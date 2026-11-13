@@ -56,3 +56,11 @@ footer a { text-underline-offset:3px; }
  .notes { grid-template-columns:1fr;gap:28px;padding-block:38px; }.notes p { max-width:none; }footer { margin-inline:20px;gap:18px;line-height:1.7; }
 }
 @media(prefers-reduced-motion:reduce) { *,*::before { scroll-behavior:auto !important; } }
+/* On phones the player, rather than a tall introduction, earns the first screen. */
+@media (max-width: 700px) {
+ main { padding-top: 26px; }
+ .intro { margin-bottom: 24px; }
+ .intro .eyebrow { margin-bottom: 12px; font-size: 9px; }
+ h1 { font-size: clamp(34px, 8.8vw, 52px); }
+ .intro-note { margin-top: 14px; font-size: 12px; line-height: 1.6; }
+}

@@ -1,0 +1,9 @@
+DHAGO — Time, woven
+Copyright 2026 DHAGO contributors
+
+This project contains original DHAGO skin styling and a procedural motion study.
+Video.js Scaffold-derived component markup and styles retain their upstream
+Apache-2.0 terms. Video.js copyright 2025-present Video.js contributors.
+
+Runtime and development dependencies retain their respective licenses. See
+package-lock.json for exact versions and installed package LICENSE files.

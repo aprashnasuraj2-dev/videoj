@@ -1,4 +1,4 @@
-<media-container class="media-skin media-container media-video dhago" data-theme="scaffold" data-preset="video">
+<media-container class="media-skin media-container media-video dhago" data-preset="video" data-theme="scaffold">
 <!-- Add a compatible media component here. -->
 <media-error-dialog>
 <media-dialog-backdrop class="media-dialog-backdrop">
@@ -20,7 +20,7 @@
 </media-controls-group>
 <media-controls>
 <media-controls-content class="dhago-shelf">
-<div class="dhago-chapter-readout" hidden><span class="dhago-chapter-index"></span><span class="dhago-chapter-name"></span></div>
+<div class="dhago-chapter-readout" hidden=""><span class="dhago-chapter-index"></span><span class="dhago-chapter-name"></span></div>
 <div class="dhago-ribbon"><media-time-slider class="media-time-slider" thumb-alignment="edge">
 <media-time-slider-chapters class="media-time-slider-chapters">
 <template>
@@ -59,7 +59,6 @@
 <media-icon class="media-button-icon-base media-play-button-pause-icon" family="scaffold" name="pause">
 </media-icon>
 </media-play-button><media-time-group class="media-time-group">
-
 <media-time class="media-time-current-value" type="current">
 </media-time>
 <media-time-separator class="media-time-separator">
@@ -79,7 +78,7 @@
 <media-slider-thumb class="media-volume-slider-thumb">
 </media-slider-thumb>
 </media-volume-slider>
-<span class="dhago-spacer" aria-hidden="true"></span>
+<span aria-hidden="true" class="dhago-spacer"></span>
 <media-captions-button class="media-button media-captions-button" id="vjs-COsQCb_P-0-10-trigger">
 <media-icon class="media-button-icon media-captions-button-off-icon" family="scaffold" name="captions-off">
 </media-icon>
@@ -91,10 +90,6 @@
 <media-text class="media-settings-button-label" token="menu.settings">Settings</media-text>
 </button><media-menu align="center" class="media-popup media-popup-safe-area media-menu-popup" id="vjs-Rq0iN2VF-h-popup" side="top">
 <media-menu-content class="media-menu-content">
-
-
-
-
 <media-menu-item class="media-menu-item" commandfor="vjs-Rq0iN2VF-9-content">
 <media-icon class="media-menu-trigger-icon" family="scaffold" name="speed">
 </media-icon>
@@ -106,6 +101,20 @@
 </media-icon>
 </span>
 </media-menu-item>
+
+<media-menu-item class="media-menu-item" commandfor="vjs-Rq0iN2VF-d-content">
+<media-icon class="media-menu-trigger-icon" family="scaffold" name="captions-off">
+</media-icon>
+<media-text token="menu.captions">Captions</media-text>
+<span class="media-menu-hint">
+<span class="media-menu-hint-label" data-part="value">
+</span>
+<media-icon class="media-menu-forward-chevron" family="scaffold" name="chevron">
+</media-icon>
+</span>
+</media-menu-item>
+
+</media-menu-content>
 <media-menu-content class="media-menu-content" id="vjs-Rq0iN2VF-9-content">
 <media-menu-item class="media-menu-back-item">
 <media-icon class="media-menu-back-chevron" family="scaffold" name="chevron">
@@ -126,19 +135,7 @@
 </media-menu-radio-item>
 </template>
 </media-playback-rate-radio-group>
-</media-menu-content>
-<media-menu-item class="media-menu-item" commandfor="vjs-Rq0iN2VF-d-content">
-<media-icon class="media-menu-trigger-icon" family="scaffold" name="captions-off">
-</media-icon>
-<media-text token="menu.captions">Captions</media-text>
-<span class="media-menu-hint">
-<span class="media-menu-hint-label" data-part="value">
-</span>
-<media-icon class="media-menu-forward-chevron" family="scaffold" name="chevron">
-</media-icon>
-</span>
-</media-menu-item>
-<media-menu-content class="media-menu-content" id="vjs-Rq0iN2VF-d-content">
+</media-menu-content><media-menu-content class="media-menu-content" id="vjs-Rq0iN2VF-d-content">
 <media-menu-item class="media-menu-back-item">
 <media-icon class="media-menu-back-chevron" family="scaffold" name="chevron">
 </media-icon>
@@ -160,9 +157,7 @@
 </media-menu-radio-item>
 </template>
 </media-captions-radio-group>
-</media-menu-content>
-</media-menu-content>
-</media-menu><media-fullscreen-button class="media-button media-fullscreen-button" id="vjs-COsQCb_P-0-4-trigger">
+</media-menu-content></media-menu><media-fullscreen-button class="media-button media-fullscreen-button" id="vjs-COsQCb_P-0-4-trigger">
 <media-icon class="media-button-icon media-fullscreen-button-enter-icon" family="scaffold" name="fullscreen-enter">
 </media-icon>
 <media-icon class="media-button-icon media-fullscreen-button-exit-icon" family="scaffold" name="fullscreen-exit">

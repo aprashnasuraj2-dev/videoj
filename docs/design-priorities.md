@@ -19,3 +19,7 @@ Alternative considered: an elaborate animated loom or A–B loop editor. Deferre
 ## Review standard
 
 Judge the isolated player at 320, 375, 768 and 1280px, with real chapter content, no chapters, open menu and error. A chapter readout must disappear when cues are absent. Automated screenshots are artifacts, not visual approval. Retain physical-device and assistive-technology gaps. Prepare the Mux and genuine-site bonuses after the core is resolved; do not claim them before observed playback.
+
+## Loading cost
+
+The optional Mux HLS engine is lazy-loaded only when a playback ID is configured. The local-film player bundle is approximately 72 KB gzip, versus 268 KB when the HLS engine was eagerly imported: about 73% less in that shared entry chunk. This is a build-size comparison, not measured phone startup time. The workbench remains a separate, heavier development page.

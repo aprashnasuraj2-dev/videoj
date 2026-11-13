@@ -106,3 +106,12 @@ test('woven chapter tracks occupy the timeline and follow the current chapter',a
  await page.locator('[data-seek="32"]').click();
  await expect(page.locator('.dhago-chapter-name')).toHaveText('Where shadows gather');
 });
+for (const time of [5,40]) {
+ test(`isolated player over ${time===5?'bright':'dark'} footage`,async({page},info)=>{
+  await page.setViewportSize({width:1600,height:1000}); await page.goto('/?local');
+  await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(1);
+  await page.locator('video').evaluate((v:HTMLVideoElement,t)=>{v.currentTime=t;},time);
+  await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.seeking)).toBe(false);
+  await page.locator('media-container').screenshot({path:info.outputPath(`player-${time}.png`)});
+ });
+}

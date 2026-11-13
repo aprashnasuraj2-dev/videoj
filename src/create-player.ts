@@ -1,5 +1,4 @@
 import '@videojs/html/video/player';
-import '@videojs/html/media/mux-video';
 import './video/skin';
 import template from './video/skin.html?raw';
 
@@ -30,12 +29,15 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
       el.setAttribute(attr,value.split(' ').map(id => ids.get(id) ?? id).join(' '));
     });
   }
+  // Keep the HLS engine out of the local-film entry bundle. Custom elements
+  // upgrade the declarative attributes when the optional adapter finishes loading.
+  if (options.playbackId) void import('@videojs/html/media/mux-video');
   const video = document.createElement(options.playbackId ? 'mux-video' : 'video') as HTMLVideoElement;
   if (options.playbackId) video.setAttribute('src', `https://stream.mux.com/${options.playbackId}.m3u8`);
   else video.src = options.source;
-  video.playsInline = true;
-  video.preload = 'metadata';
-  if (options.poster) video.poster = options.poster;
+  video.setAttribute('playsinline', '');
+  video.setAttribute('preload', 'metadata');
+  if (options.poster) video.setAttribute('poster', options.poster);
   for (const [kind,src,label] of [
     ['chapters',options.chapters,'English chapters'],
     ['captions',options.captions,'English descriptions'],
