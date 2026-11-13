@@ -792,10 +792,12 @@
     "phaseTitle": "07 / VIDEO, MUX & REAL-SITE BONUS",
     "title": "Verify the Mux bonus end to end",
     "detail": "Observe the submitted player requesting the expected public asset and advancing through real video. Record playback ID, deployment URL, time and network evidence. If fallback media is playing instead, treat the Mux bonus as unverified until fixed.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/hosting.md"
+      "docs/hosting.md",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329",
+      "submission/manifest.json"
     ]
   },
   {
@@ -815,10 +817,12 @@
     "phaseTitle": "07 / VIDEO, MUX & REAL-SITE BONUS",
     "title": "Integrate into one genuine live page",
     "detail": "AI prepares a useful portfolio case study or a tightly scoped existing-site integration. Keep the same skin source and verified video. A duplicate contest sandbox is weaker evidence of real use; the bonus is ultimately the judges decision.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/hosting.md"
+      "docs/hosting.md",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329",
+      "submission/manifest.json"
     ]
   },
   {
@@ -1080,8 +1084,11 @@
     "phaseTitle": "10 / FINAL ENTRY & CONTINUATION",
     "title": "Reopen the live rules and form",
     "detail": "Check the deadline wording, required fields, supported visual formats and any account-specific restrictions. Confirm the year and timezone context rather than trusting a copied countdown. AI records any difference from the planning snapshot.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "https://contra.com/community/topic/videojsskinschallenge/guidelines",
+      "docs/brief.md"
+    ]
   },
   {
     "id": 92,

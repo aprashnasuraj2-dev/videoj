@@ -74,3 +74,9 @@ Attempted preview deployment for exact revision 2ed92ded to Vercel team `surajde
 - Compared the entire release: 76 text objects match the SHA-256 manifest; original film `0158d496a0ca9950e078e1ae4b985a6f` and poster `a9fc197275fe0222c02252afc3f13acb` match their expected MD5 object IDs and sizes. No missing or changed contents remained.
 - Saved old public `index.html` and `journal.html` to `releases/2026-11-13-pre72ec6c/` before publishing exact immutable release HTML, journal first and homepage last. Verified new R2 readback hashes. Both custom domains and journal respond publicly in independent HTTP checks; post-release real Chromium smoke remains the next release gate.
 - Archived exact-source 30-test evidence and pre-release public smoke separately in the owner-selected Google Drive folder. No additional Mux asset, Patro worker, zone-level rule, or unrelated R2 bucket was modified.
+
+## 2026-11-13 — Post-publication acceptance
+
+- Public browser run [43443029329](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329) PASS after full immutable R2 release: source verification successful and **2/2 production Chromium smoke tests** passed. Mux media actually advances; chapter seeking and journal scene note work. Prior external browser codec limitations remain platform-specific counterevidence, not a revoked pass.
+- Checked latest Contra challenge guidelines directly: public playable v10 skin, visual + several English sentences, Nov 16 11:59pm PST deadline, 25-point criteria plus 2 possible bonuses. Join/form acceptance still requires owner's authorized sign-in and agreement. No entry submitted, no receipt asserted.
+- Reconciled completed technical Mux integration and real-site journal checklist entries, without marking owner/device tasks complete.

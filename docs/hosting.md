@@ -33,3 +33,7 @@ The earlier incremental/hotfix-only limitation above has been **resolved**. Comm
 The **entire** public release was verified: 76/76 UTF-8 text files matched their `release-manifest.json` SHA-256 hashes; the 2 binary files (original MP4 and poster WebP) matched their known MD5 object identifiers and byte lengths. Prior index/journal/preview entry points were saved under `releases/2026-11-13-pre72ec6c/`. Exact immutable `journal.html` and `index.html` were published last. Independent unauthenticated HTTP checks confirmed both domains and the journal.
 
 This proves content parity, not universal codec support or an accepted contest submission. Public Chromium playback/seek after the full release remains a distinct smoke gate; any failure must roll back rather than be hidden by the manifest match. No DNS, zone rules, Patro workers, or shared assets were modified.
+
+## Production browser acceptance (supersedes pending-gate note)
+
+[Main run 43443029329](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329) completed successfully **after** the 78/78 immutable publication: 2/2 public smoke tests passed, verifying actual Mux playback time, seek, chapter readout, and Studio Journal scene-note seeking. This is decoded video evidence in CI Chromium, not just a 200 response or fetched HLS manifest. Browser-specific codec availability and owner assistive-technology checks remain open.

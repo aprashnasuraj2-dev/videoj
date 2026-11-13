@@ -1,6 +1,6 @@
 # DHAGO: 100-step implementation checklist
 
-**79/100 complete** | 11 in progress | 0 blocked | Updated 2026-11-13T14:25:47.005Z
+**81/100 complete** | 10 in progress | 0 blocked | Updated 2026-11-13T14:31:30.000Z
 
 This is evidence-based task completion, not a percentage of contest quality. See [worklog](worklog.md), [status](status.json) and [plan](PLAN.md). Blocked steps remain unchecked; independent later work may continue.
 
@@ -410,11 +410,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
 
-- [ ] **067 - Verify the Mux bonus end to end** - IN_PROGRESS
+- [x] **067 - Verify the Mux bonus end to end** - DONE
 
   Observe the submitted player requesting the expected public asset and advancing through real video. Record playback ID, deployment URL, time and network evidence. If fallback media is playing instead, treat the Mux bonus as unverified until fixed.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/hosting.md](../docs/hosting.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/hosting.md](../docs/hosting.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329), [submission/manifest.json](../submission/manifest.json)
 
 - [ ] **068 - Control cost and media lifetime** - IN_PROGRESS
 
@@ -422,11 +422,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [docs/mux-cost-and-retention.md](../docs/mux-cost-and-retention.md)
 
-- [ ] **069 - Integrate into one genuine live page** - IN_PROGRESS
+- [x] **069 - Integrate into one genuine live page** - DONE
 
   AI prepares a useful portfolio case study or a tightly scoped existing-site integration. Keep the same skin source and verified video. A duplicate contest sandbox is weaker evidence of real use; the bonus is ultimately the judges decision.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/hosting.md](../docs/hosting.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/hosting.md](../docs/hosting.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329), [submission/manifest.json](../submission/manifest.json)
 
 - [ ] **070 - Preserve fallback and judging access** - IN_PROGRESS
 
@@ -558,9 +558,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
 ## 10 / FINAL ENTRY & CONTINUATION
 
-- [ ] **091 - Reopen the live rules and form** - NOT_STARTED
+- [ ] **091 - Reopen the live rules and form** - IN_PROGRESS
 
   Check the deadline wording, required fields, supported visual formats and any account-specific restrictions. Confirm the year and timezone context rather than trusting a copied countdown. AI records any difference from the planning snapshot.
+
+  Evidence: [https://contra.com/community/topic/videojsskinschallenge/guidelines](https://contra.com/community/topic/videojsskinschallenge/guidelines), [docs/brief.md](../docs/brief.md)
 
 - [x] **092 - Complete the score rehearsal** - DONE
 

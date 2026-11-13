@@ -1,6 +1,6 @@
 {
   "title": "DHAGO — Time, woven",
-  "status": "Exact 78-file public build verified; post-publish live smoke and owner submission pending",
+  "status": "Exact 78-file release and post-publish Mux/journal smoke VERIFIED; competition NOT submitted",
   "repositoryUrl": "https://github.com/aprashnasuraj2-dev/videoj",
   "reviewUrl": "https://github.com/aprashnasuraj2-dev/videoj/pull/1",
   "demoUrl": "https://creative.aafnaipatro.com/",
@@ -25,7 +25,9 @@
   "productionAssetCount": 78,
   "productionIntegrity": "76 text SHA-256 matches and 2 binary MD5+size matches; previous HTML retained for rollback",
   "preReleasePublicSmokeUrl": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43440355195",
-  "postReleasePublicSmokeUrl": null,
+  "postReleasePublicSmokeUrl": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329",
   "visualsArchiveUrl": "https://drive.google.com/file/d/13UnLqOuiAQQOBXKoh_IesPHtFROkIUyb/view",
-  "releaseManifestPath": "release-manifest.json on dist-72ec6c324f64"
+  "releaseManifestPath": "release-manifest.json on dist-72ec6c324f64",
+  "postReleasePublicSmoke": "2/2 live Playwright Chromium tests passed: real Mux playback/seek and journal scene seek",
+  "postReleaseVerifiedAt": "2026-11-13T14:30:39Z"
 }
