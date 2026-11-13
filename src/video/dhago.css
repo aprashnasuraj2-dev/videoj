@@ -171,7 +171,7 @@
  .dhago .dhago-control-label,
  .dhago .media-settings-button-label {
   display: block; position: absolute; inset-inline: 0; bottom: 5px;
-  font-size: 10px; line-height: 1.2; letter-spacing: .01em;
+  font-size: 10px; line-height: 1.2; letter-spacing: .01em; text-align: center;
  }
  .dhago .media-captions-button .media-button-icon,
  .dhago .media-settings-button .media-button-icon,

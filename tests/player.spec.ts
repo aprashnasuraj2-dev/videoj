@@ -28,6 +28,9 @@ for (const width of [320, 375, 768, 1280]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await expect(page.locator('media-fullscreen-button')).toBeVisible();
     await expect(page.locator('media-captions-button')).toBeVisible();
+    if(width<=375) {
+      for(const text of ['Captions','Settings','Screen']) await expect(page.locator('media-container').getByText(text,{exact:true})).toBeVisible();
+    }
     await page.screenshot({ path: info.outputPath(`player-${width}.png`), fullPage: true });
   });
 }
