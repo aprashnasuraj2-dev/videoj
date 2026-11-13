@@ -52,6 +52,58 @@ test.describe('Public judge experience', () => {
     await page.locator('[data-time="32"]').click();
     await expect.poll(() => mux.evaluate((element: any) => Number(element.currentTime || 0)), { timeout: 20_000 }).toBeGreaterThanOrEqual(32);
     await expect(page.locator('[data-time="32"]')).toHaveAttribute('aria-current', 'true');
+    expect(await mux.evaluate(element => (element as HTMLVideoElement).paused)).toBe(true);
+    await page.getByRole('button', {name: 'Play', exact: true}).click();
+    await expect.poll(() => mux.evaluate(element => (element as HTMLVideoElement).currentTime), {timeout: 20_000}).toBeGreaterThan(33);
     await page.screenshot({ path: info.outputPath('journal-scene-32.png'), fullPage: true });
+  });
+
+  test('signed-out narrow backup exposes working named controls and keyboard focus', async ({ page }, info) => {
+    await page.setViewportSize({ width: 320, height: 830 });
+    const errors: string[] = [];
+    page.on('pageerror', error => errors.push(error.message));
+    await page.goto('/?local', { waitUntil: 'domcontentloaded' });
+    const film = page.locator('video');
+    await expect(film).toHaveAttribute('src', /studies-in-thread\.mp4$/);
+    await expect.poll(() => film.evaluate(element => (element as HTMLVideoElement).duration)).toBe(64);
+
+    const getButton = (name: string) => page.getByRole('button', { name, exact: true });
+    const play = getButton('Play');
+    const mute = getButton('Mute');
+    const captions = getButton('Enable captions');
+    const fullscreen = getButton('Enter fullscreen');
+    const settings = getButton('Settings');
+    for (const control of [play, mute, captions, fullscreen, settings]) {
+      await expect(control).toBeVisible();
+      const box = await control.boundingBox();
+      expect(box?.width).toBeGreaterThanOrEqual(44);
+      expect(box?.height).toBeGreaterThanOrEqual(44);
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
+    await play.press('Enter');
+    await expect.poll(() => film.evaluate(element => (element as HTMLVideoElement).currentTime)).toBeGreaterThan(.2);
+    await getButton('Pause').press('Enter');
+
+    const seek = page.getByRole('slider', { name: 'Seek' });
+    await seek.press('Home');
+    await seek.press('ArrowRight');
+    await expect(seek).toHaveAttribute('aria-valuenow', '1');
+    await expect(seek).toHaveAttribute('aria-valuetext', /1 second/);
+    await mute.press('Enter');
+    await expect(getButton('Unmute')).toBeVisible();
+    await captions.press('Enter');
+    await expect(getButton('Disable captions')).toBeVisible();
+    await expect.poll(() => film.evaluate(element => Array.from((element as HTMLVideoElement).textTracks).some(t => t.kind === 'captions' && t.mode === 'showing'))).toBe(true);
+    await settings.press('Enter');
+    await expect(page.getByRole('menuitem', { name: /speed/i })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(settings).toBeFocused();
+
+    await fullscreen.click();
+    await expect.poll(() => page.evaluate(() => document.fullscreenElement?.localName)).toBe('media-container');
+    await getButton('Exit fullscreen').click();
+    await expect.poll(() => page.evaluate(() => document.fullscreenElement)).toBeNull();
+    expect(errors).toEqual([]);
+    await page.screenshot({path: info.outputPath('public-320px-backup.png')});
   });
 });
