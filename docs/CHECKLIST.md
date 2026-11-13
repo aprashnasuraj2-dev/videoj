@@ -1,134 +1,194 @@
 # DHAGO: 100-step implementation checklist
 
-**0/100 complete** | 0 in progress | 0 blocked | Updated 2026-11-13T11:08:24.452Z
+**27/100 complete** | 3 in progress | 0 blocked | Updated 2026-11-13T11:11:14.493Z
 
 This is evidence-based task completion, not a percentage of contest quality. See [worklog](worklog.md), [status](status.json) and [plan](PLAN.md). Blocked steps remain unchecked; independent later work may continue.
 
 ## 01 / STRATEGY & CONSTRAINTS
 
-- [ ] **001 - Capture the authoritative brief** - NOT_STARTED
+- [x] **001 - Capture the authoritative brief** - DONE
 
   Save the live rules URL, access date, deadline wording and any entry limits in docs/brief.md. AI must flag an absent eligibility term rather than invent it; account-specific eligibility remains unverified until checked.
 
-- [ ] **002 - Build an eligibility checklist** - NOT_STARTED
+  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+
+- [x] **002 - Build an eligibility checklist** - DONE
 
   Create separate checks for public access, actual v10 playback, five essential control categories, responsive layout, keyboard operation, visual and short description. Optional bonuses must never mask a failed minimum requirement.
 
-- [ ] **003 - Convert scoring into priorities** - NOT_STARTED
+  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+
+- [x] **003 - Convert scoring into priorities** - DONE
 
   Use an internal target of at least 23/25 plus two verified bonuses, as an aspiration only. Spend design effort on the player itself; a polished surrounding website cannot rescue weak controls.
 
-- [ ] **004 - Set the authoring contract** - NOT_STARTED
+  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+
+- [x] **004 - Set the authoring contract** - DONE
 
   AI writes the implementation, tests, documentation, screenshots, release archive and form copy. Interpret 99% as a target for authored deliverables, not measured total effort, autonomous judgment, or a guaranteed completion rate.
 
-- [ ] **005 - Identify owner handoffs** - NOT_STARTED
+  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+
+- [x] **005 - Identify owner handoffs** - DONE
 
   List account sign-in, rights confirmation, final visual choice, phone testing and accepting entry terms. AI prepares each handoff with exact fields and files, then continues all independent work without waiting unnecessarily.
 
-- [ ] **006 - Choose a bounded schedule** - NOT_STARTED
+  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+
+- [x] **006 - Choose a bounded schedule** - DONE
 
   Budget 24-32 active agent hours and 60-120 owner minutes, assuming tools work and accounts can be accessed. These are planning estimates; record actual hours and protect the final deployment buffer.
 
-- [ ] **007 - Allocate the effort** - NOT_STARTED
+  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+
+- [x] **007 - Allocate the effort** - DONE
 
   Within a 28-hour example: 4h discovery/design, 10h implementation, 7h access/device QA, 3h packaging/deployment and 4h contingency. Cut optional features before consuming the contingency reserved for playback and entry problems.
 
-- [ ] **008 - Set the cost envelope** - NOT_STARTED
+  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+
+- [x] **008 - Set the cost envelope** - DONE
 
   Target no new paid tools beyond an existing AI subscription and qualifying free hosting. Set a US$20 optional spending ceiling requiring owner agreement; log metered usage. Free allowances are finite, not a promise of zero lifetime cost.
 
-- [ ] **009 - Create the risk register** - NOT_STARTED
+  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+
+- [x] **009 - Create the risk register** - DONE
 
   Track wrong player version, inaccessible controls, mobile overflow, expired video, protected deployment and deadline failure. Give each a test, owner and fallback; fix risks that can disqualify the entry before decorative improvements.
 
-- [ ] **010 - Freeze the success definition** - NOT_STARTED
+  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+
+- [x] **010 - Freeze the success definition** - DONE
 
   The plan ends with a publicly playable skin, reproducible source, usable visual, accurate description, optional bonus evidence and saved submission receipt. A ZIP, screenshot or repository alone is not the required working URL.
 
+  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+
 ## 02 / ORIGINALITY & ART DIRECTION
 
-- [ ] **011 - Inspect a bounded competitor sample** - NOT_STARTED
+- [x] **011 - Inspect a bounded competitor sample** - DONE
 
   Review 12-20 visible entries and record concept families, not popularity rankings. The current feed includes tactile controls, transit timelines and waveform players [S7]; the sample cannot establish uniqueness across all entries.
 
-- [ ] **012 - Define one user and moment** - NOT_STARTED
+  Evidence: [docs/design.md](../docs/design.md)
+
+- [x] **012 - Define one user and moment** - DONE
 
   Target viewers watching short craft, travel or documentary films on phones and laptops. Their main task is watching; secondary tasks are finding a chapter and replaying a useful moment without a complicated editor.
 
-- [ ] **013 - Write the design thesis** - NOT_STARTED
+  Evidence: [docs/design.md](../docs/design.md)
+
+- [x] **013 - Write the design thesis** - DONE
 
   Create docs/design.md: a quiet picture above a solid control shelf, with a woven linear timeline and clear chapter labels. The metaphor lives inside the skin, so it survives when removed from its demo website.
 
-- [ ] **014 - Define the signature interaction** - NOT_STARTED
+  Evidence: [docs/design.md](../docs/design.md)
+
+- [x] **014 - Define the signature interaction** - DONE
 
   Render chapter segments as adjoining woven swatches with a single standard seek track and thumb. Pointer movement may reveal a timestamp; selection seeks. Texture must never imply a second draggable control or fictional audio waveform.
 
-- [ ] **015 - Set a restrained visual system** - NOT_STARTED
+  Evidence: [docs/design.md](../docs/design.md)
+
+- [x] **015 - Set a restrained visual system** - DONE
 
   Start with ink #171918, bone #F4EBDD, rust #B44332 and muted gold #9A5A18. AI measures every actual foreground/background pairing before use; these are palette candidates, not pre-certified accessible combinations.
 
-- [ ] **016 - Resolve type and icon craft** - NOT_STARTED
+  Evidence: [docs/design.md](../docs/design.md)
+
+- [x] **016 - Resolve type and icon craft** - DONE
 
   Use one licensed sans family plus tabular numerals for time. Draw or use one consistently licensed SVG icon family, with 20-24px glyphs inside 44-48px buttons. Adjust play-triangle optical centering by visual inspection.
 
-- [ ] **017 - Create three comparable compositions** - NOT_STARTED
+  Evidence: [docs/design.md](../docs/design.md)
+
+- [ ] **017 - Create three comparable compositions** - IN_PROGRESS
 
   AI produces live HTML/CSS variants: warm shelf, dark shelf and minimal editorial shelf. Keep video, control order and player size identical so owner selection judges the skin rather than unrelated imagery.
 
-- [ ] **018 - Apply a clear selection rubric** - NOT_STARTED
+  Evidence: [skin.json](../skin.json)
+
+- [x] **018 - Apply a clear selection rubric** - DONE
 
   Score variants for recognition, timeline clarity, thumb reach, contrast and reuse. Keep the strongest single direction; do not merge three layouts into a multi-theme system that triples the state-testing burden.
 
-- [ ] **019 - Test the counterexample** - NOT_STARTED
+  Evidence: [docs/design.md](../docs/design.md)
+
+- [x] **019 - Test the counterexample** - DONE
 
   If the weave reads as a decorative loading bar or chapter colors carry all meaning, it fails. Add names, ticks and a conventional thumb; reduce texture until seeking is immediately obvious. Novelty alone does not earn usability.
 
-- [ ] **020 - Lock a reproducible design brief** - NOT_STARTED
+  Evidence: [docs/design.md](../docs/design.md)
+
+- [x] **020 - Lock a reproducible design brief** - DONE
 
   Save approved tokens, icon stroke, spacing, radii, two responsive layouts and screenshots. Define only one optional enhancement: keyboard-operable A-B replay. Avoid accounts, multiplayer, chat and AI services in the shipped player.
 
+  Evidence: [docs/design.md](../docs/design.md)
+
 ## 03 / REPOSITORY & AI SETUP
 
-- [ ] **021 - Establish workspace capabilities** - NOT_STARTED
+- [x] **021 - Establish workspace capabilities** - DONE
 
   AI checks Node, package manager, Git, browser automation and network access. Record versions in docs/environment.md. If execution is unavailable, provide a source bundle with explicit untested status rather than claiming a functioning demo.
 
-- [ ] **022 - Create an isolated repository** - NOT_STARTED
+  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+
+- [x] **022 - Create an isolated repository** - DONE
 
   Use a new repository such as dhago-videojs-skin under the owner account, once connected. Until then, initialize local Git and keep a downloadable snapshot. Do not modify EventV, Patro or other existing projects during this setup.
 
-- [ ] **023 - Set repository safeguards** - NOT_STARTED
+  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+
+- [x] **023 - Set repository safeguards** - DONE
 
   Write .gitignore for node_modules, build output, private environment files and local recordings. Commit a safe .env.example with names only. Never place Mux secrets, host tokens or authentication cookies in Git, client JavaScript or screenshots.
 
-- [ ] **024 - Install the official agent guidance** - NOT_STARTED
+  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+
+- [x] **024 - Install the official agent guidance** - DONE
 
   Follow the Video.js skill instructions for the actual tool and restart/reload if required. If plugin installation is unsupported, read official and installed docs directly. Do not pretend a skill was installed when only its page was read.
 
-- [ ] **025 - Generate the version-matched starter** - NOT_STARTED
+  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+
+- [x] **025 - Generate the version-matched starter** - DONE
 
   Run the official skin CLI with the chosen options. Read generated files before restructuring them. Save CLI version and command choices; if docs and CLI conflict, inspect help and installed exports, then document the resolved behavior.
 
-- [ ] **026 - Prove genuine v10 integration** - NOT_STARTED
+  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+
+- [ ] **026 - Prove genuine v10 integration** - IN_PROGRESS
 
   Record the installed @videojs/html version, lockfile and runtime component registration. Reject accidental v8 patterns such as videojs() initialization unless explicitly supported by the installed v10 docs. A package name alone does not prove runtime playback.
 
-- [ ] **027 - Create the first playable baseline** - NOT_STARTED
+  Evidence: [skin.json](../skin.json)
+
+- [ ] **027 - Create the first playable baseline** - IN_PROGRESS
 
   Start the generated preview with an authorized test clip, activate play and observe advancing time and rendered frames. Commit this small known-working baseline before custom styling so later regressions have a useful comparison point.
 
-- [ ] **028 - Write a project AGENTS.md** - NOT_STARTED
+  Evidence: [skin.json](../skin.json)
+
+- [x] **028 - Write a project AGENTS.md** - DONE
 
   Specify current docs first, preserve component semantics, no fake state, no credentials, no invented test results and one coherent feature at a time. Permit routine reversible fixes; keep publication and account actions within the owner-authorized scope.
 
-- [ ] **029 - Create a resumable worklog** - NOT_STARTED
+  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+
+- [x] **029 - Create a resumable worklog** - DONE
 
   For every phase store completed step numbers, next action, commit SHA, blockers and evidence paths. New AI sessions read AGENTS.md and worklog first; they must inspect current files instead of repeating installation or research.
 
-- [ ] **030 - Use light but reliable Git discipline** - NOT_STARTED
+  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+
+- [x] **030 - Use light but reliable Git discipline** - DONE
 
   Work on feat/dhago-skin, commit meaningful slices and keep main playable. Run checks relevant to changed behavior. One final reviewed release is preferable to spending hours on redundant PR or CI cycles for cosmetic edits.
+
+  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
 
 ## 04 / STATE & ESSENTIAL CONTROLS
 

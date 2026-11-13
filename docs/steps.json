@@ -5,8 +5,11 @@
     "phaseTitle": "01 / STRATEGY & CONSTRAINTS",
     "title": "Capture the authoritative brief",
     "detail": "Save the live rules URL, access date, deadline wording and any entry limits in docs/brief.md. AI must flag an absent eligibility term rather than invent it; account-specific eligibility remains unverified until checked.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/brief.md",
+      "docs/risks.md"
+    ]
   },
   {
     "id": 2,
@@ -14,8 +17,11 @@
     "phaseTitle": "01 / STRATEGY & CONSTRAINTS",
     "title": "Build an eligibility checklist",
     "detail": "Create separate checks for public access, actual v10 playback, five essential control categories, responsive layout, keyboard operation, visual and short description. Optional bonuses must never mask a failed minimum requirement.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/brief.md",
+      "docs/risks.md"
+    ]
   },
   {
     "id": 3,
@@ -23,8 +29,11 @@
     "phaseTitle": "01 / STRATEGY & CONSTRAINTS",
     "title": "Convert scoring into priorities",
     "detail": "Use an internal target of at least 23/25 plus two verified bonuses, as an aspiration only. Spend design effort on the player itself; a polished surrounding website cannot rescue weak controls.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/brief.md",
+      "docs/risks.md"
+    ]
   },
   {
     "id": 4,
@@ -32,8 +41,11 @@
     "phaseTitle": "01 / STRATEGY & CONSTRAINTS",
     "title": "Set the authoring contract",
     "detail": "AI writes the implementation, tests, documentation, screenshots, release archive and form copy. Interpret 99% as a target for authored deliverables, not measured total effort, autonomous judgment, or a guaranteed completion rate.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/brief.md",
+      "docs/risks.md"
+    ]
   },
   {
     "id": 5,
@@ -41,8 +53,11 @@
     "phaseTitle": "01 / STRATEGY & CONSTRAINTS",
     "title": "Identify owner handoffs",
     "detail": "List account sign-in, rights confirmation, final visual choice, phone testing and accepting entry terms. AI prepares each handoff with exact fields and files, then continues all independent work without waiting unnecessarily.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/brief.md",
+      "docs/risks.md"
+    ]
   },
   {
     "id": 6,
@@ -50,8 +65,11 @@
     "phaseTitle": "01 / STRATEGY & CONSTRAINTS",
     "title": "Choose a bounded schedule",
     "detail": "Budget 24-32 active agent hours and 60-120 owner minutes, assuming tools work and accounts can be accessed. These are planning estimates; record actual hours and protect the final deployment buffer.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/brief.md",
+      "docs/risks.md"
+    ]
   },
   {
     "id": 7,
@@ -59,8 +77,11 @@
     "phaseTitle": "01 / STRATEGY & CONSTRAINTS",
     "title": "Allocate the effort",
     "detail": "Within a 28-hour example: 4h discovery/design, 10h implementation, 7h access/device QA, 3h packaging/deployment and 4h contingency. Cut optional features before consuming the contingency reserved for playback and entry problems.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/brief.md",
+      "docs/risks.md"
+    ]
   },
   {
     "id": 8,
@@ -68,8 +89,11 @@
     "phaseTitle": "01 / STRATEGY & CONSTRAINTS",
     "title": "Set the cost envelope",
     "detail": "Target no new paid tools beyond an existing AI subscription and qualifying free hosting. Set a US$20 optional spending ceiling requiring owner agreement; log metered usage. Free allowances are finite, not a promise of zero lifetime cost.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/brief.md",
+      "docs/risks.md"
+    ]
   },
   {
     "id": 9,
@@ -77,8 +101,11 @@
     "phaseTitle": "01 / STRATEGY & CONSTRAINTS",
     "title": "Create the risk register",
     "detail": "Track wrong player version, inaccessible controls, mobile overflow, expired video, protected deployment and deadline failure. Give each a test, owner and fallback; fix risks that can disqualify the entry before decorative improvements.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/brief.md",
+      "docs/risks.md"
+    ]
   },
   {
     "id": 10,
@@ -86,8 +113,11 @@
     "phaseTitle": "01 / STRATEGY & CONSTRAINTS",
     "title": "Freeze the success definition",
     "detail": "The plan ends with a publicly playable skin, reproducible source, usable visual, accurate description, optional bonus evidence and saved submission receipt. A ZIP, screenshot or repository alone is not the required working URL.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/brief.md",
+      "docs/risks.md"
+    ]
   },
   {
     "id": 11,
@@ -95,8 +125,10 @@
     "phaseTitle": "02 / ORIGINALITY & ART DIRECTION",
     "title": "Inspect a bounded competitor sample",
     "detail": "Review 12-20 visible entries and record concept families, not popularity rankings. The current feed includes tactile controls, transit timelines and waveform players [S7]; the sample cannot establish uniqueness across all entries.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/design.md"
+    ]
   },
   {
     "id": 12,
@@ -104,8 +136,10 @@
     "phaseTitle": "02 / ORIGINALITY & ART DIRECTION",
     "title": "Define one user and moment",
     "detail": "Target viewers watching short craft, travel or documentary films on phones and laptops. Their main task is watching; secondary tasks are finding a chapter and replaying a useful moment without a complicated editor.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/design.md"
+    ]
   },
   {
     "id": 13,
@@ -113,8 +147,10 @@
     "phaseTitle": "02 / ORIGINALITY & ART DIRECTION",
     "title": "Write the design thesis",
     "detail": "Create docs/design.md: a quiet picture above a solid control shelf, with a woven linear timeline and clear chapter labels. The metaphor lives inside the skin, so it survives when removed from its demo website.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/design.md"
+    ]
   },
   {
     "id": 14,
@@ -122,8 +158,10 @@
     "phaseTitle": "02 / ORIGINALITY & ART DIRECTION",
     "title": "Define the signature interaction",
     "detail": "Render chapter segments as adjoining woven swatches with a single standard seek track and thumb. Pointer movement may reveal a timestamp; selection seeks. Texture must never imply a second draggable control or fictional audio waveform.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/design.md"
+    ]
   },
   {
     "id": 15,
@@ -131,8 +169,10 @@
     "phaseTitle": "02 / ORIGINALITY & ART DIRECTION",
     "title": "Set a restrained visual system",
     "detail": "Start with ink #171918, bone #F4EBDD, rust #B44332 and muted gold #9A5A18. AI measures every actual foreground/background pairing before use; these are palette candidates, not pre-certified accessible combinations.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/design.md"
+    ]
   },
   {
     "id": 16,
@@ -140,8 +180,10 @@
     "phaseTitle": "02 / ORIGINALITY & ART DIRECTION",
     "title": "Resolve type and icon craft",
     "detail": "Use one licensed sans family plus tabular numerals for time. Draw or use one consistently licensed SVG icon family, with 20-24px glyphs inside 44-48px buttons. Adjust play-triangle optical centering by visual inspection.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/design.md"
+    ]
   },
   {
     "id": 17,
@@ -149,8 +191,10 @@
     "phaseTitle": "02 / ORIGINALITY & ART DIRECTION",
     "title": "Create three comparable compositions",
     "detail": "AI produces live HTML/CSS variants: warm shelf, dark shelf and minimal editorial shelf. Keep video, control order and player size identical so owner selection judges the skin rather than unrelated imagery.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "skin.json"
+    ]
   },
   {
     "id": 18,
@@ -158,8 +202,10 @@
     "phaseTitle": "02 / ORIGINALITY & ART DIRECTION",
     "title": "Apply a clear selection rubric",
     "detail": "Score variants for recognition, timeline clarity, thumb reach, contrast and reuse. Keep the strongest single direction; do not merge three layouts into a multi-theme system that triples the state-testing burden.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/design.md"
+    ]
   },
   {
     "id": 19,
@@ -167,8 +213,10 @@
     "phaseTitle": "02 / ORIGINALITY & ART DIRECTION",
     "title": "Test the counterexample",
     "detail": "If the weave reads as a decorative loading bar or chapter colors carry all meaning, it fails. Add names, ticks and a conventional thumb; reduce texture until seeking is immediately obvious. Novelty alone does not earn usability.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/design.md"
+    ]
   },
   {
     "id": 20,
@@ -176,8 +224,10 @@
     "phaseTitle": "02 / ORIGINALITY & ART DIRECTION",
     "title": "Lock a reproducible design brief",
     "detail": "Save approved tokens, icon stroke, spacing, radii, two responsive layouts and screenshots. Define only one optional enhancement: keyboard-operable A-B replay. Avoid accounts, multiplayer, chat and AI services in the shipped player.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/design.md"
+    ]
   },
   {
     "id": 21,
@@ -185,8 +235,12 @@
     "phaseTitle": "03 / REPOSITORY & AI SETUP",
     "title": "Establish workspace capabilities",
     "detail": "AI checks Node, package manager, Git, browser automation and network access. Record versions in docs/environment.md. If execution is unavailable, provide a source bundle with explicit untested status rather than claiming a functioning demo.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/environment.md",
+      "AGENTS.md",
+      "docs/worklog.md"
+    ]
   },
   {
     "id": 22,
@@ -194,8 +248,12 @@
     "phaseTitle": "03 / REPOSITORY & AI SETUP",
     "title": "Create an isolated repository",
     "detail": "Use a new repository such as dhago-videojs-skin under the owner account, once connected. Until then, initialize local Git and keep a downloadable snapshot. Do not modify EventV, Patro or other existing projects during this setup.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/environment.md",
+      "AGENTS.md",
+      "docs/worklog.md"
+    ]
   },
   {
     "id": 23,
@@ -203,8 +261,12 @@
     "phaseTitle": "03 / REPOSITORY & AI SETUP",
     "title": "Set repository safeguards",
     "detail": "Write .gitignore for node_modules, build output, private environment files and local recordings. Commit a safe .env.example with names only. Never place Mux secrets, host tokens or authentication cookies in Git, client JavaScript or screenshots.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/environment.md",
+      "AGENTS.md",
+      "docs/worklog.md"
+    ]
   },
   {
     "id": 24,
@@ -212,8 +274,12 @@
     "phaseTitle": "03 / REPOSITORY & AI SETUP",
     "title": "Install the official agent guidance",
     "detail": "Follow the Video.js skill instructions for the actual tool and restart/reload if required. If plugin installation is unsupported, read official and installed docs directly. Do not pretend a skill was installed when only its page was read.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/environment.md",
+      "AGENTS.md",
+      "docs/worklog.md"
+    ]
   },
   {
     "id": 25,
@@ -221,8 +287,12 @@
     "phaseTitle": "03 / REPOSITORY & AI SETUP",
     "title": "Generate the version-matched starter",
     "detail": "Run the official skin CLI with the chosen options. Read generated files before restructuring them. Save CLI version and command choices; if docs and CLI conflict, inspect help and installed exports, then document the resolved behavior.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/environment.md",
+      "AGENTS.md",
+      "docs/worklog.md"
+    ]
   },
   {
     "id": 26,
@@ -230,8 +300,10 @@
     "phaseTitle": "03 / REPOSITORY & AI SETUP",
     "title": "Prove genuine v10 integration",
     "detail": "Record the installed @videojs/html version, lockfile and runtime component registration. Reject accidental v8 patterns such as videojs() initialization unless explicitly supported by the installed v10 docs. A package name alone does not prove runtime playback.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "skin.json"
+    ]
   },
   {
     "id": 27,
@@ -239,8 +311,10 @@
     "phaseTitle": "03 / REPOSITORY & AI SETUP",
     "title": "Create the first playable baseline",
     "detail": "Start the generated preview with an authorized test clip, activate play and observe advancing time and rendered frames. Commit this small known-working baseline before custom styling so later regressions have a useful comparison point.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "skin.json"
+    ]
   },
   {
     "id": 28,
@@ -248,8 +322,12 @@
     "phaseTitle": "03 / REPOSITORY & AI SETUP",
     "title": "Write a project AGENTS.md",
     "detail": "Specify current docs first, preserve component semantics, no fake state, no credentials, no invented test results and one coherent feature at a time. Permit routine reversible fixes; keep publication and account actions within the owner-authorized scope.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/environment.md",
+      "AGENTS.md",
+      "docs/worklog.md"
+    ]
   },
   {
     "id": 29,
@@ -257,8 +335,12 @@
     "phaseTitle": "03 / REPOSITORY & AI SETUP",
     "title": "Create a resumable worklog",
     "detail": "For every phase store completed step numbers, next action, commit SHA, blockers and evidence paths. New AI sessions read AGENTS.md and worklog first; they must inspect current files instead of repeating installation or research.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/environment.md",
+      "AGENTS.md",
+      "docs/worklog.md"
+    ]
   },
   {
     "id": 30,
@@ -266,8 +348,12 @@
     "phaseTitle": "03 / REPOSITORY & AI SETUP",
     "title": "Use light but reliable Git discipline",
     "detail": "Work on feat/dhago-skin, commit meaningful slices and keep main playable. Run checks relevant to changed behavior. One final reviewed release is preferable to spending hours on redundant PR or CI cycles for cosmetic edits.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/environment.md",
+      "AGENTS.md",
+      "docs/worklog.md"
+    ]
   },
   {
     "id": 31,

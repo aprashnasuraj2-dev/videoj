@@ -1,0 +1,252 @@
+<media-container class="media-skin media-container media-video dhago" data-theme="scaffold" data-preset="video">
+<!-- Add a compatible media component here. -->
+<media-error-dialog>
+<media-dialog-backdrop class="media-dialog-backdrop">
+</media-dialog-backdrop>
+<media-dialog-popup class="media-dialog-popup">
+<media-dialog-title class="media-dialog-title">
+</media-dialog-title>
+<media-dialog-description class="media-dialog-description">
+</media-dialog-description>
+<media-dialog-close class="media-button media-dialog-close">
+</media-dialog-close>
+</media-dialog-popup>
+</media-error-dialog>
+<media-controls-group class="media-buffering-indicator-controls">
+<media-buffering-indicator class="media-buffering-indicator media-buffering-indicator-backdrop">
+<media-icon class="media-buffering-indicator-spinner-icon" family="scaffold" name="spinner">
+</media-icon>
+</media-buffering-indicator>
+</media-controls-group>
+<media-controls>
+<media-controls-content class="dhago-shelf">
+<div class="dhago-ribbon"><media-time-slider class="media-time-slider" thumb-alignment="edge">
+<media-time-slider-chapters class="media-time-slider-chapters">
+<template>
+<div class="media-time-slider-chapter">
+<media-slider-track class="media-time-slider-track">
+<media-slider-buffer class="media-time-slider-buffer">
+</media-slider-buffer>
+<media-slider-fill class="media-time-slider-fill">
+</media-slider-fill>
+</media-slider-track>
+</div>
+</template>
+</media-time-slider-chapters>
+<media-slider-thumb class="media-time-slider-thumb">
+</media-slider-thumb>
+<media-slider-preview class="media-time-slider-preview">
+<media-slider-thumbnail class="media-slider-thumbnail">
+<img alt="" aria-hidden="true" class="media-slider-thumbnail-image" decoding="async"/>
+</media-slider-thumbnail>
+<div class="media-time-slider-preview-meta">
+<div class="media-time-slider-preview-label">
+<media-slider-value class="media-time-slider-value" type="pointer">
+</media-slider-value>
+<media-time-slider-chapter-title class="media-time-slider-chapter-title">
+</media-time-slider-chapter-title>
+</div>
+</div>
+</media-slider-preview>
+</media-time-slider></div>
+<media-controls-group class="dhago-controls">
+<media-play-button class="media-button media-play-button" id="vjs-COsQCb_P-0-8-trigger">
+<media-icon class="media-button-icon-base media-play-button-restart-icon" family="scaffold" name="restart">
+</media-icon>
+<media-icon class="media-button-icon-base media-play-button-play-icon" family="scaffold" name="play">
+</media-icon>
+<media-icon class="media-button-icon-base media-play-button-pause-icon" family="scaffold" name="pause">
+</media-icon>
+</media-play-button><media-time-group class="media-time-group">
+
+<media-time class="media-time-current-value" type="current">
+</media-time>
+<media-time-separator class="media-time-separator">
+</media-time-separator>
+<media-time class="media-time-duration-value" type="duration">
+</media-time>
+</media-time-group><media-mute-button class="media-button media-mute-button" id="vjs-COsQCb_P-0-9-trigger">
+<media-icon class="media-button-icon media-mute-button-off-icon" family="scaffold" name="volume-off">
+</media-icon>
+<media-icon class="media-button-icon media-mute-button-high-icon" family="scaffold" name="volume-high">
+</media-icon>
+</media-mute-button><media-volume-slider class="media-volume-slider" orientation="horizontal">
+<media-slider-track class="media-volume-slider-track">
+<media-slider-fill class="media-volume-slider-fill">
+</media-slider-fill>
+</media-slider-track>
+<media-slider-thumb class="media-volume-slider-thumb">
+</media-slider-thumb>
+</media-volume-slider>
+<span class="dhago-spacer" aria-hidden="true"></span>
+<media-captions-button class="media-button media-captions-button" id="vjs-COsQCb_P-0-10-trigger">
+<media-icon class="media-button-icon media-captions-button-off-icon" family="scaffold" name="captions-off">
+</media-icon>
+<media-icon class="media-button-icon media-captions-button-on-icon" family="scaffold" name="captions-on">
+</media-icon>
+</media-captions-button><button class="media-button media-settings-button" commandfor="vjs-Rq0iN2VF-h-popup" id="vjs-COsQCb_P-0-11-trigger">
+<media-icon class="media-button-icon" family="scaffold" name="gear">
+</media-icon>
+<media-text class="media-settings-button-label" token="menu.settings">Settings</media-text>
+</button><media-menu align="center" class="media-popup media-popup-safe-area media-menu-popup" id="vjs-Rq0iN2VF-h-popup" side="top">
+<media-menu-content class="media-menu-content">
+
+
+
+
+<media-menu-item class="media-menu-item" commandfor="vjs-Rq0iN2VF-9-content">
+<media-icon class="media-menu-trigger-icon" family="scaffold" name="speed">
+</media-icon>
+<media-text token="menu.speed">Speed</media-text>
+<span class="media-menu-hint">
+<span class="media-menu-hint-label" data-part="value">
+</span>
+<media-icon class="media-menu-forward-chevron" family="scaffold" name="chevron">
+</media-icon>
+</span>
+</media-menu-item>
+<media-menu-content class="media-menu-content" id="vjs-Rq0iN2VF-9-content">
+<media-menu-item class="media-menu-back-item">
+<media-icon class="media-menu-back-chevron" family="scaffold" name="chevron">
+</media-icon>
+<media-text token="menu.speed">Speed</media-text>
+</media-menu-item>
+<media-menu-separator class="media-menu-separator">
+</media-menu-separator>
+<media-playback-rate-radio-group class="media-menu-radio-group">
+<template>
+<media-menu-radio-item class="media-menu-radio-item">
+<span data-part="label">
+</span>
+<media-menu-item-indicator class="media-menu-indicator" force-mount="">
+<media-icon class="media-menu-radio-icon" family="scaffold" name="check">
+</media-icon>
+</media-menu-item-indicator>
+</media-menu-radio-item>
+</template>
+</media-playback-rate-radio-group>
+</media-menu-content>
+<media-menu-item class="media-menu-item" commandfor="vjs-Rq0iN2VF-d-content">
+<media-icon class="media-menu-trigger-icon" family="scaffold" name="captions-off">
+</media-icon>
+<media-text token="menu.captions">Captions</media-text>
+<span class="media-menu-hint">
+<span class="media-menu-hint-label" data-part="value">
+</span>
+<media-icon class="media-menu-forward-chevron" family="scaffold" name="chevron">
+</media-icon>
+</span>
+</media-menu-item>
+<media-menu-content class="media-menu-content" id="vjs-Rq0iN2VF-d-content">
+<media-menu-item class="media-menu-back-item">
+<media-icon class="media-menu-back-chevron" family="scaffold" name="chevron">
+</media-icon>
+<media-text token="menu.captions">Captions</media-text>
+</media-menu-item>
+<media-menu-separator class="media-menu-separator">
+</media-menu-separator>
+<media-captions-radio-group class="media-menu-radio-group">
+<template>
+<media-menu-radio-item class="media-menu-radio-item">
+<span data-part="label">
+</span>
+<span class="media-menu-badge" data-part="badge">
+</span>
+<media-menu-item-indicator class="media-menu-indicator" force-mount="">
+<media-icon class="media-menu-radio-icon" family="scaffold" name="check">
+</media-icon>
+</media-menu-item-indicator>
+</media-menu-radio-item>
+</template>
+</media-captions-radio-group>
+</media-menu-content>
+</media-menu-content>
+</media-menu><media-fullscreen-button class="media-button media-fullscreen-button" id="vjs-COsQCb_P-0-4-trigger">
+<media-icon class="media-button-icon media-fullscreen-button-enter-icon" family="scaffold" name="fullscreen-enter">
+</media-icon>
+<media-icon class="media-button-icon media-fullscreen-button-exit-icon" family="scaffold" name="fullscreen-exit">
+</media-icon>
+</media-fullscreen-button>
+</media-controls-group>
+</media-controls-content>
+</media-controls>
+<media-hotkey action="togglePaused" keys="Space">
+</media-hotkey>
+<media-hotkey action="togglePaused" keys="k">
+</media-hotkey>
+<media-hotkey action="toggleMuted" keys="m">
+</media-hotkey>
+<media-hotkey action="seekStep" keys="ArrowRight">
+</media-hotkey>
+<media-hotkey action="seekStep" keys="ArrowLeft">
+</media-hotkey>
+<media-hotkey action="seekStep" keys="l">
+</media-hotkey>
+<media-hotkey action="seekStep" keys="j">
+</media-hotkey>
+<media-hotkey action="volumeStep" keys="ArrowUp">
+</media-hotkey>
+<media-hotkey action="volumeStep" keys="ArrowDown">
+</media-hotkey>
+<media-hotkey action="seekToPercent" keys="0-9">
+</media-hotkey>
+<media-hotkey action="seekToPercent" keys="Home" value="0">
+</media-hotkey>
+<media-hotkey action="seekToPercent" keys="End" value="100">
+</media-hotkey>
+<media-hotkey action="speedUp" keys="&gt;">
+</media-hotkey>
+<media-hotkey action="speedDown" keys="&lt;">
+</media-hotkey>
+<media-hotkey action="toggleFullscreen" keys="f">
+</media-hotkey>
+<media-hotkey action="toggleSubtitles" keys="c">
+</media-hotkey>
+<media-hotkey action="togglePictureInPicture" keys="i">
+</media-hotkey><media-gesture action="togglePaused" pointer="mouse" region="center" type="tap">
+</media-gesture>
+<media-gesture action="toggleControls" pointer="touch" type="tap">
+</media-gesture>
+<media-gesture action="seekStep" region="left" type="doubletap">
+</media-gesture>
+<media-gesture action="toggleFullscreen" region="center" type="doubletap">
+</media-gesture>
+<media-gesture action="seekStep" region="right" type="doubletap">
+</media-gesture><media-status-announcer class="media-status-announcer">
+</media-status-announcer><div aria-hidden="true" class="media-indicator-group">
+<media-volume-indicator class="media-indicator media-volume-indicator">
+<media-volume-indicator-fill class="media-volume-indicator-fill">
+<media-icon class="media-volume-indicator-icon media-volume-indicator-high-icon" family="scaffold" name="volume-high">
+</media-icon>
+<media-icon class="media-volume-indicator-icon media-volume-indicator-low-icon" family="scaffold" name="volume-low">
+</media-icon>
+<media-icon class="media-volume-indicator-icon media-volume-indicator-off-icon" family="scaffold" name="volume-off">
+</media-icon>
+<media-volume-indicator-value class="media-volume-indicator-value">
+</media-volume-indicator-value>
+</media-volume-indicator-fill>
+</media-volume-indicator>
+<media-status-indicator actions="toggleSubtitles,toggleFullscreen,togglePictureInPicture" class="media-indicator media-status-indicator">
+<media-icon class="media-status-indicator-icon media-status-indicator-captions-on-icon" family="scaffold" name="captions-on">
+</media-icon>
+<media-icon class="media-status-indicator-icon media-status-indicator-captions-off-icon" family="scaffold" name="captions-off">
+</media-icon>
+<media-icon class="media-status-indicator-icon media-status-indicator-fullscreen-enter-icon" family="scaffold" name="fullscreen-enter">
+</media-icon>
+<media-icon class="media-status-indicator-icon media-status-indicator-fullscreen-exit-icon" family="scaffold" name="fullscreen-exit">
+</media-icon>
+<media-icon class="media-status-indicator-icon media-status-indicator-pip-enter-icon" family="scaffold" name="pip-enter">
+</media-icon>
+<media-icon class="media-status-indicator-icon media-status-indicator-pip-exit-icon" family="scaffold" name="pip-exit">
+</media-icon>
+<media-status-indicator-value>
+</media-status-indicator-value>
+</media-status-indicator>
+<media-seek-indicator class="media-indicator media-seek-indicator">
+<media-icon class="media-seek-indicator-icon" family="scaffold" name="chevron">
+</media-icon>
+<media-seek-indicator-value class="media-seek-indicator-value">
+</media-seek-indicator-value>
+</media-seek-indicator>
+</div>
+</media-container>
