@@ -25,3 +25,11 @@ Release source intent: `4f3f86c`. Exact public R2 objects: `assets/demo-mux-4f3f
 An external automated browser has no compatible H.264/AAC decoder and rejects the HLS variants. The same test browser earlier rejected the local MP4. GitHub Playwright Chromium on Linux successfully plays and seeks the Mux asset at the exact candidate revision. Run additional branded-browser and physical-device checks rather than claiming universal support.
 
 The empty `dhago-studio` Pages project is a Direct Uploads project and cannot be converted to a Git integration. New Git-connected Pages creation returned Cloudflare Git installation error 8000011. Keep dedicated static R2 hostnames; do not attempt to rewire the Patro zone or replace workers to work around the Pages connection.
+
+## Superseding release verification — 2026-11-13
+
+The earlier incremental/hotfix-only limitation above has been **resolved**. Commit `72ec6c324f646c6dcb18708bc86d3f0d415f39c2` passed 30 Chromium source tests, and GitHub Actions built immutable `dist-72ec6c324f64`, containing 78 release files plus a SHA-256 manifest. The dedicated R2 bucket had 10 missing hash-named files, which were uploaded and read back. One stale `preview.html` was backed up and replaced.
+
+The **entire** public release was verified: 76/76 UTF-8 text files matched their `release-manifest.json` SHA-256 hashes; the 2 binary files (original MP4 and poster WebP) matched their known MD5 object identifiers and byte lengths. Prior index/journal/preview entry points were saved under `releases/2026-11-13-pre72ec6c/`. Exact immutable `journal.html` and `index.html` were published last. Independent unauthenticated HTTP checks confirmed both domains and the journal.
+
+This proves content parity, not universal codec support or an accepted contest submission. Public Chromium playback/seek after the full release remains a distinct smoke gate; any failure must roll back rather than be hidden by the manifest match. No DNS, zone rules, Patro workers, or shared assets were modified.
