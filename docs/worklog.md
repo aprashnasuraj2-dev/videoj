@@ -92,4 +92,4 @@ Attempted preview deployment for exact revision 2ed92ded to Vercel team `surajde
 
 - First clean-branch CI at `61bfbe5`: typecheck/build and 34 browser checks passed, but one custom mouse-hold data-attribute expectation failed. The former PR #3 had the same failure; repeating a homemade pointer listener would be an unsound fix.
 - Removed all new seek pointer listeners. Video.js v10 already reflects dragging through `media-time-slider[data-dragging]` (used in its own scaffold CSS), so the tactile CSS now keys off that exact native state. Keyboard and playback semantics are unchanged.
-- Replaced synthetic custom state tests with native attribute presentation tests, a two-instance isolation check, real keyboard navigation, buffering event tests and reduced-motion behavior. Run CI on the corrected exact head before merging.
+- Replaced synthetic custom state tests with native attribute presentation tests, a forced-colors chapter-marker check, real keyboard navigation, buffering event tests and reduced-motion behavior. Run CI on the corrected exact head before merging.

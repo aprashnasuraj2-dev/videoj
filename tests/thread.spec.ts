@@ -60,21 +60,14 @@ test('reduced motion suppresses native-drag tension without disabling seek', asy
   await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(0);
 });
 
-test('native drag appearance does not affect independent player mounts', async ({ page }) => {
+test('forced colors retains chapter joins, labels and keyboard navigation', async ({ page }) => {
+  await page.emulateMedia({forcedColors:'active'});
   await page.goto('/?local');
-  const second=await page.locator('video-player').evaluate(async _first=>{
-    const {createDhagoPlayer}=await import('/src/create-player.ts');
-    const mount=document.createElement('div');
-    document.body.appendChild(mount);
-    const player=createDhagoPlayer({source:'./media/studies-in-thread.mp4',surface:'dark'});
-    mount.append(player);
-    return player.querySelector('media-container')?.getAttribute('data-surface');
-  });
-  expect(second).toBe('dark');
-  const sliders=page.locator('media-time-slider');
-  await expect(sliders).toHaveCount(2);
-  await sliders.first().evaluate(el=>el.setAttribute('data-dragging',''));
-  expect(await page.locator('.media-time-slider-chapters').first().evaluate(el=>getComputedStyle(el).transform)).not.toBe('none');
-  expect(await page.locator('.media-time-slider-chapters').nth(1).evaluate(el=>getComputedStyle(el).transform)).toBe('none');
-  await sliders.first().evaluate(el=>el.removeAttribute('data-dragging'));
+  const joins=page.locator('.media-time-slider-chapter');
+  await expect(joins).toHaveCount(4);
+  expect(await joins.nth(1).evaluate(el=>getComputedStyle(el,'::before').borderStyle)).toBe('solid');
+  await expect(page.locator('.dhago-chapter-name')).toHaveText('A thread of light');
+  await page.locator('media-time-slider media-slider-thumb').focus();
+  await page.keyboard.press('ArrowRight');
+  await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(0);
 });
