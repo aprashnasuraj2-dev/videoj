@@ -191,9 +191,10 @@
     "phaseTitle": "02 / ORIGINALITY & ART DIRECTION",
     "title": "Create three comparable compositions",
     "detail": "AI produces live HTML/CSS variants: warm shelf, dark shelf and minimal editorial shelf. Keep video, control order and player size identical so owner selection judges the skin rather than unrelated imagery.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
-      "skin.json"
+      "tests/QA.md",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -300,10 +301,10 @@
     "phaseTitle": "03 / REPOSITORY & AI SETUP",
     "title": "Prove genuine v10 integration",
     "detail": "Record the installed @videojs/html version, lockfile and runtime component registration. Reject accidental v8 patterns such as videojs() initialization unless explicitly supported by the installed v10 docs. A package name alone does not prove runtime playback.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -312,10 +313,10 @@
     "phaseTitle": "03 / REPOSITORY & AI SETUP",
     "title": "Create the first playable baseline",
     "detail": "Start the generated preview with an authorized test clip, activate play and observe advancing time and rendered frames. Commit this small known-working baseline before custom styling so later regressions have a useful comparison point.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -375,10 +376,10 @@
     "phaseTitle": "04 / STATE & ESSENTIAL CONTROLS",
     "title": "Implement play, pause and ended states",
     "detail": "Use the provided play control with correct state labels and replay behavior. Test the overlay and shelf buttons against actual playback; if play() is rejected, expose a useful message instead of showing a false playing icon.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -387,10 +388,10 @@
     "phaseTitle": "04 / STATE & ESSENTIAL CONTROLS",
     "title": "Build a conventional seek slider",
     "detail": "Connect timeline fill, buffer, thumb and pointer/keyboard seeking to the real media state. Handle zero or unavailable duration, dragging outside bounds and seeking near the end. Never fake buffered progress for visual polish.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -399,10 +400,10 @@
     "phaseTitle": "04 / STATE & ESSENTIAL CONTROLS",
     "title": "Make time readable and stable",
     "detail": "Display elapsed and total time with tabular numerals and clear labels. Before metadata, show an honest placeholder. Avoid NaN:NaN, negative elapsed time, shifting widths and announcements on every time-update event.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -411,10 +412,10 @@
     "phaseTitle": "04 / STATE & ESSENTIAL CONTROLS",
     "title": "Wire mute and volume correctly",
     "detail": "Show a discoverable mute control and a working volume adjustment where the platform supports it. Restore the previous nonzero level when unmuting. Test device volume restrictions and describe platform-controlled behavior without a misleading inactive slider.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -423,10 +424,10 @@
     "phaseTitle": "04 / STATE & ESSENTIAL CONTROLS",
     "title": "Implement real fullscreen",
     "detail": "Request fullscreen on the appropriate player container so custom controls remain included where supported. Handle exiting via Escape and browser UI. Test iPhone native video fullscreen separately; do not label a CSS-expanded panel as system fullscreen.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -435,10 +436,10 @@
     "phaseTitle": "04 / STATE & ESSENTIAL CONTROLS",
     "title": "Add reliable caption controls",
     "detail": "Provide a valid caption track for the demo and a clear on/off or language selector. Reflect availability, selection and errors accurately. Keep captions clear of the control shelf, including mobile landscape and enlarged text.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -447,10 +448,10 @@
     "phaseTitle": "04 / STATE & ESSENTIAL CONTROLS",
     "title": "Add one compact settings surface",
     "detail": "Offer playback speed only if supported; use clear current values and keyboard-operable choices. Avoid quality controls until the media feature truly supports them. An MP4 demo does not justify a fabricated adaptive-quality menu.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -459,10 +460,10 @@
     "phaseTitle": "04 / STATE & ESSENTIAL CONTROLS",
     "title": "Handle loading and playback failure",
     "detail": "Style idle, metadata loading, buffering, seeking, paused, playing, ended and failed states. Show a stable buffer indicator only when needed. Include a useful retry action and safe media fallback without silently abandoning the Mux bonus.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -471,8 +472,11 @@
     "phaseTitle": "04 / STATE & ESSENTIAL CONTROLS",
     "title": "Verify baseline acceptance now",
     "detail": "Run play/pause, seek, time, volume/mute and fullscreen checks before decoration. Capture browser, source and observed result in evidence/core-controls.md. Fix functional failures while the layout is still simple; postpone optional A-B replay.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "tests/QA.md",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
+    ]
   },
   {
     "id": 41,
@@ -492,10 +496,10 @@
     "phaseTitle": "05 / SIGNATURE SKIN IMPLEMENTATION",
     "title": "Build the solid control shelf",
     "detail": "Place essential controls against an opaque, stable surface so moving footage cannot destroy contrast. Let the video remain visually dominant. In fullscreen, keep the shelf attached to the player container and preserve safe-area padding.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -504,10 +508,10 @@
     "phaseTitle": "05 / SIGNATURE SKIN IMPLEMENTATION",
     "title": "Implement original weave texture",
     "detail": "Generate a restrained repeating pattern for chapter segments with small CSS gradients or SVG. Keep it decorative and noninteractive. Reduce visual density around labels; never put low-contrast texture directly behind essential numbers or icon strokes.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -516,10 +520,10 @@
     "phaseTitle": "05 / SIGNATURE SKIN IMPLEMENTATION",
     "title": "Map chapter data to actual time",
     "detail": "Store titles and real start/end seconds in a documented format. Compute segment widths from duration, clamp invalid values and test overlaps. With no chapters, retain the normal timeline; do not invent chapter content or timings.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -528,10 +532,10 @@
     "phaseTitle": "05 / SIGNATURE SKIN IMPLEMENTATION",
     "title": "Add seek preview feedback",
     "detail": "Show actual timestamp and chapter name on hover/focus or touch interaction without requiring either. Include preview thumbnails only if verified storyboards exist and load reliably. A timestamp-only fallback is better than broken or invented thumbnail frames.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -540,10 +544,10 @@
     "phaseTitle": "05 / SIGNATURE SKIN IMPLEMENTATION",
     "title": "Polish focus, hover and pressed states",
     "detail": "Resolve every icon and button across resting, hover, focus, active, muted and disabled states. Keep focus distinct from hover. On touch, avoid sticky hover behavior and ensure no action requires a precision hover target.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -552,10 +556,10 @@
     "phaseTitle": "05 / SIGNATURE SKIN IMPLEMENTATION",
     "title": "Make motion purposeful",
     "detail": "Use brief opacity or position transitions for feedback, with an initial 120-180ms design target. Avoid perpetual weave motion and layout-shifting flourishes. Reduced-motion mode removes nonessential movement while preserving immediate visible state feedback.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -587,10 +591,10 @@
     "phaseTitle": "05 / SIGNATURE SKIN IMPLEMENTATION",
     "title": "Review the actual visual artifact",
     "detail": "Critique isolated screenshots for distinctive craft and useful interaction. Verify that the woven ribbon is actually visible; a passing seek test cannot prove visual quality. Compare warm, dark and minimal at desktop and 320px. Fix composition defects before adding features.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
-      "docs/design-priorities.md",
-      "docs/worklog.md"
+      "tests/QA.md",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -599,10 +603,10 @@
     "phaseTitle": "06 / RESPONSIVENESS & ACCESSIBILITY",
     "title": "Test width-driven layout",
     "detail": "Use player/container width as the breakpoint signal where supported. At 320px, move essentials into two rows instead of squeezing labels. Test portrait, landscape and embedded players; viewport-wide CSS can fail inside narrow content columns.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -611,10 +615,10 @@
     "phaseTitle": "06 / RESPONSIVENESS & ACCESSIBILITY",
     "title": "Preserve all essential functions",
     "detail": "Keep play/pause, seek, time, mute/volume access and fullscreen discoverable at narrow widths. Overflow menus may hold secondary settings, not silently remove essential actions. Respect phone safe areas without covering the timeline.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -635,10 +639,10 @@
     "phaseTitle": "06 / RESPONSIVENESS & ACCESSIBILITY",
     "title": "Verify popup focus behavior",
     "detail": "Open each menu with keyboard, move between choices, press Escape and confirm focus returns to its trigger. Do not trap focus in nonmodal popovers. Ensure menus are reachable and unclipped in fullscreen and short landscape players.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -647,10 +651,10 @@
     "phaseTitle": "06 / RESPONSIVENESS & ACCESSIBILITY",
     "title": "Strengthen visible focus",
     "detail": "Apply a high-contrast outline with sufficient offset around each interactive target. Keep controls visible while focused; idle auto-hide must never hide the focused action. Test focus over both the dark and light shelf treatment.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -668,7 +672,7 @@
     "phaseTitle": "06 / RESPONSIVENESS & ACCESSIBILITY",
     "title": "Measure real contrast and color use",
     "detail": "Measure text, icon, focus and track pairs over near-white, near-black and mixed video frames. Label chapters and selected settings with more than color. Forced-colors mode must retain the timeline, boundaries and focus visibility.",
-    "status": "NOT_STARTED",
+    "status": "IN_PROGRESS",
     "evidence": []
   },
   {
@@ -689,7 +693,7 @@
     "status": "IN_PROGRESS",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -830,10 +834,10 @@
     "phaseTitle": "08 / QUALITY & FAILURE TESTING",
     "title": "Automate core actions in-browser",
     "detail": "With Playwright or equivalent, prove time advances after play, stops after pause and changes after seeking. Verify mute state and volume where supported. Handle loading deterministically and assert meaningful outcomes rather than fixed sleep delays.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -853,10 +857,10 @@
     "phaseTitle": "08 / QUALITY & FAILURE TESTING",
     "title": "Run focused accessibility automation",
     "detail": "Scan resting player, open menu and error states with an appropriate scanner. Fix missing names, contrast findings and structural errors. Record tool version and scope; a clean scan cannot certify WCAG compliance or replace screen-reader use.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -868,7 +872,7 @@
     "status": "IN_PROGRESS",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -877,8 +881,11 @@
     "phaseTitle": "08 / QUALITY & FAILURE TESTING",
     "title": "Exercise media edge states",
     "detail": "Test slow loading, unavailable source, retry, end/replay, rapid play/pause and seek-before-metadata. Check invalid or missing chapters and long captions. Error copy should help recovery without displaying raw credentials, stack traces or developer-only details.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "tests/QA.md",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
+    ]
   },
   {
     "id": 77,
@@ -906,10 +913,10 @@
     "phaseTitle": "08 / QUALITY & FAILURE TESTING",
     "title": "Review security and dependency risk",
     "detail": "Run available dependency checks and inspect introduced scripts, external requests and exposed variables. Lock dependencies and remove unused packages. Prioritize exploitable findings in shipped code; do not churn the stack for irrelevant development-only warnings.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -918,10 +925,10 @@
     "phaseTitle": "08 / QUALITY & FAILURE TESTING",
     "title": "Close failures with evidence",
     "detail": "Log failures, fix causes and re-run the affected checks. Publish tests/QA.md with PASS, FAIL and NOT TESTED entries, browser/device details and screenshots. Do not turn a test plan or an AI assertion into a claim that tests passed.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
     ]
   },
   {
@@ -942,8 +949,11 @@
     "phaseTitle": "09 / DEPLOYMENT & SUBMISSION FILES",
     "title": "Complete the license package",
     "detail": "Include the full Apache-2.0 license and appropriate original-work notices; retain dependency licenses and attributions. Confirm owner media rights. Do not imply that accepting the contest terms transfers ownership or grants rights the entrant never held.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "tests/QA.md",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
+    ]
   },
   {
     "id": 83,
@@ -951,7 +961,7 @@
     "phaseTitle": "09 / DEPLOYMENT & SUBMISSION FILES",
     "title": "Create the submission manifest",
     "detail": "Populate entry title, demo URL, repository URL if shared, version, release SHA, visual paths and description path. Add Mux playback ID and real-site URL only when verified; use null for excluded bonuses, not plausible-looking placeholders.",
-    "status": "NOT_STARTED",
+    "status": "IN_PROGRESS",
     "evidence": []
   },
   {
@@ -978,7 +988,7 @@
     "phaseTitle": "09 / DEPLOYMENT & SUBMISSION FILES",
     "title": "Capture the final visuals",
     "detail": "Generate a sharp 1600x1000 hero image and a phone-width screenshot as internal targets, adjusting to actual form limits. AI must capture the running skin, not composite nonexistent controls. Keep video content and the unique ribbon visible.",
-    "status": "NOT_STARTED",
+    "status": "IN_PROGRESS",
     "evidence": []
   },
   {
@@ -996,7 +1006,7 @@
     "phaseTitle": "09 / DEPLOYMENT & SUBMISSION FILES",
     "title": "Draft the final description",
     "detail": "Write 3-4 accurate sentences explaining the metaphor, useful interaction and accessibility choices. Verify every feature claim against the release. Do not claim a tested screen-reader/device combination, original invention or bonus that the evidence cannot support.",
-    "status": "NOT_STARTED",
+    "status": "IN_PROGRESS",
     "evidence": []
   },
   {
@@ -1035,7 +1045,7 @@
     "phaseTitle": "10 / FINAL ENTRY & CONTINUATION",
     "title": "Complete the score rehearsal",
     "detail": "Review the player against all four scored categories using the release evidence. List one weakness per category and fix only high-impact defects. The internal score is subjective preparation, not a forecast of judges scores or prize probability.",
-    "status": "NOT_STARTED",
+    "status": "IN_PROGRESS",
     "evidence": []
   },
   {
@@ -1053,7 +1063,7 @@
     "phaseTitle": "10 / FINAL ENTRY & CONTINUATION",
     "title": "Prepare the exact form entries",
     "detail": "Map each actual form field to manifest values and attachment paths. AI can draft or fill fields when tools and permission allow. Identity, eligibility declarations, open-source acceptance and authentication remain the owner decision; do not silently accept legal terms.",
-    "status": "NOT_STARTED",
+    "status": "IN_PROGRESS",
     "evidence": []
   },
   {

@@ -1,6 +1,6 @@
 # DHAGO: 100-step implementation checklist
 
-**38/100 complete** | 34 in progress | 0 blocked | Updated 2026-11-13T11:45:08.362Z
+**66/100 complete** | 15 in progress | 0 blocked | Updated 2026-11-13T11:53:50.350Z
 
 This is evidence-based task completion, not a percentage of contest quality. See [worklog](worklog.md), [status](status.json) and [plan](PLAN.md). Blocked steps remain unchecked; independent later work may continue.
 
@@ -104,11 +104,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [docs/design.md](../docs/design.md)
 
-- [ ] **017 - Create three comparable compositions** - IN_PROGRESS
+- [x] **017 - Create three comparable compositions** - DONE
 
   AI produces live HTML/CSS variants: warm shelf, dark shelf and minimal editorial shelf. Keep video, control order and player size identical so owner selection judges the skin rather than unrelated imagery.
 
-  Evidence: [skin.json](../skin.json)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
 - [x] **018 - Apply a clear selection rubric** - DONE
 
@@ -160,17 +160,17 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
 
-- [ ] **026 - Prove genuine v10 integration** - IN_PROGRESS
+- [x] **026 - Prove genuine v10 integration** - DONE
 
   Record the installed @videojs/html version, lockfile and runtime component registration. Reject accidental v8 patterns such as videojs() initialization unless explicitly supported by the installed v10 docs. A package name alone does not prove runtime playback.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **027 - Create the first playable baseline** - IN_PROGRESS
+- [x] **027 - Create the first playable baseline** - DONE
 
   Start the generated preview with an authorized test clip, activate play and observe advancing time and rendered frames. Commit this small known-working baseline before custom styling so later regressions have a useful comparison point.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
 - [x] **028 - Write a project AGENTS.md** - DONE
 
@@ -198,57 +198,59 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [src/video/skin.ts](../src/video/skin.ts), [src/video/skin.html](../src/video/skin.html)
 
-- [ ] **032 - Implement play, pause and ended states** - IN_PROGRESS
+- [x] **032 - Implement play, pause and ended states** - DONE
 
   Use the provided play control with correct state labels and replay behavior. Test the overlay and shelf buttons against actual playback; if play() is rejected, expose a useful message instead of showing a false playing icon.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **033 - Build a conventional seek slider** - IN_PROGRESS
+- [x] **033 - Build a conventional seek slider** - DONE
 
   Connect timeline fill, buffer, thumb and pointer/keyboard seeking to the real media state. Handle zero or unavailable duration, dragging outside bounds and seeking near the end. Never fake buffered progress for visual polish.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **034 - Make time readable and stable** - IN_PROGRESS
+- [x] **034 - Make time readable and stable** - DONE
 
   Display elapsed and total time with tabular numerals and clear labels. Before metadata, show an honest placeholder. Avoid NaN:NaN, negative elapsed time, shifting widths and announcements on every time-update event.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **035 - Wire mute and volume correctly** - IN_PROGRESS
+- [x] **035 - Wire mute and volume correctly** - DONE
 
   Show a discoverable mute control and a working volume adjustment where the platform supports it. Restore the previous nonzero level when unmuting. Test device volume restrictions and describe platform-controlled behavior without a misleading inactive slider.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **036 - Implement real fullscreen** - IN_PROGRESS
+- [x] **036 - Implement real fullscreen** - DONE
 
   Request fullscreen on the appropriate player container so custom controls remain included where supported. Handle exiting via Escape and browser UI. Test iPhone native video fullscreen separately; do not label a CSS-expanded panel as system fullscreen.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **037 - Add reliable caption controls** - IN_PROGRESS
+- [x] **037 - Add reliable caption controls** - DONE
 
   Provide a valid caption track for the demo and a clear on/off or language selector. Reflect availability, selection and errors accurately. Keep captions clear of the control shelf, including mobile landscape and enlarged text.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **038 - Add one compact settings surface** - IN_PROGRESS
+- [x] **038 - Add one compact settings surface** - DONE
 
   Offer playback speed only if supported; use clear current values and keyboard-operable choices. Avoid quality controls until the media feature truly supports them. An MP4 demo does not justify a fabricated adaptive-quality menu.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **039 - Handle loading and playback failure** - IN_PROGRESS
+- [x] **039 - Handle loading and playback failure** - DONE
 
   Style idle, metadata loading, buffering, seeking, paused, playing, ended and failed states. Show a stable buffer indicator only when needed. Include a useful retry action and safe media fallback without silently abandoning the Mux bonus.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **040 - Verify baseline acceptance now** - NOT_STARTED
+- [x] **040 - Verify baseline acceptance now** - DONE
 
   Run play/pause, seek, time, volume/mute and fullscreen checks before decoration. Capture browser, source and observed result in evidence/core-controls.md. Fix functional failures while the layout is still simple; postpone optional A-B replay.
+
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
 ## 05 / SIGNATURE SKIN IMPLEMENTATION
 
@@ -258,41 +260,41 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [src/create-player.ts](../src/create-player.ts), [apps/preview/src/demo.css](../apps/preview/src/demo.css)
 
-- [ ] **042 - Build the solid control shelf** - IN_PROGRESS
+- [x] **042 - Build the solid control shelf** - DONE
 
   Place essential controls against an opaque, stable surface so moving footage cannot destroy contrast. Let the video remain visually dominant. In fullscreen, keep the shelf attached to the player container and preserve safe-area padding.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **043 - Implement original weave texture** - IN_PROGRESS
+- [x] **043 - Implement original weave texture** - DONE
 
   Generate a restrained repeating pattern for chapter segments with small CSS gradients or SVG. Keep it decorative and noninteractive. Reduce visual density around labels; never put low-contrast texture directly behind essential numbers or icon strokes.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **044 - Map chapter data to actual time** - IN_PROGRESS
+- [x] **044 - Map chapter data to actual time** - DONE
 
   Store titles and real start/end seconds in a documented format. Compute segment widths from duration, clamp invalid values and test overlaps. With no chapters, retain the normal timeline; do not invent chapter content or timings.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **045 - Add seek preview feedback** - IN_PROGRESS
+- [x] **045 - Add seek preview feedback** - DONE
 
   Show actual timestamp and chapter name on hover/focus or touch interaction without requiring either. Include preview thumbnails only if verified storyboards exist and load reliably. A timestamp-only fallback is better than broken or invented thumbnail frames.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **046 - Polish focus, hover and pressed states** - IN_PROGRESS
+- [x] **046 - Polish focus, hover and pressed states** - DONE
 
   Resolve every icon and button across resting, hover, focus, active, muted and disabled states. Keep focus distinct from hover. On touch, avoid sticky hover behavior and ensure no action requires a precision hover target.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **047 - Make motion purposeful** - IN_PROGRESS
+- [x] **047 - Make motion purposeful** - DONE
 
   Use brief opacity or position transitions for feedback, with an initial 120-180ms design target. Avoid perpetual weave motion and layout-shifting flourishes. Reduced-motion mode removes nonessential movement while preserving immediate visible state feedback.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
 - [x] **048 - Evaluate optional A-B replay** - DONE
 
@@ -306,25 +308,25 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
 
-- [ ] **050 - Review the actual visual artifact** - IN_PROGRESS
+- [x] **050 - Review the actual visual artifact** - DONE
 
   Critique isolated screenshots for distinctive craft and useful interaction. Verify that the woven ribbon is actually visible; a passing seek test cannot prove visual quality. Compare warm, dark and minimal at desktop and 320px. Fix composition defects before adding features.
 
-  Evidence: [docs/design-priorities.md](../docs/design-priorities.md), [docs/worklog.md](../docs/worklog.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
 ## 06 / RESPONSIVENESS & ACCESSIBILITY
 
-- [ ] **051 - Test width-driven layout** - IN_PROGRESS
+- [x] **051 - Test width-driven layout** - DONE
 
   Use player/container width as the breakpoint signal where supported. At 320px, move essentials into two rows instead of squeezing labels. Test portrait, landscape and embedded players; viewport-wide CSS can fail inside narrow content columns.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **052 - Preserve all essential functions** - IN_PROGRESS
+- [x] **052 - Preserve all essential functions** - DONE
 
   Keep play/pause, seek, time, mute/volume access and fullscreen discoverable at narrow widths. Overflow menus may hold secondary settings, not silently remove essential actions. Respect phone safe areas without covering the timeline.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
 - [ ] **053 - Audit the complete keyboard route** - IN_PROGRESS
 
@@ -332,23 +334,23 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
 
-- [ ] **054 - Verify popup focus behavior** - IN_PROGRESS
+- [x] **054 - Verify popup focus behavior** - DONE
 
   Open each menu with keyboard, move between choices, press Escape and confirm focus returns to its trigger. Do not trap focus in nonmodal popovers. Ensure menus are reachable and unclipped in fullscreen and short landscape players.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **055 - Strengthen visible focus** - IN_PROGRESS
+- [x] **055 - Strengthen visible focus** - DONE
 
   Apply a high-contrast outline with sufficient offset around each interactive target. Keep controls visible while focused; idle auto-hide must never hide the focused action. Test focus over both the dark and light shelf treatment.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
 - [ ] **056 - Check semantics with assistive technology** - NOT_STARTED
 
   AI inspects accessible names, roles and current values, then prepares a short VoiceOver or NVDA walkthrough for the owner. Verify changing labels and slider time. Do not duplicate roles or announce elapsed seconds continuously.
 
-- [ ] **057 - Measure real contrast and color use** - NOT_STARTED
+- [ ] **057 - Measure real contrast and color use** - IN_PROGRESS
 
   Measure text, icon, focus and track pairs over near-white, near-black and mixed video frames. Label chapters and selected settings with more than color. Forced-colors mode must retain the timeline, boundaries and focus visibility.
 
@@ -360,7 +362,7 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Test prefers-reduced-motion and remove ornamental animation. Provide solid surfaces without relying on blur, and honor contrast preferences where implemented. Test actual emulated media conditions, not merely the existence of a CSS media-query block.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
 - [ ] **060 - Conduct a timed first-use trial** - NOT_STARTED
 
@@ -430,11 +432,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [tests/QA.md](../tests/QA.md), [tests/player.spec.ts](../tests/player.spec.ts)
 
-- [ ] **072 - Automate core actions in-browser** - IN_PROGRESS
+- [x] **072 - Automate core actions in-browser** - DONE
 
   With Playwright or equivalent, prove time advances after play, stops after pause and changes after seeking. Verify mute state and volume where supported. Handle loading deterministically and assert meaningful outcomes rather than fixed sleep delays.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
 - [x] **073 - Separate platform-limited checks** - DONE
 
@@ -442,21 +444,23 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [tests/QA.md](../tests/QA.md)
 
-- [ ] **074 - Run focused accessibility automation** - IN_PROGRESS
+- [x] **074 - Run focused accessibility automation** - DONE
 
   Scan resting player, open menu and error states with an appropriate scanner. Fix missing names, contrast findings and structural errors. Record tool version and scope; a clean scan cannot certify WCAG compliance or replace screen-reader use.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
 - [ ] **075 - Capture a responsive visual set** - IN_PROGRESS
 
   Save screenshots at the planned player widths, light/dark footage, captions on and menu open. Inspect overflow, clipped focus rings, time alignment and touch spacing. Compare actual images, not only CSS breakpoint declarations.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **076 - Exercise media edge states** - NOT_STARTED
+- [ ] **076 - Exercise media edge states** - IN_PROGRESS
 
   Test slow loading, unavailable source, retry, end/replay, rapid play/pause and seek-before-metadata. Check invalid or missing chapters and long captions. Error copy should help recovery without displaying raw credentials, stack traces or developer-only details.
+
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
 - [ ] **077 - Check constrained-device performance** - NOT_STARTED
 
@@ -468,17 +472,17 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [docs/media.md](../docs/media.md)
 
-- [ ] **079 - Review security and dependency risk** - IN_PROGRESS
+- [x] **079 - Review security and dependency risk** - DONE
 
   Run available dependency checks and inspect introduced scripts, external requests and exposed variables. Lock dependencies and remove unused packages. Prioritize exploitable findings in shipped code; do not churn the stack for irrelevant development-only warnings.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **080 - Close failures with evidence** - IN_PROGRESS
+- [x] **080 - Close failures with evidence** - DONE
 
   Log failures, fix causes and re-run the affected checks. Publish tests/QA.md with PASS, FAIL and NOT TESTED entries, browser/device details and screenshots. Do not turn a test plan or an AI assertion into a claim that tests passed.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
 ## 09 / DEPLOYMENT & SUBMISSION FILES
 
@@ -488,11 +492,13 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [README.md](../README.md), [tests/QA.md](../tests/QA.md)
 
-- [ ] **082 - Complete the license package** - NOT_STARTED
+- [x] **082 - Complete the license package** - DONE
 
   Include the full Apache-2.0 license and appropriate original-work notices; retain dependency licenses and attributions. Confirm owner media rights. Do not imply that accepting the contest terms transfers ownership or grants rights the entrant never held.
 
-- [ ] **083 - Create the submission manifest** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+
+- [ ] **083 - Create the submission manifest** - IN_PROGRESS
 
   Populate entry title, demo URL, repository URL if shared, version, release SHA, visual paths and description path. Add Mux playback ID and real-site URL only when verified; use null for excluded bonuses, not plausible-looking placeholders.
 
@@ -504,7 +510,7 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Open the production URL in a clean signed-out session and on a phone if available. Start video, seek, use captions and fullscreen; confirm network media requests and no console errors. A successful hosting dashboard is insufficient evidence.
 
-- [ ] **086 - Capture the final visuals** - NOT_STARTED
+- [ ] **086 - Capture the final visuals** - IN_PROGRESS
 
   Generate a sharp 1600x1000 hero image and a phone-width screenshot as internal targets, adjusting to actual form limits. AI must capture the running skin, not composite nonexistent controls. Keep video content and the unique ribbon visible.
 
@@ -512,7 +518,7 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Capture 25-40 seconds showing play, timeline seeking, captions or settings, narrow layout and visible keyboard focus. Keep transitions clear and reduced-motion behavior truthful. A plain screen capture is better than an unrepresentative promotional animation.
 
-- [ ] **088 - Draft the final description** - NOT_STARTED
+- [ ] **088 - Draft the final description** - IN_PROGRESS
 
   Write 3-4 accurate sentences explaining the metaphor, useful interaction and accessibility choices. Verify every feature claim against the release. Do not claim a tested screen-reader/device combination, original invention or bonus that the evidence cannot support.
 
@@ -532,7 +538,7 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Check the deadline wording, required fields, supported visual formats and any account-specific restrictions. Confirm the year and timezone context rather than trusting a copied countdown. AI records any difference from the planning snapshot.
 
-- [ ] **092 - Complete the score rehearsal** - NOT_STARTED
+- [ ] **092 - Complete the score rehearsal** - IN_PROGRESS
 
   Review the player against all four scored categories using the release evidence. List one weakness per category and fix only high-impact defects. The internal score is subjective preparation, not a forecast of judges scores or prize probability.
 
@@ -540,7 +546,7 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   AI supplies the working URL, desktop/mobile visual, description, optional bonus evidence and license summary in one place. Owner checks the appearance, authorship/rights and account identity. Avoid repeated vague approvals throughout routine engineering work.
 
-- [ ] **094 - Prepare the exact form entries** - NOT_STARTED
+- [ ] **094 - Prepare the exact form entries** - IN_PROGRESS
 
   Map each actual form field to manifest values and attachment paths. AI can draft or fill fields when tools and permission allow. Identity, eligibility declarations, open-source acceptance and authentication remain the owner decision; do not silently accept legal terms.
 

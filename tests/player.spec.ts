@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
-test('actual media responds to play, pause, seek, mute, captions and settings', async ({ page }) => {
+test('actual media responds to play, pause, seek, mute, captions and settings', async ({ page }, info) => {
   await page.goto('/?local');
   const media = page.locator('video');
   await expect.poll(() => media.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThan(0);
@@ -17,6 +17,7 @@ test('actual media responds to play, pause, seek, mute, captions and settings', 
   await expect.poll(() => media.evaluate((v: HTMLVideoElement) => Array.from(v.textTracks).some(t => t.kind === 'captions' && t.mode === 'showing'))).toBe(true);
   await page.locator('.media-settings-button').click();
   await expect(page.locator('media-menu-content').first()).toBeVisible();
+  await page.locator('media-container').screenshot({path:info.outputPath('settings-open.png')});
   await page.keyboard.press('Escape');
   await expect(page.locator('.media-settings-button')).toBeFocused();
 });

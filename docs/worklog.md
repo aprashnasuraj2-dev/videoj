@@ -31,3 +31,9 @@
 - Added manual Drive archive workflow with separate Google OAuth secrets, revision filenames, resumable uploads, checksum verification and receipts. Connected Drive access is not assumed to exist inside GitHub runners.
 - Deeper browser checks exposed fullscreen shelf loss: fullscreen state is reflected on the button, not the container. Switched layout rules to native :fullscreen and reserved shelf height. Slider keyboard tests now target the actual focusable thumb; chapter navigation restores focus to that thumb.
 - Added Apache-2.0 LICENSE and NOTICE; lazy-loaded optional Mux engine. No Mux upload or contest submission performed.
+
+## 2026-11-13 — Passing core and mobile craft review
+
+- Revision 1cae217: 17/17 Chromium checks pass; saved full evidence to Drive and recorded exact file ID. Reviewed isolated bright/dark footage and 320px captures. Ribbon and chapter readout now remain visible; control shelf stays legible independent of footage.
+- Mobile critique: three unlabelled lower-row icons looked accidental. Revised them into three evenly sized, labelled Captions / Settings / Screen targets. Fresh affected checks required before claiming that refinement verified.
+- Checklist remains subordinate to craft; broad preference and media-edge rows remain in progress because the automated suite does not cover every case in those rows. Physical-phone, screen-reader, production and bonus evidence remain pending.

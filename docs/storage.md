@@ -26,3 +26,12 @@ GitHub Actions artifacts are a temporary transport, not durable storage. Preserv
 The script uses resumable Drive upload sessions, verifies returned MD5 against source bytes, computes SHA-256 receipts and refuses conflicting or duplicate filenames. It uploads only allowlisted versioned archives from `handoff/`. Secrets and signed upload-session URLs are omitted from logs. Large interrupted uploads fail visibly; a rerun lists completed archives before creating new ones. No asset is deleted.
 
 Workflow archives include failed-test evidence too and therefore never imply that the entry is final or passing. Source ZIP is from the exact checked-out commit; final artifacts require final QA and live URLs. Mux provisioning remains a separate manual workflow until the owner is ready for upload.
+
+Submission drafts live under `submission/` in Git. Their manifest deliberately leaves public URL, Mux bonus, final visuals and receipt empty until verified. Candidate source archives in Drive are labeled development candidates, never final entries.
+
+## Verified passing milestone
+
+- `DHAGO_verified_17-tests_1cae217_2026-11-13.zip`
+- File ID: `1fUf7yYmot1i2tddyq99ibkZAYb5SIS7e`
+- URL: https://drive.google.com/file/d/1fUf7yYmot1i2tddyq99ibkZAYb5SIS7e/view?usp=drivesdk
+- Contains the passing 17-test Chromium run and captured visuals for revision `1cae2171eb523142279f70c258378537fa34c818`. Later mobile polish requires its own fresh evidence.

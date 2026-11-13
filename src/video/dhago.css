@@ -160,3 +160,20 @@
 
 .dhago:fullscreen > media-controls { flex: 0 0 auto; }
 .dhago:fullscreen > video, .dhago:fullscreen > mux-video { height: 0 !important; aspect-ratio: auto; }
+.dhago .dhago-control-label { display: none; }
+@container media-root (width < 500px) {
+ .dhago .media-captions-button,
+ .dhago .media-settings-button,
+ .dhago .media-fullscreen-button {
+  flex: 1 0 calc((100% - 8px) / 3); height: 54px; margin-inline-start: 0;
+  position: relative; border-color: var(--dhago-border);
+ }
+ .dhago .dhago-control-label,
+ .dhago .media-settings-button-label {
+  display: block; position: absolute; inset-inline: 0; bottom: 5px;
+  font-size: 10px; line-height: 1.2; letter-spacing: .01em;
+ }
+ .dhago .media-captions-button .media-button-icon,
+ .dhago .media-settings-button .media-button-icon,
+ .dhago .media-fullscreen-button .media-button-icon { translate: 0 -7px; }
+}
