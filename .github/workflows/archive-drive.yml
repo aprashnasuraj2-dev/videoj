@@ -26,7 +26,7 @@ jobs:
           git archive --format=zip --output="handoff/dhago-source-${GITHUB_SHA}.zip" HEAD
           python - <<'PY'
           import os, pathlib, zipfile
-          with zipfile.ZipFile('handoff/dhago-evidence-'+os.environ['GITHUB_SHA']+'.zip','w',zipfile.ZIP_DEFLATED) as z:
+          with zipfile.ZipFile('handoff/dhago-evidence-'+os.environ['GITHUB_SHA']+'-'+os.environ['GITHUB_RUN_ID']+'-'+os.environ['GITHUB_RUN_ATTEMPT']+'.zip','w',zipfile.ZIP_DEFLATED) as z:
               for folder in ['test-results','playwright-report']:
                   for p in pathlib.Path(folder).rglob('*'):
                       if p.is_file(): z.write(p)

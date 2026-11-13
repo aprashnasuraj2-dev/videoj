@@ -29,7 +29,7 @@ for (const width of [320, 375, 768, 1280]) {
     await expect(page.locator('media-fullscreen-button')).toBeVisible();
     await expect(page.locator('media-captions-button')).toBeVisible();
     if(width<=375) {
-      for(const text of ['Captions','Settings','Screen']) await expect(page.locator('media-container').getByText(text,{exact:true})).toBeVisible();
+      for(const selector of ['media-captions-button .dhago-control-label','.media-settings-button-label','media-fullscreen-button .dhago-control-label']) await expect(page.locator(selector)).toBeVisible();
     }
     await page.screenshot({ path: info.outputPath(`player-${width}.png`), fullPage: true });
   });

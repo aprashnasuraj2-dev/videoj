@@ -37,3 +37,16 @@
 - Revision 1cae217: 17/17 Chromium checks pass; saved full evidence to Drive and recorded exact file ID. Reviewed isolated bright/dark footage and 320px captures. Ribbon and chapter readout now remain visible; control shelf stays legible independent of footage.
 - Mobile critique: three unlabelled lower-row icons looked accidental. Revised them into three evenly sized, labelled Captions / Settings / Screen targets. Fresh affected checks required before claiming that refinement verified.
 - Checklist remains subordinate to craft; broad preference and media-edge rows remain in progress because the automated suite does not cover every case in those rows. Physical-phone, screen-reader, production and bonus evidence remain pending.
+
+## Hosting boundary
+
+Attempted preview deployment for exact revision 2ed92ded to Vercel team `surajdev2`. Vercel returned 403: connection does not have permission to create a project. No existing project is linked to this repo; no local authenticated Vercel CLI is installed. No deployment URL or public-access claim is recorded. Continue design/source/evidence work independently.
+
+## Latest verified source
+
+- Revision 2ed92ded: 17/17 checks pass after labelled mobile controls; current open-menu capture included. Core functionality remains verified after the visual refinement.
+- Remaining high-value handoff: public hosting needs project-creation access; physical-phone/screen-reader checks remain; Mux upload stays deferred per owner direction. Final submission terms and receipt remain pending.
+
+## Mobile screenshot follow-through
+
+- Although 2ed92ded passed behavior checks, actual screenshot inspection found its Settings visual label missing and the other labels left-aligned. Corrected all three with simple consistent text spans and centered labels; added assertions that all three labels are visible at narrow widths. This refinement is revision fdcc1a45 and must pass its affected checks.

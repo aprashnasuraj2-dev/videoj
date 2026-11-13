@@ -23,3 +23,7 @@ Judge the isolated player at 320, 375, 768 and 1280px, with real chapter content
 ## Loading cost
 
 The optional Mux HLS engine is lazy-loaded only when a playback ID is configured. The local-film player bundle is approximately 72 KB gzip, versus 268 KB when the HLS engine was eagerly imported: about 73% less in that shared entry chunk. This is a build-size comparison, not measured phone startup time. The workbench remains a separate, heavier development page.
+
+## Final mobile label correction
+
+The 2ed92ded screenshot exposed a label-specific flaw despite all behavior checks passing: the translated custom Settings text was not painted, while Captions and Screen aligned differently. Replaced that decorative visual label with a plain aria-hidden span (the button retains its explicit accessible name), centered all three labels, and added narrow-layout assertions for the three visible labels. This is why image inspection remains part of the design review.

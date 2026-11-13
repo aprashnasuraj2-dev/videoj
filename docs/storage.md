@@ -35,3 +35,5 @@ Submission drafts live under `submission/` in Git. Their manifest deliberately l
 - File ID: `1fUf7yYmot1i2tddyq99ibkZAYb5SIS7e`
 - URL: https://drive.google.com/file/d/1fUf7yYmot1i2tddyq99ibkZAYb5SIS7e/view?usp=drivesdk
 - Contains the passing 17-test Chromium run and captured visuals for revision `1cae2171eb523142279f70c258378537fa34c818`. Later mobile polish requires its own fresh evidence.
+
+- Additional mobile review milestone: file `1NwJoy_L9d6Vsfp4DRE-43w3XF5AuUfaY`, https://drive.google.com/file/d/1NwJoy_L9d6Vsfp4DRE-43w3XF5AuUfaY/view?usp=drivesdk . Revision 2ed92ded passed behavior checks; its screenshot review led to the subsequent Settings label correction. Retained as development evidence, not final visual approval.
