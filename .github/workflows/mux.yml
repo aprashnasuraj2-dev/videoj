@@ -1,0 +1,39 @@
+name: Provision Mux demo media
+on:
+  workflow_dispatch:
+concurrency:
+  group: mux-demo-media
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Upload or reuse original film
+        env:
+          MUX_TOKEN_ID: ${{ secrets.MUX_TOKEN_ID }}
+          MUX_TOKEN_SECRET: ${{ secrets.MUX_TOKEN_SECRET }}
+        run: node scripts/mux-upload.mjs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci && npm run typecheck && npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Verify actual Mux playback
+        run: npx playwright test tests/mux.spec.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-mux-configuration
+          path: |
+            apps/preview/src/media.json
+            dist/
+            test-results/
+            playwright-report/

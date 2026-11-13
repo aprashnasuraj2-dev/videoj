@@ -1,0 +1,19 @@
+{
+  "title": "DHAGO — Time, woven",
+  "status": "Public candidate; NOT submitted; complete CI dist not yet live",
+  "repositoryUrl": "https://github.com/aprashnasuraj2-dev/videoj",
+  "reviewUrl": "https://github.com/aprashnasuraj2-dev/videoj/pull/1",
+  "demoUrl": "https://creative.aafnaipatro.com/",
+  "muxPlaybackId": "Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw",
+  "liveSiteUrl": "https://creative.aafnaipatro.com/journal.html",
+  "driveFolderUrl": "https://drive.google.com/drive/folders/1uBHKAcUv2G8mfn3e9Q01A-F1Cp5U7RL5",
+  "descriptionPath": "submission/description.md",
+  "finalVisuals": [],
+  "receipt": null,
+  "candidateCommit": "4f3f86cb795f3a21d787c1f8a0567d2242eca29a",
+  "ciEvidenceUrl": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626",
+  "ciTestsPassed": 26,
+  "driveEvidenceUrl": "https://drive.google.com/file/d/1j7FHURfdYk6Wn0LlNrF8jDLjixnC4ml7/view",
+  "publicReleaseMethod": "incremental R2 repair with versioned assets; final candidate dist still to deploy",
+  "playbackLimitations": "CI Chromium HLS playback passes; separate browser automation reports unsupported H.264/AAC codecs, so physical/branded-browser verification is required"
+}

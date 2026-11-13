@@ -1,0 +1,45 @@
+name: Archive candidate to Google Drive
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: drive-candidate-archive
+  cancel-in-progress: false
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci && npm run typecheck && npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
+      - name: Prepare versioned source and evidence archives
+        if: always()
+        run: |
+          mkdir -p handoff
+          git archive --format=zip --output="handoff/dhago-source-${GITHUB_SHA}.zip" HEAD
+          python - <<'PY'
+          import os, pathlib, zipfile
+          with zipfile.ZipFile('handoff/dhago-evidence-'+os.environ['GITHUB_SHA']+'-'+os.environ['GITHUB_RUN_ID']+'-'+os.environ['GITHUB_RUN_ATTEMPT']+'.zip','w',zipfile.ZIP_DEFLATED) as z:
+              for folder in ['test-results','playwright-report']:
+                  for p in pathlib.Path(folder).rglob('*'):
+                      if p.is_file(): z.write(p)
+          PY
+      - name: Upload and verify durable archives
+        if: always()
+        env:
+          GOOGLE_DRIVE_CLIENT_ID: ${{ secrets.GOOGLE_DRIVE_CLIENT_ID }}
+          GOOGLE_DRIVE_CLIENT_SECRET: ${{ secrets.GOOGLE_DRIVE_CLIENT_SECRET }}
+          GOOGLE_DRIVE_REFRESH_TOKEN: ${{ secrets.GOOGLE_DRIVE_REFRESH_TOKEN }}
+        run: node scripts/archive-drive.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: drive-upload-receipt
+          path: drive-receipt.json

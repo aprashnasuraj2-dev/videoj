@@ -1,11 +1,13 @@
 import { createDhagoPlayer } from '@/create-player';
 import './demo.css';
+import media from './media.json';
 
 const query = new URLSearchParams(location.search);
 const allowed = ['warm','dark','minimal'] as const;
 const surface = allowed.find(x=>x===query.get('surface')) ?? 'warm';
 const player = createDhagoPlayer({
   source: './media/studies-in-thread.mp4',
+  playbackId: query.has('local') ? undefined : media.playbackId ?? undefined,
   poster: './media/poster.webp',
   chapters: query.has('nochapters') ? undefined : './media/chapters.vtt',
   captions: './media/captions.vtt',
@@ -13,12 +15,12 @@ const player = createDhagoPlayer({
 });
 const mount=document.querySelector<HTMLElement>('#player-mount')!;
 mount.append(player);
-const video=player.querySelector('video')!;
+const video=player.querySelector<HTMLVideoElement>('video, mux-video')!;
 const seekButtons = document.querySelectorAll<HTMLButtonElement>('[data-seek]');
 seekButtons.forEach(button=>button.addEventListener('click',()=>{
   if (!Number.isFinite(video.duration)) return;
   video.currentTime = Math.min(Number(button.dataset.seek),video.duration);
-  player.querySelector<HTMLElement>('media-time-slider')?.focus();
+  player.querySelector<HTMLElement>('media-time-slider media-slider-thumb')?.focus();
 }));
 video.addEventListener('timeupdate',()=>{
   seekButtons.forEach((button,i)=>{

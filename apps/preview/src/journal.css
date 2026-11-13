@@ -1,0 +1,38 @@
+.journal {background:#e9e6de;}
+.journal h1 {font-size:clamp(44px,6vw,84px);line-height:1.02;letter-spacing:-.06em;margin:22px 0;}
+.journal h1 em {font-weight:400;}
+.journal-deck {font-size:19px;line-height:1.65;max-width:650px;margin-bottom:46px;}
+.journal-layout {display:grid;grid-template-columns:minmax(0,1.9fr) minmax(240px,1fr);gap:36px;align-items:start;}
+.journal-layout section {min-width:0;position:sticky;top:24px;}
+#journal-player {--media-accent-color:#e8c078;--media-accent-text-color:#171918;--media-border-radius:5px;}
+.journal-caption {font-size:12px;line-height:1.7;color:#60584f;}
+.journal aside>p {font-size:13px;line-height:1.65;}
+.scene-note {width:100%;display:grid;text-align:left;gap:8px;padding:20px 14px;border:0;border-top:1px solid #aaa298;border-left:3px solid transparent;background:transparent;color:#171918;cursor:pointer;}
+.scene-note:hover,.scene-note[aria-current] {background:#ded9ce;border-left-color:#8a3d2b;}
+.scene-note span {font-size:10px;letter-spacing:.1em;font-variant-numeric:tabular-nums;color:#60584f;}
+.scene-note strong {font-size:18px;font-weight:500;}
+.scene-note small {font-size:13px;line-height:1.6;}
+.journal-essay {max-width:650px;margin:90px auto 50px;}
+.journal-essay h2 {font-size:44px;line-height:1.05;letter-spacing:-.04em;}
+.journal-essay p {line-height:1.8;}
+@media(max-width:800px){.journal-layout{grid-template-columns:1fr;gap:25px}.journal-layout section{position:static}.journal-deck{font-size:17px}.journal-essay{margin-top:50px}.journal h1{font-size:44px}}
+
+
+/* The notebook margin repeats the timeline's woven selvedge without
+   mimicking an additional playback control. */
+.scene-note { position: relative; isolation: isolate; padding-left: 22px; }
+.scene-note::before {
+  content: ""; position: absolute; inset-block: 14px; inset-inline-start: 6px;
+  width: 5px; background-color: var(--journal-thread, #af8f71);
+  background-image: repeating-linear-gradient(0deg,#17191860 0 1px,transparent 1px 5px);
+  border: 1px solid #17191824; pointer-events:none;
+}
+.scene-note:nth-of-type(2) { --journal-thread: #9ba8a0; }
+.scene-note:nth-of-type(3) { --journal-thread: #bba28a; }
+.scene-note:nth-of-type(4) { --journal-thread: #bc7569; }
+.scene-note[aria-current="true"] { border-left-width: 4px; }
+.scene-note:focus-visible { outline: 3px solid #8a3d2b; outline-offset: 2px; }
+@media (forced-colors: active) {
+  .scene-note::before { background: CanvasText; }
+  .scene-note[aria-current="true"] { border-left-color: Highlight; }
+}

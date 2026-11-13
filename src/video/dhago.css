@@ -64,7 +64,6 @@
 .dhago .media-time-toggle { display: none; }
 .dhago .media-time-current-value,.dhago .media-time-duration-value,.dhago .media-time-separator { display: inline; opacity: 1; }
 .dhago .media-time-duration-value { color: var(--dhago-muted); }
-.dhago .media-settings-button-label { display: none; }
 .dhago .media-volume-slider { width: 76px; height: 44px; display: flex; align-items: center; flex: 0 0 76px; }
 .dhago .media-volume-slider[data-hidden] { display: none; }
 .dhago .media-volume-slider-track { position: relative; width: 100%; height: 4px; background: var(--dhago-border); }
@@ -94,6 +93,7 @@
 .dhago .media-menu-item,.dhago .media-menu-radio-item { min-height: 44px; }
 .dhago .media-dialog-backdrop { border-radius: inherit; }
 .dhago .media-dialog-popup { border-radius: 10px; border: 1px solid var(--dhago-border); }
+.dhago .dhago-retry { min-height:44px; padding:10px 16px; margin:12px 8px 0 0; border:1px solid var(--dhago-border); border-radius:7px; background:var(--dhago-ink); color:var(--dhago-bone); cursor:pointer; font:inherit; }
 .dhago .media-status-indicator,.dhago .media-volume-indicator { color: #fff; background: #171918; border-radius: 8px; }
 .dhago .media-buffering-indicator { background: #171918; color: #f4ebdd; border-radius: 50%; }
 .dhago :focus-visible { outline: 3px solid var(--dhago-rust); outline-offset: 3px; }
@@ -114,9 +114,9 @@
   .dhago .media-volume-slider { flex-basis: 65px; max-width: 65px; }
   .dhago .media-captions-button { margin-inline-start: 0; }
 }
-.dhago[data-fullscreen] { width: 100%; height: 100dvh !important; border-radius: 0 !important; justify-content: center; overflow: auto !important; }
-.dhago[data-fullscreen] > video,.dhago[data-fullscreen] > mux-video { flex: 1; min-height: 0; height: 0; border-radius: 0; }
-.dhago[data-fullscreen] .dhago-shelf { padding-bottom: max(14px, env(safe-area-inset-bottom)); border-radius: 0; }
+.dhago:is(:fullscreen, [data-fullscreen]) { width: 100%; height: 100dvh !important; border-radius: 0 !important; justify-content: center; overflow: auto !important; }
+.dhago:is(:fullscreen, [data-fullscreen]) > video,.dhago:is(:fullscreen, [data-fullscreen]) > mux-video { flex: 1; min-height: 0; height: 0; border-radius: 0; }
+.dhago:is(:fullscreen, [data-fullscreen]) .dhago-shelf { padding-bottom: max(14px, env(safe-area-inset-bottom)); border-radius: 0; }
 @media (prefers-reduced-motion: reduce) { .dhago { --dhago-duration: 0ms; } .dhago *, .dhago *::before { animation-duration: .01ms !important; transition-duration: 0ms !important; } }
 @media (forced-colors: active) {
  .dhago { --dhago-bone: Canvas; --dhago-ink: CanvasText; --dhago-border: GrayText; --dhago-rust: Highlight; }
@@ -124,4 +124,68 @@
  .dhago .media-time-slider-fill { background: Highlight; mix-blend-mode: normal; }
  .dhago .media-time-slider-thumb { background: Highlight; border-color: CanvasText; }
  .dhago .media-button { border: 1px solid ButtonText; }
+}
+
+/* Preserve Scaffold's full-width chapter coordinate system. Each chapter clips
+   a complete track; relative positioning collapses an empty flex item to zero. */
+.dhago .media-time-slider-track { position: absolute; inset-inline: 0; }
+.dhago .media-volume-slider-thumb {
+  left: var(--media-slider-fill, 0%); bottom: auto; top: 50%;
+  transform: translate(-50%, -50%); border-radius: 50%;
+}
+.dhago .media-volume-slider-fill { height: 100%; }
+.dhago .dhago-chapter-readout {
+  display: flex; align-items: baseline; gap: 10px; min-width: 0;
+  padding-top: 6px; color: var(--dhago-ink); font-size: 12px;
+}
+.dhago .dhago-chapter-readout[hidden] { display: none; }
+.dhago .dhago-chapter-index {
+  color: var(--dhago-muted); font-size: 10px; letter-spacing: .08em;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.dhago .dhago-chapter-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dhago .media-time-slider-chapter:nth-child(2n) .media-time-slider-track {
+  background-image: repeating-linear-gradient(45deg,#17191838 0 1px,transparent 1px 5px),repeating-linear-gradient(-45deg,#fff5 0 1px,transparent 1px 5px);
+}
+.dhago .media-time-slider-chapter:nth-child(3n) .media-time-slider-track {
+  background-image: repeating-linear-gradient(90deg,#17191830 0 2px,transparent 2px 7px),repeating-linear-gradient(0deg,#fff7 0 1px,transparent 1px 3px);
+}
+.dhago .media-time-slider-chapter:nth-child(4n) .media-time-slider-track {
+  background-image: repeating-linear-gradient(135deg,#17191840 0 1px,transparent 1px 4px),repeating-linear-gradient(0deg,#fff6 0 2px,transparent 2px 6px);
+}
+@media (prefers-contrast: more) {
+ .dhago .media-button { border-color: var(--dhago-muted); }
+ .dhago .media-time-slider-track { outline: 1px solid var(--dhago-ink); }
+}
+
+.dhago:fullscreen > media-controls { flex: 0 0 auto; }
+.dhago:fullscreen > video, .dhago:fullscreen > mux-video { height: 0 !important; aspect-ratio: auto; }
+.dhago .dhago-control-label { display: none; }
+@container media-root (width < 500px) {
+ .dhago .media-captions-button,
+ .dhago .media-settings-button,
+ .dhago .media-fullscreen-button {
+  flex: 1 0 calc((100% - 8px) / 3); height: 54px; margin-inline-start: 0;
+  position: relative; border-color: var(--dhago-border);
+ }
+ .dhago .dhago-control-label {
+  display: block; position: absolute; inset-inline: 0; bottom: 5px;
+  font-size: 10px; line-height: 1.2; letter-spacing: .01em; text-align: center;
+ }
+ .dhago .media-captions-button .media-button-icon,
+ .dhago .media-settings-button .media-button-icon,
+ .dhago .media-fullscreen-button .media-button-icon { translate: 0 -7px; }
+}
+
+
+/* Accessibility safeguard: Scaffold's 15rem hiding breakpoint grows when a
+   visitor increases their root font size. At 200% text size, 15rem = 480px,
+   which incorrectly removes captions/settings from a 375px player. DHAGO uses
+   a deliberate two-row shelf, so retain available controls instead. Honor
+   data-hidden: genuinely unavailable components remain hidden. */
+@container media-root (width < 15rem) {
+  .dhago .media-captions-button:not([data-hidden]),
+  .dhago .media-settings-button:not([data-hidden]) {
+    display: grid;
+  }
 }

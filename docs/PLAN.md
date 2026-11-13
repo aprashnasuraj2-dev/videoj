@@ -111,3 +111,6 @@ Resume prompt: Read AGENTS.md, this plan and docs/worklog.md. Inspect the curren
 - [Mux playback and asset lifecycle](https://www.mux.com/docs/core/stream-video-files)
 - [Mux current plans and limits](https://www.mux.com/pricing)
 - [Public challenge feed: a limited competitor sample](https://contra.com/community/topic/videojsskinschallenge)
+## Priority revision — 2026-11-13
+
+The owner prioritizes competitive design quality over completing a fixed task count. Use `docs/design-priorities.md` to sequence work. The 100 rows remain an audit trail and may be refined when they reward busywork or miss a real defect. No completion percentage predicts an award. Defer Mux upload until core design and usability are ready; keep provisioning manual-only. Submission and receipt rows remain pending until real owner-authorized entry.
