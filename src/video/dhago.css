@@ -50,6 +50,7 @@
   border-top: 1px solid var(--dhago-border);
 }
 .dhago .dhago-controls { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.dhago .dhago-primary-controls { display: contents; }
 .dhago .dhago-spacer { flex: 1; }
 .dhago .media-button {
   width: 44px; height: 44px; border: 1px solid transparent; border-radius: 7px;
@@ -127,14 +128,25 @@
 @container media-root (width < 500px) {
   .dhago .dhago-shelf { padding: 6px 12px 12px; }
   .dhago .dhago-controls { flex-wrap: wrap; gap: 4px; }
-  .dhago .media-volume-slider { flex: 1; min-width: 44px; max-width: 80px; }
-  .dhago .dhago-spacer { flex: 0 0 100%; height: 0; margin-block: -2px; }
-  .dhago .media-time-group { flex: 1; }
+  .dhago .dhago-primary-controls {
+    flex: 0 0 100%; min-width: 0;
+    display: grid; align-items: center; gap: 4px;
+    grid-template-columns: 44px minmax(0, 1fr) 44px minmax(44px, 21%);
+  }
+  .dhago .dhago-primary-controls:has(.media-volume-slider[data-hidden]) {
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+  }
+  .dhago .media-volume-slider { width: 100%; min-width: 0; }
+  .dhago .dhago-spacer { display: none; }
+  .dhago .media-time-group {
+    justify-self: start; height: auto; min-width: 0; max-width: 100%;
+    flex-wrap: wrap; gap: 2px 4px;
+  }
+  .dhago .media-time-current-value, .dhago .media-time-duration-value { white-space: nowrap; }
   .dhago .media-captions-button { margin-inline-start: auto; }
 }
 @container media-root (width < 370px) {
   .dhago .media-time-group { padding-inline: 4px; font-size: 11px; }
-  .dhago .media-volume-slider { max-width: 65px; }
   .dhago .media-captions-button { margin-inline-start: 0; }
 }
 .dhago:is(:fullscreen, [data-fullscreen]) { width: 100%; height: 100dvh !important; border-radius: 0 !important; justify-content: center; overflow: auto !important; }
@@ -270,10 +282,19 @@
 
 /* Caption legibility comes first; native cues keep normal placement, selectable
    font preferences and familiar reading order. No animated text or fake cues. */
-.dhago > video::cue,
-.dhago > mux-video::cue {
-  color: #f4ebdd;
-  background-color: rgba(23, 25, 24, .88);
+.dhago {
+  --dhago-cue-color: #f4ebdd;
+  --dhago-cue-background: rgba(23, 25, 24, .88);
+}
+.dhago > video::cue {
+  color: var(--dhago-cue-color);
+  background-color: var(--dhago-cue-background);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  text-shadow: 0 1px 1px #000;
+}
+.dhago > mux-video::part(video)::cue {
+  color: var(--dhago-cue-color);
+  background-color: var(--dhago-cue-background);
   font-family: ui-sans-serif, system-ui, sans-serif;
   text-shadow: 0 1px 1px #000;
 }
@@ -287,7 +308,7 @@
 }
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
   .dhago .media-menu-popup { box-shadow: none; }
-  .dhago > video::cue, .dhago > mux-video::cue { color: #fff; background-color: #171918; }
+  .dhago { --dhago-cue-color: #fff; --dhago-cue-background: #171918; }
 }
 @media (forced-colors: active) {
   .dhago .media-menu-popup { background: Canvas; color: CanvasText; box-shadow: none; }

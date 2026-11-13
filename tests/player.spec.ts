@@ -126,6 +126,7 @@ for (const time of [5,40]) {
 test('the open menu and hour-long clock fit the narrow player', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 720 });
   await page.goto('/?local');
+  await page.addStyleTag({ content: '.dhago .media-time-group { font-family: monospace; }' });
   const controls = page.locator('.dhago-controls');
   await expect(page.locator('media-fullscreen-button .dhago-control-label')).toHaveText('Fullscreen');
   const settings = page.getByRole('button', { name: 'Settings', exact: true });
@@ -150,10 +151,11 @@ test('the open menu and hour-long clock fit the narrow player', async ({ page })
   await expect(controls.locator('.media-time-duration-value')).toContainText('23:45:56');
   const firstRow = await controls.evaluate(el => {
     const bounds = (selector: string) => el.querySelector(selector)!.getBoundingClientRect();
-    return { controls: bounds('.media-play-button').top, time: bounds('.media-time-group').top, mute: bounds('.media-mute-button').top, volume: bounds('.media-volume-slider').top, right: bounds('.media-volume-slider').right, edge: el.getBoundingClientRect().right };
+    return { controls: bounds('.media-play-button').top, time: bounds('.media-time-group').top, clockRight: bounds('.media-time-group').right, muteLeft: bounds('.media-mute-button').left, mute: bounds('.media-mute-button').top, volume: bounds('.media-volume-slider').top, right: bounds('.media-volume-slider').right, edge: el.getBoundingClientRect().right };
   });
   expect(firstRow.time).toBeGreaterThanOrEqual(firstRow.controls);
   expect(firstRow.time - firstRow.controls).toBeLessThan(44);
+  expect(firstRow.clockRight).toBeLessThanOrEqual(firstRow.muteLeft);
   expect(firstRow.mute).toBe(firstRow.controls);
   expect(firstRow.volume).toBe(firstRow.controls);
   expect(firstRow.right).toBeLessThanOrEqual(firstRow.edge);
