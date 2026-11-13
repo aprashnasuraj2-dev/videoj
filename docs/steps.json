@@ -804,8 +804,10 @@
     "phaseTitle": "07 / VIDEO, MUX & REAL-SITE BONUS",
     "title": "Control cost and media lifetime",
     "detail": "Current Mux pricing advertises a free plan with up to 10 stored videos and 100K monthly delivery minutes [S6]. Confirm the account-specific limits. Example: 10,000 full 2-minute views equal 20,000 delivery minutes, before replays and other account traffic.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "docs/mux-cost-and-retention.md"
+    ]
   },
   {
     "id": 69,
@@ -982,9 +984,11 @@
     "phaseTitle": "09 / DEPLOYMENT & SUBMISSION FILES",
     "title": "Create the submission manifest",
     "detail": "Populate entry title, demo URL, repository URL if shared, version, release SHA, visual paths and description path. Add Mux playback ID and real-site URL only when verified; use null for excluded bonuses, not plausible-looking placeholders.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
-      "tests/QA.md"
+      "tests/QA.md",
+      "submission/manifest.json",
+      "docs/hosting.md"
     ]
   },
   {
@@ -993,8 +997,12 @@
     "phaseTitle": "09 / DEPLOYMENT & SUBMISSION FILES",
     "title": "Deploy the actual final build",
     "detail": "Use the starter deploy command or verified host workflow after inspecting scripts. Set a stable production URL with no password, preview authentication or login gate. Keep secrets server-side, and verify allowed media origins and HTTPS.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/release-integrity.md",
+      "docs/hosting.md",
+      "https://github.com/aprashnasuraj2-dev/videoj/blob/dist-72ec6c324f64/release-manifest.json"
+    ]
   },
   {
     "id": 85,
@@ -1013,9 +1021,11 @@
     "phaseTitle": "09 / DEPLOYMENT & SUBMISSION FILES",
     "title": "Capture the final visuals",
     "detail": "Generate a sharp 1600x1000 hero image and a phone-width screenshot as internal targets, adjusting to actual form limits. AI must capture the running skin, not composite nonexistent controls. Keep video content and the unique ribbon visible.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
-      "tests/QA.md"
+      "tests/QA.md",
+      "docs/storage.md",
+      "https://drive.google.com/file/d/13UnLqOuiAQQOBXKoh_IesPHtFROkIUyb/view"
     ]
   },
   {
@@ -1036,8 +1046,11 @@
     "phaseTitle": "09 / DEPLOYMENT & SUBMISSION FILES",
     "title": "Draft the final description",
     "detail": "Write 3-4 accurate sentences explaining the metaphor, useful interaction and accessibility choices. Verify every feature claim against the release. Do not claim a tested screen-reader/device combination, original invention or bonus that the evidence cannot support.",
-    "status": "IN_PROGRESS",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "submission/description.md",
+      "docs/owner-review.md"
+    ]
   },
   {
     "id": 89,
@@ -1076,8 +1089,10 @@
     "phaseTitle": "10 / FINAL ENTRY & CONTINUATION",
     "title": "Complete the score rehearsal",
     "detail": "Review the player against all four scored categories using the release evidence. List one weakness per category and fix only high-impact defects. The internal score is subjective preparation, not a forecast of judges scores or prize probability.",
-    "status": "IN_PROGRESS",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "docs/score-rehearsal.md"
+    ]
   },
   {
     "id": 93,
@@ -1085,8 +1100,10 @@
     "phaseTitle": "10 / FINAL ENTRY & CONTINUATION",
     "title": "Present one concrete owner review",
     "detail": "AI supplies the working URL, desktop/mobile visual, description, optional bonus evidence and license summary in one place. Owner checks the appearance, authorship/rights and account identity. Avoid repeated vague approvals throughout routine engineering work.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "docs/owner-review.md"
+    ]
   },
   {
     "id": 94,
