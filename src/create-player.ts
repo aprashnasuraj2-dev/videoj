@@ -5,6 +5,7 @@ import template from './video/skin.html?raw';
 export interface DhagoOptions {
   source: string;
   playbackId?: string;
+  fallbackUrl?: string;
   poster?: string;
   chapters?: string;
   captions?: string;
@@ -29,6 +30,12 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
       el.setAttribute(attr,value.split(' ').map(id => ids.get(id) ?? id).join(' '));
     });
   }
+  if (options.playbackId && options.fallbackUrl) {
+    const fallback = player.querySelector<HTMLAnchorElement>('.dhago-fallback')!;
+    fallback.href = options.fallbackUrl;
+    fallback.hidden = false;
+  }
+
   // Keep the HLS engine out of the local-film entry bundle. Custom elements
   // upgrade the declarative attributes when the optional adapter finishes loading.
   if (options.playbackId) void import('@videojs/html/media/mux-video');
@@ -59,6 +66,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
     const track = Array.from(video.textTracks).find(t => t.kind === 'chapters');
     const cues = Array.from(track?.cues ?? []);
     const time = video.currentTime;
+    container.toggleAttribute('data-hour-clock', video.duration >= 3600);
     const nearEnd = Number.isFinite(video.duration) && video.duration > 0 &&
       time >= video.duration - 0.05;
     const index = cues.findIndex((cue, i) =>

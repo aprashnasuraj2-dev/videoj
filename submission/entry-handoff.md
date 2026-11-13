@@ -51,3 +51,11 @@ Use a fresh current-source desktop capture emphasizing the **isolated player and
 - Source archive snapshot commit: `5d31666a74770ca0043afe63ccf6e44e16d5be2c`; deployed source-code commit `a6492362b634799f3f23611e95eb88d003474d1f` (later documentation/workflows changed, not player code).
 
 Final human account, legal terms and physical accessibility checks are still outstanding. A postrelease 2/2 CI smoke does not by itself prove every judge's codec/browser compatibility.
+
+## Final polish copy and field map
+
+Use the public playable URL and short title above. For the two optional fields, use the public Mux playback ID and the Studio Journal URL. Prepare one isolated player visual with the storyboard thumbnail, stitch and playhead visible. Actual attachment restrictions are still to be confirmed in the signed-in form.
+
+> DHAGO takes its name from the Nepali word for thread. Its Video.js v10 timeline draws stitches from the film’s chapter cues and reveals real video frames as you move across the ribbon. Scrubbing puts the weave under tension, while a stable control shelf keeps time, sound and captions easy to find. The original film streams from Mux, and the Studio Journal uses the same player to take readers straight to the scenes it discusses.
+
+The public challenge deadline is November 17, 2026 at 1:44 p.m. Nepal time. Mux confirmed a Ready public standard asset matching the original film. Use the polish description once the candidate is published and verified.

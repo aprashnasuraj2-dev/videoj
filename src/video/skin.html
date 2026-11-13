@@ -9,14 +9,17 @@
 <media-dialog-description class="media-dialog-description">
 </media-dialog-description>
 <button class="dhago-retry" type="button">Try loading again</button>
+<a class="dhago-fallback" hidden>Play the backup copy</a>
 <media-dialog-close class="media-button media-dialog-close">
 </media-dialog-close>
 </media-dialog-popup>
 </media-error-dialog>
 <media-controls-group class="media-buffering-indicator-controls">
 <media-buffering-indicator class="media-buffering-indicator media-buffering-indicator-backdrop">
-<media-icon class="media-buffering-indicator-spinner-icon" family="scaffold" name="spinner">
-</media-icon>
+<span class="dhago-loading">
+  <span class="dhago-loading-thread" aria-hidden="true"></span>
+  <span>Buffering</span>
+</span>
 </media-buffering-indicator>
 </media-controls-group>
 <media-controls>
@@ -38,7 +41,7 @@
 <media-slider-thumb class="media-time-slider-thumb">
 </media-slider-thumb>
 <media-slider-preview class="media-time-slider-preview">
-<media-slider-thumbnail class="media-slider-thumbnail">
+<media-slider-thumbnail class="media-slider-thumbnail" loading="lazy">
 <img alt="" aria-hidden="true" class="media-slider-thumbnail-image" decoding="async"/>
 </media-slider-thumbnail>
 <div class="media-time-slider-preview-meta">
@@ -52,6 +55,7 @@
 </media-slider-preview>
 </media-time-slider></div>
 <media-controls-group class="dhago-controls">
+<div class="dhago-primary-controls">
 <media-play-button class="media-button media-play-button" id="vjs-COsQCb_P-0-8-trigger">
 <media-icon class="media-button-icon-base media-play-button-restart-icon" family="scaffold" name="restart">
 </media-icon>
@@ -79,6 +83,7 @@
 <media-slider-thumb class="media-volume-slider-thumb">
 </media-slider-thumb>
 </media-volume-slider>
+</div>
 <span aria-hidden="true" class="dhago-spacer"></span>
 <media-captions-button class="media-button media-captions-button" id="vjs-COsQCb_P-0-10-trigger">
 <media-icon class="media-button-icon media-captions-button-off-icon" family="scaffold" name="captions-off">
@@ -163,7 +168,7 @@
 </media-icon>
 <media-icon class="media-button-icon media-fullscreen-button-exit-icon" family="scaffold" name="fullscreen-exit">
 </media-icon>
-<span aria-hidden="true" class="dhago-control-label">Screen</span></media-fullscreen-button>
+<span aria-hidden="true" class="dhago-control-label">Fullscreen</span></media-fullscreen-button>
 </media-controls-group>
 </media-controls-content>
 </media-controls>

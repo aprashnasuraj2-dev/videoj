@@ -665,8 +665,11 @@
     "phaseTitle": "06 / RESPONSIVENESS & ACCESSIBILITY",
     "title": "Check semantics with assistive technology",
     "detail": "AI inspects accessible names, roles and current values, then prepares a short VoiceOver or NVDA walkthrough for the owner. Verify changing labels and slider time. Do not duplicate roles or announce elapsed seconds continuously.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "tests/deep.spec.ts",
+      "docs/owner-review.md"
+    ]
   },
   {
     "id": 57,
@@ -676,7 +679,9 @@
     "detail": "Measure text, icon, focus and track pairs over near-white, near-black and mixed video frames. Label chapters and selected settings with more than color. Forced-colors mode must retain the timeline, boundaries and focus visibility.",
     "status": "IN_PROGRESS",
     "evidence": [
-      "tests/QA.md"
+      "tests/QA.md",
+      "tests/player.spec.ts",
+      "tests/thread.spec.ts"
     ]
   },
   {
@@ -685,8 +690,10 @@
     "phaseTitle": "06 / RESPONSIVENESS & ACCESSIBILITY",
     "title": "Check zoom and long content",
     "detail": "Test 200% zoom and a narrow reflow case, large text, long chapter titles and translated labels. Wrap or truncate with accessible full names. Never shrink essential labels until they technically fit but become unreadable.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
+      "tests/deep.spec.ts",
+      "tests/player.spec.ts",
       "tests/QA.md"
     ]
   },
@@ -710,7 +717,9 @@
     "title": "Conduct a timed first-use trial",
     "detail": "Ask the owner to play, seek, mute, open captions and enter fullscreen on a phone without instruction. Target finding each in about five seconds as a design heuristic, not a scientific benchmark. Fix any repeated hesitation.",
     "status": "NOT_STARTED",
-    "evidence": []
+    "evidence": [
+      "docs/owner-review.md"
+    ]
   },
   {
     "id": 61,
@@ -766,11 +775,11 @@
     "phaseTitle": "07 / VIDEO, MUX & REAL-SITE BONUS",
     "title": "Upload a persistent public asset",
     "detail": "Create a standard asset with public playback and wait for Ready. Record asset ID privately and playback ID in the manifest. Avoid temporary demo assets; the Mux docs console warns its test assets are deleted after 24 hours [S5].",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
-      "tests/QA.md",
-      "docs/media.md",
-      "docs/hosting.md"
+      "docs/worklog.md",
+      "apps/preview/src/media.json",
+      "tests/mux.spec.ts"
     ]
   },
   {
@@ -808,7 +817,8 @@
     "detail": "Current Mux pricing advertises a free plan with up to 10 stored videos and 100K monthly delivery minutes [S6]. Confirm the account-specific limits. Example: 10,000 full 2-minute views equal 20,000 delivery minutes, before replays and other account traffic.",
     "status": "IN_PROGRESS",
     "evidence": [
-      "docs/mux-cost-and-retention.md"
+      "docs/mux-cost-and-retention.md",
+      "docs/worklog.md"
     ]
   },
   {
@@ -833,9 +843,9 @@
     "detail": "Keep an authorized fallback source for resilience, but report which source is active. Test public access without a session. Store the original video safely and keep both URLs, the deployment and the Mux asset live through judging.",
     "status": "IN_PROGRESS",
     "evidence": [
-      "tests/QA.md",
-      "docs/media.md",
-      "docs/hosting.md"
+      "docs/hosting.md",
+      "tests/player.spec.ts",
+      "docs/worklog.md"
     ]
   },
   {
@@ -1016,6 +1026,7 @@
     "detail": "Open the production URL in a clean signed-out session and on a phone if available. Start video, seek, use captions and fullscreen; confirm network media requests and no console errors. A successful hosting dashboard is insufficient evidence.",
     "status": "IN_PROGRESS",
     "evidence": [
+      "tests/live.spec.ts",
       "tests/QA.md"
     ]
   },
@@ -1076,8 +1087,11 @@
     "phaseTitle": "09 / DEPLOYMENT & SUBMISSION FILES",
     "title": "Freeze the submission candidate",
     "detail": "Tag the tested release after verifying repository state and source/deployment alignment. Record stable URLs and capture time in submission/final-checklist.md. Permit only fixes to playback, accessibility, public access or factual copy after freeze.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "submission/manifest.json",
+      "docs/worklog.md"
+    ]
   },
   {
     "id": 91,
@@ -1088,7 +1102,7 @@
     "status": "IN_PROGRESS",
     "evidence": [
       "https://contra.com/community/topic/videojsskinschallenge/guidelines",
-      "docs/brief.md"
+      "submission/entry-handoff.md"
     ]
   },
   {
@@ -1110,7 +1124,8 @@
     "detail": "AI supplies the working URL, desktop/mobile visual, description, optional bonus evidence and license summary in one place. Owner checks the appearance, authorship/rights and account identity. Avoid repeated vague approvals throughout routine engineering work.",
     "status": "IN_PROGRESS",
     "evidence": [
-      "docs/owner-review.md"
+      "docs/owner-review.md",
+      "submission/entry-handoff.md"
     ]
   },
   {
@@ -1120,7 +1135,9 @@
     "title": "Prepare the exact form entries",
     "detail": "Map each actual form field to manifest values and attachment paths. AI can draft or fill fields when tools and permission allow. Identity, eligibility declarations, open-source acceptance and authentication remain the owner decision; do not silently accept legal terms.",
     "status": "IN_PROGRESS",
-    "evidence": []
+    "evidence": [
+      "submission/entry-handoff.md"
+    ]
   },
   {
     "id": 95,
@@ -1128,8 +1145,11 @@
     "phaseTitle": "10 / FINAL ENTRY & CONTINUATION",
     "title": "Run the final minimum-requirement pass",
     "detail": "From the submitted URL, verify actual v10 video playback, all five essential control groups, narrow layout and keyboard/menu exit. If one fails, fix and retest before entering. An attractive image cannot compensate for a nonworking entry.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "tests/QA.md",
+      "tests/live.spec.ts"
+    ]
   },
   {
     "id": 96,
@@ -1137,8 +1157,12 @@
     "phaseTitle": "10 / FINAL ENTRY & CONTINUATION",
     "title": "Attach only verified bonus claims",
     "detail": "Include the public Mux playback ID matching the played source and the genuine live-site URL, if ready. Recheck both signed out. Omit an unverified bonus rather than spending the deadline buffer creating a fragile last-minute integration.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "submission/entry-handoff.md",
+      "tests/mux.spec.ts",
+      "tests/live.spec.ts"
+    ]
   },
   {
     "id": 97,

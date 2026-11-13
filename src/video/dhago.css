@@ -5,6 +5,7 @@
   --dhago-muted: #60584f;
   --dhago-border: #c9bda9;
   --dhago-rust: var(--media-accent-color, #b44332);
+  --dhago-on-rust: var(--media-accent-text-color, #fff);
   --dhago-duration: 140ms;
   --media-background: var(--dhago-bone);
   --media-foreground: var(--dhago-ink);
@@ -23,13 +24,14 @@
   background: #111 !important;
   border-radius: var(--media-border-radius, 14px) !important;
   overflow: visible !important;
-  box-shadow: 0 2px 0 #fff5 inset, 0 22px 65px #1f1a1426;
+  box-shadow: 0 1px 0 #fff3 inset, 0 3px 10px #17191812, 0 18px 48px #17191819;
   isolation: isolate;
 }
 .dhago[data-surface="dark"] {
   --dhago-bone: #202321; --dhago-ink: #f4ebdd; --dhago-muted: #d2c7b7;
   --dhago-border: #77786c; --media-button-highlight: #3b403b;
   --dhago-rust: var(--media-accent-color, #efad81);
+  --dhago-on-rust: var(--media-accent-text-color, #171918);
 }
 .dhago[data-surface="minimal"] { --dhago-bone: #fff; --dhago-border: #aaa; box-shadow: none; }
 .dhago > video, .dhago > mux-video {
@@ -48,6 +50,7 @@
   border-top: 1px solid var(--dhago-border);
 }
 .dhago .dhago-controls { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.dhago .dhago-primary-controls { display: contents; }
 .dhago .dhago-spacer { flex: 1; }
 .dhago .media-button {
   width: 44px; height: 44px; border: 1px solid transparent; border-radius: 7px;
@@ -60,7 +63,13 @@
 .dhago .media-button-icon,.dhago .media-button-icon-base { width: 22px; height: 22px; }
 .dhago .media-button-icon-base { position: absolute; }
 .dhago .media-play-button-play-icon { translate: 1px 0; }
-.dhago .media-time-group { font-size: 12px; padding-inline: 8px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.dhago .media-time-group {
+  display: flex; align-items: baseline; gap: .35em;
+  font-size: 12px; padding-inline: 8px;
+  min-inline-size: calc(12ch + 16px);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.dhago[data-hour-clock] .media-time-group { min-inline-size: calc(19ch + 16px); }
 .dhago .media-time-toggle { display: none; }
 .dhago .media-time-current-value,.dhago .media-time-duration-value,.dhago .media-time-separator { display: inline; opacity: 1; }
 .dhago .media-time-duration-value { color: var(--dhago-muted); }
@@ -86,32 +95,98 @@
   background: var(--dhago-ink); box-shadow: 0 0 0 1px var(--dhago-ink);
   opacity: 1; scale: 1;
 }
-.dhago .media-time-slider-preview { background: var(--dhago-ink); color: var(--dhago-bone); border-radius: 6px; padding: 7px 10px; }
-.dhago .media-time-slider-preview-label { font-size: 12px; gap: 8px; }
-.dhago .media-slider-thumbnail { display: none; }
-.dhago .media-menu-popup { border: 1px solid var(--dhago-border); border-radius: 10px; box-shadow: 0 12px 35px #0003; }
+.dhago .media-time-slider-preview {
+  z-index: 4;
+  background: #171918;
+  color: #f4ebdd;
+  border-radius: 10px;
+  gap: 0;
+  padding: 0;
+  border: 0;
+  box-shadow: 0 0 0 1px #746758, 0 2px 6px #17191826, 0 9px 20px #17191833;
+  max-width: min(164px, 100%);
+}
+.dhago .media-time-slider-preview-label { font-size: 12px; gap: 7px; }
+.dhago .media-time-slider-preview-meta { padding: 4px 6px; }
+.dhago .media-slider-thumbnail {
+  margin: 4px 4px 0;
+  max-inline-size: 154px;
+  border-radius: 5px;
+}
+.dhago .media-slider-thumbnail:is([data-hidden], [data-error]) { display: none; }
+.dhago .media-time-slider-preview:has(.media-slider-thumbnail:not([data-hidden], [data-error])) {
+  box-shadow: 0 0 0 1px var(--dhago-rust), 0 2px 6px #17191826, 0 9px 20px #17191833;
+}
+.dhago .media-menu-popup {
+  --media-hidden-popup-scale: .97;
+  --media-hidden-popup-blur: 0px;
+  --media-popup-translate-distance: 4px;
+  border: 1px solid var(--dhago-border);
+  border-radius: 10px;
+  box-shadow: 0 3px 8px #1719181a, 0 14px 30px #17191824;
+  transition: opacity var(--dhago-duration) ease-out, transform var(--dhago-duration) ease-out,
+    scale var(--dhago-duration) ease-out;
+}
+.dhago .media-menu-popup[data-side="top"] { transform-origin: center bottom; }
+.dhago .media-menu-popup[data-side="bottom"] { transform-origin: center top; }
 .dhago .media-menu-item,.dhago .media-menu-radio-item { min-height: 44px; }
 .dhago .media-dialog-backdrop { border-radius: inherit; }
 .dhago .media-dialog-popup { border-radius: 10px; border: 1px solid var(--dhago-border); }
 .dhago .dhago-retry { min-height:44px; padding:10px 16px; margin:12px 8px 0 0; border:1px solid var(--dhago-border); border-radius:7px; background:var(--dhago-ink); color:var(--dhago-bone); cursor:pointer; font:inherit; }
+.dhago .dhago-fallback {
+  display: inline-flex; align-items: center; min-height: 44px;
+  color: inherit; text-underline-offset: .2em;
+}
+.dhago .dhago-fallback[hidden] { display: none; }
 .dhago .media-status-indicator,.dhago .media-volume-indicator { color: #fff; background: #171918; border-radius: 8px; }
-.dhago .media-buffering-indicator { background: #171918; color: #f4ebdd; border-radius: 50%; }
+/* Keep the Video.js delay and visibility gate. Only the artwork changes. */
+.dhago .media-buffering-indicator { background: #1115; }
+.dhago .dhago-loading {
+  display: grid; justify-items: center; gap: 8px;
+  background: #171918; color: #f4ebdd;
+  border: 1px solid #746758; border-radius: 10px;
+  padding: 11px 16px;
+  font: 600 12px/1.25 var(--media-font-family);
+}
+.dhago .dhago-loading-thread {
+  width: 36px; height: 9px; border: 1px solid #f4ebdd; border-radius: 4px;
+  background: repeating-linear-gradient(115deg, #efad81 0 3px, #171918 3px 6px, #f4ebdd 6px 7px, #171918 7px 9px);
+}
+@keyframes dhago-thread-travel { to { background-position-x: 10px; } }
+@media (prefers-reduced-motion: no-preference) {
+  .dhago .media-buffering-indicator[data-visible] .dhago-loading-thread {
+    animation: dhago-thread-travel 520ms linear infinite;
+  }
+}
 .dhago :focus-visible { outline: 3px solid var(--dhago-rust); outline-offset: 3px; }
 .dhago .media-play-button:focus-visible { outline-offset: 3px; }
 @media (hover: hover) {
   .dhago .media-button:hover { background: var(--media-button-highlight); }
-  .dhago .media-play-button:hover { background: var(--dhago-rust); color: var(--media-accent-text-color, #fff); }
+  .dhago .media-play-button:hover { background: var(--dhago-rust); color: var(--dhago-on-rust); }
 }
 @container media-root (width < 500px) {
   .dhago .dhago-shelf { padding: 6px 12px 12px; }
   .dhago .dhago-controls { flex-wrap: wrap; gap: 4px; }
-  .dhago .media-volume-slider { flex: 1; min-width: 55px; max-width: 80px; }
+  .dhago .dhago-primary-controls {
+    flex: 0 0 100%; min-width: 0;
+    display: grid; align-items: center; gap: 4px;
+    grid-template-columns: 44px minmax(0, 1fr) 44px minmax(44px, 21%);
+  }
+  .dhago .dhago-primary-controls:has(.media-volume-slider[data-hidden]) {
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+  }
+  .dhago .media-volume-slider { width: 100%; min-width: 0; }
   .dhago .dhago-spacer { display: none; }
-  .dhago .media-time-group { flex: 1; }
+  .dhago .media-time-group, .dhago[data-hour-clock] .media-time-group {
+    min-inline-size: 0;
+    justify-self: start; height: auto; min-width: 0; max-width: 100%;
+    flex-wrap: wrap; gap: 2px 4px;
+  }
+  .dhago .media-time-current-value, .dhago .media-time-duration-value { white-space: nowrap; }
   .dhago .media-captions-button { margin-inline-start: auto; }
 }
 @container media-root (width < 370px) {
-  .dhago .media-volume-slider { flex-basis: 65px; max-width: 65px; }
+  .dhago .media-time-group { padding-inline: 4px; font-size: 11px; }
   .dhago .media-captions-button { margin-inline-start: 0; }
 }
 .dhago:is(:fullscreen, [data-fullscreen]) { width: 100%; height: 100dvh !important; border-radius: 0 !important; justify-content: center; overflow: auto !important; }
@@ -194,12 +269,14 @@
 /* Thread physics, bounded to a single interaction.
    Joins come from Video.js's real chapter cue intervals; their visible stitches
    are purely decorative and never replace the seek thumb or spoken chapter name. */
-.dhago .media-time-slider-chapter:not(:first-child)::before {
+.dhago .media-time-slider-chapter ~ .media-time-slider-chapter::before {
   content: "";
   display: block;
-  position: relative;
-  inset-inline-start: 4px;
-  top: 6px;
+  /* Scaffold clips a full-width track for each cue. Use its cue coordinate
+     to keep the stitch inside the visible segment, even after an uneven cut. */
+  position: absolute;
+  inset-inline-start: calc(var(--media-slider-chapter-start) + 5px);
+  top: 7px;
   z-index: 3;
   width: 9px;
   height: 9px;
@@ -216,11 +293,26 @@
   background-image: repeating-linear-gradient(90deg, #fff6 0 1px, transparent 1px 5px);
 }
 .dhago .media-time-slider-chapters {
-  transition: transform var(--dhago-duration) ease-out, opacity var(--dhago-duration) ease-out;
+  transition: transform 240ms cubic-bezier(.175, .885, .32, 1.275), opacity var(--dhago-duration) ease-out;
   transform-origin: center;
 }
 .dhago .media-time-slider[data-dragging] .media-time-slider-chapters {
-  transform: scaleY(.86);
+  transform: scaleY(.88);
+  transition-timing-function: ease-out;
+}
+.dhago .media-time-slider-chapters::after {
+  content: "";
+  position: absolute; inset: 0; z-index: 4; pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent,
+    #fff2 max(0%, calc(var(--media-slider-pointer, 0%) - 6%)),
+    #fff5 var(--media-slider-pointer, 0%),
+    #fff2 min(100%, calc(var(--media-slider-pointer, 0%) + 6%)), transparent);
+  mask-image: linear-gradient(90deg, transparent max(0%, calc(var(--media-slider-pointer, 0%) - 12%)),
+    black var(--media-slider-pointer, 0%), transparent min(100%, calc(var(--media-slider-pointer, 0%) + 12%)));
+}
+@media (prefers-reduced-motion: no-preference) and (prefers-contrast: no-preference) and (forced-colors: none) {
+  .dhago .media-time-slider[data-dragging] .media-time-slider-chapters::after { opacity: .6; }
 }
 .dhago .media-time-slider[data-dragging] .media-time-slider-thumb {
   box-shadow: 0 0 0 2px var(--dhago-ink), 0 0 0 5px var(--dhago-bone);
@@ -245,19 +337,42 @@
 
 /* Caption legibility comes first; native cues keep normal placement, selectable
    font preferences and familiar reading order. No animated text or fake cues. */
-.dhago > video::cue,
-.dhago > mux-video::cue {
-  color: #f4ebdd;
-  background-color: rgba(23, 25, 24, .88);
+.dhago {
+  --dhago-cue-color: #f4ebdd;
+  --dhago-cue-background: rgba(23, 25, 24, .88);
+}
+.dhago > video::cue {
+  color: var(--dhago-cue-color);
+  background-color: var(--dhago-cue-background);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  text-shadow: 0 1px 1px #000;
+}
+.dhago > mux-video::part(video)::cue {
+  color: var(--dhago-cue-color);
+  background-color: var(--dhago-cue-background);
   font-family: ui-sans-serif, system-ui, sans-serif;
   text-shadow: 0 1px 1px #000;
 }
 @media (prefers-reduced-motion: reduce) {
   .dhago .media-time-slider-chapters { transition: none; }
+  .dhago .media-menu-popup:is([data-starting-style], [data-ending-style]) {
+    scale: 1;
+    transform: none;
+  }
   .dhago .media-time-slider[data-dragging] .media-time-slider-chapters { transform: none; }
 }
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .dhago .media-menu-popup { box-shadow: none; }
+  .dhago { --dhago-cue-color: #fff; --dhago-cue-background: #171918; }
+}
 @media (forced-colors: active) {
-  .dhago .media-time-slider-chapter:not(:first-child)::before {
+  .dhago .media-menu-popup, .dhago .media-time-slider-preview, .dhago .dhago-loading {
+    background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none;
+  }
+  .dhago .media-time-slider-preview { outline: 1px solid CanvasText; }
+  .dhago .dhago-loading-thread { background: Highlight; border-color: CanvasText; animation: none; }
+  .dhago .media-slider-thumbnail { display: none; }
+  .dhago .media-time-slider-chapter ~ .media-time-slider-chapter::before {
     background: Canvas;
     border: 2px solid CanvasText;
     box-shadow: none;

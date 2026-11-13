@@ -122,3 +122,55 @@ for (const time of [5,40]) {
   await page.locator('media-container').screenshot({path:info.outputPath(`player-${time}.png`)});
  });
 }
+
+test('the open menu and hour-long clock fit the narrow player', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 720 });
+  await page.goto('/?local');
+  await page.addStyleTag({ content: '.dhago .media-time-group { font-family: monospace; }' });
+  const controls = page.locator('.dhago-controls');
+  await expect(page.locator('media-fullscreen-button .dhago-control-label')).toHaveText('Fullscreen');
+  const settings = page.getByRole('button', { name: 'Settings', exact: true });
+  await settings.click();
+  const menu = page.locator('.media-menu-popup');
+  await expect(menu).toBeVisible();
+  const bounds = await menu.boundingBox();
+  expect(bounds!.x).toBeGreaterThanOrEqual(0);
+  expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(320);
+  await page.keyboard.press('Escape');
+  await expect(settings).toBeFocused();
+
+  await page.locator('video').evaluate((video: HTMLVideoElement) => {
+    Object.defineProperties(video, {
+      currentTime: { get: () => 45296 },
+      duration: { get: () => 85556 },
+    });
+    video.dispatchEvent(new Event('durationchange'));
+    video.dispatchEvent(new Event('timeupdate'));
+  });
+  await expect(controls.locator('.media-time-current-value')).toContainText('12:34:56');
+  await expect(controls.locator('.media-time-duration-value')).toContainText('23:45:56');
+  const firstRow = await controls.evaluate(el => {
+    const bounds = (selector: string) => el.querySelector(selector)!.getBoundingClientRect();
+    return { controls: bounds('.media-play-button').top, time: bounds('.media-time-group').top, clockRight: bounds('.media-time-group').right, muteLeft: bounds('.media-mute-button').left, mute: bounds('.media-mute-button').top, volume: bounds('.media-volume-slider').top, right: bounds('.media-volume-slider').right, edge: el.getBoundingClientRect().right };
+  });
+  expect(firstRow.time).toBeGreaterThanOrEqual(firstRow.controls);
+  expect(firstRow.time - firstRow.controls).toBeLessThan(44);
+  expect(firstRow.clockRight).toBeLessThanOrEqual(firstRow.muteLeft);
+  expect(firstRow.mute).toBe(firstRow.controls);
+  expect(firstRow.volume).toBe(firstRow.controls);
+  expect(firstRow.right).toBeLessThanOrEqual(firstRow.edge);
+});
+
+test('a rejected Mux request offers an explicit playable backup', async ({ page }) => {
+  await page.route('https://stream.mux.com/**', route => route.abort());
+  await page.goto('/?surface=dark');
+  const fallback = page.getByRole('link', { name: 'Play the backup copy' });
+  await expect(fallback).toBeVisible({ timeout: 15_000 });
+  await fallback.click();
+  await expect(page).toHaveURL(/surface=dark&local=/);
+  const video = page.locator('video');
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThan(0);
+  await page.locator('media-play-button').click();
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(.2);
+  await expect(fallback).toHaveCount(0);
+});
