@@ -1,11 +1,11 @@
 {
-  "updated": "2026-11-13T13:29:49.761Z",
+  "updated": "2026-11-13T14:25:47.005Z",
   "total": 100,
   "counts": {
-    "NOT_STARTED": 13,
-    "IN_PROGRESS": 13,
+    "NOT_STARTED": 10,
+    "IN_PROGRESS": 11,
     "BLOCKED": 0,
-    "DONE": 74
+    "DONE": 79
   },
   "firstIncomplete": 56,
   "phase": 6,
