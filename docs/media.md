@@ -9,3 +9,9 @@ Repository Actions secrets must be named `MUX_TOKEN_ID` and `MUX_TOKEN_SECRET`. 
 After provisioning, inspect the workflow result and test actual HLS playback before marking steps 65–67 complete. A ready API asset is not browser playback proof. Account billing limits and judging lifetime remain to be confirmed. At 1,000 full 64-second views, delivery is about 1,067 minutes before replay. At 4 Mbps this is roughly 32 GB. Video stays on the media CDN; no application worker proxies it.
 
 API reference verified 2026-11-13: https://www.mux.com/docs/api-reference/video/direct-uploads/create-direct-upload . Version-matched integration: installed @videojs/html 10.4.0 docs/reference/components/mux-video.md.
+
+## Current source, release, and spend boundary
+
+The public Mux playback ID configured in `apps/preview/src/media.json` is used by the exact release source `72ec6c3`. HLS compatibility was demonstrated in GitHub Chromium tests, and earlier live public smoke confirmed playback and seeking. A post-exact-publication live check remains outstanding until a new main-branch smoke job passes.
+
+The published 2026-11-13 Mux Free plan advertises 100,000 delivered minutes monthly and at most 10 stored videos; a full 64-second watch consumes about 1.067 delivery minutes. The account-specific plan/remaining quota were not available. See `docs/mux-cost-and-retention.md`. Do not start another upload or enable paid spend to work around an unverified limit.
