@@ -40,3 +40,5 @@ const playbackId=asset.playback_ids?.find(p=>p.policy==='public')?.id;
 if(asset.status!=='ready' || !playbackId) throw Error('Ready public playback not available');
 await writeFile('apps/preview/src/media.json',JSON.stringify({playbackId,contentHash:marker},null,2)+'\n');
 console.log('Ready public playback configuration saved; browser playback verification still required.');
+// Playback IDs and content hashes are public; management credentials never are.
+console.log(JSON.stringify({playbackId,contentHash:marker}));

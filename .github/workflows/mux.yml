@@ -1,6 +1,8 @@
 name: Provision Mux demo media
 on:
   workflow_dispatch:
+  pull_request:
+    paths: ['submission/mux-publish-request.json']
 concurrency:
   group: mux-demo-media
   cancel-in-progress: false
@@ -8,6 +10,7 @@ permissions:
   contents: read
 jobs:
   upload:
+    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'feat/mux-submission-workflows')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -20,7 +23,20 @@ jobs:
           MUX_TOKEN_ID: ${{ secrets.MUX_TOKEN_ID }}
           MUX_TOKEN_SECRET: ${{ secrets.MUX_TOKEN_SECRET }}
         run: node scripts/mux-upload.mjs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci && npm run typecheck && npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Verify actual Mux playback
+        run: npx playwright test tests/mux.spec.ts
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: public-mux-configuration
-          path: apps/preview/src/media.json
+          path: |
+            apps/preview/src/media.json
+            dist/
+            test-results/
+            playwright-report/

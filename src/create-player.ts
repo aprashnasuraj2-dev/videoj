@@ -37,6 +37,9 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   else video.src = options.source;
   video.setAttribute('playsinline', '');
   video.setAttribute('preload', 'metadata');
+  // The Mux adapter derives a cross-origin storyboard track. Local text tracks
+  // also remain usable when a host serves the film from a different CDN.
+  video.setAttribute('crossorigin', 'anonymous');
   if (options.poster) video.setAttribute('poster', options.poster);
   for (const [kind,src,label] of [
     ['chapters',options.chapters,'English chapters'],
