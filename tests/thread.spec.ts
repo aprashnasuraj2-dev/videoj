@@ -15,10 +15,12 @@ test('cue joins form knots without replacing accessible seek controls', async ({
   expect(box).toBeTruthy();
   await page.mouse.move(box!.x + box!.width * .4, box!.y + box!.height / 2);
   await page.mouse.down();
+  await expect(page.locator('.dhago')).toHaveAttribute('data-thread-pull', '');
   await expect.poll(() => page.locator('.media-time-slider-chapters')
     .evaluate(el => getComputedStyle(el).transform)).not.toBe('none');
   await page.screenshot({path:info.outputPath('thread-held.png')});
   await page.mouse.up();
+  await expect(page.locator('.dhago')).not.toHaveAttribute('data-thread-pull', '');
   await expect.poll(() => page.locator('.media-time-slider-chapters')
     .evaluate(el => getComputedStyle(el).transform)).toBe('none');
 

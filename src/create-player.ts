@@ -63,6 +63,19 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   };
   video.addEventListener('timeupdate', updateChapter);
   video.addEventListener('loadedmetadata', updateChapter);
+  // A held conventional seek slider briefly tensions the rendered swatches.
+  // Pointer state belongs to this player instance; no global listeners or new
+  // seek interpretation. Release also on cancel/leave/lost capture.
+  const seek = player.querySelector<HTMLElement>('media-time-slider');
+  if (seek) {
+    const release = () => container.removeAttribute('data-thread-pull');
+    seek.addEventListener('pointerdown', (event: PointerEvent) => {
+      if (event.isPrimary && event.button === 0) container.setAttribute('data-thread-pull', '');
+    });
+    for (const type of ['pointerup', 'pointercancel', 'pointerleave', 'lostpointercapture', 'blur']) {
+      seek.addEventListener(type, release);
+    }
+  }
   // The ribbon's temporary thread slack reflects real decoding stalls.
   // Do not use a timer, a polling loop, or guessed Mux quality/buffer data.
   const setWaiting = () => {
