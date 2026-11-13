@@ -586,9 +586,12 @@
     "phase": 5,
     "phaseTitle": "05 / SIGNATURE SKIN IMPLEMENTATION",
     "title": "Review the actual visual artifact",
-    "detail": "Capture equal-size desktop and phone screenshots from the running code, then compare them against the selected direction. Fix optical alignment, ribbon weight and spacing. Do not submit a generated concept image as evidence of implemented UI.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "detail": "Critique isolated screenshots for distinctive craft and useful interaction. Verify that the woven ribbon is actually visible; a passing seek test cannot prove visual quality. Compare warm, dark and minimal at desktop and 320px. Fix composition defects before adding features.",
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "docs/design-priorities.md",
+      "docs/worklog.md"
+    ]
   },
   {
     "id": 51,

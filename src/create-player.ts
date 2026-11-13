@@ -45,6 +45,20 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
     track.kind = kind; track.src = src; track.srclang = 'en'; track.label = label;
     track.default = kind === 'chapters'; video.append(track);
   }
+  // Read real chapter cues; no duplicated timer or invented chapter state.
+  const readout = player.querySelector<HTMLElement>('.dhago-chapter-readout')!;
+  const updateChapter = () => {
+    const track = Array.from(video.textTracks).find(t => t.kind === 'chapters');
+    const cues = Array.from(track?.cues ?? []);
+    const index = cues.findIndex(c => video.currentTime >= c.startTime && video.currentTime < c.endTime);
+    readout.hidden = index < 0;
+    if (index < 0) return;
+    readout.querySelector('.dhago-chapter-index')!.textContent = `CHAPTER ${String(index + 1).padStart(2, '0')} / ${String(cues.length).padStart(2, '0')}`;
+    readout.querySelector('.dhago-chapter-name')!.textContent = (cues[index] as VTTCue).text;
+  };
+  video.addEventListener('timeupdate', updateChapter);
+  video.addEventListener('loadedmetadata', updateChapter);
+  video.querySelectorAll('track').forEach(t => t.addEventListener('load', updateChapter));
   container.prepend(video);
   return player;
 }

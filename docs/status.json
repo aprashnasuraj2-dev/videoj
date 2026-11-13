@@ -1,9 +1,9 @@
 {
-  "updated": "2026-11-13T11:36:22.113Z",
+  "updated": "2026-11-13T11:45:08.362Z",
   "total": 100,
   "counts": {
-    "NOT_STARTED": 29,
-    "IN_PROGRESS": 33,
+    "NOT_STARTED": 28,
+    "IN_PROGRESS": 34,
     "BLOCKED": 0,
     "DONE": 38
   },

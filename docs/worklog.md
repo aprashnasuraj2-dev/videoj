@@ -17,3 +17,10 @@
 - Added candidate CI, exact-revision source packaging with checksums, and Mux provisioning with content-hash reuse. Mux uses runner secrets only and exports public configuration for review; no automatic default-branch mutation.
 - Actual Mux upload, ready state, browser playback, public deployment, screenshots, physical-device checks and submission remain unverified.
 - Direct default-branch push was rejected by automatic approval review; changes prepared on a review branch instead. Next: run CI there, confirm repository secret names, run Mux workflow after authorized integration, review public configuration, then verify real playback.
+
+## 2026-11-13 — Design-first revision
+
+- Owner clarified: focus on competitive craft, revise checklist as needed, and defer Mux upload. Removed automatic push trigger from Mux workflow.
+- Retrieved actual CI evidence: 5/6 tests passed (real controls and four viewport sizes); axe failed on unnamed settings trigger. Added explicit accessible name.
+- Inspected desktop and 320px screenshots. Found invisible woven track despite passing keyboard seek: position:relative caused zero-width content in the inherited full-width chapter geometry. Restored absolute track positioning. Corrected horizontal volume thumb geometry.
+- Added real-cue chapter readout and distinct weave patterns; no invented media state. Expanded affected behavior/accessibility tests. See design-priorities.md for review criteria and rejected scope.

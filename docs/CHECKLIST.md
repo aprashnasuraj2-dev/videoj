@@ -1,6 +1,6 @@
 # DHAGO: 100-step implementation checklist
 
-**38/100 complete** | 33 in progress | 0 blocked | Updated 2026-11-13T11:36:22.113Z
+**38/100 complete** | 34 in progress | 0 blocked | Updated 2026-11-13T11:45:08.362Z
 
 This is evidence-based task completion, not a percentage of contest quality. See [worklog](worklog.md), [status](status.json) and [plan](PLAN.md). Blocked steps remain unchecked; independent later work may continue.
 
@@ -306,9 +306,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
 
-- [ ] **050 - Review the actual visual artifact** - NOT_STARTED
+- [ ] **050 - Review the actual visual artifact** - IN_PROGRESS
 
-  Capture equal-size desktop and phone screenshots from the running code, then compare them against the selected direction. Fix optical alignment, ribbon weight and spacing. Do not submit a generated concept image as evidence of implemented UI.
+  Critique isolated screenshots for distinctive craft and useful interaction. Verify that the woven ribbon is actually visible; a passing seek test cannot prove visual quality. Compare warm, dark and minimal at desktop and 320px. Fix composition defects before adding features.
+
+  Evidence: [docs/design-priorities.md](../docs/design-priorities.md), [docs/worklog.md](../docs/worklog.md)
 
 ## 06 / RESPONSIVENESS & ACCESSIBILITY
 

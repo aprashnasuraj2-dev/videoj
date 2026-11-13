@@ -125,3 +125,35 @@
  .dhago .media-time-slider-thumb { background: Highlight; border-color: CanvasText; }
  .dhago .media-button { border: 1px solid ButtonText; }
 }
+
+/* Preserve Scaffold's full-width chapter coordinate system. Each chapter clips
+   a complete track; relative positioning collapses an empty flex item to zero. */
+.dhago .media-time-slider-track { position: absolute; inset-inline: 0; }
+.dhago .media-volume-slider-thumb {
+  left: var(--media-slider-fill, 0%); bottom: auto; top: 50%;
+  transform: translate(-50%, -50%); border-radius: 50%;
+}
+.dhago .media-volume-slider-fill { height: 100%; }
+.dhago .dhago-chapter-readout {
+  display: flex; align-items: baseline; gap: 10px; min-width: 0;
+  padding-top: 6px; color: var(--dhago-ink); font-size: 12px;
+}
+.dhago .dhago-chapter-readout[hidden] { display: none; }
+.dhago .dhago-chapter-index {
+  color: var(--dhago-muted); font-size: 10px; letter-spacing: .08em;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.dhago .dhago-chapter-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dhago .media-time-slider-chapter:nth-child(2n) .media-time-slider-track {
+  background-image: repeating-linear-gradient(45deg,#17191838 0 1px,transparent 1px 5px),repeating-linear-gradient(-45deg,#fff5 0 1px,transparent 1px 5px);
+}
+.dhago .media-time-slider-chapter:nth-child(3n) .media-time-slider-track {
+  background-image: repeating-linear-gradient(90deg,#17191830 0 2px,transparent 2px 7px),repeating-linear-gradient(0deg,#fff7 0 1px,transparent 1px 3px);
+}
+.dhago .media-time-slider-chapter:nth-child(4n) .media-time-slider-track {
+  background-image: repeating-linear-gradient(135deg,#17191840 0 1px,transparent 1px 4px),repeating-linear-gradient(0deg,#fff6 0 2px,transparent 2px 6px);
+}
+@media (prefers-contrast: more) {
+ .dhago .media-button { border-color: var(--dhago-muted); }
+ .dhago .media-time-slider-track { outline: 1px solid var(--dhago-ink); }
+}

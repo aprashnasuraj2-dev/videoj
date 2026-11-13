@@ -1,9 +1,6 @@
 name: Provision Mux demo media
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths: ['scripts/mux-upload.mjs', 'apps/preview/public/media/studies-in-thread.mp4']
 concurrency:
   group: mux-demo-media
   cancel-in-progress: false
