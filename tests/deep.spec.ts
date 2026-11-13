@@ -42,6 +42,7 @@ test('forced colors and enlarged text preserve useful narrow controls',async({pa
  await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(0);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
  for(const s of ['media-play-button','media-captions-button','.media-settings-button','media-fullscreen-button']){
+  await expect(page.locator(s)).toBeVisible();
   const b=await page.locator(s).boundingBox();expect(b!.width).toBeGreaterThanOrEqual(44);expect(b!.height).toBeGreaterThanOrEqual(44);
  }
  await page.screenshot({path:info.outputPath('forced-colors-large-text.png'),fullPage:true});

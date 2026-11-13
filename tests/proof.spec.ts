@@ -1,6 +1,7 @@
 import {test,expect} from '@playwright/test';
-test.use({viewport:{width:1600,height:1000},video:{mode:'on',size:{width:1600,height:1000}}});
+test.use({viewport:{width:1600,height:1000},video:{mode:'on',size:{width:1280,height:800}},trace:'off'});
 test('capture an honest 30-second control walkthrough',async({page},info)=>{
+ test.setTimeout(60000);
  await page.goto('/?local');
  const video=page.locator('video');
  await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(1);
