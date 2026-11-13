@@ -176,3 +176,16 @@
  .dhago .media-settings-button .media-button-icon,
  .dhago .media-fullscreen-button .media-button-icon { translate: 0 -7px; }
 }
+
+
+/* Accessibility safeguard: Scaffold's 15rem hiding breakpoint grows when a
+   visitor increases their root font size. At 200% text size, 15rem = 480px,
+   which incorrectly removes captions/settings from a 375px player. DHAGO uses
+   a deliberate two-row shelf, so retain available controls instead. Honor
+   data-hidden: genuinely unavailable components remain hidden. */
+@container media-root (width < 15rem) {
+  .dhago .media-captions-button:not([data-hidden]),
+  .dhago .media-settings-button:not([data-hidden]) {
+    display: grid;
+  }
+}

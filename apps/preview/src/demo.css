@@ -64,3 +64,37 @@ footer a { text-underline-offset:3px; }
  h1 { font-size: clamp(34px, 8.8vw, 52px); }
  .intro-note { margin-top: 14px; font-size: 12px; line-height: 1.6; }
 }
+
+
+/* Woven chapter selvages: restrained coloured inlay over a plain weave.
+   Each edge is decorative; chapter titles and times carry the meaning. */
+.chapter { position: relative; isolation: isolate; }
+.chapter::before {
+  content: ""; position: absolute; top: 0; inset-inline: 0; height: 6px;
+  background-color: var(--chapter-thread, #b8a994);
+  background-image:
+    repeating-linear-gradient(90deg, #17191857 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(0deg, #fff7 0 1px, transparent 1px 3px);
+  border-bottom: 1px solid #17191826; pointer-events: none;
+}
+.chapter:nth-child(2) { --chapter-thread: #9ba8a0; }
+.chapter:nth-child(2)::before {
+  background-image: repeating-linear-gradient(45deg, #17191859 0 1px, transparent 1px 6px),
+                    repeating-linear-gradient(-45deg, #fff7 0 1px, transparent 1px 6px);
+}
+.chapter:nth-child(3) { --chapter-thread: #bba28a; }
+.chapter:nth-child(3)::before {
+  background-image: repeating-linear-gradient(90deg, #17191850 0 2px, transparent 2px 7px),
+                    repeating-linear-gradient(0deg, #fff8 0 1px, transparent 1px 3px);
+}
+.chapter:nth-child(4) { --chapter-thread: #bc7569; }
+.chapter:nth-child(4)::before {
+  background-image: repeating-linear-gradient(135deg, #17191859 0 1px, transparent 1px 4px),
+                    repeating-linear-gradient(0deg, #fff7 0 2px, transparent 2px 6px);
+}
+.chapter[aria-current="true"] { background-color: #eae1d4; box-shadow: inset 0 0 0 2px #8a3d2b; }
+.chapter[aria-current="true"]::before { height: 8px; }
+@media (forced-colors: active) {
+  .chapter::before { background: CanvasText; }
+  .chapter[aria-current="true"] { outline: 2px solid Highlight; outline-offset: -2px; }
+}
