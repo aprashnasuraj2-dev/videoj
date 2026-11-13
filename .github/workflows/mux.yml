@@ -1,0 +1,29 @@
+name: Provision Mux demo media
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['scripts/mux-upload.mjs', 'apps/preview/public/media/studies-in-thread.mp4']
+concurrency:
+  group: mux-demo-media
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Upload or reuse original film
+        env:
+          MUX_TOKEN_ID: ${{ secrets.MUX_TOKEN_ID }}
+          MUX_TOKEN_SECRET: ${{ secrets.MUX_TOKEN_SECRET }}
+        run: node scripts/mux-upload.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: public-mux-configuration
+          path: apps/preview/src/media.json

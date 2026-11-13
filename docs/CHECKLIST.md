@@ -1,6 +1,6 @@
 # DHAGO: 100-step implementation checklist
 
-**27/100 complete** | 3 in progress | 0 blocked | Updated 2026-11-13T11:11:14.493Z
+**38/100 complete** | 33 in progress | 0 blocked | Updated 2026-11-13T11:36:22.113Z
 
 This is evidence-based task completion, not a percentage of contest quality. See [worklog](worklog.md), [status](status.json) and [plan](PLAN.md). Blocked steps remain unchecked; independent later work may continue.
 
@@ -164,13 +164,13 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Record the installed @videojs/html version, lockfile and runtime component registration. Reject accidental v8 patterns such as videojs() initialization unless explicitly supported by the installed v10 docs. A package name alone does not prove runtime playback.
 
-  Evidence: [skin.json](../skin.json)
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
 
 - [ ] **027 - Create the first playable baseline** - IN_PROGRESS
 
   Start the generated preview with an authorized test clip, activate play and observe advancing time and rendered frames. Commit this small known-working baseline before custom styling so later regressions have a useful comparison point.
 
-  Evidence: [skin.json](../skin.json)
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
 
 - [x] **028 - Write a project AGENTS.md** - DONE
 
@@ -192,41 +192,59 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
 ## 04 / STATE & ESSENTIAL CONTROLS
 
-- [ ] **031 - Inventory real component imports** - NOT_STARTED
+- [x] **031 - Inventory real component imports** - DONE
 
   Map every visible and nonvisual component to its installed reference and import. Include status announcements and an error surface. Compound controls need their child registrations too; unknown custom elements can look present while doing nothing.
 
-- [ ] **032 - Implement play, pause and ended states** - NOT_STARTED
+  Evidence: [src/video/skin.ts](../src/video/skin.ts), [src/video/skin.html](../src/video/skin.html)
+
+- [ ] **032 - Implement play, pause and ended states** - IN_PROGRESS
 
   Use the provided play control with correct state labels and replay behavior. Test the overlay and shelf buttons against actual playback; if play() is rejected, expose a useful message instead of showing a false playing icon.
 
-- [ ] **033 - Build a conventional seek slider** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **033 - Build a conventional seek slider** - IN_PROGRESS
 
   Connect timeline fill, buffer, thumb and pointer/keyboard seeking to the real media state. Handle zero or unavailable duration, dragging outside bounds and seeking near the end. Never fake buffered progress for visual polish.
 
-- [ ] **034 - Make time readable and stable** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **034 - Make time readable and stable** - IN_PROGRESS
 
   Display elapsed and total time with tabular numerals and clear labels. Before metadata, show an honest placeholder. Avoid NaN:NaN, negative elapsed time, shifting widths and announcements on every time-update event.
 
-- [ ] **035 - Wire mute and volume correctly** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **035 - Wire mute and volume correctly** - IN_PROGRESS
 
   Show a discoverable mute control and a working volume adjustment where the platform supports it. Restore the previous nonzero level when unmuting. Test device volume restrictions and describe platform-controlled behavior without a misleading inactive slider.
 
-- [ ] **036 - Implement real fullscreen** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **036 - Implement real fullscreen** - IN_PROGRESS
 
   Request fullscreen on the appropriate player container so custom controls remain included where supported. Handle exiting via Escape and browser UI. Test iPhone native video fullscreen separately; do not label a CSS-expanded panel as system fullscreen.
 
-- [ ] **037 - Add reliable caption controls** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **037 - Add reliable caption controls** - IN_PROGRESS
 
   Provide a valid caption track for the demo and a clear on/off or language selector. Reflect availability, selection and errors accurately. Keep captions clear of the control shelf, including mobile landscape and enlarged text.
 
-- [ ] **038 - Add one compact settings surface** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **038 - Add one compact settings surface** - IN_PROGRESS
 
   Offer playback speed only if supported; use clear current values and keyboard-operable choices. Avoid quality controls until the media feature truly supports them. An MP4 demo does not justify a fabricated adaptive-quality menu.
 
-- [ ] **039 - Handle loading and playback failure** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **039 - Handle loading and playback failure** - IN_PROGRESS
 
   Style idle, metadata loading, buffering, seeking, paused, playing, ended and failed states. Show a stable buffer indicator only when needed. Include a useful retry action and safe media fallback without silently abandoning the Mux bonus.
+
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
 
 - [ ] **040 - Verify baseline acceptance now** - NOT_STARTED
 
@@ -234,41 +252,59 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
 ## 05 / SIGNATURE SKIN IMPLEMENTATION
 
-- [ ] **041 - Separate skin and showcase styles** - NOT_STARTED
+- [x] **041 - Separate skin and showcase styles** - DONE
 
   Keep player-specific markup/styles in the generated src/ structure and demo narrative under apps/preview/ or its verified equivalent. Namespace classes. The skin must not depend on the host page background, global reset or a particular page font.
 
-- [ ] **042 - Build the solid control shelf** - NOT_STARTED
+  Evidence: [src/create-player.ts](../src/create-player.ts), [apps/preview/src/demo.css](../apps/preview/src/demo.css)
+
+- [ ] **042 - Build the solid control shelf** - IN_PROGRESS
 
   Place essential controls against an opaque, stable surface so moving footage cannot destroy contrast. Let the video remain visually dominant. In fullscreen, keep the shelf attached to the player container and preserve safe-area padding.
 
-- [ ] **043 - Implement original weave texture** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **043 - Implement original weave texture** - IN_PROGRESS
 
   Generate a restrained repeating pattern for chapter segments with small CSS gradients or SVG. Keep it decorative and noninteractive. Reduce visual density around labels; never put low-contrast texture directly behind essential numbers or icon strokes.
 
-- [ ] **044 - Map chapter data to actual time** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **044 - Map chapter data to actual time** - IN_PROGRESS
 
   Store titles and real start/end seconds in a documented format. Compute segment widths from duration, clamp invalid values and test overlaps. With no chapters, retain the normal timeline; do not invent chapter content or timings.
 
-- [ ] **045 - Add seek preview feedback** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **045 - Add seek preview feedback** - IN_PROGRESS
 
   Show actual timestamp and chapter name on hover/focus or touch interaction without requiring either. Include preview thumbnails only if verified storyboards exist and load reliably. A timestamp-only fallback is better than broken or invented thumbnail frames.
 
-- [ ] **046 - Polish focus, hover and pressed states** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **046 - Polish focus, hover and pressed states** - IN_PROGRESS
 
   Resolve every icon and button across resting, hover, focus, active, muted and disabled states. Keep focus distinct from hover. On touch, avoid sticky hover behavior and ensure no action requires a precision hover target.
 
-- [ ] **047 - Make motion purposeful** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **047 - Make motion purposeful** - IN_PROGRESS
 
   Use brief opacity or position transitions for feedback, with an initial 120-180ms design target. Avoid perpetual weave motion and layout-shifting flourishes. Reduced-motion mode removes nonessential movement while preserving immediate visible state feedback.
 
-- [ ] **048 - Evaluate optional A-B replay** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [x] **048 - Evaluate optional A-B replay** - DONE
 
   Only after essential checks pass, add two labeled boundary actions and a clear reset. Clamp A below B, seek to A only when appropriate and respect pause/end behavior. Remove the entire feature if it causes timeline ambiguity or instability.
 
-- [ ] **049 - Package theme customization** - NOT_STARTED
+  Evidence: [docs/design.md](../docs/design.md)
+
+- [ ] **049 - Package theme customization** - IN_PROGRESS
 
   Expose a small token surface, safe defaults and a documented compact layout. Test one alternate accent plus a second unrelated host page. A configurable color is not automatically accessible; state which foreground settings were measured together.
+
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
 
 - [ ] **050 - Review the actual visual artifact** - NOT_STARTED
 
@@ -276,25 +312,35 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
 ## 06 / RESPONSIVENESS & ACCESSIBILITY
 
-- [ ] **051 - Test width-driven layout** - NOT_STARTED
+- [ ] **051 - Test width-driven layout** - IN_PROGRESS
 
   Use player/container width as the breakpoint signal where supported. At 320px, move essentials into two rows instead of squeezing labels. Test portrait, landscape and embedded players; viewport-wide CSS can fail inside narrow content columns.
 
-- [ ] **052 - Preserve all essential functions** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **052 - Preserve all essential functions** - IN_PROGRESS
 
   Keep play/pause, seek, time, mute/volume access and fullscreen discoverable at narrow widths. Overflow menus may hold secondary settings, not silently remove essential actions. Respect phone safe areas without covering the timeline.
 
-- [ ] **053 - Audit the complete keyboard route** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **053 - Audit the complete keyboard route** - IN_PROGRESS
 
   Tab through controls in visual order, activate buttons with expected keys and operate sliders with arrows. Test Home/End when provided. Prevent duplicate shortcuts, page scrolling on consumed playback keys and global hotkeys that capture typing elsewhere.
 
-- [ ] **054 - Verify popup focus behavior** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **054 - Verify popup focus behavior** - IN_PROGRESS
 
   Open each menu with keyboard, move between choices, press Escape and confirm focus returns to its trigger. Do not trap focus in nonmodal popovers. Ensure menus are reachable and unclipped in fullscreen and short landscape players.
 
-- [ ] **055 - Strengthen visible focus** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **055 - Strengthen visible focus** - IN_PROGRESS
 
   Apply a high-contrast outline with sufficient offset around each interactive target. Keep controls visible while focused; idle auto-hide must never hide the focused action. Test focus over both the dark and light shelf treatment.
+
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
 
 - [ ] **056 - Check semantics with assistive technology** - NOT_STARTED
 
@@ -308,9 +354,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Test 200% zoom and a narrow reflow case, large text, long chapter titles and translated labels. Wrap or truncate with accessible full names. Never shrink essential labels until they technically fit but become unreadable.
 
-- [ ] **059 - Honor user preferences** - NOT_STARTED
+- [ ] **059 - Honor user preferences** - IN_PROGRESS
 
   Test prefers-reduced-motion and remove ornamental animation. Provide solid surfaces without relying on blur, and honor contrast preferences where implemented. Test actual emulated media conditions, not merely the existence of a CSS media-query block.
+
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
 
 - [ ] **060 - Conduct a timed first-use trial** - NOT_STARTED
 
@@ -318,29 +366,41 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
 ## 07 / VIDEO, MUX & REAL-SITE BONUS
 
-- [ ] **061 - Choose one rights-cleared video** - NOT_STARTED
+- [x] **061 - Choose one rights-cleared video** - DONE
 
   Prefer a 60-120 second owner-created craft, landscape or project walkthrough with bright and dark scenes. Record creator, permission and any music terms. Apache licensing the skin does not automatically relicense third-party video, fonts or artwork.
 
-- [ ] **062 - Prepare the media package with AI** - NOT_STARTED
+  Evidence: [scripts/create-film.py](../scripts/create-film.py), [docs/media.md](../docs/media.md)
+
+- [x] **062 - Prepare the media package with AI** - DONE
 
   AI can edit authorized footage, create an original title card, compress a web version and extract a poster. If source footage is unavailable, create a simple original motion study from code rather than downloading unlicensed cinematic footage.
 
-- [ ] **063 - Produce real captions and chapters** - NOT_STARTED
+  Evidence: [apps/preview/public/media/studies-in-thread.mp4](../apps/preview/public/media/studies-in-thread.mp4), [apps/preview/public/media/poster.webp](../apps/preview/public/media/poster.webp)
+
+- [x] **063 - Produce real captions and chapters** - DONE
 
   Generate a transcript if there is speech, correct names and timestamps, and export WebVTT captions plus chapter metadata. For a silent study, use honest descriptive labels; do not fabricate spoken dialogue just to demonstrate captions.
 
-- [ ] **064 - Prepare the Mux account handoff** - NOT_STARTED
+  Evidence: [apps/preview/public/media/captions.vtt](../apps/preview/public/media/captions.vtt), [apps/preview/public/media/chapters.vtt](../apps/preview/public/media/chapters.vtt)
+
+- [x] **064 - Prepare the Mux account handoff** - DONE
 
   Give the owner the exact sign-up/upload steps and filename. Owner handles identity, authentication and plan choice. If an approved connector exists, AI may use it within granted scope; never request that passwords or secrets be pasted into the repository.
 
-- [ ] **065 - Upload a persistent public asset** - NOT_STARTED
+  Evidence: [docs/media.md](../docs/media.md), [.github/workflows/mux.yml](../.github/workflows/mux.yml)
+
+- [ ] **065 - Upload a persistent public asset** - IN_PROGRESS
 
   Create a standard asset with public playback and wait for Ready. Record asset ID privately and playback ID in the manifest. Avoid temporary demo assets; the Mux docs console warns its test assets are deleted after 24 hours [S5].
 
-- [ ] **066 - Connect the actual Mux source** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **066 - Connect the actual Mux source** - IN_PROGRESS
 
   Use the installed Video.js v10 media integration for Mux/HLS, verified against matching docs. Test manifest and segments, browser playback and seeking. The public playback ID is safe to expose; management credentials must stay outside the browser bundle.
+
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
 
 - [ ] **067 - Verify the Mux bonus end to end** - NOT_STARTED
 
@@ -354,31 +414,43 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   AI prepares a useful portfolio case study or a tightly scoped existing-site integration. Keep the same skin source and verified video. A duplicate contest sandbox is weaker evidence of real use; the bonus is ultimately the judges decision.
 
-- [ ] **070 - Preserve fallback and judging access** - NOT_STARTED
+- [ ] **070 - Preserve fallback and judging access** - IN_PROGRESS
 
   Keep an authorized fallback source for resilience, but report which source is active. Test public access without a session. Store the original video safely and keep both URLs, the deployment and the Mux asset live through judging.
 
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
 ## 08 / QUALITY & FAILURE TESTING
 
-- [ ] **071 - Write a behavior-focused test matrix** - NOT_STARTED
+- [x] **071 - Write a behavior-focused test matrix** - DONE
 
   Cover every essential action plus captions, chapter seeking and any optional replay. Specify setup, action and expected media state. Keep test IDs stable; avoid tests that merely assert implementation classes exist.
 
-- [ ] **072 - Automate core actions in-browser** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [tests/player.spec.ts](../tests/player.spec.ts)
+
+- [ ] **072 - Automate core actions in-browser** - IN_PROGRESS
 
   With Playwright or equivalent, prove time advances after play, stops after pause and changes after seeking. Verify mute state and volume where supported. Handle loading deterministically and assert meaningful outcomes rather than fixed sleep delays.
 
-- [ ] **073 - Separate platform-limited checks** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [x] **073 - Separate platform-limited checks** - DONE
 
   Fullscreen and audio policies may require real user gestures or headed/device tests. Mark automated gaps and complete manual checks where possible. A passing mocked fullscreen call cannot prove real fullscreen behavior on a phone.
 
-- [ ] **074 - Run focused accessibility automation** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md)
+
+- [ ] **074 - Run focused accessibility automation** - IN_PROGRESS
 
   Scan resting player, open menu and error states with an appropriate scanner. Fix missing names, contrast findings and structural errors. Record tool version and scope; a clean scan cannot certify WCAG compliance or replace screen-reader use.
 
-- [ ] **075 - Capture a responsive visual set** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **075 - Capture a responsive visual set** - IN_PROGRESS
 
   Save screenshots at the planned player widths, light/dark footage, captions on and menu open. Inspect overflow, clipped focus rings, time alignment and touch spacing. Compare actual images, not only CSS breakpoint declarations.
+
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
 
 - [ ] **076 - Exercise media edge states** - NOT_STARTED
 
@@ -388,23 +460,31 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Test a throttled mobile profile and measure actual startup behavior. Target under 250KB compressed first-party demo JavaScript excluding video and fonts, if the starter permits; report measured exceptions. Prefer no continuous decorative requestAnimationFrame loop.
 
-- [ ] **078 - Model delivery and hosting load** - NOT_STARTED
+- [x] **078 - Model delivery and hosting load** - DONE
 
   At 4Mbps, a fully watched 2-minute video transfers about 60MB; 1,000 full views approach 60GB before adaptive bitrate or caching. Serve video through the media CDN; do not proxy segments through a quota-sensitive application worker.
 
-- [ ] **079 - Review security and dependency risk** - NOT_STARTED
+  Evidence: [docs/media.md](../docs/media.md)
+
+- [ ] **079 - Review security and dependency risk** - IN_PROGRESS
 
   Run available dependency checks and inspect introduced scripts, external requests and exposed variables. Lock dependencies and remove unused packages. Prioritize exploitable findings in shipped code; do not churn the stack for irrelevant development-only warnings.
 
-- [ ] **080 - Close failures with evidence** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
+- [ ] **080 - Close failures with evidence** - IN_PROGRESS
 
   Log failures, fix causes and re-run the affected checks. Publish tests/QA.md with PASS, FAIL and NOT TESTED entries, browser/device details and screenshots. Do not turn a test plan or an AI assertion into a claim that tests passed.
 
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+
 ## 09 / DEPLOYMENT & SUBMISSION FILES
 
-- [ ] **081 - Write concise reproducibility instructions** - NOT_STARTED
+- [x] **081 - Write concise reproducibility instructions** - DONE
 
   AI writes README.md with exact runtime, install, development and build commands from package.json, plus media configuration. Test a clean install with the lockfile. Explain how the skin can be used outside the contest demo.
+
+  Evidence: [README.md](../README.md), [tests/QA.md](../tests/QA.md)
 
 - [ ] **082 - Complete the license package** - NOT_STARTED
 
@@ -434,9 +514,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Write 3-4 accurate sentences explaining the metaphor, useful interaction and accessibility choices. Verify every feature claim against the release. Do not claim a tested screen-reader/device combination, original invention or bonus that the evidence cannot support.
 
-- [ ] **089 - Create and verify the handover archive** - NOT_STARTED
+- [ ] **089 - Create and verify the handover archive** - IN_PROGRESS
 
   Package source, lockfile, docs and submission assets, excluding node_modules, secrets and large redundant builds. Unzip into a clean directory and run documented commands. Create SHA-256 checksums; identify the archive with the tested release SHA.
+
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
 
 - [ ] **090 - Freeze the submission candidate** - NOT_STARTED
 

@@ -1,9 +1,11 @@
 import '@videojs/html/video/player';
+import '@videojs/html/media/mux-video';
 import './video/skin';
 import template from './video/skin.html?raw';
 
 export interface DhagoOptions {
   source: string;
+  playbackId?: string;
   poster?: string;
   chapters?: string;
   captions?: string;
@@ -28,8 +30,9 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
       el.setAttribute(attr,value.split(' ').map(id => ids.get(id) ?? id).join(' '));
     });
   }
-  const video = document.createElement('video');
-  video.src = options.source;
+  const video = document.createElement(options.playbackId ? 'mux-video' : 'video') as HTMLVideoElement;
+  if (options.playbackId) video.setAttribute('src', `https://stream.mux.com/${options.playbackId}.m3u8`);
+  else video.src = options.source;
   video.playsInline = true;
   video.preload = 'metadata';
   if (options.poster) video.poster = options.poster;

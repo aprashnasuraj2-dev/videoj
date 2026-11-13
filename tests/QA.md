@@ -1,0 +1,19 @@
+# Candidate verification — 2026-11-13
+
+PASS: clean `npm ci`; TypeScript check; Vite production build on Node 24.
+NOT TESTED: browser behavior, responsive screenshots, automated axe scan. All six local Playwright cases failed at browser launch because the Chromium archive download was corrupt. A second attempt with system Chromium also failed at launch because socket creation is prohibited in this runtime. These are infrastructure failures, not passing player tests. CI installs Chromium independently and retains traces/screenshots.
+NOT TESTED: physical iPhone, VoiceOver/NVDA, real fullscreen, phone first-use trial, production signed-out access, Mux HLS playback.
+
+## Behavior matrix
+
+| Action | Expected evidence | Automation |
+|---|---|---|
+| Play / pause | media time advances; paused becomes true | player.spec.ts |
+| Seek | End moves actual media time past 60 seconds | player.spec.ts |
+| Mute | actual media muted property is true | player.spec.ts |
+| Captions | captions text track becomes showing | player.spec.ts |
+| Settings / Escape | menu opens; focus returns to trigger | player.spec.ts |
+| Widths 320/375/768/1280 | no document overflow; essential controls visible; screenshot | player.spec.ts |
+| Accessibility | zero serious/critical axe findings in player | player.spec.ts |
+
+The deterministic suite uses `?local`, keeping local media checks independent of CDN availability. It does not establish the Mux bonus. Test Mux separately against the deployed default player and record manifest/segment requests and advancing media time.

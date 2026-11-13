@@ -1,0 +1,30 @@
+name: Package submission source
+on:
+  workflow_dispatch:
+  push:
+    tags: ['candidate-*']
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci && npm run typecheck && npm run build
+      - name: Package exact source revision
+        run: |
+          git archive --format=zip --output=dhago-source.zip HEAD
+          sha256sum dhago-source.zip > SHA256SUMS
+          git rev-parse HEAD > RELEASE_SHA
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dhago-submission-source
+          path: |
+            dhago-source.zip
+            SHA256SUMS
+            RELEASE_SHA
+            dist/

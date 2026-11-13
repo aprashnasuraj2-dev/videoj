@@ -9,3 +9,11 @@
 - Official CLI resolves to 10.4.0; verified version-matched HTML instructions and official skin guidance.
 - Current stage: Phase 1, brief and constraints. Next: create evidence documents, then official Scaffold baseline.
 - No public demo, Mux account asset, physical-device result, or contest submission is claimed.
+
+## 2026-11-13 — Candidate audit and workflow preparation
+
+- Audited all 100 rows against source; prior tracker was 27 DONE. Reconciled independently evidenced items to 38 DONE; unexecuted behavior claims remain IN_PROGRESS.
+- Clean npm install, typecheck and production build pass. Added six Playwright cases plus axe scope and responsive capture. Browser download was corrupt; system Chromium launch then failed due to runtime socket restrictions. No browser pass claimed.
+- Added candidate CI, exact-revision source packaging with checksums, and Mux provisioning with content-hash reuse. Mux uses runner secrets only and exports public configuration for review; no automatic default-branch mutation.
+- Actual Mux upload, ready state, browser playback, public deployment, screenshots, physical-device checks and submission remain unverified.
+- Direct default-branch push was rejected by automatic approval review; changes prepared on a review branch instead. Next: run CI there, confirm repository secret names, run Mux workflow after authorized integration, review public configuration, then verify real playback.
