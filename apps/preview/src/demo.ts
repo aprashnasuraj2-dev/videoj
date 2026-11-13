@@ -20,7 +20,7 @@ const seekButtons = document.querySelectorAll<HTMLButtonElement>('[data-seek]');
 seekButtons.forEach(button=>button.addEventListener('click',()=>{
   if (!Number.isFinite(video.duration)) return;
   video.currentTime = Math.min(Number(button.dataset.seek),video.duration);
-  player.querySelector<HTMLElement>('media-time-slider')?.focus();
+  player.querySelector<HTMLElement>('media-time-slider media-slider-thumb')?.focus();
 }));
 video.addEventListener('timeupdate',()=>{
   seekButtons.forEach((button,i)=>{

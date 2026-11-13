@@ -24,3 +24,10 @@
 - Retrieved actual CI evidence: 5/6 tests passed (real controls and four viewport sizes); axe failed on unnamed settings trigger. Added explicit accessible name.
 - Inspected desktop and 320px screenshots. Found invisible woven track despite passing keyboard seek: position:relative caused zero-width content in the inherited full-width chapter geometry. Restored absolute track positioning. Corrected horizontal volume thumb geometry.
 - Added real-cue chapter readout and distinct weave patterns; no invented media state. Expanded affected behavior/accessibility tests. See design-priorities.md for review criteria and rejected scope.
+
+## 2026-11-13 — Durable storage and deeper interaction fixes
+
+- Saved CI development evidence ZIP to the owner's selected Drive folder and verified file metadata/parent. See docs/storage.md for the actual file ID and URL.
+- Added manual Drive archive workflow with separate Google OAuth secrets, revision filenames, resumable uploads, checksum verification and receipts. Connected Drive access is not assumed to exist inside GitHub runners.
+- Deeper browser checks exposed fullscreen shelf loss: fullscreen state is reflected on the button, not the container. Switched layout rules to native :fullscreen and reserved shelf height. Slider keyboard tests now target the actual focusable thumb; chapter navigation restores focus to that thumb.
+- Added Apache-2.0 LICENSE and NOTICE; lazy-loaded optional Mux engine. No Mux upload or contest submission performed.

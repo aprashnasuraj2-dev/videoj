@@ -16,3 +16,7 @@ Read `docs/PLAN.md`, `docs/steps.json`, `docs/worklog.md`, and `docs/status.json
 ## Continue
 
 Inspect current files and the first incomplete step. Complete independent work, record precise evidence and blockers, run appropriate checks and synchronize progress with the repository. No background work is implied after a turn ends.
+
+## Owner priority and durable assets (2026-11-13)
+
+Optimize competitive player craft; use the 100-step checklist as an evidence trail, revising steps that miss defects or encourage busywork. Follow docs/design-priorities.md. Defer Mux upload until design readiness. Persist non-Git/non-Mux development assets and final submission packages to the exact owner Google Drive folder in docs/storage.md. GitHub Actions artifact retention alone is insufficient. Read back saved metadata; record file IDs/URLs and source SHA. Never store credentials in Drive archives or the repo. Google Drive CI needs its own OAuth secrets; do not reuse Mux credentials or assume the connected app supplies runner credentials.

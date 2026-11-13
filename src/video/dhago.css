@@ -114,9 +114,9 @@
   .dhago .media-volume-slider { flex-basis: 65px; max-width: 65px; }
   .dhago .media-captions-button { margin-inline-start: 0; }
 }
-.dhago[data-fullscreen] { width: 100%; height: 100dvh !important; border-radius: 0 !important; justify-content: center; overflow: auto !important; }
-.dhago[data-fullscreen] > video,.dhago[data-fullscreen] > mux-video { flex: 1; min-height: 0; height: 0; border-radius: 0; }
-.dhago[data-fullscreen] .dhago-shelf { padding-bottom: max(14px, env(safe-area-inset-bottom)); border-radius: 0; }
+.dhago:is(:fullscreen, [data-fullscreen]) { width: 100%; height: 100dvh !important; border-radius: 0 !important; justify-content: center; overflow: auto !important; }
+.dhago:is(:fullscreen, [data-fullscreen]) > video,.dhago:is(:fullscreen, [data-fullscreen]) > mux-video { flex: 1; min-height: 0; height: 0; border-radius: 0; }
+.dhago:is(:fullscreen, [data-fullscreen]) .dhago-shelf { padding-bottom: max(14px, env(safe-area-inset-bottom)); border-radius: 0; }
 @media (prefers-reduced-motion: reduce) { .dhago { --dhago-duration: 0ms; } .dhago *, .dhago *::before { animation-duration: .01ms !important; transition-duration: 0ms !important; } }
 @media (forced-colors: active) {
  .dhago { --dhago-bone: Canvas; --dhago-ink: CanvasText; --dhago-border: GrayText; --dhago-rust: Highlight; }
@@ -157,3 +157,6 @@
  .dhago .media-button { border-color: var(--dhago-muted); }
  .dhago .media-time-slider-track { outline: 1px solid var(--dhago-ink); }
 }
+
+.dhago:fullscreen > media-controls { flex: 0 0 auto; }
+.dhago:fullscreen > video, .dhago:fullscreen > mux-video { height: 0 !important; aspect-ratio: auto; }

@@ -8,7 +8,7 @@ test('actual media responds to play, pause, seek, mute, captions and settings', 
   await expect.poll(() => media.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(.2);
   await page.locator('media-play-button').click();
   await expect.poll(() => media.evaluate((v: HTMLVideoElement) => v.paused)).toBe(true);
-  const slider = page.locator('media-time-slider');
+  const slider = page.locator('media-time-slider media-slider-thumb');
   await slider.focus(); await page.keyboard.press('End');
   await expect.poll(() => media.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(60);
   await page.locator('media-mute-button').click();
@@ -47,7 +47,7 @@ test('volume, chapter seek, speed and ended replay change real state', async ({p
   await page.goto('/?local');
   const media=page.locator('video');
   await expect.poll(()=>media.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
-  await page.locator('media-volume-slider').focus(); await page.keyboard.press('Home');
+  await page.locator('media-volume-slider media-slider-thumb').focus(); await page.keyboard.press('Home');
   await expect.poll(()=>media.evaluate((v:HTMLVideoElement)=>v.volume)).toBe(0);
   await page.locator('[data-seek="32"]').click();
   await expect.poll(()=>media.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThanOrEqual(32);
@@ -92,7 +92,7 @@ for(const surface of ['warm','dark','minimal']) {
 test('no chapters retains a usable linear seek bar',async({page})=>{
   await page.goto('/?local&nochapters');
   await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
-  await page.locator('media-time-slider').focus(); await page.keyboard.press('ArrowRight');
+  await page.locator('media-time-slider media-slider-thumb').focus(); await page.keyboard.press('ArrowRight');
   await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(0);
 });
 
