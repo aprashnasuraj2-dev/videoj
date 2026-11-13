@@ -63,6 +63,16 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   };
   video.addEventListener('timeupdate', updateChapter);
   video.addEventListener('loadedmetadata', updateChapter);
+  // The ribbon's temporary thread slack reflects real decoding stalls.
+  // Do not use a timer, a polling loop, or guessed Mux quality/buffer data.
+  const setWaiting = () => {
+    if (!video.paused && !video.ended) container.setAttribute('data-thread-buffering', '');
+  };
+  const clearWaiting = () => container.removeAttribute('data-thread-buffering');
+  for (const event of ['waiting', 'stalled']) video.addEventListener(event, setWaiting);
+  for (const event of ['playing', 'canplay', 'seeked', 'pause', 'ended', 'error', 'emptied']) {
+    video.addEventListener(event, clearWaiting);
+  }
   video.querySelectorAll('track').forEach(t => t.addEventListener('load', updateChapter));
   player.querySelector('.dhago-retry')?.addEventListener('click',()=>{
     // A deliberate user retry, never an automatic loop or silent fallback.

@@ -59,3 +59,10 @@ Attempted preview deployment for exact revision 2ed92ded to Vercel team `surajde
 - Tried auto-build route: existing `dhago-studio` Pages project is Direct Uploads and cannot change source; creating a new Git-integrated Pages project failed with Cloudflare Git installation issue (API 8000011). Retained original R2 origin, DNS and rules instead.
 - Verified latest GitHub CI artifact and copied 35 MB passing evidence directly into Google Drive folder, file ID `1j7FHURfdYk6Wn0LlNrF8jDLjixnC4ml7`. No user tokens were placed in files, browser bundles or commits.
 - Remaining release blockers: complete production dist deployment instead of incremental R2 patch; physical/branded-browser compatibility and journal seek; full owner review and contest submission (not authorized/claimed).
+
+## 2026-11-13 — Thread metaphor made interactive (feature candidate)
+
+- Kept the research-grounded plain-weave/coloured inlay concept, added small purely visual stitches at real chapter boundaries, a bounded hold-to-tension cue via CSS `:active`, and caption cue readability treatment. The standard Video.js seek slider stays intact.
+- Wired a subtle waiting-state appearance to real HTML media lifecycle events. No fake buffered progress, continuous motion loop or simulated quality selector. Reduced-motion and forced-colors exclusions included.
+- Rejected spooling play icons, floating fiber particles and ceremonial protective-thread patterns: they would compromise recognizability, cost and/or cultural specificity without improving time navigation.
+- Dedicated Playwright tests added for true cue-derived knots, conventional keyboard seeking, held ribbon feedback and event-driven buffering. Commit/CI evidence required before marking completion; changes not yet deployed to Cloudflare.

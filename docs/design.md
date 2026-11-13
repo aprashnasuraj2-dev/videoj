@@ -27,3 +27,11 @@ Source: https://contra.com/community/topic/videojsskinschallenge
 ## Counterexample and scope
 
 If weave looks like buffered progress or chapter colors are required to understand it, simplify texture and use explicit labels. If a small player hides sound/fullscreen, use another row. Do not add accounts, chat, multiplayer, unnecessary AI APIs or a theme configurator. A quiet reusable skin with complete states is the target.
+
+## Second-pass interaction layer — threaded movement without novelty controls
+
+The November 13 idea review found three genuinely additive features missing from the static ribbon: (1) decorative chapter-join stitches attached to real Video.js cue intervals, not fabricated markers; (2) a brief CSS-only compression of the woven ribbon while the conventional slider is held; (3) a reduced-opacity waiting state grounded in real media `waiting/stalled` and cleared by actual readiness/play/pause/error events. No continuous animation loop, synthetic percentage, new buttons, or unbounded particle effect was introduced. Native caption cue styling uses a readable opaque dark plate, not decorative low-contrast embroidery.
+
+Materials rather than exact ritual or ceremonial motifs are the culturally grounded reference. The Asia InCH weaving account describes plain ground cloth with supplementary coloured weft inlay and other techniques: https://www.asiainch.org/craft/traditional-dhaka-cloth-weaving/ . Protective ritual threads carry specific religious meaning and are intentionally not replicated as interface symbols (background: https://palpadurbar.lumbini.gov.np/media/downloads/Abhautik_Sampadako_Abhilekhikaran_Booklet_2082_1.pdf ).
+
+**Counterexample:** If the join markers obscure short chapters, or the subtle compression reduces tap accuracy, remove those visual effects. They are not an excuse to change any standard Video.js behavior. Both remain disabled/reduced under forced-colors or reduced-motion settings as appropriate; the thumb and chapter names remain semantic.
