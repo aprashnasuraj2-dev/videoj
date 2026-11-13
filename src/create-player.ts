@@ -78,6 +78,42 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   video.addEventListener('timeupdate', updateChapter);
   video.addEventListener('loadedmetadata', updateChapter);
   video.addEventListener('ended', updateChapter);
+  // The conventional seek control briefly tensions the textile ribbon while
+  // pressed. Use capture on the actual slider; Video.js may capture/reposition
+  // the pointer during a drag, so pointerleave/lostcapture must NOT release it.
+  // Window listeners exist only during the active gesture, and are aborted on
+  // pointerup, cancellation or focus loss. No custom seeking is performed.
+  const seek = player.querySelector<HTMLElement>('media-time-slider');
+  if (seek) {
+    let activePress: AbortController | undefined;
+    const release = () => {
+      container.removeAttribute('data-thread-pull');
+      activePress?.abort();
+      activePress = undefined;
+    };
+    seek.addEventListener('pointerdown', (event: PointerEvent) => {
+      if (!event.isPrimary || event.button !== 0 || activePress) return;
+      activePress = new AbortController();
+      container.setAttribute('data-thread-pull', '');
+      const signal = activePress.signal;
+      window.addEventListener('pointerup', release, { capture: true, signal });
+      window.addEventListener('pointercancel', release, { capture: true, signal });
+      window.addEventListener('blur', release, { signal });
+    }, true);
+  }
+
+  // Thread slack is a restrained secondary cue for real decoding stalls.
+  // The existing native buffering indicator remains the primary signal.
+  const setWaiting = () => {
+    if (!video.paused && !video.ended && !video.error) {
+      container.setAttribute('data-thread-buffering', '');
+    }
+  };
+  const clearWaiting = () => container.removeAttribute('data-thread-buffering');
+  for (const event of ['waiting', 'stalled']) video.addEventListener(event, setWaiting);
+  for (const event of ['playing', 'canplay', 'seeked', 'pause', 'ended', 'error', 'emptied']) {
+    video.addEventListener(event, clearWaiting);
+  }
   video.querySelectorAll('track').forEach(t => t.addEventListener('load', updateChapter));
   player.querySelector('.dhago-retry')?.addEventListener('click',()=>{
     // A deliberate user retry, never an automatic loop or silent fallback.

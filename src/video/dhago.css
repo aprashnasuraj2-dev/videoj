@@ -189,3 +189,86 @@
     display: grid;
   }
 }
+
+
+/* Thread physics, bounded to a single interaction.
+   Joins come from Video.js's real chapter cue intervals; their visible stitches
+   are purely decorative and never replace the seek thumb or spoken chapter name. */
+.dhago .media-time-slider-chapter:not(:first-child)::before {
+  content: "";
+  display: block;
+  position: relative;
+  inset-inline-start: 4px;
+  top: 6px;
+  z-index: 3;
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--dhago-ink);
+  border-radius: 2px;
+  background: var(--dhago-bone);
+  box-shadow: inset 0 0 0 2px var(--dhago-rust);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+.dhago .media-time-slider-fill {
+  /* The actual media fill moves through the dyed weft; no fake progress. */
+  background-color: var(--dhago-rust);
+  background-image: repeating-linear-gradient(90deg, #fff6 0 1px, transparent 1px 5px);
+}
+.dhago .media-time-slider-chapters {
+  transition: transform var(--dhago-duration) ease-out, opacity var(--dhago-duration) ease-out;
+  transform-origin: center;
+}
+.dhago[data-thread-pull] .media-time-slider-chapters {
+  transform: scaleY(.86);
+}
+.dhago[data-thread-pull] .media-time-slider-thumb {
+  box-shadow: 0 0 0 2px var(--dhago-ink), 0 0 0 5px var(--dhago-bone);
+}
+.dhago .dhago-chapter-readout::before {
+  content: "";
+  align-self: center;
+  flex: 0 0 22px;
+  width: 22px;
+  height: 3px;
+  background: repeating-linear-gradient(90deg, var(--dhago-rust) 0 4px, var(--dhago-ink) 4px 5px);
+}
+/* Waiting and stalled are taken from actual media events, never inferred from
+   player artwork or a synthetic percentage. The spinner remains the indicator. */
+.dhago[data-thread-buffering] .media-time-slider-chapters {
+  opacity: .72;
+}
+.dhago[data-thread-buffering] .media-time-slider-thumb {
+  outline: 2px dashed var(--dhago-rust);
+  outline-offset: 4px;
+}
+
+/* Caption legibility comes first; native cues keep normal placement, selectable
+   font preferences and familiar reading order. No animated text or fake cues. */
+.dhago > video::cue,
+.dhago > mux-video::cue {
+  color: #f4ebdd;
+  background-color: rgba(23, 25, 24, .88);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  text-shadow: 0 1px 1px #000;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dhago .media-time-slider-chapters { transition: none; }
+  .dhago[data-thread-pull] .media-time-slider-chapters { transform: none; }
+}
+@media (forced-colors: active) {
+  .dhago .media-time-slider-chapter:not(:first-child)::before {
+    background: Canvas;
+    border: 2px solid CanvasText;
+    box-shadow: none;
+  }
+  .dhago .media-time-slider-fill { background: Highlight; }
+  .dhago[data-thread-buffering] .media-time-slider-thumb { outline-color: CanvasText; }
+}
+
+/* Many tiny cues should remain seekable: do not pack visual stitches until
+   the ribbon looks like a control filled with knots. This is presentation only. */
+@container media-root (width < 500px) {
+  .dhago .media-time-slider-chapters:has(.media-time-slider-chapter:nth-child(13))
+  .media-time-slider-chapter::before { display: none; }
+}
