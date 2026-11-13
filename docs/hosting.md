@@ -17,3 +17,11 @@ Record the source revision, public playback ID, object hashes, production smoke 
 ## Recovery
 
 To roll back, restore the prior HTML entry points and their matching source revision; retained hashed assets remain available. Never replace zone-wide rulesets or delete shared bucket content to deploy this project. Leave both direct domains enabled through judging.
+
+## 2026-11-13 incremental live repair (not final dist)
+
+Release source intent: `4f3f86c`. Exact public R2 objects: `assets/demo-mux-4f3f86c.js`, `assets/dhago-refine-4f3f86c.css`, `assets/journal-mux-4f3f86c.js`, `index.html`, `journal.html`. Each was uploaded and read back from R2 before reporting success. Former `index.html` is retained as `releases/2026-11-13-before-mux/index.html`. Existing hashed code, Mux adapter, original MP4, other buckets and Patro routes were not deleted or replaced. This targeted repair is **not** an exact deployment of the latest CI-generated `dist/`; that remains a release task.
+
+An external automated browser has no compatible H.264/AAC decoder and rejects the HLS variants. The same test browser earlier rejected the local MP4. GitHub Playwright Chromium on Linux successfully plays and seeks the Mux asset at the exact candidate revision. Run additional branded-browser and physical-device checks rather than claiming universal support.
+
+The empty `dhago-studio` Pages project is a Direct Uploads project and cannot be converted to a Git integration. New Git-connected Pages creation returned Cloudflare Git installation error 8000011. Keep dedicated static R2 hostnames; do not attempt to rewire the Patro zone or replace workers to work around the Pages connection.

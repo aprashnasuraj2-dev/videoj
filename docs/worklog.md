@@ -50,3 +50,12 @@ Attempted preview deployment for exact revision 2ed92ded to Vercel team `surajde
 ## Mobile screenshot follow-through
 
 - Although 2ed92ded passed behavior checks, actual screenshot inspection found its Settings visual label missing and the other labels left-aligned. Corrected all three with simple consistent text spans and centered labels; added assertions that all three labels are visible at narrow widths. This refinement is revision fdcc1a45 and must pass its affected checks.
+
+## 2026-11-13 — Critical live repair, verified CI and cross-service reconciliation
+
+- Reproduced exact-head CI regression on prior commit: enlarged root font triggered Scaffold's `@container width < 15rem` logic and hid Captions. Scoped an accessible override to DHAGO; added four distinct restrained selvages to chapter cards, matching journal notes, and corrected inaccurate 'silent' film copy to synthesized low-volume ambient audio. Commit `4f3f86c` passed 26/26 CI with real Mux test.
+- Cloudflare verified dedicated R2 bucket and both existing custom domains; unrelated Patro routes untouched. Initial live public homepage used local MP4 and /journal.html returned 404. Uploaded versioned `assets/demo-mux-4f3f86c.js`, `assets/dhago-refine-4f3f86c.css`, `assets/journal-mux-4f3f86c.js` and `journal.html`; published updated index.html last. Readback verified all objects. Preserved prior index as `releases/2026-11-13-before-mux/index.html` for rollback.
+- Independently confirmed both homepage domains and new public journal HTTP content. The live browser observed proper Mux element and correct manifest URL but failed video decoding in its environment; CI Chromium plays/seeks the same public Mux ID. Do not misrepresent either result as universal compatibility.
+- Tried auto-build route: existing `dhago-studio` Pages project is Direct Uploads and cannot change source; creating a new Git-integrated Pages project failed with Cloudflare Git installation issue (API 8000011). Retained original R2 origin, DNS and rules instead.
+- Verified latest GitHub CI artifact and copied 35 MB passing evidence directly into Google Drive folder, file ID `1j7FHURfdYk6Wn0LlNrF8jDLjixnC4ml7`. No user tokens were placed in files, browser bundles or commits.
+- Remaining release blockers: complete production dist deployment instead of incremental R2 patch; physical/branded-browser compatibility and journal seek; full owner review and contest submission (not authorized/claimed).

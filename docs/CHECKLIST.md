@@ -1,6 +1,6 @@
 # DHAGO: 100-step implementation checklist
 
-**66/100 complete** | 15 in progress | 0 blocked | Updated 2026-11-13T11:53:50.350Z
+**74/100 complete** | 13 in progress | 0 blocked | Updated 2026-11-13T13:29:49.761Z
 
 This is evidence-based task completion, not a percentage of contest quality. See [worklog](worklog.md), [status](status.json) and [plan](PLAN.md). Blocked steps remain unchecked; independent later work may continue.
 
@@ -302,11 +302,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [docs/design.md](../docs/design.md)
 
-- [ ] **049 - Package theme customization** - IN_PROGRESS
+- [x] **049 - Package theme customization** - DONE
 
   Expose a small token surface, safe defaults and a documented compact layout. Test one alternate accent plus a second unrelated host page. A configurable color is not automatically accessible; state which foreground settings were measured together.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
 
 - [x] **050 - Review the actual visual artifact** - DONE
 
@@ -328,11 +328,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **053 - Audit the complete keyboard route** - IN_PROGRESS
+- [x] **053 - Audit the complete keyboard route** - DONE
 
   Tab through controls in visual order, activate buttons with expected keys and operate sliders with arrows. Test Home/End when provided. Prevent duplicate shortcuts, page scrolling on consumed playback keys and global hotkeys that capture typing elsewhere.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
 
 - [x] **054 - Verify popup focus behavior** - DONE
 
@@ -354,15 +354,19 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Measure text, icon, focus and track pairs over near-white, near-black and mixed video frames. Label chapters and selected settings with more than color. Forced-colors mode must retain the timeline, boundaries and focus visibility.
 
-- [ ] **058 - Check zoom and long content** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md)
+
+- [ ] **058 - Check zoom and long content** - IN_PROGRESS
 
   Test 200% zoom and a narrow reflow case, large text, long chapter titles and translated labels. Wrap or truncate with accessible full names. Never shrink essential labels until they technically fit but become unreadable.
 
-- [ ] **059 - Honor user preferences** - IN_PROGRESS
+  Evidence: [tests/QA.md](../tests/QA.md)
+
+- [x] **059 - Honor user preferences** - DONE
 
   Test prefers-reduced-motion and remove ornamental animation. Provide solid surfaces without relying on blur, and honor contrast preferences where implemented. Test actual emulated media conditions, not merely the existence of a CSS media-query block.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
 
 - [ ] **060 - Conduct a timed first-use trial** - NOT_STARTED
 
@@ -398,31 +402,35 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Create a standard asset with public playback and wait for Ready. Record asset ID privately and playback ID in the manifest. Avoid temporary demo assets; the Mux docs console warns its test assets are deleted after 24 hours [S5].
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md), [docs/hosting.md](../docs/hosting.md)
 
-- [ ] **066 - Connect the actual Mux source** - IN_PROGRESS
+- [x] **066 - Connect the actual Mux source** - DONE
 
   Use the installed Video.js v10 media integration for Mux/HLS, verified against matching docs. Test manifest and segments, browser playback and seeking. The public playback ID is safe to expose; management credentials must stay outside the browser bundle.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
 
-- [ ] **067 - Verify the Mux bonus end to end** - NOT_STARTED
+- [ ] **067 - Verify the Mux bonus end to end** - IN_PROGRESS
 
   Observe the submitted player requesting the expected public asset and advancing through real video. Record playback ID, deployment URL, time and network evidence. If fallback media is playing instead, treat the Mux bonus as unverified until fixed.
+
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/hosting.md](../docs/hosting.md)
 
 - [ ] **068 - Control cost and media lifetime** - NOT_STARTED
 
   Current Mux pricing advertises a free plan with up to 10 stored videos and 100K monthly delivery minutes [S6]. Confirm the account-specific limits. Example: 10,000 full 2-minute views equal 20,000 delivery minutes, before replays and other account traffic.
 
-- [ ] **069 - Integrate into one genuine live page** - NOT_STARTED
+- [ ] **069 - Integrate into one genuine live page** - IN_PROGRESS
 
   AI prepares a useful portfolio case study or a tightly scoped existing-site integration. Keep the same skin source and verified video. A duplicate contest sandbox is weaker evidence of real use; the bonus is ultimately the judges decision.
+
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/hosting.md](../docs/hosting.md)
 
 - [ ] **070 - Preserve fallback and judging access** - IN_PROGRESS
 
   Keep an authorized fallback source for resilience, but report which source is active. Test public access without a session. Store the original video safely and keep both URLs, the deployment and the Mux asset live through judging.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md), [docs/hosting.md](../docs/hosting.md)
 
 ## 08 / QUALITY & FAILURE TESTING
 
@@ -450,21 +458,23 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **075 - Capture a responsive visual set** - IN_PROGRESS
+- [x] **075 - Capture a responsive visual set** - DONE
 
   Save screenshots at the planned player widths, light/dark footage, captions on and menu open. Inspect overflow, clipped focus rings, time alignment and touch spacing. Compare actual images, not only CSS breakpoint declarations.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
 
-- [ ] **076 - Exercise media edge states** - IN_PROGRESS
+- [x] **076 - Exercise media edge states** - DONE
 
   Test slow loading, unavailable source, retry, end/replay, rapid play/pause and seek-before-metadata. Check invalid or missing chapters and long captions. Error copy should help recovery without displaying raw credentials, stack traces or developer-only details.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
 
-- [ ] **077 - Check constrained-device performance** - NOT_STARTED
+- [x] **077 - Check constrained-device performance** - DONE
 
   Test a throttled mobile profile and measure actual startup behavior. Target under 250KB compressed first-party demo JavaScript excluding video and fonts, if the starter permits; report measured exceptions. Prefer no continuous decorative requestAnimationFrame loop.
+
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
 
 - [x] **078 - Model delivery and hosting load** - DONE
 
@@ -502,21 +512,29 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Populate entry title, demo URL, repository URL if shared, version, release SHA, visual paths and description path. Add Mux playback ID and real-site URL only when verified; use null for excluded bonuses, not plausible-looking placeholders.
 
+  Evidence: [tests/QA.md](../tests/QA.md)
+
 - [ ] **084 - Deploy the actual final build** - NOT_STARTED
 
   Use the starter deploy command or verified host workflow after inspecting scripts. Set a stable production URL with no password, preview authentication or login gate. Keep secrets server-side, and verify allowed media origins and HTTPS.
 
-- [ ] **085 - Smoke-test as a new visitor** - NOT_STARTED
+- [ ] **085 - Smoke-test as a new visitor** - IN_PROGRESS
 
   Open the production URL in a clean signed-out session and on a phone if available. Start video, seek, use captions and fullscreen; confirm network media requests and no console errors. A successful hosting dashboard is insufficient evidence.
+
+  Evidence: [tests/QA.md](../tests/QA.md)
 
 - [ ] **086 - Capture the final visuals** - IN_PROGRESS
 
   Generate a sharp 1600x1000 hero image and a phone-width screenshot as internal targets, adjusting to actual form limits. AI must capture the running skin, not composite nonexistent controls. Keep video content and the unique ribbon visible.
 
-- [ ] **087 - Record a short proof video** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md)
+
+- [x] **087 - Record a short proof video** - DONE
 
   Capture 25-40 seconds showing play, timeline seeking, captions or settings, narrow layout and visible keyboard focus. Keep transitions clear and reduced-motion behavior truthful. A plain screen capture is better than an unrepresentative promotional animation.
+
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
 
 - [ ] **088 - Draft the final description** - IN_PROGRESS
 
@@ -526,7 +544,7 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Package source, lockfile, docs and submission assets, excluding node_modules, secrets and large redundant builds. Unzip into a clean directory and run documented commands. Create SHA-256 checksums; identify the archive with the tested release SHA.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md), [docs/storage.md](../docs/storage.md)
 
 - [ ] **090 - Freeze the submission candidate** - NOT_STARTED
 

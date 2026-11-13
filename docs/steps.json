@@ -579,10 +579,11 @@
     "phaseTitle": "05 / SIGNATURE SKIN IMPLEMENTATION",
     "title": "Package theme customization",
     "detail": "Expose a small token surface, safe defaults and a documented compact layout. Test one alternate accent plus a second unrelated host page. A configurable color is not automatically accessible; state which foreground settings were measured together.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "docs/media.md",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626"
     ]
   },
   {
@@ -627,10 +628,11 @@
     "phaseTitle": "06 / RESPONSIVENESS & ACCESSIBILITY",
     "title": "Audit the complete keyboard route",
     "detail": "Tab through controls in visual order, activate buttons with expected keys and operate sliders with arrows. Test Home/End when provided. Prevent duplicate shortcuts, page scrolling on consumed playback keys and global hotkeys that capture typing elsewhere.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "docs/media.md",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626"
     ]
   },
   {
@@ -673,7 +675,9 @@
     "title": "Measure real contrast and color use",
     "detail": "Measure text, icon, focus and track pairs over near-white, near-black and mixed video frames. Label chapters and selected settings with more than color. Forced-colors mode must retain the timeline, boundaries and focus visibility.",
     "status": "IN_PROGRESS",
-    "evidence": []
+    "evidence": [
+      "tests/QA.md"
+    ]
   },
   {
     "id": 58,
@@ -681,8 +685,10 @@
     "phaseTitle": "06 / RESPONSIVENESS & ACCESSIBILITY",
     "title": "Check zoom and long content",
     "detail": "Test 200% zoom and a narrow reflow case, large text, long chapter titles and translated labels. Wrap or truncate with accessible full names. Never shrink essential labels until they technically fit but become unreadable.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "tests/QA.md"
+    ]
   },
   {
     "id": 59,
@@ -690,10 +696,11 @@
     "phaseTitle": "06 / RESPONSIVENESS & ACCESSIBILITY",
     "title": "Honor user preferences",
     "detail": "Test prefers-reduced-motion and remove ornamental animation. Provide solid surfaces without relying on blur, and honor contrast preferences where implemented. Test actual emulated media conditions, not merely the existence of a CSS media-query block.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626"
     ]
   },
   {
@@ -762,7 +769,8 @@
     "status": "IN_PROGRESS",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "docs/media.md",
+      "docs/hosting.md"
     ]
   },
   {
@@ -771,10 +779,11 @@
     "phaseTitle": "07 / VIDEO, MUX & REAL-SITE BONUS",
     "title": "Connect the actual Mux source",
     "detail": "Use the installed Video.js v10 media integration for Mux/HLS, verified against matching docs. Test manifest and segments, browser playback and seeking. The public playback ID is safe to expose; management credentials must stay outside the browser bundle.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "docs/media.md",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626"
     ]
   },
   {
@@ -783,8 +792,11 @@
     "phaseTitle": "07 / VIDEO, MUX & REAL-SITE BONUS",
     "title": "Verify the Mux bonus end to end",
     "detail": "Observe the submitted player requesting the expected public asset and advancing through real video. Record playback ID, deployment URL, time and network evidence. If fallback media is playing instead, treat the Mux bonus as unverified until fixed.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "tests/QA.md",
+      "docs/hosting.md"
+    ]
   },
   {
     "id": 68,
@@ -801,8 +813,11 @@
     "phaseTitle": "07 / VIDEO, MUX & REAL-SITE BONUS",
     "title": "Integrate into one genuine live page",
     "detail": "AI prepares a useful portfolio case study or a tightly scoped existing-site integration. Keep the same skin source and verified video. A duplicate contest sandbox is weaker evidence of real use; the bonus is ultimately the judges decision.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "tests/QA.md",
+      "docs/hosting.md"
+    ]
   },
   {
     "id": 70,
@@ -813,7 +828,8 @@
     "status": "IN_PROGRESS",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "docs/media.md",
+      "docs/hosting.md"
     ]
   },
   {
@@ -869,10 +885,11 @@
     "phaseTitle": "08 / QUALITY & FAILURE TESTING",
     "title": "Capture a responsive visual set",
     "detail": "Save screenshots at the planned player widths, light/dark footage, captions on and menu open. Inspect overflow, clipped focus rings, time alignment and touch spacing. Compare actual images, not only CSS breakpoint declarations.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626"
     ]
   },
   {
@@ -881,10 +898,11 @@
     "phaseTitle": "08 / QUALITY & FAILURE TESTING",
     "title": "Exercise media edge states",
     "detail": "Test slow loading, unavailable source, retry, end/replay, rapid play/pause and seek-before-metadata. Check invalid or missing chapters and long captions. Error copy should help recovery without displaying raw credentials, stack traces or developer-only details.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
-      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626"
     ]
   },
   {
@@ -893,8 +911,11 @@
     "phaseTitle": "08 / QUALITY & FAILURE TESTING",
     "title": "Check constrained-device performance",
     "detail": "Test a throttled mobile profile and measure actual startup behavior. Target under 250KB compressed first-party demo JavaScript excluding video and fonts, if the starter permits; report measured exceptions. Prefer no continuous decorative requestAnimationFrame loop.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "tests/QA.md",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626"
+    ]
   },
   {
     "id": 78,
@@ -962,7 +983,9 @@
     "title": "Create the submission manifest",
     "detail": "Populate entry title, demo URL, repository URL if shared, version, release SHA, visual paths and description path. Add Mux playback ID and real-site URL only when verified; use null for excluded bonuses, not plausible-looking placeholders.",
     "status": "IN_PROGRESS",
-    "evidence": []
+    "evidence": [
+      "tests/QA.md"
+    ]
   },
   {
     "id": 84,
@@ -979,8 +1002,10 @@
     "phaseTitle": "09 / DEPLOYMENT & SUBMISSION FILES",
     "title": "Smoke-test as a new visitor",
     "detail": "Open the production URL in a clean signed-out session and on a phone if available. Start video, seek, use captions and fullscreen; confirm network media requests and no console errors. A successful hosting dashboard is insufficient evidence.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "IN_PROGRESS",
+    "evidence": [
+      "tests/QA.md"
+    ]
   },
   {
     "id": 86,
@@ -989,7 +1014,9 @@
     "title": "Capture the final visuals",
     "detail": "Generate a sharp 1600x1000 hero image and a phone-width screenshot as internal targets, adjusting to actual form limits. AI must capture the running skin, not composite nonexistent controls. Keep video content and the unique ribbon visible.",
     "status": "IN_PROGRESS",
-    "evidence": []
+    "evidence": [
+      "tests/QA.md"
+    ]
   },
   {
     "id": 87,
@@ -997,8 +1024,11 @@
     "phaseTitle": "09 / DEPLOYMENT & SUBMISSION FILES",
     "title": "Record a short proof video",
     "detail": "Capture 25-40 seconds showing play, timeline seeking, captions or settings, narrow layout and visible keyboard focus. Keep transitions clear and reduced-motion behavior truthful. A plain screen capture is better than an unrepresentative promotional animation.",
-    "status": "NOT_STARTED",
-    "evidence": []
+    "status": "DONE",
+    "evidence": [
+      "tests/QA.md",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626"
+    ]
   },
   {
     "id": 88,
@@ -1018,7 +1048,8 @@
     "status": "IN_PROGRESS",
     "evidence": [
       "tests/QA.md",
-      "docs/media.md"
+      "docs/media.md",
+      "docs/storage.md"
     ]
   },
   {
