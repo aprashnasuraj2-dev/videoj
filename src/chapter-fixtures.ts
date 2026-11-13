@@ -48,7 +48,7 @@ export function chapterVtt(chapters: readonly ChapterDraft[]): string {
     const min=Math.floor(ms/60000)%60, sec=Math.floor(ms/1000)%60, rem=ms%1000;
     return [hour,min,sec].map(x=>String(x).padStart(2,'0')).join(':')+'.'+String(rem).padStart(3,'0');
   };
-  return 'WEBVTT\n\n'+chapters.map((c,i)=>`${i+1}\n${time(c.start)} --> ${time(c.end)}\n${c.title.replaceAll(/[\\r\\n]/g,' ')}\n`).join('\n');
+  return 'WEBVTT\n\n'+chapters.map((c,i)=>`${i+1}\n${time(c.start)} --> ${time(c.end)}\n${c.title.replaceAll(/[\r\n]/g,' ')}\n`).join('\n');
 }
 export function denseChapters(duration:number): ChapterDraft[] {
   return Array.from({length:40},(_,i)=>({
