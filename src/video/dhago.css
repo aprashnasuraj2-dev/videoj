@@ -93,6 +93,7 @@
 .dhago .media-menu-item,.dhago .media-menu-radio-item { min-height: 44px; }
 .dhago .media-dialog-backdrop { border-radius: inherit; }
 .dhago .media-dialog-popup { border-radius: 10px; border: 1px solid var(--dhago-border); }
+.dhago .dhago-retry { min-height:44px; padding:10px 16px; margin:12px 8px 0 0; border:1px solid var(--dhago-border); border-radius:7px; background:var(--dhago-ink); color:var(--dhago-bone); cursor:pointer; font:inherit; }
 .dhago .media-status-indicator,.dhago .media-volume-indicator { color: #fff; background: #171918; border-radius: 8px; }
 .dhago .media-buffering-indicator { background: #171918; color: #f4ebdd; border-radius: 50%; }
 .dhago :focus-visible { outline: 3px solid var(--dhago-rust); outline-offset: 3px; }

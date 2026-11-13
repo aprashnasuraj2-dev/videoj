@@ -1,5 +1,6 @@
 import {test,expect} from '@playwright/test';
-import media from '../apps/preview/src/media.json';
+import {readFileSync} from 'node:fs';
+const media=JSON.parse(readFileSync(new URL('../apps/preview/src/media.json',import.meta.url),'utf8')) as {playbackId:string|null};
 
 test('Mux source really plays, seeks and carries local chapter and caption cues',async({page},info)=>{
  test.skip(!media.playbackId,'No published Mux asset configured; bonus remains unverified');

@@ -64,6 +64,12 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   video.addEventListener('timeupdate', updateChapter);
   video.addEventListener('loadedmetadata', updateChapter);
   video.querySelectorAll('track').forEach(t => t.addEventListener('load', updateChapter));
+  player.querySelector('.dhago-retry')?.addEventListener('click',()=>{
+    // A deliberate user retry, never an automatic loop or silent fallback.
+    player.querySelector<HTMLElement>('media-dialog-close')?.click();
+    video.load();
+    player.querySelector<HTMLElement>('media-play-button')?.focus();
+  });
   container.prepend(video);
   return player;
 }

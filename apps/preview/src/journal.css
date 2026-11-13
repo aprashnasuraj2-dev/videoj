@@ -1,0 +1,18 @@
+.journal {background:#e9e6de;}
+.journal h1 {font-size:clamp(44px,6vw,84px);line-height:1.02;letter-spacing:-.06em;margin:22px 0;}
+.journal h1 em {font-weight:400;}
+.journal-deck {font-size:19px;line-height:1.65;max-width:650px;margin-bottom:46px;}
+.journal-layout {display:grid;grid-template-columns:minmax(0,1.9fr) minmax(240px,1fr);gap:36px;align-items:start;}
+.journal-layout section {min-width:0;position:sticky;top:24px;}
+#journal-player {--media-accent-color:#e8c078;--media-accent-text-color:#171918;--media-border-radius:5px;}
+.journal-caption {font-size:12px;line-height:1.7;color:#60584f;}
+.journal aside>p {font-size:13px;line-height:1.65;}
+.scene-note {width:100%;display:grid;text-align:left;gap:8px;padding:20px 14px;border:0;border-top:1px solid #aaa298;border-left:3px solid transparent;background:transparent;color:#171918;cursor:pointer;}
+.scene-note:hover,.scene-note[aria-current] {background:#ded9ce;border-left-color:#8a3d2b;}
+.scene-note span {font-size:10px;letter-spacing:.1em;font-variant-numeric:tabular-nums;color:#60584f;}
+.scene-note strong {font-size:18px;font-weight:500;}
+.scene-note small {font-size:13px;line-height:1.6;}
+.journal-essay {max-width:650px;margin:90px auto 50px;}
+.journal-essay h2 {font-size:44px;line-height:1.05;letter-spacing:-.04em;}
+.journal-essay p {line-height:1.8;}
+@media(max-width:800px){.journal-layout{grid-template-columns:1fr;gap:25px}.journal-layout section{position:static}.journal-deck{font-size:17px}.journal-essay{margin-top:50px}.journal h1{font-size:44px}}

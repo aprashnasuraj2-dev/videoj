@@ -1,0 +1,27 @@
+import {test,expect} from '@playwright/test';
+test.use({viewport:{width:1600,height:1000},video:{mode:'on',size:{width:1600,height:1000}}});
+test('capture an honest 30-second control walkthrough',async({page},info)=>{
+ await page.goto('/?local');
+ const video=page.locator('video');
+ await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(1);
+ await page.locator('media-play-button').click();
+ await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime),{timeout:10000}).toBeGreaterThan(5);
+ await page.locator('media-play-button').click();
+ await page.screenshot({path:info.outputPath('hero-1600.png')});
+ await page.locator('[data-seek="32"]').click();
+ await page.locator('media-captions-button').click();
+ await page.locator('media-play-button').click();
+ await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime),{timeout:10000}).toBeGreaterThan(37);
+ await page.locator('media-play-button').click();
+ await page.locator('.media-settings-button').click();
+ await page.screenshot({path:info.outputPath('settings-with-captions.png')});
+ await page.keyboard.press('Escape');
+ await page.getByRole('button',{name:'Phone size',exact:true}).click();
+ await page.locator('media-time-slider media-slider-thumb').focus();
+ await page.keyboard.press('ArrowRight');
+ await page.locator('media-play-button').click();
+ await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime),{timeout:25000}).toBeGreaterThan(58);
+ await page.locator('media-play-button').click();
+ await page.setViewportSize({width:375,height:1000});
+ await page.screenshot({path:info.outputPath('phone-375.png'),fullPage:true});
+});
