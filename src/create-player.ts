@@ -66,6 +66,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
     const track = Array.from(video.textTracks).find(t => t.kind === 'chapters');
     const cues = Array.from(track?.cues ?? []);
     const time = video.currentTime;
+    container.toggleAttribute('data-hour-clock', video.duration >= 3600);
     const nearEnd = Number.isFinite(video.duration) && video.duration > 0 &&
       time >= video.duration - 0.05;
     const index = cues.findIndex((cue, i) =>

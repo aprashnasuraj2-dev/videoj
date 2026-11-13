@@ -135,3 +135,65 @@ test('uneven stitch positions follow cue starts and dense mobile ribbons hide st
   await page.keyboard.press('ArrowRight');
   await expect.poll(() => page.locator('video').evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(0);
 });
+
+test('storyboard preview shows real frames, clamps at the edges and survives a missing image', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 760 });
+  await page.goto('/?local');
+  const video = page.locator('video');
+  await expect.poll(() => video.evaluate((media: HTMLVideoElement) => media.duration)).toBe(64);
+  const slider = page.locator('media-time-slider');
+  const preview = page.locator('.media-time-slider-preview');
+  const thumbnail = page.locator('.media-slider-thumbnail');
+  const image = thumbnail.locator('img');
+  await thumbnail.evaluate(el => {
+    const element = el as Element & { thumbnails: Array<{ startTime: number; url: string }> };
+    element.thumbnails = [
+      { startTime: 0, url: './media/poster.webp' },
+      { startTime: 32, url: './media/missing-preview.webp' },
+    ];
+  });
+  const bounds = (await slider.boundingBox())!;
+  await page.mouse.move(bounds.x + 1, bounds.y + 20);
+  await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth)).toBeGreaterThan(0);
+  await expect(preview).toHaveCSS('opacity', '1');
+  await expect.poll(async () => (await preview.boundingBox())!.x).toBeGreaterThanOrEqual(bounds.x - 1);
+
+  await page.mouse.move(bounds.x + bounds.width - 1, bounds.y + 20);
+  await expect(thumbnail).toHaveAttribute('data-error', '');
+  await expect(thumbnail).toBeHidden();
+  await expect(preview).toHaveCSS('opacity', '1');
+  await expect(preview.locator('media-slider-value')).not.toBeEmpty();
+  await expect.poll(async () => {
+    const box = (await preview.boundingBox())!;
+    return box.x + box.width - (bounds.x + bounds.width);
+  }).toBeLessThanOrEqual(1);
+
+  await page.emulateMedia({ reducedMotion: 'reduce', forcedColors: 'active' });
+  await slider.evaluate(element => element.setAttribute('data-dragging', ''));
+  await expect.poll(() => slider.locator('.media-time-slider-chapters')
+    .evaluate(element => getComputedStyle(element, '::after').opacity)).toBe('0');
+});
+
+test('the clock has stable neighboring controls across a timecode rollover', async ({ page }) => {
+  await page.goto('/?local');
+  const video = page.locator('video');
+  await expect.poll(() => video.evaluate((element: HTMLVideoElement) => element.duration)).toBe(64);
+  const seconds = async (time: number) => video.evaluate((element: HTMLVideoElement, currentTime) => {
+    Object.defineProperties(element, {
+      duration: { configurable: true, get: () => 3599 },
+      currentTime: { configurable: true, get: () => currentTime },
+    });
+    element.dispatchEvent(new Event('durationchange'));
+    element.dispatchEvent(new Event('timeupdate'));
+  }, time);
+  const clock = page.locator('.media-time-current-value');
+  const settings = page.locator('.media-settings-button');
+  const volume = page.locator('media-mute-button');
+  await seconds(599);
+  await expect(clock).toContainText('9:59');
+  const before = await Promise.all([volume.boundingBox(), settings.boundingBox()]);
+  await seconds(600);
+  await expect(clock).toContainText('10:00');
+  const after = await Promise.all([volume.boundingBox(), settings.boundingBox()]);
+  expect(after.map(box => box?.x)).toEqual(before.map(box => box?.x));
+});

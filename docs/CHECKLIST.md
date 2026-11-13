@@ -1,6 +1,6 @@
 # DHAGO: 100-step implementation checklist
 
-**81/100 complete** | 10 in progress | 0 blocked | Updated 2026-11-13T14:31:30.000Z
+**84/100 complete** | 11 in progress | 0 blocked | Updated 2026-11-13T22:43:41.656Z
 
 This is evidence-based task completion, not a percentage of contest quality. See [worklog](worklog.md), [status](status.json) and [plan](PLAN.md). Blocked steps remain unchecked; independent later work may continue.
 
@@ -346,21 +346,23 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **056 - Check semantics with assistive technology** - NOT_STARTED
+- [ ] **056 - Check semantics with assistive technology** - IN_PROGRESS
 
   AI inspects accessible names, roles and current values, then prepares a short VoiceOver or NVDA walkthrough for the owner. Verify changing labels and slider time. Do not duplicate roles or announce elapsed seconds continuously.
+
+  Evidence: [tests/deep.spec.ts](../tests/deep.spec.ts), [docs/owner-review.md](../docs/owner-review.md)
 
 - [ ] **057 - Measure real contrast and color use** - IN_PROGRESS
 
   Measure text, icon, focus and track pairs over near-white, near-black and mixed video frames. Label chapters and selected settings with more than color. Forced-colors mode must retain the timeline, boundaries and focus visibility.
 
-  Evidence: [tests/QA.md](../tests/QA.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [tests/player.spec.ts](../tests/player.spec.ts), [tests/thread.spec.ts](../tests/thread.spec.ts)
 
-- [ ] **058 - Check zoom and long content** - IN_PROGRESS
+- [x] **058 - Check zoom and long content** - DONE
 
   Test 200% zoom and a narrow reflow case, large text, long chapter titles and translated labels. Wrap or truncate with accessible full names. Never shrink essential labels until they technically fit but become unreadable.
 
-  Evidence: [tests/QA.md](../tests/QA.md)
+  Evidence: [tests/deep.spec.ts](../tests/deep.spec.ts), [tests/player.spec.ts](../tests/player.spec.ts), [tests/QA.md](../tests/QA.md)
 
 - [x] **059 - Honor user preferences** - DONE
 
@@ -371,6 +373,8 @@ This is evidence-based task completion, not a percentage of contest quality. See
 - [ ] **060 - Conduct a timed first-use trial** - NOT_STARTED
 
   Ask the owner to play, seek, mute, open captions and enter fullscreen on a phone without instruction. Target finding each in about five seconds as a design heuristic, not a scientific benchmark. Fix any repeated hesitation.
+
+  Evidence: [docs/owner-review.md](../docs/owner-review.md)
 
 ## 07 / VIDEO, MUX & REAL-SITE BONUS
 
@@ -398,11 +402,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [docs/media.md](../docs/media.md), [.github/workflows/mux.yml](../.github/workflows/mux.yml)
 
-- [ ] **065 - Upload a persistent public asset** - IN_PROGRESS
+- [x] **065 - Upload a persistent public asset** - DONE
 
   Create a standard asset with public playback and wait for Ready. Record asset ID privately and playback ID in the manifest. Avoid temporary demo assets; the Mux docs console warns its test assets are deleted after 24 hours [S5].
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md), [docs/hosting.md](../docs/hosting.md)
+  Evidence: [docs/worklog.md](../docs/worklog.md), [apps/preview/src/media.json](../apps/preview/src/media.json), [tests/mux.spec.ts](../tests/mux.spec.ts)
 
 - [x] **066 - Connect the actual Mux source** - DONE
 
@@ -420,7 +424,7 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Current Mux pricing advertises a free plan with up to 10 stored videos and 100K monthly delivery minutes [S6]. Confirm the account-specific limits. Example: 10,000 full 2-minute views equal 20,000 delivery minutes, before replays and other account traffic.
 
-  Evidence: [docs/mux-cost-and-retention.md](../docs/mux-cost-and-retention.md)
+  Evidence: [docs/mux-cost-and-retention.md](../docs/mux-cost-and-retention.md), [docs/worklog.md](../docs/worklog.md)
 
 - [x] **069 - Integrate into one genuine live page** - DONE
 
@@ -432,7 +436,7 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Keep an authorized fallback source for resilience, but report which source is active. Test public access without a session. Store the original video safely and keep both URLs, the deployment and the Mux asset live through judging.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md), [docs/hosting.md](../docs/hosting.md)
+  Evidence: [docs/hosting.md](../docs/hosting.md), [tests/player.spec.ts](../tests/player.spec.ts), [docs/worklog.md](../docs/worklog.md)
 
 ## 08 / QUALITY & FAILURE TESTING
 
@@ -526,7 +530,7 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Open the production URL in a clean signed-out session and on a phone if available. Start video, seek, use captions and fullscreen; confirm network media requests and no console errors. A successful hosting dashboard is insufficient evidence.
 
-  Evidence: [tests/QA.md](../tests/QA.md)
+  Evidence: [tests/live.spec.ts](../tests/live.spec.ts), [tests/QA.md](../tests/QA.md)
 
 - [x] **086 - Capture the final visuals** - DONE
 
@@ -546,15 +550,17 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [submission/description.md](../submission/description.md), [docs/owner-review.md](../docs/owner-review.md)
 
-- [ ] **089 - Create and verify the handover archive** - IN_PROGRESS
+- [x] **089 - Create and verify the handover archive** - DONE
 
   Package source, lockfile, docs and submission assets, excluding node_modules, secrets and large redundant builds. Unzip into a clean directory and run documented commands. Create SHA-256 checksums; identify the archive with the tested release SHA.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md), [docs/storage.md](../docs/storage.md)
+  Evidence: [.github/workflows/verified-handoff.yml](../.github/workflows/verified-handoff.yml), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43465361492](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43465361492), [https://drive.google.com/file/d/1lJZhQS_rXjYPLoTm03ex6fEi_JP6BXNT/view?usp=drivesdk](https://drive.google.com/file/d/1lJZhQS_rXjYPLoTm03ex6fEi_JP6BXNT/view?usp=drivesdk), [docs/storage.md](../docs/storage.md)
 
-- [ ] **090 - Freeze the submission candidate** - NOT_STARTED
+- [ ] **090 - Freeze the submission candidate** - IN_PROGRESS
 
   Tag the tested release after verifying repository state and source/deployment alignment. Record stable URLs and capture time in submission/final-checklist.md. Permit only fixes to playback, accessibility, public access or factual copy after freeze.
+
+  Evidence: [submission/manifest.json](../submission/manifest.json), [docs/worklog.md](../docs/worklog.md)
 
 ## 10 / FINAL ENTRY & CONTINUATION
 
@@ -562,7 +568,7 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Check the deadline wording, required fields, supported visual formats and any account-specific restrictions. Confirm the year and timezone context rather than trusting a copied countdown. AI records any difference from the planning snapshot.
 
-  Evidence: [https://contra.com/community/topic/videojsskinschallenge/guidelines](https://contra.com/community/topic/videojsskinschallenge/guidelines), [docs/brief.md](../docs/brief.md)
+  Evidence: [https://contra.com/community/topic/videojsskinschallenge/guidelines](https://contra.com/community/topic/videojsskinschallenge/guidelines), [submission/entry-handoff.md](../submission/entry-handoff.md)
 
 - [x] **092 - Complete the score rehearsal** - DONE
 
@@ -574,19 +580,25 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   AI supplies the working URL, desktop/mobile visual, description, optional bonus evidence and license summary in one place. Owner checks the appearance, authorship/rights and account identity. Avoid repeated vague approvals throughout routine engineering work.
 
-  Evidence: [docs/owner-review.md](../docs/owner-review.md)
+  Evidence: [docs/owner-review.md](../docs/owner-review.md), [submission/entry-handoff.md](../submission/entry-handoff.md)
 
 - [ ] **094 - Prepare the exact form entries** - IN_PROGRESS
 
   Map each actual form field to manifest values and attachment paths. AI can draft or fill fields when tools and permission allow. Identity, eligibility declarations, open-source acceptance and authentication remain the owner decision; do not silently accept legal terms.
 
-- [ ] **095 - Run the final minimum-requirement pass** - NOT_STARTED
+  Evidence: [submission/entry-handoff.md](../submission/entry-handoff.md)
+
+- [ ] **095 - Run the final minimum-requirement pass** - IN_PROGRESS
 
   From the submitted URL, verify actual v10 video playback, all five essential control groups, narrow layout and keyboard/menu exit. If one fails, fix and retest before entering. An attractive image cannot compensate for a nonworking entry.
 
-- [ ] **096 - Attach only verified bonus claims** - NOT_STARTED
+  Evidence: [tests/QA.md](../tests/QA.md), [tests/live.spec.ts](../tests/live.spec.ts)
+
+- [ ] **096 - Attach only verified bonus claims** - IN_PROGRESS
 
   Include the public Mux playback ID matching the played source and the genuine live-site URL, if ready. Recheck both signed out. Omit an unverified bonus rather than spending the deadline buffer creating a fragile last-minute integration.
+
+  Evidence: [submission/entry-handoff.md](../submission/entry-handoff.md), [tests/mux.spec.ts](../tests/mux.spec.ts), [tests/live.spec.ts](../tests/live.spec.ts)
 
 - [ ] **097 - Submit through the owner account** - NOT_STARTED
 

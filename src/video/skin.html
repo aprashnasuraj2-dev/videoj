@@ -16,8 +16,10 @@
 </media-error-dialog>
 <media-controls-group class="media-buffering-indicator-controls">
 <media-buffering-indicator class="media-buffering-indicator media-buffering-indicator-backdrop">
-<media-icon class="media-buffering-indicator-spinner-icon" family="scaffold" name="spinner">
-</media-icon>
+<span class="dhago-loading">
+  <span class="dhago-loading-thread" aria-hidden="true"></span>
+  <span>Buffering</span>
+</span>
 </media-buffering-indicator>
 </media-controls-group>
 <media-controls>
@@ -39,7 +41,7 @@
 <media-slider-thumb class="media-time-slider-thumb">
 </media-slider-thumb>
 <media-slider-preview class="media-time-slider-preview">
-<media-slider-thumbnail class="media-slider-thumbnail">
+<media-slider-thumbnail class="media-slider-thumbnail" loading="lazy">
 <img alt="" aria-hidden="true" class="media-slider-thumbnail-image" decoding="async"/>
 </media-slider-thumbnail>
 <div class="media-time-slider-preview-meta">
