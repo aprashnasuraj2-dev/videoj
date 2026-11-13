@@ -108,6 +108,12 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
     video.addEventListener(event, clearWaiting);
   }
   video.querySelectorAll('track').forEach(t => t.addEventListener('load', updateChapter));
+  // Host applications may append chapters after media metadata has loaded.
+  // Do not freeze the chapter name at the empty initial track list.
+  video.textTracks.addEventListener('addtrack', event => {
+    event.track?.addEventListener('cuechange', updateChapter);
+    updateChapter();
+  });
   player.querySelector('.dhago-retry')?.addEventListener('click',()=>{
     // A deliberate user retry, never an automatic loop or silent fallback.
     player.querySelector<HTMLElement>('media-dialog-close')?.click();
