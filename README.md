@@ -15,3 +15,7 @@ Set `--media-accent-color`, `--media-accent-text-color` and `--media-border-radi
 [100-step checklist](docs/CHECKLIST.md), [verification](tests/QA.md), [Mux setup](docs/media.md). `docs/steps.json` is authoritative; run `node scripts/progress.mjs` after updates.
 
 Actions validate builds and browser behavior, provision Mux using repository secrets, and package exact source revisions with SHA-256 checksums. Source-package automation does not establish final submission readiness. No contest submission, accepted terms or bonus is claimed until verified.
+
+## Release and competition handoff
+
+[Judging rehearsal](docs/score-rehearsal.md) · [Owner review](docs/owner-review.md) · [Immutable release guide](docs/release-integrity.md) · [Mux usage limits](docs/mux-cost-and-retention.md). Production assets are staged in `dist-72ec6c324f64` and all 78 release objects were hash/ETag-verified in the dedicated R2 origin. Source CI and public smoke remain separate acceptance gates. The project has **not** been entered into the contest.
