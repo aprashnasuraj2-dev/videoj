@@ -63,3 +63,8 @@ After the workflow passes, record artifact checksum, Drive ID and source SHA and
 - Curated exact-source visuals: https://drive.google.com/file/d/1V9K153-YruJy2j01t2BhukbW1QYAGYGd/view?usp=drivesdk. Exact size **15,351,513 bytes**; original real browser screenshots and original `video.webm` proof, with `SHA256SUMS.txt` and descriptive README. Curated archive SHA-256 `1585dc7c1f17e7f807f120b4665ef62ddb00208ea0c266c5ff2af225eb23e06f`.
 - Post-new-production-release public evidence: https://drive.google.com/file/d/1dCaDYpHLsNj7GHU1SUsXOzKblgqhAQjI/view?usp=drivesdk. Exact size **1,752,651 bytes**, GitHub [postrelease run 43464044415](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43464044415): **35/35 source tests and 2/2 public Mux playback/Studio Journal scene-seek tests passed** after the new `a649236` R2 entry points were published.
 - All four files were verified as created in the *selected* Videojs Drive folder. No Google Drive sharing/permissions were changed.
+
+## Final competition release — 2026-11-14
+
+- [Visual ZIP](https://drive.google.com/file/d/1fXoXIj1gNWBXItMxOm1lt0l-aVnkPq6y/view?usp=drivesdk), 11,935,969 bytes, SHA-256 `33fa5d8a9231e0e91c39fb6338e6bd1b7c01223c28219b6873d935f7d6199bd6`.
+- [Exact source ZIP with production manifest](https://drive.google.com/file/d/1MPl0blKgSh9QM_giGV9SfZkGX2xXw7G_/view?usp=drivesdk), 3,002,621 bytes, SHA-256 `0184ca0a97988e46dd3c5b7cd9cd6cacd53a15fe61d7873cf73b3770fddd332c`. Verified 114 individual GitHub blob hashes and embedded SHA-256 receipts.

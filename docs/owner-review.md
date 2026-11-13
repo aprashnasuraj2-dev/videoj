@@ -1,6 +1,6 @@
 # DHAGO — owner review before competition entry
 
-**Candidate:** DHAGO — Time, woven. **Language:** English throughout the public player, journal and form description. **Current source:** `a6492362b634799f3f23611e95eb88d003474d1f`, built at `dist-a6492362b634`; 35/35 browser source tests.
+**Candidate:** DHAGO — Time, woven. **Language:** English throughout the public player, journal and form description. **Current source:** `dd6ec8bd217ade07707359f33b13fbbba928a5e2`, built at `dist-dd6ec8bd217a`. [41/41 source tests](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553) and [2/2 post-publication public tests](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558).
 
 **Watch:** https://creative.aafnaipatro.com/ (alternate https://dhago.aafnaipatro.com/)
 
@@ -20,18 +20,10 @@ For assistive technology, use VoiceOver or NVDA and navigate the player without 
 
 Verify you own the original film/skin rights and agree to Apache-2.0 submission terms; confirm account eligibility, preferred creator identity and profile; inspect the actual Contra entry form, attachment limits and current submission requirements; and authorize the final entry before submission. The current repository manifest has `receipt: null`. **The entry is not submitted** and no bonus is awarded yet.
 
-Deadline from the official challenge: **November 16 at 11:59pm PST** (November 17 at 1:44pm Nepal time, assuming the ongoing 2026 challenge). Allow a buffer for account authentication and the confirmation page. This review is a handoff, not permission to accept terms on your behalf.
+Deadline from the official challenge: **November 16 at 11:59pm PST** (November 17 at 1:44pm Nepal time, as confirmed by the public challenge timestamp). Allow a buffer for account authentication and the confirmation page. This review is a handoff, not permission to accept terms on your behalf.
 
+## Current entry package
 
-## Current build verification
-
-[PR #6](https://github.com/aprashnasuraj2-dev/videoj/pull/6) includes cue-derived stitches, native Video.js drag-only tension, real buffering states, and accessible motion/contrast behavior; [35-test source CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43461387053) passed. The current R2 bundle is 78/78 manifest-matched, and the previous HTML is backed up. A fresh post-new-release public Chromium smoke and a current visual archive are separate from the old release evidence linked above. Physical-phone/assistive-tech assessment and owner's competition terms/rights decision are still outstanding.
-
-## Current artifact set
-
-- [Current player and responsive screenshots; original 30-second browser control walkthrough](https://drive.google.com/file/d/1V9K153-YruJy2j01t2BhukbW1QYAGYGd/view?usp=drivesdk) — actual `a649236` source capture
-- [Reproducible source handoff ZIP, SHA-256 receipts and immutable dist manifest](https://drive.google.com/file/d/1lJZhQS_rXjYPLoTm03ex6fEi_JP6BXNT/view?usp=drivesdk) — cleanly rebuilt from `5d31666a74770ca0043afe63ccf6e44e16d5be2c`
-- [Current 35/35 source browser tests](https://drive.google.com/file/d/189RiUTl1EbD5QjKuYOyJu1hn_j0LLcoq/view?usp=drivesdk)
-- [Current after-release 2/2 public smoke evidence](https://drive.google.com/file/d/1dCaDYpHLsNj7GHU1SUsXOzKblgqhAQjI/view?usp=drivesdk)
-
-This is the consolidated review set, superseding earlier `72ec6c3` visual evidence for final competition selection. The visuals were unedited test captures. Source code and film remain independently viewable on the public demo; **physical mobile/audio quality and VoiceOver/NVDA review are not yet claimed**. Legal/identity/entry decisions remain owner-controlled.
+- [Competition visuals and walkthrough](https://drive.google.com/file/d/1fXoXIj1gNWBXItMxOm1lt0l-aVnkPq6y/view?usp=drivesdk)
+- [Verified source and release manifest](https://drive.google.com/file/d/1MPl0blKgSh9QM_giGV9SfZkGX2xXw7G_/view?usp=drivesdk)
+- [Copy-ready Contra fields](../submission/entry-handoff.md)

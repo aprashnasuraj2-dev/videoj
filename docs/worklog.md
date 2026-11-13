@@ -124,3 +124,9 @@ Attempted preview deployment for exact revision 2ed92ded to Vercel team `surajde
 - The native Video.js slider renders real frames from the Mux storyboard. The preview stays inside the player at each end and keeps the time and chapter display if the image fails. The ribbon uses native drag coordinates for a small traveling highlight and releases with a brief elastic return. Reduced motion and system high-contrast modes have stationary treatments.
 - The buffered state uses Video.js visibility and delay with a woven indicator. Timecode rollover and hour-wide compact layout have dedicated regression tests. Chapter title announcements continue to use the Video.js keyboard behavior. Stitches remain decorative.
 - Contra's public page reports 2026-11-17 07:59 UTC, equivalent to November 17 at 1:44 p.m. Nepal time. Public requirements and both bonus fields are documented in the handoff. Signed-in form restrictions and submission remain open.
+
+## 2026-11-14 — Production cutover and final package
+
+- Merged the verified final revision `dd6ec8bd217ade07707359f33b13fbbba928a5e2`. [Merged source run](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553) passed 41/41 tests. The local build matched all 78 CI-generated SHA-256 entries.
+- Uploaded seven new hashed assets and saved the preceding three HTML entry points under `releases/2026-11-14-predd6ec8bd/`. Published Journal, preview, then homepage. After cutover, 76 text SHA-256 checks and two media ETag/size checks passed. Public HTTPS confirmed both homepages and the Journal. [Post-cutover CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558) passed 2/2 with decoded Mux playback and Journal seeking.
+- Source and visuals are recorded in [storage.md](storage.md) and the [entry handoff](../submission/entry-handoff.md). The physical-device, screen reader, Mux usage and owner entry checks remain open.

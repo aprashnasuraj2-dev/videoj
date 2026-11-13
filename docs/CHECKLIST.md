@@ -1,6 +1,6 @@
 # DHAGO: 100-step implementation checklist
 
-**84/100 complete** | 11 in progress | 0 blocked | Updated 2026-11-13T22:43:41.656Z
+**86/100 complete** | 9 in progress | 0 blocked | Updated 2026-11-13T22:55:02.364Z
 
 This is evidence-based task completion, not a percentage of contest quality. See [worklog](worklog.md), [status](status.json) and [plan](PLAN.md). Blocked steps remain unchecked; independent later work may continue.
 
@@ -352,11 +352,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [tests/deep.spec.ts](../tests/deep.spec.ts), [docs/owner-review.md](../docs/owner-review.md)
 
-- [ ] **057 - Measure real contrast and color use** - IN_PROGRESS
+- [x] **057 - Measure real contrast and color use** - DONE
 
   Measure text, icon, focus and track pairs over near-white, near-black and mixed video frames. Label chapters and selected settings with more than color. Forced-colors mode must retain the timeline, boundaries and focus visibility.
 
-  Evidence: [tests/QA.md](../tests/QA.md), [tests/player.spec.ts](../tests/player.spec.ts), [tests/thread.spec.ts](../tests/thread.spec.ts)
+  Evidence: [tests/QA.md](../tests/QA.md), [tests/player.spec.ts](../tests/player.spec.ts), [tests/thread.spec.ts](../tests/thread.spec.ts), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553)
 
 - [x] **058 - Check zoom and long content** - DONE
 
@@ -436,7 +436,7 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Keep an authorized fallback source for resilience, but report which source is active. Test public access without a session. Store the original video safely and keep both URLs, the deployment and the Mux asset live through judging.
 
-  Evidence: [docs/hosting.md](../docs/hosting.md), [tests/player.spec.ts](../tests/player.spec.ts), [docs/worklog.md](../docs/worklog.md)
+  Evidence: [docs/hosting.md](../docs/hosting.md), [tests/player.spec.ts](../tests/player.spec.ts), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558)
 
 ## 08 / QUALITY & FAILURE TESTING
 
@@ -530,7 +530,7 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Open the production URL in a clean signed-out session and on a phone if available. Start video, seek, use captions and fullscreen; confirm network media requests and no console errors. A successful hosting dashboard is insufficient evidence.
 
-  Evidence: [tests/live.spec.ts](../tests/live.spec.ts), [tests/QA.md](../tests/QA.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558), [docs/owner-review.md](../docs/owner-review.md)
 
 - [x] **086 - Capture the final visuals** - DONE
 
@@ -556,11 +556,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [.github/workflows/verified-handoff.yml](../.github/workflows/verified-handoff.yml), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43465361492](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43465361492), [https://drive.google.com/file/d/1lJZhQS_rXjYPLoTm03ex6fEi_JP6BXNT/view?usp=drivesdk](https://drive.google.com/file/d/1lJZhQS_rXjYPLoTm03ex6fEi_JP6BXNT/view?usp=drivesdk), [docs/storage.md](../docs/storage.md)
 
-- [ ] **090 - Freeze the submission candidate** - IN_PROGRESS
+- [x] **090 - Freeze the submission candidate** - DONE
 
-  Tag the tested release after verifying repository state and source/deployment alignment. Record stable URLs and capture time in submission/final-checklist.md. Permit only fixes to playback, accessibility, public access or factual copy after freeze.
+  Freeze the verified source revision and record its immutable build, current hostnames, browser checks and source archive in the submission manifest.
 
-  Evidence: [submission/manifest.json](../submission/manifest.json), [docs/worklog.md](../docs/worklog.md)
+  Evidence: [submission/manifest.json](../submission/manifest.json), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553), [https://github.com/aprashnasuraj2-dev/videoj/tree/dist-dd6ec8bd217a](https://github.com/aprashnasuraj2-dev/videoj/tree/dist-dd6ec8bd217a), [https://drive.google.com/file/d/1MPl0blKgSh9QM_giGV9SfZkGX2xXw7G_/view?usp=drivesdk](https://drive.google.com/file/d/1MPl0blKgSh9QM_giGV9SfZkGX2xXw7G_/view?usp=drivesdk)
 
 ## 10 / FINAL ENTRY & CONTINUATION
 
@@ -580,7 +580,7 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   AI supplies the working URL, desktop/mobile visual, description, optional bonus evidence and license summary in one place. Owner checks the appearance, authorship/rights and account identity. Avoid repeated vague approvals throughout routine engineering work.
 
-  Evidence: [docs/owner-review.md](../docs/owner-review.md), [submission/entry-handoff.md](../submission/entry-handoff.md)
+  Evidence: [docs/owner-review.md](../docs/owner-review.md), [submission/entry-handoff.md](../submission/entry-handoff.md), [https://drive.google.com/file/d/1fXoXIj1gNWBXItMxOm1lt0l-aVnkPq6y/view?usp=drivesdk](https://drive.google.com/file/d/1fXoXIj1gNWBXItMxOm1lt0l-aVnkPq6y/view?usp=drivesdk)
 
 - [ ] **094 - Prepare the exact form entries** - IN_PROGRESS
 
@@ -598,7 +598,7 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Include the public Mux playback ID matching the played source and the genuine live-site URL, if ready. Recheck both signed out. Omit an unverified bonus rather than spending the deadline buffer creating a fragile last-minute integration.
 
-  Evidence: [submission/entry-handoff.md](../submission/entry-handoff.md), [tests/mux.spec.ts](../tests/mux.spec.ts), [tests/live.spec.ts](../tests/live.spec.ts)
+  Evidence: [submission/entry-handoff.md](../submission/entry-handoff.md), [tests/mux.spec.ts](../tests/mux.spec.ts), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558)
 
 - [ ] **097 - Submit through the owner account** - NOT_STARTED
 

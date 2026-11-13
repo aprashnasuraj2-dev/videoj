@@ -677,11 +677,12 @@
     "phaseTitle": "06 / RESPONSIVENESS & ACCESSIBILITY",
     "title": "Measure real contrast and color use",
     "detail": "Measure text, icon, focus and track pairs over near-white, near-black and mixed video frames. Label chapters and selected settings with more than color. Forced-colors mode must retain the timeline, boundaries and focus visibility.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
       "tests/QA.md",
       "tests/player.spec.ts",
-      "tests/thread.spec.ts"
+      "tests/thread.spec.ts",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553"
     ]
   },
   {
@@ -845,7 +846,7 @@
     "evidence": [
       "docs/hosting.md",
       "tests/player.spec.ts",
-      "docs/worklog.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558"
     ]
   },
   {
@@ -1026,8 +1027,9 @@
     "detail": "Open the production URL in a clean signed-out session and on a phone if available. Start video, seek, use captions and fullscreen; confirm network media requests and no console errors. A successful hosting dashboard is insufficient evidence.",
     "status": "IN_PROGRESS",
     "evidence": [
-      "tests/live.spec.ts",
-      "tests/QA.md"
+      "tests/QA.md",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558",
+      "docs/owner-review.md"
     ]
   },
   {
@@ -1086,11 +1088,13 @@
     "phase": 9,
     "phaseTitle": "09 / DEPLOYMENT & SUBMISSION FILES",
     "title": "Freeze the submission candidate",
-    "detail": "Tag the tested release after verifying repository state and source/deployment alignment. Record stable URLs and capture time in submission/final-checklist.md. Permit only fixes to playback, accessibility, public access or factual copy after freeze.",
-    "status": "IN_PROGRESS",
+    "detail": "Freeze the verified source revision and record its immutable build, current hostnames, browser checks and source archive in the submission manifest.",
+    "status": "DONE",
     "evidence": [
       "submission/manifest.json",
-      "docs/worklog.md"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553",
+      "https://github.com/aprashnasuraj2-dev/videoj/tree/dist-dd6ec8bd217a",
+      "https://drive.google.com/file/d/1MPl0blKgSh9QM_giGV9SfZkGX2xXw7G_/view?usp=drivesdk"
     ]
   },
   {
@@ -1125,7 +1129,8 @@
     "status": "IN_PROGRESS",
     "evidence": [
       "docs/owner-review.md",
-      "submission/entry-handoff.md"
+      "submission/entry-handoff.md",
+      "https://drive.google.com/file/d/1fXoXIj1gNWBXItMxOm1lt0l-aVnkPq6y/view?usp=drivesdk"
     ]
   },
   {
@@ -1161,7 +1166,7 @@
     "evidence": [
       "submission/entry-handoff.md",
       "tests/mux.spec.ts",
-      "tests/live.spec.ts"
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558"
     ]
   },
   {
