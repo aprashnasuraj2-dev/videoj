@@ -59,3 +59,10 @@ Attempted preview deployment for exact revision 2ed92ded to Vercel team `surajde
 - Tried auto-build route: existing `dhago-studio` Pages project is Direct Uploads and cannot change source; creating a new Git-integrated Pages project failed with Cloudflare Git installation issue (API 8000011). Retained original R2 origin, DNS and rules instead.
 - Verified latest GitHub CI artifact and copied 35 MB passing evidence directly into Google Drive folder, file ID `1j7FHURfdYk6Wn0LlNrF8jDLjixnC4ml7`. No user tokens were placed in files, browser bundles or commits.
 - Remaining release blockers: complete production dist deployment instead of incremental R2 patch; physical/branded-browser compatibility and journal seek; full owner review and contest submission (not authorized/claimed).
+
+## 2026-11-13 — Boundary states and exact-build preparation
+
+- Visually reviewed existing 1600px and 375px captures: the woven chapter ribbon is central and recognizable, with accessible labels on small controls. Kept playback interaction conventional rather than adding a loom animation or invented media metrics.
+- Fixed exclusive WebVTT end-time boundary: the final chapter now remains present at the film endpoint. De-duplicated chapter readout DOM writes per time update. Synchronize collection cards and journal notes from their data-start boundaries on initial load, seek and ended state; hide external cards in the `nochapters` variant.
+- Added touch-emulated Playwright coverage for mobile play, chapter selection and captions, plus initial and ending chapter states. Physical-screen-reader and real-phone checks remain outstanding.
+- Added CI source-to-release workflow that stages an immutable `dist-<source SHA>` branch containing exact build files and SHA-256 manifest. It cannot deploy, mutate Cloudflare DNS or copy secret keys; R2 release remains a deliberately separate verified operation.
