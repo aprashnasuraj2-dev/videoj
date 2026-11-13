@@ -80,3 +80,16 @@ Attempted preview deployment for exact revision 2ed92ded to Vercel team `surajde
 - Public browser run [43443029329](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329) PASS after full immutable R2 release: source verification successful and **2/2 production Chromium smoke tests** passed. Mux media actually advances; chapter seeking and journal scene note work. Prior external browser codec limitations remain platform-specific counterevidence, not a revoked pass.
 - Checked latest Contra challenge guidelines directly: public playable v10 skin, visual + several English sentences, Nov 16 11:59pm PST deadline, 25-point criteria plus 2 possible bonuses. Join/form acceptance still requires owner's authorized sign-in and agreement. No entry submitted, no receipt asserted.
 - Reconciled completed technical Mux integration and real-site journal checklist entries, without marking owner/device tasks complete.
+
+## 2026-11-13 — Thread craft recovery against current released main
+
+- Identified old unmerged PR #3 as divergent by 26 commits and failing one pointer-hold Playwright assertion (29 passing / one failing source test); do not merge it directly.
+- Ported cue-based woven joins, restrained held-tension response, media-event buffering and native caption legibility onto immutable released main, preserving its final-frame chapter/readout fixes and Mux/live journal acceptance.
+- Replaced early pointerleave/lostcapture release logic with a bounded, abortable window-scoped pointerup/cancel/blur gesture lifecycle. This specifically addresses the prior regression where slider capture changes aborted visual tension mid-drag.
+- Added a narrow, high-chapter-count de-clutter rule and both drag-outside and cancellation regression checks. Exact branch CI must pass before merge/publication. The published R2 build remains unchanged.
+
+## 2026-11-13 — CI feedback: use the native Video.js drag state
+
+- First clean-branch CI at `61bfbe5`: typecheck/build and 34 browser checks passed, but one custom mouse-hold data-attribute expectation failed. The former PR #3 had the same failure; repeating a homemade pointer listener would be an unsound fix.
+- Removed all new seek pointer listeners. Video.js v10 already reflects dragging through `media-time-slider[data-dragging]` (used in its own scaffold CSS), so the tactile CSS now keys off that exact native state. Keyboard and playback semantics are unchanged.
+- Replaced synthetic custom state tests with native attribute presentation tests, a forced-colors chapter-marker check, real keyboard navigation, buffering event tests and reduced-motion behavior. Run CI on the corrected exact head before merging.

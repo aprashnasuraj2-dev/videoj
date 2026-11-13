@@ -78,6 +78,22 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   video.addEventListener('timeupdate', updateChapter);
   video.addEventListener('loadedmetadata', updateChapter);
   video.addEventListener('ended', updateChapter);
+  // The woven drag effect is driven by Video.js' native [data-dragging]
+  // state on <media-time-slider>; do not add competing pointer handlers.
+  // This preserves touch capture, keyboard seeking and cancellation behavior.
+
+  // Thread slack is a restrained secondary cue for real decoding stalls.
+  // The existing native buffering indicator remains the primary signal.
+  const setWaiting = () => {
+    if (!video.paused && !video.ended && !video.error) {
+      container.setAttribute('data-thread-buffering', '');
+    }
+  };
+  const clearWaiting = () => container.removeAttribute('data-thread-buffering');
+  for (const event of ['waiting', 'stalled']) video.addEventListener(event, setWaiting);
+  for (const event of ['playing', 'canplay', 'seeked', 'pause', 'ended', 'error', 'emptied']) {
+    video.addEventListener(event, clearWaiting);
+  }
   video.querySelectorAll('track').forEach(t => t.addEventListener('load', updateChapter));
   player.querySelector('.dhago-retry')?.addEventListener('click',()=>{
     // A deliberate user retry, never an automatic loop or silent fallback.
