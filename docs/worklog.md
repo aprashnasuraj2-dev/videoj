@@ -87,3 +87,9 @@ Attempted preview deployment for exact revision 2ed92ded to Vercel team `surajde
 - Ported cue-based woven joins, restrained held-tension response, media-event buffering and native caption legibility onto immutable released main, preserving its final-frame chapter/readout fixes and Mux/live journal acceptance.
 - Replaced early pointerleave/lostcapture release logic with a bounded, abortable window-scoped pointerup/cancel/blur gesture lifecycle. This specifically addresses the prior regression where slider capture changes aborted visual tension mid-drag.
 - Added a narrow, high-chapter-count de-clutter rule and both drag-outside and cancellation regression checks. Exact branch CI must pass before merge/publication. The published R2 build remains unchanged.
+
+## 2026-11-13 — CI feedback: use the native Video.js drag state
+
+- First clean-branch CI at `61bfbe5`: typecheck/build and 34 browser checks passed, but one custom mouse-hold data-attribute expectation failed. The former PR #3 had the same failure; repeating a homemade pointer listener would be an unsound fix.
+- Removed all new seek pointer listeners. Video.js v10 already reflects dragging through `media-time-slider[data-dragging]` (used in its own scaffold CSS), so the tactile CSS now keys off that exact native state. Keyboard and playback semantics are unchanged.
+- Replaced synthetic custom state tests with native attribute presentation tests, a two-instance isolation check, real keyboard navigation, buffering event tests and reduced-motion behavior. Run CI on the corrected exact head before merging.

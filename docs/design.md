@@ -30,7 +30,7 @@ If weave looks like buffered progress or chapter colors are required to understa
 
 ## Studio refinement: physical thread details (candidate)
 
-Real timed chapter boundaries may carry small decorative join marks, derived from actual Video.js chapter cues rather than fabricated markers. A held seek gesture briefly tensions the strip, while the standard seek slider/thumb and chapter name retain navigation semantics. The native waiting indicator remains primary; a quieter ribbon appearance responds only to media lifecycle events. Opaque, readable native caption cues prioritize legibility over visual embroidery.
+Real timed chapter boundaries may carry small decorative join marks, derived from actual Video.js chapter cues rather than fabricated markers. The Video.js native slider dragging state briefly tensions the strip, while the standard seek slider/thumb and chapter name retain navigation semantics. The native waiting indicator remains primary; a quieter ribbon appearance responds only to media lifecycle events. Opaque, readable native caption cues prioritize legibility over visual embroidery.
 
 The source of the visual language is material and technique: plain ground cloth, coloured supplementary weft and restrained geometric repetition, rather than sacred symbols or sacred protective threads. Do not copy exact culturally specific ceremonial patterns.
 

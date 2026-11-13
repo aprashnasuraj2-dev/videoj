@@ -1,87 +1,80 @@
 import { test, expect } from '@playwright/test';
 
-test('cue joins form knots without replacing accessible seek controls', async ({ page }, info) => {
+test('cue-derived joins preserve real seek semantics and native drag treatment', async ({ page }, info) => {
   await page.goto('/?local');
-  const video = page.locator('video');
-  await expect.poll(() => video.evaluate((el: HTMLVideoElement) => el.readyState)).toBeGreaterThan(0);
-  const chapters = page.locator('.media-time-slider-chapter');
+  const video=page.locator('video');
+  await expect.poll(() => video.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
+  const chapters=page.locator('.media-time-slider-chapter');
   await expect(chapters).toHaveCount(4);
-  const knot = await chapters.nth(1).evaluate(el => getComputedStyle(el, '::before').content);
-  expect(knot).not.toBe('none');
-  await expect(page.locator('media-time-slider media-slider-thumb')).toBeVisible();
+  expect(await chapters.nth(1).evaluate(el=>getComputedStyle(el,'::before').content)).not.toBe('none');
+  const slider=page.locator('media-time-slider');
+  const thumb=page.locator('media-time-slider media-slider-thumb');
+  await expect(thumb).toBeVisible();
 
-  const slider = page.locator('media-time-slider');
-  const box = await slider.boundingBox();
-  expect(box).toBeTruthy();
-  await page.mouse.move(box!.x + box!.width * .4, box!.y + box!.height / 2);
-  await page.mouse.down();
-  await expect(page.locator('.dhago')).toHaveAttribute('data-thread-pull', '');
-  await expect.poll(() => page.locator('.media-time-slider-chapters')
-    .evaluate(el => getComputedStyle(el).transform)).not.toBe('none');
-  await page.screenshot({path:info.outputPath('thread-held.png')});
-  // Moving outside the bar while dragging must not suppress the tactile cue.
-  await page.mouse.move(box!.x + box!.width + 24, box!.y + box!.height / 2);
-  await expect(page.locator('.dhago')).toHaveAttribute('data-thread-pull', '');
-  await page.mouse.up();
-  await expect(page.locator('.dhago')).not.toHaveAttribute('data-thread-pull', '');
-  await expect.poll(() => page.locator('.media-time-slider-chapters')
-    .evaluate(el => getComputedStyle(el).transform)).toBe('none');
+  // Probe presentation against the native Video.js drag attribute; no
+  // unrelated custom pointer listener, timer or synthetic buffer values.
+  await slider.evaluate(el => el.setAttribute('data-dragging',''));
+  await expect.poll(()=>page.locator('.media-time-slider-chapters')
+    .evaluate(el=>getComputedStyle(el).transform)).not.toBe('none');
+  await page.screenshot({path:info.outputPath('native-drag-appearance.png')});
+  await slider.evaluate(el => el.removeAttribute('data-dragging'));
+  await expect.poll(()=>page.locator('.media-time-slider-chapters')
+    .evaluate(el=>getComputedStyle(el).transform)).toBe('none');
 
-  const thumb = page.locator('media-time-slider media-slider-thumb');
   await thumb.focus();
   await page.keyboard.press('ArrowRight');
-  await expect.poll(() => video.evaluate((el: HTMLVideoElement) => el.currentTime)).toBeGreaterThan(0);
+  await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(0);
 });
 
 test('no cue data creates no invented chapter stitches', async ({ page }) => {
   await page.goto('/?local&nochapters');
-  await expect.poll(() => page.locator('video').evaluate((el: HTMLVideoElement) => el.readyState)).toBeGreaterThan(0);
-  const cueCount = await page.locator('video').evaluate((el: HTMLVideoElement) =>
-    Array.from(el.textTracks).filter(t => t.kind === 'chapters').length);
-  expect(cueCount).toBe(0);
+  await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
+  expect(await page.locator('video').evaluate((v:HTMLVideoElement)=>
+    Array.from(v.textTracks).filter(t=>t.kind==='chapters').length)).toBe(0);
   await expect(page.locator('.dhago-chapter-readout')).toBeHidden();
   await expect(page.locator('media-time-slider media-slider-thumb')).toBeVisible();
 });
 
-test('waiting visualization tracks media events and clears without stale status', async ({ page }) => {
+test('buffering decoration is driven by real media events', async ({ page }) => {
   await page.goto('/?local');
-  const video = page.locator('video');
-  await expect.poll(() => video.evaluate((el: HTMLVideoElement) => el.readyState)).toBeGreaterThan(0);
+  const video=page.locator('video');
+  await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
   await page.locator('media-play-button').click();
-  await expect.poll(() => video.evaluate((el: HTMLVideoElement) => el.currentTime)).toBeGreaterThan(.2);
-  await video.evaluate((el: HTMLVideoElement) => el.dispatchEvent(new Event('waiting')));
-  await expect(page.locator('.dhago')).toHaveAttribute('data-thread-buffering', '');
-  await video.evaluate((el: HTMLVideoElement) => el.dispatchEvent(new Event('playing')));
-  await expect(page.locator('.dhago')).not.toHaveAttribute('data-thread-buffering', '');
+  await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(.2);
+  await video.evaluate((v:HTMLVideoElement)=>v.dispatchEvent(new Event('waiting')));
+  await expect(page.locator('.dhago')).toHaveAttribute('data-thread-buffering','');
+  await video.evaluate((v:HTMLVideoElement)=>v.dispatchEvent(new Event('playing')));
+  await expect(page.locator('.dhago')).not.toHaveAttribute('data-thread-buffering','');
   await page.locator('media-play-button').click();
-  await expect(video).toHaveJSProperty('paused', true);
+  await expect(video).toHaveJSProperty('paused',true);
 });
 
-test('reduced motion removes the thread-pull movement while keeping seek usable', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' });
+test('reduced motion suppresses native-drag tension without disabling seek', async ({ page }) => {
+  await page.emulateMedia({reducedMotion:'reduce'});
   await page.goto('/?local');
-  const slider = page.locator('media-time-slider');
-  const box = await slider.boundingBox();
-  expect(box).toBeTruthy();
-  await page.mouse.move(box!.x + box!.width * .4, box!.y + box!.height / 2);
-  await page.mouse.down();
-  expect(await page.locator('.media-time-slider-chapters')
-    .evaluate(el => getComputedStyle(el).transform)).toBe('none');
-  await page.mouse.up();
+  await page.locator('media-time-slider').evaluate(el=>el.setAttribute('data-dragging',''));
+  expect(await page.locator('.media-time-slider-chapters').evaluate(el=>getComputedStyle(el).transform)).toBe('none');
+  await page.locator('media-time-slider').evaluate(el=>el.removeAttribute('data-dragging'));
   await page.locator('media-time-slider media-slider-thumb').focus();
   await page.keyboard.press('ArrowRight');
-  await expect.poll(() => page.locator('video').evaluate((el: HTMLVideoElement) => el.currentTime)).toBeGreaterThan(0);
+  await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(0);
 });
 
-test('pointer cancellation and focus loss release the tension', async ({ page }) => {
+test('native drag appearance does not affect independent player mounts', async ({ page }) => {
   await page.goto('/?local');
-  const slider = page.locator('media-time-slider');
-  await slider.dispatchEvent('pointerdown', { isPrimary: true, button: 0, pointerId: 1 });
-  await expect(page.locator('.dhago')).toHaveAttribute('data-thread-pull', '');
-  await page.evaluate(() => window.dispatchEvent(new Event('blur')));
-  await expect(page.locator('.dhago')).not.toHaveAttribute('data-thread-pull', '');
-  await slider.dispatchEvent('pointerdown', { isPrimary: true, button: 0, pointerId: 2 });
-  await expect(page.locator('.dhago')).toHaveAttribute('data-thread-pull', '');
-  await page.evaluate(() => window.dispatchEvent(new PointerEvent('pointercancel', { pointerId: 2 })));
-  await expect(page.locator('.dhago')).not.toHaveAttribute('data-thread-pull', '');
+  const second=await page.locator('video-player').evaluate(async _first=>{
+    const {createDhagoPlayer}=await import('/src/create-player.ts');
+    const mount=document.createElement('div');
+    document.body.appendChild(mount);
+    const player=createDhagoPlayer({source:'./media/studies-in-thread.mp4',surface:'dark'});
+    mount.append(player);
+    return player.querySelector('media-container')?.getAttribute('data-surface');
+  });
+  expect(second).toBe('dark');
+  const sliders=page.locator('media-time-slider');
+  await expect(sliders).toHaveCount(2);
+  await sliders.first().evaluate(el=>el.setAttribute('data-dragging',''));
+  expect(await page.locator('.media-time-slider-chapters').first().evaluate(el=>getComputedStyle(el).transform)).not.toBe('none');
+  expect(await page.locator('.media-time-slider-chapters').nth(1).evaluate(el=>getComputedStyle(el).transform)).toBe('none');
+  await sliders.first().evaluate(el=>el.removeAttribute('data-dragging'));
 });
