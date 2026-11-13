@@ -1062,10 +1062,11 @@
     "phaseTitle": "09 / DEPLOYMENT & SUBMISSION FILES",
     "title": "Create and verify the handover archive",
     "detail": "Package source, lockfile, docs and submission assets, excluding node_modules, secrets and large redundant builds. Unzip into a clean directory and run documented commands. Create SHA-256 checksums; identify the archive with the tested release SHA.",
-    "status": "IN_PROGRESS",
+    "status": "DONE",
     "evidence": [
-      "tests/QA.md",
-      "docs/media.md",
+      ".github/workflows/verified-handoff.yml",
+      "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43465361492",
+      "https://drive.google.com/file/d/1lJZhQS_rXjYPLoTm03ex6fEi_JP6BXNT/view?usp=drivesdk",
       "docs/storage.md"
     ]
   },
