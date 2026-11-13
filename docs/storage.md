@@ -37,3 +37,9 @@ Submission drafts live under `submission/` in Git. Their manifest deliberately l
 - Contains the passing 17-test Chromium run and captured visuals for revision `1cae2171eb523142279f70c258378537fa34c818`. Later mobile polish requires its own fresh evidence.
 
 - Additional mobile review milestone: file `1NwJoy_L9d6Vsfp4DRE-43w3XF5AuUfaY`, https://drive.google.com/file/d/1NwJoy_L9d6Vsfp4DRE-43w3XF5AuUfaY/view?usp=drivesdk . Revision 2ed92ded passed behavior checks; its screenshot review led to the subsequent Settings label correction. Retained as development evidence, not final visual approval.
+
+## 2026-11-13 source-aligned evidence
+
+- `DHAGO_30tests_exact_main_72ec6c3.zip` — verified Google Drive file ID `13UnLqOuiAQQOBXKoh_IesPHtFROkIUyb`: https://drive.google.com/file/d/13UnLqOuiAQQOBXKoh_IesPHtFROkIUyb/view . Contains clean-build assets, 30/30 Chromium results, desktop/mobile captures and the 30-second control walkthrough for the exact source release.
+- `DHAGO_public_smoke_72ec6c3_pre_release.zip` — verified Drive file ID `1-Ffj4BKuOx3ojES86hMyLiZD5cx-xFPx`: https://drive.google.com/file/d/1-Ffj4BKuOx3ojES86hMyLiZD5cx-xFPx/view . It documents Mux playback and journal seeking **before** the full R2 bundle switch; it cannot substitute for post-publication testing.
+- The immutable `dist-72ec6c324f64` Git branch includes the release-manifest with SHA-256 for all 78 files. The final public R2 build matches 76 text SHA-256 hashes plus exact original film/poster MD5 object IDs and sizes. Prior entry points are saved in the DHAGO-only R2 prefix `releases/2026-11-13-pre72ec6c/`.

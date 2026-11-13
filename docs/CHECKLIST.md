@@ -1,6 +1,6 @@
 # DHAGO: 100-step implementation checklist
 
-**74/100 complete** | 13 in progress | 0 blocked | Updated 2026-11-13T13:29:49.761Z
+**79/100 complete** | 11 in progress | 0 blocked | Updated 2026-11-13T14:25:47.005Z
 
 This is evidence-based task completion, not a percentage of contest quality. See [worklog](worklog.md), [status](status.json) and [plan](PLAN.md). Blocked steps remain unchecked; independent later work may continue.
 
@@ -416,9 +416,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [tests/QA.md](../tests/QA.md), [docs/hosting.md](../docs/hosting.md)
 
-- [ ] **068 - Control cost and media lifetime** - NOT_STARTED
+- [ ] **068 - Control cost and media lifetime** - IN_PROGRESS
 
   Current Mux pricing advertises a free plan with up to 10 stored videos and 100K monthly delivery minutes [S6]. Confirm the account-specific limits. Example: 10,000 full 2-minute views equal 20,000 delivery minutes, before replays and other account traffic.
+
+  Evidence: [docs/mux-cost-and-retention.md](../docs/mux-cost-and-retention.md)
 
 - [ ] **069 - Integrate into one genuine live page** - IN_PROGRESS
 
@@ -508,15 +510,17 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
 
-- [ ] **083 - Create the submission manifest** - IN_PROGRESS
+- [x] **083 - Create the submission manifest** - DONE
 
   Populate entry title, demo URL, repository URL if shared, version, release SHA, visual paths and description path. Add Mux playback ID and real-site URL only when verified; use null for excluded bonuses, not plausible-looking placeholders.
 
-  Evidence: [tests/QA.md](../tests/QA.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [submission/manifest.json](../submission/manifest.json), [docs/hosting.md](../docs/hosting.md)
 
-- [ ] **084 - Deploy the actual final build** - NOT_STARTED
+- [x] **084 - Deploy the actual final build** - DONE
 
   Use the starter deploy command or verified host workflow after inspecting scripts. Set a stable production URL with no password, preview authentication or login gate. Keep secrets server-side, and verify allowed media origins and HTTPS.
+
+  Evidence: [docs/release-integrity.md](../docs/release-integrity.md), [docs/hosting.md](../docs/hosting.md), [https://github.com/aprashnasuraj2-dev/videoj/blob/dist-72ec6c324f64/release-manifest.json](https://github.com/aprashnasuraj2-dev/videoj/blob/dist-72ec6c324f64/release-manifest.json)
 
 - [ ] **085 - Smoke-test as a new visitor** - IN_PROGRESS
 
@@ -524,11 +528,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [tests/QA.md](../tests/QA.md)
 
-- [ ] **086 - Capture the final visuals** - IN_PROGRESS
+- [x] **086 - Capture the final visuals** - DONE
 
   Generate a sharp 1600x1000 hero image and a phone-width screenshot as internal targets, adjusting to actual form limits. AI must capture the running skin, not composite nonexistent controls. Keep video content and the unique ribbon visible.
 
-  Evidence: [tests/QA.md](../tests/QA.md)
+  Evidence: [tests/QA.md](../tests/QA.md), [docs/storage.md](../docs/storage.md), [https://drive.google.com/file/d/13UnLqOuiAQQOBXKoh_IesPHtFROkIUyb/view](https://drive.google.com/file/d/13UnLqOuiAQQOBXKoh_IesPHtFROkIUyb/view)
 
 - [x] **087 - Record a short proof video** - DONE
 
@@ -536,9 +540,11 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
 
-- [ ] **088 - Draft the final description** - IN_PROGRESS
+- [x] **088 - Draft the final description** - DONE
 
   Write 3-4 accurate sentences explaining the metaphor, useful interaction and accessibility choices. Verify every feature claim against the release. Do not claim a tested screen-reader/device combination, original invention or bonus that the evidence cannot support.
+
+  Evidence: [submission/description.md](../submission/description.md), [docs/owner-review.md](../docs/owner-review.md)
 
 - [ ] **089 - Create and verify the handover archive** - IN_PROGRESS
 
@@ -556,13 +562,17 @@ This is evidence-based task completion, not a percentage of contest quality. See
 
   Check the deadline wording, required fields, supported visual formats and any account-specific restrictions. Confirm the year and timezone context rather than trusting a copied countdown. AI records any difference from the planning snapshot.
 
-- [ ] **092 - Complete the score rehearsal** - IN_PROGRESS
+- [x] **092 - Complete the score rehearsal** - DONE
 
   Review the player against all four scored categories using the release evidence. List one weakness per category and fix only high-impact defects. The internal score is subjective preparation, not a forecast of judges scores or prize probability.
 
-- [ ] **093 - Present one concrete owner review** - NOT_STARTED
+  Evidence: [docs/score-rehearsal.md](../docs/score-rehearsal.md)
+
+- [ ] **093 - Present one concrete owner review** - IN_PROGRESS
 
   AI supplies the working URL, desktop/mobile visual, description, optional bonus evidence and license summary in one place. Owner checks the appearance, authorship/rights and account identity. Avoid repeated vague approvals throughout routine engineering work.
+
+  Evidence: [docs/owner-review.md](../docs/owner-review.md)
 
 - [ ] **094 - Prepare the exact form entries** - IN_PROGRESS
 

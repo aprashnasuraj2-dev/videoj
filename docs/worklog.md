@@ -66,3 +66,11 @@ Attempted preview deployment for exact revision 2ed92ded to Vercel team `surajde
 - Fixed exclusive WebVTT end-time boundary: the final chapter now remains present at the film endpoint. De-duplicated chapter readout DOM writes per time update. Synchronize collection cards and journal notes from their data-start boundaries on initial load, seek and ended state; hide external cards in the `nochapters` variant.
 - Added touch-emulated Playwright coverage for mobile play, chapter selection and captions, plus initial and ending chapter states. Physical-screen-reader and real-phone checks remain outstanding.
 - Added CI source-to-release workflow that stages an immutable `dist-<source SHA>` branch containing exact build files and SHA-256 manifest. It cannot deploy, mutate Cloudflare DNS or copy secret keys; R2 release remains a deliberately separate verified operation.
+
+## 2026-11-13 — Exact release parity restored
+
+- Merged PR #4 to `main` as `72ec6c324f646c6dcb18708bc86d3f0d415f39c2`; reviewed source head passed 30/30 Chromium checks. GitHub Actions successfully prepared immutable build branch `dist-72ec6c324f64` containing 78 files with SHA-256 manifest.
+- Scanned dedicated Cloudflare R2 `dhago-studio-static`: 10 missing hash-named assets, with shared language chunks and binary film/poster already present. Uploaded only the 10 missing assets and verified each exact readback. Detected one stale `preview.html`, saved rollback and replaced from the immutable release.
+- Compared the entire release: 76 text objects match the SHA-256 manifest; original film `0158d496a0ca9950e078e1ae4b985a6f` and poster `a9fc197275fe0222c02252afc3f13acb` match their expected MD5 object IDs and sizes. No missing or changed contents remained.
+- Saved old public `index.html` and `journal.html` to `releases/2026-11-13-pre72ec6c/` before publishing exact immutable release HTML, journal first and homepage last. Verified new R2 readback hashes. Both custom domains and journal respond publicly in independent HTTP checks; post-release real Chromium smoke remains the next release gate.
+- Archived exact-source 30-test evidence and pre-release public smoke separately in the owner-selected Google Drive folder. No additional Mux asset, Patro worker, zone-level rule, or unrelated R2 bucket was modified.

@@ -63,3 +63,11 @@ The fdcc1a45 run retained 15 passing behaviors but two narrow-label tests failed
 ## Production-only live smoke gate
 
 The `public-smoke` job runs after a successful source verification on pushes to `main` and only then. It uses `DHAGO_LIVE_URL=https://creative.aafnaipatro.com` and tests public Mux frame advancement and the separately deployed journal scene note. Pull requests skip these tests by design, so failures of a deployed environment cannot masquerade as code changes in the candidate. This gate was added after confirming HTTP success alone had masked a local-MP4 playback failure and a missing journal. **Its result is not claimed until the main push run finishes.**
+
+## Full-source production parity audit — 2026-11-13
+
+- PR #4 exact head `09352e53d5e9247c7cea8c47d33a94b1af51bf5a` passed **30/30 Playwright Chromium tests**, including four new end-of-film / no-chapters / initial scene / touch-emulation checks: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43439977940 .
+- Merged as `72ec6c324f646c6dcb18708bc86d3f0d415f39c2`; source CI verify and **pre-publish** public-smoke jobs passed in https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43440355195 . Preserve distinction: the smoke job ran before the exact full R2 publication.
+- Immutable branch `dist-72ec6c324f64` contains 78 files and SHA-256 manifest. Exact public release passed **76/76 text SHA-256 checks** and **2/2 binary ETag-MD5/size checks**. Previous HTML entry points are available for rollback.
+- Independent public HTTP retrieval confirmed DHAGO landing, alternate domain and full Studio Journal. Automated third-party browser reports codec incompatibility with both source MP4 and Mux HLS; passing Ubuntu CI Chromium is counterevidence that the media is inherently corrupt, not a guarantee of broad device support.
+- New owner's 5-step real-phone/desktop plus VoiceOver/NVDA walkthrough: `docs/owner-review.md`. **Still unverified** on actual physical hardware and screen readers.

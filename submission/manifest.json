@@ -1,6 +1,6 @@
 {
   "title": "DHAGO — Time, woven",
-  "status": "Public candidate; NOT submitted; complete CI dist not yet live",
+  "status": "Exact 78-file public build verified; post-publish live smoke and owner submission pending",
   "repositoryUrl": "https://github.com/aprashnasuraj2-dev/videoj",
   "reviewUrl": "https://github.com/aprashnasuraj2-dev/videoj/pull/1",
   "demoUrl": "https://creative.aafnaipatro.com/",
@@ -8,12 +8,24 @@
   "liveSiteUrl": "https://creative.aafnaipatro.com/journal.html",
   "driveFolderUrl": "https://drive.google.com/drive/folders/1uBHKAcUv2G8mfn3e9Q01A-F1Cp5U7RL5",
   "descriptionPath": "submission/description.md",
-  "finalVisuals": [],
+  "finalVisuals": [
+    "test-results/proof-capture-an-honest-30-second-control-walkthrough/hero-1600.png",
+    "test-results/player-layout-at-375px/player-375.png",
+    "test-results/deep-journal-uses-the-port-9e7a5-ent-and-working-scene-notes/journal-desktop.png"
+  ],
   "receipt": null,
-  "candidateCommit": "4f3f86cb795f3a21d787c1f8a0567d2242eca29a",
-  "ciEvidenceUrl": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626",
-  "ciTestsPassed": 26,
-  "driveEvidenceUrl": "https://drive.google.com/file/d/1j7FHURfdYk6Wn0LlNrF8jDLjixnC4ml7/view",
-  "publicReleaseMethod": "incremental R2 repair with versioned assets; final candidate dist still to deploy",
-  "playbackLimitations": "CI Chromium HLS playback passes; separate browser automation reports unsupported H.264/AAC codecs, so physical/branded-browser verification is required"
+  "candidateCommit": "72ec6c324f646c6dcb18708bc86d3f0d415f39c2",
+  "ciEvidenceUrl": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43440355195",
+  "ciTestsPassed": 30,
+  "driveEvidenceUrl": "https://drive.google.com/file/d/13UnLqOuiAQQOBXKoh_IesPHtFROkIUyb/view",
+  "publicReleaseMethod": "exact CI-built immutable dist published to dedicated Cloudflare R2; 78/78 content verified",
+  "playbackLimitations": "CI Chromium HLS playback passes; separate browser automation reports unsupported H.264/AAC codecs, so physical/branded-browser verification is required",
+  "productionSourceSha": "72ec6c324f646c6dcb18708bc86d3f0d415f39c2",
+  "productionDistBranch": "dist-72ec6c324f64",
+  "productionAssetCount": 78,
+  "productionIntegrity": "76 text SHA-256 matches and 2 binary MD5+size matches; previous HTML retained for rollback",
+  "preReleasePublicSmokeUrl": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43440355195",
+  "postReleasePublicSmokeUrl": null,
+  "visualsArchiveUrl": "https://drive.google.com/file/d/13UnLqOuiAQQOBXKoh_IesPHtFROkIUyb/view",
+  "releaseManifestPath": "release-manifest.json on dist-72ec6c324f64"
 }
