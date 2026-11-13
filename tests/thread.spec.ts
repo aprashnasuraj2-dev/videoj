@@ -71,3 +71,67 @@ test('forced colors retains chapter joins, labels and keyboard navigation', asyn
   await page.keyboard.press('ArrowRight');
   await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(0);
 });
+
+test('touch scrubbing holds beyond the slider and clears on cancellation', async ({ browser }) => {
+  const context = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 375, height: 812 } });
+  try {
+    const page = await context.newPage();
+    await page.goto('/?local');
+    const slider = page.locator('media-time-slider');
+    const thumb = slider.locator('media-slider-thumb');
+    await expect.poll(() => page.locator('video').evaluate((v: HTMLVideoElement) => v.duration)).toBeGreaterThan(0);
+    await slider.scrollIntoViewIfNeeded();
+    const box = (await slider.boundingBox())!;
+    const y = Math.round(box.y + box.height / 2);
+    const x = Math.round(box.x + 16);
+    const cdp = await context.newCDPSession(page);
+
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x + 45, y }] });
+    await expect(slider).toHaveAttribute('data-dragging', '');
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x + 95, y: y + box.height }] });
+    await expect(slider).toHaveAttribute('data-dragging', '');
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] });
+    await expect(slider).not.toHaveAttribute('data-dragging', '');
+
+    const video = page.locator('video');
+    const before = await video.evaluate((v: HTMLVideoElement) => v.currentTime);
+    await thumb.focus();
+    await page.keyboard.press('Home');
+    await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBe(0);
+    await page.keyboard.press('ArrowRight');
+    await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(0);
+    expect(before).toBeGreaterThan(0);
+  } finally {
+    await context.close();
+  }
+});
+
+test('uneven stitch positions follow cue starts and dense mobile ribbons hide stitches', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  const captionsUrl = '**/media/chapters.vtt';
+  await page.route(captionsUrl, route => route.fulfill({
+    contentType: 'text/vtt',
+    body: 'WEBVTT\n\n00:00.000 --> 00:11.000\nOne\n\n00:11.000 --> 00:40.000\nTwo\n\n00:40.000 --> 01:04.000\nThree\n',
+  }));
+  await page.goto('/?local');
+  const chapters = page.locator('.media-time-slider-chapter');
+  await expect(chapters).toHaveCount(3);
+  const coordinates = await chapters.evaluateAll(cues => cues.map(cue => {
+    const marker = getComputedStyle(cue, '::before');
+    return { content: marker.content, start: Number.parseFloat(getComputedStyle(cue).getPropertyValue('--media-slider-chapter-start')), markerX: Number.parseFloat(marker.insetInlineStart), width: cue.getBoundingClientRect().width };
+  }));
+  expect(coordinates[0].content).toBe('none');
+  for (const cue of coordinates.slice(1)) expect(cue.markerX).toBeCloseTo(cue.width * cue.start / 100 + 5, 0);
+
+  await page.unroute(captionsUrl);
+  const stamp = (s: number) => '00:' + String(s).padStart(2, '0') + '.000';
+  const dense = Array.from({ length: 14 }, (_, i) => `${stamp(i * 4)} --> ${stamp((i + 1) * 4)}\nChapter ${i + 1}\n`).join('\n');
+  await page.route(captionsUrl, route => route.fulfill({ contentType: 'text/vtt', body: `WEBVTT\n\n${dense}` }));
+  await page.reload();
+  await expect.poll(() => chapters.count()).toBeGreaterThanOrEqual(14);
+  expect(await chapters.nth(1).evaluate(el => getComputedStyle(el, '::before').display)).toBe('none');
+  await page.locator('media-time-slider media-slider-thumb').focus();
+  await page.keyboard.press('ArrowRight');
+  await expect.poll(() => page.locator('video').evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(0);
+});

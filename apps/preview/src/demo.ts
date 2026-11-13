@@ -5,9 +5,12 @@ import media from './media.json';
 const query = new URLSearchParams(location.search);
 const allowed = ['warm','dark','minimal'] as const;
 const surface = allowed.find(x=>x===query.get('surface')) ?? 'warm';
+const fallback = new URL(location.href);
+fallback.searchParams.set('local', '');
 const player = createDhagoPlayer({
   source: './media/studies-in-thread.mp4',
   playbackId: query.has('local') ? undefined : media.playbackId ?? undefined,
+  fallbackUrl: fallback.href,
   poster: './media/poster.webp',
   chapters: query.has('nochapters') ? undefined : './media/chapters.vtt',
   captions: './media/captions.vtt',

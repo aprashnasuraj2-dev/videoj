@@ -3,7 +3,17 @@ import media from './media.json';
 import './demo.css';
 import './journal.css';
 
-const player=createDhagoPlayer({source:'./media/studies-in-thread.mp4',playbackId:new URLSearchParams(location.search).has('local')?undefined:media.playbackId??undefined,poster:'./media/poster.webp',chapters:'./media/chapters.vtt',captions:'./media/captions.vtt',surface:'dark'});
+const fallback = new URL(location.href);
+fallback.searchParams.set('local', '');
+const player = createDhagoPlayer({
+  source: './media/studies-in-thread.mp4',
+  playbackId: new URLSearchParams(location.search).has('local') ? undefined : media.playbackId ?? undefined,
+  fallbackUrl: fallback.href,
+  poster: './media/poster.webp',
+  chapters: './media/chapters.vtt',
+  captions: './media/captions.vtt',
+  surface: 'dark',
+});
 document.querySelector('#journal-player')!.append(player);
 const video=player.querySelector<HTMLVideoElement>('video,mux-video')!;
 const notes=document.querySelectorAll<HTMLButtonElement>('[data-time]');
