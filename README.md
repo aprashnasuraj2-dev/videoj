@@ -19,3 +19,7 @@ Actions validate builds and browser behavior, provision Mux using repository sec
 ## Release and competition handoff
 
 [Judging rehearsal](docs/score-rehearsal.md) · [Owner review](docs/owner-review.md) · [Immutable release guide](docs/release-integrity.md) · [Mux usage limits](docs/mux-cost-and-retention.md). Production assets are staged in `dist-72ec6c324f64` and all 78 release objects were hash/ETag-verified in the dedicated R2 origin. Source CI and public smoke remain separate acceptance gates. The project has **not** been entered into the contest.
+
+## 2026-11-13 thread-craft refinement
+
+[PR #6](https://github.com/aprashnasuraj2-dev/videoj/pull/6) adds cue-derived decorative joins, subtle native dragging tension and real-media buffering response without inventing a control, cue or telemetry state. Reduced-motion and forced-colors behavior remain test-covered. Source `a6492362b634799f3f23611e95eb88d003474d1f` passed **35/35 Playwright Chromium tests** and its immutable `dist-a6492362b634` release matched **78/78 dedicated R2 assets**. A new post-release public browser smoke, physical-phone assessment, screen-reader review and owner-submitted challenge entry are separate gates. Prior HTML entry points remain backed up for rollback.

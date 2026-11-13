@@ -1,6 +1,6 @@
 # DHAGO — owner review before competition entry
 
-**Candidate:** DHAGO — Time, woven. **Language:** English throughout the public player, journal and form description. **Source:** `72ec6c324f646c6dcb18708bc86d3f0d415f39c2`, built at `dist-72ec6c324f64`.
+**Candidate:** DHAGO — Time, woven. **Language:** English throughout the public player, journal and form description. **Current source:** `a6492362b634799f3f23611e95eb88d003474d1f`, built at `dist-a6492362b634`; 35/35 browser source tests.
 
 **Watch:** https://creative.aafnaipatro.com/ (alternate https://dhago.aafnaipatro.com/)
 
@@ -8,7 +8,7 @@
 
 **Repository / Apache-2.0:** https://github.com/aprashnasuraj2-dev/videoj
 
-**Visual and engineering evidence:** https://drive.google.com/file/d/13UnLqOuiAQQOBXKoh_IesPHtFROkIUyb/view (30 passing Chromium tests, responsive images, film-control walkthrough). The separate https://drive.google.com/file/d/1-Ffj4BKuOx3ojES86hMyLiZD5cx-xFPx/view contains earlier production smoke evidence; that smoke preceded the exact R2 HTML publication.
+**Earlier visual and engineering evidence (old release):** https://drive.google.com/file/d/13UnLqOuiAQQOBXKoh_IesPHtFROkIUyb/view (30 passing Chromium tests, responsive images, film-control walkthrough). The separate https://drive.google.com/file/d/1-Ffj4BKuOx3ojES86hMyLiZD5cx-xFPx/view contains earlier production smoke evidence; that smoke preceded the exact R2 HTML publication.
 
 ## Five-action independent review
 
@@ -21,3 +21,8 @@ For assistive technology, use VoiceOver or NVDA and navigate the player without 
 Verify you own the original film/skin rights and agree to Apache-2.0 submission terms; confirm account eligibility, preferred creator identity and profile; inspect the actual Contra entry form, attachment limits and current submission requirements; and authorize the final entry before submission. The current repository manifest has `receipt: null`. **The entry is not submitted** and no bonus is awarded yet.
 
 Deadline from the official challenge: **November 16 at 11:59pm PST** (November 17 at 1:44pm Nepal time, assuming the ongoing 2026 challenge). Allow a buffer for account authentication and the confirmation page. This review is a handoff, not permission to accept terms on your behalf.
+
+
+## Current build verification
+
+[PR #6](https://github.com/aprashnasuraj2-dev/videoj/pull/6) includes cue-derived stitches, native Video.js drag-only tension, real buffering states, and accessible motion/contrast behavior; [35-test source CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43461387053) passed. The current R2 bundle is 78/78 manifest-matched, and the previous HTML is backed up. A fresh post-new-release public Chromium smoke and a current visual archive are separate from the old release evidence linked above. Physical-phone/assistive-tech assessment and owner's competition terms/rights decision are still outstanding.
