@@ -30,3 +30,29 @@ jobs:
             playwright-report/
             dist/
           retention-days: 14
+
+  public-smoke:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Verify production Mux playback and live Studio Journal
+        env:
+          DHAGO_LIVE_URL: https://creative.aafnaipatro.com
+        run: npx playwright test tests/live.spec.ts --workers=1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-smoke-evidence
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 14
