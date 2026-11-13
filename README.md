@@ -1,6 +1,6 @@
 # DHAGO — Time, woven
 
-Reusable Video.js v10 HTML skin with a woven chapter ribbon, visible control shelf, captions and speed settings. The preview includes an original 64-second silent motion study.
+Reusable Video.js v10 HTML skin with a woven chapter ribbon, visible control shelf, captions and speed settings. The preview includes an original 64-second motion study with quiet synthesized ambient audio.
 
 [Public collection](https://creative.aafnaipatro.com/) · [Annotated film journal](https://creative.aafnaipatro.com/journal.html)
 

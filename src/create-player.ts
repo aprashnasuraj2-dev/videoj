@@ -52,17 +52,32 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   }
   // Read real chapter cues; no duplicated timer or invented chapter state.
   const readout = player.querySelector<HTMLElement>('.dhago-chapter-readout')!;
+  // At the exact film endpoint the final WebVTT cue's exclusive end time
+  // must not erase its chapter label. Avoid redundant DOM writes on timeupdate.
+  let displayedChapter = '';
   const updateChapter = () => {
     const track = Array.from(video.textTracks).find(t => t.kind === 'chapters');
     const cues = Array.from(track?.cues ?? []);
-    const index = cues.findIndex(c => video.currentTime >= c.startTime && video.currentTime < c.endTime);
+    const time = video.currentTime;
+    const nearEnd = Number.isFinite(video.duration) && video.duration > 0 &&
+      time >= video.duration - 0.05;
+    const index = cues.findIndex((cue, i) =>
+      (time >= cue.startTime && time < cue.endTime) ||
+      (i === cues.length - 1 && nearEnd && time >= cue.startTime)
+    );
+    const label = index < 0 ? '' : (cues[index] as VTTCue).text;
+    const signature = `${index}/${cues.length}/${label}`;
+    if (signature === displayedChapter) return;
+    displayedChapter = signature;
     readout.hidden = index < 0;
     if (index < 0) return;
-    readout.querySelector('.dhago-chapter-index')!.textContent = `CHAPTER ${String(index + 1).padStart(2, '0')} / ${String(cues.length).padStart(2, '0')}`;
-    readout.querySelector('.dhago-chapter-name')!.textContent = (cues[index] as VTTCue).text;
+    readout.querySelector('.dhago-chapter-index')!.textContent =
+      `CHAPTER ${String(index + 1).padStart(2, '0')} / ${String(cues.length).padStart(2, '0')}`;
+    readout.querySelector('.dhago-chapter-name')!.textContent = label;
   };
   video.addEventListener('timeupdate', updateChapter);
   video.addEventListener('loadedmetadata', updateChapter);
+  video.addEventListener('ended', updateChapter);
   video.querySelectorAll('track').forEach(t => t.addEventListener('load', updateChapter));
   player.querySelector('.dhago-retry')?.addEventListener('click',()=>{
     // A deliberate user retry, never an automatic loop or silent fallback.

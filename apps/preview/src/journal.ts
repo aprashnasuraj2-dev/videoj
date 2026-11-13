@@ -12,6 +12,13 @@ notes.forEach(note=>note.addEventListener('click',()=>{
  video.pause();video.currentTime=Math.min(Number(note.dataset.time),video.duration);
  player.querySelector<HTMLElement>('media-time-slider media-slider-thumb')?.focus();
 }));
-video.addEventListener('timeupdate',()=>notes.forEach((note,i)=>{
- if(video.currentTime>=i*16&&video.currentTime<(i+1)*16)note.setAttribute('aria-current','true');else note.removeAttribute('aria-current');
-}));
+const starts=Array.from(notes,note=>Number(note.dataset.time));
+const syncNotes=()=>notes.forEach((note,i)=>{
+ const active=video.currentTime>=starts[i] &&
+   (i===notes.length-1||video.currentTime<starts[i+1]);
+ if(active)note.setAttribute('aria-current','true');
+ else note.removeAttribute('aria-current');
+});
+for(const event of ['loadedmetadata','timeupdate','ended'] as const)
+  video.addEventListener(event,syncNotes);
+syncNotes();

@@ -1,0 +1,59 @@
+name: Prepare immutable Cloudflare release assets
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'apps/preview/**'
+      - 'vite.config.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/stage-cloudflare-dist.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: dhago-dist-${{ github.sha }}
+  cancel-in-progress: false
+jobs:
+  stage-dist:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci && npm run typecheck && npm run build
+      - name: Create immutable branch containing exact dist
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s dist/index.html && test -s dist/journal.html
+          SOURCE_SHA="$(git rev-parse HEAD)"
+          SHORT="${SOURCE_SHA:0:12}"
+          RELEASE_BRANCH="dist-${SHORT}"
+          if git ls-remote --exit-code --heads origin "$RELEASE_BRANCH"; then
+            echo "Immutable release branch already exists: $RELEASE_BRANCH"
+            exit 0
+          fi
+          mkdir -p published-dist
+          cp -a dist/. published-dist/
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib
+          root=pathlib.Path('published-dist')
+          entries=[]
+          for path in sorted(root.rglob('*')):
+              if path.is_file():
+                  entries.append({'key':str(path.relative_to(root)), 'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'bytes':path.stat().st_size})
+          pathlib.Path('release-manifest.json').write_text(json.dumps({'source_sha':os.environ['GITHUB_SHA'],'built_by':'GitHub Actions','file_count':len(entries),'files':entries},indent=2)+'\n')
+          print('Staged',len(entries),'release files')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$RELEASE_BRANCH"
+          git add -f published-dist release-manifest.json
+          git commit -m "build: immutable DHAGO dist for ${SOURCE_SHA}"
+          git push origin "HEAD:refs/heads/$RELEASE_BRANCH"
+          echo "Immutable source: ${SOURCE_SHA}; branch: ${RELEASE_BRANCH}" >> "$GITHUB_STEP_SUMMARY"

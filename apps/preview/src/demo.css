@@ -98,3 +98,6 @@ footer a { text-underline-offset:3px; }
   .chapter::before { background: CanvasText; }
   .chapter[aria-current="true"] { outline: 2px solid Highlight; outline-offset: -2px; }
 }
+
+/* No chapter cues means no external chapter actions. */
+.chapter-list[hidden] { display: none !important; }

@@ -22,12 +22,21 @@ seekButtons.forEach(button=>button.addEventListener('click',()=>{
   video.currentTime = Math.min(Number(button.dataset.seek),video.duration);
   player.querySelector<HTMLElement>('media-time-slider media-slider-thumb')?.focus();
 }));
-video.addEventListener('timeupdate',()=>{
+// Chapter cards follow declared seek boundaries, including the final frame.
+const chapterStarts=Array.from(seekButtons,button=>Number(button.dataset.seek));
+if(query.has('nochapters'))document.querySelector('.chapter-list')?.setAttribute('hidden','');
+const syncCards=()=>{
+  if(query.has('nochapters'))return;
   seekButtons.forEach((button,i)=>{
-    const active=video.currentTime >= i*16 && video.currentTime < (i+1)*16;
-    if(active)button.setAttribute('aria-current','true');else button.removeAttribute('aria-current');
+    const active=video.currentTime>=chapterStarts[i] &&
+      (i===seekButtons.length-1 || video.currentTime<chapterStarts[i+1]);
+    if(active)button.setAttribute('aria-current','true');
+    else button.removeAttribute('aria-current');
   });
-});
+};
+for(const event of ['loadedmetadata','timeupdate','ended'] as const)
+  video.addEventListener(event,syncCards);
+syncCards();
 document.querySelectorAll<HTMLButtonElement>('[data-surface-choice]').forEach(button=>{
   button.setAttribute('aria-pressed',String(button.dataset.surfaceChoice===surface));
   button.addEventListener('click',()=>{
