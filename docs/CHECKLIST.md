@@ -1,0 +1,426 @@
+# DHAGO: 100-step implementation checklist
+
+**0/100 complete** | 0 in progress | 0 blocked | Updated 2026-11-13T11:08:24.452Z
+
+This is evidence-based task completion, not a percentage of contest quality. See [worklog](worklog.md), [status](status.json) and [plan](PLAN.md). Blocked steps remain unchecked; independent later work may continue.
+
+## 01 / STRATEGY & CONSTRAINTS
+
+- [ ] **001 - Capture the authoritative brief** - NOT_STARTED
+
+  Save the live rules URL, access date, deadline wording and any entry limits in docs/brief.md. AI must flag an absent eligibility term rather than invent it; account-specific eligibility remains unverified until checked.
+
+- [ ] **002 - Build an eligibility checklist** - NOT_STARTED
+
+  Create separate checks for public access, actual v10 playback, five essential control categories, responsive layout, keyboard operation, visual and short description. Optional bonuses must never mask a failed minimum requirement.
+
+- [ ] **003 - Convert scoring into priorities** - NOT_STARTED
+
+  Use an internal target of at least 23/25 plus two verified bonuses, as an aspiration only. Spend design effort on the player itself; a polished surrounding website cannot rescue weak controls.
+
+- [ ] **004 - Set the authoring contract** - NOT_STARTED
+
+  AI writes the implementation, tests, documentation, screenshots, release archive and form copy. Interpret 99% as a target for authored deliverables, not measured total effort, autonomous judgment, or a guaranteed completion rate.
+
+- [ ] **005 - Identify owner handoffs** - NOT_STARTED
+
+  List account sign-in, rights confirmation, final visual choice, phone testing and accepting entry terms. AI prepares each handoff with exact fields and files, then continues all independent work without waiting unnecessarily.
+
+- [ ] **006 - Choose a bounded schedule** - NOT_STARTED
+
+  Budget 24-32 active agent hours and 60-120 owner minutes, assuming tools work and accounts can be accessed. These are planning estimates; record actual hours and protect the final deployment buffer.
+
+- [ ] **007 - Allocate the effort** - NOT_STARTED
+
+  Within a 28-hour example: 4h discovery/design, 10h implementation, 7h access/device QA, 3h packaging/deployment and 4h contingency. Cut optional features before consuming the contingency reserved for playback and entry problems.
+
+- [ ] **008 - Set the cost envelope** - NOT_STARTED
+
+  Target no new paid tools beyond an existing AI subscription and qualifying free hosting. Set a US$20 optional spending ceiling requiring owner agreement; log metered usage. Free allowances are finite, not a promise of zero lifetime cost.
+
+- [ ] **009 - Create the risk register** - NOT_STARTED
+
+  Track wrong player version, inaccessible controls, mobile overflow, expired video, protected deployment and deadline failure. Give each a test, owner and fallback; fix risks that can disqualify the entry before decorative improvements.
+
+- [ ] **010 - Freeze the success definition** - NOT_STARTED
+
+  The plan ends with a publicly playable skin, reproducible source, usable visual, accurate description, optional bonus evidence and saved submission receipt. A ZIP, screenshot or repository alone is not the required working URL.
+
+## 02 / ORIGINALITY & ART DIRECTION
+
+- [ ] **011 - Inspect a bounded competitor sample** - NOT_STARTED
+
+  Review 12-20 visible entries and record concept families, not popularity rankings. The current feed includes tactile controls, transit timelines and waveform players [S7]; the sample cannot establish uniqueness across all entries.
+
+- [ ] **012 - Define one user and moment** - NOT_STARTED
+
+  Target viewers watching short craft, travel or documentary films on phones and laptops. Their main task is watching; secondary tasks are finding a chapter and replaying a useful moment without a complicated editor.
+
+- [ ] **013 - Write the design thesis** - NOT_STARTED
+
+  Create docs/design.md: a quiet picture above a solid control shelf, with a woven linear timeline and clear chapter labels. The metaphor lives inside the skin, so it survives when removed from its demo website.
+
+- [ ] **014 - Define the signature interaction** - NOT_STARTED
+
+  Render chapter segments as adjoining woven swatches with a single standard seek track and thumb. Pointer movement may reveal a timestamp; selection seeks. Texture must never imply a second draggable control or fictional audio waveform.
+
+- [ ] **015 - Set a restrained visual system** - NOT_STARTED
+
+  Start with ink #171918, bone #F4EBDD, rust #B44332 and muted gold #9A5A18. AI measures every actual foreground/background pairing before use; these are palette candidates, not pre-certified accessible combinations.
+
+- [ ] **016 - Resolve type and icon craft** - NOT_STARTED
+
+  Use one licensed sans family plus tabular numerals for time. Draw or use one consistently licensed SVG icon family, with 20-24px glyphs inside 44-48px buttons. Adjust play-triangle optical centering by visual inspection.
+
+- [ ] **017 - Create three comparable compositions** - NOT_STARTED
+
+  AI produces live HTML/CSS variants: warm shelf, dark shelf and minimal editorial shelf. Keep video, control order and player size identical so owner selection judges the skin rather than unrelated imagery.
+
+- [ ] **018 - Apply a clear selection rubric** - NOT_STARTED
+
+  Score variants for recognition, timeline clarity, thumb reach, contrast and reuse. Keep the strongest single direction; do not merge three layouts into a multi-theme system that triples the state-testing burden.
+
+- [ ] **019 - Test the counterexample** - NOT_STARTED
+
+  If the weave reads as a decorative loading bar or chapter colors carry all meaning, it fails. Add names, ticks and a conventional thumb; reduce texture until seeking is immediately obvious. Novelty alone does not earn usability.
+
+- [ ] **020 - Lock a reproducible design brief** - NOT_STARTED
+
+  Save approved tokens, icon stroke, spacing, radii, two responsive layouts and screenshots. Define only one optional enhancement: keyboard-operable A-B replay. Avoid accounts, multiplayer, chat and AI services in the shipped player.
+
+## 03 / REPOSITORY & AI SETUP
+
+- [ ] **021 - Establish workspace capabilities** - NOT_STARTED
+
+  AI checks Node, package manager, Git, browser automation and network access. Record versions in docs/environment.md. If execution is unavailable, provide a source bundle with explicit untested status rather than claiming a functioning demo.
+
+- [ ] **022 - Create an isolated repository** - NOT_STARTED
+
+  Use a new repository such as dhago-videojs-skin under the owner account, once connected. Until then, initialize local Git and keep a downloadable snapshot. Do not modify EventV, Patro or other existing projects during this setup.
+
+- [ ] **023 - Set repository safeguards** - NOT_STARTED
+
+  Write .gitignore for node_modules, build output, private environment files and local recordings. Commit a safe .env.example with names only. Never place Mux secrets, host tokens or authentication cookies in Git, client JavaScript or screenshots.
+
+- [ ] **024 - Install the official agent guidance** - NOT_STARTED
+
+  Follow the Video.js skill instructions for the actual tool and restart/reload if required. If plugin installation is unsupported, read official and installed docs directly. Do not pretend a skill was installed when only its page was read.
+
+- [ ] **025 - Generate the version-matched starter** - NOT_STARTED
+
+  Run the official skin CLI with the chosen options. Read generated files before restructuring them. Save CLI version and command choices; if docs and CLI conflict, inspect help and installed exports, then document the resolved behavior.
+
+- [ ] **026 - Prove genuine v10 integration** - NOT_STARTED
+
+  Record the installed @videojs/html version, lockfile and runtime component registration. Reject accidental v8 patterns such as videojs() initialization unless explicitly supported by the installed v10 docs. A package name alone does not prove runtime playback.
+
+- [ ] **027 - Create the first playable baseline** - NOT_STARTED
+
+  Start the generated preview with an authorized test clip, activate play and observe advancing time and rendered frames. Commit this small known-working baseline before custom styling so later regressions have a useful comparison point.
+
+- [ ] **028 - Write a project AGENTS.md** - NOT_STARTED
+
+  Specify current docs first, preserve component semantics, no fake state, no credentials, no invented test results and one coherent feature at a time. Permit routine reversible fixes; keep publication and account actions within the owner-authorized scope.
+
+- [ ] **029 - Create a resumable worklog** - NOT_STARTED
+
+  For every phase store completed step numbers, next action, commit SHA, blockers and evidence paths. New AI sessions read AGENTS.md and worklog first; they must inspect current files instead of repeating installation or research.
+
+- [ ] **030 - Use light but reliable Git discipline** - NOT_STARTED
+
+  Work on feat/dhago-skin, commit meaningful slices and keep main playable. Run checks relevant to changed behavior. One final reviewed release is preferable to spending hours on redundant PR or CI cycles for cosmetic edits.
+
+## 04 / STATE & ESSENTIAL CONTROLS
+
+- [ ] **031 - Inventory real component imports** - NOT_STARTED
+
+  Map every visible and nonvisual component to its installed reference and import. Include status announcements and an error surface. Compound controls need their child registrations too; unknown custom elements can look present while doing nothing.
+
+- [ ] **032 - Implement play, pause and ended states** - NOT_STARTED
+
+  Use the provided play control with correct state labels and replay behavior. Test the overlay and shelf buttons against actual playback; if play() is rejected, expose a useful message instead of showing a false playing icon.
+
+- [ ] **033 - Build a conventional seek slider** - NOT_STARTED
+
+  Connect timeline fill, buffer, thumb and pointer/keyboard seeking to the real media state. Handle zero or unavailable duration, dragging outside bounds and seeking near the end. Never fake buffered progress for visual polish.
+
+- [ ] **034 - Make time readable and stable** - NOT_STARTED
+
+  Display elapsed and total time with tabular numerals and clear labels. Before metadata, show an honest placeholder. Avoid NaN:NaN, negative elapsed time, shifting widths and announcements on every time-update event.
+
+- [ ] **035 - Wire mute and volume correctly** - NOT_STARTED
+
+  Show a discoverable mute control and a working volume adjustment where the platform supports it. Restore the previous nonzero level when unmuting. Test device volume restrictions and describe platform-controlled behavior without a misleading inactive slider.
+
+- [ ] **036 - Implement real fullscreen** - NOT_STARTED
+
+  Request fullscreen on the appropriate player container so custom controls remain included where supported. Handle exiting via Escape and browser UI. Test iPhone native video fullscreen separately; do not label a CSS-expanded panel as system fullscreen.
+
+- [ ] **037 - Add reliable caption controls** - NOT_STARTED
+
+  Provide a valid caption track for the demo and a clear on/off or language selector. Reflect availability, selection and errors accurately. Keep captions clear of the control shelf, including mobile landscape and enlarged text.
+
+- [ ] **038 - Add one compact settings surface** - NOT_STARTED
+
+  Offer playback speed only if supported; use clear current values and keyboard-operable choices. Avoid quality controls until the media feature truly supports them. An MP4 demo does not justify a fabricated adaptive-quality menu.
+
+- [ ] **039 - Handle loading and playback failure** - NOT_STARTED
+
+  Style idle, metadata loading, buffering, seeking, paused, playing, ended and failed states. Show a stable buffer indicator only when needed. Include a useful retry action and safe media fallback without silently abandoning the Mux bonus.
+
+- [ ] **040 - Verify baseline acceptance now** - NOT_STARTED
+
+  Run play/pause, seek, time, volume/mute and fullscreen checks before decoration. Capture browser, source and observed result in evidence/core-controls.md. Fix functional failures while the layout is still simple; postpone optional A-B replay.
+
+## 05 / SIGNATURE SKIN IMPLEMENTATION
+
+- [ ] **041 - Separate skin and showcase styles** - NOT_STARTED
+
+  Keep player-specific markup/styles in the generated src/ structure and demo narrative under apps/preview/ or its verified equivalent. Namespace classes. The skin must not depend on the host page background, global reset or a particular page font.
+
+- [ ] **042 - Build the solid control shelf** - NOT_STARTED
+
+  Place essential controls against an opaque, stable surface so moving footage cannot destroy contrast. Let the video remain visually dominant. In fullscreen, keep the shelf attached to the player container and preserve safe-area padding.
+
+- [ ] **043 - Implement original weave texture** - NOT_STARTED
+
+  Generate a restrained repeating pattern for chapter segments with small CSS gradients or SVG. Keep it decorative and noninteractive. Reduce visual density around labels; never put low-contrast texture directly behind essential numbers or icon strokes.
+
+- [ ] **044 - Map chapter data to actual time** - NOT_STARTED
+
+  Store titles and real start/end seconds in a documented format. Compute segment widths from duration, clamp invalid values and test overlaps. With no chapters, retain the normal timeline; do not invent chapter content or timings.
+
+- [ ] **045 - Add seek preview feedback** - NOT_STARTED
+
+  Show actual timestamp and chapter name on hover/focus or touch interaction without requiring either. Include preview thumbnails only if verified storyboards exist and load reliably. A timestamp-only fallback is better than broken or invented thumbnail frames.
+
+- [ ] **046 - Polish focus, hover and pressed states** - NOT_STARTED
+
+  Resolve every icon and button across resting, hover, focus, active, muted and disabled states. Keep focus distinct from hover. On touch, avoid sticky hover behavior and ensure no action requires a precision hover target.
+
+- [ ] **047 - Make motion purposeful** - NOT_STARTED
+
+  Use brief opacity or position transitions for feedback, with an initial 120-180ms design target. Avoid perpetual weave motion and layout-shifting flourishes. Reduced-motion mode removes nonessential movement while preserving immediate visible state feedback.
+
+- [ ] **048 - Evaluate optional A-B replay** - NOT_STARTED
+
+  Only after essential checks pass, add two labeled boundary actions and a clear reset. Clamp A below B, seek to A only when appropriate and respect pause/end behavior. Remove the entire feature if it causes timeline ambiguity or instability.
+
+- [ ] **049 - Package theme customization** - NOT_STARTED
+
+  Expose a small token surface, safe defaults and a documented compact layout. Test one alternate accent plus a second unrelated host page. A configurable color is not automatically accessible; state which foreground settings were measured together.
+
+- [ ] **050 - Review the actual visual artifact** - NOT_STARTED
+
+  Capture equal-size desktop and phone screenshots from the running code, then compare them against the selected direction. Fix optical alignment, ribbon weight and spacing. Do not submit a generated concept image as evidence of implemented UI.
+
+## 06 / RESPONSIVENESS & ACCESSIBILITY
+
+- [ ] **051 - Test width-driven layout** - NOT_STARTED
+
+  Use player/container width as the breakpoint signal where supported. At 320px, move essentials into two rows instead of squeezing labels. Test portrait, landscape and embedded players; viewport-wide CSS can fail inside narrow content columns.
+
+- [ ] **052 - Preserve all essential functions** - NOT_STARTED
+
+  Keep play/pause, seek, time, mute/volume access and fullscreen discoverable at narrow widths. Overflow menus may hold secondary settings, not silently remove essential actions. Respect phone safe areas without covering the timeline.
+
+- [ ] **053 - Audit the complete keyboard route** - NOT_STARTED
+
+  Tab through controls in visual order, activate buttons with expected keys and operate sliders with arrows. Test Home/End when provided. Prevent duplicate shortcuts, page scrolling on consumed playback keys and global hotkeys that capture typing elsewhere.
+
+- [ ] **054 - Verify popup focus behavior** - NOT_STARTED
+
+  Open each menu with keyboard, move between choices, press Escape and confirm focus returns to its trigger. Do not trap focus in nonmodal popovers. Ensure menus are reachable and unclipped in fullscreen and short landscape players.
+
+- [ ] **055 - Strengthen visible focus** - NOT_STARTED
+
+  Apply a high-contrast outline with sufficient offset around each interactive target. Keep controls visible while focused; idle auto-hide must never hide the focused action. Test focus over both the dark and light shelf treatment.
+
+- [ ] **056 - Check semantics with assistive technology** - NOT_STARTED
+
+  AI inspects accessible names, roles and current values, then prepares a short VoiceOver or NVDA walkthrough for the owner. Verify changing labels and slider time. Do not duplicate roles or announce elapsed seconds continuously.
+
+- [ ] **057 - Measure real contrast and color use** - NOT_STARTED
+
+  Measure text, icon, focus and track pairs over near-white, near-black and mixed video frames. Label chapters and selected settings with more than color. Forced-colors mode must retain the timeline, boundaries and focus visibility.
+
+- [ ] **058 - Check zoom and long content** - NOT_STARTED
+
+  Test 200% zoom and a narrow reflow case, large text, long chapter titles and translated labels. Wrap or truncate with accessible full names. Never shrink essential labels until they technically fit but become unreadable.
+
+- [ ] **059 - Honor user preferences** - NOT_STARTED
+
+  Test prefers-reduced-motion and remove ornamental animation. Provide solid surfaces without relying on blur, and honor contrast preferences where implemented. Test actual emulated media conditions, not merely the existence of a CSS media-query block.
+
+- [ ] **060 - Conduct a timed first-use trial** - NOT_STARTED
+
+  Ask the owner to play, seek, mute, open captions and enter fullscreen on a phone without instruction. Target finding each in about five seconds as a design heuristic, not a scientific benchmark. Fix any repeated hesitation.
+
+## 07 / VIDEO, MUX & REAL-SITE BONUS
+
+- [ ] **061 - Choose one rights-cleared video** - NOT_STARTED
+
+  Prefer a 60-120 second owner-created craft, landscape or project walkthrough with bright and dark scenes. Record creator, permission and any music terms. Apache licensing the skin does not automatically relicense third-party video, fonts or artwork.
+
+- [ ] **062 - Prepare the media package with AI** - NOT_STARTED
+
+  AI can edit authorized footage, create an original title card, compress a web version and extract a poster. If source footage is unavailable, create a simple original motion study from code rather than downloading unlicensed cinematic footage.
+
+- [ ] **063 - Produce real captions and chapters** - NOT_STARTED
+
+  Generate a transcript if there is speech, correct names and timestamps, and export WebVTT captions plus chapter metadata. For a silent study, use honest descriptive labels; do not fabricate spoken dialogue just to demonstrate captions.
+
+- [ ] **064 - Prepare the Mux account handoff** - NOT_STARTED
+
+  Give the owner the exact sign-up/upload steps and filename. Owner handles identity, authentication and plan choice. If an approved connector exists, AI may use it within granted scope; never request that passwords or secrets be pasted into the repository.
+
+- [ ] **065 - Upload a persistent public asset** - NOT_STARTED
+
+  Create a standard asset with public playback and wait for Ready. Record asset ID privately and playback ID in the manifest. Avoid temporary demo assets; the Mux docs console warns its test assets are deleted after 24 hours [S5].
+
+- [ ] **066 - Connect the actual Mux source** - NOT_STARTED
+
+  Use the installed Video.js v10 media integration for Mux/HLS, verified against matching docs. Test manifest and segments, browser playback and seeking. The public playback ID is safe to expose; management credentials must stay outside the browser bundle.
+
+- [ ] **067 - Verify the Mux bonus end to end** - NOT_STARTED
+
+  Observe the submitted player requesting the expected public asset and advancing through real video. Record playback ID, deployment URL, time and network evidence. If fallback media is playing instead, treat the Mux bonus as unverified until fixed.
+
+- [ ] **068 - Control cost and media lifetime** - NOT_STARTED
+
+  Current Mux pricing advertises a free plan with up to 10 stored videos and 100K monthly delivery minutes [S6]. Confirm the account-specific limits. Example: 10,000 full 2-minute views equal 20,000 delivery minutes, before replays and other account traffic.
+
+- [ ] **069 - Integrate into one genuine live page** - NOT_STARTED
+
+  AI prepares a useful portfolio case study or a tightly scoped existing-site integration. Keep the same skin source and verified video. A duplicate contest sandbox is weaker evidence of real use; the bonus is ultimately the judges decision.
+
+- [ ] **070 - Preserve fallback and judging access** - NOT_STARTED
+
+  Keep an authorized fallback source for resilience, but report which source is active. Test public access without a session. Store the original video safely and keep both URLs, the deployment and the Mux asset live through judging.
+
+## 08 / QUALITY & FAILURE TESTING
+
+- [ ] **071 - Write a behavior-focused test matrix** - NOT_STARTED
+
+  Cover every essential action plus captions, chapter seeking and any optional replay. Specify setup, action and expected media state. Keep test IDs stable; avoid tests that merely assert implementation classes exist.
+
+- [ ] **072 - Automate core actions in-browser** - NOT_STARTED
+
+  With Playwright or equivalent, prove time advances after play, stops after pause and changes after seeking. Verify mute state and volume where supported. Handle loading deterministically and assert meaningful outcomes rather than fixed sleep delays.
+
+- [ ] **073 - Separate platform-limited checks** - NOT_STARTED
+
+  Fullscreen and audio policies may require real user gestures or headed/device tests. Mark automated gaps and complete manual checks where possible. A passing mocked fullscreen call cannot prove real fullscreen behavior on a phone.
+
+- [ ] **074 - Run focused accessibility automation** - NOT_STARTED
+
+  Scan resting player, open menu and error states with an appropriate scanner. Fix missing names, contrast findings and structural errors. Record tool version and scope; a clean scan cannot certify WCAG compliance or replace screen-reader use.
+
+- [ ] **075 - Capture a responsive visual set** - NOT_STARTED
+
+  Save screenshots at the planned player widths, light/dark footage, captions on and menu open. Inspect overflow, clipped focus rings, time alignment and touch spacing. Compare actual images, not only CSS breakpoint declarations.
+
+- [ ] **076 - Exercise media edge states** - NOT_STARTED
+
+  Test slow loading, unavailable source, retry, end/replay, rapid play/pause and seek-before-metadata. Check invalid or missing chapters and long captions. Error copy should help recovery without displaying raw credentials, stack traces or developer-only details.
+
+- [ ] **077 - Check constrained-device performance** - NOT_STARTED
+
+  Test a throttled mobile profile and measure actual startup behavior. Target under 250KB compressed first-party demo JavaScript excluding video and fonts, if the starter permits; report measured exceptions. Prefer no continuous decorative requestAnimationFrame loop.
+
+- [ ] **078 - Model delivery and hosting load** - NOT_STARTED
+
+  At 4Mbps, a fully watched 2-minute video transfers about 60MB; 1,000 full views approach 60GB before adaptive bitrate or caching. Serve video through the media CDN; do not proxy segments through a quota-sensitive application worker.
+
+- [ ] **079 - Review security and dependency risk** - NOT_STARTED
+
+  Run available dependency checks and inspect introduced scripts, external requests and exposed variables. Lock dependencies and remove unused packages. Prioritize exploitable findings in shipped code; do not churn the stack for irrelevant development-only warnings.
+
+- [ ] **080 - Close failures with evidence** - NOT_STARTED
+
+  Log failures, fix causes and re-run the affected checks. Publish tests/QA.md with PASS, FAIL and NOT TESTED entries, browser/device details and screenshots. Do not turn a test plan or an AI assertion into a claim that tests passed.
+
+## 09 / DEPLOYMENT & SUBMISSION FILES
+
+- [ ] **081 - Write concise reproducibility instructions** - NOT_STARTED
+
+  AI writes README.md with exact runtime, install, development and build commands from package.json, plus media configuration. Test a clean install with the lockfile. Explain how the skin can be used outside the contest demo.
+
+- [ ] **082 - Complete the license package** - NOT_STARTED
+
+  Include the full Apache-2.0 license and appropriate original-work notices; retain dependency licenses and attributions. Confirm owner media rights. Do not imply that accepting the contest terms transfers ownership or grants rights the entrant never held.
+
+- [ ] **083 - Create the submission manifest** - NOT_STARTED
+
+  Populate entry title, demo URL, repository URL if shared, version, release SHA, visual paths and description path. Add Mux playback ID and real-site URL only when verified; use null for excluded bonuses, not plausible-looking placeholders.
+
+- [ ] **084 - Deploy the actual final build** - NOT_STARTED
+
+  Use the starter deploy command or verified host workflow after inspecting scripts. Set a stable production URL with no password, preview authentication or login gate. Keep secrets server-side, and verify allowed media origins and HTTPS.
+
+- [ ] **085 - Smoke-test as a new visitor** - NOT_STARTED
+
+  Open the production URL in a clean signed-out session and on a phone if available. Start video, seek, use captions and fullscreen; confirm network media requests and no console errors. A successful hosting dashboard is insufficient evidence.
+
+- [ ] **086 - Capture the final visuals** - NOT_STARTED
+
+  Generate a sharp 1600x1000 hero image and a phone-width screenshot as internal targets, adjusting to actual form limits. AI must capture the running skin, not composite nonexistent controls. Keep video content and the unique ribbon visible.
+
+- [ ] **087 - Record a short proof video** - NOT_STARTED
+
+  Capture 25-40 seconds showing play, timeline seeking, captions or settings, narrow layout and visible keyboard focus. Keep transitions clear and reduced-motion behavior truthful. A plain screen capture is better than an unrepresentative promotional animation.
+
+- [ ] **088 - Draft the final description** - NOT_STARTED
+
+  Write 3-4 accurate sentences explaining the metaphor, useful interaction and accessibility choices. Verify every feature claim against the release. Do not claim a tested screen-reader/device combination, original invention or bonus that the evidence cannot support.
+
+- [ ] **089 - Create and verify the handover archive** - NOT_STARTED
+
+  Package source, lockfile, docs and submission assets, excluding node_modules, secrets and large redundant builds. Unzip into a clean directory and run documented commands. Create SHA-256 checksums; identify the archive with the tested release SHA.
+
+- [ ] **090 - Freeze the submission candidate** - NOT_STARTED
+
+  Tag the tested release after verifying repository state and source/deployment alignment. Record stable URLs and capture time in submission/final-checklist.md. Permit only fixes to playback, accessibility, public access or factual copy after freeze.
+
+## 10 / FINAL ENTRY & CONTINUATION
+
+- [ ] **091 - Reopen the live rules and form** - NOT_STARTED
+
+  Check the deadline wording, required fields, supported visual formats and any account-specific restrictions. Confirm the year and timezone context rather than trusting a copied countdown. AI records any difference from the planning snapshot.
+
+- [ ] **092 - Complete the score rehearsal** - NOT_STARTED
+
+  Review the player against all four scored categories using the release evidence. List one weakness per category and fix only high-impact defects. The internal score is subjective preparation, not a forecast of judges scores or prize probability.
+
+- [ ] **093 - Present one concrete owner review** - NOT_STARTED
+
+  AI supplies the working URL, desktop/mobile visual, description, optional bonus evidence and license summary in one place. Owner checks the appearance, authorship/rights and account identity. Avoid repeated vague approvals throughout routine engineering work.
+
+- [ ] **094 - Prepare the exact form entries** - NOT_STARTED
+
+  Map each actual form field to manifest values and attachment paths. AI can draft or fill fields when tools and permission allow. Identity, eligibility declarations, open-source acceptance and authentication remain the owner decision; do not silently accept legal terms.
+
+- [ ] **095 - Run the final minimum-requirement pass** - NOT_STARTED
+
+  From the submitted URL, verify actual v10 video playback, all five essential control groups, narrow layout and keyboard/menu exit. If one fails, fix and retest before entering. An attractive image cannot compensate for a nonworking entry.
+
+- [ ] **096 - Attach only verified bonus claims** - NOT_STARTED
+
+  Include the public Mux playback ID matching the played source and the genuine live-site URL, if ready. Recheck both signed out. Omit an unverified bonus rather than spending the deadline buffer creating a fragile last-minute integration.
+
+- [ ] **097 - Submit through the owner account** - NOT_STARTED
+
+  After owner acceptance of entry terms and explicit submission authorization, AI may submit through a supported authenticated tool; otherwise the owner clicks the final button. AI supplies copy-paste-ready text, attachment filenames and URLs in the correct order.
+
+- [ ] **098 - Capture successful entry evidence** - NOT_STARTED
+
+  Observe the actual success screen or published entry URL. Save a screenshot, receipt text or confirmation email reference and Nepal timestamp in submission/receipt.md. A click, drafted form or uploaded file is not proof of successful submission.
+
+- [ ] **099 - Verify the published result** - NOT_STARTED
+
+  Open the public entry and every submitted link once; ensure the visual and description match the final release. Keep the site, repo snapshot and Mux asset available through judging. Schedule future checks only if the owner requests them.
+
+- [ ] **100 - Deliver the final handover** - NOT_STARTED
+
+  AI returns entry URL, demo URL, repository/release reference, download package and verified bonus status. Mark steps 1-100 complete only with evidence; list unresolved items plainly. Preserve docs/worklog.md so another AI can resume without repeating finished work.
+
