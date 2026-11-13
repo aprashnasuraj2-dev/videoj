@@ -1,0 +1,77 @@
+name: Package verified DHAGO source handoff
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verified-handoff.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  handoff:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Archive exact tracked source and independently rebuild
+        shell: bash
+        run: |
+          set -euo pipefail
+          SHORT="${GITHUB_SHA:0:12}"
+          mkdir -p handoff-artifact clean
+          SOURCE="handoff-artifact/DHAGO_source_${SHORT}.zip"
+          git archive --format=zip --output="$SOURCE" "$GITHUB_SHA"
+          unzip -q "$SOURCE" -d clean
+          test -s clean/LICENSE
+          test -s clean/NOTICE
+          test -s clean/package.json
+          test -s clean/package-lock.json
+          test -s clean/submission/entry-handoff.md
+          test -s clean/apps/preview/public/media/studies-in-thread.mp4
+          if find clean -type f | grep -Eq '(^|/)(node_modules|dist|\.env)(/|$)'; then
+            echo 'Unexpected dependency/build/secret payload in source archive' >&2
+            exit 1
+          fi
+          (
+            cd clean
+            npm ci
+            npm run typecheck
+            npm run build
+            test -s dist/index.html
+            test -s dist/journal.html
+          )
+          git fetch --depth=1 origin refs/heads/dist-a6492362b634
+          git show FETCH_HEAD:release-manifest.json > handoff-artifact/release-manifest.json
+          python3 - <<'PY'
+          import json, pathlib
+          p=pathlib.Path('handoff-artifact/release-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['source_sha']=='a6492362b634799f3f23611e95eb88d003474d1f'
+          assert m['file_count']==78
+          p2=pathlib.Path('handoff-artifact/HANDOFF.txt')
+          p2.write_text(
+            'DHAGO verified source handoff\n'
+            'Archive source commit: '+__import__('os').environ['GITHUB_SHA']+'\n'
+            'Production code source: a6492362b634799f3f23611e95eb88d003474d1f\n'
+            'Immutable public build: dist-a6492362b634 (78/78 R2 assets verified)\n'
+            'Live demo: https://creative.aafnaipatro.com/\n'
+            'Journal: https://creative.aafnaipatro.com/journal.html\n'
+            'Competition not submitted; owner legal/identity review pending.\n'
+            'Reproduction: unzip archive, npm ci, npm run typecheck, npm run build, npm test\n'
+          )
+          PY
+          (cd handoff-artifact && sha256sum DHAGO_source_*.zip release-manifest.json HANDOFF.txt > SHA256SUMS.txt)
+          echo "Source archive: $SOURCE" >> "$GITHUB_STEP_SUMMARY"
+          cat handoff-artifact/SHA256SUMS.txt >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dhago-verified-source-handoff
+          path: handoff-artifact/
+          if-no-files-found: error
+          retention-days: 14

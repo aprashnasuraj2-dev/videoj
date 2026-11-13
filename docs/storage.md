@@ -48,3 +48,9 @@ Submission drafts live under `submission/` in Git. Their manifest deliberately l
 
 - Source `a6492362b634799f3f23611e95eb88d003474d1f`, PR #6 [passing 35-test run 43461387053](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43461387053), merged main [run 43461852782](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43461852782), immutable [dist staging 43461852795](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43461852795). The staged branch holds SHA-256 manifest/source-derived static assets and remains in Git; the 14-day CI evidence ZIP is **not** durable Drive storage. Owner-selected folder is unchanged.
 - Seven new hashed assets and three new HTML entry points have been R2-verified. Backup prefix: `releases/2026-11-13-prea6492362/`. This document makes **no claim** that a final 35-test archive is already in Google Drive. Copy verified visual/browser evidence to the selected Drive folder before final handoff, recording the new Drive file ID and hash.
+
+## Portable source handoff packaging
+
+The manual/one-shot `.github/workflows/verified-handoff.yml` archives **only tracked Git source**, then unpacks into a clean directory, performs `npm ci`, TypeScript checks and a production build, verifies the Apache license/NOTICE, original media and competition handoff notes, and attaches the immutable production release-manifest for `a6492362b634`. It writes SHA-256 checksum receipts and a reproducibility note. Never package `node_modules`, untracked credentials or duplicate built `dist`. Its artifact is temporary until uploaded to the selected Drive folder.
+
+After the workflow passes, record artifact checksum, Drive ID and source SHA and reconcile step #89. The competition receipt remains null.
