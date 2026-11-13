@@ -64,7 +64,6 @@
 .dhago .media-time-toggle { display: none; }
 .dhago .media-time-current-value,.dhago .media-time-duration-value,.dhago .media-time-separator { display: inline; opacity: 1; }
 .dhago .media-time-duration-value { color: var(--dhago-muted); }
-.dhago .media-settings-button-label { display: none; }
 .dhago .media-volume-slider { width: 76px; height: 44px; display: flex; align-items: center; flex: 0 0 76px; }
 .dhago .media-volume-slider[data-hidden] { display: none; }
 .dhago .media-volume-slider-track { position: relative; width: 100%; height: 4px; background: var(--dhago-border); }
@@ -168,8 +167,7 @@
   flex: 1 0 calc((100% - 8px) / 3); height: 54px; margin-inline-start: 0;
   position: relative; border-color: var(--dhago-border);
  }
- .dhago .dhago-control-label,
- .dhago .media-settings-button-label {
+ .dhago .dhago-control-label {
   display: block; position: absolute; inset-inline: 0; bottom: 5px;
   font-size: 10px; line-height: 1.2; letter-spacing: .01em; text-align: center;
  }

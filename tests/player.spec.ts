@@ -29,7 +29,10 @@ for (const width of [320, 375, 768, 1280]) {
     await expect(page.locator('media-fullscreen-button')).toBeVisible();
     await expect(page.locator('media-captions-button')).toBeVisible();
     if(width<=375) {
-      for(const selector of ['media-captions-button .dhago-control-label','.media-settings-button-label','media-fullscreen-button .dhago-control-label']) await expect(page.locator(selector)).toBeVisible();
+      for(const selector of ['media-captions-button .dhago-control-label','.media-settings-button .dhago-control-label','media-fullscreen-button .dhago-control-label']) {
+        const label=page.locator(selector); await expect(label).toBeVisible();
+        const box=await label.boundingBox(); expect(box!.width).toBeGreaterThan(40); expect(box!.height).toBeGreaterThanOrEqual(10);
+      }
     }
     await page.screenshot({ path: info.outputPath(`player-${width}.png`), fullPage: true });
   });
