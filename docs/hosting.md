@@ -37,3 +37,11 @@ This proves content parity, not universal codec support or an accepted contest s
 ## Production browser acceptance (supersedes pending-gate note)
 
 [Main run 43443029329](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329) completed successfully **after** the 78/78 immutable publication: 2/2 public smoke tests passed, verifying actual Mux playback time, seek, chapter readout, and Studio Journal scene-note seeking. This is decoded video evidence in CI Chromium, not just a 200 response or fetched HLS manifest. Browser-specific codec availability and owner assistive-technology checks remain open.
+
+## Current exact build — 2026-11-13 (supersedes `72ec6c3` as production source)
+
+The current source revision is `a6492362b634799f3f23611e95eb88d003474d1f` (PR #6, 35/35 source Chromium tests, main CI PASS). Its immutable build lives at `dist-a6492362b634`, manifest `release-manifest.json`, total 78 objects. The dedicated R2 bucket `dhago-studio-static` received only seven missing immutable hashed JS/CSS resources; each was SHA-256 verified on readback. The previous three HTML entries were verified against the old build and backed up at `releases/2026-11-13-prea6492362/`, then `journal.html`, `preview.html`, and finally `index.html` were updated.
+
+After publication, all **76/76 UTF-8 assets match their staged SHA-256**, and the unchanged poster and original MP4 match **2/2 prior MD5 object identifiers and sizes**. The public CI browser acceptance run [43461852782](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43461852782) passed **before** the new HTML cutover; repeat a signed-out Chromium Mux/journal run on the new release. Web text-fetch diagnostics returned inaccessible and cannot establish video-codec support either way.
+
+Rollback for this cutover: restore only the three HTML objects from `releases/2026-11-13-prea6492362/` after verifying their SHA-256. Keep old/new hashed files and both original media objects. No unrelated Patro routes, worker quotas, zone rules, Mux assets, or other R2 content were changed.
