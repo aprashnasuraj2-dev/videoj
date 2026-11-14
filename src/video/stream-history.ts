@@ -39,6 +39,10 @@ export function connectStreamHistory(media:HTMLMediaElement,container:HTMLElemen
   let bufferCount=0;
 
   const duration=()=>Number.isFinite(media.duration)&&media.duration>0?media.duration:0;
+  const capHistory=(selector:string,max:number)=>{
+    const nodes=history.querySelectorAll(selector);
+    for(let i=0;i<nodes.length-max;i++)nodes[i]?.remove();
+  };
   const pct=(time:number)=>{
     const d=duration();
     return d?clamp(100*time/d,0,100):0;
@@ -116,6 +120,7 @@ export function connectStreamHistory(media:HTMLMediaElement,container:HTMLElemen
       qualityNode.style.setProperty('--dhago-quality-thread-px',clamp(2+(height-240)/240,2,7).toFixed(2)+'px');
       setRange(qualityNode,qualityStart,now);
       history.append(qualityNode);
+      capHistory('.dhago-quality-thread',96);
       container.dataset.streamRendition=key;
       container.toggleAttribute('data-stream-rendition-changed',qualityChanges>1);
       updateSummary();
@@ -137,6 +142,7 @@ export function connectStreamHistory(media:HTMLMediaElement,container:HTMLElemen
       bufferNode.dataset.cause=event.type;
       setRange(bufferNode,bufferStart,bufferStart);
       history.append(bufferNode);
+      capHistory('.dhago-slack-thread',96);
       bufferCount++;
       container.dataset.streamBufferEvents=String(bufferCount);
       updateSummary();
