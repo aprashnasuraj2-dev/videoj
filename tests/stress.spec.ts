@@ -63,7 +63,7 @@ test('Stress Lab reports real playback state and keeps its clock out of live ann
   await page.goto('/stress.html?case=original');
   const media=page.locator('#lab-player video');
   await expect(page.locator('#state-duration')).toHaveText('0:01:04');
-  await expect(page.locator('#state-chapter')).toHaveText('A thread of light');
+  await expect(page.locator('#state-chapter')).toHaveText('Raw fibre');
   await expect(page.locator('#state-source')).toHaveText('Video file');
   expect(await page.locator('#state-time').evaluate(clock=>clock.closest('[aria-live],[role=status]')!==null)).toBe(false);
   await page.locator('#lab-player media-play-button').click();
@@ -77,7 +77,7 @@ test('Stress Lab reports real playback state and keeps its clock out of live ann
 
 test('Stress Lab recovers from an unavailable source and drops detached specimen events',async({page})=>{
   let fail=true;
-  await page.route('**/media/studies-in-thread.mp4',route=>fail
+  await page.route('**/media/from-fibre-to-fabric.mp4',route=>fail
     ? route.fulfill({status:503,body:'Synthetic service interruption'})
     : route.continue());
   await page.goto('/stress.html?case=original');
@@ -103,7 +103,7 @@ test('late chapter fixture attaches genuine cues while paused',async({page})=>{
   // Route the external fixture to a same-origin complete 64s progressive source so
   // the late-cue contract remains reproducible when Wikimedia is unavailable.
   await page.route(url=>url.hostname==='upload.wikimedia.org',async route=>{
-    const response=await route.fetch({url:new URL('/media/studies-in-thread.mp4',page.url()).href});
+    const response=await route.fetch({url:new URL('/media/from-fibre-to-fabric.mp4',page.url()).href});
     await route.fulfill({response,headers:{...response.headers(),'access-control-allow-origin':'*'}});
   });
   await page.goto('/stress.html?case=late');
