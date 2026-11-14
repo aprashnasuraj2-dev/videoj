@@ -13,7 +13,7 @@ One exported skin; several truthful host scenarios. Keep page design subordinate
 
 ## 60-second judge path
 1. 0–8s: landing page, see playing film and the woven chapter ribbon. Viewer immediately understands that the thread is also the seek control.
-2. 8–20s: drag the ribbon, seek to chapter three, note the real thumbnails/time/selected chapter. No separate custom navigation grammar.
+2. 8–20s: drag the ribbon, seek to chapter three, and note the real time/chapter preview plus selected chapter. Storyboard imagery is evidence only when the active backend genuinely provides it. No separate custom navigation grammar.
 3. 20–33s: try Linen then Ink, resize to phone, verify the core controls and time stay usable.
 4. 33–46s: scroll to **The weave adapts** and open one realistic stress case, ideally forty chapters over actual Nepalese Dhaka footage. Return to the same page.
 5. 46–60s: see the Studio Journal entry using the same player, and the released From Fibre to Fabric primary playback.

@@ -8,11 +8,11 @@ Both custom domains point directly to the existing `dhago-studio-static` R2 buck
 
 The production build contains plain static files. Hashed assets are uploaded first, HTML entry points last. Existing objects are compared by key and MD5 ETag before uploading: unchanged media and other assets are reused. Old hashed assets are retained so a previously loaded page continues to work. No general SPA fallback masks missing media or scripts as HTML.
 
-Video requests go directly to Mux after its public playback ID is configured. `?local` explicitly selects the original MP4; playback failure never silently changes the claimed Mux source. The original film is retained in Git and at the existing R2 key. This architecture adds zero application Worker invocations per ordinary static request; R2 operations, storage and Mux delivery remain metered under their account allowances.
+The canonical public film is served directly from the dedicated R2 bucket as `media/from-fibre-to-fabric.mp4`, with the matching WebM compatibility rendition, poster, chapter VTT and descriptive-caption VTT. A future Mux playback ID is optional bonus delivery and is activated only after the same fibre film receives its own verified public asset; the retired film's playback ID must never be reused. This static architecture adds zero application Worker invocations per ordinary request; R2 operations and any future Mux delivery remain metered under their account allowances.
 
 ## Release evidence
 
-Record the source revision, public playback ID, object hashes, production smoke result and captures in `submission/manifest.json` and `tests/QA.md`. A 200 response alone proves neither playback nor bonus eligibility. The annotated `journal.html` is a separate studio publication using the portable skin to navigate scene notes; final bonus eligibility is the judges' decision.
+Record the source revision, delivery mode, object hashes, production smoke result and captures in `submission/manifest.json` and `tests/QA.md`. Record a Mux playback ID only if the canonical fibre asset is actually configured and browser-verified. A 200 response alone proves neither playback nor bonus eligibility. The annotated `journal.html` is a separate studio publication using the portable skin to navigate scene notes; final bonus eligibility is the judges' decision.
 
 ## Recovery
 
