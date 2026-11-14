@@ -1,0 +1,366 @@
+{
+  "methodology": "all emitted JavaScript and CSS in full multi-page Vite build; independently gzip-9 each file",
+  "warning": "sum of all output chunks is not a real one-page download and not the reusable skin alone",
+  "generatedFrom": "current dist/ directory",
+  "totalJsCssGzipBytes": 510452,
+  "totalJsCssRawBytes": 1687138,
+  "informationalBudgetGzipBytes": 550000,
+  "informationalBudgetMet": true,
+  "assets": [
+    {
+      "path": "assets/mux-video-D8kfgal9.js",
+      "rawBytes": 639768,
+      "gzipBytes": 194347
+    },
+    {
+      "path": "assets/workbench-BjdghHa6.js",
+      "rawBytes": 428733,
+      "gzipBytes": 139045
+    },
+    {
+      "path": "assets/create-player-DYkKiWWT.js",
+      "rawBytes": 270001,
+      "gzipBytes": 73480
+    },
+    {
+      "path": "assets/create-player-DewnUuZo.css",
+      "rawBytes": 80667,
+      "gzipBytes": 12235
+    },
+    {
+      "path": "assets/workbench-CkfP0cA4.css",
+      "rawBytes": 63525,
+      "gzipBytes": 9879
+    },
+    {
+      "path": "assets/stress-BOV_d5WU.js",
+      "rawBytes": 16074,
+      "gzipBytes": 6544
+    },
+    {
+      "path": "assets/stress-BjlfrF_-.css",
+      "rawBytes": 12880,
+      "gzipBytes": 3521
+    },
+    {
+      "path": "assets/media-Dti6384u.css",
+      "rawBytes": 7729,
+      "gzipBytes": 2320
+    },
+    {
+      "path": "assets/el-CWyPnoVm.js",
+      "rawBytes": 4207,
+      "gzipBytes": 1547
+    },
+    {
+      "path": "assets/uk-By5Oht4H.js",
+      "rawBytes": 3974,
+      "gzipBytes": 1490
+    },
+    {
+      "path": "assets/ru-BIFqwFBP.js",
+      "rawBytes": 4090,
+      "gzipBytes": 1486
+    },
+    {
+      "path": "assets/te-COeoNCXG.js",
+      "rawBytes": 5237,
+      "gzipBytes": 1446
+    },
+    {
+      "path": "assets/bg-BuyccQIT.js",
+      "rawBytes": 4063,
+      "gzipBytes": 1428
+    },
+    {
+      "path": "assets/hi-BxNHuFif.js",
+      "rawBytes": 4449,
+      "gzipBytes": 1420
+    },
+    {
+      "path": "assets/bn-D2yacfAS.js",
+      "rawBytes": 4428,
+      "gzipBytes": 1400
+    },
+    {
+      "path": "assets/mr-BJWLxMyT.js",
+      "rawBytes": 4559,
+      "gzipBytes": 1400
+    },
+    {
+      "path": "assets/ne-DEncG1xh.js",
+      "rawBytes": 4718,
+      "gzipBytes": 1393
+    },
+    {
+      "path": "assets/th-atFIybwV.js",
+      "rawBytes": 4544,
+      "gzipBytes": 1380
+    },
+    {
+      "path": "assets/ja-Bpz7uNhi.js",
+      "rawBytes": 3006,
+      "gzipBytes": 1327
+    },
+    {
+      "path": "assets/fa-BV41rOFq.js",
+      "rawBytes": 3300,
+      "gzipBytes": 1308
+    },
+    {
+      "path": "assets/ar-DGArSUT3.js",
+      "rawBytes": 3326,
+      "gzipBytes": 1285
+    },
+    {
+      "path": "assets/ko-CHkE07TQ.js",
+      "rawBytes": 2761,
+      "gzipBytes": 1245
+    },
+    {
+      "path": "assets/pl-DVtFFeYJ.js",
+      "rawBytes": 2755,
+      "gzipBytes": 1228
+    },
+    {
+      "path": "assets/vi-iHXOg8lu.js",
+      "rawBytes": 3037,
+      "gzipBytes": 1225
+    },
+    {
+      "path": "assets/gd-04lsZrZ2.js",
+      "rawBytes": 2817,
+      "gzipBytes": 1221
+    },
+    {
+      "path": "assets/cs-BXzRpsd_.js",
+      "rawBytes": 2680,
+      "gzipBytes": 1215
+    },
+    {
+      "path": "assets/hu-CdPj7te_.js",
+      "rawBytes": 2745,
+      "gzipBytes": 1211
+    },
+    {
+      "path": "assets/de-gvz09wMO.js",
+      "rawBytes": 2773,
+      "gzipBytes": 1205
+    },
+    {
+      "path": "assets/he-BWfmp-XK.js",
+      "rawBytes": 3094,
+      "gzipBytes": 1205
+    },
+    {
+      "path": "assets/sk-C3P39Eg2.js",
+      "rawBytes": 2681,
+      "gzipBytes": 1203
+    },
+    {
+      "path": "assets/lv-dAOnFrCK.js",
+      "rawBytes": 2697,
+      "gzipBytes": 1193
+    },
+    {
+      "path": "assets/zh-TW-CQCld8lG.js",
+      "rawBytes": 2310,
+      "gzipBytes": 1189
+    },
+    {
+      "path": "assets/ca-eJtrL8o1.js",
+      "rawBytes": 2788,
+      "gzipBytes": 1188
+    },
+    {
+      "path": "assets/az-CGZvZq9Y.js",
+      "rawBytes": 2613,
+      "gzipBytes": 1187
+    },
+    {
+      "path": "assets/zh-CN-BkLkxg4s.js",
+      "rawBytes": 2295,
+      "gzipBytes": 1186
+    },
+    {
+      "path": "assets/eu-T2D2zIyX.js",
+      "rawBytes": 2634,
+      "gzipBytes": 1184
+    },
+    {
+      "path": "assets/sr-DJRmC5Bf.js",
+      "rawBytes": 2708,
+      "gzipBytes": 1179
+    },
+    {
+      "path": "assets/oc-CCDM5qBr.js",
+      "rawBytes": 2676,
+      "gzipBytes": 1178
+    },
+    {
+      "path": "assets/fr-0nCTvTtg.js",
+      "rawBytes": 2742,
+      "gzipBytes": 1175
+    },
+    {
+      "path": "assets/ro-BSlGxBHH.js",
+      "rawBytes": 2746,
+      "gzipBytes": 1173
+    },
+    {
+      "path": "assets/hr-zm5-c7i6.js",
+      "rawBytes": 2708,
+      "gzipBytes": 1169
+    },
+    {
+      "path": "assets/fi-BB6tGgE-.js",
+      "rawBytes": 2645,
+      "gzipBytes": 1167
+    },
+    {
+      "path": "assets/pt-BR-DOYtnLUm.js",
+      "rawBytes": 2717,
+      "gzipBytes": 1165
+    },
+    {
+      "path": "assets/url-CsKNWYnw.js",
+      "rawBytes": 2131,
+      "gzipBytes": 1162
+    },
+    {
+      "path": "assets/it-DUgW4Y2F.js",
+      "rawBytes": 2878,
+      "gzipBytes": 1160
+    },
+    {
+      "path": "assets/lt--VeJMBB3.js",
+      "rawBytes": 2556,
+      "gzipBytes": 1160
+    },
+    {
+      "path": "assets/pt-PT-BBuACs9-.js",
+      "rawBytes": 2777,
+      "gzipBytes": 1149
+    },
+    {
+      "path": "assets/sl-BxAMGTTM.js",
+      "rawBytes": 2773,
+      "gzipBytes": 1148
+    },
+    {
+      "path": "assets/cy-DUW01E3I.js",
+      "rawBytes": 2567,
+      "gzipBytes": 1146
+    },
+    {
+      "path": "assets/es-BsU79CiS.js",
+      "rawBytes": 2806,
+      "gzipBytes": 1146
+    },
+    {
+      "path": "assets/bs-Bv9dPrUC.js",
+      "rawBytes": 2596,
+      "gzipBytes": 1142
+    },
+    {
+      "path": "assets/gl-mB52BKVE.js",
+      "rawBytes": 2767,
+      "gzipBytes": 1136
+    },
+    {
+      "path": "assets/et-q9W3SLUC.js",
+      "rawBytes": 2539,
+      "gzipBytes": 1135
+    },
+    {
+      "path": "assets/nl-CESsSqT3.js",
+      "rawBytes": 2614,
+      "gzipBytes": 1131
+    },
+    {
+      "path": "assets/sv-DWmFnmZx.js",
+      "rawBytes": 2466,
+      "gzipBytes": 1131
+    },
+    {
+      "path": "assets/tr-CDFmxn17.js",
+      "rawBytes": 2495,
+      "gzipBytes": 1108
+    },
+    {
+      "path": "assets/da-D030lwQl.js",
+      "rawBytes": 2494,
+      "gzipBytes": 1096
+    },
+    {
+      "path": "assets/nb-Bzwhn84A.js",
+      "rawBytes": 2468,
+      "gzipBytes": 1092
+    },
+    {
+      "path": "assets/nn-CIBQpHMY.js",
+      "rawBytes": 2434,
+      "gzipBytes": 1087
+    },
+    {
+      "path": "assets/id-ChIXjN6o.js",
+      "rawBytes": 2440,
+      "gzipBytes": 1063
+    },
+    {
+      "path": "assets/journal-C31SB6jC.css",
+      "rawBytes": 2209,
+      "gzipBytes": 911
+    },
+    {
+      "path": "assets/demo-BW6NZGau.js",
+      "rawBytes": 2030,
+      "gzipBytes": 891
+    },
+    {
+      "path": "assets/preview-BDHfJ8ST.js",
+      "rawBytes": 1355,
+      "gzipBytes": 761
+    },
+    {
+      "path": "assets/journal-4tieZkGB.js",
+      "rawBytes": 1159,
+      "gzipBytes": 647
+    },
+    {
+      "path": "assets/parse-vtt-BzLuiUdf.js",
+      "rawBytes": 723,
+      "gzipBytes": 439
+    },
+    {
+      "path": "assets/deep-equal-2fCx4gVW.js",
+      "rawBytes": 972,
+      "gzipBytes": 411
+    },
+    {
+      "path": "assets/media-BJ9tDuub.js",
+      "rawBytes": 615,
+      "gzipBytes": 400
+    },
+    {
+      "path": "assets/modulepreload-polyfill-P2Xu9kJm.js",
+      "rawBytes": 670,
+      "gzipBytes": 389
+    },
+    {
+      "path": "assets/preview-D6uvfvmw.css",
+      "rawBytes": 622,
+      "gzipBytes": 317
+    },
+    {
+      "path": "assets/pt-VFKQWrMn.js",
+      "rawBytes": 41,
+      "gzipBytes": 61
+    },
+    {
+      "path": "assets/zh-RIBAyAnI.js",
+      "rawBytes": 41,
+      "gzipBytes": 61
+    }
+  ]
+}
