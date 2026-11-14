@@ -89,3 +89,27 @@ test('native controls remain available without JavaScript',async({browser})=>{
     await expect(native).toHaveAttribute('src','./media/studies-in-thread.mp4');
   }finally{await context.close();}
 });
+
+test('H.264-incapable Chromium plays the original VP9 rendition instead of a broken MP4 backup', async ({page})=>{
+  await page.addInitScript(()=>{
+    const original=HTMLMediaElement.prototype.canPlayType;
+    HTMLMediaElement.prototype.canPlayType=function(type:string):CanPlayTypeResult {
+      if(type.includes('avc1.64001f'))return '';
+      if(type.includes('vp9'))return 'probably';
+      return original.call(this,type);
+    };
+  });
+  await page.goto('/?local');
+  const video=page.locator('#player-mount video');
+  await expect(video).toHaveAttribute('src',/studies-in-thread\.webm$/);
+  await expect(page.locator('.dhago')).toHaveAttribute('data-compatibility-source','webm');
+  await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.readyState),{timeout:15000}).toBeGreaterThan(0);
+  await page.locator('media-play-button').click();
+  await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime),{timeout:15000}).toBeGreaterThan(.3);
+  await expect(page.locator('.dhago-chapter-name')).toContainText('A thread of light');
+});
+test('codec-capable browsers still mount Mux rather than claiming the compatibility route as the bonus',async({page})=>{
+  await page.goto('/');
+  await expect(page.locator('mux-video')).toHaveCount(1);
+  await expect(page.locator('.dhago')).not.toHaveAttribute('data-compatibility-source','webm');
+});
