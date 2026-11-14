@@ -1,9 +1,19 @@
 DHAGO — Time, woven
 Copyright 2026 DHAGO contributors
 
-This project contains original DHAGO skin styling and a procedural motion study.
+This repository contains original DHAGO skin styling and interaction code, the
+From Fibre to Fabric motion study and its poster/chapter/descriptive-caption
+assets, and generated abstract weave metadata/SVG used by the public demo.
+
 Video.js Scaffold-derived component markup and styles retain their upstream
 Apache-2.0 terms. Video.js copyright 2025-present Video.js contributors.
 
-Runtime and development dependencies retain their respective licenses. See
-package-lock.json for exact versions and installed package LICENSE files.
+Runtime and development dependencies retain their respective licenses. The
+Stress Lab also references external media fixtures at runtime solely for
+credited edge-case testing; each fixture keeps its original upstream license
+and attribution as recorded in apps/preview/src/stress.ts. Those external
+fixtures are not presented as original DHAGO footage and are not relicensed
+under this repository's Apache-2.0 license.
+
+See package-lock.json for exact dependency versions and installed package
+license files.
