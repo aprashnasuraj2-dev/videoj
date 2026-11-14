@@ -66,7 +66,7 @@ test('journal uses the portable skin with a different accent and working scene n
  await page.goto('/journal.html?local');
  await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
  await page.locator('[data-time="48"]').click();
- await expect(page.locator('.dhago-chapter-name')).toHaveText('Coming home');
+ await expect(page.locator('.dhago-chapter-name')).toHaveText('Cloth holds time');
  await expect(page.locator('video')).toHaveJSProperty('paused',true);
  await expect(page.locator('media-time-slider media-slider-thumb')).toBeFocused();
  const result=await new AxeBuilder({page}).include('main').analyze();
