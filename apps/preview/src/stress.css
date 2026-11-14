@@ -125,3 +125,19 @@ main {max-width:1420px;padding:36px clamp(20px,4vw,55px) 0;}
 .edge-actions button:focus-visible{outline:3px solid #b64d37;outline-offset:2px}
 #edge-feedback{min-height:20px;color:#38523e;font-size:13px}
 @media(max-width:540px){.edge-metrics{grid-template-columns:1fr}.edge-actions button{flex:1 1 120px}}
+
+/* Portable Lab: grid items must shrink to the *actual* host at 320px.
+   The browser's intrinsic file input width must not enlarge a 1fr column. */
+.portable-tool,.portable-grid,.portable-heading,.portable-results,.portable-loader,.portable-runner,.portable-specimen{min-width:0;max-width:100%;box-sizing:border-box;}
+.portable-grid>*{min-width:0;max-width:100%;}
+.portable-loader-actions,.portable-inline{min-width:0;max-width:100%;}
+.portable-loader input,.portable-loader input[type=file],.portable-loader input[type=url],.portable-runner select{min-width:0;max-width:100%;width:100%;box-sizing:border-box;}
+.portable-table-wrap{width:100%;min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;contain:inline-size;}
+@media(max-width:880px){.portable-grid,.portable-heading{grid-template-columns:minmax(0,1fr);}}
+@media(max-width:540px){
+ .portable-tool{width:100%;}
+ .portable-loader,.portable-runner,.portable-specimen,.portable-results{padding:12px;}
+ .portable-grid{gap:12px;}
+ .portable-inline{grid-template-columns:minmax(0,1fr);}
+ .portable-inline input,.portable-inline button{width:100%;min-width:0;}
+}
