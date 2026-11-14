@@ -19,7 +19,7 @@ main {max-width:1420px;padding:36px clamp(20px,4vw,55px) 0;}
 .lab-case[aria-pressed="true"] {border-color:#b78a6a;background:#e6d4c0;box-shadow:inset 3px 0 #a34933;}
 .lab-case-num {font:11px ui-monospace,monospace;color:#6f5943;grid-row:span 2;}
 .lab-case-title {font-size:13px;font-weight:650;}
-.lab-case-type {font-size:10px;color:#6c695f;}
+.lab-case-type {font-size:10px;color:#5c5951;}
 .lab-small-print {font-size:11px;line-height:1.7;color:#69675b;margin:20px 10px 10px;}
 .lab-content {min-width:0;}
 .case-heading {display:flex;align-items:start;justify-content:space-between;gap:16px;margin-bottom:19px;}
