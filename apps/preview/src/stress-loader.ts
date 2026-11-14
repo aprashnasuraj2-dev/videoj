@@ -95,5 +95,5 @@ if(document.querySelector('#portable-tool')){
   q('#portable-copy-markdown').addEventListener('click',()=>void navigator.clipboard.writeText(makeMarkdown()).then(()=>setState('Review summary copied.','ready')));
   q('#portable-clear-results').addEventListener('click',()=>{results.splice(0);render();setState('Review results cleared.','ready')});
   void installFixtureWorker();
-  render();setState('Built-in DHAGO reference adapter active.','ready');
+  render();setState('DHAGO is ready to explore.','ready');
 }
