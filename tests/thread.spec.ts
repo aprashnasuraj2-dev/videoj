@@ -66,7 +66,7 @@ test('forced colors retains chapter joins, labels and keyboard navigation', asyn
   const joins=page.locator('.media-time-slider-chapter');
   await expect(joins).toHaveCount(4);
   expect(await joins.nth(1).evaluate(el=>getComputedStyle(el,'::before').borderStyle)).toBe('solid');
-  await expect(page.locator('.dhago-chapter-name')).toHaveText('A thread of light');
+  await expect(page.locator('.dhago-chapter-name')).toHaveText('Raw fibre');
   await page.locator('media-time-slider media-slider-thumb').focus();
   await page.keyboard.press('ArrowRight');
   await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(0);
@@ -109,7 +109,7 @@ test('touch scrubbing holds beyond the slider and clears on cancellation', async
 
 test('uneven stitch positions follow cue starts and dense mobile ribbons hide stitches', async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  const captionsUrl = '**/media/chapters.vtt';
+  const captionsUrl = '**/media/from-fibre-to-fabric-chapters.vtt';
   await page.route(captionsUrl, route => route.fulfill({
     contentType: 'text/vtt',
     body: 'WEBVTT\n\n00:00.000 --> 00:11.000\nOne\n\n00:11.000 --> 00:40.000\nTwo\n\n00:40.000 --> 01:04.000\nThree\n',
