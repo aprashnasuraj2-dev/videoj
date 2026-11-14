@@ -908,3 +908,7 @@
   .dhago .media-time-slider-chapters {box-shadow:none;border:1px solid CanvasText;}
   .dhago .dhago-chapter-summary::before {box-shadow:none;}
 }
+
+/* Native slider preview clamping uses measured width. A regular border adds
+   two pixels beyond the clamped right endpoint; an inset stroke does not. */
+.dhago .media-time-slider-preview{border:0;box-shadow:inset 0 0 0 1px #d3bca3,0 4px 14px #111b193d,0 14px 38px #111b1947;}

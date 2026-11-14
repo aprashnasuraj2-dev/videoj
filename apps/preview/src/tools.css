@@ -56,3 +56,9 @@ body.tools .tools-header,body.tools .tools-intro,body.tools .tools-player-layout
 body.tools .event-scroll{width:100%;max-width:100%;min-width:0;display:block;overflow-x:auto;overflow-y:auto;contain:inline-size}
 body.tools .event-scroll table{width:max-content;min-width:100%;max-width:none;}
 body.tools .tools-card{min-width:0;max-width:100%;}
+
+/* Event history scrolls independently: its 5-column intrinsic table must
+   never make the 320px document wider. Inner scroll still works normally. */
+body.tools .tools-grid{width:100%;min-width:0;max-width:100%;overflow:clip;}
+body.tools .event-scroll{width:100%;max-width:100%;min-width:0;overscroll-behavior-x:contain;}
+@media(max-width:480px){body.tools .tools-grid{padding-inline:0;}body.tools .tools-card{min-width:0;}}
