@@ -20,7 +20,9 @@ const layeredMetadata:DhagoMetadataTrack[]=[
     {start:24,end:32,label:'Sponsor segment'},
   ]},
 ];
-const mediaSources:Record<Kind,{src:string;credit:string;creditUrl?:string;license:string}>={
+// Commons media is credited at its source. Prefer stable, browser-playable upload URLs
+// over wiki redirects, and retain the original downloads as independent backups.
+const mediaSources:Record<Kind,{src:string;credit:string;creditUrl?:string;license:string;fallbacks?:readonly string[]}>={
   original:{src:ORIGINAL,credit:'Studies in Thread — original DHAGO film',license:'Original production'},
   dhaka:{src:'https://upload.wikimedia.org/wikipedia/commons/0/0a/Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm',
     credit:'Oxlaey — Making handwoven Dhaka fabric in Nepal (real Nepalese textile weaving, not pashmina)',
@@ -28,10 +30,12 @@ const mediaSources:Record<Kind,{src:string;credit:string;creditUrl?:string;licen
   pashmina:{src:'https://upload.wikimedia.org/wikipedia/commons/8/82/Pashmina%2C_The_Gold_of_Kashmir_%26_The_Himalaya.webm',
     credit:'Florenz / Florence Bourgade — The Gold of Kashmir & the Himalaya (Kashmir, not filmed in Nepal)',
     creditUrl:'https://commons.wikimedia.org/wiki/File:Pashmina,_The_Gold_of_Kashmir_%26_The_Himalaya.webm',license:'CC BY 3.0, unmodified'},
-  sheep:{src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/Sheep_grazing_in_the_countryside.webm',
+  sheep:{src:'https://upload.wikimedia.org/wikipedia/commons/transcoded/2/27/Sheep_grazing_in_the_countryside.webm/Sheep_grazing_in_the_countryside.webm.480p.vp9.webm',
+    fallbacks:['https://upload.wikimedia.org/wikipedia/commons/2/27/Sheep_grazing_in_the_countryside.webm'],
     credit:'François Nguyen — Sheep grazing in the countryside (general sheep footage, not Nepal)',
     creditUrl:'https://commons.wikimedia.org/wiki/File:Sheep_grazing_in_the_countryside.webm',license:'CC BY 2.0, unmodified'},
-  loom:{src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS_Loom.ogg',
+  loom:{src:'https://upload.wikimedia.org/wikipedia/commons/transcoded/e/e8/WWS_Loom.ogg/WWS_Loom.ogg.mp3',
+    fallbacks:['https://upload.wikimedia.org/wikipedia/commons/e/e8/WWS_Loom.ogg'],
     credit:'Work With Sounds / Konrad Gutkowski — Loom (industrial loom recording, not Nepal)',
     creditUrl:'https://commons.wikimedia.org/wiki/File:WWS_Loom.ogg',license:'CC BY 4.0, unmodified'},
   broken:{src:'./media/definitely-missing-dhago-source.mp4',credit:'Intentionally unavailable media for the recovery demonstration',license:'Demonstration only'},
@@ -182,6 +186,11 @@ function render(scenario:Case){
     surface:$('#lab-surface') instanceof HTMLSelectElement?($<HTMLSelectElement>('#lab-surface').value as 'warm'|'dark'|'minimal'):'warm',
   });
   const container=player.querySelector<HTMLElement>('media-container')!;
+  // The Commons link is a usable escape hatch if neither media rendition loads.
+  if(scenario.source!=='broken' && credit.creditUrl){
+    const backup=player.querySelector<HTMLAnchorElement>('.dhago-fallback');
+    if(backup){backup.href=credit.creditUrl;backup.target='_blank';backup.rel='noopener noreferrer';backup.textContent=scenario.source==='loom'?'Listen at Wikimedia Commons':'Watch at Wikimedia Commons';backup.hidden=false;}
+  }
   container.setAttribute('data-lab-case',scenario.id);
   if(scenario.source==='broken'){
     const backup=player.querySelector<HTMLAnchorElement>('.dhago-fallback');
@@ -191,9 +200,13 @@ function render(scenario:Case){
   setWidth(scenario.width??$<HTMLSelectElement>('#lab-width').value);
   const target=player.querySelector<HTMLMediaElement>('video,audio,mux-video')!;
   media=target;
+  // Sound-only playback is an intentional audible experience, not a silent visual specimen.
+  if(scenario.source==='loom'){target.muted=false;target.volume=1;}
   const chapter=player.querySelector<HTMLElement>('.dhago-chapter-name')!;
   setText(sourceValue,target.tagName==='AUDIO'?'Recording':target.tagName==='MUX-VIDEO'?'Stream':'Film');
-  diagnostics.textContent='The chapter timing for this study is ready to explore.';
+  diagnostics.textContent=scenario.source==='loom'
+    ? 'Press Play to hear the loom. Sound starts unmuted; your device volume still matters.'
+    : 'The chapter timing for this study is ready to explore.';
   const update=()=>{
     const state=container.getAttribute('data-playback-state')??'idle';
     setText(status,state.charAt(0).toUpperCase()+state.slice(1));
@@ -221,6 +234,27 @@ function render(scenario:Case){
   };
   if(target.readyState>=1)onMetadata();
   else target.addEventListener('loadedmetadata',onMetadata,{once:true,signal});
+  // If Wikimedia serves an unavailable rendition, move once to its original file.
+  // This avoids a redirect loop and never labels a failed external source as working.
+  const backups=[...(credit.fallbacks??[])];
+  let attempted=0;
+  let askedToPlay=false;
+  target.addEventListener('play',()=>{askedToPlay=true;},{signal});
+  target.addEventListener('pause',()=>{if(!target.error)askedToPlay=false;},{signal});
+  target.addEventListener('error',()=>{
+    if(!target.error)return;
+    const next=backups[attempted++];
+    if(!next){
+      if(credit.creditUrl)diagnostics.textContent='This recording could not play here. Try its credited Wikimedia Commons page below, or choose another study.';
+      return;
+    }
+    diagnostics.textContent='That version did not load. Trying the original recording instead…';
+    const resume=askedToPlay;
+    target.src=next;
+    target.load();
+    player?.querySelector<HTMLElement>('media-dialog-close')?.click();
+    if(resume)target.addEventListener('canplay',()=>{void target.play().catch(()=>{});},{once:true,signal});
+  },{signal});
   for(const event of ['loadedmetadata','loadeddata','canplay','canplaythrough','durationchange','seeking','seeked','error','emptied','timeupdate'])
     target.addEventListener(event,update,{signal});
   update();
