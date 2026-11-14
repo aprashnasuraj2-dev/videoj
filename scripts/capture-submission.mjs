@@ -240,9 +240,10 @@ async function captureRelease(browser) {
   await player.getByRole('menuitem', { name: /speed/i }).waitFor();
   await photo(player, 'settings-open.png');
   await page.keyboard.press('Escape');
-  if (!await settings.evaluate(element => document.activeElement === element)) {
-    throw new Error('Escape did not restore Settings focus.');
-  }
+  // Menu focus restoration completes after the menu's close transition. The live
+  // browser test already asserts this behavior with Playwright's auto-waiting;
+  // the recorder must not sample document.activeElement in the same task as Escape.
+  await page.waitForFunction(() => document.activeElement?.classList.contains('media-settings-button'), undefined, { timeout: 3_000 });
   await player.getByRole('button', { name: 'Enter fullscreen' }).click();
   await page.waitForFunction(() => document.fullscreenElement?.localName === 'media-container');
   await photo(page, 'fullscreen.png');
