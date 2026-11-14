@@ -5,3 +5,5 @@ Its strongest quality is not spectacle around the player; it is the resolution o
 The original 64-second *Studies in Thread* film was created specifically for DHAGO as a quiet four-part motion study. The Studio Journal places that same skin in a second editorial context, while the edge studies show how the interface behaves with dense chapters, audio-only media, missing chapters, errors and narrow layouts.
 
 DHAGO is intended to feel memorable at first glance and dependable after the novelty wears off: weaving changes the material language of playback, not the mental model of playback.
+
+Beyond the showcase, the same skin is mounted in the Studio Journal, the woven timeline is demonstrated independently in two host treatments, and the browser-side Edge States Lab can exercise another compatible player through an isolated adapter without uploading a local adapter file.
