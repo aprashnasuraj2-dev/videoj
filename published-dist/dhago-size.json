@@ -1,0 +1,554 @@
+{
+  "dhagoPlayerAuthoredLayer": {
+    "methodology": "DHAGO-authored player CSS, TypeScript and HTML template concatenated and compressed as one stream; excludes @videojs/html runtime/scaffold, demo application, media and screenshots",
+    "files": [
+      "src/video/dhago.css",
+      "src/create-player.ts",
+      "src/video/skin.ts",
+      "src/video/living-loom.ts",
+      "src/video/stream-history.ts",
+      "src/video/metadata-lanes.ts",
+      "src/video/skin.html"
+    ],
+    "rawBytes": 78851,
+    "gzipBytes": 18474,
+    "brotliBytes": 16300,
+    "css": {
+      "files": [
+        "src/video/dhago.css"
+      ],
+      "rawBytes": 32096,
+      "gzipBytes": 7403,
+      "brotliBytes": 6370
+    },
+    "behaviorAndTemplate": {
+      "files": [
+        "src/create-player.ts",
+        "src/video/skin.ts",
+        "src/video/living-loom.ts",
+        "src/video/stream-history.ts",
+        "src/video/metadata-lanes.ts",
+        "src/video/skin.html"
+      ],
+      "rawBytes": 46755,
+      "gzipBytes": 11366,
+      "brotliBytes": 10024
+    }
+  },
+  "portableAuthoredLayer": {
+    "methodology": "DHAGO-authored player CSS, TypeScript and HTML template concatenated and compressed as one stream; excludes @videojs/html runtime/scaffold, demo application, media and screenshots",
+    "files": [
+      "src/video/dhago.css",
+      "src/create-player.ts",
+      "src/video/skin.ts",
+      "src/video/living-loom.ts",
+      "src/video/stream-history.ts",
+      "src/video/metadata-lanes.ts",
+      "src/video/skin.html"
+    ],
+    "rawBytes": 78851,
+    "gzipBytes": 18474,
+    "brotliBytes": 16300,
+    "css": {
+      "files": [
+        "src/video/dhago.css"
+      ],
+      "rawBytes": 32096,
+      "gzipBytes": 7403,
+      "brotliBytes": 6370
+    },
+    "behaviorAndTemplate": {
+      "files": [
+        "src/create-player.ts",
+        "src/video/skin.ts",
+        "src/video/living-loom.ts",
+        "src/video/stream-history.ts",
+        "src/video/metadata-lanes.ts",
+        "src/video/skin.html"
+      ],
+      "rawBytes": 46755,
+      "gzipBytes": 11366,
+      "brotliBytes": 10024
+    }
+  },
+  "reusableRibbon": {
+    "methodology": "Host-neutral reusable ribbon TypeScript + CSS only; excludes demo host, media and Video.js",
+    "files": [
+      "src/ribbon/ribbon.ts",
+      "src/ribbon/ribbon.css"
+    ],
+    "rawBytes": 8128,
+    "gzipBytes": 2786,
+    "brotliBytes": 2440
+  },
+  "stressLabApplication": {
+    "methodology": "Authored Stress Lab application source: portable harness, isolated browser loader, DHAGO specimen controller, route CSS/HTML and fixture service worker; excludes player/runtime dependencies and media",
+    "files": [
+      "src/stress-lab/harness.ts",
+      "apps/preview/src/stress-loader.ts",
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress.css",
+      "apps/preview/stress.html",
+      "apps/preview/public/stress-sw.js"
+    ],
+    "rawBytes": 76941,
+    "gzipBytes": 23061,
+    "brotliBytes": 19812
+  },
+  "emittedDemoBuild": {
+    "methodology": "all emitted JavaScript and CSS in the full multi-page Vite demo build; each file compressed independently",
+    "warning": "sum of all output chunks is not a real one-page download and is not the reusable skin alone",
+    "generatedFrom": "current dist/ directory",
+    "totalJsCssRawBytes": 1758935,
+    "totalJsCssGzipBytes": 529738,
+    "totalJsCssBrotliBytes": 447536,
+    "informationalBudgetGzipBytes": 550000,
+    "informationalBudgetMet": true,
+    "assets": [
+      {
+        "path": "assets/mux-video-BfB4AXiv.js",
+        "rawBytes": 639768,
+        "gzipBytes": 194346,
+        "brotliBytes": 159046
+      },
+      {
+        "path": "assets/workbench-BjdghHa6.js",
+        "rawBytes": 428733,
+        "gzipBytes": 139045,
+        "brotliBytes": 119037
+      },
+      {
+        "path": "assets/create-player-BTyqd4rp.js",
+        "rawBytes": 276392,
+        "gzipBytes": 75408,
+        "brotliBytes": 64362
+      },
+      {
+        "path": "assets/stress-Ny8At13c.js",
+        "rawBytes": 50908,
+        "gzipBytes": 14866,
+        "brotliBytes": 12872
+      },
+      {
+        "path": "assets/create-player-BLSZ5hqD.css",
+        "rawBytes": 83230,
+        "gzipBytes": 12715,
+        "brotliBytes": 11130
+      },
+      {
+        "path": "assets/workbench-CkfP0cA4.css",
+        "rawBytes": 63525,
+        "gzipBytes": 9879,
+        "brotliBytes": 8650
+      },
+      {
+        "path": "assets/stress-DnAqM5of.css",
+        "rawBytes": 19096,
+        "gzipBytes": 4766,
+        "brotliBytes": 4152
+      },
+      {
+        "path": "assets/ribbon-DKtFyLQL.css",
+        "rawBytes": 11592,
+        "gzipBytes": 3289,
+        "brotliBytes": 2831
+      },
+      {
+        "path": "assets/media-BvIT1rPc.css",
+        "rawBytes": 8388,
+        "gzipBytes": 2469,
+        "brotliBytes": 2095
+      },
+      {
+        "path": "assets/ribbon-BCAiiR2_.js",
+        "rawBytes": 4485,
+        "gzipBytes": 1933,
+        "brotliBytes": 1711
+      },
+      {
+        "path": "assets/el-CWyPnoVm.js",
+        "rawBytes": 4207,
+        "gzipBytes": 1547,
+        "brotliBytes": 1273
+      },
+      {
+        "path": "assets/uk-By5Oht4H.js",
+        "rawBytes": 3974,
+        "gzipBytes": 1490,
+        "brotliBytes": 1196
+      },
+      {
+        "path": "assets/ru-BIFqwFBP.js",
+        "rawBytes": 4090,
+        "gzipBytes": 1486,
+        "brotliBytes": 1193
+      },
+      {
+        "path": "assets/te-COeoNCXG.js",
+        "rawBytes": 5237,
+        "gzipBytes": 1446,
+        "brotliBytes": 1238
+      },
+      {
+        "path": "assets/bg-BuyccQIT.js",
+        "rawBytes": 4063,
+        "gzipBytes": 1428,
+        "brotliBytes": 1170
+      },
+      {
+        "path": "assets/hi-BxNHuFif.js",
+        "rawBytes": 4449,
+        "gzipBytes": 1420,
+        "brotliBytes": 1131
+      },
+      {
+        "path": "assets/bn-D2yacfAS.js",
+        "rawBytes": 4428,
+        "gzipBytes": 1400,
+        "brotliBytes": 1202
+      },
+      {
+        "path": "assets/mr-BJWLxMyT.js",
+        "rawBytes": 4559,
+        "gzipBytes": 1400,
+        "brotliBytes": 1175
+      },
+      {
+        "path": "assets/ne-DEncG1xh.js",
+        "rawBytes": 4718,
+        "gzipBytes": 1393,
+        "brotliBytes": 1150
+      },
+      {
+        "path": "assets/th-atFIybwV.js",
+        "rawBytes": 4544,
+        "gzipBytes": 1380,
+        "brotliBytes": 1159
+      },
+      {
+        "path": "assets/ja-Bpz7uNhi.js",
+        "rawBytes": 3006,
+        "gzipBytes": 1327,
+        "brotliBytes": 1058
+      },
+      {
+        "path": "assets/fa-BV41rOFq.js",
+        "rawBytes": 3300,
+        "gzipBytes": 1308,
+        "brotliBytes": 1081
+      },
+      {
+        "path": "assets/journal-Cul1rCUK.css",
+        "rawBytes": 3411,
+        "gzipBytes": 1292,
+        "brotliBytes": 1094
+      },
+      {
+        "path": "assets/ar-DGArSUT3.js",
+        "rawBytes": 3326,
+        "gzipBytes": 1285,
+        "brotliBytes": 1030
+      },
+      {
+        "path": "assets/ko-CHkE07TQ.js",
+        "rawBytes": 2761,
+        "gzipBytes": 1245,
+        "brotliBytes": 1011
+      },
+      {
+        "path": "assets/pl-DVtFFeYJ.js",
+        "rawBytes": 2755,
+        "gzipBytes": 1228,
+        "brotliBytes": 1109
+      },
+      {
+        "path": "assets/vi-iHXOg8lu.js",
+        "rawBytes": 3037,
+        "gzipBytes": 1225,
+        "brotliBytes": 1085
+      },
+      {
+        "path": "assets/gd-04lsZrZ2.js",
+        "rawBytes": 2817,
+        "gzipBytes": 1221,
+        "brotliBytes": 1112
+      },
+      {
+        "path": "assets/cs-BXzRpsd_.js",
+        "rawBytes": 2680,
+        "gzipBytes": 1215,
+        "brotliBytes": 1073
+      },
+      {
+        "path": "assets/hu-CdPj7te_.js",
+        "rawBytes": 2745,
+        "gzipBytes": 1211,
+        "brotliBytes": 1092
+      },
+      {
+        "path": "assets/de-gvz09wMO.js",
+        "rawBytes": 2773,
+        "gzipBytes": 1205,
+        "brotliBytes": 1096
+      },
+      {
+        "path": "assets/he-BWfmp-XK.js",
+        "rawBytes": 3094,
+        "gzipBytes": 1205,
+        "brotliBytes": 985
+      },
+      {
+        "path": "assets/sk-C3P39Eg2.js",
+        "rawBytes": 2681,
+        "gzipBytes": 1203,
+        "brotliBytes": 1083
+      },
+      {
+        "path": "assets/lv-dAOnFrCK.js",
+        "rawBytes": 2697,
+        "gzipBytes": 1193,
+        "brotliBytes": 1069
+      },
+      {
+        "path": "stress-sw.js",
+        "rawBytes": 3045,
+        "gzipBytes": 1190,
+        "brotliBytes": 1051
+      },
+      {
+        "path": "assets/zh-TW-CQCld8lG.js",
+        "rawBytes": 2310,
+        "gzipBytes": 1189,
+        "brotliBytes": 933
+      },
+      {
+        "path": "assets/ca-eJtrL8o1.js",
+        "rawBytes": 2788,
+        "gzipBytes": 1188,
+        "brotliBytes": 1062
+      },
+      {
+        "path": "assets/az-CGZvZq9Y.js",
+        "rawBytes": 2613,
+        "gzipBytes": 1187,
+        "brotliBytes": 1054
+      },
+      {
+        "path": "assets/zh-CN-BkLkxg4s.js",
+        "rawBytes": 2295,
+        "gzipBytes": 1186,
+        "brotliBytes": 886
+      },
+      {
+        "path": "assets/eu-T2D2zIyX.js",
+        "rawBytes": 2634,
+        "gzipBytes": 1184,
+        "brotliBytes": 1086
+      },
+      {
+        "path": "assets/sr-DJRmC5Bf.js",
+        "rawBytes": 2708,
+        "gzipBytes": 1179,
+        "brotliBytes": 1059
+      },
+      {
+        "path": "assets/oc-CCDM5qBr.js",
+        "rawBytes": 2676,
+        "gzipBytes": 1178,
+        "brotliBytes": 1070
+      },
+      {
+        "path": "assets/fr-0nCTvTtg.js",
+        "rawBytes": 2742,
+        "gzipBytes": 1175,
+        "brotliBytes": 1045
+      },
+      {
+        "path": "assets/ro-BSlGxBHH.js",
+        "rawBytes": 2746,
+        "gzipBytes": 1173,
+        "brotliBytes": 1056
+      },
+      {
+        "path": "assets/hr-zm5-c7i6.js",
+        "rawBytes": 2708,
+        "gzipBytes": 1169,
+        "brotliBytes": 1056
+      },
+      {
+        "path": "assets/fi-BB6tGgE-.js",
+        "rawBytes": 2645,
+        "gzipBytes": 1167,
+        "brotliBytes": 1065
+      },
+      {
+        "path": "assets/pt-BR-DOYtnLUm.js",
+        "rawBytes": 2717,
+        "gzipBytes": 1165,
+        "brotliBytes": 1045
+      },
+      {
+        "path": "assets/url-CsKNWYnw.js",
+        "rawBytes": 2131,
+        "gzipBytes": 1162,
+        "brotliBytes": 1046
+      },
+      {
+        "path": "assets/it-DUgW4Y2F.js",
+        "rawBytes": 2878,
+        "gzipBytes": 1160,
+        "brotliBytes": 1047
+      },
+      {
+        "path": "assets/lt--VeJMBB3.js",
+        "rawBytes": 2556,
+        "gzipBytes": 1160,
+        "brotliBytes": 1048
+      },
+      {
+        "path": "assets/pt-PT-BBuACs9-.js",
+        "rawBytes": 2777,
+        "gzipBytes": 1149,
+        "brotliBytes": 1034
+      },
+      {
+        "path": "assets/sl-BxAMGTTM.js",
+        "rawBytes": 2773,
+        "gzipBytes": 1148,
+        "brotliBytes": 1050
+      },
+      {
+        "path": "assets/cy-DUW01E3I.js",
+        "rawBytes": 2567,
+        "gzipBytes": 1146,
+        "brotliBytes": 1048
+      },
+      {
+        "path": "assets/es-BsU79CiS.js",
+        "rawBytes": 2806,
+        "gzipBytes": 1146,
+        "brotliBytes": 992
+      },
+      {
+        "path": "assets/bs-Bv9dPrUC.js",
+        "rawBytes": 2596,
+        "gzipBytes": 1142,
+        "brotliBytes": 1029
+      },
+      {
+        "path": "assets/gl-mB52BKVE.js",
+        "rawBytes": 2767,
+        "gzipBytes": 1136,
+        "brotliBytes": 1012
+      },
+      {
+        "path": "assets/et-q9W3SLUC.js",
+        "rawBytes": 2539,
+        "gzipBytes": 1135,
+        "brotliBytes": 1035
+      },
+      {
+        "path": "assets/nl-CESsSqT3.js",
+        "rawBytes": 2614,
+        "gzipBytes": 1131,
+        "brotliBytes": 1040
+      },
+      {
+        "path": "assets/sv-DWmFnmZx.js",
+        "rawBytes": 2466,
+        "gzipBytes": 1131,
+        "brotliBytes": 1017
+      },
+      {
+        "path": "assets/tr-CDFmxn17.js",
+        "rawBytes": 2495,
+        "gzipBytes": 1108,
+        "brotliBytes": 996
+      },
+      {
+        "path": "assets/da-D030lwQl.js",
+        "rawBytes": 2494,
+        "gzipBytes": 1096,
+        "brotliBytes": 985
+      },
+      {
+        "path": "assets/nb-Bzwhn84A.js",
+        "rawBytes": 2468,
+        "gzipBytes": 1092,
+        "brotliBytes": 987
+      },
+      {
+        "path": "assets/nn-CIBQpHMY.js",
+        "rawBytes": 2434,
+        "gzipBytes": 1087,
+        "brotliBytes": 992
+      },
+      {
+        "path": "assets/id-ChIXjN6o.js",
+        "rawBytes": 2440,
+        "gzipBytes": 1063,
+        "brotliBytes": 965
+      },
+      {
+        "path": "assets/journal-DQV44Ug5.js",
+        "rawBytes": 1969,
+        "gzipBytes": 1020,
+        "brotliBytes": 865
+      },
+      {
+        "path": "assets/demo-CoUxXvSP.js",
+        "rawBytes": 2030,
+        "gzipBytes": 890,
+        "brotliBytes": 750
+      },
+      {
+        "path": "assets/preview-CedA9JcR.js",
+        "rawBytes": 1355,
+        "gzipBytes": 759,
+        "brotliBytes": 634
+      },
+      {
+        "path": "assets/parse-vtt-DtZov_lT.js",
+        "rawBytes": 723,
+        "gzipBytes": 439,
+        "brotliBytes": 369
+      },
+      {
+        "path": "assets/deep-equal-2fCx4gVW.js",
+        "rawBytes": 972,
+        "gzipBytes": 411,
+        "brotliBytes": 374
+      },
+      {
+        "path": "assets/media-B1hRh4Wu.js",
+        "rawBytes": 615,
+        "gzipBytes": 400,
+        "brotliBytes": 334
+      },
+      {
+        "path": "assets/modulepreload-polyfill-P2Xu9kJm.js",
+        "rawBytes": 670,
+        "gzipBytes": 389,
+        "brotliBytes": 325
+      },
+      {
+        "path": "assets/preview-D6uvfvmw.css",
+        "rawBytes": 622,
+        "gzipBytes": 317,
+        "brotliBytes": 253
+      },
+      {
+        "path": "assets/pt-VFKQWrMn.js",
+        "rawBytes": 41,
+        "gzipBytes": 61,
+        "brotliBytes": 45
+      },
+      {
+        "path": "assets/zh-RIBAyAnI.js",
+        "rawBytes": 41,
+        "gzipBytes": 61,
+        "brotliBytes": 45
+      }
+    ]
+  }
+}
