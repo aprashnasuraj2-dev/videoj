@@ -17,6 +17,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Sync and hash-verify canonical documentary media
+        run: npm run sync:canonical-media
       - name: Install media tools for reproducible original-film encodes
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - name: Generate actual video weave metadata for typecheck
