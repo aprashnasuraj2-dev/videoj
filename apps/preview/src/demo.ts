@@ -3,6 +3,7 @@ import sampledWeave from './weave-studies.json';
 import fibreWeave from './weave-fibre.json';
 import './demo.css';
 import media from './media.json';
+import fibreMedia from './media-fibre.json';
 
 const query = new URLSearchParams(location.search);
 const allowed = ['warm','dark','minimal'] as const;
@@ -14,7 +15,7 @@ const player = createDhagoPlayer({
   source: fibrePreview ? './media/from-fibre-to-fabric.mp4' : './media/studies-in-thread.mp4',
   compatibilitySource: fibrePreview ? './media/from-fibre-to-fabric.webm' : './media/studies-in-thread.webm',
   weave: (fibrePreview ? fibreWeave : sampledWeave) as DhagoWeave,
-  playbackId: (fibrePreview || query.has('local')) ? undefined : media.playbackId ?? undefined,
+  playbackId: query.has('local') ? undefined : (fibrePreview ? fibreMedia.playbackId ?? undefined : media.playbackId ?? undefined),
   fallbackUrl: fallback.href,
   poster: fibrePreview ? './media/from-fibre-to-fabric-poster.webp' : './media/poster.webp',
   chapters: query.has('nochapters') ? undefined : (fibrePreview ? './media/from-fibre-to-fabric-chapters.vtt' : './media/chapters.vtt'),
@@ -36,7 +37,7 @@ if (fibrePreview) {
   // The candidate's source is local. The old Mux public playback ID belongs
   // to a different movie and must never be represented as this film's stream.
   const proof=document.querySelector<HTMLElement>('.resilience-proof');
-  if (proof) proof.textContent='Original fibre-to-fabric film candidate · Local encoded media · New Mux publication pending';
+  if (proof) proof.textContent=fibreMedia.playbackId ? 'Original fibre-to-fabric film candidate · Mux playback · Video.js v10 · Original VP9 compatibility' : 'Original fibre-to-fabric film candidate · Local encoded media · New Mux publication pending';
 }
 const video=player.querySelector<HTMLVideoElement>('video, mux-video')!;
 const seekButtons = document.querySelectorAll<HTMLButtonElement>('[data-seek]');
