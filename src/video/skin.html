@@ -24,8 +24,12 @@
 </media-controls-group>
 <media-controls>
 <media-controls-content class="dhago-shelf">
-<details class="dhago-chapter-readout" hidden=""><summary class="dhago-chapter-summary"><span class="dhago-chapter-index"></span><span class="dhago-chapter-name" dir="auto"></span><span class="dhago-chapter-chevron" aria-hidden="true"></span></summary><ol class="dhago-chapter-list" aria-label="Jump to chapter"></ol></details>
-<div class="dhago-ribbon"><media-time-slider class="media-time-slider" thumb-alignment="edge">
+<details class="dhago-chapter-readout" hidden="" aria-label="Chapter map"><summary class="dhago-chapter-summary" aria-describedby="dhago-map-help"><span class="dhago-chapter-index"></span><span class="dhago-chapter-name" dir="auto"></span><span class="dhago-chapter-chevron" aria-hidden="true"></span></summary><p class="dhago-visually-hidden" id="dhago-map-help">Open the chapter map to hear each chapter name and its start and end time. Activate a chapter to seek there.</p><ol class="dhago-chapter-list" aria-label="Chapter map"></ol></details>
+<div class="dhago-ribbon">
+<div class="dhago-stream-history" aria-hidden="true"></div>
+<div class="dhago-metadata-lanes" aria-hidden="true" hidden></div>
+<p class="dhago-stream-summary dhago-visually-hidden">Stream history: no exposed streaming telemetry yet.</p>
+<media-time-slider class="media-time-slider" thumb-alignment="edge">
 <media-time-slider-chapters class="media-time-slider-chapters">
 <template>
 <div class="media-time-slider-chapter">
