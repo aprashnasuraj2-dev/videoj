@@ -41,20 +41,21 @@ const builtIn:PortableSkinAdapter={
 };
 const direct=createSkinStressHarness({source:VIDEO,audioSource:AUDIO,missingSource:'/__stress-fixtures/missing.mp4',poster:POSTER,adapter:builtIn});
 
+const resultLabel=(status:StressStatus)=>({pass:'Passed',fail:'Needs attention',warning:'Review suggested','not-run':'Not assessed'})[status];
 const makeMarkdown=()=>{
-  const out=['# Skin Stress Lab report','','Generated: '+new Date().toISOString(),'Browser: '+navigator.userAgent,'Viewport: '+innerWidth+'×'+innerHeight,'','| Case | Status | Observation |','| --- | --- | --- |'];
-  for(const r of results){const a=r.assertions.find(x=>x.status==='fail')||r.assertions.find(x=>x.status==='warning')||r.assertions[0];out.push('| '+r.caseLabel.replaceAll('|','\\|')+' | '+r.status.toUpperCase()+' | '+String(a?.evidence||a?.label||'—').replaceAll('|','\\|')+' |')}
-  out.push('','Forced colors/reduced motion are only marked RUN when the real media query is active. Browser zoom and live/DVR remain manual gates unless genuinely supplied.');
+  const out=['# DHAGO — Playback Resilience Review','','Reviewed: '+new Date().toISOString(),'Viewing environment: '+navigator.userAgent,'Screen area: '+innerWidth+'×'+innerHeight,'','| Study | Outcome | Observation |','| --- | --- | --- |'];
+  for(const r of results){const a=r.assertions.find(x=>x.status==='fail')||r.assertions.find(x=>x.status==='warning')||r.assertions[0];out.push('| '+r.caseLabel.replaceAll('|','\\|')+' | '+resultLabel(r.status)+' | '+String(a?.evidence||a?.label||'—').replaceAll('|','\\|')+' |')}
+  out.push('','Notes: High-contrast display and reduced-motion preferences are assessed only when active in this browser. Actual browser zoom, device-native controls and live or time-shifted streams require real-world checks. A failed connection is not evidence of a failed player.');
   return out.join('\n');
 };
 const render=()=>{
   const body=q<HTMLTableSectionElement>('#portable-result-body');body.replaceChildren();
-  for(const r of results){const tr=document.createElement('tr');tr.dataset.status=r.status;const th=document.createElement('th');th.scope='row';th.textContent=r.caseLabel;const st=document.createElement('td');st.className='stress-status stress-status-'+r.status;st.textContent=r.status.toUpperCase();const ob=document.createElement('td');const a=r.assertions.find(x=>x.status==='fail')||r.assertions.find(x=>x.status==='warning')||r.assertions[0];ob.textContent=a?.evidence||a?.label||'No assertions returned.';tr.append(th,st,ob);body.append(tr)}
+  for(const r of results){const tr=document.createElement('tr');tr.dataset.status=r.status;const th=document.createElement('th');th.scope='row';th.textContent=r.caseLabel;const st=document.createElement('td');st.className='stress-status stress-status-'+r.status;st.textContent=resultLabel(r.status);const ob=document.createElement('td');const a=r.assertions.find(x=>x.status==='fail')||r.assertions.find(x=>x.status==='warning')||r.assertions[0];ob.textContent=a?.evidence||a?.label||'No assertions returned.';tr.append(th,st,ob);body.append(tr)}
   const c=(s:StressStatus)=>results.filter(r=>r.status===s).length;
-  q('#portable-summary').textContent=results.length?'Latest run: '+c('pass')+' pass · '+c('fail')+' fail · '+c('warning')+' warning · '+c('not-run')+' not run':'No portable run yet.';
+  q('#portable-summary').textContent=results.length?'Reviewed '+results.length+' conditions · '+c('pass')+' passed · '+c('fail')+' need attention · '+c('warning')+' review · '+c('not-run')+' not assessed':'No comparison yet.';
 };
 const setState=(message:string,state='idle')=>{q('#portable-loader-status').textContent=message;q('#portable-loader-status').setAttribute('data-state',state)};
-const download=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify({generatedAt:new Date().toISOString(),userAgent:navigator.userAgent,results},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='skin-stress-report.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),0)};
+const download=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify({generatedAt:new Date().toISOString(),userAgent:navigator.userAgent,results},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='dhago-playback-review.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),0)};
 
 type Descriptor={mode:'url'|'source';url?:string;source?:string};
 const sandboxSource=String.raw`<!doctype html><meta charset="utf-8"><style>html,body{margin:0;background:#f3eee4}*{box-sizing:border-box}#host{min-height:140px;max-width:100%}</style><div id="host"></div><script>
@@ -82,17 +83,17 @@ class Sandbox{
 if(document.querySelector('#portable-tool')){
   const sandbox=new Sandbox();let mode:'builtin'|'sandbox'='builtin';
   q<HTMLSelectElement>('#portable-case').replaceChildren(...portableStressFixtures.map(f=>{const o=document.createElement('option');o.value=f.id;o.textContent=f.label;return o}));
-  const runOne=async(id:PortableStressCaseId)=>{setState('Running '+id+'…','loading');try{const r=mode==='builtin'?(await direct.run(q('#portable-direct-host'),id)).result:await sandbox.run(id);results.push(r);render();setState(r.caseLabel+': '+r.status.toUpperCase(),r.status);return r}catch(e){setState(e instanceof Error?e.message:String(e),'error');throw e}};
+  const runOne=async(id:PortableStressCaseId)=>{const chosen=portableStressFixtures.find(x=>x.id===id);setState('Exploring '+(chosen?.label||id)+'…','loading');try{const r=mode==='builtin'?(await direct.run(q('#portable-direct-host'),id)).result:await sandbox.run(id);results.push(r);render();setState(r.caseLabel+': '+resultLabel(r.status),r.status);return r}catch(e){setState('This condition could not be reviewed: '+(e instanceof Error?e.message:String(e)),'error');return null}};
   const activateSandbox=async()=>{await direct.destroy();q('#portable-direct-host').replaceChildren();mode='sandbox'};
-  q('#portable-use-dhago').addEventListener('click',async()=>{sandbox.destroy();q('#portable-sandbox-host').replaceChildren();mode='builtin';await direct.destroy();q('#portable-direct-host').replaceChildren();setState('Built-in DHAGO reference adapter active.','ready')});
-  q('#portable-load-url').addEventListener('click',async()=>{const url=q<HTMLInputElement>('#portable-adapter-url').value.trim();if(!url){setState('Enter an ESM adapter URL.','error');return}await activateSandbox();setState('Loading URL adapter in isolated sandbox…','loading');try{const r=await sandbox.load({mode:'url',url});setState('Loaded: '+String(r.adapterName||url),'ready')}catch(e){setState(e instanceof Error?e.message:String(e),'error')}});
-  q<HTMLInputElement>('#portable-adapter-file').addEventListener('change',async e=>{const file=(e.currentTarget as HTMLInputElement).files?.[0];if(!file)return;if(!/\.(m?js)$/i.test(file.name)){setState('Local adapter must be .js or .mjs.','error');return}await activateSandbox();setState('Loading local adapter in isolated sandbox…','loading');try{const r=await sandbox.load({mode:'source',source:await file.text()});setState('Loaded locally: '+String(r.adapterName||file.name)+'. File was not uploaded.','ready')}catch(err){setState(err instanceof Error?err.message:String(err),'error')}});
+  q('#portable-use-dhago').addEventListener('click',async()=>{sandbox.destroy();q('#portable-sandbox-host').replaceChildren();mode='builtin';await direct.destroy();q('#portable-direct-host').replaceChildren();setState('DHAGO is ready to explore.','ready')});
+  q('#portable-load-url').addEventListener('click',async()=>{const url=q<HTMLInputElement>('#portable-adapter-url').value.trim();if(!url){setState('Enter the web address of a compatible player connector.','error');return}await activateSandbox();setState('Connecting to the selected player…','loading');try{const r=await sandbox.load({mode:'url',url});setState('Connected: '+String(r.adapterName||url),'ready')}catch(e){setState(e instanceof Error?e.message:String(e),'error')}});
+  q<HTMLInputElement>('#portable-adapter-file').addEventListener('change',async e=>{const file=(e.currentTarget as HTMLInputElement).files?.[0];if(!file)return;if(!/\.(m?js)$/i.test(file.name)){setState('Choose a JavaScript connector file ending in .js or .mjs.','error');return}await activateSandbox();setState('Opening the selected player in a protected viewing area…','loading');try{const r=await sandbox.load({mode:'source',source:await file.text()});setState('Connected locally: '+String(r.adapterName||file.name)+'. DHAGO did not upload the file.','ready')}catch(err){setState(err instanceof Error?err.message:String(err),'error')}});
   q('#portable-run-case').addEventListener('click',()=>void runOne(q<HTMLSelectElement>('#portable-case').value as PortableStressCaseId));
-  q('#portable-run-suite').addEventListener('click',async()=>{for(const f of portableStressFixtures.filter(x=>!x.manualOnly))await runOne(f.id);setState('Compatible suite finished.','ready')});
-  q('#portable-copy-json').addEventListener('click',()=>void navigator.clipboard.writeText(JSON.stringify({generatedAt:new Date().toISOString(),userAgent:navigator.userAgent,results},null,2)).then(()=>setState('JSON copied.','ready')));
+  q('#portable-run-suite').addEventListener('click',async()=>{for(const f of portableStressFixtures.filter(x=>!x.manualOnly)){const reviewed=await runOne(f.id);if(!reviewed)return}setState('The available playback conditions have been reviewed.','ready')});
+  q('#portable-copy-json').addEventListener('click',()=>void navigator.clipboard.writeText(JSON.stringify({generatedAt:new Date().toISOString(),userAgent:navigator.userAgent,results},null,2)).then(()=>setState('Review data copied.','ready')));
   q('#portable-download-json').addEventListener('click',download);
-  q('#portable-copy-markdown').addEventListener('click',()=>void navigator.clipboard.writeText(makeMarkdown()).then(()=>setState('Markdown report copied.','ready')));
-  q('#portable-clear-results').addEventListener('click',()=>{results.splice(0);render();setState('Result matrix cleared.','ready')});
+  q('#portable-copy-markdown').addEventListener('click',()=>void navigator.clipboard.writeText(makeMarkdown()).then(()=>setState('Review summary copied.','ready')));
+  q('#portable-clear-results').addEventListener('click',()=>{results.splice(0);render();setState('Review results cleared.','ready')});
   void installFixtureWorker();
   render();setState('Built-in DHAGO reference adapter active.','ready');
 }
