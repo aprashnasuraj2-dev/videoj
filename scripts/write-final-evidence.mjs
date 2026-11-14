@@ -65,6 +65,15 @@ Automated WebKit results are evidence about the engine, not a claim that Safari 
 - **Three appearances, one interaction model.** Linen, Ink and Paper change atmosphere without changing how viewers operate the player.
 - **The same skin works beyond the showcase.** The Studio Journal presents the player in an editorial context while preserving its interaction language.
 
+## Reuse and portability proof
+
+- **The player is not tied to the showcase page.** The same skin mount is used in more than one published context.
+- **The woven timeline stands on its own.** It can receive chapter geometry and playback state, drive seeking, and report active progress in a different host treatment.
+- **The edge-state instrument is reusable.** Another compatible player can be connected in the browser through a small adapter and exercised against the same resilience cases.
+- **Local adapter files stay local.** They are read by the browser and executed inside an isolated sandbox rather than uploaded to a DHAGO backend.
+- **Remote adapters are isolated too.** CORS-readable modules load inside an opaque-origin frame; load/contract failures are reported separately from actual player failures.
+- **Reports avoid leaking implementation input.** Exported result data omits adapter source text and local filesystem paths.
+
 ## Recommended attachment order
 
 1. Active desktop player hero.
