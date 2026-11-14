@@ -17,8 +17,11 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Install media tools for reproducible original-film encodes
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - run: npm run typecheck
-      - run: npm run build
+      - name: Build and require a decoded compatibility rendition
+        run: DHAGO_REQUIRE_WEBM=1 npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm test
       - uses: actions/upload-artifact@v4
