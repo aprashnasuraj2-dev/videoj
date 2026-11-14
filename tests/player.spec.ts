@@ -171,3 +171,27 @@ test('homepage playback is independent of the legacy Mux asset', async ({ page }
   await page.locator('media-play-button').click();
   await expect.poll(()=>film.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(.2);
 });
+
+
+test('Living Loom stage follows real documentary time across all four canonical chapters', async ({page}) => {
+  await page.goto('/?local');
+  const media = page.locator('#player-mount video');
+  const container = page.locator('#player-mount media-container');
+  await expect.poll(() => media.evaluate((v:HTMLVideoElement) => v.readyState)).toBeGreaterThan(0);
+
+  for (const [time, stage] of [
+    [5, 'raw-fibre'],
+    [20, 'twist-into-thread'],
+    [40, 'warp-meets-weft'],
+    [55, 'cloth-holds-time'],
+  ] as const) {
+    await media.evaluate((v:HTMLVideoElement, t) => {
+      v.currentTime = t;
+      v.dispatchEvent(new Event('timeupdate'));
+    }, time);
+    await expect.poll(() => container.getAttribute('data-weave-stage')).toBe(stage);
+    const ratio = await container.evaluate(el => Number(getComputedStyle(el).getPropertyValue('--dhago-time-ratio')));
+    expect(ratio).toBeGreaterThan(0);
+    expect(ratio).toBeLessThanOrEqual(1);
+  }
+});
