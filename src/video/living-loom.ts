@@ -1,4 +1,11 @@
-/** Render media state without taking ownership of the Video.js controls. */
+const WEAVE_STAGES = [
+  'raw-fibre',
+  'twist-into-thread',
+  'warp-meets-weft',
+  'cloth-holds-time',
+] as const;
+
+/** Render truthful media state without taking ownership of the Video.js controls. */
 export function connectLivingLoom(media: HTMLMediaElement, container: HTMLElement) {
   let started = false;
   let loading = false;
@@ -6,6 +13,7 @@ export function connectLivingLoom(media: HTMLMediaElement, container: HTMLElemen
   let interruption: 'waiting' | 'stalled' | undefined;
   let state = 'idle';
   let progress = '';
+  let weaveStage = '';
 
   function sync(event?: Event) {
     if (event && !media.isConnected) return;
@@ -56,11 +64,32 @@ export function connectLivingLoom(media: HTMLMediaElement, container: HTMLElemen
     const activeSeek = !media.error && (seeking || media.seeking);
     const complete = finite && !activeSeek && !media.error && media.ended && time >= duration - .05;
     const blocked = Boolean(interruption && !media.paused && !complete && !media.error);
-    const nextProgress = finite ? `${(100 * Math.min(1, Math.max(0, time / duration))).toFixed(3)}%` : '';
+    const ratio = finite ? Math.min(1, Math.max(0, time / duration)) : 0;
+    const nextProgress = finite ? `${(100 * ratio).toFixed(3)}%` : '';
     if (nextProgress !== progress) {
       progress = nextProgress;
       if (progress) container.style.setProperty('--dhago-progress', progress);
       else container.style.removeProperty('--dhago-progress');
+    }
+
+    if (finite) {
+      const stageIndex = Math.min(WEAVE_STAGES.length - 1, Math.floor(Math.min(.999999, ratio) * WEAVE_STAGES.length));
+      const stageStart = stageIndex / WEAVE_STAGES.length;
+      const stagePhase = Math.min(1, Math.max(0, (ratio - stageStart) * WEAVE_STAGES.length));
+      const nextStage = WEAVE_STAGES[stageIndex];
+      container.style.setProperty('--dhago-time-ratio', ratio.toFixed(5));
+      container.style.setProperty('--dhago-stage-index', String(stageIndex));
+      container.style.setProperty('--dhago-stage-phase', stagePhase.toFixed(5));
+      if (nextStage !== weaveStage) {
+        weaveStage = nextStage;
+        container.dataset.weaveStage = weaveStage;
+      }
+    } else {
+      weaveStage = '';
+      delete container.dataset.weaveStage;
+      container.style.removeProperty('--dhago-time-ratio');
+      container.style.removeProperty('--dhago-stage-index');
+      container.style.removeProperty('--dhago-stage-phase');
     }
 
     container.toggleAttribute('data-weave-finite', finite);
