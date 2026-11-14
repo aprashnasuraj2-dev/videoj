@@ -3,7 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 const id=process.env.MUX_TOKEN_ID, secret=process.env.MUX_TOKEN_SECRET;
 if (!id || !secret) throw Error('Configure MUX_TOKEN_ID and MUX_TOKEN_SECRET repository secrets');
-const file=await readFile('apps/preview/public/media/studies-in-thread.mp4');
+const file=await readFile('apps/preview/public/media/from-fibre-to-fabric.mp4');
 const marker='dhago-'+createHash('sha256').update(file).digest('hex');
 async function api(path, method='GET', body) {
  const res=await fetch('https://api.mux.com/video/v1/'+path, {method,
