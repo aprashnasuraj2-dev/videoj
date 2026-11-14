@@ -1,23 +1,27 @@
 {
   "title": "DHAGO — Time, woven",
-  "status": "Final candidate evidence is generated from exact-head CI and public release; contest entry remains pending owner submission.",
-  "repositoryUrl": "https://github.com/aprashnasuraj2-dev/videoj",
+  "status": "Final candidate evidence is generated from the exact public release; contest entry remains pending owner submission.",
   "demoUrl": "https://creative.aafnaipatro.com/",
-  "liveSiteUrl": "https://creative.aafnaipatro.com/journal.html",
-  "installGuide": "INSTALL.md",
+  "studioJournalUrl": "https://creative.aafnaipatro.com/journal.html",
+  "stressLabUrl": "https://creative.aafnaipatro.com/stress.html",
+  "ribbonUrl": "https://creative.aafnaipatro.com/ribbon.html",
+  "integrationUrl": "https://creative.aafnaipatro.com/install.html",
   "muxPlaybackId": "Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw",
   "publicReleaseAuthority": "https://creative.aafnaipatro.com/release-manifest.json",
   "finalEvidenceArtifact": "public-smoke-evidence",
-  "finalEvidenceIndex": "submission/final-release-evidence.md inside public-smoke-evidence",
   "leadAttachment": "submission/hero-desktop.png",
   "interactionLoop": "submission/interaction-loop.mp4",
   "additionalAttachments": [
     "submission/finished-cloth.png",
     "submission/hero-mobile.png",
     "submission/stress-lab.png",
+    "submission/stress-lab-browser-loader.png",
+    "submission/layered-weft.png",
+    "submission/ribbon-component.png",
     "submission/install-example.png",
     "submission/performance-evidence.md",
-    "submission/tested-environments.md"
+    "submission/tested-environments.md",
+    "submission/final-release-evidence.md"
   ],
   "externalHumanValidation": "NOT OBTAINED unless a genuine tester is recorded before submission",
   "notTestedUnlessPhysicallyPerformed": [
