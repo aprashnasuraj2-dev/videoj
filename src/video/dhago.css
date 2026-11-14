@@ -598,3 +598,25 @@
   .dhago .media-time-slider-thumb { background: Highlight; border-color: CanvasText; }
   .dhago .media-time-slider-chapters { filter: none !important; }
 }
+
+
+/* Source-derived textile: optional offline frame colors and mean audio levels.
+   These variables decorate real Video.js cue sections; time geometry and seek
+   truth remain owned by Video.js. In all other hosts the classic weave survives. */
+.dhago[data-weave-sampled] .media-time-slider-chapter .media-time-slider-track {
+  background-color: color-mix(in srgb, var(--dhago-weave-color, #b49a80) 70%, var(--dhago-bone) 30%);
+  background-image:
+    repeating-linear-gradient(
+      90deg, #1719184d 0 var(--dhago-weave-thread, 2px),
+      transparent var(--dhago-weave-thread, 2px) 7px
+    ),
+    repeating-linear-gradient(0deg, #fff9 0 1px, transparent 1px 4px);
+}
+/* Custom patterns never become extra hit targets or false audio waveforms. */
+.dhago[data-weave-sampled] .media-time-slider-chapter { position: relative; }
+@media (forced-colors: active), (prefers-contrast: more) {
+  .dhago[data-weave-sampled] .media-time-slider-chapter .media-time-slider-track {
+    background-image: none;
+    background-color: Canvas;
+  }
+}
