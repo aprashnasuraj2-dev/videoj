@@ -110,7 +110,10 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   video.querySelectorAll('track').forEach(t => t.addEventListener('load', updateChapter));
   // Host applications may append chapters after media metadata has loaded.
   // Do not freeze the chapter name at the empty initial track list.
-  video.textTracks.addEventListener('addtrack', event => {
+  // mux-video is registered asynchronously: its textTracks accessor can be
+  // unavailable until the custom element upgrades. A native video/audio
+  // element has the list immediately; the other media events still update cues.
+  video.textTracks?.addEventListener('addtrack', event => {
     event.track?.addEventListener('cuechange', updateChapter);
     updateChapter();
   });
