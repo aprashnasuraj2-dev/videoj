@@ -5,11 +5,12 @@ test('host-neutral ribbon drives one media element from default and minimal trea
   const video=page.locator('#ribbon-video');
   await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
   await expect(page.locator('.woven-time-ribbon')).toHaveCount(2);
+  await expect(video).toHaveAttribute('src','./media/from-fibre-to-fabric.mp4');
   const first=page.locator('#default-ribbon .woven-ribbon-slider');
   await first.evaluate((input:HTMLInputElement)=>{input.value='32';input.dispatchEvent(new Event('input',{bubbles:true}));});
   await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(31.5);
-  await expect(page.locator('#default-ribbon .woven-ribbon-readout')).toContainText('Where shadows gather');
-  await expect(page.locator('#minimal-ribbon .woven-ribbon-readout')).toContainText('Where shadows gather');
+  await expect(page.locator('#default-ribbon .woven-ribbon-readout')).toContainText('Warp meets weft');
+  await expect(page.locator('#minimal-ribbon .woven-ribbon-readout')).toContainText('Warp meets weft');
   await expect(page.locator('.host-default .woven-time-ribbon')).toBeVisible();
   await expect(page.locator('.host-minimal .woven-time-ribbon')).toBeVisible();
 });
