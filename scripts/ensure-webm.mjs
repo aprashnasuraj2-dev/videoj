@@ -2,12 +2,23 @@
 // It is an alternate encoding of the same authored film, not unrelated footage.
 // No fallback media is loaded on browsers that support the primary H.264 rendition.
 import { spawnSync } from 'node:child_process';
-import { statSync, existsSync, unlinkSync } from 'node:fs';
+import { statSync, existsSync, unlinkSync, readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 
 const source = resolve('apps/preview/public/media/studies-in-thread.mp4');
 const target = resolve('apps/preview/public/media/studies-in-thread.webm');
 const strict = process.env.DHAGO_REQUIRE_WEBM === '1';
+const preservedHash = 'c2e7b6b3c4a699c6fa9010245b5c42a90ff93f65c25a1e6a61bf621ea2e7ed39';
+const preservedSize = 7455419;
+const integrity = () => {
+  const data = readFileSync(target);
+  const actual = createHash('sha256').update(data).digest('hex');
+  if (data.byteLength !== preservedSize || actual !== preservedHash) {
+    throw new Error('[DHAGO/compatibility] Preserved original WebM does not match the R2 recovery proof. Do not silently replace media. ' +
+      'Expected ' + preservedHash + ', observed ' + actual + ' (' + data.byteLength + ' bytes).');
+  }
+};
 const fail = (reason) => {
   console.error('[DHAGO/compatibility] ' + reason);
   if (strict) process.exit(1);
@@ -15,9 +26,13 @@ const fail = (reason) => {
 if (!existsSync(source)) fail('Original authored MP4 is missing.');
 else {
   const upToDate = existsSync(target) && statSync(target).size > 100_000;
-  if (upToDate) console.log('[DHAGO/compatibility] Existing original VP9 rendition is current.');
+  if (upToDate) {
+    integrity();
+    console.log('[DHAGO/compatibility] Byte-pinned original VP9 rendition verified.');
+  }
   else {
-    console.log('[DHAGO/compatibility] Generating an additional VP9/Opus rendition...');
+    if (strict) fail('Preserved original VP9 rendition is missing; release builds require the byte-pinned source-controlled file.');
+    console.log('[DHAGO/compatibility] Generating a local VP9/Opus compatibility rendition, not certified as release bytes...');
     const conversion = spawnSync('ffmpeg', [
       '-hide_banner', '-loglevel', 'error', '-nostdin', '-y',
       // Bit-exact demux/mux options suppress volatile container metadata/UIDs.
@@ -41,7 +56,7 @@ else {
     } else {
       const bytes = statSync(target).size;
       if (bytes < 100_000) fail('VP9 output was unexpectedly small.');
-      else console.log(`[DHAGO/compatibility] Generated original VP9 rendition (${bytes} bytes).`);
+      else console.log(`[DHAGO/compatibility] Generated noncanonical local VP9 rendition (${bytes} bytes). Release CI requires the frozen source WebM.`);
     }
   }
 }
