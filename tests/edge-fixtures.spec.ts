@@ -18,7 +18,7 @@ test('missing poster does not block real playback', async ({ page }) => {
 test('captions absence and repeated track toggles remain truthful', async ({ page }) => {
   // Exercise the source under known codecs without depending on the external specimen host.
   await page.route(url => url.hostname === 'upload.wikimedia.org', async route => {
-    const response = await route.fetch({ url: new URL('/media/studies-in-thread.mp4', page.url()).href });
+    const response = await route.fetch({ url: new URL('/media/from-fibre-to-fabric.mp4', page.url()).href });
     await route.fulfill({ response, headers: { ...response.headers(), 'access-control-allow-origin': '*' } });
   });
   await page.goto('/stress.html?case=nocaptions');
