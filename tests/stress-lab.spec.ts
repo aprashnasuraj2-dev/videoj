@@ -40,6 +40,7 @@ async function openLab(page:any){
 }
 
 async function loadLocal(page:any,source:string,name='adapter.mjs'){
+  if(!(await page.locator('.portable-external').evaluate((d:HTMLDetailsElement)=>d.open)))await page.locator('.portable-external summary').click();
   await page.locator('#portable-adapter-file').setInputFiles({
     name,
     mimeType:'text/javascript',
@@ -138,7 +139,7 @@ test('JSON and Markdown report serialization omit adapter source and local paths
   await openLab(page);
   await page.getByRole('button',{name:'Explore selected condition'}).click();
 
-  await page.getByRole('button',{name:'Copy data'}).click();
+  await page.getByRole('button',{name:'Copy details'}).click();
   const json=await page.evaluate(()=>navigator.clipboard.readText());
   expect(json).toContain('"caseId": "baseline"');
   expect(json).not.toContain('export default');
@@ -155,6 +156,9 @@ test('Stress Lab portable UI is keyboard reachable and introduces no serious/cri
   await openLab(page);
   await page.locator('#portable-use-dhago').focus();
   await expect(page.locator('#portable-use-dhago')).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.locator('.portable-external summary')).toBeFocused();
+  await page.keyboard.press('Enter');
   await page.keyboard.press('Tab');
   await expect(page.locator('#portable-adapter-url')).toBeFocused();
 
@@ -175,6 +179,7 @@ test('ESM adapter URL mode loads a CORS-readable module without joining the pare
   });
   await openLab(page);
   const url=new URL('/__stress-adapter-test.mjs',page.url()).href;
+  await page.locator('.portable-external summary').click();
   await page.locator('#portable-adapter-url').fill(url);
   await page.getByRole('button',{name:'Connect',exact:true}).click();
   await expect(page.locator('#portable-loader-status')).toContainText('Connected: Plain video fixture');
