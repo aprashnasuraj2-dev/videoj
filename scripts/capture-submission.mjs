@@ -274,12 +274,24 @@ async function captureRelease(browser) {
   // same task as the completed media-time check.
   await page.waitForFunction(() => document.querySelector('[data-time="32"]')?.getAttribute('aria-current') === 'true', undefined, { timeout: 3_000 });
   await photo(page, 'studio-journal.png', { fullPage: true });
-  const installProof = page.locator('.journal-proof');
-  if (await installProof.count()) await photo(installProof, 'install-example.png');
+
+  await page.goto(new URL('install.html', origin).href);
+  await page.getByRole('heading', { name: /Small API/i }).waitFor();
+  await photo(page, 'install-example.png', { fullPage: true });
 
   await page.goto(new URL('stress.html', origin).href);
   await page.locator('#lab-case-list [data-case=original]').waitFor();
   await photo(page, 'stress-lab.png', { fullPage: true });
+
+  // Prove the public browser loader with the shipped standalone ESM adapter,
+  // not with private workspace access.
+  await page.getByRole('button', { name: 'Load public example adapter' }).click();
+  await page.locator('#portable-loader-status').filter({ hasText: 'Loaded: Native media example' }).waitFor({ timeout: 15_000 });
+  await page.locator('#portable-case').selectOption('narrow-240');
+  await page.getByRole('button', { name: 'Run current case' }).click();
+  await page.locator('#portable-result-body tr').filter({ hasText: '240px container' }).waitFor({ timeout: 15_000 });
+  await photo(page.locator('#portable-tool'), 'stress-lab-browser-loader.png');
+
   await page.locator('#lab-case-list [data-case=error]').click();
   await page.locator('#lab-player .dhago-retry').waitFor({ timeout: 20_000 });
   await photo(page, 'stress-lab-controlled-404.png', { fullPage: true });
@@ -316,7 +328,7 @@ async function captureRelease(browser) {
   ffmpeg(['-i', proofDemo, '-t', '8', '-an', '-c:v', 'libx264', '-crf', '17', '-pix_fmt', 'yuv420p',
     '-movflags', '+faststart', join(output, 'interaction-loop.mp4')]);
   await writeFile(join(output, 'capture-evidence.json'), JSON.stringify({
-    releaseSha: DHAGO_RELEASE_SHA,
+    releaseFingerprint: DHAGO_RELEASE_SHA,
     entrypoints,
     origin: origin.href,
     browser: `Chromium ${browser.version()}`,
@@ -326,7 +338,7 @@ async function captureRelease(browser) {
     capturedAt: new Date().toISOString(),
     screenshots: saves,
     videos: ['interaction-loop.mp4', 'proof-demo.mp4'],
-    method: 'Genuine browser frames from the exact public release. The 8-second judge loop is the opening playback + woven seek segment; no simulated media state. Sound is omitted.',
+    method: 'Genuine browser frames from the exact public release. The 8-second judge loop is the opening playback + woven seek segment; the Stress Lab browser-loader capture uses the public standalone ESM example adapter; no simulated media state. Sound is omitted.',
   }, null, 2) + '\n');
 }
 
