@@ -143,3 +143,10 @@ footer a { text-underline-offset:3px; }
   .intro-copy .intro-note { margin-top: 0; }
   .intro-proof { padding-top: 10px; }
 }
+
+/* Four-surface navigation wraps at 320px instead of expanding the viewport. */
+@media(max-width:700px){
+ .site-header{flex-wrap:wrap;align-items:flex-start;gap:12px 20px}
+ .top-meta{display:flex;flex:1 1 100%;width:100%;min-width:0;flex-wrap:wrap;gap:8px 18px;justify-content:flex-start}
+ .top-meta a{white-space:nowrap}
+}

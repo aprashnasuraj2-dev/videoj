@@ -61,7 +61,12 @@ test('Tools and Lab stay reachable and usable at narrow viewport',async({page})=
  await page.setViewportSize({width:320,height:780});
  for(const path of ['/tools.html','/stress.html?case=original']){
   await page.goto(path);
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  const diagnostic=await page.evaluate(()=>({
+    viewport:innerWidth,width:document.documentElement.scrollWidth,
+    offenders:Array.from(document.querySelectorAll('*')).filter(el=>el.getBoundingClientRect().right>innerWidth+1)
+      .slice(0,8).map(el=>({tag:el.tagName,cls:typeof el.className==='string'?el.className.slice(0,70):'',right:Math.round(el.getBoundingClientRect().right)}))
+   }));
+   expect(diagnostic.width, path+' overflow '+JSON.stringify(diagnostic)).toBeLessThanOrEqual(diagnostic.viewport);
  }
  await expect(page.locator('#edge-truth-title')).toBeVisible();
 });

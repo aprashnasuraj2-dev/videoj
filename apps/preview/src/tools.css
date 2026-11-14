@@ -39,3 +39,15 @@ body.tools footer a{color:#8a3f2e}
 @media(max-width:950px){.tools-player-layout,.tools-grid{grid-template-columns:1fr}.tools-header{align-items:flex-start}}
 @media(max-width:480px){.tools-header nav{gap:8px 13px}.tools-card{padding:14px}.tools-metrics{grid-template-columns:1fr 1fr}.tools-intro{padding-top:26px}.tools-actions button{flex:1 1 120px}}
 @media(prefers-reduced-motion:reduce){.tools *{scroll-behavior:auto!important;transition-duration:0s!important;animation-duration:0s!important}}
+
+/* Keep each instrument inside the physical viewport without hiding controls. */
+body.tools main{width:100%;max-width:1260px}
+body.tools .tools-header,body.tools .tools-intro,body.tools .tools-player-layout,body.tools .tools-grid{max-width:100%;min-width:0}
+#tools-player,#tools-player .dhago{width:100%;max-width:100%;min-width:0}
+.tools-grid>*{min-width:0}
+@media(max-width:480px){
+ body.tools main{padding-inline:16px}
+ body.tools .tools-intro,body.tools .tools-player-layout,body.tools .tools-grid{padding-inline:0}
+ .tools-metrics{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .tools-player-layout{gap:14px}
+}
