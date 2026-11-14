@@ -1,9 +1,5 @@
 name: Package verified DHAGO source handoff
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/verified-handoff.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -33,7 +29,8 @@ jobs:
           test -s clean/package.json
           test -s clean/package-lock.json
           test -s clean/submission/entry-handoff.md
-          test -s clean/apps/preview/public/media/studies-in-thread.mp4
+          test -s clean/apps/preview/public/media/from-fibre-to-fabric.mp4
+          test -s clean/apps/preview/public/media/from-fibre-to-fabric.webm
           if find clean -type f | grep -Eq '(^|/)(node_modules|dist|\.env)(/|$)'; then
             echo 'Unexpected dependency/build/secret payload in source archive' >&2
             exit 1
@@ -46,20 +43,21 @@ jobs:
             test -s dist/index.html
             test -s dist/journal.html
           )
-          git fetch --depth=1 origin refs/heads/dist-a6492362b634
+          git fetch --depth=1 origin "refs/heads/dist-${SHORT}"
           git show FETCH_HEAD:release-manifest.json > handoff-artifact/release-manifest.json
           python3 - <<'PY'
           import json, pathlib
           p=pathlib.Path('handoff-artifact/release-manifest.json')
           m=json.loads(p.read_text())
-          assert m['source_sha']=='a6492362b634799f3f23611e95eb88d003474d1f'
-          assert m['file_count']==78
+          import os
+          assert m['source_sha']==os.environ['GITHUB_SHA']
+          assert m['file_count'] > 0
           p2=pathlib.Path('handoff-artifact/HANDOFF.txt')
           p2.write_text(
             'DHAGO verified source handoff\n'
             'Archive source commit: '+__import__('os').environ['GITHUB_SHA']+'\n'
-            'Production code source: a6492362b634799f3f23611e95eb88d003474d1f\n'
-            'Immutable public build: dist-a6492362b634 (78/78 R2 assets verified)\n'
+            'Production code source: '+__import__('os').environ['GITHUB_SHA']+'\n'
+            'Immutable public build: dist-'+__import__('os').environ['GITHUB_SHA'][:12]+' ('+str(m['file_count'])+' manifest assets)\n'
             'Live demo: https://creative.aafnaipatro.com/\n'
             'Journal: https://creative.aafnaipatro.com/journal.html\n'
             'Competition not submitted; owner legal/identity review pending.\n'
