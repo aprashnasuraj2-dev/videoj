@@ -161,8 +161,16 @@ test('Stress Lab portable UI is keyboard reachable and introduces no serious/cri
 
 
 test('ESM adapter URL mode loads a CORS-readable module without joining the parent origin',async({page})=>{
+  await page.route('**/__stress-adapter-test.mjs',async route=>{
+    await route.fulfill({
+      status:200,
+      contentType:'text/javascript; charset=utf-8',
+      headers:{'Access-Control-Allow-Origin':'*','Cache-Control':'no-store'},
+      body:validAdapter,
+    });
+  });
   await openLab(page);
-  const url='data:text/javascript;charset=utf-8,'+encodeURIComponent(validAdapter);
+  const url=new URL('/__stress-adapter-test.mjs',page.url()).href;
   await page.locator('#portable-adapter-url').fill(url);
   await page.getByRole('button',{name:'Load URL'}).click();
   await expect(page.locator('#portable-loader-status')).toContainText('Loaded: Plain video fixture');
