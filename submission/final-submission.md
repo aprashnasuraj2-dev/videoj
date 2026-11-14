@@ -73,6 +73,14 @@ Essential controls use comfortable touch targets, keyboard focus remains visible
 
 The same visual system is resolved for poster, active playback, captions, menus, chapter transitions, narrow layouts, missing chapters, audio-only media, errors, completion and replay. The result is intended to feel finished rather than merely themed.
 
+### Reusable without becoming generic
+
+The competition skin is not coupled to the showcase page. The same mount is used by the main collection and Studio Journal, and its appearance can shift between Linen, Ink and Paper without changing the interaction model.
+
+The woven timeline is also separable from the full skin. It accepts chapter geometry and real playback state, returns normalized progress and active-chapter state, and can drive seeking in another host treatment without depending on the DHAGO page itself.
+
+The Edge States Lab goes one step further: another compatible player can be connected through a small browser-side bridge loaded from a CORS-readable module URL or a local JavaScript file. External code runs inside an opaque-origin sandboxed frame, local files stay in the browser rather than being uploaded, and loading failures are kept separate from actual skin failures. This makes the resilience work reusable evidence rather than a one-off private test page.
+
 ## Originality and attribution
 
 *Studies in Thread* is an original four-part procedural motion study with synthesized ambient audio, no spoken narration and English descriptive captions. The illustrated poster is original artwork rather than a film frame.
