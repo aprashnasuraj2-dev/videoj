@@ -41,7 +41,9 @@ jobs:
             npm run typecheck
             npm run build
             test -s dist/index.html
-            test -s dist/journal.html\n            test -s dist/media/studies-in-thread.webm\n            test ! -e dist/media/from-fibre-to-fabric.mp4
+            test -s dist/journal.html
+            test -s dist/media/studies-in-thread.webm
+            test ! -e dist/media/from-fibre-to-fabric.mp4
           )
           git fetch --depth=1 origin "refs/heads/dist-${SHORT}"
           git show FETCH_HEAD:release-manifest.json > handoff-artifact/release-manifest.json
