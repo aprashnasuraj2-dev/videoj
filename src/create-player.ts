@@ -14,6 +14,8 @@ export interface DhagoOptions {
   poster?: string;
   chapters?: string;
   captions?: string;
+  /** Real, encoded-source storyboard. Mux supplies its own when active. */
+  thumbnails?: string;
   surface?: 'warm' | 'dark' | 'minimal';
   mediaKind?: 'video' | 'audio';
   /** Optional offline-sampled real footage palette. No capture or processing at playback. */
@@ -77,6 +79,16 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
     const track = document.createElement('track');
     track.kind = kind; track.src = src; track.srclang = 'en'; track.label = label;
     track.default = kind === 'chapters'; video.append(track);
+  }
+  // Video.js v10 reads its local seek-preview frames from a genuine
+  // metadata VTT track. Never overlay a local storyboard on another Mux film.
+  if (!useMux && options.thumbnails) {
+    const thumbnails=document.createElement('track');
+    thumbnails.kind='metadata';
+    thumbnails.label='thumbnails';
+    thumbnails.src=options.thumbnails;
+    thumbnails.default=true;
+    video.append(thumbnails);
   }
   // A host can opt in to frame-derived color and audio-derived strand width.
   // Only apply a swatch when its exact authored cue boundaries match the
