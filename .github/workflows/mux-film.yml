@@ -1,0 +1,69 @@
+name: Provision Mux fibre film (single-asset, secret-backed)
+on:
+  push:
+    branches: ['film/from-fibre-to-fabric-20261114']
+    paths: ['.github/workflows/mux-film.yml']
+  workflow_dispatch:
+concurrency:
+  group: mux-fibre-film-publication
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  provision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Verify owner-managed Actions credentials are available, without revealing them
+        env:
+          MUX_TOKEN_ID: ${{ secrets.MUX_TOKEN_ID }}
+          MUX_TOKEN_SECRET: ${{ secrets.MUX_TOKEN_SECRET }}
+        run: |
+          if [ -z "$MUX_TOKEN_ID" ] || [ -z "$MUX_TOKEN_SECRET" ]; then
+            echo "::error::Encrypted MUX_TOKEN_ID and MUX_TOKEN_SECRET are required in GitHub Actions; none are written to the repository."
+            exit 1
+          fi
+      - name: Validate exact-source film and production compilation before provisioning
+        run: |
+          set -euo pipefail
+          test -s apps/preview/public/media/from-fibre-to-fabric.mp4
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          npm ci
+          DHAGO_REQUIRE_WEBM=1 npm run build
+          npm run typecheck
+      - name: Reuse matching video hash or upload and await genuinely ready Mux media
+        env:
+          MUX_TOKEN_ID: ${{ secrets.MUX_TOKEN_ID }}
+          MUX_TOKEN_SECRET: ${{ secrets.MUX_TOKEN_SECRET }}
+          DHAGO_MUX_SOURCE: apps/preview/public/media/from-fibre-to-fabric.mp4
+          DHAGO_MUX_OUTPUT: apps/preview/src/media-fibre.json
+        run: node scripts/mux-upload.mjs
+      - name: Browser-proof the newly provisioned Mux stream
+        run: |
+          npx playwright install --with-deps chromium
+          npx playwright test tests/film-mux.spec.ts --workers=1
+      - name: Persist only public playback metadata to candidate branch
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add apps/preview/src/media-fibre.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'feat(mux): attach verified public fibre-film playback ID'
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mux-fibre-public-proof
+          path: |
+            apps/preview/src/media-fibre.json
+            test-results/
+            playwright-report/
+          retention-days: 14
