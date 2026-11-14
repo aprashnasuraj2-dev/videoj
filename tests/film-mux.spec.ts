@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import film from '../apps/preview/src/media-fibre.json';
+import { readFileSync } from 'node:fs';
+const film=JSON.parse(readFileSync(new URL('../apps/preview/src/media-fibre.json',import.meta.url),'utf8')) as {playbackId:string|null};
 
 test('candidate Mux HLS decodes, advances, seeks and exposes the actual new source',async({page})=>{
   test.skip(!film.playbackId,'The candidate Mux asset is not provisioned yet — no bonus claimed.');
