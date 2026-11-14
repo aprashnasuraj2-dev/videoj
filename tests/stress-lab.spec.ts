@@ -40,6 +40,7 @@ async function openLab(page:any){
 }
 
 async function loadLocal(page:any,source:string,name='adapter.mjs'){
+  if(!(await page.locator('.portable-external').evaluate((d:HTMLDetailsElement)=>d.open)))await page.locator('.portable-external summary').click();
   await page.locator('#portable-adapter-file').setInputFiles({
     name,
     mimeType:'text/javascript',
@@ -61,7 +62,7 @@ test('built-in reference produces structured baseline and a real 240px result',a
   await page.locator('#portable-case').selectOption('narrow-240');
   await page.getByRole('button',{name:'Explore selected condition'}).click();
   await expect(page.locator('#portable-result-body tr')).toHaveCount(2);
-  await expect(page.locator('#portable-result-body tr').last()).toContainText('240px container');
+  await expect(page.locator('#portable-result-body tr').last()).toContainText('Narrow width · 240px');
   await expect(page.locator('#portable-result-body tr').last()).toHaveAttribute('data-status','pass');
   await expect.poll(()=>page.locator('#portable-direct-host').evaluate((el:HTMLElement)=>Math.round(el.getBoundingClientRect().width))).toBe(240);
 });
@@ -83,7 +84,7 @@ test('local adapter stays in an opaque sandbox and replaces the old built-in pla
   await expect(page.locator('#portable-direct-host .dhago')).toHaveCount(1);
 
   await loadLocal(page,validAdapter);
-  await expect(page.locator('#portable-loader-status')).toContainText('Connected locally: Plain video fixture');
+  await expect(page.locator('#portable-loader-status')).toContainText('Your player is ready: Plain video fixture');
   await expect(page.locator('#portable-direct-host .dhago')).toHaveCount(0);
   const frame=page.locator('#portable-sandbox-host iframe');
   await expect(frame).toHaveCount(1);
@@ -92,26 +93,26 @@ test('local adapter stays in an opaque sandbox and replaces the old built-in pla
   await page.locator('#portable-case').selectOption('narrow-240');
   await page.getByRole('button',{name:'Explore selected condition'}).click();
   await expect(page.locator('#portable-result-body tr').last()).toHaveAttribute('data-status','pass');
-  await expect(page.locator('#portable-result-body tr').last()).toContainText('240px container');
+  await expect(page.locator('#portable-result-body tr').last()).toContainText('Narrow width · 240px');
 });
 
 test('invalid adapter contracts are loader errors, not skin failures',async({page})=>{
   await openLab(page);
   await loadLocal(page,`export default { name: 'Missing mount' };`);
-  await expect(page.locator('#portable-loader-status')).toContainText('invalid-contract');
+  await expect(page.locator('#portable-loader-status')).toContainText('not compatible with the comparison studio');
   await expect(page.locator('#portable-result-body tr')).toHaveCount(0);
 });
 
 test('adapter mount exceptions and missing media become structured FAIL results',async({page})=>{
   await openLab(page);
   await loadLocal(page,`export default {name:'Throws',mount(){throw new Error('fixture mount exploded')}};`,'throws.mjs');
-  await expect(page.locator('#portable-loader-status')).toContainText('Connected locally: Throws');
+  await expect(page.locator('#portable-loader-status')).toContainText('Your player is ready: Throws');
   await page.getByRole('button',{name:'Explore selected condition'}).click();
   await expect(page.locator('#portable-result-body tr').last()).toHaveAttribute('data-status','fail');
   await expect(page.locator('#portable-result-body tr').last()).toContainText('fixture mount exploded');
 
   await loadLocal(page,`export default {name:'No media',mount(host){const root=document.createElement('div');root.textContent='controls only';host.append(root);return {root,destroy(){root.remove()}}}};`,'no-media.mjs');
-  await expect(page.locator('#portable-loader-status')).toContainText('Connected locally: No media');
+  await expect(page.locator('#portable-loader-status')).toContainText('Your player is ready: No media');
   await page.getByRole('button',{name:'Explore selected condition'}).click();
   const row=page.locator('#portable-result-body tr').last();
   await expect(row).toHaveAttribute('data-status','fail');
@@ -138,7 +139,7 @@ test('JSON and Markdown report serialization omit adapter source and local paths
   await openLab(page);
   await page.getByRole('button',{name:'Explore selected condition'}).click();
 
-  await page.getByRole('button',{name:'Copy data'}).click();
+  await page.getByRole('button',{name:'Copy details'}).click();
   const json=await page.evaluate(()=>navigator.clipboard.readText());
   expect(json).toContain('"caseId": "baseline"');
   expect(json).not.toContain('export default');
@@ -147,7 +148,7 @@ test('JSON and Markdown report serialization omit adapter source and local paths
   await page.getByRole('button',{name:'Copy summary'}).click();
   const md=await page.evaluate(()=>navigator.clipboard.readText());
   expect(md).toContain('# DHAGO — Playback Resilience Review');
-  expect(md).toContain('| Baseline | Passed |');
+  expect(md).toContain('| Everyday playback | Passed |');
   expect(md).not.toContain('export default');
 });
 
@@ -155,6 +156,9 @@ test('Stress Lab portable UI is keyboard reachable and introduces no serious/cri
   await openLab(page);
   await page.locator('#portable-use-dhago').focus();
   await expect(page.locator('#portable-use-dhago')).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(page.locator('.portable-external summary')).toBeFocused();
+  await page.keyboard.press('Enter');
   await page.keyboard.press('Tab');
   await expect(page.locator('#portable-adapter-url')).toBeFocused();
 
@@ -175,9 +179,10 @@ test('ESM adapter URL mode loads a CORS-readable module without joining the pare
   });
   await openLab(page);
   const url=new URL('/__stress-adapter-test.mjs',page.url()).href;
+  await page.locator('.portable-external summary').click();
   await page.locator('#portable-adapter-url').fill(url);
   await page.getByRole('button',{name:'Connect',exact:true}).click();
-  await expect(page.locator('#portable-loader-status')).toContainText('Connected: Plain video fixture');
+  await expect(page.locator('#portable-loader-status')).toContainText('Your player is ready: Plain video fixture');
   await expect(page.locator('#portable-sandbox-host iframe')).toHaveAttribute('sandbox','allow-scripts');
   await page.locator('#portable-case').selectOption('baseline');
   await page.getByRole('button',{name:'Explore selected condition'}).click();

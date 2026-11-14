@@ -17,14 +17,14 @@
 <div class="lab-layout">
   <aside class="lab-cases" aria-labelledby="cases-title">
     <h2 id="cases-title">Choose a study</h2>
-    <div role="group" aria-label="Stress cases" id="lab-case-list"></div>
+    <div role="group" aria-label="Playback studies" id="lab-case-list"></div>
     <div class="lab-small-print">The original <em>Studies in Thread</em> film anchors the collection. Additional films and sound recordings retain their individual credits. Intentional interruptions are clearly identified as demonstrations.</div>
   </aside>
   <section class="lab-content" aria-label="DHAGO playback studies">
     <div class="case-heading"><div><p class="eyebrow" id="case-category"></p><h2 id="case-title">Original weave</h2><p id="case-description"></p></div><span id="case-badge">ORIGINAL FILM</span></div>
-    <media-i18n><div id="lab-player" tabindex="-1"></div></media-i18n><noscript><video controls playsinline preload="metadata" src="./media/studies-in-thread.mp4" style="width:100%" aria-label="Native fallback for Studies in Thread"></video><p>JavaScript is unavailable. Native media controls remain accessible for the original film.</p></noscript>
+    <media-i18n><div id="lab-player" tabindex="-1"></div></media-i18n><noscript><video controls playsinline preload="metadata" src="./media/studies-in-thread.mp4" style="width:100%" aria-label="Studies in Thread with standard video controls"></video><p>JavaScript is unavailable. Native media controls remain accessible for the original film.</p></noscript>
     <div class="lab-actions">
-      <label>Container width <select id="lab-width"><option value="100%">Fluid</option><option value="240px">240px</option><option value="280px">280px</option><option value="320px">320px</option><option value="420px">420px</option><option value="720px">720px</option></select></label>
+      <label>Player width <select id="lab-width"><option value="100%">Fluid</option><option value="240px">240px</option><option value="280px">280px</option><option value="320px">320px</option><option value="420px">420px</option><option value="720px">720px</option></select></label>
       <label>Surface <select id="lab-surface"><option value="warm">Linen</option><option value="dark">Ink</option><option value="minimal">Paper</option></select></label>
       <button type="button" id="lab-restart">Replay this study</button>
       <button type="button" id="lab-motion" aria-pressed="false">Motion: on</button>
@@ -35,20 +35,20 @@
         <span>State <strong id="state-status">Idle</strong></span>
         <span>Position <strong id="state-time">—</strong></span>
         <span>Duration <strong id="state-duration">—</strong></span>
-        <span>Dimensions <strong id="state-width">—</strong></span>
+        <span>Player width <strong id="state-width">—</strong></span>
         <span>Chapter <strong id="state-chapter">—</strong></span>
-        <span>Seeking <strong id="state-seeking">No</strong></span>
-        <span>Playback readiness <strong id="state-ready">Not loaded</strong></span>
+        <span>Moving through film <strong id="state-seeking">No</strong></span>
+        <span>Ready to watch <strong id="state-ready">Not loaded</strong></span>
         <span>Source <strong id="state-source">—</strong></span>
       </div>
       <p id="state-error" hidden></p>
       <p id="lab-diagnostics"></p>
       <p id="lab-credit"></p>
     </div>
-    <details class="lab-report edge-truth"><summary id="edge-truth-title">Explore playback details <span>Live controls and measurements</span></summary>
+    <details class="lab-report edge-truth"><summary id="edge-truth-title">Explore playback details <span>See how the film responds</span></summary>
 <p class="edge-disclosure">Watch the media respond to play, pause, seek, volume, speed and captions. These readings come from the selected film or recording. Connection loss and device-only behavior are examined separately, never presented as real footage.</p>
 <dl id="edge-truth-metrics" class="edge-metrics"></dl>
-<div class="edge-actions" id="edge-actions" role="group" aria-label="Playback measurement controls">
+<div class="edge-actions" id="edge-actions" role="group" aria-label="Playback controls">
 <button type="button" data-edge="play">Play</button><button type="button" data-edge="pause">Pause</button>
 <button type="button" data-edge="start">From start</button><button type="button" data-edge="back">−10s</button><button type="button" data-edge="forward">+10s</button><button type="button" data-edge="nearend">Near end</button>
 <button type="button" data-edge="mute">Mute / unmute</button><button type="button" data-edge="zero-volume">Volume 0</button>
@@ -59,7 +59,7 @@
 </details>
 <div class="lab-manual" id="lab-manual"></div>
 <section class="manual-spotlight" id="manual-spotlight" aria-labelledby="manual-spotlight-title" hidden>
-  <p class="eyebrow">A note on real-world proof</p>
+  <p class="eyebrow">Beyond the studio</p>
   <h3 id="manual-spotlight-title">Some experiences need the real device.</h3>
   <p>The original film stays available above while you explore these conditions. The browser cannot faithfully recreate a live broadcast, an iPhone’s native controls or an assistive-technology session.</p>
   <ol>
@@ -79,22 +79,28 @@
   </div>
   <div class="portable-grid">
     <section class="portable-loader" aria-labelledby="loader-title">
-      <h3 id="loader-title">01 / Connect a player</h3>
-      <p>Start with DHAGO or bring a compatible player of your own. Each runs in its own viewing area so you can compare how it behaves.</p>
+      <h3 id="loader-title">01 / Choose your player</h3>
+      <p>Begin with DHAGO, or bring another compatible player to see the same viewing conditions in a fresh space.</p>
       <div class="portable-loader-actions">
         <button type="button" id="portable-use-dhago">Use DHAGO</button>
-        <label for="portable-adapter-url">Player connector URL</label>
+        <details class="portable-help portable-external"><summary>Bring another player (advanced)</summary>
+          <p>This option is for compatible player integrations, not links to ordinary video files. Only use trusted code.</p>
+          <div class="portable-external-controls">
+        <label for="portable-adapter-url">JavaScript integration address</label>
         <div class="portable-inline"><input id="portable-adapter-url" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/my-skin-adapter.mjs"/><button type="button" id="portable-load-url">Connect</button></div>
-        <label for="portable-adapter-file">Player connector file <span>.js / .mjs</span></label>
+        <label for="portable-adapter-file">JavaScript integration file <span>.js / .mjs</span></label>
         <input id="portable-adapter-file" type="file" accept=".js,.mjs,text/javascript,application/javascript"/>
+          </div>
+          <p class="portable-doc-link"><a href="./stress-adapter.example.mjs" download>See an example integration file</a></p>
+        </details>
       </div>
-      <details class="portable-help"><summary>How connections and privacy work</summary><p>Compatible connectors use JavaScript modules (.js or .mjs). Web addresses and imported dependencies must allow cross-origin loading. If a connector cannot load, its study is marked <strong>Not assessed</strong>—not a player failure. Local files are not uploaded by this site, but loaded code can make its own network requests. Only use code you trust.</p></details>
+      <details class="portable-help"><summary>Playback and privacy</summary><p>DHAGO works without connecting another player. For optional comparisons, a compatible JavaScript integration runs inside a separate, restricted frame. An unavailable integration is marked <strong>Not assessed</strong>, not counted as a playback failure. Files you choose stay on this device, although third-party code can make its own network requests. Only use code you trust.</p></details>
       <output id="portable-loader-status" class="portable-loader-status" aria-live="polite">Preparing the DHAGO player…</output>
     </section>
 
     <section class="portable-runner" aria-labelledby="runner-title">
       <h3 id="runner-title">02 / Explore playback conditions</h3>
-      <label for="portable-case">Case</label>
+      <label for="portable-case">Playback condition</label>
       <select id="portable-case"></select>
       <div class="portable-run-actions">
         <button type="button" id="portable-run-case">Explore selected condition</button>
@@ -105,22 +111,21 @@
   </div>
 
   <section class="portable-specimen" aria-labelledby="portable-specimen-title">
-    <div class="portable-specimen-head"><h3 id="portable-specimen-title">Player preview</h3><span id="portable-summary">No comparison yet.</span></div>
-    <div id="portable-direct-host" class="portable-host" aria-label="Built-in DHAGO portable test host"></div>
-    <div id="portable-sandbox-host" class="portable-host" aria-label="Sandboxed external adapter test host"></div>
+    <div class="portable-specimen-head"><h3 id="portable-specimen-title">The player in focus</h3><span id="portable-summary">No comparison yet.</span></div>
+    <div id="portable-direct-host" class="portable-host" aria-label="DHAGO comparison player"></div>
+    <div id="portable-sandbox-host" class="portable-host" aria-label="Other player comparison area"></div>
   </section>
 
   <section class="portable-results" aria-labelledby="portable-results-title">
-    <div class="portable-results-head"><div><h3 id="portable-results-title">03 / The results</h3><p>Explore the findings and save a copy. Connection problems are kept separate from playback behavior.</p></div>
+    <div class="portable-results-head"><div><h3 id="portable-results-title">03 / What happened</h3><p>Explore the findings and save a copy. Connection problems are kept separate from playback behavior.</p></div>
       <div class="portable-export">
-        <button type="button" id="portable-copy-json">Copy data</button>
-        <button type="button" id="portable-download-json">Download data</button>
+        <button type="button" id="portable-copy-json">Copy details</button>
+        <button type="button" id="portable-download-json">Save details</button>
         <button type="button" id="portable-copy-markdown">Copy summary</button>
         <button type="button" id="portable-clear-results">Clear</button>
       </div>
     </div>
     <div class="portable-table-wrap"><table><thead><tr><th scope="col">Case</th><th scope="col">Status</th><th scope="col">What we observed</th></tr></thead><tbody id="portable-result-body"></tbody></table></div>
-    <p class="portable-doc-link"><a href="./stress-adapter.example.mjs" download>Get an example player connector ↗</a></p>
     <p id="portable-cases" class="lab-portable-cases"></p>
   </section>
 </section>

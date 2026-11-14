@@ -29,6 +29,7 @@ test('all gallery destinations and example connector resolve as actual static fi
   const original=await request.get('/media/studies-in-thread.mp4');
   expect(original.status()).toBe(200);
   expect((await original.body()).length).toBe(2563521);
+  await page.locator('.portable-external summary').click();
   const link=page.locator('a[download][href="./stress-adapter.example.mjs"]');
   await expect(link).toBeVisible();
 });
