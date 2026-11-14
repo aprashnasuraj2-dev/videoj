@@ -114,3 +114,14 @@ main {max-width:1420px;padding:36px clamp(20px,4vw,55px) 0;}
 @media(max-width:880px){.portable-heading,.portable-grid{grid-template-columns:1fr;}.portable-results-head{display:block;}.portable-export{justify-content:flex-start;margin-top:12px;}}
 @media(max-width:540px){.portable-inline{grid-template-columns:1fr;}.portable-specimen-head{display:block;}#portable-summary{display:block;text-align:left;margin-top:8px;}.portable-tool{margin-top:54px;}.portable-loader,.portable-runner,.portable-specimen,.portable-results{padding:15px;}}
 @media(forced-colors:active){.portable-tool button,.portable-tool input,.portable-tool select,.portable-loader-status,.portable-table-wrap,.portable-sandbox{border-color:CanvasText}.portable-results tr[data-status]{background:Canvas}.portable-results tr[data-status="fail"] .stress-status{color:LinkText}.portable-privacy{border-left-color:Highlight;}}
+
+/* Media truth instrument: unlike the fixture gallery, this observes real native state. */
+.edge-truth{margin-top:22px}.edge-disclosure{max-width:72ch;color:#607064;line-height:1.6}
+.edge-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px;margin:16px 0}
+.edge-metrics>div{border-bottom:1px solid #dad6cb;padding:8px 0;min-width:0;display:flex;flex-direction:column;gap:5px}
+.edge-metrics dt{color:#667269;font-size:12px}.edge-metrics dd{margin:0;color:#26392d;font:13px/1.4 ui-monospace,monospace;overflow-wrap:anywhere}
+.edge-actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+.edge-actions button{border:1px solid #8ca497;background:#f3f6ef;color:#294534;padding:10px 12px;border-radius:8px;min-height:44px;cursor:pointer}
+.edge-actions button:focus-visible{outline:3px solid #b64d37;outline-offset:2px}
+#edge-feedback{min-height:20px;color:#38523e;font-size:13px}
+@media(max-width:540px){.edge-metrics{grid-template-columns:1fr}.edge-actions button{flex:1 1 120px}}

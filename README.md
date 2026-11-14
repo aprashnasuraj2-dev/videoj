@@ -2,7 +2,7 @@
 
 Reusable Video.js v10 HTML skin with a woven chapter ribbon, visible control shelf, captions and speed settings. The public demo is built around the first 64-second **Studies in Thread** motion study: chapter time becomes warp and weft while familiar media controls stay precise. The ribbon can also encode exposed rendition changes, real buffering interruptions and dropped-frame counters as an honest viewing history.
 
-[Public collection](https://creative.aafnaipatro.com/) · [Annotated film journal](https://creative.aafnaipatro.com/journal.html) · [Reusable ribbon proof](https://creative.aafnaipatro.com/ribbon.html) · [Portable Stress Lab](STRESS-LAB.md) · [Install in under a minute](INSTALL.md)
+[Public collection](https://creative.aafnaipatro.com/) · [Annotated film journal](https://creative.aafnaipatro.com/journal.html) · [Reusable ribbon proof](https://creative.aafnaipatro.com/ribbon.html) · [Edge States Lab](https://creative.aafnaipatro.com/stress.html) · [Engineering Tools](https://creative.aafnaipatro.com/tools.html) · [Portable Stress Lab](STRESS-LAB.md) · [Install in under a minute](INSTALL.md)
 
 Requires Node 24 and npm. Run `npm ci`, `npm run dev`; validate with `npm run typecheck` and `npm run build`. Serve `dist/` over HTTPS. For browser checks run `npx playwright install --with-deps chromium`, `npm run build`, then `npm test`. Tests exercise the production build through Vite preview. Set `DHAGO_LIVE_URL` to run appropriate checks against a published origin; keep fault-injection cases in the test environment.
 

@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="description" content="DHAGO Stress Lab: a browser-side resilience laboratory for Video.js and compatible media skins, plus DHAGO edge-state specimens."/>
+<meta name="description" content="DHAGO Edge States Lab: a browser-side resilience laboratory for Video.js and compatible media skins, plus DHAGO edge-state specimens."/>
 <title>DHAGO — The Loom Under Pressure</title>
 </head>
 <body>
 <a class="skip" href="#lab-player">Skip to test player</a>
-<header class="lab-header"><a class="lab-brand" href="./">▦ DHAGO</a><nav><a href="./">Original film</a><a href="./journal.html">Studio Journal</a><a href="./ribbon.html">Ribbon demo</a></nav></header>
+<header class="lab-header"><a class="lab-brand" href="./">▦ DHAGO</a><nav><a href="./">Original film</a><a href="./tools.html">Tools</a><a href="./journal.html">Studio Journal</a><a href="./ribbon.html">Ribbon demo</a></nav></header>
 <main>
 <section class="lab-intro">
   <p class="eyebrow">A working specimen / Video.js v10</p>
@@ -18,7 +18,7 @@
   <aside class="lab-cases" aria-labelledby="cases-title">
     <h2 id="cases-title">Choose a specimen</h2>
     <div role="group" aria-label="Stress cases" id="lab-case-list"></div>
-    <div class="lab-small-print">The original DHAGO film remains the primary submission. External footage is labeled and credited separately. Controlled fault injections are identified explicitly.</div>
+    <div class="lab-small-print">Studies in Thread, the original DHAGO film, remains the primary submission. External footage is labeled and credited separately. Controlled fault injections are identified explicitly.</div>
   </aside>
   <section class="lab-content" aria-label="Stress test player">
     <div class="case-heading"><div><p class="eyebrow" id="case-category"></p><h2 id="case-title">Original weave</h2><p id="case-description"></p></div><span id="case-badge">REAL MEDIA</span></div>
@@ -45,7 +45,20 @@
       <p id="lab-diagnostics"></p>
       <p id="lab-credit"></p>
     </div>
-    <div class="lab-manual" id="lab-manual"></div>
+    <section class="lab-report edge-truth" aria-labelledby="edge-truth-title">
+<h3 id="edge-truth-title">Native truth / DHAGO derived state</h3>
+<p class="edge-disclosure">Reads the selected specimen's real HTMLMediaElement state. All buttons act on genuine media properties; no network stall or codec failure is simulated here. The explicitly labeled Stress Lab fixtures remain separate.</p>
+<dl id="edge-truth-metrics" class="edge-metrics"></dl>
+<div class="edge-actions" id="edge-actions" role="group" aria-label="Real media state actions">
+<button type="button" data-edge="play">Play</button><button type="button" data-edge="pause">Pause</button>
+<button type="button" data-edge="start">Seek 0</button><button type="button" data-edge="back">−10s</button><button type="button" data-edge="forward">+10s</button><button type="button" data-edge="nearend">Near end</button>
+<button type="button" data-edge="mute">Mute / unmute</button><button type="button" data-edge="zero-volume">Volume 0</button>
+<button type="button" data-edge="speed">Speed 1.5×</button><button type="button" data-edge="captions">Captions on/off</button>
+<button type="button" data-edge="reset">Reset specimen</button>
+</div>
+<p id="edge-feedback" role="status" aria-live="polite"></p>
+</section>
+<div class="lab-manual" id="lab-manual"></div>
   </section>
 </div>
 
@@ -106,6 +119,6 @@
 </main>
 <footer class="lab-footer">DHAGO / Time, woven · <a href="./">Return to the original skin</a></footer>
 <script type="module" src="/src/stress.ts"></script>
-<script type="module" src="/src/stress-loader.ts"></script>
+<script type="module" src="/src/stress-loader.ts"></script><script type="module" src="/src/edge-inspector.ts"></script>
 </body>
 </html>
