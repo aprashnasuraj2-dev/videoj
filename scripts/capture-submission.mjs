@@ -267,9 +267,10 @@ async function captureRelease(browser) {
     const mux = document.querySelector('mux-video');
     return mux?.paused && mux.currentTime >= 32;
   });
-  if (await page.locator('[data-time="32"]').getAttribute('aria-current') !== 'true') {
-    throw new Error('Studio Journal did not mark the selected note.');
-  }
+  // The Journal updates its selected-note semantics from the media seek event.
+  // Wait for that observable state instead of sampling the attribute in the
+  // same task as the completed media-time check.
+  await page.waitForFunction(() => document.querySelector('[data-time="32"]')?.getAttribute('aria-current') === 'true', undefined, { timeout: 3_000 });
   await photo(page, 'studio-journal.png', { fullPage: true });
 
   await page.goto(new URL('stress.html', origin).href);
