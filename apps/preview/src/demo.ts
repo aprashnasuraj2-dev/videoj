@@ -1,4 +1,5 @@
-import { createDhagoPlayer } from '@/create-player';
+import { createDhagoPlayer, type DhagoWeave } from '@/create-player';
+import sampledWeave from './weave-studies.json';
 import './demo.css';
 import media from './media.json';
 
@@ -10,6 +11,7 @@ fallback.searchParams.set('local', '');
 const player = createDhagoPlayer({
   source: './media/studies-in-thread.mp4',
   compatibilitySource: './media/studies-in-thread.webm',
+  weave: sampledWeave as DhagoWeave,
   playbackId: query.has('local') ? undefined : media.playbackId ?? undefined,
   fallbackUrl: fallback.href,
   poster: './media/poster.webp',
