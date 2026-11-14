@@ -29,9 +29,19 @@
       <button type="button" id="lab-restart">Reset this specimen</button>
       <button type="button" id="lab-motion" aria-pressed="false">Motion: on</button>
     </div>
-    <div class="lab-report" aria-live="polite">
+    <div class="lab-report">
       <h3>Observed state <small>(actual media events)</small></h3>
-      <div class="lab-metrics"><span>State <strong id="state-status">Idle</strong></span><span>Position <strong id="state-time">—</strong></span><span>Duration <strong id="state-duration">—</strong></span><span>Dimensions <strong id="state-width">—</strong></span></div>
+      <div class="lab-metrics">
+        <span>State <strong id="state-status">Idle</strong></span>
+        <span>Position <strong id="state-time">—</strong></span>
+        <span>Duration <strong id="state-duration">—</strong></span>
+        <span>Dimensions <strong id="state-width">—</strong></span>
+        <span>Chapter <strong id="state-chapter">—</strong></span>
+        <span>Seeking <strong id="state-seeking">No</strong></span>
+        <span>Media readiness <strong id="state-ready">No metadata</strong></span>
+        <span>Source <strong id="state-source">—</strong></span>
+      </div>
+      <p id="state-error" hidden></p>
       <p id="lab-diagnostics"></p>
       <p id="lab-credit"></p>
     </div>

@@ -71,8 +71,13 @@ test('native media events distinguish seeking from buffering and stalled without
   await media.evaluate((v:HTMLVideoElement)=>v.dispatchEvent(new Event('waiting')));
   await expect(shell).toHaveAttribute('data-thread-buffering','');
   await expect(shell).not.toHaveAttribute('data-thread-stalled','');
-  await media.evaluate((v:HTMLVideoElement)=>v.dispatchEvent(new Event('stalled')));
-  await expect(shell).toHaveAttribute('data-thread-stalled','');
+  // Buffered playback can produce a real timeupdate before the next browser
+  // round trip. Read the injected transition synchronously, then test recovery.
+  const stalled = await media.evaluate((v: HTMLVideoElement) => {
+    v.dispatchEvent(new Event('stalled'));
+    return v.closest('.dhago')?.hasAttribute('data-thread-stalled');
+  });
+  expect(stalled).toBe(true);
   await media.evaluate((v:HTMLVideoElement)=>v.dispatchEvent(new Event('seeking')));
   await expect(shell).toHaveAttribute('data-thread-seeking','');
   await expect(shell).not.toHaveAttribute('data-thread-stalled','');

@@ -1,6 +1,7 @@
 import '@videojs/html/video/player';
 import './video/skin';
 import template from './video/skin.html?raw';
+import { connectLivingLoom } from './video/living-loom';
 
 export interface DhagoWeaveChapter { start:number; end:number; color:string; threadPx:number; audioDb?:number|null }
 export interface DhagoWeave { format:'dhago-weave-v1'; chapters:DhagoWeaveChapter[] }
@@ -63,6 +64,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   const video = document.createElement(options.mediaKind === 'audio' ? 'audio' : (useMux ? 'mux-video' : 'video')) as HTMLVideoElement;
   if (useMux) video.setAttribute('src', `https://stream.mux.com/${options.playbackId}.m3u8`);
   else video.src = useCompatibleOriginal ? options.compatibilitySource! : options.source;
+  const initialSource = video.getAttribute('src');
   video.setAttribute('playsinline', '');
   video.setAttribute('preload', 'metadata');
   // The Mux adapter derives a cross-origin storyboard track. Local text tracks
@@ -84,7 +86,8 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   let colored = false;
   let weaveObserver:MutationObserver|null = null;
   const applyWeave = () => {
-    if (colored || options.weave?.format !== 'dhago-weave-v1') return;
+    if (!video.isConnected || colored || video.getAttribute('src') !== initialSource ||
+      options.weave?.format !== 'dhago-weave-v1' || !Array.isArray(options.weave.chapters)) return;
     const list=container.querySelector<HTMLElement>('.media-time-slider-chapters');
     const elements=Array.from(list?.querySelectorAll<HTMLElement>('.media-time-slider-chapter')??[]);
     const cues=Array.from(
@@ -92,7 +95,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
     );
     if (!elements.length || cues.length !== elements.length || !options.weave.chapters.length) return;
     const pairs=cues.map((cue,i)=>{
-      const match=options.weave!.chapters.find(s=>Math.abs(s.start-cue.startTime)<.06&&Math.abs(s.end-cue.endTime)<.06);
+      const match=options.weave!.chapters.find(s=>s && Math.abs(s.start-cue.startTime)<.06&&Math.abs(s.end-cue.endTime)<.06);
       return {node:elements[i],match};
     });
     if(pairs.some(p=>!p.match || !/^#[0-9a-f]{6}$/i.test(p.match.color) ||
@@ -112,9 +115,13 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
       weaveObserver=new MutationObserver(applyWeave);
       weaveObserver.observe(chapterRoot,{childList:true,subtree:true});
     }
-    for(const type of ['loadedmetadata','durationchange','timeupdate'] as const)
+    for(const type of ['loadedmetadata','durationchange'] as const)
       video.addEventListener(type,applyWeave);
-    video.querySelectorAll('track').forEach(track=>track.addEventListener('load',applyWeave));
+    video.addEventListener('emptied', () => {
+      if (video.getAttribute('src') === initialSource) return;
+      container.removeAttribute('data-weave-sampled');
+      colored = false;
+    });
   }
   // Native <details> provides a keyboard/touch chapter picker inside the skin.
   // The time-slider remains the sole continuous seeking surface.
@@ -125,6 +132,8 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   const chapterList = readout.querySelector<HTMLOListElement>('.dhago-chapter-list')!;
   let displayedChapter = '';
   let cueFingerprint = '';
+  let cues: VTTCue[] = [];
+  const maxChapterChoices = 120;
   const displayTime = (seconds: number): string => {
     const whole = Math.max(0, Math.floor(seconds));
     const hours = Math.floor(whole / 3600);
@@ -134,24 +143,26 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
       ? `${hours}:${String(minutes).padStart(2, '0')}:${tail}`
       : `${minutes}:${tail}`;
   };
-  const updateChapter = () => {
+  const refreshChapters = () => {
     // Text tracks can be unavailable until the async Mux element upgrades.
     const tracks = video.textTracks ? Array.from(video.textTracks) : [];
     const track = tracks.find(t => t.kind === 'chapters');
     // WebVTT is the source of truth. Invalid zero-length cues are excluded;
     // external producers' overlapping/gapped cues are not silently rewritten.
-    const cues = Array.from(track?.cues ?? [])
-      .filter(c => Number.isFinite(c.startTime) && Number.isFinite(c.endTime) &&
+    cues = Array.from(track?.cues ?? [])
+      .filter((c): c is VTTCue => 'text' in c && Number.isFinite(c.startTime) && Number.isFinite(c.endTime) &&
         c.startTime >= 0 && c.endTime > c.startTime)
       .sort((a, b) => a.startTime - b.startTime || a.endTime - b.endTime);
-    const fingerprint = cues.map(c => `${c.startTime}:${c.endTime}:${(c as VTTCue).text}`).join('\u001e');
-    container.toggleAttribute('data-hour-clock', video.duration >= 3600);
+    const visibleCues = cues.slice(0, maxChapterChoices);
+    const fingerprint = JSON.stringify([cues.length, visibleCues.map(c => [c.startTime, c.endTime, c.text])]);
+    container.toggleAttribute('data-hour-clock', Number.isFinite(video.duration) && video.duration >= 3600);
 
     if (fingerprint !== cueFingerprint) {
       cueFingerprint = fingerprint;
+      if (readout.open && chapterList.contains(document.activeElement)) summary.focus();
       readout.open = false;
       const fragment = document.createDocumentFragment();
-      cues.forEach((cue, i) => {
+      visibleCues.forEach((cue, i) => {
         const item = document.createElement('li');
         const button = document.createElement('button');
         button.type = 'button';
@@ -163,8 +174,8 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
         const name = document.createElement('span');
         name.className = 'dhago-jump-name';
         name.dir = 'auto';
-        name.textContent = (cue as VTTCue).text;
-        name.title = (cue as VTTCue).text;
+        name.textContent = cue.text;
+        name.title = cue.text;
         const stamp = document.createElement('time');
         stamp.className = 'dhago-jump-time';
         stamp.textContent = displayTime(cue.startTime);
@@ -172,8 +183,18 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
         item.append(button);
         fragment.append(item);
       });
+      if (visibleCues.length < cues.length) {
+        const note = document.createElement('li');
+        note.className = 'dhago-chapter-limit';
+        note.textContent = `First ${maxChapterChoices} chapters shown. Use Seek to reach later chapters.`;
+        fragment.append(note);
+      }
       chapterList.replaceChildren(fragment);
     }
+    updateChapter();
+  };
+  const updateChapter = () => {
+    if (!video.isConnected) return;
     // Gaps remain visibly unmarked. At exactly the film endpoint keep the
     // final chapter so the end/replay state does not flicker.
     const time = video.currentTime;
@@ -183,7 +204,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
       (time >= cue.startTime && time < cue.endTime) ||
       (i === cues.length - 1 && nearEnd && time >= cue.startTime)
     );
-    const label = index < 0 ? 'Unmarked passage' : (cues[index] as VTTCue).text;
+    const label = index < 0 ? 'Unmarked passage' : cues[index].text;
     const signature = `${index}/${cues.length}/${label}`;
     if (signature === displayedChapter) return;
     displayedChapter = signature;
@@ -233,47 +254,34 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
       event.preventDefault();
     }
   });
-  video.addEventListener('timeupdate', updateChapter);
-  video.addEventListener('loadedmetadata', updateChapter);
-  video.addEventListener('ended', updateChapter);
-  // The woven drag effect is driven by Video.js' native [data-dragging]
-  // state on <media-time-slider>; do not add competing pointer handlers.
-  // This preserves touch capture, keyboard seeking and cancellation behavior.
-
-  // Three distinct states; all are triggered by real media events.
-  // Native Video.js buffering indicators remain authoritative.
-  const setWaiting = (isStalled: boolean) => {
-    if (!video.paused && !video.ended && !video.error) {
-      container.setAttribute('data-thread-buffering', '');
-      container.toggleAttribute('data-thread-stalled', isStalled);
+  let trackList: TextTrackList | undefined;
+  const watchTracks = () => {
+    if (!video.isConnected) return;
+    if (video.textTracks !== trackList) {
+      trackList?.removeEventListener('addtrack', refreshChapters);
+      trackList?.removeEventListener('removetrack', refreshChapters);
+      trackList = video.textTracks;
+      trackList?.addEventListener('addtrack', refreshChapters);
+      trackList?.addEventListener('removetrack', refreshChapters);
     }
+    refreshChapters();
   };
-  const clearWaiting = () => {
-    container.removeAttribute('data-thread-buffering');
-    container.removeAttribute('data-thread-stalled');
-  };
-  video.addEventListener('waiting', () => setWaiting(false));
-  video.addEventListener('stalled', () => setWaiting(true));
-  const clearSeeking = () => container.removeAttribute('data-thread-seeking');
-  video.addEventListener('seeking', () => {
-    container.setAttribute('data-thread-seeking', '');
-    clearWaiting();
-  });
-  video.addEventListener('seeked', clearSeeking);
-  for (const event of ['playing', 'canplay', 'seeked', 'pause', 'ended', 'error', 'emptied']) {
-    video.addEventListener(event, clearWaiting);
+  for (const type of ['loadedmetadata', 'durationchange', 'emptied']) {
+    video.addEventListener(type, watchTracks);
   }
-  for (const event of ['error', 'emptied', 'ended']) video.addEventListener(event, clearSeeking);
-  video.querySelectorAll('track').forEach(t => t.addEventListener('load', updateChapter));
-  // Host applications may append chapters after media metadata has loaded.
-  // Do not freeze the chapter name at the empty initial track list.
-  // mux-video is registered asynchronously: its textTracks accessor can be
-  // unavailable until the custom element upgrades. A native video/audio
-  // element has the list immediately; the other media events still update cues.
-  video.textTracks?.addEventListener('addtrack', event => {
-    event.track?.addEventListener('cuechange', updateChapter);
-    updateChapter();
-  });
+  for (const type of ['timeupdate', 'seeking', 'seeked', 'ended']) {
+    video.addEventListener(type, updateChapter);
+  }
+  // The capture listener also covers tracks a host app adds after mount.
+  video.addEventListener('load', (event) => {
+    if (event.target instanceof HTMLTrackElement) {
+      watchTracks();
+      applyWeave();
+    }
+  }, true);
+  // The Mux adapter may proxy text-track events through its shadow media.
+  video.querySelectorAll('track').forEach(track => track.addEventListener('load', watchTracks));
+  connectLivingLoom(video, container);
   player.querySelector('.dhago-retry')?.addEventListener('click',()=>{
     // A deliberate user retry, never an automatic loop or silent fallback.
     player.querySelector<HTMLElement>('media-dialog-close')?.click();

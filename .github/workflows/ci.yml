@@ -36,11 +36,29 @@ jobs:
             dist/
           retention-days: 14
 
-  public-smoke:
+  stage-dist:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: verify
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v4
+        with:
+          name: candidate-evidence
+      - name: Stage the exact dist exercised by verify
+        run: node scripts/stage-cf-dist.mjs
+
+  public-smoke:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: stage-dist
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -49,10 +67,45 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - name: Bind smoke to the published immutable release
+        env:
+          DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
+        run: |
+          node --input-type=module <<'JS'
+          import { appendFileSync } from 'node:fs';
+          import { setTimeout as sleep } from 'node:timers/promises';
+          const origin = new URL(process.env.DHAGO_LIVE_URL);
+          const manifestUrl = new URL('release-manifest.json', origin);
+          for (let attempt = 0; attempt < 70; attempt++) {
+            try {
+              manifestUrl.searchParams.set('check', String(Date.now()));
+              const response = await fetch(manifestUrl, { signal: AbortSignal.timeout(5000) });
+              const manifest = response.ok ? await response.json() : null;
+              if (manifest?.source_sha === process.env.GITHUB_SHA) {
+                const entry = manifest.files.find(({ key }) => /^assets\/demo-[\w-]+\.js$/.test(key));
+                if (!entry) throw new Error('Published manifest lacks the demo entry');
+                appendFileSync(process.env.GITHUB_ENV, `DHAGO_EXPECTED_ENTRY_ASSET=${entry.key}\n`);
+                process.exit(0);
+              }
+            } catch (error) {
+              if (attempt === 69) console.error(error.message);
+            }
+            await sleep(10000);
+          }
+          throw new Error('Dedicated public origin did not serve this exact release manifest.');
+          JS
       - name: Verify production Mux playback and live Studio Journal
         env:
           DHAGO_LIVE_URL: https://creative.aafnaipatro.com
         run: npx playwright test tests/live.spec.ts --workers=1
+      - name: Capture actual public browser interaction and screenshots
+        env:
+          DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
+          DHAGO_RELEASE_SHA: ${{ github.sha }}
+          DHAGO_EXPECTED_MUX_ID: Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          node scripts/capture-submission.mjs test-results/submission
       - uses: actions/upload-artifact@v4
         if: always()
         with:
