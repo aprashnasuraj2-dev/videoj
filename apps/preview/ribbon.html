@@ -3,7 +3,7 @@
 <head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content="Host-neutral Woven Time Ribbon component proof for Video.js and other media UIs."/><title>DHAGO — Woven Time Ribbon component</title></head>
 <body class="ribbon-demo">
 <a class="skip" href="#ribbon-video">Skip to media</a>
-<header class="ribbon-head"><a href="./">DHAGO</a><nav><a href="./stress.html">Stress Lab</a><a href="https://github.com/aprashnasuraj2-dev/videoj/blob/main/src/ribbon/ribbon.ts">Component source</a></nav></header>
+<header class="ribbon-head"><a href="./">DHAGO</a><nav><a href="./stress.html">Stress Lab</a><a href="./install.html#ribbon-api">Integration</a></nav></header>
 <main>
 <p class="eyebrow">Reusable component / chapters in · playback state out</p>
 <h1>One ribbon.<br/><em>Different hosts.</em></h1>
@@ -13,7 +13,7 @@
 <article class="host-card host-default"><p class="eyebrow">Default host treatment</p><h2>Standard controls, woven time.</h2><div id="default-ribbon"></div></article>
 <article class="host-card host-minimal"><p class="eyebrow">Minimal host treatment</p><h2>The same API, quieter surface.</h2><div id="minimal-ribbon"></div></article>
 </section>
-<section class="ribbon-api"><h2>Small API, no DHAGO dependency.</h2><pre><code>const ribbon = createWovenRibbon({ chapters, tracks, onSeek });
+<section class="ribbon-api" id="component-api"><h2>Small API, no DHAGO dependency.</h2><pre><code>const ribbon = createWovenRibbon({ chapters, tracks, onSeek });
 ribbon.update({ currentTime, duration, buffering, droppedFrames, renditionHeight });
 const { progress, activeChapterIndex } = ribbon.getState();</code></pre></section>
 </main>
