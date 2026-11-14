@@ -62,3 +62,17 @@ body.tools .tools-card{min-width:0;max-width:100%;}
 body.tools .tools-grid{width:100%;min-width:0;max-width:100%;overflow:clip;}
 body.tools .event-scroll{width:100%;max-width:100%;min-width:0;overscroll-behavior-x:contain;}
 @media(max-width:480px){body.tools .tools-grid{padding-inline:0;}body.tools .tools-card{min-width:0;}}
+
+/* A five-column event table is not usable at 320px. Present a 3-column
+   compact log rather than letting its intrinsic width widen the document.
+   All five fields remain available on desktop and in the copied snapshot. */
+@media(max-width:480px){
+  body.tools .event-scroll {box-sizing:border-box;width:100%;max-width:100%;overflow-x:hidden;}
+  body.tools .event-scroll table {width:100%!important;min-width:0!important;max-width:100%!important;table-layout:fixed;border-collapse:collapse;}
+  body.tools .event-scroll th,body.tools .event-scroll td {white-space:normal;overflow-wrap:anywhere;word-break:break-word;font-size:10px;padding:6px 3px;}
+  body.tools .event-scroll th:nth-child(3),body.tools .event-scroll td:nth-child(3),
+  body.tools .event-scroll th:nth-child(4),body.tools .event-scroll td:nth-child(4){display:none;}
+  body.tools .event-scroll th:nth-child(1){width:39%;}
+  body.tools .event-scroll th:nth-child(2){width:27%;}
+  body.tools .event-scroll th:nth-child(5){width:34%;}
+}
