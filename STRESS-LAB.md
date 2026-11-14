@@ -36,13 +36,13 @@ A URL module can fail before the skin is tested:
 - missing default adapter contract → adapter **NOT RUN**;
 - `mount()` throws after a valid load → fixture **FAIL**.
 
-All dependencies imported by a remote ESM adapter must also be browser-loadable under their own CORS policy.
+All dependencies imported by a remote ESM adapter must also be browser-loadable under their own CORS policy. Because the sandbox intentionally has an opaque origin, servers that allow only the parent site's origin may still reject it; wildcard CORS is the most portable remote-module policy.
 
 ### Local .js / .mjs
 
 Choose a local JavaScript module. The browser reads it with `File.text()`, sends the text to the isolated iframe, creates a Blob module **inside that iframe**, and imports it there.
 
-**The file is not uploaded to a DHAGO backend.**
+**The file is not uploaded to a DHAGO backend.**\n\nThe shipped public example adapter is fetched as inert text by the parent and sent to the sandbox as source, so the example remains deterministic without granting the sandbox same-origin privilege. The parent never executes that adapter text.
 
 Because a local adapter is imported from a Blob URL, relative imports inside that local file do not have a filesystem-relative module base. For a local test, use a single-file adapter or browser-resolvable absolute module URLs.
 
