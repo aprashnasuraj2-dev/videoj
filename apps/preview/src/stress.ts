@@ -56,7 +56,7 @@ const cases:Case[]=[
 ];
 const $=<T extends Element=HTMLElement>(selector:string)=>document.querySelector<T>(selector)!;
 const portableCases=document.querySelector<HTMLElement>('#portable-cases');
-if(portableCases)portableCases.textContent=portableStressFixtures.map(item=>item.label).join(' · ');
+if(portableCases)portableCases.textContent=`${portableStressFixtures.length} playback conditions to explore — from tight spaces and dense chapters to missing covers, sound-only recordings and viewing preferences.`;
 const mount=$<HTMLElement>('#lab-player');
 let active:Case=cases[0];
 let player:HTMLElement|null=null;
