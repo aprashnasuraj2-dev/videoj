@@ -82,7 +82,7 @@ const readyValue=$('#state-ready');
 const sourceValue=$('#state-source');
 const errorValue=$<HTMLElement>('#state-error');
 const diagnostics=$('#lab-diagnostics');
-const readyLabels=['No metadata','Metadata loaded','Current frame','Some media ahead','Enough media'];
+const readyLabels=['Waiting for the film','Film details received','First frame ready','Ready to watch','Ready for smooth playback'];
 const mediaErrors:Record<number,string>={
   1:'Playback was canceled.',
   2:'The media connection was interrupted.',
@@ -134,7 +134,19 @@ function attachCues(target:HTMLMediaElement,scenario:Case){
   if(scenario.cues&&scenario.cues!=='none'){
     if(Number.isFinite(duration)&&duration>0) {
       const report=normalizeChapterDrafts(sampleChapters(scenario.cues,duration),duration);
-      if(report.issues.length)diagnostics.textContent='Timing notes: '+report.issues.join(' · ');
+      if(report.issues.length){
+        // Preserve the precise machine-readable explanation without surfacing internal wording.
+        diagnostics.dataset.issues=report.issues.join(' | ');
+        const notes=report.issues.map(issue=>{
+          if(/out.of.order|sorted/i.test(issue))return 'Chapters are shown in time order';
+          if(/overlap/i.test(issue))return 'Overlapping passages were separated';
+          if(/gap/i.test(issue))return 'Unmarked moments remain open';
+          if(/invalid|negative|zero.length/i.test(issue))return 'Unusable markers were left out';
+          if(/duration|overrun|clamp/i.test(issue))return 'Chapter ends fit the actual film';
+          return 'A chapter needed a timing adjustment';
+        });
+        diagnostics.textContent='About these chapter timings: '+[...new Set(notes)].join(' · ');
+      }
       addTrack(target,'chapters','Chapter markers','en',chapterVtt(report.chapters));
     } else {
       diagnostics.textContent='Chapter markers will appear once the film length is known.';
@@ -206,6 +218,7 @@ function render(scenario:Case){
   if(scenario.source==='loom'){target.muted=false;target.volume=1;}
   const chapter=player.querySelector<HTMLElement>('.dhago-chapter-name')!;
   setText(sourceValue,target.tagName==='AUDIO'?'Recording':target.tagName==='MUX-VIDEO'?'Stream':'Film');
+  delete diagnostics.dataset.issues;
   diagnostics.textContent=scenario.source==='loom'
     ? 'Press Play to hear the loom. Sound starts unmuted; your device volume still matters.'
     : 'The chapter timing for this study is ready to explore.';
