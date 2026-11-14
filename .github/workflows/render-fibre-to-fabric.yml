@@ -1,0 +1,73 @@
+name: Render original DHAGO fibre-to-fabric film
+on:
+  push:
+    branches: ['film/from-fibre-to-fabric-20261114']
+    paths:
+      - 'scripts/create-film-v2.py'
+      - '.github/workflows/render-fibre-to-fabric.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: film-fibre-to-fabric-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install reproducible original film renderer
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check 'numpy==2.3.5' 'pillow==12.3.0' 'opencv-python-headless==4.13.0.92'
+      - name: Render original 64-second film and independent compatibility encode
+        run: python scripts/create-film-v2.py --out .generated-film --webm
+      - name: Validate the actual encoded media
+        run: |
+          set -euo pipefail
+          test -s .generated-film/from-fibre-to-fabric.mp4
+          test -s .generated-film/from-fibre-to-fabric.webm
+          test -s .generated-film/poster.webp
+          ffmpeg -hide_banner -v error -i .generated-film/from-fibre-to-fabric.mp4 -f null -
+          ffmpeg -hide_banner -v error -i .generated-film/from-fibre-to-fabric.webm -f null -
+          python - <<'PY'
+          import json, subprocess
+          for name,video,audio in [('from-fibre-to-fabric.mp4','h264','aac'),('from-fibre-to-fabric.webm','vp9','opus')]:
+              raw=subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration:stream=codec_name,width,height,r_frame_rate','-of','json','.generated-film/'+name])
+              result=json.loads(raw)
+              assert 63.95<float(result['format']['duration'])<64.10, result
+              streams=result['streams']
+              assert streams[0]['codec_name']==video and streams[0]['width']==1280 and streams[0]['height']==720 and streams[0]['r_frame_rate']=='24/1',result
+              assert any(s.get('codec_name')==audio for s in streams),result
+              print(name,'validated',result['format']['duration'])
+          PY
+      - name: Publish only the new, versioned film assets to this feature branch
+        run: |
+          set -euo pipefail
+          cp .generated-film/from-fibre-to-fabric.mp4 apps/preview/public/media/from-fibre-to-fabric.mp4
+          cp .generated-film/from-fibre-to-fabric.webm apps/preview/public/media/from-fibre-to-fabric.webm
+          cp .generated-film/poster.webp apps/preview/public/media/from-fibre-to-fabric-poster.webp
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f apps/preview/public/media/from-fibre-to-fabric.mp4 apps/preview/public/media/from-fibre-to-fabric.webm apps/preview/public/media/from-fibre-to-fabric-poster.webp
+          if ! git diff --cached --quiet; then
+            git commit -m 'build(film): encode source-traceable MP4, VP9 and poster'
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dhago-fibre-to-fabric-visual-review
+          path: |
+            .generated-film/contact-sheet.jpg
+            .generated-film/frame-*.jpg
+          retention-days: 14
