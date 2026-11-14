@@ -7,7 +7,7 @@ type Kind = 'original'|'dhaka'|'pashmina'|'sheep'|'loom'|'broken';
 type CueMode = 'four'|'none'|'dense'|'invalid'|'uneven'|'intl'|'late';
 type Case = {
   id:string; name:string; category:string; type:'Real playback'|'Controlled fixture'|'Manual verification';
-  description:string; source:Kind; cues?:CueMode; captions?:'none'|'multi'|'long'; metadata?:'layered';
+  description:string; source:Kind; cues?:CueMode; captions?:'none'|'multi'|'long'; metadata?:'layered'|'hostile';
   poster?:'missing'|'normal'; width?:string; manual:string;
 };
 const ORIGINAL='./media/studies-in-thread.mp4';
@@ -20,8 +20,22 @@ const layeredMetadata:DhagoMetadataTrack[]=[
     {start:24,end:32,label:'Sponsor segment'},
   ]},
 ];
+const hostileMetadata:DhagoMetadataTrack[]=[
+  {id:'hostile',label:'Hostile authored metadata fixture',kind:'custom',color:'url(javascript:alert(1))',cues:[
+    {start:-8,end:4,label:'negative start clamps to zero'},
+    {start:0,end:20,label:'overlap A'},
+    {start:10,end:30,label:'overlap B'},
+    {start:10,end:10,label:'zero length is ignored'},
+    {start:Number.NaN,end:12,label:'non-finite start is ignored'},
+    {start:58,end:120,label:'duration overrun clamps to media end'},
+    ...Array.from({length:130},(_,i)=>({start:(i%64),end:(i%64)+.25,label:'density '+i})),
+  ]},
+  {id:'hostile',label:'Duplicate track ID must be ignored',kind:'speaker',color:'#ff00ff',cues:[
+    {start:0,end:64,label:'duplicate ID'},
+  ]},
+];
 const mediaSources:Record<Kind,{src:string;credit:string;creditUrl:string;license:string}>={
-  original:{src:ORIGINAL,credit:'Original DHAGO motion study · created for the competition',creditUrl:'https://github.com/aprashnasuraj2-dev/videoj',license:'Apache-2.0 source / original film'},
+  original:{src:ORIGINAL,credit:'Original DHAGO motion study · created for the competition',creditUrl:'./',license:'Apache-2.0 challenge release / original film'},
   dhaka:{src:'https://upload.wikimedia.org/wikipedia/commons/0/0a/Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm',
     credit:'Oxlaey — Making handwoven Dhaka fabric in Nepal (real Nepalese textile weaving, not pashmina)',
     creditUrl:'https://commons.wikimedia.org/wiki/File:Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm',license:'CC BY-SA 3.0, unmodified'},
@@ -34,7 +48,7 @@ const mediaSources:Record<Kind,{src:string;credit:string;creditUrl:string;licens
   loom:{src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS_Loom.ogg',
     credit:'Work With Sounds / Konrad Gutkowski — Loom (industrial loom recording, not Nepal)',
     creditUrl:'https://commons.wikimedia.org/wiki/File:WWS_Loom.ogg',license:'CC BY 4.0, unmodified'},
-  broken:{src:'./media/definitely-missing-dhago-source.mp4',credit:'Deliberately missing local source (controlled 404)',creditUrl:'https://github.com/aprashnasuraj2-dev/videoj',license:'Test injection'},
+  broken:{src:'./media/definitely-missing-dhago-source.mp4',credit:'Deliberately missing local source (controlled 404)',creditUrl:'./stress.html#adapter-guide',license:'Test injection'},
 };
 const cases:Case[]=[
   {id:'original',name:'Original weave',category:'Baseline',type:'Real playback',description:'The public film, four genuine chapters, working media controls and original source.',source:'original',cues:'four',manual:'Play, pause, seek, mute, enable captions, inspect fullscreen and replay.'},
@@ -47,6 +61,7 @@ const cases:Case[]=[
   {id:'nochapters',name:'Empty loom',category:'No chapter file',type:'Real playback',description:'No chapter track attached; seek and clocks must still work with a linear timeline.',source:'original',cues:'none',manual:'Check the chapter title is absent and keyboard seeking still works.'},
   {id:'captions',name:'Many voices',category:'Caption-language density',type:'Controlled fixture',description:'Two generated caption tracks, including a deliberately long readable caption. The controls must avoid misleading empty selections.',source:'original',cues:'four',captions:'multi',manual:'Open Settings, switch caption language and inspect the long cue against the control shelf.'},
   {id:'layers',name:'Layered weft',category:'Speaker / captions / sponsor metadata',type:'Controlled fixture',description:'The real film is paired with explicitly labeled fixture metadata to prove the ribbon can layer speaker and sponsor intervals without pretending those facts belong to the film.',source:'original',cues:'four',metadata:'layered',manual:'Inspect the separate colored weft lanes. Speaker and sponsor lanes are controlled test metadata; chapters and captions remain real/native tracks.'},
+  {id:'metadataedge',name:'Hostile metadata',category:'Invalid ranges / duplicate IDs / unsafe color',type:'Controlled fixture',description:'Authored metadata deliberately includes negative, overlapping, zero-length, non-finite, overrun, duplicate-ID and excessive cue input. The primary seek control must remain intact while invalid data is isolated.',source:'original',cues:'four',metadata:'hostile',manual:'Inspect the custom lane: only one hostile track ID should render, invalid ranges should disappear, overrun should clamp, overlap may remain truthful, and the unsafe color should fall back.'},
   {id:'nocaptions',name:'Silent labels',category:'Caption absence',type:'Real playback',description:'The film has no caption tracks. Unsupported caption choices must not be offered as available.',source:'pashmina',cues:'none',captions:'none',manual:'Inspect captions availability and the Settings menu; there must be no phantom language.'},
   {id:'audio',name:'Sound of the loom',category:'Audio-only media',type:'Real playback',description:'An actual Ogg audio recording of a historic mechanical loom. Audio is shown in a compact textile panel, not an empty video poster.',source:'loom',cues:'none',manual:'Play/pause, mute, seek and change speed. This recording is from Germany, not Nepal.'},
   {id:'poster',name:'Missing cover',category:'Failed poster request',type:'Controlled fixture',description:'The source is valid, but the poster URL deliberately returns 404. Playback must remain available.',source:'original',cues:'four',poster:'missing',manual:'Inspect the initial screen before playback; verify a broken image icon never blocks controls.'},
@@ -172,7 +187,7 @@ function render(scenario:Case){
     poster:scenario.poster==='missing'?'./media/nonexistent-cover.webp':scenario.source==='original'?BASE_POSTER:undefined,
     fallbackUrl:scenario.source==='broken'?location.origin+location.pathname+'?case=original':undefined,
     mediaKind:scenario.source==='loom'?'audio':'video',
-    metadataTracks:scenario.metadata==='layered'?layeredMetadata:undefined,
+    metadataTracks:scenario.metadata==='layered'?layeredMetadata:scenario.metadata==='hostile'?hostileMetadata:undefined,
     surface:$('#lab-surface') instanceof HTMLSelectElement?($<HTMLSelectElement>('#lab-surface').value as 'warm'|'dark'|'minimal'):'warm',
   });
   const container=player.querySelector<HTMLElement>('media-container')!;
