@@ -198,3 +198,11 @@ main {max-width:1420px;padding:36px clamp(20px,4vw,55px) 0;}
 @media(max-width:880px){.manual-spotlight ol{grid-template-columns:1fr}.lab-case:hover{transform:none}}
 @media(max-width:540px){.lab-intro{padding-top:0}.lab-intro h1{font-size:clamp(38px,10vw,47px)}.lab-case{padding:13px 12px}.manual-spotlight{padding:18px}.edge-truth summary span{margin-left:32px}.lab-report{padding:16px}.portable-tool button:hover{transform:none}}
 @media(prefers-reduced-motion:reduce){.lab-case,.portable-tool button,.lab-header nav a{transition:none}}
+
+/* Keep optional integration details available without crowding the film gallery. */
+.portable-external{min-width:0}
+.portable-external-controls{display:grid;grid-template-columns:minmax(0,1fr);gap:9px;margin-top:14px}
+.portable-external-controls input{min-width:0;max-width:100%;box-sizing:border-box}
+.portable-external .portable-doc-link{margin:13px 0 0;line-height:1.6}
+.portable-external summary{padding:4px 0}
+.portable-external[open] summary{margin-bottom:4px}
