@@ -12,11 +12,11 @@
 
 **Genuine-site showcase:** https://creative.aafnaipatro.com/journal.html
 
-**Source:** https://github.com/aprashnasuraj2-dev/videoj
+**Source package:** exact Apache-2.0 source archive bundled with the final handoff
 
-**Install guide:** https://github.com/aprashnasuraj2-dev/videoj/blob/main/INSTALL.md
+**Install guide:** `INSTALL.md` in the source package
 
-**License:** Apache-2.0 (LICENSE and NOTICE in repository)
+**License:** Apache-2.0 (`LICENSE` and `NOTICE` in the source package)
 
 **Four-sentence English description**
 
