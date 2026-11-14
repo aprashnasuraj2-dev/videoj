@@ -90,7 +90,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
       .filter(c => Number.isFinite(c.startTime) && Number.isFinite(c.endTime) &&
         c.startTime >= 0 && c.endTime > c.startTime)
       .sort((a, b) => a.startTime - b.startTime || a.endTime - b.endTime);
-    const fingerprint = cues.map(c => `${c.startTime}:${c.endTime}:${c.text}`).join('\u001e');
+    const fingerprint = cues.map(c => `${c.startTime}:${c.endTime}:${(c as VTTCue).text}`).join('\u001e');
     container.toggleAttribute('data-hour-clock', video.duration >= 3600);
 
     if (fingerprint !== cueFingerprint) {
@@ -109,8 +109,8 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
         const name = document.createElement('span');
         name.className = 'dhago-jump-name';
         name.dir = 'auto';
-        name.textContent = cue.text;
-        name.title = cue.text;
+        name.textContent = (cue as VTTCue).text;
+        name.title = (cue as VTTCue).text;
         const stamp = document.createElement('time');
         stamp.className = 'dhago-jump-time';
         stamp.textContent = displayTime(cue.startTime);
@@ -129,7 +129,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
       (time >= cue.startTime && time < cue.endTime) ||
       (i === cues.length - 1 && nearEnd && time >= cue.startTime)
     );
-    const label = index < 0 ? 'Unmarked passage' : cues[index].text;
+    const label = index < 0 ? 'Unmarked passage' : (cues[index] as VTTCue).text;
     const signature = `${index}/${cues.length}/${label}`;
     if (signature === displayedChapter) return;
     displayedChapter = signature;
@@ -159,7 +159,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
     // For DVR-like media seek only inside the actual available window.
     const ranges = video.seekable;
     let target = requested;
-    if (ranges.length) {
+    if (ranges?.length) {
       const start = ranges.start(0);
       const end = ranges.end(ranges.length - 1);
       target = Math.max(start, Math.min(target, end));
@@ -186,18 +186,30 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   // state on <media-time-slider>; do not add competing pointer handlers.
   // This preserves touch capture, keyboard seeking and cancellation behavior.
 
-  // Thread slack is a restrained secondary cue for real decoding stalls.
-  // The existing native buffering indicator remains the primary signal.
-  const setWaiting = () => {
+  // Three distinct states; all are triggered by real media events.
+  // Native Video.js buffering indicators remain authoritative.
+  const setWaiting = (isStalled: boolean) => {
     if (!video.paused && !video.ended && !video.error) {
       container.setAttribute('data-thread-buffering', '');
+      container.toggleAttribute('data-thread-stalled', isStalled);
     }
   };
-  const clearWaiting = () => container.removeAttribute('data-thread-buffering');
-  for (const event of ['waiting', 'stalled']) video.addEventListener(event, setWaiting);
+  const clearWaiting = () => {
+    container.removeAttribute('data-thread-buffering');
+    container.removeAttribute('data-thread-stalled');
+  };
+  video.addEventListener('waiting', () => setWaiting(false));
+  video.addEventListener('stalled', () => setWaiting(true));
+  const clearSeeking = () => container.removeAttribute('data-thread-seeking');
+  video.addEventListener('seeking', () => {
+    container.setAttribute('data-thread-seeking', '');
+    clearWaiting();
+  });
+  video.addEventListener('seeked', clearSeeking);
   for (const event of ['playing', 'canplay', 'seeked', 'pause', 'ended', 'error', 'emptied']) {
     video.addEventListener(event, clearWaiting);
   }
+  for (const event of ['error', 'emptied', 'ended']) video.addEventListener(event, clearSeeking);
   video.querySelectorAll('track').forEach(t => t.addEventListener('load', updateChapter));
   // Host applications may append chapters after media metadata has loaded.
   // Do not freeze the chapter name at the empty initial track list.
