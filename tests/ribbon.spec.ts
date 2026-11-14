@@ -17,7 +17,7 @@ test('host-neutral ribbon drives one media element from default and minimal trea
 
 test('portable Stress Lab advertises its adapter cases without claiming forced colors',async({page})=>{
   await page.goto('/stress.html?case=original');
-  await expect(page.getByRole('link',{name:/Run Stress Lab against your skin/})).toBeVisible();
+  await expect(page.getByRole('link',{name:/Explore the player comparison studio/})).toBeVisible();
   await expect(page.locator('#portable-cases')).toContainText('Malformed cues');
   await expect(page.locator('#portable-cases')).toContainText('240px container');
   await expect(page.locator('#portable-cases')).toContainText('Forced colors');
@@ -25,8 +25,8 @@ test('portable Stress Lab advertises its adapter cases without claiming forced c
 
 test('layered-weft fixture renders supplied speaker and sponsor tracks without calling them film facts',async({page})=>{
   await page.goto('/stress.html?case=layers');
-  await expect(page.locator('#case-badge')).toHaveText('CONTROLLED FIXTURE');
-  await expect(page.locator('#case-description')).toContainText('fixture metadata');
+  await expect(page.locator('#case-badge')).toHaveText('GUIDED STUDY');
+  await expect(page.locator('#case-description')).toContainText('illustrative speaker and sponsor intervals');
   await expect.poll(()=>page.locator('.dhago-metadata-lane[data-kind="speaker"]').count()).toBeGreaterThan(0);
   await expect.poll(()=>page.locator('.dhago-metadata-lane[data-kind="sponsor"]').count()).toBeGreaterThan(0);
 });
