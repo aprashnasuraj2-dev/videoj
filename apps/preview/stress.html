@@ -7,7 +7,7 @@
 </head>
 <body>
 <a class="skip" href="#lab-player">Skip to test player</a>
-<header class="lab-header"><a class="lab-brand" href="./">▦ DHAGO</a><nav><a href="./">Original film</a><a href="./journal.html">Studio Journal</a><a href="https://github.com/aprashnasuraj2-dev/videoj">Source</a></nav></header>
+<header class="lab-header"><a class="lab-brand" href="./">▦ DHAGO</a><nav><a href="./">Original film</a><a href="./journal.html">Studio Journal</a><a href="#adapter-guide">Adapter guide</a></nav></header>
 <main>
 <section class="lab-intro">
   <p class="eyebrow">A working specimen / Video.js v10</p>
@@ -59,7 +59,7 @@
       <h3 id="loader-title">1 / Load an adapter</h3>
       <p>Third-party code runs in a sandboxed, opaque-origin iframe. It cannot write arbitrary markup into this page. The built-in DHAGO adapter is the trusted reference specimen.</p>
       <div class="portable-loader-actions">
-        <button type="button" id="portable-use-dhago">Use built-in DHAGO</button>
+        <div class="portable-reference-actions"><button type="button" id="portable-use-dhago">Use built-in DHAGO</button><button type="button" id="portable-load-example">Load public example adapter</button></div>
         <label for="portable-adapter-url">ESM adapter URL</label>
         <div class="portable-inline"><input id="portable-adapter-url" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/my-skin-adapter.mjs"/><button type="button" id="portable-load-url">Load URL</button></div>
         <label for="portable-adapter-file">Local adapter file <span>.js / .mjs</span></label>
@@ -97,9 +97,42 @@
       </div>
     </div>
     <div class="portable-table-wrap"><table><thead><tr><th scope="col">Case</th><th scope="col">Status</th><th scope="col">Main observation</th></tr></thead><tbody id="portable-result-body"></tbody></table></div>
-    <p class="portable-doc-link"><a href="https://github.com/aprashnasuraj2-dev/videoj/blob/main/STRESS-LAB.md">Adapter contract, security model and fixture documentation ↗</a></p>
+    <p class="portable-doc-link"><a href="#adapter-guide">Adapter contract, security model and fixture documentation ↓</a></p>
     <p id="portable-cases" class="lab-portable-cases"></p>
   </section>
+</section>
+
+<section class="lab-context stress-guide" id="adapter-guide" aria-labelledby="adapter-guide-title">
+<p class="eyebrow">Adapter contract / standalone public guide</p>
+<h2 id="adapter-guide-title">Bring a compatible player. Keep the boundary small.</h2>
+<p>Stress Lab does not require access to DHAGO's private project workspace. A browser-loadable adapter only needs a name and a mount function. Remote adapters run in a sandboxed iframe with scripts enabled but without same-origin privilege; local adapter files are read in the browser and are not uploaded.</p>
+<pre class="stress-guide-code"><code>export default {
+  name: 'My player',
+  async mount(host, input) {
+    const root = await mountMyPlayer({
+      host,
+      source: input.source,
+      poster: input.poster,
+      chapters: input.chapters,
+      captions: input.captions,
+    });
+
+    return {
+      root,
+      media: root.querySelector('video'),
+      destroy() {
+        root.remove();
+      },
+    };
+  },
+};</code></pre>
+<div class="stress-guide-grid">
+<article><h3>URL mode</h3><p>The adapter URL and every imported dependency must permit browser module loading under CORS. A blocked URL is <strong>NOT RUN</strong>, not a skin failure.</p></article>
+<article><h3>Local file mode</h3><p>Choose a single <code>.js</code> or <code>.mjs</code> file. It is converted to a Blob module inside the isolated frame. Relative filesystem imports are therefore not supported.</p></article>
+<article><h3>Security model</h3><p>The parent validates the iframe window plus a random session identifier before accepting results. Third-party code never receives <code>allow-same-origin</code> and cannot inject arbitrary result HTML into the parent UI.</p></article>
+<article><h3>Truth model</h3><p>Forced colors and reduced motion are only marked RUN when real media queries are active. Live/DVR and real 400% zoom remain manual gates unless genuinely supplied.</p></article>
+</div>
+<p><a href="./stress-example-adapter.mjs">Open the public native-media example adapter ↗</a> · <a href="./install.html#stress-api">Read the release integration contract ↗</a></p>
 </section>
 
 <section class="lab-context"><p class="eyebrow">What is demonstrated / what remains to be checked</p><h2>Tests should expose limitations, not hide them.</h2><p>Media decoding, live DVR, iOS native fullscreen, external casting, physical touch cancellation, real browser zoom and screen-reader behavior need genuine device/source conditions. A browser fixture can model geometry or induce an error, but it cannot manufacture those proofs.</p></section>
