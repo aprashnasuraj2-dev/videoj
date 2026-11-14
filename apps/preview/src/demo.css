@@ -101,3 +101,24 @@ footer a { text-underline-offset:3px; }
 
 /* No chapter cues means no external chapter actions. */
 .chapter-list[hidden] { display: none !important; }
+
+/* The resilience evidence is part of one competition entry, not another skin. */
+.resilience { border-top: 2px solid #34382f; padding: 34px 0 38px; }
+.resilience-heading {display:flex;justify-content:space-between;align-items:end;gap:28px;margin-bottom:24px;}
+.resilience-heading h2 {font:normal clamp(29px,3.4vw,49px)/1.05 Georgia,serif;letter-spacing:-.045em;margin:0;}
+.resilience-heading p:last-child {max-width:420px;font-size:13px;line-height:1.75;color:#595b50;margin:0;}
+.resilience-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+.resilience-panel {min-width:0;display:flex;flex-direction:column;align-items:start;gap:14px;text-decoration:none;padding:24px 20px;border:1px solid #c8bcaa;background:#eee8da;min-height:215px;}
+.resilience-panel:focus-visible {outline:3px solid #b44332;}
+.resilience-panel:hover {background:#e6ddcf;}
+.resilience-index {font:10px ui-monospace,monospace;color:#795c46;letter-spacing:.07em;}
+.resilience-panel strong {font:normal 24px/1.15 Georgia,serif;letter-spacing:-.025em;}
+.resilience-panel>span:nth-child(3) {font-size:12px;color:#5d6255;line-height:1.6;}
+.resilience-link {font-size:11px;font-weight:650;text-decoration:underline;text-underline-offset:3px;margin-top:auto;}
+.resilience-proof {font-size:11px;line-height:1.65;color:#656358;margin:21px 0 0;}
+@media(max-width:740px){
+ .resilience-heading{align-items:start;flex-direction:column;}
+ .resilience-grid{grid-template-columns:1fr;}
+ .resilience-panel{min-height:0;padding:22px 18px;}
+ .resilience-panel strong{font-size:22px;}
+}
