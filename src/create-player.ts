@@ -5,6 +5,8 @@ import template from './video/skin.html?raw';
 export interface DhagoOptions {
   source: string;
   playbackId?: string;
+  /** Optional compatible original source if the browser cannot decode H.264. */
+  compatibilitySource?: string;
   fallbackUrl?: string;
   poster?: string;
   chapters?: string;
@@ -41,12 +43,21 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
     fallback.hidden = false;
   }
 
-  // Keep the HLS engine out of the local-film entry bundle. Custom elements
-  // upgrade the declarative attributes when the optional adapter finishes loading.
-  if (options.playbackId) void import('@videojs/html/media/mux-video');
-  const video = document.createElement(options.mediaKind === 'audio' ? 'audio' : (options.playbackId ? 'mux-video' : 'video')) as HTMLVideoElement;
-  if (options.playbackId) video.setAttribute('src', `https://stream.mux.com/${options.playbackId}.m3u8`);
-  else video.src = options.source;
+  // Playback must be possible in browsers compiled without H.264/AAC.
+  // On browsers that do support the actual Mux H.264 rendition, preserve Mux
+  // as the primary source and do not use the compatibility path silently.
+  const capability = document.createElement('video');
+  const h264 = capability.canPlayType('video/mp4; codecs="avc1.64001f, mp4a.40.2"');
+  const webm = capability.canPlayType('video/webm; codecs="vp9, opus"');
+  const useCompatibleOriginal = options.mediaKind !== 'audio' &&
+    Boolean(options.compatibilitySource && !h264 && webm);
+  const useMux = Boolean(options.playbackId && !useCompatibleOriginal);
+  if (useCompatibleOriginal) container.setAttribute('data-compatibility-source', 'webm');
+  // Keep the Mux HLS engine out of the local-film entry bundle.
+  if (useMux) void import('@videojs/html/media/mux-video');
+  const video = document.createElement(options.mediaKind === 'audio' ? 'audio' : (useMux ? 'mux-video' : 'video')) as HTMLVideoElement;
+  if (useMux) video.setAttribute('src', `https://stream.mux.com/${options.playbackId}.m3u8`);
+  else video.src = useCompatibleOriginal ? options.compatibilitySource! : options.source;
   video.setAttribute('playsinline', '');
   video.setAttribute('preload', 'metadata');
   // The Mux adapter derives a cross-origin storyboard track. Local text tracks
