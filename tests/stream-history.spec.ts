@@ -9,8 +9,9 @@ test('real decoded dimensions, native metadata and spoken chapter map are expose
   await expect(shell.locator('.dhago-quality-thread')).toHaveCount(1);
   await expect.poll(()=>shell.locator('.dhago-metadata-lane[data-kind="chapter"]').count()).toBeGreaterThan(0);
   const first= shell.locator('.dhago-chapter-jump').first();
-  await expect(first).toHaveAttribute('aria-label',/Chapter 1 of 4: A thread of light. 0:00 to 0:16./);
-  await expect(shell.locator('.dhago-chapter-summary')).toHaveAttribute('aria-label',/Chapter map. Chapter 1 of 4/);
+  await expect(first).toContainText('A thread of light');
+  await expect(first.locator('.dhago-visually-hidden')).toHaveText('Chapter 1 of 4; ends at 0:16.');
+  await expect(shell.locator('.dhago-chapter-summary')).not.toHaveAttribute('aria-label',/.+/);
 });
 
 test('buffer slack and missed stitches are driven by exposed events/counters',async({page})=>{
