@@ -7,7 +7,12 @@ const sizes=JSON.parse(readFileSync(sizePath,'utf8'));
 const score=name=>Math.round((lhr.categories?.[name]?.score ?? 0)*100);
 const audit=id=>lhr.audits?.[id];
 const network=audit('network-requests')?.details?.items ?? [];
-const transfer=network.reduce((sum,item)=>sum+(Number(item.transferSize)||0),0);
+const resources=audit('resource-summary')?.details?.items ?? [];
+const totalResource=resources.find(item=>item.resourceType==='total');
+const requestCount=network.length || Number(totalResource?.requestCount) || 0;
+const transfer=network.length
+  ? network.reduce((sum,item)=>sum+(Number(item.transferSize)||0),0)
+  : Number(totalResource?.transferSize)||0;
 const metric={
   measuredAt:new Date().toISOString(),
   url:lhr.finalDisplayedUrl ?? lhr.finalUrl,
@@ -20,7 +25,7 @@ const metric={
     cls:audit('cumulative-layout-shift')?.numericValue ?? null,
     tbtMs:audit('total-blocking-time')?.numericValue ?? null,
     inpMs:audit('interaction-to-next-paint')?.numericValue ?? null,
-    requestCount:network.length,
+    requestCount,
     transferBytes:transfer,
   },
   portableAuthoredLayer:sizes.portableAuthoredLayer,
