@@ -387,3 +387,214 @@
   .dhago .media-time-slider-chapters:has(.media-time-slider-chapter:nth-child(13))
   .media-time-slider-chapter::before { display: none; }
 }
+
+
+/* ══ DHAGO / selvedge & shuttle ══════════════════════════════════════════
+   The same woven system must read as a designed player when isolated from
+   the demo. Every material cue is static unless real interaction occurs. */
+.dhago .dhago-shelf::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  pointer-events: none;
+  background-color: var(--dhago-bone);
+  background-image:
+    repeating-linear-gradient(90deg, var(--dhago-rust) 0 2px, transparent 2px 7px),
+    repeating-linear-gradient(0deg, transparent 0 2px, var(--dhago-border) 2px 3px);
+  opacity: .78;
+}
+.dhago .dhago-ribbon { padding-block: 2px 7px; }
+.dhago .media-time-slider-thumb {
+  width: 14px;
+  border-radius: 4px;
+  background:
+    linear-gradient(90deg, transparent 0 3px, var(--dhago-rust) 3px 6px, transparent 6px 100%),
+    linear-gradient(130deg, var(--dhago-ink), var(--dhago-ink));
+  box-shadow: 0 0 0 1px var(--dhago-ink), 0 3px 8px #1719184d, inset 0 1px #fff6;
+}
+.dhago .media-time-slider-chapter:nth-child(2n) .media-time-slider-track {
+  background-image:
+    repeating-linear-gradient(45deg, #17191844 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(-45deg, #f7f0df77 0 1px, transparent 1px 5px);
+}
+.dhago .media-time-slider-chapter:nth-child(2n+1) .media-time-slider-track {
+  background-image:
+    repeating-linear-gradient(90deg, #17191840 0 1px, transparent 1px 6px),
+    repeating-linear-gradient(0deg, #f7f0df66 0 1px, transparent 1px 4px);
+}
+.dhago .media-time-slider[data-dragging] .media-time-slider-chapters {
+  transform: translateY(1px) scaleY(.88);
+}
+.dhago .media-time-slider[data-dragging] .media-time-slider-thumb {
+  box-shadow: 0 0 0 2px var(--dhago-ink), 0 0 0 5px var(--dhago-bone), 0 4px 12px #17191866;
+}
+/* A seek is a moving shuttle, a buffer is slack, a stall is an interruption. */
+.dhago[data-thread-seeking] .media-time-slider-thumb {
+  outline: 2px solid var(--dhago-rust);
+  outline-offset: 5px;
+}
+.dhago[data-thread-seeking] .media-time-slider-chapters {
+  filter: saturate(.78);
+}
+.dhago[data-thread-stalled] .media-time-slider-chapters {
+  opacity: .48;
+}
+.dhago[data-thread-stalled] .media-time-slider-thumb {
+  outline: 3px double var(--dhago-rust);
+  outline-offset: 4px;
+}
+/* The chapter readout is an actual keyboard and touch discovery control.
+   Its expanding list does not put forty tiny click targets on the ribbon. */
+.dhago .dhago-chapter-readout {
+  display: block;
+  position: relative;
+  min-width: 0;
+  padding-top: 6px;
+  margin-bottom: 1px;
+  isolation: isolate;
+}
+.dhago .dhago-chapter-readout[hidden] { display: none !important; }
+.dhago .dhago-chapter-readout::before { content: none; }
+.dhago .dhago-chapter-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 5px 9px;
+  cursor: pointer;
+  list-style: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  transition: background-color var(--dhago-duration), border-color var(--dhago-duration);
+}
+.dhago .dhago-chapter-summary::-webkit-details-marker { display: none; }
+.dhago .dhago-chapter-summary::before {
+  content: "";
+  flex: 0 0 25px;
+  height: 8px;
+  background: repeating-linear-gradient(90deg, var(--dhago-rust) 0 4px, var(--dhago-ink) 4px 5px);
+  border-top: 1px solid var(--dhago-border);
+  border-bottom: 1px solid var(--dhago-border);
+}
+.dhago .dhago-chapter-summary:hover,
+.dhago .dhago-chapter-readout[open] .dhago-chapter-summary {
+  background: var(--media-button-highlight);
+  border-color: var(--dhago-border);
+}
+.dhago .dhago-chapter-index { flex: 0 0 auto; }
+.dhago .dhago-chapter-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  unicode-bidi: plaintext;
+  font-weight: 550;
+}
+.dhago .dhago-chapter-chevron {
+  flex: 0 0 7px;
+  height: 7px;
+  border-inline-end: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform var(--dhago-duration);
+}
+.dhago .dhago-chapter-readout[open] .dhago-chapter-chevron { transform: rotate(225deg) translateY(-1px); }
+.dhago .dhago-chapter-list {
+  position: absolute;
+  z-index: 40;
+  inset-block-start: calc(100% + 5px);
+  inset-inline-start: 0;
+  width: min(390px, 100%);
+  max-height: min(360px, 48vh);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  border: 1px solid var(--dhago-border);
+  border-radius: 9px;
+  background: var(--dhago-bone);
+  color: var(--dhago-ink);
+  box-shadow: 0 9px 16px #17191825, 0 20px 46px #17191836;
+}
+.dhago .dhago-chapter-list li { margin: 0; padding: 0; }
+.dhago .dhago-chapter-jump {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 8px 9px;
+  background: transparent;
+  color: inherit;
+  text-align: start;
+  display: grid;
+  grid-template-columns: 3ch minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 11px;
+  cursor: pointer;
+  font: 12px/1.5 var(--media-font-family);
+}
+.dhago .dhago-chapter-jump:hover { background: var(--media-button-highlight); }
+.dhago .dhago-chapter-jump[aria-current="true"] {
+  background: var(--media-button-highlight);
+  border-color: var(--dhago-rust);
+  box-shadow: inset 3px 0 var(--dhago-rust);
+}
+.dhago .dhago-jump-number {
+  font: 10px/1.4 ui-monospace, monospace;
+  color: var(--dhago-muted);
+}
+.dhago .dhago-jump-name {
+  overflow-wrap: anywhere;
+  min-width: 0;
+  max-width: 100%;
+  text-align: start;
+  unicode-bidi: plaintext;
+}
+.dhago .dhago-jump-time {
+  font: 11px/1.4 ui-monospace, monospace;
+  white-space: nowrap;
+  color: var(--dhago-muted);
+}
+.dhago .dhago-chapter-jump:focus-visible,
+.dhago .dhago-chapter-summary:focus-visible {
+  outline: 3px solid var(--dhago-rust);
+  outline-offset: -2px;
+}
+.dhago .media-time-slider-preview-label { min-width: 0; overflow-wrap: anywhere; }
+.dhago .media-time-slider-chapter-title {
+  overflow-wrap: anywhere;
+  unicode-bidi: plaintext;
+}
+@container media-root (width < 300px) {
+  .dhago .dhago-shelf { padding-inline: 7px; }
+  .dhago .dhago-chapter-summary { gap: 6px; padding-inline: 6px; }
+  .dhago .dhago-chapter-summary::before { flex-basis: 15px; }
+  .dhago .dhago-chapter-index { font-size: 9px; letter-spacing: 0; }
+  .dhago .dhago-chapter-name { font-size: 11px; }
+  .dhago .dhago-chapter-jump { gap: 5px; padding: 8px 5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dhago .dhago-chapter-summary,
+  .dhago .dhago-chapter-chevron { transition: none !important; }
+  .dhago .media-time-slider[data-dragging] .media-time-slider-chapters { transform: none !important; }
+}
+@media (prefers-contrast: more) {
+  .dhago .dhago-chapter-summary { border-color: var(--dhago-ink); }
+  .dhago .media-time-slider-chapter .media-time-slider-track { background-image: none; }
+  .dhago .media-time-slider-chapters { filter: none !important; }
+}
+@media (forced-colors: active) {
+  .dhago .dhago-shelf::before,
+  .dhago .dhago-chapter-summary::before { background: Highlight; opacity: 1; }
+  .dhago .dhago-chapter-list { color: CanvasText; background: Canvas; border-color: CanvasText; box-shadow: none; }
+  .dhago .dhago-chapter-jump[aria-current="true"] { outline: 2px solid Highlight; }
+  .dhago .dhago-chapter-jump:focus-visible,
+  .dhago .dhago-chapter-summary:focus-visible { outline-color: Highlight; }
+  .dhago .media-time-slider-thumb { background: Highlight; border-color: CanvasText; }
+  .dhago .media-time-slider-chapters { filter: none !important; }
+}
