@@ -1,7 +1,6 @@
 {
   "title": "DHAGO — Time, woven",
   "status": "Final candidate evidence is generated from exact-head CI and public release; contest entry remains pending owner submission.",
-  "repositoryUrl": "https://github.com/aprashnasuraj2-dev/videoj",
   "demoUrl": "https://creative.aafnaipatro.com/",
   "liveSiteUrl": "https://creative.aafnaipatro.com/journal.html",
   "installGuide": "INSTALL.md",
@@ -27,5 +26,6 @@
     "VoiceOver or NVDA real assistive-technology pass"
   ],
   "receipt": null,
-  "submissionDeadline": "2026-11-17T13:44:00+05:45"
+  "submissionDeadline": "2026-11-17T13:44:00+05:45",
+  "sourcePackage": "Exact Apache-2.0 source archive bundled with final handoff"
 }
