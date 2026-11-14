@@ -289,7 +289,11 @@ async function captureRelease(browser) {
   await page.locator('#portable-loader-status').filter({ hasText: 'Loaded: Native media example' }).waitFor({ timeout: 15_000 });
   await page.locator('#portable-case').selectOption('narrow-240');
   await page.getByRole('button', { name: 'Run current case' }).click();
-  await page.locator('#portable-result-body tr').filter({ hasText: '240px container' }).waitFor({ timeout: 15_000 });
+  const publicAdapterResult=page.locator('#portable-result-body tr').filter({ hasText: '240px container' }).last();
+  await publicAdapterResult.waitFor({ timeout: 15_000 });
+  if(await publicAdapterResult.getAttribute('data-status')!=='pass'){
+    throw new Error('Public Stress Lab example adapter did not pass the real 240px fixture.');
+  }
   await photo(page.locator('#portable-tool'), 'stress-lab-browser-loader.png');
 
   await page.locator('#lab-case-list [data-case=error]').click();
