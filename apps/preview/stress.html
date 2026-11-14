@@ -2,35 +2,35 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="description" content="DHAGO Edge States Lab: a browser-side resilience laboratory for Video.js and compatible media skins, plus DHAGO edge-state specimens."/>
-<title>DHAGO — The Loom Under Pressure</title>
+<meta name="description" content="Explore DHAGO under real playback conditions, from dense chapters and narrow screens to audio, captions and graceful recovery. Keep watching as the weave adapts."/>
+<title>DHAGO — The Weave, Under Pressure</title>
 </head>
 <body>
-<a class="skip" href="#lab-player">Skip to test player</a>
-<header class="lab-header"><a class="lab-brand" href="./">▦ DHAGO</a><nav><a href="./">Original film</a><a href="./tools.html">Tools</a><a href="./journal.html">Studio Journal</a><a href="./ribbon.html">Ribbon demo</a></nav></header>
+<a class="skip" href="#lab-player">Skip to film</a>
+<header class="lab-header"><a class="lab-brand" href="./">▦ DHAGO</a><nav><a href="./">Watch the film</a><a href="./tools.html">Creative tools</a><a href="./journal.html">Studio Journal</a><a href="./ribbon.html">The ribbon</a></nav></header>
 <main>
 <section class="lab-intro">
-  <p class="eyebrow">A working specimen / Video.js v10</p>
+  <p class="eyebrow">DHAGO / The resilience collection</p>
   <h1>The loom, <em>under pressure.</em></h1>
-  <p>Fibre becomes thread; thread becomes cloth. The gallery below keeps DHAGO honest under imperfect data and constrained spaces. The portable instrument after it can run the same resilience ideas against another compatible player directly in the browser. <a href="#portable-tool">Run Stress Lab against your skin ↓</a></p>
+  <p>A beautiful player should feel at home beyond a perfect demo. Follow the same woven timeline through short films, crowded chapters, unexpected interruptions, and small screens. Each study reveals how the design responds without hiding what the media can—and cannot—do. <a href="#portable-tool">Explore the player comparison studio ↓</a></p>
 </section>
 <div class="lab-layout">
   <aside class="lab-cases" aria-labelledby="cases-title">
-    <h2 id="cases-title">Choose a specimen</h2>
+    <h2 id="cases-title">Choose a study</h2>
     <div role="group" aria-label="Stress cases" id="lab-case-list"></div>
-    <div class="lab-small-print">Studies in Thread, the original DHAGO film, remains the primary submission. External footage is labeled and credited separately. Controlled fault injections are identified explicitly.</div>
+    <div class="lab-small-print">The original <em>Studies in Thread</em> film anchors the collection. Additional films and sound recordings retain their individual credits. Intentional interruptions are clearly identified as demonstrations.</div>
   </aside>
-  <section class="lab-content" aria-label="Stress test player">
-    <div class="case-heading"><div><p class="eyebrow" id="case-category"></p><h2 id="case-title">Original weave</h2><p id="case-description"></p></div><span id="case-badge">REAL MEDIA</span></div>
+  <section class="lab-content" aria-label="DHAGO playback studies">
+    <div class="case-heading"><div><p class="eyebrow" id="case-category"></p><h2 id="case-title">Original weave</h2><p id="case-description"></p></div><span id="case-badge">ORIGINAL FILM</span></div>
     <media-i18n><div id="lab-player" tabindex="-1"></div></media-i18n><noscript><video controls playsinline preload="metadata" src="./media/studies-in-thread.mp4" style="width:100%" aria-label="Native fallback for Studies in Thread"></video><p>JavaScript is unavailable. Native media controls remain accessible for the original film.</p></noscript>
     <div class="lab-actions">
       <label>Container width <select id="lab-width"><option value="100%">Fluid</option><option value="240px">240px</option><option value="280px">280px</option><option value="320px">320px</option><option value="420px">420px</option><option value="720px">720px</option></select></label>
       <label>Surface <select id="lab-surface"><option value="warm">Linen</option><option value="dark">Ink</option><option value="minimal">Paper</option></select></label>
-      <button type="button" id="lab-restart">Reset this specimen</button>
+      <button type="button" id="lab-restart">Replay this study</button>
       <button type="button" id="lab-motion" aria-pressed="false">Motion: on</button>
     </div>
     <div class="lab-report">
-      <h3>Observed state <small>(actual media events)</small></h3>
+      <h3>Playback at a glance <small>Updated as the film plays</small></h3>
       <div class="lab-metrics">
         <span>State <strong id="state-status">Idle</strong></span>
         <span>Position <strong id="state-time">—</strong></span>
@@ -38,86 +38,96 @@
         <span>Dimensions <strong id="state-width">—</strong></span>
         <span>Chapter <strong id="state-chapter">—</strong></span>
         <span>Seeking <strong id="state-seeking">No</strong></span>
-        <span>Media readiness <strong id="state-ready">No metadata</strong></span>
+        <span>Playback readiness <strong id="state-ready">Not loaded</strong></span>
         <span>Source <strong id="state-source">—</strong></span>
       </div>
       <p id="state-error" hidden></p>
       <p id="lab-diagnostics"></p>
       <p id="lab-credit"></p>
     </div>
-    <section class="lab-report edge-truth" aria-labelledby="edge-truth-title">
-<h3 id="edge-truth-title">Native truth / DHAGO derived state</h3>
-<p class="edge-disclosure">Reads the selected specimen's real HTMLMediaElement state. All buttons act on genuine media properties; no network stall or codec failure is simulated here. The explicitly labeled Stress Lab fixtures remain separate.</p>
+    <details class="lab-report edge-truth"><summary id="edge-truth-title">Explore playback details <span>Live controls and measurements</span></summary>
+<p class="edge-disclosure">Watch the media respond to play, pause, seek, volume, speed and captions. These readings come from the selected film or recording. Connection loss and device-only behavior are examined separately, never presented as real footage.</p>
 <dl id="edge-truth-metrics" class="edge-metrics"></dl>
-<div class="edge-actions" id="edge-actions" role="group" aria-label="Real media state actions">
+<div class="edge-actions" id="edge-actions" role="group" aria-label="Playback measurement controls">
 <button type="button" data-edge="play">Play</button><button type="button" data-edge="pause">Pause</button>
-<button type="button" data-edge="start">Seek 0</button><button type="button" data-edge="back">−10s</button><button type="button" data-edge="forward">+10s</button><button type="button" data-edge="nearend">Near end</button>
+<button type="button" data-edge="start">From start</button><button type="button" data-edge="back">−10s</button><button type="button" data-edge="forward">+10s</button><button type="button" data-edge="nearend">Near end</button>
 <button type="button" data-edge="mute">Mute / unmute</button><button type="button" data-edge="zero-volume">Volume 0</button>
 <button type="button" data-edge="speed">Speed 1.5×</button><button type="button" data-edge="captions">Captions on/off</button>
-<button type="button" data-edge="reset">Reset specimen</button>
+<button type="button" data-edge="reset">Start over</button>
 </div>
 <p id="edge-feedback" role="status" aria-live="polite"></p>
-</section>
+</details>
 <div class="lab-manual" id="lab-manual"></div>
+<section class="manual-spotlight" id="manual-spotlight" aria-labelledby="manual-spotlight-title" hidden>
+  <p class="eyebrow">A note on real-world proof</p>
+  <h3 id="manual-spotlight-title">Some experiences need the real device.</h3>
+  <p>The original film stays available above while you explore these conditions. The browser cannot faithfully recreate a live broadcast, an iPhone’s native controls or an assistive-technology session.</p>
+  <ol>
+    <li><strong>Live and time-shifted video.</strong> Check a genuine live source with a real seekable window before judging live-edge controls.</li>
+    <li><strong>iPhone, AirPlay and fullscreen.</strong> Try playback, rotation and external playback on the devices that actually provide those features.</li>
+    <li><strong>Zoom, touch and accessibility.</strong> Check 200–400% browser zoom, keyboard navigation, touch cancellation and a real screen reader.</li>
+  </ol>
+  <p class="manual-footnote">A thoughtful interface should acknowledge what is still to be verified—not claim success on behalf of another device.</p>
+</section>
   </section>
 </div>
 
 <section class="portable-tool" id="portable-tool" aria-labelledby="portable-title">
   <div class="portable-heading">
-    <div><p class="eyebrow">Open ecosystem tool / bring your own skin</p><h2 id="portable-title">Test your own player.</h2></div>
-    <p class="portable-privacy"><strong>Runs in your browser.</strong> Local adapter files are not uploaded by DHAGO Stress Lab.</p>
+    <div><p class="eyebrow">The comparison studio / open to other players</p><h2 id="portable-title">See how another player responds.</h2></div>
+    <p class="portable-privacy"><strong>Runs in your browser.</strong> Your selected local file stays on your device; only load player code you trust.</p>
   </div>
   <div class="portable-grid">
     <section class="portable-loader" aria-labelledby="loader-title">
-      <h3 id="loader-title">1 / Load an adapter</h3>
-      <p>Third-party code runs in a sandboxed, opaque-origin iframe. It cannot write arbitrary markup into this page. The built-in DHAGO adapter is the trusted reference specimen.</p>
+      <h3 id="loader-title">01 / Connect a player</h3>
+      <p>Start with DHAGO or bring a compatible player of your own. Each runs in its own viewing area so you can compare how it behaves.</p>
       <div class="portable-loader-actions">
-        <button type="button" id="portable-use-dhago">Use built-in DHAGO</button>
-        <label for="portable-adapter-url">ESM adapter URL</label>
-        <div class="portable-inline"><input id="portable-adapter-url" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/my-skin-adapter.mjs"/><button type="button" id="portable-load-url">Load URL</button></div>
-        <label for="portable-adapter-file">Local adapter file <span>.js / .mjs</span></label>
+        <button type="button" id="portable-use-dhago">Use DHAGO</button>
+        <label for="portable-adapter-url">Player connector URL</label>
+        <div class="portable-inline"><input id="portable-adapter-url" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/my-skin-adapter.mjs"/><button type="button" id="portable-load-url">Connect</button></div>
+        <label for="portable-adapter-file">Player connector file <span>.js / .mjs</span></label>
         <input id="portable-adapter-file" type="file" accept=".js,.mjs,text/javascript,application/javascript"/>
       </div>
-      <p class="portable-note">URL modules and every dependency they import must permit browser CORS. A blocked module is reported as <strong>NOT RUN</strong>, not as a skin failure. Local files execute only in the sandbox and are not sent to a backend.</p>
-      <output id="portable-loader-status" class="portable-loader-status" aria-live="polite">Preparing reference adapter…</output>
+      <details class="portable-help"><summary>How connections and privacy work</summary><p>Compatible connectors use JavaScript modules (.js or .mjs). Web addresses and imported dependencies must allow cross-origin loading. If a connector cannot load, its study is marked <strong>Not assessed</strong>—not a player failure. Local files are not uploaded by this site, but loaded code can make its own network requests. Only use code you trust.</p></details>
+      <output id="portable-loader-status" class="portable-loader-status" aria-live="polite">Preparing the DHAGO player…</output>
     </section>
 
     <section class="portable-runner" aria-labelledby="runner-title">
-      <h3 id="runner-title">2 / Run resilience cases</h3>
+      <h3 id="runner-title">02 / Explore playback conditions</h3>
       <label for="portable-case">Case</label>
       <select id="portable-case"></select>
       <div class="portable-run-actions">
-        <button type="button" id="portable-run-case">Run current case</button>
-        <button type="button" id="portable-run-suite">Run compatible suite</button>
+        <button type="button" id="portable-run-case">Explore selected condition</button>
+        <button type="button" id="portable-run-suite">Explore all compatible conditions</button>
       </div>
-      <p class="portable-note">Cases that require a real environment stay honest: forced colors and reduced motion are detected with media queries; real 400% zoom and live/DVR remain manual unless the environment genuinely supplies them.</p>
+      <p class="portable-note">Some conditions can only be checked on a real device. They stay marked for review rather than receiving an artificial pass.</p>
     </section>
   </div>
 
   <section class="portable-specimen" aria-labelledby="portable-specimen-title">
-    <div class="portable-specimen-head"><h3 id="portable-specimen-title">Isolated specimen</h3><span id="portable-summary">No portable run yet.</span></div>
+    <div class="portable-specimen-head"><h3 id="portable-specimen-title">Player preview</h3><span id="portable-summary">No comparison yet.</span></div>
     <div id="portable-direct-host" class="portable-host" aria-label="Built-in DHAGO portable test host"></div>
     <div id="portable-sandbox-host" class="portable-host" aria-label="Sandboxed external adapter test host"></div>
   </section>
 
   <section class="portable-results" aria-labelledby="portable-results-title">
-    <div class="portable-results-head"><div><h3 id="portable-results-title">3 / Result matrix</h3><p>Structured assertions keep adapter-loading errors separate from skin failures.</p></div>
+    <div class="portable-results-head"><div><h3 id="portable-results-title">03 / The results</h3><p>Explore the findings and save a copy. Connection problems are kept separate from playback behavior.</p></div>
       <div class="portable-export">
-        <button type="button" id="portable-copy-json">Copy JSON</button>
-        <button type="button" id="portable-download-json">Download JSON</button>
-        <button type="button" id="portable-copy-markdown">Copy Markdown</button>
+        <button type="button" id="portable-copy-json">Copy data</button>
+        <button type="button" id="portable-download-json">Download data</button>
+        <button type="button" id="portable-copy-markdown">Copy summary</button>
         <button type="button" id="portable-clear-results">Clear</button>
       </div>
     </div>
-    <div class="portable-table-wrap"><table><thead><tr><th scope="col">Case</th><th scope="col">Status</th><th scope="col">Main observation</th></tr></thead><tbody id="portable-result-body"></tbody></table></div>
-    <p class="portable-doc-link"><a href="./stress-adapter.example.mjs" download>Download a minimal native-video adapter example ↗</a></p>
+    <div class="portable-table-wrap"><table><thead><tr><th scope="col">Case</th><th scope="col">Status</th><th scope="col">What we observed</th></tr></thead><tbody id="portable-result-body"></tbody></table></div>
+    <p class="portable-doc-link"><a href="./stress-adapter.example.mjs" download>Get an example player connector ↗</a></p>
     <p id="portable-cases" class="lab-portable-cases"></p>
   </section>
 </section>
 
-<section class="lab-context"><p class="eyebrow">What is demonstrated / what remains to be checked</p><h2>Tests should expose limitations, not hide them.</h2><p>Media decoding, live DVR, iOS native fullscreen, external casting, physical touch cancellation, real browser zoom and screen-reader behavior need genuine device/source conditions. A browser fixture can model geometry or induce an error, but it cannot manufacture those proofs.</p></section>
+<section class="lab-context"><p class="eyebrow">Thoughtful testing, without shortcuts</p><h2>Beauty matters. So does knowing its limits.</h2><p>DHAGO is designed for real media, not just ideal conditions. This collection reveals how the controls behave with different chapter structures, media types and constrained spaces. Live streaming, native casting, iPhone fullscreen and assistive technology deserve separate checks on the devices and sources that support them.</p></section>
 </main>
-<footer class="lab-footer">DHAGO / Time, woven · <a href="./">Return to the original skin</a></footer>
+<footer class="lab-footer">DHAGO / Time, woven · <a href="./">Return to the film</a></footer>
 <script type="module" src="/src/stress.ts"></script>
 <script type="module" src="/src/stress-loader.ts"></script><script type="module" src="/src/edge-inspector.ts"></script>
 </body>
