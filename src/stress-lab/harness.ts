@@ -8,7 +8,7 @@ export interface PortableSkinMount{root:HTMLElement;media?:HTMLMediaElement|null
 export interface PortableSkinAdapter{name:string;mount:(host:HTMLElement,input:PortableStressInput)=>PortableSkinMount|Promise<PortableSkinMount>}
 export interface StressEnvironment{userAgent:string;viewport:{width:number;height:number};devicePixelRatio:number;forcedColors:boolean;reducedMotion:boolean;online:boolean}
 export interface StressAssertion{id:string;label:string;status:StressStatus;expected?:string|number|boolean;observed?:string|number|boolean|null;evidence?:string}
-export interface StressResult{caseId:PortableStressCaseId;caseLabel:string;adapterName:string;status:StressStatus;assertions:StressAssertion[];environment:StressEnvironment;durationMs:number;notes:string[]}
+export interface StressResult{caseId:PortableStressCaseId|'adapter-load';caseLabel:string;adapterName:string;status:StressStatus;assertions:StressAssertion[];environment:StressEnvironment;durationMs:number;notes:string[]}
 export interface PortableStressRun{fixture:PortableStressFixture;mount?:PortableSkinMount;result:StressResult;cleanup:()=>Promise<void>}
 
 const fixtures:PortableStressFixture[]=[
