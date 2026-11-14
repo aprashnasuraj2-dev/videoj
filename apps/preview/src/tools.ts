@@ -105,12 +105,24 @@ const render = () => {
  // A compact live sample, not a log of URL parameters or secret-bearing headers.
  snapshotNode.textContent=JSON.stringify(snap,null,2);
 };
+// Render at most four times a second, but *always* deliver the latest state.
+ // A native seek can emit all its events inside the throttle window and then
+ // go quiet while paused. Dropping that frame left the inspector at 0% even
+ // though currentTime was already at 48 seconds.
+let trailingRender: number | undefined;
 const scheduleRender = () => {
- if(pendingFrame)return;
- pendingFrame=requestAnimationFrame(()=>{
-   // Cap expensive DOM and range writes at 4Hz while playback produces many timeupdates.
-   if(performance.now()-lastMetrics>=240){lastMetrics=performance.now();render();}
-   else {pendingFrame=0;}
+ if(pendingFrame || trailingRender !== undefined) return;
+ const remaining = Math.max(0, 240 - (performance.now() - lastMetrics));
+ if(remaining > 0) {
+   trailingRender = window.setTimeout(() => {
+     trailingRender = undefined;
+     scheduleRender();
+   }, remaining);
+   return;
+ }
+ pendingFrame = requestAnimationFrame(() => {
+   lastMetrics = performance.now();
+   render(); // Reads the latest native properties, never an old event snapshot.
  });
 };
 const renderEvents=()=>{
