@@ -7,3 +7,6 @@ test-results/
 playwright-report/
 tmp/
 .DS_Store
+
+# Generated alternative encoding of the original film
+apps/preview/public/media/studies-in-thread.webm
