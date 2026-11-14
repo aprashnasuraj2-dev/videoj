@@ -65,7 +65,7 @@
         <label for="portable-adapter-file">Local adapter file <span>.js / .mjs</span></label>
         <input id="portable-adapter-file" type="file" accept=".js,.mjs,text/javascript,application/javascript"/>
       </div>
-      <p class="portable-note">URL modules and every dependency they import must permit browser CORS. A blocked module is reported as <strong>NOT RUN</strong>, not as a skin failure. Local files execute only in the sandbox and are not sent to a backend.</p>
+      <p class="portable-note">URL modules and every dependency they import must permit browser CORS. A blocked module is reported as <strong>NOT RUN</strong>, not as a skin failure. Because third-party code runs in an opaque-origin sandbox, URL modules should allow wildcard or null-origin CORS. Local files execute only in the sandbox and are not sent to a backend.</p>
       <output id="portable-loader-status" class="portable-loader-status" aria-live="polite">Preparing reference adapter…</output>
     </section>
 
@@ -127,7 +127,7 @@
   },
 };</code></pre>
 <div class="stress-guide-grid">
-<article><h3>URL mode</h3><p>The adapter URL and every imported dependency must permit browser module loading under CORS. A blocked URL is <strong>NOT RUN</strong>, not a skin failure.</p></article>
+<article><h3>URL mode</h3><p>The adapter URL and every imported dependency must permit browser module loading from the opaque sandbox origin; wildcard CORS is the most portable choice. A blocked URL is <strong>NOT RUN</strong>, not a skin failure.</p></article>
 <article><h3>Local file mode</h3><p>Choose a single <code>.js</code> or <code>.mjs</code> file. It is converted to a Blob module inside the isolated frame. Relative filesystem imports are therefore not supported.</p></article>
 <article><h3>Security model</h3><p>The parent validates the iframe window plus a random session identifier before accepting results. Third-party code never receives <code>allow-same-origin</code> and cannot inject arbitrary result HTML into the parent UI.</p></article>
 <article><h3>Truth model</h3><p>Forced colors and reduced motion are only marked RUN when real media queries are active. Live/DVR and real 400% zoom remain manual gates unless genuinely supplied.</p></article>
