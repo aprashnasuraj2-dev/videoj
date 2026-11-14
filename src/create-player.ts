@@ -102,7 +102,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'dhago-chapter-jump';
-        button.dataset.time = String(cue.startTime);
+        button.dataset.chapterTime = String(cue.startTime);
         const number = document.createElement('span');
         number.className = 'dhago-jump-number';
         number.textContent = String(i + 1).padStart(2, '0');
@@ -152,9 +152,9 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   chapterList.addEventListener('click', (event) => {
     const origin = event.target;
     if (!(origin instanceof Element)) return;
-    const button = origin.closest<HTMLButtonElement>('button[data-time]');
+    const button = origin.closest<HTMLButtonElement>('button[data-chapter-time]');
     if (!button || !chapterList.contains(button)) return;
-    const requested = Number(button.dataset.time);
+    const requested = Number(button.dataset.chapterTime);
     if (!Number.isFinite(requested) || requested < 0) return;
     // For DVR-like media seek only inside the actual available window.
     const ranges = video.seekable;
