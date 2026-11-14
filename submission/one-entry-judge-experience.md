@@ -16,19 +16,19 @@ One exported skin; several truthful host scenarios. Keep page design subordinate
 2. 8–20s: drag the ribbon, seek to chapter three, note the real thumbnails/time/selected chapter. No separate custom navigation grammar.
 3. 20–33s: try Linen then Ink, resize to phone, verify the core controls and time stay usable.
 4. 33–46s: scroll to **The weave adapts** and open one realistic stress case, ideally forty chapters over actual Nepalese Dhaka footage. Return to the same page.
-5. 46–60s: see the Studio Journal entry using the same player, and the Mux-backed primary playback.
+5. 46–60s: see the Studio Journal entry using the same player, and the same fibre-to-fabric primary playback.
 
 The walk-through is a suggested judge narrative, **not** a claim that an actual judge has performed it.
 
 ## Submission short description (English)
-DHAGO takes its name from the Nepali word for thread. It turns real video chapter cues into a quiet, tactile woven timeline—an original interaction that remains a precise, accessible seek control. The same Video.js v10 skin works across warm, dark and narrow layouts, streams its original motion study through Mux, and appears in a live Studio Journal. An optional stress lab demonstrates chapter-density, missing media, audio-only and degraded playback with honest media state, without turning those into separate entries.
+DHAGO takes its name from the Nepali word for thread. It turns real video chapter cues into a quiet, tactile woven timeline—an original interaction that remains a precise, accessible seek control. The same Video.js v10 skin works across warm, dark and narrow layouts, serves its original fibre-to-fabric motion study from the dedicated public release, and appears in a live Studio Journal. An optional stress lab demonstrates chapter-density, missing media, audio-only and degraded playback with honest media state, without turning those into separate entries.
 
 ## Submission evidence order
 1. Standalone player crop: film and woven ribbon (not homepage-only ornament).
 2. Phone control shelf under actual playback.
 3. Paired Linen/Ink surfaces with identical semantics.
 4. One stress case: dense chapter cue fixture running on credited real weaving footage.
-5. One real-world journal capture with working Mux playback.
+5. One real-world journal capture with the same working fibre-to-fabric playback.
 6. Unedited controls walk-through plus release/QA evidence.
 
 ## Engineering tradeoffs
