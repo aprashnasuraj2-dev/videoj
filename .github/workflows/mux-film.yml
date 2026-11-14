@@ -2,7 +2,9 @@ name: Provision Mux fibre film (single-asset, secret-backed)
 on:
   push:
     branches: ['film/from-fibre-to-fabric-20261114']
-    paths: ['.github/workflows/mux-film.yml']
+    paths:
+      - '.github/workflows/mux-film.yml'
+      - 'scripts/mux-upload.mjs'
   workflow_dispatch:
 concurrency:
   group: mux-fibre-film-publication
