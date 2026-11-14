@@ -21,6 +21,8 @@ else {
     console.log('[DHAGO/compatibility] Generating an additional VP9/Opus rendition...');
     const conversion = spawnSync('ffmpeg', [
       '-hide_banner', '-loglevel', 'error', '-nostdin', '-y',
+      // Bit-exact demux/mux options suppress volatile container metadata/UIDs.
+      '-fflags', '+bitexact',
       '-i', source,
       '-map', '0:v:0', '-map', '0:a:0?',
       '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2',
@@ -31,6 +33,7 @@ else {
       '-b:v', '0', '-crf', '32', '-row-mt', '0', '-threads', '1', '-pix_fmt', 'yuv420p',
       '-c:a', 'libopus', '-b:a', '96k',
       '-metadata', 'title=DHAGO - Studies in thread',
+      '-fflags', '+bitexact',
       '-f', 'webm', target,
     ], { stdio: 'inherit', timeout: 300_000 });
     if (conversion.error || conversion.status !== 0) {
