@@ -1,7 +1,7 @@
 # Submission preparation
 
-This is a development candidate. No contest terms have been accepted and no entry is claimed.
+DHAGO's source candidate is validated through one exact-head release gate: Chromium functional tests, compact Firefox/WebKit engine proof, immutable dist staging, exact-manifest publication, branded-Chrome public smoke, Lighthouse mobile measurement and browser evidence capture.
 
-Before finalizing: resolve all observed functional defects; inspect current desktop/mobile and isolated-player captures; verify a stable public URL; complete physical-phone and assistive-technology checks where available. Upload the chosen final film to Mux only once design readiness is established, using configured management secrets. Verify its public ID matches the video actually playing and retain it through judging. Verify the genuine-site bonus separately.
+The final `public-smoke-evidence` artifact is the manual Contra attachment source. It contains the active hero, 8-second interaction loop, finished-cloth state, active mobile capture, Stress Lab, install example, raw and summarized performance data, capture provenance and a generated `final-release-evidence.md` bound to the exact Git SHA.
 
-Final package belongs in the selected Drive folder. Include the exact source SHA, checksum, tested URL, public playback ID if verified, actual live-site URL if verified, final images and proof recording, copy and a concise QA record. Fields remain null until observed. After owner acceptance/authorization, submit and save the real receipt.
+No contest terms are accepted and no entry is claimed by repository automation. Genuine outside human validation is recorded only if actually obtained. Safari on macOS, physical Android Chrome, physical iPhone Safari and VoiceOver/NVDA remain `NOT TESTED` unless a real device/pass is performed; Playwright WebKit must not be relabeled as Safari.

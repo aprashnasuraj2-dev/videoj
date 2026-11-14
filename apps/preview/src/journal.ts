@@ -35,3 +35,20 @@ const syncNotes=()=>notes.forEach((note,i)=>{
 for(const event of ['loadedmetadata','timeupdate','ended'] as const)
   video.addEventListener(event,syncNotes);
 syncNotes();
+
+const sizeBadge=document.querySelector<HTMLElement>('#dhago-size-badge');
+const sizeNote=document.querySelector<HTMLElement>('#dhago-size-note');
+if(sizeBadge){
+  fetch('./dhago-size.json',{cache:'no-store'})
+    .then(response=>response.ok?response.json():Promise.reject(new Error('size report unavailable')))
+    .then(report=>{
+      const layer=report.portableAuthoredLayer;
+      if(!layer?.gzipBytes||!layer?.brotliBytes)throw new Error('portable size fields unavailable');
+      sizeBadge.textContent=`DHAGO authored layer · ${(layer.gzipBytes/1024).toFixed(1)} kB gzip · ${(layer.brotliBytes/1024).toFixed(1)} kB br`;
+      if(sizeNote)sizeNote.textContent='Measured at build time from DHAGO-authored CSS, TypeScript and template source; Video.js runtime, demo app, media and screenshots excluded.';
+    })
+    .catch(()=>{
+      sizeBadge.textContent='DHAGO authored layer · measured in release artifact';
+      if(sizeNote)sizeNote.textContent='See dhago-size.json in the verified release for exact raw, gzip and brotli bytes.';
+    });
+}

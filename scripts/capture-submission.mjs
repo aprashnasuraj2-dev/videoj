@@ -143,12 +143,14 @@ async function captureRelease(browser) {
   const stylesheet = await page.locator('link[rel=stylesheet]').count();
   if (!stylesheet) throw new Error('No linked release stylesheet was observed.');
 
-  await photo(page, 'hero-desktop.png', { fullPage: true });
-  await photo(player, 'hero-player.png');
+  await photo(page, 'initial-poster.png', { fullPage: true });
   await mountFrame(player);
   const capture = await createScreencast(context, page);
   await play.click();
   await waitForDecoded(page, .15);
+  await sleep(900);
+  await photo(page, 'hero-desktop.png', { fullPage: true });
+  await photo(player, 'hero-player.png');
   await capture.clip('Playing and weaving', 4.0, async () => {
     filmStates.playStart = await playerSnapshot(media);
   });
@@ -172,7 +174,7 @@ async function captureRelease(browser) {
   await page.waitForFunction(() => document.querySelector('.media-slider-thumbnail-image')?.naturalWidth > 0,
     undefined, { timeout: 20_000 });
   await photo(player, 'chapters-preview.png');
-  await capture.clip('Seek shuttle and frame preview', 3.2, async () => {
+  await capture.clip('Seek shuttle and frame preview', 4.0, async () => {
     await page.mouse.down();
     for (let step = 1; step <= 26; step++) {
       await page.mouse.move(startPosition + (endPosition - startPosition) * step / 26, y);
@@ -272,6 +274,8 @@ async function captureRelease(browser) {
   // same task as the completed media-time check.
   await page.waitForFunction(() => document.querySelector('[data-time="32"]')?.getAttribute('aria-current') === 'true', undefined, { timeout: 3_000 });
   await photo(page, 'studio-journal.png', { fullPage: true });
+  const installProof = page.locator('.journal-proof');
+  if (await installProof.count()) await photo(installProof, 'install-example.png');
 
   await page.goto(new URL('stress.html', origin).href);
   await page.locator('#lab-case-list [data-case=original]').waitFor();
@@ -279,11 +283,26 @@ async function captureRelease(browser) {
   await page.locator('#lab-case-list [data-case=error]').click();
   await page.locator('#lab-player .dhago-retry').waitFor({ timeout: 20_000 });
   await photo(page, 'stress-lab-controlled-404.png', { fullPage: true });
+  await page.goto(new URL('stress.html?case=layers', origin).href);
+  await page.locator('.dhago-metadata-lane[data-kind="speaker"]').waitFor();
+  await photo(page, 'layered-weft.png', { fullPage: true });
+
+  await page.goto(new URL('ribbon.html', origin).href);
+  await page.locator('.woven-time-ribbon').first().waitFor();
+  await photo(page, 'ribbon-component.png', { fullPage: true });
 
   for (const [size, label] of [[768, 'tablet'], [375, 'hero-mobile']]) {
     await page.setViewportSize({ width: size, height: 900 });
     await page.goto(origin.href);
-    await player.getByRole('button', { name: 'Play', exact: true }).waitFor();
+    const responsivePlay = player.getByRole('button', { name: 'Play', exact: true });
+    await responsivePlay.waitFor();
+    if (label === 'hero-mobile') {
+      await responsivePlay.click();
+      await page.waitForFunction(() => {
+        const media = document.querySelector('mux-video');
+        return media?.readyState >= 2 && media.currentTime > .45;
+      }, undefined, { timeout: 20_000 });
+    }
     if (!await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)) {
       throw new Error(`The homepage overflows at ${size}px.`);
     }
@@ -292,7 +311,10 @@ async function captureRelease(browser) {
   await context.close();
   const list = join(work, 'shots.ffconcat');
   await writeFile(list, shots.map(shot => `file '${shot}'`).join('\n') + '\n');
-  ffmpeg(['-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', join(output, 'proof-demo.mp4')]);
+  const proofDemo = join(output, 'proof-demo.mp4');
+  ffmpeg(['-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', '-movflags', '+faststart', proofDemo]);
+  ffmpeg(['-i', proofDemo, '-t', '8', '-an', '-c:v', 'libx264', '-crf', '17', '-pix_fmt', 'yuv420p',
+    '-movflags', '+faststart', join(output, 'interaction-loop.mp4')]);
   await writeFile(join(output, 'capture-evidence.json'), JSON.stringify({
     releaseSha: DHAGO_RELEASE_SHA,
     entrypoints,
@@ -303,7 +325,8 @@ async function captureRelease(browser) {
     media: filmStates,
     capturedAt: new Date().toISOString(),
     screenshots: saves,
-    method: 'Genuine browser frames, edited into four chapters. No simulated media state. Sound is omitted in the screen recording.',
+    videos: ['interaction-loop.mp4', 'proof-demo.mp4'],
+    method: 'Genuine browser frames from the exact public release. The 8-second judge loop is the opening playback + woven seek segment; no simulated media state. Sound is omitted.',
   }, null, 2) + '\n');
 }
 

@@ -1,11 +1,14 @@
 /* DHAGO's visual system. Scaffold supplies component state/semantics, not layout. */
 .dhago {
-  --dhago-bone: #f4ebdd;
-  --dhago-ink: #171918;
-  --dhago-muted: #60584f;
-  --dhago-border: #c9bda9;
+  --dhago-bone: var(--dhago-surface-color, #f4ebdd);
+  --dhago-ink: var(--dhago-foreground-color, #171918);
+  --dhago-muted: var(--dhago-muted-color, #60584f);
+  --dhago-border: var(--dhago-border-color, #c9bda9);
   --dhago-rust: var(--media-accent-color, #b44332);
   --dhago-on-rust: var(--media-accent-text-color, #fff);
+  --dhago-focus: var(--dhago-focus-color, var(--dhago-rust));
+  --dhago-weave-density: 5px;
+  --dhago-control-density: 4px;
   --dhago-duration: 140ms;
   --media-background: var(--dhago-bone);
   --media-foreground: var(--dhago-ink);
@@ -15,7 +18,7 @@
   --media-ring: var(--dhago-rust);
   --media-button-highlight: #e2d5c1;
   --media-font-family: ui-sans-serif, system-ui, sans-serif;
-  --media-spacing: 4px;
+  --media-spacing: var(--dhago-control-density);
   --media-caption-controls-y: -28px;
   display: flex !important;
   flex-direction: column;
@@ -28,12 +31,12 @@
   isolation: isolate;
 }
 .dhago[data-surface="dark"] {
-  --dhago-bone: #202321; --dhago-ink: #f4ebdd; --dhago-muted: #d2c7b7;
-  --dhago-border: #77786c; --media-button-highlight: #3b403b;
+  --dhago-bone: var(--dhago-surface-color, #202321); --dhago-ink: var(--dhago-foreground-color, #f4ebdd); --dhago-muted: var(--dhago-muted-color, #d2c7b7);
+  --dhago-border: var(--dhago-border-color, #77786c); --media-button-highlight: #3b403b;
   --dhago-rust: var(--media-accent-color, #efad81);
   --dhago-on-rust: var(--media-accent-text-color, #171918);
 }
-.dhago[data-surface="minimal"] { --dhago-bone: #fff; --dhago-border: #aaa; box-shadow: none; }
+.dhago[data-surface="minimal"] { --dhago-bone: var(--dhago-surface-color, #fff); --dhago-border: var(--dhago-border-color, #aaa); box-shadow: none; }
 .dhago > video, .dhago > mux-video {
   display: block;
   width: 100%; height: auto; aspect-ratio: 16/9; object-fit: contain;
@@ -84,7 +87,7 @@
 .dhago .media-time-slider-chapter { height: 22px; border-radius: 2px; overflow: hidden; }
 .dhago .media-time-slider-track {
   height: 22px; background-color: #c9bda9; border-radius: 2px; position: relative;
-  background-image: repeating-linear-gradient(90deg, #17191830 0 1px, transparent 1px 5px), repeating-linear-gradient(0deg, #fff7 0 1px, transparent 1px 4px);
+  background-image: repeating-linear-gradient(90deg, #17191830 0 1px, transparent 1px var(--dhago-weave-density)), repeating-linear-gradient(0deg, #fff7 0 1px, transparent 1px 4px);
 }
 .dhago .media-time-slider-chapter:nth-child(2n) .media-time-slider-track { background-color: #a4aaa1; }
 .dhago .media-time-slider-chapter:nth-child(3n) .media-time-slider-track { background-color: #b29b80; }
@@ -158,7 +161,7 @@
     animation: dhago-thread-travel 520ms linear infinite;
   }
 }
-.dhago :focus-visible { outline: 3px solid var(--dhago-rust); outline-offset: 3px; }
+.dhago :focus-visible { outline: 3px solid var(--dhago-focus); outline-offset: 3px; }
 .dhago .media-play-button:focus-visible { outline-offset: 3px; }
 @media (hover: hover) {
   .dhago .media-button:hover { background: var(--media-button-highlight); }
@@ -194,7 +197,7 @@
 .dhago:is(:fullscreen, [data-fullscreen]) .dhago-shelf { padding-bottom: max(14px, env(safe-area-inset-bottom)); border-radius: 0; }
 @media (prefers-reduced-motion: reduce) { .dhago { --dhago-duration: 0ms; } .dhago *, .dhago *::before { animation-duration: .01ms !important; transition-duration: 0ms !important; } }
 @media (forced-colors: active) {
- .dhago { --dhago-bone: Canvas; --dhago-ink: CanvasText; --dhago-border: GrayText; --dhago-rust: Highlight; }
+ .dhago { --dhago-bone: Canvas; --dhago-ink: CanvasText; --dhago-border: GrayText; --dhago-rust: Highlight; --dhago-focus: Highlight; }
  .dhago .media-time-slider-track { background: Canvas; border: 1px solid CanvasText; }
  .dhago .media-time-slider-fill { background: Highlight; mix-blend-mode: normal; }
  .dhago .media-time-slider-thumb { background: Highlight; border-color: CanvasText; }
@@ -562,7 +565,7 @@
 }
 .dhago .dhago-chapter-jump:focus-visible,
 .dhago .dhago-chapter-summary:focus-visible {
-  outline: 3px solid var(--dhago-rust);
+  outline: 3px solid var(--dhago-focus);
   outline-offset: -2px;
 }
 .dhago .media-time-slider-preview-label { min-width: 0; overflow-wrap: anywhere; }
@@ -645,4 +648,68 @@
   .dhago[data-weave-complete] .media-time-slider-chapter:last-of-type .media-time-slider-fill {
     box-shadow: inset -3px 0 CanvasText;
   }
+}
+
+
+/* Honest stream history: decoration appears only when exposed media state exists. */
+.dhago .dhago-ribbon { position: relative; }
+.dhago .dhago-stream-history {
+  position:absolute; inset:5px 0 auto; height:12px; z-index:3; pointer-events:none;
+}
+.dhago .dhago-quality-thread {
+  position:absolute; bottom:1px; min-width:1px;
+  height:var(--dhago-quality-thread-px,2px);
+  border-radius:999px;
+  background:color-mix(in srgb,var(--dhago-rust) 78%,var(--dhago-ink));
+  opacity:.72;
+}
+.dhago .dhago-drop-stitch {
+  position:absolute; top:0; width:3px; height:10px;
+  background:var(--dhago-bone);
+  border:1px solid var(--dhago-ink);
+  transform:translateX(-1px) rotate(18deg);
+  box-shadow:0 0 0 1px var(--dhago-rust);
+}
+.dhago .dhago-drop-stitch[data-count]:not([data-count="1"])::after {
+  content: attr(data-count);
+  position:absolute; inset:auto auto 9px -4px;
+  font:8px/1 ui-monospace,monospace; color:var(--dhago-ink);
+}
+.dhago .dhago-slack-thread {
+  position:absolute; top:4px; height:5px; min-width:3px;
+  border-bottom:2px solid var(--dhago-rust);
+  border-radius:0 0 50% 50%;
+  transform:translateY(2px);
+  opacity:.78;
+}
+.dhago[data-thread-buffering] .media-time-slider-chapters {
+  transform:translateY(3px) scaleY(.76);
+  opacity:.68;
+}
+.dhago .dhago-metadata-lanes {
+  display:grid; gap:2px; padding:0 1px 1px; margin-top:-2px;
+}
+.dhago .dhago-metadata-lanes[hidden] { display:none; }
+.dhago .dhago-metadata-lane {
+  position:relative; height:3px; overflow:hidden; border-radius:2px;
+  background:color-mix(in srgb,var(--dhago-border) 55%,transparent);
+}
+.dhago .dhago-metadata-thread {
+  position:absolute; inset-block:0;
+  background:var(--dhago-lane-color,var(--dhago-muted));
+  opacity:.9;
+}
+.dhago .dhago-visually-hidden {
+  position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important;
+  overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; border:0!important;
+}
+@media (forced-colors: active) {
+  .dhago .dhago-quality-thread,
+  .dhago .dhago-drop-stitch,
+  .dhago .dhago-slack-thread,
+  .dhago .dhago-metadata-thread { background:Highlight; border-color:CanvasText; }
+  .dhago .dhago-metadata-lane { background:Canvas; border:1px solid CanvasText; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dhago[data-thread-buffering] .media-time-slider-chapters { transform:none; }
 }

@@ -2,6 +2,9 @@ import '@videojs/html/video/player';
 import './video/skin';
 import template from './video/skin.html?raw';
 import { connectLivingLoom } from './video/living-loom';
+import { connectStreamHistory } from './video/stream-history';
+import { connectMetadataLanes, type DhagoMetadataTrack } from './video/metadata-lanes';
+export type { DhagoMetadataCue, DhagoMetadataTrack } from './video/metadata-lanes';
 
 export interface DhagoWeaveChapter { start:number; end:number; color:string; threadPx:number; audioDb?:number|null }
 export interface DhagoWeave { format:'dhago-weave-v1'; chapters:DhagoWeaveChapter[] }
@@ -19,6 +22,8 @@ export interface DhagoOptions {
   mediaKind?: 'video' | 'audio';
   /** Optional offline-sampled real footage palette. No capture or processing at playback. */
   weave?: DhagoWeave;
+  /** Optional authored metadata weft. Nothing is inferred when a track is absent. */
+  metadataTracks?: DhagoMetadataTrack[];
 }
 
 let instance = 0;
@@ -37,7 +42,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   player.querySelectorAll<HTMLElement>('[id]').forEach(el => {
     ids.set(el.id,el.id+suffix); el.id += suffix;
   });
-  for (const attr of ['trigger','commandfor','aria-controls','aria-labelledby']) {
+  for (const attr of ['trigger','commandfor','aria-controls','aria-labelledby','aria-describedby']) {
     player.querySelectorAll<HTMLElement>(`[${attr}]`).forEach(el => {
       const value = el.getAttribute(attr)!;
       el.setAttribute(attr,value.split(' ').map(id => ids.get(id) ?? id).join(' '));
@@ -168,6 +173,9 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
         button.type = 'button';
         button.className = 'dhago-chapter-jump';
         button.dataset.chapterTime = String(cue.startTime);
+        const spoken = document.createElement('span');
+        spoken.className = 'dhago-visually-hidden';
+        spoken.textContent = `Chapter ${i + 1} of ${cues.length}; ends at ${displayTime(cue.endTime)}.`;
         const number = document.createElement('span');
         number.className = 'dhago-jump-number';
         number.textContent = String(i + 1).padStart(2, '0');
@@ -179,7 +187,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
         const stamp = document.createElement('time');
         stamp.className = 'dhago-jump-time';
         stamp.textContent = displayTime(cue.startTime);
-        button.append(number, name, stamp);
+        button.append(number, name, stamp, spoken);
         item.append(button);
         fragment.append(item);
       });
@@ -218,6 +226,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
       : `CHAPTER ${String(index + 1).padStart(2, '0')} / ${String(cues.length).padStart(2, '0')}`;
     chapterName.textContent = label;
     chapterName.title = label;
+    summary.removeAttribute('aria-label');
     chapterList.querySelectorAll<HTMLButtonElement>('.dhago-chapter-jump')
       .forEach((button, i) => {
         if (i === index) button.setAttribute('aria-current', 'true');
@@ -282,6 +291,8 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   // The Mux adapter may proxy text-track events through its shadow media.
   video.querySelectorAll('track').forEach(track => track.addEventListener('load', watchTracks));
   connectLivingLoom(video, container);
+  connectStreamHistory(video, container);
+  connectMetadataLanes(video, container, options.metadataTracks ?? []);
   player.querySelector('.dhago-retry')?.addEventListener('click',()=>{
     // A deliberate user retry, never an automatic loop or silent fallback.
     player.querySelector<HTMLElement>('media-dialog-close')?.click();

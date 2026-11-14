@@ -1,14 +1,14 @@
 # DHAGO — Time, woven
 
-Reusable Video.js v10 HTML skin with a woven chapter ribbon, visible control shelf, captions and speed settings. The preview includes an original 64-second motion study with quiet synthesized ambient audio.
+Reusable Video.js v10 HTML skin with a woven chapter ribbon, visible control shelf, captions and speed settings. The ribbon can also encode exposed rendition changes, real buffering interruptions and dropped-frame counters as an honest viewing history. The preview includes an original 64-second motion study with quiet synthesized ambient audio.
 
-[Public collection](https://creative.aafnaipatro.com/) · [Annotated film journal](https://creative.aafnaipatro.com/journal.html)
+[Public collection](https://creative.aafnaipatro.com/) · [Annotated film journal](https://creative.aafnaipatro.com/journal.html) · [Reusable ribbon proof](https://creative.aafnaipatro.com/ribbon.html) · [Portable Stress Lab](STRESS-LAB.md) · [Install in under a minute](INSTALL.md)
 
 Requires Node 24 and npm. Run `npm ci`, `npm run dev`; validate with `npm run typecheck` and `npm run build`. Serve `dist/` over HTTPS. For browser checks run `npx playwright install --with-deps chromium`, `npm run build`, then `npm test`. Tests exercise the production build through Vite preview. Set `DHAGO_LIVE_URL` to run appropriate checks against a published origin; keep fault-injection cases in the test environment.
 
-Import `createDhagoPlayer` from `src/create-player.ts` through a compatible TypeScript/Vite build. Append its returned element to your mount. Supply `source`, optional `poster`, `chapters`, `captions`, and `surface` (`warm`, `dark`, `minimal`). A public `playbackId` selects the version-matched Mux adapter. Skin code imports nothing from the preview application.
+See [`INSTALL.md`](INSTALL.md) for minimal HTML/Vite and React mounts. `src/ribbon/ribbon.ts` is a host-neutral timeline component, while `src/stress-lab/harness.ts` packages the edge-state fixtures behind a one-adapter contract. Import `createDhagoPlayer` from `src/create-player.ts` through a compatible TypeScript/Vite build. Append its returned element to your mount. Supply `source`, optional `poster`, `chapters`, `captions`, and `surface` (`warm`, `dark`, `minimal`). A public `playbackId` selects the version-matched Mux adapter. Skin code imports nothing from the preview application.
 
-Set `--media-accent-color`, `--media-accent-text-color` and `--media-border-radius` on the mount for a host treatment. `journal.html` demonstrates Ink with gold `#e8c078` and dark accent text `#171918`, on shelf `#202321`; that accent/shelf pair is approximately 9.25:1. The same accent on a white shelf is a counterexample: it does not provide adequate focus contrast. Test the actual combinations you ship.
+Set `--media-accent-color`, `--media-accent-text-color`, `--media-border-radius` and the documented `--dhago-*` host tokens on the mount for a host treatment. `journal.html` demonstrates Ink with gold `#e8c078` and dark accent text `#171918`, on shelf `#202321`; that accent/shelf pair is approximately 9.25:1. The same accent on a white shelf is a counterexample: it does not provide adequate focus contrast. Test the actual combinations you ship.
 
 ## Progress and operations
 
@@ -18,8 +18,8 @@ Actions validate builds and browser behavior, provision Mux using repository sec
 
 ## Release and competition handoff
 
-[Judging rehearsal](docs/score-rehearsal.md) · [Owner review](docs/owner-review.md) · [Immutable release guide](docs/release-integrity.md) · [Mux usage limits](docs/mux-cost-and-retention.md). Production assets are staged in `dist-72ec6c324f64` and all 78 release objects were hash/ETag-verified in the dedicated R2 origin. Source CI and public smoke remain separate acceptance gates. The project has **not** been entered into the contest.
+[Judging rehearsal](docs/score-rehearsal.md) · [Owner review](docs/owner-review.md) · [Immutable release guide](docs/release-integrity.md) · [Mux usage limits](docs/mux-cost-and-retention.md).
 
-## 2026-11-13 thread-craft refinement
+The final pipeline keeps candidate verification, immutable staging and public-release proof separate. A green final main run produces `public-smoke-evidence` containing the exact source SHA, active hero capture, 8-second interaction loop, mobile and Stress Lab proof, measured raw/gzip/brotli authored-layer size, Lighthouse mobile metrics and the tested-environments table. The public `release-manifest.json.source_sha` is the release authority; do not rely on older hard-coded SHAs in historical notes.
 
-[PR #6](https://github.com/aprashnasuraj2-dev/videoj/pull/6) adds cue-derived decorative joins, subtle native dragging tension and real-media buffering response without inventing a control, cue or telemetry state. Reduced-motion and forced-colors behavior remain test-covered. Source `a6492362b634799f3f23611e95eb88d003474d1f` passed **35/35 Playwright Chromium tests** and its immutable `dist-a6492362b634` release matched **78/78 dedicated R2 assets**. A new post-release public browser smoke, physical-phone assessment, screen-reader review and owner-submitted challenge entry are separate gates. Prior HTML entry points remain backed up for rollback.
+Physical Safari/iPhone/Android and VoiceOver/NVDA remain separate real-device gates and are never inferred from emulation. The project has **not** been entered into the contest.
