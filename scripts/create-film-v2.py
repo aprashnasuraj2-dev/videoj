@@ -111,7 +111,9 @@ def loom_frame():
     x0,x1=70,BW-85; y0,y1=82,BH-80
     d.rectangle((x0-23,y0-38,x1+23,y1+40),outline=(113,77,50,255),width=28)
     d.rectangle((x0-10,y0-24,x1+10,y1+24),outline=(196,151,89,110),width=3)
-    colors=[(184,165,135),(212,186,147),(158,145,120),(230,199,158)]
+    # Bone, gold, weathered indigo and madder accents are palette references,
+    # not an assertion that this schematic reproduces a named Nepali textile.
+    colors=[(184,165,135),(212,186,147),(108,119,150),(178,99,83),(230,199,158),(112,124,148)]
     warp_n=51;weft_n=38
     for i in range(warp_n):
         x=x0+(x1-x0)*i/(warp_n-1)
@@ -148,6 +150,40 @@ def cloth_frame():
         for i,x in enumerate(range(x0+38,x1-7,14)):
             if (i+j)%2:
                 d.line((x-3,y,x+3,y),fill=(233,208,165,180),width=3)
+    # Coloured *thread strokes*, not pasted flat decals: restrained geometry
+    # introduces a recognisable woven design while preserving raised crossings.
+    # The pattern is an original textile-inspired study, not documentary Dhaka.
+    brick=(171,76,63,240);indigo=(57,73,99,240)
+    ochre=(195,146,74,230);linen=(236,207,161,240)
+    for band_y,band_color in [(y0+84,brick),(y0+96,indigo),(y1-124,indigo),(y1-112,brick)]:
+        for offset in range(0,12,4):
+            yy=band_y+offset
+            for x in range(x0+26,x1-20,9):
+                phase=(x//9+offset//4)%2
+                d.line((x,yy,x+(5 if phase else 7),yy+1),fill=band_color,width=2)
+    # Diamonds have visible individual warp/weft flecks and nested counterforms;
+    # colours do not encode navigation or pretend this is a real loom recording.
+    def woven_diamond(cx,cy,rx,ry,tone,inner):
+        for dy in range(-ry,ry+1,4):
+            half=int(rx*(1-abs(dy)/ry))
+            if half<2:continue
+            for x in range(cx-half,cx+half,7):
+                d.line((x,cy+dy,x+5,cy+dy+1),fill=tone,width=3)
+        for dy in range(-max(3,ry//2),max(3,ry//2)+1,4):
+            half=int(rx*.48*(1-abs(dy)/(ry*.52)))
+            if half<2:continue
+            for x in range(cx-half,cx+half,7):
+                d.line((x,cy+dy,x+5,cy+dy+1),fill=inner,width=3)
+    centres=[(int(BW*p),int(BH*q)) for p,q in
+             [(.245,.36),(.47,.36),(.695,.36),(.355,.64),(.58,.64),(.805,.64)]]
+    for n,(cx,cy) in enumerate(centres):
+        woven_diamond(cx,cy,76,86,brick if n%2==0 else indigo,
+                       linen if n%2==0 else ochre)
+    # Border is woven into the cloth, not painted outside the textile.
+    for x in range(x0+35,x1-22,12):
+        tone=brick if (x//12)%3==0 else indigo
+        for yy in range(y1-82,y1-60,5):
+            d.line((x,yy,x+7,yy+1),fill=tone,width=2)
     # Dark fold on right catches directional light, cloth is tactile rather
     # than a flat repeating textile wallpaper.
     d.line([(x0+5,y0+55),(x0+118,y0+62),(x0+53,y1-18)],fill=(238,212,166,155),width=5)
@@ -200,12 +236,23 @@ def dynamic_frame(bases,labels,sec):
         s=math.sin(sec*math.tau*2)
         cv2.ellipse(frame,(cx,cy),(75,11),0,5+180*s/3,15+180*s/3,(172,194,219),2,cv2.LINE_AA)
     elif section==2:
-        # A moving shuttle-shaped wooden silhouette along a *single* weft.
-        t=sec*0.55
-        progress=(t%2)
-        if progress>1:progress=2-progress
+        # A succession of newly inserted wefts traces genuinely distinct
+        # image content across the shot, rather than a 16s still plus shuttle.
+        # The construction is illustrative, not a claim to simulate a loom.
+        completed=min(29,int(local*1.85))
+        ink=[(69,74,166),(102,86,65),(114,160,200),(170,194,224)]
+        for j in range(completed):
+            yy=int(H*.325+j*8.4)
+            tone=ink[(j//3)%len(ink)]
+            cv2.line(frame,(78,yy),(W-78,yy+1),tone,3,cv2.LINE_AA)
+            for x in range(88,W-80,23):
+                if (x//23+j)%2==0:
+                    cv2.line(frame,(x,yy-2),(x+7,yy-1),(220,221,222),1,cv2.LINE_AA)
+        # A moving shuttle follows the advancing interlacing front.
+        progress=(local*.88)%2
+        if progress>1: progress=2-progress
         cx=int(145+progress*(W-300))
-        yy=int(H*.60+5*math.sin(sec*2.8))
+        yy=int(H*.325+completed*8.4+5*math.sin(sec*2.8))
         poly=np.array([[cx-85,yy],[cx-48,yy-11],[cx+52,yy-11],[cx+89,yy],[cx+52,yy+12],[cx-48,yy+12]],np.int32)
         cv2.fillConvexPoly(frame,poly,(52,83,119),cv2.LINE_AA)
         cv2.polylines(frame,[poly],True,(122,161,191),2,cv2.LINE_AA)
@@ -226,6 +273,11 @@ def dynamic_frame(bases,labels,sec):
         alpha=min(1,(local-2.5)/.8,(14.8-local)/.8)
         layer=labels[section];a=layer[:,:,3:4].astype(np.float32)/255*alpha
         frame=np.uint8(np.clip(frame.astype(np.float32)*(1-a)+layer[:,:,:3]*a,0,255))
+    # Short editorial dissolves make the material transformation continuous.
+    # Only the first 0.45s of scenes 2–4 is blended; raw shots remain traceable.
+    if section>0 and local<.45:
+        preceding=dynamic_frame(bases,labels,section*16-1/FPS)
+        frame=cv2.addWeighted(preceding,1-local/.45,frame,local/.45,0)
     return frame
 
 
