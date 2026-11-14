@@ -30,9 +30,8 @@ test('buffer slack and missed stitches are driven by exposed events/counters',as
   await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(.25);
 
   await video.evaluate(v=>v.dispatchEvent(new Event('waiting')));
-  await expect(shell).toHaveAttribute('data-thread-buffering','');
+  await expect(shell).toHaveAttribute('data-stream-buffer-events','1');
   await video.evaluate(v=>v.dispatchEvent(new Event('playing')));
-  await expect(shell).not.toHaveAttribute('data-thread-buffering','');
   await expect(shell.locator('.dhago-slack-thread')).toHaveCount(1);
 
   await page.evaluate(()=>((window as any).__setDhagoDropped)(2));

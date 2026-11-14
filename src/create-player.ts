@@ -172,8 +172,9 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
         button.type = 'button';
         button.className = 'dhago-chapter-jump';
         button.dataset.chapterTime = String(cue.startTime);
-        button.setAttribute('aria-label',
-          `Chapter ${i + 1} of ${cues.length}: ${cue.text}. ${displayTime(cue.startTime)} to ${displayTime(cue.endTime)}.`);
+        const spoken = document.createElement('span');
+        spoken.className = 'dhago-visually-hidden';
+        spoken.textContent = `Chapter ${i + 1} of ${cues.length}; ends at ${displayTime(cue.endTime)}.`;
         const number = document.createElement('span');
         number.className = 'dhago-jump-number';
         number.textContent = String(i + 1).padStart(2, '0');
@@ -185,7 +186,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
         const stamp = document.createElement('time');
         stamp.className = 'dhago-jump-time';
         stamp.textContent = displayTime(cue.startTime);
-        button.append(number, name, stamp);
+        button.append(number, name, stamp, spoken);
         item.append(button);
         fragment.append(item);
       });
@@ -224,9 +225,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
       : `CHAPTER ${String(index + 1).padStart(2, '0')} / ${String(cues.length).padStart(2, '0')}`;
     chapterName.textContent = label;
     chapterName.title = label;
-    summary.setAttribute('aria-label', index < 0
-      ? `Chapter map. Between chapters. ${cues.length} chapters available.`
-      : `Chapter map. Chapter ${index + 1} of ${cues.length}: ${label}.`);
+    summary.removeAttribute('aria-label');
     chapterList.querySelectorAll<HTMLButtonElement>('.dhago-chapter-jump')
       .forEach((button, i) => {
         if (i === index) button.setAttribute('aria-current', 'true');
