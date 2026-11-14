@@ -30,6 +30,7 @@ jobs:
           test -s clean/package-lock.json
           test -s clean/submission/entry-handoff.md
           test -s clean/apps/preview/public/media/studies-in-thread.mp4
+          test -s clean/apps/preview/public/media/studies-in-thread.webm
           test -s clean/apps/preview/public/media/dhago-studies-poster.svg
           if find clean -type f | grep -Eq '(^|/)(node_modules|dist|\.env)(/|$)'; then
             echo 'Unexpected dependency/build/secret payload in source archive' >&2
@@ -38,6 +39,7 @@ jobs:
           (
             cd clean
             npm ci
+            npm run sync:canonical-media
             npm run typecheck
             npm run build
             test -s dist/index.html

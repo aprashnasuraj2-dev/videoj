@@ -7,13 +7,13 @@
 | Role | Canonical file |
 |---|---|
 | Original film | `apps/preview/public/media/studies-in-thread.mp4` |
-| Compatibility source | `apps/preview/public/media/studies-in-thread.webm` (build-produced when missing) |
+| Compatibility source | `apps/preview/public/media/studies-in-thread.webm` (source-controlled, byte-pinned R2 recovery rendition) |
 | Poster | `apps/preview/public/media/poster.webp` |
 | Chapters | `apps/preview/public/media/chapters.vtt` |
 | Captions | `apps/preview/public/media/captions.vtt` |
 | Derived weave study | `apps/preview/src/weave-studies.json` (build-produced) |
 
-The Git MP4 blob was `38b34cbd3e0e06221e12e9059979a0ece8cc266b` (2,563,521 bytes) both on the pre-replacement baseline `d8aba3f957cb` and later `main`. The original Mux provisioning configuration recorded content SHA-256 `9dcc4672e3014ca947e310c1809c0cf6d40ffff186478f3e6a1e47f89b3688b3`; the canonical-source verification command checks that exact digest rather than downloading an unverified replacement.
+The preserved source-controlled WebM is **7,455,419 bytes**, SHA-256 `c2e7b6b3c4a699c6fa9010245b5c42a90ff93f65c25a1e6a61bf621ea2e7ed39`, matching the previously published R2 compatibility source. The prior FFmpeg-generated WebM had equal byte length but a different digest; old builds must not misreport this as release parity. Both original film renditions are guarded by `npm run sync:canonical-media`. The Git MP4 blob was `38b34cbd3e0e06221e12e9059979a0ece8cc266b` (2,563,521 bytes) both on the pre-replacement baseline `d8aba3f957cb` and later `main`. The original Mux provisioning configuration recorded content SHA-256 `9dcc4672e3014ca947e310c1809c0cf6d40ffff186478f3e6a1e47f89b3688b3`; the canonical-source verification command checks that exact digest rather than downloading an unverified replacement.
 
 Original chapter boundaries: `0–16s A thread of light`, `16–32s The shape of quiet`, `32–48s Where shadows gather`, `48–64s Coming home`. Use actual WebVTT cues; tool fixtures must be clearly labeled.
 

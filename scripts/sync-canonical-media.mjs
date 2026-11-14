@@ -12,3 +12,14 @@ if (content.byteLength !== expectedSize || sha256 !== expectedHash) {
   throw new Error(`DHAGO original film differs from pre-replacement source (bytes=${content.byteLength}, sha256=${sha256})`);
 }
 console.log('[DHAGO/media] Original Studies in Thread verified; no media overwritten.');
+
+const fallback = resolve('apps/preview/public/media/studies-in-thread.webm');
+const expectedFallbackBytes = 7455419;
+const expectedFallbackSha256 = 'c2e7b6b3c4a699c6fa9010245b5c42a90ff93f65c25a1e6a61bf621ea2e7ed39';
+const webm = await readFile(fallback);
+const fallbackSha256 = createHash('sha256').update(webm).digest('hex');
+if (webm.length !== expectedFallbackBytes || fallbackSha256 !== expectedFallbackSha256) {
+  throw new Error('[DHAGO/media] Original VP9 fallback differs from the preserved public recovery object ' +
+    '(bytes=' + webm.length + ', sha256=' + fallbackSha256 + ')');
+}
+console.log('[DHAGO/media] Preserved original VP9 compatibility fallback verified; no media overwritten.');
