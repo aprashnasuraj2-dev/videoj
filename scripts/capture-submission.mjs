@@ -16,8 +16,8 @@ const output = resolve(process.argv[2] ?? 'submission/assets');
 const complete = process.env.DHAGO_LOOM_COMPLETE_SELECTOR ?? '.dhago[data-weave-complete]';
 if (!DHAGO_LIVE_URL || !/^[a-f0-9]{40}$/.test(DHAGO_RELEASE_SHA ?? '')
   || !/^assets\/[\w-]+\.js$/.test(DHAGO_EXPECTED_ENTRY_ASSET ?? '')
-  || !/^[a-zA-Z0-9]+$/.test(DHAGO_EXPECTED_MUX_ID ?? '')) {
-  throw new Error('Supply DHAGO_LIVE_URL, DHAGO_RELEASE_SHA, DHAGO_EXPECTED_ENTRY_ASSET and DHAGO_EXPECTED_MUX_ID.');
+  || (DHAGO_EXPECTED_MUX_ID && !/^[a-zA-Z0-9]+$/.test(DHAGO_EXPECTED_MUX_ID))) {
+  throw new Error('Supply DHAGO_LIVE_URL, DHAGO_RELEASE_SHA and DHAGO_EXPECTED_ENTRY_ASSET; DHAGO_EXPECTED_MUX_ID is optional.');
 }
 const origin = new URL(DHAGO_LIVE_URL);
 if (origin.protocol !== 'https:' || origin.pathname !== '/' || origin.search || origin.hash) {
@@ -25,7 +25,8 @@ if (origin.protocol !== 'https:' || origin.pathname !== '/' || origin.search || 
 }
 const width = 1280;
 const height = 960;
-const muxSource = `https://stream.mux.com/${DHAGO_EXPECTED_MUX_ID}.m3u8`;
+const muxSource = DHAGO_EXPECTED_MUX_ID ? `https://stream.mux.com/${DHAGO_EXPECTED_MUX_ID}.m3u8` : null;
+const mediaSelector = 'video,mux-video';
 const filmStates = {};
 const clipLabels = [];
 const shots = [];
@@ -105,7 +106,7 @@ async function photo(target, filename, options = {}) {
 
 async function waitForDecoded(page, minimumTime) {
   await page.waitForFunction(minimum => {
-    const media = document.querySelector('mux-video');
+    const media = document.querySelector('video,mux-video');
     return media?.readyState >= 2 && media.videoWidth > 0 && media.currentTime >= minimum;
   }, minimumTime, { timeout: 35_000 });
 }
@@ -122,9 +123,9 @@ async function captureRelease(browser) {
   const page = await context.newPage();
   const issues = [];
   page.on('pageerror', error => issues.push(error.message));
-  const manifestResponse = page.waitForResponse(response => response.url() === muxSource
-    && (response.ok() || response.status() === 302 || response.status() === 307), { timeout: 35_000 });
-  void manifestResponse.catch(() => {});
+  const manifestResponse = muxSource ? page.waitForResponse(response => response.url() === muxSource
+    && (response.ok() || response.status() === 302 || response.status() === 307), { timeout: 35_000 }) : null;
+  void manifestResponse?.catch(() => {});
   const response = await page.goto(origin.href, { waitUntil: 'domcontentloaded' });
   if (!response?.ok() || new URL(page.url()).origin !== origin.origin) {
     throw new Error('Public homepage failed or redirected to a different origin.');
@@ -136,10 +137,15 @@ async function captureRelease(browser) {
   }
 
   const player = page.locator('#player-mount .dhago');
-  const media = player.locator('mux-video');
+  const media = player.locator(mediaSelector).first();
   const play = player.locator('media-play-button');
   await media.waitFor();
-  if (await media.getAttribute('src') !== muxSource) throw new Error('Playback ID differs from the release input.');
+  const observedSource = await media.evaluate(element => element.currentSrc || element.getAttribute('src') || '');
+  if (muxSource) {
+    if (await media.getAttribute('src') !== muxSource) throw new Error('Playback ID differs from the release input.');
+  } else if (!/from-fibre-to-fabric\.(mp4|webm)(?:$|\?)/.test(observedSource)) {
+    throw new Error('Canonical R2 fibre film is not mounted.');
+  }
   const stylesheet = await page.locator('link[rel=stylesheet]').count();
   if (!stylesheet) throw new Error('No linked release stylesheet was observed.');
 
@@ -189,7 +195,7 @@ async function captureRelease(browser) {
     await page.mouse.up();
   });
   await page.waitForFunction(() => {
-    const mux = document.querySelector('mux-video');
+    const mux = document.querySelector('video,mux-video');
     return mux?.currentTime > 32 && mux.currentTime < 41 && !mux.seeking;
   }, undefined, { timeout: 15_000 });
   filmStates.seeked = await playerSnapshot(media);
@@ -200,7 +206,7 @@ async function captureRelease(browser) {
   await capture.clip('Keyboard captions and Ink surface', 3.6, async () => {
     await captions.focus();
     await page.keyboard.press('Enter');
-    await page.waitForFunction(() => [...document.querySelector('mux-video').textTracks]
+    await page.waitForFunction(() => [...document.querySelector('video,mux-video').textTracks]
       .some(track => track.kind === 'captions' && track.mode === 'showing'));
     await sleep(750);
     await ink.click();
@@ -213,13 +219,13 @@ async function captureRelease(browser) {
 
   await media.evaluate(element => { element.currentTime = element.duration - 1.15; });
   await page.waitForFunction(() => {
-    const mux = document.querySelector('mux-video');
+    const mux = document.querySelector('video,mux-video');
     return !mux.seeking && mux.readyState >= 2 && mux.currentTime > 61;
   }, undefined, { timeout: 15_000 });
   await play.focus();
   await capture.clip('Finished cloth', 3.4, async () => {
     await page.keyboard.press('Enter');
-    await page.waitForFunction(selector => document.querySelector('mux-video')?.ended
+    await page.waitForFunction(selector => document.querySelector('video,mux-video')?.ended
       && document.querySelector(selector), complete, { timeout: 12_000 });
     filmStates.ended = await playerSnapshot(media);
     await photo(player, 'finished-cloth.png');
@@ -227,7 +233,7 @@ async function captureRelease(browser) {
   await capture.stop();
   await play.click();
   await page.waitForFunction(selector => {
-    const mux = document.querySelector('mux-video');
+    const mux = document.querySelector('video,mux-video');
     return !mux.ended && !mux.paused && mux.currentTime > .1 && mux.currentTime < 3
       && !document.querySelector(selector);
   }, complete, { timeout: 20_000 });
@@ -256,17 +262,20 @@ async function captureRelease(browser) {
   await page.getByRole('button', { name: 'Linen', exact: true }).click();
   await photo(player, 'linen-surface.png');
 
-  const manifestUrl = (await manifestResponse).url();
+  const manifestUrl = manifestResponse ? (await manifestResponse).url() : observedSource;
   if (issues.length) throw new Error(`Uncaught errors on public homepage: ${issues.join(' | ')}`);
   await page.goto(new URL('journal.html', origin).href);
   const journal = page.locator('#journal-player .dhago');
-  const journalMedia = journal.locator('mux-video');
+  const journalMedia = journal.locator(mediaSelector).first();
   await journalMedia.waitFor();
-  if (await journalMedia.getAttribute('src') !== muxSource) throw new Error('Studio Journal uses a different film.');
-  await page.waitForFunction(() => Number.isFinite(document.querySelector('mux-video')?.duration));
+  const journalSource = await journalMedia.evaluate(element => element.currentSrc || element.getAttribute('src') || '');
+  if (muxSource ? await journalMedia.getAttribute('src') !== muxSource : !/from-fibre-to-fabric\.(mp4|webm)(?:$|\?)/.test(journalSource)) {
+    throw new Error('Studio Journal uses a different film.');
+  }
+  await page.waitForFunction(() => Number.isFinite(document.querySelector('video,mux-video')?.duration));
   await page.locator('[data-time="32"]').click();
   await page.waitForFunction(() => {
-    const mux = document.querySelector('mux-video');
+    const mux = document.querySelector('video,mux-video');
     return mux?.paused && mux.currentTime >= 32;
   });
   // The Journal updates its selected-note semantics from the media seek event.
@@ -299,7 +308,7 @@ async function captureRelease(browser) {
     if (label === 'hero-mobile') {
       await responsivePlay.click();
       await page.waitForFunction(() => {
-        const media = document.querySelector('mux-video');
+        const media = document.querySelector('video,mux-video');
         return media?.readyState >= 2 && media.currentTime > .45;
       }, undefined, { timeout: 20_000 });
     }
@@ -326,6 +335,7 @@ async function captureRelease(browser) {
     capturedAt: new Date().toISOString(),
     screenshots: saves,
     videos: ['interaction-loop.mp4', 'proof-demo.mp4'],
+    delivery: muxSource ? 'Mux' : 'Cloudflare R2 direct media',
     method: 'Genuine browser frames from the exact public release. The 8-second judge loop is the opening playback + woven seek segment; no simulated media state. Sound is omitted.',
   }, null, 2) + '\n');
 }
