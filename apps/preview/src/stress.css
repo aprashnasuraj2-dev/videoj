@@ -42,7 +42,7 @@ main {max-width:1420px;padding:36px clamp(20px,4vw,55px) 0;}
 .lab-report h3 {font:600 12px ui-sans-serif,system-ui;letter-spacing:.05em;margin:0 0 12px;}
 .lab-report small {font-weight:400;color:#68665a;}
 .lab-metrics {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
-.lab-metrics span {display:grid;gap:8px;font:10px ui-monospace,monospace;color:#6f6b5c;}
+.lab-metrics span {display:grid;gap:8px;font:10px ui-monospace,monospace;color:#625e50;}
 .lab-metrics strong {color:#242720;font-weight:600;font-size:11px;overflow-wrap:anywhere;}
 #lab-diagnostics,#lab-credit{font-size:12px;line-height:1.7;margin:15px 0 0;color:#57574e;}
 #lab-credit a {text-underline-offset:3px;}
