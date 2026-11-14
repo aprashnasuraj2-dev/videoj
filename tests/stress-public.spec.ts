@@ -36,6 +36,6 @@ test('all gallery destinations and example connector resolve as actual static fi
 test('visitor-facing study introduction contains no deployment or developer handoff wording', async ({ page }) => {
   await page.goto('/stress.html?case=manual');
   const intro=await page.locator('.lab-intro,.lab-small-print,.lab-context').allTextContents();
-  expect(intro.join(' ')).not.toMatch(/\\b(repository|commit|internal handoff|debug fixture|test harness|deployment checklist)\\b/i);
+  expect(intro.join(' ')).not.toMatch(/\b(repository|commit|internal handoff|debug fixture|test harness|deployment checklist)\b/i);
   await expect(page.getByRole('link', { name: /Explore the player comparison studio/ })).toBeVisible();
 });
