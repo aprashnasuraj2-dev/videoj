@@ -46,6 +46,13 @@ jobs:
           DHAGO_MUX_SOURCE: apps/preview/public/media/from-fibre-to-fabric.mp4
           DHAGO_MUX_OUTPUT: apps/preview/src/media-fibre.json
         run: node scripts/mux-upload.mjs
+      - name: Rebuild with the newly verified public Mux playback ID
+        run: |
+          # The bundle made before provisioning still contains a null playback ID.
+          # Rebuild after media-fibre.json changes; otherwise browser tests exercise
+          # stale local media and will fail or falsely report a non-Mux source.
+          DHAGO_REQUIRE_WEBM=1 npm run build
+          npm run typecheck
       - name: Browser-proof the newly provisioned Mux stream
         run: |
           npx playwright install --with-deps chromium
