@@ -41,7 +41,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   player.querySelectorAll<HTMLElement>('[id]').forEach(el => {
     ids.set(el.id,el.id+suffix); el.id += suffix;
   });
-  for (const attr of ['trigger','commandfor','aria-controls','aria-labelledby']) {
+  for (const attr of ['trigger','commandfor','aria-controls','aria-labelledby','aria-describedby']) {
     player.querySelectorAll<HTMLElement>(`[${attr}]`).forEach(el => {
       const value = el.getAttribute(attr)!;
       el.setAttribute(attr,value.split(' ').map(id => ids.get(id) ?? id).join(' '));
