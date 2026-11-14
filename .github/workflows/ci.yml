@@ -26,6 +26,8 @@ jobs:
       - run: npm run typecheck
       - name: Build and require a decoded compatibility rendition
         run: DHAGO_REQUIRE_WEBM=1 npm run build
+      - name: Verify encoded weaving progression and original textile chroma
+        run: python3 scripts/check-film-visuals.py apps/preview/public/media/from-fibre-to-fabric.mp4
       - run: npx playwright install --with-deps chromium
       - run: npm test
       - uses: actions/upload-artifact@v4
