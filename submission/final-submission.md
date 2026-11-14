@@ -49,7 +49,7 @@ DHAGO is an original Video.js skin and interaction system. The woven-time metaph
 
 ## H. Media / asset statement
 
-The primary *From Fibre to Fabric* motion study, generated textile geometry, poster, chapter data, documentary narration and English captions are authored for DHAGO. The Stress Lab also links clearly credited external fixture media under their original licenses for edge-case testing; those fixtures are not presented as original DHAGO footage, are not silently relicensed, and are not the canonical competition film.
+The primary *From Fibre to Fabric* documentary short, generated textile geometry, poster, chapter data, documentary narration and English captions are authored for DHAGO. The Stress Lab also links clearly credited external fixture media under their original licenses for edge-case testing; those fixtures are not presented as original DHAGO footage, are not silently relicensed, and are not the canonical competition film.
 
 ## I. License statement
 
