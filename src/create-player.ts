@@ -2,6 +2,9 @@ import '@videojs/html/video/player';
 import './video/skin';
 import template from './video/skin.html?raw';
 
+export interface DhagoWeaveChapter { start:number; end:number; color:string; threadPx:number; audioDb?:number|null }
+export interface DhagoWeave { format:'dhago-weave-v1'; chapters:DhagoWeaveChapter[] }
+
 export interface DhagoOptions {
   source: string;
   playbackId?: string;
@@ -13,6 +16,8 @@ export interface DhagoOptions {
   captions?: string;
   surface?: 'warm' | 'dark' | 'minimal';
   mediaKind?: 'video' | 'audio';
+  /** Optional offline-sampled real footage palette. No capture or processing at playback. */
+  weave?: DhagoWeave;
 }
 
 let instance = 0;
@@ -72,6 +77,44 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
     const track = document.createElement('track');
     track.kind = kind; track.src = src; track.srclang = 'en'; track.label = label;
     track.default = kind === 'chapters'; video.append(track);
+  }
+  // A host can opt in to frame-derived color and audio-derived strand width.
+  // Only apply a swatch when its exact authored cue boundaries match the
+  // generated metadata. Never color a different video's unrelated chapters.
+  let colored = false;
+  let weaveObserver:MutationObserver|null = null;
+  const applyWeave = () => {
+    if (colored || options.weave?.format !== 'dhago-weave-v1') return;
+    const list=container.querySelector<HTMLElement>('.media-time-slider-chapters');
+    const elements=Array.from(list?.querySelectorAll<HTMLElement>('.media-time-slider-chapter')??[]);
+    const cues=Array.from(
+      (video.textTracks?Array.from(video.textTracks):[]).find(t=>t.kind==='chapters')?.cues??[]
+    );
+    if (!elements.length || cues.length !== elements.length || !options.weave.chapters.length) return;
+    const pairs=cues.map((cue,i)=>{
+      const match=options.weave!.chapters.find(s=>Math.abs(s.start-cue.startTime)<.06&&Math.abs(s.end-cue.endTime)<.06);
+      return {node:elements[i],match};
+    });
+    if(pairs.some(p=>!p.match || !/^#[0-9a-f]{6}$/i.test(p.match.color) ||
+      !Number.isFinite(p.match.threadPx)))return;
+    pairs.forEach(({node,match})=>{
+      node.style.setProperty('--dhago-weave-color',match!.color);
+      node.style.setProperty('--dhago-weave-thread',Math.max(1,Math.min(4,match!.threadPx)).toFixed(2)+'px');
+    });
+    colored=true;
+    container.setAttribute('data-weave-sampled','');
+    weaveObserver?.disconnect();
+    weaveObserver=null;
+  };
+  if(options.weave) {
+    const chapterRoot=container.querySelector('.media-time-slider-chapters');
+    if(chapterRoot) {
+      weaveObserver=new MutationObserver(applyWeave);
+      weaveObserver.observe(chapterRoot,{childList:true,subtree:true});
+    }
+    for(const type of ['loadedmetadata','durationchange','timeupdate'] as const)
+      video.addEventListener(type,applyWeave);
+    video.querySelectorAll('track').forEach(track=>track.addEventListener('load',applyWeave));
   }
   // Native <details> provides a keyboard/touch chapter picker inside the skin.
   // The time-slider remains the sole continuous seeking surface.
