@@ -14,7 +14,7 @@ DHAGO turns Video.js v10 chapter time into a tactile woven ribbon inspired by Ne
 
 ## C. Judge-facing description
 
-DHAGO takes its name from the Nepali word for thread and treats video time as warp and weft. Real chapter cues become woven sections on a conventional Video.js v10 seek surface: the viewer can drag across the ribbon, read the current chapter and use the same precise playback controls they already know. The public release pairs the skin with the original 64-second *From Fibre to Fabric* motion study and a Studio Journal that seeks the same film from four scene notes.
+DHAGO takes its name from the Nepali word for thread and treats video time as warp and weft. Real chapter cues become woven sections on a conventional Video.js v10 seek surface: the viewer can drag across the ribbon, read the current chapter and use the same precise playback controls they already know. The public release pairs the skin with the original 64-second *From Fibre to Fabric* documentary short and a Studio Journal that seeks the same film from four scene notes.
 
 The interaction is designed to survive outside the showcase page. Linen, Ink and Paper use the same semantics; narrow layouts retain essential controls; keyboard focus, captions, reduced motion, forced-colors behavior, error recovery and no-chapter cases are exercised in the browser suite. A standalone Ribbon proves the timeline can be hosted separately, while the Stress Lab tests dense/absent/malformed cues, narrow players, missing posters, source errors, multilingual titles, audio-only media and clearly labelled external fixtures. Release evidence is generated from the exact CI-tested public artifact rather than from a separate promotional build.
 
@@ -25,7 +25,7 @@ The interaction is designed to survive outside the showcase page. Linen, Ink and
 - **Three coherent surfaces:** Linen, Ink and Paper change treatment, not control meaning.
 - **Original demonstration film:** *From Fibre to Fabric* follows Raw fibre → Twist into thread → Warp meets weft → Cloth holds time.
 - **Studio Journal:** four scene notes seek the same released film and keep selection paused until the viewer chooses Play.
-- **Accessibility-first control shelf:** visible keyboard focus, descriptive captions, reduced-motion and forced-colors handling, comfortable essential targets.
+- **Accessibility-first control shelf:** visible keyboard focus, English documentary captions, reduced-motion and forced-colors handling, comfortable essential targets.
 - **Stress Lab:** realistic edge-state coverage without invented telemetry or fake live/DVR claims.
 - **Portable architecture:** reusable player factory plus a host-neutral Woven Time Ribbon component.
 
@@ -33,15 +33,15 @@ The interaction is designed to survive outside the showcase page. Linen, Ink and
 
 - Built on **Video.js v10 / @videojs/html 10.4.0**, not the v8 `videojs()` API.
 - Portable `createDhagoPlayer()` API accepts source, optional compatibility source, poster, chapter/caption tracks, surface and authored metadata.
-- Canonical public delivery uses the dedicated Cloudflare R2 release; the HTML media element uses `preload="metadata"`, so the ~37.7 MB MP4 is not intentionally fetched in full before interaction.
-- A ~30.5 MB VP9/WebM compatibility encode is generated/validated reproducibly for browsers without H.264 support.
+- Canonical public delivery uses the dedicated Cloudflare R2 release; the HTML media element uses `preload="metadata"`, so the ~22.7 MB MP4 is not intentionally fetched in full before interaction.
+- A ~25.6 MB VP9/WebM compatibility encode is generated/validated reproducibly for browsers without H.264 support.
 - Optional Mux support is lazy-loaded only when a verified playback ID is configured; direct R2 playback remains the reliable canonical path.
 - Immutable `dist-<SHA>` releases carry SHA-256 + byte-length manifests and are published without rebuilding after CI.
 - Public smoke binds the live manifest to the exact Git SHA, then captures playback, seeking, screenshots, interaction media and Lighthouse evidence.
 
 ## F. Accessibility highlights
 
-Keyboard routes cover playback, seeking, settings and menu exit; focus remains visible on solid control surfaces. Descriptive captions, chapter text, non-color cues, reduced-motion treatment, forced-colors behavior and narrow layouts are tested. Automated/browser-engine evidence is not relabelled as a physical-device or screen-reader certification: real VoiceOver/NVDA and physical iPhone/Android checks remain separate owner/device evidence unless actually performed.
+Keyboard routes cover playback, seeking, settings and menu exit; focus remains visible on solid control surfaces. English documentary captions, chapter text, non-color cues, reduced-motion treatment, forced-colors behavior and narrow layouts are tested. Automated/browser-engine evidence is not relabelled as a physical-device or screen-reader certification: real VoiceOver/NVDA and physical iPhone/Android checks remain separate owner/device evidence unless actually performed.
 
 ## G. Originality statement
 
@@ -49,7 +49,7 @@ DHAGO is an original Video.js skin and interaction system. The woven-time metaph
 
 ## H. Media / asset statement
 
-The primary *From Fibre to Fabric* motion study, generated textile geometry, poster, chapter data and descriptive captions are authored for DHAGO. The Stress Lab also links clearly credited external fixture media under their original licenses for edge-case testing; those fixtures are not presented as original DHAGO footage, are not silently relicensed, and are not the canonical competition film.
+The primary *From Fibre to Fabric* documentary short, generated textile geometry, poster, chapter data, documentary narration and English captions are authored for DHAGO. The Stress Lab also links clearly credited external fixture media under their original licenses for edge-case testing; those fixtures are not presented as original DHAGO footage, are not silently relicensed, and are not the canonical competition film.
 
 ## I. License statement
 
@@ -111,4 +111,4 @@ Prefer the generated interaction clip when it accurately shows real browser stat
 
 ## Current decision boundary
 
-Core competition readiness does **not** depend on Mux. R2 is the canonical public source; Mux is an optional bonus only after its own fibre-film verification. No paid Mux upgrade or competition legal acceptance is authorized by this package.
+R2 remains the canonical public source. Mux is a competition bonus path and is claimed only after the same canonical 64-second documentary has its own verified public playback ID and browser evidence. No paid Mux upgrade or competition legal acceptance is authorized by this package.

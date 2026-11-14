@@ -1,6 +1,6 @@
 # DHAGO — Time, woven
 
-Reusable Video.js v10 HTML skin with a woven chapter ribbon, visible control shelf, captions and speed settings. The public demo is built around the original 64-second **From Fibre to Fabric** motion study: chapter time becomes warp and weft while familiar media controls stay precise. The ribbon can also encode exposed rendition changes, real buffering interruptions and dropped-frame counters as an honest viewing history.
+Reusable Video.js v10 HTML skin with a woven chapter ribbon, visible control shelf, captions and speed settings. The public demo is built around the original 64-second **From Fibre to Fabric** documentary short: chapter time becomes warp and weft while familiar media controls stay precise. The ribbon can also encode exposed rendition changes, real buffering interruptions and dropped-frame counters as an honest viewing history.
 
 [Public collection](https://creative.aafnaipatro.com/) · [Annotated film journal](https://creative.aafnaipatro.com/journal.html) · [Reusable ribbon proof](https://creative.aafnaipatro.com/ribbon.html) · [Portable Stress Lab](STRESS-LAB.md) · [Install in under a minute](INSTALL.md)
 
@@ -23,3 +23,8 @@ Actions validate builds and browser behavior, provision Mux using repository sec
 The final pipeline keeps candidate verification, immutable staging and public-release proof separate. A green final main run produces `public-smoke-evidence` containing the exact source SHA, active hero capture, 8-second interaction loop, mobile and Stress Lab proof, measured raw/gzip/brotli authored-layer size, Lighthouse mobile metrics and the tested-environments table. The public `release-manifest.json.source_sha` is the release authority; do not rely on older hard-coded SHAs in historical notes.
 
 Physical Safari/iPhone/Android and VoiceOver/NVDA remain separate real-device gates and are never inferred from emulation. The project has **not** been entered into the contest.
+
+
+### Documentary media contract
+
+The canonical 64-second film is deliberately aligned to four equal chapter intervals: 0–16s **Raw fibre**, 16–32s **Twist into thread**, 32–48s **Warp meets weft**, and 48–64s **Cloth holds time**. Living Loom derives `data-weave-stage`, `--dhago-time-ratio` and `--dhago-stage-phase` from the media element's real `currentTime / duration`; those values only decorate the woven ribbon and never replace Video.js seek truth. The current direct-delivery masters are approximately 22.7 MB H.264/AAC and 25.6 MB VP9/Opus, with English documentary captions carried as WebVTT.
