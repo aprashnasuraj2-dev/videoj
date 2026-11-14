@@ -56,7 +56,12 @@ export function connectMetadataLanes(
         cues,
       });
     }
-    const tracks=[...native,...authored].slice(0,6);
+    const seen=new Set<string>();
+    const tracks=[...native,...authored].filter(track=>{
+      if(!track.id||seen.has(track.id))return false;
+      seen.add(track.id);
+      return true;
+    }).slice(0,6);
     const fragment=document.createDocumentFragment();
     tracks.forEach(track=>{
       const row=document.createElement('div');
