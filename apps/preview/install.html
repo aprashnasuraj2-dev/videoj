@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="DHAGO integration contract and adoption proof for the Video.js v10 skin, reusable Woven Time Ribbon, and browser-side Stress Lab."/>
+<title>DHAGO — Integration contract</title>
+</head>
+<body class="install-page">
+<a class="skip" href="#install-main">Skip to integration guide</a>
+<header class="install-head"><a class="install-brand" href="./">▦ DHAGO</a><nav><a href="./stress.html">Stress Lab</a><a href="./ribbon.html">Reusable ribbon</a><a href="./journal.html">Studio Journal</a></nav></header>
+<main id="install-main">
+<section class="install-hero">
+<p class="eyebrow">Adoption proof / Video.js v10</p>
+<h1>Small API.<br/><em>Clear boundaries.</em></h1>
+<p>DHAGO is a standards-based Video.js v10 skin with a host-neutral ribbon primitive and a browser-side resilience lab. This page documents the integration contract used by the public release without requiring access to the private project workspace.</p>
+<div class="install-facts" aria-label="Release boundaries">
+<span><strong>Player</strong> createDhagoPlayer(options)</span>
+<span><strong>Ribbon</strong> chapters + tracks + playback state</span>
+<span><strong>Stress Lab</strong> browser adapter contract</span>
+<span><strong>License</strong> Apache-2.0 challenge release</span>
+</div>
+</section>
+
+<section class="install-section" aria-labelledby="player-api">
+<div><p class="eyebrow">01 / Player API</p><h2 id="player-api">Mount the skin.</h2><p>The challenge release uses this public integration shape. Media truth stays with the browser/Video.js runtime; optional metadata is only rendered when supplied.</p></div>
+<pre><code>import { createDhagoPlayer } from './dhago/create-player';
+
+const player = createDhagoPlayer({
+  source: '/film.mp4',
+  poster: '/poster.webp',
+  chapters: '/chapters.vtt',
+  captions: '/captions.vtt',
+  surface: 'warm',
+});
+
+document.querySelector('#player').append(player);</code></pre>
+</section>
+
+<section class="install-section" aria-labelledby="mux-api">
+<div><p class="eyebrow">02 / Mux delivery</p><h2 id="mux-api">Public playback ID, never API secrets.</h2><p>When a public Mux playback ID is supplied, DHAGO uses the Video.js Mux adapter. A direct source can remain available as a compatibility fallback. Management credentials never belong in browser code.</p></div>
+<pre><code>const player = createDhagoPlayer({
+  source: '/film.mp4',
+  compatibilitySource: '/film.webm',
+  playbackId: 'PUBLIC_PLAYBACK_ID',
+  fallbackUrl: location.href + '?local',
+  chapters: '/chapters.vtt',
+  captions: '/captions.vtt',
+});</code></pre>
+</section>
+
+<section class="install-section" aria-labelledby="metadata-api">
+<div><p class="eyebrow">03 / Layered weft</p><h2 id="metadata-api">Authored metadata remains explicit.</h2><p>Speaker, sponsor and custom lanes are not inferred from the film. A host must provide them. Malformed/duplicate input is bounded so it cannot break the primary seek control.</p></div>
+<pre><code>metadataTracks: [{
+  id: 'speaker',
+  label: 'Speakers',
+  kind: 'speaker',
+  cues: [
+    { start: 0, end: 18, label: 'Host' },
+    { start: 18, end: 42, label: 'Guest' },
+  ],
+}]</code></pre>
+</section>
+
+<section class="install-section" aria-labelledby="ribbon-api">
+<div><p class="eyebrow">04 / Reusable ribbon</p><h2 id="ribbon-api">Host-neutral timeline primitive.</h2><p>The Woven Time Ribbon is deliberately smaller than a player library. It accepts chapter/track geometry and playback state, then returns normalized state while leaving transport ownership with the host.</p><p><a href="./ribbon.html">Open the live two-host ribbon proof ↗</a></p></div>
+<pre><code>const ribbon = createWovenRibbon({
+  chapters,
+  tracks,
+  onSeek(time) {
+    media.currentTime = time;
+  },
+});
+
+ribbon.update({
+  currentTime: media.currentTime,
+  duration: media.duration,
+  buffering,
+  droppedFrames,
+  renditionHeight,
+});</code></pre>
+</section>
+
+<section class="install-section" aria-labelledby="stress-api">
+<div><p class="eyebrow">05 / Stress Lab</p><h2 id="stress-api">Test another skin without cloning DHAGO.</h2><p>The public Stress Lab accepts a browser-loadable ESM adapter URL or a local <code>.js/.mjs</code> file. Third-party code runs inside an opaque-origin sandbox and returns only structured results to the parent page.</p><p><a href="./stress.html#portable-tool">Open the working browser tool ↗</a></p></div>
+<pre><code>export default {
+  name: 'My player',
+
+  async mount(host, input) {
+    const root = mountMyPlayer(host, input);
+
+    return {
+      root,
+      media: root.querySelector('video'),
+      destroy() {
+        root.remove();
+      },
+    };
+  },
+};</code></pre>
+</section>
+
+<section class="install-boundaries" aria-labelledby="boundaries">
+<p class="eyebrow">Truth boundary</p><h2 id="boundaries">What this page does not claim.</h2>
+<p>It does not claim npm publication, official Video.js adoption, Safari/macOS testing, physical-phone testing, or real screen-reader validation. Those remain separate release facts. The public integration contract documents the challenge candidate; it is not a package-registry announcement.</p>
+</section>
+</main>
+<footer>DHAGO / Time, woven · <a href="./">Return to the player</a></footer>
+<script type="module" src="/src/install.ts"></script>
+</body>
+</html>
