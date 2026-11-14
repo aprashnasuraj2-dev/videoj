@@ -33,7 +33,7 @@ const fixtures:PortableStressFixture[]=[
 {id:'audio-only',label:'A recording without pictures',description:'A recording plays with its own timeline and sound controls.',chapterMode:'none',mediaKind:'audio'},
 {id:'source-replacement',label:'Switching films',description:'Change the film without leaving old controls behind.',chapterMode:'four',sourceReplacement:true},
 {id:'rapid-seeks',label:'Quick timeline jumps',description:'Jump back and forth and see whether the clock stays accurate.',chapterMode:'four',rapidSeeks:true},
-{id:'forced-colors',label:'High-contrast viewing',description:'This can only be judged with the browser's high-contrast setting enabled.',chapterMode:'four',requiresForcedColors:true},
+{id:'forced-colors',label:'High-contrast viewing',description:'This can only be judged with the high-contrast browser setting enabled.',chapterMode:'four',requiresForcedColors:true},
 {id:'reduced-motion',label:'Less movement',description:'This can only be judged with reduced-motion preferences enabled.',chapterMode:'four',requiresReducedMotion:true},
 {id:'browser-zoom',label:'Up close at 400%',description:'Check legibility and controls at real browser magnification.',chapterMode:'four',manualOnly:'Not assessed. Try 400% zoom in a real browser.'},
 {id:'live-dvr',label:'Live and time-shifted video',description:'An actual live stream with rewind is needed to judge this experience.',chapterMode:'none',manualOnly:'Not assessed. Try a genuine live stream that supports rewinding.'}
