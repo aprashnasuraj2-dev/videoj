@@ -59,6 +59,11 @@ jobs:
     needs: stage-dist
     runs-on: ubuntu-latest
     timeout-minutes: 24
+    env:
+      # GitHub-hosted Ubuntu includes branded Chrome with H.264/AAC support.
+      # Playwright's downloaded Chromium may intentionally omit proprietary codecs,
+      # which exercises DHAGO's WebM fallback rather than the Mux path.
+      PLAYWRIGHT_CHROMIUM_EXECUTABLE: /usr/bin/google-chrome
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
