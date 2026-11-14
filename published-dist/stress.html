@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="DHAGO Stress Lab: a browser-side resilience laboratory for Video.js and compatible media skins, plus DHAGO edge-state specimens."/>
+<title>DHAGO — The Loom Under Pressure</title>
+  <script type="module" crossorigin src="./assets/stress-D-WT_Vlp.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-P2Xu9kJm.js">
+  <link rel="modulepreload" crossorigin href="./assets/deep-equal-2fCx4gVW.js">
+  <link rel="modulepreload" crossorigin href="./assets/create-player-BTyqd4rp.js">
+  <link rel="stylesheet" crossorigin href="./assets/create-player-BLSZ5hqD.css">
+  <link rel="stylesheet" crossorigin href="./assets/stress-DnAqM5of.css">
+</head>
+<body>
+<a class="skip" href="#lab-player">Skip to test player</a>
+<header class="lab-header"><a class="lab-brand" href="./">▦ DHAGO</a><nav><a href="./">Original film</a><a href="./journal.html">Studio Journal</a><a href="./ribbon.html">Ribbon demo</a></nav></header>
+<main>
+<section class="lab-intro">
+  <p class="eyebrow">A working specimen / Video.js v10</p>
+  <h1>The loom, <em>under pressure.</em></h1>
+  <p>Fibre becomes thread; thread becomes cloth. The gallery below keeps DHAGO honest under imperfect data and constrained spaces. The portable instrument after it can run the same resilience ideas against another compatible player directly in the browser. <a href="#portable-tool">Run Stress Lab against your skin ↓</a></p>
+</section>
+<div class="lab-layout">
+  <aside class="lab-cases" aria-labelledby="cases-title">
+    <h2 id="cases-title">Choose a specimen</h2>
+    <div role="group" aria-label="Stress cases" id="lab-case-list"></div>
+    <div class="lab-small-print">The original DHAGO film remains the primary submission. External footage is labeled and credited separately. Controlled fault injections are identified explicitly.</div>
+  </aside>
+  <section class="lab-content" aria-label="Stress test player">
+    <div class="case-heading"><div><p class="eyebrow" id="case-category"></p><h2 id="case-title">Original weave</h2><p id="case-description"></p></div><span id="case-badge">REAL MEDIA</span></div>
+    <media-i18n><div id="lab-player" tabindex="-1"></div></media-i18n><noscript><video controls playsinline preload="metadata" src="./media/studies-in-thread.mp4" style="width:100%" aria-label="Native fallback for the original film"></video><p>JavaScript is unavailable. Native media controls remain accessible for the original film.</p></noscript>
+    <div class="lab-actions">
+      <label>Container width <select id="lab-width"><option value="100%">Fluid</option><option value="240px">240px</option><option value="280px">280px</option><option value="320px">320px</option><option value="420px">420px</option><option value="720px">720px</option></select></label>
+      <label>Surface <select id="lab-surface"><option value="warm">Linen</option><option value="dark">Ink</option><option value="minimal">Paper</option></select></label>
+      <button type="button" id="lab-restart">Reset this specimen</button>
+      <button type="button" id="lab-motion" aria-pressed="false">Motion: on</button>
+    </div>
+    <div class="lab-report">
+      <h3>Observed state <small>(actual media events)</small></h3>
+      <div class="lab-metrics">
+        <span>State <strong id="state-status">Idle</strong></span>
+        <span>Position <strong id="state-time">—</strong></span>
+        <span>Duration <strong id="state-duration">—</strong></span>
+        <span>Dimensions <strong id="state-width">—</strong></span>
+        <span>Chapter <strong id="state-chapter">—</strong></span>
+        <span>Seeking <strong id="state-seeking">No</strong></span>
+        <span>Media readiness <strong id="state-ready">No metadata</strong></span>
+        <span>Source <strong id="state-source">—</strong></span>
+      </div>
+      <p id="state-error" hidden></p>
+      <p id="lab-diagnostics"></p>
+      <p id="lab-credit"></p>
+    </div>
+    <div class="lab-manual" id="lab-manual"></div>
+  </section>
+</div>
+
+<section class="portable-tool" id="portable-tool" aria-labelledby="portable-title">
+  <div class="portable-heading">
+    <div><p class="eyebrow">Open ecosystem tool / bring your own skin</p><h2 id="portable-title">Test your own player.</h2></div>
+    <p class="portable-privacy"><strong>Runs in your browser.</strong> Local adapter files are not uploaded by DHAGO Stress Lab.</p>
+  </div>
+  <div class="portable-grid">
+    <section class="portable-loader" aria-labelledby="loader-title">
+      <h3 id="loader-title">1 / Load an adapter</h3>
+      <p>Third-party code runs in a sandboxed, opaque-origin iframe. It cannot write arbitrary markup into this page. The built-in DHAGO adapter is the trusted reference specimen.</p>
+      <div class="portable-loader-actions">
+        <button type="button" id="portable-use-dhago">Use built-in DHAGO</button>
+        <label for="portable-adapter-url">ESM adapter URL</label>
+        <div class="portable-inline"><input id="portable-adapter-url" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/my-skin-adapter.mjs"/><button type="button" id="portable-load-url">Load URL</button></div>
+        <label for="portable-adapter-file">Local adapter file <span>.js / .mjs</span></label>
+        <input id="portable-adapter-file" type="file" accept=".js,.mjs,text/javascript,application/javascript"/>
+      </div>
+      <p class="portable-note">URL modules and every dependency they import must permit browser CORS. A blocked module is reported as <strong>NOT RUN</strong>, not as a skin failure. Local files execute only in the sandbox and are not sent to a backend.</p>
+      <output id="portable-loader-status" class="portable-loader-status" aria-live="polite">Preparing reference adapter…</output>
+    </section>
+
+    <section class="portable-runner" aria-labelledby="runner-title">
+      <h3 id="runner-title">2 / Run resilience cases</h3>
+      <label for="portable-case">Case</label>
+      <select id="portable-case"></select>
+      <div class="portable-run-actions">
+        <button type="button" id="portable-run-case">Run current case</button>
+        <button type="button" id="portable-run-suite">Run compatible suite</button>
+      </div>
+      <p class="portable-note">Cases that require a real environment stay honest: forced colors and reduced motion are detected with media queries; real 400% zoom and live/DVR remain manual unless the environment genuinely supplies them.</p>
+    </section>
+  </div>
+
+  <section class="portable-specimen" aria-labelledby="portable-specimen-title">
+    <div class="portable-specimen-head"><h3 id="portable-specimen-title">Isolated specimen</h3><span id="portable-summary">No portable run yet.</span></div>
+    <div id="portable-direct-host" class="portable-host" aria-label="Built-in DHAGO portable test host"></div>
+    <div id="portable-sandbox-host" class="portable-host" aria-label="Sandboxed external adapter test host"></div>
+  </section>
+
+  <section class="portable-results" aria-labelledby="portable-results-title">
+    <div class="portable-results-head"><div><h3 id="portable-results-title">3 / Result matrix</h3><p>Structured assertions keep adapter-loading errors separate from skin failures.</p></div>
+      <div class="portable-export">
+        <button type="button" id="portable-copy-json">Copy JSON</button>
+        <button type="button" id="portable-download-json">Download JSON</button>
+        <button type="button" id="portable-copy-markdown">Copy Markdown</button>
+        <button type="button" id="portable-clear-results">Clear</button>
+      </div>
+    </div>
+    <div class="portable-table-wrap"><table><thead><tr><th scope="col">Case</th><th scope="col">Status</th><th scope="col">Main observation</th></tr></thead><tbody id="portable-result-body"></tbody></table></div>
+    <p class="portable-doc-link"><a href="./stress-adapter.example.mjs" download>Download a minimal native-video adapter example ↗</a></p>
+    <p id="portable-cases" class="lab-portable-cases"></p>
+  </section>
+</section>
+
+<section class="lab-context"><p class="eyebrow">What is demonstrated / what remains to be checked</p><h2>Tests should expose limitations, not hide them.</h2><p>Media decoding, live DVR, iOS native fullscreen, external casting, physical touch cancellation, real browser zoom and screen-reader behavior need genuine device/source conditions. A browser fixture can model geometry or induce an error, but it cannot manufacture those proofs.</p></section>
+</main>
+<footer class="lab-footer">DHAGO / Time, woven · <a href="./">Return to the original skin</a></footer>
+</body>
+</html>
