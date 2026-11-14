@@ -3,7 +3,14 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 const id=process.env.MUX_TOKEN_ID, secret=process.env.MUX_TOKEN_SECRET;
 if (!id || !secret) throw Error('Configure MUX_TOKEN_ID and MUX_TOKEN_SECRET repository secrets');
-const file=await readFile('apps/preview/public/media/studies-in-thread.mp4');
+const sourcePath=process.env.DHAGO_MUX_SOURCE || 'apps/preview/public/media/studies-in-thread.mp4';
+const outputPath=process.env.DHAGO_MUX_OUTPUT || 'apps/preview/src/media.json';
+if(!['apps/preview/public/media/studies-in-thread.mp4','apps/preview/public/media/from-fibre-to-fabric.mp4'].includes(sourcePath))
+ throw Error('Refusing unexpected Mux upload source');
+if(!['apps/preview/src/media.json','apps/preview/src/media-fibre.json'].includes(outputPath))
+ throw Error('Refusing unexpected public playback output');
+const file=await readFile(sourcePath);
+if (file.byteLength<100_000) throw Error('Refusing empty or unusually small video file');
 const marker='dhago-'+createHash('sha256').update(file).digest('hex');
 async function api(path, method='GET', body) {
  const res=await fetch('https://api.mux.com/video/v1/'+path, {method,
@@ -38,7 +45,7 @@ for(let n=0;n<120 && asset.status!=='ready';n++) {
 }
 const playbackId=asset.playback_ids?.find(p=>p.policy==='public')?.id;
 if(asset.status!=='ready' || !playbackId) throw Error('Ready public playback not available');
-await writeFile('apps/preview/src/media.json',JSON.stringify({playbackId,contentHash:marker},null,2)+'\n');
+await writeFile(outputPath,JSON.stringify({playbackId,contentHash:marker},null,2)+'\n');
 console.log('Ready public playback configuration saved; browser playback verification still required.');
 // Playback IDs and content hashes are public; management credentials never are.
 console.log(JSON.stringify({playbackId,contentHash:marker}));
