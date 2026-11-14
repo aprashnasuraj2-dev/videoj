@@ -130,3 +130,13 @@ Attempted preview deployment for exact revision 2ed92ded to Vercel team `surajde
 - Merged the verified final revision `dd6ec8bd217ade07707359f33b13fbbba928a5e2`. [Merged source run](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553) passed 41/41 tests. The local build matched all 78 CI-generated SHA-256 entries.
 - Uploaded seven new hashed assets and saved the preceding three HTML entry points under `releases/2026-11-14-predd6ec8bd/`. Published Journal, preview, then homepage. After cutover, 76 text SHA-256 checks and two media ETag/size checks passed. Public HTTPS confirmed both homepages and the Journal. [Post-cutover CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558) passed 2/2 with decoded Mux playback and Journal seeking.
 - Source and visuals are recorded in [storage.md](storage.md) and the [entry handoff](../submission/entry-handoff.md). The physical-device, screen reader, Mux usage and owner entry checks remain open.
+
+
+## 2026-11-14 — Fibre-film final coherence pass
+
+- Reconciled current main after the fibre migration and retired-Mux cleanup. Direct R2 delivery is canonical and active Mux configuration remains null until the fibre film has its own verified playback ID.
+- Found two judge-visible legacy references that search-only cleanup missed: the Stress Lab noscript fallback and standalone Ribbon demo still selected `studies-in-thread.mp4`; the Ribbon also carried retired chapter labels. Retargeted those public surfaces to *From Fibre to Fabric* while intentionally retaining legacy media files as historical/test fixtures.
+- Rewrote active release instructions around exact CI artifact → immutable manifest → R2 publication with `release-manifest.json` last. Mux is optional until the canonical fibre film receives its own verified asset.
+- Re-read the live Contra challenge through its current public challenge record: ACTIVE, deadline 2026-11-17 07:59 UTC, public Video.js v10 URL + visual + short description required; Mux playback ID and real live-site URL are optional bonus fields. No legal checkbox was accepted.
+- Added `submission/final-submission.md` with copy-ready title, descriptions, feature/technical/accessibility/originality/media/license statements, live links, 60-second walkthrough, screenshot shortlist and legal-safe checklist.
+- This branch must pass exact-head Chromium, Firefox and WebKit verification before merge; no contest submission or paid action is authorized by this work.
