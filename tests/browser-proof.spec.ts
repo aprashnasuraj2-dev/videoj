@@ -44,6 +44,6 @@ test('judge-visible controls work across the available browser engine', async ({
   await page.setViewportSize({width:375,height:820});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
   await expect(player.locator('media-captions-button')).toBeVisible();
-  await expect(player.locator('media-settings-button')).toBeVisible();
+  await expect(player.getByRole('button',{name:'Settings',exact:true})).toBeVisible();
   await expect(player.locator('media-fullscreen-button')).toBeVisible();
 });
