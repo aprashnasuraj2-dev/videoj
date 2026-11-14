@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node scripts/compile-weave.mjs && vite",
-    "build": "node scripts/ensure-webm.mjs && node scripts/compile-weave.mjs && vite build && node scripts/size-report.mjs",
+    "dev": "npm run prepare:storyboard && npm run prepare:weave && vite",
+    "build": "node scripts/ensure-webm.mjs && npm run prepare:storyboard && npm run prepare:weave && vite build && node scripts/size-report.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "deploy": "node apps/preview/deploy.mjs",
@@ -13,8 +13,9 @@
     "deploy:netlify": "npx --yes netlify-cli@27 deploy --build",
     "deploy:cloudflare": "npm run build && npx --yes wrangler@4 pages deploy dist --project-name dhago",
     "test": "playwright test",
-    "prepare:weave": "node scripts/compile-weave.mjs",
-    "size:report": "node scripts/size-report.mjs"
+    "prepare:weave": "node scripts/compile-weave.mjs && node scripts/compile-weave.mjs apps/preview/public/media/from-fibre-to-fabric.mp4 apps/preview/public/media/from-fibre-to-fabric-chapters.vtt apps/preview/src/weave-fibre.json apps/preview/public/media/from-fibre-to-fabric.weave.svg",
+    "size:report": "node scripts/size-report.mjs",
+    "prepare:storyboard": "python3 scripts/generate-storyboard.py apps/preview/public/media/from-fibre-to-fabric.mp4"
   },
   "dependencies": {
     "@videojs/html": "10.4.0"
