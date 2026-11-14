@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content="Host-neutral Woven Time Ribbon component proof for Video.js and other media UIs."/><title>DHAGO — Woven Time Ribbon component</title>  <script type="module" crossorigin src="./assets/ribbon-B9U7sgxG.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-P2Xu9kJm.js">
+  <link rel="stylesheet" crossorigin href="./assets/ribbon-DKtFyLQL.css">
+</head>
+<body class="ribbon-demo">
+<a class="skip" href="#ribbon-video">Skip to media</a>
+<header class="ribbon-head"><a href="./">DHAGO</a><nav><a href="./stress.html">Stress Lab</a><a href="./journal.html#portable-title">Install proof</a></nav></header>
+<main>
+<p class="eyebrow">Reusable component / chapters in · playback state out</p>
+<h1>One ribbon.<br/><em>Different hosts.</em></h1>
+<p class="ribbon-deck">This proof extracts the woven timeline from DHAGO. It has no Video.js import: chapter and metadata geometry go in; normalized progress and active-chapter state come out. Both treatments below are driven by the canonical From Fibre to Fabric media element.</p>
+<video id="ribbon-video" controls playsinline preload="metadata" src="./media/from-fibre-to-fabric.mp4" poster="./media/from-fibre-to-fabric-poster.webp"></video>
+<section class="ribbon-grid" aria-label="Ribbon host treatments">
+<article class="host-card host-default"><p class="eyebrow">Default host treatment</p><h2>Standard controls, woven time.</h2><div id="default-ribbon"></div></article>
+<article class="host-card host-minimal"><p class="eyebrow">Minimal host treatment</p><h2>The same API, quieter surface.</h2><div id="minimal-ribbon"></div></article>
+</section>
+<section class="ribbon-api"><h2>Small API, no DHAGO dependency.</h2><pre><code>const ribbon = createWovenRibbon({ chapters, tracks, onSeek });
+ribbon.update({ currentTime, duration, buffering, droppedFrames, renditionHeight });
+const { progress, activeChapterIndex } = ribbon.getState();</code></pre></section>
+</main>
+<footer>Woven Time Ribbon · experimental reusable component proposal · <a href="https://github.com/videojs/video.js/discussions/8235">Related Video.js chapters discussion ↗</a></footer>
+</body></html>
