@@ -20,9 +20,12 @@ test('invalid chapter metadata is sorted, clamped and reported without inventing
   await page.goto('/stress.html?case=malformed');
   const media=page.locator('#lab-player video');
   await expect.poll(()=>media.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
-  await expect(page.locator('#lab-diagnostics')).toContainText('Sorted out-of-order chapters');
-  await expect(page.locator('#lab-diagnostics')).toContainText('Resolved overlapping chapter');
-  await expect(page.locator('#lab-diagnostics')).toContainText('Preserved unlabeled gap');
+  await expect(page.locator('#lab-diagnostics')).toContainText('Chapters are shown in time order');
+  await expect(page.locator('#lab-diagnostics')).toContainText('Overlapping passages were separated');
+  await expect(page.locator('#lab-diagnostics')).toContainText('Unmarked moments remain open');
+  await expect(page.locator('#lab-diagnostics')).toHaveAttribute('data-issues',/Sorted out-of-order chapters/);
+  await expect(page.locator('#lab-diagnostics')).toHaveAttribute('data-issues',/Resolved overlapping chapter/);
+  await expect(page.locator('#lab-diagnostics')).toHaveAttribute('data-issues',/Preserved unlabeled gap/);
   await expect.poll(()=>media.evaluate((v:HTMLVideoElement)=>Array.from(v.textTracks).some(t=>t.kind==='chapters'&&t.cues&&t.cues.length>0))).toBe(true);
 });
 test('240px live resizing preserves core navigation controls',async({page})=>{
