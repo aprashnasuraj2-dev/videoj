@@ -13,7 +13,7 @@ const playerCss=['src/video/dhago.css'];
 const playerBehavior=['src/create-player.ts','src/video/skin.ts','src/video/living-loom.ts','src/video/stream-history.ts','src/video/metadata-lanes.ts','src/video/skin.html'];
 const playerFiles=[...playerCss,...playerBehavior];
 const ribbonFiles=['src/ribbon/ribbon.ts','src/ribbon/ribbon.css'];
-const stressFiles=['src/stress-lab/harness.ts','apps/preview/src/stress-loader.ts','apps/preview/src/stress.ts','apps/preview/src/stress.css','apps/preview/stress.html','apps/preview/public/stress-sw.js'];
+const stressFiles=['src/stress-lab/harness.ts','apps/preview/src/stress-loader.ts','apps/preview/src/stress.ts','apps/preview/src/stress.css','apps/preview/stress.html','apps/preview/public/stress-sw.js','apps/preview/public/stress-example-adapter.mjs'];
 
 const player=group('DHAGO-authored player CSS, TypeScript and HTML template concatenated and compressed as one stream; excludes @videojs/html runtime/scaffold, demo application, media and screenshots',playerFiles);
 player.css={files:playerCss,...compressed(joinSources(playerCss))};
