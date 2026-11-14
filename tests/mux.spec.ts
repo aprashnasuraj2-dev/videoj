@@ -15,7 +15,7 @@ test('Mux source really plays, seeks and carries local chapter and caption cues'
  await page.locator('media-play-button').click();
  await page.locator('[data-seek="32"]').click();
  await expect.poll(()=>video.evaluate((v:any)=>v.currentTime),{timeout:15000}).toBeGreaterThanOrEqual(32);
- await expect(page.locator('.dhago-chapter-name')).toHaveText('Where shadows gather');
+ await expect(page.locator('.dhago-chapter-name')).toHaveText('Warp meets weft');
  await page.locator('media-captions-button').click();
  await expect.poll(()=>video.evaluate((v:any)=>Array.from(v.textTracks as TextTrackList).some(t=>t.kind==='captions'&&t.mode==='showing'))).toBe(true);
  expect(requests.some(url=>url.includes(`${media.playbackId}.m3u8`))).toBe(true);
