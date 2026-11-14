@@ -1,11 +1,14 @@
 /* DHAGO's visual system. Scaffold supplies component state/semantics, not layout. */
 .dhago {
-  --dhago-bone: #f4ebdd;
-  --dhago-ink: #171918;
-  --dhago-muted: #60584f;
-  --dhago-border: #c9bda9;
+  --dhago-bone: var(--dhago-surface-color, #f4ebdd);
+  --dhago-ink: var(--dhago-foreground-color, #171918);
+  --dhago-muted: var(--dhago-muted-color, #60584f);
+  --dhago-border: var(--dhago-border-color, #c9bda9);
   --dhago-rust: var(--media-accent-color, #b44332);
   --dhago-on-rust: var(--media-accent-text-color, #fff);
+  --dhago-focus: var(--dhago-focus-color, var(--dhago-rust));
+  --dhago-weave-density: 5px;
+  --dhago-control-density: 4px;
   --dhago-duration: 140ms;
   --media-background: var(--dhago-bone);
   --media-foreground: var(--dhago-ink);
@@ -15,7 +18,7 @@
   --media-ring: var(--dhago-rust);
   --media-button-highlight: #e2d5c1;
   --media-font-family: ui-sans-serif, system-ui, sans-serif;
-  --media-spacing: 4px;
+  --media-spacing: var(--dhago-control-density);
   --media-caption-controls-y: -28px;
   display: flex !important;
   flex-direction: column;
@@ -28,12 +31,12 @@
   isolation: isolate;
 }
 .dhago[data-surface="dark"] {
-  --dhago-bone: #202321; --dhago-ink: #f4ebdd; --dhago-muted: #d2c7b7;
-  --dhago-border: #77786c; --media-button-highlight: #3b403b;
+  --dhago-bone: var(--dhago-surface-color, #202321); --dhago-ink: var(--dhago-foreground-color, #f4ebdd); --dhago-muted: var(--dhago-muted-color, #d2c7b7);
+  --dhago-border: var(--dhago-border-color, #77786c); --media-button-highlight: #3b403b;
   --dhago-rust: var(--media-accent-color, #efad81);
   --dhago-on-rust: var(--media-accent-text-color, #171918);
 }
-.dhago[data-surface="minimal"] { --dhago-bone: #fff; --dhago-border: #aaa; box-shadow: none; }
+.dhago[data-surface="minimal"] { --dhago-bone: var(--dhago-surface-color, #fff); --dhago-border: var(--dhago-border-color, #aaa); box-shadow: none; }
 .dhago > video, .dhago > mux-video {
   display: block;
   width: 100%; height: auto; aspect-ratio: 16/9; object-fit: contain;
@@ -84,7 +87,7 @@
 .dhago .media-time-slider-chapter { height: 22px; border-radius: 2px; overflow: hidden; }
 .dhago .media-time-slider-track {
   height: 22px; background-color: #c9bda9; border-radius: 2px; position: relative;
-  background-image: repeating-linear-gradient(90deg, #17191830 0 1px, transparent 1px 5px), repeating-linear-gradient(0deg, #fff7 0 1px, transparent 1px 4px);
+  background-image: repeating-linear-gradient(90deg, #17191830 0 1px, transparent 1px var(--dhago-weave-density)), repeating-linear-gradient(0deg, #fff7 0 1px, transparent 1px 4px);
 }
 .dhago .media-time-slider-chapter:nth-child(2n) .media-time-slider-track { background-color: #a4aaa1; }
 .dhago .media-time-slider-chapter:nth-child(3n) .media-time-slider-track { background-color: #b29b80; }
@@ -158,7 +161,7 @@
     animation: dhago-thread-travel 520ms linear infinite;
   }
 }
-.dhago :focus-visible { outline: 3px solid var(--dhago-rust); outline-offset: 3px; }
+.dhago :focus-visible { outline: 3px solid var(--dhago-focus); outline-offset: 3px; }
 .dhago .media-play-button:focus-visible { outline-offset: 3px; }
 @media (hover: hover) {
   .dhago .media-button:hover { background: var(--media-button-highlight); }
@@ -194,7 +197,7 @@
 .dhago:is(:fullscreen, [data-fullscreen]) .dhago-shelf { padding-bottom: max(14px, env(safe-area-inset-bottom)); border-radius: 0; }
 @media (prefers-reduced-motion: reduce) { .dhago { --dhago-duration: 0ms; } .dhago *, .dhago *::before { animation-duration: .01ms !important; transition-duration: 0ms !important; } }
 @media (forced-colors: active) {
- .dhago { --dhago-bone: Canvas; --dhago-ink: CanvasText; --dhago-border: GrayText; --dhago-rust: Highlight; }
+ .dhago { --dhago-bone: Canvas; --dhago-ink: CanvasText; --dhago-border: GrayText; --dhago-rust: Highlight; --dhago-focus: Highlight; }
  .dhago .media-time-slider-track { background: Canvas; border: 1px solid CanvasText; }
  .dhago .media-time-slider-fill { background: Highlight; mix-blend-mode: normal; }
  .dhago .media-time-slider-thumb { background: Highlight; border-color: CanvasText; }
@@ -562,7 +565,7 @@
 }
 .dhago .dhago-chapter-jump:focus-visible,
 .dhago .dhago-chapter-summary:focus-visible {
-  outline: 3px solid var(--dhago-rust);
+  outline: 3px solid var(--dhago-focus);
   outline-offset: -2px;
 }
 .dhago .media-time-slider-preview-label { min-width: 0; overflow-wrap: anywhere; }
