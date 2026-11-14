@@ -5,7 +5,7 @@ test('fibre-to-fabric lab is reachable without changing the main page',async({pa
   await expect(page.getByRole('heading',{name:/loom, under pressure/i})).toBeVisible();
   await expect(page.locator('media-container')).toHaveCount(1);
   await expect(page.locator('#case-title')).toHaveText('Original weave');
-  await expect(page.locator('#lab-credit')).toContainText('Original DHAGO');
+  await expect(page.locator('#lab-credit')).toContainText('From Fibre to Fabric');
 });
 test('no chapters stays playable and hides the current chapter readout',async({page})=>{
   await page.goto('/stress.html?case=nochapters');
