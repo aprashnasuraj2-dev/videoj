@@ -17,6 +17,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Test idempotent free-plan Mux provisioning offline
+        run: node --test scripts/verify-mux-upload.mjs
       - name: Install media tools for reproducible original-film encodes
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - name: Generate actual video weave metadata for typecheck
