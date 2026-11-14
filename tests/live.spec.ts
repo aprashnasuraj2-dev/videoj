@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Actual Cloudflare R2 production smoke for the released From Fibre to Fabric film.
+ * Actual Cloudflare R2 production smoke for the released Studies in Thread film.
  * Only enabled when DHAGO_LIVE_URL is explicitly supplied by the main-branch
  * release-gate job. Ordinary pull-request CI remains deterministic/local.
  * We test real decoded frames, not just HTTP 200 or a playlist string.
@@ -9,25 +9,25 @@ import { test, expect } from '@playwright/test';
 test.describe('Public judge experience', () => {
   test.skip(!process.env.DHAGO_LIVE_URL, 'Public-site audit runs only with DHAGO_LIVE_URL');
 
-  test('public homepage serves and advances the released fibre-to-fabric film', async ({ page }, info) => {
+  test('public homepage serves and advances the released original Studies in Thread film', async ({ page }, info) => {
     test.setTimeout(90_000);
     const errors: string[] = [];
     page.on('pageerror', error => errors.push(error.message));
 
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await expect(page.getByRole('heading', { name: /Every moment/i })).toBeVisible();
-    await expect(page.getByText('FROM FIBRE TO FABRIC — A DHAGO FILM', { exact: true })).toBeVisible();
+    await expect(page.getByText('STUDIES IN THREAD — THE ORIGINAL DHAGO FILM', { exact: true })).toBeVisible();
 
     const film = page.locator('#player-mount video');
     await expect(page.locator('mux-video')).toHaveCount(0);
-    await expect(film).toHaveAttribute('src', /from-fibre-to-fabric\.mp4$/);
+    await expect(film).toHaveAttribute('src', /studies-in-thread\.mp4$/);
     await expect.poll(() => film.evaluate((element: HTMLVideoElement) => Number(element.duration || 0)), { timeout: 50_000 }).toBeGreaterThan(60);
     await page.locator('media-play-button').click();
     await expect.poll(() => film.evaluate((element: HTMLVideoElement) => Number(element.currentTime || 0)), { timeout: 50_000 }).toBeGreaterThan(2);
     await page.locator('media-play-button').click();
     await page.locator('[data-seek="32"]').click();
     await expect.poll(() => film.evaluate((element: HTMLVideoElement) => Number(element.currentTime || 0))).toBeGreaterThanOrEqual(32);
-    await expect(page.locator('.dhago-chapter-name')).toContainText('Warp meets weft');
+    await expect(page.locator('.dhago-chapter-name')).toContainText('Where shadows gather');
     await page.screenshot({ path: info.outputPath('public-playing.png'), fullPage: true });
     await info.attach('public-source-evidence', {
       body: JSON.stringify({ finalUrl: page.url(), source: await film.getAttribute('src'), pageErrors: errors }, null, 2),
@@ -36,15 +36,15 @@ test.describe('Public judge experience', () => {
     expect(errors).toEqual([]);
   });
 
-  test('public Studio Journal shares the fibre-to-fabric film and scene notes', async ({ page }, info) => {
+  test('public Studio Journal shares the Studies in Thread motion study and scene notes', async ({ page }, info) => {
     test.setTimeout(90_000);
     await page.goto('/journal.html', { waitUntil: 'domcontentloaded' });
-    await expect(page.getByRole('heading', { name: /Following fibre/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Warp meets weft/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Looking closely/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Where shadows gather/i })).toBeVisible();
 
     const film = page.locator('#journal-player video');
     await expect(page.locator('mux-video')).toHaveCount(0);
-    await expect(film).toHaveAttribute('src', /from-fibre-to-fabric\.mp4$/);
+    await expect(film).toHaveAttribute('src', /studies-in-thread\.mp4$/);
     await expect.poll(() => film.evaluate((element: HTMLVideoElement) => Number(element.duration || 0)), { timeout: 50_000 }).toBeGreaterThan(60);
     await page.locator('[data-time="32"]').click();
     await expect.poll(() => film.evaluate((element: HTMLVideoElement) => Number(element.currentTime || 0)), { timeout: 20_000 }).toBeGreaterThanOrEqual(32);
@@ -61,7 +61,7 @@ test.describe('Public judge experience', () => {
     page.on('pageerror', error => errors.push(error.message));
     await page.goto('/?local', { waitUntil: 'domcontentloaded' });
     const film = page.locator('video');
-    await expect(film).toHaveAttribute('src', /from-fibre-to-fabric\.mp4$/);
+    await expect(film).toHaveAttribute('src', /studies-in-thread\.mp4$/);
     await expect.poll(() => film.evaluate(element => (element as HTMLVideoElement).duration)).toBeGreaterThan(60);
 
     const getButton = (name: string) => page.getByRole('button', { name, exact: true });

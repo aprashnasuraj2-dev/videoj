@@ -5,11 +5,11 @@ test('poster state and exact final frame retain chapter context',async({page})=>
   const video=page.locator('video');
   await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
   await expect(page.locator('.chapter[aria-current="true"]')).toHaveCount(1);
-  await expect(page.locator('.chapter[aria-current="true"]')).toContainText('Raw fibre');
+  await expect(page.locator('.chapter[aria-current="true"]')).toContainText('A thread of light');
   await video.evaluate((v:HTMLVideoElement)=>{v.currentTime=v.duration;});
   await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(63.9);
-  await expect(page.locator('.dhago-chapter-name')).toHaveText('Cloth holds time');
-  await expect(page.locator('.chapter[aria-current="true"]')).toContainText('Cloth holds time');
+  await expect(page.locator('.dhago-chapter-name')).toHaveText('Coming home');
+  await expect(page.locator('.chapter[aria-current="true"]')).toContainText('Coming home');
 });
 
 test('no-chapter variant leaves an honest linear seek bar',async({page})=>{
@@ -29,10 +29,10 @@ test('journal notes track initial cue, scene selection and last frame',async({pa
   await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
   await expect(page.locator('.scene-note[aria-current="true"]')).toHaveCount(1);
   await page.locator('[data-time="32"]').click();
-  await expect(page.locator('.scene-note[aria-current="true"]')).toContainText('Warp meets weft');
+  await expect(page.locator('.scene-note[aria-current="true"]')).toContainText('Where shadows gather');
   await video.evaluate((v:HTMLVideoElement)=>{v.currentTime=v.duration;});
   await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(63.9);
-  await expect(page.locator('.scene-note[aria-current="true"]')).toContainText('Cloth holds time');
+  await expect(page.locator('.scene-note[aria-current="true"]')).toContainText('Coming home');
 });
 
 test.describe('touch-emulated narrow player',()=>{

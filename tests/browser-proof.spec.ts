@@ -17,7 +17,7 @@ test('judge-visible controls work across the available browser engine', async ({
 
   await page.locator('[data-seek="32"]').click();
   await expect.poll(()=>media.evaluate((video:HTMLVideoElement)=>video.currentTime)).toBeGreaterThan(31.5);
-  await expect(player.locator('.dhago-chapter-name')).toContainText('Warp meets weft');
+  await expect(player.locator('.dhago-chapter-name')).toContainText('Where shadows gather');
   await expect(player.locator('media-time-slider')).toBeVisible();
 
   const captions=player.locator('media-captions-button');
