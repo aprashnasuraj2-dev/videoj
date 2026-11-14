@@ -10,7 +10,7 @@ const chapters:WovenRibbonCue[]=[
   {start:48,end:64,label:'Cloth holds time'},
 ];
 const tracks:WovenRibbonTrack[]=[
-  {id:'captions',label:'English descriptions',color:'#5f7f86',cues:chapters.map(c=>({...c,label:'Description cue'}))},
+  {id:'captions',label:'English documentary captions',color:'#5f7f86',cues:chapters.map(c=>({...c,label:'Documentary caption cue'}))},
   {id:'scene-note',label:'Scene notes',color:'#9a713c',cues:[
     {start:0,end:8,label:'Fibre'}, {start:16,end:24,label:'Thread'}, {start:32,end:40,label:'Weave'}, {start:48,end:64,label:'Cloth'},
   ]},
