@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="DHAGO stress lab: live player scenarios for chapters, media errors, audio-only, international text, dense timelines and constrained layouts."/>
+<title>DHAGO — The Loom Under Pressure</title>
+</head>
+<body>
+<a class="skip" href="#lab-player">Skip to test player</a>
+<header class="lab-header"><a class="lab-brand" href="./">▦ DHAGO</a><nav><a href="./">Original film</a><a href="./journal.html">Studio Journal</a><a href="https://github.com/aprashnasuraj2-dev/videoj">Source</a></nav></header>
+<main>
+<section class="lab-intro">
+  <p class="eyebrow">A working specimen / Video.js v10</p>
+  <h1>The loom, <em>under pressure.</em></h1>
+  <p>Fibre becomes thread; thread becomes cloth. This is a set of real and controlled edge cases, not a second polished film. Switch a case to observe how the same controls behave with imperfect data, new media and constrained spaces.</p>
+</section>
+<div class="lab-layout">
+  <aside class="lab-cases" aria-labelledby="cases-title">
+    <h2 id="cases-title">Choose a specimen</h2>
+    <div role="group" aria-label="Stress cases" id="lab-case-list"></div>
+    <div class="lab-small-print">The original DHAGO film remains the primary submission. External footage is labeled and credited separately. Controlled fault injections are identified explicitly.</div>
+  </aside>
+  <section class="lab-content" aria-label="Stress test player">
+    <div class="case-heading"><div><p class="eyebrow" id="case-category"></p><h2 id="case-title">Original weave</h2><p id="case-description"></p></div><span id="case-badge">REAL MEDIA</span></div>
+    <media-i18n><div id="lab-player" tabindex="-1"></div></media-i18n><noscript><video controls playsinline preload="metadata" src="./media/studies-in-thread.mp4" style="width:100%" aria-label="Native fallback for the original film"></video><p>JavaScript is unavailable. Native media controls remain accessible for the original film.</p></noscript>
+    <div class="lab-actions">
+      <label>Container width <select id="lab-width"><option value="100%">Fluid</option><option value="240px">240px</option><option value="280px">280px</option><option value="320px">320px</option><option value="420px">420px</option><option value="720px">720px</option></select></label>
+      <label>Surface <select id="lab-surface"><option value="warm">Linen</option><option value="dark">Ink</option><option value="minimal">Paper</option></select></label>
+      <button type="button" id="lab-restart">Reset this specimen</button>
+      <button type="button" id="lab-motion" aria-pressed="false">Motion: on</button>
+    </div>
+    <div class="lab-report" aria-live="polite">
+      <h3>Observed state <small>(actual media events)</small></h3>
+      <div class="lab-metrics"><span>State <strong id="state-status">Idle</strong></span><span>Position <strong id="state-time">—</strong></span><span>Duration <strong id="state-duration">—</strong></span><span>Dimensions <strong id="state-width">—</strong></span></div>
+      <p id="lab-diagnostics"></p>
+      <p id="lab-credit"></p>
+    </div>
+    <div class="lab-manual" id="lab-manual"></div>
+  </section>
+</div>
+<section class="lab-context"><p class="eyebrow">What is demonstrated / what remains to be checked</p><h2>Tests should expose limitations, not hide them.</h2><p>Media decoding, live DVR, iOS native fullscreen, external casting, physical touch cancellation, real browser zoom and screen-reader behavior need genuine device/source conditions. A browser mock can model timeline geometry or induce an error, but cannot prove all of those capabilities.</p></section>
+</main>
+<footer class="lab-footer">DHAGO / From fibre to fabric · <a href="./">Return to the original skin</a></footer>
+<script type="module" src="/src/stress.ts"></script>
+</body>
+</html>

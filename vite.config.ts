@@ -26,7 +26,7 @@ export default defineConfig({
     emptyOutDir: true,
     rolldownOptions: {
       // The workbench shell, and the preview page it frames.
-      input: { demo: path('./apps/preview/index.html'), journal: path('./apps/preview/journal.html'), workbench: path('./apps/preview/workbench.html'), preview: path('./apps/preview/preview.html') },
+      input: { demo: path('./apps/preview/index.html'), journal: path('./apps/preview/journal.html'), stress: path('./apps/preview/stress.html'), workbench: path('./apps/preview/workbench.html'), preview: path('./apps/preview/preview.html') },
     },
   },
 });

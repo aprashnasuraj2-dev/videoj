@@ -10,6 +10,7 @@ export interface DhagoOptions {
   chapters?: string;
   captions?: string;
   surface?: 'warm' | 'dark' | 'minimal';
+  mediaKind?: 'video' | 'audio';
 }
 
 let instance = 0;
@@ -19,6 +20,10 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   player.innerHTML = template;
   const container = player.querySelector('media-container')!;
   container.setAttribute('data-surface', options.surface ?? 'warm');
+  if (options.mediaKind === 'audio') {
+    container.setAttribute('data-preset', 'audio');
+    container.setAttribute('data-audio-only', '');
+  }
   const suffix = `-dhago-${++instance}`;
   const ids = new Map<string,string>();
   player.querySelectorAll<HTMLElement>('[id]').forEach(el => {
@@ -39,7 +44,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   // Keep the HLS engine out of the local-film entry bundle. Custom elements
   // upgrade the declarative attributes when the optional adapter finishes loading.
   if (options.playbackId) void import('@videojs/html/media/mux-video');
-  const video = document.createElement(options.playbackId ? 'mux-video' : 'video') as HTMLVideoElement;
+  const video = document.createElement(options.mediaKind === 'audio' ? 'audio' : (options.playbackId ? 'mux-video' : 'video')) as HTMLVideoElement;
   if (options.playbackId) video.setAttribute('src', `https://stream.mux.com/${options.playbackId}.m3u8`);
   else video.src = options.source;
   video.setAttribute('playsinline', '');
@@ -47,7 +52,7 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
   // The Mux adapter derives a cross-origin storyboard track. Local text tracks
   // also remain usable when a host serves the film from a different CDN.
   video.setAttribute('crossorigin', 'anonymous');
-  if (options.poster) video.setAttribute('poster', options.poster);
+  if (options.poster && options.mediaKind !== 'audio') video.setAttribute('poster', options.poster);
   for (const [kind,src,label] of [
     ['chapters',options.chapters,'English chapters'],
     ['captions',options.captions,'English descriptions'],
@@ -103,6 +108,15 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
     video.addEventListener(event, clearWaiting);
   }
   video.querySelectorAll('track').forEach(t => t.addEventListener('load', updateChapter));
+  // Host applications may append chapters after media metadata has loaded.
+  // Do not freeze the chapter name at the empty initial track list.
+  // mux-video is registered asynchronously: its textTracks accessor can be
+  // unavailable until the custom element upgrades. A native video/audio
+  // element has the list immediately; the other media events still update cues.
+  video.textTracks?.addEventListener('addtrack', event => {
+    event.track?.addEventListener('cuechange', updateChapter);
+    updateChapter();
+  });
   player.querySelector('.dhago-retry')?.addEventListener('click',()=>{
     // A deliberate user retry, never an automatic loop or silent fallback.
     player.querySelector<HTMLElement>('media-dialog-close')?.click();
