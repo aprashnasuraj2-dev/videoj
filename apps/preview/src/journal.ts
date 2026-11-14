@@ -7,6 +7,7 @@ const fallback = new URL(location.href);
 fallback.searchParams.set('local', '');
 const player = createDhagoPlayer({
   source: './media/studies-in-thread.mp4',
+  compatibilitySource: './media/studies-in-thread.webm',
   playbackId: new URLSearchParams(location.search).has('local') ? undefined : media.playbackId ?? undefined,
   fallbackUrl: fallback.href,
   poster: './media/poster.webp',
