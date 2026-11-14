@@ -53,6 +53,10 @@ test('built-in reference produces structured baseline and a real 240px result',a
   await page.getByRole('button',{name:'Run current case'}).click();
   await expect(page.locator('#portable-result-body tr')).toHaveCount(1);
   await expect(page.locator('#portable-result-body tr').first()).toHaveAttribute('data-status','pass');
+  const portableVideo=page.locator('#portable-direct-host video');
+  await expect(portableVideo).toHaveAttribute('src', /studies-in-thread\.mp4$/);
+  await expect(portableVideo).toHaveAttribute('poster', /dhago-studies-poster\.svg$/);
+  await expect.poll(() => portableVideo.evaluate((media: HTMLVideoElement) => media.duration), { timeout: 15_000 }).toBeGreaterThan(60);
 
   await page.locator('#portable-case').selectOption('narrow-240');
   await page.getByRole('button',{name:'Run current case'}).click();

@@ -103,4 +103,38 @@ test.describe('Public judge experience', () => {
     expect(errors).toEqual([]);
     await page.screenshot({path: info.outputPath('public-320px-backup.png')});
   });
+
+  test('public Mux bonus route really plays the same original film rather than a local fallback', async ({ page }, info) => {
+    test.setTimeout(90_000);
+    const playbackId = 'Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw';
+    const playlist = `https://stream.mux.com/${playbackId}.m3u8`;
+    const requests: string[] = [];
+    page.on('request', request => {
+      if (request.url().includes('stream.mux.com')) requests.push(request.url());
+    });
+    await page.goto('/?mux', { waitUntil: 'domcontentloaded' });
+    const film = page.locator('mux-video');
+    await expect(film).toHaveCount(1);
+    await expect(film).toHaveAttribute('src', playlist);
+    await expect(page.locator('#player-mount video')).toHaveCount(0);
+    await expect.poll(() => film.evaluate((video: any) => Number(video.duration)), { timeout: 45_000 }).toBeGreaterThan(63);
+    await page.locator('media-play-button').click();
+    await expect.poll(() => film.evaluate((video: any) => Number(video.currentTime)), { timeout: 45_000 }).toBeGreaterThan(2);
+    await page.locator('media-play-button').click();
+    await page.locator('[data-seek="32"]').click();
+    await expect.poll(() => film.evaluate((video: any) => Number(video.currentTime)), { timeout: 20_000 }).toBeGreaterThanOrEqual(32);
+    await expect(page.locator('.dhago-chapter-name')).toContainText('Where shadows gather');
+    await page.locator('media-captions-button').click();
+    await expect.poll(() => film.evaluate((video: any) =>
+      Array.from(video.textTracks as TextTrackList).some((track: TextTrack) =>
+        track.kind === 'captions' && track.mode === 'showing'
+      )), { timeout: 10_000 }).toBe(true);
+    expect(requests).toContain(playlist);
+    expect(await film.evaluate((video: any) => video.error?.code ?? null)).toBeNull();
+    await info.attach('live-original-mux-proof', {
+      body: JSON.stringify({ playbackId, playlistRequested: true, capturedAt: new Date().toISOString() }, null, 2),
+      contentType: 'application/json',
+    });
+    await page.locator('.dhago').screenshot({ path: info.outputPath('live-mux-original-chapter-03.png') });
+  });
 });

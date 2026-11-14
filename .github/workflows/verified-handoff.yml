@@ -29,8 +29,8 @@ jobs:
           test -s clean/package.json
           test -s clean/package-lock.json
           test -s clean/submission/entry-handoff.md
-          test -s clean/apps/preview/public/media/from-fibre-to-fabric.mp4
-          test -s clean/apps/preview/public/media/from-fibre-to-fabric.webm
+          test -s clean/apps/preview/public/media/studies-in-thread.mp4
+          test -s clean/apps/preview/public/media/dhago-studies-poster.svg
           if find clean -type f | grep -Eq '(^|/)(node_modules|dist|\.env)(/|$)'; then
             echo 'Unexpected dependency/build/secret payload in source archive' >&2
             exit 1
@@ -42,6 +42,8 @@ jobs:
             npm run build
             test -s dist/index.html
             test -s dist/journal.html
+            test -s dist/media/studies-in-thread.webm
+            test ! -e dist/media/from-fibre-to-fabric.mp4
           )
           git fetch --depth=1 origin "refs/heads/dist-${SHORT}"
           git show FETCH_HEAD:release-manifest.json > handoff-artifact/release-manifest.json
