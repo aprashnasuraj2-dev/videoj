@@ -1,6 +1,6 @@
 # DHAGO — Time, woven
 
-Reusable Video.js v10 HTML skin with a woven chapter ribbon, visible control shelf, captions and speed settings. The ribbon can also encode exposed rendition changes, real buffering interruptions and dropped-frame counters as an honest viewing history. The preview includes an original 64-second motion study with quiet synthesized ambient audio.
+Reusable Video.js v10 HTML skin with a woven chapter ribbon, visible control shelf, captions and speed settings. The public demo is built around the original 64-second **From Fibre to Fabric** motion study: chapter time becomes warp and weft while familiar media controls stay precise. The ribbon can also encode exposed rendition changes, real buffering interruptions and dropped-frame counters as an honest viewing history.
 
 [Public collection](https://creative.aafnaipatro.com/) · [Annotated film journal](https://creative.aafnaipatro.com/journal.html) · [Reusable ribbon proof](https://creative.aafnaipatro.com/ribbon.html) · [Portable Stress Lab](STRESS-LAB.md) · [Install in under a minute](INSTALL.md)
 
