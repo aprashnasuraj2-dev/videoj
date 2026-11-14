@@ -36,9 +36,42 @@ jobs:
             dist/
           retention-days: 14
 
+  browser-proof:
+    needs: verify
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [firefox, webkit]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: candidate-evidence
+      - name: Install ${{ matrix.browser }} only
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+      - name: Run compact judge-visible browser proof
+        env:
+          DHAGO_BROWSER: ${{ matrix.browser }}
+        run: npx playwright test tests/browser-proof.spec.ts --workers=1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-proof-${{ matrix.browser }}
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 14
+
   stage-dist:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: verify
+    needs: [verify, browser-proof]
     runs-on: ubuntu-latest
     timeout-minutes: 8
     permissions:
@@ -71,6 +104,9 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: candidate-evidence
       - run: npx playwright install --with-deps chromium
       - name: Bind smoke to the published immutable release
         env:
@@ -99,6 +135,27 @@ jobs:
           }
           throw new Error('Dedicated public origin did not serve this exact release manifest.');
           JS
+      - name: Measure Lighthouse mobile and release size
+        env:
+          DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
+          CHROME_PATH: /usr/bin/google-chrome
+        run: |
+          mkdir -p test-results/submission
+          npx --yes lighthouse@13.6.0 "$DHAGO_LIVE_URL" \
+            --output=json \
+            --output-path=test-results/submission/lighthouse-mobile.json \
+            --only-categories=performance \
+            --only-categories=accessibility \
+            --only-categories=best-practices \
+            --only-categories=seo \
+            --form-factor=mobile \
+            --chrome-flags="--headless --no-sandbox --disable-gpu" \
+            --quiet
+          cp dist/dhago-size.json test-results/submission/dhago-size.json
+          node scripts/summarize-performance.mjs \
+            test-results/submission/lighthouse-mobile.json \
+            dist/dhago-size.json \
+            test-results/submission/performance-evidence
       - name: Verify production Mux playback and live Studio Journal
         env:
           DHAGO_LIVE_URL: https://creative.aafnaipatro.com
