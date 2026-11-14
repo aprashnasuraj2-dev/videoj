@@ -28,7 +28,7 @@ const md=`# DHAGO — final judge-facing release evidence
 **Live:** https://creative.aafnaipatro.com/  
 **Studio Journal:** https://creative.aafnaipatro.com/journal.html  
 **Source package:** exact Apache-2.0 source archive from the final handoff  
-**Public media:** Mux playback ID \`Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw\`  
+**Public media:** \`media/from-fibre-to-fabric.mp4\` with VP9/WebM compatibility rendition  
 **Reusable ribbon proof:** https://creative.aafnaipatro.com/ribbon.html  
 **Portable Stress Lab:** https://creative.aafnaipatro.com/stress.html
 
