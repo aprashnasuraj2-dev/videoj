@@ -4,10 +4,10 @@ import './ribbon-demo.css';
 
 const video=document.querySelector<HTMLVideoElement>('#ribbon-video')!;
 const chapters:WovenRibbonCue[]=[
-  {start:0,end:16,label:'A thread of light'},
-  {start:16,end:32,label:'The shape of quiet'},
-  {start:32,end:48,label:'Where shadows gather'},
-  {start:48,end:64,label:'Coming home'},
+  {start:0,end:16,label:'Raw fibre'},
+  {start:16,end:32,label:'Twist into thread'},
+  {start:32,end:48,label:'Warp meets weft'},
+  {start:48,end:64,label:'Cloth holds time'},
 ];
 const tracks:WovenRibbonTrack[]=[
   {id:'captions',label:'English descriptions',color:'#5f7f86',cues:chapters.map(c=>({...c,label:'Description cue'}))},
