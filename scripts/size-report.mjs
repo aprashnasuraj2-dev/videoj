@@ -21,7 +21,7 @@ const joinSources = paths => Buffer.concat(paths.flatMap(path => [
 ]));
 
 const authoredCssFiles=['src/video/dhago.css'];
-const authoredBehaviorFiles=['src/create-player.ts','src/video/skin.ts','src/video/living-loom.ts','src/video/skin.html'];
+const authoredBehaviorFiles=['src/create-player.ts','src/video/skin.ts','src/video/living-loom.ts','src/video/stream-history.ts','src/video/metadata-lanes.ts','src/video/skin.html'];
 const authoredFiles=[...authoredCssFiles,...authoredBehaviorFiles];
 const portablePayload=joinSources(authoredFiles);
 const cssPayload=joinSources(authoredCssFiles);

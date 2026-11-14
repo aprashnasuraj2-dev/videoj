@@ -147,6 +147,32 @@ Contrast remains the host's responsibility. A token combination can be syntactic
 - `surface` — `warm`, `dark`, or `minimal`.
 - `mediaKind` — `video` or `audio`.
 - `weave` — optional precomputed DHAGO weave metadata from authored media.
+- `metadataTracks` — optional explicit speaker/sponsor/custom cue lanes. DHAGO never infers these categories when absent.
+
+### Metadata weft example
+
+```ts
+createDhagoPlayer({
+  source: '/film.mp4',
+  chapters: '/chapters.vtt',
+  captions: '/captions.vtt',
+  metadataTracks: [{
+    id: 'speaker',
+    label: 'Speakers',
+    kind: 'speaker',
+    cues: [
+      { start: 0, end: 18, label: 'Host' },
+      { start: 18, end: 42, label: 'Guest' },
+    ],
+  }],
+});
+```
+
+Native chapters and caption tracks can become visual lanes automatically. Speaker, sponsor and custom lanes appear only when the host supplies them.
+
+### Stream-history telemetry
+
+When the browser/engine exposes it, DHAGO records decoded video dimensions as thread thickness, real `waiting`/`stalled` interruptions as slack thread, and `getVideoPlaybackQuality()` dropped-frame deltas as missed stitches. Engines that do not expose a metric simply omit that layer; no bitrate, rendition switch or dropped frame is inferred.
 
 ## Accessibility contract
 

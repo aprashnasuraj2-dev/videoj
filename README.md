@@ -1,12 +1,12 @@
 # DHAGO — Time, woven
 
-Reusable Video.js v10 HTML skin with a woven chapter ribbon, visible control shelf, captions and speed settings. The preview includes an original 64-second motion study with quiet synthesized ambient audio.
+Reusable Video.js v10 HTML skin with a woven chapter ribbon, visible control shelf, captions and speed settings. The ribbon can also encode exposed rendition changes, real buffering interruptions and dropped-frame counters as an honest viewing history. The preview includes an original 64-second motion study with quiet synthesized ambient audio.
 
-[Public collection](https://creative.aafnaipatro.com/) · [Annotated film journal](https://creative.aafnaipatro.com/journal.html) · [Install in under a minute](INSTALL.md)
+[Public collection](https://creative.aafnaipatro.com/) · [Annotated film journal](https://creative.aafnaipatro.com/journal.html) · [Reusable ribbon proof](https://creative.aafnaipatro.com/ribbon.html) · [Portable Stress Lab](STRESS-LAB.md) · [Install in under a minute](INSTALL.md)
 
 Requires Node 24 and npm. Run `npm ci`, `npm run dev`; validate with `npm run typecheck` and `npm run build`. Serve `dist/` over HTTPS. For browser checks run `npx playwright install --with-deps chromium`, `npm run build`, then `npm test`. Tests exercise the production build through Vite preview. Set `DHAGO_LIVE_URL` to run appropriate checks against a published origin; keep fault-injection cases in the test environment.
 
-See [`INSTALL.md`](INSTALL.md) for minimal HTML/Vite and React mounts. Import `createDhagoPlayer` from `src/create-player.ts` through a compatible TypeScript/Vite build. Append its returned element to your mount. Supply `source`, optional `poster`, `chapters`, `captions`, and `surface` (`warm`, `dark`, `minimal`). A public `playbackId` selects the version-matched Mux adapter. Skin code imports nothing from the preview application.
+See [`INSTALL.md`](INSTALL.md) for minimal HTML/Vite and React mounts. `src/ribbon/ribbon.ts` is a host-neutral timeline component, while `src/stress-lab/harness.ts` packages the edge-state fixtures behind a one-adapter contract. Import `createDhagoPlayer` from `src/create-player.ts` through a compatible TypeScript/Vite build. Append its returned element to your mount. Supply `source`, optional `poster`, `chapters`, `captions`, and `surface` (`warm`, `dark`, `minimal`). A public `playbackId` selects the version-matched Mux adapter. Skin code imports nothing from the preview application.
 
 Set `--media-accent-color`, `--media-accent-text-color`, `--media-border-radius` and the documented `--dhago-*` host tokens on the mount for a host treatment. `journal.html` demonstrates Ink with gold `#e8c078` and dark accent text `#171918`, on shelf `#202321`; that accent/shelf pair is approximately 9.25:1. The same accent on a white shelf is a counterexample: it does not provide adequate focus contrast. Test the actual combinations you ship.
 

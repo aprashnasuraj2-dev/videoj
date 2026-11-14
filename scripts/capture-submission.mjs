@@ -283,6 +283,13 @@ async function captureRelease(browser) {
   await page.locator('#lab-case-list [data-case=error]').click();
   await page.locator('#lab-player .dhago-retry').waitFor({ timeout: 20_000 });
   await photo(page, 'stress-lab-controlled-404.png', { fullPage: true });
+  await page.goto(new URL('stress.html?case=layers', origin).href);
+  await page.locator('.dhago-metadata-lane[data-kind="speaker"]').waitFor();
+  await photo(page, 'layered-weft.png', { fullPage: true });
+
+  await page.goto(new URL('ribbon.html', origin).href);
+  await page.locator('.woven-time-ribbon').first().waitFor();
+  await photo(page, 'ribbon-component.png', { fullPage: true });
 
   for (const [size, label] of [[768, 'tablet'], [375, 'hero-mobile']]) {
     await page.setViewportSize({ width: size, height: 900 });

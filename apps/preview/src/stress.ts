@@ -1,4 +1,4 @@
-import { createDhagoPlayer } from '@/create-player';
+import { createDhagoPlayer, type DhagoMetadataTrack } from '@/create-player';
 import { chapterVtt, denseChapters, normalizeChapterDrafts, type ChapterDraft } from '@/chapter-fixtures';
 import './stress.css';
 import { portableStressFixtures } from '@/stress-lab/harness';
@@ -7,11 +7,19 @@ type Kind = 'original'|'dhaka'|'pashmina'|'sheep'|'loom'|'broken';
 type CueMode = 'four'|'none'|'dense'|'invalid'|'uneven'|'intl'|'late';
 type Case = {
   id:string; name:string; category:string; type:'Real playback'|'Controlled fixture'|'Manual verification';
-  description:string; source:Kind; cues?:CueMode; captions?:'none'|'multi'|'long';
+  description:string; source:Kind; cues?:CueMode; captions?:'none'|'multi'|'long'; metadata?:'layered';
   poster?:'missing'|'normal'; width?:string; manual:string;
 };
 const ORIGINAL='./media/studies-in-thread.mp4';
 const BASE_POSTER='./media/poster.webp';
+const layeredMetadata:DhagoMetadataTrack[]=[
+  {id:'speaker',label:'Speaker changes (fixture)',kind:'speaker',color:'#9a713c',cues:[
+    {start:0,end:20,label:'Speaker A'},{start:20,end:40,label:'Speaker B'},{start:40,end:64,label:'Speaker A'},
+  ]},
+  {id:'sponsor',label:'Sponsor segment (fixture)',kind:'sponsor',color:'#7c6a89',cues:[
+    {start:24,end:32,label:'Sponsor segment'},
+  ]},
+];
 const mediaSources:Record<Kind,{src:string;credit:string;creditUrl:string;license:string}>={
   original:{src:ORIGINAL,credit:'Original DHAGO motion study · created for the competition',creditUrl:'https://github.com/aprashnasuraj2-dev/videoj',license:'Apache-2.0 source / original film'},
   dhaka:{src:'https://upload.wikimedia.org/wikipedia/commons/0/0a/Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm',
@@ -38,6 +46,7 @@ const cases:Case[]=[
   {id:'late',name:'The late arrival',category:'Asynchronous chapter data',type:'Controlled fixture',description:'Playback begins with no chapters. After a four-second controlled delay the VTT chapter track is inserted.',source:'dhaka',cues:'late',manual:'Start playback promptly. Observe the chapter ribbon and title as the metadata arrives. This is a scripted late-load fixture.'},
   {id:'nochapters',name:'Empty loom',category:'No chapter file',type:'Real playback',description:'No chapter track attached; seek and clocks must still work with a linear timeline.',source:'original',cues:'none',manual:'Check the chapter title is absent and keyboard seeking still works.'},
   {id:'captions',name:'Many voices',category:'Caption-language density',type:'Controlled fixture',description:'Two generated caption tracks, including a deliberately long readable caption. The controls must avoid misleading empty selections.',source:'original',cues:'four',captions:'multi',manual:'Open Settings, switch caption language and inspect the long cue against the control shelf.'},
+  {id:'layers',name:'Layered weft',category:'Speaker / captions / sponsor metadata',type:'Controlled fixture',description:'The real film is paired with explicitly labeled fixture metadata to prove the ribbon can layer speaker and sponsor intervals without pretending those facts belong to the film.',source:'original',cues:'four',metadata:'layered',manual:'Inspect the separate colored weft lanes. Speaker and sponsor lanes are controlled test metadata; chapters and captions remain real/native tracks.'},
   {id:'nocaptions',name:'Silent labels',category:'Caption absence',type:'Real playback',description:'The film has no caption tracks. Unsupported caption choices must not be offered as available.',source:'pashmina',cues:'none',captions:'none',manual:'Inspect captions availability and the Settings menu; there must be no phantom language.'},
   {id:'audio',name:'Sound of the loom',category:'Audio-only media',type:'Real playback',description:'An actual Ogg audio recording of a historic mechanical loom. Audio is shown in a compact textile panel, not an empty video poster.',source:'loom',cues:'none',manual:'Play/pause, mute, seek and change speed. This recording is from Germany, not Nepal.'},
   {id:'poster',name:'Missing cover',category:'Failed poster request',type:'Controlled fixture',description:'The source is valid, but the poster URL deliberately returns 404. Playback must remain available.',source:'original',cues:'four',poster:'missing',manual:'Inspect the initial screen before playback; verify a broken image icon never blocks controls.'},
@@ -163,6 +172,7 @@ function render(scenario:Case){
     poster:scenario.poster==='missing'?'./media/nonexistent-cover.webp':scenario.source==='original'?BASE_POSTER:undefined,
     fallbackUrl:scenario.source==='broken'?location.origin+location.pathname+'?case=original':undefined,
     mediaKind:scenario.source==='loom'?'audio':'video',
+    metadataTracks:scenario.metadata==='layered'?layeredMetadata:undefined,
     surface:$('#lab-surface') instanceof HTMLSelectElement?($<HTMLSelectElement>('#lab-surface').value as 'warm'|'dark'|'minimal'):'warm',
   });
   const container=player.querySelector<HTMLElement>('media-container')!;

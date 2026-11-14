@@ -28,7 +28,9 @@ const md=`# DHAGO — final judge-facing release evidence
 **Live:** https://creative.aafnaipatro.com/  
 **Studio Journal:** https://creative.aafnaipatro.com/journal.html  
 **Repository:** https://github.com/aprashnasuraj2-dev/videoj  
-**Public media:** Mux playback ID \`Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw\`
+**Public media:** Mux playback ID \`Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw\`  
+**Reusable ribbon proof:** https://creative.aafnaipatro.com/ribbon.html  
+**Portable Stress Lab:** https://creative.aafnaipatro.com/stress.html
 
 ## Size and performance
 
@@ -56,6 +58,14 @@ ${environments}
 
 Automated WebKit is evidence about the WebKit engine, not a claim that Safari on macOS/iOS was physically tested.
 
+## Engineering differentiators
+
+- **Viewing history becomes cloth:** decoded rendition dimensions change strand thickness; real waiting/stalled events leave slack spans; exposed dropped-frame counters leave missed stitches. Unsupported telemetry renders nothing.
+- **Warp + weft carry data:** time remains the warp. Native chapters/caption tracks and explicitly supplied speaker/sponsor/custom intervals become separate weft lanes.
+- **Nonvisual chapter map:** every chapter jump exposes its ordinal, name, start and end time to assistive technology; the visual ribbon is not the only way to understand structure.
+- **Reusable component:** \`src/ribbon/ribbon.ts\` has no DHAGO or Video.js import and is demonstrated under default and minimal host treatments.
+- **Portable Stress Lab:** \`src/stress-lab/harness.ts\` accepts a skin adapter and supplies malformed cues, a real 240px host, missing media and actual forced-colors detection.
+
 ## External validation
 
 **Genuine outside human validation: NOT OBTAINED.** No testimonial, star, issue or embed test is manufactured for the submission.
@@ -74,6 +84,8 @@ Use these exact files from the \`public-smoke-evidence\` artifact:
 8. \`submission/final-release-evidence.md\` — this tested-environment and release summary.
 9. \`submission/capture-evidence.json\` — browser/media-state provenance.
 10. \`submission/lighthouse-mobile.json\` — raw Lighthouse result.
+
+Supplemental ecosystem proof: \`submission/layered-weft.png\` and \`submission/ribbon-component.png\`.
 
 The longer \`submission/proof-demo.mp4\` remains available as supporting evidence but should not lead the submission.
 

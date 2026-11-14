@@ -21,3 +21,11 @@ test('portable Stress Lab advertises its adapter cases without claiming forced c
   await expect(page.locator('#portable-cases')).toContainText('240px container');
   await expect(page.locator('#portable-cases')).toContainText('Forced colors');
 });
+
+test('layered-weft fixture renders supplied speaker and sponsor tracks without calling them film facts',async({page})=>{
+  await page.goto('/stress.html?case=layers');
+  await expect(page.locator('#case-badge')).toHaveText('CONTROLLED FIXTURE');
+  await expect(page.locator('#case-description')).toContainText('fixture metadata');
+  await expect.poll(()=>page.locator('.dhago-metadata-lane[data-kind="speaker"]').count()).toBeGreaterThan(0);
+  await expect.poll(()=>page.locator('.dhago-metadata-lane[data-kind="sponsor"]').count()).toBeGreaterThan(0);
+});
