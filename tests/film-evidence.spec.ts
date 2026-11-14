@@ -1,0 +1,36 @@
+import { test, expect } from '@playwright/test';
+test.use({ viewport:{width:1440,height:900},video:{mode:'on',size:{width:1280,height:800}},trace:'off' });
+
+test('record genuine candidate woven-player demo and final-source screenshots',async({page},info)=>{
+  test.setTimeout(90_000);
+  await page.goto('/?film=fibre&local',{waitUntil:'domcontentloaded'});
+  const video=page.locator('video');
+  await expect(video).toHaveAttribute('src',/from-fibre-to-fabric\.mp4$/);
+  await expect.poll(()=>video.evaluate((m:HTMLVideoElement)=>m.readyState)).toBeGreaterThan(1);
+  await page.locator('media-container').screenshot({path:info.outputPath('DHAGO_fibre_cover_player.png')});
+  await page.locator('media-play-button').click();
+  await expect.poll(()=>video.evaluate((m:HTMLVideoElement)=>m.currentTime),{timeout:18000}).toBeGreaterThan(2);
+  await page.locator('media-play-button').click();
+  const slider=page.locator('media-time-slider');
+  const bbox=await slider.boundingBox();
+  expect(bbox).not.toBeNull();
+  await page.mouse.move(bbox!.x+bbox!.width*.25,bbox!.y+bbox!.height*.5);
+  await page.mouse.down();
+  await page.mouse.move(bbox!.x+bbox!.width*.57,bbox!.y+bbox!.height*.5,{steps:12});
+  await expect.poll(()=>video.evaluate((m:HTMLVideoElement)=>m.currentTime)).toBeGreaterThan(30);
+  await slider.screenshot({path:info.outputPath('DHAGO_fibre_real_drag.png')});
+  await page.mouse.up();
+  await expect(page.locator('.dhago-chapter-name')).toHaveText('Warp meets weft');
+  await page.locator('media-captions-button').click();
+  await page.locator('media-play-button').click();
+  await expect.poll(()=>video.evaluate((m:HTMLVideoElement)=>m.currentTime)).toBeGreaterThan(38);
+  await page.locator('media-play-button').click();
+  await page.locator('.media-settings-button').click();
+  await page.screenshot({path:info.outputPath('DHAGO_fibre_captions_settings.png')});
+  await page.keyboard.press('Escape');
+  await page.locator('[data-seek="48"]').click();
+  await expect(page.locator('.dhago-chapter-name')).toHaveText('Cloth holds time');
+  await page.setViewportSize({width:375,height:840});
+  await expect(page.locator('media-fullscreen-button')).toBeVisible();
+  await page.screenshot({path:info.outputPath('DHAGO_fibre_375px_browser_emulation.png'),fullPage:true});
+});
