@@ -4,7 +4,7 @@ const media=JSON.parse(readFileSync(new URL('../apps/preview/src/media.json',imp
 
 test('Mux source really plays, seeks and carries local chapter and caption cues',async({page},info)=>{
  test.setTimeout(90_000);
- test.skip(process.env.DHAGO_VERIFY_LEGACY_MUX!=='1' || !media.playbackId,'Legacy Mux asset is not the final film; run only as an explicit historical integration check');
+ test.skip(!media.playbackId,'Canonical fibre-film Mux playback is not configured yet');
  const requests:string[]=[];
  page.on('request',r=>{if(/stream\.mux\.com|\.m4s|\.ts\?/.test(r.url()))requests.push(r.url());});
  await page.goto('/');
