@@ -178,3 +178,9 @@ jobs:
             test-results/
             playwright-report/
           retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: dhago-submission-package
+          path: test-results/submission/package/
+          retention-days: 30
