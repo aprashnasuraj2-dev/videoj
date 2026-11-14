@@ -1,20 +1,15 @@
 import { createDhagoPlayer, type DhagoWeave } from '@/create-player';
 import sampledWeave from './weave-studies.json';
-import media from './media.json';
 import './demo.css';
 import './journal.css';
 
-const fallback = new URL(location.href);
-fallback.searchParams.set('local', '');
 const player = createDhagoPlayer({
-  source: './media/studies-in-thread.mp4',
-  compatibilitySource: './media/studies-in-thread.webm',
+  source: './media/from-fibre-to-fabric.mp4',
+  compatibilitySource: './media/from-fibre-to-fabric.webm',
   weave: sampledWeave as DhagoWeave,
-  playbackId: new URLSearchParams(location.search).has('local') ? undefined : media.playbackId ?? undefined,
-  fallbackUrl: fallback.href,
-  poster: './media/poster.webp',
-  chapters: './media/chapters.vtt',
-  captions: './media/captions.vtt',
+  poster: './media/from-fibre-to-fabric-poster.webp',
+  chapters: './media/from-fibre-to-fabric-chapters.vtt',
+  captions: './media/from-fibre-to-fabric-captions.vtt',
   surface: 'dark',
 });
 document.querySelector('#journal-player')!.append(player);
