@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="description" content="DHAGO stress lab: live player scenarios for chapters, media errors, audio-only, international text, dense timelines and constrained layouts."/>
+<meta name="description" content="DHAGO Stress Lab: a browser-side resilience laboratory for Video.js and compatible media skins, plus DHAGO edge-state specimens."/>
 <title>DHAGO — The Loom Under Pressure</title>
 </head>
 <body>
@@ -12,7 +12,7 @@
 <section class="lab-intro">
   <p class="eyebrow">A working specimen / Video.js v10</p>
   <h1>The loom, <em>under pressure.</em></h1>
-  <p>Fibre becomes thread; thread becomes cloth. This is a set of real and controlled edge cases, not a second polished film. Switch a case to observe how the same controls behave with imperfect data, new media and constrained spaces.</p>
+  <p>Fibre becomes thread; thread becomes cloth. The gallery below keeps DHAGO honest under imperfect data and constrained spaces. The portable instrument after it can run the same resilience ideas against another compatible player directly in the browser.</p>
 </section>
 <div class="lab-layout">
   <aside class="lab-cases" aria-labelledby="cases-title">
@@ -48,9 +48,64 @@
     <div class="lab-manual" id="lab-manual"></div>
   </section>
 </div>
-<section class="lab-context"><p class="eyebrow">Portable tool / bring your own skin</p><h2>Stress Lab is an adapter, not a DHAGO privilege.</h2><p>The repository exports a host-neutral harness for malformed cues, a real 240px container, missing media and actual forced-colors detection. Skin authors provide one mount adapter; the harness supplies the hostile conditions.</p><p><a href="https://github.com/aprashnasuraj2-dev/videoj/blob/main/STRESS-LAB.md">Run Stress Lab against your skin ↗</a></p><p id="portable-cases" class="lab-portable-cases"></p></section><section class="lab-context"><p class="eyebrow">What is demonstrated / what remains to be checked</p><h2>Tests should expose limitations, not hide them.</h2><p>Media decoding, live DVR, iOS native fullscreen, external casting, physical touch cancellation, real browser zoom and screen-reader behavior need genuine device/source conditions. A browser mock can model timeline geometry or induce an error, but cannot prove all of those capabilities.</p></section>
+
+<section class="portable-tool" id="portable-tool" aria-labelledby="portable-title">
+  <div class="portable-heading">
+    <div><p class="eyebrow">Open ecosystem tool / bring your own skin</p><h2 id="portable-title">Test your own player.</h2></div>
+    <p class="portable-privacy"><strong>Runs in your browser.</strong> Local adapter files are not uploaded by DHAGO Stress Lab.</p>
+  </div>
+  <div class="portable-grid">
+    <section class="portable-loader" aria-labelledby="loader-title">
+      <h3 id="loader-title">1 / Load an adapter</h3>
+      <p>Third-party code runs in a sandboxed, opaque-origin iframe. It cannot write arbitrary markup into this page. The built-in DHAGO adapter is the trusted reference specimen.</p>
+      <div class="portable-loader-actions">
+        <button type="button" id="portable-use-dhago">Use built-in DHAGO</button>
+        <label for="portable-adapter-url">ESM adapter URL</label>
+        <div class="portable-inline"><input id="portable-adapter-url" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/my-skin-adapter.mjs"/><button type="button" id="portable-load-url">Load URL</button></div>
+        <label for="portable-adapter-file">Local adapter file <span>.js / .mjs</span></label>
+        <input id="portable-adapter-file" type="file" accept=".js,.mjs,text/javascript,application/javascript"/>
+      </div>
+      <p class="portable-note">URL modules and every dependency they import must permit browser CORS. A blocked module is reported as <strong>NOT RUN</strong>, not as a skin failure. Local files execute only in the sandbox and are not sent to a backend.</p>
+      <output id="portable-loader-status" class="portable-loader-status" aria-live="polite">Preparing reference adapter…</output>
+    </section>
+
+    <section class="portable-runner" aria-labelledby="runner-title">
+      <h3 id="runner-title">2 / Run resilience cases</h3>
+      <label for="portable-case">Case</label>
+      <select id="portable-case"></select>
+      <div class="portable-run-actions">
+        <button type="button" id="portable-run-case">Run current case</button>
+        <button type="button" id="portable-run-suite">Run compatible suite</button>
+      </div>
+      <p class="portable-note">Cases that require a real environment stay honest: forced colors and reduced motion are detected with media queries; real 400% zoom and live/DVR remain manual unless the environment genuinely supplies them.</p>
+    </section>
+  </div>
+
+  <section class="portable-specimen" aria-labelledby="portable-specimen-title">
+    <div class="portable-specimen-head"><h3 id="portable-specimen-title">Isolated specimen</h3><span id="portable-summary">No portable run yet.</span></div>
+    <div id="portable-direct-host" class="portable-host" aria-label="Built-in DHAGO portable test host"></div>
+    <div id="portable-sandbox-host" class="portable-host" aria-label="Sandboxed external adapter test host"></div>
+  </section>
+
+  <section class="portable-results" aria-labelledby="portable-results-title">
+    <div class="portable-results-head"><div><h3 id="portable-results-title">3 / Result matrix</h3><p>Structured assertions keep adapter-loading errors separate from skin failures.</p></div>
+      <div class="portable-export">
+        <button type="button" id="portable-copy-json">Copy JSON</button>
+        <button type="button" id="portable-download-json">Download JSON</button>
+        <button type="button" id="portable-copy-markdown">Copy Markdown</button>
+        <button type="button" id="portable-clear-results">Clear</button>
+      </div>
+    </div>
+    <div class="portable-table-wrap"><table><thead><tr><th scope="col">Case</th><th scope="col">Status</th><th scope="col">Main observation</th></tr></thead><tbody id="portable-result-body"></tbody></table></div>
+    <p class="portable-doc-link"><a href="https://github.com/aprashnasuraj2-dev/videoj/blob/main/STRESS-LAB.md">Adapter contract, security model and fixture documentation ↗</a></p>
+    <p id="portable-cases" class="lab-portable-cases"></p>
+  </section>
+</section>
+
+<section class="lab-context"><p class="eyebrow">What is demonstrated / what remains to be checked</p><h2>Tests should expose limitations, not hide them.</h2><p>Media decoding, live DVR, iOS native fullscreen, external casting, physical touch cancellation, real browser zoom and screen-reader behavior need genuine device/source conditions. A browser fixture can model geometry or induce an error, but it cannot manufacture those proofs.</p></section>
 </main>
 <footer class="lab-footer">DHAGO / Time, woven · <a href="./">Return to the original skin</a></footer>
 <script type="module" src="/src/stress.ts"></script>
+<script type="module" src="/src/stress-loader.ts"></script>
 </body>
 </html>
