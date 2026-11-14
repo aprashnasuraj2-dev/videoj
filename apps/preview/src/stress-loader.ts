@@ -54,6 +54,21 @@ const render=()=>{
   q('#portable-summary').textContent=results.length?'Latest run: '+c('pass')+' pass · '+c('fail')+' fail · '+c('warning')+' warning · '+c('not-run')+' not run':'No portable run yet.';
 };
 const setState=(message:string,state='idle')=>{q('#portable-loader-status').textContent=message;q('#portable-loader-status').setAttribute('data-state',state)};
+const recordLoadNotRun=(message:string)=>{
+  const result:StressResult={
+    caseId:'adapter-load',
+    caseLabel:'Adapter load',
+    adapterName:'Not loaded',
+    status:'not-run',
+    assertions:[{id:'adapter-load',label:'Adapter could be loaded safely',status:'not-run',expected:'loadable module contract',observed:'not run',evidence:message}],
+    environment:{userAgent:navigator.userAgent,viewport:{width:innerWidth,height:innerHeight},devicePixelRatio:devicePixelRatio||1,forcedColors:matchMedia('(forced-colors: active)').matches,reducedMotion:matchMedia('(prefers-reduced-motion: reduce)').matches,online:navigator.onLine},
+    durationMs:0,
+    notes:[],
+  };
+  results.push(result);
+  render();
+  setState('NOT RUN — '+message,'not-run');
+};
 const download=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify({generatedAt:new Date().toISOString(),userAgent:navigator.userAgent,results},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='skin-stress-report.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),0)};
 
 type Descriptor={mode:'url'|'source';url?:string;source?:string};
@@ -85,7 +100,7 @@ if(document.querySelector('#portable-tool')){
   const runOne=async(id:PortableStressCaseId)=>{setState('Running '+id+'…','loading');try{const r=mode==='builtin'?(await direct.run(q('#portable-direct-host'),id)).result:await sandbox.run(id);results.push(r);render();setState(r.caseLabel+': '+r.status.toUpperCase(),r.status);return r}catch(e){setState(e instanceof Error?e.message:String(e),'error');throw e}};
   const activateSandbox=async()=>{await direct.destroy();q('#portable-direct-host').replaceChildren();mode='sandbox'};
   q('#portable-use-dhago').addEventListener('click',async()=>{sandbox.destroy();q('#portable-sandbox-host').replaceChildren();mode='builtin';await direct.destroy();q('#portable-direct-host').replaceChildren();setState('Built-in DHAGO reference adapter active.','ready')});
-  const loadUrlAdapter=async(url:string,label?:string)=>{if(!url){setState('Enter an ESM adapter URL.','error');return}await activateSandbox();setState('Loading '+(label??'URL adapter')+' in isolated sandbox…','loading');try{const r=await sandbox.load({mode:'url',url});setState('Loaded: '+String(r.adapterName||label||url),'ready')}catch(e){setState(e instanceof Error?e.message:String(e),'error')}};
+  const loadUrlAdapter=async(url:string,label?:string)=>{if(!url){setState('Enter an ESM adapter URL.','error');return}await activateSandbox();setState('Loading '+(label??'URL adapter')+' in isolated sandbox…','loading');try{const r=await sandbox.load({mode:'url',url});setState('Loaded: '+String(r.adapterName||label||url),'ready')}catch(e){recordLoadNotRun(e instanceof Error?e.message:String(e))}};
   q('#portable-load-url').addEventListener('click',()=>void loadUrlAdapter(q<HTMLInputElement>('#portable-adapter-url').value.trim()));
   q('#portable-load-example').addEventListener('click',async()=>{
     const url=new URL('./stress-example-adapter.mjs',location.href).href;
@@ -99,10 +114,10 @@ if(document.querySelector('#portable-tool')){
       const result=await sandbox.load({mode:'source',source});
       setState('Loaded: '+String(result.adapterName||'public example adapter'),'ready');
     }catch(error){
-      setState(error instanceof Error?error.message:String(error),'error');
+      recordLoadNotRun(error instanceof Error?error.message:String(error));
     }
   });
-  q<HTMLInputElement>('#portable-adapter-file').addEventListener('change',async e=>{const file=(e.currentTarget as HTMLInputElement).files?.[0];if(!file)return;if(!/\.(m?js)$/i.test(file.name)){setState('Local adapter must be .js or .mjs.','error');return}await activateSandbox();setState('Loading local adapter in isolated sandbox…','loading');try{const r=await sandbox.load({mode:'source',source:await file.text()});setState('Loaded locally: '+String(r.adapterName||file.name)+'. File was not uploaded.','ready')}catch(err){setState(err instanceof Error?err.message:String(err),'error')}});
+  q<HTMLInputElement>('#portable-adapter-file').addEventListener('change',async e=>{const file=(e.currentTarget as HTMLInputElement).files?.[0];if(!file)return;if(!/\.(m?js)$/i.test(file.name)){setState('Local adapter must be .js or .mjs.','error');return}await activateSandbox();setState('Loading local adapter in isolated sandbox…','loading');try{const r=await sandbox.load({mode:'source',source:await file.text()});setState('Loaded locally: '+String(r.adapterName||file.name)+'. File was not uploaded.','ready')}catch(err){recordLoadNotRun(err instanceof Error?err.message:String(err))}});
   q('#portable-run-case').addEventListener('click',()=>void runOne(q<HTMLSelectElement>('#portable-case').value as PortableStressCaseId));
   q('#portable-run-suite').addEventListener('click',async()=>{for(const f of portableStressFixtures.filter(x=>!x.manualOnly))await runOne(f.id);setState('Compatible suite finished.','ready')});
   q('#portable-copy-json').addEventListener('click',()=>void navigator.clipboard.writeText(JSON.stringify({generatedAt:new Date().toISOString(),userAgent:navigator.userAgent,results},null,2)).then(()=>setState('JSON copied.','ready')));
