@@ -715,27 +715,27 @@
 }
 
 
-/* Documentary choreography: the 64-second film and the woven control share one
+/* Reversible media choreography: the 64-second film and the woven control share one
    truthful clock. These four states are derived from currentTime / duration
    in living-loom.ts. They only change textile density; they never move the
    seek thumb, fabricate progress, or create an extra interaction target. */
-.dhago[data-weave-stage="raw-fibre"] { --dhago-weave-density: 9px; }
-.dhago[data-weave-stage="twist-into-thread"] { --dhago-weave-density: 7px; }
-.dhago[data-weave-stage="warp-meets-weft"] { --dhago-weave-density: 5px; }
-.dhago[data-weave-stage="cloth-holds-time"] { --dhago-weave-density: 3px; }
+.dhago[data-weave-stage="thread-of-light"] { --dhago-weave-density: 9px; }
+.dhago[data-weave-stage="shape-of-quiet"] { --dhago-weave-density: 7px; }
+.dhago[data-weave-stage="shadows-gather"] { --dhago-weave-density: 5px; }
+.dhago[data-weave-stage="coming-home"] { --dhago-weave-density: 3px; }
 
-.dhago[data-weave-stage="raw-fibre"] .dhago-chapter-summary::before {
+.dhago[data-weave-stage="thread-of-light"] .dhago-chapter-summary::before {
   background: repeating-linear-gradient(90deg, var(--dhago-rust) 0 2px, transparent 2px 8px);
 }
-.dhago[data-weave-stage="twist-into-thread"] .dhago-chapter-summary::before {
+.dhago[data-weave-stage="shape-of-quiet"] .dhago-chapter-summary::before {
   background: repeating-linear-gradient(110deg, var(--dhago-rust) 0 3px, var(--dhago-ink) 3px 4px, transparent 4px 7px);
 }
-.dhago[data-weave-stage="warp-meets-weft"] .dhago-chapter-summary::before {
+.dhago[data-weave-stage="shadows-gather"] .dhago-chapter-summary::before {
   background:
     repeating-linear-gradient(90deg, var(--dhago-rust) 0 3px, transparent 3px 6px),
     repeating-linear-gradient(0deg, var(--dhago-ink) 0 1px, transparent 1px 3px);
 }
-.dhago[data-weave-stage="cloth-holds-time"] .dhago-chapter-summary::before {
+.dhago[data-weave-stage="coming-home"] .dhago-chapter-summary::before {
   background:
     repeating-linear-gradient(90deg, var(--dhago-rust) 0 4px, var(--dhago-ink) 4px 5px),
     repeating-linear-gradient(0deg, transparent 0 2px, var(--dhago-border) 2px 3px);

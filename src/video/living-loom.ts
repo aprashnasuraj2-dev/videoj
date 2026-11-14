@@ -1,8 +1,8 @@
 const WEAVE_STAGES = [
-  'raw-fibre',
-  'twist-into-thread',
-  'warp-meets-weft',
-  'cloth-holds-time',
+  'thread-of-light',
+  'shape-of-quiet',
+  'shadows-gather',
+  'coming-home',
 ] as const;
 
 /** Render truthful media state without taking ownership of the Video.js controls. */

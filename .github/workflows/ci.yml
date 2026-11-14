@@ -145,7 +145,7 @@ jobs:
         env:
           DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
           DHAGO_RELEASE_SHA: ${{ github.sha }}
-          DHAGO_EXPECTED_MEDIA_PATH: media/from-fibre-to-fabric.mp4
+          DHAGO_EXPECTED_MEDIA_PATH: media/studies-in-thread.mp4
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           node scripts/capture-submission.mjs test-results/submission
