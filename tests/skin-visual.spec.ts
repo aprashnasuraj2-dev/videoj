@@ -66,3 +66,15 @@ test('no motion preference leaves the controls stable and real focus still visib
  }
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('public homepage keeps the focus on the skin rather than implementation details',async({page})=>{
+ await page.goto('/?local');
+ const visible=await page.locator('body').innerText();
+ for(const phrase of ['Install','Engineering Tools','Portable Stress Lab','Reusable ribbon API','Apache-2.0','GitHub','repository']){
+  expect(visible).not.toContain(phrase);
+ }
+ await expect(page.locator('a[href*="github.com"]')).toHaveCount(0);
+ await expect(page.locator('a[href="./journal.html"]').first()).toBeVisible();
+ await expect(page.locator('a[href="./stress.html?case=original"]').first()).toBeVisible();
+ await expect(page.locator('a[href="./ribbon.html"]').first()).toBeVisible();
+});

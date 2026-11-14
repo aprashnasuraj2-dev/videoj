@@ -12,35 +12,33 @@ const p=perf.portableAuthoredLayer;
 
 const environments=`| Environment | Playback | Seek | Chapters | Captions | Fullscreen | Accessibility | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Google Chrome desktop, GitHub-hosted Ubuntu, exact public release | PASS | PASS | PASS | PASS | PASS | LIMITED — keyboard/focus semantics automated; no screen reader | PASS |
-| Firefox desktop, Playwright/Linux, verified candidate | PASS | PASS | PASS | PASS | PASS | LIMITED — keyboard/focus semantics automated; no screen reader | PASS |
-| WebKit engine, Playwright/Linux, verified candidate | PASS | PASS | PASS | PASS | LIMITED — fullscreen not asserted in WebKit proof | LIMITED — engine proof only; this is not Safari | LIMITED |
-| Safari desktop on macOS | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED |
+| Chrome desktop, automated public-release check | PASS | PASS | PASS | PASS | PASS | LIMITED — keyboard/focus checks; no screen reader | PASS |
+| Firefox desktop, automated browser check | PASS | PASS | PASS | PASS | PASS | LIMITED — keyboard/focus checks; no screen reader | PASS |
+| WebKit engine, automated browser check | PASS | PASS | PASS | PASS | LIMITED — fullscreen not asserted in this check | LIMITED — engine evidence only; not physical Safari | LIMITED |
+| Safari on macOS | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED |
 | Android Chrome on a physical phone | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED |
 | iPhone Safari on a physical device | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED |
-| VoiceOver or NVDA real assistive-technology pass | — | — | — | — | — | NOT TESTED | NOT TESTED |`;
+| VoiceOver or NVDA | — | — | — | — | — | NOT TESTED | NOT TESTED |`;
 
-const md=`# DHAGO — final judge-facing release evidence
+const md=`# DHAGO — competition evidence
 
-**Narrative:** A visually distinctive woven-time interface that is also a portable, accessible, small, production-tested Video.js v10 skin.
+**Positioning:** DHAGO's strength is the player itself: a distinctive woven-time concept resolved across real playback, interaction, responsive layouts and accessibility states.
 
-**Final Git SHA:** \`${sha}\`  
-**Live:** https://creative.aafnaipatro.com/  
+**Live player:** https://creative.aafnaipatro.com/  
+**Mux playback:** https://creative.aafnaipatro.com/?mux  
 **Studio Journal:** https://creative.aafnaipatro.com/journal.html  
-**Source package:** exact Apache-2.0 source archive from the final handoff  
-**Canonical 64-second original film:** \`media/studies-in-thread.mp4\` with VP9/WebM compatibility rendition  
-**Reusable ribbon proof:** https://creative.aafnaipatro.com/ribbon.html  
-**Portable Stress Lab:** https://creative.aafnaipatro.com/stress.html
+**Timeline study:** https://creative.aafnaipatro.com/ribbon.html  
+**Edge studies:** https://creative.aafnaipatro.com/stress.html?case=original
 
-## Size and performance
+## Measured public-page results
 
 | Metric | Measured value |
 | --- | ---: |
-| DHAGO authored layer raw | ${kb(p.rawBytes)} |
-| DHAGO authored layer gzip | ${kb(p.gzipBytes)} |
-| DHAGO authored layer brotli | ${kb(p.brotliBytes)} |
-| Initial page requests observed by Lighthouse | ${l.requestCount} |
-| Initial page transfer observed by Lighthouse | ${kb(l.transferBytes)} |
+| Skin authored layer raw | ${kb(p.rawBytes)} |
+| Skin authored layer gzip | ${kb(p.gzipBytes)} |
+| Skin authored layer brotli | ${kb(p.brotliBytes)} |
+| Initial page requests | ${l.requestCount} |
+| Initial page transfer | ${kb(l.transferBytes)} |
 | Lighthouse mobile Performance | ${l.performance} |
 | Lighthouse mobile Accessibility | ${l.accessibility} |
 | Lighthouse mobile Best Practices | ${l.bestPractices} |
@@ -50,52 +48,53 @@ const md=`# DHAGO — final judge-facing release evidence
 | TBT | ${ms(l.tbtMs)} |
 | INP | ${ms(l.inpMs)} |
 
-**Size boundary:** authored DHAGO CSS, TypeScript and HTML template compressed as one stream. Video.js runtime/scaffold, demo application, film media and screenshots are excluded. Lighthouse page transfer is a separate end-to-end measurement.
+These measurements describe the tested public release. They are not claims about every device or network.
 
 ## Tested environments
 
 ${environments}
 
-Automated WebKit is evidence about the WebKit engine, not a claim that Safari on macOS/iOS was physically tested.
+Automated WebKit results are evidence about the engine, not a claim that Safari on macOS or iOS was physically tested.
 
-## Engineering differentiators
+## Craft and interaction strengths
 
-- **Viewing history becomes cloth:** decoded rendition dimensions change strand thickness; real waiting/stalled events leave slack spans; exposed dropped-frame counters leave missed stitches. Unsupported telemetry renders nothing.
-- **Warp + weft carry data:** time remains the warp. Native chapters/caption tracks and explicitly supplied speaker/sponsor/custom intervals become separate weft lanes.
-- **Nonvisual chapter map:** every chapter jump exposes its ordinal, name, start and end time to assistive technology; the visual ribbon is not the only way to understand structure.
-- **Reusable component:** \`src/ribbon/ribbon.ts\` has no DHAGO or Video.js import and is demonstrated under default and minimal host treatments.
-- **Portable Stress Lab:** \`src/stress-lab/harness.ts\` accepts a skin adapter and supplies malformed cues, a real 240px host, missing media and actual forced-colors detection.
+- **Woven time is functional, not decorative.** Chapter intervals, progress, the shuttle thumb and active chapter all respond to real media time.
+- **The metaphor reverses truthfully.** Seeking backward unwinds the visual state; pause, completion and replay remain synchronized with playback.
+- **The visual identity survives narrow layouts.** The chapter ribbon and essential controls remain bounded at mobile sizes, including the dedicated 240px edge study.
+- **Accessibility is part of the composition.** Visible focus, comfortable control targets, a solid control shelf, descriptive captions and reduced-motion behaviour are built into the visual treatment.
+- **Three appearances, one interaction model.** Linen, Ink and Paper change atmosphere without changing how viewers operate the player.
+- **The same skin works beyond the showcase.** The Studio Journal presents the player in an editorial context while preserving its interaction language.
 
-## External validation
+## Reuse and portability proof
 
-**Genuine outside human validation: NOT OBTAINED.** No testimonial, star, issue or embed test is manufactured for the submission.
+- **The player is not tied to the showcase page.** The same skin mount is used in more than one published context.
+- **The woven timeline stands on its own.** It can receive chapter geometry and playback state, drive seeking, and report active progress in a different host treatment.
+- **The edge-state instrument is reusable.** Another compatible player can be connected in the browser through a small adapter and exercised against the same resilience cases.
+- **Local adapter files stay local.** They are read by the browser and executed inside an isolated sandbox rather than uploaded to a DHAGO backend.
+- **Remote adapters are isolated too.** CORS-readable modules load inside an opaque-origin frame; load/contract failures are reported separately from actual player failures.
+- **Reports avoid leaking implementation input.** Exported result data omits adapter source text and local filesystem paths.
 
-## Manual Contra attachment set
+## Recommended attachment order
 
-Use these exact files from the \`public-smoke-evidence\` artifact:
+1. Active desktop player hero.
+2. Authentic 8-second play-to-seek interaction.
+3. Chapter 03 seek/caption state.
+4. Active mobile-width player.
+5. Ink and Paper variants.
+6. Studio Journal.
+7. Edge-state evidence as supporting material.
 
-1. \`submission/hero-desktop.png\` — strongest active-playback hero.
-2. \`submission/interaction-loop.mp4\` — 8-second playback → woven seek interaction.
-3. \`submission/finished-cloth.png\` — completed woven-time state.
-4. \`submission/hero-mobile.png\` — active real mobile-width capture.
-5. \`submission/stress-lab.png\` — edge-state Stress Lab.
-6. \`submission/install-example.png\` — installability proof from the Journal.
-7. \`submission/performance-evidence.md\` and \`submission/dhago-size.json\` — measured size/performance.
-8. \`submission/final-release-evidence.md\` — this tested-environment and release summary.
-9. \`submission/capture-evidence.json\` — browser/media-state provenance.
-10. \`submission/lighthouse-mobile.json\` — raw Lighthouse result.
-
-Supplemental ecosystem proof: \`submission/layered-weft.png\` and \`submission/ribbon-component.png\`.
-
-The longer \`submission/proof-demo.mp4\` remains available as supporting evidence but should not lead the submission.
+The longer proof recording and raw measurement files should remain supporting evidence rather than the opening impression.
 
 ## Visual design note
 
-Typography pairs a quiet system sans-serif for controls and metadata with a restrained serif display face in the surrounding presentation; the contrast separates instrument from story without imitating a museum label. The Linen palette uses bone, ink and rust because those values read as fibre, shadow and dyed thread while preserving control contrast. The ribbon geometry uses repeated warp/weft intervals, cue-derived joins and a conventional seek thumb: weaving changes the material language, not the mental model of playback. Chapter colour can be sampled offline from the authored film, but time geometry and interaction remain truthful Video.js states.
+The player pairs a quiet control typeface with a restrained editorial display voice around it. Linen uses bone, ink and rust tones that suggest fibre, shadow and dyed thread while keeping the controls clear. Repeated warp/weft intervals and cue-derived joins give the timeline its identity, while the conventional seek thumb keeps navigation immediately understandable.
 
-## Capture provenance
+## Evidence integrity
 
-Browser: ${capture.browser}. The interaction evidence uses genuine browser frames from the exact public release; no synthetic playback state is inserted.
+The screenshots and recordings in this evidence set come from genuine browser playback of the public release. No synthetic playback state is inserted.
+
+Release provenance and exact integrity records are retained separately from this judge-facing report. Capture browser: ${capture.browser}.
 `;
 writeFileSync(root+'/tested-environments.md',environments+'\n');
 writeFileSync(root+'/final-release-evidence.md',md);
