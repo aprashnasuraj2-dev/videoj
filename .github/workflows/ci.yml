@@ -135,6 +135,18 @@ jobs:
           }
           throw new Error('Dedicated public origin did not serve this exact release manifest.');
           JS
+      - name: Verify production Mux playback and live Studio Journal
+        env:
+          DHAGO_LIVE_URL: https://creative.aafnaipatro.com
+        run: npx playwright test tests/live.spec.ts --workers=1
+      - name: Capture actual public browser interaction and screenshots
+        env:
+          DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
+          DHAGO_RELEASE_SHA: ${{ github.sha }}
+          DHAGO_EXPECTED_MUX_ID: Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          node scripts/capture-submission.mjs test-results/submission
       - name: Measure Lighthouse mobile and release size
         env:
           DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
@@ -156,18 +168,6 @@ jobs:
             test-results/submission/lighthouse-mobile.json \
             dist/dhago-size.json \
             test-results/submission/performance-evidence
-      - name: Verify production Mux playback and live Studio Journal
-        env:
-          DHAGO_LIVE_URL: https://creative.aafnaipatro.com
-        run: npx playwright test tests/live.spec.ts --workers=1
-      - name: Capture actual public browser interaction and screenshots
-        env:
-          DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
-          DHAGO_RELEASE_SHA: ${{ github.sha }}
-          DHAGO_EXPECTED_MUX_ID: Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-          node scripts/capture-submission.mjs test-results/submission
       - name: Assemble judge-facing evidence index
         run: node scripts/write-final-evidence.mjs test-results/submission
       - uses: actions/upload-artifact@v4
