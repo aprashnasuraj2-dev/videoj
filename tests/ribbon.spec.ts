@@ -18,9 +18,10 @@ test('host-neutral ribbon drives one media element from default and minimal trea
 test('portable Stress Lab advertises its adapter cases without claiming forced colors',async({page})=>{
   await page.goto('/stress.html?case=original');
   await expect(page.getByRole('link',{name:/Explore the player comparison studio/})).toBeVisible();
-  await expect(page.locator('#portable-cases')).toContainText('Malformed cues');
-  await expect(page.locator('#portable-cases')).toContainText('240px container');
-  await expect(page.locator('#portable-cases')).toContainText('Forced colors');
+  await expect(page.locator('#portable-cases')).toContainText('25 playback conditions to explore');
+  await expect(page.locator('#portable-case option[value="malformed-cues"]')).toHaveCount(1);
+  await expect(page.locator('#portable-case option[value="narrow-240"]')).toHaveCount(1);
+  await expect(page.locator('#portable-case option[value="forced-colors"]')).toHaveCount(1);
 });
 
 test('layered-weft fixture renders supplied speaker and sponsor tracks without calling them film facts',async({page})=>{
