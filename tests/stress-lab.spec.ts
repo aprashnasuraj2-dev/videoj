@@ -91,11 +91,14 @@ test('local adapter stays in an opaque sandbox and replaces the old built-in pla
   await expect(page.locator('#portable-result-body tr').last()).toContainText('240px container');
 });
 
-test('invalid adapter contracts are loader errors, not skin failures',async({page})=>{
+test('invalid adapter contracts are NOT RUN loader evidence, not skin failures',async({page})=>{
   await openLab(page);
   await loadLocal(page,`export default { name: 'Missing mount' };`);
+  await expect(page.locator('#portable-loader-status')).toContainText('NOT RUN');
   await expect(page.locator('#portable-loader-status')).toContainText('invalid-contract');
-  await expect(page.locator('#portable-result-body tr')).toHaveCount(0);
+  const row=page.locator('#portable-result-body tr').last();
+  await expect(row).toContainText('Adapter load');
+  await expect(row).toHaveAttribute('data-status','not-run');
 });
 
 test('adapter mount exceptions and missing media become structured FAIL results',async({page})=>{
@@ -216,4 +219,21 @@ test('public release pages expose no private project link',async({page})=>{
     await page.goto(path);
     await expect(page.locator('a[href*="aprashnasuraj2-dev"],a[href*="/videoj"]')).toHaveCount(0);
   }
+});
+
+
+test('Download JSON exports a portable report without adapter source',async({page})=>{
+  await openLab(page);
+  await page.getByRole('button',{name:'Run current case'}).click();
+  const downloadPromise=page.waitForEvent('download');
+  await page.getByRole('button',{name:'Download JSON'}).click();
+  const download=await downloadPromise;
+  expect(download.suggestedFilename()).toBe('skin-stress-report.json');
+  const stream=await download.createReadStream();
+  const chunks:Buffer[]=[];
+  for await(const chunk of stream)chunks.push(Buffer.from(chunk));
+  const text=Buffer.concat(chunks).toString('utf8');
+  expect(text).toContain('"caseId": "baseline"');
+  expect(text).not.toContain('export default');
+  expect(text).not.toMatch(/[A-Z]:\\\\|\/Users\/|\/home\//);
 });
