@@ -44,7 +44,8 @@ test('Edge States Lab shows actual native and derived state without fabricating 
  await page.goto('/stress.html?case=original');
  const video=page.locator('#lab-player video');
  await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
- await expect(page.locator('#edge-truth-metrics')).toContainText('ReadyState');
+ await page.locator('#edge-truth-title').click();
+ await expect(page.locator('#edge-truth-metrics')).toContainText('Ready to play');
  await expect(page.locator('#edge-truth-metrics')).toContainText('studies-in-thread.mp4');
  await page.locator('[data-edge="forward"]').click();
  await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThanOrEqual(9.5);
@@ -54,7 +55,7 @@ test('Edge States Lab shows actual native and derived state without fabricating 
  await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.muted)).toBe(true);
  await page.locator('[data-edge="reset"]').click();
  await expect.poll(()=>page.locator('#lab-player video').evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeLessThan(1);
- await expect(page.locator('#edge-feedback')).toContainText('Observing selected specimen');
+ await expect(page.locator('#edge-feedback')).toContainText('These readings follow');
 });
 
 test('Tools and Lab stay reachable and usable at narrow viewport',async({page})=>{

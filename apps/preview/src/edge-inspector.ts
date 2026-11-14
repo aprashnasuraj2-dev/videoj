@@ -9,7 +9,7 @@ const feedback=document.querySelector<HTMLElement>('#edge-feedback')!;
 let media:HTMLMediaElement|null=null;
 let controller:AbortController|null=null;
 let scheduled=0;
-const names=['Source','Paused','Ended','Seeking','ReadyState','NetworkState','Time / duration','Volume / muted','Rate','Playback state','Buffering / stalled','Progress','Stage','Chapter','Text tracks','Fullscreen / PiP'];
+const names=['Media','Paused','Finished','Seeking','Ready to play','Connection','Position / length','Volume / muted','Playback speed','Playback state','Waiting / stalled','Timeline progress','Visual transition','Current chapter','Captions and chapters','Fullscreen / small window'];
 const nodes=new Map<string,HTMLElement>();
 for(const name of names){
  const wrap=document.createElement('div');const dt=document.createElement('dt');dt.textContent=name;
@@ -28,16 +28,16 @@ function paint(){
  scheduled=0;const m=media;
  if(!m){for(const name of names)set(name,'—');return;}
  const shell=m.closest<HTMLElement>('media-container');
- set('Source',sourceName(m));set('Paused',String(m.paused));set('Ended',String(m.ended));set('Seeking',String(m.seeking));
- set('ReadyState',String(m.readyState));set('NetworkState',String(m.networkState));
- set('Time / duration',sane(m.currentTime)+' / '+sane(m.duration));
- set('Volume / muted',sane(m.volume)+' / '+m.muted);set('Rate',sane(m.playbackRate));
+ set('Media',sourceName(m));set('Paused',String(m.paused));set('Finished',String(m.ended));set('Seeking',String(m.seeking));
+ set('Ready to play',['Not loaded','Details received','Current frame ready','Ready to watch','Media buffered'][m.readyState]||'Unknown');set('Connection',['No source','Idle','Loading','Source unavailable'][m.networkState]||'Unknown');
+ set('Position / length',sane(m.currentTime)+' / '+sane(m.duration));
+ set('Volume / muted',sane(m.volume)+' / '+m.muted);set('Playback speed',sane(m.playbackRate));
  set('Playback state',shell?.dataset.playbackState||'initializing');
- set('Buffering / stalled',String(shell?.hasAttribute('data-thread-buffering')||false)+' / '+String(shell?.hasAttribute('data-thread-stalled')||false));
- set('Progress',shell?.style.getPropertyValue('--dhago-progress')||'unknown');
- set('Stage',shell?.dataset.weaveStage||'—');set('Chapter',activeCue(m));
- set('Text tracks',Array.from(m.textTracks).map(t=>t.kind+':'+t.mode).join(', ')||'none');
- set('Fullscreen / PiP',String(document.fullscreenEnabled)+' / '+String(document.pictureInPictureEnabled===true));
+ set('Waiting / stalled',String(shell?.hasAttribute('data-thread-buffering')||false)+' / '+String(shell?.hasAttribute('data-thread-stalled')||false));
+ set('Timeline progress',Number.isFinite(m.duration)&&m.duration>0?Math.round(100*m.currentTime/m.duration)+'%':'—');
+ set('Visual transition',shell?.dataset.weaveStage||'—');set('Current chapter',activeCue(m));
+ set('Captions and chapters',Array.from(m.textTracks).map(t=>t.kind+':'+t.mode).join(', ')||'none');
+ set('Fullscreen / small window',String(document.fullscreenEnabled)+' / '+String(document.pictureInPictureEnabled===true));
 }
 function schedule(){
  if(scheduled)return;
@@ -52,7 +52,7 @@ const connect=()=>{
  for(const ev of ['loadstart','loadedmetadata','durationchange','timeupdate','play','playing','pause','ended','error','seeking','seeked','waiting','stalled','canplay','volumechange','ratechange','emptied']){
   media.addEventListener(ev,schedule,{signal:controller.signal});
  }
- feedback.textContent='Observing selected specimen. Values are real media state, not simulated network events.';
+ feedback.textContent='These readings follow the selected film or recording as it plays.';
  paint();
 };
 new MutationObserver(connect).observe(host,{childList:true});
@@ -60,24 +60,24 @@ connect();
 actions.addEventListener('click',async event=>{
  const button=(event.target as Element).closest<HTMLButtonElement>('button[data-edge]');
  if(!button)return;
- const m=media;if(!m){feedback.textContent='No specimen is mounted.';return;}
+ const m=media;if(!m){feedback.textContent='Choose a study to explore playback details.';return;}
  const action=button.dataset.edge;
  try{
-  if(action==='reset'){document.querySelector<HTMLButtonElement>('#lab-restart')?.click();feedback.textContent='Specimen reset requested; reloading native media.';return;}
-  if(action==='play'){await m.play();feedback.textContent='Native play() resolved.';}
-  else if(action==='pause'){m.pause();feedback.textContent='Native pause() applied.';}
+  if(action==='reset'){document.querySelector<HTMLButtonElement>('#lab-restart')?.click();feedback.textContent='Restarting this study…';return;}
+  if(action==='play'){await m.play();feedback.textContent='Playback started.';}
+  else if(action==='pause'){m.pause();feedback.textContent='Playback paused.';}
   else if(['start','back','forward','nearend'].includes(action||'')){
-   if(!Number.isFinite(m.duration)||m.duration<=0){feedback.textContent='Cannot seek: duration is not finite and positive.';return;}
+   if(!Number.isFinite(m.duration)||m.duration<=0){feedback.textContent='This recording does not have a seekable ending.';return;}
    const t=action==='start'?0:action==='nearend'?Math.max(0,m.duration-.15):m.currentTime+(action==='back'?-10:10);
-   m.currentTime=Math.max(0,Math.min(m.duration,t));feedback.textContent='Requested genuine media seek to '+sane(t)+'s.';
-  }else if(action==='mute'){m.muted=!m.muted;feedback.textContent='Muted='+m.muted;}
-  else if(action==='zero-volume'){m.volume=0;feedback.textContent='Volume set to zero.';}
-  else if(action==='speed'){m.playbackRate=1.5;feedback.textContent='Playback rate 1.5×.';}
+   m.currentTime=Math.max(0,Math.min(m.duration,t));feedback.textContent='Moving to '+sane(Math.max(0,Math.min(m.duration,t)))+' seconds.';
+  }else if(action==='mute'){m.muted=!m.muted;feedback.textContent=m.muted?'Sound muted.':'Sound on.';}
+  else if(action==='zero-volume'){m.volume=0;feedback.textContent='Volume lowered to zero.';}
+  else if(action==='speed'){m.playbackRate=1.5;feedback.textContent='Playing at 1.5× speed.';}
   else if(action==='captions'){
     const track=Array.from(m.textTracks).find(t=>t.kind==='captions');
-    if(!track){feedback.textContent='No native caption track in this specimen.';return;}
-    track.mode=track.mode==='showing'?'disabled':'showing';feedback.textContent='Captions '+track.mode+'.';
+    if(!track){feedback.textContent='This recording does not offer captions.';return;}
+    track.mode=track.mode==='showing'?'disabled':'showing';feedback.textContent=track.mode==='showing'?'Captions visible.':'Captions hidden.';
   }
- }catch(error){feedback.textContent='Native API rejected action: '+(error instanceof Error?error.name:'unknown error');}
+ }catch(error){feedback.textContent='The browser could not complete that action: '+(error instanceof Error?error.name:'unknown error');}
  schedule();
 });

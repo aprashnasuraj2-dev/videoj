@@ -83,7 +83,7 @@ test('audio-only lab controls drive real decoding, seeking and mute', async ({ p
   await expect.poll(() => audio.evaluate((media: HTMLAudioElement) => media.currentTime)).toBeGreaterThan(0);
   await page.locator('#lab-player media-mute-button').click();
   await expect(audio).toHaveJSProperty('muted', true);
-  await expect(page.locator('#state-source')).toHaveText('Audio file');
+  await expect(page.locator('#state-source')).toHaveText('Recording');
 });
 
 test('240px specimen exposes a bounded, keyboard-operable control shelf', async ({ page }) => {

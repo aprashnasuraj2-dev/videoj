@@ -13,15 +13,15 @@ type Case = {
 const ORIGINAL='./media/studies-in-thread.mp4';
 const BASE_POSTER='./media/dhago-studies-poster.svg';
 const layeredMetadata:DhagoMetadataTrack[]=[
-  {id:'speaker',label:'Speaker changes (fixture)',kind:'speaker',color:'#9a713c',cues:[
+  {id:'speaker',label:'Speaker passages (illustration)',kind:'speaker',color:'#9a713c',cues:[
     {start:0,end:20,label:'Speaker A'},{start:20,end:40,label:'Speaker B'},{start:40,end:64,label:'Speaker A'},
   ]},
-  {id:'sponsor',label:'Sponsor segment (fixture)',kind:'sponsor',color:'#7c6a89',cues:[
+  {id:'sponsor',label:'Sponsor passage (illustration)',kind:'sponsor',color:'#7c6a89',cues:[
     {start:24,end:32,label:'Sponsor segment'},
   ]},
 ];
 const mediaSources:Record<Kind,{src:string;credit:string;creditUrl?:string;license:string}>={
-  original:{src:ORIGINAL,credit:'Studies in Thread — original DHAGO film',license:'Apache-2.0 source / original film'},
+  original:{src:ORIGINAL,credit:'Studies in Thread — original DHAGO film',license:'Original production'},
   dhaka:{src:'https://upload.wikimedia.org/wikipedia/commons/0/0a/Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm',
     credit:'Oxlaey — Making handwoven Dhaka fabric in Nepal (real Nepalese textile weaving, not pashmina)',
     creditUrl:'https://commons.wikimedia.org/wiki/File:Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm',license:'CC BY-SA 3.0, unmodified'},
@@ -34,29 +34,29 @@ const mediaSources:Record<Kind,{src:string;credit:string;creditUrl?:string;licen
   loom:{src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS_Loom.ogg',
     credit:'Work With Sounds / Konrad Gutkowski — Loom (industrial loom recording, not Nepal)',
     creditUrl:'https://commons.wikimedia.org/wiki/File:WWS_Loom.ogg',license:'CC BY 4.0, unmodified'},
-  broken:{src:'./media/definitely-missing-dhago-source.mp4',credit:'Deliberately missing local source (controlled 404)',license:'Test injection'},
+  broken:{src:'./media/definitely-missing-dhago-source.mp4',credit:'Intentionally unavailable media for the recovery demonstration',license:'Demonstration only'},
 };
 const cases:Case[]=[
-  {id:'original',name:'Original weave',category:'Baseline',type:'Real playback',description:'The public film, four authored chapters, working media controls and original source.',source:'original',cues:'four',manual:'Play, pause, seek, mute, enable captions, inspect fullscreen and replay.'},
-  {id:'wool',name:'Wool / short film',category:'Under ten seconds',type:'Real playback',description:'An eight-second real video of sheep. Its duration is genuinely short; no invented 10-second playback window.',source:'sheep',cues:'none',poster:'missing',manual:'Seek from beginning to end, inspect the clock and replay. This is sheep footage from outside Nepal, not pashmina.'},
-  {id:'pashmina',name:'Himalayan pashmina',category:'Long international titles',type:'Controlled fixture',description:'Actual Kashmir pashmina footage with generated Devanagari, Arabic and very long chapter titles. Media is real; cue metadata is test data.',source:'pashmina',cues:'intl',manual:'Inspect title clipping and screen reader direction; verify that 200–400% browser zoom does not lose controls.'},
-  {id:'dhaka',name:'Nepal / forty stitches',category:'Dense chapters',type:'Controlled fixture',description:'Real Nepali Dhaka weaving footage with forty evenly spaced generated VTT cues. This tests actual cue density at its real media duration.',source:'dhaka',cues:'dense',manual:'Seek among tiny swatches, use keyboard on the main slider and check readability at 240px. The separate two-hour geometry example is documented; this is not a two-hour movie.'},
-  {id:'malformed',name:'Broken chapter file',category:'Out of order / overlaps / gaps',type:'Controlled fixture',description:'A known-bad cue fixture: reversed order, gaps, overlaps and out-of-range ends. The lab validates it, preserving gaps and clamping overlap before attaching the track.',source:'original',cues:'invalid',manual:'Examine the diagnosis below: malformed cue input is normalized, without inventing a chapter for empty gaps.'},
-  {id:'uneven',name:'Uneven weave',category:'Extreme chapter ratios',type:'Controlled fixture',description:'A two-second section sits beside a much longer segment. The original 64s film is used, so this does not pretend to contain fifty minutes of footage.',source:'original',cues:'uneven',manual:'Watch the two-second section stay navigable by the timeline slider even when its visual swatch is narrow.'},
-  {id:'late',name:'The late arrival',category:'Asynchronous chapter data',type:'Controlled fixture',description:'Playback begins with no chapters. After a four-second controlled delay the VTT chapter track is inserted.',source:'dhaka',cues:'late',manual:'Start playback promptly. Observe the chapter ribbon and title as the metadata arrives. This is a scripted late-load fixture.'},
-  {id:'nochapters',name:'Empty loom',category:'No chapter file',type:'Real playback',description:'No chapter track attached; seek and clocks must still work with a linear timeline.',source:'original',cues:'none',manual:'Check the chapter title is absent and keyboard seeking still works.'},
-  {id:'captions',name:'Many voices',category:'Caption-language density',type:'Controlled fixture',description:'Two generated caption tracks, including a deliberately long readable caption. The controls must avoid misleading empty selections.',source:'original',cues:'four',captions:'multi',manual:'Open Settings, switch caption language and inspect the long cue against the control shelf.'},
-  {id:'layers',name:'Layered weft',category:'Speaker / captions / sponsor metadata',type:'Controlled fixture',description:'The real film is paired with explicitly labeled fixture metadata to prove the ribbon can layer speaker and sponsor intervals without pretending those facts belong to the film.',source:'original',cues:'four',metadata:'layered',manual:'Inspect the separate colored weft lanes. Speaker and sponsor lanes are controlled test metadata; chapters and captions remain real/native tracks.'},
-  {id:'nocaptions',name:'Silent labels',category:'Caption absence',type:'Real playback',description:'The film has no caption tracks. Unsupported caption choices must not be offered as available.',source:'pashmina',cues:'none',captions:'none',manual:'Inspect captions availability and the Settings menu; there must be no phantom language.'},
-  {id:'audio',name:'Sound of the loom',category:'Audio-only media',type:'Real playback',description:'An actual Ogg audio recording of a historic mechanical loom. Audio is shown in a compact textile panel, not an empty video poster.',source:'loom',cues:'none',manual:'Play/pause, mute, seek and change speed. This recording is from Germany, not Nepal.'},
-  {id:'poster',name:'Missing cover',category:'Failed poster request',type:'Controlled fixture',description:'The source is valid, but the poster URL deliberately returns 404. Playback must remain available.',source:'original',cues:'four',poster:'missing',manual:'Inspect the initial screen before playback; verify a broken image icon never blocks controls.'},
-  {id:'error',name:'Broken thread',category:'Source 404 / retry',type:'Controlled fixture',description:'The requested media does not exist. The skin must explain the error and let the viewer explicitly retry or open a working backup.',source:'broken',cues:'none',manual:'Open the error dialog and choose the backup; closing the dialog alone is not a recovery.'},
-  {id:'narrow',name:'Pinched loom',category:'240px container',type:'Controlled fixture',description:'The genuine player runs inside a 240px container, rather than only a simulated mobile viewport.',source:'original',cues:'four',width:'240px',manual:'Check target reachability, focus, wrap and settings popup clipping.'},
-  {id:'manual',name:'Unsimulatable cases',category:'Live DVR / iOS / casting',type:'Manual verification',description:'DVR live-edge, native iOS fullscreen, external AirPlay/casting, sandboxed fullscreen and actual network dropout require their real APIs, media and devices.',source:'original',cues:'four',manual:'This page does not claim a working live stream, iOS fullscreen, native casting or 400% physical browser zoom. Open the real target device and verify these separately.'},
+  {id:'original',name:'Original weave',category:'The signature film',type:'Real playback',description:'Begin with Studies in Thread: the original 64-second motion study, with four chapters, descriptive captions and familiar controls.',source:'original',cues:'four',manual:'Watch the film, move between chapters, turn captions on and off, then try fullscreen and replay.'},
+  {id:'wool',name:'A fleeting moment',category:'An eight-second film',type:'Real playback',description:'A real eight-second glimpse of sheep grazing. Even a very short story deserves a readable timeline and a graceful ending.',source:'sheep',cues:'none',poster:'missing',manual:'Play the full clip, move near the end and replay. The footage was filmed outside Nepal.'},
+  {id:'pashmina',name:'The pashmina journey',category:'Long titles, many languages',type:'Controlled fixture',description:'Explore Kashmir pashmina footage alongside long chapter titles in multiple writing systems. The chapter labels are created for this study; the footage is authentic.',source:'pashmina',cues:'intl',manual:'Read the long chapter names, try the keyboard, then enlarge the page to see whether controls remain within reach.'},
+  {id:'dhaka',name:'Forty stitches',category:'A densely woven timeline',type:'Controlled fixture',description:'Real footage of Nepali Dhaka weaving meets forty closely spaced chapter markers. Notice how the ribbon changes without losing the ability to seek.',source:'dhaka',cues:'dense',manual:'Move through the smallest chapter segments, use the arrow keys and try the narrowest player width. The forty markers are study data, not original film chapters.'},
+  {id:'malformed',name:'When chapters disagree',category:'Overlapping chapter timings',type:'Controlled fixture',description:'A chapter list arrives with gaps, overlaps and inconsistent timing. The same original film lets you see how the timeline treats those irregularities.',source:'original',cues:'invalid',manual:'Explore the chapter boundaries and timing notes. Empty gaps stay empty rather than being disguised as new chapters.'},
+  {id:'uneven',name:'Uneven weave',category:'Contrasting chapter lengths',type:'Controlled fixture',description:'A two-second chapter sits beside a much longer passage of the original film. Both remain part of the same continuous timeline.',source:'original',cues:'uneven',manual:'Try to find and select the smallest segment. The film itself remains the original 64-second recording.'},
+  {id:'late',name:'The late arrival',category:'Chapters that arrive later',type:'Controlled fixture',description:'The Nepali weaving footage begins before its chapter information is available. Four seconds later, the ribbon gains its chapter markers.',source:'dhaka',cues:'late',manual:'Start the film and watch the chapter ribbon appear after the brief intentional delay.'},
+  {id:'nochapters',name:'An open thread',category:'A film without chapters',type:'Real playback',description:'The original film plays without chapter markers. Its timeline, clock and seeking controls still have a clear purpose.',source:'original',cues:'none',manual:'Use the timeline and arrow keys even though no chapter names are shown.'},
+  {id:'captions',name:'Many voices',category:'Captions across languages',type:'Controlled fixture',description:'Two sample caption tracks, including an unusually long line, reveal how the player handles crowded text and language selection.',source:'original',cues:'four',captions:'multi',manual:'Open the caption choices, change languages and check that long captions stay legible.'},
+  {id:'layers',name:'Layers of the weave',category:'Additional story markers',type:'Controlled fixture',description:'The original film is paired with illustrative speaker and sponsor intervals to show how different kinds of information share the ribbon.',source:'original',cues:'four',metadata:'layered',manual:'Look for separate marker lanes. Speaker and sponsor labels are illustrative, not claims about the film.'},
+  {id:'nocaptions',name:'Nothing to translate',category:'A film without captions',type:'Real playback',description:'Authentic Kashmir pashmina footage is presented without caption tracks. The player should never promise a language that is not available.',source:'pashmina',cues:'none',captions:'none',manual:'Open the settings and confirm that unavailable captions are not offered.'},
+  {id:'audio',name:'The sound of weaving',category:'Sound without a picture',type:'Real playback',description:'Listen to an authentic recording of a historic mechanical loom. DHAGO keeps the controls useful without pretending the sound has a video image.',source:'loom',cues:'none',manual:'Play, pause, seek, mute and change speed. This loom was recorded in Germany, not Nepal.'},
+  {id:'poster',name:'When the cover is missing',category:'Missing image, working film',type:'Controlled fixture',description:'The original film remains playable even when its cover image is deliberately unavailable.',source:'original',cues:'four',poster:'missing',manual:'Before playback, look for a clear playable surface rather than a broken-image obstruction.'},
+  {id:'error',name:'When the thread breaks',category:'Playback interruption and recovery',type:'Controlled fixture',description:'A deliberately unavailable media address shows what happens when a film cannot load. The recovery link leads back to the working original.',source:'broken',cues:'none',manual:'Read the explanation, try again and use the working-film link. This interruption is intentional, not a broken gallery video.'},
+  {id:'narrow',name:'A narrow frame',category:'A 240-pixel player',type:'Controlled fixture',description:'The real film and its controls settle into just 240 pixels of width. A smaller space should not mean smaller clarity.',source:'original',cues:'four',width:'240px',manual:'Check whether buttons remain reachable, keyboard focus is visible and menus fit inside the narrow frame.'},
+  {id:'manual',name:'Beyond the browser',category:'Real devices and live playback',type:'Manual verification',description:'Some experiences need a genuine live source, a physical device or assistive technology. The original film remains available while you review what cannot be recreated here.',source:'original',cues:'four',manual:'Use the guide below with an iPhone, a real live stream, a screen reader or a browser at high zoom. A simulation is never evidence of those device capabilities.'},
 ];
 const $=<T extends Element=HTMLElement>(selector:string)=>document.querySelector<T>(selector)!;
 const portableCases=document.querySelector<HTMLElement>('#portable-cases');
-if(portableCases)portableCases.textContent=portableStressFixtures.map(item=>item.label).join(' · ');
+if(portableCases)portableCases.textContent=`${portableStressFixtures.length} playback conditions to explore — from tight spaces and dense chapters to missing covers, sound-only recordings and viewing preferences.`;
 const mount=$<HTMLElement>('#lab-player');
 let active:Case=cases[0];
 let player:HTMLElement|null=null;
@@ -128,10 +128,10 @@ function attachCues(target:HTMLMediaElement,scenario:Case){
   if(scenario.cues&&scenario.cues!=='none'){
     if(Number.isFinite(duration)&&duration>0) {
       const report=normalizeChapterDrafts(sampleChapters(scenario.cues,duration),duration);
-      if(report.issues.length)diagnostics.textContent=report.issues.join(' · ');
-      addTrack(target,'chapters','Fixture chapter data','en',chapterVtt(report.chapters));
+      if(report.issues.length)diagnostics.textContent='Timing notes: '+report.issues.join(' · ');
+      addTrack(target,'chapters','Chapter markers','en',chapterVtt(report.chapters));
     } else {
-      diagnostics.textContent='Chapter fixtures require a finite source duration.';
+      diagnostics.textContent='Chapter markers will appear once the film length is known.';
     }
   }
   const long='A deliberate test caption containing enough ordinary language to stretch across several lines, including the detailed account of a weaver carefully guiding an unusually delicate fibre through the loom.';
@@ -160,8 +160,9 @@ function render(scenario:Case){
   $('#case-category').textContent=scenario.category;
   $('#case-title').textContent=scenario.name;
   $('#case-description').textContent=scenario.description;
-  $('#case-badge').textContent=scenario.type.toUpperCase();
-  $('#lab-manual').innerHTML='<strong>Try this:</strong> ';
+  $('#case-badge').textContent=scenario.id==='original'?'ORIGINAL FILM':scenario.type==='Real playback'?'REAL MEDIA':scenario.type==='Manual verification'?'DEVICE REVIEW':'GUIDED STUDY';
+  const manualSpotlight=$<HTMLElement>('#manual-spotlight');manualSpotlight.hidden=scenario.id!=='manual';
+  $('#lab-manual').innerHTML='<strong>Look closer:</strong> ';
   $('#lab-manual').append(document.createTextNode(scenario.manual));
   const credit=mediaSources[scenario.source];
   const creditNode=$('#lab-credit');
@@ -184,15 +185,15 @@ function render(scenario:Case){
   container.setAttribute('data-lab-case',scenario.id);
   if(scenario.source==='broken'){
     const backup=player.querySelector<HTMLAnchorElement>('.dhago-fallback');
-    if(backup){backup.href='./?local';backup.hidden=false;}
+    if(backup){backup.href='./stress.html?case=original';backup.hidden=false;}
   }
   mount.replaceChildren(player);
   setWidth(scenario.width??$<HTMLSelectElement>('#lab-width').value);
   const target=player.querySelector<HTMLMediaElement>('video,audio,mux-video')!;
   media=target;
   const chapter=player.querySelector<HTMLElement>('.dhago-chapter-name')!;
-  setText(sourceValue,target.tagName==='AUDIO'?'Audio file':target.tagName==='MUX-VIDEO'?'Mux HLS':'Video file');
-  diagnostics.textContent='No normalization warnings for this specimen.';
+  setText(sourceValue,target.tagName==='AUDIO'?'Recording':target.tagName==='MUX-VIDEO'?'Stream':'Film');
+  diagnostics.textContent='The chapter timing for this study is ready to explore.';
   const update=()=>{
     const state=container.getAttribute('data-playback-state')??'idle';
     setText(status,state.charAt(0).toUpperCase()+state.slice(1));
@@ -211,9 +212,9 @@ function render(scenario:Case){
   const {signal}=specimen;
   const onMetadata=()=>{
     if(scenario.cues==='late') {
-      diagnostics.textContent='Chapter track scheduled four seconds after metadata (controlled late arrival).';
+      diagnostics.textContent='Chapter markers will appear four seconds after the film becomes ready.';
       metadataTimer=window.setTimeout(()=>{
-        diagnostics.textContent='Delayed chapter track attached.';
+        diagnostics.textContent='Chapter markers are now available.';
         attachCues(target,scenario);
       },4000);
     } else attachCues(target,scenario);
