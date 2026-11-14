@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test('host-neutral ribbon drives one media element from default and minimal treatments',async({page})=>{
@@ -55,4 +56,14 @@ test('layered-weft fixture renders supplied speaker and sponsor tracks without c
   await expect(page.locator('#case-description')).toContainText('fixture metadata');
   await expect.poll(()=>page.locator('.dhago-metadata-lane[data-kind="speaker"]').count()).toBeGreaterThan(0);
   await expect.poll(()=>page.locator('.dhago-metadata-lane[data-kind="sponsor"]').count()).toBeGreaterThan(0);
+});
+
+
+test('reusable ribbon and public integration route introduce no serious or critical axe findings',async({page})=>{
+  for(const path of ['/ribbon.html','/install.html']){
+    await page.goto(path);
+    const report=await new AxeBuilder({page}).analyze();
+    const severe=report.violations.filter(v=>v.impact==='serious'||v.impact==='critical');
+    expect(severe,path+'\n'+JSON.stringify(severe,null,2)).toEqual([]);
+  }
 });
