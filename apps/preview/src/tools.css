@@ -76,3 +76,15 @@ body.tools .event-scroll{width:100%;max-width:100%;min-width:0;overscroll-behavi
   body.tools .event-scroll th:nth-child(2){width:27%;}
   body.tools .event-scroll th:nth-child(5){width:34%;}
 }
+
+/* True 320px header fit: neither brand nor nav links may retain an intrinsic
+   width wider than their flex line. Keep real links discoverable, don't hide. */
+@media(max-width:480px){
+  body.tools .tools-header{width:100%;max-width:100%;min-width:0;box-sizing:border-box;gap:12px;justify-content:flex-start;}
+  body.tools .tools-header .tools-brand{min-width:0;max-width:100%;font-size:17px;letter-spacing:.055em;overflow-wrap:anywhere;white-space:normal;}
+  body.tools .tools-header .tools-brand span{font-size:11px;letter-spacing:.05em;white-space:normal;}
+  body.tools .tools-header nav{display:flex;flex:1 1 100%;min-width:0;width:100%;max-width:100%;flex-wrap:wrap;gap:8px 11px;justify-content:flex-start;}
+  body.tools .tools-header nav a{display:inline-block;max-width:100%;font-size:12px;letter-spacing:0;overflow-wrap:anywhere;white-space:normal;}
+  body.tools footer{max-width:100%;min-width:0;overflow-wrap:anywhere;}
+  body.tools footer a{max-width:100%;overflow-wrap:anywhere;}
+}
