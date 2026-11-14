@@ -1,5 +1,8 @@
 # Public hosting and deployment
 
+> **ACTIVE RELEASE CONTRACT — 2026-11-14.** All later descriptions of `From Fibre to Fabric`, its generated replacement voiceover or its 30+ MB derivatives below are **archived historical release notes**. The competition film has been deliberately restored to the original 64-second **Studies in Thread** with frozen SHA-256 `9dcc4672e3014ca947e310c1809c0cf6d40ffff186478f3e6a1e47f89b3688b3`. Correct release keys are `media/studies-in-thread.mp4`, `media/studies-in-thread.webm`, `media/chapters.vtt`, `media/captions.vtt`, `media/dhago-studies-poster.svg`. The original Mux playback ID is documented in `apps/preview/src/media.json` and is **opt-in** on `/?mux` until a branded-Chrome proof confirms current playback. Do not overwrite/delete the original R2 recovery objects or change unrelated Patro workers. See [release-integrity.md](release-integrity.md) for the active publication gate.
+
+
 Public collection: https://creative.aafnaipatro.com/
 
 Compatibility address: https://dhago.aafnaipatro.com/

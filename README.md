@@ -12,9 +12,9 @@ Set `--media-accent-color`, `--media-accent-text-color`, `--media-border-radius`
 
 ## Progress and operations
 
-[100-step checklist](docs/CHECKLIST.md), [verification](tests/QA.md), [Mux setup](docs/media.md). `docs/steps.json` is authoritative; run `node scripts/progress.mjs` after updates.
+[100-step checklist](docs/CHECKLIST.md), [verification](tests/QA.md), [Original film and Mux bonus proof](docs/media.md) · [Copy-ready submission](submission/final-submission.md). `docs/steps.json` is authoritative; run `node scripts/progress.mjs` after updates.
 
-Actions validate builds and browser behavior, provision Mux using repository secrets, and package exact source revisions with SHA-256 checksums. Source-package automation does not establish final submission readiness. No contest submission, accepted terms or bonus is claimed until verified.
+Actions validate builds, browser behavior and separate current Mux playback proof. The original public Mux playback ID is restored from historical source configuration; we do not attempt a duplicate video upload. Exact source releases use SHA-256 checksums. Source-package automation does not establish final submission readiness. No contest submission, accepted terms or bonus is claimed until verified.
 
 ## Release and competition handoff
 
@@ -25,6 +25,6 @@ The final pipeline keeps candidate verification, immutable staging and public-re
 Physical Safari/iPhone/Android and VoiceOver/NVDA remain separate real-device gates and are never inferred from emulation. The project has **not** been entered into the contest.
 
 
-### Documentary media contract
+### Original motion-study media contract
 
-The canonical 64-second film is deliberately aligned to four equal chapter intervals: 0–16s **A thread of light**, 16–32s **The shape of quiet**, 32–48s **Where shadows gather**, and 48–64s **Coming home**. Living Loom derives `data-weave-stage`, `--dhago-time-ratio` and `--dhago-stage-phase` from the media element's real `currentTime / duration`; those values only decorate the woven ribbon and never replace Video.js seek truth. The current direct-delivery masters are approximately 22.7 MB H.264/AAC and 25.6 MB VP9/Opus, with English descriptive captions carried as WebVTT.
+The canonical 64-second film is deliberately aligned to four equal chapter intervals: 0–16s **A thread of light**, 16–32s **The shape of quiet**, 32–48s **Where shadows gather**, and 48–64s **Coming home**. Living Loom derives `data-weave-stage`, `--dhago-time-ratio` and `--dhago-stage-phase` from the media element's real `currentTime / duration`; those values only decorate the woven ribbon and never replace Video.js seek truth. The frozen original Git MP4 is **2,563,521 bytes**, and Cloudflare R2 retains its roughly **7.46 MB** VP9/WebM compatibility rendition. English descriptions and chapter cues are carried as WebVTT. The former 22–30 MB documentary encodes are superseded and not part of the current judge-facing film.
