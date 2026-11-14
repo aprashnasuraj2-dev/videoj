@@ -4,7 +4,7 @@
   "demoUrl": "https://creative.aafnaipatro.com/",
   "liveSiteUrl": "https://creative.aafnaipatro.com/journal.html",
   "installGuide": "INSTALL.md",
-  "muxPlaybackId": "Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw",
+  "muxPlaybackId": null,
   "publicReleaseAuthority": "https://creative.aafnaipatro.com/release-manifest.json",
   "finalEvidenceArtifact": "public-smoke-evidence",
   "finalEvidenceIndex": "submission/final-release-evidence.md inside public-smoke-evidence",
@@ -27,5 +27,6 @@
   ],
   "receipt": null,
   "submissionDeadline": "2026-11-17T13:44:00+05:45",
-  "sourcePackage": "Exact Apache-2.0 source archive bundled with final handoff"
+  "sourcePackage": "Exact Apache-2.0 source archive bundled with final handoff",
+  "muxStatus": "Pending canonical fibre-film publication; current public release uses Cloudflare R2"
 }
