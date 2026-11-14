@@ -87,7 +87,21 @@ if(document.querySelector('#portable-tool')){
   q('#portable-use-dhago').addEventListener('click',async()=>{sandbox.destroy();q('#portable-sandbox-host').replaceChildren();mode='builtin';await direct.destroy();q('#portable-direct-host').replaceChildren();setState('Built-in DHAGO reference adapter active.','ready')});
   const loadUrlAdapter=async(url:string,label?:string)=>{if(!url){setState('Enter an ESM adapter URL.','error');return}await activateSandbox();setState('Loading '+(label??'URL adapter')+' in isolated sandbox…','loading');try{const r=await sandbox.load({mode:'url',url});setState('Loaded: '+String(r.adapterName||label||url),'ready')}catch(e){setState(e instanceof Error?e.message:String(e),'error')}};
   q('#portable-load-url').addEventListener('click',()=>void loadUrlAdapter(q<HTMLInputElement>('#portable-adapter-url').value.trim()));
-  q('#portable-load-example').addEventListener('click',()=>{const url=new URL('./stress-example-adapter.mjs',location.href).href;q<HTMLInputElement>('#portable-adapter-url').value=url;void loadUrlAdapter(url,'public example adapter')});
+  q('#portable-load-example').addEventListener('click',async()=>{
+    const url=new URL('./stress-example-adapter.mjs',location.href).href;
+    q<HTMLInputElement>('#portable-adapter-url').value=url;
+    await activateSandbox();
+    setState('Loading public example adapter in isolated sandbox…','loading');
+    try{
+      const response=await fetch(url,{cache:'no-store'});
+      if(!response.ok)throw new Error('Example adapter HTTP '+response.status);
+      const source=await response.text();
+      const result=await sandbox.load({mode:'source',source});
+      setState('Loaded: '+String(result.adapterName||'public example adapter'),'ready');
+    }catch(error){
+      setState(error instanceof Error?error.message:String(error),'error');
+    }
+  });
   q<HTMLInputElement>('#portable-adapter-file').addEventListener('change',async e=>{const file=(e.currentTarget as HTMLInputElement).files?.[0];if(!file)return;if(!/\.(m?js)$/i.test(file.name)){setState('Local adapter must be .js or .mjs.','error');return}await activateSandbox();setState('Loading local adapter in isolated sandbox…','loading');try{const r=await sandbox.load({mode:'source',source:await file.text()});setState('Loaded locally: '+String(r.adapterName||file.name)+'. File was not uploaded.','ready')}catch(err){setState(err instanceof Error?err.message:String(err),'error')}});
   q('#portable-run-case').addEventListener('click',()=>void runOne(q<HTMLSelectElement>('#portable-case').value as PortableStressCaseId));
   q('#portable-run-suite').addEventListener('click',async()=>{for(const f of portableStressFixtures.filter(x=>!x.manualOnly))await runOne(f.id);setState('Compatible suite finished.','ready')});
