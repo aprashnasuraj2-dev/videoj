@@ -70,7 +70,7 @@ test('volume, chapter seek, speed and ended replay change real state', async ({p
   await expect.poll(()=>media.evaluate((v:HTMLVideoElement)=>!v.paused && v.currentTime<5)).toBe(true);
 });
 test('unavailable media has an accessible recovery dialog', async ({page}) => {
-  await page.route('**/studies-in-thread.mp4',r=>r.abort());
+  await page.route('**/from-fibre-to-fabric.mp4',r=>r.abort());
   await page.goto('/?local');
   await expect(page.locator('media-dialog-popup')).toBeVisible();
   const result=await new AxeBuilder({page}).include('#player-mount').analyze();
@@ -106,12 +106,12 @@ test('no chapters retains a usable linear seek bar',async({page})=>{
 test('woven chapter tracks occupy the timeline and follow the current chapter',async({page})=>{
  await page.goto('/?local');
  await expect(page.locator('.dhago-chapter-readout')).toBeVisible();
- await expect(page.locator('.dhago-chapter-name')).toHaveText('A thread of light');
+ await expect(page.locator('.dhago-chapter-name')).toHaveText('Raw fibre');
  const slider=await page.locator('media-time-slider').boundingBox();
  const track=await page.locator('.media-time-slider-track').first().boundingBox();
  expect(track!.width).toBeGreaterThan(slider!.width*.9);
  await page.locator('[data-seek="32"]').click();
- await expect(page.locator('.dhago-chapter-name')).toHaveText('Where shadows gather');
+ await expect(page.locator('.dhago-chapter-name')).toHaveText('Warp meets weft');
 });
 for (const time of [5,40]) {
  test(`isolated player over ${time===5?'bright':'dark'} footage`,async({page},info)=>{
