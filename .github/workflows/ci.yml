@@ -147,7 +147,7 @@ jobs:
           DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
         run: |
           node --input-type=module <<'JS'
-          import { appendFileSync } from 'node:fs';
+          import { appendFileSync, readFileSync } from 'node:fs';
           import { setTimeout as sleep } from 'node:timers/promises';
           const origin = new URL(process.env.DHAGO_LIVE_URL);
           const manifestUrl = new URL('release-manifest.json', origin);
@@ -157,8 +157,18 @@ jobs:
               const response = await fetch(manifestUrl, { signal: AbortSignal.timeout(5000) });
               const manifest = response.ok ? await response.json() : null;
               if (manifest?.source_sha === process.env.GITHUB_SHA) {
-                const entry = manifest.files.find(({ key }) => /^assets\/demo-[\w-]+\.js$/.test(key));
-                if (!entry) throw new Error('Published manifest lacks the demo entry');
+                // A Vite bundle can contain a demo helper in a modulepreload tag.
+                // Match the actual `<script type="module" src="...">` in the
+                // exact CI-tested homepage; never choose the first demo chunk.
+                const html = readFileSync('dist/index.html', 'utf8');
+                const entryScripts = [...html.matchAll(/<script\b[^>]*>/gi)]
+                  .map(match => match[0])
+                  .filter(tag => /\btype="module"/i.test(tag))
+                  .map(tag => tag.match(/\bsrc="\.\/(assets\/demo-[\w-]+\.js)"/i)?.[1])
+                  .filter(Boolean);
+                if (entryScripts.length !== 1) throw new Error('Expected one genuine module entry in the staged homepage.');
+                const entry = manifest.files.find(({ key }) => key === entryScripts[0]);
+                if (!entry) throw new Error('Published manifest lacks the actual staged homepage module entry: ' + entryScripts[0]);
                 appendFileSync(process.env.GITHUB_ENV, `DHAGO_EXPECTED_ENTRY_ASSET=${entry.key}\n`);
                 process.exit(0);
               }
