@@ -111,7 +111,7 @@ test('woven chapter tracks occupy the timeline and follow the current chapter',a
  const track=await page.locator('.media-time-slider-track').first().boundingBox();
  expect(track!.width).toBeGreaterThan(slider!.width*.9);
  await page.locator('[data-seek="32"]').click();
- await expect(page.locator('.dhago-chapter-name')).toHaveText('Warp meets weft');
+ await expect(page.locator('.dhago-chapter-name')).toHaveText('Thread becomes warp');
 });
 for (const time of [5,40]) {
  test(`isolated player over ${time===5?'bright':'dark'} footage`,async({page},info)=>{
@@ -181,9 +181,9 @@ test('Living Loom stage follows real documentary time across all four canonical 
 
   for (const [time, stage] of [
     [5, 'raw-fibre'],
-    [20, 'twist-into-thread'],
-    [40, 'warp-meets-weft'],
-    [55, 'cloth-holds-time'],
+    [20, 'preparing-fibre'],
+    [40, 'thread-warp'],
+    [55, 'warp-weft'],
   ] as const) {
     await media.evaluate((v:HTMLVideoElement, t) => {
       v.currentTime = t;
