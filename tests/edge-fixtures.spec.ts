@@ -52,7 +52,7 @@ test('audio-only lab controls drive real decoding, seeking and mute', async ({ p
   wav.writeUInt32LE(sampleRate, 24); wav.writeUInt32LE(sampleRate * 2, 28);
   wav.writeUInt16LE(2, 32); wav.writeUInt16LE(16, 34);
   wav.write('data', 36); wav.writeUInt32LE(dataLength, 40);
-  await page.route(url => url.hostname === 'commons.wikimedia.org', route => {
+  await page.route(url => url.hostname === 'commons.wikimedia.org' || url.hostname === 'upload.wikimedia.org', route => {
     const headers = { 'access-control-allow-origin': '*', 'accept-ranges': 'bytes' };
     const range = /^bytes=(\d+)-(\d*)$/.exec(route.request().headers().range ?? '');
     if (!range) return route.fulfill({ body: wav, contentType: 'audio/wav', headers });
