@@ -37,7 +37,7 @@ test('judge-visible controls work across the available browser engine', async ({
   if(browserName!=='webkit'){
     await fullscreen.click();
     await expect.poll(()=>page.evaluate(()=>Boolean(document.fullscreenElement))).toBe(true);
-    await page.keyboard.press('Escape');
+    await player.getByRole('button',{name:'Exit fullscreen'}).click();
     await expect.poll(()=>page.evaluate(()=>Boolean(document.fullscreenElement))).toBe(false);
   }
 
