@@ -176,7 +176,7 @@ test('ESM adapter URL mode loads a CORS-readable module without joining the pare
   await openLab(page);
   const url=new URL('/__stress-adapter-test.mjs',page.url()).href;
   await page.locator('#portable-adapter-url').fill(url);
-  await page.getByRole('button',{name:'Connect'}).click();
+  await page.getByRole('button',{name:'Connect',exact:true}).click();
   await expect(page.locator('#portable-loader-status')).toContainText('Connected: Plain video fixture');
   await expect(page.locator('#portable-sandbox-host iframe')).toHaveAttribute('sandbox','allow-scripts');
   await page.locator('#portable-case').selectOption('baseline');
