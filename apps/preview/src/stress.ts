@@ -20,8 +20,8 @@ const layeredMetadata:DhagoMetadataTrack[]=[
     {start:24,end:32,label:'Sponsor segment'},
   ]},
 ];
-const mediaSources:Record<Kind,{src:string;credit:string;creditUrl:string;license:string}>={
-  original:{src:ORIGINAL,credit:'Original DHAGO motion study · created for the competition',creditUrl:'https://github.com/aprashnasuraj2-dev/videoj',license:'Apache-2.0 source / original film'},
+const mediaSources:Record<Kind,{src:string;credit:string;creditUrl?:string;license:string}>={
+  original:{src:ORIGINAL,credit:'Original DHAGO motion study · created for the competition',license:'Apache-2.0 source / original film'},
   dhaka:{src:'https://upload.wikimedia.org/wikipedia/commons/0/0a/Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm',
     credit:'Oxlaey — Making handwoven Dhaka fabric in Nepal (real Nepalese textile weaving, not pashmina)',
     creditUrl:'https://commons.wikimedia.org/wiki/File:Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm',license:'CC BY-SA 3.0, unmodified'},
@@ -34,7 +34,7 @@ const mediaSources:Record<Kind,{src:string;credit:string;creditUrl:string;licens
   loom:{src:'https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS_Loom.ogg',
     credit:'Work With Sounds / Konrad Gutkowski — Loom (industrial loom recording, not Nepal)',
     creditUrl:'https://commons.wikimedia.org/wiki/File:WWS_Loom.ogg',license:'CC BY 4.0, unmodified'},
-  broken:{src:'./media/definitely-missing-dhago-source.mp4',credit:'Deliberately missing local source (controlled 404)',creditUrl:'https://github.com/aprashnasuraj2-dev/videoj',license:'Test injection'},
+  broken:{src:'./media/definitely-missing-dhago-source.mp4',credit:'Deliberately missing local source (controlled 404)',license:'Test injection'},
 };
 const cases:Case[]=[
   {id:'original',name:'Original weave',category:'Baseline',type:'Real playback',description:'The public film, four genuine chapters, working media controls and original source.',source:'original',cues:'four',manual:'Play, pause, seek, mute, enable captions, inspect fullscreen and replay.'},
@@ -166,8 +166,13 @@ function render(scenario:Case){
   const credit=mediaSources[scenario.source];
   const creditNode=$('#lab-credit');
   creditNode.replaceChildren(document.createTextNode('Footage / audio: '));
-  const link=document.createElement('a');link.href=credit.creditUrl;link.target='_blank';link.rel='noopener noreferrer';link.textContent=credit.credit;
-  creditNode.append(link,document.createTextNode(' · '+credit.license));
+  if(credit.creditUrl){
+    const link=document.createElement('a');link.href=credit.creditUrl;link.target='_blank';link.rel='noopener noreferrer';link.textContent=credit.credit;
+    creditNode.append(link);
+  }else{
+    creditNode.append(document.createTextNode(credit.credit));
+  }
+  creditNode.append(document.createTextNode(' · '+credit.license));
   player=createDhagoPlayer({source:credit.src,
     poster:scenario.poster==='missing'?'./media/nonexistent-cover.webp':scenario.source==='original'?BASE_POSTER:undefined,
     fallbackUrl:scenario.source==='broken'?location.origin+location.pathname+'?case=original':undefined,

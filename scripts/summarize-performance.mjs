@@ -29,6 +29,10 @@ const metric={
     transferBytes:transfer,
   },
   portableAuthoredLayer:sizes.portableAuthoredLayer,
+  dhagoPlayerAuthoredLayer:sizes.dhagoPlayerAuthoredLayer,
+  reusableRibbon:sizes.reusableRibbon,
+  stressLabApplication:sizes.stressLabApplication,
+  emittedDemoBuild:sizes.emittedDemoBuild,
   notes:[
     'Lighthouse is a lab mobile run, so TBT is reported; INP may be unavailable without field data.',
     'Page-load transfer includes requests observed by Lighthouse and is separate from the DHAGO-authored layer.',
@@ -39,7 +43,10 @@ writeFileSync(outBase+'.json',JSON.stringify(metric,null,2)+'\n');
 const kb=n=>n==null?'n/a':(n/1024).toFixed(1)+' kB';
 const ms=n=>n==null?'n/a':Math.round(n)+' ms';
 const cls=metric.lighthouseMobile.cls==null?'n/a':metric.lighthouseMobile.cls.toFixed(3);
-const p=metric.portableAuthoredLayer;
+const p=metric.dhagoPlayerAuthoredLayer;
+const r=metric.reusableRibbon;
+const s=metric.stressLabApplication;
+const d=metric.emittedDemoBuild;
 const md=`# DHAGO final performance / size evidence
 
 | Metric | Measured value |
@@ -57,8 +64,17 @@ const md=`# DHAGO final performance / size evidence
 | DHAGO authored layer raw | ${kb(p.rawBytes)} |
 | DHAGO authored layer gzip | ${kb(p.gzipBytes)} |
 | DHAGO authored layer brotli | ${kb(p.brotliBytes)} |
+| Reusable ribbon raw | ${kb(r.rawBytes)} |
+| Reusable ribbon gzip | ${kb(r.gzipBytes)} |
+| Reusable ribbon brotli | ${kb(r.brotliBytes)} |
+| Stress Lab authored app raw | ${kb(s.rawBytes)} |
+| Stress Lab authored app gzip | ${kb(s.gzipBytes)} |
+| Stress Lab authored app brotli | ${kb(s.brotliBytes)} |
+| Full multipage emitted JS+CSS raw | ${kb(d.totalJsCssRawBytes)} |
+| Full multipage emitted JS+CSS gzip | ${kb(d.totalJsCssGzipBytes)} |
+| Full multipage emitted JS+CSS brotli | ${kb(d.totalJsCssBrotliBytes)} |
 
-**Boundary:** the DHAGO authored-layer number is the custom CSS, TypeScript and HTML template compressed as one stream. It excludes the Video.js runtime/scaffold, demo application, Mux media and screenshots. The Lighthouse transfer figure is the separate end-to-end public page-load measurement.
+**Boundaries:** player, ribbon and Stress Lab are source-level authored groups compressed separately; they are not additive transfer estimates. The full multipage emitted number sums all JS/CSS chunks and is also not a one-page transfer. Video/media/screenshots are excluded from the authored groups. Lighthouse remains the separate end-to-end public page-load measurement.
 
 **Lab limitation:** Lighthouse reports TBT. INP is only shown if the run exposes it; otherwise it remains \`n/a\` rather than being inferred.
 `;

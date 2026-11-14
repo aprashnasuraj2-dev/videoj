@@ -18,10 +18,14 @@ export function connectLivingLoom(media: HTMLMediaElement, container: HTMLElemen
         interruption = undefined;
         break;
       case 'playing':
-      case 'timeupdate':
         if (!media.paused && !media.seeking && media.readyState >= 3) {
           started = true;
           interruption = undefined;
+        }
+        break;
+      case 'timeupdate':
+        if (!media.paused && !media.seeking && media.readyState >= 3) {
+          started = true;
         }
         break;
       case 'waiting':

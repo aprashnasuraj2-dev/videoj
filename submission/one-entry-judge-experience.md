@@ -2,7 +2,7 @@
 2026-11-14
 
 ## Canonical entry
-Submit **exactly one** skin, **DHAGO — Time, Woven**, with the canonical public URL https://creative.aafnaipatro.com/ and the source repository https://github.com/aprashnasuraj2-dev/videoj.
+Submit **exactly one** skin, **DHAGO — Time, Woven**, with the canonical public URL https://creative.aafnaipatro.com/ and the exact Apache-2.0 source archive from the final handoff package.
 
 The three supporting experiences do not constitute separate entries:
 - **The original film** is the primary demonstration and the first visual impression.
@@ -29,7 +29,7 @@ DHAGO takes its name from the Nepali word for thread. It turns real video chapte
 3. Paired Linen/Ink surfaces with identical semantics.
 4. One stress case: dense chapter cue fixture running on credited real weaving footage.
 5. One real-world journal capture with working Mux playback.
-6. Unedited controls walk-through plus repo/release/QA links.
+6. Unedited controls walk-through plus release/QA evidence.
 
 ## Engineering tradeoffs
 - Do not replace the original authored 64-second film with unedited stock footage for the lead capture: the exported skin is the competitor, not film production. Credit external footage and keep its existing license when used for edge cases.
