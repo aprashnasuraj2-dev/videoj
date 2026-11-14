@@ -613,7 +613,9 @@
     repeating-linear-gradient(0deg, #fff9 0 1px, transparent 1px 4px);
 }
 /* Custom patterns never become extra hit targets or false audio waveforms. */
-.dhago[data-weave-sampled] .media-time-slider-chapter { position: relative; }
+/* Keep each chapter's track positioned in the slider's full-width coordinate
+   space. Making a swatch position:relative shrinks the native seek fill to
+   its individual chapter width, breaking truthful timeline geometry. */
 @media (forced-colors: active), (prefers-contrast: more) {
   .dhago[data-weave-sampled] .media-time-slider-chapter .media-time-slider-track {
     background-image: none;
