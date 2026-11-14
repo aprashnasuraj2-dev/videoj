@@ -17,11 +17,11 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - name: Sync and hash-verify canonical documentary media
+      - name: Verify frozen original Studies in Thread film
         run: npm run sync:canonical-media
       - name: Install media tools for reproducible original-film encodes
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-      - name: Generate actual video weave metadata for typecheck
+      - name: Generate original-film sampled weave metadata for typecheck
         run: DHAGO_REQUIRE_WEBM=1 npm run prepare:weave
       - run: npm run typecheck
       - name: Build and require a decoded compatibility rendition
@@ -36,6 +36,38 @@ jobs:
             test-results/
             playwright-report/
             dist/
+          retention-days: 14
+
+  bonus-mux-proof:
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    # Bonus proof is separate: an unavailable historical asset must never
+    # invalidate otherwise verified original-video player functionality.
+    continue-on-error: true
+    env:
+      DHAGO_MUX_BONUS_PROBE: '1'
+      PLAYWRIGHT_CHROMIUM_EXECUTABLE: /usr/bin/google-chrome
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - uses: actions/download-artifact@v4
+        with:
+          name: candidate-evidence
+      - run: npx playwright install --with-deps chromium
+      - name: Play original Studies in Thread via Mux HLS with actual Chrome decoder
+        run: npx playwright test tests/mux.spec.ts --workers=1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bonus-mux-playback-proof
+          path: |
+            test-results/
+            playwright-report/
           retention-days: 14
 
   browser-proof:
@@ -137,7 +169,7 @@ jobs:
           }
           throw new Error('Dedicated public origin did not serve this exact release manifest.');
           JS
-      - name: Verify released fibre-to-fabric playback and live Studio Journal
+      - name: Verify released original motion-study playback and live Studio Journal
         env:
           DHAGO_LIVE_URL: https://creative.aafnaipatro.com
         run: npx playwright test tests/live.spec.ts --workers=1
@@ -145,7 +177,7 @@ jobs:
         env:
           DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
           DHAGO_RELEASE_SHA: ${{ github.sha }}
-          DHAGO_EXPECTED_MEDIA_PATH: media/from-fibre-to-fabric.mp4
+          DHAGO_EXPECTED_MEDIA_PATH: media/studies-in-thread.mp4
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           node scripts/capture-submission.mjs test-results/submission

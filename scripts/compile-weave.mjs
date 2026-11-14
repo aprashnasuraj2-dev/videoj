@@ -10,10 +10,10 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 
-const source=resolve(process.argv[2] ?? 'apps/preview/public/media/from-fibre-to-fabric.mp4');
-const cueFile=resolve(process.argv[3] ?? 'apps/preview/public/media/from-fibre-to-fabric-chapters.vtt');
+const source=resolve(process.argv[2] ?? 'apps/preview/public/media/studies-in-thread.mp4');
+const cueFile=resolve(process.argv[3] ?? 'apps/preview/public/media/chapters.vtt');
 const output=resolve(process.argv[4] ?? 'apps/preview/src/weave-studies.json');
-const posterOutput=resolve(process.argv[5] ?? 'apps/preview/public/media/from-fibre-to-fabric.weave.svg');
+const posterOutput=resolve(process.argv[5] ?? 'apps/preview/public/media/studies-in-thread.weave.svg');
 const strict=process.env.DHAGO_REQUIRE_WEBM==='1';
 const fail=(message)=>{console.error('[DHAGO/weave] '+message);if(strict)process.exit(1)};
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
@@ -79,7 +79,7 @@ function svgDocument(chapters){
       escapeXml((i+1)+'. '+c.title.slice(0,24))+'</text>';
   }).join('');
   return '<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">'
-    +'<title id="title">DHAGO — the chromatic weave of From Fibre to Fabric</title>'
+    +'<title id="title">DHAGO — the chromatic weave of Studies in Thread</title>'
     +'<desc id="desc">The colors are sampled from actual video frames at chapter midpoints. Thread weights reflect actual measured chapter mean audio volume where available. This image is a textile visualization, not a waveform.</desc>'
     +'<rect width="1200" height="630" fill="#1e2625"/>'
     +'<text x="48" y="62" fill="#f2e7d4" font-family="Georgia,serif" font-size="34" letter-spacing="1">DHAGO / Time, woven.</text>'

@@ -1,5 +1,7 @@
 # DHAGO judging rehearsal — 2026-11-13
 
+> **Archive notice (updated 2026-11-14):** Historical references to earlier documentary, release SHAs, Mux status or measured passes below apply only to **past builds**. The current competition film is **Studies in Thread**. Latest candidate facts and honest bonus status are in [submission/final-submission.md](../submission/final-submission.md) and [release-integrity.md](release-integrity.md). No future judge score is assumed. The judge rubric remains 10/5/5/5, plus one Mux point and one site-use point.
+
 **Purpose:** identify the weaknesses most likely to reduce the Video.js Skins Design Challenge score, not predict the judges or assert a first-place finish. The official brief assigns visual/originality 10, usability 5, accessibility 5, execution/polish 5 and possible bonus evidence worth 2 points. The active entry deadline remains Nov 16, 11:59pm PST, as recorded in `docs/brief.md`.
 
 ## Evidence-based design assessment

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="DHAGO engineering tools: real native video telemetry, bounded media events, reversible seeking, buffered/seekable ranges and safe diagnostic snapshots."/>
+<title>DHAGO — Engineering Tools</title></head>
+<body class="tools">
+<a class="skip" href="#tools-player">Skip to engineering player</a>
+<header class="tools-header"><a class="tools-brand" href="./">▦ DHAGO <span>/ ENGINEERING</span></a><nav aria-label="Main"><a href="./">Demo</a><a href="./stress.html">Edge States Lab</a><a href="./tools.html" aria-current="page">Tools</a><a href="./journal.html">Studio Journal</a></nav></header>
+<main>
+<section class="tools-intro"><p class="eyebrow">Real HTMLMediaElement telemetry / Video.js v10</p><h1>Inspect the <em>weave.</em></h1><p>These instruments read real browser media properties, then compare them to DHAGO's derived presentation. No simulated network conditions or invented playback data. The original 64-second <strong>Studies in Thread</strong> remains the test source.</p></section>
+<section class="tools-player-layout"><div><h2>Live specimen</h2><media-i18n><div id="tools-player"></div></media-i18n><p class="tools-caption">Media is the source of truth. Snapshot URLs are sanitized; controls act on this player only.</p></div>
+<aside class="tools-card" aria-labelledby="state-title"><div class="tools-card-head"><h2 id="state-title">Live state inspector</h2><span id="tools-status" role="status" aria-live="off">INITIALIZING</span></div>
+<dl id="tools-metrics" class="tools-metrics"></dl><p class="tools-mini" id="tools-chapter">Chapter: —</p></aside></section>
+<div class="tools-grid">
+<section class="tools-card" aria-labelledby="seek-title"><div class="tools-card-head"><h2 id="seek-title">Seek / scrub precision</h2><span>REAL PLAYBACK</span></div>
+<p>Every movement applies to <code>currentTime</code>; the Living Loom must move backward as well as forward.</p>
+<div class="tools-actions" id="tools-seeks">
+<button data-seek="0">Start · 0s</button><button data-seek="-10">−10s</button><button data-seek="-5">−5s</button><button data-seek="-1">−1s</button>
+<button data-seek="+1">+1s</button><button data-seek="+5">+5s</button><button data-seek="+10">+10s</button>
+<button data-seek="25%">25%</button><button data-seek="50%">50%</button><button data-seek="75%">75%</button><button data-seek="90%">90%</button><button data-seek="nearend">Near end</button>
+</div><form id="tools-seek-form"><label for="tools-exact">Exact seconds</label><div class="tools-inline"><input id="tools-exact" type="number" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 32.5"/><button type="submit">Seek precisely</button></div></form>
+<p id="tools-feedback" class="tools-feedback" role="status" aria-live="polite"></p>
+</section>
+<section class="tools-card" aria-labelledby="ranges-title"><div class="tools-card-head"><h2 id="ranges-title">Three different time ranges</h2><span>TRUTHFUL RANGES</span></div>
+<p>Played position is not the same as buffered data or the seekable window. Multiple buffered intervals are represented separately.</p>
+<div class="range-stack"><div><div class="range-label"><span>Played position</span><span id="tools-played-label">—</span></div><div class="range-track" id="tools-played"></div></div>
+<div><div class="range-label"><span>Buffered</span><span id="tools-buffered-label">—</span></div><div class="range-track" id="tools-buffered"></div></div>
+<div><div class="range-label"><span>Seekable</span><span id="tools-seekable-label">—</span></div><div class="range-track" id="tools-seekable"></div></div></div>
+<p class="tools-mini">Empty ranges remain empty; unknown or infinite duration is not shown as a percentage.</p>
+</section>
+<section class="tools-card" aria-labelledby="events-title"><div class="tools-card-head"><h2 id="events-title">Media event timeline</h2><span id="tools-event-count">0 / 120</span></div>
+<p>Events come from the actual media element. Repetitive events are coalesced; the last 120 records are retained, newest first.</p>
+<div class="tools-actions"><button id="tools-toggle-log" type="button" aria-pressed="false">Pause logging</button><button id="tools-clear-log" type="button">Clear event log</button></div>
+<div class="event-scroll"><table><thead><tr><th scope="col">Event</th><th scope="col">Time</th><th scope="col">Ready</th><th scope="col">Network</th><th scope="col">DHAGO</th></tr></thead><tbody id="tools-event-rows"></tbody></table></div>
+</section>
+<section class="tools-card" aria-labelledby="snapshot-title"><div class="tools-card-head"><h2 id="snapshot-title">Safe state snapshot</h2><span>SANITIZED</span></div>
+<p>Copy native state, DHAGO flags, chapter and range arrays as compact JSON. Source identities are reduced to local basenames; signed URLs and credentials are never copied.</p>
+<div class="tools-actions"><button id="tools-copy-state" type="button">Copy snapshot JSON</button><button id="tools-reset" type="button">Reset to original baseline</button></div>
+<pre id="tools-snapshot" tabindex="0" aria-label="Current sanitized media snapshot">Waiting for metadata…</pre>
+<p class="tools-mini">Fullscreen and Picture-in-Picture are only supported when the running browser exposes the corresponding APIs. No external capability is fabricated.</p>
+</section>
+</div>
+</main><footer>DHAGO Engineering Tools · <a href="./">Return to Demo</a> · <a href="./stress.html">Run Edge States Lab</a> · <a href="https://github.com/aprashnasuraj2-dev/videoj">Inspect source</a></footer>
+<script type="module" src="/src/tools.ts"></script></body></html>

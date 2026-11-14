@@ -14,7 +14,7 @@ test('the isolated skin itself has a chapter chooser with real seek and focus re
   await expect(choices).toHaveCount(4);
   await choices.nth(2).click();
   await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThanOrEqual(32);
-  await expect(summary).toContainText('Warp meets weft');
+  await expect(summary).toContainText('Where shadows gather');
   await expect(details).not.toHaveAttribute('open','');
   await expect(summary).toBeFocused();
   await summary.click();
@@ -33,7 +33,7 @@ test('40 actual WebVTT cues form keyboard-operable, individually labeled jump ch
     const stamp=(s:number)=>'00:'+String(Math.floor(s/60)).padStart(2,'0')+':'+String(Math.floor(s%60)).padStart(2,'0')+'.'+String(Math.round((s%1)*1000)).padStart(3,'0');
     return `${stamp(i*1.6)} --> ${stamp((i+1)*1.6)}\nWeave passage ${i+1}\n`;
   }).join('\n');
-  await page.route('**/media/from-fibre-to-fabric-chapters.vtt',route=>route.fulfill({contentType:'text/vtt',body:'WEBVTT\n\n'+marks}));
+  await page.route('**/media/chapters.vtt',route=>route.fulfill({contentType:'text/vtt',body:'WEBVTT\n\n'+marks}));
   await page.goto('/?local');
   const chooser=page.locator('.dhago-chapter-readout');
   await expect(chooser).toBeVisible();
@@ -48,7 +48,7 @@ test('40 actual WebVTT cues form keyboard-operable, individually labeled jump ch
 });
 test('Devanagari and RTL cue names preserve actual text without overflow in a small player',async({page})=>{
   await page.setViewportSize({width:320,height:780});
-  await page.route('**/media/from-fibre-to-fabric-chapters.vtt',route=>route.fulfill({contentType:'text/vtt',body:
+  await page.route('**/media/chapters.vtt',route=>route.fulfill({contentType:'text/vtt',body:
     'WEBVTT\n\n00:00.000 --> 00:32.000\nधागो र नेपाली परम्परागत कपडा उत्पादनको लामो विवरण\n\n00:32.000 --> 01:04.000\nنسيج من الذاكرة والتقاليد في جبال الهيمالايا\n'
   }));
   await page.goto('/?local');
@@ -91,7 +91,7 @@ test('native controls remain available without JavaScript',async({browser})=>{
     await page.goto('/');
     const native=page.locator('noscript video[controls]');
     await expect(native).toBeVisible();
-    await expect(native).toHaveAttribute('src','./media/from-fibre-to-fabric.mp4');
+    await expect(native).toHaveAttribute('src','./media/studies-in-thread.mp4');
   }finally{await context.close();}
 });
 
@@ -106,16 +106,16 @@ test('H.264-incapable Chromium plays the original VP9 rendition instead of a bro
   });
   await page.goto('/?local');
   const video=page.locator('#player-mount video');
-  await expect(video).toHaveAttribute('src',/from-fibre-to-fabric\.webm$/);
+  await expect(video).toHaveAttribute('src',/studies-in-thread\.webm$/);
   await expect(page.locator('.dhago')).toHaveAttribute('data-compatibility-source','webm');
   await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.readyState),{timeout:15000}).toBeGreaterThan(0);
   await page.locator('media-play-button').click();
   await expect.poll(()=>video.evaluate((v:HTMLVideoElement)=>v.currentTime),{timeout:15000}).toBeGreaterThan(.3);
-  await expect(page.locator('.dhago-chapter-name')).toContainText('Raw fibre');
+  await expect(page.locator('.dhago-chapter-name')).toContainText('A thread of light');
 });
 test('codec-capable browsers mount the new H.264 film directly',async({page})=>{
   await page.goto('/');
   await expect(page.locator('mux-video')).toHaveCount(0);
-  await expect(page.locator('#player-mount video')).toHaveAttribute('src',/from-fibre-to-fabric\.mp4$/);
+  await expect(page.locator('#player-mount video')).toHaveAttribute('src',/studies-in-thread\.mp4$/);
   await expect(page.locator('.dhago')).not.toHaveAttribute('data-compatibility-source','webm');
 });

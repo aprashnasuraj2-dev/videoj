@@ -1,0 +1,90 @@
+@import './demo.css';
+:root{color-scheme:light}
+body.tools{margin:0;background:#f2eee5;color:#222822;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.tools-header,.tools-intro,.tools-player-layout,.tools-grid,body.tools footer{max-width:1260px;margin-inline:auto;padding-inline:clamp(16px,4vw,64px)}
+.tools-header{display:flex;gap:22px;justify-content:space-between;align-items:center;padding-block:22px;border-bottom:1px solid #d9d2c4;flex-wrap:wrap}
+.tools-brand{color:#293b32;font-size:20px;letter-spacing:.1em;font-weight:800;text-decoration:none}.tools-brand span{font-size:12px;font-weight:600}
+.tools-header nav{display:flex;flex-wrap:wrap;gap:16px}.tools-header a,.tools header a{color:#30483d}
+.tools-header nav a[aria-current=page]{color:#a44033;font-weight:700;text-decoration-thickness:3px}
+.tools-intro{padding-block:48px 24px}.tools-intro h1{font-family:Georgia,serif;font-size:clamp(36px,6vw,74px);line-height:1.05;margin:12px 0 16px}
+.tools-intro h1 em{color:#a44237}.tools-intro>p:last-child{max-width:760px;line-height:1.7}
+.tools-player-layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(290px,.85fr);gap:22px;align-items:start}
+.tools-player-layout>div:first-child{min-width:0}.tools-player-layout h2{font-size:22px;margin:0 0 12px}
+.tools-player-layout media-container{max-width:100%}.tools-caption{font-size:13px;color:#4f6256}
+.tools-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;padding-block:24px 50px}
+.tools-card{background:#fffdf8;border:1px solid #d9d0c3;border-radius:16px;padding:clamp(16px,2.4vw,26px);min-width:0;box-shadow:0 12px 32px #2832280a}
+.tools-card-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap;border-bottom:1px solid #e2d9ca;padding-bottom:10px;margin-bottom:16px}
+.tools-card-head h2{margin:0;font-size:21px;letter-spacing:-.02em}.tools-card-head>span{font:700 11px/1.4 ui-monospace,SFMono-Regular,monospace;color:#895344;letter-spacing:.05em}
+.tools-card p{line-height:1.6;font-size:14px;color:#465448}
+.tools-metrics{display:grid;grid-template-columns:minmax(120px,1fr) minmax(100px,1fr);gap:7px 14px;font-size:12px;margin:0}
+.tools-metrics dt{color:#647266}.tools-metrics dd{margin:0;color:#1d2c23;font-family:ui-monospace,SFMono-Regular,monospace;overflow-wrap:anywhere;text-align:right}
+.tools-mini{font-size:12px!important;color:#617064!important;margin:14px 0 0}
+.tools-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.tools-actions button,.tools-inline button{border:1px solid #9aaba0;border-radius:8px;color:#1c382b;background:#f2f5ef;padding:11px 13px;min-height:44px;font-weight:650;cursor:pointer}
+.tools-actions button:hover,.tools-inline button:hover{background:#dce9de}
+.tools button:focus-visible,.tools input:focus-visible,.tools a:focus-visible{outline:3px solid #9b462b;outline-offset:3px}
+.tools-inline{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.tools-inline input{min-height:44px;border-radius:8px;border:1px solid #a4a99c;padding:0 12px;flex:1;min-width:120px}
+.tools label{font-weight:650}.tools-feedback{min-height:24px}
+.range-stack{display:grid;gap:20px;margin-top:22px}.range-label{display:flex;gap:12px;justify-content:space-between;font-size:13px;min-width:0}
+.range-label span:last-child{font:11px/1.35 ui-monospace,monospace;overflow-wrap:anywhere;text-align:right}
+.range-track{position:relative;height:15px;border-radius:6px;border:1px solid #cdcabb;background:repeating-linear-gradient(90deg,#f4f0e7 0 12px,#e7e0d2 12px 13px);overflow:hidden;margin-top:7px}
+.range-segment{position:absolute;inset-block:0;background:#a44f36;min-width:1px}.range-stack>div:nth-child(2) .range-segment{background:#3d7d75}.range-stack>div:nth-child(3) .range-segment{background:#a48236}
+.event-scroll{max-height:330px;overflow:auto;border:1px solid #e0d9cb;border-radius:8px}
+.event-scroll table{width:100%;border-collapse:collapse;font:12px/1.5 ui-monospace,SFMono-Regular,monospace}
+.event-scroll th,.event-scroll td{text-align:left;padding:8px;border-bottom:1px solid #e8e1d6;white-space:nowrap}
+.event-scroll th{position:sticky;top:0;background:#f3eee4}#tools-snapshot{font:11px/1.6 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;max-height:350px;overflow:auto;padding:14px;border-radius:8px;background:#202b26;color:#e7e8d4}
+body.tools footer{border-top:1px solid #d4ccba;padding-block:28px 40px;font-size:13px}
+body.tools footer a{color:#8a3f2e}
+@media(max-width:950px){.tools-player-layout,.tools-grid{grid-template-columns:1fr}.tools-header{align-items:flex-start}}
+@media(max-width:480px){.tools-header nav{gap:8px 13px}.tools-card{padding:14px}.tools-metrics{grid-template-columns:1fr 1fr}.tools-intro{padding-top:26px}.tools-actions button{flex:1 1 120px}}
+@media(prefers-reduced-motion:reduce){.tools *{scroll-behavior:auto!important;transition-duration:0s!important;animation-duration:0s!important}}
+
+/* Keep each instrument inside the physical viewport without hiding controls. */
+body.tools main{width:100%;max-width:1260px}
+body.tools .tools-header,body.tools .tools-intro,body.tools .tools-player-layout,body.tools .tools-grid{max-width:100%;min-width:0}
+#tools-player,#tools-player .dhago{width:100%;max-width:100%;min-width:0}
+.tools-grid>*{min-width:0}
+@media(max-width:480px){
+ body.tools main{padding-inline:16px}
+ body.tools .tools-intro,body.tools .tools-player-layout,body.tools .tools-grid{padding-inline:0}
+ .tools-metrics{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .tools-player-layout{gap:14px}
+}
+
+/* Internal event table must scroll in its own viewport, not widen mobile pages. */
+body.tools .event-scroll{width:100%;max-width:100%;min-width:0;display:block;overflow-x:auto;overflow-y:auto;contain:inline-size}
+body.tools .event-scroll table{width:max-content;min-width:100%;max-width:none;}
+body.tools .tools-card{min-width:0;max-width:100%;}
+
+/* Event history scrolls independently: its 5-column intrinsic table must
+   never make the 320px document wider. Inner scroll still works normally. */
+body.tools .tools-grid{width:100%;min-width:0;max-width:100%;overflow:clip;}
+body.tools .event-scroll{width:100%;max-width:100%;min-width:0;overscroll-behavior-x:contain;}
+@media(max-width:480px){body.tools .tools-grid{padding-inline:0;}body.tools .tools-card{min-width:0;}}
+
+/* A five-column event table is not usable at 320px. Present a 3-column
+   compact log rather than letting its intrinsic width widen the document.
+   All five fields remain available on desktop and in the copied snapshot. */
+@media(max-width:480px){
+  body.tools .event-scroll {box-sizing:border-box;width:100%;max-width:100%;overflow-x:hidden;}
+  body.tools .event-scroll table {width:100%!important;min-width:0!important;max-width:100%!important;table-layout:fixed;border-collapse:collapse;}
+  body.tools .event-scroll th,body.tools .event-scroll td {white-space:normal;overflow-wrap:anywhere;word-break:break-word;font-size:10px;padding:6px 3px;}
+  body.tools .event-scroll th:nth-child(3),body.tools .event-scroll td:nth-child(3),
+  body.tools .event-scroll th:nth-child(4),body.tools .event-scroll td:nth-child(4){display:none;}
+  body.tools .event-scroll th:nth-child(1){width:39%;}
+  body.tools .event-scroll th:nth-child(2){width:27%;}
+  body.tools .event-scroll th:nth-child(5){width:34%;}
+}
+
+/* True 320px header fit: neither brand nor nav links may retain an intrinsic
+   width wider than their flex line. Keep real links discoverable, don't hide. */
+@media(max-width:480px){
+  body.tools .tools-header{width:100%;max-width:100%;min-width:0;box-sizing:border-box;gap:12px;justify-content:flex-start;}
+  body.tools .tools-header .tools-brand{min-width:0;max-width:100%;font-size:17px;letter-spacing:.055em;overflow-wrap:anywhere;white-space:normal;}
+  body.tools .tools-header .tools-brand span{font-size:11px;letter-spacing:.05em;white-space:normal;}
+  body.tools .tools-header nav{display:flex;flex:1 1 100%;min-width:0;width:100%;max-width:100%;flex-wrap:wrap;gap:8px 11px;justify-content:flex-start;}
+  body.tools .tools-header nav a{display:inline-block;max-width:100%;font-size:12px;letter-spacing:0;overflow-wrap:anywhere;white-space:normal;}
+  body.tools footer{max-width:100%;min-width:0;overflow-wrap:anywhere;}
+  body.tools footer a{max-width:100%;overflow-wrap:anywhere;}
+}

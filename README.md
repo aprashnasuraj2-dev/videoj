@@ -1,8 +1,8 @@
 # DHAGO — Time, woven
 
-Reusable Video.js v10 HTML skin with a woven chapter ribbon, visible control shelf, captions and speed settings. The public demo is built around the original 64-second **From Fibre to Fabric** documentary short: chapter time becomes warp and weft while familiar media controls stay precise. The ribbon can also encode exposed rendition changes, real buffering interruptions and dropped-frame counters as an honest viewing history.
+Reusable Video.js v10 HTML skin with a woven chapter ribbon, visible control shelf, captions and speed settings. The public demo is built around the first 64-second **Studies in Thread** motion study: chapter time becomes warp and weft while familiar media controls stay precise. The ribbon can also encode exposed rendition changes, real buffering interruptions and dropped-frame counters as an honest viewing history.
 
-[Public collection](https://creative.aafnaipatro.com/) · [Annotated film journal](https://creative.aafnaipatro.com/journal.html) · [Reusable ribbon proof](https://creative.aafnaipatro.com/ribbon.html) · [Portable Stress Lab](STRESS-LAB.md) · [Install in under a minute](INSTALL.md)
+[Public collection](https://creative.aafnaipatro.com/) · [Annotated film journal](https://creative.aafnaipatro.com/journal.html) · [Reusable ribbon proof](https://creative.aafnaipatro.com/ribbon.html) · [Edge States Lab](https://creative.aafnaipatro.com/stress.html) · [Engineering Tools](https://creative.aafnaipatro.com/tools.html) · [Portable Stress Lab](STRESS-LAB.md) · [Install in under a minute](INSTALL.md)
 
 Requires Node 24 and npm. Run `npm ci`, `npm run dev`; validate with `npm run typecheck` and `npm run build`. Serve `dist/` over HTTPS. For browser checks run `npx playwright install --with-deps chromium`, `npm run build`, then `npm test`. Tests exercise the production build through Vite preview. Set `DHAGO_LIVE_URL` to run appropriate checks against a published origin; keep fault-injection cases in the test environment.
 
@@ -12,9 +12,9 @@ Set `--media-accent-color`, `--media-accent-text-color`, `--media-border-radius`
 
 ## Progress and operations
 
-[100-step checklist](docs/CHECKLIST.md), [verification](tests/QA.md), [Mux setup](docs/media.md). `docs/steps.json` is authoritative; run `node scripts/progress.mjs` after updates.
+[100-step checklist](docs/CHECKLIST.md), [verification](tests/QA.md), [Original film and Mux bonus proof](docs/media.md) · [Copy-ready submission](submission/final-submission.md). `docs/steps.json` is authoritative; run `node scripts/progress.mjs` after updates.
 
-Actions validate builds and browser behavior, provision Mux using repository secrets, and package exact source revisions with SHA-256 checksums. Source-package automation does not establish final submission readiness. No contest submission, accepted terms or bonus is claimed until verified.
+Actions validate builds, browser behavior and separate current Mux playback proof. The original public Mux playback ID is restored from historical source configuration; we do not attempt a duplicate video upload. Exact source releases use SHA-256 checksums. Source-package automation does not establish final submission readiness. No contest submission, accepted terms or bonus is claimed until verified.
 
 ## Release and competition handoff
 
@@ -25,6 +25,6 @@ The final pipeline keeps candidate verification, immutable staging and public-re
 Physical Safari/iPhone/Android and VoiceOver/NVDA remain separate real-device gates and are never inferred from emulation. The project has **not** been entered into the contest.
 
 
-### Documentary media contract
+### Original motion-study media contract
 
-The canonical 64-second film is deliberately aligned to four equal chapter intervals: 0–16s **Raw fibre**, 16–32s **Twist into thread**, 32–48s **Warp meets weft**, and 48–64s **Cloth holds time**. Living Loom derives `data-weave-stage`, `--dhago-time-ratio` and `--dhago-stage-phase` from the media element's real `currentTime / duration`; those values only decorate the woven ribbon and never replace Video.js seek truth. The current direct-delivery masters are approximately 22.7 MB H.264/AAC and 25.6 MB VP9/Opus, with English documentary captions carried as WebVTT.
+The canonical 64-second film is deliberately aligned to four equal chapter intervals: 0–16s **A thread of light**, 16–32s **The shape of quiet**, 32–48s **Where shadows gather**, and 48–64s **Coming home**. Living Loom derives `data-weave-stage`, `--dhago-time-ratio` and `--dhago-stage-phase` from the media element's real `currentTime / duration`; those values only decorate the woven ribbon and never replace Video.js seek truth. The frozen original Git MP4 is **2,563,521 bytes**, and Cloudflare R2 retains its roughly **7.46 MB** VP9/WebM compatibility rendition. English descriptions and chapter cues are carried as WebVTT. The former 22–30 MB documentary encodes are superseded and not part of the current judge-facing film.

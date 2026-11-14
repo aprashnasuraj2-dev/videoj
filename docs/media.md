@@ -1,17 +1,28 @@
-# Original film and Mux operations
+# Canonical DHAGO media — original film restored
 
-`from-fibre-to-fabric.mp4` is the canonical 64-second original DHAGO motion study. Its four chapters follow Raw fibre → Twist into thread → Warp meets weft → Cloth holds time, with matching descriptive captions and a WebM compatibility encode. The public release serves these exact media objects from the dedicated Cloudflare R2 bucket. `?local` explicitly exercises the direct source.
+## Frozen identity
 
-Repository Actions secrets must be named `MUX_TOKEN_ID` and `MUX_TOKEN_SECRET`. Their values cannot be read through the connected repository API. The supplied API token ID is not a playback ID. Never put either management credential into VITE variables.
+**Studies in Thread** is the original 64-second procedural motion study that existed before all later documentary replacement experiments. It contains abstract scenic line animation and a quiet synthesized tone, **no speech**, and descriptive captions. It is NOT the later **From Fibre to Fabric** documentary or its regenerated variants. No future video generation is authorized.
 
-`Provision Mux demo media` creates or reuses the matching content-hash asset with basic quality and public playback. It waits for ready, then exports only the public configuration as a workflow artifact for review. It does not accept contest terms or submit an entry. An asset list safety bound prevents blindly creating duplicates in unexpectedly large accounts. A runner failure after direct upload creation but before asset creation can leave a pending upload; inspect Mux before repeating an interrupted upload.
+| Role | Canonical file |
+|---|---|
+| Original film | `apps/preview/public/media/studies-in-thread.mp4` |
+| Compatibility source | `apps/preview/public/media/studies-in-thread.webm` (build-produced when missing) |
+| Poster | `apps/preview/public/media/poster.webp` |
+| Chapters | `apps/preview/public/media/chapters.vtt` |
+| Captions | `apps/preview/public/media/captions.vtt` |
+| Derived weave study | `apps/preview/src/weave-studies.json` (build-produced) |
 
-After provisioning, inspect the workflow result and test actual HLS playback before marking steps 65–67 complete. A ready API asset is not browser playback proof. Account billing limits and judging lifetime remain to be confirmed. At 1,000 full 64-second views, delivery is about 1,067 minutes before replay. At 4 Mbps this is roughly 32 GB. Video stays on the media CDN; no application worker proxies it.
+The Git MP4 blob was `38b34cbd3e0e06221e12e9059979a0ece8cc266b` (2,563,521 bytes) both on the pre-replacement baseline `d8aba3f957cb` and later `main`. The original Mux provisioning configuration recorded content SHA-256 `9dcc4672e3014ca947e310c1809c0cf6d40ffff186478f3e6a1e47f89b3688b3`; the canonical-source verification command checks that exact digest rather than downloading an unverified replacement.
 
-API reference verified 2026-11-13: https://www.mux.com/docs/api-reference/video/direct-uploads/create-direct-upload . Version-matched integration: installed @videojs/html 10.4.0 docs/reference/components/mux-video.md.
+Original chapter boundaries: `0–16s A thread of light`, `16–32s The shape of quiet`, `32–48s Where shadows gather`, `48–64s Coming home`. Use actual WebVTT cues; tool fixtures must be clearly labeled.
 
-## Current source, release, and spend boundary
+## Recovery mirrors, checked 2026-11-14
 
-`apps/preview/src/media.json` stays null until the canonical fibre-to-fabric asset receives its own verified public Mux playback ID. The previous playback ID belongs to the retired film and must not be reused. Public smoke validates the exact R2 film today; the Mux test becomes active only after the canonical ID is populated.
+- Cloudflare R2 bucket **dhago-studio-static** retains `media/studies-in-thread.mp4` (2,563,521 bytes), `media/studies-in-thread.webm` (7,455,419 bytes), `media/poster.webp`, `media/chapters.vtt`, `media/captions.vtt`.
+- Historical original Mux playback ID: `Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw`. This is public playback metadata, not a management token. **Current live playback remains unverified.** Do not make the old ID default until its HLS stream plays and seeks reliably in the actual browser build.
+- Owner Google Drive folder: `Videojs`, ID `1uBHKAcUv2G8mfn3e9Q01A-F1Cp5U7RL5`. Earlier archives include original-source and live Mux test evidence from 2026-11-13; earlier passes are historical, not current release proof.
 
-The published 2026-11-13 Mux Free plan advertises 100,000 delivered minutes monthly and at most 10 stored videos; a full 64-second watch consumes about 1.067 delivery minutes. The account-specific plan/remaining quota were not available. See `docs/mux-cost-and-retention.md`. Do not start another upload or enable paid spend to work around an unverified limit.
+The released Demo uses the original self-hosted MP4 with compatibility WebM where supported. Mux is optional and must not become a hard dependency or delay engineering release. Do not publish/reupload duplicate original media objects merely because the public HTML was replaced. Keep secrets out of source, logs and artifacts.
+
+See `docs/RESTORE-ORIGINAL.md` for implementation/verification status.

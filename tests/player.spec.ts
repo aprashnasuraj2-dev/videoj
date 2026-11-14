@@ -70,7 +70,7 @@ test('volume, chapter seek, speed and ended replay change real state', async ({p
   await expect.poll(()=>media.evaluate((v:HTMLVideoElement)=>!v.paused && v.currentTime<5)).toBe(true);
 });
 test('unavailable media has an accessible recovery dialog', async ({page}) => {
-  await page.route('**/from-fibre-to-fabric.mp4',r=>r.abort());
+  await page.route('**/studies-in-thread.mp4',r=>r.abort());
   await page.goto('/?local');
   await expect(page.locator('media-dialog-popup')).toBeVisible();
   const result=await new AxeBuilder({page}).include('#player-mount').analyze();
@@ -106,12 +106,12 @@ test('no chapters retains a usable linear seek bar',async({page})=>{
 test('woven chapter tracks occupy the timeline and follow the current chapter',async({page})=>{
  await page.goto('/?local');
  await expect(page.locator('.dhago-chapter-readout')).toBeVisible();
- await expect(page.locator('.dhago-chapter-name')).toHaveText('Raw fibre');
+ await expect(page.locator('.dhago-chapter-name')).toHaveText('A thread of light');
  const slider=await page.locator('media-time-slider').boundingBox();
  const track=await page.locator('.media-time-slider-track').first().boundingBox();
  expect(track!.width).toBeGreaterThan(slider!.width*.9);
  await page.locator('[data-seek="32"]').click();
- await expect(page.locator('.dhago-chapter-name')).toHaveText('Warp meets weft');
+ await expect(page.locator('.dhago-chapter-name')).toHaveText('Where shadows gather');
 });
 for (const time of [5,40]) {
  test(`isolated player over ${time===5?'bright':'dark'} footage`,async({page},info)=>{
@@ -161,29 +161,29 @@ test('the open menu and hour-long clock fit the narrow player', async ({ page })
   expect(firstRow.right).toBeLessThanOrEqual(firstRow.edge);
 });
 
-test('homepage playback is independent of the legacy Mux asset', async ({ page }) => {
+test('homepage preserves the original motion study without Mux dependency', async ({ page }) => {
   await page.route('https://stream.mux.com/**', route => route.abort());
   await page.goto('/?surface=dark');
   await expect(page.locator('mux-video')).toHaveCount(0);
   const film=page.locator('#player-mount video');
-  await expect(film).toHaveAttribute('src',/from-fibre-to-fabric\.mp4$/);
+  await expect(film).toHaveAttribute('src',/studies-in-thread\.mp4$/);
   await expect.poll(()=>film.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
   await page.locator('media-play-button').click();
   await expect.poll(()=>film.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(.2);
 });
 
 
-test('Living Loom stage follows real documentary time across all four canonical chapters', async ({page}) => {
+test('Living Loom stage follows actual motion-study time across all four canonical chapters', async ({page}) => {
   await page.goto('/?local');
   const media = page.locator('#player-mount video');
   const container = page.locator('#player-mount media-container');
   await expect.poll(() => media.evaluate((v:HTMLVideoElement) => v.readyState)).toBeGreaterThan(0);
 
   for (const [time, stage] of [
-    [5, 'raw-fibre'],
-    [20, 'twist-into-thread'],
-    [40, 'warp-meets-weft'],
-    [55, 'cloth-holds-time'],
+    [5, 'thread-of-light'],
+    [20, 'shape-of-quiet'],
+    [40, 'shadows-gather'],
+    [55, 'coming-home'],
   ] as const) {
     await media.evaluate((v:HTMLVideoElement, t) => {
       v.currentTime = t;
