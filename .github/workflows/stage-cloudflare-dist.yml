@@ -25,7 +25,8 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - run: npm ci && npm run typecheck && npm run build
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - run: npm ci && DHAGO_REQUIRE_WEBM=1 npm run prepare:weave && npm run typecheck && DHAGO_REQUIRE_WEBM=1 npm run build
       - name: Create immutable branch containing exact dist
         shell: bash
         run: |

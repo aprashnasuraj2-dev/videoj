@@ -7,3 +7,10 @@ test-results/
 playwright-report/
 tmp/
 .DS_Store
+
+# Generated alternative encoding of the original film
+apps/preview/public/media/studies-in-thread.webm
+
+# Generated from real authored media; reproducible at build time
+apps/preview/src/weave-studies.json
+apps/preview/public/media/studies-in-thread.weave.svg
