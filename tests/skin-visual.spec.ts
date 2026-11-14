@@ -74,7 +74,7 @@ test('public homepage keeps the focus on the skin rather than implementation det
   expect(visible).not.toContain(phrase);
  }
  await expect(page.locator('a[href*="github.com"]')).toHaveCount(0);
- await expect(page.getByRole('link',{name:/Studio journal/i})).toBeVisible();
- await expect(page.getByRole('link',{name:/Edge studies/i})).toBeVisible();
- await expect(page.getByRole('link',{name:/Timeline study/i})).toBeVisible();
+ await expect(page.locator('a[href="./journal.html"]').first()).toBeVisible();
+ await expect(page.locator('a[href="./stress.html?case=original"]').first()).toBeVisible();
+ await expect(page.locator('a[href="./ribbon.html"]').first()).toBeVisible();
 });
