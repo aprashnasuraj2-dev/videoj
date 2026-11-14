@@ -1,6 +1,7 @@
 import { createDhagoPlayer } from '@/create-player';
 import { chapterVtt, denseChapters, normalizeChapterDrafts, type ChapterDraft } from '@/chapter-fixtures';
 import './stress.css';
+import { portableStressFixtures } from '@/stress-lab/harness';
 
 type Kind = 'original'|'dhaka'|'pashmina'|'sheep'|'loom'|'broken';
 type CueMode = 'four'|'none'|'dense'|'invalid'|'uneven'|'intl'|'late';
@@ -45,6 +46,8 @@ const cases:Case[]=[
   {id:'manual',name:'Unsimulatable cases',category:'Live DVR / iOS / casting',type:'Manual verification',description:'DVR live-edge, native iOS fullscreen, external AirPlay/casting, sandboxed fullscreen and actual network dropout require their real APIs, media and devices.',source:'original',cues:'four',manual:'This page does not claim a working live stream, iOS fullscreen, native casting or 400% physical browser zoom. Open the real target device and verify these separately.'},
 ];
 const $=<T extends Element=HTMLElement>(selector:string)=>document.querySelector<T>(selector)!;
+const portableCases=document.querySelector<HTMLElement>('#portable-cases');
+if(portableCases)portableCases.textContent=portableStressFixtures.map(item=>item.label).join(' · ');
 const mount=$<HTMLElement>('#lab-player');
 let active:Case=cases[0];
 let player:HTMLElement|null=null;
