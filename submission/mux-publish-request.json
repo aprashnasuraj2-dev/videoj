@@ -1,6 +1,6 @@
 {
   "authorized": "2026-11-13",
-  "reason": "Owner requested publishing the original film to Mux alongside Cloudflare hosting for bonus evidence.",
-  "media": "apps/preview/public/media/studies-in-thread.mp4",
+  "reason": "Owner requested publishing the canonical From Fibre to Fabric film to Mux alongside Cloudflare hosting for bonus evidence.",
+  "media": "apps/preview/public/media/from-fibre-to-fabric.mp4",
   "policy": "Reuse content hash; public Basic asset; no contest submission or terms acceptance."
 }
