@@ -56,3 +56,6 @@ main {max-width:1420px;padding:36px clamp(20px,4vw,55px) 0;}
 @media(max-width:540px){.lab-header{align-items:start;gap:20px;flex-direction:column;}.lab-intro h1{font-size:44px;}.lab-cases #lab-case-list{grid-template-columns:1fr;}.case-heading{display:block;}#case-badge{display:inline-block;margin-top:12px;}.lab-actions select{max-width:140px;}}
 @media(forced-colors:active){.lab-case[aria-pressed=true]{outline:2px solid Highlight;}.lab-report{border-color:CanvasText;}#lab-player .dhago[data-audio-only]::before{background:Canvas;color:CanvasText;}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:0ms!important;}}
+
+.lab-portable-cases{font:11px/1.7 ui-monospace,monospace;color:#6a5845!important;}
+.lab-context a{text-underline-offset:4px;font-weight:650;}
