@@ -1,9 +1,9 @@
 import { createDhagoPlayer } from '@/create-player';
 import { createSkinStressHarness, portableStressFixtures, type PortableSkinAdapter, type PortableStressCaseId, type StressResult, type StressStatus } from '@/stress-lab/harness';
 
-const VIDEO='./media/studies-in-thread.mp4';
+const VIDEO='./media/from-fibre-to-fabric.mp4';
 const AUDIO='https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS_Loom.ogg';
-const POSTER='./media/poster.webp';
+const POSTER='./media/from-fibre-to-fabric-poster.webp';
 let fixtureWorker:ServiceWorkerRegistration|null=null;
 async function installFixtureWorker(){
   if(!('serviceWorker' in navigator))return null;
