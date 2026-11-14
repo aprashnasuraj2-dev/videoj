@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { copyFileSync, existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const root=process.argv[2] ?? 'test-results/submission';
@@ -7,7 +7,7 @@ const fingerprint=process.env.GITHUB_SHA;
 if(!/^[a-f0-9]{40}$/.test(fingerprint ?? ''))throw new Error('A 40-character release fingerprint is required.');
 const perf=JSON.parse(readFileSync(root+'/performance-evidence.json','utf8'));
 const capture=JSON.parse(readFileSync(root+'/capture-evidence.json','utf8'));
-const kb=n=>(Number(n)/1024).toFixed(1)+' kB';
+const kb=n=>n==null||!Number.isFinite(Number(n))?'n/a':(Number(n)/1024).toFixed(1)+' kB';
 const ms=n=>n==null?'n/a':Math.round(n)+' ms';
 const l=perf.lighthouseMobile;
 const p=perf.dhagoPlayerAuthoredLayer ?? perf.portableAuthoredLayer;
@@ -168,18 +168,18 @@ ${readDescription()}
 
 ## Attachments
 
-Upload first: **hero-desktop.png**
+Upload first: **assets/hero-desktop.png**
 
-Attach video: **interaction-loop.mp4**
+Attach video: **assets/interaction-loop.mp4**
 
 Strong supporting images, in order:
-1. finished-cloth.png
-2. hero-mobile.png
-3. stress-lab.png
-4. stress-lab-browser-loader.png
-5. layered-weft.png
-6. ribbon-component.png
-7. install-example.png
+1. assets/finished-cloth.png
+2. assets/hero-mobile.png
+3. assets/stress-lab.png
+4. assets/stress-lab-browser-loader.png
+5. assets/layered-weft.png
+6. assets/ribbon-component.png
+7. assets/install-example.png
 
 Optional engineering evidence:
 - final-release-evidence.md
@@ -225,5 +225,62 @@ const checksums=checksumFiles.sort().map(file=>{
   const hash=createHash('sha256').update(readFileSync(file)).digest('hex');
   return hash+'  '+file.slice(root.length+1);
 }).join('\n')+'\n';
+if(existsSync('LICENSE'))copyFileSync('LICENSE',root+'/LICENSE.txt');
 writeFileSync(root+'/SHA256SUMS.txt',checksums);
+
+const packageRoot=join(root,'package');
+const assetsRoot=join(packageRoot,'assets');
+mkdirSync(assetsRoot,{recursive:true});
+
+const selectedAssets=[
+  'hero-desktop.png',
+  'interaction-loop.mp4',
+  'finished-cloth.png',
+  'hero-mobile.png',
+  'stress-lab.png',
+  'stress-lab-browser-loader.png',
+  'layered-weft.png',
+  'ribbon-component.png',
+  'install-example.png',
+];
+for(const name of selectedAssets){
+  const source=join(root,name);
+  if(!existsSync(source))throw new Error('Required submission asset missing: '+name);
+  copyFileSync(source,join(assetsRoot,name));
+}
+
+const selectedDocs=[
+  'README-SUBMIT.md',
+  'description.md',
+  'links.md',
+  'final-release-evidence.md',
+  'dhago-size.json',
+  'tested-environments.md',
+  'capture-evidence.json',
+  'performance-evidence.md',
+  'performance-evidence.json',
+];
+for(const name of selectedDocs){
+  const source=join(root,name);
+  if(!existsSync(source))throw new Error('Required submission document missing: '+name);
+  copyFileSync(source,join(packageRoot,name));
+}
+if(existsSync(root+'/LICENSE.txt'))copyFileSync(root+'/LICENSE.txt',join(packageRoot,'LICENSE.txt'));
+
+const packageFiles=[];
+const walkPackage=p=>{
+  for(const name of readdirSync(p)){
+    if(name==='SHA256SUMS.txt')continue;
+    const file=join(p,name);
+    if(statSync(file).isDirectory())walkPackage(file);
+    else packageFiles.push(file);
+  }
+};
+walkPackage(packageRoot);
+const packageChecksums=packageFiles.sort().map(file=>{
+  const hash=createHash('sha256').update(readFileSync(file)).digest('hex');
+  return hash+'  '+file.slice(packageRoot.length+1);
+}).join('\n')+'\n';
+writeFileSync(join(packageRoot,'SHA256SUMS.txt'),packageChecksums);
+console.log('[DHAGO/submission] curated package assembled at '+packageRoot);
 console.log(finalEvidence);
