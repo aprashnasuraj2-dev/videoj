@@ -1,6 +1,6 @@
 # DHAGO — final competition submission package
 
-Prepared from the repository and exact public-release workflow. This document is copy-ready, but it does **not** accept challenge terms, certify identity or authorize the irreversible final submission action.
+Prepared from the repository, exact public-release workflow and the live Contra challenge record checked on 2026-11-14. Contra currently lists the challenge ACTIVE with submissions due **2026-11-17 07:59 UTC** (Nov 16, 11:59pm PST), and requires a public Video.js v10 URL plus a visual and short design description. The optional fields are a Mux public playback ID and a real live-site URL. This document is copy-ready, but it does **not** accept the Apache-2.0 challenge agreement, certify identity or authorize the irreversible final submission action.
 
 ## A. Final title
 
