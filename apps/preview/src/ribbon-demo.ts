@@ -4,15 +4,15 @@ import './ribbon-demo.css';
 
 const video=document.querySelector<HTMLVideoElement>('#ribbon-video')!;
 const chapters:WovenRibbonCue[]=[
-  {start:0,end:16,label:'Raw fibre'},
-  {start:16,end:32,label:'Twist into thread'},
-  {start:32,end:48,label:'Warp meets weft'},
-  {start:48,end:64,label:'Cloth holds time'},
+  {start:0,end:16,label:'A thread of light'},
+  {start:16,end:32,label:'The shape of quiet'},
+  {start:32,end:48,label:'Where shadows gather'},
+  {start:48,end:64,label:'Coming home'},
 ];
 const tracks:WovenRibbonTrack[]=[
-  {id:'captions',label:'English documentary captions',color:'#5f7f86',cues:chapters.map(c=>({...c,label:'Documentary caption cue'}))},
+  {id:'captions',label:'English descriptive captions',color:'#5f7f86',cues:chapters.map(c=>({...c,label:'Descriptive caption cue'}))},
   {id:'scene-note',label:'Scene notes',color:'#9a713c',cues:[
-    {start:0,end:8,label:'Fibre'}, {start:16,end:24,label:'Thread'}, {start:32,end:40,label:'Weave'}, {start:48,end:64,label:'Cloth'},
+    {start:0,end:8,label:'Light'}, {start:16,end:24,label:'Quiet'}, {start:32,end:40,label:'Shadow'}, {start:48,end:64,label:'Return'},
   ]},
 ];
 const handles=['#default-ribbon','#minimal-ribbon'].map(selector=>{
