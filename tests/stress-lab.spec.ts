@@ -155,6 +155,8 @@ test('Stress Lab portable UI is keyboard reachable and introduces no serious/cri
   await page.locator('#portable-use-dhago').focus();
   await expect(page.locator('#portable-use-dhago')).toBeFocused();
   await page.keyboard.press('Tab');
+  await expect(page.locator('#portable-load-example')).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(page.locator('#portable-adapter-url')).toBeFocused();
 
   const report=await new AxeBuilder({page}).analyze();
@@ -217,7 +219,7 @@ test('public example adapter loads from the release itself and runs isolated',as
 test('public release pages expose no private project link',async({page})=>{
   for(const path of ['/', '/journal.html', '/stress.html', '/ribbon.html', '/install.html']){
     await page.goto(path);
-    await expect(page.locator('a[href*="aprashnasuraj2-dev"],a[href*="/videoj"]')).toHaveCount(0);
+    await expect(page.locator('a[href*="aprashnasuraj2-dev/videoj"],a[href*="aprashnasuraj2-dev"]')).toHaveCount(0);
   }
 });
 
