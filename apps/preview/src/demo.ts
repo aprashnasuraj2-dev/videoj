@@ -12,7 +12,7 @@ const player = createDhagoPlayer({
   compatibilitySource: './media/studies-in-thread.webm',
   weave: sampledWeave as DhagoWeave,
   fallbackUrl: fallback.href,
-  poster: './media/poster.webp',
+  poster: './media/dhago-studies-poster.svg',
   chapters: query.has('nochapters') ? undefined : './media/chapters.vtt',
   captions: './media/captions.vtt',
   surface,

@@ -11,7 +11,7 @@ type Case = {
   poster?:'missing'|'normal'; width?:string; manual:string;
 };
 const ORIGINAL='./media/studies-in-thread.mp4';
-const BASE_POSTER='./media/poster.webp';
+const BASE_POSTER='./media/dhago-studies-poster.svg';
 const layeredMetadata:DhagoMetadataTrack[]=[
   {id:'speaker',label:'Speaker changes (fixture)',kind:'speaker',color:'#9a713c',cues:[
     {start:0,end:20,label:'Speaker A'},{start:20,end:40,label:'Speaker B'},{start:40,end:64,label:'Speaker A'},

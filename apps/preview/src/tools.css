@@ -51,3 +51,8 @@ body.tools .tools-header,body.tools .tools-intro,body.tools .tools-player-layout
  .tools-metrics{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
  .tools-player-layout{gap:14px}
 }
+
+/* Internal event table must scroll in its own viewport, not widen mobile pages. */
+body.tools .event-scroll{width:100%;max-width:100%;min-width:0;display:block;overflow-x:auto;overflow-y:auto;contain:inline-size}
+body.tools .event-scroll table{width:max-content;min-width:100%;max-width:none;}
+body.tools .tools-card{min-width:0;max-width:100%;}

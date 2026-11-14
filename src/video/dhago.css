@@ -745,3 +745,166 @@
     background: Highlight;
   }
 }
+
+/* ─── DHAGO / competition skin finish: texture, controls, motion ───────────
+   Only real Video.js/media states govern control behavior. Decorative rendering
+   is pointer transparent, size-capped, and has no independent playback state. */
+.dhago {
+  --dhago-material-seam: color-mix(in srgb, var(--dhago-rust) 40%, var(--dhago-border));
+  --dhago-control-shadow: #111b1940;
+  box-shadow:
+    0 0 0 1px var(--dhago-material-seam),
+    0 1px 0 #fff6 inset,
+    0 10px 24px #18211b1a,
+    0 28px 66px #18211b22;
+}
+.dhago > video,
+.dhago > mux-video {
+  background: #182623;
+  box-shadow: inset 0 -2px var(--dhago-material-seam);
+}
+.dhago .dhago-shelf {
+  border-top: 1px solid var(--dhago-material-seam);
+  background-color: var(--dhago-bone);
+  background-image:
+    linear-gradient(180deg, color-mix(in srgb,var(--dhago-ink) 3%,transparent) 0 1px,transparent 1px 100%),
+    repeating-linear-gradient(90deg,color-mix(in srgb,var(--dhago-ink) 2.5%,transparent) 0 1px,transparent 1px 8px);
+  background-repeat: no-repeat,repeat;
+  box-shadow: inset 0 1px #fff3;
+}
+.dhago .dhago-shelf::before {
+  height: 5px;
+  opacity: .91;
+  background-color: var(--dhago-material-seam);
+  background-image:
+    repeating-linear-gradient(90deg, var(--dhago-ink) 0 1px,transparent 1px 8px),
+    repeating-linear-gradient(0deg, transparent 0 2px,var(--dhago-bone) 2px 3px,transparent 3px 5px);
+  background-blend-mode: soft-light,normal;
+}
+.dhago[data-weave-finite] .dhago-shelf::before {
+  /* The dyed strand matches actual media time, including reversed seeks. */
+  mask-image: linear-gradient(90deg, #000 0 var(--dhago-progress,0%), #0005 var(--dhago-progress,0%) 100%);
+}
+.dhago .dhago-chapter-summary {
+  border-radius: 8px;
+  background: color-mix(in srgb,var(--dhago-bone) 94%,var(--dhago-rust) 6%);
+}
+.dhago .dhago-chapter-summary::before {
+  flex-basis: 32px;
+  height: 10px;
+  border-radius: 1px;
+  box-shadow: 0 0 0 1px var(--dhago-border), 0 1px 1px #0003 inset;
+  transition: background 180ms ease-out, box-shadow 180ms ease-out;
+}
+.dhago .dhago-chapter-index {
+  font: 650 10px/1.4 ui-monospace,SFMono-Regular,monospace;
+  letter-spacing: .095em;
+}
+.dhago .dhago-chapter-name {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(13px,1.15vw,16px);
+  letter-spacing: -.015em;
+  font-weight: 500;
+}
+.dhago .dhago-ribbon { padding-block: 6px 9px; }
+.dhago .media-time-slider-chapters {
+  padding: 1px;
+  border: 1px solid color-mix(in srgb,var(--dhago-ink) 22%,var(--dhago-border));
+  border-radius: 5px;
+  background: var(--dhago-border);
+  box-shadow: inset 0 1px 2px #101a1645, 0 1px #fff5;
+}
+.dhago .media-time-slider-chapter {
+  border-radius: 1px;
+  box-shadow: inset 0 1px #fff5, inset 0 -1px #101a161c;
+}
+.dhago .media-time-slider-thumb {
+  width: 15px;
+  height: 36px;
+  border-width: 3px;
+  border-radius: 5px;
+  background:
+    linear-gradient(90deg,transparent 0 3px,var(--dhago-rust) 3px 6px,transparent 6px 100%),
+    var(--dhago-ink);
+  box-shadow: 0 0 0 1px var(--dhago-ink), 0 1px 5px #111b194f, inset 0 1px #ffffff45;
+  transition: box-shadow var(--dhago-duration) ease-out, background-color var(--dhago-duration) ease-out;
+}
+.dhago .media-play-button {
+  border: 1px solid color-mix(in srgb,var(--dhago-rust) 35%,var(--dhago-ink));
+  border-radius: 10px;
+  background-color: var(--dhago-ink);
+  background-image:
+    repeating-linear-gradient(135deg,#ffffff10 0 1px,transparent 1px 6px),
+    linear-gradient(160deg,#ffffff20,transparent 48%);
+  box-shadow: inset 0 1px #ffffff39, 0 2px 0 var(--dhago-material-seam), 0 4px 12px var(--dhago-control-shadow);
+  transition:
+    transform var(--dhago-duration) cubic-bezier(.2,.7,.3,1),
+    background-color var(--dhago-duration) ease-out,
+    box-shadow var(--dhago-duration) ease-out;
+}
+.dhago .media-play-button .media-button-icon-base {
+  transition: transform var(--dhago-duration) ease-out;
+}
+.dhago[data-playback-state="playing"] .media-play-button {
+  box-shadow: inset 0 1px #ffffff32, 0 2px 0 var(--dhago-material-seam), 0 0 0 2px color-mix(in srgb,var(--dhago-rust) 13%,transparent);
+}
+.dhago .media-captions-button,
+.dhago .media-settings-button,
+.dhago .media-fullscreen-button {border-radius: 9px;}
+.dhago .media-time-group {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  font-weight: 550;
+}
+.dhago .media-time-slider-preview {
+  border: 1px solid #d3bca3;
+  box-shadow: 0 4px 14px #111b193d, 0 14px 38px #111b1947;
+}
+.dhago .media-time-slider-preview-meta {
+  background-image: repeating-linear-gradient(90deg,#fff1 0 1px,transparent 1px 7px);
+  padding: 6px 8px;
+}
+.dhago .dhago-chapter-list {
+  border-top: 3px solid var(--dhago-rust);
+  box-shadow: 0 6px 16px #17191827, 0 18px 55px #1719183c;
+}
+.dhago[data-surface="minimal"] {
+  --dhago-control-shadow: #00000020;
+  box-shadow: 0 0 0 1px #aaa9a0;
+}
+.dhago[data-surface="dark"] .dhago-shelf {
+  background-image: repeating-linear-gradient(90deg,#ffffff08 0 1px, transparent 1px 8px);
+  box-shadow: inset 0 1px #fff2;
+}
+@media (hover:hover) and (pointer:fine) {
+  .dhago .media-play-button:hover {transform:translateY(-1px);box-shadow:inset 0 1px #fff6,0 3px 0 var(--dhago-material-seam),0 8px 16px var(--dhago-control-shadow);}
+  .dhago .media-play-button:hover .media-button-icon-base {transform:scale(1.10);}
+  .dhago .media-time-slider:hover .media-time-slider-thumb {box-shadow:0 0 0 1px var(--dhago-ink),0 0 0 5px color-mix(in srgb,var(--dhago-rust) 22%,transparent),0 4px 10px #111b1966;}
+  .dhago .dhago-chapter-jump:hover {box-shadow:inset 3px 0 var(--dhago-rust);}
+}
+.dhago .media-play-button:active {transform:translateY(1px);box-shadow:inset 0 2px 5px #1017166b,0 0 0 1px var(--dhago-material-seam);}
+.dhago .media-play-button:focus-visible,
+.dhago .media-time-slider-thumb:focus-visible,
+.dhago .dhago-chapter-summary:focus-visible {
+  outline: 3px solid var(--dhago-focus);
+  outline-offset: 3px;
+}
+@container media-root (width < 500px){
+  .dhago .media-play-button {height:44px;width:44px;border-radius:8px;}
+  .dhago .dhago-chapter-name {font-size:13px;}
+  .dhago .dhago-chapter-summary::before {flex-basis:22px;}
+  .dhago .dhago-shelf {background-image:none;}
+}
+@media (prefers-reduced-motion:reduce){
+  .dhago .media-play-button,
+  .dhago .media-play-button .media-button-icon-base,
+  .dhago .media-time-slider-thumb,
+  .dhago .dhago-chapter-summary::before {transition:none!important;animation:none!important;transform:none!important;}
+}
+@media (forced-colors:active),(prefers-contrast:more){
+  .dhago {box-shadow:none;}
+  .dhago .media-play-button {border:2px solid ButtonText;box-shadow:none;background-image:none;}
+  .dhago .dhago-shelf::before {mask-image:none;background:Highlight;}
+  .dhago .media-time-slider-chapters {box-shadow:none;border:1px solid CanvasText;}
+  .dhago .dhago-chapter-summary::before {box-shadow:none;}
+}
