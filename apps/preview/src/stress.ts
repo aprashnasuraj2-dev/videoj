@@ -10,8 +10,8 @@ type Case = {
   description:string; source:Kind; cues?:CueMode; captions?:'none'|'multi'|'long'; metadata?:'layered';
   poster?:'missing'|'normal'; width?:string; manual:string;
 };
-const ORIGINAL='./media/studies-in-thread.mp4';
-const BASE_POSTER='./media/poster.webp';
+const ORIGINAL='./media/from-fibre-to-fabric.mp4';
+const BASE_POSTER='./media/from-fibre-to-fabric-poster.webp';
 const layeredMetadata:DhagoMetadataTrack[]=[
   {id:'speaker',label:'Speaker changes (fixture)',kind:'speaker',color:'#9a713c',cues:[
     {start:0,end:20,label:'Speaker A'},{start:20,end:40,label:'Speaker B'},{start:40,end:64,label:'Speaker A'},
@@ -21,7 +21,7 @@ const layeredMetadata:DhagoMetadataTrack[]=[
   ]},
 ];
 const mediaSources:Record<Kind,{src:string;credit:string;creditUrl?:string;license:string}>={
-  original:{src:ORIGINAL,credit:'Original DHAGO motion study · created for the competition',license:'Apache-2.0 source / original film'},
+  original:{src:ORIGINAL,credit:'From Fibre to Fabric — original DHAGO film',license:'Apache-2.0 source / original film'},
   dhaka:{src:'https://upload.wikimedia.org/wikipedia/commons/0/0a/Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm',
     credit:'Oxlaey — Making handwoven Dhaka fabric in Nepal (real Nepalese textile weaving, not pashmina)',
     creditUrl:'https://commons.wikimedia.org/wiki/File:Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm',license:'CC BY-SA 3.0, unmodified'},
@@ -93,7 +93,7 @@ for(const [i,scenario] of cases.entries()){
   caseList.append(button);
 }
 const stamp=(time:number)=>Number.isFinite(time)&&time>=0?Math.floor(time/3600)+':'+String(Math.floor(time/60)%60).padStart(2,'0')+':'+String(Math.floor(time)%60).padStart(2,'0'):'—';
-const coreChapters=(duration:number):ChapterDraft[]=>Array.from({length:4},(_,i)=>({start:duration*i/4,end:duration*(i+1)/4,title:['A thread of light','The shape of quiet','Where shadows gather','Coming home'][i]}));
+const coreChapters=(duration:number):ChapterDraft[]=>Array.from({length:4},(_,i)=>({start:duration*i/4,end:duration*(i+1)/4,title:['Raw fibre','Twist into thread','Warp meets weft','Cloth holds time'][i]}));
 function sampleChapters(mode:CueMode,duration:number):ChapterDraft[] {
   if(mode==='dense'||mode==='late')return denseChapters(duration);
   if(mode==='four')return coreChapters(duration);
@@ -140,7 +140,7 @@ function attachCues(target:HTMLMediaElement,scenario:Case){
     addTrack(target,'captions','العربية / Arabic','ar','WEBVTT\n\n00:00:00.000 --> 00:00:08.000\nالنسيج يحمل ذاكرة المكان\n');
   }else if(scenario.id==='original'||scenario.id==='narrow'||scenario.id==='poster'){
     // Original short captions come from the actual authored track, not from fixture text.
-    const track=document.createElement('track');track.kind='captions';track.label='English descriptions';track.srclang='en';track.src='./media/captions.vtt';target.append(track);
+    const track=document.createElement('track');track.kind='captions';track.label='English descriptions';track.srclang='en';track.src='./media/from-fibre-to-fabric-captions.vtt';target.append(track);
   }
 }
 function setText(node:Element,value:string){
