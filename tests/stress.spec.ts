@@ -41,19 +41,19 @@ test('audio-only scenario mounts real audio media, not a fake video surface',asy
   await expect(page.locator('media-container[data-audio-only] audio')).toHaveCount(1);
   await expect(page.locator('media-container video')).toHaveCount(0);
   await expect(page.locator('#lab-credit')).toContainText('Work With Sounds');
-  await expect(page.locator('#case-badge')).toContainText('REAL PLAYBACK');
+  await expect(page.locator('#case-badge')).toContainText('REAL MEDIA');
 });
 test('404 scenario exposes explicit retry and backup',async({page})=>{
   await page.goto('/stress.html?case=error');
   await expect(page.locator('.dhago-retry')).toBeVisible({timeout:15000});
   const backup=page.locator('.dhago-fallback');
   await expect(backup).toBeVisible();
-  await expect(backup).toHaveAttribute('href','./?local');
+  await expect(backup).toHaveAttribute('href','./stress.html?case=original');
 });
 test('fixture switch does not accumulate unused media players',async({page})=>{
   await page.goto('/stress.html?case=original');
-  await page.getByRole('button',{name:/Empty loom/}).click();
-  await page.getByRole('button',{name:/Broken thread/}).click();
+  await page.getByRole('button',{name:/An open thread/}).click();
+  await page.getByRole('button',{name:/When the thread breaks/}).click();
   await page.getByRole('button',{name:/Original weave/}).click();
   await expect(page.locator('#lab-player video,#lab-player audio')).toHaveCount(1);
   await expect(page.locator('#lab-player media-container')).toHaveCount(1);
@@ -64,7 +64,7 @@ test('Stress Lab reports real playback state and keeps its clock out of live ann
   const media=page.locator('#lab-player video');
   await expect(page.locator('#state-duration')).toHaveText('0:01:04');
   await expect(page.locator('#state-chapter')).toHaveText('A thread of light');
-  await expect(page.locator('#state-source')).toHaveText('Video file');
+  await expect(page.locator('#state-source')).toHaveText('Film');
   expect(await page.locator('#state-time').evaluate(clock=>clock.closest('[aria-live],[role=status]')!==null)).toBe(false);
   await page.locator('#lab-player media-play-button').click();
   await expect(page.locator('#state-status')).toHaveText('Playing');
@@ -90,7 +90,7 @@ test('Stress Lab recovers from an unavailable source and drops detached specimen
   await expect(page.locator('#state-error')).toBeHidden();
   await expect(page.locator('#state-duration')).toHaveText('0:01:04');
   const detached=await original.elementHandle();
-  await page.getByRole('button',{name:/Empty loom/}).click();
+  await page.getByRole('button',{name:/An open thread/}).click();
   await expect(page.locator('#state-duration')).toHaveText('0:01:04');
   await detached!.evaluate(video=>video.dispatchEvent(new Event('error')));
   await expect(page.locator('#state-status')).not.toHaveText('Error');
@@ -107,7 +107,7 @@ test('late chapter fixture attaches genuine cues while paused',async({page})=>{
     await route.fulfill({response,headers:{...response.headers(),'access-control-allow-origin':'*'}});
   });
   await page.goto('/stress.html?case=late');
-  await expect(page.locator('#lab-diagnostics')).toContainText('scheduled four seconds');
+  await expect(page.locator('#lab-diagnostics')).toContainText('four seconds after');
   await expect(page.locator('#state-chapter')).toHaveText('—');
   await expect(page.locator('#state-chapter')).toHaveText('Fibre study 01',{timeout:10000});
   await expect(page.locator('#lab-player video')).toHaveJSProperty('paused',true);
