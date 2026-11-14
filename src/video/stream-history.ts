@@ -56,6 +56,8 @@ export function connectStreamHistory(media:HTMLMediaElement,container:HTMLElemen
   const video=media as VideoLike;
   let qualityKey='';
   let qualityLabel='';
+  let qualitySource:QualityObservation['source']|''='';
+  let qualityHeight=0;
   let qualityNode:HTMLElement|null=null;
   let qualityStart=0;
   let qualityChanges=0;
@@ -87,7 +89,7 @@ export function connectStreamHistory(media:HTMLMediaElement,container:HTMLElemen
     if(!summary)return;
     const parts:string[]=[];
     if(qualityLabel)parts.push(qualityLabel);
-    if(qualityChanges>1)parts.push(`${qualityChanges-1} rendition change${qualityChanges===2?'':'s'}`);
+    if(qualityChanges>1)parts.push(`${qualityChanges-1} quality-history change${qualityChanges===2?'':'s'}`);
     if(bufferCount)parts.push(`${bufferCount} buffering interruption${bufferCount===1?'':'s'}`);
     if(droppedObserved)parts.push(`${droppedObserved} dropped frame${droppedObserved===1?'':'s'} observed`);
     summary.textContent=parts.length?`Stream history: ${parts.join(', ')}.`:'Stream history: no exposed streaming telemetry yet.';
@@ -183,29 +185,58 @@ export function connectStreamHistory(media:HTMLMediaElement,container:HTMLElemen
     return null;
   };
 
-  const syncQuality=()=>{
-    const quality=readQuality();
-    if(!quality)return;
-    const now=Number.isFinite(media.currentTime)?media.currentTime:0;
-    if(quality.key!==qualityKey){
-      if(qualityNode)setRange(qualityNode,qualityStart,now);
-      qualityKey=quality.key;
-      qualityLabel=quality.label;
-      qualityStart=now<.25?0:now;
-      qualityChanges++;
-      qualityNode=document.createElement('span');
-      qualityNode.className='dhago-quality-thread';
+  const applyQualityPresentation=(quality:QualityObservation)=>{
+    const height=Number(quality.height);
+    qualityHeight=height>0?height:0;
+    if(qualityNode){
       qualityNode.dataset.rendition=quality.label;
-      const height=Number(quality.height);
       qualityNode.style.setProperty(
         '--dhago-quality-thread-px',
         height>0?clamp(2+(height-240)/240,2,7).toFixed(2)+'px':'3px'
       );
+    }
+    container.dataset.streamRendition=quality.label;
+    container.dataset.streamRenditionSource=quality.source;
+  };
+  const syncQuality=()=>{
+    const quality=readQuality();
+    if(!quality)return;
+    const now=Number.isFinite(media.currentTime)?media.currentTime:0;
+
+    // An engine rendition becoming available after decoded dimensions is a
+    // stronger observation of the same current playback state, not evidence
+    // that playback actually switched renditions.
+    if(qualitySource==='decoded-dimensions'&&quality.source==='engine'&&qualityNode){
+      qualityKey=quality.key;
+      qualityLabel=quality.label;
+      qualitySource=quality.source;
+      applyQualityPresentation(quality);
+      setRange(qualityNode,qualityStart,now);
+      updateSummary();
+      return;
+    }
+
+    // If an engine temporarily stops exposing active state but decoded
+    // dimensions have not changed, retain the stronger previous identity.
+    if(qualitySource==='engine'&&quality.source==='decoded-dimensions'&&qualityNode
+      && qualityHeight>0&&Number(quality.height)>0&&Math.round(qualityHeight)===Math.round(Number(quality.height))){
+      setRange(qualityNode,qualityStart,now);
+      return;
+    }
+
+    if(quality.key!==qualityKey){
+      if(qualityNode)setRange(qualityNode,qualityStart,now);
+      qualityKey=quality.key;
+      qualityLabel=quality.label;
+      qualitySource=quality.source;
+      qualityStart=now<.25?0:now;
+      qualityChanges++;
+      qualityNode=document.createElement('span');
+      qualityNode.className='dhago-quality-thread';
       setRange(qualityNode,qualityStart,now);
       history.append(qualityNode);
+      applyQualityPresentation(quality);
       capHistory('.dhago-quality-thread',96);
-      container.dataset.streamRendition=quality.label;
-      container.dataset.streamRenditionSource=quality.source;
       container.toggleAttribute('data-stream-rendition-changed',qualityChanges>1);
       updateSummary();
     }else if(qualityNode){
@@ -245,7 +276,7 @@ export function connectStreamHistory(media:HTMLMediaElement,container:HTMLElemen
 
   const reset=()=>{
     history.replaceChildren();
-    qualityKey=''; qualityLabel=''; qualityNode=null; qualityStart=0; qualityChanges=0;
+    qualityKey=''; qualityLabel=''; qualitySource=''; qualityHeight=0; qualityNode=null; qualityStart=0; qualityChanges=0;
     droppedBaseline=undefined; droppedObserved=0;
     bufferNode=null; bufferStart=0; bufferCount=0;
     container.removeAttribute('data-stream-rendition');
