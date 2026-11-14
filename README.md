@@ -18,8 +18,8 @@ Actions validate builds and browser behavior, provision Mux using repository sec
 
 ## Release and competition handoff
 
-[Judging rehearsal](docs/score-rehearsal.md) · [Owner review](docs/owner-review.md) · [Immutable release guide](docs/release-integrity.md) · [Mux usage limits](docs/mux-cost-and-retention.md). Production assets are staged in `dist-72ec6c324f64` and all 78 release objects were hash/ETag-verified in the dedicated R2 origin. Source CI and public smoke remain separate acceptance gates. The project has **not** been entered into the contest.
+[Judging rehearsal](docs/score-rehearsal.md) · [Owner review](docs/owner-review.md) · [Immutable release guide](docs/release-integrity.md) · [Mux usage limits](docs/mux-cost-and-retention.md).
 
-## 2026-11-13 thread-craft refinement
+The final pipeline keeps candidate verification, immutable staging and public-release proof separate. A green final main run produces `public-smoke-evidence` containing the exact source SHA, active hero capture, 8-second interaction loop, mobile and Stress Lab proof, measured raw/gzip/brotli authored-layer size, Lighthouse mobile metrics and the tested-environments table. The public `release-manifest.json.source_sha` is the release authority; do not rely on older hard-coded SHAs in historical notes.
 
-[PR #6](https://github.com/aprashnasuraj2-dev/videoj/pull/6) adds cue-derived decorative joins, subtle native dragging tension and real-media buffering response without inventing a control, cue or telemetry state. Reduced-motion and forced-colors behavior remain test-covered. Source `a6492362b634799f3f23611e95eb88d003474d1f` passed **35/35 Playwright Chromium tests** and its immutable `dist-a6492362b634` release matched **78/78 dedicated R2 assets**. A new post-release public browser smoke, physical-phone assessment, screen-reader review and owner-submitted challenge entry are separate gates. Prior HTML entry points remain backed up for rollback.
+Physical Safari/iPhone/Android and VoiceOver/NVDA remain separate real-device gates and are never inferred from emulation. The project has **not** been entered into the contest.
