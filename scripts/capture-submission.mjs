@@ -171,18 +171,27 @@ async function captureRelease(browser) {
   const startPosition = track.x + track.width * .16;
   const endPosition = track.x + track.width * .56;
   await page.mouse.move(startPosition, y);
-  await page.waitForFunction(() => document.querySelector('.media-slider-thumbnail-image')?.naturalWidth > 0,
-    undefined, { timeout: 20_000 });
+  await page.waitForFunction(() => {
+    const preview = document.querySelector('.media-time-slider-preview');
+    const value = preview?.querySelector('media-slider-value');
+    return preview && Number(getComputedStyle(preview).opacity) >= .9 && Boolean(value?.textContent?.trim());
+  }, undefined, { timeout: 20_000 });
+  const hasStoryboard = await previewImage.evaluate(image => image.complete && image.naturalWidth > 0);
   await photo(player, 'chapters-preview.png');
-  await capture.clip('Seek shuttle and frame preview', 4.0, async () => {
+  await capture.clip(hasStoryboard ? 'Seek shuttle and frame preview' : 'Seek shuttle and chapter preview', 4.0, async () => {
     await page.mouse.down();
     for (let step = 1; step <= 26; step++) {
       await page.mouse.move(startPosition + (endPosition - startPosition) * step / 26, y);
       await sleep(52);
     }
-    if (Number(await preview.evaluate(element => getComputedStyle(element).opacity)) < .9
-      || !await previewImage.evaluate(image => image.complete && image.naturalWidth > 0)) {
-      throw new Error('No visible decoded frame preview during the real pointer drag.');
+    const previewVisible = Number(await preview.evaluate(element => getComputedStyle(element).opacity)) >= .9;
+    const previewValue = await preview.locator('media-slider-value').textContent();
+    const imageReady = await previewImage.evaluate(image => image.complete && image.naturalWidth > 0);
+    if (!previewVisible || !previewValue?.trim()) {
+      throw new Error('No visible seek time/chapter preview during the real pointer drag.');
+    }
+    if (hasStoryboard && !imageReady) {
+      throw new Error('Storyboard was available before the drag but disappeared during capture.');
     }
     await photo(player, 'living-loom-seeking.png');
     await sleep(380);
@@ -326,7 +335,7 @@ async function captureRelease(browser) {
     capturedAt: new Date().toISOString(),
     screenshots: saves,
     videos: ['interaction-loop.mp4', 'proof-demo.mp4'],
-    method: 'Genuine browser frames from the exact public release. The 8-second judge loop is the opening playback + woven seek segment; no simulated media state. Sound is omitted.',
+    method: 'Genuine browser frames from the exact public release. The interaction loop records real playback and woven seeking; Mux storyboard imagery is captured only when the active delivery backend actually supplies it. Sound is omitted.',
   }, null, 2) + '\n');
 }
 
