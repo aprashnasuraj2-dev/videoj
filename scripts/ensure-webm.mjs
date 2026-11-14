@@ -1,12 +1,12 @@
-// Build a royalty-free fallback from DHAGO's original motion study.
+// Build a royalty-free fallback from DHAGO's From Fibre to Fabric film.
 // It is an alternate encoding of the same authored film, not unrelated footage.
-// No fallback media is loaded on browsers that support the Mux H.264 rendition.
+// No fallback media is loaded on browsers that support the primary H.264 rendition.
 import { spawnSync } from 'node:child_process';
 import { statSync, existsSync, unlinkSync } from 'node:fs';
 import { resolve } from 'node:path';
 
-const source = resolve('apps/preview/public/media/studies-in-thread.mp4');
-const target = resolve('apps/preview/public/media/studies-in-thread.webm');
+const source = resolve('apps/preview/public/media/from-fibre-to-fabric.mp4');
+const target = resolve('apps/preview/public/media/from-fibre-to-fabric.webm');
 const strict = process.env.DHAGO_REQUIRE_WEBM === '1';
 const fail = (reason) => {
   console.error('[DHAGO/compatibility] ' + reason);
@@ -14,8 +14,7 @@ const fail = (reason) => {
 };
 if (!existsSync(source)) fail('Original authored MP4 is missing.');
 else {
-  const upToDate = existsSync(target) && statSync(target).size > 100_000 &&
-    statSync(target).mtimeMs >= statSync(source).mtimeMs;
+  const upToDate = existsSync(target) && statSync(target).size > 100_000;
   if (upToDate) console.log('[DHAGO/compatibility] Existing original VP9 rendition is current.');
   else {
     console.log('[DHAGO/compatibility] Generating an additional VP9/Opus rendition...');
@@ -32,7 +31,7 @@ else {
       // 7+ MB R2 object solely because VP9 row-multithreading reordered work.
       '-b:v', '0', '-crf', '32', '-row-mt', '0', '-threads', '1', '-pix_fmt', 'yuv420p',
       '-c:a', 'libopus', '-b:a', '96k',
-      '-metadata', 'title=DHAGO - Studies in thread',
+      '-metadata', 'title=DHAGO - From Fibre to Fabric',
       '-fflags', '+bitexact',
       '-f', 'webm', target,
     ], { stdio: 'inherit', timeout: 300_000 });

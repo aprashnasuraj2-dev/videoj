@@ -9,7 +9,7 @@ test('real decoded dimensions, native metadata and spoken chapter map are expose
   await expect(shell.locator('.dhago-quality-thread')).toHaveCount(1);
   await expect.poll(()=>shell.locator('.dhago-metadata-lane[data-kind="chapter"]').count()).toBeGreaterThan(0);
   const first= shell.locator('.dhago-chapter-jump').first();
-  await expect(first).toContainText('A thread of light');
+  await expect(first).toContainText('Raw fibre');
   await expect(first.locator('.dhago-visually-hidden')).toHaveText('Chapter 1 of 4; ends at 0:16.');
   await expect(shell.locator('.dhago-chapter-summary')).not.toHaveAttribute('aria-label',/.+/);
 });

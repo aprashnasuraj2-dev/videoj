@@ -53,7 +53,7 @@ const chapterVtt=(mode:PortableStressFixture['chapterMode'])=>{
  if(mode==='long')return makeVtt([{start:0,end:32,label:'A deliberately very long English chapter title that should wrap or truncate without hiding playback controls'},{start:32,end:64,label:'Second chapter'}]);
  if(mode==='intl')return makeVtt([{start:0,end:20,label:'धागो र समय'},{start:20,end:42,label:'نسيج من الذاكرة'},{start:42,end:64,label:'時間を織る'}]);
  if(mode==='malformed')return malformedChapterVtt();
- return makeVtt([{start:0,end:16,label:'A thread of light'},{start:16,end:32,label:'The shape of quiet'},{start:32,end:48,label:'Where shadows gather'},{start:48,end:64,label:'Coming home'}]);
+ return makeVtt([{start:0,end:16,label:'Raw fibre'},{start:16,end:32,label:'Twist into thread'},{start:32,end:48,label:'Warp meets weft'},{start:48,end:64,label:'Cloth holds time'}]);
 };
 const longCaption='WEBVTT\n\n00:00.000 --> 00:08.000\nA deliberately long caption containing enough ordinary language to wrap across several lines while controls remain reachable.\n';
 const arabicCaption='WEBVTT\n\n00:00.000 --> 00:08.000\nالنسيج يحمل ذاكرة المكان\n';

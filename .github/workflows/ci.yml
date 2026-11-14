@@ -95,7 +95,7 @@ jobs:
     env:
       # GitHub-hosted Ubuntu includes branded Chrome with H.264/AAC support.
       # Playwright's downloaded Chromium may intentionally omit proprietary codecs,
-      # which exercises DHAGO's WebM fallback rather than the Mux path.
+      # which exercises DHAGO's WebM fallback rather than the H.264 path.
       PLAYWRIGHT_CHROMIUM_EXECUTABLE: /usr/bin/google-chrome
     steps:
       - uses: actions/checkout@v4
@@ -135,7 +135,7 @@ jobs:
           }
           throw new Error('Dedicated public origin did not serve this exact release manifest.');
           JS
-      - name: Verify production Mux playback and live Studio Journal
+      - name: Verify released fibre-to-fabric playback and live Studio Journal
         env:
           DHAGO_LIVE_URL: https://creative.aafnaipatro.com
         run: npx playwright test tests/live.spec.ts --workers=1
@@ -143,7 +143,7 @@ jobs:
         env:
           DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
           DHAGO_RELEASE_SHA: ${{ github.sha }}
-          DHAGO_EXPECTED_MUX_ID: Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw
+          DHAGO_EXPECTED_MEDIA_PATH: media/from-fibre-to-fabric.mp4
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
           node scripts/capture-submission.mjs test-results/submission

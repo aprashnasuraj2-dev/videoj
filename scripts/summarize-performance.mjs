@@ -36,7 +36,7 @@ const metric={
   notes:[
     'Lighthouse is a lab mobile run, so TBT is reported; INP may be unavailable without field data.',
     'Page-load transfer includes requests observed by Lighthouse and is separate from the DHAGO-authored layer.',
-    'DHAGO size excludes @videojs/html runtime/scaffold, demo application, Mux media and screenshots.'
+    'DHAGO size excludes @videojs/html runtime/scaffold, demo application, film media and screenshots.'
   ]
 };
 writeFileSync(outBase+'.json',JSON.stringify(metric,null,2)+'\n');

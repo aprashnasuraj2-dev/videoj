@@ -22,9 +22,9 @@ test('keyboard follows visual order and leaves text entry alone',async({page})=>
 });
 
 test('explicit retry recovers after the network becomes available',async({page})=>{
- await page.route('**/studies-in-thread.mp4',r=>r.abort());
+ await page.route('**/from-fibre-to-fabric.mp4',r=>r.abort());
  await page.goto('/?local');await expect(page.locator('media-dialog-popup')).toBeVisible();
- await page.unroute('**/studies-in-thread.mp4');
+ await page.unroute('**/from-fibre-to-fabric.mp4');
  await page.getByRole('button',{name:'Try loading again'}).click();
  await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
  await page.locator('media-play-button').click();
@@ -51,8 +51,8 @@ test('forced colors and enlarged text preserve useful narrow controls',async({pa
 test('long chapter and caption cues remain usable at 320px',async({page},info)=>{
  await page.setViewportSize({width:320,height:1000});
  const title='A very long chapter title: watching light travel across an unusually intricate woven landscape';
- await page.route('**/media/chapters.vtt',r=>r.fulfill({contentType:'text/vtt',body:`WEBVTT\n\n00:00.000 --> 01:04.000\n${title}\n`}));
- await page.route('**/media/captions.vtt',r=>r.fulfill({contentType:'text/vtt',body:'WEBVTT\n\n00:00.000 --> 01:04.000\nLong visual description: a warm field of overlapping threads drifts gently, with room for more than one line of text.\n'}));
+ await page.route('**/media/from-fibre-to-fabric-chapters.vtt',r=>r.fulfill({contentType:'text/vtt',body:`WEBVTT\n\n00:00.000 --> 01:04.000\n${title}\n`}));
+ await page.route('**/media/from-fibre-to-fabric-captions.vtt',r=>r.fulfill({contentType:'text/vtt',body:'WEBVTT\n\n00:00.000 --> 01:04.000\nLong visual description: a warm field of overlapping threads drifts gently, with room for more than one line of text.\n'}));
  await page.goto('/?local');
  await expect(page.locator('.dhago-chapter-name')).toHaveText(title);
  await page.locator('media-captions-button').click();
@@ -66,7 +66,7 @@ test('journal uses the portable skin with a different accent and working scene n
  await page.goto('/journal.html?local');
  await expect.poll(()=>page.locator('video').evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
  await page.locator('[data-time="48"]').click();
- await expect(page.locator('.dhago-chapter-name')).toHaveText('Coming home');
+ await expect(page.locator('.dhago-chapter-name')).toHaveText('Cloth holds time');
  await expect(page.locator('video')).toHaveJSProperty('paused',true);
  await expect(page.locator('media-time-slider media-slider-thumb')).toBeFocused();
  const result=await new AxeBuilder({page}).include('main').analyze();

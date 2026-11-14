@@ -20,9 +20,7 @@
 
 **Four-sentence English description**
 
-> DHAGO takes its name from the Nepali word for thread. Its Video.js v10 timeline turns chapter cues into woven sections and reveals real video frames as you move across the ribbon. Scrubbing puts the weave under tension, while a stable control shelf keeps time, sound, captions and fullscreen familiar. The same portable skin runs the original Mux-delivered film in the public Studio Journal and is documented for HTML/Vite and React adoption.
-
-**Mux public playback ID (not a management credential):** `Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw`
+> DHAGO takes its name from the Nepali word for thread. Its Video.js v10 timeline turns chapter cues into woven sections and reveals real video frames as you move across the ribbon. Scrubbing puts the weave under tension, while a stable control shelf keeps time, sound, captions and fullscreen familiar. The same portable skin runs the original From Fibre to Fabric film in the public Studio Journal and is documented for HTML/Vite and React adoption.
 
 ## Use the generated final evidence, not historical screenshots
 
