@@ -1,3 +1,5 @@
 DHAGO turns video time into a woven ribbon: chapters become distinct coloured inlays, while a familiar seek thumb keeps navigation precise. Drawing from the crossing threads, restrained colour and finished edges of Nepali weaving, it gives the player tactile character without distracting from the film. Built with Video.js v10, the same responsive skin provides real play/pause, volume, captions, speed, fullscreen and keyboard controls across Linen, Ink and Paper treatments. The original 64-second motion study plays from Mux and can also be explored through scene notes in the public Studio Journal.
 
-Competition-facing copy, in English. Current source and Cloudflare build parity verified at `a6492362b634`; account-specific entry terms, physical-device review, bonus eligibility and submission remain subject to owner confirmation.
+The portable adoption path is documented in `INSTALL.md` with HTML/Vite, React and supported theme-token examples. Final size, Lighthouse, browser-engine and screenshot evidence is generated from the exact public release by the `public-smoke` job; use `final-release-evidence.md` from that artifact rather than a stale hard-coded SHA.
+
+Competition-facing copy, in English. Account-specific entry terms, physical-device review, assistive-technology review, optional bonus eligibility and actual Contra submission remain owner-controlled.
