@@ -71,7 +71,7 @@ main {max-width:1420px;padding:36px clamp(20px,4vw,55px) 0;}
 .portable-loader>p,.portable-runner>p,.portable-results-head p{font-size:12px;line-height:1.7;color:#59584f;}
 .portable-loader-actions{display:grid;grid-template-columns:1fr;gap:8px;margin-top:16px;}
 .portable-loader-actions label,.portable-runner label{font:600 10px/1.4 ui-monospace,monospace;text-transform:uppercase;letter-spacing:.06em;color:#675f54;margin-top:5px;}
-.portable-loader-actions label span{font-weight:400;color:#81776a;}
+.portable-loader-actions label span{font-weight:400;color:#6a6055;}
 .portable-inline{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;}
 .portable-tool button,.portable-tool input,.portable-tool select{min-height:44px;border:1px solid #afa493;border-radius:5px;background:#f6efe4;color:#252820;font:12px/1.3 ui-sans-serif,system-ui;padding:9px 11px;}
 .portable-tool button{cursor:pointer;font-weight:650;}
