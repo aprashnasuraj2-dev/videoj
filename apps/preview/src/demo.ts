@@ -1,22 +1,17 @@
 import { createDhagoPlayer, type DhagoWeave } from '@/create-player';
 import sampledWeave from './weave-studies.json';
 import './demo.css';
-import media from './media.json';
 
 const query = new URLSearchParams(location.search);
 const allowed = ['warm','dark','minimal'] as const;
 const surface = allowed.find(x=>x===query.get('surface')) ?? 'warm';
-const fallback = new URL(location.href);
-fallback.searchParams.set('local', '');
 const player = createDhagoPlayer({
-  source: './media/studies-in-thread.mp4',
-  compatibilitySource: './media/studies-in-thread.webm',
+  source: './media/from-fibre-to-fabric.mp4',
+  compatibilitySource: './media/from-fibre-to-fabric.webm',
   weave: sampledWeave as DhagoWeave,
-  playbackId: query.has('local') ? undefined : media.playbackId ?? undefined,
-  fallbackUrl: fallback.href,
-  poster: './media/poster.webp',
-  chapters: query.has('nochapters') ? undefined : './media/chapters.vtt',
-  captions: './media/captions.vtt',
+  poster: './media/from-fibre-to-fabric-poster.webp',
+  chapters: query.has('nochapters') ? undefined : './media/from-fibre-to-fabric-chapters.vtt',
+  captions: './media/from-fibre-to-fabric-captions.vtt',
   surface,
 });
 const mount=document.querySelector<HTMLElement>('#player-mount')!;
@@ -28,7 +23,6 @@ seekButtons.forEach(button=>button.addEventListener('click',()=>{
   video.currentTime = Math.min(Number(button.dataset.seek),video.duration);
   player.querySelector<HTMLElement>('media-time-slider media-slider-thumb')?.focus();
 }));
-// Chapter cards follow declared seek boundaries, including the final frame.
 const chapterStarts=Array.from(seekButtons,button=>Number(button.dataset.seek));
 if(query.has('nochapters'))document.querySelector('.chapter-list')?.setAttribute('hidden','');
 const syncCards=()=>{
