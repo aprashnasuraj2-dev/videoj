@@ -1,32 +1,59 @@
 {
-  "title": "DHAGO — Time, woven",
-  "status": "Final candidate evidence is generated from exact-head CI and public release; contest entry remains pending owner submission.",
-  "demoUrl": "https://creative.aafnaipatro.com/",
-  "liveSiteUrl": "https://creative.aafnaipatro.com/journal.html",
-  "installGuide": "INSTALL.md",
-  "publicReleaseAuthority": "https://creative.aafnaipatro.com/release-manifest.json",
-  "finalEvidenceArtifact": "public-smoke-evidence",
-  "finalEvidenceIndex": "submission/final-release-evidence.md inside public-smoke-evidence",
-  "leadAttachment": "submission/hero-desktop.png",
-  "interactionLoop": "submission/interaction-loop.mp4",
-  "additionalAttachments": [
-    "submission/finished-cloth.png",
-    "submission/hero-mobile.png",
-    "submission/stress-lab.png",
-    "submission/install-example.png",
-    "submission/performance-evidence.md",
-    "submission/tested-environments.md"
+  "title": "DHAGO — Time, Woven.",
+  "competition": "Video.js Skins Design Challenge",
+  "lastPreparedOn": "2026-11-14",
+  "status": "submission_candidate_not_filed",
+  "copyrightLicense": "Apache-2.0",
+  "corePointsAvailable": 25,
+  "bonusPointsAvailable": 2,
+  "demoUrlProposed": "https://creative.aafnaipatro.com/?mux",
+  "demoUrlFallback": "https://creative.aafnaipatro.com/",
+  "realSiteBonusUrl": "https://creative.aafnaipatro.com/journal.html",
+  "studioJournalUrl": "https://creative.aafnaipatro.com/journal.html",
+  "ribbonUrl": "https://creative.aafnaipatro.com/ribbon.html",
+  "engineeringToolsUrl": "https://creative.aafnaipatro.com/tools.html",
+  "edgeStatesLabUrl": "https://creative.aafnaipatro.com/stress.html",
+  "sourceRepository": "https://github.com/aprashnasuraj2-dev/videoj",
+  "originalFilm": {
+    "name": "Studies in Thread",
+    "durationSeconds": 64,
+    "canonicalPath": "media/studies-in-thread.mp4",
+    "compatibilityPath": "media/studies-in-thread.webm",
+    "poster": "media/dhago-studies-poster.svg",
+    "captions": "media/captions.vtt",
+    "chapters": "media/chapters.vtt",
+    "sha256": "9dcc4672e3014ca947e310c1809c0cf6d40ffff186478f3e6a1e47f89b3688b3",
+    "hasNarration": false
+  },
+  "muxBonus": {
+    "potentialPoints": 1,
+    "playbackId": "Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw",
+    "proofStatus": "pending_exact_head_decode_seek_check",
+    "judgeRoute": "https://creative.aafnaipatro.com/?mux"
+  },
+  "liveSiteBonus": {
+    "potentialPoints": 1,
+    "url": "https://creative.aafnaipatro.com/journal.html",
+    "proofStatus": "pending_public_release_playback"
+  },
+  "publicRelease": {
+    "authority": "https://creative.aafnaipatro.com/release-manifest.json",
+    "sourceSha": null,
+    "verifiedAt": null
+  },
+  "evidence": {
+    "exactReleaseArtifact": "public-smoke-evidence",
+    "bonusArtifact": "bonus-mux-playback-proof",
+    "leadHeroCapture": "submission/hero-desktop.png",
+    "mobileCapture": "submission/hero-mobile.png",
+    "screenRecording": "submission/interaction-loop.mp4",
+    "screenshotsPendingRelease": true
+  },
+  "limitations": [
+    "physical device Safari/iPhone/Android not verified in current restoration",
+    "VoiceOver/NVDA human check not verified",
+    "judges determine bonus eligibility"
   ],
-  "externalHumanValidation": "NOT OBTAINED unless a genuine tester is recorded before submission",
-  "notTestedUnlessPhysicallyPerformed": [
-    "Safari desktop on macOS",
-    "Android Chrome on a physical phone",
-    "iPhone Safari on a physical device",
-    "VoiceOver or NVDA real assistive-technology pass"
-  ],
-  "receipt": null,
-  "submissionDeadline": "2026-11-17T13:44:00+05:45",
-  "sourcePackage": "Exact Apache-2.0 source archive bundled with final handoff",
-  "publicMedia": "media/from-fibre-to-fabric.mp4",
-  "compatibilityMedia": "media/from-fibre-to-fabric.webm"
+  "submissionDeadlineUtc": "2026-11-17T07:59:00Z",
+  "receipt": null
 }
