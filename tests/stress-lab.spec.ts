@@ -197,3 +197,23 @@ test('network fixture worker only handles the reserved Stress Lab path',async({p
   expect(proof.wrongHeader).toBe('1');
   expect(proof.unrelatedHeader).toBeNull();
 });
+
+
+test('public example adapter loads from the release itself and runs isolated',async({page})=>{
+  await openLab(page);
+  await page.getByRole('button',{name:'Load public example adapter'}).click();
+  await expect(page.locator('#portable-loader-status')).toContainText('Loaded: Native media example');
+  await expect(page.locator('#portable-sandbox-host iframe')).toHaveAttribute('sandbox','allow-scripts');
+  await page.locator('#portable-case').selectOption('narrow-240');
+  await page.getByRole('button',{name:'Run current case'}).click();
+  const row=page.locator('#portable-result-body tr').last();
+  await expect(row).toContainText('240px container');
+  await expect(row).toHaveAttribute('data-status','pass');
+});
+
+test('public release pages expose no private project link',async({page})=>{
+  for(const path of ['/', '/journal.html', '/stress.html', '/ribbon.html', '/install.html']){
+    await page.goto(path);
+    await expect(page.locator('a[href*="aprashnasuraj2-dev"],a[href*="/videoj"]')).toHaveCount(0);
+  }
+});
