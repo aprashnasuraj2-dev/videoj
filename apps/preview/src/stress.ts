@@ -24,10 +24,12 @@ const layeredMetadata:DhagoMetadataTrack[]=[
 // over wiki redirects, and retain the original downloads as independent backups.
 const mediaSources:Record<Kind,{src:string;credit:string;creditUrl?:string;license:string;fallbacks?:readonly string[]}>={
   original:{src:ORIGINAL,credit:'Studies in Thread — original DHAGO film',license:'Original production'},
-  dhaka:{src:'https://upload.wikimedia.org/wikipedia/commons/0/0a/Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm',
+  dhaka:{src:'https://upload.wikimedia.org/wikipedia/commons/transcoded/0/0a/Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm/Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm.480p.vp9.webm',
+    fallbacks:['https://upload.wikimedia.org/wikipedia/commons/0/0a/Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm'],
     credit:'Oxlaey — Making handwoven Dhaka fabric in Nepal (real Nepalese textile weaving, not pashmina)',
     creditUrl:'https://commons.wikimedia.org/wiki/File:Making_handwoven_DHAKA_fabric_in_Nepal_%E2%80%A2_%E0%A4%A2%E0%A4%BE%E0%A4%95%E0%A4%BE.webm',license:'CC BY-SA 3.0, unmodified'},
-  pashmina:{src:'https://upload.wikimedia.org/wikipedia/commons/8/82/Pashmina%2C_The_Gold_of_Kashmir_%26_The_Himalaya.webm',
+  pashmina:{src:'https://upload.wikimedia.org/wikipedia/commons/transcoded/8/82/Pashmina%2C_The_Gold_of_Kashmir_%26_The_Himalaya.webm/Pashmina%2C_The_Gold_of_Kashmir_%26_The_Himalaya.webm.480p.vp9.webm',
+    fallbacks:['https://upload.wikimedia.org/wikipedia/commons/8/82/Pashmina%2C_The_Gold_of_Kashmir_%26_The_Himalaya.webm'],
     credit:'Florenz / Florence Bourgade — The Gold of Kashmir & the Himalaya (Kashmir, not filmed in Nepal)',
     creditUrl:'https://commons.wikimedia.org/wiki/File:Pashmina,_The_Gold_of_Kashmir_%26_The_Himalaya.webm',license:'CC BY 3.0, unmodified'},
   sheep:{src:'https://upload.wikimedia.org/wikipedia/commons/transcoded/2/27/Sheep_grazing_in_the_countryside.webm/Sheep_grazing_in_the_countryside.webm.480p.vp9.webm',
