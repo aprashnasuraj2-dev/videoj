@@ -1,6 +1,9 @@
 name: Provision Mux demo media
 on:
   workflow_dispatch:
+  push:
+    branches: [hotfix/fibre-film-live]
+    paths: [mux-trigger.txt]
 concurrency:
   group: mux-demo-media
   cancel-in-progress: false
