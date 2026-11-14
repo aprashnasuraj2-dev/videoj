@@ -62,7 +62,7 @@ test('built-in reference produces structured baseline and a real 240px result',a
   await page.locator('#portable-case').selectOption('narrow-240');
   await page.getByRole('button',{name:'Explore selected condition'}).click();
   await expect(page.locator('#portable-result-body tr')).toHaveCount(2);
-  await expect(page.locator('#portable-result-body tr').last()).toContainText('240px container');
+  await expect(page.locator('#portable-result-body tr').last()).toContainText('Narrow width · 240px');
   await expect(page.locator('#portable-result-body tr').last()).toHaveAttribute('data-status','pass');
   await expect.poll(()=>page.locator('#portable-direct-host').evaluate((el:HTMLElement)=>Math.round(el.getBoundingClientRect().width))).toBe(240);
 });
@@ -93,7 +93,7 @@ test('local adapter stays in an opaque sandbox and replaces the old built-in pla
   await page.locator('#portable-case').selectOption('narrow-240');
   await page.getByRole('button',{name:'Explore selected condition'}).click();
   await expect(page.locator('#portable-result-body tr').last()).toHaveAttribute('data-status','pass');
-  await expect(page.locator('#portable-result-body tr').last()).toContainText('240px container');
+  await expect(page.locator('#portable-result-body tr').last()).toContainText('Narrow width · 240px');
 });
 
 test('invalid adapter contracts are loader errors, not skin failures',async({page})=>{
@@ -148,7 +148,7 @@ test('JSON and Markdown report serialization omit adapter source and local paths
   await page.getByRole('button',{name:'Copy summary'}).click();
   const md=await page.evaluate(()=>navigator.clipboard.readText());
   expect(md).toContain('# DHAGO — Playback Resilience Review');
-  expect(md).toContain('| Baseline | Passed |');
+  expect(md).toContain('| Everyday playback | Passed |');
   expect(md).not.toContain('export default');
 });
 
