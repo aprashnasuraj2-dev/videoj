@@ -158,3 +158,31 @@ test('same-source reload preserves history while a genuine source change resets 
   await expect.poll(()=>shell.locator('.dhago-slack-thread').count()).toBe(0);
   await expect(shell).not.toHaveAttribute('data-stream-buffer-events',/.+/);
 });
+
+
+test('decoded fallback upgrades to matching engine rendition without fabricating a switch',async({page})=>{
+  await page.addInitScript(()=>{
+    class LateRenditionList extends EventTarget {
+      items=[{id:'same-resolution',width:1280,height:720,bitrate:4500000,active:false}];
+      [Symbol.iterator](){return this.items[Symbol.iterator]();}
+    }
+    const list=new LateRenditionList();
+    Object.defineProperty(HTMLVideoElement.prototype,'videoWidth',{configurable:true,get(){return 1280;}});
+    Object.defineProperty(HTMLVideoElement.prototype,'videoHeight',{configurable:true,get(){return 720;}});
+    Object.defineProperty(HTMLVideoElement.prototype,'videoRenditions',{configurable:true,get(){return list;}});
+    Object.defineProperty(window,'__activateLateRendition',{value:()=>{
+      list.items[0].active=true;
+      list.dispatchEvent(new Event('activechange'));
+    }});
+  });
+  await page.goto('/?local');
+  const shell=page.locator('#player-mount .dhago');
+  await expect(shell).toHaveAttribute('data-stream-rendition-source','decoded-dimensions');
+  await expect(shell.locator('.dhago-quality-thread')).toHaveCount(1);
+
+  await page.evaluate(()=>((window as any).__activateLateRendition)());
+  await expect(shell).toHaveAttribute('data-stream-rendition-source','engine');
+  await expect(shell).toHaveAttribute('data-stream-rendition',/same-resolution/);
+  await expect(shell.locator('.dhago-quality-thread')).toHaveCount(1);
+  await expect(shell).not.toHaveAttribute('data-stream-rendition-changed',/.+/);
+});
