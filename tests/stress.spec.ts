@@ -58,3 +58,58 @@ test('fixture switch does not accumulate unused media players',async({page})=>{
   await expect(page.locator('#lab-player video,#lab-player audio')).toHaveCount(1);
   await expect(page.locator('#lab-player media-container')).toHaveCount(1);
 });
+
+test('Stress Lab reports real playback state and keeps its clock out of live announcements',async({page},info)=>{
+  await page.goto('/stress.html?case=original');
+  const media=page.locator('#lab-player video');
+  await expect(page.locator('#state-duration')).toHaveText('0:01:04');
+  await expect(page.locator('#state-chapter')).toHaveText('A thread of light');
+  await expect(page.locator('#state-source')).toHaveText('Video file');
+  expect(await page.locator('#state-time').evaluate(clock=>clock.closest('[aria-live],[role=status]')!==null)).toBe(false);
+  await page.locator('#lab-player media-play-button').click();
+  await expect(page.locator('#state-status')).toHaveText('Playing');
+  await expect.poll(()=>media.evaluate((video:HTMLVideoElement)=>video.currentTime)).toBeGreaterThan(.25);
+  await page.locator('#lab-player media-play-button').click();
+  await expect(media).toHaveJSProperty('paused',true);
+  await expect(page.locator('#state-status')).toHaveText('Paused');
+  await page.screenshot({path:info.outputPath('stress-lab.png'),fullPage:true});
+});
+
+test('Stress Lab recovers from an unavailable source and drops detached specimen events',async({page})=>{
+  let fail=true;
+  await page.route('**/media/studies-in-thread.mp4',route=>fail
+    ? route.fulfill({status:503,body:'Synthetic service interruption'})
+    : route.continue());
+  await page.goto('/stress.html?case=original');
+  const original=page.locator('#lab-player video');
+  await expect(page.locator('#state-status')).toHaveText('Error');
+  await expect(page.locator('#state-error')).toBeVisible();
+  await expect(page.locator('#state-duration')).toHaveText('—');
+  fail=false;
+  await page.getByRole('button',{name:'Try loading again'}).click();
+  await expect(page.locator('#state-error')).toBeHidden();
+  await expect(page.locator('#state-duration')).toHaveText('0:01:04');
+  const detached=await original.elementHandle();
+  await page.getByRole('button',{name:/Empty loom/}).click();
+  await expect(page.locator('#state-duration')).toHaveText('0:01:04');
+  await detached!.evaluate(video=>video.dispatchEvent(new Event('error')));
+  await expect(page.locator('#state-status')).not.toHaveText('Error');
+  await expect(page.locator('#state-chapter')).toHaveText('—');
+  await expect(page.locator('#lab-player video')).toHaveCount(1);
+  await detached?.dispose();
+});
+
+test('late chapter fixture attaches genuine cues while paused',async({page})=>{
+  // Route the external fixture to a same-origin complete 64s progressive source so
+  // the late-cue contract remains reproducible when Wikimedia is unavailable.
+  await page.route(url=>url.hostname==='upload.wikimedia.org',async route=>{
+    const response=await route.fetch({url:new URL('/media/studies-in-thread.mp4',page.url()).href});
+    await route.fulfill({response,headers:{...response.headers(),'access-control-allow-origin':'*'}});
+  });
+  await page.goto('/stress.html?case=late');
+  await expect(page.locator('#lab-diagnostics')).toContainText('scheduled four seconds');
+  await expect(page.locator('#state-chapter')).toHaveText('—');
+  await expect(page.locator('#state-chapter')).toHaveText('Fibre study 01',{timeout:10000});
+  await expect(page.locator('#lab-player video')).toHaveJSProperty('paused',true);
+  await expect(page.locator('#lab-player .dhago-chapter-jump')).toHaveCount(40);
+});

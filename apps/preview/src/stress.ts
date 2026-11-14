@@ -50,9 +50,27 @@ let active:Case=cases[0];
 let player:HTMLElement|null=null;
 let media:HTMLMediaElement|null=null;
 let cueUrls:string[]=[];
-let sequence=0;
-const issueList:string[]=[];
+let specimen=new AbortController();
+let metadataTimer:number|undefined;
+let stateObserver:MutationObserver|undefined;
 const caseList=$<HTMLElement>('#lab-case-list');
+const status=$('#state-status');
+const position=$('#state-time');
+const durationValue=$('#state-duration');
+const widthValue=$('#state-width');
+const chapterValue=$('#state-chapter');
+const seekingValue=$('#state-seeking');
+const readyValue=$('#state-ready');
+const sourceValue=$('#state-source');
+const errorValue=$<HTMLElement>('#state-error');
+const diagnostics=$('#lab-diagnostics');
+const readyLabels=['No metadata','Metadata loaded','Current frame','Some media ahead','Enough media'];
+const mediaErrors:Record<number,string>={
+  1:'Playback was canceled.',
+  2:'The media connection was interrupted.',
+  3:'The media could not be decoded.',
+  4:'This source could not be loaded or played.',
+};
 for(const [i,scenario] of cases.entries()){
   const button=document.createElement('button');
   button.type='button';button.className='lab-case';button.dataset.case=scenario.id;button.setAttribute('aria-pressed',String(i===0));
@@ -62,8 +80,7 @@ for(const [i,scenario] of cases.entries()){
   button.addEventListener('click',()=>render(scenario));
   caseList.append(button);
 }
-const stamp=(time:number)=>Number.isFinite(time)?Math.floor(time/3600)+':'+String(Math.floor(time/60)%60).padStart(2,'0')+':'+String(Math.floor(time)%60).padStart(2,'0'):'—';
-const sourceLength=(v:HTMLMediaElement)=>Number.isFinite(v.duration)&&v.duration>0?v.duration:64;
+const stamp=(time:number)=>Number.isFinite(time)&&time>=0?Math.floor(time/3600)+':'+String(Math.floor(time/60)%60).padStart(2,'0')+':'+String(Math.floor(time)%60).padStart(2,'0'):'—';
 const coreChapters=(duration:number):ChapterDraft[]=>Array.from({length:4},(_,i)=>({start:duration*i/4,end:duration*(i+1)/4,title:['A thread of light','The shape of quiet','Where shadows gather','Coming home'][i]}));
 function sampleChapters(mode:CueMode,duration:number):ChapterDraft[] {
   if(mode==='dense'||mode==='late')return denseChapters(duration);
@@ -85,45 +102,45 @@ function sampleChapters(mode:CueMode,duration:number):ChapterDraft[] {
     {start:-3,end:6,title:'Negative start invalid'}];
   return [];
 }
-function addTrack(kind:'chapters'|'captions',label:string,language:string,data:string,token:number) {
-  if(!media||sequence!==token)return;
+function addTrack(target:HTMLMediaElement,kind:'chapters'|'captions',label:string,language:string,data:string) {
   const blob=URL.createObjectURL(new Blob([data],{type:'text/vtt'}));cueUrls.push(blob);
   const track=document.createElement('track');
   track.kind=kind;track.label=label;track.srclang=language;track.src=blob;
   if(kind==='chapters')track.default=true;
-  track.addEventListener('load',()=>{if(media&&sequence===token)media.dispatchEvent(new Event('timeupdate'));});
-  media.append(track);
+  target.append(track);
   // Track cue updates must be available even if the metadata arrived late.
   if(kind==='chapters')track.track.mode='hidden';
 }
-function attachCues(token:number){
-  if(!media||sequence!==token)return;
-  const duration=sourceLength(media);
-  if(active.cues&&active.cues!=='none'){
-    const report=normalizeChapterDrafts(sampleChapters(active.cues,duration),duration);
-    issueList.push(...report.issues);
-    addTrack('chapters','Fixture chapter data','en',chapterVtt(report.chapters),token);
+function attachCues(target:HTMLMediaElement,scenario:Case){
+  const duration=target.duration;
+  if(scenario.cues&&scenario.cues!=='none'){
+    if(Number.isFinite(duration)&&duration>0) {
+      const report=normalizeChapterDrafts(sampleChapters(scenario.cues,duration),duration);
+      if(report.issues.length)diagnostics.textContent=report.issues.join(' · ');
+      addTrack(target,'chapters','Fixture chapter data','en',chapterVtt(report.chapters));
+    } else {
+      diagnostics.textContent='Chapter fixtures require a finite source duration.';
+    }
   }
   const long='A deliberate test caption containing enough ordinary language to stretch across several lines, including the detailed account of a weaver carefully guiding an unusually delicate fibre through the loom.';
-  if(active.captions==='multi'){
-    addTrack('captions','English / long','en',`WEBVTT\n\n00:00:00.000 --> 00:00:08.000\n${long}\n`,token);
-    addTrack('captions','العربية / Arabic','ar','WEBVTT\n\n00:00:00.000 --> 00:00:08.000\nالنسيج يحمل ذاكرة المكان\n',token);
-  }else if(active.id==='original'||active.id==='narrow'||active.id==='poster'){
+  if(scenario.captions==='multi'){
+    addTrack(target,'captions','English / long','en',`WEBVTT\n\n00:00:00.000 --> 00:00:08.000\n${long}\n`);
+    addTrack(target,'captions','العربية / Arabic','ar','WEBVTT\n\n00:00:00.000 --> 00:00:08.000\nالنسيج يحمل ذاكرة المكان\n');
+  }else if(scenario.id==='original'||scenario.id==='narrow'||scenario.id==='poster'){
     // Original short captions come from the actual authored track, not from fixture text.
-    const track=document.createElement('track');track.kind='captions';track.label='English descriptions';track.srclang='en';track.src='./media/captions.vtt';media.append(track);
+    const track=document.createElement('track');track.kind='captions';track.label='English descriptions';track.srclang='en';track.src='./media/captions.vtt';target.append(track);
   }
-  updateMetrics();
 }
-function updateMetrics(){
-  if(!media)return;
-  $('#state-time').textContent=stamp(media.currentTime);
-  $('#state-duration').textContent=stamp(media.duration);
-  $('#state-width').textContent=Math.round(mount.getBoundingClientRect().width)+'px';
-  $('#lab-diagnostics').textContent=issueList.length?issueList.join(' · '):'No normalization warnings for this specimen. Displayed duration and position are read from the media element, not from a mocked clock.';
+function setText(node:Element,value:string){
+  if(node.textContent!==value)node.textContent=value;
 }
-function setWidth(value:string){mount.style.width=value;mount.style.maxWidth='100%';updateMetrics();}
+function measureWidth(){setText(widthValue,`${Math.round(mount.getBoundingClientRect().width)}px`);}
+function setWidth(value:string){mount.style.width=value;measureWidth();}
 function render(scenario:Case){
-  sequence++;const token=sequence;active=scenario;issueList.splice(0);
+  active=scenario;
+  specimen.abort();specimen=new AbortController();
+  window.clearTimeout(metadataTimer);
+  stateObserver?.disconnect();
   if(media){media.pause();media.removeAttribute('src');media.load();}
   player?.remove();player=null;media=null;
   cueUrls.forEach(URL.revokeObjectURL);cueUrls=[];
@@ -153,30 +170,41 @@ function render(scenario:Case){
   }
   mount.replaceChildren(player);
   setWidth(scenario.width??$<HTMLSelectElement>('#lab-width').value);
-  media=player.querySelector<HTMLMediaElement>('video,audio,mux-video')!;
-  $('#state-status').textContent='Loading metadata';
-  $('#state-time').textContent='—';$('#state-duration').textContent='—';
-  let cuesAttached=false;
-  const onMetadata=()=>{
-    if(token!==sequence||cuesAttached)return;
-    cuesAttached=true;
-    if(scenario.cues==='late') {
-      issueList.push('Chapter track scheduled four seconds after metadata (controlled late arrival)');
-      window.setTimeout(()=>{if(token===sequence)attachCues(token);},4000);
-    } else attachCues(token);
-    updateMetrics();
+  const target=player.querySelector<HTMLMediaElement>('video,audio,mux-video')!;
+  media=target;
+  const chapter=player.querySelector<HTMLElement>('.dhago-chapter-name')!;
+  setText(sourceValue,target.tagName==='AUDIO'?'Audio file':target.tagName==='MUX-VIDEO'?'Mux HLS':'Video file');
+  diagnostics.textContent='No normalization warnings for this specimen.';
+  const update=()=>{
+    const state=container.getAttribute('data-playback-state')??'idle';
+    setText(status,state.charAt(0).toUpperCase()+state.slice(1));
+    setText(position,target.readyState>0?stamp(target.currentTime):'—');
+    setText(durationValue,stamp(target.duration));
+    setText(chapterValue,chapter.closest('details')?.hidden?'—':chapter.textContent||'—');
+    setText(seekingValue,target.seeking?'Yes':'No');
+    setText(readyValue,readyLabels[target.readyState]??'Unknown');
+    setText(errorValue,target.error?mediaErrors[target.error.code]??'Playback failed.':'');
+    errorValue.hidden=!target.error;
   };
-  media.addEventListener('loadedmetadata',onMetadata);
-  if(media.readyState>=1)onMetadata();
-  for(const state of ['playing','waiting','stalled','seeking','seeked','pause','ended','error','canplay','loadstart','timeupdate'] as const){
-    media.addEventListener(state,()=>{
-      if(token!==sequence)return;
-      if(state!=='timeupdate'){
-        $('#state-status').textContent=state+(media?.error?` (MediaError ${media.error.code})`:'');
-      }
-      updateMetrics();
-    });
-  }
+  stateObserver=new MutationObserver(update);
+  stateObserver.observe(container,{attributes:true,attributeFilter:['data-playback-state']});
+  stateObserver.observe(chapter,{childList:true,subtree:true});
+  stateObserver.observe(chapter.closest('details')!,{attributes:true,attributeFilter:['hidden']});
+  const {signal}=specimen;
+  const onMetadata=()=>{
+    if(scenario.cues==='late') {
+      diagnostics.textContent='Chapter track scheduled four seconds after metadata (controlled late arrival).';
+      metadataTimer=window.setTimeout(()=>{
+        diagnostics.textContent='Delayed chapter track attached.';
+        attachCues(target,scenario);
+      },4000);
+    } else attachCues(target,scenario);
+  };
+  if(target.readyState>=1)onMetadata();
+  else target.addEventListener('loadedmetadata',onMetadata,{once:true,signal});
+  for(const event of ['loadedmetadata','loadeddata','canplay','canplaythrough','durationchange','seeking','seeked','error','emptied','timeupdate'])
+    target.addEventListener(event,update,{signal});
+  update();
   const url=new URL(location.href);url.searchParams.set('case',scenario.id);history.replaceState(null,'',url);
 }
 $<HTMLSelectElement>('#lab-width').addEventListener('change',e=>setWidth((e.currentTarget as HTMLSelectElement).value));
@@ -189,5 +217,5 @@ $('#lab-motion').addEventListener('click',e=>{
   b.setAttribute('aria-pressed',String(on));b.textContent=on?'Motion: off':'Motion: on';
   mount.toggleAttribute('data-motion-off',on);
 });
-window.addEventListener('resize',updateMetrics);
+window.addEventListener('resize',measureWidth);
 render(cases.find(c=>c.id===new URLSearchParams(location.search).get('case'))??cases[0]);

@@ -622,3 +622,27 @@
     background-color: Canvas;
   }
 }
+
+/* Living Loom uses the native chapter tracks as warp. Only decoded media
+   position adds weft, even while the native thumb previews a drag target. */
+.dhago[data-weave-finite] .media-time-slider-fill {
+  right: max(
+    calc(100% - var(--dhago-progress, 0%)),
+    calc(100% - var(--media-slider-chapter-end, 100%) + var(--media-spacing) * var(--media-chapter-inset-end, 0))
+  );
+  background-color: color-mix(in srgb, var(--dhago-rust) 78%, var(--dhago-weave-color, #8b503d));
+  background-image:
+    repeating-linear-gradient(90deg, #fff6 0 1px, transparent 1px 5px),
+    repeating-linear-gradient(0deg, #1f181438 0 1px, #fff3 1px 2px, transparent 2px 4px);
+}
+.dhago[data-weave-complete] .media-time-slider-chapter:last-of-type .media-time-slider-fill {
+  box-shadow: inset -3px 0 var(--dhago-ink), inset 0 1px #fff7, inset 0 -1px #17191880;
+}
+.dhago[data-weave-complete] .dhago-shelf::before { opacity: 1; }
+.dhago .dhago-chapter-list .dhago-chapter-limit { padding: 6px 9px; color: var(--dhago-muted); }
+@media (forced-colors: active) {
+  .dhago[data-weave-finite] .media-time-slider-fill { background: Highlight; }
+  .dhago[data-weave-complete] .media-time-slider-chapter:last-of-type .media-time-slider-fill {
+    box-shadow: inset -3px 0 CanvasText;
+  }
+}
