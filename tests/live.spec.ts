@@ -20,7 +20,7 @@ test.describe('Public judge experience', () => {
 
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     await expect(page.getByRole('heading', { name: /Every moment/i })).toBeVisible();
-    await expect(page.locator('a[href="./journal.html"]')).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Studio journal ↗', exact: true })).toBeVisible();
 
     const mux = page.locator('mux-video');
     await expect(mux).toHaveAttribute('src', /https:\/\/stream\.mux\.com\/[^/]+\.m3u8/);
