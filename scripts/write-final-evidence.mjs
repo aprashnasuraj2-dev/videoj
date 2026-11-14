@@ -50,7 +50,7 @@ const md=`# DHAGO — final judge-facing release evidence
 | TBT | ${ms(l.tbtMs)} |
 | INP | ${ms(l.inpMs)} |
 
-**Size boundary:** authored DHAGO CSS, TypeScript and HTML template compressed as one stream. Video.js runtime/scaffold, demo application, Mux media and screenshots are excluded. Lighthouse page transfer is a separate end-to-end measurement.
+**Size boundary:** authored DHAGO CSS, TypeScript and HTML template compressed as one stream. Video.js runtime/scaffold, demo application, film media and screenshots are excluded. Lighthouse page transfer is a separate end-to-end measurement.
 
 ## Tested environments
 
