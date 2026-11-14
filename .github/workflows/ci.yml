@@ -36,9 +36,27 @@ jobs:
             dist/
           retention-days: 14
 
-  public-smoke:
+  stage-dist:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v4
+        with:
+          name: candidate-evidence
+      - name: Stage the exact dist exercised by verify
+        run: node scripts/stage-cf-dist.mjs
+
+  public-smoke:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: stage-dist
     runs-on: ubuntu-latest
     timeout-minutes: 24
     steps:

@@ -1,60 +1,52 @@
-name: Prepare immutable Cloudflare release assets
+name: Restage an existing verified Cloudflare build
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'src/**'
-      - 'apps/preview/**'
-      - 'vite.config.ts'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/stage-cloudflare-dist.yml'
   workflow_dispatch:
+    inputs:
+      run_id:
+        description: Main branch Validate submission candidate run with a successful verify job
+        type: string
+        required: true
 permissions:
+  actions: read
   contents: write
-concurrency:
-  group: dhago-dist-${{ github.sha }}
-  cancel-in-progress: false
 jobs:
   stage-dist:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 8
     steps:
+      - name: Resolve successful verify job and source SHA
+        id: run
+        uses: actions/github-script@v7
+        env:
+          SOURCE_RUN_ID: ${{ inputs.run_id }}
+        with:
+          script: |
+            const run_id = Number(process.env.SOURCE_RUN_ID);
+            if (!Number.isSafeInteger(run_id) || run_id < 1) throw new Error('Invalid workflow run ID');
+            const { owner, repo } = context.repo;
+            const { data: run } = await github.rest.actions.getWorkflowRun({ owner, repo, run_id });
+            if (run.path !== '.github/workflows/ci.yml' || run.head_branch !== 'main' || run.event !== 'push') {
+              throw new Error('Choose a main push from Validate submission candidate');
+            }
+            const { data: jobs } = await github.rest.actions.listJobsForWorkflowRun({ owner, repo, run_id, filter: 'latest' });
+            if (!jobs.jobs.some(job => job.name === 'verify' && job.conclusion === 'success')) {
+              throw new Error('The verify job must succeed before using its candidate-evidence artifact');
+            }
+            core.setOutput('source', run.head_sha);
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.run.outputs.source }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: npm
-      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-      - run: npm ci && DHAGO_REQUIRE_WEBM=1 npm run prepare:weave && npm run typecheck && DHAGO_REQUIRE_WEBM=1 npm run build
-      - name: Create immutable branch containing exact dist
-        shell: bash
-        run: |
-          set -euo pipefail
-          test -s dist/index.html && test -s dist/journal.html
-          SOURCE_SHA="$(git rev-parse HEAD)"
-          SHORT="${SOURCE_SHA:0:12}"
-          RELEASE_BRANCH="dist-${SHORT}"
-          if git ls-remote --exit-code --heads origin "$RELEASE_BRANCH"; then
-            echo "Immutable release branch already exists: $RELEASE_BRANCH"
-            exit 0
-          fi
-          mkdir -p published-dist
-          cp -a dist/. published-dist/
-          python3 - <<'PY'
-          import hashlib,json,os,pathlib
-          root=pathlib.Path('published-dist')
-          entries=[]
-          for path in sorted(root.rglob('*')):
-              if path.is_file():
-                  entries.append({'key':str(path.relative_to(root)), 'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'bytes':path.stat().st_size})
-          pathlib.Path('release-manifest.json').write_text(json.dumps({'source_sha':os.environ['GITHUB_SHA'],'built_by':'GitHub Actions','file_count':len(entries),'files':entries},indent=2)+'\n')
-          print('Staged',len(entries),'release files')
-          PY
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git switch -c "$RELEASE_BRANCH"
-          git add -f published-dist release-manifest.json
-          git commit -m "build: immutable DHAGO dist for ${SOURCE_SHA}"
-          git push origin "HEAD:refs/heads/$RELEASE_BRANCH"
-          echo "Immutable source: ${SOURCE_SHA}; branch: ${RELEASE_BRANCH}" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/download-artifact@v4
+        with:
+          name: candidate-evidence
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.run_id }}
+      - name: Restage the same verified artifact
+        env:
+          DHAGO_BUILD_SHA: ${{ steps.run.outputs.source }}
+          DHAGO_BUILD_RUN_ID: ${{ inputs.run_id }}
+        run: node scripts/stage-cf-dist.mjs

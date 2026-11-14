@@ -52,8 +52,21 @@ test('audio-only lab controls drive real decoding, seeking and mute', async ({ p
   wav.writeUInt32LE(sampleRate, 24); wav.writeUInt32LE(sampleRate * 2, 28);
   wav.writeUInt16LE(2, 32); wav.writeUInt16LE(16, 34);
   wav.write('data', 36); wav.writeUInt32LE(dataLength, 40);
-  await page.route(url => url.hostname === 'commons.wikimedia.org', route =>
-    route.fulfill({ body: wav, contentType: 'audio/wav', headers: { 'access-control-allow-origin': '*' } }));
+  await page.route(url => url.hostname === 'commons.wikimedia.org', route => {
+    const headers = { 'access-control-allow-origin': '*', 'accept-ranges': 'bytes' };
+    const range = /^bytes=(\d+)-(\d*)$/.exec(route.request().headers().range ?? '');
+    if (!range) return route.fulfill({ body: wav, contentType: 'audio/wav', headers });
+    const start = Number(range[1]);
+    const end = range[2] ? Math.min(Number(range[2]), wav.length - 1) : wav.length - 1;
+    if (start >= wav.length || end < start) {
+      return route.fulfill({ status: 416, headers: { ...headers, 'content-range': `bytes */${wav.length}` } });
+    }
+    const body = wav.subarray(start, end + 1);
+    return route.fulfill({
+      status: 206, body, contentType: 'audio/wav',
+      headers: { ...headers, 'content-range': `bytes ${start}-${end}/${wav.length}`, 'content-length': String(body.length) },
+    });
+  });
   await page.goto('/stress.html?case=audio');
   const audio = page.locator('#lab-player audio');
   await expect(audio).toHaveJSProperty('duration', seconds);
@@ -61,7 +74,9 @@ test('audio-only lab controls drive real decoding, seeking and mute', async ({ p
   await expect.poll(() => audio.evaluate((media: HTMLAudioElement) => media.currentTime)).toBeGreaterThan(.25);
   await page.locator('#lab-player media-play-button').click();
   await expect(audio).toHaveJSProperty('paused', true);
+  await expect.poll(() => audio.evaluate((media: HTMLAudioElement) => media.seekable.length)).toBeGreaterThan(0);
   const seek = page.getByRole('slider', { name: 'Seek' });
+  await expect(seek).toBeEnabled();
   await seek.press('Home');
   await expect(audio).toHaveJSProperty('currentTime', 0);
   await seek.press('ArrowRight');
