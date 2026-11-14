@@ -8,9 +8,9 @@ DHAGO is a portable **Video.js v10 HTML skin**. It is not published to npm and i
 npm install @videojs/html@10.4.0
 ```
 
-Copy this repository's `src/` directory into your application, preserving the relative paths used by `src/create-player.ts`.
+Copy this repository's `src/` directory into your Vite-compatible application, preserving the relative paths used by `src/create-player.ts`. DHAGO's player is built from Video.js v10 HTML custom elements; Vite is the tested module/build path that resolves the TypeScript, CSS and template imports. This challenge release does not claim a separate no-build `<script>` distribution.
 
-### HTML / Vite
+### HTML host with Vite
 
 ```html
 <div id="player"></div>
