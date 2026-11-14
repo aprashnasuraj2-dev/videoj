@@ -62,32 +62,123 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
     track.kind = kind; track.src = src; track.srclang = 'en'; track.label = label;
     track.default = kind === 'chapters'; video.append(track);
   }
-  // Read real chapter cues; no duplicated timer or invented chapter state.
-  const readout = player.querySelector<HTMLElement>('.dhago-chapter-readout')!;
-  // At the exact film endpoint the final WebVTT cue's exclusive end time
-  // must not erase its chapter label. Avoid redundant DOM writes on timeupdate.
+  // Native <details> provides a keyboard/touch chapter picker inside the skin.
+  // The time-slider remains the sole continuous seeking surface.
+  const readout = player.querySelector<HTMLDetailsElement>('.dhago-chapter-readout')!;
+  const summary = readout.querySelector<HTMLElement>('.dhago-chapter-summary')!;
+  const chapterIndex = readout.querySelector<HTMLElement>('.dhago-chapter-index')!;
+  const chapterName = readout.querySelector<HTMLElement>('.dhago-chapter-name')!;
+  const chapterList = readout.querySelector<HTMLOListElement>('.dhago-chapter-list')!;
   let displayedChapter = '';
+  let cueFingerprint = '';
+  const displayTime = (seconds: number): string => {
+    const whole = Math.max(0, Math.floor(seconds));
+    const hours = Math.floor(whole / 3600);
+    const minutes = Math.floor(whole / 60) % 60;
+    const tail = String(whole % 60).padStart(2, '0');
+    return hours > 0
+      ? `${hours}:${String(minutes).padStart(2, '0')}:${tail}`
+      : `${minutes}:${tail}`;
+  };
   const updateChapter = () => {
-    const track = Array.from(video.textTracks).find(t => t.kind === 'chapters');
-    const cues = Array.from(track?.cues ?? []);
-    const time = video.currentTime;
+    // Text tracks can be unavailable until the async Mux element upgrades.
+    const tracks = video.textTracks ? Array.from(video.textTracks) : [];
+    const track = tracks.find(t => t.kind === 'chapters');
+    // WebVTT is the source of truth. Invalid zero-length cues are excluded;
+    // external producers' overlapping/gapped cues are not silently rewritten.
+    const cues = Array.from(track?.cues ?? [])
+      .filter(c => Number.isFinite(c.startTime) && Number.isFinite(c.endTime) &&
+        c.startTime >= 0 && c.endTime > c.startTime)
+      .sort((a, b) => a.startTime - b.startTime || a.endTime - b.endTime);
+    const fingerprint = cues.map(c => `${c.startTime}:${c.endTime}:${c.text}`).join('\u001e');
     container.toggleAttribute('data-hour-clock', video.duration >= 3600);
+
+    if (fingerprint !== cueFingerprint) {
+      cueFingerprint = fingerprint;
+      readout.open = false;
+      const fragment = document.createDocumentFragment();
+      cues.forEach((cue, i) => {
+        const item = document.createElement('li');
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'dhago-chapter-jump';
+        button.dataset.time = String(cue.startTime);
+        const number = document.createElement('span');
+        number.className = 'dhago-jump-number';
+        number.textContent = String(i + 1).padStart(2, '0');
+        const name = document.createElement('span');
+        name.className = 'dhago-jump-name';
+        name.dir = 'auto';
+        name.textContent = cue.text;
+        name.title = cue.text;
+        const stamp = document.createElement('time');
+        stamp.className = 'dhago-jump-time';
+        stamp.textContent = displayTime(cue.startTime);
+        button.append(number, name, stamp);
+        item.append(button);
+        fragment.append(item);
+      });
+      chapterList.replaceChildren(fragment);
+    }
+    // Gaps remain visibly unmarked. At exactly the film endpoint keep the
+    // final chapter so the end/replay state does not flicker.
+    const time = video.currentTime;
     const nearEnd = Number.isFinite(video.duration) && video.duration > 0 &&
       time >= video.duration - 0.05;
     const index = cues.findIndex((cue, i) =>
       (time >= cue.startTime && time < cue.endTime) ||
       (i === cues.length - 1 && nearEnd && time >= cue.startTime)
     );
-    const label = index < 0 ? '' : (cues[index] as VTTCue).text;
+    const label = index < 0 ? 'Unmarked passage' : cues[index].text;
     const signature = `${index}/${cues.length}/${label}`;
     if (signature === displayedChapter) return;
     displayedChapter = signature;
-    readout.hidden = index < 0;
-    if (index < 0) return;
-    readout.querySelector('.dhago-chapter-index')!.textContent =
-      `CHAPTER ${String(index + 1).padStart(2, '0')} / ${String(cues.length).padStart(2, '0')}`;
-    readout.querySelector('.dhago-chapter-name')!.textContent = label;
+    readout.hidden = cues.length === 0;
+    if (!cues.length) {
+      readout.open = false;
+      return;
+    }
+    chapterIndex.textContent = index < 0
+      ? 'BETWEEN CHAPTERS'
+      : `CHAPTER ${String(index + 1).padStart(2, '0')} / ${String(cues.length).padStart(2, '0')}`;
+    chapterName.textContent = label;
+    chapterName.title = label;
+    chapterList.querySelectorAll<HTMLButtonElement>('.dhago-chapter-jump')
+      .forEach((button, i) => {
+        if (i === index) button.setAttribute('aria-current', 'true');
+        else button.removeAttribute('aria-current');
+      });
   };
+  chapterList.addEventListener('click', (event) => {
+    const origin = event.target;
+    if (!(origin instanceof Element)) return;
+    const button = origin.closest<HTMLButtonElement>('button[data-time]');
+    if (!button || !chapterList.contains(button)) return;
+    const requested = Number(button.dataset.time);
+    if (!Number.isFinite(requested) || requested < 0) return;
+    // For DVR-like media seek only inside the actual available window.
+    const ranges = video.seekable;
+    let target = requested;
+    if (ranges.length) {
+      const start = ranges.start(0);
+      const end = ranges.end(ranges.length - 1);
+      target = Math.max(start, Math.min(target, end));
+    } else if (Number.isFinite(video.duration) && video.duration > 0) {
+      target = Math.min(requested, video.duration);
+    } else return;
+    video.currentTime = target;
+    readout.open = false;
+    summary.focus();
+    updateChapter();
+  });
+  readout.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && readout.open) {
+      readout.open = false;
+      summary.focus();
+      event.stopPropagation();
+      event.preventDefault();
+    }
+  });
   video.addEventListener('timeupdate', updateChapter);
   video.addEventListener('loadedmetadata', updateChapter);
   video.addEventListener('ended', updateChapter);
