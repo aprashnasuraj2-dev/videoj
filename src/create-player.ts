@@ -4,6 +4,7 @@ import template from './video/skin.html?raw';
 import { connectLivingLoom } from './video/living-loom';
 import { connectStreamHistory } from './video/stream-history';
 import { connectMetadataLanes, type DhagoMetadataTrack } from './video/metadata-lanes';
+export type { DhagoMetadataCue, DhagoMetadataTrack } from './video/metadata-lanes';
 
 export interface DhagoWeaveChapter { start:number; end:number; color:string; threadPx:number; audioDb?:number|null }
 export interface DhagoWeave { format:'dhago-weave-v1'; chapters:DhagoWeaveChapter[] }
