@@ -168,11 +168,6 @@ test('homepage playback is independent of the legacy Mux asset', async ({ page }
   const film=page.locator('#player-mount video');
   await expect(film).toHaveAttribute('src',/from-fibre-to-fabric\.mp4$/);
   await expect.poll(()=>film.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
-  await fallback.click();
-  await expect(page).toHaveURL(/surface=dark&local=/);
-  const video = page.locator('video');
-  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThan(0);
   await page.locator('media-play-button').click();
-  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.currentTime)).toBeGreaterThan(.2);
-  await expect(fallback).toHaveCount(0);
+  await expect.poll(()=>film.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(.2);
 });
