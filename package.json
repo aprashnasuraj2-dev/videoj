@@ -14,7 +14,8 @@
     "deploy:cloudflare": "npm run build && npx --yes wrangler@4 pages deploy dist --project-name dhago",
     "test": "playwright test",
     "prepare:weave": "node scripts/compile-weave.mjs",
-    "size:report": "node scripts/size-report.mjs"
+    "size:report": "node scripts/size-report.mjs",
+    "sync:canonical-media": "node scripts/sync-canonical-media.mjs"
   },
   "dependencies": {
     "@videojs/html": "10.4.0"
