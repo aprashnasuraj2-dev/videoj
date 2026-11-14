@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/compile-weave.mjs && vite",
-    "build": "node scripts/ensure-webm.mjs && node scripts/compile-weave.mjs && vite build && node scripts/size-report.mjs",
+    "build": "node scripts/ensure-webm.mjs && node scripts/compile-weave.mjs && vite build && node scripts/prune-retired-media.mjs && node scripts/size-report.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "deploy": "node apps/preview/deploy.mjs",
