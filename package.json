@@ -4,15 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "node scripts/ensure-webm.mjs && vite build",
+    "dev": "node scripts/compile-weave.mjs && vite",
+    "build": "node scripts/ensure-webm.mjs && node scripts/compile-weave.mjs && vite build && node scripts/size-report.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "deploy": "node apps/preview/deploy.mjs",
     "deploy:vercel": "npx --yes vercel@64 build && npx --yes vercel@64 deploy --prebuilt",
     "deploy:netlify": "npx --yes netlify-cli@27 deploy --build",
     "deploy:cloudflare": "npm run build && npx --yes wrangler@4 pages deploy dist --project-name dhago",
-    "test": "playwright test"
+    "test": "playwright test",
+    "prepare:weave": "node scripts/compile-weave.mjs",
+    "size:report": "node scripts/size-report.mjs"
   },
   "dependencies": {
     "@videojs/html": "10.4.0"
