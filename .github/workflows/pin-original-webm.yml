@@ -1,0 +1,37 @@
+name: Pin the preserved original DHAGO WebM (one-off)
+on:
+  push:
+    branches: [fix/pin-original-webm-hash-20261114]
+    paths:
+      - .github/workflows/pin-original-webm.yml
+permissions:
+  contents: write
+jobs:
+  pin-original-webm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/pin-original-webm-hash-20261114
+      - name: Recover only the preserved original compatibility rendition
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p apps/preview/public/media
+          curl --fail --location --show-error --silent --retry 4 --max-time 120 \
+            'https://creative.aafnaipatro.com/media/studies-in-thread.webm' \
+            -o apps/preview/public/media/studies-in-thread.webm
+          echo 'c2e7b6b3c4a699c6fa9010245b5c42a90ff93f65c25a1e6a61bf621ea2e7ed39  apps/preview/public/media/studies-in-thread.webm' | sha256sum --check --strict
+          test "$(stat -c%s apps/preview/public/media/studies-in-thread.webm)" -eq 7455419
+      - name: Preserve a byte-pinned original media fallback in Git
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -f apps/preview/public/media/studies-in-thread.webm
+          if ! git diff --cached --quiet; then
+            git commit -m 'media: preserve verified original DHAGO WebM fallback bytes'
+            git push origin HEAD:fix/pin-original-webm-hash-20261114
+          fi
