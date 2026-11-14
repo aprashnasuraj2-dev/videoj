@@ -36,7 +36,7 @@ export default {
 
 async function openLab(page:any){
   await page.goto('/stress.html?case=original');
-  await expect(page.locator('#portable-loader-status')).toContainText('Built-in DHAGO reference adapter active');
+  await expect(page.locator('#portable-loader-status')).toContainText('DHAGO is ready to explore.');
 }
 
 async function loadLocal(page:any,source:string,name='adapter.mjs'){
@@ -50,7 +50,7 @@ async function loadLocal(page:any,source:string,name='adapter.mjs'){
 test('built-in reference produces structured baseline and a real 240px result',async({page})=>{
   await openLab(page);
   await page.locator('#portable-case').selectOption('baseline');
-  await page.getByRole('button',{name:'Run current case'}).click();
+  await page.getByRole('button',{name:'Explore selected condition'}).click();
   await expect(page.locator('#portable-result-body tr')).toHaveCount(1);
   await expect(page.locator('#portable-result-body tr').first()).toHaveAttribute('data-status','pass');
   const portableVideo=page.locator('#portable-direct-host video');
@@ -59,7 +59,7 @@ test('built-in reference produces structured baseline and a real 240px result',a
   await expect.poll(() => portableVideo.evaluate((media: HTMLVideoElement) => media.duration), { timeout: 15_000 }).toBeGreaterThan(60);
 
   await page.locator('#portable-case').selectOption('narrow-240');
-  await page.getByRole('button',{name:'Run current case'}).click();
+  await page.getByRole('button',{name:'Explore selected condition'}).click();
   await expect(page.locator('#portable-result-body tr')).toHaveCount(2);
   await expect(page.locator('#portable-result-body tr').last()).toContainText('240px container');
   await expect(page.locator('#portable-result-body tr').last()).toHaveAttribute('data-status','pass');
@@ -71,26 +71,26 @@ test('forced colors remains NOT RUN when the real environment is inactive',async
   const active=await page.evaluate(()=>matchMedia('(forced-colors: active)').matches);
   test.skip(active,'This assertion is specifically for a normal non-forced-colors environment.');
   await page.locator('#portable-case').selectOption('forced-colors');
-  await page.getByRole('button',{name:'Run current case'}).click();
+  await page.getByRole('button',{name:'Explore selected condition'}).click();
   const row=page.locator('#portable-result-body tr').last();
   await expect(row).toHaveAttribute('data-status','not-run');
-  await expect(row).toContainText('NOT RUN');
+  await expect(row).toContainText('Not assessed');
 });
 
 test('local adapter stays in an opaque sandbox and replaces the old built-in player',async({page})=>{
   await openLab(page);
-  await page.getByRole('button',{name:'Run current case'}).click();
+  await page.getByRole('button',{name:'Explore selected condition'}).click();
   await expect(page.locator('#portable-direct-host .dhago')).toHaveCount(1);
 
   await loadLocal(page,validAdapter);
-  await expect(page.locator('#portable-loader-status')).toContainText('Loaded locally: Plain video fixture');
+  await expect(page.locator('#portable-loader-status')).toContainText('Connected locally: Plain video fixture');
   await expect(page.locator('#portable-direct-host .dhago')).toHaveCount(0);
   const frame=page.locator('#portable-sandbox-host iframe');
   await expect(frame).toHaveCount(1);
   await expect(frame).toHaveAttribute('sandbox','allow-scripts');
 
   await page.locator('#portable-case').selectOption('narrow-240');
-  await page.getByRole('button',{name:'Run current case'}).click();
+  await page.getByRole('button',{name:'Explore selected condition'}).click();
   await expect(page.locator('#portable-result-body tr').last()).toHaveAttribute('data-status','pass');
   await expect(page.locator('#portable-result-body tr').last()).toContainText('240px container');
 });
@@ -105,14 +105,14 @@ test('invalid adapter contracts are loader errors, not skin failures',async({pag
 test('adapter mount exceptions and missing media become structured FAIL results',async({page})=>{
   await openLab(page);
   await loadLocal(page,`export default {name:'Throws',mount(){throw new Error('fixture mount exploded')}};`,'throws.mjs');
-  await expect(page.locator('#portable-loader-status')).toContainText('Loaded locally: Throws');
-  await page.getByRole('button',{name:'Run current case'}).click();
+  await expect(page.locator('#portable-loader-status')).toContainText('Connected locally: Throws');
+  await page.getByRole('button',{name:'Explore selected condition'}).click();
   await expect(page.locator('#portable-result-body tr').last()).toHaveAttribute('data-status','fail');
   await expect(page.locator('#portable-result-body tr').last()).toContainText('fixture mount exploded');
 
   await loadLocal(page,`export default {name:'No media',mount(host){const root=document.createElement('div');root.textContent='controls only';host.append(root);return {root,destroy(){root.remove()}}}};`,'no-media.mjs');
-  await expect(page.locator('#portable-loader-status')).toContainText('Loaded locally: No media');
-  await page.getByRole('button',{name:'Run current case'}).click();
+  await expect(page.locator('#portable-loader-status')).toContainText('Connected locally: No media');
+  await page.getByRole('button',{name:'Explore selected condition'}).click();
   const row=page.locator('#portable-result-body tr').last();
   await expect(row).toHaveAttribute('data-status','fail');
   await expect(row).toContainText('No media element exposed');
@@ -121,7 +121,7 @@ test('adapter mount exceptions and missing media become structured FAIL results'
 test('stale or forged parent messages cannot add a result',async({page})=>{
   await openLab(page);
   await loadLocal(page,validAdapter);
-  await page.getByRole('button',{name:'Run current case'}).click();
+  await page.getByRole('button',{name:'Explore selected condition'}).click();
   await expect(page.locator('#portable-result-body tr')).toHaveCount(1);
   await page.evaluate(()=>window.postMessage({
     type:'stress:result',
@@ -136,18 +136,18 @@ test('stale or forged parent messages cannot add a result',async({page})=>{
 test('JSON and Markdown report serialization omit adapter source and local paths',async({page,context})=>{
   await context.grantPermissions(['clipboard-read','clipboard-write']);
   await openLab(page);
-  await page.getByRole('button',{name:'Run current case'}).click();
+  await page.getByRole('button',{name:'Explore selected condition'}).click();
 
-  await page.getByRole('button',{name:'Copy JSON'}).click();
+  await page.getByRole('button',{name:'Copy data'}).click();
   const json=await page.evaluate(()=>navigator.clipboard.readText());
   expect(json).toContain('"caseId": "baseline"');
   expect(json).not.toContain('export default');
   expect(json).not.toMatch(/[A-Z]:\\\\|\/Users\/|\/home\//);
 
-  await page.getByRole('button',{name:'Copy Markdown'}).click();
+  await page.getByRole('button',{name:'Copy summary'}).click();
   const md=await page.evaluate(()=>navigator.clipboard.readText());
-  expect(md).toContain('# Skin Stress Lab report');
-  expect(md).toContain('| Baseline | PASS |');
+  expect(md).toContain('# DHAGO — Playback Resilience Review');
+  expect(md).toContain('| Baseline | Passed |');
   expect(md).not.toContain('export default');
 });
 
@@ -176,11 +176,11 @@ test('ESM adapter URL mode loads a CORS-readable module without joining the pare
   await openLab(page);
   const url=new URL('/__stress-adapter-test.mjs',page.url()).href;
   await page.locator('#portable-adapter-url').fill(url);
-  await page.getByRole('button',{name:'Load URL'}).click();
-  await expect(page.locator('#portable-loader-status')).toContainText('Loaded: Plain video fixture');
+  await page.getByRole('button',{name:'Connect'}).click();
+  await expect(page.locator('#portable-loader-status')).toContainText('Connected: Plain video fixture');
   await expect(page.locator('#portable-sandbox-host iframe')).toHaveAttribute('sandbox','allow-scripts');
   await page.locator('#portable-case').selectOption('baseline');
-  await page.getByRole('button',{name:'Run current case'}).click();
+  await page.getByRole('button',{name:'Explore selected condition'}).click();
   await expect(page.locator('#portable-result-body tr').last()).toHaveAttribute('data-status','pass');
 });
 
