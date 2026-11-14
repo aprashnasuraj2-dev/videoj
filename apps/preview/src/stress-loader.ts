@@ -87,7 +87,21 @@ class Sandbox{
   frame:HTMLIFrameElement|null=null;sid='';pending=new Map<string,{ok:(v:any)=>void;bad:(e:Error)=>void;timer:number}>();
   initialized:Promise<void>|null=null;resolveInitialized:(()=>void)|null=null;
   listener=(e:MessageEvent)=>{if(!this.frame||e.source!==this.frame.contentWindow||e.data?.sessionId!==this.sid)return;const d=e.data;if(d.type==='stress:initialized'){this.resolveInitialized?.();this.resolveInitialized=null;return}if(d.type==='stress:error'){const key=this.pending.has('load')?'load':this.pending.has('run')?'run':null;const p=key?this.pending.get(key):undefined;if(p&&key){clearTimeout(p.timer);this.pending.delete(key);p.bad(new Error(String(d.code)+': '+String(d.message)))}}if(d.type==='stress:ready'){const p=this.pending.get('load');if(p){clearTimeout(p.timer);this.pending.delete('load');p.ok(d)}}if(d.type==='stress:result'){const p=this.pending.get('run');if(p){clearTimeout(p.timer);this.pending.delete('run');p.ok(d.result)}}};
-  ensure(){if(this.frame&&this.initialized)return this.initialized;this.sid=Array.from(crypto.getRandomValues(new Uint32Array(4))).join('-');const f=document.createElement('iframe');f.title='Isolated skin adapter specimen';f.className='portable-sandbox';f.setAttribute('sandbox','allow-scripts');f.srcdoc=sandboxSource;q('#portable-sandbox-host').replaceChildren(f);this.frame=f;addEventListener('message',this.listener);this.initialized=new Promise<void>(resolve=>{this.resolveInitialized=resolve});f.addEventListener('load',()=>f.contentWindow?.postMessage({type:'stress:init',sessionId:this.sid},'*'),{once:true});return this.initialized}
+  ensure(){
+    if(this.frame&&this.initialized)return this.initialized;
+    this.sid=Array.from(crypto.getRandomValues(new Uint32Array(4))).join('-');
+    const f=document.createElement('iframe');
+    f.title='Isolated skin adapter specimen';
+    f.className='portable-sandbox';
+    f.setAttribute('sandbox','allow-scripts');
+    this.frame=f;
+    addEventListener('message',this.listener);
+    this.initialized=new Promise<void>(resolve=>{this.resolveInitialized=resolve});
+    f.addEventListener('load',()=>f.contentWindow?.postMessage({type:'stress:init',sessionId:this.sid},'*'),{once:true});
+    f.srcdoc=sandboxSource;
+    q('#portable-sandbox-host').replaceChildren(f);
+    return this.initialized;
+  }
   async request(kind:'load'|'run',data:any){await this.ensure();return new Promise<any>((ok,bad)=>{const timer=window.setTimeout(()=>{this.pending.delete(kind);bad(new Error('Sandbox '+kind+' timed out.'))},12000);this.pending.set(kind,{ok,bad,timer});this.frame!.contentWindow?.postMessage({...data,sessionId:this.sid},'*')})}
   load(adapter:Descriptor){return this.request('load',{type:'stress:load',adapter})}
   run(id:PortableStressCaseId){const fixture=portableStressFixtures.find(x=>x.id===id)!;return this.request('run',{type:'stress:run',fixture,base:{source:new URL(VIDEO,location.href).href,audioSource:AUDIO,poster:new URL(POSTER,location.href).href,missingSource:new URL('/__stress-fixtures/missing.mp4',location.href).href,missingPoster:new URL('/__stress-fixtures/missing-poster.webp',location.href).href}}) as Promise<StressResult>}
