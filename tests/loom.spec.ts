@@ -36,10 +36,10 @@ test('real playback weaves, pauses, unweaves, finishes and restarts', async ({ p
 
   await page.locator('[data-seek="32"]').click();
   await expect.poll(async () => (await readLoom(media)).woven).toBeCloseTo(50, 2);
-  await expect(shell.locator('.dhago-chapter-name')).toContainText('Where shadows gather');
+  await expect(shell.locator('.dhago-chapter-name')).toContainText('Warp meets weft');
   await page.locator('[data-seek="16"]').click();
   await expect.poll(async () => (await readLoom(media)).woven).toBeCloseTo(25, 2);
-  await expect(shell.locator('.dhago-chapter-name')).toContainText('The shape of quiet');
+  await expect(shell.locator('.dhago-chapter-name')).toContainText('Twist into thread');
 
   await media.evaluate((element: HTMLVideoElement) => { element.currentTime = element.duration - .35; });
   await page.getByRole('button', { name: 'Play', exact: true }).click();
@@ -56,7 +56,7 @@ test('real playback weaves, pauses, unweaves, finishes and restarts', async ({ p
 test('metadata delay leaves the finite weave unset and the seek thumb disabled', async ({ page }) => {
   let releaseMedia!: () => void;
   const held = new Promise<void>(resolve => { releaseMedia = resolve; });
-  await page.route('**/media/studies-in-thread.mp4', async route => {
+  await page.route('**/media/from-fibre-to-fabric.mp4', async route => {
     await held;
     await route.continue();
   });
@@ -83,5 +83,5 @@ test('rapid forward and backward seeks leave the weave aligned to actual media',
   });
   await expect(shell).not.toHaveAttribute('data-thread-seeking', '');
   await expect.poll(async () => (await readLoom(media)).woven).toBeCloseTo(51.5625, 2);
-  await expect(shell.locator('.dhago-chapter-name')).toContainText('Where shadows gather');
+  await expect(shell.locator('.dhago-chapter-name')).toContainText('Warp meets weft');
 });
