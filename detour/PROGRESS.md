@@ -5,11 +5,17 @@ Resume step: 042
 
 | Item | Current state |
 | --- | --- |
-| Verified | 42/100. All Phase 4 visual and motion checkpoints have local evidence. |
-| Next | 042. Formalize the independently loadable skin boundary, its host media slot and separate optional Mux module. |
-| Open dependencies | 002: joined-form eligibility. 017: uncoached first-use observations. 043: real seek on Safari/WebKit. Continue independent steps. |
+| Verified | Phase 4 evidence retained; step 042 remains unchecked pending packed external-host playback. |
+| Next | 042. Run packed-install external-host browser checks and confirm the package, media/track slot and optional Mux isolation; then proceed to 043 WebKit proof. |
+| Open dependencies | 002: joined-form eligibility. 017: uncoached first-use observations. 042: external packed-install proof and pinned runtime unavailable in this execution environment. 043: seek on Safari/WebKit. Continue independent steps. |
 | Prototype / public release | Production build and 15 local headless Chromium scenarios passed. [Mux, Cloudflare and Drive milestones](submission-report/RELEASE-PLAN.md) remain on the release path. |
 | Source baseline | Phase 4 started at `e85bc059969102d25e2e707f40d79b3c792e35c5`. Changes are scoped to `detour/`. |
+
+## 2026-11-15 · Phase 5 architecture work (partial: step 042 open)
+
+- Added `skin/index.js` as the demo-independent core entry and `skin/mux.js` as a separate optional public-playback-ID helper. The native Mux adapter explicitly rejects unsupported HLS browsers; no Mux management credentials or playback IDs were committed. Added matching TypeScript declarations and package `exports` for core, styles and optional Mux. Package remains private pending release gate.
+- Added `integration/` as a host-owned video and optional captions composition, not an import of the showcase. Added `tests/architecture.test.mjs` with module boundary and playback ID shape assertions. Inspected the exact committed core sources: no demo, fixture or Mux imports/URLs in the skin, and independent host imports only the core entry. These were static source checks, not an executed installed-package/browser acceptance suite.
+- [Architecture map and exact follow-up commands](design/PHASE-5.md). **No runtime verification is claimed for the new changes**: the current container cannot reach GitHub for a local checkout and has no installed DETOUR dependencies. Do not mark 042 until the independent packed consumer exercises real playback and captions. Next: `npm ci && npm run build && npm run test:architecture && npm test` from `detour/`, run the second host with a replacement video, add packed-install and WebKit evidence; then reconcile 042/043.
 
 ## 2026-11-15 · Phase 4 visual system
 
