@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="DHAGO playback studio: explore real seeking, buffering, chapter movement and viewing state through the original Studies in Thread film."/>
+<title>DHAGO — Playback Studio</title>  <script type="module" crossorigin src="./assets/tools-CnNv8Q2Y.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-P2Xu9kJm.js">
+  <link rel="modulepreload" crossorigin href="./assets/deep-equal-2fCx4gVW.js">
+  <link rel="modulepreload" crossorigin href="./assets/create-player-Ouq-12V2.js">
+  <link rel="stylesheet" crossorigin href="./assets/create-player-DTHgHcqQ.css">
+  <link rel="stylesheet" crossorigin href="./assets/tools-DqfNRiZM.css">
+</head>
+<body class="tools">
+<a class="skip" href="#tools-player">Skip to playback studio</a>
+<header class="tools-header"><a class="tools-brand" href="./">▦ DHAGO <span>/ STUDIO</span></a><nav aria-label="Main"><a href="./">Collection</a><a href="./stress.html">Edge studies</a><a href="./tools.html" aria-current="page">Playback studio</a><a href="./journal.html">Studio Journal</a></nav></header>
+<main>
+<section class="tools-intro"><p class="eyebrow">Playback truth / observed as the film runs</p><h1>Look inside the <em>weave.</em></h1><p>This studio follows what the film is actually doing as it loads, plays, pauses, seeks and buffers. Nothing is staged or invented. The original 64-second <strong>Studies in Thread</strong> remains the viewing source.</p></section>
+<section class="tools-player-layout"><div><h2>Live film</h2><media-i18n><div id="tools-player"></div></media-i18n><p class="tools-caption">The film is the source of truth. Every reading on this page comes from the player you are watching.</p></div>
+<aside class="tools-card" aria-labelledby="state-title"><div class="tools-card-head"><h2 id="state-title">What the player sees</h2><span id="tools-status" role="status" aria-live="off">INITIALIZING</span></div>
+<dl id="tools-metrics" class="tools-metrics"></dl><p class="tools-mini" id="tools-chapter">Chapter: —</p></aside></section>
+<div class="tools-grid">
+<section class="tools-card" aria-labelledby="seek-title"><div class="tools-card-head"><h2 id="seek-title">Precise seeking</h2><span>LIVE PLAYBACK</span></div>
+<p>Every movement changes the real playback position, so the woven timeline must travel backward as faithfully as it moves forward.</p>
+<div class="tools-actions" id="tools-seeks">
+<button data-seek="0">Start · 0s</button><button data-seek="-10">−10s</button><button data-seek="-5">−5s</button><button data-seek="-1">−1s</button>
+<button data-seek="+1">+1s</button><button data-seek="+5">+5s</button><button data-seek="+10">+10s</button>
+<button data-seek="25%">25%</button><button data-seek="50%">50%</button><button data-seek="75%">75%</button><button data-seek="90%">90%</button><button data-seek="nearend">Near end</button>
+</div><form id="tools-seek-form"><label for="tools-exact">Exact seconds</label><div class="tools-inline"><input id="tools-exact" type="number" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 32.5"/><button type="submit">Seek precisely</button></div></form>
+<p id="tools-feedback" class="tools-feedback" role="status" aria-live="polite"></p>
+</section>
+<section class="tools-card" aria-labelledby="ranges-title"><div class="tools-card-head"><h2 id="ranges-title">Three views of time</h2><span>AS THE PLAYER REPORTS IT</span></div>
+<p>Where you are in the film is different from what has buffered and what can currently be reached. The studio keeps those ideas separate.</p>
+<div class="range-stack"><div><div class="range-label"><span>Played position</span><span id="tools-played-label">—</span></div><div class="range-track" id="tools-played"></div></div>
+<div><div class="range-label"><span>Buffered</span><span id="tools-buffered-label">—</span></div><div class="range-track" id="tools-buffered"></div></div>
+<div><div class="range-label"><span>Seekable</span><span id="tools-seekable-label">—</span></div><div class="range-track" id="tools-seekable"></div></div></div>
+<p class="tools-mini">If the player does not know something yet, the studio leaves it unknown rather than filling in a guess.</p>
+</section>
+<section class="tools-card" aria-labelledby="events-title"><div class="tools-card-head"><h2 id="events-title">Playback moments</h2><span id="tools-event-count">0 / 120</span></div>
+<p>This history follows real changes as the film loads, plays, pauses, seeks and buffers. Repeated updates are kept compact so the sequence stays readable.</p>
+<div class="tools-actions"><button id="tools-toggle-log" type="button" aria-pressed="false">Pause history</button><button id="tools-clear-log" type="button">Clear history</button></div>
+<div class="event-scroll"><table><thead><tr><th scope="col">Event</th><th scope="col">Time</th><th scope="col">Ready</th><th scope="col">Network</th><th scope="col">DHAGO</th></tr></thead><tbody id="tools-event-rows"></tbody></table></div>
+</section>
+<section class="tools-card" aria-labelledby="snapshot-title"><div class="tools-card-head"><h2 id="snapshot-title">Current viewing snapshot</h2><span>LIVE STATE</span></div>
+<p>Save a compact record of the current viewing state, including playback position, chapter, buffering and available ranges. Private or signed source details are not shown.</p>
+<div class="tools-actions"><button id="tools-copy-state" type="button">Copy details</button><button id="tools-reset" type="button">Return to beginning</button></div>
+<pre id="tools-snapshot" tabindex="0" aria-label="Current playback snapshot">Waiting for metadata…</pre>
+<p class="tools-mini">Fullscreen and Picture-in-Picture appear only when the current browser genuinely supports them.</p>
+</section>
+</div>
+</main><footer>DHAGO Playback Studio · <a href="./">Return to the collection</a> · <a href="./stress.html">Explore edge studies</a> · <a href="./journal.html">Open Studio Journal</a></footer></body></html>
