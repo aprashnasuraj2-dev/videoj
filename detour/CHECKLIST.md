@@ -415,12 +415,12 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Pass condition** — Verified VTT cues render and toggle, absent chapters do not affect detour, and 40 cues do not clutter the rail.
   - **Evidence** — [Phase 6 executable core gates](design/PHASE-6.md#2026-11-15-verified-core-gates)
 
-- [ ] **058. Finish media controls and settings**
+- [x] **058. Finish media controls and settings**
   - **Objective** — Keep ordinary use as reliable as the signature action.
   - **Work** — Wire fullscreen, time, volume/mute and label changes via documented components. Add rate only if it survives required testing. On mobile verify user-agent volume behavior and keep mute operable.
   - **Deliverable** — Transport and optional settings ready for QA.
   - **Pass condition** — Essential controls work across target browsers. Menus open, close and restore focus without changing playback unintentionally.
-  - **Progress** — Desktop Chromium/WebKit transport, rate, settings close/focus and capability-aware fullscreen pass. Mobile user-agent volume capability + mute evidence remains open; a narrow viewport is not being treated as that proof.
+  - **Evidence** — [Phase 6 mobile-UA and packaged-controls evidence](design/PHASE-6.md#2026-11-15-step-058-mobile-ua-and-transport-reconciliation). Desktop Chromium/WebKit and an emulated iPhone WebKit external consumer pass. Physical iOS/Android remains unverified for Phase 7.
 
 - [x] **059. Handle source lifecycle end to end**
   - **Objective** — Prevent stale markers and alerts across navigation.

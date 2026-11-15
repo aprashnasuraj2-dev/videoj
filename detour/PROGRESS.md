@@ -1,15 +1,21 @@
 # DETOUR progress
 
-Phase: 06
-Resume step: 058
+Phase: 07
+Resume step: 061
 
 | Item | Current state |
 | --- | --- |
-| Verified | 57/100. Steps 051 and 055–057, 059–060 now have executable Phase 6 evidence; 052–054 were already verified. |
-| Next | 058. Finish mobile user-agent volume/mute evidence, then reconcile whether Phase 6 can advance to browser/device QA. |
-| Open dependencies | 002: joined-form eligibility. 017: uncoached first-use observations. Physical-device Safari/mobile and assistive-technology evidence remain later QA gates, not Phase 5 passes. |
+| Verified | 58/100. Phase 6 steps 051–060 verified with desktop browser and emulated mobile-UA test evidence; physical mobile device testing is not claimed. |
+| Next | 061. Capture responsive 240/320/375/768/1280 px and emulated iOS landscape matrices, including held, pending Return, caption and open Settings states. Then pursue physical-device checks at 062/070. |
+| Open dependencies | 002: joined-form eligibility. 017: uncoached first-use observations. Physical-device Safari/mobile and assistive-technology evidence remain Phase 7 gates; neither desktop WebKit nor iPhone-shaped WebKit is a physical device. |
 | Prototype / public release | Base-only and DETOUR packed consumers pass. Desktop Chromium/WebKit core controls and Return pass; optional real Mux playback and public release remain later work. |
-| Source baseline | Phase 6 executable baseline: `524bac5fb73aaf0568e559c4e08342137c443da7`, GitHub Actions run 43692857813. |
+| Source baseline | Phase 6 mobile-UA completed test baseline: `15bd747d57285eb7be236577aff7b41e688cc6fc`, GitHub Actions run 43693510683. |
+
+## 2026-11-15 · Phase 6 step 058 reconciliation and Phase 7 handoff
+
+- Verified the already-committed iPhone-shaped Playwright WebKit packaged-base consumer at source `15bd747d57285eb7be236577aff7b41e688cc6fc`, successful [Actions run 43693510683](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43693510683). The executable test reads media-store volume/mute availability, tests either supported volume-setting or unsupported-slider state, and toggles native mute on and off. It explicitly does **not** require nonzero maxTouchPoints in Linux WebKit and is **not** real iPhone/touch/Safari evidence.
+- Reconciled 058 to verified, bringing Phase 6 to 10/10 executable and previously evidenced checklist items. Existing desktop Chromium/WebKit external-host coverage includes transport, caption toggle, playback-rate selection, Escape/focus restoration, and capability-conditional fullscreen. This is a tracking/evidence reconciliation, **not** a new browser run or feature patch.
+- Next actionable: 061 responsive state matrix and real screenshots. 062 physical iOS/Android touch, 064 AT, and 070 real-device browser gate remain unverified. Owner dependencies 002 and 017 remain open. The CI progress validator must pass on this reconciliation commit.
 
 ## 2026-11-15 · Phase 6 core implementation checkpoint
 

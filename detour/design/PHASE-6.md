@@ -15,11 +15,13 @@ Executable baseline: `524bac5fb73aaf0568e559c4e08342137c443da7`, GitHub Actions 
 
 The same run reports **5/5 architecture tests, 3/3 packed-consumer tests, 17/17 full Chromium scenarios, and 10/10 focused desktop-WebKit Return attempts at 42.350s**.
 
-## Step 058 remains open
+## 2026-11-15 step 058 mobile-UA and transport reconciliation
 
 Desktop Chromium and desktop WebKit now pass packaged play/pause, seek/time, mute, caption, playback-rate, Settings Escape and focus-restoration behavior. Fullscreen is exercised when the runtime reports the Fullscreen API available; capability mismatch is rejected.
 
-The checklist also asks to verify **mobile user-agent volume behavior while keeping mute operable**. A narrow desktop viewport is not equivalent to that evidence, and desktop WebKit is not a physical iPhone/Safari test. Step 058 therefore remains unchecked until a mobile-UA/device-shaped run records the volume capability and mute path without overclaiming physical-device coverage.
+The checklist also asks to verify **mobile user-agent volume behavior while keeping mute operable**. A narrow desktop viewport is not equivalent to that evidence, and desktop WebKit is not a physical iPhone/Safari test. The packaged external-host suite now contains `proveMobileWebKitBase()`: it launches Linux Playwright WebKit with the iPhone 13 UA/viewport/device-scale/mobile/touch descriptor, records `store.volumeAvailability` and `store.mutedAvailability`, verifies `mutedAvailability === 'available'`, accepts only `available` or `unsupported` volume capability, checks the unavailable slider state or an actual supported volume set as appropriate, then toggles native `video.muted` true and false. The test was successful in [GitHub Actions run 43693510683](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43693510683) at `15bd747d57285eb7be236577aff7b41e688cc6fc`.
+
+**Evidence boundary:** Linux WebKit with an emulated iPhone descriptor can still report `maxTouchPoints=0`; this test is a browser-UA/capability test, not a physical touch or iOS Safari session. Full native-device QA remains open in Phase 7. With the earlier desktop external-host suite covering all normal controls and capability-aware fullscreen, step 058 is now verified to its software integration scope. This reconciles the prior checkpoint's open status without inventing physical-device coverage.
 
 ## Limits
 
