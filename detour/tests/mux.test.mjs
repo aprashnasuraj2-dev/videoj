@@ -58,10 +58,16 @@ test('076 production Mux host keeps four persistent checkpoints and returns from
     assert.equal(media.paused, true);
     assert.ok(media.tracks.includes('captions'));
     assert.equal(await page.locator('.mux-panel').isVisible(), false, 'Healthy playback should not lead with infrastructure/recovery UI');
-    assert.match(await page.locator('.demo-heading p').textContent(), /Keep more than one place\. Explore freely\. Return from the rail\./);
+    assert.match(await page.locator('.demo-heading p').textContent(), /Keep up to four places\. Explore freely\. Return from the rail\./);
     assert.doesNotMatch(await page.locator('body').innerText(), /Mux-hosted|independent fallback/i);
 
-    for (const seconds of [42.35, 30, 18, 8]) {
+    await seekPlayer(page, 42.35);
+    await page.getByRole('button', { name: 'Keep my place' }).click();
+    await seekPlayer(page, 42.6);
+    await page.getByRole('button', { name: 'Keep my place' }).click();
+    assert.equal(await page.locator('.detour-checkpoint').count(), 1, 'Near-duplicate checkpoint must be deduplicated');
+
+    for (const seconds of [30, 18, 8]) {
       await seekPlayer(page, seconds);
       await page.getByRole('button', { name: 'Keep my place' }).click();
     }
@@ -81,6 +87,12 @@ test('076 production Mux host keeps four persistent checkpoints and returns from
     assert.ok(Math.abs(returned.time - 42.35) < 0.5, `Mux checkpoint Return landed at ${returned.time}`);
     assert.equal(returned.paused, true);
     assert.equal(await page.locator('.detour-checkpoint').count(), 4, 'Returning must not consume a checkpoint');
+
+    const second = page.getByRole('button', { name: /Return to 00:30 — checkpoint C2/ });
+    await second.focus();
+    await page.keyboard.press('Delete');
+    assert.equal(await page.locator('.detour-checkpoint').count(), 3, 'Delete removes only the focused checkpoint');
+    assert.equal(await page.getByRole('button', { name: 'Keep my place' }).isEnabled(), true);
 
     await page.getByRole('button', { name: 'Clear all saved places' }).click();
     assert.equal(await page.locator('.detour-checkpoint').count(), 0);

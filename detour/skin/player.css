@@ -143,6 +143,7 @@
   block-size: 24px;
   padding-inline: .28rem;
   border: 2px solid var(--detour-signal);
+  border-inline-end: 0;
   background: var(--detour-shelf);
   color: var(--detour-signal);
   box-shadow: 0 0 0 1px var(--detour-shelf);
@@ -158,11 +159,14 @@
   inset-inline-start: auto;
   inset-inline-end: 0;
   transform: none;
+  border-inline-start: 0;
+  border-inline-end: 2px solid var(--detour-signal);
 }
 .detour .detour-checkpoint-detail { display: none; margin-inline-start: .35rem; font-weight: 650; }
 .detour .detour-checkpoint:hover:not(:disabled) .detour-checkpoint-tag,
 .detour .detour-checkpoint:focus-visible .detour-checkpoint-tag {
   padding-inline: .42rem;
+  border: 2px solid var(--detour-signal);
   background: var(--detour-signal);
   color: var(--detour-signal-ink);
   z-index: 2;
