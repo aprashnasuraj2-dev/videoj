@@ -326,13 +326,18 @@ test('keyboard Home and End, natural end, and return without autoplay', { timeou
     return v.currentTime === 0 && !v.seeking;
   });
   await slider.press('End');
+  await page.waitForTimeout(200);
+  t.diagnostic(`${engineName}: End key snapshot ${JSON.stringify(await page.locator('video').evaluate(v => ({
+    current:v.currentTime, duration:v.duration, seeking:v.seeking,
+    seekableEnd:v.seekable.length ? v.seekable.end(v.seekable.length - 1) : null,
+  })))}`);
   await page.waitForFunction(() => {
     const v = document.querySelector('video');
     const upper = v.seekable.length ? v.seekable.end(v.seekable.length - 1) : v.duration;
     // Some decoders stop on their last timestamped frame before exact duration.
     // Accept a half-second final-frame tolerance; never accept an earlier jump.
     return Number.isFinite(upper) && v.currentTime >= upper - 0.5 && !v.seeking;
-  }, null, { timeout: 10000 });
+  }, null, { timeout: 6000 });
   t.diagnostic(`${engineName}: Home/End keyboard seek settled at ${await page.locator('video').evaluate(v => v.currentTime.toFixed(3))}s`);
   await seek(page, 63.55);
   t.diagnostic(`${engineName}: reached 63.55 seconds and starting natural end`);

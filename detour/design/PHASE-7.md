@@ -26,3 +26,7 @@ The automated tests run on GitHub-hosted Ubuntu, Node 24, Video.js HTML 10.4.0 a
 The first independent `footprint.test.mjs` passed: 81,155 B gzip baseline, 82,936 B enhanced, incremental 1,781 B. CSS is common to both package entries and therefore has zero **incremental** CSS, not zero absolute CSS. The five same-process Chromium traces reported no Long Tasks API entries; the test environment is an Ubuntu hosted CI runner rather than a constrained mobile device. This does **not** meet all of checklist 069's cold/warm and real-hardware requirements.
 
 The responsive and mobile-UA probes initially failed on a hidden-ancestor measurement error and wrong slider target respectively; both were fixed in code and require a fresh exact-head run. The 061 screenshots from that failing run are incomplete. No screenshots are represented as accepted unless a corresponding probe passed.
+
+## Responsive capture checkpoint
+
+The first full Chromium matrix passed 25 distinct width/state checks (240/320/375/768/1280 × idle/held/captions/settings/pending) and wrote 28 player images to [Actions artifact 14154059762](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43695753935/artifacts/14154059762). This artifact link is evidence of the captured run, not proof that someone visually accepted every crop. The separate Linux WebKit iPhone-configuration run found no document fullscreen capability; the control was hidden. The next test explicitly maps required visibility to the engine's truthful fullscreen availability.

@@ -11,6 +11,13 @@ Resume step: 061
 | Prototype / public release | Base-only and DETOUR packed consumers pass. Desktop Chromium/WebKit core controls and Return pass; optional real Mux playback and public release remain later work. |
 | Source baseline | Phase 6 mobile-UA completed test baseline: `15bd747d57285eb7be236577aff7b41e688cc6fc`, GitHub Actions run 43693510683. |
 
+## 2026-11-15 · 25 responsive screenshots and capability-aware landscape verification
+
+- [Run 43695753935](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43695753935) passed the full **5 widths × 5 states = 25** Chromium responsive player matrix, keyboard-only signature, Shift+Tab/rejected-Return focus, reduced-motion/forced-colors/CSS-zoom, emulated Pixel touch (landed 19.199s), gzip budget (1,781 B), and five no-long-task signature loops. Uploaded 28 screenshot files in Actions artifact 14154059762. This is browser emulation evidence, not physical-device proof or accepted screenshot design review.
+- The emulated iPhone landscape probe exposed that WebKit legitimately reports fullscreen unsupported and hides its control. Changed the geometry validator to require visibility only when `fullscreenAvailability` reports `available`; this preserves capability truthfulness rather than forcing a decorative disabled fullscreen button.
+- Desktop WebKit's Home/End scenario still failed its end-interval assertion after 10s; added an exact native clock/seekable-end diagnostic before asserting. This is an unresolved **software/browser test issue** until the next run reveals whether End is ignored or frame-clamped.
+- Extended Phase 7 tests with a synthetic 9:59:59 clock/RTL/dense-chapter case, duplicate Return/manual-seek/source-swap cancellation, and five fresh-context plus five repeat-context Chromium scripting/layout/layer observations. Newly added cases are **not yet verified**.
+
 ## 2026-11-15 · First independent Phase 7 probe results and precision fixes
 
 - GitHub Actions [run 43695310958](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43695310958) independently ran the Phase 7 tests even after a desktop-WebKit regression failure. The import-graph gzip measurement passed **1,781 B incremental** (base 81,155 B; enhanced 82,936 B) against **15,360 B**. Five 320px Chromium signature loops observed **zero long tasks >50ms** (290–314 ms wall time per iteration; not a device-speed claim). Keyboard-only, Shift+Tab/rejected Return, reduced motion, forced colors and emulated CSS zoom probes passed.

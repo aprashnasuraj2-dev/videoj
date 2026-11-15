@@ -41,9 +41,10 @@ async function geometry(page, label) {
       rail,
       root.querySelector('.detour-clock'),
       root.querySelector('media-mute-button'),
-      root.querySelector('media-fullscreen-button'),
       root.querySelector('.detour-place, detour-place'),
     ].filter(Boolean);
+    const fullscreenAvailability = root.closest('video-player')?.store?.fullscreenAvailability;
+    if (fullscreenAvailability === 'available') required.push(root.querySelector('media-fullscreen-button'));
     // A child of a hidden parent can retain display:block while occupying 0x0.
     const visible = node => {
       if (!node || !node.getClientRects().length) return false;
@@ -58,6 +59,7 @@ async function geometry(page, label) {
       controls:required.map(node=>({name:node.tagName.toLowerCase(),rect:bounds(node),visible:visible(node)})),
       targets:hitTargets.map(node=>({name:node.className,rect:bounds(node)})),
       menuVisible:visible(root.querySelector('.detour-menu')),
+      fullscreenAvailability, fullscreenVisible:visible(root.querySelector('media-fullscreen-button')),
     };
   });
   assert.ok(result.scrollWidth <= result.clientWidth + 1, `${label}: horizontal overflow ${JSON.stringify(result)}`);
@@ -290,4 +292,140 @@ test('063 Shift+Tab stays inside visible controls and failed Return keeps focus'
     });
     t.diagnostic('Desktop Chromium reverse tab and controlled rejected-return focus recovery.');
   } finally {await page.close();}
+});
+
+test('066 long-clock, RTL and dense chapters use the same held-place geometry', { timeout: 30000 }, async t => {
+  const page=await browser.newPage({viewport:{width:280,height:820}});
+  try {
+    await ready(page);
+    await page.locator('.demo').evaluate(node=>{node.style.width='240px';});
+    await page.locator('video').evaluate(video=>{
+      Object.defineProperties(video,{
+        currentTime:{configurable:true,writable:true,value:35999},
+        duration:{configurable:true,value:36000},
+        seekable:{configurable:true,value:{length:1,start:()=>0,end:()=>36000}},
+      });
+      video.dispatchEvent(new Event('durationchange'));
+      video.dispatchEvent(new Event('seeked'));
+      const track=document.createElement('track');
+      track.kind='chapters';
+      track.label='Dense arbitrary chapter descriptions';
+      track.src=new URL('fixtures/dense-chapters.vtt',document.baseURI).href;
+      video.append(track);
+      track.track.mode='hidden';
+    });
+    await page.locator('.detour-hold:enabled').waitFor();
+    await page.getByRole('button',{name:'Keep my place'}).click();
+    const back=page.getByRole('button',{name:'Return to 9:59:59'});
+    await back.waitFor();
+    await page.locator('.detour').evaluate(root=>{
+      root.dir='rtl';
+      const label=root.querySelector('.detour-return-label');
+      label.firstChild.textContent='العودة إلى لحظة المشاهدة المحفوظة سابقا عند ';
+      root.querySelector('.detour-stay').textContent='استمر في هذه اللحظة من الفيديو';
+    });
+    await page.waitForFunction(()=>[...document.querySelector('video').textTracks].some(track=>track.kind==='chapters'&&track.cues?.length===64));
+    assert.equal(await page.locator('.detour-rail > *').count(),2,'Metadata created cosmetic rail nodes');
+    const result=await geometry(page,'240/RTL/9h59m59s');
+    assert.ok(result.targets.length>=2);
+    await capture(page,'240-long-rtl-held');
+    await page.getByRole('button',{name:'استمر في هذه اللحظة من الفيديو'}).click();
+    assert.equal(await page.locator('.detour-origin').isVisible(),false);
+    t.diagnostic('Synthetic 9:59:59 and dense 64-chapter track. Real decoding/time progression is not asserted for the synthetic clock.');
+  } finally {await page.close();}
+});
+
+test('068 duplicate Return, manual-seek precedence and source swap do not replay or consume a mark', { timeout: 25000 }, async t => {
+  const page=await browser.newPage({viewport:{width:375,height:780}});
+  try {
+    await ready(page);
+    await seek(page,42.35);
+    await page.getByRole('button',{name:'Keep my place'}).click();
+    await seek(page,18);
+    await page.locator('video-player').evaluate(player=>{
+      player.__phase7Real=player.store;
+      player.__phase7Calls=0;
+      Object.defineProperty(player,'store',{configurable:true,value:Object.create(player.store,{
+        seek:{value:()=>{player.__phase7Calls++;return new Promise(resolve=>{player.__phase7Resolve=resolve;});}}
+      })});
+    });
+    const back=page.getByRole('button',{name:'Return to 00:42'});
+    await back.click();
+    await page.getByRole('button',{name:'Returning…'}).waitFor();
+    await back.evaluate(button=>{button.click();button.click();button.click();});
+    assert.equal(await page.locator('video-player').evaluate(player=>player.__phase7Calls),1,'Duplicate Return dispatched multiple seeks');
+    await page.getByRole('slider',{name:'Seek'}).press('ArrowRight');
+    await page.waitForFunction(()=>document.querySelector('video').currentTime>=19);
+    await back.waitFor();
+    assert.equal(await back.getAttribute('aria-disabled'),'false');
+    await page.locator('video-player').evaluate(player=>player.__phase7Resolve(42.35));
+    assert.equal(await page.locator('.detour-origin').isVisible(),true);
+    const paused=await page.locator('video').evaluate(v=>v.paused);
+    assert.equal(paused,true,'Recovery resumed playback unexpectedly');
+    await page.locator('video-player').evaluate(player=>{
+      Object.defineProperty(player,'store',{configurable:true,value:player.__phase7Real});
+    });
+    await page.locator('video').evaluate(video=>{
+      const url=new URL(video.currentSrc);
+      url.searchParams.set('phase7swap','1');
+      video.src=url.href;
+    });
+    await page.locator('.detour-hold:enabled').waitFor();
+    assert.equal(await page.locator('.detour-origin').isVisible(),false);
+    assert.equal(await page.locator('.detour-return').isVisible(),false);
+    assert.equal(await page.locator('video').evaluate(v=>v.paused),true);
+    t.diagnostic('One Return dispatched; later keyboard seek cancelled it; stale resolve did not consume mark, and source swap cleared it.');
+  } finally {await page.close();}
+});
+
+test('069 ten Chromium samples record five fresh-context and five same-context runs', { timeout: 90000 }, async t => {
+  const captured=[];
+  const run=async (context,condition,index) => {
+    const page=await context.newPage();
+    const cdp=await context.newCDPSession(page);
+    let layerCount=null;
+    cdp.on('LayerTree.layerTreeDidChange',event=>{layerCount=event.layers?.length??layerCount;});
+    await cdp.send('Performance.enable');
+    await cdp.send('LayerTree.enable');
+    await page.addInitScript(()=>{
+      window.__detourLongTasks=[];
+      if (PerformanceObserver.supportedEntryTypes?.includes('longtask')) {
+        new PerformanceObserver(list=>{
+          for(const x of list.getEntries())window.__detourLongTasks.push(x.duration);
+        }).observe({entryTypes:['longtask']});
+      }
+    });
+    const started=performance.now();
+    try {
+      await ready(page);
+      const nav=await page.evaluate(()=>{
+        const n=performance.getEntriesByType('navigation')[0];
+        return n?{durationMs:n.duration,transferBytes:n.transferSize,encodedBytes:n.encodedBodySize}:null;
+      });
+      const before=Object.fromEntries((await cdp.send('Performance.getMetrics')).metrics.map(m=>[m.name,m.value]));
+      await page.evaluate(()=>{window.__detourLongTasks=[];});
+      await seek(page,42.35);
+      await page.getByRole('button',{name:'Keep my place'}).click();
+      await seek(page,18);
+      await seek(page,24);
+      await page.getByRole('button',{name:'Return to 00:42'}).click();
+      await page.getByRole('button',{name:'Keep my place'}).waitFor();
+      await page.waitForTimeout(70);
+      const after=Object.fromEntries((await cdp.send('Performance.getMetrics')).metrics.map(m=>[m.name,m.value]));
+      const tasks=await page.evaluate(()=>window.__detourLongTasks);
+      const maximum=tasks.length?Math.max(...tasks):0;
+      assert.ok(maximum<=50,`${condition}/${index}: >50ms task ${maximum}`);
+      const deltas=Object.fromEntries(['ScriptDuration','LayoutDuration','RecalcStyleDuration','TaskDuration','LayoutCount'].map(key=>[key,(after[key]??0)-(before[key]??0)]));
+      captured.push({condition,index,nav,signatureWallMs:Math.round(performance.now()-started),longTasks:tasks.length,maxLongTaskMs:maximum,layerCount,deltas});
+    } finally {await cdp.detach();await page.close();}
+  };
+  for(let i=1;i<=5;i++){
+    const context=await browser.newContext({viewport:{width:320,height:740}});
+    try {await run(context,'fresh-context',i);} finally {await context.close();}
+  }
+  const warm=await browser.newContext({viewport:{width:320,height:740}});
+  try {for(let i=1;i<=5;i++)await run(warm,'repeat-context',i);} finally {await warm.close();}
+  assert.equal(captured.length,10);
+  t.diagnostic('Hosted Ubuntu Chromium traces (seconds for Script/Layout/Recalc, counts for Layer/LayoutCount): '+JSON.stringify(captured));
+  t.diagnostic('Cache may be revalidated by Vite preview; same-context is not a verified fully cached HTTP run. LayerTree observation is diagnostic, not compositing-GPU cost.');
 });

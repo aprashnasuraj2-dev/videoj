@@ -64,4 +64,5 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
       - name: Validate checklist and resume pointer
+        if: always()
         run: node scripts/check-progress.mjs
