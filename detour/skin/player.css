@@ -37,7 +37,7 @@
 }
 .detour-buffer[data-visible] { display: block; }
 .detour-shelf { padding: 0 .7rem .65rem; min-inline-size: 0; }
-.detour-rail { position: relative; display: grid; margin: 0 .4rem; }
+.detour-rail { direction: ltr; position: relative; display: grid; margin: 0 .4rem; }
 .detour media-time-slider, .detour-volume {
   position: relative;
   display: grid;
@@ -89,15 +89,15 @@
 }
 .detour-bar {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  grid-template-areas: 'transport place options';
+  grid-template-columns: auto minmax(max-content, 1fr) minmax(220px, auto) auto;
+  grid-template-areas: 'transport options place settings' 'menu menu menu menu';
   align-items: center;
   gap: .3rem;
 }
 .detour-transport { grid-area: transport; }
-.detour-options { grid-area: options; justify-self: end; }
+.detour-options { grid-area: options; justify-self: start; }
 .detour-transport, .detour-options, .detour-held { display: flex; gap: .15rem; align-items: center; }
-.detour-clock { display: flex; align-items: center; gap: .32rem; margin-inline: .25rem; color: var(--detour-secondary); white-space: nowrap; font: 500 .82rem/1.1 ui-monospace, monospace; }
+.detour-clock { direction: ltr; unicode-bidi: isolate; display: flex; align-items: center; gap: .32rem; margin-inline: .25rem; color: var(--detour-secondary); white-space: nowrap; font: 500 .82rem/1.1 ui-monospace, monospace; }
 .detour-clock media-time:first-child { color: var(--detour-ink); }
 .detour-icon, .detour button {
   min-block-size: 44px;
@@ -129,26 +129,51 @@
 .detour-volume[aria-disabled='true'] { display: none; }
 .detour-volume { inline-size: 3.25rem; margin-inline: .15rem .4rem; }
 .detour-volume .detour-thumb { inline-size: 6px; block-size: 9px; margin-inline-start: -3px; }
-.detour detour-place { grid-area: place; justify-self: center; }
+.detour detour-place { grid-area: place; min-inline-size: 0; }
 .detour detour-place svg { inline-size: 16px; block-size: 16px; }
 .detour .detour-hold { border-color: #758363; padding-inline: .75rem; }
 .detour .detour-return { background: var(--detour-signal); color: #182117; font-weight: 750; padding-inline: .75rem; }
 .detour .detour-return:hover:not([aria-disabled='true']) { background: #eeffa1; }
+.detour .detour-hold, .detour .detour-return, .detour .detour-stay {
+  min-inline-size: 44px;
+  padding-block: .45rem;
+  overflow-wrap: anywhere;
+}
 .detour .detour-stay { color: var(--detour-secondary); }
 .detour button:disabled, .detour button[aria-disabled='true'] { opacity: .6; cursor: default; }
 .detour :focus-visible, .detour media-time-slider:has(:focus-visible), .detour-volume:has(:focus-visible) {
   outline: 2px solid var(--detour-focus);
   outline-offset: -2px;
 }
+.detour-settings { grid-area: settings; justify-self: end; }
+.detour-settings[aria-expanded='true'] { color: var(--detour-signal); }
+.detour-menu {
+  grid-area: menu;
+  justify-self: end;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .25rem;
+  max-inline-size: 100%;
+  padding: .25rem .5rem;
+  background: #222c28;
+}
+.detour-menu > span { padding-inline: .25rem; }
+.detour-menu button[aria-pressed='true'] { border-color: currentColor; color: var(--detour-signal); }
+.detour-notice { margin: .35rem .45rem 0; color: var(--detour-secondary); }
 .detour-live { position: absolute; inline-size: 1px; block-size: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .detour-error { display: flex; align-items: center; justify-content: center; gap: .5rem; }
 .detour-error button { border-color: var(--detour-secondary); }
 
-@container detour (inline-size < 620px) {
-  .detour-bar { grid-template-columns: 1fr auto; grid-template-areas: 'transport options' 'place place'; }
-  .detour detour-place { justify-self: stretch; }
+@container detour (inline-size < 720px) {
+  .detour-bar {
+    grid-template-columns: minmax(0, 1fr) auto 44px;
+    grid-template-areas: 'transport options options' 'place place settings' 'menu menu menu';
+  }
+  .detour-options { justify-self: end; }
   .detour-held { gap: .4rem; }
-  .detour .detour-hold, .detour .detour-return { flex: 1; inline-size: 100%; }
+  .detour .detour-hold { inline-size: 100%; }
+  .detour .detour-return { flex: 1; }
 }
 @container detour (inline-size < 370px) {
   .detour-shelf { padding-inline: .35rem; }
@@ -156,7 +181,11 @@
   .detour-volume { display: none; }
 }
 @container detour (inline-size < 270px) {
-  .detour-bar { grid-template-columns: auto 1fr; grid-template-areas: 'play options' 'time time' 'place place'; gap: .2rem 0; }
+  .detour-bar {
+    grid-template-areas: 'play options options' 'time time time' 'place place settings' 'menu menu menu';
+    gap: .2rem 0;
+  }
+  .detour-held { flex-wrap: wrap; }
   .detour-transport { display: contents; }
   .detour-transport media-play-button { grid-area: play; }
   .detour-clock { grid-area: time; font-size: .72rem; gap: .2rem; margin: 0 .4rem .25rem; }

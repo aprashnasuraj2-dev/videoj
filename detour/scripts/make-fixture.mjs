@@ -44,7 +44,8 @@ writeFileSync(new URL('navigation-study.vtt', fixtures), `WEBVTT
 [Silent motion study. A clock tracks the current position.]
 
 00:00:17.000 --> 00:00:23.000
-[The image turns rust. Position two.]
+[The image turns rust.]
+[Position two.]
 
 00:00:40.000 --> 00:00:46.000
 [The image turns green. Position three.]

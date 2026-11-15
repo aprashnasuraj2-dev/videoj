@@ -43,13 +43,6 @@ const interfaceMarkup = `
             <media-time type="duration"></media-time>
           </div>
         </div>
-        <detour-place hidden>
-          <button type="button" class="detour-hold"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M13 3H6v12h7" fill="none" stroke="currentColor" stroke-width="2"/></svg>Keep my place</button>
-          <div class="detour-held" hidden>
-            <button type="button" class="detour-return"></button>
-            <button type="button" class="detour-stay">Stay here</button>
-          </div>
-        </detour-place>
         <div class="detour-options">
           <media-mute-button class="detour-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path class="detour-sound" d="M16 8c4 2 4 6 0 8m2-10c6 3 6 9 0 12"/><path class="detour-muted" d="m16 9 5 6m0-6-5 6"/></svg>
@@ -65,7 +58,24 @@ const interfaceMarkup = `
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M9 5H5v4m10-4h4v4M5 15v4h4m10-4v4h-4"/></svg>
           </media-fullscreen-button>
         </div>
+        <detour-place hidden>
+          <button type="button" class="detour-hold"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M13 3H6v12h7" fill="none" stroke="currentColor" stroke-width="2"/></svg>Keep my place</button>
+          <div class="detour-held" hidden>
+            <button type="button" class="detour-return"></button>
+            <button type="button" class="detour-stay">Stay here</button>
+          </div>
+        </detour-place>
+        <button type="button" class="detour-icon detour-settings" aria-label="Playback settings" aria-expanded="false" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16M8 4v6m8-1v6m-5-1v6"/></svg>
+        </button>
+        <div class="detour-menu" role="group" aria-label="Playback speed" hidden>
+          <span>Playback speed</span>
+          <button type="button" data-rate="0.75">0.75×</button>
+          <button type="button" data-rate="1">1×</button>
+          <button type="button" data-rate="1.25">1.25×</button>
+        </div>
       </div>
+      <p class="detour-notice" hidden></p>
       <p class="detour-live" role="status" aria-live="polite" aria-atomic="true"></p>
       <div class="detour-error" hidden><span>This video could not load.</span> <button type="button">Try again</button></div>
     </div>

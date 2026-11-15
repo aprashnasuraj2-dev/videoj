@@ -150,11 +150,12 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
 
 ## 03 · UX architecture and interaction rules
 
-- [ ] **021. Specify the controls layout**
+- [x] **021. Specify the controls layout**
   - **Objective** — Keep the normal player familiar alongside the signature.
   - **Work** — Set video, status shelf, full-width seek and transport order. Place play, time, mute and fullscreen outside the auxiliary menu. Put optional settings after required controls.
   - **Deliverable** — Labeled desktop and compact layouts.
   - **Pass condition** — All five required controls stay discoverable in both layouts, even with an active detour.
+  - **Evidence** — [Desktop and compact control layout](design/PHASE-3.md#layout-and-caption-boundary) and [verified control visibility](submission-report/EVIDENCE.md#2026-11-15-phase-3-interaction-proof)
 
 - [x] **022. Write the state transition table**
   - **Objective** — Prevent impossible or misleading detour states.
@@ -163,53 +164,61 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Pass condition** — Every event has a deterministic outcome. Only successful return or explicit clearing consumes a valid mark.
   - **Evidence** — [Per-instance transitions and outcome table](design/PROTOTYPE.md#behavior-and-failure-boundaries)
 
-- [ ] **023. Define a safe origin**
+- [x] **023. Define a safe origin**
   - **Objective** — Store the true position and media identity.
   - **Work** — Capture unrounded currentTime with a source epoch only for on-demand media supported by host/provider state. Check metadata and, where reported, real seekable ranges. Define how a range changing after mark affects Return.
   - **Deliverable** — Origin contract and guard cases.
   - **Pass condition** — NaN, Infinity, live, nonseekable and stale source paths never create a misleading valid mark.
+  - **Evidence** — [Origin contract and guard cases](design/PHASE-3.md#safe-origin-and-seek-mapping)
 
-- [ ] **024. Keep the playhead conventional**
+- [x] **024. Keep the playhead conventional**
   - **Objective** — Maintain the user's expectations when exploring.
   - **Work** — Map seek endpoints linearly to duration on supported VOD. Draw current buffered ranges and one origin mark separately. Keep the origin mark out of pointer hit-testing and tab order.
   - **Deliverable** — Seek mapping and visual roles spec.
   - **Pass condition** — Start and end remain reachable, holding a place changes no seek mapping, and gaps cannot appear buffered.
+  - **Evidence** — [Seek geometry and actual range mapping](design/PHASE-3.md#safe-origin-and-seek-mapping) and [Home/End and disjoint-range checks](tests/browser.test.mjs)
 
-- [ ] **025. Specify return settlement**
+- [x] **025. Specify return settlement**
   - **Objective** — Handle latency, error and repeated input.
   - **Work** — Issue one Video.js seek per Return. Use source-matched observed completion, expiry and tolerance. Give pointer/keyboard seek precedence by invalidating the pending return when a later user seek wins.
   - **Deliverable** — Return completion and timeout spec.
   - **Pass condition** — A stale completion cannot consume a newer mark. A failed return retains a valid mark and permits retry or Stay here.
+  - **Evidence** — [Settlement and timeout rules](design/PHASE-3.md#settlement-and-playback-intent) and [provider rejection and stale-result tests](tests/browser.test.mjs)
 
-- [ ] **026. Set playback continuity rules**
+- [x] **026. Set playback continuity rules**
   - **Objective** — Prevent unexpected pause or autoplay.
   - **Work** — Keep ordinary browsing and repeated seeks in the provider's current play/pause mode. At ended, clear ended through the return seek where supported and let Play remain explicit. Document platform exceptions.
   - **Deliverable** — Playing, paused and ended behavior table.
   - **Pass condition** — A paused return remains paused, an active return continues where supported, and ended never triggers autoplay.
+  - **Evidence** — [Playback continuity rules](design/PHASE-3.md#settlement-and-playback-intent) and [native paused, playing and ended checks](submission-report/EVIDENCE.md#2026-11-15-phase-3-interaction-proof)
 
-- [ ] **027. Review keyboard and pointer paths**
+- [x] **027. Review keyboard and pointer paths**
   - **Objective** — Offer every signature action without relying on a gesture.
   - **Work** — Set Tab order and Enter/Space activation. Retain the documented slider keyboard model and click/tap seek. Document pointercancel and a no-drag path. Avoid page-global shortcuts for signature actions.
   - **Deliverable** — Input map and focus return rules.
   - **Pass condition** — Both detour outcomes are reachable with Tab and Enter. Tap or keyboard can substitute for dragging.
+  - **Evidence** — [Input map and focus behavior](design/PHASE-3.md#inputs-copy-and-accessibility) and [keyboard and emulated tap checks](tests/browser.test.mjs)
 
-- [ ] **028. Design captions and menus together**
+- [x] **028. Design captions and menus together**
   - **Objective** — Prevent collisions between content and navigation.
   - **Work** — Give caption cues a protected video area. Place the detour row in the control shelf. Define Escape, focus return and menu collisions in inline and fullscreen layouts.
   - **Deliverable** — Caption-safe menu and focus diagrams.
   - **Pass condition** — Two-line captions stay readable with an open detour, and a settings menu can close and restore focus.
+  - **Evidence** — [Caption boundary and settings disclosure](design/PHASE-3.md#layout-and-caption-boundary) and [two-line cue and Escape proof](tests/browser.test.mjs)
 
-- [ ] **029. Define icon and language behavior**
+- [x] **029. Define icon and language behavior**
   - **Objective** — Make controls intelligible with localization and assistive tech.
   - **Work** — Set labels for idle, held, returning, error and disabled states. Announce meaningful transitions only. Format all timestamps with unambiguous time labels and test longer translated copy and RTL text.
   - **Deliverable** — Copy inventory and announcement plan.
   - **Pass condition** — No per-second announcements. Long text wraps without clipping and control names retain their meaning.
+  - **Evidence** — [Status copy, time formatting and RTL layout contract](design/PHASE-3.md#inputs-copy-and-accessibility) and [long-copy layout probe](tests/browser.test.mjs)
 
-- [ ] **030. Approve the real user journey**
+- [x] **030. Approve the real user journey**
   - **Objective** — Prove the critical paths before styling effort.
   - **Work** — Walk through hold, several seeks, return, stay, source swap and keyboard-only exit on a clickable prototype. Include a state with missing tracks and one disabled time state.
   - **Deliverable** — Reviewed interaction prototype and issue list.
   - **Pass condition** — All six paths complete without rescue. Critical UI ambiguities are fixed or assigned before production styling.
+  - **Evidence** — [Interaction walkthrough](design/PHASE-3.md#walkthrough-and-open-checks) and [prototype evidence](submission-report/EVIDENCE.md#2026-11-15-phase-3-interaction-proof)
 
 ## 04 · Visual system and motion language
 

@@ -1,15 +1,21 @@
 # DETOUR progress
 
-Phase: 03
-Resume step: 021
+Phase: 04
+Resume step: 031
 
 | Item | Current state |
 | --- | --- |
-| Verified | 23/100. Phase 2 visual decision, backup proof and core scope are recorded. |
-| Next | 021. Specify the desktop and compact control layout. Continue to 023 for the safe-origin specification after the verified state table at 022. |
-| Open dependencies | 002: joined-form eligibility remains entrant-side. 017: five uncoached first-use observations per task. 043: repeat real seek on Safari/WebKit. Continue independent steps. |
-| Prototype / public release | Production build and six local headless Chromium scenarios pass. Public URL, physical devices, bonuses and submission remain pending. |
-| Source baseline | Phase 2 started at `52301bc8cf3d6e93f18f7aa6700de024413d7845`. Changes are scoped to `detour/`. |
+| Verified | 32/100. Phase 3 controls, origin, seek settlement, and interaction walkthrough are recorded. |
+| Next | 031. Set visual grammar for the now-verified layout and controls, then continue Phase 4. |
+| Open dependencies | 002: joined-form eligibility. 017: uncoached first-use observations. 043: real seek on Safari/WebKit. Continue independent steps. |
+| Prototype / public release | Production build and 11 local headless Chromium scenarios passed. Candidate custom hostname: `detour.aafnaipatro.com`. [Mux, Cloudflare and Drive plan](submission-report/RELEASE-PLAN.md) is staged for release milestones. |
+| Source baseline | Phase 3 started at `1a2aa9a365dbfa874ea8515d491b09087f316b3e`. Changes are scoped to `detour/`. |
+
+## 2026-11-15 · Phase 3 interaction and release decisions
+
+- Kept required controls exposed at desktop and compact widths. Settings offers real playback speed below the picture while native two-line captions remain inside it. Escape closes settings and restores focus.
+- Tested Home/End and emulated touch seeking, paused/playing/ended return, missing captions, unavailable time, and long RTL copy. Added seekable-range and source-epoch guards. Controlled rejection and late completion confirmed the UI preserves a valid mark, including a new mark after a same-URL reload.
+- Adopted a DETOUR-specific Cloudflare host, optional Mux HLS bonus path and milestone-based Google Drive archive. The proposed hostname and service paths are release work. See the [interaction contract](design/PHASE-3.md), [browser evidence](submission-report/EVIDENCE.md#2026-11-15-phase-3-interaction-proof) and [release plan](submission-report/RELEASE-PLAN.md).
 
 ## 2026-11-15 · Phase 2 visual decision and backup
 

@@ -31,3 +31,11 @@ For functional tests, record current and held times before and after, playback m
 - [Matched player crops](../design/PHASE-2.md#visual-signature) show the same real frame and controls, with a documented A/B toggle of the held mark. Test measured the actual player widths and preserved distinct positions and shapes at coincidence. These are design comparison images.
 - [Isolated Pausepoint](../design/PHASE-2.md#pausepoint-backup) armed via keyboard, paused at 18.380s after a natural 18.3s crossing and resumed. Paused and playing seeks over an armed timestamp caused no extra pause.
 - Phase 2's [first-use study](../design/FIRST-USE.md) is ready to run. Participant recognition and completion rates have no observations yet.
+
+## 2026-11-15 Phase 3 interaction proof
+
+- Source: the commit with this entry and [the browser suite](../tests/browser.test.mjs). The production build and 11/11 Chromium scenarios passed on Debian Linux with Chromium 143.0.7499.0.
+- At 320 and 768 px the required transport remained visible while holding 42.350s. A native two-line caption stayed inside the picture with the settings below it. Escape restored focus inline and during document fullscreen. Selecting 0.75× changed native playback rate and returned focus to Settings. Long Arabic QA strings fit both widths with the rail still left-to-right.
+- Home and End reached the VOD bounds. A real Chromium touch-emulation tap sought near 19s and Return landed at 42.350s. Paused, playing and ended paths preserved intent. Stay cleared without seeking and focus returned to Keep.
+- Controlled provider fixtures covered malformed durations, finite live classification, empty and moving seekable ranges, disjoint buffers, rejected seeks, manual-seek precedence and a stale completion after reloading the same URL. A preserved mark could be retried. The source-reload test also exercised real loading. Empty media and a removed caption track were checked separately.
+- Physical-device, desktop WebKit, screen-reader and human discovery checks remain open.

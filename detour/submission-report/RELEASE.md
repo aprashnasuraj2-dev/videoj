@@ -1,6 +1,6 @@
 # Release handoff
 
-**State:** Pending. Complete this page for the actual DETOUR release; dated evidence belongs in the [ledger](EVIDENCE.md).
+**State:** Pending. Follow the [public release plan](RELEASE-PLAN.md) when the build and media are ready. Complete this page for the actual DETOUR release. Put dated evidence in the [ledger](EVIDENCE.md).
 
 | Field | Record |
 | --- | --- |
