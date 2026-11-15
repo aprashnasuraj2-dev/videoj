@@ -76,6 +76,12 @@ class DetourMediaState extends HTMLElement {
         setSettingsOpen(false);
       }
     }, { signal });
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement && !menu.hidden) {
+        setSettingsOpen(false);
+        settings.focus();
+      }
+    }, { signal });
     menu.addEventListener('click', event => {
       const button = event.target.closest('[data-rate]');
       if (!button) return;

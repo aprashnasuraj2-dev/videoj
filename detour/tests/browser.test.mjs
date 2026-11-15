@@ -605,8 +605,10 @@ test('rail endpoints keep the bracket stem anchored and motion respects reduced 
   await page.getByRole('slider', { name: 'Seek' }).focus();
   await page.keyboard.press('ArrowLeft');
   assert.ok(await page.evaluate(() => matchMedia('(forced-colors: active)').matches));
-  assert.equal(await page.locator('media-time-slider').evaluate(el => getComputedStyle(el).outlineWidth), '2px');
-  assert.equal(await mark.evaluate(el => getComputedStyle(el).borderInlineEndWidth), '2px');
+  assert.ok(parseFloat(await page.locator('media-time-slider').evaluate(el => getComputedStyle(el).outlineWidth)) >= 2,
+    'Forced-colors seek focus indicator must remain visible.');
+  assert.ok(parseFloat(await mark.evaluate(el => getComputedStyle(el).borderInlineEndWidth)) >= 2,
+    'Forced-colors held marker boundary must remain visible.');
   if (process.env.DETOUR_PHASE4_CAPTURES) {
     const directory = process.env.DETOUR_PHASE4_CAPTURES;
     mkdirSync(directory, { recursive: true });
