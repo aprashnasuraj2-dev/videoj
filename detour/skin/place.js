@@ -1,14 +1,8 @@
+import { formatDetourTime as timeLabel } from './format-time.js';
+
 const arrivalTolerance = 0.5;
 const deadlineMs = 8000;
 const outOfRangeNotice = 'The saved time is temporarily outside the seekable range.';
-
-function timeLabel(seconds) {
-  const whole = Math.max(0, Math.floor(seconds));
-  const minutes = String(Math.floor(whole / 60) % 60).padStart(2, '0');
-  const remainder = String(whole % 60).padStart(2, '0');
-  const clock = `${minutes}:${remainder}`;
-  return whole >= 3600 ? `${Math.floor(whole / 3600)}:${clock}` : clock;
-}
 
 function containsTime(ranges, time) {
   for (let i = 0; i < ranges.length; i += 1) {

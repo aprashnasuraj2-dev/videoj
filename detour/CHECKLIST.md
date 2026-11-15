@@ -587,6 +587,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Watch the cold path from page entry through hold, seek and return. Inspect layout movement, time labels, visible focus, press states and poster transition. Fix the first three issues with the biggest task impact.
   - **Deliverable** — Polish issue log and updated candidate.
   - **Pass condition** — Cold flow stays single-screen on expected sizes and all fixes survive keyboard and mobile checks.
+  - **Progress** — Public capture review found and fixed three specific issues: technical recovery copy above healthy playback, a 42s poster contradicting the 0s clock, and `0:18` vs `00:42` time-format mismatch. New build/public checks pending before acceptance.
 
 - [ ] **082. Capture an authentic hero**
   - **Objective** — Show a distinctive player-only state.

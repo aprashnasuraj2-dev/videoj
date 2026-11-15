@@ -125,7 +125,18 @@
   font-variant-numeric: tabular-nums;
 }
 .detour-clock-values { display: flex; align-items: center; gap: .35rem; }
-.detour-clock media-time:first-child { color: var(--detour-ink); }
+.detour-clock-visual { display: flex; align-items: center; gap: .35rem; }
+.detour-clock-visual [data-detour-clock-current] { color: var(--detour-ink); }
+.detour-clock-semantic {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .detour:not([data-time-known]) .detour-clock-values,
 .detour[data-time-known] .detour-clock-empty { display: none; }
 

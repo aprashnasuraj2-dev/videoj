@@ -3,6 +3,7 @@ import { muxStaticMp4Url } from '../skin/mux.js';
 import '../demo/page.css';
 import './page.css';
 
+const panel = document.querySelector('.mux-panel');
 const status = document.querySelector('[data-detour-source-status]');
 const retry = document.querySelector('[data-detour-retry]');
 const fallback = document.querySelector('[data-detour-fallback]');
@@ -36,35 +37,40 @@ function markIsActive() {
   return Boolean(held && !held.hidden);
 }
 
-function setSource(kind, { reason = '' } = {}) {
+function setSource(kind) {
   const hadMark = markIsActive();
   video.pause();
   video.dataset.provider = kind;
   video.src = kind === 'mux' ? primaryUrl : fallbackUrl;
   video.load();
-  retry.hidden = kind === 'mux';
-  fallback.hidden = kind === 'fallback';
   status.dataset.state = kind;
   if (kind === 'mux') {
-    status.textContent = reason || 'Mux-hosted video · independent fallback available.';
+    panel.hidden = true;
+    retry.hidden = true;
+    fallback.hidden = true;
+    status.textContent = '';
   } else {
+    panel.hidden = false;
+    retry.hidden = false;
+    fallback.hidden = true;
     status.textContent = hadMark
-      ? 'Using fallback video. Saved place cleared because the media source changed.'
-      : (reason || 'Using the independent fallback video.');
+      ? 'Playing the backup video. Your saved place was cleared because the video changed.'
+      : 'Playing the backup video.';
   }
 }
 
 video.addEventListener('error', () => {
   if (video.dataset.provider !== 'mux') return;
+  panel.hidden = false;
   status.dataset.state = 'error';
   status.textContent = markIsActive()
-    ? 'Mux playback is unavailable. Switching sources will clear the saved place.'
-    : 'Mux playback is unavailable. Use the fallback video or retry Mux.';
+    ? 'This video source is unavailable. Using the backup will clear your saved place.'
+    : 'This video source is unavailable. Try again or use the backup video.';
   retry.hidden = false;
   fallback.hidden = false;
 });
 
-retry.addEventListener('click', () => setSource('mux', { reason: 'Retrying Mux-hosted video…' }));
+retry.addEventListener('click', () => setSource('mux'));
 fallback.addEventListener('click', () => setSource('fallback'));
 window.addEventListener('pagehide', () => player.remove(), { once: true });
 

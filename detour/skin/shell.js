@@ -39,9 +39,16 @@ function interfaceMarkup(enhancement = '') {
           </media-play-button>
           <div class="detour-clock">
             <div class="detour-clock-values">
-              <media-time type="current"></media-time>
-              <span aria-hidden="true">/</span>
-              <media-time type="duration"></media-time>
+              <span class="detour-clock-visual" aria-hidden="true">
+                <span data-detour-clock-current>00:00</span>
+                <span>/</span>
+                <span data-detour-clock-duration>00:00</span>
+              </span>
+              <span class="detour-clock-semantic">
+                <media-time type="current"></media-time>
+                <span aria-hidden="true">/</span>
+                <media-time type="duration"></media-time>
+              </span>
             </div>
             <span class="detour-clock-empty"><span aria-hidden="true">— / —</span><span class="detour-sr-only">Time unavailable</span></span>
           </div>

@@ -11,6 +11,14 @@ Resume step: 081
 | Prototype / public release | Frozen Mux candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on immutable `detour-dist-a9bbfcb4ee68`; stable rollback/fallback remains `https://detour-release.praisethegreatfool.workers.dev/`. |
 | Source baseline | Phase 8 production source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a`: full CI 43706450932 green and immutable dist staged. Public Mux release verification 43707445255 passed from the later test-only harness; earlier full CI 43707040940 also remained green after adding the public gate. |
 
+## 2026-11-15 · Phase 9 step 081 — three cold-path friction fixes implemented (public qualification pending)
+
+- Downloaded and reviewed the actual signed-out public capture artifact from Mux verification run 43710251344 rather than relying on the older fixture boards. At 375×667 the player began at y=155px because an **80.5px technical source panel** sat above it; the visible page repeated “Mux-hosted”/“fallback” infrastructure copy before the viewer reached the interaction.
+- The cold poster was the Mux frame at ~42s and visibly embedded **00:00:41.917** while the real control clock was **0:00**. That made the very first frame contradict the actual playback position.
+- The held-state control clock rendered Video.js smart time as **0:18 / 0:55** while the signature action said **Return to 00:42**. The mechanism was correct, but the visual time grammar was inconsistent precisely where the judge compares current vs held time.
+- Implemented only those three high-impact fixes: healthy playback hides recovery/provider UI and uses viewer-benefit copy; the Mux poster is now the time-zero thumbnail; and a visual **MM:SS** clock shares DETOUR's formatter with the Return ticket while the native `media-time` elements remain present as visually hidden semantic time values.
+- Added Mux tests for the time-zero poster, healthy-copy boundary, hidden recovery panel, `00:18 / 00:55` visual clock and failure-triggered backup path. This commit requests immutable dist staging after the full DETOUR gate. **081 remains unchecked until the new immutable build is deployed and the signed-out public mobile/keyboard checks pass.**
+
 ## 2026-11-15 · Phase 8 complete — frozen public Mux candidate and rollback
 
 - **076 accepted.** Mux provisioning run 43705427292 attempt 2 produced public Playback ID `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ` for the exact showcase hash. Dedicated verification run 43706451003 passed 3/3: public 206 byte range, production-built Hold → 18s → 42.350s Return and blocked-provider fallback.

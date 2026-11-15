@@ -115,7 +115,7 @@ if (!highest) {
 
 const staticMp4Url = `https://stream.mux.com/${playbackId}/highest.mp4`;
 const hlsUrl = `https://stream.mux.com/${playbackId}.m3u8`;
-const posterUrl = `https://image.mux.com/${playbackId}/thumbnail.jpg?time=42`;
+const posterUrl = `https://image.mux.com/${playbackId}/thumbnail.jpg?time=0`;
 
 const probe = await fetch(staticMp4Url, {
   headers: { Range: 'bytes=0-1023' },

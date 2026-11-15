@@ -1,3 +1,5 @@
+import { formatDetourTime } from './format-time.js';
+
 class DetourMediaState extends HTMLElement {
   #disconnect;
   #ready = false;
@@ -15,6 +17,8 @@ class DetourMediaState extends HTMLElement {
     const settings = container.querySelector('.detour-settings');
     const menu = container.querySelector('.detour-menu');
     const rates = [...menu.querySelectorAll('[data-rate]')];
+    const currentClock = container.querySelector('[data-detour-clock-current]');
+    const durationClock = container.querySelector('[data-detour-clock-duration]');
     const inDisclosure = node => node === settings || (node && menu.contains(node));
     // Native WebKit can leave End at 0 on the v10 time-slider keyboard path.
     // Normalize only boundary keys, never remap ordinary arrow-key seeking.
@@ -57,6 +61,10 @@ class DetourMediaState extends HTMLElement {
     const renderMedia = () => {
       const timeKnown = this.#ready && Number.isFinite(media.duration) && media.duration > 0;
       container.toggleAttribute('data-time-known', timeKnown);
+      if (timeKnown) {
+        currentClock.textContent = formatDetourTime(media.currentTime);
+        durationClock.textContent = formatDetourTime(media.duration);
+      }
       const loading = !this.#ready && media.networkState === HTMLMediaElement.NETWORK_LOADING;
       const state = media.error ? 'error' : media.ended ? 'ended' : loading ? 'loading' : timeKnown ? 'ready' : 'unavailable';
       if (container.dataset.mediaState !== state) container.dataset.mediaState = state;
@@ -131,7 +139,7 @@ class DetourMediaState extends HTMLElement {
         renderSettings();
       }, { signal });
     }
-    for (const event of ['loadedmetadata', 'loadeddata', 'canplay', 'durationchange', 'progress', 'ended', 'playing', 'suspend']) {
+    for (const event of ['loadedmetadata', 'loadeddata', 'canplay', 'durationchange', 'progress', 'timeupdate', 'seeking', 'seeked', 'ended', 'playing', 'suspend']) {
       media.addEventListener(event, () => {
         this.#ready = media.readyState >= HTMLMediaElement.HAVE_METADATA;
         renderMedia();
