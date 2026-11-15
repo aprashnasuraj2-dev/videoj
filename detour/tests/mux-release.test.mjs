@@ -178,10 +178,10 @@ test('080 frozen public Mux release is immediately usable at desktop width', { t
     }
     await seekPlayer(page, 15);
     const desktopC1 = page.getByRole('button', { name: 'Return to 00:42 — checkpoint C1' });
-    await desktopC1.focus();
+    await desktopC1.hover();
     assert.equal(await page.locator('.detour-checkpoint').count(), 4);
-    await capture(page, '1280-checkpoints-focused');
-    writeCaptureMetrics('1280-checkpoints-focused', await page.evaluate(() => ({
+    await capture(page, '1280-checkpoints-hovered');
+    writeCaptureMetrics('1280-checkpoints-hovered', await page.evaluate(() => ({
       player: document.querySelector('.detour')?.getBoundingClientRect(),
       rail: document.querySelector('.detour-rail')?.getBoundingClientRect(),
       checkpoints: [...document.querySelectorAll('.detour-checkpoint')].map(button => ({

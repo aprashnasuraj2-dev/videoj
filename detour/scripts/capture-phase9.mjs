@@ -43,6 +43,7 @@ async function checkpointState(page, expectedDuration) {
   assert.equal(await page.locator('.detour-checkpoint').count(), 4);
   const c1 = page.getByRole('button', { name: 'Return to 00:42 — checkpoint C1' });
   await c1.focus();
+  await c1.hover();
   return c1;
 }
 
