@@ -15,7 +15,7 @@ Resume step: 091
 
 - The competition demo moved to `https://detour.aafnaipatro.com/mux/`; the independent rollback moved to `https://detour-backup.aafnaipatro.com/`.
 - These are branded custom Worker domains. Judge-facing pages, release metadata and submission copy must not expose the account-level `workers.dev` hostname.
-- The underlying `workers.dev` endpoints are being disabled after branded-domain requalification; they are not submission evidence.
+- The underlying `workers.dev` endpoints are disabled for both DETOUR Workers; they are not usable submission routes or submission evidence.
 
 ## 2026-11-15 · Bonus URL roles separated and live-site use corrected
 
