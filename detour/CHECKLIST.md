@@ -18,7 +18,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Inspect the signed-in challenge form and its linked terms for entry limits, entrant eligibility and media constraints. Public posts can inform the search. Ask Contra through the approved owner channel if the wording stays unclear.
   - **Deliverable** — Eligibility note with direct evidence and owner.
   - **Pass condition** — Second-entry permission and entrant eligibility have direct supporting evidence before contest submission. Record unresolved terms and continue independent work when this is open.
-  - **Progress** — [Public recheck completed. Account-level eligibility confirmation is still open.](submission-report/RULES.md#2026-11-15-second-entry-recheck)
+  - **Progress** — [Public and authenticated challenge-state rechecks completed; account-level second-entry confirmation is still open.](submission-report/RULES.md#2026-11-15-authenticated-challenge-state-recheck)
 
 - [x] **003. Set the deadline and cutoffs**
   - **Objective** — Protect the core demo and submission time.
@@ -658,6 +658,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Reopen current Guidelines and the joined form. Confirm allowance for a second entry, exact upload fields, deadline and optional IDs. Resolve changes against the recorded rule snapshot.
   - **Deliverable** — Submission checklist with live field names.
   - **Pass condition** — Second-entry eligibility is explicitly confirmed. Core required evidence is accepted by the current form.
+  - **Progress** — An authenticated Contra connector session re-read the active challenge on 2026-11-15: submissions are enabled and the public deadline is `2026-11-17T07:59:00Z`, but the available challenge action exposes no account-specific second-entry allowance or joined-form schema. Public challenge metadata is not treated as entrant permission; direct form/Contra confirmation remains required.
 
 - [x] **092. Verify the exact public release**
   - **Objective** — Catch deployment and cross-origin regressions.

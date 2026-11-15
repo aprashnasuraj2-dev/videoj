@@ -11,6 +11,14 @@ Resume step: 091
 | Prototype / public release | Frozen judging candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`; independent rollback remains `https://detour-release.praisethegreatfool.workers.dev/` / `detour-dist-50ac9661e315`. |
 | Source baseline | Public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` was re-qualified by Phase 10 run 43713525858 at verification head `b9b1495f4f66422dfa369cafcad2738fff6b4592`; no `detour/skin/` runtime file changed between those revisions. Phase 10 handoff commit `a98c5f7f80072db76223124ca98d663c5ea4a3fa` is report/tracking only. |
 
+## 2026-11-15 · Authenticated Contra recheck and final rights/package reconciliation
+
+- The connected Contra session authenticated successfully and retrieved the active Video.js Skins Design Challenge. Challenge-level state reports **submissions enabled** and deadline `2026-11-17T07:59:00Z`; the public requirements remain consistent with the recorded rule register.
+- The available Contra challenge action does **not** expose the signed-in entrant's joined-form fields or an account-specific rule permitting a second entry. Its public “Join to submit!” header is presentation metadata, not proof of join state or entry allowance. **002/091 remain open.**
+- Reconciled `RIGHTS.md` from the historical Phase 8 source to the actual public authority `a3b43f74…` / `detour-dist-a3b43f74c765`, time-zero poster and completed step-094 audit.
+- Independent extraction of reusable artifact 14161323994 confirmed `detour-video-skin-0.1.0.tgz` is **16,417 B**, SHA-256 `6c3680164f42bf582fe739b0e82af73826d35aea9a3f2ae8558c90cd6d6ad5cc`, with exactly **15 files** and no management-secret/API-hook match.
+- No new independent checklist item can honestly pass without 090/091 or owner submission. Resume remains **091**.
+
 ## 2026-11-15 · Phase 10 verification accepted — 092–095 and 098
 
 - Validate DETOUR run **43713525858** passed end-to-end at verification head `b9b1495f4f66422dfa369cafcad2738fff6b4592`. The repaired exact-public gate passed 092 and 093: signed-out HTTPS, @videojs/html **10.4.0**, real Mux captions/playback, **42.35→18→42.350s** Return, desktop keyboard controls, 375×667 touch-shaped controls and the bright alternate-media route.

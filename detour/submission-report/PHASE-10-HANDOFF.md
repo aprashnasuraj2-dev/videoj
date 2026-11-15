@@ -17,7 +17,7 @@ The verification head is later than the deployed runtime because Phase 10 added 
 | Mandatory controls — 093 | Desktop keyboard exercised play/pause, seek/time, mute, fullscreen entry/exit and Settings→Escape; 375×667 touch-enabled Chromium exercised the five required controls; bright alternate media retained all five |
 | Final audit — 094 | Apache-2.0 entry, project-authored media provenance and permissive production dependency licenses verified; **69 emitted text files** scanned for management credential/API hooks; **15-file** package boundary dry-run passed |
 | Reuse — 095 | Packed tarball installed into a fresh external host with replacement media/captions; Return landed at **42.350s** in Chromium, Firefox and desktop WebKit |
-| Reusable artifact | **14161323994**; ZIP digest `sha256:1077a7f45a101090985f065e6e57b3d2899cc2dedd9d8e93ccbc94f7c3b4c304` |
+| Reusable artifact | **14161323994**; ZIP digest `sha256:1077a7f45a101090985f065e6e57b3d2899cc2dedd9d8e93ccbc94f7c3b4c304`; tarball **16,417 B**, SHA-256 `6c3680164f42bf582fe739b0e82af73826d35aea9a3f2ae8558c90cd6d6ad5cc`, **15 files** |
 | Verification dist artifact | **14161094736**; ZIP digest `sha256:76282311a905aed6d325d2adfa04b73844360b7b13042648ab071470381ab3bc` |
 
 The 375×667 run is browser touch emulation. It does not close physical-device step 062. No NVDA/VoiceOver session has been recorded, and native browser 200% zoom remains separate from the CSS-layout zoom probe.
@@ -41,7 +41,7 @@ Official public scoring is 10 visual design/originality, 5 usability/interaction
 
 ### Must-fix / must-confirm before submission
 
-1. **091 / 002 — blocking:** confirm second-entry permission and current joined-form requirements with direct account/form or Contra evidence.
+1. **091 / 002 — blocking:** confirm second-entry permission and current joined-form requirements with direct account/form or Contra evidence. An authenticated challenge-state recheck confirms submissions are enabled and the deadline, but the available connector exposes no entrant-specific second-entry/form schema.
 2. **090 — human evidence:** run the fresh uncoached judging pass; do not substitute the author or automated browser.
 3. **097 — form binding:** map the prepared content below to the actual current field names, upload/link limits and accepted media types.
 4. **099 — owner action:** entrant accepts terms and submits; automation must not do this without the owner action.

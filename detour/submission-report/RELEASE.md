@@ -15,7 +15,7 @@
 | Media identity | Project-authored 56s `detour-showcase-v1.mp4`, 871,570 B, SHA-256 `fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1` |
 | Captions / poster | Same-origin descriptive VTT; Mux thumbnail uses the same public asset at **time=0** |
 | Presentation evidence | [Phase 9 manifest](PHASE-9-PRESENTATION.md), evidence run 43712329599, artifact 14161336344 |
-| Reusable package | `detour-video-skin-0.1.0.tgz` installed into a fresh external host and returned to 42.350s in Chromium, Firefox and desktop WebKit; artifact **14161323994**, ZIP digest `sha256:1077a7f45a101090985f065e6e57b3d2899cc2dedd9d8e93ccbc94f7c3b4c304` |
+| Reusable package | `detour-video-skin-0.1.0.tgz` installed into a fresh external host and returned to 42.350s in Chromium, Firefox and desktop WebKit; artifact **14161323994**, ZIP digest `sha256:1077a7f45a101090985f065e6e57b3d2899cc2dedd9d8e93ccbc94f7c3b4c304`; tarball **16,417 B**, SHA-256 `6c3680164f42bf582fe739b0e82af73826d35aea9a3f2ae8558c90cd6d6ad5cc`, exactly 15 package files |
 | Verification dist artifact | Artifact **14161094736**, ZIP digest `sha256:76282311a905aed6d325d2adfa04b73844360b7b13042648ab071470381ab3bc` |
 | Rights / secret audit | Run 43713525858 passed Apache-2.0, project-authored media provenance, permissive production dependency licenses, 69 emitted-text secret/API-hook scans and 15-file package boundary audit |
 | Optional Mux bonus | **Qualified.** Use the verified public Playback ID only if the current form accepts the bonus field |

@@ -17,3 +17,9 @@ Official judging is 10 for visual design and originality, 5 for usability and in
 ## 2026-11-15 second-entry recheck
 
 The live public Guidelines were retrieved again. They set requirements for each submission, but did not specify a per-entrant cap or a second-entry provision. The open feed includes a [DHAGO entry by the entrant](https://contra.com/community/aTY2mcaJ-dhago-a-woven-videojs-player-for), so this specific eligibility question matters. The account-specific joined form and any additional terms remain unverified. The entrant owns that check or a direct clarification from Contra. Step 002 stays unchecked and reopens before step 091; prototype work is independent.
+
+## 2026-11-15 authenticated challenge-state recheck
+
+An authenticated Contra connector session successfully retrieved the active Video.js Skins Design Challenge. Challenge-level data reports `submissionsEnabled: true` and deadline **2026-11-17T07:59:00Z** (Nov 17, 13:44 Nepal time). The live public requirements remain consistent with this register: public Video.js v10 URL, real video, visual + short rationale, five essential controls, responsiveness, keyboard operation, Apache-2.0, and the two optional bonus paths.
+
+The connector action is explicitly a **public challenge-details** surface. It does not return the signed-in entrant's joined-form field schema, participation state, or a per-account rule allowing multiple submissions. The returned public header label “Join to submit!” is therefore not treated as proof that this account is unjoined, nor as permission for a second entry. Public guidelines still contain no explicit per-entrant cap. Steps 002/091 remain blocked on the actual joined form or direct Contra clarification.
