@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#151717">
+  <title>DETOUR — Mux playback</title>
+  <script type="module" crossorigin src="../assets/mux-DfX58Vwf.js"></script>
+  <link rel="modulepreload" crossorigin href="../assets/text-cues-EklSDydd.js">
+  <link rel="modulepreload" crossorigin href="../assets/player-Mfz7qycD.js">
+  <link rel="stylesheet" crossorigin href="../assets/player-Dcitk3Gy.css">
+  <link rel="stylesheet" crossorigin href="../assets/mux-DCX7Q3T3.css">
+  <link rel="stylesheet" crossorigin href="../assets/page-qtcmMD0U.css">
+</head>
+<body>
+  <main class="demo">
+    <header class="demo-heading">
+      <h1>DETOUR<span>.</span></h1>
+      <p>Mux-hosted playback with an independent fallback.</p>
+    </header>
+    <section class="mux-panel" aria-label="Playback source">
+      <p class="mux-status" data-detour-source-status aria-live="polite">Preparing Mux playback…</p>
+      <div class="mux-actions">
+        <button type="button" data-detour-retry hidden>Retry Mux</button>
+        <button type="button" data-detour-fallback>Use fallback video</button>
+      </div>
+    </section>
+    <div id="example"></div>
+  </main>
+</body>
+</html>
