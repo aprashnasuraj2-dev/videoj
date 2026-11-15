@@ -1,15 +1,24 @@
 # DETOUR progress
 
 Phase: 10
-Resume step: 092
+Resume step: 091
 
 | Item | Current state |
 | --- | --- |
-| Verified | 84/100. Phase 8 is complete; Phase 9 steps 081–089 are verified except human-only 090. |
-| Next | 092. Continue independent Phase 10 verification while 090 waits for a fresh uncoached reviewer and 091 waits for explicit second-entry/current-form confirmation. |
-| Open dependencies | 002/091 second-entry and live-form confirmation; 017 first-use study; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% zoom; 090 fresh uncoached judging pass. Continue 092+ around these blockers. |
+| Verified | 89/100. Phase 8 is complete; Phase 9 steps 081–089 are verified except human-only 090; Phase 10 steps 092–095 and 098 are verified. |
+| Next | 091. Owner/account confirmation of second-entry eligibility and the current joined form now unlocks 096/097/099. Step 090 still needs a fresh uncoached human reviewer; 100 follows actual submission. |
+| Open dependencies | 002/091 second-entry and live-form confirmation; 017 first-use study; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% zoom; 090 fresh uncoached judging pass; 099 owner submission and 100 post-submission verification. No further independent Phase 10 acceptance step bypasses 091. |
 | Prototype / public release | Frozen Mux candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on immutable `detour-dist-a9bbfcb4ee68`; stable rollback/fallback remains `https://detour-release.praisethegreatfool.workers.dev/`. |
 | Source baseline | Phase 8 production source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a`: full CI 43706450932 green and immutable dist staged. Public Mux release verification 43707445255 passed from the later test-only harness; earlier full CI 43707040940 also remained green after adding the public gate. |
+
+## 2026-11-15 · Phase 10 verification accepted — 092–095 and 098
+
+- Validate DETOUR run **43713525858** passed end-to-end at verification head `b9b1495f4f66422dfa369cafcad2738fff6b4592`. The repaired exact-public gate passed 092 and 093: signed-out HTTPS, @videojs/html **10.4.0**, real Mux captions/playback, **42.35→18→42.350s** Return, desktop keyboard controls, 375×667 touch-shaped controls and the bright alternate-media route.
+- **094 accepted.** The final audit scanned **69 emitted text files**, verified Apache-2.0 plus project-authored media provenance and permissive pinned production dependency licenses, and checked a **15-file** package dry-run for leaked internal/demo/test/report material or Mux management hooks.
+- **095 accepted.** The tarball installed into a fresh external host and returned to **42.350s** in Chromium, Firefox and desktop WebKit. Artifact **14161323994** preserves the reusable package (ZIP digest `sha256:1077a7f45a101090985f065e6e57b3d2899cc2dedd9d8e93ccbc94f7c3b4c304`). Production-dist artifact **14161094736** is also preserved (ZIP digest `sha256:76282311a905aed6d325d2adfa04b73844360b7b13042648ab071470381ab3bc`).
+- **098 accepted.** The judging route remains `/mux/` on public runtime source `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`; the independent rollback remains `detour-release` / `detour-dist-50ac9661e315`. Run 43713525858 re-tested both public paths. The five later branch commits changed CI/tests/docs/release metadata but no `detour/skin/` runtime file, so a bookkeeping redeploy is not required.
+- Prepared the [Phase 10 owner handoff](submission-report/PHASE-10-HANDOFF.md): internal official-rubric rehearsal, must-fix list, provisional form payload and exact freeze/rollback record. **096/097 stay unchecked** because their pass conditions depend on 091's live account/form evidence. The internal point estimate is not an official score.
+- Verified count is **89/100**. Resume at **091**: confirm second-entry/current-form eligibility, then close 096/097. Step 090 remains fresh-human only; 099 is owner submission and 100 is post-submission verification.
 
 ## 2026-11-15 · Phase 10 first exact-public control run diagnostic
 

@@ -659,51 +659,54 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Deliverable** — Submission checklist with live field names.
   - **Pass condition** — Second-entry eligibility is explicitly confirmed. Core required evidence is accepted by the current form.
 
-- [ ] **092. Verify the exact public release**
+- [x] **092. Verify the exact public release**
   - **Objective** — Catch deployment and cross-origin regressions.
   - **Work** — Test the frozen URL in incognito and a different network or device. Verify v10 build ID, real playback, seeking across available ranges, captions, HTTPS and absence of login. Test any linked backup.
   - **Deliverable** — Public URL verification record.
   - **Pass condition** — The exact URL to be submitted plays a real video and completes hold, seek and return in a signed-out browser.
-  - **Progress** — Added a remote signed-out public gate that pins source/dist headers, records @videojs/html 10.4.0 from the lock, enables real captions, executes 42.35→18→42.35 Return and probes the independent backup; pending exact-head CI.
+  - **Evidence** — Validate DETOUR run 43713525858 passed the exact signed-out public gate: HTTPS 200, frozen source/dist headers, @videojs/html 10.4.0, real Mux playback and captions, 42.35→18→42.350 Return, plus independent backup byte range 206 / 1,024 B.
 
-- [ ] **093. Check the five mandatory controls**
+- [x] **093. Check the five mandatory controls**
   - **Objective** — Satisfy Contra's minimum product requirements.
   - **Work** — On desktop keyboard and mobile touch, confirm play/pause, seek bar, time, volume/mute and fullscreen. Exit menus with keyboard and confirm layout on bright and dark video.
   - **Deliverable** — Essential-controls sign-off table.
   - **Pass condition** — All five features are reachable and functional in the actual deployed player.
-  - **Progress** — Added exact-public desktop-keyboard and 375px touch-shaped tests for play/pause, seek/time, mute and fullscreen plus keyboard menu Escape and a bright-media control visibility check; pending CI. This is browser touch emulation, not physical-phone evidence for 062.
+  - **Evidence** — Run 43713525858 exercised play/pause, seek/time, mute, fullscreen entry/exit and Settings→Escape on the deployed player with desktop keyboard; a 375×667 touch-enabled Chromium context exercised the same five required controls, and the bright alternate-media route retained all five. Touch is browser emulation, not physical-phone evidence for 062.
 
-- [ ] **094. Audit the final build for secrets and rights**
+- [x] **094. Audit the final build for secrets and rights**
   - **Objective** — Protect the package and control public assets.
   - **Work** — Inspect production bundles, HTML and package manifest for secrets, private asset IDs and notes. Verify Apache 2.0 for the entry and documented separate rights for assets.
   - **Deliverable** — Release rights and secret-scan log.
   - **Pass condition** — No private token or unlicensed distributable asset is present. Public playback ID appears only where appropriate.
-  - **Progress** — Added build-time scan for Mux management hooks, sensitive public-config keys, internal-directory leakage, Apache-2.0 entry license, permissive production dependency licenses, procedural media provenance and package dry-run contents; pending CI.
+  - **Evidence** — Run 43713525858 passed `scripts/final-audit.mjs`: Apache-2.0 entry license, project-authored showcase provenance, permissive pinned production dependency licenses, 69 emitted text files scanned for Mux management credential/API hooks, and a 15-file package dry-run with internal demo/test/report boundaries excluded.
 
-- [ ] **095. Package reuse and reproducibility**
+- [x] **095. Package reuse and reproducibility**
   - **Objective** — Leave a working skin that another developer can mount.
   - **Work** — Include license, notices if applicable, exact install/build instructions, minimal example, feature limits and media attribution. Mark any repository link as supporting evidence unless required by the current form.
   - **Deliverable** — Versioned release package and quick-start.
   - **Pass condition** — A fresh clone or extracted archive installs, plays a replacement clip and performs a return without private values.
-  - **Progress** — Expanded README package quick-start/limits/license notes, required `format-time.js` in pack verification, retained the existing fresh-temp-host replacement-media test, and added a success-only reusable `.tgz` CI artifact; pending exact-head acceptance.
+  - **Evidence** — Run 43713525858 packed `detour-video-skin-0.1.0.tgz`, installed it into a fresh external host with replacement media/captions, and returned to 42.350s in Chromium, Firefox and desktop WebKit. Reusable-package artifact 14161323994 is preserved with ZIP digest `sha256:1077a7f45a101090985f065e6e57b3d2899cc2dedd9d8e93ccbc94f7c3b4c304`.
 
 - [ ] **096. Rehearse the official judging rubric**
   - **Objective** — Make score risks visible before submission.
   - **Work** — Use the official 10/5/5/5 rubric, then apply the two independent optional checks. Gather one evidence locator per category. Prioritize issues that threaten an official minimum over a bonus.
   - **Deliverable** — Self-score and must-fix list.
   - **Pass condition** — All eligibility gates and minimums pass. Any predicted score is identified as internal estimation.
+  - **Progress** — [Internal rubric rehearsal and must-fix list are prepared](submission-report/PHASE-10-HANDOFF.md#official-rubric-rehearsal--internal-estimate-only), but 091 still blocks the pass condition because second-entry/current-form eligibility is not confirmed.
 
 - [ ] **097. Prepare the exact form payload**
   - **Objective** — Avoid missing links or overclaiming optional points.
   - **Work** — Collect public playable URL, one strong visual, short rationale and only qualifying bonuses. Confirm file limits and link behavior in the live form. Keep an offline copy of the payload.
   - **Deliverable** — Paste-ready payload and ordered assets.
   - **Pass condition** — Required fields are complete. Mux ID and real-site URL appear only for independently verified qualifying entries.
+  - **Progress** — [A paste-ready content packet is prepared](submission-report/PHASE-10-HANDOFF.md#provisional-form-payload), including the verified Mux bonus and explicit omission of the real-site bonus. Exact live field names, limits and second-entry acceptance remain blocked by 091.
 
-- [ ] **098. Freeze links and keep rollback ready**
+- [x] **098. Freeze links and keep rollback ready**
   - **Objective** — Preserve the exact reviewed experience through judging.
   - **Work** — Record deployed version, timestamp, core/optional media URLs and rollback method. Disable experiment routes from the judging path. Retest public URLs after the freeze.
   - **Deliverable** — Release record, rollback reference and uptime owner.
   - **Pass condition** — Core release can be restored without credentials in the public package. The exact links remain healthy before submission.
+  - **Evidence** — [Phase 10 freeze and rollback record](submission-report/PHASE-10-HANDOFF.md#098-freeze-and-rollback) — run 43713525858 re-qualified both the primary Mux candidate and independent R2 rollback after the freeze; the judging `/mux/` page has no links to internal test/integration surfaces, and the public runtime remains pinned to `a3b43f74c765` / `detour-dist-a3b43f74c765`.
 
 - [ ] **099. Submit and capture confirmation**
   - **Objective** — Complete the official entry before the deadline.
