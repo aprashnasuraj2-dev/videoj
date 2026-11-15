@@ -46,3 +46,9 @@ Keyboard and mobile behavior did not regress: the full run retained packed-host,
 Evidence run 43711518943 confirmed the capture pipeline can reproduce the real signature and record a 6.32-second browser interaction clip, but review intentionally did **not** promote every generated file. The first compact capture lacked a visibly active cue, the detail crop was too tight above the held bracket, and the failure frame contained two competing recovery surfaces. These are being corrected before 082–086 acceptance.
 
 A separate full run (43711379164) showed desktop WebKit report the native media `ended` flag before the DETOUR ended-state CSS became observable. Packed WebKit, Chromium, Firefox and independent Phase 7 probes in the same run passed. The regression now waits a bounded 2 seconds for the actual ended UI after the native ended flag, preserving the product requirement while removing an event-listener/CSS settlement race from the assertion timing.
+
+## Steps 082–087 and 089 evidence acceptance — 2026-11-15
+
+Final capture run 43712329599 executed the browser evidence script against public source `a3b43f74c7652c707c3703193ab1081820bafa79`. The selected evidence is documented in [PHASE-9-PRESENTATION.md](../submission-report/PHASE-9-PRESENTATION.md). Visual review confirmed that the improved detail crop contains the complete held bracket, compact captions are actually rendered from an active VTT cue, the recovery frame contains one recovery surface, and the alternate context is visually/media-distinct rather than a duplicated hero.
+
+The interaction recording is 6.08 seconds, 960×720 VP8 at 25fps with no audio stream. Frame inspection shows the real player at 00:00, the held-state exploration with keyboard focus on the seek control, and completion at 00:42 with focus on Keep my place. This is stronger than a motion mock because the capture script asserts real media time and real button state before accepting the file.

@@ -1,15 +1,26 @@
 # DETOUR progress
 
 Phase: 09
-Resume step: 082
+Resume step: 088
 
 | Item | Current state |
 | --- | --- |
-| Verified | 76/100. Phase 8 is complete and Phase 9 step 081 cold-path polish is publicly verified. |
-| Next | 082. Capture the authentic held/current hero from the qualified public candidate, then build the distinct detail/compact/recovery/interaction evidence set. |
+| Verified | 83/100. Phase 8 is complete; Phase 9 steps 081–087 and 089 are verified from the final public evidence set. |
+| Next | 088. Execute the final public creative-route language audit. After it passes, only 090 remains in Phase 9 and requires a fresh uncoached human reviewer. |
 | Open dependencies | 002 second-entry eligibility; 017 uncoached first-use; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% browser zoom. These remain open and are not reclassified by Phase 8 browser evidence. |
 | Prototype / public release | Frozen Mux candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on immutable `detour-dist-a9bbfcb4ee68`; stable rollback/fallback remains `https://detour-release.praisethegreatfool.workers.dev/`. |
 | Source baseline | Phase 8 production source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a`: full CI 43706450932 green and immutable dist staged. Public Mux release verification 43707445255 passed from the later test-only harness; earlier full CI 43707040940 also remained green after adding the public gate. |
+
+## 2026-11-15 · Phase 9 evidence set accepted — 082–087 and 089
+
+- Final public capture run 43712329599 passed against deployed source `a3b43f74c7652c707c3703193ab1081820bafa79`; artifact 14161336344, ZIP digest `sha256:2229dabdc21c38a2310d7e7dad70044492ae1a9e1fb23609e142018a57f3a5e7`.
+- **082 hero:** 1248×806 player-only held state, current **00:18 / 00:55**, lime origin bracket and visible **Return to 00:42**.
+- **083 detail:** 1246×135 direct browser crop includes current playhead, full bracket, time pair and Return ticket; no composited overlay.
+- **084 difficult states:** 363×356 compact frame requires a real active caption cue at 18s; 363×548 recovery frame blocks the primary provider and shows exactly one viewer-facing Retry/backup surface.
+- **085 clip:** 6.08s, 960×720 VP8, **no audio stream**, real keyboard/focus interaction, verified final media time **42.0s**. No overlay simulates completion.
+- **086 alternate:** 944×635 distinct `daylight-study.mp4`, duration **01:04**, same skin/mark/Return behavior.
+- **087/089:** [presentation manifest](submission-report/PHASE-9-PRESENTATION.md) locks rationale, alt text, filenames, dimensions, byte sizes and SHA-256s. The six selected assets each demonstrate a different outcome; the duplicate raw Playwright recording is intentionally excluded.
+- Resume **088** for executable creative-route copy/metadata audit. **090 remains human-only** and will not be checked by automation.
 
 ## 2026-11-15 · Phase 9 recovery/capture candidate deployed for final public proof
 

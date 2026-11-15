@@ -589,41 +589,47 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Pass condition** — Cold flow stays single-screen on expected sizes and all fixes survive keyboard and mobile checks.
   - **Evidence** — [Phase 9 issue log and acceptance](design/PHASE-9.md#step-081-public-acceptance--2026-11-15), full implementation run 43710674795 and public run 43711048857: mobile player top improved 155.3→66.0px, desktop bottom improved 933.8→869.4px inside 900px, time-zero poster agrees with playback, visual clock reads `00:18 / 00:55`, and keyboard/mobile regression gates remain green.
 
-- [ ] **082. Capture an authentic hero**
+- [x] **082. Capture an authentic hero**
   - **Objective** — Show a distinctive player-only state.
   - **Work** — Capture real playback at the held vs current moment in a wide browser with the authentic bar and return ticket visible. Keep grading and crop changes faithful to the interaction.
   - **Deliverable** — One hero capture with viewport and source note.
   - **Pass condition** — Without surrounding site branding, a reader can see 00:18 current and 00:42 held on the actual interface.
+  - **Evidence** — [Phase 9 presentation evidence](submission-report/PHASE-9-PRESENTATION.md): `hero-1280-held.png`, 1248×806, actual public player at `00:18 / 00:55` with the held bracket and visible `Return to 00:42`; capture run 43712329599.
 
-- [ ] **083. Capture the signature detail**
+- [x] **083. Capture the signature detail**
   - **Objective** — Make the relationship between the two times unambiguous.
   - **Work** — Crop the real slider rail, current head, bracket and Return to label at 1x or 2x. Capture a later state showing the actual return completion or use an honest paired crop.
   - **Deliverable** — One detail or paired evidence image.
   - **Pass condition** — Every visible pixel block comes from the implemented interface. Labels stay readable at gallery thumbnail scale.
+  - **Evidence** — [Phase 9 presentation evidence](submission-report/PHASE-9-PRESENTATION.md): `detail-1280-held.png`, 1246×135, direct browser crop of the rail/shelf with current head, full held bracket, `00:18 / 00:55` and `Return to 00:42`; the interaction clip supplies the real completion state.
 
-- [ ] **084. Capture compact and difficult states**
+- [x] **084. Capture compact and difficult states**
   - **Objective** — Demonstrate restraint under load and small widths.
   - **Work** — Capture 320 or 375 px mobile with captions active and a separate real buffering or retry state if legible. Prefer two complementary images to repeated desktop frames.
   - **Deliverable** — Compact and complex-state captures.
   - **Pass condition** — No control or cue is edited into the screenshot. Both views map to documented, repeatable conditions.
+  - **Evidence** — [Phase 9 presentation evidence](submission-report/PHASE-9-PRESENTATION.md): `compact-375-captions.png` requires an actual active VTT cue while held at 18s; `recovery-375.png` is captured with the primary provider blocked and asserts a single recovery surface.
 
-- [ ] **085. Record a short interaction clip**
+- [x] **085. Record a short interaction clip**
   - **Objective** — Prove the user action changes real playback.
   - **Work** — Record 6-10 seconds of authentic playback UI. Show hold, seek and return with a real cursor, focus or tap cue, then briefly leave the returned time visible. Add only necessary trimming and captioning.
   - **Deliverable** — Short capture video and reproducibility note.
   - **Pass condition** — The origin and target times are readable. No fabricated overlays, mock audio response or hidden edit simulates completion.
+  - **Evidence** — [Phase 9 presentation evidence](submission-report/PHASE-9-PRESENTATION.md): `interaction-960x720.webm`, 6.08s VP8/960×720, browser-recorded keyboard/focus flow with no audio stream or fabricated overlay; verified return ends at 42.0s.
 
-- [ ] **086. Capture alternate context only if useful**
+- [x] **086. Capture alternate context only if useful**
   - **Objective** — Give reuse a visible, concise proof.
   - **Work** — If the second host offers meaningful contrast, capture the same skin playing different media with the signature available. Otherwise keep the evidence set focused on the core player.
   - **Deliverable** — One alternate-context image or skip record.
   - **Pass condition** — The image proves a different mount or media behavior with the same skin version, or the evidence list documents why a second image would repeat an existing proof.
+  - **Evidence** — [Phase 9 presentation evidence](submission-report/PHASE-9-PRESENTATION.md): `alternate-960-held.png` uses distinct `daylight-study.mp4` (01:04) on `/integration/` with the same held bracket, `00:18` current and `Return to 00:42`.
 
-- [ ] **087. Write the public design rationale**
+- [x] **087. Write the public design rationale**
   - **Objective** — Describe the viewer benefit in a few English sentences.
   - **Work** — Open with the action and its use case. Explain the visible return ticket and the unchanged seek bar. Mention portability only where the live demo or minimal example proves it.
   - **Deliverable** — Form-ready design description and alt text.
   - **Pass condition** — A reader can repeat the premise without source knowledge. Every claim has a public evidence link or capture.
+  - **Evidence** — [Form-ready rationale and alt text](submission-report/PHASE-9-PRESENTATION.md) links the public candidate and maps each sentence to the real hero, interaction clip or alternate-media proof.
 
 - [ ] **088. Audit public-facing language**
   - **Objective** — Keep the site coherent and understandable.
@@ -632,11 +638,12 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Pass condition** — No internal workflow copy, placeholder, credential or diagnostic payload remains on creative surfaces.
   - **Progress** — Public capture review removed healthy Mux infrastructure copy and found a duplicate failure surface; the Mux host now owns recovery without showing the generic nested player error. Final exact-route audit remains before acceptance.
 
-- [ ] **089. Validate evidence legibility and truth**
+- [x] **089. Validate evidence legibility and truth**
   - **Objective** — Make the gallery usable at judging scale.
   - **Work** — Check image order and actual upload sizes. Compare them against the frozen build, verify alt text and test video visibility without audio and on a phone.
   - **Deliverable** — Small evidence gallery with exact filenames.
   - **Pass condition** — The visual and description meet the form requirements, and each optional asset shows a distinct real outcome.
+  - **Evidence** — [Evidence manifest](submission-report/PHASE-9-PRESENTATION.md) records exact filename, dimensions, bytes, SHA-256, purpose and alt text. The 375px caption frame proves narrow legibility; the 6.08s clip has no audio stream and remains understandable visually.
 
 - [ ] **090. Try an uncoached judging pass**
   - **Objective** — Find shortcomings a creator overlooks.

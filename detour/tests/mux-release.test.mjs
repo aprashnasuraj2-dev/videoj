@@ -181,3 +181,45 @@ test('080 frozen public Mux release is immediately usable at desktop width', { t
     await browser.close();
   }
 });
+
+test('088 public creative routes use viewer-facing language only', { timeout: 90000 }, async t => {
+  const browser = await chromium.launch({ args: ['--no-sandbox'] });
+  const context = await browser.newContext({ viewport: { width: 960, height: 760 } });
+  const page = await context.newPage();
+  const internal = /\b(?:Mux|R2|workflow|GitHub|Actions|fixture|debug|source\s*sha|detour-dist|Independent host|developer)\b/i;
+  try {
+    const primary = await page.goto(release.origin, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    assert.equal(primary?.status(), 200);
+    await waitForSeekable(page);
+    assert.equal(await page.title(), 'DETOUR — Keep your place');
+    const primaryText = await page.locator('body').innerText();
+    assert.doesNotMatch(primaryText, internal);
+    assert.match(primaryText, /Keep your place\. Explore another moment\. Return in one action\./);
+    assert.equal(await page.locator('.mux-panel').isVisible(), false);
+
+    const integration = new URL('../integration/', release.origin).href;
+    const alternate = await page.goto(integration, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    assert.equal(alternate?.status(), 200);
+    await waitForSeekable(page);
+    assert.equal(await page.title(), 'DETOUR — Another video');
+    const alternateText = await page.locator('body').innerText();
+    assert.doesNotMatch(alternateText, internal);
+    assert.match(alternateText, /Same interaction\. Different video\./);
+    assert.equal(await page.locator('input[type="password"]').count(), 0);
+    assert.equal(await page.locator('dialog').count(), 0);
+
+    await page.goto(release.origin, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.route('https://stream.mux.com/**', route => route.abort('failed'));
+    await page.reload({ waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForFunction(() => document.querySelector('[data-detour-source-status]')?.dataset.state === 'error', null, { timeout: 20000 });
+    const recoveryText = await page.locator('body').innerText();
+    assert.doesNotMatch(recoveryText, internal);
+    assert.equal(await page.locator('.detour-error').isVisible(), false);
+    assert.equal(await page.getByRole('button', { name: 'Try video again' }).isVisible(), true);
+    assert.equal(await page.getByRole('button', { name: 'Use backup video' }).isVisible(), true);
+    t.diagnostic('Creative-route audit: primary, alternate and recovery surfaces contain viewer-facing copy only; technical public config remains a machine resource, not creative UI.');
+  } finally {
+    await context.close();
+    await browser.close();
+  }
+});
