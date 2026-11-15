@@ -1,0 +1,45 @@
+name: Verify DETOUR Mux bonus
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [detour]
+    paths:
+      - 'detour/mux/**'
+      - 'detour/public/mux-public.json'
+      - 'detour/tests/mux.test.mjs'
+      - 'detour/skin/mux.js'
+      - 'detour/skin/mux.d.ts'
+      - 'detour/vite.config.js'
+      - '.github/workflows/detour-mux-verify.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: detour
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: detour/package-lock.json
+      - name: Install media tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Install pinned dependencies
+        run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Build production multi-page demo
+        run: npm run build
+      - name: Verify anonymous Mux playback and fallback
+        run: node --test tests/mux.test.mjs
+      - name: Validate checklist and resume pointer
+        if: always()
+        run: node scripts/check-progress.mjs

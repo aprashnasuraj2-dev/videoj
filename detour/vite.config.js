@@ -8,6 +8,7 @@ export default defineConfig({
       input: {
         showcase: fileURLToPath(new URL('./index.html', import.meta.url)),
         integration: fileURLToPath(new URL('./integration/index.html', import.meta.url)),
+        mux: fileURLToPath(new URL('./mux/index.html', import.meta.url)),
       },
     },
   },

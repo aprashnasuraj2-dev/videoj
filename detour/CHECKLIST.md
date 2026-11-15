@@ -550,12 +550,14 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Use the documented v10 Mux media integration. Confirm asset readiness, public playback policy, manifest, captions and real seeks. Keep private credentials server-side and put only the public playback ID in the submission evidence.
   - **Deliverable** — Working Mux mount and public ID for the form.
   - **Pass condition** — If using Mux, a signed-out reviewer can play and seek the stream, provider state drives DETOUR and the public build contains no private token. If omitted, link the verified skip decision from step 075.
+  - **Progress** — Mux asset is provisioned with public Playback ID and a 206 range probe; `/mux/` host and signed-out browser test are implemented, pending exact-head CI and public deployment.
 
 - [ ] **077. Test streaming failure recovery**
   - **Objective** — Keep media accessible when the optional stream fails.
   - **Work** — Block the HLS manifest and a later segment; make a rights-cleared local MP4 available as Retry or alternate playback. Reset the held place on source change and explain it briefly if it was active.
   - **Deliverable** — Recovery walkthrough and branch evidence.
   - **Pass condition** — If streaming is enabled, independent MP4 plays after a simulated outage and a recovered source cannot inherit a stale mark. If omitted, link step 075 and verify the core MP4 independently.
+  - **Progress** — Dedicated Mux test blocks provider requests, requires visible recovery controls, switches to the independent showcase MP4 and checks stale held-place clearing; pending exact-head CI.
 
 - [x] **078. Qualify a real-site bonus context**
   - **Objective** — Use a genuine project that benefits from the skin.

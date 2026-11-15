@@ -1,0 +1,13 @@
+{
+  "playbackId": "Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ",
+  "contentHash": "detour-fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1",
+  "staticRendition": "highest.mp4",
+  "staticMp4Url": "https://stream.mux.com/Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ/highest.mp4",
+  "hlsUrl": "https://stream.mux.com/Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ.m3u8",
+  "posterUrl": "https://image.mux.com/Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ/thumbnail.jpg?time=42",
+  "sourceSha256": "fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1",
+  "sourceBytes": 871570,
+  "provisionRun": 43705427292,
+  "provisionAttempt": 2,
+  "provisionArtifactId": 14158174193
+}

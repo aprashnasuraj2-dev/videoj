@@ -95,3 +95,9 @@ References: official Contra challenge page, Mux Direct Upload API, Mux Assets / 
 ## Step 078 real-site bonus skip — 2026-11-15
 
 **Decision: SKIP and claim zero real-site bonus points.** The production `/integration/` page and its separately supplied `daylight-study` media demonstrate a portable skin, but they are engineering examples under the same release project rather than independently verified useful content on a genuine audience-serving website. No external-owned deployment, anonymous real-site playback, or site-owner persistence evidence exists in the current branch. Such a page must not be described as a qualified live-site bonus. Retain the tested core R2 demo and the portability evidence for their respective claims; only reopen 078 if an authentic site is deployed and independently verified before submission.
+
+## Step 076 provisioning result and optional-host implementation — 2026-11-15
+
+Mux workflow [43705427292](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43705427292), rerun attempt 2, successfully provisioned the exact 871,570-byte DETOUR showcase under content hash `detour-fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1`. The public Playback ID is `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`; Mux reported `highest.mp4` ready and the provisioning probe returned **206** with **1,024 bytes**. The public configuration artifact is 14158174193. No management credential is stored in the repository.
+
+The implementation adds a dedicated `/mux/` production entry instead of replacing the already-qualified R2 root. The host uses Mux's public static rendition so Chromium/Firefox/WebKit can retain the native `<video>` contract without adding an HLS runtime to the reusable core. It exposes a separate fallback action to the same rights-cleared showcase bytes through the ordinary release origin. Dedicated browser verification remains required before 076/077 can be checked.

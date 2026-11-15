@@ -1,0 +1,94 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { after, before, test } from 'node:test';
+import { chromium } from 'playwright';
+import { preview } from 'vite';
+
+const config = JSON.parse(readFileSync(new URL('../public/mux-public.json', import.meta.url), 'utf8'));
+let server;
+let browser;
+
+before(async () => {
+  server = await preview({ preview: { host: '127.0.0.1', port: 0 } });
+  browser = await chromium.launch({ args: ['--no-sandbox'] });
+});
+after(async () => { await browser?.close(); await server?.close(); });
+
+async function waitForSeekable(page) {
+  await page.waitForFunction(() => {
+    const video = document.querySelector('video');
+    return video?.readyState >= 2 && video.seekable.length > 0;
+  }, { timeout: 30000 });
+}
+
+async function seekPlayer(page, seconds) {
+  await page.locator('video-player').evaluate((node, time) => node.store.seek(time), seconds);
+  await page.waitForFunction(time => Math.abs(document.querySelector('video').currentTime - time) < 0.5, seconds);
+}
+
+test('076 public Mux rendition is anonymously range-readable', { timeout: 30000 }, async t => {
+  assert.match(config.playbackId, /^[A-Za-z0-9_-]+$/);
+  assert.equal(config.sourceSha256, 'fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1');
+  assert.equal(config.sourceBytes, 871570);
+  const response = await fetch(config.staticMp4Url, {
+    headers: { Range: 'bytes=0-1023' }, redirect: 'follow', signal: AbortSignal.timeout(20000),
+  });
+  const bytes = (await response.arrayBuffer()).byteLength;
+  assert.equal(response.status, 206);
+  assert.equal(bytes, 1024);
+  assert.match(response.headers.get('content-type') || '', /^video\/mp4(?:;|$)/);
+  assert.match(response.headers.get('content-range') || '', /^bytes 0-1023\/\d+$/);
+  t.diagnostic(`Mux public range: 206 / ${bytes} B / playback ID ${config.playbackId}`);
+});
+
+test('076 production Mux host executes real Hold → seek → Return', { timeout: 45000 }, async t => {
+  const page = await browser.newPage({ viewport: { width: 375, height: 667 } });
+  try {
+    await page.goto(new URL('mux/', server.resolvedUrls.local[0]).href, { waitUntil: 'domcontentloaded' });
+    await waitForSeekable(page);
+    await page.locator('.detour-hold:enabled').waitFor();
+    const media = await page.locator('video').evaluate(video => ({ src: video.currentSrc, paused: video.paused, tracks: [...video.textTracks].map(track => track.kind) }));
+    assert.equal(media.src, config.staticMp4Url);
+    assert.equal(media.paused, true);
+    assert.ok(media.tracks.includes('captions'));
+    await seekPlayer(page, 42.35);
+    await page.getByRole('button', { name: 'Keep my place' }).click();
+    await seekPlayer(page, 18);
+    await page.getByRole('button', { name: 'Return to 00:42' }).click();
+    await page.getByRole('button', { name: 'Keep my place' }).waitFor();
+    const returned = await page.locator('video').evaluate(video => ({ time: video.currentTime, paused: video.paused }));
+    assert.ok(Math.abs(returned.time - 42.35) < 0.5, `Mux Return landed at ${returned.time}`);
+    assert.equal(returned.paused, true);
+    t.diagnostic(`Mux host returned to ${returned.time.toFixed(3)}s from an 18s detour.`);
+  } finally { await page.close(); }
+});
+
+test('077 Mux outage exposes fallback and source replacement clears a held place', { timeout: 45000 }, async t => {
+  const base = server.resolvedUrls.local[0];
+  const page = await browser.newPage({ viewport: { width: 375, height: 667 } });
+  try {
+    await page.goto(new URL('mux/', base).href, { waitUntil: 'domcontentloaded' });
+    await waitForSeekable(page);
+    await seekPlayer(page, 42.35);
+    await page.getByRole('button', { name: 'Keep my place' }).click();
+    await page.getByRole('button', { name: 'Return to 00:42' }).waitFor();
+    await page.locator('[data-detour-fallback]').click();
+    await page.waitForFunction(() => document.querySelector('video')?.currentSrc.includes('/showcase/detour-showcase-v1.mp4'));
+    await waitForSeekable(page);
+    assert.equal(await page.locator('.detour-held').isVisible(), false, 'source replacement must clear stale held place');
+    assert.match(await page.locator('[data-detour-source-status]').textContent(), /Saved place cleared because the media source changed/);
+    await seekPlayer(page, 18);
+  } finally { await page.close(); }
+
+  const blocked = await browser.newPage({ viewport: { width: 375, height: 667 } });
+  try {
+    await blocked.route('https://stream.mux.com/**', route => route.abort('failed'));
+    await blocked.goto(new URL('mux/', base).href, { waitUntil: 'domcontentloaded' });
+    await blocked.waitForFunction(() => document.querySelector('[data-detour-source-status]')?.dataset.state === 'error', { timeout: 15000 });
+    assert.equal(await blocked.locator('[data-detour-fallback]').isVisible(), true);
+    await blocked.locator('[data-detour-fallback]').click();
+    await blocked.waitForFunction(() => document.querySelector('video')?.currentSrc.includes('/showcase/detour-showcase-v1.mp4'));
+    await waitForSeekable(blocked);
+    t.diagnostic('Blocked Mux request surfaced recovery controls; local/R2-compatible fallback became seekable and carried no stale mark.');
+  } finally { await blocked.close(); }
+});

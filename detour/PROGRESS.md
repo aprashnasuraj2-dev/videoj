@@ -6,10 +6,17 @@ Resume step: 076
 | Item | Current state |
 | --- | --- |
 | Verified | 71/100. Phase 8 media strategy/bundle/judge demo/portability 071–074, Mux evaluation 075 and real-site bonus skip decision 078 are verified. |
-| Next | 076 remains pending on missing GitHub Actions MUX_TOKEN_ID and MUX_TOKEN_SECRET repository secrets. Independently advance 079 rights/ownership inventory and 080 demo freeze without asserting unavailable owner approvals. |
-| Open dependencies | 002 eligibility; 017 uncoached first-use; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% browser zoom. Mux 076/077 awaits repository secrets and independent public playback qualification; optional and never a replacement for green R2 fallback. |
+| Next | 076 provisioning is complete; dedicated Mux host, signed-out browser round-trip and 077 fallback recovery are implemented and pending exact-head CI. |
+| Open dependencies | 002 eligibility; 017 uncoached first-use; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% browser zoom. Mux 076/077 now awaits independent CI/public-route qualification; optional and never a replacement for green R2 fallback. |
 | Prototype / public release | Core public release is green at `https://detour-release.praisethegreatfool.workers.dev/`, backed by SHA-versioned R2 objects and immutable dist source. Mux is now optional bonus work only. |
 | Source baseline | Public-release baseline: `1016bd1b39d817261fc0a5b0d3cbdc2252c2ce6e`, Actions run 43703881941. Full CI green; 072 HTTPS passed at 42.350s Return. |
+
+## 2026-11-15 · Mux asset provisioned; host and recovery proof implemented (validation pending)
+
+- Re-ran Mux workflow 43705427292 after repository secrets were configured. Attempt 2 completed successfully: public Playback ID `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`, content hash `detour-fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1`, `highest.mp4` ready, anonymous byte probe **206 / 1,024 B**, artifact 14158174193. Management credentials remained masked and are not copied into source.
+- Added a production-built `/mux/` host that uses the exact same skin and Mux-hosted static rendition, keeps descriptive captions, and exposes explicit Retry Mux / Use fallback video recovery. The already-qualified showcase MP4 remains the independent fallback.
+- Added dedicated Mux CI rather than making the core R2 validation depend on optional service availability. Tests require anonymous Mux byte-range access, real 42.35 → 18 → 42.35 DETOUR behavior, blocked-Mux recovery, and stale-mark clearing on source replacement.
+- This is **implementation evidence only** until the exact-head Mux workflow and full DETOUR pipeline pass. The commit requests immutable dist staging only after full CI success.
 
 ## 2026-11-15 · Release and rights handoff reconciliation (079 in progress)
 
