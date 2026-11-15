@@ -8,8 +8,8 @@ Resume step: 091
 | Verified | 89/100. Phase 8 is complete; Phase 9 steps 081–089 are verified except human-only 090; Phase 10 steps 092–095 and 098 are verified. |
 | Next | 091. Owner/account confirmation of second-entry eligibility and the current joined form now unlocks 096/097/099. Step 090 still needs a fresh uncoached human reviewer; 100 follows actual submission. |
 | Open dependencies | 002/091 second-entry and live-form confirmation; 017 first-use study; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% zoom; 090 fresh uncoached judging pass; 099 owner submission and 100 post-submission verification. No further independent Phase 10 acceptance step bypasses 091. |
-| Prototype / public release | Frozen Mux candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on immutable `detour-dist-a9bbfcb4ee68`; stable rollback/fallback remains `https://detour-release.praisethegreatfool.workers.dev/`. |
-| Source baseline | Phase 8 production source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a`: full CI 43706450932 green and immutable dist staged. Public Mux release verification 43707445255 passed from the later test-only harness; earlier full CI 43707040940 also remained green after adding the public gate. |
+| Prototype / public release | Frozen judging candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`; independent rollback remains `https://detour-release.praisethegreatfool.workers.dev/` / `detour-dist-50ac9661e315`. |
+| Source baseline | Public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` was re-qualified by Phase 10 run 43713525858 at verification head `b9b1495f4f66422dfa369cafcad2738fff6b4592`; no `detour/skin/` runtime file changed between those revisions. Phase 10 handoff commit `a98c5f7f80072db76223124ca98d663c5ea4a3fa` is report/tracking only. |
 
 ## 2026-11-15 · Phase 10 verification accepted — 092–095 and 098
 
