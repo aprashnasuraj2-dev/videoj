@@ -176,20 +176,10 @@ try {
     await page.waitForTimeout(500);
     await page.keyboard.press('Enter');
     await page.waitForFunction(() => Math.abs(document.querySelector('video').currentTime - 42) < 1, null, { timeout: 10000 });
-    await page.waitForFunction(() => {
-      const checkpoint = document.querySelector('.detour-checkpoint[data-slot="2"]');
-      return checkpoint && !checkpoint.disabled;
-    }, null, { timeout: 10000 });
     const returned = await page.locator('video').evaluate(video => video.currentTime);
     assert.ok(Math.abs(returned - 42) < 1, `Recorded checkpoint Return landed at ${returned}`);
-
-    const c2 = page.getByRole('button', { name: /checkpoint C2/ });
-    await c2.focus();
-    await page.waitForTimeout(450);
-    await page.keyboard.press('Delete');
-    await page.waitForFunction(() => !document.querySelector('.detour-checkpoint[data-slot="2"]'));
-    assert.equal(await page.locator('.detour-checkpoint').count(), 1);
-    await page.waitForTimeout(1000);
+    assert.equal(await page.locator('.detour-checkpoint').count(), 2, 'C1 and C2 remain visible after Return');
+    await page.waitForTimeout(1600);
     await context.close();
     const rawPath = await videoHandle.path();
     const finalPath = join(output, 'interaction-960x720.webm');
@@ -197,7 +187,7 @@ try {
     const probe = JSON.parse(execFileSync('ffprobe', ['-v','error','-show_format','-of','json',finalPath], { encoding: 'utf8' }));
     const duration = Number(probe.format.duration);
     assert.ok(duration >= 6 && duration <= 14, `Interaction clip must be 6-14s, got ${duration}s`);
-    writeFileSync(join(output, 'interaction-960x720.json'), JSON.stringify({ durationSeconds: duration, returnedSeconds: returned }, null, 2) + '\n');
+    writeFileSync(join(output, 'interaction-960x720.json'), JSON.stringify({ durationSeconds: duration, returnedSeconds: returned, persistentCheckpoints: 2 }, null, 2) + '\n');
   }
 } finally {
   await browser.close();

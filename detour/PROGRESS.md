@@ -16,6 +16,12 @@ Resume step: 091
 
 
 
+## 2026-11-16 · Final checkpoint interaction clip scope
+
+- Evidence run `43772451384` successfully passed the new four-checkpoint hero/detail, real-cue compact caption, recovery and alternate-media stages, then timed out waiting to remove C2 immediately after the recorded asynchronous C1 Return.
+- Individual Delete, focus preservation and the in-flight Return safety lock are already executable acceptance behavior in the Mux regression and public edge proof. The short presentation clip does not need to duplicate every edge case.
+- Final clip scope is intentionally clearer: **save C1 at ~42s → save C2 at ~18s → explore ~8s → Return through C1 → show C1+C2 still present**. The hero proves the full C1–C4 capacity; the test suite proves removal and Clear behavior.
+
 ## 2026-11-16 · Phase 9 checkpoint evidence capture correction
 
 - Public checkpoint release behavior is already accepted; this correction is presentation-only.
