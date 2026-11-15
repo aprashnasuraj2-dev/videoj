@@ -11,6 +11,14 @@ Resume step: 082
 | Prototype / public release | Frozen Mux candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on immutable `detour-dist-a9bbfcb4ee68`; stable rollback/fallback remains `https://detour-release.praisethegreatfool.workers.dev/`. |
 | Source baseline | Phase 8 production source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a`: full CI 43706450932 green and immutable dist staged. Public Mux release verification 43707445255 passed from the later test-only harness; earlier full CI 43707040940 also remained green after adding the public gate. |
 
+## 2026-11-15 · Phase 9 evidence review — recovery duplication and capture fidelity fixes (validation pending)
+
+- Evidence run 43711518943 successfully produced the hero, detail, compact, recovery, alternate-context and **6.32s** interaction clip after making held-state duration assertions source-aware. The clip returned to **42.0s** and uses real keyboard/focus input with no overlay that simulates playback.
+- Visual review found one genuine public-copy defect: when Mux failed, the host recovery panel and the reusable player's generic `This video could not load / Try again` error were both visible. The Mux host now suppresses only its nested generic player error while its host-level recovery owns Retry/backup. Other DETOUR hosts keep the generic player error unchanged.
+- Tightened the evidence capture rather than accepting weak frames: compact capture now requires a real active caption cue while held at 18s; detail crop includes 34px above the shelf so the lime held bracket is not clipped; recovery capture asserts no duplicate error surface.
+- Full run 43711379164 exposed a desktop-WebKit timing race after a **real native ended event**: the immediate test assertion ran before the DETOUR ended UI became visible. The test now waits up to 2s for the actual `.detour-ended` and replay controls; it still requires real UI visibility and does not dispatch/fabricate an ended event.
+- These changes require fresh full CI and a new immutable public candidate before 082–086 can be accepted.
+
 ## 2026-11-15 · Phase 9 step 081 accepted; evidence capture milestone starts
 
 - Public verification run 43711048857 passed the deployed `c647d59d6f00…` candidate. Reviewed its actual artifact: at 375×667 player top is **65.98px** versus **155.28px** before polish; at 1280×900 player bottom is **869.44px** versus **933.83px**, so the full desktop cold player now fits the expected viewport.

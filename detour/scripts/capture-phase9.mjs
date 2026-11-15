@@ -40,7 +40,17 @@ try {
     await ready(page);
     await heldState(page, '00:55');
     await page.locator('.detour').screenshot({ path: join(output, 'hero-1280-held.png') });
-    await page.locator('.detour-shelf').screenshot({ path: join(output, 'detail-1280-held.png') });
+    const detailBounds = await page.locator('.detour-shelf').boundingBox();
+    assert.ok(detailBounds, 'Missing shelf bounds for signature detail capture');
+    await page.screenshot({
+      path: join(output, 'detail-1280-held.png'),
+      clip: {
+        x: detailBounds.x,
+        y: Math.max(0, detailBounds.y - 34),
+        width: detailBounds.width,
+        height: detailBounds.height + 34,
+      },
+    });
     const hero = await page.evaluate(() => ({
       current: document.querySelector('[data-detour-clock-current]')?.textContent,
       duration: document.querySelector('[data-detour-clock-duration]')?.textContent,
@@ -60,10 +70,13 @@ try {
     const page = await context.newPage();
     await page.goto(release.origin, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await ready(page);
-    await seek(page, 18);
+    await heldState(page, '00:55');
     const cc = page.locator('media-captions-button');
     await cc.click();
-    await page.waitForTimeout(250);
+    await page.waitForFunction(() => {
+      const track = document.querySelector('video')?.textTracks?.[0];
+      return track?.mode === 'showing' && (track.activeCues?.length ?? 0) > 0;
+    }, null, { timeout: 5000 });
     await page.locator('.detour').screenshot({ path: join(output, 'compact-375-captions.png') });
     assert.equal(await cc.getAttribute('data-active') !== null, true, 'Captions did not become active');
     await context.close();
@@ -76,6 +89,7 @@ try {
     await page.goto(release.origin, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await page.waitForFunction(() => document.querySelector('[data-detour-source-status]')?.dataset.state === 'error', null, { timeout: 20000 });
     assert.equal(await page.locator('[data-detour-fallback]').isVisible(), true);
+    assert.equal(await page.locator('.detour-error').isVisible(), false, 'Recovery capture contains duplicate error UI');
     await page.locator('.demo').screenshot({ path: join(output, 'recovery-375.png') });
     await context.close();
   }

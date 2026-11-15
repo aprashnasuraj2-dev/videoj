@@ -630,6 +630,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Inspect UI, menus, metadata, error messages and supporting pages for internal terms, raw data, temporary labels, unpublished links and redundant controls. Translate necessary feedback into viewer language.
   - **Deliverable** — Public copy and route audit.
   - **Pass condition** — No internal workflow copy, placeholder, credential or diagnostic payload remains on creative surfaces.
+  - **Progress** — Public capture review removed healthy Mux infrastructure copy and found a duplicate failure surface; the Mux host now owns recovery without showing the generic nested player error. Final exact-route audit remains before acceptance.
 
 - [ ] **089. Validate evidence legibility and truth**
   - **Objective** — Make the gallery usable at judging scale.

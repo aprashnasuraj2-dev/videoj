@@ -40,3 +40,9 @@ Reviewed public capture deltas:
 | Held time grammar | 0:18 / 0:55 vs Return 00:42 | 00:18 / 00:55 vs Return 00:42 | Current and held times use one visual grammar |
 
 Keyboard and mobile behavior did not regress: the full run retained packed-host, Chromium, Firefox, desktop WebKit, responsive, keyboard and emulated-touch passes. The semantic Video.js `media-time` components remain in the DOM; only the visible time face is custom-formatted and aria-hidden. **Step 081 passes.**
+
+## Evidence review after step 081 — 2026-11-15
+
+Evidence run 43711518943 confirmed the capture pipeline can reproduce the real signature and record a 6.32-second browser interaction clip, but review intentionally did **not** promote every generated file. The first compact capture lacked a visibly active cue, the detail crop was too tight above the held bracket, and the failure frame contained two competing recovery surfaces. These are being corrected before 082–086 acceptance.
+
+A separate full run (43711379164) showed desktop WebKit report the native media `ended` flag before the DETOUR ended-state CSS became observable. Packed WebKit, Chromium, Firefox and independent Phase 7 probes in the same run passed. The regression now waits a bounded 2 seconds for the actual ended UI after the native ended flag, preserving the product requirement while removing an event-listener/CSS settlement race from the assertion timing.

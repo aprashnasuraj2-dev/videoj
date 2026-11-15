@@ -86,6 +86,9 @@ test('077 Mux outage exposes fallback and source replacement clears a held place
     await page.locator('video').evaluate(video => video.dispatchEvent(new Event('error')));
     await page.waitForFunction(() => !document.querySelector('.mux-panel')?.hidden);
     assert.equal(await page.locator('[data-detour-fallback]').isVisible(), true);
+    assert.equal(await page.locator('.detour-error').isVisible(), false, 'Mux host must not show a duplicate player-level recovery surface');
+    assert.equal(await page.getByRole('button', { name: 'Try video again' }).isVisible(), true);
+    assert.equal(await page.getByRole('button', { name: 'Use backup video' }).isVisible(), true);
     await page.locator('[data-detour-fallback]').click();
     await page.waitForFunction(() => document.querySelector('video')?.currentSrc.includes('/showcase/detour-showcase-v1.mp4'));
     await waitForSeekable(page);
@@ -100,6 +103,7 @@ test('077 Mux outage exposes fallback and source replacement clears a held place
     await blocked.goto(new URL('mux/', base).href, { waitUntil: 'domcontentloaded' });
     await blocked.waitForFunction(() => document.querySelector('[data-detour-source-status]')?.dataset.state === 'error', { timeout: 15000 });
     assert.equal(await blocked.locator('[data-detour-fallback]').isVisible(), true);
+    assert.equal(await blocked.locator('.detour-error').isVisible(), false, 'Blocked Mux should expose exactly the host recovery surface');
     await blocked.locator('[data-detour-fallback]').click();
     await blocked.waitForFunction(() => document.querySelector('video')?.currentSrc.includes('/showcase/detour-showcase-v1.mp4'));
     await waitForSeekable(blocked);

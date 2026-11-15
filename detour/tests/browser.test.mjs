@@ -350,8 +350,12 @@ test('keyboard Home and End, natural end, and return without autoplay', { timeou
   await page.locator('media-play-button').click();
   await page.waitForFunction(() => document.querySelector('video').ended, null, { timeout: 15000 });
   t.diagnostic(`${engineName}: native ended event observed`);
-  assert.ok(await page.locator('.detour-ended').isVisible());
-  assert.ok(await page.locator('.detour-replay').isVisible());
+  // The native ended flag can become observable before the custom element's
+  // event listener and CSS state have settled, particularly in desktop WebKit.
+  // Require the real UI to appear; do not synthesize an ended event.
+  await page.locator('.detour-ended').waitFor({ state: 'visible', timeout: 2000 });
+  await page.locator('.detour-replay').waitFor({ state: 'visible', timeout: 2000 });
+  t.diagnostic(`${engineName}: ended UI settled with state ${await page.locator('.detour').getAttribute('data-media-state')}`);
   const back = page.getByRole('button', { name: 'Return to 00:42' });
   await back.focus();
   await page.keyboard.press('Enter');

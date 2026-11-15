@@ -31,6 +31,7 @@ video.append(captions);
 
 const player = createDetourPlayer(video, { sourceKind: 'vod' });
 document.querySelector('#example').append(player);
+const playerError = player.querySelector('.detour-error');
 
 function markIsActive() {
   const held = player.querySelector('.detour-held');
@@ -39,6 +40,7 @@ function markIsActive() {
 
 function setSource(kind) {
   const hadMark = markIsActive();
+  playerError.hidden = true;
   video.pause();
   video.dataset.provider = kind;
   video.src = kind === 'mux' ? primaryUrl : fallbackUrl;
@@ -61,6 +63,7 @@ function setSource(kind) {
 
 video.addEventListener('error', () => {
   if (video.dataset.provider !== 'mux') return;
+  playerError.hidden = true;
   panel.hidden = false;
   status.dataset.state = 'error';
   status.textContent = markIsActive()
