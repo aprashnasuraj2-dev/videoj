@@ -78,19 +78,19 @@ A seek bar that remembers.
 Most seek bars remember one thing: where you are now. DETOUR lets viewers keep **up to four places on the same familiar rail**. Each lime C1–C4 bracket stays anchored while the white playhead explores elsewhere; hover/focus reveals its timestamp and click/tap returns without consuming the checkpoint. Near-identical saves deduplicate, checkpoints survive unrelated seeks, and viewers can remove one or clear them all. The behavior is source-scoped and media-agnostic—no chapters, transcript, thumbnails or specially authored footage are required. The reusable package still defaults to the original single-place Return/Stay flow, so multi-place behavior is an opt-in capability rather than a showcase-only rewrite.
 
 **Preferred primary visual**  
-Use the new public checkpoint capture from the final requalification artifact: **C1–C4 visible on the same seek rail with C1 focused at 00:42 and the white playhead exploring near 00:15**. The earlier single-point proof board is fallback evidence only.
+`hero-1280-checkpoints.png` — 1248×806, 85,773 B, direct browser screenshot from the promoted public route; SHA-256 `039b00f0104433c673dca18e8a41bb11fc477c79759a793b3c2bc308a785cb20`. C1–C4 are visible on the same seek rail, the white playhead is at 00:15, and hovered C1 expands to `C1 00:42 ↩`.
 
 **Primary visual alt text**  
 “DETOUR video player with four lime checkpoints C1 through C4 saved across the seek rail; the white playhead is exploring near 00:15 while focused C1 reveals its saved time near 00:42.”
 
-**Raw player hero fallback**  
-`hero-1280-held.png` — 1248×806, direct browser screenshot, SHA-256 `eb03e909bbd7521535fa384edf8fe3317f5f561c0da139d9fd3198900a7bf2a5`.
+**Primary visual provenance**  
+Direct browser capture; no checkpoint, playhead, time, label or control is composited afterward. Final evidence artifact `14184539322`, ZIP digest `sha256:2281c1083ff62fcdbb9e207a9e0709fb02d35247e06287ca3469694c78dafcc5`.
 
 **Preferred optional video, if accepted**  
-Regenerate the judge reel from the final public checkpoint runtime: save C1–C4, explore elsewhere, return through C1, then remove C2. Do not lead with the earlier single-point reel; retain it only as historical fallback evidence.
+`DETOUR_CHECKPOINT_DEMO.mp4` — 6.28s, 960×720 H.264, no audio; SHA-256 `9ec5ecdf0acac2cdc5fae4db81a13da6941834af04a9a34d96a853a7e571e32e`. This is a format transcode of the authentic browser recording only: save C1 and C2, explore elsewhere, return through C1, and leave both checkpoints available.
 
 **Raw interaction proof**  
-`interaction-960x720.webm` — 6.08s, 960×720, VP8, no audio; SHA-256 `6a95a6edc00ea6a03e83f8e64ee0a44b2038001f9e8844b64d075bccfe766f7f`
+`interaction-960x720.webm` — 6.28s, 960×720 VP8, no audio; SHA-256 `448b50908f3b81f7a5ca823d53eeb9ebdcd95bbe5e0b156790df3de044938151`. Final metadata records `returnedSeconds: 42` and `persistentCheckpoints: 2`.
 
 **Mux bonus evidence**  
 Playback ID: `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`  
@@ -103,6 +103,10 @@ This is a separate Aafnai Patro **On This Day** editorial history page. It uses 
 **URL-role rule**  
 - Submit/playable demo — preferred: https://detour-entry.aafnaipatro.com/mux/\n- Redundant competition mirror: https://detour.aafnaipatro.com/mux/\n- Independent rollback: https://detour-backup.aafnaipatro.com/\n- Live-site bonus: https://aafnaipatro.com/on-this-day/video/apollo-11/
 - **Never use one URL as evidence for the other role.**
+
+
+**Owner master pack**  
+`DETOUR_COMPETITION_MASTERPACK_v4.zip` — SHA-256 `9770949632f6f293a5c1984fa2363994bbe78bfdd3dcfacb9bd74df14bd54da8`. It contains the final submit assets, exact CI reusable tarball, supporting evidence and owner-only route/provenance/checksum material.
 
 **License statement, if requested**  
 Entry source is licensed under Apache License 2.0. Showcase media is project-authored procedural material with separate provenance recorded in `RIGHTS.md`.

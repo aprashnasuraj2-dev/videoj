@@ -16,6 +16,15 @@ Resume step: 091
 
 
 
+## 2026-11-16 · Final checkpoint presentation evidence accepted
+
+- Final evidence run **43772874624** passed completely from the promoted public checkpoint route. Artifact **14184539322**, ZIP digest `sha256:2281c1083ff62fcdbb9e207a9e0709fb02d35247e06287ca3469694c78dafcc5`.
+- **Hero:** `hero-1280-checkpoints.png`, 1248×806, 85,773 B, SHA-256 `039b00f0104433c673dca18e8a41bb11fc477c79759a793b3c2bc308a785cb20`. Four C1–C4 brackets are visible at current 00:15; hovered C1 expands to `C1 00:42 ↩`.
+- **Raw interaction:** `interaction-960x720.webm`, 6.28s, 960×720 VP8, no audio, SHA-256 `448b50908f3b81f7a5ca823d53eeb9ebdcd95bbe5e0b156790df3de044938151`. It saves C1 and C2, explores ~8s, returns through C1 to 42s, and leaves both checkpoints present.
+- Compact real-cue captions, recovery and alternate-media single-place compatibility captures also passed in the same artifact. The duplicate Playwright recorder file is intentionally excluded from owner packaging.
+- Latest full Validate DETOUR run **43772874561** also passed; runtime remains the accepted `d430f2ee…` checkpoint build.
+- Owner Master Pack **v4** is sealed from verified bytes: `DETOUR_COMPETITION_MASTERPACK_v4.zip`, SHA-256 `9770949632f6f293a5c1984fa2363994bbe78bfdd3dcfacb9bd74df14bd54da8`. The exact reusable tarball inside is the CI artifact bytes, not a local repack.
+
 ## 2026-11-16 · Checkpoint recording seek-settlement correction
 
 - Evidence run `43772667773` reached the final recording and returned through C1, but only one checkpoint existed. Diagnosis: the script waited for `currentTime≈18` but not for native seeking to settle; **Keep my place** was therefore still correctly disabled and the keyboard Enter could not create C2.
