@@ -17,7 +17,7 @@ test('manual study keeps the original film and clearly separates real-device ver
   await expect(page.locator('#lab-player video')).toHaveAttribute('src', './media/studies-in-thread.mp4');
 });
 
-test('all gallery destinations and example connector resolve as actual static files', async ({ request, page }) => {
+test('all gallery destinations resolve and comparison studio stays public-facing', async ({ request, page }) => {
   await page.goto('/stress.html?case=manual');
   for (const path of ['/index.html', '/journal.html', '/tools.html', '/ribbon.html', '/stress-adapter.example.mjs']) {
     const response=await request.get(path);
@@ -30,13 +30,14 @@ test('all gallery destinations and example connector resolve as actual static fi
   expect(original.status()).toBe(200);
   expect((await original.body()).length).toBe(2563521);
   await page.locator('.portable-external summary').click();
-  const link=page.locator('a[download][href="./stress-adapter.example.mjs"]');
-  await expect(link).toBeVisible();
+  const comparison=page.locator('.portable-external');
+  await expect(comparison).toContainText('Compare another player');
+  await expect(comparison).not.toContainText(/JavaScript|adapter|\.mjs|GitHub|repository|source code/i);
 });
 
 test('visitor-facing study introduction contains no deployment or developer handoff wording', async ({ page }) => {
   await page.goto('/stress.html?case=manual');
-  const intro=await page.locator('.lab-intro,.lab-small-print,.lab-context').allTextContents();
-  expect(intro.join(' ')).not.toMatch(/\b(repository|commit|internal handoff|debug fixture|test harness|deployment checklist)\b/i);
+  const publicCopy=await page.locator('.lab-intro,.lab-small-print,.lab-context,.portable-tool').allTextContents();
+  expect(publicCopy.join(' ')).not.toMatch(/\b(repository|commit|internal handoff|debug fixture|test harness|deployment checklist|JavaScript integration|adapter|GitHub|source code)\b/i);
   await expect(page.getByRole('link', { name: /Explore the player comparison studio/ })).toBeVisible();
 });
