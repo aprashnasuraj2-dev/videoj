@@ -121,11 +121,17 @@ class DetourPlace extends HTMLElement {
 
     const renderMarkers = marks => {
       if (!this.#layer) return;
+      const focusedSlot = this.#layer.contains(document.activeElement)
+        ? document.activeElement?.closest?.('.detour-checkpoint')?.dataset.slot
+        : null;
       this.#layer.replaceChildren();
       this.#layer.hidden = marks.length === 0;
       for (const mark of marks) {
         const button = markerButton(mark);
         if (button) this.#layer.append(button);
+      }
+      if (focusedSlot) {
+        this.#layer.querySelector(`[data-slot="${focusedSlot}"]`)?.focus({ preventScroll: true });
       }
     };
 
