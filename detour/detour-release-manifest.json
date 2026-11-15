@@ -1,0 +1,379 @@
+{
+  "project": "DETOUR",
+  "source_sha": "391eaf347641cd1709eff5b2a19cee0b0b1ffff3",
+  "build_run_id": "43770360131",
+  "artifact": "detour-production-dist-391eaf347641cd1709eff5b2a19cee0b0b1ffff3",
+  "file_count": 74,
+  "files": [
+    {
+      "key": "assets/ar-iYi5K5kG.js",
+      "sha256": "537230fbc59c8f2ab6c1b73e8db37910098abe8b9c2fbb83e276531d1ae9547f",
+      "bytes": 3327
+    },
+    {
+      "key": "assets/az-BH8mGbIe.js",
+      "sha256": "a74d94431a03e931cf227e1838ead86500caf1c0be07519850e8d63d1d747d00",
+      "bytes": 2614
+    },
+    {
+      "key": "assets/bg-F2fyQPd5.js",
+      "sha256": "6fbd19f19220faae874a07e0fed0c0a618fd1526d736363b2a99aff06155595b",
+      "bytes": 4064
+    },
+    {
+      "key": "assets/bn-C3bbvVVm.js",
+      "sha256": "40348acc8d182da9884d81941a84b80648ac8d38db408c13c37de0e91024a5ec",
+      "bytes": 4429
+    },
+    {
+      "key": "assets/bs-Dqk7WiBf.js",
+      "sha256": "c8e4932a16ffedc484f0397092e2c8faadbe1258943519301a3a73c94a5cb409",
+      "bytes": 2597
+    },
+    {
+      "key": "assets/ca-D6Au0hXz.js",
+      "sha256": "099006ad5ca4bc9b7f7ad45b2ae06cb123a9a822c4a4d748cb23dcbac2c44704",
+      "bytes": 2789
+    },
+    {
+      "key": "assets/cs-Do0CgvkE.js",
+      "sha256": "36face7d3b2925725e6786c47ee43b440aea0c64ad22178892daeb14b8ab559a",
+      "bytes": 2681
+    },
+    {
+      "key": "assets/cy-BeB9p6Gd.js",
+      "sha256": "0a717b1f140c69d815e5dcf619756b28e31098fb2849138593e72f04b379685d",
+      "bytes": 2568
+    },
+    {
+      "key": "assets/da-Bj2CVcUv.js",
+      "sha256": "911f1af618a2b0d00120d2562b315b5db178e6aa52b3f782e9c669a3e0de2f00",
+      "bytes": 2495
+    },
+    {
+      "key": "assets/de-DSHP-LPo.js",
+      "sha256": "67c2bf136c20b28508ad6b4179000769134ecb8c1c2872f038b9d44df3bfc2c2",
+      "bytes": 2774
+    },
+    {
+      "key": "assets/el-B_Vo2q4Y.js",
+      "sha256": "79e3f3d45387fa5fe94bdbc37a75a57694a9fec060582756cb4e8b09ac8431b9",
+      "bytes": 4208
+    },
+    {
+      "key": "assets/es-CZt-ZN44.js",
+      "sha256": "157bb1da42dac2d7261b38c0f8c5dd4d39ffa94ac77e1bf702fd188bfe4ac071",
+      "bytes": 2807
+    },
+    {
+      "key": "assets/et-DVlOK9Ty.js",
+      "sha256": "a61041039fe3efb07561885c8f15abf93d9d7fdca1cf7ad88af18f6436f14937",
+      "bytes": 2540
+    },
+    {
+      "key": "assets/eu-DYutdk-y.js",
+      "sha256": "3f9f050e6fa6c54416c940f7bb4979edfe4c8fcfc618bc5427e0b9d95ada817b",
+      "bytes": 2635
+    },
+    {
+      "key": "assets/fa-T5a9HJz0.js",
+      "sha256": "daecde320077ed86e1e0858895a05eb81e196294b088204d926306126fc2b765",
+      "bytes": 3301
+    },
+    {
+      "key": "assets/fi-CPuD_P7S.js",
+      "sha256": "0403ec962489066c2ba38e244c0cdf310594c125a179eb46ac086e18099f331a",
+      "bytes": 2646
+    },
+    {
+      "key": "assets/fr-dmp5O-jy.js",
+      "sha256": "f7ccab6f03ddae7911d16895e474c45dbeb6bc8c96cba3b3ac4c1cb3f2640344",
+      "bytes": 2741
+    },
+    {
+      "key": "assets/gd-BBknlgZr.js",
+      "sha256": "6f7019a945c72164b4735d2025a3041f3e0ec992592e0d49218b2bdb0774f368",
+      "bytes": 2818
+    },
+    {
+      "key": "assets/gl-BJ4hi93n.js",
+      "sha256": "8027c7dd4808d1defa7dbd9fb74e8747a2a03ae402324f3526f36be433c99146",
+      "bytes": 2768
+    },
+    {
+      "key": "assets/he-DZuoW-qG.js",
+      "sha256": "79b05eb49e49ada83326cbcd5d218617858a51222ddf9410c099dcce191d996b",
+      "bytes": 3095
+    },
+    {
+      "key": "assets/hi-CIinO1J6.js",
+      "sha256": "1d0af80e3e6793150959a98ab36412b0438a719130c8cefa50bfe63072922781",
+      "bytes": 4450
+    },
+    {
+      "key": "assets/hr-7rwZWD77.js",
+      "sha256": "1259c8d8d841a03da76a9936b2493a317f9134c700e899f989068eedccb4cbde",
+      "bytes": 2709
+    },
+    {
+      "key": "assets/hu-B9BPT8eD.js",
+      "sha256": "84459722d78796d31c29a4764ff4967bc9cac15bbf089af2d2b439067c818636",
+      "bytes": 2746
+    },
+    {
+      "key": "assets/id-DPkLaHkj.js",
+      "sha256": "2e0f89b7b943583042569e449dc4d308769cd91c27c04efeba060ab8778b21ff",
+      "bytes": 2441
+    },
+    {
+      "key": "assets/integration-xCD2yYWs.js",
+      "sha256": "d4f89fca05f28b36f8f02f88f4a60b1d3845388e39f0d31a1804aadc313a2b5e",
+      "bytes": 631
+    },
+    {
+      "key": "assets/it-DZh_QNko.js",
+      "sha256": "dddcc7a04fbbe7914f0905c10b66519d1372e8030e1c2665d85e6c84d2474d0e",
+      "bytes": 2879
+    },
+    {
+      "key": "assets/ja-DVwJ8vcV.js",
+      "sha256": "1f13dba69bede09f7ecdf18258dff15315e3f03a6a2a4b7852a36c8239af94ac",
+      "bytes": 3007
+    },
+    {
+      "key": "assets/ko-C7nSsWos.js",
+      "sha256": "ca3ebdd66e433bd056a7b26d30c41973fd7cbc7e660486faecbf9a95425761b3",
+      "bytes": 2762
+    },
+    {
+      "key": "assets/lt-Dts4XA6A.js",
+      "sha256": "d74074b3f65e0d6d7031db938ae808db0bb17963e4ee714eb314fd61ad9a0325",
+      "bytes": 2557
+    },
+    {
+      "key": "assets/lv-CVjwcpeg.js",
+      "sha256": "d993efe074c78024193e3d4f96c996541dcd9f842ec6fcd88336a931f123a6b5",
+      "bytes": 2698
+    },
+    {
+      "key": "assets/mr-DiWberQ_.js",
+      "sha256": "75a51361f034b0d36ddddd8b76c4031383f5a6b15f80713f5a329ad97b07eac9",
+      "bytes": 4560
+    },
+    {
+      "key": "assets/mux-BVBXcTTY.css",
+      "sha256": "1035bfcf632b136ce1fccb6004db0c968ceb3e2d606ef8d0ac258bd52a08d15a",
+      "bytes": 770
+    },
+    {
+      "key": "assets/mux-Co4Qzjhd.js",
+      "sha256": "9a2e63b98d5806e8d9134f47754d1baa598ed8e95cbfdfa8b2e2be9723a6ccbf",
+      "bytes": 2496
+    },
+    {
+      "key": "assets/nb-0ekISkXC.js",
+      "sha256": "63d92bea5396cad5ce52d521e530b3024fd32eb3c2c782f3481c700fdf914484",
+      "bytes": 2469
+    },
+    {
+      "key": "assets/ne-CujPINm4.js",
+      "sha256": "a5f19064853b7257bd879e3e30cfde4c3217a11d69fbf422a88037555cfd4812",
+      "bytes": 4719
+    },
+    {
+      "key": "assets/nl-DyiRr2pZ.js",
+      "sha256": "b3b33298bb0286312115a5ac11a13f8e96e85244a79b5aeb54169ad5b20ed199",
+      "bytes": 2615
+    },
+    {
+      "key": "assets/nn-D5umD2-P.js",
+      "sha256": "1126889de6c3177030ea3c66456e7e235e9673690e403862849e3decc5cd8eee",
+      "bytes": 2435
+    },
+    {
+      "key": "assets/oc-Dc9L2Xbx.js",
+      "sha256": "ad55d2b7ceda6865f7def7af7abe184f6e69182723dee80e384184786069c96b",
+      "bytes": 2677
+    },
+    {
+      "key": "assets/page-C94LgQuv.js",
+      "sha256": "e6c5271c6407dddd27acc9903ae73427e08ecb50a200c6a3ad9867b58240a4b0",
+      "bytes": 135548
+    },
+    {
+      "key": "assets/page-CPsZrDOc.css",
+      "sha256": "d1658f7a6637f262f2935fbf65905e0ca478e9ae17fb7c8f510f7bdcc5be6083",
+      "bytes": 13512
+    },
+    {
+      "key": "assets/parse-vtt-QZmFSEXO.js",
+      "sha256": "07e782c69c6cc3949151685dd8ba3565a6806aa252a5f15886a6b365a67018ab",
+      "bytes": 730
+    },
+    {
+      "key": "assets/pl-CGAGYPzN.js",
+      "sha256": "116110b9204e9119a0175cef307a0772476e3d18202fff3f489c297e55996ee8",
+      "bytes": 2756
+    },
+    {
+      "key": "assets/pt-DUXg3IUV.js",
+      "sha256": "3c9bf149db211bd0d82da29adfcc4ea393945aa42339d7bc9f3880995603d7a8",
+      "bytes": 2931
+    },
+    {
+      "key": "assets/pt-PT-D773DKih.js",
+      "sha256": "85e6b86ea0522a0444b56860ebdfa21bc42544e98a2ceaed396b7ceb7ea4ca0e",
+      "bytes": 2778
+    },
+    {
+      "key": "assets/ro-nXfOYpms.js",
+      "sha256": "9245639fcba1b93e64afd0aaf8f59d04ea7d997985a9497387989da5e4f57de8",
+      "bytes": 2747
+    },
+    {
+      "key": "assets/ru-DhaekxRq.js",
+      "sha256": "fc1e31d870344c0beaf73ab46cee5fc12ba23447732329ebd9b4d081a7e3cbfe",
+      "bytes": 4091
+    },
+    {
+      "key": "assets/showcase-RDAKIGSe.js",
+      "sha256": "19c8bf6418da8ad3676375a9f06a817a003c50245908648550b7e7628b9843ea",
+      "bytes": 620
+    },
+    {
+      "key": "assets/sk-Cx8wYkvo.js",
+      "sha256": "9836513a7d2ad6576370ff0c6853d8e0930e1aa4a0229196adb6a7bc274cac3c",
+      "bytes": 2682
+    },
+    {
+      "key": "assets/sl-CP5hS2K3.js",
+      "sha256": "1c1802c916a87af86841ac4bbad60a359c863dd6d2fcabfe7922bd31bea8d0c5",
+      "bytes": 2774
+    },
+    {
+      "key": "assets/sr-6opxRcu4.js",
+      "sha256": "c635c237b56653736eabc883c26b0b2b681cb225bb0746ae293952860c75869e",
+      "bytes": 2709
+    },
+    {
+      "key": "assets/sv-BaHDnK9m.js",
+      "sha256": "004e1a92a24da77ebf3df8485b5277cf1052788b511a27c724050eb0e69e2efc",
+      "bytes": 2467
+    },
+    {
+      "key": "assets/te--fAsQ_SR.js",
+      "sha256": "33eb46b866125896df184eac16cab4caab7e932fc7d5d3c80d9546f5bd59da1a",
+      "bytes": 5238
+    },
+    {
+      "key": "assets/text-cues-EklSDydd.js",
+      "sha256": "a54d5a0bc03aaf146dac4a9072009b9d9bd093a89db1ffcf9b0e382d25ba62fb",
+      "bytes": 3158
+    },
+    {
+      "key": "assets/th-DBrdo60b.js",
+      "sha256": "757ca0d078b866c311539ab787dd35e49a24dd656ec14ccc71fcc8ed5021a6de",
+      "bytes": 4545
+    },
+    {
+      "key": "assets/tr-CpWK0q66.js",
+      "sha256": "053fccb6e28a3d0cbd60780018b61b762258c4586a63fb041015ea33acf352a0",
+      "bytes": 2496
+    },
+    {
+      "key": "assets/uk-WIZfZKYV.js",
+      "sha256": "05c0a13cd766511ec6cc228fec2ba221748178db12717f1a2ace691069470545",
+      "bytes": 3975
+    },
+    {
+      "key": "assets/vi-Co8dj-2G.js",
+      "sha256": "063f4212b7bc289c0bda57da298b021eff8dbb646a264ecdbec8883a1032bb7e",
+      "bytes": 3038
+    },
+    {
+      "key": "assets/zh-BavuEQjd.js",
+      "sha256": "d715672b45646d15d56dedf441f02de08a4a0f0c2d0393bba734c6ae2ca332f6",
+      "bytes": 2504
+    },
+    {
+      "key": "assets/zh-TW-Caz8JDdO.js",
+      "sha256": "565438d5b3ad2ea093bfcba234987ced4aee1986b5b657b53d78d738c7b1e11b",
+      "bytes": 2311
+    },
+    {
+      "key": "fixtures/daylight-study.mp4",
+      "sha256": "5dd7045421f4a73175227787d328a17b175e33d96604084747dcc65da611a307",
+      "bytes": 121155
+    },
+    {
+      "key": "fixtures/daylight-study.vtt",
+      "sha256": "37463bd47c38d69f9fc58ce0642c00915932258eeb89929c90c3fc09b6aedf0a",
+      "bytes": 230
+    },
+    {
+      "key": "fixtures/dense-chapters.vtt",
+      "sha256": "7ce16e228c917d5fbfa86a854da81d8c65a1b6f44ac1897bc5139b353f08c539",
+      "bytes": 2695
+    },
+    {
+      "key": "fixtures/navigation-study.mp4",
+      "sha256": "936308f05cc42a6c472dcdea12596a5df1f42631beb4eca1d6fbca0951a1e86d",
+      "bytes": 435928
+    },
+    {
+      "key": "fixtures/navigation-study.vtt",
+      "sha256": "2ad6b8c3bfdcaa51213dcc70bf817c56e31f00ab327bcce754a31ad5c17a47e3",
+      "bytes": 241
+    },
+    {
+      "key": "fixtures/portrait-study.mp4",
+      "sha256": "f1e5967486596807180d8d2ef9edca15a2ccc83b6a374b41cc3b8cce995a3952",
+      "bytes": 381344
+    },
+    {
+      "key": "fixtures/portrait-study.vtt",
+      "sha256": "60c0cce328eada0d6971cc8a57a4c3f2b26dd29961b37e400a16e2c8608d0392",
+      "bytes": 152
+    },
+    {
+      "key": "index.html",
+      "sha256": "c39b1a58d7b6cabd436a18098511f56d8674ba0d300d81546b5fd0ed052f67da",
+      "bytes": 777
+    },
+    {
+      "key": "integration/index.html",
+      "sha256": "97f2755d3214f17cda048e33c93fbc9341d47498f946191634d053063ff3583f",
+      "bytes": 759
+    },
+    {
+      "key": "mux-public.json",
+      "sha256": "102533b778ed9be3798e1a808703f1981131ff9a03048222238e7c14c0e4ac37",
+      "bytes": 703
+    },
+    {
+      "key": "mux/index.html",
+      "sha256": "5d68dc9c6e30653c09a6fc5a027f8d2e0261c68ea78401eb410688437ca8d590",
+      "bytes": 1220
+    },
+    {
+      "key": "showcase/detour-showcase-v1-poster.jpg",
+      "sha256": "84aabf228209801f4794591d08e0c646e1e5de76be5c1bd239315fb28c0b3efc",
+      "bytes": 46768
+    },
+    {
+      "key": "showcase/detour-showcase-v1.json",
+      "sha256": "5171cf6bdb4d2f2de60e1ea20ebe9b352ce2e6df5bc1f64329cb2f9c76081dbe",
+      "bytes": 513
+    },
+    {
+      "key": "showcase/detour-showcase-v1.mp4",
+      "sha256": "fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1",
+      "bytes": 871570
+    },
+    {
+      "key": "showcase/detour-showcase-v1.vtt",
+      "sha256": "e6d225501d06707422352bf9e37002d6397bf2069444cf70d6c8f31b98e0b322",
+      "bytes": 269
+    }
+  ]
+}
