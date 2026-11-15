@@ -3,9 +3,10 @@
 **Prepared:** 2026-11-15  
 **Verification head:** `b9b1495f4f66422dfa369cafcad2738fff6b4592`  
 **Accepted public runtime:** `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`  
-**Competition submission demo:** https://detour-mux-release.praisethegreatfool.workers.dev/mux/
+**Competition submission demo:** https://detour.aafnaipatro.com/mux/
+**Public-host privacy:** use this branded hostname only; do not expose any account-level `workers.dev` hostname.
 **Independent live-site bonus URL:** https://aafnaipatro.com/on-this-day/video/apollo-11/  
-**Independent rollback:** https://detour-release.praisethegreatfool.workers.dev/  
+**Independent rollback:** https://detour-backup.aafnaipatro.com/  
 **Exact verification:** [Validate DETOUR run 43713525858](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43713525858)
 
 The verification head is later than the deployed runtime because Phase 10 added tests, audits, package documentation and release metadata. A direct compare from `a3b43f7` to `b9b1495` contains no `detour/skin/` change. The correct release claim is therefore the deployed `a3b43f7` runtime re-qualified by the later verification harness, not a fictitious redeploy of test-only commits.
@@ -59,7 +60,7 @@ This is the content packet to bind to the **actual live form** after 091. Field 
 DETOUR — Keep your place
 
 **Playable public URL**  
-https://detour-mux-release.praisethegreatfool.workers.dev/mux/
+https://detour.aafnaipatro.com/mux/
 
 **Short rationale**  
 DETOUR lets viewers keep a moment, explore another part of a video, and return in one action. The familiar seek bar remains familiar: the white playhead follows the current position while a lime bracket preserves the held point, and the explicit **Return to 00:42** ticket makes the reversible action visible. Because the behavior belongs to the player rather than specially authored footage, the same skin works with a second, different video and caption track without changing the interaction.
@@ -82,7 +83,7 @@ https://aafnaipatro.com/on-this-day/video/apollo-11/
 This is a separate Aafnai Patro **On This Day** editorial history page. It uses the reusable skin with a NASA Apollo 11 landing-site visualization, not the submission showcase media. For resilient judging delivery that NASA source is ingested into a second Mux asset (`kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U`) and proxied behind the Aafnai Patro media URL. Cloudflare Browser Rendering proved Hold at 12s → seek to 2s → Return to 12.000s.
 
 **URL-role rule**  
-- Submit/playable demo: https://detour-mux-release.praisethegreatfool.workers.dev/mux/
+- Submit/playable demo: https://detour.aafnaipatro.com/mux/
 - Live-site bonus: https://aafnaipatro.com/on-this-day/video/apollo-11/
 - **Never use one URL as evidence for the other role.**
 
@@ -93,11 +94,11 @@ Do not add repository/process/CI links to the judge-facing creative description 
 
 ## 098 freeze and rollback
 
-- **Primary:** `https://detour-mux-release.praisethegreatfool.workers.dev/mux/`
+- **Primary:** `https://detour.aafnaipatro.com/mux/`
 - **Primary runtime authority:** `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`
 - **Mux Playback ID:** `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`
 - **Same-Worker backup:** `/showcase/detour-showcase-v1.mp4`, SHA-256 `fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1`
-- **Independent rollback:** `https://detour-release.praisethegreatfool.workers.dev/` / `detour-dist-50ac9661e315`
+- **Independent rollback:** `https://detour-backup.aafnaipatro.com/` / `detour-dist-50ac9661e315`
 - **Recovery owner:** repository/challenge operator retains both Workers, Mux asset and private R2 objects through judging.
 - **Requalification:** run 43713525858 re-tested the primary candidate and the independent rollback after the presentation freeze.
 - **Judging-route boundary:** the public `/mux/` HTML exposes only the audience-facing DETOUR heading, recovery controls and player mount; it has no links to internal test, report or integration surfaces.
