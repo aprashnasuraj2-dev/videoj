@@ -13,7 +13,7 @@ function encodeFixture(name, color, filters, { size = '854x480' } = {}) {
     '-nostdin', '-loglevel', 'error', '-y',
     '-f', 'lavfi', '-i', `color=c=${color}:s=${size}:r=24:d=64`,
     '-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=44100',
-    '-vf', filters.join(','), '-t', '56', '-c:v', 'libx264', '-preset', 'fast',
+    '-vf', filters.join(','), '-t', '64', '-c:v', 'libx264', '-preset', 'fast',
     '-crf', '24', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-movflags', '+faststart', temporary,
   ], { stdio: 'inherit' });
   if (run.status !== 0) {
@@ -95,7 +95,7 @@ function encodeShowcase() {
       '-f', 'lavfi', '-i', 'color=c=0x101617:s=1280x720:r=24:d=56',
       '-f', 'lavfi', '-i', 'sine=frequency=146.83:sample_rate=48000:duration=56',
       '-vf', filters.join(','), '-af', 'volume=0.035,afade=t=in:st=0:d=1.5,afade=t=out:st=54:d=2',
-      '-t', '64', '-c:v', 'libx264', '-preset', 'fast', '-crf', '23', '-pix_fmt', 'yuv420p',
+      '-t', '56', '-c:v', 'libx264', '-preset', 'fast', '-crf', '23', '-pix_fmt', 'yuv420p',
       '-c:a', 'aac', '-b:a', '96k', '-movflags', '+faststart', temporary,
     ], { stdio: 'inherit' });
     if (run.status !== 0) {

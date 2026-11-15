@@ -11,6 +11,11 @@ Resume step: 071
 | Prototype / public release | Packed external host and desktop Chromium/Firefox/WebKit core are green. Phase 7 capture artifact exists. Public HTTPS, final showcase media and optional Mux remain later gates. |
 | Source baseline | Phase 7 accepted automated/browser baseline: `9eeeb770b4f7cc7d7d5ba4c766095f05c2116be2`, GitHub Actions run 43698982276, capture artifact 14155597667. |
 
+## 2026-11-15 · Phase 8 generator-scope correction (validation pending)
+
+- Run 43699456032 proved the **new showcase verification itself passes**, but the full Chromium regression correctly failed because the first Phase 8 duration edit changed the shared legacy fixture encoder from 64s to 56s while the showcase encoder still carried a 64s cap. That altered Phase 7's established source duration and invalidated regression assumptions.
+- Restored `encodeFixture()` to exactly 64s and scoped the **56s** cap only to `encodeShowcase()`. This is a generator fix, not a test relaxation. The existing Phase 7 baseline remains 64s; only the dedicated Phase 8 media is 56s.
+
 ## 2026-11-15 · Phase 8 custom media implementation (validation pending)
 
 - Selected a **56-second deterministic procedural motion study** rather than external stock/documentary footage. It is generated only from FFmpeg color/grid/box/text filters plus a low-level synthetic sine bed; the existing silent `navigation-study` remains the fallback. No DHAGO media or third-party footage/music is reused.
