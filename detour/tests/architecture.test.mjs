@@ -23,8 +23,10 @@ test('core lifecycle is event-driven, bounded and abortable per instance', () =>
   assert.doesNotMatch(place, /requestAnimationFrame|requestVideoFrameCallback|setInterval|MutationObserver/);
   assert.equal((place.match(/setTimeout\(/g) ?? []).length, 1, 'Only the one-shot return deadline may use a timer.');
   const listenerCalls = (place.match(/addEventListener\(/g) ?? []).length;
-  const signalOptions = (place.match(/\{ signal(?:,|\s*\})/g) ?? []).length;
-  assert.equal(signalOptions, listenerCalls, 'Every DETOUR-owned listener must be tied to the instance AbortSignal.');
+  const signalUses = (place.match(/\{ signal(?:,|\s*\})/g) ?? []).length;
+  const signalDestructures = (place.match(/const\s+\{\s*signal\s*\}\s*=/g) ?? []).length;
+  assert.equal(signalUses - signalDestructures, listenerCalls,
+    'Every DETOUR-owned listener must be tied to the instance AbortSignal.');
 });
 
 test('skin CSS stays host-scoped and client sources contain no management credential hooks', () => {
