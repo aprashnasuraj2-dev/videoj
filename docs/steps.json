@@ -1204,5 +1204,4222 @@
     "detail": "AI returns entry URL, demo URL, repository/release reference, download package and verified bonus status. Mark steps 1-100 complete only with evidence; list unresolved items plainly. Preserve docs/worklog.md so another AI can resume without repeating finished work.",
     "status": "NOT_STARTED",
     "evidence": []
+  },
+  {
+    "id": "EX-01-001",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Latest main and development history",
+    "status": "VERIFIED",
+    "existingImplementation": "Source inspected at main 7b585e369bc3",
+    "requiredImprovement": "Latest main and development history",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Capture base SHA, recent changes and exact prior evidence",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-002",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Existing docs and outstanding work",
+    "status": "VERIFIED",
+    "existingImplementation": "Source inspected at main 7b585e369bc3",
+    "requiredImprovement": "Existing docs and outstanding work",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Reconcile all existing progress and known gaps",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-003",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Player component hierarchy",
+    "status": "VERIFIED",
+    "existingImplementation": "Source inspected at main 7b585e369bc3",
+    "requiredImprovement": "Player component hierarchy",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Trace the real video-player and all native controls",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-004",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Living Loom implementation",
+    "status": "VERIFIED",
+    "existingImplementation": "Source inspected at main 7b585e369bc3",
+    "requiredImprovement": "Living Loom implementation",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Map event-driven state to actual media",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-005",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Internal chapter ribbon",
+    "status": "VERIFIED",
+    "existingImplementation": "Source inspected at main 7b585e369bc3",
+    "requiredImprovement": "Internal chapter ribbon",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Explain cues, thumb, fill and seek semantics",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-006",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Portable ribbon component",
+    "status": "VERIFIED",
+    "existingImplementation": "Source inspected at main 7b585e369bc3",
+    "requiredImprovement": "Portable ribbon component",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Confirm no Video.js-specific import",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-007",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Seek, playback, captions, speed, audio and fullscreen",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Seek, playback, captions, speed, audio and fullscreen",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Trace each control to its actual source",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-008",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Homepage and all studio pages",
+    "status": "VERIFIED",
+    "existingImplementation": "Source inspected at main 7b585e369bc3",
+    "requiredImprovement": "Homepage and all studio pages",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Record five public page roles and links",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-009",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Live deployed release",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Live deployed release",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Retrieve and compare release manifest with tested source",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-010",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Baseline player-only screenshots",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Baseline player-only screenshots",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Capture isolated desktop and mobile before images",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-011",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Linen, Ink and Paper comparison",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Linen, Ink and Paper comparison",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Show same geometry and distinct surface readability",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-012",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Generic-looking control audit",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Generic-looking control audit",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Name selectors and show screenshots of deficiencies",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-013",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Unfinished or duplicate functionality",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Unfinished or duplicate functionality",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Point to exact code and avoid reimplementation",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-014",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Mobile weaknesses",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Mobile weaknesses",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Record target geometry and overflow at 240 and 320",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-015",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Browser and accessibility evidence",
+    "status": "VERIFIED",
+    "existingImplementation": "Source inspected at main 7b585e369bc3",
+    "requiredImprovement": "Browser and accessibility evidence",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Separate automation from real human/device coverage",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-01-016",
+    "phase": 1,
+    "area": "Design and engineering audit",
+    "title": "Rubric baseline",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Rubric baseline",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "src/video/living-loom.ts",
+      "src/video/dhago.css",
+      "apps/preview/index.html"
+    ],
+    "acceptanceCriteria": "Record supported facts, counterexample and unverified gaps",
+    "verificationMethod": "source inspection and actual player screenshot",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-02-001",
+    "phase": 2,
+    "area": "Textile visual identity",
+    "title": "Warp, weft, shuttle, selvedge and tension language",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Warp, weft, shuttle, selvedge and tension language",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html"
+    ],
+    "acceptanceCriteria": "Each term maps to a visible, functional component",
+    "verificationMethod": "player-only static/interactive screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-02-002",
+    "phase": 2,
+    "area": "Textile visual identity",
+    "title": "Cohesive player material",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Cohesive player material",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html"
+    ],
+    "acceptanceCriteria": "Identity recognizable without surrounding website",
+    "verificationMethod": "player-only static/interactive screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-02-003",
+    "phase": 2,
+    "area": "Textile visual identity",
+    "title": "Consistent geometry",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Consistent geometry",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html"
+    ],
+    "acceptanceCriteria": "Spacing, corners and icon alignment follow one grid",
+    "verificationMethod": "player-only static/interactive screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-02-004",
+    "phase": 2,
+    "area": "Textile visual identity",
+    "title": "Refined textures",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Refined textures",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html"
+    ],
+    "acceptanceCriteria": "Patterns are legible without overpowering actual media",
+    "verificationMethod": "player-only static/interactive screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-02-005",
+    "phase": 2,
+    "area": "Textile visual identity",
+    "title": "Time and chapter typography",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Time and chapter typography",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html"
+    ],
+    "acceptanceCriteria": "Stable numerals and scannable hierarchy at 320",
+    "verificationMethod": "player-only static/interactive screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-02-006",
+    "phase": 2,
+    "area": "Textile visual identity",
+    "title": "Depth, contrast and shadows",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Depth, contrast and shadows",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html"
+    ],
+    "acceptanceCriteria": "Readable player against three backgrounds",
+    "verificationMethod": "player-only static/interactive screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-02-007",
+    "phase": 2,
+    "area": "Textile visual identity",
+    "title": "Three unified surface treatments",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Three unified surface treatments",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html"
+    ],
+    "acceptanceCriteria": "Linen, Ink and Paper share behavior and proportions",
+    "verificationMethod": "player-only static/interactive screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-02-008",
+    "phase": 2,
+    "area": "Textile visual identity",
+    "title": "Video dominance",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Video dominance",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html"
+    ],
+    "acceptanceCriteria": "Film remains main visual area, not decoration",
+    "verificationMethod": "player-only static/interactive screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-02-009",
+    "phase": 2,
+    "area": "Textile visual identity",
+    "title": "Remove ornamental clutter",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Remove ornamental clutter",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html"
+    ],
+    "acceptanceCriteria": "No visual element obscures caption, thumb or control",
+    "verificationMethod": "player-only static/interactive screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-02-010",
+    "phase": 2,
+    "area": "Textile visual identity",
+    "title": "Signature paused-state crop",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Signature paused-state crop",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html"
+    ],
+    "acceptanceCriteria": "Unlabeled paused player expresses woven-time concept",
+    "verificationMethod": "player-only static/interactive screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-03-001",
+    "phase": 3,
+    "area": "Signature woven timeline",
+    "title": "Continuous chapter textile",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Continuous chapter textile",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/ribbon/ribbon.ts",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Joined chapters read as one time structure",
+    "verificationMethod": "cue geometry assertions and cropped browser screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-03-002",
+    "phase": 3,
+    "area": "Signature woven timeline",
+    "title": "Chapter-specific patterns",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Changed on candidate bd83e562e593",
+    "requiredImprovement": "Chapter-specific patterns",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/ribbon/ribbon.ts",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Each of the four original swatches differs without relying solely on color",
+    "verificationMethod": "cue geometry assertions and cropped browser screenshots",
+    "evidenceLocation": [
+      "https://github.com/aprashnasuraj2-dev/videoj/commit/bd83e562e5938f354392414b37bc702bf55ea2c2"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-03-003",
+    "phase": 3,
+    "area": "Signature woven timeline",
+    "title": "Active versus inactive cue treatment",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Active versus inactive cue treatment",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/ribbon/ribbon.ts",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Current-time fill and cue boundaries are discernible",
+    "verificationMethod": "cue geometry assertions and cropped browser screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-03-004",
+    "phase": 3,
+    "area": "Signature woven timeline",
+    "title": "Shuttle thumb",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Shuttle thumb",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/ribbon/ribbon.ts",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Visually distinctive yet remains clear as a seek handle",
+    "verificationMethod": "cue geometry assertions and cropped browser screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-03-005",
+    "phase": 3,
+    "area": "Signature woven timeline",
+    "title": "True progress fill",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "True progress fill",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/ribbon/ribbon.ts",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Displayed fill follows currentTime including backwards",
+    "verificationMethod": "cue geometry assertions and cropped browser screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-03-006",
+    "phase": 3,
+    "area": "Signature woven timeline",
+    "title": "Cue numbering and labels",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Cue numbering and labels",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/ribbon/ribbon.ts",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "All labels are drawn from actual chapter tracks",
+    "verificationMethod": "cue geometry assertions and cropped browser screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-03-007",
+    "phase": 3,
+    "area": "Signature woven timeline",
+    "title": "Unequal durations",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Unequal durations",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/ribbon/ribbon.ts",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Cue widths represent real intervals",
+    "verificationMethod": "cue geometry assertions and cropped browser screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-03-008",
+    "phase": 3,
+    "area": "Signature woven timeline",
+    "title": "No-chapter fallback",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "No-chapter fallback",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/ribbon/ribbon.ts",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "No invented chapter markers or false labels",
+    "verificationMethod": "cue geometry assertions and cropped browser screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-03-009",
+    "phase": 3,
+    "area": "Signature woven timeline",
+    "title": "Dense cue collections",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Dense cue collections",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/ribbon/ribbon.ts",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "40 and 100 cues remain usable",
+    "verificationMethod": "cue geometry assertions and cropped browser screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-03-010",
+    "phase": 3,
+    "area": "Signature woven timeline",
+    "title": "International and long labels",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "International and long labels",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/ribbon/ribbon.ts",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Content remains understandable without clipping interaction",
+    "verificationMethod": "cue geometry assertions and cropped browser screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-03-011",
+    "phase": 3,
+    "area": "Signature woven timeline",
+    "title": "Native keyboard and touch seeking",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Native keyboard and touch seeking",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/ribbon/ribbon.ts",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Arrow/Home/End and pointer affect real currentTime",
+    "verificationMethod": "cue geometry assertions and cropped browser screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-03-012",
+    "phase": 3,
+    "area": "Signature woven timeline",
+    "title": "No invented media previews",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "No invented media previews",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/ribbon/ribbon.ts",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Thumbnails only come from genuine source storyboard",
+    "verificationMethod": "cue geometry assertions and cropped browser screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-03-013",
+    "phase": 3,
+    "area": "Signature woven timeline",
+    "title": "Assistive slider semantics",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Assistive slider semantics",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/ribbon/ribbon.ts",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Value, time and chapter available to screen reader",
+    "verificationMethod": "cue geometry assertions and cropped browser screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-04-001",
+    "phase": 4,
+    "area": "Living Loom state",
+    "title": "Single native media engine",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Single native media engine",
+    "sourceFiles": [
+      "src/video/living-loom.ts",
+      "tests/loom.spec.ts"
+    ],
+    "acceptanceCriteria": "No independent playback clock or dummy media",
+    "verificationMethod": "real-media event and duration checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-04-002",
+    "phase": 4,
+    "area": "Living Loom state",
+    "title": "Real time synchronization",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Real time synchronization",
+    "sourceFiles": [
+      "src/video/living-loom.ts",
+      "tests/loom.spec.ts"
+    ],
+    "acceptanceCriteria": "Woven percentage matches currentTime/duration",
+    "verificationMethod": "real-media event and duration checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-04-003",
+    "phase": 4,
+    "area": "Living Loom state",
+    "title": "Visible woven advancement",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Visible woven advancement",
+    "sourceFiles": [
+      "src/video/living-loom.ts",
+      "tests/loom.spec.ts"
+    ],
+    "acceptanceCriteria": "Progress is perceptible without background synthetic animation",
+    "verificationMethod": "real-media event and duration checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-04-004",
+    "phase": 4,
+    "area": "Living Loom state",
+    "title": "Pause state",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Pause state",
+    "sourceFiles": [
+      "src/video/living-loom.ts",
+      "tests/loom.spec.ts"
+    ],
+    "acceptanceCriteria": "Progress freezes with genuine media pause",
+    "verificationMethod": "real-media event and duration checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-04-005",
+    "phase": 4,
+    "area": "Living Loom state",
+    "title": "Backward seek",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Backward seek",
+    "sourceFiles": [
+      "src/video/living-loom.ts",
+      "tests/loom.spec.ts"
+    ],
+    "acceptanceCriteria": "Weave state reverses with real currentTime",
+    "verificationMethod": "real-media event and duration checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-04-006",
+    "phase": 4,
+    "area": "Living Loom state",
+    "title": "Rapid forward seek",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Rapid forward seek",
+    "sourceFiles": [
+      "src/video/living-loom.ts",
+      "tests/loom.spec.ts"
+    ],
+    "acceptanceCriteria": "Latest actual position prevails",
+    "verificationMethod": "real-media event and duration checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-04-007",
+    "phase": 4,
+    "area": "Living Loom state",
+    "title": "Completion and replay",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Completion and replay",
+    "sourceFiles": [
+      "src/video/living-loom.ts",
+      "tests/loom.spec.ts"
+    ],
+    "acceptanceCriteria": "Ended state requires media ending and resets on replay",
+    "verificationMethod": "real-media event and duration checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-04-008",
+    "phase": 4,
+    "area": "Living Loom state",
+    "title": "Waiting and stalled media",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Waiting and stalled media",
+    "sourceFiles": [
+      "src/video/living-loom.ts",
+      "tests/loom.spec.ts"
+    ],
+    "acceptanceCriteria": "Decorative response is driven by corresponding media events",
+    "verificationMethod": "real-media event and duration checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-04-009",
+    "phase": 4,
+    "area": "Living Loom state",
+    "title": "Unknown duration and failures",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Unknown duration and failures",
+    "sourceFiles": [
+      "src/video/living-loom.ts",
+      "tests/loom.spec.ts"
+    ],
+    "acceptanceCriteria": "No false percent, completion or fabricated telemetry",
+    "verificationMethod": "real-media event and duration checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-04-010",
+    "phase": 4,
+    "area": "Living Loom state",
+    "title": "Reduced motion",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Reduced motion",
+    "sourceFiles": [
+      "src/video/living-loom.ts",
+      "tests/loom.spec.ts"
+    ],
+    "acceptanceCriteria": "Decorative movement is suppressed when requested",
+    "verificationMethod": "real-media event and duration checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-04-011",
+    "phase": 4,
+    "area": "Living Loom state",
+    "title": "Seeking is not viewing history",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Seeking is not viewing history",
+    "sourceFiles": [
+      "src/video/living-loom.ts",
+      "tests/loom.spec.ts"
+    ],
+    "acceptanceCriteria": "UI reports seek position without claiming it was watched",
+    "verificationMethod": "real-media event and duration checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-04-012",
+    "phase": 4,
+    "area": "Living Loom state",
+    "title": "Performance at scale",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Performance at scale",
+    "sourceFiles": [
+      "src/video/living-loom.ts",
+      "tests/loom.spec.ts"
+    ],
+    "acceptanceCriteria": "No per-frame cue DOM relayout or heavy renderer",
+    "verificationMethod": "real-media event and duration checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-04-013",
+    "phase": 4,
+    "area": "Living Loom state",
+    "title": "Audio-only state",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Audio-only state",
+    "sourceFiles": [
+      "src/video/living-loom.ts",
+      "tests/loom.spec.ts"
+    ],
+    "acceptanceCriteria": "Presentation survives audio media without dimensions",
+    "verificationMethod": "real-media event and duration checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-05-001",
+    "phase": 5,
+    "area": "Shuttle interaction",
+    "title": "Native pointer accuracy",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Native pointer accuracy",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Dragged position corresponds to media currentTime",
+    "verificationMethod": "mouse, coarse-pointer and keyboard browser interactions",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-05-002",
+    "phase": 5,
+    "area": "Shuttle interaction",
+    "title": "Restrained thread tension",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Restrained thread tension",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Drag feedback disappears when interaction ends",
+    "verificationMethod": "mouse, coarse-pointer and keyboard browser interactions",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-05-003",
+    "phase": 5,
+    "area": "Shuttle interaction",
+    "title": "Hover, focus and active states",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Hover, focus and active states",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Shuttle state is visible across input modalities",
+    "verificationMethod": "mouse, coarse-pointer and keyboard browser interactions",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-05-004",
+    "phase": 5,
+    "area": "Shuttle interaction",
+    "title": "Timestamp preview",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Timestamp preview",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Seek preview shows real pointer time",
+    "verificationMethod": "mouse, coarse-pointer and keyboard browser interactions",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-05-005",
+    "phase": 5,
+    "area": "Shuttle interaction",
+    "title": "Active chapter during seek",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Active chapter during seek",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Preview label matches source cue",
+    "verificationMethod": "mouse, coarse-pointer and keyboard browser interactions",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-05-006",
+    "phase": 5,
+    "area": "Shuttle interaction",
+    "title": "Genuine thumbnail path",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Genuine thumbnail path",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Only supported Mux storyboard frames appear",
+    "verificationMethod": "mouse, coarse-pointer and keyboard browser interactions",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-05-007",
+    "phase": 5,
+    "area": "Shuttle interaction",
+    "title": "Text-only thumbnail fallback",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Text-only thumbnail fallback",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Missing image never hides accurate preview text",
+    "verificationMethod": "mouse, coarse-pointer and keyboard browser interactions",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-05-008",
+    "phase": 5,
+    "area": "Shuttle interaction",
+    "title": "Repeated and rapid seeks",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Repeated and rapid seeks",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "No lag or stale target survives",
+    "verificationMethod": "mouse, coarse-pointer and keyboard browser interactions",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-05-009",
+    "phase": 5,
+    "area": "Shuttle interaction",
+    "title": "Start/end boundary behavior",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Start/end boundary behavior",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Thumb and preview stay within player bounds",
+    "verificationMethod": "mouse, coarse-pointer and keyboard browser interactions",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-05-010",
+    "phase": 5,
+    "area": "Shuttle interaction",
+    "title": "Comfortable touch geometry",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Comfortable touch geometry",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Seek surface is usable on phone-sized player",
+    "verificationMethod": "mouse, coarse-pointer and keyboard browser interactions",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-05-011",
+    "phase": 5,
+    "area": "Shuttle interaction",
+    "title": "Keyboard seek and focus",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Keyboard seek and focus",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Native slider remains reachable and operable",
+    "verificationMethod": "mouse, coarse-pointer and keyboard browser interactions",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-05-012",
+    "phase": 5,
+    "area": "Shuttle interaction",
+    "title": "No misleading inertia",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "No misleading inertia",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/thread.spec.ts"
+    ],
+    "acceptanceCriteria": "Animation is decorative and does not delay real seek",
+    "verificationMethod": "mouse, coarse-pointer and keyboard browser interactions",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-001",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "Play and pause control",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Play and pause control",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "State and 44px target remain obvious",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-002",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "Volume and mute controls",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Volume and mute controls",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Volume slider and button remain aligned",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-003",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "Tabular time typography",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Tabular time typography",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Clock does not jump on digit changes",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-004",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "Captions menu",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Captions menu",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Visible selected state and functional subtitles",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-005",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "Speed menu",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Speed menu",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Only supported actual rates are offered",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-006",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "Settings lifecycle",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Settings lifecycle",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Open, Escape and restored focus work",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-007",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "Fullscreen mode",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Fullscreen mode",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Controls remain usable and fit safe areas",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-008",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "Keyboard focus outlines",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Keyboard focus outlines",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Visible focus across three themes",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-009",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "Tooltip and seek preview",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Tooltip and seek preview",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "No endpoint clipping or unreadable labels",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-010",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "Real buffering indicator",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Real buffering indicator",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Indicator tracks actual buffering state",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-011",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "Media error and recovery",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Media error and recovery",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Failure state is understandable and actionable",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-012",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "Finished and replay state",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Finished and replay state",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Replay transitions back into real media",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-013",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "No layout jumps",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "No layout jumps",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Interaction state does not shift control geometry",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-014",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "Icon centering, borders, radii",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Icon centering, borders, radii",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "No mismatched controls in screenshot crops",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-06-015",
+    "phase": 6,
+    "area": "Control polish",
+    "title": "Consistent control variants",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Consistent control variants",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "src/video/skin.html",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Focused, active, disabled and open states match theme",
+    "verificationMethod": "open-menu, focus, fullscreen and error-state screenshots",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-001",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "240px width",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "240px width",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "No horizontal spill or inaccessible essentials",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-002",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "320px width",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "320px width",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Full controls and clock remain reachable",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-003",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "375px width",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "375px width",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Labels remain readable and tactile",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-004",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "768px width",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "768px width",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Ribbon and shelf remain proportional",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-005",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "1280px width",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "1280px width",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Layout does not become sparse or disjointed",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-006",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Portrait and landscape",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Portrait and landscape",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Orientation change does not hide controls",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-007",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Fullscreen",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Fullscreen",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Enter and exit preserve player controls",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-008",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Keyboard-only access",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Keyboard-only access",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Complete watch flow works with no pointer",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-009",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Focus visibility and order",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Focus visibility and order",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "All actionable controls have logical tab order",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-010",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Escape and focus restoration",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Escape and focus restoration",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Menus return focus to expected trigger",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-011",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Touch target sizes",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Touch target sizes",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Required controls meet 44px target where practicable",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-012",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Caption legibility",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Caption legibility",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Light and dark footage cannot wash out subtitle reading",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-013",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Control contrast",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Control contrast",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Text and icons meet contrast in three surfaces",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-014",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Reduced motion",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Reduced motion",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Stationary alternative is fully usable",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-015",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Forced colors",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Forced colors",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Critical controls and seek state remain perceivable",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-016",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Increased contrast",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Increased contrast",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Icons and boundaries survive alternate contrast",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-017",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Text enlargement and zoom",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Text enlargement and zoom",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "200% text does not hide essential player controls",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-018",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Axe and accessible names",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Axe and accessible names",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "No critical or serious tested violations",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-07-019",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Physical screen-reader session",
+    "status": "BLOCKED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Physical screen-reader session",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "VoiceOver or NVDA identifies roles, values, menus",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": "Requires physical/human review"
+  },
+  {
+    "id": "EX-07-020",
+    "phase": 7,
+    "area": "Accessible and responsive",
+    "title": "Real device and browser matrix",
+    "status": "BLOCKED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Real device and browser matrix",
+    "sourceFiles": [
+      "src/video/dhago.css",
+      "tests/player.spec.ts",
+      "tests/manual-accessibility.md"
+    ],
+    "acceptanceCriteria": "Actual hardware checks distinguished from emulation",
+    "verificationMethod": "Playwright layout matrix and human manual reviews",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": "Requires physical/human review"
+  },
+  {
+    "id": "EX-08-001",
+    "phase": 8,
+    "area": "8A Reusable skin",
+    "title": "Shared Video.js v10 implementation",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Shared Video.js v10 implementation",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "INSTALL.md",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "One createDhagoPlayer with real v10 template",
+    "verificationMethod": "integration fixtures and media cleanup inspection",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-002",
+    "phase": 8,
+    "area": "8A Reusable skin",
+    "title": "No showcase dependency",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "No showcase dependency",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "INSTALL.md",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Library files do not import preview app",
+    "verificationMethod": "integration fixtures and media cleanup inspection",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-003",
+    "phase": 8,
+    "area": "8A Reusable skin",
+    "title": "Plain HTML Vite integration",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Plain HTML Vite integration",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "INSTALL.md",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Documented mount and playback work",
+    "verificationMethod": "integration fixtures and media cleanup inspection",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-004",
+    "phase": 8,
+    "area": "8A Reusable skin",
+    "title": "React mounting and disposal",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "React mounting and disposal",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "INSTALL.md",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Unmount cleans media and event registrations",
+    "verificationMethod": "integration fixtures and media cleanup inspection",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-005",
+    "phase": 8,
+    "area": "8A Reusable skin",
+    "title": "Theme customization",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Theme customization",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "INSTALL.md",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Three surfaces and host tokens apply coherently",
+    "verificationMethod": "integration fixtures and media cleanup inspection",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-006",
+    "phase": 8,
+    "area": "8A Reusable skin",
+    "title": "Configurable media source",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Configurable media source",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "INSTALL.md",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Host can supply real video/audio URL",
+    "verificationMethod": "integration fixtures and media cleanup inspection",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-007",
+    "phase": 8,
+    "area": "8A Reusable skin",
+    "title": "Optional captions and chapters",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Optional captions and chapters",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "INSTALL.md",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Tracks are parsed only when supplied",
+    "verificationMethod": "integration fixtures and media cleanup inspection",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-008",
+    "phase": 8,
+    "area": "8A Reusable skin",
+    "title": "Graceful no-chapter fallback",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Graceful no-chapter fallback",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "INSTALL.md",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "No false chapter list created",
+    "verificationMethod": "integration fixtures and media cleanup inspection",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-009",
+    "phase": 8,
+    "area": "8A Reusable skin",
+    "title": "Media lifecycle cleanup",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Media lifecycle cleanup",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "INSTALL.md",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Observers and listeners do not survive destroyed mounts",
+    "verificationMethod": "integration fixtures and media cleanup inspection",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-010",
+    "phase": 8,
+    "area": "8A Reusable skin",
+    "title": "Duplicate initialization prevention",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Duplicate initialization prevention",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "INSTALL.md",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "Multiple mounts have unique IDs",
+    "verificationMethod": "integration fixtures and media cleanup inspection",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-011",
+    "phase": 8,
+    "area": "8A Reusable skin",
+    "title": "Public customization contract",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Public customization contract",
+    "sourceFiles": [
+      "src/create-player.ts",
+      "INSTALL.md",
+      "tests/player.spec.ts"
+    ],
+    "acceptanceCriteria": "API types and constraints are documented",
+    "verificationMethod": "integration fixtures and media cleanup inspection",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-012",
+    "phase": 8,
+    "area": "8B Portable ribbon",
+    "title": "Host-neutral component",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Host-neutral component",
+    "sourceFiles": [
+      "src/ribbon/ribbon.ts",
+      "src/ribbon/ribbon.css",
+      "tests/ribbon.spec.ts"
+    ],
+    "acceptanceCriteria": "No Video.js import required",
+    "verificationMethod": "independent host tests and cue-mutation probe",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-013",
+    "phase": 8,
+    "area": "8B Portable ribbon",
+    "title": "Time normalization",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Time normalization",
+    "sourceFiles": [
+      "src/ribbon/ribbon.ts",
+      "src/ribbon/ribbon.css",
+      "tests/ribbon.spec.ts"
+    ],
+    "acceptanceCriteria": "Progress clamps within finite duration",
+    "verificationMethod": "independent host tests and cue-mutation probe",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-014",
+    "phase": 8,
+    "area": "8B Portable ribbon",
+    "title": "Unequal and dense cue widths",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Unequal and dense cue widths",
+    "sourceFiles": [
+      "src/ribbon/ribbon.ts",
+      "src/ribbon/ribbon.css",
+      "tests/ribbon.spec.ts"
+    ],
+    "acceptanceCriteria": "Cue geometry follows real timestamps",
+    "verificationMethod": "independent host tests and cue-mutation probe",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-015",
+    "phase": 8,
+    "area": "8B Portable ribbon",
+    "title": "Supplied metadata lanes",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Supplied metadata lanes",
+    "sourceFiles": [
+      "src/ribbon/ribbon.ts",
+      "src/ribbon/ribbon.css",
+      "tests/ribbon.spec.ts"
+    ],
+    "acceptanceCriteria": "No unsupplied metadata rendered",
+    "verificationMethod": "independent host tests and cue-mutation probe",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-016",
+    "phase": 8,
+    "area": "8B Portable ribbon",
+    "title": "Accurate seek callback",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Accurate seek callback",
+    "sourceFiles": [
+      "src/ribbon/ribbon.ts",
+      "src/ribbon/ribbon.css",
+      "tests/ribbon.spec.ts"
+    ],
+    "acceptanceCriteria": "Range emits numeric desired seek time",
+    "verificationMethod": "independent host tests and cue-mutation probe",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-017",
+    "phase": 8,
+    "area": "8B Portable ribbon",
+    "title": "Lifecycle destroy",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Lifecycle destroy",
+    "sourceFiles": [
+      "src/ribbon/ribbon.ts",
+      "src/ribbon/ribbon.css",
+      "tests/ribbon.spec.ts"
+    ],
+    "acceptanceCriteria": "Listeners and visual nodes are removed",
+    "verificationMethod": "independent host tests and cue-mutation probe",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-018",
+    "phase": 8,
+    "area": "8B Portable ribbon",
+    "title": "Static geometry between time ticks",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Changed on candidate bd83e562e593",
+    "requiredImprovement": "Static geometry between time ticks",
+    "sourceFiles": [
+      "src/ribbon/ribbon.ts",
+      "src/ribbon/ribbon.css",
+      "tests/ribbon.spec.ts"
+    ],
+    "acceptanceCriteria": "Cue placement is not rewritten each update",
+    "verificationMethod": "independent host tests and cue-mutation probe",
+    "evidenceLocation": [
+      "https://github.com/aprashnasuraj2-dev/videoj/commit/bd83e562e5938f354392414b37bc702bf55ea2c2"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-019",
+    "phase": 8,
+    "area": "8B Portable ribbon",
+    "title": "Preserve native integrated slider",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Preserve native integrated slider",
+    "sourceFiles": [
+      "src/ribbon/ribbon.ts",
+      "src/ribbon/ribbon.css",
+      "tests/ribbon.spec.ts"
+    ],
+    "acceptanceCriteria": "Separate ribbon never hijacks Video.js seek control",
+    "verificationMethod": "independent host tests and cue-mutation probe",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-020",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "Preserve existing scenarios",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Preserve existing scenarios",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "25 comparison fixtures retain their IDs",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-021",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "Professional studio hierarchy",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Professional studio hierarchy",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "Setup controls and results visually distinct",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-022",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "Readable scenario explanations",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Readable scenario explanations",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "Visitors understand what a fixture tests",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-023",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "Dense 40/100 cues",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Dense 40/100 cues",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "Navigation and rendering stay stable",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-024",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "Malformed and missing cues",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Malformed and missing cues",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "Broken data does not crash player",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-025",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "Missing media errors",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Missing media errors",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "Failure is identified as an intentional test",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-026",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "Buffering and stalled behavior",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Buffering and stalled behavior",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "Event source clearly distinguished",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-027",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "Seek/replay transitions",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Seek/replay transitions",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "Position changes reported honestly",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-028",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "Unknown duration",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Unknown duration",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "Percentages not fabricated",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-029",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "Audio-only mode",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Audio-only mode",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "No assumed picture or dimensions",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-030",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "240px host stress",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "240px host stress",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "Measured host width and controls remain usable",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-031",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "Reduced-motion and contrast stress",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Reduced-motion and contrast stress",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "Unavailable conditions reported NOT RUN",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-032",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "Actionable failures",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Actionable failures",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "Failures include observed cause, not fake pass",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-033",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "Isolate lab from primary demo",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Isolate lab from primary demo",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "Test sources never replace homepage film",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-034",
+    "phase": 8,
+    "area": "8C Edge States Lab",
+    "title": "Accurate downloadable reports",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Accurate downloadable reports",
+    "sourceFiles": [
+      "apps/preview/src/stress.ts",
+      "apps/preview/src/stress-loader.ts",
+      "src/stress-lab/harness.ts"
+    ],
+    "acceptanceCriteria": "Reports preserve fixture and observation distinction",
+    "verificationMethod": "fixtures and observed result reports",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-035",
+    "phase": 8,
+    "area": "8D Browser-side adapters",
+    "title": "Document adapter mount contract",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Document adapter mount contract",
+    "sourceFiles": [
+      "apps/preview/src/stress-loader.ts",
+      "apps/preview/public/stress-adapter.example.mjs"
+    ],
+    "acceptanceCriteria": "External adapter must return root and destroy",
+    "verificationMethod": "safe/invalid URL and local module tests",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-036",
+    "phase": 8,
+    "area": "8D Browser-side adapters",
+    "title": "Supported URL loading",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Supported URL loading",
+    "sourceFiles": [
+      "apps/preview/src/stress-loader.ts",
+      "apps/preview/public/stress-adapter.example.mjs"
+    ],
+    "acceptanceCriteria": "HTTPS module is accepted with CORS",
+    "verificationMethod": "safe/invalid URL and local module tests",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-037",
+    "phase": 8,
+    "area": "8D Browser-side adapters",
+    "title": "Local JavaScript loading",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Local JavaScript loading",
+    "sourceFiles": [
+      "apps/preview/src/stress-loader.ts",
+      "apps/preview/public/stress-adapter.example.mjs"
+    ],
+    "acceptanceCriteria": "File selected stays on client unless user exports",
+    "verificationMethod": "safe/invalid URL and local module tests",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-038",
+    "phase": 8,
+    "area": "8D Browser-side adapters",
+    "title": "Opaque-origin sandbox",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Opaque-origin sandbox",
+    "sourceFiles": [
+      "apps/preview/src/stress-loader.ts",
+      "apps/preview/public/stress-adapter.example.mjs"
+    ],
+    "acceptanceCriteria": "Sandbox uses allow-scripts without allow-same-origin",
+    "verificationMethod": "safe/invalid URL and local module tests",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-039",
+    "phase": 8,
+    "area": "8D Browser-side adapters",
+    "title": "Origin and scheme restrictions",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Origin and scheme restrictions",
+    "sourceFiles": [
+      "apps/preview/src/stress-loader.ts",
+      "apps/preview/public/stress-adapter.example.mjs"
+    ],
+    "acceptanceCriteria": "Non-HTTPS and credential URLs fail safely",
+    "verificationMethod": "safe/invalid URL and local module tests",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-040",
+    "phase": 8,
+    "area": "8D Browser-side adapters",
+    "title": "Adapter lifecycle",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Adapter lifecycle",
+    "sourceFiles": [
+      "apps/preview/src/stress-loader.ts",
+      "apps/preview/public/stress-adapter.example.mjs"
+    ],
+    "acceptanceCriteria": "Pending work and frames cleaned on destroy",
+    "verificationMethod": "safe/invalid URL and local module tests",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-041",
+    "phase": 8,
+    "area": "8D Browser-side adapters",
+    "title": "Malformed adapter handling",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Malformed adapter handling",
+    "sourceFiles": [
+      "apps/preview/src/stress-loader.ts",
+      "apps/preview/public/stress-adapter.example.mjs"
+    ],
+    "acceptanceCriteria": "Missing mount and invalid exports report clear errors",
+    "verificationMethod": "safe/invalid URL and local module tests",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-042",
+    "phase": 8,
+    "area": "8D Browser-side adapters",
+    "title": "No secret leaks",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "No secret leaks",
+    "sourceFiles": [
+      "apps/preview/src/stress-loader.ts",
+      "apps/preview/public/stress-adapter.example.mjs"
+    ],
+    "acceptanceCriteria": "Reports never copy signed URLs or credentials",
+    "verificationMethod": "safe/invalid URL and local module tests",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-043",
+    "phase": 8,
+    "area": "8D Browser-side adapters",
+    "title": "Separate fixture and observed metrics",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Separate fixture and observed metrics",
+    "sourceFiles": [
+      "apps/preview/src/stress-loader.ts",
+      "apps/preview/public/stress-adapter.example.mjs"
+    ],
+    "acceptanceCriteria": "External results are not reclassified as native truths",
+    "verificationMethod": "safe/invalid URL and local module tests",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-044",
+    "phase": 8,
+    "area": "8E Real playback telemetry",
+    "title": "Stream-history ledger",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Stream-history ledger",
+    "sourceFiles": [
+      "src/video/stream-history.ts",
+      "apps/preview/src/tools.ts"
+    ],
+    "acceptanceCriteria": "Only real exposed media observations recorded",
+    "verificationMethod": "browser media API observation",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-045",
+    "phase": 8,
+    "area": "8E Real playback telemetry",
+    "title": "Buffered interval capture",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Buffered interval capture",
+    "sourceFiles": [
+      "src/video/stream-history.ts",
+      "apps/preview/src/tools.ts"
+    ],
+    "acceptanceCriteria": "Use actual TimeRanges",
+    "verificationMethod": "browser media API observation",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-046",
+    "phase": 8,
+    "area": "8E Real playback telemetry",
+    "title": "Dropped frame counters",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Dropped frame counters",
+    "sourceFiles": [
+      "src/video/stream-history.ts",
+      "apps/preview/src/tools.ts"
+    ],
+    "acceptanceCriteria": "Require supported browser counters",
+    "verificationMethod": "browser media API observation",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-047",
+    "phase": 8,
+    "area": "8E Real playback telemetry",
+    "title": "Decoded dimensions",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Decoded dimensions",
+    "sourceFiles": [
+      "src/video/stream-history.ts",
+      "apps/preview/src/tools.ts"
+    ],
+    "acceptanceCriteria": "Read actual videoWidth and videoHeight",
+    "verificationMethod": "browser media API observation",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-048",
+    "phase": 8,
+    "area": "8E Real playback telemetry",
+    "title": "No inferred rendition claims",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "No inferred rendition claims",
+    "sourceFiles": [
+      "src/video/stream-history.ts",
+      "apps/preview/src/tools.ts"
+    ],
+    "acceptanceCriteria": "Quality changes require sufficient evidence",
+    "verificationMethod": "browser media API observation",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-049",
+    "phase": 8,
+    "area": "8E Real playback telemetry",
+    "title": "Graceful unavailable metrics",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Graceful unavailable metrics",
+    "sourceFiles": [
+      "src/video/stream-history.ts",
+      "apps/preview/src/tools.ts"
+    ],
+    "acceptanceCriteria": "Advanced charts show unsupported, not zero",
+    "verificationMethod": "browser media API observation",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-050",
+    "phase": 8,
+    "area": "8E Real playback telemetry",
+    "title": "Diagnostics independent of player",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Diagnostics independent of player",
+    "sourceFiles": [
+      "src/video/stream-history.ts",
+      "apps/preview/src/tools.ts"
+    ],
+    "acceptanceCriteria": "Basic viewing does not rely on telemetry",
+    "verificationMethod": "browser media API observation",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-051",
+    "phase": 8,
+    "area": "8F Studio Journal",
+    "title": "Preserve original four notes",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Preserve original four notes",
+    "sourceFiles": [
+      "apps/preview/src/journal.ts",
+      "apps/preview/journal.html"
+    ],
+    "acceptanceCriteria": "Original editorial text and film remain",
+    "verificationMethod": "same player source and actual scene-note seeking",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-052",
+    "phase": 8,
+    "area": "8F Studio Journal",
+    "title": "Reuse same DHAGO player",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Reuse same DHAGO player",
+    "sourceFiles": [
+      "apps/preview/src/journal.ts",
+      "apps/preview/journal.html"
+    ],
+    "acceptanceCriteria": "Journal imports createDhagoPlayer",
+    "verificationMethod": "same player source and actual scene-note seeking",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-053",
+    "phase": 8,
+    "area": "8F Studio Journal",
+    "title": "Real scene-note seek",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Real scene-note seek",
+    "sourceFiles": [
+      "apps/preview/src/journal.ts",
+      "apps/preview/journal.html"
+    ],
+    "acceptanceCriteria": "Click changes actual media time",
+    "verificationMethod": "same player source and actual scene-note seeking",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-054",
+    "phase": 8,
+    "area": "8F Studio Journal",
+    "title": "Publication-grade presentation",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Publication-grade presentation",
+    "sourceFiles": [
+      "apps/preview/src/journal.ts",
+      "apps/preview/journal.html"
+    ],
+    "acceptanceCriteria": "Notes and player form a coherent article",
+    "verificationMethod": "same player source and actual scene-note seeking",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-055",
+    "phase": 8,
+    "area": "8F Studio Journal",
+    "title": "Mobile usability",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Mobile usability",
+    "sourceFiles": [
+      "apps/preview/src/journal.ts",
+      "apps/preview/journal.html"
+    ],
+    "acceptanceCriteria": "No horizontal overflow or hidden scene notes",
+    "verificationMethod": "same player source and actual scene-note seeking",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-056",
+    "phase": 8,
+    "area": "8F Studio Journal",
+    "title": "Credible separate site integration",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Credible separate site integration",
+    "sourceFiles": [
+      "apps/preview/src/journal.ts",
+      "apps/preview/journal.html"
+    ],
+    "acceptanceCriteria": "Not portrayed as independent external client",
+    "verificationMethod": "same player source and actual scene-note seeking",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-057",
+    "phase": 8,
+    "area": "8F Studio Journal",
+    "title": "No bonus overclaim",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "No bonus overclaim",
+    "sourceFiles": [
+      "apps/preview/src/journal.ts",
+      "apps/preview/journal.html"
+    ],
+    "acceptanceCriteria": "Judges determine live-site eligibility",
+    "verificationMethod": "same player source and actual scene-note seeking",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-058",
+    "phase": 8,
+    "area": "8G Engineering Tools",
+    "title": "Preserve useful instruments",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Preserve useful instruments",
+    "sourceFiles": [
+      "apps/preview/src/tools.ts",
+      "apps/preview/tools.html"
+    ],
+    "acceptanceCriteria": "Real seek, buffer, seekable and events available",
+    "verificationMethod": "real output and failure-handling checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-059",
+    "phase": 8,
+    "area": "8G Engineering Tools",
+    "title": "Remove redundant tools",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Remove redundant tools",
+    "sourceFiles": [
+      "apps/preview/src/tools.ts",
+      "apps/preview/tools.html"
+    ],
+    "acceptanceCriteria": "Each visible utility answers distinct question",
+    "verificationMethod": "real output and failure-handling checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-060",
+    "phase": 8,
+    "area": "8G Engineering Tools",
+    "title": "Visitor-friendly explanation",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Visitor-friendly explanation",
+    "sourceFiles": [
+      "apps/preview/src/tools.ts",
+      "apps/preview/tools.html"
+    ],
+    "acceptanceCriteria": "Copy describes outcomes without raw diagnostics",
+    "verificationMethod": "real output and failure-handling checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-061",
+    "phase": 8,
+    "area": "8G Engineering Tools",
+    "title": "Keep tools off homepage",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Keep tools off homepage",
+    "sourceFiles": [
+      "apps/preview/src/tools.ts",
+      "apps/preview/tools.html"
+    ],
+    "acceptanceCriteria": "Primary player remains unencumbered",
+    "verificationMethod": "real output and failure-handling checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-062",
+    "phase": 8,
+    "area": "8G Engineering Tools",
+    "title": "Meaningful error handling",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Meaningful error handling",
+    "sourceFiles": [
+      "apps/preview/src/tools.ts",
+      "apps/preview/tools.html"
+    ],
+    "acceptanceCriteria": "Unsupported API shows explanation",
+    "verificationMethod": "real output and failure-handling checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-08-063",
+    "phase": 8,
+    "area": "8G Engineering Tools",
+    "title": "Avoid unnecessary network cost",
+    "status": "IMPLEMENTED",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Avoid unnecessary network cost",
+    "sourceFiles": [
+      "apps/preview/src/tools.ts",
+      "apps/preview/tools.html"
+    ],
+    "acceptanceCriteria": "No unrelated Worker calls added",
+    "verificationMethod": "real output and failure-handling checks",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-001",
+    "phase": 9,
+    "area": "9A Primary experience",
+    "title": "Real player focal point",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Real player focal point",
+    "sourceFiles": [
+      "apps/preview/index.html",
+      "apps/preview/src/demo.css"
+    ],
+    "acceptanceCriteria": "Video dominates first screen",
+    "verificationMethod": "public homepage and player-only crop",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-002",
+    "phase": 9,
+    "area": "9A Primary experience",
+    "title": "Lead with woven interaction",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Lead with woven interaction",
+    "sourceFiles": [
+      "apps/preview/index.html",
+      "apps/preview/src/demo.css"
+    ],
+    "acceptanceCriteria": "Shuttle/time concept is understandable quickly",
+    "verificationMethod": "public homepage and player-only crop",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-003",
+    "phase": 9,
+    "area": "9A Primary experience",
+    "title": "Eliminate developer language",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Eliminate developer language",
+    "sourceFiles": [
+      "apps/preview/index.html",
+      "apps/preview/src/demo.css"
+    ],
+    "acceptanceCriteria": "No internal release terms on primary page",
+    "verificationMethod": "public homepage and player-only crop",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-004",
+    "phase": 9,
+    "area": "9A Primary experience",
+    "title": "Remove repo links from hero",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Remove repo links from hero",
+    "sourceFiles": [
+      "apps/preview/index.html",
+      "apps/preview/src/demo.css"
+    ],
+    "acceptanceCriteria": "No GitHub links in visible homepage",
+    "verificationMethod": "public homepage and player-only crop",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-005",
+    "phase": 9,
+    "area": "9A Primary experience",
+    "title": "Watch-first call to action",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Watch-first call to action",
+    "sourceFiles": [
+      "apps/preview/index.html",
+      "apps/preview/src/demo.css"
+    ],
+    "acceptanceCriteria": "Controls are obvious and immediately usable",
+    "verificationMethod": "public homepage and player-only crop",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-006",
+    "phase": 9,
+    "area": "9A Primary experience",
+    "title": "Keep journal/ribbon/stress navigation",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Keep journal/ribbon/stress navigation",
+    "sourceFiles": [
+      "apps/preview/index.html",
+      "apps/preview/src/demo.css"
+    ],
+    "acceptanceCriteria": "Secondary pages remain discoverable",
+    "verificationMethod": "public homepage and player-only crop",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-007",
+    "phase": 9,
+    "area": "9A Primary experience",
+    "title": "Editorial consistency",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Editorial consistency",
+    "sourceFiles": [
+      "apps/preview/index.html",
+      "apps/preview/src/demo.css"
+    ],
+    "acceptanceCriteria": "Public copy claims only verified behavior",
+    "verificationMethod": "public homepage and player-only crop",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-008",
+    "phase": 9,
+    "area": "9B Authentic evidence",
+    "title": "Desktop active playback capture",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Desktop active playback capture",
+    "sourceFiles": [
+      "scripts/capture-submission.mjs",
+      "tests/skin-visual.spec.ts"
+    ],
+    "acceptanceCriteria": "Real footage, controls and time visible",
+    "verificationMethod": "screenshots and real interaction recording tied to final SHA",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-009",
+    "phase": 9,
+    "area": "9B Authentic evidence",
+    "title": "Player-only crop",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Player-only crop",
+    "sourceFiles": [
+      "scripts/capture-submission.mjs",
+      "tests/skin-visual.spec.ts"
+    ],
+    "acceptanceCriteria": "No decorative website chrome",
+    "verificationMethod": "screenshots and real interaction recording tied to final SHA",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-010",
+    "phase": 9,
+    "area": "9B Authentic evidence",
+    "title": "Shuttle seek capture",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Shuttle seek capture",
+    "sourceFiles": [
+      "scripts/capture-submission.mjs",
+      "tests/skin-visual.spec.ts"
+    ],
+    "acceptanceCriteria": "Thumb corresponds to real seek time",
+    "verificationMethod": "screenshots and real interaction recording tied to final SHA",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-011",
+    "phase": 9,
+    "area": "9B Authentic evidence",
+    "title": "Active chapter capture",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Active chapter capture",
+    "sourceFiles": [
+      "scripts/capture-submission.mjs",
+      "tests/skin-visual.spec.ts"
+    ],
+    "acceptanceCriteria": "Chapter title corresponds to cue",
+    "verificationMethod": "screenshots and real interaction recording tied to final SHA",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-012",
+    "phase": 9,
+    "area": "9B Authentic evidence",
+    "title": "Three-theme captures",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Three-theme captures",
+    "sourceFiles": [
+      "scripts/capture-submission.mjs",
+      "tests/skin-visual.spec.ts"
+    ],
+    "acceptanceCriteria": "Same skin shown in all surfaces",
+    "verificationMethod": "screenshots and real interaction recording tied to final SHA",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-013",
+    "phase": 9,
+    "area": "9B Authentic evidence",
+    "title": "320/375 mobile captures",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "320/375 mobile captures",
+    "sourceFiles": [
+      "scripts/capture-submission.mjs",
+      "tests/skin-visual.spec.ts"
+    ],
+    "acceptanceCriteria": "Actual browser geometry, no mockup",
+    "verificationMethod": "screenshots and real interaction recording tied to final SHA",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-014",
+    "phase": 9,
+    "area": "9B Authentic evidence",
+    "title": "Settings and captions capture",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Settings and captions capture",
+    "sourceFiles": [
+      "scripts/capture-submission.mjs",
+      "tests/skin-visual.spec.ts"
+    ],
+    "acceptanceCriteria": "Real open menu and captions states",
+    "verificationMethod": "screenshots and real interaction recording tied to final SHA",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-015",
+    "phase": 9,
+    "area": "9B Authentic evidence",
+    "title": "Studio Journal capture",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Studio Journal capture",
+    "sourceFiles": [
+      "scripts/capture-submission.mjs",
+      "tests/skin-visual.spec.ts"
+    ],
+    "acceptanceCriteria": "Published journal player visible",
+    "verificationMethod": "screenshots and real interaction recording tied to final SHA",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-016",
+    "phase": 9,
+    "area": "9B Authentic evidence",
+    "title": "Stress Studio capture",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Stress Studio capture",
+    "sourceFiles": [
+      "scripts/capture-submission.mjs",
+      "tests/skin-visual.spec.ts"
+    ],
+    "acceptanceCriteria": "Fixtures and results shown truthfully",
+    "verificationMethod": "screenshots and real interaction recording tied to final SHA",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-017",
+    "phase": 9,
+    "area": "9B Authentic evidence",
+    "title": "Authentic motion capture",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Authentic motion capture",
+    "sourceFiles": [
+      "scripts/capture-submission.mjs",
+      "tests/skin-visual.spec.ts"
+    ],
+    "acceptanceCriteria": "Real play, drag and pause without synthetic footage",
+    "verificationMethod": "screenshots and real interaction recording tied to final SHA",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-018",
+    "phase": 9,
+    "area": "9C Submission narrative",
+    "title": "Explain dhago meaning",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Explain dhago meaning",
+    "sourceFiles": [
+      "submission/final-submission.md",
+      "submission/description.md"
+    ],
+    "acceptanceCriteria": "Thread meaning stated without invented motif",
+    "verificationMethod": "copy/source/playback comparison",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-019",
+    "phase": 9,
+    "area": "9C Submission narrative",
+    "title": "Explain woven-time thesis",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Explain woven-time thesis",
+    "sourceFiles": [
+      "submission/final-submission.md",
+      "submission/description.md"
+    ],
+    "acceptanceCriteria": "Concept exists inside player controls",
+    "verificationMethod": "copy/source/playback comparison",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-020",
+    "phase": 9,
+    "area": "9C Submission narrative",
+    "title": "Explain real playback truth",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Explain real playback truth",
+    "sourceFiles": [
+      "submission/final-submission.md",
+      "submission/description.md"
+    ],
+    "acceptanceCriteria": "Progress follows media rather than a timer",
+    "verificationMethod": "copy/source/playback comparison",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-021",
+    "phase": 9,
+    "area": "9C Submission narrative",
+    "title": "Explain familiar accessibility",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Explain familiar accessibility",
+    "sourceFiles": [
+      "submission/final-submission.md",
+      "submission/description.md"
+    ],
+    "acceptanceCriteria": "Controls work without learning new gestures",
+    "verificationMethod": "copy/source/playback comparison",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-022",
+    "phase": 9,
+    "area": "9C Submission narrative",
+    "title": "Explain portable ribbon",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Explain portable ribbon",
+    "sourceFiles": [
+      "submission/final-submission.md",
+      "submission/description.md"
+    ],
+    "acceptanceCriteria": "Precise host-neutral contract described",
+    "verificationMethod": "copy/source/playback comparison",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-023",
+    "phase": 9,
+    "area": "9C Submission narrative",
+    "title": "Explain journal integration",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Explain journal integration",
+    "sourceFiles": [
+      "submission/final-submission.md",
+      "submission/description.md"
+    ],
+    "acceptanceCriteria": "Same mount correctly described",
+    "verificationMethod": "copy/source/playback comparison",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-024",
+    "phase": 9,
+    "area": "9C Submission narrative",
+    "title": "Explain Edge Studio",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Explain Edge Studio",
+    "sourceFiles": [
+      "submission/final-submission.md",
+      "submission/description.md"
+    ],
+    "acceptanceCriteria": "Fixtures distinguished from production incidents",
+    "verificationMethod": "copy/source/playback comparison",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-025",
+    "phase": 9,
+    "area": "9C Submission narrative",
+    "title": "Identify competition-specific work",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Identify competition-specific work",
+    "sourceFiles": [
+      "submission/final-submission.md",
+      "submission/description.md"
+    ],
+    "acceptanceCriteria": "Original film and component craft acknowledged",
+    "verificationMethod": "copy/source/playback comparison",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-026",
+    "phase": 9,
+    "area": "9C Submission narrative",
+    "title": "Separate independent verification",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Separate independent verification",
+    "sourceFiles": [
+      "submission/final-submission.md",
+      "submission/description.md"
+    ],
+    "acceptanceCriteria": "Claimed capabilities cite exact evidence",
+    "verificationMethod": "copy/source/playback comparison",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-027",
+    "phase": 9,
+    "area": "9C Submission narrative",
+    "title": "State untested areas",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "State untested areas",
+    "sourceFiles": [
+      "submission/final-submission.md",
+      "submission/description.md"
+    ],
+    "acceptanceCriteria": "Physical devices and screen readers disclosed",
+    "verificationMethod": "copy/source/playback comparison",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-028",
+    "phase": 9,
+    "area": "9D Technical evidence",
+    "title": "Concise architecture explanation",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Concise architecture explanation",
+    "sourceFiles": [
+      "submission/manifest.json",
+      "INSTALL.md",
+      "docs/release-integrity.md"
+    ],
+    "acceptanceCriteria": "Source links to shared player and helpers",
+    "verificationMethod": "exact build and documented test artifacts",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-029",
+    "phase": 9,
+    "area": "9D Technical evidence",
+    "title": "Vite and React integration proof",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Vite and React integration proof",
+    "sourceFiles": [
+      "submission/manifest.json",
+      "INSTALL.md",
+      "docs/release-integrity.md"
+    ],
+    "acceptanceCriteria": "Real installation and cleanup documentation",
+    "verificationMethod": "exact build and documented test artifacts",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-030",
+    "phase": 9,
+    "area": "9D Technical evidence",
+    "title": "Exact Video.js v10 version",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Exact Video.js v10 version",
+    "sourceFiles": [
+      "submission/manifest.json",
+      "INSTALL.md",
+      "docs/release-integrity.md"
+    ],
+    "acceptanceCriteria": "Package and lockfile match",
+    "verificationMethod": "exact build and documented test artifacts",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-031",
+    "phase": 9,
+    "area": "9D Technical evidence",
+    "title": "Accessibility summary",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Accessibility summary",
+    "sourceFiles": [
+      "submission/manifest.json",
+      "INSTALL.md",
+      "docs/release-integrity.md"
+    ],
+    "acceptanceCriteria": "Automated tests separated from manual gaps",
+    "verificationMethod": "exact build and documented test artifacts",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-032",
+    "phase": 9,
+    "area": "9D Technical evidence",
+    "title": "Browser compatibility summary",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Browser compatibility summary",
+    "sourceFiles": [
+      "submission/manifest.json",
+      "INSTALL.md",
+      "docs/release-integrity.md"
+    ],
+    "acceptanceCriteria": "Engine versions and limits recorded",
+    "verificationMethod": "exact build and documented test artifacts",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-033",
+    "phase": 9,
+    "area": "9D Technical evidence",
+    "title": "Performance and bundle evidence",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Performance and bundle evidence",
+    "sourceFiles": [
+      "submission/manifest.json",
+      "INSTALL.md",
+      "docs/release-integrity.md"
+    ],
+    "acceptanceCriteria": "Actual byte totals, not perceived speed",
+    "verificationMethod": "exact build and documented test artifacts",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-034",
+    "phase": 9,
+    "area": "9D Technical evidence",
+    "title": "Stress Studio capability summary",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Stress Studio capability summary",
+    "sourceFiles": [
+      "submission/manifest.json",
+      "INSTALL.md",
+      "docs/release-integrity.md"
+    ],
+    "acceptanceCriteria": "True tested fixtures listed",
+    "verificationMethod": "exact build and documented test artifacts",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-035",
+    "phase": 9,
+    "area": "9D Technical evidence",
+    "title": "Public release evidence",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Public release evidence",
+    "sourceFiles": [
+      "submission/manifest.json",
+      "INSTALL.md",
+      "docs/release-integrity.md"
+    ],
+    "acceptanceCriteria": "Manifest SHA matches tested main",
+    "verificationMethod": "exact build and documented test artifacts",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-036",
+    "phase": 9,
+    "area": "9D Technical evidence",
+    "title": "Apache licensing",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Apache licensing",
+    "sourceFiles": [
+      "submission/manifest.json",
+      "INSTALL.md",
+      "docs/release-integrity.md"
+    ],
+    "acceptanceCriteria": "LICENSE and NOTICE present",
+    "verificationMethod": "exact build and documented test artifacts",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-037",
+    "phase": 9,
+    "area": "9D Technical evidence",
+    "title": "Original film attribution",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Original film attribution",
+    "sourceFiles": [
+      "submission/manifest.json",
+      "INSTALL.md",
+      "docs/release-integrity.md"
+    ],
+    "acceptanceCriteria": "Owner confirms original rights and file hash",
+    "verificationMethod": "exact build and documented test artifacts",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-038",
+    "phase": 9,
+    "area": "9D Technical evidence",
+    "title": "Mux public playback evidence",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Mux public playback evidence",
+    "sourceFiles": [
+      "submission/manifest.json",
+      "INSTALL.md",
+      "docs/release-integrity.md"
+    ],
+    "acceptanceCriteria": "Real decode and seek documented",
+    "verificationMethod": "exact build and documented test artifacts",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-039",
+    "phase": 9,
+    "area": "9D Technical evidence",
+    "title": "Journal live-site evidence",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Journal live-site evidence",
+    "sourceFiles": [
+      "submission/manifest.json",
+      "INSTALL.md",
+      "docs/release-integrity.md"
+    ],
+    "acceptanceCriteria": "Public scene-note seeking verified",
+    "verificationMethod": "exact build and documented test artifacts",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-040",
+    "phase": 9,
+    "area": "9E Exact release",
+    "title": "Confirm Mux playback ID",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Confirm Mux playback ID",
+    "sourceFiles": [
+      ".github/workflows/ci.yml",
+      "docs/release-integrity.md",
+      "tests/live.spec.ts"
+    ],
+    "acceptanceCriteria": "Public ID maps to existing original asset",
+    "verificationMethod": "exact-head CI, manifest parity and signed-out live playback",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-041",
+    "phase": 9,
+    "area": "9E Exact release",
+    "title": "Test decoded Mux playback",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Test decoded Mux playback",
+    "sourceFiles": [
+      ".github/workflows/ci.yml",
+      "docs/release-integrity.md",
+      "tests/live.spec.ts"
+    ],
+    "acceptanceCriteria": "CurrentTime advances on published route",
+    "verificationMethod": "exact-head CI, manifest parity and signed-out live playback",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-042",
+    "phase": 9,
+    "area": "9E Exact release",
+    "title": "Preserve original media",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Preserve original media",
+    "sourceFiles": [
+      ".github/workflows/ci.yml",
+      "docs/release-integrity.md",
+      "tests/live.spec.ts"
+    ],
+    "acceptanceCriteria": "No duplicate upload or replacement",
+    "verificationMethod": "exact-head CI, manifest parity and signed-out live playback",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-043",
+    "phase": 9,
+    "area": "9E Exact release",
+    "title": "Protect dedicated hosting boundary",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Protect dedicated hosting boundary",
+    "sourceFiles": [
+      ".github/workflows/ci.yml",
+      "docs/release-integrity.md",
+      "tests/live.spec.ts"
+    ],
+    "acceptanceCriteria": "Touch only DHAGO R2 keys",
+    "verificationMethod": "exact-head CI, manifest parity and signed-out live playback",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-044",
+    "phase": 9,
+    "area": "9E Exact release",
+    "title": "Run candidate build and browser gates",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Run candidate build and browser gates",
+    "sourceFiles": [
+      ".github/workflows/ci.yml",
+      "docs/release-integrity.md",
+      "tests/live.spec.ts"
+    ],
+    "acceptanceCriteria": "Exact head passes appropriate checks",
+    "verificationMethod": "exact-head CI, manifest parity and signed-out live playback",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-045",
+    "phase": 9,
+    "area": "9E Exact release",
+    "title": "Merge only tested head",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Merge only tested head",
+    "sourceFiles": [
+      ".github/workflows/ci.yml",
+      "docs/release-integrity.md",
+      "tests/live.spec.ts"
+    ],
+    "acceptanceCriteria": "PR merge tied to green candidate SHA",
+    "verificationMethod": "exact-head CI, manifest parity and signed-out live playback",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-046",
+    "phase": 9,
+    "area": "9E Exact release",
+    "title": "Stage identical tested distribution",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Stage identical tested distribution",
+    "sourceFiles": [
+      ".github/workflows/ci.yml",
+      "docs/release-integrity.md",
+      "tests/live.spec.ts"
+    ],
+    "acceptanceCriteria": "No independent rebuilding after validation",
+    "verificationMethod": "exact-head CI, manifest parity and signed-out live playback",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-047",
+    "phase": 9,
+    "area": "9E Exact release",
+    "title": "Publish versioned assets safely",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Publish versioned assets safely",
+    "sourceFiles": [
+      ".github/workflows/ci.yml",
+      "docs/release-integrity.md",
+      "tests/live.spec.ts"
+    ],
+    "acceptanceCriteria": "Assets before entry HTML and manifest last",
+    "verificationMethod": "exact-head CI, manifest parity and signed-out live playback",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-048",
+    "phase": 9,
+    "area": "9E Exact release",
+    "title": "Verify public manifest SHA",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Verify public manifest SHA",
+    "sourceFiles": [
+      ".github/workflows/ci.yml",
+      "docs/release-integrity.md",
+      "tests/live.spec.ts"
+    ],
+    "acceptanceCriteria": "Current deployed source matches tested merge",
+    "verificationMethod": "exact-head CI, manifest parity and signed-out live playback",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-049",
+    "phase": 9,
+    "area": "9E Exact release",
+    "title": "Test live film and controls",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Test live film and controls",
+    "sourceFiles": [
+      ".github/workflows/ci.yml",
+      "docs/release-integrity.md",
+      "tests/live.spec.ts"
+    ],
+    "acceptanceCriteria": "Play, seek, captions and fullscreen actually work",
+    "verificationMethod": "exact-head CI, manifest parity and signed-out live playback",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-050",
+    "phase": 9,
+    "area": "9E Exact release",
+    "title": "Verify Journal and Stress Lab",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Verify Journal and Stress Lab",
+    "sourceFiles": [
+      ".github/workflows/ci.yml",
+      "docs/release-integrity.md",
+      "tests/live.spec.ts"
+    ],
+    "acceptanceCriteria": "Public pages functional after release",
+    "verificationMethod": "exact-head CI, manifest parity and signed-out live playback",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-051",
+    "phase": 9,
+    "area": "9E Exact release",
+    "title": "Record console and visual evidence",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Record console and visual evidence",
+    "sourceFiles": [
+      ".github/workflows/ci.yml",
+      "docs/release-integrity.md",
+      "tests/live.spec.ts"
+    ],
+    "acceptanceCriteria": "No unexplained severe errors",
+    "verificationMethod": "exact-head CI, manifest parity and signed-out live playback",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
+  },
+  {
+    "id": "EX-09-052",
+    "phase": 9,
+    "area": "9E Exact release",
+    "title": "Prepare owner-only handoff",
+    "status": "IN PROGRESS",
+    "existingImplementation": "Existing code/documentation present, current candidate unverified",
+    "requiredImprovement": "Prepare owner-only handoff",
+    "sourceFiles": [
+      ".github/workflows/ci.yml",
+      "docs/release-integrity.md",
+      "tests/live.spec.ts"
+    ],
+    "acceptanceCriteria": "Unverified gaps and receipt remain explicit",
+    "verificationMethod": "exact-head CI, manifest parity and signed-out live playback",
+    "evidenceLocation": [
+      "PENDING exact-head CI/browser evidence"
+    ],
+    "remainingBlocker": null
   }
 ]

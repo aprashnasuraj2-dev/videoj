@@ -1,618 +1,3493 @@
-# DHAGO: 100-step implementation checklist
+# DHAGO — Competition Excellence Checklist
 
-**86/100 complete** | 9 in progress | 0 blocked | Updated 2026-11-13T22:55:02.364Z
+Phases 1–9 below are the authoritative current program, stored in **docs/steps.json** after the preserved historical 100 steps. IMPLEMENTED is not VERIFIED. Phase 10 remains owner-only and unsubmitted.
 
-This is evidence-based task completion, not a percentage of contest quality. See [worklog](worklog.md), [status](status.json) and [plan](PLAN.md). Blocked steps remain unchecked; independent later work may continue.
+8/214 VERIFIED · 144 IMPLEMENTED · 60 IN PROGRESS · 2 BLOCKED
 
-## 01 / STRATEGY & CONSTRAINTS
+## Phase 1
 
-- [x] **001 - Capture the authoritative brief** - DONE
+### Design and engineering audit
 
-  Save the live rules URL, access date, deadline wording and any entry limits in docs/brief.md. AI must flag an absent eligibility term rather than invent it; account-specific eligibility remains unverified until checked.
+- [x] **EX-01-001: Latest main and development history** — VERIFIED
 
-  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+  Existing: Source inspected at main 7b585e369bc3
 
-- [x] **002 - Build an eligibility checklist** - DONE
+  Required: Latest main and development history
 
-  Create separate checks for public access, actual v10 playback, five essential control categories, responsive layout, keyboard operation, visual and short description. Optional bonuses must never mask a failed minimum requirement.
+  Acceptance: Capture base SHA, recent changes and exact prior evidence
 
-  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+  Verification: source inspection and actual player screenshot
 
-- [x] **003 - Convert scoring into priorities** - DONE
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-  Use an internal target of at least 23/25 plus two verified bonuses, as an aspiration only. Spend design effort on the player itself; a polished surrounding website cannot rescue weak controls.
+  Evidence: https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4
 
-  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+  Blocker: none recorded
 
-- [x] **004 - Set the authoring contract** - DONE
+- [x] **EX-01-002: Existing docs and outstanding work** — VERIFIED
 
-  AI writes the implementation, tests, documentation, screenshots, release archive and form copy. Interpret 99% as a target for authored deliverables, not measured total effort, autonomous judgment, or a guaranteed completion rate.
+  Existing: Source inspected at main 7b585e369bc3
 
-  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+  Required: Existing docs and outstanding work
 
-- [x] **005 - Identify owner handoffs** - DONE
+  Acceptance: Reconcile all existing progress and known gaps
 
-  List account sign-in, rights confirmation, final visual choice, phone testing and accepting entry terms. AI prepares each handoff with exact fields and files, then continues all independent work without waiting unnecessarily.
+  Verification: source inspection and actual player screenshot
 
-  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-- [x] **006 - Choose a bounded schedule** - DONE
+  Evidence: https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4
 
-  Budget 24-32 active agent hours and 60-120 owner minutes, assuming tools work and accounts can be accessed. These are planning estimates; record actual hours and protect the final deployment buffer.
+  Blocker: none recorded
 
-  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+- [x] **EX-01-003: Player component hierarchy** — VERIFIED
 
-- [x] **007 - Allocate the effort** - DONE
+  Existing: Source inspected at main 7b585e369bc3
 
-  Within a 28-hour example: 4h discovery/design, 10h implementation, 7h access/device QA, 3h packaging/deployment and 4h contingency. Cut optional features before consuming the contingency reserved for playback and entry problems.
+  Required: Player component hierarchy
 
-  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+  Acceptance: Trace the real video-player and all native controls
 
-- [x] **008 - Set the cost envelope** - DONE
+  Verification: source inspection and actual player screenshot
 
-  Target no new paid tools beyond an existing AI subscription and qualifying free hosting. Set a US$20 optional spending ceiling requiring owner agreement; log metered usage. Free allowances are finite, not a promise of zero lifetime cost.
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+  Evidence: https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4
 
-- [x] **009 - Create the risk register** - DONE
+  Blocker: none recorded
 
-  Track wrong player version, inaccessible controls, mobile overflow, expired video, protected deployment and deadline failure. Give each a test, owner and fallback; fix risks that can disqualify the entry before decorative improvements.
+- [x] **EX-01-004: Living Loom implementation** — VERIFIED
 
-  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+  Existing: Source inspected at main 7b585e369bc3
 
-- [x] **010 - Freeze the success definition** - DONE
+  Required: Living Loom implementation
 
-  The plan ends with a publicly playable skin, reproducible source, usable visual, accurate description, optional bonus evidence and saved submission receipt. A ZIP, screenshot or repository alone is not the required working URL.
+  Acceptance: Map event-driven state to actual media
 
-  Evidence: [docs/brief.md](../docs/brief.md), [docs/risks.md](../docs/risks.md)
+  Verification: source inspection and actual player screenshot
 
-## 02 / ORIGINALITY & ART DIRECTION
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-- [x] **011 - Inspect a bounded competitor sample** - DONE
+  Evidence: https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4
 
-  Review 12-20 visible entries and record concept families, not popularity rankings. The current feed includes tactile controls, transit timelines and waveform players [S7]; the sample cannot establish uniqueness across all entries.
+  Blocker: none recorded
 
-  Evidence: [docs/design.md](../docs/design.md)
+- [x] **EX-01-005: Internal chapter ribbon** — VERIFIED
 
-- [x] **012 - Define one user and moment** - DONE
+  Existing: Source inspected at main 7b585e369bc3
 
-  Target viewers watching short craft, travel or documentary films on phones and laptops. Their main task is watching; secondary tasks are finding a chapter and replaying a useful moment without a complicated editor.
+  Required: Internal chapter ribbon
 
-  Evidence: [docs/design.md](../docs/design.md)
+  Acceptance: Explain cues, thumb, fill and seek semantics
 
-- [x] **013 - Write the design thesis** - DONE
+  Verification: source inspection and actual player screenshot
 
-  Create docs/design.md: a quiet picture above a solid control shelf, with a woven linear timeline and clear chapter labels. The metaphor lives inside the skin, so it survives when removed from its demo website.
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-  Evidence: [docs/design.md](../docs/design.md)
+  Evidence: https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4
 
-- [x] **014 - Define the signature interaction** - DONE
+  Blocker: none recorded
 
-  Render chapter segments as adjoining woven swatches with a single standard seek track and thumb. Pointer movement may reveal a timestamp; selection seeks. Texture must never imply a second draggable control or fictional audio waveform.
+- [x] **EX-01-006: Portable ribbon component** — VERIFIED
 
-  Evidence: [docs/design.md](../docs/design.md)
+  Existing: Source inspected at main 7b585e369bc3
 
-- [x] **015 - Set a restrained visual system** - DONE
+  Required: Portable ribbon component
 
-  Start with ink #171918, bone #F4EBDD, rust #B44332 and muted gold #9A5A18. AI measures every actual foreground/background pairing before use; these are palette candidates, not pre-certified accessible combinations.
+  Acceptance: Confirm no Video.js-specific import
 
-  Evidence: [docs/design.md](../docs/design.md)
+  Verification: source inspection and actual player screenshot
 
-- [x] **016 - Resolve type and icon craft** - DONE
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-  Use one licensed sans family plus tabular numerals for time. Draw or use one consistently licensed SVG icon family, with 20-24px glyphs inside 44-48px buttons. Adjust play-triangle optical centering by visual inspection.
+  Evidence: https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4
 
-  Evidence: [docs/design.md](../docs/design.md)
+  Blocker: none recorded
 
-- [x] **017 - Create three comparable compositions** - DONE
+- [ ] **EX-01-007: Seek, playback, captions, speed, audio and fullscreen** — IN PROGRESS
 
-  AI produces live HTML/CSS variants: warm shelf, dark shelf and minimal editorial shelf. Keep video, control order and player size identical so owner selection judges the skin rather than unrelated imagery.
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Required: Seek, playback, captions, speed, audio and fullscreen
 
-- [x] **018 - Apply a clear selection rubric** - DONE
+  Acceptance: Trace each control to its actual source
 
-  Score variants for recognition, timeline clarity, thumb reach, contrast and reuse. Keep the strongest single direction; do not merge three layouts into a multi-theme system that triples the state-testing burden.
+  Verification: source inspection and actual player screenshot
 
-  Evidence: [docs/design.md](../docs/design.md)
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-- [x] **019 - Test the counterexample** - DONE
+  Evidence: PENDING exact-head CI/browser evidence
 
-  If the weave reads as a decorative loading bar or chapter colors carry all meaning, it fails. Add names, ticks and a conventional thumb; reduce texture until seeking is immediately obvious. Novelty alone does not earn usability.
+  Blocker: none recorded
 
-  Evidence: [docs/design.md](../docs/design.md)
+- [x] **EX-01-008: Homepage and all studio pages** — VERIFIED
 
-- [x] **020 - Lock a reproducible design brief** - DONE
+  Existing: Source inspected at main 7b585e369bc3
 
-  Save approved tokens, icon stroke, spacing, radii, two responsive layouts and screenshots. Define only one optional enhancement: keyboard-operable A-B replay. Avoid accounts, multiplayer, chat and AI services in the shipped player.
+  Required: Homepage and all studio pages
 
-  Evidence: [docs/design.md](../docs/design.md)
+  Acceptance: Record five public page roles and links
 
-## 03 / REPOSITORY & AI SETUP
+  Verification: source inspection and actual player screenshot
 
-- [x] **021 - Establish workspace capabilities** - DONE
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-  AI checks Node, package manager, Git, browser automation and network access. Record versions in docs/environment.md. If execution is unavailable, provide a source bundle with explicit untested status rather than claiming a functioning demo.
+  Evidence: https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4
 
-  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+  Blocker: none recorded
 
-- [x] **022 - Create an isolated repository** - DONE
+- [ ] **EX-01-009: Live deployed release** — IN PROGRESS
 
-  Use a new repository such as dhago-videojs-skin under the owner account, once connected. Until then, initialize local Git and keep a downloadable snapshot. Do not modify EventV, Patro or other existing projects during this setup.
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+  Required: Live deployed release
 
-- [x] **023 - Set repository safeguards** - DONE
+  Acceptance: Retrieve and compare release manifest with tested source
 
-  Write .gitignore for node_modules, build output, private environment files and local recordings. Commit a safe .env.example with names only. Never place Mux secrets, host tokens or authentication cookies in Git, client JavaScript or screenshots.
+  Verification: source inspection and actual player screenshot
 
-  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-- [x] **024 - Install the official agent guidance** - DONE
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Follow the Video.js skill instructions for the actual tool and restart/reload if required. If plugin installation is unsupported, read official and installed docs directly. Do not pretend a skill was installed when only its page was read.
+  Blocker: none recorded
 
-  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+- [ ] **EX-01-010: Baseline player-only screenshots** — IN PROGRESS
 
-- [x] **025 - Generate the version-matched starter** - DONE
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Run the official skin CLI with the chosen options. Read generated files before restructuring them. Save CLI version and command choices; if docs and CLI conflict, inspect help and installed exports, then document the resolved behavior.
+  Required: Baseline player-only screenshots
 
-  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+  Acceptance: Capture isolated desktop and mobile before images
 
-- [x] **026 - Prove genuine v10 integration** - DONE
+  Verification: source inspection and actual player screenshot
 
-  Record the installed @videojs/html version, lockfile and runtime component registration. Reject accidental v8 patterns such as videojs() initialization unless explicitly supported by the installed v10 docs. A package name alone does not prove runtime playback.
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Evidence: PENDING exact-head CI/browser evidence
 
-- [x] **027 - Create the first playable baseline** - DONE
+  Blocker: none recorded
 
-  Start the generated preview with an authorized test clip, activate play and observe advancing time and rendered frames. Commit this small known-working baseline before custom styling so later regressions have a useful comparison point.
+- [ ] **EX-01-011: Linen, Ink and Paper comparison** — IN PROGRESS
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Existing: Existing code/documentation present, current candidate unverified
 
-- [x] **028 - Write a project AGENTS.md** - DONE
+  Required: Linen, Ink and Paper comparison
 
-  Specify current docs first, preserve component semantics, no fake state, no credentials, no invented test results and one coherent feature at a time. Permit routine reversible fixes; keep publication and account actions within the owner-authorized scope.
+  Acceptance: Show same geometry and distinct surface readability
 
-  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+  Verification: source inspection and actual player screenshot
 
-- [x] **029 - Create a resumable worklog** - DONE
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-  For every phase store completed step numbers, next action, commit SHA, blockers and evidence paths. New AI sessions read AGENTS.md and worklog first; they must inspect current files instead of repeating installation or research.
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+  Blocker: none recorded
 
-- [x] **030 - Use light but reliable Git discipline** - DONE
+- [ ] **EX-01-012: Generic-looking control audit** — IN PROGRESS
 
-  Work on feat/dhago-skin, commit meaningful slices and keep main playable. Run checks relevant to changed behavior. One final reviewed release is preferable to spending hours on redundant PR or CI cycles for cosmetic edits.
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Evidence: [docs/environment.md](../docs/environment.md), [AGENTS.md](../AGENTS.md), [docs/worklog.md](../docs/worklog.md)
+  Required: Generic-looking control audit
 
-## 04 / STATE & ESSENTIAL CONTROLS
+  Acceptance: Name selectors and show screenshots of deficiencies
 
-- [x] **031 - Inventory real component imports** - DONE
+  Verification: source inspection and actual player screenshot
 
-  Map every visible and nonvisual component to its installed reference and import. Include status announcements and an error surface. Compound controls need their child registrations too; unknown custom elements can look present while doing nothing.
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-  Evidence: [src/video/skin.ts](../src/video/skin.ts), [src/video/skin.html](../src/video/skin.html)
+  Evidence: PENDING exact-head CI/browser evidence
 
-- [x] **032 - Implement play, pause and ended states** - DONE
+  Blocker: none recorded
 
-  Use the provided play control with correct state labels and replay behavior. Test the overlay and shelf buttons against actual playback; if play() is rejected, expose a useful message instead of showing a false playing icon.
+- [ ] **EX-01-013: Unfinished or duplicate functionality** — IN PROGRESS
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Existing: Existing code/documentation present, current candidate unverified
 
-- [x] **033 - Build a conventional seek slider** - DONE
+  Required: Unfinished or duplicate functionality
 
-  Connect timeline fill, buffer, thumb and pointer/keyboard seeking to the real media state. Handle zero or unavailable duration, dragging outside bounds and seeking near the end. Never fake buffered progress for visual polish.
+  Acceptance: Point to exact code and avoid reimplementation
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Verification: source inspection and actual player screenshot
 
-- [x] **034 - Make time readable and stable** - DONE
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-  Display elapsed and total time with tabular numerals and clear labels. Before metadata, show an honest placeholder. Avoid NaN:NaN, negative elapsed time, shifting widths and announcements on every time-update event.
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Blocker: none recorded
 
-- [x] **035 - Wire mute and volume correctly** - DONE
+- [ ] **EX-01-014: Mobile weaknesses** — IN PROGRESS
 
-  Show a discoverable mute control and a working volume adjustment where the platform supports it. Restore the previous nonzero level when unmuting. Test device volume restrictions and describe platform-controlled behavior without a misleading inactive slider.
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Required: Mobile weaknesses
 
-- [x] **036 - Implement real fullscreen** - DONE
+  Acceptance: Record target geometry and overflow at 240 and 320
 
-  Request fullscreen on the appropriate player container so custom controls remain included where supported. Handle exiting via Escape and browser UI. Test iPhone native video fullscreen separately; do not label a CSS-expanded panel as system fullscreen.
+  Verification: source inspection and actual player screenshot
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-- [x] **037 - Add reliable caption controls** - DONE
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Provide a valid caption track for the demo and a clear on/off or language selector. Reflect availability, selection and errors accurately. Keep captions clear of the control shelf, including mobile landscape and enlarged text.
+  Blocker: none recorded
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+- [x] **EX-01-015: Browser and accessibility evidence** — VERIFIED
 
-- [x] **038 - Add one compact settings surface** - DONE
+  Existing: Source inspected at main 7b585e369bc3
 
-  Offer playback speed only if supported; use clear current values and keyboard-operable choices. Avoid quality controls until the media feature truly supports them. An MP4 demo does not justify a fabricated adaptive-quality menu.
+  Required: Browser and accessibility evidence
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Acceptance: Separate automation from real human/device coverage
 
-- [x] **039 - Handle loading and playback failure** - DONE
+  Verification: source inspection and actual player screenshot
 
-  Style idle, metadata loading, buffering, seeking, paused, playing, ended and failed states. Show a stable buffer indicator only when needed. Include a useful retry action and safe media fallback without silently abandoning the Mux bonus.
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Evidence: https://github.com/aprashnasuraj2-dev/videoj/commit/7b585e369bc3f4d322a26d947a9bbcd114707fc4
 
-- [x] **040 - Verify baseline acceptance now** - DONE
+  Blocker: none recorded
 
-  Run play/pause, seek, time, volume/mute and fullscreen checks before decoration. Capture browser, source and observed result in evidence/core-controls.md. Fix functional failures while the layout is still simple; postpone optional A-B replay.
+- [ ] **EX-01-016: Rubric baseline** — IN PROGRESS
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Existing: Existing code/documentation present, current candidate unverified
 
-## 05 / SIGNATURE SKIN IMPLEMENTATION
+  Required: Rubric baseline
 
-- [x] **041 - Separate skin and showcase styles** - DONE
+  Acceptance: Record supported facts, counterexample and unverified gaps
 
-  Keep player-specific markup/styles in the generated src/ structure and demo narrative under apps/preview/ or its verified equivalent. Namespace classes. The skin must not depend on the host page background, global reset or a particular page font.
+  Verification: source inspection and actual player screenshot
 
-  Evidence: [src/create-player.ts](../src/create-player.ts), [apps/preview/src/demo.css](../apps/preview/src/demo.css)
+  Source files: src/create-player.ts, src/video/living-loom.ts, src/video/dhago.css, apps/preview/index.html
 
-- [x] **042 - Build the solid control shelf** - DONE
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Place essential controls against an opaque, stable surface so moving footage cannot destroy contrast. Let the video remain visually dominant. In fullscreen, keep the shelf attached to the player container and preserve safe-area padding.
+  Blocker: none recorded
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+## Phase 2
 
-- [x] **043 - Implement original weave texture** - DONE
+### Textile visual identity
 
-  Generate a restrained repeating pattern for chapter segments with small CSS gradients or SVG. Keep it decorative and noninteractive. Reduce visual density around labels; never put low-contrast texture directly behind essential numbers or icon strokes.
+- [ ] **EX-02-001: Warp, weft, shuttle, selvedge and tension language** — IMPLEMENTED
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Existing: Existing code/documentation present, current candidate unverified
 
-- [x] **044 - Map chapter data to actual time** - DONE
+  Required: Warp, weft, shuttle, selvedge and tension language
 
-  Store titles and real start/end seconds in a documented format. Compute segment widths from duration, clamp invalid values and test overlaps. With no chapters, retain the normal timeline; do not invent chapter content or timings.
+  Acceptance: Each term maps to a visible, functional component
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Verification: player-only static/interactive screenshots
 
-- [x] **045 - Add seek preview feedback** - DONE
+  Source files: src/video/dhago.css, src/video/skin.html
 
-  Show actual timestamp and chapter name on hover/focus or touch interaction without requiring either. Include preview thumbnails only if verified storyboards exist and load reliably. A timestamp-only fallback is better than broken or invented thumbnail frames.
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Blocker: none recorded
 
-- [x] **046 - Polish focus, hover and pressed states** - DONE
+- [ ] **EX-02-002: Cohesive player material** — IMPLEMENTED
 
-  Resolve every icon and button across resting, hover, focus, active, muted and disabled states. Keep focus distinct from hover. On touch, avoid sticky hover behavior and ensure no action requires a precision hover target.
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Required: Cohesive player material
 
-- [x] **047 - Make motion purposeful** - DONE
+  Acceptance: Identity recognizable without surrounding website
 
-  Use brief opacity or position transitions for feedback, with an initial 120-180ms design target. Avoid perpetual weave motion and layout-shifting flourishes. Reduced-motion mode removes nonessential movement while preserving immediate visible state feedback.
+  Verification: player-only static/interactive screenshots
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Source files: src/video/dhago.css, src/video/skin.html
 
-- [x] **048 - Evaluate optional A-B replay** - DONE
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Only after essential checks pass, add two labeled boundary actions and a clear reset. Clamp A below B, seek to A only when appropriate and respect pause/end behavior. Remove the entire feature if it causes timeline ambiguity or instability.
+  Blocker: none recorded
 
-  Evidence: [docs/design.md](../docs/design.md)
+- [ ] **EX-02-003: Consistent geometry** — IMPLEMENTED
 
-- [x] **049 - Package theme customization** - DONE
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Expose a small token surface, safe defaults and a documented compact layout. Test one alternate accent plus a second unrelated host page. A configurable color is not automatically accessible; state which foreground settings were measured together.
+  Required: Consistent geometry
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
+  Acceptance: Spacing, corners and icon alignment follow one grid
 
-- [x] **050 - Review the actual visual artifact** - DONE
+  Verification: player-only static/interactive screenshots
 
-  Critique isolated screenshots for distinctive craft and useful interaction. Verify that the woven ribbon is actually visible; a passing seek test cannot prove visual quality. Compare warm, dark and minimal at desktop and 320px. Fix composition defects before adding features.
+  Source files: src/video/dhago.css, src/video/skin.html
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Evidence: PENDING exact-head CI/browser evidence
 
-## 06 / RESPONSIVENESS & ACCESSIBILITY
+  Blocker: none recorded
 
-- [x] **051 - Test width-driven layout** - DONE
+- [ ] **EX-02-004: Refined textures** — IMPLEMENTED
 
-  Use player/container width as the breakpoint signal where supported. At 320px, move essentials into two rows instead of squeezing labels. Test portrait, landscape and embedded players; viewport-wide CSS can fail inside narrow content columns.
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Required: Refined textures
 
-- [x] **052 - Preserve all essential functions** - DONE
+  Acceptance: Patterns are legible without overpowering actual media
 
-  Keep play/pause, seek, time, mute/volume access and fullscreen discoverable at narrow widths. Overflow menus may hold secondary settings, not silently remove essential actions. Respect phone safe areas without covering the timeline.
+  Verification: player-only static/interactive screenshots
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Source files: src/video/dhago.css, src/video/skin.html
 
-- [x] **053 - Audit the complete keyboard route** - DONE
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Tab through controls in visual order, activate buttons with expected keys and operate sliders with arrows. Test Home/End when provided. Prevent duplicate shortcuts, page scrolling on consumed playback keys and global hotkeys that capture typing elsewhere.
+  Blocker: none recorded
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
+- [ ] **EX-02-005: Time and chapter typography** — IMPLEMENTED
 
-- [x] **054 - Verify popup focus behavior** - DONE
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Open each menu with keyboard, move between choices, press Escape and confirm focus returns to its trigger. Do not trap focus in nonmodal popovers. Ensure menus are reachable and unclipped in fullscreen and short landscape players.
+  Required: Time and chapter typography
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Acceptance: Stable numerals and scannable hierarchy at 320
 
-- [x] **055 - Strengthen visible focus** - DONE
+  Verification: player-only static/interactive screenshots
 
-  Apply a high-contrast outline with sufficient offset around each interactive target. Keep controls visible while focused; idle auto-hide must never hide the focused action. Test focus over both the dark and light shelf treatment.
+  Source files: src/video/dhago.css, src/video/skin.html
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Evidence: PENDING exact-head CI/browser evidence
 
-- [ ] **056 - Check semantics with assistive technology** - IN_PROGRESS
+  Blocker: none recorded
 
-  AI inspects accessible names, roles and current values, then prepares a short VoiceOver or NVDA walkthrough for the owner. Verify changing labels and slider time. Do not duplicate roles or announce elapsed seconds continuously.
+- [ ] **EX-02-006: Depth, contrast and shadows** — IMPLEMENTED
 
-  Evidence: [tests/deep.spec.ts](../tests/deep.spec.ts), [docs/owner-review.md](../docs/owner-review.md)
+  Existing: Existing code/documentation present, current candidate unverified
 
-- [x] **057 - Measure real contrast and color use** - DONE
+  Required: Depth, contrast and shadows
 
-  Measure text, icon, focus and track pairs over near-white, near-black and mixed video frames. Label chapters and selected settings with more than color. Forced-colors mode must retain the timeline, boundaries and focus visibility.
+  Acceptance: Readable player against three backgrounds
 
-  Evidence: [tests/QA.md](../tests/QA.md), [tests/player.spec.ts](../tests/player.spec.ts), [tests/thread.spec.ts](../tests/thread.spec.ts), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553)
+  Verification: player-only static/interactive screenshots
 
-- [x] **058 - Check zoom and long content** - DONE
+  Source files: src/video/dhago.css, src/video/skin.html
 
-  Test 200% zoom and a narrow reflow case, large text, long chapter titles and translated labels. Wrap or truncate with accessible full names. Never shrink essential labels until they technically fit but become unreadable.
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Evidence: [tests/deep.spec.ts](../tests/deep.spec.ts), [tests/player.spec.ts](../tests/player.spec.ts), [tests/QA.md](../tests/QA.md)
+  Blocker: none recorded
 
-- [x] **059 - Honor user preferences** - DONE
+- [ ] **EX-02-007: Three unified surface treatments** — IMPLEMENTED
 
-  Test prefers-reduced-motion and remove ornamental animation. Provide solid surfaces without relying on blur, and honor contrast preferences where implemented. Test actual emulated media conditions, not merely the existence of a CSS media-query block.
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
+  Required: Three unified surface treatments
 
-- [ ] **060 - Conduct a timed first-use trial** - NOT_STARTED
+  Acceptance: Linen, Ink and Paper share behavior and proportions
 
-  Ask the owner to play, seek, mute, open captions and enter fullscreen on a phone without instruction. Target finding each in about five seconds as a design heuristic, not a scientific benchmark. Fix any repeated hesitation.
+  Verification: player-only static/interactive screenshots
 
-  Evidence: [docs/owner-review.md](../docs/owner-review.md)
+  Source files: src/video/dhago.css, src/video/skin.html
 
-## 07 / VIDEO, MUX & REAL-SITE BONUS
+  Evidence: PENDING exact-head CI/browser evidence
 
-- [x] **061 - Choose one rights-cleared video** - DONE
+  Blocker: none recorded
 
-  Prefer a 60-120 second owner-created craft, landscape or project walkthrough with bright and dark scenes. Record creator, permission and any music terms. Apache licensing the skin does not automatically relicense third-party video, fonts or artwork.
+- [ ] **EX-02-008: Video dominance** — IMPLEMENTED
 
-  Evidence: [scripts/create-film.py](../scripts/create-film.py), [docs/media.md](../docs/media.md)
+  Existing: Existing code/documentation present, current candidate unverified
 
-- [x] **062 - Prepare the media package with AI** - DONE
+  Required: Video dominance
 
-  AI can edit authorized footage, create an original title card, compress a web version and extract a poster. If source footage is unavailable, create a simple original motion study from code rather than downloading unlicensed cinematic footage.
+  Acceptance: Film remains main visual area, not decoration
 
-  Evidence: [apps/preview/public/media/studies-in-thread.mp4](../apps/preview/public/media/studies-in-thread.mp4), [apps/preview/public/media/poster.webp](../apps/preview/public/media/poster.webp)
+  Verification: player-only static/interactive screenshots
 
-- [x] **063 - Produce real captions and chapters** - DONE
+  Source files: src/video/dhago.css, src/video/skin.html
 
-  Generate a transcript if there is speech, correct names and timestamps, and export WebVTT captions plus chapter metadata. For a silent study, use honest descriptive labels; do not fabricate spoken dialogue just to demonstrate captions.
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Evidence: [apps/preview/public/media/captions.vtt](../apps/preview/public/media/captions.vtt), [apps/preview/public/media/chapters.vtt](../apps/preview/public/media/chapters.vtt)
+  Blocker: none recorded
 
-- [x] **064 - Prepare the Mux account handoff** - DONE
+- [ ] **EX-02-009: Remove ornamental clutter** — IMPLEMENTED
 
-  Give the owner the exact sign-up/upload steps and filename. Owner handles identity, authentication and plan choice. If an approved connector exists, AI may use it within granted scope; never request that passwords or secrets be pasted into the repository.
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Evidence: [docs/media.md](../docs/media.md), [.github/workflows/mux.yml](../.github/workflows/mux.yml)
+  Required: Remove ornamental clutter
 
-- [x] **065 - Upload a persistent public asset** - DONE
+  Acceptance: No visual element obscures caption, thumb or control
 
-  Create a standard asset with public playback and wait for Ready. Record asset ID privately and playback ID in the manifest. Avoid temporary demo assets; the Mux docs console warns its test assets are deleted after 24 hours [S5].
+  Verification: player-only static/interactive screenshots
 
-  Evidence: [docs/worklog.md](../docs/worklog.md), [apps/preview/src/media.json](../apps/preview/src/media.json), [tests/mux.spec.ts](../tests/mux.spec.ts)
+  Source files: src/video/dhago.css, src/video/skin.html
 
-- [x] **066 - Connect the actual Mux source** - DONE
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Use the installed Video.js v10 media integration for Mux/HLS, verified against matching docs. Test manifest and segments, browser playback and seeking. The public playback ID is safe to expose; management credentials must stay outside the browser bundle.
+  Blocker: none recorded
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/media.md](../docs/media.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
+- [ ] **EX-02-010: Signature paused-state crop** — IMPLEMENTED
 
-- [x] **067 - Verify the Mux bonus end to end** - DONE
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Observe the submitted player requesting the expected public asset and advancing through real video. Record playback ID, deployment URL, time and network evidence. If fallback media is playing instead, treat the Mux bonus as unverified until fixed.
+  Required: Signature paused-state crop
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/hosting.md](../docs/hosting.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329), [submission/manifest.json](../submission/manifest.json)
+  Acceptance: Unlabeled paused player expresses woven-time concept
 
-- [ ] **068 - Control cost and media lifetime** - IN_PROGRESS
+  Verification: player-only static/interactive screenshots
 
-  Current Mux pricing advertises a free plan with up to 10 stored videos and 100K monthly delivery minutes [S6]. Confirm the account-specific limits. Example: 10,000 full 2-minute views equal 20,000 delivery minutes, before replays and other account traffic.
+  Source files: src/video/dhago.css, src/video/skin.html
 
-  Evidence: [docs/mux-cost-and-retention.md](../docs/mux-cost-and-retention.md), [docs/worklog.md](../docs/worklog.md)
+  Evidence: PENDING exact-head CI/browser evidence
 
-- [x] **069 - Integrate into one genuine live page** - DONE
+  Blocker: none recorded
 
-  AI prepares a useful portfolio case study or a tightly scoped existing-site integration. Keep the same skin source and verified video. A duplicate contest sandbox is weaker evidence of real use; the bonus is ultimately the judges decision.
+## Phase 3
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/hosting.md](../docs/hosting.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329), [submission/manifest.json](../submission/manifest.json)
+### Signature woven timeline
 
-- [ ] **070 - Preserve fallback and judging access** - IN_PROGRESS
+- [ ] **EX-03-001: Continuous chapter textile** — IMPLEMENTED
 
-  Keep an authorized fallback source for resilience, but report which source is active. Test public access without a session. Store the original video safely and keep both URLs, the deployment and the Mux asset live through judging.
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Evidence: [docs/hosting.md](../docs/hosting.md), [tests/player.spec.ts](../tests/player.spec.ts), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558)
+  Required: Continuous chapter textile
 
-## 08 / QUALITY & FAILURE TESTING
+  Acceptance: Joined chapters read as one time structure
 
-- [x] **071 - Write a behavior-focused test matrix** - DONE
+  Verification: cue geometry assertions and cropped browser screenshots
 
-  Cover every essential action plus captions, chapter seeking and any optional replay. Specify setup, action and expected media state. Keep test IDs stable; avoid tests that merely assert implementation classes exist.
+  Source files: src/video/dhago.css, src/ribbon/ribbon.ts, tests/thread.spec.ts
 
-  Evidence: [tests/QA.md](../tests/QA.md), [tests/player.spec.ts](../tests/player.spec.ts)
+  Evidence: PENDING exact-head CI/browser evidence
 
-- [x] **072 - Automate core actions in-browser** - DONE
+  Blocker: none recorded
 
-  With Playwright or equivalent, prove time advances after play, stops after pause and changes after seeking. Verify mute state and volume where supported. Handle loading deterministically and assert meaningful outcomes rather than fixed sleep delays.
+- [ ] **EX-03-002: Chapter-specific patterns** — IMPLEMENTED
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Existing: Changed on candidate bd83e562e593
 
-- [x] **073 - Separate platform-limited checks** - DONE
+  Required: Chapter-specific patterns
 
-  Fullscreen and audio policies may require real user gestures or headed/device tests. Mark automated gaps and complete manual checks where possible. A passing mocked fullscreen call cannot prove real fullscreen behavior on a phone.
+  Acceptance: Each of the four original swatches differs without relying solely on color
 
-  Evidence: [tests/QA.md](../tests/QA.md)
+  Verification: cue geometry assertions and cropped browser screenshots
 
-- [x] **074 - Run focused accessibility automation** - DONE
+  Source files: src/video/dhago.css, src/ribbon/ribbon.ts, tests/thread.spec.ts
 
-  Scan resting player, open menu and error states with an appropriate scanner. Fix missing names, contrast findings and structural errors. Record tool version and scope; a clean scan cannot certify WCAG compliance or replace screen-reader use.
+  Evidence: https://github.com/aprashnasuraj2-dev/videoj/commit/bd83e562e5938f354392414b37bc702bf55ea2c2
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Blocker: none recorded
 
-- [x] **075 - Capture a responsive visual set** - DONE
+- [ ] **EX-03-003: Active versus inactive cue treatment** — IMPLEMENTED
 
-  Save screenshots at the planned player widths, light/dark footage, captions on and menu open. Inspect overflow, clipped focus rings, time alignment and touch spacing. Compare actual images, not only CSS breakpoint declarations.
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
+  Required: Active versus inactive cue treatment
 
-- [x] **076 - Exercise media edge states** - DONE
+  Acceptance: Current-time fill and cue boundaries are discernible
 
-  Test slow loading, unavailable source, retry, end/replay, rapid play/pause and seek-before-metadata. Check invalid or missing chapters and long captions. Error copy should help recovery without displaying raw credentials, stack traces or developer-only details.
+  Verification: cue geometry assertions and cropped browser screenshots
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
+  Source files: src/video/dhago.css, src/ribbon/ribbon.ts, tests/thread.spec.ts
 
-- [x] **077 - Check constrained-device performance** - DONE
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Test a throttled mobile profile and measure actual startup behavior. Target under 250KB compressed first-party demo JavaScript excluding video and fonts, if the starter permits; report measured exceptions. Prefer no continuous decorative requestAnimationFrame loop.
+  Blocker: none recorded
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
+- [ ] **EX-03-004: Shuttle thumb** — IMPLEMENTED
 
-- [x] **078 - Model delivery and hosting load** - DONE
+  Existing: Existing code/documentation present, current candidate unverified
 
-  At 4Mbps, a fully watched 2-minute video transfers about 60MB; 1,000 full views approach 60GB before adaptive bitrate or caching. Serve video through the media CDN; do not proxy segments through a quota-sensitive application worker.
+  Required: Shuttle thumb
 
-  Evidence: [docs/media.md](../docs/media.md)
+  Acceptance: Visually distinctive yet remains clear as a seek handle
 
-- [x] **079 - Review security and dependency risk** - DONE
+  Verification: cue geometry assertions and cropped browser screenshots
 
-  Run available dependency checks and inspect introduced scripts, external requests and exposed variables. Lock dependencies and remove unused packages. Prioritize exploitable findings in shipped code; do not churn the stack for irrelevant development-only warnings.
+  Source files: src/video/dhago.css, src/ribbon/ribbon.ts, tests/thread.spec.ts
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Evidence: PENDING exact-head CI/browser evidence
 
-- [x] **080 - Close failures with evidence** - DONE
+  Blocker: none recorded
 
-  Log failures, fix causes and re-run the affected checks. Publish tests/QA.md with PASS, FAIL and NOT TESTED entries, browser/device details and screenshots. Do not turn a test plan or an AI assertion into a claim that tests passed.
+- [ ] **EX-03-005: True progress fill** — IMPLEMENTED
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+  Existing: Existing code/documentation present, current candidate unverified
 
-## 09 / DEPLOYMENT & SUBMISSION FILES
+  Required: True progress fill
 
-- [x] **081 - Write concise reproducibility instructions** - DONE
+  Acceptance: Displayed fill follows currentTime including backwards
 
-  AI writes README.md with exact runtime, install, development and build commands from package.json, plus media configuration. Test a clean install with the lockfile. Explain how the skin can be used outside the contest demo.
+  Verification: cue geometry assertions and cropped browser screenshots
 
-  Evidence: [README.md](../README.md), [tests/QA.md](../tests/QA.md)
+  Source files: src/video/dhago.css, src/ribbon/ribbon.ts, tests/thread.spec.ts
 
-- [x] **082 - Complete the license package** - DONE
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Include the full Apache-2.0 license and appropriate original-work notices; retain dependency licenses and attributions. Confirm owner media rights. Do not imply that accepting the contest terms transfers ownership or grants rights the entrant never held.
+  Blocker: none recorded
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473)
+- [ ] **EX-03-006: Cue numbering and labels** — IMPLEMENTED
 
-- [x] **083 - Create the submission manifest** - DONE
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Populate entry title, demo URL, repository URL if shared, version, release SHA, visual paths and description path. Add Mux playback ID and real-site URL only when verified; use null for excluded bonuses, not plausible-looking placeholders.
+  Required: Cue numbering and labels
 
-  Evidence: [tests/QA.md](../tests/QA.md), [submission/manifest.json](../submission/manifest.json), [docs/hosting.md](../docs/hosting.md)
+  Acceptance: All labels are drawn from actual chapter tracks
 
-- [x] **084 - Deploy the actual final build** - DONE
+  Verification: cue geometry assertions and cropped browser screenshots
 
-  Use the starter deploy command or verified host workflow after inspecting scripts. Set a stable production URL with no password, preview authentication or login gate. Keep secrets server-side, and verify allowed media origins and HTTPS.
+  Source files: src/video/dhago.css, src/ribbon/ribbon.ts, tests/thread.spec.ts
 
-  Evidence: [docs/release-integrity.md](../docs/release-integrity.md), [docs/hosting.md](../docs/hosting.md), [https://github.com/aprashnasuraj2-dev/videoj/blob/dist-72ec6c324f64/release-manifest.json](https://github.com/aprashnasuraj2-dev/videoj/blob/dist-72ec6c324f64/release-manifest.json)
+  Evidence: PENDING exact-head CI/browser evidence
 
-- [ ] **085 - Smoke-test as a new visitor** - IN_PROGRESS
+  Blocker: none recorded
 
-  Open the production URL in a clean signed-out session and on a phone if available. Start video, seek, use captions and fullscreen; confirm network media requests and no console errors. A successful hosting dashboard is insufficient evidence.
+- [ ] **EX-03-007: Unequal durations** — IMPLEMENTED
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558), [docs/owner-review.md](../docs/owner-review.md)
+  Existing: Existing code/documentation present, current candidate unverified
 
-- [x] **086 - Capture the final visuals** - DONE
+  Required: Unequal durations
 
-  Generate a sharp 1600x1000 hero image and a phone-width screenshot as internal targets, adjusting to actual form limits. AI must capture the running skin, not composite nonexistent controls. Keep video content and the unique ribbon visible.
+  Acceptance: Cue widths represent real intervals
 
-  Evidence: [tests/QA.md](../tests/QA.md), [docs/storage.md](../docs/storage.md), [https://drive.google.com/file/d/13UnLqOuiAQQOBXKoh_IesPHtFROkIUyb/view](https://drive.google.com/file/d/13UnLqOuiAQQOBXKoh_IesPHtFROkIUyb/view)
+  Verification: cue geometry assertions and cropped browser screenshots
 
-- [x] **087 - Record a short proof video** - DONE
+  Source files: src/video/dhago.css, src/ribbon/ribbon.ts, tests/thread.spec.ts
 
-  Capture 25-40 seconds showing play, timeline seeking, captions or settings, narrow layout and visible keyboard focus. Keep transitions clear and reduced-motion behavior truthful. A plain screen capture is better than an unrepresentative promotional animation.
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Evidence: [tests/QA.md](../tests/QA.md), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626)
+  Blocker: none recorded
 
-- [x] **088 - Draft the final description** - DONE
+- [ ] **EX-03-008: No-chapter fallback** — IMPLEMENTED
 
-  Write 3-4 accurate sentences explaining the metaphor, useful interaction and accessibility choices. Verify every feature claim against the release. Do not claim a tested screen-reader/device combination, original invention or bonus that the evidence cannot support.
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Evidence: [submission/description.md](../submission/description.md), [docs/owner-review.md](../docs/owner-review.md)
+  Required: No-chapter fallback
 
-- [x] **089 - Create and verify the handover archive** - DONE
+  Acceptance: No invented chapter markers or false labels
 
-  Package source, lockfile, docs and submission assets, excluding node_modules, secrets and large redundant builds. Unzip into a clean directory and run documented commands. Create SHA-256 checksums; identify the archive with the tested release SHA.
+  Verification: cue geometry assertions and cropped browser screenshots
 
-  Evidence: [.github/workflows/verified-handoff.yml](../.github/workflows/verified-handoff.yml), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43465361492](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43465361492), [https://drive.google.com/file/d/1lJZhQS_rXjYPLoTm03ex6fEi_JP6BXNT/view?usp=drivesdk](https://drive.google.com/file/d/1lJZhQS_rXjYPLoTm03ex6fEi_JP6BXNT/view?usp=drivesdk), [docs/storage.md](../docs/storage.md)
+  Source files: src/video/dhago.css, src/ribbon/ribbon.ts, tests/thread.spec.ts
 
-- [x] **090 - Freeze the submission candidate** - DONE
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Freeze the verified source revision and record its immutable build, current hostnames, browser checks and source archive in the submission manifest.
+  Blocker: none recorded
 
-  Evidence: [submission/manifest.json](../submission/manifest.json), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553), [https://github.com/aprashnasuraj2-dev/videoj/tree/dist-dd6ec8bd217a](https://github.com/aprashnasuraj2-dev/videoj/tree/dist-dd6ec8bd217a), [https://drive.google.com/file/d/1MPl0blKgSh9QM_giGV9SfZkGX2xXw7G_/view?usp=drivesdk](https://drive.google.com/file/d/1MPl0blKgSh9QM_giGV9SfZkGX2xXw7G_/view?usp=drivesdk)
+- [ ] **EX-03-009: Dense cue collections** — IMPLEMENTED
 
-## 10 / FINAL ENTRY & CONTINUATION
+  Existing: Existing code/documentation present, current candidate unverified
 
-- [ ] **091 - Reopen the live rules and form** - IN_PROGRESS
+  Required: Dense cue collections
 
-  Check the deadline wording, required fields, supported visual formats and any account-specific restrictions. Confirm the year and timezone context rather than trusting a copied countdown. AI records any difference from the planning snapshot.
+  Acceptance: 40 and 100 cues remain usable
 
-  Evidence: [https://contra.com/community/topic/videojsskinschallenge/guidelines](https://contra.com/community/topic/videojsskinschallenge/guidelines), [submission/entry-handoff.md](../submission/entry-handoff.md)
+  Verification: cue geometry assertions and cropped browser screenshots
 
-- [x] **092 - Complete the score rehearsal** - DONE
+  Source files: src/video/dhago.css, src/ribbon/ribbon.ts, tests/thread.spec.ts
 
-  Review the player against all four scored categories using the release evidence. List one weakness per category and fix only high-impact defects. The internal score is subjective preparation, not a forecast of judges scores or prize probability.
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Evidence: [docs/score-rehearsal.md](../docs/score-rehearsal.md)
+  Blocker: none recorded
 
-- [ ] **093 - Present one concrete owner review** - IN_PROGRESS
+- [ ] **EX-03-010: International and long labels** — IMPLEMENTED
 
-  AI supplies the working URL, desktop/mobile visual, description, optional bonus evidence and license summary in one place. Owner checks the appearance, authorship/rights and account identity. Avoid repeated vague approvals throughout routine engineering work.
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Evidence: [docs/owner-review.md](../docs/owner-review.md), [submission/entry-handoff.md](../submission/entry-handoff.md), [https://drive.google.com/file/d/1fXoXIj1gNWBXItMxOm1lt0l-aVnkPq6y/view?usp=drivesdk](https://drive.google.com/file/d/1fXoXIj1gNWBXItMxOm1lt0l-aVnkPq6y/view?usp=drivesdk)
+  Required: International and long labels
 
-- [ ] **094 - Prepare the exact form entries** - IN_PROGRESS
+  Acceptance: Content remains understandable without clipping interaction
 
-  Map each actual form field to manifest values and attachment paths. AI can draft or fill fields when tools and permission allow. Identity, eligibility declarations, open-source acceptance and authentication remain the owner decision; do not silently accept legal terms.
+  Verification: cue geometry assertions and cropped browser screenshots
 
-  Evidence: [submission/entry-handoff.md](../submission/entry-handoff.md)
+  Source files: src/video/dhago.css, src/ribbon/ribbon.ts, tests/thread.spec.ts
 
-- [ ] **095 - Run the final minimum-requirement pass** - IN_PROGRESS
+  Evidence: PENDING exact-head CI/browser evidence
 
-  From the submitted URL, verify actual v10 video playback, all five essential control groups, narrow layout and keyboard/menu exit. If one fails, fix and retest before entering. An attractive image cannot compensate for a nonworking entry.
+  Blocker: none recorded
 
-  Evidence: [tests/QA.md](../tests/QA.md), [tests/live.spec.ts](../tests/live.spec.ts)
+- [ ] **EX-03-011: Native keyboard and touch seeking** — IMPLEMENTED
 
-- [ ] **096 - Attach only verified bonus claims** - IN_PROGRESS
+  Existing: Existing code/documentation present, current candidate unverified
 
-  Include the public Mux playback ID matching the played source and the genuine live-site URL, if ready. Recheck both signed out. Omit an unverified bonus rather than spending the deadline buffer creating a fragile last-minute integration.
+  Required: Native keyboard and touch seeking
 
-  Evidence: [submission/entry-handoff.md](../submission/entry-handoff.md), [tests/mux.spec.ts](../tests/mux.spec.ts), [https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558)
+  Acceptance: Arrow/Home/End and pointer affect real currentTime
 
-- [ ] **097 - Submit through the owner account** - NOT_STARTED
+  Verification: cue geometry assertions and cropped browser screenshots
 
-  After owner acceptance of entry terms and explicit submission authorization, AI may submit through a supported authenticated tool; otherwise the owner clicks the final button. AI supplies copy-paste-ready text, attachment filenames and URLs in the correct order.
+  Source files: src/video/dhago.css, src/ribbon/ribbon.ts, tests/thread.spec.ts
 
-- [ ] **098 - Capture successful entry evidence** - NOT_STARTED
+  Evidence: PENDING exact-head CI/browser evidence
 
-  Observe the actual success screen or published entry URL. Save a screenshot, receipt text or confirmation email reference and Nepal timestamp in submission/receipt.md. A click, drafted form or uploaded file is not proof of successful submission.
+  Blocker: none recorded
 
-- [ ] **099 - Verify the published result** - NOT_STARTED
+- [ ] **EX-03-012: No invented media previews** — IMPLEMENTED
 
-  Open the public entry and every submitted link once; ensure the visual and description match the final release. Keep the site, repo snapshot and Mux asset available through judging. Schedule future checks only if the owner requests them.
+  Existing: Existing code/documentation present, current candidate unverified
 
-- [ ] **100 - Deliver the final handover** - NOT_STARTED
+  Required: No invented media previews
 
-  AI returns entry URL, demo URL, repository/release reference, download package and verified bonus status. Mark steps 1-100 complete only with evidence; list unresolved items plainly. Preserve docs/worklog.md so another AI can resume without repeating finished work.
+  Acceptance: Thumbnails only come from genuine source storyboard
 
+  Verification: cue geometry assertions and cropped browser screenshots
+
+  Source files: src/video/dhago.css, src/ribbon/ribbon.ts, tests/thread.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-03-013: Assistive slider semantics** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Assistive slider semantics
+
+  Acceptance: Value, time and chapter available to screen reader
+
+  Verification: cue geometry assertions and cropped browser screenshots
+
+  Source files: src/video/dhago.css, src/ribbon/ribbon.ts, tests/thread.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+## Phase 4
+
+### Living Loom state
+
+- [ ] **EX-04-001: Single native media engine** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Single native media engine
+
+  Acceptance: No independent playback clock or dummy media
+
+  Verification: real-media event and duration checks
+
+  Source files: src/video/living-loom.ts, tests/loom.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-04-002: Real time synchronization** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Real time synchronization
+
+  Acceptance: Woven percentage matches currentTime/duration
+
+  Verification: real-media event and duration checks
+
+  Source files: src/video/living-loom.ts, tests/loom.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-04-003: Visible woven advancement** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Visible woven advancement
+
+  Acceptance: Progress is perceptible without background synthetic animation
+
+  Verification: real-media event and duration checks
+
+  Source files: src/video/living-loom.ts, tests/loom.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-04-004: Pause state** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Pause state
+
+  Acceptance: Progress freezes with genuine media pause
+
+  Verification: real-media event and duration checks
+
+  Source files: src/video/living-loom.ts, tests/loom.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-04-005: Backward seek** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Backward seek
+
+  Acceptance: Weave state reverses with real currentTime
+
+  Verification: real-media event and duration checks
+
+  Source files: src/video/living-loom.ts, tests/loom.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-04-006: Rapid forward seek** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Rapid forward seek
+
+  Acceptance: Latest actual position prevails
+
+  Verification: real-media event and duration checks
+
+  Source files: src/video/living-loom.ts, tests/loom.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-04-007: Completion and replay** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Completion and replay
+
+  Acceptance: Ended state requires media ending and resets on replay
+
+  Verification: real-media event and duration checks
+
+  Source files: src/video/living-loom.ts, tests/loom.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-04-008: Waiting and stalled media** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Waiting and stalled media
+
+  Acceptance: Decorative response is driven by corresponding media events
+
+  Verification: real-media event and duration checks
+
+  Source files: src/video/living-loom.ts, tests/loom.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-04-009: Unknown duration and failures** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Unknown duration and failures
+
+  Acceptance: No false percent, completion or fabricated telemetry
+
+  Verification: real-media event and duration checks
+
+  Source files: src/video/living-loom.ts, tests/loom.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-04-010: Reduced motion** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Reduced motion
+
+  Acceptance: Decorative movement is suppressed when requested
+
+  Verification: real-media event and duration checks
+
+  Source files: src/video/living-loom.ts, tests/loom.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-04-011: Seeking is not viewing history** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Seeking is not viewing history
+
+  Acceptance: UI reports seek position without claiming it was watched
+
+  Verification: real-media event and duration checks
+
+  Source files: src/video/living-loom.ts, tests/loom.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-04-012: Performance at scale** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Performance at scale
+
+  Acceptance: No per-frame cue DOM relayout or heavy renderer
+
+  Verification: real-media event and duration checks
+
+  Source files: src/video/living-loom.ts, tests/loom.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-04-013: Audio-only state** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Audio-only state
+
+  Acceptance: Presentation survives audio media without dimensions
+
+  Verification: real-media event and duration checks
+
+  Source files: src/video/living-loom.ts, tests/loom.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+## Phase 5
+
+### Shuttle interaction
+
+- [ ] **EX-05-001: Native pointer accuracy** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Native pointer accuracy
+
+  Acceptance: Dragged position corresponds to media currentTime
+
+  Verification: mouse, coarse-pointer and keyboard browser interactions
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/thread.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-05-002: Restrained thread tension** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Restrained thread tension
+
+  Acceptance: Drag feedback disappears when interaction ends
+
+  Verification: mouse, coarse-pointer and keyboard browser interactions
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/thread.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-05-003: Hover, focus and active states** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Hover, focus and active states
+
+  Acceptance: Shuttle state is visible across input modalities
+
+  Verification: mouse, coarse-pointer and keyboard browser interactions
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/thread.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-05-004: Timestamp preview** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Timestamp preview
+
+  Acceptance: Seek preview shows real pointer time
+
+  Verification: mouse, coarse-pointer and keyboard browser interactions
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/thread.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-05-005: Active chapter during seek** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Active chapter during seek
+
+  Acceptance: Preview label matches source cue
+
+  Verification: mouse, coarse-pointer and keyboard browser interactions
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/thread.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-05-006: Genuine thumbnail path** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Genuine thumbnail path
+
+  Acceptance: Only supported Mux storyboard frames appear
+
+  Verification: mouse, coarse-pointer and keyboard browser interactions
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/thread.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-05-007: Text-only thumbnail fallback** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Text-only thumbnail fallback
+
+  Acceptance: Missing image never hides accurate preview text
+
+  Verification: mouse, coarse-pointer and keyboard browser interactions
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/thread.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-05-008: Repeated and rapid seeks** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Repeated and rapid seeks
+
+  Acceptance: No lag or stale target survives
+
+  Verification: mouse, coarse-pointer and keyboard browser interactions
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/thread.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-05-009: Start/end boundary behavior** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Start/end boundary behavior
+
+  Acceptance: Thumb and preview stay within player bounds
+
+  Verification: mouse, coarse-pointer and keyboard browser interactions
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/thread.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-05-010: Comfortable touch geometry** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Comfortable touch geometry
+
+  Acceptance: Seek surface is usable on phone-sized player
+
+  Verification: mouse, coarse-pointer and keyboard browser interactions
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/thread.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-05-011: Keyboard seek and focus** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Keyboard seek and focus
+
+  Acceptance: Native slider remains reachable and operable
+
+  Verification: mouse, coarse-pointer and keyboard browser interactions
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/thread.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-05-012: No misleading inertia** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: No misleading inertia
+
+  Acceptance: Animation is decorative and does not delay real seek
+
+  Verification: mouse, coarse-pointer and keyboard browser interactions
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/thread.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+## Phase 6
+
+### Control polish
+
+- [ ] **EX-06-001: Play and pause control** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Play and pause control
+
+  Acceptance: State and 44px target remain obvious
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-06-002: Volume and mute controls** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Volume and mute controls
+
+  Acceptance: Volume slider and button remain aligned
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-06-003: Tabular time typography** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Tabular time typography
+
+  Acceptance: Clock does not jump on digit changes
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-06-004: Captions menu** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Captions menu
+
+  Acceptance: Visible selected state and functional subtitles
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-06-005: Speed menu** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Speed menu
+
+  Acceptance: Only supported actual rates are offered
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-06-006: Settings lifecycle** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Settings lifecycle
+
+  Acceptance: Open, Escape and restored focus work
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-06-007: Fullscreen mode** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Fullscreen mode
+
+  Acceptance: Controls remain usable and fit safe areas
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-06-008: Keyboard focus outlines** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Keyboard focus outlines
+
+  Acceptance: Visible focus across three themes
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-06-009: Tooltip and seek preview** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Tooltip and seek preview
+
+  Acceptance: No endpoint clipping or unreadable labels
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-06-010: Real buffering indicator** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Real buffering indicator
+
+  Acceptance: Indicator tracks actual buffering state
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-06-011: Media error and recovery** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Media error and recovery
+
+  Acceptance: Failure state is understandable and actionable
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-06-012: Finished and replay state** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Finished and replay state
+
+  Acceptance: Replay transitions back into real media
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-06-013: No layout jumps** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: No layout jumps
+
+  Acceptance: Interaction state does not shift control geometry
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-06-014: Icon centering, borders, radii** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Icon centering, borders, radii
+
+  Acceptance: No mismatched controls in screenshot crops
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-06-015: Consistent control variants** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Consistent control variants
+
+  Acceptance: Focused, active, disabled and open states match theme
+
+  Verification: open-menu, focus, fullscreen and error-state screenshots
+
+  Source files: src/video/dhago.css, src/video/skin.html, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+## Phase 7
+
+### Accessible and responsive
+
+- [ ] **EX-07-001: 240px width** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: 240px width
+
+  Acceptance: No horizontal spill or inaccessible essentials
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-002: 320px width** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: 320px width
+
+  Acceptance: Full controls and clock remain reachable
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-003: 375px width** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: 375px width
+
+  Acceptance: Labels remain readable and tactile
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-004: 768px width** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: 768px width
+
+  Acceptance: Ribbon and shelf remain proportional
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-005: 1280px width** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: 1280px width
+
+  Acceptance: Layout does not become sparse or disjointed
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-006: Portrait and landscape** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Portrait and landscape
+
+  Acceptance: Orientation change does not hide controls
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-007: Fullscreen** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Fullscreen
+
+  Acceptance: Enter and exit preserve player controls
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-008: Keyboard-only access** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Keyboard-only access
+
+  Acceptance: Complete watch flow works with no pointer
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-009: Focus visibility and order** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Focus visibility and order
+
+  Acceptance: All actionable controls have logical tab order
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-010: Escape and focus restoration** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Escape and focus restoration
+
+  Acceptance: Menus return focus to expected trigger
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-011: Touch target sizes** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Touch target sizes
+
+  Acceptance: Required controls meet 44px target where practicable
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-012: Caption legibility** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Caption legibility
+
+  Acceptance: Light and dark footage cannot wash out subtitle reading
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-013: Control contrast** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Control contrast
+
+  Acceptance: Text and icons meet contrast in three surfaces
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-014: Reduced motion** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Reduced motion
+
+  Acceptance: Stationary alternative is fully usable
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-015: Forced colors** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Forced colors
+
+  Acceptance: Critical controls and seek state remain perceivable
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-016: Increased contrast** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Increased contrast
+
+  Acceptance: Icons and boundaries survive alternate contrast
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-017: Text enlargement and zoom** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Text enlargement and zoom
+
+  Acceptance: 200% text does not hide essential player controls
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-018: Axe and accessible names** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Axe and accessible names
+
+  Acceptance: No critical or serious tested violations
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-07-019: Physical screen-reader session** — BLOCKED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Physical screen-reader session
+
+  Acceptance: VoiceOver or NVDA identifies roles, values, menus
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: Requires physical/human review
+
+- [ ] **EX-07-020: Real device and browser matrix** — BLOCKED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Real device and browser matrix
+
+  Acceptance: Actual hardware checks distinguished from emulation
+
+  Verification: Playwright layout matrix and human manual reviews
+
+  Source files: src/video/dhago.css, tests/player.spec.ts, tests/manual-accessibility.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: Requires physical/human review
+
+## Phase 8
+
+### 8A Reusable skin
+
+- [ ] **EX-08-001: Shared Video.js v10 implementation** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Shared Video.js v10 implementation
+
+  Acceptance: One createDhagoPlayer with real v10 template
+
+  Verification: integration fixtures and media cleanup inspection
+
+  Source files: src/create-player.ts, INSTALL.md, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-002: No showcase dependency** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: No showcase dependency
+
+  Acceptance: Library files do not import preview app
+
+  Verification: integration fixtures and media cleanup inspection
+
+  Source files: src/create-player.ts, INSTALL.md, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-003: Plain HTML Vite integration** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Plain HTML Vite integration
+
+  Acceptance: Documented mount and playback work
+
+  Verification: integration fixtures and media cleanup inspection
+
+  Source files: src/create-player.ts, INSTALL.md, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-004: React mounting and disposal** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: React mounting and disposal
+
+  Acceptance: Unmount cleans media and event registrations
+
+  Verification: integration fixtures and media cleanup inspection
+
+  Source files: src/create-player.ts, INSTALL.md, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-005: Theme customization** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Theme customization
+
+  Acceptance: Three surfaces and host tokens apply coherently
+
+  Verification: integration fixtures and media cleanup inspection
+
+  Source files: src/create-player.ts, INSTALL.md, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-006: Configurable media source** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Configurable media source
+
+  Acceptance: Host can supply real video/audio URL
+
+  Verification: integration fixtures and media cleanup inspection
+
+  Source files: src/create-player.ts, INSTALL.md, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-007: Optional captions and chapters** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Optional captions and chapters
+
+  Acceptance: Tracks are parsed only when supplied
+
+  Verification: integration fixtures and media cleanup inspection
+
+  Source files: src/create-player.ts, INSTALL.md, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-008: Graceful no-chapter fallback** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Graceful no-chapter fallback
+
+  Acceptance: No false chapter list created
+
+  Verification: integration fixtures and media cleanup inspection
+
+  Source files: src/create-player.ts, INSTALL.md, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-009: Media lifecycle cleanup** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Media lifecycle cleanup
+
+  Acceptance: Observers and listeners do not survive destroyed mounts
+
+  Verification: integration fixtures and media cleanup inspection
+
+  Source files: src/create-player.ts, INSTALL.md, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-010: Duplicate initialization prevention** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Duplicate initialization prevention
+
+  Acceptance: Multiple mounts have unique IDs
+
+  Verification: integration fixtures and media cleanup inspection
+
+  Source files: src/create-player.ts, INSTALL.md, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-011: Public customization contract** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Public customization contract
+
+  Acceptance: API types and constraints are documented
+
+  Verification: integration fixtures and media cleanup inspection
+
+  Source files: src/create-player.ts, INSTALL.md, tests/player.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+### 8B Portable ribbon
+
+- [ ] **EX-08-012: Host-neutral component** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Host-neutral component
+
+  Acceptance: No Video.js import required
+
+  Verification: independent host tests and cue-mutation probe
+
+  Source files: src/ribbon/ribbon.ts, src/ribbon/ribbon.css, tests/ribbon.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-013: Time normalization** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Time normalization
+
+  Acceptance: Progress clamps within finite duration
+
+  Verification: independent host tests and cue-mutation probe
+
+  Source files: src/ribbon/ribbon.ts, src/ribbon/ribbon.css, tests/ribbon.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-014: Unequal and dense cue widths** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Unequal and dense cue widths
+
+  Acceptance: Cue geometry follows real timestamps
+
+  Verification: independent host tests and cue-mutation probe
+
+  Source files: src/ribbon/ribbon.ts, src/ribbon/ribbon.css, tests/ribbon.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-015: Supplied metadata lanes** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Supplied metadata lanes
+
+  Acceptance: No unsupplied metadata rendered
+
+  Verification: independent host tests and cue-mutation probe
+
+  Source files: src/ribbon/ribbon.ts, src/ribbon/ribbon.css, tests/ribbon.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-016: Accurate seek callback** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Accurate seek callback
+
+  Acceptance: Range emits numeric desired seek time
+
+  Verification: independent host tests and cue-mutation probe
+
+  Source files: src/ribbon/ribbon.ts, src/ribbon/ribbon.css, tests/ribbon.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-017: Lifecycle destroy** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Lifecycle destroy
+
+  Acceptance: Listeners and visual nodes are removed
+
+  Verification: independent host tests and cue-mutation probe
+
+  Source files: src/ribbon/ribbon.ts, src/ribbon/ribbon.css, tests/ribbon.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-018: Static geometry between time ticks** — IMPLEMENTED
+
+  Existing: Changed on candidate bd83e562e593
+
+  Required: Static geometry between time ticks
+
+  Acceptance: Cue placement is not rewritten each update
+
+  Verification: independent host tests and cue-mutation probe
+
+  Source files: src/ribbon/ribbon.ts, src/ribbon/ribbon.css, tests/ribbon.spec.ts
+
+  Evidence: https://github.com/aprashnasuraj2-dev/videoj/commit/bd83e562e5938f354392414b37bc702bf55ea2c2
+
+  Blocker: none recorded
+
+- [ ] **EX-08-019: Preserve native integrated slider** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Preserve native integrated slider
+
+  Acceptance: Separate ribbon never hijacks Video.js seek control
+
+  Verification: independent host tests and cue-mutation probe
+
+  Source files: src/ribbon/ribbon.ts, src/ribbon/ribbon.css, tests/ribbon.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+### 8C Edge States Lab
+
+- [ ] **EX-08-020: Preserve existing scenarios** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Preserve existing scenarios
+
+  Acceptance: 25 comparison fixtures retain their IDs
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-021: Professional studio hierarchy** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Professional studio hierarchy
+
+  Acceptance: Setup controls and results visually distinct
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-022: Readable scenario explanations** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Readable scenario explanations
+
+  Acceptance: Visitors understand what a fixture tests
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-023: Dense 40/100 cues** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Dense 40/100 cues
+
+  Acceptance: Navigation and rendering stay stable
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-024: Malformed and missing cues** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Malformed and missing cues
+
+  Acceptance: Broken data does not crash player
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-025: Missing media errors** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Missing media errors
+
+  Acceptance: Failure is identified as an intentional test
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-026: Buffering and stalled behavior** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Buffering and stalled behavior
+
+  Acceptance: Event source clearly distinguished
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-027: Seek/replay transitions** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Seek/replay transitions
+
+  Acceptance: Position changes reported honestly
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-028: Unknown duration** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Unknown duration
+
+  Acceptance: Percentages not fabricated
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-029: Audio-only mode** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Audio-only mode
+
+  Acceptance: No assumed picture or dimensions
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-030: 240px host stress** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: 240px host stress
+
+  Acceptance: Measured host width and controls remain usable
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-031: Reduced-motion and contrast stress** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Reduced-motion and contrast stress
+
+  Acceptance: Unavailable conditions reported NOT RUN
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-032: Actionable failures** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Actionable failures
+
+  Acceptance: Failures include observed cause, not fake pass
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-033: Isolate lab from primary demo** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Isolate lab from primary demo
+
+  Acceptance: Test sources never replace homepage film
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-034: Accurate downloadable reports** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Accurate downloadable reports
+
+  Acceptance: Reports preserve fixture and observation distinction
+
+  Verification: fixtures and observed result reports
+
+  Source files: apps/preview/src/stress.ts, apps/preview/src/stress-loader.ts, src/stress-lab/harness.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+### 8D Browser-side adapters
+
+- [ ] **EX-08-035: Document adapter mount contract** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Document adapter mount contract
+
+  Acceptance: External adapter must return root and destroy
+
+  Verification: safe/invalid URL and local module tests
+
+  Source files: apps/preview/src/stress-loader.ts, apps/preview/public/stress-adapter.example.mjs
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-036: Supported URL loading** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Supported URL loading
+
+  Acceptance: HTTPS module is accepted with CORS
+
+  Verification: safe/invalid URL and local module tests
+
+  Source files: apps/preview/src/stress-loader.ts, apps/preview/public/stress-adapter.example.mjs
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-037: Local JavaScript loading** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Local JavaScript loading
+
+  Acceptance: File selected stays on client unless user exports
+
+  Verification: safe/invalid URL and local module tests
+
+  Source files: apps/preview/src/stress-loader.ts, apps/preview/public/stress-adapter.example.mjs
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-038: Opaque-origin sandbox** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Opaque-origin sandbox
+
+  Acceptance: Sandbox uses allow-scripts without allow-same-origin
+
+  Verification: safe/invalid URL and local module tests
+
+  Source files: apps/preview/src/stress-loader.ts, apps/preview/public/stress-adapter.example.mjs
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-039: Origin and scheme restrictions** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Origin and scheme restrictions
+
+  Acceptance: Non-HTTPS and credential URLs fail safely
+
+  Verification: safe/invalid URL and local module tests
+
+  Source files: apps/preview/src/stress-loader.ts, apps/preview/public/stress-adapter.example.mjs
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-040: Adapter lifecycle** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Adapter lifecycle
+
+  Acceptance: Pending work and frames cleaned on destroy
+
+  Verification: safe/invalid URL and local module tests
+
+  Source files: apps/preview/src/stress-loader.ts, apps/preview/public/stress-adapter.example.mjs
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-041: Malformed adapter handling** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Malformed adapter handling
+
+  Acceptance: Missing mount and invalid exports report clear errors
+
+  Verification: safe/invalid URL and local module tests
+
+  Source files: apps/preview/src/stress-loader.ts, apps/preview/public/stress-adapter.example.mjs
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-042: No secret leaks** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: No secret leaks
+
+  Acceptance: Reports never copy signed URLs or credentials
+
+  Verification: safe/invalid URL and local module tests
+
+  Source files: apps/preview/src/stress-loader.ts, apps/preview/public/stress-adapter.example.mjs
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-043: Separate fixture and observed metrics** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Separate fixture and observed metrics
+
+  Acceptance: External results are not reclassified as native truths
+
+  Verification: safe/invalid URL and local module tests
+
+  Source files: apps/preview/src/stress-loader.ts, apps/preview/public/stress-adapter.example.mjs
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+### 8E Real playback telemetry
+
+- [ ] **EX-08-044: Stream-history ledger** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Stream-history ledger
+
+  Acceptance: Only real exposed media observations recorded
+
+  Verification: browser media API observation
+
+  Source files: src/video/stream-history.ts, apps/preview/src/tools.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-045: Buffered interval capture** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Buffered interval capture
+
+  Acceptance: Use actual TimeRanges
+
+  Verification: browser media API observation
+
+  Source files: src/video/stream-history.ts, apps/preview/src/tools.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-046: Dropped frame counters** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Dropped frame counters
+
+  Acceptance: Require supported browser counters
+
+  Verification: browser media API observation
+
+  Source files: src/video/stream-history.ts, apps/preview/src/tools.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-047: Decoded dimensions** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Decoded dimensions
+
+  Acceptance: Read actual videoWidth and videoHeight
+
+  Verification: browser media API observation
+
+  Source files: src/video/stream-history.ts, apps/preview/src/tools.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-048: No inferred rendition claims** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: No inferred rendition claims
+
+  Acceptance: Quality changes require sufficient evidence
+
+  Verification: browser media API observation
+
+  Source files: src/video/stream-history.ts, apps/preview/src/tools.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-049: Graceful unavailable metrics** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Graceful unavailable metrics
+
+  Acceptance: Advanced charts show unsupported, not zero
+
+  Verification: browser media API observation
+
+  Source files: src/video/stream-history.ts, apps/preview/src/tools.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-050: Diagnostics independent of player** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Diagnostics independent of player
+
+  Acceptance: Basic viewing does not rely on telemetry
+
+  Verification: browser media API observation
+
+  Source files: src/video/stream-history.ts, apps/preview/src/tools.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+### 8F Studio Journal
+
+- [ ] **EX-08-051: Preserve original four notes** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Preserve original four notes
+
+  Acceptance: Original editorial text and film remain
+
+  Verification: same player source and actual scene-note seeking
+
+  Source files: apps/preview/src/journal.ts, apps/preview/journal.html
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-052: Reuse same DHAGO player** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Reuse same DHAGO player
+
+  Acceptance: Journal imports createDhagoPlayer
+
+  Verification: same player source and actual scene-note seeking
+
+  Source files: apps/preview/src/journal.ts, apps/preview/journal.html
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-053: Real scene-note seek** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Real scene-note seek
+
+  Acceptance: Click changes actual media time
+
+  Verification: same player source and actual scene-note seeking
+
+  Source files: apps/preview/src/journal.ts, apps/preview/journal.html
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-054: Publication-grade presentation** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Publication-grade presentation
+
+  Acceptance: Notes and player form a coherent article
+
+  Verification: same player source and actual scene-note seeking
+
+  Source files: apps/preview/src/journal.ts, apps/preview/journal.html
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-055: Mobile usability** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Mobile usability
+
+  Acceptance: No horizontal overflow or hidden scene notes
+
+  Verification: same player source and actual scene-note seeking
+
+  Source files: apps/preview/src/journal.ts, apps/preview/journal.html
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-056: Credible separate site integration** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Credible separate site integration
+
+  Acceptance: Not portrayed as independent external client
+
+  Verification: same player source and actual scene-note seeking
+
+  Source files: apps/preview/src/journal.ts, apps/preview/journal.html
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-057: No bonus overclaim** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: No bonus overclaim
+
+  Acceptance: Judges determine live-site eligibility
+
+  Verification: same player source and actual scene-note seeking
+
+  Source files: apps/preview/src/journal.ts, apps/preview/journal.html
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+### 8G Engineering Tools
+
+- [ ] **EX-08-058: Preserve useful instruments** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Preserve useful instruments
+
+  Acceptance: Real seek, buffer, seekable and events available
+
+  Verification: real output and failure-handling checks
+
+  Source files: apps/preview/src/tools.ts, apps/preview/tools.html
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-059: Remove redundant tools** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Remove redundant tools
+
+  Acceptance: Each visible utility answers distinct question
+
+  Verification: real output and failure-handling checks
+
+  Source files: apps/preview/src/tools.ts, apps/preview/tools.html
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-060: Visitor-friendly explanation** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Visitor-friendly explanation
+
+  Acceptance: Copy describes outcomes without raw diagnostics
+
+  Verification: real output and failure-handling checks
+
+  Source files: apps/preview/src/tools.ts, apps/preview/tools.html
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-061: Keep tools off homepage** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Keep tools off homepage
+
+  Acceptance: Primary player remains unencumbered
+
+  Verification: real output and failure-handling checks
+
+  Source files: apps/preview/src/tools.ts, apps/preview/tools.html
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-062: Meaningful error handling** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Meaningful error handling
+
+  Acceptance: Unsupported API shows explanation
+
+  Verification: real output and failure-handling checks
+
+  Source files: apps/preview/src/tools.ts, apps/preview/tools.html
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-08-063: Avoid unnecessary network cost** — IMPLEMENTED
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Avoid unnecessary network cost
+
+  Acceptance: No unrelated Worker calls added
+
+  Verification: real output and failure-handling checks
+
+  Source files: apps/preview/src/tools.ts, apps/preview/tools.html
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+## Phase 9
+
+### 9A Primary experience
+
+- [ ] **EX-09-001: Real player focal point** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Real player focal point
+
+  Acceptance: Video dominates first screen
+
+  Verification: public homepage and player-only crop
+
+  Source files: apps/preview/index.html, apps/preview/src/demo.css
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-002: Lead with woven interaction** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Lead with woven interaction
+
+  Acceptance: Shuttle/time concept is understandable quickly
+
+  Verification: public homepage and player-only crop
+
+  Source files: apps/preview/index.html, apps/preview/src/demo.css
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-003: Eliminate developer language** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Eliminate developer language
+
+  Acceptance: No internal release terms on primary page
+
+  Verification: public homepage and player-only crop
+
+  Source files: apps/preview/index.html, apps/preview/src/demo.css
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-004: Remove repo links from hero** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Remove repo links from hero
+
+  Acceptance: No GitHub links in visible homepage
+
+  Verification: public homepage and player-only crop
+
+  Source files: apps/preview/index.html, apps/preview/src/demo.css
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-005: Watch-first call to action** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Watch-first call to action
+
+  Acceptance: Controls are obvious and immediately usable
+
+  Verification: public homepage and player-only crop
+
+  Source files: apps/preview/index.html, apps/preview/src/demo.css
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-006: Keep journal/ribbon/stress navigation** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Keep journal/ribbon/stress navigation
+
+  Acceptance: Secondary pages remain discoverable
+
+  Verification: public homepage and player-only crop
+
+  Source files: apps/preview/index.html, apps/preview/src/demo.css
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-007: Editorial consistency** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Editorial consistency
+
+  Acceptance: Public copy claims only verified behavior
+
+  Verification: public homepage and player-only crop
+
+  Source files: apps/preview/index.html, apps/preview/src/demo.css
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+### 9B Authentic evidence
+
+- [ ] **EX-09-008: Desktop active playback capture** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Desktop active playback capture
+
+  Acceptance: Real footage, controls and time visible
+
+  Verification: screenshots and real interaction recording tied to final SHA
+
+  Source files: scripts/capture-submission.mjs, tests/skin-visual.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-009: Player-only crop** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Player-only crop
+
+  Acceptance: No decorative website chrome
+
+  Verification: screenshots and real interaction recording tied to final SHA
+
+  Source files: scripts/capture-submission.mjs, tests/skin-visual.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-010: Shuttle seek capture** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Shuttle seek capture
+
+  Acceptance: Thumb corresponds to real seek time
+
+  Verification: screenshots and real interaction recording tied to final SHA
+
+  Source files: scripts/capture-submission.mjs, tests/skin-visual.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-011: Active chapter capture** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Active chapter capture
+
+  Acceptance: Chapter title corresponds to cue
+
+  Verification: screenshots and real interaction recording tied to final SHA
+
+  Source files: scripts/capture-submission.mjs, tests/skin-visual.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-012: Three-theme captures** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Three-theme captures
+
+  Acceptance: Same skin shown in all surfaces
+
+  Verification: screenshots and real interaction recording tied to final SHA
+
+  Source files: scripts/capture-submission.mjs, tests/skin-visual.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-013: 320/375 mobile captures** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: 320/375 mobile captures
+
+  Acceptance: Actual browser geometry, no mockup
+
+  Verification: screenshots and real interaction recording tied to final SHA
+
+  Source files: scripts/capture-submission.mjs, tests/skin-visual.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-014: Settings and captions capture** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Settings and captions capture
+
+  Acceptance: Real open menu and captions states
+
+  Verification: screenshots and real interaction recording tied to final SHA
+
+  Source files: scripts/capture-submission.mjs, tests/skin-visual.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-015: Studio Journal capture** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Studio Journal capture
+
+  Acceptance: Published journal player visible
+
+  Verification: screenshots and real interaction recording tied to final SHA
+
+  Source files: scripts/capture-submission.mjs, tests/skin-visual.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-016: Stress Studio capture** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Stress Studio capture
+
+  Acceptance: Fixtures and results shown truthfully
+
+  Verification: screenshots and real interaction recording tied to final SHA
+
+  Source files: scripts/capture-submission.mjs, tests/skin-visual.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-017: Authentic motion capture** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Authentic motion capture
+
+  Acceptance: Real play, drag and pause without synthetic footage
+
+  Verification: screenshots and real interaction recording tied to final SHA
+
+  Source files: scripts/capture-submission.mjs, tests/skin-visual.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+### 9C Submission narrative
+
+- [ ] **EX-09-018: Explain dhago meaning** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Explain dhago meaning
+
+  Acceptance: Thread meaning stated without invented motif
+
+  Verification: copy/source/playback comparison
+
+  Source files: submission/final-submission.md, submission/description.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-019: Explain woven-time thesis** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Explain woven-time thesis
+
+  Acceptance: Concept exists inside player controls
+
+  Verification: copy/source/playback comparison
+
+  Source files: submission/final-submission.md, submission/description.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-020: Explain real playback truth** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Explain real playback truth
+
+  Acceptance: Progress follows media rather than a timer
+
+  Verification: copy/source/playback comparison
+
+  Source files: submission/final-submission.md, submission/description.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-021: Explain familiar accessibility** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Explain familiar accessibility
+
+  Acceptance: Controls work without learning new gestures
+
+  Verification: copy/source/playback comparison
+
+  Source files: submission/final-submission.md, submission/description.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-022: Explain portable ribbon** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Explain portable ribbon
+
+  Acceptance: Precise host-neutral contract described
+
+  Verification: copy/source/playback comparison
+
+  Source files: submission/final-submission.md, submission/description.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-023: Explain journal integration** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Explain journal integration
+
+  Acceptance: Same mount correctly described
+
+  Verification: copy/source/playback comparison
+
+  Source files: submission/final-submission.md, submission/description.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-024: Explain Edge Studio** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Explain Edge Studio
+
+  Acceptance: Fixtures distinguished from production incidents
+
+  Verification: copy/source/playback comparison
+
+  Source files: submission/final-submission.md, submission/description.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-025: Identify competition-specific work** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Identify competition-specific work
+
+  Acceptance: Original film and component craft acknowledged
+
+  Verification: copy/source/playback comparison
+
+  Source files: submission/final-submission.md, submission/description.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-026: Separate independent verification** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Separate independent verification
+
+  Acceptance: Claimed capabilities cite exact evidence
+
+  Verification: copy/source/playback comparison
+
+  Source files: submission/final-submission.md, submission/description.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-027: State untested areas** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: State untested areas
+
+  Acceptance: Physical devices and screen readers disclosed
+
+  Verification: copy/source/playback comparison
+
+  Source files: submission/final-submission.md, submission/description.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+### 9D Technical evidence
+
+- [ ] **EX-09-028: Concise architecture explanation** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Concise architecture explanation
+
+  Acceptance: Source links to shared player and helpers
+
+  Verification: exact build and documented test artifacts
+
+  Source files: submission/manifest.json, INSTALL.md, docs/release-integrity.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-029: Vite and React integration proof** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Vite and React integration proof
+
+  Acceptance: Real installation and cleanup documentation
+
+  Verification: exact build and documented test artifacts
+
+  Source files: submission/manifest.json, INSTALL.md, docs/release-integrity.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-030: Exact Video.js v10 version** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Exact Video.js v10 version
+
+  Acceptance: Package and lockfile match
+
+  Verification: exact build and documented test artifacts
+
+  Source files: submission/manifest.json, INSTALL.md, docs/release-integrity.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-031: Accessibility summary** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Accessibility summary
+
+  Acceptance: Automated tests separated from manual gaps
+
+  Verification: exact build and documented test artifacts
+
+  Source files: submission/manifest.json, INSTALL.md, docs/release-integrity.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-032: Browser compatibility summary** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Browser compatibility summary
+
+  Acceptance: Engine versions and limits recorded
+
+  Verification: exact build and documented test artifacts
+
+  Source files: submission/manifest.json, INSTALL.md, docs/release-integrity.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-033: Performance and bundle evidence** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Performance and bundle evidence
+
+  Acceptance: Actual byte totals, not perceived speed
+
+  Verification: exact build and documented test artifacts
+
+  Source files: submission/manifest.json, INSTALL.md, docs/release-integrity.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-034: Stress Studio capability summary** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Stress Studio capability summary
+
+  Acceptance: True tested fixtures listed
+
+  Verification: exact build and documented test artifacts
+
+  Source files: submission/manifest.json, INSTALL.md, docs/release-integrity.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-035: Public release evidence** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Public release evidence
+
+  Acceptance: Manifest SHA matches tested main
+
+  Verification: exact build and documented test artifacts
+
+  Source files: submission/manifest.json, INSTALL.md, docs/release-integrity.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-036: Apache licensing** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Apache licensing
+
+  Acceptance: LICENSE and NOTICE present
+
+  Verification: exact build and documented test artifacts
+
+  Source files: submission/manifest.json, INSTALL.md, docs/release-integrity.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-037: Original film attribution** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Original film attribution
+
+  Acceptance: Owner confirms original rights and file hash
+
+  Verification: exact build and documented test artifacts
+
+  Source files: submission/manifest.json, INSTALL.md, docs/release-integrity.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-038: Mux public playback evidence** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Mux public playback evidence
+
+  Acceptance: Real decode and seek documented
+
+  Verification: exact build and documented test artifacts
+
+  Source files: submission/manifest.json, INSTALL.md, docs/release-integrity.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-039: Journal live-site evidence** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Journal live-site evidence
+
+  Acceptance: Public scene-note seeking verified
+
+  Verification: exact build and documented test artifacts
+
+  Source files: submission/manifest.json, INSTALL.md, docs/release-integrity.md
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+### 9E Exact release
+
+- [ ] **EX-09-040: Confirm Mux playback ID** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Confirm Mux playback ID
+
+  Acceptance: Public ID maps to existing original asset
+
+  Verification: exact-head CI, manifest parity and signed-out live playback
+
+  Source files: .github/workflows/ci.yml, docs/release-integrity.md, tests/live.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-041: Test decoded Mux playback** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Test decoded Mux playback
+
+  Acceptance: CurrentTime advances on published route
+
+  Verification: exact-head CI, manifest parity and signed-out live playback
+
+  Source files: .github/workflows/ci.yml, docs/release-integrity.md, tests/live.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-042: Preserve original media** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Preserve original media
+
+  Acceptance: No duplicate upload or replacement
+
+  Verification: exact-head CI, manifest parity and signed-out live playback
+
+  Source files: .github/workflows/ci.yml, docs/release-integrity.md, tests/live.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-043: Protect dedicated hosting boundary** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Protect dedicated hosting boundary
+
+  Acceptance: Touch only DHAGO R2 keys
+
+  Verification: exact-head CI, manifest parity and signed-out live playback
+
+  Source files: .github/workflows/ci.yml, docs/release-integrity.md, tests/live.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-044: Run candidate build and browser gates** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Run candidate build and browser gates
+
+  Acceptance: Exact head passes appropriate checks
+
+  Verification: exact-head CI, manifest parity and signed-out live playback
+
+  Source files: .github/workflows/ci.yml, docs/release-integrity.md, tests/live.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-045: Merge only tested head** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Merge only tested head
+
+  Acceptance: PR merge tied to green candidate SHA
+
+  Verification: exact-head CI, manifest parity and signed-out live playback
+
+  Source files: .github/workflows/ci.yml, docs/release-integrity.md, tests/live.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-046: Stage identical tested distribution** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Stage identical tested distribution
+
+  Acceptance: No independent rebuilding after validation
+
+  Verification: exact-head CI, manifest parity and signed-out live playback
+
+  Source files: .github/workflows/ci.yml, docs/release-integrity.md, tests/live.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-047: Publish versioned assets safely** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Publish versioned assets safely
+
+  Acceptance: Assets before entry HTML and manifest last
+
+  Verification: exact-head CI, manifest parity and signed-out live playback
+
+  Source files: .github/workflows/ci.yml, docs/release-integrity.md, tests/live.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-048: Verify public manifest SHA** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Verify public manifest SHA
+
+  Acceptance: Current deployed source matches tested merge
+
+  Verification: exact-head CI, manifest parity and signed-out live playback
+
+  Source files: .github/workflows/ci.yml, docs/release-integrity.md, tests/live.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-049: Test live film and controls** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Test live film and controls
+
+  Acceptance: Play, seek, captions and fullscreen actually work
+
+  Verification: exact-head CI, manifest parity and signed-out live playback
+
+  Source files: .github/workflows/ci.yml, docs/release-integrity.md, tests/live.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-050: Verify Journal and Stress Lab** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Verify Journal and Stress Lab
+
+  Acceptance: Public pages functional after release
+
+  Verification: exact-head CI, manifest parity and signed-out live playback
+
+  Source files: .github/workflows/ci.yml, docs/release-integrity.md, tests/live.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-051: Record console and visual evidence** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Record console and visual evidence
+
+  Acceptance: No unexplained severe errors
+
+  Verification: exact-head CI, manifest parity and signed-out live playback
+
+  Source files: .github/workflows/ci.yml, docs/release-integrity.md, tests/live.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+- [ ] **EX-09-052: Prepare owner-only handoff** — IN PROGRESS
+
+  Existing: Existing code/documentation present, current candidate unverified
+
+  Required: Prepare owner-only handoff
+
+  Acceptance: Unverified gaps and receipt remain explicit
+
+  Verification: exact-head CI, manifest parity and signed-out live playback
+
+  Source files: .github/workflows/ci.yml, docs/release-integrity.md, tests/live.spec.ts
+
+  Evidence: PENDING exact-head CI/browser evidence
+
+  Blocker: none recorded
+
+## Preserved historical 100-step program
+
+Historical evidence: 86 DONE, 9 IN_PROGRESS, 5 NOT_STARTED, 0 BLOCKED. Original task texts and evidence remain intact in the first 100 entries of docs/steps.json. Those statuses are not candidate test results.
+
+## Phase 10 — Owner only
+
+No terms accepted. No Contra submission performed. No receipt recorded.

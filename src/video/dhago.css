@@ -615,6 +615,29 @@
     ),
     repeating-linear-gradient(0deg, #fff9 0 1px, transparent 1px 4px);
 }
+
+/* Four source-derived swatches keep their distinct weaving structures even
+   when the optional sampled palette is enabled. Geometry stays Video.js-owned. */
+.dhago[data-weave-sampled] .media-time-slider-chapter:nth-child(4n+2) .media-time-slider-track {
+  background-image:
+    repeating-linear-gradient(45deg,#17191855 0 1px,transparent 1px 6px),
+    repeating-linear-gradient(0deg,#fff9 0 2px,transparent 2px 6px);
+}
+.dhago[data-weave-sampled] .media-time-slider-chapter:nth-child(4n+3) .media-time-slider-track {
+  background-image:
+    repeating-linear-gradient(90deg,#1719184c 0 2px,transparent 2px 5px),
+    repeating-linear-gradient(0deg,#fff8 0 1px,transparent 1px 3px);
+}
+.dhago[data-weave-sampled] .media-time-slider-chapter:nth-child(4n) .media-time-slider-track {
+  background-image:
+    repeating-linear-gradient(90deg,#17191850 0 2px,transparent 2px 9px),
+    repeating-linear-gradient(0deg,#fff9 0 2px,transparent 2px 7px);
+}
+/* When the ribbon is densely subdivided, show clear boundaries rather than
+   an unreadable moire pattern. The thumb and native seeking are unaffected. */
+.dhago .media-time-slider-chapters:has(.media-time-slider-chapter:nth-child(13))
+  .media-time-slider-track {background-image:none;}
+
 /* Custom patterns never become extra hit targets or false audio waveforms. */
 /* Keep each chapter's track positioned in the slider's full-width coordinate
    space. Making a swatch position:relative shrinks the native seek fill to
@@ -637,6 +660,26 @@
   background-image:
     repeating-linear-gradient(90deg, #fff6 0 1px, transparent 1px 5px),
     repeating-linear-gradient(0deg, #1f181438 0 1px, #fff3 1px 2px, transparent 2px 4px);
+}
+
+/* A woven chapter remains recognizable on both sides of real currentTime.
+   These are swatch patterns, not a visualization of viewing history. */
+.dhago[data-weave-finite] .media-time-slider-chapter:nth-child(4n+2) .media-time-slider-fill {
+  background-image:repeating-linear-gradient(45deg,#fff7 0 1px,transparent 1px 5px),
+    repeating-linear-gradient(0deg,#17191835 0 1px,transparent 1px 4px);
+}
+.dhago[data-weave-finite] .media-time-slider-chapter:nth-child(4n+3) .media-time-slider-fill {
+  background-image:repeating-linear-gradient(90deg,#fff6 0 2px,transparent 2px 5px),
+    repeating-linear-gradient(0deg,#1719183c 0 1px,transparent 1px 3px);
+}
+.dhago[data-weave-finite] .media-time-slider-chapter:nth-child(4n) .media-time-slider-fill {
+  background-image:repeating-linear-gradient(90deg,#fff7 0 2px,transparent 2px 9px),
+    repeating-linear-gradient(0deg,#17191838 0 2px,transparent 2px 7px);
+}
+@media (forced-colors:active),(prefers-contrast:more){
+  .dhago[data-weave-finite] .media-time-slider-chapter .media-time-slider-fill{
+    background-image:none;
+  }
 }
 .dhago[data-weave-complete] .media-time-slider-chapter:last-of-type .media-time-slider-fill {
   box-shadow: inset -3px 0 var(--dhago-ink), inset 0 1px #fff7, inset 0 -1px #17191880;

@@ -140,3 +140,9 @@ Attempted preview deployment for exact revision 2ed92ded to Vercel team `surajde
 - Re-read the live Contra challenge through its current public challenge record: ACTIVE, deadline 2026-11-17 07:59 UTC, public Video.js v10 URL + visual + short description required; Mux playback ID and real live-site URL are optional bonus fields. No legal checkbox was accepted.
 - Added `submission/final-submission.md` with copy-ready title, descriptions, feature/technical/accessibility/originality/media/license statements, live links, 60-second walkthrough, screenshot shortlist and legal-safe checklist.
 - This branch must pass exact-head Chromium, Firefox and WebKit verification before merge; no contest submission or paid action is authorized by this work.
+
+## 2026-11-15 — Competition excellence audit and implementation
+
+- Inspected main `7b585e369bc3f4d322a26d947a9bbcd114707fc4`, baseline CI success run 43662610661 and public page text. Public page text is not decoded-video QA.
+- Added 214 competition-excellence tasks to the same `docs/steps.json` source; preserved all historical 100 steps and evidence unchanged. Phase 10 remains owner-only.
+- Implemented distinct sampled woven-chapter patterns and cached portable ribbon geometry at `bd83e562e5938f354392414b37bc702bf55ea2c2`. Candidate tests and visual captures still pending.
