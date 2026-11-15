@@ -5,7 +5,7 @@
 
 | Surface | Frozen value |
 | --- | --- |
-| Primary judge URL | `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` |
+| Primary judge URL | `https://detour.aafnaipatro.com/mux/` |
 | Cloudflare Worker | `detour-mux-release` |
 | Worker deployment created | 2026-11-15T11:01:02Z; deployment id `0ff0d1bd13e14b51800dec96c9d5b88d` |
 | Production source | `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a` |
@@ -18,7 +18,7 @@
 | Captions | same-origin `/showcase/detour-showcase-v1.vtt` |
 | Mux config | same-origin `/mux-public.json`; public playback metadata only |
 | Same-Worker fallback | same-origin `/showcase/detour-showcase-v1.mp4`, served from SHA-versioned R2 on demand |
-| Independent rollback | `https://detour-release.praisethegreatfool.workers.dev/` / `detour-dist-50ac9661e315` |
+| Independent rollback | `https://detour-backup.aafnaipatro.com/` / `detour-dist-50ac9661e315` |
 | Real-site bonus | skipped; do not claim |
 
 ## Acceptance evidence
