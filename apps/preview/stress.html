@@ -7,7 +7,7 @@
 </head>
 <body>
 <a class="skip" href="#lab-player">Skip to film</a>
-<header class="lab-header"><a class="lab-brand" href="./">▦ DHAGO</a><nav><a href="./">Watch the film</a><a href="./tools.html">Creative tools</a><a href="./journal.html">Studio Journal</a><a href="./ribbon.html">The ribbon</a></nav></header>
+<header class="lab-header"><a class="lab-brand" href="./">▦ DHAGO</a><nav><a href="./">Watch the film</a><a href="./tools.html">Playback studio</a><a href="./journal.html">Studio Journal</a><a href="./ribbon.html">The ribbon</a></nav></header>
 <main>
 <section class="lab-intro">
   <p class="eyebrow">DHAGO / The resilience collection</p>
@@ -74,7 +74,7 @@
 
 <section class="portable-tool" id="portable-tool" aria-labelledby="portable-title">
   <div class="portable-heading">
-    <div><p class="eyebrow">The comparison studio / open to other players</p><h2 id="portable-title">See how another player responds.</h2></div>
+    <div><p class="eyebrow">The comparison studio / one set of conditions</p><h2 id="portable-title">See how another player responds.</h2></div>
     <p class="portable-privacy"><strong>Runs in your browser.</strong> Your selected local file stays on your device; only load player code you trust.</p>
   </div>
   <div class="portable-grid">
@@ -84,17 +84,17 @@
       <div class="portable-loader-actions">
         <button type="button" id="portable-use-dhago">Use DHAGO</button>
         <details class="portable-help portable-external"><summary>Bring another player (advanced)</summary>
-          <p>This option is for compatible player integrations, not links to ordinary video files. Only use trusted code.</p>
+          <p>This option uses a small comparison bridge made for compatible players. It is not a link to an ordinary video file.</p>
           <div class="portable-external-controls">
-        <label for="portable-adapter-url">JavaScript integration address</label>
-        <div class="portable-inline"><input id="portable-adapter-url" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/my-skin-adapter.mjs"/><button type="button" id="portable-load-url">Connect</button></div>
-        <label for="portable-adapter-file">JavaScript integration file <span>.js / .mjs</span></label>
+        <label for="portable-adapter-url">Player bridge link</label>
+        <div class="portable-inline"><input id="portable-adapter-url" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/player-bridge.mjs"/><button type="button" id="portable-load-url">Connect</button></div>
+        <label for="portable-adapter-file">Player bridge file <span>.js / .mjs</span></label>
         <input id="portable-adapter-file" type="file" accept=".js,.mjs,text/javascript,application/javascript"/>
           </div>
-          <p class="portable-doc-link"><a href="./stress-adapter.example.mjs" download>See an example integration file</a></p>
+          <p class="portable-doc-link"><a href="./stress-adapter.example.mjs" download>Download a sample bridge</a></p>
         </details>
       </div>
-      <details class="portable-help"><summary>Playback and privacy</summary><p>DHAGO works without connecting another player. For optional comparisons, a compatible JavaScript integration runs inside a separate, restricted frame. An unavailable integration is marked <strong>Not assessed</strong>, not counted as a playback failure. Files you choose stay on this device, although third-party code can make its own network requests. Only use code you trust.</p></details>
+      <details class="portable-help"><summary>Playback and privacy</summary><p>DHAGO works without connecting another player. Optional comparisons run in a separate browser space. If a bridge cannot load, the result is marked <strong>Not assessed</strong> instead of being treated as a playback failure. Files you choose stay on this device, although a connected third-party player may still make its own network requests.</p></details>
       <output id="portable-loader-status" class="portable-loader-status" aria-live="polite">Preparing the DHAGO player…</output>
     </section>
 
