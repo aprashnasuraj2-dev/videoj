@@ -1,15 +1,22 @@
 # DETOUR progress
 
 Phase: 08
-Resume step: 073
+Resume step: 072
 
 | Item | Current state |
 | --- | --- |
-| Verified | 66/100. Phase 7 browser-core acceptance is retained and Phase 8 media strategy 071 is verified. 072 is implemented locally but awaits HTTPS qualification. |
-| Next | 073. Compose the public-root one-screen judge demo while 072 waits for HTTPS qualification. |
+| Verified | 68/100. Phase 8 media strategy 071, immediate judge demo 073 and distinct-host portability 074 are verified. 072 remains the active HTTPS release gate. |
+| Next | 072. Materialize the verified release media into Git, publish the production build to an isolated Cloudflare Pages project, then prove signed-out HTTPS playback, byte-range seeking, poster and captions. |
 | Open dependencies | 002 eligibility; 017 uncoached first-use; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% browser zoom; 072 public HTTPS playback/seek qualification. |
-| Prototype / public release | Packed external host and desktop Chromium/Firefox/WebKit core are green. Phase 7 capture artifact exists. Public HTTPS, final showcase media and optional Mux remain later gates. |
-| Source baseline | Phase 8 media baseline: `87afdf6a740bbcce95caaa04e2c02886071c895c`, Actions run 43699914256. Showcase verification 2/2 passed; full DETOUR CI passed. |
+| Prototype / public release | Public-root composition and second production host pass locally. HTTPS publication is the remaining core media gate before Mux evaluation. |
+| Source baseline | Judge-demo/portability baseline: `34261f03c8df75bbeed847879de7269ab794fb55`, Actions run 43701045585. 073 and 074 pass; full DETOUR CI green. |
+
+## 2026-11-15 · Judge demo and portability accepted; HTTPS gate active
+
+- Exact source `34261f03c8df75bbeed847879de7269ab794fb55` passed [Actions run 43701045585](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43701045585).
+- **073:** root showcase appears immediately at 320×640, 375×667 and 1280×900, remains paused, exposes Keep, uses the verified showcase MP4/poster and has no dialog/password gate.
+- **074:** the production-built `/integration/` host uses `daylight-study.mp4` with separate captions and the same package skin; Hold at 42.35 → seek 18 → Return landed at **42.350s**.
+- Closed 073 and 074. Resume 072 because the same media bundle still needs signed-out HTTPS playback and seek qualification. The planned Cloudflare route is isolated from existing Patro/DHAGO Pages projects.
 
 ## 2026-11-15 · Production multi-page portability fix (validation pending)
 

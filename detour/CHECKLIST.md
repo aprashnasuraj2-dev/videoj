@@ -524,19 +524,19 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Pass condition** — The MP4 plays locally and via HTTPS with seek support. Captions are timed and the poster matches the actual video.
   - **Progress** — Generated bundle passes ffprobe, fast-start, frame-difference and local Vite HTTP seek checks at 18.000s and 42.000s. HTTPS/public-origin qualification is still required before this row can close.
 
-- [ ] **073. Compose a one-screen judge demo**
+- [x] **073. Compose a one-screen judge demo**
   - **Objective** — Make the signature action accessible immediately.
   - **Work** — Place the playable skin near the top, with one concise line of context where useful. Avoid gates and intro animation. Keep tests or docs out of the viewing path.
   - **Deliverable** — Public-ready showcase composition.
   - **Pass condition** — A cold mobile visitor can see and use the player without sign-in, instructions, scrolling past a hero, or a custom site mode.
-  - **Progress** — Public root now defaults to the verified showcase with a compact masthead; mobile/desktop first-viewport, paused/no-gate and media-selection assertions are added. Await exact-head CI before checking.
+  - **Evidence** — [Phase 8 judge-demo acceptance](design/PHASE-8.md#judge-demo-and-portability-acceptance--34261f0) and Actions run 43701045585: root player is immediately usable at 320×640, 375×667 and 1280×900, paused, with no sign-in/dialog/password gate.
 
-- [ ] **074. Show portability with a distinct clip**
+- [x] **074. Show portability with a distinct clip**
   - **Objective** — Prove reuse using the same skin artifact.
   - **Work** — Mount the unchanged skin with a chapterless media item or longer interview and different captions. Prefer one compact secondary mount or direct host example to a larger site build.
   - **Deliverable** — Second context using the same version.
   - **Pass condition** — Both clips demonstrate hold, arbitrary seek and return. The skin module has no variant branch tied to the second clip.
-  - **Progress** — Independent host now defaults to daylight-study + distinct captions and runs the same Hold → 18s → Return flow through the unchanged package skin entry. Await exact-head CI.
+  - **Evidence** — [Phase 8 portability acceptance](design/PHASE-8.md#judge-demo-and-portability-acceptance--34261f0) and Actions run 43701045585: production `/integration/` uses distinct `daylight-study` media/captions and the unchanged skin returned 18s → 42.350s.
 
 - [ ] **075. Evaluate Mux against the reserve**
   - **Objective** — Earn the optional point only with reliable playback.

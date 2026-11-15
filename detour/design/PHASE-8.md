@@ -44,3 +44,14 @@ The bundle is generated rather than committed as binary source. Local build/play
 - Fresh Chromium/Vite HTTP seeks at 18.000s and 42.000s; poster/VTT/manifest return 200.
 
 **071 passes.** **072 remains open** solely for its HTTPS/public-origin condition.
+
+
+## Judge demo and portability acceptance — 34261f0
+
+[Actions run 43701045585](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43701045585) passed the full pipeline.
+
+- **073:** public-root composition tested at 320×640, 375×667 and 1280×900. The player begins above 120 CSS px, is meaningfully present in the first viewport, is paused, has no authentication/intro gate, and points to the showcase MP4/poster.
+- **074:** Vite now builds `integration/index.html` as a real production entry. Its host owns a different `daylight-study` MP4/VTT and imports the same `createDetourPlayer` entry. Hold → 18s → Return landed at **42.350s**.
+- Regression suites explicitly request `?fixture=navigation-study`, keeping the 64s QA media independent from the 56s judge media.
+
+The next blocking acceptance is **072 HTTPS**. Local HTTP evidence is not promoted to HTTPS evidence.

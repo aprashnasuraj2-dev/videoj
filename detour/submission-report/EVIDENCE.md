@@ -83,3 +83,11 @@ For functional tests, record current and held times before and after, playback m
 - The selected showcase is a deterministic 56s in-repository FFmpeg composition, not external stock and not DHAGO media. It includes generated visual states, a low-level generated tone, a poster extracted from 42s, descriptive captions and a provenance manifest.
 - The media suite passed 2/2. ffprobe confirms H.264/AAC 1280×720; the MP4 is fast-start; 18s and 42s frame hashes differ; a fresh browser mount seeks to 18.000s then 42.000s over local HTTP.
 - Step 071 is verified. Step 072 remains pending until the same bundle plays and seeks from the eventual HTTPS public origin.
+
+
+## 2026-11-15 Phase 8 judge demo and portability
+
+- Source `34261f03c8df75bbeed847879de7269ab794fb55`; [Actions 43701045585](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43701045585).
+- 073 passed on 320×640, 375×667 and 1280×900: player visible immediately, paused, no gate, correct showcase source/poster.
+- 074 passed from the separately built `/integration/` entry using `daylight-study.mp4` and its own captions. The unchanged skin completed Hold 42.35 → arbitrary seek 18 → Return 42.350.
+- The main showcase, independent host and Phase 7 QA fixture are now three separate host/media concerns; none requires a media-name branch inside the reusable skin.
