@@ -1,6 +1,6 @@
 # DETOUR
 
-Build a reusable Video.js v10 skin where viewers can **keep their place, explore any other moment, and return in one action**. One conventional seek bar shows the current position and a separate held mark. The visible “Return to [time]” action is the player’s signature. “Stay here” clears the mark without seeking.
+Build a reusable Video.js v10 skin where viewers can **keep places, explore elsewhere, and return from the same familiar seek rail**. The package defaults to the original single held place with explicit Return/Stay controls; an opt-in checkpoint mode keeps up to four source-scoped C1–C4 marks on the rail, reveals each timestamp on hover/focus, and returns by clicking or tapping the mark.
 
 ## Start here
 
@@ -89,7 +89,7 @@ The DETOUR package source is Apache-2.0; see `LICENSE`. The package tarball cont
 
 ## Product direction
 
-- **Player first.** Keep one source-scoped held point by default, or opt into a bounded C1–C4 checkpoint rail, while preserving five essential controls and real player state. Preserve normal play/pause, seeking, captions, keyboard and touch. The mark survives arbitrary seeks and clears on successful return, deliberate dismissal or a source change.
+- **Player first.** Keep one source-scoped held point by default, or opt into a bounded C1–C4 checkpoint rail, while preserving five essential controls and real player state. Preserve normal play/pause, seeking, captions, keyboard and touch. In single-place mode the mark is consumed by Return/Stay; in checkpoint mode C1–C4 survive Returns and unrelated seeks until individually removed, cleared together or reset by a source change.
 - **Own identity.** Use graphite, a bright angular hold marker and tabular time. Lead with a playable player or a real capture. Keep DHAGO’s woven interaction, footage, visual system, live routes and release workflows out of DETOUR.
 - **Prove the behavior early.** First build a rough real v10 MP4 prototype. Demonstrate a 42s → 18s → 42s round trip, held origin through two seeks, and “Stay here” without movement. Test first-use recognition, narrow touch and keyboard before adding polish. Backup: [Pausepoint](CHECKLIST.md#02--concept-definition-and-signature-interaction), an explicit one-time pause at a viewer-chosen timestamp.
 - **Ship in order.** Core skin → replacement-media mount → public anonymous playback and real-device evidence → optional Mux or real-site bonus → owner handoff. See the [rules register](submission-report/RULES.md) for release constraints. DETOUR can develop and rehearse while second-entry eligibility is being resolved.

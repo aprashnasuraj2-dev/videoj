@@ -57,7 +57,7 @@ test('076/077 frozen public Mux release is signed-out, seekable and has an indep
     assert.equal(media.poster, release.posterUrl);
     assert.equal(await page.locator('.mux-panel').isVisible(), false);
     assert.equal(await page.locator('[data-detour-fallback]').isVisible(), false);
-    assert.match(await page.locator('.demo-heading p').textContent(), /Keep your place\. Explore another moment\. Return in one action\./);
+    assert.match(await page.locator('.demo-heading p').textContent(), /Keep up to four places\. Explore freely\. Return from the rail\./);
     assert.doesNotMatch(await page.locator('body').innerText(), /Mux-hosted|independent fallback/i);
     await page.waitForFunction(() => document.querySelector('[data-detour-clock-current]')?.textContent === '00:00');
     assert.equal((await page.locator('.detour-clock-visual').innerText()).replace(/\s+/g, ' ').trim(), '00:00 / 00:55');
@@ -68,26 +68,30 @@ test('076/077 frozen public Mux release is signed-out, seekable and has an indep
     await seekPlayer(page, 18);
     await page.waitForFunction(() => document.querySelector('[data-detour-clock-current]')?.textContent === '00:18');
     assert.equal((await page.locator('.detour-clock-visual').innerText()).replace(/\s+/g, ' ').trim(), '00:18 / 00:55');
-    await page.getByRole('button', { name: 'Return to 00:42' }).focus();
-    await capture(page, '375-held-focused');
-    const compact = await page.evaluate(() => {
-      const player = document.querySelector('.detour')?.getBoundingClientRect();
-      const returnButton = document.querySelector('.detour-return')?.getBoundingClientRect();
-      const stay = document.querySelector('.detour-stay')?.getBoundingClientRect();
-      const settings = document.querySelector('.detour-settings')?.getBoundingClientRect();
-      const rail = document.querySelector('.detour-rail')?.getBoundingClientRect();
-      const marker = document.querySelector('.detour-origin')?.getBoundingClientRect();
-      const heading = document.querySelector('.demo-heading')?.getBoundingClientRect();
-      const sourcePanel = document.querySelector('.mux-panel')?.getBoundingClientRect();
-      const clock = document.querySelector('.detour-clock')?.textContent?.trim();
-      return { player, returnButton, stay, settings, rail, marker, heading, sourcePanel, clock, bodyText: document.body.innerText };
-    });
-    writeCaptureMetrics('375-held-focused', compact);
-    await page.getByRole('button', { name: 'Return to 00:42' }).click();
-    await page.getByRole('button', { name: 'Keep my place' }).waitFor({ timeout: 10000 });
+    const c1 = page.getByRole('button', { name: 'Return to 00:42 — checkpoint C1' });
+    await c1.focus();
+    await capture(page, '375-checkpoint-focused');
+    const compact = await page.evaluate(() => ({
+      player: document.querySelector('.detour')?.getBoundingClientRect(),
+      checkpoint: document.querySelector('.detour-checkpoint[data-slot="1"]')?.getBoundingClientRect(),
+      settings: document.querySelector('.detour-settings')?.getBoundingClientRect(),
+      rail: document.querySelector('.detour-rail')?.getBoundingClientRect(),
+      heading: document.querySelector('.demo-heading')?.getBoundingClientRect(),
+      sourcePanel: document.querySelector('.mux-panel')?.getBoundingClientRect(),
+      clock: document.querySelector('.detour-clock')?.textContent?.trim(),
+      bodyText: document.body.innerText,
+    }));
+    writeCaptureMetrics('375-checkpoint-focused', compact);
+    await c1.click();
+    await page.waitForFunction(() => Math.abs(document.querySelector('video').currentTime - 42.35) < 0.5, null, { timeout: 10000 });
+    await page.waitForFunction(() => {
+      const checkpoint = document.querySelector('.detour-checkpoint[data-slot="1"]');
+      return checkpoint && !checkpoint.disabled;
+    }, null, { timeout: 10000 });
     const returned = await page.locator('video').evaluate(video => ({ time: video.currentTime, paused: video.paused }));
-    assert.ok(Math.abs(returned.time - 42.35) < 0.5, `Public Mux Return landed at ${returned.time}`);
+    assert.ok(Math.abs(returned.time - 42.35) < 0.5, `Public Mux checkpoint Return landed at ${returned.time}`);
     assert.equal(returned.paused, true);
+    assert.equal(await page.locator('.detour-checkpoint').count(), 1, 'Return must keep C1 available');
     await capture(page, '375-returned');
 
     const fallback = await page.evaluate(async () => {
@@ -108,7 +112,7 @@ test('076/077 frozen public Mux release is signed-out, seekable and has an indep
     assert.equal(fallback.accepts, 'bytes');
     assert.match(fallback.range || '', /^bytes 0-1023\/\d+$/);
     assert.equal(fallback.source, release.sourceSha);
-    t.diagnostic(`Public Mux release: HTTPS 200, Hold → 18s → ${returned.time.toFixed(3)}s Return; fallback range 206 / ${fallback.bytes} B.`);
+    t.diagnostic(`Public Mux release: HTTPS 200, C1 at 42s → 18s → ${returned.time.toFixed(3)}s checkpoint Return with persistence; fallback range 206 / ${fallback.bytes} B.`);
   } finally {
     await context.close();
     await browser.close();
@@ -136,7 +140,7 @@ test('077 frozen public Mux release recovers from a blocked provider without sta
     assert.equal(media.provider, 'fallback');
     assert.match(media.src, /\/showcase\/detour-showcase-v1\.mp4$/);
     assert.equal(media.paused, true);
-    assert.equal(await page.locator('.detour-held').isVisible(), false);
+    assert.equal(await page.locator('.detour-checkpoint').count(), 0);
     await seekPlayer(page, 18);
     t.diagnostic('Public blocked-Mux route exposed recovery controls; same-origin fallback became seekable with no stale held place.');
   } finally {
@@ -164,9 +168,31 @@ test('080 frozen public Mux release is immediately usable at desktop width', { t
     assert.equal(await page.locator('[data-detour-fallback]').isVisible(), false);
     assert.ok(player.y < 90, `Polished player should start near the heading, got y=${player.y}`);
     assert.ok(player.y + player.height <= 900, `Desktop cold flow should fit the 900px viewport, bottom=${player.y + player.height}`);
-    assert.match(await page.locator('.demo-heading p').textContent(), /Keep your place\. Explore another moment\. Return in one action\./);
+    assert.match(await page.locator('.demo-heading p').textContent(), /Keep up to four places\. Explore freely\. Return from the rail\./);
     assert.doesNotMatch(await page.locator('body').innerText(), /Mux-hosted|independent fallback/i);
     await capture(page, '1280-cold');
+
+    for (const seconds of [42.35, 30, 18, 8]) {
+      await seekPlayer(page, seconds);
+      await page.getByRole('button', { name: 'Keep my place' }).click();
+    }
+    await seekPlayer(page, 15);
+    const desktopC1 = page.getByRole('button', { name: 'Return to 00:42 — checkpoint C1' });
+    await desktopC1.focus();
+    assert.equal(await page.locator('.detour-checkpoint').count(), 4);
+    await capture(page, '1280-checkpoints-focused');
+    writeCaptureMetrics('1280-checkpoints-focused', await page.evaluate(() => ({
+      player: document.querySelector('.detour')?.getBoundingClientRect(),
+      rail: document.querySelector('.detour-rail')?.getBoundingClientRect(),
+      checkpoints: [...document.querySelectorAll('.detour-checkpoint')].map(button => ({
+        slot: button.dataset.slot,
+        label: button.getAttribute('aria-label'),
+        rect: button.getBoundingClientRect(),
+      })),
+      clock: document.querySelector('.detour-clock')?.textContent?.trim(),
+      bodyText: document.body.innerText,
+    })));
+
     const desktop = await page.evaluate(() => ({
       player: document.querySelector('.detour')?.getBoundingClientRect(),
       heading: document.querySelector('.demo-heading')?.getBoundingClientRect(),
@@ -194,7 +220,7 @@ test('088 public creative routes use viewer-facing language only', { timeout: 90
     assert.equal(await page.title(), 'DETOUR — Keep your place');
     const primaryText = await page.locator('body').innerText();
     assert.doesNotMatch(primaryText, internal);
-    assert.match(primaryText, /Keep your place\. Explore another moment\. Return in one action\./);
+    assert.match(primaryText, /Keep up to four places\. Explore freely\. Return from the rail\./);
     assert.equal(await page.locator('.mux-panel').isVisible(), false);
 
     const integration = new URL('../integration/', release.origin).href;

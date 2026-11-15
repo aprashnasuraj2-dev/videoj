@@ -49,11 +49,17 @@ test('092 exact submitted URL is a signed-out Video.js v10 release with real med
     await seek(page, 42.35);
     await page.getByRole('button', { name: 'Keep my place' }).click();
     await seek(page, 18);
-    await page.getByRole('button', { name: 'Return to 00:42' }).click();
-    await page.getByRole('button', { name: 'Keep my place' }).waitFor({ timeout: 10000 });
+    const c1 = page.getByRole('button', { name: 'Return to 00:42 — checkpoint C1' });
+    await c1.click();
+    await page.waitForFunction(() => Math.abs(document.querySelector('video').currentTime - 42.35) < 0.5, null, { timeout: 10000 });
+    await page.waitForFunction(() => {
+      const checkpoint = document.querySelector('.detour-checkpoint[data-slot="1"]');
+      return checkpoint && !checkpoint.disabled;
+    }, null, { timeout: 10000 });
     const returned = await page.locator('video').evaluate(video => ({ time: video.currentTime, paused: video.paused }));
     assert.ok(Math.abs(returned.time - 42.35) < 0.5);
     assert.equal(returned.paused, true);
+    assert.equal(await page.locator('.detour-checkpoint').count(), 1, 'checkpoint remains reusable after Return');
 
     const backup = await page.evaluate(async () => {
       const url = new URL('../showcase/detour-showcase-v1.mp4', document.baseURI);
@@ -66,7 +72,7 @@ test('092 exact submitted URL is a signed-out Video.js v10 release with real med
       };
     });
     assert.deepEqual([backup.status, backup.bytes, backup.type, backup.accepts], [206, 1024, 'video/mp4', 'bytes']);
-    t.diagnostic(`Remote signed-out public gate: Video.js @videojs/html 10.4.0 source, HTTPS 200, captions showing, 18s → ${returned.time.toFixed(3)}s Return, backup 206/1024 B.`);
+    t.diagnostic(`Remote signed-out public gate: Video.js @videojs/html 10.4.0 source, HTTPS 200, captions showing, C1 42s → 18s → ${returned.time.toFixed(3)}s Return with persistence, backup 206/1024 B.`);
   } finally {
     await context.close();
     await browser.close();

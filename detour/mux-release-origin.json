@@ -1,12 +1,12 @@
 {
-  "origin": "https://detour.aafnaipatro.com/mux/",
-  "sourceSha": "a3b43f74c7652c707c3703193ab1081820bafa79",
-  "distBranch": "detour-dist-a3b43f74c765",
+  "origin": "https://detour-entry.aafnaipatro.com/mux/",
+  "sourceSha": "d430f2ee49fa93a460c150fd90205b13fe5327be",
+  "distBranch": "detour-dist-d430f2ee49fa",
   "fallbackOrigin": "https://detour-backup.aafnaipatro.com/",
   "playbackId": "Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ",
   "staticMp4Url": "https://stream.mux.com/Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ/highest.mp4",
-  "releaseWorker": "detour-mux-release",
-  "releaseTag": "mux-bonus",
+  "releaseWorker": "detour-checkpoints-release",
+  "releaseTag": "checkpoint-release",
   "posterUrl": "https://image.mux.com/Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ/thumbnail.jpg?time=0",
-  "workerDeploymentId": "df263a1169024f2598b63aec0bb41bbe"
+  "workerDeploymentId": "0726463d1d9f467aaf5117ca13bce8f3"
 }
