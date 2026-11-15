@@ -1,29 +1,32 @@
 # Phase 10 — verification, rehearsal and owner handoff
 
-**Prepared:** 2026-11-15  
-**Verification head:** `b9b1495f4f66422dfa369cafcad2738fff6b4592`  
-**Accepted public runtime:** `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`  
-**Preferred competition submission demo:** https://detour-entry.aafnaipatro.com/mux/\n**Redundant competition mirror:** https://detour.aafnaipatro.com/mux/
-**Public-host privacy:** use this branded hostname only; do not expose any account-level `workers.dev` hostname.
-**Independent live-site bonus URL:** https://aafnaipatro.com/on-this-day/video/apollo-11/  
+**Prepared:** 2026-11-16  
+**Final handoff head:** `11e00e6d4a2c2708eda4ce172d43ea81ec007571`  
+**Promoted public runtime:** `d430f2ee49fa93a460c150fd90205b13fe5327be` / `detour-dist-d430f2ee49fa`  
+**Preferred competition demo:** https://detour-entry.aafnaipatro.com/mux/  
+**Redundant older single-place mirror:** https://detour.aafnaipatro.com/mux/  
+**Live-site bonus:** https://aafnaipatro.com/on-this-day/video/apollo-11/  
 **Independent rollback:** https://detour-backup.aafnaipatro.com/  
-**Exact verification:** [Validate DETOUR run 43713525858](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43713525858)
+**Runtime validation:** run **43770989069**  
+**Final exact-head validation:** run **43772874561**  
+**Final evidence capture:** run **43772874624**
 
-The verification head is later than the deployed runtime because Phase 10 added tests, audits, package documentation and release metadata. A direct compare from `a3b43f7` to `b9b1495` contains no `detour/skin/` change. The correct release claim is therefore the deployed `a3b43f7` runtime re-qualified by the later verification harness, not a fictitious redeploy of test-only commits.
+The public competition route serves checkpoint runtime `d430f2ee…`. Later handoff/evidence commits do not change the reusable implementation: direct compare `d430f2ee… → 11e00e6d…` contains **zero `detour/skin/*` changes**.
 
 ## Accepted verification
 
 | Gate | Observed result |
 | --- | --- |
-| Exact public release — 092 | Signed-out HTTPS 200; source/dist headers match; @videojs/html **10.4.0**; real Mux media and captions; **42.35 → 18 → 42.350s** Return; independent backup **206 / 1,024 B** |
-| Mandatory controls — 093 | Desktop keyboard exercised play/pause, seek/time, mute, fullscreen entry/exit and Settings→Escape; 375×667 touch-enabled Chromium exercised the five required controls; bright alternate media retained all five |
-| Final audit — 094 | Apache-2.0 entry, project-authored media provenance and permissive production dependency licenses verified; **69 emitted text files** scanned for management credential/API hooks; **15-file** package boundary dry-run passed |
-| Reuse — 095 | Packed tarball installed into a fresh external host with replacement media/captions; Return landed at **42.350s** in Chromium, Firefox and desktop WebKit |
-| Reusable artifact | **14161323994**; ZIP digest `sha256:1077a7f45a101090985f065e6e57b3d2899cc2dedd9d8e93ccbc94f7c3b4c304`; tarball **16,417 B**, SHA-256 `6c3680164f42bf582fe739b0e82af73826d35aea9a3f2ae8558c90cd6d6ad5cc`, **15 files** |
-| Verification dist artifact | **14161094736**; ZIP digest `sha256:76282311a905aed6d325d2adfa04b73844360b7b13042648ab071470381ab3bc` |
-| Aafnai Patro live-site bonus | `https://aafnaipatro.com/on-this-day/video/apollo-11/`; distinct On This Day editorial page, NASA Apollo 11 media delivered through separate editorial Mux Playback ID `kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U`; Cloudflare proof on ~47s source and 12→2→12.000s Return. It is **not** the competition demo. |
+| Public release — 092 | Preferred branded route serves Video.js v10 + real Mux media/captions. Public-edge proof saved **C1–C4** at ~42/30/18/08, returned **15 → 42.35s** through C1 with all four retained, removed only C2, then cleared all. |
+| Controls — 093 | Play/pause, seek/time, mute, fullscreen and settings remained functional across desktop and compact browser probes. Touch-browser evidence is not physical-phone evidence. |
+| Audit — 094 | Apache-2.0, media provenance, dependency/license, credential and package-boundary checks passed the final exact-head validation. |
+| Reuse — 095 | Exact package was installed in a fresh external host with replacement media/captions and exercised across Chromium, Firefox and desktop WebKit. Default single-place and opt-in C1–C4 modes both remain supported. |
+| Exact reusable package | Run **43772874561**, artifact **14184304470**, wrapper digest `sha256:172d3770f722e93b05298b3d1f2b9d98ccdc831145a2da5208805b2aaa600c10`; exact `.tgz` SHA-256 `fbcffda21a0d4adc3f12fb265f8ac94f53bf0a4a3b222940e4290bde8fa2b999`, 15 files. |
+| Final authentic evidence | Run **43772874624**, artifact **14184539322**, wrapper digest `sha256:2281c1083ff62fcdbb9e207a9e0709fb02d35247e06287ca3469694c78dafcc5`; raw browser interaction **6.28s, 960×720 VP8**. |
+| Canonical owner pack | `DETOUR_COMPETITION_MASTERPACK_v4.zip`, **617,835 B**, SHA-256 `6f036b80834a5cdcb68c6e43eae4d65f7cd88f54854a21b498f049638683dc54`; ZIP integrity passed. |
+| Live-site bonus | Aafnai Patro Apollo 11 page is a separate editorial use of the reusable skin, not the contest demo. |
 
-The 375×667 run is browser touch emulation. It does not close physical-device step 062. No NVDA/VoiceOver session has been recorded, and native browser 200% zoom remains separate from the CSS-layout zoom probe.
+No NVDA/VoiceOver session, physical-phone session or native browser 200% zoom session is being claimed.
 
 ## Official rubric rehearsal — internal estimate only
 
@@ -31,16 +34,16 @@ Official public scoring is 10 visual design/originality, 5 usability/interaction
 
 | Category | Internal estimate | Evidence basis | Main deduction / counterexample |
 | --- | ---: | --- | --- |
-| Visual design + originality | **8.5 / 10** | Player-only graphite/lime identity; distinct current playhead vs held bracket; explicit Return ticket; authentic hero/detail/compact/alternate captures; no DHAGO textile language | A judge who values cinematic media spectacle over control-system identity could score lower; fresh-human 090 has not yet confirmed two-second recognition |
-| Usability + interaction | **4.5 / 5** | Familiar seek bar preserved; Hold→multiple seeks→Return and Stay; exact deployed five-control keyboard/touch-shaped gate; recovery and race handling | Physical iOS/Android drag/pointer-cancel testing remains open under 062 |
+| Visual design + originality | **8.5 / 10** | Graphite/lime identity; white current playhead vs bounded C1–C4 checkpoints; hover/focus time disclosure; authentic public hero/detail/compact/alternate captures; no DHAGO textile language | A judge who values cinematic media spectacle over control-system identity could score lower; fresh-human 090 has not yet confirmed two-second recognition |
+| Usability + interaction | **4.5 / 5** | Familiar seek bar preserved; up to four rail-native checkpoints; dedupe; persistent Return; individual Delete/Backspace and Clear; five-control keyboard/touch-shaped gate; recovery and race handling | Physical iOS/Android drag/pointer-cancel testing remains open under 062 |
 | Accessibility | **3.5 / 5** | Keyboard path, focus restoration, captions, forced colors, reduced motion, RTL/long copy and semantic time/state coverage | No recorded NVDA/VoiceOver session and no native 200% browser-zoom session; DOM semantics are not a substitute for AT evidence |
 | Execution + polish | **4.8 / 5** | Exact public Mux + independent rollback; Chromium/Firefox/WebKit; package reuse; secret/license audit; deterministic evidence; recovery/fallback | Service continuity through judging still depends on operator retention; physical-device evidence is intentionally not claimed |
 | **Base estimate** | **21.3 / 25** | Internal arithmetic only | Could move materially if fresh-human discoverability or AT testing reveals a blocker |
 | Mux bonus | **+1** | Public Playback ID and exact public playback independently verified | Claim only if the current form exposes/accepts this bonus |
 | Genuine live-site bonus | **+1** | `https://aafnaipatro.com/on-this-day/video/apollo-11/` is a genuine Aafnai Patro On This Day editorial page using the reusable skin on different NASA historical media | Keep the editorial route live; never present the Mux contest demo itself as this bonus |
-| **Internal total including both bonuses** | **23.3 / 27** | Not an official prediction | Eligibility is unresolved, so this is not a submission-readiness score |
+| **Internal total including both bonuses** | **23.3 / 27** | Not an official prediction | Signed-in form constraints and human/device/AT gates remain open, so this is not a submission-readiness score |
 
-**Thesis-flip variable:** if a fresh uncoached reviewer cannot infer the held-origin/Return behavior quickly, both originality communication and usability should be discounted; if the current signed-in form imposes an unmet required field or media limit, the payload must be adapted before submission.
+**Thesis-flip variable:** if a fresh uncoached reviewer cannot infer the C1–C4 checkpoint/Return behavior quickly, both originality communication and usability should be discounted; if the current signed-in form imposes an unmet required field or media limit, the payload must be adapted before submission.
 
 ### Must-fix / must-confirm before submission
 
@@ -92,6 +95,9 @@ Direct browser capture; no checkpoint, playhead, time, label or control is compo
 **Raw interaction proof**  
 `interaction-960x720.webm` — 6.28s, 960×720 VP8, no audio; SHA-256 `448b50908f3b81f7a5ca823d53eeb9ebdcd95bbe5e0b156790df3de044938151`. Final metadata records `returnedSeconds: 42` and `persistentCheckpoints: 2`.
 
+**Exact reusable package**  
+`detour-video-skin-0.1.0.tgz` — SHA-256 `fbcffda21a0d4adc3f12fb265f8ac94f53bf0a4a3b222940e4290bde8fa2b999`; artifact **14184304470** from successful final-head run **43772874561**. The implementation matches the promoted runtime because `d430f2ee… → 11e00e6d…` contains no `detour/skin/*` changes.
+
 **Mux bonus evidence**  
 Playback ID: `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`  
 The preferred public URL plays the same Mux-hosted rendition on the checkpoint release Worker. Public-edge verification proved C1–C4 at 42/30/18/08, duplicate suppression, 15→42.35 Return with all four checkpoints retained, focus surviving a forced render, and C2-only Delete. The older branded route is retained as a single-place mirror, not as separate bonus evidence.
@@ -106,7 +112,7 @@ This is a separate Aafnai Patro **On This Day** editorial history page. It uses 
 
 
 **Owner master pack**  
-`DETOUR_COMPETITION_MASTERPACK_v4.zip` — SHA-256 `9770949632f6f293a5c1984fa2363994bbe78bfdd3dcfacb9bd74df14bd54da8`. It contains the final submit assets, exact CI reusable tarball, supporting evidence and owner-only route/provenance/checksum material.
+`DETOUR_COMPETITION_MASTERPACK_v4.zip` — **617,835 B**, SHA-256 `6f036b80834a5cdcb68c6e43eae4d65f7cd88f54854a21b498f049638683dc54`. It contains final submit assets, the exact final-head validated reusable tarball, supporting evidence, route/provenance material and content checksums.
 
 **License statement, if requested**  
 Entry source is licensed under Apache License 2.0. Showcase media is project-authored procedural material with separate provenance recorded in `RIGHTS.md`.

@@ -9,12 +9,21 @@ Resume step: 091
 | Next | 091. Multiple-submission eligibility is resolved; the signed-in current form field names, limits and acceptance state still unlock 096/097/099. Step 090 still needs a fresh uncoached human reviewer; 100 follows actual submission. |
 | Open dependencies | 091 signed-in live-form confirmation; 017 first-use study; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% zoom; 090 fresh uncoached judging pass; 099 owner submission and 100 post-submission verification. No further independent Phase 10 acceptance step bypasses 091. |
 | Prototype / public release | Preferred submission route: `https://detour-entry.aafnaipatro.com/mux/` on checkpoint runtime `d430f2ee49fa93a460c150fd90205b13fe5327be` / `detour-dist-d430f2ee49fa`; redundant mirror `https://detour.aafnaipatro.com/mux/` intentionally retains the earlier single-place `a3b43f74…` runtime; independent rollback remains `https://detour-backup.aafnaipatro.com/` / `detour-dist-50ac9661e315`. |
-| Source baseline | Multi-checkpoint runtime `d430f2ee49fa93a460c150fd90205b13fe5327be` passed full Validate DETOUR run `43770989069`; the strengthened checkpoint behavior proof at test-only head `b4ebfe8f…` passed Mux run `43771166704`. Post-promotion public-edge verification proved C1–C4, dedupe, persistent Return, focus-preserving render and individual Delete on `detour-entry`. |
+| Source baseline | Promoted checkpoint runtime `d430f2ee49fa93a460c150fd90205b13fe5327be` / `detour-dist-d430f2ee49fa` passed runtime validation `43770989069`. Final handoff head `11e00e6d…` passed complete validation `43772874561` and authentic evidence capture `43772874624`; comparison from runtime to handoff contains zero `detour/skin/*` changes. |
 
 
 
 
 
+
+
+## 2026-11-16 · Canonical master pack v4 reconciled to final-head CI package
+
+- The earlier accepted v4 archive used the promoted-runtime CI tarball. Its skin implementation was correct, but the final-head CI package has cleaner final documentation and is also fully validated.
+- Final-head Validate DETOUR run **43772874561** produced reusable-package artifact **14184304470**, ZIP digest `sha256:172d3770f722e93b05298b3d1f2b9d98ccdc831145a2da5208805b2aaa600c10`. Exact tarball SHA-256: `fbcffda21a0d4adc3f12fb265f8ac94f53bf0a4a3b222940e4290bde8fa2b999`.
+- The final-head tarball is byte-identical to the earlier validated package from head `91842b22…`; direct compare `d430f2ee… → 11e00e6d…` contains **zero `detour/skin/*` changes**.
+- Canonical owner archive is now **`DETOUR_COMPETITION_MASTERPACK_v4.zip`**, **617,835 B**, SHA-256 **`6f036b80834a5cdcb68c6e43eae4d65f7cd88f54854a21b498f049638683dc54`**. It passed ZIP integrity verification and includes SHA-256 checksums for its contents.
+- Judge-facing hook is frozen as **“A seek bar that remembers.”** Runtime and public routes are unchanged. Checklist remains **90/100**.
 
 ## 2026-11-16 · Final checkpoint presentation evidence accepted
 
@@ -23,7 +32,7 @@ Resume step: 091
 - **Raw interaction:** `interaction-960x720.webm`, 6.28s, 960×720 VP8, no audio, SHA-256 `448b50908f3b81f7a5ca823d53eeb9ebdcd95bbe5e0b156790df3de044938151`. It saves C1 and C2, explores ~8s, returns through C1 to 42s, and leaves both checkpoints present.
 - Compact real-cue captions, recovery and alternate-media single-place compatibility captures also passed in the same artifact. The duplicate Playwright recorder file is intentionally excluded from owner packaging.
 - Latest full Validate DETOUR run **43772874561** also passed; runtime remains the accepted `d430f2ee…` checkpoint build.
-- Owner Master Pack **v4** is sealed from verified bytes: `DETOUR_COMPETITION_MASTERPACK_v4.zip`, SHA-256 `9770949632f6f293a5c1984fa2363994bbe78bfdd3dcfacb9bd74df14bd54da8`. The exact reusable tarball inside is the CI artifact bytes, not a local repack.
+- Owner Master Pack **v4** is sealed from verified bytes: `DETOUR_COMPETITION_MASTERPACK_v4.zip`, SHA-256 `9770949632f6f293a5c1984fa2363994bbe78bfdd3dcfacb9bd74df14bd54da8` (**superseded by the canonical final-head package recorded above**).
 
 ## 2026-11-16 · Checkpoint recording seek-settlement correction
 

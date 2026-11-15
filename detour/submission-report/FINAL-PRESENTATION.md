@@ -28,6 +28,12 @@ The four-point cap is deliberate. Unlimited bookmarks would be a different produ
 ## Owner pack
 
 `DETOUR_COMPETITION_MASTERPACK_v4.zip`  
-SHA-256: `9770949632f6f293a5c1984fa2363994bbe78bfdd3dcfacb9bd74df14bd54da8`
+Size: **617,835 B**  
+SHA-256: `6f036b80834a5cdcb68c6e43eae4d65f7cd88f54854a21b498f049638683dc54`
 
-The package inside the owner pack is the exact CI reusable tarball: 19,213 B, 15 files, SHA-256 `86174f366fce43f9da878abbdaecc125e8deda6226838c695aa44ccaa21176e9`.
+The canonical package inside is the exact final-head CI reusable tarball from successful Validate DETOUR run **43772874561**, artifact **14184304470**:
+- GitHub wrapper digest: `sha256:172d3770f722e93b05298b3d1f2b9d98ccdc831145a2da5208805b2aaa600c10`
+- tarball: **19,237 B**, 15 files
+- tarball SHA-256: `fbcffda21a0d4adc3f12fb265f8ac94f53bf0a4a3b222940e4290bde8fa2b999`
+
+The earlier v4 archive hash `9770949632f6f293a5c1984fa2363994bbe78bfdd3dcfacb9bd74df14bd54da8` is superseded. Both tarballs carried the same checkpoint skin implementation; the canonical pack uses the later exact-head package with cleaner final documentation. Direct compare from promoted runtime `d430f2ee…` through final handoff head `11e00e6d…` contains no `detour/skin/*` changes.
