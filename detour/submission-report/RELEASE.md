@@ -24,6 +24,8 @@
 | Submission eligibility | **Open** steps 002/091; no second-entry permission, contest submission or terms acceptance is claimed |
 | Owner handoff | [Phase 10 verification/rehearsal packet](PHASE-10-HANDOFF.md) |
 
+The Aafnai Patro live-site Worker also fetches reusable assets through the branded DETOUR custom domain, so disabling legacy public Worker hostnames does not break the independent live-site bonus.
+
 ## Public-host privacy boundary
 
 The judge-facing submission and rollback use only branded `aafnaipatro.com` hostnames. `workers.dev` routing is disabled for both DETOUR Workers, and account-level `workers.dev` hostnames must not appear in judge-facing copy, screenshots, reports or form fields.
