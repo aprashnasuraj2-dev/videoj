@@ -154,6 +154,7 @@ try {
     for (let i = 0; i < 4; i += 1) { await page.keyboard.press('PageUp'); await page.waitForTimeout(70); }
     for (let i = 0; i < 2; i += 1) { await page.keyboard.press('ArrowRight'); await page.waitForTimeout(70); }
     await page.waitForFunction(() => Math.abs(document.querySelector('video').currentTime - 42) < 1);
+    await page.locator('.detour-hold:enabled').waitFor({ timeout: 10000 });
     await page.getByRole('button', { name: 'Keep my place' }).focus();
     await page.keyboard.press('Enter');
     await page.waitForTimeout(450);
@@ -162,8 +163,10 @@ try {
     await page.keyboard.press('Home');
     for (let i = 0; i < 18; i += 1) { await page.keyboard.press('ArrowRight'); await page.waitForTimeout(40); }
     await page.waitForFunction(() => Math.abs(document.querySelector('video').currentTime - 18) < 1);
+    await page.locator('.detour-hold:enabled').waitFor({ timeout: 10000 });
     await page.getByRole('button', { name: 'Keep my place' }).focus();
     await page.keyboard.press('Enter');
+    await page.waitForFunction(() => document.querySelectorAll('.detour-checkpoint').length === 2, null, { timeout: 10000 });
     await page.waitForTimeout(450);
 
     await slider.focus();
@@ -172,6 +175,10 @@ try {
     await page.waitForFunction(() => Math.abs(document.querySelector('video').currentTime - 8) < 1);
 
     const c1 = page.getByRole('button', { name: /Return to 00:4[12] — checkpoint C1/ });
+    await page.waitForFunction(() => {
+      const checkpoint = document.querySelector('.detour-checkpoint[data-slot="1"]');
+      return checkpoint && !checkpoint.disabled;
+    }, null, { timeout: 10000 });
     await c1.focus();
     await page.waitForTimeout(500);
     await page.keyboard.press('Enter');

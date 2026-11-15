@@ -16,6 +16,11 @@ Resume step: 091
 
 
 
+## 2026-11-16 · Checkpoint recording seek-settlement correction
+
+- Evidence run `43772667773` reached the final recording and returned through C1, but only one checkpoint existed. Diagnosis: the script waited for `currentTime≈18` but not for native seeking to settle; **Keep my place** was therefore still correctly disabled and the keyboard Enter could not create C2.
+- The recording harness now waits for the actual enabled Hold control before each keyboard save, asserts two checkpoints exist before exploring onward, and waits for C1 to re-enable before keyboard Return. Runtime behavior is unchanged.
+
 ## 2026-11-16 · Final checkpoint interaction clip scope
 
 - Evidence run `43772451384` successfully passed the new four-checkpoint hero/detail, real-cue compact caption, recovery and alternate-media stages, then timed out waiting to remove C2 immediately after the recorded asynchronous C1 Return.
