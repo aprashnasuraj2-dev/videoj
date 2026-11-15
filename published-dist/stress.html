@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="description" content="Explore DHAGO under real playback conditions, from dense chapters and narrow screens to audio, captions and graceful recovery. Keep watching as the weave adapts."/>
+<title>DHAGO — The Weave, Under Pressure</title>
+  <script type="module" crossorigin src="./assets/stress-CepZJ7wU.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/modulepreload-polyfill-P2Xu9kJm.js">
+  <link rel="modulepreload" crossorigin href="./assets/deep-equal-2fCx4gVW.js">
+  <link rel="modulepreload" crossorigin href="./assets/create-player-Ouq-12V2.js">
+  <link rel="stylesheet" crossorigin href="./assets/create-player-DTHgHcqQ.css">
+  <link rel="stylesheet" crossorigin href="./assets/stress-Cr3zgwb8.css">
+</head>
+<body>
+<a class="skip" href="#lab-player">Skip to film</a>
+<header class="lab-header"><a class="lab-brand" href="./">▦ DHAGO</a><nav><a href="./">Watch the film</a><a href="./tools.html">Creative tools</a><a href="./journal.html">Studio Journal</a><a href="./ribbon.html">The ribbon</a></nav></header>
+<main>
+<section class="lab-intro">
+  <p class="eyebrow">DHAGO / The resilience collection</p>
+  <h1>The loom, <em>under pressure.</em></h1>
+  <p>A beautiful player should feel at home beyond a perfect demo. Follow the same woven timeline through short films, crowded chapters, unexpected interruptions, and small screens. Each study reveals how the design responds without hiding what the media can—and cannot—do. <a href="#portable-tool">Explore the player comparison studio ↓</a></p>
+</section>
+<div class="lab-layout">
+  <aside class="lab-cases" aria-labelledby="cases-title">
+    <h2 id="cases-title">Choose a study</h2>
+    <div role="group" aria-label="Playback studies" id="lab-case-list"></div>
+    <div class="lab-small-print">The original <em>Studies in Thread</em> film anchors the collection. Additional films and sound recordings retain their individual credits. Intentional interruptions are clearly identified as demonstrations.</div>
+  </aside>
+  <section class="lab-content" aria-label="DHAGO playback studies">
+    <div class="case-heading"><div><p class="eyebrow" id="case-category"></p><h2 id="case-title">Original weave</h2><p id="case-description"></p></div><span id="case-badge">ORIGINAL FILM</span></div>
+    <media-i18n><div id="lab-player" tabindex="-1"></div></media-i18n><noscript><video controls playsinline preload="metadata" src="./media/studies-in-thread.mp4" style="width:100%" aria-label="Studies in Thread with standard video controls"></video><p>JavaScript is unavailable. Native media controls remain accessible for the original film.</p></noscript>
+    <div class="lab-actions">
+      <label>Player width <select id="lab-width"><option value="100%">Fluid</option><option value="240px">240px</option><option value="280px">280px</option><option value="320px">320px</option><option value="420px">420px</option><option value="720px">720px</option></select></label>
+      <label>Surface <select id="lab-surface"><option value="warm">Linen</option><option value="dark">Ink</option><option value="minimal">Paper</option></select></label>
+      <button type="button" id="lab-restart">Replay this study</button>
+      <button type="button" id="lab-motion" aria-pressed="false">Motion: on</button>
+    </div>
+    <div class="lab-report">
+      <h3>Playback at a glance <small>Updated as the film plays</small></h3>
+      <div class="lab-metrics">
+        <span>State <strong id="state-status">Idle</strong></span>
+        <span>Position <strong id="state-time">—</strong></span>
+        <span>Duration <strong id="state-duration">—</strong></span>
+        <span>Player width <strong id="state-width">—</strong></span>
+        <span>Chapter <strong id="state-chapter">—</strong></span>
+        <span>Moving through film <strong id="state-seeking">No</strong></span>
+        <span>Ready to watch <strong id="state-ready">Not loaded</strong></span>
+        <span>Source <strong id="state-source">—</strong></span>
+      </div>
+      <p id="state-error" hidden></p>
+      <p id="lab-diagnostics"></p>
+      <p id="lab-credit"></p>
+    </div>
+    <details class="lab-report edge-truth"><summary id="edge-truth-title">Explore playback details <span>See how the film responds</span></summary>
+<p class="edge-disclosure">Watch the media respond to play, pause, seek, volume, speed and captions. These readings come from the selected film or recording. Connection loss and device-only behavior are examined separately, never presented as real footage.</p>
+<dl id="edge-truth-metrics" class="edge-metrics"></dl>
+<div class="edge-actions" id="edge-actions" role="group" aria-label="Playback controls">
+<button type="button" data-edge="play">Play</button><button type="button" data-edge="pause">Pause</button>
+<button type="button" data-edge="start">From start</button><button type="button" data-edge="back">−10s</button><button type="button" data-edge="forward">+10s</button><button type="button" data-edge="nearend">Near end</button>
+<button type="button" data-edge="mute">Mute / unmute</button><button type="button" data-edge="zero-volume">Volume 0</button>
+<button type="button" data-edge="speed">Speed 1.5×</button><button type="button" data-edge="captions">Captions on/off</button>
+<button type="button" data-edge="reset">Start over</button>
+</div>
+<p id="edge-feedback" role="status" aria-live="polite"></p>
+</details>
+<div class="lab-manual" id="lab-manual"></div>
+<section class="manual-spotlight" id="manual-spotlight" aria-labelledby="manual-spotlight-title" hidden>
+  <p class="eyebrow">Beyond the studio</p>
+  <h3 id="manual-spotlight-title">Every screen tells a different story.</h3>
+  <p>Keep the film playing above as you explore. Some moments happen beyond this studio: watching a live broadcast, enjoying the film on an iPhone, sharing it with a larger screen or following along with a screen reader.</p>
+  <ol>
+    <li><strong>Live, with room to rewind.</strong> Try a real broadcast and, when it allows, move back to an earlier moment.</li>
+    <li><strong>From your phone to the big screen.</strong> Turn your iPhone sideways, enjoy fullscreen and try AirPlay with a compatible television.</li>
+    <li><strong>Watch your own way.</strong> Enlarge the page, use a keyboard or touch, and explore the film with a screen reader.</li>
+  </ol>
+  <p class="manual-footnote">We would rather leave room for your experience than pretend to know how every screen will feel.</p>
+</section>
+  </section>
+</div>
+
+<section class="portable-tool" id="portable-tool" aria-labelledby="portable-title">
+  <div class="portable-heading">
+    <div><p class="eyebrow">The comparison studio / open to other players</p><h2 id="portable-title">See how another player responds.</h2></div>
+    <p class="portable-privacy"><strong>Runs in your browser.</strong> Your selected local file stays on your device; only load player code you trust.</p>
+  </div>
+  <div class="portable-grid">
+    <section class="portable-loader" aria-labelledby="loader-title">
+      <h3 id="loader-title">01 / Choose your player</h3>
+      <p>Begin with DHAGO, or bring another compatible player to see the same viewing conditions in a fresh space.</p>
+      <div class="portable-loader-actions">
+        <button type="button" id="portable-use-dhago">Use DHAGO</button>
+        <details class="portable-help portable-external"><summary>Bring another player (advanced)</summary>
+          <p>This option is for compatible player integrations, not links to ordinary video files. Only use trusted code.</p>
+          <div class="portable-external-controls">
+        <label for="portable-adapter-url">JavaScript integration address</label>
+        <div class="portable-inline"><input id="portable-adapter-url" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/my-skin-adapter.mjs"/><button type="button" id="portable-load-url">Connect</button></div>
+        <label for="portable-adapter-file">JavaScript integration file <span>.js / .mjs</span></label>
+        <input id="portable-adapter-file" type="file" accept=".js,.mjs,text/javascript,application/javascript"/>
+          </div>
+          <p class="portable-doc-link"><a href="./stress-adapter.example.mjs" download>See an example integration file</a></p>
+        </details>
+      </div>
+      <details class="portable-help"><summary>Playback and privacy</summary><p>DHAGO works without connecting another player. For optional comparisons, a compatible JavaScript integration runs inside a separate, restricted frame. An unavailable integration is marked <strong>Not assessed</strong>, not counted as a playback failure. Files you choose stay on this device, although third-party code can make its own network requests. Only use code you trust.</p></details>
+      <output id="portable-loader-status" class="portable-loader-status" aria-live="polite">Preparing the DHAGO player…</output>
+    </section>
+
+    <section class="portable-runner" aria-labelledby="runner-title">
+      <h3 id="runner-title">02 / Explore playback conditions</h3>
+      <label for="portable-case">Playback condition</label>
+      <select id="portable-case"></select>
+      <div class="portable-run-actions">
+        <button type="button" id="portable-run-case">Explore selected condition</button>
+        <button type="button" id="portable-run-suite">Explore all compatible conditions</button>
+      </div>
+      <p class="portable-note">Some viewing experiences belong on the devices you use every day. We leave those open for you to explore, rather than guessing.</p>
+    </section>
+  </div>
+
+  <section class="portable-specimen" aria-labelledby="portable-specimen-title">
+    <div class="portable-specimen-head"><h3 id="portable-specimen-title">The player in focus</h3><span id="portable-summary">No comparison yet.</span></div>
+    <div id="portable-direct-host" class="portable-host" aria-label="DHAGO comparison player"></div>
+    <div id="portable-sandbox-host" class="portable-host" aria-label="Other player comparison area"></div>
+  </section>
+
+  <section class="portable-results" aria-labelledby="portable-results-title">
+    <div class="portable-results-head"><div><h3 id="portable-results-title">03 / What happened</h3><p>Explore the findings and save a copy. Connection problems are kept separate from playback behavior.</p></div>
+      <div class="portable-export">
+        <button type="button" id="portable-copy-json">Copy details</button>
+        <button type="button" id="portable-download-json">Save details</button>
+        <button type="button" id="portable-copy-markdown">Copy summary</button>
+        <button type="button" id="portable-clear-results">Clear</button>
+      </div>
+    </div>
+    <div class="portable-table-wrap"><table><thead><tr><th scope="col">Case</th><th scope="col">Status</th><th scope="col">What we observed</th></tr></thead><tbody id="portable-result-body"></tbody></table></div>
+    <p id="portable-cases" class="lab-portable-cases"></p>
+  </section>
+</section>
+
+<section class="lab-context"><p class="eyebrow">Made for the way stories are watched</p><h2>Every way of watching has its own rhythm.</h2><p>Some stories have four chapters, others forty. Some fill the screen; others are meant to be heard. Beyond this studio, a live broadcast, an iPhone in hand, a film shared to the television or a story followed with a screen reader brings a different experience. Each deserves to be explored where it happens.</p></section>
+</main>
+<footer class="lab-footer">DHAGO / Time, woven · <a href="./">Return to the film</a></footer>
+</body>
+</html>
