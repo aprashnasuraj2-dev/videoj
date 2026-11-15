@@ -244,6 +244,34 @@ async function proveEngine(engineName, engine) {
     assert.ok(Math.abs(returned.state - returned.native) <= 0.15, `${engineName} store/native clocks disagree`);
     assert.equal(returned.seeking, false);
 
+    await a.locator('media-play-button').click();
+    await page.waitForFunction(() => !document.querySelector('#player-a video').paused);
+    await page.waitForFunction(() => document.querySelector('#player-a video').currentTime > 42.45);
+    await a.locator('media-play-button').click();
+    assert.equal(await a.locator('video').evaluate(video => video.paused), true);
+
+    await a.locator('media-mute-button').click();
+    assert.equal(await a.locator('video').evaluate(video => video.muted), true);
+    await a.locator('media-mute-button').click();
+    assert.equal(await a.locator('video').evaluate(video => video.muted), false);
+
+    await a.locator('.detour-settings').click();
+    const rate = a.locator('.detour-menu [data-rate="1.25"]');
+    await rate.click();
+    assert.equal(await a.locator('video').evaluate(video => video.playbackRate), 1.25);
+    await a.locator('.detour-settings').click();
+    await a.locator('.detour-menu [data-rate="1"]').click();
+    assert.equal(await a.locator('video').evaluate(video => video.playbackRate), 1);
+
+    await seek(a, 42.35);
+    await a.getByRole('button', { name: 'Keep my place' }).click();
+    await seek(a, 18);
+    const stayTime = await a.locator('video').evaluate(video => video.currentTime);
+    await a.getByRole('button', { name: 'Stay here' }).click();
+    assert.ok(Math.abs(await a.locator('video').evaluate(video => video.currentTime) - stayTime) < 0.05,
+      `${engineName} Stay changed currentTime`);
+    assert.equal(await a.locator('.detour-origin').isVisible(), false);
+
     await a.locator('media-captions-button').click();
     await page.waitForFunction(() => document.querySelector('#player-a video').textTracks[0]?.mode === 'showing');
     assert.equal(await page.locator('#player-live detour-place').isVisible(), false, 'Live media exposed DETOUR action.');

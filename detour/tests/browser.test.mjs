@@ -750,6 +750,8 @@ test('representative portrait, dense-chapter and long-duration fixtures preserve
     const track = [...document.querySelector('video').textTracks].find(item => item.kind === 'chapters');
     return track?.cues?.length === 64;
   });
+  assert.equal(await page.locator('.detour-rail > *').count(), 2,
+    'Dense chapter metadata must not create cosmetic rail markers.');
 
   await seek(page, 42.35);
   await page.getByRole('button', { name: 'Keep my place' }).click();
@@ -775,4 +777,91 @@ test('representative portrait, dense-chapter and long-duration fixtures preserve
   await page.getByRole('button', { name: 'Keep my place' }).click();
   assert.ok(await page.getByRole('button', { name: 'Return to 10:00:42' }).isVisible());
   await page.getByRole('button', { name: 'Stay here' }).click();
+});
+
+
+test('twenty pending-return remounts clear timers, stale completions and duplicate handlers', { timeout: 50000 }, async t => {
+  const page = await player(t);
+  const playerNode = page.locator('video-player');
+  const hold = page.getByRole('button', { name: 'Keep my place' });
+
+  await page.evaluate(() => {
+    const nativeSet = window.setTimeout.bind(window);
+    const nativeClear = window.clearTimeout.bind(window);
+    const tracked = new Set();
+    window.__detourTimerAudit = { tracked, nativeSet, nativeClear };
+    window.setTimeout = (callback, delay, ...args) => {
+      const id = nativeSet(callback, delay, ...args);
+      if (delay === 8000) tracked.add(id);
+      return id;
+    };
+    window.clearTimeout = id => {
+      tracked.delete(id);
+      return nativeClear(id);
+    };
+  });
+
+  for (let cycle = 0; cycle < 20; cycle += 1) {
+    await seek(page, 42.35);
+    await hold.click();
+    await seek(page, 18);
+    await playerNode.evaluate(player => {
+      player.__cycleRealStore = player.store;
+      const delayed = Object.create(player.store, {
+        seek: { value: () => new Promise(resolve => { player.__cycleResolve = resolve; }) },
+      });
+      Object.defineProperty(player, 'store', { configurable: true, value: delayed });
+    });
+    await page.getByRole('button', { name: 'Return to 00:42' }).click();
+    await page.getByRole('button', { name: 'Returning…' }).waitFor();
+    await playerNode.evaluate(player => {
+      const place = player.querySelector('detour-place');
+      const settings = player.querySelector('.detour-settings');
+      const resolve = player.__cycleResolve;
+      place.remove();
+      settings.before(place);
+      Object.defineProperty(player, 'store', { configurable: true, value: player.__cycleRealStore });
+      resolve(42.35);
+      delete player.__cycleResolve;
+      delete player.__cycleRealStore;
+    });
+    await page.locator('.detour-hold:enabled').waitFor();
+    assert.equal(await page.locator('.detour-origin').isVisible(), false, `Leaked marker on remount ${cycle + 1}`);
+    assert.equal(await page.evaluate(() => window.__detourTimerAudit.tracked.size), 0,
+      `Leaked Return deadline on remount ${cycle + 1}`);
+  }
+
+  await seek(page, 42.35);
+  await hold.click();
+  await seek(page, 18);
+  await playerNode.evaluate(player => {
+    const real = player.store;
+    player.__countedStore = real;
+    player.__returnDispatches = 0;
+    const counted = Object.create(real, {
+      seek: { value(time) {
+        player.__returnDispatches += 1;
+        return real.seek(time);
+      } },
+    });
+    Object.defineProperty(player, 'store', { configurable: true, value: counted });
+  });
+  await page.getByRole('button', { name: 'Return to 00:42' }).click();
+  await hold.waitFor();
+  assert.equal(await playerNode.evaluate(player => player.__returnDispatches), 1,
+    'Repeated remounts created duplicate Return dispatchers.');
+  assert.equal(await page.evaluate(() => window.__detourTimerAudit.tracked.size), 0);
+
+  await playerNode.evaluate(player => {
+    Object.defineProperty(player, 'store', { configurable: true, value: player.__countedStore });
+    delete player.__countedStore;
+    delete player.__returnDispatches;
+  });
+  await page.evaluate(() => {
+    const audit = window.__detourTimerAudit;
+    window.setTimeout = audit.nativeSet;
+    window.clearTimeout = audit.nativeClear;
+    delete window.__detourTimerAudit;
+  });
+  t.diagnostic('20/20 pending-return remounts cleared the held mark, one-shot deadline and stale completion.');
 });
