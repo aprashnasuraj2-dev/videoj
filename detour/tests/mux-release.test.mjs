@@ -48,16 +48,26 @@ test('076/077 frozen public Mux release is signed-out, seekable and has an indep
       paused: video.paused,
       provider: video.dataset.provider,
       track: video.querySelector('track')?.src,
+      poster: video.poster,
     }));
     assert.equal(media.src, release.staticMp4Url);
     assert.equal(media.provider, 'mux');
     assert.equal(media.paused, true);
     assert.match(media.track || '', /\/showcase\/detour-showcase-v1\.vtt$/);
+    assert.equal(media.poster, release.posterUrl);
+    assert.equal(await page.locator('.mux-panel').isVisible(), false);
+    assert.equal(await page.locator('[data-detour-fallback]').isVisible(), false);
+    assert.match(await page.locator('.demo-heading p').textContent(), /Keep your place\. Explore another moment\. Return in one action\./);
+    assert.doesNotMatch(await page.locator('body').innerText(), /Mux-hosted|independent fallback/i);
+    await page.waitForFunction(() => document.querySelector('[data-detour-clock-current]')?.textContent === '00:00');
+    assert.equal((await page.locator('.detour-clock-visual').innerText()).replace(/\s+/g, ' ').trim(), '00:00 / 00:55');
     await capture(page, '375-cold');
 
     await seekPlayer(page, 42.35);
     await page.getByRole('button', { name: 'Keep my place' }).click();
     await seekPlayer(page, 18);
+    await page.waitForFunction(() => document.querySelector('[data-detour-clock-current]')?.textContent === '00:18');
+    assert.equal((await page.locator('.detour-clock-visual').innerText()).replace(/\s+/g, ' ').trim(), '00:18 / 00:55');
     await page.getByRole('button', { name: 'Return to 00:42' }).focus();
     await capture(page, '375-held-focused');
     const compact = await page.evaluate(() => {
@@ -150,7 +160,12 @@ test('080 frozen public Mux release is immediately usable at desktop width', { t
     assert.equal(await page.locator('input[type="password"]').count(), 0);
     assert.equal(await page.locator('video').evaluate(video => video.currentSrc), release.staticMp4Url);
     assert.equal(await page.getByRole('button', { name: 'Keep my place' }).isVisible(), true);
-    assert.equal(await page.locator('[data-detour-fallback]').isVisible(), true);
+    assert.equal(await page.locator('.mux-panel').isVisible(), false);
+    assert.equal(await page.locator('[data-detour-fallback]').isVisible(), false);
+    assert.ok(player.y < 90, `Polished player should start near the heading, got y=${player.y}`);
+    assert.ok(player.y + player.height <= 900, `Desktop cold flow should fit the 900px viewport, bottom=${player.y + player.height}`);
+    assert.match(await page.locator('.demo-heading p').textContent(), /Keep your place\. Explore another moment\. Return in one action\./);
+    assert.doesNotMatch(await page.locator('body').innerText(), /Mux-hosted|independent fallback/i);
     await capture(page, '1280-cold');
     const desktop = await page.evaluate(() => ({
       player: document.querySelector('.detour')?.getBoundingClientRect(),

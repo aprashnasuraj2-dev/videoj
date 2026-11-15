@@ -11,6 +11,14 @@ Resume step: 081
 | Prototype / public release | Frozen Mux candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on immutable `detour-dist-a9bbfcb4ee68`; stable rollback/fallback remains `https://detour-release.praisethegreatfool.workers.dev/`. |
 | Source baseline | Phase 8 production source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a`: full CI 43706450932 green and immutable dist staged. Public Mux release verification 43707445255 passed from the later test-only harness; earlier full CI 43707040940 also remained green after adding the public gate. |
 
+## 2026-11-15 · Phase 9 step 081 — polished immutable build deployed (public requalification pending)
+
+- Full DETOUR run 43710674795 passed the polished source `c647d59d6f00dae6f753a20ebc163ef12bcd5992` across production build, R2 fallback, architecture, packed host, Chromium, Firefox, desktop WebKit, footprint and responsive/keyboard/touch-emulation probes. It staged **75 files** at immutable `detour-dist-c647d59d6f00`.
+- Dedicated Mux run 43710674865 passed after fixing the first real polish regression: author CSS `.mux-panel { display:flex }` overrode the HTML `hidden` state. Added an explicit `.mux-panel[hidden] { display:none; }` rather than weakening the assertion.
+- Mux provisioning run 43710535679 reused the same content-hash asset and public Playback ID, confirming **206 / 1,024 B** for the same static rendition; the updated public config uses the time-zero poster.
+- Updated only isolated Worker `detour-mux-release` to immutable `detour-dist-c647d59d6f00` / source `c647d59d6f00…`; Cloudflare deployment id `24268d4b668c4827b3cea936ba8fe113`. The independent `detour-release` rollback remains unchanged.
+- Public signed-out assertions are now tightened to require hidden healthy recovery UI, viewer-benefit copy, time-zero poster, `00:00 / 00:55` and `00:18 / 00:55` clocks, mobile Hold/Return, and a 1280×900 player that fits entirely inside the viewport. **081 remains unchecked until this public gate passes and its capture is reviewed.**
+
 ## 2026-11-15 · Phase 9 step 081 — three cold-path friction fixes implemented (public qualification pending)
 
 - Downloaded and reviewed the actual signed-out public capture artifact from Mux verification run 43710251344 rather than relying on the older fixture boards. At 375×667 the player began at y=155px because an **80.5px technical source panel** sat above it; the visible page repeated “Mux-hosted”/“fallback” infrastructure copy before the viewer reached the interaction.
