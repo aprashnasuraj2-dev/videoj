@@ -19,16 +19,20 @@ class DetourMediaState extends HTMLElement {
     // Native WebKit can leave End at 0 on the v10 time-slider keyboard path.
     // Normalize only boundary keys, never remap ordinary arrow-key seeking.
     const timeline = container.querySelector('media-time-slider');
-    timeline.addEventListener('keydown', event => {
+    document.addEventListener('keydown', event => {
       if (!['Home', 'End'].includes(event.key) || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (!event.composedPath().includes(timeline)) return; // this player's seek slider only
       if (!this.#ready || !Number.isFinite(media.duration) || media.duration <= 0 || !media.seekable.length) return;
-      const edge = event.key === 'Home' ? media.seekable.start(0) : media.seekable.end(media.seekable.length - 1);
+      const first = media.seekable.start(0);
+      const last = Math.min(media.seekable.end(media.seekable.length - 1), media.duration);
+      // Some WebKit decoders reset to time zero on an exact-duration seek.
+      // The final decodable-frame boundary is within 50 ms of duration.
+      const edge = event.key === 'Home' ? first : Math.max(first, last - 0.05);
       if (!Number.isFinite(edge) || typeof player.store?.seek !== 'function') return;
       event.preventDefault();
       event.stopImmediatePropagation();
-      // An explicit slider key must supersede a pending Return before seeking.
       timeline.dispatchEvent(new Event('detour-manual-seek'));
-      Promise.resolve(player.store.seek(edge)).catch(() => {});
+      try { Promise.resolve(player.store.seek(edge)).catch(() => {}); } catch { /* retain the native clock */ }
     }, { signal, capture: true });
 
 
