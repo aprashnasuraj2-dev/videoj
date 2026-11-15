@@ -493,7 +493,7 @@ test('067 duration and seekable changes keep held-origin math truthful', { timeo
   } finally { await page.close(); }
 });
 
-test('068 timeout, buffering pause and stale completion never resume playback', { timeout: 20000 }, async t => {
+test('068 Return timeout ignores its late completion', { timeout: 15000 }, async t => {
   const page=await browser.newPage({viewport:{width:375,height:800}});
   try {
     await ready(page);
@@ -518,10 +518,17 @@ test('068 timeout, buffering pause and stale completion never resume playback', 
     assert.equal(await page.locator('.detour-origin').isVisible(),true,'Stale timeout completion consumed mark');
     assert.ok(Math.abs(await page.locator('video').evaluate(v=>v.currentTime)-18)<0.2,'Stale completion changed time');
     assert.equal(await page.locator('video').evaluate(v=>v.paused),true,'Stale completion resumed playback');
+    t.diagnostic('Real 8s deadline retained mark; late resolution was ignored and pause intent stayed intact.');
+  } finally { await page.close(); }
+});
 
-    await page.locator('video-player').evaluate(player=>{
-      Object.defineProperty(player,'store',{configurable:true,value:player.__timeoutReal});
-    });
+test('068 pausing while provider is waiting keeps the subsequent Return paused', { timeout: 15000 }, async t => {
+  const page=await browser.newPage({viewport:{width:375,height:800}});
+  try {
+    await ready(page);
+    await seek(page,42.35);
+    await page.getByRole('button',{name:'Keep my place'}).click();
+    await seek(page,18);
     const play=page.locator('media-play-button');
     await play.click();
     await page.waitForFunction(()=>!document.querySelector('video').paused);
@@ -533,7 +540,7 @@ test('068 timeout, buffering pause and stale completion never resume playback', 
       video.dispatchEvent(new Event('waiting'));
     });
     await page.locator('.detour-buffer').waitFor({timeout:3000});
-    assert.ok(await page.locator('.detour-buffer').isVisible(),'Playing/waiting state did not surface buffering');
+    assert.ok(await page.locator('.detour-buffer').isVisible());
     await play.click();
     assert.equal(await page.locator('video').evaluate(v=>v.paused),true,'Pause during buffering failed');
     await page.locator('video').evaluate(video=>{
@@ -541,9 +548,9 @@ test('068 timeout, buffering pause and stale completion never resume playback', 
       delete video.currentTime;
       video.dispatchEvent(new Event('progress'));
     });
-    await back.click();
+    await page.getByRole('button',{name:'Return to 00:42'}).click();
     await page.getByRole('button',{name:'Keep my place'}).waitFor();
     assert.equal(await page.locator('video').evaluate(v=>v.paused),true,'Return after pausing during buffering resumed playback');
-    t.diagnostic('8s deadline retained mark; late resolution was ignored; waiting surfaced while playing, pause took effect, and Return stayed paused.');
+    t.diagnostic('Fresh-page waiting fixture surfaced buffering; pause won; Return preserved the paused intent.');
   } finally { await page.close(); }
 });

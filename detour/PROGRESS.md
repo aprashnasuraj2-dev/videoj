@@ -11,6 +11,11 @@ Resume step: 061
 | Prototype / public release | Base-only and DETOUR packed consumers pass. Desktop Chromium/WebKit core controls and Return pass; optional real Mux playback and public release remain later work. |
 | Source baseline | Phase 6 mobile-UA completed test baseline: `15bd747d57285eb7be236577aff7b41e688cc6fc`, GitHub Actions run 43693510683. |
 
+## 2026-11-15 · Independent timeout and buffering-race probes (validation pending)
+
+- Split 068's real 8s timeout/stale completion and provider-wait/pause/Return cases into separate fresh pages. This avoids carrying a replaced Video.js store and synthetic timer state into the buffering fixture.
+- The timeout case still waits the actual production 8s deadline and resolves the old promise after failure. The buffering case now starts from a clean player and mirrors the already-verified waiting fixture before pausing and returning. No product behavior was relaxed.
+
 ## 2026-11-15 · Waiting-fixture alignment (validation pending)
 
 - Run 43698360905 again passed every pre-existing browser/package gate, step 067 and the real 8s timeout/stale-completion portion of 068. Only the newly added buffering visibility assertion failed.
