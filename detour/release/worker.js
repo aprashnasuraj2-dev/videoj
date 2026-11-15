@@ -46,40 +46,45 @@ function rangeSlice(buffer, header) {
   return { start, end, size, body: buffer.slice(start, end + 1) };
 }
 async function frozen(path) {
-  const key = new Request(`https://detour-cache.invalid/${SOURCE_SHA}${path}`);
-  const cached = await caches.default.match(key);
-  if (cached) return cached;
-  const upstream = await fetch(RAW_BASE + path, { cf: { cacheEverything: true, cacheTtl: 86400 } });
-  if (!upstream.ok) {
-    return new Response('Upstream unavailable', {
-      status: upstream.status,
-      headers: { 'X-DETOUR-Upstream-Status': String(upstream.status) },
-    });
+  const key = SOURCE_SHA + path;
+  const object = await DETOUR_ASSETS.get(key);
+  if (object) {
+    return { status: 200, body: await object.arrayBuffer(), storage: 'r2' };
   }
+  const upstream = await fetch(RAW_BASE + path);
+  if (!upstream.ok) return { status: upstream.status, body: null, storage: 'upstream' };
   const body = await upstream.arrayBuffer();
-  const headers = commonHeaders(upstream.headers, path);
-  headers.set('Content-Length', String(body.byteLength));
-  const response = new Response(body, { status: 200, headers });
-  await caches.default.put(key, response.clone());
-  return response;
+  await DETOUR_ASSETS.put(key, body, {
+    httpMetadata: {
+      contentType: contentType(path),
+      cacheControl: path.endsWith('.html') ? 'public, max-age=60' : 'public, max-age=86400, immutable',
+    },
+    customMetadata: { sourceSha: SOURCE_SHA, distBranch: DIST_BRANCH },
+  });
+  return { status: 200, body, storage: 'r2-hydrated' };
 }
 async function handle(request) {
   const url = new URL(request.url);
   const path = assetPath(url.pathname);
   if (path.includes('\\\\') || path.split('/').includes('..')) return new Response('Bad path', { status: 400 });
   const full = await frozen(path);
-  if (!full.ok) return new Response(full.body, { status: full.status, headers: commonHeaders(full.headers, path) });
-  if (request.method === 'HEAD') return new Response(null, { status: 200, headers: commonHeaders(full.headers, path) });
+  if (full.status !== 200) {
+    return new Response(full.status === 404 ? 'Not found' : 'Upstream unavailable', {
+      status: full.status === 404 ? 404 : 502,
+      headers: { 'X-DETOUR-Upstream-Status': String(full.status) },
+    });
+  }
+  const headers = commonHeaders({}, path);
+  headers.set('Content-Length', String(full.body.byteLength));
+  headers.set('X-DETOUR-Storage', full.storage);
+  if (request.method === 'HEAD') return new Response(null, { status: 200, headers });
   const range = request.headers.get('Range');
-  if (!range) return new Response(full.body, { status: 200, headers: commonHeaders(full.headers, path) });
-  const buffer = await full.arrayBuffer();
-  const part = rangeSlice(buffer, range);
+  if (!range) return new Response(full.body, { status: 200, headers });
+  const part = rangeSlice(full.body, range);
   if (part.invalid) {
-    const headers = commonHeaders(full.headers, path);
     headers.set('Content-Range', `bytes */${part.size}`);
     return new Response(null, { status: 416, headers });
   }
-  const headers = commonHeaders(full.headers, path);
   headers.set('Content-Range', `bytes ${part.start}-${part.end}/${part.size}`);
   headers.set('Content-Length', String(part.end - part.start + 1));
   headers.set('Accept-Ranges', 'bytes');

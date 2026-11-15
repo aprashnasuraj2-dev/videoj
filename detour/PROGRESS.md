@@ -11,6 +11,13 @@ Resume step: 072
 | Prototype / public release | Public-root composition and second production host pass locally. HTTPS publication is the remaining core media gate before Mux evaluation. |
 | Source baseline | Judge-demo/portability baseline: `34261f03c8df75bbeed847879de7269ab794fb55`, Actions run 43701045585. 073 and 074 pass; full DETOUR CI green. |
 
+## 2026-11-15 · Global R2 release storage after regional-cache failure
+
+- [Actions run 43703342426](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43703342426) showed that per-edge Cache API warming was not sufficient: a cold GitHub runner region still timed out waiting for media metadata.
+- Created isolated R2 bucket `detour-release-assets` in APAC and attached it to `detour-release` as binding `DETOUR_ASSETS`, with no new long-lived credential. The Worker stores objects under the frozen source SHA and hydrates a missing object once from the immutable dist branch.
+- Prehydrated the 8 root-critical release objects. R2 inventory is **8 objects / 1,063,733 B** including the exact **871,570 B MP4**, **46,768 B poster**, index, player/showcase JS/CSS and VTT. Subsequent regions read durable R2 objects rather than GitHub or a regional cache.
+- The public response now reports `X-DETOUR-Storage: r2` when served from durable storage. The strict 072 test remains unchanged and must pass from CI before acceptance.
+
 ## 2026-11-15 · Cache-backed HTTPS transport after first public gate
 
 - [Actions run 43702919194](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43702919194) reached the public origin but timed out waiting for video metadata. Independent resource probes showed the cause: immutable JS/CSS/VTT requests through raw-GitHub proxying took roughly **7–10 s each**, making repeated video-range fetches unsuitable for the 30 s first-load gate.
