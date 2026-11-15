@@ -35,6 +35,8 @@ jobs:
         run: npm run build
       - name: Verify generated Phase 8 showcase bundle and local HTTP seeks
         run: node --test tests/showcase.test.mjs
+      - name: Verify frozen public HTTPS release origin
+        run: node --test tests/https-release.test.mjs
       - name: Verify static package boundaries
         run: npm run test:architecture
       - name: Verify packed external host in Chromium and desktop WebKit
@@ -77,7 +79,7 @@ jobs:
         if: always()
         run: node scripts/check-progress.mjs
       - name: Stage exact successful dist on immutable DETOUR branch
-        if: success()
+        if: success() && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[stage-dist]'))
         env:
           DETOUR_BUILD_RUN_ID: ${{ github.run_id }}
         run: node scripts/stage-release-dist.mjs

@@ -11,6 +11,13 @@ Resume step: 072
 | Prototype / public release | Public-root composition and second production host pass locally. HTTPS publication is the remaining core media gate before Mux evaluation. |
 | Source baseline | Judge-demo/portability baseline: `34261f03c8df75bbeed847879de7269ab794fb55`, Actions run 43701045585. 073 and 074 pass; full DETOUR CI green. |
 
+## 2026-11-15 · Public HTTPS origin and exact-browser gate (validation pending)
+
+- Full source `50ac9661e315f099d3121850a57dd398cbeb5865` passed Actions run 43702266692 and staged **70 files / 2,163,553 B** at immutable branch `detour-dist-50ac9661e315`. The 871,570 B showcase MP4 SHA-256 is `fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1`.
+- Deployed isolated Cloudflare Worker `detour-release` at `https://detour-release.praisethegreatfool.workers.dev/`, pinned to that immutable branch/source. It corrects MIME types, exposes source/dist headers and preserves upstream byte ranges with an explicit 206 slicing fallback. An independent public fetch returned the expected DETOUR title/tagline; no login/gate was observed.
+- Added `tests/https-release.test.mjs`: a fresh 375×667 Chromium context must receive the pinned source headers, load the real poster/VTT/MP4, fetch bytes 0–1023 as **206 / 1,024 B / video/mp4 / Accept-Ranges: bytes**, then execute Hold at 42.35 → seek 18 → Return within ±0.5 s while remaining paused. This exact browser gate is pending CI.
+- Frozen dist staging is now explicit/manual or `[stage-dist]` commit-message gated so ordinary validation commits do not create one immutable branch per run.
+
 ## 2026-11-15 · Immutable dist branch fallback for HTTPS release (validation pending)
 
 - Exact source `bc6c473668ae3b05faff1a037e5b0655949abedf` passed validation and produced artifact 14157281055: **1,631,159 B ZIP**, SHA-256 `9ffdf3b8a9f0e210acfae38618a56af3fd22f7680acfcd96b30c00405da8501b`; expanded release is 2,163,553 B and contains the 871,570 B showcase MP4.

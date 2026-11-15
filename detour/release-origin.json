@@ -1,0 +1,7 @@
+{
+  "origin": "https://detour-release.praisethegreatfool.workers.dev/",
+  "sourceSha": "50ac9661e315f099d3121850a57dd398cbeb5865",
+  "distBranch": "detour-dist-50ac9661e315",
+  "transport": "Cloudflare Worker proxy to immutable GitHub dist branch",
+  "notes": "Pages project detour-videojs exists but Pages asset-JWT upload is connector-blocked; this origin preserves the exact green dist and explicit MP4 Range semantics."
+}
