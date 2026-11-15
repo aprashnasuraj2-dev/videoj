@@ -5,17 +5,25 @@ Use one row per material result. Include the source SHA, browser and OS or devic
 | Capability | Acceptance steps | Status | Revision, environment, artifact |
 | --- | --- | --- | --- |
 | Signature discovery and first successful return | 012, 017, 018, 090 | Partial | [Controlled crops](../design/PHASE-2.md#visual-signature) and browser trace. Uncoached viewer results remain open. |
-| Held origin survives multiple real seeks; Return lands; Stay does not seek | 043, 052–055, 060 | Chromium + desktop WebKit seek pass; remaining Phase 6 acceptance open | Phase 5 packed-host and focused WebKit evidence below; Stay/race closure continues in Phase 6. |
-| Source swap, stale event, duplicate input and retry | 059, 067–068 | Partial | Same-element reload, delayed/stale provider response and pending-Return reconnect pass. The 20-swap leak loop remains a Phase 6 gate. |
-| Genuine playback and all essential controls | 051, 058, 070, 092–093 | Partial | Local Chromium play, pause, seek, time, mute and fullscreen. Broader volume and device checks open. |
+| Held origin survives multiple real seeks; Return lands; Stay does not seek | 043, 052–055, 060 | Pass in core automated gate | Packed Chromium/WebKit return and Stay pass; stale completion after actual dismissal cannot reopen the mark. |
+| Source swap, stale event, duplicate input and retry | 059, 067–068 | Core lifecycle pass; later QA still open | Same-element reload, stale provider guards and 20/20 pending-return remount cycles pass with zero tracked deadline leaks and one final Return dispatch. |
+| Genuine playback and all essential controls | 051, 058, 070, 092–093 | Partial | Base-only packed shell and desktop Chromium/WebKit transport/settings pass. Step 058 mobile-UA volume/mute evidence and later physical-device QA remain open. |
 | Narrow embeds, real mobile, keyboard, assistive tech and contrast | 035, 038, 061–066, 070 | Partial | [Visual grid and contrast](../design/PHASE-4.md). Physical-device and assistive-technology sessions remain open. |
 | Core payload and interaction performance relative to Scaffold | 069 | Pending | |
-| Same skin on arbitrary replacement media | 060, 074 | Packed-host pass; broader integration gate pending | A fresh tarball consumer supplied its own MP4/VTT and two instances in Chromium and desktop WebKit. |
+| Same skin on arbitrary replacement media | 060, 074 | Core packed-host pass; broader later integration gate pending | Fresh tarball consumer supplies its own MP4/VTT, two isolated instances, signature path, Stay and ordinary controls in Chromium/WebKit. |
 | Authentic wide, mobile and interaction captures | 082–089 | Pending | |
 | Public bonus playback and fallback, if claimed | 075–077, 097 | Pending | |
 | Genuine second context, if claimed | 078, 097 | Pending | |
 
 For functional tests, record current and held times before and after, playback mode, and the source identity where relevant. For a failed capability, record the environment and smallest reproducible sequence. Keep public images and clips matched to their source build. Do not copy DHAGO's prior results into the DETOUR evidence column.
+
+## 2026-11-15 Phase 6 core implementation checkpoint
+
+- Source: `524bac5fb73aaf0568e559c4e08342137c443da7`; GitHub Actions run 43692857813. **5/5 architecture**, **3/3 packed consumer**, **17/17 Chromium**, and **10/10 focused desktop-WebKit Return** checks passed.
+- The packed `./base` entry proves ordinary shell playback without held-place registration. The full packed entry independently mounts two host-owned players; both desktop engines return to 42.350s and run Stay, play/pause, mute, captions, rate and settings focus paths.
+- Lifecycle stress: **20/20** pending Return remounts clear the marker, stale promise effect and tracked 8-second deadline. The post-loop counted Return dispatch equals one.
+- Failure/metadata evidence includes observed loading/waiting, measured buffered gaps, 404/retry, rejected Return with the mark retained, stale completion after Stay dismissal, no-caption fallback, and a 64-cue chapters track that leaves the rail at its normal two children.
+- Step 058 is intentionally not claimed complete: mobile user-agent volume behavior remains to be recorded. Desktop WebKit is not physical Safari/iPhone.
 
 ## 2026-11-15 Phase 5 package and cross-engine proof
 

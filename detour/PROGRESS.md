@@ -1,15 +1,23 @@
 # DETOUR progress
 
 Phase: 06
-Resume step: 051
+Resume step: 058
 
 | Item | Current state |
 | --- | --- |
-| Verified | 51/100. Phase 5 architecture, packed reuse, cross-engine seek, lifecycle/capability seams and representative fixtures are verified. |
-| Next | 051. Verify the base skin shell as an installable ordinary player before relying on DETOUR-specific controls, then continue the remaining Phase 6 race/lifecycle gates. |
+| Verified | 57/100. Steps 051 and 055–057, 059–060 now have executable Phase 6 evidence; 052–054 were already verified. |
+| Next | 058. Finish mobile user-agent volume/mute evidence, then reconcile whether Phase 6 can advance to browser/device QA. |
 | Open dependencies | 002: joined-form eligibility. 017: uncoached first-use observations. Physical-device Safari/mobile and assistive-technology evidence remain later QA gates, not Phase 5 passes. |
-| Prototype / public release | Packed external-host core passes Chromium and desktop WebKit. Optional real Mux playback and the DETOUR-only public release remain later bonus/release work. |
-| Source baseline | Phase 5 executable acceptance: `012482415ecb706d246646f0f9b95dbe780d91dc`, GitHub Actions run 43691495087. Changes remain scoped to DETOUR plus its dedicated CI workflow. |
+| Prototype / public release | Base-only and DETOUR packed consumers pass. Desktop Chromium/WebKit core controls and Return pass; optional real Mux playback and public release remain later work. |
+| Source baseline | Phase 6 executable baseline: `524bac5fb73aaf0568e559c4e08342137c443da7`, GitHub Actions run 43692857813. |
+
+## 2026-11-15 · Phase 6 core implementation checkpoint
+
+- Verified 051, 055, 056, 057, 059 and 060 at `524bac5fb73aaf0568e559c4e08342137c443da7` / Actions run 43692857813. The run passed 5 architecture checks, 3 packed-consumer tests, 17 Chromium scenarios and the 10-run desktop-WebKit signature check.
+- Split generic media lifecycle from held-place behavior. `detour-video-skin/base` now proves the five ordinary controls can load from the packed artifact without importing or registering `detour-place`.
+- Added a true stale-after-dismissal race and a 20-cycle pending-Return remount stress test. All 20 cycles cleared the marker and one-shot deadline; the final Return dispatched exactly once.
+- Packed Chromium and desktop WebKit now cover the signature path plus Stay, play/pause, mute, captions, rate and Settings focus restoration. Dense 64-cue metadata does not add rail clutter.
+- Step 058 stays open because its work text specifically requires mobile user-agent volume behavior. Compact desktop emulation is not being counted as that evidence. See [Phase 6](design/PHASE-6.md).
 
 ## 2026-11-15 · Phase 5 architecture and portability gate
 

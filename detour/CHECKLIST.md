@@ -366,11 +366,12 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
 
 ## 06 · Core player implementation
 
-- [ ] **051. Implement the video skin shell**
+- [x] **051. Implement the video skin shell**
   - **Objective** — Ship a working, familiar first render.
   - **Work** — Assemble the v10 media container, video slot, control shelf, time slider, time displays and full set of essential controls. Put the host poster inside the real player lifecycle.
   - **Deliverable** — Installable base skin with playable video.
   - **Pass condition** — The five controls operate on a clean desktop and mobile load before any detour code is mounted.
+  - **Evidence** — [Phase 6 executable core gates](design/PHASE-6.md#2026-11-15-verified-core-gates)
 
 - [x] **052. Implement the held-place action**
   - **Objective** — Record a user-selected origin accurately.
@@ -393,42 +394,47 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Pass condition** — At 1x with deterministic MP4, 10 of 10 settled returns land within 0.5s. Return never fires twice for one activation.
   - **Evidence** — [Ten separate return results and one seek per action](submission-report/EVIDENCE.md#2026-11-15-first-prototype)
 
-- [ ] **055. Implement Stay here and cancel paths**
+- [x] **055. Implement Stay here and cancel paths**
   - **Objective** — Let users finish exploring at the current moment.
   - **Work** — Clear origin and pending state on Stay here without a seek. Restore focus to Keep my place when applicable. Abort stale attempts on source replacement and dismissal.
   - **Deliverable** — Working clear action and focus recovery.
   - **Pass condition** — Event trace records no time jump. A delayed old callback cannot reopen a dismissed detour.
-  - **Progress** — [Stay and focus restore pass. A delayed old result after dismissal or source reset needs a dedicated race test.](submission-report/EVIDENCE.md#2026-11-15-first-prototype)
+  - **Evidence** — [Phase 6 executable core gates](design/PHASE-6.md#2026-11-15-verified-core-gates)
 
-- [ ] **056. Integrate genuine buffering and errors**
+- [x] **056. Integrate genuine buffering and errors**
   - **Objective** — Keep truthful player feedback under network stress.
   - **Work** — Distinguish initial loading, seeking and waiting using v10 or provider state. Render buffered segments only from measured ranges if available. Give a recoverable return failure a Retry path.
   - **Deliverable** — Status components and failure fixtures.
   - **Pass condition** — A throttled stream exposes only observed status. A gap stays unfilled and a failed seek leaves a valid mark intact.
+  - **Evidence** — [Phase 6 executable core gates](design/PHASE-6.md#2026-11-15-verified-core-gates)
 
-- [ ] **057. Integrate captions and optional metadata**
+- [x] **057. Integrate captions and optional metadata**
   - **Objective** — Use real track data while retaining a clean baseline.
   - **Work** — Use real text tracks and v10 caption controls. If chapters justify inclusion, treat them as metadata-driven navigation in a compact list and cap visible cosmetic markers. Omit absent track controls cleanly.
   - **Deliverable** — Tracks integration and metadata fallbacks.
   - **Pass condition** — Verified VTT cues render and toggle, absent chapters do not affect detour, and 40 cues do not clutter the rail.
+  - **Evidence** — [Phase 6 executable core gates](design/PHASE-6.md#2026-11-15-verified-core-gates)
 
 - [ ] **058. Finish media controls and settings**
   - **Objective** — Keep ordinary use as reliable as the signature action.
   - **Work** — Wire fullscreen, time, volume/mute and label changes via documented components. Add rate only if it survives required testing. On mobile verify user-agent volume behavior and keep mute operable.
   - **Deliverable** — Transport and optional settings ready for QA.
   - **Pass condition** — Essential controls work across target browsers. Menus open, close and restore focus without changing playback unintentionally.
+  - **Progress** — Desktop Chromium/WebKit transport, rate, settings close/focus and capability-aware fullscreen pass. Mobile user-agent volume capability + mute evidence remains open; a narrow viewport is not being treated as that proof.
 
-- [ ] **059. Handle source lifecycle end to end**
+- [x] **059. Handle source lifecycle end to end**
   - **Objective** — Prevent stale markers and alerts across navigation.
   - **Work** — Exercise route unmount, source change, different video in the same host and two simultaneous players. Cancel timers and event listeners with source or instance changes.
   - **Deliverable** — Lifecycle behavior and reproducible checks.
   - **Pass condition** — Twenty swaps or remounts show zero leaked markers, outstanding return timers or duplicate event handlers.
+  - **Evidence** — [Phase 6 executable core gates](design/PHASE-6.md#2026-11-15-verified-core-gates)
 
-- [ ] **060. Run core acceptance outside the demo**
+- [x] **060. Run core acceptance outside the demo**
   - **Objective** — Prove the open-source skin stands alone.
   - **Work** — Mount an import-only consumer with ordinary MP4 and captions. Run hold, seek, return, stay and all required controls. Compare two instances and build output.
   - **Deliverable** — Runnable portable example and core gate record.
   - **Pass condition** — No demo strings, film paths or Mux imports enter the skin. All critical paths pass on both mounts.
+  - **Evidence** — [Phase 6 executable core gates](design/PHASE-6.md#2026-11-15-verified-core-gates)
 
 ## 07 · Responsive, accessibility and difficult states
 

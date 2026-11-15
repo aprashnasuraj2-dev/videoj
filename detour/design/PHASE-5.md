@@ -17,7 +17,8 @@
 
 | Surface | Owns | Explicitly does not own |
 | --- | --- | --- |
-| `skin/index.js` | `createDetourPlayer`, v10 component composition and DETOUR behavior | Demo copy, media URLs, fixture paths, Mux code, publication paths |
+| `skin/index.js` | `createDetourPlayer` and the held-place-enhanced composition | Demo copy, media URLs, fixture paths, Mux code, publication paths |
+| `skin/base.js` + `skin/shell.js` + `skin/media-state.js` | Ordinary v10 shell, generic readiness/buffer/error/rate lifecycle, and `createBasePlayer` | Held-place registration or state |
 | `skin/player.css` | Player-scoped visual tokens and component rules under `.detour` | Host-global element/body rules |
 | Host media slot | Native video/audio element and native track children supplied by caller | Asset selection or rights policy inside the skin |
 | `skin/mux.js` | Optional public playback-ID URL/native-HLS helper | Management API, secrets, Chromium HLS engine, mandatory network dependency |
@@ -48,9 +49,9 @@ This is intentionally conservative. A finite duration by itself is not proof of 
 
 ### Event, render and accessibility budget
 
-The DETOUR-owned behavior has 14 listener call sites that expand to a fixed 24 runtime registrations per connected instance through two fixed media-event lists. Every registration is tied to one instance `AbortSignal` and is aborted on disconnect. There is no `requestAnimationFrame`, video-frame callback, interval, MutationObserver, analytics loop or mandatory third-party fetch. The only DETOUR timer is the one-shot 8-second Return settlement deadline.
+The held-place controller and the generic media-state controller each use fixed event lists and one instance-owned `AbortController`; the architecture suite audits both controllers and requires every listener to use that instance signal. There is no `requestAnimationFrame`, video-frame callback, interval, MutationObserver, analytics loop or mandatory third-party fetch. The held-place controller has one one-shot 8-second Return settlement deadline; the generic media-state controller has no timer.
 
-Rendering is event-driven. `#viewKey` and `#bufferKey` suppress unchanged DOM work; buffered segments are rebuilt only when measured ranges change. The standard v10 controls retain their roles and keyboard behavior. DETOUR adds semantic Hold/Return/Stay/settings buttons and one polite atomic status. The held bracket and buffered decoration are `aria-hidden`, non-focusable and pointer-inert. Existing focus tests cover Keep, Return, Stay, Settings and the documented time slider.
+Rendering is event-driven. Held-place `#viewKey` and media-state `#bufferKey` suppress unchanged DOM work; buffered segments are rebuilt only when measured ranges change. The standard v10 controls retain their roles and keyboard behavior. DETOUR adds semantic Hold/Return/Stay/settings buttons and one polite atomic status. The held bracket and buffered decoration are `aria-hidden`, non-focusable and pointer-inert. Existing focus tests cover Keep, Return, Stay, Settings and the documented time slider.
 
 ### CSS, media and security seams
 

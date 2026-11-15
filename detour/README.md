@@ -23,6 +23,8 @@ document.querySelector('#mount').append(
 );
 ```
 
+For hosts that want the same visual shell and ordinary Video.js controls without loading the held-place behavior, `detour-video-skin/base` exports `createBasePlayer(media)`. Its module graph does not import or register `detour-place`; the packed-consumer test exercises this mode separately at a compact width.
+
 Mux support is a separate optional `detour-video-skin/mux` entry. The core entry does not import Mux, fixtures or showcase code, and no management credential belongs in a browser bundle. See [Phase 5](design/PHASE-5.md) for the packed-host and cross-engine proof.
 
 ## Product direction
