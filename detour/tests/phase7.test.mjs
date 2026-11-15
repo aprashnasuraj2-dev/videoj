@@ -433,3 +433,104 @@ test('069 ten Chromium samples record five fresh-context and five same-context r
   t.diagnostic('Hosted Ubuntu Chromium traces (seconds for Script/Layout/Recalc, counts for Layer/LayoutCount): '+JSON.stringify(captured));
   t.diagnostic('Cache may be revalidated by Vite preview; same-context is not a verified fully cached HTTP run. LayerTree observation is diagnostic, not compositing-GPU cost.');
 });
+
+test('067 duration and seekable changes keep held-origin math truthful', { timeout: 30000 }, async t => {
+  const page = await browser.newPage({ viewport:{width:375,height:800} });
+  try {
+    await ready(page);
+    const video = page.locator('video');
+    assert.equal(await video.getAttribute('poster'), null, 'Baseline intentionally has no poster.');
+    await seek(page,42.35);
+    await page.getByRole('button',{name:'Keep my place'}).click();
+    const mark=page.locator('.detour-origin');
+    const before=parseFloat(await mark.evaluate(node=>node.style.insetInlineStart));
+    assert.ok(before>65&&before<67, `Expected ~66% origin before duration change, got ${before}`);
+
+    await video.evaluate(media=>{
+      Object.defineProperties(media,{
+        duration:{configurable:true,value:128},
+        seekable:{configurable:true,value:{length:1,start:()=>0,end:()=>128}},
+      });
+      media.dispatchEvent(new Event('durationchange'));
+      media.dispatchEvent(new Event('progress'));
+    });
+    const expanded=parseFloat(await mark.evaluate(node=>node.style.insetInlineStart));
+    assert.ok(expanded>32&&expanded<34, `Expected ~33% origin after duration expansion, got ${expanded}`);
+    assert.equal(await page.getByRole('button',{name:'Return to 00:42'}).getAttribute('aria-disabled'),'false');
+
+    await video.evaluate(media=>{
+      Object.defineProperties(media,{
+        duration:{configurable:true,value:30},
+        seekable:{configurable:true,value:{length:1,start:()=>0,end:()=>30}},
+      });
+      media.dispatchEvent(new Event('durationchange'));
+      media.dispatchEvent(new Event('progress'));
+    });
+    const back=page.getByRole('button',{name:'Return to 00:42'});
+    assert.equal(await back.getAttribute('aria-disabled'),'true');
+    assert.match(await page.locator('.detour-notice').textContent(),/outside the seekable range/);
+    const text=await page.locator('.detour').textContent();
+    assert.doesNotMatch(text,/NaN|Infinity/);
+
+    await video.evaluate(media=>{
+      Object.defineProperties(media,{
+        duration:{configurable:true,value:64},
+        seekable:{configurable:true,value:{length:1,start:()=>0,end:()=>64}},
+      });
+      media.dispatchEvent(new Event('durationchange'));
+      media.dispatchEvent(new Event('progress'));
+    });
+    assert.equal(await back.getAttribute('aria-disabled'),'false');
+    assert.equal(await page.locator('.detour-notice').isVisible(),false);
+
+    await page.locator('video-player').evaluate(player=>{
+      Object.defineProperty(player,'store',{configurable:true,value:Object.create(player.store,{streamType:{value:'live'}})});
+      player.querySelector('video').dispatchEvent(new Event('durationchange'));
+    });
+    await page.getByRole('button',{name:'Stay here'}).click();
+    assert.ok(await page.getByRole('button',{name:'Keep my place'}).isDisabled(),'Finite live/DVR-like source exposed DETOUR hold');
+    t.diagnostic('Held mark moved ~66%→~33% as duration doubled; shrink below mark disabled Return; restore re-enabled it; live classification disabled hold.');
+  } finally { await page.close(); }
+});
+
+test('068 timeout, buffering pause and stale completion never resume playback', { timeout: 20000 }, async t => {
+  const page=await browser.newPage({viewport:{width:375,height:800}});
+  try {
+    await ready(page);
+    await seek(page,42.35);
+    await page.getByRole('button',{name:'Keep my place'}).click();
+    await seek(page,18);
+    await page.locator('video-player').evaluate(player=>{
+      player.__timeoutReal=player.store;
+      Object.defineProperty(player,'store',{configurable:true,value:Object.create(player.store,{
+        seek:{value:()=>new Promise(resolve=>{player.__timeoutResolve=resolve;})}
+      })});
+    });
+    const back=page.getByRole('button',{name:'Return to 00:42'});
+    await back.click();
+    await page.getByRole('button',{name:'Returning…'}).waitFor();
+    await page.waitForFunction(()=>/Could not return/.test(document.querySelector('.detour-notice')?.textContent||''),null,{timeout:9500});
+    assert.equal(await back.getAttribute('aria-disabled'),'false');
+    assert.ok(Math.abs(await page.locator('video').evaluate(v=>v.currentTime)-18)<0.2);
+    assert.equal(await page.locator('video').evaluate(v=>v.paused),true);
+    await page.locator('video-player').evaluate(player=>player.__timeoutResolve(42.35));
+    await page.waitForTimeout(100);
+    assert.equal(await page.locator('.detour-origin').isVisible(),true,'Stale timeout completion consumed mark');
+    assert.ok(Math.abs(await page.locator('video').evaluate(v=>v.currentTime)-18)<0.2,'Stale completion changed time');
+    assert.equal(await page.locator('video').evaluate(v=>v.paused),true,'Stale completion resumed playback');
+
+    await page.locator('video-player').evaluate(player=>{
+      Object.defineProperty(player,'store',{configurable:true,value:player.__timeoutReal});
+    });
+    await page.locator('video').evaluate(video=>{
+      Object.defineProperty(video,'readyState',{configurable:true,value:HTMLMediaElement.HAVE_CURRENT_DATA});
+      video.dispatchEvent(new Event('waiting'));
+    });
+    assert.ok(await page.locator('.detour-buffer').isVisible(),'Buffering state did not surface');
+    assert.equal(await page.locator('video').evaluate(v=>v.paused),true,'Buffering changed pause intent');
+    await back.click();
+    await page.getByRole('button',{name:'Keep my place'}).waitFor();
+    assert.equal(await page.locator('video').evaluate(v=>v.paused),true,'Return during buffered/paused state resumed playback');
+    t.diagnostic('8s deadline retained mark; late resolution was ignored; buffered paused Return stayed paused.');
+  } finally { await page.close(); }
+});

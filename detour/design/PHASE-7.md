@@ -30,3 +30,10 @@ The responsive and mobile-UA probes initially failed on a hidden-ancestor measur
 ## Responsive capture checkpoint
 
 The first full Chromium matrix passed 25 distinct width/state checks (240/320/375/768/1280 × idle/held/captions/settings/pending) and wrote 28 player images to [Actions artifact 14154059762](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43695753935/artifacts/14154059762). This artifact link is evidence of the captured run, not proof that someone visually accepted every crop. The separate Linux WebKit iPhone-configuration run found no document fullscreen capability; the control was hidden. The next test explicitly maps required visibility to the engine's truthful fullscreen availability.
+
+
+## Exact-head green baseline — 88e4423
+
+[Actions run 43697253579](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43697253579) passed the entire DETOUR pipeline. Chromium, Firefox and desktop WebKit each passed the full browser suite; the corrected Home/End boundary landed at 63.95s for a 64s seekable VOD in all three. The Phase 7 probe set passed 25 responsive state checks, emulated Pixel touch, emulated iPhone-WebKit landscape, keyboard/focus recovery, 9:59:59 RTL/dense metadata, duplicate Return/manual-seek/source-swap recovery, and performance probes. Artifact 14154867955 contains the capture set.
+
+This baseline still does not represent physical iOS/Android or NVDA/VoiceOver. The next source adds direct duration-change and real-timeout recovery probes before checklist reconciliation.
