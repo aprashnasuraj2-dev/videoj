@@ -5,17 +5,27 @@ Use one row per material result. Include the source SHA, browser and OS or devic
 | Capability | Acceptance steps | Status | Revision, environment, artifact |
 | --- | --- | --- | --- |
 | Signature discovery and first successful return | 012, 017, 018, 090 | Partial | [Controlled crops](../design/PHASE-2.md#visual-signature) and browser trace. Uncoached viewer results remain open. |
-| Held origin survives multiple real seeks; Return lands; Stay does not seek | 043, 052–055, 060 | Chromium pass; wider gate pending | See local test below. |
-| Source swap, stale event, duplicate input and retry | 059, 067–068 | Partial | Same-element reload passes. Delayed provider responses and repeated remounts remain open. |
+| Held origin survives multiple real seeks; Return lands; Stay does not seek | 043, 052–055, 060 | Chromium + desktop WebKit seek pass; remaining Phase 6 acceptance open | Phase 5 packed-host and focused WebKit evidence below; Stay/race closure continues in Phase 6. |
+| Source swap, stale event, duplicate input and retry | 059, 067–068 | Partial | Same-element reload, delayed/stale provider response and pending-Return reconnect pass. The 20-swap leak loop remains a Phase 6 gate. |
 | Genuine playback and all essential controls | 051, 058, 070, 092–093 | Partial | Local Chromium play, pause, seek, time, mute and fullscreen. Broader volume and device checks open. |
 | Narrow embeds, real mobile, keyboard, assistive tech and contrast | 035, 038, 061–066, 070 | Partial | [Visual grid and contrast](../design/PHASE-4.md). Physical-device and assistive-technology sessions remain open. |
 | Core payload and interaction performance relative to Scaffold | 069 | Pending | |
-| Same skin on arbitrary replacement media | 060, 074 | Partial | A locally generated second video and captions rendered through the same player. General integration gates remain open. |
+| Same skin on arbitrary replacement media | 060, 074 | Packed-host pass; broader integration gate pending | A fresh tarball consumer supplied its own MP4/VTT and two instances in Chromium and desktop WebKit. |
 | Authentic wide, mobile and interaction captures | 082–089 | Pending | |
 | Public bonus playback and fallback, if claimed | 075–077, 097 | Pending | |
 | Genuine second context, if claimed | 078, 097 | Pending | |
 
 For functional tests, record current and held times before and after, playback mode, and the source identity where relevant. For a failed capability, record the environment and smallest reproducible sequence. Keep public images and clips matched to their source build. Do not copy DHAGO's prior results into the DETOUR evidence column.
+
+## 2026-11-15 Phase 5 package and cross-engine proof
+
+- Source: `012482415ecb706d246646f0f9b95dbe780d91dc`. Environment: GitHub-hosted Ubuntu, Node 24, pinned `@videojs/html` 10.4.0, Playwright 1.62.1, Chromium and desktop WebKit. [GitHub Actions run 43691495087](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43691495087) completed successfully.
+- Architecture suite: **4/4 pass**. It checks the demo/fixture/Mux import boundary, public Mux playback-ID validation, an AbortController-owned event lifecycle with no frame/poll loop, and host-scoped CSS/client credential seams.
+- Packed consumer: **2/2 pass**. `npm pack` produced `detour-video-skin-0.1.0.tgz`; a fresh external package installed it, supplied its own generated 64-second MP4 and VTT, and mounted two players. The archive excludes demo, integration, tests, design, submission reports and fixture media.
+- Cross-engine result: the packed host returned to **42.350s in Chromium and desktop WebKit**. Tests compared native `video.currentTime` with `player.store.state.currentTime` and exercised `player.store.seek`. Player A's mark never appeared on player B. Host captions loaded; explicit live and audio instances did not expose the held-place action.
+- Reconnect regression: while Return was held in a controlled pending seek, `detour-place` disconnected and reconnected. The active attempt cleared, the button markup remained complete, and the next hold rendered a normal `Return to 00:42` label. A second whole player also survived remove/reappend and a subsequent seek.
+- Full Chromium suite: **16/16 pass**. It includes the new 360×640 portrait fixture, a generated 64-cue chapters VTT, and a controlled 40,000-second duration rendering `Return to 10:00:42`, in addition to prior loading/error/retry/source/range/input cases. The focused desktop-WebKit test separately recorded **10/10 arrivals at 42.350s**.
+- Limits: this is desktop WebKit on Linux, not physical Safari/iPhone. No screen-reader or uncoached-user claim is made. The optional Mux entry is proven as an isolated public-ID helper; this run did **not** play a Mux HLS asset. Registry publication and public-host qualification remain later gates.
 
 ## 2026-11-15 first prototype
 

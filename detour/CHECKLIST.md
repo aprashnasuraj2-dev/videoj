@@ -301,61 +301,68 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Pass condition** — Fresh install builds and stock playback works in a public-compatible host without keys or manual patches.
   - **Evidence** — [Locked dependencies](package-lock.json) and [clean build and real browser playback](submission-report/EVIDENCE.md#2026-11-15-first-prototype)
 
-- [ ] **042. Divide delivery boundaries**
+- [x] **042. Divide delivery boundaries**
   - **Objective** — Make the skin reusable across sites and media.
   - **Work** — Create separate skin, media fixtures, demo composition and optional Mux integration. Accept host media and tracks through the v10 slot. Keep branding and asset URLs at the demo boundary.
   - **Deliverable** — Module map and import boundary checks.
   - **Pass condition** — The skin package loads independently of the demo, fixture media and Mux code.
-  - **Progress** — [Separate entry modules, static boundary inspection and host-owned media example implemented; packed-install/browser proof remains open.](design/PHASE-5.md)
+  - **Evidence** — [Phase 5 package, browser and lifecycle acceptance](design/PHASE-5.md#2026-11-15-phase-5-acceptance)
 
-- [ ] **043. Prove state and seek APIs**
+- [x] **043. Prove state and seek APIs**
   - **Objective** — Confirm PlayerController and seek behavior before UI investment.
   - **Work** — Read installed currentTime, duration, playback and seeking state through documented v10 features. Trigger seek via the feature action. Inspect native seeked or provider completion, and actual seekable ranges.
   - **Deliverable** — Browser spike and timestamped trace.
   - **Pass condition** — A 42s-to-18s-to-42s round trip works on stock MP4 in Chromium and Safari/WebKit with no duplicate player clock.
-  - **Progress** — [Chromium round trip passed. WebKit execution is open.](submission-report/EVIDENCE.md#2026-11-15-first-prototype)
+  - **Evidence** — [Phase 5 package, browser and lifecycle acceptance](design/PHASE-5.md#2026-11-15-phase-5-acceptance)
 
-- [ ] **044. Model per-instance detour state**
+- [x] **044. Model per-instance detour state**
   - **Objective** — Keep state consistent across players and replacement media.
   - **Work** — Store only origin time, source epoch and current return attempt where needed. Invalidate on replacement, disposal or source-identity change. Use monotonic attempt identity if async callbacks can arrive late.
   - **Deliverable** — Typed state model and transition checks.
   - **Pass condition** — Two players isolate marks. A stale seeked or timeout event cannot mutate a new source or newer return.
+  - **Evidence** — [Phase 5 package, browser and lifecycle acceptance](design/PHASE-5.md#2026-11-15-phase-5-acceptance)
 
-- [ ] **045. Define source capabilities**
+- [x] **045. Define source capabilities**
   - **Objective** — Avoid interpreting moving live windows as fixed video.
   - **Work** — Resolve host/provider VOD status, real native/media ranges, known duration and metadata readiness. Mark live and audio support explicitly. For the baseline retain standard playback when detour is unavailable.
   - **Deliverable** — Capability table and provider adapter contract.
   - **Pass condition** — Finite live edge values cannot enable a VOD mark. A regular seekable VOD is eligible only after readiness.
+  - **Evidence** — [Phase 5 package, browser and lifecycle acceptance](design/PHASE-5.md#2026-11-15-phase-5-acceptance)
 
-- [ ] **046. Design event and render budgets**
+- [x] **046. Design event and render budgets**
   - **Objective** — Keep the skin lightweight and responsive.
   - **Work** — Subscribe only to time, source and relevant states. Update the marker on state changes and cheap CSS changes. Allow no additional frame decoding, polling, analytics or mandatory third-party fetches.
   - **Deliverable** — Event lifecycle and performance budget.
   - **Pass condition** — Listeners are bounded per instance; no continuous animation loop is needed and state updates avoid whole-player rebuilds.
+  - **Evidence** — [Phase 5 package, browser and lifecycle acceptance](design/PHASE-5.md#2026-11-15-phase-5-acceptance)
 
-- [ ] **047. Set accessibility ownership**
+- [x] **047. Set accessibility ownership**
   - **Objective** — Reuse the proven components for standard playback.
   - **Work** — Keep v10 controls and the documented time slider. Use semantic buttons for hold and return, an existing or scoped menu, and a polite live status for actual transitions.
   - **Deliverable** — Semantic element and focus map.
   - **Pass condition** — Each interactive node has one accessible name and role, and visual decoration is absent from the accessibility tree.
+  - **Evidence** — [Phase 5 package, browser and lifecycle acceptance](design/PHASE-5.md#2026-11-15-phase-5-acceptance)
 
-- [ ] **048. Plan CSS, media and security seams**
+- [x] **048. Plan CSS, media and security seams**
   - **Objective** — Avoid fragile selectors and publishing leaks.
   - **Work** — Use documented style hooks and scoped custom properties. Isolate secrets outside client builds and distinguish public playback IDs from API tokens. Serve media with CORS and range support where required.
   - **Deliverable** — Integration notes and deploy configuration.
   - **Pass condition** — CSS has no host-global overrides and client bundles carry no secret. A second host can inject sources and captions.
+  - **Evidence** — [Phase 5 package, browser and lifecycle acceptance](design/PHASE-5.md#2026-11-15-phase-5-acceptance)
 
-- [ ] **049. Prepare representative fixtures**
+- [x] **049. Prepare representative fixtures**
   - **Objective** — Make regressions reproducible in a short window.
   - **Work** — Create rights-cleared fixtures for VOD, portrait, captions, chapterless and missing poster, plus failure, throttling and source swap scenarios. Provide long duration and dense chapter cases without requiring full new films.
   - **Deliverable** — Fixture table, sources and repeat commands.
   - **Pass condition** — Each scenario has known expected behavior. Fixtures can run from local or same-origin media with no burst of paid calls.
+  - **Evidence** — [Phase 5 package, browser and lifecycle acceptance](design/PHASE-5.md#2026-11-15-phase-5-acceptance)
 
-- [ ] **050. Make the technical go/no-go call**
+- [x] **050. Make the technical go/no-go call**
   - **Objective** — Decide before full implementation spend.
   - **Work** — Repeat baseline and detour spike on key engines. Confirm readiness events, realistic playback continuity and both mount/dispose paths. Compare the projected active hours to the submission freeze.
   - **Deliverable** — Spike decision and revised estimate.
   - **Pass condition** — Validated seek path fits reserve. If a core browser fails after a 90-minute repair window, evaluate the backup before building extras.
+  - **Evidence** — [Phase 5 package, browser and lifecycle acceptance](design/PHASE-5.md#2026-11-15-phase-5-acceptance)
 
 ## 06 · Core player implementation
 

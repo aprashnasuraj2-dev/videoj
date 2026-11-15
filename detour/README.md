@@ -8,6 +8,23 @@ Build a reusable Video.js v10 skin where viewers can **keep their place, explore
 2. Use the [continuation instructions](CONTINUE.md) to resume the current phase and next actionable step.
 3. Update the checklist and progress with evidence as work lands. Keep release evidence in [submission-report/](submission-report/README.md).
 
+## Reuse boundary
+
+The reusable surface is the package root plus scoped styles. A host creates and owns its native `<video>` or `<audio>` element and any `<track>` children, then passes that media element to `createDetourPlayer(media, { sourceKind })`. Media URLs, captions, titles and publication paths remain host concerns. The package is currently pack-installable but intentionally not registry-published.
+
+```js
+import { createDetourPlayer } from 'detour-video-skin';
+import 'detour-video-skin/styles';
+
+const video = document.createElement('video');
+video.src = '/my-video.mp4';
+document.querySelector('#mount').append(
+  createDetourPlayer(video, { sourceKind: 'vod' }),
+);
+```
+
+Mux support is a separate optional `detour-video-skin/mux` entry. The core entry does not import Mux, fixtures or showcase code, and no management credential belongs in a browser bundle. See [Phase 5](design/PHASE-5.md) for the packed-host and cross-engine proof.
+
 ## Product direction
 
 - **Player first.** Keep one source-scoped held point, five essential controls and real player state. Preserve normal play/pause, seeking, captions, keyboard and touch. The mark survives arbitrary seeks and clears on successful return, deliberate dismissal or a source change.

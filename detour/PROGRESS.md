@@ -1,21 +1,24 @@
 # DETOUR progress
 
-Phase: 05
-Resume step: 042
+Phase: 06
+Resume step: 051
 
 | Item | Current state |
 | --- | --- |
-| Verified | Phase 4 evidence retained; step 042 remains unchecked pending packed external-host playback. |
-| Next | 042. Run packed-install external-host browser checks and confirm the package, media/track slot and optional Mux isolation; then proceed to 043 WebKit proof. |
-| Open dependencies | 002: joined-form eligibility. 017: uncoached first-use observations. 042: external packed-install proof and pinned runtime unavailable in this execution environment. 043: seek on Safari/WebKit. Continue independent steps. |
-| Prototype / public release | Production build and 15 local headless Chromium scenarios passed. [Mux, Cloudflare and Drive milestones](submission-report/RELEASE-PLAN.md) remain on the release path. |
-| Source baseline | Phase 4 started at `e85bc059969102d25e2e707f40d79b3c792e35c5`. Changes are scoped to `detour/`. |
+| Verified | 51/100. Phase 5 architecture, packed reuse, cross-engine seek, lifecycle/capability seams and representative fixtures are verified. |
+| Next | 051. Verify the base skin shell as an installable ordinary player before relying on DETOUR-specific controls, then continue the remaining Phase 6 race/lifecycle gates. |
+| Open dependencies | 002: joined-form eligibility. 017: uncoached first-use observations. Physical-device Safari/mobile and assistive-technology evidence remain later QA gates, not Phase 5 passes. |
+| Prototype / public release | Packed external-host core passes Chromium and desktop WebKit. Optional real Mux playback and the DETOUR-only public release remain later bonus/release work. |
+| Source baseline | Phase 5 executable acceptance: `012482415ecb706d246646f0f9b95dbe780d91dc`, GitHub Actions run 43691495087. Changes remain scoped to DETOUR plus its dedicated CI workflow. |
 
-## 2026-11-15 · Phase 5 architecture work (partial: step 042 open)
+## 2026-11-15 · Phase 5 architecture and portability gate
 
-- Added `skin/index.js` as the demo-independent core entry and `skin/mux.js` as a separate optional public-playback-ID helper. The native Mux adapter explicitly rejects unsupported HLS browsers; no Mux management credentials or playback IDs were committed. Added matching TypeScript declarations and package `exports` for core, styles and optional Mux. Package remains private pending release gate.
-- Added `integration/` as a host-owned video and optional captions composition, not an import of the showcase. Added `tests/architecture.test.mjs` with module boundary and playback ID shape assertions. Inspected the exact committed core sources: no demo, fixture or Mux imports/URLs in the skin, and independent host imports only the core entry. These were static source checks, not an executed installed-package/browser acceptance suite.
-- [Architecture map and exact follow-up commands](design/PHASE-5.md). **No runtime verification is claimed for the new changes**: the current container cannot reach GitHub for a local checkout and has no installed DETOUR dependencies. Do not mark 042 until the independent packed consumer exercises real playback and captions. Next: `npm ci && npm run build && npm run test:architecture && npm test` from `detour/`, run the second host with a replacement video, add packed-install and WebKit evidence; then reconcile 042/043.
+- Verified steps 042–050. The core, styles and optional Mux helper have separate package exports; `npm pack` excludes demo/test/fixture material and includes Apache-2.0 licensing. A fresh external host installed the tarball and supplied its own video and caption track.
+- GitHub Actions run 43691495087 at `012482415ecb706d246646f0f9b95dbe780d91dc` passed 4/4 architecture checks, 2/2 packed-host checks, 16/16 Chromium scenarios, and the focused desktop-WebKit round trip with 10/10 arrivals at 42.350s. The packed host itself returned to 42.350s in both engines with native and Video.js store clocks agreeing.
+- Fixed the pending-Return reconnect defect by keeping persistent label/pending nodes instead of destructively replacing button children. Two packed player instances isolate marks; explicit live/audio cases hide DETOUR; stale provider completions and source epochs remain guarded.
+- Added deterministic portrait media, a 64-cue chapter track and a synthetic 40,000-second state case. Existing local harnesses cover chapterless/no-poster, captions, throttling, error/retry, source swap and delayed/rejected seeks. No paid media calls are needed.
+- Technical decision: **go**. Estimated submission-ready core work is 12–18 active engineering hours against roughly 45 hours of calendar reserve to the planned Nov 17 10:44 NPT freeze. Keep optional Mux/public-site extras behind the core gate. Desktop WebKit is not claimed as physical Safari/iPhone, and Mux URL-helper resolution is not claimed as HLS playback.
+- Full architecture, capability, event budget, fixture table and limits: [Phase 5 acceptance](design/PHASE-5.md#2026-11-15-phase-5-acceptance). Next actionable step: 051.
 
 ## 2026-11-15 · Phase 4 visual system
 
