@@ -105,3 +105,26 @@ test('077 frozen public Mux release recovers from a blocked provider without sta
     await browser.close();
   }
 });
+
+test('080 frozen public Mux release is immediately usable at desktop width', { timeout: 60000 }, async t => {
+  const browser = await chromium.launch({ args: ['--no-sandbox'] });
+  const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const page = await context.newPage();
+  try {
+    const response = await page.goto(release.origin, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    assert.equal(response?.status(), 200);
+    assert.equal(response?.headers()['x-detour-source-sha'], release.sourceSha);
+    await waitForSeekable(page);
+    const player = await page.locator('.detour').boundingBox();
+    assert.ok(player && player.width > 600 && player.y < 140, `Unexpected desktop player geometry: ${JSON.stringify(player)}`);
+    assert.equal(await page.locator('dialog').count(), 0);
+    assert.equal(await page.locator('input[type="password"]').count(), 0);
+    assert.equal(await page.locator('video').evaluate(video => video.currentSrc), release.staticMp4Url);
+    assert.equal(await page.getByRole('button', { name: 'Keep my place' }).isVisible(), true);
+    assert.equal(await page.locator('[data-detour-fallback]').isVisible(), true);
+    t.diagnostic(`Desktop public freeze smoke: 1280×900, player ${Math.round(player.width)}×${Math.round(player.height)}, Mux source seekable and fallback exposed.`);
+  } finally {
+    await context.close();
+    await browser.close();
+  }
+});
