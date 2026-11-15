@@ -2,7 +2,7 @@
 
 **Accepted capture date:** 2026-11-15.  
 **Public player source:** `a3b43f74c7652c707c3703193ab1081820bafa79` / immutable `detour-dist-a3b43f74c765`.  
-**Public URL:** https://detour-mux-release.praisethegreatfool.workers.dev/mux/  
+**Public URL:** https://detour.aafnaipatro.com/mux/  
 **Capture harness commit:** `daa6610ba8a8819893db1c0238bed5ad21a6e516`.  
 **Evidence run:** [43712329599](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43712329599), artifact **14161336344**, ZIP digest `sha256:2229dabdc21c38a2310d7e7dad70044492ae1a9e1fb23609e142018a57f3a5e7`. The artifact is retained 14 days for handoff; the capture script remains reproducible from the frozen public URL.
 
@@ -10,7 +10,7 @@
 
 **DETOUR lets viewers keep a moment, explore another part of a video, and return in one action.** The familiar seek bar remains familiar: the white playhead follows the current position while a lime bracket preserves the held point, and the explicit **Return to 00:42** ticket makes the reversible action visible. Because the behavior belongs to the player rather than specially authored footage, the same skin works with a second, different video and caption track without changing the interaction.
 
-Public evidence: the [qualified player](https://detour-mux-release.praisethegreatfool.workers.dev/mux/) plus the authentic hero, interaction clip and alternate-media capture below. The rationale intentionally avoids implementation/process terminology; Mux bonus details belong in the submission evidence fields rather than the design story.
+Public evidence: the [qualified player](https://detour.aafnaipatro.com/mux/) plus the authentic hero, interaction clip and alternate-media capture below. The rationale intentionally avoids implementation/process terminology; Mux bonus details belong in the submission evidence fields rather than the design story.
 
 ## Evidence order and immutable file manifest
 
