@@ -7,11 +7,11 @@
 | Public runtime source | `a3b43f74c7652c707c3703193ab1081820bafa79` / immutable `detour-dist-a3b43f74c765` — accepted Phase 9 candidate |
 | Phase 10 verification head | `b9b1495f4f66422dfa369cafcad2738fff6b4592` — [Validate DETOUR run 43713525858](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43713525858) green |
 | Runtime-drift check | From public source `a3b43f7` to verification head `b9b1495`, no `detour/skin/` runtime file changed; later changes are CI/tests/docs/release metadata |
-| Primary public candidate | `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` — isolated Worker `detour-mux-release`, no sign-in |
+| Primary public candidate | `https://detour.aafnaipatro.com/mux/` — isolated Worker `detour-mux-release`, no sign-in |
 | Qualified Mux playback | Playback ID `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`; public `highest.mp4`; exact showcase content hash |
 | Phase 10 public proof | Run 43713525858: HTTPS 200, source/dist headers, @videojs/html 10.4.0, captions, 42.35→18→42.350 Return, desktop keyboard and 375×667 touch-shaped mandatory controls |
 | Primary backup | Same Worker, SHA-versioned `/showcase/detour-showcase-v1.mp4`; Phase 10 probe returned **206 / 1,024 B / video/mp4 / Accept-Ranges: bytes** |
-| Independent rollback | `https://detour-release.praisethegreatfool.workers.dev/` / `detour-dist-50ac9661e315`; run 43713525858 re-ran its signed-out seek/Return gate successfully |
+| Independent rollback | `https://detour-backup.aafnaipatro.com/` / `detour-dist-50ac9661e315`; run 43713525858 re-ran its signed-out seek/Return gate successfully |
 | Media identity | Project-authored 56s `detour-showcase-v1.mp4`, 871,570 B, SHA-256 `fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1` |
 | Captions / poster | Same-origin descriptive VTT; Mux thumbnail uses the same public asset at **time=0** |
 | Presentation evidence | [Phase 9 manifest](PHASE-9-PRESENTATION.md), evidence run 43712329599, artifact 14161336344 |
@@ -24,11 +24,15 @@
 | Submission eligibility | **Open** steps 002/091; no second-entry permission, contest submission or terms acceptance is claimed |
 | Owner handoff | [Phase 10 verification/rehearsal packet](PHASE-10-HANDOFF.md) |
 
+## Public-host privacy boundary
+
+The judge-facing submission and rollback use only branded `aafnaipatro.com` hostnames. Account-level `workers.dev` hostnames are not part of the submission surface and must not appear in judge-facing copy, screenshots, reports or form fields.
+
 ## URL role separation
 
 | Role | URL | What it proves |
 | --- | --- | --- |
-| **Competition submission demo** | https://detour-mux-release.praisethegreatfool.workers.dev/mux/ | Judge-facing DETOUR showcase, required public player behavior and **Mux +1** |
+| **Competition submission demo** | https://detour.aafnaipatro.com/mux/ | Judge-facing DETOUR showcase, required public player behavior and **Mux +1** |
 | **Independent live-site use** | https://aafnaipatro.com/on-this-day/video/apollo-11/ | A real Aafnai Patro editorial page using the reusable skin on different historical media, supporting the **live-site +1** |
 
 **Do not substitute these URLs for one another.** The Aafnai Patro page is not the submitted demo; the Mux demo is not presented as the live-site bonus.
