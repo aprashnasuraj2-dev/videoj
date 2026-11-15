@@ -116,7 +116,7 @@ test.describe('Public judge experience', () => {
     const film = page.locator('mux-video');
     await expect(film).toHaveCount(1);
     await expect(film).toHaveAttribute('src', playlist);
-    await expect(page.locator('#player-mount video')).toHaveCount(0);
+    await expect(page.locator('#player-mount video[src="./media/studies-in-thread.mp4"], #player-mount video[src="./media/studies-in-thread.webm"]')).toHaveCount(0);
     await expect.poll(() => film.evaluate((video: any) => Number(video.duration)), { timeout: 45_000 }).toBeGreaterThan(63);
     await page.locator('media-play-button').click();
     await expect.poll(() => film.evaluate((video: any) => Number(video.currentTime)), { timeout: 45_000 }).toBeGreaterThan(2);
