@@ -13,10 +13,10 @@
 
 | Role | URL | Content / purpose |
 | --- | --- | --- |
-| **Competition submission demo** | https://detour-mux-release.praisethegreatfool.workers.dev/mux/ | DETOUR-branded judging showcase using the project-authored Mux-hosted contest video; also qualifies the Mux bonus |
+| **Competition submission demo** | https://detour.aafnaipatro.com/mux/ | DETOUR-branded judging showcase using the project-authored Mux-hosted contest video; also qualifies the Mux bonus |
 | **Independent live-site bonus** | https://aafnaipatro.com/on-this-day/video/apollo-11/ | Aafnai Patro editorial history page using the reusable skin on a separate NASA Apollo 11 visualization |
 
-**These are intentionally not interchangeable.** The Aafnai Patro page is not the submitted skin demo. The Mux Worker is not being called a genuine live-site placement.
+**These are intentionally not interchangeable.** The competition URL is also intentionally branded; no account-level `workers.dev` hostname belongs in the submission. The Aafnai Patro page is not the submitted skin demo. The Mux Worker is not being called a genuine live-site placement.
 
 ## Why the Aafnai Patro page is genuine site use
 
