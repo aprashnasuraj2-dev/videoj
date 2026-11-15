@@ -11,6 +11,12 @@ Resume step: 061
 | Prototype / public release | Base-only and DETOUR packed consumers pass. Desktop Chromium/WebKit core controls and Return pass; optional real Mux playback and public release remain later work. |
 | Source baseline | Phase 6 mobile-UA completed test baseline: `15bd747d57285eb7be236577aff7b41e688cc6fc`, GitHub Actions run 43693510683. |
 
+## 2026-11-15 · Phase 7 regression fixes (exact-build CI pending)
+
+- At [Actions run 43696239741](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43696239741), Chromium and Firefox full suites passed. Desktop WebKit failed Home/End: native playhead was still **0.000s** after End with duration and seekable end both 64.000s. Added an explicit, capability-checked Home/End keyboard boundary path to the ordinary media shell, using the actual Video.js store seek and a source-scoped manual-seek cancellation event for pending Returns. It does not replace arrow-key behavior or autoplay.
+- The Phase 7 duplicate-Return probe incorrectly used Playwright's delayed click before repeated DOM clicks; the 8s pending deadline expired and permitted a **new valid retry**. Corrected it to dispatch four clicks synchronously inside the 8s deadline. The test still requires exactly one store seek, and still checks manual-seek cancellation, stale resolution and source replacement. Behavior and test both await fresh CI.
+- 43696239741 otherwise passed 25/25 Chromium state captures, landscape iPhone-descriptor WebKit, Pixel emulated touch, 063 keyboard probes, long 9:59:59 RTL/dense chapters, five fresh-context and five repeat-context performance traces, and 1,781B gzip delta. Ten traces recorded zero observed tasks >50 ms. All are Linux-hosted/browser-emulated, not physical QA.
+
 ## 2026-11-15 · 25 responsive screenshots and capability-aware landscape verification
 
 - [Run 43695753935](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43695753935) passed the full **5 widths × 5 states = 25** Chromium responsive player matrix, keyboard-only signature, Shift+Tab/rejected-Return focus, reduced-motion/forced-colors/CSS-zoom, emulated Pixel touch (landed 19.199s), gzip budget (1,781 B), and five no-long-task signature loops. Uploaded 28 screenshot files in Actions artifact 14154059762. This is browser emulation evidence, not physical-device proof or accepted screenshot design review.

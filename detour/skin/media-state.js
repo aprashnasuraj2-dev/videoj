@@ -16,6 +16,21 @@ class DetourMediaState extends HTMLElement {
     const menu = container.querySelector('.detour-menu');
     const rates = [...menu.querySelectorAll('[data-rate]')];
     const inDisclosure = node => node === settings || (node && menu.contains(node));
+    // Native WebKit can leave End at 0 on the v10 time-slider keyboard path.
+    // Normalize only boundary keys, never remap ordinary arrow-key seeking.
+    const timeline = container.querySelector('media-time-slider');
+    timeline.addEventListener('keydown', event => {
+      if (!['Home', 'End'].includes(event.key) || event.altKey || event.ctrlKey || event.metaKey) return;
+      if (!this.#ready || !Number.isFinite(media.duration) || media.duration <= 0 || !media.seekable.length) return;
+      const edge = event.key === 'Home' ? media.seekable.start(0) : media.seekable.end(media.seekable.length - 1);
+      if (!Number.isFinite(edge) || typeof player.store?.seek !== 'function') return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      // An explicit slider key must supersede a pending Return before seeking.
+      timeline.dispatchEvent(new Event('detour-manual-seek'));
+      Promise.resolve(player.store.seek(edge)).catch(() => {});
+    }, { signal, capture: true });
+
 
     const setSettingsOpen = open => {
       settings.setAttribute('aria-expanded', String(open));

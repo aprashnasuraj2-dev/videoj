@@ -350,10 +350,14 @@ test('068 duplicate Return, manual-seek precedence and source swap do not replay
       })});
     });
     const back=page.getByRole('button',{name:'Return to 00:42'});
-    await back.click();
-    await page.getByRole('button',{name:'Returning…'}).waitFor();
-    await back.evaluate(button=>{button.click();button.click();button.click();});
-    assert.equal(await page.locator('video-player').evaluate(player=>player.__phase7Calls),1,'Duplicate Return dispatched multiple seeks');
+    // Dispatch synchronously before the 8s Return deadline; otherwise a
+    // delayed Playwright click can accidentally become a *new* retry.
+    await back.evaluate(button => {
+      for (let n=0;n<4;n++) button.click();
+    });
+    assert.equal(await page.locator('video-player').evaluate(player=>player.__phase7Calls),1,
+      'Repeated same-tick Return clicks dispatched multiple seeks');
+    await page.locator('.detour-return-pending:visible').waitFor({timeout:1000});
     await page.getByRole('slider',{name:'Seek'}).press('ArrowRight');
     await page.waitForFunction(()=>document.querySelector('video').currentTime>=19);
     await back.waitFor();

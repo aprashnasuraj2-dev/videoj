@@ -160,6 +160,7 @@ class DetourPlace extends HTMLElement {
       live.textContent = 'The new seek took precedence. Your place is still kept.';
       render();
     };
+    slider.addEventListener('detour-manual-seek', manualSeek, { signal });
     slider.addEventListener('pointerdown', event => {
       if (event.isPrimary && event.button === 0) manualSeek();
     }, { signal, capture: true });
