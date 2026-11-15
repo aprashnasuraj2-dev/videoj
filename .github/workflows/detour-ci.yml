@@ -48,8 +48,10 @@ jobs:
           DETOUR_ENGINE: webkit
         run: npm test
       - name: Measure incremental compressed package footprint
+        if: always()
         run: node --test tests/footprint.test.mjs
       - name: Phase 7 Chromium responsive, keyboard, preferences and emulated touch probes
+        if: always()
         env:
           DETOUR_PHASE7_CAPTURES: phase7-captures
         run: node --test tests/phase7.test.mjs

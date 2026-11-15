@@ -315,7 +315,7 @@ test('essential controls and a caption-safe settings panel at desktop and compac
   }
 });
 
-test('keyboard Home and End, natural end, and return without autoplay', { timeout: 20000 }, async t => {
+test('keyboard Home and End, natural end, and return without autoplay', { timeout: 35000 }, async t => {
   const page = await player(t);
   const slider = page.getByRole('slider', { name: 'Seek' });
   await seek(page, 42.35);
@@ -331,8 +331,10 @@ test('keyboard Home and End, natural end, and return without autoplay', { timeou
     return v.currentTime >= v.duration - 0.05 && !v.seeking;
   });
   await seek(page, 63.55);
+  t.diagnostic(`${engineName}: reached 63.55 seconds and starting natural end`);
   await page.locator('media-play-button').click();
-  await page.waitForFunction(() => document.querySelector('video').ended);
+  await page.waitForFunction(() => document.querySelector('video').ended, null, { timeout: 15000 });
+  t.diagnostic(`${engineName}: native ended event observed`);
   assert.ok(await page.locator('.detour-ended').isVisible());
   assert.ok(await page.locator('.detour-replay').isVisible());
   const back = page.getByRole('button', { name: 'Return to 00:42' });

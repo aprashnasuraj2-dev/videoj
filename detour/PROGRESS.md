@@ -11,6 +11,11 @@ Resume step: 061
 | Prototype / public release | Base-only and DETOUR packed consumers pass. Desktop Chromium/WebKit core controls and Return pass; optional real Mux playback and public release remain later work. |
 | Source baseline | Phase 6 mobile-UA completed test baseline: `15bd747d57285eb7be236577aff7b41e688cc6fc`, GitHub Actions run 43693510683. |
 
+## 2026-11-15 · WebKit cross-browser diagnostics and independent Phase 7 evidence (pending)
+
+- Run 43694806349 reached desktop WebKit, failing the fullscreen Escape assertion, a geometry invariance check and the native end-of-media wait. Added an explicit zero-minimum grid column to stop dynamic min-content sizing from shrinking the seek rail when held actions appear. The browser regression now logs the natural-end stage and allows a bounded 15s native-ended wait; this is instrumentation, **not** a manufactured ended event or a pass.
+- Previously committed capture-phase Escape interception addresses the native fullscreen/Settings ordering, pending WebKit confirmation. Phase 7 footprint/responsive steps now execute even when preceding browser tests fail; both probes and capture artifacts will be available for diagnosis rather than silently skipped.
+
 ## 2026-11-15 · Firefox fullscreen menu Escape fix (validation pending)
 
 - GitHub Actions run 43694723080 failed Firefox's full-screen Settings Escape path: menu stayed visible after Escape while fullscreen/native transition was in flight. Added focus-scoped, capture-phase Escape handling to close the playback disclosure before native fullscreen handling, and allowed asynchronous visibility settlement in the regression test. Do not mark this pass until exact-head Firefox CI confirms it.

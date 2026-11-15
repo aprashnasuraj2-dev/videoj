@@ -22,6 +22,7 @@
   --detour-clock-font: ui-monospace, "SFMono-Regular", Consolas, monospace;
   position: relative;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   inline-size: 100%;
   min-inline-size: 0;
   overflow: clip;
