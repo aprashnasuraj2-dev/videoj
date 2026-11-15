@@ -11,5 +11,6 @@
 | [Phase 8 freeze](PHASE-8-FREEZE.md) | Historical Phase 8 media/service freeze and rollback authority. |
 | [Phase 9 presentation evidence](PHASE-9-PRESENTATION.md) | Form-ready rationale, alt text and exact hero/detail/mobile/recovery/alternate/video evidence manifest. |
 | [Phase 10 owner handoff](PHASE-10-HANDOFF.md) | Exact final verification, internal rubric rehearsal, provisional form payload, freeze/rollback and remaining owner/human gates. |
+| [Aafnai Patro live-site bonus](LIVE-SITE.md) | Why the owned-site URL qualifies independently from Mux, exact deployment boundary and browser evidence. |
 
 Update evidence only when it changes. Keep large captures or archives outside Git when their size would make the repository unwieldy, and record their durable locator, source SHA and checksum here. Never promote browser emulation to physical-device or assistive-technology evidence.

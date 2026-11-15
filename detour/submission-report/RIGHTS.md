@@ -16,7 +16,7 @@
 | Mux | Public Playback ID `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`; management credentials exist only as GitHub Actions secrets | Browser/package contain public playback data only | Challenge operator keeps asset live through judging |
 | Independent rollback | `detour-release` + private `detour-release-assets` R2 / `detour-dist-50ac9661e315` | No Mux dependency | Challenge operator retains Worker/R2 |
 | Reusable tarball | `detour-video-skin-0.1.0.tgz`, **16,417 B**, SHA-256 `6c3680164f42bf582fe739b0e82af73826d35aea9a3f2ae8558c90cd6d6ad5cc`, **15 files** | Excludes demo/public/test/scripts/design/report material | Actions artifact 14161323994 + reproducible `npm ci && npm pack` |
-| Real-site bonus | No genuine independent audience-serving placement proved | **No bonus claim** | Explicit skip |
+| Real-site bonus | `https://aafnaipatro.com/labs/detour/` on owned `aafnaipatro.com`; accepted DETOUR hashed build with independent same-origin procedural video/captions; Cloudflare Browser Rendering + run 43715327394 | **Qualified live-site claim**; separate from the Mux judging URL | Isolated Worker `aafnai-detour-live-v1`, deployment `f0e707401bac46dfab475122ef993daf`; route `aafnaipatro.com/labs/detour*` |
 
 ## Final audit — run 43713525858
 
@@ -32,6 +32,7 @@
 - **Primary restore:** deploy `detour-mux-release` from immutable `detour-dist-a3b43f74c765` with the existing `DETOUR_ASSETS` R2 binding, then repeat the signed-out public Mux gate.
 - **Independent rollback:** use https://detour-release.praisethegreatfool.workers.dev/ backed by `detour-dist-50ac9661e315`.
 - **Mux retention:** keep the current public asset/Playback ID live through judging; a replacement is not bonus-qualified until re-tested.
+- **Live-site retention:** keep `aafnai-detour-live-v1` and `aafnaipatro.com/labs/detour*` live through judging; it is isolated from the site's existing application routes.
 - **Package restore:** rebuild from the reviewed branch with `npm ci && npm pack`, compare contents and rerun packed-host tests.
 
 **Counterexample:** Apache-2.0 source does not automatically clear media or third-party dependency rights, and project-authored media does not relicense bundled libraries. The audit keeps those permission chains separate.

@@ -564,7 +564,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Only if a suitable owned site exists, place the identical skin in an authentic page where an actual audience can use it. Verify that it remains public, useful and accessible without the contest landing page.
   - **Deliverable** — Eligible live-site URL or explicit skip decision.
   - **Pass condition** — The context stands alone as a genuine useful site and plays real video signed out, or the documented skip decision excludes it from bonus claims.
-  - **Evidence** — [Phase 8 step 078 explicit skip](design/PHASE-8.md#step-078-real-site-bonus-skip--2026-11-15): no independently verified, genuinely useful third-party/owned-site placement; no real-site bonus claimed.
+  - **Evidence** — [Aafnai Patro live-site qualification](submission-report/LIVE-SITE.md): `https://aafnaipatro.com/labs/detour/` is an owned-site Video Lab using the accepted reusable DETOUR build with independent same-origin video/captions. Cloudflare Browser Rendering observed the ready Video.js player and run 43715327394 passed a signed-out 42.35→18→42.35 Return plus the five required controls.
 
 - [x] **079. Confirm rights and service ownership**
   - **Objective** — Keep every public dependency lawful and available.
@@ -700,7 +700,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Collect public playable URL, one strong visual, short rationale and only qualifying bonuses. Confirm file limits and link behavior in the live form. Keep an offline copy of the payload.
   - **Deliverable** — Paste-ready payload and ordered assets.
   - **Pass condition** — Required fields are complete. Mux ID and real-site URL appear only for independently verified qualifying entries.
-  - **Progress** — [A paste-ready content packet is prepared](submission-report/PHASE-10-HANDOFF.md#provisional-form-payload), including the verified Mux bonus and explicit omission of the real-site bonus. Exact live field names, limits and second-entry acceptance remain blocked by 091.
+  - **Progress** — [A paste-ready content packet is prepared](submission-report/PHASE-10-HANDOFF.md#provisional-form-payload), including the independently verified Mux and Aafnai Patro live-site bonus fields. Exact live field names, limits and second-entry acceptance remain blocked by 091.
 
 - [x] **098. Freeze links and keep rollback ready**
   - **Objective** — Preserve the exact reviewed experience through judging.

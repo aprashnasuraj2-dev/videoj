@@ -11,6 +11,15 @@ Resume step: 091
 | Prototype / public release | Frozen judging candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`; independent rollback remains `https://detour-release.praisethegreatfool.workers.dev/` / `detour-dist-50ac9661e315`. |
 | Source baseline | Public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` was re-qualified by Phase 10 run 43713525858 at verification head `b9b1495f4f66422dfa369cafcad2738fff6b4592`; no `detour/skin/` runtime file changed between those revisions. Phase 10 handoff commit `a98c5f7f80072db76223124ca98d663c5ea4a3fa` is report/tracking only. |
 
+## 2026-11-15 · Both optional bonus paths qualified
+
+- **Mux +1 remains independently qualified:** the primary judging URL plays public Mux Playback ID `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ` and the exact-public gate returns to 42.350s.
+- **Live-site +1 is now qualified:** deployed isolated Worker `aafnai-detour-live-v1` on route `aafnaipatro.com/labs/detour*`; public URL `https://aafnaipatro.com/labs/detour/` redirects to the viewer-facing Aafnai Patro Video Lab.
+- Cloudflare Browser Rendering independently observed `data-media-state="ready"`, a same-origin 64-second `daylight-study.mp4`, captions, seek rail, time, play, mute, fullscreen, Keep my place, Return and Stay on the Aafnai Patro origin.
+- Validate DETOUR run **43715327394**, step **Verify Aafnai Patro live-site bonus**, passed the signed-out browser interaction: independent video, all five required controls visible and **42.35 → 18 → Return ≈42.35s**.
+- This bonus page is deliberately isolated from Patro root, Atlas, library, date and advanced-tool routes. It reuses the accepted hashed DETOUR build and does not alter the frozen Mux judging candidate.
+- Submission payload should now claim **both +1 bonuses**. Checklist count remains 89/100 because step 078 was already checked earlier via an explicit skip decision; its evidence has been superseded by this stronger live-site qualification.
+
 ## 2026-11-15 · Authenticated Contra recheck and final rights/package reconciliation
 
 - The connected Contra session authenticated successfully and retrieved the active Video.js Skins Design Challenge. Challenge-level state reports **submissions enabled** and deadline `2026-11-17T07:59:00Z`; the public requirements remain consistent with the recorded rule register.

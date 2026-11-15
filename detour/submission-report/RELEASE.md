@@ -19,7 +19,7 @@
 | Verification dist artifact | Artifact **14161094736**, ZIP digest `sha256:76282311a905aed6d325d2adfa04b73844360b7b13042648ab071470381ab3bc` |
 | Rights / secret audit | Run 43713525858 passed Apache-2.0, project-authored media provenance, permissive production dependency licenses, 69 emitted-text secret/API-hook scans and 15-file package boundary audit |
 | Optional Mux bonus | **Qualified.** Use the verified public Playback ID only if the current form accepts the bonus field |
-| Real-site bonus | **Skipped.** Do not represent the integration/test host as a genuine live-site placement |
+| Real-site bonus | **Qualified.** `https://aafnaipatro.com/labs/detour/` — isolated Aafnai Patro Video Lab route using the accepted DETOUR build on independent same-origin video; Cloudflare Browser Rendering ready-state proof + run 43715327394 signed-out Hold/seek/Return gate |
 | Physical-device / AT truth | Browser-width/touch emulation and desktop cross-engine evidence are green; physical-phone 062, NVDA/VoiceOver 064 and native 200% zoom 065 remain open |
 | Submission eligibility | **Open** steps 002/091; no second-entry permission, contest submission or terms acceptance is claimed |
 | Owner handoff | [Phase 10 verification/rehearsal packet](PHASE-10-HANDOFF.md) |
@@ -29,5 +29,5 @@
 - Treat the Phase 9 runtime source/dist above as the **current judging authority**. [PHASE-8-FREEZE.md](PHASE-8-FREEZE.md) remains the historical Phase 8 freeze record; its older source/poster values are not the current public candidate.
 - Do not mutate the Mux Playback ID, public MP4, captions, Worker route or rollback merely to make a later test/report commit SHA appear in the browser. Any actual runtime/media change requires the relevant public release gates again.
 - The judging path is the primary `/mux/` URL. Its page exposes the player and recovery controls and contains no links to internal experiment, test or integration routes.
-- Preserve both Workers, Mux asset, private R2 objects and immutable dist branches through judging. If Mux degrades, use the independently re-qualified `detour-release` rollback rather than an untested emergency build.
+- Preserve the Mux/release Workers, Aafnai Patro live-site Worker `aafnai-detour-live-v1`, Mux asset, private R2 objects and immutable dist branches through judging. If Mux degrades, use the independently re-qualified `detour-release` rollback rather than an untested emergency build.
 - The entrant must still confirm second-entry eligibility/current form, perform the fresh-human review, approve the exact payload and carry out submission/terms actions. Immediately after submission, step 100 re-opens the listing and repeats the public interaction.

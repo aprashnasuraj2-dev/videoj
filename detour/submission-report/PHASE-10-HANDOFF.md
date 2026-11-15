@@ -19,6 +19,7 @@ The verification head is later than the deployed runtime because Phase 10 added 
 | Reuse — 095 | Packed tarball installed into a fresh external host with replacement media/captions; Return landed at **42.350s** in Chromium, Firefox and desktop WebKit |
 | Reusable artifact | **14161323994**; ZIP digest `sha256:1077a7f45a101090985f065e6e57b3d2899cc2dedd9d8e93ccbc94f7c3b4c304`; tarball **16,417 B**, SHA-256 `6c3680164f42bf582fe739b0e82af73826d35aea9a3f2ae8558c90cd6d6ad5cc`, **15 files** |
 | Verification dist artifact | **14161094736**; ZIP digest `sha256:76282311a905aed6d325d2adfa04b73844360b7b13042648ab071470381ab3bc` |
+| Aafnai Patro live-site bonus | `https://aafnaipatro.com/labs/detour/`; Worker `aafnai-detour-live-v1`; Cloudflare rendered player ready on 64s same-origin media; run 43715327394 live-site interaction step passed |
 
 The 375×667 run is browser touch emulation. It does not close physical-device step 062. No NVDA/VoiceOver session has been recorded, and native browser 200% zoom remains separate from the CSS-layout zoom probe.
 
@@ -34,8 +35,8 @@ Official public scoring is 10 visual design/originality, 5 usability/interaction
 | Execution + polish | **4.8 / 5** | Exact public Mux + independent rollback; Chromium/Firefox/WebKit; package reuse; secret/license audit; deterministic evidence; recovery/fallback | Service continuity through judging still depends on operator retention; physical-device evidence is intentionally not claimed |
 | **Base estimate** | **21.3 / 25** | Internal arithmetic only | Could move materially if fresh-human discoverability or AT testing reveals a blocker |
 | Mux bonus | **+1** | Public Playback ID and exact public playback independently verified | Claim only if the current form exposes/accepts this bonus |
-| Genuine live-site bonus | **+0** | Intentionally skipped | Integration/test pages are not a genuine audience-serving site and must not be represented as one |
-| **Internal total including Mux** | **22.3 / 27** | Not an official prediction | Eligibility is unresolved, so this is not a submission-readiness score |
+| Genuine live-site bonus | **+1** | `https://aafnaipatro.com/labs/detour/` is an owned-site Aafnai Patro Video Lab using the accepted DETOUR build with independent same-origin video; Cloudflare Browser Rendering and run 43715327394 independently verify it | Keep this route live through judging; do not substitute an integration/test localhost or contest-only URL |
+| **Internal total including both bonuses** | **23.3 / 27** | Not an official prediction | Eligibility is unresolved, so this is not a submission-readiness score |
 
 **Thesis-flip variable:** if a fresh uncoached reviewer cannot infer the held-origin/Return behavior quickly, both originality communication and usability should be discounted; if the live form disallows a second entry, the competition submission path stops regardless of technical score.
 
@@ -76,7 +77,8 @@ Playback ID: `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`
 The primary public URL above plays the Mux-hosted rendition and passed the exact signed-out verification gate.
 
 **Genuine live-site bonus**  
-Omit / do not claim.
+https://aafnaipatro.com/labs/detour/  
+A live page on the owned Aafnai Patro project uses the same accepted DETOUR skin with an independent same-origin video/caption set. Cloudflare Browser Rendering observed the ready player and Validate DETOUR run 43715327394 passed signed-out Hold → seek → Return.
 
 **License statement, if requested**  
 Entry source is licensed under Apache License 2.0. Showcase media is project-authored procedural material with separate provenance recorded in `RIGHTS.md`.
