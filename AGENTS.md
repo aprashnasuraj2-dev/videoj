@@ -1,4 +1,12 @@
-# DHAGO implementation contract
+# Repository instructions
+
+## DETOUR branch and workspace
+
+For work on the `detour` branch or explicitly scoped to DETOUR, start with [`detour/README.md`](detour/README.md), then read the current [`CHECKLIST.md`](detour/CHECKLIST.md) and [`PROGRESS.md`](detour/PROGRESS.md) at the same branch head. Follow [`CONTINUE.md`](detour/CONTINUE.md) for resume and checkpoint rules. Keep DETOUR work under `detour/` and use only DETOUR-specific release targets.
+
+The DHAGO contract below governs DHAGO work. Its tools, hosting destinations, submission status, media, and publication permissions are scoped to DHAGO.
+
+## DHAGO implementation contract
 
 Read `docs/PLAN.md`, `docs/steps.json`, `docs/worklog.md`, and `docs/status.json` before continuing. The user authorized implementation of the entire 10-page plan in this repository. Routine design choices already follow the approved DHAGO direction; continue without repeated approvals.
 
@@ -13,14 +21,15 @@ Read `docs/PLAN.md`, `docs/steps.json`, `docs/worklog.md`, and `docs/status.json
 - Optional A-B replay is out of scope until essential controls pass. No fake quality menus, autoplay surprises, invented chapters or simulated telemetry.
 - Do not submit the contest entry or accept terms without owner acceptance and explicit authorization. Prepare all files, form copy and deployment work first.
 
-## Continue
+### Continue
 
 Inspect current files and the first incomplete step. Complete independent work, record precise evidence and blockers, run appropriate checks and synchronize progress with the repository. No background work is implied after a turn ends.
 
-## Owner priority and durable assets (2026-11-13)
+### Owner priority and durable assets (2026-11-13)
 
 Optimize competitive player craft; use the 100-step checklist as an evidence trail, revising steps that miss defects or encourage busywork. Follow docs/design-priorities.md. Defer Mux upload until design readiness. Persist non-Git/non-Mux development assets and final submission packages to the exact owner Google Drive folder in docs/storage.md. GitHub Actions artifact retention alone is insufficient. Read back saved metadata; record file IDs/URLs and source SHA. Never store credentials in Drive archives or the repo. Google Drive CI needs its own OAuth secrets; do not reuse Mux credentials or assume the connected app supplies runner credentials.
 
-## Publication authorization update
+### Publication authorization update
 
 The owner explicitly authorized Cloudflare publication and Mux upload on 2026-11-13, and supplied management credentials for the upload. Continue publishing and verifying the matching source. Do not preserve the older upload deferral as a blocker. Use `docs/hosting.md` for the dedicated static origin; preserve all unrelated Patro routes. Never copy the supplied management credentials into Git, client code, archives, screenshots or documentation. Contest submission and legal-term acceptance still require the separate final owner decision.
+
