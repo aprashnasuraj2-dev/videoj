@@ -89,6 +89,10 @@ test('076 production Mux host keeps four persistent checkpoints and returns from
     assert.equal(await page.locator('.detour-checkpoint').count(), 4, 'Returning must not consume a checkpoint');
 
     const second = page.getByRole('button', { name: /Return to 00:30 — checkpoint C2/ });
+    await page.waitForFunction(() => {
+      const checkpoint = document.querySelector('.detour-checkpoint[data-slot="2"]');
+      return checkpoint && !checkpoint.disabled;
+    });
     await second.focus();
     await page.locator('video').evaluate(video => video.dispatchEvent(new Event('progress')));
     assert.equal(await second.evaluate(node => document.activeElement === node), true, 'C2 focus must survive a marker re-render');
