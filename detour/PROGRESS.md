@@ -11,6 +11,12 @@ Resume step: 061
 | Prototype / public release | Base-only and DETOUR packed consumers pass. Desktop Chromium/WebKit core controls and Return pass; optional real Mux playback and public release remain later work. |
 | Source baseline | Phase 6 mobile-UA completed test baseline: `15bd747d57285eb7be236577aff7b41e688cc6fc`, GitHub Actions run 43693510683. |
 
+## 2026-11-15 · First independent Phase 7 probe results and precision fixes
+
+- GitHub Actions [run 43695310958](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43695310958) independently ran the Phase 7 tests even after a desktop-WebKit regression failure. The import-graph gzip measurement passed **1,781 B incremental** (base 81,155 B; enhanced 82,936 B) against **15,360 B**. Five 320px Chromium signature loops observed **zero long tasks >50ms** (290–314 ms wall time per iteration; not a device-speed claim). Keyboard-only, Shift+Tab/rejected Return, reduced motion, forced colors and emulated CSS zoom probes passed.
+- Responsive matrix and iPhone-landscape probes exposed a **test harness error**: a button within a hidden parent retained its computed display but its rectangle was zero. Changed visibility checks to actual rendered rectangles. The emulated Pixel probe previously tapped the inner slider role instead of the time-slider surface and timed out; it now uses the player slider geometry, logs landed time and asserts a bounded seek.
+- Desktop WebKit's Home/End test was using a 50ms tolerance against a potentially frame-clamped duration; updated to a measured seekable-end tolerance of 0.5s and added exact arrival diagnostics. Native ended behavior remains an independent assertion and must pass on the next run. No Phase 7 box is checked by these fixes.
+
 ## 2026-11-15 · WebKit cross-browser diagnostics and independent Phase 7 evidence (pending)
 
 - Run 43694806349 reached desktop WebKit, failing the fullscreen Escape assertion, a geometry invariance check and the native end-of-media wait. Added an explicit zero-minimum grid column to stop dynamic min-content sizing from shrinking the seek rail when held actions appear. The browser regression now logs the natural-end stage and allows a bounded 15s native-ended wait; this is instrumentation, **not** a manufactured ended event or a pass.

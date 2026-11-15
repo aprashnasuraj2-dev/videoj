@@ -44,7 +44,12 @@ async function geometry(page, label) {
       root.querySelector('media-fullscreen-button'),
       root.querySelector('.detour-place, detour-place'),
     ].filter(Boolean);
-    const visible = node => node && !node.hidden && getComputedStyle(node).display !== 'none';
+    // A child of a hidden parent can retain display:block while occupying 0x0.
+    const visible = node => {
+      if (!node || !node.getClientRects().length) return false;
+      const r = node.getBoundingClientRect();
+      return r.width > 0 && r.height > 0 && getComputedStyle(node).visibility !== 'hidden';
+    };
     const hitTargets = [root.querySelector('.detour-hold'), root.querySelector('.detour-return'), root.querySelector('.detour-stay')].filter(visible);
     const rect = bounds(root);
     return {
@@ -181,10 +186,14 @@ test('062 emulated touch path is not counted as real Android/iOS', { timeout: 45
     await ready(page);
     await seek(page,42.35);
     await page.getByRole('button',{name:'Keep my place'}).tap();
-    const slider = page.getByRole('slider',{name:'Seek'});
+    const slider = page.locator('media-time-slider');
+    await slider.scrollIntoViewIfNeeded();
     const rect = await slider.boundingBox();
-    await page.touchscreen.tap(rect.x+rect.width*0.28,rect.y+rect.height*0.5);
-    await page.waitForFunction(() => document.querySelector('video').currentTime < 26);
+    await slider.tap({ position:{ x:rect.width*0.30, y:rect.height/2 } });
+    await page.waitForTimeout(200);
+    const touched = await page.locator('video').evaluate(video => video.currentTime);
+    t.diagnostic(`Pixel emulation touch seek landed at ${touched.toFixed(3)} seconds`);
+    assert.ok(touched >= 16 && touched <= 25, `Touch seek did not land near 19s: ${touched}`);
     await page.getByRole('button',{name:'Return to 00:42'}).tap();
     await page.getByRole('button',{name:'Keep my place'}).waitFor();
     assert.ok(Math.abs(await page.locator('video').evaluate(v=>v.currentTime)-42.35)<0.5);

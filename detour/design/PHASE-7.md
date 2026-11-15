@@ -16,7 +16,13 @@ The automated tests run on GitHub-hosted Ubuntu, Node 24, Video.js HTML 10.4.0 a
 | 066 | Previous Phase 5/6 synthetic duration, dense chapter, portrait and audio cases. | Full content/language matrix at this phase. |
 | 067 | Prior guards for unseekable/invalid/live and range expiry. | Extended fluctuating-range phase-specific matrix. |
 | 068 | Prior cancellation, rejected/late seek and remount evidence. | Independent Phase 7 stress plus manual-seek race confirmation. |
-| 069 | Added same-build base-vs-DETOUR esbuild gzip budget comparison (≤15 KiB) and five in-process 320px Chromium signature/longtask observations. | Exact CI pass and independent cold/warm network traces on relevant hardware remain. |
+| 069 | [Actions 43695310958](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43695310958): incremental gzip **1,781 B / 15,360 B** limit; five 320px Chromium loops 290–314 ms wall time, no observed long task >50 ms. | No five-cold/five-warm dedicated hardware/network traces; don't infer production speed. |
 | 070 | Three desktop engines were added to CI before this phase. | Full passing exact SHA, physical coverage and accessibility sign-off. |
 
 **No Phase 7 checklist items are automatically verified by adding tests.** Only promote after a passed exact-source run and sufficient acceptance evidence. The physical/AT dependencies cannot be cleared by headless automation.
+
+## Initial Phase 7 measurements — 2026-11-15
+
+The first independent `footprint.test.mjs` passed: 81,155 B gzip baseline, 82,936 B enhanced, incremental 1,781 B. CSS is common to both package entries and therefore has zero **incremental** CSS, not zero absolute CSS. The five same-process Chromium traces reported no Long Tasks API entries; the test environment is an Ubuntu hosted CI runner rather than a constrained mobile device. This does **not** meet all of checklist 069's cold/warm and real-hardware requirements.
+
+The responsive and mobile-UA probes initially failed on a hidden-ancestor measurement error and wrong slider target respectively; both were fixed in code and require a fresh exact-head run. The 061 screenshots from that failing run are incomplete. No screenshots are represented as accepted unless a corresponding probe passed.
