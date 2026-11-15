@@ -1,22 +1,20 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content="Host-neutral Woven Time Ribbon component proof for Video.js and other media UIs."/><title>DHAGO — Woven Time Ribbon component</title></head>
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="description" content="Explore the woven timeline at the heart of DHAGO across two different visual treatments."/><title>DHAGO — Woven Timeline Study</title></head>
 <body class="ribbon-demo">
 <a class="skip" href="#ribbon-video">Skip to media</a>
-<header class="ribbon-head"><a href="./">DHAGO</a><nav><a href="./stress.html">Edge States Lab</a><a href="./tools.html">Engineering Tools</a><a href="./journal.html#portable-title">Install proof</a></nav></header>
+<header class="ribbon-head"><a href="./">DHAGO</a><nav><a href="./stress.html">Edge studies</a><a href="./tools.html">Playback studio</a><a href="./journal.html">Studio Journal</a></nav></header>
 <main>
-<p class="eyebrow">Reusable component / chapters in · playback state out</p>
+<p class="eyebrow">Timeline study / one woven idea, two expressions</p>
 <h1>One ribbon.<br/><em>Different hosts.</em></h1>
-<p class="ribbon-deck">This proof extracts the woven timeline from DHAGO. It has no Video.js import: chapter and metadata geometry go in; normalized progress and active-chapter state come out. Both treatments below are driven by the canonical Studies in Thread media element.</p>
+<p class="ribbon-deck">The woven timeline can travel beyond a single surface. Both treatments below follow the same chapter structure and the same real playback position from <em>Studies in Thread</em>, while changing only the surrounding visual atmosphere.</p>
 <video id="ribbon-video" controls playsinline preload="metadata" src="./media/studies-in-thread.mp4" poster="./media/dhago-studies-poster.svg"></video>
 <section class="ribbon-grid" aria-label="Ribbon host treatments">
-<article class="host-card host-default"><p class="eyebrow">Default host treatment</p><h2>Standard controls, woven time.</h2><div id="default-ribbon"></div></article>
-<article class="host-card host-minimal"><p class="eyebrow">Minimal host treatment</p><h2>The same API, quieter surface.</h2><div id="minimal-ribbon"></div></article>
+<article class="host-card host-default"><p class="eyebrow">Warm treatment</p><h2>Familiar controls, woven time.</h2><div id="default-ribbon"></div></article>
+<article class="host-card host-minimal"><p class="eyebrow">Quiet treatment</p><h2>The same ribbon, a lighter touch.</h2><div id="minimal-ribbon"></div></article>
 </section>
-<section class="ribbon-api"><h2>Small API, no DHAGO dependency.</h2><pre><code>const ribbon = createWovenRibbon({ chapters, tracks, onSeek });
-ribbon.update({ currentTime, duration, buffering, droppedFrames, renditionHeight });
-const { progress, activeChapterIndex } = ribbon.getState();</code></pre></section>
+<section class="ribbon-api"><h2>Reusable by design.</h2><p>The ribbon follows chapter timing, playback position and available viewing signals without depending on the surrounding showcase. It can keep the woven interaction while adapting to a different host, layout or visual treatment.</p></section>
 </main>
-<footer>Woven Time Ribbon · experimental reusable component proposal · <a href="https://github.com/videojs/video.js/discussions/8235">Related Video.js chapters discussion ↗</a></footer>
+<footer>Woven Time Ribbon · a reusable study in chapter rhythm and playback</footer>
 <script type="module" src="/src/ribbon-demo.ts"></script>
 </body></html>
