@@ -26,7 +26,7 @@
 
 ## Public-host privacy boundary
 
-The judge-facing submission and rollback use only branded `aafnaipatro.com` hostnames. Account-level `workers.dev` hostnames are not part of the submission surface and must not appear in judge-facing copy, screenshots, reports or form fields.
+The judge-facing submission and rollback use only branded `aafnaipatro.com` hostnames. `workers.dev` routing is disabled for both DETOUR Workers, and account-level `workers.dev` hostnames must not appear in judge-facing copy, screenshots, reports or form fields.
 
 ## URL role separation
 
