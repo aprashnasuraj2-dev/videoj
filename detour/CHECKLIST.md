@@ -569,6 +569,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Record asset license, attribution and redistribution scope for video, captions, poster, fonts, icons and code. Assign billing/retention ownership for host and streaming. Keep fallback assets current through judging.
   - **Deliverable** — Rights and availability manifest.
   - **Pass condition** — Every shipped asset has a usable permission basis. A named owner can restore each media path through judging.
+  - **Progress** — [Engineering rights and retention inventory](submission-report/RIGHTS.md) drafted; service/billing owner, dependency license attestation and final freeze readback remain open.
 
 - [ ] **080. Freeze the demonstration cut**
   - **Objective** — Prevent showcase scope from delaying submission.

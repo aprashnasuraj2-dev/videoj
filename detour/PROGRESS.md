@@ -11,6 +11,12 @@ Resume step: 076
 | Prototype / public release | Core public release is green at `https://detour-release.praisethegreatfool.workers.dev/`, backed by SHA-versioned R2 objects and immutable dist source. Mux is now optional bonus work only. |
 | Source baseline | Public-release baseline: `1016bd1b39d817261fc0a5b0d3cbdc2252c2ce6e`, Actions run 43703881941. Full CI green; 072 HTTPS passed at 42.350s Return. |
 
+## 2026-11-15 · Release and rights handoff reconciliation (079 in progress)
+
+- Converted the stale initial-prototype release placeholder into an evidence-based handoff: immutable asset source `50ac9661e315`, separately validated core source `1016bd1`, verified release and rollback, explicit omissions and owner-only proof gaps. See [release handoff](submission-report/RELEASE.md).
+- Added [asset rights and operational retention inventory](submission-report/RIGHTS.md) covering procedural video/audio, poster, VTT, package source, runtime/build dependencies, Worker/R2 and optional Mux. Rights provenance is engineering evidence, **not** proof of account billing, license sign-off or availability; **079 remains unchecked**.
+- Checklist 078 remains the only additional accepted step in this continuation. Resume 076 on repository-secret availability; otherwise complete owner-independent 079 audits and 080 freeze preparations. CI on this head is required before asserting new build validation.
+
 ## 2026-11-15 · Mux CI failure diagnosed; explicit real-site skip (078)
 
 - At source `5e7cbed11dd40c22d49d3e90c2f8b04734f2e7b2`, [Actions run 43704372300](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43704372300) failed in `provision` because **both** `MUX_TOKEN_ID` and `MUX_TOKEN_SECRET` were empty. The script exited before any Mux API call. This does not mean Mux playback or the core skin failed. No Mux Playback ID has been qualified.
