@@ -39,9 +39,9 @@ class DetourPlace extends HTMLElement {
     const hold = this.querySelector('.detour-hold');
     const held = this.querySelector('.detour-held');
     const back = this.querySelector('.detour-return');
-    const returnLabel = back.querySelector('span');
-    const returnTime = back.querySelector('bdi');
-    const returning = document.createTextNode('Returning…');
+    const returnLabel = back.querySelector('.detour-return-label');
+    const returnTime = back.querySelector('.detour-return-time');
+    const returning = back.querySelector('.detour-return-pending');
     const stay = this.querySelector('.detour-stay');
     const error = container.querySelector('.detour-error');
     const notice = container.querySelector('.detour-notice');
@@ -112,11 +112,9 @@ class DetourPlace extends HTMLElement {
       if (progress !== null) {
         origin.style.insetInlineStart = `${progress}%`;
         origin.toggleAttribute('data-edge-end', progress >= 96);
-        if (this.#attempt) back.replaceChildren(returning);
-        else {
-          returnTime.textContent = timeLabel(mark.time);
-          if (returnLabel.parentElement !== back) back.replaceChildren(returnLabel);
-        }
+        returning.hidden = !this.#attempt;
+        returnLabel.hidden = Boolean(this.#attempt);
+        if (!this.#attempt) returnTime.textContent = timeLabel(mark.time);
       }
     };
 
