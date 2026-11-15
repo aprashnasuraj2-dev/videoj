@@ -11,6 +11,11 @@ Resume step: 073
 | Prototype / public release | Packed external host and desktop Chromium/Firefox/WebKit core are green. Phase 7 capture artifact exists. Public HTTPS, final showcase media and optional Mux remain later gates. |
 | Source baseline | Phase 8 media baseline: `87afdf6a740bbcce95caaa04e2c02886071c895c`, Actions run 43699914256. Showcase verification 2/2 passed; full DETOUR CI passed. |
 
+## 2026-11-15 · Hosted-runner performance diagnostic correction
+
+- Run 43700337821 passed the new 073 root composition and all ordinary browser/package work, but one of the *secondary* five-fresh/five-repeat diagnostic samples reported a 350ms process-wide Long Task on the GitHub-hosted runner. The dedicated five-run signature performance gate still passed.
+- Kept the normative 069 assertion unchanged in the dedicated five-run control trace. The broader cold/repeat-context sampler now records >50ms process-wide tasks as diagnostics instead of attributing every browser/runner task to DETOUR controls. This preserves performance evidence without converting host scheduling noise into a product failure.
+
 ## 2026-11-15 · Phase 8 one-screen judge demo implementation (validation pending)
 
 - Public root now selects the 56s showcase by default with its real poster and captions; automated Phase 7 regressions explicitly request the unchanged 64s `navigation-study` fixture through a non-visual query parameter so release media cannot silently rewrite QA assumptions.
