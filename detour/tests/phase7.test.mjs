@@ -522,15 +522,24 @@ test('068 timeout, buffering pause and stale completion never resume playback', 
     await page.locator('video-player').evaluate(player=>{
       Object.defineProperty(player,'store',{configurable:true,value:player.__timeoutReal});
     });
+    const play=page.locator('media-play-button');
+    await play.click();
+    await page.waitForFunction(()=>!document.querySelector('video').paused);
     await page.locator('video').evaluate(video=>{
       Object.defineProperty(video,'readyState',{configurable:true,value:HTMLMediaElement.HAVE_CURRENT_DATA});
       video.dispatchEvent(new Event('waiting'));
     });
-    assert.ok(await page.locator('.detour-buffer').isVisible(),'Buffering state did not surface');
-    assert.equal(await page.locator('video').evaluate(v=>v.paused),true,'Buffering changed pause intent');
+    await page.locator('.detour-buffer').waitFor({timeout:3000});
+    assert.ok(await page.locator('.detour-buffer').isVisible(),'Playing/waiting state did not surface buffering');
+    await play.click();
+    assert.equal(await page.locator('video').evaluate(v=>v.paused),true,'Pause during buffering failed');
+    await page.locator('video').evaluate(video=>{
+      delete video.readyState;
+      video.dispatchEvent(new Event('progress'));
+    });
     await back.click();
     await page.getByRole('button',{name:'Keep my place'}).waitFor();
-    assert.equal(await page.locator('video').evaluate(v=>v.paused),true,'Return during buffered/paused state resumed playback');
-    t.diagnostic('8s deadline retained mark; late resolution was ignored; buffered paused Return stayed paused.');
+    assert.equal(await page.locator('video').evaluate(v=>v.paused),true,'Return after pausing during buffering resumed playback');
+    t.diagnostic('8s deadline retained mark; late resolution was ignored; waiting surfaced while playing, pause took effect, and Return stayed paused.');
   } finally { await page.close(); }
 });

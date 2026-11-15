@@ -11,6 +11,11 @@ Resume step: 061
 | Prototype / public release | Base-only and DETOUR packed consumers pass. Desktop Chromium/WebKit core controls and Return pass; optional real Mux playback and public release remain later work. |
 | Source baseline | Phase 6 mobile-UA completed test baseline: `15bd747d57285eb7be236577aff7b41e688cc6fc`, GitHub Actions run 43693510683. |
 
+## 2026-11-15 · Buffering-race probe correction (validation pending)
+
+- Run 43697966802 passed the new 067 duration/range test and the existing duplicate/manual/source-swap 068 stress. Its only Phase 7 failure was the new buffering subcase because it dispatched `waiting` while the media was already paused; the player correctly did not present active buffering in that state.
+- Corrected the probe to enter `waiting` while playing, wait for the real buffer indicator, pause through the actual play control, restore native readyState and then Return. The asserted requirement remains unchanged: pause must win, and recovery must never restart playback. The preceding real 8s Return-timeout/stale-completion assertions had already passed before that failed visibility assertion.
+
 ## 2026-11-15 · Exact-head Phase 7 green baseline and remaining difficult-state probes
 
 - Exact source `88e442377b30e053c7b1ac0404daed90b4b0ac8d` passed [Actions run 43697253579](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43697253579): architecture, packed external host, full Chromium/Firefox/WebKit regressions, footprint budget and all Phase 7 probes. End-key snapshots were **63.95/64.00s** in all three desktop engines. The Phase 7 screenshot artifact is 14154867955.
