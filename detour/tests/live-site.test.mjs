@@ -70,6 +70,7 @@ test('078 Aafnai Patro editorial history page uses the reusable DETOUR skin on i
 
     await seek(page, 12);
     await page.getByRole('button', { name: 'Keep my place' }).click();
+    await page.waitForFunction(() => document.querySelector('.detour-return-time')?.textContent === '00:12');
     await seek(page, 2);
     await page.getByRole('button', { name: 'Return to 00:12' }).click();
     await page.getByRole('button', { name: 'Keep my place' }).waitFor({ timeout: 10000 });
