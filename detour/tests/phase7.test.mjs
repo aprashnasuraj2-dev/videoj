@@ -9,6 +9,12 @@ import { preview } from 'vite';
 let server;
 let browser;
 let baseURL;
+
+function fixtureURL() {
+  const url = new URL(baseURL);
+  url.searchParams.set('fixture', 'navigation-study');
+  return url.href;
+}
 const captureDir = process.env.DETOUR_PHASE7_CAPTURES;
 before(async () => {
   server = await preview({ preview: { host: '127.0.0.1', port: 0 } });
@@ -19,7 +25,7 @@ before(async () => {
 after(async () => { await browser?.close(); await server?.close(); });
 
 async function ready(page) {
-  await page.goto(baseURL);
+  await page.goto(fixtureURL());
   await page.waitForFunction(() => {
     const video = document.querySelector('video');
     return video?.readyState >= 2 && video.seekable.length > 0;

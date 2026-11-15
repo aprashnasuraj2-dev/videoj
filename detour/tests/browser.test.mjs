@@ -11,6 +11,12 @@ let server;
 let browser;
 let baseURL;
 
+function fixtureURL() {
+  const url = new URL(baseURL);
+  url.searchParams.set('fixture', 'navigation-study');
+  return url.href;
+}
+
 before(async () => {
   assert.ok(engines[engineName], `Unsupported engine: ${engineName}`);
   server = await preview({ preview: { host: '127.0.0.1', port: 0 } });
@@ -28,7 +34,7 @@ after(async () => {
 async function player(t, width = 1000) {
   const page = await browser.newPage({ viewport: { width, height: 780 } });
   t.after(() => page.close());
-  await page.goto(baseURL);
+  await page.goto(fixtureURL());
   await page.waitForFunction(() => {
     const video = document.querySelector('video');
     return video.readyState >= 2 && video.seekable.length > 0;
@@ -495,7 +501,7 @@ test('failed and stale provider results preserve the active hold', { timeout: 25
 test('emulated tap can seek and return without dragging', { timeout: 18000 }, async t => {
   const page = await browser.newPage({ hasTouch: true, viewport: { width: 360, height: 760 } });
   t.after(() => page.close());
-  await page.goto(baseURL);
+  await page.goto(fixtureURL());
   await page.locator('.detour-hold:enabled').waitFor();
   await seek(page, 42.35);
   await page.getByRole('button', { name: 'Keep my place' }).tap();
@@ -641,7 +647,7 @@ test('media status shows measured loading, provider waiting, error and retry', {
   t.after(release);
   const fixture = /navigation-study\.mp4$/;
   await page.route(fixture, async route => { await pending; await route.continue(); });
-  await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
+  await page.goto(fixtureURL(), { waitUntil: 'domcontentloaded' });
   await page.locator('.detour-loading').waitFor();
   assert.ok(await page.locator('.detour-clock-empty').isVisible());
   assert.equal(await page.locator('.detour-screen video').getAttribute('poster'), null);

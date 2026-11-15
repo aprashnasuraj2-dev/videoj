@@ -11,6 +11,12 @@ Resume step: 073
 | Prototype / public release | Packed external host and desktop Chromium/Firefox/WebKit core are green. Phase 7 capture artifact exists. Public HTTPS, final showcase media and optional Mux remain later gates. |
 | Source baseline | Phase 8 media baseline: `87afdf6a740bbcce95caaa04e2c02886071c895c`, Actions run 43699914256. Showcase verification 2/2 passed; full DETOUR CI passed. |
 
+## 2026-11-15 · Phase 8 one-screen judge demo implementation (validation pending)
+
+- Public root now selects the 56s showcase by default with its real poster and captions; automated Phase 7 regressions explicitly request the unchanged 64s `navigation-study` fixture through a non-visual query parameter so release media cannot silently rewrite QA assumptions.
+- Reworked only the demo-page framing: compact wordmark/tagline and minimal top padding place the player immediately in view instead of behind a large hero heading. No gate, intro animation, autoplay or alternate site mode is added.
+- Extended showcase tests to check the root at 320×640, 375×667 and 1280×900: player must start above 120 CSS px, be meaningfully visible in the first viewport, remain paused, use the showcase MP4/poster, expose Keep, and contain no dialog/password gate. Pending exact-head CI.
+
 ## 2026-11-15 · Phase 8 step 071 accepted; 072 local bundle ready
 
 - Exact source `87afdf6a740bbcce95caaa04e2c02886071c895c` passed [Actions 43699914256](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43699914256). Showcase verification passed **2/2**: deterministic provenance/A-V/frame separation and a fresh local HTTP browser mount seeking exactly **18.000s → 42.000s**.

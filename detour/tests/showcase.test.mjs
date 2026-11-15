@@ -96,3 +96,24 @@ test('072 generated showcase seeks through a fresh local HTTP browser mount', {t
     t.diagnostic(`Local HTTP showcase seeks: ${at18.toFixed(3)}s → ${at42.toFixed(3)}s; HTTPS qualification remains a release gate.`);
   } finally {await page.close();}
 });
+
+test('073 public root exposes the showcase player in the first mobile viewport without a gate', { timeout:30000 }, async t => {
+  for (const viewport of [{width:320,height:640},{width:375,height:667},{width:1280,height:900}]) {
+    const page=await browser.newPage({viewport});
+    try {
+      await page.goto(server.resolvedUrls.local[0]);
+      await page.locator('.detour-hold:enabled').waitFor();
+      const player=await page.locator('.detour').boundingBox();
+      assert.ok(player.y<120,`Player starts too low at ${viewport.width}px: y=${player.y}`);
+      assert.ok(player.y<viewport.height&&player.y+Math.min(player.height,120)<viewport.height,
+        `Player is not meaningfully visible in initial viewport ${JSON.stringify({viewport,player})}`);
+      assert.equal(await page.locator('video').evaluate(v=>v.paused),true,'Judge demo must not autoplay');
+      assert.match(await page.locator('video').getAttribute('src'),/showcase\/detour-showcase-v1\.mp4$/);
+      assert.match(await page.locator('video').getAttribute('poster'),/showcase\/detour-showcase-v1-poster\.jpg$/);
+      assert.equal(await page.locator('dialog').count(),0);
+      assert.equal(await page.locator('input[type="password"]').count(),0);
+      assert.ok(await page.getByRole('button',{name:'Keep my place'}).isVisible());
+    } finally {await page.close();}
+  }
+  t.diagnostic('Public root checked at 320×640, 375×667 and 1280×900: showcase player appears immediately, paused, with no sign-in/gate.');
+});

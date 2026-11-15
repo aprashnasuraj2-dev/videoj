@@ -529,6 +529,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Place the playable skin near the top, with one concise line of context where useful. Avoid gates and intro animation. Keep tests or docs out of the viewing path.
   - **Deliverable** — Public-ready showcase composition.
   - **Pass condition** — A cold mobile visitor can see and use the player without sign-in, instructions, scrolling past a hero, or a custom site mode.
+  - **Progress** — Public root now defaults to the verified showcase with a compact masthead; mobile/desktop first-viewport, paused/no-gate and media-selection assertions are added. Await exact-head CI before checking.
 
 - [ ] **074. Show portability with a distinct clip**
   - **Objective** — Prove reuse using the same skin artifact.
