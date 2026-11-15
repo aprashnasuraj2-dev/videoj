@@ -30,7 +30,7 @@ jobs:
       - name: Install pinned dependencies
         run: npm ci
       - name: Install DETOUR browser engines
-        run: npx playwright install --with-deps chromium webkit
+        run: npx playwright install --with-deps chromium firefox webkit
       - name: Build production demo
         run: npm run build
       - name: Verify static package boundaries
@@ -39,9 +39,13 @@ jobs:
         run: npm run test:package
       - name: Run full Chromium regression
         run: npm test
-      - name: Re-run the signature round trip in desktop WebKit
+      - name: Run full Firefox regression
+        env:
+          DETOUR_ENGINE: firefox
+        run: npm test
+      - name: Run full desktop WebKit regression
         env:
           DETOUR_ENGINE: webkit
-        run: node --test --test-name-pattern="paused return lands ten times" tests/browser.test.mjs
+        run: npm test
       - name: Validate checklist and resume pointer
         run: node scripts/check-progress.mjs

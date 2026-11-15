@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { after, before, test } from 'node:test';
-import { chromium, devices, webkit } from 'playwright';
+import { chromium, devices, firefox, webkit } from 'playwright';
 import { createServer } from 'vite';
 
 const detourRoot = fileURLToPath(new URL('../', import.meta.url));
@@ -472,9 +472,9 @@ test('packed base shell records emulated iPhone WebKit volume and mute behavior'
   t.diagnostic(`Emulated iPhone WebKit capabilities: ${JSON.stringify(capabilities)}`);
 });
 
-test('packed skin runs in an external host in Chromium and desktop WebKit', { timeout: 120000 }, async t => {
+test('packed skin runs in an external host in Chromium, Firefox and desktop WebKit', { timeout: 150000 }, async t => {
   const results = {};
-  for (const [name, engine] of [['chromium', chromium], ['webkit', webkit]]) {
+  for (const [name, engine] of [['chromium', chromium], ['firefox', firefox], ['webkit', webkit]]) {
     results[name] = await proveEngine(name, engine);
   }
   t.diagnostic(`Packed external-host arrivals: ${JSON.stringify(results)}; archive ${basename(tarball)}`);
