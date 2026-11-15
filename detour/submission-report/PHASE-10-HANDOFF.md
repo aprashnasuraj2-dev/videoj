@@ -3,7 +3,7 @@
 **Prepared:** 2026-11-15  
 **Verification head:** `b9b1495f4f66422dfa369cafcad2738fff6b4592`  
 **Accepted public runtime:** `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`  
-**Competition submission demo:** https://detour.aafnaipatro.com/mux/
+**Preferred competition submission demo:** https://detour-entry.aafnaipatro.com/mux/\n**Redundant competition mirror:** https://detour.aafnaipatro.com/mux/
 **Public-host privacy:** use this branded hostname only; do not expose any account-level `workers.dev` hostname.
 **Independent live-site bonus URL:** https://aafnaipatro.com/on-this-day/video/apollo-11/  
 **Independent rollback:** https://detour-backup.aafnaipatro.com/  
@@ -68,8 +68,8 @@ This is the content packet to bind to the **actual live form** after 091. Field 
 **Entry name**  
 DETOUR — Keep your place
 
-**Playable public URL**  
-https://detour.aafnaipatro.com/mux/
+**Playable public URL — preferred**  
+https://detour-entry.aafnaipatro.com/mux/\n\n**Redundant mirror**  \nhttps://detour.aafnaipatro.com/mux/
 
 **One-line hook**  
 Most video players let you seek. DETOUR lets you leave without losing where you came from.
@@ -94,15 +94,14 @@ Most seek bars remember only where you are now. DETOUR adds a second temporal po
 
 **Mux bonus evidence**  
 Playback ID: `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`  
-The primary public URL above plays the Mux-hosted rendition and passed the exact signed-out verification gate.
+The preferred public URL above plays the same Mux-hosted rendition on the same frozen Worker and completed an external 42→18→42 signature verification. The redundant mirror is retained as a second branded route.
 
 **Genuine live-site bonus**  
 https://aafnaipatro.com/on-this-day/video/apollo-11/  
 This is a separate Aafnai Patro **On This Day** editorial history page. It uses the reusable skin with a NASA Apollo 11 landing-site visualization, not the submission showcase media. For resilient judging delivery that NASA source is ingested into a second Mux asset (`kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U`) and proxied behind the Aafnai Patro media URL. Cloudflare Browser Rendering proved Hold at 12s → seek to 2s → Return to 12.000s.
 
 **URL-role rule**  
-- Submit/playable demo: https://detour.aafnaipatro.com/mux/
-- Live-site bonus: https://aafnaipatro.com/on-this-day/video/apollo-11/
+- Submit/playable demo — preferred: https://detour-entry.aafnaipatro.com/mux/\n- Redundant competition mirror: https://detour.aafnaipatro.com/mux/\n- Independent rollback: https://detour-backup.aafnaipatro.com/\n- Live-site bonus: https://aafnaipatro.com/on-this-day/video/apollo-11/
 - **Never use one URL as evidence for the other role.**
 
 **License statement, if requested**  
@@ -115,15 +114,14 @@ Do not add repository/process/CI links to the judge-facing creative description 
 
 The owner reported the primary hostname as unavailable from one local network on 2026-11-16. External verification showed the frozen player and Mux media remained healthy, so the known-good runtime was **not redeployed**.
 
-- Previously qualified primary: `https://detour.aafnaipatro.com/mux/`
-- Redundant branded mirror: `https://detour-entry.aafnaipatro.com/mux/`
+- Preferred submission route: `https://detour-entry.aafnaipatro.com/mux/`\n- Redundant branded mirror: `https://detour.aafnaipatro.com/mux/`
 - Independent rollback: `https://detour-backup.aafnaipatro.com/`
 
-The redundant mirror routes to the exact same frozen `detour-mux-release` Worker and source `a3b43f74c7652c707c3703193ab1081820bafa79`. External browser proof completed **42 → Hold → 18 → Return → 42** with no media error. Use the mirror only if the primary hostname fails from the submission network; do not present both as separate bonus evidence.
+The redundant mirror routes to the exact same frozen `detour-mux-release` Worker and source `a3b43f74c7652c707c3703193ab1081820bafa79`. External browser proof completed **42 → Hold → 18 → Return → 42** with no media error. Use the preferred `detour-entry` route for submission; keep the older hostname only as a redundant mirror. Do not present both as separate bonus evidence.
 
 ## 098 freeze and rollback
 
-- **Primary:** `https://detour.aafnaipatro.com/mux/`
+- **Preferred primary:** `https://detour-entry.aafnaipatro.com/mux/`\n- **Redundant mirror:** `https://detour.aafnaipatro.com/mux/`
 - **Primary runtime authority:** `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`
 - **Mux Playback ID:** `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`
 - **Same-Worker backup:** `/showcase/detour-showcase-v1.mp4`, SHA-256 `fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1`

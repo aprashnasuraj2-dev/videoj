@@ -8,7 +8,7 @@ Resume step: 091
 | Verified | 90/100. Step 002 is now verified by official Contra multiple-submission guidance. Phase 8 is complete; Phase 9 steps 081–089 are verified except human-only 090; Phase 10 steps 092–095 and 098 are verified. |
 | Next | 091. Multiple-submission eligibility is resolved; the signed-in current form field names, limits and acceptance state still unlock 096/097/099. Step 090 still needs a fresh uncoached human reviewer; 100 follows actual submission. |
 | Open dependencies | 091 signed-in live-form confirmation; 017 first-use study; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% zoom; 090 fresh uncoached judging pass; 099 owner submission and 100 post-submission verification. No further independent Phase 10 acceptance step bypasses 091. |
-| Prototype / public release | Frozen judging candidate: `https://detour.aafnaipatro.com/mux/` on public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`; independent rollback remains `https://detour-backup.aafnaipatro.com/` / `detour-dist-50ac9661e315`. |
+| Prototype / public release | Preferred submission route: `https://detour-entry.aafnaipatro.com/mux/`; redundant mirror: `https://detour.aafnaipatro.com/mux/`. Both serve frozen runtime `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`; independent rollback remains `https://detour-backup.aafnaipatro.com/` / `detour-dist-50ac9661e315`. |
 | Source baseline | Public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` was re-qualified by Phase 10 run 43713525858 at verification head `b9b1495f4f66422dfa369cafcad2738fff6b4592`; no `detour/skin/` runtime file changed between those revisions. Phase 10 handoff commit `a98c5f7f80072db76223124ca98d663c5ea4a3fa` is report/tracking only. |
 
 
@@ -22,7 +22,7 @@ Resume step: 091
 - Fresh Cloudflare Browser Rendering from another edge returned **HTTP 200**, title **DETOUR — Keep your place**, frozen source `a3b43f74c765…`, storage `r2`, and the expected Mux release headers. An independent Firecrawl browser reported the Mux video at **readyState 4**, **networkState 1**, duration **55.985333s**, and no media error.
 - Added a second branded custom domain, **`https://detour-entry.aafnaipatro.com/mux/`**, pointing to the same frozen `detour-mux-release` Worker. It passed two-network HTTP/render checks and a full external signature flow: **42s → Hold → 18s → Return → 42s**, after which the held controls cleared and the player announced **Returned to 00:42.**
 - The independent older rollback `https://detour-backup.aafnaipatro.com/` also returned **HTTP 200** on its frozen `50ac9661…` build.
-- **Release decision:** keep the original URL as the previously qualified primary, but treat `detour-entry.aafnaipatro.com/mux/` as an immediately usable branded mirror if the owner's resolver/ISP continues to fail the original hostname. No player code, Mux asset, media, or package bytes changed.
+- **Release decision:** use `https://detour-entry.aafnaipatro.com/mux/` as the preferred submission URL because it is a fresh hostname on the same frozen Worker and has passed independent HTTP/render plus 42→18→42 interaction verification. Keep `https://detour.aafnaipatro.com/mux/` as a redundant mirror. No player code, Mux asset, media, or package bytes changed.
 
 ## 2026-11-15 · Final competitive positioning and master-pack v2
 
@@ -30,7 +30,7 @@ Resume step: 091
 - Locked DETOUR's narrower winning lane: **“Most video players let you seek. DETOUR lets you leave without losing where you came from.”** The complete mechanism is the differentiator: one familiar seek bar, separate current/held positions, free exploration, explicit one-action Return, explicit discard, and source/race-safe reusable implementation.
 - Rebuilt the owner submission master pack around a three-state authentic-browser board (**Hold 00:42 → Explore 00:15 → Return 00:42**) plus an **8.20s H.264 judge reel**, while retaining the raw hero and raw 6.08s browser recording as evidence fallbacks.
 - Added a concise reusable-engineering brief exposing host ownership, package exports, source-epoch state, duplicate-return suppression, manual-seek precedence, live/audio capability boundaries, accessibility mechanisms and provider separation. The reusable `.tgz` itself remains the previously verified artifact.
-- Master pack: `DETOUR_COMPETITION_MASTERPACK_v2.zip`, SHA-256 `7154d62cc07a348dc6e1f51d539d06dce797f2b0746cdad2c24f370669f52bd2`. This artifact is an owner handoff; exact Contra field binding remains step 091/097.
+- Superseded presentation pack: `DETOUR_COMPETITION_MASTERPACK_v2.zip`. Current owner pack after the route incident is `DETOUR_COMPETITION_MASTERPACK_v3.zip`, SHA-256 `091c9c166fba581175f5f79916fe2a793b6fccf961cf80027373e2970ab8356e`. Exact Contra field binding remains step 091/097.
 - **Decision:** do not add late chapters, thumbnails, AI, voice control, 3D hardware or another theme. Those are crowded lanes and would increase verification risk without strengthening DETOUR's core playback primitive.
 
 ## 2026-11-15 · Step 002 verified by official Contra multiple-submission guidance
