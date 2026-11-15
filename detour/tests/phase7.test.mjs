@@ -526,7 +526,10 @@ test('068 timeout, buffering pause and stale completion never resume playback', 
     await play.click();
     await page.waitForFunction(()=>!document.querySelector('video').paused);
     await page.locator('video').evaluate(video=>{
-      Object.defineProperty(video,'readyState',{configurable:true,value:HTMLMediaElement.HAVE_CURRENT_DATA});
+      Object.defineProperties(video,{
+        readyState:{configurable:true,value:HTMLMediaElement.HAVE_CURRENT_DATA},
+        currentTime:{configurable:true,value:video.currentTime},
+      });
       video.dispatchEvent(new Event('waiting'));
     });
     await page.locator('.detour-buffer').waitFor({timeout:3000});
@@ -535,6 +538,7 @@ test('068 timeout, buffering pause and stale completion never resume playback', 
     assert.equal(await page.locator('video').evaluate(v=>v.paused),true,'Pause during buffering failed');
     await page.locator('video').evaluate(video=>{
       delete video.readyState;
+      delete video.currentTime;
       video.dispatchEvent(new Event('progress'));
     });
     await back.click();

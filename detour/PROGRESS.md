@@ -11,6 +11,11 @@ Resume step: 061
 | Prototype / public release | Base-only and DETOUR packed consumers pass. Desktop Chromium/WebKit core controls and Return pass; optional real Mux playback and public release remain later work. |
 | Source baseline | Phase 6 mobile-UA completed test baseline: `15bd747d57285eb7be236577aff7b41e688cc6fc`, GitHub Actions run 43693510683. |
 
+## 2026-11-15 · Waiting-fixture alignment (validation pending)
+
+- Run 43698360905 again passed every pre-existing browser/package gate, step 067 and the real 8s timeout/stale-completion portion of 068. Only the newly added buffering visibility assertion failed.
+- The older verified provider-waiting fixture freezes both `readyState` and the native clock while dispatching `waiting`; the new subcase had frozen only `readyState`. Aligned the subcase exactly with that established fixture, then deletes both temporary properties before Return. This keeps the test focused on pause intent and recovery rather than creating a second, subtly different buffering simulator.
+
 ## 2026-11-15 · Buffering-race probe correction (validation pending)
 
 - Run 43697966802 passed the new 067 duration/range test and the existing duplicate/manual/source-swap 068 stress. Its only Phase 7 failure was the new buffering subcase because it dispatched `waiting` while the media was already paused; the player correctly did not present active buffering in that state.
