@@ -1,15 +1,22 @@
 # DETOUR progress
 
 Phase: 08
-Resume step: 071
+Resume step: 073
 
 | Item | Current state |
 | --- | --- |
-| Verified | 65/100. Phase 7 automated/browser-core rows 061, 063, 066–070 are verified. Physical touch 062, real screen readers 064 and native browser zoom 065 remain explicitly open. |
-| Next | 071. Lock the DETOUR-only showcase media strategy, then generate and verify the bundle without reusing DHAGO assets. |
-| Open dependencies | 002 joined-form eligibility; 017 uncoached first-use observations; 062 physical iPhone Safari + Android Chrome; 064 NVDA/VoiceOver; 065 native browser-level 200% zoom. These do not block independent Phase 8 work. |
+| Verified | 66/100. Phase 7 browser-core acceptance is retained and Phase 8 media strategy 071 is verified. 072 is implemented locally but awaits HTTPS qualification. |
+| Next | 073. Compose the public-root one-screen judge demo while 072 waits for HTTPS qualification. |
+| Open dependencies | 002 eligibility; 017 uncoached first-use; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% browser zoom; 072 public HTTPS playback/seek qualification. |
 | Prototype / public release | Packed external host and desktop Chromium/Firefox/WebKit core are green. Phase 7 capture artifact exists. Public HTTPS, final showcase media and optional Mux remain later gates. |
-| Source baseline | Phase 7 accepted automated/browser baseline: `9eeeb770b4f7cc7d7d5ba4c766095f05c2116be2`, GitHub Actions run 43698982276, capture artifact 14155597667. |
+| Source baseline | Phase 8 media baseline: `87afdf6a740bbcce95caaa04e2c02886071c895c`, Actions run 43699914256. Showcase verification 2/2 passed; full DETOUR CI passed. |
+
+## 2026-11-15 · Phase 8 step 071 accepted; 072 local bundle ready
+
+- Exact source `87afdf6a740bbcce95caaa04e2c02886071c895c` passed [Actions 43699914256](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43699914256). Showcase verification passed **2/2**: deterministic provenance/A-V/frame separation and a fresh local HTTP browser mount seeking exactly **18.000s → 42.000s**.
+- Closed 071. The selected asset is the custom 56s procedural study; the unchanged 64s `navigation-study` stays the tested fallback. No external footage/music or DHAGO media is on the critical path.
+- Kept 072 open because local HTTP is not HTTPS. The MP4/poster/VTT/manifest implementation is ready; public byte-range/seek/caption validation will close it during release work.
+- Resume at 073: move the playable showcase to the public root with a compact first-viewport composition. Do not change Phase 7 tests to the 56s media; they retain an explicit fixture query.
 
 ## 2026-11-15 · Phase 8 generator-scope correction (validation pending)
 

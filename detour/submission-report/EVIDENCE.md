@@ -75,3 +75,11 @@ For functional tests, record current and held times before and after, playback m
 - Direct hard-state probes pass: duration/range changes preserve truthful mark position and disable out-of-range Return; duplicate Return dispatches once; manual seek wins; source replacement clears state; a real 8s timeout keeps the mark and ignores late completion; pausing during a provider waiting state prevents later Return from resuming playback.
 - Performance: enhanced-vs-base import-graph gzip delta **1,815 bytes**, below the 15 KiB gate. Five fresh-context and five repeat-context 320px Chromium signature runs observed zero Long Tasks >50ms. CI records scripting/layout/task metrics; headless LayerTree did not produce a stable compositing-layer count, so no GPU-layer-cost claim is made.
 - Checked 061, 063, 066, 067, 068, 069 and 070. **Not checked:** 062 physical devices, 064 real screen readers, 065 native browser zoom. Playwright emulation/CSS zoom are not presented as those missing sessions.
+
+
+## 2026-11-15 Phase 8 media strategy and local bundle
+
+- Source `87afdf6a740bbcce95caaa04e2c02886071c895c`, [Actions 43699914256](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43699914256).
+- The selected showcase is a deterministic 56s in-repository FFmpeg composition, not external stock and not DHAGO media. It includes generated visual states, a low-level generated tone, a poster extracted from 42s, descriptive captions and a provenance manifest.
+- The media suite passed 2/2. ffprobe confirms H.264/AAC 1280×720; the MP4 is fast-start; 18s and 42s frame hashes differ; a fresh browser mount seeks to 18.000s then 42.000s over local HTTP.
+- Step 071 is verified. Step 072 remains pending until the same bundle plays and seeks from the eventual HTTPS public origin.

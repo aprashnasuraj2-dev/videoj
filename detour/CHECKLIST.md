@@ -510,18 +510,19 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
 
 ## 08 · Showcase media, Mux and secondary context
 
-- [ ] **071. Choose the media strategy**
+- [x] **071. Choose the media strategy**
   - **Objective** — Make the behavior visible with efficient production.
   - **Work** — Use a rights-cleared documentary or process clip with different visible moments around 00:18 and 00:42. Compare against a custom 45-60s film and commission original footage only if it materially improves the reveal.
   - **Deliverable** — Media decision and time cap.
   - **Pass condition** — Selected footage has clear visual differences, usable audio and documented rights. Existing cleared media is a ready fallback.
-  - **Progress** — Selected custom 56s deterministic motion study; fallback is the existing generated navigation-study. Generator, provenance and A/V/seek verification are committed for CI before this row can close.
+  - **Evidence** — [Phase 8 media decision](design/PHASE-8.md#step-071-decision) and [Actions run 43699914256](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43699914256): deterministic 56s showcase has generated A/V, distinct 18s/42s frames and documented project provenance; navigation-study remains the verified fallback.
 
 - [ ] **072. Create the showcase media bundle**
   - **Objective** — Provide a reliable playback and capture source.
   - **Work** — Produce a web-ready MP4, poster, captions and attribution. Keep sound level consistent, avoid autoplay and check poster framing in portrait and wide contexts.
   - **Deliverable** — Demo media bundle and provenance log.
   - **Pass condition** — The MP4 plays locally and via HTTPS with seek support. Captions are timed and the poster matches the actual video.
+  - **Progress** — Generated bundle passes ffprobe, fast-start, frame-difference and local Vite HTTP seek checks at 18.000s and 42.000s. HTTPS/public-origin qualification is still required before this row can close.
 
 - [ ] **073. Compose a one-screen judge demo**
   - **Objective** — Make the signature action accessible immediately.

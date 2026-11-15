@@ -30,3 +30,17 @@ The generator produces, under `public/showcase/`:
 - `detour-showcase-v1.json` — machine-readable timing/provenance manifest.
 
 The bundle is generated rather than committed as binary source. Local build/playback/seek verification and HTTPS qualification remain separate evidence gates before step 072 can be checked.
+
+
+## Acceptance — 87afdf6
+
+[Actions run 43699914256](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43699914256) passed the full DETOUR pipeline after restoring the legacy 64s fixtures and scoping 56s only to the showcase. The dedicated media suite reports:
+
+- H.264 1280×720 video + AAC 48kHz audio, duration 56s.
+- Fast-start MP4 atom order.
+- Poster extracted from the actual 42s frame.
+- Descriptive VTT and JSON provenance/timing manifest.
+- Different encoded frame hashes at 18s and 42s.
+- Fresh Chromium/Vite HTTP seeks at 18.000s and 42.000s; poster/VTT/manifest return 200.
+
+**071 passes.** **072 remains open** solely for its HTTPS/public-origin condition.
