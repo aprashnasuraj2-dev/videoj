@@ -536,6 +536,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Mount the unchanged skin with a chapterless media item or longer interview and different captions. Prefer one compact secondary mount or direct host example to a larger site build.
   - **Deliverable** — Second context using the same version.
   - **Pass condition** — Both clips demonstrate hold, arbitrary seek and return. The skin module has no variant branch tied to the second clip.
+  - **Progress** — Independent host now defaults to daylight-study + distinct captions and runs the same Hold → 18s → Return flow through the unchanged package skin entry. Await exact-head CI.
 
 - [ ] **075. Evaluate Mux against the reserve**
   - **Objective** — Earn the optional point only with reliable playback.

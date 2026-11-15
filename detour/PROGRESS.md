@@ -11,6 +11,12 @@ Resume step: 073
 | Prototype / public release | Packed external host and desktop Chromium/Firefox/WebKit core are green. Phase 7 capture artifact exists. Public HTTPS, final showcase media and optional Mux remain later gates. |
 | Source baseline | Phase 8 media baseline: `87afdf6a740bbcce95caaa04e2c02886071c895c`, Actions run 43699914256. Showcase verification 2/2 passed; full DETOUR CI passed. |
 
+## 2026-11-15 · Phase 8 portability implementation (validation pending)
+
+- Prepared the independent-host example to default to `daylight-study.mp4` + its own VTT rather than the public showcase or the regression fixture. Media selection remains a host concern; the same `createDetourPlayer` skin entry is reused unchanged.
+- Added an explicit 074 browser proof: load `integration/`, verify the distinct clip/captions, hold at 42.35s, seek to 18s and Return to the saved point within ±0.5s. This is a separate host context, not a special skin variant.
+- Both 073 and 074 now share the next exact-head CI gate; neither is checked until that run is green.
+
 ## 2026-11-15 · Hosted-runner performance diagnostic correction
 
 - Run 43700337821 passed the new 073 root composition and all ordinary browser/package work, but one of the *secondary* five-fresh/five-repeat diagnostic samples reported a 350ms process-wide Long Task on the GitHub-hosted runner. The dedicated five-run signature performance gate still passed.

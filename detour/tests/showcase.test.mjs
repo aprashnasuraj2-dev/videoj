@@ -117,3 +117,24 @@ test('073 public root exposes the showcase player in the first mobile viewport w
   }
   t.diagnostic('Public root checked at 320×640, 375×667 and 1280×900: showcase player appears immediately, paused, with no sign-in/gate.');
 });
+
+test('074 independent host reuses the same skin with a distinct clip', {timeout:30000}, async t => {
+  const page=await browser.newPage({viewport:{width:720,height:760}});
+  try {
+    const url=new URL('integration/',server.resolvedUrls.local[0]).href;
+    await page.goto(url);
+    await page.locator('.detour-hold:enabled').waitFor();
+    assert.match(await page.locator('video').getAttribute('src'),/fixtures\/daylight-study\.mp4$/);
+    assert.equal(await page.locator('video').evaluate(v=>[...v.textTracks].some(track=>track.kind==='captions')),true);
+    const player=page.locator('video-player');
+    const seek=async seconds=>player.evaluate((node,time)=>node.store.seek(time),seconds);
+    await seek(42.35);
+    await page.getByRole('button',{name:'Keep my place'}).click();
+    await seek(18);
+    await page.getByRole('button',{name:'Return to 00:42'}).click();
+    await page.getByRole('button',{name:'Keep my place'}).waitFor();
+    const arrived=await page.locator('video').evaluate(v=>v.currentTime);
+    assert.ok(Math.abs(arrived-42.35)<0.5,`Independent host returned to ${arrived}`);
+    t.diagnostic(`Distinct daylight-study host returned to ${arrived.toFixed(3)}s using the unchanged package skin entry.`);
+  } finally {await page.close();}
+});
