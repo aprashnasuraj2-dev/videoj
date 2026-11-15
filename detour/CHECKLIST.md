@@ -306,6 +306,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Create separate skin, media fixtures, demo composition and optional Mux integration. Accept host media and tracks through the v10 slot. Keep branding and asset URLs at the demo boundary.
   - **Deliverable** — Module map and import boundary checks.
   - **Pass condition** — The skin package loads independently of the demo, fixture media and Mux code.
+  - **Progress** — [Separate entry modules, static boundary inspection and host-owned media example implemented; packed-install/browser proof remains open.](design/PHASE-5.md)
 
 - [ ] **043. Prove state and seek APIs**
   - **Objective** — Confirm PlayerController and seek behavior before UI investment.
