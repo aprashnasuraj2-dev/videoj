@@ -1,15 +1,24 @@
 # DETOUR progress
 
-Phase: 08
-Resume step: 076
+Phase: 09
+Resume step: 081
 
 | Item | Current state |
 | --- | --- |
-| Verified | 71/100. Phase 8 media strategy/bundle/judge demo/portability 071–074, Mux evaluation 075 and real-site bonus skip decision 078 are verified. |
-| Next | 076 provisioning is complete; dedicated Mux host, signed-out browser round-trip and 077 fallback recovery are implemented and pending exact-head CI. |
-| Open dependencies | 002 eligibility; 017 uncoached first-use; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% browser zoom. Mux 076/077 now awaits independent CI/public-route qualification; optional and never a replacement for green R2 fallback. |
-| Prototype / public release | Core public release is green at `https://detour-release.praisethegreatfool.workers.dev/`, backed by SHA-versioned R2 objects and immutable dist source. Mux is now optional bonus work only. |
-| Source baseline | Public-release baseline: `1016bd1b39d817261fc0a5b0d3cbdc2252c2ce6e`, Actions run 43703881941. Full CI green; 072 HTTPS passed at 42.350s Return. |
+| Verified | 75/100. Phase 8 is complete: 071–080 are verified, including the qualified Mux bonus path, tested fallback, explicit real-site skip, rights/operations manifest and frozen demo. |
+| Next | 081. Begin Phase 9 polish on the frozen `a9bbfcb4ee68` demonstration without changing its media identity, Mux Playback ID or rollback contract. |
+| Open dependencies | 002 second-entry eligibility; 017 uncoached first-use; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% browser zoom. These remain open and are not reclassified by Phase 8 browser evidence. |
+| Prototype / public release | Frozen Mux candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on immutable `detour-dist-a9bbfcb4ee68`; stable rollback/fallback remains `https://detour-release.praisethegreatfool.workers.dev/`. |
+| Source baseline | Phase 8 production source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a`: full CI 43706450932 green and immutable dist staged. Public Mux release verification 43707445255 passed from the later test-only harness; earlier full CI 43707040940 also remained green after adding the public gate. |
+
+## 2026-11-15 · Phase 8 complete — frozen public Mux candidate and rollback
+
+- **076 accepted.** Mux provisioning run 43705427292 attempt 2 produced public Playback ID `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ` for the exact showcase hash. Dedicated verification run 43706451003 passed 3/3: public 206 byte range, production-built Hold → 18s → 42.350s Return and blocked-provider fallback.
+- Full implementation source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a` passed complete DETOUR run 43706450932 and staged **75 files** at immutable `detour-dist-a9bbfcb4ee68`. The new isolated Cloudflare Worker `detour-mux-release` serves that branch and redirects its root to `/mux/`; the older `detour-release` Worker was not modified.
+- **076/077 public acceptance.** Run 43707445255 passed 3/3 public-release checks: signed-out HTTPS 200; 375×667 Mux media seekable; Hold 42.35 → seek 18 → Return **42.350s**; fallback byte range **206 / 1,024 B**; blocked Mux exposed recovery and loaded the fallback with no stale mark; 1280×900 desktop smoke rendered a 1248×804 seekable player and exposed fallback.
+- **079 accepted.** [Rights/operations](submission-report/RIGHTS.md) separates project-authored media rights, Apache-2.0 entry source, permissive runtime dependency licenses, build-only tools and service retention. Operational restoration responsibility is assigned to the repository/challenge operator; final notices/bundle audit remains step 094.
+- **080 accepted.** [Phase 8 freeze](submission-report/PHASE-8-FREEZE.md) locks source/dist, Mux ID/URL, captions, media hash, Worker, R2 fallback and rollback. Real-site bonus remains explicitly skipped. Physical phone, screen-reader and native 200% zoom evidence remain open under 062/064/065.
+- Phase 8 is **10/10 complete**. Resume Phase 9 at **081** without mutating the frozen media/service identifiers unless the corresponding release gates are repeated.
 
 ## 2026-11-15 · Mux asset provisioned; host and recovery proof implemented (validation pending)
 

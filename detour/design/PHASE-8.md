@@ -101,3 +101,28 @@ References: official Contra challenge page, Mux Direct Upload API, Mux Assets / 
 Mux workflow [43705427292](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43705427292), rerun attempt 2, successfully provisioned the exact 871,570-byte DETOUR showcase under content hash `detour-fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1`. The public Playback ID is `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`; Mux reported `highest.mp4` ready and the provisioning probe returned **206** with **1,024 bytes**. The public configuration artifact is 14158174193. No management credential is stored in the repository.
 
 The implementation adds a dedicated `/mux/` production entry instead of replacing the already-qualified R2 root. The host uses Mux's public static rendition so Chromium/Firefox/WebKit can retain the native `<video>` contract without adding an HLS runtime to the reusable core. It exposes a separate fallback action to the same rights-cleared showcase bytes through the ordinary release origin. Dedicated browser verification remains required before 076/077 can be checked.
+
+## Steps 076/077 public Mux acceptance — 2026-11-15
+
+**Provisioning.** [Mux workflow 43705427292](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43705427292), rerun attempt 2, created a public Mux asset for the exact showcase SHA-256 `fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1`. Playback ID: `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`. The `highest.mp4` rendition returned HTTP 206 for bytes 0–1023. GitHub masked the management credentials; only public playback data is committed.
+
+**Implementation and full regression.** Source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a` passed [full DETOUR run 43706450932](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43706450932), including production build, showcase, frozen R2 HTTPS release, architecture, packed host, Chromium, Firefox, desktop WebKit, footprint and Phase 7 browser probes. That successful run staged 75 files at immutable branch `detour-dist-a9bbfcb4ee68`. The dedicated local/remote Mux gate [43706451003](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43706451003) passed 3/3.
+
+**Public release.** Isolated Worker `detour-mux-release` was deployed from the immutable branch with the existing isolated R2 bucket as fallback storage; the known-good `detour-release` Worker was left unchanged. The workers.dev subdomain was explicitly enabled only for the new Worker. [Run 43707445255](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43707445255) then passed the public gate:
+
+- signed-out HTTPS 200 at `https://detour-mux-release.praisethegreatfool.workers.dev/mux/`;
+- 375×667 Chromium loaded the Mux static MP4 and descriptive captions without autoplay;
+- Hold at 42.35 → seek 18 → Return settled at **42.350s**, paused;
+- same-origin fallback bytes 0–1023 returned **206 / 1,024 B / video/mp4 / Accept-Ranges: bytes**;
+- blocking `stream.mux.com` exposed recovery controls and the fallback became seekable with **no stale held place**;
+- 1280×900 signed-out smoke produced a **1248×804** visible, seekable player with Mux source and fallback exposed.
+
+This satisfies 076 and 077. The implementation intentionally uses Mux's static MP4 rendition rather than adding a browser HLS runtime to the core skin; the optional Mux URL helper remains outside the core import graph.
+
+## Step 079 rights and service ownership acceptance — 2026-11-15
+
+The [rights/operations manifest](../submission-report/RIGHTS.md) records a usable permission basis for every Phase 8 public asset and separates media rights from code/dependency licensing. The project-authored video/audio/poster/VTT contain no downloaded source footage or music recording. Entry source is Apache-2.0. Non-dev dependency metadata in the pinned lockfile is Apache-2.0, BSD-3-Clause or MIT; build/test tools are not treated as redistributed entry assets. Operational ownership and restore paths are assigned to the repository/challenge operator across GitHub source, Cloudflare Workers/R2 and the Mux asset. Final exact-bundle notices remain a distinct step 094 check.
+
+## Step 080 frozen demonstration — 2026-11-15
+
+The authoritative Phase 8 freeze is [PHASE-8-FREEZE.md](../submission-report/PHASE-8-FREEZE.md). Primary Mux URL, Playback ID, immutable source/dist, media hash/bytes, captions path and fallback/rollback are frozen. The real-site bonus stays excluded. Browser evidence covers signed-out mobile-width and desktop-width presentation; it does **not** convert the still-open physical-phone, screen-reader or native 200% zoom gates into passes.

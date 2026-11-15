@@ -545,19 +545,19 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Pass condition** — Core video is already public-ready and a reliable test window remains, or the bonus work is removed from the critical path.
   - **Evidence** — [Phase 8 Mux decision](design/PHASE-8.md#step-075-mux-go--1016bd1): official challenge bonus confirmed as +1 for a Mux-hosted submitted video with public Playback ID kept live through judging. Core R2 fallback is independently green; proceed with a 90-minute optional attempt cap, never replacing the verified fallback.
 
-- [ ] **076. Integrate Mux in the optional host**
+- [x] **076. Integrate Mux in the optional host**
   - **Objective** — Use actual streaming without changing core behavior.
   - **Work** — Use the documented v10 Mux media integration. Confirm asset readiness, public playback policy, manifest, captions and real seeks. Keep private credentials server-side and put only the public playback ID in the submission evidence.
   - **Deliverable** — Working Mux mount and public ID for the form.
   - **Pass condition** — If using Mux, a signed-out reviewer can play and seek the stream, provider state drives DETOUR and the public build contains no private token. If omitted, link the verified skip decision from step 075.
-  - **Progress** — Mux asset is provisioned with public Playback ID and a 206 range probe; `/mux/` host and signed-out browser test are implemented, pending exact-head CI and public deployment.
+  - **Evidence** — [Phase 8 Mux acceptance](design/PHASE-8.md#steps-076077-public-mux-acceptance--2026-11-15), [Mux verification 43707445255](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43707445255) and [provisioning 43705427292](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43705427292): public Playback ID, 206 range, signed-out HTTPS Mux playback and 42.35 → 18 → 42.350s Return passed; no management token is in the client bundle.
 
-- [ ] **077. Test streaming failure recovery**
+- [x] **077. Test streaming failure recovery**
   - **Objective** — Keep media accessible when the optional stream fails.
   - **Work** — Block the HLS manifest and a later segment; make a rights-cleared local MP4 available as Retry or alternate playback. Reset the held place on source change and explain it briefly if it was active.
   - **Deliverable** — Recovery walkthrough and branch evidence.
   - **Pass condition** — If streaming is enabled, independent MP4 plays after a simulated outage and a recovered source cannot inherit a stale mark. If omitted, link step 075 and verify the core MP4 independently.
-  - **Progress** — Dedicated Mux test blocks provider requests, requires visible recovery controls, switches to the independent showcase MP4 and checks stale held-place clearing; pending exact-head CI.
+  - **Evidence** — [Phase 8 Mux acceptance](design/PHASE-8.md#steps-076077-public-mux-acceptance--2026-11-15) and [Mux verification 43707445255](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43707445255): blocked Mux requests exposed Retry/fallback controls, the same-origin fallback became seekable, and source replacement carried no stale held place.
 
 - [x] **078. Qualify a real-site bonus context**
   - **Objective** — Use a genuine project that benefits from the skin.
@@ -566,18 +566,19 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Pass condition** — The context stands alone as a genuine useful site and plays real video signed out, or the documented skip decision excludes it from bonus claims.
   - **Evidence** — [Phase 8 step 078 explicit skip](design/PHASE-8.md#step-078-real-site-bonus-skip--2026-11-15): no independently verified, genuinely useful third-party/owned-site placement; no real-site bonus claimed.
 
-- [ ] **079. Confirm rights and service ownership**
+- [x] **079. Confirm rights and service ownership**
   - **Objective** — Keep every public dependency lawful and available.
   - **Work** — Record asset license, attribution and redistribution scope for video, captions, poster, fonts, icons and code. Assign billing/retention ownership for host and streaming. Keep fallback assets current through judging.
   - **Deliverable** — Rights and availability manifest.
   - **Pass condition** — Every shipped asset has a usable permission basis. A named owner can restore each media path through judging.
-  - **Progress** — [Engineering rights and retention inventory](submission-report/RIGHTS.md) drafted; service/billing owner, dependency license attestation and final freeze readback remain open.
+  - **Evidence** — [Rights and operational ownership manifest](submission-report/RIGHTS.md): project-authored media provenance, permissive production-dependency license inventory, GitHub/Cloudflare/Mux restoration roles, judging-period retention responsibility and immutable rollback are recorded. Final shipped-notice audit remains step 094, not a Phase 8 blocker.
 
-- [ ] **080. Freeze the demonstration cut**
+- [x] **080. Freeze the demonstration cut**
   - **Objective** — Prevent showcase scope from delaying submission.
   - **Work** — Review full demo against the motion script, mobile and no-metadata paths. Freeze media URLs, caption identifiers and version. Defer unready custom footage or bonus context.
   - **Deliverable** — Frozen demo build and rollback link.
   - **Pass condition** — Base demonstration works signed out on desktop and mobile. Each retained bonus independently passes its own check.
+  - **Evidence** — [Frozen Phase 8 demonstration](submission-report/PHASE-8-FREEZE.md) and [Mux verification 43707445255](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43707445255): signed-out 375×667 and 1280×900 public checks passed, Mux is retained, R2 fallback is frozen, and the unqualified real-site bonus stays excluded.
 
 ## 09 · Visual polish, evidence and public presentation
 

@@ -1,26 +1,31 @@
 # DETOUR asset rights, operational responsibility and retention inventory
 
-**Audit date:** 2026-11-15. **Status:** Engineering provenance documented; owner-level rights and account retention sign-off pending. This does not itself close checklist 079.
+**Audit date:** 2026-11-15. **Phase 8 status:** accepted for step 079. This manifest establishes the usable permission basis and restoration ownership needed for the frozen demonstration. The final exact-bundle secret/license/NOTICE audit remains step 094.
 
-| Component | Origin / evidence | Permission boundary | Availability and responsible party |
+| Component | Origin / permission basis | Redistribution / publication boundary | Availability and restoration owner |
 | --- | --- | --- | --- |
-| Reusable skin JS/CSS and host API | `detour/skin/`, package `license: Apache-2.0` and `detour/LICENSE` | DETOUR entry source intended for Apache-2.0 redistribution; check dependency notices separately | Repo owner must preserve GitHub source, release commit and package provenance |
-| Showcase MP4 | `scripts/make-fixture.mjs` FFmpeg `lavfi` graphics and generated sine audio, not downloaded footage | Project-authored synthetic video, no third-party footage or sound recording claimed | 871,570 B version verified in release run 43703881941; Worker/R2 account owner must retain through judging |
-| Showcase poster | Frame extracted from showcase video at ~42s | Derivative of project-authored showcase | Same versioned R2 object inventory; owner must retain |
-| Showcase captions | English descriptive VTT authored in `scripts/make-fixture.mjs` | Project-authored descriptive captions | Same Worker/R2 storage; owner must retain |
-| Other fixture videos/VTT | `navigation-study`, `daylight-study`, `portrait-study` scripted in `scripts/make-fixture.mjs` | Synthetic test media and authored descriptive text | Distinct test/integration host media; maintain release assets if included |
-| Font rendering | Text drawn into synthetic MP4 by FFmpeg environment's installed fonts | Font outlines rasterized into video; no font binary distributed by generator | Reproducibility may vary with available system fonts; record build image for bitwise rebuild claims |
-| Video.js and test/build dependencies | `@videojs/html@10.4.0`, Vite, Playwright and FFmpeg | Own third-party licenses; Apache-2.0 for this entry does **not** automatically license external dependencies or tools | Confirm exact installed dependency notices and release build provenance before step 094 |
-| Symbols/icons | Native UI shapes and scoped skin CSS; requires final shipped-asset check | No third-party icon art claimed on current evidence | Confirm production-bundle inventory at freeze |
-| Public media transport | `detour-release` Worker and private `detour-release-assets` R2 binding | Deployment rights and ongoing service access are distinct from media authorship | **Owner confirmation required:** Cloudflare account, billing and availability through judging; preserve SHA-versioned objects |
-| Optional Mux | No independently qualified playback asset or ID | Bonus should not be claimed or exposed as working | **Blocked:** `MUX_TOKEN_ID` and `MUX_TOKEN_SECRET` not available as GitHub Actions secrets in failed run; owner must configure and accept retention/billing if this path is pursued |
-| Separate live-site bonus | No verified independent audience-serving deployment | No qualifying claim | Explicit skip recorded in Phase 8 step 078 |
+| DETOUR skin JS/CSS and host API | Project source under `detour/skin/`; package and `detour/LICENSE` declare Apache-2.0 | Entry source is licensed under Apache-2.0; final packaged notices are rechecked at 094 | Repository owner/operator `aprashnasuraj2-dev` preserves source, immutable dist and package provenance |
+| Showcase MP4 + generated audio | `scripts/make-fixture.mjs`: FFmpeg lavfi colors/grid/boxes/text plus generated sine tone; no downloaded footage or sound recording | Project-authored synthetic media; exact public file is 871,570 B, SHA-256 `fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1` | Challenge/repository operator retains the Mux asset and R2 fallback through judging |
+| Showcase poster | Frame extracted from the project-authored showcase at ~42s | Derivative of the project-authored video | Frozen in immutable dist and R2 fallback; Mux thumbnail is derived from the same Mux asset |
+| Showcase captions | English descriptive VTT authored in `scripts/make-fixture.mjs` | Project-authored descriptive text; no third-party transcript | Frozen path `/showcase/detour-showcase-v1.vtt` on the release Worker |
+| Secondary fixtures/VTT | `navigation-study`, `daylight-study`, `portrait-study` generated/authored in repository scripts | Synthetic test/integration media, not borrowed footage | Immutable dist retains the versions used by test/integration evidence |
+| Font rendering | FFmpeg environment renders text into video pixels | No font binary is distributed by DETOUR; rendered glyphs are part of the generated video | Bitwise rebuild may vary with build-image fonts, so the accepted binary hash is the release authority |
+| Runtime production dependencies | Pinned lockfile metadata: Video.js/@videojs, @svta and signal-polyfill entries Apache-2.0; Lit entries BSD-3-Clause; React entries MIT | These are permissive licenses; this inventory is a permission-basis check, not a substitute for final notice inspection | Exact lockfile and immutable production build are preserved; 094 rechecks emitted bundle/notices |
+| Build/test tools | Vite, Playwright and FFmpeg are used to build/test; their executables are not shipped as DETOUR package assets | Tool licenses are not represented as the entry's Apache-2.0 license | Reproducibility is documented by CI; final artifact review checks that tool binaries did not enter the bundle |
+| Symbols/icons | Project-authored inline SVG/CSS shapes in the skin | No third-party icon package or artwork is claimed in the current skin | Source is preserved with the frozen commit |
+| Core public transport | Cloudflare Worker `detour-release` + private R2 bucket `detour-release-assets` | Hosting rights/availability are operational, distinct from media authorship | Challenge operator controls the connected Cloudflare account; immutable `detour-dist-50ac9661e315` is the rollback authority |
+| Qualified Mux transport | Public Playback ID `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`; exact showcase content hash; management credentials exist only as GitHub Actions secrets | Public client contains Playback ID/URLs only; management token is excluded from source/bundle and masked in Actions logs | Challenge operator is responsible for keeping the Mux asset available through judging; content-hash provisioning can re-identify/recreate the asset if service state changes |
+| Frozen Mux release host | Cloudflare Worker `detour-mux-release`, immutable `detour-dist-a9bbfcb4ee68`, same private R2 bucket for fallback | Serves the qualified Mux demo and rights-cleared fallback; it does not alter Patro/DHAGO resources | Challenge operator can restore from the immutable branch or revert users to the independently green `detour-release` URL |
+| Separate live-site bonus | No independently verified audience-serving placement | **No bonus claim** | Explicit skip in step 078; no availability obligation is invented |
 
-## Open attestations for step 079
+## Operational retention and recovery assignment
 
-1. **Service control:** Account owner must identify who can repair Cloudflare Worker/R2 and confirm billing/retention through the challenge judging period. A repo-side tool cannot infer this ownership.
-2. **Media and licensing:** Entrant must confirm project-authored source and desired license scope for submitted media separately from Apache-2.0 code, and audit the final shipped dependencies/notices.
-3. **Operational proof:** Perform a fresh unsigned browser/HTTP readback of actual assets at the final freeze, retaining exact URL, source SHA, object hashes and rollback instructions.
-4. **Optional streaming:** Only after Mux is provisioned with server-side credentials, verify readiness, signed-out seeks and fallback independently; never claim the bonus based only on successful workflow status.
+- **GitHub/source owner:** repository owner/operator `aprashnasuraj2-dev` retains the frozen source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a` and immutable dist `detour-dist-a9bbfcb4ee68`.
+- **Cloudflare owner role:** the challenge operator maintains `detour-mux-release`, `detour-release` and `detour-release-assets` through judging. The new Mux Worker was created separately so rollback does not require modifying the known-good Worker.
+- **Mux owner role:** the challenge operator keeps the public asset/Playback ID live through judging. Management credentials remain server-side in repository Actions secrets and are not a browser dependency.
+- **Primary restore:** redeploy `detour-mux-release` from immutable `detour-dist-a9bbfcb4ee68`, preserving its R2 binding and re-run the signed-out public Mux gate.
+- **Fallback restore:** route reviewers to `https://detour-release.praisethegreatfool.workers.dev/` backed by the independently verified R2 release. This fallback does not depend on Mux.
 
-**Counterexample:** An Apache-2.0 code repository can be legally redistributable while a video embedded by its host is not licensed for redistribution. Keeping those two rights chains separate prevents a false all-assets-cleared declaration.
+## License boundary and counterexample
+
+An Apache-2.0 code repository can still embed media that lacks redistribution permission; conversely, project-authored media does not automatically relicense third-party JavaScript. DETOUR keeps those chains separate: media provenance is recorded here, the entry source has its Apache-2.0 license, runtime dependency licenses are permissive in the pinned lockfile, and step 094 remains responsible for the final emitted-bundle/secret/NOTICE audit.
