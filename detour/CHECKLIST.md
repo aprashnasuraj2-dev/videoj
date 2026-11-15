@@ -18,98 +18,114 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Inspect the signed-in challenge form and its linked terms for entry limits, entrant eligibility and media constraints. Public posts can inform the search. Ask Contra through the approved owner channel if the wording stays unclear.
   - **Deliverable** — Eligibility note with direct evidence and owner.
   - **Pass condition** — Second-entry permission and entrant eligibility have direct supporting evidence before contest submission. Record unresolved terms and continue independent work when this is open.
+  - **Progress** — [Public recheck completed. Account-level eligibility confirmation is still open.](submission-report/RULES.md#2026-11-15-second-entry-recheck)
 
-- [ ] **003. Set the deadline and cutoffs**
+- [x] **003. Set the deadline and cutoffs**
   - **Objective** — Protect the core demo and submission time.
   - **Work** — Use Nov 16, 23:59 PST / Nov 17, 13:44 NPT. Book a complete local fallback before optional work, freeze the release three hours early, and set an earlier submit target.
   - **Deliverable** — A timed run sheet with an owner per workstream.
   - **Pass condition** — Every critical path task has a latest start. Upload and judging-time availability have assigned owners.
+  - **Evidence** — [Nepal-time run sheet and assigned roles](design/PLAN.md#prototype-decision-and-run-sheet)
 
-- [ ] **004. Refresh the public competition sample**
+- [x] **004. Refresh the public competition sample**
   - **Objective** — Capture late entries before committing engineering time.
   - **Work** — Review Trending, Recent and new direct links, including entries outside the most visible posts. Log author, time, mechanism, demo URL, claims and evidence level. Deduplicate updates and clones.
   - **Deliverable** — A dated landscape of at least 30 distinct entries.
   - **Pass condition** — All rows have a retrievable source. Both feed orderings and their coverage limits are recorded.
+  - **Evidence** — [58 distinct entries and two feed orderings](submission-report/COMPETITION.md)
 
-- [ ] **005. Inspect the closest competitor experiences**
+- [x] **005. Inspect the closest competitor experiences**
   - **Objective** — Check whether reversible exploration is already represented.
   - **Work** — Open PRISM, Chronoscope, Plate, GRID, Arcade, and at least one recent navigation entry. Where playback loads, try one seek, three successive jumps and keyboard return. Record page retrieval separately from played interaction.
   - **Deliverable** — Six competitor observation cards.
   - **Pass condition** — Each card names the signature action and states what was exercised, claimed, or blocked.
+  - **Evidence** — [Seven observation cards, including two retrieved demo interfaces](submission-report/COMPETITION.md#closest-observation-cards)
 
-- [ ] **006. Map behaviors and prior art**
+- [x] **006. Map behaviors and prior art**
   - **Objective** — Measure collisions by mechanism rather than colors or theme.
   - **Work** — Cluster controls by what they do. Compare DETOUR to mpv marked/reverted seek, Chronoscope timestamped notes and PRISM moment stamps and loops. Search for an entry with an explicit held origin through multiple seeks.
   - **Deliverable** — A collision map including one close counterexample.
   - **Pass condition** — Scores reflect genuine functional overlap. Equivalent visible flow in a current entry triggers a re-rank.
+  - **Evidence** — [Collision decision and explicit prior art](submission-report/COMPETITION.md#collision-decision)
 
-- [ ] **007. Maintain a 30-concept field**
+- [x] **007. Maintain a 30-concept field**
   - **Objective** — Preserve meaningful alternatives to DETOUR.
   - **Work** — Use the candidate register as a baseline. Give any added idea a control mechanism, seek model, media dependency, mobile form, still/motion cue and principal failure.
   - **Deliverable** — Thirty candidate records minimum.
   - **Pass condition** — Variants of a recolor, renamed hardware shell or repeated seek behavior count once.
+  - **Evidence** — [30-candidate register](design/CANDIDATES.md)
 
-- [ ] **008. Audit the weighted scoring**
+- [x] **008. Audit the weighted scoring**
   - **Objective** — Make the chosen concept auditable as the field changes.
   - **Work** — Re-score all candidates on the 12 weighted dimensions and four deductions. Compare the top 10, then stress the top three with browser, time and content counterexamples.
   - **Deliverable** — Updated score matrix and evidence notes.
   - **Pass condition** — Arithmetic reruns exactly. Each penalty has a named cause and the same rubric applies to every entry.
+  - **Evidence** — [Recomputed weighted scores and finalist pressure test](design/CANDIDATES.md)
 
-- [ ] **009. Separate DETOUR from DHAGO**
+- [x] **009. Separate DETOUR from DHAGO**
   - **Objective** — Prevent signature, visual or narrative overlap.
   - **Work** — Audit player-only sketches beside DHAGO. Compare timeline geometry, typography, palette, naming, input behavior and media treatment. Reuse only generic engineering knowledge and appropriately licensed tooling.
   - **Deliverable** — Side-by-side independence review.
   - **Pass condition** — A crop cannot plausibly be read as a DHAGO variant. No woven time, shuttle mechanic or textile identity appears.
+  - **Evidence** — [Independence check](design/PLAN.md#independence-check) and [tested live prototype crop recipe](design/PROTOTYPE.md#try-it)
 
-- [ ] **010. Set the selection checkpoint**
+- [x] **010. Set the selection checkpoint**
   - **Objective** — Commit only if there is a defensible competitive opening.
   - **Work** — Review current rubric, collision findings, estimated active hours, browser feasibility and spare time. Lock DETOUR, switch to Pausepoint, or stop the competition path if the core timing or eligibility fails.
   - **Deliverable** — Decision log with backup trigger.
   - **Pass condition** — One primary and one backup have a named owner, proof deadline and explicit kill conditions.
+  - **Evidence** — [Prototype, backup, repair window and delivery checkpoints](design/PLAN.md)
 
 ## 02 · Concept definition and signature interaction
 
-- [ ] **011. Write the behavior thesis**
+- [x] **011. Write the behavior thesis**
   - **Objective** — Make the promise understandable in one sentence.
   - **Work** — Use the working premise: hold where you are, explore another moment, then return in one action. Sketch one before and after using a standard seek bar.
   - **Deliverable** — One-sentence thesis and two frames.
   - **Pass condition** — A reviewer can describe the action without relying on the name or help text.
+  - **Evidence** — [Behavior thesis and idle/held frames](design/PLAN.md#scope-and-behavior)
 
-- [ ] **012. Storyboard the five-second reveal**
+- [x] **012. Storyboard the five-second reveal**
   - **Objective** — Show the full action with real time values.
   - **Work** — Start paused at 00:42. Choose Keep my place, seek to 00:18, then Return to 00:42. Plan an extended shot with a second seek and a separate Stay here outcome.
   - **Deliverable** — Five-second storyboard plus a longer proof shot.
   - **Pass condition** — The held 00:42 remains legible through both seeks. Playback time visibly returns to 00:42.
+  - **Evidence** — [Short storyboard and longer proof](design/PLAN.md#scope-and-behavior) and [real seek trace](submission-report/EVIDENCE.md#2026-11-15-first-prototype)
 
-- [ ] **013. Define the entry action**
+- [x] **013. Define the entry action**
   - **Objective** — Make creating a held place deliberate and discoverable.
   - **Work** — Prototype an exposed Keep my place button with a pin-shaped silhouette and a text label. Sample actual currentTime on press. Keep regular play/pause and the standard seek bar present.
   - **Deliverable** — Idle and just-held prototypes.
   - **Pass condition** — One press records the current point without a seek, pause or focus loss. The command is legible at 240 px.
+  - **Evidence** — [Narrow keyboard and place-action checks](submission-report/EVIDENCE.md#2026-11-15-first-prototype)
 
-- [ ] **014. Define return and stay**
+- [x] **014. Define return and stay**
   - **Objective** — Give users a reversible move and a clean exit.
   - **Work** — Use Return to [time] to request a real seek and Stay here to clear the mark. Keep only one mark. Keep action text visible and use text or shape as well as color.
   - **Deliverable** — Action copy and interactive flow.
   - **Pass condition** — Return changes playback time once. Stay clears only the mark. No equivalent wording hides a different action.
+  - **Evidence** — [Real return and stay tests](tests/browser.test.mjs)
 
-- [ ] **015. Pressure-test the problem**
+- [x] **015. Pressure-test the problem**
   - **Objective** — Identify where holding a place benefits users.
   - **Work** — Write scenarios for a missed detail in an interview, instructor cross-reference, sports replay and film callback. Include a passive short clip where the feature will rarely be used.
   - **Deliverable** — Scenario grid with a counterexample.
   - **Pass condition** — At least three use cases have an observable task benefit. The passive clip retains ordinary unobtrusive controls.
+  - **Evidence** — [Interview, tutorial, sports and passive watching tasks](design/PLAN.md#scope-and-behavior)
 
-- [ ] **016. Check media independence**
+- [x] **016. Check media independence**
   - **Objective** — Keep the interaction independent of specially edited footage.
   - **Work** — Design the same five-second task for a captioned interview and a chapterless animation. Assume zero thumbnails, chapter data, transcript or analysis.
   - **Deliverable** — Two media-independent interaction scripts.
   - **Pass condition** — The button, origin, seeks and return all make sense without any authored metadata.
+  - **Evidence** — [Captioned and chapterless rehearsal scenarios](design/PLAN.md#scope-and-behavior)
 
 - [ ] **017. Test language and recognition**
   - **Objective** — Measure discoverability before committing expensive polish.
   - **Work** — Ask five uncoached users to identify the action in a two-second active-state crop. Give five a find-and-return task on a rough prototype, including at least two touch runs; record first click and time.
   - **Deliverable** — Small-sample results with video or notes.
   - **Pass condition** — At least 4 of 5 identify return and 4 of 5 complete the task in 10 seconds. Iterate once on failure, then reassess.
+  - **Progress** — [Human first-use checks still needed.](design/PROTOTYPE.md#next-checks)
 
 - [ ] **018. Choose a visual signature**
   - **Objective** — Make the held origin recognizable inside the player crop.
@@ -137,11 +153,12 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Deliverable** — Labeled desktop and compact layouts.
   - **Pass condition** — All five required controls stay discoverable in both layouts, even with an active detour.
 
-- [ ] **022. Write the state transition table**
+- [x] **022. Write the state transition table**
   - **Objective** — Prevent impossible or misleading detour states.
   - **Work** — Define unavailable, idle, held, returning and recoverable failure. Define source reset, source replacement, stale seek, duration change, ended and disposal events.
   - **Deliverable** — Transition table with allowed inputs and effects.
   - **Pass condition** — Every event has a deterministic outcome. Only successful return or explicit clearing consumes a valid mark.
+  - **Evidence** — [Per-instance transitions and outcome table](design/PROTOTYPE.md#behavior-and-failure-boundaries)
 
 - [ ] **023. Define a safe origin**
   - **Objective** — Store the true position and media identity.
@@ -255,11 +272,12 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
 
 ## 05 · Video.js v10 implementation architecture
 
-- [ ] **041. Pin Video.js v10 and build Scaffold**
+- [x] **041. Pin Video.js v10 and build Scaffold**
   - **Objective** — Ground the implementation in the shipped v10 architecture.
   - **Work** — Start from the HTML Scaffold video preset with scoped CSS and TypeScript if useful. Lock exact working versions, record commands and check the component guide against installed exports.
   - **Deliverable** — Clean baseline repository and lockfile.
   - **Pass condition** — Fresh install builds and stock playback works in a public-compatible host without keys or manual patches.
+  - **Evidence** — [Locked dependencies](package-lock.json) and [clean build and real browser playback](submission-report/EVIDENCE.md#2026-11-15-first-prototype)
 
 - [ ] **042. Divide delivery boundaries**
   - **Objective** — Make the skin reusable across sites and media.
@@ -272,6 +290,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Read installed currentTime, duration, playback and seeking state through documented v10 features. Trigger seek via the feature action. Inspect native seeked or provider completion, and actual seekable ranges.
   - **Deliverable** — Browser spike and timestamped trace.
   - **Pass condition** — A 42s-to-18s-to-42s round trip works on stock MP4 in Chromium and Safari/WebKit with no duplicate player clock.
+  - **Progress** — [Chromium round trip passed. WebKit execution is open.](submission-report/EVIDENCE.md#2026-11-15-first-prototype)
 
 - [ ] **044. Model per-instance detour state**
   - **Objective** — Keep state consistent across players and replacement media.
@@ -323,29 +342,33 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Deliverable** — Installable base skin with playable video.
   - **Pass condition** — The five controls operate on a clean desktop and mobile load before any detour code is mounted.
 
-- [ ] **052. Implement the held-place action**
+- [x] **052. Implement the held-place action**
   - **Objective** — Record a user-selected origin accurately.
   - **Work** — Read unrounded currentTime at activation, check source eligibility and create one active mark. In the current-time display, keep sampling from the real provider.
   - **Deliverable** — Working Keep my place action.
   - **Pass condition** — Press at 42.35s and reach held state. A trace shows the precise origin and no extra seek, pause or play.
+  - **Evidence** — [Exact native origin test](tests/browser.test.mjs)
 
-- [ ] **053. Render the origin marker and ticket**
+- [x] **053. Render the origin marker and ticket**
   - **Objective** — Make the detour visible during ordinary playback.
   - **Work** — Show the held mark at origin divided by duration and the Return to [time] ticket in the control shelf. Keep current progress distinct and recompute position on valid duration changes.
   - **Deliverable** — Functional seek rail and held state.
   - **Pass condition** — After multiple unrelated seeks the marker stays at the original time and the thumb follows currentTime.
+  - **Evidence** — [Held marker survives multiple seeks](tests/browser.test.mjs)
 
-- [ ] **054. Implement return dispatch and settlement**
+- [x] **054. Implement return dispatch and settlement**
   - **Objective** — Make one action return to the held point.
   - **Work** — Wire Return to the v10 seek action. Match completion to the active origin and source. Confirm within a chosen 0.5s test tolerance, using edge-safe handling near duration.
   - **Deliverable** — Working return path and debug-only trace.
   - **Pass condition** — At 1x with deterministic MP4, 10 of 10 settled returns land within 0.5s. Return never fires twice for one activation.
+  - **Evidence** — [Ten separate return results and one seek per action](submission-report/EVIDENCE.md#2026-11-15-first-prototype)
 
 - [ ] **055. Implement Stay here and cancel paths**
   - **Objective** — Let users finish exploring at the current moment.
   - **Work** — Clear origin and pending state on Stay here without a seek. Restore focus to Keep my place when applicable. Abort stale attempts on source replacement and dismissal.
   - **Deliverable** — Working clear action and focus recovery.
   - **Pass condition** — Event trace records no time jump. A delayed old callback cannot reopen a dismissed detour.
+  - **Progress** — [Stay and focus restore pass. A delayed old result after dismissal or source reset needs a dedicated race test.](submission-report/EVIDENCE.md#2026-11-15-first-prototype)
 
 - [ ] **056. Integrate genuine buffering and errors**
   - **Objective** — Keep truthful player feedback under network stress.

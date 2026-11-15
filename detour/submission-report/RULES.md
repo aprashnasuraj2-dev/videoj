@@ -13,3 +13,7 @@
 | Optional +1 genuine live-site use | 078, 097: actual public website using the same skin to play video |
 
 Official judging is 10 for visual design and originality, 5 for usability and interaction, 5 for accessibility, and 5 for execution and polish, plus the two independent optional points. Internal concept ranking is separate. Record changed rules or a dated eligibility finding here, with the source, scope and effect on the entry.
+
+## 2026-11-15 second-entry recheck
+
+The live public Guidelines were retrieved again. They set requirements for each submission, but did not specify a per-entrant cap or a second-entry provision. The open feed includes a [DHAGO entry by the entrant](https://contra.com/community/aTY2mcaJ-dhago-a-woven-videojs-player-for), so this specific eligibility question matters. The account-specific joined form and any additional terms remain unverified. The entrant owns that check or a direct clarification from Contra. Step 002 stays unchecked and reopens before step 091; prototype work is independent.

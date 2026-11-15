@@ -1,0 +1,19 @@
+{
+  "name": "detour-video-skin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/make-fixture.mjs && vite",
+    "build": "node scripts/make-fixture.mjs && vite build",
+    "preview": "vite preview",
+    "test": "node --test tests/browser.test.mjs"
+  },
+  "dependencies": {
+    "@videojs/html": "10.4.0"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1",
+    "vite": "7.2.2"
+  }
+}
