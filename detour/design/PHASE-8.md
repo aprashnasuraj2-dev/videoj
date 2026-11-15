@@ -55,3 +55,39 @@ The bundle is generated rather than committed as binary source. Local build/play
 - Regression suites explicitly request `?fixture=navigation-study`, keeping the 64s QA media independent from the 56s judge media.
 
 The next blocking acceptance is **072 HTTPS**. Local HTTP evidence is not promoted to HTTPS evidence.
+
+
+## Step 072 HTTPS acceptance — 1016bd1
+
+[Actions run 43703881941](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43703881941) passed the full DETOUR pipeline on source `1016bd1b39d817261fc0a5b0d3cbdc2252c2ce6e`.
+
+The signed-out 375×667 Chromium public-origin test verified:
+
+- `https://detour-release.praisethegreatfool.workers.dev/` returned HTTPS 200 with frozen source/dist headers.
+- Real MP4 metadata became seekable from SHA-versioned R2 storage.
+- A browser fetch of bytes 0–1023 returned **206**, exactly **1,024 bytes**, `video/mp4`, `Accept-Ranges: bytes`, and a valid Content-Range.
+- The actual 42-second poster returned JPEG and the descriptive captions returned `text/vtt` beginning with `WEBVTT`.
+- The player did not autoplay.
+- Hold at 42.35 → seek to 18 → Return landed at **42.350 s** and remained paused.
+
+The release storage is private R2 behind the Worker binding; direct `r2.dev` public access is disabled. The frozen release source is `detour-dist-50ac9661e315`. **072 passes.**
+
+## Step 075 Mux GO — 1016bd1
+
+**Official bonus:** the Video.js Skins Challenge awards **+1 point** when the submitted player uses Mux-hosted video, the submission includes the public Mux Playback ID, and the asset remains live through judging.
+
+**Decision:** GO, but keep it strictly optional. The core R2 release already passes independently, so Mux cannot become a critical dependency.
+
+**Budget:** 90 active engineering minutes. At the 072 acceptance checkpoint approximately 45.5 hours remained before the published challenge deadline; the Mux cap consumes ~3.3% of that buffer. If provisioning, rendition readiness, public playback or signed-out seek verification does not pass inside the cap, remove/skip the Mux bonus and keep the verified R2 release.
+
+**Implementation boundary:**
+
+- Upload the exact DETOUR showcase using management credentials only in GitHub Actions.
+- Deduplicate by content SHA/passthrough to avoid duplicate Mux assets on reruns.
+- Request a **public** Playback ID, `video_quality:"basic"`, and the current Static Renditions API with `resolution:"highest"`; do not use deprecated `mp4_support`.
+- Optional host may use `https://stream.mux.com/{PLAYBACK_ID}/highest.mp4` plus Mux thumbnail/caption strategy as appropriate.
+- Do not import Mux management code into `skin/index.js`, `skin/base.js`, or the normal R2 release route.
+- Keep the R2 MP4 as fallback for step 077.
+- Retain the bonus only after signed-out browser playback and real DETOUR Hold/seek/Return pass on the Mux URL.
+
+References: official Contra challenge page, Mux Direct Upload API, Mux Assets / Static Renditions API, and Mux playback-ID documentation current on 2026-11-15.

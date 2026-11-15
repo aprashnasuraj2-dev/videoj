@@ -1,15 +1,22 @@
 # DETOUR progress
 
 Phase: 08
-Resume step: 072
+Resume step: 076
 
 | Item | Current state |
 | --- | --- |
-| Verified | 68/100. Phase 8 media strategy 071, immediate judge demo 073 and distinct-host portability 074 are verified. 072 remains the active HTTPS release gate. |
-| Next | 072. Materialize the verified release media into Git, publish the production build to an isolated Cloudflare Pages project, then prove signed-out HTTPS playback, byte-range seeking, poster and captions. |
-| Open dependencies | 002 eligibility; 017 uncoached first-use; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% browser zoom; 072 public HTTPS playback/seek qualification. |
-| Prototype / public release | Public-root composition and second production host pass locally. HTTPS publication is the remaining core media gate before Mux evaluation. |
-| Source baseline | Judge-demo/portability baseline: `34261f03c8df75bbeed847879de7269ab794fb55`, Actions run 43701045585. 073 and 074 pass; full DETOUR CI green. |
+| Verified | 70/100. Phase 8 media strategy/bundle/judge demo/portability 071–074 and Mux evaluation 075 are verified. |
+| Next | 076. Provision a DETOUR-specific public Mux asset/rendition with repository secrets only, mount it as an optional host path without changing the core skin, and prove signed-out real seeks before retaining the bonus. |
+| Open dependencies | 002 eligibility; 017 uncoached first-use; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% browser zoom. Mux 076/077 is optional and must not replace the green R2 fallback. |
+| Prototype / public release | Core public release is green at `https://detour-release.praisethegreatfool.workers.dev/`, backed by SHA-versioned R2 objects and immutable dist source. Mux is now optional bonus work only. |
+| Source baseline | Public-release baseline: `1016bd1b39d817261fc0a5b0d3cbdc2252c2ce6e`, Actions run 43703881941. Full CI green; 072 HTTPS passed at 42.350s Return. |
+
+## 2026-11-15 · 072 accepted; 075 Mux reserve decision
+
+- [Actions run 43703881941](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43703881941) passed the complete pipeline on source `1016bd1b39d817261fc0a5b0d3cbdc2252c2ce6e`. The strict public-release test completed in **3.725 s**: HTTPS 200, pinned source/dist headers, MP4 byte range **206 / 1,024 B / video/mp4 / Accept-Ranges: bytes**, poster/VTT checks, then signed-out Hold at 42.35 → seek 18 → Return at **42.350 s**, remaining paused.
+- **072 accepted.** Public transport is isolated Cloudflare Worker + private R2 binding; the bucket's public `r2.dev` endpoint is disabled. The verified frozen source remains `detour-dist-50ac9661e315`.
+- **075 GO.** The official challenge offers **+1 point** for using Mux when the submitted player plays a Mux-hosted video, the form includes the public Playback ID, and the asset remains live through judging. At this checkpoint roughly **45.5 h** remained before the challenge deadline, so reserve **90 active engineering minutes** for the optional path (~3.3% of that buffer). Stop/skip the bonus if a ready public playback path plus signed-out browser seek proof is not achieved inside the cap.
+- Lowest-risk implementation: keep R2 MP4 as default/fallback; upload the same DETOUR showcase as a separate content-hash-keyed Mux asset with `playback_policies:["public"]`, `video_quality:"basic"`, and current `static_renditions:[{resolution:"highest"}]`. Use only public Playback ID/URL client-side; management credentials stay in GitHub Actions secrets. Static MP4 is preferred for the bonus path because it preserves DETOUR's native `<video>` contract across Chromium/Firefox/WebKit without adding an HLS runtime to the reusable core.
 
 ## 2026-11-15 · Global R2 release storage after regional-cache failure
 

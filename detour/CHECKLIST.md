@@ -517,12 +517,12 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Pass condition** — Selected footage has clear visual differences, usable audio and documented rights. Existing cleared media is a ready fallback.
   - **Evidence** — [Phase 8 media decision](design/PHASE-8.md#step-071-decision) and [Actions run 43699914256](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43699914256): deterministic 56s showcase has generated A/V, distinct 18s/42s frames and documented project provenance; navigation-study remains the verified fallback.
 
-- [ ] **072. Create the showcase media bundle**
+- [x] **072. Create the showcase media bundle**
   - **Objective** — Provide a reliable playback and capture source.
   - **Work** — Produce a web-ready MP4, poster, captions and attribution. Keep sound level consistent, avoid autoplay and check poster framing in portrait and wide contexts.
   - **Deliverable** — Demo media bundle and provenance log.
   - **Pass condition** — The MP4 plays locally and via HTTPS with seek support. Captions are timed and the poster matches the actual video.
-  - **Progress** — Generated bundle passes ffprobe, fast-start, frame-difference and local Vite HTTP seek checks at 18.000s and 42.000s. HTTPS/public-origin qualification is still required before this row can close.
+  - **Evidence** — [Phase 8 HTTPS acceptance](design/PHASE-8.md#step-072-https-acceptance--1016bd1) and [Actions run 43703881941](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43703881941): local bundle checks plus signed-out public HTTPS playback passed; bytes 0–1023 returned 206, poster/VTT loaded, and Hold → 18s → Return landed at 42.350s while paused.
 
 - [x] **073. Compose a one-screen judge demo**
   - **Objective** — Make the signature action accessible immediately.
@@ -538,11 +538,12 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Pass condition** — Both clips demonstrate hold, arbitrary seek and return. The skin module has no variant branch tied to the second clip.
   - **Evidence** — [Phase 8 portability acceptance](design/PHASE-8.md#judge-demo-and-portability-acceptance--34261f0) and Actions run 43701045585: production `/integration/` uses distinct `daylight-study` media/captions and the unchanged skin returned 18s → 42.350s.
 
-- [ ] **075. Evaluate Mux against the reserve**
+- [x] **075. Evaluate Mux against the reserve**
   - **Objective** — Earn the optional point only with reliable playback.
   - **Work** — Confirm the exact bonus language and asset lifetime. Set a 90-minute attempt cap after core fallback passes. Compare risk and test time for Mux against the remaining buffer.
   - **Deliverable** — Mux go/skip record and budget.
   - **Pass condition** — Core video is already public-ready and a reliable test window remains, or the bonus work is removed from the critical path.
+  - **Evidence** — [Phase 8 Mux decision](design/PHASE-8.md#step-075-mux-go--1016bd1): official challenge bonus confirmed as +1 for a Mux-hosted submitted video with public Playback ID kept live through judging. Core R2 fallback is independently green; proceed with a 90-minute optional attempt cap, never replacing the verified fallback.
 
 - [ ] **076. Integrate Mux in the optional host**
   - **Objective** — Use actual streaming without changing core behavior.
