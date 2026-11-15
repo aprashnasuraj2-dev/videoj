@@ -4,9 +4,9 @@ test('manual study keeps the original film and clearly separates real-device ver
   await page.goto('/stress.html?case=manual');
   await expect(page.getByRole('heading', { name: 'Beyond the browser' })).toBeVisible();
   await expect(page.locator('#manual-spotlight')).toBeVisible();
-  await expect(page.locator('#manual-spotlight')).toContainText('Live and time-shifted video');
-  await expect(page.locator('#manual-spotlight')).toContainText('iPhone, AirPlay and fullscreen');
-  await expect(page.locator('#manual-spotlight')).toContainText('Zoom, touch and accessibility');
+  await expect(page.locator('#manual-spotlight')).toContainText('Live, with room to rewind');
+  await expect(page.locator('#manual-spotlight')).toContainText('From your phone to the big screen');
+  await expect(page.locator('#manual-spotlight')).toContainText('Watch your own way');
   await expect(page.locator('#lab-case-list .lab-case')).toHaveCount(16);
   await expect(page.locator('#lab-player video')).toHaveAttribute('src', './media/studies-in-thread.mp4');
   await expect(page.locator('#case-badge')).toHaveText('DEVICE REVIEW');
