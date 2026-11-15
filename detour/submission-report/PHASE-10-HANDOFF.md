@@ -71,16 +71,25 @@ DETOUR — Keep your place
 **Playable public URL**  
 https://detour.aafnaipatro.com/mux/
 
-**Short rationale**  
-DETOUR lets viewers keep a moment, explore another part of a video, and return in one action. The familiar seek bar remains familiar: the white playhead follows the current position while a lime bracket preserves the held point, and the explicit **Return to 00:42** ticket makes the reversible action visible. Because the behavior belongs to the player rather than specially authored footage, the same skin works with a second, different video and caption track without changing the interaction.
+**One-line hook**  
+Most video players let you seek. DETOUR lets you leave without losing where you came from.
 
-**Primary visual**  
-`hero-1280-held.png` — 1248×806, 85,734 B, SHA-256 `eb03e909bbd7521535fa384edf8fe3317f5f561c0da139d9fd3198900a7bf2a5`
+**Short rationale**  
+Most seek bars remember only where you are now. DETOUR adds a second temporal position without replacing the seek bar people already understand. Press **Keep my place** and a lime bracket holds the origin while the white playhead is free to move anywhere; **Return to 00:42** takes you back in one action, while **Stay here** discards the mark. The interaction is deliberately media-agnostic: it needs no chapters, transcript, thumbnails or specially authored footage. The same packaged Video.js v10 skin mounts on host-owned media and captions, and the submission proves it on different videos and on a separate live site.
+
+**Preferred primary visual**  
+`DETOUR_PRIMARY_VISUAL.png` — a three-state authentic-browser proof board: **Hold 00:42 → Explore 00:15 → Return 00:42**. SHA-256 `39e4f94cee067f61c0949a142678551459f181f9e821515c448ff7ce46059fc5`.
 
 **Primary visual alt text**  
-“DETOUR video player at 00:18 with a lime held-position bracket near 00:42 and a bright Return to 00:42 button.”
+“Three DETOUR player states show a moment held at 00:42, exploration at 00:15 while a lime origin bracket remains on the seek bar, and a one-action return to 00:42.”
 
-**Optional interaction evidence, if the form accepts video**  
+**Raw player hero fallback**  
+`hero-1280-held.png` — 1248×806, direct browser screenshot, SHA-256 `eb03e909bbd7521535fa384edf8fe3317f5f561c0da139d9fd3198900a7bf2a5`.
+
+**Preferred optional video, if accepted**  
+`DETOUR_JUDGE_REEL.mp4` — 8.20s, 960×720 H.264, silent; short title/end cards around the authentic browser interaction. SHA-256 `b5a4092888e57c99356d6945a0ef9c43519a49f7d77c56eba6a8a61a4f2ed1e3`.
+
+**Raw interaction proof**  
 `interaction-960x720.webm` — 6.08s, 960×720, VP8, no audio; SHA-256 `6a95a6edc00ea6a03e83f8e64ee0a44b2038001f9e8844b64d075bccfe766f7f`
 
 **Mux bonus evidence**  
@@ -99,7 +108,7 @@ This is a separate Aafnai Patro **On This Day** editorial history page. It uses 
 **License statement, if requested**  
 Entry source is licensed under Apache License 2.0. Showcase media is project-authored procedural material with separate provenance recorded in `RIGHTS.md`.
 
-Do not add repository/process/CI links to the judge-facing creative description unless the live form explicitly requires a source/evidence field. Step 097 stays unchecked until the actual form fields and constraints are confirmed.
+Do not add repository/process/CI links to the judge-facing creative description unless the live form explicitly requires a source/evidence field. The preferred visual and judge reel are presentation assets derived from authentic browser evidence; keep the raw hero and raw interaction recording as non-composited fallbacks. Step 097 stays unchecked until the actual form fields and constraints are confirmed.
 
 ## 098 freeze and rollback
 

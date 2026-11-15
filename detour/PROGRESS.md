@@ -13,6 +13,16 @@ Resume step: 091
 
 
 
+
+## 2026-11-15 · Final competitive positioning and master-pack v2
+
+- Refreshed the late public field. The challenge is now crowded with strong object/metaphor skins — film strips, camera lenses, tactile hardware, transit systems, games, gesture layers and cinematic shells — and a new late post also describes anchoring a moment on the timeline. A generic “bookmark a moment” story is no longer sufficient.
+- Locked DETOUR's narrower winning lane: **“Most video players let you seek. DETOUR lets you leave without losing where you came from.”** The complete mechanism is the differentiator: one familiar seek bar, separate current/held positions, free exploration, explicit one-action Return, explicit discard, and source/race-safe reusable implementation.
+- Rebuilt the owner submission master pack around a three-state authentic-browser board (**Hold 00:42 → Explore 00:15 → Return 00:42**) plus an **8.20s H.264 judge reel**, while retaining the raw hero and raw 6.08s browser recording as evidence fallbacks.
+- Added a concise reusable-engineering brief exposing host ownership, package exports, source-epoch state, duplicate-return suppression, manual-seek precedence, live/audio capability boundaries, accessibility mechanisms and provider separation. The reusable `.tgz` itself remains the previously verified artifact.
+- Master pack: `DETOUR_COMPETITION_MASTERPACK_v2.zip`, SHA-256 `7154d62cc07a348dc6e1f51d539d06dce797f2b0746cdad2c24f370669f52bd2`. This artifact is an owner handoff; exact Contra field binding remains step 091/097.
+- **Decision:** do not add late chapters, thumbnails, AI, voice control, 3D hardware or another theme. Those are crowded lanes and would increase verification risk without strengthening DETOUR's core playback primitive.
+
 ## 2026-11-15 · Step 002 verified by official Contra multiple-submission guidance
 
 - Contra's official Help Center article **“Challenges on Contra: A new way to earn”** (published 2026-04-06) answers the exact eligibility question: participants may submit more than once to a challenge as long as the submissions are **unique** and meet the challenge criteria. It also states challenges are open to Contra independents unless a challenge says otherwise.
@@ -20,12 +30,12 @@ Resume step: 091
 - **002 is now verified.** Verified count becomes **90/100**.
 - **091 remains open, but its blocker is narrower:** the public challenge API does not expose the signed-in submission form's exact labels, required/optional state, media/file limits or acceptance result. The entrant must open the current joined form and record those facts before 096/097/099 can pass.
 
-## 2026-11-15 · Step 091 rechecked; direct eligibility confirmation still required
+## 2026-11-15 · Earlier 091 public-form recheck (superseded on eligibility)
 
 - Re-read the active Contra Video.js Skins Design Challenge after the release freeze. Public challenge state remains **submissions enabled**, deadline `2026-11-17T07:59:00Z` (Nov 17, 13:44 NPT), with **1,097 participants** and **253 submissions** at this recheck.
-- The challenge payload still provides **no entrant-specific second-entry permission, joined-form schema, per-account submission cap, upload limits or accepted-media field contract**. Public `submissionInstructions` and `termsAndConditionsUrl` are null. The public web surface also exposes no readable form schema outside the signed-in flow.
-- Updated 091 evidence and added a copy-ready direct Contra clarification question to the Phase 10 handoff. No checklist box was promoted: public counts and a “Join to submit!” label do not establish this account's eligibility for a second entry.
-- **Next action remains 091:** the entrant checks the signed-in joined form or obtains a direct Contra answer confirming whether a participant who already submitted DHAGO may submit the separate DETOUR skin, plus the current field/asset constraints. Once confirmed, promote 096/097 from prepared to verified, then proceed to owner submission 099. Step 090 remains a fresh-human gate.
+- At that point the public challenge payload exposed no joined-form schema, upload limits or accepted-media field contract. Public `submissionInstructions` and `termsAndConditionsUrl` were null.
+- This entry originally treated second-entry permission as unresolved. The later official Contra Help Center finding above supersedes that part: multiple unique challenge submissions are allowed.
+- **Remaining action is narrower:** inspect the signed-in current form for exact fields, required/optional state and media limits, then bind the prepared DETOUR payload. Step 090 remains a fresh-human gate.
 
 ## 2026-11-15 · Branded public-host privacy correction
 

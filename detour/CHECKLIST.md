@@ -700,7 +700,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Collect public playable URL, one strong visual, short rationale and only qualifying bonuses. Confirm file limits and link behavior in the live form. Keep an offline copy of the payload.
   - **Deliverable** — Paste-ready payload and ordered assets.
   - **Pass condition** — Required fields are complete. Mux ID and real-site URL appear only for independently verified qualifying entries.
-  - **Progress** — [A paste-ready content packet is prepared](submission-report/PHASE-10-HANDOFF.md#provisional-form-payload), including the independently verified Mux and Aafnai Patro live-site bonus fields. Exact live field names, limits and second-entry acceptance remain blocked by 091.
+  - **Progress** — [A competition-focused payload and ordered asset strategy are prepared](submission-report/PHASE-10-HANDOFF.md#provisional-form-payload): stronger reversible-seeking hook, three-state primary visual, short judge reel, raw browser fallbacks, verified Mux ID and distinct Aafnai Patro live-site bonus. Multiple-submission eligibility is resolved; exact signed-in form field names, required/optional state and upload/media limits remain blocked by 091.
 
 - [x] **098. Freeze links and keep rollback ready**
   - **Objective** — Preserve the exact reviewed experience through judging.
