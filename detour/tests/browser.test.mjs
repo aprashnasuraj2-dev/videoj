@@ -448,10 +448,19 @@ test('failed and stale provider results preserve the active hold', { timeout: 25
   await slider.press('ArrowRight');
   await page.waitForFunction(() => document.querySelector('video').currentTime === 19);
   await back.waitFor();
+  await page.getByRole('button', { name: 'Stay here' }).click();
+  await page.getByRole('button', { name: 'Keep my place' }).waitFor();
+  assert.equal(await page.locator('.detour-origin').isVisible(), false);
   await page.locator('video-player').evaluate(player => player.resolveReturn(42.35));
-  assert.ok(await back.isEnabled());
+  assert.equal(await page.locator('.detour-origin').isVisible(), false,
+    'A stale completion must not reopen a dismissed detour.');
+  assert.equal(await back.isVisible(), false);
   assert.equal(await current(page), 19);
+
   await page.locator('video-player').evaluate(player => player.setReturnOutcome('real'));
+  await seek(page, 42.35);
+  await page.getByRole('button', { name: 'Keep my place' }).click();
+  await seek(page, 18);
   await back.click();
   await page.getByRole('button', { name: 'Keep my place' }).waitFor();
   assert.ok(Math.abs(await current(page) - 42.35) < 0.1);

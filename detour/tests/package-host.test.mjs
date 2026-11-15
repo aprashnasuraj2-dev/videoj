@@ -255,13 +255,38 @@ async function proveEngine(engineName, engine) {
     await a.locator('media-mute-button').click();
     assert.equal(await a.locator('video').evaluate(video => video.muted), false);
 
-    await a.locator('.detour-settings').click();
-    const rate = a.locator('.detour-menu [data-rate="1.25"]');
+    const settings = a.locator('.detour-settings');
+    const menu = a.locator('.detour-menu');
+    await settings.click();
+    await menu.locator('[data-rate="1.25"]').focus();
+    await page.keyboard.press('Escape');
+    assert.equal(await menu.isVisible(), false, `${engineName} Escape did not close settings`);
+    assert.equal(await settings.evaluate(el => el === document.activeElement), true,
+      `${engineName} Escape did not restore settings focus`);
+
+    await settings.click();
+    const rate = menu.locator('[data-rate="1.25"]');
     await rate.click();
     assert.equal(await a.locator('video').evaluate(video => video.playbackRate), 1.25);
-    await a.locator('.detour-settings').click();
-    await a.locator('.detour-menu [data-rate="1"]').click();
+    assert.equal(await settings.evaluate(el => el === document.activeElement), true,
+      `${engineName} rate selection did not restore settings focus`);
+    await settings.click();
+    await menu.locator('[data-rate="1"]').click();
     assert.equal(await a.locator('video').evaluate(video => video.playbackRate), 1);
+
+    const fullscreen = await a.evaluate(element => ({
+      documentEnabled: document.fullscreenEnabled,
+      storeAvailability: element.store?.fullscreenAvailability,
+    }));
+    if (fullscreen.documentEnabled && fullscreen.storeAvailability === 'available') {
+      await a.locator('media-fullscreen-button').click();
+      await page.waitForFunction(() => Boolean(document.fullscreenElement));
+      await a.locator('media-fullscreen-button').click();
+      await page.waitForFunction(() => !document.fullscreenElement);
+    } else {
+      assert.notEqual(fullscreen.storeAvailability, 'available',
+        `${engineName} reported fullscreen available while document fullscreen is disabled`);
+    }
 
     await seek(a, 42.35);
     await a.getByRole('button', { name: 'Keep my place' }).click();
