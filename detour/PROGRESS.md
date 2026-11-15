@@ -11,6 +11,13 @@ Resume step: 072
 | Prototype / public release | Public-root composition and second production host pass locally. HTTPS publication is the remaining core media gate before Mux evaluation. |
 | Source baseline | Judge-demo/portability baseline: `34261f03c8df75bbeed847879de7269ab794fb55`, Actions run 43701045585. 073 and 074 pass; full DETOUR CI green. |
 
+## 2026-11-15 · Immutable dist branch fallback for HTTPS release (validation pending)
+
+- Exact source `bc6c473668ae3b05faff1a037e5b0655949abedf` passed validation and produced artifact 14157281055: **1,631,159 B ZIP**, SHA-256 `9ffdf3b8a9f0e210acfae38618a56af3fd22f7680acfcd96b30c00405da8501b`; expanded release is 2,163,553 B and contains the 871,570 B showcase MP4.
+- Cloudflare Pages Direct Upload asset JWTs cannot be redeemed through the connected API boundary (upload session succeeds; asset upload returns authorization failure). The isolated `detour-videojs` Pages project was created but has not received a deployment; no existing Pages project was changed.
+- Added successful-CI staging to an immutable `detour-dist-<source12>` branch with a SHA-256/byte manifest. This gives a frozen public origin source for an isolated Worker fallback without embedding or rebuilding release binaries. The stage runs only after the full checklist validator and browser suite pass.
+- 072 stays open until the resulting HTTPS Worker origin passes signed-out playback, byte-range seek, poster and captions.
+
 ## 2026-11-15 · Immutable release artifact for Direct Upload (validation pending)
 
 - Cloudflare Pages Git-connected project creation returned Cloudflare error 8000011 (internal Pages Git installation issue) even though the connection has Pages Write. Existing Patro/DHAGO projects were not modified.
