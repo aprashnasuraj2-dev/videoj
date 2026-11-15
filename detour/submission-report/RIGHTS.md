@@ -31,7 +31,7 @@
 ## Operational recovery
 
 - **Primary restore:** deploy `detour-mux-release` from immutable `detour-dist-a3b43f74c765` with the existing `DETOUR_ASSETS` R2 binding, then repeat the signed-out public Mux gate.
-- **Independent rollback:** use https://detour-release.praisethegreatfool.workers.dev/ backed by `detour-dist-50ac9661e315`.
+- **Independent rollback:** use https://detour-backup.aafnaipatro.com/ backed by `detour-dist-50ac9661e315`.
 - **Mux retention:** keep the current public asset/Playback ID live through judging; a replacement is not bonus-qualified until re-tested.
 - **Live-site retention:** keep `aafnai-history-video-apollo11`, `aafnaipatro.com/on-this-day/video/apollo-11*`, and editorial Playback ID `kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U` live through judging. The retired `aafnai-detour-live-v1` / `/labs/detour*` route was deleted and must not be cited.
 - **Package restore:** rebuild from the reviewed branch with `npm ci && npm pack`, compare contents and rerun packed-host tests.
