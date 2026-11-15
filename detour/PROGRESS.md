@@ -8,12 +8,18 @@ Resume step: 091
 | Verified | 89/100. Phase 8 is complete; Phase 9 steps 081–089 are verified except human-only 090; Phase 10 steps 092–095 and 098 are verified. |
 | Next | 091. Owner/account confirmation of second-entry eligibility and the current joined form now unlocks 096/097/099. Step 090 still needs a fresh uncoached human reviewer; 100 follows actual submission. |
 | Open dependencies | 002/091 second-entry and live-form confirmation; 017 first-use study; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% zoom; 090 fresh uncoached judging pass; 099 owner submission and 100 post-submission verification. No further independent Phase 10 acceptance step bypasses 091. |
-| Prototype / public release | Frozen judging candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`; independent rollback remains `https://detour-release.praisethegreatfool.workers.dev/` / `detour-dist-50ac9661e315`. |
+| Prototype / public release | Frozen judging candidate: `https://detour.aafnaipatro.com/mux/` on public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`; independent rollback remains `https://detour-backup.aafnaipatro.com/` / `detour-dist-50ac9661e315`. |
 | Source baseline | Public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` was re-qualified by Phase 10 run 43713525858 at verification head `b9b1495f4f66422dfa369cafcad2738fff6b4592`; no `detour/skin/` runtime file changed between those revisions. Phase 10 handoff commit `a98c5f7f80072db76223124ca98d663c5ea4a3fa` is report/tracking only. |
+
+## 2026-11-15 · Branded public-host privacy correction
+
+- The competition demo moved to `https://detour.aafnaipatro.com/mux/`; the independent rollback moved to `https://detour-backup.aafnaipatro.com/`.
+- These are branded custom Worker domains. Judge-facing pages, release metadata and submission copy must not expose the account-level `workers.dev` hostname.
+- The underlying `workers.dev` endpoints are being disabled after branded-domain requalification; they are not submission evidence.
 
 ## 2026-11-15 · Bonus URL roles separated and live-site use corrected
 
-- **Competition submission demo / Mux +1:** `https://detour-mux-release.praisethegreatfool.workers.dev/mux/`. This is the judge-facing DETOUR showcase and the only URL to use as the playable submission demo. It plays public Mux Playback ID `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`.
+- **Competition submission demo / Mux +1:** `https://detour.aafnaipatro.com/mux/`. This is the judge-facing DETOUR showcase and the only URL to use as the playable submission demo. It plays public Mux Playback ID `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`.
 - **Independent live-site use / +1:** `https://aafnaipatro.com/on-this-day/video/apollo-11/`. This is an Aafnai Patro **On This Day** editorial history page using a NASA Apollo 11 landing-site visualization through the reusable skin. It is not a contest landing page and does not use the Mux showcase media.
 - **Do not substitute these URLs for one another.** The Mux Worker satisfies the playable competition demo/Mux path; the Aafnai Patro editorial page is evidence of genuine site use.
 - Cloudflare Browser Rendering observed the editorial page at HTTPS 200 with a ~47-second Apollo 11 video, captions and the required controls. To remove NASA-origin latency as a judging dependency, the NASA source was separately ingested into Mux as editorial asset Playback ID `kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U`; the Aafnai Patro Worker proxies that distinct asset behind its own media URL. A fresh Cloudflare interaction probe held at **12s**, sought to **2s**, and returned to exactly **12.000s** while remaining paused.
@@ -164,7 +170,7 @@ Resume step: 091
 ## 2026-11-15 · Public HTTPS origin and exact-browser gate (validation pending)
 
 - Full source `50ac9661e315f099d3121850a57dd398cbeb5865` passed Actions run 43702266692 and staged **70 files / 2,163,553 B** at immutable branch `detour-dist-50ac9661e315`. The 871,570 B showcase MP4 SHA-256 is `fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1`.
-- Deployed isolated Cloudflare Worker `detour-release` at `https://detour-release.praisethegreatfool.workers.dev/`, pinned to that immutable branch/source. It corrects MIME types, exposes source/dist headers and preserves upstream byte ranges with an explicit 206 slicing fallback. An independent public fetch returned the expected DETOUR title/tagline; no login/gate was observed.
+- Deployed isolated Cloudflare Worker `detour-release` at `https://detour-backup.aafnaipatro.com/`, pinned to that immutable branch/source. It corrects MIME types, exposes source/dist headers and preserves upstream byte ranges with an explicit 206 slicing fallback. An independent public fetch returned the expected DETOUR title/tagline; no login/gate was observed.
 - Added `tests/https-release.test.mjs`: a fresh 375×667 Chromium context must receive the pinned source headers, load the real poster/VTT/MP4, fetch bytes 0–1023 as **206 / 1,024 B / video/mp4 / Accept-Ranges: bytes**, then execute Hold at 42.35 → seek 18 → Return within ±0.5 s while remaining paused. This exact browser gate is pending CI.
 - Frozen dist staging is now explicit/manual or `[stage-dist]` commit-message gated so ordinary validation commits do not create one immutable branch per run.
 
