@@ -247,9 +247,12 @@ class DetourPlace extends HTMLElement {
 
       const finish = arrived => {
         if (signal.aborted || this.#attempt !== attempt || !this.#marks.includes(mark) || sourceKey() !== mark.source) return;
+        const activeCheckpoint = document.activeElement?.closest?.('.detour-checkpoint');
         const shouldRestore = restoreTarget === 'back'
           ? document.activeElement === back || document.activeElement === document.body
-          : true;
+          : restoreTarget === 'marker'
+            ? document.activeElement === document.body || activeCheckpoint?.dataset.slot === String(mark.slot)
+            : false;
         clearAttempt();
 
         if (arrived) {
