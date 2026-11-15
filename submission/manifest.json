@@ -1,8 +1,8 @@
 {
   "title": "DHAGO — Time, Woven.",
   "competition": "Video.js Skins Design Challenge",
-  "lastPreparedOn": "2026-11-14",
-  "status": "submission_candidate_not_filed",
+  "lastPreparedOn": "2026-11-15",
+  "status": "ready_for_owner_review_not_submitted",
   "copyrightLicense": "Apache-2.0",
   "corePointsAvailable": 25,
   "bonusPointsAvailable": 2,
@@ -28,26 +28,31 @@
   "muxBonus": {
     "potentialPoints": 1,
     "playbackId": "Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw",
-    "proofStatus": "pending_exact_head_decode_seek_check",
+    "proofStatus": "verified_in_public_browser_ci_43667195719_judge_decides",
     "judgeRoute": "https://creative.aafnaipatro.com/?mux"
   },
   "liveSiteBonus": {
     "potentialPoints": 1,
     "url": "https://creative.aafnaipatro.com/journal.html",
-    "proofStatus": "pending_public_release_playback"
+    "proofStatus": "studio_journal_public_and_playback_proven_judge_decides"
   },
   "publicRelease": {
     "authority": "https://creative.aafnaipatro.com/release-manifest.json",
-    "sourceSha": null,
-    "verifiedAt": null
+    "sourceSha": "4acefca864e54b1f85ca021204e03ff148d170a7",
+    "verifiedAt": "2026-11-15"
   },
   "evidence": {
     "exactReleaseArtifact": "public-smoke-evidence",
     "bonusArtifact": "bonus-mux-playback-proof",
-    "leadHeroCapture": "submission/hero-desktop.png",
-    "mobileCapture": "submission/hero-mobile.png",
-    "screenRecording": "submission/interaction-loop.mp4",
-    "screenshotsPendingRelease": true
+    "leadHeroCapture": "external-handoff-zip:images/01_desktop_actual_player.png",
+    "mobileCapture": "external-handoff-zip:images/03_mobile_player_only_real_crop.png",
+    "screenRecording": "external-handoff-zip:videos/01_eight_second_real_interaction.mp4",
+    "screenshotsPendingRelease": false,
+    "publicSmokeRunId": 43667195719,
+    "r2ManifestFileCount": 93,
+    "externalEvidenceArchive": "DHAGO_public_release_4acefca864e5_evidence.zip",
+    "currentHandoffArchive": "DHAGO_Competition_Handoff_4acefca864e5.zip",
+    "auditMethod": "Exact published build tested; do not infer physical device or screen-reader approval"
   },
   "limitations": [
     "physical device Safari/iPhone/Android not verified in current restoration",

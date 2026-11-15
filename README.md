@@ -12,7 +12,7 @@ Set `--media-accent-color`, `--media-accent-text-color`, `--media-border-radius`
 
 ## Progress and operations
 
-[100-step checklist](docs/CHECKLIST.md), [verification](tests/QA.md), [Original film and Mux bonus proof](docs/media.md) · [Copy-ready submission](submission/final-submission.md). `docs/steps.json` is authoritative; run `node scripts/progress.mjs` after updates.
+[evidence-based checklist](docs/CHECKLIST.md), [verification](tests/QA.md), [Original film and Mux bonus proof](docs/media.md) · [Copy-ready submission](submission/final-submission.md). `docs/steps.json` is authoritative; run `node scripts/progress.mjs` after updates.
 
 Actions validate builds, browser behavior and separate current Mux playback proof. The original public Mux playback ID is restored from historical source configuration; we do not attempt a duplicate video upload. Exact source releases use SHA-256 checksums. Source-package automation does not establish final submission readiness. No contest submission, accepted terms or bonus is claimed until verified.
 
