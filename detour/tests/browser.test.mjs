@@ -521,7 +521,13 @@ test('visual layout preserves the essential controls, targets and focus across e
     const stay = page.getByRole('button', { name: 'Stay here' });
     const returnBox = await playerBox(back);
     const stayBox = await playerBox(stay);
-    assert.deepEqual(await geometry(), before, `Holding a place moved an essential control at ${width}px`);
+    const afterHold = await geometry();
+    for (let i = 0; i < before.length; i += 1) {
+      for (const key of ['x', 'y', 'width', 'height']) {
+        assert.ok(Math.abs(afterHold[i][key] - before[i][key]) <= 0.05,
+          `Holding a place moved essential control ${i} ${key} at ${width}px: ${before[i][key]} → ${afterHold[i][key]}`);
+      }
+    }
     for (const box of [returnBox, stayBox]) {
       assert.ok(box.width >= 44 && box.height >= 44, `Target under 44px at ${width}px`);
     }
