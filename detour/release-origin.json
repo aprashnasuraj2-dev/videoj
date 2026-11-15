@@ -1,5 +1,5 @@
 {
-  "origin": "https://detour-release.praisethegreatfool.workers.dev/",
+  "origin": "https://detour-backup.aafnaipatro.com/",
   "sourceSha": "50ac9661e315f099d3121850a57dd398cbeb5865",
   "distBranch": "detour-dist-50ac9661e315",
   "transport": "Cloudflare Worker with SHA-versioned R2 objects hydrated from immutable GitHub dist branch",
