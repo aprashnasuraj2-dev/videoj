@@ -39,7 +39,7 @@ test('078 Aafnai Patro editorial history page uses the reusable DETOUR skin on i
     assert.equal(response?.headers()['x-player-skin'], 'detour-a3b43f74c765');
     assert.equal(response?.headers()['x-live-site-use'], 'editorial-history');
 
-    assert.equal(await page.getByRole('link', { name: 'Aafnai Patro' }).getAttribute('href'), 'https://aafnaipatro.com/');
+    assert.equal(await page.locator('a.brand').getAttribute('href'), 'https://aafnaipatro.com/');
     assert.match(await page.title(), /Apollo 11 Landing Site — Visual History/);
     assert.equal(await page.getByRole('heading', { name: 'Apollo 11 Landing Site' }).isVisible(), true);
     assert.equal(await page.getByText('DETOUR.', { exact: true }).count(), 0);
