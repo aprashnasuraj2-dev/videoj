@@ -20,7 +20,7 @@ The verification head is later than the deployed runtime because Phase 10 added 
 | Reuse — 095 | Packed tarball installed into a fresh external host with replacement media/captions; Return landed at **42.350s** in Chromium, Firefox and desktop WebKit |
 | Reusable artifact | **14161323994**; ZIP digest `sha256:1077a7f45a101090985f065e6e57b3d2899cc2dedd9d8e93ccbc94f7c3b4c304`; tarball **16,417 B**, SHA-256 `6c3680164f42bf582fe739b0e82af73826d35aea9a3f2ae8558c90cd6d6ad5cc`, **15 files** |
 | Verification dist artifact | **14161094736**; ZIP digest `sha256:76282311a905aed6d325d2adfa04b73844360b7b13042648ab071470381ab3bc` |
-| Aafnai Patro live-site bonus | `https://aafnaipatro.com/on-this-day/video/apollo-11/`; distinct On This Day editorial page, NASA Apollo 11 media, Cloudflare ready-state proof on 47s source and 12→2→12.000s Return. It is **not** the competition demo. |
+| Aafnai Patro live-site bonus | `https://aafnaipatro.com/on-this-day/video/apollo-11/`; distinct On This Day editorial page, NASA Apollo 11 media delivered through separate editorial Mux Playback ID `kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U`; Cloudflare proof on ~47s source and 12→2→12.000s Return. It is **not** the competition demo. |
 
 The 375×667 run is browser touch emulation. It does not close physical-device step 062. No NVDA/VoiceOver session has been recorded, and native browser 200% zoom remains separate from the CSS-layout zoom probe.
 
@@ -79,7 +79,7 @@ The primary public URL above plays the Mux-hosted rendition and passed the exact
 
 **Genuine live-site bonus**  
 https://aafnaipatro.com/on-this-day/video/apollo-11/  
-This is a separate Aafnai Patro **On This Day** editorial history page. It uses the reusable skin with a NASA Apollo 11 landing-site visualization, not the submission showcase media. Cloudflare Browser Rendering reached ready state on the 47-second source and proved Hold at 12s → seek to 2s → Return to 12.000s.
+This is a separate Aafnai Patro **On This Day** editorial history page. It uses the reusable skin with a NASA Apollo 11 landing-site visualization, not the submission showcase media. For resilient judging delivery that NASA source is ingested into a second Mux asset (`kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U`) and proxied behind the Aafnai Patro media URL. Cloudflare Browser Rendering proved Hold at 12s → seek to 2s → Return to 12.000s.
 
 **URL-role rule**  
 - Submit/playable demo: https://detour-mux-release.praisethegreatfool.workers.dev/mux/
