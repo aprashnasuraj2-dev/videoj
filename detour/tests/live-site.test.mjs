@@ -15,9 +15,12 @@ async function ready(page, timeout = 45000) {
 async function seek(page, seconds) {
   await page.locator('video-player').evaluate((node, time) => node.store.seek(time), seconds);
   await page.waitForFunction(
-    time => Math.abs(document.querySelector('video').currentTime - time) < 0.5,
+    time => {
+      const video = document.querySelector('video');
+      return Math.abs(video.currentTime - time) < 0.5 && !video.seeking;
+    },
     seconds,
-    { timeout: 10000 },
+    { timeout: 15000 },
   );
 }
 
