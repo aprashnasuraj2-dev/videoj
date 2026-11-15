@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
+import { mkdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { chromium, firefox, webkit } from 'playwright';
-import { preview } from 'vite';
+import { createServer, preview } from 'vite';
 
 const engines = { chromium, firefox, webkit };
 const engineName = process.env.DETOUR_ENGINE ?? 'chromium';
@@ -147,4 +149,105 @@ test('source reload clears the held place and re-enables the next video', { time
   await page.locator('.detour-hold:enabled').waitFor();
   assert.equal(await page.locator('.detour-origin').isVisible(), false);
   assert.equal(await page.locator('.detour-return').isVisible(), false);
+});
+
+
+test('the held bracket and playhead stay separate at 320 and 768 pixels', { timeout: 25000 }, async t => {
+  const directory = process.env.DETOUR_PHASE2_CAPTURES;
+  if (directory) mkdirSync(directory, { recursive: true });
+  for (const width of [320, 768]) {
+    const page = await player(t, width + 32);
+    await page.locator('.demo').evaluate((demo, target) => {
+      demo.style.width = `${target}px`;
+    }, width);
+    await seek(page, 42.35);
+    await page.getByRole('button', { name: 'Keep my place' }).click();
+    await seek(page, 18);
+    await page.mouse.move(0, 0);
+    await page.evaluate(() => document.activeElement?.blur());
+
+    const skin = page.locator('.detour');
+    const mark = page.locator('.detour-origin');
+    const thumb = page.locator('media-time-slider .detour-thumb');
+    const ticket = page.getByRole('button', { name: 'Return to 00:42' });
+    assert.equal((await skin.boundingBox()).width, width);
+    assert.ok(await ticket.isVisible());
+    assert.equal(await mark.evaluate(el => getComputedStyle(el).pointerEvents), 'none');
+    const position = await mark.boundingBox();
+    const currentPosition = await thumb.boundingBox();
+    assert.ok(position.x > currentPosition.x + currentPosition.width);
+    assert.ok(position.y + position.height < currentPosition.y);
+
+    if (directory) {
+      await skin.screenshot({ path: join(directory, `bracket-${width}.png`) });
+      await mark.evaluate(el => { el.hidden = true; });
+      await skin.screenshot({ path: join(directory, `text-only-${width}.png`) });
+      await mark.evaluate(el => { el.hidden = false; });
+    }
+
+    await seek(page, 42.35);
+    const overlap = await thumb.boundingBox();
+    const fixed = await mark.boundingBox();
+    assert.ok(Math.abs(overlap.x - fixed.x) < 4, 'Both markers should refer to the same time');
+    assert.ok(fixed.y + fixed.height < overlap.y, 'Both shapes remain distinct at the same timestamp');
+  }
+});
+
+test('Pausepoint pauses once on playback and skips over sought points', { timeout: 40000 }, async t => {
+  const dev = await createServer({ server: { host: '127.0.0.1', port: 0 }, logLevel: 'silent' });
+  t.after(() => dev.close());
+  await dev.listen();
+  const page = await browser.newPage();
+  t.after(() => page.close());
+  await page.goto(new URL('design/pausepoint/', dev.resolvedUrls.local[0]).href);
+  await page.waitForFunction(() => document.querySelector('video')?.readyState >= 2);
+  const target = page.getByRole('spinbutton', { name: 'Pause at (seconds)' });
+  const status = page.locator('#summary');
+  const transport = page.locator('media-play-button');
+  const mark = page.locator('.pausepoint-mark');
+  const wait = condition => page.waitForFunction(condition);
+
+  const arm = async time => {
+    await target.fill(String(time));
+    await target.press('Enter');
+    assert.match(await status.textContent(), /Pause armed/);
+    assert.ok(await mark.isVisible());
+  };
+
+  await seek(page, 17.4);
+  await arm(18.3);
+  await page.locator('video').evaluate(video => {
+    video.addEventListener('pause', () => {
+      video.dataset.pauseEvents = String(Number(video.dataset.pauseEvents ?? 0) + 1);
+    });
+  });
+  await transport.click();
+  await wait(() => document.querySelector('#summary').textContent.startsWith('Paused after'));
+  await wait(() => document.querySelector('video').paused);
+  const arrived = await current(page);
+  assert.ok(arrived >= 18.3 && arrived <= 18.9, `Pause landed at ${arrived}`);
+  assert.equal(await mark.isVisible(), false);
+  assert.equal(await page.locator('video').getAttribute('data-pause-events'), '1');
+  await transport.click();
+  await wait(() => document.querySelector('video').currentTime > 19);
+  assert.equal(await page.locator('video').getAttribute('data-pause-events'), '1');
+  await transport.click();
+
+  await seek(page, 18);
+  await arm(19);
+  await seek(page, 20);
+  assert.equal(await status.textContent(), 'Pause point skipped by seeking.');
+  assert.equal(await mark.isVisible(), false);
+
+  await seek(page, 18);
+  await arm(22);
+  await transport.click();
+  await wait(() => document.querySelector('video').currentTime > 18.1);
+  const priorPauseCount = await page.locator('video').getAttribute('data-pause-events');
+  await page.getByRole('slider', { name: 'Seek' }).press('PageUp');
+  await wait(() => document.querySelector('video').currentTime > 28.1);
+  assert.equal(await status.textContent(), 'Pause point skipped by seeking.');
+  assert.equal(await page.locator('video').evaluate(video => video.paused), false);
+  assert.equal(await page.locator('video').getAttribute('data-pause-events'), priorPauseCount);
+  t.diagnostic(`Armed at 18.3s, paused at ${arrived.toFixed(3)}s, then resumed. Paused seek and playing PageUp seek skipped the armed points.`);
 });

@@ -78,9 +78,9 @@
 .detour-buffered span { background: #84958c; }
 .detour-origin {
   position: absolute;
-  inset-block-start: calc(50% - 9px);
-  inline-size: 7px;
-  block-size: 18px;
+  inset-block-start: calc(50% - 18px);
+  inline-size: 8px;
+  block-size: 9px;
   border: 2px solid var(--detour-signal);
   border-inline-end: 0;
   margin-inline-start: -2px;

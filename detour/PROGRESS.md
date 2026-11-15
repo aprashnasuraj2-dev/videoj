@@ -1,15 +1,22 @@
 # DETOUR progress
 
-Phase: 02
-Resume step: 018
+Phase: 03
+Resume step: 021
 
 | Item | Current state |
 | --- | --- |
-| Verified | 20/100, including the Phase 01 live scan and concept decision, Phase 02 flow setup, reproducible v10 build, and saved-origin, marker and return behavior. |
-| Next | 018. Compare the live bracket and ticket against a text-only alternative at 320 and 768 px, then test and document Pausepoint's bounded backup behavior, step 019. |
-| Open dependencies | 002: joined-form eligibility remains entrant-side. 017: five uncoached first-use sessions remain open. 043: repeat on Safari/WebKit. Continue independent steps. |
-| Prototype / public release | Local production build passes four headless Chromium browser scenarios. Public URL, physical devices, bonuses and submission are pending. |
-| Source baseline | Initial DETOUR setup `21e24433c591c3588947e9caffa59e996bc2a914`. All product changes are under `detour/`. |
+| Verified | 23/100. Phase 2 visual decision, backup proof and core scope are recorded. |
+| Next | 021. Specify the desktop and compact control layout. Continue to 023 for the safe-origin specification after the verified state table at 022. |
+| Open dependencies | 002: joined-form eligibility remains entrant-side. 017: five uncoached first-use observations per task. 043: repeat real seek on Safari/WebKit. Continue independent steps. |
+| Prototype / public release | Production build and six local headless Chromium scenarios pass. Public URL, physical devices, bonuses and submission remain pending. |
+| Source baseline | Phase 2 started at `52301bc8cf3d6e93f18f7aa6700de024413d7845`. Changes are scoped to `detour/`. |
+
+## 2026-11-15 · Phase 2 visual decision and backup
+
+- Compared live player-only crops at 320 and 768 px with the bracket present and hidden. Retained the raised bracket and the explicit Return button. Current and held markers stay distinct even at the same timestamp.
+- Ran the isolated Pausepoint proof. Set 18.3s using the keyboard picker, observed one pause at 18.380s, resumed playback, and verified that seeking across armed targets while paused and while playing skips the point. The backup has a 2–4 hour switch estimate.
+- Locked the single-place scope and prepared the first-use moderator guide. Step 017 remains unchecked. The next independently actionable step is 021.
+- See the [crops and backup proof](design/PHASE-2.md), [concept scope](design/SCOPE.md), and [test evidence](submission-report/EVIDENCE.md#2026-11-15-phase-2-design-proof).
 
 ## 2026-11-15 · Competition refresh and playable prototype
 

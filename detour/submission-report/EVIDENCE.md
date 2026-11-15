@@ -4,7 +4,7 @@ Use one row per material result. Include the source SHA, browser and OS or devic
 
 | Capability | Acceptance steps | Status | Revision, environment, artifact |
 | --- | --- | --- | --- |
-| Signature discovery and first successful return | 012, 017, 090 | Pending | |
+| Signature discovery and first successful return | 012, 017, 018, 090 | Partial | [Controlled crops](../design/PHASE-2.md#visual-signature) and browser trace. Uncoached viewer results remain open. |
 | Held origin survives multiple real seeks; Return lands; Stay does not seek | 043, 052–055, 060 | Chromium pass; wider gate pending | See local test below. |
 | Source swap, stale event, duplicate input and retry | 059, 067–068 | Partial | Same-element reload passes. Delayed provider responses and repeated remounts remain open. |
 | Genuine playback and all essential controls | 051, 058, 070, 092–093 | Partial | Local Chromium play, pause, seek, time, mute and fullscreen. Broader volume and device checks open. |
@@ -24,3 +24,10 @@ For functional tests, record current and held times before and after, playback m
 - [Four local browser tests](../tests/browser.test.mjs) passed. At a paused 42.350s, Keep caused no time change. Seeking to 18s and 24s preserved the held marker, with Return landing at 42.350s on every one of ten runs and one observed seeking event per action. Keep did not pause or change the position. A separate playing return stayed playing.
 - At 240 and 375 px viewport widths, the accessible seek thumb responded to the arrow key and Stay did not move the playhead. Tests measured at least 44px targets and no horizontal overflow. A same-element source reload discarded the saved place. Captions, mute and Chromium fullscreen toggled from the real player.
 - Boundaries: Chromium headless and viewport tests, no physical-device or assistive-technology claims. Stock system Chromium was blocked by this executor's Unix-socket restriction; a compatible headless build instead ran the suite. Firefox, Safari/WebKit, user discovery and the public deployment remain open.
+
+## 2026-11-15 Phase 2 design proof
+
+- Source: the commit containing this entry and the [browser suite](../tests/browser.test.mjs). Debian Linux, Chromium 143.0.7499.0 headless, real 64s H.264 fixture. `npm run build` and all six browser scenarios passed.
+- [Matched player crops](../design/PHASE-2.md#visual-signature) show the same real frame and controls, with a documented A/B toggle of the held mark. Test measured the actual player widths and preserved distinct positions and shapes at coincidence. These are design comparison images.
+- [Isolated Pausepoint](../design/PHASE-2.md#pausepoint-backup) armed via keyboard, paused at 18.380s after a natural 18.3s crossing and resumed. Paused and playing seeks over an armed timestamp caused no extra pause.
+- Phase 2's [first-use study](../design/FIRST-USE.md) is ready to run. Participant recognition and completion rates have no observations yet.

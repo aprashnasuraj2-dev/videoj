@@ -125,25 +125,28 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Ask five uncoached users to identify the action in a two-second active-state crop. Give five a find-and-return task on a rough prototype, including at least two touch runs; record first click and time.
   - **Deliverable** — Small-sample results with video or notes.
   - **Pass condition** — At least 4 of 5 identify return and 4 of 5 complete the task in 10 seconds. Iterate once on failure, then reassess.
-  - **Progress** — [Human first-use checks still needed.](design/PROTOTYPE.md#next-checks)
+  - **Progress** — [Study protocol and crops ready. Five uncoached observations per task remain open.](design/FIRST-USE.md)
 
-- [ ] **018. Choose a visual signature**
+- [x] **018. Choose a visual signature**
   - **Objective** — Make the held origin recognizable inside the player crop.
   - **Work** — Use a bracket-shaped origin mark and a rectangular Return ticket aligned with the conventional rail. Compare it against a text-only mock and choose after cropping at 320 and 768 px.
   - **Deliverable** — Two crops and a recorded design choice.
   - **Pass condition** — The chosen crop shows current playhead and held origin as distinct shapes without a page title.
+  - **Evidence** — [Player-only A/B crops and decision at 320 and 768 px](design/PHASE-2.md#visual-signature)
 
-- [ ] **019. Build a backup proof sketch**
+- [x] **019. Build a backup proof sketch**
   - **Objective** — Keep a practical fallback within reach.
   - **Work** — Sketch Pausepoint with a future-time stop marker, a regular seek bar and a keyboard-operable time picker. Test crossing during ordinary play versus seeking, then estimate the switch cost.
   - **Deliverable** — One backup storyboard and cost note.
   - **Pass condition** — Backup can pause once when playing across the chosen timestamp. Seeking past it never silently pauses the video.
+  - **Evidence** — [Pausepoint storyboard, browser crossing and seek proof, and switch estimate](design/PHASE-2.md#pausepoint-backup)
 
-- [ ] **020. Freeze the concept scope**
+- [x] **020. Freeze the concept scope**
   - **Objective** — Align implementation around one memorable behavior.
   - **Work** — Lock a single source-scoped held place, source resets, ordinary seeking, return and stay. Defer persistent history, accounts, share links, automatic chapters and additional themes.
   - **Deliverable** — Signed-off behavior and scope brief.
   - **Pass condition** — Every required feature maps to the premise or essential player usability. No optional feature blocks core progress.
+  - **Evidence** — [Phase 3 concept scope and behavior boundaries](design/SCOPE.md)
 
 ## 03 · UX architecture and interaction rules
 
