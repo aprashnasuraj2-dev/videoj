@@ -43,6 +43,10 @@ The live-site page does **not** reuse the contest showcase video.
 - Observed duration in Cloudflare Browser Rendering after the delivery change: **46.94 seconds**.
 - NASA SVS states its visualizations are public domain unless otherwise noted; Aafnai Patro credits NASA SVS and links the source.
 
+## Branded asset dependency
+
+The editorial Worker now loads DETOUR CSS/JS only from the branded origin `https://detour.aafnaipatro.com`. The retired account-level Worker hostname is not referenced by the live-site Worker.
+
 ## Browser evidence
 
 Cloudflare Browser Rendering independently loaded the public editorial URL and observed:
