@@ -83,18 +83,17 @@
       <p>Begin with DHAGO, or bring another compatible player to see the same viewing conditions in a fresh space.</p>
       <div class="portable-loader-actions">
         <button type="button" id="portable-use-dhago">Use DHAGO</button>
-        <details class="portable-help portable-external"><summary>Bring another player (advanced)</summary>
-          <p>This option uses a small comparison bridge made for compatible players. It is not a link to an ordinary video file.</p>
+        <details class="portable-help portable-external"><summary>Compare another player</summary>
+          <p>Connect another compatible player and explore it under the same viewing conditions. Only use a player you trust.</p>
           <div class="portable-external-controls">
-        <label for="portable-adapter-url">Player bridge link</label>
-        <div class="portable-inline"><input id="portable-adapter-url" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/player-bridge.mjs"/><button type="button" id="portable-load-url">Connect</button></div>
-        <label for="portable-adapter-file">Player bridge file <span>.js / .mjs</span></label>
+        <label for="portable-adapter-url">Player connection link</label>
+        <div class="portable-inline"><input id="portable-adapter-url" type="url" inputmode="url" autocomplete="off" placeholder="https://example.com/player-connection"/><button type="button" id="portable-load-url">Connect</button></div>
+        <label for="portable-adapter-file">Player connection file</label>
         <input id="portable-adapter-file" type="file" accept=".js,.mjs,text/javascript,application/javascript"/>
           </div>
-          <p class="portable-doc-link"><a href="./stress-adapter.example.mjs" download>Download a sample bridge</a></p>
         </details>
       </div>
-      <details class="portable-help"><summary>Playback and privacy</summary><p>DHAGO works without connecting another player. Optional comparisons run in a separate browser space. If a bridge cannot load, the result is marked <strong>Not assessed</strong> instead of being treated as a playback failure. Files you choose stay on this device, although a connected third-party player may still make its own network requests.</p></details>
+      <details class="portable-help"><summary>Playback and privacy</summary><p>DHAGO works without connecting another player. Optional comparisons run in a separate browser space. If another player cannot connect, the result is marked <strong>Not assessed</strong> instead of being treated as a playback failure. Files you choose stay on this device, although a connected third-party player may still use its own network services.</p></details>
       <output id="portable-loader-status" class="portable-loader-status" aria-live="polite">Preparing the DHAGO player…</output>
     </section>
 
