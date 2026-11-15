@@ -11,6 +11,13 @@ Resume step: 082
 | Prototype / public release | Frozen Mux candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on immutable `detour-dist-a9bbfcb4ee68`; stable rollback/fallback remains `https://detour-release.praisethegreatfool.workers.dev/`. |
 | Source baseline | Phase 8 production source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a`: full CI 43706450932 green and immutable dist staged. Public Mux release verification 43707445255 passed from the later test-only harness; earlier full CI 43707040940 also remained green after adding the public gate. |
 
+## 2026-11-15 · Phase 9 recovery/capture candidate deployed for final public proof
+
+- Full run 43711976766 passed source `a3b43f74c7652c707c3703193ab1081820bafa79` across Chromium, Firefox and desktop WebKit. The new bounded WebKit settlement check observed **real native ended**, then visible ended/replay UI with `data-media-state=ended` in all three engines.
+- Successful CI staged **74 files** at immutable `detour-dist-a3b43f74c765`.
+- Updated only Cloudflare Worker `detour-mux-release` to that immutable branch; deployment id `df263a1169024f2598b63aec0bb41bbe`. The independent `detour-release` rollback remains untouched.
+- The final public evidence gate now points at this exact source/dist. It must prove the single recovery surface and regenerate the hero/detail/caption/recovery/alternate/clip set before 082–089 are promoted.
+
 ## 2026-11-15 · Phase 9 evidence review — recovery duplication and capture fidelity fixes (validation pending)
 
 - Evidence run 43711518943 successfully produced the hero, detail, compact, recovery, alternate-context and **6.32s** interaction clip after making held-state duration assertions source-aware. The clip returned to **42.0s** and uses real keyboard/focus input with no overlay that simulates playback.

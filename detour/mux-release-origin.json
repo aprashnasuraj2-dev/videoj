@@ -1,12 +1,12 @@
 {
   "origin": "https://detour-mux-release.praisethegreatfool.workers.dev/mux/",
-  "sourceSha": "c647d59d6f00dae6f753a20ebc163ef12bcd5992",
-  "distBranch": "detour-dist-c647d59d6f00",
+  "sourceSha": "a3b43f74c7652c707c3703193ab1081820bafa79",
+  "distBranch": "detour-dist-a3b43f74c765",
   "fallbackOrigin": "https://detour-release.praisethegreatfool.workers.dev/",
   "playbackId": "Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ",
   "staticMp4Url": "https://stream.mux.com/Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ/highest.mp4",
   "releaseWorker": "detour-mux-release",
   "releaseTag": "mux-bonus",
   "posterUrl": "https://image.mux.com/Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ/thumbnail.jpg?time=0",
-  "workerDeploymentId": "24268d4b668c4827b3cea936ba8fe113"
+  "workerDeploymentId": "df263a1169024f2598b63aec0bb41bbe"
 }
