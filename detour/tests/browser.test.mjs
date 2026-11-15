@@ -533,7 +533,10 @@ test('visual layout preserves the essential controls, targets and focus across e
     const thumb = page.getByRole('slider', { name: 'Seek' });
     await thumb.focus();
     await page.keyboard.press('ArrowLeft');
-    await page.waitForFunction(() => document.querySelector('video').currentTime < 42);
+    await page.waitForFunction(() => {
+      const video = document.querySelector('video');
+      return video.currentTime < 42 && !video.seeking;
+    });
     const ring = await page.locator('media-time-slider').evaluate(el => {
       const style = getComputedStyle(el);
       return [style.outlineStyle, style.outlineWidth, style.outlineOffset];
