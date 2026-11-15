@@ -29,13 +29,13 @@ captions.label = 'English';
 captions.src = captionsUrl;
 video.append(captions);
 
-const player = createDetourPlayer(video, { sourceKind: 'vod' });
+const player = createDetourPlayer(video, { sourceKind: 'vod', maxPlaces: 4, returnUi: 'marker' });
 document.querySelector('#example').append(player);
 const playerError = player.querySelector('.detour-error');
 
 function markIsActive() {
   const held = player.querySelector('.detour-held');
-  return Boolean(held && !held.hidden);
+  return Boolean(player.querySelector('.detour-checkpoint') || (held && !held.hidden));
 }
 
 function setSource(kind) {

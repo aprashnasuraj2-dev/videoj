@@ -105,6 +105,75 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+.detour-checkpoints {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.detour .detour-checkpoint {
+  position: absolute;
+  inset-block-start: 0;
+  transform: translateX(-50%);
+  inline-size: var(--detour-target);
+  min-inline-size: var(--detour-target);
+  block-size: var(--detour-target);
+  min-block-size: var(--detour-target);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--detour-signal);
+  pointer-events: auto;
+  overflow: visible;
+}
+.detour .detour-checkpoint[data-edge-start] { transform: translateX(0); }
+.detour .detour-checkpoint[data-edge-end] { transform: translateX(-100%); }
+.detour .detour-checkpoint:hover:not(:disabled),
+.detour .detour-checkpoint:active:not(:disabled),
+.detour .detour-checkpoint:disabled { background: transparent; }
+.detour .detour-checkpoint-tag {
+  position: absolute;
+  inset-block-start: 10px;
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 24px;
+  block-size: 24px;
+  padding-inline: .28rem;
+  border: 2px solid var(--detour-signal);
+  background: var(--detour-shelf);
+  color: var(--detour-signal);
+  box-shadow: 0 0 0 1px var(--detour-shelf);
+  font: 760 .68rem/1 var(--detour-clock-font);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.detour .detour-checkpoint[data-edge-start] .detour-checkpoint-tag {
+  inset-inline-start: 0;
+  transform: none;
+}
+.detour .detour-checkpoint[data-edge-end] .detour-checkpoint-tag {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  transform: none;
+}
+.detour .detour-checkpoint-detail { display: none; margin-inline-start: .35rem; font-weight: 650; }
+.detour .detour-checkpoint:hover:not(:disabled) .detour-checkpoint-tag,
+.detour .detour-checkpoint:focus-visible .detour-checkpoint-tag {
+  padding-inline: .42rem;
+  background: var(--detour-signal);
+  color: var(--detour-signal-ink);
+  z-index: 2;
+}
+.detour .detour-checkpoint:hover:not(:disabled) .detour-checkpoint-detail,
+.detour .detour-checkpoint:focus-visible .detour-checkpoint-detail { display: inline; }
+.detour .detour-checkpoint[data-returning] .detour-checkpoint-tag {
+  background: var(--detour-signal-pressed);
+  color: var(--detour-signal-ink);
+}
+
 .detour-bar {
   display: grid;
   grid-template-columns: auto minmax(max-content, 1fr) clamp(236px, 32cqi, 276px) auto;
@@ -176,10 +245,25 @@
 .detour-volume { inline-size: 3.2rem; margin-inline: .125rem .4rem; }
 .detour-volume .detour-thumb { inline-size: 6px; block-size: 9px; margin-inline-start: -3px; }
 .detour detour-place { grid-area: place; min-inline-size: 0; min-block-size: var(--detour-target); }
+.detour detour-place[data-return-ui='marker'] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--detour-gap);
+}
 .detour detour-place svg { inline-size: 16px; block-size: 16px; flex: none; }
 .detour-held { display: grid; grid-template-columns: minmax(0, 1fr) minmax(92px, 34%); gap: var(--detour-gap); }
 .detour .detour-hold, .detour .detour-return, .detour .detour-stay { overflow-wrap: anywhere; text-align: center; }
 .detour .detour-hold { inline-size: 100%; border-color: var(--detour-edge); }
+.detour .detour-place-count {
+  color: var(--detour-secondary);
+  font: 650 .68rem/1 var(--detour-clock-font);
+  font-variant-numeric: tabular-nums;
+}
+.detour .detour-clear {
+  border-color: var(--detour-edge);
+  color: var(--detour-secondary);
+  padding-inline: .65rem;
+}
 .detour .detour-return {
   background: var(--detour-signal);
   color: var(--detour-signal-ink);
@@ -262,7 +346,7 @@
 }
 @media (forced-colors: active) {
   .detour-origin[data-edge-end] { border-inline-end-color: ButtonText; }
-  .detour-origin, .detour .detour-hold, .detour .detour-return { border-color: ButtonText; }
+  .detour-origin, .detour .detour-hold, .detour .detour-return, .detour .detour-checkpoint-tag { border-color: ButtonText; }
   .detour-track, .detour-thumb { border: 1px solid ButtonText; }
   .detour-fill { border-block: 2px solid Highlight; }
   .detour :focus-visible, .detour media-time-slider:has(:focus-visible),

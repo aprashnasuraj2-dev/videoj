@@ -47,7 +47,7 @@ test('076 public Mux rendition is anonymously range-readable', { timeout: 30000 
   t.diagnostic(`Mux public range: 206 / ${bytes} B; matching time-zero poster ${posterBytes} B; playback ID ${config.playbackId}`);
 });
 
-test('076 production Mux host executes real Hold → seek → Return', { timeout: 45000 }, async t => {
+test('076 production Mux host keeps four persistent checkpoints and returns from the rail', { timeout: 45000 }, async t => {
   const page = await browser.newPage({ viewport: { width: 375, height: 667 } });
   try {
     await page.goto(new URL('mux/', server.resolvedUrls.local[0]).href, { waitUntil: 'domcontentloaded' });
@@ -58,19 +58,34 @@ test('076 production Mux host executes real Hold → seek → Return', { timeout
     assert.equal(media.paused, true);
     assert.ok(media.tracks.includes('captions'));
     assert.equal(await page.locator('.mux-panel').isVisible(), false, 'Healthy playback should not lead with infrastructure/recovery UI');
-    assert.match(await page.locator('.demo-heading p').textContent(), /Keep your place\. Explore another moment\. Return in one action\./);
+    assert.match(await page.locator('.demo-heading p').textContent(), /Keep more than one place\. Explore freely\. Return from the rail\./);
     assert.doesNotMatch(await page.locator('body').innerText(), /Mux-hosted|independent fallback/i);
-    await seekPlayer(page, 42.35);
-    await page.getByRole('button', { name: 'Keep my place' }).click();
-    await seekPlayer(page, 18);
-    await page.waitForFunction(() => document.querySelector('[data-detour-clock-current]')?.textContent === '00:18');
-    assert.equal((await page.locator('.detour-clock-visual').innerText()).replace(/\s+/g, ' ').trim(), '00:18 / 00:55');
-    await page.getByRole('button', { name: 'Return to 00:42' }).click();
-    await page.getByRole('button', { name: 'Keep my place' }).waitFor();
+
+    for (const seconds of [42.35, 30, 18, 8]) {
+      await seekPlayer(page, seconds);
+      await page.getByRole('button', { name: 'Keep my place' }).click();
+    }
+
+    assert.equal(await page.locator('.detour-checkpoint').count(), 4);
+    assert.equal(await page.locator('.detour-place-count').textContent(), '4/4');
+    assert.equal(await page.getByRole('button', { name: 'Keep my place' }).isDisabled(), true);
+
+    const first = page.getByRole('button', { name: /Return to 00:42 — checkpoint C1/ });
+    await first.hover();
+    assert.match((await first.innerText()).replace(/\s+/g, ' ').trim(), /C1 00:42/);
+
+    await seekPlayer(page, 15);
+    await first.click();
+    await page.waitForFunction(() => Math.abs(document.querySelector('video').currentTime - 42.35) < 0.5);
     const returned = await page.locator('video').evaluate(video => ({ time: video.currentTime, paused: video.paused }));
-    assert.ok(Math.abs(returned.time - 42.35) < 0.5, `Mux Return landed at ${returned.time}`);
+    assert.ok(Math.abs(returned.time - 42.35) < 0.5, `Mux checkpoint Return landed at ${returned.time}`);
     assert.equal(returned.paused, true);
-    t.diagnostic(`Mux host returned to ${returned.time.toFixed(3)}s from an 18s detour.`);
+    assert.equal(await page.locator('.detour-checkpoint').count(), 4, 'Returning must not consume a checkpoint');
+
+    await page.getByRole('button', { name: 'Clear all saved places' }).click();
+    assert.equal(await page.locator('.detour-checkpoint').count(), 0);
+    assert.equal(await page.getByRole('button', { name: 'Keep my place' }).isEnabled(), true);
+    t.diagnostic(`Mux host preserved C1–C4 and returned from 15s to ${returned.time.toFixed(3)}s via C1.`);
   } finally { await page.close(); }
 });
 
@@ -92,7 +107,7 @@ test('077 Mux outage exposes fallback and source replacement clears a held place
     await page.locator('[data-detour-fallback]').click();
     await page.waitForFunction(() => document.querySelector('video')?.currentSrc.includes('/showcase/detour-showcase-v1.mp4'));
     await waitForSeekable(page);
-    assert.equal(await page.locator('.detour-held').isVisible(), false, 'source replacement must clear stale held place');
+    assert.equal(await page.locator('.detour-checkpoint').count(), 0, 'source replacement must clear stale checkpoints');
     assert.match(await page.locator('[data-detour-source-status]').textContent(), /Playing the backup video/);
     await seekPlayer(page, 18);
   } finally { await page.close(); }

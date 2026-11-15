@@ -58,6 +58,14 @@ video.append(captions);
 document.querySelector('#player').append(
   createDetourPlayer(video, { sourceKind: 'vod' }),
 );
+
+// Optional multi-place mode: C1–C4 stay on the familiar seek rail.
+// Hover/focus reveals time; click/tap returns; Delete removes one checkpoint.
+const checkpointPlayer = createDetourPlayer(video.cloneNode(true), {
+  sourceKind: 'vod',
+  maxPlaces: 4,
+  returnUi: 'marker',
+});
 ```
 
 ### Build and verification
@@ -70,7 +78,7 @@ document.querySelector('#player').append(
 ### Reuse limits
 
 - Held-place behavior is enabled only when the host declares `sourceKind: 'vod'` on a native video with finite, seekable media.
-- DETOUR stores one held position per mounted player instance. A source change clears it; successful Return or **Stay here** consumes it.
+- DETOUR defaults to one held position per mounted player instance. Hosts may opt into up to four source-scoped checkpoints with `maxPlaces: 4`; marker mode keeps those checkpoints on the seek rail until the viewer clears them or the source changes.
 - Live streams, non-seekable media and audio keep the ordinary player shell but do not expose the held-place action.
 - Media URLs, poster, captions, titles, hosting and optional streaming providers are host concerns. The packed artifact excludes demo/showcase media and test fixtures.
 - `detour-video-skin/mux` contains public URL helpers only. Mux management credentials are never part of the package/browser contract.
@@ -81,7 +89,7 @@ The DETOUR package source is Apache-2.0; see `LICENSE`. The package tarball cont
 
 ## Product direction
 
-- **Player first.** Keep one source-scoped held point, five essential controls and real player state. Preserve normal play/pause, seeking, captions, keyboard and touch. The mark survives arbitrary seeks and clears on successful return, deliberate dismissal or a source change.
+- **Player first.** Keep one source-scoped held point by default, or opt into a bounded C1–C4 checkpoint rail, while preserving five essential controls and real player state. Preserve normal play/pause, seeking, captions, keyboard and touch. The mark survives arbitrary seeks and clears on successful return, deliberate dismissal or a source change.
 - **Own identity.** Use graphite, a bright angular hold marker and tabular time. Lead with a playable player or a real capture. Keep DHAGO’s woven interaction, footage, visual system, live routes and release workflows out of DETOUR.
 - **Prove the behavior early.** First build a rough real v10 MP4 prototype. Demonstrate a 42s → 18s → 42s round trip, held origin through two seeks, and “Stay here” without movement. Test first-use recognition, narrow touch and keyboard before adding polish. Backup: [Pausepoint](CHECKLIST.md#02--concept-definition-and-signature-interaction), an explicit one-time pause at a viewer-chosen timestamp.
 - **Ship in order.** Core skin → replacement-media mount → public anonymous playback and real-device evidence → optional Mux or real-site bonus → owner handoff. See the [rules register](submission-report/RULES.md) for release constraints. DETOUR can develop and rehearse while second-entry eligibility is being resolved.

@@ -15,6 +15,14 @@ Resume step: 091
 
 
 
+## 2026-11-16 · Multi-place checkpoint candidate implemented — verification pending
+
+- Owner proposed replacing the single always-visible Return surface with multiple timeline places. Implemented a backward-compatible package candidate: default hosts retain the original one-place explicit Return/Stay UI, while hosts can opt into `maxPlaces: 4` with `returnUi: 'marker'`.
+- In marker mode, C1–C4 persist on the familiar seek rail. Hover/focus expands each marker to show its timestamp; click/tap returns to that checkpoint without consuming it; Delete/Backspace removes the focused checkpoint; **Clear** removes all checkpoints for touch users. Near-duplicate saves are deduplicated and source changes clear all checkpoints.
+- The Mux competition route opts into the four-checkpoint mode and removes the permanent Return panel from its normal state. The package cap of four is deliberate: unlimited bookmarks would clutter the short showcase and weaken the reversible-seeking concept.
+- **Verification status:** this candidate is implemented but unverified. Keep the currently deployed frozen public runtime unchanged until full DETOUR CI, Mux-specific tests, package boundaries and browser regressions pass against this exact source.
+
+
 ## 2026-11-16 · Public-route incident check and redundant branded entry route
 
 - Owner reported `https://detour.aafnaipatro.com/mux/` as dead from their local network. Do not treat that single vantage as proof of global outage.
