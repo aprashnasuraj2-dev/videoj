@@ -11,6 +11,11 @@ Resume step: 072
 | Prototype / public release | Public-root composition and second production host pass locally. HTTPS publication is the remaining core media gate before Mux evaluation. |
 | Source baseline | Judge-demo/portability baseline: `34261f03c8df75bbeed847879de7269ab794fb55`, Actions run 43701045585. 073 and 074 pass; full DETOUR CI green. |
 
+## 2026-11-15 · Static release-asset materialization
+
+- Added a DETOUR-only write workflow that runs only when its own workflow file changes or by explicit manual dispatch. It regenerates the already-tested showcase and `daylight-study`, verifies duration and SHA-256s, then force-adds exactly six static media files and commits them if bytes changed.
+- This is intentionally separate from validation CI. It contains no Cloudflare/Mux credential and cannot touch DHAGO/Patro assets. Once materialized, Cloudflare Pages can run Vite without depending on FFmpeg in its build image.
+
 ## 2026-11-15 · Judge demo and portability accepted; HTTPS gate active
 
 - Exact source `34261f03c8df75bbeed847879de7269ab794fb55` passed [Actions run 43701045585](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43701045585).
