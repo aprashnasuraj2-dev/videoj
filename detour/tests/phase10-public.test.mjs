@@ -110,7 +110,8 @@ test('093 all five mandatory controls work on the deployed player with keyboard 
     await fullscreen.focus();
     await page.keyboard.press('Enter');
     await page.waitForFunction(() => Boolean(document.fullscreenElement));
-    await page.keyboard.press('Escape');
+    await fullscreen.focus();
+    await page.keyboard.press('Enter');
     await page.waitForFunction(() => !document.fullscreenElement);
 
     const settings = page.locator('.detour-settings');

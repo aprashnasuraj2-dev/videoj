@@ -11,6 +11,13 @@ Resume step: 092
 | Prototype / public release | Frozen Mux candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on immutable `detour-dist-a9bbfcb4ee68`; stable rollback/fallback remains `https://detour-release.praisethegreatfool.workers.dev/`. |
 | Source baseline | Phase 8 production source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a`: full CI 43706450932 green and immutable dist staged. Public Mux release verification 43707445255 passed from the later test-only harness; earlier full CI 43707040940 also remained green after adding the public gate. |
 
+## 2026-11-15 · Phase 10 first exact-public control run diagnostic
+
+- Run 43713238320 **passed 092**: exact public HTTPS source/dist headers, pinned @videojs/html 10.4.0, real captions, 42.35→18→42.350 Return and 206/1,024-byte backup all succeeded.
+- Step 093 reached and successfully **entered fullscreen by keyboard Enter**, then timed out waiting for native Escape to leave fullscreen. This does not show that the fullscreen control failed; it shows native Escape behavior is not a reliable proxy for activating the control's exit state in this automation context.
+- The public control gate now uses the same focused fullscreen button + **Enter** for both enter and exit. Settings still independently requires **Escape** to close its menu and restore focus. No product code or acceptance minimum is relaxed.
+- 092–095 remain unchecked until the corrected exact-head run completes and the final audit/package stages execute.
+
 ## 2026-11-15 · Phase 10 steps 092–095 implemented (acceptance pending)
 
 - Added `tests/phase10-public.test.mjs` against the **actual submitted candidate URL**, not local preview. Step 092 pins HTTPS/source/dist, @videojs/html **10.4.0**, real Mux playback, captions, 42.35→18→Return and a 206/1,024-byte independent backup probe.
