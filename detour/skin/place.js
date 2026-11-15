@@ -39,6 +39,9 @@ class DetourPlace extends HTMLElement {
     const hold = this.querySelector('.detour-hold');
     const held = this.querySelector('.detour-held');
     const back = this.querySelector('.detour-return');
+    const returnLabel = back.querySelector('span');
+    const returnTime = back.querySelector('bdi');
+    const returning = document.createTextNode('Returning…');
     const stay = this.querySelector('.detour-stay');
     const error = container.querySelector('.detour-error');
     const notice = container.querySelector('.detour-notice');
@@ -74,6 +77,13 @@ class DetourPlace extends HTMLElement {
       for (const button of rates) button.setAttribute('aria-pressed', String(Number(button.dataset.rate) === video.playbackRate));
     };
 
+    const renderMedia = () => {
+      const timeKnown = this.#ready && Number.isFinite(video.duration) && video.duration > 0;
+      container.toggleAttribute('data-time-known', timeKnown);
+      const loading = !this.#ready && video.networkState === HTMLMediaElement.NETWORK_LOADING;
+      const state = video.error ? 'error' : video.ended ? 'ended' : loading ? 'loading' : timeKnown ? 'ready' : 'unavailable';
+      if (container.dataset.mediaState !== state) container.dataset.mediaState = state;
+    };
     const render = () => {
       const allowed = accessible();
       const mark = this.#mark?.source === sourceKey() ? this.#mark : null;
@@ -101,7 +111,12 @@ class DetourPlace extends HTMLElement {
       origin.hidden = progress === null;
       if (progress !== null) {
         origin.style.insetInlineStart = `${progress}%`;
-        back.textContent = this.#attempt ? 'Returning…' : `Return to ${timeLabel(mark.time)}`;
+        origin.toggleAttribute('data-edge-end', progress >= 96);
+        if (this.#attempt) back.replaceChildren(returning);
+        else {
+          returnTime.textContent = timeLabel(mark.time);
+          if (returnLabel.parentElement !== back) back.replaceChildren(returnLabel);
+        }
       }
     };
 
@@ -231,13 +246,15 @@ class DetourPlace extends HTMLElement {
         const wasHeld = Boolean(this.#mark);
         clear(wasHeld ? 'Your place was cleared because the video changed.' : '', this.contains(document.activeElement) && wasHeld);
         error.hidden = true;
+        renderMedia();
         renderBuffer();
         renderSettings();
       }, { signal });
     }
-    for (const event of ['loadedmetadata', 'loadeddata', 'canplay', 'durationchange', 'progress', 'seeking', 'seeked']) {
+    for (const event of ['loadedmetadata', 'loadeddata', 'canplay', 'durationchange', 'progress', 'seeking', 'seeked', 'ended', 'playing', 'suspend']) {
       video.addEventListener(event, () => {
         this.#ready = video.readyState >= HTMLMediaElement.HAVE_METADATA;
+        renderMedia();
         render();
         renderBuffer();
         if (event === 'loadedmetadata' || event === 'canplay') renderSettings();
@@ -248,6 +265,7 @@ class DetourPlace extends HTMLElement {
       this.#sourceEpoch += 1;
       clear('This video could not load.', this.contains(document.activeElement));
       error.hidden = false;
+      renderMedia();
       renderSettings();
     }, { signal });
     error.querySelector('button').addEventListener('click', () => {
@@ -258,6 +276,7 @@ class DetourPlace extends HTMLElement {
     this.#ready = video.readyState >= HTMLMediaElement.HAVE_METADATA;
     this.#viewKey = undefined;
     this.#bufferKey = undefined;
+    renderMedia();
     render();
     renderBuffer();
     renderSettings();

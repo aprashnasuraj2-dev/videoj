@@ -222,65 +222,75 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
 
 ## 04 · Visual system and motion language
 
-- [ ] **031. Set the visual grammar**
+- [x] **031. Set the visual grammar**
   - **Objective** — Give DETOUR an original, stable player identity.
   - **Work** — Use matte graphite, cool off-white text and a safety-yellow held-place accent. Use square joins, a short bent bracket and tabular times. Keep caption surfaces and functional markings legible.
   - **Deliverable** — One-page token and geometry sheet.
   - **Pass condition** — Default and held states look coherent on bright, dark and mixed footage. Held state remains distinguishable without color.
+  - **Evidence** — [Palette and geometry](design/PHASE-4.md#tokens-and-geometry) and [dark, mixed and bright boards](design/PHASE-4.md#contrast-and-visual-evidence)
 
-- [ ] **032. Set typographic hierarchy**
+- [x] **032. Set typographic hierarchy**
   - **Objective** — Make playback information readable without crowding.
   - **Work** — Use an open, neutral sans, tabular numerals and readable casing. Keep time, Return and navigation labels distinct. Use one short visual label per action.
   - **Deliverable** — Type stack, scale and text specimens.
   - **Pass condition** — Long timestamps and translated action labels fit at 240 px without ellipsis on the core action.
+  - **Evidence** — [Type stack and responsive copy](design/PHASE-4.md#tokens-and-geometry) and [240 px long-copy probe](tests/browser.test.mjs)
 
-- [ ] **033. Design the rail and origin mark**
+- [x] **033. Design the rail and origin mark**
   - **Objective** — Show both positions with one conventional control.
   - **Work** — Draw linear rail, fill, accessible focus style and separate origin notch with an always-readable ticket. Offset or simplify the notch at the ends without moving its true position.
   - **Deliverable** — Rail component visual states.
   - **Pass condition** — Current head and origin at identical, near and far positions remain identifiable. Decorative marks cannot capture input.
+  - **Evidence** — [Rail geometry](design/PHASE-4.md#tokens-and-geometry) and [endpoint, near and coincident marker checks](tests/browser.test.mjs)
 
-- [ ] **034. Design transport and options**
+- [x] **034. Design transport and options**
   - **Objective** — Give the signature room while protecting core controls.
   - **Work** — Set reusable icon, button, hover, pressed, disabled and focus styles. Move rate or secondary actions into a bounded menu only when needed. Keep mute and fullscreen labeled to assistive tech.
   - **Deliverable** — Control family and compact menu drawings.
   - **Pass condition** — Common operations have consistent appearance and pressed state. No essential item disappears behind settings.
+  - **Evidence** — [Control family and visible states](design/PHASE-4.md#motion-and-visible-states) and [transport and settings layout checks](tests/browser.test.mjs)
 
-- [ ] **035. Build a deliberate responsive system**
+- [x] **035. Build a deliberate responsive system**
   - **Objective** — Scale the player by container width.
   - **Work** — At 240-319 px put the action on its own row with wrapping. From 320 px preserve 44 px signature targets. At 600 px and above align the return ticket beside supporting actions when space allows.
   - **Deliverable** — Container layout grid and breakpoint examples.
   - **Pass condition** — Design fits 240, 320, 375, 768 and desktop widths without overflow, target overlap or clipped focus.
+  - **Evidence** — [Container rules at six tested widths](design/PHASE-4.md#container-rules)
 
-- [ ] **036. Define motion around the hold**
+- [x] **036. Define motion around the hold**
   - **Objective** — Make the state change visible without screen movement.
   - **Work** — Use a short opacity or transform handoff on the held marker, then keep it fixed. Reserve the shelf size to avoid hunting controls and remove nonessential animation for reduced motion.
   - **Deliverable** — Motion timings and reduced-motion alternatives.
   - **Pass condition** — Transition completes in 160 ms or less, never animates the true playback clock and causes no control displacement.
+  - **Evidence** — [140 ms motion and reduced-motion behavior](design/PHASE-4.md#motion-and-visible-states) and [motion/geometry checks](tests/browser.test.mjs)
 
-- [ ] **037. Resolve real playback statuses**
+- [x] **037. Resolve real playback statuses**
   - **Objective** — Keep loading and problems legible within the design.
   - **Work** — Specify real loading, buffering, returning, ended, no poster, error and retry surfaces. Preserve the held label on a recoverable return failure.
   - **Deliverable** — State sheet against two contrasting films.
   - **Pass condition** — Status is distinguishable from a held place, captions remain visible, and unavailable values are represented honestly.
+  - **Evidence** — [Status states](design/PHASE-4.md#motion-and-visible-states) and [loading, error and two-fixture proof](submission-report/EVIDENCE.md#2026-11-15-phase-4-visual-proof)
 
-- [ ] **038. Define contrast and focus tokens**
+- [x] **038. Define contrast and focus tokens**
   - **Objective** — Make the design robust under common accessibility modes.
   - **Work** — Measure text and component contrast against the opaque shelf. Add a visible outline using only readable system colors in forced colors. Include focus over the darkest and brightest frames.
   - **Deliverable** — Contrast measurements and mode samples.
   - **Pass condition** — Normal text reaches 4.5:1 and relevant UI boundaries reach 3:1. Keyboard focus and origin shape remain visible in forced colors.
+  - **Evidence** — [Measured ratios and forced-colors sample](design/PHASE-4.md#contrast-and-visual-evidence)
 
-- [ ] **039. Compose player-only views**
+- [x] **039. Compose player-only views**
   - **Objective** — Prove the player carries the visual idea.
   - **Work** — Prepare wide, narrow and bright-footage concept boards. Crop to the player edge and compare those with and without a held point and visible caption cue.
   - **Deliverable** — Three design boards for internal review.
   - **Pass condition** — Each exposes the actual control hierarchy. A project title, surrounding site or themed footage is unnecessary for recognition.
+  - **Evidence** — [Three paired player-only boards](design/PHASE-4.md#contrast-and-visual-evidence)
 
-- [ ] **040. Lock the visual acceptance sheet**
+- [x] **040. Lock the visual acceptance sheet**
   - **Objective** — Give build and QA a shared target.
   - **Work** — Annotate measurements, font, focus, placement, contrast, icon state and motion. Label sketches as design only. Use a single token set and reserve evidence slots for real player captures.
   - **Deliverable** — Buildable acceptance sheet.
   - **Pass condition** — Every critical state has a reference. The build can be compared to explicit size, spacing and behavior checks.
+  - **Evidence** — [Visual acceptance sheet and reproducible gallery](design/PHASE-4.md)
 
 ## 05 · Video.js v10 implementation architecture
 

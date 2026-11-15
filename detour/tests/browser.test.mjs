@@ -333,6 +333,8 @@ test('keyboard Home and End, natural end, and return without autoplay', { timeou
   await seek(page, 63.55);
   await page.locator('media-play-button').click();
   await page.waitForFunction(() => document.querySelector('video').ended);
+  assert.ok(await page.locator('.detour-ended').isVisible());
+  assert.ok(await page.locator('.detour-replay').isVisible());
   const back = page.getByRole('button', { name: 'Return to 00:42' });
   await back.focus();
   await page.keyboard.press('Enter');
@@ -437,6 +439,7 @@ test('failed and stale provider results preserve the active hold', { timeout: 25
   await back.click();
   await page.locator('.detour-notice').waitFor();
   assert.ok(await back.isEnabled());
+  assert.ok(await back.isVisible(), 'A failed seek must keep the labeled place visible');
   assert.equal(await current(page), 18);
   await page.locator('video-player').evaluate(player => player.setReturnOutcome('delay'));
   await back.click();
@@ -486,4 +489,228 @@ test('emulated tap can seek and return without dragging', { timeout: 18000 }, as
   await page.getByRole('button', { name: 'Return to 00:42' }).tap();
   await page.getByRole('button', { name: 'Keep my place' }).waitFor();
   assert.ok(Math.abs(await current(page) - 42.35) < 0.1);
+});
+
+test('visual layout preserves the essential controls, targets and focus across embed widths', { timeout: 40000 }, async t => {
+  for (const width of [240, 320, 375, 600, 768, 1100]) {
+    const page = await player(t, width + 32);
+    const skin = page.locator('.detour');
+    await page.locator('.demo').evaluate((demo, size) => { demo.style.width = size + 'px'; }, width);
+    await seek(page, 42.35);
+
+    const essentials = ['media-time-slider', 'media-play-button', '.detour-clock', 'media-mute-button', 'media-fullscreen-button'];
+    const playerBox = async locator => {
+      const origin = await skin.boundingBox();
+      const box = await locator.boundingBox();
+      return { ...box, x: box.x - origin.x, y: box.y - origin.y };
+    };
+    const geometry = async () => Promise.all(essentials.map(selector => playerBox(page.locator(selector))));
+    const before = await geometry();
+    const hold = page.getByRole('button', { name: 'Keep my place' });
+    await hold.click();
+    const back = page.getByRole('button', { name: 'Return to 00:42' });
+    const stay = page.getByRole('button', { name: 'Stay here' });
+    const returnBox = await playerBox(back);
+    const stayBox = await playerBox(stay);
+    assert.deepEqual(await geometry(), before, `Holding a place moved an essential control at ${width}px`);
+    for (const box of [returnBox, stayBox]) {
+      assert.ok(box.width >= 44 && box.height >= 44, `Target under 44px at ${width}px`);
+    }
+    assert.ok(returnBox.x + returnBox.width <= stayBox.x + 0.1);
+    const skinBox = await skin.boundingBox();
+    assert.equal(skinBox.width, width);
+    const boxes = [...before, returnBox, stayBox];
+    for (const [i, box] of boxes.entries()) {
+      assert.ok(box.x >= 0 && box.x + box.width <= skinBox.width);
+      for (const other of boxes.slice(i + 1)) {
+        const overlapX = Math.min(box.x + box.width, other.x + other.width) - Math.max(box.x, other.x);
+        const overlapY = Math.min(box.y + box.height, other.y + other.height) - Math.max(box.y, other.y);
+        assert.ok(overlapX <= 0.1 || overlapY <= 0.1, `Controls overlap at ${width}px`);
+      }
+    }
+    if (width >= 600) assert.ok(Math.abs(returnBox.y - before[1].y) < 2);
+    else assert.ok(returnBox.y >= before[1].y + before[1].height);
+    const thumb = page.getByRole('slider', { name: 'Seek' });
+    await thumb.focus();
+    await page.keyboard.press('ArrowLeft');
+    await page.waitForFunction(() => document.querySelector('video').currentTime < 42);
+    const ring = await page.locator('media-time-slider').evaluate(el => {
+      const style = getComputedStyle(el);
+      return [style.outlineStyle, style.outlineWidth, style.outlineOffset];
+    });
+    assert.deepEqual(ring, ['solid', '2px', '-2px']);
+
+    if (width === 240) {
+      await skin.evaluate(el => { el.dir = 'rtl'; });
+      await back.evaluate(button => {
+        button.querySelector('span').firstChild.textContent = 'العودة إلى موضع المشاهدة المحفوظ سابقًا عند ';
+        button.querySelector('bdi').textContent = '100:59:59';
+      });
+      await stay.evaluate(button => { button.textContent = 'استمر في المشاهدة هنا'; });
+      for (const selector of ['.detour-return', '.detour-stay']) {
+        assert.ok(await page.locator(selector).evaluate(el => el.scrollWidth <= el.clientWidth + 1));
+      }
+      assert.match(await page.locator('.detour-return').textContent(), /100:59:59/);
+    }
+    assert.ok(await skin.evaluate(el => el.scrollWidth <= el.clientWidth + 1), `Overflow at ${width}px`);
+    await page.close();
+  }
+});
+
+test('rail endpoints keep the bracket stem anchored and motion respects reduced mode', { timeout: 20000 }, async t => {
+  const page = await player(t, 272);
+  await page.locator('.demo').evaluate(el => { el.style.width = '240px'; });
+  const rail = page.locator('.detour-rail');
+  const mark = page.locator('.detour-origin');
+  const hold = page.getByRole('button', { name: 'Keep my place' });
+  const stay = page.getByRole('button', { name: 'Stay here' });
+  for (const time of [0, 63.8]) {
+    await seek(page, time);
+    const before = await rail.boundingBox();
+    await hold.click();
+    const p = await mark.evaluate(el => {
+      const style = getComputedStyle(el);
+      const box = el.getBoundingClientRect();
+      return { left: box.left, right: box.right, start: parseFloat(style.borderInlineStartWidth),
+        end: parseFloat(style.borderInlineEndWidth), duration: parseFloat(style.animationDuration),
+        pointer: style.pointerEvents, tab: el.tabIndex };
+    });
+    const stem = time ? p.right - 1 : p.left + 1;
+    assert.ok(Math.abs(stem - (before.x + before.width * time / 64)) < 1.5);
+    assert.equal(p.start, time ? 0 : 2);
+    assert.equal(p.end, time ? 2 : 0);
+    assert.equal(p.duration, 0.14);
+    assert.equal(p.pointer, 'none');
+    assert.equal(p.tab, -1);
+    await seek(page, time ? 62.8 : 1);
+    assert.deepEqual(await rail.boundingBox(), before);
+    await stay.click();
+  }
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await hold.click();
+  assert.equal(await mark.evaluate(el => getComputedStyle(el).animationName), 'none');
+  await page.emulateMedia({ forcedColors: 'active' });
+  await page.getByRole('slider', { name: 'Seek' }).focus();
+  await page.keyboard.press('ArrowLeft');
+  assert.ok(await page.evaluate(() => matchMedia('(forced-colors: active)').matches));
+  assert.equal(await page.locator('media-time-slider').evaluate(el => getComputedStyle(el).outlineWidth), '2px');
+  assert.equal(await mark.evaluate(el => getComputedStyle(el).borderInlineEndWidth), '2px');
+  if (process.env.DETOUR_PHASE4_CAPTURES) {
+    const directory = process.env.DETOUR_PHASE4_CAPTURES;
+    mkdirSync(directory, { recursive: true });
+    await page.locator('.detour').screenshot({ path: join(directory, 'forced-colors.jpg'), quality: 89 });
+  }
+});
+
+test('media status shows measured loading, provider waiting, error and retry', { timeout: 28000 }, async t => {
+  const page = await browser.newPage();
+  t.after(() => page.close());
+  let release;
+  const pending = new Promise(resolve => { release = resolve; });
+  t.after(release);
+  const fixture = /navigation-study\.mp4$/;
+  await page.route(fixture, async route => { await pending; await route.continue(); });
+  await page.goto(baseURL, { waitUntil: 'domcontentloaded' });
+  await page.locator('.detour-loading').waitFor();
+  assert.ok(await page.locator('.detour-clock-empty').isVisible());
+  assert.equal(await page.locator('.detour-screen video').getAttribute('poster'), null);
+  release();
+  await page.locator('.detour-hold:enabled').waitFor();
+  assert.equal(await page.locator('.detour-loading').isVisible(), false);
+  assert.ok(await page.locator('.detour-clock-values').isVisible());
+  await page.locator('media-play-button').click();
+  await page.waitForFunction(() => document.querySelector('video').currentTime > 0);
+  await page.locator('video').evaluate(video => {
+    Object.defineProperties(video, {
+      readyState: { configurable: true, value: HTMLMediaElement.HAVE_CURRENT_DATA },
+      currentTime: { configurable: true, value: video.currentTime },
+    });
+    video.dispatchEvent(new Event('waiting'));
+  });
+  const buffer = page.locator('.detour-buffer');
+  await buffer.waitFor({ timeout: 5000 });
+  const picture = await page.locator('.detour-screen').boundingBox();
+  assert.ok((await buffer.boundingBox()).y > picture.y + picture.height);
+  await page.locator('video').evaluate(video => {
+    delete video.readyState;
+    delete video.currentTime;
+    video.dispatchEvent(new Event('playing'));
+  });
+  await page.locator('media-play-button').click();
+  await buffer.waitFor({ state: 'hidden' });
+  const broken = /navigation-study\.mp4\?broken=1$/;
+  await page.route(broken, route => route.fulfill({ status: 404 }));
+  await page.locator('video').evaluate(video => {
+    const source = new URL(video.currentSrc);
+    source.searchParams.set('broken', '1');
+    video.src = source.href;
+  });
+  const retry = page.getByRole('button', { name: 'Try again' });
+  await retry.waitFor();
+  assert.ok(await page.locator('.detour-clock-empty').isVisible());
+  await page.unroute(broken);
+  await retry.click();
+  await page.locator('.detour-hold:enabled').waitFor();
+  assert.equal(await retry.isVisible(), false);
+});
+
+test('player-only treatments keep captions and held place readable on dark, mixed and bright media', { timeout: 36000 }, async t => {
+  const directory = process.env.DETOUR_PHASE4_CAPTURES;
+  if (directory) mkdirSync(directory, { recursive: true });
+  const boards = [
+    { key: 'wide-dark', width: 900, time: 2 },
+    { key: 'narrow-mixed', width: 320, time: 18 },
+    { key: 'wide-bright', width: 768, time: 18, source: 'daylight-study' },
+  ];
+  for (const { key, width, time, source } of boards) {
+    const page = await player(t, width + 32);
+    await page.locator('.demo').evaluate((el, size) => { el.style.width = size + 'px'; }, width);
+    if (source) {
+      await page.locator('video').evaluate((video, name) => new Promise(resolve => {
+        video.addEventListener('loadeddata', resolve, { once: true });
+        const track = video.querySelector('track');
+        track.src = new URL(`fixtures/${name}.vtt`, document.baseURI).href;
+        video.src = new URL(`fixtures/${name}.mp4`, document.baseURI).href;
+      }), source);
+    }
+    const skin = page.locator('.detour');
+    if (source) {
+      const pair = await skin.evaluate(el => {
+        const style = getComputedStyle(el);
+        const tokens = ['ink', 'secondary', 'shelf', 'edge', 'panel', 'signal-ink', 'signal', 'focus'];
+        const linearize = n => n <= .04045 ? n / 12.92 : ((n + .055) / 1.055) ** 2.4;
+        const light = name => {
+          const hex = style.getPropertyValue(`--detour-${name}`).trim().slice(1);
+          return [0, 2, 4].map(i => linearize(parseInt(hex.slice(i, i + 2), 16) / 255))
+            .reduce((sum, value, i) => sum + value * [.2126, .7152, .0722][i], 0);
+        };
+        return Object.fromEntries(tokens.map(name => [name, light(name)]));
+      });
+      for (const [a, b, minimum] of [['ink', 'shelf', 4.5], ['secondary', 'shelf', 4.5],
+        ['signal-ink', 'signal', 4.5], ['edge', 'shelf', 3], ['edge', 'panel', 3], ['focus', 'shelf', 3]]) {
+        const [low, high] = [pair[a], pair[b]].sort((x, y) => x - y);
+        assert.ok((high + .05) / (low + .05) >= minimum, `Contrast for ${a}/${b}`);
+      }
+    }
+    const take = async state => {
+      if (directory) await skin.screenshot({ path: join(directory, `${key}-${state}.jpg`), quality: 89, animations: 'disabled' });
+    };
+    await seek(page, time);
+    await page.locator('media-captions-button').click();
+    await page.waitForFunction(() => document.querySelector('video').textTracks[0].activeCues?.length > 0);
+    assert.equal(await page.locator('media-captions-button[data-active] span').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(241, 244, 236)');
+    await page.mouse.move(0, 0);
+    await page.evaluate(() => document.activeElement?.blur());
+    await take('idle');
+    await seek(page, 42.35);
+    await page.getByRole('button', { name: 'Keep my place' }).click();
+    await seek(page, time);
+    await page.waitForFunction(() => document.querySelector('video').textTracks[0].activeCues?.length > 0);
+    await page.mouse.move(0, 0);
+    await page.evaluate(() => document.activeElement?.blur());
+    assert.ok(await page.getByRole('button', { name: 'Return to 00:42' }).isVisible());
+    assert.ok(await page.locator('.detour-origin').isVisible());
+    await take('held');
+    await page.close();
+  }
 });

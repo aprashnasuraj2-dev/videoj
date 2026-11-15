@@ -17,9 +17,7 @@ import './player.css';
 
 const interfaceMarkup = `
   <media-container class="detour" lang="en">
-    <div class="detour-screen">
-      <media-buffering-indicator class="detour-buffer">Buffering</media-buffering-indicator>
-    </div>
+    <div class="detour-screen"></div>
     <div class="detour-shelf">
       <div class="detour-rail">
         <media-time-slider label="Seek" step="1" large-step="10">
@@ -36,11 +34,15 @@ const interfaceMarkup = `
           <media-play-button class="detour-icon">
             <svg class="detour-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4.7v14.6L19 12z" fill="currentColor"/></svg>
             <svg class="detour-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3v14H7zm7 0h3v14h-3z" fill="currentColor"/></svg>
+            <svg class="detour-replay" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 10a7 7 0 1 1 1 6M5 5v5h5"/></svg>
           </media-play-button>
           <div class="detour-clock">
-            <media-time type="current"></media-time>
-            <span aria-hidden="true">/</span>
-            <media-time type="duration"></media-time>
+            <div class="detour-clock-values">
+              <media-time type="current"></media-time>
+              <span aria-hidden="true">/</span>
+              <media-time type="duration"></media-time>
+            </div>
+            <span class="detour-clock-empty"><span aria-hidden="true">— / —</span><span class="detour-sr-only">Time unavailable</span></span>
           </div>
         </div>
         <div class="detour-options">
@@ -55,13 +57,13 @@ const interfaceMarkup = `
           </media-volume-slider>
           <media-captions-button class="detour-icon detour-cc"><span aria-hidden="true">CC</span></media-captions-button>
           <media-fullscreen-button class="detour-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M9 5H5v4m10-4h4v4M5 15v4h4m10-4v4h-4"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path class="detour-expand" d="M9 5H5v4m10-4h4v4M5 15v4h4m10-4v4h-4"/><path class="detour-contract" d="M5 9h4V5m10 4h-4V5M5 15h4v4m10-4h-4v4"/></svg>
           </media-fullscreen-button>
         </div>
         <detour-place hidden>
           <button type="button" class="detour-hold"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M13 3H6v12h7" fill="none" stroke="currentColor" stroke-width="2"/></svg>Keep my place</button>
           <div class="detour-held" hidden>
-            <button type="button" class="detour-return"></button>
+            <button type="button" class="detour-return"><span>Return to <bdi class="detour-return-time"></bdi></span></button>
             <button type="button" class="detour-stay">Stay here</button>
           </div>
         </detour-place>
@@ -75,8 +77,13 @@ const interfaceMarkup = `
           <button type="button" data-rate="1.25">1.25×</button>
         </div>
       </div>
+      <div class="detour-media-status">
+        <span class="detour-loading">Loading video…</span>
+        <media-buffering-indicator class="detour-buffer">Buffering…</media-buffering-indicator>
+        <span class="detour-ended">Video ended</span>
+      </div>
       <p class="detour-notice" hidden></p>
-      <p class="detour-live" role="status" aria-live="polite" aria-atomic="true"></p>
+      <p class="detour-sr-only detour-live" role="status" aria-live="polite" aria-atomic="true"></p>
       <div class="detour-error" hidden><span>This video could not load.</span> <button type="button">Try again</button></div>
     </div>
   </media-container>

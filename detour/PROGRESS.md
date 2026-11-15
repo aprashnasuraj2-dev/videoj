@@ -1,15 +1,22 @@
 # DETOUR progress
 
-Phase: 04
-Resume step: 031
+Phase: 05
+Resume step: 042
 
 | Item | Current state |
 | --- | --- |
-| Verified | 32/100. Phase 3 controls, origin, seek settlement, and interaction walkthrough are recorded. |
-| Next | 031. Set visual grammar for the now-verified layout and controls, then continue Phase 4. |
+| Verified | 42/100. All Phase 4 visual and motion checkpoints have local evidence. |
+| Next | 042. Formalize the independently loadable skin boundary, its host media slot and separate optional Mux module. |
 | Open dependencies | 002: joined-form eligibility. 017: uncoached first-use observations. 043: real seek on Safari/WebKit. Continue independent steps. |
-| Prototype / public release | Production build and 11 local headless Chromium scenarios passed. Candidate custom hostname: `detour.aafnaipatro.com`. [Mux, Cloudflare and Drive plan](submission-report/RELEASE-PLAN.md) is staged for release milestones. |
-| Source baseline | Phase 3 started at `1a2aa9a365dbfa874ea8515d491b09087f316b3e`. Changes are scoped to `detour/`. |
+| Prototype / public release | Production build and 15 local headless Chromium scenarios passed. [Mux, Cloudflare and Drive milestones](submission-report/RELEASE-PLAN.md) remain on the release path. |
+| Source baseline | Phase 4 started at `e85bc059969102d25e2e707f40d79b3c792e35c5`. Changes are scoped to `detour/`. |
+
+## 2026-11-15 · Phase 4 visual system
+
+- Implemented the opaque graphite shelf, separate white playhead and safety-lime bracket, and tabular Return ticket. The stem holds its exact rail position as its arms flip inward near the end.
+- Verified 240, 320, 375, 600, 768 and 1100 px layouts, including the 600 px inline threshold. The regular Hold transition preserves transport geometry. Reduced-motion and forced-colors cases were measured in Chromium.
+- Added visible loading, waiting, ended, no-time and retry treatments. A separate bright fixture demonstrates the same controls, native captions and kept-place behavior.
+- Locked the [visual acceptance sheet](design/PHASE-4.md) with three paired player-only boards and a forced-colors sample. See the [test evidence](submission-report/EVIDENCE.md#2026-11-15-phase-4-visual-proof).
 
 ## 2026-11-15 · Phase 3 interaction and release decisions
 

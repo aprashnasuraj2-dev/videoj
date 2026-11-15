@@ -8,9 +8,9 @@ Use one row per material result. Include the source SHA, browser and OS or devic
 | Held origin survives multiple real seeks; Return lands; Stay does not seek | 043, 052–055, 060 | Chromium pass; wider gate pending | See local test below. |
 | Source swap, stale event, duplicate input and retry | 059, 067–068 | Partial | Same-element reload passes. Delayed provider responses and repeated remounts remain open. |
 | Genuine playback and all essential controls | 051, 058, 070, 092–093 | Partial | Local Chromium play, pause, seek, time, mute and fullscreen. Broader volume and device checks open. |
-| Narrow embeds, real mobile, keyboard, assistive tech and contrast | 061–066, 070 | Pending | |
+| Narrow embeds, real mobile, keyboard, assistive tech and contrast | 035, 038, 061–066, 070 | Partial | [Visual grid and contrast](../design/PHASE-4.md). Physical-device and assistive-technology sessions remain open. |
 | Core payload and interaction performance relative to Scaffold | 069 | Pending | |
-| Same skin on arbitrary replacement media | 060, 074 | Pending | |
+| Same skin on arbitrary replacement media | 060, 074 | Partial | A locally generated second video and captions rendered through the same player. General integration gates remain open. |
 | Authentic wide, mobile and interaction captures | 082–089 | Pending | |
 | Public bonus playback and fallback, if claimed | 075–077, 097 | Pending | |
 | Genuine second context, if claimed | 078, 097 | Pending | |
@@ -39,3 +39,11 @@ For functional tests, record current and held times before and after, playback m
 - Home and End reached the VOD bounds. A real Chromium touch-emulation tap sought near 19s and Return landed at 42.350s. Paused, playing and ended paths preserved intent. Stay cleared without seeking and focus returned to Keep.
 - Controlled provider fixtures covered malformed durations, finite live classification, empty and moving seekable ranges, disjoint buffers, rejected seeks, manual-seek precedence and a stale completion after reloading the same URL. A preserved mark could be retried. The source-reload test also exercised real loading. Empty media and a removed caption track were checked separately.
 - Physical-device, desktop WebKit, screen-reader and human discovery checks remain open.
+
+## 2026-11-15 Phase 4 visual proof
+
+- Source: the exact commit with this entry, the [built visual system](../skin/player.css) and the [browser suite](../tests/browser.test.mjs). Debian Linux, Chromium 143.0.7499.0 headless. Build and 15/15 scenarios passed.
+- Actual player widths 240, 320, 375, 600, 768 and 1100 px. Geometry measured relative to the player. Core transport had no displacement on Keep, no target overlap and no clipped keyboard ring. Return and Stay retained 44 px targets. Long Arabic QA copy with an extended timestamp fit the 240 px embed.
+- Tested actual range anchors near zero and the end, a closely spaced seek, motion reduced to none and emulated forced colors. Contrast tested against solid runtime CSS tokens. The weakest audited text pair was 7.12:1 and weakest component boundary pair 3.18:1.
+- A held HTTP response exposed loading and the unavailable clock. A controlled decoder-wait state verified delayed buffer UI. Real playback exercised ended and replay. A 404 followed by native retry verified source recovery, and a rejected Return retained the labeled point.
+- [Six player-only captures and a forced-colors sample](../design/PHASE-4.md#contrast-and-visual-evidence) record local design evidence. Desktop WebKit, physical devices, independent first-use results and public-release qualification remain pending.

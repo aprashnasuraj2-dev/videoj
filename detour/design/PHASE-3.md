@@ -2,6 +2,8 @@
 
 ## Layout and caption boundary
 
+See the [Phase 4 acceptance sheet](PHASE-4.md#container-rules) for the current fitted breakpoints.
+
 | Area | Desktop, 720 px and wider | Compact, under 720 px |
 | --- | --- | --- |
 | Picture and captions | Native captions inside the picture. | Same media boundary. A two-line cue can appear while Keep or Return is visible. |
