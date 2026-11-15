@@ -21,12 +21,13 @@ async function seek(page, seconds) {
   await page.waitForFunction(time => Math.abs(document.querySelector('video').currentTime - time) < 0.5, seconds, { timeout: 10000 });
 }
 
-async function heldState(page) {
+async function heldState(page, expectedDuration) {
   await seek(page, 42.35);
   await page.getByRole('button', { name: 'Keep my place' }).click();
   await seek(page, 18);
   await page.waitForFunction(() => document.querySelector('[data-detour-clock-current]')?.textContent === '00:18');
-  assert.equal((await page.locator('.detour-clock-visual').innerText()).replace(/\s+/g, ' ').trim(), '00:18 / 00:55');
+  const clock = (await page.locator('.detour-clock-visual').innerText()).replace(/\s+/g, ' ').trim();
+  assert.equal(clock, `00:18 / ${expectedDuration}`);
   await page.getByRole('button', { name: 'Return to 00:42' }).waitFor();
 }
 
@@ -37,7 +38,7 @@ try {
     const page = await context.newPage();
     await page.goto(release.origin, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await ready(page);
-    await heldState(page);
+    await heldState(page, '00:55');
     await page.locator('.detour').screenshot({ path: join(output, 'hero-1280-held.png') });
     await page.locator('.detour-shelf').screenshot({ path: join(output, 'detail-1280-held.png') });
     const hero = await page.evaluate(() => ({
@@ -85,7 +86,7 @@ try {
     const integration = new URL('../integration/', release.origin).href;
     await page.goto(integration, { waitUntil: 'domcontentloaded', timeout: 30000 });
     await ready(page);
-    await heldState(page);
+    await heldState(page, '01:04');
     assert.match(await page.locator('video').getAttribute('src'), /fixtures\/daylight-study\.mp4$/);
     await page.locator('.detour').screenshot({ path: join(output, 'alternate-960-held.png') });
     writeFileSync(join(output, 'alternate-960-held.json'), JSON.stringify({
