@@ -1,8 +1,8 @@
 {
-  "origin": "https://detour-mux-release.praisethegreatfool.workers.dev/mux/",
+  "origin": "https://detour.aafnaipatro.com/mux/",
   "sourceSha": "a3b43f74c7652c707c3703193ab1081820bafa79",
   "distBranch": "detour-dist-a3b43f74c765",
-  "fallbackOrigin": "https://detour-release.praisethegreatfool.workers.dev/",
+  "fallbackOrigin": "https://detour-backup.aafnaipatro.com/",
   "playbackId": "Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ",
   "staticMp4Url": "https://stream.mux.com/Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ/highest.mp4",
   "releaseWorker": "detour-mux-release",
