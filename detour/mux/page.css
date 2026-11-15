@@ -1,3 +1,4 @@
+.mux-panel[hidden] { display: none; }
 .mux-panel {
   display: flex;
   align-items: center;
