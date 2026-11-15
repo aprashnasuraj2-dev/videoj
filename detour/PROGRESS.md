@@ -11,6 +11,12 @@ Resume step: 061
 | Prototype / public release | Base-only and DETOUR packed consumers pass. Desktop Chromium/WebKit core controls and Return pass; optional real Mux playback and public release remain later work. |
 | Source baseline | Phase 6 mobile-UA completed test baseline: `15bd747d57285eb7be236577aff7b41e688cc6fc`, GitHub Actions run 43693510683. |
 
+## 2026-11-15 · Phase 7 browser-probe implementation (validation pending)
+
+- Added `tests/phase7.test.mjs` with an exact 240/320/375/768/1280px embedded-player matrix for idle, held, real captions, Settings and delayed Return, plus optional real Playwright screenshots; keyboard-only Hold → Home/End → Return and Stay → Escape/focus; reduced motion, forced colors and emulated CSS zoom; and Pixel Chromium emulated touch tap/seek/return.
+- CI now invokes the distinct Phase 7 probes after existing build/architecture/packed-host/full-browser regressions, and uploads screenshot artifacts on both success and failure. This is implementation, **not yet a verified passing run**. Existing checklist boxes 061–070 stay open until actual evidence is reviewed.
+- Physical iPhone Safari, Android Chrome, NVDA/VoiceOver and real browser zoom cannot be inferred from Playwright descriptors. They remain explicit device/AT gates. Next action: inspect exact-head CI output and screenshots, fix failures, and only then promote supported steps.
+
 ## 2026-11-15 · Phase 6 step 058 reconciliation and Phase 7 handoff
 
 - Verified the already-committed iPhone-shaped Playwright WebKit packaged-base consumer at source `15bd747d57285eb7be236577aff7b41e688cc6fc`, successful [Actions run 43693510683](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43693510683). The executable test reads media-store volume/mute availability, tests either supported volume-setting or unsupported-slider state, and toggles native mute on and off. It explicitly does **not** require nonzero maxTouchPoints in Linux WebKit and is **not** real iPhone/touch/Safari evidence.

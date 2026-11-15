@@ -47,5 +47,17 @@ jobs:
         env:
           DETOUR_ENGINE: webkit
         run: npm test
+      - name: Phase 7 Chromium responsive, keyboard, preferences and emulated touch probes
+        env:
+          DETOUR_PHASE7_CAPTURES: phase7-captures
+        run: node --test tests/phase7.test.mjs
+      - name: Preserve Phase 7 browser captures on passing or failing probes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detour-phase7-browser-probes
+          path: detour/phase7-captures/
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Validate checklist and resume pointer
         run: node scripts/check-progress.mjs
