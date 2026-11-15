@@ -564,7 +564,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Only if a suitable owned site exists, place the identical skin in an authentic page where an actual audience can use it. Verify that it remains public, useful and accessible without the contest landing page.
   - **Deliverable** — Eligible live-site URL or explicit skip decision.
   - **Pass condition** — The context stands alone as a genuine useful site and plays real video signed out, or the documented skip decision excludes it from bonus claims.
-  - **Evidence** — [Aafnai Patro live-site qualification](submission-report/LIVE-SITE.md): `https://aafnaipatro.com/labs/detour/` is an owned-site Video Lab using the accepted reusable DETOUR build with independent same-origin video/captions. Cloudflare Browser Rendering observed the ready Video.js player and run 43715327394 passed a signed-out 42.35→18→42.35 Return plus the five required controls.
+  - **Evidence** — [Aafnai Patro editorial live-site qualification](submission-report/LIVE-SITE.md): `https://aafnaipatro.com/on-this-day/video/apollo-11/` is an owned-site history page, not the competition demo. It uses the accepted reusable DETOUR skin with a separate NASA Apollo 11 visualization; Cloudflare Browser Rendering proved the 47s media ready and a real 12→2→12.000s Return. The former `/labs/detour` route and Worker were deleted.
 
 - [x] **079. Confirm rights and service ownership**
   - **Objective** — Keep every public dependency lawful and available.

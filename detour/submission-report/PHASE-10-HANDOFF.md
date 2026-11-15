@@ -3,7 +3,8 @@
 **Prepared:** 2026-11-15  
 **Verification head:** `b9b1495f4f66422dfa369cafcad2738fff6b4592`  
 **Accepted public runtime:** `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`  
-**Primary judging URL:** https://detour-mux-release.praisethegreatfool.workers.dev/mux/  
+**Competition submission demo:** https://detour-mux-release.praisethegreatfool.workers.dev/mux/
+**Independent live-site bonus URL:** https://aafnaipatro.com/on-this-day/video/apollo-11/  
 **Independent rollback:** https://detour-release.praisethegreatfool.workers.dev/  
 **Exact verification:** [Validate DETOUR run 43713525858](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43713525858)
 
@@ -19,7 +20,7 @@ The verification head is later than the deployed runtime because Phase 10 added 
 | Reuse — 095 | Packed tarball installed into a fresh external host with replacement media/captions; Return landed at **42.350s** in Chromium, Firefox and desktop WebKit |
 | Reusable artifact | **14161323994**; ZIP digest `sha256:1077a7f45a101090985f065e6e57b3d2899cc2dedd9d8e93ccbc94f7c3b4c304`; tarball **16,417 B**, SHA-256 `6c3680164f42bf582fe739b0e82af73826d35aea9a3f2ae8558c90cd6d6ad5cc`, **15 files** |
 | Verification dist artifact | **14161094736**; ZIP digest `sha256:76282311a905aed6d325d2adfa04b73844360b7b13042648ab071470381ab3bc` |
-| Aafnai Patro live-site bonus | `https://aafnaipatro.com/labs/detour/`; Worker `aafnai-detour-live-v1`; Cloudflare rendered player ready on 64s same-origin media; run 43715327394 live-site interaction step passed |
+| Aafnai Patro live-site bonus | `https://aafnaipatro.com/on-this-day/video/apollo-11/`; distinct On This Day editorial page, NASA Apollo 11 media, Cloudflare ready-state proof on 47s source and 12→2→12.000s Return. It is **not** the competition demo. |
 
 The 375×667 run is browser touch emulation. It does not close physical-device step 062. No NVDA/VoiceOver session has been recorded, and native browser 200% zoom remains separate from the CSS-layout zoom probe.
 
@@ -35,7 +36,7 @@ Official public scoring is 10 visual design/originality, 5 usability/interaction
 | Execution + polish | **4.8 / 5** | Exact public Mux + independent rollback; Chromium/Firefox/WebKit; package reuse; secret/license audit; deterministic evidence; recovery/fallback | Service continuity through judging still depends on operator retention; physical-device evidence is intentionally not claimed |
 | **Base estimate** | **21.3 / 25** | Internal arithmetic only | Could move materially if fresh-human discoverability or AT testing reveals a blocker |
 | Mux bonus | **+1** | Public Playback ID and exact public playback independently verified | Claim only if the current form exposes/accepts this bonus |
-| Genuine live-site bonus | **+1** | `https://aafnaipatro.com/labs/detour/` is an owned-site Aafnai Patro Video Lab using the accepted DETOUR build with independent same-origin video; Cloudflare Browser Rendering and run 43715327394 independently verify it | Keep this route live through judging; do not substitute an integration/test localhost or contest-only URL |
+| Genuine live-site bonus | **+1** | `https://aafnaipatro.com/on-this-day/video/apollo-11/` is a genuine Aafnai Patro On This Day editorial page using the reusable skin on different NASA historical media | Keep the editorial route live; never present the Mux contest demo itself as this bonus |
 | **Internal total including both bonuses** | **23.3 / 27** | Not an official prediction | Eligibility is unresolved, so this is not a submission-readiness score |
 
 **Thesis-flip variable:** if a fresh uncoached reviewer cannot infer the held-origin/Return behavior quickly, both originality communication and usability should be discounted; if the live form disallows a second entry, the competition submission path stops regardless of technical score.
@@ -77,8 +78,13 @@ Playback ID: `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`
 The primary public URL above plays the Mux-hosted rendition and passed the exact signed-out verification gate.
 
 **Genuine live-site bonus**  
-https://aafnaipatro.com/labs/detour/  
-A live page on the owned Aafnai Patro project uses the same accepted DETOUR skin with an independent same-origin video/caption set. Cloudflare Browser Rendering observed the ready player and Validate DETOUR run 43715327394 passed signed-out Hold → seek → Return.
+https://aafnaipatro.com/on-this-day/video/apollo-11/  
+This is a separate Aafnai Patro **On This Day** editorial history page. It uses the reusable skin with a NASA Apollo 11 landing-site visualization, not the submission showcase media. Cloudflare Browser Rendering reached ready state on the 47-second source and proved Hold at 12s → seek to 2s → Return to 12.000s.
+
+**URL-role rule**  
+- Submit/playable demo: https://detour-mux-release.praisethegreatfool.workers.dev/mux/
+- Live-site bonus: https://aafnaipatro.com/on-this-day/video/apollo-11/
+- **Never use one URL as evidence for the other role.**
 
 **License statement, if requested**  
 Entry source is licensed under Apache License 2.0. Showcase media is project-authored procedural material with separate provenance recorded in `RIGHTS.md`.

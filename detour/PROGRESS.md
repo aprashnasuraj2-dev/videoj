@@ -11,14 +11,15 @@ Resume step: 091
 | Prototype / public release | Frozen judging candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`; independent rollback remains `https://detour-release.praisethegreatfool.workers.dev/` / `detour-dist-50ac9661e315`. |
 | Source baseline | Public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` was re-qualified by Phase 10 run 43713525858 at verification head `b9b1495f4f66422dfa369cafcad2738fff6b4592`; no `detour/skin/` runtime file changed between those revisions. Phase 10 handoff commit `a98c5f7f80072db76223124ca98d663c5ea4a3fa` is report/tracking only. |
 
-## 2026-11-15 · Both optional bonus paths qualified
+## 2026-11-15 · Bonus URL roles separated and live-site use corrected
 
-- **Mux +1 remains independently qualified:** the primary judging URL plays public Mux Playback ID `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ` and the exact-public gate returns to 42.350s.
-- **Live-site +1 is now qualified:** deployed isolated Worker `aafnai-detour-live-v1` on route `aafnaipatro.com/labs/detour*`; public URL `https://aafnaipatro.com/labs/detour/` redirects to the viewer-facing Aafnai Patro Video Lab.
-- Cloudflare Browser Rendering independently observed `data-media-state="ready"`, a same-origin 64-second `daylight-study.mp4`, captions, seek rail, time, play, mute, fullscreen, Keep my place, Return and Stay on the Aafnai Patro origin.
-- Validate DETOUR run **43715327394**, step **Verify Aafnai Patro live-site bonus**, passed the signed-out browser interaction: independent video, all five required controls visible and **42.35 → 18 → Return ≈42.35s**.
-- This bonus page is deliberately isolated from Patro root, Atlas, library, date and advanced-tool routes. It reuses the accepted hashed DETOUR build and does not alter the frozen Mux judging candidate.
-- Submission payload should now claim **both +1 bonuses**. Checklist count remains 89/100 because step 078 was already checked earlier via an explicit skip decision; its evidence has been superseded by this stronger live-site qualification.
+- **Competition submission demo / Mux +1:** `https://detour-mux-release.praisethegreatfool.workers.dev/mux/`. This is the judge-facing DETOUR showcase and the only URL to use as the playable submission demo. It plays public Mux Playback ID `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`.
+- **Independent live-site use / +1:** `https://aafnaipatro.com/on-this-day/video/apollo-11/`. This is an Aafnai Patro **On This Day** editorial history page using a NASA Apollo 11 landing-site visualization through the reusable skin. It is not a contest landing page and does not use the Mux showcase media.
+- **Do not substitute these URLs for one another.** The Mux Worker satisfies the playable competition demo/Mux path; the Aafnai Patro editorial page is evidence of genuine site use.
+- Cloudflare Browser Rendering observed the editorial page at HTTPS 200 with `data-media-state="ready"`, a 47-second Apollo 11 video, captions and the required controls. An injected interaction probe held at **12s**, sought to **2s**, and returned to exactly **12.000s** while remaining paused.
+- The temporary `aafnaipatro.com/labs/detour*` route and Worker `aafnai-detour-live-v1` were deleted after this correction. They are not submission or bonus evidence.
+- The current live-site CI gate is `tests/live-site.test.mjs`; it targets only the editorial URL and waits for real remote seeks to settle before recording the held point.
+- Checklist count remains **89/100** because step 078 was already checked; the evidence basis is now the distinct editorial placement rather than the retired lab page.
 
 ## 2026-11-15 · Authenticated Contra recheck and final rights/package reconciliation
 

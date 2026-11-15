@@ -15,8 +15,9 @@
 | Final public runtime | `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765` | Audience-facing player; no management code or secret | Isolated Worker `detour-mux-release`, deployment `df263a1169024f2598b63aec0bb41bbe` |
 | Mux | Public Playback ID `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`; management credentials exist only as GitHub Actions secrets | Browser/package contain public playback data only | Challenge operator keeps asset live through judging |
 | Independent rollback | `detour-release` + private `detour-release-assets` R2 / `detour-dist-50ac9661e315` | No Mux dependency | Challenge operator retains Worker/R2 |
+| NASA editorial media | NASA Scientific Visualization Studio page `https://svs.gsfc.nasa.gov/4185/`; 360p Apollo 11 landing-site flyover proxied on the Aafnai Patro editorial route; page credits NASA SVS | Used only on the independent live-site page, not in the competition showcase or reusable package | Aafnai Patro editorial Worker proxies the source; replace/remove the live-site bonus claim if upstream availability or rights status changes |
 | Reusable tarball | `detour-video-skin-0.1.0.tgz`, **16,417 B**, SHA-256 `6c3680164f42bf582fe739b0e82af73826d35aea9a3f2ae8558c90cd6d6ad5cc`, **15 files** | Excludes demo/public/test/scripts/design/report material | Actions artifact 14161323994 + reproducible `npm ci && npm pack` |
-| Real-site bonus | `https://aafnaipatro.com/labs/detour/` on owned `aafnaipatro.com`; accepted DETOUR hashed build with independent same-origin procedural video/captions; Cloudflare Browser Rendering + run 43715327394 | **Qualified live-site claim**; separate from the Mux judging URL | Isolated Worker `aafnai-detour-live-v1`, deployment `f0e707401bac46dfab475122ef993daf`; route `aafnaipatro.com/labs/detour*` |
+| Real-site bonus | `https://aafnaipatro.com/on-this-day/video/apollo-11/`; owned Aafnai Patro On This Day editorial page using NASA SVS `A New Look at the Apollo 11 Landing Site` media through the accepted skin | **Qualified live-site claim, separate from the Mux submission demo.** NASA SVS identifies its visualizations as public domain unless otherwise noted; the page credits NASA SVS and links the source. | Worker `aafnai-history-video-apollo11`, deployment `c40780e17ab14656a57cd09bdaee76a6`; route `aafnaipatro.com/on-this-day/video/apollo-11*` |
 
 ## Final audit — run 43713525858
 
@@ -32,7 +33,7 @@
 - **Primary restore:** deploy `detour-mux-release` from immutable `detour-dist-a3b43f74c765` with the existing `DETOUR_ASSETS` R2 binding, then repeat the signed-out public Mux gate.
 - **Independent rollback:** use https://detour-release.praisethegreatfool.workers.dev/ backed by `detour-dist-50ac9661e315`.
 - **Mux retention:** keep the current public asset/Playback ID live through judging; a replacement is not bonus-qualified until re-tested.
-- **Live-site retention:** keep `aafnai-detour-live-v1` and `aafnaipatro.com/labs/detour*` live through judging; it is isolated from the site's existing application routes.
+- **Live-site retention:** keep `aafnai-history-video-apollo11` and `aafnaipatro.com/on-this-day/video/apollo-11*` live through judging. The retired `aafnai-detour-live-v1` / `/labs/detour*` route was deleted and must not be cited.
 - **Package restore:** rebuild from the reviewed branch with `npm ci && npm pack`, compare contents and rerun packed-host tests.
 
 **Counterexample:** Apache-2.0 source does not automatically clear media or third-party dependency rights, and project-authored media does not relicense bundled libraries. The audit keeps those permission chains separate.

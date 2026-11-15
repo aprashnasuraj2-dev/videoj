@@ -1,55 +1,71 @@
-# Aafnai Patro live-site bonus
+# Aafnai Patro live-site bonus — independent editorial use
 
 **Qualification date:** 2026-11-15  
-**Public URL:** https://aafnaipatro.com/labs/detour/  
+**Live-site bonus URL:** https://aafnaipatro.com/on-this-day/video/apollo-11/  
 **Owned site:** https://aafnaipatro.com/  
-**Worker:** `aafnai-detour-live-v1`  
-**Cloudflare route:** `aafnaipatro.com/labs/detour*`  
-**Current deployment:** `f0e707401bac46dfab475122ef993daf`  
-**Accepted DETOUR runtime:** `a3b43f74c7652c707c3703193ab1081820bafa79` / hashed production assets from `detour-dist-a3b43f74c765`
+**Feature context:** Aafnai Patro → On This Day → Visual history  
+**Worker:** `aafnai-history-video-apollo11`  
+**Cloudflare route:** `aafnaipatro.com/on-this-day/video/apollo-11*`  
+**Deployment:** `c40780e17ab14656a57cd09bdaee76a6`  
+**Reusable skin authority:** `a3b43f74c7652c707c3703193ab1081820bafa79` / hashed build from `detour-dist-a3b43f74c765`
 
-## Why this is a separate +1 claim
+## The two URLs have different jobs
 
-The Mux bonus and live-site bonus are independent:
+| Role | URL | Content / purpose |
+| --- | --- | --- |
+| **Competition submission demo** | https://detour-mux-release.praisethegreatfool.workers.dev/mux/ | DETOUR-branded judging showcase using the project-authored Mux-hosted contest video; also qualifies the Mux bonus |
+| **Independent live-site bonus** | https://aafnaipatro.com/on-this-day/video/apollo-11/ | Aafnai Patro editorial history page using the reusable skin on a separate NASA Apollo 11 visualization |
 
-- **Mux +1:** the competition judging URL plays the qualified public Mux asset.
-- **Live-site +1:** the owned Aafnai Patro project exposes DETOUR on its own public domain with an independent same-origin video and caption track.
+**These are intentionally not interchangeable.** The Aafnai Patro page is not the submitted skin demo. The Mux Worker is not being called a genuine live-site placement.
 
-The live-site page is not a redirect to the competition demo and does not use Mux to establish the second bonus. It loads the accepted hashed DETOUR player bundle and the separate `daylight-study.mp4` / `daylight-study.vtt` content through the Aafnai Patro origin.
+## Why the Aafnai Patro page is genuine site use
 
-## Cloudflare isolation
+The page lives inside the existing `/on-this-day` product area and is written as historical editorial content:
 
-Before deployment, the Aafnai Patro zone had no route matching `/labs/detour*`. A new Worker and one exact route were created rather than modifying the root `patro` Worker or existing Atlas, library, date, discovery or advanced-tool routes.
+- Aafnai Patro breadcrumb and link back to the On This Day archive;
+- editorial title **Apollo 11 Landing Site** and date **20 July 1969**;
+- explanatory history copy and “what to look for” notes;
+- NASA Scientific Visualization Studio attribution and source link;
+- no DETOUR title, competition copy, submission instructions, repo/process language or Mux showcase media.
 
-The public page identifies itself as **Aafnai Patro — Video lab** and links back to the site root. Response headers identify the isolated use:
+The skin is simply the player interface used by the page.
 
-- `x-detour-live-site: aafnaipatro`
-- `x-detour-runtime: a3b43f74c765`
-- `x-detour-use: independent-site`
+## Different media
 
-## Independent browser evidence
+The live-site page does **not** reuse the contest showcase video.
 
-Cloudflare Browser Rendering loaded the live URL after JavaScript execution and observed:
+- Editorial media: NASA Scientific Visualization Studio, **A New Look at the Apollo 11 Landing Site**, landing-site flyover.
+- Public source page: https://svs.gsfc.nasa.gov/4185/
+- Aafnai Patro media path: `/on-this-day/video/apollo-11/media/apollo11.mp4`
+- Caption path: `/on-this-day/video/apollo-11/media/apollo11.vtt`
+- Observed duration in Cloudflare Browser Rendering: **47 seconds**.
+- NASA SVS states its visualizations are public domain unless otherwise noted; Aafnai Patro credits NASA SVS and links the source.
 
-- final HTTPS page on `aafnaipatro.com`;
-- `video-player` mounted with `data-media-state="ready"`;
-- same-origin source `/labs/detour/fixtures/daylight-study.mp4`;
-- 64-second duration exposed by the seek slider;
-- host captions from `daylight-study.vtt`;
-- play, seek/time, mute, captions, fullscreen, Keep my place, Return, Stay and playback settings rendered in the live player.
+## Browser evidence
 
-Validate DETOUR run **43715327394** adds the interaction proof. Its **Verify Aafnai Patro live-site bonus** step passed signed out and verified:
+Cloudflare Browser Rendering independently loaded the public editorial URL and observed:
 
-1. HTTPS Aafnai Patro route and live-site/runtime headers.
-2. Independent same-origin 64-second video/captions.
-3. All five contest-required controls visible.
-4. Hold at **42.35s**.
-5. Seek to **18s**.
-6. **Return** settles back at approximately **42.35s** while preserving paused state.
-7. Play/pause and mute work on the live page.
+- HTTPS 200 on `aafnaipatro.com`;
+- response headers `x-aafnai-feature: on-this-day-video`, `x-player-skin: detour-a3b43f74c765`, `x-live-site-use: editorial-history`;
+- the Video.js player initialized to ready state;
+- a 47-second Apollo 11 media duration;
+- captions, play/pause, seek/time, mute, fullscreen, Keep my place, Return, Stay and settings.
+
+A second Browser Rendering interaction probe executed the real signature path against the remote editorial media:
+
+1. wait until media is ready and seekable;
+2. seek to **12s** and wait for the remote seek to settle;
+3. Keep my place and wait for the held **00:12** label;
+4. seek to **2s**;
+5. Return;
+6. observe **12.000s**, paused state preserved.
+
+The repository gate `tests/live-site.test.mjs` targets this exact editorial URL and includes the remote-seek settlement requirement.
+
+## Removed temporary implementation
+
+The earlier experimental route `aafnaipatro.com/labs/detour*` and Worker `aafnai-detour-live-v1` were deleted after recognizing that a DETOUR-branded “Video Lab” was too close to a second contest showcase. **Do not cite or restore that route as bonus evidence.**
 
 ## Retention and counterexample
 
-Keep `aafnai-detour-live-v1` and the `/labs/detour*` route live through judging. If the page were merely an iframe/redirect to the competition demo, or if it used a test-only localhost, the second bonus would be weak; this deployment instead mounts DETOUR on the owned site and serves independent media on that origin.
-
-The historical Phase 8 decision to skip the live-site bonus was correct at that time. This later evidence supersedes the skip without rewriting that historical record.
+Keep `aafnai-history-video-apollo11` and the editorial route live through judging. If the live-site page became a redirect/iframe to the competition demo, reused the contest landing-page narrative, or stopped serving independent editorial media, the live-site bonus would no longer be defensible.
