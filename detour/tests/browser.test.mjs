@@ -714,3 +714,62 @@ test('player-only treatments keep captions and held place readable on dark, mixe
     await page.close();
   }
 });
+
+
+test('representative portrait, dense-chapter and long-duration fixtures preserve DETOUR behavior', { timeout: 32000 }, async t => {
+  const page = await player(t, 520);
+  const video = page.locator('video');
+  assert.equal(await video.getAttribute('poster'), null, 'Baseline fixture intentionally has no poster.');
+  assert.equal(await video.evaluate(media => [...media.textTracks].some(track => track.kind === 'chapters')), false,
+    'Baseline VOD is intentionally chapterless.');
+
+  await video.evaluate(media => new Promise(resolve => {
+    media.addEventListener('loadeddata', resolve, { once: true });
+    const captions = media.querySelector('track[kind="captions"]');
+    captions.src = new URL('fixtures/portrait-study.vtt', document.baseURI).href;
+    media.src = new URL('fixtures/portrait-study.mp4', document.baseURI).href;
+  }));
+  await page.locator('.detour-hold:enabled').waitFor();
+  const dimensions = await video.evaluate(media => [media.videoWidth, media.videoHeight]);
+  assert.ok(dimensions[1] > dimensions[0], `Expected portrait media, got ${dimensions.join('×')}`);
+
+  const chapters = await video.evaluate(media => {
+    const track = document.createElement('track');
+    track.kind = 'chapters';
+    track.label = 'Dense synthetic chapters';
+    track.src = new URL('fixtures/dense-chapters.vtt', document.baseURI).href;
+    media.append(track);
+    track.track.mode = 'hidden';
+    return track.label;
+  });
+  assert.equal(chapters, 'Dense synthetic chapters');
+  await page.waitForFunction(() => {
+    const track = [...document.querySelector('video').textTracks].find(item => item.kind === 'chapters');
+    return track?.cues?.length === 64;
+  });
+
+  await seek(page, 42.35);
+  await page.getByRole('button', { name: 'Keep my place' }).click();
+  await seek(page, 18);
+  await page.getByRole('button', { name: 'Return to 00:42' }).click();
+  await page.getByRole('button', { name: 'Keep my place' }).waitFor();
+  assert.ok(Math.abs(await current(page) - 42.35) < 0.1);
+
+  await video.evaluate(media => {
+    Object.defineProperties(media, {
+      currentTime: { configurable: true, writable: true, value: 36042.35 },
+      duration: { configurable: true, value: 40000 },
+      seekable: { configurable: true, value: {
+        length: 1,
+        start: () => 0,
+        end: () => 40000,
+      } },
+    });
+    media.dispatchEvent(new Event('durationchange'));
+    media.dispatchEvent(new Event('seeked'));
+  });
+  await page.locator('.detour-hold:enabled').waitFor();
+  await page.getByRole('button', { name: 'Keep my place' }).click();
+  assert.ok(await page.getByRole('button', { name: 'Return to 10:00:42' }).isVisible());
+  await page.getByRole('button', { name: 'Stay here' }).click();
+});
