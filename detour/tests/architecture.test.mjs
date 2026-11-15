@@ -15,3 +15,28 @@ test('public Mux playback URL never uses a management secret', () => {
     assert.throws(() => muxPlaybackUrl(invalid));
   }
 });
+
+test('core lifecycle is event-driven, bounded and abortable per instance', () => {
+  const place = read('../skin/place.js');
+  assert.match(place, /new AbortController\(\)/);
+  assert.match(place, /this\.#disconnect\?\.abort\(\)/);
+  assert.doesNotMatch(place, /requestAnimationFrame|requestVideoFrameCallback|setInterval|MutationObserver/);
+  assert.equal((place.match(/setTimeout\(/g) ?? []).length, 1, 'Only the one-shot return deadline may use a timer.');
+  const listenerCalls = (place.match(/addEventListener\(/g) ?? []).length;
+  const signalOptions = (place.match(/\{ signal(?:,|\s*\})/g) ?? []).length;
+  assert.equal(signalOptions, listenerCalls, 'Every DETOUR-owned listener must be tied to the instance AbortSignal.');
+});
+
+test('skin CSS stays host-scoped and client sources contain no management credential hooks', () => {
+  const css = read('../skin/player.css');
+  const selectorHeads = css.split('\n')
+    .map(line => line.trim())
+    .filter(line => line.endsWith('{') && !line.startsWith('@') && !/^(?:from|to|\d+%)\s*\{/.test(line));
+  for (const selector of selectorHeads) {
+    assert.match(selector, /^\.detour(?:\b|[\s.:[>#,+~])/i, `Unscoped selector: ${selector}`);
+  }
+
+  const client = ['../skin/index.js', '../skin/player.js', '../skin/place.js', '../skin/mux.js', '../skin/player.css']
+    .map(read).join('\n');
+  assert.doesNotMatch(client, /MUX_TOKEN_(?:ID|SECRET)|Authorization\s*:|Bearer\s+[A-Za-z0-9+/_=-]{12,}|api[_-]?secret\s*=|management[_-]?token\s*=/i);
+});
