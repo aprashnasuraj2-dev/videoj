@@ -17,6 +17,9 @@ Resume step: 091
 
 ## 2026-11-16 · Multi-place checkpoint candidate implemented — verification pending
 
+- First exact-head full validation run **43769433525** found a real backward-compatibility regression: default single-place hosts received an inert third `.detour-checkpoints` rail child even with marker mode disabled. Existing dense-chapter geometry tests correctly rejected **3 !== 2** in both the full Chromium suite and Phase 7.
+- Fix: create the checkpoint layer only when `returnUi: 'marker'` is actually enabled. Default one-place hosts retain the historical two-child rail DOM exactly; the tests are not weakened.
+
 - Owner proposed replacing the single always-visible Return surface with multiple timeline places. Implemented a backward-compatible package candidate: default hosts retain the original one-place explicit Return/Stay UI, while hosts can opt into `maxPlaces: 4` with `returnUi: 'marker'`.
 - In marker mode, C1–C4 persist on the familiar seek rail. Hover/focus expands each marker to show its timestamp; click/tap returns to that checkpoint without consuming it; Delete/Backspace removes the focused checkpoint; **Clear** removes all checkpoints for touch users. Near-duplicate saves are deduplicated and source changes clear all checkpoints.
 - The Mux competition route opts into the four-checkpoint mode and removes the permanent Return panel from its normal state. The package cap of four is deliberate: unlimited bookmarks would clutter the short showcase and weaken the reversible-seeking concept.

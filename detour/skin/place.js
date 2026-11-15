@@ -60,11 +60,14 @@ class DetourPlace extends HTMLElement {
       this.hasAttribute('data-vod') && seekable(video.currentTime) && typeof player.store?.seek === 'function';
 
     this.#layer?.remove();
-    this.#layer = document.createElement('div');
-    this.#layer.className = 'detour-checkpoints';
-    this.#layer.hidden = true;
-    this.#layer.setAttribute('aria-label', 'Saved places');
-    rail.append(this.#layer);
+    this.#layer = undefined;
+    if (markerMode) {
+      this.#layer = document.createElement('div');
+      this.#layer.className = 'detour-checkpoints';
+      this.#layer.hidden = true;
+      this.#layer.setAttribute('aria-label', 'Saved places');
+      rail.append(this.#layer);
+    }
 
     const showNotice = text => {
       notice.textContent = text;
@@ -117,9 +120,9 @@ class DetourPlace extends HTMLElement {
     };
 
     const renderMarkers = marks => {
+      if (!this.#layer) return;
       this.#layer.replaceChildren();
-      this.#layer.hidden = !markerMode || marks.length === 0;
-      if (!markerMode) return;
+      this.#layer.hidden = marks.length === 0;
       for (const mark of marks) {
         const button = markerButton(mark);
         if (button) this.#layer.append(button);
@@ -337,23 +340,24 @@ class DetourPlace extends HTMLElement {
       returnTo(mark, { consume: true, restoreTarget: 'back' });
     }, { signal });
 
-    this.#layer.addEventListener('click', event => {
-      if (!markerMode) return;
-      const button = event.target.closest('.detour-checkpoint');
-      if (!button || button.disabled) return;
-      const mark = findMark(Number(button.dataset.slot));
-      returnTo(mark, { consume: false, restoreTarget: 'marker' });
-    }, { signal });
+    if (this.#layer) {
+      this.#layer.addEventListener('click', event => {
+        const button = event.target.closest('.detour-checkpoint');
+        if (!button || button.disabled) return;
+        const mark = findMark(Number(button.dataset.slot));
+        returnTo(mark, { consume: false, restoreTarget: 'marker' });
+      }, { signal });
 
-    this.#layer.addEventListener('keydown', event => {
-      if (!markerMode || !/^(Delete|Backspace)$/.test(event.key)) return;
-      const button = event.target.closest('.detour-checkpoint');
-      if (!button || this.#attempt) return;
-      const mark = findMark(Number(button.dataset.slot));
-      if (!mark) return;
-      event.preventDefault();
-      removeMark(mark, `Checkpoint C${mark.slot} cleared.`);
-    }, { signal });
+      this.#layer.addEventListener('keydown', event => {
+        if (!/^(Delete|Backspace)$/.test(event.key)) return;
+        const button = event.target.closest('.detour-checkpoint');
+        if (!button || this.#attempt) return;
+        const mark = findMark(Number(button.dataset.slot));
+        if (!mark) return;
+        event.preventDefault();
+        removeMark(mark, `Checkpoint C${mark.slot} cleared.`);
+      }, { signal });
+    }
 
     const manualSeek = () => {
       if (!this.#attempt) return;
