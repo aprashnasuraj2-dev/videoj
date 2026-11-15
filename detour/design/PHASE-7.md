@@ -16,7 +16,7 @@ The automated tests run on GitHub-hosted Ubuntu, Node 24, Video.js HTML 10.4.0 a
 | 066 | Previous Phase 5/6 synthetic duration, dense chapter, portrait and audio cases. | Full content/language matrix at this phase. |
 | 067 | Prior guards for unseekable/invalid/live and range expiry. | Extended fluctuating-range phase-specific matrix. |
 | 068 | Prior cancellation, rejected/late seek and remount evidence. | Independent Phase 7 stress plus manual-seek race confirmation. |
-| 069 | No current comparable 5× cold/warm byte/long-task budget. | Five-repeat runtime traces and compressed incremental bytes. |
+| 069 | Added same-build base-vs-DETOUR esbuild gzip budget comparison (≤15 KiB) and five in-process 320px Chromium signature/longtask observations. | Exact CI pass and independent cold/warm network traces on relevant hardware remain. |
 | 070 | Three desktop engines were added to CI before this phase. | Full passing exact SHA, physical coverage and accessibility sign-off. |
 
 **No Phase 7 checklist items are automatically verified by adding tests.** Only promote after a passed exact-source run and sufficient acceptance evidence. The physical/AT dependencies cannot be cleared by headless automation.

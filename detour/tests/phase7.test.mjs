@@ -191,3 +191,36 @@ test('062 emulated touch path is not counted as real Android/iOS', { timeout: 45
     t.diagnostic('Pixel descriptor in Playwright Chromium: tap/seek/return only; no physical Android claim.');
   } finally { await context.close(); }
 });
+
+test('069 five cached-run signature traces have no observed long task above 50ms', { timeout: 90000 }, async t => {
+  const context = await browser.newContext({viewport:{width:320,height:740}});
+  const page = await context.newPage();
+  await page.addInitScript(() => {
+    window.__detourLongTasks = [];
+    if ('PerformanceObserver' in window && PerformanceObserver.supportedEntryTypes?.includes('longtask')) {
+      new PerformanceObserver(list => { for (const entry of list.getEntries()) window.__detourLongTasks.push({start:entry.startTime,ms:entry.duration}); })
+        .observe({entryTypes:['longtask']});
+    }
+  });
+  try {
+    const durations = [];
+    for (let n=0;n<5;n++) {
+      const first = performance.now();
+      await ready(page);
+      await page.evaluate(()=>{window.__detourLongTasks=[];});
+      const start = performance.now();
+      await seek(page,42.35);
+      await page.getByRole('button',{name:'Keep my place'}).click();
+      await seek(page,18);
+      await seek(page,24);
+      await page.getByRole('button',{name:'Return to 00:42'}).click();
+      await page.getByRole('button',{name:'Keep my place'}).waitFor();
+      await page.waitForTimeout(120);
+      const tasks = await page.evaluate(()=>window.__detourLongTasks);
+      const max = tasks.reduce((m,x)=>Math.max(m,x.ms),0);
+      assert.ok(max<=50,`Run ${n+1} had ${max}ms long task`);
+      durations.push({n:n+1,wallMs:Math.round(performance.now()-start),observedLongTasks:tasks.length,maxLongTaskMs:max});
+    }
+    t.diagnostic('Chromium 320px warm-process signature observations: '+JSON.stringify(durations));
+  } finally {await context.close();}
+});
