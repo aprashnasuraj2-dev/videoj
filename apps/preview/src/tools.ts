@@ -54,7 +54,7 @@ const snapshot = () => ({
   support:{fullscreen:document.fullscreenEnabled,pictureInPicture:document.pictureInPictureEnabled===true}
 });
 const createMetrics = () => {
- for(const label of ['Source','Playback','Time / duration','Progress','Paused / ended','Seeking','Ready / network','Buffering / stalled','Stage / phase','Volume / muted','Rate','Captions','Buffered ranges','Seekable ranges','Error']){
+ for(const label of ['Film','Player state','Position / length','Progress','Paused / finished','Seeking','Readiness / connection','Buffering / interrupted','Weave / movement','Volume / sound','Speed','Captions','Loaded sections','Reachable sections','Playback issue']){
  const dt=document.createElement('dt');dt.textContent=label;
  const dd=document.createElement('dd');dd.dataset.metric=label;
  metrics.append(dt,dd);
@@ -79,21 +79,21 @@ const render = () => {
  pendingFrame=0;
  const snap=snapshot(),n=snap.native,d=snap.dhago;
  const ratio=n.duration&&n.currentTime!==null?clamp(n.currentTime/n.duration,0,1):null;
- setMetric('Source',snap.source);
- setMetric('Playback',d.playbackState);
- setMetric('Time / duration',stamp(video.currentTime)+' / '+stamp(video.duration));
+ setMetric('Film',snap.source);
+ setMetric('Player state',d.playbackState);
+ setMetric('Position / length',stamp(video.currentTime)+' / '+stamp(video.duration));
  setMetric('Progress',ratio===null?'unknown':(ratio*100).toFixed(2)+'%');
- setMetric('Paused / ended',String(n.paused)+' / '+String(n.ended));
+ setMetric('Paused / finished',String(n.paused)+' / '+String(n.ended));
  setMetric('Seeking',String(n.seeking));
- setMetric('Ready / network',n.readyState+' / '+n.networkState);
- setMetric('Buffering / stalled',String(d.buffering)+' / '+String(d.stalled));
- setMetric('Stage / phase',(d.weaveStage||'—')+' / '+(d.stagePhase||'—'));
- setMetric('Volume / muted',n.volume+' / '+n.muted);
- setMetric('Rate',String(n.playbackRate));
+ setMetric('Readiness / connection',n.readyState+' / '+n.networkState);
+ setMetric('Buffering / interrupted',String(d.buffering)+' / '+String(d.stalled));
+ setMetric('Weave / movement',(d.weaveStage||'—')+' / '+(d.stagePhase||'—'));
+ setMetric('Volume / sound',n.volume+' / '+n.muted);
+ setMetric('Speed',String(n.playbackRate));
  setMetric('Captions',n.captions.join(', ')||'off');
- setMetric('Buffered ranges',String(n.buffered.length));
- setMetric('Seekable ranges',String(n.seekable.length));
- setMetric('Error',n.errorCode===null?'none':String(n.errorCode));
+ setMetric('Loaded sections',String(n.buffered.length));
+ setMetric('Reachable sections',String(n.seekable.length));
+ setMetric('Playback issue',n.errorCode===null?'none':String(n.errorCode));
  chapterNode.textContent='Chapter: '+d.chapter;
  q('#tools-status').textContent=d.playbackState.toUpperCase();
  drawRange('#tools-played',n.currentTime!==null?[[0,n.currentTime]]:[],video.duration);
