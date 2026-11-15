@@ -94,6 +94,12 @@ try {
     await checkpointState(page, '00:55');
     const cc = page.locator('media-captions-button');
     await cc.click();
+    // 00:15 is deliberately between authored caption cues. Move to the saved
+    // C3 point at 00:18 so this evidence proves both the checkpoint rail and
+    // a genuinely active caption cue rather than assuming every time has text.
+    await seek(page, 18);
+    await page.waitForFunction(() => document.querySelector('[data-detour-clock-current]')?.textContent === '00:18');
+    await page.getByRole('button', { name: 'Return to 00:18 — checkpoint C3' }).focus();
     await page.waitForFunction(() => {
       const track = document.querySelector('video')?.textTracks?.[0];
       return track?.mode === 'showing' && (track.activeCues?.length ?? 0) > 0;

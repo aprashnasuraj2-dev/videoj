@@ -15,6 +15,14 @@ Resume step: 091
 
 
 
+
+## 2026-11-16 · Phase 9 checkpoint evidence capture correction
+
+- Public checkpoint release behavior is already accepted; this correction is presentation-only.
+- Phase 9 evidence run `43772179620` produced the new desktop checkpoint hero/detail, then failed in the compact captions step because the script required an active caption cue at **00:15**. The authored VTT has cues at **00:00–00:06**, **00:16–00:25** and **00:38–00:47**, so 00:15 is intentionally between cues.
+- Fixed the capture state to move from the four-checkpoint overview to saved **C3 at 00:18**, focus C3, and then require a genuinely active caption cue before the compact screenshot. No player/runtime behavior or public release changed.
+- Next evidence run should produce desktop checkpoint hero/detail, compact checkpoint+caption state, recovery state, alternate-media single-place proof and the interaction clip.
+
 ## 2026-11-16 · Multi-place checkpoint release accepted and promoted
 
 - Corrected candidate **86e3b15b…** passed full validation run **43769776693**: Chromium, Firefox, desktop WebKit, packed external host, final audit, footprint budget, responsive/keyboard/preferences/emulated-touch probes, checklist validation and immutable dist staging all passed.
