@@ -18,7 +18,7 @@ test('canonical original media is byte-frozen and its captions and four chapters
  await expect(page.locator('.dhago-chapter-name')).toContainText('Coming home');
 });
 
-test('Engineering Tools perform real seek, bounded logging and reset',async({page})=>{
+test('Playback Studio performs real seek, bounded history and reset',async({page})=>{
  await page.goto('/tools.html');
  const media=page.locator('#tools-player video');
  await expect.poll(()=>media.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
@@ -28,7 +28,7 @@ test('Engineering Tools perform real seek, bounded logging and reset',async({pag
  await expect(page.locator('[data-metric="Progress"]')).toContainText('75');
  await page.locator('#tools-seeks button[data-seek="-10"]').click();
  await expect.poll(()=>media.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeLessThan(40);
- await expect.poll(()=>page.locator('#tools-snapshot').textContent()).toContain('"playbackState"');
+ await expect.poll(()=>page.locator('#tools-snapshot').textContent()).toContain('Playback:');
  await expect(page.locator('#tools-snapshot')).not.toContainText('from-fibre-to-fabric');
  await page.locator('#tools-toggle-log').click();
  await expect(page.locator('#tools-toggle-log')).toHaveAttribute('aria-pressed','true');
