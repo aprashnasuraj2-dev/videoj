@@ -87,6 +87,31 @@ function makeHost() {
 </body>
 </html>
 `);
+  writeFileSync(join(hostDir, 'base.html'), `<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DETOUR base shell</title></head>
+<body><main><div id="mount"></div></main><script type="module" src="/base-main.js"></script></body>
+</html>
+`);
+  writeFileSync(join(hostDir, 'base-main.js'), `import { createBasePlayer } from 'detour-video-skin/base';
+import 'detour-video-skin/styles';
+
+const video = document.createElement('video');
+video.preload = 'metadata';
+video.playsInline = true;
+video.src = '/host-owned.mp4';
+const track = document.createElement('track');
+track.kind = 'captions';
+track.srclang = 'en';
+track.label = 'Base host captions';
+track.src = '/host-owned.vtt';
+video.append(track);
+const player = createBasePlayer(video);
+player.id = 'base-player';
+document.querySelector('#mount').append(player);
+window.baseHostReady = true;
+`);
+
   writeFileSync(join(hostDir, 'main.js'), `import { createDetourPlayer } from 'detour-video-skin';
 import 'detour-video-skin/styles';
 
@@ -138,6 +163,51 @@ async function seek(player, seconds) {
   assert.equal(clocks.seeking, false);
   assert.ok(clocks.duration > 63 && clocks.duration <= 64.1);
   return clocks;
+}
+
+async function proveBaseShell() {
+  const browser = await chromium.launch({ args: ['--no-sandbox'] });
+  try {
+    const page = await browser.newPage({ viewport: { width: 960, height: 760 } });
+    await page.goto(new URL('base.html', baseURL).href);
+    await page.waitForFunction(() => window.baseHostReady === true);
+    await page.waitForFunction(() => {
+      const video = document.querySelector('#base-player video');
+      return video?.readyState >= 2 && video.seekable.length > 0;
+    });
+    const base = page.locator('#base-player');
+    assert.equal(await base.locator('detour-place').count(), 0);
+    assert.equal(await page.evaluate(() => customElements.get('detour-place')), undefined,
+      'Base entry loaded held-place behavior.');
+
+    for (const selector of ['media-play-button', 'media-time-slider', '.detour-clock', 'media-mute-button', 'media-fullscreen-button']) {
+      assert.ok(await base.locator(selector).isVisible(), `Base shell missing ${selector}`);
+    }
+    await seek(base, 12);
+    await base.locator('media-play-button').click();
+    await page.waitForFunction(() => document.querySelector('#base-player video').currentTime > 12.12);
+    await base.locator('media-play-button').click();
+    assert.equal(await base.locator('video').evaluate(video => video.paused), true);
+
+    await base.locator('media-mute-button').click();
+    assert.equal(await base.locator('video').evaluate(video => video.muted), true);
+    await base.locator('media-captions-button').click();
+    await page.waitForFunction(() => document.querySelector('#base-player video').textTracks[0]?.mode === 'showing');
+
+    await base.locator('media-fullscreen-button').click();
+    await page.waitForFunction(() => Boolean(document.fullscreenElement));
+    await base.locator('media-fullscreen-button').click();
+    await page.waitForFunction(() => !document.fullscreenElement);
+
+    await page.setViewportSize({ width: 360, height: 760 });
+    const overflow = await base.locator('.detour').evaluate(el => [el.scrollWidth, el.clientWidth]);
+    assert.ok(overflow[0] <= overflow[1], `Base shell overflow at 360px: ${overflow}`);
+    for (const selector of ['media-play-button', 'media-time-slider', '.detour-clock', 'media-mute-button', 'media-fullscreen-button']) {
+      assert.ok(await base.locator(selector).isVisible(), `Compact base shell missing ${selector}`);
+    }
+  } finally {
+    await browser.close();
+  }
 }
 
 async function proveEngine(engineName, engine) {
@@ -259,7 +329,7 @@ after(async () => {
 test('packed artifact contains the reusable boundary and excludes showcase/runtime fixtures', () => {
   for (const required of [
     'package.json', 'LICENSE', 'README.md',
-    'skin/index.js', 'skin/index.d.ts', 'skin/player.js', 'skin/place.js', 'skin/player.css',
+    'skin/index.js', 'skin/index.d.ts', 'skin/base.js', 'skin/base.d.ts', 'skin/shell.js', 'skin/media-state.js', 'skin/player.js', 'skin/place.js', 'skin/player.css',
     'skin/mux.js', 'skin/mux.d.ts',
   ]) assert.ok(packedFiles.includes(required), `Packed archive missing ${required}`);
 
@@ -269,6 +339,7 @@ test('packed artifact contains the reusable boundary and excludes showcase/runti
 
   const packageJson = JSON.parse(readFileSync(join(hostDir, 'node_modules/detour-video-skin/package.json'), 'utf8'));
   assert.equal(packageJson.license, 'Apache-2.0');
+  assert.equal(packageJson.exports['./base'].import, './skin/base.js');
   assert.equal(packageJson.exports['./mux'].import, './skin/mux.js');
   assert.equal(packageJson.exports['./styles'], './skin/player.css');
 
@@ -277,6 +348,10 @@ test('packed artifact contains the reusable boundary and excludes showcase/runti
     "import {muxPlaybackUrl} from 'detour-video-skin/mux'; process.stdout.write(muxPlaybackUrl('public_Id-42'));",
   ], { cwd: hostDir, encoding: 'utf8' });
   assert.equal(mux, 'https://stream.mux.com/public_Id-42.m3u8');
+});
+
+test('packed base shell runs ordinary controls without mounting DETOUR behavior', { timeout: 60000 }, async () => {
+  await proveBaseShell();
 });
 
 test('packed skin runs in an external host in Chromium and desktop WebKit', { timeout: 120000 }, async t => {

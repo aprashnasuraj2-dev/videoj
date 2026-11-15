@@ -27,7 +27,11 @@
       "types": "./skin/mux.d.ts",
       "import": "./skin/mux.js"
     },
-    "./styles": "./skin/player.css"
+    "./styles": "./skin/player.css",
+    "./base": {
+      "types": "./skin/base.d.ts",
+      "import": "./skin/base.js"
+    }
   },
   "license": "Apache-2.0",
   "files": [

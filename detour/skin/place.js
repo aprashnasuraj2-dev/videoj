@@ -24,9 +24,9 @@ class DetourPlace extends HTMLElement {
   #ready = false;
   #sourceEpoch = 0;
   #viewKey;
-  #bufferKey;
 
   connectedCallback() {
+    this.#disconnect?.abort();
     this.#disconnect = new AbortController();
     const { signal } = this.#disconnect;
     const container = this.closest('media-container');
@@ -34,7 +34,6 @@ class DetourPlace extends HTMLElement {
     const video = container.querySelector('video, audio');
     const origin = container.querySelector('.detour-origin');
     const slider = container.querySelector('media-time-slider');
-    const buffered = container.querySelector('.detour-buffered');
     const live = container.querySelector('.detour-live');
     const hold = this.querySelector('.detour-hold');
     const held = this.querySelector('.detour-held');
@@ -43,12 +42,7 @@ class DetourPlace extends HTMLElement {
     const returnTime = back.querySelector('.detour-return-time');
     const returning = back.querySelector('.detour-return-pending');
     const stay = this.querySelector('.detour-stay');
-    const error = container.querySelector('.detour-error');
     const notice = container.querySelector('.detour-notice');
-    const settings = container.querySelector('.detour-settings');
-    const menu = container.querySelector('.detour-menu');
-    const rates = [...menu.querySelectorAll('[data-rate]')];
-    const inDisclosure = node => node === settings || (node && menu.contains(node));
     const sourceKey = () => `${this.#sourceEpoch}\n${video.getAttribute('src') ?? ''}\n${video.currentSrc}`;
     const seekable = time =>
       this.#ready && !video.srcObject && player.store?.streamType !== 'live'
@@ -62,28 +56,7 @@ class DetourPlace extends HTMLElement {
       notice.textContent = text;
       notice.hidden = !text;
     };
-    const setSettingsOpen = open => {
-      settings.setAttribute('aria-expanded', String(open));
-      menu.hidden = !open;
-    };
-    const renderSettings = () => {
-      const unavailable = !this.#ready || player.store?.playbackRateAvailability !== 'available'
-        || typeof player.store?.setPlaybackRate !== 'function';
-      if (unavailable && inDisclosure(document.activeElement)) {
-        container.querySelector('media-play-button').focus();
-      }
-      if (unavailable) setSettingsOpen(false);
-      settings.hidden = unavailable;
-      for (const button of rates) button.setAttribute('aria-pressed', String(Number(button.dataset.rate) === video.playbackRate));
-    };
 
-    const renderMedia = () => {
-      const timeKnown = this.#ready && Number.isFinite(video.duration) && video.duration > 0;
-      container.toggleAttribute('data-time-known', timeKnown);
-      const loading = !this.#ready && video.networkState === HTMLMediaElement.NETWORK_LOADING;
-      const state = video.error ? 'error' : video.ended ? 'ended' : loading ? 'loading' : timeKnown ? 'ready' : 'unavailable';
-      if (container.dataset.mediaState !== state) container.dataset.mediaState = state;
-    };
     const render = () => {
       const allowed = accessible();
       const mark = this.#mark?.source === sourceKey() ? this.#mark : null;
@@ -116,25 +89,6 @@ class DetourPlace extends HTMLElement {
         returnLabel.hidden = Boolean(this.#attempt);
         if (!this.#attempt) returnTime.textContent = timeLabel(mark.time);
       }
-    };
-
-    const renderBuffer = () => {
-      const duration = video.duration;
-      const spans = [];
-      if (Number.isFinite(duration) && duration > 0) {
-        for (let i = 0; i < video.buffered.length; i += 1) {
-          spans.push([video.buffered.start(i) / duration * 100, video.buffered.end(i) / duration * 100]);
-        }
-      }
-      const key = JSON.stringify(spans);
-      if (key === this.#bufferKey) return;
-      this.#bufferKey = key;
-      buffered.replaceChildren(...spans.map(([start, end]) => {
-        const segment = document.createElement('span');
-        segment.style.insetInlineStart = `${start}%`;
-        segment.style.inlineSize = `${end - start}%`;
-        return segment;
-      }));
     };
 
     const clearAttempt = () => {
@@ -213,71 +167,31 @@ class DetourPlace extends HTMLElement {
       if (!event.altKey && !event.ctrlKey && !event.metaKey
         && /^(Arrow(Left|Right|Up|Down)|Home|End|PageUp|PageDown)$/.test(event.key)) manualSeek();
     }, { signal, capture: true });
-    const bar = settings.parentElement;
-    settings.addEventListener('click', () => setSettingsOpen(menu.hidden), { signal });
-    bar.addEventListener('keydown', event => {
-      if (event.key !== 'Escape' || menu.hidden || !inDisclosure(event.target)) return;
-      event.preventDefault();
-      event.stopPropagation();
-      setSettingsOpen(false);
-      settings.focus();
-    }, { signal });
-    bar.addEventListener('focusout', event => {
-      if (inDisclosure(event.target) && event.relatedTarget && !inDisclosure(event.relatedTarget)) {
-        setSettingsOpen(false);
-      }
-    }, { signal });
-    menu.addEventListener('click', event => {
-      const button = event.target.closest('[data-rate]');
-      if (!button) return;
-      player.store.setPlaybackRate(Number(button.dataset.rate));
-      renderSettings();
-      setSettingsOpen(false);
-      settings.focus();
-    }, { signal });
-    video.addEventListener('ratechange', renderSettings, { signal });
 
     for (const event of ['emptied', 'loadstart']) {
       video.addEventListener(event, () => {
         this.#ready = false;
         this.#sourceEpoch += 1;
         const wasHeld = Boolean(this.#mark);
-        clear(wasHeld ? 'Your place was cleared because the video changed.' : '', this.contains(document.activeElement) && wasHeld);
-        error.hidden = true;
-        renderMedia();
-        renderBuffer();
-        renderSettings();
+        clear(wasHeld ? 'Your place was cleared because the video changed.' : '',
+          this.contains(document.activeElement) && wasHeld);
       }, { signal });
     }
     for (const event of ['loadedmetadata', 'loadeddata', 'canplay', 'durationchange', 'progress', 'seeking', 'seeked', 'ended', 'playing', 'suspend']) {
       video.addEventListener(event, () => {
         this.#ready = video.readyState >= HTMLMediaElement.HAVE_METADATA;
-        renderMedia();
         render();
-        renderBuffer();
-        if (event === 'loadedmetadata' || event === 'canplay') renderSettings();
       }, { signal });
     }
     video.addEventListener('error', () => {
       this.#ready = false;
       this.#sourceEpoch += 1;
       clear('This video could not load.', this.contains(document.activeElement));
-      error.hidden = false;
-      renderMedia();
-      renderSettings();
     }, { signal });
-    error.querySelector('button').addEventListener('click', () => {
-      error.hidden = true;
-      video.load();
-      container.querySelector('media-play-button').focus();
-    }, { signal });
+
     this.#ready = video.readyState >= HTMLMediaElement.HAVE_METADATA;
     this.#viewKey = undefined;
-    this.#bufferKey = undefined;
-    renderMedia();
     render();
-    renderBuffer();
-    renderSettings();
   }
 
   disconnectedCallback() {
@@ -288,4 +202,6 @@ class DetourPlace extends HTMLElement {
   }
 }
 
-customElements.define('detour-place', DetourPlace);
+if (!customElements.get('detour-place')) {
+  customElements.define('detour-place', DetourPlace);
+}
