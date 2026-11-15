@@ -39,6 +39,8 @@ jobs:
         run: node --test tests/https-release.test.mjs
       - name: Phase 10 exact public release and mandatory controls
         run: node --test tests/phase10-public.test.mjs
+      - name: Verify Aafnai Patro live-site bonus
+        run: node --test tests/live-site.test.mjs
       - name: Audit final bundle, package license and secret boundary
         run: node scripts/final-audit.mjs
       - name: Verify static package boundaries
