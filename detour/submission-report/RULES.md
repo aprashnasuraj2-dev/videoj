@@ -35,11 +35,15 @@ No public field now resolves the open DETOUR question:
 - `submissionInstructions` is null and `termsAndConditionsUrl` is null in the public challenge record;
 - the public web surface does not expose readable joined-form fields or upload limits outside the signed-in flow.
 
-Therefore steps **002/091 remain open**. The required evidence is either the signed-in form itself showing a valid second-entry path, or a direct Contra clarification that explicitly permits a second distinct skin from an entrant who already submitted one.
+That public challenge payload alone did not resolve second-entry eligibility. A subsequent check of Contra's **official Help Center** did: see the current rule below. The remaining step 091 gap is the signed-in form schema and acceptance state, not permission to submit a second unique entry.
 
-**Copy-ready clarification question**
+## 2026-11-15 official Contra multiple-submission rule
 
-> I already submitted one distinct entry to the Video.js Skins Design Challenge (DHAGO) and have built a separate second skin (DETOUR). May the same participant submit more than one distinct skin to this challenge? If yes, is there a per-participant submission limit, and can you confirm the current required/optional form fields and any upload or media limits for the second submission?
+**Source:** Contra Help Center, [Challenges on Contra: A new way to earn](https://help.contra.com/en/articles/11647374-challenges-on-contra-a-new-way-to-earn), published 2026-04-06 and rechecked 2026-11-15.
 
-This question intentionally avoids account usernames and private credentials. It is a blocker-resolution request, not evidence of permission by itself.
+Contra's FAQ directly answers **“Can I submit more than once to a challenge?”** in the affirmative, with the condition that submissions be **unique** and meet the challenge criteria. The same article says challenges are open to Contra independents unless noted otherwise.
+
+This is direct platform-level evidence for DETOUR's second-entry permission. The active Video.js challenge guidelines show no exception or per-participant cap, and DETOUR's separation from DHAGO is already verified in steps 009/020. **Step 002 is therefore verified.**
+
+This does **not** complete step 091. The public challenge record still does not expose the signed-in submission form's exact field names, required/optional flags, upload/media limits or whether the prepared DETOUR payload is accepted by those fields. Those facts remain owner/account-visible evidence to capture from the current joined form before 096/097/099.
 

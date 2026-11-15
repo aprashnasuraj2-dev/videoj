@@ -13,12 +13,12 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Pass condition** — Each official requirement maps to a verification step. Mark unclear eligibility and entry limits separately.
   - **Evidence** — [public rules and acceptance mapping](submission-report/RULES.md)
 
-- [ ] **002. Resolve second-entry eligibility**
+- [x] **002. Resolve second-entry eligibility**
   - **Objective** — Establish a safe submission path for this separate concept.
   - **Work** — Inspect the signed-in challenge form and its linked terms for entry limits, entrant eligibility and media constraints. Public posts can inform the search. Ask Contra through the approved owner channel if the wording stays unclear.
   - **Deliverable** — Eligibility note with direct evidence and owner.
   - **Pass condition** — Second-entry permission and entrant eligibility have direct supporting evidence before contest submission. Record unresolved terms and continue independent work when this is open.
-  - **Progress** — [Public and authenticated challenge-state rechecks completed; account-level second-entry confirmation is still open.](submission-report/RULES.md#2026-11-15-authenticated-challenge-state-recheck)
+  - **Evidence** — [Official Contra Help Center explicitly permits multiple unique submissions](submission-report/RULES.md#2026-11-15-official-contra-multiple-submission-rule)
 
 - [x] **003. Set the deadline and cutoffs**
   - **Objective** — Protect the core demo and submission time.
@@ -658,7 +658,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Reopen current Guidelines and the joined form. Confirm allowance for a second entry, exact upload fields, deadline and optional IDs. Resolve changes against the recorded rule snapshot.
   - **Deliverable** — Submission checklist with live field names.
   - **Pass condition** — Second-entry eligibility is explicitly confirmed. Core required evidence is accepted by the current form.
-  - **Progress** — Rechecked the active challenge again on 2026-11-15 after the Phase 10 freeze: `submissionsEnabled: true`, deadline `2026-11-17T07:59:00Z`, and public counts of 1,097 participants / 253 submissions. The public challenge payload still exposes no entrant-specific second-entry allowance, joined-form field schema, upload limits or per-account submission cap; `submissionInstructions` and `termsAndConditionsUrl` remain null. Public metadata is not entrant permission. A copy-ready direct Contra clarification question is recorded in `submission-report/PHASE-10-HANDOFF.md`; 091 remains blocked until direct form or Contra evidence exists.
+  - **Progress** — Second-entry eligibility is now resolved by Contra's official Help Center, which explicitly permits multiple submissions when they are unique and meet the challenge criteria; DETOUR's separate-concept evidence is already recorded. The remaining 091 gate is the signed-in current form itself: exact field names, required/optional state, upload/media limits and successful acceptance of the prepared core evidence are not exposed by the public challenge API (`submissionInstructions` / `termsAndConditionsUrl` are null).
 
 - [x] **092. Verify the exact public release**
   - **Objective** — Catch deployment and cross-origin regressions.

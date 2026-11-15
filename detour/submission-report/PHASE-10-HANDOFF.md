@@ -40,11 +40,11 @@ Official public scoring is 10 visual design/originality, 5 usability/interaction
 | Genuine live-site bonus | **+1** | `https://aafnaipatro.com/on-this-day/video/apollo-11/` is a genuine Aafnai Patro On This Day editorial page using the reusable skin on different NASA historical media | Keep the editorial route live; never present the Mux contest demo itself as this bonus |
 | **Internal total including both bonuses** | **23.3 / 27** | Not an official prediction | Eligibility is unresolved, so this is not a submission-readiness score |
 
-**Thesis-flip variable:** if a fresh uncoached reviewer cannot infer the held-origin/Return behavior quickly, both originality communication and usability should be discounted; if the live form disallows a second entry, the competition submission path stops regardless of technical score.
+**Thesis-flip variable:** if a fresh uncoached reviewer cannot infer the held-origin/Return behavior quickly, both originality communication and usability should be discounted; if the current signed-in form imposes an unmet required field or media limit, the payload must be adapted before submission.
 
 ### Must-fix / must-confirm before submission
 
-1. **091 / 002 — blocking:** confirm second-entry permission and current joined-form requirements with direct account/form or Contra evidence. An authenticated challenge-state recheck confirms submissions are enabled and the deadline, but the available connector exposes no entrant-specific second-entry/form schema.
+1. **091 — blocking:** second-entry permission is resolved by Contra's official Help Center FAQ. The remaining gate is the current signed-in form: record exact required/optional fields, media/file limits and whether the prepared DETOUR payload is accepted.
 2. **090 — human evidence:** run the fresh uncoached judging pass; do not substitute the author or automated browser.
 3. **097 — form binding:** map the prepared content below to the actual current field names, upload/link limits and accepted media types.
 4. **099 — owner action:** entrant accepts terms and submits; automation must not do this without the owner action.
@@ -53,13 +53,13 @@ Official public scoring is 10 visual design/originality, 5 usability/interaction
 Because 091 is still open, checklist step 096 remains unchecked even though this rehearsal exists: its pass condition requires all eligibility gates to pass.
 
 
-## Contra clarification — exact next owner action for 091
+## Current form confirmation — exact next owner action for 091
 
-Use the signed-in joined form if it exposes a second-entry path. If it does not make the rule explicit, send Contra this exact question through the entrant's approved support channel:
+Contra's official Help Center now resolves the multiple-submission question: more than one unique submission is allowed when each meets the challenge criteria. Do not spend the remaining window re-asking that generic question unless the challenge form shows a contradictory challenge-specific rule.
 
-> I already submitted one distinct entry to the Video.js Skins Design Challenge (DHAGO) and have built a separate second skin (DETOUR). May the same participant submit more than one distinct skin to this challenge? If yes, is there a per-participant submission limit, and can you confirm the current required/optional form fields and any upload or media limits for the second submission?
+Open the signed-in joined form and record: exact field labels; which are required vs optional; accepted image/video types and size/count limits; URL validation behavior; the Mux Playback ID field; the genuine live-site bonus field; and whether the prepared DETOUR values are accepted without truncation or validation errors. If any challenge-specific form rule conflicts with the official Help Center, capture it and ask Contra only about that conflict.
 
-Record the reply or signed-in form evidence in `RULES.md` before checking 091. Do **not** interpret public challenge counts, the generic “Join to submit!” header, or the absence of a written cap as permission.
+Record the form evidence in `RULES.md` before checking 091.
 
 ## Provisional form payload
 
@@ -118,7 +118,7 @@ Any subsequent change to `detour/skin/`, the public media, Mux Playback ID, capt
 ## Remaining human/account gates
 
 - **090:** fresh uncoached reviewer.
-- **091 / 002:** second-entry and current joined-form evidence.
+- **091:** current signed-in joined-form field/limit/acceptance evidence. Multiple-submission eligibility is already resolved by official Contra guidance.
 - **096:** promote the rubric rehearsal only after 091 and required minimums are confirmed.
 - **097:** bind this content packet to the actual live fields after 091.
 - **099:** owner/entrant submission and receipt capture.

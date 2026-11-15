@@ -5,12 +5,20 @@ Resume step: 091
 
 | Item | Current state |
 | --- | --- |
-| Verified | 89/100. Phase 8 is complete; Phase 9 steps 081–089 are verified except human-only 090; Phase 10 steps 092–095 and 098 are verified. |
-| Next | 091. Owner/account confirmation of second-entry eligibility and the current joined form now unlocks 096/097/099. Step 090 still needs a fresh uncoached human reviewer; 100 follows actual submission. |
-| Open dependencies | 002/091 second-entry and live-form confirmation; 017 first-use study; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% zoom; 090 fresh uncoached judging pass; 099 owner submission and 100 post-submission verification. No further independent Phase 10 acceptance step bypasses 091. |
+| Verified | 90/100. Step 002 is now verified by official Contra multiple-submission guidance. Phase 8 is complete; Phase 9 steps 081–089 are verified except human-only 090; Phase 10 steps 092–095 and 098 are verified. |
+| Next | 091. Multiple-submission eligibility is resolved; the signed-in current form field names, limits and acceptance state still unlock 096/097/099. Step 090 still needs a fresh uncoached human reviewer; 100 follows actual submission. |
+| Open dependencies | 091 signed-in live-form confirmation; 017 first-use study; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% zoom; 090 fresh uncoached judging pass; 099 owner submission and 100 post-submission verification. No further independent Phase 10 acceptance step bypasses 091. |
 | Prototype / public release | Frozen judging candidate: `https://detour.aafnaipatro.com/mux/` on public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`; independent rollback remains `https://detour-backup.aafnaipatro.com/` / `detour-dist-50ac9661e315`. |
 | Source baseline | Public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` was re-qualified by Phase 10 run 43713525858 at verification head `b9b1495f4f66422dfa369cafcad2738fff6b4592`; no `detour/skin/` runtime file changed between those revisions. Phase 10 handoff commit `a98c5f7f80072db76223124ca98d663c5ea4a3fa` is report/tracking only. |
 
+
+
+## 2026-11-15 · Step 002 verified by official Contra multiple-submission guidance
+
+- Contra's official Help Center article **“Challenges on Contra: A new way to earn”** (published 2026-04-06) answers the exact eligibility question: participants may submit more than once to a challenge as long as the submissions are **unique** and meet the challenge criteria. It also states challenges are open to Contra independents unless a challenge says otherwise.
+- The Video.js Skins Design Challenge guidelines contain no contrary per-participant cap. DETOUR's Phase 1/2 evidence already establishes it as a separate concept from DHAGO rather than a duplicate submission.
+- **002 is now verified.** Verified count becomes **90/100**.
+- **091 remains open, but its blocker is narrower:** the public challenge API does not expose the signed-in submission form's exact labels, required/optional state, media/file limits or acceptance result. The entrant must open the current joined form and record those facts before 096/097/099 can pass.
 
 ## 2026-11-15 · Step 091 rechecked; direct eligibility confirmation still required
 
