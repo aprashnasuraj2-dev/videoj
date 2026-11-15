@@ -1,0 +1,10 @@
+{
+  "origin": "https://detour-mux-release.praisethegreatfool.workers.dev/mux/",
+  "sourceSha": "a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a",
+  "distBranch": "detour-dist-a9bbfcb4ee68",
+  "fallbackOrigin": "https://detour-release.praisethegreatfool.workers.dev/",
+  "playbackId": "Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ",
+  "staticMp4Url": "https://stream.mux.com/Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ/highest.mp4",
+  "releaseWorker": "detour-mux-release",
+  "releaseTag": "mux-bonus"
+}

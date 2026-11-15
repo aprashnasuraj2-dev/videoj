@@ -8,6 +8,8 @@ on:
       - 'detour/mux/**'
       - 'detour/public/mux-public.json'
       - 'detour/tests/mux.test.mjs'
+      - 'detour/tests/mux-release.test.mjs'
+      - 'detour/mux-release-origin.json'
       - 'detour/skin/mux.js'
       - 'detour/skin/mux.d.ts'
       - 'detour/vite.config.js'
@@ -40,6 +42,8 @@ jobs:
         run: npm run build
       - name: Verify anonymous Mux playback and fallback
         run: node --test tests/mux.test.mjs
+      - name: Verify frozen public Mux release signed out
+        run: node --test tests/mux-release.test.mjs
       - name: Validate checklist and resume pointer
         if: always()
         run: node scripts/check-progress.mjs
