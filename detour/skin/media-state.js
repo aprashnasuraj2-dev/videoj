@@ -64,6 +64,17 @@ class DetourMediaState extends HTMLElement {
 
     settings.addEventListener('click', () => setSettingsOpen(menu.hidden), { signal });
     const bar = settings.parentElement;
+    // Firefox may consume Escape to exit native fullscreen before the bubbled
+    // keydown reaches the control shelf. Resolve an open disclosure first.
+    // Scope to the focused disclosure so independent player instances cannot
+    // steal each other's Escape events.
+    document.addEventListener('keydown', event => {
+      if (event.key !== 'Escape' || menu.hidden || !inDisclosure(document.activeElement)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      setSettingsOpen(false);
+      settings.focus();
+    }, { signal, capture: true });
     bar.addEventListener('keydown', event => {
       if (event.key !== 'Escape' || menu.hidden || !inDisclosure(event.target)) return;
       event.preventDefault();

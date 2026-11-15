@@ -224,3 +224,61 @@ test('069 five cached-run signature traces have no observed long task above 50ms
     t.diagnostic('Chromium 320px warm-process signature observations: '+JSON.stringify(durations));
   } finally {await context.close();}
 });
+
+test('061 emulated iPhone landscape WebKit can hold and return without clipping', { timeout: 45000 }, async t => {
+  const mobileBrowser = await webkit.launch();
+  const iphone = devices['iPhone 13'];
+  const context = await mobileBrowser.newContext({
+    userAgent:iphone.userAgent,viewport:{width:844,height:390},
+    deviceScaleFactor:iphone.deviceScaleFactor,isMobile:true,hasTouch:true,
+  });
+  try {
+    const page = await context.newPage();
+    await ready(page);
+    await page.locator('.demo').evaluate(node => { node.style.width='800px'; });
+    await geometry(page,'emulated-iPhone-landscape/idle');
+    await seek(page,42.35);
+    await page.getByRole('button',{name:'Keep my place'}).click();
+    await seek(page,18);
+    await geometry(page,'emulated-iPhone-landscape/held');
+    await capture(page,'emulated-iPhone-landscape-held');
+    await page.getByRole('button',{name:'Return to 00:42'}).click();
+    await page.getByRole('button',{name:'Keep my place'}).waitFor();
+    assert.ok(Math.abs(await page.locator('video').evaluate(v=>v.currentTime)-42.35)<0.5);
+    t.diagnostic('Linux WebKit with iPhone UA landscape geometry: no physical Safari/iOS claim.');
+  } finally {await context.close(); await mobileBrowser.close();}
+});
+
+test('063 Shift+Tab stays inside visible controls and failed Return keeps focus', { timeout: 30000 }, async t => {
+  const page = await browser.newPage({viewport:{width:375,height:800}});
+  try {
+    await ready(page);
+    const settings=page.getByRole('button',{name:'Playback settings'});
+    await settings.focus();
+    await page.keyboard.press('Shift+Tab');
+    const focus=await page.evaluate(()=>{
+      const element=document.activeElement;
+      const rect=element?.getBoundingClientRect();
+      return {inside:!!element?.closest('.detour'),width:rect?.width??0,height:rect?.height??0};
+    });
+    assert.ok(focus.inside&&focus.width>0&&focus.height>0, 'Reverse tab landed outside visible player');
+    await seek(page,42.35);
+    await page.getByRole('button',{name:'Keep my place'}).click();
+    await seek(page,18);
+    await page.locator('video-player').evaluate(player=>{
+      player.__phase7RealStore=player.store;
+      Object.defineProperty(player,'store',{configurable:true,
+        value:Object.create(player.store,{seek:{value:()=>Promise.reject(new Error('Controlled phase7 reject'))}})});
+    });
+    const back=page.getByRole('button',{name:'Return to 00:42'});
+    await back.focus();
+    await page.keyboard.press('Enter');
+    await page.locator('.detour-notice:visible').waitFor();
+    assert.equal(await back.evaluate(node=>node===document.activeElement),true);
+    assert.equal(await back.getAttribute('aria-disabled'),'false');
+    await page.locator('video-player').evaluate(player=>{
+      Object.defineProperty(player,'store',{configurable:true,value:player.__phase7RealStore});
+    });
+    t.diagnostic('Desktop Chromium reverse tab and controlled rejected-return focus recovery.');
+  } finally {await page.close();}
+});

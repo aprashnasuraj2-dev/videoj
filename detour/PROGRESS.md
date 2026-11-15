@@ -11,6 +11,11 @@ Resume step: 061
 | Prototype / public release | Base-only and DETOUR packed consumers pass. Desktop Chromium/WebKit core controls and Return pass; optional real Mux playback and public release remain later work. |
 | Source baseline | Phase 6 mobile-UA completed test baseline: `15bd747d57285eb7be236577aff7b41e688cc6fc`, GitHub Actions run 43693510683. |
 
+## 2026-11-15 · Firefox fullscreen menu Escape fix (validation pending)
+
+- GitHub Actions run 43694723080 failed Firefox's full-screen Settings Escape path: menu stayed visible after Escape while fullscreen/native transition was in flight. Added focus-scoped, capture-phase Escape handling to close the playback disclosure before native fullscreen handling, and allowed asynchronous visibility settlement in the regression test. Do not mark this pass until exact-head Firefox CI confirms it.
+- Added iPhone-descriptor **landscape WebKit emulation** and Shift+Tab plus controlled rejected-Return focus tests to Phase 7. These are software emulation and keyboard checks, not physical iPhone or screen-reader certification.
+
 ## 2026-11-15 · Phase 7 footprint and five-repeat interaction probe (validation pending)
 
 - Added reproducible, equal-target gzip compilation of the detached base and DETOUR entries and a 15 KiB incremental budget assertion. Common scoped CSS is identical across entries (zero incremental CSS); the total CSS is not claimed as zero. This import-graph estimate does not replace actual network trace byte accounting.

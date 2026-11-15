@@ -8,9 +8,9 @@ The automated tests run on GitHub-hosted Ubuntu, Node 24, Video.js HTML 10.4.0 a
 
 | ID | Executable check | Known gap before acceptance |
 | --- | --- | --- |
-| 061 | Real Vite-built player at 240, 320, 375, 768 and 1280 CSS px; idle, held, native VTT caption, Settings, pending Return; each state screenshot saved on CI. Required control visibility, 44px signature hit boxes and horizontal overflow asserted. | Review images and inspect real iOS landscape before claiming the full row. |
+| 061 | Real Vite-built player at 240, 320, 375, 768 and 1280 CSS px; idle, held, native VTT caption, Settings, pending Return; each state screenshot saved on CI. Required control visibility, 44px signature hit boxes and horizontal overflow asserted. | Now includes a distinct emulated iPhone WebKit landscape hold/Return path; inspect images and physical iOS landscape remains separate. |
 | 062 | Emulated Pixel Chromium touch taps Hold, timeline and Return. | Physical Android Chrome and iPhone Safari, pointercancel, drag and page-scroll interruption remain. |
-| 063 | Keyboard-only Hold, slider Home/End, Return, Stay and Escape focus restore. | Inspect failure focus and Shift+Tab path; perform AT checks separately. |
+| 063 | Keyboard-only Hold, slider Home/End, Return, Stay and Escape focus restore. | Added desktop Chromium Shift+Tab and controlled rejected-Return focus paths; obtain exact CI outcome; perform AT checks separately. |
 | 064 | No AT sessions recorded. | NVDA/Firefox or Chrome and VoiceOver/Safari, with versions. |
 | 065 | Reduced-motion animation, forced colors, and 200% *CSS zoom emulation*, with screenshots. | Actual browser zoom, contrast re-measure and bright/dark caption inspection remain. |
 | 066 | Previous Phase 5/6 synthetic duration, dense chapter, portrait and audio cases. | Full content/language matrix at this phase. |

@@ -292,7 +292,7 @@ test('essential controls and a caption-safe settings panel at desktop and compac
       await menu.waitFor();
       await page.keyboard.press('Tab');
       await page.keyboard.press('Escape');
-      assert.equal(await menu.isVisible(), false);
+      await menu.waitFor({ state: 'hidden', timeout: 3000 });
       assert.equal(await settings.evaluate(el => document.activeElement === el), true);
       if (await page.evaluate(() => Boolean(document.fullscreenElement))) {
         await page.locator('media-fullscreen-button').click();
