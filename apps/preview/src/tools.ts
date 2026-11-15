@@ -103,7 +103,16 @@ const render = () => {
  q('#tools-buffered-label').textContent=rangeDescription(n.buffered);
  q('#tools-seekable-label').textContent=rangeDescription(n.seekable);
  // A compact live sample, not a log of URL parameters or secret-bearing headers.
- snapshotNode.textContent=JSON.stringify(snap,null,2);
+ snapshotNode.textContent=[
+  'Source: '+snap.source,
+  'Playback: '+d.playbackState,
+  'Position: '+stamp(video.currentTime)+' / '+stamp(video.duration),
+  'Chapter: '+d.chapter,
+  'Buffered ranges: '+rangeDescription(n.buffered),
+  'Seekable ranges: '+rangeDescription(n.seekable),
+  'Sound: '+(n.muted?'muted':'on')+' · speed '+n.playbackRate+'×',
+  'Fullscreen: '+(snap.support.fullscreen?'available':'unavailable')+' · Picture-in-Picture: '+(snap.support.pictureInPicture?'available':'unavailable')
+ ].join('\n');
 };
 // Render at most four times a second, but *always* deliver the latest state.
  // A native seek can emit all its events inside the throttle window and then
@@ -173,15 +182,15 @@ q<HTMLFormElement>('#tools-seek-form').addEventListener('submit',e=>{
 q<HTMLButtonElement>('#tools-toggle-log').addEventListener('click',e=>{
  logging=!logging;
  const b=e.currentTarget as HTMLButtonElement;
- b.textContent=logging?'Pause logging':'Resume logging';
+ b.textContent=logging?'Pause history':'Resume history';
  b.setAttribute('aria-pressed',String(!logging));
 });
-q('#tools-clear-log').addEventListener('click',()=>{events.length=0;renderEvents();feedback.textContent='Event history cleared.';});
+q('#tools-clear-log').addEventListener('click',()=>{events.length=0;renderEvents();feedback.textContent='Playback history cleared.';});
 q('#tools-copy-state').addEventListener('click',async()=>{
  try{
  await navigator.clipboard.writeText(JSON.stringify(snapshot(),null,2));
- feedback.textContent='Sanitized snapshot copied.';
- }catch{feedback.textContent='Clipboard permission denied. Select and copy the sanitized snapshot text below.';snapshotNode.focus();}
+ feedback.textContent='Playback details copied.';
+ }catch{feedback.textContent='Clipboard permission denied. Select and copy the playback details below.';snapshotNode.focus();}
 });
 q('#tools-reset').addEventListener('click',()=>{
  video.pause();
@@ -192,7 +201,7 @@ q('#tools-reset').addEventListener('click',()=>{
  if(restored){video.src=SOURCE;video.load();video.addEventListener('loadedmetadata',()=>{video.currentTime=0;scheduleRender();},{once:true});}
  else if(video.readyState>0)video.currentTime=0;
  for(const t of Array.from(video.textTracks||[]))if(t.kind==='captions')t.mode='disabled';
- feedback.textContent='Restored original media, start position, normal speed and sound. Event history preserved.';
+ feedback.textContent='Returned to the original film, start position, normal speed and sound. Playback history preserved.';
  scheduleRender();
 });
 renderEvents();render();
