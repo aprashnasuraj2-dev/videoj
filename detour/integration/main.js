@@ -1,4 +1,5 @@
 import { createDetourPlayer } from '../skin/index.js';
+import '../demo/page.css';
 
 // This page is an independent host example: media selection stays outside the skin.
 // Its default is deliberately different from the public showcase and QA fixture.

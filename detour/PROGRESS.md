@@ -1,15 +1,23 @@
 # DETOUR progress
 
 Phase: 09
-Resume step: 081
+Resume step: 082
 
 | Item | Current state |
 | --- | --- |
-| Verified | 75/100. Phase 8 is complete: 071–080 are verified, including the qualified Mux bonus path, tested fallback, explicit real-site skip, rights/operations manifest and frozen demo. |
-| Next | 081. Begin Phase 9 polish on the frozen `a9bbfcb4ee68` demonstration without changing its media identity, Mux Playback ID or rollback contract. |
+| Verified | 76/100. Phase 8 is complete and Phase 9 step 081 cold-path polish is publicly verified. |
+| Next | 082. Capture the authentic held/current hero from the qualified public candidate, then build the distinct detail/compact/recovery/interaction evidence set. |
 | Open dependencies | 002 second-entry eligibility; 017 uncoached first-use; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% browser zoom. These remain open and are not reclassified by Phase 8 browser evidence. |
 | Prototype / public release | Frozen Mux candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on immutable `detour-dist-a9bbfcb4ee68`; stable rollback/fallback remains `https://detour-release.praisethegreatfool.workers.dev/`. |
 | Source baseline | Phase 8 production source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a`: full CI 43706450932 green and immutable dist staged. Public Mux release verification 43707445255 passed from the later test-only harness; earlier full CI 43707040940 also remained green after adding the public gate. |
+
+## 2026-11-15 · Phase 9 step 081 accepted; evidence capture milestone starts
+
+- Public verification run 43711048857 passed the deployed `c647d59d6f00…` candidate. Reviewed its actual artifact: at 375×667 player top is **65.98px** versus **155.28px** before polish; at 1280×900 player bottom is **869.44px** versus **933.83px**, so the full desktop cold player now fits the expected viewport.
+- The reviewed mobile frame begins at generated **00:00:00.000** and the player clock reads **00:00 / 00:55**. Held state shows actual 18s media with **00:18 / 00:55**, the lime held bracket and **Return to 00:42**; healthy recovery/provider UI is absent.
+- Full exact source `c647d59d6f00dae6f753a20ebc163ef12bcd5992` remains green in run 43710674795 across Chromium, Firefox, desktop WebKit, packed-host, responsive and keyboard probes. Follow-up exact-head run 43711048833 also passed.
+- **081 accepted.** Added a separate public evidence capture workflow for 082–086: player-only wide hero, control-shelf detail, 375px captions, provider-recovery state, distinct-media alternate mount and an authentic 6–10s keyboard/focus interaction recording. The capture script verifies real times rather than fabricating overlays.
+- Resume at **082**. Step 090 still requires an uncoached human reviewer and cannot be replaced by automation.
 
 ## 2026-11-15 · Phase 9 step 081 — polished immutable build deployed (public requalification pending)
 

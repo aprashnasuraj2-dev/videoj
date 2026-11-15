@@ -582,12 +582,12 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
 
 ## 09 · Visual polish, evidence and public presentation
 
-- [ ] **081. Polish what the judge touches first**
+- [x] **081. Polish what the judge touches first**
   - **Objective** — Remove perceptible friction from the signature sequence.
   - **Work** — Watch the cold path from page entry through hold, seek and return. Inspect layout movement, time labels, visible focus, press states and poster transition. Fix the first three issues with the biggest task impact.
   - **Deliverable** — Polish issue log and updated candidate.
   - **Pass condition** — Cold flow stays single-screen on expected sizes and all fixes survive keyboard and mobile checks.
-  - **Progress** — Public capture review found and fixed three specific issues: technical recovery copy above healthy playback, a 42s poster contradicting the 0s clock, and `0:18` vs `00:42` time-format mismatch. New build/public checks pending before acceptance.
+  - **Evidence** — [Phase 9 issue log and acceptance](design/PHASE-9.md#step-081-public-acceptance--2026-11-15), full implementation run 43710674795 and public run 43711048857: mobile player top improved 155.3→66.0px, desktop bottom improved 933.8→869.4px inside 900px, time-zero poster agrees with playback, visual clock reads `00:18 / 00:55`, and keyboard/mobile regression gates remain green.
 
 - [ ] **082. Capture an authentic hero**
   - **Objective** — Show a distinctive player-only state.

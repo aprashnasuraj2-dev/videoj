@@ -1,0 +1,49 @@
+name: Capture DETOUR Phase 9 evidence
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [detour]
+    paths:
+      - 'detour/scripts/capture-phase9.mjs'
+      - 'detour/mux-release-origin.json'
+      - '.github/workflows/detour-phase9-evidence.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: detour
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: detour/package-lock.json
+      - name: Install media tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Install pinned dependencies
+        run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Capture authentic public evidence
+        env:
+          DETOUR_PHASE9_OUTPUT: phase9-evidence
+        run: node scripts/capture-phase9.mjs
+      - name: Preserve evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detour-phase9-evidence-${{ github.sha }}
+          path: detour/phase9-evidence/
+          if-no-files-found: error
+          retention-days: 14
+      - name: Validate checklist and resume pointer
+        if: always()
+        run: node scripts/check-progress.mjs

@@ -24,3 +24,19 @@ Source of review: signed-out public diagnostics from Actions run 43710251344, ca
 3. Stage the exact successful dist; update only the isolated `detour-mux-release` Worker.
 4. Re-run signed-out 375×667 public Hold → 18s → Return and 1280×900 smoke. Capture the new public states and compare player top position to the prior 155.3px mobile baseline.
 5. Only then check 081 and move to 082.
+
+## Step 081 public acceptance — 2026-11-15
+
+The polished implementation source `c647d59d6f00dae6f753a20ebc163ef12bcd5992` passed the complete DETOUR pipeline in run 43710674795 and was staged as `detour-dist-c647d59d6f00`. The isolated Mux Worker was updated to that immutable branch and public verification run 43711048857 passed.
+
+Reviewed public capture deltas:
+
+| Measurement | Before | After | Effect |
+| --- | ---: | ---: | --- |
+| 375px player top | 155.28px | 65.98px | **89.30px earlier**, ~57.5% reduction in pre-player vertical distance |
+| 375px recovery panel | 80.5px visible | 0px | Infrastructure UI removed from healthy path |
+| 1280×900 player bottom | 933.83px | 869.44px | Full player now fits inside 900px viewport with ~30.6px reserve |
+| Cold media image vs clock | poster ~41.917s vs clock 0:00 | frame 0.000s vs clock 00:00 | First frame and truthful playback state agree |
+| Held time grammar | 0:18 / 0:55 vs Return 00:42 | 00:18 / 00:55 vs Return 00:42 | Current and held times use one visual grammar |
+
+Keyboard and mobile behavior did not regress: the full run retained packed-host, Chromium, Firefox, desktop WebKit, responsive, keyboard and emulated-touch passes. The semantic Video.js `media-time` components remain in the DOM; only the visible time face is custom-formatted and aria-hidden. **Step 081 passes.**
