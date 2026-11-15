@@ -27,6 +27,58 @@ For hosts that want the same visual shell and ordinary Video.js controls without
 
 Mux support is a separate optional `detour-video-skin/mux` entry. The core entry does not import Mux, fixtures or showcase code, and no management credential belongs in a browser bundle. See [Phase 5](design/PHASE-5.md) for the packed-host and cross-engine proof.
 
+## Package quick-start
+
+DETOUR is **pack-installable** but intentionally not registry-published. From this directory:
+
+```bash
+npm ci
+npm pack
+# In another project:
+npm install /path/to/detour-video-skin-0.1.0.tgz
+```
+
+Then mount a host-owned native media element:
+
+```js
+import { createDetourPlayer } from 'detour-video-skin';
+import 'detour-video-skin/styles';
+
+const video = document.createElement('video');
+video.src = '/interview.mp4';
+video.preload = 'metadata';
+
+const captions = document.createElement('track');
+captions.kind = 'captions';
+captions.srclang = 'en';
+captions.label = 'English';
+captions.src = '/interview.vtt';
+video.append(captions);
+
+document.querySelector('#player').append(
+  createDetourPlayer(video, { sourceKind: 'vod' }),
+);
+```
+
+### Build and verification
+
+- `npm run build` — generate the deterministic demo media and build the multi-page showcase.
+- `npm run test:architecture` — verify package/import boundaries and credential separation.
+- `npm run test:package` — pack the exact package, install it into a fresh temporary host, replace the media/captions and exercise the skin in Chromium, Firefox and desktop WebKit.
+- `npm test` — run the core browser regression in Chromium; set `DETOUR_ENGINE=firefox` or `webkit` for the other engines.
+
+### Reuse limits
+
+- Held-place behavior is enabled only when the host declares `sourceKind: 'vod'` on a native video with finite, seekable media.
+- DETOUR stores one held position per mounted player instance. A source change clears it; successful Return or **Stay here** consumes it.
+- Live streams, non-seekable media and audio keep the ordinary player shell but do not expose the held-place action.
+- Media URLs, poster, captions, titles, hosting and optional streaming providers are host concerns. The packed artifact excludes demo/showcase media and test fixtures.
+- `detour-video-skin/mux` contains public URL helpers only. Mux management credentials are never part of the package/browser contract.
+
+### License and media
+
+The DETOUR package source is Apache-2.0; see `LICENSE`. The package tarball contains no showcase video, poster or captions. The public demonstration media is project-authored procedural test/showcase material with separate provenance in `submission-report/RIGHTS.md`.
+
 ## Product direction
 
 - **Player first.** Keep one source-scoped held point, five essential controls and real player state. Preserve normal play/pause, seeking, captions, keyboard and touch. The mark survives arbitrary seeks and clears on successful return, deliberate dismissal or a source change.

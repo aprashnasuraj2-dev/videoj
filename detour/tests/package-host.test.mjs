@@ -442,7 +442,7 @@ after(async () => {
 test('packed artifact contains the reusable boundary and excludes showcase/runtime fixtures', () => {
   for (const required of [
     'package.json', 'LICENSE', 'README.md',
-    'skin/index.js', 'skin/index.d.ts', 'skin/base.js', 'skin/base.d.ts', 'skin/shell.js', 'skin/media-state.js', 'skin/player.js', 'skin/place.js', 'skin/player.css',
+    'skin/index.js', 'skin/index.d.ts', 'skin/base.js', 'skin/base.d.ts', 'skin/shell.js', 'skin/media-state.js', 'skin/player.js', 'skin/place.js', 'skin/format-time.js', 'skin/player.css',
     'skin/mux.js', 'skin/mux.d.ts',
   ]) assert.ok(packedFiles.includes(required), `Packed archive missing ${required}`);
 

@@ -664,24 +664,28 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Test the frozen URL in incognito and a different network or device. Verify v10 build ID, real playback, seeking across available ranges, captions, HTTPS and absence of login. Test any linked backup.
   - **Deliverable** — Public URL verification record.
   - **Pass condition** — The exact URL to be submitted plays a real video and completes hold, seek and return in a signed-out browser.
+  - **Progress** — Added a remote signed-out public gate that pins source/dist headers, records @videojs/html 10.4.0 from the lock, enables real captions, executes 42.35→18→42.35 Return and probes the independent backup; pending exact-head CI.
 
 - [ ] **093. Check the five mandatory controls**
   - **Objective** — Satisfy Contra's minimum product requirements.
   - **Work** — On desktop keyboard and mobile touch, confirm play/pause, seek bar, time, volume/mute and fullscreen. Exit menus with keyboard and confirm layout on bright and dark video.
   - **Deliverable** — Essential-controls sign-off table.
   - **Pass condition** — All five features are reachable and functional in the actual deployed player.
+  - **Progress** — Added exact-public desktop-keyboard and 375px touch-shaped tests for play/pause, seek/time, mute and fullscreen plus keyboard menu Escape and a bright-media control visibility check; pending CI. This is browser touch emulation, not physical-phone evidence for 062.
 
 - [ ] **094. Audit the final build for secrets and rights**
   - **Objective** — Protect the package and control public assets.
   - **Work** — Inspect production bundles, HTML and package manifest for secrets, private asset IDs and notes. Verify Apache 2.0 for the entry and documented separate rights for assets.
   - **Deliverable** — Release rights and secret-scan log.
   - **Pass condition** — No private token or unlicensed distributable asset is present. Public playback ID appears only where appropriate.
+  - **Progress** — Added build-time scan for Mux management hooks, sensitive public-config keys, internal-directory leakage, Apache-2.0 entry license, permissive production dependency licenses, procedural media provenance and package dry-run contents; pending CI.
 
 - [ ] **095. Package reuse and reproducibility**
   - **Objective** — Leave a working skin that another developer can mount.
   - **Work** — Include license, notices if applicable, exact install/build instructions, minimal example, feature limits and media attribution. Mark any repository link as supporting evidence unless required by the current form.
   - **Deliverable** — Versioned release package and quick-start.
   - **Pass condition** — A fresh clone or extracted archive installs, plays a replacement clip and performs a return without private values.
+  - **Progress** — Expanded README package quick-start/limits/license notes, required `format-time.js` in pack verification, retained the existing fresh-temp-host replacement-media test, and added a success-only reusable `.tgz` CI artifact; pending exact-head acceptance.
 
 - [ ] **096. Rehearse the official judging rubric**
   - **Objective** — Make score risks visible before submission.

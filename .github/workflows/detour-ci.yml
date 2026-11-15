@@ -37,6 +37,10 @@ jobs:
         run: node --test tests/showcase.test.mjs
       - name: Verify frozen public HTTPS release origin
         run: node --test tests/https-release.test.mjs
+      - name: Phase 10 exact public release and mandatory controls
+        run: node --test tests/phase10-public.test.mjs
+      - name: Audit final bundle, package license and secret boundary
+        run: node scripts/final-audit.mjs
       - name: Verify static package boundaries
         run: npm run test:architecture
       - name: Verify packed external host in Chromium and desktop WebKit
@@ -67,6 +71,20 @@ jobs:
           path: detour/phase7-captures/
           if-no-files-found: ignore
           retention-days: 7
+      - name: Pack reusable DETOUR skin
+        if: success()
+        run: |
+          rm -rf release-package
+          mkdir -p release-package
+          npm pack --pack-destination release-package
+      - name: Preserve reusable DETOUR package
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detour-reusable-package-${{ github.sha }}
+          path: detour/release-package/*.tgz
+          if-no-files-found: error
+          retention-days: 14
       - name: Preserve exact production release bundle
         if: success()
         uses: actions/upload-artifact@v4

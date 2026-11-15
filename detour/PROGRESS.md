@@ -11,6 +11,14 @@ Resume step: 092
 | Prototype / public release | Frozen Mux candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on immutable `detour-dist-a9bbfcb4ee68`; stable rollback/fallback remains `https://detour-release.praisethegreatfool.workers.dev/`. |
 | Source baseline | Phase 8 production source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a`: full CI 43706450932 green and immutable dist staged. Public Mux release verification 43707445255 passed from the later test-only harness; earlier full CI 43707040940 also remained green after adding the public gate. |
 
+## 2026-11-15 · Phase 10 steps 092–095 implemented (acceptance pending)
+
+- Added `tests/phase10-public.test.mjs` against the **actual submitted candidate URL**, not local preview. Step 092 pins HTTPS/source/dist, @videojs/html **10.4.0**, real Mux playback, captions, 42.35→18→Return and a 206/1,024-byte independent backup probe.
+- The same public test exercises the five required controls with **desktop keyboard** and a **375×667 touch-enabled Chromium context**: play/pause, real seek + time, mute, fullscreen, plus Settings→Escape focus restoration. It also checks all five remain visible over the bright alternate media. Touch is browser emulation and does not close physical-device step 062.
+- Added `scripts/final-audit.mjs`: scans built text assets for Mux management credential/API hooks, checks public config keys, exact media hash/provenance, Apache-2.0 entry license, production dependency licenses, dist directory boundaries, and `npm pack --dry-run` contents.
+- Expanded the package README with exact pack/install/build instructions, minimal host-owned media/captions example, VOD/source-reset limits and license/media boundaries. The packed-host test now explicitly requires `skin/format-time.js`.
+- CI now preserves a success-only `detour-video-skin-0.1.0.tgz` artifact in addition to the production dist. **092–095 remain unchecked until this exact head passes.**
+
 ## 2026-11-15 · Step 088 accepted; Phase 10 independent verification begins
 
 - Mux/public run 43712857162 passed the new executable language audit in **3.78s**. It opened the actual signed-out primary route, alternate-media route and blocked-provider recovery state.

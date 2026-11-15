@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import { muxPlaybackUrl } from '../skin/mux.js';
 const read = name => readFileSync(new URL(name, import.meta.url), 'utf8');
 test('core skin has no demo, fixture or Mux dependency', () => {
-  for (const filename of ['../skin/index.js', '../skin/player.js', '../skin/place.js', '../skin/shell.js', '../skin/media-state.js', '../skin/base.js', '../skin/player.css']) {
+  for (const filename of ['../skin/index.js', '../skin/player.js', '../skin/place.js', '../skin/format-time.js', '../skin/shell.js', '../skin/media-state.js', '../skin/base.js', '../skin/player.css']) {
     const source = read(filename);
     assert.doesNotMatch(source, /(?:from\s*['"][^'"]*(?:demo\/|fixtures\/|mux(?:\.js)?['"]))|(?:stream\.mux\.com)|(?:navigation-study)/i, filename);
   }
@@ -41,7 +41,7 @@ test('skin CSS stays host-scoped and client sources contain no management creden
     assert.match(selector, /^\.detour(?:\b|[\s.:[>#,+~])/i, `Unscoped selector: ${selector}`);
   }
 
-  const client = ['../skin/index.js', '../skin/player.js', '../skin/place.js', '../skin/shell.js', '../skin/media-state.js', '../skin/base.js', '../skin/mux.js', '../skin/player.css']
+  const client = ['../skin/index.js', '../skin/player.js', '../skin/place.js', '../skin/format-time.js', '../skin/shell.js', '../skin/media-state.js', '../skin/base.js', '../skin/mux.js', '../skin/player.css']
     .map(read).join('\n');
   assert.doesNotMatch(client, /MUX_TOKEN_(?:ID|SECRET)|Authorization\s*:|Bearer\s+[A-Za-z0-9+/_=-]{12,}|api[_-]?secret\s*=|management[_-]?token\s*=/i);
 });
