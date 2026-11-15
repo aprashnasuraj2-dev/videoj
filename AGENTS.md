@@ -5,7 +5,7 @@ Read `docs/PLAN.md`, `docs/steps.json`, `docs/worklog.md`, and `docs/status.json
 - Use Video.js v10. Read installed `node_modules/@videojs/html/docs/llms.txt` and relevant references before changing components. Do not use the v8 `videojs()` API.
 - Skin code belongs in `src/`; it must import nothing from `apps/preview/`.
 - Keep player state truthful. Preserve error handling, keyboard access, announcements, component registrations and unique trigger IDs.
-- Check all 100 steps in order. A blocked owner/account step does not block independent later work. DONE requires evidence; otherwise use IN_PROGRESS, BLOCKED or NOT_STARTED.
+- The original 100 steps remain intact as historical entries 1–100 in docs/steps.json. Entries after 100 form the authoritative competition-excellence Phases 1–9, with status NOT STARTED / IN PROGRESS / IMPLEMENTED / VERIFIED / BLOCKED. Do not promote IMPLEMENTED to VERIFIED without evidence. Phase 10 is owner-only.
 - `docs/steps.json` is the progress source. Run `node scripts/progress.mjs` after updates; it regenerates CHECKLIST.md and status.json. Update worklog at meaningful milestones and push evidence with implementation.
 - Never put credentials in source, client bundles, logs or screenshots. Public playback IDs are allowed; management secrets are not.
 - Use relevant functional tests, responsive screenshots and keyboard checks. Never label unexecuted tests passed; desktop WebKit is not a physical iPhone.
