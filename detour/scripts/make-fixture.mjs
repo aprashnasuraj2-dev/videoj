@@ -5,13 +5,13 @@ import { fileURLToPath } from 'node:url';
 const fixtures = new URL('../public/fixtures/', import.meta.url);
 mkdirSync(fixtures, { recursive: true });
 
-function encodeFixture(name, color, filters) {
+function encodeFixture(name, color, filters, { size = '854x480' } = {}) {
   const output = fileURLToPath(new URL(`${name}.mp4`, fixtures));
   if (existsSync(output)) return;
   const temporary = fileURLToPath(new URL(`${name}.${process.pid}.tmp.mp4`, fixtures));
   const run = spawnSync('ffmpeg', [
     '-nostdin', '-loglevel', 'error', '-y',
-    '-f', 'lavfi', '-i', `color=c=${color}:s=854x480:r=24:d=64`,
+    '-f', 'lavfi', '-i', `color=c=${color}:s=${size}:r=24:d=64`,
     '-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=44100',
     '-vf', filters.join(','), '-t', '64', '-c:v', 'libx264', '-preset', 'fast',
     '-crf', '24', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-movflags', '+faststart', temporary,
@@ -51,6 +51,15 @@ encodeFixture('daylight-study', '0xf5f1e6', [
   'drawbox=x=58:y=378:w=250:h=2:color=0x759087:t=fill',
 ]);
 
+encodeFixture('portrait-study', '0x142226', [
+  'drawgrid=width=40:height=40:thickness=1:color=white@0.10',
+  'drawbox=x=52:y=82:w=256:h=3:color=0xe4ff52:t=fill',
+  "drawbox=x=62:y=170:w=236:h=250:color=0x315248:t=fill:enable='between(t,14,31)'",
+  "drawbox=x=82:y=210:w=196:h=210:color=0x784536:t=fill:enable='gte(t,38)'",
+  "drawtext=text='PORTRAIT STUDY':x=52:y=112:fontsize=21:fontcolor=white",
+  "drawtext=text='%{pts\\:hms}':x=52:y=500:fontsize=28:fontcolor=white",
+], { size: '360x640' });
+
 writeFileSync(new URL('navigation-study.vtt', fixtures), `WEBVTT
 
 00:00:00.000 --> 00:00:04.000
@@ -75,3 +84,23 @@ writeFileSync(new URL('daylight-study.vtt', fixtures), `WEBVTT
 00:00:40.000 --> 00:00:46.000
 [A pale yellow rectangle appears.]
 `);
+
+writeFileSync(new URL('portrait-study.vtt', fixtures), `WEBVTT
+
+00:00:17.000 --> 00:00:23.000
+[Portrait fixture at the explored moment.]
+
+00:00:40.000 --> 00:00:46.000
+[Portrait fixture near the kept place.]
+`);
+
+function vttTime(seconds) {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor(seconds / 60) % 60;
+  const remainder = seconds % 60;
+  return [hours, minutes, remainder].map(value => String(value).padStart(2, '0')).join(':') + '.000';
+}
+const denseChapters = Array.from({ length: 64 }, (_, index) =>
+  `${vttTime(index)} --> ${vttTime(index + 1)}\nChapter ${String(index + 1).padStart(2, '0')}`
+).join('\n\n');
+writeFileSync(new URL('dense-chapters.vtt', fixtures), `WEBVTT\n\n${denseChapters}\n`);
