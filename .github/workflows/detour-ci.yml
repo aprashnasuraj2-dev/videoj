@@ -1,0 +1,47 @@
+name: Validate DETOUR
+
+on:
+  push:
+    branches: [detour]
+    paths:
+      - 'detour/**'
+      - '.github/workflows/detour-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  phase-5:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    defaults:
+      run:
+        working-directory: detour
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: detour/package-lock.json
+      - name: Install media tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Install pinned dependencies
+        run: npm ci
+      - name: Install DETOUR browser engines
+        run: npx playwright install --with-deps chromium webkit
+      - name: Build production demo
+        run: npm run build
+      - name: Verify static package boundaries
+        run: npm run test:architecture
+      - name: Verify packed external host in Chromium and desktop WebKit
+        run: npm run test:package
+      - name: Run full Chromium regression
+        run: npm test
+      - name: Re-run the signature round trip in desktop WebKit
+        env:
+          DETOUR_ENGINE: webkit
+        run: node --test --test-name-pattern="paused return lands ten times" tests/browser.test.mjs
+      - name: Validate checklist and resume pointer
+        run: node scripts/check-progress.mjs
