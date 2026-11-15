@@ -33,6 +33,8 @@ jobs:
         run: npx playwright install --with-deps chromium firefox webkit
       - name: Build production demo
         run: npm run build
+      - name: Verify generated Phase 8 showcase bundle and local HTTP seeks
+        run: node --test tests/showcase.test.mjs
       - name: Verify static package boundaries
         run: npm run test:architecture
       - name: Verify packed external host in Chromium and desktop WebKit

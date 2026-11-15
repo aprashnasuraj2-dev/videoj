@@ -11,6 +11,13 @@ Resume step: 071
 | Prototype / public release | Packed external host and desktop Chromium/Firefox/WebKit core are green. Phase 7 capture artifact exists. Public HTTPS, final showcase media and optional Mux remain later gates. |
 | Source baseline | Phase 7 accepted automated/browser baseline: `9eeeb770b4f7cc7d7d5ba4c766095f05c2116be2`, GitHub Actions run 43698982276, capture artifact 14155597667. |
 
+## 2026-11-15 · Phase 8 custom media implementation (validation pending)
+
+- Selected a **56-second deterministic procedural motion study** rather than external stock/documentary footage. It is generated only from FFmpeg color/grid/box/text filters plus a low-level synthetic sine bed; the existing silent `navigation-study` remains the fallback. No DHAGO media or third-party footage/music is reused.
+- Added a generated bundle contract: 1280×720 H.264/AAC fast-start MP4, poster extracted from the actual 42s frame, descriptive VTT and JSON provenance/timing manifest. Binary outputs stay generated/ignored; source instructions remain reviewable.
+- Added `showcase.test.mjs`: ffprobe verifies codec/dimensions/audio/duration; MP4 atom order verifies fast-start; frame hashes at 18s and 42s must differ; fresh Vite-preview Chromium must seek to both times and fetch poster/VTT/manifest over local HTTP. HTTPS qualification remains step 072/release work.
+- CI will run the showcase verification after the production build. Step 071 remains unchecked until this exact implementation passes; step 072 cannot pass before HTTPS verification.
+
 ## 2026-11-15 · Phase 7 automated/browser acceptance and Phase 8 handoff
 
 - Exact source `9eeeb770b4f7cc7d7d5ba4c766095f05c2116be2` passed [Actions run 43698982276](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43698982276) with architecture, packed external-host, full Chromium/Firefox/desktop-WebKit, footprint and all Phase 7 probes. The final race set includes a real 8s Return deadline followed by a late resolution and a fresh-page waiting → pause → Return sequence.

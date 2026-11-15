@@ -13,7 +13,7 @@ function encodeFixture(name, color, filters, { size = '854x480' } = {}) {
     '-nostdin', '-loglevel', 'error', '-y',
     '-f', 'lavfi', '-i', `color=c=${color}:s=${size}:r=24:d=64`,
     '-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=44100',
-    '-vf', filters.join(','), '-t', '64', '-c:v', 'libx264', '-preset', 'fast',
+    '-vf', filters.join(','), '-t', '56', '-c:v', 'libx264', '-preset', 'fast',
     '-crf', '24', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-movflags', '+faststart', temporary,
   ], { stdio: 'inherit' });
   if (run.status !== 0) {
@@ -59,6 +59,83 @@ encodeFixture('portrait-study', '0x142226', [
   "drawtext=text='PORTRAIT STUDY':x=52:y=112:fontsize=21:fontcolor=white",
   "drawtext=text='%{pts\\:hms}':x=52:y=500:fontsize=28:fontcolor=white",
 ], { size: '360x640' });
+
+
+const showcase = new URL('../public/showcase/', import.meta.url);
+mkdirSync(showcase, { recursive: true });
+
+function encodeShowcase() {
+  const name = 'detour-showcase-v1';
+  const output = fileURLToPath(new URL(`${name}.mp4`, showcase));
+  const poster = fileURLToPath(new URL(`${name}-poster.jpg`, showcase));
+  if (!existsSync(output)) {
+    const temporary = fileURLToPath(new URL(`${name}.${process.pid}.tmp.mp4`, showcase));
+    const filters = [
+      'drawgrid=width=64:height=64:thickness=1:color=white@0.08',
+      'drawbox=x=0:y=0:w=1280:h=720:color=0x111718@0.45:t=fill',
+      "drawbox=x=720:y=0:w=560:h=720:color=0x20383d:t=fill:enable='lt(t,16)'",
+      "drawbox=x=720:y=0:w=560:h=720:color=0x7a4133:t=fill:enable='between(t,16,37.999)'",
+      "drawbox=x=720:y=0:w=560:h=720:color=0x315348:t=fill:enable='gte(t,38)'",
+      'drawbox=x=698:y=0:w=4:h=720:color=0xe5fc64:t=fill',
+      'drawbox=x=92:y=128:w=510:h=4:color=0xe5fc64:t=fill',
+      'drawbox=x=92:y=170:w=360:h=2:color=white@0.62:t=fill',
+      'drawbox=x=92:y=198:w=435:h=2:color=white@0.28:t=fill',
+      'drawbox=x=810:y=178:w=330:h=300:color=white@0.45:t=2',
+      'drawbox=x=850:y=218:w=250:h=220:color=white@0.22:t=1',
+      "drawbox=x='120+mod(t*19\\,430)':y=548:w=72:h=6:color=0xe5fc64:t=fill",
+      "drawtext=text='DETOUR / MOTION STUDY':x=92:y=78:fontsize=32:fontcolor=white",
+      "drawtext=text='KEEP A MOMENT. EXPLORE. RETURN.':x=92:y=238:fontsize=23:fontcolor=white@0.76",
+      "drawtext=text='%{pts\\:hms}':x=92:y=318:fontsize=48:fontcolor=white",
+      "drawtext=text='ORIGIN / A':x=848:y=330:fontsize=28:fontcolor=white:enable='lt(t,16)'",
+      "drawtext=text='DETOUR / B':x=848:y=330:fontsize=28:fontcolor=white:enable='between(t,16,37.999)'",
+      "drawtext=text='RETURN / C':x=848:y=330:fontsize=28:fontcolor=white:enable='gte(t,38)'",
+    ];
+    const run = spawnSync('ffmpeg', [
+      '-nostdin', '-loglevel', 'error', '-y',
+      '-f', 'lavfi', '-i', 'color=c=0x101617:s=1280x720:r=24:d=56',
+      '-f', 'lavfi', '-i', 'sine=frequency=146.83:sample_rate=48000:duration=56',
+      '-vf', filters.join(','), '-af', 'volume=0.035,afade=t=in:st=0:d=1.5,afade=t=out:st=54:d=2',
+      '-t', '64', '-c:v', 'libx264', '-preset', 'fast', '-crf', '23', '-pix_fmt', 'yuv420p',
+      '-c:a', 'aac', '-b:a', '96k', '-movflags', '+faststart', temporary,
+    ], { stdio: 'inherit' });
+    if (run.status !== 0) {
+      rmSync(temporary, { force: true });
+      throw run.error ?? new Error('FFmpeg could not generate DETOUR showcase media.');
+    }
+    renameSync(temporary, output);
+  }
+  if (!existsSync(poster)) {
+    const run = spawnSync('ffmpeg', [
+      '-nostdin', '-loglevel', 'error', '-y', '-ss', '42', '-i', output,
+      '-frames:v', '1', '-q:v', '2', poster,
+    ], { stdio: 'inherit' });
+    if (run.status !== 0) throw run.error ?? new Error('FFmpeg could not extract DETOUR showcase poster.');
+  }
+  writeFileSync(new URL(`${name}.vtt`, showcase), `WEBVTT
+
+00:00:00.000 --> 00:00:06.000
+[Graphite motion study. A route marker moves across a measured field.]
+
+00:00:16.000 --> 00:00:25.000
+[The field turns rust at the explored moment.]
+
+00:00:38.000 --> 00:00:47.000
+[The field turns green at the kept return moment.]
+`);
+  writeFileSync(new URL(`${name}.json`, showcase), JSON.stringify({
+    id: name,
+    durationSeconds: 56,
+    exploredMomentSeconds: 18,
+    keptMomentSeconds: 42,
+    video: `${name}.mp4`,
+    poster: `${name}-poster.jpg`,
+    captions: `${name}.vtt`,
+    audio: 'Procedurally generated 146.83 Hz low-level sine bed; no third-party recording.',
+    provenance: 'Generated deterministically from FFmpeg lavfi primitives and in-repository filter instructions; no source footage, logo, photograph or music file is incorporated.',
+  }, null, 2) + '\n');
+}
+
+encodeShowcase();
 
 writeFileSync(new URL('navigation-study.vtt', fixtures), `WEBVTT
 

@@ -515,6 +515,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Use a rights-cleared documentary or process clip with different visible moments around 00:18 and 00:42. Compare against a custom 45-60s film and commission original footage only if it materially improves the reveal.
   - **Deliverable** — Media decision and time cap.
   - **Pass condition** — Selected footage has clear visual differences, usable audio and documented rights. Existing cleared media is a ready fallback.
+  - **Progress** — Selected custom 56s deterministic motion study; fallback is the existing generated navigation-study. Generator, provenance and A/V/seek verification are committed for CI before this row can close.
 
 - [ ] **072. Create the showcase media bundle**
   - **Objective** — Provide a reliable playback and capture source.
