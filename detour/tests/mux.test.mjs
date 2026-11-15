@@ -90,7 +90,8 @@ test('076 production Mux host keeps four persistent checkpoints and returns from
 
     const second = page.getByRole('button', { name: /Return to 00:30 — checkpoint C2/ });
     await second.focus();
-    await page.keyboard.press('Delete');
+    assert.equal(await second.evaluate(node => document.activeElement === node), true, 'C2 must own focus before keyboard removal');
+    await second.press('Delete');
     assert.equal(await page.locator('.detour-checkpoint').count(), 3, 'Delete removes only the focused checkpoint');
     assert.equal(await page.getByRole('button', { name: 'Keep my place' }).isEnabled(), true);
 
