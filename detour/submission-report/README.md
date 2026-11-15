@@ -1,6 +1,6 @@
 # DETOUR submission report
 
-**State:** Phase 8 public demonstration is frozen; Phase 9 evidence is accepted through step 089 except the final public-language audit (088) and uncoached human pass (090). The latest implementation pointer is in [progress](../PROGRESS.md).
+**State:** Phase 8 is frozen; Phase 9 is accepted through 089 with only the fresh-human review (090) open. Independent Phase 10 verification proceeds while eligibility/current-form confirmation remains owner-dependent. The latest implementation pointer is in [progress](../PROGRESS.md).
 
 | Report | What it answers |
 | --- | --- |

@@ -1,15 +1,23 @@
 # DETOUR progress
 
-Phase: 09
-Resume step: 088
+Phase: 10
+Resume step: 092
 
 | Item | Current state |
 | --- | --- |
-| Verified | 83/100. Phase 8 is complete; Phase 9 steps 081–087 and 089 are verified from the final public evidence set. |
-| Next | 088. Execute the final public creative-route language audit. After it passes, only 090 remains in Phase 9 and requires a fresh uncoached human reviewer. |
-| Open dependencies | 002 second-entry eligibility; 017 uncoached first-use; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% browser zoom. These remain open and are not reclassified by Phase 8 browser evidence. |
+| Verified | 84/100. Phase 8 is complete; Phase 9 steps 081–089 are verified except human-only 090. |
+| Next | 092. Continue independent Phase 10 verification while 090 waits for a fresh uncoached reviewer and 091 waits for explicit second-entry/current-form confirmation. |
+| Open dependencies | 002/091 second-entry and live-form confirmation; 017 first-use study; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% zoom; 090 fresh uncoached judging pass. Continue 092+ around these blockers. |
 | Prototype / public release | Frozen Mux candidate: `https://detour-mux-release.praisethegreatfool.workers.dev/mux/` on immutable `detour-dist-a9bbfcb4ee68`; stable rollback/fallback remains `https://detour-release.praisethegreatfool.workers.dev/`. |
 | Source baseline | Phase 8 production source `a9bbfcb4ee6810c2e6a5ed0e1f32c731b3780e6a`: full CI 43706450932 green and immutable dist staged. Public Mux release verification 43707445255 passed from the later test-only harness; earlier full CI 43707040940 also remained green after adding the public gate. |
+
+## 2026-11-15 · Step 088 accepted; Phase 10 independent verification begins
+
+- Mux/public run 43712857162 passed the new executable language audit in **3.78s**. It opened the actual signed-out primary route, alternate-media route and blocked-provider recovery state.
+- Primary title is `DETOUR — Keep your place`; alternate title is `DETOUR — Another video`. Visible creative copy contains no Mux/R2, workflow, GitHub Actions, fixture/debug, source-SHA, detour-dist, developer or old “Independent host” terminology.
+- Recovery presents exactly the host-owned **Try video again / Use backup video** surface; the nested generic player error stays hidden in this host only. The public playback config remains a machine resource and is not presented as creative UI.
+- **088 accepted.** Phase 9 is **9/10 complete**; **090 remains intentionally open** because its pass condition requires a fresh uncoached human reviewer. The creator and automated browser are not substitutes.
+- **091 also remains open** because public rules do not establish account-level second-entry permission/current joined-form fields. Per CONTINUE.md, resume independent work at **092** rather than stopping on those owner/account dependencies.
 
 ## 2026-11-15 · Phase 9 evidence set accepted — 082–087 and 089
 

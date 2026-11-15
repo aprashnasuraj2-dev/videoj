@@ -631,12 +631,12 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Pass condition** — A reader can repeat the premise without source knowledge. Every claim has a public evidence link or capture.
   - **Evidence** — [Form-ready rationale and alt text](submission-report/PHASE-9-PRESENTATION.md) links the public candidate and maps each sentence to the real hero, interaction clip or alternate-media proof.
 
-- [ ] **088. Audit public-facing language**
+- [x] **088. Audit public-facing language**
   - **Objective** — Keep the site coherent and understandable.
   - **Work** — Inspect UI, menus, metadata, error messages and supporting pages for internal terms, raw data, temporary labels, unpublished links and redundant controls. Translate necessary feedback into viewer language.
   - **Deliverable** — Public copy and route audit.
   - **Pass condition** — No internal workflow copy, placeholder, credential or diagnostic payload remains on creative surfaces.
-  - **Progress** — Public capture review removed healthy Mux infrastructure copy and found a duplicate failure surface; the Mux host now owns recovery without showing the generic nested player error. Final exact-route audit remains before acceptance.
+  - **Evidence** — [Public-language acceptance](design/PHASE-9.md#step-088-public-language-acceptance--2026-11-15) and Mux run 43712857162: signed-out primary, alternate and recovery routes passed titles/body-copy checks; no workflow, Mux/R2, fixture/debug, source-SHA, developer or duplicate recovery terminology is visible on creative surfaces.
 
 - [x] **089. Validate evidence legibility and truth**
   - **Objective** — Make the gallery usable at judging scale.
