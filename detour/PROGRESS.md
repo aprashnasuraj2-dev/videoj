@@ -11,6 +11,11 @@ Resume step: 073
 | Prototype / public release | Packed external host and desktop Chromium/Firefox/WebKit core are green. Phase 7 capture artifact exists. Public HTTPS, final showcase media and optional Mux remain later gates. |
 | Source baseline | Phase 8 media baseline: `87afdf6a740bbcce95caaa04e2c02886071c895c`, Actions run 43699914256. Showcase verification 2/2 passed; full DETOUR CI passed. |
 
+## 2026-11-15 · Production multi-page portability fix (validation pending)
+
+- Run 43700686209 reached the new 074 test but timed out because Vite's production build emitted only the root entry; `integration/index.html` was a source/dev page, not a built production page.
+- Added explicit Vite multi-page inputs for the public showcase and independent integration host. This makes the portability proof exercise a real production artifact rather than relying on a dev-server fallback. No skin branching or media-specific logic was added to the package.
+
 ## 2026-11-15 · Phase 8 portability implementation (validation pending)
 
 - Prepared the independent-host example to default to `daylight-study.mp4` + its own VTT rather than the public showcase or the regression fixture. Media selection remains a host concern; the same `createDetourPlayer` skin entry is reused unchanged.
