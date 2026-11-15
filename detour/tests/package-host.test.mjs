@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { after, before, test } from 'node:test';
-import { chromium, webkit } from 'playwright';
+import { chromium, devices, webkit } from 'playwright';
 import { createServer } from 'vite';
 
 const detourRoot = fileURLToPath(new URL('../', import.meta.url));
@@ -210,6 +210,60 @@ async function proveBaseShell() {
   }
 }
 
+async function proveMobileWebKitBase() {
+  const browser = await webkit.launch();
+  try {
+    const iphone = devices['iPhone 13'];
+    const context = await browser.newContext({
+      userAgent: iphone.userAgent,
+      viewport: iphone.viewport,
+      deviceScaleFactor: iphone.deviceScaleFactor,
+      isMobile: iphone.isMobile,
+      hasTouch: iphone.hasTouch,
+    });
+    const page = await context.newPage();
+    await page.goto(new URL('base.html', baseURL).href);
+    await page.waitForFunction(() => window.baseHostReady === true);
+    await page.waitForFunction(() => {
+      const video = document.querySelector('#base-player video');
+      return video?.readyState >= 2 && video.seekable.length > 0;
+    });
+    const base = page.locator('#base-player');
+    assert.equal(await base.locator('detour-place').count(), 0);
+    assert.equal(await page.evaluate(() => customElements.get('detour-place')), undefined);
+
+    const capabilities = await base.evaluate(element => ({
+      volumeAvailability: element.store?.volumeAvailability,
+      mutedAvailability: element.store?.mutedAvailability,
+      userAgent: navigator.userAgent,
+      maxTouchPoints: navigator.maxTouchPoints,
+    }));
+    assert.match(capabilities.userAgent, /iPhone/);
+    assert.ok(capabilities.maxTouchPoints > 0);
+    assert.equal(capabilities.mutedAvailability, 'available',
+      'iPhone-shaped WebKit must keep the independent mute capability available.');
+    assert.ok(['available', 'unsupported'].includes(capabilities.volumeAvailability),
+      `Unexpected attached volume availability: ${capabilities.volumeAvailability}`);
+
+    const volume = base.locator('media-volume-slider');
+    if (capabilities.volumeAvailability === 'unsupported') {
+      assert.equal(await volume.getAttribute('data-availability'), 'unsupported');
+    } else {
+      await base.evaluate(element => element.store.setVolume(0.4));
+      await page.waitForFunction(() => Math.abs(document.querySelector('#base-player video').volume - 0.4) < 0.01);
+    }
+
+    await base.locator('media-mute-button').click();
+    assert.equal(await base.locator('video').evaluate(video => video.muted), true);
+    await base.locator('media-mute-button').click();
+    assert.equal(await base.locator('video').evaluate(video => video.muted), false);
+
+    return capabilities;
+  } finally {
+    await browser.close();
+  }
+}
+
 async function proveEngine(engineName, engine) {
   const browser = await engine.launch({ args: engineName === 'chromium' ? ['--no-sandbox'] : [] });
   try {
@@ -357,7 +411,12 @@ async function proveEngine(engineName, engine) {
       await seek(b, 12);
     }
 
-    return Number(returned.native.toFixed(3));
+    return {
+      arrival: Number(returned.native.toFixed(3)),
+      fullscreen: fullscreen.documentEnabled && fullscreen.storeAvailability === 'available'
+        ? 'exercised'
+        : `not-exercised:${fullscreen.storeAvailability}`,
+    };
   } finally {
     await browser.close();
   }
@@ -405,6 +464,11 @@ test('packed artifact contains the reusable boundary and excludes showcase/runti
 
 test('packed base shell runs ordinary controls without mounting DETOUR behavior', { timeout: 60000 }, async () => {
   await proveBaseShell();
+});
+
+test('packed base shell records emulated iPhone WebKit volume and mute behavior', { timeout: 60000 }, async t => {
+  const capabilities = await proveMobileWebKitBase();
+  t.diagnostic(`Emulated iPhone WebKit capabilities: ${JSON.stringify(capabilities)}`);
 });
 
 test('packed skin runs in an external host in Chromium and desktop WebKit', { timeout: 120000 }, async t => {
