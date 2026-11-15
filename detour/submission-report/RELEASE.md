@@ -26,6 +26,17 @@
 
 The Aafnai Patro live-site Worker also fetches reusable assets through the branded DETOUR custom domain, so disabling legacy public Worker hostnames does not break the independent live-site bonus.
 
+
+## 2026-11-16 redundant branded route
+
+A local-network report said the primary custom hostname was unavailable. Cloudflare's domain object, generated DNS record, Worker deployment and two independent external browser checks all showed the frozen release was still serving correctly. To remove single-hostname risk without changing the build, a second branded custom domain was attached to the same Worker:
+
+- Primary: `https://detour.aafnaipatro.com/mux/`
+- Redundant mirror: `https://detour-entry.aafnaipatro.com/mux/`
+- Independent rollback: `https://detour-backup.aafnaipatro.com/`
+
+The mirror served HTTP 200 with the same source/dist headers and completed the real **42s → 18s → 42s** DETOUR interaction. No `workers.dev` hostname is part of the public release set.
+
 ## Public-host privacy boundary
 
 The judge-facing submission and rollback use only branded `aafnaipatro.com` hostnames. `workers.dev` routing is disabled for both DETOUR Workers, and account-level `workers.dev` hostnames must not appear in judge-facing copy, screenshots, reports or form fields.

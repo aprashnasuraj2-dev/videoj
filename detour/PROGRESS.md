@@ -14,6 +14,16 @@ Resume step: 091
 
 
 
+
+## 2026-11-16 · Public-route incident check and redundant branded entry route
+
+- Owner reported `https://detour.aafnaipatro.com/mux/` as dead from their local network. Do not treat that single vantage as proof of global outage.
+- Cloudflare custom-domain state is intact: `detour.aafnaipatro.com` remains enabled on Worker `detour-mux-release`, with its generated proxied DNS record and active frozen deployment.
+- Fresh Cloudflare Browser Rendering from another edge returned **HTTP 200**, title **DETOUR — Keep your place**, frozen source `a3b43f74c765…`, storage `r2`, and the expected Mux release headers. An independent Firecrawl browser reported the Mux video at **readyState 4**, **networkState 1**, duration **55.985333s**, and no media error.
+- Added a second branded custom domain, **`https://detour-entry.aafnaipatro.com/mux/`**, pointing to the same frozen `detour-mux-release` Worker. It passed two-network HTTP/render checks and a full external signature flow: **42s → Hold → 18s → Return → 42s**, after which the held controls cleared and the player announced **Returned to 00:42.**
+- The independent older rollback `https://detour-backup.aafnaipatro.com/` also returned **HTTP 200** on its frozen `50ac9661…` build.
+- **Release decision:** keep the original URL as the previously qualified primary, but treat `detour-entry.aafnaipatro.com/mux/` as an immediately usable branded mirror if the owner's resolver/ISP continues to fail the original hostname. No player code, Mux asset, media, or package bytes changed.
+
 ## 2026-11-15 · Final competitive positioning and master-pack v2
 
 - Refreshed the late public field. The challenge is now crowded with strong object/metaphor skins — film strips, camera lenses, tactile hardware, transit systems, games, gesture layers and cinematic shells — and a new late post also describes anchoring a moment on the timeline. A generic “bookmark a moment” story is no longer sufficient.

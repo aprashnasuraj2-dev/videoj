@@ -110,6 +110,17 @@ Entry source is licensed under Apache License 2.0. Showcase media is project-aut
 
 Do not add repository/process/CI links to the judge-facing creative description unless the live form explicitly requires a source/evidence field. The preferred visual and judge reel are presentation assets derived from authentic browser evidence; keep the raw hero and raw interaction recording as non-composited fallbacks. Step 097 stays unchecked until the actual form fields and constraints are confirmed.
 
+
+## Redundant public entry route after owner-network incident
+
+The owner reported the primary hostname as unavailable from one local network on 2026-11-16. External verification showed the frozen player and Mux media remained healthy, so the known-good runtime was **not redeployed**.
+
+- Previously qualified primary: `https://detour.aafnaipatro.com/mux/`
+- Redundant branded mirror: `https://detour-entry.aafnaipatro.com/mux/`
+- Independent rollback: `https://detour-backup.aafnaipatro.com/`
+
+The redundant mirror routes to the exact same frozen `detour-mux-release` Worker and source `a3b43f74c7652c707c3703193ab1081820bafa79`. External browser proof completed **42 → Hold → 18 → Return → 42** with no media error. Use the mirror only if the primary hostname fails from the submission network; do not present both as separate bonus evidence.
+
 ## 098 freeze and rollback
 
 - **Primary:** `https://detour.aafnaipatro.com/mux/`
