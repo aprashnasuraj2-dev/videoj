@@ -65,6 +65,14 @@ jobs:
           path: detour/phase7-captures/
           if-no-files-found: ignore
           retention-days: 7
+      - name: Preserve exact production release bundle
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detour-production-dist-${{ github.sha }}
+          path: detour/dist/
+          if-no-files-found: error
+          retention-days: 14
       - name: Validate checklist and resume pointer
         if: always()
         run: node scripts/check-progress.mjs

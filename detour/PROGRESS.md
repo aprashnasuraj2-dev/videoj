@@ -11,6 +11,12 @@ Resume step: 072
 | Prototype / public release | Public-root composition and second production host pass locally. HTTPS publication is the remaining core media gate before Mux evaluation. |
 | Source baseline | Judge-demo/portability baseline: `34261f03c8df75bbeed847879de7269ab794fb55`, Actions run 43701045585. 073 and 074 pass; full DETOUR CI green. |
 
+## 2026-11-15 · Immutable release artifact for Direct Upload (validation pending)
+
+- Cloudflare Pages Git-connected project creation returned Cloudflare error 8000011 (internal Pages Git installation issue) even though the connection has Pages Write. Existing Patro/DHAGO projects were not modified.
+- Added a success-only CI artifact containing the exact production `detour/dist/` bytes, named with the source SHA and retained 14 days. This is the input for isolated Pages Direct Upload; it prevents deployment from rebuilding different bytes or depending on the broken Git integration.
+- Keep 072 open until that artifact is deployed and signed-out HTTPS seek/poster/caption checks pass.
+
 ## 2026-11-15 · Static release-asset materialization
 
 - Added a DETOUR-only write workflow that runs only when its own workflow file changes or by explicit manual dispatch. It regenerates the already-tested showcase and `daylight-study`, verifies duration and SHA-256s, then force-adds exactly six static media files and commits them if bytes changed.
