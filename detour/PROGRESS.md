@@ -11,6 +11,14 @@ Resume step: 091
 | Prototype / public release | Frozen judging candidate: `https://detour.aafnaipatro.com/mux/` on public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`; independent rollback remains `https://detour-backup.aafnaipatro.com/` / `detour-dist-50ac9661e315`. |
 | Source baseline | Public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` was re-qualified by Phase 10 run 43713525858 at verification head `b9b1495f4f66422dfa369cafcad2738fff6b4592`; no `detour/skin/` runtime file changed between those revisions. Phase 10 handoff commit `a98c5f7f80072db76223124ca98d663c5ea4a3fa` is report/tracking only. |
 
+
+## 2026-11-15 · Step 091 rechecked; direct eligibility confirmation still required
+
+- Re-read the active Contra Video.js Skins Design Challenge after the release freeze. Public challenge state remains **submissions enabled**, deadline `2026-11-17T07:59:00Z` (Nov 17, 13:44 NPT), with **1,097 participants** and **253 submissions** at this recheck.
+- The challenge payload still provides **no entrant-specific second-entry permission, joined-form schema, per-account submission cap, upload limits or accepted-media field contract**. Public `submissionInstructions` and `termsAndConditionsUrl` are null. The public web surface also exposes no readable form schema outside the signed-in flow.
+- Updated 091 evidence and added a copy-ready direct Contra clarification question to the Phase 10 handoff. No checklist box was promoted: public counts and a “Join to submit!” label do not establish this account's eligibility for a second entry.
+- **Next action remains 091:** the entrant checks the signed-in joined form or obtains a direct Contra answer confirming whether a participant who already submitted DHAGO may submit the separate DETOUR skin, plus the current field/asset constraints. Once confirmed, promote 096/097 from prepared to verified, then proceed to owner submission 099. Step 090 remains a fresh-human gate.
+
 ## 2026-11-15 · Branded public-host privacy correction
 
 - The competition demo moved to `https://detour.aafnaipatro.com/mux/`; the independent rollback moved to `https://detour-backup.aafnaipatro.com/`.

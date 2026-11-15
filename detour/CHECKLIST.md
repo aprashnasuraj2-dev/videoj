@@ -658,7 +658,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Reopen current Guidelines and the joined form. Confirm allowance for a second entry, exact upload fields, deadline and optional IDs. Resolve changes against the recorded rule snapshot.
   - **Deliverable** — Submission checklist with live field names.
   - **Pass condition** — Second-entry eligibility is explicitly confirmed. Core required evidence is accepted by the current form.
-  - **Progress** — An authenticated Contra connector session re-read the active challenge on 2026-11-15: submissions are enabled and the public deadline is `2026-11-17T07:59:00Z`, but the available challenge action exposes no account-specific second-entry allowance or joined-form schema. Public challenge metadata is not treated as entrant permission; direct form/Contra confirmation remains required.
+  - **Progress** — Rechecked the active challenge again on 2026-11-15 after the Phase 10 freeze: `submissionsEnabled: true`, deadline `2026-11-17T07:59:00Z`, and public counts of 1,097 participants / 253 submissions. The public challenge payload still exposes no entrant-specific second-entry allowance, joined-form field schema, upload limits or per-account submission cap; `submissionInstructions` and `termsAndConditionsUrl` remain null. Public metadata is not entrant permission. A copy-ready direct Contra clarification question is recorded in `submission-report/PHASE-10-HANDOFF.md`; 091 remains blocked until direct form or Contra evidence exists.
 
 - [x] **092. Verify the exact public release**
   - **Objective** — Catch deployment and cross-origin regressions.

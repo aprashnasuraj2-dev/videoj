@@ -23,3 +23,23 @@ The live public Guidelines were retrieved again. They set requirements for each 
 An authenticated Contra connector session successfully retrieved the active Video.js Skins Design Challenge. Challenge-level data reports `submissionsEnabled: true` and deadline **2026-11-17T07:59:00Z** (Nov 17, 13:44 Nepal time). The live public requirements remain consistent with this register: public Video.js v10 URL, real video, visual + short rationale, five essential controls, responsiveness, keyboard operation, Apache-2.0, and the two optional bonus paths.
 
 The connector action is explicitly a **public challenge-details** surface. It does not return the signed-in entrant's joined-form field schema, participation state, or a per-account rule allowing multiple submissions. The returned public header label “Join to submit!” is therefore not treated as proof that this account is unjoined, nor as permission for a second entry. Public guidelines still contain no explicit per-entrant cap. Steps 002/091 remain blocked on the actual joined form or direct Contra clarification.
+
+## 2026-11-15 final Phase 10 eligibility recheck
+
+The active challenge was re-read after the judging candidate and bonus URLs were frozen. The challenge still reports `submissionsEnabled: true`, deadline **2026-11-17T07:59:00Z**, **1,097 participants** and **253 submissions**. Those counts establish challenge activity only; they do not establish a per-entrant allowance.
+
+No public field now resolves the open DETOUR question:
+
+- the guidelines still do not state that one participant may submit multiple distinct skins;
+- the connector's challenge payload exposes no signed-in entrant submission list or joined-form field schema;
+- `submissionInstructions` is null and `termsAndConditionsUrl` is null in the public challenge record;
+- the public web surface does not expose readable joined-form fields or upload limits outside the signed-in flow.
+
+Therefore steps **002/091 remain open**. The required evidence is either the signed-in form itself showing a valid second-entry path, or a direct Contra clarification that explicitly permits a second distinct skin from an entrant who already submitted one.
+
+**Copy-ready clarification question**
+
+> I already submitted one distinct entry to the Video.js Skins Design Challenge (DHAGO) and have built a separate second skin (DETOUR). May the same participant submit more than one distinct skin to this challenge? If yes, is there a per-participant submission limit, and can you confirm the current required/optional form fields and any upload or media limits for the second submission?
+
+This question intentionally avoids account usernames and private credentials. It is a blocker-resolution request, not evidence of permission by itself.
+

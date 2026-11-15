@@ -52,6 +52,15 @@ Official public scoring is 10 visual design/originality, 5 usability/interaction
 
 Because 091 is still open, checklist step 096 remains unchecked even though this rehearsal exists: its pass condition requires all eligibility gates to pass.
 
+
+## Contra clarification — exact next owner action for 091
+
+Use the signed-in joined form if it exposes a second-entry path. If it does not make the rule explicit, send Contra this exact question through the entrant's approved support channel:
+
+> I already submitted one distinct entry to the Video.js Skins Design Challenge (DHAGO) and have built a separate second skin (DETOUR). May the same participant submit more than one distinct skin to this challenge? If yes, is there a per-participant submission limit, and can you confirm the current required/optional form fields and any upload or media limits for the second submission?
+
+Record the reply or signed-in form evidence in `RULES.md` before checking 091. Do **not** interpret public challenge counts, the generic “Join to submit!” header, or the absence of a written cap as permission.
+
 ## Provisional form payload
 
 This is the content packet to bind to the **actual live form** after 091. Field labels and limits are intentionally not invented.
