@@ -185,8 +185,10 @@
 .detour .detour-return[aria-disabled='true'] { border-color: var(--detour-edge); }
 .detour :focus-visible,
 .detour media-time-slider:focus,
+.detour media-time-slider:focus-within,
 .detour media-time-slider:has(:focus-visible),
 .detour-volume:focus,
+.detour-volume:focus-within,
 .detour-volume:has(:focus-visible) {
   outline: 2px solid var(--detour-focus);
   outline-offset: -2px;
