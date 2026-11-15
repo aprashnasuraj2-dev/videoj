@@ -91,3 +91,7 @@ The release storage is private R2 behind the Worker binding; direct `r2.dev` pub
 - Retain the bonus only after signed-out browser playback and real DETOUR Hold/seek/Return pass on the Mux URL.
 
 References: official Contra challenge page, Mux Direct Upload API, Mux Assets / Static Renditions API, and Mux playback-ID documentation current on 2026-11-15.
+
+## Step 078 real-site bonus skip — 2026-11-15
+
+**Decision: SKIP and claim zero real-site bonus points.** The production `/integration/` page and its separately supplied `daylight-study` media demonstrate a portable skin, but they are engineering examples under the same release project rather than independently verified useful content on a genuine audience-serving website. No external-owned deployment, anonymous real-site playback, or site-owner persistence evidence exists in the current branch. Such a page must not be described as a qualified live-site bonus. Retain the tested core R2 demo and the portability evidence for their respective claims; only reopen 078 if an authentic site is deployed and independently verified before submission.

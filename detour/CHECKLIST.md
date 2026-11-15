@@ -557,11 +557,12 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Deliverable** — Recovery walkthrough and branch evidence.
   - **Pass condition** — If streaming is enabled, independent MP4 plays after a simulated outage and a recovered source cannot inherit a stale mark. If omitted, link step 075 and verify the core MP4 independently.
 
-- [ ] **078. Qualify a real-site bonus context**
+- [x] **078. Qualify a real-site bonus context**
   - **Objective** — Use a genuine project that benefits from the skin.
   - **Work** — Only if a suitable owned site exists, place the identical skin in an authentic page where an actual audience can use it. Verify that it remains public, useful and accessible without the contest landing page.
   - **Deliverable** — Eligible live-site URL or explicit skip decision.
   - **Pass condition** — The context stands alone as a genuine useful site and plays real video signed out, or the documented skip decision excludes it from bonus claims.
+  - **Evidence** — [Phase 8 step 078 explicit skip](design/PHASE-8.md#step-078-real-site-bonus-skip--2026-11-15): no independently verified, genuinely useful third-party/owned-site placement; no real-site bonus claimed.
 
 - [ ] **079. Confirm rights and service ownership**
   - **Objective** — Keep every public dependency lawful and available.

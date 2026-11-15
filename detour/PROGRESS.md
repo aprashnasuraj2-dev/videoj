@@ -5,11 +5,19 @@ Resume step: 076
 
 | Item | Current state |
 | --- | --- |
-| Verified | 70/100. Phase 8 media strategy/bundle/judge demo/portability 071–074 and Mux evaluation 075 are verified. |
-| Next | 076. Provision a DETOUR-specific public Mux asset/rendition with repository secrets only, mount it as an optional host path without changing the core skin, and prove signed-out real seeks before retaining the bonus. |
-| Open dependencies | 002 eligibility; 017 uncoached first-use; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% browser zoom. Mux 076/077 is optional and must not replace the green R2 fallback. |
+| Verified | 71/100. Phase 8 media strategy/bundle/judge demo/portability 071–074, Mux evaluation 075 and real-site bonus skip decision 078 are verified. |
+| Next | 076 remains pending on missing GitHub Actions MUX_TOKEN_ID and MUX_TOKEN_SECRET repository secrets. Independently advance 079 rights/ownership inventory and 080 demo freeze without asserting unavailable owner approvals. |
+| Open dependencies | 002 eligibility; 017 uncoached first-use; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% browser zoom. Mux 076/077 awaits repository secrets and independent public playback qualification; optional and never a replacement for green R2 fallback. |
 | Prototype / public release | Core public release is green at `https://detour-release.praisethegreatfool.workers.dev/`, backed by SHA-versioned R2 objects and immutable dist source. Mux is now optional bonus work only. |
 | Source baseline | Public-release baseline: `1016bd1b39d817261fc0a5b0d3cbdc2252c2ce6e`, Actions run 43703881941. Full CI green; 072 HTTPS passed at 42.350s Return. |
+
+## 2026-11-15 · Mux CI failure diagnosed; explicit real-site skip (078)
+
+- At source `5e7cbed11dd40c22d49d3e90c2f8b04734f2e7b2`, [Actions run 43704372300](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43704372300) failed in `provision` because **both** `MUX_TOKEN_ID` and `MUX_TOKEN_SECRET` were empty. The script exited before any Mux API call. This does not mean Mux playback or the core skin failed. No Mux Playback ID has been qualified.
+- Adjusted only the optional Mux workflow to preflight both credentials and issue a conspicuous warning/step summary when absent. Both provision and artifact upload are conditional; a green workflow when credentials are missing is **not** evidence that Mux passed. Re-run after the owner configures both repository secrets and use a real signed-out playback/seek test before checking 076.
+- **078 accepted by explicit skip:** the production `/integration/` example establishes reusable skin portability but is not independently evidenced as an authentic separate audience-serving website. Do not claim the additional real-site bonus. See [decision](design/PHASE-8.md#step-078-real-site-bonus-skip--2026-11-15).
+- Previously qualified baseline remains [Actions run 43703881941](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43703881941), including R2-backed byte-range media and signed-out Hold → Seek → Return; it is independent of the optional Mux workflow. Newly modified workflow and progress documentation require fresh exact-head CI before acceptance; no new test run is represented as passed here.
+- **Next actionable:** 076 after GitHub secrets are configured; independently audit 079 rights and media/service ownership, and advance the 080 release freeze where physical-device and owner evidence are not required.
 
 ## 2026-11-15 · 072 accepted; 075 Mux reserve decision
 
