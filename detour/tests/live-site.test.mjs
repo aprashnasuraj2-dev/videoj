@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { chromium } from 'playwright';
 
-const LIVE_SITE = 'https://aafnaipatro.com/labs/detour/';
+const LIVE_SITE = 'https://aafnaipatro.com/on-this-day/video/apollo-11/';
 
 async function ready(page, timeout = 45000) {
   await page.waitForFunction(() => {
@@ -21,7 +21,7 @@ async function seek(page, seconds) {
   );
 }
 
-test('078 Aafnai Patro live site uses the reusable DETOUR skin on independent video', { timeout: 90000 }, async t => {
+test('078 Aafnai Patro editorial history page uses the reusable DETOUR skin on independent video', { timeout: 90000 }, async t => {
   const browser = await chromium.launch({ args: ['--no-sandbox'] });
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const page = await context.newPage();
@@ -31,13 +31,16 @@ test('078 Aafnai Patro live site uses the reusable DETOUR skin on independent vi
     assert.equal(response?.status(), 200);
     assert.equal(new URL(page.url()).protocol, 'https:');
     assert.equal(new URL(page.url()).host, 'aafnaipatro.com');
-    assert.equal(new URL(page.url()).pathname, '/labs/detour/integration/');
-    assert.equal(response?.headers()['x-detour-live-site'], 'aafnaipatro');
-    assert.equal(response?.headers()['x-detour-runtime'], 'a3b43f74c765');
-    assert.equal(response?.headers()['x-detour-use'], 'independent-site');
+    assert.equal(new URL(page.url()).pathname, '/on-this-day/video/apollo-11/');
+    assert.equal(response?.headers()['x-aafnai-feature'], 'on-this-day-video');
+    assert.equal(response?.headers()['x-player-skin'], 'detour-a3b43f74c765');
+    assert.equal(response?.headers()['x-live-site-use'], 'editorial-history');
 
     assert.equal(await page.getByRole('link', { name: 'Aafnai Patro' }).getAttribute('href'), 'https://aafnaipatro.com/');
-    assert.match(await page.title(), /^DETOUR on Aafnai Patro/);
+    assert.match(await page.title(), /Apollo 11 Landing Site — Visual History/);
+    assert.equal(await page.getByRole('heading', { name: 'Apollo 11 Landing Site' }).isVisible(), true);
+    assert.equal(await page.getByText('DETOUR.', { exact: true }).count(), 0);
+    assert.equal(await page.getByRole('link', { name: /NASA Scientific Visualization Studio/ }).count(), 1);
     assert.equal(await page.locator('input[type="password"]').count(), 0);
 
     await ready(page);
@@ -49,10 +52,11 @@ test('078 Aafnai Patro live site uses the reusable DETOUR skin on independent vi
       captions: video.querySelector('track')?.src,
     }));
     assert.equal(new URL(media.src).host, 'aafnaipatro.com');
-    assert.equal(new URL(media.src).pathname, '/labs/detour/fixtures/daylight-study.mp4');
-    assert.equal(new URL(media.captions).pathname, '/labs/detour/fixtures/daylight-study.vtt');
+    assert.equal(new URL(media.src).host, 'aafnaipatro.com');
+    assert.equal(new URL(media.src).pathname, '/on-this-day/video/apollo-11/media/apollo11.mp4');
+    assert.equal(new URL(media.captions).pathname, '/on-this-day/video/apollo-11/media/apollo11.vtt');
     assert.equal(media.paused, true);
-    assert.ok(media.duration > 63 && media.duration < 65);
+    assert.ok(media.duration > 30, `expected historical visualization duration >30s, got ${media.duration}`);
 
     for (const selector of [
       'media-play-button',
@@ -64,17 +68,17 @@ test('078 Aafnai Patro live site uses the reusable DETOUR skin on independent vi
       assert.equal(await page.locator(selector).isVisible(), true, `live site missing ${selector}`);
     }
 
-    await seek(page, 42.35);
+    await seek(page, 12);
     await page.getByRole('button', { name: 'Keep my place' }).click();
-    await seek(page, 18);
-    await page.getByRole('button', { name: 'Return to 00:42' }).click();
+    await seek(page, 2);
+    await page.getByRole('button', { name: 'Return to 00:12' }).click();
     await page.getByRole('button', { name: 'Keep my place' }).waitFor({ timeout: 10000 });
 
     const returned = await page.locator('video').evaluate(video => ({
       time: video.currentTime,
       paused: video.paused,
     }));
-    assert.ok(Math.abs(returned.time - 42.35) < 0.5, `live-site Return landed at ${returned.time}`);
+    assert.ok(Math.abs(returned.time - 12) < 0.5, `live-site Return landed at ${returned.time}`);
     assert.equal(returned.paused, true);
 
     await page.locator('media-play-button').click();
@@ -86,7 +90,7 @@ test('078 Aafnai Patro live site uses the reusable DETOUR skin on independent vi
     assert.equal(await page.locator('video').evaluate(video => video.muted), true);
 
     t.diagnostic(
-      `Aafnai Patro live-site bonus: signed-out HTTPS 200, independent same-origin 64s video, five required controls visible, 42.35 → 18 → ${returned.time.toFixed(3)}s Return.`,
+      `Aafnai Patro live-site bonus: signed-out editorial history page, independent NASA video through the Aafnai Patro origin, five required controls visible, 12 → 2 → ${returned.time.toFixed(3)}s Return.`,
     );
   } finally {
     await context.close();
