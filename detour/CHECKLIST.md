@@ -665,7 +665,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Test the frozen URL in incognito and a different network or device. Verify v10 build ID, real playback, seeking across available ranges, captions, HTTPS and absence of login. Test any linked backup.
   - **Deliverable** — Public URL verification record.
   - **Pass condition** — The exact URL to be submitted plays a real video and completes hold, seek and return in a signed-out browser.
-  - **Evidence** — Validate DETOUR run 43713525858 passed the exact signed-out public gate: HTTPS 200, frozen source/dist headers, @videojs/html 10.4.0, real Mux playback and captions, 42.35→18→42.350 Return, plus independent backup byte range 206 / 1,024 B.
+  - **Evidence** — Original freeze passed run 43713525858. The promoted multi-checkpoint runtime `d430f2ee49fa…` passed full run 43770989069; Mux behavior run 43771166704 passed C1–C4 logic. Post-promotion public-edge verification returned HTTPS 200 from `https://detour-entry.aafnaipatro.com/mux/` with matching source/dist headers, Mux readyState 4, C1 Return 15→42.35 with checkpoint persistence, and the independent backup remains available.
 
 - [x] **093. Check the five mandatory controls**
   - **Objective** — Satisfy Contra's minimum product requirements.
@@ -686,7 +686,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Include license, notices if applicable, exact install/build instructions, minimal example, feature limits and media attribution. Mark any repository link as supporting evidence unless required by the current form.
   - **Deliverable** — Versioned release package and quick-start.
   - **Pass condition** — A fresh clone or extracted archive installs, plays a replacement clip and performs a return without private values.
-  - **Evidence** — Run 43713525858 packed `detour-video-skin-0.1.0.tgz`, installed it into a fresh external host with replacement media/captions, and returned to 42.350s in Chromium, Firefox and desktop WebKit. Reusable-package artifact 14161323994 is preserved with ZIP digest `sha256:1077a7f45a101090985f065e6e57b3d2899cc2dedd9d8e93ccbc94f7c3b4c304`.
+  - **Evidence** — The original package proof passed run 43713525858. The checkpoint-capable runtime passed full run 43770989069, including fresh packed-host installation and replacement-media checks; reusable-package artifact 14184079022 is preserved with ZIP digest `sha256:e63efd22b5b457000be19447b8021461f20d6adfa13d939acd45259d87d20ee8`. Single-place behavior remains the default; C1–C4 is opt-in.
 
 - [ ] **096. Rehearse the official judging rubric**
   - **Objective** — Make score risks visible before submission.
@@ -707,7 +707,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Record deployed version, timestamp, core/optional media URLs and rollback method. Disable experiment routes from the judging path. Retest public URLs after the freeze.
   - **Deliverable** — Release record, rollback reference and uptime owner.
   - **Pass condition** — Core release can be restored without credentials in the public package. The exact links remain healthy before submission.
-  - **Evidence** — [Phase 10 freeze and rollback record](submission-report/PHASE-10-HANDOFF.md#098-freeze-and-rollback) — run 43713525858 re-qualified both the primary Mux candidate and independent R2 rollback after the freeze; the judging `/mux/` page has no links to internal test/integration surfaces, and the public runtime remains pinned to `a3b43f74c765` / `detour-dist-a3b43f74c765`.
+  - **Evidence** — [Phase 10 freeze and rollback record](submission-report/PHASE-10-HANDOFF.md#098-freeze-and-rollback) — preferred `detour-entry` is pinned to checkpoint runtime `d430f2ee49fa…` / `detour-dist-d430f2ee49fa` after full run 43770989069 and public-edge interaction verification. `detour.aafnaipatro.com` intentionally retains the previous single-place `a3b43f74…` mirror and `detour-backup.aafnaipatro.com` retains independent `50ac9661…` rollback.
 
 - [ ] **099. Submit and capture confirmation**
   - **Objective** — Complete the official entry before the deadline.

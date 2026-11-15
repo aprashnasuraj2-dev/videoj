@@ -72,29 +72,29 @@ DETOUR — Keep your place
 https://detour-entry.aafnaipatro.com/mux/\n\n**Redundant mirror**  \nhttps://detour.aafnaipatro.com/mux/
 
 **One-line hook**  
-Most video players let you seek. DETOUR lets you leave without losing where you came from.
+A seek bar that remembers.
 
 **Short rationale**  
-Most seek bars remember only where you are now. DETOUR adds a second temporal position without replacing the seek bar people already understand. Press **Keep my place** and a lime bracket holds the origin while the white playhead is free to move anywhere; **Return to 00:42** takes you back in one action, while **Stay here** discards the mark. The interaction is deliberately media-agnostic: it needs no chapters, transcript, thumbnails or specially authored footage. The same packaged Video.js v10 skin mounts on host-owned media and captions, and the submission proves it on different videos and on a separate live site.
+Most seek bars remember one thing: where you are now. DETOUR lets viewers keep **up to four places on the same familiar rail**. Each lime C1–C4 bracket stays anchored while the white playhead explores elsewhere; hover/focus reveals its timestamp and click/tap returns without consuming the checkpoint. Near-identical saves deduplicate, checkpoints survive unrelated seeks, and viewers can remove one or clear them all. The behavior is source-scoped and media-agnostic—no chapters, transcript, thumbnails or specially authored footage are required. The reusable package still defaults to the original single-place Return/Stay flow, so multi-place behavior is an opt-in capability rather than a showcase-only rewrite.
 
 **Preferred primary visual**  
-`DETOUR_PRIMARY_VISUAL.png` — a three-state authentic-browser proof board: **Hold 00:42 → Explore 00:15 → Return 00:42**. SHA-256 `39e4f94cee067f61c0949a142678551459f181f9e821515c448ff7ce46059fc5`.
+Use the new public checkpoint capture from the final requalification artifact: **C1–C4 visible on the same seek rail with C1 focused at 00:42 and the white playhead exploring near 00:15**. The earlier single-point proof board is fallback evidence only.
 
 **Primary visual alt text**  
-“Three DETOUR player states show a moment held at 00:42, exploration at 00:15 while a lime origin bracket remains on the seek bar, and a one-action return to 00:42.”
+“DETOUR video player with four lime checkpoints C1 through C4 saved across the seek rail; the white playhead is exploring near 00:15 while focused C1 reveals its saved time near 00:42.”
 
 **Raw player hero fallback**  
 `hero-1280-held.png` — 1248×806, direct browser screenshot, SHA-256 `eb03e909bbd7521535fa384edf8fe3317f5f561c0da139d9fd3198900a7bf2a5`.
 
 **Preferred optional video, if accepted**  
-`DETOUR_JUDGE_REEL.mp4` — 8.20s, 960×720 H.264, silent; short title/end cards around the authentic browser interaction. SHA-256 `b5a4092888e57c99356d6945a0ef9c43519a49f7d77c56eba6a8a61a4f2ed1e3`.
+Regenerate the judge reel from the final public checkpoint runtime: save C1–C4, explore elsewhere, return through C1, then remove C2. Do not lead with the earlier single-point reel; retain it only as historical fallback evidence.
 
 **Raw interaction proof**  
 `interaction-960x720.webm` — 6.08s, 960×720, VP8, no audio; SHA-256 `6a95a6edc00ea6a03e83f8e64ee0a44b2038001f9e8844b64d075bccfe766f7f`
 
 **Mux bonus evidence**  
 Playback ID: `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`  
-The preferred public URL above plays the same Mux-hosted rendition on the same frozen Worker and completed an external 42→18→42 signature verification. The redundant mirror is retained as a second branded route.
+The preferred public URL plays the same Mux-hosted rendition on the checkpoint release Worker. Public-edge verification proved C1–C4 at 42/30/18/08, duplicate suppression, 15→42.35 Return with all four checkpoints retained, focus surviving a forced render, and C2-only Delete. The older branded route is retained as a single-place mirror, not as separate bonus evidence.
 
 **Genuine live-site bonus**  
 https://aafnaipatro.com/on-this-day/video/apollo-11/  
@@ -117,19 +117,19 @@ The owner reported the primary hostname as unavailable from one local network on
 - Preferred submission route: `https://detour-entry.aafnaipatro.com/mux/`\n- Redundant branded mirror: `https://detour.aafnaipatro.com/mux/`
 - Independent rollback: `https://detour-backup.aafnaipatro.com/`
 
-The redundant mirror routes to the exact same frozen `detour-mux-release` Worker and source `a3b43f74c7652c707c3703193ab1081820bafa79`. External browser proof completed **42 → Hold → 18 → Return → 42** with no media error. Use the preferred `detour-entry` route for submission; keep the older hostname only as a redundant mirror. Do not present both as separate bonus evidence.
+The preferred `detour-entry` route now serves accepted multi-checkpoint runtime `d430f2ee49fa…` from isolated Worker `detour-checkpoints-release`. The older `detour.aafnaipatro.com` hostname intentionally remains on the previous single-place `a3b43f74…` Worker as a compatibility mirror. Public-edge proof on `detour-entry` completed four saves, dedupe, Return and individual Delete with no media error. Do not present the mirror as separate bonus evidence.
 
 ## 098 freeze and rollback
 
 - **Preferred primary:** `https://detour-entry.aafnaipatro.com/mux/`\n- **Redundant mirror:** `https://detour.aafnaipatro.com/mux/`
-- **Primary runtime authority:** `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`
+- **Primary runtime authority:** `d430f2ee49fa93a460c150fd90205b13fe5327be` / `detour-dist-d430f2ee49fa`
 - **Mux Playback ID:** `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`
 - **Same-Worker backup:** `/showcase/detour-showcase-v1.mp4`, SHA-256 `fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1`
 - **Independent rollback:** `https://detour-backup.aafnaipatro.com/` / `detour-dist-50ac9661e315`
 - **Recovery owner:** repository/challenge operator retains both Workers, Mux asset and private R2 objects through judging.
-- **Requalification:** run 43713525858 re-tested the primary candidate and the independent rollback after the presentation freeze.
+- **Requalification:** full run 43770989069 accepted the checkpoint runtime; Mux run 43771166704 accepted the strengthened checkpoint behavior proof; post-promotion Cloudflare Browser Rendering verified the exact `detour-entry` edge route.
 - **Judging-route boundary:** the public `/mux/` HTML exposes only the audience-facing DETOUR heading, recovery controls and player mount; it has no links to internal test, report or integration surfaces.
-- **Rollback mechanism:** if Mux availability degrades, use the independently verified `detour-release` URL instead of mutating the known-good package or introducing an untested media source.
+- **Rollback mechanism:** first switch judges to unchanged single-place mirror `https://detour.aafnaipatro.com/mux/`; if Mux itself degrades, use independent `https://detour-backup.aafnaipatro.com/`. Do not mutate the accepted package or introduce an untested media source.
 
 Any subsequent change to `detour/skin/`, the public media, Mux Playback ID, captions, Worker route or rollback requires the corresponding public verification gate again.
 

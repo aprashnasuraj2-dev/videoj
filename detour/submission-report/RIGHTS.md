@@ -12,11 +12,11 @@
 | Secondary fixtures/VTT | Procedural `navigation-study`, `daylight-study`, `portrait-study` | Test/reuse evidence, not borrowed footage | Immutable dist preserves accepted versions |
 | Font rendering | System font glyphs rasterized into generated video; no font binary distributed | Frozen media hash is authoritative for the accepted binary | Rebuild may vary with system font; accepted bytes retained |
 | UI symbols | Project-authored inline SVG/CSS | No third-party icon pack | Frozen source |
-| Final public runtime | `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765` | Audience-facing player; no management code or secret | Isolated Worker `detour-mux-release`, deployment `df263a1169024f2598b63aec0bb41bbe` |
+| Final public runtime | `d430f2ee49fa93a460c150fd90205b13fe5327be` / `detour-dist-d430f2ee49fa` | Preferred audience-facing multi-checkpoint player; no management code or secret | Isolated Worker `detour-checkpoints-release`, active version `0726463d-1d9f-467a-af51-17ca13bce8f3`; custom domain `detour-entry.aafnaipatro.com` |
 | Mux | Public Playback ID `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`; management credentials exist only as GitHub Actions secrets | Browser/package contain public playback data only | Challenge operator keeps asset live through judging |
 | Independent rollback | `detour-release` + private `detour-release-assets` R2 / `detour-dist-50ac9661e315` | No Mux dependency | Challenge operator retains Worker/R2 |
 | NASA editorial media | NASA Scientific Visualization Studio page `https://svs.gsfc.nasa.gov/4185/`; Apollo 11 landing-site flyover ingested to a **separate** Mux editorial asset, Playback ID `kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U`; page credits NASA SVS | Used only on the independent live-site page, not in the competition showcase or reusable package | Aafnai Patro Worker proxies the editorial Mux rendition; original NASA source remains the provenance authority |
-| Reusable tarball | `detour-video-skin-0.1.0.tgz`, **16,417 B**, SHA-256 `6c3680164f42bf582fe739b0e82af73826d35aea9a3f2ae8558c90cd6d6ad5cc`, **15 files** | Excludes demo/public/test/scripts/design/report material | Actions artifact 14161323994 + reproducible `npm ci && npm pack` |
+| Reusable tarball | Checkpoint-capable `detour-video-skin-0.1.0.tgz`; exact package from runtime `d430f2ee…` preserved in artifact 14184079022, ZIP digest `sha256:e63efd22b5b457000be19447b8021461f20d6adfa13d939acd45259d87d20ee8` | Excludes demo/public/test/scripts/design/report material; single-place remains default, C1–C4 is opt-in | Actions artifact 14184079022 + reproducible `npm ci && npm pack` |
 | Real-site bonus | `https://aafnaipatro.com/on-this-day/video/apollo-11/`; owned Aafnai Patro On This Day editorial page using NASA SVS `A New Look at the Apollo 11 Landing Site` through the accepted skin | **Qualified live-site claim, separate from the Mux submission demo.** NASA SVS identifies its visualizations as public domain unless otherwise noted; the page credits NASA SVS and links the source. | Worker `aafnai-history-video-apollo11`, deployment `0c287b4c1e994a3caf41c575e7b7376d`; route `aafnaipatro.com/on-this-day/video/apollo-11*`; editorial Playback ID `kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U` |
 
 ## Final audit — run 43713525858
@@ -30,7 +30,7 @@
 
 ## Operational recovery
 
-- **Primary restore:** deploy `detour-mux-release` from immutable `detour-dist-a3b43f74c765` with the existing `DETOUR_ASSETS` R2 binding, then repeat the signed-out public Mux gate.
+- **Primary restore:** deploy `detour-checkpoints-release` from immutable `detour-dist-d430f2ee49fa` with the existing `DETOUR_ASSETS` R2 binding, then repeat the signed-out checkpoint/Mux gate. The earlier `detour-mux-release` / `a3b43f74…` route remains a separate single-place mirror.
 - **Independent rollback:** use https://detour-backup.aafnaipatro.com/ backed by `detour-dist-50ac9661e315`.
 - **Mux retention:** keep the current public asset/Playback ID live through judging; a replacement is not bonus-qualified until re-tested.
 - **Live-site retention:** keep `aafnai-history-video-apollo11`, `aafnaipatro.com/on-this-day/video/apollo-11*`, and editorial Playback ID `kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U` live through judging. The retired `aafnai-detour-live-v1` / `/labs/detour*` route was deleted and must not be cited.

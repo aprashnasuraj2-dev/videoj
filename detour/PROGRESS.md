@@ -8,14 +8,14 @@ Resume step: 091
 | Verified | 90/100. Step 002 is now verified by official Contra multiple-submission guidance. Phase 8 is complete; Phase 9 steps 081–089 are verified except human-only 090; Phase 10 steps 092–095 and 098 are verified. |
 | Next | 091. Multiple-submission eligibility is resolved; the signed-in current form field names, limits and acceptance state still unlock 096/097/099. Step 090 still needs a fresh uncoached human reviewer; 100 follows actual submission. |
 | Open dependencies | 091 signed-in live-form confirmation; 017 first-use study; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% zoom; 090 fresh uncoached judging pass; 099 owner submission and 100 post-submission verification. No further independent Phase 10 acceptance step bypasses 091. |
-| Prototype / public release | Preferred submission route: `https://detour-entry.aafnaipatro.com/mux/`; redundant mirror: `https://detour.aafnaipatro.com/mux/`. Both serve frozen runtime `a3b43f74c7652c707c3703193ab1081820bafa79` / `detour-dist-a3b43f74c765`; independent rollback remains `https://detour-backup.aafnaipatro.com/` / `detour-dist-50ac9661e315`. |
-| Source baseline | Public runtime `a3b43f74c7652c707c3703193ab1081820bafa79` was re-qualified by Phase 10 run 43713525858 at verification head `b9b1495f4f66422dfa369cafcad2738fff6b4592`; no `detour/skin/` runtime file changed between those revisions. Phase 10 handoff commit `a98c5f7f80072db76223124ca98d663c5ea4a3fa` is report/tracking only. |
+| Prototype / public release | Preferred submission route: `https://detour-entry.aafnaipatro.com/mux/` on checkpoint runtime `d430f2ee49fa93a460c150fd90205b13fe5327be` / `detour-dist-d430f2ee49fa`; redundant mirror `https://detour.aafnaipatro.com/mux/` intentionally retains the earlier single-place `a3b43f74…` runtime; independent rollback remains `https://detour-backup.aafnaipatro.com/` / `detour-dist-50ac9661e315`. |
+| Source baseline | Multi-checkpoint runtime `d430f2ee49fa93a460c150fd90205b13fe5327be` passed full Validate DETOUR run `43770989069`; the strengthened checkpoint behavior proof at test-only head `b4ebfe8f…` passed Mux run `43771166704`. Post-promotion public-edge verification proved C1–C4, dedupe, persistent Return, focus-preserving render and individual Delete on `detour-entry`. |
 
 
 
 
 
-## 2026-11-16 · Multi-place checkpoint candidate implemented — verification pending
+## 2026-11-16 · Multi-place checkpoint release accepted and promoted
 
 - Corrected candidate **86e3b15b…** passed full validation run **43769776693**: Chromium, Firefox, desktop WebKit, packed external host, final audit, footprint budget, responsive/keyboard/preferences/emulated-touch probes, checklist validation and immutable dist staging all passed.
 - Final craft pass keeps the saved-point visual language tied to DETOUR's original lime open bracket: C1–C4 are open C/bracket marks at rest, then close into a high-contrast timestamp chip only on hover/focus. The Mux copy now says **“Keep up to four places. Explore freely. Return from the rail.”**
@@ -30,7 +30,7 @@ Resume step: 091
 - Owner proposed replacing the single always-visible Return surface with multiple timeline places. Implemented a backward-compatible package candidate: default hosts retain the original one-place explicit Return/Stay UI, while hosts can opt into `maxPlaces: 4` with `returnUi: 'marker'`.
 - In marker mode, C1–C4 persist on the familiar seek rail. Hover/focus expands each marker to show its timestamp; click/tap returns to that checkpoint without consuming it; Delete/Backspace removes the focused checkpoint; **Clear** removes all checkpoints for touch users. Near-duplicate saves are deduplicated and source changes clear all checkpoints.
 - The Mux competition route opts into the four-checkpoint mode and removes the permanent Return panel from its normal state. The package cap of four is deliberate: unlimited bookmarks would clutter the short showcase and weaken the reversible-seeking concept.
-- **Verification status:** this candidate is implemented but unverified. Keep the currently deployed frozen public runtime unchanged until full DETOUR CI, Mux-specific tests, package boundaries and browser regressions pass against this exact source.
+- **Accepted runtime:** `d430f2ee49fa…` passed full run `43770989069` across Chromium, Firefox, desktop WebKit, packed external host, footprint, responsive/keyboard/preferences/emulated-touch probes, audit and immutable staging. Mux run `43771166704` passed the strengthened checkpoint behavior proof after test-only timing corrections. The runtime is promoted to isolated Worker `detour-checkpoints-release` and `https://detour-entry.aafnaipatro.com/mux/`; public edge verification observed matching source/dist headers, Mux `readyState=4`, C1–C4 at 42/30/18/08, duplicate suppression, Return from 15→42.35 with all checkpoints retained, focus surviving a forced render, and C2-only Delete with live announcement.
 
 
 ## 2026-11-16 · Public-route incident check and redundant branded entry route
@@ -38,9 +38,9 @@ Resume step: 091
 - Owner reported `https://detour.aafnaipatro.com/mux/` as dead from their local network. Do not treat that single vantage as proof of global outage.
 - Cloudflare custom-domain state is intact: `detour.aafnaipatro.com` remains enabled on Worker `detour-mux-release`, with its generated proxied DNS record and active frozen deployment.
 - Fresh Cloudflare Browser Rendering from another edge returned **HTTP 200**, title **DETOUR — Keep your place**, frozen source `a3b43f74c765…`, storage `r2`, and the expected Mux release headers. An independent Firecrawl browser reported the Mux video at **readyState 4**, **networkState 1**, duration **55.985333s**, and no media error.
-- Added a second branded custom domain, **`https://detour-entry.aafnaipatro.com/mux/`**, pointing to the same frozen `detour-mux-release` Worker. It passed two-network HTTP/render checks and a full external signature flow: **42s → Hold → 18s → Return → 42s**, after which the held controls cleared and the player announced **Returned to 00:42.**
+- Added a second branded custom domain, **`https://detour-entry.aafnaipatro.com/mux/`**. It initially mirrored the old runtime for incident isolation, then was deliberately reassigned after checkpoint acceptance to isolated Worker `detour-checkpoints-release` on `d430f2ee…`. Final public verification proved the four-checkpoint interaction; the old `detour.aafnaipatro.com` route remains untouched as the single-place mirror.
 - The independent older rollback `https://detour-backup.aafnaipatro.com/` also returned **HTTP 200** on its frozen `50ac9661…` build.
-- **Release decision:** use `https://detour-entry.aafnaipatro.com/mux/` as the preferred submission URL because it is a fresh hostname on the same frozen Worker and has passed independent HTTP/render plus 42→18→42 interaction verification. Keep `https://detour.aafnaipatro.com/mux/` as a redundant mirror. No player code, Mux asset, media, or package bytes changed.
+- **Release decision:** use `https://detour-entry.aafnaipatro.com/mux/` as the preferred submission URL for the accepted C1–C4 runtime. Keep `https://detour.aafnaipatro.com/mux/` as the unchanged single-place mirror and `detour-backup` as the independent no-Mux rollback.
 
 ## 2026-11-15 · Final competitive positioning and master-pack v2
 
