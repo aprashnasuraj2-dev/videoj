@@ -65,3 +65,13 @@ For functional tests, record current and held times before and after, playback m
 - Tested actual range anchors near zero and the end, a closely spaced seek, motion reduced to none and emulated forced colors. Contrast tested against solid runtime CSS tokens. The weakest audited text pair was 7.12:1 and weakest component boundary pair 3.18:1.
 - A held HTTP response exposed loading and the unavailable clock. A controlled decoder-wait state verified delayed buffer UI. Real playback exercised ended and replay. A 404 followed by native retry verified source recovery, and a rejected Return retained the labeled point.
 - [Six player-only captures and a forced-colors sample](../design/PHASE-4.md#contrast-and-visual-evidence) record local design evidence. Desktop WebKit, physical devices, independent first-use results and public-release qualification remain pending.
+
+
+## 2026-11-15 Phase 7 responsive, difficult-state and browser-core acceptance
+
+- Exact source: `9eeeb770b4f7cc7d7d5ba4c766095f05c2116be2`. [Actions run 43698982276](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43698982276) passed architecture, packed external consumer, full Chromium, full Firefox, full desktop WebKit, footprint and Phase 7 probe suites.
+- Capture artifact **14155597667** (SHA-256 `ff23070578f510008a8c499e5607fceb88745fb576621d7da805467cefdb6151`) contains the responsive evidence. Representative 240px held/settings/pending, 1280px settings, forced-colors, CSS 200%-layout and long Arabic 9:59:59 captures were visually inspected after download.
+- WebKit Home/End was a real regression found during this phase. The final fix routes boundary keys through the actual player store at the final decodable frame; exact-head snapshots were 63.95/64.00s in Chromium, Firefox and WebKit.
+- Direct hard-state probes pass: duration/range changes preserve truthful mark position and disable out-of-range Return; duplicate Return dispatches once; manual seek wins; source replacement clears state; a real 8s timeout keeps the mark and ignores late completion; pausing during a provider waiting state prevents later Return from resuming playback.
+- Performance: enhanced-vs-base import-graph gzip delta **1,815 bytes**, below the 15 KiB gate. Five fresh-context and five repeat-context 320px Chromium signature runs observed zero Long Tasks >50ms. CI records scripting/layout/task metrics; headless LayerTree did not produce a stable compositing-layer count, so no GPU-layer-cost claim is made.
+- Checked 061, 063, 066, 067, 068, 069 and 070. **Not checked:** 062 physical devices, 064 real screen readers, 065 native browser zoom. Playwright emulation/CSS zoom are not presented as those missing sessions.

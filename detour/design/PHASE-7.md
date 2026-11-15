@@ -4,7 +4,7 @@
 
 The automated tests run on GitHub-hosted Ubuntu, Node 24, Video.js HTML 10.4.0 and Playwright 1.62.1. Chromium desktop and emulated Pixel descriptors are not physical Android Chrome; desktop Linux WebKit with an iPhone descriptor is not iOS Safari. Browser DOM attributes and accessibility trees are not a substitute for NVDA or VoiceOver sessions.
 
-## Implemented probe matrix — pending CI validation
+## Probe matrix
 
 | ID | Executable check | Known gap before acceptance |
 | --- | --- | --- |
@@ -37,3 +37,24 @@ The first full Chromium matrix passed 25 distinct width/state checks (240/320/37
 [Actions run 43697253579](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43697253579) passed the entire DETOUR pipeline. Chromium, Firefox and desktop WebKit each passed the full browser suite; the corrected Home/End boundary landed at 63.95s for a 64s seekable VOD in all three. The Phase 7 probe set passed 25 responsive state checks, emulated Pixel touch, emulated iPhone-WebKit landscape, keyboard/focus recovery, 9:59:59 RTL/dense metadata, duplicate Return/manual-seek/source-swap recovery, and performance probes. Artifact 14154867955 contains the capture set.
 
 This baseline still does not represent physical iOS/Android or NVDA/VoiceOver. The next source adds direct duration-change and real-timeout recovery probes before checklist reconciliation.
+
+
+## Accepted automated/browser gate — 9eeeb77
+
+Source `9eeeb770b4f7cc7d7d5ba4c766095f05c2116be2`; [GitHub Actions 43698982276](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43698982276); screenshot artifact **14155597667**, SHA-256 `ff23070578f510008a8c499e5607fceb88745fb576621d7da805467cefdb6151`.
+
+| Step | Accepted evidence | Boundary |
+| --- | --- | --- |
+| 061 | 240/320/375/768/1280 × idle/held/captions/settings/pending all pass; emulated iPhone-WebKit landscape passes; representative artifact images visually inspected. | iPhone descriptor is not physical iOS. |
+| 063 | Full three-engine keyboard regressions plus dedicated forward/reverse focus, Space/Enter, Home/End, Escape, successful and rejected Return focus. | Screen-reader gestures belong to 064. |
+| 066 | No chapters, 64 chapters, portrait, audio-only fallback, 9:59:59 and >10-hour synthetic clocks, Arabic RTL/long action copy. | Chapter titles are metadata-only; DETOUR deliberately does not render them onto the rail. |
+| 067 | NaN/Infinity, empty/truncated seekable, finite-live guard, held mark across 64→128→30→64 duration/range changes. | Provider-specific live DVR UIs remain provider responsibility. |
+| 068 | Duplicate Return, manual seek, source swap, rejection, stale resolution, real 8s timeout, waiting/pause/Return, 20 remounts. | Tests use controlled provider-store substitutes for failure timing. |
+| 069 | 1,815 B incremental gzip; 10 × 320px traces; zero Long Tasks >50ms; scripting/layout/task metrics recorded. | Hosted Ubuntu CI is not low-end mobile hardware; no GPU-layer cost claim. |
+| 070 | Packed external host plus full Chromium, Firefox and desktop WebKit suites green at one SHA. | Physical iOS/Android and NVDA/VoiceOver are **unverified**, recorded under 062/064. |
+
+### Open Phase 7 external gates
+
+- **062:** physical iPhone Safari + Android Chrome touch/drag/pointer-cancel/page-scroll recovery.
+- **064:** NVDA and VoiceOver spoken output and gesture completion.
+- **065:** real browser-level 200% zoom. Reduced motion, forced colors, contrast and CSS-layout zoom already pass, but they are not substituted for this remaining check.

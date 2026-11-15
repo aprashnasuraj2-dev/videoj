@@ -1,15 +1,22 @@
 # DETOUR progress
 
-Phase: 07
-Resume step: 061
+Phase: 08
+Resume step: 071
 
 | Item | Current state |
 | --- | --- |
-| Verified | 58/100. Phase 6 steps 051–060 verified with desktop browser and emulated mobile-UA test evidence; physical mobile device testing is not claimed. |
-| Next | 061. Capture responsive 240/320/375/768/1280 px and emulated iOS landscape matrices, including held, pending Return, caption and open Settings states. Then pursue physical-device checks at 062/070. |
-| Open dependencies | 002: joined-form eligibility. 017: uncoached first-use observations. Physical-device Safari/mobile and assistive-technology evidence remain Phase 7 gates; neither desktop WebKit nor iPhone-shaped WebKit is a physical device. |
-| Prototype / public release | Base-only and DETOUR packed consumers pass. Desktop Chromium/WebKit core controls and Return pass; optional real Mux playback and public release remain later work. |
-| Source baseline | Phase 6 mobile-UA completed test baseline: `15bd747d57285eb7be236577aff7b41e688cc6fc`, GitHub Actions run 43693510683. |
+| Verified | 65/100. Phase 7 automated/browser-core rows 061, 063, 066–070 are verified. Physical touch 062, real screen readers 064 and native browser zoom 065 remain explicitly open. |
+| Next | 071. Lock the DETOUR-only showcase media strategy, then generate and verify the bundle without reusing DHAGO assets. |
+| Open dependencies | 002 joined-form eligibility; 017 uncoached first-use observations; 062 physical iPhone Safari + Android Chrome; 064 NVDA/VoiceOver; 065 native browser-level 200% zoom. These do not block independent Phase 8 work. |
+| Prototype / public release | Packed external host and desktop Chromium/Firefox/WebKit core are green. Phase 7 capture artifact exists. Public HTTPS, final showcase media and optional Mux remain later gates. |
+| Source baseline | Phase 7 accepted automated/browser baseline: `9eeeb770b4f7cc7d7d5ba4c766095f05c2116be2`, GitHub Actions run 43698982276, capture artifact 14155597667. |
+
+## 2026-11-15 · Phase 7 automated/browser acceptance and Phase 8 handoff
+
+- Exact source `9eeeb770b4f7cc7d7d5ba4c766095f05c2116be2` passed [Actions run 43698982276](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43698982276) with architecture, packed external-host, full Chromium/Firefox/desktop-WebKit, footprint and all Phase 7 probes. The final race set includes a real 8s Return deadline followed by a late resolution and a fresh-page waiting → pause → Return sequence.
+- Checked 061, 063 and 066–070. Visual review of artifact 14155597667 confirmed representative 240px held/settings/pending, 1280px settings, forced-colors, 200% CSS-layout zoom and Arabic long-clock captures have no clipped signature action or horizontal loss. Step 065 remains open because CSS zoom is not native browser zoom.
+- Kept 062, 064 and 065 open with exact evidence boundaries. Physical Android/iPhone and NVDA/VoiceOver are not available through this executor; the prepared [device QA protocol](design/DEVICE-QA.md) is the handoff. Per CONTINUE.md, advance independently to Phase 8 at 071 rather than idling on external QA.
+- Performance gate: incremental gzip **1,815 B / 15,360 B**. Five fresh-context and five repeat-context Chromium runs at 320px observed zero Long Tasks over 50ms; scripting/layout durations are recorded in CI. Headless LayerTree did not expose a stable compositing-layer count, so no GPU/compositing-cost claim is made.
 
 ## 2026-11-15 · Independent timeout and buffering-race probes (validation pending)
 

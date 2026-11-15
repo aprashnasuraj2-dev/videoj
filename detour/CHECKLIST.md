@@ -438,65 +438,75 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
 
 ## 07 · Responsive, accessibility and difficult states
 
-- [ ] **061. Test compact and wide layouts**
+- [x] **061. Test compact and wide layouts**
   - **Objective** — Catch layout failures before capture.
   - **Work** — Test 240, 320, 375, 768 and 1280 px containers plus iOS landscape. Exercise idle, held, return pending, caption-on and expanded menu states at each relevant width.
   - **Deliverable** — Responsive grid with real screenshots.
   - **Pass condition** — No clipped labels, overflow or overlapping hit boxes. Required controls and the return action stay visible.
+  - **Evidence** — [Phase 7 responsive acceptance](design/PHASE-7.md#accepted-automatedbrowser-gate--9eeeb77) — 25 Chromium width/state captures plus capability-aware emulated iPhone-WebKit landscape; artifact 14155597667. Representative narrow/wide/settings/pending/forced-color/RTL captures were visually reviewed.
 
 - [ ] **062. Test touch and pointer behavior**
   - **Objective** — Make exploration comfortable without precision gestures.
   - **Work** — On Android Chrome and iPhone Safari, tap hold, seek by tap, drag and use Return and Stay. Test pointer cancel and normal page scrolling outside the rail. Measure signature targets.
   - **Deliverable** — Touch and pointer matrix with device notes.
   - **Pass condition** — Signature targets are at least 44 x 44 CSS px. Page scrolling recovers after interruption and every action has a no-drag path.
+  - **Progress** — Playwright Pixel tap/seek/Return and iPhone-shaped WebKit landscape pass with 44px targets, but the row explicitly requires physical Android Chrome and iPhone Safari, drag/pointer-cancel and page-scroll recovery. See [device QA protocol](design/DEVICE-QA.md).
 
-- [ ] **063. Certify the keyboard path**
+- [x] **063. Certify the keyboard path**
   - **Objective** — Make the full player operable without a pointer.
   - **Work** — Use Tab and Shift+Tab through the media controls and held-state actions. Use Enter/Space for buttons, documented slider keys and Escape for menus. Exercise return success and error focus.
   - **Deliverable** — Keyboard walkthrough and focus issue log.
   - **Pass condition** — No trap or offscreen focus. After dynamic state changes the next focused element is visible and logical.
+  - **Evidence** — [Phase 7 keyboard acceptance](design/PHASE-7.md#accepted-automatedbrowser-gate--9eeeb77) — exact-head Chromium/Firefox/WebKit regression plus dedicated Tab/Shift+Tab, Enter/Space, Home/End, Escape, Return/Stay and rejected-Return focus paths.
 
 - [ ] **064. Exercise screen readers**
   - **Objective** — Verify names, announcements and actual slider usability.
   - **Work** — Test NVDA with Firefox or Chrome and VoiceOver on Safari, preferably including iOS. Inspect role/value text for the seek control and timestamp, mark created, returned, error and clearing announcements.
   - **Deliverable** — Assistive technology results with versions.
   - **Pass condition** — The user can complete hold, seek and return without sight. State changes announce once and playback time does not chatter.
+  - **Progress** — DOM live-region semantics and keyboard focus are exercised, but no NVDA/VoiceOver session has been recorded. Do not infer screen-reader output from DOM markup; use [device QA protocol](design/DEVICE-QA.md).
 
 - [ ] **065. Test motion, contrast and zoom**
   - **Objective** — Keep visual feedback readable in difficult contexts.
   - **Work** — Toggle reduced motion and forced colors. Test bright/dark video, an extended caption and 200% browser zoom. Measure text and control contrast and inspect clipping.
   - **Deliverable** — Contrast and preference evidence set.
   - **Pass condition** — Contrast targets hold, animation is suppressed on request and no important control or focus indicator disappears.
+  - **Progress** — Reduced motion, forced colors, measured contrast, bright/dark captions and 200% CSS-layout zoom captures pass. Native browser-level 200% zoom remains unverified; keep this row open rather than equating CSS zoom with browser zoom.
 
-- [ ] **066. Stress arbitrary content and languages**
+- [x] **066. Stress arbitrary content and languages**
   - **Objective** — Confirm the experience survives reality outside the hero film.
   - **Work** — Test no chapters, 40 chapters, an hour-long timeline, 9:59:59, RTL, international characters and long chapter titles. Include portrait and audio-only as baseline or explicit fallback.
   - **Deliverable** — Content matrix and exception notes.
   - **Pass condition** — The detour remains media-independent. Actual capabilities and unsupported signature contexts are documented precisely.
+  - **Evidence** — [Phase 7 content acceptance](design/PHASE-7.md#accepted-automatedbrowser-gate--9eeeb77) — chapterless baseline, 64-chapter metadata, 9:59:59/10-hour clocks, Arabic RTL/long copy, portrait VOD and explicit audio-only fallback behavior.
 
-- [ ] **067. Test unknown duration and range changes**
+- [x] **067. Test unknown duration and range changes**
   - **Objective** — Keep the signature truthful under uncertain timing.
   - **Work** — Use metadata loading, invalid duration, truncated seekable data, live/DVR and unavailable poster fixtures. Change duration after holding and retest the origin interval.
   - **Deliverable** — Timing boundary test matrix.
   - **Pass condition** — No NaN or Infinity is displayed. Unsupported feeds retain truthful core controls, and invalid marks cannot cause out-of-range seeks.
+  - **Evidence** — [Phase 7 timing acceptance](design/PHASE-7.md#accepted-automatedbrowser-gate--9eeeb77) — invalid/unknown duration, empty/truncated ranges and live guards plus direct held-origin 64→128→30→64 duration/range changes without NaN/Infinity or out-of-range Return.
 
-- [ ] **068. Prove recovery and race handling**
+- [x] **068. Prove recovery and race handling**
   - **Objective** — Catch async bugs and misleading success states.
   - **Work** — Throttle or abort a return; trigger duplicate Return, a later manual seek, source switch during return, pause during buffering and end of media. Force a stale event after timeout.
   - **Deliverable** — Race and reload evidence.
   - **Pass condition** — Only current-source completions consume marks. Recovery or manual seek never makes the player resume unexpectedly.
+  - **Evidence** — [Phase 7 race acceptance](design/PHASE-7.md#accepted-automatedbrowser-gate--9eeeb77) — duplicate Return, manual-seek precedence, source change, rejected/late provider work, real 8s timeout, waiting→pause→Return and 20 remount cycles preserve mark/source/pause truth.
 
-- [ ] **069. Measure browser performance**
+- [x] **069. Measure browser performance**
   - **Objective** — Keep the feature responsive on ordinary hardware.
   - **Work** — Record cold and warm traces, layer and scripting costs at 320 px, and bytes relative to plain Scaffold using the same media. Repeat five times per target condition and label simulated devices.
   - **Deliverable** — Performance measurements and limits.
   - **Pass condition** — Added compressed JS and CSS are at most 15 KiB combined. No verified control long task exceeds 50 ms during the signature trace.
+  - **Evidence** — [Phase 7 performance acceptance](design/PHASE-7.md#accepted-automatedbrowser-gate--9eeeb77) — 1,815 B incremental gzip against 15 KiB; five fresh-context plus five repeat-context 320px traces, zero observed Long Tasks >50ms, with scripting/layout metrics recorded.
 
-- [ ] **070. Close the cross-browser core gate**
+- [x] **070. Close the cross-browser core gate**
   - **Objective** — Reserve time for fixes before evidence capture.
   - **Work** — Repeat critical paths on Chromium, Firefox, Safari/WebKit and real iOS and Android where available. Record browser, OS, device and severity. Use an independent clean session for final confirmation.
   - **Deliverable** — Signed browser and accessibility summary.
   - **Pass condition** — No blocking or major issue in a supported required path. Any missing physical coverage remains explicitly unverified.
+  - **Evidence** — [Phase 7 browser-core gate](design/PHASE-7.md#accepted-automatedbrowser-gate--9eeeb77) — exact-head packed host and full Chromium/Firefox/desktop-WebKit suites passed. Physical iOS/Android and real AT remain explicitly unverified under 062/064, as permitted by this gate's pass condition.
 
 ## 08 · Showcase media, Mux and secondary context
 
