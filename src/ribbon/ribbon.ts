@@ -37,11 +37,14 @@ export interface WovenRibbonHandle {
 const clamp=(value:number,min:number,max:number)=>Math.min(max,Math.max(min,value));
 const normalizedCues=(cues:WovenRibbonCue[])=>cues.filter(cue=>
   Number.isFinite(cue?.start)&&Number.isFinite(cue?.end)&&cue.end>cue.start&&typeof cue.label==='string'
-).slice(0,120);
+).sort((a,b)=>a.start-b.start||a.end-b.end).slice(0,120);
 const safeColor=(value:string)=>typeof CSS!=='undefined'&&CSS.supports?.('color',value)?value:'#6f7668';
 const timeText=(value:number)=>{
   const seconds=Math.max(0,Math.floor(Number.isFinite(value)?value:0));
-  return Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');
+  const hours=Math.floor(seconds/3600);
+  const minutes=Math.floor(seconds/60)%60;
+  const tail=String(seconds%60).padStart(2,'0');
+  return hours?hours+':'+String(minutes).padStart(2,'0')+':'+tail:minutes+':'+tail;
 };
 
 /**
@@ -75,6 +78,9 @@ export function createWovenRibbon(options:WovenRibbonOptions):WovenRibbonHandle 
   visual.append(warp);
 
   const tracks=[{id:'chapters',label:'Chapters',color:'#b44332',cues:chapters},...extraTracks];
+  // Cue geometry is static for one media duration. Playback updates must not
+  // repeatedly query and rewrite every lane, especially with 100+ cues.
+  const cueNodes:HTMLElement[]=[];
   tracks.forEach((track,index)=>{
     const lane=document.createElement('div');
     lane.className='woven-ribbon-lane';
@@ -88,6 +94,7 @@ export function createWovenRibbon(options:WovenRibbonOptions):WovenRibbonHandle 
       span.dataset.end=String(cue.end);
       span.title=track.label+': '+cue.label;
       lane.append(span);
+      cueNodes.push(span);
     });
     visual.append(lane);
   });
@@ -103,13 +110,14 @@ export function createWovenRibbon(options:WovenRibbonOptions):WovenRibbonHandle 
   root.append(visual,input,readout);
 
   let state:WovenRibbonState={currentTime:0,duration:0,progress:0,activeChapterIndex:-1};
+  let layoutDuration=NaN;
   const layout=()=>{
     const duration=state.duration;
     if(!(duration>0)){
-      root.querySelectorAll<HTMLElement>('.woven-ribbon-cue').forEach(cue=>{cue.style.left='0%';cue.style.width='0%'});
+      cueNodes.forEach(cue=>{cue.style.left='0%';cue.style.width='0%'});
       return;
     }
-    root.querySelectorAll<HTMLElement>('.woven-ribbon-cue').forEach(cue=>{
+    cueNodes.forEach(cue=>{
       const start=clamp(Number(cue.dataset.start),0,duration);
       const end=clamp(Number(cue.dataset.end),0,duration);
       cue.style.left=(100*start/duration).toFixed(3)+'%';
@@ -127,19 +135,24 @@ export function createWovenRibbon(options:WovenRibbonOptions):WovenRibbonHandle 
     }):-1;
     state={...next,currentTime,duration,progress,activeChapterIndex};
     input.max=String(duration||1);
+    input.disabled=duration===0;
     input.value=String(currentTime);
     root.style.setProperty('--woven-progress',(progress*100).toFixed(3)+'%');
     root.toggleAttribute('data-buffering',Boolean(next.buffering));
     if(Number.isFinite(next.renditionHeight)&&Number(next.renditionHeight)>0)
       root.style.setProperty('--woven-quality-thread',clamp(2+(Number(next.renditionHeight)-240)/240,2,7).toFixed(2)+'px');
     else root.style.removeProperty('--woven-quality-thread');
-    root.dataset.droppedFrames=String(Math.max(0,Math.floor(next.droppedFrames??0)));
+    root.dataset.droppedFrames=String(Number.isFinite(next.droppedFrames)
+      ?Math.max(0,Math.floor(next.droppedFrames!)):0);
     root.querySelectorAll<HTMLElement>('.woven-ribbon-lane[data-track="chapters"] .woven-ribbon-cue')
       .forEach((cue,index)=>cue.toggleAttribute('data-active',index===activeChapterIndex));
     const chapter=activeChapterIndex>=0?chapters[activeChapterIndex]?.label:'Unmarked passage';
     readout.value=Math.round(progress*100)+'% · '+chapter;
     input.setAttribute('aria-valuetext',duration?timeText(currentTime)+' of '+timeText(duration)+'; '+chapter:'Media duration unavailable');
-    layout();
+    if(duration!==layoutDuration){
+      layoutDuration=duration;
+      layout();
+    }
     options.onState?.(state);
     return state;
   };

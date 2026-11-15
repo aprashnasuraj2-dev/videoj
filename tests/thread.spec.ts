@@ -197,3 +197,21 @@ test('the clock has stable neighboring controls across a timecode rollover', asy
   const after = await Promise.all([volume.boundingBox(), settings.boundingBox()]);
   expect(after.map(box => box?.x)).toEqual(before.map(box => box?.x));
 });
+
+
+test('sampled source weaving preserves four distinct chapter structures on the actual player',async({page},info)=>{
+  await page.goto('/?local');
+  const shell=page.locator('#player-mount .dhago');
+  await expect(shell).toHaveAttribute('data-weave-sampled','');
+  const swatches=shell.locator('.media-time-slider-chapter');
+  await expect(swatches).toHaveCount(4);
+  const patterns=await swatches.evaluateAll(nodes=>nodes.map(node=>{
+    const track=node.querySelector('.media-time-slider-track')!;
+    const fill=node.querySelector('.media-time-slider-fill')!;
+    return [getComputedStyle(track).backgroundImage,getComputedStyle(fill).backgroundImage];
+  }));
+  expect(new Set(patterns.map(x=>x[0])).size).toBe(4);
+  expect(new Set(patterns.map(x=>x[1])).size).toBe(4);
+  await shell.screenshot({path:info.outputPath('actual-sampled-woven-player.png')});
+});
+

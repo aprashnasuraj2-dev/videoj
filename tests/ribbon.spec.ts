@@ -31,3 +31,29 @@ test('layered-weft fixture renders supplied speaker and sponsor tracks without c
   await expect.poll(()=>page.locator('.dhago-metadata-lane[data-kind="speaker"]').count()).toBeGreaterThan(0);
   await expect.poll(()=>page.locator('.dhago-metadata-lane[data-kind="sponsor"]').count()).toBeGreaterThan(0);
 });
+
+
+test('portable ribbon changes position without rewriting static cue geometry',async({page})=>{
+  await page.goto('/ribbon.html');
+  const media=page.locator('#ribbon-video');
+  await expect.poll(()=>media.evaluate((v:HTMLVideoElement)=>v.readyState)).toBeGreaterThan(0);
+  await expect(page.locator('#default-ribbon .woven-ribbon-cue').first()).toHaveAttribute('style',/left:/);
+  await page.evaluate(()=>{
+    const root=document.querySelector('#default-ribbon')!;
+    const cues=Array.from(root.querySelectorAll('.woven-ribbon-cue'));
+    (window as unknown as {ribbonCueMutations:number}).ribbonCueMutations=0;
+    const observer=new MutationObserver(records=>{
+      (window as unknown as {ribbonCueMutations:number}).ribbonCueMutations+=records.length;
+    });
+    cues.forEach(cue=>observer.observe(cue,{attributes:true,attributeFilter:['style']}));
+    (window as unknown as {stopRibbonObservation:()=>void}).stopRibbonObservation=()=>observer.disconnect();
+  });
+  for(const t of [8,42,17,54]){
+    await media.evaluate((v:HTMLVideoElement,t)=>{v.currentTime=t;},t);
+    await expect.poll(()=>media.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThan(t-.6);
+  }
+  await expect.poll(()=>page.locator('#default-ribbon .woven-ribbon-readout').innerText()).toContain('Coming home');
+  expect(await page.evaluate(()=>(window as unknown as {ribbonCueMutations:number}).ribbonCueMutations)).toBe(0);
+  await page.evaluate(()=>(window as unknown as {stopRibbonObservation:()=>void}).stopRibbonObservation());
+});
+
