@@ -11,6 +11,12 @@ Resume step: 072
 | Prototype / public release | Public-root composition and second production host pass locally. HTTPS publication is the remaining core media gate before Mux evaluation. |
 | Source baseline | Judge-demo/portability baseline: `34261f03c8df75bbeed847879de7269ab794fb55`, Actions run 43701045585. 073 and 074 pass; full DETOUR CI green. |
 
+## 2026-11-15 · Cache-backed HTTPS transport after first public gate
+
+- [Actions run 43702919194](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43702919194) reached the public origin but timed out waiting for video metadata. Independent resource probes showed the cause: immutable JS/CSS/VTT requests through raw-GitHub proxying took roughly **7–10 s each**, making repeated video-range fetches unsuitable for the 30 s first-load gate.
+- Updated only the release Worker transport: each immutable file is fetched once, normalized, stored in `caches.default` under the frozen source SHA, and then served from Cloudflare cache. MP4 range requests now slice the cached full object deterministically and return 206 without refetching raw GitHub for each byte range.
+- External prewarm after deployment measured the same JS/CSS/VTT resources at roughly **0.17–0.31 s**, versus the earlier 7–10 s. The strict HTTPS browser gate is intentionally unchanged and must pass before 072 closes.
+
 ## 2026-11-15 · Public HTTPS origin and exact-browser gate (validation pending)
 
 - Full source `50ac9661e315f099d3121850a57dd398cbeb5865` passed Actions run 43702266692 and staged **70 files / 2,163,553 B** at immutable branch `detour-dist-50ac9661e315`. The 871,570 B showcase MP4 SHA-256 is `fa41edd8b8d17a6e0fcb9e3ee4e63513191e4a6850e99ed24df076044e5a87a1`.
