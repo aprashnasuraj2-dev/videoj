@@ -281,7 +281,10 @@ test('keyboard-full-journey: real Play/Pause, mute/volume, captions and Settings
     const captionsTabs = await tabTo(page, 'media-captions-button');
     check('captions-tab-reachable', captionsTabs !== null, { captionsTabs, active: await active(page) });
     await page.keyboard.press('Enter');
-    await page.waitForFunction(() => document.querySelector('video').textTracks[0]?.mode === 'showing');
+    await page.waitForFunction(() => {
+      const track = document.querySelector('video').textTracks[0];
+      return track?.mode === 'showing' && (track.cues?.length || 0) > 0;
+    }, null, { timeout: 10000 });
     const track = await page.locator('video').evaluate(v => ({
       mode: v.textTracks[0]?.mode,
       cueCount: v.textTracks[0]?.cues?.length || 0,
