@@ -67,14 +67,25 @@ try {
   };
 
   const cdp=await mobile.newCDPSession(touchPage);
-  const touch=(type,x,y)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:(type==='touchEnd'||type==='touchCancel')?[]:[{x,y,radiusX:2,radiusY:2,force:1}],modifiers:0});
+  const touch=(type,x,y)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:(type==='touchEnd'||type==='touchCancel')?[]:[{x,y,id:1,radiusX:2,radiusY:2,force:1}],modifiers:0});
   const y=tb.y+tb.height/2;
+  const touchHit=await touchPage.evaluate(({x,y})=>{
+    window.__afterimageTouchProbe=[];
+    for(const type of ['touchstart','touchmove','touchend','touchcancel']){
+      document.addEventListener(type,event=>{
+        window.__afterimageTouchProbe.push({type,target:event.target?.className||event.target?.tagName||null,touches:event.touches?.length||0,changed:event.changedTouches?.length||0});
+      },{capture:true});
+    }
+    const el=document.elementFromPoint(x,y);
+    return {tag:el?.tagName||null,cls:el?.className||null,hidden:el?.hidden??null};
+  },{x:tb.x+tb.width*0.50,y});
   await touch('touchStart',tb.x+tb.width*0.50,y);
   for(const f of [0.60,0.70,0.81]) await touch('touchMove',tb.x+tb.width*f,y);
   await touch('touchEnd',0,0);
   await touchPage.waitForTimeout(120);
   const touchDrag=Number(await touchSeam.inputValue());
-  check('seam-horizontal-touch-drag',touchDrag>=68&&touchDrag<=92,{touchDrag});
+  const touchEvents=await touchPage.evaluate(()=>window.__afterimageTouchProbe||[]);
+  check('seam-horizontal-touch-drag',touchDrag>=68&&touchDrag<=92,{touchDrag,touchHit,touchEvents});
 
   await touch('touchStart',tb.x+tb.width*(touchDrag/100),y);
   await touch('touchMove',tb.x+tb.width*0.42,y);
