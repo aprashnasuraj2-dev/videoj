@@ -215,7 +215,7 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
 <section id="afterimage-player" aria-label="AFTERIMAGE player"></section>
 <p class="fixture-note"><strong>The Waterline.</strong> Try the matched study, or pin any moment yourself. The copper mark remembers one rendered frame while the pale playhead keeps moving.</p>
 </main>
-<script type="module">function formatAfterimageTime(value) {
+<script type="module">export function formatAfterimageTime(value) {
   if (!Number.isFinite(value) || value < 0) return '—:——';
   const total = Math.max(0, Math.round(value));
   const seconds = total % 60;
@@ -228,7 +228,7 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
     : two(minutesTotal) + ':' + two(seconds);
 }
 
-function formatAfterimageDelta(value) {
+export function formatAfterimageDelta(value) {
   if (!Number.isFinite(value)) return '—';
   const rounded = Math.abs(value) < 0.5 ? 0 : Math.round(value);
   const sign = rounded > 0 ? '+' : rounded < 0 ? '−' : '±';
@@ -236,6 +236,7 @@ function formatAfterimageDelta(value) {
 }
 
 
+import { formatAfterimageDelta, formatAfterimageTime } from './format-time.js';
 
 const CAP_PIXELS = 920000;
 const CAP_LONG_EDGE = 1280;
@@ -510,6 +511,7 @@ if (!customElements.get('afterimage-temporal-lens')) {
 }
 
 
+import { formatAfterimageTime } from './format-time.js';
 
 const SEEK_TIMEOUT_MS = 3000;
 const PIN_TIMEOUT_MS = 1800;
@@ -628,20 +630,21 @@ export function bindAfterimageExample(player, video, example) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import '@videojs/html/video/player';
+import '@videojs/html/i18n';
+import '@videojs/html/ui/container';
+import '@videojs/html/ui/play-button';
+import '@videojs/html/ui/time-slider';
+import '@videojs/html/ui/slider-track';
+import '@videojs/html/ui/slider-fill';
+import '@videojs/html/ui/slider-thumb';
+import '@videojs/html/ui/time';
+import '@videojs/html/ui/mute-button';
+import '@videojs/html/ui/volume-slider';
+import '@videojs/html/ui/captions-button';
+import '@videojs/html/ui/fullscreen-button';
+import '@videojs/html/ui/buffering-indicator';
+import './player.css';
 
 function interfaceMarkup(enhancement = '') {
   return '<media-container class="afterimage" lang="en">' +
@@ -687,21 +690,59 @@ function interfaceMarkup(enhancement = '') {
   '</media-container>';
 }
 
-function createAfterimageShell(media, enhancement = '') {
+function bindFullscreenControl(player, media) {
+  const button = player.querySelector('media-fullscreen-button');
+  const target = player.firstElementChild;
+  if (!button || !target) return;
+
+  const setLabel = () => {
+    const active = document.fullscreenElement === target ||
+      Boolean(document.fullscreenElement && target.contains(document.fullscreenElement));
+    button.setAttribute('aria-label', active ? 'Exit fullscreen' : 'Enter fullscreen');
+  };
+
+  button.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.().catch(() => {});
+      return;
+    }
+
+    if (document.fullscreenEnabled && typeof target.requestFullscreen === 'function') {
+      target.requestFullscreen().catch(() => {});
+      return;
+    }
+
+    if (typeof media.webkitEnterFullscreen === 'function') {
+      try { media.webkitEnterFullscreen(); } catch {}
+    }
+  }, { capture: true });
+
+  target.addEventListener('fullscreenchange', setLabel);
+  media.addEventListener('webkitbeginfullscreen', () => button.setAttribute('aria-label', 'Exit fullscreen'));
+  media.addEventListener('webkitendfullscreen', () => button.setAttribute('aria-label', 'Enter fullscreen'));
+  setLabel();
+}
+
+export function createAfterimageShell(media, enhancement = '') {
   if (!(media instanceof HTMLVideoElement)) throw new TypeError('AFTERIMAGE requires a host-owned HTMLVideoElement.');
   const player = document.createElement('video-player');
   player.innerHTML = interfaceMarkup(enhancement);
   player.firstElementChild.querySelector('.afterimage-screen').append(media);
+  bindFullscreenControl(player, media);
   return player;
 }
 
-function createBasePlayer(media) {
+export function createBasePlayer(media) {
   return createAfterimageShell(media);
 }
 
 
-
-
+import './temporal-lens.js';
+import { bindAfterimageExample } from './authored-example.js';
+import { createAfterimageShell } from './shell.js';
 
 function normalizeExample(options) {
   const example = options?.example;
@@ -732,7 +773,7 @@ function temporalLensMarkup(example) {
   '</afterimage-temporal-lens>';
 }
 
-function createAfterimagePlayer(media, options = {}) {
+export function createAfterimagePlayer(media, options = {}) {
   const example = normalizeExample(options);
   const player = createAfterimageShell(media, temporalLensMarkup(example));
   if (example) bindAfterimageExample(player, media, example);
@@ -757,6 +798,6 @@ chapters.src = asset('./media/the-waterline-v1-chapters.vtt');
 video.append(chapters);
 const mountedPlayer = createAfterimagePlayer(video, { example: { pinnedSeconds: 5, currentSeconds: 13 } });
 document.querySelector('#afterimage-player').append(mountedPlayer);
-window.__AFTERIMAGE_RELEASE__ = { version: '0.3.3-webkit-handoff', video, player: mountedPlayer };</script>
+window.__AFTERIMAGE_RELEASE__ = { version: '0.3.4-fullscreen-control', video, player: mountedPlayer };</script>
 </body>
 </html>

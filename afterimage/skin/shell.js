@@ -58,11 +58,48 @@ function interfaceMarkup(enhancement = '') {
   '</media-container>';
 }
 
+function bindFullscreenControl(player, media) {
+  const button = player.querySelector('media-fullscreen-button');
+  const target = player.firstElementChild;
+  if (!button || !target) return;
+
+  const setLabel = () => {
+    const active = document.fullscreenElement === target ||
+      Boolean(document.fullscreenElement && target.contains(document.fullscreenElement));
+    button.setAttribute('aria-label', active ? 'Exit fullscreen' : 'Enter fullscreen');
+  };
+
+  button.addEventListener('click', event => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.().catch(() => {});
+      return;
+    }
+
+    if (document.fullscreenEnabled && typeof target.requestFullscreen === 'function') {
+      target.requestFullscreen().catch(() => {});
+      return;
+    }
+
+    if (typeof media.webkitEnterFullscreen === 'function') {
+      try { media.webkitEnterFullscreen(); } catch {}
+    }
+  }, { capture: true });
+
+  target.addEventListener('fullscreenchange', setLabel);
+  media.addEventListener('webkitbeginfullscreen', () => button.setAttribute('aria-label', 'Exit fullscreen'));
+  media.addEventListener('webkitendfullscreen', () => button.setAttribute('aria-label', 'Enter fullscreen'));
+  setLabel();
+}
+
 export function createAfterimageShell(media, enhancement = '') {
   if (!(media instanceof HTMLVideoElement)) throw new TypeError('AFTERIMAGE requires a host-owned HTMLVideoElement.');
   const player = document.createElement('video-player');
   player.innerHTML = interfaceMarkup(enhancement);
   player.firstElementChild.querySelector('.afterimage-screen').append(media);
+  bindFullscreenControl(player, media);
   return player;
 }
 

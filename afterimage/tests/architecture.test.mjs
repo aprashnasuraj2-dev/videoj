@@ -48,3 +48,13 @@ test('skin CSS is scoped to the AFTERIMAGE player', () => {
     .filter(line => line.endsWith('{') && !line.startsWith('@') && !/^(?:from|to|\d+%)\s*\{/.test(line));
   for (const selector of selectorHeads) assert.match(selector, /^\.afterimage(?:\b|[\s.:[>#,+~])/i, 'Unscoped selector: ' + selector);
 });
+
+
+test('fullscreen control owns a wrapper-first fallback and native video fallback', () => {
+  const source = read('../skin/shell.js');
+  assert.match(source, /requestFullscreen/);
+  assert.match(source, /exitFullscreen/);
+  assert.match(source, /webkitEnterFullscreen/);
+  assert.match(source, /fullscreenchange/);
+  assert.match(source, /stopImmediatePropagation/);
+});

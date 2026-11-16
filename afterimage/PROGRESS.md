@@ -237,3 +237,13 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Headless Chromium reports `document.fullscreenEnabled=true` but did not create a `fullscreenElement` after clicking the Video.js fullscreen control. A headless shell is not a reliable native fullscreen environment, so this is not classified as a product failure.
 - Added `AFTERIMAGE headed fullscreen`: exact-release Chromium launched headed under Xvfb, requiring the public release/version, a named ≥44px fullscreen control, native enter, screenshot while fullscreen, Escape exit, and usable Play control afterward.
 - The ordinary three-engine matrix keeps checking fullscreen control presence/name without making a false native-transition claim from a headless shell.
+
+
+## 2026-11-16 · fullscreen control promoted from assumption to owned fallback
+
+- Headed Chromium fullscreen run `43804651588` confirmed the Video.js fullscreen element was present/named but clicking it did not create `document.fullscreenElement` even under Xvfb.
+- Fullscreen is a published minimum control, so AFTERIMAGE now owns the final activation path instead of relying on an unverified custom-element side effect.
+- The existing Video.js fullscreen control remains the visible control. Its click is intercepted synchronously under the user gesture: wrapper Fullscreen API is used when available, Escape/second click exits, and WebKit native video fullscreen is the fallback when wrapper fullscreen is unavailable.
+- The wrapper is the fullscreen target so the comparison layer and control deck stay together on desktop/fullscreen-capable browsers.
+- Runtime marker advances to `0.3.4-fullscreen-control`.
+- **Next action:** deploy this exact source, point all release gates to its SHA/version, and require the headed fullscreen round trip to pass before promoting task 18.
