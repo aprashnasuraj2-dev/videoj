@@ -21,6 +21,7 @@ function interfaceMarkup(enhancement = '') {
       '<div class="afterimage-reference" hidden aria-hidden="true"><canvas></canvas></div>' +
       '<div class="afterimage-seam" hidden aria-hidden="true"><span></span></div>' +
       '<input class="afterimage-seam-control" type="range" min="0" max="100" value="50" step="1" aria-label="Pinned frame reveal" hidden>' +
+      '<div class="afterimage-comparison-caption" hidden aria-hidden="true"><span></span></div>' +
     '</div>' +
     '<div class="afterimage-deck">' +
       '<div class="afterimage-relation" hidden>' +
