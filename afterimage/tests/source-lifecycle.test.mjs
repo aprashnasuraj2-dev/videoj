@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { chromium } from 'playwright';
+import { chromium, firefox, webkit } from 'playwright';
 import { createServer } from 'vite';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
+const engines = { chromium, firefox, webkit };
+const engineName = process.env.AFTERIMAGE_HARDENING_ENGINE || 'chromium';
 let server;
 let browser;
 let baseURL;
@@ -17,7 +19,10 @@ before(async () => {
   });
   await server.listen();
   baseURL = server.resolvedUrls.local[0];
-  browser = await chromium.launch({ args: ['--no-sandbox'] });
+  assert.ok(engines[engineName], `Unsupported engine: ${engineName}`);
+  browser = await engines[engineName].launch({
+    args: engineName === 'chromium' ? ['--no-sandbox'] : [],
+  });
 });
 
 after(async () => {
