@@ -684,7 +684,7 @@ export function bindAfterimageExample(player, video, example) {
 
 
 function interfaceMarkup(enhancement = '') {
-  return '<media-container class="afterimage" lang="en">' +
+  return '<media-container class="afterimage" lang="en" tabindex="-1">' +
     '<div class="afterimage-stage">' +
       '<div class="afterimage-screen"></div>' +
       '<div class="afterimage-reference" hidden aria-hidden="true"><canvas></canvas></div>' +
@@ -834,6 +834,6 @@ chapters.src = asset('./media/the-waterline-v1-chapters.vtt');
 video.append(chapters);
 const mountedPlayer = createAfterimagePlayer(video, { example: { pinnedSeconds: 5, currentSeconds: 13 } });
 document.querySelector('#afterimage-player').append(mountedPlayer);
-window.__AFTERIMAGE_RELEASE__ = { version: '0.3.6-keyboard-visible', video, player: mountedPlayer };</script>
+window.__AFTERIMAGE_RELEASE__ = { version: '0.3.7-keyboard-first', video, player: mountedPlayer };</script>
 </body>
 </html>

@@ -15,7 +15,7 @@ import '@videojs/html/ui/buffering-indicator';
 import './player.css';
 
 function interfaceMarkup(enhancement = '') {
-  return '<media-container class="afterimage" lang="en">' +
+  return '<media-container class="afterimage" lang="en" tabindex="-1">' +
     '<div class="afterimage-stage">' +
       '<div class="afterimage-screen"></div>' +
       '<div class="afterimage-reference" hidden aria-hidden="true"><canvas></canvas></div>' +
