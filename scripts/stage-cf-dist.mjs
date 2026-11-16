@@ -26,7 +26,7 @@ const manifest = {
   source_sha: source,
   built_by: 'GitHub Actions',
   build_run_id: process.env.DHAGO_BUILD_RUN_ID ?? process.env.GITHUB_RUN_ID,
-  build_artifact: 'candidate-evidence',
+  build_artifact: 'dhago-build',
   file_count: files.length,
   files,
 };
