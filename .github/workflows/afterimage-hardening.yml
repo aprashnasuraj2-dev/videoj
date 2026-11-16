@@ -89,9 +89,18 @@ jobs:
           AFTERIMAGE_RELEASE: ''
           AFTERIMAGE_VERSION: 0.3.10-control-fit
         run: |
+          # Vite's static server does not reproduce the production Worker's
+          # WebM range/metadata behavior on this CI image. Hide only the local
+          # WebM during this regression so the unchanged standalone exercises
+          # its committed MP4 fallback with a real finite/seekable timeline.
+          mv public/media/the-waterline-v1.webm /tmp/afterimage-hardening-waterline.webm
           npx vite --host 127.0.0.1 --port 4173 > /tmp/afterimage-hardening-vite.log 2>&1 &
           server_pid=$!
-          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          cleanup() {
+            kill "$server_pid" 2>/dev/null || true
+            mv /tmp/afterimage-hardening-waterline.webm public/media/the-waterline-v1.webm 2>/dev/null || true
+          }
+          trap cleanup EXIT
           ready=0
           for attempt in $(seq 1 30); do
             if curl -fsS http://127.0.0.1:4173/standalone.html >/dev/null; then
