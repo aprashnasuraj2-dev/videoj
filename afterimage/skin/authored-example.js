@@ -3,12 +3,12 @@ import { formatAfterimageTime } from './format-time.js';
 const SEEK_TIMEOUT_MS = 3000;
 const PIN_TIMEOUT_MS = 1800;
 
-function finiteVod(video) {
+function finiteExampleVod(video) {
   return Number.isFinite(video.duration) && video.duration > 0;
 }
 
 function waitForMetadata(video, signal) {
-  if (finiteVod(video)) return Promise.resolve();
+  if (finiteExampleVod(video)) return Promise.resolve();
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => finish(new Error('The example is not ready yet.')), SEEK_TIMEOUT_MS);
     const onLoaded = () => finish();
@@ -86,7 +86,7 @@ export function bindAfterimageExample(player, video, example) {
     const wasPaused = video.paused;
     try {
       await waitForMetadata(video, signal);
-      if (!finiteVod(video) || example.pinnedSeconds >= video.duration || example.currentSeconds > video.duration) {
+      if (!finiteExampleVod(video) || example.pinnedSeconds >= video.duration || example.currentSeconds > video.duration) {
         throw new Error('The authored comparison is outside this video.');
       }
       await seekTo(video, example.pinnedSeconds, signal);
