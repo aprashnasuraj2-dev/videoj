@@ -35,6 +35,17 @@ test('manual Temporal Lens never programs transport', () => {
   assert.match(source, /new AbortController\(\)/);
 });
 
+test('Temporal Lens owns an explicit truthful media/capture state model', () => {
+  const source = read('../skin/temporal-lens.js');
+  for (const state of [
+    'source-error', 'timeline-unavailable', 'seeking', 'metadata-pending',
+    'frame-pending', 'frame-unavailable', 'ended-ready', 'ready'
+  ]) assert.match(source, new RegExp(state), `Missing capture state: ${state}`);
+  assert.match(source, /streamType\s*===\s*['"]live['"]/);
+  assert.match(source, /afterimage:pin-failed/);
+  assert.doesNotMatch(source, /Return to|Stay here|checkpoint|C1|C2|C3|C4/i);
+});
+
 test('authored example is the single documented seek exemption', () => {
   const source = read('../skin/authored-example.js');
   assert.equal((source.match(/video\.currentTime\s*=/g) || []).length, 1);
