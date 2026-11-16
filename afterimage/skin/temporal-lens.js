@@ -133,6 +133,7 @@ class AfterimageTemporalLens extends HTMLElement {
       this.#seam = 50;
       render();
       announce((approximate ? 'Pinned approximately at ' : 'Pinned at ') + formatAfterimageTime(time) + '. Comparison opened.');
+      this.dispatchEvent(new CustomEvent('afterimage:pin-complete', { bubbles: true, detail: { time, approximate } }));
       return true;
     };
 
@@ -167,7 +168,9 @@ class AfterimageTemporalLens extends HTMLElement {
           drawCandidate(reportedTime, approximate, requestId, sourceEpoch);
         } catch (error) {
           if (requestId === this.#requestId && sourceEpoch === this.#sourceEpoch) {
-            announce(error instanceof Error ? error.message : 'Could not pin this frame.');
+            const message = error instanceof Error ? error.message : 'Could not pin this frame.';
+            announce(message);
+            this.dispatchEvent(new CustomEvent('afterimage:pin-failed', { bubbles: true, detail: { message } }));
           }
         } finally {
           if (!signal.aborted && requestId === this.#requestId) {

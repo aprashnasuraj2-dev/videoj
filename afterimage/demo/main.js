@@ -1,18 +1,28 @@
 import { createAfterimagePlayer } from '../skin/player.js';
 import './page.css';
 
+const asset = path => new URL(path, document.baseURI).href;
 const video = document.createElement('video');
 video.preload = 'metadata';
 video.playsInline = true;
 video.crossOrigin = 'anonymous';
-video.poster = new URL('./poster.svg', import.meta.url).href;
-video.src = 'https://vjs.zencdn.net/v/oceans.mp4';
+video.poster = asset('./media/the-waterline-v1-poster.jpg');
+video.src = asset('./media/the-waterline-v1.mp4');
 
 const captions = document.createElement('track');
 captions.kind = 'captions';
 captions.srclang = 'en';
 captions.label = 'English';
-captions.src = new URL('./captions.vtt', import.meta.url).href;
+captions.src = asset('./media/the-waterline-v1.vtt');
 video.append(captions);
 
-document.querySelector('#afterimage-player').append(createAfterimagePlayer(video));
+const chapters = document.createElement('track');
+chapters.kind = 'chapters';
+chapters.srclang = 'en';
+chapters.label = 'Waterline';
+chapters.src = asset('./media/the-waterline-v1-chapters.vtt');
+video.append(chapters);
+
+document.querySelector('#afterimage-player').append(createAfterimagePlayer(video, {
+  example: { pinnedSeconds: 5, currentSeconds: 13 },
+}));

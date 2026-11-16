@@ -70,7 +70,8 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
 .afterimage media-play-button:not([data-paused]) .afterimage-play { display: none; }
 .afterimage media-play-button:not([data-paused]) .afterimage-pause { display: block; }
 .afterimage .afterimage-action { padding: 0 14px; border-color: rgb(217 160 105 / .62); }
-.afterimage .afterimage-pin-action { color: #101820; background: var(--afterimage-copper); font-weight: 720; }
+.afterimage .afterimage-example-action { color: #101820; background: var(--afterimage-copper); font-weight: 760; }
+.afterimage .afterimage-pin-action { background: transparent; }
 .afterimage .afterimage-presets button, .afterimage .afterimage-clear { padding-inline: 10px; font-size: 12px; }
 .afterimage .afterimage-clear { border-color: transparent; color: var(--afterimage-muted); background: transparent; }
 .afterimage .afterimage-clock { white-space: nowrap; font-size: 13px; }
@@ -117,7 +118,7 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
 <p><strong>Time leaves a trace.</strong><br>Pin a frame. See what changes as the film plays.</p>
 </header>
 <section id="afterimage-player" aria-label="AFTERIMAGE player"></section>
-<p class="fixture-note"><strong>Engineering preview.</strong> This first playable slice uses a temporary permissive Video.js fixture while the original <em>The Waterline</em> film is rendered. The skin, clock, pinned frame, seam, and timeline relation are real.</p>
+<p class="fixture-note"><strong>The Waterline.</strong> Try the matched study, or pin any moment yourself. The copper mark remembers one rendered frame while the pale playhead keeps moving.</p>
 </main>
 <script type="module">function formatAfterimageTime(value) {
   if (!Number.isFinite(value) || value < 0) return '—:——';
@@ -274,6 +275,7 @@ class AfterimageTemporalLens extends HTMLElement {
       this.#seam = 50;
       render();
       announce((approximate ? 'Pinned approximately at ' : 'Pinned at ') + formatAfterimageTime(time) + '. Comparison opened.');
+      this.dispatchEvent(new CustomEvent('afterimage:pin-complete', { bubbles: true, detail: { time, approximate } }));
       return true;
     };
 
@@ -308,7 +310,9 @@ class AfterimageTemporalLens extends HTMLElement {
           drawCandidate(reportedTime, approximate, requestId, sourceEpoch);
         } catch (error) {
           if (requestId === this.#requestId && sourceEpoch === this.#sourceEpoch) {
-            announce(error instanceof Error ? error.message : 'Could not pin this frame.');
+            const message = error instanceof Error ? error.message : 'Could not pin this frame.';
+            announce(message);
+            this.dispatchEvent(new CustomEvent('afterimage:pin-failed', { bubbles: true, detail: { message } }));
           }
         } finally {
           if (!signal.aborted && requestId === this.#requestId) {
@@ -412,6 +416,118 @@ if (!customElements.get('afterimage-temporal-lens')) {
 
 
 
+const SEEK_TIMEOUT_MS = 3000;
+const PIN_TIMEOUT_MS = 1800;
+
+function finiteVod(video) {
+  return Number.isFinite(video.duration) && video.duration > 0;
+}
+
+function waitForMetadata(video, signal) {
+  if (finiteVod(video)) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => finish(new Error('The example is not ready yet.')), SEEK_TIMEOUT_MS);
+    const onLoaded = () => finish();
+    const onError = () => finish(new Error('The example video could not be loaded.'));
+    const onAbort = () => finish(new DOMException('Aborted', 'AbortError'));
+    const finish = error => {
+      clearTimeout(timer);
+      video.removeEventListener('loadedmetadata', onLoaded);
+      video.removeEventListener('error', onError);
+      signal?.removeEventListener('abort', onAbort);
+      error ? reject(error) : resolve();
+    };
+    video.addEventListener('loadedmetadata', onLoaded, { once: true });
+    video.addEventListener('error', onError, { once: true });
+    signal?.addEventListener('abort', onAbort, { once: true });
+  });
+}
+
+function seekTo(video, seconds, signal) {
+  const target = Math.max(0, Math.min(video.duration, seconds));
+  if (!video.seeking && Math.abs(video.currentTime - target) < 0.04) return Promise.resolve(target);
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => finish(new Error('The example seek took too long.')), SEEK_TIMEOUT_MS);
+    const onSeeked = () => finish();
+    const onError = () => finish(new Error('The example seek failed.'));
+    const onAbort = () => finish(new DOMException('Aborted', 'AbortError'));
+    const finish = error => {
+      clearTimeout(timer);
+      video.removeEventListener('seeked', onSeeked);
+      video.removeEventListener('error', onError);
+      signal?.removeEventListener('abort', onAbort);
+      error ? reject(error) : resolve(target);
+    };
+    video.addEventListener('seeked', onSeeked, { once: true });
+    video.addEventListener('error', onError, { once: true });
+    signal?.addEventListener('abort', onAbort, { once: true });
+    video.currentTime = target;
+  });
+}
+
+function waitForPin(lens, signal) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => finish(new Error('The pinned frame did not arrive in time.')), PIN_TIMEOUT_MS);
+    const onComplete = event => finish(null, event.detail);
+    const onFailed = event => finish(new Error(event.detail?.message || 'The pinned frame could not be created.'));
+    const onAbort = () => finish(new DOMException('Aborted', 'AbortError'));
+    const finish = (error, detail) => {
+      clearTimeout(timer);
+      lens.removeEventListener('afterimage:pin-complete', onComplete);
+      lens.removeEventListener('afterimage:pin-failed', onFailed);
+      signal?.removeEventListener('abort', onAbort);
+      error ? reject(error) : resolve(detail);
+    };
+    lens.addEventListener('afterimage:pin-complete', onComplete, { once: true });
+    lens.addEventListener('afterimage:pin-failed', onFailed, { once: true });
+    signal?.addEventListener('abort', onAbort, { once: true });
+  });
+}
+
+export function bindAfterimageExample(player, video, example) {
+  const button = player.querySelector('[data-afterimage-example]');
+  const lens = player.querySelector('afterimage-temporal-lens');
+  const pinButton = player.querySelector('[data-afterimage-pin]');
+  const status = player.querySelector('.afterimage-status');
+  if (!button || !lens || !pinButton) return () => {};
+
+  const controller = new AbortController();
+  const { signal } = controller;
+  let busy = false;
+
+  button.addEventListener('click', async () => {
+    if (busy) return;
+    busy = true;
+    button.disabled = true;
+    const wasPaused = video.paused;
+    try {
+      await waitForMetadata(video, signal);
+      if (!finiteVod(video) || example.pinnedSeconds >= video.duration || example.currentSeconds > video.duration) {
+        throw new Error('The authored comparison is outside this video.');
+      }
+      await seekTo(video, example.pinnedSeconds, signal);
+      const pinResult = waitForPin(lens, signal);
+      pinButton.click();
+      const reference = await pinResult;
+      await seekTo(video, example.currentSeconds, signal);
+      const playbackIntentPreserved = video.paused === wasPaused;
+      status.textContent = 'Example opened: pinned ' + formatAfterimageTime(reference.time) +
+        ', now ' + formatAfterimageTime(video.currentTime) +
+        (playbackIntentPreserved ? '.' : '. Playback state changed during the browser seek.');
+      lens.querySelector('.afterimage-seam-control')?.focus({ preventScroll: true });
+    } catch (error) {
+      if (error?.name !== 'AbortError') status.textContent = error instanceof Error ? error.message : 'The example could not be opened.';
+    } finally {
+      busy = false;
+      button.disabled = false;
+    }
+  }, { signal });
+
+  return () => controller.abort();
+}
+
+
+
 
 
 
@@ -485,9 +601,23 @@ function createBasePlayer(media) {
 
 
 
-const temporalLensMarkup =
-  '<afterimage-temporal-lens class="afterimage-lens">' +
+
+function normalizeExample(options) {
+  const example = options?.example;
+  if (!example) return null;
+  const pinnedSeconds = Number(example.pinnedSeconds);
+  const currentSeconds = Number(example.currentSeconds);
+  if (!Number.isFinite(pinnedSeconds) || !Number.isFinite(currentSeconds) || pinnedSeconds < 0 || currentSeconds < 0) return null;
+  return { pinnedSeconds, currentSeconds };
+}
+
+function temporalLensMarkup(example) {
+  const exampleButton = example
+    ? '<button type="button" class="afterimage-action afterimage-example-action" data-afterimage-example>Try a comparison</button>'
+    : '';
+  return '<afterimage-temporal-lens class="afterimage-lens">' +
     '<div class="afterimage-lens-primary">' +
+      exampleButton +
       '<button type="button" class="afterimage-action afterimage-pin-action" data-afterimage-pin><span>Pin moment</span></button>' +
       '<button type="button" class="afterimage-action" data-afterimage-compare hidden>Compare</button>' +
       '<button type="button" class="afterimage-action" data-afterimage-close hidden>Close comparison</button>' +
@@ -499,24 +629,33 @@ const temporalLensMarkup =
     '</div>' +
     '<button type="button" class="afterimage-clear" data-afterimage-clear hidden>Clear pin</button>' +
   '</afterimage-temporal-lens>';
+}
 
-function createAfterimagePlayer(media) {
-  return createAfterimageShell(media, temporalLensMarkup);
+function createAfterimagePlayer(media, options = {}) {
+  const example = normalizeExample(options);
+  const player = createAfterimageShell(media, temporalLensMarkup(example));
+  if (example) bindAfterimageExample(player, media, example);
+  return player;
 }
 
 
+const asset = path => new URL(path, document.baseURI).href;
 const video = document.createElement('video');
 video.preload = 'metadata';
 video.playsInline = true;
 video.crossOrigin = 'anonymous';
-video.poster = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1600 900\" role=\"img\" aria-labelledby=\"t d\">\n<title id=\"t\">The Waterline preview</title><desc id=\"d\">A stylized stone spillway chamber with a gauge, copper gate, and circular inspection opening.</desc>\n<defs><linearGradient id=\"bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#26343a\"/><stop offset=\"1\" stop-color=\"#0f171c\"/></linearGradient><linearGradient id=\"stone\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#b7ae99\"/><stop offset=\"1\" stop-color=\"#807b6f\"/></linearGradient></defs>\n<rect width=\"1600\" height=\"900\" fill=\"url(#bg)\"/><path d=\"M0 690 290 565h1020l290 125v210H0z\" fill=\"#171e21\"/><rect x=\"180\" y=\"165\" width=\"1240\" height=\"465\" rx=\"6\" fill=\"url(#stone)\" opacity=\".73\"/><rect x=\"245\" y=\"225\" width=\"930\" height=\"345\" fill=\"#596064\" opacity=\".52\"/>\n<circle cx=\"1265\" cy=\"330\" r=\"104\" fill=\"#151c20\" stroke=\"#d8d0bd\" stroke-width=\"12\"/><circle cx=\"1265\" cy=\"330\" r=\"66\" fill=\"#25343b\"/><rect x=\"360\" y=\"205\" width=\"72\" height=\"390\" rx=\"3\" fill=\"#d8d0bd\"/>\n<g stroke=\"#101820\" stroke-width=\"6\"><path d=\"M360 250h40M360 310h58M360 370h40M360 430h58M360 490h40M360 550h58\"/></g><rect x=\"725\" y=\"240\" width=\"245\" height=\"330\" fill=\"#1c2528\" stroke=\"#d9a069\" stroke-width=\"9\"/><path d=\"M680 610h340\" stroke=\"#d9a069\" stroke-width=\"10\"/>\n<text x=\"88\" y=\"104\" fill=\"#f0e9d9\" font-family=\"Georgia,serif\" font-size=\"58\">THE WATERLINE</text><text x=\"92\" y=\"150\" fill=\"#d9a069\" font-family=\"Arial,sans-serif\" font-size=\"18\" letter-spacing=\"6\">CAMERA A · DRY STATE</text>\n</svg>");
-video.src = 'https://vjs.zencdn.net/v/oceans.mp4';
+video.poster = asset('./media/the-waterline-v1-poster.jpg');
+video.src = asset('./media/the-waterline-v1.mp4');
 const captions = document.createElement('track');
 captions.kind = 'captions'; captions.srclang = 'en'; captions.label = 'English';
-captions.src = 'data:text/vtt;charset=utf-8,' + encodeURIComponent("WEBVTT\n\n00:00.000 --> 00:03.500\n[Waves and distant water]\n\n00:03.500 --> 00:08.000\n[Water continues]\n");
+captions.src = asset('./media/the-waterline-v1.vtt');
 video.append(captions);
-const mountedPlayer = createAfterimagePlayer(video);
+const chapters = document.createElement('track');
+chapters.kind = 'chapters'; chapters.srclang = 'en'; chapters.label = 'Waterline';
+chapters.src = asset('./media/the-waterline-v1-chapters.vtt');
+video.append(chapters);
+const mountedPlayer = createAfterimagePlayer(video, { example: { pinnedSeconds: 5, currentSeconds: 13 } });
 document.querySelector('#afterimage-player').append(mountedPlayer);
-window.__AFTERIMAGE_RELEASE__ = { version: '0.1.0-preview', video, player: mountedPlayer };</script>
+window.__AFTERIMAGE_RELEASE__ = { version: '0.2.0-waterline', video, player: mountedPlayer };</script>
 </body>
 </html>

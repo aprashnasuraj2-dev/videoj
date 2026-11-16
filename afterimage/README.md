@@ -21,15 +21,18 @@ const video = document.createElement('video');
 video.src = '/film.mp4';
 video.preload = 'metadata';
 video.playsInline = true;
-document.querySelector('#player').append(createAfterimagePlayer(video));
+
+document.querySelector('#player').append(createAfterimagePlayer(video, {
+  example: { pinnedSeconds: 12, currentSeconds: 28 },
+}));
 ```
 
-## Current engineering slice
+The optional `example` pair adds **Try a comparison**. It is host-supplied and media-agnostic. It performs the one documented authored seek sequence; the manual Temporal Lens itself never programs play, pause, seek, rate or audio state.
 
-The checked-in demo intentionally uses a temporary public Video.js fixture while the original **THE WATERLINE** film is produced. That fixture is not part of the reusable package and is not the intended submission media.
+## WATERLINE proof film
 
-The implemented manual Temporal Lens path performs no programmed play, pause, seek, rate, or audio action. It captures one bounded frame, keeps it registered over the real video, and changes only presentation while the seam moves. Source replacement and teardown invalidate pending capture work.
+The checked-in studio uses the original 18-second **THE WATERLINE** proof under `public/media/`: locked dry architecture → first flow → reflective wet state. The film is H.264/AAC at 1280×720/24 fps. Its procedural sound bed, captions, chapters, cue pair, hashes and source provenance are recorded beside the media.
 
 ## License
 
-Apache-2.0. Final film/media rights and hashes will be recorded separately before release.
+Apache-2.0 for the entry code. Media provenance and rights notes are recorded in `public/media/the-waterline-v1.json` and `media-plan.json`.

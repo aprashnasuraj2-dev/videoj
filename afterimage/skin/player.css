@@ -50,7 +50,8 @@
 .afterimage media-play-button:not([data-paused]) .afterimage-play { display: none; }
 .afterimage media-play-button:not([data-paused]) .afterimage-pause { display: block; }
 .afterimage .afterimage-action { padding: 0 14px; border-color: rgb(217 160 105 / .62); }
-.afterimage .afterimage-pin-action { color: #101820; background: var(--afterimage-copper); font-weight: 720; }
+.afterimage .afterimage-example-action { color: #101820; background: var(--afterimage-copper); font-weight: 760; }
+.afterimage .afterimage-pin-action { background: transparent; }
 .afterimage .afterimage-presets button, .afterimage .afterimage-clear { padding-inline: 10px; font-size: 12px; }
 .afterimage .afterimage-clear { border-color: transparent; color: var(--afterimage-muted); background: transparent; }
 .afterimage .afterimage-clock { white-space: nowrap; font-size: 13px; }
