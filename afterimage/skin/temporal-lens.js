@@ -80,6 +80,11 @@ class AfterimageTemporalLens extends HTMLElement {
     const clearButton = this.querySelector('[data-afterimage-clear]');
     const presetButtons = [...this.querySelectorAll('[data-afterimage-preset]')];
 
+    // A custom element may be detached while a frame request has temporarily
+    // disabled Pin. Reconnection is a fresh lifecycle epoch; never inherit that
+    // transient disabled state from the previous mount.
+    pinButton.disabled = false;
+
     const updateCaptureState = () => {
       const state = captureState(video, player);
       this.dataset.captureState = state.kind;
