@@ -6,8 +6,15 @@ dist/
 test-results/
 playwright-report/
 tmp/
+handoff/
+published-dist/
+release-package/
+*.tgz
+*.zip
+*.log
 .DS_Store
 
-# Generated from real authored media; reproducible at build time
+# Build-generated metadata and experimental media stay out of source releases.
 apps/preview/src/weave-studies.json
-apps/preview/public/media/from-fibre-to-fabric.weave.svg
+apps/preview/public/media/from-fibre-to-fabric*
+apps/preview/public/media/studies-in-thread.weave.svg

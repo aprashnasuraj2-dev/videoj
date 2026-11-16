@@ -1,5 +1,5 @@
-// Keep historical experiments in source control, not in the public DHAGO release.
-// A copy of the retired documentary in dist adds tens of MB, complicates
+// Reject any retired experimental film accidentally copied into a public build.
+// An accidental documentary in dist adds tens of MB, complicates
 // immutable R2 parity and can make a release appear to ship the wrong film.
 // Only removes generated dist files. Never deletes source or public R2 objects.
 import { existsSync, readdirSync, statSync, unlinkSync } from 'node:fs';
@@ -30,4 +30,4 @@ for (const name of retired) {
   unlinkSync(path);
 }
 console.log('[DHAGO/release] Excluded ' + retired.length
-  + ' retired documentary artifacts (' + saved + ' bytes) from generated dist. Original source remains intact.');
+  + ' retired documentary artifacts (' + saved + ' bytes) from generated dist. Canonical source remains intact.');

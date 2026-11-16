@@ -1,30 +1,57 @@
-# DHAGO — Time, woven
+# DHAGO & DETOUR — open-source Video.js player experiences
 
-Reusable Video.js v10 HTML skin with a woven chapter ribbon, visible control shelf, captions and speed settings. The public demo is built around the first 64-second **Studies in Thread** motion study: chapter time becomes warp and weft while familiar media controls stay precise. The ribbon can also encode exposed rendition changes, real buffering interruptions and dropped-frame counters as an honest viewing history.
+Two independent, reusable approaches to video navigation, built with **Video.js v10**. Use either player in your own project; the demos illustrate the interaction without being required by the reusable code.
 
-[Public collection](https://creative.aafnaipatro.com/) · [Annotated film journal](https://creative.aafnaipatro.com/journal.html) · [Reusable ribbon proof](https://creative.aafnaipatro.com/ribbon.html) · [Edge States Lab](https://creative.aafnaipatro.com/stress.html) · [Engineering Tools](https://creative.aafnaipatro.com/tools.html) · [Portable Stress Lab](STRESS-LAB.md) · [Install in under a minute](INSTALL.md)
+| | [DHAGO](#dhago--woven-time) | [DETOUR](#detour--keep-your-place) |
+| --- | --- | --- |
+| Core idea | A woven chapter timeline that follows the real media clock | Save a position, explore elsewhere, and return from the same seek rail |
+| Reusable source | [`src/`](src/) | [`detour/skin/`](detour/skin/) |
+| Integration guide | [`INSTALL.md`](INSTALL.md) | [`detour/README.md`](detour/README.md) |
+| Browser examples | [DHAGO Studio](https://creative.aafnaipatro.com/) | [DETOUR checkpoint demo](https://detour-entry.aafnaipatro.com/mux/) |
+| Module boundary | TypeScript + Vite-compatible HTML custom elements | Pack-installable native-media component with optional Mux helper |
+| Publication | Source integration; not published to npm | `npm pack`; not published to npm |
 
-Requires Node 24 and npm. Run `npm ci`, `npm run dev`; validate with `npm run typecheck` and `npm run build`. Serve `dist/` over HTTPS. For browser checks run `npx playwright install --with-deps chromium`, `npm run build`, then `npm test`. Tests exercise the production build through Vite preview. Set `DHAGO_LIVE_URL` to run appropriate checks against a published origin; keep fault-injection cases in the test environment.
+## DHAGO — woven time
 
-See [`INSTALL.md`](INSTALL.md) for minimal HTML/Vite and React mounts. `src/ribbon/ribbon.ts` is a host-neutral timeline component, while `src/stress-lab/harness.ts` packages the edge-state fixtures behind a one-adapter contract. Import `createDhagoPlayer` from `src/create-player.ts` through a compatible TypeScript/Vite build. Append its returned element to your mount. Supply `source`, optional `poster`, `chapters`, `captions`, and `surface` (`warm`, `dark`, `minimal`). A public `playbackId` selects the version-matched Mux adapter. Skin code imports nothing from the preview application.
+*Dhago* means “thread” in Nepali. Its chapter ribbon uses actual WebVTT cues, a visible seek thumb and familiar playback controls. Linen, Ink and Paper surfaces share one interaction language. Where available, the player can show real buffering and frame-quality observations; unsupported telemetry is omitted, not fabricated.
 
-Set `--media-accent-color`, `--media-accent-text-color`, `--media-border-radius` and the documented `--dhago-*` host tokens on the mount for a host treatment. `journal.html` demonstrates Ink with gold `#e8c078` and dark accent text `#171918`, on shelf `#202321`; that accent/shelf pair is approximately 9.25:1. The same accent on a white shelf is a counterexample: it does not provide adequate focus contrast. Test the actual combinations you ship.
+The original [Studies in Thread](https://creative.aafnaipatro.com/) film is a 64-second procedural motion study, not a prerequisite for using the skin.
 
-## Progress and operations
+**Run DHAGO from the repository root:**
 
-[evidence-based checklist](docs/CHECKLIST.md), [verification](tests/QA.md), [Original film and Mux bonus proof](docs/media.md) · [Copy-ready submission](submission/final-submission.md). `docs/steps.json` is authoritative; run `node scripts/progress.mjs` after updates.
+```bash
+npm ci
+npm run dev
+npm run typecheck
+npm run build
+```
 
-Actions validate builds, browser behavior and separate current Mux playback proof. The original public Mux playback ID is restored from historical source configuration; we do not attempt a duplicate video upload. Exact source releases use SHA-256 checksums. Source-package automation does not establish final submission readiness. No contest submission, accepted terms or bonus is claimed until verified.
+See [installation and host integration](INSTALL.md), [Studio Journal](https://creative.aafnaipatro.com/journal.html), [ribbon example](https://creative.aafnaipatro.com/ribbon.html) and [playback stress lab](https://creative.aafnaipatro.com/stress.html). Browser regression: `npm test` (install the Playwright browsers first).
 
-## Release and competition handoff
+## DETOUR — keep your place
 
-[Judging rehearsal](docs/score-rehearsal.md) · [Owner review](docs/owner-review.md) · [Immutable release guide](docs/release-integrity.md) · [Mux usage limits](docs/mux-cost-and-retention.md).
+DETOUR lets viewers hold one position, seek freely and return without losing the original point. The standard API keeps a single held position; hosts can opt into **up to four source-scoped checkpoints** on the seek rail. Live, nonseekable and audio-only media keep ordinary controls without an unavailable Return action.
 
-The final pipeline keeps candidate verification, immutable staging and public-release proof separate. A green final main run produces `public-smoke-evidence` containing the exact source SHA, active hero capture, 8-second interaction loop, mobile and Stress Lab proof, measured raw/gzip/brotli authored-layer size, Lighthouse mobile metrics and the tested-environments table. The public `release-manifest.json.source_sha` is the release authority; do not rely on older hard-coded SHAs in historical notes.
+**Run DETOUR separately:**
 
-Physical Safari/iPhone/Android and VoiceOver/NVDA remain separate real-device gates and are never inferred from emulation. The project has **not** been entered into the contest.
+```bash
+cd detour
+npm ci
+npm run build
+npm run test:architecture
+npm test
+npm pack
+```
 
+See the [package API and examples](detour/README.md), [published checkpoint demo](https://detour-entry.aafnaipatro.com/mux/) and [technical boundaries](detour/docs/ENGINEERING.md). The independent [single-place demonstration](https://detour.aafnaipatro.com/mux/) shows the default interaction.
 
-### Original motion-study media contract
+## Architecture and contribution
 
-The canonical 64-second film is deliberately aligned to four equal chapter intervals: 0–16s **A thread of light**, 16–32s **The shape of quiet**, 32–48s **Where shadows gather**, and 48–64s **Coming home**. Living Loom derives `data-weave-stage`, `--dhago-time-ratio` and `--dhago-stage-phase` from the media element's real `currentTime / duration`; those values only decorate the woven ribbon and never replace Video.js seek truth. The frozen original Git MP4 is **2,563,521 bytes**, and Cloudflare R2 retains its roughly **7.46 MB** VP9/WebM compatibility rendition. English descriptions and chapter cues are carried as WebVTT. The former 22–30 MB documentary encodes are superseded and not part of the current judge-facing film.
+The repository root builds **DHAGO**. `detour/` is a separate project with its own `package.json`, dependencies, build, tests, and Apache-2.0 license. Neither reusable player depends on the other's preview site or demo media. Developing one should not silently change the other's runtime, hosted route, or release.
+
+- [Architecture and verification](docs/ARCHITECTURE.md)
+- [Contributing](CONTRIBUTING.md)
+- [License](LICENSE) and [attribution](NOTICE)
+- [Security guidance](SECURITY.md)
+
+Both are open-source source distributions, not official Video.js skins or npm registry releases. Browser, media-decoder and device behavior varies; consult the integration constraints before deploying. Prior planning records are preserved in version history, rather than treated as current product instructions.

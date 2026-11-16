@@ -59,8 +59,14 @@ test('volume, chapter seek, speed and ended replay change real state', async ({p
   await page.locator('[data-seek="32"]').click();
   await expect.poll(()=>media.evaluate((v:HTMLVideoElement)=>v.currentTime)).toBeGreaterThanOrEqual(32);
   await page.locator('.media-settings-button').click();
-  await page.getByRole('menuitem', {name:/Speed/}).click();
-  await page.getByRole('menuitemradio', {name:/1\.5/}).click();
+  const speed = page.getByRole('menuitem', {name:/Speed/});
+  await expect(speed).toBeVisible();
+  // Activate the documented keyboard menu path to avoid a transient pointer/focus race.
+  await speed.focus();
+  await speed.press('Enter');
+  const oneAndHalf = page.getByRole('menuitemradio', {name:/1\.5/});
+  await expect(oneAndHalf).toBeVisible();
+  await oneAndHalf.click();
   await expect.poll(()=>media.evaluate((v:HTMLVideoElement)=>v.playbackRate)).toBe(1.5);
   await page.keyboard.press('Escape');
   await media.evaluate((v:HTMLVideoElement)=>{v.currentTime=v.duration-.1;});

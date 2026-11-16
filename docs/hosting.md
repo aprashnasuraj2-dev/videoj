@@ -1,50 +1,30 @@
-# Public hosting and deployment
+# Public hosting and release boundaries
 
-> **ACTIVE RELEASE CONTRACT — 2026-11-14.** All later descriptions of `From Fibre to Fabric`, its generated replacement voiceover or its 30+ MB derivatives below are **archived historical release notes**. The competition film has been deliberately restored to the original 64-second **Studies in Thread** with frozen SHA-256 `9dcc4672e3014ca947e310c1809c0cf6d40ffff186478f3e6a1e47f89b3688b3`. Correct release keys are `media/studies-in-thread.mp4`, `media/studies-in-thread.webm`, `media/chapters.vtt`, `media/captions.vtt`, `media/dhago-studies-poster.svg`. The original Mux playback ID is documented in `apps/preview/src/media.json` and is **opt-in** on `/?mux` until a branded-Chrome proof confirms current playback. Do not overwrite/delete the original R2 recovery objects or change unrelated Patro workers. See [release-integrity.md](release-integrity.md) for the active publication gate.
+DHAGO and DETOUR are independent player packages with separate demonstration origins. A source merge does **not** automatically publish a new version.
 
+| Application | Example origin | Release scope |
+| --- | --- | --- |
+| DHAGO | https://creative.aafnaipatro.com/ | Original Studies in Thread source, journal, ribbon, tools and stress lab |
+| DHAGO mirror | https://dhago.aafnaipatro.com/ | Verify independently before claiming an identical version |
+| DETOUR checkpoints | https://detour-entry.aafnaipatro.com/mux/ | Optional four-place seek rail |
+| DETOUR standard | https://detour.aafnaipatro.com/mux/ | Single-place Hold/Return |
+| DETOUR fallback | https://detour-backup.aafnaipatro.com/ | Independently backed recovery route |
 
-Public collection: https://creative.aafnaipatro.com/
+## DHAGO release process
 
-Compatibility address: https://dhago.aafnaipatro.com/
+- Verify locally with `npm ci && npm run typecheck && npm run build && npm test`.
+- GitHub Actions `Validate DHAGO` tests source changes, retaining the built `dist/` on main for four days. It **does not deploy automatically**.
+- For a release, use the separately triggered `Restage an existing verified Cloudflare build` workflow with the successful **main-push** validation run ID. It stages the exact verified bundle under an immutable `dist-<SHA>` branch for deployment tooling.
+- Confirm the public `release-manifest.json.source_sha`, asset checksums, actual film decode, captions, seeking and Journal navigation before promoting a production origin. Existing Cloudflare R2 objects and unrelated Patro pages must remain untouched.
 
-Both custom domains point directly to the existing `dhago-studio-static` R2 bucket in the connected Cloudflare account. Only these two hosts map `/` to `/index.html` through a URL transform. No Patro application route, worker, asset, DNS record or sitemap is replaced. The empty `dhago-studio` Pages project is not the serving origin.
+## DETOUR release process
 
-The production build contains plain static files. Hashed assets are uploaded first, HTML entry points last. Existing objects are compared by key and MD5 ETag before uploading: unchanged media and other assets are reused. Old hashed assets are retained so a previously loaded page continues to work. No general SPA fallback masks missing media or scripts as HTML.
+- Verify the nested package and browser behavior in `detour/` using the commands in its README.
+- The usual DETOUR CI validates local build, package boundary and multi-browser behavior. Checks against changing public network origins are **manual** rather than repeated for every source commit.
+- An accepted release may be staged using `detour/scripts/stage-release-dist.mjs` and its matching source/runtime evidence. Maintain distinct checkpoint, single-place and fallback deployment records. No automatic media provisioning is triggered by code changes.
 
-The canonical competition film is the **original 64-second Studies in Thread**, served as `media/studies-in-thread.mp4` with VP9 WebM compatibility, the authored SVG poster, and the original descriptive-caption and chapter VTTs. The restored historical original-film Mux ID is only activated on the explicit `?mux` route and requires independent live decoder/seek proof before a bonus claim. Obsolete From Fibre to Fabric files remain in the repository and may remain in R2 for rollback, but are excluded from each new generated `dist` and its immutable manifest; they must not be uploaded again for this release. This static architecture adds zero application Worker invocations per ordinary request; R2 operations and any future Mux delivery remain metered under their account allowances.
+## Media and secrets
 
-## Release evidence
+Canonical DHAGO media lives under `apps/preview/public/media/`; the distributed original MP4/WebM and WebVTT files are distinct from the reusable skin. Mux is optional: public playback IDs can appear in client configuration, but management tokens may not.
 
-Record the source revision, delivery mode, object hashes, production smoke result and captures in `submission/manifest.json` and `tests/QA.md`. Record a Mux playback ID only if the canonical fibre asset is actually configured and browser-verified. A 200 response alone proves neither playback nor bonus eligibility. The annotated `journal.html` is a separate studio publication using the portable skin to navigate scene notes; final bonus eligibility is the judges' decision.
-
-## Recovery
-
-To roll back, restore the prior HTML entry points and their matching source revision; retained hashed assets remain available. Never replace zone-wide rulesets or delete shared bucket content to deploy this project. Leave both direct domains enabled through judging.
-
-## 2026-11-13 incremental live repair (not final dist)
-
-Release source intent: `4f3f86c`. Exact public R2 objects: `assets/demo-mux-4f3f86c.js`, `assets/dhago-refine-4f3f86c.css`, `assets/journal-mux-4f3f86c.js`, `index.html`, `journal.html`. Each was uploaded and read back from R2 before reporting success. Former `index.html` is retained as `releases/2026-11-13-before-mux/index.html`. Existing hashed code, Mux adapter, original MP4, other buckets and Patro routes were not deleted or replaced. This targeted repair is **not** an exact deployment of the latest CI-generated `dist/`; that remains a release task.
-
-An external automated browser has no compatible H.264/AAC decoder and rejects the HLS variants. The same test browser earlier rejected the local MP4. GitHub Playwright Chromium on Linux successfully plays and seeks the Mux asset at the exact candidate revision. Run additional branded-browser and physical-device checks rather than claiming universal support.
-
-The empty `dhago-studio` Pages project is a Direct Uploads project and cannot be converted to a Git integration. New Git-connected Pages creation returned Cloudflare Git installation error 8000011. Keep dedicated static R2 hostnames; do not attempt to rewire the Patro zone or replace workers to work around the Pages connection.
-
-## Superseding release verification — 2026-11-13
-
-The earlier incremental/hotfix-only limitation above has been **resolved**. Commit `72ec6c324f646c6dcb18708bc86d3f0d415f39c2` passed 30 Chromium source tests, and GitHub Actions built immutable `dist-72ec6c324f64`, containing 78 release files plus a SHA-256 manifest. The dedicated R2 bucket had 10 missing hash-named files, which were uploaded and read back. One stale `preview.html` was backed up and replaced.
-
-The **entire** public release was verified: 76/76 UTF-8 text files matched their `release-manifest.json` SHA-256 hashes; the 2 binary files (original MP4 and poster WebP) matched their known MD5 object identifiers and byte lengths. Prior index/journal/preview entry points were saved under `releases/2026-11-13-pre72ec6c/`. Exact immutable `journal.html` and `index.html` were published last. Independent unauthenticated HTTP checks confirmed both domains and the journal.
-
-This proves content parity, not universal codec support or an accepted contest submission. Public Chromium playback/seek after the full release remains a distinct smoke gate; any failure must roll back rather than be hidden by the manifest match. No DNS, zone rules, Patro workers, or shared assets were modified.
-
-## Production browser acceptance (supersedes pending-gate note)
-
-[Main run 43443029329](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329) completed successfully **after** the 78/78 immutable publication: 2/2 public smoke tests passed, verifying actual Mux playback time, seek, chapter readout, and Studio Journal scene-note seeking. This is decoded video evidence in CI Chromium, not just a 200 response or fetched HLS manifest. Browser-specific codec availability and owner assistive-technology checks remain open.
-
-## Current exact build — 2026-11-13 (supersedes `72ec6c3` as production source)
-
-The current source revision is `a6492362b634799f3f23611e95eb88d003474d1f` (PR #6, 35/35 source Chromium tests, main CI PASS). Its immutable build lives at `dist-a6492362b634`, manifest `release-manifest.json`, total 78 objects. The dedicated R2 bucket `dhago-studio-static` received only seven missing immutable hashed JS/CSS resources; each was SHA-256 verified on readback. The previous three HTML entries were verified against the old build and backed up at `releases/2026-11-13-prea6492362/`, then `journal.html`, `preview.html`, and finally `index.html` were updated.
-
-After publication, all **76/76 UTF-8 assets match their staged SHA-256**, and the unchanged poster and original MP4 match **2/2 prior MD5 object identifiers and sizes**. The public CI browser acceptance run [43461852782](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43461852782) passed **before** the new HTML cutover; repeat a signed-out Chromium Mux/journal run on the new release. Web text-fetch diagnostics returned inaccessible and cannot establish video-codec support either way.
-
-Rollback for this cutover: restore only the three HTML objects from `releases/2026-11-13-prea6492362/` after verifying their SHA-256. Keep old/new hashed files and both original media objects. No unrelated Patro routes, worker quotas, zone rules, Mux assets, or other R2 content were changed.
+Neither release process should reupload a video without checking content hashes and existing storage, nor alter global Cloudflare rules or other domains. Consult [release integrity](release-integrity.md) and [media provenance](media.md) for the operational checks.

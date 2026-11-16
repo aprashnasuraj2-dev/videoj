@@ -1,15 +1,39 @@
-name: Validate submission candidate
+name: Validate DHAGO
+
 on:
   push:
     branches: [main]
+    paths:
+      - 'src/**'
+      - 'apps/preview/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.ts'
+      - 'tsconfig.json'
+      - '.github/workflows/ci.yml'
   pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'apps/preview/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.ts'
+      - 'tsconfig.json'
+      - '.github/workflows/ci.yml'
   workflow_dispatch:
+
 permissions:
   contents: read
+
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -17,67 +41,46 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - name: Verify frozen original Studies in Thread film
-        run: npm run sync:canonical-media
-      - name: Install media tools for reproducible original-film encodes
+      - name: Install FFmpeg for media reproducibility
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-      - name: Generate original-film sampled weave metadata for typecheck
-        run: DHAGO_REQUIRE_WEBM=1 npm run prepare:weave
-      - run: npm run typecheck
-      - name: Build and require a decoded compatibility rendition
-        run: DHAGO_REQUIRE_WEBM=1 npm run build
-      - run: npx playwright install --with-deps chromium
-      - run: npm test
-      - uses: actions/upload-artifact@v4
-        if: always()
+      - name: Verify canonical film and prepare metadata
+        run: |
+          npm run sync:canonical-media
+          DHAGO_REQUIRE_WEBM=1 npm run prepare:weave
+      - name: Typecheck and build
+        run: |
+          npm run typecheck
+          DHAGO_REQUIRE_WEBM=1 npm run build
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verify player interactions
+        run: npm test
+      - name: Reuse source-matched build across browser checks and optional releases
+        uses: actions/upload-artifact@v4
         with:
-          name: candidate-evidence
+          name: dhago-build
+          path: dist/
+          retention-days: 4
+          if-no-files-found: error
+      - name: Keep regression diagnostics only on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dhago-failure-diagnostics
           path: |
             test-results/
             playwright-report/
-            dist/
-          retention-days: 14
+          retention-days: 3
+          if-no-files-found: ignore
 
-  bonus-mux-proof:
-    needs: verify
-    runs-on: ubuntu-latest
-    timeout-minutes: 12
-    # Bonus proof is separate: an unavailable historical asset must never
-    # invalidate otherwise verified original-video player functionality.
-    continue-on-error: true
-    env:
-      DHAGO_MUX_BONUS_PROBE: '1'
-      PLAYWRIGHT_CHROMIUM_EXECUTABLE: /usr/bin/google-chrome
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      - uses: actions/download-artifact@v4
-        with:
-          name: candidate-evidence
-      - run: npx playwright install --with-deps chromium
-      - name: Play original Studies in Thread via Mux HLS with actual Chrome decoder
-        run: npx playwright test tests/mux.spec.ts --workers=1
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: bonus-mux-playback-proof
-          path: |
-            test-results/
-            playwright-report/
-          retention-days: 14
-
-  browser-proof:
+  cross-browser:
     needs: verify
     strategy:
       fail-fast: false
       matrix:
         browser: [firefox, webkit]
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -87,49 +90,33 @@ jobs:
       - run: npm ci
       - uses: actions/download-artifact@v4
         with:
-          name: candidate-evidence
-      - name: Install ${{ matrix.browser }} only
+          name: dhago-build
+          path: dist/
+      - name: Install browser
         run: npx playwright install --with-deps ${{ matrix.browser }}
-      - name: Run compact judge-visible browser proof
+      - name: Exercise player in ${{ matrix.browser }}
         env:
           DHAGO_BROWSER: ${{ matrix.browser }}
         run: npx playwright test tests/browser-proof.spec.ts --workers=1
-      - uses: actions/upload-artifact@v4
-        if: always()
+      - name: Preserve failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
         with:
-          name: browser-proof-${{ matrix.browser }}
+          name: dhago-${{ matrix.browser }}-failure
           path: |
             test-results/
             playwright-report/
-          retention-days: 14
+          retention-days: 3
+          if-no-files-found: ignore
 
-  stage-dist:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [verify, browser-proof]
+  mux-playback:
+    if: github.event_name == 'workflow_dispatch'
+    needs: verify
     runs-on: ubuntu-latest
-    timeout-minutes: 8
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-      - uses: actions/download-artifact@v4
-        with:
-          name: candidate-evidence
-      - name: Stage the exact dist exercised by verify
-        run: node scripts/stage-cf-dist.mjs
-
-  public-smoke:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: stage-dist
-    runs-on: ubuntu-latest
-    timeout-minutes: 24
+    timeout-minutes: 12
+    continue-on-error: true
     env:
-      # GitHub-hosted Ubuntu includes branded Chrome with H.264/AAC support.
-      # Playwright's downloaded Chromium may intentionally omit proprietary codecs,
-      # which exercises DHAGO's WebM fallback rather than the H.264 path.
+      DHAGO_MUX_PLAYBACK_PROBE: '1'
       PLAYWRIGHT_CHROMIUM_EXECUTABLE: /usr/bin/google-chrome
     steps:
       - uses: actions/checkout@v4
@@ -140,85 +127,8 @@ jobs:
       - run: npm ci
       - uses: actions/download-artifact@v4
         with:
-          name: candidate-evidence
+          name: dhago-build
+          path: dist/
       - run: npx playwright install --with-deps chromium
-      - name: Bind smoke to the published immutable release
-        env:
-          DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
-        run: |
-          node --input-type=module <<'JS'
-          import { appendFileSync, readFileSync } from 'node:fs';
-          import { setTimeout as sleep } from 'node:timers/promises';
-          const origin = new URL(process.env.DHAGO_LIVE_URL);
-          const manifestUrl = new URL('release-manifest.json', origin);
-          for (let attempt = 0; attempt < 70; attempt++) {
-            try {
-              manifestUrl.searchParams.set('check', String(Date.now()));
-              const response = await fetch(manifestUrl, { signal: AbortSignal.timeout(5000) });
-              const manifest = response.ok ? await response.json() : null;
-              if (manifest?.source_sha === process.env.GITHUB_SHA) {
-                // A Vite bundle can contain a demo helper in a modulepreload tag.
-                // Match the actual `<script type="module" src="...">` in the
-                // exact CI-tested homepage; never choose the first demo chunk.
-                const html = readFileSync('dist/index.html', 'utf8');
-                const entryScripts = [...html.matchAll(/<script\b[^>]*>/gi)]
-                  .map(match => match[0])
-                  .filter(tag => /\btype="module"/i.test(tag))
-                  .map(tag => tag.match(/\bsrc="\.\/(assets\/demo-[\w-]+\.js)"/i)?.[1])
-                  .filter(Boolean);
-                if (entryScripts.length !== 1) throw new Error('Expected one genuine module entry in the staged homepage.');
-                const entry = manifest.files.find(({ key }) => key === entryScripts[0]);
-                if (!entry) throw new Error('Published manifest lacks the actual staged homepage module entry: ' + entryScripts[0]);
-                appendFileSync(process.env.GITHUB_ENV, `DHAGO_EXPECTED_ENTRY_ASSET=${entry.key}\n`);
-                process.exit(0);
-              }
-            } catch (error) {
-              if (attempt === 69) console.error(error.message);
-            }
-            await sleep(10000);
-          }
-          throw new Error('Dedicated public origin did not serve this exact release manifest.');
-          JS
-      - name: Verify released original motion-study playback and live Studio Journal
-        env:
-          DHAGO_LIVE_URL: https://creative.aafnaipatro.com
-        run: npx playwright test tests/live.spec.ts --workers=1
-      - name: Capture actual public browser interaction and screenshots
-        env:
-          DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
-          DHAGO_RELEASE_SHA: ${{ github.sha }}
-          DHAGO_EXPECTED_MEDIA_PATH: media/studies-in-thread.mp4
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-          node scripts/capture-submission.mjs test-results/submission
-      - name: Measure Lighthouse mobile and release size
-        env:
-          DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
-          CHROME_PATH: /usr/bin/google-chrome
-        run: |
-          mkdir -p test-results/submission
-          npx --yes lighthouse@13.6.0 "$DHAGO_LIVE_URL" \
-            --output=json \
-            --output-path=test-results/submission/lighthouse-mobile.json \
-            --only-categories=performance \
-            --only-categories=accessibility \
-            --only-categories=best-practices \
-            --only-categories=seo \
-            --form-factor=mobile \
-            --chrome-flags="--headless --no-sandbox --disable-gpu" \
-            --quiet
-          cp dist/dhago-size.json test-results/submission/dhago-size.json
-          node scripts/summarize-performance.mjs \
-            test-results/submission/lighthouse-mobile.json \
-            dist/dhago-size.json \
-            test-results/submission/performance-evidence
-      - name: Assemble judge-facing evidence index
-        run: node scripts/write-final-evidence.mjs test-results/submission
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: public-smoke-evidence
-          path: |
-            test-results/
-            playwright-report/
-          retention-days: 14
+      - name: Verify optional Mux HLS playback
+        run: npx playwright test tests/mux.spec.ts --workers=1

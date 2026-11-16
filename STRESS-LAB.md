@@ -4,7 +4,7 @@ Public tool: https://creative.aafnaipatro.com/stress.html
 
 Stress Lab has two layers:
 
-- the DHAGO specimen gallery, which demonstrates the competition skin under real and controlled edge states;
+- the DHAGO specimen gallery, which demonstrates the woven player under real and controlled edge states;
 - a host-neutral browser instrument that can load another compatible player through a tiny adapter and return structured resilience results.
 
 The reusable harness lives at `src/stress-lab/harness.ts`. It does not import DHAGO or Video.js.

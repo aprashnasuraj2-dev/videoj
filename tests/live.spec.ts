@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
  * release-gate job. Ordinary pull-request CI remains deterministic/local.
  * We test real decoded frames, not just HTTP 200 or a playlist string.
  */
-test.describe('Public judge experience', () => {
+test.describe('Public player experience', () => {
   test.skip(!process.env.DHAGO_LIVE_URL, 'Public-site audit runs only with DHAGO_LIVE_URL');
 
   test('public homepage serves and advances the released original Studies in Thread film', async ({ page }, info) => {
@@ -104,7 +104,7 @@ test.describe('Public judge experience', () => {
     await page.screenshot({path: info.outputPath('public-320px-backup.png')});
   });
 
-  test('public Mux bonus route really plays the same original film rather than a local fallback', async ({ page }, info) => {
+  test('public Mux route really plays the same original film rather than a local fallback', async ({ page }, info) => {
     test.setTimeout(90_000);
     const playbackId = 'Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw';
     const playlist = `https://stream.mux.com/${playbackId}.m3u8`;

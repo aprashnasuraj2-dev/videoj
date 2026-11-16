@@ -1,0 +1,42 @@
+{
+  "name": "detour-video-skin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/make-fixture.mjs && vite",
+    "build": "node scripts/make-fixture.mjs && vite build",
+    "preview": "vite preview",
+    "test": "node --test tests/browser.test.mjs",
+    "test:architecture": "node --test tests/architecture.test.mjs",
+    "test:package": "node --test tests/package-host.test.mjs"
+  },
+  "dependencies": {
+    "@videojs/html": "10.4.0"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1",
+    "vite": "7.2.2"
+  },
+  "exports": {
+    ".": {
+      "types": "./skin/index.d.ts",
+      "import": "./skin/index.js"
+    },
+    "./mux": {
+      "types": "./skin/mux.d.ts",
+      "import": "./skin/mux.js"
+    },
+    "./styles": "./skin/player.css",
+    "./base": {
+      "types": "./skin/base.d.ts",
+      "import": "./skin/base.js"
+    }
+  },
+  "license": "Apache-2.0",
+  "files": [
+    "skin/",
+    "README.md",
+    "LICENSE"
+  ]
+}
