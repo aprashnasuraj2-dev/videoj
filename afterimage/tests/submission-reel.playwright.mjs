@@ -2,8 +2,8 @@ import { chromium } from 'playwright';
 import { mkdir, rename, writeFile } from 'node:fs/promises';
 
 const baseURL = process.env.AFTERIMAGE_URL || 'https://afterimage.aafnaipatro.com/';
-const expectedRelease = process.env.AFTERIMAGE_RELEASE || 'f0bed46afe912b43af657841b0a2897742e9f4ff';
-const expectedVersion = process.env.AFTERIMAGE_VERSION || '0.3.3-webkit-handoff';
+const expectedRelease = process.env.AFTERIMAGE_RELEASE || '132d2b4b9bda6eb9dcaae2e713bb265faef4f046';
+const expectedVersion = process.env.AFTERIMAGE_VERSION || '0.3.4-fullscreen-control';
 const artifactDir = new URL('../artifacts/submission/', import.meta.url);
 await mkdir(artifactDir, { recursive: true });
 

@@ -247,3 +247,11 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - The wrapper is the fullscreen target so the comparison layer and control deck stay together on desktop/fullscreen-capable browsers.
 - Runtime marker advances to `0.3.4-fullscreen-control`.
 - **Next action:** deploy this exact source, point all release gates to its SHA/version, and require the headed fullscreen round trip to pass before promoting task 18.
+
+
+## 2026-11-16 · fullscreen candidate deployed and release gates repointed
+
+- Isolated Worker `afterimage-preview` now serves exact product source `132d2b4b9bda6eb9dcaae2e713bb265faef4f046` as Worker version `265b8f11-93ec-400e-ac59-b87c2b5f7fbe` at 100% traffic.
+- Runtime marker is `0.3.4-fullscreen-control`.
+- Browser matrix, headed fullscreen gate and submission-capture gate are repointed to require both this exact response header SHA and runtime marker.
+- **Next action:** require CI + Chromium/Firefox/WebKit + headed fullscreen to pass before treating this as the new known-good candidate; then regenerate submission evidence against the same release.

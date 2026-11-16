@@ -43,8 +43,8 @@ jobs:
         env:
           BROWSER: ${{ matrix.browser }}
           AFTERIMAGE_URL: https://afterimage.aafnaipatro.com/
-          AFTERIMAGE_RELEASE: f0bed46afe912b43af657841b0a2897742e9f4ff
-          AFTERIMAGE_VERSION: 0.3.3-webkit-handoff
+          AFTERIMAGE_RELEASE: 132d2b4b9bda6eb9dcaae2e713bb265faef4f046
+          AFTERIMAGE_VERSION: 0.3.4-fullscreen-control
         run: node tests/public-candidate.playwright.mjs
 
       - name: Upload browser evidence
