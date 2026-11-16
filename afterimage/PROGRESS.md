@@ -126,3 +126,12 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - WebKit opens the correct pair by keyboard but loses the immediate focus transfer during its asynchronous seek/render update, despite direct range focus working elsewhere in the same engine.
 - The authored helper now retries the seam focus on the next animation frame only if focus did not stick. This preserves normal engines and makes the handoff resilient to WebKit's post-seek UI update ordering.
 - **Next action:** regenerate/redeploy exact source and rerun the deep matrix.
+
+
+## 2026-11-16 · WebKit focus handoff ordering fix
+
+- Browser matrix run `43800265060` proved Chromium and Firefox green on the live `0.3.2-webkit-focus` candidate, while WebKit still opened the correct 00:05→00:13 pair but reported `seamFocused:false`.
+- The remaining failure is focus ordering, not playback or comparison state: the authored trigger was re-enabled after the attempted seam focus, allowing WebKit's control-state restoration to overwrite the handoff.
+- The authored flow now records the seam as the intended focus target, restores `busy`/disabled state first in `finally`, then focuses the still-connected seam on the next animation frame.
+- Standalone output is regenerated from the canonical generator in the same commit; reproducibility remains a hard gate.
+- **Next action:** deploy the exact source, rerun CI plus the three-engine matrix, and promote checklist items only from passing evidence.

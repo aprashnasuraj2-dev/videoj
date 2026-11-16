@@ -84,6 +84,7 @@ export function bindAfterimageExample(player, video, example) {
     busy = true;
     button.disabled = true;
     const wasPaused = video.paused;
+    let focusTarget = null;
     try {
       await waitForMetadata(video, signal);
       if (!finiteExampleVod(video) || example.pinnedSeconds >= video.duration || example.currentSeconds > video.duration) {
@@ -98,18 +99,17 @@ export function bindAfterimageExample(player, video, example) {
       status.textContent = 'Example opened: pinned ' + formatAfterimageTime(reference.time) +
         ', now ' + formatAfterimageTime(video.currentTime) +
         (playbackIntentPreserved ? '.' : '. Playback state changed during the browser seek.');
-      const seamControl = player.querySelector('.afterimage-seam-control');
-      if (seamControl) {
-        seamControl.focus({ preventScroll: true });
-        requestAnimationFrame(() => {
-          if (document.activeElement !== seamControl) seamControl.focus({ preventScroll: true });
-        });
-      }
+      focusTarget = player.querySelector('.afterimage-seam-control');
     } catch (error) {
       if (error?.name !== 'AbortError') status.textContent = error instanceof Error ? error.message : 'The example could not be opened.';
     } finally {
       busy = false;
       button.disabled = false;
+      if (focusTarget && !signal.aborted) {
+        requestAnimationFrame(() => {
+          if (!signal.aborted && focusTarget.isConnected) focusTarget.focus({ preventScroll: true });
+        });
+      }
     }
   }, { signal });
 
