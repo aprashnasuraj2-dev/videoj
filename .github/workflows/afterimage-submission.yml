@@ -1,0 +1,59 @@
+name: AFTERIMAGE submission capture
+
+on:
+  push:
+    branches:
+      - afterimage
+    paths:
+      - 'afterimage/tests/submission-reel.playwright.mjs'
+      - '.github/workflows/afterimage-submission.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: afterimage
+    env:
+      AFTERIMAGE_URL: https://afterimage.aafnaipatro.com/
+      AFTERIMAGE_RELEASE: f0bed46afe912b43af657841b0a2897742e9f4ff
+      AFTERIMAGE_VERSION: 0.3.3-webkit-handoff
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: afterimage/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Record exact public candidate
+        run: node tests/submission-reel.playwright.mjs
+
+      - name: Encode submission MP4
+        run: |
+          ffmpeg -y -i artifacts/submission/afterimage-submission-reel.webm -an -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -movflags +faststart artifacts/submission/afterimage-submission-reel.mp4
+          duration="$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 artifacts/submission/afterimage-submission-reel.mp4)"
+          bytes="$(stat -c%s artifacts/submission/afterimage-submission-reel.mp4)"
+          printf '{"durationSeconds":%s,"bytes":%s,"audio":false,"release":"%s"}\n' "$duration" "$bytes" "$AFTERIMAGE_RELEASE" > artifacts/submission/reel-report.json
+
+      - name: Upload submission evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: afterimage-submission-evidence
+          path: afterimage/artifacts/submission/
+          if-no-files-found: error
+          retention-days: 30
