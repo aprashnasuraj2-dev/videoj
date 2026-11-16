@@ -37,3 +37,11 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - The studio labels the current remote video as an engineering preview. It is temporary and is not represented as THE WATERLINE or final submission media.
 - Local container Git/network access cannot resolve github.com, so local npm verification is unavailable in this execution surface. Next verification uses a source-matched remote build/deployment.
 - **Next action:** build the exact branch through an isolated Vercel preview; only observed passes will be changed from in-progress to done.
+
+## 2026-11-16 · standalone release surface prepared
+
+- Corrected v10 UI state styling to use documented data-paused and data-visible state attributes.
+- Added scripts/build-standalone.mjs. It composes the same committed Temporal Lens modules and CSS into standalone.html, loading the official pinned @videojs/cdn@10.4.0 video preset for a no-bundler browser surface.
+- The standalone page keeps the temporary fixture explicitly labeled and exposes only a non-secret debug handle for browser verification.
+- Vercel project creation is blocked by account permission (403). Cloudflare Pages Git project creation is separately blocked by the account's broken Pages Git installation (error 8000011). Neither blocker implies a source/build failure.
+- **Next action:** deploy standalone.html as an isolated preview without altering DHAGO/DETOUR, then exercise the actual browser flow. Package build remains separately unverified until a dependency-capable runner is available.

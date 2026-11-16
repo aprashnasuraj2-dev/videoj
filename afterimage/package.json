@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run test:architecture && vite build",
+    "build": "npm run test:architecture && npm run build:standalone && vite build",
     "preview": "vite preview",
     "test:architecture": "node --test tests/architecture.test.mjs",
-    "test": "node --test tests/architecture.test.mjs"
+    "test": "node --test tests/architecture.test.mjs",
+    "build:standalone": "node scripts/build-standalone.mjs"
   },
   "dependencies": {
     "@videojs/html": "10.4.0"
@@ -29,5 +30,9 @@
     }
   },
   "license": "Apache-2.0",
-  "files": ["skin/", "README.md", "LICENSE"]
+  "files": [
+    "skin/",
+    "README.md",
+    "LICENSE"
+  ]
 }

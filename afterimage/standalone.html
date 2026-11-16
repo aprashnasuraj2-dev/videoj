@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101820">
+<meta name="description" content="AFTERIMAGE — pin a frame and see what changes as the film plays.">
+<title>AFTERIMAGE — Temporal Lens</title>
+<style>:root { color-scheme: dark; background: #0b1116; color: #f0e9d9; font-family: Inter, Geist, ui-sans-serif, system-ui, sans-serif; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; background: radial-gradient(circle at 15% -10%, rgb(182 218 230 / .09), transparent 32rem), #0b1116; }
+main { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: clamp(24px, 5vw, 68px) 0 80px; }
+header { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, .55fr); gap: 22px; align-items: end; margin-bottom: 22px; }
+h1 { margin: 0; font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: clamp(48px, 8vw, 106px); font-weight: 400; letter-spacing: -.055em; line-height: .82; }
+header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2vw, 19px); line-height: 1.5; }
+.eyebrow { display: inline-block; margin-bottom: 12px; color: #d9a069; font: 700 11px/1 ui-sans-serif, system-ui, sans-serif; letter-spacing: .16em; text-transform: uppercase; }
+.fixture-note { max-width: 760px; margin: 14px auto 0; color: #9da7aa; font-size: 12px; line-height: 1.55; }
+.fixture-note strong { color: #d9a069; }
+@media (max-width: 700px) { main { width: min(100% - 16px, 1180px); padding-top: 22px; } header { grid-template-columns: 1fr; } }
+
+.afterimage {
+  --afterimage-ink: #101820;
+  --afterimage-limestone: #f0e9d9;
+  --afterimage-copper: #d9a069;
+  --afterimage-current: #b6dae6;
+  --afterimage-muted: #aab3b7;
+  display: block;
+  inline-size: 100%;
+  max-inline-size: 1120px;
+  margin-inline: auto;
+  color: var(--afterimage-limestone);
+  background: #0b1116;
+  border: 1px solid rgb(240 233 217 / 0.16);
+  box-shadow: 0 24px 70px rgb(0 0 0 / 0.36);
+  font-family: Inter, Geist, ui-sans-serif, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  container-type: inline-size;
+}
+.afterimage .afterimage-stage { position: relative; overflow: hidden; background: #05080a; aspect-ratio: 16 / 9; isolation: isolate; }
+.afterimage .afterimage-screen, .afterimage .afterimage-reference { position: absolute; inset: 0; }
+.afterimage .afterimage-screen video, .afterimage .afterimage-reference canvas { display: block; width: 100%; height: 100%; object-fit: contain; background: #05080a; }
+.afterimage .afterimage-reference { z-index: 2; pointer-events: none; }
+.afterimage .afterimage-seam { position: absolute; z-index: 3; inset-block: 0; width: 1px; transform: translateX(-0.5px); background: var(--afterimage-limestone); box-shadow: -2px 0 0 rgb(16 24 32 / .72), 2px 0 0 rgb(16 24 32 / .72); pointer-events: none; }
+.afterimage .afterimage-seam span { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; width: 22px; height: 42px; transform: translate(-50%, -50%); border: 1px solid var(--afterimage-limestone); border-radius: 999px; background: linear-gradient(90deg, transparent 45%, var(--afterimage-copper) 45% 55%, transparent 55%), var(--afterimage-ink); box-shadow: 0 0 0 3px rgb(16 24 32 / .78); }
+.afterimage .afterimage-seam-control { position: absolute; z-index: 4; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
+.afterimage .afterimage-seam-control:focus-visible { opacity: 1; height: 44px; inset-block-start: 50%; transform: translateY(-50%); accent-color: var(--afterimage-copper); }
+.afterimage .afterimage-deck { position: relative; padding: 14px 16px 16px; background: linear-gradient(180deg, rgb(255 255 255 / .025), transparent 38%), var(--afterimage-ink); border-block-start: 1px solid rgb(240 233 217 / .12); }
+.afterimage .afterimage-relation { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-block-end: 12px; font-size: 12px; letter-spacing: .03em; }
+.afterimage .afterimage-relation > span { min-height: 36px; padding: 8px 10px; border: 1px solid rgb(240 233 217 / .14); border-radius: 8px; background: rgb(0 0 0 / .16); }
+.afterimage .afterimage-relation b { margin-inline-end: .45em; color: var(--afterimage-muted); font-size: 10px; font-weight: 650; letter-spacing: .11em; text-transform: uppercase; }
+.afterimage .afterimage-delta output { color: var(--afterimage-current); }
+.afterimage .afterimage-rail { position: relative; margin-block: 4px 14px; height: 28px; display: flex; align-items: center; }
+.afterimage .afterimage-rail media-time-slider { position: relative; z-index: 3; display: block; width: 100%; height: 28px; cursor: pointer; }
+.afterimage .afterimage-track, .afterimage media-slider-track.afterimage-track { position: absolute; inset-inline: 0; inset-block-start: 50%; height: 3px; transform: translateY(-50%); background: rgb(240 233 217 / .22); }
+.afterimage .afterimage-fill, .afterimage media-slider-fill.afterimage-fill { display: block; height: 100%; background: var(--afterimage-current); }
+.afterimage .afterimage-thumb, .afterimage media-slider-thumb.afterimage-thumb { width: 12px; height: 12px; margin: -4.5px 0 0 -6px; border: 2px solid var(--afterimage-current); border-radius: 50%; background: var(--afterimage-ink); box-shadow: 0 0 0 2px var(--afterimage-ink); }
+.afterimage .afterimage-interval { position: absolute; z-index: 1; inset-block-start: 50%; height: 7px; transform: translateY(-50%); border-block: 1px solid rgb(217 160 105 / .72); background: rgb(217 160 105 / .18); pointer-events: none; }
+.afterimage .afterimage-pin { position: absolute; z-index: 2; inset-block-start: 0; width: 1px; height: 28px; background: var(--afterimage-copper); pointer-events: none; }
+.afterimage .afterimage-pin i { position: absolute; inset-block-start: 1px; inset-inline-start: 50%; width: 9px; height: 9px; transform: translateX(-50%) rotate(45deg); border: 1px solid var(--afterimage-ink); background: var(--afterimage-copper); }
+.afterimage .afterimage-pin[data-edge-start] i { inset-inline-start: 0; transform: rotate(45deg); }
+.afterimage .afterimage-pin[data-edge-end] i { inset-inline-start: auto; inset-inline-end: 0; transform: rotate(45deg); }
+.afterimage .afterimage-bar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(280px, auto); align-items: center; gap: 12px; }
+.afterimage .afterimage-transport, .afterimage .afterimage-options, .afterimage .afterimage-lens, .afterimage .afterimage-lens-primary, .afterimage .afterimage-presets { display: flex; align-items: center; gap: 8px; }
+.afterimage .afterimage-options { justify-content: center; }
+.afterimage .afterimage-lens { justify-content: flex-end; }
+.afterimage .afterimage-icon, .afterimage .afterimage-action, .afterimage .afterimage-presets button, .afterimage .afterimage-clear { min-width: 44px; min-height: 44px; border: 1px solid rgb(240 233 217 / .18); border-radius: 8px; color: var(--afterimage-limestone); background: rgb(255 255 255 / .04); font: inherit; cursor: pointer; }
+.afterimage .afterimage-icon { display: inline-grid; place-items: center; width: 44px; padding: 0; }
+.afterimage .afterimage-icon svg { width: 22px; height: 22px; }
+.afterimage .afterimage-play-button .afterimage-pause { display: none; }
+.afterimage media-play-button:not([data-paused]) .afterimage-play { display: none; }
+.afterimage media-play-button:not([data-paused]) .afterimage-pause { display: block; }
+.afterimage .afterimage-action { padding: 0 14px; border-color: rgb(217 160 105 / .62); }
+.afterimage .afterimage-pin-action { color: #101820; background: var(--afterimage-copper); font-weight: 720; }
+.afterimage .afterimage-presets button, .afterimage .afterimage-clear { padding-inline: 10px; font-size: 12px; }
+.afterimage .afterimage-clear { border-color: transparent; color: var(--afterimage-muted); background: transparent; }
+.afterimage .afterimage-clock { white-space: nowrap; font-size: 13px; }
+.afterimage .afterimage-volume { position: relative; display: block; width: 76px; height: 28px; }
+.afterimage .afterimage-cc { font-size: 11px; font-weight: 800; letter-spacing: .06em; }
+.afterimage .afterimage-buffering { min-height: 18px; margin-block-start: 8px; color: var(--afterimage-muted); font-size: 11px; }
+.afterimage .afterimage-buffering:not([data-visible]) { display: none; }
+.afterimage .afterimage-buffering[data-visible] { display: block; }
+.afterimage .afterimage-status { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.afterimage button:focus-visible, .afterimage input:focus-visible, .afterimage media-play-button:focus-visible, .afterimage media-mute-button:focus-visible, .afterimage media-captions-button:focus-visible, .afterimage media-fullscreen-button:focus-visible, .afterimage media-time-slider:focus-visible, .afterimage media-volume-slider:focus-visible { outline: 3px solid var(--afterimage-current); outline-offset: 3px; }
+.afterimage button:hover, .afterimage .afterimage-icon:hover { border-color: rgb(240 233 217 / .52); }
+.afterimage button:disabled { opacity: .55; cursor: wait; }
+@container (max-width: 720px) {
+  .afterimage .afterimage-deck { padding-inline: 12px; }
+  .afterimage .afterimage-bar { grid-template-columns: 1fr auto; }
+  .afterimage .afterimage-lens { grid-column: 1 / -1; justify-content: space-between; flex-wrap: wrap; padding-block-start: 4px; border-block-start: 1px solid rgb(240 233 217 / .1); }
+  .afterimage .afterimage-volume { display: none; }
+}
+@container (max-width: 430px) {
+  .afterimage .afterimage-relation { grid-template-columns: 1fr 1fr; }
+  .afterimage .afterimage-delta { grid-column: 1 / -1; }
+  .afterimage .afterimage-options { gap: 4px; }
+  .afterimage .afterimage-lens-primary { flex: 1 1 100%; }
+  .afterimage .afterimage-action { flex: 1; }
+  .afterimage .afterimage-presets { flex: 1; }
+  .afterimage .afterimage-presets button { flex: 1; }
+  .afterimage .afterimage-clear { min-width: 70px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .afterimage .afterimage-reference { transition: clip-path 150ms ease-out; }
+}
+@media (forced-colors: active) {
+  .afterimage { border: 1px solid CanvasText; }
+  .afterimage .afterimage-pin, .afterimage .afterimage-pin i, .afterimage .afterimage-seam { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  .afterimage .afterimage-interval { border-color: Highlight; background: transparent; }
+}
+</style>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.4.0/video.js"></script>
+</head>
+<body>
+<main>
+<header>
+<div><span class="eyebrow">Temporal Lens · Video.js v10</span><h1>AFTERIMAGE</h1></div>
+<p><strong>Time leaves a trace.</strong><br>Pin a frame. See what changes as the film plays.</p>
+</header>
+<section id="afterimage-player" aria-label="AFTERIMAGE player"></section>
+<p class="fixture-note"><strong>Engineering preview.</strong> This first playable slice uses a temporary permissive Video.js fixture while the original <em>The Waterline</em> film is rendered. The skin, clock, pinned frame, seam, and timeline relation are real.</p>
+</main>
+<script type="module">function formatAfterimageTime(value) {
+  if (!Number.isFinite(value) || value < 0) return '—:——';
+  const total = Math.max(0, Math.round(value));
+  const seconds = total % 60;
+  const minutesTotal = Math.floor(total / 60);
+  const minutes = minutesTotal % 60;
+  const hours = Math.floor(minutesTotal / 60);
+  const two = number => String(number).padStart(2, '0');
+  return hours > 0
+    ? String(hours) + ':' + two(minutes) + ':' + two(seconds)
+    : two(minutesTotal) + ':' + two(seconds);
+}
+
+function formatAfterimageDelta(value) {
+  if (!Number.isFinite(value)) return '—';
+  const rounded = Math.abs(value) < 0.5 ? 0 : Math.round(value);
+  const sign = rounded > 0 ? '+' : rounded < 0 ? '−' : '±';
+  return sign + formatAfterimageTime(Math.abs(rounded));
+}
+
+
+
+const CAP_PIXELS = 920000;
+const CAP_LONG_EDGE = 1280;
+const CALLBACK_TIMEOUT_MS = 320;
+
+function finiteVod(video) {
+  return Number.isFinite(video.duration) && video.duration > 0;
+}
+
+function captureSize(video) {
+  const sourceWidth = video.videoWidth;
+  const sourceHeight = video.videoHeight;
+  if (!sourceWidth || !sourceHeight) return null;
+  const longScale = Math.min(1, CAP_LONG_EDGE / Math.max(sourceWidth, sourceHeight));
+  const pixelScale = Math.min(1, Math.sqrt(CAP_PIXELS / (sourceWidth * sourceHeight)));
+  const scale = Math.min(longScale, pixelScale);
+  return { width: Math.max(1, Math.round(sourceWidth * scale)), height: Math.max(1, Math.round(sourceHeight * scale)) };
+}
+
+function safePercent(time, duration) {
+  if (!Number.isFinite(time) || !Number.isFinite(duration) || duration <= 0) return null;
+  return Math.max(0, Math.min(100, time / duration * 100));
+}
+
+class AfterimageTemporalLens extends HTMLElement {
+  #disconnect;
+  #sourceEpoch = 0;
+  #requestId = 0;
+  #pendingFrameCallback = null;
+  #pendingTimer = null;
+  #reference = null;
+  #presentation = 'closed';
+  #seam = 50;
+  #cancelPending = () => {};
+
+  connectedCallback() {
+    this.#disconnect?.abort();
+    this.#disconnect = new AbortController();
+    const { signal } = this.#disconnect;
+    const container = this.closest('.afterimage');
+    const player = this.closest('video-player');
+    const video = container.querySelector('video');
+    const referenceLayer = container.querySelector('.afterimage-reference');
+    const referenceCanvas = referenceLayer.querySelector('canvas');
+    const seamLine = container.querySelector('.afterimage-seam');
+    const seamControl = container.querySelector('.afterimage-seam-control');
+    const relation = container.querySelector('.afterimage-relation');
+    const pinnedOutput = container.querySelector('[data-afterimage-pinned]');
+    const nowOutput = container.querySelector('[data-afterimage-now]');
+    const deltaOutput = container.querySelector('[data-afterimage-delta]');
+    const pinMark = container.querySelector('.afterimage-pin');
+    const interval = container.querySelector('.afterimage-interval');
+    const status = container.querySelector('.afterimage-status');
+    const pinButton = this.querySelector('[data-afterimage-pin]');
+    const compareButton = this.querySelector('[data-afterimage-compare]');
+    const closeButton = this.querySelector('[data-afterimage-close]');
+    const clearButton = this.querySelector('[data-afterimage-clear]');
+    const presetButtons = [...this.querySelectorAll('[data-afterimage-preset]')];
+
+    const announce = message => {
+      status.textContent = '';
+      queueMicrotask(() => { if (!signal.aborted) status.textContent = message; });
+    };
+
+    const cancelPending = () => {
+      if (this.#pendingTimer !== null) {
+        clearTimeout(this.#pendingTimer);
+        this.#pendingTimer = null;
+      }
+      if (this.#pendingFrameCallback !== null && typeof video.cancelVideoFrameCallback === 'function') {
+        video.cancelVideoFrameCallback(this.#pendingFrameCallback);
+      }
+      this.#pendingFrameCallback = null;
+    };
+    this.#cancelPending = cancelPending;
+
+    const updateSeam = value => {
+      this.#seam = Math.max(0, Math.min(100, Number(value) || 0));
+      referenceLayer.style.clipPath = 'inset(0 ' + (100 - this.#seam) + '% 0 0)';
+      seamLine.style.insetInlineStart = this.#seam + '%';
+      seamControl.value = String(this.#seam);
+      seamControl.setAttribute('aria-valuetext', Math.round(this.#seam) + '% pinned frame');
+    };
+
+    const updateRelation = () => {
+      if (!this.#reference) return;
+      pinnedOutput.textContent = (this.#reference.approximate ? '≈' : '') + formatAfterimageTime(this.#reference.time);
+      nowOutput.textContent = formatAfterimageTime(video.currentTime);
+      deltaOutput.textContent = formatAfterimageDelta(video.currentTime - this.#reference.time);
+      const pinPercent = safePercent(this.#reference.time, video.duration);
+      const nowPercent = safePercent(video.currentTime, video.duration);
+      if (pinPercent === null || nowPercent === null) {
+        pinMark.hidden = true;
+        interval.hidden = true;
+        return;
+      }
+      pinMark.hidden = false;
+      interval.hidden = false;
+      pinMark.style.insetInlineStart = pinPercent + '%';
+      interval.style.insetInlineStart = Math.min(pinPercent, nowPercent) + '%';
+      interval.style.width = Math.abs(nowPercent - pinPercent) + '%';
+      pinMark.toggleAttribute('data-edge-start', pinPercent < 3);
+      pinMark.toggleAttribute('data-edge-end', pinPercent > 97);
+    };
+
+    const render = () => {
+      const hasReference = Boolean(this.#reference);
+      const open = hasReference && this.#presentation === 'open';
+      referenceLayer.hidden = !open;
+      seamLine.hidden = !open;
+      seamControl.hidden = !open;
+      relation.hidden = !hasReference;
+      pinMark.hidden = !hasReference;
+      interval.hidden = !hasReference;
+      compareButton.hidden = !hasReference || open;
+      closeButton.hidden = !open;
+      clearButton.hidden = !hasReference;
+      for (const button of presetButtons) button.hidden = !open;
+      pinButton.querySelector('span').textContent = hasReference ? 'Pin current frame' : 'Pin moment';
+      updateSeam(this.#seam);
+      updateRelation();
+    };
+
+    const commitCandidate = (candidate, time, approximate, requestId, sourceEpoch) => {
+      if (signal.aborted || requestId !== this.#requestId || sourceEpoch !== this.#sourceEpoch) return false;
+      referenceCanvas.width = candidate.width;
+      referenceCanvas.height = candidate.height;
+      const context = referenceCanvas.getContext('2d', { alpha: false });
+      context.drawImage(candidate, 0, 0);
+      this.#reference = { time, approximate, sourceEpoch };
+      this.#presentation = 'open';
+      this.#seam = 50;
+      render();
+      announce((approximate ? 'Pinned approximately at ' : 'Pinned at ') + formatAfterimageTime(time) + '. Comparison opened.');
+      return true;
+    };
+
+    const drawCandidate = (reportedTime, approximate, requestId, sourceEpoch) => {
+      const size = captureSize(video);
+      if (!size || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) throw new Error('Wait for the frame to load, then try again.');
+      const candidate = document.createElement('canvas');
+      candidate.width = size.width;
+      candidate.height = size.height;
+      const context = candidate.getContext('2d', { alpha: false });
+      if (!context) throw new Error('This browser cannot capture the current frame.');
+      context.drawImage(video, 0, 0, size.width, size.height);
+      const time = Number.isFinite(reportedTime) ? reportedTime : video.currentTime;
+      if (!Number.isFinite(time)) throw new Error('The current frame time is unavailable.');
+      return commitCandidate(candidate, time, approximate, requestId, sourceEpoch);
+    };
+
+    const capture = () => {
+      if (!finiteVod(video) || video.seeking || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || !captureSize(video)) {
+        announce('Wait for the frame to load, then try again.');
+        return;
+      }
+      cancelPending();
+      const requestId = ++this.#requestId;
+      const sourceEpoch = this.#sourceEpoch;
+      pinButton.disabled = true;
+      pinButton.querySelector('span').textContent = 'Pinning…';
+
+      const finish = (reportedTime, approximate) => {
+        cancelPending();
+        try {
+          drawCandidate(reportedTime, approximate, requestId, sourceEpoch);
+        } catch (error) {
+          if (requestId === this.#requestId && sourceEpoch === this.#sourceEpoch) {
+            announce(error instanceof Error ? error.message : 'Could not pin this frame.');
+          }
+        } finally {
+          if (!signal.aborted && requestId === this.#requestId) {
+            pinButton.disabled = false;
+            render();
+          }
+        }
+      };
+
+      if (!video.paused && typeof video.requestVideoFrameCallback === 'function') {
+        this.#pendingFrameCallback = video.requestVideoFrameCallback((_now, metadata) => {
+          this.#pendingFrameCallback = null;
+          finish(Number.isFinite(metadata.mediaTime) ? metadata.mediaTime : video.currentTime, !Number.isFinite(metadata.mediaTime));
+        });
+        this.#pendingTimer = setTimeout(() => {
+          this.#pendingTimer = null;
+          if (requestId === this.#requestId && sourceEpoch === this.#sourceEpoch) finish(video.currentTime, true);
+        }, CALLBACK_TIMEOUT_MS);
+      } else {
+        finish(video.currentTime, true);
+      }
+    };
+
+    const closeComparison = restoreFocus => {
+      if (!this.#reference) return;
+      this.#presentation = 'closed';
+      render();
+      announce('Comparison closed. The pinned frame remains on the timeline.');
+      if (restoreFocus) compareButton.focus({ preventScroll: true });
+    };
+
+    const clearReference = () => {
+      cancelPending();
+      ++this.#requestId;
+      this.#reference = null;
+      this.#presentation = 'closed';
+      referenceCanvas.width = 1;
+      referenceCanvas.height = 1;
+      render();
+      announce('Pinned frame cleared.');
+      if (!pinButton.disabled) pinButton.focus({ preventScroll: true });
+    };
+
+    pinButton.addEventListener('click', capture, { signal });
+    compareButton.addEventListener('click', () => {
+      if (!this.#reference) return;
+      this.#presentation = 'open';
+      render();
+      announce('Comparison opened.');
+      seamControl.focus({ preventScroll: true });
+    }, { signal });
+    closeButton.addEventListener('click', () => closeComparison(true), { signal });
+    clearButton.addEventListener('click', clearReference, { signal });
+    seamControl.addEventListener('input', () => updateSeam(seamControl.value), { signal });
+    seamControl.addEventListener('change', () => announce('Pinned frame reveal set to ' + Math.round(this.#seam) + ' percent.'), { signal });
+
+    for (const button of presetButtons) {
+      button.addEventListener('click', () => {
+        updateSeam(Number(button.dataset.afterimagePreset));
+        announce(button.textContent.trim() + ' view selected.');
+        seamControl.focus({ preventScroll: true });
+      }, { signal });
+    }
+
+    video.addEventListener('timeupdate', updateRelation, { signal });
+    video.addEventListener('durationchange', updateRelation, { signal });
+    video.addEventListener('loadedmetadata', updateRelation, { signal });
+
+    for (const eventName of ['loadstart', 'emptied']) {
+      video.addEventListener(eventName, () => {
+        cancelPending();
+        ++this.#requestId;
+        ++this.#sourceEpoch;
+        this.#reference = null;
+        this.#presentation = 'closed';
+        render();
+      }, { signal });
+    }
+
+    player.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && this.#presentation === 'open') {
+        event.preventDefault();
+        closeComparison(true);
+      }
+    }, { signal });
+
+    render();
+  }
+
+  disconnectedCallback() {
+    this.#cancelPending();
+    this.#disconnect?.abort();
+    ++this.#requestId;
+    this.#reference = null;
+  }
+}
+
+if (!customElements.get('afterimage-temporal-lens')) {
+  customElements.define('afterimage-temporal-lens', AfterimageTemporalLens);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function interfaceMarkup(enhancement = '') {
+  return '<media-container class="afterimage" lang="en">' +
+    '<div class="afterimage-stage">' +
+      '<div class="afterimage-screen"></div>' +
+      '<div class="afterimage-reference" hidden aria-hidden="true"><canvas></canvas></div>' +
+      '<div class="afterimage-seam" hidden aria-hidden="true"><span></span></div>' +
+      '<input class="afterimage-seam-control" type="range" min="0" max="100" value="50" step="1" aria-label="Pinned frame reveal" hidden>' +
+    '</div>' +
+    '<div class="afterimage-deck">' +
+      '<div class="afterimage-relation" hidden>' +
+        '<span><b>Pinned</b> <output data-afterimage-pinned>—:——</output></span>' +
+        '<span><b>Now</b> <output data-afterimage-now>—:——</output></span>' +
+        '<span class="afterimage-delta"><b>Interval</b> <output data-afterimage-delta>—</output></span>' +
+      '</div>' +
+      '<div class="afterimage-rail">' +
+        '<media-time-slider label="Seek" step="1" large-step="10">' +
+          '<media-slider-track class="afterimage-track"><media-slider-fill class="afterimage-fill"></media-slider-fill></media-slider-track>' +
+          '<media-slider-thumb class="afterimage-thumb"></media-slider-thumb>' +
+        '</media-time-slider>' +
+        '<span class="afterimage-interval" hidden aria-hidden="true"></span>' +
+        '<span class="afterimage-pin" hidden aria-hidden="true"><i></i></span>' +
+      '</div>' +
+      '<div class="afterimage-bar">' +
+        '<div class="afterimage-transport">' +
+          '<media-play-button class="afterimage-icon afterimage-play-button">' +
+            '<svg class="afterimage-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4.6v14.8L19 12z" fill="currentColor"/></svg>' +
+            '<svg class="afterimage-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3v14H7zm7 0h3v14h-3z" fill="currentColor"/></svg>' +
+          '</media-play-button>' +
+          '<span class="afterimage-clock" aria-label="Playback time"><media-time type="current"></media-time><span aria-hidden="true"> / </span><media-time type="duration"></media-time></span>' +
+        '</div>' +
+        '<div class="afterimage-options">' +
+          '<media-mute-button class="afterimage-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8c4 2 4 6 0 8"/></svg></media-mute-button>' +
+          '<media-volume-slider label="Volume" class="afterimage-volume"><media-slider-track class="afterimage-track"><media-slider-fill class="afterimage-fill"></media-slider-fill></media-slider-track><media-slider-thumb class="afterimage-thumb"></media-slider-thumb></media-volume-slider>' +
+          '<media-captions-button class="afterimage-icon afterimage-cc"><span aria-hidden="true">CC</span></media-captions-button>' +
+          '<media-fullscreen-button class="afterimage-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 5H5v4m10-4h4v4M5 15v4h4m10-4v4h-4"/></svg></media-fullscreen-button>' +
+        '</div>' +
+        enhancement +
+      '</div>' +
+      '<media-buffering-indicator class="afterimage-buffering">Buffering…</media-buffering-indicator>' +
+      '<p class="afterimage-status" role="status" aria-live="polite" aria-atomic="true"></p>' +
+    '</div>' +
+  '</media-container>';
+}
+
+function createAfterimageShell(media, enhancement = '') {
+  if (!(media instanceof HTMLVideoElement)) throw new TypeError('AFTERIMAGE requires a host-owned HTMLVideoElement.');
+  const player = document.createElement('video-player');
+  player.innerHTML = interfaceMarkup(enhancement);
+  player.firstElementChild.querySelector('.afterimage-screen').append(media);
+  return player;
+}
+
+function createBasePlayer(media) {
+  return createAfterimageShell(media);
+}
+
+
+
+
+const temporalLensMarkup =
+  '<afterimage-temporal-lens class="afterimage-lens">' +
+    '<div class="afterimage-lens-primary">' +
+      '<button type="button" class="afterimage-action afterimage-pin-action" data-afterimage-pin><span>Pin moment</span></button>' +
+      '<button type="button" class="afterimage-action" data-afterimage-compare hidden>Compare</button>' +
+      '<button type="button" class="afterimage-action" data-afterimage-close hidden>Close comparison</button>' +
+    '</div>' +
+    '<div class="afterimage-presets" role="group" aria-label="Comparison views">' +
+      '<button type="button" data-afterimage-preset="100" hidden>Pinned</button>' +
+      '<button type="button" data-afterimage-preset="50" hidden>Split</button>' +
+      '<button type="button" data-afterimage-preset="0" hidden>Now</button>' +
+    '</div>' +
+    '<button type="button" class="afterimage-clear" data-afterimage-clear hidden>Clear pin</button>' +
+  '</afterimage-temporal-lens>';
+
+function createAfterimagePlayer(media) {
+  return createAfterimageShell(media, temporalLensMarkup);
+}
+
+
+const video = document.createElement('video');
+video.preload = 'metadata';
+video.playsInline = true;
+video.crossOrigin = 'anonymous';
+video.poster = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1600 900\" role=\"img\" aria-labelledby=\"t d\">\n<title id=\"t\">The Waterline preview</title><desc id=\"d\">A stylized stone spillway chamber with a gauge, copper gate, and circular inspection opening.</desc>\n<defs><linearGradient id=\"bg\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop stop-color=\"#26343a\"/><stop offset=\"1\" stop-color=\"#0f171c\"/></linearGradient><linearGradient id=\"stone\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\"><stop stop-color=\"#b7ae99\"/><stop offset=\"1\" stop-color=\"#807b6f\"/></linearGradient></defs>\n<rect width=\"1600\" height=\"900\" fill=\"url(#bg)\"/><path d=\"M0 690 290 565h1020l290 125v210H0z\" fill=\"#171e21\"/><rect x=\"180\" y=\"165\" width=\"1240\" height=\"465\" rx=\"6\" fill=\"url(#stone)\" opacity=\".73\"/><rect x=\"245\" y=\"225\" width=\"930\" height=\"345\" fill=\"#596064\" opacity=\".52\"/>\n<circle cx=\"1265\" cy=\"330\" r=\"104\" fill=\"#151c20\" stroke=\"#d8d0bd\" stroke-width=\"12\"/><circle cx=\"1265\" cy=\"330\" r=\"66\" fill=\"#25343b\"/><rect x=\"360\" y=\"205\" width=\"72\" height=\"390\" rx=\"3\" fill=\"#d8d0bd\"/>\n<g stroke=\"#101820\" stroke-width=\"6\"><path d=\"M360 250h40M360 310h58M360 370h40M360 430h58M360 490h40M360 550h58\"/></g><rect x=\"725\" y=\"240\" width=\"245\" height=\"330\" fill=\"#1c2528\" stroke=\"#d9a069\" stroke-width=\"9\"/><path d=\"M680 610h340\" stroke=\"#d9a069\" stroke-width=\"10\"/>\n<text x=\"88\" y=\"104\" fill=\"#f0e9d9\" font-family=\"Georgia,serif\" font-size=\"58\">THE WATERLINE</text><text x=\"92\" y=\"150\" fill=\"#d9a069\" font-family=\"Arial,sans-serif\" font-size=\"18\" letter-spacing=\"6\">CAMERA A · DRY STATE</text>\n</svg>");
+video.src = 'https://vjs.zencdn.net/v/oceans.mp4';
+const captions = document.createElement('track');
+captions.kind = 'captions'; captions.srclang = 'en'; captions.label = 'English';
+captions.src = 'data:text/vtt;charset=utf-8,' + encodeURIComponent("WEBVTT\n\n00:00.000 --> 00:03.500\n[Waves and distant water]\n\n00:03.500 --> 00:08.000\n[Water continues]\n");
+video.append(captions);
+const mountedPlayer = createAfterimagePlayer(video);
+document.querySelector('#afterimage-player').append(mountedPlayer);
+window.__AFTERIMAGE_RELEASE__ = { version: '0.1.0-preview', video, player: mountedPlayer };</script>
+</body>
+</html>
