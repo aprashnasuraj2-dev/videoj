@@ -178,6 +178,8 @@ test('package-external-host: packed artifact contains only reusable product surf
 
   assert.doesNotMatch(runtime, /the-waterline|WATERLINE|apollo|aafnaipatro|detour\//i);
   assert.doesNotMatch(runtime, /stream\.mux\.com|image\.mux\.com|MUX_TOKEN_(?:ID|SECRET)|Authorization\s*:|Bearer\s+/i);
+  assert.doesNotMatch(runtime, /kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U|playback[_-]?id/i,
+    'Packed runtime leaked a public/provider playback identity.');
   assert.doesNotMatch(runtime, /afterimage\.aafnaipatro\.com|challenge|contra\.com/i);
 });
 
