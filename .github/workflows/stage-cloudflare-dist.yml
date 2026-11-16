@@ -1,5 +1,8 @@
 name: Restage an existing verified Cloudflare build
 on:
+  workflow_run:
+    workflows: ['Validate DHAGO']
+    types: [completed]
   workflow_dispatch:
     inputs:
       run_id:
@@ -11,7 +14,7 @@ permissions:
   contents: write
 jobs:
   stage-dist:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'workflow_dispatch' || (github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.conclusion == 'success'))
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -19,14 +22,14 @@ jobs:
         id: run
         uses: actions/github-script@v7
         env:
-          SOURCE_RUN_ID: ${{ inputs.run_id }}
+          SOURCE_RUN_ID: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || inputs.run_id }}
         with:
           script: |
             const run_id = Number(process.env.SOURCE_RUN_ID);
             if (!Number.isSafeInteger(run_id) || run_id < 1) throw new Error('Invalid workflow run ID');
             const { owner, repo } = context.repo;
             const { data: run } = await github.rest.actions.getWorkflowRun({ owner, repo, run_id });
-            if (run.path !== '.github/workflows/ci.yml' || run.head_branch !== 'main' || run.event !== 'push') {
+            if (run.path !== '.github/workflows/ci.yml' || run.head_branch !== 'main' || run.event !== 'push' || run.conclusion !== 'success') {
               throw new Error('Choose a main push from Validate DHAGO');
             }
             const { data: jobs } = await github.rest.actions.listJobsForWorkflowRun({ owner, repo, run_id, filter: 'latest' });
@@ -44,9 +47,10 @@ jobs:
         with:
           name: dhago-build
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ inputs.run_id }}
+          run-id: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || inputs.run_id }}
+          path: dist/
       - name: Restage the same verified artifact
         env:
           DHAGO_BUILD_SHA: ${{ steps.run.outputs.source }}
-          DHAGO_BUILD_RUN_ID: ${{ inputs.run_id }}
+          DHAGO_BUILD_RUN_ID: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || inputs.run_id }}
         run: node scripts/stage-cf-dist.mjs
