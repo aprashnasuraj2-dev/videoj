@@ -339,14 +339,23 @@ try {
   check('essential-mute-toggle', mutedState.muted !== initialAudio.muted && unmutedState.muted === initialAudio.muted, { initialAudio, mutedState, unmutedState });
 
   const volumeControl = controlsPage.locator('media-volume-slider');
-  await volumeControl.focus();
-  await controlsPage.keyboard.press('Home');
-  await controlsPage.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.volume <= 0.01, null, { timeout: 2000 });
+  const volumeBox = await volumeControl.boundingBox();
+  check('volume-control-has-geometry', Boolean(volumeBox && volumeBox.width >= 40), volumeBox);
+  await volumeControl.click({ position: { x: Math.max(2, Math.round(volumeBox.width * 0.2)), y: Math.round(volumeBox.height / 2) } });
+  await controlsPage.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.volume < 0.4, null, { timeout: 2000 });
   const lowVolume = await controlsPage.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.volume);
-  await controlsPage.keyboard.press('End');
-  await controlsPage.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.volume >= 0.99, null, { timeout: 2000 });
+  await volumeControl.click({ position: { x: Math.round(volumeBox.width * 0.82), y: Math.round(volumeBox.height / 2) } });
+  await controlsPage.waitForFunction(previous => window.__AFTERIMAGE_RELEASE__.video.volume > previous + 0.25, lowVolume, { timeout: 2000 });
   const highVolume = await controlsPage.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.volume);
-  check('essential-volume-range', lowVolume <= 0.01 && highVolume >= 0.99, { lowVolume, highVolume });
+  await volumeControl.focus();
+  await controlsPage.keyboard.press('ArrowLeft');
+  await controlsPage.waitForFunction(previous => window.__AFTERIMAGE_RELEASE__.video.volume < previous, highVolume, { timeout: 2000 });
+  const keyboardVolume = await controlsPage.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.volume);
+  check(
+    'essential-volume-range',
+    lowVolume < 0.4 && highVolume > lowVolume + 0.25 && keyboardVolume < highVolume,
+    { lowVolume, highVolume, keyboardVolume },
+  );
 
   const fullscreenSupport = await controlsPage.evaluate(() => ({
     enabled: Boolean(document.fullscreenEnabled),

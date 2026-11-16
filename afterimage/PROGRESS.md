@@ -221,3 +221,11 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - README now starts with the public proof URL, explains the host-owned-media contract, documents both enhanced and base-player imports, and makes the one-video/bounded-canvas mechanism explicit.
 - Added `THIRD_PARTY_NOTICES.md`: Video.js `@videojs/html@10.4.0` attribution/license plus WATERLINE source/audio/caption provenance. The dependency is Apache-2.0; media provenance remains explicitly separate from the entry code license.
 - Added the notices file to the package `files` allow-list so an exported package cannot silently omit its attribution/provenance note.
+
+
+## 2026-11-16 · volume probe corrected to supported semantics
+
+- Essential-controls matrix #28 reached the volume test in Chromium, Firefox and WebKit after the new play/pause, seek/time and mute assertions had already succeeded.
+- The uniform failure came from assuming `Home`/`End` semantics for Video.js's volume custom element. Those keys are guaranteed by AFTERIMAGE's own reveal range test, not by this Video.js component.
+- The volume gate now proves two real pointer-set levels and then focuses the same Video.js volume slider and requires `ArrowLeft` to reduce the media element's actual `volume`.
+- No product code changed.
