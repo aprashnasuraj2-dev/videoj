@@ -92,7 +92,10 @@ async function keyboardSeekTo(page, seconds, { reverse = false } = {}) {
   });
   await page.keyboard.press('Home');
   await page.waitForFunction(() => document.querySelector('video').currentTime < 0.5);
-  for (let i = 0; i < seconds; i += 1) await page.keyboard.press('ArrowRight');
+  for (let i = 0; i < seconds; i += 1) {
+    await page.keyboard.press('ArrowRight');
+    if ((i + 1) % 6 === 0) await page.waitForTimeout(20);
+  }
   await page.waitForFunction(target => {
     const v = document.querySelector('video');
     return !v.seeking && Math.abs(v.currentTime - target) < 0.75;
