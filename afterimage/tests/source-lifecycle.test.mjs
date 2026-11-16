@@ -131,14 +131,47 @@ test('source-lifecycle: 20 remove/reinsert cycles do not duplicate handlers or i
     cycle.player.addEventListener('afterimage:pin-complete', () => { window.__cyclePinCompletions += 1; });
   });
   await page.waitForFunction(() => window.__cycle?.video?.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA);
+  await page.locator('#cycle-player media-play-button').click();
+  await page.waitForFunction(() => !window.__cycle.video.paused);
+  await page.evaluate(() => {
+    const v = window.__cycle.video;
+    window.__cycleOriginalRVFC = typeof v.requestVideoFrameCallback === 'function'
+      ? v.requestVideoFrameCallback.bind(v) : null;
+    window.__cycleOriginalCancelRVFC = typeof v.cancelVideoFrameCallback === 'function'
+      ? v.cancelVideoFrameCallback.bind(v) : null;
+  });
 
   for (let i = 0; i < 20; i += 1) {
-    await page.evaluate(() => {
-      const { player } = window.__cycle;
+    const pendingCycle = i % 5 === 4;
+    if (pendingCycle) {
+      await page.evaluate(index => {
+        const v = window.__cycle.video;
+        window.__cyclePendingCallback = null;
+        v.requestVideoFrameCallback = cb => {
+          window.__cyclePendingCallback = cb;
+          return 8000 + index;
+        };
+        v.cancelVideoFrameCallback = () => {};
+      }, i);
+      await page.locator('#cycle-player [data-afterimage-pin]').click();
+      await page.waitForFunction(() => window.__cycle.player.querySelector('[data-afterimage-pin]').disabled);
+    }
+
+    await page.evaluate(pending => {
+      const { player, video } = window.__cycle;
       const parent = document.querySelector('#scratch');
       player.remove();
+      if (pending) {
+        window.__cyclePendingCallback?.(performance.now(), { mediaTime: video.currentTime });
+      }
       parent.append(player);
-    });
+      if (window.__cycleOriginalRVFC) video.requestVideoFrameCallback = window.__cycleOriginalRVFC;
+      else delete video.requestVideoFrameCallback;
+      if (window.__cycleOriginalCancelRVFC) video.cancelVideoFrameCallback = window.__cycleOriginalCancelRVFC;
+      else delete video.cancelVideoFrameCallback;
+    }, pendingCycle);
+    await page.waitForFunction(() => !window.__cycle.player.querySelector('[data-afterimage-pin]').disabled);
+    assert.equal(await page.locator('#cycle-player .afterimage-reference').isVisible(), false);
   }
 
   const afterCycles = await page.evaluate(() => ({
@@ -184,7 +217,7 @@ test('source-lifecycle: 20 remove/reinsert cycles do not duplicate handlers or i
   assert.equal(disposed.referenceHidden, true);
   assert.equal(disposed.relationHidden, true);
   assert.equal(disposed.pinDisabled, false);
-  report.observations.remountStress = { cycles: 20, afterCycles, disposed };
+  report.observations.remountStress = { cycles: 20, pendingCycles: [5, 10, 15, 20], afterCycles, disposed };
   report.checks.remountStress = true;
 });
 
