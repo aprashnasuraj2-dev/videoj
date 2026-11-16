@@ -37,7 +37,11 @@ async function freshPage(t) {
   await page.waitForFunction(() => {
     const h = window.__AFTERIMAGE_HARDENING__;
     return h?.a?.video?.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
-      && h?.b?.video?.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
+      && h?.b?.video?.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
+      && h.a.video.seekable.length > 0
+      && h.b.video.seekable.length > 0
+      && Number.isFinite(h.a.video.duration) && h.a.video.duration > 0
+      && Number.isFinite(h.b.video.duration) && h.b.video.duration > 0;
   }, null, { timeout: 20000 });
   return page;
 }
@@ -271,7 +275,7 @@ test('source-lifecycle: capture-state matrix is truthful and recovery never auto
 
   await page.evaluate(() => {
     const v = window.__AFTERIMAGE_HARDENING__.a.video;
-    delete v.duration;
+    Object.defineProperty(v, 'duration', { configurable: true, value: 24 });
     Object.defineProperty(v, 'readyState', { configurable: true, value: HTMLMediaElement.HAVE_METADATA });
     v.dispatchEvent(new Event('waiting'));
   });
