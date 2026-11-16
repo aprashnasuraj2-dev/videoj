@@ -19,8 +19,10 @@ function captureState(video, player) {
     };
   }
 
+  // currentSrc can remain stale briefly after src removal/load(). Eligibility
+  // follows the host's currently declared source, not the browser's old resolved URL.
   const hasDeclaredSource = Boolean(
-    video.currentSrc || video.getAttribute('src') || video.querySelector('source[src]')
+    video.getAttribute('src') || video.querySelector('source[src]')
   );
   if (!hasDeclaredSource) {
     return {
