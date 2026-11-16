@@ -18,6 +18,33 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
 .fixture-note strong { color: #d9a069; }
 @media (max-width: 700px) { main { width: min(100% - 16px, 1180px); padding-top: 22px; } header { grid-template-columns: 1fr; } }
 
+@media (max-width: 300px) {
+  header,
+  header > * {
+    min-width: 0;
+  }
+
+  h1 {
+    font-size: clamp(38px, 18vw, 44px);
+    letter-spacing: -0.06em;
+    overflow-wrap: anywhere;
+  }
+
+  .eyebrow {
+    max-width: 100%;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    line-height: 1.35;
+    white-space: normal;
+  }
+
+  header p {
+    min-width: 0;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+}
+
 .afterimage {
   --afterimage-ink: #101820;
   --afterimage-limestone: #f0e9d9;
@@ -122,6 +149,52 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
   .afterimage .afterimage-relation { gap: 5px; }
   .afterimage .afterimage-relation > span { padding-inline: 7px; }
   .afterimage .afterimage-clock { font-size: 12px; }
+}
+
+@container (max-width: 300px) {
+  .afterimage .afterimage-bar {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .afterimage .afterimage-bar > *,
+  .afterimage .afterimage-transport,
+  .afterimage .afterimage-options,
+  .afterimage .afterimage-lens,
+  .afterimage .afterimage-lens-primary,
+  .afterimage .afterimage-presets {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .afterimage .afterimage-transport,
+  .afterimage .afterimage-options,
+  .afterimage .afterimage-lens {
+    width: 100%;
+  }
+
+  .afterimage .afterimage-transport {
+    justify-content: space-between;
+  }
+
+  .afterimage .afterimage-options {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .afterimage .afterimage-lens {
+    grid-column: 1;
+    justify-content: stretch;
+  }
+
+  .afterimage .afterimage-lens-primary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .afterimage .afterimage-action {
+    white-space: normal;
+    line-height: 1.15;
+  }
 }
 </style>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.4.0/video.js"></script>
@@ -671,6 +744,6 @@ chapters.src = asset('./media/the-waterline-v1-chapters.vtt');
 video.append(chapters);
 const mountedPlayer = createAfterimagePlayer(video, { example: { pinnedSeconds: 5, currentSeconds: 13 } });
 document.querySelector('#afterimage-player').append(mountedPlayer);
-window.__AFTERIMAGE_RELEASE__ = { version: '0.2.2-waterline', video, player: mountedPlayer };</script>
+window.__AFTERIMAGE_RELEASE__ = { version: '0.2.3-waterline', video, player: mountedPlayer };</script>
 </body>
 </html>
