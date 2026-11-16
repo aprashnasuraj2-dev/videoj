@@ -1,0 +1,72 @@
+name: AFTERIMAGE official release gates
+
+on:
+  push:
+    branches:
+      - afterimage
+    paths:
+      - 'afterimage/tests/official-gates.playwright.mjs'
+      - 'afterimage/tests/touch-robustness.playwright.mjs'
+      - '.github/workflows/afterimage-official-gates.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  keyboard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: afterimage
+    env:
+      AFTERIMAGE_URL: https://afterimage.aafnaipatro.com/
+      AFTERIMAGE_RELEASE: 070f19767660833016291a23235a1ae671ad5f57
+      AFTERIMAGE_VERSION: 0.3.6-keyboard-visible
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: afterimage/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Definitive keyboard-only journey
+        run: xvfb-run -a node tests/official-gates.playwright.mjs
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: afterimage-official-keyboard-evidence
+          path: afterimage/artifacts/official-gates/
+          if-no-files-found: error
+          retention-days: 30
+
+  touch-robustness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: afterimage
+    env:
+      AFTERIMAGE_URL: https://afterimage.aafnaipatro.com/
+      AFTERIMAGE_RELEASE: 070f19767660833016291a23235a1ae671ad5f57
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: afterimage/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Pointer, touch and race gates
+        run: node tests/touch-robustness.playwright.mjs
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: afterimage-touch-robustness-evidence
+          path: afterimage/artifacts/touch-robustness/
+          if-no-files-found: error
+          retention-days: 30
