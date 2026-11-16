@@ -120,13 +120,24 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
       weaveObserver=new MutationObserver(applyWeave);
       weaveObserver.observe(chapterRoot,{childList:true,subtree:true});
     }
-    for(const type of ['loadedmetadata','durationchange'] as const)
-      video.addEventListener(type,applyWeave);
-    video.addEventListener('emptied', () => {
-      if (video.getAttribute('src') === initialSource) return;
-      container.removeAttribute('data-weave-sampled');
-      colored = false;
-    });
+    const syncSourceWeave = () => {
+      // A host may replace media on the same player. The old swatches are
+      // authored for the original source, not for the replacement's cues.
+      if (video.getAttribute('src') !== initialSource) {
+        chapterRoot?.querySelectorAll<HTMLElement>('.media-time-slider-chapter').forEach(node => {
+          node.style.removeProperty('--dhago-weave-color');
+          node.style.removeProperty('--dhago-weave-thread');
+        });
+        container.removeAttribute('data-weave-sampled');
+        colored = false;
+        weaveObserver?.disconnect();
+        weaveObserver = null;
+        return;
+      }
+      applyWeave();
+    };
+    for(const type of ['loadstart','loadedmetadata','durationchange','emptied'] as const)
+      video.addEventListener(type,syncSourceWeave);
   }
   // Native <details> provides a keyboard/touch chapter picker inside the skin.
   // The time-slider remains the sole continuous seeking surface.
