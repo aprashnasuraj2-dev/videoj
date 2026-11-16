@@ -119,3 +119,10 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Root cause: authored-example.js queried the seam inside the Temporal Lens element even though the reveal range lives in the shared player stage.
 - Fixed the authored helper to focus the player-level seam control after the pair opens. This aligns keyboard behavior with the existing mouse/authored flow and Escape focus restoration.
 - **Next action:** regenerate standalone, deploy exact source, rerun the expanded three-engine suite.
+
+## 2026-11-16 · WebKit authored-focus stabilization
+
+- Deep Firefox and Chromium runs pass the keyboard-only authored comparison after the player-level focus fix.
+- WebKit opens the correct pair by keyboard but loses the immediate focus transfer during its asynchronous seek/render update, despite direct range focus working elsewhere in the same engine.
+- The authored helper now retries the seam focus on the next animation frame only if focus did not stick. This preserves normal engines and makes the handoff resilient to WebKit's post-seek UI update ordering.
+- **Next action:** regenerate/redeploy exact source and rerun the deep matrix.
