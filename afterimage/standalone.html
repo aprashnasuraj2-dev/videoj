@@ -8,7 +8,7 @@
 <title>AFTERIMAGE — Temporal Lens</title>
 <style>:root { color-scheme: dark; background: #0b1116; color: #f0e9d9; font-family: Inter, Geist, ui-sans-serif, system-ui, sans-serif; }
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; background: radial-gradient(circle at 15% -10%, rgb(182 218 230 / .09), transparent 32rem), #0b1116; }
+body { margin: 0; background: radial-gradient(circle at 15% -10%, rgb(182 218 230 / .09), transparent 32rem), #0b1116; }
 main { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: clamp(24px, 5vw, 68px) 0 80px; }
 header { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, .55fr); gap: 22px; align-items: end; margin-bottom: 22px; }
 h1 { margin: 0; font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: clamp(48px, 8vw, 106px); font-weight: 400; letter-spacing: -.055em; line-height: .82; }
@@ -107,6 +107,21 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
   .afterimage { border: 1px solid CanvasText; }
   .afterimage .afterimage-pin, .afterimage .afterimage-pin i, .afterimage .afterimage-seam { forced-color-adjust: none; background: Highlight; color: HighlightText; }
   .afterimage .afterimage-interval { border-color: Highlight; background: transparent; }
+}
+
+@container (max-width: 300px) {
+  .afterimage .afterimage-deck { padding-inline: 8px; }
+  .afterimage .afterimage-bar { grid-template-columns: 1fr auto; gap: 6px; }
+  .afterimage .afterimage-options { gap: 2px; }
+  .afterimage .afterimage-lens { gap: 6px; }
+  .afterimage .afterimage-lens-primary { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 6px; }
+  .afterimage .afterimage-lens-primary .afterimage-action { width: 100%; min-width: 0; padding-inline: 8px; }
+  .afterimage .afterimage-presets { width: 100%; gap: 4px; }
+  .afterimage .afterimage-presets button { min-width: 0; padding-inline: 6px; }
+  .afterimage .afterimage-clear { min-width: 0; padding-inline: 6px; }
+  .afterimage .afterimage-relation { gap: 5px; }
+  .afterimage .afterimage-relation > span { padding-inline: 7px; }
+  .afterimage .afterimage-clock { font-size: 12px; }
 }
 </style>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.4.0/video.js"></script>
@@ -656,6 +671,6 @@ chapters.src = asset('./media/the-waterline-v1-chapters.vtt');
 video.append(chapters);
 const mountedPlayer = createAfterimagePlayer(video, { example: { pinnedSeconds: 5, currentSeconds: 13 } });
 document.querySelector('#afterimage-player').append(mountedPlayer);
-window.__AFTERIMAGE_RELEASE__ = { version: '0.2.1-waterline', video, player: mountedPlayer };</script>
+window.__AFTERIMAGE_RELEASE__ = { version: '0.2.2-waterline', video, player: mountedPlayer };</script>
 </body>
 </html>
