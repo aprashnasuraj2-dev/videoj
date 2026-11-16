@@ -92,6 +92,9 @@ jobs:
       - name: Judge-first-use automation metric
         run: node --test tests/judge-first-use.test.mjs
 
+      - name: Verify submitted URL after in-place hardening deploy
+        run: node --test tests/mux-release.test.mjs
+
       - name: Validate existing checklist/resume invariants
         if: always()
         run: node scripts/check-progress.mjs
