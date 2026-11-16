@@ -69,14 +69,14 @@ try {
   const cdp=await mobile.newCDPSession(touchPage);
   const touch=(type,x,y)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:(type==='touchEnd'||type==='touchCancel')?[]:[{x,y,radiusX:2,radiusY:2,force:1}],modifiers:0});
   const y=tb.y+tb.height/2;
-  await touch('touchStart',tb.x+tb.width*0.25,y);
-  for(const f of [0.38,0.52,0.67,0.81]) await touch('touchMove',tb.x+tb.width*f,y);
+  await touch('touchStart',tb.x+tb.width*0.50,y);
+  for(const f of [0.60,0.70,0.81]) await touch('touchMove',tb.x+tb.width*f,y);
   await touch('touchEnd',0,0);
   await touchPage.waitForTimeout(120);
   const touchDrag=Number(await touchSeam.inputValue());
   check('seam-horizontal-touch-drag',touchDrag>=68&&touchDrag<=92,{touchDrag});
 
-  await touch('touchStart',tb.x+tb.width*0.55,y);
+  await touch('touchStart',tb.x+tb.width*(touchDrag/100),y);
   await touch('touchMove',tb.x+tb.width*0.42,y);
   await touch('touchCancel',0,0);
   const afterCancel=Number(await touchSeam.inputValue());
