@@ -266,6 +266,111 @@ try {
     await cdp.send('Emulation.setPageScaleFactor', { pageScaleFactor: 1 });
   }
 
+  const controlsPage = await context.newPage();
+  const controlsResponse = await controlsPage.goto(baseURL, { waitUntil: 'networkidle', timeout: 60000 });
+  if (expectedRelease) {
+    const controlsRelease = controlsResponse?.headers()?.['x-afterimage-release'] || null;
+    check('controls-serving-release', controlsRelease === expectedRelease, { controlsRelease, expectedRelease });
+  }
+  await controlsPage.waitForFunction(() => {
+    const release = window.__AFTERIMAGE_RELEASE__;
+    return release?.video?.readyState >= 1 && Number.isFinite(release.video.duration);
+  }, null, { timeout: 30000 });
+
+  const playControl = controlsPage.locator('media-play-button');
+  await playControl.click();
+  await controlsPage.waitForFunction(() => !window.__AFTERIMAGE_RELEASE__.video.paused);
+  const afterPlay = await controlsPage.evaluate(() => ({
+    paused: window.__AFTERIMAGE_RELEASE__.video.paused,
+    time: window.__AFTERIMAGE_RELEASE__.video.currentTime,
+  }));
+  await controlsPage.waitForTimeout(350);
+  await playControl.click();
+  await controlsPage.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.paused);
+  const afterPause = await controlsPage.evaluate(() => ({
+    paused: window.__AFTERIMAGE_RELEASE__.video.paused,
+    time: window.__AFTERIMAGE_RELEASE__.video.currentTime,
+  }));
+  check('essential-play-pause', !afterPlay.paused && afterPause.paused && afterPause.time > afterPlay.time, { afterPlay, afterPause });
+
+  const seekControl = controlsPage.locator('media-time-slider');
+  const seekBox = await seekControl.boundingBox();
+  check('seek-control-has-geometry', Boolean(seekBox && seekBox.width > 100), seekBox);
+  await seekControl.click({ position: { x: Math.round(seekBox.width * 0.62), y: Math.round(seekBox.height / 2) } });
+  await controlsPage.waitForFunction(() => {
+    const v = window.__AFTERIMAGE_RELEASE__.video;
+    return v.currentTime > v.duration * 0.45 && v.currentTime < v.duration * 0.8;
+  }, null, { timeout: 3000 });
+  const seekState = await controlsPage.evaluate(() => {
+    const { video, player } = window.__AFTERIMAGE_RELEASE__;
+    return {
+      currentTime: video.currentTime,
+      duration: video.duration,
+      currentLabel: player.querySelector('media-time[type="current"]')?.textContent?.trim() || '',
+      durationLabel: player.querySelector('media-time[type="duration"]')?.textContent?.trim() || '',
+    };
+  });
+  check(
+    'essential-seek-time',
+    seekState.currentTime > seekState.duration * 0.45 &&
+      seekState.currentTime < seekState.duration * 0.8 &&
+      /\d/.test(seekState.currentLabel) &&
+      /\d/.test(seekState.durationLabel),
+    seekState,
+  );
+
+  const muteControl = controlsPage.locator('media-mute-button');
+  const initialAudio = await controlsPage.evaluate(() => {
+    const v = window.__AFTERIMAGE_RELEASE__.video;
+    return { muted: v.muted, volume: v.volume };
+  });
+  await muteControl.click();
+  await controlsPage.waitForFunction(previous => window.__AFTERIMAGE_RELEASE__.video.muted !== previous, initialAudio.muted);
+  const mutedState = await controlsPage.evaluate(() => ({
+    muted: window.__AFTERIMAGE_RELEASE__.video.muted,
+    volume: window.__AFTERIMAGE_RELEASE__.video.volume,
+  }));
+  await muteControl.click();
+  await controlsPage.waitForFunction(previous => window.__AFTERIMAGE_RELEASE__.video.muted !== previous, mutedState.muted);
+  const unmutedState = await controlsPage.evaluate(() => ({
+    muted: window.__AFTERIMAGE_RELEASE__.video.muted,
+    volume: window.__AFTERIMAGE_RELEASE__.video.volume,
+  }));
+  check('essential-mute-toggle', mutedState.muted !== initialAudio.muted && unmutedState.muted === initialAudio.muted, { initialAudio, mutedState, unmutedState });
+
+  const volumeControl = controlsPage.locator('media-volume-slider');
+  await volumeControl.focus();
+  await controlsPage.keyboard.press('Home');
+  await controlsPage.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.volume <= 0.01, null, { timeout: 2000 });
+  const lowVolume = await controlsPage.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.volume);
+  await controlsPage.keyboard.press('End');
+  await controlsPage.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.volume >= 0.99, null, { timeout: 2000 });
+  const highVolume = await controlsPage.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.volume);
+  check('essential-volume-range', lowVolume <= 0.01 && highVolume >= 0.99, { lowVolume, highVolume });
+
+  const fullscreenSupport = await controlsPage.evaluate(() => ({
+    enabled: Boolean(document.fullscreenEnabled),
+    named: Boolean(window.__AFTERIMAGE_RELEASE__.player.querySelector('media-fullscreen-button')?.getAttribute('aria-label')),
+  }));
+  check('fullscreen-control-present', fullscreenSupport.named, fullscreenSupport);
+  if (browserName === 'chromium' && fullscreenSupport.enabled) {
+    const fullscreenControl = controlsPage.locator('media-fullscreen-button');
+    await fullscreenControl.click();
+    await controlsPage.waitForFunction(() => Boolean(document.fullscreenElement), null, { timeout: 3000 });
+    const enteredFullscreen = await controlsPage.evaluate(() => ({
+      active: Boolean(document.fullscreenElement),
+      tag: document.fullscreenElement?.tagName || null,
+    }));
+    await controlsPage.keyboard.press('Escape');
+    await controlsPage.waitForFunction(() => !document.fullscreenElement, null, { timeout: 3000 });
+    check('essential-fullscreen-roundtrip', enteredFullscreen.active, enteredFullscreen);
+  } else {
+    report.notes.fullscreen = browserName === 'chromium'
+      ? 'Fullscreen control is named and present; this headless Chromium environment reports document.fullscreenEnabled=false, so native transition is not asserted here.'
+      : 'Native fullscreen transition is asserted only in Chromium when the headless environment exposes Fullscreen API; control presence/name is checked in every engine.';
+  }
+  await controlsPage.close();
+
   const keyboardPage = await context.newPage();
   await keyboardPage.goto(baseURL, { waitUntil: 'networkidle', timeout: 60000 });
   await keyboardPage.waitForFunction(() => Boolean(window.__AFTERIMAGE_RELEASE__), null, { timeout: 30000 });

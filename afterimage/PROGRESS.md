@@ -206,3 +206,11 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Visual review found the final exact-pair page still still carried the caption enabled earlier in the reel. Captions are useful evidence, but the hero still should communicate the Temporal Lens without competing overlay text.
 - Capture choreography now disables captions after their demonstration, writes the final exact 00:05 / 00:13 / +00:08 player view as `afterimage-primary-still.png`, retains the earlier state as `afterimage-inspection-still.png`, and adds `afterimage-keyboard-focus.png` after focusing the seam.
 - Mobile capture now starts playback before the authored pair and pauses after it, giving the 390px evidence the same playback semantics as the desktop primary flow.
+
+
+## 2026-11-16 · official minimum-control gate added
+
+- Contra's active challenge definition confirms the pre-score minimum controls are play/pause, seek bar, time, volume/mute and fullscreen, plus responsive and keyboard operation.
+- Existing evidence already covered playback start, responsive layout, keyboard flow and captions, but mute/volume and native fullscreen state changes were not directly observed.
+- The exact-release browser matrix now adds a separate essential-controls page: real play→pause state transition, pointer seek with time readout, mute→unmute, volume Home→End, fullscreen control naming in every engine, and a Chromium native fullscreen enter/Escape round trip when the headless environment exposes Fullscreen API.
+- The public candidate remains pinned to `f0bed46...`; this is verification-only branch work.
