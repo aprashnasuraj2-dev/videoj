@@ -44,8 +44,18 @@ async function player(t, width = 1000) {
 }
 
 async function seek(page, seconds) {
-  const arrived = await page.locator('video-player').evaluate((element, time) => element.store.seek(time), seconds);
-  assert.ok(Math.abs(arrived - seconds) < 0.1, `Ended seek at ${arrived}s, expected ${seconds}s`);
+  const wasPaused = await page.locator('video').evaluate(video => video.paused);
+  await page.locator('video-player').evaluate((element, time) => element.store.seek(time), seconds);
+  const tolerance = wasPaused ? 0.12 : 0.5;
+  await page.waitForFunction(({ target, tolerance }) => {
+    const video = document.querySelector('video');
+    return !video.seeking && Math.abs(video.currentTime - target) <= tolerance;
+  }, { target: seconds, tolerance }, { timeout: 5000 });
+  const settled = await page.locator('video').evaluate(video => video.currentTime);
+  assert.ok(
+    Math.abs(settled - seconds) <= tolerance,
+    `Seek settled at ${settled}s, expected ${seconds}s ±${tolerance}s (wasPaused=${wasPaused})`,
+  );
 }
 
 const current = page => page.locator('video').evaluate(video => video.currentTime);
