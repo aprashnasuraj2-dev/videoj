@@ -1,10 +1,10 @@
 # AFTERIMAGE rules and evidence register
 
-Checked 2026-11-16 before implementation.
+Checked 2026-11-16 before implementation; rechecked after final release closure.
 
 ## Verified challenge state
 
-- Contra status: **ACTIVE**; submissions are enabled.
+- Contra status: **ACTIVE**; submissions are enabled (rechecked after final release closure).
 - Deadline: **2026-11-17T07:59:00Z**, which is Nov 16, 11:59 p.m. PST and Nov 17, 1:44 p.m. NPT.
 - Entry license: Apache License 2.0.
 - Required submission: a public URL with a Video.js v10 player playing video, one visual, and a short design description.

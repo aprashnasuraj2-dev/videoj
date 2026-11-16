@@ -4,6 +4,8 @@
 
 **Public proof:** https://afterimage.aafnaipatro.com/
 
+**Live-site portability proof:** https://aafnaipatro.com/on-this-day/afterimage/apollo-11/ — the same final skin on different Mux-hosted media with host-owned theme, poster, captions and chapters.
+
 The challenge candidate uses Video.js v10.4.0 and the original 18-second **THE WATERLINE** proof film. Its authored example compares the same locked architecture dry at 00:05 and wet at 00:13. Manual pinning remains media-agnostic.
 
 ## Install and integrate

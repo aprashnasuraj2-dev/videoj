@@ -282,3 +282,18 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - The direct Mux MP4 is the first source; a same-origin proxy of the same Mux asset is only a playback fallback.
 - Added a dedicated browser gate requiring the exact AFTERIMAGE release, direct `stream.mux.com` currentSrc, public playback ID, >40s alternate film, captions + chapters, manual-only host behavior, playing manual pin, presets and live caption activation.
 - **Next action:** use the browser result to decide whether bonus tasks 72–73 and 77–79 can be promoted to done.
+
+
+## 2026-11-16 · final release closure and submission handoff
+
+- Serving product is frozen at `2316dc7f07f5b73a2d30d7e95fc5b09e6f83fb69`, runtime `0.3.10-control-fit`.
+- Exact product CI run `43810424989` passed locked install, architecture, reproducible standalone generation, Vite build and package inspection.
+- Official release run `43810603770` passed all three jobs: definitive keyboard-only journey, pointer/touch/race robustness, and judge first-use.
+- Final three-engine matrix `43810610298` passed Chromium, Firefox and WebKit.
+- Headed fullscreen was strengthened after artifact review; run `43812044536` proved the label settles correctly after exit: `Enter fullscreen → Exit fullscreen → Enter fullscreen`. The earlier stale label snapshot was a sampling race, not a product defect.
+- Submission capture `43810624542` produced a 1,004,957-byte primary PNG and 52.28s / 5,213,051-byte silent H.264 MP4 from the exact release.
+- Aafnai Patro + Mux run `43810653422` passed direct Mux playback, public playback ID, lime host theme, Mux poster, host captions/chapters, navigation/attribution, manual pin and presets.
+- Cloudflare primary deployment is `0b1d5abb-07ae-4c97-87e8-66512216bcfa` / version `05caf0d5-26c7-432a-abbf-ed77fe092e6b` at 100%. Apollo is isolated at deployment `37a1a47a-7e1f-40dd-af3c-124d7cf00933`.
+- Checklist was reconciled without inflating coverage: physical phone/screen reader, numbered-frame fixture, explicit slow-device/network profiling, two-instance stress, true cross-origin-taint/expired-provider failure and signed-in form upload acceptance remain unclaimed.
+- `docs/SUBMISSION.md` is now form-ready; `docs/FINAL_HANDOFF.md` records exact fields, evidence artifacts, rollback and the remaining account action.
+- **Next action:** complete the signed-in Contra submission using the prepared URL/visual/description + Mux ID + live-site URL, then record confirmation. Keep the Mux asset live through judging.

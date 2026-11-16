@@ -1,5 +1,78 @@
 # AFTERIMAGE observed evidence
 
+> **Current release closure — 2026-11-16.** Product source is frozen at `2316dc7f07f5b73a2d30d7e95fc5b09e6f83fb69`, runtime `0.3.10-control-fit`. Historical sections below preserve earlier candidates and gaps; where they conflict with this closure, this section is authoritative.
+
+## Final exact release
+
+- Public candidate: https://afterimage.aafnaipatro.com/
+- Video.js: `@videojs/html@10.4.0`
+- Product source: `2316dc7f07f5b73a2d30d7e95fc5b09e6f83fb69`
+- Runtime marker: `0.3.10-control-fit`
+- Cloudflare Worker: `afterimage-preview`
+- Current deployment: `0b1d5abb-07ae-4c97-87e8-66512216bcfa`
+- Current Worker version: `05caf0d5-26c7-432a-abbf-ed77fe092e6b` at 100% traffic.
+- Product-source CI: run `43810424989` — locked install, architecture, deterministic standalone regeneration, Vite build and package inspection all passed.
+- Final three-engine matrix: run `43810610298` — Chromium / Firefox / WebKit all passed against the exact release header and runtime marker.
+- Final official gates: run `43810603770` — keyboard-only, pointer/touch/race robustness, and judge first-use jobs all passed.
+- Strengthened headed fullscreen: run `43812044536` — native wrapper enter, deck fit, visible Play, control exit, and accessible label `Enter fullscreen → Exit fullscreen → Enter fullscreen` all passed.
+- Submission capture: run `43810624542` — final stills and reel captured from the exact public release.
+- AafnaiPatro + Mux bonus: run `43810653422` — exact final skin release, direct Mux currentSrc, host theme/tracks/poster/navigation and manual pin all passed.
+
+## Final judge-facing measurements
+
+- Fresh desktop load: Play 44×44; Seek 710.94×44; Try a comparison 184.09×44; no horizontal overflow.
+- Fresh keyboard order: first Tab lands on Play; Shift+Tab is reversible.
+- Keyboard playback: Enter advanced media to 0.546s; Space paused at 0.548196s with no clock drift.
+- Keyboard seek: 0.699s / 0:00 → 4.075s / 0:04 using ArrowRight.
+- Mute: false → true → false. Volume: 1.00 → 0.90 → 0.95 by keyboard.
+- Focus: 3px outline; focus contrast 12.07:1; control text contrast 14.80:1.
+- Captions: three WATERLINE cues load and keyboard toggle enters `showing`; captions survive fullscreen.
+- Native fullscreen: wrapper fills the viewport; stage/deck boundary is registered; deck bottom equals viewport bottom; Play remains visible.
+- First-use proof: ordinary playback → 00:05/00:13 pair → seam drag → Close → Clear completed in 1.25s of automated interaction, with playback preserved.
+- Pointer/touch reveal: click 27%, mouse drag 76%, outside release clamped 100%, touch tap 31%, touch drag 81%, touch cancel stayed bounded; page vertical scroll remained functional (0 → 502px).
+- Atomic failure: forced canvas failure retained the previous valid pin/canvas and kept Play/Seek/Volume/Fullscreen usable while playback continued.
+- Race safety: delayed re-pin after Close did not stale-apply; same-URL reload/source change invalidated a pending capture.
+- Three-engine stress remains bounded to one 1279×719 reference canvas (~3.51 MiB raw RGBA) over 20 repeated pins, with zero app fetch/XHR from capture/seam operations and clean teardown.
+
+## WATERLINE media
+
+- Runtime observed by final capture: 18.013s (manifest target 18.000s).
+- 1280×720, 24fps; VP9/Opus WebM first source with H.264/AAC MP4 fallback.
+- Authored pair: dry 00:05 → wet 00:13; signed interval +00:08.
+- Six committed check frames: 3, 5, 7, 11, 13 and 15 seconds.
+- Original AI-assisted matched keyframes, in-repository motion/edit, procedural FFmpeg sound, captions and chapters.
+- Provenance, source task IDs, codecs and hashes: `public/media/the-waterline-v1.json` + `media-plan.json`.
+
+## Submission media
+
+Artifact `14200790244` from run `43810624542` contains:
+
+- `afterimage-primary-still.png` — 1,004,957 bytes.
+- `afterimage-inspection-still.png`.
+- `afterimage-mobile-390.png`.
+- `afterimage-keyboard-focus.png`.
+- `afterimage-submission-page.png`.
+- `afterimage-submission-reel.mp4` — 52.28s, 5,213,051 bytes, no audio.
+- WebM recording and exact-release JSON reports.
+
+## Mux + real-site bonus proof
+
+- Live site: https://aafnaipatro.com/on-this-day/afterimage/apollo-11/
+- Public playback ID: `kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U`
+- Browser-observed current source: `https://stream.mux.com/kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U/highest.mp4`
+- Media observed: 46.94s, 640×360.
+- Host theme: lime `#d9ff4a`.
+- Host supplies its own Mux poster, captions, chapters and normal Aafnai Patro navigation/NASA attribution.
+- WATERLINE authored shortcut is absent; manual Pin moment is present and works while playback advances.
+- Current Apollo Worker deployment: `37a1a47a-7e1f-40dd-af3c-124d7cf00933`, version `e85068b9-4e0e-4976-85d3-f4c42ecbd55a` at 100% traffic.
+- Operational requirement: keep the Mux asset live through judging.
+
+## Explicit remaining limits
+
+Do **not** claim these as tested: physical-phone hardware, screen-reader session, numbered-frame tolerance fixture, dedicated slow-network/low-CPU profiling, two simultaneous player instances, true tainted cross-origin canvas/expired-provider failure, or a comparison+fullscreen caption-readability capture. Public requirements do not expose signed-in visual-upload size constraints, and no challenge submission has been executed from this toolset.
+
+---
+
 Evidence here is limited to what was actually exercised. A code path existing is not treated as a pass.
 
 ## Exact-source build
