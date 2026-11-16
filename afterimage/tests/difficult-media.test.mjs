@@ -227,6 +227,37 @@ test('difficult-media: no captions/no poster and long real cue preserve ordinary
   }
 });
 
+test('difficult-media: displayed buffered extent is derived from native media ranges', { timeout: 25000 }, async () => {
+  const page = await browser.newPage({ viewport: { width: 768, height: 900 } });
+  try {
+    await ready(page);
+    await page.waitForTimeout(300);
+    const observed = await page.locator('#player-a').evaluate(player => {
+      const video = player.querySelector('video');
+      const slider = player.querySelector('media-time-slider');
+      const ranges = [];
+      for (let i = 0; i < video.buffered.length; i += 1) {
+        ranges.push([video.buffered.start(i), video.buffered.end(i)]);
+      }
+      const rendered = parseFloat(
+        slider.style.getPropertyValue('--media-slider-buffer')
+        || getComputedStyle(slider).getPropertyValue('--media-slider-buffer')
+        || '0'
+      );
+      const expected = ranges.length && Number.isFinite(video.duration) && video.duration > 0
+        ? Math.max(0, Math.min(100, ranges[ranges.length - 1][1] / video.duration * 100))
+        : 0;
+      return { duration: video.duration, ranges, rendered, expected };
+    });
+    check('native-buffer-range-derived',
+      Number.isFinite(observed.rendered)
+      && Math.abs(observed.rendered - observed.expected) <= 2,
+      observed);
+  } finally {
+    await page.close();
+  }
+});
+
 test('difficult-media: >1-hour duration and seekable-range mutation stay truthful', { timeout: 25000 }, async () => {
   const page = await browser.newPage({ viewport: { width: 768, height: 900 } });
   try {
