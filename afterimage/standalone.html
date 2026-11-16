@@ -609,7 +609,7 @@ export function bindAfterimageExample(player, video, example) {
       status.textContent = 'Example opened: pinned ' + formatAfterimageTime(reference.time) +
         ', now ' + formatAfterimageTime(video.currentTime) +
         (playbackIntentPreserved ? '.' : '. Playback state changed during the browser seek.');
-      lens.querySelector('.afterimage-seam-control')?.focus({ preventScroll: true });
+      player.querySelector('.afterimage-seam-control')?.focus({ preventScroll: true });
     } catch (error) {
       if (error?.name !== 'AbortError') status.textContent = error instanceof Error ? error.message : 'The example could not be opened.';
     } finally {
@@ -751,6 +751,6 @@ chapters.src = asset('./media/the-waterline-v1-chapters.vtt');
 video.append(chapters);
 const mountedPlayer = createAfterimagePlayer(video, { example: { pinnedSeconds: 5, currentSeconds: 13 } });
 document.querySelector('#afterimage-player').append(mountedPlayer);
-window.__AFTERIMAGE_RELEASE__ = { version: '0.3.0-dual-codec', video, player: mountedPlayer };</script>
+window.__AFTERIMAGE_RELEASE__ = { version: '0.3.1-keyboard', video, player: mountedPlayer };</script>
 </body>
 </html>
