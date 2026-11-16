@@ -184,3 +184,10 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - The capture gate had incorrectly required an unmarked exact pin even though AFTERIMAGE intentionally exposes the approximation marker when no presented-frame callback arrives inside the bound.
 - The reel assertion now preserves that semantic distinction: it requires normalized pinned time `00:05`, Now `00:13`, and Interval `+00:08`, while recording whether the final pin was approximate.
 - Increased deliberate holds so the finished evidence reel lands closer to the planned ~55-second submission length while remaining understandable with audio off.
+
+
+## 2026-11-16 · freeze the closing hero pair
+
+- Submission capture run `43802338378` reached an exact `00:05 / 00:13` authored pair, but the newly extended final hold allowed normal playback to continue to `00:18`, making the closing assertion correctly fail at `+00:13`.
+- The reel now pauses immediately after the final authored pair resolves, then holds the 00:05 / 00:13 / +00:08 visual for the closing shot.
+- This changes only capture choreography; the public player remains immutable.

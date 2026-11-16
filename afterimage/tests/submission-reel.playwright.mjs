@@ -124,6 +124,10 @@ try {
     return !button?.disabled && video.currentTime > 12.6 && video.currentTime < 13.8 &&
       !player.querySelector('.afterimage-reference')?.hidden;
   }, null, { timeout: 8000 });
+  if (!await page.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.paused)) {
+    await page.locator('media-play-button').click();
+    await page.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.paused);
+  }
   await hold('final matched pair', 8500);
 
   await page.screenshot({ path: new URL('afterimage-submission-page.png', artifactDir).pathname, fullPage: false });
