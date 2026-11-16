@@ -26,7 +26,7 @@ function interfaceMarkup(enhancement = '') {
             <span class="detour-buffered" aria-hidden="true"></span>
             <media-slider-fill class="detour-fill"></media-slider-fill>
           </media-slider-track>
-          <media-slider-thumb class="detour-thumb"></media-slider-thumb>
+          <media-slider-thumb class="detour-thumb" tabindex="0"></media-slider-thumb>
         </media-time-slider>
         <span class="detour-origin" hidden aria-hidden="true"></span>
       </div>
