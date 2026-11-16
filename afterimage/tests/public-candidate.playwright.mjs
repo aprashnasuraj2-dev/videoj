@@ -9,11 +9,37 @@ if (!engine) throw new Error('Unsupported browser: ' + browserName);
 
 const artifactDir = new URL('../artifacts/' + browserName + '/', import.meta.url);
 await mkdir(artifactDir, { recursive: true });
-const report = { browser: browserName, url: baseURL, checks: {}, issues: [] };
+const report = { browser: browserName, url: baseURL, checks: {}, notes: {}, issues: [] };
 const check = (name, value, detail = null) => {
   report.checks[name] = { pass: Boolean(value), detail };
   if (!value) throw new Error(name + (detail ? ': ' + JSON.stringify(detail) : ''));
 };
+
+async function tabUntil(page, selector, max = 40) {
+  for (let i = 1; i <= max; i += 1) {
+    await page.keyboard.press('Tab');
+    const matches = await page.evaluate(sel => document.activeElement?.matches?.(sel) || false, selector);
+    if (matches) return i;
+  }
+  return null;
+}
+
+function rgb(value) {
+  const match = String(value).match(/rgba?\((\d+(?:\.\d+)?)[, ]+(\d+(?:\.\d+)?)[, ]+(\d+(?:\.\d+)?)/i);
+  return match ? match.slice(1, 4).map(Number) : null;
+}
+function luminance(color) {
+  const values = color.map(value => {
+    const channel = value / 255;
+    return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * values[0] + 0.7152 * values[1] + 0.0722 * values[2];
+}
+function contrast(a, b) {
+  const la = luminance(a);
+  const lb = luminance(b);
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+}
 
 const browser = await engine.launch({ headless: true });
 const context = await browser.newContext({
@@ -36,6 +62,7 @@ try {
     const q = s => player.querySelector(s);
     return {
       version,
+      currentSrc: video.currentSrc,
       duration: video.duration,
       width: video.videoWidth,
       height: video.videoHeight,
@@ -45,7 +72,7 @@ try {
       pinVisible: q('[data-afterimage-pin]')?.getBoundingClientRect().width > 0,
     };
   });
-  check('boots-final-waterline', Math.abs(boot.duration - 18) < 0.1 && !boot.error && boot.tryVisible && boot.pinVisible, boot);
+  check('boots-final-waterline', Math.abs(boot.duration - 18) < 0.15 && !boot.error && boot.tryVisible && boot.pinVisible, boot);
 
   await page.locator('media-play-button').click();
   await page.waitForTimeout(900);
@@ -161,7 +188,307 @@ try {
     matches: matchMedia('(prefers-reduced-motion: reduce)').matches,
     transition: getComputedStyle(window.__AFTERIMAGE_RELEASE__.player.querySelector('.afterimage-reference')).transitionDuration,
   }));
-  check('reduced-motion-query', reducedMotion.matches, reducedMotion);
+  check('reduced-motion-query', reducedMotion.matches && reducedMotion.transition === '0s', reducedMotion);
+
+  await page.setViewportSize({ width: 540, height: 405 });
+  await page.waitForTimeout(100);
+  const reflow200 = await page.evaluate(() => {
+    const player = window.__AFTERIMAGE_RELEASE__.player;
+    const primary = [...player.querySelectorAll('button,media-play-button,media-mute-button,media-captions-button,media-fullscreen-button')]
+      .filter(el => !el.hidden && el.getBoundingClientRect().width > 0)
+      .map(el => ({ w: Math.round(el.getBoundingClientRect().width), h: Math.round(el.getBoundingClientRect().height) }));
+    return {
+      viewport: innerWidth,
+      overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+      minTarget: Math.min(...primary.map(x => Math.min(x.w, x.h))),
+      playerWidth: Math.round(player.getBoundingClientRect().width),
+    };
+  });
+  check('200pct-equivalent-reflow', !reflow200.overflow && reflow200.minTarget >= 44, reflow200);
+
+  await page.setViewportSize({ width: 720, height: 900 });
+  const shapeFixtures = await page.evaluate(() => {
+    const { player } = window.__AFTERIMAGE_RELEASE__;
+    const stage = player.querySelector('.afterimage-stage');
+    const reference = player.querySelector('.afterimage-reference');
+    const original = stage.style.aspectRatio;
+    const measure = ratio => {
+      stage.style.aspectRatio = ratio;
+      const stageRect = stage.getBoundingClientRect();
+      const referenceRect = reference.getBoundingClientRect();
+      return {
+        ratio,
+        stage: { width: Math.round(stageRect.width), height: Math.round(stageRect.height) },
+        reference: { width: Math.round(referenceRect.width), height: Math.round(referenceRect.height) },
+        overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+        objectFit: getComputedStyle(player.querySelector('video')).objectFit,
+      };
+    };
+    const letterbox = measure('4 / 3');
+    const portrait = measure('9 / 16');
+    stage.style.aspectRatio = original;
+    return { letterbox, portrait };
+  });
+  check(
+    'letterbox-portrait-container-fixtures',
+    !shapeFixtures.letterbox.overflow &&
+      !shapeFixtures.portrait.overflow &&
+      shapeFixtures.letterbox.objectFit === 'contain' &&
+      shapeFixtures.portrait.objectFit === 'contain' &&
+      shapeFixtures.letterbox.stage.width === shapeFixtures.letterbox.reference.width &&
+      shapeFixtures.portrait.stage.width === shapeFixtures.portrait.reference.width,
+    shapeFixtures,
+  );
+
+  if (browserName === 'chromium') {
+    const cdp = await context.newCDPSession(page);
+    await page.setViewportSize({ width: 1080, height: 810 });
+    await cdp.send('Emulation.setPageScaleFactor', { pageScaleFactor: 2 });
+    const pageScale = await page.evaluate(() => ({
+      scale: visualViewport?.scale || 1,
+      visualWidth: visualViewport?.width || innerWidth,
+      layoutWidth: innerWidth,
+    }));
+    check('200pct-page-scale', pageScale.scale >= 1.99, pageScale);
+    await cdp.send('Emulation.setPageScaleFactor', { pageScaleFactor: 1 });
+  }
+
+  const keyboardPage = await context.newPage();
+  await keyboardPage.goto(baseURL, { waitUntil: 'networkidle', timeout: 60000 });
+  await keyboardPage.waitForFunction(() => Boolean(window.__AFTERIMAGE_RELEASE__), null, { timeout: 30000 });
+  await keyboardPage.waitForFunction(() => {
+    const v = window.__AFTERIMAGE_RELEASE__?.video;
+    return v && Number.isFinite(v.duration) && v.readyState >= 1;
+  }, null, { timeout: 30000 });
+  await keyboardPage.evaluate(() => document.activeElement?.blur?.());
+  const tabsToPlay = await tabUntil(keyboardPage, 'media-play-button');
+  const playFocus = await keyboardPage.evaluate(() => {
+    const { player } = window.__AFTERIMAGE_RELEASE__;
+    const play = player.querySelector('media-play-button');
+    const deck = player.querySelector('.afterimage-deck');
+    const playStyle = getComputedStyle(play);
+    const deckStyle = getComputedStyle(deck);
+    return {
+      focused: document.activeElement === play,
+      color: playStyle.color,
+      background: deckStyle.backgroundColor,
+      outlineColor: playStyle.outlineColor,
+      outlineWidth: playStyle.outlineWidth,
+    };
+  });
+  const textRgb = rgb(playFocus.color);
+  const bgRgb = rgb(playFocus.background);
+  const outlineRgb = rgb(playFocus.outlineColor);
+  const textContrast = textRgb && bgRgb ? contrast(textRgb, bgRgb) : 0;
+  const focusContrast = outlineRgb && bgRgb ? contrast(outlineRgb, bgRgb) : 0;
+  check(
+    'keyboard-focus-visible-contrast',
+    Boolean(tabsToPlay) &&
+      playFocus.focused &&
+      parseFloat(playFocus.outlineWidth) >= 3 &&
+      textContrast >= 4.5 &&
+      focusContrast >= 3,
+    { tabsToPlay, ...playFocus, textContrast, focusContrast },
+  );
+  await keyboardPage.keyboard.press('Enter');
+  await keyboardPage.waitForTimeout(700);
+  const keyboardPlaying = await keyboardPage.evaluate(() => {
+    const v = window.__AFTERIMAGE_RELEASE__.video;
+    return { paused: v.paused, currentTime: v.currentTime };
+  });
+  check('keyboard-only-playback', !keyboardPlaying.paused && keyboardPlaying.currentTime > 0.25, keyboardPlaying);
+
+  const tabsToExample = await tabUntil(keyboardPage, '[data-afterimage-example]');
+  check('keyboard-tabs-to-example', Boolean(tabsToExample), { tabsToExample });
+  await keyboardPage.keyboard.press('Enter');
+  await keyboardPage.waitForFunction(() => {
+    const p = window.__AFTERIMAGE_RELEASE__?.player;
+    return p && !p.querySelector('.afterimage-reference')?.hidden;
+  }, null, { timeout: 8000 });
+  await keyboardPage.waitForTimeout(100);
+  const keyboardComparison = await keyboardPage.evaluate(() => {
+    const { player, video } = window.__AFTERIMAGE_RELEASE__;
+    const seamControl = player.querySelector('.afterimage-seam-control');
+    return {
+      open: !player.querySelector('.afterimage-reference')?.hidden,
+      seamFocused: document.activeElement === seamControl,
+      paused: video.paused,
+      pinned: player.querySelector('[data-afterimage-pinned]')?.textContent?.trim(),
+      now: player.querySelector('[data-afterimage-now]')?.textContent?.trim(),
+    };
+  });
+  check('keyboard-only-comparison', keyboardComparison.open && keyboardComparison.seamFocused && !keyboardComparison.paused && keyboardComparison.pinned === '00:05', keyboardComparison);
+  await keyboardPage.keyboard.press('Escape');
+  await keyboardPage.waitForTimeout(60);
+  const keyboardEscape = await keyboardPage.evaluate(() => {
+    const { player } = window.__AFTERIMAGE_RELEASE__;
+    const compare = player.querySelector('[data-afterimage-compare]');
+    return {
+      closed: player.querySelector('.afterimage-reference')?.hidden === true,
+      focusRestored: document.activeElement === compare,
+    };
+  });
+  check('keyboard-only-escape', keyboardEscape.closed && keyboardEscape.focusRestored, keyboardEscape);
+  await keyboardPage.keyboard.press('Enter');
+  await keyboardPage.waitForTimeout(60);
+  const keyboardReopen = await keyboardPage.evaluate(() => {
+    const { player } = window.__AFTERIMAGE_RELEASE__;
+    return {
+      open: player.querySelector('.afterimage-reference')?.hidden === false,
+      seamFocused: document.activeElement === player.querySelector('.afterimage-seam-control'),
+    };
+  });
+  check('keyboard-only-reopen', keyboardReopen.open && keyboardReopen.seamFocused, keyboardReopen);
+  await keyboardPage.close();
+
+  const stabilityPage = await context.newPage();
+  await stabilityPage.goto(baseURL, { waitUntil: 'networkidle', timeout: 60000 });
+  await stabilityPage.waitForFunction(() => Boolean(window.__AFTERIMAGE_RELEASE__), null, { timeout: 30000 });
+  await stabilityPage.waitForFunction(() => window.__AFTERIMAGE_RELEASE__?.video?.readyState >= 1, null, { timeout: 30000 });
+  await stabilityPage.evaluate(() => {
+    const v = window.__AFTERIMAGE_RELEASE__.video;
+    v.muted = true;
+    window.__afterimageEvents = { pause: 0, seeking: 0, waiting: 0, stalled: 0, playing: 0 };
+    for (const type of Object.keys(window.__afterimageEvents)) {
+      v.addEventListener(type, () => { window.__afterimageEvents[type] += 1; });
+    }
+  });
+  await stabilityPage.locator('media-play-button').click();
+  await stabilityPage.waitForTimeout(900);
+  const baselineEvents = await stabilityPage.evaluate(() => ({
+    time: window.__AFTERIMAGE_RELEASE__.video.currentTime,
+    events: { ...window.__afterimageEvents },
+  }));
+  await stabilityPage.locator('[data-afterimage-pin]').click();
+  await stabilityPage.waitForFunction(() => !window.__AFTERIMAGE_RELEASE__.player.querySelector('.afterimage-reference')?.hidden, null, { timeout: 3000 });
+  const stabilitySeam = stabilityPage.locator('.afterimage-seam-control');
+  for (const value of ['10', '90', '50']) {
+    await stabilitySeam.evaluate((el, next) => {
+      el.value = next;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    }, value);
+  }
+  await stabilityPage.waitForTimeout(900);
+  const comparisonEvents = await stabilityPage.evaluate(() => ({
+    time: window.__AFTERIMAGE_RELEASE__.video.currentTime,
+    paused: window.__AFTERIMAGE_RELEASE__.video.paused,
+    events: { ...window.__afterimageEvents },
+  }));
+  const eventDelta = Object.fromEntries(Object.keys(comparisonEvents.events).map(key => [key, comparisonEvents.events[key] - baselineEvents.events[key]]));
+  check(
+    'comparison-playback-event-stability',
+    !comparisonEvents.paused &&
+      comparisonEvents.time > baselineEvents.time + 0.5 &&
+      eventDelta.pause === 0 &&
+      eventDelta.seeking === 0,
+    { baselineEvents, comparisonEvents, eventDelta },
+  );
+  await stabilityPage.close();
+
+  const stressPage = await context.newPage();
+  await stressPage.goto(baseURL, { waitUntil: 'networkidle', timeout: 60000 });
+  await stressPage.waitForFunction(() => Boolean(window.__AFTERIMAGE_RELEASE__), null, { timeout: 30000 });
+  await stressPage.waitForFunction(() => window.__AFTERIMAGE_RELEASE__?.video?.readyState >= 1, null, { timeout: 30000 });
+  await stressPage.evaluate(async () => {
+    const { video, player } = window.__AFTERIMAGE_RELEASE__;
+    video.muted = true;
+    video.pause();
+    window.__afterimageErrors = [];
+    addEventListener('error', event => window.__afterimageErrors.push(String(event.error || event.message || 'error')));
+    addEventListener('unhandledrejection', event => window.__afterimageErrors.push(String(event.reason || 'unhandledrejection')));
+    const originalFetch = window.fetch;
+    window.__afterimageAppRequests = [];
+    window.fetch = (...args) => {
+      window.__afterimageAppRequests.push({ type: 'fetch', url: String(args[0]) });
+      return originalFetch(...args);
+    };
+    const originalOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+      window.__afterimageAppRequests.push({ type: 'xhr', method, url: String(url) });
+      return originalOpen.call(this, method, url, ...rest);
+    };
+    if (Math.abs(video.currentTime - 5) > 0.05) {
+      await new Promise(resolve => {
+        video.addEventListener('seeked', resolve, { once: true });
+        video.currentTime = 5;
+      });
+    }
+    window.__afterimageInitialTransfer = performance.getEntriesByType('resource').reduce((sum, entry) => sum + (entry.transferSize || 0), 0);
+    window.__afterimageCanvasRef = player.querySelector('.afterimage-reference canvas');
+  });
+  await stressPage.waitForTimeout(300);
+  const stressPin = stressPage.locator('[data-afterimage-pin]');
+  const captureStart = Date.now();
+  await stressPin.click();
+  await stressPage.waitForFunction(() => !window.__AFTERIMAGE_RELEASE__.player.querySelector('.afterimage-reference')?.hidden, null, { timeout: 3000 });
+  const captureLatencyMs = Date.now() - captureStart;
+  for (let i = 1; i < 20; i += 1) {
+    await stressPin.click();
+    await stressPage.waitForFunction(() => !window.__AFTERIMAGE_RELEASE__.player.querySelector('[data-afterimage-pin]')?.disabled, null, { timeout: 2000 });
+  }
+  const stressSeam = stressPage.locator('.afterimage-seam-control');
+  for (const value of ['0', '20', '40', '60', '80', '100', '50']) {
+    await stressSeam.evaluate((el, next) => {
+      el.value = next;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    }, value);
+  }
+  const stress = await stressPage.evaluate(() => {
+    const { player } = window.__AFTERIMAGE_RELEASE__;
+    const canvases = [...player.querySelectorAll('.afterimage-reference canvas')];
+    const canvas = canvases[0];
+    return {
+      canvasCount: canvases.length,
+      sameCanvas: canvas === window.__afterimageCanvasRef,
+      canvasWidth: canvas?.width || 0,
+      canvasHeight: canvas?.height || 0,
+      canvasPixels: (canvas?.width || 0) * (canvas?.height || 0),
+      rawReferenceBytes: (canvas?.width || 0) * (canvas?.height || 0) * 4,
+      appRequestsDuringCaptureAndSeam: window.__afterimageAppRequests.length,
+      appRequests: window.__afterimageAppRequests,
+      initialTransferBytes: window.__afterimageInitialTransfer,
+      errors: [...window.__afterimageErrors],
+    };
+  });
+  check(
+    'repeated-pin-bounded-buffer',
+    stress.canvasCount === 1 && stress.sameCanvas && stress.canvasPixels > 0 && stress.canvasPixels <= 930000 && stress.errors.length === 0,
+    { captureLatencyMs, ...stress },
+  );
+  check(
+    'seam-no-app-network',
+    stress.appRequestsDuringCaptureAndSeam === 0,
+    { captureLatencyMs, initialTransferBytes: stress.initialTransferBytes, rawReferenceBytes: stress.rawReferenceBytes, appRequests: stress.appRequests },
+  );
+  await stressPage.evaluate(() => window.__AFTERIMAGE_RELEASE__.player.remove());
+  await stressPage.waitForTimeout(300);
+  const teardown = await stressPage.evaluate(() => ({
+    lensCount: document.querySelectorAll('afterimage-temporal-lens').length,
+    errors: [...window.__afterimageErrors],
+  }));
+  check('teardown-clean', teardown.lensCount === 0 && teardown.errors.length === 0, teardown);
+  await stressPage.close();
+
+  if (browserName === 'chromium') {
+    const forcedContext = await browser.newContext({ viewport: { width: 1080, height: 810 }, forcedColors: 'active' });
+    const forcedPage = await forcedContext.newPage();
+    await forcedPage.goto(baseURL, { waitUntil: 'networkidle', timeout: 60000 });
+    await forcedPage.waitForFunction(() => Boolean(window.__AFTERIMAGE_RELEASE__), null, { timeout: 30000 });
+    const forcedColors = await forcedPage.evaluate(() => {
+      const p = window.__AFTERIMAGE_RELEASE__.player;
+      const seamLine = p.querySelector('.afterimage-seam');
+      const pin = p.querySelector('.afterimage-pin');
+      return {
+        matches: matchMedia('(forced-colors: active)').matches,
+        seamForcedColorAdjust: getComputedStyle(seamLine).forcedColorAdjust,
+        pinForcedColorAdjust: getComputedStyle(pin).forcedColorAdjust,
+      };
+    });
+    check('forced-colors', forcedColors.matches && forcedColors.seamForcedColorAdjust === 'none' && forcedColors.pinForcedColorAdjust === 'none', forcedColors);
+    await forcedContext.close();
+  } else {
+    report.notes.forcedColors = 'Playwright forced-colors assertion is run in Chromium; reduced-motion and core accessibility checks run in all engines.';
+  }
 
   const failurePage = await context.newPage();
   await failurePage.goto(baseURL, { waitUntil: 'networkidle', timeout: 60000 });

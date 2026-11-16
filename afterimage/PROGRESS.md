@@ -106,3 +106,9 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Public host code now uses typed source elements: WebM first, MP4 fallback. The reusable skin remains source-agnostic.
 - This addresses GitHub-runner Chromium/Firefox H.264 decode absence without weakening the browser assertions or altering the 18-second authored timeline.
 - **Next action:** pass exact-source CI, deploy the dual-codec worker, and rerun Chromium/Firefox/WebKit full-flow evidence.
+
+## 2026-11-16 · deep browser evidence expansion
+
+- Dual-codec public matrix passed Chromium, Firefox and WebKit on the same live release.
+- Browser evidence is being expanded beyond mouse-driven happy path: Tab/Enter-only playback and example, focus contrast, 200%-equivalent reflow plus Chromium page-scale 2×, letterbox/portrait container fixtures, repeated 20-pin buffer reuse, clean teardown, transport event counters, app-network counters during seam changes, and Chromium forced-colors.
+- These tests remain public-candidate tests against afterimage.aafnaipatro.com; no TinyFish or paid browser service is used.
