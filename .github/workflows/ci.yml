@@ -55,13 +55,12 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Verify player interactions
         run: npm test
-      - name: Keep source-matched build for optional release staging
-        if: github.event_name != 'pull_request'
+      - name: Reuse source-matched build across browser checks and optional releases
         uses: actions/upload-artifact@v4
         with:
           name: dhago-build
           path: dist/
-          retention-days: 5
+          retention-days: 4
           if-no-files-found: error
       - name: Keep regression diagnostics only on failure
         if: failure()
@@ -90,14 +89,8 @@ jobs:
           cache: npm
       - run: npm ci
       - uses: actions/download-artifact@v4
-        if: github.event_name != 'pull_request'
         with:
           name: dhago-build
-      - name: Build on pull requests
-        if: github.event_name == 'pull_request'
-        run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-          DHAGO_REQUIRE_WEBM=1 npm run build
       - name: Install browser
         run: npx playwright install --with-deps ${{ matrix.browser }}
       - name: Exercise player in ${{ matrix.browser }}
