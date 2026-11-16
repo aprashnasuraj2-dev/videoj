@@ -341,7 +341,7 @@ test('keyboard-full-journey: Keep → two keyboard seeks → Return and Keep →
       captionsBeforeReturn.mode === 'showing' && captionsBeforeReturn.cueCount > 0,
       captionsBeforeReturn);
 
-    await keyboardSeekTo(page, 42);
+    await keyboardSeekTo(page, 42, { reverse: true });
     const holdTabs = await tabTo(page, '.detour-hold');
     check('keep-tab-reachable', holdTabs !== null, { holdTabs, active: await active(page) });
     const heldAt = await page.locator('video').evaluate(v => v.currentTime);
