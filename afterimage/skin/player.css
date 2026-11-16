@@ -16,6 +16,7 @@
   font-variant-numeric: tabular-nums;
   container-type: inline-size;
 }
+.afterimage [hidden] { display: none !important; }
 .afterimage .afterimage-stage { position: relative; overflow: hidden; background: #05080a; aspect-ratio: 16 / 9; isolation: isolate; }
 .afterimage .afterimage-screen, .afterimage .afterimage-reference { position: absolute; inset: 0; }
 .afterimage .afterimage-screen video, .afterimage .afterimage-reference canvas { display: block; width: 100%; height: 100%; object-fit: contain; background: #05080a; }
