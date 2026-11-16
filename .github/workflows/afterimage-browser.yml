@@ -1,0 +1,55 @@
+name: AFTERIMAGE browser matrix
+
+on:
+  push:
+    branches:
+      - afterimage
+    paths:
+      - 'afterimage/**'
+      - '.github/workflows/afterimage-browser.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  public-candidate:
+    name: public-candidate / ${{ matrix.browser }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    defaults:
+      run:
+        working-directory: afterimage
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install pinned Playwright runner
+        run: npm install --no-save --package-lock=false @playwright/test@1.56.1
+
+      - name: Install browser
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Exercise public candidate
+        env:
+          BROWSER: ${{ matrix.browser }}
+          AFTERIMAGE_URL: https://afterimage.aafnaipatro.com/
+        run: node tests/public-candidate.playwright.mjs
+
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: afterimage-${{ matrix.browser }}-evidence
+          path: afterimage/artifacts/${{ matrix.browser }}/
+          if-no-files-found: warn
+          retention-days: 14
