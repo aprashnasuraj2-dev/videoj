@@ -84,7 +84,7 @@ async function tabTo(page, selector, { reverse = false, limit = 40 } = {}) {
 
 async function keyboardSeekTo(page, seconds) {
   const slider = page.getByRole('slider', { name: 'Seek' });
-  const tabs = await tabTo(page, 'media-time-slider');
+  const tabs = await tabTo(page, 'media-time-slider media-slider-thumb');
   check(`seek-tab-reachable-${seconds}`, tabs !== null, { tabs, active: await active(page) });
   await page.keyboard.press('Home');
   await page.waitForFunction(() => document.querySelector('video').currentTime < 0.5);
@@ -99,8 +99,15 @@ async function keyboardSeekTo(page, seconds) {
 function cssContrastScript() {
   return () => {
     const parse = value => {
-      const match = String(value).match(/[\d.]+/g);
-      return match ? match.slice(0, 3).map(Number) : [0, 0, 0];
+      const text = String(value).trim();
+      if (/^#[0-9a-f]{6}$/i.test(text)) {
+        return [1, 3, 5].map(i => parseInt(text.slice(i, i + 2), 16));
+      }
+      if (/^#[0-9a-f]{3}$/i.test(text)) {
+        return [1, 2, 3].map(i => parseInt(text[i] + text[i], 16));
+      }
+      const match = text.match(/[\d.]+/g);
+      return match && match.length >= 3 ? match.slice(0, 3).map(Number) : [0, 0, 0];
     };
     const lum = rgb => {
       const channel = x => {
@@ -185,9 +192,17 @@ test('keyboard-full-journey: clean first focus, deterministic tab sequence and q
     report.observations.initialTabSequence = sequence;
     const tags = sequence.map(item => item.tag);
     for (const required of [
-      'media-time-slider', 'media-play-button', 'media-mute-button',
+      'media-play-button', 'media-mute-button',
       'media-captions-button', 'media-fullscreen-button',
     ]) check(`tab-sequence-${required}`, tags.includes(required), { tags, sequence });
+    check('tab-sequence-seek-slider',
+      sequence.some(item => item.role === 'slider' && /Seek/i.test(item.label)),
+      sequence);
+    if (await page.locator('media-volume-slider').isVisible()) {
+      check('tab-sequence-volume-slider',
+        sequence.some(item => item.role === 'slider' && /Volume/i.test(item.label)),
+        sequence);
+    }
     check('tab-sequence-keep', sequence.some(item => /Keep my place/.test(item.label)), sequence);
     check('tab-sequence-settings', sequence.some(item => /Playback settings/i.test(item.label)), sequence);
 
@@ -247,7 +262,7 @@ test('keyboard-full-journey: real Play/Pause, mute/volume, captions and Settings
     }));
     report.observations.mediaCapabilities = capability;
     if (capability.volume === 'available') {
-      const volumeTabs = await tabTo(page, 'media-volume-slider');
+      const volumeTabs = await tabTo(page, 'media-volume-slider media-slider-thumb');
       check('volume-tab-reachable', volumeTabs !== null, { volumeTabs, active: await active(page) });
       const v0 = await page.locator('video').evaluate(v => v.volume);
       await page.keyboard.press('ArrowLeft');
