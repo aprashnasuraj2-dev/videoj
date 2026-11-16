@@ -46,11 +46,11 @@ try {
   check('waterline-media', Math.abs(boot.duration - 18.013) < 0.2 && boot.width === 1280 && boot.height === 720, boot);
 
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-  await hold('opening identity', 3200);
+  await hold('opening identity', 5000);
 
   const player = page.locator('#afterimage-player');
   await player.scrollIntoViewIfNeeded();
-  await hold('player establishes', 2200);
+  await hold('player establishes', 3000);
 
   await page.locator('media-play-button').click();
   await page.waitForFunction(() => !window.__AFTERIMAGE_RELEASE__.video.paused);
@@ -66,7 +66,7 @@ try {
       video.currentTime < 13.8 &&
       (player.querySelector('.afterimage-status')?.textContent || '').startsWith('Example opened:');
   }, null, { timeout: 8000 });
-  await hold('matched dry wet pair while time advances', 2200);
+  await hold('matched dry wet pair while time advances', 3500);
 
   await page.locator('media-play-button').click();
   await page.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.paused);
@@ -124,7 +124,7 @@ try {
     return !button?.disabled && video.currentTime > 12.6 && video.currentTime < 13.8 &&
       !player.querySelector('.afterimage-reference')?.hidden;
   }, null, { timeout: 8000 });
-  await hold('final matched pair', 3200);
+  await hold('final matched pair', 8500);
 
   await page.screenshot({ path: new URL('afterimage-submission-page.png', artifactDir).pathname, fullPage: false });
 
@@ -138,8 +138,9 @@ try {
       seam: player.querySelector('.afterimage-seam-control')?.value,
     };
   });
-  check('final-pair-readable', finalState.pinned === '00:05' && finalState.now === '00:13', finalState);
-  report.finalState = finalState;
+  const normalizedPinned = finalState.pinned?.replace(/^≈/, '');
+  check('final-pair-readable', normalizedPinned === '00:05' && finalState.now === '00:13' && finalState.delta === '+00:08', finalState);
+  report.finalState = { ...finalState, approximatePin: finalState.pinned?.startsWith('≈') || false };
 } finally {
   await writeFile(new URL('capture-report.json', artifactDir), JSON.stringify(report, null, 2) + '\n');
   await context.close();
