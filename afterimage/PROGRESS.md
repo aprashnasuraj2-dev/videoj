@@ -53,3 +53,13 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Cloudflare Browser Rendering on that hostname has already passed the desktop core-flow instrumentation: all required controls present; playback advanced; a live pin opened; Pinned stayed fixed while Now advanced; Pinned/Now/Split presets preserved playback; Close/Compare/Clear behaved correctly; media decoded at 960×400 with no error.
 - Added a branch-scoped GitHub Actions workflow for `afterimage` only. It installs the lockfile, runs architecture tests, proves the standalone generator is reproducible, runs the production Vite build, and inspects the npm package surface.
 - **Next action:** collect the exact workflow result and complete 390px/320px plus accessibility checks with Cloudflare Browser Rendering.
+
+## 2026-11-16 · verified engineering milestone
+
+- Branch-scoped AFTERIMAGE CI passed at exact SHA `09cdfb59...`: locked install, tests, reproducible standalone output, Vite build and package dry-run.
+- Live custom domain `afterimage.aafnaipatro.com` passed the core Temporal Lens browser flow through Cloudflare Browser Rendering.
+- 390px and 320px mobile probes passed without horizontal overflow and with 44px minimum visible primary targets.
+- Accessibility tree verified named media controls, seek range, comparison reveal range, comparison actions and the live status announcement.
+- Checklist rows are promoted only where that evidence satisfies the task. First-use authored shortcut, final film, keyboard, caption rendering, fullscreen transition, failure paths and cross-browser coverage remain open/in-progress.
+- Creative media work started: one locked dry WATERLINE architectural keyframe is generated; a low-cost wet-state edit is in progress so no paid video generation is required.
+- **Next action:** finish the wet keyframe, assemble the short original WATERLINE cut in-repo, replace the temporary fixture, add Try a comparison using observed final cue times, and rerun exact-candidate CI/browser evidence.
