@@ -138,7 +138,6 @@ try {
   check('canvas-failure-preserves-essential-ui',failedRepin.playVisible&&failedRepin.seekVisible&&failedRepin.volumeVisible&&failedRepin.fullscreenVisible,failedRepin);
   await rp.evaluate(()=>window.__restoreCanvasGetContext?.());
 
-  await rp.locator('[data-afterimage-close]').click();
   const beforeDelayed=await rp.evaluate(()=>window.__AFTERIMAGE_RELEASE__.player.querySelector('[data-afterimage-pinned]')?.textContent?.trim());
   await rp.evaluate(()=>{
     const v=window.__AFTERIMAGE_RELEASE__.video;
