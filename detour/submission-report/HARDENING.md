@@ -7,13 +7,16 @@ This pass strengthens DETOUR's standard-player keyboard, fullscreen, focus, touc
 - Baseline branch: `detour`
 - Protected baseline head: `a4af85bc7e83c08d6417ce4d3065738a0e2da68f`
 - Hardening branch: `detour-hardening`
-- Verified hardening product SHA: `d91494e77c1bf8860a2d26a638e1e72958040e69`
-- Full release-style hardening run: GitHub Actions `43818172481` — success.
-- Focused new-gate run at the same product SHA: `43818172494` — success.
+- Deployed hardened runtime source SHA: `6d26d98b96af24b114fa9e29d8c5f6f3539b39c6`.
+- Immutable release artifact: `detour-dist-6d26d98b96af`.
+- Exact final certification head: `c20663ea7c1858e959b13a2006ee235aa3beeeb8` (subsequent changes are reconciliation only).
+- Full hardening run: GitHub Actions `43823412157` — success (job result independently inspected).
+- Focused hardening run: GitHub Actions `43823412160` — success (job result independently inspected).
 - Package/runtime version remains `0.1.0` with `@videojs/html 10.4.0`.
 - Current public route remains `https://detour-entry.aafnaipatro.com/mux/`.
-- Current public release identity remains `d430f2ee49fa93a460c150fd90205b13fe5327be` / `detour-dist-d430f2ee49fa`.
-- The hardening candidate was **not** promoted publicly during this pass. Public-host evidence for the older release is not reused as proof of the new hardening product.
+- Current public release identity is `6d26d98b96af24b114fa9e29d8c5f6f3539b39c6` / `detour-dist-6d26d98b96af`, promoted **in place** on the same submission URL.
+- Existing Worker: `detour-checkpoints-release`; Cloudflare deployment UUID: `4fd118da-be83-4649-b93d-5072d9db5284`; serving Worker version: `25e7f851-27f3-4200-86c2-197ad98c8b80`.
+- The Mux playback ID `Ml1c1QHJ0001lK9x2dZych2nACRmtSdDl02Iraqzwj22wQ`, authored video, captions, poster, fallback and checkpoint semantics were retained.
 
 ## What changed
 
@@ -30,7 +33,7 @@ No new seek model, checkpoint semantics, frame capture, comparison mode or visua
 
 ## Exact passing gate
 
-Run `43818172481` passed on product SHA `d91494e77c1bf8860a2d26a638e1e72958040e69`:
+Final run `43823412157` passed at verification head `c20663ea7c1858e959b13a2006ee235aa3beeeb8`, checking deployed runtime source `6d26d98b96af24b114fa9e29d8c5f6f3539b39c6`:
 
 - production build;
 - architecture and concept-boundary tests;
@@ -48,7 +51,7 @@ Run `43818172481` passed on product SHA `d91494e77c1bf8860a2d26a638e1e72958040e6
 - judge-first-use automation metric;
 - checklist/progress validator.
 
-The separate focused run `43818172494` passed the new keyboard/fullscreen/touch/judge gates at the same product SHA.
+The separate focused run `43823412160` passed the keyboard/fullscreen/touch/judge gates. The final full run additionally exercised the **submitted public URL**, the checkpoint `42.35s → 18s → 42.350s` behavior, 206 range fallback, blocked-Mux recovery and source/dist headers.
 
 ## Keyboard-only journey
 
@@ -181,7 +184,7 @@ The reusable package still provides a functional `detour-video-skin/base` export
 
 - A permanent keyboard-help cue was not added. The direct keyboard path is now independently certified and the existing compact control composition already exposes the necessary controls; another persistent cue would add visual density without being required for operation.
 - No AFTERIMAGE frame capture, canvas reference, split-screen, Temporal Lens, Pinned/Split/Now, WATERLINE media, comparison preset or authored paired-frame behavior was introduced.
-- No public promotion was performed merely to claim the hardening candidate as released.
+- Public promotion was completed in place because the product runtime changed for actual keyboard/accessibility hardening; no second submission identity or replacement URL was created.
 
 ## Known limits
 
