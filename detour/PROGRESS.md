@@ -16,6 +16,13 @@ Resume step: 091
 
 
 
+## 2026-11-16 · Seek-settlement regression gate made playback-aware
+
+- A docs-only hardening run exposed a nondeterministic legacy Chromium assertion: while media was actively playing, the generic seek helper requested 42.0s but sampled 42.190758s and still demanded <0.1s. The same unchanged product had already passed the full release-style hardening run.
+- The shared browser-test seek helper now waits for real native seek settlement and uses **±0.12s while paused** versus **±0.5s while already playing**. Playing media is allowed to advance naturally after the seek; the gate still asserts the actual media clock, not a button label or requested value.
+- This is a test-harness stability correction only. No DETOUR runtime/skin file changed in this correction, and Return's own arrival assertions remain independently bounded.
+- Exact final branch-head validation is still required after this documentation/test reconciliation; no stale earlier run will be used as final certification.
+
 ## 2026-11-16 · Cross-hardening keyboard/fullscreen/touch evidence accepted
 
 - Isolated hardening product `d91494e77c1bf8860a2d26a638e1e72958040e69` passed full release-style run `43818172481`: build, architecture, packed external host, full Chromium/Firefox/desktop-WebKit regressions, Phase 7, footprint, definitive keyboard journeys in all three engines, headed fullscreen roundtrip, browser-level touch interruption, judge-first-use automation and progress validation.
