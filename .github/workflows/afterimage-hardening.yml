@@ -1,0 +1,95 @@
+name: AFTERIMAGE hardening gates
+
+on:
+  push:
+    branches: [afterimage-hardening]
+    paths:
+      - 'afterimage/**'
+      - '.github/workflows/afterimage-hardening.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hardening:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    defaults:
+      run:
+        working-directory: afterimage
+    steps:
+      - name: Checkout exact hardening head
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: afterimage/package-lock.json
+
+      - name: Install media tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Install browser engines
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Architecture and concept-boundary tests
+        run: npm test
+
+      - name: Rebuild standalone from canonical sources
+        run: npm run build:standalone
+
+      - name: Record standalone drift without promoting it
+        run: |
+          if git diff --quiet -- standalone.html; then
+            echo "standalone_status=exact" >> "$GITHUB_ENV"
+          else
+            echo "standalone_status=regenerated-uncommitted" >> "$GITHUB_ENV"
+            git diff --stat -- standalone.html
+          fi
+
+      - name: Production build
+        run: npx vite build
+
+      - name: Inspect pack surface
+        run: npm pack --dry-run
+
+      - name: Source lifecycle — Chromium
+        env:
+          AFTERIMAGE_HARDENING_ENGINE: chromium
+        run: node --test tests/source-lifecycle.test.mjs
+
+      - name: Source lifecycle — Firefox
+        env:
+          AFTERIMAGE_HARDENING_ENGINE: firefox
+        run: node --test tests/source-lifecycle.test.mjs
+
+      - name: Source lifecycle — WebKit
+        env:
+          AFTERIMAGE_HARDENING_ENGINE: webkit
+        run: node --test tests/source-lifecycle.test.mjs
+
+      - name: Packed external host
+        run: node --test tests/package-external-host.test.mjs
+
+      - name: Difficult media matrix
+        run: node --test tests/difficult-media.test.mjs
+
+      - name: Performance and footprint
+        run: node --test tests/performance-footprint.test.mjs
+
+      - name: Preserve hardening evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: afterimage-hardening-evidence-${{ github.sha }}
+          path: |
+            afterimage/artifacts/hardening/
+            afterimage/standalone.html
+          if-no-files-found: warn
+          retention-days: 30
