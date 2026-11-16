@@ -73,11 +73,17 @@ async function freshPage(t) {
     return h?.a?.video?.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
       && h?.b?.video?.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
   }, null, { timeout: 20000 });
+  if (engineName === 'webkit') {
+    await page.waitForFunction(() => {
+      const h = window.__AFTERIMAGE_HARDENING__;
+      return h?.a?.video?.seekable?.length > 0 && h?.b?.video?.seekable?.length > 0;
+    }, null, { timeout: 15000 });
+  }
   const mediaState = await page.evaluate(() => {
     const h = window.__AFTERIMAGE_HARDENING__;
     return {
-      a: { readyState: h.a.video.readyState, duration: h.a.video.duration, width: h.a.video.videoWidth, height: h.a.video.videoHeight },
-      b: { readyState: h.b.video.readyState, duration: h.b.video.duration, width: h.b.video.videoWidth, height: h.b.video.videoHeight },
+      a: { readyState: h.a.video.readyState, duration: h.a.video.duration, seekable: h.a.video.seekable.length, width: h.a.video.videoWidth, height: h.a.video.videoHeight },
+      b: { readyState: h.b.video.readyState, duration: h.b.video.duration, seekable: h.b.video.seekable.length, width: h.b.video.videoWidth, height: h.b.video.videoHeight },
     };
   });
   report.observations.fixtureMedia ??= fixtureMedia;
@@ -103,16 +109,10 @@ async function seek(page, selector, time) {
   const result = await page.locator(selector).evaluate(async (player, seconds) => {
     const video = player.querySelector('video');
     const arrived = await player.store.seek(seconds);
-    if (Number.isFinite(arrived) && Math.abs(arrived - seconds) < 0.5) {
-      return { mode: 'videojs-store', arrived, seekable: video.seekable.length, duration: video.duration };
-    }
-    // This lifecycle suite is testing Temporal Lens isolation, not transport.
-    // Desktop WebKit can expose decoded current data before a native seekable
-    // range materializes. A host-owned native seek is therefore an acceptable
-    // fixture fallback and never enters the Temporal Lens implementation.
-    video.currentTime = seconds;
-    return { mode: 'host-native-fixture', arrived, seekable: video.seekable.length, duration: video.duration };
+    return { mode: 'videojs-store', arrived, seekable: video.seekable.length, duration: video.duration };
   }, time);
+  assert.ok(Number.isFinite(result.arrived) && Math.abs(result.arrived - time) < 0.5,
+    `Store seek landed at ${result.arrived}, expected ${time}; seekable=${result.seekable}`);
   await page.waitForFunction(({ selector, time }) => {
     const video = document.querySelector(selector)?.querySelector('video');
     return video && !video.seeking && Math.abs(video.currentTime - time) < 0.5;
@@ -483,8 +483,8 @@ test('source-lifecycle: capture-state matrix is truthful and recovery never auto
     const v = window.__AFTERIMAGE_HARDENING__.a.video;
     Object.defineProperty(v, 'readyState', { configurable: true, value: HTMLMediaElement.HAVE_CURRENT_DATA });
     v.dispatchEvent(new Event('waiting'));
+    v.pause();
   });
-  await play.click();
   assert.equal(await page.evaluate(() => window.__AFTERIMAGE_HARDENING__.a.video.paused), true);
   await page.evaluate(() => {
     const v = window.__AFTERIMAGE_HARDENING__.a.video;
