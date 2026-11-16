@@ -70,7 +70,7 @@ try {
 
   await page.locator('media-play-button').click();
   await page.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.paused);
-  await page.locator('#afterimage-player').screenshot({ path: new URL('afterimage-primary-still.png', artifactDir).pathname });
+  await page.locator('#afterimage-player').screenshot({ path: new URL('afterimage-inspection-still.png', artifactDir).pathname });
   await hold('split paused for inspection', 2800);
 
   const seam = page.locator('.afterimage-seam-control');
@@ -111,6 +111,11 @@ try {
   await page.getByRole('button', { name: 'Clear pin', exact: true }).click();
   await hold('clear returns ordinary player', 2200);
 
+  if (await page.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.textTracks?.[0]?.mode === 'showing')) {
+    await page.locator('media-captions-button').click();
+    await page.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.textTracks?.[0]?.mode !== 'showing');
+  }
+
   if (await page.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.paused)) {
     await page.locator('media-play-button').click();
     await page.waitForFunction(() => !window.__AFTERIMAGE_RELEASE__.video.paused);
@@ -130,7 +135,12 @@ try {
   }
   await hold('final matched pair', 8500);
 
+  await page.locator('#afterimage-player').screenshot({ path: new URL('afterimage-primary-still.png', artifactDir).pathname });
   await page.screenshot({ path: new URL('afterimage-submission-page.png', artifactDir).pathname, fullPage: false });
+
+  await seam.focus();
+  await page.waitForTimeout(250);
+  await page.locator('#afterimage-player').screenshot({ path: new URL('afterimage-keyboard-focus.png', artifactDir).pathname });
 
   const finalState = await page.evaluate(() => {
     const { player, video } = window.__AFTERIMAGE_RELEASE__;
@@ -161,11 +171,17 @@ const mobilePage = await mobileContext.newPage();
 const mobileResponse = await mobilePage.goto(baseURL, { waitUntil: 'networkidle', timeout: 60000 });
 if ((mobileResponse?.headers()?.['x-afterimage-release'] || null) !== expectedRelease) throw new Error('Mobile capture release mismatch');
 await mobilePage.waitForFunction(() => window.__AFTERIMAGE_RELEASE__?.video?.readyState >= 1, null, { timeout: 30000 });
+await mobilePage.locator('media-play-button').click();
+await mobilePage.waitForFunction(() => !window.__AFTERIMAGE_RELEASE__.video.paused);
 await mobilePage.locator('[data-afterimage-example]').click();
 await mobilePage.waitForFunction(() => {
   const { player, video } = window.__AFTERIMAGE_RELEASE__;
   return !player.querySelector('[data-afterimage-example]')?.disabled && video.currentTime > 12.6 && video.currentTime < 13.8;
 }, null, { timeout: 8000 });
+if (!await mobilePage.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.paused)) {
+  await mobilePage.locator('media-play-button').click();
+  await mobilePage.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.paused);
+}
 await mobilePage.locator('#afterimage-player').scrollIntoViewIfNeeded();
 await mobilePage.screenshot({ path: new URL('afterimage-mobile-390.png', artifactDir).pathname, fullPage: false });
 await mobileContext.close();

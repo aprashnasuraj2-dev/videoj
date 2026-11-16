@@ -198,3 +198,11 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Submission capture run `43802596202` passed the full exact-public recording step. The real pointer seam drag, authored pair gates, final frozen pair, still capture and mobile capture all completed.
 - Post-processing failed only because GitHub's Ubuntu image did not expose a system `ffmpeg` executable. Playwright downloaded its internal helper binary for browser recording, but that binary is not added to PATH and is not a substitute for the submission transcode/ffprobe step.
 - Added an explicit system `ffmpeg` install before recording. Evidence upload already runs with `if: always()`, so the successful raw WebM/stills from the failed encode remain recoverable.
+
+
+## 2026-11-16 · submission asset visual polish
+
+- Successful submission capture/encode pipeline produced a 50.32s, 4,754,620-byte H.264 MP4 with no audio plus desktop/mobile stills.
+- Visual review found the final exact-pair page still still carried the caption enabled earlier in the reel. Captions are useful evidence, but the hero still should communicate the Temporal Lens without competing overlay text.
+- Capture choreography now disables captions after their demonstration, writes the final exact 00:05 / 00:13 / +00:08 player view as `afterimage-primary-still.png`, retains the earlier state as `afterimage-inspection-still.png`, and adds `afterimage-keyboard-focus.png` after focusing the seam.
+- Mobile capture now starts playback before the authored pair and pauses after it, giving the 390px evidence the same playback semantics as the desktop primary flow.
