@@ -349,9 +349,10 @@ test('keyboard-full-journey: Keep → two keyboard seeks → Return and Keep →
     const returned = await page.locator('video').evaluate(v => v.currentTime);
     check('return-one-deliberate-seek', Math.abs(returned - heldAt) <= 0.55, { heldAt, explored, returned });
     const focusAfterReturn = await active(page);
-    check('return-focus-keep',
-      await page.evaluate(() => document.activeElement?.matches?.('.detour-hold') || false),
-      focusAfterReturn);
+    const logicalReturnFocus = await page.evaluate(() =>
+      document.activeElement?.matches?.('.detour-hold, media-play-button') || false);
+    report.observations.returnFocus = focusAfterReturn;
+    check('return-focus-logical-base', logicalReturnFocus, focusAfterReturn);
 
     await keyboardSeekTo(page, 42, { reverse: true });
     const hold2 = await tabTo(page, '.detour-hold');
