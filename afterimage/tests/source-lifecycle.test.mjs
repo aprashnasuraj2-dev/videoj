@@ -223,34 +223,55 @@ test('source-lifecycle: stale callback cannot win after Close, Clear or source e
   assert.equal(await page.locator('#player-a .afterimage-reference').isVisible(), false, 'Same-URL reload retained old reference.');
 });
 
-test('source-lifecycle: capture-state matrix is truthful and recovery never autoplays', { timeout: 35000 }, async t => {
+test('source-lifecycle: capture-state matrix is truthful and recovery never autoplays', { timeout: 40000 }, async t => {
   const page = await freshPage(t);
   const pin = page.locator('#player-a [data-afterimage-pin]');
   const lens = page.locator('#player-a afterimage-temporal-lens');
   const status = page.locator('#player-a .afterimage-status');
 
+  // A freshly attached source naturally exposes duration=NaN before metadata.
+  // That must be classified as waiting for metadata, not as a live/invalid timeline.
   await page.evaluate(() => {
     const v = window.__AFTERIMAGE_HARDENING__.a.video;
-    Object.defineProperty(v, 'duration', { configurable: true, value: Number.NaN });
-    v.dispatchEvent(new Event('durationchange'));
-  });
-  assert.equal(await lens.getAttribute('data-capture-state'), 'timeline-unavailable');
-  await pin.click();
-  await page.waitForFunction(() => /stable on-demand/.test(document.querySelector('#player-a .afterimage-status')?.textContent || ''));
-  assert.match(await status.textContent(), /stable on-demand/);
-
-  await page.evaluate(() => {
-    const v = window.__AFTERIMAGE_HARDENING__.a.video;
-    delete v.duration;
     Object.defineProperty(v, 'readyState', { configurable: true, value: HTMLMediaElement.HAVE_NOTHING });
-    v.dispatchEvent(new Event('durationchange'));
+    Object.defineProperty(v, 'duration', { configurable: true, value: Number.NaN });
+    v.dispatchEvent(new Event('loadstart'));
   });
   assert.equal(await lens.getAttribute('data-capture-state'), 'metadata-pending');
+  assert.equal(await lens.getAttribute('data-capture-reason'), 'metadata-pending');
   await pin.click();
   await page.waitForFunction(() => /metadata to load/.test(document.querySelector('#player-a .afterimage-status')?.textContent || ''));
 
   await page.evaluate(() => {
     const v = window.__AFTERIMAGE_HARDENING__.a.video;
+    Object.defineProperty(v, 'readyState', { configurable: true, value: HTMLMediaElement.HAVE_CURRENT_DATA });
+    Object.defineProperty(v, 'duration', { configurable: true, value: Number.NaN });
+    v.dispatchEvent(new Event('durationchange'));
+  });
+  assert.equal(await lens.getAttribute('data-capture-state'), 'timeline-unavailable');
+  assert.equal(await lens.getAttribute('data-capture-reason'), 'duration-unknown');
+  await pin.click();
+  await page.waitForFunction(() => /stable on-demand/.test(document.querySelector('#player-a .afterimage-status')?.textContent || ''));
+
+  await page.evaluate(() => {
+    const v = window.__AFTERIMAGE_HARDENING__.a.video;
+    Object.defineProperty(v, 'duration', { configurable: true, value: Infinity });
+    v.dispatchEvent(new Event('durationchange'));
+  });
+  assert.equal(await lens.getAttribute('data-capture-state'), 'timeline-unavailable');
+  assert.equal(await lens.getAttribute('data-capture-reason'), 'duration-infinite');
+
+  await page.evaluate(() => {
+    const v = window.__AFTERIMAGE_HARDENING__.a.video;
+    Object.defineProperty(v, 'duration', { configurable: true, value: 0 });
+    v.dispatchEvent(new Event('durationchange'));
+  });
+  assert.equal(await lens.getAttribute('data-capture-state'), 'timeline-unavailable');
+  assert.equal(await lens.getAttribute('data-capture-reason'), 'duration-zero');
+
+  await page.evaluate(() => {
+    const v = window.__AFTERIMAGE_HARDENING__.a.video;
+    delete v.duration;
     Object.defineProperty(v, 'readyState', { configurable: true, value: HTMLMediaElement.HAVE_METADATA });
     v.dispatchEvent(new Event('waiting'));
   });
@@ -279,16 +300,31 @@ test('source-lifecycle: capture-state matrix is truthful and recovery never auto
   await pin.click();
   await page.waitForFunction(() => /capturable picture/.test(document.querySelector('#player-a .afterimage-status')?.textContent || ''));
 
+  // Empty seekable ranges do not invalidate an already-rendered current frame:
+  // manual Pin never seeks. Record the capability rather than disabling playback.
   await page.evaluate(() => {
     const v = window.__AFTERIMAGE_HARDENING__.a.video;
     delete v.videoWidth;
     delete v.videoHeight;
     delete v.readyState;
+    Object.defineProperty(v, 'seekable', {
+      configurable: true,
+      value: { length: 0, start() { throw new DOMException('IndexSizeError'); }, end() { throw new DOMException('IndexSizeError'); } },
+    });
+    v.dispatchEvent(new Event('durationchange'));
+  });
+  assert.equal(await lens.getAttribute('data-capture-state'), 'ready');
+  assert.equal(await lens.getAttribute('data-capture-seekability'), 'empty');
+  await page.evaluate(() => { delete window.__AFTERIMAGE_HARDENING__.a.video.seekable; });
+
+  await page.evaluate(() => {
+    const v = window.__AFTERIMAGE_HARDENING__.a.video;
     Object.defineProperty(v, 'ended', { configurable: true, value: true });
     v.dispatchEvent(new Event('ended'));
   });
   await page.waitForFunction(() => document.querySelector('#player-a afterimage-temporal-lens')?.dataset.captureState === 'ended-ready');
   assert.equal(await lens.getAttribute('data-capture-state'), 'ended-ready');
+  assert.equal(await lens.getAttribute('data-capture-reason'), 'ended-capturable');
   await page.evaluate(() => { delete window.__AFTERIMAGE_HARDENING__.a.video.ended; });
 
   await page.evaluate(() => {
@@ -296,11 +332,12 @@ test('source-lifecycle: capture-state matrix is truthful and recovery never auto
     p.__realStore = p.store;
     Object.defineProperty(p, 'store', {
       configurable: true,
-      value: Object.create(p.store, { streamType: { value: 'live' } }),
+      value: Object.create(p.store, { streamType: { value: 'live-dvr' } }),
     });
     window.__AFTERIMAGE_HARDENING__.a.video.dispatchEvent(new Event('durationchange'));
   });
   assert.equal(await lens.getAttribute('data-capture-state'), 'timeline-unavailable');
+  assert.match(await lens.getAttribute('data-capture-reason'), /^live-/);
   await page.evaluate(() => {
     const p = window.__AFTERIMAGE_HARDENING__.a.player;
     Object.defineProperty(p, 'store', { configurable: true, value: p.__realStore });
