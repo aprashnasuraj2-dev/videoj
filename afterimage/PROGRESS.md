@@ -272,3 +272,13 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Runtime marker: `0.3.5-fullscreen-fit`.
 - All browser, headed-fullscreen, and submission-capture gates are repointed to require this exact response-header SHA and runtime marker.
 - **Next action:** accept this as the serving release only after CI, Chromium/Firefox/WebKit, headed fullscreen deck-fit, and submission capture all pass against this exact identity.
+
+
+## 2026-11-16 · real-site + Mux bonus route deployed
+
+- Deployed isolated Worker `aafnai-history-afterimage-apollo11` on the exact path `aafnaipatro.com/on-this-day/afterimage/apollo-11*`; no existing AafnaiPatro or DETOUR route was replaced.
+- The page reuses AFTERIMAGE product source `428e337...` / runtime `0.3.5-fullscreen-fit` with different host-owned media, poster, captions, chapters and a host-supplied lime theme.
+- Alternate media is the existing AafnaiPatro NASA Apollo 11 visualization delivered by public Mux playback ID `kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U`.
+- The direct Mux MP4 is the first source; a same-origin proxy of the same Mux asset is only a playback fallback.
+- Added a dedicated browser gate requiring the exact AFTERIMAGE release, direct `stream.mux.com` currentSrc, public playback ID, >40s alternate film, captions + chapters, manual-only host behavior, playing manual pin, presets and live caption activation.
+- **Next action:** use the browser result to decide whether bonus tasks 72–73 and 77–79 can be promoted to done.

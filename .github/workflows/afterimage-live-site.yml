@@ -1,0 +1,54 @@
+name: AFTERIMAGE live-site + Mux bonus
+
+on:
+  push:
+    branches:
+      - afterimage
+    paths:
+      - 'afterimage/tests/live-site.playwright.mjs'
+      - '.github/workflows/afterimage-live-site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-site:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: afterimage
+    env:
+      AFTERIMAGE_LIVE_SITE_URL: https://aafnaipatro.com/on-this-day/afterimage/apollo-11/
+      AFTERIMAGE_RELEASE: 428e337d9918dcba1db50d01ea1b22a5b470c1ac
+      AFTERIMAGE_VERSION: 0.3.5-fullscreen-fit
+      MUX_PLAYBACK_ID: kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: afterimage/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify AafnaiPatro + Mux integration
+        run: node tests/live-site.playwright.mjs
+
+      - name: Upload live-site evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: afterimage-live-site-mux-evidence
+          path: afterimage/artifacts/live-site/
+          if-no-files-found: warn
+          retention-days: 30
