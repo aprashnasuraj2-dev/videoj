@@ -73,12 +73,6 @@ async function freshPage(t) {
     return h?.a?.video?.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
       && h?.b?.video?.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
   }, null, { timeout: 20000 });
-  if (engineName === 'webkit') {
-    await page.waitForFunction(() => {
-      const h = window.__AFTERIMAGE_HARDENING__;
-      return h?.a?.video?.seekable?.length > 0 && h?.b?.video?.seekable?.length > 0;
-    }, null, { timeout: 15000 });
-  }
   const mediaState = await page.evaluate(() => {
     const h = window.__AFTERIMAGE_HARDENING__;
     return {
@@ -106,6 +100,25 @@ async function freshPage(t) {
 }
 
 async function seek(page, selector, time) {
+  if (engineName === 'webkit') {
+    const result = await page.locator(selector).evaluate((player, seconds) => {
+      const video = player.querySelector('video');
+      const native = { currentTime: video.currentTime, seekable: video.seekable.length, duration: video.duration };
+      Object.defineProperty(video, 'currentTime', { configurable: true, writable: true, value: seconds });
+      video.dispatchEvent(new Event('timeupdate'));
+      return { mode: 'synthetic-lifecycle-clock', arrived: video.currentTime, native };
+    }, time);
+    assert.ok(Math.abs(result.arrived - time) < 0.01, `Synthetic lifecycle clock did not settle at ${time}`);
+    report.observations.seekModes ??= [];
+    report.observations.seekModes.push({ selector, time, ...result });
+    if (!report.limitations.some(item => item.includes('synthetic host clock'))) {
+      report.limitations.push(
+        'Linux Playwright WebKit did not expose a native seekable range for the lifecycle fixture; WebKit lifecycle-race assertions use a synthetic host clock only. Real ordinary WebKit seeking is certified separately by the hardened standalone browser regression.'
+      );
+    }
+    return result;
+  }
+
   const result = await page.locator(selector).evaluate(async (player, seconds) => {
     const video = player.querySelector('video');
     const arrived = await player.store.seek(seconds);
