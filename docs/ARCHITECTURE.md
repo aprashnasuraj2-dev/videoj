@@ -30,3 +30,7 @@ DETOUR requires `cd detour && npm ci && npm run build`, then `npm run test:archi
 ## Evidence policy
 
 Separate **source behavior**, **automated browser results**, **published-route observations** and **physical-device results**. An artifact from one category is not a substitute for another. Prior release and planning records are recoverable from repository history; maintain new user-facing documentation around interfaces, integration and reproducible checks instead of administrative scorecards.
+
+## Minimal GitHub Actions policy
+
+The repository uses two file-scoped validation workflows (one for each player) and a manual DHAGO staging/recovery workflow. Source changes trigger appropriate tests; documentation-only edits do not generate full browser matrices. Optional live-origin/Mux probes are requested explicitly, while routine CI exercises local package and browser functionality. Diagnostic artifacts are retained only on failure for three days; successful main DHAGO builds remain available for five days to support explicit release staging. Existing GitHub Actions run histories are hosted outside the Git tree and follow the repository's separate retention settings.

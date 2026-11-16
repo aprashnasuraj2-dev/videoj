@@ -3,7 +3,7 @@ import { after, before, test } from 'node:test';
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { chromium, firefox, webkit } from 'playwright';
-import { createServer, preview } from 'vite';
+import { preview } from 'vite';
 
 const engines = { chromium, firefox, webkit };
 const engineName = process.env.DETOUR_ENGINE ?? 'chromium';

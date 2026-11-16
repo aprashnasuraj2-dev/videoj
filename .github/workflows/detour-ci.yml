@@ -2,24 +2,42 @@ name: Validate DETOUR
 
 on:
   push:
-    branches: [detour, main]
+    branches: [main, detour]
     paths:
-      - 'detour/**'
+      - 'detour/skin/**'
+      - 'detour/demo/**'
+      - 'detour/integration/**'
+      - 'detour/mux/**'
+      - 'detour/public/**'
+      - 'detour/scripts/**'
+      - 'detour/tests/**'
+      - 'detour/package.json'
+      - 'detour/package-lock.json'
+      - 'detour/vite.config.js'
       - '.github/workflows/detour-ci.yml'
   pull_request:
     branches: [main, detour]
     paths:
-      - 'detour/**'
+      - 'detour/skin/**'
+      - 'detour/demo/**'
+      - 'detour/integration/**'
+      - 'detour/mux/**'
+      - 'detour/public/**'
+      - 'detour/scripts/**'
+      - 'detour/tests/**'
+      - 'detour/package.json'
+      - 'detour/package-lock.json'
+      - 'detour/vite.config.js'
       - '.github/workflows/detour-ci.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  phase-5:
+  verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 22
+    timeout-minutes: 25
     defaults:
       run:
         working-directory: detour
@@ -30,78 +48,58 @@ jobs:
           node-version: 24
           cache: npm
           cache-dependency-path: detour/package-lock.json
-      - name: Install media tools
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-      - name: Install pinned dependencies
-        run: npm ci
-      - name: Install DETOUR browser engines
-        run: npx playwright install --with-deps chromium firefox webkit
-      - name: Build production demo
-        run: npm run build
-      - name: Verify showcase bundle and local HTTP seeking
-        run: node --test tests/showcase.test.mjs
-      - name: Verify frozen public HTTPS release origin
-        run: node --test tests/https-release.test.mjs
-      - name: Verify public release and standard controls
-        run: node --test tests/phase10-public.test.mjs
-      - name: Verify independently embedded player
-        run: node --test tests/live-site.test.mjs
-      - name: Audit final bundle, package license and secret boundary
-        run: node scripts/final-audit.mjs
-      - name: Verify static package boundaries
-        run: npm run test:architecture
-      - name: Verify packed external host in Chromium and desktop WebKit
-        run: npm run test:package
-      - name: Run full Chromium regression
-        run: npm test
-      - name: Run full Firefox regression
-        env:
-          DETOUR_ENGINE: firefox
-        run: npm test
-      - name: Run full desktop WebKit regression
-        env:
-          DETOUR_ENGINE: webkit
-        run: npm test
-      - name: Measure incremental compressed package footprint
-        if: always()
-        run: node --test tests/footprint.test.mjs
-      - name: Chromium responsive, keyboard, preferences and emulated touch probes
-        if: always()
-        env:
-          DETOUR_PHASE7_CAPTURES: phase7-captures
-        run: node --test tests/phase7.test.mjs
-      - name: Preserve browser captures on passing or failing probes
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: detour-phase7-browser-probes
-          path: detour/phase7-captures/
-          if-no-files-found: ignore
-          retention-days: 7
-      - name: Pack reusable DETOUR skin
-        if: success()
+      - name: Install media tools and dependencies
         run: |
-          rm -rf release-package
-          mkdir -p release-package
-          npm pack --pack-destination release-package
-      - name: Preserve reusable DETOUR package
-        if: success()
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          npm ci
+      - name: Install browser engines
+        run: npx playwright install --with-deps chromium firefox webkit
+      - name: Build demo
+        run: npm run build
+      - name: Verify package boundary and media provenance
+        run: |
+          npm run test:architecture
+          node scripts/final-audit.mjs
+      - name: Verify local showcase and external host
+        run: |
+          node --test tests/showcase.test.mjs
+          npm run test:package
+      - name: Verify Chromium, Firefox and WebKit
+        run: |
+          npm test
+          DETOUR_ENGINE=firefox npm test
+          DETOUR_ENGINE=webkit npm test
+      - name: Verify responsive, keyboard and size constraints
+        run: |
+          node --test tests/phase7.test.mjs
+          node --test tests/footprint.test.mjs
+      - name: Verify optional published integrations on demand
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          node --test tests/https-release.test.mjs
+          node --test tests/phase10-public.test.mjs
+          node --test tests/live-site.test.mjs
+          node --test tests/mux.test.mjs
+          node --test tests/mux-release.test.mjs
+      - name: Preserve failure evidence
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: detour-reusable-package-${{ github.sha }}
-          path: detour/release-package/*.tgz
-          if-no-files-found: error
-          retention-days: 14
-      - name: Preserve exact production release bundle
-        if: success()
+          name: detour-failure-diagnostics
+          path: |
+            detour/test-results/
+            detour/phase7-captures/
+            detour/phase9-diagnostics/
+          retention-days: 3
+          if-no-files-found: ignore
+      - name: Package reusable source on demand
+        if: github.event_name == 'workflow_dispatch' && success()
+        run: npm pack
+      - name: Retain package for integration
+        if: github.event_name == 'workflow_dispatch' && success()
         uses: actions/upload-artifact@v4
         with:
-          name: detour-production-dist-${{ github.sha }}
-          path: detour/dist/
+          name: detour-package-${{ github.sha }}
+          path: detour/*.tgz
+          retention-days: 5
           if-no-files-found: error
-          retention-days: 14
-      - name: Stage exact successful dist on immutable DETOUR branch
-        if: success() && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[stage-dist]'))
-        env:
-          DETOUR_BUILD_RUN_ID: ${{ github.run_id }}
-        run: node scripts/stage-release-dist.mjs

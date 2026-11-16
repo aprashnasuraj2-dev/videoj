@@ -1,18 +1,17 @@
-# Build artifacts, media and durable storage
+# Source artifacts and storage
 
-Source code, generated media and published web assets have different lifecycles.
+DHAGO and DETOUR have independently reproducible builds. Keep the source SHA, checksums and deployed URL together when creating an actual release.
 
-| Asset | Primary reference | Retention rule |
-| --- | --- | --- |
-| Reusable DHAGO source | Git commit in this repository | Tag/review source revision; do not embed secrets |
-| Reusable DETOUR package | `cd detour && npm pack` | Preserve exact source SHA and tarball checksum |
-| Canonical DHAGO film and captions | `apps/preview/public/media/` and media provenance | Preserve verified MP4, WebM, WebVTT and poster |
-| Deployed static files | Commit-matched `dist/` and release manifest | Store immutable build and checksum evidence |
-| Browser runs / performance captures | GitHub Actions artifacts or configured owner archive | Keep actual browser, date, run and source revision visible |
-| Optional Mux delivery | Public playback config plus account-owned asset | Keep management tokens outside source and browser |
+| Artifact | Creation / verification |
+| --- | --- |
+| DHAGO reusable source | Repository `src/` with `npm ci`, `npm run typecheck` and `npm run build` |
+| DETOUR packed source | `cd detour && npm pack` and `npm run test:package` |
+| DHAGO canonical media | `npm run sync:canonical-media` and byte-pinned source media |
+| Built DHAGO website | `dist/` plus immutable `release-manifest.json.source_sha` |
+| Built DETOUR example | `detour/dist/` and the matching DETOUR release manifest |
+| Browser regressions | GitHub Actions checks on modified project files, failure evidence only |
+| Published runtime | Browser observations against the exact deployed revision, verified separately |
 
-`archive-drive.yml` is an optional, manually triggered durable source/evidence archive and requires separately configured OAuth credentials. It must not be assumed to run merely because GitHub or Drive is connected. Confirm uploads and independent readback before calling them retained.
+Optional archival to an owner-controlled storage folder can be performed outside the source repository. Do not commit export archives, local credentials, generated Playwright reports or massive one-off render assets. CI artifacts are intentionally short-lived; a successful build is not a durable backup and not proof that an external site serves that build.
 
-Published URLs are **not** evidence that a specific commit is live. Verify `release-manifest.json.source_sha` and actual playback from the named public route. Do not duplicate media uploads or alter shared Cloudflare storage and unrelated domains to refresh a project-specific demonstration.
-
-Prior one-off release packets and detailed run logs remain available in repository version history; maintain new records around exact source versions and tested results.
+The two published applications may use different pinned versions and different Cloudflare/Mux services. Do not conflate them or overwrite unrelated Aafnai Patro resources during maintenance.

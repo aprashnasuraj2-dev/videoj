@@ -1,5 +1,10 @@
 /node_modules/
 /dist/
-/public/fixtures/
 /test-results/
-/public/showcase/\n
+/phase7-captures/
+/phase9-diagnostics/
+/release-package/
+/published-dist/
+/.mux/
+/public/fixtures/
+/public/showcase/
