@@ -17,7 +17,7 @@ import './player.css';
 
 function interfaceMarkup(enhancement = '') {
   return `
-  <media-container class="detour" lang="en">
+  <media-container class="detour" lang="en" tabindex="-1">
     <div class="detour-screen"></div>
     <div class="detour-shelf">
       <div class="detour-rail">
