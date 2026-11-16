@@ -196,6 +196,13 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
     line-height: 1.15;
   }
 }
+
+@container (max-width: 300px) {
+  .afterimage .afterimage-presets button {
+    flex: 1 1 44px;
+    min-width: 44px;
+  }
+}
 </style>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.4.0/video.js"></script>
 </head>
@@ -744,6 +751,6 @@ chapters.src = asset('./media/the-waterline-v1-chapters.vtt');
 video.append(chapters);
 const mountedPlayer = createAfterimagePlayer(video, { example: { pinnedSeconds: 5, currentSeconds: 13 } });
 document.querySelector('#afterimage-player').append(mountedPlayer);
-window.__AFTERIMAGE_RELEASE__ = { version: '0.2.3-waterline', video, player: mountedPlayer };</script>
+window.__AFTERIMAGE_RELEASE__ = { version: '0.2.4-waterline', video, player: mountedPlayer };</script>
 </body>
 </html>
