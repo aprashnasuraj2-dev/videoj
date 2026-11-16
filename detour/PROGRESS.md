@@ -21,6 +21,7 @@ Resume step: 091
 - A docs-only hardening run exposed a nondeterministic legacy Chromium assertion: while media was actively playing, the generic seek helper requested 42.0s but sampled 42.190758s and still demanded <0.1s. The same unchanged product had already passed the full release-style hardening run.
 - The shared browser-test seek helper now waits for real native seek settlement and uses **±0.12s while paused** versus **±0.5s while already playing**. Playing media is allowed to advance naturally after the seek; the gate still asserts the actual media clock, not a button label or requested value.
 - This is a test-harness stability correction only. No DETOUR runtime/skin file changed in this correction, and Return's own arrival assertions remain independently bounded.
+- Final-head focused run `43819197661` then exposed a second evidence-timing race: the caption track had reached `mode=showing` before its VTT cues were populated, so fullscreen certification sampled `cueCount=0`. The fullscreen gate now waits for both `showing` **and at least one real cue**, matching the already-hardened keyboard caption gate. Runtime caption behavior is unchanged.
 - Exact final branch-head validation is still required after this documentation/test reconciliation; no stale earlier run will be used as final certification.
 
 ## 2026-11-16 · Cross-hardening keyboard/fullscreen/touch evidence accepted
