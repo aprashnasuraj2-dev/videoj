@@ -10,12 +10,24 @@ Resume step: 091
 | Open dependencies | 091 signed-in live-form confirmation; 017 first-use study; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% zoom; 090 fresh uncoached judging pass; 099 owner submission and 100 post-submission verification. No further independent Phase 10 acceptance step bypasses 091. |
 | Prototype / public release | Preferred submission route: `https://detour-entry.aafnaipatro.com/mux/` on checkpoint runtime `d430f2ee49fa93a460c150fd90205b13fe5327be` / `detour-dist-d430f2ee49fa`; redundant mirror `https://detour.aafnaipatro.com/mux/` intentionally retains the earlier single-place `a3b43f74…` runtime; independent rollback remains `https://detour-backup.aafnaipatro.com/` / `detour-dist-50ac9661e315`. |
 | Source baseline | Promoted checkpoint runtime `d430f2ee49fa93a460c150fd90205b13fe5327be` / `detour-dist-d430f2ee49fa` passed runtime validation `43770989069`. Final handoff head `11e00e6d…` passed complete validation `43772874561` and authentic evidence capture `43772874624`; comparison from runtime to handoff contains zero `detour/skin/*` changes. |
+| Hardening candidate | Product SHA `d91494e77c1bf8860a2d26a638e1e72958040e69` passed full hardening run `43818172481` plus focused gate `43818172494`. It is intentionally **not** promoted to the public route; public identity remains `d430f2ee…`. |
 
 
 
 
 
+## 2026-11-16 · Cross-hardening keyboard/fullscreen/touch evidence accepted
 
+- Isolated hardening product `d91494e77c1bf8860a2d26a638e1e72958040e69` passed full release-style run `43818172481`: build, architecture, packed external host, full Chromium/Firefox/desktop-WebKit regressions, Phase 7, footprint, definitive keyboard journeys in all three engines, headed fullscreen roundtrip, browser-level touch interruption, judge-first-use automation and progress validation.
+- Focused run `43818172494` passed the new hardening gates at the same product SHA. No public deployment was changed; `https://detour-entry.aafnaipatro.com/mux/` still identifies public source `d430f2ee49fa93a460c150fd90205b13fe5327be`.
+- Keyboard certification now begins from a clean `body` focus state. First Tab lands on the semantic Seek slider in Chromium, Firefox and desktop WebKit. Focus indication measures **3px**, **13.34:1** against the shelf; representative control foreground is **15.48:1**. Real Play/Pause, Mute, Volume, loaded VTT captions, Settings/Escape, Keep, Return and Stay all pass by keyboard.
+- Cross-engine focus hardening removed only redundant wrapper/raw-media stops: `media-container` is not sequentially tabbable, the Seek thumb is, and a bare host media element gets `tabIndex=-1` only when the host did not explicitly provide a tabindex. Explicit host focus policy remains authoritative.
+- Headed fullscreen evidence verifies the actual `MEDIA-CONTAINER.detour`, all core/held controls inside 1280×800, captions and Settings preserved, and the settled label sequence `Enter fullscreen → Exit fullscreen → Enter fullscreen → Exit fullscreen → Enter fullscreen`. CI Escape did not leave Fullscreen API; the gate truthfully used the still-reachable visible fullscreen control instead of faking Escape success.
+- Browser-level touch emulation now covers tap seek, drag seek, outside pointer release, pointercancel, page-scroll recovery (0→305), Return/Stay and a manual touch seek interrupting a pending Return; stale Return completion is ignored. This **does not** close physical iPhone Safari/Android Chrome step 062.
+- Fresh-session automation sees Play 44×44, Seek 1207.625×44, Keep 276×44, Fullscreen/Settings 44×44. The automated 42.35→18→24→42.35 path completes in 327.7ms and Stay preserves 18s in 171.5ms. These are engineering metrics only; they do **not** close human steps 017 or 090.
+- Existing footprint evidence passed again: 1,815 B incremental gzip and zero observed >50ms Long Tasks across five fresh plus five repeat CI traces. This is not a low-end-phone claim.
+- A permanent keyboard-help cue was intentionally rejected: the direct path is now certified and the added persistent text would increase composition density without being required for operation.
+- Full report: [cross-hardening evidence](submission-report/HARDENING.md). Open boundaries remain 017 human first-use, 062 physical phones, 064 NVDA/VoiceOver, 065 native browser 200% zoom, 090 uncoached judge, and the existing owner/form/submission gates.
 
 ## 2026-11-16 · Canonical master pack v4 reconciled to final-head CI package
 
