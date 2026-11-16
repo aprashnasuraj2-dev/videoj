@@ -86,3 +86,9 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Instrumentation still found document overflow: header min-content width was ~283px (wordmark/eyebrow), while the comparison control grid retained a ~260px min-content width.
 - Added an ultra-narrow typography fallback and explicit `min-width:0`/one-column control rules so neither the header nor the Temporal Lens can widen the document.
 - **Next action:** regenerate standalone, redeploy exact source, and rerun 240px plus the three-browser matrix.
+
+## 2026-11-16 · WebKit ultra-narrow target correction
+
+- On the corrected no-overflow build, WebKit measured Pinned/Split/Now at 41×44px because the ultra-narrow rule had intentionally removed their minimum width.
+- The available 206px control row can fit three 44px targets plus gaps, so the candidate is corrected rather than lowering the 44px acceptance threshold.
+- **Next action:** regenerate standalone, redeploy exact source, verify 240px no-overflow + ≥44px targets, then rerun the browser matrix.

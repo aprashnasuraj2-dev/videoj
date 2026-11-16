@@ -149,3 +149,10 @@
     line-height: 1.15;
   }
 }
+
+@container (max-width: 300px) {
+  .afterimage .afterimage-presets button {
+    flex: 1 1 44px;
+    min-width: 44px;
+  }
+}
