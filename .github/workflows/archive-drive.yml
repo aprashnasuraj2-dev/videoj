@@ -1,10 +1,10 @@
-name: Archive candidate to Google Drive
+name: Archive source snapshot to Google Drive
 on:
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: drive-candidate-archive
+  group: drive-source snapshot-archive
   cancel-in-progress: false
 jobs:
   archive:

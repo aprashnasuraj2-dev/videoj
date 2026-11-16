@@ -2,7 +2,12 @@ name: Validate DETOUR
 
 on:
   push:
-    branches: [detour]
+    branches: [detour, main]
+    paths:
+      - 'detour/**'
+      - '.github/workflows/detour-ci.yml'
+  pull_request:
+    branches: [main, detour]
     paths:
       - 'detour/**'
       - '.github/workflows/detour-ci.yml'
@@ -33,13 +38,13 @@ jobs:
         run: npx playwright install --with-deps chromium firefox webkit
       - name: Build production demo
         run: npm run build
-      - name: Verify generated Phase 8 showcase bundle and local HTTP seeks
+      - name: Verify showcase bundle and local HTTP seeking
         run: node --test tests/showcase.test.mjs
       - name: Verify frozen public HTTPS release origin
         run: node --test tests/https-release.test.mjs
-      - name: Phase 10 exact public release and mandatory controls
+      - name: Verify public release and standard controls
         run: node --test tests/phase10-public.test.mjs
-      - name: Verify Aafnai Patro live-site bonus
+      - name: Verify independently embedded player
         run: node --test tests/live-site.test.mjs
       - name: Audit final bundle, package license and secret boundary
         run: node scripts/final-audit.mjs
@@ -60,12 +65,12 @@ jobs:
       - name: Measure incremental compressed package footprint
         if: always()
         run: node --test tests/footprint.test.mjs
-      - name: Phase 7 Chromium responsive, keyboard, preferences and emulated touch probes
+      - name: Chromium responsive, keyboard, preferences and emulated touch probes
         if: always()
         env:
           DETOUR_PHASE7_CAPTURES: phase7-captures
         run: node --test tests/phase7.test.mjs
-      - name: Preserve Phase 7 browser captures on passing or failing probes
+      - name: Preserve browser captures on passing or failing probes
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -95,9 +100,6 @@ jobs:
           path: detour/dist/
           if-no-files-found: error
           retention-days: 14
-      - name: Validate checklist and resume pointer
-        if: always()
-        run: node scripts/check-progress.mjs
       - name: Stage exact successful dist on immutable DETOUR branch
         if: success() && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[stage-dist]'))
         env:

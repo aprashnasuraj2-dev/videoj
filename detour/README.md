@@ -1,16 +1,19 @@
-# DETOUR
+# DETOUR — A seek bar that remembers
 
-Build a reusable Video.js v10 skin where viewers can **keep places, explore elsewhere, and return from the same familiar seek rail**. The package defaults to the original single held place with explicit Return/Stay controls; an opt-in checkpoint mode keeps up to four source-scoped C1–C4 marks on the rail, reveals each timestamp on hover/focus, and returns by clicking or tapping the mark.
+DETOUR is an open-source Video.js v10 skin for holding a moment, exploring elsewhere in a video, and returning without losing the original position. The familiar seek rail remains the primary navigation control.
 
-## Start here
+**[Four-checkpoint demo](https://detour-entry.aafnaipatro.com/mux/)** · **[Single-place demo](https://detour.aafnaipatro.com/mux/)** · **[Engineering and media provenance](docs/ENGINEERING.md)** · **[Repository overview](../README.md)**
 
-1. Read the current [100-step checklist](CHECKLIST.md) and [progress](PROGRESS.md) from the same freshly fetched `detour` head.
-2. Use the [continuation instructions](CONTINUE.md) to resume the current phase and next actionable step.
-3. Update the checklist and progress with evidence as work lands. Keep release evidence in [submission-report/](submission-report/README.md).
+## Use DETOUR in another application
 
-## Reuse boundary
+The host owns the native media element and its source/track tags. The package owns the control shell and held-position behavior; it does not import showcase media, Mux management APIs, or the host application's router.
 
-The reusable surface is the package root plus scoped styles. A host creates and owns its native `<video>` or `<audio>` element and any `<track>` children, then passes that media element to `createDetourPlayer(media, { sourceKind })`. Media URLs, captions, titles and publication paths remain host concerns. The package is currently pack-installable but intentionally not registry-published.
+```bash
+cd detour
+npm ci
+npm pack
+# Install the generated detour-video-skin-0.1.0.tgz in your host project.
+```
 
 ```js
 import { createDetourPlayer } from 'detour-video-skin';
@@ -18,80 +21,45 @@ import 'detour-video-skin/styles';
 
 const video = document.createElement('video');
 video.src = '/my-video.mp4';
-document.querySelector('#mount').append(
-  createDetourPlayer(video, { sourceKind: 'vod' }),
-);
-```
-
-For hosts that want the same visual shell and ordinary Video.js controls without loading the held-place behavior, `detour-video-skin/base` exports `createBasePlayer(media)`. Its module graph does not import or register `detour-place`; the packed-consumer test exercises this mode separately at a compact width.
-
-Mux support is a separate optional `detour-video-skin/mux` entry. The core entry does not import Mux, fixtures or showcase code, and no management credential belongs in a browser bundle. See [Phase 5](design/PHASE-5.md) for the packed-host and cross-engine proof.
-
-## Package quick-start
-
-DETOUR is **pack-installable** but intentionally not registry-published. From this directory:
-
-```bash
-npm ci
-npm pack
-# In another project:
-npm install /path/to/detour-video-skin-0.1.0.tgz
-```
-
-Then mount a host-owned native media element:
-
-```js
-import { createDetourPlayer } from 'detour-video-skin';
-import 'detour-video-skin/styles';
-
-const video = document.createElement('video');
-video.src = '/interview.mp4';
 video.preload = 'metadata';
-
-const captions = document.createElement('track');
-captions.kind = 'captions';
-captions.srclang = 'en';
-captions.label = 'English';
-captions.src = '/interview.vtt';
-video.append(captions);
-
 document.querySelector('#player').append(
   createDetourPlayer(video, { sourceKind: 'vod' }),
 );
+```
 
-// Optional multi-place mode: C1–C4 stay on the familiar seek rail.
-// Hover/focus reveals time; click/tap returns; Delete removes one checkpoint.
-const checkpointPlayer = createDetourPlayer(video.cloneNode(true), {
+A four-checkpoint mode is opt-in; the default remains one held position with explicit Return/Stay actions.
+
+```js
+const checkpointPlayer = createDetourPlayer(video, {
   sourceKind: 'vod',
   maxPlaces: 4,
   returnUi: 'marker',
 });
 ```
 
-### Build and verification
+In marker mode, C1–C4 remain on the seek rail. Hover or focus exposes timestamps, click/tap returns, Delete/Backspace removes a focused point, and Clear removes all. A source change resets source-scoped positions. Duplicated saves near an existing point are coalesced.
 
-- `npm run build` — generate the deterministic demo media and build the multi-page showcase.
-- `npm run test:architecture` — verify package/import boundaries and credential separation.
-- `npm run test:package` — pack the exact package, install it into a fresh temporary host, replace the media/captions and exercise the skin in Chromium, Firefox and desktop WebKit.
-- `npm test` — run the core browser regression in Chromium; set `DETOUR_ENGINE=firefox` or `webkit` for the other engines.
+For a plain player shell without held-place behavior use `detour-video-skin/base` and `createBasePlayer(media)`. The separate `detour-video-skin/mux` export provides public playback-URL helpers, not media-management operations.
 
-### Reuse limits
+## Boundaries
 
-- Held-place behavior is enabled only when the host declares `sourceKind: 'vod'` on a native video with finite, seekable media.
-- DETOUR defaults to one held position per mounted player instance. Hosts may opt into up to four source-scoped checkpoints with `maxPlaces: 4`; marker mode keeps those checkpoints on the seek rail until the viewer clears them or the source changes.
-- Live streams, non-seekable media and audio keep the ordinary player shell but do not expose the held-place action.
-- Media URLs, poster, captions, titles, hosting and optional streaming providers are host concerns. The packed artifact excludes demo/showcase media and test fixtures.
-- `detour-video-skin/mux` contains public URL helpers only. Mux management credentials are never part of the package/browser contract.
+- The held-place action requires `sourceKind: 'vod'`, a finite duration and genuinely seekable video. Live streams, unseekable media and audio keep normal controls but not a nonfunctional Return action.
+- Captions, posters, titles, source URLs and hosting belong to the host. The published demonstration is not part of the npm pack artifact.
+- Each player instance owns its state. A source replacement or disconnected player invalidates old holds and in-flight returns.
+- The current distribution is **pack-installable, not published to the npm registry**. Browser-native behavior, DRM, codecs and accessibility need validation in the adopting application.
+- The package is Apache-2.0. Demo media provenance and third-party licenses are distinct; see [engineering notes](docs/ENGINEERING.md).
 
-### License and media
+## Develop and verify
 
-The DETOUR package source is Apache-2.0; see `LICENSE`. The package tarball contains no showcase video, poster or captions. The public demonstration media is project-authored procedural test/showcase material with separate provenance in `submission-report/RIGHTS.md`.
+```bash
+npm ci
+npm run build
+npm run test:architecture
+npm test
+npm run test:package
+npm pack
+```
 
-## Product direction
+Use `DETOUR_ENGINE=firefox npm test` or `DETOUR_ENGINE=webkit npm test` for additional engines. The public Mux route and alternate-media page provide integration examples, not a requirement to adopt a streaming provider.
 
-- **Player first.** Keep one source-scoped held point by default, or opt into a bounded C1–C4 checkpoint rail, while preserving five essential controls and real player state. Preserve normal play/pause, seeking, captions, keyboard and touch. In single-place mode the mark is consumed by Return/Stay; in checkpoint mode C1–C4 survive Returns and unrelated seeks until individually removed, cleared together or reset by a source change.
-- **Own identity.** Use graphite, a bright angular hold marker and tabular time. Lead with a playable player or a real capture. Keep DHAGO’s woven interaction, footage, visual system, live routes and release workflows out of DETOUR.
-- **Prove the behavior early.** First build a rough real v10 MP4 prototype. Demonstrate a 42s → 18s → 42s round trip, held origin through two seeks, and “Stay here” without movement. Test first-use recognition, narrow touch and keyboard before adding polish. Backup: [Pausepoint](CHECKLIST.md#02--concept-definition-and-signature-interaction), an explicit one-time pause at a viewer-chosen timestamp.
-- **Ship in order.** Core skin → replacement-media mount → public anonymous playback and real-device evidence → optional Mux or real-site bonus → owner handoff. See the [rules register](submission-report/RULES.md) for release constraints. DETOUR can develop and rehearse while second-entry eligibility is being resolved.
-
-The original [planning PDF](https://chatgpt.com/library?file_id=libfile_d2f57bf1472081918779a4349d0ed582&account_id=personal) is a historical reference. Checklist state, wording and resume position live on this branch.
+To reproduce historical project experiments, inspect Git history; old task boards and one-off release packets are not active product documentation.

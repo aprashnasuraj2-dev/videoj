@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 
-const root=process.argv[2] ?? 'test-results/submission';
+const root=process.argv[2] ?? 'test-results/release';
 const sha=process.env.GITHUB_SHA;
 if(!/^[a-f0-9]{40}$/.test(sha ?? ''))throw new Error('GITHUB_SHA is required');
 const perf=JSON.parse(readFileSync(root+'/performance-evidence.json','utf8'));
@@ -20,7 +20,7 @@ const environments=`| Environment | Playback | Seek | Chapters | Captions | Full
 | iPhone Safari on a physical device | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED | NOT TESTED |
 | VoiceOver or NVDA | — | — | — | — | — | NOT TESTED | NOT TESTED |`;
 
-const md=`# DHAGO — competition evidence
+const md=`# DHAGO — public playback evidence
 
 **Positioning:** DHAGO's strength is the player itself: a distinctive woven-time concept resolved across real playback, interaction, responsive layouts and accessibility states.
 
@@ -94,7 +94,7 @@ The player pairs a quiet control typeface with a restrained editorial display vo
 
 The screenshots and recordings in this evidence set come from genuine browser playback of the public release. No synthetic playback state is inserted.
 
-Release provenance and exact integrity records are retained separately from this judge-facing report. Capture browser: ${capture.browser}.
+Release provenance and exact integrity records are retained separately from this public playback report. Capture browser: ${capture.browser}.
 `;
 writeFileSync(root+'/tested-environments.md',environments+'\n');
 writeFileSync(root+'/final-release-evidence.md',md);

@@ -1,4 +1,4 @@
-name: Validate submission candidate
+name: Validate DHAGO
 on:
   push:
     branches: [main]
@@ -31,18 +31,18 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: candidate-evidence
+          name: dhago-build
           path: |
             test-results/
             playwright-report/
             dist/
           retention-days: 14
 
-  bonus-mux-proof:
+  mux-playback:
     needs: verify
     runs-on: ubuntu-latest
     timeout-minutes: 12
-    # Bonus proof is separate: an unavailable historical asset must never
+    # Mux playback validation is separate: an unavailable historical asset must never
     # invalidate otherwise verified original-video player functionality.
     continue-on-error: true
     env:
@@ -57,14 +57,14 @@ jobs:
       - run: npm ci
       - uses: actions/download-artifact@v4
         with:
-          name: candidate-evidence
+          name: dhago-build
       - run: npx playwright install --with-deps chromium
       - name: Play original Studies in Thread via Mux HLS with actual Chrome decoder
         run: npx playwright test tests/mux.spec.ts --workers=1
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: bonus-mux-playback-proof
+          name: mux-playback-evidence
           path: |
             test-results/
             playwright-report/
@@ -87,10 +87,10 @@ jobs:
       - run: npm ci
       - uses: actions/download-artifact@v4
         with:
-          name: candidate-evidence
+          name: dhago-build
       - name: Install ${{ matrix.browser }} only
         run: npx playwright install --with-deps ${{ matrix.browser }}
-      - name: Run compact judge-visible browser proof
+      - name: Run cross-browser player interaction proof
         env:
           DHAGO_BROWSER: ${{ matrix.browser }}
         run: npx playwright test tests/browser-proof.spec.ts --workers=1
@@ -117,7 +117,7 @@ jobs:
           node-version: 24
       - uses: actions/download-artifact@v4
         with:
-          name: candidate-evidence
+          name: dhago-build
       - name: Stage the exact dist exercised by verify
         run: node scripts/stage-cf-dist.mjs
 
@@ -140,7 +140,7 @@ jobs:
       - run: npm ci
       - uses: actions/download-artifact@v4
         with:
-          name: candidate-evidence
+          name: dhago-build
       - run: npx playwright install --with-deps chromium
       - name: Bind smoke to the published immutable release
         env:
@@ -183,23 +183,23 @@ jobs:
         env:
           DHAGO_LIVE_URL: https://creative.aafnaipatro.com
         run: npx playwright test tests/live.spec.ts --workers=1
-      - name: Capture actual public browser interaction and screenshots
+      - name: Capture public browser interaction and screenshots
         env:
           DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
           DHAGO_RELEASE_SHA: ${{ github.sha }}
           DHAGO_EXPECTED_MEDIA_PATH: media/studies-in-thread.mp4
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
-          node scripts/capture-submission.mjs test-results/submission
+          node scripts/capture-public-proof.mjs test-results/release
       - name: Measure Lighthouse mobile and release size
         env:
           DHAGO_LIVE_URL: https://creative.aafnaipatro.com/
           CHROME_PATH: /usr/bin/google-chrome
         run: |
-          mkdir -p test-results/submission
+          mkdir -p test-results/release
           npx --yes lighthouse@13.6.0 "$DHAGO_LIVE_URL" \
             --output=json \
-            --output-path=test-results/submission/lighthouse-mobile.json \
+            --output-path=test-results/release/lighthouse-mobile.json \
             --only-categories=performance \
             --only-categories=accessibility \
             --only-categories=best-practices \
@@ -207,13 +207,13 @@ jobs:
             --form-factor=mobile \
             --chrome-flags="--headless --no-sandbox --disable-gpu" \
             --quiet
-          cp dist/dhago-size.json test-results/submission/dhago-size.json
+          cp dist/dhago-size.json test-results/release/dhago-size.json
           node scripts/summarize-performance.mjs \
-            test-results/submission/lighthouse-mobile.json \
+            test-results/release/lighthouse-mobile.json \
             dist/dhago-size.json \
-            test-results/submission/performance-evidence
-      - name: Assemble judge-facing evidence index
-        run: node scripts/write-final-evidence.mjs test-results/submission
+            test-results/release/performance-evidence
+      - name: Assemble public playback evidence index
+        run: node scripts/write-release-evidence.mjs test-results/release
       - uses: actions/upload-artifact@v4
         if: always()
         with:

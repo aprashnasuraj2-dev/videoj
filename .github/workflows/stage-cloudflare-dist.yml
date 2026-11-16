@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       run_id:
-        description: Main branch Validate submission candidate run with a successful verify job
+        description: Main branch Validate DHAGO run with a successful verify job
         type: string
         required: true
 permissions:
@@ -27,11 +27,11 @@ jobs:
             const { owner, repo } = context.repo;
             const { data: run } = await github.rest.actions.getWorkflowRun({ owner, repo, run_id });
             if (run.path !== '.github/workflows/ci.yml' || run.head_branch !== 'main' || run.event !== 'push') {
-              throw new Error('Choose a main push from Validate submission candidate');
+              throw new Error('Choose a main push from Validate DHAGO');
             }
             const { data: jobs } = await github.rest.actions.listJobsForWorkflowRun({ owner, repo, run_id, filter: 'latest' });
             if (!jobs.jobs.some(job => job.name === 'verify' && job.conclusion === 'success')) {
-              throw new Error('The verify job must succeed before using its candidate-evidence artifact');
+              throw new Error('The verify job must succeed before using its dhago-build artifact');
             }
             core.setOutput('source', run.head_sha);
       - uses: actions/checkout@v4
@@ -42,7 +42,7 @@ jobs:
           node-version: 24
       - uses: actions/download-artifact@v4
         with:
-          name: candidate-evidence
+          name: dhago-build
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ inputs.run_id }}
       - name: Restage the same verified artifact

@@ -12,7 +12,7 @@ const {
   DHAGO_EXPECTED_MEDIA_PATH,
   PLAYWRIGHT_CHROMIUM_EXECUTABLE,
 } = process.env;
-const output = resolve(process.argv[2] ?? 'submission/assets');
+const output = resolve(process.argv[2] ?? 'test-results/release/assets');
 const complete = process.env.DHAGO_LOOM_COMPLETE_SELECTOR ?? '.dhago[data-weave-complete]';
 if (!DHAGO_LIVE_URL || !/^[a-f0-9]{40}$/.test(DHAGO_RELEASE_SHA ?? '')
   || !/^assets\/[\w-]+\.js$/.test(DHAGO_EXPECTED_ENTRY_ASSET ?? '')
