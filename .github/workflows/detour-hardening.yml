@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   hardening:
@@ -95,6 +95,12 @@ jobs:
       - name: Validate existing checklist/resume invariants
         if: always()
         run: node scripts/check-progress.mjs
+
+      - name: Stage verified immutable dist for in-place live update
+        if: success() && contains(github.event.head_commit.message, '[stage-dist]')
+        env:
+          DETOUR_BUILD_RUN_ID: ${{ github.run_id }}
+        run: node scripts/stage-release-dist.mjs
 
       - name: Preserve hardening evidence
         if: always()
