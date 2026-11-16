@@ -32,7 +32,7 @@ const boot = [
   "video.append(chapters);",
   "const mountedPlayer = createAfterimagePlayer(video, { example: { pinnedSeconds: 5, currentSeconds: 13 } });",
   "document.querySelector('#afterimage-player').append(mountedPlayer);",
-  "window.__AFTERIMAGE_RELEASE__ = { version: '0.3.9-touch-events', video, player: mountedPlayer };",
+  "window.__AFTERIMAGE_RELEASE__ = { version: '0.3.10-control-fit', video, player: mountedPlayer };",
 ].join('\n');
 
 const runtime = [format, lens, authored, shell, player, boot].map(escapeScript).join('\n\n');

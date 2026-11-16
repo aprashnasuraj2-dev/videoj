@@ -39,11 +39,11 @@
 .afterimage .afterimage-pin i { position: absolute; inset-block-start: 1px; inset-inline-start: 50%; width: 9px; height: 9px; transform: translateX(-50%) rotate(45deg); border: 1px solid var(--afterimage-ink); background: var(--afterimage-copper); }
 .afterimage .afterimage-pin[data-edge-start] i { inset-inline-start: 0; transform: rotate(45deg); }
 .afterimage .afterimage-pin[data-edge-end] i { inset-inline-start: auto; inset-inline-end: 0; transform: rotate(45deg); }
-.afterimage .afterimage-bar { display: grid; grid-template-columns: auto minmax(120px, 1fr) auto minmax(0, auto); grid-template-areas: "transport rail options lens"; align-items: center; gap: 10px; }
+.afterimage .afterimage-bar { display: grid; grid-template-columns: auto minmax(120px, 1fr) auto; grid-template-areas: "transport rail options" "lens lens lens"; align-items: center; gap: 8px 10px; }
 .afterimage .afterimage-transport, .afterimage .afterimage-options, .afterimage .afterimage-lens, .afterimage .afterimage-lens-primary, .afterimage .afterimage-presets { display: flex; align-items: center; gap: 8px; }
 .afterimage .afterimage-transport { grid-area: transport; }
 .afterimage .afterimage-options { grid-area: options; justify-content: center; }
-.afterimage .afterimage-lens { grid-area: lens; justify-content: flex-end; }
+.afterimage .afterimage-lens { grid-area: lens; justify-content: flex-end; min-width: 0; max-width: 100%; flex-wrap: wrap; padding-block-start: 4px; border-block-start: 1px solid rgb(240 233 217 / .1); }
 .afterimage .afterimage-icon, .afterimage .afterimage-action, .afterimage .afterimage-presets button, .afterimage .afterimage-clear { min-width: 44px; min-height: 44px; border: 1px solid rgb(240 233 217 / .18); border-radius: 8px; color: var(--afterimage-limestone); background: rgb(255 255 255 / .04); font: inherit; cursor: pointer; }
 .afterimage .afterimage-icon { display: inline-grid; place-items: center; width: 44px; padding: 0; }
 .afterimage .afterimage-icon svg { width: 22px; height: 22px; }
