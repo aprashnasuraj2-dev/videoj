@@ -242,36 +242,40 @@ try {
   const seamFocus = await page.evaluate(() => {
     const { player } = window.__AFTERIMAGE_RELEASE__;
     const el = player.querySelector('.afterimage-seam-control');
-    const style = getComputedStyle(el);
     return {
       focused: document.activeElement === el,
       ariaValueText: el.getAttribute('aria-valuetext'),
-      outlineWidth: style.outlineWidth,
     };
   });
   check('keyboard-seam-focus', seamFocus.focused && /pinned frame/.test(seamFocus.ariaValueText || ''), seamFocus);
-  await shot(playerSection, 'afterimage-keyboard-focus.png');
-  await hold(page, 'keyboard reveal focus', 1400);
 
-  const close = page.getByRole('button', { name: 'Close comparison', exact: true });
-  await close.focus();
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Escape');
   await page.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.player.querySelector('.afterimage-reference')?.hidden === true);
   const closeState = await page.evaluate(() => {
     const { player, video } = window.__AFTERIMAGE_RELEASE__;
+    const compare = player.querySelector('[data-afterimage-compare]');
+    const style = getComputedStyle(compare);
     return {
-      compareFocused: document.activeElement === player.querySelector('[data-afterimage-compare]'),
+      compareFocused: document.activeElement === compare,
+      outlineWidth: style.outlineWidth,
       trackMode: [...video.textTracks].find(item => item.kind === 'captions')?.mode || null,
       mirrorHidden: player.querySelector('.afterimage-comparison-caption')?.hidden,
       comparisonOpen: player.querySelector('.afterimage')?.hasAttribute('data-comparison-open') || false,
     };
   });
-  check('close-restores-native-caption-state', closeState.compareFocused && closeState.trackMode === 'showing' && closeState.mirrorHidden && !closeState.comparisonOpen, closeState);
-  await hold(page, 'close retains the pin and restores native caption rendering', 1300);
+  check('escape-restores-native-caption-state-and-focus',
+    closeState.compareFocused &&
+      parseFloat(closeState.outlineWidth) >= 3 &&
+      closeState.trackMode === 'showing' &&
+      closeState.mirrorHidden &&
+      !closeState.comparisonOpen,
+    closeState);
+  await shot(playerSection, 'afterimage-keyboard-focus.png');
+  await hold(page, 'Escape restores focus to Compare', 1200);
 
   await page.keyboard.press('Enter');
   await page.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.player.querySelector('.afterimage-reference')?.hidden === false);
-  await hold(page, 'compare reopens from keyboard', 1300);
+  await hold(page, 'Compare reopens from keyboard', 1000);
 
   await page.getByRole('button', { name: 'Clear pin', exact: true }).click();
   await hold(page, 'clear returns to ordinary playback', 1200);
