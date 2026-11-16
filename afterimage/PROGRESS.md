@@ -343,3 +343,19 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Public media delivery remains the same authored WATERLINE bytes; a live range probe returned **206**, `bytes 0-1023/1875769`, `video/mp4`, and the expected `ftypisom` signature. Public browser interaction showed the real WATERLINE cue above an open comparison while Pinned/Split/Now remained visible and playback continued.
 - Checklist 058 is therefore complete. Checklist 060 remains honestly blocked because browser semantics/emulation are not physical iPhone/Android or real NVDA/VoiceOver evidence.
 - Submission/form work was intentionally not started in this pass.
+
+
+## 2026-11-16 · revised accessible submission asset pack accepted
+
+- Submission work resumed only after the comparison-caption accessibility correction passed and was promoted in place. The public competition URL remained `https://afterimage.aafnaipatro.com/`; no replacement route or submission identity was created.
+- Final serving release is `a01a62fa5ef8c75850d285656254bb741bd31061`, runtime `0.3.10-control-fit`. Cloudflare Browser Rendering independently observed HTTP 200 plus `x-afterimage-release: a01a62fa...` and `x-afterimage-accessibility: comparison-captions`, and its accessibility tree exposes named standard and signature controls.
+- Revised judge-facing capture run **43831838485** passed **14/14** assertions against that exact live release. Accepted artifact: **14209146581**.
+- The new `afterimage-submission-reel.mp4` is **28.60s**, **3,007,617 B**, 1280×720 H.264/yuv420p/fast-start, intentionally audio-free, SHA-256 `bec156851f76df79785ec48818bbaf6a8504b5d6967fe84c2c5ba8758d48da13`. It supersedes the older 52.28s / 5.21MB reel.
+- Reel choreography is now deliberately dense: identity → ordinary playback → real captions → 00:05→00:13 comparison → caption over pinned canvas → real wrapper fullscreen → pointer seam movement → Pinned/Now/Split → keyboard Escape→Compare focus restoration → keyboard reopen → Clear → exact clean hero.
+- Visual review rejected two weaker draft states rather than accepting automation blindly: a transient focused-seam range visualization was removed from the judge reel, and the final hero was changed from an approximate paused pin to a real playing-frame pin.
+- Accepted primary visual `afterimage-primary-still.png`: 1181×812, 1,005,556 B, SHA-256 `3787cf177be243260f1b15331dc28e96e9be1512e4414ca11a0bf263d2a3e6ff`; exact Pinned 00:05 / Now 00:13 / +00:08 / 50% seam, no approximation marker.
+- Accepted supporting captures in the same artifact: caption-over-comparison, real wrapper-fullscreen caption proof, clean Escape→Compare focus restoration, 390×844 captioned mobile layout, and 1280×720 wide submission alternate.
+- `docs/SUBMISSION.md` now contains the revised form-ready description and exact final assets. `docs/SUBMISSION_ASSET_REPORT.md` records dimensions, byte sizes, SHA-256 values, visual review and why the new assets supersede the old set. `docs/FINAL_HANDOFF.md` records current release/deployment, final field values, evidence ledger and rollback.
+- Apollo/Mux bonus URL remains healthy and still reports the earlier compatible `2316dc7...` / `0.3.10-control-fit` skin build. It remains valid reusable-skin/live-site evidence but is no longer described as the exact current `a01a62fa...` primary release.
+- Checklist submission rows were reconciled to the new release and artifact. Signed-in Contra upload acceptance (85), optional-field constraints (90), and actual submission confirmation (98) remain unresolved external/account gates. Physical phone/NVDA/VoiceOver claims remain explicitly unmade.
+- **Next action:** use artifact **14209146581** and the exact fields in `docs/SUBMISSION.md` / `docs/FINAL_HANDOFF.md` in the signed-in Contra form, review the preview, submit, then record confirmation. No further player or capture change is justified without a concrete defect.
