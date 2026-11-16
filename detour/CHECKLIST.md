@@ -125,7 +125,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Ask five uncoached users to identify the action in a two-second active-state crop. Give five a find-and-return task on a rough prototype, including at least two touch runs; record first click and time.
   - **Deliverable** — Small-sample results with video or notes.
   - **Pass condition** — At least 4 of 5 identify return and 4 of 5 complete the task in 10 seconds. Iterate once on failure, then reassess.
-  - **Progress** — [Study protocol and crops ready. Five uncoached observations per task remain open.](design/FIRST-USE.md)
+  - **Progress** — [Study protocol and crops ready. Five uncoached observations per task remain open.](design/FIRST-USE.md) Hardening run 43818172481 adds a fresh-session automated walkthrough and timing metric, but automation is explicitly not counted as recognition or task-completion evidence; this human gate stays open.
 
 - [x] **018. Choose a visual signature**
   - **Objective** — Make the held origin recognizable inside the player crop.
@@ -650,6 +650,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Give a fresh reviewer the public URL only. Observe whether they discover hold/return, then test mobile, captions and normal seek. Ask for the one behavior they remember afterward.
   - **Deliverable** — Reviewer notes and final corrections.
   - **Pass condition** — Reviewer reaches the signature in 10 seconds or the visible affordance is improved and retested before freeze.
+  - **Progress** — Hardening run 43818172481 proves a clean fresh session exposes Play, Seek and Keep and records the automated hold→two-seeks→Return / Stay paths. The measured automation time is not a human usability claim and does not satisfy this uncoached-review gate.
 
 ## 10 · Final verification, packaging and submission
 
