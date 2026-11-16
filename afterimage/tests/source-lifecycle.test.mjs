@@ -320,3 +320,69 @@ test('source-lifecycle: capture-state matrix is truthful and recovery never auto
   const text = await page.locator('#player-a').textContent();
   assert.doesNotMatch(text, /NaN|Infinity/);
 });
+
+
+test('source-lifecycle: failed re-pin retains the previous valid reference', { timeout: 30000 }, async t => {
+  const page = await freshPage(t);
+  await seek(page, '#player-a', 6);
+  await pin(page, '#player-a');
+
+  const before = await page.locator('#player-a').evaluate(player => {
+    const canvas = player.querySelector('.afterimage-reference canvas');
+    return {
+      pinned: player.querySelector('[data-afterimage-pinned]')?.textContent?.trim(),
+      width: canvas?.width || 0,
+      height: canvas?.height || 0,
+      referenceHidden: player.querySelector('.afterimage-reference')?.hidden,
+    };
+  });
+  assert.ok(before.width > 1 && before.height > 1);
+  assert.equal(before.referenceHidden, false);
+
+  await page.evaluate(() => {
+    const v = window.__AFTERIMAGE_HARDENING__.a.video;
+    Object.defineProperty(v, 'videoWidth', { configurable: true, value: 0 });
+    Object.defineProperty(v, 'videoHeight', { configurable: true, value: 0 });
+    v.dispatchEvent(new Event('loadeddata'));
+  });
+  await page.waitForFunction(() =>
+    document.querySelector('#player-a afterimage-temporal-lens')?.dataset.captureState === 'frame-unavailable');
+  await page.locator('#player-a [data-afterimage-pin]').click();
+  await page.waitForFunction(() =>
+    /capturable picture/.test(document.querySelector('#player-a .afterimage-status')?.textContent || ''));
+
+  const afterInvalidFrame = await page.locator('#player-a').evaluate(player => {
+    const canvas = player.querySelector('.afterimage-reference canvas');
+    return {
+      pinned: player.querySelector('[data-afterimage-pinned]')?.textContent?.trim(),
+      width: canvas?.width || 0,
+      height: canvas?.height || 0,
+      referenceHidden: player.querySelector('.afterimage-reference')?.hidden,
+    };
+  });
+  assert.deepEqual(afterInvalidFrame, before, 'Invalid-frame re-pin replaced or cleared the valid reference.');
+
+  await page.evaluate(() => {
+    const v = window.__AFTERIMAGE_HARDENING__.a.video;
+    delete v.videoWidth;
+    delete v.videoHeight;
+    Object.defineProperty(v, 'error', { configurable: true, value: { code: 3 } });
+    v.dispatchEvent(new Event('error'));
+  });
+  await page.waitForFunction(() =>
+    document.querySelector('#player-a afterimage-temporal-lens')?.dataset.captureState === 'source-error');
+  await page.locator('#player-a [data-afterimage-pin]').click();
+  await page.waitForFunction(() =>
+    /cannot provide a frame/.test(document.querySelector('#player-a .afterimage-status')?.textContent || ''));
+
+  const afterSourceError = await page.locator('#player-a').evaluate(player => {
+    const canvas = player.querySelector('.afterimage-reference canvas');
+    return {
+      pinned: player.querySelector('[data-afterimage-pinned]')?.textContent?.trim(),
+      width: canvas?.width || 0,
+      height: canvas?.height || 0,
+      referenceHidden: player.querySelector('.afterimage-reference')?.hidden,
+    };
+  });
+  assert.deepEqual(afterSourceError, before, 'Source-error re-pin replaced or cleared the valid reference.');
+});
