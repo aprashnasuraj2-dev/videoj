@@ -586,6 +586,8 @@ test('source-lifecycle: failed re-pin retains the previous valid reference', { t
   await page.locator('#player-a [data-afterimage-pin]').click();
   await page.waitForFunction(() =>
     /capturable picture/.test(document.querySelector('#player-a .afterimage-status')?.textContent || ''));
+  assert.equal(await page.locator('#player-a [data-afterimage-pin]').evaluate(el => el === document.activeElement), true,
+    'Failed invalid-frame re-pin lost focus from the active Pin action.');
 
   const afterInvalidFrame = await page.locator('#player-a').evaluate(player => {
     const canvas = player.querySelector('.afterimage-reference canvas');
@@ -610,6 +612,8 @@ test('source-lifecycle: failed re-pin retains the previous valid reference', { t
   await page.locator('#player-a [data-afterimage-pin]').click();
   await page.waitForFunction(() =>
     /cannot provide a frame/.test(document.querySelector('#player-a .afterimage-status')?.textContent || ''));
+  assert.equal(await page.locator('#player-a [data-afterimage-pin]').evaluate(el => el === document.activeElement), true,
+    'Failed source-error re-pin lost focus from the active Pin action.');
 
   const afterSourceError = await page.locator('#player-a').evaluate(player => {
     const canvas = player.querySelector('.afterimage-reference canvas');
