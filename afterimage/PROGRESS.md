@@ -135,3 +135,11 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - The authored flow now records the seam as the intended focus target, restores `busy`/disabled state first in `finally`, then focuses the still-connected seam on the next animation frame.
 - Standalone output is regenerated from the canonical generator in the same commit; reproducibility remains a hard gate.
 - **Next action:** deploy the exact source, rerun CI plus the three-engine matrix, and promote checklist items only from passing evidence.
+
+
+## 2026-11-16 · exact-release browser gate and WebKit race correction
+
+- The first post-deploy WebKit rerun reached the live `f0bed46...` candidate but the harness sampled while the authored flow was still at the first `00:05` seek; its failure detail was `now:"00:05"`, proving the assertion raced the second seek rather than observing a completed flow.
+- Replaced fixed sleeps with an observable authored-completion gate: comparison open, trigger re-enabled, current time in the 00:13 window, and live status beginning `Example opened:`.
+- The browser workflow now also requires public response header `x-afterimage-release=f0bed46...` and runtime version `0.3.3-webkit-handoff`. A passing matrix therefore proves the intended deployed build rather than merely the hostname.
+- **Next action:** rerun the exact-release three-engine matrix; if green, reconcile tasks 30, 53–55, 59, 62, 66–67 and 70 from the recorded assertions.

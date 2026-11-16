@@ -3,6 +3,8 @@ import { mkdir, writeFile } from 'node:fs/promises';
 
 const browserName = process.env.BROWSER || 'chromium';
 const baseURL = process.env.AFTERIMAGE_URL || 'https://afterimage.aafnaipatro.com/';
+const expectedRelease = process.env.AFTERIMAGE_RELEASE || null;
+const expectedVersion = process.env.AFTERIMAGE_VERSION || null;
 const engines = { chromium, firefox, webkit };
 const engine = engines[browserName];
 if (!engine) throw new Error('Unsupported browser: ' + browserName);
@@ -50,7 +52,9 @@ const context = await browser.newContext({
 const page = await context.newPage();
 
 try {
-  await page.goto(baseURL, { waitUntil: 'networkidle', timeout: 60000 });
+  const initialResponse = await page.goto(baseURL, { waitUntil: 'networkidle', timeout: 60000 });
+  const releaseHeader = initialResponse?.headers()?.['x-afterimage-release'] || null;
+  if (expectedRelease) check('serving-release', releaseHeader === expectedRelease, { releaseHeader, expectedRelease });
   await page.waitForFunction(() => Boolean(window.__AFTERIMAGE_RELEASE__), null, { timeout: 30000 });
   await page.waitForFunction(() => {
     const video = window.__AFTERIMAGE_RELEASE__?.video;
@@ -73,6 +77,7 @@ try {
     };
   });
   check('boots-final-waterline', Math.abs(boot.duration - 18) < 0.15 && !boot.error && boot.tryVisible && boot.pinVisible, boot);
+  if (expectedVersion) check('serving-version', boot.version === expectedVersion, { version: boot.version, expectedVersion });
 
   await page.locator('media-play-button').click();
   await page.waitForTimeout(900);
@@ -84,10 +89,18 @@ try {
 
   await page.locator('[data-afterimage-example]').click();
   await page.waitForFunction(() => {
-    const p = window.__AFTERIMAGE_RELEASE__?.player;
-    return p && !p.querySelector('.afterimage-reference')?.hidden;
+    const release = window.__AFTERIMAGE_RELEASE__;
+    if (!release) return false;
+    const { player, video } = release;
+    const button = player.querySelector('[data-afterimage-example]');
+    const status = player.querySelector('.afterimage-status')?.textContent || '';
+    return !player.querySelector('.afterimage-reference')?.hidden &&
+      !button?.disabled &&
+      video.currentTime > 12.6 &&
+      video.currentTime < 13.8 &&
+      status.startsWith('Example opened:');
   }, null, { timeout: 8000 });
-  await page.waitForTimeout(300);
+  await page.waitForTimeout(50);
   const example = await page.evaluate(() => {
     const { video, player } = window.__AFTERIMAGE_RELEASE__;
     const text = s => player.querySelector(s)?.textContent?.trim() || '';
@@ -302,10 +315,18 @@ try {
   check('keyboard-tabs-to-example', Boolean(tabsToExample), { tabsToExample });
   await keyboardPage.keyboard.press('Enter');
   await keyboardPage.waitForFunction(() => {
-    const p = window.__AFTERIMAGE_RELEASE__?.player;
-    return p && !p.querySelector('.afterimage-reference')?.hidden;
+    const release = window.__AFTERIMAGE_RELEASE__;
+    if (!release) return false;
+    const { player, video } = release;
+    const button = player.querySelector('[data-afterimage-example]');
+    const status = player.querySelector('.afterimage-status')?.textContent || '';
+    return !player.querySelector('.afterimage-reference')?.hidden &&
+      !button?.disabled &&
+      video.currentTime > 12.6 &&
+      video.currentTime < 13.8 &&
+      status.startsWith('Example opened:');
   }, null, { timeout: 8000 });
-  await keyboardPage.waitForTimeout(100);
+  await keyboardPage.waitForTimeout(50);
   const keyboardComparison = await keyboardPage.evaluate(() => {
     const { player, video } = window.__AFTERIMAGE_RELEASE__;
     const seamControl = player.querySelector('.afterimage-seam-control');
