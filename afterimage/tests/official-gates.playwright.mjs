@@ -2,8 +2,8 @@ import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const baseURL = process.env.AFTERIMAGE_URL || 'https://afterimage.aafnaipatro.com/';
-const expectedRelease = process.env.AFTERIMAGE_RELEASE || '420dfc628bce4deef1d075797eae0505d34367c7';
-const expectedVersion = process.env.AFTERIMAGE_VERSION || '0.3.7-keyboard-first';
+const expectedRelease = process.env.AFTERIMAGE_RELEASE || '99c1496df894001609153f7c33966964cc1c7c69';
+const expectedVersion = process.env.AFTERIMAGE_VERSION || '0.3.8-touch-focus';
 const artifactDir = new URL('../artifacts/official-gates/', import.meta.url);
 await mkdir(artifactDir, { recursive: true });
 
@@ -40,6 +40,10 @@ const press = async key => {
   return after;
 };
 const matches = selector => page.evaluate(sel => document.activeElement?.matches?.(sel) || false, selector);
+const activeNamed = name => page.evaluate(n => {
+  const el=document.activeElement;
+  return (el?.getAttribute('aria-label') || el?.getAttribute('label') || '').trim() === n;
+}, name);
 const tabTo = async (selector, max = 32) => {
   for (let i = 0; i < max; i += 1) {
     if (await matches(selector)) return i;
@@ -113,7 +117,15 @@ try {
   await page.waitForFunction(() => !window.__AFTERIMAGE_RELEASE__.video.paused, null, { timeout: 3000 });
 
   await press('Tab');
-  check('tab-order-2-seek', await matches('media-time-slider'), await active(page));
+  check('tab-order-2-seek', await activeNamed('Seek'), await active(page));
+  const seekFocusStyle = await page.evaluate(() => {
+    const player=window.__AFTERIMAGE_RELEASE__.player;
+    const parent=player.querySelector('media-time-slider');
+    const rect=parent.getBoundingClientRect(), style=getComputedStyle(parent), deck=getComputedStyle(player.querySelector('.afterimage-deck'));
+    return {width:rect.width,height:rect.height,outlineWidth:style.outlineWidth,outlineColor:style.outlineColor,deckBackground:deck.backgroundColor};
+  });
+  const seekFocusRatio=ratio(rgb(seekFocusStyle.outlineColor),rgb(seekFocusStyle.deckBackground));
+  check('seek-focus-visible-target',seekFocusStyle.height>=44&&parseFloat(seekFocusStyle.outlineWidth)>=3&&seekFocusRatio>=3,{...seekFocusStyle,seekFocusRatio});
   await press('Shift+Tab');
   check('shift-tab-reversible', await matches('media-play-button'), await active(page));
   await press('Tab');
@@ -135,9 +147,14 @@ try {
   check('mute-keyboard-toggle', muted1 !== muted0 && muted2 === muted0, { muted0, muted1, muted2 });
 
   await press('Tab');
-  check('tab-order-4-volume', await matches('media-volume-slider'), await active(page));
-  const volumeBox = await active(page);
-  check('volume-target-44', volumeBox.width >= 44 && volumeBox.height >= 44, volumeBox);
+  check('tab-order-4-volume', await activeNamed('Volume'), await active(page));
+  const volumeBox = await page.evaluate(() => {
+    const el=window.__AFTERIMAGE_RELEASE__.player.querySelector('media-volume-slider');
+    const rect=el.getBoundingClientRect(), style=getComputedStyle(el), deck=getComputedStyle(window.__AFTERIMAGE_RELEASE__.player.querySelector('.afterimage-deck'));
+    return {width:rect.width,height:rect.height,outlineWidth:style.outlineWidth,outlineColor:style.outlineColor,deckBackground:deck.backgroundColor};
+  });
+  const volumeFocusRatio=ratio(rgb(volumeBox.outlineColor),rgb(volumeBox.deckBackground));
+  check('volume-target-focus-44', volumeBox.width >= 44 && volumeBox.height >= 44 && parseFloat(volumeBox.outlineWidth)>=3 && volumeFocusRatio>=3, {...volumeBox,volumeFocusRatio});
   const volume0 = await page.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.volume);
   await press('ArrowLeft'); await press('ArrowLeft');
   const volumeLow = await page.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.volume);
