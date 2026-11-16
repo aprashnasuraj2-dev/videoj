@@ -99,3 +99,10 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Rather than classifying that as a skin failure or weakening coverage, the WATERLINE pipeline now also emits a VP9/Opus WebM fallback from the same 18-second master.
 - The public player will use typed source elements so engines can select MP4/H.264 or WebM/VP9 according to actual codec support.
 - **Next action:** let the media workflow render and commit the WebM, then wire the host to both sources and rerun the full matrix.
+
+## 2026-11-16 · dual-codec public candidate
+
+- WATERLINE media workflow produced a VP9/Opus WebM fallback (1,291,697 bytes) alongside the H.264/AAC MP4.
+- Public host code now uses typed source elements: WebM first, MP4 fallback. The reusable skin remains source-agnostic.
+- This addresses GitHub-runner Chromium/Firefox H.264 decode absence without weakening the browser assertions or altering the 18-second authored timeline.
+- **Next action:** pass exact-source CI, deploy the dual-codec worker, and rerun Chromium/Firefox/WebKit full-flow evidence.

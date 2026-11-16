@@ -7,7 +7,16 @@ video.preload = 'metadata';
 video.playsInline = true;
 video.crossOrigin = 'anonymous';
 video.poster = asset('./media/the-waterline-v1-poster.jpg');
-video.src = asset('./media/the-waterline-v1.mp4');
+
+for (const source of [
+  { src: asset('./media/the-waterline-v1.webm'), type: 'video/webm; codecs="vp9, opus"' },
+  { src: asset('./media/the-waterline-v1.mp4'), type: 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"' },
+]) {
+  const element = document.createElement('source');
+  element.src = source.src;
+  element.type = source.type;
+  video.append(element);
+}
 
 const captions = document.createElement('track');
 captions.kind = 'captions';

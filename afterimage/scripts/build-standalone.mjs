@@ -21,7 +21,7 @@ const boot = [
   "video.playsInline = true;",
   "video.crossOrigin = 'anonymous';",
   "video.poster = asset('./media/the-waterline-v1-poster.jpg');",
-  "video.src = asset('./media/the-waterline-v1.mp4');",
+  "for (const source of [{ src: asset('./media/the-waterline-v1.webm'), type: 'video/webm; codecs=\\\"vp9, opus\\\"' }, { src: asset('./media/the-waterline-v1.mp4'), type: 'video/mp4; codecs=\\\"avc1.42E01E, mp4a.40.2\\\"' }]) { const element = document.createElement('source'); element.src = source.src; element.type = source.type; video.append(element); }",
   "const captions = document.createElement('track');",
   "captions.kind = 'captions'; captions.srclang = 'en'; captions.label = 'English';",
   "captions.src = asset('./media/the-waterline-v1.vtt');",
@@ -32,7 +32,7 @@ const boot = [
   "video.append(chapters);",
   "const mountedPlayer = createAfterimagePlayer(video, { example: { pinnedSeconds: 5, currentSeconds: 13 } });",
   "document.querySelector('#afterimage-player').append(mountedPlayer);",
-  "window.__AFTERIMAGE_RELEASE__ = { version: '0.2.4-waterline', video, player: mountedPlayer };",
+  "window.__AFTERIMAGE_RELEASE__ = { version: '0.3.0-dual-codec', video, player: mountedPlayer };",
 ].join('\n');
 
 const runtime = [format, lens, authored, shell, player, boot].map(escapeScript).join('\n\n');

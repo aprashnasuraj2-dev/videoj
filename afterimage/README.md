@@ -31,7 +31,7 @@ The optional `example` pair adds **Try a comparison**. It is host-supplied and m
 
 ## WATERLINE proof film
 
-The checked-in studio uses the original 18-second **THE WATERLINE** proof under `public/media/`: locked dry architecture → first flow → reflective wet state. The film is H.264/AAC at 1280×720/24 fps. Its procedural sound bed, captions, chapters, cue pair, hashes and source provenance are recorded beside the media.
+The checked-in studio uses the original 18-second **THE WATERLINE** proof under `public/media/`: locked dry architecture → first flow → reflective wet state. The film is delivered at 1280×720/24 fps as VP9/Opus WebM with H.264/AAC MP4 fallback. Its procedural sound bed, captions, chapters, cue pair, hashes and source provenance are recorded beside the media.
 
 ## License
 
