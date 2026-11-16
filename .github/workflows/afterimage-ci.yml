@@ -1,0 +1,48 @@
+name: AFTERIMAGE CI
+
+on:
+  push:
+    branches:
+      - afterimage
+    paths:
+      - 'afterimage/**'
+      - '.github/workflows/afterimage-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: afterimage
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: afterimage/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Architecture tests
+        run: npm test
+
+      - name: Reproduce standalone artifact
+        run: |
+          npm run build:standalone
+          git diff --exit-code -- standalone.html
+
+      - name: Production build
+        run: npm run build
+
+      - name: Inspect package surface
+        run: npm pack --dry-run

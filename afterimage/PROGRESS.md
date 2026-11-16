@@ -45,3 +45,11 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - The standalone page keeps the temporary fixture explicitly labeled and exposes only a non-secret debug handle for browser verification.
 - Vercel project creation is blocked by account permission (403). Cloudflare Pages Git project creation is separately blocked by the account's broken Pages Git installation (error 8000011). Neither blocker implies a source/build failure.
 - **Next action:** deploy standalone.html as an isolated preview without altering DHAGO/DETOUR, then exercise the actual browser flow. Package build remains separately unverified until a dependency-capable runner is available.
+
+## 2026-11-16 · no-paid-browser verification path
+
+- TinyFish is not part of the release or verification plan.
+- The live custom hostname is now `https://afterimage.aafnaipatro.com/`, attached only to the isolated `afterimage-preview` Worker. No apex, DHAGO, DETOUR, or Patro route was changed.
+- Cloudflare Browser Rendering on that hostname has already passed the desktop core-flow instrumentation: all required controls present; playback advanced; a live pin opened; Pinned stayed fixed while Now advanced; Pinned/Now/Split presets preserved playback; Close/Compare/Clear behaved correctly; media decoded at 960×400 with no error.
+- Added a branch-scoped GitHub Actions workflow for `afterimage` only. It installs the lockfile, runs architecture tests, proves the standalone generator is reproducible, runs the production Vite build, and inspects the npm package surface.
+- **Next action:** collect the exact workflow result and complete 390px/320px plus accessibility checks with Cloudflare Browser Rendering.
