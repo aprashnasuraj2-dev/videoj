@@ -40,6 +40,11 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
+      - name: Install submission encoder
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
       - name: Record exact public candidate
         run: node tests/submission-reel.playwright.mjs
 

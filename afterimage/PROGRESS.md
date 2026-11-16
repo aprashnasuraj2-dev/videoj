@@ -191,3 +191,10 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Submission capture run `43802338378` reached an exact `00:05 / 00:13` authored pair, but the newly extended final hold allowed normal playback to continue to `00:18`, making the closing assertion correctly fail at `+00:13`.
 - The reel now pauses immediately after the final authored pair resolves, then holds the 00:05 / 00:13 / +00:08 visual for the closing shot.
 - This changes only capture choreography; the public player remains immutable.
+
+
+## 2026-11-16 · raw reel capture passed; system encoder added
+
+- Submission capture run `43802596202` passed the full exact-public recording step. The real pointer seam drag, authored pair gates, final frozen pair, still capture and mobile capture all completed.
+- Post-processing failed only because GitHub's Ubuntu image did not expose a system `ffmpeg` executable. Playwright downloaded its internal helper binary for browser recording, but that binary is not added to PATH and is not a substitute for the submission transcode/ffprobe step.
+- Added an explicit system `ffmpeg` install before recording. Evidence upload already runs with `if: always()`, so the successful raw WebM/stills from the failed encode remain recoverable.
