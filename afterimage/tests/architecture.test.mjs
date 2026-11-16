@@ -41,7 +41,7 @@ test('Temporal Lens owns an explicit truthful media/capture state model', () => 
     'source-error', 'timeline-unavailable', 'seeking', 'metadata-pending',
     'frame-pending', 'frame-unavailable', 'ended-ready', 'ready'
   ]) assert.match(source, new RegExp(state), `Missing capture state: ${state}`);
-  assert.match(source, /streamType\s*===\s*['"]live['"]/);
+  assert.match(source, /streamType\.startsWith\(['"]live['"]\)/);
   assert.match(source, /afterimage:pin-failed/);
   assert.doesNotMatch(source, /Return to|Stay here|checkpoint|C1|C2|C3|C4/i);
 });
