@@ -186,6 +186,11 @@ test('fullscreen-roundtrip: keyboard entry, geometry, settings/captions persiste
       captionInside.mode === 'showing' && captionInside.cueCount > 0,
       captionInside);
 
+    const captionsTabsInside = await tabTo(page, 'media-captions-button');
+    check('captions-control-reachable-inside-fullscreen',
+      captionsTabsInside !== null,
+      { captionsTabsInside, active: await active(page) });
+
     const settingsTabs = await tabTo(page, '.detour-settings');
     check('settings-reachable-inside-fullscreen', settingsTabs !== null, { settingsTabs, active: await active(page) });
     await page.keyboard.press('Enter');
