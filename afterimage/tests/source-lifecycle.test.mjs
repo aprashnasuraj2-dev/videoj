@@ -194,6 +194,7 @@ test('source-lifecycle: 20 remove/reinsert cycles do not duplicate handlers or i
   assert.deepEqual(afterCycles, { lensCount: 1, referenceHidden: true, relationHidden: true });
 
   await seek(page, '#cycle-player', 7);
+  await page.locator('#cycle-player video').evaluate(video => video.pause());
   await page.locator('#cycle-player [data-afterimage-pin]').click();
   await page.waitForFunction(() => window.__cyclePinCompletions === 1);
   assert.equal(await page.evaluate(() => window.__cyclePinCompletions), 1);
