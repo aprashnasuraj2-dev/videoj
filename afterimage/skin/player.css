@@ -27,6 +27,7 @@
 .afterimage .afterimage-seam-control:focus-visible { opacity: 1; height: 44px; inset-block-start: 50%; transform: translateY(-50%); accent-color: var(--afterimage-copper); }
 .afterimage .afterimage-comparison-caption { position: absolute; z-index: 5; inset-inline: 6%; inset-block-end: 5%; display: flex; justify-content: center; pointer-events: none; text-align: center; }
 .afterimage .afterimage-comparison-caption span { max-inline-size: min(90%, 48rem); padding: .34em .62em; border-radius: 4px; color: var(--afterimage-limestone); background: rgb(5 8 10 / .9); font-size: clamp(14px, 2.1cqi, 22px); font-weight: 650; line-height: 1.35; white-space: pre-line; text-shadow: 0 1px 2px #000; }
+.afterimage[data-comparison-open] video::cue { color: transparent; background: transparent; text-shadow: none; }
 .afterimage .afterimage-deck { position: relative; padding: 14px 16px 16px; background: linear-gradient(180deg, rgb(255 255 255 / .025), transparent 38%), var(--afterimage-ink); border-block-start: 1px solid rgb(240 233 217 / .12); }
 .afterimage .afterimage-relation { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-block-end: 12px; font-size: 12px; letter-spacing: .03em; }
 .afterimage .afterimage-relation > span { min-height: 36px; padding: 8px 10px; border: 1px solid rgb(240 233 217 / .14); border-radius: 8px; background: rgb(0 0 0 / .16); }
