@@ -152,7 +152,38 @@ test('source-lifecycle: two simultaneous players keep independent references', {
   assert.match(values.b, /00:11/);
   assert.ok(values.aCanvas > 1 && values.bCanvas > 1);
   assert.notEqual(values.a, values.b);
-  report.observations.twoInstances = values;
+
+  const bBeforeClearA = await page.locator('#player-b').evaluate(player => ({
+    pinned: player.querySelector('[data-afterimage-pinned]')?.textContent?.trim(),
+    canvasWidth: player.querySelector('.afterimage-reference canvas')?.width || 0,
+    referenceVisible: !player.querySelector('.afterimage-reference')?.hidden,
+  }));
+  await page.locator('#player-a [data-afterimage-clear]').click();
+  const afterClearA = await page.evaluate(() => ({
+    aReferenceVisible: !document.querySelector('#player-a .afterimage-reference')?.hidden,
+    aRelationVisible: !document.querySelector('#player-a .afterimage-relation')?.hidden,
+    bPinned: document.querySelector('#player-b [data-afterimage-pinned]')?.textContent?.trim(),
+    bCanvasWidth: document.querySelector('#player-b .afterimage-reference canvas')?.width || 0,
+    bReferenceVisible: !document.querySelector('#player-b .afterimage-reference')?.hidden,
+  }));
+  assert.equal(afterClearA.aReferenceVisible, false);
+  assert.equal(afterClearA.aRelationVisible, false);
+  assert.equal(afterClearA.bReferenceVisible, true);
+  assert.equal(afterClearA.bPinned, bBeforeClearA.pinned);
+  assert.equal(afterClearA.bCanvasWidth, bBeforeClearA.canvasWidth);
+
+  await page.locator('#player-b .afterimage-seam-control').evaluate(seam => {
+    seam.value = '73';
+    seam.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  const reverse = await page.evaluate(() => ({
+    aReferenceVisible: !document.querySelector('#player-a .afterimage-reference')?.hidden,
+    bReferenceVisible: !document.querySelector('#player-b .afterimage-reference')?.hidden,
+    bSeam: document.querySelector('#player-b .afterimage-seam-control')?.value,
+  }));
+  assert.deepEqual(reverse, { aReferenceVisible: false, bReferenceVisible: true, bSeam: '73' });
+
+  report.observations.twoInstances = { ...values, bBeforeClearA, afterClearA, reverse };
   report.checks.twoInstances = true;
 });
 
