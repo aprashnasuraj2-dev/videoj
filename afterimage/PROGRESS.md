@@ -16,3 +16,13 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - **Known blockers/limits:** current execution has not observed any developer-local uncommitted worktree; no player code has been implemented or tested yet; exact signed-in submission form field constraints are not exposed by the public challenge record.
 - **Next task:** **04** — finish the rules/form evidence register, then **05–10** to lock rubric evidence, reusable conventions, v10.4.0 API direction, prior-art consequence, isolated publish/rollback target, and first-use matched-camera proof before scaffolding.
 - **Concrete next action:** add AFTERIMAGE planning/evidence notes under `afterimage/docs/`, reconcile tasks 04–10, then scaffold the isolated package at task 11.
+
+## 2026-11-16 · planning lock (tasks 04–10)
+
+- Rechecked the live Contra challenge record: active, submissions enabled, deadline and scoring unchanged; multiple unique submissions are supported by Contra Help Center.
+- Mapped every scored category and both bonuses to a concrete player/test artifact in afterimage/docs/RULES.md.
+- Confirmed the repository-wide reusable conventions: separate package/build boundary, scoped styles, native media state, no secrets, exact-source evidence. Adopted @videojs/html 10.4.0 because both current sibling projects pin it; installed API behavior still must be proven in CI.
+- Refreshed closest public mechanisms and documented evidence limits. The main collision is editorial frame inspection; AFTERIMAGE stays distinct by compositing one fixed viewer-selected frame over a still-running film and drawing their signed time relationship on the normal rail.
+- Locked the opening pair to one repeated Camera A composition (dry ≈00:06 → first flow ≈00:14). Arbitrary manual pins remain supported; the judge shortcut deliberately uses matched geometry.
+- Defined isolated primary/fallback deployment and rollback rules without touching live services.
+- **Next task:** **11** — scaffold the independent package, then **12** mount genuine Video.js v10 with a deterministic local proof fixture.
