@@ -53,3 +53,12 @@ test('base package entry has no held-place module or markup dependency', () => {
   }
   assert.match(read('../skin/player.js'), /import ['"]\.\/place\.js['"]/);
 });
+
+
+test('reusable DETOUR runtime rejects AFTERIMAGE concept and sibling imports', () => {
+  const runtime = [
+    '../skin/index.js', '../skin/player.js', '../skin/place.js', '../skin/format-time.js',
+    '../skin/shell.js', '../skin/media-state.js', '../skin/base.js', '../skin/mux.js', '../skin/player.css'
+  ].map(read).join('\n');
+  assert.doesNotMatch(runtime, /(?:\.\.\/afterimage\/|afterimage-temporal-lens|temporal[-\s]?lens|WATERLINE|Pinned\s*\/\s*Split\s*\/\s*Now)/i);
+});
