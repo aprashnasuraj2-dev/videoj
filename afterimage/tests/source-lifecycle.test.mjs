@@ -242,6 +242,15 @@ test('source-lifecycle: capture-state matrix is truthful and recovery never auto
   await page.evaluate(() => {
     const v = window.__AFTERIMAGE_HARDENING__.a.video;
     delete v.duration;
+    Object.defineProperty(v, 'readyState', { configurable: true, value: HTMLMediaElement.HAVE_NOTHING });
+    v.dispatchEvent(new Event('durationchange'));
+  });
+  assert.equal(await lens.getAttribute('data-capture-state'), 'metadata-pending');
+  await pin.click();
+  await page.waitForFunction(() => /metadata to load/.test(document.querySelector('#player-a .afterimage-status')?.textContent || ''));
+
+  await page.evaluate(() => {
+    const v = window.__AFTERIMAGE_HARDENING__.a.video;
     Object.defineProperty(v, 'readyState', { configurable: true, value: HTMLMediaElement.HAVE_METADATA });
     v.dispatchEvent(new Event('waiting'));
   });
