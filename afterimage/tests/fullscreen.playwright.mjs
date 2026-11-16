@@ -74,12 +74,17 @@ try {
 
   await fullscreenControl.click();
   await page.waitForFunction(() => !document.fullscreenElement, null, { timeout: 5000 });
+  await page.waitForFunction(() =>
+    window.__AFTERIMAGE_RELEASE__.player.querySelector('media-fullscreen-button')?.getAttribute('aria-label') === 'Enter fullscreen',
+    null,
+    { timeout: 2000 },
+  );
   const exited = await page.evaluate(() => ({
     active: Boolean(document.fullscreenElement),
     buttonName: window.__AFTERIMAGE_RELEASE__.player.querySelector('media-fullscreen-button')?.getAttribute('aria-label') || null,
     playVisible: window.__AFTERIMAGE_RELEASE__.player.querySelector('media-play-button')?.getBoundingClientRect().width > 0,
   }));
-  check('exit-fullscreen-control', !exited.active && exited.playVisible, exited);
+  check('exit-fullscreen-control', !exited.active && exited.playVisible && exited.buttonName === 'Enter fullscreen', exited);
   report.pass = true;
 } catch (error) {
   report.pass = false;
