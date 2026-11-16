@@ -63,3 +63,12 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Checklist rows are promoted only where that evidence satisfies the task. First-use authored shortcut, final film, keyboard, caption rendering, fullscreen transition, failure paths and cross-browser coverage remain open/in-progress.
 - Creative media work started: one locked dry WATERLINE architectural keyframe is generated; a low-cost wet-state edit is in progress so no paid video generation is required.
 - **Next action:** finish the wet keyframe, assemble the short original WATERLINE cut in-repo, replace the temporary fixture, add Try a comparison using observed final cue times, and rerun exact-candidate CI/browser evidence.
+
+## 2026-11-16 · final WATERLINE candidate verified
+
+- Replaced the temporary ocean fixture with the original 18-second WATERLINE proof.
+- Added host-configured `Try a comparison` at 00:05→00:13. The reusable manual Temporal Lens still contains no programmed play, pause, or seek; only the explicit authored-example helper owns the documented seek exemption.
+- Final source `f4d7c1be...` passed exact-source CI and is live at `afterimage.aafnaipatro.com`.
+- Final public browser proof passed the authored pair, playback continuity, real captions, paused approximate pin, reverse signed delta, arbitrary seam, Escape/focus restoration, and media MIME/range checks.
+- TinyFish is not used. Verification and release stay inside GitHub + Cloudflare Patro.
+- **Next action:** add a GitHub-hosted Playwright matrix against the public candidate for Chromium/Firefox/WebKit, keyboard traversal, 240px/zoom, multi-instance/failure checks, and screenshot artifacts.

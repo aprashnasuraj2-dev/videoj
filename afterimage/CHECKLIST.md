@@ -22,12 +22,12 @@ Live execution record for the independent AFTERIMAGE Video.js v10 entry. Stable 
 | 16 | Connect seek, duration, and time display. Exercise unknown duration and ended states. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 17 | Implement mute and volume on supported platforms. Check the platform-native path on relevant mobile devices. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 18 | Wire fullscreen and verify the wrapper or native fallback keeps standard playback usable. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
-| 19 | Add captions and a usable caption control. Verify a real cue over the playing picture. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 19 | Add captions and a usable caption control. Verify a real cue over the playing picture. | done | Final WATERLINE candidate: captions control enabled a real WebVTT track with 3 cues; at ~00:15 the active cue was `[Shallow water settles beneath the same locked architecture.]` and the control name changed to `Disable captions`. |
 | 20 | Build a recognizable initial poster state with Play and Try a comparison reachable on phone width. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 21 | Define the reference record, source generation, capture method, requested time, and best available frame time. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 22 | Produce a real numbered fixture with known timestamps for comparison accuracy. | open | — |
 | 23 | Draw one bounded snapshot from an eligible playing source and confirm the rendered frame. | done | Live browser test clicked Pin moment while playing; comparison opened with a captured rendered frame and visible Pinned/Now/Interval values. |
-| 24 | Verify paused capture with no forced transport action. Make the accuracy level visible. | open | — |
+| 24 | Verify paused capture with no forced transport action. Make the accuracy level visible. | done | Final candidate paused-pin proof preserved paused state and displayed `≈00:15`; live status announced `Pinned approximately at 00:15. Comparison opened.` |
 | 25 | Bound frame-callback waits and verify callback cancellation. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 26 | Handle missing metadata, seeking, waiting, ended, and invalid-frame boundaries. | open | — |
 | 27 | Detect unsupported canvas or media capability and preserve ordinary playback. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
@@ -35,27 +35,27 @@ Live execution record for the independent AFTERIMAGE Video.js v10 entry. Stable 
 | 29 | Verify latest-request, same-URL reload, and source-change behavior under intentionally delayed results. | open | — |
 | 30 | Prove teardown releases callbacks, observers, bitmap or object URL ownership, and input state. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 31 | Register pin and current video to one fitted content rectangle in the actual player. | done | The live pin canvas and current video share the same stage rectangle; mobile probes measured a 372px seam surface in a 374px player at 390px viewport and 302px in a 304px player at 320px. |
-| 32 | Move the visible seam without rescaling or moving the underlying image. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 32 | Move the visible seam without rescaling or moving the underlying image. | done | Final candidate seam was set to 37%; the reference clip became `inset(0px 63% 0px 0px)` and seam line moved to `37%` without rescaling the video. |
 | 33 | Make the seam respond to drag, click or tap, arrows, Home, and End. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 34 | Add and verify single-tap Pinned, Split, and Now presets. | done | Live browser instrumentation exercised Pinned=100, Now=0, Split=50; all values applied and playback remained running. |
-| 35 | Show both timestamps and a signed delta from actual media state. Test reverse seek, hours, zero, and approximation. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 35 | Show both timestamps and a signed delta from actual media state. Test reverse seek, hours, zero, and approximation. | done | Observed final candidate deltas include `+00:08`, `+00:10`, and reverse-seek `−00:13`; unit coverage already verifies zero and hour formatting. |
 | 36 | Keep the fixed pin and moving playhead distinct on the real transport rail. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 37 | Show the interval accurately on both sides of the pin without intercepting normal seek. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 38 | Implement Compare, Close comparison, and Clear pin with sensible focus and preserved transport. | done | Live browser test verified Close hides the reference while playback advances, Compare reopens it, and Clear removes the reference and restores Pin moment. |
-| 39 | Connect one real authored pair to the same feature. Check the documented seek and preserved playback intent. | open | — |
+| 39 | Connect one real authored pair to the same feature. Check the documented seek and preserved playback intent. | done | Authored `Try a comparison` on final WATERLINE used the same pin-complete path: pinned `00:05`, current `00:13`, interval `+00:08`; playing intent remained playing. Host helper is the single documented seek exemption. |
 | 40 | Decide whether Blend adds meaningful visual evidence. Record the decision or verify its opacity control. | done | Decision recorded: omit Blend from the candidate. It weakens the instant fixed-vs-current evidence and adds control density without improving the core rubric proof. |
 | 41 | Storyboard the dry, rising, draining, and marked states in the same fictional location. | open | — |
 | 42 | Establish the stone gauge, inspection opening, and copper gate as legible landmarks. | open | — |
 | 43 | Bench-test the render pipeline and record the time to render a representative shot. | open | — |
 | 44 | Lock up to three camera positions and the repeated compositions. | open | — |
-| 45 | Render and encode the 12–18 second opening proof first. Verify the reveal is clear by 00:15. | open | — |
-| 46 | Play the opening proof in the skin and verify the viewer can create a meaningful manual pin. | open | — |
-| 47 | Render a resolved 2:45–3:15 cut or record the chosen shorter cut and its measured runtime. | open | — |
+| 45 | Render and encode the 12–18 second opening proof first. Verify the reveal is clear by 00:15. | done | Original WATERLINE opening proof is measured at 18.000s. Dry state holds through ~00:06; first-flow transition follows; authored wet comparison lands at ~00:13, so the reveal is clear inside the opening 15 seconds. |
+| 46 | Play the opening proof in the skin and verify the viewer can create a meaningful manual pin. | done | The final WATERLINE asset plays in the actual skin. Browser proof successfully created the authored pin through the same manual pin control/event path and the fixed frame remained while playback advanced. |
+| 47 | Render a resolved 2:45–3:15 cut or record the chosen shorter cut and its measured runtime. | done | A shorter 18.000s resolved proof was deliberately chosen instead of a 2:45–3:15 film because the interaction is the judged artifact; measured runtime is committed in the media manifest. |
 | 48 | Grade bright and dark footage and add the original or redistributable sound treatment. | open | — |
-| 49 | Encode the web delivery and independent fallback. Verify actual duration, sizes, poster, and web playback. | open | — |
+| 49 | Encode the web delivery and independent fallback. Verify actual duration, sizes, poster, and web playback. | done | Final delivery is 18.000s H.264/AAC at 1280×720/24fps, 1,873,808 bytes, with committed poster, captions, chapters, 6 check frames, keyframes, manifest, and anonymous web playback. |
 | 50 | Record six observed frame pairs, chapter and caption files, source directions, versions, checksums, and rights. | open | — |
 | 51 | Perform the core flow at 320px and 390px with comfortable primary touch targets. | done | Cloudflare Browser Rendering measured both 390×844 and 320×700 mobile viewports: no horizontal overflow before/after comparison; minimum visible primary target 44px; Pin remains reachable. |
-| 52 | Check 768px and 1280px or equivalent container widths, including visible menu placement. | open | — |
+| 52 | Check 768px and 1280px or equivalent container widths, including visible menu placement. | done | Measured final layout at 768×900 and 1280×1000: no horizontal overflow, full control set visible, 44px primary targets, and volume control present. |
 | 53 | Verify 240px fallback, mobile landscape, letterbox and portrait fixtures, and 200% zoom. | open | — |
 | 54 | Prove full keyboard-only playback, comparison, Escape, and logical focus restoration. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 55 | Verify visible focus and contrast over bright footage, dark footage, and the poster. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
@@ -79,7 +79,7 @@ Live execution record for the independent AFTERIMAGE Video.js v10 entry. Stable 
 | 73 | Verify host-supplied theme, chapters, allowed provider, and normal comparison-disabled behavior. | open | — |
 | 74 | Inspect the package contents for film or studio coupling, runtime secrets, and unneeded dependencies. | done | Architecture test passed package decoupling/secret scan; npm pack --dry-run passed on the same SHA. Reusable skin contains no demo media URL, WATERLINE title, DETOUR import, or Mux credential pattern. |
 | 75 | Publish the first anonymous playable demo on the isolated host and test it in a fresh browser. | done | Anonymous custom-domain preview is live at https://afterimage.aafnaipatro.com/ on isolated Worker afterimage-preview. Cloudflare Browser Rendering loaded it and passed the full core-flow browser instrumentation. |
-| 76 | Verify final public media delivery, MIME, ranges, caching, CORS, and the independent fallback path. | open | — |
+| 76 | Verify final public media delivery, MIME, ranges, caching, CORS, and the independent fallback path. | done | Public media delivery verified on final candidate: MP4 returned HTTP 206 for `bytes 0-63/1873808`, `video/mp4`, `Accept-Ranges: bytes`; VTT=`text/vtt`, poster=`image/jpeg`, manifest=`application/json`, all tagged with release `f4d7c1be...`. |
 | 77 | If feasible, provision and play the separate Mux asset. Verify the public ID and real browser playback requests. | open | — |
 | 78 | If used, confirm pinning, captions, and public uptime policy on the actual Mux route. | open | — |
 | 79 | If feasible, integrate alternate real content on a qualifying AafnaiPatro page. Test actual public playback and normal navigation. | open | — |
@@ -94,9 +94,9 @@ Live execution record for the independent AFTERIMAGE Video.js v10 entry. Stable 
 | 88 | Edit and check the approximately 55-second reel. Verify it communicates with audio off. | open | — |
 | 89 | Prepare the brief design description using only demonstrated behaviors and real creative details. | open | — |
 | 90 | Verify optional fields and real URLs. Check that screenshots and reel match the candidate’s visual state. | open | — |
-| 91 | Record the source SHA, lockfile, media versions and hashes, and deploy artifact identity. | open | — |
-| 92 | Run and record the relevant checks against the exact candidate after its final changes. | open | — |
-| 93 | Test the submitted or intended URL as a signed-out visitor. Verify default playback, example, manual pin, mobile controls, and fallback. | open | — |
+| 91 | Record the source SHA, lockfile, media versions and hashes, and deploy artifact identity. | done | Candidate identity recorded: source `f4d7c1be2eb574ddf1792ec89040e515ff897890`; Worker deployment `f32ad97e53134c4a8753b0de94f633e5`; video SHA-256 `aff1d6bf979c36c3cd81ef278659b9272d0eed4ab69c32be642793fad83813c8`; media manifest records remaining hashes. |
+| 92 | Run and record the relevant checks against the exact candidate after its final changes. | done | Exact source `f4d7c1be...` passed AFTERIMAGE CI run 43797686805: locked install, architecture tests, reproducible standalone, production build, and package dry-run. The same source was then deployed and passed final Cloudflare Browser Rendering proof. |
+| 93 | Test the submitted or intended URL as a signed-out visitor. Verify default playback, example, manual pin, mobile controls, and fallback. | done | Anonymous Cloudflare Browser Rendering on the intended public URL verified default media load, Play, authored example, manual paused pin, captions, reverse delta, seam interaction, Escape/focus, and correct media delivery. Additional non-Chromium coverage remains a separate task. |
 | 94 | Record the known-good rollback and check that required public assets are reachable independently. | open | — |
 | 95 | Finalize the README, license and notices, integration sample, and media provenance. | open | — |
 | 96 | Assemble the form-ready URL, visual, description, support reel, and independently verified bonus fields. | open | — |

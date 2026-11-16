@@ -74,3 +74,51 @@ With comparison open, it additionally exposed:
 ## Remaining evidence gaps
 
 Do not infer passes for pause toggling, real seek edge cases, fullscreen transition, caption rendering over the image, keyboard-only end-to-end flow, failure states, teardown stress, cross-browser coverage, final WATERLINE media, or submission-form acceptance until those are separately observed.
+
+## Final WATERLINE candidate · 2026-11-16
+
+### Serving identity
+
+- Public URL: `https://afterimage.aafnaipatro.com/`
+- Source: `f4d7c1be2eb574ddf1792ec89040e515ff897890`
+- Exact-source CI: run `43797686805`, job `133070134400`, all steps passed.
+- Cloudflare Worker: `afterimage-preview`
+- Current deployment: `f32ad97e53134c4a8753b0de94f633e5`
+- Startup time reported by Cloudflare: 1 ms.
+- Custom domain remains isolated from the apex Patro worker and DETOUR hosts.
+
+### WATERLINE media
+
+- Runtime: exactly 18.000s.
+- Video: H.264, 1280×720, 24 fps.
+- Audio: AAC; procedural brown-noise water bed + 58 Hz low sine; no third-party recording.
+- Final MP4: 1,873,808 bytes.
+- MP4 SHA-256: `aff1d6bf979c36c3cd81ef278659b9272d0eed4ab69c32be642793fad83813c8`.
+- Authored pair: 00:05 dry reference → 00:13 wet state.
+- Keyframes, captions, chapters, poster, six sampled frames, and hashes are committed under `public/media/`.
+
+### Final browser proof
+
+Cloudflare Browser Rendering executed the final public candidate, not the former ocean fixture.
+
+- Media decoded: 18.000s, 1280×720, readyState 4, no media error.
+- `Try a comparison`: pinned `00:05`; now `00:13`; interval `+00:08`; playing intent remained playing.
+- After another ~1.2s, Pinned remained fixed while Now advanced and delta increased.
+- Captions: 2 text tracks present; caption track loaded 3 cues; mode `showing`; active cue over wet state: `[Shallow water settles beneath the same locked architecture.]`.
+- Paused manual pin: playback stayed paused; displayed `≈00:15`; status announced the approximate capture.
+- Reverse seek: relation showed `−00:13`.
+- Arbitrary seam: value 37; reference clip `inset(0px 63% 0px 0px)`; seam line `37%`.
+- Escape: comparison closed, Compare remained available, and focus restored to Compare.
+- Final assertion set returned `pass: true`.
+
+### Delivery proof
+
+- MP4 range request: HTTP 206, `Content-Type: video/mp4`, `Content-Range: bytes 0-63/1873808`, `Accept-Ranges: bytes`.
+- Caption and chapter files: `text/vtt; charset=utf-8`.
+- Poster: `image/jpeg`.
+- Manifest: `application/json; charset=utf-8`.
+- All responses carry `x-afterimage-release: f4d7c1be...`.
+
+### Evidence still not claimed
+
+Not yet promoted: full keyboard-only traversal, 240px/200% zoom, touch-cancel/scroll behavior, repeated-pin memory stress, two-instance lifecycle, Firefox/WebKit, fullscreen transition behavior, caption visual contrast in fullscreen, failure/cross-origin paths, screenshot/reel artifacts, Mux bonus, or signed-in submission-form acceptance.
