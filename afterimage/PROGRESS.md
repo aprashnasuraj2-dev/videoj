@@ -161,3 +161,10 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Submission capture run `43801633569` stopped before browser launch because the standalone capture script imported `@playwright/test` while AFTERIMAGE's locked dev dependency is `playwright@1.62.1`.
 - This is capture tooling only; the serving product release remains `f0bed46...` and the exact-release three-engine matrix remains green.
 - Corrected the capture script to import Chromium from the installed `playwright` package. The workflow will rerun from the script change.
+
+
+## 2026-11-16 · submission recording path normalization
+
+- Submission capture run `43801771733` reached Playwright context creation and failed before navigation because `recordVideo.dir` accepts a filesystem string, not a WHATWG URL object.
+- Normalized the recording directory to `artifactDir.pathname`. Screenshot and fs APIs continue using their supported path/URL forms.
+- No live release change was made.

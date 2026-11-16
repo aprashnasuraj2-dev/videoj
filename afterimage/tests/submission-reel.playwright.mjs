@@ -12,7 +12,7 @@ const context = await browser.newContext({
   viewport: { width: 1280, height: 720 },
   colorScheme: 'dark',
   reducedMotion: 'no-preference',
-  recordVideo: { dir: artifactDir, size: { width: 1280, height: 720 } },
+  recordVideo: { dir: artifactDir.pathname, size: { width: 1280, height: 720 } },
 });
 const page = await context.newPage();
 const recordedVideo = page.video();
