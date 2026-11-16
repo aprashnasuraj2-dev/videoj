@@ -2,8 +2,8 @@ import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const baseURL = process.env.AFTERIMAGE_URL || 'https://afterimage.aafnaipatro.com/';
-const expectedRelease = process.env.AFTERIMAGE_RELEASE || '070f19767660833016291a23235a1ae671ad5f57';
-const expectedVersion = process.env.AFTERIMAGE_VERSION || '0.3.6-keyboard-visible';
+const expectedRelease = process.env.AFTERIMAGE_RELEASE || '420dfc628bce4deef1d075797eae0505d34367c7';
+const expectedVersion = process.env.AFTERIMAGE_VERSION || '0.3.7-keyboard-first';
 const artifactDir = new URL('../artifacts/official-gates/', import.meta.url);
 await mkdir(artifactDir, { recursive: true });
 

@@ -22,8 +22,8 @@ jobs:
         working-directory: afterimage
     env:
       AFTERIMAGE_URL: https://afterimage.aafnaipatro.com/
-      AFTERIMAGE_RELEASE: 070f19767660833016291a23235a1ae671ad5f57
-      AFTERIMAGE_VERSION: 0.3.6-keyboard-visible
+      AFTERIMAGE_RELEASE: 420dfc628bce4deef1d075797eae0505d34367c7
+      AFTERIMAGE_VERSION: 0.3.7-keyboard-first
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -51,7 +51,7 @@ jobs:
         working-directory: afterimage
     env:
       AFTERIMAGE_URL: https://afterimage.aafnaipatro.com/
-      AFTERIMAGE_RELEASE: 070f19767660833016291a23235a1ae671ad5f57
+      AFTERIMAGE_RELEASE: 420dfc628bce4deef1d075797eae0505d34367c7
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
