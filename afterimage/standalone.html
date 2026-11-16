@@ -279,30 +279,126 @@ const CAP_PIXELS = 920000;
 const CAP_LONG_EDGE = 1280;
 const CALLBACK_TIMEOUT_MS = 320;
 
-function finiteVod(video) {
-  return Number.isFinite(video.duration) && video.duration > 0;
+function seekability(video) {
+  return video.seekable?.length > 0 ? 'available' : 'empty';
 }
 
 function captureState(video, player) {
   if (video.error) {
-    return { kind: 'source-error', ready: false, message: 'This video cannot provide a frame for Temporal Lens.' };
+    return {
+      kind: 'source-error',
+      reason: 'source-error',
+      seekability: seekability(video),
+      ready: false,
+      message: 'This video cannot provide a frame for Temporal Lens.',
+    };
   }
-  if (player.store?.streamType === 'live' || !finiteVod(video)) {
-    return { kind: 'timeline-unavailable', ready: false, message: 'Temporal Lens needs a stable on-demand video timeline.' };
+
+  // currentSrc can remain stale briefly after src removal/load(). Eligibility
+  // follows the host's currently declared source, not the browser's old resolved URL.
+  const hasDeclaredSource = Boolean(
+    video.getAttribute('src') || video.querySelector('source[src]')
+  );
+  if (!hasDeclaredSource) {
+    return {
+      kind: 'timeline-unavailable',
+      reason: 'source-missing',
+      seekability: seekability(video),
+      ready: false,
+      message: 'Temporal Lens needs a stable on-demand video timeline.',
+    };
+  }
+
+  // Metadata readiness is evaluated before duration semantics. A newly attached
+  // source normally reports duration=NaN until metadata arrives; that is a
+  // waiting state, not evidence that the source is an unsupported timeline.
+  if (video.readyState < HTMLMediaElement.HAVE_METADATA) {
+    return {
+      kind: 'metadata-pending',
+      reason: 'metadata-pending',
+      seekability: seekability(video),
+      ready: false,
+      message: 'Wait for video metadata to load, then try again.',
+    };
+  }
+
+  const streamType = String(player.store?.streamType || '').toLowerCase();
+  const rangeState = seekability(video);
+  if (streamType.startsWith('live')) {
+    return {
+      kind: 'timeline-unavailable',
+      reason: rangeState === 'available' ? 'live-dvr' : 'live-stream',
+      seekability: rangeState,
+      ready: false,
+      message: 'Temporal Lens needs a stable on-demand video timeline.',
+    };
+  }
+
+  if (Number.isNaN(video.duration)) {
+    return {
+      kind: 'timeline-unavailable',
+      reason: 'duration-unknown',
+      seekability: rangeState,
+      ready: false,
+      message: 'Temporal Lens needs a stable on-demand video timeline.',
+    };
+  }
+  if (video.duration === Infinity) {
+    return {
+      kind: 'timeline-unavailable',
+      reason: 'duration-infinite',
+      seekability: rangeState,
+      ready: false,
+      message: 'Temporal Lens needs a stable on-demand video timeline.',
+    };
+  }
+  if (!Number.isFinite(video.duration) || video.duration <= 0) {
+    return {
+      kind: 'timeline-unavailable',
+      reason: video.duration === 0 ? 'duration-zero' : 'duration-invalid',
+      seekability: rangeState,
+      ready: false,
+      message: 'Temporal Lens needs a stable on-demand video timeline.',
+    };
   }
   if (video.seeking) {
-    return { kind: 'seeking', ready: false, message: 'Wait for seeking to finish, then try again.' };
-  }
-  if (video.readyState < HTMLMediaElement.HAVE_METADATA) {
-    return { kind: 'metadata-pending', ready: false, message: 'Wait for video metadata to load, then try again.' };
+    return {
+      kind: 'seeking',
+      reason: 'seeking',
+      seekability: rangeState,
+      ready: false,
+      message: 'Wait for seeking to finish, then try again.',
+    };
   }
   if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
-    return { kind: 'frame-pending', ready: false, message: 'Wait for the frame to load, then try again.' };
+    return {
+      kind: 'frame-pending',
+      reason: 'frame-pending',
+      seekability: rangeState,
+      ready: false,
+      message: 'Wait for the frame to load, then try again.',
+    };
   }
   if (!captureSize(video)) {
-    return { kind: 'frame-unavailable', ready: false, message: 'The current video does not expose a capturable picture.' };
+    return {
+      kind: 'frame-unavailable',
+      reason: 'picture-unavailable',
+      seekability: rangeState,
+      ready: false,
+      message: 'The current video does not expose a capturable picture.',
+    };
   }
-  return { kind: video.ended ? 'ended-ready' : 'ready', ready: true, message: '' };
+
+  // Manual Pin captures the already-rendered current frame and never seeks.
+  // An empty native seekable range therefore does not make capture dishonest;
+  // expose it as evidence while preserving ordinary host playback semantics.
+  return {
+    kind: video.ended ? 'ended-ready' : 'ready',
+    reason: video.ended ? 'ended-capturable' : 'vod-ready',
+    seekability: rangeState,
+    ready: true,
+    message: '',
+  };
 }
 
 function captureSize(video) {
@@ -363,6 +459,8 @@ class AfterimageTemporalLens extends HTMLElement {
     const updateCaptureState = () => {
       const state = captureState(video, player);
       this.dataset.captureState = state.kind;
+      this.dataset.captureReason = state.reason;
+      this.dataset.captureSeekability = state.seekability;
       pinButton.title = state.ready ? '' : state.message;
       return state;
     };
