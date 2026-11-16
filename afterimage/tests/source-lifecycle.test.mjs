@@ -238,12 +238,27 @@ test('source-lifecycle: stale callback cannot win after Close, Clear or source e
   await page.locator('#player-a [data-afterimage-pin]').click();
   await page.waitForFunction(() => document.querySelector('#player-a [data-afterimage-pin]').disabled);
   await page.locator('#player-a [data-afterimage-close]').click();
-  await page.evaluate(() => window.__heldClose?.(performance.now(), { mediaTime: 13 }));
-  await page.waitForTimeout(80);
   assert.equal(await page.locator('#player-a [data-afterimage-pinned]').textContent(), first);
   assert.equal(await page.locator('#player-a .afterimage-reference').isVisible(), false);
 
-  await page.locator('#player-a [data-afterimage-compare]').click();
+  // Close invalidated the older request. Complete a newer same-source pin first,
+  // then deliver the old callback: latest-request-wins must preserve the newer pin.
+  await page.evaluate(() => {
+    const v = window.__AFTERIMAGE_HARDENING__.a.video;
+    v.requestVideoFrameCallback = cb => {
+      queueMicrotask(() => cb(performance.now(), { mediaTime: v.currentTime }));
+      return 10011;
+    };
+    v.cancelVideoFrameCallback = () => {};
+  });
+  await seek(page, '#player-a', 8);
+  await page.locator('#player-a [data-afterimage-pin]').click();
+  await page.waitForFunction(() => /00:0?8/.test(document.querySelector('#player-a [data-afterimage-pinned]')?.textContent || ''));
+  const sameSourceNewest = await page.locator('#player-a [data-afterimage-pinned]').textContent();
+  await page.evaluate(() => window.__heldClose?.(performance.now(), { mediaTime: 13 }));
+  await page.waitForTimeout(80);
+  assert.equal(await page.locator('#player-a [data-afterimage-pinned]').textContent(), sameSourceNewest);
+
   await page.evaluate(() => {
     const v = window.__AFTERIMAGE_HARDENING__.a.video;
     window.__heldClear = null;
@@ -293,7 +308,13 @@ test('source-lifecycle: stale callback cannot win after Close, Clear or source e
   });
   await page.waitForFunction(() => window.__AFTERIMAGE_HARDENING__.a.video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA);
   assert.equal(await page.locator('#player-a .afterimage-reference').isVisible(), false, 'Same-URL reload retained old reference.');
-  report.observations.staleWorkRaces = { first, newest, sameUrlReloadCleared: true };
+  report.observations.staleWorkRaces = {
+    first,
+    sameSourceNewest,
+    oldClosedRequestIgnoredAfterNewerPin: true,
+    newest,
+    sameUrlReloadCleared: true,
+  };
   report.checks.staleWorkRaces = true;
 });
 
