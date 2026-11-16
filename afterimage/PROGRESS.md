@@ -154,3 +154,10 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Checklist rows 13, 30, 53–55, 57, 59, 62, 66–67 and 70 are promoted to done. Candidate identity rows 91–93 are reconciled to the current serving release.
 - Deliberately still open/in-progress: native fullscreen, physical device/screen-reader, pointer/touch cancellation, delayed source-switch races, slow/constrained-device profiling, multi-instance, alternate-host package proof, bonuses and submission-form acceptance.
 - **Next action:** preserve the strongest exact-release stills, then close the highest-value remaining usability/transport gaps before submission packaging.
+
+
+## 2026-11-16 · submission-capture runner correction
+
+- Submission capture run `43801633569` stopped before browser launch because the standalone capture script imported `@playwright/test` while AFTERIMAGE's locked dev dependency is `playwright@1.62.1`.
+- This is capture tooling only; the serving product release remains `f0bed46...` and the exact-release three-engine matrix remains green.
+- Corrected the capture script to import Chromium from the installed `playwright` package. The workflow will rerun from the script change.

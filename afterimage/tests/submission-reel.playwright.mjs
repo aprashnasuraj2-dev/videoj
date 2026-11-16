@@ -1,4 +1,4 @@
-import { chromium } from '@playwright/test';
+import { chromium } from 'playwright';
 import { mkdir, rename, writeFile } from 'node:fs/promises';
 
 const baseURL = process.env.AFTERIMAGE_URL || 'https://afterimage.aafnaipatro.com/';
