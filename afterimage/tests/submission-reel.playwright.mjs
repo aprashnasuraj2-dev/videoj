@@ -125,8 +125,59 @@ try {
       accessiblePair.mirrorRect.bottom <= accessiblePair.stageRect.bottom + 1,
     accessiblePair,
   );
-  await hold(page, 'captions remain readable over the temporal comparison', 2600);
+  await hold(page, 'captions remain readable over the temporal comparison', 1200);
   await shot(playerSection, 'afterimage-accessibility-comparison.png');
+
+  const fullscreen = page.locator('media-fullscreen-button');
+  await fullscreen.click();
+  await page.waitForFunction(() => Boolean(document.fullscreenElement), null, { timeout: 5000 });
+  await page.locator('media-play-button').click();
+  await page.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.paused, null, { timeout: 3000 });
+  await page.waitForTimeout(250);
+  const fullscreenState = await page.evaluate(() => {
+    const { player, video } = window.__AFTERIMAGE_RELEASE__;
+    const wrapper = player.querySelector('.afterimage');
+    const stage = player.querySelector('.afterimage-stage').getBoundingClientRect();
+    const deck = player.querySelector('.afterimage-deck').getBoundingClientRect();
+    const mirror = player.querySelector('.afterimage-comparison-caption');
+    const track = [...video.textTracks].find(item => item.kind === 'captions');
+    return {
+      wrapperFullscreen: document.fullscreenElement === wrapper,
+      stage: { width: stage.width, height: stage.height },
+      deckBottom: deck.bottom,
+      viewportHeight: innerHeight,
+      paused: video.paused,
+      currentTime: video.currentTime,
+      comparisonOpen: wrapper.hasAttribute('data-comparison-open'),
+      mirrorHidden: mirror.hidden,
+      mirrorText: mirror.textContent.trim(),
+      activeCue: track?.activeCues?.[0]?.text || null,
+      trackMode: track?.mode || null,
+    };
+  });
+  check(
+    'fullscreen-comparison-captions',
+    fullscreenState.wrapperFullscreen &&
+      fullscreenState.stage.width > 0 &&
+      fullscreenState.stage.height > 0 &&
+      fullscreenState.deckBottom <= fullscreenState.viewportHeight + 1 &&
+      fullscreenState.paused &&
+      fullscreenState.currentTime >= 10 && fullscreenState.currentTime < 18 &&
+      fullscreenState.comparisonOpen &&
+      !fullscreenState.mirrorHidden &&
+      fullscreenState.trackMode === 'showing' &&
+      fullscreenState.mirrorText === fullscreenState.activeCue,
+    fullscreenState,
+  );
+  await hold(page, 'real fullscreen keeps comparison and captions together', 1800);
+  await shot(page, 'afterimage-accessibility-fullscreen.png');
+
+  await fullscreen.focus();
+  await page.keyboard.press('Space');
+  await page.waitForFunction(() => !document.fullscreenElement, null, { timeout: 5000 });
+  await page.locator('media-play-button').click();
+  await page.waitForFunction(() => !window.__AFTERIMAGE_RELEASE__.video.paused, null, { timeout: 3000 });
+  await hold(page, 'fullscreen exit returns to the same playing comparison', 700);
 
   const seam = page.locator('.afterimage-seam-control');
   const box = await seam.boundingBox();
@@ -141,55 +192,12 @@ try {
   await page.mouse.up();
   const pointerValue = Number(await seam.inputValue());
   check('real-pointer-seam-drag', pointerValue >= 24 && pointerValue <= 30, { pointerValue });
-  await hold(page, 'dragged reveal changes only presentation', 1700);
+  await hold(page, 'dragged reveal changes only presentation', 1500);
 
   for (const label of ['Pinned', 'Now', 'Split']) {
     await page.getByRole('button', { name: label, exact: true }).click();
-    await hold(page, label + ' preset', 1050);
+    await hold(page, label + ' preset', 900);
   }
-
-  const fullscreen = page.locator('media-fullscreen-button');
-  await fullscreen.click();
-  await page.waitForFunction(() => Boolean(document.fullscreenElement), null, { timeout: 5000 });
-  await page.waitForTimeout(350);
-  const fullscreenState = await page.evaluate(() => {
-    const { player, video } = window.__AFTERIMAGE_RELEASE__;
-    const wrapper = player.querySelector('.afterimage');
-    const stage = player.querySelector('.afterimage-stage').getBoundingClientRect();
-    const deck = player.querySelector('.afterimage-deck').getBoundingClientRect();
-    const mirror = player.querySelector('.afterimage-comparison-caption');
-    const track = [...video.textTracks].find(item => item.kind === 'captions');
-    return {
-      wrapperFullscreen: document.fullscreenElement === wrapper,
-      stage: { width: stage.width, height: stage.height },
-      deckBottom: deck.bottom,
-      viewportHeight: innerHeight,
-      comparisonOpen: wrapper.hasAttribute('data-comparison-open'),
-      mirrorHidden: mirror.hidden,
-      mirrorText: mirror.textContent.trim(),
-      activeCue: track?.activeCues?.[0]?.text || null,
-      trackMode: track?.mode || null,
-    };
-  });
-  check(
-    'fullscreen-comparison-captions',
-    fullscreenState.wrapperFullscreen &&
-      fullscreenState.stage.width > 0 &&
-      fullscreenState.stage.height > 0 &&
-      fullscreenState.deckBottom <= fullscreenState.viewportHeight + 1 &&
-      fullscreenState.comparisonOpen &&
-      !fullscreenState.mirrorHidden &&
-      fullscreenState.trackMode === 'showing' &&
-      fullscreenState.mirrorText === fullscreenState.activeCue,
-    fullscreenState,
-  );
-  await hold(page, 'real fullscreen keeps comparison and captions together', 2400);
-  await shot(page, 'afterimage-accessibility-fullscreen.png');
-
-  await fullscreen.focus();
-  await page.keyboard.press('Space');
-  await page.waitForFunction(() => !document.fullscreenElement, null, { timeout: 5000 });
-  await hold(page, 'fullscreen exit returns to the same player state', 1200);
 
   await seam.focus();
   await page.keyboard.press('ArrowLeft');
