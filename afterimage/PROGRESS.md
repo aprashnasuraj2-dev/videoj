@@ -297,3 +297,19 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Checklist was reconciled without inflating coverage: physical phone/screen reader, numbered-frame fixture, explicit slow-device/network profiling, two-instance stress, true cross-origin-taint/expired-provider failure and signed-in form upload acceptance remain unclaimed.
 - `docs/SUBMISSION.md` is now form-ready; `docs/FINAL_HANDOFF.md` records exact fields, evidence artifacts, rollback and the remaining account action.
 - **Next action:** complete the signed-in Contra submission using the prepared URL/visual/description + Mux ID + live-site URL, then record confirmation. Keep the Mux asset live through judging.
+
+
+## 2026-11-16 · cross-hardening P0/P1 evidence
+
+- Hardening was isolated on `afterimage-hardening`; the frozen public competition build `2316dc7...` / `0.3.10-control-fit` was not overwritten.
+- Product source `2d7107050d72fda401c0d260532dddabe9b01a45` passed hardening run `43816324001`: architecture/build/package, source-lifecycle in Chromium/Firefox/desktop WebKit, real packed external consumer, difficult-media matrix and performance-footprint.
+- The gate found and fixed two real lifecycle/presentation defects: CSS could visually override a hidden relation layer, and reconnecting during a pending capture could inherit a disabled Pin button.
+- Explicit capture states now cover metadata pending, unstable/unknown timeline, seeking, waiting/frame pending, invalid picture, source error, ready and ended-ready. Failed re-pins retain the last valid reference; pause during waiting does not recover by autoplay.
+- Two simultaneous instances and 20 detach/reinsert cycles pass, including pending callback disposal, stale Close/Clear callbacks, source-epoch races and same-URL reload.
+- The packed consumer supplies unrelated host-owned media/poster/captions and proves the base export has no Temporal Lens behavior or demo/runtime coupling.
+- Footprint evidence: 3,570-byte incremental JS gzip, one 1279×719 reference canvas (~3,678,404 raw RGBA bytes), 20-pin mean 34.03ms / max 45.91ms, zero seam seek events/network requests, and zero observed >50ms Long Tasks in five fresh plus five repeat CI contexts.
+- Difficult-media evidence passes 240/320/390/768/1280px, mobile landscape, 4:3, 9:16, RTL/long Arabic copy, 9:59:59 clock, no poster/captions, long real cue, ended media and unavailable enhancement fallback.
+- Playback Settings/rate was intentionally not added: the direct standard controls + Pin already fit narrow widths, while another first-use control would increase density without strengthening the Temporal Lens thesis.
+- Checklist 016, 026 and 069 are now promoted only from passing executable evidence. Physical phones, screen readers, low-end hardware, genuine tainted cross-origin/expired-provider failure and explicit throttled-network profiling remain unclaimed.
+- Successful run regenerated `standalone.html`; its bytes were reconciled on the hardening branch in `73d883c...`.
+- Full evidence and concept-drift audit: `docs/HARDENING.md`.
