@@ -8,6 +8,28 @@ function finiteVod(video) {
   return Number.isFinite(video.duration) && video.duration > 0;
 }
 
+function captureState(video, player) {
+  if (video.error) {
+    return { kind: 'source-error', ready: false, message: 'This video cannot provide a frame for Temporal Lens.' };
+  }
+  if (player.store?.streamType === 'live' || !finiteVod(video)) {
+    return { kind: 'timeline-unavailable', ready: false, message: 'Temporal Lens needs a stable on-demand video timeline.' };
+  }
+  if (video.seeking) {
+    return { kind: 'seeking', ready: false, message: 'Wait for seeking to finish, then try again.' };
+  }
+  if (video.readyState < HTMLMediaElement.HAVE_METADATA) {
+    return { kind: 'metadata-pending', ready: false, message: 'Wait for video metadata to load, then try again.' };
+  }
+  if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+    return { kind: 'frame-pending', ready: false, message: 'Wait for the frame to load, then try again.' };
+  }
+  if (!captureSize(video)) {
+    return { kind: 'frame-unavailable', ready: false, message: 'The current video does not expose a capturable picture.' };
+  }
+  return { kind: video.ended ? 'ended-ready' : 'ready', ready: true, message: '' };
+}
+
 function captureSize(video) {
   const sourceWidth = video.videoWidth;
   const sourceHeight = video.videoHeight;
@@ -57,6 +79,13 @@ class AfterimageTemporalLens extends HTMLElement {
     const closeButton = this.querySelector('[data-afterimage-close]');
     const clearButton = this.querySelector('[data-afterimage-clear]');
     const presetButtons = [...this.querySelectorAll('[data-afterimage-preset]')];
+
+    const updateCaptureState = () => {
+      const state = captureState(video, player);
+      this.dataset.captureState = state.kind;
+      pinButton.title = state.ready ? '' : state.message;
+      return state;
+    };
 
     const announce = message => {
       status.textContent = '';
@@ -158,8 +187,13 @@ class AfterimageTemporalLens extends HTMLElement {
     };
 
     const capture = () => {
-      if (!finiteVod(video) || video.seeking || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || !captureSize(video)) {
-        announce('Wait for the frame to load, then try again.');
+      const state = updateCaptureState();
+      if (!state.ready) {
+        announce(state.message);
+        this.dispatchEvent(new CustomEvent('afterimage:pin-failed', {
+          bubbles: true,
+          detail: { message: state.message, state: state.kind },
+        }));
         return;
       }
       cancelPending();
@@ -288,6 +322,9 @@ class AfterimageTemporalLens extends HTMLElement {
     video.addEventListener('timeupdate', updateRelation, { signal });
     video.addEventListener('durationchange', updateRelation, { signal });
     video.addEventListener('loadedmetadata', updateRelation, { signal });
+    for (const eventName of ['loadedmetadata', 'loadeddata', 'canplay', 'durationchange', 'progress', 'seeking', 'seeked', 'waiting', 'playing', 'ended', 'error']) {
+      video.addEventListener(eventName, updateCaptureState, { signal });
+    }
 
     for (const eventName of ['loadstart', 'emptied']) {
       video.addEventListener(eventName, () => {
@@ -296,6 +333,7 @@ class AfterimageTemporalLens extends HTMLElement {
         this.#reference = null;
         this.#presentation = 'closed';
         render();
+        updateCaptureState();
       }, { signal });
     }
 
@@ -307,6 +345,7 @@ class AfterimageTemporalLens extends HTMLElement {
     }, { signal });
 
     render();
+    updateCaptureState();
   }
 
   disconnectedCallback() {
