@@ -249,18 +249,33 @@ test('package-external-host: enhanced export isolates two hosts and survives man
 
     await a.locator('[data-afterimage-compare]').click();
     assert.equal(await a.locator('.afterimage-reference').isVisible(), true);
-    assert.equal(await a.locator('.afterimage-seam-control').evaluate(el => el === document.activeElement), true);
+    const seamA = a.locator('.afterimage-seam-control');
+    assert.equal(await seamA.evaluate(el => el === document.activeElement), true);
+    await seamA.evaluate(el => {
+      el.value = '73';
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    assert.equal(await seamA.inputValue(), '73');
+    assert.match(await a.locator('.afterimage-reference').getAttribute('style') || '', /73|27/);
 
     await a.locator('[data-afterimage-clear]').click();
     assert.equal(await a.locator('.afterimage-reference').isVisible(), false);
     assert.equal(await a.locator('.afterimage-relation').isVisible(), false);
 
+    await seek(b, 12);
+    await b.locator('[data-afterimage-pin]').click();
+    await page.waitForFunction(() => document.querySelector('#afterimage-b .afterimage-reference')?.hidden === false);
+    assert.equal(await b.locator('.afterimage-reference').isVisible(), true);
+    assert.equal(await a.locator('.afterimage-reference').isVisible(), false, 'Pinning packed instance B revived A state.');
+    await b.locator('[data-afterimage-clear]').click();
+    assert.equal(await b.locator('.afterimage-reference').isVisible(), false);
+
     await b.locator('media-captions-button').click();
     await page.waitForFunction(() => window.__HOST_READY__.b.video.textTracks[0]?.mode === 'showing');
     await b.locator('media-mute-button').click();
     assert.equal(await b.locator('video').evaluate(v => v.muted), true);
-    await seek(b, 12);
-    assert.ok(Math.abs(await b.locator('video').evaluate(v => v.currentTime) - 12) < 0.5);
+    await seek(b, 14);
+    assert.ok(Math.abs(await b.locator('video').evaluate(v => v.currentTime) - 14) < 0.5);
 
     await page.evaluate(() => {
       const { player } = window.__HOST_READY__.a;
