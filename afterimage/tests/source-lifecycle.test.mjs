@@ -16,7 +16,13 @@ let baseURL;
 const report = {
   gate: 'source-lifecycle',
   browser: engineName,
-  checks: {},
+  checks: {
+    twoInstances: false,
+    remountStress: false,
+    staleWorkRaces: false,
+    captureStates: false,
+    failedRepinRetention: false,
+  },
   observations: {},
   limitations: [],
 };
@@ -110,6 +116,8 @@ test('source-lifecycle: two simultaneous players keep independent references', {
   assert.match(values.b, /00:11/);
   assert.ok(values.aCanvas > 1 && values.bCanvas > 1);
   assert.notEqual(values.a, values.b);
+  report.observations.twoInstances = values;
+  report.checks.twoInstances = true;
 });
 
 test('source-lifecycle: 20 remove/reinsert cycles do not duplicate handlers or inherit old state', { timeout: 30000 }, async t => {
@@ -176,6 +184,8 @@ test('source-lifecycle: 20 remove/reinsert cycles do not duplicate handlers or i
   assert.equal(disposed.referenceHidden, true);
   assert.equal(disposed.relationHidden, true);
   assert.equal(disposed.pinDisabled, false);
+  report.observations.remountStress = { cycles: 20, afterCycles, disposed };
+  report.checks.remountStress = true;
 });
 
 test('source-lifecycle: stale callback cannot win after Close, Clear or source epoch replacement', { timeout: 40000 }, async t => {
@@ -250,6 +260,8 @@ test('source-lifecycle: stale callback cannot win after Close, Clear or source e
   });
   await page.waitForFunction(() => window.__AFTERIMAGE_HARDENING__.a.video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA);
   assert.equal(await page.locator('#player-a .afterimage-reference').isVisible(), false, 'Same-URL reload retained old reference.');
+  report.observations.staleWorkRaces = { first, newest, sameUrlReloadCleared: true };
+  report.checks.staleWorkRaces = true;
 });
 
 test('source-lifecycle: capture-state matrix is truthful and recovery never autoplays', { timeout: 40000 }, async t => {
@@ -394,6 +406,20 @@ test('source-lifecycle: capture-state matrix is truthful and recovery never auto
 
   const text = await page.locator('#player-a').textContent();
   assert.doesNotMatch(text, /NaN|Infinity/);
+  report.observations.captureStates = {
+    metadataPending: true,
+    durationUnknown: true,
+    durationInfinite: true,
+    durationZero: true,
+    framePending: true,
+    seeking: true,
+    frameUnavailable: true,
+    emptySeekableCapturable: true,
+    endedReady: true,
+    liveTimelineUnavailable: true,
+    waitPauseRecoveryRemainedPaused: true,
+  };
+  report.checks.captureStates = true;
 });
 
 
@@ -460,4 +486,6 @@ test('source-lifecycle: failed re-pin retains the previous valid reference', { t
     };
   });
   assert.deepEqual(afterSourceError, before, 'Source-error re-pin replaced or cleared the valid reference.');
+  report.observations.failedRepinRetention = { before, afterInvalidFrame, afterSourceError };
+  report.checks.failedRepinRetention = true;
 });
