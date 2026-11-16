@@ -450,14 +450,14 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — On Android Chrome and iPhone Safari, tap hold, seek by tap, drag and use Return and Stay. Test pointer cancel and normal page scrolling outside the rail. Measure signature targets.
   - **Deliverable** — Touch and pointer matrix with device notes.
   - **Pass condition** — Signature targets are at least 44 x 44 CSS px. Page scrolling recovers after interruption and every action has a no-drag path.
-  - **Progress** — Playwright Pixel tap/seek/Return and iPhone-shaped WebKit landscape pass with 44px targets, but the row explicitly requires physical Android Chrome and iPhone Safari, drag/pointer-cancel and page-scroll recovery. See [device QA protocol](design/DEVICE-QA.md).
+  - **Progress** — Hardening run 43818172481 now adds browser-level tap seek, drag seek, pointer release outside the slider, pointercancel, page-scroll recovery, Return/Stay after touch seek, and manual-touch interruption of a pending Return with stale completion ignored. Signature targets remain ≥44px where measured. This row stays open because its pass condition explicitly requires physical Android Chrome and iPhone Safari. See [device QA protocol](design/DEVICE-QA.md) and [hardening evidence](submission-report/HARDENING.md).
 
 - [x] **063. Certify the keyboard path**
   - **Objective** — Make the full player operable without a pointer.
   - **Work** — Use Tab and Shift+Tab through the media controls and held-state actions. Use Enter/Space for buttons, documented slider keys and Escape for menus. Exercise return success and error focus.
   - **Deliverable** — Keyboard walkthrough and focus issue log.
   - **Pass condition** — No trap or offscreen focus. After dynamic state changes the next focused element is visible and logical.
-  - **Evidence** — [Phase 7 keyboard acceptance](design/PHASE-7.md#accepted-automatedbrowser-gate--9eeeb77) — exact-head Chromium/Firefox/WebKit regression plus dedicated Tab/Shift+Tab, Enter/Space, Home/End, Escape, Return/Stay and rejected-Return focus paths.
+  - **Evidence** — [Phase 7 keyboard acceptance](design/PHASE-7.md#accepted-automatedbrowser-gate--9eeeb77) plus hardening run 43818172481: clean first focus, deterministic Tab/Shift+Tab through Seek, Play, Mute, Volume, Captions, Fullscreen, Settings, Keep, Return and Stay; real media-state activation; exact dynamic focus ownership; and the same definitive journey passing Chromium, Firefox and desktop WebKit. See [hardening evidence](submission-report/HARDENING.md).
 
 - [ ] **064. Exercise screen readers**
   - **Objective** — Verify names, announcements and actual slider usability.
@@ -471,7 +471,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Toggle reduced motion and forced colors. Test bright/dark video, an extended caption and 200% browser zoom. Measure text and control contrast and inspect clipping.
   - **Deliverable** — Contrast and preference evidence set.
   - **Pass condition** — Contrast targets hold, animation is suppressed on request and no important control or focus indicator disappears.
-  - **Progress** — Reduced motion, forced colors, measured contrast, bright/dark captions and 200% CSS-layout zoom captures pass. Native browser-level 200% zoom remains unverified; keep this row open rather than equating CSS zoom with browser zoom.
+  - **Progress** — Reduced motion, forced colors, bright/dark captions and 200% CSS-layout zoom captures pass. Hardening run 43818172481 additionally measures a 3px focus indicator at 13.34:1 against the adjacent shelf and representative control foreground at 15.48:1. Native browser-level 200% zoom remains unverified; keep this row open rather than equating CSS zoom with browser zoom.
 
 - [x] **066. Stress arbitrary content and languages**
   - **Objective** — Confirm the experience survives reality outside the hero film.
@@ -506,7 +506,7 @@ Start with [master direction](README.md). Resume using [progress](PROGRESS.md) a
   - **Work** — Repeat critical paths on Chromium, Firefox, Safari/WebKit and real iOS and Android where available. Record browser, OS, device and severity. Use an independent clean session for final confirmation.
   - **Deliverable** — Signed browser and accessibility summary.
   - **Pass condition** — No blocking or major issue in a supported required path. Any missing physical coverage remains explicitly unverified.
-  - **Evidence** — [Phase 7 browser-core gate](design/PHASE-7.md#accepted-automatedbrowser-gate--9eeeb77) — exact-head packed host and full Chromium/Firefox/desktop-WebKit suites passed. Physical iOS/Android and real AT remain explicitly unverified under 062/064, as permitted by this gate's pass condition.
+  - **Evidence** — [Phase 7 browser-core gate](design/PHASE-7.md#accepted-automatedbrowser-gate--9eeeb77) plus hardening run 43818172481 — packed host, full Chromium/Firefox/desktop-WebKit suites, definitive keyboard journey in all three engines, headed fullscreen roundtrip, browser-level touch interruption and first-use automation all passed on product SHA d91494e77c1bf8860a2d26a638e1e72958040e69. Physical iOS/Android and real AT remain explicitly unverified under 062/064.
 
 ## 08 · Showcase media, Mux and secondary context
 
