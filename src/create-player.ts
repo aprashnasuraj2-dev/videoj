@@ -255,13 +255,35 @@ export function createDhagoPlayer(options: DhagoOptions): HTMLElement {
     summary.focus();
     updateChapter();
   });
+  // The chapter map is a conventional list of buttons, not a second seek rail.
+  // Arrow/Home/End move focus only; Enter/Space retain the native button action.
+  // Restrict this handler to the open chapter list so text inputs and media
+  // controls outside the map keep their own keyboard semantics.
   readout.addEventListener('keydown', event => {
-    if (event.key === 'Escape' && readout.open) {
+    if (!readout.open) return;
+    if (event.key === 'Escape') {
       readout.open = false;
       summary.focus();
       event.stopPropagation();
       event.preventDefault();
+      return;
     }
+    if (!(event.target instanceof Element) || !chapterList.contains(event.target)) return;
+    const buttons = Array.from(chapterList.querySelectorAll<HTMLButtonElement>('.dhago-chapter-jump:not(:disabled)'));
+    const focused = event.target.closest<HTMLButtonElement>('.dhago-chapter-jump');
+    const current = focused ? buttons.indexOf(focused) : -1;
+    if (current < 0 || !buttons.length) return;
+    let next = current;
+    switch (event.key) {
+      case 'ArrowDown': next = Math.min(buttons.length - 1, current + 1); break;
+      case 'ArrowUp': next = Math.max(0, current - 1); break;
+      case 'Home': next = 0; break;
+      case 'End': next = buttons.length - 1; break;
+      default: return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    buttons[next].focus();
   });
   let trackList: TextTrackList | undefined;
   const watchTracks = () => {
