@@ -6,8 +6,8 @@
     "currentSeconds": 13
   },
   "runtimeSeconds": 18,
-  "sizeBytes": 1873808,
-  "bitRate": 832803,
+  "sizeBytes": 1875769,
+  "bitRate": 833675,
   "streams": [
     {
       "index": 0,
@@ -27,8 +27,29 @@
   "files": {
     "video": {
       "name": "the-waterline-v1.mp4",
-      "sha256": "aff1d6bf979c36c3cd81ef278659b9272d0eed4ab69c32be642793fad83813c8",
-      "bytes": 1873808
+      "sha256": "3e4ff72fcab9a5481520aa8c3d77005eb2d137304160f24c7543603ba14a4650",
+      "bytes": 1875769
+    },
+    "webm": {
+      "name": "the-waterline-v1.webm",
+      "sha256": "0493fbbdfc8ecdce75860b69fd71e217a19b081efcd0884ff497ad403379867a",
+      "bytes": 1291697,
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "vp9",
+          "codec_type": "video",
+          "width": 1280,
+          "height": 720,
+          "r_frame_rate": "24/1"
+        },
+        {
+          "index": 1,
+          "codec_name": "opus",
+          "codec_type": "audio",
+          "r_frame_rate": "0/0"
+        }
+      ]
     },
     "poster": {
       "name": "the-waterline-v1-poster.jpg",
