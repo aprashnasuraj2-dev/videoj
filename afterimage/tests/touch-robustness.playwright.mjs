@@ -48,6 +48,8 @@ try {
   await ready(touchPage); await openComparison(touchPage);
   const touchSeam=touchPage.locator('.afterimage-seam-control');
   const tb=await touchSeam.boundingBox();
+  const scrollOffset=await touchPage.evaluate(()=>({x:scrollX,y:scrollY}));
+  const tv={x:tb.x-scrollOffset.x,y:tb.y-scrollOffset.y,width:tb.width,height:tb.height};
   const mobileLayout=await touchPage.evaluate(()=>{
     const {player}=window.__AFTERIMAGE_RELEASE__;
     const volume=player.querySelector('media-volume-slider').getBoundingClientRect();
@@ -55,7 +57,7 @@ try {
   });
   check('mobile-no-overflow-essential-volume',!mobileLayout.overflow&&mobileLayout.volumeVisible,mobileLayout);
 
-  await touchPage.touchscreen.tap(tb.x+tb.width*0.31,tb.y+tb.height/2);
+  await touchPage.touchscreen.tap(tv.x+tv.width*0.31,tv.y+tv.height/2);
   await touchPage.waitForTimeout(100);
   const tapValue=Number(await touchSeam.inputValue());
   check('seam-touch-tap-bounded',tapValue>=0&&tapValue<=100,{tapValue});
@@ -68,7 +70,7 @@ try {
 
   const cdp=await mobile.newCDPSession(touchPage);
   const touch=(type,x,y)=>cdp.send('Input.dispatchTouchEvent',{type,touchPoints:(type==='touchEnd'||type==='touchCancel')?[]:[{x,y,id:1,radiusX:2,radiusY:2,force:1}],modifiers:0});
-  const y=tb.y+tb.height/2;
+  const y=tv.y+tv.height/2;
   const touchHit=await touchPage.evaluate(({x,y})=>{
     window.__afterimageTouchProbe=[];
     for(const type of ['touchstart','touchmove','touchend','touchcancel']){
@@ -78,17 +80,17 @@ try {
     }
     const el=document.elementFromPoint(x,y);
     return {tag:el?.tagName||null,cls:el?.className||null,hidden:el?.hidden??null};
-  },{x:tb.x+tb.width*0.50,y});
-  await touch('touchStart',tb.x+tb.width*0.50,y);
+  },{x:tv.x+tv.width*0.50,y});
+  await touch('touchStart',tv.x+tv.width*0.50,y);
   for(const f of [0.60,0.70,0.81]) await touch('touchMove',tb.x+tb.width*f,y);
   await touch('touchEnd',0,0);
   await touchPage.waitForTimeout(120);
   const touchDrag=Number(await touchSeam.inputValue());
   const touchEvents=await touchPage.evaluate(()=>window.__afterimageTouchProbe||[]);
-  check('seam-horizontal-touch-drag',touchDrag>=68&&touchDrag<=92,{touchDrag,touchHit,touchEvents});
+  check('seam-horizontal-touch-drag',touchDrag>=68&&touchDrag<=92,{touchDrag,touchHit,touchEvents,tb,tv,scrollOffset});
 
-  await touch('touchStart',tb.x+tb.width*(touchDrag/100),y);
-  await touch('touchMove',tb.x+tb.width*0.42,y);
+  await touch('touchStart',tv.x+tv.width*(touchDrag/100),y);
+  await touch('touchMove',tv.x+tv.width*0.42,y);
   await touch('touchCancel',0,0);
   const afterCancel=Number(await touchSeam.inputValue());
   check('touch-cancel-bounded',afterCancel>=0&&afterCancel<=100,{afterCancel});
