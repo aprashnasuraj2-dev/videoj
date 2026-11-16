@@ -233,6 +233,53 @@ class AfterimageTemporalLens extends HTMLElement {
     seamControl.addEventListener('input', () => updateSeam(seamControl.value), { signal });
     seamControl.addEventListener('change', () => announce('Pinned frame reveal set to ' + Math.round(this.#seam) + ' percent.'), { signal });
 
+    let touchPointer = null;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchDragging = false;
+    const seamFromClientX = clientX => {
+      const rect = seamControl.getBoundingClientRect();
+      if (!rect.width) return this.#seam;
+      return Math.max(0, Math.min(100, (clientX - rect.left) / rect.width * 100));
+    };
+    const endTouchPointer = event => {
+      if (event.pointerType !== 'touch' || event.pointerId !== touchPointer) return;
+      if (!touchDragging) updateSeam(seamFromClientX(event.clientX));
+      announce('Pinned frame reveal set to ' + Math.round(this.#seam) + ' percent.');
+      if (seamControl.hasPointerCapture?.(event.pointerId)) seamControl.releasePointerCapture(event.pointerId);
+      touchPointer = null;
+      touchDragging = false;
+    };
+    seamControl.addEventListener('pointerdown', event => {
+      if (event.pointerType !== 'touch') return;
+      touchPointer = event.pointerId;
+      touchStartX = event.clientX;
+      touchStartY = event.clientY;
+      touchDragging = false;
+    }, { signal });
+    seamControl.addEventListener('pointermove', event => {
+      if (event.pointerType !== 'touch' || event.pointerId !== touchPointer) return;
+      const dx = event.clientX - touchStartX;
+      const dy = event.clientY - touchStartY;
+      if (!touchDragging && Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+      if (!touchDragging && Math.abs(dy) > Math.abs(dx)) {
+        touchPointer = null;
+        return;
+      }
+      if (!touchDragging) {
+        touchDragging = true;
+        seamControl.setPointerCapture?.(event.pointerId);
+      }
+      updateSeam(seamFromClientX(event.clientX));
+      event.preventDefault();
+    }, { signal });
+    seamControl.addEventListener('pointerup', endTouchPointer, { signal });
+    seamControl.addEventListener('pointercancel', event => {
+      if (event.pointerType !== 'touch' || event.pointerId !== touchPointer) return;
+      touchPointer = null;
+      touchDragging = false;
+    }, { signal });
+
     for (const button of presetButtons) {
       button.addEventListener('click', () => {
         updateSeam(Number(button.dataset.afterimagePreset));
