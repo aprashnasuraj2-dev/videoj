@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - afterimage
+      - afterimage-hardening
     paths:
       - 'afterimage/tests/submission-reel.playwright.mjs'
       - '.github/workflows/afterimage-submission.yml'
@@ -21,7 +22,7 @@ jobs:
         working-directory: afterimage
     env:
       AFTERIMAGE_URL: https://afterimage.aafnaipatro.com/
-      AFTERIMAGE_RELEASE: 2316dc7f07f5b73a2d30d7e95fc5b09e6f83fb69
+      AFTERIMAGE_RELEASE: a01a62fa5ef8c75850d285656254bb741bd31061
       AFTERIMAGE_VERSION: 0.3.10-control-fit
     steps:
       - name: Checkout exact commit
@@ -46,14 +47,46 @@ jobs:
           sudo apt-get install -y ffmpeg
 
       - name: Record exact public candidate
-        run: node tests/submission-reel.playwright.mjs
+        run: xvfb-run -a node tests/submission-reel.playwright.mjs
 
       - name: Encode submission MP4
         run: |
-          ffmpeg -y -i artifacts/submission/afterimage-submission-reel.webm -an -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -movflags +faststart artifacts/submission/afterimage-submission-reel.mp4
+          ffmpeg -y -i artifacts/submission/afterimage-submission-reel.webm -an -c:v libx264 -preset medium -crf 21 -pix_fmt yuv420p -movflags +faststart artifacts/submission/afterimage-submission-reel.mp4
           duration="$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 artifacts/submission/afterimage-submission-reel.mp4)"
           bytes="$(stat -c%s artifacts/submission/afterimage-submission-reel.mp4)"
-          printf '{"durationSeconds":%s,"bytes":%s,"audio":false,"release":"%s"}\n' "$duration" "$bytes" "$AFTERIMAGE_RELEASE" > artifacts/submission/reel-report.json
+          printf '{"durationSeconds":%s,"bytes":%s,"audio":false,"release":"%s","accessibility":"comparison-captions"}\\n' "$duration" "$bytes" "$AFTERIMAGE_RELEASE" > artifacts/submission/reel-report.json
+
+      - name: Build submission asset manifest
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, pathlib, subprocess
+          root = pathlib.Path("artifacts/submission")
+          items = []
+          for path in sorted(root.iterdir()):
+              if not path.is_file():
+                  continue
+              digest = hashlib.sha256(path.read_bytes()).hexdigest()
+              item = {"name": path.name, "bytes": path.stat().st_size, "sha256": digest}
+              if path.suffix.lower() in {".png", ".mp4", ".webm"}:
+                  probe = subprocess.run([
+                      "ffprobe", "-v", "error", "-select_streams", "v:0",
+                      "-show_entries", "stream=width,height", "-of", "json", str(path)
+                  ], capture_output=True, text=True)
+                  if probe.returncode == 0:
+                      try:
+                          streams = json.loads(probe.stdout).get("streams", [])
+                          if streams:
+                              item["width"] = streams[0].get("width")
+                              item["height"] = streams[0].get("height")
+                      except Exception:
+                          pass
+              items.append(item)
+          (root / "submission-manifest.json").write_text(json.dumps({
+              "release": "a01a62fa5ef8c75850d285656254bb741bd31061",
+              "runtime": "0.3.10-control-fit",
+              "assets": items
+          }, indent=2) + "\\n")
+          PY
 
       - name: Upload submission evidence
         if: always()
