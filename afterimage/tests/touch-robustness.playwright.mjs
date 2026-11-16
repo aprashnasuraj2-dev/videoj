@@ -47,9 +47,11 @@ try {
   const touchPage=await mobile.newPage();
   await ready(touchPage); await openComparison(touchPage);
   const touchSeam=touchPage.locator('.afterimage-seam-control');
+  await touchSeam.scrollIntoViewIfNeeded();
+  await touchPage.waitForTimeout(100);
   const tb=await touchSeam.boundingBox();
   const scrollOffset=await touchPage.evaluate(()=>({x:scrollX,y:scrollY}));
-  const tv={x:tb.x-scrollOffset.x,y:tb.y-scrollOffset.y,width:tb.width,height:tb.height};
+  const tv={x:tb.x,y:tb.y,width:tb.width,height:tb.height};
   const mobileLayout=await touchPage.evaluate(()=>{
     const {player}=window.__AFTERIMAGE_RELEASE__;
     const volume=player.querySelector('media-volume-slider').getBoundingClientRect();
