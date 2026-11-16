@@ -214,3 +214,10 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Existing evidence already covered playback start, responsive layout, keyboard flow and captions, but mute/volume and native fullscreen state changes were not directly observed.
 - The exact-release browser matrix now adds a separate essential-controls page: real play→pause state transition, pointer seek with time readout, mute→unmute, volume Home→End, fullscreen control naming in every engine, and a Chromium native fullscreen enter/Escape round trip when the headless environment exposes Fullscreen API.
 - The public candidate remains pinned to `f0bed46...`; this is verification-only branch work.
+
+
+## 2026-11-16 · package-facing release documentation
+
+- README now starts with the public proof URL, explains the host-owned-media contract, documents both enhanced and base-player imports, and makes the one-video/bounded-canvas mechanism explicit.
+- Added `THIRD_PARTY_NOTICES.md`: Video.js `@videojs/html@10.4.0` attribution/license plus WATERLINE source/audio/caption provenance. The dependency is Apache-2.0; media provenance remains explicitly separate from the entry code license.
+- Added the notices file to the package `files` allow-list so an exported package cannot silently omit its attribution/provenance note.
