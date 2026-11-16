@@ -271,6 +271,7 @@ try {
     return {
       text: span.textContent.trim(),
       ariaHidden: layer.getAttribute('aria-hidden'),
+      comparisonState: player.querySelector('.afterimage')?.hasAttribute('data-comparison-open') || false,
       hidden: layer.hidden,
       trackMode: track?.mode || null,
       activeCue: track?.activeCues?.[0]?.text || null,
@@ -285,6 +286,7 @@ try {
     'comparison-caption-readable-over-reference',
     !comparisonCaption.hidden &&
       comparisonCaption.ariaHidden === 'true' &&
+      comparisonCaption.comparisonState &&
       comparisonCaption.trackMode === 'showing' &&
       comparisonCaption.text === comparisonCaption.activeCue &&
       comparisonCaption.rect.width > 0 &&
@@ -356,6 +358,17 @@ try {
   check('close-keyboard-reachable', toClose !== null, {tabs:toClose, active:await active(page)});
   await press('Enter');
   check('close-keyboard-operable-focus-compare', await matches('[data-afterimage-compare]'), await active(page));
+  const captionAfterClose = await page.evaluate(() => {
+    const p = window.__AFTERIMAGE_RELEASE__.player;
+    return {
+      mirrorHidden: p.querySelector('.afterimage-comparison-caption')?.hidden,
+      comparisonState: p.querySelector('.afterimage')?.hasAttribute('data-comparison-open') || false,
+      trackMode: [...window.__AFTERIMAGE_RELEASE__.video.textTracks].find(track => track.kind === 'captions')?.mode || null,
+    };
+  });
+  check('comparison-caption-restores-native-track-visual-state',
+    captionAfterClose.mirrorHidden && !captionAfterClose.comparisonState && captionAfterClose.trackMode === 'showing',
+    captionAfterClose);
   await press('Enter');
   check('compare-keyboard-reopen', await matches('.afterimage-seam-control'), await active(page));
 
