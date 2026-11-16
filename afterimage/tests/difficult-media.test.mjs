@@ -227,6 +227,64 @@ test('difficult-media: no captions/no poster and long real cue preserve ordinary
   }
 });
 
+test('difficult-media: >1-hour duration and seekable-range mutation stay truthful', { timeout: 25000 }, async () => {
+  const page = await browser.newPage({ viewport: { width: 768, height: 900 } });
+  try {
+    await ready(page);
+    const observation = await page.evaluate(() => {
+      const h = window.__AFTERIMAGE_HARDENING__;
+      const v = h.a.video;
+      const lens = h.a.player.querySelector('afterimage-temporal-lens');
+      Object.defineProperty(v, 'duration', { configurable: true, value: 3665 });
+      Object.defineProperty(v, 'readyState', { configurable: true, value: HTMLMediaElement.HAVE_CURRENT_DATA });
+      Object.defineProperty(v, 'seekable', {
+        configurable: true,
+        value: { length: 1, start: () => 0, end: () => 3665 },
+      });
+      v.dispatchEvent(new Event('durationchange'));
+      const longVod = {
+        state: lens.dataset.captureState,
+        reason: lens.dataset.captureReason,
+        seekability: lens.dataset.captureSeekability,
+      };
+
+      Object.defineProperty(v, 'seekable', {
+        configurable: true,
+        value: { length: 0, start() { throw new DOMException('IndexSizeError'); }, end() { throw new DOMException('IndexSizeError'); } },
+      });
+      v.dispatchEvent(new Event('progress'));
+      const emptyRange = {
+        state: lens.dataset.captureState,
+        reason: lens.dataset.captureReason,
+        seekability: lens.dataset.captureSeekability,
+      };
+
+      Object.defineProperty(v, 'duration', { configurable: true, value: 0 });
+      v.dispatchEvent(new Event('durationchange'));
+      const zeroDuration = {
+        state: lens.dataset.captureState,
+        reason: lens.dataset.captureReason,
+        seekability: lens.dataset.captureSeekability,
+        playWidth: h.a.player.querySelector('media-play-button').getBoundingClientRect().width,
+        text: h.a.player.textContent,
+      };
+      return { longVod, emptyRange, zeroDuration };
+    });
+    check('long-duration-range-mutation',
+      observation.longVod.state === 'ready'
+      && observation.longVod.seekability === 'available'
+      && observation.emptyRange.state === 'ready'
+      && observation.emptyRange.seekability === 'empty'
+      && observation.zeroDuration.state === 'timeline-unavailable'
+      && observation.zeroDuration.reason === 'duration-zero'
+      && observation.zeroDuration.playWidth >= 44
+      && !/NaN|Infinity/.test(observation.zeroDuration.text),
+      observation);
+  } finally {
+    await page.close();
+  }
+});
+
 test('difficult-media: ended media can still truthfully pin; unavailable source keeps base controls usable', { timeout: 30000 }, async () => {
   const page = await browser.newPage({ viewport: { width: 768, height: 900 } });
   try {
