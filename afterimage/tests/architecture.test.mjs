@@ -21,6 +21,8 @@ test('core package is independent from demo media and sibling skins', () => {
   ].map(read).join('\n');
   assert.doesNotMatch(sources, /vjs\.zencdn\.net|detour\/|apps\/preview|THE WATERLINE|the-waterline/i);
   assert.doesNotMatch(sources, /MUX_TOKEN_(?:ID|SECRET)|Authorization\s*:|Bearer\s+[A-Za-z0-9+/_=-]{12,}/i);
+  assert.doesNotMatch(sources, /aafnaipatro|kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U|stream\.mux\.com|image\.mux\.com|dhago\//i);
+  assert.doesNotMatch(sources, /the-waterline-v1|apollo11/i);
 });
 
 test('manual Temporal Lens never programs transport', () => {

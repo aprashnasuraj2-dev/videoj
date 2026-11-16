@@ -7,6 +7,7 @@ on:
     paths:
       - 'afterimage/tests/official-gates.playwright.mjs'
       - 'afterimage/tests/touch-robustness.playwright.mjs'
+      - 'afterimage/tests/judge-first-use.playwright.mjs'
       - '.github/workflows/afterimage-official-gates.yml'
   workflow_dispatch:
 
@@ -68,5 +69,34 @@ jobs:
         with:
           name: afterimage-touch-robustness-evidence
           path: afterimage/artifacts/touch-robustness/
+          if-no-files-found: error
+          retention-days: 30
+
+  judge-first-use:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: afterimage
+    env:
+      AFTERIMAGE_URL: https://afterimage.aafnaipatro.com/
+      AFTERIMAGE_RELEASE: 6f271470a76161a55a423e5a67e7c5fb1cdb2f63
+      AFTERIMAGE_VERSION: 0.3.9-touch-events
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: afterimage/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: First-five / first-thirty judge walkthrough
+        run: node tests/judge-first-use.playwright.mjs
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: afterimage-judge-first-use-evidence
+          path: afterimage/artifacts/judge-first-use/
           if-no-files-found: error
           retention-days: 30
