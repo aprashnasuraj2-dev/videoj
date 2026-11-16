@@ -8,10 +8,21 @@ Resume step: 091
 | Verified | 90/100. Step 002 is now verified by official Contra multiple-submission guidance. Phase 8 is complete; Phase 9 steps 081–089 are verified except human-only 090; Phase 10 steps 092–095 and 098 are verified. |
 | Next | 091. Multiple-submission eligibility is resolved; the signed-in current form field names, limits and acceptance state still unlock 096/097/099. Step 090 still needs a fresh uncoached human reviewer; 100 follows actual submission. |
 | Open dependencies | 091 signed-in live-form confirmation; 017 first-use study; 062 physical phones; 064 NVDA/VoiceOver; 065 native 200% zoom; 090 fresh uncoached judging pass; 099 owner submission and 100 post-submission verification. No further independent Phase 10 acceptance step bypasses 091. |
-| Prototype / public release | Preferred submission route: `https://detour-entry.aafnaipatro.com/mux/` on checkpoint runtime `d430f2ee49fa93a460c150fd90205b13fe5327be` / `detour-dist-d430f2ee49fa`; redundant mirror `https://detour.aafnaipatro.com/mux/` intentionally retains the earlier single-place `a3b43f74…` runtime; independent rollback remains `https://detour-backup.aafnaipatro.com/` / `detour-dist-50ac9661e315`. |
+| Prototype / public release | Preferred submitted route remains `https://detour-entry.aafnaipatro.com/mux/`; it now serves the in-place hardened checkpoint runtime `6d26d98b96af24b114fa9e29d8c5f6f3539b39c6` / `detour-dist-6d26d98b96af` through the existing `detour-checkpoints-release` Worker. The Mux playback ID, media hash, hostname, checkpoint semantics and rollback route are unchanged. |
 | Source baseline | Promoted checkpoint runtime `d430f2ee49fa93a460c150fd90205b13fe5327be` / `detour-dist-d430f2ee49fa` passed runtime validation `43770989069`. Final handoff head `11e00e6d…` passed complete validation `43772874561` and authentic evidence capture `43772874624`; comparison from runtime to handoff contains zero `detour/skin/*` changes. |
-| Hardening candidate | Product SHA `d91494e77c1bf8860a2d26a638e1e72958040e69` passed full hardening run `43818172481` plus focused gate `43818172494`. It is intentionally **not** promoted to the public route; public identity remains `d430f2ee…`. |
+| Hardening candidate | Live product source `6d26d98b96af24b114fa9e29d8c5f6f3539b39c6` is deployed in place at the same submitted URL. Final verification head `c20663ea7c1858e959b13a2006ee235aa3beeeb8` passed full hardening run `43823412157` and focused gate `43823412160`; commits after the live product source are test/metadata only. |
 
+
+
+## 2026-11-16 · Live function/accessibility hardening deployed in place
+
+- The already-submitted URL remains **`https://detour-entry.aafnaipatro.com/mux/`**. No replacement submission page, alternate release story or new public hostname was created.
+- The existing `detour-checkpoints-release` Worker now serves immutable source **`6d26d98b96af24b114fa9e29d8c5f6f3539b39c6`** from **`detour-dist-6d26d98b96af`**. Cloudflare deployment **`4fd118da-be83-4649-b93d-5072d9db5284`** routes 100% of traffic to Worker version **`25e7f851-27f3-4200-86c2-197ad98c8b80`** with the original `DETOUR_ASSETS` R2 binding preserved.
+- Final verification head **`c20663ea7c1858e959b13a2006ee235aa3beeeb8`** passed full hardening run **`43823412157`** and focused run **`43823412160`**. The full run includes build, architecture isolation, packed external host, Chromium/Firefox/desktop-WebKit regressions, Phase 7, footprint, keyboard journeys in all three engines, headed fullscreen, touch interruption, first-use automation and the submitted-URL regression.
+- The live regression verified HTTPS 200, checkpoint C1 at ~42s → ordinary seek to ~18s → Return to 42.350s, 206 byte-range fallback, blocked-provider recovery, and a 1280×900 immediate-use smoke test. Cloudflare Browser Rendering independently observed response headers `X-DETOUR-Source-SHA: 6d26d98b…` and `X-DETOUR-Dist-Branch: detour-dist-6d26d98b96af`.
+- Live accessibility-tree evidence exposes named Seek and Volume sliders plus Play, Mute, Captions, Fullscreen, Keep my place and Playback settings. The focus indicator remains 3px with 13.34:1 measured contrast in CI; captions survive Return/Stay and fullscreen; Settings/Escape focus ownership remains deterministic.
+- Runtime hardening is intentionally narrow: redundant wrapper/raw-media tab stops were removed and focus visibility strengthened. No frame capture, Temporal Lens, split comparison, AFTERIMAGE terminology/colors or WATERLINE behavior was introduced.
+- Physical iPhone Safari, physical Android Chrome, NVDA/VoiceOver, native browser-level 200% zoom and uncoached-human recognition remain explicitly unverified. Existing checklist statuses for those external gates stay open.
 
 
 
