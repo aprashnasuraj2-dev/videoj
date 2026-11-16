@@ -128,12 +128,49 @@ try {
   await hold(page, 'captions remain readable over the temporal comparison', 1200);
   await shot(playerSection, 'afterimage-accessibility-comparison.png');
 
+  // Freeze a deterministic real cue before fullscreen. The earlier failure
+  // sampled after playback had naturally crossed the 18s cue boundary; that is
+  // a recording-harness timing race, not a caption/product failure.
+  const fullscreenCueTime = 13;
+  const fullscreenSeek = await page.evaluate(async seconds => {
+    const { player, video } = window.__AFTERIMAGE_RELEASE__;
+    const arrived = await player.store.seek(seconds);
+    return { arrived, duration: video.duration };
+  }, fullscreenCueTime);
+  check(
+    'fullscreen-cue-seek-settles',
+    Number.isFinite(fullscreenSeek.arrived) && Math.abs(fullscreenSeek.arrived - fullscreenCueTime) < 0.5,
+    fullscreenSeek,
+  );
+  await page.waitForFunction(seconds => {
+    const { player, video } = window.__AFTERIMAGE_RELEASE__;
+    const track = [...video.textTracks].find(item => item.kind === 'captions');
+    const mirror = player.querySelector('.afterimage-comparison-caption');
+    return !video.seeking &&
+      Math.abs(video.currentTime - seconds) < 0.5 &&
+      track?.mode === 'showing' &&
+      track.activeCues?.length > 0 &&
+      mirror && !mirror.hidden &&
+      mirror.textContent.trim() === track.activeCues[0].text;
+  }, fullscreenCueTime, { timeout: 5000 });
+  if (!await page.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.paused)) {
+    await page.locator('media-play-button').click();
+    await page.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.paused, null, { timeout: 3000 });
+  }
+
   const fullscreen = page.locator('media-fullscreen-button');
   await fullscreen.click();
   await page.waitForFunction(() => Boolean(document.fullscreenElement), null, { timeout: 5000 });
-  await page.locator('media-play-button').click();
-  await page.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.paused, null, { timeout: 3000 });
-  await page.waitForTimeout(250);
+  await page.waitForFunction(() => {
+    const { player, video } = window.__AFTERIMAGE_RELEASE__;
+    const track = [...video.textTracks].find(item => item.kind === 'captions');
+    const mirror = player.querySelector('.afterimage-comparison-caption');
+    return video.paused &&
+      track?.mode === 'showing' &&
+      track.activeCues?.length > 0 &&
+      mirror && !mirror.hidden &&
+      mirror.textContent.trim() === track.activeCues[0].text;
+  }, null, { timeout: 3000 });
   const fullscreenState = await page.evaluate(() => {
     const { player, video } = window.__AFTERIMAGE_RELEASE__;
     const wrapper = player.querySelector('.afterimage');
