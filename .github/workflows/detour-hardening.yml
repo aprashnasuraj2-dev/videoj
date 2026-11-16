@@ -1,0 +1,107 @@
+name: DETOUR hardening gates
+
+on:
+  push:
+    branches: [detour-hardening]
+    paths:
+      - 'detour/**'
+      - '.github/workflows/detour-hardening.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hardening:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    defaults:
+      run:
+        working-directory: detour
+    steps:
+      - name: Checkout exact hardening head
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: detour/package-lock.json
+
+      - name: Install media tools
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Install browser engines
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Build production demo and deterministic fixtures
+        run: npm run build
+
+      - name: Architecture and concept-boundary tests
+        run: npm run test:architecture
+
+      - name: Packed external-host regression
+        run: npm run test:package
+
+      - name: Full Chromium regression
+        env:
+          DETOUR_ENGINE: chromium
+        run: npm test
+
+      - name: Full Firefox regression
+        env:
+          DETOUR_ENGINE: firefox
+        run: npm test
+
+      - name: Full desktop WebKit regression
+        env:
+          DETOUR_ENGINE: webkit
+        run: npm test
+
+      - name: Existing Phase 7 responsive, preferences, keyboard and emulated-touch regression
+        run: node --test tests/phase7.test.mjs
+
+      - name: Existing footprint budget
+        run: node --test tests/footprint.test.mjs
+
+      - name: Definitive keyboard journey — Chromium
+        env:
+          DETOUR_HARDENING_ENGINE: chromium
+        run: node --test tests/keyboard-full-journey.test.mjs
+
+      - name: Definitive keyboard journey — Firefox
+        env:
+          DETOUR_HARDENING_ENGINE: firefox
+        run: node --test tests/keyboard-full-journey.test.mjs
+
+      - name: Definitive keyboard journey — WebKit
+        env:
+          DETOUR_HARDENING_ENGINE: webkit
+        run: node --test tests/keyboard-full-journey.test.mjs
+
+      - name: Headed fullscreen roundtrip
+        run: xvfb-run -a node --test tests/fullscreen-roundtrip.test.mjs
+
+      - name: Touch interruption recovery
+        run: node --test tests/touch-interruption.test.mjs
+
+      - name: Judge-first-use automation metric
+        run: node --test tests/judge-first-use.test.mjs
+
+      - name: Validate existing checklist/resume invariants
+        if: always()
+        run: node scripts/check-progress.mjs
+
+      - name: Preserve hardening evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detour-hardening-evidence-${{ github.sha }}
+          path: |
+            detour/artifacts/hardening/
+          if-no-files-found: warn
+          retention-days: 30
