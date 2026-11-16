@@ -1,0 +1,1 @@
+export interface AfterimagePlayerOptions {}\nexport function createAfterimagePlayer(media: HTMLVideoElement, options?: AfterimagePlayerOptions): HTMLElement;\n

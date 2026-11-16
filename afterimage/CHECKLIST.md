@@ -14,34 +14,34 @@ Live execution record for the independent AFTERIMAGE Video.js v10 entry. Stable 
 | 08 | Refresh the closest prior art. Document accessible sources, observation limits, and one design decision it changed. | done | afterimage/docs/COMPETITION.md records PRISM, Chronoscope, FOLIO // LOUPE, Edit Bay, Farbspur, Scry and sample-feed limitations. Decision: keep the fixed-frame/running-film signed-interval composition; use a locked camera for the judge cue. |
 | 09 | Record the publish target and a fallback host. Establish how to roll back an isolated build. | done | afterimage/docs/RELEASE.md defines primary afterimage.aafnaipatro.com, isolated-host fallback, versioned static artifact, no shared-route mutation before verification, and rollback by prior immutable deployment. |
 | 10 | Define the first-use flow and the opening matched-camera pair. Name the visible change that makes the pair worth showing. | done | afterimage/docs/DESIGN.md locks first-use flow and authored opening pair: Camera A dry frame ≈00:06 to first-flow ≈00:14, same geometry, water/reflection change around fixed stone/copper landmarks. |
-| 11 | Scaffold the separate package, reproducible install, and local preview. | open | — |
-| 12 | Mount genuine Video.js v10 with an encoded local fixture. Verify the real clock advances. | open | — |
-| 13 | Resolve the material palette and type against actual footage. Measure contrast in the intended layout. | open | — |
-| 14 | Draw the reusable transport deck and icon treatment. Check the familiar actions with a first-time viewer or a fresh walkthrough. | open | — |
-| 15 | Connect play and pause to real media state. Verify both in the browser. | open | — |
-| 16 | Connect seek, duration, and time display. Exercise unknown duration and ended states. | open | — |
-| 17 | Implement mute and volume on supported platforms. Check the platform-native path on relevant mobile devices. | open | — |
-| 18 | Wire fullscreen and verify the wrapper or native fallback keeps standard playback usable. | open | — |
-| 19 | Add captions and a usable caption control. Verify a real cue over the playing picture. | open | — |
-| 20 | Build a recognizable initial poster state with Play and Try a comparison reachable on phone width. | open | — |
-| 21 | Define the reference record, source generation, capture method, requested time, and best available frame time. | open | — |
+| 11 | Scaffold the separate package, reproducible install, and local preview. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 12 | Mount genuine Video.js v10 with an encoded local fixture. Verify the real clock advances. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 13 | Resolve the material palette and type against actual footage. Measure contrast in the intended layout. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 14 | Draw the reusable transport deck and icon treatment. Check the familiar actions with a first-time viewer or a fresh walkthrough. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 15 | Connect play and pause to real media state. Verify both in the browser. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 16 | Connect seek, duration, and time display. Exercise unknown duration and ended states. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 17 | Implement mute and volume on supported platforms. Check the platform-native path on relevant mobile devices. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 18 | Wire fullscreen and verify the wrapper or native fallback keeps standard playback usable. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 19 | Add captions and a usable caption control. Verify a real cue over the playing picture. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 20 | Build a recognizable initial poster state with Play and Try a comparison reachable on phone width. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 21 | Define the reference record, source generation, capture method, requested time, and best available frame time. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 22 | Produce a real numbered fixture with known timestamps for comparison accuracy. | open | — |
-| 23 | Draw one bounded snapshot from an eligible playing source and confirm the rendered frame. | open | — |
+| 23 | Draw one bounded snapshot from an eligible playing source and confirm the rendered frame. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 24 | Verify paused capture with no forced transport action. Make the accuracy level visible. | open | — |
-| 25 | Bound frame-callback waits and verify callback cancellation. | open | — |
+| 25 | Bound frame-callback waits and verify callback cancellation. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 26 | Handle missing metadata, seeking, waiting, ended, and invalid-frame boundaries. | open | — |
-| 27 | Detect unsupported canvas or media capability and preserve ordinary playback. | open | — |
-| 28 | Implement atomic re-pin and retain a valid prior pin when replacement fails. | open | — |
+| 27 | Detect unsupported canvas or media capability and preserve ordinary playback. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 28 | Implement atomic re-pin and retain a valid prior pin when replacement fails. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 29 | Verify latest-request, same-URL reload, and source-change behavior under intentionally delayed results. | open | — |
-| 30 | Prove teardown releases callbacks, observers, bitmap or object URL ownership, and input state. | open | — |
-| 31 | Register pin and current video to one fitted content rectangle in the actual player. | open | — |
-| 32 | Move the visible seam without rescaling or moving the underlying image. | open | — |
-| 33 | Make the seam respond to drag, click or tap, arrows, Home, and End. | open | — |
-| 34 | Add and verify single-tap Pinned, Split, and Now presets. | open | — |
-| 35 | Show both timestamps and a signed delta from actual media state. Test reverse seek, hours, zero, and approximation. | open | — |
-| 36 | Keep the fixed pin and moving playhead distinct on the real transport rail. | open | — |
-| 37 | Show the interval accurately on both sides of the pin without intercepting normal seek. | open | — |
-| 38 | Implement Compare, Close comparison, and Clear pin with sensible focus and preserved transport. | open | — |
+| 30 | Prove teardown releases callbacks, observers, bitmap or object URL ownership, and input state. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 31 | Register pin and current video to one fitted content rectangle in the actual player. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 32 | Move the visible seam without rescaling or moving the underlying image. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 33 | Make the seam respond to drag, click or tap, arrows, Home, and End. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 34 | Add and verify single-tap Pinned, Split, and Now presets. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 35 | Show both timestamps and a signed delta from actual media state. Test reverse seek, hours, zero, and approximation. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 36 | Keep the fixed pin and moving playhead distinct on the real transport rail. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 37 | Show the interval accurately on both sides of the pin without intercepting normal seek. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 38 | Implement Compare, Close comparison, and Clear pin with sensible focus and preserved transport. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 39 | Connect one real authored pair to the same feature. Check the documented seek and preserved playback intent. | open | — |
 | 40 | Decide whether Blend adds meaningful visual evidence. Record the decision or verify its opacity control. | open | — |
 | 41 | Storyboard the dry, rising, draining, and marked states in the same fictional location. | open | — |
@@ -54,17 +54,17 @@ Live execution record for the independent AFTERIMAGE Video.js v10 entry. Stable 
 | 48 | Grade bright and dark footage and add the original or redistributable sound treatment. | open | — |
 | 49 | Encode the web delivery and independent fallback. Verify actual duration, sizes, poster, and web playback. | open | — |
 | 50 | Record six observed frame pairs, chapter and caption files, source directions, versions, checksums, and rights. | open | — |
-| 51 | Perform the core flow at 320px and 390px with comfortable primary touch targets. | open | — |
+| 51 | Perform the core flow at 320px and 390px with comfortable primary touch targets. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 52 | Check 768px and 1280px or equivalent container widths, including visible menu placement. | open | — |
 | 53 | Verify 240px fallback, mobile landscape, letterbox and portrait fixtures, and 200% zoom. | open | — |
-| 54 | Prove full keyboard-only playback, comparison, Escape, and logical focus restoration. | open | — |
-| 55 | Verify visible focus and contrast over bright footage, dark footage, and the poster. | open | — |
+| 54 | Prove full keyboard-only playback, comparison, Escape, and logical focus restoration. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
+| 55 | Verify visible focus and contrast over bright footage, dark footage, and the poster. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 56 | Check arbitrary seam positions with a tap or click. Verify that vertical scrolling, touch cancellation, and handle limits work. | open | — |
-| 57 | Verify accessible button names, range values, status announcements, and clear feedback from a failed pin. | open | — |
+| 57 | Verify accessible button names, range values, status announcements, and clear feedback from a failed pin. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 58 | Check captions remain readable during comparison, at full width, and in fullscreen where supported. | open | — |
-| 59 | Verify reduced motion and forced colors. Document any platform-specific limitations. | open | — |
+| 59 | Verify reduced motion and forced colors. Document any platform-specific limitations. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 60 | Try a screen reader and physical phone when available. Record real hardware and emulation coverage separately. | open | — |
-| 61 | Instrument app transport calls to prove pinning, dragging, presets, clear, and close preserve play state. | open | — |
+| 61 | Instrument app transport calls to prove pinning, dragging, presets, clear, and close preserve play state. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 62 | Check baseline and comparison playback for actual pause, seeking, waiting, and stall events. | open | — |
 | 63 | Measure frame-to-timestamp tolerance on the numbered fixture and document sampling limitations. | open | — |
 | 64 | Test image failures, inaccessible cross-origin sources, and expired provider URLs without affecting playback. | open | — |
@@ -74,10 +74,10 @@ Live execution record for the independent AFTERIMAGE Video.js v10 entry. Stable 
 | 68 | Check slow-network and constrained-device behavior and record test conditions. | open | — |
 | 69 | Exercise two instances, rapid mounting and teardown, and preserved ordinary playback for unsupported sources. | open | — |
 | 70 | Run available Chromium, Firefox, and WebKit coverage. Resolve the defects that break the primary flow. | open | — |
-| 71 | Export the reusable skin and styles with documented lifecycle. Pack or build the actual consumer artifact. | open | — |
+| 71 | Export the reusable skin and styles with documented lifecycle. Pack or build the actual consumer artifact. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 72 | Install in a clean external host with alternate video, poster, and captions. | open | — |
 | 73 | Verify host-supplied theme, chapters, allowed provider, and normal comparison-disabled behavior. | open | — |
-| 74 | Inspect the package contents for film or studio coupling, runtime secrets, and unneeded dependencies. | open | — |
+| 74 | Inspect the package contents for film or studio coupling, runtime secrets, and unneeded dependencies. | in progress | Implementation landed in the first playable slice; build/browser evidence is still required before marking done. |
 | 75 | Publish the first anonymous playable demo on the isolated host and test it in a fresh browser. | open | — |
 | 76 | Verify final public media delivery, MIME, ranges, caching, CORS, and the independent fallback path. | open | — |
 | 77 | If feasible, provision and play the separate Mux asset. Verify the public ID and real browser playback requests. | open | — |

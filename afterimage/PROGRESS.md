@@ -26,3 +26,14 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Locked the opening pair to one repeated Camera A composition (dry ≈00:06 → first flow ≈00:14). Arbitrary manual pins remain supported; the judge shortcut deliberately uses matched geometry.
 - Defined isolated primary/fallback deployment and rollback rules without touching live services.
 - **Next task:** **11** — scaffold the independent package, then **12** mount genuine Video.js v10 with a deterministic local proof fixture.
+
+## 2026-11-16 · first playable slice implemented, pending build verification
+
+- Added an independent afterimage-video-skin package pinned to @videojs/html 10.4.0 with its own Vite build, package lock, Apache-2.0 license and architecture tests.
+- Built a genuine Video.js v10 custom-element shell with play/pause, seek, time, mute/volume, captions and fullscreen controls.
+- Implemented the first manual Temporal Lens path: bounded one-shot frame capture, registered canvas overlay, range seam, Pinned/Split/Now presets, fixed rail pin, current-time relation band, signed delta, close/reopen and clear.
+- The lens contains no programmed play/pause/seek. Playing capture uses a bounded requestVideoFrameCallback wait; paused capture is a best-effort current-frame sample marked approximate. New-source and teardown paths invalidate pending work.
+- Added responsive layouts, 44px primary targets, visible focus, reduced-motion behavior and forced-colors treatment.
+- The studio labels the current remote video as an engineering preview. It is temporary and is not represented as THE WATERLINE or final submission media.
+- Local container Git/network access cannot resolve github.com, so local npm verification is unavailable in this execution surface. Next verification uses a source-matched remote build/deployment.
+- **Next action:** build the exact branch through an isolated Vercel preview; only observed passes will be changed from in-progress to done.
