@@ -7,6 +7,7 @@
 | [Rules and eligibility](RULES.md) | What Contra requires, which checklist steps prove it and what still depends on the entrant. |
 | [Competition refresh](COMPETITION.md) | Which current entries overlap with the mechanism and what evidence was visible. |
 | [Evidence ledger](EVIDENCE.md) | What was actually tested, with source revision, environment and reproducible evidence. |
+| [Cross-hardening evidence](HARDENING.md) | Exact keyboard, focus, fullscreen, touch-interruption and first-use automation evidence, plus explicit physical/AT/human limits. |
 | [Release handoff](RELEASE.md) | Which build and media are public, which claims are substantiated, what the entrant sends and how to recover that exact release. |
 | [Phase 8 freeze](PHASE-8-FREEZE.md) | Historical Phase 8 media/service freeze and rollback authority. |
 | [Phase 9 presentation evidence](PHASE-9-PRESENTATION.md) | Form-ready rationale, alt text and exact hero/detail/mobile/recovery/alternate/video evidence manifest. |
