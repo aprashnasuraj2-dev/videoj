@@ -1,4 +1,4 @@
-name: Verify DETOUR Mux bonus
+name: Verify DETOUR Mux playback
 
 on:
   workflow_dispatch:

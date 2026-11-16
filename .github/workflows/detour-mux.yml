@@ -1,4 +1,4 @@
-name: Provision DETOUR Mux bonus
+name: Provision DETOUR Mux integration
 on:
   workflow_dispatch:
   push:
@@ -8,7 +8,7 @@ on:
       - '.github/workflows/detour-mux.yml'
 
 concurrency:
-  group: detour-mux-bonus
+  group: detour-mux-integration
   cancel-in-progress: false
 
 permissions:
@@ -37,7 +37,7 @@ jobs:
           else
             echo "ready=false" >> "$GITHUB_OUTPUT"
             echo "::warning::Optional Mux provisioning not attempted: configure both MUX_TOKEN_ID and MUX_TOKEN_SECRET as GitHub Actions repository secrets."
-            echo "### DETOUR optional Mux bonus: not provisioned" >> "$GITHUB_STEP_SUMMARY"
+            echo "### DETOUR optional Mux integration: not provisioned" >> "$GITHUB_STEP_SUMMARY"
             echo "Missing one or both repository secrets. The independently verified R2/MP4 release remains the fallback; this workflow does **not** qualify Mux." >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Provision or reuse DETOUR content-hash asset

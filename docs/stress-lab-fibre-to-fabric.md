@@ -1,5 +1,5 @@
 # DHAGO — From fibre to fabric, public stress lab
-2026-11-14 · Supporting evidence, not the primary contest artwork.
+2026-11-14 · Supplemental edge-case evidence, not the default demo film.
 
 ## Creative direction
 The original 64-second **Studies in Thread** film is still the primary design presentation. The stress lab uses **distinct specimens** to test playback in contrasting conditions, without reducing Nepal's textile heritage to a repeating generic string.
@@ -8,7 +8,7 @@ The original 64-second **Studies in Thread** film is still the primary design pr
 - **Chyangra pashmina** is the fine undercoat of a Himalayan mountain **goat**, not sheep. The pashmina clip was filmed in **Kashmir**, by Florenz/Florence Bourgade — label the origin accurately.
 - **Nepalese Dhaka** is a different traditional handwoven textile, and the Oxlaey clip actually records weavers in Nepal. Do not label Dhaka weaving as pashmina production.
 - **Sound of the loom** is an actual mechanical loom sound captured in Germany; not field-recorded in Nepal.
-- Full competition-facing copy remains in **English**; Devanagari and Arabic titles are intentional internationalization **test data**, not a change in the primary entry language.
+- Full user-facing copy remains in **English**; Devanagari and Arabic titles are intentional internationalization **test data**, not a change in the primary demo language.
 
 ## Evidence matrix
 | Scenario | How it is demonstrated | What is not established |

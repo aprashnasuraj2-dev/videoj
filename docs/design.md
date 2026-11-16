@@ -20,7 +20,7 @@ Build query-driven warm, dark and minimal surface variants with identical media/
 
 ## Bounded competitor scan
 
-Observed on the public challenge feed during planning (2026-11-13): LOT 66, Tactile/Paper Key, Iris, Vesper, Ascent, Tide, Verbatim, MODE, Line, Black Box, iPod-inspired player, Clay. Families: physical/tactile objects, transit/navigation, waveform/audio, cinematic overlays. This convenience sample of 12 entries is not a representative survey; feed popularity is not judging evidence. No claim that DHAGO is unique among all entries. Do not copy entries or sacred traditional motifs.
+These early design explorations are historical. The reusable skin is evaluated on playback clarity and accessibility, not comparisons with other entries.
 
 Source: https://contra.com/community/topic/videojsskinschallenge
 

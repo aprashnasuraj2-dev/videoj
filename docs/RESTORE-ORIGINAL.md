@@ -19,6 +19,6 @@
 - [ ] New engineering Tools and Edge Lab complete.
 - [ ] Public deployment from verified merged SHA.
 - [ ] Mux original live playback verified or marked unsupported.
-- [ ] Owner-controlled competition submission.
+- [ ] Confirm license provenance, media access and reproducible release evidence.
 
 Note: verified presence does not establish cryptographic parity of the R2 mirror. The source-controlled Git MP4 plus SHA-256 check is authoritative. Public deploy and live rechecks are separate gates.

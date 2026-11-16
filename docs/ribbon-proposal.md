@@ -1,6 +1,6 @@
 # Proposal — Woven Time Ribbon as a reusable Video.js v10 composition
 
-DHAGO began as a competition skin, but the timeline idea is useful outside its visual theme. This repository includes a host-neutral proof at `src/ribbon/ribbon.ts` and a public demo at https://creative.aafnaipatro.com/ribbon.html.
+DHAGO’s timeline can be reused independently of its visual theme. This repository includes a host-neutral proof at `src/ribbon/ribbon.ts` and a public demo at https://creative.aafnaipatro.com/ribbon.html.
 
 ## Current upstream position — checked 2026-11-14
 
@@ -57,4 +57,4 @@ The component does not own media truth. A host decides where chapters, metadata 
 
 The first choice is to contribute to an existing relevant discussion or issue, because the generic timed-metadata problem is already solved upstream. A new issue would only be justified if maintainers want a **distinct component-level discussion about multi-lane timeline composition or accessible chapter-map navigation**.
 
-No duplicate upstream issue should be opened merely to promote the competition entry.
+Open upstream issues only for specific, reproducible interoperability problems or well-scoped proposals.

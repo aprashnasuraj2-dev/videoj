@@ -1,6 +1,6 @@
 # Public hosting and deployment
 
-> **ACTIVE RELEASE CONTRACT — 2026-11-14.** All later descriptions of `From Fibre to Fabric`, its generated replacement voiceover or its 30+ MB derivatives below are **archived historical release notes**. The competition film has been deliberately restored to the original 64-second **Studies in Thread** with frozen SHA-256 `9dcc4672e3014ca947e310c1809c0cf6d40ffff186478f3e6a1e47f89b3688b3`. Correct release keys are `media/studies-in-thread.mp4`, `media/studies-in-thread.webm`, `media/chapters.vtt`, `media/captions.vtt`, `media/dhago-studies-poster.svg`. The original Mux playback ID is documented in `apps/preview/src/media.json` and is **opt-in** on `/?mux` until a branded-Chrome proof confirms current playback. Do not overwrite/delete the original R2 recovery objects or change unrelated Patro workers. See [release-integrity.md](release-integrity.md) for the active publication gate.
+> **ACTIVE RELEASE CONTRACT — 2026-11-14.** All later descriptions of `From Fibre to Fabric`, its generated replacement voiceover or its 30+ MB derivatives below are **archived historical release notes**. The demo film has been deliberately restored to the original 64-second **Studies in Thread** with frozen SHA-256 `9dcc4672e3014ca947e310c1809c0cf6d40ffff186478f3e6a1e47f89b3688b3`. Correct release keys are `media/studies-in-thread.mp4`, `media/studies-in-thread.webm`, `media/chapters.vtt`, `media/captions.vtt`, `media/dhago-studies-poster.svg`. The original Mux playback ID is documented in `apps/preview/src/media.json` and is **opt-in** on `/?mux` until a branded-Chrome proof confirms current playback. Do not overwrite/delete the original R2 recovery objects or change unrelated Patro workers. See [release-integrity.md](release-integrity.md) for the active publication gate.
 
 
 Public collection: https://creative.aafnaipatro.com/
@@ -11,15 +11,15 @@ Both custom domains point directly to the existing `dhago-studio-static` R2 buck
 
 The production build contains plain static files. Hashed assets are uploaded first, HTML entry points last. Existing objects are compared by key and MD5 ETag before uploading: unchanged media and other assets are reused. Old hashed assets are retained so a previously loaded page continues to work. No general SPA fallback masks missing media or scripts as HTML.
 
-The canonical competition film is the **original 64-second Studies in Thread**, served as `media/studies-in-thread.mp4` with VP9 WebM compatibility, the authored SVG poster, and the original descriptive-caption and chapter VTTs. The restored historical original-film Mux ID is only activated on the explicit `?mux` route and requires independent live decoder/seek proof before a bonus claim. Obsolete From Fibre to Fabric files remain in the repository and may remain in R2 for rollback, but are excluded from each new generated `dist` and its immutable manifest; they must not be uploaded again for this release. This static architecture adds zero application Worker invocations per ordinary request; R2 operations and any future Mux delivery remain metered under their account allowances.
+The canonical demo film is the **original 64-second Studies in Thread**, served as `media/studies-in-thread.mp4` with VP9 WebM compatibility, the authored SVG poster, and the original descriptive-caption and chapter VTTs. The restored historical original-film Mux ID is only activated on the explicit `?mux` route and requires independent live decoder/seek proof before a bonus claim. Obsolete From Fibre to Fabric files remain in the repository and may remain in R2 for rollback, but are excluded from each new generated `dist` and its immutable manifest; they must not be uploaded again for this release. This static architecture adds zero application Worker invocations per ordinary request; R2 operations and any future Mux delivery remain metered under their account allowances.
 
 ## Release evidence
 
-Record the source revision, delivery mode, object hashes, production smoke result and captures in `submission/manifest.json` and `tests/QA.md`. Record a Mux playback ID only if the canonical fibre asset is actually configured and browser-verified. A 200 response alone proves neither playback nor bonus eligibility. The annotated `journal.html` is a separate studio publication using the portable skin to navigate scene notes; final bonus eligibility is the judges' decision.
+Record the source revision, delivery mode, object hashes, production smoke result and captures in `the generated release-manifest.json` and `tests/QA.md`. Record a Mux playback ID only if the canonical fibre asset is actually configured and browser-verified. A 200 response alone proves neither playback nor bonus eligibility. The annotated `journal.html` is a separate studio publication using the portable skin to navigate scene notes; final bonus eligibility is the judges' decision.
 
 ## Recovery
 
-To roll back, restore the prior HTML entry points and their matching source revision; retained hashed assets remain available. Never replace zone-wide rulesets or delete shared bucket content to deploy this project. Leave both direct domains enabled through judging.
+To roll back, restore the prior HTML entry points and their matching source revision; retained hashed assets remain available. Never replace zone-wide rulesets or delete shared bucket content to deploy this project. Leave both direct domains enabled through public operation.
 
 ## 2026-11-13 incremental live repair (not final dist)
 
@@ -35,7 +35,7 @@ The earlier incremental/hotfix-only limitation above has been **resolved**. Comm
 
 The **entire** public release was verified: 76/76 UTF-8 text files matched their `release-manifest.json` SHA-256 hashes; the 2 binary files (original MP4 and poster WebP) matched their known MD5 object identifiers and byte lengths. Prior index/journal/preview entry points were saved under `releases/2026-11-13-pre72ec6c/`. Exact immutable `journal.html` and `index.html` were published last. Independent unauthenticated HTTP checks confirmed both domains and the journal.
 
-This proves content parity, not universal codec support or an accepted contest submission. Public Chromium playback/seek after the full release remains a distinct smoke gate; any failure must roll back rather than be hidden by the manifest match. No DNS, zone rules, Patro workers, or shared assets were modified.
+This proves content parity, not universal codec support or an accepted public release. Public Chromium playback/seek after the full release remains a distinct smoke gate; any failure must roll back rather than be hidden by the manifest match. No DNS, zone rules, Patro workers, or shared assets were modified.
 
 ## Production browser acceptance (supersedes pending-gate note)
 

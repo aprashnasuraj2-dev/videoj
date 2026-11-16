@@ -1,37 +1,24 @@
-# DHAGO — release integrity, recovery and judge-proof protocol
+# DHAGO — release integrity and recovery
 
-**Active contract 2026-11-14:** Restore *Studies in Thread*, the initial authored 64-second film. The newer `from-fibre-to-fabric.*` documentary is a retired experiment, **not** the competition media. Source-controlled original SHA-256: `9dcc4672e3014ca947e310c1809c0cf6d40ffff186478f3e6a1e47f89b3688b3`.
+This repository keeps build verification, immutable static assets and real public playback observations distinct. A green build is not proof that a specific host serves the same bytes.
 
-## Isolated hosting
+## Canonical film and player
 
-- The public sites `creative.aafnaipatro.com` and `dhago.aafnaipatro.com` map to dedicated Cloudflare R2 bucket `dhago-studio-static`.
-- Regular playback must **not** invoke AafnaiPatro application Workers. Do not touch other domains, workers, page routes, DNS, sitemaps, buckets or ads.
-- Original film and fallback are `media/studies-in-thread.mp4` and `media/studies-in-thread.webm`; captions and chapter tracks are `media/captions.vtt` and `media/chapters.vtt`.
-- New judge-facing poster is `media/dhago-studies-poster.svg` (a designed vector illustration). Preserve `media/poster.webp` as the historical original poster/rollback resource.
-- Demo, Studio Journal, Ribbon, Stress Lab and Tools reuse the matching published assets.
+The maintained original motion study is **Studies in Thread**, a 64-second four-chapter procedural film. The source demonstration uses `apps/preview/public/media/studies-in-thread.mp4`, compatible WebM media, poster and caption/chapter WebVTT. The larger *From Fibre to Fabric* documentary renders are retired experiments; they are not the canonical viewing source.
 
-## Exact source → immutable release
+The reusable skin is in `src/`, and the preview application is in `apps/preview/`. The browser should show actual current time and ordinary Video.js controls. A decorative weave must never replace the native seek range or invent buffering/quality observations.
 
-1. **Candidate PR:** clean Node 24 dependency install, original MP4 SHA verification, original-WebM derivation, sampled chapter-weave extraction, TypeScript typecheck and production build.
-2. **Real browser proof:** Chromium video playback, keyboard/mouse/touch-emulation, 320/375/768/1280px, captions, play/pause/seek/replay, chapter seek and quiet reduced-motion states. Firefox and WebKit cross-engine proof after candidate verify.
-3. **Mux bonus proof:** separate actual Chrome job exercises the historical original Mux playback ID at `/?mux` for real decoded time advancement, chapter seeking and captions. This evidence is mandatory **before** presenting the Mux bonus as verified, but should not silently alter the default local film.
-4. **Source merge:** only exact green candidate head may merge; record final `main` commit SHA, not merely the PR number.
-5. **Stage artifact:** publish the **same CI-tested distribution**, never recompile with different inputs. CI builds an immutable `dist-<mainSHA-prefix>` branch with a file-level SHA-256 manifest and byte lengths. Validate the manifest's `source_sha` and all expected page/media keys.
-6. **Publish R2:** compare keys, sizes and hashes with `dhago-studio-static`. Reuse matching originals; do **not** create needless duplicate media. Upload missing immutable CSS/JS/static assets first. Read back and hash-check. Backup only DHAGO entry HTML and old manifest under a restricted `releases/` prefix. Publish `index.html`, `journal.html` and other entry HTML **last**, then `release-manifest.json` only when its entire referenced file list is present.
-7. **Live QA:** verify signed-out public manifest is final SHA; original film decodes and time advances. Confirm local page, Mux judge route (if bonus claimed), Journal seek, fullscreen, Settings Escape, 320px player, and no source errors. CI browser logs and screenshots must come from the **public exact release**.
-8. **Submission evidence:** curate actual browser screenshots, a short real interaction loop, accessibility/keyboard proof and engineering lab links. Clearly mark physical device/screen-reader checks not yet performed.
-9. **Owner entry:** owner accepts license/legal terms and submits on Contra; retain a real success receipt. Never infer submission from site availability.
+## Build, prove, stage
 
-## Mux and bonus boundary
+1. Run `npm ci`, `npm run sync:canonical-media`, `npm run typecheck`, and `npm run build`. Verify the canonical film and compatibility WebM.
+2. Run `npm test` after installing Playwright browsers. Separate functional tests from Firefox, desktop WebKit, external-host checks and physical device testing.
+3. Preserve the exact commit SHA, `dist/` byte hashes, size report and real test results.
+4. Stage only the build verified for that SHA. The generated `release-manifest.json.source_sha` identifies the published source revision; do not substitute a historical hard-coded SHA.
+5. On the public origin, verify the release manifest, film decode, seeking, captions, speed/fullscreen, narrow layout, Studio Journal and the edge-state studio. Verify optional public Mux playback independently; missing access to Mux does not prove that direct-file playback is broken.
+6. If the live assets fail, restore a prior **matching** code-and-media release. Do not replace zone-wide Cloudflare settings, shared buckets or other Aafnai Patro products to fix this isolated application.
 
-Original public playback ID (previous Git provenance): `Kc01fHxM9HqQpKzgf9qZRumwvL02wQZLZUwZHKtQ6F02mw`.
+## Limits and attribution
 
-The Mux bonus is **one** potential point, contingent on real current video playback and a publicly retained asset. The **second** potential bonus point is for a separate real live-site use; propose the published `/journal.html` context, subject to judge interpretation. Historical IDs, a fetched playlist, or an R2 film do not by themselves earn the Mux point.
+Physical Safari/iPhone/Android and VoiceOver/NVDA are not established by Playwright's desktop WebKit or emulated touch. Unsupported telemetry and absent chapters must be omitted rather than simulated. Use [`NOTICE`](../NOTICE), [`LICENSE`](../LICENSE), [`docs/media.md`](media.md) and [`tests/QA.md`](../tests/QA.md) for rights and verification context.
 
-The judge-facing Mux route is `https://creative.aafnaipatro.com/?mux` (and optional `/journal.html?mux`). Standard `/?local` and `/` continue to use original direct media for codec resilience until a verified release strategy is explicitly chosen.
-
-## Failure and rollback
-
-A failed bonus-only Mux probe should be logged as a **bonus gap**, not mislabeled a failure of the local original MP4. A failed real player/CI browser gate blocks deployment. A published-bundle mismatch blocks manifest finalization. When live playback genuinely regresses, restore only the backed-up DHAGO entry HTML from the immediately previous known-good release (verify bytes first), retaining prior immutable assets. Do not roll back any unrelated AafnaiPatro service.
-
-The **exact final release SHA**, full-browser QA results, Mux status, release asset checks and owner submission receipt are populated only from verified evidence; do not hardcode future success.
+DETOUR is independently packaged, released and hosted; do not reuse DHAGO's release manifest or media as its publication authority.

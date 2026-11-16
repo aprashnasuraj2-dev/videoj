@@ -1,98 +1,38 @@
-# DHAGO candidate verification
+# DHAGO quality assurance
 
-## Verified browser baseline
+This file is a reproducible test guide, not a claim that every browser or device has been certified. Historical test runs remain in GitHub Actions and repository history.
 
-Revision `1cae2171eb523142279f70c258378537fa34c818`: [GitHub run 43420343473](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420343473), **17/17 passing**. Chromium on Ubuntu, Playwright 1.65.0, axe 4.14.0. Clean npm install, typecheck and production build also pass. Later mobile label/layout refinement is verified by its own run before release.
+## Local prerequisites
 
-| Scope | Observed result |
-|---|---|
-| Play/pause, seek, mute, focused-thumb volume | PASS: actual media state changes |
-| Captions, chapter seek/readout, speed, ended/replay | PASS |
-| Fullscreen | PASS: actual document fullscreen element enters/exits; no mocked API |
-| 320/375/768/1280px | PASS: no document overflow; essential controls visible; screenshots retained |
-| Linen, Ink, Paper | PASS: focus, 44px essential targets, reduced motion and scoped axe scans |
-| No chapters | PASS: linear seek remains operable |
-| Error / open menu / resting player | PASS: serious/critical axe scan; error dialog appears for unavailable source |
-| Isolated bright/dark footage | Captured and visually inspected: shelf, chapter readout and ribbon remain legible |
-| Physical phone / VoiceOver / NVDA | NOT TESTED |
-| Forced colors / zoom / long captions / slow loading / rapid input | NOT TESTED: broader matrix remains incomplete |
-| Public production / Mux playback / genuine-site bonus | NOT VERIFIED |
+Use Node.js 24. FFmpeg is used for reproducible media preparation; Playwright browser binaries are necessary for browser tests.
 
-The deterministic suite uses `?local`. It does not establish the Mux bonus. A successful automated scan is not WCAG certification or proof of real assistive-technology usability.
+```bash
+npm ci
+npm run sync:canonical-media
+npm run typecheck
+npm run build
+npx playwright install --with-deps chromium
+npm test
+```
 
-## Retained failures and corrections
+Additional browser engines can be checked through the GitHub Actions matrix or installed locally. Keep published-route testing explicitly separate from production-build testing.
 
-Local browser download was corrupt; system Chromium then failed at launch because socket creation is prohibited. GitHub's runner supplied the browser evidence instead.
+## Verification matrix
 
-Initial CI: 5/6 passed, with a critical unnamed Settings button. Added explicit name. Visual review found an invisible woven track despite passing keyboard seek; restored the full-width absolute chapter coordinate system. Horizontal volume thumb retained vertical geometry; corrected it. Fullscreen initially lost the shelf because state was reflected on the button rather than the container; native :fullscreen now governs the layout. Slider keyboard tests now focus the actual thumb. Speed/captions submenus now follow documented sibling composition. Relevant baseline checks pass.
+| Concern | What must be verified | What does **not** count |
+| --- | --- | --- |
+| Core playback | Actual native media time advances; seek/play/pause/mute/speed/fullscreen reflect state | Animation of a decorative progress bar |
+| Chapters | Actual cue timing, navigation, absent-cue fallback | Hand-entered labels treated as media evidence |
+| Captions | Supplied track selected and readable; no fabricated dialogue | Caption toggle rendered without a real track |
+| Resilience | Missing/expired media, loading, recoverable errors and narrow widths | A happy-path screenshot |
+| Stream history | Buffering, dropped frames and decoded dimensions only when exposed | Invented rendition or bitrate history |
+| Keyboard and preferences | Focus visible, controls reachable, reduced motion/forced colors supported | Static visual review alone |
+| External integration | Skin works with host replacement media outside preview app | An example that imports preview-only state |
+| Public release | Live manifest matches source SHA and media actually decodes | CI passing without checking the deployed origin |
+| Physical accessibility | Recorded phone and screen-reader runs by a tester | Desktop WebKit or simulated mobile viewport |
 
-## Contrast measurements
+## Production specifics
 
-Calculated using sRGB relative luminance from the actual fixed palette. These measure solid foreground/background pairs, not every hover, texture or user-customized accent.
+The maintained public DHAGO demo is https://creative.aafnaipatro.com/ with a separate annotated Journal. The direct media path and optional Mux path are separate playback modes. Test the public path after deployment; historical checks do not establish current uptime. Record the source revision, browser, test mode, observed result and environment.
 
-| Pair | Ratio |
-|---|---:|
-| Linen text / shelf | 14.95:1 |
-| Linen muted text / shelf | 5.91:1 |
-| Linen focus / shelf | 4.69:1 |
-| Ink text / shelf | 13.43:1 |
-| Ink muted text / shelf | 9.51:1 |
-| Ink focus / shelf | 8.28:1 |
-
-Opaque shelf surfaces isolate text/icons from changing footage. Weave patterns, text labels, time and thumb carry information without color alone.
-
-## Dependency and loading scope
-
-`npm audit --omit=dev` reported zero vulnerabilities in its production dependency scope on 2026-11-13. It does not cover all development dependencies or every bundled optional adapter. The local player shared entry is about 72 KB gzip; the optional Mux chunk is about 197 KB gzip. No measured phone startup time is claimed.
-
-## Mobile refinement confirmed
-
-Revision `2ed92ded44831acb29a512700ad76d7720b33939`: [run 43420845834](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43420845834) passed the same 17 checks after the labelled mobile-control row was introduced. Open settings is now captured in the evidence set. No new production/Mux/device claim follows from this run.
-
-The fdcc1a45 run retained 15 passing behaviors but two narrow-label tests failed from an ambiguous test locator: Captions also exists inside hidden menus. The selector was narrowed to the actual visible control labels. This is a test-selection correction, not a hidden player failure or a claimed passing run.
-
-## Exact-head candidate and production boundary — 2026-11-13
-
-- **Candidate:** commit `4f3f86cb795f3a21d787c1f8a0567d2242eca29a`, [CI run 43430986626](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43430986626): clean install, typecheck, build and **26/26 Chromium tests PASS**. This includes `tests/mux.spec.ts` observing Mux HLS video playing and seeking with local chapter/caption cues, forced-colors + 200% root text case, 320px long titles, explicit network recovery, 4x-CPU/1.6Mbps simulated startup measurement and the 30s proof recording.
-- **Evidence archive:** [Google Drive 1j7FHURfdYk6Wn0LlNrF8jDLjixnC4ml7](https://drive.google.com/file/d/1j7FHURfdYk6Wn0LlNrF8jDLjixnC4ml7/view), stored in the project folder. Contains CI screenshots, movie, Playwright report and built assets for this revision. It is not a complete source-code archive; GitHub remains the canonical source.
-- **Public hosts:** https://creative.aafnaipatro.com/ and https://dhago.aafnaipatro.com/ return the DHAGO English homepage. The separate https://creative.aafnaipatro.com/journal.html is now live after an R2 release (formerly 404). The public homepage requests the documented Mux HLS ID, with a functioning verified HLS manifest.
-- **Browser counterexample:** the external automated browser can see `mux-video` and requests the Mux URL but cannot decode any returned H.264/AAC variants, reporting `no level with compatible codecs found`. The same external browser previously failed on the local H.264 MP4 with a demuxer error. CI Chromium plays the Mux stream successfully; this is a browser codec-availability discrepancy, not evidence that all users can or cannot play it. Branded Chrome/Safari/WebKit real-device checks remain open.
-- **Deployment gap:** static public R2 was surgically patched with a versioned Mux bootstrap, textile refinements and a journal module. **It has not been proven byte-for-byte identical to the complete 4f3f86c production dist**. Step 84 remains unfinished; judge-facing production acceptance is not claimed. Live scene-note seeking in the external browser was blocked by the codec error.
-- **Mux provisioning:** previous manual GitHub workflow failed because `MUX_TOKEN_ID` and `MUX_TOKEN_SECRET` runner secrets are unset. The existing public playback ID is configured and the HLS manifest works; do not rerun an upload blindly or create duplicates.
-
-## Production-only live smoke gate
-
-The `public-smoke` job runs after a successful source verification on pushes to `main` and only then. It uses `DHAGO_LIVE_URL=https://creative.aafnaipatro.com` and tests public Mux frame advancement and the separately deployed journal scene note. Pull requests skip these tests by design, so failures of a deployed environment cannot masquerade as code changes in the candidate. This gate was added after confirming HTTP success alone had masked a local-MP4 playback failure and a missing journal. **Its result is not claimed until the main push run finishes.**
-
-## Full-source production parity audit — 2026-11-13
-
-- PR #4 exact head `09352e53d5e9247c7cea8c47d33a94b1af51bf5a` passed **30/30 Playwright Chromium tests**, including four new end-of-film / no-chapters / initial scene / touch-emulation checks: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43439977940 .
-- Merged as `72ec6c324f646c6dcb18708bc86d3f0d415f39c2`; source CI verify and **pre-publish** public-smoke jobs passed in https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43440355195 . Preserve distinction: the smoke job ran before the exact full R2 publication.
-- Immutable branch `dist-72ec6c324f64` contains 78 files and SHA-256 manifest. Exact public release passed **76/76 text SHA-256 checks** and **2/2 binary ETag-MD5/size checks**. Previous HTML entry points are available for rollback.
-- Independent public HTTP retrieval confirmed DHAGO landing, alternate domain and full Studio Journal. Automated third-party browser reports codec incompatibility with both source MP4 and Mux HLS; passing Ubuntu CI Chromium is counterevidence that the media is inherently corrupt, not a guarantee of broad device support.
-- New owner's 5-step real-phone/desktop plus VoiceOver/NVDA walkthrough: `docs/owner-review.md`. **Still unverified** on actual physical hardware and screen readers.
-
-## Exact published build: post-release Mux and Studio Journal smoke PASSED
-
-On 2026-11-13 14:30 UTC, GitHub Actions [run 43443029329](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43443029329) completed **verify SUCCESS** and **public-smoke SUCCESS** against `https://creative.aafnaipatro.com` **after** the immutable `72ec6c3` build was published to R2. The two production Chromium tests passed: (1) actual `mux-video` HLS duration and video time advancement beyond 2 seconds, chapter seek beyond 32 seconds, correct chapter name and Mux network requests; (2) Studio Journal loads and clicking scene note 03 seeks real Mux video and marks `aria-current`. Screenshots and request traces are retained by CI. This confirms the deployed source path in Chrome, not every codec/OS combination or a submitted entry.
-
-## New native thread release — 2026-11-13
-
-- Feature PR [#6](https://github.com/aprashnasuraj2-dev/videoj/pull/6), exact head `e765854098dede556ace465e092585a7f18cd71a`: [CI 43461387053](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43461387053), **35/35 source Chromium tests passed** (2 public smoke cases intentionally excluded on PR). Includes 5 new tests for native Video.js dragging treatment, chapter/cue truthfulness, event-driven waiting, reduced motion and forced-colors navigation.
-- First enhancement CI had 34 passing and 1 failed pointer listener test; replaced the homemade handler entirely rather than weakening the test. Merged commit `a6492362b634799f3f23611e95eb88d003474d1f` then passed main source + existing public Mux/journal smoke in [43461852782](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43461852782). This smoke was run **before** the new immutable R2 HTML publication.
-- [Staged release 43461852795](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43461852795) generated `dist-a6492362b634`. New dedicated R2 release is **78/78 asset-identical** by 76 UTF-8 SHA-256 comparisons and two unchanged media ETag-MD5/size comparisons; all seven newly uploaded hashed assets were independently read back and hashed. The old three HTML entries are backed up.
-- **Remaining verification boundary:** a new post-publication Chromium live run, plus physical phone and VoiceOver/NVDA checks. Neither source CI nor R2 parity alone proves these; no successful contest entry is claimed.
-
-## Post-publish Chromium acceptance and source handoff — 2026-11-13
-
-- [Run 43464044415](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43464044415) occurred after current a649236 R2 HTML publication. Source suite **35/35 PASS**; public `tests/live.spec.ts` **2/2 PASS**, verifying actual decoded public Mux playback/advance and Studio Journal scene-note seeking. Verified evidence stored at https://drive.google.com/file/d/1dCaDYpHLsNj7GHU1SUsXOzKblgqhAQjI/view?usp=drivesdk.
-- Release parity already proven: 76/76 text SHA-256 and 2/2 binary ETag-MD5/size = 78/78; prior three HTML entry points remain backed up. 35-test source visuals and trace archive saved at https://drive.google.com/file/d/189RiUTl1EbD5QjKuYOyJu1hn_j0LLcoq/view?usp=drivesdk; selected original screenshots and proof video at https://drive.google.com/file/d/1V9K153-YruJy2j01t2BhukbW1QYAGYGd/view?usp=drivesdk.
-- Source archive reconstructed from `5d31666a74770ca0043afe63ccf6e44e16d5be2c` in a clean tree, compiled successfully and independently checksum-verified; GitHub handoff [43465361492](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43465361492), durable Drive archive https://drive.google.com/file/d/1lJZhQS_rXjYPLoTm03ex6fEi_JP6BXNT/view?usp=drivesdk. This closes #89, but **does not** replace a real phone or VoiceOver/NVDA trial. Competition submission receipt remains null.
-
-## Final polish regression coverage
-
-- 320 px plus 200% text and long captions/chapters are exercised by the existing deep tests. The narrow clock test runs with a wider font and simulated hour-long media time on the real Video.js clock. The rollover test compares the exact x coordinates of sound and settings at 9:59 and 10:00.
-- The candidate exercises the actual Mux storyboard in Chromium. A local test covers image decode, edge clamping, the missing-image fallback and suppressed motion in forced colors.
-- Production acceptance remains separate from source tests. Linux WebKit covers the desktop fullscreen path. Physical iPhone Safari, Android Chrome, VoiceOver or NVDA and an unaided review remain pending.
-
-Final release `dd6ec8bd217ade07707359f33b13fbbba928a5e2`: [41/41 source tests](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553) and [2/2 after cutover](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/43521973553/job/132220457558). The final player passed the local MP4 9-action sweep on Chromium Android emulation, Firefox at 320 px, and desktop Linux WebKit. The tested default clock and preview contrast are 14.95:1. Warm focus is 4.69:1, dark focus 8.28:1. Caption ink against the 88% dark backplate composited over white is approximately 10.45:1. These are calculated ratios for the default surfaces. Forced-color keyboard coverage and bright/dark captures are in the browser suite.
+See [`docs/release-integrity.md`](../docs/release-integrity.md), [`tests/manual-accessibility.md`](manual-accessibility.md) and [`STRESS-LAB.md`](../STRESS-LAB.md).

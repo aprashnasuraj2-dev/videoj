@@ -1,6 +1,6 @@
 # Player craft review — 2026-11-13
 
-This review uses actual Chromium captures and media-state checks. It does not predict judges' scores.
+This review uses actual Chromium captures and media-state checks from its recorded revision. Recheck current browsers before interpreting the outcomes.
 
 | Scored area | What is demonstrated | Remaining weakness / next meaningful action |
 |---|---|---|
