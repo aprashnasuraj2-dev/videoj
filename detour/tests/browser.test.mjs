@@ -577,7 +577,7 @@ test('visual layout preserves the essential controls, targets and focus across e
       const style = getComputedStyle(el);
       return [style.outlineStyle, style.outlineWidth, style.outlineOffset];
     });
-    assert.deepEqual(ring, ['solid', '2px', '-2px']);
+    assert.deepEqual(ring, ['solid', '3px', '-3px']);
 
     if (width === 240) {
       await skin.evaluate(el => { el.dir = 'rtl'; });
