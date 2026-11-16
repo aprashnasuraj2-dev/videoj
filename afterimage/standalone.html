@@ -1,4 +1,12 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101820"><meta name="description" content="AFTERIMAGE — pin a frame and see what changes as the film plays."><title>AFTERIMAGE — Temporal Lens</title><style>:root { color-scheme: dark; background: #0b1116; color: #f0e9d9; font-family: Inter, Geist, ui-sans-serif, system-ui, sans-serif; }
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101820">
+<meta name="description" content="AFTERIMAGE — pin a frame and see what changes as the film plays.">
+<title>AFTERIMAGE — Temporal Lens</title>
+<style>:root { color-scheme: dark; background: #0b1116; color: #f0e9d9; font-family: Inter, Geist, ui-sans-serif, system-ui, sans-serif; }
 * { box-sizing: border-box; }
 body { margin: 0; background: radial-gradient(circle at 15% -10%, rgb(182 218 230 / .09), transparent 32rem), #0b1116; }
 main { width: min(1180px, calc(100% - 28px)); margin: 0 auto; padding: clamp(24px, 5vw, 68px) 0 80px; }
@@ -195,7 +203,19 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
     min-width: 44px;
   }
 }
-</style><script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.4.0/video.js"></script></head><body><main><header><div><span class="eyebrow">Temporal Lens · Video.js v10</span><h1>AFTERIMAGE</h1></div><p><strong>Time leaves a trace.</strong><br>Pin a frame. See what changes as the film plays.</p></header><section id="afterimage-player" aria-label="AFTERIMAGE player"></section><p class="fixture-note"><strong>The Waterline.</strong> Try the matched study, or pin any moment yourself. The copper mark remembers one rendered frame while the pale playhead keeps moving.</p></main><script type="module">function formatAfterimageTime(value) {
+</style>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/cdn@10.4.0/video.js"></script>
+</head>
+<body>
+<main>
+<header>
+<div><span class="eyebrow">Temporal Lens · Video.js v10</span><h1>AFTERIMAGE</h1></div>
+<p><strong>Time leaves a trace.</strong><br>Pin a frame. See what changes as the film plays.</p>
+</header>
+<section id="afterimage-player" aria-label="AFTERIMAGE player"></section>
+<p class="fixture-note"><strong>The Waterline.</strong> Try the matched study, or pin any moment yourself. The copper mark remembers one rendered frame while the pale playhead keeps moving.</p>
+</main>
+<script type="module">function formatAfterimageTime(value) {
   if (!Number.isFinite(value) || value < 0) return '—:——';
   const total = Math.max(0, Math.round(value));
   const seconds = total % 60;
@@ -722,11 +742,21 @@ function createAfterimagePlayer(media, options = {}) {
 
 const asset = path => new URL(path, document.baseURI).href;
 const video = document.createElement('video');
-video.preload='metadata'; video.playsInline=true; video.crossOrigin='anonymous';
-video.poster=asset('./media/the-waterline-v1-poster.jpg');
-for (const source of [{src:asset('./media/the-waterline-v1.webm'),type:'video/webm; codecs=\"vp9, opus\"'},{src:asset('./media/the-waterline-v1.mp4'),type:'video/mp4; codecs=\"avc1.42E01E, mp4a.40.2\"'}]) { const el=document.createElement('source'); el.src=source.src; el.type=source.type; video.append(el); }
-const captions=document.createElement('track'); captions.kind='captions'; captions.srclang='en'; captions.label='English'; captions.src=asset('./media/the-waterline-v1.vtt'); video.append(captions);
-const chapters=document.createElement('track'); chapters.kind='chapters'; chapters.srclang='en'; chapters.label='Waterline'; chapters.src=asset('./media/the-waterline-v1-chapters.vtt'); video.append(chapters);
-const mountedPlayer=createAfterimagePlayer(video,{example:{pinnedSeconds:5,currentSeconds:13}});
+video.preload = 'metadata';
+video.playsInline = true;
+video.crossOrigin = 'anonymous';
+video.poster = asset('./media/the-waterline-v1-poster.jpg');
+for (const source of [{ src: asset('./media/the-waterline-v1.webm'), type: 'video/webm; codecs=\"vp9, opus\"' }, { src: asset('./media/the-waterline-v1.mp4'), type: 'video/mp4; codecs=\"avc1.42E01E, mp4a.40.2\"' }]) { const element = document.createElement('source'); element.src = source.src; element.type = source.type; video.append(element); }
+const captions = document.createElement('track');
+captions.kind = 'captions'; captions.srclang = 'en'; captions.label = 'English';
+captions.src = asset('./media/the-waterline-v1.vtt');
+video.append(captions);
+const chapters = document.createElement('track');
+chapters.kind = 'chapters'; chapters.srclang = 'en'; chapters.label = 'Waterline';
+chapters.src = asset('./media/the-waterline-v1-chapters.vtt');
+video.append(chapters);
+const mountedPlayer = createAfterimagePlayer(video, { example: { pinnedSeconds: 5, currentSeconds: 13 } });
 document.querySelector('#afterimage-player').append(mountedPlayer);
-window.__AFTERIMAGE_RELEASE__={version:'0.3.2-webkit-focus',video,player:mountedPlayer};</script></body></html>
+window.__AFTERIMAGE_RELEASE__ = { version: '0.3.2-webkit-focus', video, player: mountedPlayer };</script>
+</body>
+</html>
