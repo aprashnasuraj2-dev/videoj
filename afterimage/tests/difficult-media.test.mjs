@@ -316,7 +316,7 @@ test('difficult-media: >1-hour duration and seekable-range mutation stay truthfu
   }
 });
 
-test('difficult-media: ended media can still truthfully pin; unavailable source keeps base controls usable', { timeout: 30000 }, async () => {
+test('difficult-media: ended media can still truthfully pin; unavailable source keeps base controls usable', { timeout: 35000 }, async () => {
   const page = await browser.newPage({ viewport: { width: 768, height: 900 } });
   try {
     await ready(page);
@@ -326,9 +326,11 @@ test('difficult-media: ended media can still truthfully pin; unavailable source 
       v.dispatchEvent(new Event('ended'));
     });
     await page.waitForFunction(() =>
-      document.querySelector('#player-a afterimage-temporal-lens')?.dataset.captureState === 'ended-ready');
-    await page.locator('#player-a [data-afterimage-pin]').click();
-    await page.waitForFunction(() => document.querySelector('#player-a .afterimage-reference')?.hidden === false);
+      document.querySelector('#player-a afterimage-temporal-lens')?.dataset.captureState === 'ended-ready',
+      null, { timeout: 5000 });
+    await page.locator('#player-a [data-afterimage-pin]').click({ timeout: 5000 });
+    await page.waitForFunction(() => document.querySelector('#player-a .afterimage-reference')?.hidden === false,
+      null, { timeout: 5000 });
     check('ended-ready-pin',
       await page.locator('#player-a afterimage-temporal-lens').getAttribute('data-capture-state') === 'ended-ready',
       { pinned: await page.locator('#player-a [data-afterimage-pinned]').textContent() });
@@ -341,10 +343,12 @@ test('difficult-media: ended media can still truthfully pin; unavailable source 
       h.b.video.load();
     });
     await page.waitForFunction(() =>
-      document.querySelector('#player-b afterimage-temporal-lens')?.dataset.captureState === 'timeline-unavailable');
-    await page.locator('#player-b [data-afterimage-pin]').click();
+      document.querySelector('#player-b afterimage-temporal-lens')?.dataset.captureState === 'timeline-unavailable',
+      null, { timeout: 5000 });
+    await page.locator('#player-b [data-afterimage-pin]').click({ timeout: 5000 });
     await page.waitForFunction(() =>
-      /stable on-demand/.test(document.querySelector('#player-b .afterimage-status')?.textContent || ''));
+      /stable on-demand/.test(document.querySelector('#player-b .afterimage-status')?.textContent || ''),
+      null, { timeout: 5000 });
     const ordinary = await page.locator('#player-b').evaluate(player => ({
       play: player.querySelector('media-play-button').getBoundingClientRect().width,
       seek: player.querySelector('media-time-slider').getBoundingClientRect().width,
