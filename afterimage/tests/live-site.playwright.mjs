@@ -2,8 +2,8 @@ import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const liveURL = process.env.AFTERIMAGE_LIVE_SITE_URL || 'https://aafnaipatro.com/on-this-day/afterimage/apollo-11/';
-const expectedRelease = process.env.AFTERIMAGE_RELEASE || '428e337d9918dcba1db50d01ea1b22a5b470c1ac';
-const expectedVersion = process.env.AFTERIMAGE_VERSION || '0.3.5-fullscreen-fit';
+const expectedRelease = process.env.AFTERIMAGE_RELEASE || '6f271470a76161a55a423e5a67e7c5fb1cdb2f63';
+const expectedVersion = process.env.AFTERIMAGE_VERSION || '0.3.9-touch-events';
 const expectedPlaybackId = process.env.MUX_PLAYBACK_ID || 'kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U';
 const artifactDir = new URL('../artifacts/live-site/', import.meta.url);
 await mkdir(artifactDir, { recursive: true });
@@ -47,8 +47,13 @@ try {
       height: site.video.videoHeight,
       copper: computed.getPropertyValue('--afterimage-copper').trim(),
       tracks,
+      poster: site.video.poster,
       examplePresent: Boolean(site.player.querySelector('[data-afterimage-example]')),
       pinPresent: Boolean(site.player.querySelector('[data-afterimage-pin]')),
+      navLinks: [...document.querySelectorAll('.sitebar a')].map(a => ({ text: a.textContent?.trim() || '', href: a.href })),
+      nasaAttribution: /NASA Scientific Visualization Studio/i.test(document.body.innerText),
+      packageHasWaterlineAssetPath: [...document.scripts].some(script => /the-waterline-v1/i.test(script.textContent || '')),
+      pageTitle: document.title,
     };
   });
   report.observations.boot = boot;
@@ -63,7 +68,16 @@ try {
   check('host-tracks',
     boot.tracks.some(t => t.kind === 'captions') && boot.tracks.some(t => t.kind === 'chapters'),
     boot.tracks);
+  check('alternate-host-poster',
+    /image\.mux\.com\/kjscGKEn9895zn00Tk7GWxsa1y8c00mtKQYT4K00NgMI3U\/thumbnail\.jpg/.test(boot.poster),
+    { poster: boot.poster });
+  check('aafnai-navigation',
+    boot.navLinks.some(link => link.href === 'https://aafnaipatro.com/') &&
+      boot.navLinks.some(link => /\/on-this-day\/?$/.test(link.href)),
+    boot.navLinks);
+  check('nasa-editorial-attribution', boot.nasaAttribution, { title: boot.pageTitle });
   check('manual-only-host', !boot.examplePresent && boot.pinPresent, { examplePresent: boot.examplePresent, pinPresent: boot.pinPresent });
+  check('reusable-package-no-waterline-asset-path', !boot.packageHasWaterlineAssetPath, { packageHasWaterlineAssetPath: boot.packageHasWaterlineAssetPath });
 
   await page.locator('media-play-button').click();
   await page.waitForFunction(() => {
@@ -106,6 +120,8 @@ try {
   check('preset-pinned', Number(await page.locator('.afterimage-seam-control').inputValue()) === 100);
   await page.getByRole('button', { name: 'Split', exact: true }).click();
   check('preset-split', Number(await page.locator('.afterimage-seam-control').inputValue()) === 50);
+  await page.getByRole('button', { name: 'Now', exact: true }).click();
+  check('preset-now', Number(await page.locator('.afterimage-seam-control').inputValue()) === 0);
 
   const captionsButton = page.locator('media-captions-button');
   if (await captionsButton.count()) {
