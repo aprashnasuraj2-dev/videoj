@@ -63,10 +63,10 @@ async function active(page) {
   });
 }
 
-async function tabTo(page, selector, limit = 40) {
+async function tabTo(page, selector, limit = 40, reverse = false) {
   for (let i = 0; i <= limit; i += 1) {
     if (await page.evaluate(s => document.activeElement?.matches?.(s) || false, selector)) return i;
-    await page.keyboard.press('Tab');
+    await page.keyboard.press(reverse ? 'Shift+Tab' : 'Tab');
   }
   return null;
 }
@@ -186,7 +186,7 @@ test('fullscreen-roundtrip: keyboard entry, geometry, settings/captions persiste
       captionInside.mode === 'showing' && captionInside.cueCount > 0,
       captionInside);
 
-    const captionsTabsInside = await tabTo(page, 'media-captions-button');
+    const captionsTabsInside = await tabTo(page, 'media-captions-button', 40, true);
     check('captions-control-reachable-inside-fullscreen',
       captionsTabsInside !== null,
       { captionsTabsInside, active: await active(page) });
