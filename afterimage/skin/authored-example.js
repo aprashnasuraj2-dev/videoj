@@ -98,7 +98,7 @@ export function bindAfterimageExample(player, video, example) {
       status.textContent = 'Example opened: pinned ' + formatAfterimageTime(reference.time) +
         ', now ' + formatAfterimageTime(video.currentTime) +
         (playbackIntentPreserved ? '.' : '. Playback state changed during the browser seek.');
-      lens.querySelector('.afterimage-seam-control')?.focus({ preventScroll: true });
+      player.querySelector('.afterimage-seam-control')?.focus({ preventScroll: true });
     } catch (error) {
       if (error?.name !== 'AbortError') status.textContent = error instanceof Error ? error.message : 'The example could not be opened.';
     } finally {

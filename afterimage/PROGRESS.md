@@ -112,3 +112,10 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Dual-codec public matrix passed Chromium, Firefox and WebKit on the same live release.
 - Browser evidence is being expanded beyond mouse-driven happy path: Tab/Enter-only playback and example, focus contrast, 200%-equivalent reflow plus Chromium page-scale 2×, letterbox/portrait container fixtures, repeated 20-pin buffer reuse, clean teardown, transport event counters, app-network counters during seam changes, and Chromium forced-colors.
 - These tests remain public-candidate tests against afterimage.aafnaipatro.com; no TinyFish or paid browser service is used.
+
+## 2026-11-16 · keyboard-only authored-flow defect fixed
+
+- Deep Chromium and Firefox tests proved Tab→Enter can activate Try a comparison and open the correct 00:05→00:13 pair, but focus did not move to the reveal slider.
+- Root cause: authored-example.js queried the seam inside the Temporal Lens element even though the reveal range lives in the shared player stage.
+- Fixed the authored helper to focus the player-level seam control after the pair opens. This aligns keyboard behavior with the existing mouse/authored flow and Escape focus restoration.
+- **Next action:** regenerate standalone, deploy exact source, rerun the expanded three-engine suite.
