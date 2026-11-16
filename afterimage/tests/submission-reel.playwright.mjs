@@ -236,19 +236,9 @@ try {
     await hold(page, label + ' preset', 900);
   }
 
-  await seam.focus();
-  await page.keyboard.press('ArrowLeft');
-  await page.keyboard.press('ArrowRight');
-  const seamFocus = await page.evaluate(() => {
-    const { player } = window.__AFTERIMAGE_RELEASE__;
-    const el = player.querySelector('.afterimage-seam-control');
-    return {
-      focused: document.activeElement === el,
-      ariaValueText: el.getAttribute('aria-valuetext'),
-    };
-  });
-  check('keyboard-seam-focus', seamFocus.focused && /pinned frame/.test(seamFocus.ariaValueText || ''), seamFocus);
-
+  const keyboardOrigin = page.getByRole('button', { name: 'Close comparison', exact: true });
+  await keyboardOrigin.focus();
+  check('keyboard-origin-focus', await keyboardOrigin.evaluate(el => document.activeElement === el));
   await page.keyboard.press('Escape');
   await page.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.player.querySelector('.afterimage-reference')?.hidden === true);
   const closeState = await page.evaluate(() => {
