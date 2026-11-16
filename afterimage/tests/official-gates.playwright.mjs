@@ -2,8 +2,8 @@ import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const baseURL = process.env.AFTERIMAGE_URL || 'https://afterimage.aafnaipatro.com/';
-const expectedRelease = process.env.AFTERIMAGE_RELEASE || '99c1496df894001609153f7c33966964cc1c7c69';
-const expectedVersion = process.env.AFTERIMAGE_VERSION || '0.3.8-touch-focus';
+const expectedRelease = process.env.AFTERIMAGE_RELEASE || '6f271470a76161a55a423e5a67e7c5fb1cdb2f63';
+const expectedVersion = process.env.AFTERIMAGE_VERSION || '0.3.9-touch-events';
 const artifactDir = new URL('../artifacts/official-gates/', import.meta.url);
 await mkdir(artifactDir, { recursive: true });
 
@@ -165,7 +165,10 @@ try {
   await press('Tab');
   check('tab-order-5-captions', await matches('media-captions-button'), await active(page));
   await press('Enter');
-  await page.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.textTracks?.[0]?.mode === 'showing', null, { timeout: 3000 });
+  await page.waitForFunction(() => {
+    const track=window.__AFTERIMAGE_RELEASE__.video.textTracks?.[0];
+    return track?.mode === 'showing' && (track.cues?.length || 0) > 0;
+  }, null, { timeout: 5000 });
   const captions = await page.evaluate(() => {
     const {video,player}=window.__AFTERIMAGE_RELEASE__;
     const visibleMenus=[...player.querySelectorAll('[role="menu"],[role="listbox"],media-menu')].filter(el=>el.getBoundingClientRect().width>0 && el.getBoundingClientRect().height>0);

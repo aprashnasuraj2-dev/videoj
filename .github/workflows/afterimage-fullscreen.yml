@@ -22,8 +22,8 @@ jobs:
         working-directory: afterimage
     env:
       AFTERIMAGE_URL: https://afterimage.aafnaipatro.com/
-      AFTERIMAGE_RELEASE: 99c1496df894001609153f7c33966964cc1c7c69
-      AFTERIMAGE_VERSION: 0.3.8-touch-focus
+      AFTERIMAGE_RELEASE: 6f271470a76161a55a423e5a67e7c5fb1cdb2f63
+      AFTERIMAGE_VERSION: 0.3.9-touch-events
     steps:
       - name: Checkout
         uses: actions/checkout@v4
