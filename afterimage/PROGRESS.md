@@ -330,3 +330,16 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - **Promotion decision: KEEP FROZEN PUBLIC RELEASE.** Hardening improves evidence and resilience, but changing an already-qualified competition build at the deadline is not objectively safer.
 - Full current evidence: `docs/HARDENING.md`.
 
+
+## 2026-11-16 · comparison-caption accessibility fix promoted in place
+
+- A real accessibility defect was identified before submission work: while Temporal Lens comparison was open, the pinned reference canvas could cover part of the browser-rendered native video cue.
+- The fix keeps the genuine WebVTT text track in `showing` mode and mirrors only its currently active caption/subtitle cue into a visual-only `aria-hidden` layer above the reference canvas. Native visual cue paint is suppressed only while comparison is open and is restored immediately on Close. No transport behavior, authored comparison timing, seam semantics, media, or DETOUR concept was changed.
+- Exact product/test head `6443599439c7d39728c0b582c6e433149f74d4ad` passed hardening run **43827669182**: architecture/concept isolation, standalone regeneration, production build, package inspection, Chromium/Firefox/desktop-WebKit lifecycle, packed external host, difficult-media, performance/footprint, three-engine browser regression, headed keyboard/accessibility, touch, fullscreen and judge-first-use.
+- Evidence artifact **14207153589** / `sha256:a1037fe0c02b41ee82584eaf6635a20dd361208a12017b6183dc44cfb1942347` contains the generated standalone and `official-gates/comparison-fullscreen-captions.png`. The official gate passed **48/48** checks. The active WATERLINE cue measured **16.61:1** contrast over the comparison both inline and in wrapper fullscreen.
+- CI reconciled the exact tested generated standalone in `a01a62fa5ef8c75850d285656254bb741bd31061`.
+- Because this was a verified product accessibility correction, the existing public hostname was promoted **in place** rather than creating a second competition URL. Worker version **5d408fca-2d53-4bf7-bbcc-d0bc050e8a46** is routed 100% by deployment **c382985b-f3d9-44e0-8c35-a5e488095731**; prior deployment `0b1d5abb-07ae-4c97-87e8-66512216bcfa` remains available for rollback.
+- Cloudflare Browser Rendering observed public HTTP 200 with `x-afterimage-release: a01a62fa5ef8c75850d285656254bb741bd31061` and `x-afterimage-accessibility: comparison-captions`, with no DETOUR terminology. Its public accessibility tree exposes Play, Seek, Mute, Volume, Enable captions, Enter fullscreen, Try a comparison and Pin moment.
+- Public media delivery remains the same authored WATERLINE bytes; a live range probe returned **206**, `bytes 0-1023/1875769`, `video/mp4`, and the expected `ftypisom` signature. Public browser interaction showed the real WATERLINE cue above an open comparison while Pinned/Split/Now remained visible and playback continued.
+- Checklist 058 is therefore complete. Checklist 060 remains honestly blocked because browser semantics/emulation are not physical iPhone/Android or real NVDA/VoiceOver evidence.
+- Submission/form work was intentionally not started in this pass.

@@ -2,21 +2,21 @@
 
 This pass hardens the reusable AFTERIMAGE / Temporal Lens implementation without changing its central interaction, copper/limestone visual language, WATERLINE submission story, or conventional transport contract.
 
-## Baseline, exact source and public freeze
+## Baseline, exact source and public authority
 
 - Baseline branch: `afterimage`
 - Baseline head: `d4d913af16717c07f11b46f45fc912cb6f39187c`
 - Hardening branch: `afterimage-hardening`
-- Verified hardening product/test source: `b8003a74d43c382b3011b8094f16bbc37397ee80`
-- Generated `standalone.html` bytes from that successful run were reconciled in `5e8825b9ecfcc0c600aff1d0fcb393ae40b7a057`.
-- Exact product hardening run: GitHub Actions `43825696674` — **success**.
-- Evidence artifact: `14206631544`, digest `sha256:29442e5621ad770b27301d4dce98c19832e0188d9116c9f1c74a2ed08c303c97`.
-- Frozen public competition product remains `2316dc7f07f5b73a2d30d7e95fc5b09e6f83fb69`, runtime `0.3.10-control-fit`, at `https://afterimage.aafnaipatro.com/`.
-- No hardening build was promoted to the public hostname. Independent Cloudflare Browser Rendering still observed `x-afterimage-release: 2316dc7...` and no DETOUR terminology on the public page.
+- Verified accessibility-hardening product/test source: `6443599439c7d39728c0b582c6e433149f74d4ad`.
+- Exact tested generated `standalone.html` bytes were reconciled in `a01a62fa5ef8c75850d285656254bb741bd31061`.
+- Exact accessibility hardening run: GitHub Actions `43827669182` — **success**.
+- Evidence artifact: `14207153589`, digest `sha256:a1037fe0c02b41ee82584eaf6635a20dd361208a12017b6183dc44cfb1942347`.
+- Existing competition URL remains `https://afterimage.aafnaipatro.com/`; it now serves release identity `a01a62fa5ef8c75850d285656254bb741bd31061` through Worker version `5d408fca-2d53-4bf7-bbcc-d0bc050e8a46` and deployment `c382985b-f3d9-44e0-8c35-a5e488095731` at 100% traffic.
+- The previous deployment `0b1d5abb-07ae-4c97-87e8-66512216bcfa` / version `05caf0d5-26c7-432a-abbf-ed77fe092e6b` remains available for rollback. WATERLINE authored media, captions, poster and concept are unchanged.
 
 ## Exact executable gates
 
-Run `43825696674` passed, in order:
+Run `43827669182` passed, in order:
 
 1. `npm test` — architecture and concept-boundary tests.
 2. `npm run build:standalone` — canonical standalone regeneration.
@@ -132,18 +132,18 @@ Measured on the GitHub-hosted Linux CI runner with Playwright Chromium. These ar
 
 | Metric | Exact result |
 | --- | ---: |
-| Base ESM gzip | 80,121 bytes |
-| Enhanced ESM gzip | 83,940 bytes |
-| Incremental JS gzip | 3,819 bytes |
-| Shared scoped CSS gzip | 2,652 bytes |
+| Base ESM gzip | 80,133 bytes |
+| Enhanced ESM gzip | 84,253 bytes |
+| Incremental JS gzip | 4,120 bytes |
+| Shared scoped CSS gzip | 2,815 bytes |
 | Incremental CSS over base entry | 0 bytes |
 | Repeated pins | 20 |
-| Mean pin wall time | 34.95 ms |
-| Max pin wall time | 48.41 ms |
+| Mean pin wall time | 41.22 ms |
+| Max pin wall time | 62.54 ms |
 | Reference canvas | 1279×719 |
 | Reference canvases after repeated pins | 1 |
 | Raw RGBA estimate | 3,678,404 bytes |
-| 200 seam inputs scripting wall | 3.0 ms |
+| 200 seam inputs scripting wall | 2.6 ms |
 | Seam-generated `seeking` events | 0 |
 | Seam-generated `seeked` events | 0 |
 | Seam-generated application network requests | 0 |
@@ -160,7 +160,7 @@ Against the regenerated hardened standalone:
 - Chromium report: 33/33 checks passed.
 - Firefox report: 31/31 checks passed.
 - desktop Playwright WebKit report: 31/31 checks passed.
-- headed Chromium official gate: 44/44 checks passed.
+- headed Chromium official gate: 48/48 checks passed, including dedicated comparison-caption inline/fullscreen/readback restoration checks.
 - touch robustness: 15/15 checks passed.
 - headed fullscreen: 4/4 checks passed.
 - judge-first-use automation: 9/9 checks passed.
@@ -179,6 +179,32 @@ Key measurements/behaviors:
 - reduced-motion passes Chromium/Firefox/WebKit; forced-colors is explicitly Chromium-only coverage;
 - touch seam tap/drag/cancel and vertical scroll recovery remain bounded;
 - automated first-use walkthrough completes the normal Play → comparison → seam → Close → Clear journey in 1.317s. This is an engineering automation metric, not human usability evidence.
+
+## Comparison-caption accessibility correction
+
+The hardening gate exposed a product-level accessibility problem rather than a test-only gap: the pinned canvas is intentionally above the moving video, so a native video cue could be visually covered on the pinned side during comparison.
+
+The correction is deliberately narrow:
+
+- the real WebVTT caption/subtitle track remains authoritative and remains in `showing` mode;
+- while comparison is open, active real cue text is mirrored into a visual-only `aria-hidden` layer above the reference canvas;
+- the browser's native cue paint is made visually transparent only during that open comparison, preventing duplicate partial captions;
+- Close removes the comparison state and restores native cue paint without toggling or replacing the real track;
+- no seek, pause, play, checkpoint, Return/Stay, history or DETOUR behavior was introduced.
+
+Exact headed evidence in run `43827669182`:
+
+- inline comparison cue: `[Shallow water settles beneath the same locked architecture.]`;
+- real track mode: `showing`;
+- inline comparison-caption contrast: **16.61:1**;
+- wrapper-fullscreen comparison-caption contrast: **16.61:1**;
+- comparison remained open in fullscreen and the mirrored text exactly matched the active real cue;
+- after fullscreen exit the comparison cue remained visible;
+- after Close the mirror was hidden, the comparison state was removed and the real caption track was still `showing`.
+
+The artifact includes `official-gates/comparison-fullscreen-captions.png`.
+
+Post-deploy verification at the existing public URL observed the new release header, a named accessibility tree, a real open-comparison WATERLINE cue while playback continued, and a 206 byte-range media response.
 
 ## Playback Settings decision
 
@@ -221,6 +247,6 @@ Architecture and hardened browser tests prove:
 
 ## Promotion decision
 
-**KEEP FROZEN PUBLIC RELEASE**
+**PROMOTED IN PLACE FOR A VERIFIED ACCESSIBILITY DEFECT**
 
-The hardening objectively improves lifecycle truthfulness, portability and evidence. It does not create a competition need strong enough to justify replacing an already-qualified public candidate at the deadline. The protected public build remains `2316dc7...` / `0.3.10-control-fit`.
+The earlier freeze decision was superseded only after a concrete product accessibility defect was demonstrated and corrected. The existing competition URL was not replaced. Release `a01a62fa5ef8c75850d285656254bb741bd31061` is now served at `https://afterimage.aafnaipatro.com/` by deployment `c382985b-f3d9-44e0-8c35-a5e488095731`; the prior known-good deployment remains retained for rollback. No media identity or interaction concept changed.
