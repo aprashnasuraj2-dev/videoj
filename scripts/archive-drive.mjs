@@ -22,7 +22,7 @@ for(const name of await readdir('handoff')) {
  let file=matches[0];
  if(file && file.md5Checksum!==md5) throw Error('Existing archive differs; use a new revision filename');
  if(!file) {
-  const metadata={name,parents:[folder],description:'DHAGO development/submission candidate archive; not proof of contest submission.'};
+  const metadata={name,parents:[folder],description:'DHAGO source and browser evidence archive; validate its source revision and checksums.'};
   const session=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id,name,md5Checksum,webViewLink,parents',{method:'POST',headers:{...headers,'Content-Type':'application/json','X-Upload-Content-Type':'application/octet-stream','X-Upload-Content-Length':String(bytes.length)},body:JSON.stringify(metadata),signal:AbortSignal.timeout(30000)});
   if(!session.ok) throw Error(`Drive upload session failed (${session.status}); response omitted`);
   const location=session.headers.get('location');
