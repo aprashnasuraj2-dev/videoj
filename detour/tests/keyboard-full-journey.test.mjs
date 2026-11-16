@@ -82,10 +82,14 @@ async function tabTo(page, selector, { reverse = false, limit = 40 } = {}) {
   return null;
 }
 
-async function keyboardSeekTo(page, seconds) {
+async function keyboardSeekTo(page, seconds, { reverse = false } = {}) {
   const slider = page.getByRole('slider', { name: 'Seek' });
-  const tabs = await tabTo(page, 'media-time-slider media-slider-thumb');
-  check(`seek-tab-reachable-${seconds}`, tabs !== null, { tabs, active: await active(page) });
+  const tabs = await tabTo(page, 'media-time-slider media-slider-thumb', { reverse });
+  check(`seek-${reverse ? 'shift-tab' : 'tab'}-reachable-${seconds}`, tabs !== null, {
+    tabs,
+    reverse,
+    active: await active(page),
+  });
   await page.keyboard.press('Home');
   await page.waitForFunction(() => document.querySelector('video').currentTime < 0.5);
   for (let i = 0; i < seconds; i += 1) await page.keyboard.press('ArrowRight');
@@ -332,7 +336,7 @@ test('keyboard-full-journey: Keep → two keyboard seeks → Return and Keep →
       Math.abs(await page.locator('video').evaluate(v => v.currentTime) - heldAt) < 0.08,
       { heldAt, now: await page.locator('video').evaluate(v => v.currentTime) });
 
-    await keyboardSeekTo(page, 18);
+    await keyboardSeekTo(page, 18, { reverse: true });
     await page.keyboard.press('ArrowRight');
     await page.waitForFunction(() => document.querySelector('video').currentTime >= 18.8);
     await page.keyboard.press('ArrowLeft');
@@ -349,13 +353,13 @@ test('keyboard-full-journey: Keep → two keyboard seeks → Return and Keep →
       await page.evaluate(() => document.activeElement?.matches?.('.detour-hold') || false),
       focusAfterReturn);
 
-    await keyboardSeekTo(page, 42);
+    await keyboardSeekTo(page, 42, { reverse: true });
     const hold2 = await tabTo(page, '.detour-hold');
     check('keep-second-tab-reachable', hold2 !== null, { hold2, active: await active(page) });
     await page.keyboard.press('Space');
     await page.getByRole('button', { name: 'Return to 00:42' }).waitFor();
 
-    await keyboardSeekTo(page, 18);
+    await keyboardSeekTo(page, 18, { reverse: true });
     const stayTime = await page.locator('video').evaluate(v => v.currentTime);
     const stayTabs = await tabTo(page, '.detour-stay');
     check('stay-tab-reachable', stayTabs !== null, { stayTabs, active: await active(page) });
