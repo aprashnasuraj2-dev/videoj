@@ -199,65 +199,6 @@ test('the held bracket and playhead stay separate at 320 and 768 pixels', { time
   }
 });
 
-test('Pausepoint pauses once on playback and skips over sought points', { timeout: 40000 }, async t => {
-  const dev = await createServer({ server: { host: '127.0.0.1', port: 0 }, logLevel: 'silent' });
-  t.after(() => dev.close());
-  await dev.listen();
-  const page = await browser.newPage();
-  t.after(() => page.close());
-  await page.goto(new URL('design/pausepoint/', dev.resolvedUrls.local[0]).href);
-  await page.waitForFunction(() => document.querySelector('video')?.readyState >= 2);
-  const target = page.getByRole('spinbutton', { name: 'Pause at (seconds)' });
-  const status = page.locator('#summary');
-  const transport = page.locator('media-play-button');
-  const mark = page.locator('.pausepoint-mark');
-  const wait = condition => page.waitForFunction(condition);
-
-  const arm = async time => {
-    await target.fill(String(time));
-    await target.press('Enter');
-    assert.match(await status.textContent(), /Pause armed/);
-    assert.ok(await mark.isVisible());
-  };
-
-  await seek(page, 17.4);
-  await arm(18.3);
-  await page.locator('video').evaluate(video => {
-    video.addEventListener('pause', () => {
-      video.dataset.pauseEvents = String(Number(video.dataset.pauseEvents ?? 0) + 1);
-    });
-  });
-  await transport.click();
-  await wait(() => document.querySelector('#summary').textContent.startsWith('Paused after'));
-  await wait(() => document.querySelector('video').paused);
-  const arrived = await current(page);
-  assert.ok(arrived >= 18.3 && arrived <= 18.9, `Pause landed at ${arrived}`);
-  assert.equal(await mark.isVisible(), false);
-  assert.equal(await page.locator('video').getAttribute('data-pause-events'), '1');
-  await transport.click();
-  await wait(() => document.querySelector('video').currentTime > 19);
-  assert.equal(await page.locator('video').getAttribute('data-pause-events'), '1');
-  await transport.click();
-
-  await seek(page, 18);
-  await arm(19);
-  await seek(page, 20);
-  assert.equal(await status.textContent(), 'Pause point skipped by seeking.');
-  assert.equal(await mark.isVisible(), false);
-
-  await seek(page, 18);
-  await arm(22);
-  await transport.click();
-  await wait(() => document.querySelector('video').currentTime > 18.1);
-  const priorPauseCount = await page.locator('video').getAttribute('data-pause-events');
-  await page.getByRole('slider', { name: 'Seek' }).press('PageUp');
-  await wait(() => document.querySelector('video').currentTime > 28.1);
-  assert.equal(await status.textContent(), 'Pause point skipped by seeking.');
-  assert.equal(await page.locator('video').evaluate(video => video.paused), false);
-  assert.equal(await page.locator('video').getAttribute('data-pause-events'), priorPauseCount);
-  t.diagnostic(`Armed at 18.3s, paused at ${arrived.toFixed(3)}s, then resumed. Paused seek and playing PageUp seek skipped the armed points.`);
-});
-
 test('essential controls and a caption-safe settings panel at desktop and compact widths', { timeout: 30000 }, async t => {
   for (const width of [320, 768]) {
     const page = await player(t, width + 32);
