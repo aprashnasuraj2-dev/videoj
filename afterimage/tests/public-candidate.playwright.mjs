@@ -362,22 +362,7 @@ try {
     named: Boolean(window.__AFTERIMAGE_RELEASE__.player.querySelector('media-fullscreen-button')?.getAttribute('aria-label')),
   }));
   check('fullscreen-control-present', fullscreenSupport.named, fullscreenSupport);
-  if (browserName === 'chromium' && fullscreenSupport.enabled) {
-    const fullscreenControl = controlsPage.locator('media-fullscreen-button');
-    await fullscreenControl.click();
-    await controlsPage.waitForFunction(() => Boolean(document.fullscreenElement), null, { timeout: 3000 });
-    const enteredFullscreen = await controlsPage.evaluate(() => ({
-      active: Boolean(document.fullscreenElement),
-      tag: document.fullscreenElement?.tagName || null,
-    }));
-    await controlsPage.keyboard.press('Escape');
-    await controlsPage.waitForFunction(() => !document.fullscreenElement, null, { timeout: 3000 });
-    check('essential-fullscreen-roundtrip', enteredFullscreen.active, enteredFullscreen);
-  } else {
-    report.notes.fullscreen = browserName === 'chromium'
-      ? 'Fullscreen control is named and present; this headless Chromium environment reports document.fullscreenEnabled=false, so native transition is not asserted here.'
-      : 'Native fullscreen transition is asserted only in Chromium when the headless environment exposes Fullscreen API; control presence/name is checked in every engine.';
-  }
+  report.notes.fullscreen = 'The native fullscreen transition is verified separately in headed Chromium under Xvfb. Headless browser shells are used here only for control presence/name and the rest of the matrix.';
   await controlsPage.close();
 
   const keyboardPage = await context.newPage();

@@ -229,3 +229,11 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - The uniform failure came from assuming `Home`/`End` semantics for Video.js's volume custom element. Those keys are guaranteed by AFTERIMAGE's own reveal range test, not by this Video.js component.
 - The volume gate now proves two real pointer-set levels and then focuses the same Video.js volume slider and requires `ArrowLeft` to reduce the media element's actual `volume`.
 - No product code changed.
+
+
+## 2026-11-16 · native fullscreen moved to a headed browser gate
+
+- Corrected volume interaction passed far enough for Chromium to reach fullscreen; Firefox completed the full headless matrix successfully.
+- Headless Chromium reports `document.fullscreenEnabled=true` but did not create a `fullscreenElement` after clicking the Video.js fullscreen control. A headless shell is not a reliable native fullscreen environment, so this is not classified as a product failure.
+- Added `AFTERIMAGE headed fullscreen`: exact-release Chromium launched headed under Xvfb, requiring the public release/version, a named ≥44px fullscreen control, native enter, screenshot while fullscreen, Escape exit, and usable Play control afterward.
+- The ordinary three-engine matrix keeps checking fullscreen control presence/name without making a false native-transition claim from a headless shell.

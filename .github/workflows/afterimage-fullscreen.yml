@@ -1,0 +1,54 @@
+name: AFTERIMAGE headed fullscreen
+
+on:
+  push:
+    branches:
+      - afterimage
+    paths:
+      - 'afterimage/tests/fullscreen.playwright.mjs'
+      - 'afterimage/tests/public-candidate.playwright.mjs'
+      - '.github/workflows/afterimage-fullscreen.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fullscreen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: afterimage
+    env:
+      AFTERIMAGE_URL: https://afterimage.aafnaipatro.com/
+      AFTERIMAGE_RELEASE: f0bed46afe912b43af657841b0a2897742e9f4ff
+      AFTERIMAGE_VERSION: 0.3.3-webkit-handoff
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: afterimage/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Install headed Chromium dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify native fullscreen in headed Chromium
+        run: xvfb-run -a node tests/fullscreen.playwright.mjs
+
+      - name: Upload fullscreen evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: afterimage-fullscreen-evidence
+          path: afterimage/artifacts/fullscreen/
+          if-no-files-found: warn
+          retention-days: 30
