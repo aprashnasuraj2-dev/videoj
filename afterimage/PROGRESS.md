@@ -72,3 +72,10 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Final public browser proof passed the authored pair, playback continuity, real captions, paused approximate pin, reverse signed delta, arbitrary seam, Escape/focus restoration, and media MIME/range checks.
 - TinyFish is not used. Verification and release stay inside GitHub + Cloudflare Patro.
 - **Next action:** add a GitHub-hosted Playwright matrix against the public candidate for Chromium/Firefox/WebKit, keyboard traversal, 240px/zoom, multi-instance/failure checks, and screenshot artifacts.
+
+## 2026-11-16 · cross-browser matrix found 240px defect
+
+- WebKit reached the live candidate successfully and passed earlier playback/authored-pair/keyboard steps, then failed the 240px fallback check because page CSS still imposed a 320px body minimum.
+- This is a real layout defect, not a test harness failure: at viewport 240px the measured player was 304px and horizontal overflow was true.
+- Removed the page-level 320px floor and added an ultra-narrow container rule that keeps primary actions/presets fluid while preserving 44px target height.
+- **Next action:** rebuild/redeploy the exact fix, then rerun Chromium/Firefox/WebKit matrix.

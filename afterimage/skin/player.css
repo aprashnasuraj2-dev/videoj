@@ -88,3 +88,18 @@
   .afterimage .afterimage-pin, .afterimage .afterimage-pin i, .afterimage .afterimage-seam { forced-color-adjust: none; background: Highlight; color: HighlightText; }
   .afterimage .afterimage-interval { border-color: Highlight; background: transparent; }
 }
+
+@container (max-width: 300px) {
+  .afterimage .afterimage-deck { padding-inline: 8px; }
+  .afterimage .afterimage-bar { grid-template-columns: 1fr auto; gap: 6px; }
+  .afterimage .afterimage-options { gap: 2px; }
+  .afterimage .afterimage-lens { gap: 6px; }
+  .afterimage .afterimage-lens-primary { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 6px; }
+  .afterimage .afterimage-lens-primary .afterimage-action { width: 100%; min-width: 0; padding-inline: 8px; }
+  .afterimage .afterimage-presets { width: 100%; gap: 4px; }
+  .afterimage .afterimage-presets button { min-width: 0; padding-inline: 6px; }
+  .afterimage .afterimage-clear { min-width: 0; padding-inline: 6px; }
+  .afterimage .afterimage-relation { gap: 5px; }
+  .afterimage .afterimage-relation > span { padding-inline: 7px; }
+  .afterimage .afterimage-clock { font-size: 12px; }
+}
