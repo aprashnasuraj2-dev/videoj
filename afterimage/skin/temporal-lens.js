@@ -19,6 +19,19 @@ function captureState(video, player) {
     };
   }
 
+  const hasDeclaredSource = Boolean(
+    video.currentSrc || video.getAttribute('src') || video.querySelector('source[src]')
+  );
+  if (!hasDeclaredSource) {
+    return {
+      kind: 'timeline-unavailable',
+      reason: 'source-missing',
+      seekability: seekability(video),
+      ready: false,
+      message: 'Temporal Lens needs a stable on-demand video timeline.',
+    };
+  }
+
   // Metadata readiness is evaluated before duration semantics. A newly attached
   // source normally reports duration=NaN until metadata arrives; that is a
   // waiting state, not evidence that the source is an unsupported timeline.
