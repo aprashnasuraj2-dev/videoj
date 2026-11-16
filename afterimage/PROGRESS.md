@@ -143,3 +143,14 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Replaced fixed sleeps with an observable authored-completion gate: comparison open, trigger re-enabled, current time in the 00:13 window, and live status beginning `Example opened:`.
 - The browser workflow now also requires public response header `x-afterimage-release=f0bed46...` and runtime version `0.3.3-webkit-handoff`. A passing matrix therefore proves the intended deployed build rather than merely the hostname.
 - **Next action:** rerun the exact-release three-engine matrix; if green, reconcile tasks 30, 53–55, 59, 62, 66–67 and 70 from the recorded assertions.
+
+
+## 2026-11-16 · exact-release matrix green and checklist reconciliation
+
+- AFTERIMAGE CI #23 passed on tracking/test commit `f7f1c669...`; the serving product source remains immutable `f0bed46...`.
+- Browser matrix run `43801027232` (#18) passed Chromium, Firefox and WebKit while explicitly requiring public response header `f0bed46...` and runtime `0.3.3-webkit-handoff`.
+- The previous WebKit failure was confirmed as a harness race: the failed sample still showed Now `00:05`. The corrected gate waits for the authored trigger to re-enable, current time to reach the 00:13 window, and the `Example opened:` live-status message before asserting focus.
+- Quantified cross-browser evidence is now recorded in `docs/EVIDENCE.md`: 240px no-overflow/44px targets, 14.80:1 text contrast, 12.07:1 focus contrast, complete keyboard flow, zero comparison-induced pause/seek/wait/stall events, one reused 919,601-pixel reference canvas across 20 pins, ~3.68MB raw reference buffer, zero app network requests from pin/seam operations, 41/59/79ms capture observations, clean teardown, reduced motion and failure fallback.
+- Checklist rows 13, 30, 53–55, 57, 59, 62, 66–67 and 70 are promoted to done. Candidate identity rows 91–93 are reconciled to the current serving release.
+- Deliberately still open/in-progress: native fullscreen, physical device/screen-reader, pointer/touch cancellation, delayed source-switch races, slow/constrained-device profiling, multi-instance, alternate-host package proof, bonuses and submission-form acceptance.
+- **Next action:** preserve the strongest exact-release stills, then close the highest-value remaining usability/transport gaps before submission packaging.
