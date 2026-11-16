@@ -1,0 +1,24 @@
+{
+  "id": "the-waterline-v1",
+  "durationSeconds": 18,
+  "fps": 24,
+  "dryReferenceSeconds": 5,
+  "wetExampleSeconds": 13,
+  "transition": {
+    "start": 6,
+    "duration": 2
+  },
+  "sources": {
+    "dry": {
+      "taskId": "b9e17613-8a2a-4962-ab1e-73e3bf2d1272",
+      "assetId": "e7a51d0a-957b-4f57-8702-af4d6beae118",
+      "url": "https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3-pro-image/images/b9e17613-8a2a-4962-ab1e-73e3bf2d1272/f8d11f2f-2b0d-4558-b825-4f0e3001765e/Single_cinematic_architectural_still__16_9__A_fictional_brut.png?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMWY4OGEzNThlNTc0ZWUxNSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5NDg5NDgwOH0.RvmrgL1m6N5VGdoRVflw8pNyYhu3_VPBNzIMvtqqF5s"
+    },
+    "wet": {
+      "taskId": "85eb2848-4322-47a5-9d9c-8132d91bb5ac",
+      "assetId": "c00481cf-ef23-416d-8110-470fffc1788c",
+      "url": "https://dnznrvs05pmza.cloudfront.net/34a0c1fe-1d8d-4bf9-8620-682a67a4e6b8.png?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiM2JlNTA4NDExZGY5NGY3ZCIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5NDkwNzIwMX0.YPNGDSxBwrAqkDyz2FSb6dQsglhrXSM5i9qLINJ1ObA"
+    }
+  },
+  "rights": "Original AI-assisted keyframes generated for this entry; motion, edit, sound bed, captions and encode are generated in-repository."
+}

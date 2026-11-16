@@ -1,0 +1,50 @@
+name: AFTERIMAGE WATERLINE media
+
+on:
+  push:
+    branches:
+      - afterimage
+    paths:
+      - 'afterimage/media-plan.json'
+      - 'afterimage/scripts/make-waterline.sh'
+      - '.github/workflows/afterimage-media.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    if: ${{ !contains(github.event.head_commit.message, '[waterline-render]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact branch
+        uses: actions/checkout@v4
+        with:
+          ref: afterimage
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+
+      - name: Render WATERLINE
+        run: bash afterimage/scripts/make-waterline.sh
+
+      - name: Inspect output
+        run: |
+          ffprobe -v error -show_entries format=duration,size,bit_rate -show_entries stream=codec_name,codec_type,width,height,r_frame_rate -of json afterimage/public/media/the-waterline-v1.mp4
+          cat afterimage/public/media/the-waterline-v1.json
+          ls -lh afterimage/public/media
+
+      - name: Commit generated media
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add afterimage/public/media
+          if git diff --cached --quiet; then
+            echo "Generated media is unchanged."
+            exit 0
+          fi
+          git commit -m "media(afterimage): render WATERLINE proof [waterline-render]"
+          git push origin HEAD:afterimage
