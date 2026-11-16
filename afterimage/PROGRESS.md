@@ -329,4 +329,4 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Still unverified: physical iPhone Safari, physical Android Chrome, NVDA, VoiceOver, real low-end phone performance, genuine tainted cross-origin/expired-provider failure, separately throttled authored-seek behavior, numbered-frame tolerance and signed-in competition submission.
 - **Promotion decision: KEEP FROZEN PUBLIC RELEASE.** Hardening improves evidence and resilience, but changing an already-qualified competition build at the deadline is not objectively safer.
 - Full current evidence: `docs/HARDENING.md`.
-\n
+
