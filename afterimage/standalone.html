@@ -75,6 +75,9 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
 .afterimage .afterimage-seam span { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; width: 22px; height: 42px; transform: translate(-50%, -50%); border: 1px solid var(--afterimage-limestone); border-radius: 999px; background: linear-gradient(90deg, transparent 45%, var(--afterimage-copper) 45% 55%, transparent 55%), var(--afterimage-ink); box-shadow: 0 0 0 3px rgb(16 24 32 / .78); }
 .afterimage .afterimage-seam-control { position: absolute; z-index: 4; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; touch-action: pan-y; }
 .afterimage .afterimage-seam-control:focus-visible { opacity: 1; height: 44px; inset-block-start: 50%; transform: translateY(-50%); accent-color: var(--afterimage-copper); }
+.afterimage .afterimage-comparison-caption { position: absolute; z-index: 5; inset-inline: 6%; inset-block-end: 5%; display: flex; justify-content: center; pointer-events: none; text-align: center; }
+.afterimage .afterimage-comparison-caption span { max-inline-size: min(90%, 48rem); padding: .34em .62em; border-radius: 4px; color: var(--afterimage-limestone); background: rgb(5 8 10 / .9); font-size: clamp(14px, 2.1cqi, 22px); font-weight: 650; line-height: 1.35; white-space: pre-line; text-shadow: 0 1px 2px #000; }
+.afterimage[data-comparison-open] video::cue { color: transparent; background: transparent; text-shadow: none; }
 .afterimage .afterimage-deck { position: relative; padding: 14px 16px 16px; background: linear-gradient(180deg, rgb(255 255 255 / .025), transparent 38%), var(--afterimage-ink); border-block-start: 1px solid rgb(240 233 217 / .12); }
 .afterimage .afterimage-relation { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-block-end: 12px; font-size: 12px; letter-spacing: .03em; }
 .afterimage .afterimage-relation > span { min-height: 36px; padding: 8px 10px; border: 1px solid rgb(240 233 217 / .14); border-radius: 8px; background: rgb(0 0 0 / .16); }
@@ -438,6 +441,8 @@ class AfterimageTemporalLens extends HTMLElement {
     const referenceCanvas = referenceLayer.querySelector('canvas');
     const seamLine = container.querySelector('.afterimage-seam');
     const seamControl = container.querySelector('.afterimage-seam-control');
+    const comparisonCaption = container.querySelector('.afterimage-comparison-caption');
+    const comparisonCaptionText = comparisonCaption?.querySelector('span');
     const relation = container.querySelector('.afterimage-relation');
     const pinnedOutput = container.querySelector('[data-afterimage-pinned]');
     const nowOutput = container.querySelector('[data-afterimage-now]');
@@ -517,9 +522,45 @@ class AfterimageTemporalLens extends HTMLElement {
       pinMark.toggleAttribute('data-edge-end', pinPercent > 97);
     };
 
+    const updateComparisonCaption = () => {
+      if (!comparisonCaption || !comparisonCaptionText) return;
+      const open = Boolean(this.#reference) && this.#presentation === 'open';
+      const cues = [];
+      if (open) {
+        for (const track of Array.from(video.textTracks || [])) {
+          if (track.mode !== 'showing' || !['captions', 'subtitles'].includes(track.kind)) continue;
+          for (const cue of Array.from(track.activeCues || [])) {
+            let rendered = '';
+            try {
+              rendered = cue.getCueAsHTML?.()?.textContent || '';
+            } catch {}
+            const raw = String(rendered || cue.text || '').trim();
+            const plain = raw.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+            if (plain && !cues.includes(plain)) cues.push(plain);
+          }
+        }
+      }
+      comparisonCaptionText.textContent = cues.join('\n');
+      comparisonCaption.hidden = cues.length === 0;
+    };
+
+    const bindCaptionTrackEvents = () => {
+      for (const track of Array.from(video.textTracks || [])) {
+        track.addEventListener?.('cuechange', updateComparisonCaption, { signal });
+      }
+    };
+    bindCaptionTrackEvents();
+    video.textTracks?.addEventListener?.('change', updateComparisonCaption, { signal });
+    video.textTracks?.addEventListener?.('addtrack', event => {
+      event.track?.addEventListener?.('cuechange', updateComparisonCaption, { signal });
+      updateComparisonCaption();
+    }, { signal });
+    video.textTracks?.addEventListener?.('removetrack', updateComparisonCaption, { signal });
+
     const render = () => {
       const hasReference = Boolean(this.#reference);
       const open = hasReference && this.#presentation === 'open';
+      container.toggleAttribute('data-comparison-open', open);
       referenceLayer.hidden = !open;
       seamLine.hidden = !open;
       seamControl.hidden = !open;
@@ -533,6 +574,7 @@ class AfterimageTemporalLens extends HTMLElement {
       pinButton.querySelector('span').textContent = hasReference ? 'Pin current frame' : 'Pin moment';
       updateSeam(this.#seam);
       updateRelation();
+      updateComparisonCaption();
     };
 
     const commitCandidate = (candidate, time, approximate, requestId, sourceEpoch) => {
@@ -698,6 +740,7 @@ class AfterimageTemporalLens extends HTMLElement {
     }
 
     video.addEventListener('timeupdate', updateRelation, { signal });
+    video.addEventListener('timeupdate', updateComparisonCaption, { signal });
     video.addEventListener('durationchange', updateRelation, { signal });
     video.addEventListener('loadedmetadata', updateRelation, { signal });
     for (const eventName of ['loadedmetadata', 'loadeddata', 'canplay', 'durationchange', 'progress', 'seeking', 'seeked', 'waiting', 'playing', 'ended', 'error']) {
@@ -879,6 +922,7 @@ function interfaceMarkup(enhancement = '') {
       '<div class="afterimage-reference" hidden aria-hidden="true"><canvas></canvas></div>' +
       '<div class="afterimage-seam" hidden aria-hidden="true"><span></span></div>' +
       '<input class="afterimage-seam-control" type="range" min="0" max="100" value="50" step="1" aria-label="Pinned frame reveal" hidden>' +
+      '<div class="afterimage-comparison-caption" hidden aria-hidden="true"><span></span></div>' +
     '</div>' +
     '<div class="afterimage-deck">' +
       '<div class="afterimage-relation" hidden>' +
