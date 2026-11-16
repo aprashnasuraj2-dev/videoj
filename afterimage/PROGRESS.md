@@ -313,3 +313,20 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Checklist 016, 026 and 069 are now promoted only from passing executable evidence. Physical phones, screen readers, low-end hardware, genuine tainted cross-origin/expired-provider failure and explicit throttled-network profiling remain unclaimed.
 - Successful run regenerated `standalone.html`; its bytes were reconciled on the hardening branch in `73d883c...`.
 - Full evidence and concept-drift audit: `docs/HARDENING.md`.
+
+## 2026-11-16 · final cross-hardening verification and freeze decision
+
+- Hardening stayed isolated on `afterimage-hardening`; the public competition product remains frozen at `2316dc7f07f5b73a2d30d7e95fc5b09e6f83fb69` / runtime `0.3.10-control-fit`.
+- Exact hardening product/test source `b8003a74d43c382b3011b8094f16bbc37397ee80` passed GitHub Actions run `43825696674`. The exact regenerated standalone bytes tested in that run were reconciled in `5e8825b9ecfcc0c600aff1d0fcb393ae40b7a057`.
+- Artifact `14206631544` / digest `sha256:29442e5621ad770b27301d4dce98c19832e0188d9116c9f1c74a2ed08c303c97` contains lifecycle JSON for Chromium/Firefox/WebKit, difficult-media and footprint JSON, three browser reports, headed keyboard/fullscreen evidence, touch evidence and judge-first-use captures.
+- Lifecycle proof now includes explicit metadata/NaN/Infinity/zero/live-DVR/seekability/source-removal/ended/error states; two-instance bidirectional isolation; 20 remount cycles with pending work; latest-request/source-epoch races; failed-repin retention/focus; and zero accepted page exceptions. A stale `currentSrc` after source removal was found as a real edge defect and fixed by following only the host's currently declared source.
+- Real `npm pack` portability installs unrelated host-owned video/poster/captions, proves base/enhanced separation, moves the seam, pins both enhanced instances independently and rejects demo/media/provider/sibling/runtime coupling from the tarball.
+- Difficult-media passes 240/320/390/768/1280, mobile landscape, 4:3, 9:16, RTL/long localized copy, real long captions, no poster/captions, >1-hour and ~10-hour states, duration/range mutation, native buffered-range rendering, ended capture and unavailable-source fallback.
+- Measured CI footprint: base 80,121 B gzip; enhanced 83,940 B; +3,819 B JS; shared CSS 2,652 B; one 1279×719 canvas / 3,678,404 raw RGBA bytes; 20-pin mean 34.95ms / max 48.41ms; 200 seam inputs 3.0ms; zero seam network/seeking events; zero observed >50ms interaction Long Tasks in 10 traces.
+- Hardened regression passes Chromium 33/33, Firefox 31/31, desktop Playwright WebKit 31/31, official headed keyboard/accessibility 44/44, touch 15/15, fullscreen 4/4 and judge-first-use 9/9. First Tab remains Play; focus ring is 3px / 12.07:1 against the deck and control foreground 14.80:1.
+- Linux Playwright WebKit's lifecycle fixture can expose decoded data before stable duration/seekability, so that lifecycle-race gate records a synthetic host clock only; real WebKit ordinary playback/seek is separately covered by the 31/31 hardened standalone regression. This is not physical Safari evidence.
+- Playback Settings remains intentionally excluded because it adds narrow-width density without strengthening Temporal Lens. No Return/Stay/checkpoint/navigation-history behavior was introduced.
+- Still unverified: physical iPhone Safari, physical Android Chrome, NVDA, VoiceOver, real low-end phone performance, genuine tainted cross-origin/expired-provider failure, separately throttled authored-seek behavior, numbered-frame tolerance and signed-in competition submission.
+- **Promotion decision: KEEP FROZEN PUBLIC RELEASE.** Hardening improves evidence and resilience, but changing an already-qualified competition build at the deadline is not objectively safer.
+- Full current evidence: `docs/HARDENING.md`.
+\n
