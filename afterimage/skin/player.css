@@ -80,6 +80,28 @@
   .afterimage .afterimage-presets button { flex: 1; }
   .afterimage .afterimage-clear { min-width: 70px; }
 }
+
+.afterimage:fullscreen {
+  inline-size: 100%;
+  max-inline-size: none;
+  block-size: 100%;
+  margin: 0;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.afterimage:fullscreen .afterimage-stage {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  block-size: auto;
+  aspect-ratio: auto;
+}
+.afterimage:fullscreen .afterimage-deck {
+  flex: 0 0 auto;
+  padding-block-end: max(16px, env(safe-area-inset-bottom));
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .afterimage .afterimage-reference { transition: clip-path 150ms ease-out; }
 }

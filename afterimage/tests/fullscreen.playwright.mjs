@@ -39,24 +39,47 @@ try {
   check('runtime-version', support.version === expectedVersion, support);
   check('fullscreen-api-and-control', support.fullscreenEnabled && Boolean(support.buttonName) && support.buttonWidth >= 44 && support.buttonHeight >= 44, support);
 
-  await page.locator('media-fullscreen-button').click();
+  const fullscreenControl = page.locator('media-fullscreen-button');
+  await fullscreenControl.click();
   await page.waitForFunction(() => Boolean(document.fullscreenElement), null, { timeout: 5000 });
-  const entered = await page.evaluate(() => ({
-    active: Boolean(document.fullscreenElement),
-    tag: document.fullscreenElement?.tagName || null,
-    buttonName: window.__AFTERIMAGE_RELEASE__.player.querySelector('media-fullscreen-button')?.getAttribute('aria-label') || null,
-  }));
-  check('enter-fullscreen', entered.active, entered);
+  await page.waitForTimeout(200);
+  const entered = await page.evaluate(() => {
+    const { player } = window.__AFTERIMAGE_RELEASE__;
+    const bar = player.querySelector('.afterimage-bar')?.getBoundingClientRect();
+    const deck = player.querySelector('.afterimage-deck')?.getBoundingClientRect();
+    const stage = player.querySelector('.afterimage-stage')?.getBoundingClientRect();
+    const fullscreenButton = player.querySelector('media-fullscreen-button');
+    return {
+      active: Boolean(document.fullscreenElement),
+      tag: document.fullscreenElement?.tagName || null,
+      buttonName: fullscreenButton?.getAttribute('aria-label') || null,
+      viewportHeight: innerHeight,
+      barBottom: bar?.bottom || 0,
+      deckBottom: deck?.bottom || 0,
+      stageBottom: stage?.bottom || 0,
+      deckTop: deck?.top || 0,
+      playVisible: player.querySelector('media-play-button')?.getBoundingClientRect().width > 0,
+    };
+  });
+  check(
+    'enter-fullscreen',
+    entered.active &&
+      entered.playVisible &&
+      entered.barBottom <= entered.viewportHeight + 1 &&
+      entered.deckBottom <= entered.viewportHeight + 1 &&
+      entered.stageBottom <= entered.deckTop + 1,
+    entered,
+  );
   await page.screenshot({ path: new URL('fullscreen-entered.png', artifactDir).pathname });
 
-  await page.keyboard.press('Escape');
+  await fullscreenControl.click();
   await page.waitForFunction(() => !document.fullscreenElement, null, { timeout: 5000 });
   const exited = await page.evaluate(() => ({
     active: Boolean(document.fullscreenElement),
     buttonName: window.__AFTERIMAGE_RELEASE__.player.querySelector('media-fullscreen-button')?.getAttribute('aria-label') || null,
     playVisible: window.__AFTERIMAGE_RELEASE__.player.querySelector('media-play-button')?.getBoundingClientRect().width > 0,
   }));
-  check('escape-fullscreen', !exited.active && exited.playVisible, exited);
+  check('exit-fullscreen-control', !exited.active && exited.playVisible, exited);
   report.pass = true;
 } catch (error) {
   report.pass = false;

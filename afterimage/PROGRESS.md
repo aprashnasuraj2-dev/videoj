@@ -255,3 +255,12 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Runtime marker is `0.3.4-fullscreen-control`.
 - Browser matrix, headed fullscreen gate and submission-capture gate are repointed to require both this exact response header SHA and runtime marker.
 - **Next action:** require CI + Chromium/Firefox/WebKit + headed fullscreen to pass before treating this as the new known-good candidate; then regenerate submission evidence against the same release.
+
+
+## 2026-11-16 · fullscreen deck-fit product fix
+
+- Headed Chromium proved `0.3.4-fullscreen-control` enters native wrapper fullscreen, but visual evidence showed the fixed 16:9 stage plus deck exceeded the fullscreen viewport and pushed transport below the fold.
+- Fullscreen now uses a 100%-height flex column. The stage flexes into the remaining height with `aspect-ratio:auto`; the deck remains a non-shrinking footer with safe-area padding.
+- Headed evidence now requires the stage/deck boundary to register, transport/deck bottoms to stay inside the viewport, and exits through the visible fullscreen button.
+- Runtime marker advances to `0.3.5-fullscreen-fit`; standalone is regenerated from the same canonical sources.
+- Owner confirmed both optional bonuses are required for final readiness: Mux public playback ID actually used by the submitted player, plus a separate real public site using the reusable AFTERIMAGE skin.
