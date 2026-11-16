@@ -254,6 +254,104 @@ try {
   await press('Enter');
   check('comparison-enter-reopen-range-focus', await matches('.afterimage-seam-control'), await active(page));
 
+  await page.waitForFunction(() => {
+    const { player, video } = window.__AFTERIMAGE_RELEASE__;
+    const caption = player.querySelector('.afterimage-comparison-caption');
+    const track = [...video.textTracks].find(item => item.kind === 'captions' && item.mode === 'showing');
+    return caption && !caption.hidden && track?.activeCues?.length > 0 && caption.textContent.trim().length > 0;
+  }, null, { timeout: 3000 });
+  const comparisonCaption = await page.evaluate(() => {
+    const { player, video } = window.__AFTERIMAGE_RELEASE__;
+    const stage = player.querySelector('.afterimage-stage').getBoundingClientRect();
+    const layer = player.querySelector('.afterimage-comparison-caption');
+    const span = layer.querySelector('span');
+    const rect = span.getBoundingClientRect();
+    const style = getComputedStyle(span);
+    const track = [...video.textTracks].find(item => item.kind === 'captions' && item.mode === 'showing');
+    return {
+      text: span.textContent.trim(),
+      ariaHidden: layer.getAttribute('aria-hidden'),
+      hidden: layer.hidden,
+      trackMode: track?.mode || null,
+      activeCue: track?.activeCues?.[0]?.text || null,
+      rect: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height },
+      stage: { left: stage.left, right: stage.right, top: stage.top, bottom: stage.bottom },
+      color: style.color,
+      backgroundColor: style.backgroundColor,
+    };
+  });
+  const comparisonCaptionContrast = ratio(rgb(comparisonCaption.color), rgb(comparisonCaption.backgroundColor));
+  check(
+    'comparison-caption-readable-over-reference',
+    !comparisonCaption.hidden &&
+      comparisonCaption.ariaHidden === 'true' &&
+      comparisonCaption.trackMode === 'showing' &&
+      comparisonCaption.text === comparisonCaption.activeCue &&
+      comparisonCaption.rect.width > 0 &&
+      comparisonCaption.rect.height > 0 &&
+      comparisonCaption.rect.left >= comparisonCaption.stage.left - 1 &&
+      comparisonCaption.rect.right <= comparisonCaption.stage.right + 1 &&
+      comparisonCaption.rect.top >= comparisonCaption.stage.top - 1 &&
+      comparisonCaption.rect.bottom <= comparisonCaption.stage.bottom + 1 &&
+      comparisonCaptionContrast >= 4.5,
+    { ...comparisonCaption, comparisonCaptionContrast },
+  );
+
+  const comparisonFullscreenButton = page.locator('media-fullscreen-button');
+  await comparisonFullscreenButton.focus();
+  await press('Enter');
+  await page.waitForFunction(() => Boolean(document.fullscreenElement), null, { timeout: 5000 });
+  const comparisonFullscreenCaption = await page.evaluate(() => {
+    const { player, video } = window.__AFTERIMAGE_RELEASE__;
+    const layer = player.querySelector('.afterimage-comparison-caption');
+    const span = layer.querySelector('span');
+    const rect = span.getBoundingClientRect();
+    const stage = player.querySelector('.afterimage-stage').getBoundingClientRect();
+    const style = getComputedStyle(span);
+    const track = [...video.textTracks].find(item => item.kind === 'captions' && item.mode === 'showing');
+    return {
+      exactWrapper: document.fullscreenElement === player.querySelector('.afterimage'),
+      comparisonOpen: !player.querySelector('.afterimage-reference').hidden,
+      captionHidden: layer.hidden,
+      text: span.textContent.trim(),
+      activeCue: track?.activeCues?.[0]?.text || null,
+      trackMode: track?.mode || null,
+      rect: { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height },
+      stage: { left: stage.left, right: stage.right, top: stage.top, bottom: stage.bottom },
+      color: style.color,
+      backgroundColor: style.backgroundColor,
+    };
+  });
+  const comparisonFullscreenContrast = ratio(rgb(comparisonFullscreenCaption.color), rgb(comparisonFullscreenCaption.backgroundColor));
+  check(
+    'comparison-caption-readable-in-fullscreen',
+    comparisonFullscreenCaption.exactWrapper &&
+      comparisonFullscreenCaption.comparisonOpen &&
+      !comparisonFullscreenCaption.captionHidden &&
+      comparisonFullscreenCaption.trackMode === 'showing' &&
+      comparisonFullscreenCaption.text === comparisonFullscreenCaption.activeCue &&
+      comparisonFullscreenCaption.rect.width > 0 &&
+      comparisonFullscreenCaption.rect.height > 0 &&
+      comparisonFullscreenCaption.rect.left >= comparisonFullscreenCaption.stage.left - 1 &&
+      comparisonFullscreenCaption.rect.right <= comparisonFullscreenCaption.stage.right + 1 &&
+      comparisonFullscreenCaption.rect.top >= comparisonFullscreenCaption.stage.top - 1 &&
+      comparisonFullscreenCaption.rect.bottom <= comparisonFullscreenCaption.stage.bottom + 1 &&
+      comparisonFullscreenContrast >= 4.5,
+    { ...comparisonFullscreenCaption, comparisonFullscreenContrast },
+  );
+  await page.screenshot({ path: new URL('comparison-fullscreen-captions.png', artifactDir).pathname });
+  await comparisonFullscreenButton.focus();
+  await press('Space');
+  await page.waitForFunction(() => !document.fullscreenElement, null, { timeout: 5000 });
+  check(
+    'comparison-caption-survives-fullscreen-exit',
+    await page.evaluate(() => {
+      const p = window.__AFTERIMAGE_RELEASE__.player;
+      return !p.querySelector('.afterimage-reference').hidden &&
+        !p.querySelector('.afterimage-comparison-caption').hidden;
+    }),
+  );
+
   const toClose = await tabTo('[data-afterimage-close]');
   check('close-keyboard-reachable', toClose !== null, {tabs:toClose, active:await active(page)});
   await press('Enter');
