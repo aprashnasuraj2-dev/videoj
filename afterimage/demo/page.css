@@ -9,3 +9,30 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
 .fixture-note { max-width: 760px; margin: 14px auto 0; color: #9da7aa; font-size: 12px; line-height: 1.55; }
 .fixture-note strong { color: #d9a069; }
 @media (max-width: 700px) { main { width: min(100% - 16px, 1180px); padding-top: 22px; } header { grid-template-columns: 1fr; } }
+
+@media (max-width: 300px) {
+  header,
+  header > * {
+    min-width: 0;
+  }
+
+  h1 {
+    font-size: clamp(38px, 18vw, 44px);
+    letter-spacing: -0.06em;
+    overflow-wrap: anywhere;
+  }
+
+  .eyebrow {
+    max-width: 100%;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    line-height: 1.35;
+    white-space: normal;
+  }
+
+  header p {
+    min-width: 0;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+}

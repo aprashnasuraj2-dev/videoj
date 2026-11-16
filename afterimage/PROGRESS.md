@@ -79,3 +79,10 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - This is a real layout defect, not a test harness failure: at viewport 240px the measured player was 304px and horizontal overflow was true.
 - Removed the page-level 320px floor and added an ultra-narrow container rule that keeps primary actions/presets fluid while preserving 44px target height.
 - **Next action:** rebuild/redeploy the exact fix, then rerun Chromium/Firefox/WebKit matrix.
+
+## 2026-11-16 · second 240px root cause isolated
+
+- The first fix removed the page-level 320px floor and reduced the player itself to 224px at a 240px desktop viewport.
+- Instrumentation still found document overflow: header min-content width was ~283px (wordmark/eyebrow), while the comparison control grid retained a ~260px min-content width.
+- Added an ultra-narrow typography fallback and explicit `min-width:0`/one-column control rules so neither the header nor the Temporal Lens can widen the document.
+- **Next action:** regenerate standalone, redeploy exact source, and rerun 240px plus the three-browser matrix.
