@@ -275,9 +275,10 @@ try {
     await page.waitForFunction(() => ![...window.__AFTERIMAGE_RELEASE__.video.textTracks].some(track => track.kind === 'captions' && track.mode === 'showing'));
   }
 
-  if (!await page.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.paused)) {
+  if (await page.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.paused)) {
     await page.locator('media-play-button').click();
-    await page.waitForFunction(() => window.__AFTERIMAGE_RELEASE__.video.paused);
+    await page.waitForFunction(() => !window.__AFTERIMAGE_RELEASE__.video.paused);
+    await page.waitForTimeout(300);
   }
 
   await page.locator('[data-afterimage-example]').click();
@@ -312,7 +313,8 @@ try {
   const normalizedPinned = finalState.pinned?.replace(/^≈/, '');
   check(
     'final-primary-visual',
-    normalizedPinned === '00:05' &&
+    finalState.pinned === '00:05' &&
+      normalizedPinned === '00:05' &&
       finalState.now === '00:13' &&
       finalState.delta === '+00:08' &&
       finalState.seam === '50' &&
