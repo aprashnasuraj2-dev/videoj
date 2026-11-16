@@ -111,6 +111,12 @@ try {
   await page.getByRole('button', { name: 'Clear pin', exact: true }).click();
   await hold('clear returns ordinary player', 2200);
 
+  if (await page.evaluate(() => window.__AFTERIMAGE_RELEASE__.video.paused)) {
+    await page.locator('media-play-button').click();
+    await page.waitForFunction(() => !window.__AFTERIMAGE_RELEASE__.video.paused);
+    await hold('playback restored before final pair', 900);
+  }
+
   await page.locator('[data-afterimage-example]').click();
   await page.waitForFunction(() => {
     const { player, video } = window.__AFTERIMAGE_RELEASE__;

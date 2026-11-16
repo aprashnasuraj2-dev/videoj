@@ -168,3 +168,11 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Submission capture run `43801771733` reached Playwright context creation and failed before navigation because `recordVideo.dir` accepts a filesystem string, not a WHATWG URL object.
 - Normalized the recording directory to `artifactDir.pathname`. Screenshot and fs APIs continue using their supported path/URL forms.
 - No live release change was made.
+
+
+## 2026-11-16 · reel choreography correction after full interaction pass
+
+- Submission capture run `43801880259` completed the interaction sequence, including the real pointer seam drag, then failed only at the final hero-pair assertion because the video had intentionally been paused before invoking the authored pair.
+- In paused capture mode AFTERIMAGE correctly labels the pinned frame approximate, producing `≈00:05 / 00:13 / +00:08`; this is expected product semantics, not a regression.
+- The reel choreography now restores playback before the final authored pair so the final submission frame uses an exact presented-frame callback and reads `00:05 / 00:13`.
+- Submission evidence upload is now `if: always()` so future capture failures retain their report/video evidence instead of discarding diagnostics.
