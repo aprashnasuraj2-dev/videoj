@@ -15,6 +15,7 @@ const engineName = process.env.AFTERIMAGE_HARDENING_ENGINE || 'chromium';
 let server;
 let browser;
 let baseURL;
+const runtimeErrors = new WeakMap();
 const report = {
   gate: 'source-lifecycle',
   browser: engineName,
@@ -61,6 +62,8 @@ after(async () => {
 
 async function freshPage(t) {
   const page = await browser.newPage({ viewport: { width: 1100, height: 850 } });
+  runtimeErrors.set(page, []);
+  page.on('pageerror', error => runtimeErrors.get(page)?.push(String(error?.stack || error)));
   t.after(() => page.close());
   const url = new URL('tests/hardening-host.html', baseURL);
   const fixtureMedia = engineName === 'webkit'
@@ -97,6 +100,11 @@ async function freshPage(t) {
     );
   }
   return page;
+}
+
+function assertNoRuntimeErrors(page, label) {
+  const errors = runtimeErrors.get(page) || [];
+  assert.deepEqual(errors, [], `${label} emitted browser runtime exceptions: ${errors.join('\n')}`);
 }
 
 async function seek(page, selector, time) {
@@ -151,6 +159,8 @@ test('source-lifecycle: two simultaneous players keep independent references', {
 
   assert.equal(await page.locator('#player-b .afterimage-reference').isVisible(), false);
   assert.equal(await page.locator('#player-b .afterimage-relation').isVisible(), false);
+  assert.equal(await page.locator('#player-b .afterimage-seam').isVisible(), false);
+  assert.equal(await page.locator('#player-b .afterimage-seam-control').isVisible(), false);
 
   await seek(page, '#player-b', 11);
   await pin(page, '#player-b');
@@ -196,6 +206,7 @@ test('source-lifecycle: two simultaneous players keep independent references', {
   }));
   assert.deepEqual(reverse, { aReferenceVisible: false, bReferenceVisible: true, bSeam: '73' });
 
+  assertNoRuntimeErrors(page, 'two-instance isolation');
   report.observations.twoInstances = { ...values, bBeforeClearA, afterClearA, reverse };
   report.checks.twoInstances = true;
 });
@@ -256,10 +267,11 @@ test('source-lifecycle: 20 remove/reinsert cycles do not duplicate handlers or i
 
   const afterCycles = await page.evaluate(() => ({
     lensCount: window.__cycle.player.querySelectorAll('afterimage-temporal-lens').length,
+    canvasCount: window.__cycle.player.querySelectorAll('.afterimage-reference canvas').length,
     referenceHidden: window.__cycle.player.querySelector('.afterimage-reference')?.hidden,
     relationHidden: window.__cycle.player.querySelector('.afterimage-relation')?.hidden,
   }));
-  assert.deepEqual(afterCycles, { lensCount: 1, referenceHidden: true, relationHidden: true });
+  assert.deepEqual(afterCycles, { lensCount: 1, canvasCount: 1, referenceHidden: true, relationHidden: true });
 
   await seek(page, '#cycle-player', 7);
   await page.locator('#cycle-player video').evaluate(video => video.pause());
@@ -298,6 +310,7 @@ test('source-lifecycle: 20 remove/reinsert cycles do not duplicate handlers or i
   assert.equal(disposed.referenceHidden, true);
   assert.equal(disposed.relationHidden, true);
   assert.equal(disposed.pinDisabled, false);
+  assertNoRuntimeErrors(page, '20-cycle remount stress');
   report.observations.remountStress = { cycles: 20, pendingCycles: [5, 10, 15, 20], afterCycles, disposed };
   report.checks.remountStress = true;
 });
@@ -389,6 +402,7 @@ test('source-lifecycle: stale callback cannot win after Close, Clear or source e
   });
   await page.waitForFunction(() => window.__AFTERIMAGE_HARDENING__.a.video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA);
   assert.equal(await page.locator('#player-a .afterimage-reference').isVisible(), false, 'Same-URL reload retained old reference.');
+  assertNoRuntimeErrors(page, 'stale-work races');
   report.observations.staleWorkRaces = {
     first,
     sameSourceNewest,
@@ -541,6 +555,7 @@ test('source-lifecycle: capture-state matrix is truthful and recovery never auto
 
   const text = await page.locator('#player-a').textContent();
   assert.doesNotMatch(text, /NaN|Infinity/);
+  assertNoRuntimeErrors(page, 'capture-state matrix');
   report.observations.captureStates = {
     metadataPending: true,
     durationUnknown: true,
@@ -625,6 +640,7 @@ test('source-lifecycle: failed re-pin retains the previous valid reference', { t
     };
   });
   assert.deepEqual(afterSourceError, before, 'Source-error re-pin replaced or cleared the valid reference.');
+  assertNoRuntimeErrors(page, 'failed re-pin retention');
   report.observations.failedRepinRetention = { before, afterInvalidFrame, afterSourceError };
   report.checks.failedRepinRetention = true;
 });
