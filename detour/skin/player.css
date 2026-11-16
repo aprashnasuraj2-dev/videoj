@@ -290,8 +290,8 @@
 .detour-volume:focus,
 .detour-volume:focus-within,
 .detour-volume:has(:focus-visible) {
-  outline: 2px solid var(--detour-focus);
-  outline-offset: -2px;
+  outline: 3px solid var(--detour-focus);
+  outline-offset: -3px;
 }
 .detour .detour-return:not([aria-disabled='true']):focus-visible { outline-color: var(--detour-signal-ink); }
 .detour-settings { grid-area: settings; justify-self: end; }
