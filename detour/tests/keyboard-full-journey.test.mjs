@@ -177,10 +177,9 @@ test('keyboard-full-journey: clean first focus, deterministic tab sequence and q
     check('focus-indicator-contrast', contrast.focusContrast >= 3, contrast);
     check('control-text-icon-contrast', contrast.controlContrast >= 4.5, contrast);
 
-    await page.evaluate(() => document.activeElement?.blur());
-    const sequence = [];
-    const seen = new Set();
-    for (let i = 0; i < 14; i += 1) {
+    const sequence = [first];
+    const seen = new Set([`${first.tag}|${first.label}`]);
+    for (let i = 0; i < 13; i += 1) {
       await page.keyboard.press('Tab');
       const item = await active(page);
       if (!item.insidePlayer || item.width <= 0 || item.height <= 0) break;
