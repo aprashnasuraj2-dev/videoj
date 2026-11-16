@@ -282,6 +282,7 @@ class AfterimageTemporalLens extends HTMLElement {
     const render = () => {
       const hasReference = Boolean(this.#reference);
       const open = hasReference && this.#presentation === 'open';
+      container.toggleAttribute('data-comparison-open', open);
       referenceLayer.hidden = !open;
       seamLine.hidden = !open;
       seamControl.hidden = !open;
