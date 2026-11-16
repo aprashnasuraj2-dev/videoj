@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const baseURL=process.env.AFTERIMAGE_URL || 'https://afterimage.aafnaipatro.com/';
-const expectedRelease=process.env.AFTERIMAGE_RELEASE || '6f271470a76161a55a423e5a67e7c5fb1cdb2f63';
+const expectedRelease=process.env.AFTERIMAGE_RELEASE ?? '6f271470a76161a55a423e5a67e7c5fb1cdb2f63';
 const artifactDir=new URL('../artifacts/touch-robustness/', import.meta.url);
 await mkdir(artifactDir,{recursive:true});
 const report={url:baseURL,expectedRelease,checks:{},observations:{},limitations:[]};
@@ -11,7 +11,7 @@ const browser=await chromium.launch({headless:true});
 
 async function ready(page){
   const response=await page.goto(baseURL,{waitUntil:'networkidle',timeout:60000});
-  check('release-'+Math.random().toString(36).slice(2,7),response?.headers()?.['x-afterimage-release']===expectedRelease,{header:response?.headers()?.['x-afterimage-release']});
+  if(expectedRelease) check('release-'+Math.random().toString(36).slice(2,7),response?.headers()?.['x-afterimage-release']===expectedRelease,{header:response?.headers()?.['x-afterimage-release']});
   await page.waitForFunction(()=>window.__AFTERIMAGE_RELEASE__?.video?.readyState>=1,null,{timeout:30000});
 }
 async function openComparison(page){

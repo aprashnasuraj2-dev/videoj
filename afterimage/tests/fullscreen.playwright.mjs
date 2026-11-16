@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const baseURL = process.env.AFTERIMAGE_URL || 'https://afterimage.aafnaipatro.com/';
-const expectedRelease = process.env.AFTERIMAGE_RELEASE || '428e337d9918dcba1db50d01ea1b22a5b470c1ac';
+const expectedRelease = process.env.AFTERIMAGE_RELEASE ?? '428e337d9918dcba1db50d01ea1b22a5b470c1ac';
 const expectedVersion = process.env.AFTERIMAGE_VERSION || '0.3.5-fullscreen-fit';
 const artifactDir = new URL('../artifacts/fullscreen/', import.meta.url);
 await mkdir(artifactDir, { recursive: true });
@@ -19,7 +19,7 @@ const page = await context.newPage();
 try {
   const response = await page.goto(baseURL, { waitUntil: 'networkidle', timeout: 60000 });
   const releaseHeader = response?.headers()?.['x-afterimage-release'] || null;
-  check('exact-release', releaseHeader === expectedRelease, { releaseHeader, expectedRelease });
+  if (expectedRelease) check('exact-release', releaseHeader === expectedRelease, { releaseHeader, expectedRelease });
   await page.waitForFunction(() => {
     const release = window.__AFTERIMAGE_RELEASE__;
     return release?.video?.readyState >= 1 && Number.isFinite(release.video.duration);

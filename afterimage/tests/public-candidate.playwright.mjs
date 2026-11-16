@@ -1,4 +1,4 @@
-import { chromium, firefox, webkit } from '@playwright/test';
+import { chromium, firefox, webkit } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const browserName = process.env.BROWSER || 'chromium';

@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 
 const baseURL = process.env.AFTERIMAGE_URL || 'https://afterimage.aafnaipatro.com/';
-const expectedRelease = process.env.AFTERIMAGE_RELEASE || '6f271470a76161a55a423e5a67e7c5fb1cdb2f63';
+const expectedRelease = process.env.AFTERIMAGE_RELEASE ?? '6f271470a76161a55a423e5a67e7c5fb1cdb2f63';
 const expectedVersion = process.env.AFTERIMAGE_VERSION || '0.3.9-touch-events';
 const artifactDir = new URL('../artifacts/official-gates/', import.meta.url);
 await mkdir(artifactDir, { recursive: true });
@@ -68,7 +68,7 @@ const page = await context.newPage();
 try {
   const response = await page.goto(baseURL, { waitUntil: 'networkidle', timeout: 60000 });
   check('anonymous-http-ok', response?.ok(), { status: response?.status() });
-  check('exact-release-header', response?.headers()?.['x-afterimage-release'] === expectedRelease, { header: response?.headers()?.['x-afterimage-release'] });
+  if (expectedRelease) check('exact-release-header', response?.headers()?.['x-afterimage-release'] === expectedRelease, { header: response?.headers()?.['x-afterimage-release'] });
   await page.waitForFunction(() => {
     const r=window.__AFTERIMAGE_RELEASE__;
     return r?.video?.readyState >= 1 && Number.isFinite(r.video.duration);

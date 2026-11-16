@@ -14,7 +14,7 @@ permissions:
 jobs:
   hardening:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 55
     defaults:
       run:
         working-directory: afterimage
@@ -83,6 +83,35 @@ jobs:
       - name: Performance and footprint
         run: node --test tests/performance-footprint.test.mjs
 
+      - name: Hardened standalone browser, keyboard, touch and fullscreen regression
+        env:
+          AFTERIMAGE_URL: http://127.0.0.1:4173/standalone.html
+          AFTERIMAGE_RELEASE: ''
+          AFTERIMAGE_VERSION: 0.3.10-control-fit
+        run: |
+          npx vite --host 127.0.0.1 --port 4173 > /tmp/afterimage-hardening-vite.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          ready=0
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:4173/standalone.html >/dev/null; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" -ne 1 ]; then
+            cat /tmp/afterimage-hardening-vite.log
+            exit 1
+          fi
+          BROWSER=chromium node tests/public-candidate.playwright.mjs
+          BROWSER=firefox node tests/public-candidate.playwright.mjs
+          BROWSER=webkit node tests/public-candidate.playwright.mjs
+          xvfb-run -a node tests/official-gates.playwright.mjs
+          node tests/touch-robustness.playwright.mjs
+          xvfb-run -a node tests/fullscreen.playwright.mjs
+          node tests/judge-first-use.playwright.mjs
+
       - name: Reconcile generated standalone on hardening branch
         if: success() && github.actor != 'github-actions[bot]'
         run: |
@@ -100,7 +129,7 @@ jobs:
         with:
           name: afterimage-hardening-evidence-${{ github.sha }}
           path: |
-            afterimage/artifacts/hardening/
+            afterimage/artifacts/
             afterimage/standalone.html
           if-no-files-found: warn
           retention-days: 30
