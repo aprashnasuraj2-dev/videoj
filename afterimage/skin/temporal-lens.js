@@ -252,7 +252,11 @@ class AfterimageTemporalLens extends HTMLElement {
         for (const track of Array.from(video.textTracks || [])) {
           if (track.mode !== 'showing' || !['captions', 'subtitles'].includes(track.kind)) continue;
           for (const cue of Array.from(track.activeCues || [])) {
-            const raw = String(cue.text || '').trim();
+            let rendered = '';
+            try {
+              rendered = cue.getCueAsHTML?.()?.textContent || '';
+            } catch {}
+            const raw = String(rendered || cue.text || '').trim();
             const plain = raw.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
             if (plain && !cues.includes(plain)) cues.push(plain);
           }
