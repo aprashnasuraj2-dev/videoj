@@ -357,11 +357,13 @@ test('difficult-media: ended media can still truthfully pin; unavailable source 
       relationHidden: player.querySelector('.afterimage-relation').hidden,
       referenceHidden: player.querySelector('.afterimage-reference').hidden,
       state: player.querySelector('afterimage-temporal-lens').dataset.captureState,
+      reason: player.querySelector('afterimage-temporal-lens').dataset.captureReason,
       text: player.textContent,
     }));
     check('unavailable-enhancement-preserves-player',
       ordinary.play >= 44 && ordinary.seek > 0 && ordinary.mute >= 44 && ordinary.fullscreen >= 44
-      && ordinary.relationHidden && ordinary.referenceHidden && ordinary.state === 'timeline-unavailable'
+      && ordinary.relationHidden && ordinary.referenceHidden
+      && ordinary.state === 'timeline-unavailable' && ordinary.reason === 'source-missing'
       && !/NaN|Infinity/.test(ordinary.text),
       ordinary);
   } finally {
