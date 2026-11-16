@@ -92,3 +92,10 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - On the corrected no-overflow build, WebKit measured Pinned/Split/Now at 41×44px because the ultra-narrow rule had intentionally removed their minimum width.
 - The available 206px control row can fit three 44px targets plus gaps, so the candidate is corrected rather than lowering the 44px acceptance threshold.
 - **Next action:** regenerate standalone, redeploy exact source, verify 240px no-overflow + ≥44px targets, then rerun the browser matrix.
+
+## 2026-11-16 · cross-browser codec hardening
+
+- Chromium and Firefox GitHub-hosted Playwright jobs timed out before product assertions at the H.264 metadata wait; WebKit has a decode path on the same runner family.
+- Rather than classifying that as a skin failure or weakening coverage, the WATERLINE pipeline now also emits a VP9/Opus WebM fallback from the same 18-second master.
+- The public player will use typed source elements so engines can select MP4/H.264 or WebM/VP9 according to actual codec support.
+- **Next action:** let the media workflow render and commit the WebM, then wire the host to both sources and rerun the full matrix.

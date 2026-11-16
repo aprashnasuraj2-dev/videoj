@@ -19,6 +19,12 @@ ffmpeg -nostdin -loglevel error -y \
   -c:a aac -b:a 96k -movflags +faststart \
   "$OUT/the-waterline-v1.mp4"
 
+ffmpeg -nostdin -loglevel error -y \
+  -i "$OUT/the-waterline-v1.mp4" \
+  -c:v libvpx-vp9 -crf 34 -b:v 0 -row-mt 1 -deadline good -cpu-used 2 \
+  -c:a libopus -b:a 64k \
+  "$OUT/the-waterline-v1.webm"
+
 ffmpeg -nostdin -loglevel error -y -ss 5 -i "$OUT/the-waterline-v1.mp4" -frames:v 1 -q:v 2 "$OUT/the-waterline-v1-poster.jpg"
 for t in 3 5 7 11 13 15; do
   ffmpeg -nostdin -loglevel error -y -ss "$t" -i "$OUT/the-waterline-v1.mp4" -frames:v 1 -q:v 3 "$OUT/frame-${t}.jpg"
@@ -57,10 +63,13 @@ const { readFileSync, writeFileSync, statSync } = require('node:fs');
 const { join } = require('node:path');
 const out = process.argv[2];
 const video = join(out, 'the-waterline-v1.mp4');
-const probe = JSON.parse(execFileSync('ffprobe', [
+const webm = join(out, 'the-waterline-v1.webm');
+const probeFile = file => JSON.parse(execFileSync('ffprobe', [
   '-v','error','-show_entries','format=duration,size,bit_rate:stream=index,codec_name,codec_type,width,height,r_frame_rate',
-  '-of','json',video
+  '-of','json',file
 ], { encoding:'utf8' }));
+const probe = probeFile(video);
+const webmProbe = probeFile(webm);
 const hash = file => createHash('sha256').update(readFileSync(join(out,file))).digest('hex');
 const manifest = {
   id:'the-waterline-v1',
@@ -72,6 +81,7 @@ const manifest = {
   streams:probe.streams,
   files:{
     video:{name:'the-waterline-v1.mp4',sha256:hash('the-waterline-v1.mp4'),bytes:statSync(video).size},
+    webm:{name:'the-waterline-v1.webm',sha256:hash('the-waterline-v1.webm'),bytes:statSync(webm).size,streams:webmProbe.streams},
     poster:{name:'the-waterline-v1-poster.jpg',sha256:hash('the-waterline-v1-poster.jpg')},
     captions:{name:'the-waterline-v1.vtt',sha256:hash('the-waterline-v1.vtt')},
     chapters:{name:'the-waterline-v1-chapters.vtt',sha256:hash('the-waterline-v1-chapters.vtt')},
