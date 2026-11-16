@@ -75,6 +75,12 @@ class AfterimageTemporalLens extends HTMLElement {
     };
     this.#cancelPending = cancelPending;
 
+    const invalidatePending = () => {
+      cancelPending();
+      ++this.#requestId;
+      if (pinButton.disabled) pinButton.disabled = false;
+    };
+
     const updateSeam = value => {
       this.#seam = Math.max(0, Math.min(100, Number(value) || 0));
       referenceLayer.style.clipPath = 'inset(0 ' + (100 - this.#seam) + '% 0 0)';
@@ -196,6 +202,7 @@ class AfterimageTemporalLens extends HTMLElement {
 
     const closeComparison = restoreFocus => {
       if (!this.#reference) return;
+      invalidatePending();
       this.#presentation = 'closed';
       render();
       announce('Comparison closed. The pinned frame remains on the timeline.');
@@ -203,8 +210,7 @@ class AfterimageTemporalLens extends HTMLElement {
     };
 
     const clearReference = () => {
-      cancelPending();
-      ++this.#requestId;
+      invalidatePending();
       this.#reference = null;
       this.#presentation = 'closed';
       referenceCanvas.width = 1;
@@ -241,8 +247,7 @@ class AfterimageTemporalLens extends HTMLElement {
 
     for (const eventName of ['loadstart', 'emptied']) {
       video.addEventListener(eventName, () => {
-        cancelPending();
-        ++this.#requestId;
+        invalidatePending();
         ++this.#sourceEpoch;
         this.#reference = null;
         this.#presentation = 'closed';

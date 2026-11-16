@@ -36,3 +36,6 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
     overflow-wrap: anywhere;
   }
 }
+
+.keyboard-cue { max-width: 760px; margin: 12px auto 0; padding: 9px 12px; border: 1px solid rgb(182 218 230 / .18); border-radius: 9px; color: #b9c2c4; background: rgb(16 24 32 / .58); font-size: 12px; line-height: 1.45; }
+.keyboard-cue strong { color: #f0e9d9; font-weight: 700; }

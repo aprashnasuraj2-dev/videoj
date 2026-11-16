@@ -29,8 +29,8 @@
 .afterimage .afterimage-relation > span { min-height: 36px; padding: 8px 10px; border: 1px solid rgb(240 233 217 / .14); border-radius: 8px; background: rgb(0 0 0 / .16); }
 .afterimage .afterimage-relation b { margin-inline-end: .45em; color: var(--afterimage-muted); font-size: 10px; font-weight: 650; letter-spacing: .11em; text-transform: uppercase; }
 .afterimage .afterimage-delta output { color: var(--afterimage-current); }
-.afterimage .afterimage-rail { position: relative; margin-block: 4px 14px; height: 28px; display: flex; align-items: center; }
-.afterimage .afterimage-rail media-time-slider { position: relative; z-index: 3; display: block; width: 100%; height: 28px; cursor: pointer; }
+.afterimage .afterimage-rail { position: relative; grid-area: rail; min-width: 0; height: 44px; display: flex; align-items: center; }
+.afterimage .afterimage-rail media-time-slider { position: relative; z-index: 3; display: block; width: 100%; height: 44px; cursor: pointer; }
 .afterimage .afterimage-track, .afterimage media-slider-track.afterimage-track { position: absolute; inset-inline: 0; inset-block-start: 50%; height: 3px; transform: translateY(-50%); background: rgb(240 233 217 / .22); }
 .afterimage .afterimage-fill, .afterimage media-slider-fill.afterimage-fill { display: block; height: 100%; background: var(--afterimage-current); }
 .afterimage .afterimage-thumb, .afterimage media-slider-thumb.afterimage-thumb { width: 12px; height: 12px; margin: -4.5px 0 0 -6px; border: 2px solid var(--afterimage-current); border-radius: 50%; background: var(--afterimage-ink); box-shadow: 0 0 0 2px var(--afterimage-ink); }
@@ -39,10 +39,11 @@
 .afterimage .afterimage-pin i { position: absolute; inset-block-start: 1px; inset-inline-start: 50%; width: 9px; height: 9px; transform: translateX(-50%) rotate(45deg); border: 1px solid var(--afterimage-ink); background: var(--afterimage-copper); }
 .afterimage .afterimage-pin[data-edge-start] i { inset-inline-start: 0; transform: rotate(45deg); }
 .afterimage .afterimage-pin[data-edge-end] i { inset-inline-start: auto; inset-inline-end: 0; transform: rotate(45deg); }
-.afterimage .afterimage-bar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(280px, auto); align-items: center; gap: 12px; }
+.afterimage .afterimage-bar { display: grid; grid-template-columns: auto minmax(120px, 1fr) auto minmax(0, auto); grid-template-areas: "transport rail options lens"; align-items: center; gap: 10px; }
 .afterimage .afterimage-transport, .afterimage .afterimage-options, .afterimage .afterimage-lens, .afterimage .afterimage-lens-primary, .afterimage .afterimage-presets { display: flex; align-items: center; gap: 8px; }
-.afterimage .afterimage-options { justify-content: center; }
-.afterimage .afterimage-lens { justify-content: flex-end; }
+.afterimage .afterimage-transport { grid-area: transport; }
+.afterimage .afterimage-options { grid-area: options; justify-content: center; }
+.afterimage .afterimage-lens { grid-area: lens; justify-content: flex-end; }
 .afterimage .afterimage-icon, .afterimage .afterimage-action, .afterimage .afterimage-presets button, .afterimage .afterimage-clear { min-width: 44px; min-height: 44px; border: 1px solid rgb(240 233 217 / .18); border-radius: 8px; color: var(--afterimage-limestone); background: rgb(255 255 255 / .04); font: inherit; cursor: pointer; }
 .afterimage .afterimage-icon { display: inline-grid; place-items: center; width: 44px; padding: 0; }
 .afterimage .afterimage-icon svg { width: 22px; height: 22px; }
@@ -55,7 +56,7 @@
 .afterimage .afterimage-presets button, .afterimage .afterimage-clear { padding-inline: 10px; font-size: 12px; }
 .afterimage .afterimage-clear { border-color: transparent; color: var(--afterimage-muted); background: transparent; }
 .afterimage .afterimage-clock { white-space: nowrap; font-size: 13px; }
-.afterimage .afterimage-volume { position: relative; display: block; width: 76px; height: 28px; }
+.afterimage .afterimage-volume { position: relative; display: block; width: 76px; min-width: 76px; height: 44px; }
 .afterimage .afterimage-cc { font-size: 11px; font-weight: 800; letter-spacing: .06em; }
 .afterimage .afterimage-buffering { min-height: 18px; margin-block-start: 8px; color: var(--afterimage-muted); font-size: 11px; }
 .afterimage .afterimage-buffering:not([data-visible]) { display: none; }
@@ -66,9 +67,17 @@
 .afterimage button:disabled { opacity: .55; cursor: wait; }
 @container (max-width: 720px) {
   .afterimage .afterimage-deck { padding-inline: 12px; }
-  .afterimage .afterimage-bar { grid-template-columns: 1fr auto; }
-  .afterimage .afterimage-lens { grid-column: 1 / -1; justify-content: space-between; flex-wrap: wrap; padding-block-start: 4px; border-block-start: 1px solid rgb(240 233 217 / .1); }
-  .afterimage .afterimage-volume { display: none; }
+  .afterimage .afterimage-bar {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "transport" "rail" "options" "lens";
+    gap: 8px;
+  }
+  .afterimage .afterimage-transport,
+  .afterimage .afterimage-options,
+  .afterimage .afterimage-lens { width: 100%; min-width: 0; }
+  .afterimage .afterimage-options { justify-content: flex-start; flex-wrap: wrap; }
+  .afterimage .afterimage-volume { flex: 1 1 76px; max-width: 120px; }
+  .afterimage .afterimage-lens { justify-content: space-between; flex-wrap: wrap; padding-block-start: 4px; border-block-start: 1px solid rgb(240 233 217 / .1); }
 }
 @container (max-width: 430px) {
   .afterimage .afterimage-relation { grid-template-columns: 1fr 1fr; }
@@ -113,7 +122,7 @@
 
 @container (max-width: 300px) {
   .afterimage .afterimage-deck { padding-inline: 8px; }
-  .afterimage .afterimage-bar { grid-template-columns: 1fr auto; gap: 6px; }
+  .afterimage .afterimage-bar { grid-template-columns: minmax(0, 1fr); grid-template-areas: "transport" "rail" "options" "lens"; gap: 6px; }
   .afterimage .afterimage-options { gap: 2px; }
   .afterimage .afterimage-lens { gap: 6px; }
   .afterimage .afterimage-lens-primary { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 6px; }
@@ -158,7 +167,7 @@
   }
 
   .afterimage .afterimage-lens {
-    grid-column: 1;
+    grid-area: lens;
     justify-content: stretch;
   }
 

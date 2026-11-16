@@ -45,6 +45,9 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
   }
 }
 
+.keyboard-cue { max-width: 760px; margin: 12px auto 0; padding: 9px 12px; border: 1px solid rgb(182 218 230 / .18); border-radius: 9px; color: #b9c2c4; background: rgb(16 24 32 / .58); font-size: 12px; line-height: 1.45; }
+.keyboard-cue strong { color: #f0e9d9; font-weight: 700; }
+
 .afterimage {
   --afterimage-ink: #101820;
   --afterimage-limestone: #f0e9d9;
@@ -76,8 +79,8 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
 .afterimage .afterimage-relation > span { min-height: 36px; padding: 8px 10px; border: 1px solid rgb(240 233 217 / .14); border-radius: 8px; background: rgb(0 0 0 / .16); }
 .afterimage .afterimage-relation b { margin-inline-end: .45em; color: var(--afterimage-muted); font-size: 10px; font-weight: 650; letter-spacing: .11em; text-transform: uppercase; }
 .afterimage .afterimage-delta output { color: var(--afterimage-current); }
-.afterimage .afterimage-rail { position: relative; margin-block: 4px 14px; height: 28px; display: flex; align-items: center; }
-.afterimage .afterimage-rail media-time-slider { position: relative; z-index: 3; display: block; width: 100%; height: 28px; cursor: pointer; }
+.afterimage .afterimage-rail { position: relative; grid-area: rail; min-width: 0; height: 44px; display: flex; align-items: center; }
+.afterimage .afterimage-rail media-time-slider { position: relative; z-index: 3; display: block; width: 100%; height: 44px; cursor: pointer; }
 .afterimage .afterimage-track, .afterimage media-slider-track.afterimage-track { position: absolute; inset-inline: 0; inset-block-start: 50%; height: 3px; transform: translateY(-50%); background: rgb(240 233 217 / .22); }
 .afterimage .afterimage-fill, .afterimage media-slider-fill.afterimage-fill { display: block; height: 100%; background: var(--afterimage-current); }
 .afterimage .afterimage-thumb, .afterimage media-slider-thumb.afterimage-thumb { width: 12px; height: 12px; margin: -4.5px 0 0 -6px; border: 2px solid var(--afterimage-current); border-radius: 50%; background: var(--afterimage-ink); box-shadow: 0 0 0 2px var(--afterimage-ink); }
@@ -86,10 +89,11 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
 .afterimage .afterimage-pin i { position: absolute; inset-block-start: 1px; inset-inline-start: 50%; width: 9px; height: 9px; transform: translateX(-50%) rotate(45deg); border: 1px solid var(--afterimage-ink); background: var(--afterimage-copper); }
 .afterimage .afterimage-pin[data-edge-start] i { inset-inline-start: 0; transform: rotate(45deg); }
 .afterimage .afterimage-pin[data-edge-end] i { inset-inline-start: auto; inset-inline-end: 0; transform: rotate(45deg); }
-.afterimage .afterimage-bar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(280px, auto); align-items: center; gap: 12px; }
+.afterimage .afterimage-bar { display: grid; grid-template-columns: auto minmax(120px, 1fr) auto minmax(0, auto); grid-template-areas: "transport rail options lens"; align-items: center; gap: 10px; }
 .afterimage .afterimage-transport, .afterimage .afterimage-options, .afterimage .afterimage-lens, .afterimage .afterimage-lens-primary, .afterimage .afterimage-presets { display: flex; align-items: center; gap: 8px; }
-.afterimage .afterimage-options { justify-content: center; }
-.afterimage .afterimage-lens { justify-content: flex-end; }
+.afterimage .afterimage-transport { grid-area: transport; }
+.afterimage .afterimage-options { grid-area: options; justify-content: center; }
+.afterimage .afterimage-lens { grid-area: lens; justify-content: flex-end; }
 .afterimage .afterimage-icon, .afterimage .afterimage-action, .afterimage .afterimage-presets button, .afterimage .afterimage-clear { min-width: 44px; min-height: 44px; border: 1px solid rgb(240 233 217 / .18); border-radius: 8px; color: var(--afterimage-limestone); background: rgb(255 255 255 / .04); font: inherit; cursor: pointer; }
 .afterimage .afterimage-icon { display: inline-grid; place-items: center; width: 44px; padding: 0; }
 .afterimage .afterimage-icon svg { width: 22px; height: 22px; }
@@ -102,7 +106,7 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
 .afterimage .afterimage-presets button, .afterimage .afterimage-clear { padding-inline: 10px; font-size: 12px; }
 .afterimage .afterimage-clear { border-color: transparent; color: var(--afterimage-muted); background: transparent; }
 .afterimage .afterimage-clock { white-space: nowrap; font-size: 13px; }
-.afterimage .afterimage-volume { position: relative; display: block; width: 76px; height: 28px; }
+.afterimage .afterimage-volume { position: relative; display: block; width: 76px; min-width: 76px; height: 44px; }
 .afterimage .afterimage-cc { font-size: 11px; font-weight: 800; letter-spacing: .06em; }
 .afterimage .afterimage-buffering { min-height: 18px; margin-block-start: 8px; color: var(--afterimage-muted); font-size: 11px; }
 .afterimage .afterimage-buffering:not([data-visible]) { display: none; }
@@ -113,9 +117,17 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
 .afterimage button:disabled { opacity: .55; cursor: wait; }
 @container (max-width: 720px) {
   .afterimage .afterimage-deck { padding-inline: 12px; }
-  .afterimage .afterimage-bar { grid-template-columns: 1fr auto; }
-  .afterimage .afterimage-lens { grid-column: 1 / -1; justify-content: space-between; flex-wrap: wrap; padding-block-start: 4px; border-block-start: 1px solid rgb(240 233 217 / .1); }
-  .afterimage .afterimage-volume { display: none; }
+  .afterimage .afterimage-bar {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "transport" "rail" "options" "lens";
+    gap: 8px;
+  }
+  .afterimage .afterimage-transport,
+  .afterimage .afterimage-options,
+  .afterimage .afterimage-lens { width: 100%; min-width: 0; }
+  .afterimage .afterimage-options { justify-content: flex-start; flex-wrap: wrap; }
+  .afterimage .afterimage-volume { flex: 1 1 76px; max-width: 120px; }
+  .afterimage .afterimage-lens { justify-content: space-between; flex-wrap: wrap; padding-block-start: 4px; border-block-start: 1px solid rgb(240 233 217 / .1); }
 }
 @container (max-width: 430px) {
   .afterimage .afterimage-relation { grid-template-columns: 1fr 1fr; }
@@ -160,7 +172,7 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
 
 @container (max-width: 300px) {
   .afterimage .afterimage-deck { padding-inline: 8px; }
-  .afterimage .afterimage-bar { grid-template-columns: 1fr auto; gap: 6px; }
+  .afterimage .afterimage-bar { grid-template-columns: minmax(0, 1fr); grid-template-areas: "transport" "rail" "options" "lens"; gap: 6px; }
   .afterimage .afterimage-options { gap: 2px; }
   .afterimage .afterimage-lens { gap: 6px; }
   .afterimage .afterimage-lens-primary { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 6px; }
@@ -205,7 +217,7 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
   }
 
   .afterimage .afterimage-lens {
-    grid-column: 1;
+    grid-area: lens;
     justify-content: stretch;
   }
 
@@ -235,9 +247,10 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
 <p><strong>Time leaves a trace.</strong><br>Pin a frame. See what changes as the film plays.</p>
 </header>
 <section id="afterimage-player" aria-label="AFTERIMAGE player"></section>
+<p class="keyboard-cue"><strong>Keyboard:</strong> Tab through controls · Enter/Space activate · arrows adjust · Esc closes</p>
 <p class="fixture-note"><strong>The Waterline.</strong> Try the matched study, or pin any moment yourself. The copper mark remembers one rendered frame while the pale playhead keeps moving.</p>
 </main>
-<script type="module">function formatAfterimageTime(value) {
+<script type="module">export function formatAfterimageTime(value) {
   if (!Number.isFinite(value) || value < 0) return '—:——';
   const total = Math.max(0, Math.round(value));
   const seconds = total % 60;
@@ -250,7 +263,7 @@ header p { max-width: 34rem; margin: 0; color: #c8c4b9; font-size: clamp(15px, 2
     : two(minutesTotal) + ':' + two(seconds);
 }
 
-function formatAfterimageDelta(value) {
+export function formatAfterimageDelta(value) {
   if (!Number.isFinite(value)) return '—';
   const rounded = Math.abs(value) < 0.5 ? 0 : Math.round(value);
   const sign = rounded > 0 ? '+' : rounded < 0 ? '−' : '±';
@@ -258,6 +271,7 @@ function formatAfterimageDelta(value) {
 }
 
 
+import { formatAfterimageDelta, formatAfterimageTime } from './format-time.js';
 
 const CAP_PIXELS = 920000;
 const CAP_LONG_EDGE = 1280;
@@ -333,6 +347,12 @@ class AfterimageTemporalLens extends HTMLElement {
       this.#pendingFrameCallback = null;
     };
     this.#cancelPending = cancelPending;
+
+    const invalidatePending = () => {
+      cancelPending();
+      ++this.#requestId;
+      if (pinButton.disabled) pinButton.disabled = false;
+    };
 
     const updateSeam = value => {
       this.#seam = Math.max(0, Math.min(100, Number(value) || 0));
@@ -455,6 +475,7 @@ class AfterimageTemporalLens extends HTMLElement {
 
     const closeComparison = restoreFocus => {
       if (!this.#reference) return;
+      invalidatePending();
       this.#presentation = 'closed';
       render();
       announce('Comparison closed. The pinned frame remains on the timeline.');
@@ -462,8 +483,7 @@ class AfterimageTemporalLens extends HTMLElement {
     };
 
     const clearReference = () => {
-      cancelPending();
-      ++this.#requestId;
+      invalidatePending();
       this.#reference = null;
       this.#presentation = 'closed';
       referenceCanvas.width = 1;
@@ -500,8 +520,7 @@ class AfterimageTemporalLens extends HTMLElement {
 
     for (const eventName of ['loadstart', 'emptied']) {
       video.addEventListener(eventName, () => {
-        cancelPending();
-        ++this.#requestId;
+        invalidatePending();
         ++this.#sourceEpoch;
         this.#reference = null;
         this.#presentation = 'closed';
@@ -532,6 +551,7 @@ if (!customElements.get('afterimage-temporal-lens')) {
 }
 
 
+import { formatAfterimageTime } from './format-time.js';
 
 const SEEK_TIMEOUT_MS = 3000;
 const PIN_TIMEOUT_MS = 1800;
@@ -650,20 +670,21 @@ export function bindAfterimageExample(player, video, example) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import '@videojs/html/video/player';
+import '@videojs/html/i18n';
+import '@videojs/html/ui/container';
+import '@videojs/html/ui/play-button';
+import '@videojs/html/ui/time-slider';
+import '@videojs/html/ui/slider-track';
+import '@videojs/html/ui/slider-fill';
+import '@videojs/html/ui/slider-thumb';
+import '@videojs/html/ui/time';
+import '@videojs/html/ui/mute-button';
+import '@videojs/html/ui/volume-slider';
+import '@videojs/html/ui/captions-button';
+import '@videojs/html/ui/fullscreen-button';
+import '@videojs/html/ui/buffering-indicator';
+import './player.css';
 
 function interfaceMarkup(enhancement = '') {
   return '<media-container class="afterimage" lang="en">' +
@@ -679,14 +700,6 @@ function interfaceMarkup(enhancement = '') {
         '<span><b>Now</b> <output data-afterimage-now>—:——</output></span>' +
         '<span class="afterimage-delta"><b>Interval</b> <output data-afterimage-delta>—</output></span>' +
       '</div>' +
-      '<div class="afterimage-rail">' +
-        '<media-time-slider label="Seek" step="1" large-step="10">' +
-          '<media-slider-track class="afterimage-track"><media-slider-fill class="afterimage-fill"></media-slider-fill></media-slider-track>' +
-          '<media-slider-thumb class="afterimage-thumb"></media-slider-thumb>' +
-        '</media-time-slider>' +
-        '<span class="afterimage-interval" hidden aria-hidden="true"></span>' +
-        '<span class="afterimage-pin" hidden aria-hidden="true"><i></i></span>' +
-      '</div>' +
       '<div class="afterimage-bar">' +
         '<div class="afterimage-transport">' +
           '<media-play-button class="afterimage-icon afterimage-play-button">' +
@@ -694,6 +707,14 @@ function interfaceMarkup(enhancement = '') {
             '<svg class="afterimage-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3v14H7zm7 0h3v14h-3z" fill="currentColor"/></svg>' +
           '</media-play-button>' +
           '<span class="afterimage-clock" aria-label="Playback time"><media-time type="current"></media-time><span aria-hidden="true"> / </span><media-time type="duration"></media-time></span>' +
+        '</div>' +
+        '<div class="afterimage-rail">' +
+          '<media-time-slider label="Seek" step="1" large-step="10">' +
+            '<media-slider-track class="afterimage-track"><media-slider-fill class="afterimage-fill"></media-slider-fill></media-slider-track>' +
+            '<media-slider-thumb class="afterimage-thumb"></media-slider-thumb>' +
+          '</media-time-slider>' +
+          '<span class="afterimage-interval" hidden aria-hidden="true"></span>' +
+          '<span class="afterimage-pin" hidden aria-hidden="true"><i></i></span>' +
         '</div>' +
         '<div class="afterimage-options">' +
           '<media-mute-button class="afterimage-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8c4 2 4 6 0 8"/></svg></media-mute-button>' +
@@ -745,7 +766,7 @@ function bindFullscreenControl(player, media) {
   setLabel();
 }
 
-function createAfterimageShell(media, enhancement = '') {
+export function createAfterimageShell(media, enhancement = '') {
   if (!(media instanceof HTMLVideoElement)) throw new TypeError('AFTERIMAGE requires a host-owned HTMLVideoElement.');
   const player = document.createElement('video-player');
   player.innerHTML = interfaceMarkup(enhancement);
@@ -754,13 +775,14 @@ function createAfterimageShell(media, enhancement = '') {
   return player;
 }
 
-function createBasePlayer(media) {
+export function createBasePlayer(media) {
   return createAfterimageShell(media);
 }
 
 
-
-
+import './temporal-lens.js';
+import { bindAfterimageExample } from './authored-example.js';
+import { createAfterimageShell } from './shell.js';
 
 function normalizeExample(options) {
   const example = options?.example;
@@ -791,7 +813,7 @@ function temporalLensMarkup(example) {
   '</afterimage-temporal-lens>';
 }
 
-function createAfterimagePlayer(media, options = {}) {
+export function createAfterimagePlayer(media, options = {}) {
   const example = normalizeExample(options);
   const player = createAfterimageShell(media, temporalLensMarkup(example));
   if (example) bindAfterimageExample(player, media, example);
@@ -816,6 +838,6 @@ chapters.src = asset('./media/the-waterline-v1-chapters.vtt');
 video.append(chapters);
 const mountedPlayer = createAfterimagePlayer(video, { example: { pinnedSeconds: 5, currentSeconds: 13 } });
 document.querySelector('#afterimage-player').append(mountedPlayer);
-window.__AFTERIMAGE_RELEASE__ = { version: '0.3.5-fullscreen-fit', video, player: mountedPlayer };</script>
+window.__AFTERIMAGE_RELEASE__ = { version: '0.3.6-keyboard-visible', video, player: mountedPlayer };</script>
 </body>
 </html>

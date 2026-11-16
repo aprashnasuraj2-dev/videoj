@@ -32,7 +32,7 @@ const boot = [
   "video.append(chapters);",
   "const mountedPlayer = createAfterimagePlayer(video, { example: { pinnedSeconds: 5, currentSeconds: 13 } });",
   "document.querySelector('#afterimage-player').append(mountedPlayer);",
-  "window.__AFTERIMAGE_RELEASE__ = { version: '0.3.5-fullscreen-fit', video, player: mountedPlayer };",
+  "window.__AFTERIMAGE_RELEASE__ = { version: '0.3.6-keyboard-visible', video, player: mountedPlayer };",
 ].join('\n');
 
 const runtime = [format, lens, authored, shell, player, boot].map(escapeScript).join('\n\n');
@@ -54,6 +54,7 @@ const html = `<!doctype html>
 <p><strong>Time leaves a trace.</strong><br>Pin a frame. See what changes as the film plays.</p>
 </header>
 <section id="afterimage-player" aria-label="AFTERIMAGE player"></section>
+<p class="keyboard-cue"><strong>Keyboard:</strong> Tab through controls · Enter/Space activate · arrows adjust · Esc closes</p>
 <p class="fixture-note"><strong>The Waterline.</strong> Try the matched study, or pin any moment yourself. The copper mark remembers one rendered frame while the pale playhead keeps moving.</p>
 </main>
 <script type="module">${runtime}</script>
