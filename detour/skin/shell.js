@@ -100,6 +100,11 @@ export function createPlayerShell(media, enhancement = '') {
   const player = document.createElement('video-player');
   player.innerHTML = interfaceMarkup(enhancement);
   const container = player.firstElementChild;
+  // Firefox may place a bare media element in sequential focus navigation even
+  // when it has no native controls. DETOUR already exposes the real transport
+  // controls, so avoid that redundant stop unless the host explicitly opted
+  // the media element into its own tab order.
+  if (!media.hasAttribute('tabindex')) media.tabIndex = -1;
   container.querySelector('.detour-screen').prepend(media);
   if (media instanceof HTMLAudioElement) container.dataset.audio = '';
   return player;
