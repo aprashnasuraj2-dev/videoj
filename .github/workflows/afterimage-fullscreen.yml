@@ -22,8 +22,8 @@ jobs:
         working-directory: afterimage
     env:
       AFTERIMAGE_URL: https://afterimage.aafnaipatro.com/
-      AFTERIMAGE_RELEASE: 132d2b4b9bda6eb9dcaae2e713bb265faef4f046
-      AFTERIMAGE_VERSION: 0.3.4-fullscreen-control
+      AFTERIMAGE_RELEASE: 428e337d9918dcba1db50d01ea1b22a5b470c1ac
+      AFTERIMAGE_VERSION: 0.3.5-fullscreen-fit
     steps:
       - name: Checkout
         uses: actions/checkout@v4

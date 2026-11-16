@@ -264,3 +264,11 @@ Append-only execution log. Read this file with `CHECKLIST.md` from the same revi
 - Headed evidence now requires the stage/deck boundary to register, transport/deck bottoms to stay inside the viewport, and exits through the visible fullscreen button.
 - Runtime marker advances to `0.3.5-fullscreen-fit`; standalone is regenerated from the same canonical sources.
 - Owner confirmed both optional bonuses are required for final readiness: Mux public playback ID actually used by the submitted player, plus a separate real public site using the reusable AFTERIMAGE skin.
+
+
+## 2026-11-16 · 0.3.5 fullscreen-fit candidate deployed
+
+- Isolated Worker `afterimage-preview` now serves exact source `428e337d9918dcba1db50d01ea1b22a5b470c1ac` as Worker version `5eddb40f-7118-4be4-8ba8-0fef1baf1ce6` at 100% traffic.
+- Runtime marker: `0.3.5-fullscreen-fit`.
+- All browser, headed-fullscreen, and submission-capture gates are repointed to require this exact response-header SHA and runtime marker.
+- **Next action:** accept this as the serving release only after CI, Chromium/Firefox/WebKit, headed fullscreen deck-fit, and submission capture all pass against this exact identity.
