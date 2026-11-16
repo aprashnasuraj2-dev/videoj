@@ -15,8 +15,9 @@
     import { createAfterimagePlayer } from '/skin/index.js';
     import '/skin/player.css';
 
-    const MEDIA = '/media/the-waterline-v1.mp4';
-    const CAPTIONS = '/media/the-waterline-v1.vtt';
+    const params = new URLSearchParams(location.search);
+    const MEDIA = params.get('media') || '/media/the-waterline-v1.mp4';
+    const CAPTIONS = params.get('captions') || '/media/the-waterline-v1.vtt';
 
     function makeVideo(id) {
       const video = document.createElement('video');

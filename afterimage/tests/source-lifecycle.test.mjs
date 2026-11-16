@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { after, before, test } from 'node:test';
 import { fileURLToPath } from 'node:url';
@@ -8,6 +9,7 @@ import { createServer } from 'vite';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const artifactDir = join(root, 'artifacts', 'hardening');
+const lifecycleFixture = join(root, 'public', 'hardening-lifecycle.mp4');
 const engines = { chromium, firefox, webkit };
 const engineName = process.env.AFTERIMAGE_HARDENING_ENGINE || 'chromium';
 let server;
@@ -29,6 +31,13 @@ const report = {
 
 before(async () => {
   mkdirSync(artifactDir, { recursive: true });
+  const fixture = spawnSync('ffmpeg', [
+    '-nostdin', '-loglevel', 'error', '-y',
+    '-f', 'lavfi', '-i', 'testsrc2=size=640x360:rate=24:duration=24',
+    '-t', '24', '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '30',
+    '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', lifecycleFixture,
+  ], { encoding: 'utf8' });
+  if (fixture.status !== 0) throw new Error(fixture.stderr || 'Could not create lifecycle fixture.');
   server = await createServer({
     root,
     logLevel: 'silent',
@@ -47,12 +56,15 @@ after(async () => {
   writeFileSync(join(artifactDir, `source-lifecycle-${engineName}.json`), JSON.stringify(report, null, 2) + '\n');
   await browser?.close();
   await server?.close();
+  rmSync(lifecycleFixture, { force: true });
 });
 
 async function freshPage(t) {
   const page = await browser.newPage({ viewport: { width: 1100, height: 850 } });
   t.after(() => page.close());
-  await page.goto(new URL('tests/hardening-host.html', baseURL).href);
+  const url = new URL('tests/hardening-host.html', baseURL);
+  url.searchParams.set('media', '/hardening-lifecycle.mp4');
+  await page.goto(url.href);
   await page.waitForFunction(() => {
     const h = window.__AFTERIMAGE_HARDENING__;
     return h?.a?.video?.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
