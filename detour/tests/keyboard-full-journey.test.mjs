@@ -326,6 +326,21 @@ test('keyboard-full-journey: Keep → two keyboard seeks → Return and Keep →
   try {
     await ready(page);
 
+    const captionsTabs = await tabTo(page, 'media-captions-button');
+    check('signature-captions-tab-reachable', captionsTabs !== null, { captionsTabs, active: await active(page) });
+    await page.keyboard.press('Enter');
+    await page.waitForFunction(() => {
+      const track = document.querySelector('video').textTracks[0];
+      return track?.mode === 'showing' && (track.cues?.length || 0) > 0;
+    }, null, { timeout: 10000 });
+    const captionsBeforeReturn = await page.locator('video').evaluate(v => ({
+      mode: v.textTracks[0]?.mode,
+      cueCount: v.textTracks[0]?.cues?.length || 0,
+    }));
+    check('signature-captions-enabled-before-return',
+      captionsBeforeReturn.mode === 'showing' && captionsBeforeReturn.cueCount > 0,
+      captionsBeforeReturn);
+
     await keyboardSeekTo(page, 42);
     const holdTabs = await tabTo(page, '.detour-hold');
     check('keep-tab-reachable', holdTabs !== null, { holdTabs, active: await active(page) });
@@ -374,6 +389,9 @@ test('keyboard-full-journey: Keep → two keyboard seeks → Return and Keep →
       mode: v.textTracks[0]?.mode,
       cueCount: v.textTracks[0]?.cues?.length || 0,
     }));
+    check('captions-survive-return-and-stay',
+      captions.mode === 'showing' && captions.cueCount > 0,
+      { captionsBeforeReturn, captions });
     report.observations.captionsAfterSignatureFlow = captions;
   } finally {
     await page.close();
