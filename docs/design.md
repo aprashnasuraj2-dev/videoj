@@ -1,6 +1,6 @@
 # DHAGO design specification
 
-Status: implementation direction authorized by the user's request to implement the supplied 10-page plan. Working name: DHAGO, Time, woven. Name availability and native-language review remain unverified. This is not a claim of trademark clearance or global uniqueness.
+DHAGO is a reusable player interface built around chapter navigation as a woven thread. Name availability and trademark clearance have not been independently established.
 
 ## Audience and interaction
 
@@ -12,23 +12,17 @@ Ink #171918, bone #F4EBDD, rust #B44332, muted gold #9A5A18. Use stable opaque s
 
 Source-order controls: timeline, play/pause, time, mute, volume, captions, settings, fullscreen. Menu includes actual speed and available captions; remove quality/audio choices when unsupported. Shelf is below the image and stays visible. Video retains a conventional aspect ratio. Narrow embeds stack controls without shrinking targets. Fullscreen uses the actual container and fits shelf + picture within the viewport.
 
-Primary signature: an orange/rust thread moves through differently woven chapter swatches, paired with chapter names and time. The thumb is clearly visible and keyboard operable. Optional A-B replay is deferred; it is removed from the candidate until core QA passes.
+Primary signature: an orange/rust thread moves through differently woven chapter swatches, paired with chapter names and time. The thumb is clearly visible and keyboard operable. Optional A-B replay is out of scope until core interactions are well validated.
 
 ## Three compositions and selection
 
-Build query-driven warm, dark and minimal surface variants with identical media/control order. Provisional selection is warm per the approved plan's default, pending owner feedback. Warm carries stronger textile character; dark suits cinema; minimal prioritizes host blending. Do not build three different feature sets.
-
-## Bounded competitor scan
-
-These early design explorations are historical. The reusable skin is evaluated on playback clarity and accessibility, not comparisons with other entries.
-
-Source: https://contra.com/community/topic/videojsskinschallenge
+Warm, dark and minimal surfaces share identical media and control order. Warm emphasizes textile character; dark suits cinema; minimal prioritizes host blending. These are alternative presentations of the same reusable interface, not separate feature sets.
 
 ## Counterexample and scope
 
 If weave looks like buffered progress or chapter colors are required to understand it, simplify texture and use explicit labels. If a small player hides sound/fullscreen, use another row. Do not add accounts, chat, multiplayer, unnecessary AI APIs or a theme configurator. A quiet reusable skin with complete states is the target.
 
-## Studio refinement: physical thread details (candidate)
+## Studio refinement: physical thread details
 
 Real timed chapter boundaries may carry small decorative join marks, derived from actual Video.js chapter cues rather than fabricated markers. The Video.js native slider dragging state briefly tensions the strip, while the standard seek slider/thumb and chapter name retain navigation semantics. The native waiting indicator remains primary; a quieter ribbon appearance responds only to media lifecycle events. Opaque, readable native caption cues prioritize legibility over visual embroidery.
 
