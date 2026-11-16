@@ -115,7 +115,7 @@ jobs:
     timeout-minutes: 12
     continue-on-error: true
     env:
-      DHAGO_MUX_BONUS_PROBE: '1'
+      DHAGO_MUX_PLAYBACK_PROBE: '1'
       PLAYWRIGHT_CHROMIUM_EXECUTABLE: /usr/bin/google-chrome
     steps:
       - uses: actions/checkout@v4

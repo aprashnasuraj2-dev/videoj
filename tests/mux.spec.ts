@@ -4,7 +4,7 @@ const media=JSON.parse(readFileSync(new URL('../apps/preview/src/media.json',imp
 
 test('Mux source really plays, seeks and carries local chapter and caption cues',async({page},info)=>{
  test.setTimeout(90_000);
- test.skip(!media.playbackId || process.env.DHAGO_MUX_BONUS_PROBE !== '1','Mux proof runs only in the branded Chrome bonus job; default suite stays codec-independent');
+ test.skip(!media.playbackId || process.env.DHAGO_MUX_PLAYBACK_PROBE !== '1','Mux proof runs only in the optional branded Chrome playback check; default suite stays codec-independent');
  const requests:string[]=[];
  page.on('request',r=>{if(/stream\.mux\.com|\.m4s|\.ts\?/.test(r.url()))requests.push(r.url());});
  await page.goto('/?mux');

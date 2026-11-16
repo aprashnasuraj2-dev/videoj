@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('judge-visible controls work across the available browser engine', async ({ page, browserName }) => {
+test('player controls work across the available browser engine', async ({ page, browserName }) => {
   await page.goto('/?local');
   const player=page.locator('#player-mount .dhago');
   const media=player.locator('video');

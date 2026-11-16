@@ -71,13 +71,13 @@ jobs:
           DETOUR_ENGINE=webkit npm test
       - name: Verify responsive, keyboard and size constraints
         run: |
-          node --test tests/phase7.test.mjs
+          node --test tests/responsive.test.mjs
           node --test tests/footprint.test.mjs
       - name: Verify optional published integrations on demand
         if: github.event_name == 'workflow_dispatch'
         run: |
           node --test tests/https-release.test.mjs
-          node --test tests/phase10-public.test.mjs
+          node --test tests/public-release.test.mjs
           node --test tests/live-site.test.mjs
           node --test tests/mux.test.mjs
           node --test tests/mux-release.test.mjs

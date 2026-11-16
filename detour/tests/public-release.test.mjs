@@ -19,7 +19,7 @@ async function seek(page, seconds) {
   await page.waitForFunction(time => Math.abs(document.querySelector('video').currentTime - time) < 0.5, seconds, { timeout: 10000 });
 }
 
-test('092 exact submitted URL is a signed-out Video.js v10 release with real media, captions, return and backup', { timeout: 90000 }, async t => {
+test('Public HTTPS URL is a signed-out Video.js v10 release with real media, captions, return and backup', { timeout: 90000 }, async t => {
   assert.equal(lock.packages['node_modules/@videojs/html']?.version, '10.4.0');
   const browser = await chromium.launch({ args: ['--no-sandbox'] });
   const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -79,7 +79,7 @@ test('092 exact submitted URL is a signed-out Video.js v10 release with real med
   }
 });
 
-test('093 all five mandatory controls work on the deployed player with keyboard and touch-shaped input', { timeout: 120000 }, async t => {
+test('All five essential controls work on the deployed player with keyboard and touch-shaped input', { timeout: 120000 }, async t => {
   const browser = await chromium.launch({ args: ['--no-sandbox'] });
   try {
     const desktop = await browser.newContext({ viewport: { width: 1280, height: 900 } });

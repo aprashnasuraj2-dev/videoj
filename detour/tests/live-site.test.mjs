@@ -94,7 +94,7 @@ test('078 Aafnai Patro editorial history page uses the reusable DETOUR skin on i
     assert.equal(await page.locator('video').evaluate(video => video.muted), true);
 
     t.diagnostic(
-      `Aafnai Patro live-site bonus: signed-out editorial history page, independent NASA video through the Aafnai Patro origin, five required controls visible, 12 → 2 → ${returned.time.toFixed(3)}s Return.`,
+      `Aafnai Patro editorial integration: signed-out editorial history page, independent NASA video through the Aafnai Patro origin, five required controls visible, 12 → 2 → ${returned.time.toFixed(3)}s Return.`,
     );
   } finally {
     await context.close();

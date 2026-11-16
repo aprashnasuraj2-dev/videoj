@@ -13,7 +13,7 @@ DHAGO and DETOUR are independent player packages with separate demonstration ori
 ## DHAGO release process
 
 - Verify locally with `npm ci && npm run typecheck && npm run build && npm test`.
-- GitHub Actions `Validate DHAGO` tests source changes, retaining the built `dist/` on main for five days. It **does not deploy automatically**.
+- GitHub Actions `Validate DHAGO` tests source changes, retaining the built `dist/` on main for four days. It **does not deploy automatically**.
 - For a release, use the separately triggered `Restage an existing verified Cloudflare build` workflow with the successful **main-push** validation run ID. It stages the exact verified bundle under an immutable `dist-<SHA>` branch for deployment tooling.
 - Confirm the public `release-manifest.json.source_sha`, asset checksums, actual film decode, captions, seeking and Journal navigation before promoting a production origin. Existing Cloudflare R2 objects and unrelated Patro pages must remain untouched.
 

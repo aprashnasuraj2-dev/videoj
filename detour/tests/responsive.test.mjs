@@ -79,7 +79,7 @@ async function geometry(page, label) {
   return result;
 }
 
-test('061 Chromium full responsive state/capture matrix at actual embed widths', { timeout: 120000 }, async t => {
+test('Chromium full responsive state/capture matrix at actual embed widths', { timeout: 120000 }, async t => {
   const widths = [240, 320, 375, 768, 1280];
   const table = [];
   for (const width of widths) {
@@ -123,7 +123,7 @@ test('061 Chromium full responsive state/capture matrix at actual embed widths',
   t.diagnostic('Actual responsive states: ' + JSON.stringify(table));
 });
 
-test('063 keyboard-only Hold, two seeks, Return, Stay, and Settings Escape restore focus', { timeout: 45000 }, async t => {
+test('keyboard-only Hold, two seeks, Return, Stay, and Settings Escape restore focus', { timeout: 45000 }, async t => {
   const page = await browser.newPage({ viewport: { width: 375, height: 780 } });
   try {
     await ready(page);
@@ -165,7 +165,7 @@ test('063 keyboard-only Hold, two seeks, Return, Stay, and Settings Escape resto
   } finally { await page.close(); }
 });
 
-test('065 reduced motion, forced colors and 200% layout zoom retain core controls', { timeout: 45000 }, async t => {
+test('reduced motion, forced colors and 200% layout zoom retain core controls', { timeout: 45000 }, async t => {
   const page = await browser.newPage({ viewport:{width:800,height:900}, reducedMotion:'reduce' });
   try {
     await ready(page);
@@ -187,7 +187,7 @@ test('065 reduced motion, forced colors and 200% layout zoom retain core control
   } finally { await page.close(); }
 });
 
-test('062 emulated touch path is not counted as real Android/iOS', { timeout: 45000 }, async t => {
+test('emulated touch path is not counted as real Android/iOS', { timeout: 45000 }, async t => {
   const context = await browser.newContext({ ...devices['Pixel 7'], viewport:{width:412,height:915} });
   const page = await context.newPage();
   try {
@@ -209,7 +209,7 @@ test('062 emulated touch path is not counted as real Android/iOS', { timeout: 45
   } finally { await context.close(); }
 });
 
-test('069 five cached-run signature traces have no observed long task above 50ms', { timeout: 90000 }, async t => {
+test('five cached-run signature traces have no observed long task above 50ms', { timeout: 90000 }, async t => {
   const context = await browser.newContext({viewport:{width:320,height:740}});
   const page = await context.newPage();
   await page.addInitScript(() => {
@@ -242,7 +242,7 @@ test('069 five cached-run signature traces have no observed long task above 50ms
   } finally {await context.close();}
 });
 
-test('061 emulated iPhone landscape WebKit can hold and return without clipping', { timeout: 45000 }, async t => {
+test('emulated iPhone landscape WebKit can hold and return without clipping', { timeout: 45000 }, async t => {
   const mobileBrowser = await webkit.launch();
   const iphone = devices['iPhone 13'];
   const context = await mobileBrowser.newContext({
@@ -266,7 +266,7 @@ test('061 emulated iPhone landscape WebKit can hold and return without clipping'
   } finally {await context.close(); await mobileBrowser.close();}
 });
 
-test('063 Shift+Tab stays inside visible controls and failed Return keeps focus', { timeout: 30000 }, async t => {
+test('Shift+Tab stays inside visible controls and failed Return keeps focus', { timeout: 30000 }, async t => {
   const page = await browser.newPage({viewport:{width:375,height:800}});
   try {
     await ready(page);
@@ -285,7 +285,7 @@ test('063 Shift+Tab stays inside visible controls and failed Return keeps focus'
     await page.locator('video-player').evaluate(player=>{
       player.__phase7RealStore=player.store;
       Object.defineProperty(player,'store',{configurable:true,
-        value:Object.create(player.store,{seek:{value:()=>Promise.reject(new Error('Controlled phase7 reject'))}})});
+        value:Object.create(player.store,{seek:{value:()=>Promise.reject(new Error('Controlled seek rejection'))}})});
     });
     const back=page.getByRole('button',{name:'Return to 00:42'});
     await back.focus();
@@ -300,7 +300,7 @@ test('063 Shift+Tab stays inside visible controls and failed Return keeps focus'
   } finally {await page.close();}
 });
 
-test('066 long-clock, RTL and dense chapters use the same held-place geometry', { timeout: 30000 }, async t => {
+test('long-clock, RTL and dense chapters use the same held-place geometry', { timeout: 30000 }, async t => {
   const page=await browser.newPage({viewport:{width:280,height:820}});
   try {
     await ready(page);
@@ -341,7 +341,7 @@ test('066 long-clock, RTL and dense chapters use the same held-place geometry', 
   } finally {await page.close();}
 });
 
-test('068 duplicate Return, manual-seek precedence and source swap do not replay or consume a mark', { timeout: 25000 }, async t => {
+test('duplicate Return, manual-seek precedence and source swap do not replay or consume a mark', { timeout: 25000 }, async t => {
   const page=await browser.newPage({viewport:{width:375,height:780}});
   try {
     await ready(page);
@@ -388,7 +388,7 @@ test('068 duplicate Return, manual-seek precedence and source swap do not replay
   } finally {await page.close();}
 });
 
-test('069 ten Chromium samples record five fresh-context and five same-context runs', { timeout: 90000 }, async t => {
+test('ten Chromium samples record five fresh-context and five same-context runs', { timeout: 90000 }, async t => {
   const captured=[];
   const run=async (context,condition,index) => {
     const page=await context.newPage();
@@ -444,7 +444,7 @@ test('069 ten Chromium samples record five fresh-context and five same-context r
   t.diagnostic('Cache may be revalidated by Vite preview; same-context is not a verified fully cached HTTP run. LayerTree observation is diagnostic, not compositing-GPU cost.');
 });
 
-test('067 duration and seekable changes keep held-origin math truthful', { timeout: 30000 }, async t => {
+test('duration and seekable changes keep held-origin math truthful', { timeout: 30000 }, async t => {
   const page = await browser.newPage({ viewport:{width:375,height:800} });
   try {
     await ready(page);
@@ -503,7 +503,7 @@ test('067 duration and seekable changes keep held-origin math truthful', { timeo
   } finally { await page.close(); }
 });
 
-test('068 Return timeout ignores its late completion', { timeout: 15000 }, async t => {
+test('Return timeout ignores its late completion', { timeout: 15000 }, async t => {
   const page=await browser.newPage({viewport:{width:375,height:800}});
   try {
     await ready(page);
@@ -532,7 +532,7 @@ test('068 Return timeout ignores its late completion', { timeout: 15000 }, async
   } finally { await page.close(); }
 });
 
-test('068 pausing while provider is waiting keeps the subsequent Return paused', { timeout: 15000 }, async t => {
+test('pausing while provider is waiting keeps the subsequent Return paused', { timeout: 15000 }, async t => {
   const page=await browser.newPage({viewport:{width:375,height:800}});
   try {
     await ready(page);

@@ -107,7 +107,7 @@ test('073 public root exposes the showcase player in the first mobile viewport w
       assert.ok(player.y<120,`Player starts too low at ${viewport.width}px: y=${player.y}`);
       assert.ok(player.y<viewport.height&&player.y+Math.min(player.height,120)<viewport.height,
         `Player is not meaningfully visible in initial viewport ${JSON.stringify({viewport,player})}`);
-      assert.equal(await page.locator('video').evaluate(v=>v.paused),true,'Judge demo must not autoplay');
+      assert.equal(await page.locator('video').evaluate(v=>v.paused),true,'Showcase demo must not autoplay');
       assert.match(await page.locator('video').getAttribute('src'),/showcase\/detour-showcase-v1\.mp4$/);
       assert.match(await page.locator('video').getAttribute('poster'),/showcase\/detour-showcase-v1-poster\.jpg$/);
       assert.equal(await page.locator('dialog').count(),0);
