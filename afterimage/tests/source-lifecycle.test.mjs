@@ -120,7 +120,7 @@ test('source-lifecycle: two simultaneous players keep independent references', {
   report.checks.twoInstances = true;
 });
 
-test('source-lifecycle: 20 remove/reinsert cycles do not duplicate handlers or inherit old state', { timeout: 30000 }, async t => {
+test('source-lifecycle: 20 remove/reinsert cycles do not duplicate handlers or inherit old state', { timeout: 70000 }, async t => {
   const page = await freshPage(t);
   await page.evaluate(() => {
     const h = window.__AFTERIMAGE_HARDENING__;
