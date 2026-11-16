@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AFTERIMAGE hardening host</title>
+</head>
+<body>
+  <main>
+    <div id="mount-a"></div>
+    <div id="mount-b"></div>
+    <div id="scratch"></div>
+  </main>
+  <script type="module">
+    import { createAfterimagePlayer } from '/skin/index.js';
+    import '/skin/player.css';
+
+    const MEDIA = '/media/the-waterline-v1.mp4';
+    const CAPTIONS = '/media/the-waterline-v1.vtt';
+
+    function makeVideo(id) {
+      const video = document.createElement('video');
+      video.id = id + '-video';
+      video.preload = 'auto';
+      video.playsInline = true;
+      video.src = MEDIA;
+      const track = document.createElement('track');
+      track.kind = 'captions';
+      track.srclang = 'en';
+      track.label = 'Hardening captions';
+      track.src = CAPTIONS;
+      video.append(track);
+      return video;
+    }
+
+    function makePlayer(id) {
+      const video = makeVideo(id);
+      const player = createAfterimagePlayer(video);
+      player.id = id;
+      return { player, video };
+    }
+
+    const a = makePlayer('player-a');
+    const b = makePlayer('player-b');
+    document.querySelector('#mount-a').append(a.player);
+    document.querySelector('#mount-b').append(b.player);
+
+    window.__AFTERIMAGE_HARDENING__ = {
+      create: makePlayer,
+      a,
+      b,
+      scratch: document.querySelector('#scratch'),
+      media: MEDIA,
+    };
+  </script>
+</body>
+</html>
