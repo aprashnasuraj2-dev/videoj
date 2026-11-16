@@ -163,6 +163,8 @@ class AfterimageTemporalLens extends HTMLElement {
     const referenceCanvas = referenceLayer.querySelector('canvas');
     const seamLine = container.querySelector('.afterimage-seam');
     const seamControl = container.querySelector('.afterimage-seam-control');
+    const comparisonCaption = container.querySelector('.afterimage-comparison-caption');
+    const comparisonCaptionText = comparisonCaption?.querySelector('span');
     const relation = container.querySelector('.afterimage-relation');
     const pinnedOutput = container.querySelector('[data-afterimage-pinned]');
     const nowOutput = container.querySelector('[data-afterimage-now]');
@@ -242,6 +244,37 @@ class AfterimageTemporalLens extends HTMLElement {
       pinMark.toggleAttribute('data-edge-end', pinPercent > 97);
     };
 
+    const updateComparisonCaption = () => {
+      if (!comparisonCaption || !comparisonCaptionText) return;
+      const open = Boolean(this.#reference) && this.#presentation === 'open';
+      const cues = [];
+      if (open) {
+        for (const track of Array.from(video.textTracks || [])) {
+          if (track.mode !== 'showing' || !['captions', 'subtitles'].includes(track.kind)) continue;
+          for (const cue of Array.from(track.activeCues || [])) {
+            const raw = String(cue.text || '').trim();
+            const plain = raw.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+            if (plain && !cues.includes(plain)) cues.push(plain);
+          }
+        }
+      }
+      comparisonCaptionText.textContent = cues.join('\n');
+      comparisonCaption.hidden = cues.length === 0;
+    };
+
+    const bindCaptionTrackEvents = () => {
+      for (const track of Array.from(video.textTracks || [])) {
+        track.addEventListener?.('cuechange', updateComparisonCaption, { signal });
+      }
+    };
+    bindCaptionTrackEvents();
+    video.textTracks?.addEventListener?.('change', updateComparisonCaption, { signal });
+    video.textTracks?.addEventListener?.('addtrack', event => {
+      event.track?.addEventListener?.('cuechange', updateComparisonCaption, { signal });
+      updateComparisonCaption();
+    }, { signal });
+    video.textTracks?.addEventListener?.('removetrack', updateComparisonCaption, { signal });
+
     const render = () => {
       const hasReference = Boolean(this.#reference);
       const open = hasReference && this.#presentation === 'open';
@@ -258,6 +291,7 @@ class AfterimageTemporalLens extends HTMLElement {
       pinButton.querySelector('span').textContent = hasReference ? 'Pin current frame' : 'Pin moment';
       updateSeam(this.#seam);
       updateRelation();
+      updateComparisonCaption();
     };
 
     const commitCandidate = (candidate, time, approximate, requestId, sourceEpoch) => {
@@ -423,6 +457,7 @@ class AfterimageTemporalLens extends HTMLElement {
     }
 
     video.addEventListener('timeupdate', updateRelation, { signal });
+    video.addEventListener('timeupdate', updateComparisonCaption, { signal });
     video.addEventListener('durationchange', updateRelation, { signal });
     video.addEventListener('loadedmetadata', updateRelation, { signal });
     for (const eventName of ['loadedmetadata', 'loadeddata', 'canplay', 'durationchange', 'progress', 'seeking', 'seeked', 'waiting', 'playing', 'ended', 'error']) {
