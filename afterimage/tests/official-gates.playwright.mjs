@@ -212,6 +212,8 @@ try {
   check('fullscreen-escape-exit', await matches('media-fullscreen-button'), await active(page));
   await press('Space');
   await page.waitForFunction(() => Boolean(document.fullscreenElement), null, { timeout: 5000 });
+  const tabsBackToFullscreen = await tabTo('media-fullscreen-button');
+  check('fullscreen-control-reachable-inside-fullscreen', tabsBackToFullscreen !== null, { tabs: tabsBackToFullscreen, active: await active(page) });
   await press('Space');
   await page.waitForFunction(() => !document.fullscreenElement, null, { timeout: 5000 });
   check('fullscreen-visible-control-exit', await matches('media-fullscreen-button'), await active(page));
