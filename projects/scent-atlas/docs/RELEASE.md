@@ -40,3 +40,34 @@ The first attempt to provision a Git-connected Pages project returned Cloudflare
 - Preview source revision: `0046eebab30429c5d629b55e7f32d712b286b39a` (before OG cover addition)
 - Independent HTTP content check and screenshot success; 404 returned correctly; `noindex` on preview.
 - Production build, custom-domain binding and final public smoke tests are the next release gate.
+
+## Final production release — verified 2026-11-17
+
+| Field | Recorded evidence |
+|---|---|
+| Public URL | `https://scent-atlas.aafnaipatro.com/` |
+| Release source | `0730f5e3146269dc9c099ea554e314a6e3c8d4da` |
+| Worker service | `scent-atlas-showroom` (isolated) |
+| Worker script ETag | `8884b2ef60d643f33ad1b32a5a9722218e44b3cbb598eddd8c5ef0875aa8386d` |
+| Compiled release artifact SHA-256 | `c8480e85ddabdc45ca5148262fa43870bcf589bab1580b3ac57553905028e340` |
+| Worker Domain association ID | `b7462b7ae52c81105e536032c6a99f58966ecb85` |
+| TLS cert ID | `39574f5f-f5ee-454d-9a7b-049a2fad4d99` |
+| DNS result | New AAAA `scent-atlas.aafnaipatro.com` -> `100::` |
+| Deployment contents | 21 static files; 344,714 raw source bytes total; no external origin fetches |
+| Public acceptance | 11/11 live routes independently retrieved; one deliberately invalid path returned HTTP 404; social cover HTTP 200 |
+| SEO | Canonical/OG target production hostname, indexable production meta, noindex on workers.dev preview |
+| Other host associations | Apex `patro`, DETOUR `detour-mux-release`, `creative` CNAME to `public.r2.dev` unchanged |
+
+**Rollback:** remove only the newly created Worker Domain association ID `b7462b7ae52c81105e536032c6a99f58966ecb85` and, if needed, disable this service's workers.dev subdomain. Re-deploy the prior dedicated script artifact if rollback of *only Scent Atlas* is required. Do not touch main, apex, wildcard, shared routes, other domains or unrelated Workers.
+
+**Known scope limitations:** No real checkout, fulfillment, ingredient or allergy declarations, access log/business outcomes, multi-device accessibility certification, buyer interviews, or production LCP measurement. Only the isolated Scent Atlas route and Worker script were changed during public release.
+
+## Independent legacy-host regression check
+
+After the new child-domain release, three separate Firecrawl HTTP content checks returned **200** for:
+
+- `https://aafnaipatro.com/` — recognizable Nepali calendar homepage, १ मंसिर २०८३ / 17 November 2026
+- `https://creative.aafnaipatro.com/` — DHAGO, title "DHAGO — Time, woven."
+- `https://detour.aafnaipatro.com/` — DETOUR, title "DETOUR — Keep your place"
+
+These are post-release availability checks, not proof of complete historical parity or video playback. The Cloudflare Worker Domain/DNS associations for these services matched the preflight snapshot. No existing Worker script, Worker Route or GitHub main branch was changed as part of this release.

@@ -57,3 +57,22 @@ After exact live binding: independently verify HTTP 200 on all 11 routes, 404 st
 - 2026-11-17: separate Firecrawl browser scrape returned HTTP **200** for the landing page, the expected scene image URLs, an actual screenshot, the expected canonical metadata, and `noindex,nofollow` preview robots metadata.
 - These checks establish that published preview content was readable; they do not imply measured mobile LCP, real purchase behavior, or complete Firefox/WebKit verification.
 - Subsequent cover image asset adds 1600 × 1200 OG media to the final build; budget must be recalculated from the final manifest (unrequested OG image does not load as a normal landing-page `<img>`).
+
+## Production acceptance: 2026-11-17
+
+**Released source:** `0730f5e3146269dc9c099ea554e314a6e3c8d4da`  
+**Compiled static Worker SHA-256:** `c8480e85ddabdc45ca5148262fa43870bcf589bab1580b3ac57553905028e340`  
+**Domain:** `https://scent-atlas.aafnaipatro.com/`
+
+- An external TinyFish batch independently fetched **11/11** public application routes (landing; three scenes; compare; three kit pages; three completion pages). Titles, scene copy, canonical URLs and production indexing metadata matched the implementation; each completion displayed "No order was placed." No route errors were reported for those eleven requests.
+- Separate Firecrawl fetch checked **HTTP 200** for the landing page, **HTTP 200** with `image/webp` for `/media/social-cover.webp`, and **HTTP 404** with a readable friendly HTML page for an invalid URL.
+- An externally executed browser scrape returned a mobile-viewport screenshot and recognized the main text/image content, independent of local `set_content` renders.
+- Final release pages expose production `index,follow,max-image-preview:large`; isolated `workers.dev` preview gets an explicit `X-Robots-Tag: noindex,nofollow` even when it shares the production bundle.
+- Files constituting the first-party landing request (HTML, CSS, tiny optional script, three WebP scene images and favicon) total **156,553 raw bytes (~152.9 KiB)**. This is a static source-asset sum, **not** recorded HTTP transfer or a measured LCP; latency/core web vitals remain unmeasured.
+- Post-release Cloudflare read-only mapping: only the new `scent-atlas.aafnaipatro.com` AAAA `100::` and Worker Domain `scent-atlas-showroom` were added. Apex continued to map to `patro`; DETOUR continued to map to `detour-mux-release`; `creative.aafnaipatro.com` remained CNAME `public.r2.dev`; the shared Worker route list was not edited.
+
+**Outstanding verification:** real mobile Safari/Firefox/WebKit interaction, complete screen-reader audit, automated axe/WCAG conformance audit, three cold-cache lab LCP runs and 3-5 volunteer comprehension sessions. These are not presented as completed or promised on a schedule.
+
+### Legacy-host regression result
+
+Independent post-release Firecrawl fetches returned HTTP **200** on the Aafnai Patro apex, DHAGO (`creative.aafnaipatro.com`) and DETOUR (`detour.aafnaipatro.com`) homepages. The visible titles and core content were consistent with their intended identities. These are smoke tests, not tests of unrelated application features or video playback. Pre/post Cloudflare service mappings were identical except for the deliberate addition of the Scent Atlas child host.
