@@ -31,3 +31,12 @@ The first attempt to provision a Git-connected Pages project returned Cloudflare
 ## Release evidence
 
 **Pending final verified public deployment.** Update with actual revision, Worker ETag/version, hash, binding ID, hostname, status test results and timestamp. Do not publish a “live” case study without completing these gates.
+
+## Verified isolated preview (2026-11-17)
+
+- Temporary Worker public preview: `https://scent-atlas-showroom.praisethegreatfool.workers.dev/`
+- Preview script ETag: `0928150cd3988fd83f25fbfb97542605916a4330a6eeabc073bfb231c9667c43`
+- Preview artifact SHA-256: `ef504be8d5936bc2cd4a5c6276dce5950984bb63e11f5a070f37b930f974b9bf`
+- Preview source revision: `0046eebab30429c5d629b55e7f32d712b286b39a` (before OG cover addition)
+- Independent HTTP content check and screenshot success; 404 returned correctly; `noindex` on preview.
+- Production build, custom-domain binding and final public smoke tests are the next release gate.

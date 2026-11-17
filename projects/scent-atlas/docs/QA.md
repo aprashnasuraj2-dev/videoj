@@ -49,3 +49,11 @@ The action plan proposes **≤450 KiB initial transfer and median LCP ≤2.5s** 
 ### Real-world acceptance still due
 
 After exact live binding: independently verify HTTP 200 on all 11 routes, 404 status, HEAD behavior, missing resource handling, canonical and OG URLs, self-hosted assets, CSP header, no PII submission/third-party requests, same-host asset delivery, and the other existing Aafnai Patro domain markers before/after. Perform real Firefox/WebKit and physical Android/iOS tests if those browsers/devices become available. No broad WCAG conformance or conversion change should be claimed on this evidence alone.
+
+## Isolated public preview: external fetch evidence
+
+- Preview hostname `https://scent-atlas-showroom.praisethegreatfool.workers.dev/` bound to the dedicated static Worker `scent-atlas-showroom`, isolated from the apex and all previously deployed services.
+- 2026-11-17: independent TinyFish fetch returned real content and correct direct links for landing, `/scenes/rain/`, `/compare/`, `/kits/rain/complete/`; missing route returned a specific HTTP **404**.
+- 2026-11-17: separate Firecrawl browser scrape returned HTTP **200** for the landing page, the expected scene image URLs, an actual screenshot, the expected canonical metadata, and `noindex,nofollow` preview robots metadata.
+- These checks establish that published preview content was readable; they do not imply measured mobile LCP, real purchase behavior, or complete Firefox/WebKit verification.
+- Subsequent cover image asset adds 1600 × 1200 OG media to the final build; budget must be recalculated from the final manifest (unrequested OG image does not load as a normal landing-page `<img>`).

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+release/
+portfolio/.frames/
+docs/*-320.png
+docs/*-390.png
+docs/*-1440.png
+docs/visual-results.json
+docs/browser-results.json

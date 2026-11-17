@@ -21,3 +21,10 @@ The three photographs used by this static experience were created in this conver
 ## Copy / fonts / icons
 
 All fragrance and interface copy is original editorial text for this concept. The layout uses system sans-serif and serif fallback stacks; **no third-party font files** are shipped. The mark and arrows are HTML/CSS/vector artwork created for this project. All UI text is live HTML, not baked into generated photography. A later commercial rebrand should review trademark/name availability before launch.
+
+## Portfolio publishing visuals
+
+- `media/social-cover.webp` / `portfolio/COVER-1600x1200.png`: 1600 × 1200 typeset composition combining the three original scene studies; the WebP derivative is used as the default public Open Graph cover. Its copy and scene labels are set separately from the browser's live text.
+- `portfolio/01-DISCOVERY.png`, `02-COMPARISON.png`, `03-KIT-REVIEW.png`: annotated 1600 × 1100 review plates based on actual locally rendered Scent Atlas UI screenshots. These are not fabricated screenshots of third-party products.
+- `portfolio/SCENT-ATLAS-27s-REEL.mp4`: 27.0-second H.264 silent case-study sequence, captioned in the frames, comprising cover/real UI captures from the built experience. It is a screenshot-based motion storyboard, not a filmed customer session or an audio advertisement.
+- The reproducible art and reel scripts are `scripts/make-portfolio-assets.py` and `scripts/make-reel.py`; they require Pillow, ffmpeg and local, non-distributed font files.

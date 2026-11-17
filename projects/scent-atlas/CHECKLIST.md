@@ -10,7 +10,7 @@ A scene-led perfume discovery storefront. Start here before editing application 
 | Project boundary | `projects/scent-atlas/` |
 | Proposed public URL | `https://scent-atlas.aafnaipatro.com/` (check availability and zone ownership before binding) |
 | Delivery | Live concept demo, reproducible verification and a Contra-ready case study |
-| Current status | Design, offline build and isolated hosting baseline complete. Next: deploy preview Worker, verify publicly, bind unused child host, finish Contra package. |
+| Current status | Preview Worker externally verified and corrected production media added. Next: bind exact public hostname, verify live smoke checks, complete Contra handoff. |
 
 Use the branch for this project only. Keep the GitHub repository description, root README, main branch, shared workflows/configuration, DHAGO, DETOUR and their public hosts outside the change set. No merge to main is required. Review repository instructions at the checked-out revision. Record the date, source SHA, evidence pointer and any unresolved issue beside each completed phase. Commit checklist updates with the corresponding work. This file is the first branch commit. A checked box means its evidence exists.
 
@@ -50,7 +50,7 @@ Use the branch for this project only. Keep the GitHub repository description, ro
 ## Phase 4 - Release to Aafnai Patro
 
 - [x] Check ownership, availability, exact DNS/custom-domain associations and applicable routing for the proposed hostname. Use only an unused child of aafnaipatro.com.
-- [ ] Deploy the project-only static artifact to an isolated preview. Record branch commit, artifact hash and deployment ID, then verify direct links, 404, headers, images and metadata.
+- [x] Deploy the project-only static artifact to an isolated preview. Record branch commit, artifact hash and deployment ID, then verify direct links, 404, headers, images and metadata.
 - [ ] Capture baseline HTTP status and a recognizable marker on the Aafnai Patro apex and existing DHAGO/DETOUR project URLs. Preserve their routing.
 - [ ] Bind just the new child hostname to the proven project deployment after verifying the preview. Record the exact new association and the project-only rollback steps.
 - [ ] Check the live site from an independent browser, including HTTPS, deep links, core routes and assets. Repeat the existing-host smoke checks and confirm the only expected routing change is the new hostname.
@@ -81,3 +81,9 @@ Keep artifact references, deployment IDs and test summaries in `docs/QA.md` and 
 - `docs/QA.md`: six passing catalog tests, `tsc` success, all 12 static HTML documents and scoped links, no horizontally clipped screenshot at 320/390/768/1440 after corrections; cross-browser and participant studies not claimed.
 - `docs/RELEASE.md`: main commit, README blob SHA, null repository description, existing workflows and original public-host mappings checked read-only.
 - Isolated Cloudflare Pages Git setup failed (installation issue), Direct Upload asset JWT unsupported through the available API action. Dedicated static Worker deployment is the contained fallback; final public release pending verification.
+
+### Isolated preview acceptance and social-cover revision (2026-11-17)
+
+- `scent-atlas-showroom.praisethegreatfool.workers.dev` externally retrieved through independent TinyFish/Firecrawl reads; landing, a scene, comparison and demo complete were readable, missing route returned 404.
+- Cloudflare preview worker ETag `0928150cd3988fd83f25fbfb97542605916a4330a6eeabc073bfb231c9667c43`; previous preview source `0046eebab30429c5d629b55e7f32d712b286b39a` and artifact SHA-256 `ef504be8d5936bc2cd4a5c6276dce5950984bb63e11f5a070f37b930f974b9bf`.
+- Add distinct typeset OG cover and reproducible portfolio still/reel generators. Production domain not yet bound at this checkpoint.
