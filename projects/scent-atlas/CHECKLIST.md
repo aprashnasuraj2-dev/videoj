@@ -10,14 +10,14 @@ A scene-led perfume discovery storefront. Start here before editing application 
 | Project boundary | `projects/scent-atlas/` |
 | Proposed public URL | `https://scent-atlas.aafnaipatro.com/` (check availability and zone ownership before binding) |
 | Delivery | Live concept demo, reproducible verification and a Contra-ready case study |
-| Current status | Implementation committed with 11 HTML routes, validated catalog and local tests. Next: document baseline, finish browser QA, prepare isolated release. |
+| Current status | Design, offline build and isolated hosting baseline complete. Next: deploy preview Worker, verify publicly, bind unused child host, finish Contra package. |
 
 Use the branch for this project only. Keep the GitHub repository description, root README, main branch, shared workflows/configuration, DHAGO, DETOUR and their public hosts outside the change set. No merge to main is required. Review repository instructions at the checked-out revision. Record the date, source SHA, evidence pointer and any unresolved issue beside each completed phase. Commit checklist updates with the corresponding work. This file is the first branch commit. A checked box means its evidence exists.
 
 ## Phase 0 - Baseline and scope
 
 - [x] Create `scent-atlas` from the verified main revision and write this checklist before implementation.
-- [ ] Confirm project boundary and record the baseline SHAs for main, its README, and the current repo description where readable. Inventory relevant workflows and existing public domains/routes read-only.
+- [x] Confirm project boundary and record the baseline SHAs for main, its README, and the current repo description where readable. Inventory relevant workflows and existing public domains/routes read-only.
 - [x] Define the standalone build, local scripts and artifact directories under `projects/scent-atlas/`. Establish phase evidence paths and the project-local README.
 - [x] Confirm the concept scope: three scenes, six fictional fragrance profiles, three curated kits, a generic browse link, one comparison view, and a no-payment demo completion.
 
@@ -27,7 +27,7 @@ Use the branch for this project only. Keep the GitHub repository description, ro
 - [x] Define six sample IDs, three distinct three-sample kits, leading sample order, fixed scene-to-kit links, and plain-language comparison dimensions.
 - [x] Draft direct scene copy, what-it-smells-like descriptors, sample-kit copy, and explicit concept/demo wording. Avoid unsupported fragrance performance or ingredient claims.
 - [x] Create responsive screen layouts, keyboard/focus states, and reduced-motion behavior for landing, scene, compare and kit screens.
-- [ ] Produce original or cleared assets with a manifest containing source, license or generation record, dimensions, alt treatment and crop behavior.
+- [x] Produce original or cleared assets with a manifest containing source, license or generation record, dimensions, alt treatment and crop behavior.
 
 ## Phase 2 - Build the discovery flow
 
@@ -36,7 +36,7 @@ Use the branch for this project only. Keep the GitHub repository description, ro
 - [x] Make the core browse, comparison and kit paths functional with JavaScript disabled. Use JavaScript to enhance interaction only.
 - [x] Add kit preview and a locally handled fictional completion state with a clear way back to other scenes. Collect no account, email, payment or address data.
 - [x] Keep dependencies, lockfile, build output, metadata and styles project-local. Wire documented build and verification commands with no whole-repo deployment.
-- [ ] Verify basic failure states: missing media, unsupported JavaScript, deep link refresh, back/forward, unexpected URL and any blocked local storage.
+- [x] Verify basic failure states: missing media, unsupported JavaScript, deep link refresh, back/forward, unexpected URL and any blocked local storage.
 
 ## Phase 3 - Verify and refine
 
@@ -49,7 +49,7 @@ Use the branch for this project only. Keep the GitHub repository description, ro
 
 ## Phase 4 - Release to Aafnai Patro
 
-- [ ] Check ownership, availability, exact DNS/custom-domain associations and applicable routing for the proposed hostname. Use only an unused child of aafnaipatro.com.
+- [x] Check ownership, availability, exact DNS/custom-domain associations and applicable routing for the proposed hostname. Use only an unused child of aafnaipatro.com.
 - [ ] Deploy the project-only static artifact to an isolated preview. Record branch commit, artifact hash and deployment ID, then verify direct links, 404, headers, images and metadata.
 - [ ] Capture baseline HTTP status and a recognizable marker on the Aafnai Patro apex and existing DHAGO/DETOUR project URLs. Preserve their routing.
 - [ ] Bind just the new child hostname to the proven project deployment after verifying the preview. Record the exact new association and the project-only rollback steps.
@@ -73,3 +73,11 @@ Keep artifact references, deployment IDs and test summaries in `docs/QA.md` and 
 - Local `npm run verify`: six catalog unit tests passed; TypeScript check passed; 12 HTML documents (11 routes plus 404), internal asset/link validation passed.
 - Visual render self-check at 320/390/768/1440 CSS pixels: no horizontal overflow in seven inspected page types. This is not physical-device or independent browser acceptance.
 - Pending: remote build replay, Cloudflare deployment and real-browser/public verification; do not treat checked implementation items as deployment evidence.
+
+### Refinement and release preflight evidence (2026-11-17)
+
+- `docs/ASSET-PROVENANCE.md`: all three original editorial images, crop/compression and alternative text documented.
+- `docs/DECISIONS.md`: static architecture, failed Pages Git integration and isolated Worker fallback tradeoff recorded.
+- `docs/QA.md`: six passing catalog tests, `tsc` success, all 12 static HTML documents and scoped links, no horizontally clipped screenshot at 320/390/768/1440 after corrections; cross-browser and participant studies not claimed.
+- `docs/RELEASE.md`: main commit, README blob SHA, null repository description, existing workflows and original public-host mappings checked read-only.
+- Isolated Cloudflare Pages Git setup failed (installation issue), Direct Upload asset JWT unsupported through the available API action. Dedicated static Worker deployment is the contained fallback; final public release pending verification.
