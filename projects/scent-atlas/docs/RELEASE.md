@@ -18,7 +18,7 @@
 
 ## Platform choice
 
-The first attempt to provision a Git-connected Pages project returned Cloudflare error `8000011` / HTTP 401 (Git integration installation issue). A dedicated empty **Direct Upload Pages** project, `scent-atlas-studio`, was created. The Pages asset upload endpoint (`/pages/assets/upload`) returned 403 with the available session authorization because it requires a separate upload JWT, not supported by the connected action's header interface. As a contained fallback, prepare an isolated static Worker service `scent-atlas-showroom` and, only after preview checks, bind the unused child hostname using Worker Domains. The empty Pages project can be removed after release, since it contains no content.
+The first attempt to provision a Git-connected Pages project returned Cloudflare error `8000011` / HTTP 401 (Git integration installation issue). A dedicated empty **Direct Upload Pages** project, `scent-atlas-studio`, was created. The Pages asset upload endpoint (`/pages/assets/upload`) returned 403 with the available session authorization because it requires a separate upload JWT, not supported by the connected action's header interface. As a contained fallback, prepare an isolated static Worker service `scent-atlas-showroom` and, only after preview checks, bind the unused child hostname using Worker Domains. The empty Pages project was removed after the successful Worker release, once zero deployments and no custom domains were confirmed. This cleanup did not affect the live site.
 
 ## Gate and rollback
 
@@ -30,7 +30,7 @@ The first attempt to provision a Git-connected Pages project returned Cloudflare
 
 ## Release evidence
 
-**Pending final verified public deployment.** Update with actual revision, Worker ETag/version, hash, binding ID, hostname, status test results and timestamp. Do not publish a “live” case study without completing these gates.
+**Historical preflight note (superseded).** This section was written before domain binding. The final source, Worker ETag, artifact hash, hostname, status tests and rollback ID appear in the verified production section below.
 
 ## Verified isolated preview (2026-11-17)
 
@@ -71,3 +71,7 @@ After the new child-domain release, three separate Firecrawl HTTP content checks
 - `https://detour.aafnaipatro.com/` — DETOUR, title "DETOUR — Keep your place"
 
 These are post-release availability checks, not proof of complete historical parity or video playback. The Cloudflare Worker Domain/DNS associations for these services matched the preflight snapshot. No existing Worker script, Worker Route or GitHub main branch was changed as part of this release.
+
+## Cleanup confirmation
+
+On 2026-11-17 the unused `scent-atlas-studio` Pages project, created only for the failed Direct Upload attempt, was deleted after confirming **zero deployments** and no custom domains (only its default inactive `pages.dev` placeholder). The live Scent Atlas Worker Domain continues to serve the public site.

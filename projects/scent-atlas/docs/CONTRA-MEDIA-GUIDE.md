@@ -1,7 +1,7 @@
 # Scent Atlas — portfolio media and publication notes
 
 ## Primary cover (1600 × 1200)
-`portfolio/COVER-1600x1200.jpg`. The source publishing master is `portfolio/COVER-1600x1200.png`. Artwork uses three original scene studies with restrained editorial labels and the core question.
+`portfolio/COVER-1600x1200.jpg`. The high-resolution publishing master `portfolio/COVER-1600x1200.png` is supplied in the downloadable handoff archive rather than added as a second large binary to the repository. Artwork uses three original scene studies with restrained editorial labels and the core question.
 
 ## Annotated screenshots (1600 × 1100)
 
