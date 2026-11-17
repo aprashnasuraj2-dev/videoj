@@ -1,0 +1,17 @@
+{
+  "name": "scent-atlas",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A static, scene-led fragrance discovery concept with no shopper data collection.",
+  "engines": {
+    "node": ">=22.10.0"
+  },
+  "scripts": {
+    "build": "node --experimental-strip-types scripts/build.mjs",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "verify": "npm run test && npm run typecheck && npm run build && node scripts/verify.mjs",
+    "preview": "python3 -m http.server 4173 --directory dist",
+    "typecheck": "tsc --noEmit --strict --target ES2022 --module ESNext src/catalog.ts"
+  }
+}

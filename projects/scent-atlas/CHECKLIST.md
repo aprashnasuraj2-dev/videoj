@@ -10,7 +10,7 @@ A scene-led perfume discovery storefront. Start here before editing application 
 | Project boundary | `projects/scent-atlas/` |
 | Proposed public URL | `https://scent-atlas.aafnaipatro.com/` (check availability and zone ownership before binding) |
 | Delivery | Live concept demo, reproducible verification and a Contra-ready case study |
-| Current status | Planning. Next action: confirm project boundary and record release baseline under Phase 0. |
+| Current status | Implementation committed with 11 HTML routes, validated catalog and local tests. Next: document baseline, finish browser QA, prepare isolated release. |
 
 Use the branch for this project only. Keep the GitHub repository description, root README, main branch, shared workflows/configuration, DHAGO, DETOUR and their public hosts outside the change set. No merge to main is required. Review repository instructions at the checked-out revision. Record the date, source SHA, evidence pointer and any unresolved issue beside each completed phase. Commit checklist updates with the corresponding work. This file is the first branch commit. A checked box means its evidence exists.
 
@@ -18,24 +18,24 @@ Use the branch for this project only. Keep the GitHub repository description, ro
 
 - [x] Create `scent-atlas` from the verified main revision and write this checklist before implementation.
 - [ ] Confirm project boundary and record the baseline SHAs for main, its README, and the current repo description where readable. Inventory relevant workflows and existing public domains/routes read-only.
-- [ ] Define the standalone build, local scripts and artifact directories under `projects/scent-atlas/`. Establish phase evidence paths and the project-local README.
-- [ ] Confirm the concept scope: three scenes, six fictional fragrance profiles, three curated kits, a generic browse link, one comparison view, and a no-payment demo completion.
+- [x] Define the standalone build, local scripts and artifact directories under `projects/scent-atlas/`. Establish phase evidence paths and the project-local README.
+- [x] Confirm the concept scope: three scenes, six fictional fragrance profiles, three curated kits, a generic browse link, one comparison view, and a no-payment demo completion.
 
 ## Phase 1 - Story, catalog and design
 
-- [ ] Finalize Rain on Pavement, Cedar Workshop and Fresh Orange Peel as the three scene entry points.
-- [ ] Define six sample IDs, three distinct three-sample kits, leading sample order, fixed scene-to-kit links, and plain-language comparison dimensions.
-- [ ] Draft direct scene copy, what-it-smells-like descriptors, sample-kit copy, and explicit concept/demo wording. Avoid unsupported fragrance performance or ingredient claims.
-- [ ] Create responsive screen layouts, keyboard/focus states, and reduced-motion behavior for landing, scene, compare and kit screens.
+- [x] Finalize Rain on Pavement, Cedar Workshop and Fresh Orange Peel as the three scene entry points.
+- [x] Define six sample IDs, three distinct three-sample kits, leading sample order, fixed scene-to-kit links, and plain-language comparison dimensions.
+- [x] Draft direct scene copy, what-it-smells-like descriptors, sample-kit copy, and explicit concept/demo wording. Avoid unsupported fragrance performance or ingredient claims.
+- [x] Create responsive screen layouts, keyboard/focus states, and reduced-motion behavior for landing, scene, compare and kit screens.
 - [ ] Produce original or cleared assets with a manifest containing source, license or generation record, dimensions, alt treatment and crop behavior.
 
 ## Phase 2 - Build the discovery flow
 
-- [ ] Implement static URLs for landing, three scenes, comparison and three kits. Each URL opens directly, refreshes and traverses browser history.
-- [ ] Use one validated catalog with stable IDs. Reject duplicate IDs, missing sample references, wrong kit size and incorrect scene/kit links at build time.
-- [ ] Make the core browse, comparison and kit paths functional with JavaScript disabled. Use JavaScript to enhance interaction only.
-- [ ] Add kit preview and a locally handled fictional completion state with a clear way back to other scenes. Collect no account, email, payment or address data.
-- [ ] Keep dependencies, lockfile, build output, metadata and styles project-local. Wire documented build and verification commands with no whole-repo deployment.
+- [x] Implement static URLs for landing, three scenes, comparison and three kits. Each URL opens directly, refreshes and traverses browser history.
+- [x] Use one validated catalog with stable IDs. Reject duplicate IDs, missing sample references, wrong kit size and incorrect scene/kit links at build time.
+- [x] Make the core browse, comparison and kit paths functional with JavaScript disabled. Use JavaScript to enhance interaction only.
+- [x] Add kit preview and a locally handled fictional completion state with a clear way back to other scenes. Collect no account, email, payment or address data.
+- [x] Keep dependencies, lockfile, build output, metadata and styles project-local. Wire documented build and verification commands with no whole-repo deployment.
 - [ ] Verify basic failure states: missing media, unsupported JavaScript, deep link refresh, back/forward, unexpected URL and any blocked local storage.
 
 ## Phase 3 - Verify and refine
@@ -66,3 +66,10 @@ Use the branch for this project only. Keep the GitHub repository description, ro
 ## Evidence
 
 Keep artifact references, deployment IDs and test summaries in `docs/QA.md` and `docs/RELEASE.md` under this project. Keep runnable code in this directory. Store secrets and private participant records outside the repository. Document blockers, keep working on independent items and leave an actionable next unchecked step.
+
+### Implementation evidence (2026-11-17)
+
+- Scoped source and original scene assets committed here; no shared root file or deployment workflow changed.
+- Local `npm run verify`: six catalog unit tests passed; TypeScript check passed; 12 HTML documents (11 routes plus 404), internal asset/link validation passed.
+- Visual render self-check at 320/390/768/1440 CSS pixels: no horizontal overflow in seven inspected page types. This is not physical-device or independent browser acceptance.
+- Pending: remote build replay, Cloudflare deployment and real-browser/public verification; do not treat checked implementation items as deployment evidence.
