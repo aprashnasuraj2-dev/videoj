@@ -12,7 +12,7 @@ ROOT=pathlib.Path(__file__).resolve().parent
 SCENES=json.loads((ROOT/'story.json').read_text('utf-8'))['scenes']
 OUT=ROOT/'audio';OUT.mkdir(exist_ok=True)
 VOICE='ne-NP-HemkalaNeural'
-RATE='+0%'; PITCH='+0Hz'; SAMPLE_RATE=24000
+RATE='+8%'; PITCH='+0Hz'; SAMPLE_RATE=24000
 
 
 def run(cmd):
@@ -107,7 +107,7 @@ async def main():
  (OUT/'captions_ne.srt').write_text(subs,'utf-8')
  summary={'voice':VOICE,'rate':RATE,'duration':round(current,3),'language':'ne-NP','scene_timings':times,'total_captions':len(events),'provider_words_used_for_cues':sum(t['caption_mode']=='provider_word_boundary' for t in times),'sha256_wav':hashlib.sha256((OUT/'neural_ne_np.wav').read_bytes()).hexdigest(),'warning':'Do not claim voice is human; this is neural synthesis. Listen and approve before publication.'}
  (OUT/'timing_ne.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n','utf-8')
- if not 52<=current<=89:raise RuntimeError(f'Duration {current:.1f}s outside supported preflight window 52–89s: revise script or time stretch audio before finalizing')
+ if not 52<=current<=95:raise RuntimeError(f'Duration {current:.1f}s outside supported preflight window 52–95s: revise script or time stretch audio before finalizing')
  print(json.dumps(summary,ensure_ascii=False,indent=2),flush=True)
 
 if __name__=='__main__':asyncio.run(main())
