@@ -1,0 +1,34 @@
+name: Balen reel — Nepali neural narration
+on:
+  push:
+    branches: [newsroom-reel-engine]
+    paths:
+      - 'newsroom/stories/balen-india-previsit-2026-11/v2/**'
+      - '.github/workflows/balen-neural-voice.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ne-np-narration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install speech tools
+        run: |
+          python -m pip install --disable-pip-version-check edge-tts
+          ffmpeg -hide_banner -version | head -2
+      - name: Produce 9-scene natural Nepali neural speech with provider timestamp audit
+        run: python newsroom/stories/balen-india-previsit-2026-11/v2/tts_ne.py
+      - name: Upload voice and aligned captions as downloadable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: balen-ne-np-neural-narration
+          path: |
+            newsroom/stories/balen-india-previsit-2026-11/v2/audio/neural_ne_np.wav
+            newsroom/stories/balen-india-previsit-2026-11/v2/audio/captions_ne.srt
+            newsroom/stories/balen-india-previsit-2026-11/v2/audio/timing_ne.json
+          retention-days: 5
