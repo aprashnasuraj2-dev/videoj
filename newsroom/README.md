@@ -49,6 +49,11 @@ If you only have a narrated WAV and no timecodes, run a **non-strict preview**. 
 
 The engine preserves the visual template while improving the voice. The provided voice track must contain the exact storyboard narration, as confirmed manually or by aligned timestamps; the renderer cannot magically check the spoken words without ASR.
 
+
+## V3 review-first publication gate (new)
+
+Do not spend time/credits rendering 70 seconds until a native-language reviewer accepts a 14-second opening and the entire storyboard. The offline, consent-aware [Review-First v3 workflow](docs/REVIEW_FIRST_V3.md) includes a human scorecard, voice sample, side-by-side contact sheet, script/subtitle diff checks, immutable media hashes and mandatory review signoff. **All approval boxes are false by default**. For any release, use `render --strict --release` with the approved media and preview, not `render` alone. `main` and both player projects are unaffected.
+
 ## Smart automation contract (for AI assistants)
 
 1. Research 3+ independent, relevant, dated sources; compare publication dates, event dates, and figure scope. If fewer sources genuinely exist, report that limitation. Do not fabricate sources.

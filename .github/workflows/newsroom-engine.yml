@@ -1,7 +1,7 @@
 name: newsroom-engine
 on:
   push:
-    branches: [newsroom-reel-engine]
+    branches: [newsroom-reel-engine, newsroom-review-first-v3]
     paths: ['newsroom/**', '.github/workflows/newsroom-engine.yml']
   pull_request:
     paths: ['newsroom/**', '.github/workflows/newsroom-engine.yml']
@@ -25,3 +25,6 @@ jobs:
           python -m newsroom validate newsroom/templates/example_ai_bubble.json
           python -m newsroom validate newsroom/templates/example_ai_bubble_ne.json
           python -m pytest -q newsroom/tests
+          python -m newsroom review-pack newsroom/templates/example_ai_bubble_ne.json --out /tmp/newsroom-ne-review-pack
+          test -f /tmp/newsroom-ne-review-pack/contact_sheet.jpg
+          test -f /tmp/newsroom-ne-review-pack/review.html

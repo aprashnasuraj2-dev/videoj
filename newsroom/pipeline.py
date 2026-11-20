@@ -38,14 +38,20 @@ def ffprobe_duration(path: Path)->float:
 
 
 def voice_path(manifest:dict, project_path:Path, override:Path|None=None):
-    p=Path(override) if override else Path(str(manifest.get('voice',{}).get('file','')))
-    if not str(p) or str(p)=='.':raise FileNotFoundError("Natural voice audio required: set voice.file or pass --voice /path/to/narration.wav")
-    if not p.is_absolute():p=project_path.parent/p
-    if not p.is_file():raise FileNotFoundError(f"Narration missing: {p}\nNo automatic robotic-voice fallback is allowed")
+    # Explicit CLI --voice paths are relative to the invocation's current directory;
+    # paths inside the manifest are relative to the manifest itself.
+    if override is not None:
+        p=Path(override)
+        if not p.is_absolute():p=Path.cwd()/p
+    else:
+        configured=str(manifest.get('voice',{}).get('file','')).strip()
+        if not configured:raise FileNotFoundError('Natural voice audio required: set voice.file or pass --voice /path/to/narration.wav')
+        p=Path(configured)
+        if not p.is_absolute():p=project_path.parent/p
+    if not p.is_file():raise FileNotFoundError(f'Narration missing: {p}\nNo automatic robotic-voice fallback is allowed')
     if p.suffix.lower() not in {'.wav','.mp3','.m4a','.flac','.aac','.ogg'}:
-        raise ValueError("Narration must be recognized audio format WAV/MP3/M4A/FLAC/AAC/OGG")
+        raise ValueError('Narration must be recognized audio format WAV/MP3/M4A/FLAC/AAC/OGG')
     return p.resolve()
-
 
 def make_timeline(manifest:dict, voice_duration:float, lead=0.45, tail=1.4):
     """True timestamps take precedence. Otherwise use estimated word-weighted cues."""
