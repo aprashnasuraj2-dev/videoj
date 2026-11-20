@@ -1,0 +1,79 @@
+{
+  "file": "/mnt/data/balen_visit_2026_11/v2/output/Balen_India_Three_Doors_NEURAL_VOICE_CORRECTED.mp4",
+  "duration_s": 72.208,
+  "size_bytes": 4447973,
+  "video_codec": "h264",
+  "audio_codec": "aac",
+  "dimensions": "1080x1920",
+  "expected_duration_s": 72.18,
+  "passes": {
+    "video_stream": true,
+    "audio_stream": true,
+    "h264": true,
+    "aac": true,
+    "resolution": true,
+    "duration": true,
+    "nonzero_size": true,
+    "not_silent": true,
+    "loudness_acceptable": true
+  },
+  "warnings": [],
+  "audio_mean_dbfs": -16.3,
+  "integrated_lufs": -15.8,
+  "passed": true,
+  "language": "ne-NP",
+  "narrator": "Microsoft ne-NP-HemkalaNeural AI-generated voice (not human)",
+  "voice_original_espeak_replaced": true,
+  "captions": "26 manually proofread phrase-level cues; mostly provider time-anchored, one scene approximate",
+  "source_cutoff": "2026-11-20",
+  "cut": "PRE-VISIT; NOT outcome report",
+  "script_proofread": true,
+  "main_branch_unchanged": true,
+  "caption_visual_regression": {
+    "passed": true,
+    "samples": [
+      {
+        "at_second": 3.6,
+        "scene": 1,
+        "bright_subtitle_pixels": 10642,
+        "passed": true
+      },
+      {
+        "at_second": 15.0,
+        "scene": 3,
+        "bright_subtitle_pixels": 9898,
+        "passed": true
+      },
+      {
+        "at_second": 30.6,
+        "scene": 5,
+        "bright_subtitle_pixels": 10615,
+        "passed": true
+      },
+      {
+        "at_second": 40.3,
+        "scene": 6,
+        "bright_subtitle_pixels": 10802,
+        "passed": true
+      },
+      {
+        "at_second": 52.5,
+        "scene": 7,
+        "bright_subtitle_pixels": 4213,
+        "passed": true
+      },
+      {
+        "at_second": 65.9,
+        "scene": 9,
+        "bright_subtitle_pixels": 6930,
+        "passed": true
+      },
+      {
+        "at_second": 69.4,
+        "scene": 9,
+        "bright_subtitle_pixels": 6881,
+        "passed": true
+      }
+    ]
+  }
+}
