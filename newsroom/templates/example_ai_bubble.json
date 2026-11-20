@@ -1,0 +1,32 @@
+{
+  "metadata": {
+    "title": "When Will the AI Bubble Burst?",
+    "as_of": "2026-11-20",
+    "publisher": "The Signal",
+    "language": "en",
+    "format": "vertical-9:16",
+    "rights": "original visuals and original procedural score; synthetic narrator"
+  },
+  "voice": {
+    "mode": "natural_external",
+    "file": "assets/natural_narrator.wav",
+    "provider": "approved natural-quality voice service or consenting human narrator",
+    "performance": "calm, precise English broadcast delivery; restrained urgency",
+    "pronunciation": "Anthropic: an-THROP-ik; Claude: klawd"
+  },
+  "sources": [
+    {"id":"R1","title":"Reuters on Anthropic's IPO valuation","published":"2026-11-19","url":"https://www.reuters.com/legal/transactional/view-anthropic-set-soar-debut-will-ai-peers-follow-2026-11-19/","note":"Approximate fully diluted equity valuation; timestamp matters"},
+    {"id":"R2","title":"Reuters on post-IPO price and valuation","published":"2026-11-20","url":"https://www.reuters.com/business/anthropics-post-debut-stumble-delivers-reality-check-ai-trade-2026-11-20/","note":"Intraday price snapshot, not necessarily closing market value"},
+    {"id":"R3","title":"Reuters on revenue disclosed for IPO","published":"2026-11-19","url":"https://www.investing.com/news/stock-market-news/anthropic-prices-blockuster-ipo-at-83-a-share-source-says-5037110","note":"Q3 revenue is a quarterly number, not annual revenue"},
+    {"id":"ECB","title":"ECB Financial Stability Review, November 2026","published":"2026-11","url":"https://www.ecb.europa.eu/press/financial-stability-publications/fsr/focus/2026/html/ecb.fsrbox202611_03~4fd1449eaa.et.html","note":"Projection for cumulative US Big Tech capex by 2030; not an Anthropic commitment"}
+  ],
+  "scenes": [
+    {"layout":"cover","eyebrow":"Technology / Markets","headline":"When does the AI bubble burst?","value":"$1.77T","detail":"A striking valuation. A harder question about returns.","voiceover":"One point seven seven trillion dollars. That was Anthropic's fully diluted valuation at its market debut.","source_ids":["R1"],"claims":[{"kind":"reported","text":"Anthropic debut-day fully diluted valuation approximately $1.77T","source_ids":["R1"]}]},
+    {"layout":"stat","eyebrow":"The market reprices","headline":"One day changes the mood","value":"≈$1.6T","detail":"Reuters intraday snapshot, not the closing price.","voiceover":"By the following day, shares were under pressure. So is this the moment the bubble bursts?","source_ids":["R2"],"claims":[{"kind":"reported","text":"Approximate Reuters intraday snapshot $1.6T, November 20","source_ids":["R2"]}]},
+    {"layout":"stat","eyebrow":"The bull argument","headline":"Demand is real","value":"$16.96B","detail":"Reported Q3 revenue, up 47 percent quarter on quarter.","voiceover":"The bull case begins with real demand. The Claude maker reported almost seventeen billion dollars in quarterly revenue, up forty seven percent from the previous quarter.","source_ids":["R3"],"claims":[{"kind":"reported","text":"Q3 2026 revenue $16.96B and +47% quarter-on-quarter growth","source_ids":["R3"]}]},
+    {"layout":"stat","eyebrow":"The bear argument","headline":"But what price?","value":"~40×","detail":"Reuters estimate of trailing sales multiple; market-sensitive.","voiceover":"But investors were paying roughly forty times trailing sales. That valuation leaves little room for disappointment.","source_ids":["R2"],"claims":[{"kind":"reported","text":"Approximately 40 times trailing sales according to Reuters","source_ids":["R2"]}]},
+    {"layout":"stat","eyebrow":"Infrastructure bet","headline":"The buildout costs trillions","value":"$5.5T","detail":"ECB estimate: cumulative US Big Tech capital expenditure through 2030.","voiceover":"And the European Central Bank estimates that United States big tech could invest five point five trillion dollars by twenty thirty.","source_ids":["ECB"],"claims":[{"kind":"reported","text":"ECB projection of US Big Tech cumulative capex of about $5.5T through 2030","source_ids":["ECB"]}]},
+    {"layout":"compare","eyebrow":"What could happen","headline":"Two very different futures","left":{"label":"BULL CASE","body":"Paying customers scale as cost per AI task declines."},"right":{"label":"BEAR CASE","body":"Growth slows before power, chips and debt can be repaid."},"voiceover":"The optimists see faster adoption and cheaper computing. The skeptics see slower growth, expensive chips and debt commitments.","source_ids":["R3","ECB"],"claims":[{"kind":"scenario","text":"Faster adoption and improving unit economics could sustain returns","source_ids":["R3"],"qualifier":"Illustrative bull scenario, not a forecast"},{"kind":"scenario","text":"Slower growth and expensive commitments could compress valuation","source_ids":["ECB"],"qualifier":"Illustrative bear scenario, not a forecast"}]},
+    {"layout":"closing","eyebrow":"Bottom line","headline":"Technology is not the stock price","value":"WATCH CASH FLOW","detail":"No credible source can name the day a market bubble bursts.","voiceover":"A stock market correction would not mean artificial intelligence has failed. No one can name the exact day the bubble bursts. Watch cash flow. And watch the gap between promise and price.","source_ids":["R2","ECB"],"claims":[{"kind":"inference","text":"A stock-market correction is distinct from technology adoption","source_ids":["R2","ECB"],"qualifier":"Analytical distinction, not a prediction"}]}
+  ]
+}

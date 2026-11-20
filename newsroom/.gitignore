@@ -1,0 +1,14 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+newsroom/output/
+newsroom/assets/*.wav
+newsroom/assets/*.mp3
+newsroom/assets/*.m4a
+newsroom/assets/*.flac
+newsroom/assets/*.ogg
+newsroom/*.tmp
+*.log
+.env
+.env.*
+!*.example
