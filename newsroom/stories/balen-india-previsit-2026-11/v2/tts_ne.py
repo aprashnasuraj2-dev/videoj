@@ -5,6 +5,8 @@ No undocumented fallback to eSpeak or Hindi voice; failure is explicit.
 """
 from __future__ import annotations
 import asyncio, json, hashlib, pathlib, subprocess, wave, re, unicodedata
+import imageio_ffmpeg
+FFMPEG=imageio_ffmpeg.get_ffmpeg_exe()
 
 ROOT=pathlib.Path(__file__).resolve().parent
 SCENES=json.loads((ROOT/'story.json').read_text('utf-8'))['scenes']
@@ -39,7 +41,7 @@ async def synth_one(i:int,text:str):
   elif item['type']=='WordBoundary':words.append({'text':str(item['text']),'start':float(item['offset'])/10_000_000,'end':(float(item['offset'])+float(item['duration']))/10_000_000})
  if not data: raise RuntimeError(f'No audio returned by {VOICE} for segment {i}')
  mp3.write_bytes(b''.join(data))
- run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',str(mp3),'-ac','1','-ar',str(SAMPLE_RATE),'-c:a','pcm_s16le',str(wav)])
+ run([FFMPEG,'-hide_banner','-loglevel','error','-y','-i',str(mp3),'-ac','1','-ar',str(SAMPLE_RATE),'-c:a','pcm_s16le',str(wav)])
  with wave.open(str(wav),'rb') as w:
   if (w.getframerate(),w.getnchannels(),w.getsampwidth())!=(SAMPLE_RATE,1,2):raise RuntimeError('Unsupported WAV format')
   pcm=w.readframes(w.getnframes());duration=w.getnframes()/SAMPLE_RATE
