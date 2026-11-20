@@ -1,0 +1,326 @@
+{
+  "metadata": {
+    "title": "दिल्लीका तीन ढोका | बालेनको भारत भ्रमण",
+    "as_of": "2026-11-20",
+    "publisher": "THE SIGNAL / स्वतन्त्र विश्लेषण",
+    "language": "ne",
+    "format": "vertical-9:16",
+    "rights": "Original editorial graphics and procedural score; commentary is illustrative and must not be mistaken for footage of future meetings"
+  },
+  "voice": {
+    "mode": "natural_external",
+    "file": "../assets/nepali_narration_draft.wav",
+    "provider": "eSpeak Nepali prototype only — not a natural-neural narration, must replace before editorial publication",
+    "locale": "ne-NP",
+    "performance": "PRODUCTION BLOCKER: voice must be replaced with natural native ne-NP before distribution"
+  },
+  "sources": [
+    {
+      "id": "R1",
+      "title": "Nepal MoFA visit itinerary reported by Radio Nepal",
+      "published": "2026-11-20",
+      "url": "https://radionepalonline.com/en/2026/11/20/439048.html",
+      "note": "November 22–23 state visit; Modi discussions scheduled; no outcomes yet"
+    },
+    {
+      "id": "R2",
+      "title": "Kathmandu Post: additional Nepal India power export capacity",
+      "published": "2026-07-15",
+      "url": "https://kathmandupost.com/money/2026/07/15/nepal-to-export-550mw-more-electricity-to-india-under-new-agreement",
+      "note": "Agreement to increase transfer CAPACITY to 1,650 MW for exports, not verified shipped power"
+    },
+    {
+      "id": "R3",
+      "title": "India Embassy in Nepal: long-term power trade understanding",
+      "published": "2026-11-20",
+      "url": "https://www.indembkathmandu.gov.in/commerce-wing-brief",
+      "note": "Up to 10,000 MW export target over ten years agreed 2024; target is not actual export"
+    },
+    {
+      "id": "R4",
+      "title": "OnlineKhabar: 615 MW new Indian export approvals, Bangladesh 20MW outstanding",
+      "published": "2026-11-19",
+      "url": "https://english.onlinekhabar.com/india-approve-electricity-export.html",
+      "note": "Additional Bangladesh export pending; separate from Indian market approvals"
+    },
+    {
+      "id": "R5",
+      "title": "Reuters: Prime Minister Shah's 22–23 November India visit",
+      "published": "2026-11-20",
+      "url": "https://www.reuters.com/world/asia-pacific/nepal-pm-balendra-shah-visit-india-meet-modi-2026-11-20/",
+      "note": "Confirms planned official visit; commercial air route negotiations"
+    },
+    {
+      "id": "R6",
+      "title": "Kathmandu Post: unresolved air entry routes and aid",
+      "published": "2026-11-20",
+      "url": "https://kathmandupost.com/national/2026/11/20/old-differences-continue-to-weigh-on-nepal-india-ties",
+      "note": "Air route status; proposals for aid, not agreed grants"
+    },
+    {
+      "id": "R7",
+      "title": "OnlineKhabar: unresolved agenda including airspace and finance",
+      "published": "2026-11-20",
+      "url": "https://english.onlinekhabar.com/issues-unresolved-balen-india-visit.html",
+      "note": "Unfinalized negotiations and both sides' airspace interests; not settled agreements"
+    },
+    {
+      "id": "R8",
+      "title": "Kathmandu Post: India transmission constraints on Bangladesh 20MW",
+      "published": "2026-06-14",
+      "url": "https://kathmandupost.com/national/2026/06/14/additional-20-mw-electricity-export-to-bangladesh-blocked-as-india-withholds-approval",
+      "note": "Indian authorities cited transmission capacity; not equivalent to purely political refusal"
+    }
+  ],
+  "scenes": [
+    {
+      "layout": "cover",
+      "eyebrow": "२० नोभेम्बर २०२६ | भ्रमणपूर्व",
+      "headline": "दिल्लीमा तस्बिर होइन, तीन ढोका",
+      "value": "३ / १",
+      "detail": "बजार । आकाश । वित्त\nतीन चुनौती, एउटै कूटनीतिक परीक्षा",
+      "voiceover": "बालेन दिल्ली जाँदैछन्। तर असली प्रश्न मोदीसँग कति समय भेटे भन्ने होइन; नेपालका कति ढोका खुले भन्ने हो।",
+      "source_ids": [
+        "R1",
+        "R5"
+      ],
+      "claims": [
+        {
+          "kind": "inference",
+          "text": "The visit should be assessed by specific structural access and outcomes",
+          "source_ids": [
+            "R1",
+            "R5"
+          ],
+          "qualifier": "Editorial framing, not a reported claim"
+        }
+      ],
+      "cue_start": 0.0,
+      "cue_end": 7.406
+    },
+    {
+      "layout": "stat",
+      "eyebrow": "तथ्य / पूर्वसन्ध्या",
+      "headline": "भेट तय छ। नतिजा बाँकी छ।",
+      "value": "२२–२३",
+      "detail": "नोभेम्बर २०२६\nपूर्व-भ्रमण विश्लेषण, सम्पन्न भेटको समाचार होइन",
+      "voiceover": "नोभेम्बर बाइस र तेइसको भ्रमण अझै भएको छैन। नतिजा आइसकेको दाबी नगरौँ।",
+      "source_ids": [
+        "R1",
+        "R5"
+      ],
+      "claims": [
+        {
+          "kind": "reported",
+          "text": "Visit is scheduled for November 22–23, 2026; not yet undertaken on November 20",
+          "source_ids": [
+            "R1",
+            "R5"
+          ],
+          "qualifier": "Schedule can change"
+        }
+      ],
+      "cue_start": 7.546,
+      "cue_end": 12.785
+    },
+    {
+      "layout": "stat",
+      "eyebrow": "पहिलो ढोका / ऊर्जा बजार",
+      "headline": "लक्ष्य र कारोबार एउटै होइनन्",
+      "value": "10,000 MW",
+      "detail": "दश वर्षभित्र नेपालबाट भारततर्फ निर्यातको लक्ष्य\nवास्तविक बिक्रीको दाबी होइन",
+      "voiceover": "पहिलो ढोका, बिजुली। भारतसँग दस वर्षमा दस हजार मेगावाटसम्म निर्यात गर्ने लक्ष्य छ।",
+      "source_ids": [
+        "R2",
+        "R3"
+      ],
+      "claims": [
+        {
+          "kind": "reported",
+          "text": "2024 understanding targeted up to 10,000 MW of export within a decade, not achieved volume",
+          "source_ids": [
+            "R2",
+            "R3"
+          ],
+          "qualifier": "Target, not actual flow"
+        }
+      ],
+      "cue_start": 12.925,
+      "cue_end": 18.814
+    },
+    {
+      "layout": "stat",
+      "eyebrow": "प्रगति / तर अर्थ बुझौँ",
+      "headline": "प्रसारण क्षमता बढाउने सहमति",
+      "value": "1,650 MW",
+      "detail": "जुलाई २०२६: सीमापार निर्यात क्षमता\nनिर्णय भएको क्षमता ≠ बेचेको ऊर्जा",
+      "voiceover": "जुलाईमा निर्यात क्षमता सोह्र सय पचास मेगावाट पुर्‍याउने सहमति पनि भयो। यो वास्तविक प्रगति हो।",
+      "source_ids": [
+        "R2"
+      ],
+      "claims": [
+        {
+          "kind": "reported",
+          "text": "July agreement to raise aggregate transfer capacity for Nepal exports from 1,100 MW to 1,650 MW",
+          "source_ids": [
+            "R2"
+          ],
+          "qualifier": "Capacity agreement, not volume delivered"
+        }
+      ],
+      "cue_start": 18.954,
+      "cue_end": 25.199
+    },
+    {
+      "layout": "compare",
+      "eyebrow": "अनुमति / बाँकी प्रश्न",
+      "headline": "सहयोग र सीमाको एकै तस्वीर",
+      "voiceover": "यही साता भारतले झन्डै छ सय पन्ध्र मेगावाटको निर्यात स्वीकृति दियो। तर बंगलादेशतर्फ थप बीस मेगावाट अझै अड्किएको छ। उत्पादन र बजार पहुँच एउटै होइन।",
+      "source_ids": [
+        "R4",
+        "R8"
+      ],
+      "claims": [
+        {
+          "kind": "reported",
+          "text": "India approved export of 615.02 MW of Nepali power on Nov 19 2026",
+          "source_ids": [
+            "R4"
+          ],
+          "qualifier": "New approvals, separate from Bangladesh proposal"
+        },
+        {
+          "kind": "reported",
+          "text": "As of 19 Nov 2026 planned additional 20 MW exports to Bangladesh had not proceeded for lack of Indian approval",
+          "source_ids": [
+            "R4",
+            "R8"
+          ],
+          "qualifier": "Grid constraints cited by India"
+        }
+      ],
+      "left": {
+        "label": "भारततर्फ नयाँ स्वीकृति",
+        "body": "६१५.०२ मेगावाट: नोभेम्बर १९ मा स्वीकृत निर्यात"
+      },
+      "right": {
+        "label": "बंगलादेशतर्फ बाँकी",
+        "body": "+२० मेगावाट: थप निर्यातको अनुमति अपुरो"
+      },
+      "cue_start": 25.339,
+      "cue_end": 35.6
+    },
+    {
+      "layout": "stat",
+      "eyebrow": "दोस्रो ढोका / आकाश",
+      "headline": "खुला आकाश पनि समझदारी हो",
+      "value": "BHAIRAHAWA",
+      "detail": "हवाई प्रवेश मार्गमा प्रगति खोजिँदैछ\nसुरक्षा र यातायात व्यवस्थापनका प्रश्न पनि छन्",
+      "voiceover": "दोस्रो ढोका, आकाश। भैरहवाका लागि नयाँ हवाई प्रवेश मार्ग नेपालले खोजिरहेको छ। भारतका सुरक्षा र हवाई व्यवस्थापनका चिन्ता पनि छन्।",
+      "source_ids": [
+        "R5",
+        "R6",
+        "R7"
+      ],
+      "claims": [
+        {
+          "kind": "reported",
+          "text": "Nepal wants additional flight entry routes; there are aviation security and management issues to negotiate",
+          "source_ids": [
+            "R5",
+            "R6",
+            "R7"
+          ],
+          "qualifier": "Not yet agreed or opened"
+        }
+      ],
+      "cue_start": 35.74,
+      "cue_end": 44.964
+    },
+    {
+      "layout": "compare",
+      "eyebrow": "तेस्रो ढोका / अर्थसहायता",
+      "headline": "ठूलो अंक कि राम्रो सम्झौता?",
+      "left": {
+        "label": "अनुदान",
+        "body": "फिर्ता तिर्नुपर्ने ऋण होइन। सर्त र वितरण मितिको जाँच आवश्यक।"
+      },
+      "right": {
+        "label": "ऋण",
+        "body": "ब्याज, भुक्तानी, परियोजना प्रतिफल र जोखिम सार्वजनिक हुनुपर्छ।"
+      },
+      "voiceover": "तेस्रो ढोका, पैसा। सहयोगको अंक मात्र होइन; अनुदान कि ऋण? सर्त के? समयसीमा कहिले?",
+      "source_ids": [
+        "R6",
+        "R7"
+      ],
+      "claims": [
+        {
+          "kind": "inference",
+          "text": "Assess financing by grant versus debt terms, cost, deadlines and viability",
+          "source_ids": [
+            "R6",
+            "R7"
+          ],
+          "qualifier": "Evaluation framework, no financing agreement asserted"
+        }
+      ],
+      "cue_start": 45.104,
+      "cue_end": 51.885
+    },
+    {
+      "layout": "closing",
+      "eyebrow": "भारत–नेपाल / दुवै पक्ष",
+      "headline": "सहयोग पनि छ। निर्भरता पनि।",
+      "value": "३ प्रमाण",
+      "detail": "मार्ग खुलेको? स्वीकृति आएको?\nमिति सहितको सम्झौता?",
+      "voiceover": "भारतका सुरक्षा र प्राविधिक हित पनि वास्तविक हुन्। दिल्लीबाट फर्किएपछि तीन प्रमाण खोजौँ—खुलेको हवाई मार्ग, स्वीकृत कारोबार, अनि मितिसहितको कार्यतालिका।",
+      "source_ids": [
+        "R2",
+        "R4",
+        "R5",
+        "R7"
+      ],
+      "claims": [
+        {
+          "kind": "inference",
+          "text": "A balanced scorecard tracks routes, energy access and deadlines",
+          "source_ids": [
+            "R2",
+            "R4",
+            "R5",
+            "R7"
+          ],
+          "qualifier": "Questions for after the visit, not claimed outcomes"
+        }
+      ],
+      "cue_start": 52.025,
+      "cue_end": 62.103
+    },
+    {
+      "layout": "closing",
+      "eyebrow": "सम्पादकीय निष्कर्ष",
+      "headline": "तस्बिरलाई उपलब्धि नठानौँ",
+      "value": "कार्यान्वयन",
+      "detail": "अर्को पटकको अनुमतिको बाध्यता कति घट्यो?\nत्यही नै दीर्घकालीन कूटनीतिक लाभ हो।",
+      "voiceover": "अन्तिम प्रश्न यही हो। भोलि पनि उही अनुमतिका लागि ढोका ढकढक्याउनुपर्ने निर्भरता कति घट्यो?",
+      "source_ids": [
+        "R1",
+        "R7"
+      ],
+      "claims": [
+        {
+          "kind": "inference",
+          "text": "Implementation matters more than ceremony for measuring durable benefit",
+          "source_ids": [
+            "R1",
+            "R7"
+          ],
+          "qualifier": "Editorial assessment"
+        }
+      ],
+      "cue_start": 62.243,
+      "cue_end": 68.115
+    }
+  ]
+}
