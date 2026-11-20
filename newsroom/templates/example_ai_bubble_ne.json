@@ -1,0 +1,214 @@
+{
+  "metadata": {
+    "title": "एआईको मूल्यांकन: बुलबुला कहिले फुट्ला?",
+    "as_of": "2026-11-20",
+    "publisher": "The Signal",
+    "language": "ne",
+    "format": "vertical-9:16",
+    "rights": "मौलिक ग्राफिक्स, मूल ध्वनि तथा अनुमति प्राप्त नेपाली एआई/मानवीय आवाज; नमुना मात्र"
+  },
+  "voice": {
+    "mode": "natural_external",
+    "file": "assets/natural_narrator.wav",
+    "provider": "नेपाली उच्चारण पुष्टि भएको अनुमति प्राप्त आवाज सेवा वा सहमत मानव वाचक",
+    "performance": "शान्त, विश्वसनीय नेपाली समाचार विश्लेषण; प्राकृतिक संवादात्मक गति, आवश्यक ठाउँमा विराम; अत्यधिक नाटकीय वा हिन्दी लवज होइन",
+    "pronunciation": "Anthropic = एन्थ्रोपिक; Claude = क्लड (वाचकबाट पुष्टि); AI = एआई; IPO = आईपीओ; Q3 = तेस्रो त्रैमासिक। समीक्षा गरेर बोल्नुहोस्।",
+    "locale": "ne-NP"
+  },
+  "sources": [
+    {
+      "id": "R1",
+      "title": "Reuters on Anthropic's IPO valuation",
+      "published": "2026-11-19",
+      "url": "https://www.reuters.com/legal/transactional/view-anthropic-set-soar-debut-will-ai-peers-follow-2026-11-19/",
+      "note": "Approximate fully diluted equity valuation; timestamp matters"
+    },
+    {
+      "id": "R2",
+      "title": "Reuters on post-IPO price and valuation",
+      "published": "2026-11-20",
+      "url": "https://www.reuters.com/business/anthropics-post-debut-stumble-delivers-reality-check-ai-trade-2026-11-20/",
+      "note": "Intraday price snapshot, not necessarily closing market value"
+    },
+    {
+      "id": "R3",
+      "title": "Reuters on revenue disclosed for IPO",
+      "published": "2026-11-19",
+      "url": "https://www.investing.com/news/stock-market-news/anthropic-prices-blockuster-ipo-at-83-a-share-source-says-5037110",
+      "note": "Q3 revenue is a quarterly number, not annual revenue"
+    },
+    {
+      "id": "ECB",
+      "title": "ECB Financial Stability Review, November 2026",
+      "published": "2026-11",
+      "url": "https://www.ecb.europa.eu/press/financial-stability-publications/fsr/focus/2026/html/ecb.fsrbox202611_03~4fd1449eaa.et.html",
+      "note": "Projection for cumulative US Big Tech capex by 2030; not an Anthropic commitment"
+    }
+  ],
+  "scenes": [
+    {
+      "layout": "cover",
+      "eyebrow": "प्रविधि / बजार",
+      "headline": "एआईको बुलबुला कहिले फुट्ला?",
+      "value": "$1.77T",
+      "detail": "कम्पनीको मूल्यांकन र वास्तविक आम्दानी फरक कुरा हुन्।",
+      "voiceover": "झन्डै सत्र खर्ब सत्तरी अर्ब अमेरिकी डलर। एन्थ्रोपिकको बजार प्रवेशको मूल्यांकनले एउटा ठूलो प्रश्न उठाएको छ।",
+      "source_ids": [
+        "R1"
+      ],
+      "claims": [
+        {
+          "kind": "reported",
+          "text": "Anthropic debut-day fully diluted valuation approximately $1.77T",
+          "source_ids": [
+            "R1"
+          ],
+          "qualifier": ""
+        }
+      ]
+    },
+    {
+      "layout": "stat",
+      "eyebrow": "बजारको प्रतिक्रिया",
+      "headline": "बजारको उत्साह सधैँ टिक्दैन",
+      "value": "≈$1.6T",
+      "detail": "एक दिनको बजार मूल्य स्थायी तथ्य होइन।",
+      "voiceover": "अर्को दिन सेयर मूल्यमा दबाब देखियो। तर के एउटा गिरावटले एआईको बुलबुला फुटेको प्रमाणित गर्छ?",
+      "source_ids": [
+        "R2"
+      ],
+      "claims": [
+        {
+          "kind": "reported",
+          "text": "Approximate Reuters intraday snapshot $1.6T, November 20",
+          "source_ids": [
+            "R2"
+          ],
+          "qualifier": ""
+        }
+      ]
+    },
+    {
+      "layout": "stat",
+      "eyebrow": "सकारात्मक पक्ष",
+      "headline": "वास्तविक माग पनि छ",
+      "value": "$16.96B",
+      "detail": "तेस्रो त्रैमासिक आम्दानी, अघिल्लो त्रैमासिकभन्दा ४७ प्रतिशत बढी।",
+      "voiceover": "समर्थकहरू भन्छन्, ग्राहकले पैसा तिरिरहेका छन्। कम्पनीले तेस्रो त्रैमासिकमा झन्डै सत्र अर्ब डलर आम्दानी देखाएको थियो।",
+      "source_ids": [
+        "R3"
+      ],
+      "claims": [
+        {
+          "kind": "reported",
+          "text": "Q3 2026 revenue $16.96B and +47% quarter-on-quarter growth",
+          "source_ids": [
+            "R3"
+          ],
+          "qualifier": ""
+        }
+      ]
+    },
+    {
+      "layout": "stat",
+      "eyebrow": "चिन्ताको पक्ष",
+      "headline": "मूल्यांकन कति महँगो?",
+      "value": "~40×",
+      "detail": "बिक्रीको तुलनामा मूल्यांकन — समयअनुसार परिवर्तन हुने सूचक।",
+      "voiceover": "तर बिक्रीको तुलनामा मूल्यांकन धेरै माथि छ। अपेक्षाअनुसार वृद्धि नभए सेयरको मूल्य तीव्र रूपमा घट्न सक्छ।",
+      "source_ids": [
+        "R2"
+      ],
+      "claims": [
+        {
+          "kind": "reported",
+          "text": "Approximately 40 times trailing sales according to Reuters",
+          "source_ids": [
+            "R2"
+          ],
+          "qualifier": ""
+        }
+      ]
+    },
+    {
+      "layout": "stat",
+      "eyebrow": "पूर्वाधार खर्च",
+      "headline": "लगानीको दायित्व ठूलो छ",
+      "value": "$5.5T",
+      "detail": "सन् २०३० सम्म अमेरिकी ठूला प्रविधि कम्पनीको सम्भावित पूँजीगत खर्च।",
+      "voiceover": "डाटा सेन्टर, चिप र बिजुलीमा खर्बौँ डलर चाहिन्छ। युरोपेली केन्द्रीय बैंकले सन् दुई हजार तीससम्म ठूलो खर्च हुने अनुमान गरेको छ।",
+      "source_ids": [
+        "ECB"
+      ],
+      "claims": [
+        {
+          "kind": "reported",
+          "text": "ECB projection of US Big Tech cumulative capex of about $5.5T through 2030",
+          "source_ids": [
+            "ECB"
+          ],
+          "qualifier": ""
+        }
+      ]
+    },
+    {
+      "layout": "compare",
+      "eyebrow": "दुई सम्भावना",
+      "headline": "दुई फरक भविष्य",
+      "left": {
+        "label": "सकारात्मक अवस्था",
+        "body": "ग्राहक बढ्छन्, एआई प्रयोगको औसत खर्च घट्छ।"
+      },
+      "right": {
+        "label": "नकारात्मक अवस्था",
+        "body": "वृद्धि सुस्त हुन्छ, चिप र ऋणको दायित्व बढ्छ।"
+      },
+      "voiceover": "सकारात्मक अवस्थामा ग्राहक र उत्पादकत्व बढ्छन्, कामको लागत घट्छ। नकारात्मक अवस्थामा लगानीको प्रतिफल आउनुअघि ऋण र खर्चको बोझ बढ्छ।",
+      "source_ids": [
+        "R3",
+        "ECB"
+      ],
+      "claims": [
+        {
+          "kind": "scenario",
+          "text": "Faster adoption and improving unit economics could sustain returns",
+          "source_ids": [
+            "R3"
+          ],
+          "qualifier": "Illustrative bull scenario, not a forecast"
+        },
+        {
+          "kind": "scenario",
+          "text": "Slower growth and expensive commitments could compress valuation",
+          "source_ids": [
+            "ECB"
+          ],
+          "qualifier": "Illustrative bear scenario, not a forecast"
+        }
+      ]
+    },
+    {
+      "layout": "closing",
+      "eyebrow": "निष्कर्ष",
+      "headline": "प्रविधि र सेयरको मूल्य एउटै होइन",
+      "value": "नगद प्रवाह हेर्नुहोस्",
+      "detail": "ठ्याक्कै मिति बताउने विश्वसनीय आधार छैन।",
+      "voiceover": "एआई प्रविधि उपयोगी हुन सक्छ, तर त्यसको सेयर महँगो हुन सक्छ। बुलबुला कहिले फुट्छ भनेर निश्चित मिति कसैले दिन सक्दैन। नगद प्रवाह र मूल्यांकनको दूरी हेर्नुहोस्।",
+      "source_ids": [
+        "R2",
+        "ECB"
+      ],
+      "claims": [
+        {
+          "kind": "inference",
+          "text": "A stock-market correction is distinct from technology adoption",
+          "source_ids": [
+            "R2",
+            "ECB"
+          ],
+          "qualifier": "Analytical distinction, not a prediction"
+        }
+      ]
+    }
+  ]
+}

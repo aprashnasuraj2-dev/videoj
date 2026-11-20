@@ -21,6 +21,7 @@ from typing import Any
 from .audio import build_bed
 from .graphics import render_scene
 from .validation import load, source_ledger
+from .i18n import language, is_nepali, verify_text_engine, subtitle_font, sentence_ends, ass_subtitle_style
 
 
 def run(args, *, capture=True):
@@ -94,11 +95,13 @@ def captions_estimated(timeline:list[dict], output:Path)->None:
         chunks=[];current=[]
         for word in words:
             current.append(word)
-            if len(current)>=7 or str(word).endswith(('.','?', '!')) and len(current)>3:
+            if len(current)>=5 or (sentence_ends(word) and len(current)>=3):
                 chunks.append(' '.join(current));current=[]
         if current:chunks.append(' '.join(current))
         if not chunks:continue
-        dur=(t['end']-t['start']);weights=[max(len(re.findall(r'\w+',c)),1) for c in chunks];total=sum(weights)
+        # Grapheme count respects syllables/matras rather than Python \w character class.
+        import regex as unicode_regex
+        dur=(t['end']-t['start']);weights=[max(len(unicode_regex.findall(r'\X',c)),1) for c in chunks];total=sum(weights)
         used=0.0
         for i,chunk in enumerate(chunks):
             start=t['start']+dur*used/total;used+=weights[i];end=t['start']+dur*used/total
@@ -118,7 +121,7 @@ def offset_srt(source:Path,dest:Path,offset:float)->None:
 
 
 def digest_scene(scene:dict,meta:dict,width,height):
-    src=json.dumps([scene,meta,width,height,'graphics-1.1'],sort_keys=True)
+    src=json.dumps([scene,meta,width,height,'graphics-2.0-nepali'],sort_keys=True,ensure_ascii=False)
     return hashlib.sha256(src.encode()).hexdigest()
 
 
@@ -156,6 +159,8 @@ def qc_mp4(video:Path, expected_length:float, width:int,height:int)->dict:
 
 def build(project:Path, *, output:Path|None=None, voice_override:Path|None=None, preview=False, strict=False, workers=2, subs:Path|None=None)->dict:
     project=Path(project).resolve();manifest=load(project)
+    lang=language(manifest['metadata'])
+    typography=verify_text_engine(lang)
     v=voice_path(manifest,project,voice_override)
     vdur=ffprobe_duration(v)
     lead=.45;tail=1.25
@@ -214,8 +219,6 @@ def build(project:Path, *, output:Path|None=None, voice_override:Path|None=None,
         captions_estimated(timeline,srt);subtitle_method='estimated'
     # Burn subtitles in the safe lower third, no VTT re-parsing at the client.
     escaped=str(srt.resolve()).replace('\\','\\\\').replace(':','\\:').replace("'","\\'").replace(',','\\,')
-    caption_size=22 if preview else 47
-    margin_v=68 if preview else 158
     # Voice has clear priority: -6dB high-pass cleanup, bed -30dB relative to voice peak.
     # Short fade-out avoids clicks; FFmpeg loudnorm prevents clipped AAC delivery.
     filters=(
@@ -224,16 +227,17 @@ def build(project:Path, *, output:Path|None=None, voice_override:Path|None=None,
         f'afade=t=out:st={max(0,total-.65):.3f}:d=0.6,'
         'loudnorm=I=-16:TP=-1.5:LRA=10[a]'
     )
-    vf=(f"subtitles=filename='{escaped}':force_style='FontName=DejaVu Sans,FontSize={caption_size},"
-        f"Alignment=2,MarginV={margin_v},Outline=2,Shadow=1,PrimaryColour=&H00F5F6F5&,"
-        "OutlineColour=&H00101923&'" )
+    # ASS FontSize is in script-coordinate units (PlayResY=288 for SRT->ASS),
+    # not final video pixels: 50 would create ~333 px captions at 1920h.
+    vf=f"subtitles=filename='{escaped}':force_style='{ass_subtitle_style(lang)}'"
     run(['ffmpeg','-hide_banner','-loglevel','error','-y','-i',visuals,'-i',v,'-i',bed,'-filter_complex',filters,
          '-map','0:v','-map','[a]','-vf',vf,'-t',calculated_length,'-c:v','libx264','-preset','veryfast','-crf',crf,'-r',fps,
          '-pix_fmt','yuv420p','-c:a','aac','-b:a','160k','-ar','48000','-movflags','+faststart',out])
     report=qc_mp4(out,calculated_length,width,height)
     report.update({'rendered_at_utc':datetime.now(timezone.utc).isoformat(),'source_manifest':str(project),'voice_file':str(v),
       'voice_duration_s':vdur,'caption_alignment':subtitle_method,'scene_timing_method':method,'scene_count':len(timing),
-      'new_encoded_scenes':len(scene_inputs),'reused_encoded_scenes':len(timing)-len(scene_inputs),'preview':preview})
+      'new_encoded_scenes':len(scene_inputs),'reused_encoded_scenes':len(timing)-len(scene_inputs),'preview':preview,
+      'language':lang,'caption_font':subtitle_font(lang),'complex_text_layout_raqm':typography['complex_text_layout_raqm']})
     if subtitle_method=='estimated':report['warnings'].append('Captions and visual scene cuts are based on estimated word allocation; supply real timestamps or aligned SRT for publication')
     qc_path=out.with_name(out.stem+'_QA.json');qc_path.write_text(json.dumps(report,indent=2),encoding='utf-8')
     ledger=out.with_name(out.stem+'_SOURCES.md');ledger.write_text(source_ledger(manifest),encoding='utf-8')

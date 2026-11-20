@@ -17,3 +17,24 @@
 - [ ] Export final MP4 H.264/AAC, 1080 × 1920 at 24 FPS
 - [ ] Save MP4, SRT and sources/QA in persistent Library/Drive on request
 - [ ] Leave original apps/main branch untouched
+
+## Nepali and multilingual production checks
+
+- [x] Language routes `en`, `ne`, `ne-en`; old English manifests still valid
+- [x] Locale gate requires `ne-NP` for Nepali voice tracks
+- [x] RAQM shaping and Noto Sans Devanagari typography preflight
+- [x] Real mixed-script Latin/Devanagari font rendering; `$` and financial figures remain legible
+- [x] Unicode grapheme-aware wrapping; no cutting conjuncts/diacritics
+- [x] Subtitles use libass with Noto font and Nepali sentence boundaries `।`
+- [x] Generic exact character and exact word timestamps (external voice remains separate)
+- [x] Nepali and code-mixed sample templates and spoken-voice acceptance checklist
+- [ ] For every **published** story, confirm a native-sounding Nepali voice by listening
+- [ ] For every **published** story, visually proofread subtitle density on mobile
+- [ ] For every **published** story, verify number unit translations and source dates
+
+## Engineering verification evidence (2026-11-20)
+
+- [x] 17 tests: English regression, Nepali glyph geometry, nativeness manifest, word/character timestamp alignment and MP4 preview cache reuse
+- [x] Full-resolution 1080 × 1920 strict-timing technical test generated a valid 10.0s H.264/AAC MP4 at −16.0 LUFS
+- [x] Inspected a rendered video frame: corrected ASS script-unit caption scaling, no glyph clipping, no headline overlap
+- [ ] Native-sounding Nepali **voice** acceptance is a separate human QA gate (technical test intentionally uses a synthetic tone)

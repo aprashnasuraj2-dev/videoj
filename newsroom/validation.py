@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from datetime import date
 from urllib.parse import urlparse
+from .i18n import SUPPORTED_LANGUAGES, language, required_locale, has_devanagari
 
 VALID_KINDS = {"reported", "inference", "scenario", "speculation"}
 VALID_LAYOUTS = {"cover", "stat", "bars", "compare", "explainer", "closing"}
@@ -35,6 +36,9 @@ def validate(obj: dict) -> None:
         errors.append("metadata.as_of must be ISO date YYYY-MM-DD")
     if metadata.get("publisher", "").strip().lower() in {"al jazeera", "reuters", "bbc", "bloomberg"}:
         errors.append("Do not impersonate an established newsroom or imply affiliation")
+    lang = language(metadata)
+    if lang not in SUPPORTED_LANGUAGES:
+        errors.append(f"metadata.language must be one of {sorted(SUPPORTED_LANGUAGES)}")
     sources = obj.get("sources", [])
     if not isinstance(sources, list):
         errors.append("sources must be an array")
@@ -104,6 +108,12 @@ def validate(obj: dict) -> None:
     voice = obj.get("voice", {})
     if not isinstance(voice, dict):
         errors.append("voice must be object")
+    if lang in {"ne", "ne-en"}:
+        locale = str(voice.get("locale", ""))
+        if locale.lower() not in {"ne", "ne-np"}:
+            errors.append("Nepali production requires voice.locale ne-NP (actual Nepali audio, not Hindi translation)")
+        if not any(has_devanagari(s.get("voiceover", "")) for s in scenes):
+            errors.append("Nepali production requires genuine Nepali-language narration, not an English-only storyboard")
     if voice.get("mode", "natural_external") != "natural_external":
         errors.append("Only natural_external voice mode supported; robotic automatic fallback is intentionally prohibited")
     if errors:
@@ -112,7 +122,7 @@ def validate(obj: dict) -> None:
 
 def source_ledger(obj: dict) -> str:
     info = obj['metadata']
-    lines = [f"# Editorial evidence record — {info['title']}", "", f"Cutoff: {info['as_of']}", f"Publisher: {info['publisher']} (independent explainer)", "", "## Source register", ""]
+    lines = [f"# Editorial evidence record — {info['title']}", "", f"Cutoff: {info['as_of']}", f"Publisher: {info['publisher']} (independent explainer)", f"Language: {language(info)}", "", "## Source register", ""]
     for s in obj['sources']:
         lines.extend([f"- **{s['id']} — {s['title']}** ({s['published']}): {s['url']}",f"  - Note: {s.get('note','No note supplied')}"])
     lines.extend(["", "## Claims, evidence and editorial boundary", ""])
