@@ -120,6 +120,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   const manifestSeen=new Promise(resolve=>{manifestSeenResolve=resolve;});
   const manifestRelease=new Promise(resolve=>{releaseManifest=resolve;});
   await page.route(peerBase+'/agents/agent-manifest.json',async route=>{manifestSeenResolve();await manifestRelease;try{await route.abort();}catch{}});
+  await page.locator('#peer-url').fill(peerBase+'/agents/checklist');
   const mediaBeforeCancel=await media.evaluate(video=>video.currentTime);
   await page.getByRole('button',{name:'Run consented peer composition'}).click();
   await page.waitForFunction(()=>document.querySelector('#consent-dialog').open&&document.querySelector('#consent-purpose').textContent.includes('exact published peer network'));
