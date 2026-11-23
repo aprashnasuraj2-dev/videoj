@@ -17,4 +17,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - run: node --test packages/sutra-evidence/test/receipt.test.mjs
+      - run: node --test packages/sutra-evidence/test/*.test.mjs
+      - run: node packages/sutra-evidence/annotation-cli.mjs packages/sutra-evidence/examples/annotation.json packages/sutra-evidence/examples/integrity-manifest.json packages/sutra-evidence/examples/transcript-v3.vtt
