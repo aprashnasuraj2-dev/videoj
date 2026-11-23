@@ -23,3 +23,18 @@
 #peer-consent-log{font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto}
 #peer-consent-dialog dd{overflow-wrap:anywhere}
 @media(max-width:760px){.peer-workbench{padding:20px}.peer-input-row{flex-direction:column}.peer-input-row input,.peer-input-row button{width:100%;flex:auto}}
+
+/* Reusable, source-scoped transcript controls. Native media is the only clock. */
+#timing-transcript-panel{margin-top:18px;max-width:100%;min-width:0}
+.transcript-browser{border-top:1px solid #d7dfd4;padding-top:12px}
+.transcript-browser label{display:block;font-size:12px;font-weight:700}
+.transcript-meta,.transcript-status{font-size:12px;color:#596e64;overflow-wrap:anywhere}
+.transcript-search{width:100%;max-width:100%;font:inherit;font-size:13px;padding:10px;border:1px solid #b1c2b6;border-radius:7px;margin:4px 0 8px;background:#fffef9;color:#163c3d}
+.transcript-search:focus-visible{outline:3px solid #ad651e;outline-offset:2px}
+.transcript-cues{list-style:none;margin:12px 0;padding:0;max-width:100%}
+.transcript-item{margin:8px 0}
+.transcript-cue{width:100%;display:flex;gap:10px;text-align:left;align-items:flex-start;overflow-wrap:anywhere;background:#f2f4ef;padding:12px}
+.transcript-range{font-size:11px;white-space:nowrap;font-weight:700;flex-shrink:0}
+.transcript-words{font-size:12px;min-width:0}
+.transcript-cue[aria-current=true]{border-color:#357561;background:#e7f0e7;box-shadow:inset 3px 0 #357561}
+@media(max-width:760px){.transcript-cue{flex-direction:column;gap:5px}}
