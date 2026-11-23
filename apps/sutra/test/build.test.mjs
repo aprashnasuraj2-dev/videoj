@@ -37,3 +37,21 @@ test('manifest graph cache versions equal current Git blob identities',async()=>
   assert.equal(declared.searchParams.get('v'),blob,`${entry.name} version must change whenever graph bytes change`);
  }
 });
+
+
+test('static _headers security boundary matches default Worker API policy and keeps assets off Worker-first path',async()=>{
+ const {securityHeaders}=await import('../../../services/sutra-api/worker.js');
+ const lines=fs.readFileSync(path.join(app,'public/_headers'),'utf8').split(/\r?\n/);
+ const actual={};let wildcard=false;
+ for(const line of lines){
+  if(line.trim()==='/*'){wildcard=true;continue;}
+  if(wildcard&&!/^\s/.test(line)&&line.trim())break;
+  if(!wildcard||!line.trim())continue;
+  const colon=line.indexOf(':');if(colon>0)actual[line.slice(0,colon).trim()]=line.slice(colon+1).trim();
+ }
+ const expected=securityHeaders({});
+ for(const [key,value] of Object.entries(expected))assert.equal(actual[key],value,`${key} must not drift between static and API policy`);
+ const wrangler=JSON.parse(fs.readFileSync(path.join(app,'../../services/sutra-api/wrangler.jsonc')));
+ assert.deepEqual(wrangler.assets.run_worker_first,['/api/*']);
+ assert.equal(wrangler.vars.SUTRA_PEER_ORIGINS,'');
+});
