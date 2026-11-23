@@ -5,6 +5,7 @@ import {AgentNetwork, validateNetwork} from './vendor/nsdeploy/kernel.js';
 import {runAgent} from './vendor/nsdeploy/runner.js';
 import {checkSchema, validateData} from './vendor/nsdeploy/actions.js';
 import {TraceBus} from './vendor/nsdeploy/trace.js';
+import {createPrivateContextPolicy,privateContextPrompt} from './private-context.js';
 
 export class RuntimeError extends Error {
   constructor(code,message){super(message);this.name='RuntimeError';this.code=code;}
@@ -97,12 +98,15 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
 
 // Model adapters are explicitly injected; there is no keyless automatic mock fallback.
 // A scripted-test adapter is only a test driver, not a live inference service.
-export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,peerRuntime,thirdPartyMcp}={}){
+export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,peerRuntime,thirdPartyMcp,privateContext,peerContextGrants}={}){
  if(peerRuntime!==undefined){
   if(!plain(peerRuntime)||typeof peerRuntime.inspector?.perform!=='function'||peerRuntime.fetchImpl!==undefined&&typeof peerRuntime.fetchImpl!=='function')fail('PEER_CONFIG','Peer invocation requires an explicit contact inspector and optional fetch implementation.');
   allowed(peerRuntime,['inspector','fetchImpl'],'peer runtime');
  }
  const third=thirdPartyMcp===undefined?null:validateExternalMcpConfig(thirdPartyMcp);
+ let privatePolicy;
+ try{privatePolicy=createPrivateContextPolicy({values:privateContext??{},grants:peerContextGrants??[]});}
+ catch(error){fail(error?.code??'PRIVATE_CONTEXT_POLICY','Private context policy is invalid.');}
  const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeers:!!peerRuntime,externalMcpUrl:third?.url??null});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
  if(!model||typeof model.chat!=='function'||!['scripted-test','provider'].includes(model.mode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
@@ -182,7 +186,18 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   return {invoke:async(message,{parentSpan:span,chain:visited=[],composition:sharedBudget}={})=>{
    check();
    if(!plain(message)||!plain(message.user_message)||typeof message.user_message.text!=='string')fail('PEER_REQUEST','Invalid delegated peer request.');
-   const peerCtx={...ctx,network:peer.network,frontMan:peer.frontMan,baseOrigin:loaded.origin,displayOrigin:loaded.origin,isTop:false,slyData:{},composition:sharedBudget??composition};
+   const approvedContext=privatePolicy.downstream(url,loaded.name);
+   const contextText=privateContextPrompt(approvedContext);
+   let peerNetwork=peer.network;
+   if(contextText){
+    const baseNetwork=peer.network;
+    peerNetwork=Object.create(baseNetwork);
+    peerNetwork.getAgentSpec=agentName=>{
+     const spec=baseNetwork.getAgentSpec(agentName);
+     return spec?{...spec,instructions:(spec.instructions??'')+contextText}:spec;
+    };
+   }
+   const peerCtx={...ctx,network:peerNetwork,frontMan:peer.frontMan,baseOrigin:loaded.origin,displayOrigin:loaded.origin,isTop:false,slyData:{...approvedContext},composition:sharedBudget??composition};
    // Run the published data as local agents under the caller's one model
    // adapter, total model budget, trace and abort signal. Never send prompt
    // text or an API key to the artifact-serving peer origin.
