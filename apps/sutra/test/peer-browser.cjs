@@ -117,7 +117,12 @@ const assert=require('node:assert/strict');
   assert.equal(await page.locator('#peer-router').innerText(),'Scripted test driver · no live provider');
   assert.equal(await page.locator('#peer-agent-budget').innerText(),'3 / 12 used');
   assert.equal(await page.locator('#peer-model-budget').innerText(),'5 / 8 used');
+  assert.equal(await page.locator('#peer-tool-count').innerText(),'2');
+  assert.match(await page.locator('#peer-elapsed').innerText(),/^\d+ ms \/ 60,000 ms$/);
+  assert.ok(parseInt(await page.locator('#peer-elapsed').innerText(),10)>=0);
   assert.equal(await page.locator('#peer-contact-count').innerText(),'2 completed');
+  assert.match(await page.locator('#peer-trace').innerText(),/Tool · checklist/);
+  assert.match(await page.locator('#peer-trace').innerText(),/Tool · evidence/);
   assert.deepEqual(peerRequests.slice(previous).map(r=>new URL(r.url).pathname),
    ['/agents/agent-manifest.json','/agents/checklist.network.json']);
   assert.match(await page.locator('#peer-trace').innerText(),/Loaded peer/);
