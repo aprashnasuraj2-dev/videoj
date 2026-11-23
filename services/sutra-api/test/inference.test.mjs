@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {handleInference,UPSTREAM,inferenceStatus} from '../inference.js';import {InferenceQuota} from '../quota.js';import worker,{handleSourceTools} from '../worker.js';import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {handleInference,UPSTREAM,inferenceStatus} from '../inference.js';import {InferenceQuota} from '../quota.js';import worker,{handleSourceTools,securityHeaders,allowedPeerOrigins} from '../worker.js';import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
 const payload=()=>({model:'operator-approved',stream:true,messages:[{role:'user',content:'hello'}],tools:[]});
 const request=(body=payload(),extra={})=>new Request('https://sutra.test/api/infer',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json','CF-Connecting-IP':'192.0.2.1',...extra},body:JSON.stringify(body)});
 let leaseSequence=0;
@@ -65,5 +65,29 @@ test('provider failure and public stream cancellation release active quota lease
   if(scenario==='cancel')await response.body.cancel();else assert.equal(response.status,502);
   await new Promise(resolve=>setTimeout(resolve,0));
   assert.deepEqual(calls,['/reserve','/release']);
+ }
+});
+
+test('worker security policy blocks broad third-party execution and admits only exact HTTPS peer origins',async()=>{
+ const none=securityHeaders({});
+ assert.match(none['Content-Security-Policy'],/script-src 'self'/);
+ assert.match(none['Content-Security-Policy'],/connect-src 'self'(;|$)/);
+ assert.match(none['Content-Security-Policy'],/object-src 'none'/);
+ assert.equal(none['Referrer-Policy'],'no-referrer');
+ assert.equal(none['X-Frame-Options'],'DENY');
+ assert.match(none['Permissions-Policy'],/camera=\(\)/);
+ assert.deepEqual(allowedPeerOrigins({SUTRA_PEER_ORIGINS:'https://peer-one.example,https://peer-two.example'}),['https://peer-one.example','https://peer-two.example']);
+ assert.deepEqual(allowedPeerOrigins({SUTRA_PEER_ORIGINS:'https://peer.example/path'}),[]);
+ const peers=securityHeaders({SUTRA_PEER_ORIGINS:'https://peer-one.example'});
+ assert.match(peers['Content-Security-Policy'],/connect-src 'self' https:\/\/peer-one\.example/);
+ assert.doesNotMatch(peers['Content-Security-Policy'],/https:/g);
+});
+test('all worker API and asset responses receive browser security headers',async()=>{
+ const asset=await worker.fetch(new Request('https://sutra.test/'),{ASSETS:{fetch:async()=>new Response('<!doctype html>',{headers:{'Content-Type':'text/html'}})}});
+ for(const response of [asset,await worker.fetch(new Request('https://sutra.test/api/status'),{})]){
+  assert.match(response.headers.get('Content-Security-Policy'),/default-src 'self'/);
+  assert.equal(response.headers.get('Referrer-Policy'),'no-referrer');
+  assert.equal(response.headers.get('X-Frame-Options'),'DENY');
+  assert.equal(response.headers.get('X-Content-Type-Options'),'nosniff');
  }
 });
