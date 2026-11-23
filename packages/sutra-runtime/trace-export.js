@@ -11,7 +11,9 @@ function safeObject(value,keys){
  if(!value||typeof value!=='object'||Array.isArray(value))return {};
  const out={};
  for(const key of keys){
-  const data=safeText(value[key],key==='purpose'?160:100);
+  const property=Object.getOwnPropertyDescriptor(value,key);
+  if(!property||!Object.hasOwn(property,'value'))continue;
+  const data=safeText(property.value,key==='purpose'?160:100);
   if(data!==null)out[key]=data;
  }
  return out;
@@ -24,8 +26,10 @@ export function createSafeTraceReceipt({events=[],contactEvents=[],outcome='fail
  const limitedEvents=events.slice(0,128).map(item=>safeObject(item,executionFields));
  const limitedContacts=contactEvents.slice(0,128).map(item=>{
   const filtered=safeObject(item,contactFields);
-  if(Array.isArray(item?.disclosure))filtered.disclosure=item.disclosure.slice(0,12)
-   .map(x=>safeText(x,80)).filter(x=>x!==null);
+  const property=item&&typeof item==='object'?Object.getOwnPropertyDescriptor(item,'disclosure'):null;
+  if(property&&Object.hasOwn(property,'value')&&Array.isArray(property.value)){
+   filtered.disclosure=property.value.slice(0,12).map(x=>safeText(x,80)).filter(x=>x!==null);
+  }
   return filtered;
  });
  const core={schemaVersion:1,reportType:'sutra-sanitized-execution',mode,outcome,
