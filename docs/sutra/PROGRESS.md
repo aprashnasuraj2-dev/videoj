@@ -1,5 +1,15 @@
 # SUTRA progress register
 
+## Session 0010 checkpoint — Phase 036 complete
+
+**250/1,000 tasks verified; 17 phases fully verified.** The peer private-context boundary now has separate downstream and upstream permissions. Upstream return requires both the peer front-agent declaration and the caller-owned exact-network policy; the host cannot invent a permission and the peer cannot exceed the caller policy. Only field names enter the sanitized trace.
+
+A receipt-smuggling regression also confirms that a private field not sent downstream cannot be recreated upstream, and a peer-proposed evidence receipt carrying an extra private-style field is rejected by the strict receipt schema without echoing its value.
+
+Tested source candidate: `621520e1636deb39686e7aef462e8b481c4558cd`; full shell/Chromium https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45162744214. See [session 0010 evidence](evidence/implementation/SESSION-0010.md).
+
+**Next:** `SUTRA-P037-01` redirect-origin/policy handling. The existing browser policy remains fail-closed; do not silently broaden redirect access. Live router CORS/account, public HTTPS, original media/rights, physical-device evidence, release and Devpost remain open.
+
 ## Session 0009 checkpoint — Phase 026 complete
 
 **247/1,000 tasks verified; 16 phases fully verified.** Phase 026 now has current evidence for explicit `idle/running/cancelling/failed/complete` lifecycle states, visible incomplete cancellation, bounded read-only source retries with sanitized attempt counts, and Chromium proof that cancelling a stalled peer run does not break native timing-video playback.
