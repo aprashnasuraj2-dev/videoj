@@ -34,7 +34,7 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
   const signature=await crypto.subtle.sign('HMAC',secret,new TextEncoder().encode(identity));const clientKey=Array.from(new Uint8Array(signature),b=>b.toString(16).padStart(2,'0')).join('');
   const quota=env.SUTRA_QUOTA.get(env.SUTRA_QUOTA.idFromName('sutra-inference-global-v1'));
   const quotaSignal=AbortSignal.any([request.signal,AbortSignal.timeout(5000)]);const reservation=await abortable(quota.fetch('https://quota.internal/reserve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientKey}),signal:quotaSignal}),quotaSignal);
-  if(!reservation.ok)return error(reservation.status===429?'QUOTA':'QUOTA_UNAVAILABLE',reservation.status===429?429:503);if((await reservation.json()).allowed!==true)return error('QUOTA_UNAVAILABLE',503);
+  if(!reservation.ok)return error(reservation.status===429?'QUOTA':'QUOTA_UNAVAILABLE',reservation.status===429?429:503);if((await abortable(reservation.json(),quotaSignal)).allowed!==true)return error('QUOTA_UNAVAILABLE',503);
  }catch{return error('QUOTA_UNAVAILABLE',503);}
  if(request.signal.aborted)return error('CANCELLED',499);
  const controller=new AbortController(),cancel=()=>controller.abort();request.signal.addEventListener('abort',cancel,{once:true});const timer=setTimeout(cancel,30000);
