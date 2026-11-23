@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "project": "SUTRA",
+  "updated_at": "2026-11-23T12:58:13+05:45",
+  "work_branch": "main",
+  "last_observed_code_sha": "042bea1d1723b448854538c21e8f693608897c5a",
+  "last_session_id": "SUTRA-SESSION-0001",
+  "stage": "planning_bootstrap_only",
+  "current_task": null,
+  "next_task": "SUTRA-P001-01",
+  "ready_engineering_queue": [
+    "SUTRA-P002-01",
+    "SUTRA-P003-01",
+    "SUTRA-P011-01"
+  ],
+  "next_action": "Verify current repository/source state; establish the audience/task and rules baseline while requesting only necessary participant-owned eligibility input.",
+  "task_records": {},
+  "blockers": [],
+  "pending_inputs": [
+    {
+      "id": "INPUT-ELIGIBILITY",
+      "owner": "participant",
+      "scope": "entry eligibility and representation",
+      "independent_work": "Problem definition, rules mapping and safe local engineering can proceed."
+    },
+    {
+      "id": "INPUT-CONTENT-RIGHTS",
+      "owner": "participant",
+      "scope": "original lesson, factual review and permission for public footage",
+      "independent_work": "Use clearly labeled synthetic fixtures for implementation."
+    },
+    {
+      "id": "INPUT-SPEND",
+      "owner": "participant",
+      "scope": "provider selection and approved paid-service budget before enabling paid use",
+      "independent_work": "Use mock adapters and inspect supported runtime contracts."
+    },
+    {
+      "id": "INPUT-RESEARCH",
+      "owner": "participant",
+      "scope": "consenting testers and physical-device availability when phases are ready",
+      "independent_work": "Prepare reproducible tasks and label unavailable conditions untested."
+    }
+  ],
+  "release": {
+    "state": "not_started",
+    "proposed_app_url": "https://sutra.aafnaipatro.com/",
+    "proposed_peer_url": "https://sutra-guide.aafnaipatro.com/",
+    "verified_app_url": null,
+    "verified_peer_url": null,
+    "source_revision": null,
+    "evidence": []
+  },
+  "submission": {
+    "package_state": "not_started",
+    "package_artifact": null,
+    "devpost_state": "not_started",
+    "confirmation_evidence": []
+  },
+  "baseline": {
+    "pdf_filename": "SUTRA_Open_Agentic_Web_100_Phase_Work_Plan(1).pdf",
+    "pdf_sha256": "00df14e3e4727c7070aceadb5286f75c8d66d9606f89a89e4aca989b2409db53",
+    "initial_phases": 100,
+    "initial_tasks": 1000,
+    "base_person_hours": 168.5,
+    "reserve_percent": 15,
+    "internal_zip_date": "2027-01-09",
+    "deadline_baseline": "2027-01-11T21:45:00+05:45",
+    "deadline_requires_recheck": true
+  },
+  "notes": [
+    "Task checkbox state is authoritative; this register carries evidence and resume pointers.",
+    "A delivered package is not an official Devpost submission."
+  ]
+}

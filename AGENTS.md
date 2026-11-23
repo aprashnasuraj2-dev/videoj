@@ -24,3 +24,12 @@ This repository contains two independent Video.js v10 projects.
 - Check integration/package boundaries, resulting content hashes, and browser behavior before changing any public domain mapping. Public DHAGO and DETOUR deployments are independent.
 - Use meaningful commits and keep artifacts/release evidence tied to exact source revisions. Do not claim tests ran when they did not.
 - Use the repository's GitHub Actions verification and ordinary pull-request review for maintenance; avoid generating administrative task trackers as a substitute for product work.
+
+## SUTRA continuation and execution
+
+- SUTRA is an explicitly requested new project plan in `docs/sutra/`; its live checklist applies when the user requests SUTRA work. The historical-planning note above applies to older player planning, not this active SUTRA plan.
+- Treat **“continue with sutra”** case-insensitively as a request to resume the established project: read `docs/sutra/README.md`, `CONTINUE.md`, `progress.json`, `PROGRESS.md`, the latest session/decisions and relevant detailed checklist. Inspect actual source/CI/release state before trusting old status.
+- Execute the next dependency-ready incomplete work; do not stop at a status recap or ask for renewed permission for already authorized reversible work. Record narrow participant-input blockers and continue independent engineering.
+- After each SUTRA session, update task checkboxes and evidence, machine cursor, readable handoff and append-only session log; record scope changes and new discoveries. Run `node docs/sutra/tools/progress.mjs check` when available and persist the checkpoint in the repo.
+- Keep SUTRA isolated from existing player deployments. Reuse only an explicitly reviewed player boundary. Follow applicable release/PR conventions; source commits, staging, public deployment, ZIP delivery and official submission are different outcomes.
+- Never count planned work, generated documentation, mock outputs, stale evidence, same-owner demo origins or unrun checks as completed implementation or independent adoption. Do not create background jobs or contact other people merely because the user says continue.
