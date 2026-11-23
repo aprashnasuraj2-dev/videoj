@@ -1,5 +1,15 @@
 # SUTRA progress register
 
+## Session 0009 checkpoint — Phase 026 complete
+
+**247/1,000 tasks verified; 16 phases fully verified.** Phase 026 now has current evidence for explicit `idle/running/cancelling/failed/complete` lifecycle states, visible incomplete cancellation, bounded read-only source retries with sanitized attempt counts, and Chromium proof that cancelling a stalled peer run does not break native timing-video playback.
+
+Final tested product candidate: `fb300b9df50a59768c64ee0d8f7c01389d74f27f`. Full shell/Chromium: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45161898243. Register/evidence workflows for that candidate also passed. Intermediate browser failures are retained in [session 0009 evidence](evidence/implementation/SESSION-0009.md) and were not counted.
+
+The retry policy is intentionally narrow: one retry only for transport rejection or 5xx on the read-only source RPC; malformed successful payloads are not retried. Cancellation aborts instead of retrying. A cancelled run ends as failed/incomplete, never complete.
+
+**Next independent engineering:** `SUTRA-P036-04` separate upstream/downstream private-context handling, followed by remaining redirect policy work. `SUTRA-P030-02` live OpenRouter browser CORS/account validation remains external and unverified. Public deployment, paid inference, original-content claims, ZIP delivery and Devpost submission remain closed.
+
 ## Session 0008 final engineering checkpoint — current
 
 **242/1,000 tasks verified; 15 fully verified phases.** This includes 7 more task-level checks since the 235-item redirect checkpoint: independent BYOK/funded-failure isolation (P030-08), credentialless redirect denial (P037-05), and streaming/child-cancellation behavior (P026-02..06). [Run-interruption CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45159138495), [independent inference-path CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158656419), [redirect credential CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158831857) all passed on immutable code candidates. See [session 0008 evidence](evidence/implementation/SESSION-0008.md) for limits and retained failures.
