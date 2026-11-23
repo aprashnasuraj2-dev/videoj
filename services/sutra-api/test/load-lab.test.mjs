@@ -10,7 +10,7 @@ function storage(){
 const sse=text=>new Response(`data: ${JSON.stringify({choices:[{index:0,delta:{content:text},finish_reason:null}]})}\n\ndata: ${JSON.stringify({choices:[{index:0,delta:{},finish_reason:'stop'}]})}\n\ndata: [DONE]\n\n`,{headers:{'Content-Type':'text/event-stream'}});
 const request=(i)=>new Request('https://sutra.test/api/infer',{method:'POST',headers:{
  'Content-Type':'application/json','Origin':'https://sutra.test','CF-Connecting-IP':`192.0.2.${i+1}`
-},body:JSON.stringify({model:'operator-approved',messages:[{role:'user',content:`LOAD_SESSION_CANARY_${String(i).padStart(2,'0')}`}],tools:[]})});
+},body:JSON.stringify({model:'operator-approved',messages:[{role:'user',content:`LOAD_SESSION_CANARY_${String(i).padStart(2,'0')}`}],tools:[],stream:true})});
 
 test('20-session local lab preserves prompt isolation and enforces four active provider leases without retries',async()=>{
  const store=storage();
