@@ -81,6 +81,18 @@ test('approved third-party MCP exposes only declared tools and calls through the
  assert.deepEqual(seen[0].disclosure,['tool names','tool schemas']);assert.deepEqual(seen[1].disclosure,['tool arguments']);
 });
 
+
+test('peer model hints cannot replace the caller-selected model or receive adapter secrets',async()=>{
+ const hinted=structuredClone(peerGraph);hinted.llm_config={model_name:'peer-network-hint'};for(const agent of hinted.tools)agent.llm_config={model_name:'peer-agent-hint'};
+ const seen=[];const base=peerModel();const model={mode:'scripted-test',apiKey:'synthetic-provider-secret',async chat(args){seen.push(JSON.stringify({model:args.model,messages:args.messages,tools:args.tools,origin:args.origin}));return base.chat(args);}};
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})}),fetches=[];
+ const result=await runNetwork({definition:callerGraph(),request:'Use the checklist peer.',model,modelName:'caller-approved-model',external:{baseOrigin:'https://caller.example',inspector,fetchImpl:peerFetch({graph:hinted,calls:fetches})}});
+ assert.ok(seen.length>=5);assert.ok(seen.every(entry=>JSON.parse(entry).model==='caller-approved-model'));assert.ok(!JSON.stringify({seen,fetches,result}).includes('synthetic-provider-secret'));assert.ok(!seen.some(entry=>entry.includes('peer-network-hint')||entry.includes('peer-agent-hint')));
+});
+test('provider-mode peer execution refuses to start without an explicit caller-selected model',async()=>{
+ let calls=0;const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ await assert.rejects(runNetwork({definition:callerGraph(),request:'x',model:{mode:'provider',async chat(){calls++;return {content:'x',toolCalls:[]};}},external:{baseOrigin:'https://caller.example',inspector,fetchImpl:peerFetch()}}),e=>e.code==='MODEL_POLICY');assert.equal(calls,0);
+});
 test('private context is deny-by-default and exact-destination policy forwards only named keys',async()=>{
  const g=callerGraph();g.tools[0].allow={to_downstream:{sly_data:['locale','secret']}};
  const modelCalls=[];const base=peerModel();const model={mode:'scripted-test',async chat(args){modelCalls.push(JSON.stringify({messages:args.messages,tools:args.tools,origin:args.origin}));return base.chat(args);}};
