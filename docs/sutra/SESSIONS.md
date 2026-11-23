@@ -131,3 +131,14 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Final peer candidate `4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb` passed the full SUTRA workflow: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493.
 - Credited P031-01/02/04/05/06/07/08/09. Total is 186/1000; phase 031 stays open. P031-03 actual corpus provenance and P031-10 distinct public HTTPS remain pending and are not simulated by loopback.
 - Next: P032-08 invocation-visible peer failure, P033-03 third-party MCP consent, then P035-01 caller-local peer execution. Public release remains closed.
+
+
+## SUTRA-SESSION-0007 - Caller-local peer invocation, strict failures and two-origin Chromium
+
+- 2026-11-23T18:29:19+05:45; started from merged main `f4cc6e8d385d7a5e326435630fff6985fdf802cb`; worked exclusively on `sutra/caller-peer-failure-boundary`, draft PR #49.
+- `SUTRA-P032-08/10`: the invoking `runNetwork` now preserves specific consent, exact-network, missing-manifest/graph and malformed-peer errors as unsuccessful run outcomes. Tool text from a failed peer cannot become a completed answer.
+- `SUTRA-P035-01..04/06..09`: opted-in peer references load through the exact data-only consent boundary and execute in the caller's pinned runtime, with shared model/agent budgets and sanitized caller-versus-peer trace labels; only public graph/manifest GETs reach the peer host.
+- Final verified source candidate `3b37a73db0a03577b81f3d34346ea70ff46ea0a5` passed 21 app + 37 consent/inference/API + 72 runtime + 7 peer tests, all ten pinned vendor hashes, and all three Chromium suites. Two-origin browser fixture showed 3 local agent invocations, 5 scripted model steps, zero requests upon denial and exactly two artifact GETs after consent. Evidence: [session 0007](evidence/implementation/SESSION-0007.md) and https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45176985173/job/137700681281.
+- Retained failed intermediate CI observations and corrections in the evidence report; no failed test was counted as passing.
+- Machine checklist increases from 186 to 196 verified checks and from 11 to 12 complete phases, pending register audit. `SUTRA-P035-05` and phase 035 exit remain open. Next `SUTRA-P033-03`: third-party MCP discovery/invocation consent; no external endpoint has been contacted.
+- The participant release gate remains in force: no release, domain assignment, public model, public HTTPS peer, licensed real corpus, ZIP or Devpost filing.
