@@ -46,41 +46,41 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P082-09` Produce and review the phase artifact: Staging URLs and route validation.
 - [ ] `SUTRA-P082-10` Close phase 082 only after its applicable tasks have evidence and its exit condition is observed: The public artifacts return expected JSON/JS types, no SPA HTML fallback, and no protected login wall.
 
-## Phase 083 - Release on the AafnaiPatro subdomains
+## Phase 083 - Release caller and peer across distinct registrable domains
 
 - **Baseline effort:** 1.5 person-hours; **owner:** E.
-- **Original phase dependencies:** 82. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Map only the approved new subdomains after staging passes. Recheck existing route precedence and compare deployed source hashes to the candidate.
-- **Phase exit:** Both new origins serve the intended candidate over HTTPS; existing public player and Patro routes pass a smoke check.
+- **Architecture correction:** `SUTRA-DECISION-0010`. The caller may use the approved AafnaiPatro origin, but the guide/peer must be hosted on a different registrable domain. A sibling `*.aafnaipatro.com` peer is not acceptable evidence because domain-scoped cookies and same-site policy weaken the boundary claim.
+- **Intent:** Promote only approved staging artifacts after all major gates pass. Keep the peer static and isolated from Patro Worker quota/domain cookies.
+- **Phase exit:** Caller and peer serve the exact approved candidates over HTTPS on different registrable domains; browser evidence shows credential-free peer artifact GETs and existing Patro/DHAGO/DETOUR routes remain intact.
 
-- [ ] `SUTRA-P083-01` Inspect proposed new custom-domain mappings and route precedence
-- [ ] `SUTRA-P083-02` Promote only the new caller and peer targets after staging succeeds
-- [ ] `SUTRA-P083-03` Verify HTTPS and exact production artifact versions
-- [ ] `SUTRA-P083-04` Check production graph/runtime URLs directly signed out
-- [ ] `SUTRA-P083-05` Confirm the default funded model path from a clean browser session
-- [ ] `SUTRA-P083-06` Smoke-check existing Patro, DHAGO and DETOUR routes
-- [ ] `SUTRA-P083-07` Record rollback target and deployed artifact hashes
-- [ ] `SUTRA-P083-08` Do not treat a source merge or staged branch as proof of production release
-- [ ] `SUTRA-P083-09` Produce and review the phase artifact: Proposed production URLs activated and release record.
-- [ ] `SUTRA-P083-10` Close phase 083 only after its applicable tasks have evidence and its exit condition is observed: Both new origins serve the intended candidate over HTTPS; existing public player and Patro routes pass a smoke check.
+- [ ] `SUTRA-P083-01` Select and verify an HTTPS peer host on a different registrable domain from the caller
+- [ ] `SUTRA-P083-02` Verify the peer host is static/public-artifact only and isolated from Patro Worker quota/domain cookies
+- [ ] `SUTRA-P083-03` Inspect caller and peer custom-domain/route precedence before promotion
+- [ ] `SUTRA-P083-04` Promote only the exact tested caller and peer artifacts after staging succeeds
+- [ ] `SUTRA-P083-05` Verify HTTPS, CORS, manifest/graph hashes and signed-out loading on both origins
+- [ ] `SUTRA-P083-06` Re-run the BYOK key-canary proof and confirm the peer origin receives no router credential
+- [ ] `SUTRA-P083-07` Smoke-check existing Patro, DHAGO and DETOUR routes
+- [ ] `SUTRA-P083-08` Record rollback targets and deployed artifact hashes; do not treat a source merge as production proof
+- [ ] `SUTRA-P083-09` Produce the production URL/hash/CORS/browser-boundary release record
+- [ ] `SUTRA-P083-10` Close phase 083 only after distinct-registrable-domain behavior is observed in a real browser.
 
-## Phase 084 - Publish the reusable community release
+## Phase 084 - Publish the evidence-first community release
 
 - **Baseline effort:** 2 person-hours; **owner:** E.
-- **Original phase dependencies:** 60,76,80,83. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Create public versioned Open Kit source and downloadable release assets in videoj. Include standalone install examples, license/NOTICE and public docs. An npm release is optional.
-- **Phase exit:** Each tool is available without an account, private key or SUTRA-only corpus; one clean independent installation is reproducible.
+- **Original phase dependencies:** 60,76,80,83.
+- **Intent:** Publish the versioned Web Annotation media-evidence profile/validator as the primary reusable contribution. Include the consent inspector and static peer only as examples. After stable public SUTRA/peer URLs exist, submit the site to the official `cognizant-ai-labs/agentic-web` `docs/agentic_websites.md` directory via a truthful pull request.
+- **Phase exit:** The evidence tool is publicly downloadable without account/key/SUTRA corpus, one clean outside install is reproducible, and the official-directory PR is filed only with working public URLs.
 
-- [ ] `SUTRA-P084-01` Create versioned public source and release assets for each Open Kit tool
-- [ ] `SUTRA-P084-02` Include independent synthetic examples and actual runnable entry points
-- [ ] `SUTRA-P084-03` Publish quickstart URLs usable without an account
-- [ ] `SUTRA-P084-04` Retain upstream license, NOTICE and third-party attribution
-- [ ] `SUTRA-P084-05` Check tools do not require private learner media or credentials
-- [ ] `SUTRA-P084-06` Run the documented clean-host install on the release version
-- [ ] `SUTRA-P084-07` Distinguish repository release from an optional npm publication
-- [ ] `SUTRA-P084-08` Record actual public URLs and release hashes for submission copy
-- [ ] `SUTRA-P084-09` Produce and review the phase artifact: Community tool URLs and versioned release package.
-- [ ] `SUTRA-P084-10` Close phase 084 only after its applicable tasks have evidence and its exit condition is observed: Each tool is available without an account, private key or SUTRA-only corpus; one clean independent installation is reproducible.
+- [ ] `SUTRA-P084-01` Create a versioned public release asset for the evidence profile, validator, fixtures and cue-link helper
+- [ ] `SUTRA-P084-02` Include standards mapping, synthetic examples and actual runnable CLI/browser entry points
+- [ ] `SUTRA-P084-03` Publish a quickstart usable without an account, player clone or private key
+- [ ] `SUTRA-P084-04` Retain upstream/repository license, NOTICE and third-party attribution
+- [ ] `SUTRA-P084-05` Check the evidence package contains no private learner media, router credential or SUTRA-only service dependency
+- [ ] `SUTRA-P084-06` Re-run the documented clean-host install on the exact release version
+- [ ] `SUTRA-P084-07` Record public package/source URLs and immutable release hashes
+- [ ] `SUTRA-P084-08` Prepare the official `docs/agentic_websites.md` entry with accurate feature/boundary wording and working caller/peer links
+- [ ] `SUTRA-P084-09` File the upstream directory pull request only after the public URLs are stable; record its URL/status
+- [ ] `SUTRA-P084-10` Close phase 084 only after the community release and truthful directory submission are evidenced.
 
 ## Phase 085 - Write the technical implementation report
 
@@ -157,20 +157,19 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 ## Phase 089 - Rehearse rollback and judging availability
 
 - **Baseline effort:** 1.5 person-hours; **owner:** E+P.
-- **Original phase dependencies:** 83,87. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Restore the previous SUTRA build on staging, verify media/inference compatibility and calculate funded headroom through the judging period. Keep the last known good artifacts.
-- **Phase exit:** Rollback is reproducible; site and funded default inference are planned through at least 19 Jan Nepal time, subject to rechecked official dates.
+- **Intent:** Restore the previous SUTRA build on staging, verify media/inference compatibility and calculate funded headroom through judging. Treat the browser-direct BYOK route as an independent resilience path if funded inference throttles; never silently move a user key to the funded host or vice versa.
+- **Phase exit:** Rollback is reproducible; the funded path is budgeted through the rechecked judging window and the BYOK path remains independently usable with explicit user configuration.
 
 - [ ] `SUTRA-P089-01` Retain a verified previous SUTRA build and source/media references
 - [ ] `SUTRA-P089-02` Rehearse restoring it on staging rather than mutating unrelated production
-- [ ] `SUTRA-P089-03` Check rollback preserves valid graph/runtime/media combinations
-- [ ] `SUTRA-P089-04` Estimate judging-period model requests and available funding
-- [ ] `SUTRA-P089-05` Confirm public site, peer, media and default inference remain accessible
-- [ ] `SUTRA-P089-06` Recheck official judging end time in Nepal and UTC
-- [ ] `SUTRA-P089-07` Document provider drift and outages as residual availability risks
-- [ ] `SUTRA-P089-08` Record manual recovery steps without pretending monitoring is already scheduled
-- [ ] `SUTRA-P089-09` Produce and review the phase artifact: Rollback runbook and judging-availability budget.
-- [ ] `SUTRA-P089-10` Close phase 089 only after its applicable tasks have evidence and its exit condition is observed: Rollback is reproducible; site and funded default inference are planned through at least 19 Jan Nepal time, subject to rechecked official dates.
+- [ ] `SUTRA-P089-03` Check rollback preserves valid graph/runtime/media/evidence-profile combinations
+- [ ] `SUTRA-P089-04` Estimate judging-period funded-model requests and available funding
+- [ ] `SUTRA-P089-05` Verify public caller, peer, media, funded inference and BYOK setup paths independently
+- [ ] `SUTRA-P089-06` Simulate funded-path throttling/unavailability and confirm configured BYOK still routes only to the selected browser router
+- [ ] `SUTRA-P089-07` Recheck official judging end time in Nepal and UTC
+- [ ] `SUTRA-P089-08` Document provider drift/outages and manual recovery without pretending background monitoring exists
+- [ ] `SUTRA-P089-09` Produce the rollback runbook, funded-availability budget and BYOK fallback proof
+- [ ] `SUTRA-P089-10` Close phase 089 only after rollback plus independent funded/BYOK availability behavior are evidenced.
 
 ## Phase 090 - Close the public-release milestone
 
