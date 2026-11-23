@@ -249,6 +249,51 @@ const consentInspector=createConsentInspector({decide:intent=>new Promise(resolv
  consentDialog.showModal();
 })});
 function finishConsent(decision,scope='once'){if(!resolveConsent)return;const resolve=resolveConsent;resolveConsent=null;consentDialog.close();resolve({decision,scope});}
+let currentComparison=compareSourceClaims(localComparisonInput,null),currentPeerEvidenceUrl=null;
+const comparisonPeerUrl=document.querySelector('#comparison-peer-url'),runtimePeerUrl=document.querySelector('#peer-url'),comparisonStatus=document.querySelector('#comparison-status'),peerCard=document.querySelector('#peer-source-card'),reviewComparisonButton=document.querySelector('#review-comparison');
+function evidenceUrlFromPeerNetwork(raw){
+ let target;try{target=new URL(raw);}catch{throw Error('Use a complete peer network URL.');}
+ const loopback=['localhost','127.0.0.1','[::1]'].includes(target.hostname);
+ if(target.username||target.password||target.search||target.hash||target.pathname.endsWith('/')||target.protocol!=='https:'&&!(target.protocol==='http:'&&loopback))throw Error('Peer network URL is outside the comparison profile.');
+ const parts=target.pathname.split('/').filter(Boolean),network=decodeURIComponent(parts.at(-1)||'');
+ if(!/^[A-Za-z][A-Za-z0-9_]{0,59}$/.test(network))throw Error('Peer network name is invalid.');
+ const directory=target.pathname.slice(0,target.pathname.lastIndexOf('/')+1),url=new URL(directory+encodeURIComponent(network)+'.evidence.json',target.origin);
+ return {network,url};
+}
+function renderComparison(result,{peerUrl=null,stateOverride=null}={}){
+ currentComparison=result;const state=stateOverride||result.status;
+ peerCard.dataset.state=state;comparisonStatus.dataset.state=state;
+ const peer=result.peer,details=document.querySelector('#peer-card-details'),link=document.querySelector('#peer-source-link');
+ if(!peer){
+  details.hidden=true;link.hidden=true;document.querySelector('#peer-compare-excerpt').textContent='';
+  document.querySelector('#peer-card-summary').textContent=state==='denied'?'Peer written guide was denied. Local timing evidence remains available.':state==='error'?'Peer written guide could not be validated or loaded. Local evidence remains available.':'Not loaded. No peer comparison is inferred.';
+  comparisonStatus.textContent=state==='denied'?'Peer evidence denied before contact. Local source remains usable; no comparison is inferred.':state==='error'?'Peer evidence unavailable or invalid. No agreement or conflict is inferred.':result.summary;
+  reviewComparisonButton.disabled=true;return;
+ }
+ details.hidden=false;document.querySelector('#peer-card-summary').textContent=result.reviewed?'Human review recorded; source status remains '+result.status+'.':'Peer source loaded; review state is not reviewed.';
+ document.querySelector('#peer-compare-source').textContent=`${peer.source.id} / ${peer.source.version}`;document.querySelector('#peer-compare-date').textContent=peer.source.publishedAt;document.querySelector('#peer-compare-scope').textContent=peer.source.scope;document.querySelector('#peer-compare-provenance').textContent=peer.source.provenance;document.querySelector('#peer-compare-window').textContent=`${peer.claim.start.toFixed(0)}–${peer.claim.end.toFixed(0)} seconds`;document.querySelector('#peer-compare-excerpt').textContent=peer.claim.excerpt;
+ if(peerUrl){link.href=peerUrl+'#'+encodeURIComponent(peer.claim.id);link.hidden=false;}
+ comparisonStatus.textContent=`${result.status}: ${result.summary} Review: ${result.reviewed?'reviewed':'not reviewed'}. Factual truth is not verified.`;reviewComparisonButton.disabled=false;
+}
+renderComparison(currentComparison);
+comparisonPeerUrl.addEventListener('input',()=>{runtimePeerUrl.value=comparisonPeerUrl.value;});
+runtimePeerUrl.addEventListener('input',()=>{comparisonPeerUrl.value=runtimePeerUrl.value;});
+document.querySelector('#open-local-comparison-cue').addEventListener('click',async()=>{
+ if(!timingPlayer){comparisonStatus.textContent='Load the synthetic timing media before opening the local cue. Local source metadata remains available.';return;}
+ try{const actual=await timingPlayer.seek(localComparisonInput.claim.start);comparisonStatus.textContent=`Local source cue reached at actual media time ${actual.toFixed(2)}s. Peer comparison status remains ${currentComparison.status}.`;}catch{comparisonStatus.textContent='Local source cue is not seekable on the current media. No successful seek is claimed.';}
+});
+document.querySelector('#load-peer-comparison').addEventListener('click',async event=>{
+ const button=event.currentTarget;button.disabled=true;comparisonStatus.dataset.state='loading';comparisonStatus.textContent='Validating peer evidence destination before contact…';consentMode='external';
+ try{
+  const {network,url}=evidenceUrlFromPeerNetwork(comparisonPeerUrl.value.trim()),contact={origin:url.origin,kind:'peer_evidence',purpose:`Retrieve the declared peer written evidence at ${url.pathname.slice(0,100)}`,disclosure:['source id','source version','published date','claim range','excerpt'],network};
+  const guide=await fetchJsonWithConsent({inspector:consentInspector,contact,url:url.href,maxBytes:16384});
+  currentPeerEvidenceUrl=url.href;const result=compareSourceClaims(localComparisonInput,guide);renderComparison(result,{peerUrl:url.href});
+  setJourneyState('ready',result.status==='conflict_unresolved'?'local and written source windows conflict; the conflict remains unresolved.':'source comparison loaded without factual verification.','Review the comparison without changing its evidence status, then preview the review card.');
+ }catch(error){
+  currentPeerEvidenceUrl=null;const denied=error?.code==='CONSENT_DENIED';renderComparison(compareSourceClaims(localComparisonInput,null),{stateOverride:denied?'denied':'error'});if(denied)setJourneyState('denied','peer written evidence was denied; local lesson, transcript and evidence remain available.','Continue locally or review the local card without peer evidence.');
+ }finally{button.disabled=false;consentMode='synthetic';consentEvents.textContent=JSON.stringify(consentInspector.exportEvents(),null,2);}
+});
+reviewComparisonButton.addEventListener('click',()=>{if(!currentComparison.peer)return;renderComparison(markComparisonReviewed(currentComparison),{peerUrl:currentPeerEvidenceUrl});});
 document.querySelector('#deny-peer-contact').addEventListener('click',()=>finishConsent('deny','once'));
 document.querySelector('#allow-peer-once').addEventListener('click',()=>finishConsent('allow','once'));
 document.querySelector('#allow-peer-session').addEventListener('click',()=>finishConsent('allow','session'));
