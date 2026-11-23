@@ -270,3 +270,16 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Retained failures 45169335475, 45169474354, 45169623505 and 45169892087; final full shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45170096228.
 - Verified P047-01..10; Phase 047 closes. New total **288/1000**, **23 fully verified phases**.
 - Next: Phase 042 ordinary media controls/error/focus checks. Live provider/public HTTPS/release remain external/blocked.
+
+
+## SUTRA-SESSION-0017 — Reusable player controls and media-error coverage
+
+- Observed 2026-11-23T17:59:22+05:45; tested SUTRA source candidate `b8ef8baef4ff8176eb13290e021e9db50b4c8a7a`.
+- Chromium exercises the shipped DHAGO play/pause, mute/volume, captions and seek controls against actual native media; same-player source replacement reloads metadata and retains controls.
+- Fullscreen control dispatch is verified through a controlled Fullscreen API shim after real headless fullscreen timed out. The failure remains retained and no visual-headless fullscreen claim is made; the reusable DHAGO suite separately contains real fullscreen geometry tests.
+- At 360×800 core player controls remain inside the viewport and keyboard focusable.
+- A corrupt MP4 object URL produces a native media error and exposes the shipped retry control. The adapter forwards compatibility source/fallback/poster options without importing preview or DETOUR code.
+- A genuine alternate-codec SUTRA fixture is still missing. Therefore P042-06 and P042-10 remain open; component fallback mechanism is not treated as system acceptance.
+- Full SUTRA shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45171777112.
+- Verified P042-05/P042-08/P042-09. New total **291/1000**; Phase 042 remains open.
+- Next: versioned transcript experience tied to the 8-second timing fixture.
