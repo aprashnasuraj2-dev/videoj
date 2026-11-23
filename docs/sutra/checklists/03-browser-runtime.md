@@ -108,11 +108,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** Cancellation prevents new calls; an interrupted answer is visibly incomplete and is never presented as a completed verified result.
 
 - [ ] `SUTRA-P026-01` Represent idle, running, cancelling, failed and complete states explicitly
-- [ ] `SUTRA-P026-02` Assemble streamed function-call arguments only after valid completion
-- [ ] `SUTRA-P026-03` Handle malformed model output and unexpected provider payloads
-- [ ] `SUTRA-P026-04` Propagate model and child-agent errors without inventing success
-- [ ] `SUTRA-P026-05` Abort outstanding reads and prevent new children after cancellation
-- [ ] `SUTRA-P026-06` Label interrupted text as incomplete rather than verified output
+- [x] `SUTRA-P026-02` Assemble streamed function-call arguments only after valid completion
+- [x] `SUTRA-P026-03` Handle malformed model output and unexpected provider payloads
+- [x] `SUTRA-P026-04` Propagate model and child-agent errors without inventing success
+- [x] `SUTRA-P026-05` Abort outstanding reads and prevent new children after cancellation
+- [x] `SUTRA-P026-06` Label interrupted text as incomplete rather than verified output
 - [ ] `SUTRA-P026-07` Bound retries for clearly failed reads with recorded attempt counts
 - [ ] `SUTRA-P026-08` Verify cancellation does not disrupt ordinary media controls
 - [ ] `SUTRA-P026-09` Produce and review the phase artifact: Typed run lifecycle and actionable error states.
