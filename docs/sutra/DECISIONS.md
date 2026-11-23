@@ -72,3 +72,14 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - No public deployment occurred in session 0005. Next remains P033-01 consent-before-contact engineering, with real peer/provider/content/user evidence still pending. No mandatory gate is omitted or weakened.
 
 - This gate concerns public release. Private controlled provider testing still requires the separately pending model/budget authorization; it need not wait for the public release gates, since such testing supplies their evidence.
+
+
+## SUTRA-DECISION-0009 - Consent is a reusable pre-contact boundary; redirects stay closed
+
+- 2026-11-23T15:00:23+05:45; final tested candidate `70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7`.
+- Decision: external contact starts default-deny. The approval request contains only public origin, contact kind, purpose, disclosure field labels and optional exact network identity. One-contact approval is the default; session memory exists only after explicit choice and is keyed to the exact contact tuple.
+- Peer manifest and declared graph retrieval are separate contact kinds. If the manifest points to another graph origin, that origin receives its own approval before retrieval. Browser requests omit credentials and are bounded to public JSON.
+- The current Profile 0.3 peer URL convention is implemented exactly for data artifacts: final path component is the network name, preceding path is the site base and exact manifest name matching is required. This does not enable peer execution by itself.
+- Alternative considered: immediately follow the specification's normal redirect behavior. Rejected for this checkpoint because an origin-changing redirect can expand contact after the displayed approval. Redirects therefore fail closed until P037 supplies changed-origin policy/re-consent tests. This is intentionally stricter and not yet a full redirect-conformance claim.
+- Consent events and their standalone example are reusable Open Kit material. Permission visibility is not a reputation system, source-truth proof or independent adoption evidence.
+- P033-03 remains open: declaring MCP contact kinds in the reusable policy is not evidence that third-party MCP discovery/calls are wired through it.
