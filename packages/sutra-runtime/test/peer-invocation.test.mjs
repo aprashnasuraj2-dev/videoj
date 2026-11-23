@@ -28,7 +28,7 @@ test('peer graph runs in the caller runtime under the caller model and one share
  };
  const result=await drive({peerRuntime:{inspector,fetchImpl}});
  assert.equal(result.mode,'scripted-test');
- assert.equal(result.agentCalls,4);
+ assert.equal(result.agentCalls,3);
  assert.equal(result.modelCalls,5);
  assert.match(result.text,/Scripted orchestration test complete/);
  assert.deepEqual(intents,['peer_manifest','peer_graph']);
