@@ -2,6 +2,10 @@
 
 This applies to SUTRA continuation requests, regardless of case or surrounding punctuation. It is an instruction for a future active assistant session, not a background automation, model invocation or permission to contact other people.
 
+## Public release gate
+
+The participant explicitly directed on 23 November 2026: do not jump to release before all major checklist work is complete. Keep public deployment, domain/route assignment, paid inference enablement and promotion closed until the applicable major product, security, conformance and acceptance gates have current passing evidence. A passing build, browser fixture or deployment-free dry-run alone cannot satisfy this gate. Continue independent engineering and report remaining major gates; do not treat a Cloudflare configuration file as release authorization.
+
 ## Resume sequence
 
 1. Read root `AGENTS.md` and applicable nested instructions. Use the repo selected by the user; do not guess from unrelated player projects.

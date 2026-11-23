@@ -63,3 +63,10 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Use a single global transactional quota, rather than relying on an approximate per-location rate limit as a spending ceiling. This adds a DO deployment dependency and a serialized global bottleneck; it is bounded to 1,000 calls/day in configuration and does not imply a dollar cap or abuse immunity.
 - Grant exactly one same-origin JSON-only MCP source endpoint from trusted host options. Validate tool discovery against local schemas and every receipt against the host catalog. The default runtime profile continues to reject all MCP and external tools unless this narrow grant is provided.
 - Expose the registry/validator as community source building blocks. Separate source availability from independent adoption and semantic factual correctness. No mandatory gates are omitted.
+
+
+## SUTRA-DECISION-0008 - Finish major checklist gates before release
+
+- 23 November 2026, Asia/Kathmandu. The participant explicitly directed that release must wait until all major checklist work is complete.
+- Public deployment, domain/route assignment, paid inference enablement and promotion remain closed until applicable major product, security, conformance and acceptance gates have current passing evidence. Local builds and dry-run bundling may continue but cannot substitute for those gates.
+- No public deployment occurred in session 0005. Next remains P033-01 consent-before-contact engineering, with real peer/provider/content/user evidence still pending. No mandatory gate is omitted or weakened.

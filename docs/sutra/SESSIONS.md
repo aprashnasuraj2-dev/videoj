@@ -104,3 +104,8 @@ Append entries; never erase failures or silently rewrite previous completion cla
 ### Session 0005 packaging follow-up
 
 - 2026-11-23T14:25:23+05:45: post-merge main shell/register CI succeeded. Wrangler 4.166.0 dry-run also passed (72 assets, Worker 32.49 KiB/9.16 KiB gzip, inference off, empty model allowlist, no supplied secrets). No deployment occurred; 152 checks remain verified. This supersedes only the earlier unobserved-bundle limitation.
+
+
+### Participant release constraint
+
+- Participant clarified during final handoff: do not jump to release until all major checklist work is complete. Recorded this gate in CONTINUE/PROGRESS/DECISIONS and preserved deployment/route/paid-inference state as closed. The completed Cloudflare action was a deployment-free dry-run only.

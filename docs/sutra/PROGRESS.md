@@ -29,6 +29,13 @@ Final Chromium CI passed on `61f44558b9512990f9c4155e31ff95d0d40bbe98`, includin
 packaged binary missing and system browser launch failed. No local browser pass,
 physical-device result or human visual approval is claimed.
 
+## Public release gate
+
+User direction: no public release until all major checklist work is complete and
+verified. Packaging preflight is separate from release. Keep deployments, public
+routes and paid inference closed while major product/security/conformance gates
+remain open.
+
 ## Resume
 
 Next independent task: `SUTRA-P033-01`, consent-aware external contact policy and
