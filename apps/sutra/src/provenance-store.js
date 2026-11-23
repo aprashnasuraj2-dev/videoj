@@ -4,9 +4,12 @@ const NAME=/^[A-Za-z0-9_.:@/# -]{1,160}$/;
 const ERROR=/^[A-Z][A-Z0-9_]{1,63}$/;
 const LIMIT_KEYS=['maxDepth','maxAgents','maxModelCalls','maxSteps','concurrency','timeoutMs','maxOutputChars','maxRemoteCalls','maxCallsPerPeer'];
 
+function looksSensitive(text){
+ return /(?:^|[^A-Za-z0-9])(?:bearer|api[_ -]?key|secret|token|password)(?:[^A-Za-z0-9]|$)/i.test(text)||/(?:^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{8,}(?:$|[^A-Za-z0-9])/i.test(text);
+}
 function cleanText(value,fallback='unknown'){
  const text=String(value??'').trim();
- return NAME.test(text)?text:fallback;
+ return NAME.test(text)&&!looksSensitive(text)?text:fallback;
 }
 function cleanCommit(value){const text=String(value??'');return COMMIT.test(text)?text:'unknown';}
 function cleanHash(value){const text=String(value??'');return HASH.test(text)?text:'unknown';}
