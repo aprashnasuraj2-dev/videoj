@@ -38,13 +38,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P022-01` Create agent-manifest.json matching the pinned runtime schema
 - [x] `SUTRA-P022-02` Declare each network name, front_man and hocon location exactly
 - [x] `SUTRA-P022-03` Publish the resolved network JSON at the declared HTTP path
-- [ ] `SUTRA-P022-04` Create links.json with exact symbolic-to-peer-network bindings
+- [x] `SUTRA-P022-04` Create links.json with exact symbolic-to-peer-network bindings
 - [x] `SUTRA-P022-05` Declare peer policy independently from address resolution
-- [ ] `SUTRA-P022-06` Keep top-site inference configuration distinct from peer metadata
+- [x] `SUTRA-P022-06` Keep top-site inference configuration distinct from peer metadata
 - [x] `SUTRA-P022-07` Check trailing slashes, relative URLs and nested site-base resolution
-- [ ] `SUTRA-P022-08` List manifest, graph, links and runtime URLs in a public artifact inventory
-- [ ] `SUTRA-P022-09` Produce and review the phase artifact: Public artifact bundle and URL inventory.
-- [ ] `SUTRA-P022-10` Close phase 022 only after its applicable tasks have evidence and its exit condition is observed: A caller resolves /agents/learner through /agents/agent-manifest.json and selects only the exact named entry.
+- [x] `SUTRA-P022-08` List manifest, graph, links and runtime URLs in a public artifact inventory
+- [x] `SUTRA-P022-09` Produce and review the phase artifact: Public artifact bundle and URL inventory.
+- [x] `SUTRA-P022-10` Close phase 022 only after its applicable tasks have evidence and its exit condition is observed: A caller resolves /agents/learner through /agents/agent-manifest.json and selects only the exact named entry.
 
 ## Phase 023 - Mount real browser orchestration
 
