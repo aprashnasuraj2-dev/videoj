@@ -9,10 +9,15 @@ const isClaim=c=>!!c&&typeof c==='object'&&!Array.isArray(c)&&
  safeString(c.sourceVersion,100)&&safeString(c.scope,160)&&
  safeString(c.claimKey,100)&&id.test(c.claimKey)&&
  (safeString(c.value,120)||Number.isFinite(c.value)||typeof c.value==='boolean')&&
- safeString(c.excerpt,1200)&&safeString(c.title,120);
+ safeString(c.excerpt,1200)&&safeString(c.title,120)&&
+ safeString(c.provenance,240)&&
+ (c.observedAt===undefined||typeof c.observedAt==='string'&&
+  !Number.isNaN(Date.parse(c.observedAt))&&c.observedAt.length<=40)&&
+ (c.dateBasis===undefined||safeString(c.dateBasis,120));
 const shallow=c=>Object.freeze({
  sourceKind:c.sourceKind,sourceId:c.sourceId,sourceVersion:c.sourceVersion,scope:c.scope,
- claimKey:c.claimKey,value:c.value,excerpt:c.excerpt,title:c.title,
+ claimKey:c.claimKey,value:c.value,excerpt:c.excerpt,title:c.title,provenance:c.provenance,
+ ...(c.observedAt?{observedAt:c.observedAt,dateBasis:c.dateBasis??'Recorded observation'}:{}),
  ...(Number.isFinite(c.start)&&Number.isFinite(c.end)&&c.start>=0&&c.end>c.start?{start:c.start,end:c.end}:{})
 });
 export function compareClaimPair({video=null,guide=null}={}){
@@ -43,8 +48,8 @@ export function compareClaimPair({video=null,guide=null}={}){
 export const syntheticComparison=Object.freeze({
  video:Object.freeze({sourceKind:'video',sourceId:'fixture_video',sourceVersion:'v1',
   title:'Hypothetical video note',scope:'synthetic_handover',claimKey:'signature_count',
-  value:2,excerpt:'In this invented example, the handover needs two signatures.',start:2,end:4}),
+  value:2,excerpt:'In this invented example, the handover needs two signatures.',provenance:'Authored synthetic comparison fixture, not original video evidence',observedAt:'2026-11-23T00:00:00Z',dateBasis:'Fixture metadata date'}),
  guide:Object.freeze({sourceKind:'guide',sourceId:'fixture_guide',sourceVersion:'v1',
   title:'Hypothetical written checklist',scope:'synthetic_handover',claimKey:'signature_count',
-  value:3,excerpt:'In this invented example, the handover needs three signatures.'})
+  value:3,excerpt:'In this invented example, the handover needs three signatures.',provenance:'Authored synthetic written checklist fixture, not an external publisher',observedAt:'2026-11-23T00:00:00Z',dateBasis:'Fixture metadata date'})
 });
