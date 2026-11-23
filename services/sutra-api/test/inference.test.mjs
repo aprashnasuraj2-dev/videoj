@@ -112,7 +112,8 @@ test('cache policy separates private APIs, mutable pointers and explicitly versi
  assert.equal(apply('https://sutra.test/agents/agent-manifest.json'),'public, max-age=0, must-revalidate');
  assert.equal(apply('https://sutra.test/agents/links.json'),'public, max-age=0, must-revalidate');
  assert.equal(apply('https://sutra.test/agents/learner.network.json'),'public, max-age=0, must-revalidate');
- assert.equal(apply('https://sutra.test/agents/learner.network.json?v=abc'),'public, max-age=31536000, immutable');
+ assert.equal(apply('https://sutra.test/agents/v/abc/learner.network.json'),'public, max-age=31536000, immutable');
+ assert.equal(apply('https://sutra.test/agents/learner.network.json?v=abc'),'public, max-age=0, must-revalidate');
  assert.equal(apply('https://sutra.test/media/timing-fixture.mp4'),'public, max-age=0, must-revalidate');
  assert.equal(apply('https://sutra.test/media/timing-fixture.mp4?v=abc'),'public, max-age=31536000, immutable');
  assert.equal(apply('https://sutra.test/assets/index-contenthash.js'),'public, max-age=31536000, immutable');
