@@ -129,7 +129,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P037-02` Reapply destination policy and required consent at each changed origin
 - [ ] `SUTRA-P037-03` Bound the set of acceptable declared artifact destinations
 - [ ] `SUTRA-P037-04` Re-evaluate approval when peer scope or content binding changes materially
-- [ ] `SUTRA-P037-05` Avoid leaking authentication headers across redirect chains
+- [x] `SUTRA-P037-05` Avoid leaking authentication headers across redirect chains
 - [x] `SUTRA-P037-06` Handle browser redirect limitations by failing closed when necessary
 - [x] `SUTRA-P037-07` Test same-origin, changed-origin, looping and denied redirect fixtures
 - [x] `SUTRA-P037-08` Keep the local lesson functional after a blocked peer redirect
