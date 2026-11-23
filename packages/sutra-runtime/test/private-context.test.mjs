@@ -50,7 +50,7 @@ test('runtime gives only explicitly approved field to exact peer model prompts',
  const peer=seen.filter(x=>x.origin==='https://peer.example');
  assert.ok(local.length>0&&peer.length>0);
  assert.ok(local.every(x=>!JSON.stringify(x.messages).includes('ne-NP')));
- assert.ok(peer.some(x=>JSON.stringify(x.messages).includes('"locale":"ne-NP"')),JSON.stringify({seen,events:result.events}));
+ assert.ok(peer.some(x=>x.messages.some(message=>message.role==='system'&&String(message.content).includes('"locale":"ne-NP"'))));
  assert.ok(peer.every(x=>!JSON.stringify(x.messages).includes('PRIVATE_CONTEXT_CANARY_123')));
  assert.ok(peer.every(x=>!JSON.stringify(x.messages).includes('"preference":"concise"')));
  assert.ok(!JSON.stringify(result.events).includes('ne-NP'));
@@ -106,9 +106,9 @@ test('returning private context needs an independent toCaller grant',async()=>{
   return seen.filter(x=>x.origin==='sutra-local').map(x=>JSON.stringify(x.messages));
  }
  const denied=await collect([]);
- assert.ok(denied.every(text=>!text.includes('"private_context"')));
+ assert.ok(denied.every(text=>!text.includes('private_context')));
  assert.ok(denied.every(text=>!text.includes('ne-NP')));
  const allowed=await collect(['locale']);
- assert.ok(allowed.some(text=>text.includes('"private_context"')&&text.includes('ne-NP')));
+ assert.ok(allowed.some(text=>text.includes('private_context')&&text.includes('ne-NP')));
  assert.ok(allowed.every(text=>!text.includes('PRIVATE_CONTEXT_CANARY_123')));
 });
