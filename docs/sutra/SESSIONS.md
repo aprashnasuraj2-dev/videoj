@@ -160,3 +160,9 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Prior candidate 49e4f00178063c0f484dd6582883f947a754b547 FAILED the browser assertion: a blocked peer load may surface inside the invoking agent tool result rather than top-level (PEER_ARTIFACT). Corrected observable assertion; failed CI retained at https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45157301045 and not credited as success.
 - Redirect rejection is deliberately stricter than full Profile 0.3 redirect interoperability. Same-URL changed content is not yet hash-bound to authorization. No public HTTPS or third-party-publisher validation; phase 037 remains incomplete.
 - Do not credit checklist tasks before complete, passing current candidate CI. Historical verified baseline remains 232/1000.
+
+### Session 0008 redirect validation and timestamped checkpoint
+
+- 2026-11-23T16:26:24+05:45: the final redirect/path-consent candidate `e5af69d975ec0c7fc4c84c3e20b84036e3302cca` passed all three Actions workflows, including Chromium shell run https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158153046. Verified P037-06/07/08 against actual fail-closed and local-lesson observations; total **235/1,000** with 15 complete phases. Re-consent for accepted changed-origin redirects and changed-content graph approval remain OPEN.
+- Withdrawn the proposed peer URL at the caller's same registrable domain. A separately controlled registrable domain remains an unverified external release dependency; no domain or route was configured.
+- Appended additional concurrent BYOK revocation regression on the branch after the redirect candidate. That later test requires its own passing CI before its result is counted; earlier BYOK single-call cancellation was already verified.
