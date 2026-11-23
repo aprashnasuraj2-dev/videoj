@@ -126,16 +126,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Make the reusable evidence interchange a narrow profile of the W3C Web Annotation Data Model rather than a SUTRA-only receipt. Represent a cue target with `SpecificResource` + `FragmentSelector`, use the W3C Media Fragments temporal value `t=start,end`, and attach SRI-style `sha256-<base64>` integrity metadata for transcript/media bytes. Keep authenticity and semantic truth separate from byte integrity.
 - **Phase exit:** A standards-shaped annotation can produce a deterministic media cue link; altered bytes/ranges are rejected; a valid hash is never described as proof that a statement is true.
 
-- [~] `SUTRA-P017-01` Define the profile identifier/version over the W3C Web Annotation JSON-LD context
-- [ ] `SUTRA-P017-02` Use `Annotation`, `SpecificResource`, `FragmentSelector` and an explicit source IRI rather than a bespoke cue envelope
-- [ ] `SUTRA-P017-03` Encode the cue interval as a Media Fragments temporal selector `t=start,end` and validate finite half-open bounds
-- [ ] `SUTRA-P017-04` Attach transcript/media integrity using SRI-style SHA-256 metadata and an independently supplied manifest
-- [ ] `SUTRA-P017-05` Represent the exact source excerpt as a `TextualBody` plus bounded cue/version metadata needed by this profile
-- [ ] `SUTRA-P017-06` Keep credentials, private context and raw prompts out of annotations and integrity manifests
-- [ ] `SUTRA-P017-07` Create valid, missing-source, invalid-fragment, altered-integrity and altered-quotation fixtures
-- [ ] `SUTRA-P017-08` Document explicitly that a hash establishes byte equality only, not factual truth, publisher trust or semantic support
-- [ ] `SUTRA-P017-09` Produce and review the phase artifact: Web Annotation media-evidence profile, validator contract and valid/invalid fixtures.
-- [ ] `SUTRA-P017-10` Close phase 017 only after its applicable tasks have evidence and its exit condition is observed: A standards-shaped cue annotation validates, altered bytes/ranges fail, and byte integrity is not mislabeled as truth.
+- [x] `SUTRA-P017-01` Define the profile identifier/version over the W3C Web Annotation JSON-LD context
+- [x] `SUTRA-P017-02` Use `Annotation`, `SpecificResource`, `FragmentSelector` and an explicit source IRI rather than a bespoke cue envelope
+- [x] `SUTRA-P017-03` Encode the cue interval as a Media Fragments temporal selector `t=start,end` and validate finite half-open bounds
+- [x] `SUTRA-P017-04` Attach transcript/media integrity using SRI-style SHA-256 metadata and an independently supplied manifest
+- [x] `SUTRA-P017-05` Represent the exact source excerpt as a `TextualBody` plus bounded cue/version metadata needed by this profile
+- [x] `SUTRA-P017-06` Keep credentials, private context and raw prompts out of annotations and integrity manifests
+- [x] `SUTRA-P017-07` Create valid, missing-source, invalid-fragment, altered-integrity and altered-quotation fixtures
+- [x] `SUTRA-P017-08` Document explicitly that a hash establishes byte equality only, not factual truth, publisher trust or semantic support
+- [x] `SUTRA-P017-09` Produce and review the phase artifact: Web Annotation media-evidence profile, validator contract and valid/invalid fixtures.
+- [x] `SUTRA-P017-10` Close phase 017 only after its applicable tasks have evidence and its exit condition is observed: A standards-shaped cue annotation validates, altered bytes/ranges fail, and byte integrity is not mislabeled as truth.
 
 
 ## Phase 018 - Build a small reproducible lesson corpus
