@@ -110,13 +110,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P036-01` Keep private context separate from ordinary request/response text
 - [x] `SUTRA-P036-02` Deny private-field forwarding across network boundaries by default
 - [x] `SUTRA-P036-03` Bind allowed fields to an exact destination network identity
-- [ ] `SUTRA-P036-04` Apply separate upstream and downstream forwarding permissions
+- [x] `SUTRA-P036-04` Apply separate upstream and downstream forwarding permissions
 - [x] `SUTRA-P036-05` Use synthetic secret canaries to inspect prompts and network requests
-- [ ] `SUTRA-P036-06` Verify peer results cannot smuggle forbidden private fields into receipts
+- [x] `SUTRA-P036-06` Verify peer results cannot smuggle forbidden private fields into receipts
 - [x] `SUTRA-P036-07` Explain that plain delegated text is not filtered as private context
 - [x] `SUTRA-P036-08` Test both denied forwarding and an explicitly permitted non-secret field
 - [x] `SUTRA-P036-09` Produce and review the phase artifact: Destination-scoped context filter and canary tests.
-- [ ] `SUTRA-P036-10` Close phase 036 only after its applicable tasks have evidence and its exit condition is observed: Synthetic secret canaries are absent from peer requests, prompts, outputs and trace export unless a specifically allowed test field is used.
+- [x] `SUTRA-P036-10` Close phase 036 only after its applicable tasks have evidence and its exit condition is observed: Synthetic secret canaries are absent from peer requests, prompts, outputs and trace export unless a specifically allowed test field is used.
 
 ## Phase 037 - Handle redirects and policy changes
 
