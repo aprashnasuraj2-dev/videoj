@@ -103,11 +103,12 @@ export function mountTranscriptPanel(host,{source,onSeek,media}={}){
    button.setAttribute('aria-label','Seek to '+formatTime(cue.start)+': '+cue.text);
    button.addEventListener('keydown',onCueKey);
    button.addEventListener('click',async()=>{
+    if(button.dataset.busy==='true')return;
     if(typeof onSeek!=='function'){
      status('Seek unavailable: no native media adapter is connected.');
      return;
     }
-    button.disabled=true;
+    button.dataset.busy='true';button.setAttribute('aria-busy','true');
     try{
      const actual=await onSeek(cue.start);
      if(!Number.isFinite(actual)||Math.abs(actual-cue.start)>1)throw Error('Native seek did not reach the cue.');
@@ -115,7 +116,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media}={}){
      updateActive();
     }catch{
      status('The cue could not be reached in the current media. No seek success is claimed.');
-    }finally{button.disabled=false;}
+    }finally{delete button.dataset.busy;button.removeAttribute('aria-busy');}
    });
    item.append(button);list.append(item);buttonMap.set(cue.id,button);
   }
