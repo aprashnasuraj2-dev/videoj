@@ -179,10 +179,10 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Keep a user-chosen browser key path so inference cost can remain with the user when desired and so the project can directly prove that caller credentials never reach a second site. Use only tested browser-CORS-compatible routers, keep credentials in memory, and provide explicit deletion. Funded inference remains the no-setup judge path; BYOK is also the resilience path if funded inference throttles.
 - **Phase exit:** A live/synthetic key-canary run shows the key goes only to the selected router and never to peer artifacts, actions, analytics, traces, exports or storage; deleting the key removes the in-memory state.
 
-- [ ] `SUTRA-P030-01` Keep BYOK in shipped scope as a deliberate caller-funded inference path, not an optional first cut
+- [~] `SUTRA-P030-01` Keep BYOK in shipped scope as a deliberate caller-funded inference path, not an optional first cut
 - [ ] `SUTRA-P030-02` Use only a tested permitted router with browser CORS support and an explicit router origin
 - [ ] `SUTRA-P030-03` Keep BYOK credentials in memory only and provide explicit deletion/reset
-- [x] `SUTRA-P030-04` Prevent peer metadata from overriding caller router or model policy
+- [ ] `SUTRA-P030-04` Prevent peer metadata from overriding caller router or model policy
 - [ ] `SUTRA-P030-05` Send keys only in authorized model requests to the selected router and never to peer artifact origins
 - [ ] `SUTRA-P030-06` Check URLs, prompts, actions, traces, analytics, exports and browser storage for synthetic key canaries
 - [ ] `SUTRA-P030-07` Stop with a clear setup error if BYOK is selected but its required key/model configuration is absent
