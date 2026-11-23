@@ -2,6 +2,7 @@
 const {chromium}=require('playwright');
 const {spawn}=require('node:child_process');
 const path=require('node:path');
+const fs=require('node:fs');
 const assert=require('node:assert/strict');
 
 (async()=>{
@@ -103,6 +104,18 @@ const assert=require('node:assert/strict');
    ['/agents/agent-manifest.json','/agents/checklist.network.json']);
   assert.match(await page.locator('#peer-trace').innerText(),/Loaded peer/);
   assert.match(await page.locator('#peer-trace').innerText(),/Caller/);
+  const peerDownloadPromise=page.waitForEvent('download');
+  await page.getByRole('button',{name:'Download redacted execution JSON'}).click();
+  const peerDownload=await peerDownloadPromise;
+  assert.equal(peerDownload.suggestedFilename(),'sutra-peer-sanitized-trace.json');
+  const receipt=JSON.parse(fs.readFileSync(await peerDownload.path(),'utf8'));
+  assert.equal(receipt.reportType,'sutra-sanitized-execution');
+  assert.equal(receipt.mode,'scripted-test');
+  assert.equal(receipt.outcome,'completed');
+  assert.equal(receipt.modelCalls,5);assert.equal(receipt.agentCalls,3);
+  assert.ok(receipt.events.some(event=>event.network==='checklist'));
+  assert.ok(!JSON.stringify(receipt).includes('Inspect the synthetic checklist state'));
+  assert.ok(!JSON.stringify(receipt).includes('Authorization'));
   assert.ok(!(await page.locator('#peer-consent-log').textContent()).includes('Inspect the synthetic checklist state'));
   await page.getByLabel('Exact peer network URL').fill(peer+'/agents/checklist_wrong');
   await page.getByRole('button',{name:'Run scripted peer test'}).click();
