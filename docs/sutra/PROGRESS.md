@@ -2,7 +2,21 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
-## Session 0008 final consent exit — 2026-11-23
+## Session 0009 final implementation checkpoint — 2026-11-23
+
+**263 / 1,000 verified task checks (26.3%); 16 / 100 phases fully complete.** This session added 59 verified checks and closed phases **035 (caller-local peer execution), 044 (accessible transcript), and 046 (validated local review-card action flow)**. Checklist checks differ in effort; this percentage does not measure overall engineering time, market readiness or challenge compliance.
+
+**Exact tested code:** `141635df81697e7daed5a166815ab2ac3f3e1bb9`; [passing learner/build/browser CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482). The run passed 33 learner tests, 37 consent/inference/source/API tests, 87 runtime/loader/security tests, 7 independent peer tests, all ten pinned vendor hashes, and four Chromium scripts. [Full engineering evidence, including intermediate failures](evidence/implementation/SESSION-0009.md).
+
+**Implemented in this development session:** an actual SUTRA learner peer workbench with explicit public artifact consent and non-success errors; pinned caller-owned provider-model policy and fake BYOK canaries; searchable source-scoped transcript bound to real native seek, accessible keyboard navigation and honest caption/translation labels; source comparison distinguishing missing guide evidence from an explicitly hypothetical unresolved conflict; safe source-provenance/date cards; validated JSON exports of saved local synthetic receipts and bounded redacted peer traces; and redirect refusal tested in Chromium while local video/evidence remain functional. The model remains scripted and source content synthetic.
+
+**Critical unfinished blockers:** no original rights-cleared lesson, human factual review, authentic written guide, actual independently deployed HTTPS second origin, provider-funded live visitor experience, approved model/budget, independent external MCP publisher, external adoption, or consented hardware/user testing. The strict redirect-error profile is deliberately **not** the full origin-change redirect compatibility required by the challenge. The user release prohibition still applies; no deployed site, route assignment, paid model call, final ZIP or Devpost submission was performed.
+
+**Next dependency-ready engineering:** `SUTRA-P039-05` (controlled source-backed read-only MCP success/discovery failure/real service timeout), then `P036-03` (exact destination-scoped private data contract), `P045-03` (real excerpt semantics/verified comparison), and first-view accessibility/acceptance. Continue on [draft PR #49](https://github.com/aprashnasuraj2-dev/videoj/pull/49), not a release.
+
+---
+
+## Session 0008 final consent exit (historical) — 2026-11-23
 
 **204 / 1,000 verified checks; 13 phases complete.** Phase 033 is now closed after the extra Chromium browser test demonstrated that denied external MCP discovery makes zero external POSTs while the original local evidence validator and native synthetic video remain available in the same browser session.
 
