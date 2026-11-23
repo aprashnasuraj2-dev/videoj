@@ -153,3 +153,9 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Credited P033-03 and P039-02/03/04/06/08/09, increasing from 196 to **203/1000** verified checks. P033-10 remains pending until the new same-page media/evidence-after-denial test added at `12aae467ce7ebfd7cd1929f0360d1d8ca598fd7e` is observed green. This latest test revision has not been silently credited.
 - An actual independently approved outside MCP read-only publisher, real HTTP service timeout behavior, external auth and provider/BYOK separation evidence remain pending. Details and intermediate CI limitations in [session 0008](evidence/implementation/SESSION-0008.md).
 - Next cursor P033-10, then P039-01/05 and P035-05. User release gate persists.
+
+### SUTRA-SESSION-0008 final consent phase exit observation
+
+- Final tested commit `12aae467ce7ebfd7cd1929f0360d1d8ca598fd7e` passed https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45179248410/job/137708455358, including the new same-page browser scenario: denied MCP discovery sent zero external POSTs, then the local consistency checker and native synthetic video remained usable.
+- P033-10 was credited after this observation; phase 033 closes. Total **204/1,000** verified checks and **13 complete phases**. Previous session 0008 pending-CI note is historical, not the final status.
+- Resume on P039-01 (authorized real public-read MCP service) and P035-05 (synthetic secret canaries) while keeping decision 0008 release restrictions in force.
