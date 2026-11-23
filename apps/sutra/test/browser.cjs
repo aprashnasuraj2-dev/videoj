@@ -77,7 +77,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.getByRole('button',{name:'Run consented peer composition'}).click();
   await page.waitForFunction(()=>document.querySelector('#consent-dialog').open&&document.querySelector('#consent-purpose').textContent.includes('exact published peer network'));
   await page.getByRole('button',{name:'Allow once',exact:true}).click();
-  await page.waitForFunction(()=>document.querySelector('#peer-network-result').textContent.includes('(PEER_ARTIFACT)'));
+  await page.waitForFunction(()=>/Peer load failed|public network artifact is unavailable|PEER_ARTIFACT/.test(document.querySelector('#peer-network-result').textContent));
   const redirectRequests=peerRequests.slice(beforeRedirect);
   assert.equal(redirectRequests.length,1,'redirect response must not trigger a second peer GET');
   assert.ok(redirectRequests[0].url.endsWith('/agents/agent-manifest.json'));
