@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
-import {runNetwork} from '../index.js';
+import {runNetwork,loadPeerNetwork} from '../index.js';
 import {createConsentInspector} from '../../sutra-consent/index.js';
 
 const peerGraph=JSON.parse(fs.readFileSync(new URL('../../../apps/sutra-peer/public/agents/checklist.network.json',import.meta.url)));
@@ -124,4 +124,32 @@ test('peer graph MCP descriptors are rejected rather than inherited into the cal
 });
 test('external capabilities remain disabled without an explicit host boundary',async()=>{
  let modelCalls=0;await assert.rejects(runNetwork({definition:callerGraph(),request:'x',model:{mode:'scripted-test',async chat(){modelCalls++;return {content:'x',toolCalls:[]};}}}),e=>e.code==='REFERENCE');assert.equal(modelCalls,0);
+});
+
+test('remembered peer graph consent is bound to the exact manifest-declared artifact path',async()=>{
+ let graphPath='./checklist.network.json',requests=[],decisions=[];
+ const inspector=createConsentInspector({decide:async intent=>{decisions.push({kind:intent.kind,purpose:intent.purpose});return {decision:'allow',scope:'session'};}});
+ const fetchImpl=async(url,options)=>{
+  requests.push({url,credentials:options.credentials,redirect:options.redirect});
+  if(url.endsWith('/agent-manifest.json'))return Response.json({networks:[{name:'checklist',front_man:'checklist',hocon:graphPath}]});
+  if(url.endsWith('.network.json'))return Response.json(peerGraph);
+  throw Error('unsupported artifact');
+ };
+ for(const next of ['./checklist.network.json','./checklist.network.json','./changed.network.json']){
+  graphPath=next;
+  await loadPeerNetwork({peerUrl,inspector,fetchImpl});
+ }
+ assert.deepEqual(decisions.map(x=>x.kind),['peer_manifest','peer_graph','peer_graph']);
+ assert.ok(decisions[1].purpose.includes('/agents/checklist.network.json'));
+ assert.ok(decisions[2].purpose.includes('/agents/changed.network.json'));
+ assert.equal(requests.length,6);
+ assert.ok(requests.every(x=>x.credentials==='omit'&&x.redirect==='error'));
+});
+test('query-bearing peer graph references fail before graph contact',async()=>{
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'session'})}),requested=[];
+ await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async(url)=>{
+  requested.push(url);
+  return Response.json({networks:[{name:'checklist',front_man:'checklist',hocon:'./checklist.network.json?redirect=https://other.example'}]});
+ }}),error=>error.code==='ARTIFACT_ORIGIN');
+ assert.equal(requested.length,1,'query-bearing graph URL must not be contacted');
 });
