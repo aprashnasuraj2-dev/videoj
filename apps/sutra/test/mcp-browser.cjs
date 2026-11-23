@@ -9,7 +9,7 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
 
 (async()=>{
  const app=path.resolve(__dirname,'..');const root=path.resolve(app,'../..');
- let cors=true;let posts=[],cookieSeen=[];
+ let cors=true;let posts=[],cookieSeen=[],authorizationSeen=[],bodyCanarySeen=[];
  const server=http.createServer(async(req,res)=>{
   if(req.url!=='/mcp'){res.writeHead(404);res.end();return;}
   const origin=req.headers.origin;
@@ -25,7 +25,9 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
   if(req.method==='OPTIONS'){res.writeHead(cors?204:403);res.end();return;}
   if(req.method!=='POST'||origin!==caller){res.writeHead(405);res.end();return;}
   cookieSeen.push(req.headers.cookie??null);
+  authorizationSeen.push(req.headers.authorization??null);
   let body='';for await(const chunk of req){body+=chunk;if(body.length>20000){res.writeHead(413);res.end();return;}}
+  bodyCanarySeen.push(body.includes('BYOK_PRIVATE_MCP_BROWSER_CANARY'));
   const rpc=JSON.parse(body);posts.push(rpc.method);
   let result;
   if(rpc.method==='initialize')result={protocolVersion:'2025-06-18',capabilities:{tools:{}}};
@@ -63,7 +65,8 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
      return {decision:choice==='deny-discovery'||choice==='deny-call'&&intent.kind==='mcp_call'?'deny':'allow',scope:'once'};
     }});
     let steps=0;
-    const model={mode:'scripted-test',async chat({messages}){
+    const model={mode:'provider',approvedModel:'approved-fixture-model',
+     privateCredential:'BYOK_PRIVATE_MCP_BROWSER_CANARY',async chat({messages}){
      steps++;
      const previous=messages.find(message=>message.role==='tool');
      if(previous)return {content:'Result from approved external read: '+previous.content,toolCalls:[]};
@@ -90,6 +93,8 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
   assert.equal(yes.ok,true);assert.match(yes.text,/third_party_unverified/);assert.match(yes.text,/unverified/);
   assert.deepEqual(posts.slice(before),['initialize','notifications/initialized','tools/list','tools/call']);
   assert.ok(cookieSeen.every(value=>value===null),'No cookies sent to MCP origin');
+  assert.ok(authorizationSeen.every(value=>value===null),'No model authorization forwarded to MCP origin');
+  assert.ok(bodyCanarySeen.every(value=>value===false),'BYOK canary never enters third-party MCP payload');
   assert.deepEqual(yes.decisions,['mcp_discovery','mcp_call']);
   assert.ok(!JSON.stringify(yes.consent).includes('synthetic-secret-canary'));
   assert.ok(!JSON.stringify(yes.events).includes('synthetic-secret-canary'));
