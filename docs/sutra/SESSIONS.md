@@ -199,3 +199,16 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Full build/runtime/peer/Chromium workflow passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45162744214.
 - Verified P036-04/06/10; Phase 036 closes. New total **250/1000**, **17 fully verified phases**.
 - Next P037-01 redirect origin/policy handling. Existing fail-closed redirect behavior remains; no public release or provider claim.
+
+
+## SUTRA-SESSION-0011 — Redirect destination re-consent and bounded policy
+
+- Observed 2026-11-23T17:00:00+05:45; tested source candidate `be03c617a437366792d128d312ecc537856fe621`.
+- Rechecked Profile 0.3 commit `a0ceda34e4f2e653223e13e63282abc9b60eaf7c`: normal browser redirects are allowed, but a redirect to a different origin must be treated as a new destination under the same consent policy.
+- Preserved native browser `redirect:error` when JavaScript cannot inspect a changed origin before contact. Added bounded continuation only for transports that expose a raw 3xx Location before another request.
+- Redirect policy now caps hops, rejects cycles/credentials/fragments/unsafe schemes, creates a new consent tuple for changed origin/path, and requires approval before the next request.
+- Tests cover changed-origin deny with zero second-origin contact, explicit second-origin approval, same-origin changed-path re-evaluation despite session memory, cycles and hop limits. Existing browser/loopback no-credential/fail-closed/local-lesson tests remain green.
+- Full shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45163356204; register/evidence runs 45163356065 / 45163356138 passed on the tested candidate.
+- Verified P037-01/02/03/04/09/10; Phase 037 closes. New total **256/1000**, **18 fully verified phases**.
+- Same-URL byte replacement without a declared content binding is not treated as a redirect scope change; integrity/versioning remains a separate concern and no stronger claim is made.
+- Next: Phase 022 publication bundle/inventory audit. Live P030-02 router CORS/account and public HTTPS P034 remain external gates. No release or submission.
