@@ -132,6 +132,34 @@ const assert=require('node:assert/strict');
   await page.setViewportSize({width:360,height:800});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
 
+  // Redirect policy deliberately fails closed until origin-changing redirect
+  // consent is implemented. Test cross-site, same-site and looping 302 replies.
+  const crossSite=[];
+  page.on('request',request=>{if(request.url().includes('unapproved.example'))crossSite.push(request.url());});
+  for(const locationHeader of [
+   'https://unapproved.example/secret',
+   peer+'/agents/another-manifest.json',
+   peer+'/agents/agent-manifest.json'
+  ]){
+   const beforeRedirect=peerRequests.length;
+   await page.route(peer+'/agents/agent-manifest.json',route=>route.fulfill({
+    status:302,headers:{Location:locationHeader,'Access-Control-Allow-Origin':'*'},
+    body:''
+   }));
+   await page.getByLabel('Exact peer network URL').fill(peer+'/agents/checklist');
+   await page.getByRole('button',{name:'Run scripted peer test'}).click();
+   await page.getByRole('dialog',{name:'Approve real public artifact access?'}).waitFor();
+   await page.getByRole('button',{name:'Allow this GET once'}).click();
+   await page.waitForFunction(()=>document.querySelector('#peer-status').textContent.includes('PEER_MANIFEST_UNAVAILABLE'));
+   assert.equal(peerRequests.length,beforeRedirect+1,'redirect never follows a second artifact URL');
+   await page.unroute(peer+'/agents/agent-manifest.json');
+  }
+  assert.deepEqual(crossSite,[],'unapproved redirect destination never contacted');
+  await page.getByRole('button',{name:'Check example',exact:true}).click();
+  assert.match(await page.locator('#result').innerText(),/Catalog matched/);
+  await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
+  await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Actual media duration: 8.0 seconds.'));
+  assert.equal(await page.locator('video').count(),1,'local native video works after blocked peer redirects');
   const transcript=await page.evaluate(async root=>{
    const {mountTranscriptPanel}=await import('/@fs/'+root+'/apps/sutra/src/transcript-panel.js');
    const container=document.createElement('div');document.body.append(container);
