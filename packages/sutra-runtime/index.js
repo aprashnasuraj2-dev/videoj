@@ -148,7 +148,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
  const guardSource=method=>async(...args)=>{check();try{return await rawSourceClient[method](...args);}catch{const error=new RuntimeError('CAPABILITY_UNAVAILABLE','Source retrieval failed; no completed source result is claimed.');failure=error;controller.abort(error);throw error;}};
  const sourceClient=rawSourceClient?{listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
- const rawExternal=third?createExternalReadMcp(third,{signal:controller.signal}):null;
+ const rawExternal=third?createExternalReadMcp(thirdPartyMcp,{signal:controller.signal}):null;
  const guardExternal=method=>async(...args)=>{
   check();
   try{return await rawExternal[method](...args);}
