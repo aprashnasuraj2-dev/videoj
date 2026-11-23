@@ -1,1 +1,18 @@
-{"name":"@sutra/inference","version":"0.1.0","private":true,"type":"module","license":"Apache-2.0","exports":{".":"./client.js","./protocol":"./protocol.js"},"scripts":{"test":"node --test test/*.test.mjs"},"engines":{"node":">=22"}}
+{
+  "name": "@sutra/inference",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./client.js",
+    "./protocol": "./protocol.js",
+    "./byok": "./byok.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
