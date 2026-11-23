@@ -35,15 +35,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Implement the base-path manifest lookup and exact name match; resolve declared graph URLs safely. Reject missing entries rather than choosing a similarly named network.
 - **Phase exit:** Wrong-name, missing-manifest and malformed-definition cases fail closed with a specific visible explanation.
 
-- [ ] `SUTRA-P032-01` Derive the peer site base from the network URL path correctly
-- [ ] `SUTRA-P032-02` Fetch the manifest at that derived base after consent
-- [ ] `SUTRA-P032-03` Select only an exactly matching network name
-- [ ] `SUTRA-P032-04` Resolve declared hocon locations against the correct site base
-- [ ] `SUTRA-P032-05` Reject missing entry, malformed manifest and unsupported graph types
-- [ ] `SUTRA-P032-06` Handle query fragments, encoded paths and trailing-slash ambiguity deliberately
-- [ ] `SUTRA-P032-07` Avoid fallback to a default or similarly named network
+- [x] `SUTRA-P032-01` Derive the peer site base from the network URL path correctly
+- [x] `SUTRA-P032-02` Fetch the manifest at that derived base after consent
+- [x] `SUTRA-P032-03` Select only an exactly matching network name
+- [x] `SUTRA-P032-04` Resolve declared hocon locations against the correct site base
+- [x] `SUTRA-P032-05` Reject missing entry, malformed manifest and unsupported graph types
+- [x] `SUTRA-P032-06` Handle query fragments, encoded paths and trailing-slash ambiguity deliberately
+- [x] `SUTRA-P032-07` Avoid fallback to a default or similarly named network
 - [ ] `SUTRA-P032-08` Preserve a specific failure result for the invoking network
-- [ ] `SUTRA-P032-09` Produce and review the phase artifact: Peer loader and name-resolution test fixtures.
+- [x] `SUTRA-P032-09` Produce and review the phase artifact: Peer loader and name-resolution test fixtures.
 - [ ] `SUTRA-P032-10` Close phase 032 only after its applicable tasks have evidence and its exit condition is observed: Wrong-name, missing-manifest and malformed-definition cases fail closed with a specific visible explanation.
 
 ## Phase 033 - Ask permission before external contact
@@ -53,15 +53,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Display destination origin, purpose and intended disclosure before peer fetches and third-party MCP discovery/calls. Keep default per-contact approval; remember session-scoped approval only after explicit user choice.
 - **Phase exit:** Network recording shows no unapproved peer request; denial leaves the local video and local evidence usable.
 
-- [ ] `SUTRA-P033-01` Show intended external origin and purpose before the first contact
-- [ ] `SUTRA-P033-02` Obtain approval before manifest fetch and graph retrieval
+- [x] `SUTRA-P033-01` Show intended external origin and purpose before the first contact
+- [x] `SUTRA-P033-02` Obtain approval before manifest fetch and graph retrieval
 - [ ] `SUTRA-P033-03` Apply consent checks before third-party MCP discovery and calls
-- [ ] `SUTRA-P033-04` Implement denial with no network request side effect
-- [ ] `SUTRA-P033-05` Use per-contact approval as the initial policy
-- [ ] `SUTRA-P033-06` Allow session-scoped remembered decisions only through an explicit user choice
-- [ ] `SUTRA-P033-07` Show intended data disclosure without leaking hidden private context
-- [ ] `SUTRA-P033-08` Record consent scope and decisions in a redacted inspectable event stream
-- [ ] `SUTRA-P033-09` Produce and review the phase artifact: Consent UI, state machine and decision record.
+- [x] `SUTRA-P033-04` Implement denial with no network request side effect
+- [x] `SUTRA-P033-05` Use per-contact approval as the initial policy
+- [x] `SUTRA-P033-06` Allow session-scoped remembered decisions only through an explicit user choice
+- [x] `SUTRA-P033-07` Show intended data disclosure without leaking hidden private context
+- [x] `SUTRA-P033-08` Record consent scope and decisions in a redacted inspectable event stream
+- [x] `SUTRA-P033-09` Produce and review the phase artifact: Consent UI, state machine and decision record.
 - [ ] `SUTRA-P033-10` Close phase 033 only after its applicable tasks have evidence and its exit condition is observed: Network recording shows no unapproved peer request; denial leaves the local video and local evidence usable.
 
 ## Phase 034 - Verify public artifact CORS
