@@ -49,6 +49,13 @@ runButton.addEventListener('click',async()=>{
 });
 
 let timingPlayer=null,timingObjectUrl=null,timingTranscript=null;
+const transcriptHost=document.querySelector('#timing-transcript-panel');
+timingTranscript=mountTranscriptPanel(transcriptHost,{
+ source:timingFixture.source,onSeek:seconds=>{
+  if(!timingPlayer)throw new Error('Native media is not loaded.');
+  return timingPlayer.seek(seconds);
+ }
+});
 mountComparisonView(document.querySelector('#comparison-body'),{
  receipt:timingFixture.receipt,seekTo:seconds=>timingPlayer?.seek(seconds)
 });
@@ -67,7 +74,7 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
   timingPlayer=mountTimingPlayer(mediaHost,{source:timingObjectUrl,chapters:new URL('timing-chapters.vtt',base).href,captions:new URL('timing-captions.vtt',base).href});
   mediaHost.classList.add('player-mounted');await timingPlayer.ready();if(Math.abs(timingPlayer.media.duration-timingFixture.source.duration)>.1)throw Error('Media duration mismatch.');
   timingTranscript?.dispose();
-  timingTranscript=mountTranscriptPanel(document.querySelector('#timing-transcript-panel'),{
+  timingTranscript=mountTranscriptPanel(transcriptHost,{
    source:timingFixture.source,media:timingPlayer.media,onSeek:seconds=>timingPlayer.seek(seconds)
   });
   timingStatus.textContent=`Synthetic timing fixture loaded. Actual media duration: ${timingPlayer.media.duration.toFixed(1)} seconds. Original lesson still pending.`;seekTiming.hidden=false;
