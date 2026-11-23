@@ -94,3 +94,13 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Alternative rejected: delegate model/prompt execution to a remote peer server with its own model keys. That would widen credential and prompt disclosure, reduce inspectability and make caller-controlled spending limits harder to enforce. Caller-local execution increases browser CPU/load and can still receive untrusted public instructions; it does not imply semantic truth or universal prompt-injection resistance.
 - Scope limited to SUTRA code and tests, not DHAGO/DETOUR or a public route. Two loopback origins, not independent HTTPS publishers, were observed. External third-party MCP, production CORS, private-credential canaries, real content, and independent adoption remain incomplete.
 - No changed release authorization: public launch and paid inference remain closed by decision 0008.
+
+
+## SUTRA-DECISION-0011 - Exact read-only MCP subset instead of generic dynamic remote tools
+
+- 2026-11-23T18:53:00+05:45, verified source candidate `e2766f1ca8bc1b09d2495af977f749e4a8317de1`; observed https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45178921845/job/137707320526.
+- Decision: allow **only** a host-selected exact HTTPS `/mcp` endpoint with a distinct reusable consent inspector. HTTP loopback permits a controlled real-browser fixture; arbitrary endpoint and dynamic tool catalog remain disabled. Discovery and actual tool call are separate consent operations.
+- Implement only the pinned `2025-06-18` JSON-only stateless POST transport. One `read_public` tool has fixed schema, read-only annotation and bounded unverified output. Reject unapproved/writing tools, unsupported protocol versions, mismatched response IDs, SSE/session modes, non-JSON, oversized replies, redirects and credentials; propagate failure as an incomplete caller run.
+- Alternative: import a full-featured MCP SDK and enable dynamic read/write tools. Rejected for this stage because it introduces optional auth/session streaming, larger attack surface, arbitrary tool behavior and dependencies before an authorized real outside service is selected. This strict subset is not a full generic MCP interoperability claim.
+- Tool annotations and local tests do not establish real publisher integrity, immutable read-only behavior or factual truth. P039's real service and timeout/auth requirements and P033's same-page denial-and-media phase exit remain separately open; no mandatory gate is omitted.
+- Source reference: https://modelcontextprotocol.io/specification/2025-06-18/basic/transports.
