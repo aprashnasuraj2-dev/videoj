@@ -173,3 +173,17 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - 2026-11-23T16:30:00+05:45: verified P030-08 synthetic independence at `106da667c68b1645fa33674b08785db5a97f2fd3`, shell https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158656419. A funded quota 429 does not block BYOK; BYOK auth 401 does not prevent an otherwise configured funded adapter. No live funded account or browser CORS is claimed.
 - 2026-11-23T16:31:00+05:45: verified P037-05 on `cf60561ad82fdef78b3b41e4bc1f530d21192a8a`, shell https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158831857: redirect requests omit Authorization/Cookie and changed-origin targets receive no request. Full redirect acceptance/reconsent stays open.
 - Total **242/1000**, fifteen fully verified phases. Source, checklist, machine register and evidence link synchronized in PR #48. No release or official submission.
+
+
+## SUTRA-SESSION-0009 — Explicit lifecycle, cancellation/media continuity and bounded read retry
+
+- Observed 2026-11-23T16:51:55+05:45. Started from PR #48 with 242/1000 verified and Phase 026 partially complete.
+- Added `apps/sutra/src/run-lifecycle.js` with explicit idle, running, cancelling, failed and complete states plus unit tests for valid transitions and incomplete cancellation.
+- Wired peer composition to a fresh AbortController per run, a visible lifecycle status, a cancel control, cancellation provenance and pending-consent cleanup. Cancelled output is explicitly incomplete and never presented as verified/completed.
+- Added Chromium cancellation coverage: after page reload and mounting the synthetic native timing fixture, the peer URL is re-entered, the manifest request is intentionally stalled, the run is cancelled, lifecycle ends failed/incomplete, and the video subsequently plays, advances its native media clock and pauses normally.
+- Added bounded source-read retry behavior: at most two transport attempts per RPC; one retry for transport rejection or 5xx only. Successful malformed content/schema failures are not retried. Each attempt emits sanitized method/attempt/maxAttempts metadata.
+- Retained two failed browser candidates: run 45161277792 exposed a timing-sensitive state assertion; run 45161634271 exposed that page reload correctly cleared the peer URL. Both were fixed in the fixture and remain non-passing history.
+- Final product candidate `fb300b9df50a59768c64ee0d8f7c01389d74f27f` passed build, app tests, inference/source/consent/API tests, pinned runtime verification, runtime tests, independent peer tests and Chromium: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45161898243.
+- Verified P026-01/07/08/09/10; Phase 026 closes. New total **247/1000**, **16 fully verified phases**.
+- Corrected stale documentation that still named a same-registrable-domain peer proposal; peer public origin remains unset and must use a different registrable domain.
+- Next independent task: P036-04 private-context upstream/downstream handling. P030-02 live router CORS/account, public HTTPS, original media/rights, factual review, physical-device evidence, release and submission remain open.
