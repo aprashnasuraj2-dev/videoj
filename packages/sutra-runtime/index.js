@@ -1,4 +1,5 @@
 import {createSourceMcp} from './source-mcp.js';
+import {createExternalReadMcp,validateExternalMcpConfig} from './external-mcp.js';
 import {fetchJsonWithConsent} from '../sutra-consent/index.js';
 import {AgentNetwork, validateNetwork} from './vendor/nsdeploy/kernel.js';
 import {runAgent} from './vendor/nsdeploy/runner.js';
@@ -41,7 +42,7 @@ function assertJsonData(value,ancestors=new Set(),depth=0){
 
 // The current profile deliberately accepts local declarative agents only.
 // Peer/MCP/action/code loading must be integrated with consent in later phases.
-export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false,allowPeers=false}={}){
+export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false,allowPeers=false,externalMcpUrl=null}={}){
  const bounds=executionLimits(limits);
  assertJsonData(definition);
  let json;
@@ -65,7 +66,7 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
   allowed(agent.function,['description','parameters'],'function');
   try{checkSchema(agent.function.parameters);}catch{fail('SCHEMA','Unsupported or malformed invocation schema.');}
   if(agent.function.parameters.type!=='object'||agent.function.parameters.additionalProperties!==false)fail('SCHEMA','Invocation schema must reject extra object fields.');
-  if(!Array.isArray(agent.tools)||agent.tools.length>16||agent.tools.some(ref=>typeof ref!=='string'&&!(allowSourceTools===true&&plain(ref)&&Object.keys(ref).length===1&&ref.url==='/api/source-tools')))fail('TOOLS','Agent needs a bounded local tool list.');
+  if(!Array.isArray(agent.tools)||agent.tools.length>16||agent.tools.some(ref=>typeof ref!=='string'&&!((allowSourceTools===true&&plain(ref)&&Object.keys(ref).length===1&&ref.url==='/api/source-tools')||(typeof externalMcpUrl==='string'&&plain(ref)&&Object.keys(ref).length===1&&ref.url===externalMcpUrl))))fail('TOOLS','Agent needs a bounded local tool list.');
   if(new Set(agent.tools.map(r=>JSON.stringify(r))).size!==agent.tools.length)fail('TOOLS','Duplicate local references are unsupported.');
   const steps=agent.max_steps??raw.max_steps??bounds.maxSteps;
   if(!Number.isInteger(steps)||steps<1||steps>bounds.maxSteps)fail('STEPS','Invalid or over-budget step count.');
@@ -96,12 +97,13 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
 
 // Model adapters are explicitly injected; there is no keyless automatic mock fallback.
 // A scripted-test adapter is only a test driver, not a live inference service.
-export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,peerRuntime}={}){
+export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,peerRuntime,thirdPartyMcp}={}){
  if(peerRuntime!==undefined){
   if(!plain(peerRuntime)||typeof peerRuntime.inspector?.perform!=='function'||peerRuntime.fetchImpl!==undefined&&typeof peerRuntime.fetchImpl!=='function')fail('PEER_CONFIG','Peer invocation requires an explicit contact inspector and optional fetch implementation.');
   allowed(peerRuntime,['inspector','fetchImpl'],'peer runtime');
  }
- const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeers:!!peerRuntime});
+ const third=thirdPartyMcp===undefined?null:validateExternalMcpConfig(thirdPartyMcp);
+ const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeers:!!peerRuntime,externalMcpUrl:third?.url??null});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
  if(!model||typeof model.chat!=='function'||!['scripted-test','provider'].includes(model.mode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
  if(signal?.aborted)fail('CANCELLED','Run cancelled before model execution.');
@@ -146,6 +148,17 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
  const guardSource=method=>async(...args)=>{check();try{return await rawSourceClient[method](...args);}catch{const error=new RuntimeError('CAPABILITY_UNAVAILABLE','Source retrieval failed; no completed source result is claimed.');failure=error;controller.abort(error);throw error;}};
  const sourceClient=rawSourceClient?{listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
+ const rawExternal=third?createExternalReadMcp(third,{signal:controller.signal}):null;
+ const guardExternal=method=>async(...args)=>{
+  check();
+  try{return await rawExternal[method](...args);}
+  catch(error){
+   const safeCode=typeof error?.code==='string'&&/^[A-Z][A-Z0-9_]{1,50}$/.test(error.code)?error.code:'MCP_FAILED';
+   const stopped=new RuntimeError('EXTERNAL_'+safeCode,`External MCP ${method==='listTools'?'discovery':'call'} stopped (${safeCode}); no completed read is claimed.`);
+   failure=stopped;controller.abort(stopped);throw stopped;
+  }
+ };
+ const externalClient=rawExternal?{url:third.url,listTools:guardExternal('listTools'),callTool:guardExternal('callTool')}:null;
  // The vendor runner is pinned unchanged. A peer error would normally become
  // model-visible tool text; instead abort this host with its sanitized exact
  // failure code so a model cannot turn a failed load into a completed answer.
@@ -170,7 +183,12 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    return runAgent(peerCtx,peer.frontMan,message.user_message.text,span,visited);
   }};
  };
- const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote:resolvePeer,resolveMcp:sourceClient?async ref=>{check();if(ref?.url!=='/api/source-tools')return unavailable();return sourceClient;}:unavailable,resolveLink:unavailable,requestConsent:async info=>info?.kind==='network'&&!!peerRuntime?'proceed':'decline'};
+ const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote:resolvePeer,resolveMcp:async ref=>{
+  check();
+  if(ref?.url==='/api/source-tools'&&sourceClient)return sourceClient;
+  if(ref?.url===third?.url&&externalClient)return externalClient;
+  return unavailable();
+ },resolveLink:unavailable,requestConsent:async info=>info?.kind==='network'&&!!peerRuntime||info?.kind==='mcp'&&!!third?'proceed':'decline'};
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
   if(!result.text||events.some(e=>e.kind==='composition_limit'))fail('INCOMPLETE','Execution stopped before a complete answer.');
   return {text:result.text,mode:model.mode,modelCalls,agentCalls:composition.agentCalls,events};
