@@ -3,13 +3,13 @@
     {
       "name": "learner",
       "front_man": "learner",
-      "hocon": "./learner.network.json",
+      "hocon": "./learner.network.json?v=585c70ba5c6d1ed8d3dd681eae398fe354f909ab",
       "description": "Local learner/evidence graph; funded inference and peer composition are pending."
     },
     {
       "name": "source_learner",
       "front_man": "learner",
-      "hocon": "./source_learner.network.json",
+      "hocon": "./source_learner.network.json?v=61afec6b5cac95776050428c1e5f10bb58decf5b",
       "description": "Scripted source retrieval through bounded same-origin MCP; synthetic catalog, no factual truth claim."
     }
   ],
