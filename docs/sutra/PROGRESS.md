@@ -1,5 +1,14 @@
 # SUTRA progress register
 
+## Session 0008 evidence reconciliation — current checkpoint
+
+**232/1,000 original checklist items verified; 15 phases fully verified.** This adds 46 evidence-linked checks to the prior 186, not 46 new features. Earlier completed browser peer-invocation work was reconciled against passing session 0007 CI; latest BYOK key-isolation, in-flight cancellation and Chromium checks passed for code candidate `092c8d2c601bcfd7075a4062a4c13460257aaa90` ([shell CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061)).
+
+Newly closed phases: 032 exact peer resolution, 033 external-contact consent, 035 caller-local peer runtime and 038 untrusted-peer containment. Phase 034 public CORS remains open because controlled loopback origin proof is **not** public HTTPS staging/production proof. Phase 036 upstream private-context return remains open; phase 030 BYOK remains open for actual approved router/account CORS and independent funded-path failure. Phase 037 redirect re-consent and production trust remain open. An in-memory key is cleared and active requests are aborted, but network requests already transmitted cannot be recalled.
+
+**Next task `SUTRA-P030-02`**: verify OpenRouter browser CORS using an authorized key and account, without recording secrets; independently implement full redirect and upstream-private-context fixtures. Never replace real operator evidence with simulated credentials. The repo is still development-only: default paid inference, public routes, release and Devpost submission remain closed.
+
+
 ## Session 0008 — BYOK revocation hardening (verification ongoing)
 
 On the active `sutra/peer-invocation` PR #48 branch, `packages/sutra-inference/byok.js` now aborts every in-flight model fetch when its in-memory key is cleared. A unit regression checks active cancellation, the absence of a second network call and sanitized error messages. Tested code candidate: `092c8d2c601bcfd7075a4062a4c13460257aaa90`.
