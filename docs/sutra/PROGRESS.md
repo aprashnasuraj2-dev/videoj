@@ -4,7 +4,7 @@
 
 ## Session 0004 checkpoint
 
-**132/1,000 checks verified**; run the audit for current phase counts. Work is SUTRA: restricted browser orchestration, learner/evidence interaction, media integration and local review cards. Existing reusable-player source/demos/deployments and DETOUR remain unchanged.
+**135/1,000 checks verified**; nine phases complete; run the audit for current counts. Work is SUTRA: restricted browser orchestration, learner/evidence interaction, media integration and local review cards. Existing reusable-player source/demos/deployments and DETOUR remain unchanged.
 
 The nsDeploy reference core is pinned and unchanged. SUTRA's host validates local graphs/data, enforces finite budgets/cancellation and emits sanitized events. Its published two-agent graph runs with an explicitly scripted driver; live funded inference and peers are not connected.
 
@@ -12,7 +12,7 @@ The learner app loads a byte-checked synthetic timing fixture through an explici
 
 ## Observed checks
 
-53 runtime/loader tests and 17 app/review tests passed locally; production build and all ten upstream source hashes passed. Initial runtime/player browser CI passed on `90f3dbebb52f7171e6c9e0946d42fcf6613a168c`. Final additional review/accessor-hardening browser cases are pending observation. Local Chromium remains environment-blocked; no physical-device, Safari/Firefox or human visual-review result is claimed.
+53 runtime/loader tests and 17 app/review tests passed locally; production build and all ten upstream source hashes passed. Initial runtime/player browser CI passed on `90f3dbebb52f7171e6c9e0946d42fcf6613a168c`. Final Chromium CI passed the review/accessor-hardening cases, invalid-graph refusal and actual native media interactions. Local Chromium remains environment-blocked; no physical-device, Safari/Firefox or human visual-review result is claimed.
 
 ## Resume
 

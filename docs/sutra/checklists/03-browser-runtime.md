@@ -60,7 +60,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P023-05` Expose narrow registered actions through the runtime interface
 - [x] `SUTRA-P023-06` Record browser execution evidence separately from provider inference execution
 - [x] `SUTRA-P023-07` Ensure the server proxy does not secretly own orchestration
-- [ ] `SUTRA-P023-08` Verify initial errors are visible without opening developer tools
+- [x] `SUTRA-P023-08` Verify initial errors are visible without opening developer tools
 - [ ] `SUTRA-P023-09` Produce and review the phase artifact: Runtime entry module and first local run.
 - [ ] `SUTRA-P023-10` Close phase 023 only after its applicable tasks have evidence and its exit condition is observed: Browser traces prove graph execution and internal delegation; a server-only chat endpoint is insufficient.
 
@@ -78,9 +78,9 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P024-05` Handle invalid Unicode, deeply nested input and parser failures safely
 - [x] `SUTRA-P024-06` Verify each invalid fixture causes zero model calls
 - [x] `SUTRA-P024-07` Retain a valid control graph proving validation is not universally rejecting
-- [ ] `SUTRA-P024-08` Render specific actionable errors without private context or stack secrets
+- [x] `SUTRA-P024-08` Render specific actionable errors without private context or stack secrets
 - [x] `SUTRA-P024-09` Produce and review the phase artifact: Network validator and adversarial fixtures.
-- [ ] `SUTRA-P024-10` Close phase 024 only after its applicable tasks have evidence and its exit condition is observed: Invalid examples generate visible errors and zero inference requests; supported valid graphs still run.
+- [x] `SUTRA-P024-10` Close phase 024 only after its applicable tasks have evidence and its exit condition is observed: Invalid examples generate visible errors and zero inference requests; supported valid graphs still run.
 
 ## Phase 025 - Provide funded default inference
 
