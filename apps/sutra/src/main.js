@@ -65,13 +65,17 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
  try{
   const {mountTimingPlayer}=await import('./player-adapter.js');
   const base=new URL(`${import.meta.env.BASE_URL}media/`,location.origin);
-  const response=await fetch(new URL('timing-fixture.mp4',base),{credentials:'omit',redirect:'error',signal:AbortSignal.timeout(10000)});
+  const versioned=(name,version)=>{const url=new URL(name,base);url.searchParams.set('v',version);return url.href;};
+  const response=await fetch(versioned('timing-fixture.mp4',timingFixture.source.mediaHash),{credentials:'omit',redirect:'error',signal:AbortSignal.timeout(10000)});
   if(!response.ok||Number(response.headers.get('content-length'))>1024*1024)throw Error('Fixture download failed.');
   const bytes=await response.arrayBuffer();if(bytes.byteLength>1024*1024)throw Error('Fixture too large.');
   const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');
   if(digest!==timingFixture.source.mediaHash)throw Error('Media version mismatch.');
   timingObjectUrl=URL.createObjectURL(new Blob([bytes],{type:'video/mp4'}));
-  timingPlayer=mountTimingPlayer(mediaHost,{source:timingObjectUrl,poster:new URL('timing-poster.svg',base).href,chapters:new URL('timing-chapters.vtt',base).href,captions:new URL('timing-captions.vtt',base).href});
+  timingPlayer=mountTimingPlayer(mediaHost,{source:timingObjectUrl,
+   poster:versioned('timing-poster.svg',timingFixture.source.mediaHash),
+   chapters:versioned('timing-chapters.vtt',timingFixture.source.hash),
+   captions:versioned('timing-captions.vtt',timingFixture.source.hash)});
   mediaHost.classList.add('player-mounted');await timingPlayer.ready();if(Math.abs(timingPlayer.media.duration-timingFixture.source.duration)>.1)throw Error('Media duration mismatch.');
   timingTranscript?.dispose();
   timingTranscript=mountTranscriptPanel(transcriptHost,{
