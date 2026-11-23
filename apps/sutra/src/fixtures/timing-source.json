@@ -1,0 +1,30 @@
+{
+  "source": {
+    "id": "synthetic-timing-fixture",
+    "version": "v1",
+    "hash": "449d66df1b308964a008d2829fd09434f76a5a78137b4cef3de047488f2cf2e0",
+    "mediaHash": "cb0cdcb04039eb2bfc62a22462f0a040c1a23c2bdfd24f1403669569c2f22c5e",
+    "duration": 8,
+    "cues": [
+      {
+        "id": "timing-marker",
+        "start": 2,
+        "end": 4,
+        "text": "Synthetic timing marker. This is not a training instruction."
+      }
+    ]
+  },
+  "receipt": {
+    "version": 1,
+    "sourceId": "synthetic-timing-fixture",
+    "sourceVersion": "v1",
+    "sourceHash": "449d66df1b308964a008d2829fd09434f76a5a78137b4cef3de047488f2cf2e0",
+    "mediaHash": "cb0cdcb04039eb2bfc62a22462f0a040c1a23c2bdfd24f1403669569c2f22c5e",
+    "cueId": "timing-marker",
+    "start": 2,
+    "end": 4,
+    "excerpt": "Synthetic timing marker. This is not a training instruction.",
+    "retrievedAt": "2026-11-23T00:00:00Z",
+    "verification": "unverified"
+  }
+}

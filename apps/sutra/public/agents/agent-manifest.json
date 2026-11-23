@@ -1,0 +1,17 @@
+{
+  "networks": [
+    {
+      "name": "learner",
+      "front_man": "learner",
+      "hocon": "./learner.network.json",
+      "description": "Local learner/evidence graph; funded inference and peer composition are pending."
+    }
+  ],
+  "allowed_peers": [],
+  "peer_policy": {
+    "mode": "closed"
+  },
+  "deployment": {
+    "mode": "static"
+  }
+}

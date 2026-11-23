@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T13:23:04+05:45",
+  "updated_at": "2026-11-23T13:54:20+05:45",
   "work_branch": "main",
-  "last_observed_code_sha": "a86042b35724e573b74b6fedb0673d3b72186bb6",
-  "last_session_id": "SUTRA-SESSION-0003",
-  "stage": "isolated_learner_shell",
+  "last_observed_code_sha": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+  "last_session_id": "SUTRA-SESSION-0004",
+  "stage": "restricted_runtime_and_review_flow",
   "current_task": null,
-  "next_task": "SUTRA-P014-01",
+  "next_task": "SUTRA-P025-01",
   "ready_engineering_queue": [
-    "SUTRA-P012-04",
-    "SUTRA-P021-01"
+    "SUTRA-P027-01",
+    "SUTRA-P033-01"
   ],
-  "next_action": "Pin and spike the browser agent runtime, then resolve actual shared DHAGO dependencies. Session 0003 shell and register CI passed; physical-device and visual review remain unverified.",
+  "next_action": "Implement a bounded default-inference adapter/proxy and grounded agent-callable read actions. Keep paid calls disabled until provider/funding is operator-approved. The complete session 0004 shell/browser and register CI passed.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -648,6 +648,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -661,6 +668,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -674,6 +688,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -687,6 +708,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -700,6 +728,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -713,6 +748,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -726,6 +768,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -739,6 +788,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -752,6 +808,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -765,6 +828,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -778,6 +848,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -791,6 +868,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -804,6 +888,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -817,6 +908,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -830,6 +928,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -843,6 +948,13 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -856,6 +968,13 @@
           "result": "pass",
           "source_revision": "a86042b35724e573b74b6fedb0673d3b72186bb6",
           "observed_at": "2026-11-23T13:23:04+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     },
@@ -869,6 +988,924 @@
           "result": "pass",
           "source_revision": "a86042b35724e573b74b6fedb0673d3b72186bb6",
           "observed_at": "2026-11-23T13:23:04+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
+        }
+      ]
+    },
+    "SUTRA-P012-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
+        }
+      ]
+    },
+    "SUTRA-P012-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Revalidated preserved app package/build boundaries and scoped CI after runtime/player integration; actual locked install/build, 17 Node checks, vendor verification, 53 runtime tests and browser step passed.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
+        }
+      ]
+    },
+    "SUTRA-P014-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P014-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P014-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P014-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P014-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P014-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P014-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P014-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P014-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P014-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P021-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P021-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P021-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P021-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P021-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P021-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P021-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P021-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P021-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P021-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P023-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P023-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P023-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P023-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P023-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P024-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P024-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P024-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P024-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P024-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P024-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P024-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P024-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P029-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P029-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P029-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P029-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P029-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P029-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P029-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P029-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:51:05+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:51:05+05:45"
+        }
+      ]
+    },
+    "SUTRA-P024-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:54:20+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Observed actual successful browser workflow including invalid graph/cycle refusal before delegation, visible failed artifact load, scripted two-agent wiring, real native media state and review-card cancellation/save/reload/delete.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
+        }
+      ]
+    },
+    "SUTRA-P024-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:54:20+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Observed actual successful browser workflow including invalid graph/cycle refusal before delegation, visible failed artifact load, scripted two-agent wiring, real native media state and review-card cancellation/save/reload/delete.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
+        }
+      ]
+    },
+    "SUTRA-P023-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:54:20+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45136028109/job/137562391347",
+          "description": "Observed actual successful browser workflow including invalid graph/cycle refusal before delegation, visible failed artifact load, scripted two-agent wiring, real native media state and review-card cancellation/save/reload/delete.",
+          "result": "pass",
+          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+          "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
     }

@@ -1,23 +1,21 @@
 # SUTRA progress register
 
-[Checklist](CHECKLIST.md) | [Machine handoff](progress.json) | [Sessions](SESSIONS.md)
+[Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
-## Current checkpoint
+## Session 0004 checkpoint
 
-Session SUTRA-SESSION-0003; inspected parent `47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2`. **66/1,000 verified checks; 5 phases complete.** Phase 012 is partial: the isolated shell builds, but actual shared-player dependency resolution and the phase exit remain pending. No task is active.
+**135/1,000 checks verified**; nine phases complete; run the audit for current counts. Work is SUTRA: restricted browser orchestration, learner/evidence interaction, media integration and local review cards. Existing reusable-player source/demos/deployments and DETOUR remain unchanged.
 
-## Implemented
+The nsDeploy reference core is pinned and unchanged. SUTRA's host validates local graphs/data, enforces finite budgets/cancellation and emits sanitized events. Its published two-agent graph runs with an explicitly scripted driver; live funded inference and peers are not connected.
 
-apps/sutra has its own pinned Vite package, lockfile, build output and readable learner workspace. Selecting the synthetic transcript cue invokes the real evidence validator; altered text is rejected. The interface explicitly distinguishes catalog consistency from factual truth and shows original footage/runtime as pending.
+The learner app loads a byte-checked synthetic timing fixture through an explicit reusable-component adapter and uses actual native media state. A review card can be previewed, cancelled, locally confirmed, reloaded and deleted. Neither the fixture nor its receipt establishes factual truth or replaces the pending original lesson.
 
-Official rules and specification were freshly checked; see RULES_SPEC_BASELINE.md and the exact version diff. Deadline baseline remains unchanged. No conforming agentic runtime or public release is claimed.
+## Observed checks
 
-## Checks and limitations
+53 runtime/loader tests and 17 app/review tests passed locally; production build and all ten upstream source hashes passed. Initial runtime/player browser CI passed on `90f3dbebb52f7171e6c9e0946d42fcf6613a168c`. Final Chromium CI passed the review/accessor-hardening cases, invalid-graph refusal and actual native media interactions. Local Chromium remains environment-blocked; no physical-device, Safari/Firefox or human visual-review result is claimed.
 
-Clean install/build and four build-boundary tests passed; root and DETOUR output sentinels survived. Local Chromium could not launch because of an environment socket restriction. The dedicated CI browser job passed actual desktop/360px interactions, keyboard activation, mismatch rejection and no-external-request assertions. No physical-device or visual review is recorded.
+## Resume
 
-## Next work
+Next: `SUTRA-P025-01`, a bounded default-inference adapter/proxy; then `SUTRA-P027-01` grounded local source actions and consent-aware peer work. Provider/funding, participant eligibility, original footage and factual reviewer remain unconfirmed. Keep paid inference disabled until configured and authorized.
 
-`SUTRA-P014-01`: select/pin and spike the browser runtime. Resolve P012-04 for actual DHAGO source dependencies; phase 013 now has observed passing CI. Participant eligibility, factual reviewer, rights-cleared footage and approved paid-service budget remain pending.
-
-No site/domain mapping, live inference, user trial, final ZIP or Devpost submission was performed. Continue by checking actual source and evidence, not merely these recorded counts.
+No public deployment, genuine user/builder trial, final ZIP or Devpost filing occurred. See the session report for limitations, retained failures and exact candidate hashes.

@@ -38,13 +38,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P012-01` Create a standalone apps/sutra package manifest and lockfile
 - [x] `SUTRA-P012-02` Give the app a distinct Vite root and output directory
 - [x] `SUTRA-P012-03` Define the explicit DHAGO source import or adapter boundary
-- [ ] `SUTRA-P012-04` Resolve shared-source dependencies without importing the preview application
+- [x] `SUTRA-P012-04` Resolve shared-source dependencies without importing the preview application
 - [x] `SUTRA-P012-05` Keep DETOUR code, themes, fixtures and media out of SUTRA
 - [x] `SUTRA-P012-06` Ensure builds cannot empty root dist or detour/dist directories
 - [x] `SUTRA-P012-07` Provide documented clean-install and development commands for the new app
 - [x] `SUTRA-P012-08` Verify the new application shell builds independently of demo content
 - [x] `SUTRA-P012-09` Produce and review the phase artifact: Standalone app skeleton and build entry.
-- [ ] `SUTRA-P012-10` Close phase 012 only after its applicable tasks have evidence and its exit condition is observed: A SUTRA build cannot empty root dist/ or detour/dist/; no dependency on apps/preview/ exists.
+- [x] `SUTRA-P012-10` Close phase 012 only after its applicable tasks have evidence and its exit condition is observed: A SUTRA build cannot empty root dist/ or detour/dist/; no dependency on apps/preview/ exists.
 
 ## Phase 013 - Create path-scoped verification
 
@@ -71,16 +71,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Spike a pinned nsDeploy browser runtime revision, inspect its integration surface and license, and record required adapters. Prefer reusing browser orchestration to building a second framework.
 - **Phase exit:** A minimal two-agent network can be loaded in the spike; no declaration of conformance precedes behavior tests.
 
-- [ ] `SUTRA-P014-01` Inspect nsDeploy runtime entry points and a working published example
-- [ ] `SUTRA-P014-02` Select an immutable runtime revision and compatible graph format
-- [ ] `SUTRA-P014-03` Review its license and transitive redistribution/NOTICE obligations
-- [ ] `SUTRA-P014-04` Spike browser import, graph parsing and basic two-agent execution
-- [ ] `SUTRA-P014-05` Identify required inference, action and peer adapters before UI expansion
-- [ ] `SUTRA-P014-06` Record unsupported optional runtime capabilities and deliberate omissions
-- [ ] `SUTRA-P014-07` Measure the runtime bundle separately from the learner shell
-- [ ] `SUTRA-P014-08` Compare reuse effort with a fresh runtime and record the selection
-- [ ] `SUTRA-P014-09` Produce and review the phase artifact: Runtime decision, lock/pin and third-party notice entry.
-- [ ] `SUTRA-P014-10` Close phase 014 only after its applicable tasks have evidence and its exit condition is observed: A minimal two-agent network can be loaded in the spike; no declaration of conformance precedes behavior tests.
+- [x] `SUTRA-P014-01` Inspect nsDeploy runtime entry points and a working published example
+- [x] `SUTRA-P014-02` Select an immutable runtime revision and compatible graph format
+- [x] `SUTRA-P014-03` Review its license and transitive redistribution/NOTICE obligations
+- [x] `SUTRA-P014-04` Spike browser import, graph parsing and basic two-agent execution
+- [x] `SUTRA-P014-05` Identify required inference, action and peer adapters before UI expansion
+- [x] `SUTRA-P014-06` Record unsupported optional runtime capabilities and deliberate omissions
+- [x] `SUTRA-P014-07` Measure the runtime bundle separately from the learner shell
+- [x] `SUTRA-P014-08` Compare reuse effort with a fresh runtime and record the selection
+- [x] `SUTRA-P014-09` Produce and review the phase artifact: Runtime decision, lock/pin and third-party notice entry.
+- [x] `SUTRA-P014-10` Close phase 014 only after its applicable tasks have evidence and its exit condition is observed: A minimal two-agent network can be loaded in the spike; no declaration of conformance precedes behavior tests.
 
 ## Phase 015 - Author one rights-cleared training lesson
 

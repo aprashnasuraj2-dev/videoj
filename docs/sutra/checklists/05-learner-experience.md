@@ -35,13 +35,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Mount createDhagoPlayer from src/create-player.ts with host-supplied lesson and tracks. Use a thin adapter to observe the actual native media element. Preserve the v10 custom-element runtime.
 - **Phase exit:** Play, pause, seek, volume, captions and fullscreen work; no DETOUR code or existing demo media is imported.
 
-- [ ] `SUTRA-P042-01` Import only the DHAGO reusable create-player surface through the adapter
-- [ ] `SUTRA-P042-02` Use host-supplied media, poster, captions and chapter tracks
-- [ ] `SUTRA-P042-03` Preserve the installed v10 custom-element playback runtime
-- [ ] `SUTRA-P042-04` Observe actual native media state rather than synthesizing progress
+- [x] `SUTRA-P042-01` Import only the DHAGO reusable create-player surface through the adapter
+- [x] `SUTRA-P042-02` Use host-supplied media, poster, captions and chapter tracks
+- [x] `SUTRA-P042-03` Preserve the installed v10 custom-element playback runtime
+- [x] `SUTRA-P042-04` Observe actual native media state rather than synthesizing progress
 - [ ] `SUTRA-P042-05` Verify ordinary play, pause, volume, seek and fullscreen behavior
 - [ ] `SUTRA-P042-06` Handle source changes, missing decode support and media load errors
-- [ ] `SUTRA-P042-07` Avoid coupling the player to agents, model state or DETOUR internals
+- [x] `SUTRA-P042-07` Avoid coupling the player to agents, model state or DETOUR internals
 - [ ] `SUTRA-P042-08` Check host styles do not break player focus and narrow-screen controls
 - [ ] `SUTRA-P042-09` Produce and review the phase artifact: SUTRA player adapter and ordinary controls.
 - [ ] `SUTRA-P042-10` Close phase 042 only after its applicable tasks have evidence and its exit condition is observed: Play, pause, seek, volume, captions and fullscreen work; no DETOUR code or existing demo media is imported.
@@ -53,14 +53,14 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Render cue references as time ranges. On explicit viewer action, seek to a validated timestamp and confirm actual media time; handle unseekable sources and delayed metadata.
 - **Phase exit:** A seek reaches within one second of the valid target on supported test media; unavailable seeking is described accurately.
 
-- [ ] `SUTRA-P043-01` Validate cue ranges against actual loaded media duration
-- [ ] `SUTRA-P043-02` Seek only after explicit viewer intent and required metadata availability
-- [ ] `SUTRA-P043-03` Observe actual currentTime after seeking rather than an optimistic timer
+- [x] `SUTRA-P043-01` Validate cue ranges against actual loaded media duration
+- [x] `SUTRA-P043-02` Seek only after explicit viewer intent and required metadata availability
+- [x] `SUTRA-P043-03` Observe actual currentTime after seeking rather than an optimistic timer
 - [ ] `SUTRA-P043-04` Handle missing seekable ranges, live sources and nonseekable media
-- [ ] `SUTRA-P043-05` Preserve correct source identity across media replacement
-- [ ] `SUTRA-P043-06` Show the exact source cue and time range on evidence cards
+- [x] `SUTRA-P043-05` Preserve correct source identity across media replacement
+- [x] `SUTRA-P043-06` Show the exact source cue and time range on evidence cards
 - [ ] `SUTRA-P043-07` Provide keyboard activation and clear unavailable-seek feedback
-- [ ] `SUTRA-P043-08` Measure supported seeking against the one-second target tolerance
+- [x] `SUTRA-P043-08` Measure supported seeking against the one-second target tolerance
 - [ ] `SUTRA-P043-09` Produce and review the phase artifact: Evidence-to-seek interaction and actual-state feedback.
 - [ ] `SUTRA-P043-10` Close phase 043 only after its applicable tasks have evidence and its exit condition is observed: A seek reaches within one second of the valid target on supported test media; unavailable seeking is described accurately.
 
