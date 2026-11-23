@@ -3,13 +3,15 @@ const {chromium}=require('playwright');
 const {spawn}=require('node:child_process');
 const http=require('node:http');
 const path=require('node:path');
+const fs=require('node:fs');
 const assert=require('node:assert/strict');
 const caller='http://127.0.0.1:4186',endpoint='http://127.0.0.1:4187/mcp';
 const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLength:120}},required:['query'],additionalProperties:false};
 
 (async()=>{
  const app=path.resolve(__dirname,'..');const root=path.resolve(app,'../..');
- let cors=true;let posts=[],cookieSeen=[],authorizationSeen=[],bodyCanarySeen=[];
+ const timing=JSON.parse(fs.readFileSync(path.join(app,'src/fixtures/timing-source.json'),'utf8'));
+ let cors=true,serviceMode='normal';let posts=[],cookieSeen=[],authorizationSeen=[],bodyCanarySeen=[];
  const server=http.createServer(async(req,res)=>{
   if(req.url!=='/mcp'){res.writeHead(404);res.end();return;}
   const origin=req.headers.origin;
@@ -24,6 +26,12 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
   addCors();
   if(req.method==='OPTIONS'){res.writeHead(cors?204:403);res.end();return;}
   if(req.method!=='POST'||origin!==caller){res.writeHead(405);res.end();return;}
+  if(serviceMode==='timeout'){
+   // Deliberately hold the approved request open beyond the client's fixed
+   // five-second deadline. The browser must abort; no fallback endpoint exists.
+   req.on('close',()=>{if(!res.writableEnded)res.destroy();});
+   return;
+  }
   cookieSeen.push(req.headers.cookie??null);
   authorizationSeen.push(req.headers.authorization??null);
   let body='';for await(const chunk of req){body+=chunk;if(body.length>20000){res.writeHead(413);res.end();return;}}
@@ -32,8 +40,13 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
   let result;
   if(rpc.method==='initialize')result={protocolVersion:'2025-06-18',capabilities:{tools:{}}};
   else if(rpc.method==='notifications/initialized'){res.writeHead(202);res.end();return;}
-  else if(rpc.method==='tools/list')result={tools:[{name:'read_public',description:'Synthetic public record',inputSchema:schema,annotations:{readOnlyHint:true,destructiveHint:false}}]};
-  else if(rpc.method==='tools/call')result={structuredContent:{version:1,truthStatus:'unverified',items:[{id:'sample',excerpt:'A bounded public synthetic sample.'}]}};
+  else if(rpc.method==='tools/list'){
+   if(serviceMode==='discovery_error')result={tools:[{name:'write_public',description:'Disallowed synthetic writer',inputSchema:schema,annotations:{readOnlyHint:false,destructiveHint:true}}]};
+   else result={tools:[{name:'read_public',description:'Synthetic public record',inputSchema:schema,annotations:{readOnlyHint:true,destructiveHint:false}}]};
+  }
+  else if(rpc.method==='tools/call')result={structuredContent:{version:1,truthStatus:'unverified',items:[{
+   id:timing.receipt.sourceId+'/'+timing.receipt.cueId,excerpt:timing.receipt.excerpt
+  }]}};
   else{res.writeHead(400);res.end();return;}
   res.writeHead(200,{'Content-Type':'application/json; charset=utf-8','X-Content-Type-Options':'nosniff'});
   res.end(JSON.stringify({jsonrpc:'2.0',id:rpc.id,result}));
@@ -91,12 +104,27 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
   assert.deepEqual(posts,['initialize','notifications/initialized','tools/list']);
   const before=posts.length,yes=await attempt('allow');
   assert.equal(yes.ok,true);assert.match(yes.text,/third_party_unverified/);assert.match(yes.text,/unverified/);
+  assert.ok(yes.text.includes(timing.receipt.excerpt),'approved MCP read returns exact catalog-backed synthetic excerpt');
+  assert.ok(yes.text.includes(timing.receipt.sourceId+'/'+timing.receipt.cueId));
   assert.deepEqual(posts.slice(before),['initialize','notifications/initialized','tools/list','tools/call']);
   assert.ok(cookieSeen.every(value=>value===null),'No cookies sent to MCP origin');
   assert.ok(authorizationSeen.every(value=>value===null),'No model authorization forwarded to MCP origin');
   assert.ok(bodyCanarySeen.every(value=>value===false),'BYOK canary never enters third-party MCP payload');
   assert.deepEqual(yes.decisions,['mcp_discovery','mcp_call']);
   assert.ok(!JSON.stringify(yes.consent).includes('synthetic-secret-canary'));
+  serviceMode='discovery_error';const beforeDiscoveryError=posts.length;
+  const badDiscovery=await attempt('allow');
+  assert.equal(badDiscovery.ok,false);
+  assert.equal(badDiscovery.code,'EXTERNAL_CONTACT_FAILED');
+  assert.deepEqual(posts.slice(beforeDiscoveryError),['initialize','notifications/initialized','tools/list']);
+  serviceMode='timeout';const beforeTimeout=posts.length,timeoutStarted=Date.now();
+  const timed=await attempt('allow');
+  const timeoutElapsed=Date.now()-timeoutStarted;
+  assert.equal(timed.ok,false);
+  assert.equal(timed.code,'EXTERNAL_CONTACT_FAILED');
+  assert.ok(timeoutElapsed>=4500&&timeoutElapsed<10000,'fixed MCP deadline should terminate a real held-open service');
+  assert.equal(posts.length,beforeTimeout,'held request never reached parsed JSON-RPC body');
+  serviceMode='normal';
   assert.ok(!JSON.stringify(yes.events).includes('synthetic-secret-canary'));
   cors=false;const beforeCors=posts.length;
   const blocked=await attempt('allow');
@@ -104,7 +132,7 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
   assert.equal(blocked.code,'EXTERNAL_CONTACT_FAILED');
   assert.equal(posts.length,beforeCors,'CORS refusal prevents POST');
   assert.deepEqual(errors,[]);
-  console.log('PASS: Chromium cross-origin MCP separate discovery/call consent, 0 POSTs on discovery denial, intact local media/evidence, no tools/call after call denial, 4 approved stateless JSON RPCs, no cookies or private traces, browser CORS fail-closed.');
+  console.log('PASS: Chromium cross-origin MCP separate discovery/call consent, 0 POSTs on discovery denial, intact local media/evidence, no tools/call after call denial, 4 approved source-backed stateless JSON RPCs, disallowed discovery and real held-open timeout fail closed, no cookies or private traces, browser CORS fail-closed.');
  }finally{
   if(browser)await browser.close();vite.kill();await new Promise(resolve=>server.close(resolve));
  }
