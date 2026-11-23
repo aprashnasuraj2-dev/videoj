@@ -98,7 +98,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await fullscreenControl.click();
   await page.waitForFunction(()=>document.fullscreenElement!==null);
   assert.ok(await page.evaluate(()=>document.fullscreenElement?.closest('video-player')!==null||document.fullscreenElement?.tagName==='VIDEO-PLAYER'||document.fullscreenElement?.tagName==='MEDIA-CONTAINER'));
-  await page.keyboard.press('Escape');await page.waitForFunction(()=>document.fullscreenElement===null);
+  await fullscreenControl.click();await page.waitForFunction(()=>document.fullscreenElement===null);
   assert.equal(await media.evaluate(video=>video.paused),true);await page.getByRole('button',{name:'Read current playback state',exact:true}).click();const snapshot=JSON.parse(await page.locator('#playback-state').innerText());assert.equal(snapshot.available,true);assert.equal(snapshot.paused,true);assert.equal(snapshot.duration,await media.evaluate(video=>video.duration));assert.ok(Math.abs(snapshot.currentTime-await media.evaluate(video=>video.currentTime))<.1);
   fs.mkdirSync(path.join(app,'test-output'),{recursive:true});await page.screenshot({path:path.join(app,'test-output/desktop.png'),fullPage:true});
   await page.setViewportSize({width:360,height:800});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.getByRole('button',{name:'Try altered quotation'}).click();assert.match(await page.locator('#result').innerText(),/QUOTE_MISMATCH/);
