@@ -1,19 +1,20 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T18:29:19+05:45",
+  "updated_at": "2026-11-23T18:53:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
-  "last_session_id": "SUTRA-SESSION-0007",
-  "stage": "caller_local_peer_invocation",
+  "last_observed_code_sha": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+  "last_session_id": "SUTRA-SESSION-0008",
+  "stage": "external_mcp_consent_and_browser_fixture",
   "current_task": null,
-  "next_task": "SUTRA-P033-03",
+  "next_task": "SUTRA-P033-10",
   "ready_engineering_queue": [
-    "SUTRA-P033-03",
-    "SUTRA-P035-05",
-    "SUTRA-P036-01"
+    "SUTRA-P033-10",
+    "SUTRA-P039-01",
+    "SUTRA-P039-05",
+    "SUTRA-P035-05"
   ],
-  "next_action": "Implement narrowly injected default-deny third-party MCP discovery and actual call consent, preserve caller budget and error propagation, test in local Chromium without a live service; then synthetic credential canary. No public deployment or paid inference.",
+  "next_action": "Observe the additional same-page media-after-denied-MCP Chromium run before closing P033; then choose a real explicitly approved public-read MCP service and validate timeout/auth/CORS, followed by private provider/BYOK canary. Keep public release closed.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -3015,6 +3016,146 @@
           "result": "pass",
           "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
           "observed_at": "2026-11-23T18:29:19+05:45"
+        }
+      ]
+    },
+    "SUTRA-P033-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:53:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0008.md",
+          "description": "Strict host-granted read-only MCP fixture. Separate pre-discovery and pre-call consent, actual Chromium CORS/denial, exact tool and bounded JSON-RPC schemas, no cookie/secret forwarding, clear synthetic-only documentation; no live partner service.",
+          "result": "pass",
+          "source_revision": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+          "observed_at": "2026-11-23T18:53:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45178921845/job/137707320526",
+          "description": "Successful exact-source GitHub Actions app/runtime/consent/peer and four Chromium scripts, including standalone real-browser two-origin external MCP fixture.",
+          "result": "pass",
+          "source_revision": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+          "observed_at": "2026-11-23T18:53:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P039-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:53:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0008.md",
+          "description": "Strict host-granted read-only MCP fixture. Separate pre-discovery and pre-call consent, actual Chromium CORS/denial, exact tool and bounded JSON-RPC schemas, no cookie/secret forwarding, clear synthetic-only documentation; no live partner service.",
+          "result": "pass",
+          "source_revision": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+          "observed_at": "2026-11-23T18:53:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45178921845/job/137707320526",
+          "description": "Successful exact-source GitHub Actions app/runtime/consent/peer and four Chromium scripts, including standalone real-browser two-origin external MCP fixture.",
+          "result": "pass",
+          "source_revision": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+          "observed_at": "2026-11-23T18:53:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P039-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:53:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0008.md",
+          "description": "Strict host-granted read-only MCP fixture. Separate pre-discovery and pre-call consent, actual Chromium CORS/denial, exact tool and bounded JSON-RPC schemas, no cookie/secret forwarding, clear synthetic-only documentation; no live partner service.",
+          "result": "pass",
+          "source_revision": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+          "observed_at": "2026-11-23T18:53:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45178921845/job/137707320526",
+          "description": "Successful exact-source GitHub Actions app/runtime/consent/peer and four Chromium scripts, including standalone real-browser two-origin external MCP fixture.",
+          "result": "pass",
+          "source_revision": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+          "observed_at": "2026-11-23T18:53:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P039-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:53:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0008.md",
+          "description": "Strict host-granted read-only MCP fixture. Separate pre-discovery and pre-call consent, actual Chromium CORS/denial, exact tool and bounded JSON-RPC schemas, no cookie/secret forwarding, clear synthetic-only documentation; no live partner service.",
+          "result": "pass",
+          "source_revision": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+          "observed_at": "2026-11-23T18:53:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45178921845/job/137707320526",
+          "description": "Successful exact-source GitHub Actions app/runtime/consent/peer and four Chromium scripts, including standalone real-browser two-origin external MCP fixture.",
+          "result": "pass",
+          "source_revision": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+          "observed_at": "2026-11-23T18:53:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P039-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:53:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0008.md",
+          "description": "Strict host-granted read-only MCP fixture. Separate pre-discovery and pre-call consent, actual Chromium CORS/denial, exact tool and bounded JSON-RPC schemas, no cookie/secret forwarding, clear synthetic-only documentation; no live partner service.",
+          "result": "pass",
+          "source_revision": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+          "observed_at": "2026-11-23T18:53:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45178921845/job/137707320526",
+          "description": "Successful exact-source GitHub Actions app/runtime/consent/peer and four Chromium scripts, including standalone real-browser two-origin external MCP fixture.",
+          "result": "pass",
+          "source_revision": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+          "observed_at": "2026-11-23T18:53:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P039-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:53:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0008.md",
+          "description": "Strict host-granted read-only MCP fixture. Separate pre-discovery and pre-call consent, actual Chromium CORS/denial, exact tool and bounded JSON-RPC schemas, no cookie/secret forwarding, clear synthetic-only documentation; no live partner service.",
+          "result": "pass",
+          "source_revision": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+          "observed_at": "2026-11-23T18:53:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45178921845/job/137707320526",
+          "description": "Successful exact-source GitHub Actions app/runtime/consent/peer and four Chromium scripts, including standalone real-browser two-origin external MCP fixture.",
+          "result": "pass",
+          "source_revision": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+          "observed_at": "2026-11-23T18:53:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P039-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:53:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0008.md",
+          "description": "Strict host-granted read-only MCP fixture. Separate pre-discovery and pre-call consent, actual Chromium CORS/denial, exact tool and bounded JSON-RPC schemas, no cookie/secret forwarding, clear synthetic-only documentation; no live partner service.",
+          "result": "pass",
+          "source_revision": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+          "observed_at": "2026-11-23T18:53:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45178921845/job/137707320526",
+          "description": "Successful exact-source GitHub Actions app/runtime/consent/peer and four Chromium scripts, including standalone real-browser two-origin external MCP fixture.",
+          "result": "pass",
+          "source_revision": "e2766f1ca8bc1b09d2495af977f749e4a8317de1",
+          "observed_at": "2026-11-23T18:53:00+05:45"
         }
       ]
     }
