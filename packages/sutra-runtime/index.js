@@ -1,6 +1,6 @@
 import {createSourceMcp} from './source-mcp.js';
 import {fetchJsonWithConsent} from '../sutra-consent/index.js';
-import {AgentNetwork, validateNetwork, isExternalAgent, isMcpTool, parseExternalAgent} from './vendor/nsdeploy/kernel.js';
+import {AgentNetwork, validateNetwork, isExternalAgent, isMcpTool, parseExternalAgent, filterSlyData} from './vendor/nsdeploy/kernel.js';
 import {runAgent} from './vendor/nsdeploy/runner.js';
 import {checkSchema, validateData} from './vendor/nsdeploy/actions.js';
 import {TraceBus} from './vendor/nsdeploy/trace.js';
@@ -57,7 +57,7 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
  const names=new Set();
  for(const agent of raw.tools){
   if(!plain(agent))fail('AGENT','Invalid agent object.');
-  allowed(agent,['name','function','instructions','tools','llm_config','max_steps'],'agent');
+  allowed(agent,['name','function','instructions','tools','llm_config','max_steps','allow'],'agent');
   if(!idPattern.test(agent.name)||['constructor','prototype','__proto__'].includes(agent.name)||names.has(agent.name))fail('AGENT_NAME','Invalid or duplicate agent name.');
   names.add(agent.name);
   if(typeof agent.instructions!=='string'||!agent.instructions.trim()||agent.instructions.length>12000)fail('INSTRUCTIONS','Agent needs bounded public instructions.');
@@ -83,6 +83,16 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
   if(!Number.isInteger(steps)||steps<1||steps>bounds.maxSteps)fail('STEPS','Invalid or over-budget step count.');
   agent.max_steps=steps;
   if(agent.llm_config!==undefined){if(!plain(agent.llm_config))fail('MODEL','Invalid model hints.');allowed(agent.llm_config,['model_name'],'model');if(typeof agent.llm_config.model_name!=='string')fail('MODEL','Invalid model hint.');}
+  if(agent.allow!==undefined){
+   if(!plain(agent.allow))fail('PRIVATE_CONTEXT_POLICY','Agent private-context policy must be an object.');
+   allowed(agent.allow,['to_downstream','to_upstream'],'private-context allow');
+   for(const direction of ['to_downstream','to_upstream'])if(agent.allow[direction]!==undefined){
+    const rule=agent.allow[direction];if(!plain(rule))fail('PRIVATE_CONTEXT_POLICY','Private-context direction policy must be an object.');
+    allowed(rule,['sly_data'],'private-context direction');
+    if(rule.sly_data!==undefined&&(!Array.isArray(rule.sly_data)||rule.sly_data.length>16||rule.sly_data.some(key=>!idPattern.test(key))||new Set(rule.sly_data).size!==rule.sly_data.length))fail('PRIVATE_CONTEXT_POLICY','Private-context fields must be unique bounded identifiers; wildcards are disabled.');
+   }
+  }
+
  }
  if(raw.llm_config!==undefined){if(!plain(raw.llm_config))fail('MODEL','Invalid network model hints.');allowed(raw.llm_config,['model_name'],'model');if(typeof raw.llm_config.model_name!=='string')fail('MODEL','Invalid model hint.');}
  for(const agent of raw.tools)for(const ref of agent.tools){
@@ -125,6 +135,18 @@ function validateExternalHost(external){
  if(base.origin!==external.baseOrigin||base.username||base.password||base.pathname!=='/'||base.search||base.hash||base.protocol!=='https:'&&!(base.protocol==='http:'&&loopback))fail('EXTERNAL_CONFIG','Caller base origin must be an exact HTTPS origin (loopback HTTP for development).');
  if(external.fetchImpl!==undefined&&typeof external.fetchImpl!=='function')fail('EXTERNAL_CONFIG','External artifact fetch implementation must be callable.');
  if(external.resolveMcp!==undefined&&typeof external.resolveMcp!=='function')fail('EXTERNAL_CONFIG','MCP resolver must be callable.');
+ if(external.peerContext!==undefined){
+  if(!plain(external.peerContext)||Object.keys(external.peerContext).length>16)fail('EXTERNAL_CONFIG','Peer private-context policy must be a bounded exact-URL map.');
+  for(const [peerUrl,policy] of Object.entries(external.peerContext)){
+   let peer;try{peer=new URL(peerUrl);}catch{fail('EXTERNAL_CONFIG','Peer private-context policy key must be an absolute network URL.');}
+   if(peer.href!==peerUrl||peer.search||peer.hash||peer.username||peer.password)fail('EXTERNAL_CONFIG','Peer private-context policy key must be the exact canonical network URL.');
+   if(!plain(policy))fail('EXTERNAL_CONFIG','Peer private-context policy must be an object.');
+   allowed(policy,['downstream','upstream'],'peer private-context policy');
+   for(const direction of ['downstream','upstream'])if(policy[direction]!==undefined){
+    const keys=policy[direction];if(!Array.isArray(keys)||keys.length>16||keys.some(key=>!idPattern.test(key))||new Set(keys).size!==keys.length)fail('EXTERNAL_CONFIG','Peer private-context field names must be unique bounded identifiers.');
+   }
+  }
+ }
  return {...external,baseOrigin:base.origin};
 }
 function mcpOrigins(network,baseOrigin){
@@ -173,10 +195,14 @@ function validateMcpClient(client,ref){
  };
 }
 
-export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,external}={}){
+export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,external,privateContext={}}={}){
  const host=validateExternalHost(external);
  const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeerNetworks:!!host,allowMcp:!!host?.resolveMcp});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
+ if(!plain(privateContext)||Object.keys(privateContext).length>32||Object.keys(privateContext).some(key=>!idPattern.test(key)))fail('PRIVATE_CONTEXT','Private context must use bounded identifier keys.');
+ assertJsonData(privateContext);let privateBytes;try{privateBytes=new TextEncoder().encode(JSON.stringify(privateContext)).length;}catch{fail('PRIVATE_CONTEXT','Private context must be finite JSON data.');}
+ if(privateBytes>8192)fail('PRIVATE_CONTEXT','Private context exceeds the 8 KiB runtime limit.');
+ const initialPrivateContext=structuredClone(privateContext);
  if(!model||typeof model.chat!=='function'||!['scripted-test','provider'].includes(model.mode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
  if(signal?.aborted)fail('CANCELLED','Run cancelled before model execution.');
  const bounds=compiled.limits,controller=new AbortController();
@@ -184,7 +210,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  if(signal?.aborted)aborted();else signal?.addEventListener('abort',aborted,{once:true});
  const trace=new TraceBus(),events=[];let modelCalls=0,active=0,totalOutput=0,failure=null,closed=false;const waiters=[];
  const check=()=>{if(closed)fail('CLOSED','Run is closed.');if(controller.signal.aborted)throw controller.signal.reason;};
- const emit=event=>{const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','origin','network'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,160);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
+ const emit=event=>{const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','origin','network'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,160);if(Array.isArray(event.contextKeys))safe.contextKeys=event.contextKeys.filter(key=>idPattern.test(key)).slice(0,16);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
  trace.addEventListener('event',e=>emit(e.detail));
  const abortWaiters=()=>{for(const wake of waiters.splice(0))wake();};controller.signal.addEventListener('abort',abortWaiters);
  const deadline=setTimeout(()=>controller.abort(new RuntimeError('TIMEOUT','Run exceeded its elapsed time limit.')),bounds.timeoutMs);
@@ -251,17 +277,23 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    return {
     async invoke(envelope,{chain:parentChain=[]}={}){
      check();
+     const exactPolicy=host.peerContext?.[new URL(peerUrl).href]??{};
+     const permitted=filterSlyData(plain(envelope?.sly_data)?envelope.sly_data:{},exactPolicy.downstream??[]);
+     trace.note('private_context',{parent:parentSpan,origin:loaded.origin,network:loaded.name,contextKeys:Object.keys(permitted)});
      const peerCtx={
       network:peerCompiled.network,frontMan:peerCompiled.frontMan,baseOrigin:loaded.origin,displayOrigin:loaded.origin,
-      llm:guardedModel,trace,composition,slyData:plain(envelope?.sly_data)?{...envelope.sly_data}:{},history:[],isTop:false,
+      llm:guardedModel,trace,composition,slyData:permitted,history:[],isTop:false,
       mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote:unavailable,
       resolveMcp:unavailable,resolveLink:unavailable,requestConsent:async()=> 'decline'
      };
-     return runAgent(peerCtx,peerCompiled.frontMan,String(envelope?.user_message?.text??''),parentSpan,[...parentChain,key]);
+     const result=await runAgent(peerCtx,peerCompiled.frontMan,String(envelope?.user_message?.text??''),parentSpan,[...parentChain,key]);
+     // Upstream private-context merging is intentionally not implemented yet. Keeping
+     // it separate from the model-visible tool result is safer than serializing it.
+     return result;
     }
    };
   }:unavailable;
-  const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:host?.baseOrigin??sourceTools?.origin??'https://sutra.invalid',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote,resolveMcp,resolveLink:unavailable,requestConsent};
+  const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:host?.baseOrigin??sourceTools?.origin??'https://sutra.invalid',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:initialPrivateContext,history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote,resolveMcp,resolveLink:unavailable,requestConsent};
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
   if(!result.text||events.some(e=>e.kind==='composition_limit'))fail('INCOMPLETE','Execution stopped before a complete answer.');
   return {text:result.text,mode:model.mode,modelCalls,agentCalls:composition.agentCalls,remoteCalls:composition.remoteCalls,events};
