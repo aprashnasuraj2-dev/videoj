@@ -199,7 +199,8 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   const sourceClient=rawSourceClient?{url:(sourceTools?.origin??host?.baseOrigin??'https://sutra.invalid')+'/api/source-tools',listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
   const requestConsent=async intent=>intent?.kind==='network'?'allow':'decline';
   const resolveMcp=sourceClient?async ref=>{check();if(ref?.url==='/api/source-tools')return sourceClient;return unavailable();}:unavailable;
-  const resolveRemote=host?async(peerUrl,chain,parentSpan)=>{
+  const resolveRemote=host?async function(peerUrl,chain,parentSpan){
+   const callerContext=this;
    check();
    let loaded;
    try{loaded=await loadPeerNetwork({peerUrl,inspector:host.inspector,fetchImpl:host.fetchImpl??fetch,signal:controller.signal,timeoutMs:Math.min(5000,bounds.timeoutMs)});}
@@ -219,8 +220,13 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
       resolveMcp:unavailable,resolveLink:unavailable,requestConsent:async()=> 'decline'
      };
      const result=await runAgent(peerCtx,peerCompiled.frontMan,String(envelope?.user_message?.text??''),parentSpan,[...parentChain,key]);
-     // Upstream private-context merging is intentionally not implemented yet. Keeping
-     // it separate from the model-visible tool result is safer than serializing it.
+     const peerFront=peerCompiled.network.getAgentSpec(peerCompiled.frontMan);
+     const peerUpstream=peerFront?.allow?.to_upstream?.sly_data??[],hostUpstream=exactPolicy.upstream??[];
+     const upstreamKeys=peerUpstream.filter(field=>hostUpstream.includes(field));
+     const returned=filterSlyData(peerCtx.slyData,upstreamKeys);
+     if(!plain(callerContext?.slyData))fail('PRIVATE_CONTEXT','Caller private context is unavailable for an upstream merge.');
+     for(const [field,value] of Object.entries(returned))callerContext.slyData[field]=structuredClone(value);
+     trace.note('private_context_upstream',{parent:parentSpan,origin:loaded.origin,network:loaded.name,contextKeys:Object.keys(returned)});
      return result;
     }
    };
