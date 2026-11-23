@@ -52,3 +52,23 @@ test('clear key aborts an already active BYOK request, not only future calls',as
  await assert.rejects(adapter.chat({messages:[{role:'user',content:'again'}]}),error=>error.code==='BYOK_KEY_MISSING');
  assert.equal(seen.length,1,'no second request after clear');
 });
+
+test('clearing a BYOK key cancels all concurrent model requests',async()=>{
+ const key='synthetic-concurrent-canary',pendingOptions=[];
+ let ready;
+ const reached=new Promise(resolve=>{ready=resolve;});
+ const adapter=createOpenRouterByokAdapter({key,model:'openrouter/free',fetchImpl:(_url,options)=>{
+  pendingOptions.push(options);
+  if(pendingOptions.length===2)ready();
+  return new Promise((_resolve,reject)=>options.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true}));
+ }});
+ const first=adapter.chat({messages:[{role:'user',content:'first'}]});
+ const second=adapter.chat({messages:[{role:'user',content:'second'}]});
+ await reached;
+ adapter.clear();
+ assert.equal(pendingOptions.length,2);
+ assert.ok(pendingOptions.every(request=>request.signal.aborted));
+ const settled=await Promise.allSettled([first,second]);
+ assert.ok(settled.every(result=>result.status==='rejected'&&result.reason?.code==='CANCELLED'));
+ assert.ok(!JSON.stringify(settled.map(x=>x.reason?.message)).includes(key));
+});
