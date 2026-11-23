@@ -53,7 +53,7 @@ runButton.addEventListener('click',async()=>{
    if(event.kind==='agent'&&event.phase==='start'){const item=document.createElement('li');item.textContent=`${event.agent} agent started in this browser (scripted driver)`;list.append(item);}
   }});
   status.textContent=`${result.text} ${result.agentCalls} agent invocations; ${result.modelCalls} scripted model steps.`;
- }catch(error){status.textContent=`Network test stopped (${error.code||'LOAD_FAILED'}). No completed result is claimed.`;}
+ }catch(error){const budget=error.code==='COMPOSITION_LIMIT'?` Limit: ${error.limit||'composition'}. Incomplete partial output: ${error.partialText||'none'}.`:'';status.textContent=`Network test stopped (${error.code||'LOAD_FAILED'}).${budget} No completed result is claimed.`;}
  finally{runButton.disabled=false;}
 });
 
@@ -209,7 +209,7 @@ peerRunButton.addEventListener('click',async()=>{
   setProvenance({graph:graphLabel,model:useByok?byokAdapter.model:'fixture-only',router:useByok?'OpenRouter (browser BYOK)':'scripted local fixture',origins:[...origins].sort(),calls:`${result.agentCalls} agent / ${result.modelCalls} model / ${result.remoteCalls} peer`,consent:consentSummary(consentStart),errors:'none'});
  }catch(error){
   const code=error.code||'PEER_FAILED',cancelled=controller.signal.aborted||code==='CANCELLED';
-  status.textContent=cancelled?'Peer composition cancelled. The interrupted output is incomplete and is not a verified result.':`Peer composition stopped (${code}). No completed peer result is claimed.`;
+  status.textContent=cancelled?'Peer composition cancelled. The interrupted output is incomplete and is not a verified result.':code==='COMPOSITION_LIMIT'?`Peer composition stopped at ${error.limit||'composition'} limit. Incomplete partial output: ${error.partialText||'none'}. No completed peer result is claimed.`:`Peer composition stopped (${code}). No completed peer result is claimed.`;
   peerLifecycle.fail(cancelled?'Cancelled. Incomplete result; nothing from this interrupted run is verified.':`Failed (${code}). No completed result is claimed.`);
   setProvenance({graph:graphLabel,model:useByok?(byokAdapter?.model||'not configured'):'fixture-only',router:useByok?'OpenRouter (browser BYOK)':'scripted local fixture',origins:[...origins].sort(),calls:'incomplete',consent:consentSummary(consentStart),errors:cancelled?'CANCELLED':code});
  }finally{
