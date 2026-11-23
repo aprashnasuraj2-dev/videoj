@@ -13,3 +13,15 @@ test('shared Video.js runtime is resolved from the app dependency boundary',()=>
 test('timing fixture metadata matches actual media bytes and cue receipt',async()=>{const {createHash}=await import('node:crypto');const {validateReceipt}=await import('../../../packages/sutra-evidence/index.js');const meta=JSON.parse(fs.readFileSync(path.join(app,'src/fixtures/timing-source.json')));const bytes=fs.readFileSync(path.join(app,'public/media/timing-fixture.mp4'));assert.equal(createHash('sha256').update(bytes).digest('hex'),meta.source.mediaHash);assert.equal(validateReceipt(meta.receipt,{sources:[meta.source]}).level,'catalog_matched');});
 test('published local graph matches independent runtime example',()=>{assert.deepEqual(JSON.parse(fs.readFileSync(path.join(app,'public/agents/learner.network.json'))),JSON.parse(fs.readFileSync(path.join(app,'../../packages/sutra-runtime/examples/learner.network.json'))));});
 test('client assets exclude server credential/config identifiers and fixed paid upstream',()=>{for(const name of fs.readdirSync(path.join(app,'dist/assets'))){if(!name.endsWith('.js'))continue;const content=fs.readFileSync(path.join(app,'dist/assets',name),'utf8');for(const marker of ['SUTRA_PROVIDER_KEY','SUTRA_CLIENT_HASH_SECRET','SERVER_ONLY_KEY_MARKER','https://api.openai.com/v1/chat/completions'])assert.ok(!content.includes(marker),`server-only marker leaked into ${name}`);}});
+
+test('built learner has no third-party advertising or analytics script surface',()=>{
+ const html=fs.readFileSync(path.join(app,'dist/index.html'),'utf8');
+ assert.doesNotMatch(html,/<script[^>]+src=["']https?:\/\//i);
+ assert.doesNotMatch(html,/<link[^>]+href=["']https?:\/\//i);
+ const markers=['googletagmanager.com','google-analytics.com','doubleclick.net','adsbygoogle','connect.facebook.net','hotjar.com','segment.com'];
+ for(const name of fs.readdirSync(path.join(app,'dist/assets'))){
+  if(!name.endsWith('.js'))continue;
+  const content=fs.readFileSync(path.join(app,'dist/assets',name),'utf8').toLowerCase();
+  for(const marker of markers)assert.ok(!content.includes(marker),`third-party analytics/ad marker ${marker} found in ${name}`);
+ }
+});
