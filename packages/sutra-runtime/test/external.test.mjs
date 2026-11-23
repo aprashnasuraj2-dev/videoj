@@ -153,3 +153,34 @@ test('query-bearing peer graph references fail before graph contact',async()=>{
  }}),error=>error.code==='ARTIFACT_ORIGIN');
  assert.equal(requested.length,1,'query-bearing graph URL must not be contacted');
 });
+
+test('peer private context applies separate downstream and upstream permissions',async()=>{
+ const g=callerGraph();g.tools[0].allow={to_downstream:{sly_data:['locale','secret']}};
+ const peer=structuredClone(peerGraph);peer.tools[0].allow={to_upstream:{sly_data:['locale','secret']}};
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ const result=await runNetwork({
+  definition:g,request:'Use the checklist peer.',model:peerModel(),
+  privateContext:{locale:'en-NP',secret:'synthetic-upstream-private-canary'},
+  external:{baseOrigin:'https://caller.example',inspector,fetchImpl:peerFetch({graph:peer}),peerContext:{[peerUrl]:{downstream:['locale','secret'],upstream:['locale']}}}
+ });
+ const down=result.events.find(e=>e.kind==='private_context'&&e.network==='checklist');
+ const up=result.events.find(e=>e.kind==='private_context_upstream'&&e.network==='checklist');
+ assert.deepEqual(down?.contextKeys,['locale','secret']);
+ assert.deepEqual(up?.contextKeys,['locale'],'host upstream allow-list must independently narrow the peer declaration');
+ const serialized=JSON.stringify(result);
+ assert.ok(!serialized.includes('en-NP'));
+ assert.ok(!serialized.includes('synthetic-upstream-private-canary'));
+});
+test('host upstream permission cannot create fields the peer did not declare for return',async()=>{
+ const g=callerGraph();g.tools[0].allow={to_downstream:{sly_data:['locale','secret']}};
+ const peer=structuredClone(peerGraph);peer.tools[0].allow={to_upstream:{sly_data:['locale']}};
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ const result=await runNetwork({
+  definition:g,request:'Use the checklist peer.',model:peerModel(),
+  privateContext:{locale:'en-NP',secret:'synthetic-host-overreach-canary'},
+  external:{baseOrigin:'https://caller.example',inspector,fetchImpl:peerFetch({graph:peer}),peerContext:{[peerUrl]:{downstream:['locale','secret'],upstream:['secret']}}}
+ });
+ const up=result.events.find(e=>e.kind==='private_context_upstream'&&e.network==='checklist');
+ assert.deepEqual(up?.contextKeys,[]);
+ assert.ok(!JSON.stringify(result).includes('synthetic-host-overreach-canary'));
+});
