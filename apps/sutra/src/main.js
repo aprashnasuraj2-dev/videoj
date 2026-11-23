@@ -251,29 +251,30 @@ cancelPeerRunButton.addEventListener('click',()=>{
 function statusPeerRun(message){document.querySelector('#peer-network-result').textContent=message;}
 peerRunButton.addEventListener('click',async()=>{
  const status=document.querySelector('#peer-network-result'),list=document.querySelector('#network-trace'),raw=document.querySelector('#peer-url').value.trim(),useByok=document.querySelector('#use-byok').checked;
- const controller=new AbortController();activePeerRunController=controller;
+ const controller=new AbortController(),events=[];activePeerRunController=controller;
  list.replaceChildren();consentMode='external';status.textContent='Validating the peer URL before any contact…';peerLifecycle.start('Validating the peer URL before any external contact.');
- const origins=new Set();activeOriginSink=origins;const consentStart=consentInspector.exportEvents().length;let graphLabel='not run';
+ const origins=new Set();activeOriginSink=origins;const consentStart=consentInspector.exportEvents().length;
+ const selectedModel=useByok?(byokAdapter?.model||'not configured'):'fixture-only',selectedRouter=useByok?'OpenRouter (browser BYOK)':'scripted local fixture';
+ const provId=beginProvenance({kind:'peer_composition',modelId:selectedModel,router:selectedRouter,limits:DEFAULT_LIMITS});let callerHash='unknown',peerHash='not observed';
  try{
   if(useByok&&(!byokAdapter||!byokAdapter.configured())){const error=new Error('Configure BYOK before selecting it.');error.code='BYOK_SETUP';throw error;}
   const target=new URL(raw);
   const callerDefinition={metadata:{description:'SUTRA browser caller for an explicitly entered peer network.'},max_steps:6,tools:[{name:'learner',function:{description:'Delegate a narrow checklist request to the approved peer.',parameters:{type:'object',properties:{request:{type:'string',minLength:1,maxLength:1200}},required:['request'],additionalProperties:false}},instructions:'Use the declared peer when available. Report denial or load failure exactly; do not invent peer results.',tools:[target.href]}]};
-  const callerHash=await sha256Integrity(JSON.stringify(callerDefinition));let peerHash='not observed';
+  callerHash=await sha256Integrity(JSON.stringify(callerDefinition));
   const fetchPeer=async(url,options)=>{origins.add(new URL(url).origin);const response=await fetch(url,options);if(response.ok&&url.endsWith('.network.json'))peerHash=await sha256Integrity(await response.clone().arrayBuffer());return response;};
   const model=useByok?byokAdapter:createPeerScriptedModel(),modelName=useByok?byokAdapter.model:'';
   const result=await runNetwork({definition:callerDefinition,request:'Inspect the peer publication state.',model,modelName,signal:controller.signal,external:{baseOrigin:location.origin,inspector:consentInspector,fetchImpl:fetchPeer},onEvent:event=>{
-   if(event.kind==='agent'&&event.phase==='start'){const item=document.createElement('li');item.textContent=`${event.network||'network'} / ${event.agent} @ ${event.origin||'caller'}`;list.append(item);}
+   events.push(event);if(event.kind==='agent'&&event.phase==='start'){const item=document.createElement('li');item.textContent=`${event.network||'network'} / ${event.agent} @ ${event.origin||'caller'}`;list.append(item);}
   }});
-  graphLabel=`caller ${callerHash}; peer ${peerHash}`;
   const modeText=useByok?`${result.modelCalls} BYOK model calls via OpenRouter`:`${result.modelCalls} scripted model steps`;
   status.textContent=`${result.text} ${result.agentCalls} agent invocations; ${result.remoteCalls} peer call; ${modeText}. Factual truth was not verified.`;
   peerLifecycle.complete('Completed. The displayed result is complete for this controlled run; factual truth is still unverified.');
-  setProvenance({graph:graphLabel,model:useByok?byokAdapter.model:'fixture-only',router:useByok?'OpenRouter (browser BYOK)':'scripted local fixture',origins:[...origins].sort(),calls:`${result.agentCalls} agent / ${result.modelCalls} model / ${result.remoteCalls} peer`,consent:consentSummary(consentStart),errors:'none'});
+  finishProvenance(provId,{graphSha:callerHash,modelId:useByok?byokAdapter.model:'fixture-only',router:selectedRouter,origins:[...origins],consentEvents:consentInspector.exportEvents().slice(consentStart),runtimeEvents:result.events,agentCalls:result.agentCalls,modelCalls:result.modelCalls,remoteCalls:result.remoteCalls,status:'complete'});
  }catch(error){
   const code=error.code||'PEER_FAILED',cancelled=controller.signal.aborted||code==='CANCELLED';
   status.textContent=cancelled?'Peer composition cancelled. The interrupted output is incomplete and is not a verified result.':code==='COMPOSITION_LIMIT'?`Peer composition stopped at ${error.limit||'composition'} limit. Incomplete partial output: ${error.partialText||'none'}. No completed peer result is claimed.`:`Peer composition stopped (${code}). No completed peer result is claimed.`;
   peerLifecycle.fail(cancelled?'Cancelled. Incomplete result; nothing from this interrupted run is verified.':`Failed (${code}). No completed result is claimed.`);
-  setProvenance({graph:graphLabel,model:useByok?(byokAdapter?.model||'not configured'):'fixture-only',router:useByok?'OpenRouter (browser BYOK)':'scripted local fixture',origins:[...origins].sort(),calls:'incomplete',consent:consentSummary(consentStart),errors:cancelled?'CANCELLED':code});
+  const counts=countRuntimeEvents(events);finishProvenance(provId,{graphSha:callerHash,modelId:useByok?(byokAdapter?.model||'not configured'):'fixture-only',router:selectedRouter,origins:[...origins],consentEvents:consentInspector.exportEvents().slice(consentStart),runtimeEvents:events,...counts,status:cancelled?'cancelled':code==='COMPOSITION_LIMIT'?'partial':'failed',errorCode:cancelled?'CANCELLED':code});
  }finally{
   activePeerRunController=null;activeOriginSink=null;consentEvents.textContent=JSON.stringify(consentInspector.exportEvents(),null,2);consentMode='synthetic';
  }
