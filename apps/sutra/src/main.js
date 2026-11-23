@@ -54,7 +54,9 @@ transcriptResults.addEventListener('click',async event=>{
  const button=event.target instanceof Element?event.target.closest('button[data-cue-id]'):null;if(!button||!timingPlayer||!timingTranscriptIndex)return;
  const cue=timingTranscriptIndex.all().find(row=>row.id===button.dataset.cueId);if(!cue)return;
  try{const actual=await timingPlayer.seek(cue.start);transcriptStatus.textContent=`Reached ${cue.id} at actual media time ${actual.toFixed(2)}s. Source ${timingTranscriptMeta.sourceId} ${timingTranscriptMeta.sourceVersion}; transcript ${timingTranscriptMeta.transcriptVersion}.`;updateTimingTranscriptActive();}
- catch{transcriptStatus.textContent='This transcript cue is unavailable on the current media seek range. No successful seek is claimed.';}
+ catch(error){
+  transcriptStatus.textContent=error?.reason==='live_or_unknown_duration'?'This media has no finite seekable duration. Transcript cue navigation is unavailable.':error?.reason==='no_seekable_range'?'This media currently exposes no seekable range. Transcript cue navigation is unavailable.':'This transcript cue is unavailable on the current media seek range. No successful seek is claimed.';
+ }
 });
 (async()=>{
  try{
@@ -147,7 +149,10 @@ seekTiming.addEventListener('click',async()=>{
   if(!result.valid)throw Error('Invalid fixture cue.');
   const actual=await timingPlayer.seek(fixture.receipt.start);
   timingStatus.textContent=`Synthetic cue reached. Actual native media time: ${actual.toFixed(2)} seconds. Consistency check only; no factual verification.`;
- }catch{timingStatus.textContent='The synthetic cue could not be reached. Check media availability; no seek success is claimed.';}
+ }catch(error){
+  const reason=error?.reason;
+  timingStatus.textContent=reason==='live_or_unknown_duration'?'This source has no finite seekable duration, so the evidence cue cannot be opened. No seek success is claimed.':reason==='no_seekable_range'?'This media currently exposes no seekable range. No seek success is claimed.':reason==='outside_seekable_range'?'The evidence cue is outside the media’s current seekable window. No seek success is claimed.':'The synthetic cue could not be reached. Check media availability; no seek success is claimed.';
+ }
  finally{seekTiming.disabled=false;}
 });
 
