@@ -136,7 +136,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   releaseManifest();
   await page.waitForFunction(()=>document.querySelector('#peer-run-lifecycle').dataset.state==='failed');
   assert.match(await page.locator('#peer-network-result').innerText(),/cancelled.*incomplete/i);
-  assert.match(await page.locator('#prov-errors').innerText(),/CANCELLED/);assert.match(await page.locator('#prov-status').innerText(),/peer_composition \/ cancelled/);
+  assert.match(await page.locator('#prov-errors').textContent(),/CANCELLED/);assert.match(await page.locator('#prov-status').textContent(),/peer_composition \/ cancelled/);
   assert.equal(await page.getByRole('button',{name:'Run consented peer composition'}).isEnabled(),true);
   assert.equal(await page.getByRole('button',{name:'Cancel current run'}).isDisabled(),true);
   await page.unroute(peerBase+'/agents/agent-manifest.json');
