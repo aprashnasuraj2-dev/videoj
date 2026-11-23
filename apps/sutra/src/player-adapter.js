@@ -1,5 +1,6 @@
 // Explicit reusable DHAGO boundary. No imports from apps/preview or DETOUR.
 import {readPlaybackState} from './playback-state.js';
+import {assessSeekTarget,timeRangesSnapshot} from './seek-policy.js';
 import {createDhagoPlayer} from '../../../src/create-player.ts';
 
 export function mountTimingPlayer(host,{source,compatibilitySource,fallbackUrl,poster,chapters,captions}){
@@ -22,10 +23,8 @@ export function mountTimingPlayer(host,{source,compatibilitySource,fallbackUrl,p
  return {element:player,media,readState:()=>readPlaybackState(media),
   ready:()=>waitFor('loadedmetadata',()=>media.readyState>=1),
   async seek(seconds){
-   if(!Number.isFinite(seconds)||seconds<0||!Number.isFinite(media.duration)||seconds>media.duration)throw new Error('Cue is outside the loaded media.');
-   if(!media.seekable.length)throw new Error('This media has no available seek range.');
-   let available=false;for(let i=0;i<media.seekable.length;i++)if(seconds>=media.seekable.start(i)&&seconds<=media.seekable.end(i))available=true;
-   if(!available)throw new Error('The requested cue is outside available seek ranges.');
+   const decision=assessSeekTarget({duration:media.duration,ranges:timeRangesSnapshot(media.seekable)},seconds);
+   if(!decision.ok){const error=new Error(decision.message);error.code='SEEK_UNAVAILABLE';error.reason=decision.reason;throw error;}
    await waitFor('seeked',()=>!media.seeking&&Math.abs(media.currentTime-seconds)<=1,()=>{media.currentTime=seconds;});
    return media.currentTime;
   },
