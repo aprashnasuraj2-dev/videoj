@@ -39,8 +39,8 @@ function assertJsonData(value,ancestors=new Set(),depth=0){
  ancestors.delete(value);
 }
 
-// The current profile deliberately accepts local declarative agents only.
-// Peer/MCP/action/code loading must be integrated with consent in later phases.
+// External declarative peers/MCP remain disabled by default. They are accepted only
+// when the caller explicitly enables the corresponding consent-gated host surface.
 export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false,allowPeerNetworks=false,allowMcp=false}={}){
  const bounds=executionLimits(limits);
  assertJsonData(definition);
@@ -65,7 +65,19 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
   allowed(agent.function,['description','parameters'],'function');
   try{checkSchema(agent.function.parameters);}catch{fail('SCHEMA','Unsupported or malformed invocation schema.');}
   if(agent.function.parameters.type!=='object'||agent.function.parameters.additionalProperties!==false)fail('SCHEMA','Invocation schema must reject extra object fields.');
-  if(!Array.isArray(agent.tools)||agent.tools.length>16||agent.tools.some(ref=>typeof ref!=='string'&&!(allowSourceTools===true&&plain(ref)&&Object.keys(ref).length===1&&ref.url==='/api/source-tools')))fail('TOOLS','Agent needs a bounded local tool list.');
+  if(!Array.isArray(agent.tools)||agent.tools.length>16)fail('TOOLS','Agent needs a bounded tool list.');
+  for(const ref of agent.tools){
+   if(typeof ref==='string')continue;
+   const sourceDescriptor=allowSourceTools===true&&plain(ref)&&Object.keys(ref).length===1&&ref.url==='/api/source-tools';
+   if(sourceDescriptor)continue;
+   if(!(allowMcp&&plain(ref)))fail('TOOLS','External capability descriptors are disabled in this runtime profile.');
+   allowed(ref,['url','tools'],'MCP descriptor');
+   if(typeof ref.url!=='string'||!ref.url.trim())fail('TOOLS','MCP descriptor requires a bounded URL.');
+   let endpoint;try{endpoint=new URL(ref.url);}catch{fail('TOOLS','Third-party MCP descriptor URL must be absolute.');}
+   const loopback=['localhost','127.0.0.1','[::1]'].includes(endpoint.hostname);
+   if(endpoint.username||endpoint.password||endpoint.search||endpoint.hash||endpoint.protocol!=='https:'&&!(endpoint.protocol==='http:'&&loopback))fail('TOOLS','Third-party MCP URL must use approved HTTPS without embedded credentials, query or fragment.');
+   if(ref.tools!==undefined&&(!Array.isArray(ref.tools)||ref.tools.length<1||ref.tools.length>32||ref.tools.some(tool=>!idPattern.test(tool))))fail('TOOLS','MCP allowed-tool names must be bounded identifiers.');
+  }
   if(new Set(agent.tools.map(r=>JSON.stringify(r))).size!==agent.tools.length)fail('TOOLS','Duplicate local references are unsupported.');
   const steps=agent.max_steps??raw.max_steps??bounds.maxSteps;
   if(!Number.isInteger(steps)||steps<1||steps>bounds.maxSteps)fail('STEPS','Invalid or over-budget step count.');
@@ -73,12 +85,27 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
   if(agent.llm_config!==undefined){if(!plain(agent.llm_config))fail('MODEL','Invalid model hints.');allowed(agent.llm_config,['model_name'],'model');if(typeof agent.llm_config.model_name!=='string')fail('MODEL','Invalid model hint.');}
  }
  if(raw.llm_config!==undefined){if(!plain(raw.llm_config))fail('MODEL','Invalid network model hints.');allowed(raw.llm_config,['model_name'],'model');if(typeof raw.llm_config.model_name!=='string')fail('MODEL','Invalid model hint.');}
- for(const agent of raw.tools)for(const ref of agent.tools)if(typeof ref==='string'&&!names.has(ref))fail('REFERENCE','External or missing capabilities are unavailable in this local profile.');
+ for(const agent of raw.tools)for(const ref of agent.tools){
+  if(typeof ref!=='string'||names.has(ref))continue;
+  if(allowMcp&&isMcpTool(ref)){
+   let endpoint;try{endpoint=new URL(ref);}catch{fail('REFERENCE','Third-party MCP URL must be absolute.');}
+   const loopback=['localhost','127.0.0.1','[::1]'].includes(endpoint.hostname);
+   if(endpoint.username||endpoint.password||endpoint.search||endpoint.hash||endpoint.protocol!=='https:'&&!(endpoint.protocol==='http:'&&loopback))fail('REFERENCE','Third-party MCP URL is outside the approved transport profile.');
+   continue;
+  }
+  if(allowPeerNetworks&&isExternalAgent(ref)&&!isMcpTool(ref)){
+   let peer;try{peer=new URL(ref);}catch{fail('REFERENCE','Peer network URL must be absolute.');}
+   const loopback=['localhost','127.0.0.1','[::1]'].includes(peer.hostname);
+   if(peer.username||peer.password||peer.search||peer.hash||peer.protocol!=='https:'&&!(peer.protocol==='http:'&&loopback))fail('REFERENCE','Peer URL is outside the approved transport profile.');
+   continue;
+  }
+  fail('REFERENCE','External or missing capabilities are unavailable in this runtime profile.');
+ }
  const byName=new Map(raw.tools.map(a=>[a.name,a]));
  function visit(name,chain=[]){
   if(chain.includes(name))fail('CYCLE','Composition cycle rejected before execution.');
   if(chain.length>=bounds.maxDepth)fail('DEPTH','Composition depth exceeds runtime policy.');
-  for(const ref of byName.get(name).tools)if(typeof ref==='string')visit(ref,[...chain,name]);
+  for(const ref of byName.get(name).tools)if(typeof ref==='string'&&byName.has(ref))visit(ref,[...chain,name]);
  }
  for(const agent of raw.tools)visit(agent.name);
  const network=new AgentNetwork(raw,name);
