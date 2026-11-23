@@ -12,18 +12,18 @@ function validModel(value){return typeof value==='string'&&value.trim().length>0
  */
 export function createOpenRouterByokAdapter({key,model,fetchImpl=fetch,timeoutMs=30000}={}){
  if(!validSecret(key)||!validModel(model)||!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>30000)stop('BYOK_CONFIG');
- let secret=key;const selectedModel=model.trim();
+ let secret=key;const selectedModel=model.trim();const activeRequests=new Set();
  const adapter={
   mode:'provider',
   routerId:'openrouter',
   routerOrigin:OPENROUTER_ORIGIN,
   model:selectedModel,
   configured:()=>secret.length>0,
-  clear(){secret='';},
+  clear(){secret='';for(const controller of activeRequests)controller.abort();},
   async chat({messages,tools=[],signal}){
    if(!secret)stop('BYOK_KEY_MISSING');
    if(signal?.aborted)stop('CANCELLED');
-   const controller=new AbortController(),cancel=()=>controller.abort();
+   const controller=new AbortController(),cancel=()=>controller.abort();activeRequests.add(controller);
    signal?.addEventListener('abort',cancel,{once:true});const timer=setTimeout(cancel,timeoutMs);
    const body={model:selectedModel,messages,tools,stream:true,stream_options:{include_usage:true},...(tools.length?{tool_choice:'auto'}:{})};
    try{
@@ -47,7 +47,7 @@ export function createOpenRouterByokAdapter({key,model,fetchImpl=fetch,timeoutMs
     if(error instanceof InferenceError)throw error;
     throw new InferenceError(controller.signal.aborted?'CANCELLED':'TRANSPORT');
    }finally{
-    clearTimeout(timer);signal?.removeEventListener('abort',cancel);
+    clearTimeout(timer);signal?.removeEventListener('abort',cancel);activeRequests.delete(controller);
    }
   }
  };
