@@ -43,8 +43,8 @@ export function withCachePolicy(response,request){
  const url=new URL(request.url),path=url.pathname,headers=new Headers(response.headers);
  let policy='public, max-age=0, must-revalidate';
  if(path.startsWith('/api/'))policy='no-store';
- else if(path.startsWith('/assets/'))policy='public, max-age=31536000, immutable';
- else if(url.searchParams.has('v')&&(path.startsWith('/agents/')||path.startsWith('/media/')))policy='public, max-age=31536000, immutable';
+ else if(path.startsWith('/assets/')||path.startsWith('/agents/v/'))policy='public, max-age=31536000, immutable';
+ else if(url.searchParams.has('v')&&path.startsWith('/media/'))policy='public, max-age=31536000, immutable';
  else if(path==='/'||path.endsWith('.html')||path.endsWith('/agent-manifest.json')||path.endsWith('/links.json')||path.endsWith('.network.json')||path.startsWith('/media/'))policy='public, max-age=0, must-revalidate';
  headers.set('Cache-Control',policy);
  return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
