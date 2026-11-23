@@ -125,16 +125,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Add an optional run-provenance panel showing the exact specification commit, pinned runtime revision, active graph SHA-256, model ID, router, contacted origins, call counts, consent decisions and errors. Keep raw prompts, private context and credentials out of the panel/export.
 - **Phase exit:** The panel lets a reviewer identify which spec/runtime/graph/router/model produced a run; a synthetic credential canary is absent from both UI and exported provenance and panel failure cannot break playback.
 
-- [ ] `SUTRA-P047-01` Show exact Open Agentic Web spec commit and pinned nsDeploy/runtime revision
-- [ ] `SUTRA-P047-02` Recompute/display the active graph SHA-256 and list contacted origins with approved/denied contacts
-- [ ] `SUTRA-P047-03` Show model ID, router identity, agent/tool names, call counts and bounded timing/budget information
-- [ ] `SUTRA-P047-04` Represent partial failures, consent decisions and unknown action outcomes accurately
-- [ ] `SUTRA-P047-05` Redact credentials, private fields and unnecessary raw prompt/model text
-- [ ] `SUTRA-P047-06` Bound provenance memory and support safe user-initiated export
-- [ ] `SUTRA-P047-07` Test credential/private canaries in inspector UI and downloaded files
-- [ ] `SUTRA-P047-08` Ensure optional provenance-panel failures never break media playback or the local evidence flow
-- [ ] `SUTRA-P047-09` Produce and review the phase artifact: Redacted run-provenance panel and export format.
-- [ ] `SUTRA-P047-10` Close phase 047 only after its applicable tasks have evidence and its exit condition is observed: Spec/runtime/graph/model/router/origins are inspectable without secret exposure.
+- [x] `SUTRA-P047-01` Show exact Open Agentic Web spec commit and pinned nsDeploy/runtime revision
+- [x] `SUTRA-P047-02` Recompute/display the active graph SHA-256 and list contacted origins with approved/denied contacts
+- [x] `SUTRA-P047-03` Show model ID, router identity, agent/tool names, call counts and bounded timing/budget information
+- [x] `SUTRA-P047-04` Represent partial failures, consent decisions and unknown action outcomes accurately
+- [x] `SUTRA-P047-05` Redact credentials, private fields and unnecessary raw prompt/model text
+- [x] `SUTRA-P047-06` Bound provenance memory and support safe user-initiated export
+- [x] `SUTRA-P047-07` Test credential/private canaries in inspector UI and downloaded files
+- [x] `SUTRA-P047-08` Ensure optional provenance-panel failures never break media playback or the local evidence flow
+- [x] `SUTRA-P047-09` Produce and review the phase artifact: Redacted run-provenance panel and export format.
+- [x] `SUTRA-P047-10` Close phase 047 only after its applicable tasks have evidence and its exit condition is observed: Spec/runtime/graph/model/router/origins are inspectable without secret exposure.
 
 
 ## Phase 048 - Deferred Nepali localization
