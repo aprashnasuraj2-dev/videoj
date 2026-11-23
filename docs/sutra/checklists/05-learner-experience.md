@@ -107,16 +107,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Let the viewer review a short card with cue and source references before local save or download. Show where it is stored and allow deletion.
 - **Phase exit:** Saved data matches the approved preview; reload and delete work, and storage failure remains visible.
 
-- [ ] `SUTRA-P046-01` Preview the learning card before any local persistence or download
-- [ ] `SUTRA-P046-02` Include exact cue IDs, source versions and receipt references
-- [ ] `SUTRA-P046-03` Explain where cards are stored and how users can delete them
-- [ ] `SUTRA-P046-04` Bind saved values to the confirmed preview without hidden mutation
-- [ ] `SUTRA-P046-05` Handle storage quota, unavailable storage and export failures
-- [ ] `SUTRA-P046-06` Verify reload restores supported cards and flags stale data
-- [ ] `SUTRA-P046-07` Verify deletion removes associated local data
-- [ ] `SUTRA-P046-08` Keep card export independent of private prompts and router credentials
-- [ ] `SUTRA-P046-09` Produce and review the phase artifact: Review-card preview, local persistence and receipt export.
-- [ ] `SUTRA-P046-10` Close phase 046 only after its applicable tasks have evidence and its exit condition is observed: Saved data matches the approved preview; reload and delete work, and storage failure remains visible.
+- [x] `SUTRA-P046-01` Preview the learning card before any local persistence or download
+- [x] `SUTRA-P046-02` Include exact cue IDs, source versions and receipt references
+- [x] `SUTRA-P046-03` Explain where cards are stored and how users can delete them
+- [x] `SUTRA-P046-04` Bind saved values to the confirmed preview without hidden mutation
+- [x] `SUTRA-P046-05` Handle storage quota, unavailable storage and export failures
+- [x] `SUTRA-P046-06` Verify reload restores supported cards and flags stale data
+- [x] `SUTRA-P046-07` Verify deletion removes associated local data
+- [x] `SUTRA-P046-08` Keep card export independent of private prompts and router credentials
+- [x] `SUTRA-P046-09` Produce and review the phase artifact: Review-card preview, local persistence and receipt export.
+- [x] `SUTRA-P046-10` Close phase 046 only after its applicable tasks have evidence and its exit condition is observed: Saved data matches the approved preview; reload and delete work, and storage failure remains visible.
 
 ## Phase 047 - Expose a safe run-provenance inspector
 
