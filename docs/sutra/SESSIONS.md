@@ -283,3 +283,17 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Full SUTRA shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45171777112.
 - Verified P042-05/P042-08/P042-09. New total **291/1000**; Phase 042 remains open.
 - Next: versioned transcript experience tied to the 8-second timing fixture.
+
+
+## SUTRA-SESSION-0018 — Guided workspace, explicit seekability and timing transcript
+
+- Observed 2026-11-23T18:22:28+05:45; tested source candidate `31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5`.
+- Added the guided first-viewer task, visible active synthetic source/transcript versions, explicit core states (empty/loading/ready/denied/error/completed), next-human-action guidance and a collapsed-by-default runtime/peer/BYOK/provenance disclosure.
+- Added `LEARNER_WORKSPACE.md` with the responsive/state interaction contract and a separate fresh Chromium viewer that observes loading by holding the media request, survives peer denial locally and completes a confirmed review-card save without opening developer controls.
+- Added `seek-policy.js` with distinct live/unknown duration, no-range, outside-duration and outside-current-window outcomes. Evidence cue activation now uses keyboard and reports unavailable seeking without claiming success.
+- Added a separate 0–8 second `timing-transcript.vtt` bound to `synthetic-timing-fixture v1`, versioned as `timing-transcript-v1` with SHA-256 `9128748a8a5b636e2bcb99f738fc613d6cc7bcc253546dae45f4a3cf05285881`. The 12–18 second evidence annotation remains visibly separate.
+- Added bounded transcript search, keyboard navigation, valid `aria-current="true"`, active-cue highlighting with no focus/scroll stealing, missing-transcript state and missing-caption state.
+- Retained failures 45173250994 (async transcript/caption coupling), 45174231410 (invalid empty aria-current) and 45175480362 (caption track remained pending while disabled); each produced a product/test-boundary fix.
+- Final full shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45175869357; register/evidence 45175869381 / 45175869292 passed.
+- Verified Phase 041 (10 tasks), remaining Phase 043 tasks (4) and Phase 044 (10). New total **315/1000**, **26 fully verified phases**.
+- Phase 042 remains open on a genuine alternate-codec compatibility path. Live provider/router CORS, public HTTPS, original lesson rights/factual review, physical-device evidence and release remain open.
