@@ -72,3 +72,15 @@ test('executable peer metadata and malformed graph fail closed',async()=>{
   }}),e=>e.code===code);
  }
 });
+
+test('approved peer that never responds hits bounded artifact timeout without fallback',async()=>{
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ const start=Date.now();
+ await assert.rejects(loadPeerNetwork({peerUrl,inspector,timeoutMs:25,fetchImpl:async()=>new Promise(()=>{})}),e=>e.code==='ARTIFACT_TIMEOUT');
+ assert.ok(Date.now()-start<1000);
+});
+test('404 peer manifest and invalid JSON are visible artifact failures',async()=>{
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async()=>new Response('missing',{status:404})}),e=>e.code==='MANIFEST_UNAVAILABLE');
+ await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async()=>new Response('{bad',{headers:{'Content-Type':'application/json'}})}),e=>e.code==='MANIFEST_UNAVAILABLE');
+});
