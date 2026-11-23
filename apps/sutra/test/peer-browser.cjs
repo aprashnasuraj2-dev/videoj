@@ -186,9 +186,9 @@ const assert=require('node:assert/strict');
   assert.equal(peerRequests.length,contextBefore+2);
   assert.ok(peerRequests.slice(contextBefore).every(r=>!JSON.stringify(r.headers).includes('PRIVATE_BROWSER_CONTEXT_CANARY_456')));
   assert.ok(peerRequests.slice(contextBefore).every(r=>!JSON.stringify(r.headers).includes('ne-NP')));
-  assert.ok(contextResult.peerPrompts.some(text=>text.includes('"locale":"ne-NP"')));
+  assert.ok(contextResult.peerPrompts.some(text=>text.includes('ne-NP')&&text.includes('CALLER-APPROVED PRIVATE CONTEXT')));
   assert.ok(contextResult.peerPrompts.every(text=>!text.includes('PRIVATE_BROWSER_CONTEXT_CANARY_456')));
-  assert.ok(contextResult.localPrompts.some(text=>text.includes('"private_context"')&&text.includes('ne-NP')));
+  assert.ok(contextResult.localPrompts.some(text=>text.includes('private_context')&&text.includes('ne-NP')));
   assert.ok(contextResult.localPrompts.every(text=>!text.includes('PRIVATE_BROWSER_CONTEXT_CANARY_456')));
   assert.ok(!JSON.stringify(contextResult.events).includes('PRIVATE_BROWSER_CONTEXT_CANARY_456'));
   const transcript=await page.evaluate(async root=>{
