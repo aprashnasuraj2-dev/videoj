@@ -70,3 +70,9 @@
 .peer-execution-summary dt{margin:0;font-size:12px}.peer-execution-summary dd{margin:0;font-size:12px;overflow-wrap:anywhere}
 #peer-inspector h3{margin:16px 0 6px}
 @media(max-width:760px){.peer-execution-summary{grid-template-columns:1fr}.peer-execution-summary dd{margin-bottom:8px}}
+
+#peer-inspector>summary{min-height:32px;padding:4px 0}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto!important}
+ *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;transition-delay:0s!important}
+}
