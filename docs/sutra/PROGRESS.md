@@ -1,5 +1,13 @@
 # SUTRA progress register
 
+## Session 0018 checkpoint — guided workspace, seek and transcript phases complete
+
+**315/1,000 tasks verified; 26 phases fully verified.** Phase 041, Phase 043 and Phase 044 now have one green browser-backed source revision. A fresh viewer can follow the guided synthetic task with developer controls closed; evidence seeking distinguishes unavailable/live-style states; and the versioned 0–8 second timing transcript supports bounded search, keyboard navigation, active-cue highlighting and separate missing-caption/transcript states.
+
+Tested source candidate: `31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5`; full shell/Chromium https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45175869357. See [session 0018 evidence](evidence/implementation/SESSION-0018.md) and [learner workspace contract](../sutra/LEARNER_WORKSPACE.md).
+
+**Next:** Phase 045 visible peer comparison. Phase 042 remains open on genuine alternate-codec SUTRA evidence. Live inference/router CORS, public HTTPS/CORS, original rights-cleared media/factual review, physical-device evidence, release and Devpost remain open.
+
 ## Session 0017 checkpoint — Phase 042 partially verified
 
 **291/1,000 tasks verified; 23 phases fully verified.** The SUTRA/DHAGO boundary now has Chromium evidence for actual play/pause, mute/volume, captions, seek, source replacement, visible media-error recovery, 360px control geometry/focus and fullscreen-control API dispatch. Phase 042 remains open because SUTRA still lacks a genuine alternate-codec fixture proving the compatibility-source branch.
