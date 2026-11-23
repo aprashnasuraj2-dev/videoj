@@ -4,7 +4,7 @@
 
 ## Session 0006 checkpoint
 
-**178/1,000 checks verified**; eleven phases complete. Phase 058 (reusable peer-consent
+**186/1,000 checks verified**; eleven phases complete. Phase 058 (reusable peer-consent
 inspector) is closed. Phase 032 exact peer loading and phase 033 consent are materially
 advanced but intentionally remain open.
 
@@ -38,6 +38,16 @@ Intermediate CI failures are retained in
 [evidence/implementation/SESSION-0006.md](evidence/implementation/SESSION-0006.md).
 They were test-fixture/assertion failures and were not counted as passing evidence.
 
+## Independent peer package
+
+Added zero-dependency `apps/sutra-peer/` with its own static build, human guide page,
+exact `checklist` manifest/graph, narrow `source_select` helper and explicit links map.
+The local preview and real consent-aware loader integration passed in CI on
+`4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb`. P031-03 remains open for actual
+rights-cleared corpus provenance; P031-10 remains open for a distinct public HTTPS
+origin. The proposed caller/peer origins are disclosed as same-project-owner and do
+not demonstrate independent adoption.
+
 ## Boundaries still open
 
 No real second HTTPS peer origin has been published or contacted. Cross-origin CORS,
@@ -57,17 +67,17 @@ closed. The prior Wrangler dry-run is packaging evidence only.
 
 Next independent engineering queue:
 
-1. `SUTRA-P031-01` — build the independent peer source package locally, without
-   claiming a public second origin.
-2. `SUTRA-P032-08` — preserve a specific peer-load failure through the invoking
+1. `SUTRA-P032-08` — preserve a specific peer-load failure through the invoking
    network rather than only the loader API.
-3. `SUTRA-P033-03` — connect the consent boundary to third-party MCP discovery and
+2. `SUTRA-P033-03` — connect the consent boundary to third-party MCP discovery and
    calls; phase 039 still requires an authorized read-only endpoint and real browser
    behavior.
+3. `SUTRA-P035-01` — instantiate the already validated peer data in the caller runtime
+   once the failure/consent path is preserved.
 
 Original media/rights/factual reviewer, entrant eligibility, approved live-model
 spend, consenting learners/builders/devices, public release, final ZIP and Devpost
 filing remain pending.
 
-[Final verified shell workflow](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940).
+[Final consent/loader workflow](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940). [Final independent-peer workflow](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493).
 No public release is implied.
