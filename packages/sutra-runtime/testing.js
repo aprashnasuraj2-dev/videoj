@@ -21,3 +21,19 @@ export function createSourceScriptedModel(){
   return {content:`Scripted source test complete. ${read.receipts[0].excerpt} Source consistency only; factual truth remains unverified. No live AI was used.`,toolCalls:[]};
  }};
 }
+
+
+// Deterministic caller/peer driver. It invokes the first available tool once per
+// agent, then summarizes the returned tool result. This exercises real browser
+// composition without model inference, credentials or factual claims.
+export function createPeerScriptedModel(){
+ let sequence=0;
+ return {mode:'scripted-test',async chat({messages,tools,signal}){
+  signal?.throwIfAborted();
+  const returned=messages.filter(message=>message.role==='tool');
+  if(!tools.length)return {content:'Peer helper fixture: rights-cleared lesson provenance remains pending.',toolCalls:[]};
+  if(returned.length)return {content:'Scripted composition observed: '+returned[0].content,toolCalls:[]};
+  const name=tools[0].function.name;
+  return {content:'',toolCalls:[{id:`peer-browser-${++sequence}`,type:'function',function:{name,arguments:JSON.stringify({request:'Inspect the published source state. This is a scripted browser composition test.'})}}]};
+ }};
+}
