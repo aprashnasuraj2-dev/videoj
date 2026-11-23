@@ -183,18 +183,43 @@ document.querySelector('#preview-peer-contact').addEventListener('click',async()
 
 
 const SPEC_COMMIT='a0ceda34e4f2e653223e13e63282abc9b60eaf7c',RUNTIME_SHA='486ecf26aa8775963f9b765f894734bef1ac9817';
-const appBuild=typeof __SUTRA_BUILD_SHA__==='string'?__SUTRA_BUILD_SHA__:'local-dev';
+const appBuild=typeof __SUTRA_BUILD_SHA__==='string'?__SUTRA_BUILD_SHA__:'local-dev',DEFAULT_LIMITS=executionLimits();
+const provenanceStore=createProvenanceStore({specCommit:SPEC_COMMIT,runtimeSha:RUNTIME_SHA,buildSha:appBuild,maxRuns:12});
 document.querySelector('#prov-spec').textContent=SPEC_COMMIT;document.querySelector('#prov-runtime').textContent=RUNTIME_SHA;document.querySelector('#prov-build').textContent=appBuild;
 let byokAdapter=null,activeOriginSink=null;
 const byokStatus=document.querySelector('#byok-status');
-function setProvenance({graph='not run',model='not run',router='not run',origins=[],calls='none',consent='none',errors='none'}={}){
- document.querySelector('#prov-graph').textContent=graph;document.querySelector('#prov-model').textContent=model;document.querySelector('#prov-router').textContent=router;
- document.querySelector('#prov-origins').textContent=origins.length?origins.join(', '):'none';document.querySelector('#prov-calls').textContent=calls;document.querySelector('#prov-consent').textContent=consent;document.querySelector('#prov-errors').textContent=errors;
+function setProv(id,value){const node=document.querySelector(id);if(node)node.textContent=String(value);}
+function renderProvenance(snapshot=provenanceStore.latest()){
+ try{
+  if(!snapshot)return;
+  setProv('#prov-status',`${snapshot.kind} / ${snapshot.status}`);setProv('#prov-graph',snapshot.graphSha);setProv('#prov-model',snapshot.modelId);setProv('#prov-router',snapshot.router);
+  setProv('#prov-origins',snapshot.origins.length?snapshot.origins.join(', '):'none');setProv('#prov-agents',snapshot.agents.length?snapshot.agents.join(', '):'none');setProv('#prov-tools',snapshot.tools.length?snapshot.tools.join(', '):'none');
+  setProv('#prov-calls',`${snapshot.calls.agent} agent / ${snapshot.calls.model} model / ${snapshot.calls.remote} remote`);
+  const stops=snapshot.limitStops.length?`; stops ${snapshot.limitStops.join(', ')}`:'';
+  setProv('#prov-budget',`${snapshot.elapsedMs} ms; maxAgents ${snapshot.limits.maxAgents??'n/a'}; maxModelCalls ${snapshot.limits.maxModelCalls??'n/a'}; maxRemoteCalls ${snapshot.limits.maxRemoteCalls??'n/a'}${stops}`);
+  setProv('#prov-consent',snapshot.consent.length?snapshot.consent.map(item=>`${item.kind}:${item.decision}/${item.scope}@${item.origin||'unknown'}${item.remembered?'(remembered)':''}`).join('; '):'none');
+  setProv('#prov-actions',snapshot.actions.length?snapshot.actions.map(item=>`${item.status} ${item.action} [${item.requestId}]`).join('; '):'none');setProv('#prov-errors',snapshot.error);
+ }catch{const status=document.querySelector('#prov-export-status');if(status)status.textContent='Provenance inspector unavailable. Learning and playback remain independent.';}
 }
-function consentSummary(start){
- const decisions=consentInspector.exportEvents().slice(start).filter(event=>event.type==='decision');
- return decisions.length?decisions.map(event=>`${event.contactKind}:${event.decision}/${event.scope}`).join('; '):'none';
+function beginProvenance(input){try{return provenanceStore.begin(input);}catch{return null;}}
+function finishProvenance(runId,input){
+ try{const snapshot=provenanceStore.finish({runId,...input});renderProvenance(snapshot);return snapshot;}
+ catch{const status=document.querySelector('#prov-export-status');if(status)status.textContent='Provenance update failed. The underlying run result is unchanged.';return null;}
 }
+function recordActionProvenance(receipts){
+ try{
+  let snapshot=provenanceStore.recordAction(receipts);
+  if(!snapshot){const runId=provenanceStore.begin({kind:'review_action',limits:DEFAULT_LIMITS});snapshot=provenanceStore.finish({runId,status:receipts?.some(r=>r.status==='unknown')?'partial':'complete',actionReceipts:receipts,errorCode:receipts?.some(r=>r.status==='unknown')?'ACTION_UNKNOWN':'none'});}
+  renderProvenance(snapshot);
+ }catch{const status=document.querySelector('#prov-export-status');if(status)status.textContent='Action provenance unavailable. The reviewed action outcome is unchanged.';}
+}
+document.querySelector('#export-provenance').addEventListener('click',()=>{
+ const status=document.querySelector('#prov-export-status');
+ try{
+  const body=JSON.stringify(provenanceStore.exportData(),null,2)+'\n',url=URL.createObjectURL(new Blob([body],{type:'application/json'})),link=document.createElement('a');
+  link.href=url;link.download='sutra-run-provenance.json';link.hidden=true;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),0);status.textContent='Redacted provenance JSON downloaded.';
+ }catch{status.textContent='Provenance export failed. Playback and evidence remain available.';}
+});
 document.querySelector('#save-byok').addEventListener('click',()=>{
  const keyInput=document.querySelector('#byok-key'),model=document.querySelector('#byok-model').value.trim();
  try{
