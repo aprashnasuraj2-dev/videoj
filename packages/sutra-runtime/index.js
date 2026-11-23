@@ -106,6 +106,12 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeers:!!peerRuntime,externalMcpUrl:third?.url??null});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
  if(!model||typeof model.chat!=='function'||!['scripted-test','provider'].includes(model.mode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
+ // The caller, not an untrusted graph (including a fetched peer), owns
+ // provider/model selection. Model hints may exist in published data but never
+ // control the actual adapter dispatch. A live adapter must declare one fixed,
+ // host-approved model; the server separately enforces its own allowlist.
+ const approvedModel=model.mode==='scripted-test'?'mock-1':model.approvedModel;
+ if(typeof approvedModel!=='string'||! /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,119}$/.test(approvedModel)||approvedModel==='mock-1'&&model.mode==='provider')fail('MODEL_POLICY','Provider adapter must supply one fixed approved model identifier.');
  if(signal?.aborted)fail('CANCELLED','Run cancelled before model execution.');
  const bounds=compiled.limits,controller=new AbortController();
  const aborted=()=>controller.abort(signal?.reason??new RuntimeError('CANCELLED','Run cancelled.'));
@@ -126,7 +132,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   active++;const span=trace.start('model_call',{mode:model.mode,parent:args.parentSpan});
   try{
    check();
-   const response=await Promise.race([model.chat({...args,signal:controller.signal,onContentDelta:undefined}),stopped]);check();
+   const response=await Promise.race([model.chat({...args,model:approvedModel,signal:controller.signal,onContentDelta:undefined}),stopped]);check();
    if(!plain(response)||typeof response.content!=='string'||!Array.isArray(response.toolCalls)||response.toolCalls.length>bounds.concurrency)fail('MODEL_RESPONSE','Malformed or excessive model result.');
    totalOutput+=response.content.length;
    if(totalOutput>bounds.maxOutputChars)fail('OUTPUT_LIMIT','Model output budget exceeded.');
@@ -183,7 +189,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    return runAgent(peerCtx,peer.frontMan,message.user_message.text,span,visited);
   }};
  };
- const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote:resolvePeer,resolveMcp:async ref=>{
+ const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:approvedModel,modelOverride:approvedModel,resolveRemote:resolvePeer,resolveMcp:async ref=>{
   check();
   if(ref?.url==='/api/source-tools'&&sourceClient)return sourceClient;
   if(ref?.url===third?.url&&externalClient)return externalClient;
