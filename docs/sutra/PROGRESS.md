@@ -1,25 +1,23 @@
 # SUTRA progress register
 
-[Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
+[Checklist](CHECKLIST.md) | [Machine handoff](progress.json) | [Sessions](SESSIONS.md)
 
 ## Current checkpoint
 
-- Stage: standalone evidence validator implemented; app/runtime and public release not started.
-- Session: SUTRA-SESSION-0002; parent inspected: `cbd3be50545e98a6d1b13c58e59d403b7cde7906`.
-- Verified: 28/1,000 checks; phases 017 and 057 complete, phase 002 partially complete.
-- Active task: none; next: `SUTRA-P003-01`.
-- Engineering queue: repository map (`P011-01`) and isolated app (`P012-01`).
+Session SUTRA-SESSION-0003; inspected parent `47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2`. **66/1,000 verified checks; 5 phases complete.** Phase 012 is partial: the isolated shell builds, but actual shared-player dependency resolution and the phase exit remain pending. No task is active.
 
-## Implemented and tested
+## Implemented
 
-`packages/sutra-evidence/` has a versioned receipt schema, dependency-free browser-callable validator and Node CLI. It checks exact source version/media identity, cue ranges and quotations against an independently supplied catalog. All 22 tests passed, including an independent-working-directory CLI check. This is source code, not an npm publication or completed agentic website.
+apps/sutra has its own pinned Vite package, lockfile, build output and readable learner workspace. Selecting the synthetic transcript cue invokes the real evidence validator; altered text is rejected. The interface explicitly distinguishes catalog consistency from factual truth and shows original footage/runtime as pending.
 
-Results distinguish shape-only from catalog-matched data; neither establishes source truth. Real media ingestion/hashing, browser integration, peer consent and live inference remain pending. Synthetic examples are labeled and do not constitute lesson footage.
+Official rules and specification were freshly checked; see RULES_SPEC_BASELINE.md and the exact version diff. Deadline baseline remains unchanged. No conforming agentic runtime or public release is claimed.
 
-## Participant inputs
+## Checks and limitations
 
-Eligibility remains unconfirmed. A competent factual reviewer and rights-cleared original footage are still required; no identity, permission or pilot result is assumed. Independent development can proceed with synthetic fixtures.
+Clean install/build and four build-boundary tests passed; root and DETOUR output sentinels survived. Local Chromium could not launch because of an environment socket restriction. The dedicated CI browser job passed actual desktop/360px interactions, keyboard activation, mismatch rejection and no-external-request assertions. No physical-device or visual review is recorded.
 
-## Resume
+## Next work
 
-Refresh official rules/spec and repository boundaries, then create the isolated learner shell. Read CONTINUE.md and verify current code/evidence before continuing. No SUTRA site, community adoption, ZIP delivery or Devpost submission is recorded.
+`SUTRA-P014-01`: select/pin and spike the browser runtime. Resolve P012-04 for actual DHAGO source dependencies; phase 013 now has observed passing CI. Participant eligibility, factual reviewer, rights-cleared footage and approved paid-service budget remain pending.
+
+No site/domain mapping, live inference, user trial, final ZIP or Devpost submission was performed. Continue by checking actual source and evidence, not merely these recorded counts.

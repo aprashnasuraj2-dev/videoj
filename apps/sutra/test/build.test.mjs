@@ -1,0 +1,11 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import config from '../vite.config.js';
+const app=fileURLToPath(new URL('../',import.meta.url));
+test('output remains inside isolated app',()=>assert.equal(config.build.outDir,path.join(app,'dist')));
+test('Vite root does not depend on preview app',()=>assert.equal(config.root,app));
+test('built bundle exists with relative assets',()=>{const html=fs.readFileSync(path.join(app,'dist/index.html'),'utf8');assert.match(html,/\.\/assets\//);});
+test('source imports evidence but no preview or DETOUR modules',()=>{const s=fs.readFileSync(path.join(app,'src/main.js'),'utf8');assert.match(s,/packages\/sutra-evidence/);assert.doesNotMatch(s,/apps\/preview|detour\/|videojs\(/);});

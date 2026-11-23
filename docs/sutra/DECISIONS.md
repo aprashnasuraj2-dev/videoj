@@ -41,3 +41,10 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Alternative: wait for every earlier phase. Rejected because participant-owned inputs would unnecessarily block safe standalone implementation.
 - Contract: a receipt never self-asserts verified truth; the validator returns shape-only or catalog-matched status. Real byte hashing/ingestion and semantic verification are separate future work.
 - Source baseline: cbd3be50545e98a6d1b13c58e59d403b7cde7906; tested candidate file hashes are in the session evidence.
+
+## SUTRA-DECISION-0005 - Honest isolated shell before runtime/media
+
+- 2026-11-23T13:20:58+05:45. Vite 8.3.4 is pinned in a separate app/lock/output; evidence package imports work without root player dependencies. DHAGO integration remains phase 042 and dependency resolution remains P012-04.
+- Alternative: import the full preview app to get a player immediately. Rejected because it couples unrelated demo media/styles and release paths.
+- The visible shell has real deterministic validator interactions and clearly labels synthetic material. It does not imitate agent execution or playback.
+- Local Chromium is environment-blocked, so a dedicated real-browser CI test is added. No skipped local test is reported as passed.

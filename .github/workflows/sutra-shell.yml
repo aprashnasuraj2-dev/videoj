@@ -1,0 +1,36 @@
+name: Validate SUTRA learner shell
+on:
+  push:
+    branches: [main]
+    paths: ['apps/sutra/**', 'packages/sutra-evidence/**', '.github/workflows/sutra-shell.yml']
+  pull_request:
+    branches: [main]
+    paths: ['apps/sutra/**', 'packages/sutra-evidence/**', '.github/workflows/sutra-shell.yml']
+permissions:
+  contents: read
+jobs:
+  shell:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    defaults:
+      run:
+        working-directory: apps/sutra
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/sutra/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: sutra-shell-debug
+          path: apps/sutra/test-output/
+          retention-days: 3
+          if-no-files-found: ignore
