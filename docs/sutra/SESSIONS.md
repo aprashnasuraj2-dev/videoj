@@ -122,3 +122,12 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Credited 26 checks: P032-01..07/09, P033-01/02/04..09 and all P058 items. New total: 178/1000; phase 058 closes. P032-08/10 and P033-03/10 remain open.
 - No live peer, third-party MCP, CORS, public deployment, paid model call, external outreach or official filing occurred. Public release remains blocked by decision 0008.
 - Next engineering queue: P031-01 independent peer package, P032-08 invocation-visible peer failure, P033-03 third-party MCP consent.
+
+
+### Session 0006 independent peer continuation
+
+- 2026-11-23T15:05:24+05:45: added zero-dependency `apps/sutra-peer/` with static build/preview, human page, exact `checklist` manifest/graph, `source_select` helper, links map and proposed-origin ownership disclosure.
+- CI step builds and tests the peer package independently. Its loopback test fetches the built page/artifacts, observes public-artifact CORS locally, and then loads the actual `/agents/checklist` URL through `loadPeerNetwork` after separate consent decisions.
+- Final peer candidate `4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb` passed the full SUTRA workflow: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493.
+- Credited P031-01/02/04/05/06/07/08/09. Total is 186/1000; phase 031 stays open. P031-03 actual corpus provenance and P031-10 distinct public HTTPS remain pending and are not simulated by loopback.
+- Next: P032-08 invocation-visible peer failure, P033-03 third-party MCP consent, then P035-01 caller-local peer execution. Public release remains closed.
