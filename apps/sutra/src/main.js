@@ -41,7 +41,7 @@ function renderTimingTranscript(query=transcriptSearch.value){
 function updateTimingTranscriptActive(){
  if(!timingTranscriptIndex||!timingPlayer)return;
  const active=timingTranscriptIndex.activeAt(timingPlayer.media.currentTime);
- for(const [id,button] of timingTranscriptButtons){button.toggleAttribute('aria-current',id===active);}
+ for(const [id,button] of timingTranscriptButtons){if(id===active)button.setAttribute('aria-current','true');else button.removeAttribute('aria-current');}
 }
 transcriptSearch.addEventListener('input',()=>renderTimingTranscript());
 transcriptResults.addEventListener('keydown',event=>{
