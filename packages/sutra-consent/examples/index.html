@@ -1,0 +1,14 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>SUTRA consent inspector example</title>
+<main>
+  <h1>Consent inspector example</h1>
+  <p>Standalone framework-neutral example. The transport is simulated; no third-party request is made.</p>
+  <label>Decision
+    <select id="decision"><option value="deny">Deny</option><option value="once">Allow once</option><option value="session">Allow for this session</option></select>
+  </label>
+  <button id="run">Inspect contact</button>
+  <pre id="intent"></pre>
+  <pre id="result"></pre>
+</main>
+<script type="module" src="./example.js"></script>

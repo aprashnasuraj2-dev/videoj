@@ -1,18 +1,19 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T14:26:08+05:45",
+  "updated_at": "2026-11-23T15:05:24+05:45",
   "work_branch": "main",
-  "last_observed_code_sha": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
-  "last_session_id": "SUTRA-SESSION-0005",
-  "stage": "bounded_inference_and_source_retrieval",
+  "last_observed_code_sha": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+  "last_session_id": "SUTRA-SESSION-0006",
+  "stage": "independent_peer_package_and_consent",
   "current_task": null,
-  "next_task": "SUTRA-P033-01",
+  "next_task": "SUTRA-P032-08",
   "ready_engineering_queue": [
-    "SUTRA-P033-01",
-    "SUTRA-P058-01"
+    "SUTRA-P032-08",
+    "SUTRA-P033-03",
+    "SUTRA-P035-01"
   ],
-  "next_action": "Implement P033-01 consent-aware peer policy and bounded external artifact loading before any third-party contact; extract reusable consent events under P058 where useful. Phase 025 operator model/live keyless visitor/exit remain pending. Keep inference disabled.",
+  "next_action": "Wire the verified peer artifact loader into caller-local invocation so peer-load failures are preserved for the invoking network, then apply the reusable consent boundary to third-party MCP discovery/calls. Keep P031-03 provenance and P031-10 public HTTPS pending; do not release.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -2134,6 +2135,686 @@
           "result": "pass",
           "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
           "observed_at": "2026-11-23T14:22:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P032-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Profile 0.3 exact-name peer artifact loader passed final CI: derived site base, manifest-after-consent, exact selection, declared graph resolution, malformed/unsupported rejection and deliberate URL edge cases; runtime suite 65/65.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P032-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Profile 0.3 exact-name peer artifact loader passed final CI: derived site base, manifest-after-consent, exact selection, declared graph resolution, malformed/unsupported rejection and deliberate URL edge cases; runtime suite 65/65.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P032-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Profile 0.3 exact-name peer artifact loader passed final CI: derived site base, manifest-after-consent, exact selection, declared graph resolution, malformed/unsupported rejection and deliberate URL edge cases; runtime suite 65/65.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P032-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Profile 0.3 exact-name peer artifact loader passed final CI: derived site base, manifest-after-consent, exact selection, declared graph resolution, malformed/unsupported rejection and deliberate URL edge cases; runtime suite 65/65.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P032-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Profile 0.3 exact-name peer artifact loader passed final CI: derived site base, manifest-after-consent, exact selection, declared graph resolution, malformed/unsupported rejection and deliberate URL edge cases; runtime suite 65/65.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P032-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Profile 0.3 exact-name peer artifact loader passed final CI: derived site base, manifest-after-consent, exact selection, declared graph resolution, malformed/unsupported rejection and deliberate URL edge cases; runtime suite 65/65.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P032-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Profile 0.3 exact-name peer artifact loader passed final CI: derived site base, manifest-after-consent, exact selection, declared graph resolution, malformed/unsupported rejection and deliberate URL edge cases; runtime suite 65/65.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P032-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Profile 0.3 exact-name peer artifact loader passed final CI: derived site base, manifest-after-consent, exact selection, declared graph resolution, malformed/unsupported rejection and deliberate URL edge cases; runtime suite 65/65.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P033-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Reusable default-deny consent policy, learner consent UI and peer loader passed final CI. Destination/purpose/disclosure precede contact; denial has no request side effect; exact session scope is explicit; event export is redacted.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P033-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Reusable default-deny consent policy, learner consent UI and peer loader passed final CI. Destination/purpose/disclosure precede contact; denial has no request side effect; exact session scope is explicit; event export is redacted.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P033-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Reusable default-deny consent policy, learner consent UI and peer loader passed final CI. Destination/purpose/disclosure precede contact; denial has no request side effect; exact session scope is explicit; event export is redacted.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P033-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Reusable default-deny consent policy, learner consent UI and peer loader passed final CI. Destination/purpose/disclosure precede contact; denial has no request side effect; exact session scope is explicit; event export is redacted.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P033-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Reusable default-deny consent policy, learner consent UI and peer loader passed final CI. Destination/purpose/disclosure precede contact; denial has no request side effect; exact session scope is explicit; event export is redacted.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P033-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Reusable default-deny consent policy, learner consent UI and peer loader passed final CI. Destination/purpose/disclosure precede contact; denial has no request side effect; exact session scope is explicit; event export is redacted.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P033-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Reusable default-deny consent policy, learner consent UI and peer loader passed final CI. Destination/purpose/disclosure precede contact; denial has no request side effect; exact session scope is explicit; event export is redacted.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P033-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Reusable default-deny consent policy, learner consent UI and peer loader passed final CI. Destination/purpose/disclosure precede contact; denial has no request side effect; exact session scope is explicit; event export is redacted.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P058-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Framework-neutral @sutra/consent package and plain-browser example passed unit and Chromium checks outside the learner/player/corpus; denial emits no transport, explicit session scope is remembered exactly, exports omit private canaries.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P058-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Framework-neutral @sutra/consent package and plain-browser example passed unit and Chromium checks outside the learner/player/corpus; denial emits no transport, explicit session scope is remembered exactly, exports omit private canaries.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P058-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Framework-neutral @sutra/consent package and plain-browser example passed unit and Chromium checks outside the learner/player/corpus; denial emits no transport, explicit session scope is remembered exactly, exports omit private canaries.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P058-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Framework-neutral @sutra/consent package and plain-browser example passed unit and Chromium checks outside the learner/player/corpus; denial emits no transport, explicit session scope is remembered exactly, exports omit private canaries.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P058-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Framework-neutral @sutra/consent package and plain-browser example passed unit and Chromium checks outside the learner/player/corpus; denial emits no transport, explicit session scope is remembered exactly, exports omit private canaries.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P058-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Framework-neutral @sutra/consent package and plain-browser example passed unit and Chromium checks outside the learner/player/corpus; denial emits no transport, explicit session scope is remembered exactly, exports omit private canaries.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P058-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Framework-neutral @sutra/consent package and plain-browser example passed unit and Chromium checks outside the learner/player/corpus; denial emits no transport, explicit session scope is remembered exactly, exports omit private canaries.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P058-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Framework-neutral @sutra/consent package and plain-browser example passed unit and Chromium checks outside the learner/player/corpus; denial emits no transport, explicit session scope is remembered exactly, exports omit private canaries.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P058-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Framework-neutral @sutra/consent package and plain-browser example passed unit and Chromium checks outside the learner/player/corpus; denial emits no transport, explicit session scope is remembered exactly, exports omit private canaries.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P058-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:58:39+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Framework-neutral @sutra/consent package and plain-browser example passed unit and Chromium checks outside the learner/player/corpus; denial emits no transport, explicit session scope is remembered exactly, exports omit private canaries.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940",
+          "description": "Final GitHub Actions shell job for the tested candidate; build, package/API suites, vendor hash check, 65 runtime tests and both Chromium checks passed.",
+          "result": "pass",
+          "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+          "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
         }
       ]
     }

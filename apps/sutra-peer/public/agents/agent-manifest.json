@@ -1,0 +1,13 @@
+{
+  "networks": [
+    {
+      "name": "checklist",
+      "front_man": "checklist",
+      "hocon": "./checklist.network.json",
+      "description": "SUTRA checklist guide peer; synthetic source-selection fixture until the rights-cleared corpus is connected."
+    }
+  ],
+  "allowed_peers": [],
+  "peer_policy": {"mode": "closed"},
+  "deployment": {"mode": "static"}
+}

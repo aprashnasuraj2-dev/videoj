@@ -1,4 +1,5 @@
 import {createSourceMcp} from './source-mcp.js';
+import {fetchJsonWithConsent} from '../sutra-consent/index.js';
 import {AgentNetwork, validateNetwork} from './vendor/nsdeploy/kernel.js';
 import {runAgent} from './vendor/nsdeploy/runner.js';
 import {checkSchema, validateData} from './vendor/nsdeploy/actions.js';
@@ -190,4 +191,72 @@ export async function loadLocalNetwork({signal,timeoutMs=5000,...options}={}){
  const timer=setTimeout(()=>controller.abort(new RuntimeError('ARTIFACT_TIMEOUT','Artifact loading exceeded its time limit.')),timeoutMs);
  try{return await Promise.race([loadLocalNetworkData({...options,signal:controller.signal}),stopped]);}
  finally{clearTimeout(timer);signal?.removeEventListener('abort',cancel);controller.signal.removeEventListener('abort',stop);controller.abort();}
+}
+
+
+function parsePeerNetworkReference(peerUrl){
+ let target;
+ try{target=new URL(peerUrl);}catch{fail('PEER_URL','Peer network URL must be absolute.');}
+ const loopback=['localhost','127.0.0.1','[::1]'].includes(target.hostname);
+ if(target.username||target.password||target.search||target.hash||target.protocol!=='https:'&&!(target.protocol==='http:'&&loopback))fail('PEER_URL','Peer network URL must use approved HTTPS without credentials, query or fragment (loopback HTTP for development).');
+ if(target.pathname.endsWith('/'))fail('PEER_URL','Peer network URL must end with the exact published network name, not a trailing slash.');
+ const parts=target.pathname.split('/');const encodedName=parts.pop();
+ let networkName;
+ try{networkName=decodeURIComponent(encodedName);}catch{fail('PEER_URL','Peer network name has invalid encoding.');}
+ if(!idPattern.test(networkName))fail('NETWORK_ID','Peer URL final path component is not a supported exact network name.');
+ const basePath=parts.join('/')+'/';
+ const base=new URL(basePath,target.origin);
+ return {target,base,networkName};
+}
+
+async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,allowSourceTools=false}={}){
+ const {base,networkName}=parsePeerNetworkReference(peerUrl);
+ const manifestUrl=new URL('agent-manifest.json',base);
+ const manifest=await fetchJsonWithConsent({
+  inspector,
+  contact:{origin:manifestUrl.origin,kind:'peer_manifest',purpose:'Resolve the exact published peer network',disclosure:['network name'],network:networkName},
+  url:manifestUrl.href,fetchImpl,maxBytes:16384,signal
+ });
+ if(!plain(manifest)||!Array.isArray(manifest.networks)||manifest.networks.length<1||manifest.networks.length>32)fail('MANIFEST','Invalid public peer network index.');
+ if(manifest.coded_tools||manifest.actions)fail('UNSUPPORTED_CAPABILITY','Executable peer publication metadata is disabled in this profile.');
+ const matching=manifest.networks.filter(entry=>plain(entry)&&entry.name===networkName);
+ if(matching.length!==1)fail('NETWORK_MATCH','Exactly one matching published peer network is required.');
+ const entry=matching[0];
+ if(typeof entry.hocon!=='string'||!entry.hocon||entry.hocon.length>2048||typeof entry.front_man!=='string')fail('MANIFEST','Peer network entry lacks its declared data artifact or front.');
+ let graphUrl;
+ try{graphUrl=new URL(entry.hocon,base);}catch{fail('ARTIFACT_URL','Invalid declared peer graph URL.');}
+ const graphLoopback=['localhost','127.0.0.1','[::1]'].includes(graphUrl.hostname);
+ if(graphUrl.username||graphUrl.password||graphUrl.hash||graphUrl.protocol!=='https:'&&!(graphUrl.protocol==='http:'&&graphLoopback))fail('ARTIFACT_ORIGIN','Declared peer graph must use approved HTTP(S) without credentials or fragment.');
+ const definition=await fetchJsonWithConsent({
+  inspector,
+  contact:{origin:graphUrl.origin,kind:'peer_graph',purpose:'Retrieve the declared peer network definition',disclosure:['network name'],network:networkName},
+  url:graphUrl.href,fetchImpl,maxBytes:65536,signal
+ });
+ compileNetwork(definition,{name:networkName,frontMan:entry.front_man,allowSourceTools});
+ return {definition,name:networkName,frontMan:entry.front_man,artifacts:{manifest:manifestUrl.href,definition:graphUrl.href},origin:base.origin};
+}
+
+/**
+ * Consent-aware data-only peer artifact loader for the Profile 0.3 URL convention.
+ * It does not enable peer execution by itself. Manifest and graph retrieval are
+ * separately approved contacts; redirects are fail-closed until redirect-policy
+ * handling is implemented.
+ */
+export async function loadPeerNetwork({signal,timeoutMs=5000,...options}={}){
+ if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>5000)fail('LIMIT_CONFIG','Peer artifact load timeout must be within 1–5000 ms.');
+ if(signal?.aborted)fail('CANCELLED','Peer artifact loading cancelled.');
+ const controller=new AbortController();
+ const cancel=()=>controller.abort(new RuntimeError('CANCELLED','Peer artifact loading cancelled.'));
+ signal?.addEventListener('abort',cancel,{once:true});
+ let stop;const stopped=new Promise((_,reject)=>{stop=()=>reject(controller.signal.reason);controller.signal.addEventListener('abort',stop,{once:true});});
+ stopped.catch(()=>{});
+ const timer=setTimeout(()=>controller.abort(new RuntimeError('ARTIFACT_TIMEOUT','Peer artifact loading exceeded its time limit.')),timeoutMs);
+ try{return await Promise.race([loadPeerNetworkData({...options,signal:controller.signal}),stopped]);}
+ catch(error){
+  if(error instanceof RuntimeError||error?.name==='ConsentError')throw error;
+  if(controller.signal.aborted&&controller.signal.reason instanceof RuntimeError)throw controller.signal.reason;
+  fail('PEER_LOAD_FAILED','Peer artifact loading failed before a usable network was established.');
+ } finally {
+  clearTimeout(timer);signal?.removeEventListener('abort',cancel);controller.signal.removeEventListener('abort',stop);controller.abort();
+ }
 }

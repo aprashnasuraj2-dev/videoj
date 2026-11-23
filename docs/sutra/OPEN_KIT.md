@@ -8,8 +8,9 @@ not yet been measured. They do not establish factual truth or full web conforman
 | --- | --- | --- |
 | Evidence receipts | `packages/sutra-evidence`: schema, `validateReceipt`, CLI | 22 tests; shape-only versus catalog-matched result |
 | Source tools | `packages/sutra-source-tools`: `list`, `call` | 5 registry tests; bounded literal search and exact cue read |
-| Browser host | `packages/sutra-runtime`: compile/run/load, restricted source MCP | 59 tests; explicit grants, budgets, cancellation and sanitized events |
-| Inference boundary | `packages/sutra-inference` and `services/sutra-api` | 24 client/API tests; synthetic streams and transaction harness |
+| Browser host | `packages/sutra-runtime`: compile/run/load, restricted source MCP, consent-aware peer artifact loader | 65 tests; exact peer resolution, explicit grants, budgets, cancellation and sanitized events |
+| Inference boundary | `packages/sutra-inference` and `services/sutra-api` | Synthetic streams and transaction harness; live provider/model still unverified |
+| Consent inspector | `packages/sutra-consent`: policy, redacted events, bounded JSON helper, plain-browser example | 8 unit tests + standalone Chromium; default deny and exact explicit session scope |
 
 Source tools currently import the evidence package and the pinned runtime schema
 helper; copy those dependencies together. They are not yet a published standalone
@@ -22,6 +23,7 @@ From the repository root with Node 24:
 node --test packages/sutra-source-tools/test/*.test.mjs
 node --test packages/sutra-evidence/test/*.test.mjs
 node --test packages/sutra-runtime/test/*.test.mjs
+node --test packages/sutra-consent/test/*.test.mjs
 ```
 
 Follow each package README for contracts, limits and scope. Before community release,

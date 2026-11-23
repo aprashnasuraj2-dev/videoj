@@ -2,54 +2,82 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
-## Session 0005 checkpoint
+## Session 0006 checkpoint
 
-**152/1,000 checks verified**; ten phases complete, including the bounded read-only
-capability registry. Work is SUTRA. Existing player source, demos and deployment mappings
-remain unchanged.
+**186/1,000 checks verified**; eleven phases complete. Phase 058 (reusable peer-consent
+inspector) is closed. Phase 032 exact peer loading and phase 033 consent are materially
+advanced but intentionally remain open.
 
-Implemented a separate default-off inference Worker/client: fixed provider origin,
-operator model allowlist, server-only credentials, transactional request quotas,
-bounded streaming and cancellation. No actual model, provider account, spend limit,
-Cloudflare deployment or live visitor result is verified. A call ceiling is not a
-dollar budget. Keep inference disabled until those operator/live gates are met.
+Implemented `packages/sutra-consent/`: a framework-neutral default-deny policy,
+explicit one-contact/session scope, public origin/purpose/disclosure display, redacted
+events and a bounded credentialless JSON helper. The learner now exposes a consent
+preview, and a separate plain-browser example proves the component runs outside the
+learner app, DHAGO player and SUTRA corpus.
 
-Added reusable read-only source search/cue tools, a fixed same-origin MCP endpoint
-and bounded host adapter, a published source learner graph and real retrieval under
-scripted decisions. Native playback state is exposed through a read-only data
-snapshot. Matching a receipt to its catalog establishes consistency, not truth.
-Community tools are listed in [OPEN_KIT.md](OPEN_KIT.md); adoption remains unmeasured.
+Added a data-only Profile 0.3 peer artifact loader. It derives the site base from the
+peer-network URL, loads the manifest only after approval, selects the exact network
+name, resolves the declared graph and requires a separate approval when that graph is
+on another origin. Query/fragment/trailing-slash ambiguity, missing/duplicate names,
+executable metadata and malformed graphs fail closed. Redirects remain deliberately
+blocked until phase 037 defines changed-origin handling.
 
 ## Observed checks
 
-109 local tests, production build and all ten upstream hashes pass. Tests use
-synthetic streams and a quota transaction harness. CI found and drove fixes for a
-Vite hook return, swallowed required-source failure and narrow snapshot overflow.
-Final Chromium CI passed on `61f44558b9512990f9c4155e31ff95d0d40bbe98`, including real source endpoint calls, blocked-source refusal, native playback snapshots and 360px no-overflow. Local Chromium is unavailable:
-packaged binary missing and system browser launch failed. No local browser pass,
-physical-device result or human visual approval is claimed.
+Final code candidate `70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7` passed:
+
+- production app build and app tests;
+- 37 consent/inference/source/API tests;
+- 65 runtime/loader/source-MCP tests;
+- all ten pinned upstream module hashes;
+- learner Chromium with consent denial/session scope, prior evidence/runtime/media
+  behavior, 360 px no-overflow and no external requests;
+- standalone consent-example Chromium with denial-before-transport and exact remembered
+  session approval.
+
+Intermediate CI failures are retained in
+[evidence/implementation/SESSION-0006.md](evidence/implementation/SESSION-0006.md).
+They were test-fixture/assertion failures and were not counted as passing evidence.
+
+## Independent peer package
+
+Added zero-dependency `apps/sutra-peer/` with its own static build, human guide page,
+exact `checklist` manifest/graph, narrow `source_select` helper and explicit links map.
+The local preview and real consent-aware loader integration passed in CI on
+`4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb`. P031-03 remains open for actual
+rights-cleared corpus provenance; P031-10 remains open for a distinct public HTTPS
+origin. The proposed caller/peer origins are disclosed as same-project-owner and do
+not demonstrate independent adoption.
+
+## Boundaries still open
+
+No real second HTTPS peer origin has been published or contacted. Cross-origin CORS,
+caller-local peer execution, third-party MCP discovery/call consent, redirect
+re-consent, private-context peer canaries and router inheritance remain unverified.
+Consent visibility does not prove publisher trust, factual truth or independent
+adoption. Phase 025 model selection/live keyless visitor also remains open.
 
 ## Public release gate
 
-User direction: no public release until all major checklist work is complete and
-verified. Packaging preflight is separate from release. Keep deployments, public
-routes and paid inference closed while major product/security/conformance gates
-remain open.
+User direction remains unchanged: no public release until all applicable major
+checklist product/security/conformance/acceptance gates are complete with current
+evidence. Public routes, public inference, promotion and official submission stay
+closed. The prior Wrangler dry-run is packaging evidence only.
 
 ## Resume
 
-Next independent task: `SUTRA-P033-01`, consent-aware external contact policy and
-bounded peer loader. Implement and test consent before any third-party fetch;
-standalone peer publication and real two-origin tests remain separate gates.
+Next independent engineering queue:
 
-Phase 025 model selection/live keyless visitor/exit remain pending. Original media,
-rights, factual reviewer, eligible entrant, consenting learners/builders, public
-Cloudflare release, final ZIP and Devpost filing are still outstanding. Read the
-session evidence and actual remote CI before continuing.
+1. `SUTRA-P032-08` — preserve a specific peer-load failure through the invoking
+   network rather than only the loader API.
+2. `SUTRA-P033-03` — connect the consent boundary to third-party MCP discovery and
+   calls; phase 039 still requires an authorized read-only endpoint and real browser
+   behavior.
+3. `SUTRA-P035-01` — instantiate the already validated peer data in the caller runtime
+   once the failure/consent path is preserved.
 
-[Verified browser workflow](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45139865572/job/137574910727). The register checkpoint is saved through PR #45; no public release is implied.
+Original media/rights/factual reviewer, entrant eligibility, approved live-model
+spend, consenting learners/builders/devices, public release, final ZIP and Devpost
+filing remain pending.
 
-
-Packaging follow-up: Wrangler 4.166.0 dry-run passed on 23 November 2026, reading
-72 assets and bundling a 32.49 KiB Worker (9.16 KiB gzip). Inference remains off;
-no migration, public route or deployed runtime result is established.
+[Final consent/loader workflow](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940). [Final independent-peer workflow](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493).
+No public release is implied.
