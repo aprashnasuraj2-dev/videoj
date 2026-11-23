@@ -5,6 +5,7 @@ import {createPrivateContextPolicy,privateContextPrompt,PrivateContextError} fro
 import {runNetwork} from '../index.js';
 import {createScriptedModel} from '../testing.js';
 import {createConsentInspector} from '../../sutra-consent/index.js';
+import {serializeSafeTraceReceipt} from '../trace-export.js';
 
 const peerUrl='https://peer.example/agents/transit';
 const wrongPeer='https://other.example/agents/transit';
@@ -55,6 +56,12 @@ test('runtime gives only explicitly approved field to exact peer model prompts',
  assert.ok(peer.every(x=>!JSON.stringify(x.messages).includes('"preference":"concise"')));
  assert.ok(!JSON.stringify(result.events).includes('ne-NP'));
  assert.ok(!JSON.stringify(result.events).includes('PRIVATE_CONTEXT_CANARY_123'));
+ const safeReceipt=serializeSafeTraceReceipt({
+  events:result.events,contactEvents:[],outcome:'completed',mode:result.mode,
+  modelCalls:result.modelCalls,agentCalls:result.agentCalls
+ });
+ assert.ok(!safeReceipt.includes('PRIVATE_CONTEXT_CANARY_123'));
+ assert.ok(!safeReceipt.includes('ne-NP'),'private values never enter execution receipts even when approved for a peer model');
 });
 
 test('same network name on a different origin does not inherit another peer grant',async()=>{
