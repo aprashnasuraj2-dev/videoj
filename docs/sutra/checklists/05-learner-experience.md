@@ -39,11 +39,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P042-02` Use host-supplied media, poster, captions and chapter tracks
 - [x] `SUTRA-P042-03` Preserve the installed v10 custom-element playback runtime
 - [x] `SUTRA-P042-04` Observe actual native media state rather than synthesizing progress
-- [ ] `SUTRA-P042-05` Verify ordinary play, pause, volume, seek and fullscreen behavior
+- [x] `SUTRA-P042-05` Verify ordinary play, pause, volume, seek and fullscreen behavior
 - [ ] `SUTRA-P042-06` Handle source changes, missing decode support and media load errors
 - [x] `SUTRA-P042-07` Avoid coupling the player to agents, model state or DETOUR internals
-- [ ] `SUTRA-P042-08` Check host styles do not break player focus and narrow-screen controls
-- [ ] `SUTRA-P042-09` Produce and review the phase artifact: SUTRA player adapter and ordinary controls.
+- [x] `SUTRA-P042-08` Check host styles do not break player focus and narrow-screen controls
+- [x] `SUTRA-P042-09` Produce and review the phase artifact: SUTRA player adapter and ordinary controls.
 - [ ] `SUTRA-P042-10` Close phase 042 only after its applicable tasks have evidence and its exit condition is observed: Play, pause, seek, volume, captions and fullscreen work; no DETOUR code or existing demo media is imported.
 
 ## Phase 043 - Connect evidence cards to real playback
