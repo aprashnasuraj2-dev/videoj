@@ -39,7 +39,7 @@ const contrast=(a,b)=>{
    const unnamed=controls.filter(e=>{
     const labelled=e.getAttribute('aria-label')||e.getAttribute('aria-labelledby');
     const label=e.id&&document.querySelector('label[for="'+CSS.escape(e.id)+'"]');
-    return !(labelled||label?.textContent.trim()||e.textContent.trim()||e.getAttribute('title')||e.getAttribute('placeholder'));
+    return !(labelled||label?.textContent?.trim()||e.textContent?.trim()||e.getAttribute('title')||e.getAttribute('placeholder'));
    }).map(e=>e.id||e.tagName);
    const live=[...document.querySelectorAll('[aria-live],[role=status]')].filter(visible).map(e=>({id:e.id,role:e.getAttribute('role'),live:e.getAttribute('aria-live')}));
    return {duplicates:[...new Set(duplicates)],unnamed,live};
