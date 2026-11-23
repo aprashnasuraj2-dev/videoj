@@ -90,19 +90,26 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.getByRole('button',{name:'Delete local review'}).click();assert.equal(await page.locator('#review-list li').count(),0);
   await page.getByRole('button',{name:'Read current playback state',exact:true}).click();assert.equal(JSON.parse(await page.locator('#playback-state').innerText()).available,false);
   // A missing media response must fail honestly and allow a later explicit retry.
-  await page.route('**/media/timing-fixture.mp4',route=>route.fulfill({status:404,contentType:'text/plain',body:'missing fixture'}));
+  await page.route('**/media/timing-fixture.mp4*',route=>route.fulfill({status:404,contentType:'text/plain',body:'missing fixture'}));
   await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Timing fixture unavailable.'));
   assert.equal(await page.locator('video').count(),0);
   assert.equal(await page.getByRole('button',{name:'Load synthetic timing fixture'}).isEnabled(),true);
-  await page.unroute('**/media/timing-fixture.mp4');
+  await page.unroute('**/media/timing-fixture.mp4*');
+  // A stale deployment may return HTTP 200 with the wrong bytes. Hash binding
+  // must stop before Blob/player mount and leave an explicit retry path.
+  await page.route('**/media/timing-fixture.mp4*',route=>route.fulfill({status:200,contentType:'video/mp4',body:'stale-media-bytes'}));
+  await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
+  await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Timing fixture unavailable.'));
+  assert.equal(await page.locator('video').count(),0);
+  await page.unroute('**/media/timing-fixture.mp4*');
   // Poster is independent of media decode: a missing poster must not turn a
   // successful native video load into an unavailable lesson.
-  await page.route('**/media/timing-poster.svg',route=>route.fulfill({status:404,contentType:'text/plain',body:'missing poster'}));
+  await page.route('**/media/timing-poster.svg*',route=>route.fulfill({status:404,contentType:'text/plain',body:'missing poster'}));
   await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Actual media duration: 8.0 seconds.'));
   assert.ok(requests.some(url=>url.includes('/media/timing-poster.svg')),'host-supplied poster request is independently observable');
-  await page.unroute('**/media/timing-poster.svg');
+  await page.unroute('**/media/timing-poster.svg*');
   const transcriptSearch=page.getByRole('searchbox',{name:'Search synthetic transcript'});
   assert.match(await page.locator('#timing-transcript-panel .transcript-meta').innerText(),/synthetic-timing-fixture.*v1/);
   await transcriptSearch.fill('not-in-the-fixture');
