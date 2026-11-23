@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T13:54:20+05:45",
+  "updated_at": "2026-11-23T14:22:27+05:45",
   "work_branch": "main",
-  "last_observed_code_sha": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
-  "last_session_id": "SUTRA-SESSION-0004",
-  "stage": "restricted_runtime_and_review_flow",
+  "last_observed_code_sha": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+  "last_session_id": "SUTRA-SESSION-0005",
+  "stage": "bounded_inference_and_source_retrieval",
   "current_task": null,
-  "next_task": "SUTRA-P025-01",
+  "next_task": "SUTRA-P033-01",
   "ready_engineering_queue": [
-    "SUTRA-P027-01",
-    "SUTRA-P033-01"
+    "SUTRA-P033-01",
+    "SUTRA-P058-01"
   ],
-  "next_action": "Implement a bounded default-inference adapter/proxy and grounded agent-callable read actions. Keep paid calls disabled until provider/funding is operator-approved. The complete session 0004 shell/browser and register CI passed.",
+  "next_action": "Implement P033-01 consent-aware peer policy and bounded external artifact loading before any third-party contact; extract reusable consent events under P058 where useful. Phase 025 operator model/live keyless visitor/exit remain pending. Keep inference disabled.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -1908,6 +1908,227 @@
           "observed_at": "2026-11-23T13:54:20+05:45"
         }
       ]
+    },
+    "SUTRA-P025-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P025-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P025-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P025-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P025-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P025-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P025-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P027-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P027-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P027-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P027-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P027-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P027-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P027-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P027-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:16:11+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Bounded inference/source implementation: 109 local tests, build and vendor hashes pass. Synthetic streams and transaction harness do not prove live provider/Cloudflare behavior. Exact candidate hashes recorded. Browser-dependent closure is recorded only after CI observation.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:16:11+05:45"
+        }
+      ]
+    },
+    "SUTRA-P027-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:22:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45139865572/job/137574910727",
+          "description": "Actual Chromium browser command passed on exact candidate: two-agent source search/read, blocked-source unavailable refusal, native playback snapshot, 360px no-overflow, no page errors/external requests. Scripted model decisions and synthetic corpus do not establish live inference or factual truth.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:22:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P027-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T14:22:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45139865572/job/137574910727",
+          "description": "Actual Chromium browser command passed on exact candidate: two-agent source search/read, blocked-source unavailable refusal, native playback snapshot, 360px no-overflow, no page errors/external requests. Scripted model decisions and synthetic corpus do not establish live inference or factual truth.",
+          "result": "pass",
+          "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
+          "observed_at": "2026-11-23T14:22:27+05:45"
+        }
+      ]
     }
   },
   "blockers": [],
@@ -1928,7 +2149,7 @@
       "id": "INPUT-SPEND",
       "owner": "participant",
       "scope": "provider selection and approved paid-service budget before enabling paid use",
-      "independent_work": "Use mock adapters and inspect supported runtime contracts."
+      "independent_work": "Keep inference disabled; use synthetic streams and continue source/consent engineering. Operator model, budget and live deployment checks remain pending."
     },
     {
       "id": "INPUT-RESEARCH",

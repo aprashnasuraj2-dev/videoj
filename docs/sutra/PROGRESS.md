@@ -2,20 +2,42 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
-## Session 0004 checkpoint
+## Session 0005 checkpoint
 
-**135/1,000 checks verified**; nine phases complete; run the audit for current counts. Work is SUTRA: restricted browser orchestration, learner/evidence interaction, media integration and local review cards. Existing reusable-player source/demos/deployments and DETOUR remain unchanged.
+**152/1,000 checks verified**; ten phases complete, including the bounded read-only
+capability registry. Work is SUTRA. Existing player source, demos and deployment mappings
+remain unchanged.
 
-The nsDeploy reference core is pinned and unchanged. SUTRA's host validates local graphs/data, enforces finite budgets/cancellation and emits sanitized events. Its published two-agent graph runs with an explicitly scripted driver; live funded inference and peers are not connected.
+Implemented a separate default-off inference Worker/client: fixed provider origin,
+operator model allowlist, server-only credentials, transactional request quotas,
+bounded streaming and cancellation. No actual model, provider account, spend limit,
+Cloudflare deployment or live visitor result is verified. A call ceiling is not a
+dollar budget. Keep inference disabled until those operator/live gates are met.
 
-The learner app loads a byte-checked synthetic timing fixture through an explicit reusable-component adapter and uses actual native media state. A review card can be previewed, cancelled, locally confirmed, reloaded and deleted. Neither the fixture nor its receipt establishes factual truth or replaces the pending original lesson.
+Added reusable read-only source search/cue tools, a fixed same-origin MCP endpoint
+and bounded host adapter, a published source learner graph and real retrieval under
+scripted decisions. Native playback state is exposed through a read-only data
+snapshot. Matching a receipt to its catalog establishes consistency, not truth.
+Community tools are listed in [OPEN_KIT.md](OPEN_KIT.md); adoption remains unmeasured.
 
 ## Observed checks
 
-53 runtime/loader tests and 17 app/review tests passed locally; production build and all ten upstream source hashes passed. Initial runtime/player browser CI passed on `90f3dbebb52f7171e6c9e0946d42fcf6613a168c`. Final Chromium CI passed the review/accessor-hardening cases, invalid-graph refusal and actual native media interactions. Local Chromium remains environment-blocked; no physical-device, Safari/Firefox or human visual-review result is claimed.
+109 local tests, production build and all ten upstream hashes pass. Tests use
+synthetic streams and a quota transaction harness. CI found and drove fixes for a
+Vite hook return, swallowed required-source failure and narrow snapshot overflow.
+Final Chromium CI passed on `61f44558b9512990f9c4155e31ff95d0d40bbe98`, including real source endpoint calls, blocked-source refusal, native playback snapshots and 360px no-overflow. Local Chromium is unavailable:
+packaged binary missing and system browser launch failed. No local browser pass,
+physical-device result or human visual approval is claimed.
 
 ## Resume
 
-Next: `SUTRA-P025-01`, a bounded default-inference adapter/proxy; then `SUTRA-P027-01` grounded local source actions and consent-aware peer work. Provider/funding, participant eligibility, original footage and factual reviewer remain unconfirmed. Keep paid inference disabled until configured and authorized.
+Next independent task: `SUTRA-P033-01`, consent-aware external contact policy and
+bounded peer loader. Implement and test consent before any third-party fetch;
+standalone peer publication and real two-origin tests remain separate gates.
 
-No public deployment, genuine user/builder trial, final ZIP or Devpost filing occurred. See the session report for limitations, retained failures and exact candidate hashes.
+Phase 025 model selection/live keyless visitor/exit remain pending. Original media,
+rights, factual reviewer, eligible entrant, consenting learners/builders, public
+Cloudflare release, final ZIP and Devpost filing are still outstanding. Read the
+session evidence and actual remote CI before continuing.
+
+[Verified browser workflow](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45139865572/job/137574910727). The register checkpoint is saved through PR #45; no public release is implied.
