@@ -96,8 +96,13 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.equal(await page.locator('video').count(),0);
   assert.equal(await page.getByRole('button',{name:'Load synthetic timing fixture'}).isEnabled(),true);
   await page.unroute('**/media/timing-fixture.mp4');
+  // Poster is independent of media decode: a missing poster must not turn a
+  // successful native video load into an unavailable lesson.
+  await page.route('**/media/timing-poster.svg',route=>route.fulfill({status:404,contentType:'text/plain',body:'missing poster'}));
   await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Actual media duration: 8.0 seconds.'));
+  assert.ok(requests.some(url=>url.includes('/media/timing-poster.svg')),'host-supplied poster request is independently observable');
+  await page.unroute('**/media/timing-poster.svg');
   const transcriptSearch=page.getByRole('searchbox',{name:'Search synthetic transcript'});
   assert.match(await page.locator('#timing-transcript-panel .transcript-meta').innerText(),/synthetic-timing-fixture.*v1/);
   await transcriptSearch.fill('not-in-the-fixture');
