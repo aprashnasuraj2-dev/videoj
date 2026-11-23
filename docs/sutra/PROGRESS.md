@@ -1,6 +1,12 @@
 # SUTRA progress register
 
-## Session 0008 redirect security follow-up — current checkpoint
+## Session 0008 final engineering checkpoint — current
+
+**242/1,000 tasks verified; 15 fully verified phases.** This includes 7 more task-level checks since the 235-item redirect checkpoint: independent BYOK/funded-failure isolation (P030-08), credentialless redirect denial (P037-05), and streaming/child-cancellation behavior (P026-02..06). [Run-interruption CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45159138495), [independent inference-path CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158656419), [redirect credential CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158831857) all passed on immutable code candidates. See [session 0008 evidence](evidence/implementation/SESSION-0008.md) for limits and retained failures.
+
+**Next engineering:** P026-01 explicit learner run lifecycle (idle/running/cancelling/failed/complete) and cancellation/media continuity; P030-02 live authorized browser router CORS remains an external gate. Phase 026, 030 and 037 remain open, and the public release/Devpost gates remain blocked. The record describes synthetic and loopback validation, not real content or funded AI.
+
+## Session 0008 redirect security follow-up — earlier checkpoint
 
 **235/1,000 tasks verified; 15 phases fully verified.** This adds three task-level checks P037-06/07/08 to the previous 232 after the real loopback redirect matrix and Chromium blocked-redirect/local-lesson fixture passed on source candidate `e5af69d975ec0c7fc4c84c3e20b84036e3302cca` ([full shell run](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158153046)). Graph approval now distinguishes exact graph paths, and query-bearing graph URLs fail. Real third-party HTTPS redirects, changed-content authorization and full re-consent remain open; phase 037 is incomplete.
 
