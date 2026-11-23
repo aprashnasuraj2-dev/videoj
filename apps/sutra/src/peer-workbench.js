@@ -3,13 +3,14 @@
 import {loadLocalNetwork,runNetwork} from '../../../packages/sutra-runtime/index.js';
 import {createScriptedModel} from '../../../packages/sutra-runtime/testing.js';
 import {createConsentInspector} from '../../../packages/sutra-consent/index.js';
+import {serializeSafeTraceReceipt} from '../../../packages/sutra-runtime/trace-export.js';
 
 export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',location.href).href}={}){
  const byId=id=>root.querySelector('#'+id);
  const urlInput=byId('peer-url'), runButton=byId('run-peer'),
   status=byId('peer-status'), trace=byId('peer-trace'), consentLog=byId('peer-consent-log');
- const dialog=byId('peer-consent-dialog');
- let pendingDecision=null, running=false, activeController=null;
+ const dialog=byId('peer-consent-dialog'),exportButton=byId('export-peer-trace');
+ let pendingDecision=null, running=false, activeController=null,lastReceipt=null;
  const finish=(decision,scope='once')=>{
   if(!pendingDecision)return;
   const resolve=pendingDecision;pendingDecision=null;
@@ -50,8 +51,9 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
    status.textContent='Enter one exact peer network URL (maximum 2,048 characters). No request was made.';
    return;
   }
-  running=true;runButton.disabled=true;
+  running=true;runButton.disabled=true;lastReceipt=null;exportButton.disabled=true;
   activeController=new AbortController();
+  const currentEvents=[],consentStart=inspector.exportEvents().length;
   resetTrace();
   status.textContent='Checking the local learner network. No external contact occurs before approval.';
   try{
@@ -67,20 +69,36 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
     model:createScriptedModel(),
     peerRuntime:{inspector},
     signal:activeController.signal,
-    onEvent:appendTrace
+    onEvent:event=>{if(currentEvents.length<512)currentEvents.push(event);appendTrace(event);}
    });
+   lastReceipt={mode:result.mode,outcome:'completed',modelCalls:result.modelCalls,
+    agentCalls:result.agentCalls,events:result.events,
+    contactEvents:inspector.exportEvents().slice(consentStart)};
    status.textContent='Scripted peer test complete: '+result.agentCalls+
     ' caller-local agent invocations and '+result.modelCalls+
     ' scripted model steps. Public graph data only; no live inference or factual verification.';
   }catch(error){
    const code=typeof error?.code==='string'&&/^[A-Z][A-Z0-9_]{1,50}$/.test(error.code)?error.code:'STOPPED';
+   lastReceipt={mode:'scripted-test',
+    outcome:code.includes('DENIED')?'denied':code==='CANCELLED'?'cancelled':'failed',
+    modelCalls:null,agentCalls:null,events:currentEvents,
+    contactEvents:inspector.exportEvents().slice(consentStart)};
    status.textContent='Peer test stopped ('+code+'). No completed peer result is claimed. Local lesson and evidence are unaffected.';
   }finally{
    running=false;runButton.disabled=false;activeController=null;
-   renderConsentEvents();
+   exportButton.disabled=!lastReceipt;renderConsentEvents();
   }
  }
  runButton.addEventListener('click',run);
+ exportButton.addEventListener('click',()=>{
+  if(!lastReceipt)return;
+  const json=serializeSafeTraceReceipt(lastReceipt);
+  const objectUrl=URL.createObjectURL(new Blob([json],{type:'application/json'}));
+  const link=document.createElement('a');
+  link.href=objectUrl;link.download='sutra-peer-sanitized-trace.json';
+  document.body.append(link);link.click();link.remove();
+  setTimeout(()=>URL.revokeObjectURL(objectUrl),1000);
+ });
  const unload=()=>{
   activeController?.abort();
   finish('deny');
