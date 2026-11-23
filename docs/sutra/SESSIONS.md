@@ -235,3 +235,25 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Full shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45165087393.
 - Verified P028-04/07/10; Phase 028 closes. New total **264/1000**, **20 fully verified phases**.
 - Next browser action registration/review work; live provider/public HTTPS gates remain open.
+
+
+## SUTRA-SESSION-0014 — Host action registry and reviewed local writes
+
+- Observed 2026-11-23T17:21:26+05:45; tested source candidate `0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c`.
+- Exposed an optional host-owned ActionRegistry through `runNetwork`; malformed registries fail before model execution.
+- Opted the learner graph into exact CRUSE v1 and bounded the compiler to that exact presentation metadata shape. The pinned runner then exposes only the exact caller/network action catalog as proposals, never executable functions.
+- Registered `save-review-card` and `export-receipt` as local-only `write` actions with strict nested receipt schemas, immutable plans and revalidation against the source catalog.
+- Refactored the visible review flow to execute confirmed save/export through the registry. Chromium observes cancel/no write, one saved review, one local JSON download, reload persistence and no duplicate saved card from export.
+- Retained failures: run 45165924184 showed the graph had not opted into CRUSE; run 45166333206 showed `innerText` on a closed details element was an invalid observability assertion. Both were fixed without weakening the runtime.
+- Final shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45166574357.
+- Verified P023-05/P023-09 and P029-01/P029-10. Phase 029 closes; Phase 023 remains open on real configured inference P023-03.
+
+
+## SUTRA-SESSION-0015 — Review-card learner-flow reconciliation
+
+- Observed 2026-11-23T17:23:27+05:45; source/evidence remains `0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c`.
+- Reconciled the now-tested registry flow plus existing review-store tests against Phase 046. This is accounting of observed behavior, not ten newly implemented features.
+- Verified preview-before-effect, exact cue/source-version receipt fields, browser-only storage disclosure, immutable confirmed payload, quota/unknown/export failure handling, reload/stale-data validation, deletion and export isolation from prompts/router credentials.
+- Session 0015 evidence: `docs/sutra/evidence/implementation/SESSION-0015.md`.
+- Verified P046-01..10; Phase 046 closes. New total **278/1000**, **22 fully verified phases**.
+- Next independent learner-quality work: provenance inspector, ordinary media-control/browser checks or transcript experience. Live provider/public HTTPS/release remain blocked.
