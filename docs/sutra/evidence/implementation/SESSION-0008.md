@@ -33,3 +33,9 @@
 - Observe the pending browser run for the same-page local media/evidence after denied MCP. Only then consider P033-10 and phase exit.
 - Identify an authorized real public-read MCP host and run explicit bounded compatibility tests (P039-01/05/07), with provider credentials separate from MCP auth. Then continue private credential canaries for P035-05.
 - Continue strict development-only status; no major checklist gate or official submission is bypassed.
+
+## Superseding final observation: consent phase exit passed
+
+- Following the earlier evidence entry, GitHub Actions run https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45179248410/job/137708455358 completed successfully on exact commit `12aae467ce7ebfd7cd1929f0360d1d8ca598fd7e` (run updated 2026-11-23T13:01:56Z). This supersedes the previously pending browser outcome; it does not change the earlier test history.
+- The added Chromium scenario denied MCP discovery **before any external POST**, then performed the local source-catalog consistency check and loaded the real native synthetic timing video successfully in the same browser session. The entire learner test pipeline, runtime checks, pinned vendor integrity and four Chromium suites also passed.
+- On this final observation, `SUTRA-P033-10` closes; phase 033 now has ten verified checks. Overall register: **204 / 1,000 verified; 13 phases complete**. No outside MCP publisher, public deployment, paid provider or challenge conformance is thereby established.
