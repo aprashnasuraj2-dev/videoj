@@ -104,3 +104,27 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Alternative: import a full-featured MCP SDK and enable dynamic read/write tools. Rejected for this stage because it introduces optional auth/session streaming, larger attack surface, arbitrary tool behavior and dependencies before an authorized real outside service is selected. This strict subset is not a full generic MCP interoperability claim.
 - Tool annotations and local tests do not establish real publisher integrity, immutable read-only behavior or factual truth. P039's real service and timeout/auth requirements and P033's same-page denial-and-media phase exit remain separately open; no mandatory gate is omitted.
 - Source reference: https://modelcontextprotocol.io/specification/2025-06-18/basic/transports.
+
+
+## SUTRA-DECISION-0012 - The caller, not published agent hints, owns model selection
+
+- Observed 2026-11-23T19:47:30+05:45; verified source `141635df81697e7daed5a166815ab2ac3f3e1bb9`; [passed CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482).
+- Decision: pin the injected `model.approvedModel` for all provider-mode local and caller-local peer steps, ignoring model-name hints in untrusted public graph metadata. Reject malformed, blank and fixture-only provider identifiers before any work. This protects caller control of model policy, but the actual server proxy must still enforce fixed upstream/model allowlists and spending limits before paid activation.
+- Synthetic fake-provider credential canaries deliberately reside only in the caller adapter object, not ordinary prompt text, graph publications, consent metadata, peer artifact GETs, MCP POSTs or trace exports. Private `sly_data` is empty downstream by default, coded/REST/nested peer capability is unavailable in this profile.
+- Alternative: let peer `llm_config` select the provider model dynamically. Rejected because a malicious or expensive peer could alter cost, routing and credential exposure; preserving a single caller-selected model restricts legitimate peer preferences but reduces blast radius.
+- Limitations: a fake provider-mode browser test is **not** a live provider/BYOK integration, and normal delegated user text is not scrubbed of secrets. No blanket prompt-injection immunity or actual billing-control proof is claimed.
+
+## SUTRA-DECISION-0013 - Show missing and conflicting evidence rather than invent guide agreement
+
+- Observed 2026-11-23T19:47:30+05:45; verified source `141635df81697e7daed5a166815ab2ac3f3e1bb9`; [session implementation report](evidence/implementation/SESSION-0009.md).
+- Decision: keep an exact synthetic timing-catalog cue visible next to an **explicit missing reviewed-guide source**. Only a separately labeled hypothetical written guide (two signatures vs three) is used to test disagreement UI. Require bounded claim identity, scope, version, provenance and date-basis metadata. Same-scope exact structured values yield `consistent_unverified`, never factual truth; different values remain `unresolved_conflict`; different scopes remain `incomparable`.
+- Alternative: generate a plausible guide statement or let a language model infer agreement from free-form text. Rejected because it would create unsupported source claims and hide real conflicts until the participant supplies rights-cleared content and a reviewer.
+- The source-to-video navigation is anchored to actual media time after explicit activation; no automatic text scroll or fake playback success. Original lesson/media rights, reviewed guide and actual semantic comparison remain blocking inputs.
+
+## SUTRA-DECISION-0014 - Retain strict redirect refusal and bounded local export
+
+- Observed 2026-11-23T19:47:30+05:45; verified source `141635df81697e7daed5a166815ab2ac3f3e1bb9`.
+- Decision: keep artifact and MCP transport `redirect:'error'` until phase 037 can safely re-consent changed origins and verify full required behavior. Real Chromium rejected changed-origin, same-origin-changed-path and looping redirect fixtures before follow; original local video/evidence remained functional. This is a narrower deliberate profile and is **not** full redirect conformance.
+- User-triggered execution/review downloads project bounded whitelisted fields rather than serializing raw event, model or localStorage objects; accessor getters are not executed and synthetic/unverified status is explicit. Possible browser download failures are not reported as saved success.
+- Alternative: follow browser redirects automatically or serialize full debug events for reproducibility. Rejected due unexpected destination/contact expansion and potential private prompt, key or result leakage. Detailed forensic debugging remains an explicitly limited development feature, not a general public trace export.
+- No participant release authorization changed; public URLs, paid inference and final official submission remain gated.
