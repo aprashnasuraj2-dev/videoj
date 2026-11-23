@@ -17,15 +17,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Publish a second app under apps/sutra-peer/ with a checklist front agent and a source-selection helper. Give it its own static build and understandable human page.
 - **Phase exit:** The peer is independently fetchable on a distinct HTTPS origin, with no dependency on the caller bundle.
 
-- [ ] `SUTRA-P031-01` Create an independent apps/sutra-peer static package and build output
-- [ ] `SUTRA-P031-02` Publish a checklist front agent and narrow source-selection helper
+- [x] `SUTRA-P031-01` Create an independent apps/sutra-peer static package and build output
+- [x] `SUTRA-P031-02` Publish a checklist front agent and narrow source-selection helper
 - [ ] `SUTRA-P031-03` Serve a human-readable guide page with actual corpus provenance
-- [ ] `SUTRA-P031-04` Keep its public graph declarative and independently fetchable
-- [ ] `SUTRA-P031-05` Avoid requiring caller UI imports or a private agent server
-- [ ] `SUTRA-P031-06` Expose the exact checklist network identifier through its own manifest
-- [ ] `SUTRA-P031-07` Prepare distinct preview and production origin configuration
-- [ ] `SUTRA-P031-08` State both public origins are controlled by the same project owner
-- [ ] `SUTRA-P031-09` Produce and review the phase artifact: Peer graph, manifest, links and source page.
+- [x] `SUTRA-P031-04` Keep its public graph declarative and independently fetchable
+- [x] `SUTRA-P031-05` Avoid requiring caller UI imports or a private agent server
+- [x] `SUTRA-P031-06` Expose the exact checklist network identifier through its own manifest
+- [x] `SUTRA-P031-07` Prepare distinct preview and production origin configuration
+- [x] `SUTRA-P031-08` State both public origins are controlled by the same project owner
+- [x] `SUTRA-P031-09` Produce and review the phase artifact: Peer graph, manifest, links and source page.
 - [ ] `SUTRA-P031-10` Close phase 031 only after its applicable tasks have evidence and its exit condition is observed: The peer is independently fetchable on a distinct HTTPS origin, with no dependency on the caller bundle.
 
 ## Phase 032 - Resolve peers by exact network name
