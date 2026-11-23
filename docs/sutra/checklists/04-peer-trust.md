@@ -154,23 +154,25 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P038-09` Produce and review the phase artifact: Adversarial peer fixture set and containment report.
 - [ ] `SUTRA-P038-10` Close phase 038 only after its applicable tasks have evidence and its exit condition is observed: Test attacks cannot cause a blocked destination, unreviewed write, key leak or router override; limitations of prompt defenses are stated.
 
-## Phase 039 - Add a compatible read-only MCP path
+## Phase 039 - Keep MCP compatibility as a non-flagship regression example
 
 - **Baseline effort:** 2 person-hours; **owner:** E.
-- **Original phase dependencies:** 27,33,38. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Exercise the runtime MCP adapter against a controlled read-only test service or public permitted service. Confirm discovery and call consent, bounded results and clear CORS failure behavior.
-- **Phase exit:** At least one authorized tool read works; unavailable endpoints never trigger browser-security bypasses.
+- **Original phase dependencies:** 27,33,38. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work).
+- **Priority decision:** no further public/production MCP product work is planned for the submission. The controlled read-only browser fixture is retained because it already proves the runtime boundary and prevents regression; it is not a centerpiece, public-service claim or filmed-path dependency.
+- **Intent:** Preserve one controlled read-only interoperability fixture: approval before discovery/call, bounded results, declared-tool filtering, credentialless transport and browser CORS failure. Do not spend release time on public MCP hosting/authentication.
+- **Phase exit:** The controlled authorized read works and unavailable endpoints fail closed; the product does not depend on a production MCP service.
 
-- [ ] `SUTRA-P039-01` Choose a controlled or explicitly permitted read-only MCP service
-- [ ] `SUTRA-P039-02` Verify the pinned runtime’s MCP discovery and invocation support
-- [ ] `SUTRA-P039-03` Ask permission before discovery and before calls according to policy
-- [ ] `SUTRA-P039-04` Apply allowed-tool names and bounded argument/result schemas
-- [ ] `SUTRA-P039-05` Test successful grounded read, discovery error and service timeout
-- [ ] `SUTRA-P039-06` Verify browser CORS and fail closed when access is unavailable
-- [ ] `SUTRA-P039-07` Keep MCP authentication distinct from LLM router credentials
-- [ ] `SUTRA-P039-08` Document the tested endpoint behavior without implying production availability
-- [ ] `SUTRA-P039-09` Produce and review the phase artifact: MCP compatibility fixture and documented integration instructions.
-- [ ] `SUTRA-P039-10` Close phase 039 only after its applicable tasks have evidence and its exit condition is observed: At least one authorized tool read works; unavailable endpoints never trigger browser-security bypasses.
+- [x] `SUTRA-P039-01` Use the controlled project-authored read-only MCP fixture rather than adding a production/public service dependency
+- [x] `SUTRA-P039-02` Verify the pinned runtime’s MCP discovery and invocation support through the bounded browser transport
+- [x] `SUTRA-P039-03` Ask permission before discovery and before calls according to policy
+- [x] `SUTRA-P039-04` Apply declared-tool names and bounded argument/result schemas
+- [x] `SUTRA-P039-05` Test successful source-addressed read, protocol/provider failures and service timeout/cancellation
+- [x] `SUTRA-P039-06` Verify real browser CORS behavior and fail closed when endpoint access is unavailable
+- [x] `SUTRA-P039-07` Keep the fixture credentialless and distinct from LLM router credentials
+- [x] `SUTRA-P039-08` Document that the endpoint is controlled test infrastructure, not production availability
+- [x] `SUTRA-P039-09` Produce and review the phase artifact: controlled MCP compatibility fixture and regression documentation.
+- [x] `SUTRA-P039-10` Close phase 039 at the regression-example scope only: one authorized read works and unavailable access never triggers browser-security bypasses.
+
 
 ## Phase 040 - Close the interoperability milestone
 
