@@ -86,7 +86,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 
 - **Baseline effort:** 3 person-hours; **owner:** E+P.
 - **Original phase dependencies:** 07,23. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Implement a narrow same-origin default-inference proxy with a fixed approved upstream and model policy. Keep its provider credential server-side. Stream output and enforce payload and output ceilings.
+- **Intent:** Implement a narrow same-origin funded default-inference proxy with a fixed approved upstream and model policy. Keep its provider credential server-side. This remains the no-setup judge path, while P030 BYOK remains a separate user-funded fallback rather than being cut to preserve host budget. Stream output and enforce payload and output ceilings.
 - **Phase exit:** A new visitor completes the live task without bringing a key; no provider secret appears in assets, prompts or logs.
 
 - [x] `SUTRA-P025-01` Implement one narrow same-origin default-inference endpoint
@@ -172,20 +172,20 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P029-09` Produce and review the phase artifact: Write proposal, confirmation and receipt flow.
 - [ ] `SUTRA-P029-10` Close phase 029 only after its applicable tasks have evidence and its exit condition is observed: Cancelling writes changes no stored state; changing arguments after review requires a fresh confirmation.
 
-## Phase 030 - Add optional direct BYOK safely
+## Phase 030 - Keep direct BYOK as a first-class caller path
 
 - **Baseline effort:** 2 person-hours; **owner:** E.
-- **Original phase dependencies:** 25-29. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Offer only a tested browser-CORS-compatible router path with in-memory credentials and clear deletion. Keep the funded default as the judge path. If capacity is short, remove BYOK UI and publish it as unsupported.
-- **Phase exit:** If shipped, keys go only to the selected router and never to peer artifacts, actions, analytics, traces or exports.
+- **Original phase dependencies:** 25-29. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work). **Priority override:** implementation may proceed once caller-local routing/key-isolation boundaries exist; it does not need to wait for funded-provider activation.
+- **Intent:** Keep a user-chosen browser key path so inference cost can remain with the user when desired and so the project can directly prove that caller credentials never reach a second site. Use only tested browser-CORS-compatible routers, keep credentials in memory, and provide explicit deletion. Funded inference remains the no-setup judge path; BYOK is also the resilience path if funded inference throttles.
+- **Phase exit:** A live/synthetic key-canary run shows the key goes only to the selected router and never to peer artifacts, actions, analytics, traces, exports or storage; deleting the key removes the in-memory state.
 
-- [ ] `SUTRA-P030-01` Decide whether optional BYOK remains in scope after the default path works
-- [ ] `SUTRA-P030-02` Use only a tested permitted router with browser CORS support
-- [ ] `SUTRA-P030-03` Keep BYOK credentials in memory and provide explicit deletion
-- [ ] `SUTRA-P030-04` Prevent peer metadata from overriding caller router or model policy
-- [ ] `SUTRA-P030-05` Send keys only in authorized model requests to the selected router
-- [ ] `SUTRA-P030-06` Check URLs, prompts, actions, traces, analytics and exports for key canaries
-- [ ] `SUTRA-P030-07` Stop with a clear setup error if a required key is absent
-- [ ] `SUTRA-P030-08` If omitted, remove BYOK affordances and record the optional-scope decision
-- [ ] `SUTRA-P030-09` Produce and review the phase artifact: BYOK adapter and disclosure, or a documented omission decision.
-- [ ] `SUTRA-P030-10` Close phase 030 only after its applicable tasks have evidence and its exit condition is observed: If shipped, keys go only to the selected router and never to peer artifacts, actions, analytics, traces or exports.
+- [ ] `SUTRA-P030-01` Keep BYOK in shipped scope as a deliberate caller-funded inference path, not an optional first cut
+- [ ] `SUTRA-P030-02` Use only a tested permitted router with browser CORS support and an explicit router origin
+- [ ] `SUTRA-P030-03` Keep BYOK credentials in memory only and provide explicit deletion/reset
+- [x] `SUTRA-P030-04` Prevent peer metadata from overriding caller router or model policy
+- [ ] `SUTRA-P030-05` Send keys only in authorized model requests to the selected router and never to peer artifact origins
+- [ ] `SUTRA-P030-06` Check URLs, prompts, actions, traces, analytics, exports and browser storage for synthetic key canaries
+- [ ] `SUTRA-P030-07` Stop with a clear setup error if BYOK is selected but its required key/model configuration is absent
+- [ ] `SUTRA-P030-08` Prove the funded path and BYOK path can fail independently, with BYOK remaining usable when funded inference is throttled/unavailable
+- [ ] `SUTRA-P030-09` Produce and review the phase artifact: BYOK adapter, key-isolation trace and deletion/fallback behavior.
+- [ ] `SUTRA-P030-10` Close phase 030 only after its applicable tasks have evidence and its exit condition is observed: User keys reach only the selected router and never the second site or exported evidence.
