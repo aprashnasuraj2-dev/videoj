@@ -100,3 +100,11 @@ test('invalid action registry is rejected before model execution',async()=>{
  await assert.rejects(run({actionRegistry:{catalog(){return[];}},model:{mode:'scripted-test',async chat(){calls++;return {content:'x',toolCalls:[]};}}}),e=>e.code==='ACTION_REGISTRY');
  assert.equal(calls,0);
 });
+
+test('CRUSE metadata is bounded to exact version 1',async()=>{
+ for(const cruse of [{version:2},{version:1,extra:true},'v1']){
+  const g=copy();g.cruse=cruse;let calls=0;
+  await assert.rejects(run({definition:g,model:{mode:'scripted-test',async chat(){calls++;return {content:'x',toolCalls:[]};}}}),e=>e.code==='PRESENTATION');
+  assert.equal(calls,0);
+ }
+});
