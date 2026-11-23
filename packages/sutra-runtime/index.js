@@ -110,7 +110,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  if(signal?.aborted)aborted();else signal?.addEventListener('abort',aborted,{once:true});
  const trace=new TraceBus(),events=[];let modelCalls=0,active=0,totalOutput=0,failure=null,closed=false;const waiters=[];
  const check=()=>{if(closed)fail('CLOSED','Run is closed.');if(controller.signal.aborted)throw controller.signal.reason;};
- const emit=event=>{const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,100);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
+ const emit=event=>{const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','network','origin'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,100);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
  trace.addEventListener('event',e=>emit(e.detail));
  const abortWaiters=()=>{for(const wake of waiters.splice(0))wake();};controller.signal.addEventListener('abort',abortWaiters);
  const deadline=setTimeout(()=>controller.abort(new RuntimeError('TIMEOUT','Run exceeded its elapsed time limit.')),bounds.timeoutMs);
