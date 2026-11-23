@@ -71,7 +71,7 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
   const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');
   if(digest!==timingFixture.source.mediaHash)throw Error('Media version mismatch.');
   timingObjectUrl=URL.createObjectURL(new Blob([bytes],{type:'video/mp4'}));
-  timingPlayer=mountTimingPlayer(mediaHost,{source:timingObjectUrl,chapters:new URL('timing-chapters.vtt',base).href,captions:new URL('timing-captions.vtt',base).href});
+  timingPlayer=mountTimingPlayer(mediaHost,{source:timingObjectUrl,poster:new URL('timing-poster.svg',base).href,chapters:new URL('timing-chapters.vtt',base).href,captions:new URL('timing-captions.vtt',base).href});
   mediaHost.classList.add('player-mounted');await timingPlayer.ready();if(Math.abs(timingPlayer.media.duration-timingFixture.source.duration)>.1)throw Error('Media duration mismatch.');
   timingTranscript?.dispose();
   timingTranscript=mountTranscriptPanel(transcriptHost,{
