@@ -48,9 +48,10 @@ test('explicitly denied external contact never reaches the redirecting endpoint'
 test('custom transport cannot silently return already-redirected JSON',async()=>{
  const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
  for(const redirectedUrl of ['https://peer.example/other.json','https://different.example/capture']){
-  const fetchImpl=async()=>Object.assign(new Response('{"ok":true}',{headers:{'Content-Type':'application/json'}}),{
-   redirected:true,url:redirectedUrl
-  });
+  const fetchImpl=async()=>{
+   const response=new Response('{"ok":true}',{headers:{'Content-Type':'application/json'}});
+   return {redirected:true,url:redirectedUrl,ok:response.ok,headers:response.headers,body:response.body};
+  };
   await assert.rejects(fetchJsonWithConsent({inspector,contact:contact('https://peer.example'),url:'https://peer.example/manifest.json',fetchImpl}),error=>error.code==='CONTACT_REDIRECT');
  }
 });
