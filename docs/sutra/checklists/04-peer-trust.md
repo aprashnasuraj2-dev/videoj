@@ -55,7 +55,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 
 - [x] `SUTRA-P033-01` Show intended external origin and purpose before the first contact
 - [x] `SUTRA-P033-02` Obtain approval before manifest fetch and graph retrieval
-- [ ] `SUTRA-P033-03` Apply consent checks before third-party MCP discovery and calls
+- [x] `SUTRA-P033-03` Apply consent checks before third-party MCP discovery and calls
 - [x] `SUTRA-P033-04` Implement denial with no network request side effect
 - [x] `SUTRA-P033-05` Use per-contact approval as the initial policy
 - [x] `SUTRA-P033-06` Allow session-scoped remembered decisions only through an explicit user choice
@@ -162,14 +162,14 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** At least one authorized tool read works; unavailable endpoints never trigger browser-security bypasses.
 
 - [ ] `SUTRA-P039-01` Choose a controlled or explicitly permitted read-only MCP service
-- [ ] `SUTRA-P039-02` Verify the pinned runtime’s MCP discovery and invocation support
-- [ ] `SUTRA-P039-03` Ask permission before discovery and before calls according to policy
-- [ ] `SUTRA-P039-04` Apply allowed-tool names and bounded argument/result schemas
+- [x] `SUTRA-P039-02` Verify the pinned runtime’s MCP discovery and invocation support
+- [x] `SUTRA-P039-03` Ask permission before discovery and before calls according to policy
+- [x] `SUTRA-P039-04` Apply allowed-tool names and bounded argument/result schemas
 - [ ] `SUTRA-P039-05` Test successful grounded read, discovery error and service timeout
-- [ ] `SUTRA-P039-06` Verify browser CORS and fail closed when access is unavailable
+- [x] `SUTRA-P039-06` Verify browser CORS and fail closed when access is unavailable
 - [ ] `SUTRA-P039-07` Keep MCP authentication distinct from LLM router credentials
-- [ ] `SUTRA-P039-08` Document the tested endpoint behavior without implying production availability
-- [ ] `SUTRA-P039-09` Produce and review the phase artifact: MCP compatibility fixture and documented integration instructions.
+- [x] `SUTRA-P039-08` Document the tested endpoint behavior without implying production availability
+- [x] `SUTRA-P039-09` Produce and review the phase artifact: MCP compatibility fixture and documented integration instructions.
 - [ ] `SUTRA-P039-10` Close phase 039 only after its applicable tasks have evidence and its exit condition is observed: At least one authorized tool read works; unavailable endpoints never trigger browser-security bypasses.
 
 ## Phase 040 - Close the interoperability milestone
