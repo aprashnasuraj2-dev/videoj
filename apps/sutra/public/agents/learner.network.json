@@ -50,5 +50,8 @@
       "instructions": "Explain source consistency limits. No original lesson is connected; do not invent a transcript, a correct reading, factual verification or a completed user action.",
       "tools": []
     }
-  ]
+  ],
+  "cruse": {
+    "version": 1
+  }
 }
