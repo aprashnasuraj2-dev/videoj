@@ -257,3 +257,16 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Session 0015 evidence: `docs/sutra/evidence/implementation/SESSION-0015.md`.
 - Verified P046-01..10; Phase 046 closes. New total **278/1000**, **22 fully verified phases**.
 - Next independent learner-quality work: provenance inspector, ordinary media-control/browser checks or transcript experience. Live provider/public HTTPS/release remain blocked.
+
+
+## SUTRA-SESSION-0016 — Safe run-provenance inspector
+
+- Observed 2026-11-23T17:45:49+05:45; tested source candidate `ee4a4829ee756b756b4d2dad7cc1223cf84d8e70`.
+- Added a bounded allow-list provenance store with up to 12 completed runs and four overlapping active runs keyed by explicit run ID.
+- Local, source and peer runs now expose exact spec/runtime/build identity, graph SHA-256 SRI, model/router, contacted origins, sanitized agent/tool names, call counts, elapsed/budget data, consent decisions, action statuses and fixed error codes.
+- Added user-initiated redacted JSON export. Raw prompts, model text, tool arguments, receipt payloads and private values are never part of the provenance input schema.
+- Tightened identifier redaction after tests found two leakage classes: credential-shaped strings that looked like valid public IDs, and runtime labels that bypassed the common sanitizer.
+- Chromium downloads/validates the provenance JSON, confirms the BYOK canary and routed prompt text are absent, and proves deleting the optional inspector does not break evidence validation or native playback.
+- Retained failures 45169335475, 45169474354, 45169623505 and 45169892087; final full shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45170096228.
+- Verified P047-01..10; Phase 047 closes. New total **288/1000**, **23 fully verified phases**.
+- Next: Phase 042 ordinary media controls/error/focus checks. Live provider/public HTTPS/release remain external/blocked.
