@@ -28,7 +28,7 @@ const server=http.createServer(async(req,res)=>{
  if(body.method==='tools/call'){
   if(body.params?.name!=='lookup')return json(res,200,{jsonrpc:'2.0',id:body.id,error:{code:-32601,message:'Tool not allowed'}});
   const args=body.params.arguments;if(!args||typeof args.request!=='string'||!args.request.trim()||args.request.length>1200||Object.keys(args).some(key=>key!=='request'))return json(res,200,{jsonrpc:'2.0',id:body.id,error:{code:-32602,message:'Invalid arguments'}});
-  return reply({isError:false,structuredContent:{version:1,truthStatus:'unverified',answer:'Synthetic controlled MCP read.',requestEcho:args.request}});
+  return reply({isError:false,structuredContent:{version:1,truthStatus:'unverified',sourceId:'mcp-fixture-source',sourceVersion:'fixture-v1',cueId:'mcp-fixture-cue',excerpt:'Synthetic controlled MCP read.',requestEcho:args.request}});
  }
  return json(res,200,{jsonrpc:'2.0',id:body.id,error:{code:-32601,message:'Method not found'}});
 });
