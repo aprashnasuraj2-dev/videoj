@@ -10,4 +10,11 @@ test('built peer serves human page and public artifacts independently on loopbac
  const data=await manifest.json();assert.equal(data.networks[0].name,'checklist');
  const graph=await fetch(base+'/agents/checklist.network.json',{credentials:'omit'});assert.equal(graph.status,200);assert.equal(graph.headers.get('access-control-allow-origin'),'*');assert.deepEqual((await graph.json()).tools.map(x=>x.name),['checklist','source_select']);
  const missing=await fetch(base+'/agents/not-published.json');assert.equal(missing.status,404);
+ const [{loadPeerNetwork},{createConsentInspector}]=await Promise.all([
+  import('../../../packages/sutra-runtime/index.js'),import('../../../packages/sutra-consent/index.js')
+ ]);
+ const decisions=[];const inspector=createConsentInspector({decide:async intent=>{decisions.push({kind:intent.kind,origin:intent.origin,network:intent.network});return {decision:'allow',scope:'once'};}});
+ const loaded=await loadPeerNetwork({peerUrl:base+'/agents/checklist',inspector,fetchImpl:fetch});
+ assert.equal(loaded.name,'checklist');assert.equal(loaded.frontMan,'checklist');assert.deepEqual(loaded.definition.tools.map(x=>x.name),['checklist','source_select']);
+ assert.deepEqual(decisions,[{kind:'peer_manifest',origin:base,network:'checklist'},{kind:'peer_graph',origin:base,network:'checklist'}]);
 });
