@@ -1,5 +1,6 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
-import {compileNetwork,runNetwork,executionLimits} from '../index.js';import {createScriptedModel} from '../testing.js';
+import {compileNetwork,runNetwork,executionLimits} from '../index.js';
+import {ActionRegistry} from '../vendor/nsdeploy/actions.js';import {createScriptedModel} from '../testing.js';
 const graph=JSON.parse(fs.readFileSync(new URL('../examples/learner.network.json',import.meta.url)));
 const copy=()=>structuredClone(graph);const run=(opts={})=>runNetwork({definition:copy(),request:'Inspect the synthetic cue.',model:createScriptedModel(),...opts});
 test('reference loop runs two agents and three scripted model steps',async()=>{const result=await run();assert.equal(result.mode,'scripted-test');assert.equal(result.agentCalls,2);assert.equal(result.modelCalls,3);assert.match(result.text,/No live AI/);assert.ok(result.events.some(e=>e.kind==='agent'&&e.agent==='evidence'));});
@@ -80,4 +81,23 @@ test('budget partial output is bounded and control characters are removed',async
  await assert.rejects(run({definition:g,model,limits:{maxAgents:1}}),e=>{
   assert.equal(e.code,'COMPOSITION_LIMIT');assert.ok(e.partialText.length<=2000);assert.equal(e.partialText.includes('\u0000'),false);return true;
  });
+});
+
+test('host action registry exposes only its narrow catalog through the runtime prompt',async()=>{
+ const registry=new ActionRegistry();
+ const ref=registry.register({base:'https://sutra.invalid',network:'learner'},{
+  name:'save-review-card',description:'Save reviewed fixture locally.',
+  inputSchema:{type:'object',properties:{receiptId:{type:'string',minLength:1,maxLength:40}},required:['receiptId'],additionalProperties:false},
+  effect:'write',availability:'local-only',callerOrigins:['https://sutra.invalid'],timeoutMs:1000
+ },async()=>({ok:true}));
+ const seen=[];const model={mode:'scripted-test',async chat({messages})=>({content:'fixture action catalog inspected',toolCalls:[]})};
+ const capture={mode:'scripted-test',async chat(args){seen.push(args.messages.map(m=>m.content).join('\n'));return {content:'fixture action catalog inspected',toolCalls:[]};}};
+ const result=await run({model:capture,actionRegistry:registry});
+ assert.match(result.text,/fixture action catalog inspected/);assert.equal(seen.length,1);
+ assert.ok(seen[0].includes(ref));assert.ok(seen[0].includes('save-review-card'));assert.ok(seen[0].includes('"effect":"write"'));
+});
+test('invalid action registry is rejected before model execution',async()=>{
+ let calls=0;
+ await assert.rejects(run({actionRegistry:{catalog(){return[];}},model:{mode:'scripted-test',async chat(){calls++;return {content:'x',toolCalls:[]};}}}),e=>e.code==='ACTION_REGISTRY');
+ assert.equal(calls,0);
 });
