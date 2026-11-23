@@ -41,7 +41,7 @@ function assertJsonData(value,ancestors=new Set(),depth=0){
 
 // The current profile deliberately accepts local declarative agents only.
 // Peer/MCP/action/code loading must be integrated with consent in later phases.
-export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false}={}){
+export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false,allowPeers=false}={}){
  const bounds=executionLimits(limits);
  assertJsonData(definition);
  let json;
@@ -73,12 +73,19 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
   if(agent.llm_config!==undefined){if(!plain(agent.llm_config))fail('MODEL','Invalid model hints.');allowed(agent.llm_config,['model_name'],'model');if(typeof agent.llm_config.model_name!=='string')fail('MODEL','Invalid model hint.');}
  }
  if(raw.llm_config!==undefined){if(!plain(raw.llm_config))fail('MODEL','Invalid network model hints.');allowed(raw.llm_config,['model_name'],'model');if(typeof raw.llm_config.model_name!=='string')fail('MODEL','Invalid model hint.');}
- for(const agent of raw.tools)for(const ref of agent.tools)if(typeof ref==='string'&&!names.has(ref))fail('REFERENCE','External or missing capabilities are unavailable in this local profile.');
+ for(const agent of raw.tools)for(const ref of agent.tools)if(typeof ref==='string'&&!names.has(ref)){
+  if(!allowPeers||!/^https:\/\//.test(ref))fail('REFERENCE','External or missing capabilities are unavailable in this local profile.');
+  // Only exact public peer graph references are permitted, never arbitrary
+  // transport endpoints or MCP endpoints disguised as peer networks.
+  parsePeerNetworkReference(ref);
+  const dest=new URL(ref);
+  if(dest.hostname.split('.').includes('mcp')||dest.pathname.split('/').includes('mcp'))fail('REFERENCE','MCP endpoints are not permitted through peer composition.');
+ }
  const byName=new Map(raw.tools.map(a=>[a.name,a]));
  function visit(name,chain=[]){
   if(chain.includes(name))fail('CYCLE','Composition cycle rejected before execution.');
   if(chain.length>=bounds.maxDepth)fail('DEPTH','Composition depth exceeds runtime policy.');
-  for(const ref of byName.get(name).tools)if(typeof ref==='string')visit(ref,[...chain,name]);
+  for(const ref of byName.get(name).tools)if(typeof ref==='string'&&names.has(ref))visit(ref,[...chain,name]);
  }
  for(const agent of raw.tools)visit(agent.name);
  const network=new AgentNetwork(raw,name);
@@ -89,8 +96,12 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
 
 // Model adapters are explicitly injected; there is no keyless automatic mock fallback.
 // A scripted-test adapter is only a test driver, not a live inference service.
-export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools}={}){
- const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools});
+export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,peerRuntime}={}){
+ if(peerRuntime!==undefined){
+  if(!plain(peerRuntime)||typeof peerRuntime.inspector?.perform!=='function'||peerRuntime.fetchImpl!==undefined&&typeof peerRuntime.fetchImpl!=='function')fail('PEER_CONFIG','Peer invocation requires an explicit contact inspector and optional fetch implementation.');
+  allowed(peerRuntime,['inspector','fetchImpl'],'peer runtime');
+ }
+ const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeers:!!peerRuntime});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
  if(!model||typeof model.chat!=='function'||!['scripted-test','provider'].includes(model.mode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
  if(signal?.aborted)fail('CANCELLED','Run cancelled before model execution.');
@@ -129,13 +140,37 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   }catch(error){failure=error;controller.abort(error);trace.fail(span,new Error('Model or tool boundary failed.'));throw error;}
   finally{active--;waiters.shift()?.();}
  }};
- const composition={remoteCalls:0,peerCalls:new Map(),maxRemoteCalls:0,maxCallsPerPeer:0,agentCalls:0,maxAgentCalls:bounds.maxAgents,deadlineSeconds:bounds.timeoutMs/1000,deadline:Date.now()+bounds.timeoutMs};
+ const composition={remoteCalls:0,peerCalls:new Map(),maxRemoteCalls:peerRuntime?2:0,maxCallsPerPeer:peerRuntime?1:0,agentCalls:0,maxAgentCalls:bounds.maxAgents,deadlineSeconds:bounds.timeoutMs/1000,deadline:Date.now()+bounds.timeoutMs};
  const unavailable=()=>fail('CAPABILITY_UNAVAILABLE','External capabilities are disabled in this local runtime profile.');
  try{
  const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
  const guardSource=method=>async(...args)=>{check();try{return await rawSourceClient[method](...args);}catch{const error=new RuntimeError('CAPABILITY_UNAVAILABLE','Source retrieval failed; no completed source result is claimed.');failure=error;controller.abort(error);throw error;}};
  const sourceClient=rawSourceClient?{listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
- const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote:unavailable,resolveMcp:sourceClient?async ref=>{check();if(ref?.url!=='/api/source-tools')return unavailable();return sourceClient;}:unavailable,resolveLink:unavailable,requestConsent:async()=> 'decline'};
+ // The vendor runner is pinned unchanged. A peer error would normally become
+ // model-visible tool text; instead abort this host with its sanitized exact
+ // failure code so a model cannot turn a failed load into a completed answer.
+ const resolvePeer=async(url,chain,parentSpan)=>{
+  check();if(!peerRuntime)return unavailable();
+  let loaded,peer;
+  try{
+   loaded=await loadPeerNetwork({peerUrl:url,inspector:peerRuntime.inspector,fetchImpl:peerRuntime.fetchImpl??fetch,signal:controller.signal,timeoutMs:Math.min(bounds.timeoutMs,5000)});
+   peer=compileNetwork(loaded.definition,{name:loaded.name,frontMan:loaded.frontMan,limits:bounds});
+  }catch(error){
+   const code=typeof error?.code==='string'&&/^[A-Z][A-Z0-9_]{1,50}$/.test(error.code)?error.code:'LOAD_FAILED';
+   const controlled=new RuntimeError('PEER_'+code,`Peer artifact loading stopped (${code}); no completed peer answer is claimed.`);
+   failure=controlled;controller.abort(controlled);throw controlled;
+  }
+  return {invoke:async(message,{parentSpan:span,chain:visited=[],composition:sharedBudget}={})=>{
+   check();
+   if(!plain(message)||!plain(message.user_message)||typeof message.user_message.text!=='string')fail('PEER_REQUEST','Invalid delegated peer request.');
+   const peerCtx={...ctx,network:peer.network,frontMan:peer.frontMan,baseOrigin:loaded.origin,displayOrigin:loaded.origin,isTop:false,slyData:{},composition:sharedBudget??composition};
+   // Run the published data as local agents under the caller's one model
+   // adapter, total model budget, trace and abort signal. Never send prompt
+   // text or an API key to the artifact-serving peer origin.
+   return runAgent(peerCtx,peer.frontMan,message.user_message.text,span,visited);
+  }};
+ };
+ const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote:resolvePeer,resolveMcp:sourceClient?async ref=>{check();if(ref?.url!=='/api/source-tools')return unavailable();return sourceClient;}:unavailable,resolveLink:unavailable,requestConsent:async info=>info?.kind==='network'&&!!peerRuntime?'proceed':'decline'};
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
   if(!result.text||events.some(e=>e.kind==='composition_limit'))fail('INCOMPLETE','Execution stopped before a complete answer.');
   return {text:result.text,mode:model.mode,modelCalls,agentCalls:composition.agentCalls,events};
