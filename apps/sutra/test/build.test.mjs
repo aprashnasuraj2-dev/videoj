@@ -33,3 +33,10 @@ test('pre-release artifact inventory names all bundled public agent surfaces',()
  assert.match(inventory,/peer public origin is intentionally \*\*unset\*\*/i);
  assert.match(inventory,/not deployment evidence/i);
 });
+
+test('learner UI exposes composition budget category and labels partial output incomplete',()=>{
+ const source=fs.readFileSync(path.join(app,'src/main.js'),'utf8');
+ assert.match(source,/COMPOSITION_LIMIT/);
+ assert.match(source,/Incomplete partial output/);
+ assert.match(source,/No completed (?:peer )?result is claimed/);
+});
