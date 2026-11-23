@@ -1,5 +1,13 @@
 # SUTRA progress register
 
+## Session 0016 checkpoint — Phase 047 complete
+
+**288/1,000 tasks verified; 23 phases fully verified.** The optional run-provenance inspector now has a bounded allow-list state model, exact spec/runtime/graph/model/router/contact/call/budget metadata, structured action outcomes, redacted JSON download, credential/private canary tests, and explicit failure isolation from evidence/playback.
+
+Tested source candidate: `ee4a4829ee756b756b4d2dad7cc1223cf84d8e70`; full shell/Chromium https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45170096228. See [session 0016 evidence](evidence/implementation/SESSION-0016.md).
+
+**Next independent work:** Phase 042 shipped DHAGO media controls/error/focus coverage, then transcript experience. Live provider/router CORS, public HTTPS/CORS, original rights-cleared media/factual review, physical-device evidence, release and Devpost remain open.
+
 ## Session 0015 checkpoint — reviewed actions and review-card flow
 
 **278/1,000 tasks verified; 22 phases fully verified.** The learner now exposes a host-owned CRUSE action catalog, executes confirmed save/export through the pinned ActionRegistry, downloads a validated local JSON receipt, and preserves browser-only review storage/reload/delete semantics. Phase 029 and Phase 046 are complete. Phase 023 gains its action/runtime-artifact checks but remains open because real configured inference is not yet observed.
