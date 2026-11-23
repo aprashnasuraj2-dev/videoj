@@ -2,6 +2,22 @@
 import {readPlaybackState} from './playback-state.js';
 import {createDhagoPlayer} from '../../../src/create-player.ts';
 
+export function validateNativeSeekTarget(media,seconds){
+ if(!media||!Number.isFinite(seconds)||seconds<0)throw new Error('Cue target is invalid.');
+ const duration=media.duration;
+ if(!Number.isFinite(duration)||duration<=0)throw new Error('This media has no finite seekable duration.');
+ if(seconds>duration)throw new Error('Cue is outside the loaded media.');
+ const ranges=media.seekable;
+ if(!ranges||!Number.isInteger(ranges.length)||ranges.length<1)throw new Error('This media has no available seek range.');
+ let available=false;
+ for(let i=0;i<ranges.length;i++){
+  const start=ranges.start(i),end=ranges.end(i);
+  if(Number.isFinite(start)&&Number.isFinite(end)&&seconds>=start&&seconds<=end){available=true;break;}
+ }
+ if(!available)throw new Error('The requested cue is outside available seek ranges.');
+ return seconds;
+}
+
 export function mountTimingPlayer(host,{source,chapters,captions}){
  const player=createDhagoPlayer({source,chapters,captions,surface:'minimal'});
  host.replaceChildren(player);
@@ -22,10 +38,7 @@ export function mountTimingPlayer(host,{source,chapters,captions}){
  return {element:player,media,readState:()=>readPlaybackState(media),
   ready:()=>waitFor('loadedmetadata',()=>media.readyState>=1),
   async seek(seconds){
-   if(!Number.isFinite(seconds)||seconds<0||!Number.isFinite(media.duration)||seconds>media.duration)throw new Error('Cue is outside the loaded media.');
-   if(!media.seekable.length)throw new Error('This media has no available seek range.');
-   let available=false;for(let i=0;i<media.seekable.length;i++)if(seconds>=media.seekable.start(i)&&seconds<=media.seekable.end(i))available=true;
-   if(!available)throw new Error('The requested cue is outside available seek ranges.');
+   validateNativeSeekTarget(media,seconds);
    await waitFor('seeked',()=>!media.seeking&&Math.abs(media.currentTime-seconds)<=1,()=>{media.currentTime=seconds;});
    return media.currentTime;
   }
