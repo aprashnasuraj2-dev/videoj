@@ -16,7 +16,7 @@ const mime=file=>({
 
 (async()=>{
  const app=path.resolve(__dirname,'..'),dist=path.join(app,'dist');
- const upstream='http://127.0.0.1:4190',site='http://127.0.0.1:4191';
+ const upstream='http://127.0.0.1:4280',site='http://127.0.0.1:4281';
  const {securityHeaders}=await import(path.join(app,'../../services/sutra-api/worker.js'));
  const headers=securityHeaders({});
  assert.ok(fs.existsSync(path.join(dist,'index.html')),'built dist/index.html is required before CSP browser test');
@@ -42,8 +42,8 @@ const mime=file=>({
  });
  let browser;
  try{
-  await new Promise((resolve,reject)=>staticServer.once('error',reject).listen(4190,'127.0.0.1',resolve));
-  await new Promise((resolve,reject)=>proxy.once('error',reject).listen(4191,'127.0.0.1',resolve));
+  await new Promise((resolve,reject)=>staticServer.once('error',reject).listen(4280,'127.0.0.1',resolve));
+  await new Promise((resolve,reject)=>proxy.once('error',reject).listen(4281,'127.0.0.1',resolve));
   assert.equal((await fetch(upstream+'/index.html')).status,200);
   browser=await chromium.launch({headless:true});
   const page=await browser.newPage({viewport:{width:1000,height:800}});
