@@ -10,6 +10,16 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:1280,height:1050}});const errors=[],external=[],requests=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{requests.push(r.url());if(!r.url().startsWith(base+'/')&&!r.url().startsWith('blob:'+base+'/'))external.push(r.url());});
   await page.goto(base);await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+  // Text-first path stays usable before the optional MP4 is requested.
+  const initialTranscript=page.getByRole('searchbox',{name:'Search synthetic transcript'});
+  assert.equal(await initialTranscript.count(),1);
+  assert.equal(requests.some(url=>url.includes('/media/timing-fixture.mp4')),false);
+  await initialTranscript.fill('timing marker');
+  assert.equal(await page.locator('#timing-transcript-panel .transcript-cue').count(),1);
+  await page.locator('#timing-transcript-panel .transcript-cue').click();
+  assert.match(await page.locator('#timing-transcript-panel .transcript-status').innerText(),/could not be reached/);
+  assert.equal(requests.some(url=>url.includes('/media/timing-fixture.mp4')),false,'transcript interaction must not autoload video');
+  await initialTranscript.fill('');
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
   assert.match(await page.locator('#comparison-body .comparison-status').innerText(),/No reviewed guide claim/);
   assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/synthetic-timing-fixture/);
