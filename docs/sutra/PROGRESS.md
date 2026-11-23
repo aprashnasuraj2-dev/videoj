@@ -2,7 +2,21 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
-## Session 0007 checkpoint — 2026-11-23
+## Session 0008 checkpoint — 2026-11-23
+
+**203 / 1,000 verified checks; 12 phases complete.** Phase 032 remains closed. Phase 033 is one uncredited exit check from completion; phase 039 is partially verified only against a synthetic read-only MCP fixture.
+
+**Observed:** The exact code candidate `e2766f1ca8bc1b09d2495af977f749e4a8317de1` passed [GitHub Actions](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45178921845/job/137707320526), including SUTRA app/runtime tests, pinned upstream checks and four Chromium integration scripts. A separate-loopback-origin MCP server accepted only JSON-RPC 2025-06-18 read-public discovery/call traffic. Tests observed **zero external POSTs on denied discovery**, zero tool calls after call denial, four credentialless approved RPCs and a browser CORS rejection that did not claim success. No real outside service was contacted.
+
+**Implemented:** `thirdPartyMcp` host injection requires exact `/mcp` URL and reusable inspector, narrow read-only tool schema, 32 KiB response cap and disabled cookies/redirects. Discovery and calls each receive independent consent; failure aborts the invoking run. The untrusted result is labelled unverified.
+
+**Not verified:** actual third-party publisher rights/availability, full streaming/session-based MCP compatibility, real provider/BYOK secret isolation, production HTTPS CORS and factual truth. A later same-page browser case confirming the original video/evidence remains usable after denied MCP contact is still awaiting an observed passing run; keep `SUTRA-P033-10` pending.
+
+**Next:** observe the additional browser case and only then close phase 033 if green; identify an approved real public-read MCP service for bounded compatibility/timeouts; continue `SUTRA-P035-05` credential canaries. No public release, paid inference, domain/route assignment, final ZIP or Devpost filing. [Session evidence](evidence/implementation/SESSION-0008.md). Development remains [draft PR #49](https://github.com/aprashnasuraj2-dev/videoj/pull/49).
+
+---
+
+## Session 0007 checkpoint (historical) — 2026-11-23
 
 **196/1,000 checks verified; 12 phases complete.** Phase 032 (exact peer resolution and invoking-network errors) closes. Phase 035 caller-local peer execution advances eight checks, but its credential-canary and exit gates remain open.
 
