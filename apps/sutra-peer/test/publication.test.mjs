@@ -16,6 +16,6 @@ test('build output is a self-contained static publication',()=>{
  for(const p of ['dist/index.html','dist/peer.config.json','dist/src/main.js','dist/src/style.css','dist/agents/agent-manifest.json','dist/agents/checklist.network.json','dist/agents/links.json'])assert.ok(fs.statSync(path.join(root,p)).isFile(),p);
  const built=read('dist/agents/agent-manifest.json');assert.equal(built.networks[0].name,'checklist');
 });
-test('origin configuration distinguishes local preview from proposed undeployed production',()=>{
- const c=read('peer.config.json');assert.equal(c.preview_origin,'http://127.0.0.1:4185');assert.equal(c.production_status,'proposed_not_deployed');assert.match(c.production_origin,/^https:\/\//);assert.notEqual(c.preview_origin,c.production_origin);assert.equal(c.ownership,'same_project_owner');
+test('origin configuration refuses to invent a same-site production peer',()=>{
+ const c=read('peer.config.json');assert.equal(c.preview_origin,'http://127.0.0.1:4185');assert.equal(c.production_status,'unassigned_not_deployed');assert.equal(c.production_origin,null);assert.match(c.production_origin_requirement,/different registrable domain/i);assert.equal(c.caller_production_origin,'https://sutra.aafnaipatro.com');assert.equal(c.ownership,'same_project_owner');
 });
