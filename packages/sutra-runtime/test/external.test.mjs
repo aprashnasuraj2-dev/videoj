@@ -50,7 +50,7 @@ test('peer denial performs no artifact request and the invoking network can cont
 });
 test('peer agents consume the same caller agent budget',async()=>{
  const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
- await assert.rejects(runNetwork({definition:callerGraph(),request:'Use the checklist peer.',model:peerModel(),limits:{maxAgents:2},external:{baseOrigin:'https://caller.example',inspector,fetchImpl:peerFetch()}}),e=>e.code==='INCOMPLETE');
+ await assert.rejects(runNetwork({definition:callerGraph(),request:'Use the checklist peer.',model:peerModel(),limits:{maxAgents:2},external:{baseOrigin:'https://caller.example',inspector,fetchImpl:peerFetch()}}),e=>e.code==='COMPOSITION_LIMIT'&&e.limit==='agent_calls'&&typeof e.partialText==='string');
 });
 test('peer model hints cannot replace the caller-selected model or receive adapter secrets',async()=>{
  const hinted=structuredClone(peerGraph);hinted.llm_config={model_name:'peer-network-hint'};for(const agent of hinted.tools)agent.llm_config={model_name:'peer-agent-hint'};
