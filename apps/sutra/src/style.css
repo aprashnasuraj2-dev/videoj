@@ -3,3 +3,5 @@
 .runtime-lab{margin-top:24px;background:#fffef9;border:1px solid #d6ddd5;border-radius:14px;padding:28px}.runtime-lab>p{max-width:840px;font-size:14px}.runtime-lab li{font-size:13px}button:disabled{opacity:.6;cursor:wait}
 
 .media-empty button{color:#fff;border-color:#94b1a6}.media-empty.player-mounted{padding:0;min-height:0;background:#183e3d}.player-mounted video-player{display:block;width:100%}.player-mounted video{width:100%;aspect-ratio:16/9}#timing-status{font-size:12px}
+
+.review-section{margin-top:24px;background:#fffef9;border:1px solid #d6ddd5;border-radius:14px;padding:28px}.review-section p{font-size:14px}dialog{max-width:min(680px,94vw);max-height:90vh;overflow:auto;border:1px solid #9eb7a7;border-radius:12px;color:#163c3d;background:#fffef9;padding:24px}dialog::backdrop{background:#102b2bb3}dialog pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px}#review-list{padding-left:20px}#review-list li{font-size:13px;margin:12px 0}

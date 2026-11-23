@@ -20,10 +20,28 @@ export function executionLimits(input={}){
  }
  return Object.freeze(out);
 }
+// Inspect data descriptors before stringify so accessors/toJSON cannot execute as publication data.
+function assertJsonData(value,ancestors=new Set(),depth=0){
+ if(value===null||typeof value==='string'||typeof value==='boolean')return;
+ if(typeof value==='number'){if(!Number.isFinite(value))fail('NETWORK_DATA','Only finite JSON numbers are supported.');return;}
+ if(typeof value!=='object'||!Array.isArray(value)&&Object.getPrototypeOf(value)!==Object.prototype&&Object.getPrototypeOf(value)!==null)fail('NETWORK_DATA','Only plain JSON data is supported.');
+ if(depth>20||ancestors.has(value))fail('NETWORK_DATA','Network data is too deep or cyclic.');
+ const keys=Reflect.ownKeys(value);if(keys.length>4096)fail('NETWORK_DATA','Network object is too large.');
+ ancestors.add(value);
+ for(const key of keys){
+  if(Array.isArray(value)&&key==='length')continue;
+  const descriptor=Object.getOwnPropertyDescriptor(value,key);
+  if(typeof key!=='string'||['__proto__','constructor','prototype'].includes(key)||!descriptor.enumerable||!Object.hasOwn(descriptor,'value'))fail('NETWORK_DATA','Executable or unsafe data property.');
+  assertJsonData(descriptor.value,ancestors,depth+1);
+ }
+ ancestors.delete(value);
+}
+
 // The current profile deliberately accepts local declarative agents only.
 // Peer/MCP/action/code loading must be integrated with consent in later phases.
 export function compileNetwork(definition,{name='learner',frontMan='learner',limits={}}={}){
  const bounds=executionLimits(limits);
+ assertJsonData(definition);
  let json;
  try{json=JSON.stringify(definition,(key,value)=>{if(['function','symbol','bigint','undefined'].includes(typeof value)||typeof value==='number'&&!Number.isFinite(value))fail('NETWORK_DATA','Only finite JSON values are supported.');return value;});}catch{fail('NETWORK_DATA','Network must be finite JSON data.');}
  if(!json||new TextEncoder().encode(json).length>65536)fail('NETWORK_SIZE','Network exceeds the 64 KiB data limit.');

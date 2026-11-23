@@ -64,3 +64,14 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Observed 2026-11-23T13:23:04+05:45: shell and register CI passed on `a86042b35724e573b74b6fedb0673d3b72186bb6`; shell steps include actual npm run test:browser success.
 - Final checkpoint: 66/1000 checks and five phases complete. P013-09/10 are now credited; P012-04/10 still pending.
 - Local Chromium failure is retained; remote Chromium functional success is separate evidence. No visual or physical-device pass claimed.
+
+## SUTRA-SESSION-0004 - Runtime, evidence workflow and isolated learner integration
+
+- Started 07:43:18 UTC /13:28:18 Nepal; checkpoint 2026-11-23T13:51:05+05:45. Request: continue SUTRA for approximately half an hour.
+- Resumed main 0da257c6a31f33ceba7c825755e94b51a5bd4338; inspected root instructions, handoff, decisions and task dependencies. User clarified SUTRA scope; reusable player source/demos/deployments remain untouched.
+- Implemented pinned reference-loop adapter, exact local artifact loading, data/schema validation, finite execution, cancellation and safe trace events; scripted model wiring is clearly labeled.
+- Added an explicit app-only reusable player adapter, verified synthetic timing bytes/native state, and reviewed browser-local fixture cards with cancellation/replay/outcome handling.
+- Local results: 53 runtime/loader tests; 17 app/review tests; build and all ten vendor-module hashes pass. Initial runtime/player browser CI passed on 90f3dbebb52f7171e6c9e0946d42fcf6613a168c; later review and accessor-hardening CI remains to be observed.
+- Evidence: evidence/implementation/SESSION-0004.md and runtime-player-candidate-files.json.
+- Recorded 132/1000 verified checks; live inference, peer consent, agent-callable source actions and genuine lesson/user evidence remain pending.
+- Next: P025-01 safe inference host boundary; P027-01 local read-action registry. No paid calls, public deployment, external outreach or official filing occurred.

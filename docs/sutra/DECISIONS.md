@@ -48,3 +48,10 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Alternative: import the full preview app to get a player immediately. Rejected because it couples unrelated demo media/styles and release paths.
 - The visible shell has real deterministic validator interactions and clearly labels synthetic material. It does not imitate agent execution or playback.
 - Local Chromium is environment-blocked, so a dedicated real-browser CI test is added. No skipped local test is reported as passed.
+
+## SUTRA-DECISION-0006 - Reuse the reference loop under a restricted host
+
+- 2026-11-23T13:51:05+05:45; pin 486ecf26aa8775963f9b765f894734bef1ac9817. Reuse ten unchanged core modules with preserved license/headers and drift checks. Full Engine/UI/optional LangChain bundle is deferred; no unnecessary transport or executable-peer surface is enabled.
+- Scripted test execution proves local wiring, not live AI, source truth or challenge conformance. Actual provider, read actions and peer consent are explicit next integrations.
+- The existing reusable player is imported only by SUTRA's app adapter; its source, demos, and deployment paths remain unchanged. Generated timing media exists only to test SUTRA's native clock/seek behavior, not to substitute for required instructional or entrant footage.
+- Human-confirmed synthetic review persistence is bounded and proposal-owned. There is no agent-writable arbitrary storage catalog or hosted side effect.
