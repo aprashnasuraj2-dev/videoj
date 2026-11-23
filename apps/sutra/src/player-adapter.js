@@ -3,8 +3,8 @@ import {readPlaybackState} from './playback-state.js';
 import {validateNativeSeekTarget} from './seek-policy.js';
 import {createDhagoPlayer} from '../../../src/create-player.ts';
 
-export function mountTimingPlayer(host,{source,chapters,captions}){
- const player=createDhagoPlayer({source,chapters,captions,surface:'minimal'});
+export function mountTimingPlayer(host,{source,poster,chapters,captions}){
+ const player=createDhagoPlayer({source,poster,chapters,captions,surface:'minimal'});
  host.replaceChildren(player);
  const media=player.querySelector('video');
  if(!media)throw new Error('Native media element unavailable.');
