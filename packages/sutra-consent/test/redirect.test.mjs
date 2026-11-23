@@ -56,3 +56,63 @@ test('custom transport cannot silently return already-redirected JSON',async()=>
   await assert.rejects(fetchJsonWithConsent({inspector,contact:contact('https://peer.example'),url:'https://peer.example/manifest.json',fetchImpl}),error=>error.code==='CONTACT_REDIRECT');
  }
 });
+
+test('observable changed-origin redirect requires a new consent before the second contact',async()=>{
+ const calls=[],intents=[];
+ const inspector=createConsentInspector({decide:async intent=>{intents.push({origin:intent.origin,purpose:intent.purpose});return intent.origin==='https://other.example'?{decision:'deny',scope:'once'}:{decision:'allow',scope:'once'};}});
+ const fetchImpl=async(url,options)=>{
+  calls.push({url,credentials:options.credentials,redirect:options.redirect});
+  return new Response('',{status:302,headers:{Location:'https://other.example/agents/manifest.json'}});
+ };
+ await assert.rejects(fetchJsonWithConsent({inspector,contact:contact('https://peer.example'),url:'https://peer.example/manifest.json',fetchImpl}),error=>error.code==='CONSENT_DENIED');
+ assert.deepEqual(calls.map(x=>x.url),['https://peer.example/manifest.json'],'new origin must not be contacted before its own decision');
+ assert.deepEqual(intents.map(x=>x.origin),['https://peer.example','https://other.example']);
+ assert.ok(calls.every(x=>x.credentials==='omit'&&x.redirect==='error'));
+});
+
+test('observable changed-origin redirect may continue only after explicit second approval',async()=>{
+ const calls=[],origins=[];
+ const inspector=createConsentInspector({decide:async intent=>{origins.push(intent.origin);return {decision:'allow',scope:'once'};}});
+ const fetchImpl=async(url,options)=>{
+  calls.push({url,options});
+  if(url==='https://peer.example/manifest.json')return new Response('',{status:302,headers:{Location:'https://other.example/agents/manifest.json'}});
+  if(url==='https://other.example/agents/manifest.json')return Response.json({networks:[]});
+  throw Error('unexpected destination');
+ };
+ const value=await fetchJsonWithConsent({inspector,contact:contact('https://peer.example'),url:'https://peer.example/manifest.json',fetchImpl});
+ assert.deepEqual(value,{networks:[]});
+ assert.deepEqual(origins,['https://peer.example','https://other.example']);
+ assert.deepEqual(calls.map(x=>x.url),['https://peer.example/manifest.json','https://other.example/agents/manifest.json']);
+ assert.ok(calls.every(x=>x.options.credentials==='omit'&&x.options.redirect==='error'));
+});
+
+test('same-origin redirect to a new artifact path re-evaluates remembered session approval',async()=>{
+ const decisions=[],calls=[];
+ const inspector=createConsentInspector({decide:async intent=>{decisions.push(intent.purpose);return {decision:'allow',scope:'session'};}});
+ const fetchImpl=async(url)=>{
+  calls.push(url);
+  if(url.endsWith('/manifest.json'))return new Response('',{status:302,headers:{Location:'/agents/manifest-v2.json'}});
+  return Response.json({ok:true});
+ };
+ const value=await fetchJsonWithConsent({inspector,contact:contact('https://peer.example'),url:'https://peer.example/manifest.json',fetchImpl});
+ assert.deepEqual(value,{ok:true});
+ assert.equal(decisions.length,2,'changed artifact path must not inherit the original remembered tuple silently');
+ assert.ok(decisions[1].includes('/agents/manifest-v2.json'));
+ assert.equal(calls.length,2);
+});
+
+test('observable redirect cycles and excessive chains stop before another destination contact',async()=>{
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ const cycleCalls=[];
+ const cycleFetch=async url=>{
+  cycleCalls.push(url);
+  return new Response('',{status:302,headers:{Location:url.includes('one')?'https://peer.example/two':'https://peer.example/one'}});
+ };
+ await assert.rejects(fetchJsonWithConsent({inspector,contact:contact('https://peer.example'),url:'https://peer.example/one',fetchImpl:cycleFetch}),error=>error.code==='CONTACT_REDIRECT');
+ assert.deepEqual(cycleCalls,['https://peer.example/one','https://peer.example/two']);
+
+ const hopCalls=[];
+ const hopFetch=async url=>{hopCalls.push(url);const n=Number(url.match(/(\d+)$/)?.[1]??0);return new Response('',{status:302,headers:{Location:'https://peer.example/hop'+(n+1)}});};
+ await assert.rejects(fetchJsonWithConsent({inspector:createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})}),contact:contact('https://peer.example'),url:'https://peer.example/hop0',fetchImpl:hopFetch,maxRedirects:2}),error=>error.code==='CONTACT_REDIRECT');
+ assert.deepEqual(hopCalls,['https://peer.example/hop0','https://peer.example/hop1','https://peer.example/hop2']);
+});
