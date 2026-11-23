@@ -1,5 +1,13 @@
 # SUTRA progress register
 
+## Session 0013 checkpoint — Phase 028 complete
+
+**264/1,000 tasks verified; 20 phases fully verified.** Nested peer execution now has explicit shared caller-budget evidence, and budget stops expose sanitized limit categories plus bounded partial text that is always labeled incomplete at the runtime/UI boundary.
+
+Tested source: `37d0a45371db717b5f44c2f839b8bbb8345538e7`; full shell/Chromium https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45165087393. See [session 0013 evidence](evidence/implementation/SESSION-0013.md).
+
+**Next:** browser/action registry integration and reviewed local write actions. Live provider, public HTTPS/CORS, original media/rights, physical-device evidence, release and submission remain open.
+
 ## Session 0012 checkpoint — Phase 022 complete
 
 **261/1,000 tasks verified; 19 phases fully verified.** The caller publication bundle now includes explicit top-site inference metadata separate from peer policy, exact publisher link maps, and a pre-release artifact inventory. The link maps are intentionally empty because no published symbolic external-network reference has an established publisher-owned binding; the distinct peer domain remains unset rather than fabricated.
