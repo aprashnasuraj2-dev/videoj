@@ -2,10 +2,10 @@ name: Validate SUTRA learner shell
 on:
   push:
     branches: [main]
-    paths: ['apps/sutra/**', 'packages/sutra-evidence/**', 'packages/sutra-runtime/**', 'src/**', '.github/workflows/sutra-shell.yml']
+    paths: ['apps/sutra/**', 'packages/sutra-evidence/**', 'packages/sutra-runtime/**', 'packages/sutra-source-tools/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'src/**', '.github/workflows/sutra-shell.yml']
   pull_request:
     branches: [main]
-    paths: ['apps/sutra/**', 'packages/sutra-evidence/**', 'packages/sutra-runtime/**', 'src/**', '.github/workflows/sutra-shell.yml']
+    paths: ['apps/sutra/**', 'packages/sutra-evidence/**', 'packages/sutra-runtime/**', 'packages/sutra-source-tools/**', 'packages/sutra-inference/**', 'services/sutra-api/**', 'src/**', '.github/workflows/sutra-shell.yml']
 permissions:
   contents: read
 jobs:
@@ -25,6 +25,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm test
+      - run: node --test ../../packages/sutra-inference/test/*.test.mjs ../../packages/sutra-source-tools/test/*.test.mjs ../../services/sutra-api/test/*.test.mjs
       - run: node ../../packages/sutra-runtime/verify-vendor.mjs
       - run: node --test ../../packages/sutra-runtime/test/*.test.mjs
       - run: npx playwright install --with-deps chromium
