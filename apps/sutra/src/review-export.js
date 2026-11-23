@@ -9,12 +9,14 @@ function dataField(object,key){
  return descriptor.value;
 }
 export function createReviewExport(record,{sources}={}){
- if(!plain(record)||!plain(record.receipt)||record.synthetic!==true)throw Error('Not a supported synthetic saved review.');
+ if(!plain(record))throw Error('Not a supported synthetic saved review.');
+ const receiptData=dataField(record,'receipt'),synthetic=dataField(record,'synthetic');
+ if(!plain(receiptData)||synthetic!==true)throw Error('Not a supported synthetic saved review.');
  const id=dataField(record,'id'),savedAt=dataField(record,'savedAt');
  if(typeof id!=='string'||! /^[A-Za-z0-9_-]{1,100}$/.test(id)||
   typeof savedAt!=='string'||savedAt.length>40||Number.isNaN(Date.parse(savedAt)))throw Error('Saved review identity or date is invalid.');
  const receipt={};
- for(const key of fields)receipt[key]=dataField(record.receipt,key);
+ for(const key of fields)receipt[key]=dataField(receiptData,key);
  if(!validateReceipt(receipt,{sources}).valid)throw Error('Saved review no longer matches the provided source catalog.');
  return Object.freeze({
   reportVersion:1,type:'sutra-local-review-export',id,
