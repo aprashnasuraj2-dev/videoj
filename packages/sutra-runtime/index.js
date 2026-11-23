@@ -131,7 +131,9 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const composition={remoteCalls:0,peerCalls:new Map(),maxRemoteCalls:0,maxCallsPerPeer:0,agentCalls:0,maxAgentCalls:bounds.maxAgents,deadlineSeconds:bounds.timeoutMs/1000,deadline:Date.now()+bounds.timeoutMs};
  const unavailable=()=>fail('CAPABILITY_UNAVAILABLE','External capabilities are disabled in this local runtime profile.');
  try{
- const sourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
+ const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
+ const guardSource=method=>async(...args)=>{check();try{return await rawSourceClient[method](...args);}catch{const error=new RuntimeError('CAPABILITY_UNAVAILABLE','Source retrieval failed; no completed source result is claimed.');failure=error;controller.abort(error);throw error;}};
+ const sourceClient=rawSourceClient?{listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
  const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote:unavailable,resolveMcp:sourceClient?async ref=>{check();if(ref?.url!=='/api/source-tools')return unavailable();return sourceClient;}:unavailable,resolveLink:unavailable,requestConsent:async()=> 'decline'};
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
   if(!result.text||events.some(e=>e.kind==='composition_limit'))fail('INCOMPLETE','Execution stopped before a complete answer.');
