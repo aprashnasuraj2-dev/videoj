@@ -32,7 +32,7 @@ test('20-session local lab preserves prompt isolation and enforces four active p
  };
  const responses=await Promise.all(Array.from({length:20},(_,i)=>handleInference(request(i),env,{fetchImpl})));
  const statuses=responses.map(r=>r.status);
- assert.equal(statuses.filter(x=>x===200).length,4,'active provider work is capped at four');
+ assert.equal(statuses.filter(x=>x===200).length,4,'active provider work is capped at four; statuses='+JSON.stringify(statuses));
  assert.equal(statuses.filter(x=>x===429).length,16,'excess simultaneous sessions are rejected instead of queued or retried');
  assert.equal(bodies.length,4);
  assert.equal(providerCalls.size,4);
