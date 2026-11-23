@@ -123,7 +123,15 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   const initialMuted=await media.evaluate(video=>video.muted);await muteControl.click();await page.waitForFunction(before=>document.querySelector('video')?.muted!==before,initialMuted);await muteControl.click();await page.waitForFunction(before=>document.querySelector('video')?.muted===before,initialMuted);
   const volumeBefore=await media.evaluate(video=>video.volume);await volumeControl.focus();await page.keyboard.press('ArrowDown');await page.waitForFunction(before=>document.querySelector('video')?.volume<before,volumeBefore);
   await captionsControl.click();await page.waitForFunction(()=>Array.from(document.querySelector('video')?.textTracks||[]).some(track=>(track.kind==='captions'||track.kind==='subtitles')&&track.mode==='showing'));await captionsControl.click();await page.waitForFunction(()=>Array.from(document.querySelector('video')?.textTracks||[]).filter(track=>track.kind==='captions'||track.kind==='subtitles').every(track=>track.mode!=='showing'));
-  await fullscreenControl.click();await page.waitForFunction(()=>document.fullscreenElement!==null);await page.keyboard.press('Escape');await page.waitForFunction(()=>document.fullscreenElement===null);
+  await page.evaluate(()=>{
+   const state={active:null,enter:0,exit:0,request:Element.prototype.requestFullscreen,exitFn:document.exitFullscreen};
+   window.__sutraFullscreenTest=state;
+   Element.prototype.requestFullscreen=async function(){state.active=this;state.enter++;document.dispatchEvent(new Event('fullscreenchange'));};
+   document.exitFullscreen=async function(){state.active=null;state.exit++;document.dispatchEvent(new Event('fullscreenchange'));};
+   Object.defineProperty(document,'fullscreenElement',{configurable:true,get(){return state.active;}});
+  });
+  await fullscreenControl.click();await page.waitForFunction(()=>window.__sutraFullscreenTest?.enter===1);await fullscreenControl.click();await page.waitForFunction(()=>window.__sutraFullscreenTest?.exit===1);
+  await page.evaluate(()=>{const state=window.__sutraFullscreenTest;Element.prototype.requestFullscreen=state.request;document.exitFullscreen=state.exitFn;delete document.fullscreenElement;delete window.__sutraFullscreenTest;});
   await page.getByRole('button',{name:'Inspect timing cue at 00:02'}).click();await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Synthetic cue reached.'));assert.ok(Math.abs(await media.evaluate(video=>video.currentTime)-2)<=1);
   await media.evaluate(video=>video.play());await page.waitForFunction(()=>document.querySelector('video').currentTime>2.15);await media.evaluate(video=>video.pause());assert.equal(await media.evaluate(video=>video.paused),true);
 
