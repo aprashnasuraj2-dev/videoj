@@ -8,3 +8,18 @@
 
 /* Native snapshot data must remain readable within narrow learner columns. */
 #playback-state{display:block;max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;margin-top:12px}.lesson,.evidence{min-width:0}
+
+/* Peer workbench: explicit contact consent with readable 360px and zoomed layouts. */
+.peer-workbench{margin-top:24px;background:#fffef9;border:1px solid #d6ddd5;border-radius:14px;padding:28px;min-width:0}
+.peer-workbench>p{font-size:14px;max-width:900px}
+.peer-workbench label{display:block;font-size:13px;margin:18px 0 8px}
+.peer-input-row{display:flex;flex-wrap:wrap;align-items:stretch;gap:10px}
+.peer-input-row input{font:inherit;font-size:14px;padding:12px;border:1px solid #94afa2;border-radius:7px;background:white;color:#163c3d;min-width:0;flex:1 1 300px;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.peer-input-row button{flex:0 1 auto}
+.peer-input-row input:focus-visible{outline:3px solid #ad651e;outline-offset:3px}
+#peer-status{font-size:13px;background:#f0f1ed;padding:12px 14px;border-radius:8px;overflow-wrap:anywhere}
+#peer-trace{margin:8px 0;padding-left:20px}
+#peer-trace li{font-size:13px;overflow-wrap:anywhere}
+#peer-consent-log{font-size:11px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:220px;overflow:auto}
+#peer-consent-dialog dd{overflow-wrap:anywhere}
+@media(max-width:760px){.peer-workbench{padding:20px}.peer-input-row{flex-direction:column}.peer-input-row input,.peer-input-row button{width:100%;flex:auto}}
