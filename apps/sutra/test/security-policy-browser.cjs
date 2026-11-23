@@ -17,9 +17,18 @@ const mime=file=>({
 (async()=>{
  const app=path.resolve(__dirname,'..'),dist=path.join(app,'dist');
  const upstream='http://127.0.0.1:4280',site='http://127.0.0.1:4281';
- const {securityHeaders}=await import(path.join(app,'../../services/sutra-api/worker.js'));
- const headers=securityHeaders({});
  assert.ok(fs.existsSync(path.join(dist,'index.html')),'built dist/index.html is required before CSP browser test');
+ const headerFile=fs.readFileSync(path.join(dist,'_headers'),'utf8').split(/\r?\n/);
+ const headers={};let inWildcard=false;
+ for(const line of headerFile){
+  if(line.trim()==='/*'){inWildcard=true;continue;}
+  if(inWildcard&&!/^\s/.test(line)&&line.trim())break;
+  if(!inWildcard||!line.trim())continue;
+  const colon=line.indexOf(':');if(colon<0)continue;
+  headers[line.slice(0,colon).trim()]=line.slice(colon+1).trim();
+ }
+ assert.match(headers['Content-Security-Policy']??'',/connect-src 'self'/);
+ assert.equal(headers['Referrer-Policy'],'no-referrer');
  const staticServer=http.createServer((req,res)=>{
   const pathname=new URL(req.url,'http://local').pathname;
   const relative=pathname==='/'?'index.html':decodeURIComponent(pathname).replace(/^\/+/, '');
@@ -90,7 +99,7 @@ const mime=file=>({
   assert.ok(violations.some(v=>v.directive==='connect-src'));
   assert.ok(!errors.some(e=>!/Content Security Policy/i.test(e)),JSON.stringify(errors));
 
-  console.log('PASS: built static SUTRA under Worker CSP preserves local graph/native media and blocks unexpected script/connect destinations with zero responses and explicit CSP violations.');
+  console.log('PASS: built static SUTRA under deployed _headers CSP preserves local graph/native media and blocks unexpected script/connect destinations with zero responses and explicit CSP violations.');
  }finally{
   if(browser)await browser.close();
   await Promise.all([
