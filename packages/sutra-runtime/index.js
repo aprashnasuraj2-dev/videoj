@@ -316,10 +316,10 @@ async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,all
  let graphUrl;
  try{graphUrl=new URL(entry.hocon,base);}catch{fail('ARTIFACT_URL','Invalid declared peer graph URL.');}
  const graphLoopback=['localhost','127.0.0.1','[::1]'].includes(graphUrl.hostname);
- if(graphUrl.username||graphUrl.password||graphUrl.hash||graphUrl.protocol!=='https:'&&!(graphUrl.protocol==='http:'&&graphLoopback))fail('ARTIFACT_ORIGIN','Declared peer graph must use approved HTTP(S) without credentials or fragment.');
+ if(graphUrl.username||graphUrl.password||graphUrl.hash||graphUrl.search||graphUrl.pathname.length>160||graphUrl.protocol!=='https:'&&!(graphUrl.protocol==='http:'&&graphLoopback))fail('ARTIFACT_ORIGIN','Declared peer graph must use approved HTTP(S), a bounded path and no credentials, query or fragment.');
  const definition=await fetchJsonWithConsent({
   inspector,
-  contact:{origin:graphUrl.origin,kind:'peer_graph',purpose:'Retrieve the declared peer network definition',disclosure:['network name'],network:networkName},
+  contact:{origin:graphUrl.origin,kind:'peer_graph',purpose:'Retrieve the declared peer network definition at '+graphUrl.pathname,disclosure:['network name'],network:networkName},
   url:graphUrl.href,fetchImpl,maxBytes:65536,signal
  });
  compileNetwork(definition,{name:networkName,frontMan:entry.front_man,allowSourceTools});
