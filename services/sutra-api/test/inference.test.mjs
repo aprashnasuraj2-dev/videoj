@@ -91,3 +91,14 @@ test('all worker API and asset responses receive browser security headers',async
   assert.equal(response.headers.get('X-Content-Type-Options'),'nosniff');
  }
 });
+
+test('direct nonbrowser caller that spoofs allowed Origin still hits client quota before second provider call',async()=>{
+ const store=storage(),quota=new InferenceQuota({storage:store},{SUTRA_MAX_DAILY_CALLS:'5',SUTRA_MAX_CLIENT_CALLS:'1',SUTRA_MAX_CONCURRENT:'1'});
+ const env={...environment(),SUTRA_QUOTA:{idFromName:x=>x,get:()=>quota}};
+ let upstream=0;
+ const fetchImpl=async()=>{upstream++;return sse();};
+ const first=await handleInference(request(),env,{fetchImpl});assert.equal(first.status,200);await first.text();
+ const second=await handleInference(request(),env,{fetchImpl});assert.equal(second.status,429);
+ assert.equal(upstream,1);
+ const errorBody=await second.text();assert.match(errorBody,/QUOTA/);assert.ok(!errorBody.includes('192.0.2.1'));
+});
