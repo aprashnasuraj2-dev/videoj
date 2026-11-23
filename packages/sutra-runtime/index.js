@@ -144,8 +144,9 @@ function safePeerFailure(error){
  if(code==='ARTIFACT_TIMEOUT'||code==='CANCELLED')return new RuntimeError(code,'Peer load stopped before a usable network was established.');
  return new RuntimeError('PEER_UNAVAILABLE','Peer load failed before a usable network was established.');
 }
-export async function runNetwork({definition,name='learner',frontMan='learner',request,model,modelName='',limits={},signal,onEvent,sourceTools,external,privateContext={}}={}){
+export async function runNetwork({definition,name='learner',frontMan='learner',request,model,modelName='',limits={},signal,onEvent,sourceTools,actionRegistry,external,privateContext={}}={}){
  const host=validateExternalHost(external);
+ if(actionRegistry!==undefined&&(!actionRegistry||typeof actionRegistry.catalog!=='function'||typeof actionRegistry.validatePresentation!=='function'))fail('ACTION_REGISTRY','Action registry must expose catalog and presentation validation.');
  const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeerNetworks:!!host});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
  if(!plain(privateContext)||Object.keys(privateContext).length>32||Object.keys(privateContext).some(key=>!idPattern.test(key)))fail('PRIVATE_CONTEXT','Private context must use bounded identifier keys.');
@@ -231,7 +232,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
     }
    };
   }:unavailable;
-  const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:host?.baseOrigin??sourceTools?.origin??'https://sutra.invalid',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:initialPrivateContext,history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:selectedModel||'fixture-only',modelOverride:selectedModel,resolveRemote,resolveMcp,resolveLink:unavailable,requestConsent};
+  const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:host?.baseOrigin??sourceTools?.origin??'https://sutra.invalid',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:initialPrivateContext,history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:selectedModel||'fixture-only',modelOverride:selectedModel,resolveRemote,resolveMcp,resolveLink:unavailable,requestConsent,actions:actionRegistry};
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
   if(!result.text)fail('INCOMPLETE','Execution stopped before a complete answer.');
   const budgetStop=events.find(e=>e.kind==='composition_limit');
