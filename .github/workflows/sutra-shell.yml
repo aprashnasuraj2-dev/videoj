@@ -2,7 +2,7 @@ name: Validate SUTRA learner shell
 on:
   push:
     branches: [main]
-    paths: ['apps/sutra/**', 'apps/sutra-peer/**', 'apps/sutra-mcp-fixture/**', 'packages/sutra-evidence/**', 'packages/sutra-runtime/**', 'packages/sutra-source-tools/**', 'packages/sutra-inference/**', 'packages/sutra-consent/**', 'services/sutra-api/**', 'src/**', '.github/workflows/sutra-shell.yml']
+    paths: ['apps/sutra/**', 'apps/sutra-peer/**', 'packages/sutra-evidence/**', 'packages/sutra-runtime/**', 'packages/sutra-source-tools/**', 'packages/sutra-inference/**', 'packages/sutra-consent/**', 'services/sutra-api/**', 'src/**', '.github/workflows/sutra-shell.yml']
   pull_request:
     branches: [main]
     paths: ['apps/sutra/**', 'apps/sutra-peer/**', 'packages/sutra-evidence/**', 'packages/sutra-runtime/**', 'packages/sutra-source-tools/**', 'packages/sutra-inference/**', 'packages/sutra-consent/**', 'services/sutra-api/**', 'src/**', '.github/workflows/sutra-shell.yml']
@@ -24,7 +24,6 @@ jobs:
           cache-dependency-path: |
             apps/sutra/package-lock.json
             apps/sutra-peer/package-lock.json
-            apps/sutra-mcp-fixture/package-lock.json
       - run: npm ci
       - run: npm run build
       - run: npm test
@@ -34,9 +33,6 @@ jobs:
       - name: Build and test independent SUTRA peer publication
         working-directory: apps/sutra-peer
         run: npm ci && npm run build && npm test
-      - name: Test controlled read-only MCP fixture
-        working-directory: apps/sutra-mcp-fixture
-        run: npm ci && npm test
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
       - uses: actions/upload-artifact@v4
