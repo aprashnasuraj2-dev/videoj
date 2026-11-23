@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T16:31:00+05:45",
+  "updated_at": "2026-11-23T16:33:00+05:45",
   "work_branch": "sutra/peer-invocation",
-  "last_observed_code_sha": "e5af69d975ec0c7fc4c84c3e20b84036e3302cca",
+  "last_observed_code_sha": "29d686bd4f3fdb99565e3a3e4c904d12018ff27a",
   "last_session_id": "SUTRA-SESSION-0008",
-  "stage": "redirect_matrix_validated",
+  "stage": "runtime_streaming_peer_security_verified",
   "current_task": null,
-  "next_task": "SUTRA-P030-02",
+  "next_task": "SUTRA-P026-01",
   "ready_engineering_queue": [
+    "SUTRA-P026-01",
     "SUTRA-P030-02",
-    "SUTRA-P034-01",
     "SUTRA-P036-04",
     "SUTRA-P037-01"
   ],
-  "next_action": "Keep P030-02 live OpenRouter CORS/account test pending external authorized credentials; implement a bounded explicit redirect re-consent policy and changed-content session binding under P037-01/02/04, plus P036-04 upstream private context. Distinct registrable peer domain must be sourced and verified before staging. Never release prematurely.",
+  "next_action": "Implement explicit idle/running/cancelling/failed/complete UI lifecycle under P026-01, visibly distinguish incomplete results and test cancellation while the media player remains usable. Live model CORS (P030-02) and production HTTPS are separate external gates. Keep public release closed.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -3899,6 +3899,71 @@
           "result": "pass",
           "source_revision": "cf60561ad82fdef78b3b41e4bc1f530d21192a8a",
           "observed_at": "2026-11-23T16:31:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:33:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45159138495",
+          "description": "SUTRA-P026-02: passing SSE fragmented tool-call, malformed model/result, child-error, abort/cancel and incomplete-result regressions as applicable. Cancellation after delegated stall prevents subsequent model calls; user-visible lifecycle controls remain pending.",
+          "result": "pass",
+          "source_revision": "29d686bd4f3fdb99565e3a3e4c904d12018ff27a",
+          "observed_at": "2026-11-23T16:33:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:33:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45159138495",
+          "description": "SUTRA-P026-03: passing SSE fragmented tool-call, malformed model/result, child-error, abort/cancel and incomplete-result regressions as applicable. Cancellation after delegated stall prevents subsequent model calls; user-visible lifecycle controls remain pending.",
+          "result": "pass",
+          "source_revision": "29d686bd4f3fdb99565e3a3e4c904d12018ff27a",
+          "observed_at": "2026-11-23T16:33:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:33:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45159138495",
+          "description": "SUTRA-P026-04: passing SSE fragmented tool-call, malformed model/result, child-error, abort/cancel and incomplete-result regressions as applicable. Cancellation after delegated stall prevents subsequent model calls; user-visible lifecycle controls remain pending.",
+          "result": "pass",
+          "source_revision": "29d686bd4f3fdb99565e3a3e4c904d12018ff27a",
+          "observed_at": "2026-11-23T16:33:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:33:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45159138495",
+          "description": "SUTRA-P026-05: passing SSE fragmented tool-call, malformed model/result, child-error, abort/cancel and incomplete-result regressions as applicable. Cancellation after delegated stall prevents subsequent model calls; user-visible lifecycle controls remain pending.",
+          "result": "pass",
+          "source_revision": "29d686bd4f3fdb99565e3a3e4c904d12018ff27a",
+          "observed_at": "2026-11-23T16:33:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:33:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45159138495",
+          "description": "SUTRA-P026-06: passing SSE fragmented tool-call, malformed model/result, child-error, abort/cancel and incomplete-result regressions as applicable. Cancellation after delegated stall prevents subsequent model calls; user-visible lifecycle controls remain pending.",
+          "result": "pass",
+          "source_revision": "29d686bd4f3fdb99565e3a3e4c904d12018ff27a",
+          "observed_at": "2026-11-23T16:33:00+05:45"
         }
       ]
     }
