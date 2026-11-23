@@ -1,19 +1,20 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T16:03:05+05:45",
+  "updated_at": "2026-11-23T16:04:27+05:45",
   "work_branch": "sutra/peer-invocation",
   "last_observed_code_sha": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
   "last_session_id": "SUTRA-SESSION-0006",
-  "stage": "evidence_profile_byok_rebaseline",
-  "current_task": "SUTRA-P017-01",
-  "next_task": "SUTRA-P017-02",
+  "stage": "byok_key_isolation_and_provenance",
+  "current_task": "SUTRA-P030-01",
+  "next_task": "SUTRA-P030-02",
   "ready_engineering_queue": [
-    "SUTRA-P017-02",
-    "SUTRA-P030-01",
+    "SUTRA-P030-02",
+    "SUTRA-P030-03",
+    "SUTRA-P030-05",
     "SUTRA-P035-01"
   ],
-  "next_action": "Finish and re-verify the Web Annotation media-evidence profile under widened CI, then complete browser BYOK key-isolation/provenance evidence. Keep P039/P048/P059/P069 omitted and keep public release closed.",
+  "next_action": "Observe the current shell/BYOK browser run, fix any canary or CORS-fixture failures, then credit only the BYOK items actually demonstrated. Real router CORS with a real account/key remains a separate live check.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -2559,8 +2560,24 @@
       ]
     },
     "SUTRA-P017-01": {
-      "state": "active",
-      "started_at": "2026-11-23T16:03:05+05:45"
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
     },
     "SUTRA-P039-01": {
       "state": "omitted",
@@ -2841,6 +2858,391 @@
       "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
       "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
       "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P017-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-01": {
+      "state": "active",
+      "started_at": "2026-11-23T16:04:27+05:45",
+      "next_action": "Finish the BYOK browser canary/provenance regression and verify key deletion plus peer-origin isolation under current CI."
     }
   },
   "blockers": [],
