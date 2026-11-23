@@ -37,16 +37,3 @@ export function createPeerScriptedModel(){
   return {content:'',toolCalls:[{id:`peer-browser-${++sequence}`,type:'function',function:{name,arguments:JSON.stringify({request:'Inspect the published source state. This is a scripted browser composition test.'})}}]};
  }};
 }
-
-
-// Deterministic MCP browser driver. Discovery/call consent and transport are real;
-// only the model decision is scripted.
-export function createMcpScriptedModel(){
- let sequence=0;
- return {mode:'scripted-test',async chat({messages,tools,signal}){
-  signal?.throwIfAborted();const returned=messages.filter(message=>message.role==='tool');
-  if(!tools.length)return {content:'Scripted MCP test continued without an approved third-party tool.',toolCalls:[]};
-  if(returned.length)return {content:'Scripted MCP read observed: '+returned[0].content,toolCalls:[]};
-  return {content:'',toolCalls:[{id:`mcp-browser-${++sequence}`,type:'function',function:{name:tools[0].function.name,arguments:JSON.stringify({request:'synthetic public lookup'})}}]};
- }};
-}
