@@ -62,7 +62,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P033-07` Show intended data disclosure without leaking hidden private context
 - [x] `SUTRA-P033-08` Record consent scope and decisions in a redacted inspectable event stream
 - [x] `SUTRA-P033-09` Produce and review the phase artifact: Consent UI, state machine and decision record.
-- [ ] `SUTRA-P033-10` Close phase 033 only after its applicable tasks have evidence and its exit condition is observed: Network recording shows no unapproved peer request; denial leaves the local video and local evidence usable.
+- [x] `SUTRA-P033-10` Close phase 033 only after its applicable tasks have evidence and its exit condition is observed: Network recording shows no unapproved peer request; denial leaves the local video and local evidence usable.
 
 ## Phase 034 - Verify public artifact CORS
 
