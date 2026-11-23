@@ -26,15 +26,17 @@ test('built learner has no third-party advertising or analytics script surface',
  }
 });
 
-test('manifest graph cache versions equal current Git blob identities',async()=>{
+test('manifest graph paths equal current Git blob identities and retain byte-identical immutable copies',async()=>{
  const {createHash}=await import('node:crypto');
  const manifest=JSON.parse(fs.readFileSync(path.join(app,'public/agents/agent-manifest.json')));
  for(const entry of manifest.networks){
+  const canonical=path.join(app,'public/agents',entry.name+'.network.json');
+  const canonicalBytes=fs.readFileSync(canonical);
+  const blob=createHash('sha1').update(Buffer.from(`blob ${canonicalBytes.length}\0`)).update(canonicalBytes).digest('hex');
   const declared=new URL(entry.hocon,'https://sutra.test/agents/');
-  const file=path.join(app,'public',declared.pathname);
-  const bytes=fs.readFileSync(file);
-  const blob=createHash('sha1').update(Buffer.from(`blob ${bytes.length}\0`)).update(bytes).digest('hex');
-  assert.equal(declared.searchParams.get('v'),blob,`${entry.name} version must change whenever graph bytes change`);
+  assert.equal(declared.pathname,`/agents/v/${blob}/${entry.name}.network.json`,`${entry.name} path must change whenever canonical graph bytes change`);
+  const versioned=fs.readFileSync(path.join(app,'public',declared.pathname));
+  assert.deepEqual(versioned,canonicalBytes,`${entry.name} versioned graph must exactly match canonical source`);
  }
 });
 
