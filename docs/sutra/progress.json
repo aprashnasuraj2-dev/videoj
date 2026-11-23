@@ -1,19 +1,20 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T17:05:44+05:45",
+  "updated_at": "2026-11-23T17:11:35+05:45",
   "work_branch": "sutra/peer-invocation",
-  "last_observed_code_sha": "47f84a1f8ee47cf7f9a049aaa8286d3142d8648c",
-  "last_session_id": "SUTRA-SESSION-0012",
-  "stage": "phase_022_publication_bundle_complete",
+  "last_observed_code_sha": "37d0a45371db717b5f44c2f839b8bbb8345538e7",
+  "last_session_id": "SUTRA-SESSION-0013",
+  "stage": "phase_028_execution_budgets_complete",
   "current_task": null,
   "next_task": "SUTRA-P023-05",
   "ready_engineering_queue": [
     "SUTRA-P023-05",
+    "SUTRA-P029-01",
     "SUTRA-P030-02",
     "SUTRA-P034-01"
   ],
-  "next_action": "Reconcile Phase 023 browser orchestration/action tasks against current source and implement any missing narrow registered action boundary. P030-02 live router CORS/account and P034-01 public HTTPS remain external gates. Do not release.",
+  "next_action": "Reconcile current browser source/action runtime evidence for P023-05/09, then implement P029-01 registered local write actions if still missing. Live P030-02/P034 remain external gates. Do not release.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -4210,6 +4211,45 @@
           "result": "pass",
           "source_revision": "47f84a1f8ee47cf7f9a049aaa8286d3142d8648c",
           "observed_at": "2026-11-23T17:05:44+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:11:35+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0013.md",
+          "description": "Peer agents share the caller composition/model/deadline budgets; deterministic maxAgents test stops nested work with the caller's agent_calls limit.",
+          "result": "pass",
+          "source_revision": "37d0a45371db717b5f44c2f839b8bbb8345538e7",
+          "observed_at": "2026-11-23T17:11:35+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:11:35+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0013.md",
+          "description": "Composition-limit errors expose a sanitized limit category and bounded control-character-stripped partial text that the learner labels incomplete; no completed result is claimed.",
+          "result": "pass",
+          "source_revision": "37d0a45371db717b5f44c2f839b8bbb8345538e7",
+          "observed_at": "2026-11-23T17:11:35+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:11:35+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0013.md",
+          "description": "Phase exit observed: over-budget and cycle fixtures stop predictably while ordinary repeated-agent runs remain valid.",
+          "result": "pass",
+          "source_revision": "37d0a45371db717b5f44c2f839b8bbb8345538e7",
+          "observed_at": "2026-11-23T17:11:35+05:45"
         }
       ]
     }
