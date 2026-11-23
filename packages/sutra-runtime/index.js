@@ -162,7 +162,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  if(signal?.aborted)aborted();else signal?.addEventListener('abort',aborted,{once:true});
  const trace=new TraceBus(),events=[];let modelCalls=0,active=0,totalOutput=0,failure=null,closed=false;const waiters=[];
  const check=()=>{if(closed)fail('CLOSED','Run is closed.');if(controller.signal.aborted)throw controller.signal.reason;};
- const emit=event=>{const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','origin','network'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,160);if(Array.isArray(event.contextKeys))safe.contextKeys=event.contextKeys.filter(key=>idPattern.test(key)).slice(0,16);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
+ const emit=event=>{const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','origin','network'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,160);for(const key of ['attempt','maxAttempts'])if(Number.isInteger(event[key])&&event[key]>=1&&event[key]<=12)safe[key]=event[key];if(Array.isArray(event.contextKeys))safe.contextKeys=event.contextKeys.filter(key=>idPattern.test(key)).slice(0,16);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
  trace.addEventListener('event',e=>emit(e.detail));
  const abortWaiters=()=>{for(const wake of waiters.splice(0))wake();};controller.signal.addEventListener('abort',abortWaiters);
  const deadline=setTimeout(()=>controller.abort(new RuntimeError('TIMEOUT','Run exceeded its elapsed time limit.')),bounds.timeoutMs);
@@ -194,7 +194,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const composition={remoteCalls:0,peerCalls:new Map(),maxRemoteCalls:host?bounds.maxRemoteCalls:0,maxCallsPerPeer:host?bounds.maxCallsPerPeer:0,agentCalls:0,maxAgentCalls:bounds.maxAgents,deadlineSeconds:bounds.timeoutMs/1000,deadline:Date.now()+bounds.timeoutMs};
  const unavailable=()=>fail('CAPABILITY_UNAVAILABLE','External capabilities are disabled in this runtime profile.');
  try{
-  const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
+  const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal,onAttempt:({method,attempt,maxAttempts})=>trace.note('source_attempt',{tool:method,attempt,maxAttempts})}):null;
   const guardSource=method=>async(...args)=>{check();try{return await rawSourceClient[method](...args);}catch{const error=new RuntimeError('CAPABILITY_UNAVAILABLE','Source retrieval failed; no completed source result is claimed.');failure=error;controller.abort(error);throw error;}};
   const sourceClient=rawSourceClient?{url:(sourceTools?.origin??host?.baseOrigin??'https://sutra.invalid')+'/api/source-tools',listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
   const requestConsent=async intent=>intent?.kind==='network'?'allow':'decline';
