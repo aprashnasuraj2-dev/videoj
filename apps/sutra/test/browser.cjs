@@ -62,10 +62,15 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();await page.getByRole('button',{name:'Allow for this session'}).click();await page.waitForFunction(()=>document.querySelector('#consent-status').textContent.includes('Simulated operations: 1'));await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();await page.waitForFunction(()=>document.querySelector('#consent-status').textContent.includes('Simulated operations: 2'));assert.match(await page.locator('#consent-events').textContent(),/remembered/);
 
   await page.locator('#peer-url').fill(peerBase+'/agents/checklist');const peerBefore=peerRequests.length;
+  assert.equal(await page.locator('#peer-run-lifecycle').getAttribute('data-state'),'idle');
   await page.getByRole('button',{name:'Run consented peer composition'}).click();
+  await page.waitForFunction(()=>document.querySelector('#peer-run-lifecycle').dataset.state==='running');
   await page.waitForFunction(()=>document.querySelector('#consent-dialog').open&&document.querySelector('#consent-purpose').textContent.includes('exact published peer network'));await page.getByRole('button',{name:'Allow once',exact:true}).click();
   await page.waitForFunction(()=>document.querySelector('#consent-dialog').open&&document.querySelector('#consent-purpose').textContent.includes('network definition'));await page.getByRole('button',{name:'Allow once',exact:true}).click();
   await page.waitForFunction(()=>document.querySelector('#peer-network-result').textContent.includes('3 agent invocations; 1 peer call; 5 scripted model steps.'));
+  assert.equal(await page.locator('#peer-run-lifecycle').getAttribute('data-state'),'complete');
+  assert.match(await page.locator('#peer-run-lifecycle').innerText(),/Run state: complete/i);
+  assert.equal(await page.getByRole('button',{name:'Cancel current run'}).isDisabled(),true);
   assert.equal(peerRequests.length-peerBefore,2);assert.ok(peerRequests.every(request=>request.method==='GET'&&!request.headers.authorization&&!request.headers.cookie));
   const peerTrace=await page.locator('#network-trace').innerText();assert.match(peerTrace,/learner \/ learner @ sutra-local/);assert.match(peerTrace,/checklist \/ checklist @ http:\/\/127\.0\.0\.1:4195/);assert.match(await page.locator('#prov-graph').innerText(),/sha256-/);assert.match(await page.locator('#prov-origins').innerText(),/127\.0\.0\.1:4195/);
 
@@ -110,9 +115,33 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   const media=page.locator('video');assert.equal(await media.count(),1);await page.getByRole('button',{name:'Inspect timing cue at 00:02'}).click();await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Synthetic cue reached.'));assert.ok(Math.abs(await media.evaluate(video=>video.currentTime)-2)<=1);
   await media.evaluate(video=>video.play());await page.waitForFunction(()=>document.querySelector('video').currentTime>2.15);await media.evaluate(video=>video.pause());assert.equal(await media.evaluate(video=>video.paused),true);
 
+  // Cancel a deliberately stalled peer manifest request and prove ordinary native media still works.
+  let manifestSeenResolve,releaseManifest;
+  const manifestSeen=new Promise(resolve=>{manifestSeenResolve=resolve;});
+  const manifestRelease=new Promise(resolve=>{releaseManifest=resolve;});
+  await page.route(peerBase+'/agents/agent-manifest.json',async route=>{manifestSeenResolve();await manifestRelease;try{await route.abort();}catch{}});
+  const mediaBeforeCancel=await media.evaluate(video=>video.currentTime);
+  await page.getByRole('button',{name:'Run consented peer composition'}).click();
+  await page.waitForFunction(()=>document.querySelector('#peer-run-lifecycle').dataset.state==='running');
+  await page.waitForFunction(()=>document.querySelector('#consent-dialog').open&&document.querySelector('#consent-purpose').textContent.includes('exact published peer network'));
+  await page.getByRole('button',{name:'Allow once',exact:true}).click();await manifestSeen;
+  await page.getByRole('button',{name:'Cancel current run'}).click();
+  const cancelState=await page.locator('#peer-run-lifecycle').getAttribute('data-state');assert.ok(['cancelling','failed'].includes(cancelState));
+  assert.match(await page.locator('#peer-run-lifecycle').innerText(),/incomplete|Cancelled/i);
+  releaseManifest();
+  await page.waitForFunction(()=>document.querySelector('#peer-run-lifecycle').dataset.state==='failed');
+  assert.match(await page.locator('#peer-network-result').innerText(),/cancelled.*incomplete/i);
+  assert.match(await page.locator('#prov-errors').innerText(),/CANCELLED/);
+  assert.equal(await page.getByRole('button',{name:'Run consented peer composition'}).isEnabled(),true);
+  assert.equal(await page.getByRole('button',{name:'Cancel current run'}).isDisabled(),true);
+  await page.unroute(peerBase+'/agents/agent-manifest.json');
+  await media.evaluate(video=>video.play());await page.waitForFunction(before=>document.querySelector('video').currentTime>before+.08,mediaBeforeCancel);await media.evaluate(video=>video.pause());
+  assert.equal(await media.evaluate(video=>video.paused),true);
+  assert.ok(await media.evaluate(video=>video.currentTime)>mediaBeforeCancel,'media clock must continue after run cancellation');
+
   fs.mkdirSync(path.join(app,'test-output'),{recursive:true});await page.screenshot({path:path.join(app,'test-output/desktop.png'),fullPage:true});
   await page.setViewportSize({width:360,height:800});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.getByRole('button',{name:'Try altered quotation'}).click();await page.waitForFunction(()=>document.querySelector('#result').textContent.includes('QUOTE_MISMATCH'));await page.screenshot({path:path.join(app,'test-output/mobile.png'),fullPage:true});
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);assert.ok(!requests.some(url=>url.includes('/assets/mux-video-')),'native fixture must not load optional Mux chunk');
-  console.log('PASS: W3C annotation + transcript SHA-256, truth boundary, local/source orchestration, consented two-origin peer execution, BYOK key only to router and never peer/storage/provenance, memory deletion, native timing playback, 360px layout, no unexpected external requests.');
+  console.log('PASS: W3C annotation + transcript SHA-256, truth boundary, explicit peer lifecycle/cancellation, local/source orchestration, consented two-origin peer execution, BYOK key only to router and never peer/storage/provenance, memory deletion, native timing playback after cancellation, 360px layout, no unexpected external requests.');
  }finally{if(browser)await browser.close();server.kill();peerServer.kill();}
 })().catch(error=>{console.error(error);process.exitCode=1;});
