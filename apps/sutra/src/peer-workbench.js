@@ -100,6 +100,8 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
   }finally{
    running=false;runButton.disabled=false;activeController=null;
    exportButton.disabled=!lastReceipt;renderConsentEvents();
+   // Return keyboard users to the control that initiated the modal flow.
+   if(['denied','error','cancelled'].includes(status.dataset.state))runButton.focus({preventScroll:true});
   }
  }
  runButton.addEventListener('click',run);
