@@ -11,7 +11,8 @@ const assert=require('node:assert/strict');
  const {securityHeaders}=await import(path.join(app,'../../services/sutra-api/worker.js'));
  const headers=securityHeaders({});
  const vite=spawn(process.execPath,[path.join(app,'node_modules/vite/bin/vite.js'),'preview','--host','127.0.0.1','--port','4190','--strictPort'],{cwd:app,stdio:'pipe'});
- let log='';for(const stream of [vite.stdout,vite.stderr])stream.on('data',d=>log=(log+d).slice(-5000));
+ let log='',exited=false;vite.on('exit',()=>exited=true);
+ for(const stream of [vite.stdout,vite.stderr])stream.on('data',d=>log=(log+d).slice(-5000));
  const proxy=http.createServer(async(req,res)=>{
   try{
    const target=new URL(req.url,upstream),method=req.method??'GET';
@@ -23,8 +24,14 @@ const assert=require('node:assert/strict');
  });
  let browser;
  try{
-  let ready=false;for(let i=0;i<60;i++){try{const r=await fetch(upstream,{signal:AbortSignal.timeout(400)});if(r.ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,150));}
-  assert.ok(ready,'built preview not ready: '+log);
+  let ready=false,lastError='';
+  for(let i=0;i<120;i++){
+   if(exited)break;
+   try{const r=await fetch(upstream+'/index.html',{signal:AbortSignal.timeout(750)});if(r.ok){ready=true;break;}lastError='HTTP '+r.status;}
+   catch(error){lastError=String(error?.message??error);}
+   await new Promise(r=>setTimeout(r,200));
+  }
+  assert.ok(ready,'built preview not ready: '+lastError+' '+log);
   await new Promise((resolve,reject)=>proxy.once('error',reject).listen(4191,'127.0.0.1',resolve));
   browser=await chromium.launch({headless:true});
   const page=await browser.newPage({viewport:{width:1000,height:800}});
