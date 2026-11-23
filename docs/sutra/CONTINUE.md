@@ -4,7 +4,7 @@ This applies to SUTRA continuation requests, regardless of case or surrounding p
 
 ## Public release gate
 
-The participant explicitly directed on 23 November 2026: do not jump to release before all major checklist work is complete. Keep public deployment, domain/route assignment, paid inference enablement and promotion closed until the applicable major product, security, conformance and acceptance gates have current passing evidence. A passing build, browser fixture or deployment-free dry-run alone cannot satisfy this gate. Continue independent engineering and report remaining major gates; do not treat a Cloudflare configuration file as release authorization.
+The participant explicitly directed on 23 November 2026: do not jump to release before all major checklist work is complete. Keep public deployment, domain/route assignment, public inference enablement and promotion closed until the applicable major product, security, conformance and acceptance gates have current passing evidence. A passing build, browser fixture or deployment-free dry-run alone cannot satisfy this gate. Continue independent engineering and report remaining major gates; do not treat a Cloudflare configuration file as release authorization.
 
 ## Resume sequence
 

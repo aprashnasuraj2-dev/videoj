@@ -68,5 +68,7 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 ## SUTRA-DECISION-0008 - Finish major checklist gates before release
 
 - 23 November 2026, Asia/Kathmandu. The participant explicitly directed that release must wait until all major checklist work is complete.
-- Public deployment, domain/route assignment, paid inference enablement and promotion remain closed until applicable major product, security, conformance and acceptance gates have current passing evidence. Local builds and dry-run bundling may continue but cannot substitute for those gates.
+- Public deployment, domain/route assignment, public inference enablement and promotion remain closed until applicable major product, security, conformance and acceptance gates have current passing evidence. Local builds and dry-run bundling may continue but cannot substitute for those gates.
 - No public deployment occurred in session 0005. Next remains P033-01 consent-before-contact engineering, with real peer/provider/content/user evidence still pending. No mandatory gate is omitted or weakened.
+
+- This gate concerns public release. Private controlled provider testing still requires the separately pending model/budget authorization; it need not wait for the public release gates, since such testing supplies their evidence.

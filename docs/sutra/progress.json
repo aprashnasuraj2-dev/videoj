@@ -2194,6 +2194,6 @@
   "notes": [
     "Task checkbox state is authoritative; this register carries evidence and resume pointers.",
     "A delivered package is not an official Devpost submission.",
-    "Participant release gate: no public deployment, domain/route assignment, paid inference enablement or promotion until all applicable major checklist product/security/conformance/acceptance gates have current passing evidence. Dry-run bundling is not release."
+    "Participant release gate: no public deployment, domain/route assignment, public inference enablement or promotion until all applicable major checklist product/security/conformance/acceptance gates have current passing evidence. Dry-run bundling is not release."
   ]
 }
