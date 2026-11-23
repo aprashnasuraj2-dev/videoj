@@ -122,8 +122,8 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.route(peerBase+'/agents/agent-manifest.json',async route=>{manifestSeenResolve();await manifestRelease;try{await route.abort();}catch{}});
   const mediaBeforeCancel=await media.evaluate(video=>video.currentTime);
   await page.getByRole('button',{name:'Run consented peer composition'}).click();
-  await page.waitForFunction(()=>document.querySelector('#peer-run-lifecycle').dataset.state==='running');
   await page.waitForFunction(()=>document.querySelector('#consent-dialog').open&&document.querySelector('#consent-purpose').textContent.includes('exact published peer network'));
+  assert.equal(await page.locator('#peer-run-lifecycle').getAttribute('data-state'),'running');
   await page.getByRole('button',{name:'Allow once',exact:true}).click();await manifestSeen;
   await page.getByRole('button',{name:'Cancel current run'}).click();
   const cancelState=await page.locator('#peer-run-lifecycle').getAttribute('data-state');assert.ok(['cancelling','failed'].includes(cancelState));
