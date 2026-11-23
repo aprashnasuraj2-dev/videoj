@@ -38,6 +38,16 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();await page.getByRole('button',{name:'Allow for this session (simulate)'}).click();await page.waitForFunction(()=>document.querySelector('#consent-status').textContent.includes('Simulated operations: 1'));const externalBeforeRemembered=external.length;await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();await page.waitForFunction(()=>document.querySelector('#consent-status').textContent.includes('Simulated operations: 2'));assert.equal(external.length,externalBeforeRemembered);assert.match(await page.locator('#consent-events').textContent(),/remembered/);
   await page.getByRole('button',{name:'Preview synthetic review card'}).click();await page.getByRole('button',{name:'Cancel',exact:true}).click();assert.equal(await page.locator('#review-list li').count(),0);
   await page.getByRole('button',{name:'Preview synthetic review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();assert.equal(await page.locator('#review-list li').count(),1);assert.match(await page.locator('#review-status').innerText(),/not factual verification/);
+  const reviewDownloadPromise=page.waitForEvent('download');
+  await page.getByRole('button',{name:'Download saved receipt'}).click();
+  const reviewDownload=await reviewDownloadPromise;
+  assert.equal(reviewDownload.suggestedFilename(),'sutra-synthetic-review.json');
+  const exportedReview=JSON.parse(fs.readFileSync(await reviewDownload.path(),'utf8'));
+  assert.equal(exportedReview.type,'sutra-local-review-export');
+  assert.equal(exportedReview.truthStatus,'unverified');
+  assert.equal(exportedReview.receipt.sourceId,'synthetic-timing-fixture');
+  assert.ok(!JSON.stringify(exportedReview).includes('apiKey'));
+  assert.match(await page.locator('#review-status').innerText(),/download requested/);
   await page.reload();assert.equal(await page.locator('#review-list li').count(),1);await page.getByRole('button',{name:'Delete local review'}).click();assert.equal(await page.locator('#review-list li').count(),0);
   await page.getByRole('button',{name:'Read current playback state',exact:true}).click();assert.equal(JSON.parse(await page.locator('#playback-state').innerText()).available,false);
   await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
