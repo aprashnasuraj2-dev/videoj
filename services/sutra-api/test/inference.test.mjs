@@ -80,7 +80,7 @@ test('worker security policy blocks broad third-party execution and admits only 
  assert.deepEqual(allowedPeerOrigins({SUTRA_PEER_ORIGINS:'https://peer.example/path'}),[]);
  const peers=securityHeaders({SUTRA_PEER_ORIGINS:'https://peer-one.example'});
  assert.match(peers['Content-Security-Policy'],/connect-src 'self' https:\/\/peer-one\.example/);
- assert.doesNotMatch(peers['Content-Security-Policy'],/https:/g);
+ assert.doesNotMatch(peers['Content-Security-Policy'],/connect-src[^;]*\shttps:(?:\s|;|$)/);
 });
 test('all worker API and asset responses receive browser security headers',async()=>{
  const asset=await worker.fetch(new Request('https://sutra.test/'),{ASSETS:{fetch:async()=>new Response('<!doctype html>',{headers:{'Content-Type':'text/html'}})}});
