@@ -5,8 +5,8 @@ const path=require('node:path');
 const assert=require('node:assert/strict');
 
 (async()=>{
- const app=path.resolve(__dirname,'..'),base='http://127.0.0.1:4193';
- const server=spawn(process.execPath,[path.join(app,'node_modules/vite/bin/vite.js'),'preview','--host','127.0.0.1','--port','4193','--strictPort'],{cwd:app,stdio:'pipe'});
+ const app=path.resolve(__dirname,'..'),base='http://127.0.0.1:4283';
+ const server=spawn(process.execPath,[path.join(app,'node_modules/vite/bin/vite.js'),'preview','--host','127.0.0.1','--port','4283','--strictPort'],{cwd:app,stdio:'pipe'});
  let browser,log='',exited=false;server.on('exit',()=>exited=true);for(const stream of [server.stdout,server.stderr])stream.on('data',d=>log=(log+d).slice(-5000));
  try{
   let ready=false;for(let i=0;i<80;i++){if(exited)break;try{const r=await fetch(base,{signal:AbortSignal.timeout(500)});if(r.ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,150));}
