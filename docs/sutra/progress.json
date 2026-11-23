@@ -1,20 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T17:21:26+05:45",
+  "updated_at": "2026-11-23T17:23:27+05:45",
   "work_branch": "sutra/peer-invocation",
   "last_observed_code_sha": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
-  "last_session_id": "SUTRA-SESSION-0014",
-  "stage": "phase_029_reviewed_actions_complete",
+  "last_session_id": "SUTRA-SESSION-0015",
+  "stage": "phase_046_review_card_complete",
   "current_task": null,
-  "next_task": "SUTRA-P023-03",
+  "next_task": "SUTRA-P047-01",
   "ready_engineering_queue": [
-    "SUTRA-P040-01",
+    "SUTRA-P047-01",
+    "SUTRA-P042-05",
+    "SUTRA-P044-01",
     "SUTRA-P023-03",
-    "SUTRA-P030-02",
-    "SUTRA-P034-01"
+    "SUTRA-P030-02"
   ],
-  "next_action": "Continue independent engineering with the next non-external safety/acceptance task (P040-01) while keeping P023-03/P030-02 live provider tests and P034 public HTTPS as external gates. Do not deploy or release.",
+  "next_action": "Continue independent learner-quality work with P047 provenance inspector or P042/P044 browser/media/transcript checks. Keep live provider/router and public HTTPS gates external; do not release.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -4302,6 +4303,136 @@
           "result": "pass",
           "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
           "observed_at": "2026-11-23T17:21:26+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Chromium previews save and export action payloads before any local persistence or download; cancel executes no action.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Reviewed receipt includes exact cue/source IDs, source/media hashes, source version, interval and verification status.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Visible UI states browser-only storage/no account and exposes Delete local review for persisted cards.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Registry plans and receipt arguments are recursively frozen; saved values match the confirmed reviewed receipt.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Tests cover storage quota/security rejection, ambiguous persistence and export failure with no automatic retry.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Chromium restores the saved card after reload; review-store validation rejects corrupt/stale catalog data.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Chromium and unit tests verify deleting a saved review removes the associated local record.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Export action schema accepts only the validated receipt; browser exporter serializes only that receipt and has no BYOK/private prompt path.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Session 0015 plus registered action module, review store and Chromium save/export flow form the reviewed phase artifact.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Phase exit observed on controlled fixture: confirmed preview equals saved data, reload/delete work, and storage failure remains visible.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
         }
       ]
     }
