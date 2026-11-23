@@ -9,8 +9,19 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
  const byId=id=>root.querySelector('#'+id);
  const urlInput=byId('peer-url'), runButton=byId('run-peer'),
   status=byId('peer-status'), trace=byId('peer-trace'), consentLog=byId('peer-consent-log');
- const dialog=byId('peer-consent-dialog'),exportButton=byId('export-peer-trace');
+ const dialog=byId('peer-consent-dialog'),exportButton=byId('export-peer-trace'),
+  execState=byId('peer-exec-state'),agentBudget=byId('peer-agent-budget'),
+  modelBudget=byId('peer-model-budget'),contactCount=byId('peer-contact-count');
  let pendingDecision=null, running=false, activeController=null,lastReceipt=null;
+ const completedContacts=()=>inspector.exportEvents().filter(event=>event.type==='outcome'&&event.status==='completed').length;
+ const setState=(state,{agentCalls=0,modelCalls=0}={})=>{
+  const labels={idle:'Idle',loading:'Loading local network',consent:'Awaiting external approval',completed:'Completed',denied:'Denied',cancelled:'Cancelled',error:'Stopped with error',input_error:'Input required'};
+  execState.textContent=labels[state]??'Stopped';
+  status.dataset.state=state;
+  agentBudget.textContent=Math.min(Number.isInteger(agentCalls)?agentCalls:0,12)+' / 12 used';
+  modelBudget.textContent=Math.min(Number.isInteger(modelCalls)?modelCalls:0,8)+' / 8 used';
+  contactCount.textContent=completedContacts()+' completed';
+ };
  const finish=(decision,scope='once')=>{
   if(!pendingDecision)return;
   const resolve=pendingDecision;pendingDecision=null;
@@ -29,7 +40,7 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
   byId('peer-purpose').textContent=intent.purpose;
   byId('peer-disclosure').textContent=intent.disclosure.join(', ');
   byId('peer-contact-kind').textContent=intent.kind==='peer_manifest'?'Manifest':'Declared graph';
-  dialog.showModal();
+  setState('consent');dialog.showModal();
  })});
  function renderConsentEvents(){
   // The inspector exports only public field labels and decisions, never the
@@ -49,12 +60,12 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
   const peerUrl=urlInput.value.trim();
   if(!peerUrl||peerUrl.length>2048){
    status.textContent='Enter one exact peer network URL (maximum 2,048 characters). No request was made.';
-   return;
+   setState('input_error');return;
   }
   running=true;runButton.disabled=true;lastReceipt=null;exportButton.disabled=true;
   activeController=new AbortController();
   const currentEvents=[],consentStart=inspector.exportEvents().length;
-  resetTrace();
+  resetTrace();setState('loading');
   status.textContent='Checking the local learner network. No external contact occurs before approval.';
   try{
    // The publication loader and runtime validate the exact peer URL. Never
@@ -77,6 +88,7 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
    status.textContent='Scripted peer test complete: '+result.agentCalls+
     ' caller-local agent invocations and '+result.modelCalls+
     ' scripted model steps. Public graph data only; no live inference or factual verification.';
+   setState('completed',{agentCalls:result.agentCalls,modelCalls:result.modelCalls});
   }catch(error){
    const code=typeof error?.code==='string'&&/^[A-Z][A-Z0-9_]{1,50}$/.test(error.code)?error.code:'STOPPED';
    lastReceipt={mode:'scripted-test',
@@ -84,6 +96,7 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
     modelCalls:null,agentCalls:null,events:currentEvents,
     contactEvents:inspector.exportEvents().slice(consentStart)};
    status.textContent='Peer test stopped ('+code+'). No completed peer result is claimed. Local lesson and evidence are unaffected.';
+   setState(code.includes('DENIED')?'denied':code==='CANCELLED'?'cancelled':'error');
   }finally{
    running=false;runButton.disabled=false;activeController=null;
    exportButton.disabled=!lastReceipt;renderConsentEvents();
@@ -105,5 +118,6 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
   inspector.clearSession();
  };
  window.addEventListener('pagehide',unload);
+ setState('idle');
  return {dispose(){unload();window.removeEventListener('pagehide',unload);}};
 }
