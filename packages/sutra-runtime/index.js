@@ -50,7 +50,8 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
  let raw;
  try{raw=JSON.parse(json,(key,value)=>{if(['__proto__','constructor','prototype'].includes(key))fail('NETWORK_DATA','Unsafe data key.');return value;});}catch(error){if(error instanceof RuntimeError)throw error;fail('NETWORK_DATA','Invalid network data.');}
  if(!plain(raw))fail('NETWORK_DATA','Network must be an object.');
- allowed(raw,['metadata','tools','llm_config','max_steps'],'network');
+ allowed(raw,['metadata','tools','llm_config','max_steps','cruse'],'network');
+ if(raw.cruse!==undefined){if(!plain(raw.cruse)||Object.keys(raw.cruse).some(key=>key!=='version')||raw.cruse.version!==1)fail('PRESENTATION','CRUSE presentation metadata must be exactly version 1.');}
  if(!idPattern.test(name)||!idPattern.test(frontMan))fail('NETWORK_ID','Invalid network/front identity.');
  if(!plain(raw.metadata)||typeof raw.metadata.description!=='string'||raw.metadata.description.length>2000)fail('METADATA','Network needs a bounded description.');
  if(!Array.isArray(raw.tools)||raw.tools.length<1||raw.tools.length>32)fail('AGENTS','Network requires one to 32 agents.');
