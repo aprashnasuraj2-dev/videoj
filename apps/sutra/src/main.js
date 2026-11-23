@@ -40,6 +40,7 @@ async function check(altered=false){
 document.querySelector('#cue').addEventListener('click',()=>void check());
 document.querySelector('#check').addEventListener('click',()=>void check());
 document.querySelector('#alter').addEventListener('click',()=>void check(true));
+void check();
 
 const runButton=document.querySelector('#run-network');
 runButton.addEventListener('click',async()=>{
@@ -150,20 +151,51 @@ document.querySelector('#preview-peer-contact').addEventListener('click',async()
 });
 
 
+const SPEC_COMMIT='a0ceda34e4f2e653223e13e63282abc9b60eaf7c';
+const runtimeBuild=typeof __SUTRA_BUILD_SHA__==='string'?__SUTRA_BUILD_SHA__:'local-dev';
+document.querySelector('#prov-spec').textContent=SPEC_COMMIT;document.querySelector('#prov-runtime').textContent=runtimeBuild;
+let byokAdapter=null,activeOriginSink=null;
+const byokStatus=document.querySelector('#byok-status');
+function setProvenance({graph='not run',model='not run',router='not run',origins=[],calls='none',consent='none',errors='none'}={}){
+ document.querySelector('#prov-graph').textContent=graph;document.querySelector('#prov-model').textContent=model;document.querySelector('#prov-router').textContent=router;
+ document.querySelector('#prov-origins').textContent=origins.length?origins.join(', '):'none';document.querySelector('#prov-calls').textContent=calls;document.querySelector('#prov-consent').textContent=consent;document.querySelector('#prov-errors').textContent=errors;
+}
+function consentSummary(start){
+ const decisions=consentInspector.exportEvents().slice(start).filter(event=>event.type==='decision');
+ return decisions.length?decisions.map(event=>`${event.contactKind}:${event.decision}/${event.scope}`).join('; '):'none';
+}
+document.querySelector('#save-byok').addEventListener('click',()=>{
+ const keyInput=document.querySelector('#byok-key'),model=document.querySelector('#byok-model').value.trim();
+ try{
+  byokAdapter?.clear();byokAdapter=createOpenRouterByokAdapter({key:keyInput.value,model,fetchImpl:async(url,options)=>{activeOriginSink?.add(new URL(url).origin);return fetch(url,options);}});
+  keyInput.value='';byokStatus.textContent=`BYOK ready in memory for ${model}. The key is not written to browser storage.`;
+ }catch(error){byokAdapter=null;keyInput.value='';byokStatus.textContent=`BYOK setup rejected (${error.code||'BYOK_CONFIG'}). No key was stored.`;}
+});
+document.querySelector('#clear-byok').addEventListener('click',()=>{byokAdapter?.clear();byokAdapter=null;document.querySelector('#byok-key').value='';byokStatus.textContent='BYOK key cleared from memory.';});
 const peerRunButton=document.querySelector('#run-peer-network');
 peerRunButton.addEventListener('click',async()=>{
- const status=document.querySelector('#peer-network-result'),list=document.querySelector('#network-trace'),raw=document.querySelector('#peer-url').value.trim();
+ const status=document.querySelector('#peer-network-result'),list=document.querySelector('#network-trace'),raw=document.querySelector('#peer-url').value.trim(),useByok=document.querySelector('#use-byok').checked;
  peerRunButton.disabled=true;list.replaceChildren();consentMode='external';status.textContent='Validating the peer URL before any contact…';
+ const origins=new Set();activeOriginSink=origins;const consentStart=consentInspector.exportEvents().length;let graphLabel='not run';
  try{
+  if(useByok&&(!byokAdapter||!byokAdapter.configured())){const error=new Error('Configure BYOK before selecting it.');error.code='BYOK_SETUP';throw error;}
   const target=new URL(raw);
   const callerDefinition={metadata:{description:'SUTRA browser caller for an explicitly entered peer network.'},max_steps:6,tools:[{name:'learner',function:{description:'Delegate a narrow checklist request to the approved peer.',parameters:{type:'object',properties:{request:{type:'string',minLength:1,maxLength:1200}},required:['request'],additionalProperties:false}},instructions:'Use the declared peer when available. Report denial or load failure exactly; do not invent peer results.',tools:[target.href]}]};
-  const result=await runNetwork({definition:callerDefinition,request:'Inspect the peer publication state.',model:createPeerScriptedModel(),external:{baseOrigin:location.origin,inspector:consentInspector,fetchImpl:fetch},onEvent:event=>{
+  const callerHash=await sha256Integrity(JSON.stringify(callerDefinition));let peerHash='not observed';
+  const fetchPeer=async(url,options)=>{origins.add(new URL(url).origin);const response=await fetch(url,options);if(response.ok&&url.endsWith('.network.json'))peerHash=await sha256Integrity(await response.clone().arrayBuffer());return response;};
+  const model=useByok?byokAdapter:createPeerScriptedModel(),modelName=useByok?byokAdapter.model:'';
+  const result=await runNetwork({definition:callerDefinition,request:'Inspect the peer publication state.',model,modelName,external:{baseOrigin:location.origin,inspector:consentInspector,fetchImpl:fetchPeer},onEvent:event=>{
    if(event.kind==='agent'&&event.phase==='start'){const item=document.createElement('li');item.textContent=`${event.network||'network'} / ${event.agent} @ ${event.origin||'caller'}`;list.append(item);}
   }});
-  status.textContent=`${result.text} ${result.agentCalls} agent invocations; ${result.remoteCalls} peer call; ${result.modelCalls} scripted model steps. No live AI was used.`;
+  graphLabel=`caller ${callerHash}; peer ${peerHash}`;
+  const modeText=useByok?`${result.modelCalls} BYOK model calls via OpenRouter`:`${result.modelCalls} scripted model steps`;
+  status.textContent=`${result.text} ${result.agentCalls} agent invocations; ${result.remoteCalls} peer call; ${modeText}. Factual truth was not verified.`;
+  setProvenance({graph:graphLabel,model:useByok?byokAdapter.model:'fixture-only',router:useByok?'OpenRouter (browser BYOK)':'scripted local fixture',origins:[...origins].sort(),calls:`${result.agentCalls} agent / ${result.modelCalls} model / ${result.remoteCalls} peer`,consent:consentSummary(consentStart),errors:'none'});
  }catch(error){
   status.textContent=`Peer composition stopped (${error.code||'PEER_FAILED'}). No completed peer result is claimed.`;
+  setProvenance({graph:graphLabel,model:useByok?(byokAdapter?.model||'not configured'):'fixture-only',router:useByok?'OpenRouter (browser BYOK)':'scripted local fixture',origins:[...origins].sort(),calls:'incomplete',consent:consentSummary(consentStart),errors:error.code||'PEER_FAILED'});
  }finally{
-  consentEvents.textContent=JSON.stringify(consentInspector.exportEvents(),null,2);consentMode='synthetic';peerRunButton.disabled=false;
+  activeOriginSink=null;consentEvents.textContent=JSON.stringify(consentInspector.exportEvents(),null,2);consentMode='synthetic';peerRunButton.disabled=false;
  }
 });
+
