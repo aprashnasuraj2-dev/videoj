@@ -9,6 +9,9 @@ test('built peer serves human page and public artifacts independently on loopbac
  const manifest=await fetch(base+'/agents/agent-manifest.json',{credentials:'omit'});assert.equal(manifest.status,200);assert.equal(manifest.headers.get('access-control-allow-origin'),'*');assert.match(manifest.headers.get('content-type'),/application\/json/);
  const data=await manifest.json();assert.equal(data.networks[0].name,'checklist');
  const graph=await fetch(base+'/agents/checklist.network.json',{credentials:'omit'});assert.equal(graph.status,200);assert.equal(graph.headers.get('access-control-allow-origin'),'*');assert.deepEqual((await graph.json()).tools.map(x=>x.name),['checklist','source_select']);
+ const preflight=await fetch(base+'/agents/checklist.network.json',{method:'OPTIONS',headers:{Origin:'http://caller.example','Access-Control-Request-Method':'GET','Access-Control-Request-Headers':'Accept'}});assert.equal(preflight.status,204);assert.equal(preflight.headers.get('access-control-allow-origin'),'*');assert.equal(preflight.headers.get('access-control-allow-methods'),'GET, HEAD');assert.equal(preflight.headers.get('access-control-allow-credentials'),null);
+ const post=await fetch(base+'/agents/checklist.network.json',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});assert.equal(post.status,405);assert.equal(post.headers.get('allow'),'GET, HEAD');
+ const head=await fetch(base+'/agents/checklist.network.json',{method:'HEAD'});assert.equal(head.status,200);assert.equal(await head.text(),'');
  const missing=await fetch(base+'/agents/not-published.json');assert.equal(missing.status,404);
  const [{loadPeerNetwork},{createConsentInspector}]=await Promise.all([
   import('../../../packages/sutra-runtime/index.js'),import('../../../packages/sutra-consent/index.js')
