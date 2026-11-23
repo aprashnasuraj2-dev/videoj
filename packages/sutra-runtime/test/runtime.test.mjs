@@ -26,8 +26,7 @@ test('model-call budget stops delegation, no final success claimed',async()=>ass
 test('agent budget stop identifies the exhausted limit and preserves incomplete partial text',async()=>{
  await assert.rejects(run({limits:{maxAgents:1}}),e=>{
   assert.equal(e.code,'COMPOSITION_LIMIT');assert.equal(e.limit,'agent_calls');
-  assert.match(e.message,/agent_calls budget/);assert.equal(typeof e.partialText,'string');assert.ok(e.partialText.length>0);
-  assert.match(e.partialText,/Skipped|limit|Continue/i);return true;
+  assert.match(e.message,/agent_calls budget/);assert.match(e.message,/partial output is incomplete/i);assert.equal(typeof e.partialText,'string');assert.ok(e.partialText.length>0);return true;
  });
 });
 test('repeated runs may invoke the same agent normally',async()=>{await run();await run();});
