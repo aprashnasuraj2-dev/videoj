@@ -1,5 +1,4 @@
 import {createSourceMcp} from './source-mcp.js';
-import {createThirdPartyMcp} from './third-party-mcp.js';
 import {fetchJsonWithConsent} from '../sutra-consent/index.js';
 import {AgentNetwork, validateNetwork, isExternalAgent, isMcpTool, parseExternalAgent, filterSlyData} from './vendor/nsdeploy/kernel.js';
 import {runAgent} from './vendor/nsdeploy/runner.js';
@@ -40,9 +39,9 @@ function assertJsonData(value,ancestors=new Set(),depth=0){
  ancestors.delete(value);
 }
 
-// External declarative peers/MCP remain disabled by default. They are accepted only
-// when the caller explicitly enables the corresponding consent-gated host surface.
-export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false,allowPeerNetworks=false,allowMcp=false}={}){
+// External declarative peers remain disabled by default and require an explicit consent-gated host surface.
+// Third-party MCP remains outside this narrowed release scope; only the existing same-origin source capability is allowed.
+export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false,allowPeerNetworks=false}={}){
  const bounds=executionLimits(limits);
  assertJsonData(definition);
  let json;
@@ -70,14 +69,7 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
   for(const ref of agent.tools){
    if(typeof ref==='string')continue;
    const sourceDescriptor=allowSourceTools===true&&plain(ref)&&Object.keys(ref).length===1&&ref.url==='/api/source-tools';
-   if(sourceDescriptor)continue;
-   if(!(allowMcp&&plain(ref)))fail('TOOLS','External capability descriptors are disabled in this runtime profile.');
-   allowed(ref,['url','tools'],'MCP descriptor');
-   if(typeof ref.url!=='string'||!ref.url.trim())fail('TOOLS','MCP descriptor requires a bounded URL.');
-   let endpoint;try{endpoint=new URL(ref.url);}catch{fail('TOOLS','Third-party MCP descriptor URL must be absolute.');}
-   const loopback=['localhost','127.0.0.1','[::1]'].includes(endpoint.hostname);
-   if(endpoint.username||endpoint.password||endpoint.search||endpoint.hash||endpoint.protocol!=='https:'&&!(endpoint.protocol==='http:'&&loopback))fail('TOOLS','Third-party MCP URL must use approved HTTPS without embedded credentials, query or fragment.');
-   if(ref.tools!==undefined&&(!Array.isArray(ref.tools)||ref.tools.length<1||ref.tools.length>32||ref.tools.some(tool=>!idPattern.test(tool))))fail('TOOLS','MCP allowed-tool names must be bounded identifiers.');
+   if(!sourceDescriptor)fail('TOOLS','External capability descriptors are disabled in this runtime profile.');
   }
   if(new Set(agent.tools.map(r=>JSON.stringify(r))).size!==agent.tools.length)fail('TOOLS','Duplicate local references are unsupported.');
   const steps=agent.max_steps??raw.max_steps??bounds.maxSteps;
@@ -98,19 +90,13 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
  if(raw.llm_config!==undefined){if(!plain(raw.llm_config))fail('MODEL','Invalid network model hints.');allowed(raw.llm_config,['model_name'],'model');if(typeof raw.llm_config.model_name!=='string')fail('MODEL','Invalid model hint.');}
  for(const agent of raw.tools)for(const ref of agent.tools){
   if(typeof ref!=='string'||names.has(ref))continue;
-  if(allowMcp&&isMcpTool(ref)){
-   let endpoint;try{endpoint=new URL(ref);}catch{fail('REFERENCE','Third-party MCP URL must be absolute.');}
-   const loopback=['localhost','127.0.0.1','[::1]'].includes(endpoint.hostname);
-   if(endpoint.username||endpoint.password||endpoint.search||endpoint.hash||endpoint.protocol!=='https:'&&!(endpoint.protocol==='http:'&&loopback))fail('REFERENCE','Third-party MCP URL is outside the approved transport profile.');
-   continue;
-  }
   if(allowPeerNetworks&&isExternalAgent(ref)&&!isMcpTool(ref)){
    let peer;try{peer=new URL(ref);}catch{fail('REFERENCE','Peer network URL must be absolute.');}
    const loopback=['localhost','127.0.0.1','[::1]'].includes(peer.hostname);
    if(peer.username||peer.password||peer.search||peer.hash||peer.protocol!=='https:'&&!(peer.protocol==='http:'&&loopback))fail('REFERENCE','Peer URL is outside the approved transport profile.');
    continue;
   }
-  fail('REFERENCE','External or missing capabilities are unavailable in this runtime profile.');
+  fail('REFERENCE','External, MCP or missing capabilities are unavailable in this runtime profile.');
  }
  const byName=new Map(raw.tools.map(a=>[a.name,a]));
  function visit(name,chain=[]){
@@ -135,8 +121,6 @@ function validateExternalHost(external){
  const loopback=['localhost','127.0.0.1','[::1]'].includes(base.hostname);
  if(base.origin!==external.baseOrigin||base.username||base.password||base.pathname!=='/'||base.search||base.hash||base.protocol!=='https:'&&!(base.protocol==='http:'&&loopback))fail('EXTERNAL_CONFIG','Caller base origin must be an exact HTTPS origin (loopback HTTP for development).');
  if(external.fetchImpl!==undefined&&typeof external.fetchImpl!=='function')fail('EXTERNAL_CONFIG','External artifact fetch implementation must be callable.');
- if(external.resolveMcp!==undefined&&typeof external.resolveMcp!=='function')fail('EXTERNAL_CONFIG','MCP resolver must be callable.');
- if(external.mcpFetch!==undefined&&typeof external.mcpFetch!=='function')fail('EXTERNAL_CONFIG','MCP fetch implementation must be callable.');
  if(external.peerContext!==undefined){
   if(!plain(external.peerContext)||Object.keys(external.peerContext).length>16)fail('EXTERNAL_CONFIG','Peer private-context policy must be a bounded exact-URL map.');
   for(const [peerUrl,policy] of Object.entries(external.peerContext)){
@@ -151,17 +135,6 @@ function validateExternalHost(external){
  }
  return {...external,baseOrigin:base.origin};
 }
-function mcpOrigins(network,baseOrigin){
- const map=new Map();
- for(const agent of network.config.tools||[])for(const ref of agent.tools||[]){
-  if(network.classifyTool(ref).kind!=='mcp')continue;
-  const raw=typeof ref==='string'?ref:ref?.url;
-  let url;try{url=new URL(raw,baseOrigin);}catch{fail('MCP_ORIGIN','Invalid MCP destination.');}
-  const prior=map.get(url.host);if(prior&&prior!==url.origin)fail('MCP_ORIGIN','Ambiguous MCP destination origin.');
-  map.set(url.host,url.origin);
- }
- return map;
-}
 function safePeerFailure(error){
  const code=error?.code;
  if(code==='CONSENT_DENIED')return new RuntimeError('PEER_CONSENT_DENIED','Peer contact was denied before the requested public artifact was retrieved.');
@@ -171,35 +144,9 @@ function safePeerFailure(error){
  if(code==='ARTIFACT_TIMEOUT'||code==='CANCELLED')return new RuntimeError(code,'Peer load stopped before a usable network was established.');
  return new RuntimeError('PEER_UNAVAILABLE','Peer load failed before a usable network was established.');
 }
-function validateMcpClient(client,ref){
- if(!client||typeof client.listTools!=='function'||typeof client.callTool!=='function')fail('MCP_CLIENT','MCP resolver returned an invalid client.');
- const raw=typeof ref==='string'?ref:ref.url;const endpoint=new URL(raw);
- const allowNames=plain(ref)&&Array.isArray(ref.tools)?new Set(ref.tools):null;
- return {
-  url:endpoint.href,
-  async listTools(parentSpan){
-   const tools=await client.listTools(parentSpan);
-   if(!Array.isArray(tools)||tools.length>32)fail('MCP_CLIENT','MCP discovery returned an invalid tool list.');
-   const out=[];
-   for(const tool of tools){
-    if(!plain(tool)||!idPattern.test(tool.name)||typeof tool.description!=='string'||!plain(tool.inputSchema))fail('MCP_CLIENT','MCP discovery returned an invalid tool definition.');
-    try{checkSchema(tool.inputSchema);}catch{fail('MCP_CLIENT','MCP tool schema is unsupported.');}
-    if(allowNames&&!allowNames.has(tool.name))continue;
-    out.push(structuredClone(tool));
-   }
-   if(allowNames&&out.length!==allowNames.size)fail('MCP_CLIENT','One or more declared MCP tools were not discovered exactly.');
-   return out;
-  },
-  async callTool(name,args,parentSpan){
-   if(allowNames&&!allowNames.has(name))fail('MCP_CLIENT','Undeclared MCP tool call refused.');
-   return client.callTool(name,args,parentSpan);
-  }
- };
-}
-
 export async function runNetwork({definition,name='learner',frontMan='learner',request,model,modelName='',limits={},signal,onEvent,sourceTools,external,privateContext={}}={}){
  const host=validateExternalHost(external);
- const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeerNetworks:!!host,allowMcp:!!(host?.resolveMcp||host?.mcpFetch)});
+ const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeerNetworks:!!host});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
  if(!plain(privateContext)||Object.keys(privateContext).length>32||Object.keys(privateContext).some(key=>!idPattern.test(key)))fail('PRIVATE_CONTEXT','Private context must use bounded identifier keys.');
  assertJsonData(privateContext);let privateBytes;try{privateBytes=new TextEncoder().encode(JSON.stringify(privateContext)).length;}catch{fail('PRIVATE_CONTEXT','Private context must be finite JSON data.');}
@@ -250,37 +197,8 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
   const guardSource=method=>async(...args)=>{check();try{return await rawSourceClient[method](...args);}catch{const error=new RuntimeError('CAPABILITY_UNAVAILABLE','Source retrieval failed; no completed source result is claimed.');failure=error;controller.abort(error);throw error;}};
   const sourceClient=rawSourceClient?{url:(sourceTools?.origin??host?.baseOrigin??'https://sutra.invalid')+'/api/source-tools',listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
-  const discoveredMcpOrigins=host?mcpOrigins(compiled.network,host.baseOrigin):new Map();
-  const requestConsent=async intent=>{
-   if(intent?.kind==='network')return 'allow'; // resolveRemote performs the real manifest/graph approvals immediately before fetch.
-   if(intent?.kind!=='mcp'||!host?.inspector)return 'decline';
-   const origin=discoveredMcpOrigins.get(intent.peerOrigin);
-   if(!origin)fail('MCP_ORIGIN','MCP consent destination could not be resolved exactly.');
-   const phase=intent.phase==='call'?'call':'discover';
-   try{
-    await host.inspector.authorize({
-     origin,
-     kind:phase==='call'?'mcp_call':'mcp_discovery',
-     purpose:phase==='call'?'Call an explicitly discovered third-party MCP tool':'Discover the explicitly declared third-party MCP tools',
-     disclosure:phase==='call'?['tool arguments']:['tool names','tool schemas'],
-     network:compiled.name
-    });
-    return 'allow';
-   }catch(error){
-    if(error?.code==='CONSENT_DENIED')return 'decline';
-    throw error;
-   }
-  };
-  const externalMcpClient=async ref=>{
-   check();
-   if(host?.resolveMcp)return validateMcpClient(await host.resolveMcp(ref),ref);
-   if(host?.mcpFetch){
-    const raw=typeof ref==='string'?ref:ref?.url;
-    return validateMcpClient(createThirdPartyMcp({url:raw,fetchImpl:host.mcpFetch,signal:controller.signal}),ref);
-   }
-   return unavailable();
-  };
-  const resolveMcp=sourceClient?async ref=>{check();if(ref?.url==='/api/source-tools')return sourceClient;return externalMcpClient(ref);}:host?(async ref=>externalMcpClient(ref)):unavailable;
+  const requestConsent=async intent=>intent?.kind==='network'?'allow':'decline';
+  const resolveMcp=sourceClient?async ref=>{check();if(ref?.url==='/api/source-tools')return sourceClient;return unavailable();}:unavailable;
   const resolveRemote=host?async(peerUrl,chain,parentSpan)=>{
    check();
    let loaded;
