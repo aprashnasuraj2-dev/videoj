@@ -55,6 +55,18 @@ test('action outcomes can update latest run without exposing action result paylo
 
 test('invalid active-state and clock usage fail visibly without corrupting history',()=>{
  const store=createProvenanceStore({specCommit:spec,runtimeSha:runtime,buildSha:'abcdef1',clock:()=>42});
- assert.throws(()=>store.finish(),/No active provenance run/);assert.equal(store.size(),0);
+ assert.throws(()=>store.finish(),/No matching active provenance run/);assert.equal(store.size(),0);
  assert.throws(()=>createProvenanceStore({specCommit:spec,runtimeSha:runtime,buildSha:'abcdef1',maxRuns:0}),/maxRuns/);
+});
+
+test('overlapping runs remain isolated by run id and active memory is bounded',()=>{
+ let now=10;const store=createProvenanceStore({specCommit:spec,runtimeSha:runtime,buildSha:'abcdef1',clock:()=>now});
+ const first=store.begin({kind:'local',graphSha:'a'.repeat(64),modelId:'fixture-only',router:'fixture'});
+ const second=store.begin({kind:'peer',graphSha:'b'.repeat(64),modelId:'openrouter/free',router:'OpenRouter'});
+ assert.equal(store.activeSize(),2);
+ now=25;const peer=store.finish({runId:second,modelCalls:5,status:'complete'});
+ now=40;const local=store.finish({runId:first,modelCalls:3,status:'complete'});
+ assert.equal(peer.kind,'peer');assert.equal(peer.graphSha,'b'.repeat(64));assert.equal(peer.modelId,'openrouter/free');
+ assert.equal(local.kind,'local');assert.equal(local.graphSha,'a'.repeat(64));assert.equal(local.modelId,'fixture-only');
+ assert.equal(store.activeSize(),0);
 });
