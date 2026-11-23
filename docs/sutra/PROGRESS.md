@@ -2,7 +2,17 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
-## Session 0008 checkpoint — 2026-11-23
+## Session 0008 final consent exit — 2026-11-23
+
+**204 / 1,000 verified checks; 13 phases complete.** Phase 033 is now closed after the extra Chromium browser test demonstrated that denied external MCP discovery makes zero external POSTs while the original local evidence validator and native synthetic video remain available in the same browser session.
+
+**Last verified code:** `12aae467ce7ebfd7cd1929f0360d1d8ca598fd7e`; [passing GitHub Actions run](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45179248410/job/137708455358). This successful run supersedes the pending phase-exit note in the historical session 0008 checkpoint below. The earlier [MCP fixture run](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45178921845/job/137707320526) also verified distinct discovery and call consent, credential omission and CORS refusal.
+
+**Next priority:** P039-01 authorized *real* public-read MCP service; P039-05 timeout/endpoint compatibility and P039-07 authentication separation; then P035-05 provider/BYOK credential canaries. No live external publisher, paid provider, actual HTTPS peer or factual original corpus is claimed. Draft PR #49 stays unmerged and public release remains gated.
+
+---
+
+## Session 0008 checkpoint (historical pending observation) — 2026-11-23
 
 **203 / 1,000 verified checks; 12 phases complete.** Phase 032 remains closed. Phase 033 is one uncredited exit check from completion; phase 039 is partially verified only against a synthetic read-only MCP fixture.
 
