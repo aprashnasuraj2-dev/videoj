@@ -13,10 +13,10 @@ const stop=server=>new Promise((resolve,reject)=>server.close(error=>error?rejec
 const contact=origin=>({origin,kind:'peer_manifest',purpose:'Fetch exactly one disclosed peer manifest',disclosure:['network name'],network:'checklist'});
 
 test('same-origin, changed-origin and looping redirects all fail closed before following',async()=>{
- const hits=[],other=[];
+ const hits=[],other=[],headers=[];
  const second=await serve((req,res)=>{other.push(req.url);res.writeHead(200,{'Content-Type':'application/json'});res.end('{"unexpected":true}');});
  const first=await serve((req,res)=>{
-  hits.push(req.url);
+  hits.push(req.url);headers.push(req.headers);
   if(req.url==='/ok'){res.writeHead(200,{'Content-Type':'application/json'});res.end('{"ok":true}');return;}
   const location=req.url==='/same'?'/ok':req.url==='/changed'?second.origin+'/capture':'/loop';
   res.writeHead(302,{Location:location});res.end();
@@ -29,6 +29,7 @@ test('same-origin, changed-origin and looping redirects all fail closed before f
    assert.deepEqual(hits.slice(before),[route],route+' must not follow even one hop');
   }
   assert.deepEqual(other,[],'changed-origin target must not receive a request');
+  assert.ok(headers.every(h=>!h.authorization&&!h.cookie),'redirecting origin must receive no caller credentials');
   assert.equal(hits.includes('/ok'),false,'same-origin redirected target must not be fetched');
   const ok=await fetchJsonWithConsent({inspector,contact:contact(first.origin),url:first.origin+'/ok'});
   assert.deepEqual(ok,{ok:true},'an ordinary direct read remains functional');
