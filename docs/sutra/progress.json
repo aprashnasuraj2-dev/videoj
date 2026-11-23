@@ -14,7 +14,7 @@
     "SUTRA-P036-04",
     "SUTRA-P037-07"
   ],
-  "next_action": "Verify actual OpenRouter browser CORS with an authorized test key/account for P030-02 without persisting/logging credentials. Independently implement redirect fixtures P037-07 and upstream private-context return P036-04. Keep funded inference and public release disabled.",
+  "next_action": "Finish P030-02 live router CORS only with authorized account/key; build P037 full redirect matrix and P036 upstream context policy. Obtain a separate registrable domain for the peer before any public HTTPS test; do not reuse aafnaipatro.com subdomains. All public release gates remain closed.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -3868,7 +3868,7 @@
   "release": {
     "state": "not_started",
     "proposed_app_url": "https://sutra.aafnaipatro.com/",
-    "proposed_peer_url": "https://sutra-guide.aafnaipatro.com/",
+    "proposed_peer_url": null,
     "verified_app_url": null,
     "verified_peer_url": null,
     "source_revision": null,
