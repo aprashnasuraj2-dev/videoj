@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T16:04:27+05:45",
+  "updated_at": "2026-11-23T16:07:00+05:45",
   "work_branch": "sutra/peer-invocation",
-  "last_observed_code_sha": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
-  "last_session_id": "SUTRA-SESSION-0006",
-  "stage": "byok_key_isolation_and_provenance",
+  "last_observed_code_sha": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+  "last_session_id": "SUTRA-SESSION-0008",
+  "stage": "byok_revocation_verification",
   "current_task": "SUTRA-P030-01",
   "next_task": "SUTRA-P030-02",
   "ready_engineering_queue": [
@@ -14,7 +14,7 @@
     "SUTRA-P030-05",
     "SUTRA-P035-01"
   ],
-  "next_action": "Observe the current shell/BYOK browser run, fix any canary or CORS-fixture failures, then credit only the BYOK items actually demonstrated. Real router CORS with a real account/key remains a separate live check.",
+  "next_action": "Verify final shell/Chromium CI for BYOK candidate 092c8d2, update exact P030 checklist and evidence only for tests that passed; separately obtain real OpenRouter account/CORS evidence without exposing credentials. Keep all release/deployment/funded inference gates closed.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -3241,8 +3241,7 @@
     },
     "SUTRA-P030-01": {
       "state": "active",
-      "started_at": "2026-11-23T16:04:27+05:45",
-      "next_action": "Finish the BYOK browser canary/provenance regression and verify key deletion plus peer-origin isolation under current CI."
+      "next_action": "Verify final shell/Chromium CI for BYOK candidate 092c8d2, update exact P030 checklist and evidence only for tests that passed; separately obtain real OpenRouter account/CORS evidence without exposing credentials. Keep all release/deployment/funded inference gates closed."
     }
   },
   "blockers": [],
