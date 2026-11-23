@@ -8,7 +8,7 @@ const SRI=/^sha256-[A-Za-z0-9+/]{43}=$/;
 const isObject=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const validDate=value=>typeof value==='string'&&Number.isFinite(Date.parse(value))&&/T.*(?:Z|[+-]\d\d:\d\d)$/.test(value);
 const error=(code,path)=>({code,path});
-const iri=value=>{try{const u=new URL(value);return ['http:','https:'].includes(u.protocol)&&!u.username&&!u.password&&!u.hash;}catch{return /^urn:[A-Za-z0-9][A-Za-z0-9:._-]{1,240}$/.test(value??'');}};
+const iri=value=>{if(typeof value==='string'&&/^urn:[A-Za-z0-9][A-Za-z0-9:._-]{1,240}$/.test(value))return true;try{const u=new URL(value);return ['http:','https:'].includes(u.protocol)&&!u.username&&!u.password&&!u.hash;}catch{return false;}};
 function contextIncludes(value,target){return value===target||Array.isArray(value)&&value.includes(target);}
 export function parseMediaFragment(value){
  if(typeof value!=='string')return null;
@@ -26,6 +26,7 @@ export function validateAnnotationProfile(annotation,{manifest}={}){
  if(!isObject(annotation))return {valid:false,level:'invalid',errors:[error('ANNOTATION_TYPE','')]};
  if(!contextIncludes(annotation['@context'],ANNOTATION_CONTEXT))fail('CONTEXT','@context');
  if(annotation.type!=='Annotation')fail('ANNOTATION_TYPE','type');
+ if(!iri(annotation.id))fail('ANNOTATION_ID','id');
  if(annotation.motivation!=='linking')fail('MOTIVATION','motivation');
  if(!validDate(annotation.created))fail('DATE','created');
  if(!isObject(annotation.generator)||annotation.generator.id!==PROFILE_ID)fail('PROFILE','generator.id');
