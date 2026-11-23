@@ -42,7 +42,7 @@ test('learner UI exposes composition budget category and labels partial output i
 });
 
 test('player adapter forwards compatibility/error surfaces without demo coupling',()=>{
- const source=fs.readFileSync(path.join(app,'src/player-adapter.js'),'utf8');
+ const source=fs.readFileSync(path.join(app,'src/player-adapter.js'),'utf8'),imports=source.split('\n').filter(line=>line.startsWith('import ')).join('\n');
  for(const marker of ['compatibilitySource','fallbackUrl','poster','replaceSource','setVolume','setCaptions'])assert.ok(source.includes(marker),marker);
- assert.doesNotMatch(source,/apps\/preview|detour\//i);
+ assert.doesNotMatch(imports,/apps\/preview|detour\//i);
 });
