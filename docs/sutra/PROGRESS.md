@@ -1,5 +1,13 @@
 # SUTRA progress register
 
+## Session 0012 checkpoint — Phase 022 complete
+
+**261/1,000 tasks verified; 19 phases fully verified.** The caller publication bundle now includes explicit top-site inference metadata separate from peer policy, exact publisher link maps, and a pre-release artifact inventory. The link maps are intentionally empty because no published symbolic external-network reference has an established publisher-owned binding; the distinct peer domain remains unset rather than fabricated.
+
+Tested publication source: `47f84a1f8ee47cf7f9a049aaa8286d3142d8648c`; full shell/Chromium https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45164065404. See [session 0012 evidence](evidence/implementation/SESSION-0012.md).
+
+**Next:** `SUTRA-P023-05` browser action boundary/reconciliation. Live OpenRouter browser CORS/account, public HTTPS/CORS, original content, physical-device evidence, release and Devpost remain open.
+
 ## Session 0011 checkpoint — Phase 037 complete
 
 **256/1,000 tasks verified; 18 phases fully verified.** Redirect policy now re-consents an observable changed origin before the next request, re-evaluates session approval for a changed artifact path, bounds hops and cycles, and preserves fail-closed browser behavior when JavaScript cannot inspect a redirect target before contact.
