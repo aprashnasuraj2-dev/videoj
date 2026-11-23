@@ -57,11 +57,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P023-02` Parse the public graph in JavaScript executed by the browser
 - [ ] `SUTRA-P023-03` Start a real front-agent invocation using configured inference
 - [x] `SUTRA-P023-04` Observe an internal agent delegation and structured return
-- [ ] `SUTRA-P023-05` Expose narrow registered actions through the runtime interface
+- [x] `SUTRA-P023-05` Expose narrow registered actions through the runtime interface
 - [x] `SUTRA-P023-06` Record browser execution evidence separately from provider inference execution
 - [x] `SUTRA-P023-07` Ensure the server proxy does not secretly own orchestration
 - [x] `SUTRA-P023-08` Verify initial errors are visible without opening developer tools
-- [ ] `SUTRA-P023-09` Produce and review the phase artifact: Runtime entry module and first local run.
+- [x] `SUTRA-P023-09` Produce and review the phase artifact: Runtime entry module and first local run.
 - [ ] `SUTRA-P023-10` Close phase 023 only after its applicable tasks have evidence and its exit condition is observed: Browser traces prove graph execution and internal delegation; a server-only chat endpoint is insufficient.
 
 ## Phase 024 - Add pre-execution network validation
@@ -161,7 +161,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Add save-review-card and export-receipt with explicit effect classification. Bind the reviewed payload to the executed action and source version. Surface persisted receipt or unknown outcome accurately.
 - **Phase exit:** Cancelling writes changes no stored state; changing arguments after review requires a fresh confirmation.
 
-- [ ] `SUTRA-P029-01` Register save-review-card and export-receipt with explicit effects
+- [x] `SUTRA-P029-01` Register save-review-card and export-receipt with explicit effects
 - [x] `SUTRA-P029-02` Validate proposed payload and bind it to the current source version
 - [x] `SUTRA-P029-03` Show destination, arguments and local persistence meaning before confirmation
 - [x] `SUTRA-P029-04` Require a new confirmation if the reviewed payload changes
@@ -170,7 +170,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P029-07` Distinguish successful persistence, rejection and unknown outcome
 - [x] `SUTRA-P029-08` Ensure the browser never blindly repeats an ambiguous write
 - [x] `SUTRA-P029-09` Produce and review the phase artifact: Write proposal, confirmation and receipt flow.
-- [ ] `SUTRA-P029-10` Close phase 029 only after its applicable tasks have evidence and its exit condition is observed: Cancelling writes changes no stored state; changing arguments after review requires a fresh confirmation.
+- [x] `SUTRA-P029-10` Close phase 029 only after its applicable tasks have evidence and its exit condition is observed: Cancelling writes changes no stored state; changing arguments after review requires a fresh confirmation.
 
 ## Phase 030 - Keep direct BYOK as a first-class caller path
 
