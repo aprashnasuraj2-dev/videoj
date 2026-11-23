@@ -167,7 +167,7 @@ function safePeerFailure(error){
  if(code==='CONSENT_DENIED')return new RuntimeError('PEER_CONSENT_DENIED','Peer contact was denied before the requested public artifact was retrieved.');
  if(code==='NETWORK_MATCH')return new RuntimeError('PEER_NETWORK_MATCH','Peer load failed: the requested exact network name is not published exactly once.');
  if(code==='MANIFEST')return new RuntimeError('PEER_MANIFEST','Peer load failed: the public manifest is malformed or incomplete.');
- if(['CONTACT_RESPONSE','CONTACT_JSON','CONTACT_SIZE','CONTACT_FETCH','CONTACT_REDIRECT','ARTIFACT_URL','ARTIFACT_ORIGIN','CYCLE','REFERENCE','VALIDATION','FRONT'].includes(code))return new RuntimeError('PEER_ARTIFACT','Peer load failed: the declared public network artifact is unavailable or invalid.');
+ if(['CONTACT_RESPONSE','CONTACT_JSON','CONTACT_SIZE','CONTACT_FETCH','CONTACT_REDIRECT','ARTIFACT_URL','ARTIFACT_ORIGIN','CYCLE','REFERENCE','VALIDATION','FRONT','UNSUPPORTED_FIELD','TOOLS','SCHEMA','AGENT','AGENTS','AGENT_NAME','INSTRUCTIONS','FUNCTION','PRIVATE_CONTEXT_POLICY','MODEL','STEPS','NETWORK_DATA','NETWORK_SIZE','METADATA'].includes(code))return new RuntimeError('PEER_ARTIFACT','Peer load failed: the declared public network artifact is unavailable or invalid.');
  if(code==='ARTIFACT_TIMEOUT'||code==='CANCELLED')return new RuntimeError(code,'Peer load stopped before a usable network was established.');
  return new RuntimeError('PEER_UNAVAILABLE','Peer load failed before a usable network was established.');
 }
