@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T13:08:08+05:45",
+  "updated_at": "2026-11-23T13:20:58+05:45",
   "work_branch": "main",
-  "last_observed_code_sha": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-  "last_session_id": "SUTRA-SESSION-0002",
-  "stage": "evidence_validator_implemented",
+  "last_observed_code_sha": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+  "last_session_id": "SUTRA-SESSION-0003",
+  "stage": "isolated_learner_shell",
   "current_task": null,
-  "next_task": "SUTRA-P003-01",
+  "next_task": "SUTRA-P014-01",
   "ready_engineering_queue": [
-    "SUTRA-P011-01",
-    "SUTRA-P012-01"
+    "SUTRA-P012-04",
+    "SUTRA-P021-01"
   ],
-  "next_action": "Refresh the rules/specification and repository map, then create the isolated learner shell. Obtain a factual reviewer and original lesson rights before public corpus work.",
+  "next_action": "Pin and spike the browser agent runtime; resolve the actual shared DHAGO player dependency boundary before completing phase 012. Verify shell CI/browser results from session 0003.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -375,6 +375,474 @@
           "result": "pass",
           "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
           "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P003-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P003-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P003-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P003-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P003-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P003-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P003-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P003-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P003-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P003-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P011-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P011-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P011-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P011-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P011-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P011-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P011-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P011-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P011-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P011-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P012-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P012-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P012-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P012-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P012-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P012-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P012-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P012-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P013-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P013-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P013-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P013-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P013-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P013-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P013-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P013-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:20:58+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0003.md",
+          "description": "Refreshed rules/spec diff and source map, or observed isolated shell configuration/build checks as applicable; browser testing remains explicitly separate.",
+          "result": "pass",
+          "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+          "observed_at": "2026-11-23T13:20:58+05:45"
         }
       ]
     }

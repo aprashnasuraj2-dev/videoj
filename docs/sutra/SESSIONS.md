@@ -48,3 +48,13 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Evidence: `evidence/implementation/SESSION-0002.md` plus candidate file hashes.
 - Scope: decision 0004 records independent early contract/tool implementation.
 - Next: P003-01 rules/spec refresh, P011 source map, P012 isolated shell. No public deployment, paid inference, outreach or official filing occurred.
+
+## SUTRA-SESSION-0003 - Rules refresh and isolated learner shell
+
+- 2026-11-23T13:20:58+05:45; resumed main `47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2` and its existing 28 verified tasks.
+- Refreshed official pages and launch/current spec pins; no substantive core spec change found. Added requirement map and repository map.
+- Built apps/sutra with own Vite package/lock/output; actual synthetic receipt validation and honest missing-media/runtime states.
+- Four build-boundary checks passed; root/DETOUR output sentinels survived. Local Chromium blocked by environment socket restriction; no local visual success claimed. Browser behavior is committed as a reproducible CI check.
+- Verified count: 64/1000. Phase 012 remains partial because real DHAGO shared dependency resolution and its phase exit are pending. Phase 013 CI completion is also not yet credited.
+- Evidence: evidence/implementation/SESSION-0003.md and shell-candidate-files.json.
+- Next: P014-01 runtime selection/spike, P012-04 shared player dependencies. Participant reviewer/footage, eligibility and spend remain pending; no external outreach, paid inference or public deployment.

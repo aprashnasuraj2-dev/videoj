@@ -17,16 +17,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Record main SHA 042bea1d1723b448854538c21e8f693608897c5a, repository instructions, existing build commands and deployment workflows. Inspect nested instructions before touching any directory.
 - **Phase exit:** Read evidence is distinguished from executed tests; no assumption that an existing live domain matches main.
 
-- [ ] `SUTRA-P011-01` Resolve the current remote main SHA and record inspection time
-- [ ] `SUTRA-P011-02` Read root and relevant nested AGENTS instructions before changes
-- [ ] `SUTRA-P011-03` Inventory root DHAGO and independent DETOUR build boundaries
-- [ ] `SUTRA-P011-04` Inspect actual workflow triggers rather than relying on hosting prose
-- [ ] `SUTRA-P011-05` Identify existing SUTRA files, branches or work before creating replacements
-- [ ] `SUTRA-P011-06` Separate source inspection from builds, CI runs and live observations
-- [ ] `SUTRA-P011-07` Record original package versions and existing deployment relationships
-- [ ] `SUTRA-P011-08` Check the attached plan matches the phase titles and provenance hash
-- [ ] `SUTRA-P011-09` Produce and review the phase artifact: Repository map and baseline revision note.
-- [ ] `SUTRA-P011-10` Close phase 011 only after its applicable tasks have evidence and its exit condition is observed: Read evidence is distinguished from executed tests; no assumption that an existing live domain matches main.
+- [x] `SUTRA-P011-01` Resolve the current remote main SHA and record inspection time
+- [x] `SUTRA-P011-02` Read root and relevant nested AGENTS instructions before changes
+- [x] `SUTRA-P011-03` Inventory root DHAGO and independent DETOUR build boundaries
+- [x] `SUTRA-P011-04` Inspect actual workflow triggers rather than relying on hosting prose
+- [x] `SUTRA-P011-05` Identify existing SUTRA files, branches or work before creating replacements
+- [x] `SUTRA-P011-06` Separate source inspection from builds, CI runs and live observations
+- [x] `SUTRA-P011-07` Record original package versions and existing deployment relationships
+- [x] `SUTRA-P011-08` Check the attached plan matches the phase titles and provenance hash
+- [x] `SUTRA-P011-09` Produce and review the phase artifact: Repository map and baseline revision note.
+- [x] `SUTRA-P011-10` Close phase 011 only after its applicable tasks have evidence and its exit condition is observed: Read evidence is distinguished from executed tests; no assumption that an existing live domain matches main.
 
 ## Phase 012 - Create an isolated SUTRA app package
 
@@ -35,15 +35,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Add apps/sutra/ with its own package, lockfile, Vite config and output. Import only the DHAGO reusable player through an explicit reviewed path boundary. Do not mix in DETOUR source or demo media.
 - **Phase exit:** A SUTRA build cannot empty root dist/ or detour/dist/; no dependency on apps/preview/ exists.
 
-- [ ] `SUTRA-P012-01` Create a standalone apps/sutra package manifest and lockfile
-- [ ] `SUTRA-P012-02` Give the app a distinct Vite root and output directory
-- [ ] `SUTRA-P012-03` Define the explicit DHAGO source import or adapter boundary
+- [x] `SUTRA-P012-01` Create a standalone apps/sutra package manifest and lockfile
+- [x] `SUTRA-P012-02` Give the app a distinct Vite root and output directory
+- [x] `SUTRA-P012-03` Define the explicit DHAGO source import or adapter boundary
 - [ ] `SUTRA-P012-04` Resolve shared-source dependencies without importing the preview application
-- [ ] `SUTRA-P012-05` Keep DETOUR code, themes, fixtures and media out of SUTRA
-- [ ] `SUTRA-P012-06` Ensure builds cannot empty root dist or detour/dist directories
-- [ ] `SUTRA-P012-07` Provide documented clean-install and development commands for the new app
-- [ ] `SUTRA-P012-08` Verify the new application shell builds independently of demo content
-- [ ] `SUTRA-P012-09` Produce and review the phase artifact: Standalone app skeleton and build entry.
+- [x] `SUTRA-P012-05` Keep DETOUR code, themes, fixtures and media out of SUTRA
+- [x] `SUTRA-P012-06` Ensure builds cannot empty root dist or detour/dist directories
+- [x] `SUTRA-P012-07` Provide documented clean-install and development commands for the new app
+- [x] `SUTRA-P012-08` Verify the new application shell builds independently of demo content
+- [x] `SUTRA-P012-09` Produce and review the phase artifact: Standalone app skeleton and build entry.
 - [ ] `SUTRA-P012-10` Close phase 012 only after its applicable tasks have evidence and its exit condition is observed: A SUTRA build cannot empty root dist/ or detour/dist/; no dependency on apps/preview/ exists.
 
 ## Phase 013 - Create path-scoped verification
@@ -53,14 +53,14 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Add checks for the new app and shared DHAGO imports. Preserve existing verification. Inspect workflow YAML because current DHAGO staging triggers on successful main pushes as well as manual dispatch.
 - **Phase exit:** App changes run their checks; existing staging or deployment behavior is understood before any root edit.
 
-- [ ] `SUTRA-P013-01` Add path-scoped verification for new app and imported shared code
-- [ ] `SUTRA-P013-02` Preserve existing DHAGO and DETOUR workflow intent and triggers
-- [ ] `SUTRA-P013-03` Inspect whether changes to shared player files need existing regressions
-- [ ] `SUTRA-P013-04` Ensure documentation-only planning edits do not trigger deployment work
-- [ ] `SUTRA-P013-05` Keep SUTRA artifacts and caches separate from other project outputs
-- [ ] `SUTRA-P013-06` Pin appropriate Node and dependency installation behavior
-- [ ] `SUTRA-P013-07` Document successful-main restaging versus actual public promotion accurately
-- [ ] `SUTRA-P013-08` Ensure CI does not require unavailable provider or deployment secrets
+- [x] `SUTRA-P013-01` Add path-scoped verification for new app and imported shared code
+- [x] `SUTRA-P013-02` Preserve existing DHAGO and DETOUR workflow intent and triggers
+- [x] `SUTRA-P013-03` Inspect whether changes to shared player files need existing regressions
+- [x] `SUTRA-P013-04` Ensure documentation-only planning edits do not trigger deployment work
+- [x] `SUTRA-P013-05` Keep SUTRA artifacts and caches separate from other project outputs
+- [x] `SUTRA-P013-06` Pin appropriate Node and dependency installation behavior
+- [x] `SUTRA-P013-07` Document successful-main restaging versus actual public promotion accurately
+- [x] `SUTRA-P013-08` Ensure CI does not require unavailable provider or deployment secrets
 - [ ] `SUTRA-P013-09` Produce and review the phase artifact: Scoped CI configuration and release-trigger note.
 - [ ] `SUTRA-P013-10` Close phase 013 only after its applicable tasks have evidence and its exit condition is observed: App changes run their checks; existing staging or deployment behavior is understood before any root edit.
 

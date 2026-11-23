@@ -53,16 +53,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Record the submission rules, Profile 0.2 at fd872b9 and Profile 0.3 at a0ceda3. Preserve their substantive comparison and map requirements to evidence. Recheck for organizer changes before release.
 - **Phase exit:** Every mandatory requirement has an owner and planned verification; version differences are explicit.
 
-- [ ] `SUTRA-P003-01` Retrieve current official rules, requirements, schedule and judging criteria
-- [ ] `SUTRA-P003-02` Pin the launch-time specification commit and current specification commit
-- [ ] `SUTRA-P003-03` Diff normative behavior rather than comparing only profile version labels
-- [ ] `SUTRA-P003-04` List public artifacts, browser execution and privacy obligations individually
-- [ ] `SUTRA-P003-05` Map each obligation to stable task IDs and intended evidence
-- [ ] `SUTRA-P003-06` Record source URLs, versions and retrieval time with timezone
-- [ ] `SUTRA-P003-07` Distinguish mandatory requirements, recommendations, extensions and project choices
-- [ ] `SUTRA-P003-08` Record a release-time rule recheck task and unresolved interpretation questions
-- [ ] `SUTRA-P003-09` Produce and review the phase artifact: Versioned requirement matrix with source links and retrieval dates.
-- [ ] `SUTRA-P003-10` Close phase 003 only after its applicable tasks have evidence and its exit condition is observed: Every mandatory requirement has an owner and planned verification; version differences are explicit.
+- [x] `SUTRA-P003-01` Retrieve current official rules, requirements, schedule and judging criteria
+- [x] `SUTRA-P003-02` Pin the launch-time specification commit and current specification commit
+- [x] `SUTRA-P003-03` Diff normative behavior rather than comparing only profile version labels
+- [x] `SUTRA-P003-04` List public artifacts, browser execution and privacy obligations individually
+- [x] `SUTRA-P003-05` Map each obligation to stable task IDs and intended evidence
+- [x] `SUTRA-P003-06` Record source URLs, versions and retrieval time with timezone
+- [x] `SUTRA-P003-07` Distinguish mandatory requirements, recommendations, extensions and project choices
+- [x] `SUTRA-P003-08` Record a release-time rule recheck task and unresolved interpretation questions
+- [x] `SUTRA-P003-09` Produce and review the phase artifact: Versioned requirement matrix with source links and retrieval dates.
+- [x] `SUTRA-P003-10` Close phase 003 only after its applicable tasks have evidence and its exit condition is observed: Every mandatory requirement has an owner and planned verification; version differences are explicit.
 
 ## Phase 004 - Select SUTRA and reject excess scope
 
