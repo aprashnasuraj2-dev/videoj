@@ -50,9 +50,14 @@ export function mountTranscriptPanel(host,{source,onSeek,media}={}){
  const items=valid?[...cues].sort((a,b)=>a.start-b.start):[];
  const sourceId=typeof source?.id==='string'?source.id:'unknown';
  const version=typeof source?.version==='string'?source.version:'unknown';
+ let captionTrackConfirmed=false;
+ try{captionTrackConfirmed=Array.from(media?.textTracks??[]).some(track=>
+  track.kind==='captions'||track.kind==='subtitles');}catch{}
  meta.textContent='Synthetic source '+sourceId+' · '+version+
   ' · '+(valid?items.length:0)+' cue'+(items.length===1?'':'s')+
-  '. Source consistency only; original lesson review pending.';
+  '. Source consistency only; original lesson review pending. '+
+  (captionTrackConfirmed?'A native caption track is present but its accuracy is unverified.':
+   'No native caption track is confirmed; the catalog transcript is independent.');
  const buttonMap=new Map();
  const status=text=>{state.textContent=text;};
  function updateActive(){
