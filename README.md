@@ -55,3 +55,9 @@ The repository root builds **DHAGO**. `detour/` is a separate project with its o
 - [Security guidance](SECURITY.md)
 
 Both are open-source source distributions, not official Video.js skins or npm registry releases. Browser, media-decoder and device behavior varies; consult the integration constraints before deploying. Prior planning records are preserved in version history, rather than treated as current product instructions.
+
+## SUTRA - planned agentic learning companion
+
+The active [SUTRA workspace](docs/sutra/README.md) contains the user-requested [detailed checklist](docs/sutra/CHECKLIST.md), [progress register](docs/sutra/PROGRESS.md) and [continuation procedure](docs/sutra/CONTINUE.md) for the Open Agentic Web Challenge. Say **“continue with sutra”** to resume from verified repository status and carry out the next dependency-ready task.
+
+At tracker bootstrap this is a planned separate application, not a shipped player or public agent service. Use the register for the current implementation/release state. Existing DHAGO and DETOUR boundaries remain as documented above.
