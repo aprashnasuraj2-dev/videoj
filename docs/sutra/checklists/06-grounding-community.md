@@ -125,16 +125,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Ship a dependency-free profile of the W3C Web Annotation model for timed media evidence: `Annotation` → `SpecificResource` → `FragmentSelector`, Media Fragments `t=start,end`, plus a separate SRI-style SHA-256 integrity manifest. Keep byte integrity distinct from factual truth.
 - **Phase exit:** From an unrelated working directory, the CLI validates the good annotation/transcript fixture and rejects altered bytes, a bad interval and an altered quotation without the SUTRA app, player, API key or private service.
 
-- [ ] `SUTRA-P057-01` Keep the evidence package independent of the learner UI, player and agent runtime
-- [ ] `SUTRA-P057-02` Map the public evidence object to W3C Web Annotation classes/properties rather than a bespoke SUTRA envelope
-- [ ] `SUTRA-P057-03` Use a `FragmentSelector` conforming to Media Fragments URI syntax with explicit `t=start,end` ranges
-- [ ] `SUTRA-P057-04` Keep resource integrity in a separate manifest with SRI-style `sha256-<base64>` metadata
-- [ ] `SUTRA-P057-05` Recompute supplied transcript/media bytes with Web Crypto before counting integrity as verified
-- [ ] `SUTRA-P057-06` Verify transcript cue ID, exact interval and exact quotation after the transcript bytes match
-- [ ] `SUTRA-P057-07` Bundle good and deliberately bad fixtures with stable error codes and no secret-bearing fields
-- [ ] `SUTRA-P057-08` Provide a tiny framework-free `#t=start,end` cue-link helper with no player dependency
-- [ ] `SUTRA-P057-09` Provide a clean-host CLI/quickstart targeted at first success within 15 minutes
-- [ ] `SUTRA-P057-10` Close phase 057 only after widened CI runs the annotation tests and CLI, and docs state that matching hashes prove bytes rather than truth.
+- [x] `SUTRA-P057-01` Keep the evidence package independent of the learner UI, player and agent runtime
+- [x] `SUTRA-P057-02` Map the public evidence object to W3C Web Annotation classes/properties rather than a bespoke SUTRA envelope
+- [x] `SUTRA-P057-03` Use a `FragmentSelector` conforming to Media Fragments URI syntax with explicit `t=start,end` ranges
+- [x] `SUTRA-P057-04` Keep resource integrity in a separate manifest with SRI-style `sha256-<base64>` metadata
+- [x] `SUTRA-P057-05` Recompute supplied transcript/media bytes with Web Crypto before counting integrity as verified
+- [x] `SUTRA-P057-06` Verify transcript cue ID, exact interval and exact quotation after the transcript bytes match
+- [x] `SUTRA-P057-07` Bundle good and deliberately bad fixtures with stable error codes and no secret-bearing fields
+- [x] `SUTRA-P057-08` Provide a tiny framework-free `#t=start,end` cue-link helper with no player dependency
+- [x] `SUTRA-P057-09` Provide a clean-host CLI/quickstart targeted at first success within 15 minutes
+- [x] `SUTRA-P057-10` Close phase 057 only after widened CI runs the annotation tests and CLI, and docs state that matching hashes prove bytes rather than truth.
 
 ## Phase 058 - Consent inspector (completed earlier; example-only now)
 
