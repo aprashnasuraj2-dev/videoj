@@ -89,15 +89,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Implement a narrow same-origin default-inference proxy with a fixed approved upstream and model policy. Keep its provider credential server-side. Stream output and enforce payload and output ceilings.
 - **Phase exit:** A new visitor completes the live task without bringing a key; no provider secret appears in assets, prompts or logs.
 
-- [ ] `SUTRA-P025-01` Implement one narrow same-origin default-inference endpoint
+- [x] `SUTRA-P025-01` Implement one narrow same-origin default-inference endpoint
 - [ ] `SUTRA-P025-02` Select a fixed approved provider origin and permitted model list
-- [ ] `SUTRA-P025-03` Keep the provider credential in server-managed configuration only
-- [ ] `SUTRA-P025-04` Enforce input size, output token and model request ceilings
-- [ ] `SUTRA-P025-05` Stream supported provider responses through the bounded adapter
-- [ ] `SUTRA-P025-06` Prevent arbitrary URL forwarding and server-side request forgery
+- [x] `SUTRA-P025-03` Keep the provider credential in server-managed configuration only
+- [x] `SUTRA-P025-04` Enforce input size, output token and model request ceilings
+- [x] `SUTRA-P025-05` Stream supported provider responses through the bounded adapter
+- [x] `SUTRA-P025-06` Prevent arbitrary URL forwarding and server-side request forgery
 - [ ] `SUTRA-P025-07` Verify a clean visitor can run without supplying credentials
-- [ ] `SUTRA-P025-08` Check generated assets, logs and error responses for secret exposure
-- [ ] `SUTRA-P025-09` Produce and review the phase artifact: Default inference endpoint and setup documentation.
+- [x] `SUTRA-P025-08` Check generated assets, logs and error responses for secret exposure
+- [x] `SUTRA-P025-09` Produce and review the phase artifact: Default inference endpoint and setup documentation.
 - [ ] `SUTRA-P025-10` Close phase 025 only after its applicable tasks have evidence and its exit condition is observed: A new visitor completes the live task without bringing a key; no provider secret appears in assets, prompts or logs.
 
 ## Phase 026 - Support streaming, cancellation and errors
@@ -125,16 +125,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Expose exact catalog actions for lesson search, source excerpt retrieval and current playback state. Validate input and result schemas; never grant arbitrary DOM or fetch access.
 - **Phase exit:** The runtime calls an internal agent and a grounded local capability using validated arguments.
 
-- [ ] `SUTRA-P027-01` Register exact names and purpose for transcript search and excerpt reads
-- [ ] `SUTRA-P027-02` Declare effect classes and input schemas for each local capability
-- [ ] `SUTRA-P027-03` Return only corpus-scoped source IDs and bounded excerpt data
-- [ ] `SUTRA-P027-04` Expose actual playback state through a safe read adapter
-- [ ] `SUTRA-P027-05` Prevent arbitrary DOM access, script execution and unrestricted fetch arguments
-- [ ] `SUTRA-P027-06` Validate action output before agents or UI consume it
-- [ ] `SUTRA-P027-07` Observe an internal agent invoking a grounded local capability
-- [ ] `SUTRA-P027-08` Show unavailable capabilities clearly rather than bypassing browser restrictions
-- [ ] `SUTRA-P027-09` Produce and review the phase artifact: Read-action registry and bounded retrieval functions.
-- [ ] `SUTRA-P027-10` Close phase 027 only after its applicable tasks have evidence and its exit condition is observed: The runtime calls an internal agent and a grounded local capability using validated arguments.
+- [x] `SUTRA-P027-01` Register exact names and purpose for transcript search and excerpt reads
+- [x] `SUTRA-P027-02` Declare effect classes and input schemas for each local capability
+- [x] `SUTRA-P027-03` Return only corpus-scoped source IDs and bounded excerpt data
+- [x] `SUTRA-P027-04` Expose actual playback state through a safe read adapter
+- [x] `SUTRA-P027-05` Prevent arbitrary DOM access, script execution and unrestricted fetch arguments
+- [x] `SUTRA-P027-06` Validate action output before agents or UI consume it
+- [x] `SUTRA-P027-07` Observe an internal agent invoking a grounded local capability
+- [x] `SUTRA-P027-08` Show unavailable capabilities clearly rather than bypassing browser restrictions
+- [x] `SUTRA-P027-09` Produce and review the phase artifact: Read-action registry and bounded retrieval functions.
+- [x] `SUTRA-P027-10` Close phase 027 only after its applicable tasks have evidence and its exit condition is observed: The runtime calls an internal agent and a grounded local capability using validated arguments.
 
 ## Phase 028 - Implement execution budgets
 

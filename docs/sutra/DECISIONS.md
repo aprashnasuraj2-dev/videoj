@@ -55,3 +55,11 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Scripted test execution proves local wiring, not live AI, source truth or challenge conformance. Actual provider, read actions and peer consent are explicit next integrations.
 - The existing reusable player is imported only by SUTRA's app adapter; its source, demos, and deployment paths remain unchanged. Generated timing media exists only to test SUTRA's native clock/seek behavior, not to substitute for required instructional or entrant footage.
 - Human-confirmed synthetic review persistence is bounded and proposal-owned. There is no agent-writable arbitrary storage catalog or hosted side effect.
+
+## SUTRA-DECISION-0007 - Default-off fixed inference and host-granted source tools
+
+- 2026-11-23, Asia/Kathmandu. Default inference has one fixed OpenAI origin and an operator model allowlist, server-only credentials, conservative nonrefunded quota reservation and no automatic retry. No paid model is selected or enabled in this checkpoint.
+- Considered accepting arbitrary compatible router URLs. Rejected because it expands credential egress and SSRF exposure before the core path has live evidence. A fixed provider limits compatibility; availability, pricing and actual model support still need operator validation.
+- Use a single global transactional quota, rather than relying on an approximate per-location rate limit as a spending ceiling. This adds a DO deployment dependency and a serialized global bottleneck; it is bounded to 1,000 calls/day in configuration and does not imply a dollar cap or abuse immunity.
+- Grant exactly one same-origin JSON-only MCP source endpoint from trusted host options. Validate tool discovery against local schemas and every receipt against the host catalog. The default runtime profile continues to reject all MCP and external tools unless this narrow grant is provided.
+- Expose the registry/validator as community source building blocks. Separate source availability from independent adoption and semantic factual correctness. No mandatory gates are omitted.

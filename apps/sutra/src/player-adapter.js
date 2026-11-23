@@ -1,4 +1,5 @@
 // Explicit reusable DHAGO boundary. No imports from apps/preview or DETOUR.
+import {readPlaybackState} from './playback-state.js';
 import {createDhagoPlayer} from '../../../src/create-player.ts';
 
 export function mountTimingPlayer(host,{source,chapters,captions}){
@@ -18,7 +19,7 @@ export function mountTimingPlayer(host,{source,chapters,captions}){
    try{act?.();changed();}catch(error){cleanup();reject(error);}
   });
  }
- return {element:player,media,
+ return {element:player,media,readState:()=>readPlaybackState(media),
   ready:()=>waitFor('loadedmetadata',()=>media.readyState>=1),
   async seek(seconds){
    if(!Number.isFinite(seconds)||seconds<0||!Number.isFinite(media.duration)||seconds>media.duration)throw new Error('Cue is outside the loaded media.');

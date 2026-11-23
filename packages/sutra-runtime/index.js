@@ -1,3 +1,4 @@
+import {createSourceMcp} from './source-mcp.js';
 import {AgentNetwork, validateNetwork} from './vendor/nsdeploy/kernel.js';
 import {runAgent} from './vendor/nsdeploy/runner.js';
 import {checkSchema, validateData} from './vendor/nsdeploy/actions.js';
@@ -39,7 +40,7 @@ function assertJsonData(value,ancestors=new Set(),depth=0){
 
 // The current profile deliberately accepts local declarative agents only.
 // Peer/MCP/action/code loading must be integrated with consent in later phases.
-export function compileNetwork(definition,{name='learner',frontMan='learner',limits={}}={}){
+export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false}={}){
  const bounds=executionLimits(limits);
  assertJsonData(definition);
  let json;
@@ -63,20 +64,20 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
   allowed(agent.function,['description','parameters'],'function');
   try{checkSchema(agent.function.parameters);}catch{fail('SCHEMA','Unsupported or malformed invocation schema.');}
   if(agent.function.parameters.type!=='object'||agent.function.parameters.additionalProperties!==false)fail('SCHEMA','Invocation schema must reject extra object fields.');
-  if(!Array.isArray(agent.tools)||agent.tools.length>16||agent.tools.some(ref=>typeof ref!=='string'))fail('TOOLS','Agent needs a bounded local tool list.');
-  if(new Set(agent.tools).size!==agent.tools.length)fail('TOOLS','Duplicate local references are unsupported.');
+  if(!Array.isArray(agent.tools)||agent.tools.length>16||agent.tools.some(ref=>typeof ref!=='string'&&!(allowSourceTools===true&&plain(ref)&&Object.keys(ref).length===1&&ref.url==='/api/source-tools')))fail('TOOLS','Agent needs a bounded local tool list.');
+  if(new Set(agent.tools.map(r=>JSON.stringify(r))).size!==agent.tools.length)fail('TOOLS','Duplicate local references are unsupported.');
   const steps=agent.max_steps??raw.max_steps??bounds.maxSteps;
   if(!Number.isInteger(steps)||steps<1||steps>bounds.maxSteps)fail('STEPS','Invalid or over-budget step count.');
   agent.max_steps=steps;
   if(agent.llm_config!==undefined){if(!plain(agent.llm_config))fail('MODEL','Invalid model hints.');allowed(agent.llm_config,['model_name'],'model');if(typeof agent.llm_config.model_name!=='string')fail('MODEL','Invalid model hint.');}
  }
  if(raw.llm_config!==undefined){if(!plain(raw.llm_config))fail('MODEL','Invalid network model hints.');allowed(raw.llm_config,['model_name'],'model');if(typeof raw.llm_config.model_name!=='string')fail('MODEL','Invalid model hint.');}
- for(const agent of raw.tools)for(const ref of agent.tools)if(!names.has(ref))fail('REFERENCE','External or missing capabilities are unavailable in this local profile.');
+ for(const agent of raw.tools)for(const ref of agent.tools)if(typeof ref==='string'&&!names.has(ref))fail('REFERENCE','External or missing capabilities are unavailable in this local profile.');
  const byName=new Map(raw.tools.map(a=>[a.name,a]));
  function visit(name,chain=[]){
   if(chain.includes(name))fail('CYCLE','Composition cycle rejected before execution.');
   if(chain.length>=bounds.maxDepth)fail('DEPTH','Composition depth exceeds runtime policy.');
-  for(const ref of byName.get(name).tools)visit(ref,[...chain,name]);
+  for(const ref of byName.get(name).tools)if(typeof ref==='string')visit(ref,[...chain,name]);
  }
  for(const agent of raw.tools)visit(agent.name);
  const network=new AgentNetwork(raw,name);
@@ -87,8 +88,8 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
 
 // Model adapters are explicitly injected; there is no keyless automatic mock fallback.
 // A scripted-test adapter is only a test driver, not a live inference service.
-export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent}={}){
- const compiled=compileNetwork(definition,{name,frontMan,limits});
+export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools}={}){
+ const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
  if(!model||typeof model.chat!=='function'||!['scripted-test','provider'].includes(model.mode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
  if(signal?.aborted)fail('CANCELLED','Run cancelled before model execution.');
@@ -129,8 +130,11 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  }};
  const composition={remoteCalls:0,peerCalls:new Map(),maxRemoteCalls:0,maxCallsPerPeer:0,agentCalls:0,maxAgentCalls:bounds.maxAgents,deadlineSeconds:bounds.timeoutMs/1000,deadline:Date.now()+bounds.timeoutMs};
  const unavailable=()=>fail('CAPABILITY_UNAVAILABLE','External capabilities are disabled in this local runtime profile.');
- const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote:unavailable,resolveMcp:unavailable,resolveLink:unavailable,requestConsent:async()=> 'decline'};
  try{
+ const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
+ const guardSource=method=>async(...args)=>{check();try{return await rawSourceClient[method](...args);}catch{const error=new RuntimeError('CAPABILITY_UNAVAILABLE','Source retrieval failed; no completed source result is claimed.');failure=error;controller.abort(error);throw error;}};
+ const sourceClient=rawSourceClient?{listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
+ const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote:unavailable,resolveMcp:sourceClient?async ref=>{check();if(ref?.url!=='/api/source-tools')return unavailable();return sourceClient;}:unavailable,resolveLink:unavailable,requestConsent:async()=> 'decline'};
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
   if(!result.text||events.some(e=>e.kind==='composition_limit'))fail('INCOMPLETE','Execution stopped before a complete answer.');
   return {text:result.text,mode:model.mode,modelCalls,agentCalls:composition.agentCalls,events};
@@ -140,7 +144,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
 
 // Same-origin publication loader for the restricted local profile. Cross-origin
 // loading is deliberately refused until the consent-aware peer loader is shipped.
-async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigin,fetchImpl=fetch,signal}={}){
+async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigin,fetchImpl=fetch,signal,allowSourceTools=false}={}){
  let base;
  try{base=new URL(baseUrl);}catch{fail('ARTIFACT_URL','Use a complete agent site-base URL.');}
  const loopback=['localhost','127.0.0.1','[::1]'].includes(base.hostname);
@@ -171,7 +175,7 @@ async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigi
  // No executable site modules, coded bundles or inference metadata are acted on.
  if(manifest.coded_tools||manifest.actions)fail('UNSUPPORTED_CAPABILITY','Executable publication metadata is disabled in the local profile.');
  const definition=await read(graphUrl,65536);
- compileNetwork(definition,{name:entry.name,frontMan:entry.front_man});
+ compileNetwork(definition,{name:entry.name,frontMan:entry.front_man,allowSourceTools});
  return {definition,name:entry.name,frontMan:entry.front_man,artifacts:{manifest:new URL('agent-manifest.json',base).href,definition:graphUrl.href}};
 }
 

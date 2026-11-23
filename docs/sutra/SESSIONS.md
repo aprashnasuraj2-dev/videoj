@@ -82,3 +82,20 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Revalidated app/CI foundation gates after the added integrations; preserved previous evidence as history. Updated source map for the now-implemented SUTRA component boundary.
 - Final count: 135/1000 checks, nine phases complete. Remaining work is explicitly scoped; no live-AI, factual-truth, independent adoption or deployment claim is made.
 - Next session should resume P025-01; implement/test the bounded host boundary while keeping paid calls disabled until configured/authorized.
+
+## SUTRA-SESSION-0005 - Bounded inference and source retrieval
+
+- Started 2026-11-23T13:58:02+05:45; resumed main 13d9eb8e624f1c83e22a29f1dd17dfe69bcc17cc. User authorized approximately half an hour of SUTRA work. Remote main was unchanged when PR #45 opened.
+- Implemented a default-off fixed-provider Worker/client, bounded complete-only streaming, server-only credential boundary and global transactional daily quota. No real provider/model/account/spend validation or live call occurred.
+- Implemented reusable read-only source tools, exact catalog receipts, same-origin MCP endpoint/transport, two-agent scripted source invocation and native snapshot-only playback reads. Existing player source/demos/deployments remain untouched.
+- 109 local tests, production build and ten upstream module hashes pass. Server-only identifiers are absent from built JS. Synthetic streams and transaction harness are explicitly distinguished from live services.
+- First CI preview startup failed after all Node checks passed; fixed the Vite hook return and added startup logs. Local browser then reached launch but required Chromium binary was absent. Final remote Chromium observation is appended separately.
+- Evidence: evidence/implementation/SESSION-0005.md and inference-source-candidate-files.json. Code candidate 61f44558b9512990f9c4155e31ff95d0d40bbe98.
+- Partial checkpoint 150/1000; actual model selection, live visitor, source unavailable browser case and phase exit are not credited before observation. Next independent engineering: P033-01 consent-aware peer boundary; keep paid inference disabled.
+
+
+### Session 0005 final browser and register checkpoint
+
+- 2026-11-23T14:22:27+05:45: source candidate 61f44558b9512990f9c4155e31ff95d0d40bbe98 passed all shell workflow steps, including real Chromium. Evidence: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45139865572/job/137574910727.
+- Final local totals: 59 runtime +11 inference +5 source registry +13 API/quota +21 app =109 tests; production build and ten upstream hashes pass. Chromium confirms unavailable-source refusal and 360px wrapping after retained failures.
+- 152/1000 checks, ten phases complete. P027 closes; P025-02/07/10 remain pending. Next P033-01 consent-before-contact boundary. No paid call, public deployment, original-content claim, independent adoption, ZIP delivery or Devpost filing occurred.
