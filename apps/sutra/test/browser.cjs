@@ -50,6 +50,13 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.match(await page.locator('#review-status').innerText(),/download requested/);
   await page.reload();assert.equal(await page.locator('#review-list li').count(),1);await page.getByRole('button',{name:'Delete local review'}).click();assert.equal(await page.locator('#review-list li').count(),0);
   await page.getByRole('button',{name:'Read current playback state',exact:true}).click();assert.equal(JSON.parse(await page.locator('#playback-state').innerText()).available,false);
+  // A missing media response must fail honestly and allow a later explicit retry.
+  await page.route('**/media/timing-fixture.mp4',route=>route.fulfill({status:404,contentType:'text/plain',body:'missing fixture'}));
+  await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
+  await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Timing fixture unavailable.'));
+  assert.equal(await page.locator('video').count(),0);
+  assert.equal(await page.getByRole('button',{name:'Load synthetic timing fixture'}).isEnabled(),true);
+  await page.unroute('**/media/timing-fixture.mp4');
   await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Actual media duration: 8.0 seconds.'));
   const transcriptSearch=page.getByRole('searchbox',{name:'Search synthetic transcript'});
@@ -72,11 +79,30 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.getByRole('button',{name:'Inspect timing cue at 00:02'}).click();
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Synthetic cue reached.'));
   assert.ok(Math.abs(await media.evaluate(video=>video.currentTime)-2)<=1);
-  await media.evaluate(video=>video.play());await page.waitForFunction(()=>document.querySelector('video').currentTime>2.15);await media.evaluate(video=>video.pause());
+  // Ordinary player controls must drive the native media state.
+  const playControl=page.locator('media-play-button'),muteControl=page.locator('media-mute-button'),
+   volumeSlider=page.locator('media-volume-slider'),captionControl=page.locator('media-captions-button'),
+   fullscreenControl=page.locator('media-fullscreen-button');
+  await playControl.click();await page.waitForFunction(()=>document.querySelector('video').currentTime>2.15);
+  assert.equal(await media.evaluate(video=>video.paused),false);
+  await playControl.click();await page.waitForFunction(()=>document.querySelector('video').paused===true);
+  await muteControl.click();assert.equal(await media.evaluate(video=>video.muted),true);
+  await muteControl.click();assert.equal(await media.evaluate(video=>video.muted),false);
+  const volumeBox=await volumeSlider.boundingBox();assert.ok(volumeBox&&volumeBox.width>=24);
+  await page.mouse.click(volumeBox.x+volumeBox.width*.35,volumeBox.y+Math.max(1,volumeBox.height/2));
+  const volume=await media.evaluate(video=>video.volume);assert.ok(volume>.15&&volume<.65,'volume slider changes native volume');
+  const captionTrack=await media.evaluate(video=>Array.from(video.textTracks).find(t=>t.kind==='captions')?.mode??'missing');
+  assert.notEqual(captionTrack,'missing');
+  await captionControl.click();
+  await page.waitForFunction(()=>Array.from(document.querySelector('video').textTracks).some(t=>t.kind==='captions'&&t.mode==='showing'));
+  await fullscreenControl.click();
+  await page.waitForFunction(()=>document.fullscreenElement!==null);
+  assert.ok(await page.evaluate(()=>document.fullscreenElement?.closest('video-player')!==null||document.fullscreenElement?.tagName==='VIDEO-PLAYER'||document.fullscreenElement?.tagName==='MEDIA-CONTAINER'));
+  await page.keyboard.press('Escape');await page.waitForFunction(()=>document.fullscreenElement===null);
   assert.equal(await media.evaluate(video=>video.paused),true);await page.getByRole('button',{name:'Read current playback state',exact:true}).click();const snapshot=JSON.parse(await page.locator('#playback-state').innerText());assert.equal(snapshot.available,true);assert.equal(snapshot.paused,true);assert.equal(snapshot.duration,await media.evaluate(video=>video.duration));assert.ok(Math.abs(snapshot.currentTime-await media.evaluate(video=>video.currentTime))<.1);
   fs.mkdirSync(path.join(app,'test-output'),{recursive:true});await page.screenshot({path:path.join(app,'test-output/desktop.png'),fullPage:true});
   await page.setViewportSize({width:360,height:800});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.getByRole('button',{name:'Try altered quotation'}).click();assert.match(await page.locator('#result').innerText(),/QUOTE_MISMATCH/);
   await page.screenshot({path:path.join(app,'test-output/mobile.png'),fullPage:true});assert.deepEqual(errors,[]);assert.deepEqual(external,[]);assert.ok(!requests.some(url=>url.includes('/assets/mux-video-')),'native fixture must not load optional Mux chunk');
-  console.log('PASS: catalog match, truth boundary, rejection, keyboard, scripted browser-local two-agent orchestration, consent-before-contact denial/session scope, native timing-fixture decode/play/pause/seek, 360px interaction/overflow, no errors and no external requests.');
+  console.log('PASS: catalog match, truth boundary, rejection, keyboard, scripted browser-local two-agent orchestration, consent-before-contact denial/session scope, native timing-fixture recovery/play/pause/volume/captions/fullscreen/seek, 360px interaction/overflow, no errors and no external requests.');
  }finally{if(browser)await browser.close();server.kill();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
