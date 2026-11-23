@@ -47,3 +47,20 @@ test('parallel child model calls never exceed concurrency two',async()=>{
 test('adapter failures are sanitized and viewer errors do not control execution',async()=>{await assert.rejects(run({model:{mode:'scripted-test',chat:async()=>{throw Error('synthetic-secret');}}}),e=>e.code==='RUN_FAILED'&&!e.message.includes('synthetic-secret'));await run({onEvent:()=>{throw Error('viewer failed');}});});
 test('data accessors and toJSON callbacks never execute during compilation',()=>{let calls=0;const g=copy();Object.defineProperty(g.metadata,'extra',{enumerable:true,get(){calls++;return 'unsafe';}});assert.throws(()=>compileNetwork(g),e=>e.code==='NETWORK_DATA');assert.equal(calls,0);const h=copy();h.metadata.toJSON=()=>{calls++;return {description:'hidden conversion'};};assert.throws(()=>compileNetwork(h),e=>e.code==='NETWORK_DATA');assert.equal(calls,0);});
 test('nonplain and deeply nested publication data is rejected',()=>{const g=copy();g.metadata.extra=new Date();assert.throws(()=>compileNetwork(g),e=>e.code==='NETWORK_DATA');const h=copy();let cursor=h.metadata;for(let i=0;i<25;i++){cursor.more={};cursor=cursor.more;}assert.throws(()=>compileNetwork(h),e=>e.code==='NETWORK_DATA');});
+
+test('cancellation while a delegated agent is stalled prevents later model calls',async()=>{
+ let beginChild,calls=0;
+ const childStarted=new Promise(resolve=>{beginChild=resolve;});
+ const model={mode:'scripted-test',async chat({tools}){
+  calls++;
+  if(calls===1)return {content:'',toolCalls:[{id:'delegate-1',type:'function',function:{name:'evidence',arguments:'{"request":"inspect"}'}}]};
+  if(calls===2){beginChild();return new Promise(()=>{});}
+  throw Error('No model call may occur after cancellation.');
+ }};
+ const controller=new AbortController();
+ const pending=run({model,signal:controller.signal});
+ await childStarted;
+ controller.abort();
+ await assert.rejects(pending);
+ assert.equal(calls,2,'cancellation must prevent additional model steps');
+});
