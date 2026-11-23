@@ -17,11 +17,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Create one composition with video, transcript, source evidence and review card. Use a short guided starting task rather than an empty chatbot panel.
 - **Phase exit:** A first-time viewer sees the question, supporting cue and next action without opening a developer trace.
 
-- [ ] `SUTRA-P041-01` Design the initial task prompt so users avoid an empty chat dead end
-- [ ] `SUTRA-P041-02` Place video, transcript, evidence and review card in one coherent workspace
-- [ ] `SUTRA-P041-03` Make the active lesson and selected source version visible
+- [x] `SUTRA-P041-01` Design the initial task prompt so users avoid an empty chat dead end
+- [x] `SUTRA-P041-02` Place video, transcript, evidence and review card in one coherent workspace
+- [x] `SUTRA-P041-03` Make the active lesson and selected source version visible
 - [ ] `SUTRA-P041-04` Define loading, empty, denied, error and completed screen states
-- [ ] `SUTRA-P041-05` Keep the source comparison and next human action discoverable
+- [x] `SUTRA-P041-05` Keep the source comparison and next human action discoverable
 - [ ] `SUTRA-P041-06` Place technical execution details in an optional inspector
 - [ ] `SUTRA-P041-07` Specify desktop, narrow screen and zoom behavior before styling
 - [ ] `SUTRA-P041-08` Walk through the complete question-to-card flow with a fresh viewer
@@ -59,9 +59,9 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P043-04` Handle missing seekable ranges, live sources and nonseekable media
 - [x] `SUTRA-P043-05` Preserve correct source identity across media replacement
 - [x] `SUTRA-P043-06` Show the exact source cue and time range on evidence cards
-- [ ] `SUTRA-P043-07` Provide keyboard activation and clear unavailable-seek feedback
+- [x] `SUTRA-P043-07` Provide keyboard activation and clear unavailable-seek feedback
 - [x] `SUTRA-P043-08` Measure supported seeking against the one-second target tolerance
-- [ ] `SUTRA-P043-09` Produce and review the phase artifact: Evidence-to-seek interaction and actual-state feedback.
+- [x] `SUTRA-P043-09` Produce and review the phase artifact: Evidence-to-seek interaction and actual-state feedback.
 - [ ] `SUTRA-P043-10` Close phase 043 only after its applicable tasks have evidence and its exit condition is observed: A seek reaches within one second of the valid target on supported test media; unavailable seeking is described accurately.
 
 ## Phase 044 - Add an inspectable transcript experience
@@ -71,16 +71,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Provide search, active-cue highlight and keyboard navigation without stealing focus during playback. Link each result to source version and video interval.
 - **Phase exit:** Search and cue navigation work with keyboard only; absent captions or transcript produce explicit empty states.
 
-- [ ] `SUTRA-P044-01` Render transcript text and cue controls with stable accessible names
-- [ ] `SUTRA-P044-02` Implement bounded query filtering and clear no-results behavior
-- [ ] `SUTRA-P044-03` Highlight the actual active cue without stealing keyboard focus
-- [ ] `SUTRA-P044-04` Support keyboard movement and activation of transcript results
-- [ ] `SUTRA-P044-05` Link result metadata to the media and transcript versions
-- [ ] `SUTRA-P044-06` Preserve scroll intent rather than forcing disruptive auto-follow
-- [ ] `SUTRA-P044-07` Handle absent captions, missing transcript and very long cue text
-- [ ] `SUTRA-P044-08` Distinguish translated text from original source quotations
-- [ ] `SUTRA-P044-09` Produce and review the phase artifact: Accessible transcript panel.
-- [ ] `SUTRA-P044-10` Close phase 044 only after its applicable tasks have evidence and its exit condition is observed: Search and cue navigation work with keyboard only; absent captions or transcript produce explicit empty states.
+- [x] `SUTRA-P044-01` Render transcript text and cue controls with stable accessible names
+- [x] `SUTRA-P044-02` Implement bounded query filtering and clear no-results behavior
+- [x] `SUTRA-P044-03` Highlight the actual active cue without stealing keyboard focus
+- [x] `SUTRA-P044-04` Support keyboard movement and activation of transcript results
+- [x] `SUTRA-P044-05` Link result metadata to the media and transcript versions
+- [x] `SUTRA-P044-06` Preserve scroll intent rather than forcing disruptive auto-follow
+- [x] `SUTRA-P044-07` Handle absent captions, missing transcript and very long cue text
+- [x] `SUTRA-P044-08` Distinguish translated text from original source quotations
+- [x] `SUTRA-P044-09` Produce and review the phase artifact: Accessible transcript panel.
+- [x] `SUTRA-P044-10` Close phase 044 only after its applicable tasks have evidence and its exit condition is observed: Search and cue navigation work with keyboard only; absent captions or transcript produce explicit empty states.
 
 ## Phase 045 - Add the peer comparison view
 
@@ -89,15 +89,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Display the video claim and written checklist side by side with source dates and scope. Expose agreement, conflict and missing information rather than blending them into one confident answer.
 - **Phase exit:** A conflict fixture remains visibly unresolved until reviewed; no inferred agreement is labeled verified.
 
-- [ ] `SUTRA-P045-01` Render video evidence and written guide as separate source cards
-- [ ] `SUTRA-P045-02` Display source date, scope and provenance for each claim
+- [x] `SUTRA-P045-01` Render video evidence and written guide as separate source cards
+- [x] `SUTRA-P045-02` Display source date, scope and provenance for each claim
 - [ ] `SUTRA-P045-03` Represent agreement only when supported by the actual excerpts
-- [ ] `SUTRA-P045-04` Expose conflicts without blending them into a false consensus
-- [ ] `SUTRA-P045-05` Show missing information and unsupported comparisons explicitly
+- [x] `SUTRA-P045-04` Expose conflicts without blending them into a false consensus
+- [x] `SUTRA-P045-05` Show missing information and unsupported comparisons explicitly
 - [ ] `SUTRA-P045-06` Retain links to original cues and written source excerpts
-- [ ] `SUTRA-P045-07` Allow peer denial while preserving local evidence
-- [ ] `SUTRA-P045-08` Test the deliberately conflicting fixture in the visible UI
-- [ ] `SUTRA-P045-09` Produce and review the phase artifact: Comparison cards with source links.
+- [x] `SUTRA-P045-07` Allow peer denial while preserving local evidence
+- [x] `SUTRA-P045-08` Test the deliberately conflicting fixture in the visible UI
+- [x] `SUTRA-P045-09` Produce and review the phase artifact: Comparison cards with source links.
 - [ ] `SUTRA-P045-10` Close phase 045 only after its applicable tasks have evidence and its exit condition is observed: A conflict fixture remains visibly unresolved until reviewed; no inferred agreement is labeled verified.
 
 ## Phase 046 - Build the review-card action flow
@@ -107,16 +107,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Let the viewer review a short card with cue and source references before local save or download. Show where it is stored and allow deletion.
 - **Phase exit:** Saved data matches the approved preview; reload and delete work, and storage failure remains visible.
 
-- [ ] `SUTRA-P046-01` Preview the learning card before any local persistence or download
-- [ ] `SUTRA-P046-02` Include exact cue IDs, source versions and receipt references
-- [ ] `SUTRA-P046-03` Explain where cards are stored and how users can delete them
-- [ ] `SUTRA-P046-04` Bind saved values to the confirmed preview without hidden mutation
-- [ ] `SUTRA-P046-05` Handle storage quota, unavailable storage and export failures
-- [ ] `SUTRA-P046-06` Verify reload restores supported cards and flags stale data
-- [ ] `SUTRA-P046-07` Verify deletion removes associated local data
-- [ ] `SUTRA-P046-08` Keep card export independent of private prompts and router credentials
-- [ ] `SUTRA-P046-09` Produce and review the phase artifact: Review-card preview, local persistence and receipt export.
-- [ ] `SUTRA-P046-10` Close phase 046 only after its applicable tasks have evidence and its exit condition is observed: Saved data matches the approved preview; reload and delete work, and storage failure remains visible.
+- [x] `SUTRA-P046-01` Preview the learning card before any local persistence or download
+- [x] `SUTRA-P046-02` Include exact cue IDs, source versions and receipt references
+- [x] `SUTRA-P046-03` Explain where cards are stored and how users can delete them
+- [x] `SUTRA-P046-04` Bind saved values to the confirmed preview without hidden mutation
+- [x] `SUTRA-P046-05` Handle storage quota, unavailable storage and export failures
+- [x] `SUTRA-P046-06` Verify reload restores supported cards and flags stale data
+- [x] `SUTRA-P046-07` Verify deletion removes associated local data
+- [x] `SUTRA-P046-08` Keep card export independent of private prompts and router credentials
+- [x] `SUTRA-P046-09` Produce and review the phase artifact: Review-card preview, local persistence and receipt export.
+- [x] `SUTRA-P046-10` Close phase 046 only after its applicable tasks have evidence and its exit condition is observed: Saved data matches the approved preview; reload and delete work, and storage failure remains visible.
 
 ## Phase 047 - Expose a safe execution inspector
 
@@ -126,14 +126,14 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** A synthetic credential canary is absent from the UI and downloaded trace; trace failures do not break playback.
 
 - [ ] `SUTRA-P047-01` Show selected router identity without displaying credentials
-- [ ] `SUTRA-P047-02` Display contacted origins and approved versus denied contact events
+- [x] `SUTRA-P047-02` Display contacted origins and approved versus denied contact events
 - [ ] `SUTRA-P047-03` Show agent and tool names with bounded timing and budget information
 - [ ] `SUTRA-P047-04` Represent partial failures and unknown action outcomes accurately
-- [ ] `SUTRA-P047-05` Redact credentials, private fields and unnecessary raw prompt text
-- [ ] `SUTRA-P047-06` Bound trace memory and support safe user-initiated export
+- [x] `SUTRA-P047-05` Redact credentials, private fields and unnecessary raw prompt text
+- [x] `SUTRA-P047-06` Bound trace memory and support safe user-initiated export
 - [ ] `SUTRA-P047-07` Test credential canaries in inspector UI and downloaded files
-- [ ] `SUTRA-P047-08` Ensure optional inspector failures never break media playback
-- [ ] `SUTRA-P047-09` Produce and review the phase artifact: Redacted trace panel and export format.
+- [x] `SUTRA-P047-08` Ensure optional inspector failures never break media playback
+- [x] `SUTRA-P047-09` Produce and review the phase artifact: Redacted trace panel and export format.
 - [ ] `SUTRA-P047-10` Close phase 047 only after its applicable tasks have evidence and its exit condition is observed: A synthetic credential canary is absent from the UI and downloaded trace; trace failures do not break playback.
 
 ## Phase 048 - Make the core flow bilingual
