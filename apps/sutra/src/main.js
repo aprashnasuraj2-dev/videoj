@@ -140,10 +140,12 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
   const captionState=document.querySelector('#caption-state'),captionTrack=timingPlayer.media.querySelector('track[kind="captions"],track[kind="subtitles"]');
   if(!captionTrack)captionState.textContent='Captions unavailable. The versioned timing transcript remains separate and searchable.';
   else{
-   const captionAvailable=()=>{captionState.textContent='Caption track available. Transcript version and integrity remain independently inspectable.';};
-   const captionUnavailable=()=>{captionState.textContent='Captions unavailable. The versioned timing transcript remains separate and searchable.';};
+   let captionSettled=false;const captionAvailable=()=>{if(captionSettled)return;captionSettled=true;captionState.textContent='Caption track available. Transcript version and integrity remain independently inspectable.';};
+   const captionUnavailable=()=>{if(captionSettled)return;captionSettled=true;captionState.textContent='Captions unavailable. The versioned timing transcript remains separate and searchable.';};
    captionTrack.addEventListener('load',captionAvailable,{once:true});captionTrack.addEventListener('error',captionUnavailable,{once:true});
+   try{if(captionTrack.track?.mode==='disabled')captionTrack.track.mode='hidden';}catch{}
    if(captionTrack.readyState===2)captionAvailable();else if(captionTrack.readyState===3)captionUnavailable();
+   setTimeout(()=>{if(captionSettled)return;if(captionTrack.readyState===2||captionTrack.track?.cues?.length)captionAvailable();else captionUnavailable();},1500);
   }
   timingStatus.textContent=`Synthetic timing fixture loaded. Actual media duration: ${timingPlayer.media.duration.toFixed(1)} seconds. Original lesson still pending.`;seekTiming.hidden=false;setJourneyState('ready','timing media is loaded; source consistency can now be inspected.','Open the 00:02 cue, then verify the separate evidence annotation.');
  }catch{if(timingObjectUrl){URL.revokeObjectURL(timingObjectUrl);timingObjectUrl=null;}timingStatus.textContent='Timing fixture unavailable. No playback or seek success is claimed.';setJourneyState('error','timing media could not be loaded; no playback result is claimed.','Continue with transcript/evidence inspection or retry the media load.');button.disabled=false;}
