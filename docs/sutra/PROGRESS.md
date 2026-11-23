@@ -2,7 +2,23 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
-## Session 0006 checkpoint
+## Session 0007 checkpoint — 2026-11-23
+
+**196/1,000 checks verified; 12 phases complete.** Phase 032 (exact peer resolution and invoking-network errors) closes. Phase 035 caller-local peer execution advances eight checks, but its credential-canary and exit gates remain open.
+
+The strict host requires `peerRuntime.inspector` before accepting exact external network references. Two individually consented credentialless artifact GETs load the published manifest and graph, and the graph executes **locally** using the caller's injected model, shared model/agent budgets, deadline and sanitized event stream. Wrong-name, denied, unavailable-manifest, unavailable-graph and malformed-peer conditions stop the invoking network with specific error codes; no model-summarized success is accepted.
+
+**Observed green evidence:** [CI 45176985173](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45176985173/job/137700681281) tested code candidate `3b37a73db0a03577b81f3d34346ea70ff46ea0a5`. The run passed 21 learner-app tests, 37 consent/inference/source/API tests, 72 runtime tests, 7 independent peer-package tests, all 10 pinned reference hashes, and all three Chromium browser scripts. The new Chromium run used two distinct **loopback** origins; denial sent zero peer requests, approval sent precisely manifest and graph GETs, and peer delegation used three caller-local agents and five scripted model steps. [Detailed evidence and retained failures](evidence/implementation/SESSION-0007.md).
+
+**Still open:** real provider credential-canary and BYOK boundary (`SUTRA-P035-05`), third-party MCP discovery/call consent (`SUTRA-P033-03`), real HTTPS/CORS on staging and separate public peer, rights-cleared learner corpus, factual review and eligible participant testing. The proposed peer origin remains same-project-owner rather than demonstrated independent adoption.
+
+**Next:** implement `SUTRA-P033-03` through a read-only external MCP transport injected into the host, with separate discovery and actual call approval, bounded result validation and denial-before-transport tests. Then close synthetic credential-canary checks before considering phase 035 exit. Do **not** move to public release, route/domain assignment, paid inference, promotional materials or Devpost submission before major gates have fresh evidence.
+
+Development branch: [draft PR #49](https://github.com/aprashnasuraj2-dev/videoj/pull/49). No public SUTRA deployment.
+
+---
+
+## Session 0006 checkpoint (historical)
 
 **186/1,000 checks verified**; eleven phases complete. Phase 058 (reusable peer-consent
 inspector) is closed. Phase 032 exact peer loading and phase 033 consent are materially
@@ -63,7 +79,7 @@ checklist product/security/conformance/acceptance gates are complete with curren
 evidence. Public routes, public inference, promotion and official submission stay
 closed. The prior Wrangler dry-run is packaging evidence only.
 
-## Resume
+## Historical session 0006 resume
 
 Next independent engineering queue:
 
