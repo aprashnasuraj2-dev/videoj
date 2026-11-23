@@ -8,6 +8,7 @@ import {createConsentInspector} from '../../../packages/sutra-consent/index.js';
 import {mountPeerWorkbench} from './peer-workbench.js';
 import {mountTranscriptPanel} from './transcript-panel.js';
 import {mountComparisonView} from './comparison-view.js';
+import {serializeReviewExport} from './review-export.js';
 import receipt from '../../../packages/sutra-evidence/examples/receipt.json';
 import sources from '../../../packages/sutra-evidence/examples/sources.json';
 document.querySelector('#app').innerHTML=`<header><a class="brand" href="#main">SUTRA<span>Learning, linked to evidence</span></a><span class="stage">Local development shell</span></header>
@@ -91,9 +92,20 @@ function getReviewStore(){if(!reviewStore)reviewStore=createReviewStore({storage
 function renderReviews(){
  const list=document.querySelector('#review-list');list.replaceChildren();
  for(const record of getReviewStore().list()){
-  const item=document.createElement('li'),label=document.createElement('span'),remove=document.createElement('button');
+  const item=document.createElement('li'),label=document.createElement('span'),remove=document.createElement('button'),download=document.createElement('button');
   label.textContent=`Synthetic timing review · cue ${record.receipt.start}–${record.receipt.end}s · ${record.receipt.sourceVersion} `;remove.textContent='Delete local review';
-  remove.addEventListener('click',()=>{try{getReviewStore().remove(record.id);renderReviews();reviewStatus.textContent='Local review deleted.';}catch{reviewStatus.textContent='Could not delete this local review; no successful deletion is claimed.';}});item.append(label,remove);list.append(item);
+  download.textContent='Download saved receipt';download.className='review-action';
+  download.addEventListener('click',()=>{
+   try{
+    const json=serializeReviewExport(record,{sources:[timingFixture.source]});
+    const url=URL.createObjectURL(new Blob([json],{type:'application/json'}));
+    const anchor=document.createElement('a');anchor.href=url;anchor.download='sutra-synthetic-review.json';
+    document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    reviewStatus.textContent='Synthetic receipt download requested. This does not confirm the browser saved the file or that the source is factually true.';
+   }catch{reviewStatus.textContent='This receipt could not be validated for download. No export success is claimed.';}
+  });
+  remove.addEventListener('click',()=>{try{getReviewStore().remove(record.id);renderReviews();reviewStatus.textContent='Local review deleted.';}catch{reviewStatus.textContent='Could not delete this local review; no successful deletion is claimed.';}});
+  item.append(label,download,remove);list.append(item);
  }
 }
 function cancelReview(){if(reviewProposal){getReviewStore().cancel(reviewProposal.id);reviewProposal=null;}reviewDialog.close();reviewStatus.textContent='Review cancelled. No card was saved.';}
