@@ -2,9 +2,7 @@ import test from 'node:test';import assert from 'node:assert/strict';import fs f
 import {loadPeerNetwork} from '../index.js';
 import {createConsentInspector} from '../../sutra-consent/index.js';
 const graph=JSON.parse(fs.readFileSync(new URL('../examples/learner.network.json',import.meta.url)));
-const response=(body,url)=>{
- const value=Response.json(body);Object.defineProperty(value,'url',{value});return value;
-};
+const response=body=>Response.json(body);
 const manifest=(hocon='./transit.network.json')=>({networks:[{name:'transit',front_man:'learner',hocon}]});
 const peerUrl='https://peer.example/agents/transit';
 test('peer URL derives site base, exact name and consents before each public artifact fetch',async()=>{
@@ -12,8 +10,8 @@ test('peer URL derives site base, exact name and consents before each public art
  const fetchImpl=async(url,opts)=>{
   const parsed=new URL(url);order.push('fetch:'+parsed.origin+parsed.pathname);
   assert.equal(opts.credentials,'omit');assert.equal(opts.redirect,'error');
-  if(parsed.pathname.endsWith('/agent-manifest.json'))return response(manifest(),url);
-  if(parsed.pathname.endsWith('/transit.network.json'))return response(graph,url);
+  if(parsed.pathname.endsWith('/agent-manifest.json'))return response(manifest());
+  if(parsed.pathname.endsWith('/transit.network.json'))return response(graph);
   throw Error('unexpected fetch');
  };
  const loaded=await loadPeerNetwork({peerUrl,inspector,fetchImpl});
@@ -29,7 +27,7 @@ test('manifest denial emits no fetch and graph denial emits no graph fetch',asyn
  await assert.rejects(loadPeerNetwork({peerUrl,inspector:denyManifest,fetchImpl:async()=>{fetches++;}}),e=>e.code==='CONSENT_DENIED');assert.equal(fetches,0);
  let decisions=0;fetches=0;
  const denyGraph=createConsentInspector({decide:async()=>({decision:++decisions===1?'allow':'deny',scope:'once'})});
- await assert.rejects(loadPeerNetwork({peerUrl,inspector:denyGraph,fetchImpl:async url=>{fetches++;return response(manifest(),url);}}),e=>e.code==='CONSENT_DENIED');assert.equal(fetches,1);
+ await assert.rejects(loadPeerNetwork({peerUrl,inspector:denyGraph,fetchImpl:async url=>{fetches++;return response(manifest());}}),e=>e.code==='CONSENT_DENIED');assert.equal(fetches,1);
 });
 test('missing or duplicate exact network fails after manifest without graph fallback',async()=>{
  for(const networks of [
@@ -37,13 +35,13 @@ test('missing or duplicate exact network fails after manifest without graph fall
   [{name:'transit',front_man:'learner',hocon:'./a.json'},{name:'transit',front_man:'learner',hocon:'./b.json'}]
  ]){
   let fetches=0;const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
-  await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async url=>{fetches++;return response({networks},url);}}),e=>e.code==='NETWORK_MATCH');
+  await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async url=>{fetches++;return response({networks});}}),e=>e.code==='NETWORK_MATCH');
   assert.equal(fetches,1);
  }
 });
 test('encoded exact name is deliberate while query fragment and trailing slash are rejected before contact',async()=>{
  let decisions=0,fetches=0;const inspector=createConsentInspector({decide:async()=>{decisions++;return {decision:'allow',scope:'once'};}});
- const fetchImpl=async url=>{fetches++;return response(url.endsWith('agent-manifest.json')?manifest():graph,url);};
+ const fetchImpl=async url=>{fetches++;return response(url.endsWith('agent-manifest.json')?manifest():graph);};
  const loaded=await loadPeerNetwork({peerUrl:'https://peer.example/root/agents/%74ransit',inspector,fetchImpl});assert.equal(loaded.name,'transit');assert.equal(loaded.artifacts.manifest,'https://peer.example/root/agents/agent-manifest.json');
  const prior={decisions,fetches};
  for(const bad of ['https://peer.example/agents/transit/','https://peer.example/agents/transit?q=1','https://peer.example/agents/transit#x','https://peer.example/agents/transit%2Fsecret']){
@@ -55,7 +53,7 @@ test('absolute graph origin gets a distinct consent decision and never receives 
  const intents=[],calls=[];const inspector=createConsentInspector({decide:async intent=>{intents.push({kind:intent.kind,origin:intent.origin});return {decision:'allow',scope:'once'};}});
  const fetchImpl=async(url,opts)=>{
   calls.push({url,credentials:opts.credentials,authorization:opts.headers.Authorization});
-  return response(url.includes('agent-manifest')?manifest('https://cdn.example/public/transit.json'):graph,url);
+  return response(url.includes('agent-manifest')?manifest('https://cdn.example/public/transit.json'):graph);
  };
  const loaded=await loadPeerNetwork({peerUrl,inspector,fetchImpl});
  assert.equal(loaded.artifacts.definition,'https://cdn.example/public/transit.json');
@@ -69,8 +67,8 @@ test('executable peer metadata and malformed graph fail closed',async()=>{
  ]){
   const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});let call=0;
   await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async url=>{
-   call++;if(call===1)return response(manifestBody,url);
-   const bad=structuredClone(graph);bad.tools[1].tools=['learner'];return response(bad,url);
+   call++;if(call===1)return response(manifestBody);
+   const bad=structuredClone(graph);bad.tools[1].tools=['learner'];return response(bad);
   }}),e=>e.code===code);
  }
 });
