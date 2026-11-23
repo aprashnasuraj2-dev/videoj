@@ -69,6 +69,22 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.equal(peerRequests.length-peerBefore,2);assert.ok(peerRequests.every(request=>request.method==='GET'&&!request.headers.authorization&&!request.headers.cookie));
   const peerTrace=await page.locator('#network-trace').innerText();assert.match(peerTrace,/learner \/ learner @ sutra-local/);assert.match(peerTrace,/checklist \/ checklist @ http:\/\/127\.0\.0\.1:4195/);assert.match(await page.locator('#prov-graph').innerText(),/sha256-/);assert.match(await page.locator('#prov-origins').innerText(),/127\.0\.0\.1:4195/);
 
+  // The browser must reject a redirected public artifact before visiting the new target.
+  const beforeRedirect=peerRequests.length;
+  await page.route(peerBase+'/agents/agent-manifest.json',route=>route.fulfill({
+   status:302,headers:{Location:peerBase+'/agents/redirect-target.json','Access-Control-Allow-Origin':base}
+  }));
+  await page.getByRole('button',{name:'Run consented peer composition'}).click();
+  await page.waitForFunction(()=>document.querySelector('#consent-dialog').open&&document.querySelector('#consent-purpose').textContent.includes('exact published peer network'));
+  await page.getByRole('button',{name:'Allow once',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelector('#peer-network-result').textContent.includes('(PEER_ARTIFACT)'));
+  const redirectRequests=peerRequests.slice(beforeRedirect);
+  assert.equal(redirectRequests.length,1,'redirect response must not trigger a second peer GET');
+  assert.ok(redirectRequests[0].url.endsWith('/agents/agent-manifest.json'));
+  await page.getByRole('button',{name:'Verify transcript evidence',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelector('#result').textContent.includes('Annotation, transcript SHA-256'));
+  await page.unroute(peerBase+'/agents/agent-manifest.json');
+
   await page.locator('#use-byok').check();const missingPeer=peerRequests.length,missingRouter=routerRequests.length;await page.getByRole('button',{name:'Run consented peer composition'}).click();await page.waitForFunction(()=>document.querySelector('#peer-network-result').textContent.includes('(BYOK_SETUP)'));assert.equal(peerRequests.length,missingPeer);assert.equal(routerRequests.length,missingRouter);
   const keyCanary='synthetic-byok-browser-canary-987654';await page.locator('#byok-model').fill('openrouter/free');await page.locator('#byok-key').fill(keyCanary);await page.getByRole('button',{name:'Use key in memory'}).click();assert.equal(await page.locator('#byok-key').inputValue(),'');assert.match(await page.locator('#byok-status').innerText(),/ready in memory/);assert.ok(!(await page.content()).includes(keyCanary));
 
