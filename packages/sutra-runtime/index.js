@@ -247,11 +247,13 @@ function parsePeerNetworkReference(peerUrl){
 async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,allowSourceTools=false}={}){
  const {base,networkName}=parsePeerNetworkReference(peerUrl);
  const manifestUrl=new URL('agent-manifest.json',base);
- const manifest=await fetchJsonWithConsent({
+ let manifest;
+ try{manifest=await fetchJsonWithConsent({
   inspector,
   contact:{origin:manifestUrl.origin,kind:'peer_manifest',purpose:'Resolve the exact published peer network',disclosure:['network name'],network:networkName},
   url:manifestUrl.href,fetchImpl,maxBytes:16384,signal
- });
+ });}
+ catch(error){if(error?.code==='CONTACT_FAILED')fail('MANIFEST_UNAVAILABLE','The peer manifest was unavailable or not a valid public JSON response.');throw error;}
  if(!plain(manifest)||!Array.isArray(manifest.networks)||manifest.networks.length<1||manifest.networks.length>32)fail('MANIFEST','Invalid public peer network index.');
  if(manifest.coded_tools||manifest.actions)fail('UNSUPPORTED_CAPABILITY','Executable peer publication metadata is disabled in this profile.');
  const matching=manifest.networks.filter(entry=>plain(entry)&&entry.name===networkName);
@@ -262,11 +264,13 @@ async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,all
  try{graphUrl=new URL(entry.hocon,base);}catch{fail('ARTIFACT_URL','Invalid declared peer graph URL.');}
  const graphLoopback=['localhost','127.0.0.1','[::1]'].includes(graphUrl.hostname);
  if(graphUrl.username||graphUrl.password||graphUrl.hash||graphUrl.protocol!=='https:'&&!(graphUrl.protocol==='http:'&&graphLoopback))fail('ARTIFACT_ORIGIN','Declared peer graph must use approved HTTP(S) without credentials or fragment.');
- const definition=await fetchJsonWithConsent({
+ let definition;
+ try{definition=await fetchJsonWithConsent({
   inspector,
   contact:{origin:graphUrl.origin,kind:'peer_graph',purpose:'Retrieve the declared peer network definition',disclosure:['network name'],network:networkName},
   url:graphUrl.href,fetchImpl,maxBytes:65536,signal
- });
+ });}
+ catch(error){if(error?.code==='CONTACT_FAILED')fail('GRAPH_UNAVAILABLE','The declared peer graph was unavailable or not a valid public JSON response.');throw error;}
  compileNetwork(definition,{name:networkName,frontMan:entry.front_man,allowSourceTools});
  return {definition,name:networkName,frontMan:entry.front_man,artifacts:{manifest:manifestUrl.href,definition:graphUrl.href},origin:base.origin};
 }
