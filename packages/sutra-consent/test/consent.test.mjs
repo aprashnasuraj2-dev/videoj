@@ -32,8 +32,8 @@ test('session approval is exact and only remembered after explicit choice',async
 });
 test('peer and MCP contact kinds use the same default-deny boundary',async()=>{
  const seen=[];const inspector=createConsentInspector({decide:async intent=>{seen.push(intent.kind);return {decision:'allow',scope:'once'};}});
- for(const kind of ['peer_manifest','peer_graph','mcp_discovery','mcp_call'])await inspector.perform(contact(kind),async()=>{});
- assert.deepEqual(seen,['peer_manifest','peer_graph','mcp_discovery','mcp_call']);
+ for(const kind of ['peer_manifest','peer_graph','peer_evidence','mcp_discovery','mcp_call'])await inspector.perform(contact(kind),async()=>{});
+ assert.deepEqual(seen,['peer_manifest','peer_graph','peer_evidence','mcp_discovery','mcp_call']);
 });
 test('exports never include operation results, failures, credentials or private prompt values',async()=>{
  const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
