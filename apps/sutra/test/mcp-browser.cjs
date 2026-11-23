@@ -80,6 +80,9 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
   assert.deepEqual(noDiscovery.decisions,['mcp_discovery']);
   await page.getByRole('button',{name:'Check example',exact:true}).click();
   assert.match(await page.locator('#result').innerText(),/Catalog matched/);
+  await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
+  await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Actual media duration: 8.0 seconds.'));
+  assert.equal(await page.locator('video').count(),1,'Local native playback remains available after denied MCP discovery');
   const noCall=await attempt('deny-call');
   assert.equal(noCall.ok,false);assert.equal(noCall.code,'EXTERNAL_CONSENT_DENIED');
   assert.deepEqual(posts,['initialize','notifications/initialized','tools/list']);
@@ -96,7 +99,7 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
   assert.equal(blocked.code,'EXTERNAL_CONTACT_FAILED');
   assert.equal(posts.length,beforeCors,'CORS refusal prevents POST');
   assert.deepEqual(errors,[]);
-  console.log('PASS: Chromium cross-origin MCP separate discovery/call consent, 0 POSTs on discovery denial, no tools/call after call denial, 4 approved stateless JSON RPCs, no cookies or private traces, browser CORS fail-closed.');
+  console.log('PASS: Chromium cross-origin MCP separate discovery/call consent, 0 POSTs on discovery denial, intact local media/evidence, no tools/call after call denial, 4 approved stateless JSON RPCs, no cookies or private traces, browser CORS fail-closed.');
  }finally{
   if(browser)await browser.close();vite.kill();await new Promise(resolve=>server.close(resolve));
  }
