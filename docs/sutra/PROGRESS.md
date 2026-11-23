@@ -1,5 +1,13 @@
 # SUTRA progress register
 
+## Session 0015 checkpoint — reviewed actions and review-card flow
+
+**278/1,000 tasks verified; 22 phases fully verified.** The learner now exposes a host-owned CRUSE action catalog, executes confirmed save/export through the pinned ActionRegistry, downloads a validated local JSON receipt, and preserves browser-only review storage/reload/delete semantics. Phase 029 and Phase 046 are complete. Phase 023 gains its action/runtime-artifact checks but remains open because real configured inference is not yet observed.
+
+Tested source candidate: `0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c`; full shell/Chromium https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45166574357. See [session 0014](evidence/implementation/SESSION-0014.md) and [session 0015](evidence/implementation/SESSION-0015.md).
+
+**Next independent work:** provenance inspector or remaining media/transcript learner checks. Live provider/router CORS, public HTTPS/CORS, original lesson rights/factual review, physical-device evidence, release and Devpost remain open.
+
 ## Session 0013 checkpoint — Phase 028 complete
 
 **264/1,000 tasks verified; 20 phases fully verified.** Nested peer execution now has explicit shared caller-budget evidence, and budget stops expose sanitized limit categories plus bounded partial text that is always labeled incomplete at the runtime/UI boundary.
