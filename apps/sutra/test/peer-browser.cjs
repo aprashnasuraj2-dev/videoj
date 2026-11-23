@@ -31,15 +31,15 @@ const assert=require('node:assert/strict');
   const page=await browser.newPage();
   const pageErrors=[],peerRequests=[];
   page.on('pageerror',error=>pageErrors.push(error.message));
-  page.on('request',request=>{if(request.url().startsWith(peer+'/'))peerRequests.push({method:request.method(),url:request.url(),cookie:request.headers().cookie});});
+  page.on('request',request=>{if(request.url().startsWith(peer+'/'))peerRequests.push({method:request.method(),url:request.url(),headers:request.headers(),cookie:request.headers().cookie});});
   await page.goto(learner);
   const modules=Object.fromEntries([
    ['runtime','packages/sutra-runtime/index.js'],
    ['model','packages/sutra-runtime/testing.js'],
    ['consent','packages/sutra-consent/index.js']
   ].map(([key,file])=>[key,'/@fs/'+path.join(root,file).replace(/\\/g,'/')]));
-  async function attempt(networkName,decision){
-   return page.evaluate(async({modules,peer,networkName,decision})=>{
+  async function attempt(networkName,decision,useProviderCanary=false){
+   return page.evaluate(async({modules,peer,networkName,decision,useProviderCanary})=>{
     const [{runNetwork},{createScriptedModel},{createConsentInspector}]=await Promise.all([
      import(modules.runtime),import(modules.model),import(modules.consent)
     ]);
@@ -49,14 +49,19 @@ const assert=require('node:assert/strict');
     definition.tools[0].tools=[peer+'/agents/'+networkName];
     const inspector=createConsentInspector({decide:async()=>({decision,scope:'once'})});
     try{
+     const model=createScriptedModel();
+     if(useProviderCanary){
+      model.mode='provider';model.approvedModel='approved-fixture-model';
+      model.privateCredential='BYOK_PRIVATE_BROWSER_CANARY_DO_NOT_LEAK';
+     }
      const result=await runNetwork({
       definition,request:'synthetic-private-canary requested local checklist',
-      model:createScriptedModel(),peerRuntime:{inspector},
+      model,peerRuntime:{inspector},
      });
      return {ok:true,modelCalls:result.modelCalls,agentCalls:result.agentCalls,
       events:result.events,decisions:inspector.exportEvents()};
     }catch(error){return {ok:false,code:error.code,events:inspector.exportEvents()};}
-   },{modules,peer,networkName,decision});
+   },{modules,peer,networkName,decision,useProviderCanary});
   }
 
   const denied=await attempt('checklist','deny');
@@ -64,12 +69,13 @@ const assert=require('node:assert/strict');
   assert.equal(denied.code,'PEER_CONSENT_DENIED');
   assert.equal(peerRequests.length,0,'denial prevents every peer request');
   assert.ok(denied.events.some(event=>event.decision==='deny'));
-  const allowed=await attempt('checklist','allow');
+  const allowed=await attempt('checklist','allow',true);
   assert.equal(allowed.ok,true,'caller-local peer invocation returned a result');
   assert.equal(allowed.agentCalls,3);assert.equal(allowed.modelCalls,5);
   assert.deepEqual(peerRequests.map(request=>new URL(request.url).pathname),
    ['/agents/agent-manifest.json','/agents/checklist.network.json']);
   assert.ok(peerRequests.every(request=>request.method==='GET'&&!request.cookie));
+  assert.ok(peerRequests.every(request=>!JSON.stringify(request.headers).includes('BYOK_PRIVATE_BROWSER_CANARY_DO_NOT_LEAK')));
   assert.ok(allowed.decisions.some(event=>event.contactKind==='peer_manifest'&&event.decision==='allow'));
   assert.ok(allowed.decisions.some(event=>event.contactKind==='peer_graph'&&event.decision==='allow'));
   assert.ok(allowed.decisions.some(event=>event.contactKind==='peer_graph'&&event.status==='completed'));
