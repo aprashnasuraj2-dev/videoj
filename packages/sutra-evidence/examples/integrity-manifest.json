@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "profile": "urn:sutra:evidence:web-annotation-media:0.1",
+  "sourceVersion": "transcript-v3",
+  "resources": [
+    {
+      "id": "https://example.invalid/sutra/media/synthetic-timing.mp4",
+      "role": "media",
+      "integrity": "sha256-B4kzCjeo3PJzWU0nwvCSYjL+fBJxXN0vjHZE1fSOC+E="
+    },
+    {
+      "id": "https://example.invalid/sutra/transcript/transcript-v3.vtt",
+      "role": "transcript",
+      "integrity": "sha256-LXH6Pb7F/vU/+NWp+gTG3PHFDE/dz3mEZNWHwAj6taY="
+    }
+  ]
+}
