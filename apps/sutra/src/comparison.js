@@ -8,7 +8,7 @@ const isClaim=c=>!!c&&typeof c==='object'&&!Array.isArray(c)&&
  sourceKind.has(c.sourceKind)&&safeString(c.sourceId,100)&&id.test(c.sourceId)&&
  safeString(c.sourceVersion,100)&&safeString(c.scope,160)&&
  safeString(c.claimKey,100)&&id.test(c.claimKey)&&
- (typeof c.value==='string'&&c.value.length<=120||Number.isFinite(c.value)||typeof c.value==='boolean')&&
+ (safeString(c.value,120)||Number.isFinite(c.value)||typeof c.value==='boolean')&&
  safeString(c.excerpt,1200)&&safeString(c.title,120);
 const shallow=c=>Object.freeze({
  sourceKind:c.sourceKind,sourceId:c.sourceId,sourceVersion:c.sourceVersion,scope:c.scope,
