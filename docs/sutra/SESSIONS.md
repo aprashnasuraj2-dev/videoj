@@ -224,3 +224,14 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Full product shell/Chromium passed on https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45164065404. That candidate's register job failed only because Session 0011 had not yet been appended; the checkpoint transaction was corrected in later commits and the failed register run remains historical.
 - Verified P022-04/06/08/09/10; Phase 022 closes. New total **261/1000**, **19 fully verified phases**.
 - Next: P023-05 browser action boundary; live router CORS/account, public HTTPS/CORS and all release gates remain open.
+
+
+## SUTRA-SESSION-0013 — Shared execution budgets and visible diagnostics
+
+- Observed 2026-11-23T17:11:35+05:45; tested source candidate `37d0a45371db717b5f44c2f839b8bbb8345538e7`.
+- Nested peer agents share caller composition/model/deadline budgets. A too-small caller agent budget stops nested peer work under the same `agent_calls` category.
+- Runtime events map fixed budget failures to sanitized categories. `COMPOSITION_LIMIT` carries the category and a bounded control-character-stripped partial text; learner UI labels that text incomplete and never claims a completed result.
+- An intermediate assertion incorrectly assumed partial model text itself would mention the limit; the model had already produced “test complete”. The corrected invariant is authoritative runtime/UI incomplete labeling rather than rewriting model text.
+- Full shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45165087393.
+- Verified P028-04/07/10; Phase 028 closes. New total **264/1000**, **20 fully verified phases**.
+- Next browser action registration/review work; live provider/public HTTPS gates remain open.
