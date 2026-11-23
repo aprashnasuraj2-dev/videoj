@@ -58,3 +58,9 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Verified count: 64/1000. Phase 012 remains partial because real DHAGO shared dependency resolution and its phase exit are pending. Phase 013 CI completion is also not yet credited.
 - Evidence: evidence/implementation/SESSION-0003.md and shell-candidate-files.json.
 - Next: P014-01 runtime selection/spike, P012-04 shared player dependencies. Participant reviewer/footage, eligibility and spend remain pending; no external outreach, paid inference or public deployment.
+
+### Session 0003 CI completion
+
+- Observed 2026-11-23T13:23:04+05:45: shell and register CI passed on `a86042b35724e573b74b6fedb0673d3b72186bb6`; shell steps include actual npm run test:browser success.
+- Final checkpoint: 66/1000 checks and five phases complete. P013-09/10 are now credited; P012-04/10 still pending.
+- Local Chromium failure is retained; remote Chromium functional success is separate evidence. No visual or physical-device pass claimed.

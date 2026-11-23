@@ -15,3 +15,7 @@ Local Node v24.22.3 results:
 - No model calls, agent execution, peer networking, media playback, real data collection or deployment occurred.
 
 The browser shell imports the actual evidence validator and synthetic receipts. It labels pending original media and makes no factual-verification claim. DHAGO/DETOUR source and deployment settings remain unchanged. P012-04 and P012-10 stay pending until the real shared-player dependency boundary is resolved; this is a usable shell, not completion of all player integration.
+
+## CI observed 2026-11-23T13:23:04+05:45
+
+Source `a86042b35724e573b74b6fedb0673d3b72186bb6`: shell and register jobs succeeded. [Shell job](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45132350095/job/137550504454) steps explicitly show npm ci, production build, four Node tests, Chromium install and npm run test:browser all successful. This establishes the scripted desktop/360px functional assertions, not human visual review or physical-device evidence. The local browser restriction remains a historical failed attempt. Phase 013 exit now has observed CI evidence; 66 checks and five phases are verified.

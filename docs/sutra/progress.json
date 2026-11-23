@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T13:20:58+05:45",
+  "updated_at": "2026-11-23T13:23:04+05:45",
   "work_branch": "main",
-  "last_observed_code_sha": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
+  "last_observed_code_sha": "a86042b35724e573b74b6fedb0673d3b72186bb6",
   "last_session_id": "SUTRA-SESSION-0003",
   "stage": "isolated_learner_shell",
   "current_task": null,
@@ -12,7 +12,7 @@
     "SUTRA-P012-04",
     "SUTRA-P021-01"
   ],
-  "next_action": "Pin and spike the browser agent runtime; resolve the actual shared DHAGO player dependency boundary before completing phase 012. Verify shell CI/browser results from session 0003.",
+  "next_action": "Pin and spike the browser agent runtime, then resolve actual shared DHAGO dependencies. Session 0003 shell and register CI passed; physical-device and visual review remain unverified.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -843,6 +843,32 @@
           "result": "pass",
           "source_revision": "47191f97499d0c1b2ca4dbc5f32b0b39f7d698c2",
           "observed_at": "2026-11-23T13:20:58+05:45"
+        }
+      ]
+    },
+    "SUTRA-P013-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:23:04+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45132350095/job/137550504454",
+          "description": "Observed successful locked install, build, Node tests and real Chromium browser step; no deployment occurred.",
+          "result": "pass",
+          "source_revision": "a86042b35724e573b74b6fedb0673d3b72186bb6",
+          "observed_at": "2026-11-23T13:23:04+05:45"
+        }
+      ]
+    },
+    "SUTRA-P013-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:23:04+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45132350095/job/137550504454",
+          "description": "Observed successful locked install, build, Node tests and real Chromium browser step; no deployment occurred.",
+          "result": "pass",
+          "source_revision": "a86042b35724e573b74b6fedb0673d3b72186bb6",
+          "observed_at": "2026-11-23T13:23:04+05:45"
         }
       ]
     }

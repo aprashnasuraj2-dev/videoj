@@ -61,8 +61,8 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P013-06` Pin appropriate Node and dependency installation behavior
 - [x] `SUTRA-P013-07` Document successful-main restaging versus actual public promotion accurately
 - [x] `SUTRA-P013-08` Ensure CI does not require unavailable provider or deployment secrets
-- [ ] `SUTRA-P013-09` Produce and review the phase artifact: Scoped CI configuration and release-trigger note.
-- [ ] `SUTRA-P013-10` Close phase 013 only after its applicable tasks have evidence and its exit condition is observed: App changes run their checks; existing staging or deployment behavior is understood before any root edit.
+- [x] `SUTRA-P013-09` Produce and review the phase artifact: Scoped CI configuration and release-trigger note.
+- [x] `SUTRA-P013-10` Close phase 013 only after its applicable tasks have evidence and its exit condition is observed: App changes run their checks; existing staging or deployment behavior is understood before any root edit.
 
 ## Phase 014 - Select reference runtime and license
 
