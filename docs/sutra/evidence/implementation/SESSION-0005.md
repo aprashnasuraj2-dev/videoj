@@ -109,3 +109,21 @@ Final checkpoint: **152/1000 checks; ten phases fully verified**. Phase 027 clos
 phase 025 remains partial because actual operator model selection, a live keyless
 visitor task and its exit have not occurred. Remote tree comparison confirms zero
 changes to existing `src/`, `detour/`, `apps/preview/` or their deployment configs.
+
+
+## Deployment-free packaging follow-up
+
+At 2026-11-23T14:25:23+05:45, `WRANGLER_SEND_METRICS=false npm exec --yes
+--package=wrangler@4 -- wrangler deploy --dry-run --outdir
+/tmp/sutra-worker-dry-run --config wrangler.jsonc` passed using Wrangler 4.166.0.
+It read 72 assets, bundled a 32.49 KiB Worker (9.16 KiB gzip), recognized the
+InferenceQuota/ASSETS bindings and retained enable=false/model-list-empty.
+No secrets were supplied and no account resource, route or migration was deployed.
+The earlier no-dry-run statement describes the initial candidate checkpoint; this
+observation supersedes only that packaging limitation. The preceding offline CLI
+attempt failed ENOTCACHED; normal installation then supplied the CLI. A proxy and
+transitive node-domexception deprecation warning did not fail the dry-run.
+
+This is bundle/config validation, not Cloudflare runtime, quota persistence,
+provider compatibility, spend control or public release evidence. Verified task
+count stays 152; no deployment or live-visitor task is closed by a dry-run.

@@ -29,6 +29,13 @@ Final Chromium CI passed on `61f44558b9512990f9c4155e31ff95d0d40bbe98`, includin
 packaged binary missing and system browser launch failed. No local browser pass,
 physical-device result or human visual approval is claimed.
 
+## Public release gate
+
+User direction: no public release until all major checklist work is complete and
+verified. Packaging preflight is separate from release. Keep deployments, public
+routes and paid inference closed while major product/security/conformance gates
+remain open.
+
 ## Resume
 
 Next independent task: `SUTRA-P033-01`, consent-aware external contact policy and
@@ -41,3 +48,8 @@ Cloudflare release, final ZIP and Devpost filing are still outstanding. Read the
 session evidence and actual remote CI before continuing.
 
 [Verified browser workflow](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45139865572/job/137574910727). The register checkpoint is saved through PR #45; no public release is implied.
+
+
+Packaging follow-up: Wrangler 4.166.0 dry-run passed on 23 November 2026, reading
+72 assets and bundling a 32.49 KiB Worker (9.16 KiB gzip). Inference remains off;
+no migration, public route or deployed runtime result is established.

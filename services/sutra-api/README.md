@@ -36,8 +36,7 @@ MCP servers, SSE responses, auth flows or third-party discovery.
    512 output tokens/call. Hard configuration maxima: 1,000 global, client <= global,
    1,024 output tokens. A full agent task may consume up to 8 model calls.
 5. Apply/review the DO migration and validate the Wrangler bundle/deployment in a
-   separate nonproduction environment. Neither a Wrangler dry-run nor deployment
-   has been observed yet. Account routing, secret setup and live visitor checks
+   separate nonproduction environment. Wrangler 4.166.0 dry-run passed on 2026-11-23 (72 assets, 32.49 KiB Worker /9.16 KiB gzip); no deployment has been observed. Account routing, secret setup and live visitor checks
    remain pending. Enable only after budget/model approval and those checks.
 
 Only the fixed `https://api.openai.com/v1/chat/completions` can receive the server
