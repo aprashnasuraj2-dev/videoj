@@ -69,10 +69,10 @@ const assert=require('node:assert/strict');
   assert.deepEqual(peerRequests.map(request=>new URL(request.url).pathname),
    ['/agents/agent-manifest.json','/agents/checklist.network.json']);
   assert.ok(peerRequests.every(request=>request.method==='GET'&&!request.cookie));
-  assert.ok(allowed.events.some(event=>event.contactKind==='peer_manifest'&&event.decision==='allow'));
-  assert.ok(allowed.events.some(event=>event.contactKind==='peer_graph'&&event.decision==='allow'));
-  assert.ok(allowed.events.some(event=>event.contactKind==='peer_graph'&&event.status==='completed'));
-  assert.ok(allowed.events.every(event=>!JSON.stringify(event).includes('synthetic-private-canary')));
+  assert.ok(allowed.decisions.some(event=>event.contactKind==='peer_manifest'&&event.decision==='allow'));
+  assert.ok(allowed.decisions.some(event=>event.contactKind==='peer_graph'&&event.decision==='allow'));
+  assert.ok(allowed.decisions.some(event=>event.contactKind==='peer_graph'&&event.status==='completed'));
+  assert.ok(allowed.decisions.every(event=>!JSON.stringify(event).includes('synthetic-private-canary')));
   assert.ok(allowed.events.length>0);
   const wrong=await attempt('checklist_wrong','allow');
   assert.equal(wrong.ok,false);
