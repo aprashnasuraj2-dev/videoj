@@ -93,12 +93,12 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P035-02` Use the caller’s approved inference router and model policy
 - [x] `SUTRA-P035-03` Share caller execution ceilings across peer delegation
 - [x] `SUTRA-P035-04` Return the peer front-agent structured result through normal tool results
-- [ ] `SUTRA-P035-05` Prevent the peer from receiving provider or BYOK credentials
+- [x] `SUTRA-P035-05` Prevent the peer from receiving provider or BYOK credentials
 - [x] `SUTRA-P035-06` Show local and peer-network invocations in one browser trace
 - [x] `SUTRA-P035-07` Ensure the peer origin receives artifacts-only requests as designed
 - [x] `SUTRA-P035-08` Demonstrate equivalent loading with no private remote execution service
 - [x] `SUTRA-P035-09` Produce and review the phase artifact: End-to-end browser composition proof.
-- [ ] `SUTRA-P035-10` Close phase 035 only after its applicable tasks have evidence and its exit condition is observed: One browser trace shows local graph -> peer graph -> structured result, with model requests staying on the caller inference path.
+- [x] `SUTRA-P035-10` Close phase 035 only after its applicable tasks have evidence and its exit condition is observed: One browser trace shows local graph -> peer graph -> structured result, with model requests staying on the caller inference path.
 
 ## Phase 036 - Enforce private-context allow rules
 
@@ -107,13 +107,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Keep private context outside ordinary text. Deny transfer by default and allow only explicitly named fields for the destination network. Explain that ordinary delegated text can still disclose data.
 - **Phase exit:** Synthetic secret canaries are absent from peer requests, prompts, outputs and trace export unless a specifically allowed test field is used.
 
-- [ ] `SUTRA-P036-01` Keep private context separate from ordinary request/response text
-- [ ] `SUTRA-P036-02` Deny private-field forwarding across network boundaries by default
+- [x] `SUTRA-P036-01` Keep private context separate from ordinary request/response text
+- [x] `SUTRA-P036-02` Deny private-field forwarding across network boundaries by default
 - [ ] `SUTRA-P036-03` Bind allowed fields to an exact destination network identity
 - [ ] `SUTRA-P036-04` Apply separate upstream and downstream forwarding permissions
-- [ ] `SUTRA-P036-05` Use synthetic secret canaries to inspect prompts and network requests
+- [x] `SUTRA-P036-05` Use synthetic secret canaries to inspect prompts and network requests
 - [ ] `SUTRA-P036-06` Verify peer results cannot smuggle forbidden private fields into receipts
-- [ ] `SUTRA-P036-07` Explain that plain delegated text is not filtered as private context
+- [x] `SUTRA-P036-07` Explain that plain delegated text is not filtered as private context
 - [ ] `SUTRA-P036-08` Test both denied forwarding and an explicitly permitted non-secret field
 - [ ] `SUTRA-P036-09` Produce and review the phase artifact: Destination-scoped context filter and canary tests.
 - [ ] `SUTRA-P036-10` Close phase 036 only after its applicable tasks have evidence and its exit condition is observed: Synthetic secret canaries are absent from peer requests, prompts, outputs and trace export unless a specifically allowed test field is used.
@@ -129,11 +129,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P037-02` Reapply destination policy and required consent at each changed origin
 - [ ] `SUTRA-P037-03` Bound the set of acceptable declared artifact destinations
 - [ ] `SUTRA-P037-04` Re-evaluate approval when peer scope or content binding changes materially
-- [ ] `SUTRA-P037-05` Avoid leaking authentication headers across redirect chains
-- [ ] `SUTRA-P037-06` Handle browser redirect limitations by failing closed when necessary
-- [ ] `SUTRA-P037-07` Test same-origin, changed-origin, looping and denied redirect fixtures
-- [ ] `SUTRA-P037-08` Keep the local lesson functional after a blocked peer redirect
-- [ ] `SUTRA-P037-09` Produce and review the phase artifact: Redirect fixtures and policy-change handling.
+- [x] `SUTRA-P037-05` Avoid leaking authentication headers across redirect chains
+- [x] `SUTRA-P037-06` Handle browser redirect limitations by failing closed when necessary
+- [x] `SUTRA-P037-07` Test same-origin, changed-origin, looping and denied redirect fixtures
+- [x] `SUTRA-P037-08` Keep the local lesson functional after a blocked peer redirect
+- [x] `SUTRA-P037-09` Produce and review the phase artifact: Redirect fixtures and policy-change handling.
 - [ ] `SUTRA-P037-10` Close phase 037 only after its applicable tasks have evidence and its exit condition is observed: A redirect to an unapproved origin cannot silently expand access; the original site remains responsive.
 
 ## Phase 038 - Keep untrusted peer instructions contained
@@ -144,14 +144,14 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** Test attacks cannot cause a blocked destination, unreviewed write, key leak or router override; limitations of prompt defenses are stated.
 
 - [ ] `SUTRA-P038-01` Treat peer instructions, transcript text and tool results as untrusted
-- [ ] `SUTRA-P038-02` Create fixtures attempting key exfiltration and private-context disclosure
-- [ ] `SUTRA-P038-03` Create fixtures attempting router override and unapproved destination calls
-- [ ] `SUTRA-P038-04` Create fixtures attempting unreviewed writes and argument substitution
-- [ ] `SUTRA-P038-05` Keep remote executable tool loading outside this release
-- [ ] `SUTRA-P038-06` Validate final action arguments with runtime-owned policy checks
-- [ ] `SUTRA-P038-07` Verify prompt-level defenses are not the only containment mechanism
-- [ ] `SUTRA-P038-08` Record residual model manipulation risks without claiming universal immunity
-- [ ] `SUTRA-P038-09` Produce and review the phase artifact: Adversarial peer fixture set and containment report.
+- [x] `SUTRA-P038-02` Create fixtures attempting key exfiltration and private-context disclosure
+- [x] `SUTRA-P038-03` Create fixtures attempting router override and unapproved destination calls
+- [x] `SUTRA-P038-04` Create fixtures attempting unreviewed writes and argument substitution
+- [x] `SUTRA-P038-05` Keep remote executable tool loading outside this release
+- [x] `SUTRA-P038-06` Validate final action arguments with runtime-owned policy checks
+- [x] `SUTRA-P038-07` Verify prompt-level defenses are not the only containment mechanism
+- [x] `SUTRA-P038-08` Record residual model manipulation risks without claiming universal immunity
+- [x] `SUTRA-P038-09` Produce and review the phase artifact: Adversarial peer fixture set and containment report.
 - [ ] `SUTRA-P038-10` Close phase 038 only after its applicable tasks have evidence and its exit condition is observed: Test attacks cannot cause a blocked destination, unreviewed write, key leak or router override; limitations of prompt defenses are stated.
 
 ## Phase 039 - Add a compatible read-only MCP path
@@ -161,13 +161,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Exercise the runtime MCP adapter against a controlled read-only test service or public permitted service. Confirm discovery and call consent, bounded results and clear CORS failure behavior.
 - **Phase exit:** At least one authorized tool read works; unavailable endpoints never trigger browser-security bypasses.
 
-- [ ] `SUTRA-P039-01` Choose a controlled or explicitly permitted read-only MCP service
+- [x] `SUTRA-P039-01` Choose a controlled or explicitly permitted read-only MCP service
 - [x] `SUTRA-P039-02` Verify the pinned runtime’s MCP discovery and invocation support
 - [x] `SUTRA-P039-03` Ask permission before discovery and before calls according to policy
 - [x] `SUTRA-P039-04` Apply allowed-tool names and bounded argument/result schemas
 - [ ] `SUTRA-P039-05` Test successful grounded read, discovery error and service timeout
 - [x] `SUTRA-P039-06` Verify browser CORS and fail closed when access is unavailable
-- [ ] `SUTRA-P039-07` Keep MCP authentication distinct from LLM router credentials
+- [x] `SUTRA-P039-07` Keep MCP authentication distinct from LLM router credentials
 - [x] `SUTRA-P039-08` Document the tested endpoint behavior without implying production availability
 - [x] `SUTRA-P039-09` Produce and review the phase artifact: MCP compatibility fixture and documented integration instructions.
 - [ ] `SUTRA-P039-10` Close phase 039 only after its applicable tasks have evidence and its exit condition is observed: At least one authorized tool read works; unavailable endpoints never trigger browser-security bypasses.
