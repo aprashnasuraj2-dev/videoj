@@ -188,16 +188,15 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    if(!plain(message)||!plain(message.user_message)||typeof message.user_message.text!=='string')fail('PEER_REQUEST','Invalid delegated peer request.');
    const approvedContext=privatePolicy.downstream(url,loaded.name);
    const contextText=privateContextPrompt(approvedContext);
-   let peerNetwork=peer.network;
-   if(contextText){
-    const baseNetwork=peer.network;
-    peerNetwork=Object.create(baseNetwork);
-    peerNetwork.getAgentSpec=agentName=>{
-     const spec=baseNetwork.getAgentSpec(agentName);
-     return spec?{...spec,instructions:(spec.instructions??'')+contextText}:spec;
-    };
-   }
-   const peerCtx={...ctx,network:peerNetwork,frontMan:peer.frontMan,baseOrigin:loaded.origin,displayOrigin:loaded.origin,isTop:false,slyData:{...approvedContext},composition:sharedBudget??composition};
+   // Inject approved fields at the peer's model boundary rather than mutating
+   // public graph instructions. This keeps host-private data separate from the
+   // peer artifact and from the caller's ordinary delegated request text.
+   const peerLlm=contextText?{...ctx.llm,chat:args=>{
+    const messages=args.messages.map((message,index)=>index===0&&message.role==='system'?
+     {...message,content:String(message.content??'')+contextText}:message);
+    return ctx.llm.chat({...args,messages});
+   }}:ctx.llm;
+   const peerCtx={...ctx,network:peer.network,llm:peerLlm,frontMan:peer.frontMan,baseOrigin:loaded.origin,displayOrigin:loaded.origin,isTop:false,slyData:{...approvedContext},composition:sharedBudget??composition};
    // Run the published data as local agents under the caller's one model
    // adapter, total model budget, trace and abort signal. Never send prompt
    // text or an API key to the artifact-serving peer origin.
