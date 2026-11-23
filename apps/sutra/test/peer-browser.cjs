@@ -112,6 +112,40 @@ const assert=require('node:assert/strict');
   assert.equal(peerRequests.length,previous+3,'workbench wrong name fetches only manifest');
   await page.setViewportSize({width:360,height:800});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+
+  const transcript=await page.evaluate(async root=>{
+   const {mountTranscriptPanel}=await import('/@fs/'+root+'/apps/sutra/src/transcript-panel.js');
+   const container=document.createElement('div');document.body.append(container);
+   const media=new EventTarget();media.currentTime=0;
+   const source={id:'multi-cue-fixture',version:'v2',duration:8,cues:[
+    {id:'intro',start:0,end:1,text:'Beginning source wording.'},
+    {id:'translated',start:2,end:4,text:'Translated notice.',translation:true,language:'Nepali'},
+    {id:'outro',start:4,end:7,text:'Ending source wording.'}
+   ]};
+   let seeks=0;
+   const panel=mountTranscriptPanel(container,{source,media,onSeek:async t=>{
+    seeks++;media.currentTime=t;media.dispatchEvent(new Event('seeked'));return t;
+   }});
+   const controls=[...container.querySelectorAll('.transcript-cue')];
+   controls[0].focus();
+   controls[0].dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true,cancelable:true}));
+   const arrowMoved=document.activeElement===controls[1];
+   const translatedVisible=controls[1].textContent.includes('Translated wording · Nepali · not an original quotation');
+   controls[1].click();
+   await new Promise(resolve=>setTimeout(resolve,0));
+   const cueActivated=seeks===1&&media.currentTime===2&&controls[1].getAttribute('aria-current')==='true';
+   const preservedFocus=document.activeElement===controls[1];
+   const input=container.querySelector('input[type=search]');
+   input.value='nothing-to-match';input.dispatchEvent(new Event('input'));
+   const noResults=container.querySelectorAll('.transcript-cue').length===0&&
+    container.querySelector('.transcript-status').textContent.includes('No transcript cues match');
+   panel.dispose();
+   const empty=mountTranscriptPanel(container,{source:{id:'empty',version:'v1',duration:8,cues:[]},media});
+   const missing=container.textContent.includes('No usable transcript cues');
+   empty.dispose();container.remove();
+   return {arrowMoved,translatedVisible,cueActivated,preservedFocus,noResults,missing};
+  },root);
+  assert.deepEqual(transcript,{arrowMoved:true,translatedVisible:true,cueActivated:true,preservedFocus:true,noResults:true,missing:true});
   assert.deepEqual(pageErrors,[]);
   console.log('PASS: Chromium two-origin peer CORS, denial before transport, exact artifact GETs, caller-local 3-agent/5-model composition, redacted consent and specific wrong-name refusal.');
  }finally{
