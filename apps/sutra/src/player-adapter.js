@@ -23,6 +23,7 @@ export function mountTimingPlayer(host,{source,compatibilitySource,fallbackUrl,p
  return {element:player,media,readState:()=>readPlaybackState(media),
   ready:()=>waitFor('loadedmetadata',()=>media.readyState>=1),
   async seek(seconds){
+   if(media.error){const error=new Error('Current media is in a load or decode error state.');error.code='SEEK_UNAVAILABLE';error.reason='media_error';throw error;}
    const decision=assessSeekTarget({duration:media.duration,ranges:timeRangesSnapshot(media.seekable)},seconds);
    if(!decision.ok){const error=new Error(decision.message);error.code='SEEK_UNAVAILABLE';error.reason=decision.reason;throw error;}
    await waitFor('seeked',()=>!media.seeking&&Math.abs(media.currentTime-seconds)<=1,()=>{media.currentTime=seconds;});
