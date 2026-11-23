@@ -11,8 +11,9 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
   status=byId('peer-status'), trace=byId('peer-trace'), consentLog=byId('peer-consent-log');
  const dialog=byId('peer-consent-dialog'),exportButton=byId('export-peer-trace'),
   execState=byId('peer-exec-state'),agentBudget=byId('peer-agent-budget'),
-  modelBudget=byId('peer-model-budget'),contactCount=byId('peer-contact-count');
- let pendingDecision=null, running=false, activeController=null,lastReceipt=null;
+  modelBudget=byId('peer-model-budget'),toolCount=byId('peer-tool-count'),
+  elapsed=byId('peer-elapsed'),contactCount=byId('peer-contact-count');
+ let pendingDecision=null, running=false, activeController=null,lastReceipt=null,runStarted=0,observedTools=0;
  const completedContacts=()=>inspector.exportEvents().filter(event=>event.type==='outcome'&&event.status==='completed').length;
  const setState=(state,{agentCalls=0,modelCalls=0}={})=>{
   const labels={idle:'Idle',loading:'Loading local network',consent:'Awaiting external approval',completed:'Completed',denied:'Denied',cancelled:'Cancelled',error:'Stopped with error',input_error:'Input required'};
@@ -20,6 +21,8 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
   status.dataset.state=state;
   agentBudget.textContent=Math.min(Number.isInteger(agentCalls)?agentCalls:0,12)+' / 12 used';
   modelBudget.textContent=Math.min(Number.isInteger(modelCalls)?modelCalls:0,8)+' / 8 used';
+  toolCount.textContent=String(observedTools);
+  elapsed.textContent=(runStarted?Math.max(0,Math.round(performance.now()-runStarted)):0)+' ms / 60,000 ms';
   contactCount.textContent=completedContacts()+' completed';
  };
  const finish=(decision,scope='once')=>{
@@ -49,10 +52,15 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
  }
  function resetTrace(){trace.replaceChildren();}
  function appendTrace(event){
-  if(event.kind!=='agent'||event.phase!=='start')return;
+  if(event.phase!=='start'||!['agent','tool'].includes(event.kind))return;
   const item=document.createElement('li');
-  const label=event.network==='learner'?'Caller':'Loaded peer';
-  item.textContent=label+' · '+(event.network??'network')+' / '+(event.agent??'agent')+' · scripted';
+  if(event.kind==='agent'){
+   const label=event.network==='learner'?'Caller':'Loaded peer';
+   item.textContent=label+' · '+(event.network??'network')+' / '+(event.agent??'agent')+' · scripted';
+  }else{
+   observedTools++;
+   item.textContent='Tool · '+(event.tool??'unnamed')+' · '+(event.origin??'local');
+  }
   if(trace.childElementCount<24)trace.append(item);
  }
  async function run(){
@@ -63,7 +71,7 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
    setState('input_error');return;
   }
   running=true;runButton.disabled=true;lastReceipt=null;exportButton.disabled=true;
-  activeController=new AbortController();
+  runStarted=performance.now();observedTools=0;activeController=new AbortController();
   const currentEvents=[],consentStart=inspector.exportEvents().length;
   resetTrace();setState('loading');
   status.textContent='Checking the local learner network. No external contact occurs before approval.';
@@ -100,6 +108,7 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
   }finally{
    running=false;runButton.disabled=false;activeController=null;
    exportButton.disabled=!lastReceipt;renderConsentEvents();
+   setState(status.dataset.state,{agentCalls:lastReceipt?.agentCalls??0,modelCalls:lastReceipt?.modelCalls??0});
    // Return keyboard users to the control that initiated the modal flow.
    if(['denied','error','cancelled'].includes(status.dataset.state))runButton.focus({preventScroll:true});
   }
