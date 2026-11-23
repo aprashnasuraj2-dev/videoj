@@ -50,7 +50,7 @@ test('runtime gives only explicitly approved field to exact peer model prompts',
  const peer=seen.filter(x=>x.origin==='https://peer.example');
  assert.ok(local.length>0&&peer.length>0);
  assert.ok(local.every(x=>!JSON.stringify(x.messages).includes('ne-NP')));
- assert.ok(peer.some(x=>JSON.stringify(x.messages).includes('"locale":"ne-NP"')));
+ assert.ok(peer.some(x=>JSON.stringify(x.messages).includes('"locale":"ne-NP"')),JSON.stringify({seen,events:result.events}));
  assert.ok(peer.every(x=>!JSON.stringify(x.messages).includes('PRIVATE_CONTEXT_CANARY_123')));
  assert.ok(peer.every(x=>!JSON.stringify(x.messages).includes('"preference":"concise"')));
  assert.ok(!JSON.stringify(result.events).includes('ne-NP'));
