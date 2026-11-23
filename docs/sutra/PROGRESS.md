@@ -1,5 +1,13 @@
 # SUTRA progress register
 
+## Session 0017 checkpoint — Phase 042 partially verified
+
+**291/1,000 tasks verified; 23 phases fully verified.** The SUTRA/DHAGO boundary now has Chromium evidence for actual play/pause, mute/volume, captions, seek, source replacement, visible media-error recovery, 360px control geometry/focus and fullscreen-control API dispatch. Phase 042 remains open because SUTRA still lacks a genuine alternate-codec fixture proving the compatibility-source branch.
+
+Tested source candidate: `b8ef8baef4ff8176eb13290e021e9db50b4c8a7a`; full shell/Chromium https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45171777112. See [session 0017 evidence](evidence/implementation/SESSION-0017.md).
+
+**Next:** Phase 044 versioned timing transcript. Live provider/router CORS, public HTTPS/CORS, original lesson rights/factual review, physical-device evidence, release and Devpost remain open.
+
 ## Session 0016 checkpoint — Phase 047 complete
 
 **288/1,000 tasks verified; 23 phases fully verified.** The optional run-provenance inspector now has a bounded allow-list state model, exact spec/runtime/graph/model/router/contact/call/budget metadata, structured action outcomes, redacted JSON download, credential/private canary tests, and explicit failure isolation from evidence/playback.
