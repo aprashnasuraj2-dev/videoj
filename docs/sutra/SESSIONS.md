@@ -297,3 +297,18 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Final full shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45175869357; register/evidence 45175869381 / 45175869292 passed.
 - Verified Phase 041 (10 tasks), remaining Phase 043 tasks (4) and Phase 044 (10). New total **315/1000**, **26 fully verified phases**.
 - Phase 042 remains open on a genuine alternate-codec compatibility path. Live provider/router CORS, public HTTPS, original lesson rights/factual review, physical-device evidence and release remain open.
+
+
+## SUTRA-SESSION-0019 — Source-separated peer comparison
+
+- Observed 2026-11-23T18:33:54+05:45; tested source candidate `227e33ebedb0e42aefa28141c617b164a43dce1a`.
+- Added a separately published `/agents/checklist.evidence.json` artifact to the independent SUTRA peer. It is not embedded in or implicitly loaded with the agent graph.
+- Added explicit `peer_evidence` consent kind and a visible comparison loader using the same bounded credential-free JSON fetch boundary as other public peer artifacts.
+- Added conservative comparison states: missing, unsupported, conflict_unresolved and agreement_unverified. Agreement requires exact claim ID, time value and exact excerpt.
+- Visible comparison keeps local 2–4 second timing evidence and peer 5–7 second written guide in separate cards with source date, scope, provenance, excerpts and exact source references.
+- Chromium proves denied peer evidence performs zero evidence requests and leaves local evidence usable; an allowed attempt performs exactly one credential-free evidence GET and renders conflict_unresolved.
+- Marking the comparison reviewed does not resolve or verify the conflict.
+- Integrated run discovered a nondeterministic corrupt-media duration assumption; adapter now checks authoritative native `media.error` before seekability policy.
+- Full shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45177623668; register/evidence 45177623608 / 45177623712 passed.
+- Verified P045-01..10; Phase 045 closes. New total **325/1000**, **27 fully verified phases**.
+- Next independent queue: Phase 049 accessibility/mobile; Phase 042 genuine alternate-codec proof and live provider/public HTTPS remain open.
