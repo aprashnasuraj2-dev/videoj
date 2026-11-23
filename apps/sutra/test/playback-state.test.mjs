@@ -1,0 +1,4 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readPlaybackState} from '../src/playback-state.js';
+const native={currentTime:2,duration:8,paused:true,ended:false,seeking:false,readyState:4,error:null};
+test('bounded read snapshot exposes native values, no DOM or mutation capability',()=>{const media={...native,src:'private',ownerDocument:{secret:true}};const out=readPlaybackState(media);assert.deepEqual(out,{available:true,currentTime:2,duration:8,paused:true,ended:false,seeking:false,readyState:4});out.currentTime=7;assert.equal(media.currentTime,2);});
+test('missing, unknown-duration, errored and unreadable media report unavailable',()=>{for(const media of [null,{...native,duration:NaN},{...native,duration:Infinity},{...native,readyState:0},{...native,error:{}},{get currentTime(){throw Error();}}])assert.equal(readPlaybackState(media).available,false);});
