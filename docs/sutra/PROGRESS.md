@@ -1,5 +1,14 @@
 # SUTRA progress register
 
+## Session 0008 — BYOK revocation hardening (verification ongoing)
+
+On the active `sutra/peer-invocation` PR #48 branch, `packages/sutra-inference/byok.js` now aborts every in-flight model fetch when its in-memory key is cleared. A unit regression checks active cancellation, the absence of a second network call and sanitized error messages. Tested code candidate: `092c8d2c601bcfd7075a4062a4c13460257aaa90`.
+
+At checkpoint time, the GitHub Actions register and evidence jobs passed, and the shell job had passed install/build/app/inference/runtime/peer tests but had not completed Chromium. Do **not** count a browser pass or any new verified checklist items until the exact candidate passes the remaining shell checks. The original **186/1,000** verified total is retained. A synthetic OpenRouter route proves key isolation under a controlled fixture, not that a real provider account, funded path or public HTTPS CORS works.
+
+Next: finish the browser workflow, verify that only the selected router receives the BYOK canary, then credit individual P030 tasks only against observed evidence. Live router CORS and account tests remain an independent gate. No public release, deployment or key funding is authorized.
+
+
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
 ## Session 0006 checkpoint
