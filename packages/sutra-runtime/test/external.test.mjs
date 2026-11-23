@@ -80,6 +80,43 @@ test('approved third-party MCP exposes only declared tools and calls through the
  assert.deepEqual(counters,{resolve:1,list:1,call:1});assert.match(result.text,/truthStatus/);assert.deepEqual(seen.map(x=>x.kind),['mcp_discovery','mcp_call']);assert.ok(seen.every(x=>x.origin==='https://mcp.example'));
  assert.deepEqual(seen[0].disclosure,['tool names','tool schemas']);assert.deepEqual(seen[1].disclosure,['tool arguments']);
 });
+
+test('private context is deny-by-default and exact-destination policy forwards only named keys',async()=>{
+ const g=callerGraph();g.tools[0].allow={to_downstream:{sly_data:['locale','secret']}};
+ const modelCalls=[];const base=peerModel();const model={mode:'scripted-test',async chat(args){modelCalls.push(JSON.stringify({messages:args.messages,tools:args.tools,origin:args.origin}));return base.chat(args);}};
+ const fetches=[];const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ const result=await runNetwork({
+  definition:g,request:'Use the checklist peer.',model,
+  privateContext:{locale:'en-NP',secret:'synthetic-private-canary'},
+  external:{baseOrigin:'https://caller.example',inspector,fetchImpl:peerFetch({calls:fetches}),peerContext:{[peerUrl]:{downstream:['locale'],upstream:[]}}}
+ });
+ const serialized=JSON.stringify({modelCalls,fetches,result});
+ assert.ok(!serialized.includes('synthetic-private-canary'));
+ const boundary=result.events.find(e=>e.kind==='private_context'&&e.network==='checklist');assert.deepEqual(boundary?.contextKeys,['locale']);
+ assert.ok(!JSON.stringify(result.events).includes('en-NP'),'trace exports field names, not private values');
+});
+test('peer private-context permission is keyed to the exact canonical network URL',async()=>{
+ const g=callerGraph();g.tools[0].allow={to_downstream:{sly_data:['locale']}};
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ const result=await runNetwork({definition:g,request:'x',model:peerModel(),privateContext:{locale:'en-NP'},external:{baseOrigin:'https://caller.example',inspector,fetchImpl:peerFetch(),peerContext:{'https://peer.example/agents/checklist2':{downstream:['locale']}}}});
+ const boundary=result.events.find(e=>e.kind==='private_context'&&e.network==='checklist');assert.deepEqual(boundary?.contextKeys,[]);
+});
+test('ordinary delegated text is distinct from private context and is not silently filtered',async()=>{
+ const g=callerGraph();g.tools[0].allow={to_downstream:{sly_data:['secret']}};
+ const seen=[];let seq=0;const model={mode:'scripted-test',async chat({messages,tools,signal,origin}){signal?.throwIfAborted();seen.push(JSON.stringify({messages,tools,origin}));const returned=messages.filter(m=>m.role==='tool');
+  if(tools.length&&!returned.length)return call(tools[0].function.name,{request:'plain-text-canary'},'plain-'+(++seq));
+  if(returned.length)return {content:'done '+returned[0].content,toolCalls:[]};
+  return {content:'peer saw ordinary delegated text',toolCalls:[]};
+ }};
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ const result=await runNetwork({definition:g,request:'start',model,privateContext:{secret:'synthetic-private-canary'},external:{baseOrigin:'https://caller.example',inspector,fetchImpl:peerFetch(),peerContext:{[peerUrl]:{downstream:[]}}}});
+ assert.ok(seen.some(x=>x.includes('plain-text-canary')));assert.ok(!seen.some(x=>x.includes('synthetic-private-canary')));assert.ok(!result.text.includes('synthetic-private-canary'));
+});
+test('wildcard or oversized private-context policy is rejected before model or peer contact',async()=>{
+ const g=callerGraph();g.tools[0].allow={to_downstream:{sly_data:['*']}};let calls=0;
+ await assert.rejects(runNetwork({definition:g,request:'x',model:{mode:'scripted-test',async chat(){calls++;return {content:'x',toolCalls:[]};}},external:{baseOrigin:'https://caller.example',inspector:createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})})}}),e=>e.code==='PRIVATE_CONTEXT_POLICY');assert.equal(calls,0);
+ const normal=callerGraph();await assert.rejects(runNetwork({definition:normal,request:'x',model:peerModel(),privateContext:{secret:'x'.repeat(9000)},external:{baseOrigin:'https://caller.example',inspector:createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})}),fetchImpl:peerFetch()}}),e=>e.code==='PRIVATE_CONTEXT');
+});
 test('external capabilities remain disabled without an explicit host boundary',async()=>{
  let modelCalls=0;await assert.rejects(runNetwork({definition:callerGraph(),request:'x',model:{mode:'scripted-test',async chat(){modelCalls++;return {content:'x',toolCalls:[]};}}}),e=>e.code==='REFERENCE');assert.equal(modelCalls,0);
  await assert.rejects(runNetwork({definition:mcpGraph(),request:'x',model:{mode:'scripted-test',async chat(){modelCalls++;return {content:'x',toolCalls:[]};}}}),e=>['TOOLS','REFERENCE'].includes(e.code));assert.equal(modelCalls,0);
