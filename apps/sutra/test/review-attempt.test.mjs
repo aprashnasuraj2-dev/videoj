@@ -14,10 +14,12 @@ for(const outcome of ['completed','rejected','unknown'])test(`review attempt exp
  assert.match(result.retryPolicy,/never automatically retry/);
  if(outcome==='unknown')assert.match(result.outcomeMeaning,/may have happened/);
 });
-test('attempt export strips unrelated prompt/key fields and rejects stale receipt',()=>{
- const attempt=base('unknown');attempt.providerKey='PRIVATE_KEY_CANARY';attempt.rawPrompt='PRIVATE_PROMPT_CANARY';attempt.receipt.hidden='PRIVATE_FIELD_CANARY';
+test('attempt export strips unrelated attempt metadata and rejects mutated evidence receipt',()=>{
+ const attempt=base('unknown');attempt.providerKey='PRIVATE_KEY_CANARY';attempt.rawPrompt='PRIVATE_PROMPT_CANARY';
  const text=serializeReviewAttemptReceipt(attempt,{sources});
- assert.ok(!text.includes('PRIVATE_KEY_CANARY'));assert.ok(!text.includes('PRIVATE_PROMPT_CANARY'));assert.ok(!text.includes('PRIVATE_FIELD_CANARY'));
+ assert.ok(!text.includes('PRIVATE_KEY_CANARY'));assert.ok(!text.includes('PRIVATE_PROMPT_CANARY'));
+ const extra=base('unknown');extra.receipt.hidden='PRIVATE_FIELD_CANARY';
+ assert.throws(()=>createReviewAttemptReceipt(extra,{sources}));
  const stale=base('unknown');stale.receipt.excerpt='changed';
  assert.throws(()=>createReviewAttemptReceipt(stale,{sources}));
 });
