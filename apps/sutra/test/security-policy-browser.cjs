@@ -1,18 +1,36 @@
-// Production-header browser regression. A local proxy injects the exact Worker
-// security headers around the built Vite preview; no deployment or external host.
+// Production-header browser regression. A local static server serves the built
+// dist tree and a second proxy injects the exact Worker security headers.
+// No deployment, DNS change, external peer, analytics or paid inference.
 const {chromium}=require('playwright');
-const {spawn}=require('node:child_process');
 const http=require('node:http');
+const fs=require('node:fs');
 const path=require('node:path');
 const assert=require('node:assert/strict');
 
+const mime=file=>({
+ '.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8',
+ '.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8',
+ '.mp4':'video/mp4','.vtt':'text/vtt; charset=utf-8','.svg':'image/svg+xml',
+ '.png':'image/png','.webp':'image/webp'
+}[path.extname(file)]??'application/octet-stream');
+
 (async()=>{
- const app=path.resolve(__dirname,'..'),upstream='http://127.0.0.1:4190',site='http://127.0.0.1:4191';
+ const app=path.resolve(__dirname,'..'),dist=path.join(app,'dist');
+ const upstream='http://127.0.0.1:4190',site='http://127.0.0.1:4191';
  const {securityHeaders}=await import(path.join(app,'../../services/sutra-api/worker.js'));
  const headers=securityHeaders({});
- const vite=spawn(process.execPath,[path.join(app,'node_modules/vite/bin/vite.js'),'preview','--host','127.0.0.1','--port','4190','--strictPort'],{cwd:app,stdio:'pipe'});
- let log='',exited=false;vite.on('exit',()=>exited=true);
- for(const stream of [vite.stdout,vite.stderr])stream.on('data',d=>log=(log+d).slice(-5000));
+ assert.ok(fs.existsSync(path.join(dist,'index.html')),'built dist/index.html is required before CSP browser test');
+ const staticServer=http.createServer((req,res)=>{
+  const pathname=new URL(req.url,'http://local').pathname;
+  const relative=pathname==='/'?'index.html':decodeURIComponent(pathname).replace(/^\/+/, '');
+  const file=path.resolve(dist,relative);
+  if(!file.startsWith(dist+path.sep)&&file!==path.join(dist,'index.html')){res.writeHead(403);res.end();return;}
+  try{
+   const stat=fs.statSync(file);if(!stat.isFile())throw Error();
+   res.writeHead(200,{'Content-Type':mime(file),'Content-Length':stat.size,'Cache-Control':'no-store'});
+   fs.createReadStream(file).pipe(res);
+  }catch{res.writeHead(404,{'Content-Type':'text/plain'});res.end('not found');}
+ });
  const proxy=http.createServer(async(req,res)=>{
   try{
    const target=new URL(req.url,upstream),method=req.method??'GET';
@@ -24,15 +42,9 @@ const assert=require('node:assert/strict');
  });
  let browser;
  try{
-  let ready=false,lastError='';
-  for(let i=0;i<120;i++){
-   if(exited)break;
-   try{const r=await fetch(upstream+'/index.html',{signal:AbortSignal.timeout(750)});if(r.ok){ready=true;break;}lastError='HTTP '+r.status;}
-   catch(error){lastError=String(error?.message??error);}
-   await new Promise(r=>setTimeout(r,200));
-  }
-  assert.ok(ready,'built preview not ready: '+lastError+' '+log);
+  await new Promise((resolve,reject)=>staticServer.once('error',reject).listen(4190,'127.0.0.1',resolve));
   await new Promise((resolve,reject)=>proxy.once('error',reject).listen(4191,'127.0.0.1',resolve));
+  assert.equal((await fetch(upstream+'/index.html')).status,200);
   browser=await chromium.launch({headless:true});
   const page=await browser.newPage({viewport:{width:1000,height:800}});
   const blockedRequests=[],violations=[],errors=[];
@@ -45,7 +57,7 @@ const assert=require('node:assert/strict');
   await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
   assert.match((await page.request.get(site)).headers()['content-security-policy'],/connect-src 'self'/);
 
-  // Core static/browser-local features remain available under production headers.
+  // Core built/browser-local features remain available under production headers.
   await page.getByRole('button',{name:'Check example',exact:true}).click();
   assert.match(await page.locator('#result').innerText(),/Catalog matched/);
   await page.getByRole('button',{name:'Run scripted network test'}).click();
@@ -55,7 +67,7 @@ const assert=require('node:assert/strict');
   assert.equal(await page.locator('video').count(),1);
 
   // Unexpected script and connection destinations are blocked by CSP before
-  // browser transport. No network interception/failure is used to create the result.
+  // browser transport. No routing abort is used to create this result.
   const result=await page.evaluate(async()=>{
    const scriptResult=new Promise(resolve=>{
     const script=document.createElement('script');script.src='https://blocked.example/evil.js';
@@ -67,17 +79,18 @@ const assert=require('node:assert/strict');
   });
   assert.deepEqual(result,{script:'blocked',fetch:'blocked'});
   await page.waitForTimeout(50);
-  const observed=await page.evaluate(()=>window.__sutraCsp??[]);
-  violations.push(...observed);
+  violations.push(...await page.evaluate(()=>window.__sutraCsp??[]));
   assert.equal(blockedRequests.length,0,'CSP stops unexpected third-party transport before request');
   assert.ok(violations.some(v=>v.directive==='script-src-elem'||v.directive==='script-src'));
   assert.ok(violations.some(v=>v.directive==='connect-src'));
   assert.ok(!errors.some(e=>!/Content Security Policy/i.test(e)),JSON.stringify(errors));
 
-  console.log('PASS: Worker CSP/referrer/frame/permissions profile preserves built local graph and native media while blocking unexpected script and connect destinations before transport.');
+  console.log('PASS: built static SUTRA under Worker CSP preserves local graph/native media and blocks unexpected script/connect destinations before transport.');
  }finally{
   if(browser)await browser.close();
-  await new Promise(resolve=>proxy.close(()=>resolve()));
-  vite.kill();
+  await Promise.all([
+   new Promise(resolve=>proxy.close(()=>resolve())),
+   new Promise(resolve=>staticServer.close(()=>resolve()))
+  ]);
  }
 })().catch(error=>{console.error(error);process.exitCode=1;});
