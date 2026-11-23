@@ -40,3 +40,9 @@ test('learner UI exposes composition budget category and labels partial output i
  assert.match(source,/Incomplete partial output/);
  assert.match(source,/No completed (?:peer )?result is claimed/);
 });
+
+test('player adapter forwards compatibility/error surfaces without demo coupling',()=>{
+ const source=fs.readFileSync(path.join(app,'src/player-adapter.js'),'utf8');
+ for(const marker of ['compatibilitySource','fallbackUrl','poster','replaceSource','setVolume','setCaptions'])assert.ok(source.includes(marker),marker);
+ assert.doesNotMatch(source,/apps\/preview|detour\//i);
+});
