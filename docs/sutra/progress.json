@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T15:05:24+05:45",
-  "work_branch": "main",
-  "last_observed_code_sha": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
-  "last_session_id": "SUTRA-SESSION-0006",
-  "stage": "independent_peer_package_and_consent",
+  "updated_at": "2026-11-23T18:29:19+05:45",
+  "work_branch": "sutra/caller-peer-failure-boundary",
+  "last_observed_code_sha": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+  "last_session_id": "SUTRA-SESSION-0007",
+  "stage": "caller_local_peer_invocation",
   "current_task": null,
-  "next_task": "SUTRA-P032-08",
+  "next_task": "SUTRA-P033-03",
   "ready_engineering_queue": [
-    "SUTRA-P032-08",
     "SUTRA-P033-03",
-    "SUTRA-P035-01"
+    "SUTRA-P035-05",
+    "SUTRA-P036-01"
   ],
-  "next_action": "Wire the verified peer artifact loader into caller-local invocation so peer-load failures are preserved for the invoking network, then apply the reusable consent boundary to third-party MCP discovery/calls. Keep P031-03 provenance and P031-10 public HTTPS pending; do not release.",
+  "next_action": "Implement narrowly injected default-deny third-party MCP discovery and actual call consent, preserve caller budget and error propagation, test in local Chromium without a live service; then synthetic credential canary. No public deployment or paid inference.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -2815,6 +2815,206 @@
           "result": "pass",
           "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
           "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P032-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:29:19+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "Exact peer-load failure code is surfaced through invoking network, including wrong-name, manifest/graph failure, cycle and precontact denial.",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45176985173/job/137700681281",
+          "description": "Green exact-source CI: 21 app + 37 consent/inference/source/API + 72 runtime + 7 peer tests, 10 pinned module hashes and three Chromium scripts (including two-origin peer).",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        }
+      ]
+    },
+    "SUTRA-P032-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:29:19+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "Exact peer-load failure code is surfaced through invoking network, including wrong-name, manifest/graph failure, cycle and precontact denial.",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45176985173/job/137700681281",
+          "description": "Green exact-source CI: 21 app + 37 consent/inference/source/API + 72 runtime + 7 peer tests, 10 pinned module hashes and three Chromium scripts (including two-origin peer).",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:29:19+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "Caller-local peer integration: SUTRA-P035-01; cross-origin loopback Chromium recorded three agent invocations, five shared scripted model calls, consent and public artifact GET-only transport; not real HTTPS/provider validation.",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45176985173/job/137700681281",
+          "description": "Green exact-source CI: 21 app + 37 consent/inference/source/API + 72 runtime + 7 peer tests, 10 pinned module hashes and three Chromium scripts (including two-origin peer).",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:29:19+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "Caller-local peer integration: SUTRA-P035-02; cross-origin loopback Chromium recorded three agent invocations, five shared scripted model calls, consent and public artifact GET-only transport; not real HTTPS/provider validation.",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45176985173/job/137700681281",
+          "description": "Green exact-source CI: 21 app + 37 consent/inference/source/API + 72 runtime + 7 peer tests, 10 pinned module hashes and three Chromium scripts (including two-origin peer).",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:29:19+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "Caller-local peer integration: SUTRA-P035-03; cross-origin loopback Chromium recorded three agent invocations, five shared scripted model calls, consent and public artifact GET-only transport; not real HTTPS/provider validation.",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45176985173/job/137700681281",
+          "description": "Green exact-source CI: 21 app + 37 consent/inference/source/API + 72 runtime + 7 peer tests, 10 pinned module hashes and three Chromium scripts (including two-origin peer).",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:29:19+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "Caller-local peer integration: SUTRA-P035-04; cross-origin loopback Chromium recorded three agent invocations, five shared scripted model calls, consent and public artifact GET-only transport; not real HTTPS/provider validation.",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45176985173/job/137700681281",
+          "description": "Green exact-source CI: 21 app + 37 consent/inference/source/API + 72 runtime + 7 peer tests, 10 pinned module hashes and three Chromium scripts (including two-origin peer).",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:29:19+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "Caller-local peer integration: SUTRA-P035-06; cross-origin loopback Chromium recorded three agent invocations, five shared scripted model calls, consent and public artifact GET-only transport; not real HTTPS/provider validation.",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45176985173/job/137700681281",
+          "description": "Green exact-source CI: 21 app + 37 consent/inference/source/API + 72 runtime + 7 peer tests, 10 pinned module hashes and three Chromium scripts (including two-origin peer).",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:29:19+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "Caller-local peer integration: SUTRA-P035-07; cross-origin loopback Chromium recorded three agent invocations, five shared scripted model calls, consent and public artifact GET-only transport; not real HTTPS/provider validation.",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45176985173/job/137700681281",
+          "description": "Green exact-source CI: 21 app + 37 consent/inference/source/API + 72 runtime + 7 peer tests, 10 pinned module hashes and three Chromium scripts (including two-origin peer).",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:29:19+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "Caller-local peer integration: SUTRA-P035-08; cross-origin loopback Chromium recorded three agent invocations, five shared scripted model calls, consent and public artifact GET-only transport; not real HTTPS/provider validation.",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45176985173/job/137700681281",
+          "description": "Green exact-source CI: 21 app + 37 consent/inference/source/API + 72 runtime + 7 peer tests, 10 pinned module hashes and three Chromium scripts (including two-origin peer).",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:29:19+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "Caller-local peer integration: SUTRA-P035-09; cross-origin loopback Chromium recorded three agent invocations, five shared scripted model calls, consent and public artifact GET-only transport; not real HTTPS/provider validation.",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45176985173/job/137700681281",
+          "description": "Green exact-source CI: 21 app + 37 consent/inference/source/API + 72 runtime + 7 peer tests, 10 pinned module hashes and three Chromium scripts (including two-origin peer).",
+          "result": "pass",
+          "source_revision": "3b37a73db0a03577b81f3d34346ea70ff46ea0a5",
+          "observed_at": "2026-11-23T18:29:19+05:45"
         }
       ]
     }
