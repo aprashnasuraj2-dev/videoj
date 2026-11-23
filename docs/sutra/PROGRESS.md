@@ -1,5 +1,13 @@
 # SUTRA progress register
 
+## Session 0019 checkpoint — Phase 045 peer comparison complete
+
+**325/1,000 tasks verified; 27 phases fully verified.** The learner now compares local timing evidence with a separately consented written peer artifact without blending them. The deliberate 2–4s vs 5–7s fixture stays `conflict_unresolved`; denial creates zero peer-evidence requests and leaves local evidence intact; human review does not convert conflict into agreement or verification.
+
+Tested source candidate: `227e33ebedb0e42aefa28141c617b164a43dce1a`; full shell/Chromium https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45177623668. See [session 0019 evidence](evidence/implementation/SESSION-0019.md).
+
+**Next:** Phase 049 accessibility/mobile acceptance. Phase 042 remains open on genuine alternate-codec SUTRA evidence. Live provider/router CORS, public HTTPS/CORS, original lesson rights/factual review, physical-device evidence, release and Devpost remain open.
+
 ## Session 0018 checkpoint — guided workspace, seek and transcript phases complete
 
 **315/1,000 tasks verified; 26 phases fully verified.** Phase 041, Phase 043 and Phase 044 now have one green browser-backed source revision. A fresh viewer can follow the guided synthetic task with developer controls closed; evidence seeking distinguishes unavailable/live-style states; and the versioned 0–8 second timing transcript supports bounded search, keyboard navigation, active-cue highlighting and separate missing-caption/transcript states.
