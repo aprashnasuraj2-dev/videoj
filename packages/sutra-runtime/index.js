@@ -1,6 +1,6 @@
 import {createSourceMcp} from './source-mcp.js';
 import {fetchJsonWithConsent} from '../sutra-consent/index.js';
-import {AgentNetwork, validateNetwork} from './vendor/nsdeploy/kernel.js';
+import {AgentNetwork, validateNetwork, isExternalAgent, isMcpTool, parseExternalAgent} from './vendor/nsdeploy/kernel.js';
 import {runAgent} from './vendor/nsdeploy/runner.js';
 import {checkSchema, validateData} from './vendor/nsdeploy/actions.js';
 import {TraceBus} from './vendor/nsdeploy/trace.js';
@@ -12,7 +12,7 @@ const fail=(code,message)=>{throw new RuntimeError(code,message);};
 const plain=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const allowed=(object,keys,where)=>{for(const key of Object.keys(object))if(!keys.includes(key))fail('UNSUPPORTED_FIELD',`Unsupported ${where} field.`);};
 const idPattern=/^[A-Za-z][A-Za-z0-9_]{0,59}$/;
-const defaults=Object.freeze({maxDepth:3,maxAgents:12,maxModelCalls:8,maxSteps:8,concurrency:2,timeoutMs:60000,maxOutputChars:16000});
+const defaults=Object.freeze({maxDepth:3,maxAgents:12,maxModelCalls:8,maxSteps:8,concurrency:2,timeoutMs:60000,maxOutputChars:16000,maxRemoteCalls:2,maxCallsPerPeer:1});
 export function executionLimits(input={}){
  if(!plain(input))fail('LIMIT_CONFIG','Limits must be an object.');
  const out={...defaults};
@@ -41,7 +41,7 @@ function assertJsonData(value,ancestors=new Set(),depth=0){
 
 // The current profile deliberately accepts local declarative agents only.
 // Peer/MCP/action/code loading must be integrated with consent in later phases.
-export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false}={}){
+export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false,allowPeerNetworks=false,allowMcp=false}={}){
  const bounds=executionLimits(limits);
  assertJsonData(definition);
  let json;
@@ -89,8 +89,66 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
 
 // Model adapters are explicitly injected; there is no keyless automatic mock fallback.
 // A scripted-test adapter is only a test driver, not a live inference service.
-export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools}={}){
- const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools});
+function validateExternalHost(external){
+ if(external===undefined)return null;
+ if(!plain(external)||!external.inspector||typeof external.inspector.authorize!=='function')fail('EXTERNAL_CONFIG','External capability use requires the consent inspector.');
+ let base;
+ try{base=new URL(external.baseOrigin);}catch{fail('EXTERNAL_CONFIG','External capability use requires an absolute caller base origin.');}
+ const loopback=['localhost','127.0.0.1','[::1]'].includes(base.hostname);
+ if(base.origin!==external.baseOrigin||base.username||base.password||base.pathname!=='/'||base.search||base.hash||base.protocol!=='https:'&&!(base.protocol==='http:'&&loopback))fail('EXTERNAL_CONFIG','Caller base origin must be an exact HTTPS origin (loopback HTTP for development).');
+ if(external.fetchImpl!==undefined&&typeof external.fetchImpl!=='function')fail('EXTERNAL_CONFIG','External artifact fetch implementation must be callable.');
+ if(external.resolveMcp!==undefined&&typeof external.resolveMcp!=='function')fail('EXTERNAL_CONFIG','MCP resolver must be callable.');
+ return {...external,baseOrigin:base.origin};
+}
+function mcpOrigins(network,baseOrigin){
+ const map=new Map();
+ for(const agent of network.config.tools||[])for(const ref of agent.tools||[]){
+  if(network.classifyTool(ref).kind!=='mcp')continue;
+  const raw=typeof ref==='string'?ref:ref?.url;
+  let url;try{url=new URL(raw,baseOrigin);}catch{fail('MCP_ORIGIN','Invalid MCP destination.');}
+  const prior=map.get(url.host);if(prior&&prior!==url.origin)fail('MCP_ORIGIN','Ambiguous MCP destination origin.');
+  map.set(url.host,url.origin);
+ }
+ return map;
+}
+function safePeerFailure(error){
+ const code=error?.code;
+ if(code==='CONSENT_DENIED')return new RuntimeError('PEER_CONSENT_DENIED','Peer contact was denied before the requested public artifact was retrieved.');
+ if(code==='NETWORK_MATCH')return new RuntimeError('PEER_NETWORK_MATCH','Peer load failed: the requested exact network name is not published exactly once.');
+ if(code==='MANIFEST')return new RuntimeError('PEER_MANIFEST','Peer load failed: the public manifest is malformed or incomplete.');
+ if(['CONTACT_RESPONSE','CONTACT_JSON','CONTACT_SIZE','CONTACT_FETCH','CONTACT_REDIRECT','ARTIFACT_URL','ARTIFACT_ORIGIN','CYCLE','REFERENCE','VALIDATION','FRONT'].includes(code))return new RuntimeError('PEER_ARTIFACT','Peer load failed: the declared public network artifact is unavailable or invalid.');
+ if(code==='ARTIFACT_TIMEOUT'||code==='CANCELLED')return new RuntimeError(code,'Peer load stopped before a usable network was established.');
+ return new RuntimeError('PEER_UNAVAILABLE','Peer load failed before a usable network was established.');
+}
+function validateMcpClient(client,ref){
+ if(!client||typeof client.listTools!=='function'||typeof client.callTool!=='function')fail('MCP_CLIENT','MCP resolver returned an invalid client.');
+ const raw=typeof ref==='string'?ref:ref.url;const endpoint=new URL(raw);
+ const allowNames=plain(ref)&&Array.isArray(ref.tools)?new Set(ref.tools):null;
+ return {
+  url:endpoint.href,
+  async listTools(parentSpan){
+   const tools=await client.listTools(parentSpan);
+   if(!Array.isArray(tools)||tools.length>32)fail('MCP_CLIENT','MCP discovery returned an invalid tool list.');
+   const out=[];
+   for(const tool of tools){
+    if(!plain(tool)||!idPattern.test(tool.name)||typeof tool.description!=='string'||!plain(tool.inputSchema))fail('MCP_CLIENT','MCP discovery returned an invalid tool definition.');
+    try{checkSchema(tool.inputSchema);}catch{fail('MCP_CLIENT','MCP tool schema is unsupported.');}
+    if(allowNames&&!allowNames.has(tool.name))continue;
+    out.push(structuredClone(tool));
+   }
+   if(allowNames&&out.length!==allowNames.size)fail('MCP_CLIENT','One or more declared MCP tools were not discovered exactly.');
+   return out;
+  },
+  async callTool(name,args,parentSpan){
+   if(allowNames&&!allowNames.has(name))fail('MCP_CLIENT','Undeclared MCP tool call refused.');
+   return client.callTool(name,args,parentSpan);
+  }
+ };
+}
+
+export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,external}={}){
+ const host=validateExternalHost(external);
+ const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeerNetworks:!!host,allowMcp:!!host?.resolveMcp});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
  if(!model||typeof model.chat!=='function'||!['scripted-test','provider'].includes(model.mode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
  if(signal?.aborted)fail('CANCELLED','Run cancelled before model execution.');
@@ -99,13 +157,12 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  if(signal?.aborted)aborted();else signal?.addEventListener('abort',aborted,{once:true});
  const trace=new TraceBus(),events=[];let modelCalls=0,active=0,totalOutput=0,failure=null,closed=false;const waiters=[];
  const check=()=>{if(closed)fail('CLOSED','Run is closed.');if(controller.signal.aborted)throw controller.signal.reason;};
- const emit=event=>{const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,100);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
+ const emit=event=>{const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','origin','network'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,160);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
  trace.addEventListener('event',e=>emit(e.detail));
  const abortWaiters=()=>{for(const wake of waiters.splice(0))wake();};controller.signal.addEventListener('abort',abortWaiters);
  const deadline=setTimeout(()=>controller.abort(new RuntimeError('TIMEOUT','Run exceeded its elapsed time limit.')),bounds.timeoutMs);
  let rejectAbort;
  const stopped=new Promise((_,reject)=>{rejectAbort=()=>reject(controller.signal.reason);controller.signal.addEventListener('abort',rejectAbort,{once:true});if(controller.signal.aborted)rejectAbort();});
- // An abort may precede the first awaited race; retain an observer to avoid unhandled rejection.
  stopped.catch(()=>{});
  const guardedModel={chat:async args=>{
   check();if(modelCalls>=bounds.maxModelCalls)fail('MODEL_LIMIT','Model-call budget exceeded.');modelCalls++;
@@ -129,16 +186,58 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   }catch(error){failure=error;controller.abort(error);trace.fail(span,new Error('Model or tool boundary failed.'));throw error;}
   finally{active--;waiters.shift()?.();}
  }};
- const composition={remoteCalls:0,peerCalls:new Map(),maxRemoteCalls:0,maxCallsPerPeer:0,agentCalls:0,maxAgentCalls:bounds.maxAgents,deadlineSeconds:bounds.timeoutMs/1000,deadline:Date.now()+bounds.timeoutMs};
- const unavailable=()=>fail('CAPABILITY_UNAVAILABLE','External capabilities are disabled in this local runtime profile.');
+ const composition={remoteCalls:0,peerCalls:new Map(),maxRemoteCalls:host?bounds.maxRemoteCalls:0,maxCallsPerPeer:host?bounds.maxCallsPerPeer:0,agentCalls:0,maxAgentCalls:bounds.maxAgents,deadlineSeconds:bounds.timeoutMs/1000,deadline:Date.now()+bounds.timeoutMs};
+ const unavailable=()=>fail('CAPABILITY_UNAVAILABLE','External capabilities are disabled in this runtime profile.');
  try{
- const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
- const guardSource=method=>async(...args)=>{check();try{return await rawSourceClient[method](...args);}catch{const error=new RuntimeError('CAPABILITY_UNAVAILABLE','Source retrieval failed; no completed source result is claimed.');failure=error;controller.abort(error);throw error;}};
- const sourceClient=rawSourceClient?{listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
- const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote:unavailable,resolveMcp:sourceClient?async ref=>{check();if(ref?.url!=='/api/source-tools')return unavailable();return sourceClient;}:unavailable,resolveLink:unavailable,requestConsent:async()=> 'decline'};
+  const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
+  const guardSource=method=>async(...args)=>{check();try{return await rawSourceClient[method](...args);}catch{const error=new RuntimeError('CAPABILITY_UNAVAILABLE','Source retrieval failed; no completed source result is claimed.');failure=error;controller.abort(error);throw error;}};
+  const sourceClient=rawSourceClient?{url:(sourceTools?.origin??host?.baseOrigin??'https://sutra.invalid')+'/api/source-tools',listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
+  const discoveredMcpOrigins=host?mcpOrigins(compiled.network,host.baseOrigin):new Map();
+  const requestConsent=async intent=>{
+   if(intent?.kind==='network')return 'allow'; // resolveRemote performs the real manifest/graph approvals immediately before fetch.
+   if(intent?.kind!=='mcp'||!host?.inspector)return 'decline';
+   const origin=discoveredMcpOrigins.get(intent.peerOrigin);
+   if(!origin)fail('MCP_ORIGIN','MCP consent destination could not be resolved exactly.');
+   const phase=intent.phase==='call'?'call':'discover';
+   try{
+    await host.inspector.authorize({
+     origin,
+     kind:phase==='call'?'mcp_call':'mcp_discovery',
+     purpose:phase==='call'?'Call an explicitly discovered third-party MCP tool':'Discover the explicitly declared third-party MCP tools',
+     disclosure:phase==='call'?['tool arguments']:['tool names','tool schemas'],
+     network:compiled.name
+    });
+    return 'allow';
+   }catch(error){
+    if(error?.code==='CONSENT_DENIED')return 'decline';
+    throw error;
+   }
+  };
+  const resolveMcp=sourceClient?async ref=>{check();if(ref?.url==='/api/source-tools')return sourceClient;if(!host?.resolveMcp)return unavailable();return validateMcpClient(await host.resolveMcp(ref),ref);}:host?.resolveMcp?async ref=>{check();return validateMcpClient(await host.resolveMcp(ref),ref);}:unavailable;
+  const resolveRemote=host?async(peerUrl,chain,parentSpan)=>{
+   check();
+   let loaded;
+   try{loaded=await loadPeerNetwork({peerUrl,inspector:host.inspector,fetchImpl:host.fetchImpl??fetch,signal:controller.signal,timeoutMs:Math.min(5000,bounds.timeoutMs)});}
+   catch(error){throw safePeerFailure(error);}
+   const peerCompiled=compileNetwork(loaded.definition,{name:loaded.name,frontMan:loaded.frontMan,limits:bounds});
+   const parsed=parseExternalAgent(peerUrl,host.baseOrigin),key=`${parsed.origin}::${parsed.agentName}`;
+   return {
+    async invoke(envelope,{chain:parentChain=[]}={}){
+     check();
+     const peerCtx={
+      network:peerCompiled.network,frontMan:peerCompiled.frontMan,baseOrigin:loaded.origin,displayOrigin:loaded.origin,
+      llm:guardedModel,trace,composition,slyData:plain(envelope?.sly_data)?{...envelope.sly_data}:{},history:[],isTop:false,
+      mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote:unavailable,
+      resolveMcp:unavailable,resolveLink:unavailable,requestConsent:async()=> 'decline'
+     };
+     return runAgent(peerCtx,peerCompiled.frontMan,String(envelope?.user_message?.text??''),parentSpan,[...parentChain,key]);
+    }
+   };
+  }:unavailable;
+  const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:host?.baseOrigin??sourceTools?.origin??'https://sutra.invalid',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote,resolveMcp,resolveLink:unavailable,requestConsent};
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
   if(!result.text||events.some(e=>e.kind==='composition_limit'))fail('INCOMPLETE','Execution stopped before a complete answer.');
-  return {text:result.text,mode:model.mode,modelCalls,agentCalls:composition.agentCalls,events};
+  return {text:result.text,mode:model.mode,modelCalls,agentCalls:composition.agentCalls,remoteCalls:composition.remoteCalls,events};
  }catch(error){if(error instanceof RuntimeError)throw error;if(controller.signal.aborted&&controller.signal.reason instanceof RuntimeError)throw controller.signal.reason;fail('RUN_FAILED','Runtime execution failed; no completed result is claimed.');}
  finally{closed=true;clearTimeout(deadline);signal?.removeEventListener('abort',aborted);controller.signal.removeEventListener('abort',rejectAbort);controller.signal.removeEventListener('abort',abortWaiters);abortWaiters();}
 }
