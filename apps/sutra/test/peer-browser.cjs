@@ -148,6 +148,7 @@ const assert=require('node:assert/strict');
    await new Promise(resolve=>setTimeout(resolve,0));
    const cueActivated=seeks===1&&media.currentTime===2&&controls[1].getAttribute('aria-current')==='true';
    const preservedFocus=document.activeElement===controls[1];
+   const captionMissing=container.querySelector('.transcript-meta').textContent.includes('No native caption track is confirmed');
    const input=container.querySelector('input[type=search]');
    input.value='nothing-to-match';input.dispatchEvent(new Event('input'));
    const noResults=container.querySelectorAll('.transcript-cue').length===0&&
@@ -155,10 +156,19 @@ const assert=require('node:assert/strict');
    panel.dispose();
    const empty=mountTranscriptPanel(container,{source:{id:'empty',version:'v1',duration:8,cues:[]},media});
    const missing=container.textContent.includes('No usable transcript cues');
-   empty.dispose();container.remove();
-   return {arrowMoved,translatedVisible,cueActivated,preservedFocus,noResults,missing};
+   empty.dispose();
+   const long=mountTranscriptPanel(container,{source:{id:'long_cue',version:'v1',duration:8,cues:[
+    {id:'long',start:0,end:2,text:'x'.repeat(4000)}
+   ]},media});
+   const longVisible=container.querySelector('.transcript-words').textContent.length===4000;
+   const previousScroll=scrollY;
+   media.currentTime=1;media.dispatchEvent(new Event('timeupdate'));
+   const noAutoFollow=scrollY===previousScroll;
+   const noHorizontalClipping=document.documentElement.scrollWidth<=innerWidth;
+   long.dispose();container.remove();
+   return {arrowMoved,translatedVisible,cueActivated,preservedFocus,noResults,missing,captionMissing,longVisible,noAutoFollow,noHorizontalClipping};
   },root);
-  assert.deepEqual(transcript,{arrowMoved:true,translatedVisible:true,cueActivated:true,preservedFocus:true,noResults:true,missing:true});
+  assert.deepEqual(transcript,{arrowMoved:true,translatedVisible:true,cueActivated:true,preservedFocus:true,noResults:true,missing:true,captionMissing:true,longVisible:true,noAutoFollow:true,noHorizontalClipping:true});
   assert.deepEqual(pageErrors,[]);
   console.log('PASS: Chromium two-origin peer CORS, denial before transport, exact artifact GETs, caller-local 3-agent/5-model composition, redacted consent and specific wrong-name refusal.');
  }finally{
