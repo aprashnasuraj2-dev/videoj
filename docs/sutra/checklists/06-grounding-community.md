@@ -143,16 +143,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Make a reusable component or module showing intended peer contact, scope and redacted outcome. Clearly state that schema/permission visibility does not establish publisher trust.
 - **Phase exit:** Another static page can use it; denial emits no fetch and exports contain no credential canary.
 
-- [ ] `SUTRA-P058-01` Extract consent events and policy display into a reusable module
-- [ ] `SUTRA-P058-02` Define framework-neutral origin, purpose and disclosure inputs
-- [ ] `SUTRA-P058-03` Provide a plain browser example outside the learner app
-- [ ] `SUTRA-P058-04` Verify denial emits no network request
-- [ ] `SUTRA-P058-05` Support explicit approval scope and redacted outcome display
-- [ ] `SUTRA-P058-06` Keep model credentials and raw private prompts out of exports
-- [ ] `SUTRA-P058-07` Document that consent visibility is not a publisher reputation system
-- [ ] `SUTRA-P058-08` Test integration without the DHAGO player or SUTRA corpus
-- [ ] `SUTRA-P058-09` Produce and review the phase artifact: Open Kit artifact 2: consent inspector with a framework-neutral example.
-- [ ] `SUTRA-P058-10` Close phase 058 only after its applicable tasks have evidence and its exit condition is observed: Another static page can use it; denial emits no fetch and exports contain no credential canary.
+- [x] `SUTRA-P058-01` Extract consent events and policy display into a reusable module
+- [x] `SUTRA-P058-02` Define framework-neutral origin, purpose and disclosure inputs
+- [x] `SUTRA-P058-03` Provide a plain browser example outside the learner app
+- [x] `SUTRA-P058-04` Verify denial emits no network request
+- [x] `SUTRA-P058-05` Support explicit approval scope and redacted outcome display
+- [x] `SUTRA-P058-06` Keep model credentials and raw private prompts out of exports
+- [x] `SUTRA-P058-07` Document that consent visibility is not a publisher reputation system
+- [x] `SUTRA-P058-08` Test integration without the DHAGO player or SUTRA corpus
+- [x] `SUTRA-P058-09` Produce and review the phase artifact: Open Kit artifact 2: consent inspector with a framework-neutral example.
+- [x] `SUTRA-P058-10` Close phase 058 only after its applicable tasks have evidence and its exit condition is observed: Another static page can use it; denial emits no fetch and exports contain no credential canary.
 
 ## Phase 059 - Create an agentic-site starter
 
