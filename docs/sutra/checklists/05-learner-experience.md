@@ -17,16 +17,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Create one composition with video, transcript, source evidence and review card. Use a short guided starting task rather than an empty chatbot panel.
 - **Phase exit:** A first-time viewer sees the question, supporting cue and next action without opening a developer trace.
 
-- [ ] `SUTRA-P041-01` Design the initial task prompt so users avoid an empty chat dead end
-- [ ] `SUTRA-P041-02` Place video, transcript, evidence and review card in one coherent workspace
-- [ ] `SUTRA-P041-03` Make the active lesson and selected source version visible
-- [ ] `SUTRA-P041-04` Define loading, empty, denied, error and completed screen states
-- [ ] `SUTRA-P041-05` Keep the source comparison and next human action discoverable
-- [ ] `SUTRA-P041-06` Place technical execution details in an optional inspector
-- [ ] `SUTRA-P041-07` Specify desktop, narrow screen and zoom behavior before styling
-- [ ] `SUTRA-P041-08` Walk through the complete question-to-card flow with a fresh viewer
-- [ ] `SUTRA-P041-09` Produce and review the phase artifact: Responsive screen design and interaction map.
-- [ ] `SUTRA-P041-10` Close phase 041 only after its applicable tasks have evidence and its exit condition is observed: A first-time viewer sees the question, supporting cue and next action without opening a developer trace.
+- [x] `SUTRA-P041-01` Design the initial task prompt so users avoid an empty chat dead end
+- [x] `SUTRA-P041-02` Place video, transcript, evidence and review card in one coherent workspace
+- [x] `SUTRA-P041-03` Make the active lesson and selected source version visible
+- [x] `SUTRA-P041-04` Define loading, empty, denied, error and completed screen states
+- [x] `SUTRA-P041-05` Keep the source comparison and next human action discoverable
+- [x] `SUTRA-P041-06` Place technical execution details in an optional inspector
+- [x] `SUTRA-P041-07` Specify desktop, narrow screen and zoom behavior before styling
+- [x] `SUTRA-P041-08` Walk through the complete question-to-card flow with a fresh viewer
+- [x] `SUTRA-P041-09` Produce and review the phase artifact: Responsive screen design and interaction map.
+- [x] `SUTRA-P041-10` Close phase 041 only after its applicable tasks have evidence and its exit condition is observed: A first-time viewer sees the question, supporting cue and next action without opening a developer trace.
 
 ## Phase 042 - Integrate the DHAGO reusable player
 
@@ -56,13 +56,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P043-01` Validate cue ranges against actual loaded media duration
 - [x] `SUTRA-P043-02` Seek only after explicit viewer intent and required metadata availability
 - [x] `SUTRA-P043-03` Observe actual currentTime after seeking rather than an optimistic timer
-- [ ] `SUTRA-P043-04` Handle missing seekable ranges, live sources and nonseekable media
+- [x] `SUTRA-P043-04` Handle missing seekable ranges, live sources and nonseekable media
 - [x] `SUTRA-P043-05` Preserve correct source identity across media replacement
 - [x] `SUTRA-P043-06` Show the exact source cue and time range on evidence cards
-- [ ] `SUTRA-P043-07` Provide keyboard activation and clear unavailable-seek feedback
+- [x] `SUTRA-P043-07` Provide keyboard activation and clear unavailable-seek feedback
 - [x] `SUTRA-P043-08` Measure supported seeking against the one-second target tolerance
-- [ ] `SUTRA-P043-09` Produce and review the phase artifact: Evidence-to-seek interaction and actual-state feedback.
-- [ ] `SUTRA-P043-10` Close phase 043 only after its applicable tasks have evidence and its exit condition is observed: A seek reaches within one second of the valid target on supported test media; unavailable seeking is described accurately.
+- [x] `SUTRA-P043-09` Produce and review the phase artifact: Evidence-to-seek interaction and actual-state feedback.
+- [x] `SUTRA-P043-10` Close phase 043 only after its applicable tasks have evidence and its exit condition is observed: A seek reaches within one second of the valid target on supported test media; unavailable seeking is described accurately.
 
 ## Phase 044 - Add an inspectable transcript experience
 
@@ -71,16 +71,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Provide search, active-cue highlight and keyboard navigation without stealing focus during playback. Link each result to source version and video interval.
 - **Phase exit:** Search and cue navigation work with keyboard only; absent captions or transcript produce explicit empty states.
 
-- [ ] `SUTRA-P044-01` Render transcript text and cue controls with stable accessible names
-- [ ] `SUTRA-P044-02` Implement bounded query filtering and clear no-results behavior
-- [ ] `SUTRA-P044-03` Highlight the actual active cue without stealing keyboard focus
-- [ ] `SUTRA-P044-04` Support keyboard movement and activation of transcript results
-- [ ] `SUTRA-P044-05` Link result metadata to the media and transcript versions
-- [ ] `SUTRA-P044-06` Preserve scroll intent rather than forcing disruptive auto-follow
-- [ ] `SUTRA-P044-07` Handle absent captions, missing transcript and very long cue text
-- [ ] `SUTRA-P044-08` Distinguish translated text from original source quotations
-- [ ] `SUTRA-P044-09` Produce and review the phase artifact: Accessible transcript panel.
-- [ ] `SUTRA-P044-10` Close phase 044 only after its applicable tasks have evidence and its exit condition is observed: Search and cue navigation work with keyboard only; absent captions or transcript produce explicit empty states.
+- [x] `SUTRA-P044-01` Render transcript text and cue controls with stable accessible names
+- [x] `SUTRA-P044-02` Implement bounded query filtering and clear no-results behavior
+- [x] `SUTRA-P044-03` Highlight the actual active cue without stealing keyboard focus
+- [x] `SUTRA-P044-04` Support keyboard movement and activation of transcript results
+- [x] `SUTRA-P044-05` Link result metadata to the media and transcript versions
+- [x] `SUTRA-P044-06` Preserve scroll intent rather than forcing disruptive auto-follow
+- [x] `SUTRA-P044-07` Handle absent captions, missing transcript and very long cue text
+- [x] `SUTRA-P044-08` Distinguish translated text from original source quotations
+- [x] `SUTRA-P044-09` Produce and review the phase artifact: Accessible transcript panel.
+- [x] `SUTRA-P044-10` Close phase 044 only after its applicable tasks have evidence and its exit condition is observed: Search and cue navigation work with keyboard only; absent captions or transcript produce explicit empty states.
 
 ## Phase 045 - Add the peer comparison view
 
