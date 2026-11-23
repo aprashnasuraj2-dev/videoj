@@ -74,7 +74,7 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
  }
  if(raw.llm_config!==undefined){if(!plain(raw.llm_config))fail('MODEL','Invalid network model hints.');allowed(raw.llm_config,['model_name'],'model');if(typeof raw.llm_config.model_name!=='string')fail('MODEL','Invalid model hint.');}
  for(const agent of raw.tools)for(const ref of agent.tools)if(typeof ref==='string'&&!names.has(ref)){
-  if(!allowPeers||!/^https:\/\//.test(ref))fail('REFERENCE','External or missing capabilities are unavailable in this local profile.');
+  if(!allowPeers||!/^https?:\/\//.test(ref))fail('REFERENCE','External or missing capabilities are unavailable in this local profile.');
   // Only exact public peer graph references are permitted, never arbitrary
   // transport endpoints or MCP endpoints disguised as peer networks.
   parsePeerNetworkReference(ref);
