@@ -47,3 +47,14 @@ The session did not treat intermediate failures as passes.
 - Redirect acceptance/re-consent remains open under P037.
 - Consent visibility does not establish publisher reputation, factual truth, semantic support or independent adoption.
 - Public release remains blocked by the participant's major-checklist release gate.
+
+
+## Independent peer-package continuation
+
+- Final peer candidate: `4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb`.
+- Final CI: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493
+- Added zero-dependency `apps/sutra-peer/` with a deterministic static build, local preview server, human page, own manifest, exact `checklist` network, narrow `source_select` helper and empty explicit links map.
+- The publication imports no caller UI package and exposes no private agent execution server. The proposed caller/peer production origins are disclosed as same-project-owner and the production peer remains explicitly `proposed_not_deployed`.
+- Local preview serves only built static content; `/agents/` files receive public CORS for controlled loopback testing. This is not evidence of production HTTPS or browser cross-origin behavior.
+- The peer test suite observes the human page and static artifacts over loopback, checks the exact manifest/network/links shape, and then uses the real `loadPeerNetwork` + `createConsentInspector` path to load `/agents/checklist` after separate manifest/graph approvals.
+- P031-03 remains open because actual rights-cleared lesson corpus provenance/reviewer evidence is unavailable. P031-10 remains open because no independently fetchable distinct public HTTPS origin exists.
