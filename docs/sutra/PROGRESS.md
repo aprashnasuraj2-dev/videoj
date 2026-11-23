@@ -1,6 +1,12 @@
 # SUTRA progress register
 
-## Session 0008 evidence reconciliation — current checkpoint
+## Session 0008 redirect security follow-up — current checkpoint
+
+**235/1,000 tasks verified; 15 phases fully verified.** This adds three task-level checks P037-06/07/08 to the previous 232 after the real loopback redirect matrix and Chromium blocked-redirect/local-lesson fixture passed on source candidate `e5af69d975ec0c7fc4c84c3e20b84036e3302cca` ([full shell run](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158153046)). Graph approval now distinguishes exact graph paths, and query-bearing graph URLs fail. Real third-party HTTPS redirects, changed-content authorization and full re-consent remain open; phase 037 is incomplete.
+
+A separate BYOK regression tests cancellation of concurrent in-flight requests. Live OpenRouter CORS, keyless funded visitor and model funding remain unverified; no release is authorized. Peer proposal at the same registrable domain as the caller was withdrawn pending a genuinely separate peer domain.
+
+## Session 0008 evidence reconciliation — earlier checkpoint
 
 **232/1,000 original checklist items verified; 15 phases fully verified.** This adds 46 evidence-linked checks to the prior 186, not 46 new features. Earlier completed browser peer-invocation work was reconciled against passing session 0007 CI; latest BYOK key-isolation, in-flight cancellation and Chromium checks passed for code candidate `092c8d2c601bcfd7075a4062a4c13460257aaa90` ([shell CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061)).
 
