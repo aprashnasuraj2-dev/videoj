@@ -253,7 +253,7 @@ async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,all
   contact:{origin:manifestUrl.origin,kind:'peer_manifest',purpose:'Resolve the exact published peer network',disclosure:['network name'],network:networkName},
   url:manifestUrl.href,fetchImpl,maxBytes:16384,signal
  });}
- catch(error){if(error?.code==='CONTACT_FAILED')fail('MANIFEST_UNAVAILABLE','The peer manifest was unavailable or not a valid public JSON response.');throw error;}
+ catch(error){if(/^CONTACT_(?:FAILED|RESPONSE|SIZE|JSON|FETCH|REDIRECT)$/.test(error?.code??''))fail('MANIFEST_UNAVAILABLE','The peer manifest was unavailable or not a valid public JSON response.');throw error;}
  if(!plain(manifest)||!Array.isArray(manifest.networks)||manifest.networks.length<1||manifest.networks.length>32)fail('MANIFEST','Invalid public peer network index.');
  if(manifest.coded_tools||manifest.actions)fail('UNSUPPORTED_CAPABILITY','Executable peer publication metadata is disabled in this profile.');
  const matching=manifest.networks.filter(entry=>plain(entry)&&entry.name===networkName);
@@ -270,7 +270,7 @@ async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,all
   contact:{origin:graphUrl.origin,kind:'peer_graph',purpose:'Retrieve the declared peer network definition',disclosure:['network name'],network:networkName},
   url:graphUrl.href,fetchImpl,maxBytes:65536,signal
  });}
- catch(error){if(error?.code==='CONTACT_FAILED')fail('GRAPH_UNAVAILABLE','The declared peer graph was unavailable or not a valid public JSON response.');throw error;}
+ catch(error){if(/^CONTACT_(?:FAILED|RESPONSE|SIZE|JSON|FETCH|REDIRECT)$/.test(error?.code??''))fail('GRAPH_UNAVAILABLE','The declared peer graph was unavailable or not a valid public JSON response.');throw error;}
  compileNetwork(definition,{name:networkName,frontMan:entry.front_man,allowSourceTools});
  return {definition,name:networkName,frontMan:entry.front_man,artifacts:{manifest:manifestUrl.href,definition:graphUrl.href},origin:base.origin};
 }
