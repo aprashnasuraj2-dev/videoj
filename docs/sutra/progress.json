@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T16:07:00+05:45",
+  "updated_at": "2026-11-23T16:14:09+05:45",
   "work_branch": "sutra/peer-invocation",
   "last_observed_code_sha": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
   "last_session_id": "SUTRA-SESSION-0008",
-  "stage": "byok_revocation_verification",
-  "current_task": "SUTRA-P030-01",
+  "stage": "byok_peer_evidence_reconciled",
+  "current_task": null,
   "next_task": "SUTRA-P030-02",
   "ready_engineering_queue": [
     "SUTRA-P030-02",
-    "SUTRA-P030-03",
-    "SUTRA-P030-05",
-    "SUTRA-P035-01"
+    "SUTRA-P034-01",
+    "SUTRA-P036-04",
+    "SUTRA-P037-07"
   ],
-  "next_action": "Verify final shell/Chromium CI for BYOK candidate 092c8d2, update exact P030 checklist and evidence only for tests that passed; separately obtain real OpenRouter account/CORS evidence without exposing credentials. Keep all release/deployment/funded inference gates closed.",
+  "next_action": "Verify actual OpenRouter browser CORS with an authorized test key/account for P030-02 without persisting/logging credentials. Independently implement redirect fixtures P037-07 and upstream private-context return P036-04. Keep funded inference and public release disabled.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -3240,8 +3240,602 @@
       ]
     },
     "SUTRA-P030-01": {
-      "state": "active",
-      "next_action": "Verify final shell/Chromium CI for BYOK candidate 092c8d2, update exact P030 checklist and evidence only for tests that passed; separately obtain real OpenRouter account/CORS evidence without exposing credentials. Keep all release/deployment/funded inference gates closed."
+      "state": "verified",
+      "verified_at": "2026-11-23T16:14:09+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061",
+          "description": "BYOK SUTRA-P030-01: fixed OpenRouter route, memory-only key, deletion/cancel, caller policy, no peer credential leakage and Chromium synthetic canary checks as applicable. Controlled fixture, not production provider CORS.",
+          "result": "pass",
+          "source_revision": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+          "observed_at": "2026-11-23T16:14:09+05:45"
+        }
+      ]
+    },
+    "SUTRA-P032-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P032-08: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P032-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P032-10: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P033-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P033-03: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P033-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P033-10: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-02: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-03: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-04: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-05: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-06: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-07: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-08: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-09: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-01: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-02: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-03: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-04: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-05: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-06: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-07: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-08: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-09: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-10: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P036-01: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P036-02: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P036-03: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P036-05: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P036-07: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P036-08: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P036-09: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-01: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-02: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-03: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-04: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-05: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-06: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-07: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-08: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-09: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-10: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:14:09+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061",
+          "description": "BYOK SUTRA-P030-03: fixed OpenRouter route, memory-only key, deletion/cancel, caller policy, no peer credential leakage and Chromium synthetic canary checks as applicable. Controlled fixture, not production provider CORS.",
+          "result": "pass",
+          "source_revision": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+          "observed_at": "2026-11-23T16:14:09+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:14:09+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061",
+          "description": "BYOK SUTRA-P030-04: fixed OpenRouter route, memory-only key, deletion/cancel, caller policy, no peer credential leakage and Chromium synthetic canary checks as applicable. Controlled fixture, not production provider CORS.",
+          "result": "pass",
+          "source_revision": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+          "observed_at": "2026-11-23T16:14:09+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:14:09+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061",
+          "description": "BYOK SUTRA-P030-05: fixed OpenRouter route, memory-only key, deletion/cancel, caller policy, no peer credential leakage and Chromium synthetic canary checks as applicable. Controlled fixture, not production provider CORS.",
+          "result": "pass",
+          "source_revision": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+          "observed_at": "2026-11-23T16:14:09+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:14:09+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061",
+          "description": "BYOK SUTRA-P030-06: fixed OpenRouter route, memory-only key, deletion/cancel, caller policy, no peer credential leakage and Chromium synthetic canary checks as applicable. Controlled fixture, not production provider CORS.",
+          "result": "pass",
+          "source_revision": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+          "observed_at": "2026-11-23T16:14:09+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:14:09+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061",
+          "description": "BYOK SUTRA-P030-07: fixed OpenRouter route, memory-only key, deletion/cancel, caller policy, no peer credential leakage and Chromium synthetic canary checks as applicable. Controlled fixture, not production provider CORS.",
+          "result": "pass",
+          "source_revision": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+          "observed_at": "2026-11-23T16:14:09+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:14:09+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061",
+          "description": "BYOK SUTRA-P030-09: fixed OpenRouter route, memory-only key, deletion/cancel, caller policy, no peer credential leakage and Chromium synthetic canary checks as applicable. Controlled fixture, not production provider CORS.",
+          "result": "pass",
+          "source_revision": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+          "observed_at": "2026-11-23T16:14:09+05:45"
+        }
+      ]
     }
   },
   "blockers": [],
