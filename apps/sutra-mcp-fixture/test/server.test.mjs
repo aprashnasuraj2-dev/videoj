@@ -9,6 +9,6 @@ test('controlled MCP fixture enforces origin/methods and serves only read operat
  const request=async body=>fetch(base+'/mcp',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify(body)});
  const init=await request({jsonrpc:'2.0',id:1,method:'initialize',params:{}});assert.equal((await init.json()).result.protocolVersion,'2025-06-18');
  const listed=await request({jsonrpc:'2.0',id:2,method:'tools/list',params:{}});assert.deepEqual((await listed.json()).result.tools.map(x=>x.name),['lookup','not_declared']);
- const read=await request({jsonrpc:'2.0',id:3,method:'tools/call',params:{name:'lookup',arguments:{request:'hello'}}});assert.equal((await read.json()).result.structuredContent.truthStatus,'unverified');
+ const read=await request({jsonrpc:'2.0',id:3,method:'tools/call',params:{name:'lookup',arguments:{request:'hello'}}});const readBody=await read.json();assert.equal(readBody.result.structuredContent.truthStatus,'unverified');assert.deepEqual({sourceId:readBody.result.structuredContent.sourceId,sourceVersion:readBody.result.structuredContent.sourceVersion,cueId:readBody.result.structuredContent.cueId,excerpt:readBody.result.structuredContent.excerpt},{sourceId:'mcp-fixture-source',sourceVersion:'fixture-v1',cueId:'mcp-fixture-cue',excerpt:'Synthetic controlled MCP read.'});
  const write=await request({jsonrpc:'2.0',id:4,method:'tools/call',params:{name:'write',arguments:{request:'x'}}});assert.ok((await write.json()).error);
 });
