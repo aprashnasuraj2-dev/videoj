@@ -10,6 +10,18 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:1280,height:1050}});const errors=[],external=[],requests=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{requests.push(r.url());if(!r.url().startsWith(base+'/')&&!r.url().startsWith('blob:'+base+'/'))external.push(r.url());});
   await page.goto(base);await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+  assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
+  assert.match(await page.locator('#comparison-body .comparison-status').innerText(),/No reviewed guide claim/);
+  assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/synthetic-timing-fixture/);
+  await page.getByRole('button',{name:'Inspect native video cue at 2 seconds'}).click();
+  assert.match(await page.locator('#comparison-body .comparison-seek-status').innerText(),/Video cue unavailable/);
+  await page.getByRole('button',{name:'Demonstrate a synthetic conflict'}).click();
+  assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'unresolved_conflict');
+  assert.match(await page.locator('#comparison-body .comparison-status').innerText(),/Neither side is declared factually correct/);
+  assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/two signatures/);
+  assert.match(await page.locator('#comparison-body .comparison-card').last().innerText(),/three signatures/);
+  await page.getByRole('button',{name:'Inspect available evidence'}).click();
+  assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
   await page.getByRole('button',{name:'Check example',exact:true}).click();assert.match(await page.locator('#result').innerText(),/Catalog matched/);assert.match(await page.locator('#result').innerText(),/Factual truth has not been checked/);
   await page.getByRole('button',{name:'Try altered quotation'}).click();assert.match(await page.locator('#result').innerText(),/QUOTE_MISMATCH/);
   await page.locator('#cue').focus();await page.keyboard.press('Enter');assert.equal(await page.locator('#cue').getAttribute('aria-pressed'),'true');
@@ -40,6 +52,9 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.waitForFunction(()=>document.querySelector('#timing-transcript-panel .transcript-status').textContent.includes('Native media reached'));
   assert.ok(Math.abs(await page.locator('video').evaluate(video=>video.currentTime)-2)<=1);
   assert.equal(await cueButton.getAttribute('aria-current'),'true');
+  await page.getByRole('button',{name:'Inspect native video cue at 2 seconds'}).click();
+  await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('Native media reached'));
+  assert.ok(Math.abs(await page.locator('video').evaluate(v=>v.currentTime)-2)<=1);
   const media=page.locator('video');assert.equal(await media.count(),1);
   await page.getByRole('button',{name:'Inspect timing cue at 00:02'}).click();
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Synthetic cue reached.'));
