@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "id": "synthetic-timing-transcript",
+  "transcriptVersion": "timing-transcript-v1",
+  "transcriptHash": "9128748a8a5b636e2bcb99f738fc613d6cc7bcc253546dae45f4a3cf05285881",
+  "sourceId": "synthetic-timing-fixture",
+  "sourceVersion": "v1",
+  "mediaHash": "cb0cdcb04039eb2bfc62a22462f0a040c1a23c2bdfd24f1403669569c2f22c5e",
+  "duration": 8,
+  "language": "en",
+  "translated": false,
+  "role": "synthetic timing transcript; not factual verification"
+}
