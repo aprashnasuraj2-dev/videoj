@@ -38,3 +38,6 @@
 .transcript-words{font-size:12px;min-width:0}
 .transcript-cue[aria-current=true]{border-color:#357561;background:#e7f0e7;box-shadow:inset 3px 0 #357561}
 @media(max-width:760px){.transcript-cue{flex-direction:column;gap:5px}}
+
+.transcript-wording{display:flex;flex-direction:column;gap:4px;min-width:0}
+.transcript-word-type{font-size:10px;color:#5b7569}
