@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T15:00:23+05:45",
+  "updated_at": "2026-11-23T15:05:24+05:45",
   "work_branch": "main",
-  "last_observed_code_sha": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
+  "last_observed_code_sha": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
   "last_session_id": "SUTRA-SESSION-0006",
-  "stage": "consent_and_peer_artifact_loading",
+  "stage": "independent_peer_package_and_consent",
   "current_task": null,
-  "next_task": "SUTRA-P031-01",
+  "next_task": "SUTRA-P032-08",
   "ready_engineering_queue": [
-    "SUTRA-P031-01",
     "SUTRA-P032-08",
-    "SUTRA-P033-03"
+    "SUTRA-P033-03",
+    "SUTRA-P035-01"
   ],
-  "next_action": "Build the independent local peer source package needed for real two-origin composition, then preserve peer-loader failures through the invoking network and wire consent into third-party MCP discovery/calls. Keep public deployment, public inference and release closed.",
+  "next_action": "Wire the verified peer artifact loader into caller-local invocation so peer-load failures are preserved for the invoking network, then apply the reusable consent boundary to third-party MCP discovery/calls. Keep P031-03 provenance and P031-10 public HTTPS pending; do not release.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -2655,6 +2655,166 @@
           "result": "pass",
           "source_revision": "70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7",
           "observed_at": "2026-11-23T14:58:39+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P031-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:05:24+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0006.md",
+          "description": "Independent zero-dependency static peer package, exact checklist manifest/graph/links, local preview and same-owner/proposed-origin disclosure. Real loopback fetch plus consent-aware exact loader integration passed; no public HTTPS/provenance claim.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493",
+          "description": "Final peer-package GitHub Actions job: peer build/tests and integration step passed alongside the full SUTRA shell/browser suite.",
+          "result": "pass",
+          "source_revision": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
+          "observed_at": "2026-11-23T15:05:24+05:45"
         }
       ]
     }
