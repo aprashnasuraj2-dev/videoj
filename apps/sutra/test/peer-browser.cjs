@@ -80,6 +80,38 @@ const assert=require('node:assert/strict');
   assert.equal(wrong.ok,false);
   assert.equal(wrong.code,'PEER_NETWORK_MATCH');
   assert.equal(peerRequests.length,3,'wrong name fetches only manifest');
+
+  // Exercise the actual visible learner workbench, not only page.evaluate.
+  const previous=peerRequests.length;
+  await page.getByLabel('Exact peer network URL').fill(peer+'/agents/checklist');
+  await page.getByRole('button',{name:'Run scripted peer test'}).click();
+  await page.getByRole('dialog',{name:'Approve real public artifact access?'}).waitFor();
+  assert.equal(await page.locator('#peer-origin').innerText(),peer);
+  assert.equal(await page.locator('#peer-contact-kind').innerText(),'Manifest');
+  await page.getByRole('button',{name:'Deny external request'}).click();
+  await page.waitForFunction(()=>document.querySelector('#peer-status').textContent.includes('PEER_CONSENT_DENIED'));
+  assert.equal(peerRequests.length,previous,'workbench denial sends no request');
+  await page.getByRole('button',{name:'Run scripted peer test'}).click();
+  await page.getByRole('dialog',{name:'Approve real public artifact access?'}).waitFor();
+  await page.getByRole('button',{name:'Allow this GET once'}).click();
+  await page.getByRole('dialog',{name:'Approve real public artifact access?'}).waitFor();
+  assert.equal(await page.locator('#peer-contact-kind').innerText(),'Declared graph');
+  await page.getByRole('button',{name:'Allow this GET once'}).click();
+  await page.waitForFunction(()=>document.querySelector('#peer-status').textContent.includes('Scripted peer test complete:'));
+  assert.match(await page.locator('#peer-status').innerText(),/3 caller-local agent invocations and 5 scripted model steps/);
+  assert.deepEqual(peerRequests.slice(previous).map(r=>new URL(r.url).pathname),
+   ['/agents/agent-manifest.json','/agents/checklist.network.json']);
+  assert.match(await page.locator('#peer-trace').innerText(),/Loaded peer/);
+  assert.match(await page.locator('#peer-trace').innerText(),/Caller/);
+  assert.ok(!(await page.locator('#peer-consent-log').textContent()).includes('Inspect the synthetic checklist state'));
+  await page.getByLabel('Exact peer network URL').fill(peer+'/agents/checklist_wrong');
+  await page.getByRole('button',{name:'Run scripted peer test'}).click();
+  await page.getByRole('dialog',{name:'Approve real public artifact access?'}).waitFor();
+  await page.getByRole('button',{name:'Allow this GET once'}).click();
+  await page.waitForFunction(()=>document.querySelector('#peer-status').textContent.includes('PEER_NETWORK_MATCH'));
+  assert.equal(peerRequests.length,previous+3,'workbench wrong name fetches only manifest');
+  await page.setViewportSize({width:360,height:800});
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   assert.deepEqual(pageErrors,[]);
   console.log('PASS: Chromium two-origin peer CORS, denial before transport, exact artifact GETs, caller-local 3-agent/5-model composition, redacted consent and specific wrong-name refusal.');
  }finally{
