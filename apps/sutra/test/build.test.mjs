@@ -25,3 +25,15 @@ test('built learner has no third-party advertising or analytics script surface',
   for(const marker of markers)assert.ok(!content.includes(marker),`third-party analytics/ad marker ${marker} found in ${name}`);
  }
 });
+
+test('manifest graph cache versions equal current Git blob identities',async()=>{
+ const {createHash}=await import('node:crypto');
+ const manifest=JSON.parse(fs.readFileSync(path.join(app,'public/agents/agent-manifest.json')));
+ for(const entry of manifest.networks){
+  const declared=new URL(entry.hocon,'https://sutra.test/agents/');
+  const file=path.join(app,'public',declared.pathname);
+  const bytes=fs.readFileSync(file);
+  const blob=createHash('sha1').update(Buffer.from(`blob ${bytes.length}\0`)).update(bytes).digest('hex');
+  assert.equal(declared.searchParams.get('v'),blob,`${entry.name} version must change whenever graph bytes change`);
+ }
+});
