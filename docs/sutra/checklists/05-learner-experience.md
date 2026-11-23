@@ -89,16 +89,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Display the video claim and written checklist side by side with source dates and scope. Expose agreement, conflict and missing information rather than blending them into one confident answer.
 - **Phase exit:** A conflict fixture remains visibly unresolved until reviewed; no inferred agreement is labeled verified.
 
-- [ ] `SUTRA-P045-01` Render video evidence and written guide as separate source cards
-- [ ] `SUTRA-P045-02` Display source date, scope and provenance for each claim
-- [ ] `SUTRA-P045-03` Represent agreement only when supported by the actual excerpts
-- [ ] `SUTRA-P045-04` Expose conflicts without blending them into a false consensus
-- [ ] `SUTRA-P045-05` Show missing information and unsupported comparisons explicitly
-- [ ] `SUTRA-P045-06` Retain links to original cues and written source excerpts
-- [ ] `SUTRA-P045-07` Allow peer denial while preserving local evidence
-- [ ] `SUTRA-P045-08` Test the deliberately conflicting fixture in the visible UI
-- [ ] `SUTRA-P045-09` Produce and review the phase artifact: Comparison cards with source links.
-- [ ] `SUTRA-P045-10` Close phase 045 only after its applicable tasks have evidence and its exit condition is observed: A conflict fixture remains visibly unresolved until reviewed; no inferred agreement is labeled verified.
+- [x] `SUTRA-P045-01` Render video evidence and written guide as separate source cards
+- [x] `SUTRA-P045-02` Display source date, scope and provenance for each claim
+- [x] `SUTRA-P045-03` Represent agreement only when supported by the actual excerpts
+- [x] `SUTRA-P045-04` Expose conflicts without blending them into a false consensus
+- [x] `SUTRA-P045-05` Show missing information and unsupported comparisons explicitly
+- [x] `SUTRA-P045-06` Retain links to original cues and written source excerpts
+- [x] `SUTRA-P045-07` Allow peer denial while preserving local evidence
+- [x] `SUTRA-P045-08` Test the deliberately conflicting fixture in the visible UI
+- [x] `SUTRA-P045-09` Produce and review the phase artifact: Comparison cards with source links.
+- [x] `SUTRA-P045-10` Close phase 045 only after its applicable tasks have evidence and its exit condition is observed: A conflict fixture remains visibly unresolved until reviewed; no inferred agreement is labeled verified.
 
 ## Phase 046 - Build the review-card action flow
 
