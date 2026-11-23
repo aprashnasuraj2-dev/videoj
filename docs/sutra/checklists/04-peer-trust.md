@@ -42,9 +42,9 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P032-05` Reject missing entry, malformed manifest and unsupported graph types
 - [x] `SUTRA-P032-06` Handle query fragments, encoded paths and trailing-slash ambiguity deliberately
 - [x] `SUTRA-P032-07` Avoid fallback to a default or similarly named network
-- [ ] `SUTRA-P032-08` Preserve a specific failure result for the invoking network
+- [x] `SUTRA-P032-08` Preserve a specific failure result for the invoking network
 - [x] `SUTRA-P032-09` Produce and review the phase artifact: Peer loader and name-resolution test fixtures.
-- [ ] `SUTRA-P032-10` Close phase 032 only after its applicable tasks have evidence and its exit condition is observed: Wrong-name, missing-manifest and malformed-definition cases fail closed with a specific visible explanation.
+- [x] `SUTRA-P032-10` Close phase 032 only after its applicable tasks have evidence and its exit condition is observed: Wrong-name, missing-manifest and malformed-definition cases fail closed with a specific visible explanation.
 
 ## Phase 033 - Ask permission before external contact
 
@@ -89,15 +89,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Instantiate the fetched peer graph in the active browser runtime. It inherits the caller router, model policy and execution limits; do not call a private remote peer agent service.
 - **Phase exit:** One browser trace shows local graph -> peer graph -> structured result, with model requests staying on the caller inference path.
 
-- [ ] `SUTRA-P035-01` Instantiate the fetched peer data in the active caller runtime
-- [ ] `SUTRA-P035-02` Use the caller’s approved inference router and model policy
-- [ ] `SUTRA-P035-03` Share caller execution ceilings across peer delegation
-- [ ] `SUTRA-P035-04` Return the peer front-agent structured result through normal tool results
+- [x] `SUTRA-P035-01` Instantiate the fetched peer data in the active caller runtime
+- [x] `SUTRA-P035-02` Use the caller’s approved inference router and model policy
+- [x] `SUTRA-P035-03` Share caller execution ceilings across peer delegation
+- [x] `SUTRA-P035-04` Return the peer front-agent structured result through normal tool results
 - [ ] `SUTRA-P035-05` Prevent the peer from receiving provider or BYOK credentials
-- [ ] `SUTRA-P035-06` Show local and peer-network invocations in one browser trace
-- [ ] `SUTRA-P035-07` Ensure the peer origin receives artifacts-only requests as designed
-- [ ] `SUTRA-P035-08` Demonstrate equivalent loading with no private remote execution service
-- [ ] `SUTRA-P035-09` Produce and review the phase artifact: End-to-end browser composition proof.
+- [x] `SUTRA-P035-06` Show local and peer-network invocations in one browser trace
+- [x] `SUTRA-P035-07` Ensure the peer origin receives artifacts-only requests as designed
+- [x] `SUTRA-P035-08` Demonstrate equivalent loading with no private remote execution service
+- [x] `SUTRA-P035-09` Produce and review the phase artifact: End-to-end browser composition proof.
 - [ ] `SUTRA-P035-10` Close phase 035 only after its applicable tasks have evidence and its exit condition is observed: One browser trace shows local graph -> peer graph -> structured result, with model requests staying on the caller inference path.
 
 ## Phase 036 - Enforce private-context allow rules
