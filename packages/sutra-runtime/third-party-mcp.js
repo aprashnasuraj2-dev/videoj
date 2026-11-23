@@ -37,6 +37,6 @@ export function createThirdPartyMcp({url,fetchImpl=fetch,signal,timeoutMs=5000,m
  return Object.freeze({
   url:endpoint.href,
   async listTools(){await ready();const result=await rpc('tools/list',{});if(!Array.isArray(result.tools)||result.tools.length>32)fail();return structuredClone(result.tools);},
-  async callTool(name,args){if(typeof name!=='string'||!name||name.length>60||args===null||typeof args!=='object'||Array.isArray(args))fail();await ready();const result=await rpc('tools/call',{name,arguments:args});if(result.isError)fail();return structuredClone(result.structuredContent??result.content??result);}
+  async callTool(name,args){if(typeof name!=='string'||!name||name.length>60||args===null||typeof args!=='object'||Array.isArray(args))fail();let encoded;try{encoded=JSON.stringify({name,arguments:args});}catch{fail();}if(!encoded||new TextEncoder().encode(encoded).length>12000)fail();await ready();const result=await rpc('tools/call',{name,arguments:args});if(result.isError)fail();return structuredClone(result.structuredContent??result.content??result);}
  });
 }
