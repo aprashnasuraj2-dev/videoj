@@ -118,41 +118,43 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P046-09` Produce and review the phase artifact: Review-card preview, local persistence and receipt export.
 - [ ] `SUTRA-P046-10` Close phase 046 only after its applicable tasks have evidence and its exit condition is observed: Saved data matches the approved preview; reload and delete work, and storage failure remains visible.
 
-## Phase 047 - Expose a safe execution inspector
+## Phase 047 - Expose a safe run-provenance inspector
 
 - **Baseline effort:** 1.5 person-hours; **owner:** E.
 - **Original phase dependencies:** 26,35-38,41. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Add an optional panel showing agent names, contacted origins, approvals, budget use and errors. Log concise events without raw private prompts or credentials.
-- **Phase exit:** A synthetic credential canary is absent from the UI and downloaded trace; trace failures do not break playback.
+- **Intent:** Add an optional run-provenance panel showing the exact specification commit, pinned runtime revision, active graph SHA-256, model ID, router, contacted origins, call counts, consent decisions and errors. Keep raw prompts, private context and credentials out of the panel/export.
+- **Phase exit:** The panel lets a reviewer identify which spec/runtime/graph/router/model produced a run; a synthetic credential canary is absent from both UI and exported provenance and panel failure cannot break playback.
 
-- [ ] `SUTRA-P047-01` Show selected router identity without displaying credentials
-- [ ] `SUTRA-P047-02` Display contacted origins and approved versus denied contact events
-- [ ] `SUTRA-P047-03` Show agent and tool names with bounded timing and budget information
-- [ ] `SUTRA-P047-04` Represent partial failures and unknown action outcomes accurately
-- [ ] `SUTRA-P047-05` Redact credentials, private fields and unnecessary raw prompt text
-- [ ] `SUTRA-P047-06` Bound trace memory and support safe user-initiated export
-- [ ] `SUTRA-P047-07` Test credential canaries in inspector UI and downloaded files
-- [ ] `SUTRA-P047-08` Ensure optional inspector failures never break media playback
-- [ ] `SUTRA-P047-09` Produce and review the phase artifact: Redacted trace panel and export format.
-- [ ] `SUTRA-P047-10` Close phase 047 only after its applicable tasks have evidence and its exit condition is observed: A synthetic credential canary is absent from the UI and downloaded trace; trace failures do not break playback.
+- [ ] `SUTRA-P047-01` Show exact Open Agentic Web spec commit and pinned nsDeploy/runtime revision
+- [ ] `SUTRA-P047-02` Recompute/display the active graph SHA-256 and list contacted origins with approved/denied contacts
+- [ ] `SUTRA-P047-03` Show model ID, router identity, agent/tool names, call counts and bounded timing/budget information
+- [ ] `SUTRA-P047-04` Represent partial failures, consent decisions and unknown action outcomes accurately
+- [ ] `SUTRA-P047-05` Redact credentials, private fields and unnecessary raw prompt/model text
+- [ ] `SUTRA-P047-06` Bound provenance memory and support safe user-initiated export
+- [ ] `SUTRA-P047-07` Test credential/private canaries in inspector UI and downloaded files
+- [ ] `SUTRA-P047-08` Ensure optional provenance-panel failures never break media playback or the local evidence flow
+- [ ] `SUTRA-P047-09` Produce and review the phase artifact: Redacted run-provenance panel and export format.
+- [ ] `SUTRA-P047-10` Close phase 047 only after its applicable tasks have evidence and its exit condition is observed: Spec/runtime/graph/model/router/origins are inspectable without secret exposure.
 
-## Phase 048 - Make the core flow bilingual
+
+## Phase 048 - Make the core flow bilingual — deferred
 
 - **Baseline effort:** 2 person-hours; **owner:** E+P.
-- **Original phase dependencies:** 41-47. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Support English and Nepali labels and lesson summaries with human review of technical terms. Keep source quotations in their original language and label translations.
-- **Phase exit:** Language switching retains run state and cue links; English remains complete for judges and community builders.
+- **Original phase dependencies:** 41-47. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work).
+- **Scope decision:** Nepali localization is intentionally omitted from the competition release under SUTRA-DECISION-0010. English remains complete; source quotations keep their original language. This phase does not block P049/P050 or release.
+- **Practical effect:** The competition build is English-first. Localization can be resumed after the evidence/runtime/media/BYOK/public-proof gates are stable.
 
-- [ ] `SUTRA-P048-01` Inventory core learner labels and error messages requiring translation
-- [ ] `SUTRA-P048-02` Keep English complete for judges and external builders
-- [ ] `SUTRA-P048-03` Have a human review Nepali technical terms and ambiguity
-- [ ] `SUTRA-P048-04` Retain original source excerpts when translations are shown
-- [ ] `SUTRA-P048-05` Preserve selected lesson, cue and run state during language switching
-- [ ] `SUTRA-P048-06` Format timestamps, units and dates consistently across languages
-- [ ] `SUTRA-P048-07` Check fallback text and missing localization keys
-- [ ] `SUTRA-P048-08` Cut optional localization polish before compromising core runtime correctness
-- [ ] `SUTRA-P048-09` Produce and review the phase artifact: Localized core screens and reviewed terminology list.
-- [ ] `SUTRA-P048-10` Close phase 048 only after its applicable tasks have evidence and its exit condition is observed: Language switching retains run state and cue links; English remains complete for judges and community builders.
+- [-] `SUTRA-P048-01` Inventory core learner labels and error messages requiring translation — omitted from competition scope
+- [-] `SUTRA-P048-02` Keep English complete for judges and external builders — covered as the release baseline rather than a translation task
+- [-] `SUTRA-P048-03` Have a human review Nepali technical terms and ambiguity — deferred
+- [-] `SUTRA-P048-04` Retain original source excerpts when translations are shown — no translated UI shipped
+- [-] `SUTRA-P048-05` Preserve selected lesson, cue and run state during language switching — no language switch shipped
+- [-] `SUTRA-P048-06` Format timestamps, units and dates consistently across languages — multilingual formatting deferred
+- [-] `SUTRA-P048-07` Check fallback text and missing localization keys — localization system deferred
+- [-] `SUTRA-P048-08` Cut optional localization polish before compromising core runtime correctness — decision exercised by SUTRA-DECISION-0010
+- [-] `SUTRA-P048-09` Produce and review the phase artifact: Localized core screens and reviewed terminology list — omitted
+- [-] `SUTRA-P048-10` Phase exit omitted for the competition release; report phase 048 as complete with omissions, not implemented.
+
 
 ## Phase 049 - Complete accessibility and mobile checks
 
@@ -175,7 +177,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 ## Phase 050 - Close the complete-product milestone
 
 - **Baseline effort:** 1 person-hours; **owner:** E+P.
-- **Original phase dependencies:** 41-49. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
+- **Original phase dependencies:** 41-49. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work). P048 is an explicit optional omission under SUTRA-DECISION-0010 and does not block this milestone.
 - **Intent:** Run the entire hero journey without a developer console. Review loading, empty, denied, source-conflict and success states for clarity and consistency.
 - **Phase exit:** A new viewer can finish the task using the visible UI; the local learning flow survives peer denial.
 
