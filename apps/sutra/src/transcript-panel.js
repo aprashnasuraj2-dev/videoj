@@ -11,7 +11,9 @@ const validCue=(cue,duration)=>
  typeof cue.id==='string'&&/^[A-Za-z0-9_-]{1,100}$/.test(cue.id)&&
  typeof cue.text==='string'&&cue.text.trim()&&cue.text.length<=4000&&
  Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&
- cue.start>=0&&cue.end>cue.start&&cue.end<=duration;
+ cue.start>=0&&cue.end>cue.start&&cue.end<=duration&&
+ (cue.translation===undefined||typeof cue.translation==='boolean')&&
+ (cue.language===undefined||typeof cue.language==='string'&&cue.language.length<=40);
 const formatTime=n=>{
  const mm=Math.floor(n/60),ss=Math.floor(n%60);
  return String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
@@ -80,7 +82,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media}={}){
   currentCues=items.filter(cue=>cue.text.toLocaleLowerCase('en').includes(query));
   buttonMap.clear();list.replaceChildren();
   if(!valid){
-   status('No verified transcript cues are available for this media. The local player remains usable.');
+   status('No usable transcript cues are available for this media. The local player remains usable.');
    return;
   }
   if(!currentCues.length){
@@ -93,7 +95,11 @@ export function mountTranscriptPanel(host,{source,onSeek,media}={}){
    button.type='button';
    const label=el('span','transcript-range',formatTime(cue.start)+'–'+formatTime(cue.end));
    const text=el('span','transcript-words',cue.text);
-   button.append(label,text);
+   const wordType=el('span','transcript-word-type',cue.translation===true?
+    'Translated wording'+(cue.language?' · '+cue.language:'')+' · not an original quotation':
+    'Source wording · unverified');
+   const wording=el('span','transcript-wording');wording.append(text,wordType);
+   button.append(label,wording);
    button.setAttribute('aria-label','Seek to '+formatTime(cue.start)+': '+cue.text);
    button.addEventListener('keydown',onCueKey);
    button.addEventListener('click',async()=>{
