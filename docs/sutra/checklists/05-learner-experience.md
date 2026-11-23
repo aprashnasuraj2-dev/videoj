@@ -137,24 +137,23 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P047-10` Close phase 047 only after its applicable tasks have evidence and its exit condition is observed: Spec/runtime/graph/model/router/origins are inspectable without secret exposure.
 
 
-## Phase 048 - Make the core flow bilingual — deferred
+## Phase 048 - Deferred Nepali localization
 
 - **Baseline effort:** 2 person-hours; **owner:** E+P.
-- **Original phase dependencies:** 41-47. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work).
-- **Scope decision:** Nepali localization is intentionally omitted from the competition release under SUTRA-DECISION-0010. English remains complete; source quotations keep their original language. This phase does not block P049/P050 or release.
-- **Practical effect:** The competition build is English-first. Localization can be resumed after the evidence/runtime/media/BYOK/public-proof gates are stable.
+- **Scope decision:** `SUTRA-DECISION-0010`. English remains the complete submission language; Nepali localization is intentionally cut before evidence/BYOK/runtime correctness.
+- **Intent if resumed:** Support English and Nepali labels and lesson summaries with human review of technical terms while retaining original source quotations.
+- **Phase exit if resumed:** Language switching retains run state and cue links.
 
-- [-] `SUTRA-P048-01` Inventory core learner labels and error messages requiring translation — omitted from competition scope
-- [-] `SUTRA-P048-02` Keep English complete for judges and external builders — covered as the release baseline rather than a translation task
-- [-] `SUTRA-P048-03` Have a human review Nepali technical terms and ambiguity — deferred
-- [-] `SUTRA-P048-04` Retain original source excerpts when translations are shown — no translated UI shipped
-- [-] `SUTRA-P048-05` Preserve selected lesson, cue and run state during language switching — no language switch shipped
-- [-] `SUTRA-P048-06` Format timestamps, units and dates consistently across languages — multilingual formatting deferred
-- [-] `SUTRA-P048-07` Check fallback text and missing localization keys — localization system deferred
-- [-] `SUTRA-P048-08` Cut optional localization polish before compromising core runtime correctness — decision exercised by SUTRA-DECISION-0010
-- [-] `SUTRA-P048-09` Produce and review the phase artifact: Localized core screens and reviewed terminology list — omitted
-- [-] `SUTRA-P048-10` Phase exit omitted for the competition release; report phase 048 as complete with omissions, not implemented.
-
+- [-] `SUTRA-P048-01` Inventory core learner labels and error messages requiring translation
+- [-] `SUTRA-P048-02` Keep English complete for judges and external builders
+- [-] `SUTRA-P048-03` Have a human review Nepali technical terms and ambiguity
+- [-] `SUTRA-P048-04` Retain original source excerpts when translations are shown
+- [-] `SUTRA-P048-05` Preserve selected lesson, cue and run state during language switching
+- [-] `SUTRA-P048-06` Format timestamps, units and dates consistently across languages
+- [-] `SUTRA-P048-07` Check fallback text and missing localization keys
+- [-] `SUTRA-P048-08` Cut optional localization polish before compromising core runtime correctness
+- [-] `SUTRA-P048-09` Produce and review the phase artifact: localized core screens and reviewed terminology list.
+- [-] `SUTRA-P048-10` Close phase 048 only if localization is later resumed and evidenced.
 
 ## Phase 049 - Complete accessibility and mobile checks
 
