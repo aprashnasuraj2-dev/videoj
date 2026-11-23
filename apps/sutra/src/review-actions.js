@@ -57,9 +57,10 @@ export function createReviewActions({store,sources,exporter,baseOrigin,network='
   const plan=registry.prepare({kind:'action',action:ref,arguments:{receipt:clone(receipt)}});
   return deepFreeze(plan);
  };
+ const preview=plan=>deepFreeze(plan.map(({entry,args})=>({action:entry.name,description:entry.description,origin:new URL(entry.base).origin,effect:entry.effect,arguments:clone(args)})));
  return Object.freeze({
   registry,saveRef,exportRef,
-  catalog:()=>registry.catalog(scope),
+  catalog:()=>registry.catalog(scope),preview,
   prepareSave:receipt=>prepare(saveRef,receipt),
   prepareExport:receipt=>prepare(exportRef,receipt),
   execute:(plan,confirm,invocationId)=>registry.execute(plan,confirm,invocationId)
