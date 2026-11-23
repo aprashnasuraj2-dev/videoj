@@ -3,7 +3,7 @@ import {InferenceError,readSse,makeAccumulator,stop,abortable} from './protocol.
 export function createProviderAdapter({origin,model,fetchImpl=fetch,timeoutMs=30000}={}){
  let base;try{base=new URL(origin);}catch{stop('CONFIG');}
  if(base.origin!==origin||base.protocol!=='https:'&&!(base.protocol==='http:'&&['localhost','127.0.0.1','[::1]'].includes(base.hostname))||typeof model!=='string'||!model||!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>30000)stop('CONFIG');
- return {mode:'provider',async chat({messages,tools=[],signal}){
+ return {mode:'provider',approvedModel:model,async chat({messages,tools=[],signal}){
   if(signal?.aborted)stop('CANCELLED');const controller=new AbortController(),cancel=()=>controller.abort();signal?.addEventListener('abort',cancel,{once:true});const timer=setTimeout(cancel,timeoutMs);
   try{
    const response=await abortable(fetchImpl(`${origin}/api/infer`,{method:'POST',credentials:'same-origin',redirect:'error',headers:{'Content-Type':'application/json'},body:JSON.stringify({model,messages,tools,stream:true}),signal:controller.signal}),controller.signal);
