@@ -23,7 +23,13 @@ test('pre-aborted run makes no model calls',async()=>{const controller=new Abort
 test('timeout terminates a non-cooperating model',async()=>{const start=Date.now();await assert.rejects(run({limits:{timeoutMs:20},model:{mode:'scripted-test',chat:()=>new Promise(()=>{})}}),e=>e.code==='TIMEOUT');assert.ok(Date.now()-start<1000);});
 test('mid-run cancellation terminates a non-cooperating model',async()=>{const controller=new AbortController();const job=run({signal:controller.signal,model:{mode:'scripted-test',chat:()=>new Promise(()=>{})}});setTimeout(()=>controller.abort(),10);await assert.rejects(job);});
 test('model-call budget stops delegation, no final success claimed',async()=>assert.rejects(run({limits:{maxModelCalls:1}})));
-test('agent budget stop is not treated as completed answer',async()=>assert.rejects(run({limits:{maxAgents:1}}),e=>['INCOMPLETE','RUN_FAILED'].includes(e.code)));
+test('agent budget stop identifies the exhausted limit and preserves incomplete partial text',async()=>{
+ await assert.rejects(run({limits:{maxAgents:1}}),e=>{
+  assert.equal(e.code,'COMPOSITION_LIMIT');assert.equal(e.limit,'agent_calls');
+  assert.match(e.message,/agent_calls budget/);assert.equal(typeof e.partialText,'string');assert.ok(e.partialText.length>0);
+  assert.match(e.partialText,/Skipped|limit|Continue/i);return true;
+ });
+});
 test('repeated runs may invoke the same agent normally',async()=>{await run();await run();});
 for(const [label,response,code]of[
  ['unknown call',{content:'',toolCalls:[{id:'1',type:'function',function:{name:'not_available',arguments:'{}'}}]},'TOOL_UNAVAILABLE'],
@@ -34,7 +40,7 @@ for(const [label,response,code]of[
 ])test(label+' is rejected',async()=>assert.rejects(run({model:{mode:'scripted-test',chat:async()=>response}}),e=>e.code===code));
 test('output ceiling is enforced',async()=>assert.rejects(run({limits:{maxOutputChars:5},model:{mode:'scripted-test',chat:async()=>({content:'too long',toolCalls:[]})}}),e=>e.code==='OUTPUT_LIMIT'));
 test('step exhaustion is incomplete, not successful empty answer',async()=>assert.rejects(run({limits:{maxSteps:1},definition:{...copy(),max_steps:1}}),e=>e.code==='INCOMPLETE'));
-test('safe events never expose request, tool arguments or model text',async()=>{const seen=[];await run({request:'synthetic-private-canary',onEvent:e=>seen.push(e)});assert.ok(!JSON.stringify(seen).includes('synthetic-private-canary'));for(const event of seen)assert.ok(Object.keys(event).every(k=>['kind','phase','id','parent','status','agent','tool','origin','network','attempt','maxAttempts'].includes(k)));});
+test('safe events never expose request, tool arguments or model text',async()=>{const seen=[];await run({request:'synthetic-private-canary',onEvent:e=>seen.push(e)});assert.ok(!JSON.stringify(seen).includes('synthetic-private-canary'));for(const event of seen)assert.ok(Object.keys(event).every(k=>['kind','phase','id','parent','status','agent','tool','origin','network','attempt','maxAttempts','limit'].includes(k)));});
 test('executable JS and nonfinite data are not silently serialized away',()=>{for(const value of [()=>1,Symbol('x'),NaN,undefined]){const g=copy();g.metadata.extra=value;assert.throws(()=>compileNetwork(g),e=>e.code==='NETWORK_DATA');}});
 test('parallel child model calls never exceed concurrency two',async()=>{
  const g=copy();const helper=structuredClone(g.tools[1]);helper.name='evidence2';g.tools.push(helper);g.tools[0].tools.push('evidence2');let active=0,peak=0;
@@ -63,4 +69,16 @@ test('cancellation while a delegated agent is stalled prevents later model calls
  controller.abort();
  await assert.rejects(pending);
  assert.equal(calls,2,'cancellation must prevent additional model steps');
+});
+
+test('budget partial output is bounded and control characters are removed',async()=>{
+ const g=copy();let seq=0;
+ const model={mode:'scripted-test',async chat({tools,messages}){
+  seq++;
+  if(tools.length&&!messages.some(m=>m.role==='tool'))return {content:'',toolCalls:[{id:'one',type:'function',function:{name:'evidence',arguments:'{"request":"x"}'}}]};
+  return {content:'safe-partial\u0000 '+('x'.repeat(2500)),toolCalls:[]};
+ }};
+ await assert.rejects(run({definition:g,model,limits:{maxAgents:1}}),e=>{
+  assert.equal(e.code,'COMPOSITION_LIMIT');assert.ok(e.partialText.length<=2000);assert.equal(e.partialText.includes('\u0000'),false);return true;
+ });
 });
