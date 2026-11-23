@@ -100,23 +100,23 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P075-09` Produce and review the phase artifact: Paired task comparison and limitations.
 - [ ] `SUTRA-P075-10` Close phase 075 only after its applicable tasks have evidence and its exit condition is observed: Target >=30% median task-time reduction with no evidence-accuracy loss; a worse result triggers workflow revision, not selective exclusion.
 
-## Phase 076 - Run two outside-builder Open Kit trials
+## Phase 076 - Run outside-builder evidence/interoperability trials
 
 - **Baseline effort:** 3 person-hours; **owner:** P+E.
-- **Original phase dependencies:** 60,71. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Invite two consenting developers outside the project to install one tool or starter from the public docs. Record time to first success and every intervention. Do not send invitations automatically.
-- **Phase exit:** Target two clean runs within 15 minutes each; if only one or zero participate, disclose the actual count and remaining validation gap.
+- **Priority override:** At least one participant should be another challenge entrant or builder working on an agentic-web site, so the result tests actual cross-project usefulness rather than same-owner adoption.
+- **Intent:** Give outside developers only the public evidence-profile quickstart and, once public, the guide network URL. Measure time to first valid annotation/transcript result and whether another entrant can load the network without project coaching.
+- **Phase exit:** Target two clean evidence-package runs within 15 minutes each and at least one external entrant/browser load of the public peer; report the actual participant count and every intervention.
 
-- [ ] `SUTRA-P076-01` Seek two consenting developers outside the project through authorized outreach
-- [ ] `SUTRA-P076-02` Give each only the public quickstart and installation task
-- [ ] `SUTRA-P076-03` Record environment and exact tool release version
-- [ ] `SUTRA-P076-04` Measure time to first valid receipt or agent invocation
-- [ ] `SUTRA-P076-05` Log each intervention and blocker rather than coaching invisibly
-- [ ] `SUTRA-P076-06` Keep participant identities out of public research notes
+- [ ] `SUTRA-P076-01` Seek two consenting developers outside the project through authorized outreach; prioritize at least one challenge entrant
+- [ ] `SUTRA-P076-02` Give each only the public evidence-profile quickstart for the first task
+- [ ] `SUTRA-P076-03` Record environment, package version and time to first `transcript_verified` result
+- [ ] `SUTRA-P076-04` Target first valid evidence result within 15 minutes without cloning the player/learner app
+- [ ] `SUTRA-P076-05` After public peer release, have at least one outside entrant load the exact network URL in their own browser/runtime or documented compatible client
+- [ ] `SUTRA-P076-06` Log each intervention/blocker and keep participant identities out of public research notes
 - [ ] `SUTRA-P076-07` Report zero/one participants honestly if recruitment fails
-- [ ] `SUTRA-P076-08` Do not count project-owned demo sites as independent adopters
-- [ ] `SUTRA-P076-09` Produce and review the phase artifact: De-identified setup logs and adoption friction report.
-- [ ] `SUTRA-P076-10` Close phase 076 only after its applicable tasks have evidence and its exit condition is observed: Target two clean runs within 15 minutes each; if only one or zero participate, disclose the actual count and remaining validation gap.
+- [ ] `SUTRA-P076-08` Do not count project-owned origins as independent adoption or outside validation
+- [ ] `SUTRA-P076-09` Produce de-identified setup logs, timing, interoperability result and adoption-friction notes
+- [ ] `SUTRA-P076-10` Close phase 076 only after the actual outside-run count and entrant-load result are evidenced.
 
 ## Phase 077 - Complete the browser and device matrix
 
