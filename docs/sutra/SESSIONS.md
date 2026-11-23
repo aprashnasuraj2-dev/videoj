@@ -187,3 +187,15 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Verified P026-01/07/08/09/10; Phase 026 closes. New total **247/1000**, **16 fully verified phases**.
 - Corrected stale documentation that still named a same-registrable-domain peer proposal; peer public origin remains unset and must use a different registrable domain.
 - Next independent task: P036-04 private-context upstream/downstream handling. P030-02 live router CORS/account, public HTTPS, original media/rights, factual review, physical-device evidence, release and submission remain open.
+
+
+## SUTRA-SESSION-0010 — Separate upstream/downstream private context and receipt boundary
+
+- Observed 2026-11-23T16:56:19+05:45; tested candidate `621520e1636deb39686e7aef462e8b481c4558cd`.
+- Converted the caller-local peer resolver to use the per-tool-call context already supplied by the pinned runner, without changing vendored runtime files or their hashes.
+- Upstream private context now requires intersection of the peer front agent's `allow.to_upstream.sly_data` and the caller host's exact peer-URL `upstream` allow-list. Returned values merge only into that call's private snapshot; trace export records names only.
+- Tests cover caller narrower than peer, peer narrower than caller, absent downstream secret not recreated upstream, and no private values in result/events.
+- Added receipt-smuggling integration: an extra `apiKey` field proposed for a receipt is rejected as `UNKNOWN_FIELD` without echoing its value.
+- Full build/runtime/peer/Chromium workflow passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45162744214.
+- Verified P036-04/06/10; Phase 036 closes. New total **250/1000**, **17 fully verified phases**.
+- Next P037-01 redirect origin/policy handling. Existing fail-closed redirect behavior remains; no public release or provider claim.
