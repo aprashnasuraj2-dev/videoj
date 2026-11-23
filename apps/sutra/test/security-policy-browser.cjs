@@ -47,8 +47,9 @@ const mime=file=>({
   assert.equal((await fetch(upstream+'/index.html')).status,200);
   browser=await chromium.launch({headless:true});
   const page=await browser.newPage({viewport:{width:1000,height:800}});
-  const blockedRequests=[],violations=[],errors=[];
+  const blockedRequests=[],blockedResponses=[],violations=[],errors=[];
   page.on('request',r=>{if(r.url().includes('blocked.example'))blockedRequests.push(r.url());});
+  page.on('response',r=>{if(r.url().includes('blocked.example'))blockedResponses.push(r.url());});
   page.on('pageerror',e=>errors.push(e.message));
   await page.goto(site);
   await page.evaluate(()=>document.addEventListener('securitypolicyviolation',event=>{
@@ -80,12 +81,16 @@ const mime=file=>({
   assert.deepEqual(result,{script:'blocked',fetch:'blocked'});
   await page.waitForTimeout(50);
   violations.push(...await page.evaluate(()=>window.__sutraCsp??[]));
-  assert.equal(blockedRequests.length,0,'CSP stops unexpected third-party transport before request');
+  // Playwright may surface a browser request event for a CSP-blocked URL before
+  // transport; a network response must never exist, and Chromium must report the
+  // policy violation for both script and connect directives.
+  assert.ok(blockedRequests.length>=1,'browser attempted the deliberately disallowed destinations');
+  assert.equal(blockedResponses.length,0,'CSP-blocked third-party destinations produce no network responses');
   assert.ok(violations.some(v=>v.directive==='script-src-elem'||v.directive==='script-src'));
   assert.ok(violations.some(v=>v.directive==='connect-src'));
   assert.ok(!errors.some(e=>!/Content Security Policy/i.test(e)),JSON.stringify(errors));
 
-  console.log('PASS: built static SUTRA under Worker CSP preserves local graph/native media and blocks unexpected script/connect destinations before transport.');
+  console.log('PASS: built static SUTRA under Worker CSP preserves local graph/native media and blocks unexpected script/connect destinations with zero responses and explicit CSP violations.');
  }finally{
   if(browser)await browser.close();
   await Promise.all([
