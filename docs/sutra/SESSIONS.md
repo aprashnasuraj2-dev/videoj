@@ -212,3 +212,15 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Verified P037-01/02/03/04/09/10; Phase 037 closes. New total **256/1000**, **18 fully verified phases**.
 - Same-URL byte replacement without a declared content binding is not treated as a redirect scope change; integrity/versioning remains a separate concern and no stronger claim is made.
 - Next: Phase 022 publication bundle/inventory audit. Live P030-02 router CORS/account and public HTTPS P034 remain external gates. No release or submission.
+
+
+## SUTRA-SESSION-0012 — Caller public artifact bundle and manifest boundary
+
+- Observed 2026-11-23T17:05:44+05:45; tested publication source candidate `47f84a1f8ee47cf7f9a049aaa8286d3142d8648c`.
+- Added top-site `llm_router` metadata to the public manifest, separately from `allowed_peers` and `peer_policy`: same-origin `/api/infer`, `mock:false`, and direct BYOK router `https://openrouter.ai/api/v1`. No credential is published and the default endpoint remains operator-disabled.
+- Updated `links.json` to explicitly include `learner` and `source_learner` with empty publisher-owned maps. This is intentional: the graphs have no symbolic external-network reference and the distinct public peer URL is not yet established. No fake binding was added.
+- Added `PUBLIC_ARTIFACT_INVENTORY.md` covering the manifest, both graphs, links, browser runtime and APIs, with every proposed public URL labeled undeployed/unverified and peer origin unset.
+- Added build tests for router/peer metadata separation, exact empty link maps, secret absence and inventory coverage.
+- Full product shell/Chromium passed on https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45164065404. That candidate's register job failed only because Session 0011 had not yet been appended; the checkpoint transaction was corrected in later commits and the failed register run remains historical.
+- Verified P022-04/06/08/09/10; Phase 022 closes. New total **261/1000**, **19 fully verified phases**.
+- Next: P023-05 browser action boundary; live router CORS/account, public HTTPS/CORS and all release gates remain open.
