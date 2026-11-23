@@ -1,33 +1,83 @@
-# SUTRA evidence receipts - early v0.1.0 source package
+# SUTRA media-evidence profile — 0.2.0 candidate
 
-Dependency-free ES module and Node CLI for video-cue evidence receipts. Browser-callable code imports no Node APIs. This early source package is not an npm publication, a complete agentic runtime or a semantic truth verifier.
+A dependency-free, browser-callable evidence format for linking an exact excerpt to an exact moment in media without inventing a SUTRA-only interchange envelope.
+
+The public profile uses the [W3C Web Annotation Data Model](https://www.w3.org/TR/annotation-model/): an `Annotation` targets a `SpecificResource` selected by a `FragmentSelector`. The selector follows [Media Fragments URI 1.0](https://www.w3.org/TR/media-frags/) with an explicit temporal value such as `t=12,18`, representing the half-open interval `[12,18)`. Resource integrity is kept in a small sidecar manifest using [SRI](https://www.w3.org/TR/sri/) style `sha256-<base64-digest>` strings.
+
+**A matching hash proves byte equality, not factual truth, publisher trust, semantic support, authorship or operational safety.**
+
+## 15-minute quickstart target
+
+No player, SUTRA learner app, API key, account or private service is required.
 
 ```sh
-node --test packages/sutra-evidence/test/receipt.test.mjs
+node --test packages/sutra-evidence/test/annotation.test.mjs
+node packages/sutra-evidence/annotation-cli.mjs \
+  packages/sutra-evidence/examples/annotation.json \
+  packages/sutra-evidence/examples/integrity-manifest.json \
+  packages/sutra-evidence/examples/transcript-v3.vtt
+```
+
+A successful fixture prints `level: "transcript_verified"` and the deterministic cue URL:
+
+```text
+https://example.invalid/sutra/media/synthetic-timing.mp4#t=12,18
+```
+
+The example domain is intentionally non-routable. Fixtures are synthetic project-authored data.
+
+## Browser API
+
+```js
+import {
+  validateAnnotationProfile,
+  validateEvidenceBytes,
+  verifyIntegrity,
+  cueHref
+} from './packages/sutra-evidence/index.js';
+
+const shape = validateAnnotationProfile(annotation, { manifest });
+const bytes = await validateEvidenceBytes(annotation, {
+  manifest,
+  resources: { [transcriptUrl]: transcriptBytes }
+});
+const link = cueHref(annotation);
+```
+
+Validation levels:
+
+- `annotation_shape`: W3C-shaped annotation/profile constraints pass; no integrity manifest was supplied.
+- `manifest_bound`: the annotation and sidecar manifest agree structurally, but supplied bytes have not all been checked.
+- `transcript_verified`: the supplied transcript bytes match the manifest SHA-256, and the named WebVTT cue exactly matches the annotation’s ID, interval and quotation.
+- `invalid`: a stable error code identifies the failed boundary without echoing untrusted values.
+
+Media bytes may also be supplied to `validateEvidenceBytes`; each supplied resource is hashed in Web Crypto before being counted as verified. The current minimum quickstart requires the transcript bytes because the synthetic MP4 is an app fixture rather than a community-package dependency.
+
+## Tiny cue link
+
+```js
+import { mountCueLink } from './packages/sutra-evidence/cue-link.js';
+mountCueLink(document.querySelector('#citation'), annotation, {
+  label: 'Jump to cited moment'
+});
+```
+
+The helper creates a normal anchor using the standards-derived `#t=start,end` fragment. It imports no player and owns no seek implementation.
+
+## Integrity sidecar
+
+The sidecar is intentionally small: profile ID, source version, and one media plus one transcript resource with SRI-style SHA-256 metadata. It is not a signature, identity system or trust score. Signature/publisher authentication can be layered independently.
+
+The package never fetches arbitrary URLs, stores keys, executes peer code, grants consent or sends model requests. Hosts decide how to retrieve the resources whose bytes are supplied for hashing.
+
+## Legacy compatibility
+
+`validateReceipt()`, `receipt.schema.json`, `examples/receipt.json`, and `examples/sources.json` remain temporarily for the pre-0.2 SUTRA learner migration. They are **not** the flagship public interchange format. New code should use the Web Annotation profile.
+
+Run the legacy check only when maintaining old fixtures:
+
+```sh
 node packages/sutra-evidence/cli.mjs packages/sutra-evidence/examples/receipt.json packages/sutra-evidence/examples/sources.json
 ```
 
-```js
-import { validateReceipt } from './packages/sutra-evidence/index.js';
-const result = validateReceipt(receipt, { sources: independentlySuppliedCatalog });
-```
-
-No installation, provider key, player or learner app is required. Copy the package directory to an independent host and run its CLI with Node >=22. Use the root Apache-2.0 LICENSE; retain its notices when redistributing. Synthetic examples are project-authored fixtures, not real media or user-research results.
-
-## Contract
-
-`receipt.schema.json` is a JSON Schema 2020-12 shape contract. The runtime additionally checks finite ordered intervals, actual calendar dates, nonblank text and source/cue consistency. External schema validators must enable date-time format assertions; runtime checks remain required. These constraints are stricter than shape validation alone.
-
-Every receipt carries version 1, sourceId, sourceHash (SHA-256 of the canonical UTF-8 transcript/checklist bytes), sourceVersion, mediaHash (SHA-256 of actual media bytes), cueId, start/end seconds, exact cue excerpt, retrievedAt with explicit timezone, and `verification: "unverified"`. Applications must supply the expected catalog independently; never construct it from untrusted receipt claims. The synthetic example's mediaHash is a labeled placeholder identity for a fixture, not proof that a film exists.
-
-The catalog is an array of `{id, hash, version, mediaHash, duration, cues:[{id,start,end,text}]}`. Cue ranges and text must match exactly in v1. Subquotes, tolerance, multi-source synthesis, signatures, author identity and real media hashing/ingestion are not implemented. A future ingestion step must calculate hashes from the actual bytes; merely copying claimed hashes provides no integrity assurance.
-
-Return levels:
-
-- `invalid`: rejected with stable error code and field path; values are not echoed.
-- `shape_only`: receipt shape passed without a supplied source catalog. No source matching claimed.
-- `catalog_matched`: references, expected hashes, source version, media identity, cue bounds and exact text match the supplied catalog. This does not establish factual truth, semantic support, publisher trust or operational safety.
-
-Unknown receipt properties are rejected, including fields named for credentials/private prompts. Callers must still prevent sensitive content being placed inside an excerpt and control who supplies the catalog. This library does not isolate secrets, execute peer code, fetch URLs or grant consent.
-
-CLI exit codes: 0 accepted at the reported level; 1 invalid receipt/catalog; 2 usage, unreadable/oversized input or malformed JSON. The CLI supports files up to 2 MiB each; the API bounds catalog count to 10,000 but the host must also bound transport bytes.
+Use the repository Apache-2.0 license and retain applicable notices when redistributing.
