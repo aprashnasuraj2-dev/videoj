@@ -1,4 +1,4 @@
-const HASH=/^[a-f0-9]{64}$/i;
+const HASH=/^(?:[a-f0-9]{64}|sha256-[A-Za-z0-9+/]{43}=)$/i;
 const COMMIT=/^[a-f0-9]{7,64}$/i;
 const NAME=/^[A-Za-z0-9_.:@/# -]{1,160}$/;
 const ERROR=/^[A-Z][A-Z0-9_]{1,63}$/;
