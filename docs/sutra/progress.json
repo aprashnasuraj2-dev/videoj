@@ -1,21 +1,22 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T17:59:22+05:45",
+  "updated_at": "2026-11-23T18:22:28+05:45",
   "work_branch": "sutra/peer-invocation",
-  "last_observed_code_sha": "b8ef8baef4ff8176eb13290e021e9db50b4c8a7a",
-  "last_session_id": "SUTRA-SESSION-0017",
-  "stage": "phase_042_controls_partially_verified",
+  "last_observed_code_sha": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+  "last_session_id": "SUTRA-SESSION-0018",
+  "stage": "learner_workspace_seek_transcript_complete",
   "current_task": null,
-  "next_task": "SUTRA-P044-01",
+  "next_task": "SUTRA-P045-01",
   "ready_engineering_queue": [
-    "SUTRA-P044-01",
+    "SUTRA-P045-01",
     "SUTRA-P042-06",
+    "SUTRA-P049-01",
     "SUTRA-P023-03",
     "SUTRA-P030-02",
     "SUTRA-P034-01"
   ],
-  "next_action": "Build the timing-fixture transcript panel against its own 0–8 second media/version identity. Keep P042-06 open until a genuine alternate-codec compatibility path is observed. Do not release.",
+  "next_action": "Build a visible peer comparison fixture that preserves source separation/conflict/missing information under Phase 045. Keep P042-06 open until a genuine alternate-codec compatibility path is observed; live provider/router/public HTTPS remain external gates. Do not release.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -4602,6 +4603,318 @@
           "result": "pass",
           "source_revision": "b8ef8baef4ff8176eb13290e021e9db50b4c8a7a",
           "observed_at": "2026-11-23T17:59:22+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Guided first-viewer question and ordered local task replace an empty-chat dead end.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Video/timing transcript, separate evidence validation and review-card actions are presented as one coherent learner workspace.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Guided card visibly names synthetic-timing-fixture v1 and timing-transcript-v1.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Core journey explicitly models empty/loading/ready/denied/error/completed with browser-observed transitions.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Visible next-human-action guidance and source/evidence panels remain discoverable without opening technical details.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Runtime/peer/BYOK/provenance controls are collapsed behind an optional developer disclosure by default.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "LEARNER_WORKSPACE.md specifies desktop/narrow/zoom reflow and final CSS/browser 360px checks implement that contract.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Fresh Chromium viewer completes load, peer-denial/local recovery, cue navigation, evidence review, confirmed save and delete without opening runtime details.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "LEARNER_WORKSPACE.md plus Session 0018 form the reviewed responsive interaction/state artifact.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Phase exit observed: fresh viewer sees question, supporting cue/source identity and next action without developer trace.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Pure seek policy distinguishes live/unknown duration, no seekable range, outside duration and outside current seek window before changing media state.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Evidence cue is keyboard-activated with Enter; corrupt media produces specific unavailable-seek feedback and no success claim.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Session 0018 records seek policy, native TimeRanges handling, keyboard interaction and actual-currentTime evidence.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Phase exit observed: valid target lands within one second on supported media and unavailable seeking is described accurately.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Versioned transcript cues render as buttons with stable accessible time-range/text names.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Search is bounded to 80 characters/100 results and exposes explicit no-results state.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Actual media time sets valid aria-current=true without moving focus or scrolling.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "ArrowUp/Down/Home/End navigation and native button activation are implemented; Chromium exercises ArrowDown plus Enter.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Transcript metadata visibly links source ID/version, media hash identity, transcript version and SHA-256.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Active-cue updates never call scrollIntoView; browser test confirms zero calls while focus remains in search.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Missing transcript and missing captions are separate browser states; malformed/oversized cue data fails closed.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Transcript metadata explicitly marks translated=false and UI labels original synthetic English rather than replacing it with translation.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Session 0018 plus timing-transcript.vtt, metadata, bounded transcript index and browser interaction form the reviewed transcript artifact.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Phase exit observed: keyboard search/navigation work and absent transcript/caption states are explicit.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
         }
       ]
     }
