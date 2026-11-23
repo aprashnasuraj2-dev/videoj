@@ -83,3 +83,14 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Alternative considered: immediately follow the specification's normal redirect behavior. Rejected for this checkpoint because an origin-changing redirect can expand contact after the displayed approval. Redirects therefore fail closed until P037 supplies changed-origin policy/re-consent tests. This is intentionally stricter and not yet a full redirect-conformance claim.
 - Consent events and their standalone example are reusable Open Kit material. Permission visibility is not a reputation system, source-truth proof or independent adoption evidence.
 - P033-03 remains open: declaring MCP contact kinds in the reusable policy is not evidence that third-party MCP discovery/calls are wired through it.
+
+
+## SUTRA-DECISION-0010 - Opt-in caller-local peer execution and explicit failure propagation
+
+- 2026-11-23T18:29:19+05:45; supported code candidate `3b37a73db0a03577b81f3d34346ea70ff46ea0a5`, verified by https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45176985173/job/137700681281.
+- Decision: keep external network references forbidden unless the host injects an explicit `peerRuntime` consent inspector. The parser accepts only exact HTTPS peer references, with HTTP restricted to localhost/loopback fixtures. The existing manifest and graph loader invokes consent separately, and executable peer definitions remain refused.
+- Run approved peer graph data inside the caller's pinned agent loop with shared model adapter, model budget, agent budget, deadlines, cancellation and sanitized trace. The peer publisher receives **artifact GETs only**; model content is not posted to the peer service.
+- A pinned upstream runner otherwise catches tool exceptions and supplies error text to the model, which could be misrepresented as success. We preserve the vendor modules unchanged, while the host's peer resolver aborts the composition on artifact load failures with sanitized specific `PEER_*` codes. Distinguish unavailable manifest, unavailable graph, rejected exact name, consent denial and malformed data.
+- Alternative rejected: delegate model/prompt execution to a remote peer server with its own model keys. That would widen credential and prompt disclosure, reduce inspectability and make caller-controlled spending limits harder to enforce. Caller-local execution increases browser CPU/load and can still receive untrusted public instructions; it does not imply semantic truth or universal prompt-injection resistance.
+- Scope limited to SUTRA code and tests, not DHAGO/DETOUR or a public route. Two loopback origins, not independent HTTPS publishers, were observed. External third-party MCP, production CORS, private-credential canaries, real content, and independent adoption remain incomplete.
+- No changed release authorization: public launch and paid inference remain closed by decision 0008.
