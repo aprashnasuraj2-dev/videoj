@@ -3,7 +3,7 @@ export class ConsentError extends Error {
 }
 const fail=(code,message)=>{throw new ConsentError(code,message);};
 const plain=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
-const contactKinds=new Set(['peer_manifest','peer_graph','mcp_discovery','mcp_call']);
+const contactKinds=new Set(['peer_manifest','peer_graph','peer_evidence','mcp_discovery','mcp_call']);
 const labelPattern=/^[A-Za-z][A-Za-z0-9 _-]{0,79}$/;
 const networkPattern=/^[A-Za-z][A-Za-z0-9_]{0,59}$/;
 const allowed=(object,keys)=>{for(const key of Object.keys(object))if(!keys.includes(key))fail('CONTACT_FIELD','Unsupported contact metadata field.');};
