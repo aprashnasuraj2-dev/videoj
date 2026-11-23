@@ -1,6 +1,6 @@
 const HASH=/^[a-f0-9]{64}$/i;
 const COMMIT=/^[a-f0-9]{7,64}$/i;
-const NAME=/^[A-Za-z0-9_.:@/ -]{1,160}$/;
+const NAME=/^[A-Za-z0-9_.:@/# -]{1,160}$/;
 const ERROR=/^[A-Z][A-Z0-9_]{1,63}$/;
 const LIMIT_KEYS=['maxDepth','maxAgents','maxModelCalls','maxSteps','concurrency','timeoutMs','maxOutputChars','maxRemoteCalls','maxCallsPerPeer'];
 
@@ -41,11 +41,11 @@ function safeRuntimeEvents(events=[]){
  return {agents:unique(agents),tools:unique(tools),limitStops:unique(limits,8)};
 }
 function safeActionOutcomes(receipts=[]){
- return receipts.slice(0,16).map(receipt=>({
-  action:cleanText(receipt?.action,'unknown'),
-  requestId:cleanText(receipt?.requestId,'none'),
-  status:['succeeded','rejected','unknown','not_started'].includes(receipt?.status)?receipt.status:'unknown'
- }));
+ return receipts.slice(0,16).map(receipt=>{
+  const resultOutcome=receipt?.result?.outcome;
+  const status=resultOutcome==='rejected'?'rejected':['succeeded','rejected','unknown','not_started'].includes(receipt?.status)?receipt.status:'unknown';
+  return {action:cleanText(receipt?.action,'unknown'),requestId:cleanText(receipt?.requestId,'none'),status};
+ });
 }
 function clone(value){return JSON.parse(JSON.stringify(value));}
 function freeze(value){if(value&&typeof value==='object'&&!Object.isFrozen(value)){Object.freeze(value);for(const child of Object.values(value))freeze(child);}return value;}
