@@ -39,6 +39,16 @@ export function withSecurityHeaders(response,env={}){
  for(const [key,value] of Object.entries(securityHeaders(env)))headers.set(key,value);
  return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
 }
+export function withCachePolicy(response,request){
+ const url=new URL(request.url),path=url.pathname,headers=new Headers(response.headers);
+ let policy='public, max-age=0, must-revalidate';
+ if(path.startsWith('/api/'))policy='no-store';
+ else if(path.startsWith('/assets/'))policy='public, max-age=31536000, immutable';
+ else if(url.searchParams.has('v')&&(path.startsWith('/agents/')||path.startsWith('/media/')))policy='public, max-age=31536000, immutable';
+ else if(path==='/'||path.endsWith('.html')||path.endsWith('/agent-manifest.json')||path.endsWith('/links.json')||path.endsWith('.network.json')||path.startsWith('/media/'))policy='public, max-age=0, must-revalidate';
+ headers.set('Cache-Control',policy);
+ return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
+}
 
 const json=(data,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 // Restricted, stateless JSON-RPC/MCP facade. No caller URL, filesystem or DOM access.
@@ -63,5 +73,5 @@ export default {async fetch(request,env){
  else if(path==='/api/status'&&request.method==='GET')response=json({inference:inferenceStatus(env)?'configured':'disabled',sourceTools:'synthetic-catalog',factualTruth:'unverified'});
  else if(path.startsWith('/api/'))response=json({error:{code:'NOT_FOUND'}},404);
  else response=await (env.ASSETS?.fetch(request)??new Response('Not found',{status:404}));
- return withSecurityHeaders(response,env);
+ return withSecurityHeaders(withCachePolicy(response,request),env);
 }};
