@@ -1,0 +1,33 @@
+{
+  "@context": "http://www.w3.org/ns/anno.jsonld",
+  "id": "urn:sutra:annotation:record-reading-v3",
+  "type": "Annotation",
+  "motivation": "linking",
+  "created": "2026-11-23T15:20:00+05:45",
+  "generator": {
+    "id": "urn:sutra:evidence:web-annotation-media:0.1",
+    "type": "Software",
+    "name": "SUTRA evidence profile 0.1"
+  },
+  "body": {
+    "id": "urn:sutra:cue:record-reading",
+    "type": "TextualBody",
+    "purpose": "describing",
+    "value": "Synthetic example: record the displayed reading in the handover card.",
+    "format": "text/plain",
+    "language": "en"
+  },
+  "target": {
+    "type": "SpecificResource",
+    "source": {
+      "id": "https://example.invalid/sutra/media/synthetic-timing.mp4",
+      "type": "Video",
+      "format": "video/mp4"
+    },
+    "selector": {
+      "type": "FragmentSelector",
+      "conformsTo": "http://www.w3.org/TR/media-frags/",
+      "value": "t=12,18"
+    }
+  }
+}
