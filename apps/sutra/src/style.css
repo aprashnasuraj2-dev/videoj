@@ -60,3 +60,13 @@
 #review-list li{display:flex;flex-wrap:wrap;gap:8px;align-items:center;min-width:0}
 #review-list li span{flex:1 1 260px;overflow-wrap:anywhere}
 #review-list .review-action{border-color:#779787}
+
+#peer-status[data-state=completed]{border-left:3px solid #357561;background:#e7f0e7}
+#peer-status[data-state=denied],#peer-status[data-state=error],#peer-status[data-state=input_error]{border-left:3px solid #ad651e;background:#fff0e4}
+#peer-status[data-state=loading],#peer-status[data-state=consent]{border-left:3px solid #6f806f}
+#peer-inspector{margin-top:14px;border:1px solid #d3ddd4;border-radius:8px;padding:10px 12px}
+#peer-inspector>summary{font-weight:700}
+.peer-execution-summary{display:grid;grid-template-columns:minmax(150px,.45fr) minmax(0,1fr);column-gap:16px;row-gap:4px;margin:12px 0}
+.peer-execution-summary dt{margin:0;font-size:12px}.peer-execution-summary dd{margin:0;font-size:12px;overflow-wrap:anywhere}
+#peer-inspector h3{margin:16px 0 6px}
+@media(max-width:760px){.peer-execution-summary{grid-template-columns:1fr}.peer-execution-summary dd{margin-bottom:8px}}
