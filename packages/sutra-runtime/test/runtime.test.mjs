@@ -90,8 +90,7 @@ test('host action registry exposes only its narrow catalog through the runtime p
   inputSchema:{type:'object',properties:{receiptId:{type:'string',minLength:1,maxLength:40}},required:['receiptId'],additionalProperties:false},
   effect:'write',availability:'local-only',callerOrigins:['https://sutra.invalid'],timeoutMs:1000
  },async()=>({ok:true}));
- const seen=[];const model={mode:'scripted-test',async chat({messages})=>({content:'fixture action catalog inspected',toolCalls:[]})};
- const capture={mode:'scripted-test',async chat(args){seen.push(args.messages.map(m=>m.content).join('\n'));return {content:'fixture action catalog inspected',toolCalls:[]};}};
+ const seen=[];const capture={mode:'scripted-test',async chat(args){seen.push(args.messages.map(m=>m.content).join('\n'));return {content:'fixture action catalog inspected',toolCalls:[]};}};
  const result=await run({model:capture,actionRegistry:registry});
  assert.match(result.text,/fixture action catalog inspected/);assert.equal(seen.length,1);
  assert.ok(seen[0].includes(ref));assert.ok(seen[0].includes('save-review-card'));assert.ok(seen[0].includes('"effect":"write"'));
