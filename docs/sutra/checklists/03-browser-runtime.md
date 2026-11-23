@@ -186,6 +186,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P030-05` Send keys only in authorized model requests to the selected router and never to peer artifact origins
 - [x] `SUTRA-P030-06` Check URLs, prompts, actions, traces, analytics, exports and browser storage for synthetic key canaries
 - [x] `SUTRA-P030-07` Stop with a clear setup error if BYOK is selected but its required key/model configuration is absent
-- [ ] `SUTRA-P030-08` Prove the funded path and BYOK path can fail independently, with BYOK remaining usable when funded inference is throttled/unavailable
+- [x] `SUTRA-P030-08` Prove the funded path and BYOK path can fail independently, with BYOK remaining usable when funded inference is throttled/unavailable
 - [x] `SUTRA-P030-09` Produce and review the phase artifact: BYOK adapter, key-isolation trace and deletion/fallback behavior.
 - [ ] `SUTRA-P030-10` Close phase 030 only after its applicable tasks have evidence and its exit condition is observed: User keys reach only the selected router and never the second site or exported evidence.
