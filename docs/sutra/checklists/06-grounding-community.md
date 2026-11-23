@@ -118,29 +118,29 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P056-09` Produce and review the phase artifact: Version migration behavior and stale-card warning.
 - [ ] `SUTRA-P056-10` Close phase 056 only after its applicable tasks have evidence and its exit condition is observed: Replacing a fixture invalidates prior evidence links or marks them stale; hashes are described as integrity checks only.
 
-## Phase 057 - Extract the standalone evidence validator
+## Phase 057 - Publish the standalone Web Annotation media-evidence validator
 
 - **Baseline effort:** 2 person-hours; **owner:** E.
-- **Original phase dependencies:** 09,17,52,56. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Move schema validation into packages/sutra-evidence/ with no UI/player import. Ship a CLI or simple callable module, example receipts and documented error codes.
-- **Phase exit:** A clean host validates one good receipt and rejects three bad fixtures without the SUTRA app or private services.
+- **Priority override:** `SUTRA-DECISION-0010`. This is the flagship Potential Impact artifact.
+- **Intent:** Ship a dependency-free profile of the W3C Web Annotation model for timed media evidence: `Annotation` → `SpecificResource` → `FragmentSelector`, Media Fragments `t=start,end`, plus a separate SRI-style SHA-256 integrity manifest. Keep byte integrity distinct from factual truth.
+- **Phase exit:** From an unrelated working directory, the CLI validates the good annotation/transcript fixture and rejects altered bytes, a bad interval and an altered quotation without the SUTRA app, player, API key or private service.
 
-- [x] `SUTRA-P057-01` Create a standalone evidence package without UI or media dependencies
-- [x] `SUTRA-P057-02` Publish the receipt schema and supported version rules
-- [x] `SUTRA-P057-03` Expose a documented validator API and simple command-line entry point
-- [x] `SUTRA-P057-04` Return stable error codes for missing source, invalid time and altered hash
-- [x] `SUTRA-P057-05` Bundle valid and invalid synthetic fixtures
-- [x] `SUTRA-P057-06` Avoid requiring the learner application or private service credentials
-- [x] `SUTRA-P057-07` Run the validator from a separate clean host
-- [x] `SUTRA-P057-08` Document semantic-validation limits and compatibility expectations
-- [x] `SUTRA-P057-09` Produce and review the phase artifact: Open Kit artifact 1: evidence schema and validator.
-- [x] `SUTRA-P057-10` Close phase 057 only after its applicable tasks have evidence and its exit condition is observed: A clean host validates one good receipt and rejects three bad fixtures without the SUTRA app or private services.
+- [ ] `SUTRA-P057-01` Keep the evidence package independent of the learner UI, player and agent runtime
+- [ ] `SUTRA-P057-02` Map the public evidence object to W3C Web Annotation classes/properties rather than a bespoke SUTRA envelope
+- [ ] `SUTRA-P057-03` Use a `FragmentSelector` conforming to Media Fragments URI syntax with explicit `t=start,end` ranges
+- [ ] `SUTRA-P057-04` Keep resource integrity in a separate manifest with SRI-style `sha256-<base64>` metadata
+- [ ] `SUTRA-P057-05` Recompute supplied transcript/media bytes with Web Crypto before counting integrity as verified
+- [ ] `SUTRA-P057-06` Verify transcript cue ID, exact interval and exact quotation after the transcript bytes match
+- [ ] `SUTRA-P057-07` Bundle good and deliberately bad fixtures with stable error codes and no secret-bearing fields
+- [ ] `SUTRA-P057-08` Provide a tiny framework-free `#t=start,end` cue-link helper with no player dependency
+- [ ] `SUTRA-P057-09` Provide a clean-host CLI/quickstart targeted at first success within 15 minutes
+- [ ] `SUTRA-P057-10` Close phase 057 only after widened CI runs the annotation tests and CLI, and docs state that matching hashes prove bytes rather than truth.
 
-## Phase 058 - Extract the peer-consent inspector
+## Phase 058 - Consent inspector (completed earlier; example-only now)
 
 - **Baseline effort:** 2 person-hours; **owner:** E.
-- **Original phase dependencies:** 09,33-38,47. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Make a reusable component or module showing intended peer contact, scope and redacted outcome. Clearly state that schema/permission visibility does not establish publisher trust.
+- **Scope note:** This phase was validly completed before `SUTRA-DECISION-0010`. Keep the module/tests as an example of the required peer-contact boundary, but do not position it as the flagship community artifact and do not spend release-critical time polishing it.
+- **Intent:** Framework-neutral origin/purpose/disclosure approval with redacted decisions.
 - **Phase exit:** Another static page can use it; denial emits no fetch and exports contain no credential canary.
 
 - [x] `SUTRA-P058-01` Extract consent events and policy display into a reusable module
@@ -151,41 +151,42 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P058-06` Keep model credentials and raw private prompts out of exports
 - [x] `SUTRA-P058-07` Document that consent visibility is not a publisher reputation system
 - [x] `SUTRA-P058-08` Test integration without the DHAGO player or SUTRA corpus
-- [x] `SUTRA-P058-09` Produce and review the phase artifact: Open Kit artifact 2: consent inspector with a framework-neutral example.
-- [x] `SUTRA-P058-10` Close phase 058 only after its applicable tasks have evidence and its exit condition is observed: Another static page can use it; denial emits no fetch and exports contain no credential canary.
+- [x] `SUTRA-P058-09` Retain the framework-neutral example as secondary Open Kit material
+- [x] `SUTRA-P058-10` Historical phase exit remains evidenced; no additional release polish is required.
 
-## Phase 059 - Create an agentic-site starter
+## Phase 059 - Deferred general agentic-site starter
 
 - **Baseline effort:** 2 person-hours; **owner:** E.
-- **Original phase dependencies:** 09,22,31,57-58. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Build a minimal two-agent example with manifest, links, runtime wiring, sample local action and clear deploy instructions. Use synthetic licensed data and preserve runtime attribution.
-- **Phase exit:** A clean install serves the example without the main app; manifest and exact-name peer loading work.
+- **Scope decision:** `SUTRA-DECISION-0010`. A broad starter duplicates work already common among challenge entrants and is cut before the evidence validator, BYOK and real interoperability proof. The small peer package may remain as an example, not a release-critical starter product.
+- **Intent if resumed:** Build a minimal reusable agentic-site starter after the flagship evidence tool has outside validation.
+- **Phase exit if resumed:** A clean install serves the example without the main app; manifest and exact-name peer loading work.
 
-- [ ] `SUTRA-P059-01` Create a minimal two-agent starter with synthetic licensed content
-- [ ] `SUTRA-P059-02` Include manifest, resolved graph and named peer-link examples
-- [ ] `SUTRA-P059-03` Wire a pinned runtime and one safe registered local action
-- [ ] `SUTRA-P059-04` Document default inference setup without embedding real secrets
-- [ ] `SUTRA-P059-05` Include a second-origin example and denied-origin walkthrough
-- [ ] `SUTRA-P059-06` Keep starter build/install commands independent of the learner app
-- [ ] `SUTRA-P059-07` Retain required upstream license and NOTICE material
-- [ ] `SUTRA-P059-08` Verify clean publication and exact-name network loading
-- [ ] `SUTRA-P059-09` Produce and review the phase artifact: Open Kit artifact 3: publisher starter and example peer.
-- [ ] `SUTRA-P059-10` Close phase 059 only after its applicable tasks have evidence and its exit condition is observed: A clean install serves the example without the main app; manifest and exact-name peer loading work.
+- [-] `SUTRA-P059-01` Create a minimal two-agent starter with synthetic licensed content
+- [-] `SUTRA-P059-02` Include manifest, resolved graph and named peer-link examples
+- [-] `SUTRA-P059-03` Wire a pinned runtime and one safe registered local action
+- [-] `SUTRA-P059-04` Document default inference setup without embedding real secrets
+- [-] `SUTRA-P059-05` Include a second-origin example and denied-origin walkthrough
+- [-] `SUTRA-P059-06` Keep starter build/install commands independent of the learner app
+- [-] `SUTRA-P059-07` Retain required upstream license and NOTICE material
+- [-] `SUTRA-P059-08` Verify clean publication and exact-name network loading
+- [-] `SUTRA-P059-09` Produce and review the phase artifact only if this optional starter is resumed
+- [-] `SUTRA-P059-10` Close phase 059 only if the starter is later resumed and evidenced.
 
-## Phase 060 - Publish a versioned Open Kit candidate
+## Phase 060 - Package the evidence-first Open Kit candidate
 
 - **Baseline effort:** 1.5 person-hours; **owner:** E.
-- **Original phase dependencies:** 57-59. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Write quickstarts, API boundaries, Apache-compatible notices and troubleshooting. Add a community test command described as project checks, not an official certification suite.
-- **Phase exit:** Each tool has its own purpose, entry point, license and runnable example; no private data or tokens are packaged.
+- **Original phase dependencies:** 57; completed consent/peer examples may accompany it but are not required flagship artifacts.
+- **Intent:** Make the Web Annotation media-evidence validator the primary reusable contribution. Keep the consent inspector and static peer as small secondary examples. Optimize the flagship for an outside developer to reach a valid result within 15 minutes.
+- **Phase exit:** The evidence package has an immutable candidate version, standards mapping, CLI/API/cue-link entry points, synthetic fixtures, license and one-command tests; no private key or SUTRA-only corpus is required.
 
-- [ ] `SUTRA-P060-01` Assign an immutable candidate version to each community artifact
-- [ ] `SUTRA-P060-02` Write a purpose, quickstart and public entry point for each tool
-- [ ] `SUTRA-P060-03` Explain supported environments and incompatible optional capabilities
-- [ ] `SUTRA-P060-04` Include troubleshooting for schema, CORS, consent and router failures
-- [ ] `SUTRA-P060-05` Expose public source and runnable synthetic examples
-- [ ] `SUTRA-P060-06` Label project checks as project checks rather than official certification
-- [ ] `SUTRA-P060-07` Scan archives for private material and secret canaries
-- [ ] `SUTRA-P060-08` Record what remains unverified before asking outsiders to try it
-- [ ] `SUTRA-P060-09` Produce and review the phase artifact: Versioned community release candidate and public documentation paths.
-- [ ] `SUTRA-P060-10` Close phase 060 only after its applicable tasks have evidence and its exit condition is observed: Each tool has its own purpose, entry point, license and runnable example; no private data or tokens are packaged.
+- [ ] `SUTRA-P060-01` Assign an immutable candidate version to the evidence profile/package
+- [ ] `SUTRA-P060-02` Lead the Open Kit docs with the Web Annotation + Media Fragments + SRI mapping
+- [ ] `SUTRA-P060-03` Provide CLI, browser API and tiny cue-link entry points with one synthetic fixture set
+- [ ] `SUTRA-P060-04` Keep the 15-minute quickstart independent of the player, learner, peer and inference services
+- [ ] `SUTRA-P060-05` Retain Apache-compatible notices and clearly label project checks as non-official conformance checks
+- [ ] `SUTRA-P060-06` Preserve the hash-versus-truth boundary in all examples and output wording
+- [ ] `SUTRA-P060-07` Scan the candidate package/archive for private material and secret canaries
+- [ ] `SUTRA-P060-08` Keep consent inspector and static peer as optional examples rather than equal-weight products
+- [ ] `SUTRA-P060-09` Record the exact candidate hash/version and what remains unverified before outside trials
+- [ ] `SUTRA-P060-10` Close phase 060 only after one clean documented install reproduces the validator result without private context.
+
