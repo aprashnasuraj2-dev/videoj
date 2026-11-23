@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T14:22:27+05:45",
+  "updated_at": "2026-11-23T14:26:08+05:45",
   "work_branch": "main",
   "last_observed_code_sha": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
   "last_session_id": "SUTRA-SESSION-0005",
@@ -1997,6 +1997,13 @@
           "result": "pass",
           "source_revision": "61f44558b9512990f9c4155e31ff95d0d40bbe98",
           "observed_at": "2026-11-23T14:16:11+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0005.md",
+          "description": "Wrangler 4.166.0 deployment-free dry-run passed: 72 assets, Worker 32.49 KiB /9.16 KiB gzip, recognized bindings, inference disabled, no secrets or deployment. Runtime code matches tested candidate.",
+          "result": "pass",
+          "source_revision": "8eac23ab2ceb7eb11c7f9b7d265bedbb072a74d7",
+          "observed_at": "2026-11-23T14:26:08+05:45"
         }
       ]
     },

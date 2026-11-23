@@ -99,3 +99,8 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - 2026-11-23T14:22:27+05:45: source candidate 61f44558b9512990f9c4155e31ff95d0d40bbe98 passed all shell workflow steps, including real Chromium. Evidence: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45139865572/job/137574910727.
 - Final local totals: 59 runtime +11 inference +5 source registry +13 API/quota +21 app =109 tests; production build and ten upstream hashes pass. Chromium confirms unavailable-source refusal and 360px wrapping after retained failures.
 - 152/1000 checks, ten phases complete. P027 closes; P025-02/07/10 remain pending. Next P033-01 consent-before-contact boundary. No paid call, public deployment, original-content claim, independent adoption, ZIP delivery or Devpost filing occurred.
+
+
+### Session 0005 packaging follow-up
+
+- 2026-11-23T14:25:23+05:45: post-merge main shell/register CI succeeded. Wrangler 4.166.0 dry-run also passed (72 assets, Worker 32.49 KiB/9.16 KiB gzip, inference off, empty model allowlist, no supplied secrets). No deployment occurred; 152 checks remain verified. This supersedes only the earlier unobserved-bundle limitation.

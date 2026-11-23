@@ -251,7 +251,7 @@
     },
     {
       "path": "services/sutra-api/README.md",
-      "sha256": "d8464365fe5005310ea998b8a0aafa82c60caba096f3f9c85672c18d94801eb5"
+      "sha256": "3fdbe174b7b3e54a2f72525dd9e74f2e6cc4111400d815b5806170b50671e7bc"
     },
     {
       "path": "services/sutra-api/test/inference.test.mjs",
@@ -261,5 +261,6 @@
       "path": ".github/workflows/sutra-shell.yml",
       "sha256": "16a2716d3f8c5ec3f24519a38df8f6438b5230aef05a69397ebb3702a5970d66"
     }
-  ]
+  ],
+  "documentation_note": "Runtime candidate unchanged; setup documentation updated after deployment-free Wrangler observation."
 }

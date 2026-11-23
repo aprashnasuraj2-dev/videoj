@@ -41,3 +41,8 @@ Cloudflare release, final ZIP and Devpost filing are still outstanding. Read the
 session evidence and actual remote CI before continuing.
 
 [Verified browser workflow](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45139865572/job/137574910727). The register checkpoint is saved through PR #45; no public release is implied.
+
+
+Packaging follow-up: Wrangler 4.166.0 dry-run passed on 23 November 2026, reading
+72 assets and bundling a 32.49 KiB Worker (9.16 KiB gzip). Inference remains off;
+no migration, public route or deployed runtime result is established.
