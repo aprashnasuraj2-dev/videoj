@@ -131,3 +131,13 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Final peer candidate `4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb` passed the full SUTRA workflow: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493.
 - Credited P031-01/02/04/05/06/07/08/09. Total is 186/1000; phase 031 stays open. P031-03 actual corpus provenance and P031-10 distinct public HTTPS remain pending and are not simulated by loopback.
 - Next: P032-08 invocation-visible peer failure, P033-03 third-party MCP consent, then P035-01 caller-local peer execution. Public release remains closed.
+
+
+## SUTRA-SESSION-0008 — BYOK in-flight credential revocation
+
+- Checkpoint: 2026-11-23T16:07:00+05:45; working branch `sutra/peer-invocation`, PR #48; tested candidate `092c8d2c601bcfd7075a4062a4c13460257aaa90`.
+- Fixed a BYOK revocation gap: `clear()` formerly removed the closure secret for future calls but did not cancel model requests already in flight. Active request abort controllers are now tracked and aborted when the key is cleared, with cleanup in `finally`.
+- Added a node-test regression checking an already active fetch is aborted, no later transport occurs, and cancellation errors do not expose a synthetic secret.
+- GitHub Actions register and evidence jobs passed for the candidate. Shell CI had completed install, production build, app tests, inference/source/consent/API tests, pinned-vendor verification, runtime tests and independent-peer tests; Chromium installation and browser execution were still underway at the time this entry was recorded.
+- Not yet credited as new `[x]` items: original total stays 186/1000 until the final shell CI result is inspected. In particular P030-02 production CORS cannot be verified using a browser route fixture alone.
+- Next: inspect the exact candidate shell result, retain failure evidence if needed and continue the phase 030 BYOK credential-isolation checklist. Release, funded inference and public routes remain off.
