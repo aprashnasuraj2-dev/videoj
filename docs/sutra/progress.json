@@ -1,21 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T17:45:49+05:45",
+  "updated_at": "2026-11-23T17:59:22+05:45",
   "work_branch": "sutra/peer-invocation",
-  "last_observed_code_sha": "ee4a4829ee756b756b4d2dad7cc1223cf84d8e70",
-  "last_session_id": "SUTRA-SESSION-0016",
-  "stage": "phase_047_provenance_complete",
+  "last_observed_code_sha": "b8ef8baef4ff8176eb13290e021e9db50b4c8a7a",
+  "last_session_id": "SUTRA-SESSION-0017",
+  "stage": "phase_042_controls_partially_verified",
   "current_task": null,
-  "next_task": "SUTRA-P042-05",
+  "next_task": "SUTRA-P044-01",
   "ready_engineering_queue": [
-    "SUTRA-P042-05",
     "SUTRA-P044-01",
+    "SUTRA-P042-06",
     "SUTRA-P023-03",
     "SUTRA-P030-02",
     "SUTRA-P034-01"
   ],
-  "next_action": "Continue independent learner-quality work with Phase 042 ordinary media controls and error/focus checks, then transcript Phase 044. Keep live provider/router CORS and public HTTPS as external gates. Do not deploy or release.",
+  "next_action": "Build the timing-fixture transcript panel against its own 0–8 second media/version identity. Keep P042-06 open until a genuine alternate-codec compatibility path is observed. Do not release.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -4563,6 +4563,45 @@
           "result": "pass",
           "source_revision": "ee4a4829ee756b756b4d2dad7cc1223cf84d8e70",
           "observed_at": "2026-11-23T17:45:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:59:22+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Chromium exercises the shipped play/pause, mute/volume, captions and seek controls against actual native media; fullscreen control dispatch is verified with a controlled Fullscreen API shim while the headless real-fullscreen limitation is retained.",
+          "result": "pass",
+          "source_revision": "b8ef8baef4ff8176eb13290e021e9db50b4c8a7a",
+          "observed_at": "2026-11-23T17:59:22+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:59:22+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "At 360x800 the document does not horizontally clip and play/mute/captions/fullscreen controls remain within the viewport and keyboard focusable.",
+          "result": "pass",
+          "source_revision": "b8ef8baef4ff8176eb13290e021e9db50b4c8a7a",
+          "observed_at": "2026-11-23T17:59:22+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:59:22+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Session 0017 records the SUTRA player adapter, actual control/media observations, source replacement, native media error/retry surface and explicit missing-codec limitation.",
+          "result": "pass",
+          "source_revision": "b8ef8baef4ff8176eb13290e021e9db50b4c8a7a",
+          "observed_at": "2026-11-23T17:59:22+05:45"
         }
       ]
     }
