@@ -150,3 +150,13 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Credited BYOK P030-01/03/04/05/06/07/09 against the passing latest canary, deletion and key-revocation tests, with the actual source revision recorded in `progress.json`.
 - Total rises from 186 to **232 verified items**, **15 fully verified phases**. No synthetic fixture is counted as public HTTPS CORS, real model quality, live funded inference, factual lesson validation or independent outside adoption.
 - Open P030-02 actual permitted router CORS, P030-08 independent funded-path failure, P034-01 staging/public HTTPS, P036-04 upstream field policy and P037-07 full redirects. Release stays blocked under SUTRA-DECISION-0008.
+
+### Session 0008 redirect/path-consent hardening — in verification
+
+- Scope: P037-04/06/07/08 targeted engineering, not yet claimed verified.
+- fetchJsonWithConsent now rejects redirected responses and response URLs differing from the disclosed target, even if a custom transport silently followed a same-origin redirect. Native fetch still uses redirect:error, credentials:omit.
+- New real loopback HTTP tests cover same-origin, changed-origin and looping redirects, denied-before-transport and normal direct read. Chromium checks blocked manifest redirects while local lesson evidence remains functional.
+- Manifest-declared graph path changes now require a fresh session approval; query-bearing or overlong graph paths fail before graph contact. Changed-path and query-denial regression fixtures added.
+- Prior candidate 49e4f00178063c0f484dd6582883f947a754b547 FAILED the browser assertion: a blocked peer load may surface inside the invoking agent tool result rather than top-level (PEER_ARTIFACT). Corrected observable assertion; failed CI retained at https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45157301045 and not credited as success.
+- Redirect rejection is deliberately stricter than full Profile 0.3 redirect interoperability. Same-URL changed content is not yet hash-bound to authorization. No public HTTPS or third-party-publisher validation; phase 037 remains incomplete.
+- Do not credit checklist tasks before complete, passing current candidate CI. Historical verified baseline remains 232/1000.
