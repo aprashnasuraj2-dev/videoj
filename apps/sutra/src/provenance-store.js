@@ -37,9 +37,9 @@ function safeConsent(events=[]){
 function safeRuntimeEvents(events=[]){
  const agents=[],tools=[],limits=[];
  for(const event of events){
-  if(event?.phase==='start'&&event.kind==='agent'&&NAME.test(String(event.agent??'')))agents.push(event.agent);
-  if(event?.phase==='start'&&event.kind==='tool'&&NAME.test(String(event.tool??'')))tools.push(event.tool);
-  if(event?.kind==='composition_limit'&&NAME.test(String(event.limit??'')))limits.push(event.limit);
+  if(event?.phase==='start'&&event.kind==='agent'){const value=cleanText(event.agent,'');if(value)agents.push(value);}
+  if(event?.phase==='start'&&event.kind==='tool'){const value=cleanText(event.tool,'');if(value)tools.push(value);}
+  if(event?.kind==='composition_limit'){const value=cleanText(event.limit,'');if(value)limits.push(value);}
  }
  return {agents:unique(agents),tools:unique(tools),limitStops:unique(limits,8)};
 }
