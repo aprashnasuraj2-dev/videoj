@@ -1,4 +1,5 @@
 import {createSourceMcp} from './source-mcp.js';
+import {createThirdPartyMcp} from './third-party-mcp.js';
 import {fetchJsonWithConsent} from '../sutra-consent/index.js';
 import {AgentNetwork, validateNetwork, isExternalAgent, isMcpTool, parseExternalAgent, filterSlyData} from './vendor/nsdeploy/kernel.js';
 import {runAgent} from './vendor/nsdeploy/runner.js';
@@ -135,6 +136,7 @@ function validateExternalHost(external){
  if(base.origin!==external.baseOrigin||base.username||base.password||base.pathname!=='/'||base.search||base.hash||base.protocol!=='https:'&&!(base.protocol==='http:'&&loopback))fail('EXTERNAL_CONFIG','Caller base origin must be an exact HTTPS origin (loopback HTTP for development).');
  if(external.fetchImpl!==undefined&&typeof external.fetchImpl!=='function')fail('EXTERNAL_CONFIG','External artifact fetch implementation must be callable.');
  if(external.resolveMcp!==undefined&&typeof external.resolveMcp!=='function')fail('EXTERNAL_CONFIG','MCP resolver must be callable.');
+ if(external.mcpFetch!==undefined&&typeof external.mcpFetch!=='function')fail('EXTERNAL_CONFIG','MCP fetch implementation must be callable.');
  if(external.peerContext!==undefined){
   if(!plain(external.peerContext)||Object.keys(external.peerContext).length>16)fail('EXTERNAL_CONFIG','Peer private-context policy must be a bounded exact-URL map.');
   for(const [peerUrl,policy] of Object.entries(external.peerContext)){
@@ -197,7 +199,7 @@ function validateMcpClient(client,ref){
 
 export async function runNetwork({definition,name='learner',frontMan='learner',request,model,modelName='',limits={},signal,onEvent,sourceTools,external,privateContext={}}={}){
  const host=validateExternalHost(external);
- const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeerNetworks:!!host,allowMcp:!!host?.resolveMcp});
+ const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeerNetworks:!!host,allowMcp:!!(host?.resolveMcp||host?.mcpFetch)});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
  if(!plain(privateContext)||Object.keys(privateContext).length>32||Object.keys(privateContext).some(key=>!idPattern.test(key)))fail('PRIVATE_CONTEXT','Private context must use bounded identifier keys.');
  assertJsonData(privateContext);let privateBytes;try{privateBytes=new TextEncoder().encode(JSON.stringify(privateContext)).length;}catch{fail('PRIVATE_CONTEXT','Private context must be finite JSON data.');}
@@ -269,7 +271,16 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
     throw error;
    }
   };
-  const resolveMcp=sourceClient?async ref=>{check();if(ref?.url==='/api/source-tools')return sourceClient;if(!host?.resolveMcp)return unavailable();return validateMcpClient(await host.resolveMcp(ref),ref);}:host?.resolveMcp?async ref=>{check();return validateMcpClient(await host.resolveMcp(ref),ref);}:unavailable;
+  const externalMcpClient=async ref=>{
+   check();
+   if(host?.resolveMcp)return validateMcpClient(await host.resolveMcp(ref),ref);
+   if(host?.mcpFetch){
+    const raw=typeof ref==='string'?ref:ref?.url;
+    return validateMcpClient(createThirdPartyMcp({url:raw,fetchImpl:host.mcpFetch,signal:controller.signal}),ref);
+   }
+   return unavailable();
+  };
+  const resolveMcp=sourceClient?async ref=>{check();if(ref?.url==='/api/source-tools')return sourceClient;return externalMcpClient(ref);}:host?(async ref=>externalMcpClient(ref)):unavailable;
   const resolveRemote=host?async(peerUrl,chain,parentSpan)=>{
    check();
    let loaded;
