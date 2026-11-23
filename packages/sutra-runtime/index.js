@@ -188,6 +188,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    check();
    if(!plain(message)||!plain(message.user_message)||typeof message.user_message.text!=='string')fail('PEER_REQUEST','Invalid delegated peer request.');
    const approvedContext=privatePolicy.downstream(url,loaded.name);
+   trace.note('private_context_policy',{origin:loaded.origin,network:loaded.name,status:Object.keys(approvedContext).length?'shared':'none'});
    const contextText=privateContextPrompt(approvedContext);
    // Inject the caller security boundary at the peer's model boundary rather
    // than mutating public graph instructions. Runtime-owned capability checks
