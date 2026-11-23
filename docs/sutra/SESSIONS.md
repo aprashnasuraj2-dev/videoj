@@ -142,3 +142,14 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Retained failed intermediate CI observations and corrections in the evidence report; no failed test was counted as passing.
 - Machine checklist increases from 186 to 196 verified checks and from 11 to 12 complete phases, pending register audit. `SUTRA-P035-05` and phase 035 exit remain open. Next `SUTRA-P033-03`: third-party MCP discovery/invocation consent; no external endpoint has been contacted.
 - The participant release gate remains in force: no release, domain assignment, public model, public HTTPS peer, licensed real corpus, ZIP or Devpost filing.
+
+
+## SUTRA-SESSION-0008 - External read-only MCP consent, bounded transport and browser CORS
+
+- 2026-11-23T18:53:00+05:45: continued draft PR #49 on SUTRA only; no release, domain mapping, funded provider or DHAGO/DETOUR change.
+- Added exact opt-in third-party `/mcp` client under `packages/sutra-runtime/external-mcp.js`. Requires operator-supplied fixed URL and existing consent inspector; protocol version 2025-06-18, stateless JSON only, one audited-schema `read_public` tool, no credential, no redirect, no SSE/session/write or arbitrary URL fallback.
+- Consent is separately required before `initialize`/`tools/list` discovery and before actual `tools/call`; denial or failed contact stops the invoking network. Discovery and result bounds, allowed tool name, data validation and redacted consent logs are covered in runtime tests.
+- Exact green code candidate `e2766f1ca8bc1b09d2495af977f749e4a8317de1`: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45178921845/job/137707320526. Four Chromium scripts included real-browser cross-origin public-read MCP: denied discovery emitted zero POSTs, denied call emitted no call, allowed path made four bounded requests, CORS refusal failed closed, cookies/secret canaries absent.
+- Credited P033-03 and P039-02/03/04/06/08/09, increasing from 196 to **203/1000** verified checks. P033-10 remains pending until the new same-page media/evidence-after-denial test added at `12aae467ce7ebfd7cd1929f0360d1d8ca598fd7e` is observed green. This latest test revision has not been silently credited.
+- An actual independently approved outside MCP read-only publisher, real HTTP service timeout behavior, external auth and provider/BYOK separation evidence remain pending. Details and intermediate CI limitations in [session 0008](evidence/implementation/SESSION-0008.md).
+- Next cursor P033-10, then P039-01/05 and P035-05. User release gate persists.
