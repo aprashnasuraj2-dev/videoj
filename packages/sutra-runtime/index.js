@@ -195,7 +195,7 @@ function validateMcpClient(client,ref){
  };
 }
 
-export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,external,privateContext={}}={}){
+export async function runNetwork({definition,name='learner',frontMan='learner',request,model,modelName='',limits={},signal,onEvent,sourceTools,external,privateContext={}}={}){
  const host=validateExternalHost(external);
  const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeerNetworks:!!host,allowMcp:!!host?.resolveMcp});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
@@ -204,6 +204,9 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  if(privateBytes>8192)fail('PRIVATE_CONTEXT','Private context exceeds the 8 KiB runtime limit.');
  const initialPrivateContext=structuredClone(privateContext);
  if(!model||typeof model.chat!=='function'||!['scripted-test','provider'].includes(model.mode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
+ if(typeof modelName!=='string'||modelName.length>120||/[\u0000-\u001f\u007f]/.test(modelName))fail('MODEL_POLICY','Caller model selection must be bounded text.');
+ const selectedModel=modelName.trim();
+ if(host&&model.mode==='provider'&&!selectedModel)fail('MODEL_POLICY','External peer execution requires an explicit caller-selected provider model.');
  if(signal?.aborted)fail('CANCELLED','Run cancelled before model execution.');
  const bounds=compiled.limits,controller=new AbortController();
  const aborted=()=>controller.abort(signal?.reason??new RuntimeError('CANCELLED','Run cancelled.'));
@@ -218,7 +221,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const stopped=new Promise((_,reject)=>{rejectAbort=()=>reject(controller.signal.reason);controller.signal.addEventListener('abort',rejectAbort,{once:true});if(controller.signal.aborted)rejectAbort();});
  stopped.catch(()=>{});
  const guardedModel={chat:async args=>{
-  check();if(modelCalls>=bounds.maxModelCalls)fail('MODEL_LIMIT','Model-call budget exceeded.');modelCalls++;
+  check();if(selectedModel&&args.model!==selectedModel)fail('MODEL_POLICY','Peer or graph model hint attempted to bypass the caller-selected model.');if(modelCalls>=bounds.maxModelCalls)fail('MODEL_LIMIT','Model-call budget exceeded.');modelCalls++;
   while(active>=bounds.concurrency){await new Promise(resolve=>waiters.push(resolve));check();}
   active++;const span=trace.start('model_call',{mode:model.mode,parent:args.parentSpan});
   try{
@@ -283,7 +286,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
      const peerCtx={
       network:peerCompiled.network,frontMan:peerCompiled.frontMan,baseOrigin:loaded.origin,displayOrigin:loaded.origin,
       llm:guardedModel,trace,composition,slyData:permitted,history:[],isTop:false,
-      mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote:unavailable,
+      mock:model.mode==='scripted-test',apiKey:'',defaultModel:selectedModel||'fixture-only',modelOverride:selectedModel,resolveRemote:unavailable,
       resolveMcp:unavailable,resolveLink:unavailable,requestConsent:async()=> 'decline'
      };
      const result=await runAgent(peerCtx,peerCompiled.frontMan,String(envelope?.user_message?.text??''),parentSpan,[...parentChain,key]);
@@ -293,7 +296,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
     }
    };
   }:unavailable;
-  const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:host?.baseOrigin??sourceTools?.origin??'https://sutra.invalid',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:initialPrivateContext,history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote,resolveMcp,resolveLink:unavailable,requestConsent};
+  const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:host?.baseOrigin??sourceTools?.origin??'https://sutra.invalid',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:initialPrivateContext,history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:selectedModel||'fixture-only',modelOverride:selectedModel,resolveRemote,resolveMcp,resolveLink:unavailable,requestConsent};
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
   if(!result.text||events.some(e=>e.kind==='composition_limit'))fail('INCOMPLETE','Execution stopped before a complete answer.');
   return {text:result.text,mode:model.mode,modelCalls,agentCalls:composition.agentCalls,remoteCalls:composition.remoteCalls,events};
