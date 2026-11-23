@@ -53,25 +53,27 @@ function freeze(value){if(value&&typeof value==='object'&&!Object.isFrozen(value
 export function createProvenanceStore({specCommit,runtimeSha,buildSha,maxRuns=12,clock=()=>Date.now()}={}){
  if(!Number.isInteger(maxRuns)||maxRuns<1||maxRuns>32)throw new TypeError('maxRuns must be 1–32.');
  const fixed=freeze({specCommit:cleanCommit(specCommit),runtimeSha:cleanCommit(runtimeSha),buildSha:cleanCommit(buildSha)});
- const runs=[];let sequence=0,active=null;
+ const runs=[],active=new Map();let sequence=0;
  function begin({kind='run',graphSha='unknown',modelId='unknown',router='unknown',limits={}}={}){
+  if(active.size>=4)throw new Error('Too many active provenance runs.');
   const startedAt=clock();if(!Number.isFinite(startedAt))throw new TypeError('clock must return a finite number.');
-  active={id:`run-${++sequence}`,kind:cleanText(kind,'run'),startedAt,graphSha:cleanHash(graphSha),modelId:cleanText(modelId),router:cleanText(router),limits:cleanLimits(limits)};
-  return active.id;
+  const record={id:`run-${++sequence}`,kind:cleanText(kind,'run'),startedAt,graphSha:cleanHash(graphSha),modelId:cleanText(modelId),router:cleanText(router),limits:cleanLimits(limits)};
+  active.set(record.id,record);return record.id;
  }
- function finish({graphSha,modelId,router,origins=[],consentEvents=[],runtimeEvents=[],agentCalls=0,modelCalls=0,remoteCalls=0,errorCode='none',status='complete',actionReceipts=[]}={}){
-  if(!active)throw new Error('No active provenance run.');
+ function finish({runId,graphSha,modelId,router,origins=[],consentEvents=[],runtimeEvents=[],agentCalls=0,modelCalls=0,remoteCalls=0,errorCode='none',status='complete',actionReceipts=[]}={}){
+  const id=runId??(active.size===1?active.keys().next().value:null),current=id?active.get(id):null;
+  if(!current)throw new Error('No matching active provenance run.');
   const endedAt=clock(),runtime=safeRuntimeEvents(runtimeEvents);
   const run=freeze({
-   ...fixed,id:active.id,kind:active.kind,status:['complete','failed','cancelled','partial'].includes(status)?status:'failed',
-   graphSha:cleanHash(graphSha??active.graphSha),modelId:cleanText(modelId??active.modelId),router:cleanText(router??active.router),
+   ...fixed,id:current.id,kind:current.kind,status:['complete','failed','cancelled','partial'].includes(status)?status:'failed',
+   graphSha:cleanHash(graphSha??current.graphSha),modelId:cleanText(modelId??current.modelId),router:cleanText(router??current.router),
    origins:unique(origins.map(cleanOrigin),16),consent:safeConsent(consentEvents),agents:runtime.agents,tools:runtime.tools,limitStops:runtime.limitStops,
    calls:{agent:Number.isInteger(agentCalls)&&agentCalls>=0?Math.min(agentCalls,1000):0,model:Number.isInteger(modelCalls)&&modelCalls>=0?Math.min(modelCalls,1000):0,remote:Number.isInteger(remoteCalls)&&remoteCalls>=0?Math.min(remoteCalls,1000):0},
-   limits:active.limits,elapsedMs:Number.isFinite(endedAt)?Math.max(0,Math.min(3600000,Math.round(endedAt-active.startedAt))):0,
+   limits:current.limits,elapsedMs:Number.isFinite(endedAt)?Math.max(0,Math.min(3600000,Math.round(endedAt-current.startedAt))):0,
    error:ERROR.test(String(errorCode??''))?String(errorCode):'none',
    actions:safeActionOutcomes(actionReceipts)
   });
-  runs.push(run);while(runs.length>maxRuns)runs.shift();active=null;return clone(run);
+  active.delete(current.id);runs.push(run);while(runs.length>maxRuns)runs.shift();return clone(run);
  }
  function recordAction(receipts=[]){
   const latest=runs.at(-1);if(!latest)return null;
@@ -80,5 +82,5 @@ export function createProvenanceStore({specCommit,runtimeSha,buildSha,maxRuns=12
  }
  function latest(){return runs.length?clone(runs.at(-1)):null;}
  function exportData(){return freeze({version:1,generatedAt:new Date(clock()).toISOString(),runs:clone(runs)});}
- return Object.freeze({begin,finish,recordAction,latest,exportData,size:()=>runs.length});
+ return Object.freeze({begin,finish,recordAction,latest,exportData,size:()=>runs.length,activeSize:()=>active.size});
 }
