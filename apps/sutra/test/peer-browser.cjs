@@ -160,6 +160,37 @@ const assert=require('node:assert/strict');
   await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Actual media duration: 8.0 seconds.'));
   assert.equal(await page.locator('video').count(),1,'local native video works after blocked peer redirects');
+  const contextBefore=peerRequests.length;
+  const contextResult=await page.evaluate(async({modules,peer})=>{
+   const [{runNetwork},{createScriptedModel},{createConsentInspector}]=await Promise.all([
+    import(modules.runtime),import(modules.model),import(modules.consent)
+   ]);
+   const definition=await (await fetch('/agents/learner.network.json',{credentials:'omit'})).json();
+   definition.tools[0].tools=[peer+'/agents/checklist'];
+   const base=createScriptedModel(),seen=[];
+   const model={...base,async chat(args){
+    seen.push({origin:args.origin,messages:structuredClone(args.messages)});
+    return base.chat(args);
+   }};
+   const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+   const result=await runNetwork({
+    definition,request:'Inspect synthetic evidence.',model,
+    privateContext:{locale:'ne-NP',secretCanary:'PRIVATE_BROWSER_CONTEXT_CANARY_456'},
+    peerContextGrants:[{peerUrl:peer+'/agents/checklist',network:'checklist',toPeer:['locale'],toCaller:['locale']}],
+    peerRuntime:{inspector}
+   });
+   return {events:result.events,
+    peerPrompts:seen.filter(x=>x.origin===peer).map(x=>JSON.stringify(x.messages)),
+    localPrompts:seen.filter(x=>x.origin==='sutra-local').map(x=>JSON.stringify(x.messages))};
+  },{modules,peer});
+  assert.equal(peerRequests.length,contextBefore+2);
+  assert.ok(peerRequests.slice(contextBefore).every(r=>!JSON.stringify(r.headers).includes('PRIVATE_BROWSER_CONTEXT_CANARY_456')));
+  assert.ok(peerRequests.slice(contextBefore).every(r=>!JSON.stringify(r.headers).includes('ne-NP')));
+  assert.ok(contextResult.peerPrompts.some(text=>text.includes('"locale":"ne-NP"')));
+  assert.ok(contextResult.peerPrompts.every(text=>!text.includes('PRIVATE_BROWSER_CONTEXT_CANARY_456')));
+  assert.ok(contextResult.localPrompts.some(text=>text.includes('"private_context"')&&text.includes('ne-NP')));
+  assert.ok(contextResult.localPrompts.every(text=>!text.includes('PRIVATE_BROWSER_CONTEXT_CANARY_456')));
+  assert.ok(!JSON.stringify(contextResult.events).includes('PRIVATE_BROWSER_CONTEXT_CANARY_456'));
   const transcript=await page.evaluate(async root=>{
    const {mountTranscriptPanel}=await import('/@fs/'+root+'/apps/sutra/src/transcript-panel.js');
    const container=document.createElement('div');document.body.append(container);
@@ -204,7 +235,7 @@ const assert=require('node:assert/strict');
   },root);
   assert.deepEqual(transcript,{arrowMoved:true,translatedVisible:true,cueActivated:true,preservedFocus:true,noResults:true,missing:true,captionMissing:true,longVisible:true,noAutoFollow:true,noHorizontalClipping:true});
   assert.deepEqual(pageErrors,[]);
-  console.log('PASS: Chromium two-origin peer CORS, denial before transport, exact artifact GETs, caller-local 3-agent/5-model composition, redacted consent and specific wrong-name refusal.');
+  console.log('PASS: Chromium two-origin peer CORS, denial before transport, exact artifact GETs, caller-local 3-agent/5-model composition, redacted consent, exact destination-bound private context, strict redirects and specific wrong-name refusal.');
  }finally{
   if(browser)await browser.close();
   for(const child of processes)child.kill();
