@@ -77,3 +77,16 @@ test('peer execution shares the model budget with the invoking agent',async()=>{
   fetchImpl:async url=>Response.json(url.endsWith('agent-manifest.json')?manifest():sourceGraph)
  }}),error=>error.code==='MODEL_LIMIT');
 });
+
+test('manifest failure and declared graph failure retain separate caller-visible codes',async()=>{
+ const missing=new Response('Not found',{status:404,headers:{'content-type':'text/plain'}});
+ let calls=0;
+ await assert.rejects(drive({peerRuntime:{inspector:approved(),fetchImpl:async()=>{calls++;return missing;}}}),e=>e.code==='PEER_MANIFEST_UNAVAILABLE');
+ assert.equal(calls,1);
+ calls=0;
+ await assert.rejects(drive({peerRuntime:{inspector:approved(),fetchImpl:async url=>{
+  calls++;
+  return url.endsWith('agent-manifest.json')?Response.json(manifest()):missing;
+ }}}),e=>e.code==='PEER_GRAPH_UNAVAILABLE');
+ assert.equal(calls,2);
+});
