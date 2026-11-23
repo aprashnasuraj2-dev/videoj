@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T17:11:35+05:45",
+  "updated_at": "2026-11-23T17:21:26+05:45",
   "work_branch": "sutra/peer-invocation",
-  "last_observed_code_sha": "37d0a45371db717b5f44c2f839b8bbb8345538e7",
-  "last_session_id": "SUTRA-SESSION-0013",
-  "stage": "phase_028_execution_budgets_complete",
+  "last_observed_code_sha": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+  "last_session_id": "SUTRA-SESSION-0014",
+  "stage": "phase_029_reviewed_actions_complete",
   "current_task": null,
-  "next_task": "SUTRA-P023-05",
+  "next_task": "SUTRA-P023-03",
   "ready_engineering_queue": [
-    "SUTRA-P023-05",
-    "SUTRA-P029-01",
+    "SUTRA-P040-01",
+    "SUTRA-P023-03",
     "SUTRA-P030-02",
     "SUTRA-P034-01"
   ],
-  "next_action": "Reconcile current browser source/action runtime evidence for P023-05/09, then implement P029-01 registered local write actions if still missing. Live P030-02/P034 remain external gates. Do not release.",
+  "next_action": "Continue independent engineering with the next non-external safety/acceptance task (P040-01) while keeping P023-03/P030-02 live provider tests and P034 public HTTPS as external gates. Do not deploy or release.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -4250,6 +4250,58 @@
           "result": "pass",
           "source_revision": "37d0a45371db717b5f44c2f839b8bbb8345538e7",
           "observed_at": "2026-11-23T17:11:35+05:45"
+        }
+      ]
+    },
+    "SUTRA-P023-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:21:26+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0014.md",
+          "description": "Host-owned ActionRegistry is passed through runNetwork; CRUSE-v1 learner invocation receives only the exact caller/network catalog, while invalid registries fail before model execution.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:21:26+05:45"
+        }
+      ]
+    },
+    "SUTRA-P023-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:21:26+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0014.md",
+          "description": "Runtime entry, CRUSE-v1 public graph, host action registry and successful local Chromium invocation form the reviewed browser runtime artifact; live provider invocation remains separate.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:21:26+05:45"
+        }
+      ]
+    },
+    "SUTRA-P029-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:21:26+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0014.md",
+          "description": "Registered save-review-card and export-receipt as local-only write actions with strict receipt schemas and host-owned execution handlers.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:21:26+05:45"
+        }
+      ]
+    },
+    "SUTRA-P029-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:21:26+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0014.md",
+          "description": "Phase exit observed in Chromium/unit tests: cancel executes no write, frozen reviewed payloads cannot change after preview, and changed arguments require a fresh preparation/confirmation.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:21:26+05:45"
         }
       ]
     }
