@@ -13,6 +13,8 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
   assert.match(await page.locator('#comparison-body .comparison-status').innerText(),/No reviewed guide claim/);
   assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/synthetic-timing-fixture/);
+  assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/Fixture receipt retrieval timestamp/);
+  assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/SUTRA local synthetic timing catalog/);
   await page.getByRole('button',{name:'Inspect native video cue at 2 seconds'}).click();
   assert.match(await page.locator('#comparison-body .comparison-seek-status').innerText(),/Video cue unavailable/);
   await page.getByRole('button',{name:'Demonstrate a synthetic conflict'}).click();
@@ -20,6 +22,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.match(await page.locator('#comparison-body .comparison-status').innerText(),/Neither side is declared factually correct/);
   assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/two signatures/);
   assert.match(await page.locator('#comparison-body .comparison-card').last().innerText(),/three signatures/);
+  assert.match(await page.locator('#comparison-body .comparison-card').last().innerText(),/not an external publisher/);
   await page.getByRole('button',{name:'Inspect available evidence'}).click();
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
   await page.getByRole('button',{name:'Check example',exact:true}).click();assert.match(await page.locator('#result').innerText(),/Catalog matched/);assert.match(await page.locator('#result').innerText(),/Factual truth has not been checked/);
