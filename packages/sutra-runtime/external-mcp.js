@@ -57,7 +57,12 @@ export function createExternalReadMcp(options,{signal}={}){
      headers:{'Content-Type':'application/json',Accept:'application/json, text/event-stream','MCP-Protocol-Version':'2025-06-18'},
      body
    }),abort.promise]);}
-   catch{fail(signal?.aborted?'MCP_CANCELLED':'MCP_TRANSPORT','External MCP transport failed or timed out.');}
+   catch(error){
+    if(error instanceof ExternalMcpError)throw error;
+    if(signal?.aborted)fail('MCP_CANCELLED','Third-party MCP operation was cancelled.');
+    if(controller.signal.aborted)fail('MCP_TIMEOUT','Third-party MCP endpoint exceeded the five-second operation limit.');
+    fail('MCP_TRANSPORT','External MCP transport failed.');
+   }
    if(response?.url){
     let actual;try{actual=new URL(response.url);}catch{fail('MCP_RESPONSE','Invalid MCP response URL.');}
     if(actual.href!==url)fail('MCP_REDIRECT','External MCP changed endpoint.');
@@ -70,7 +75,10 @@ export function createExternalReadMcp(options,{signal}={}){
    try{
     while(true){
      let next;
-     try{next=await Promise.race([reader.read(),abort.promise]);}catch{fail(signal?.aborted?'MCP_CANCELLED':'MCP_TIMEOUT','Third-party MCP response was interrupted.');}
+     try{next=await Promise.race([reader.read(),abort.promise]);}catch(error){
+      if(error instanceof ExternalMcpError)throw error;
+      fail(signal?.aborted?'MCP_CANCELLED':'MCP_TIMEOUT',signal?.aborted?'Third-party MCP operation was cancelled.':'Third-party MCP response exceeded the five-second operation limit.');
+     }
      if(next.done)break;
      total+=next.value.byteLength;
      if(total>32768)fail('MCP_SIZE','Third-party MCP response exceeded 32 KiB.');
