@@ -1,20 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T18:54:00+05:45",
+  "updated_at": "2026-11-23T19:47:30+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "12aae467ce7ebfd7cd1929f0360d1d8ca598fd7e",
-  "last_session_id": "SUTRA-SESSION-0008",
-  "stage": "consent_phase_closed_mcp_fixture_only",
+  "last_observed_code_sha": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+  "last_session_id": "SUTRA-SESSION-0009",
+  "stage": "learner_workflow_and_security_boundary_integrated",
   "current_task": null,
-  "next_task": "SUTRA-P039-01",
+  "next_task": "SUTRA-P039-05",
   "ready_engineering_queue": [
-    "SUTRA-P039-01",
     "SUTRA-P039-05",
-    "SUTRA-P039-07",
-    "SUTRA-P035-05"
+    "SUTRA-P036-03",
+    "SUTRA-P045-03",
+    "SUTRA-P041-04",
+    "SUTRA-P049-01"
   ],
-  "next_action": "Obtain/identify an explicitly permitted real third-party public-read MCP service and verify 2025-06-18 JSON-only compatibility, timeouts and separate authentication; then run private provider/BYOK credential-canary tests. Do not release before major gates.",
+  "next_action": "Add controlled source-backed read-only MCP transport with exact catalog provenance; test the successful grounded synthetic read, discovery failure and real timeout for P039-05. Then define destination-bound private context transfer, connect rights-cleared guide content, and run human/HTTPS/provider acceptance when permitted. Public release, funded inference and Devpost stay closed.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -3176,6 +3177,1186 @@
           "result": "pass",
           "source_revision": "12aae467ce7ebfd7cd1929f0360d1d8ca598fd7e",
           "observed_at": "2026-11-23T18:54:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Browser fake-BYOK canary, fixed caller-approved provider model and exact two-artifact GET path with no credential transfer; local peer/model trace and inherited budget passed, not a paid live provider.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Browser fake-BYOK canary, fixed caller-approved provider model and exact two-artifact GET path with no credential transfer; local peer/model trace and inherited budget passed, not a paid live provider.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Private adapter context remained separate from delegated ordinary request text; no default slyData forwarding, fake secret canaries absent from approved peer network requests, documented plain-text disclosure residual.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Private adapter context remained separate from delegated ordinary request text; no default slyData forwarding, fake secret canaries absent from approved peer network requests, documented plain-text disclosure residual.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Private adapter context remained separate from delegated ordinary request text; no default slyData forwarding, fake secret canaries absent from approved peer network requests, documented plain-text disclosure residual.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Private adapter context remained separate from delegated ordinary request text; no default slyData forwarding, fake secret canaries absent from approved peer network requests, documented plain-text disclosure residual.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Chromium cross-origin, same-origin, loop and denied redirect fixtures refused by redirect-error without any follow; no authentication transfer and local video/evidence stayed usable. Full redirect-approval conformance remains open.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Chromium cross-origin, same-origin, loop and denied redirect fixtures refused by redirect-error without any follow; no authentication transfer and local video/evidence stayed usable. Full redirect-approval conformance remains open.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Chromium cross-origin, same-origin, loop and denied redirect fixtures refused by redirect-error without any follow; no authentication transfer and local video/evidence stayed usable. Full redirect-approval conformance remains open.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Chromium cross-origin, same-origin, loop and denied redirect fixtures refused by redirect-error without any follow; no authentication transfer and local video/evidence stayed usable. Full redirect-approval conformance remains open.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Chromium cross-origin, same-origin, loop and denied redirect fixtures refused by redirect-error without any follow; no authentication transfer and local video/evidence stayed usable. Full redirect-approval conformance remains open.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Adversarial public graph fixtures tried nested external destinations, MCP, coded tools, REST/write and unauthorized allow blocks. Exact runtime schema, caller-owned model override, and default deny rejected them; no blanket prompt-injection immunity.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Adversarial public graph fixtures tried nested external destinations, MCP, coded tools, REST/write and unauthorized allow blocks. Exact runtime schema, caller-owned model override, and default deny rejected them; no blanket prompt-injection immunity.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Adversarial public graph fixtures tried nested external destinations, MCP, coded tools, REST/write and unauthorized allow blocks. Exact runtime schema, caller-owned model override, and default deny rejected them; no blanket prompt-injection immunity.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Adversarial public graph fixtures tried nested external destinations, MCP, coded tools, REST/write and unauthorized allow blocks. Exact runtime schema, caller-owned model override, and default deny rejected them; no blanket prompt-injection immunity.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Adversarial public graph fixtures tried nested external destinations, MCP, coded tools, REST/write and unauthorized allow blocks. Exact runtime schema, caller-owned model override, and default deny rejected them; no blanket prompt-injection immunity.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Adversarial public graph fixtures tried nested external destinations, MCP, coded tools, REST/write and unauthorized allow blocks. Exact runtime schema, caller-owned model override, and default deny rejected them; no blanket prompt-injection immunity.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Adversarial public graph fixtures tried nested external destinations, MCP, coded tools, REST/write and unauthorized allow blocks. Exact runtime schema, caller-owned model override, and default deny rejected them; no blanket prompt-injection immunity.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Adversarial public graph fixtures tried nested external destinations, MCP, coded tools, REST/write and unauthorized allow blocks. Exact runtime schema, caller-owned model override, and default deny rejected them; no blanket prompt-injection immunity.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P039-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "A controlled loopback read-only MCP service was selected for regression; a fake provider credential was absent from all authorized JSON-RPC transport headers and bodies. An actual third-party provider/service compatibility remains open.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P039-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "A controlled loopback read-only MCP service was selected for regression; a fake provider credential was absent from all authorized JSON-RPC transport headers and bodies. An actual third-party provider/service compatibility remains open.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "First-visit guided synthetic question, one browser page with cue, native media, evidence/source ID/version, comparison and review controls were exercised in Chromium. Human fresh-viewer research and zoom still pending.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "First-visit guided synthetic question, one browser page with cue, native media, evidence/source ID/version, comparison and review controls were exercised in Chromium. Human fresh-viewer research and zoom still pending.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "First-visit guided synthetic question, one browser page with cue, native media, evidence/source ID/version, comparison and review controls were exercised in Chromium. Human fresh-viewer research and zoom still pending.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "First-visit guided synthetic question, one browser page with cue, native media, evidence/source ID/version, comparison and review controls were exercised in Chromium. Human fresh-viewer research and zoom still pending.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Keyboard-operated transcript cue requested native seek, validated timing and visibly reported lack of media instead of success; source identity, cue and actual native video position were tested.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Keyboard-operated transcript cue requested native seek, validated timing and visibly reported lack of media instead of success; source identity, cue and actual native video position were tested.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Accessible searchable native-time transcript with stable names, Up/Down/Home/End, source version, no scroll jump, absent caption and empty cases, long text, translated labels, browser tested.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Accessible searchable native-time transcript with stable names, Up/Down/Home/End, source version, no scroll jump, absent caption and empty cases, long text, translated labels, browser tested.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Accessible searchable native-time transcript with stable names, Up/Down/Home/End, source version, no scroll jump, absent caption and empty cases, long text, translated labels, browser tested.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Accessible searchable native-time transcript with stable names, Up/Down/Home/End, source version, no scroll jump, absent caption and empty cases, long text, translated labels, browser tested.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Accessible searchable native-time transcript with stable names, Up/Down/Home/End, source version, no scroll jump, absent caption and empty cases, long text, translated labels, browser tested.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Accessible searchable native-time transcript with stable names, Up/Down/Home/End, source version, no scroll jump, absent caption and empty cases, long text, translated labels, browser tested.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Accessible searchable native-time transcript with stable names, Up/Down/Home/End, source version, no scroll jump, absent caption and empty cases, long text, translated labels, browser tested.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Accessible searchable native-time transcript with stable names, Up/Down/Home/End, source version, no scroll jump, absent caption and empty cases, long text, translated labels, browser tested.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Accessible searchable native-time transcript with stable names, Up/Down/Home/End, source version, no scroll jump, absent caption and empty cases, long text, translated labels, browser tested.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Accessible searchable native-time transcript with stable names, Up/Down/Home/End, source version, no scroll jump, absent caption and empty cases, long text, translated labels, browser tested.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Distinct synthetic source cards with source date basis/scope/provenance, explicit missing guide status and hypothetical unresolved conflict, real local cue seek link, denial did not break local evidence. No reviewed external guide or semantic truth claim.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Distinct synthetic source cards with source date basis/scope/provenance, explicit missing guide status and hypothetical unresolved conflict, real local cue seek link, denial did not break local evidence. No reviewed external guide or semantic truth claim.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Distinct synthetic source cards with source date basis/scope/provenance, explicit missing guide status and hypothetical unresolved conflict, real local cue seek link, denial did not break local evidence. No reviewed external guide or semantic truth claim.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Distinct synthetic source cards with source date basis/scope/provenance, explicit missing guide status and hypothetical unresolved conflict, real local cue seek link, denial did not break local evidence. No reviewed external guide or semantic truth claim.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Distinct synthetic source cards with source date basis/scope/provenance, explicit missing guide status and hypothetical unresolved conflict, real local cue seek link, denial did not break local evidence. No reviewed external guide or semantic truth claim.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Distinct synthetic source cards with source date basis/scope/provenance, explicit missing guide status and hypothetical unresolved conflict, real local cue seek link, denial did not break local evidence. No reviewed external guide or semantic truth claim.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Distinct synthetic source cards with source date basis/scope/provenance, explicit missing guide status and hypothetical unresolved conflict, real local cue seek link, denial did not break local evidence. No reviewed external guide or semantic truth claim.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Human preview before local synthetic receipt save, exact immutable catalog IDs/version, quota/unknown outcomes, reload/stale refusal/delete and allowlisted JSON receipt downloads exercised in Node and Chromium.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Human preview before local synthetic receipt save, exact immutable catalog IDs/version, quota/unknown outcomes, reload/stale refusal/delete and allowlisted JSON receipt downloads exercised in Node and Chromium.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Human preview before local synthetic receipt save, exact immutable catalog IDs/version, quota/unknown outcomes, reload/stale refusal/delete and allowlisted JSON receipt downloads exercised in Node and Chromium.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Human preview before local synthetic receipt save, exact immutable catalog IDs/version, quota/unknown outcomes, reload/stale refusal/delete and allowlisted JSON receipt downloads exercised in Node and Chromium.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Human preview before local synthetic receipt save, exact immutable catalog IDs/version, quota/unknown outcomes, reload/stale refusal/delete and allowlisted JSON receipt downloads exercised in Node and Chromium.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Human preview before local synthetic receipt save, exact immutable catalog IDs/version, quota/unknown outcomes, reload/stale refusal/delete and allowlisted JSON receipt downloads exercised in Node and Chromium.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Human preview before local synthetic receipt save, exact immutable catalog IDs/version, quota/unknown outcomes, reload/stale refusal/delete and allowlisted JSON receipt downloads exercised in Node and Chromium.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Human preview before local synthetic receipt save, exact immutable catalog IDs/version, quota/unknown outcomes, reload/stale refusal/delete and allowlisted JSON receipt downloads exercised in Node and Chromium.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Human preview before local synthetic receipt save, exact immutable catalog IDs/version, quota/unknown outcomes, reload/stale refusal/delete and allowlisted JSON receipt downloads exercised in Node and Chromium.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Human preview before local synthetic receipt save, exact immutable catalog IDs/version, quota/unknown outcomes, reload/stale refusal/delete and allowlisted JSON receipt downloads exercised in Node and Chromium.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Visible origin/decision log, sanitized public fields, capped inspector memory/export with actual JSON download, fake key/accessor tests and local native video unaffected by denied external operation.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Visible origin/decision log, sanitized public fields, capped inspector memory/export with actual JSON download, fake key/accessor tests and local native video unaffected by denied external operation.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Visible origin/decision log, sanitized public fields, capped inspector memory/export with actual JSON download, fake key/accessor tests and local native video unaffected by denied external operation.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Visible origin/decision log, sanitized public fields, capped inspector memory/export with actual JSON download, fake key/accessor tests and local native video unaffected by denied external operation.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T19:47:30+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Visible origin/decision log, sanitized public fields, capped inspector memory/export with actual JSON download, fake key/accessor tests and local native video unaffected by denied external operation.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45189799072/job/137744808482",
+          "description": "Exact-source GitHub Actions green: 33 app +37 consent/inference/source/API +87 runtime +7 peer tests, ten integrity hashes, four Chromium scripts; no public or live provider test.",
+          "result": "pass",
+          "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
+          "observed_at": "2026-11-23T19:47:30+05:45"
         }
       ]
     }
