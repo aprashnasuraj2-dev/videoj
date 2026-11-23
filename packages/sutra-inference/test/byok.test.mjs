@@ -29,3 +29,26 @@ test('BYOK HTTP and transport failures are sanitized without echoing key or resp
 test('BYOK rejects invalid secret/model configuration before transport',()=>{
  for(const args of [{key:'short',model:'openrouter/free'},{key:'valid-key-123',model:''},{key:'valid key 123',model:'openrouter/free'}])assert.throws(()=>createOpenRouterByokAdapter(args),e=>e.code==='BYOK_CONFIG');
 });
+
+test('clear key aborts an already active BYOK request, not only future calls',async()=>{
+ const key='synthetic-active-byok-canary',seen=[];
+ let started;
+ const startedPromise=new Promise(resolve=>{started=resolve;});
+ const adapter=createOpenRouterByokAdapter({key,model:'openrouter/free',fetchImpl:(_url,options)=>{
+  seen.push(options);
+  started();
+  return new Promise((_resolve,reject)=>{
+   if(options.signal.aborted)return reject(new DOMException('Aborted','AbortError'));
+   options.signal.addEventListener('abort',()=>reject(new DOMException('Aborted','AbortError')),{once:true});
+  });
+ }});
+ const pending=adapter.chat({messages:[{role:'user',content:'fixture'}]});
+ await startedPromise;
+ assert.equal(seen.length,1);assert.equal(seen[0].signal.aborted,false);
+ adapter.clear();
+ assert.equal(adapter.configured(),false);
+ assert.equal(seen[0].signal.aborted,true,'clearing key must abort in-flight fetch');
+ await assert.rejects(pending,error=>error.code==='CANCELLED'&&!error.message.includes(key));
+ await assert.rejects(adapter.chat({messages:[{role:'user',content:'again'}]}),error=>error.code==='BYOK_KEY_MISSING');
+ assert.equal(seen.length,1,'no second request after clear');
+});
