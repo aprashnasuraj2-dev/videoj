@@ -125,16 +125,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Design a versioned JSON receipt carrying source ID, source hash, cue ID, timestamp interval, source text reference, retrieval time and verification status. Keep authenticity claims separate from file integrity.
 - **Phase exit:** A hash mismatch is detectable; a valid hash is never described as proof that a statement is true.
 
-- [ ] `SUTRA-P017-01` Choose a receipt schema identifier and versioning convention
-- [ ] `SUTRA-P017-02` Specify source ID, media hash and transcript or checklist version
-- [ ] `SUTRA-P017-03` Specify cue identifier and finite start/end timestamp constraints
-- [ ] `SUTRA-P017-04` Represent quotation or excerpt references without fabricating provenance
-- [ ] `SUTRA-P017-05` Include retrieval time and clearly scoped verification status
-- [ ] `SUTRA-P017-06` Keep credentials, private context and raw prompts out of receipts
-- [ ] `SUTRA-P017-07` Create valid, missing-source, invalid-range and altered-hash examples
-- [ ] `SUTRA-P017-08` Document that byte integrity does not establish factual truth
-- [ ] `SUTRA-P017-09` Produce and review the phase artifact: Evidence schema v1 and valid/invalid example fixtures.
-- [ ] `SUTRA-P017-10` Close phase 017 only after its applicable tasks have evidence and its exit condition is observed: A hash mismatch is detectable; a valid hash is never described as proof that a statement is true.
+- [x] `SUTRA-P017-01` Choose a receipt schema identifier and versioning convention
+- [x] `SUTRA-P017-02` Specify source ID, media hash and transcript or checklist version
+- [x] `SUTRA-P017-03` Specify cue identifier and finite start/end timestamp constraints
+- [x] `SUTRA-P017-04` Represent quotation or excerpt references without fabricating provenance
+- [x] `SUTRA-P017-05` Include retrieval time and clearly scoped verification status
+- [x] `SUTRA-P017-06` Keep credentials, private context and raw prompts out of receipts
+- [x] `SUTRA-P017-07` Create valid, missing-source, invalid-range and altered-hash examples
+- [x] `SUTRA-P017-08` Document that byte integrity does not establish factual truth
+- [x] `SUTRA-P017-09` Produce and review the phase artifact: Evidence schema v1 and valid/invalid example fixtures.
+- [x] `SUTRA-P017-10` Close phase 017 only after its applicable tasks have evidence and its exit condition is observed: A hash mismatch is detectable; a valid hash is never described as proof that a statement is true.
 
 ## Phase 018 - Build a small reproducible lesson corpus
 

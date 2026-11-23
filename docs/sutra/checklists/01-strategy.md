@@ -35,15 +35,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Choose field technicians learning from short training videos as the initial audience. Use a learning task such as finding the optical-power recording step and comparing it with a written handover checklist.
 - **Phase exit:** Task success can be observed without assuming a training benefit or claiming operational certification.
 
-- [ ] `SUTRA-P002-01` Name one primary learner role and one real learning task
-- [ ] `SUTRA-P002-02` Describe the existing manual workflow and its observable pain points
-- [ ] `SUTRA-P002-03` Specify the input question, permitted corpus and expected learning card
-- [ ] `SUTRA-P002-04` Write three failure examples, including wrong cue and conflicting checklist
-- [ ] `SUTRA-P002-05` Define what counts as successful evidence retrieval and user action
-- [ ] `SUTRA-P002-06` Document what the project will not claim about certification or competence
+- [x] `SUTRA-P002-01` Name one primary learner role and one real learning task
+- [x] `SUTRA-P002-02` Describe the existing manual workflow and its observable pain points
+- [x] `SUTRA-P002-03` Specify the input question, permitted corpus and expected learning card
+- [x] `SUTRA-P002-04` Write three failure examples, including wrong cue and conflicting checklist
+- [x] `SUTRA-P002-05` Define what counts as successful evidence retrieval and user action
+- [x] `SUTRA-P002-06` Document what the project will not claim about certification or competence
 - [ ] `SUTRA-P002-07` Identify who can fact-check the technical lesson before public use
-- [ ] `SUTRA-P002-08` Record assumptions about language, device, connectivity and prior experience
-- [ ] `SUTRA-P002-09` Produce and review the phase artifact: One-page problem brief with one primary task and three failure examples.
+- [x] `SUTRA-P002-08` Record assumptions about language, device, connectivity and prior experience
+- [x] `SUTRA-P002-09` Produce and review the phase artifact: One-page problem brief with one primary task and three failure examples.
 - [ ] `SUTRA-P002-10` Close phase 002 only after its applicable tasks have evidence and its exit condition is observed: Task success can be observed without assuming a training benefit or claiming operational certification.
 
 ## Phase 003 - Pin the challenge and specification baseline

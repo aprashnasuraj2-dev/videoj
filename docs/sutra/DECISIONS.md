@@ -33,3 +33,11 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Effect on scope, effort, security, costs and release criteria.
 - Omitted tasks, if any, with why optional/covered differently; mandatory failures remain blockers.
 - Evidence and source revision; superseded decision ID if applicable.
+
+## SUTRA-DECISION-0004 - Implement the evidence contract independently
+
+- Timestamp: 2026-11-23T13:08:08+05:45.
+- Decision: implement phases 017 and 057 using clearly synthetic fixtures before final footage/runtime integration. These artifacts have no genuine footage dependency; their verification does not establish corpus readiness or browser conformance.
+- Alternative: wait for every earlier phase. Rejected because participant-owned inputs would unnecessarily block safe standalone implementation.
+- Contract: a receipt never self-asserts verified truth; the validator returns shape-only or catalog-matched status. Real byte hashing/ingestion and semantic verification are separate future work.
+- Source baseline: cbd3be50545e98a6d1b13c58e59d403b7cde7906; tested candidate file hashes are in the session evidence.

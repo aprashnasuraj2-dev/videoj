@@ -1,20 +1,384 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T12:58:13+05:45",
+  "updated_at": "2026-11-23T13:08:08+05:45",
   "work_branch": "main",
-  "last_observed_code_sha": "042bea1d1723b448854538c21e8f693608897c5a",
-  "last_session_id": "SUTRA-SESSION-0001",
-  "stage": "planning_bootstrap_only",
+  "last_observed_code_sha": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+  "last_session_id": "SUTRA-SESSION-0002",
+  "stage": "evidence_validator_implemented",
   "current_task": null,
-  "next_task": "SUTRA-P001-01",
+  "next_task": "SUTRA-P003-01",
   "ready_engineering_queue": [
-    "SUTRA-P002-01",
-    "SUTRA-P003-01",
-    "SUTRA-P011-01"
+    "SUTRA-P011-01",
+    "SUTRA-P012-01"
   ],
-  "next_action": "Verify current repository/source state; establish the audience/task and rules baseline while requesting only necessary participant-owned eligibility input.",
-  "task_records": {},
+  "next_action": "Refresh the rules/specification and repository map, then create the isolated learner shell. Obtain a factual reviewer and original lesson rights before public corpus work.",
+  "task_records": {
+    "SUTRA-P002-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P002-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P002-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P002-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P002-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P002-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P002-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P002-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T13:08:08+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
+          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
+          "result": "pass",
+          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
+          "observed_at": "2026-11-23T13:08:08+05:45"
+        }
+      ]
+    }
+  },
   "blockers": [],
   "pending_inputs": [
     {
