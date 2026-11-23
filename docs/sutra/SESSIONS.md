@@ -109,3 +109,16 @@ Append entries; never erase failures or silently rewrite previous completion cla
 ### Participant release constraint
 
 - Participant clarified during final handoff: do not jump to release until all major checklist work is complete. Recorded this gate in CONTINUE/PROGRESS/DECISIONS and preserved deployment/route/paid-inference state as closed. The completed Cloudflare action was a deployment-free dry-run only.
+
+
+## SUTRA-SESSION-0006 - Consent boundary and exact peer artifact loading
+
+- Started from merged main `bd72962a434ca2ce1408eafaa3ce5d85de4ef850` after verifying both SUTRA workflows green and the live register at 152/1000. Work stayed on `sutra/consent-inspector`; PR #47 is the review surface.
+- Added framework-neutral `packages/sutra-consent/` with default per-contact approval, explicit exact session scope, public destination/purpose/disclosure labels, redacted decision/outcome events and bounded credentialless JSON retrieval. Added a learner consent preview and an independently served plain-browser example.
+- Added a Profile 0.3 exact peer artifact loader to the restricted runtime: URL-derived site base, manifest-after-consent, exact network match, declared graph resolution and distinct graph-origin approval. Executable metadata remains rejected and peer execution remains disabled.
+- Preserved stricter redirect-error behavior for now. The current spec permits ordinary redirects, but changed-origin consent/policy is deliberately deferred to P037 rather than silently broadening access.
+- CI retained several failures instead of rewriting history: runs 20-23 found browser-test assertion issues; run 24 passed the consent-only candidate; run 25 passed the peer-loader code before dedicated peer tests; run 26 exposed a bad mocked Response fixture; run 27 is the final green code candidate.
+- Final source candidate `70fe330b92dc22ba3dd9fc60cc3166c1d7ae42d7`: 37 consent/inference/source/API tests and 65 runtime tests pass; ten vendor hashes pass; learner and standalone-example Chromium both pass. Evidence: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45145022530/job/137592064940 and `evidence/implementation/SESSION-0006.md`.
+- Credited 26 checks: P032-01..07/09, P033-01/02/04..09 and all P058 items. New total: 178/1000; phase 058 closes. P032-08/10 and P033-03/10 remain open.
+- No live peer, third-party MCP, CORS, public deployment, paid model call, external outreach or official filing occurred. Public release remains blocked by decision 0008.
+- Next engineering queue: P031-01 independent peer package, P032-08 invocation-visible peer failure, P033-03 third-party MCP consent.
