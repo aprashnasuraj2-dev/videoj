@@ -86,19 +86,20 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 
 - **Baseline effort:** 3 person-hours; **owner:** P.
 - **Original phase dependencies:** 02,05. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Record or obtain permission for a 3-5 minute instructional video and a written handover checklist. Use synthetic device readings; remove customer information, employer marks and unauthorized material.
-- **Phase exit:** Rights and factual review are documented; the film contains the steps needed by the hero query.
+- **Intent:** Record or obtain permission for one concise instructional video of about three minutes and a written handover checklist. Aim for a final total average bitrate around 0.8 Mbps so the measured asset is roughly 18 MB and comfortably below the 25 MiB hard limit; measured bytes, not the estimate, decide acceptance. Use synthetic device readings; remove customer information, employer marks and unauthorized material.
+- **Phase exit:** Rights and factual review are documented; the approximately three-minute film contains the steps needed by the hero query and is suitable for the measured media-size target.
 
-- [ ] `SUTRA-P015-01` Select one factual 3-5 minute lesson matching the hero task
+- [ ] `SUTRA-P015-01` Select one factual approximately three-minute lesson matching the hero task
 - [ ] `SUTRA-P015-02` Create or obtain explicit rights for footage, narration and written checklist
 - [ ] `SUTRA-P015-03` Remove customer data, internal credentials and unauthorized employer marks
 - [ ] `SUTRA-P015-04` Use synthetic device readings and non-sensitive demonstrations
 - [ ] `SUTRA-P015-05` Have a competent content owner review the technical sequence
-- [ ] `SUTRA-P015-06` Verify the actual recording contains the answerable steps being demonstrated
+- [ ] `SUTRA-P015-06` Verify the actual recording contains the answerable steps being demonstrated without padding the lesson to hit a duration target
 - [ ] `SUTRA-P015-07` Record media owner, license, capture date and permitted public use
 - [ ] `SUTRA-P015-08` Keep raw private permissions outside Git and publish only safe provenance
 - [ ] `SUTRA-P015-09` Produce and review the phase artifact: Original lesson files, text checklist and provenance record.
-- [ ] `SUTRA-P015-10` Close phase 015 only after its applicable tasks have evidence and its exit condition is observed: Rights and factual review are documented; the film contains the steps needed by the hero query.
+- [ ] `SUTRA-P015-10` Close phase 015 only after its applicable tasks have evidence and its exit condition is observed: Rights and factual review are documented; the approximately three-minute film contains the hero steps and fits the measured delivery target.
+
 
 ## Phase 016 - Create transcript, captions and cue IDs
 
@@ -118,23 +119,24 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P016-09` Produce and review the phase artifact: WebVTT captions, transcript JSON and cue map.
 - [ ] `SUTRA-P016-10` Close phase 016 only after its applicable tasks have evidence and its exit condition is observed: All timestamps satisfy 0 <= start < end <= actual duration; spot checks match spoken content.
 
-## Phase 017 - Define the evidence receipt contract
+## Phase 017 - Define the Web Annotation evidence profile
 
 - **Baseline effort:** 1.5 person-hours; **owner:** E.
 - **Original phase dependencies:** 09,16. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Design a versioned JSON receipt carrying source ID, source hash, cue ID, timestamp interval, source text reference, retrieval time and verification status. Keep authenticity claims separate from file integrity.
-- **Phase exit:** A hash mismatch is detectable; a valid hash is never described as proof that a statement is true.
+- **Intent:** Make the reusable evidence interchange a narrow profile of the W3C Web Annotation Data Model rather than a SUTRA-only receipt. Represent a cue target with `SpecificResource` + `FragmentSelector`, use the W3C Media Fragments temporal value `t=start,end`, and attach SRI-style `sha256-<base64>` integrity metadata for transcript/media bytes. Keep authenticity and semantic truth separate from byte integrity.
+- **Phase exit:** A standards-shaped annotation can produce a deterministic media cue link; altered bytes/ranges are rejected; a valid hash is never described as proof that a statement is true.
 
-- [x] `SUTRA-P017-01` Choose a receipt schema identifier and versioning convention
-- [x] `SUTRA-P017-02` Specify source ID, media hash and transcript or checklist version
-- [x] `SUTRA-P017-03` Specify cue identifier and finite start/end timestamp constraints
-- [x] `SUTRA-P017-04` Represent quotation or excerpt references without fabricating provenance
-- [x] `SUTRA-P017-05` Include retrieval time and clearly scoped verification status
-- [x] `SUTRA-P017-06` Keep credentials, private context and raw prompts out of receipts
-- [x] `SUTRA-P017-07` Create valid, missing-source, invalid-range and altered-hash examples
-- [x] `SUTRA-P017-08` Document that byte integrity does not establish factual truth
-- [x] `SUTRA-P017-09` Produce and review the phase artifact: Evidence schema v1 and valid/invalid example fixtures.
-- [x] `SUTRA-P017-10` Close phase 017 only after its applicable tasks have evidence and its exit condition is observed: A hash mismatch is detectable; a valid hash is never described as proof that a statement is true.
+- [x] `SUTRA-P017-01` Define the profile identifier/version over the W3C Web Annotation JSON-LD context
+- [x] `SUTRA-P017-02` Use `Annotation`, `SpecificResource`, `FragmentSelector` and an explicit source IRI rather than a bespoke cue envelope
+- [x] `SUTRA-P017-03` Encode the cue interval as a Media Fragments temporal selector `t=start,end` and validate finite half-open bounds
+- [x] `SUTRA-P017-04` Attach transcript/media integrity using SRI-style SHA-256 metadata and an independently supplied manifest
+- [x] `SUTRA-P017-05` Represent the exact source excerpt as a `TextualBody` plus bounded cue/version metadata needed by this profile
+- [x] `SUTRA-P017-06` Keep credentials, private context and raw prompts out of annotations and integrity manifests
+- [x] `SUTRA-P017-07` Create valid, missing-source, invalid-fragment, altered-integrity and altered-quotation fixtures
+- [x] `SUTRA-P017-08` Document explicitly that a hash establishes byte equality only, not factual truth, publisher trust or semantic support
+- [x] `SUTRA-P017-09` Produce and review the phase artifact: Web Annotation media-evidence profile, validator contract and valid/invalid fixtures.
+- [x] `SUTRA-P017-10` Close phase 017 only after its applicable tasks have evidence and its exit condition is observed: A standards-shaped cue annotation validates, altered bytes/ranges fail, and byte integrity is not mislabeled as truth.
+
 
 ## Phase 018 - Build a small reproducible lesson corpus
 
@@ -158,19 +160,20 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 
 - **Baseline effort:** 1.5 person-hours; **owner:** E.
 - **Original phase dependencies:** 08,15. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Measure encodes, choose poster/preload policy and test the intended media host for byte ranges, CORS and content types. Use a separate approved R2/CDN location if Pages limits or seeking require it.
-- **Phase exit:** Any Pages asset is below 25 MiB; seeking is verified on the selected route before choosing it.
+- **Intent:** Measure the approximately three-minute encode, target roughly 0.8 Mbps total average bitrate, choose poster/preload policy and test the intended media host for byte ranges, CORS and content types. The estimate is about 18 MB at 180 seconds; actual encoded bytes including audio/container overhead must remain below 25 MiB. Exercise a physical iPhone seek before finalizing the host. Use a separate approved R2/CDN location if Pages limits or seeking require it.
+- **Phase exit:** Any Pages asset is actually below 25 MiB and real physical-iPhone seeking is verified on the selected route before choosing it.
 
-- [ ] `SUTRA-P019-01` Measure final MP4/WebM file sizes including audio and container overhead
-- [ ] `SUTRA-P019-02` Check each Pages asset against the actual per-file size limit
+- [ ] `SUTRA-P019-01` Measure final MP4/WebM duration, total average bitrate and file size including audio/container overhead
+- [ ] `SUTRA-P019-02` Check each Pages asset against the actual per-file size limit and keep the lesson asset below 25 MiB
 - [ ] `SUTRA-P019-03` Test Range responses, content types and CORS on proposed media hosting
-- [ ] `SUTRA-P019-04` Test real seeking and decoding before selecting the final delivery route
-- [ ] `SUTRA-P019-05` Prefer verified media hosting over routing video through the main Patro Worker
+- [ ] `SUTRA-P019-04` Test real decode and seeking on an available physical iPhone before selecting the final delivery route
+- [ ] `SUTRA-P019-05` Prefer verified static/media hosting over routing video through the main Patro Worker
 - [ ] `SUTRA-P019-06` Set intentional poster, preload and low-bandwidth transcript behavior
 - [ ] `SUTRA-P019-07` Avoid unapproved media uploads or duplicate assets when hashes already match
-- [ ] `SUTRA-P019-08` Record bitrate, duration, byte count and chosen media origin
-- [ ] `SUTRA-P019-09` Produce and review the phase artifact: Media delivery decision and byte/bitrate inventory.
-- [ ] `SUTRA-P019-10` Close phase 019 only after its applicable tasks have evidence and its exit condition is observed: Any Pages asset is below 25 MiB; seeking is verified on the selected route before choosing it.
+- [ ] `SUTRA-P019-08` Record bitrate, duration, exact byte count, physical device/browser version and chosen media origin
+- [ ] `SUTRA-P019-09` Produce and review the phase artifact: Media delivery decision, byte/bitrate inventory and early iPhone seek evidence.
+- [ ] `SUTRA-P019-10` Close phase 019 only after its applicable tasks have evidence and its exit condition is observed: The asset is below 25 MiB and real iPhone seeking works on the selected route.
+
 
 ## Phase 020 - Close the foundation milestone
 

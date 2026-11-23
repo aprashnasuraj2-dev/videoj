@@ -1,19 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T15:05:24+05:45",
-  "work_branch": "main",
-  "last_observed_code_sha": "4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb",
-  "last_session_id": "SUTRA-SESSION-0006",
-  "stage": "independent_peer_package_and_consent",
+  "updated_at": "2026-11-23T18:33:54+05:45",
+  "work_branch": "sutra/peer-invocation",
+  "last_observed_code_sha": "227e33ebedb0e42aefa28141c617b164a43dce1a",
+  "last_session_id": "SUTRA-SESSION-0019",
+  "stage": "phase_045_peer_comparison_complete",
   "current_task": null,
-  "next_task": "SUTRA-P032-08",
+  "next_task": "SUTRA-P049-01",
   "ready_engineering_queue": [
-    "SUTRA-P032-08",
-    "SUTRA-P033-03",
-    "SUTRA-P035-01"
+    "SUTRA-P049-01",
+    "SUTRA-P042-06",
+    "SUTRA-P023-03",
+    "SUTRA-P030-02",
+    "SUTRA-P034-01"
   ],
-  "next_action": "Wire the verified peer artifact loader into caller-local invocation so peer-load failures are preserved for the invoking network, then apply the reusable consent boundary to third-party MCP discovery/calls. Keep P031-03 provenance and P031-10 public HTTPS pending; do not release.",
+  "next_action": "Continue independent accessibility/mobile acceptance in Phase 049, while keeping P042-06 genuine alternate-codec proof and live provider/public HTTPS gates open. Do not deploy or release.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -107,266 +109,6 @@
       ]
     },
     "SUTRA-P002-09": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P017-01": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P017-02": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P017-03": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P017-04": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P017-05": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P017-06": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P017-07": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P017-08": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P017-09": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P017-10": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P057-01": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P057-02": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P057-03": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P057-04": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P057-05": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P057-06": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P057-07": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P057-08": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P057-09": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:08:08+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0002.md",
-          "description": "Problem brief or evidence contract/package reviewed; 22 package tests and independent-directory CLI exercise passed. Exact candidate package hashes are recorded.",
-          "result": "pass",
-          "source_revision": "cbd3be50545e98a6d1b13c58e59d403b7cde7906",
-          "observed_at": "2026-11-23T13:08:08+05:45"
-        }
-      ]
-    },
-    "SUTRA-P057-10": {
       "state": "verified",
       "verified_at": "2026-11-23T13:08:08+05:45",
       "evidence": [
@@ -2817,6 +2559,2493 @@
           "observed_at": "2026-11-23T15:05:24+05:45"
         }
       ]
+    },
+    "SUTRA-P017-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P039-01": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P039-02": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P039-03": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P039-04": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P039-05": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P039-06": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P039-07": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P039-08": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P039-09": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P039-10": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P048-01": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P048-02": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P048-03": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P048-04": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P048-05": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P048-06": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P048-07": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P048-08": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P048-09": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P048-10": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P059-01": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P059-02": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P059-03": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P059-04": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P059-05": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P059-06": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P059-07": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P059-08": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P059-09": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P059-10": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P069-01": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P069-02": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P069-03": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P069-04": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P069-05": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P069-06": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P069-07": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P069-08": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P069-09": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P069-10": {
+      "state": "omitted",
+      "omitted_at": "2026-11-23T16:03:05+05:45",
+      "reason": "Optional breadth deferred so the submission can prioritize standards-based evidence, BYOK key isolation, real mobile media and public peer interoperability.",
+      "scope_basis": "Participant priority correction recorded in SUTRA-DECISION-0010; this phase is not required for the narrowed release path.",
+      "decision_id": "SUTRA-DECISION-0010"
+    },
+    "SUTRA-P017-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P017-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P057-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:04:27+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155018127",
+          "description": "Widened evidence workflow ran 30/30 legacy + Web Annotation tests and the standalone annotation CLI successfully.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        },
+        {
+          "artifact": "packages/sutra-evidence/README.md",
+          "description": "Evidence-first package documents W3C Web Annotation + Media Fragments + SRI mapping, 15-minute quickstart target, cue-link helper and the bytes-not-truth boundary.",
+          "result": "pass",
+          "source_revision": "e37045136c5c70753a3b906352ed7f647f4d8227",
+          "observed_at": "2026-11-23T16:04:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:14:09+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061",
+          "description": "BYOK SUTRA-P030-01: fixed OpenRouter route, memory-only key, deletion/cancel, caller policy, no peer credential leakage and Chromium synthetic canary checks as applicable. Controlled fixture, not production provider CORS.",
+          "result": "pass",
+          "source_revision": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+          "observed_at": "2026-11-23T16:14:09+05:45"
+        }
+      ]
+    },
+    "SUTRA-P032-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P032-08: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P032-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P032-10: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P033-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P033-03: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P033-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P033-10: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-02: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-03: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-04: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-05: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-06: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-07: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-08: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P034-09: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-01: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-02: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-03: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-04: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-05: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-06: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-07: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-08: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-09: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P035-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P035-10: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P036-01: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P036-02: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P036-03: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P036-05: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P036-07: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P036-08: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P036-09: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-01: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-02: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-03: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-04: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-05: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-06: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-07: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-08: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-09: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T15:33:40+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0007.md",
+          "description": "SUTRA-P038-10: exact browser composition, consent, bounded runtime, private-context canaries, public loopback CORS or peer attack containment as applicable; verified by session 0007 CI. Loopback is not public HTTPS.",
+          "result": "pass",
+          "source_revision": "79d9d01562e039c6c2d47887c92396026913acc7",
+          "observed_at": "2026-11-23T15:33:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:14:09+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061",
+          "description": "BYOK SUTRA-P030-03: fixed OpenRouter route, memory-only key, deletion/cancel, caller policy, no peer credential leakage and Chromium synthetic canary checks as applicable. Controlled fixture, not production provider CORS.",
+          "result": "pass",
+          "source_revision": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+          "observed_at": "2026-11-23T16:14:09+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:14:09+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061",
+          "description": "BYOK SUTRA-P030-04: fixed OpenRouter route, memory-only key, deletion/cancel, caller policy, no peer credential leakage and Chromium synthetic canary checks as applicable. Controlled fixture, not production provider CORS.",
+          "result": "pass",
+          "source_revision": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+          "observed_at": "2026-11-23T16:14:09+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:14:09+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061",
+          "description": "BYOK SUTRA-P030-05: fixed OpenRouter route, memory-only key, deletion/cancel, caller policy, no peer credential leakage and Chromium synthetic canary checks as applicable. Controlled fixture, not production provider CORS.",
+          "result": "pass",
+          "source_revision": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+          "observed_at": "2026-11-23T16:14:09+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:14:09+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061",
+          "description": "BYOK SUTRA-P030-06: fixed OpenRouter route, memory-only key, deletion/cancel, caller policy, no peer credential leakage and Chromium synthetic canary checks as applicable. Controlled fixture, not production provider CORS.",
+          "result": "pass",
+          "source_revision": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+          "observed_at": "2026-11-23T16:14:09+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:14:09+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061",
+          "description": "BYOK SUTRA-P030-07: fixed OpenRouter route, memory-only key, deletion/cancel, caller policy, no peer credential leakage and Chromium synthetic canary checks as applicable. Controlled fixture, not production provider CORS.",
+          "result": "pass",
+          "source_revision": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+          "observed_at": "2026-11-23T16:14:09+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:14:09+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061",
+          "description": "BYOK SUTRA-P030-09: fixed OpenRouter route, memory-only key, deletion/cancel, caller policy, no peer credential leakage and Chromium synthetic canary checks as applicable. Controlled fixture, not production provider CORS.",
+          "result": "pass",
+          "source_revision": "092c8d2c601bcfd7075a4062a4c13460257aaa90",
+          "observed_at": "2026-11-23T16:14:09+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:26:24+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158153046",
+          "description": "SUTRA-P037-06: passing real loopback redirect matrix and controlled browser redirect refusal/local evidence continuity on exact candidate. This is fail-closed behavior, not redirect acceptance, re-consent or public HTTPS conformance.",
+          "result": "pass",
+          "source_revision": "e5af69d975ec0c7fc4c84c3e20b84036e3302cca",
+          "observed_at": "2026-11-23T16:26:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:26:24+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158153046",
+          "description": "SUTRA-P037-07: passing real loopback redirect matrix and controlled browser redirect refusal/local evidence continuity on exact candidate. This is fail-closed behavior, not redirect acceptance, re-consent or public HTTPS conformance.",
+          "result": "pass",
+          "source_revision": "e5af69d975ec0c7fc4c84c3e20b84036e3302cca",
+          "observed_at": "2026-11-23T16:26:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:26:24+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158153046",
+          "description": "SUTRA-P037-08: passing real loopback redirect matrix and controlled browser redirect refusal/local evidence continuity on exact candidate. This is fail-closed behavior, not redirect acceptance, re-consent or public HTTPS conformance.",
+          "result": "pass",
+          "source_revision": "e5af69d975ec0c7fc4c84c3e20b84036e3302cca",
+          "observed_at": "2026-11-23T16:26:24+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:30:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158656419",
+          "description": "Controlled backend quota 429 leaves direct browser BYOK working; BYOK 401 failure leaves funded mock adapter working. Both paths independently passed node tests and entire shell Chromium workflow. Not live funded service or live router account.",
+          "result": "pass",
+          "source_revision": "106da667c68b1645fa33674b08785db5a97f2fd3",
+          "observed_at": "2026-11-23T16:30:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:31:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158831857",
+          "description": "Controlled real loopback redirect tests assert no Authorization/Cookie at source, zero requests to changed-origin target; credentialless redirect:error remains enforced; browser regression suite passed. Live HTTPS redirect chains unverified.",
+          "result": "pass",
+          "source_revision": "cf60561ad82fdef78b3b41e4bc1f530d21192a8a",
+          "observed_at": "2026-11-23T16:31:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:33:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45159138495",
+          "description": "SUTRA-P026-02: passing SSE fragmented tool-call, malformed model/result, child-error, abort/cancel and incomplete-result regressions as applicable. Cancellation after delegated stall prevents subsequent model calls; user-visible lifecycle controls remain pending.",
+          "result": "pass",
+          "source_revision": "29d686bd4f3fdb99565e3a3e4c904d12018ff27a",
+          "observed_at": "2026-11-23T16:33:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:33:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45159138495",
+          "description": "SUTRA-P026-03: passing SSE fragmented tool-call, malformed model/result, child-error, abort/cancel and incomplete-result regressions as applicable. Cancellation after delegated stall prevents subsequent model calls; user-visible lifecycle controls remain pending.",
+          "result": "pass",
+          "source_revision": "29d686bd4f3fdb99565e3a3e4c904d12018ff27a",
+          "observed_at": "2026-11-23T16:33:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:33:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45159138495",
+          "description": "SUTRA-P026-04: passing SSE fragmented tool-call, malformed model/result, child-error, abort/cancel and incomplete-result regressions as applicable. Cancellation after delegated stall prevents subsequent model calls; user-visible lifecycle controls remain pending.",
+          "result": "pass",
+          "source_revision": "29d686bd4f3fdb99565e3a3e4c904d12018ff27a",
+          "observed_at": "2026-11-23T16:33:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:33:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45159138495",
+          "description": "SUTRA-P026-05: passing SSE fragmented tool-call, malformed model/result, child-error, abort/cancel and incomplete-result regressions as applicable. Cancellation after delegated stall prevents subsequent model calls; user-visible lifecycle controls remain pending.",
+          "result": "pass",
+          "source_revision": "29d686bd4f3fdb99565e3a3e4c904d12018ff27a",
+          "observed_at": "2026-11-23T16:33:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:33:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45159138495",
+          "description": "SUTRA-P026-06: passing SSE fragmented tool-call, malformed model/result, child-error, abort/cancel and incomplete-result regressions as applicable. Cancellation after delegated stall prevents subsequent model calls; user-visible lifecycle controls remain pending.",
+          "result": "pass",
+          "source_revision": "29d686bd4f3fdb99565e3a3e4c904d12018ff27a",
+          "observed_at": "2026-11-23T16:33:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:51:55+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Explicit idle/running/cancelling/failed/complete lifecycle rendered in an ARIA live region and exercised in unit/Chromium tests.",
+          "result": "pass",
+          "source_revision": "fb300b9df50a59768c64ee0d8f7c01389d74f27f",
+          "observed_at": "2026-11-23T16:51:55+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:51:55+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Read-only source RPC retries are capped at two attempts; transport/5xx retry once, malformed successful data does not retry, and sanitized attempt counts are recorded.",
+          "result": "pass",
+          "source_revision": "fb300b9df50a59768c64ee0d8f7c01389d74f27f",
+          "observed_at": "2026-11-23T16:51:55+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:51:55+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Chromium cancels a stalled peer run and then proves the native timing video can still play, advance its actual media clock and pause.",
+          "result": "pass",
+          "source_revision": "fb300b9df50a59768c64ee0d8f7c01389d74f27f",
+          "observed_at": "2026-11-23T16:51:55+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:51:55+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Phase artifact includes the lifecycle module, browser cancellation/media test, bounded retry implementation and revision-linked session evidence.",
+          "result": "pass",
+          "source_revision": "fb300b9df50a59768c64ee0d8f7c01389d74f27f",
+          "observed_at": "2026-11-23T16:51:55+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:51:55+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Phase exit observed: cancellation prevents continued work, interrupted output is explicitly incomplete, and ordinary media remains functional.",
+          "result": "pass",
+          "source_revision": "fb300b9df50a59768c64ee0d8f7c01389d74f27f",
+          "observed_at": "2026-11-23T16:51:55+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:56:19+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Peer return applies an independent intersection of peer-declared upstream fields and caller-owned exact-destination upstream policy; sanitized trace contains field names only.",
+          "result": "pass",
+          "source_revision": "621520e1636deb39686e7aef462e8b481c4558cd",
+          "observed_at": "2026-11-23T16:56:19+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:56:19+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Runtime canary plus strict evidence validation show an unsent private field cannot be recreated upstream and a peer-proposed receipt with a private-style extra field is rejected without echoing its value.",
+          "result": "pass",
+          "source_revision": "621520e1636deb39686e7aef462e8b481c4558cd",
+          "observed_at": "2026-11-23T16:56:19+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:56:19+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Phase exit observed: exact-destination default-deny private context has separate downstream/upstream permission gates with canary and receipt-smuggling tests.",
+          "result": "pass",
+          "source_revision": "621520e1636deb39686e7aef462e8b481c4558cd",
+          "observed_at": "2026-11-23T16:56:19+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:00:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0011.md",
+          "description": "Controlled transport exposes a 3xx destination before follow-up; changed-origin redirect is identified before the next contact, while native browser redirects remain fail-closed when not inspectable.",
+          "result": "pass",
+          "source_revision": "be03c617a437366792d128d312ecc537856fe621",
+          "observed_at": "2026-11-23T17:00:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:00:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0011.md",
+          "description": "A changed redirect origin creates a new consent tuple and must receive a separate allow decision before its first request.",
+          "result": "pass",
+          "source_revision": "be03c617a437366792d128d312ecc537856fe621",
+          "observed_at": "2026-11-23T17:00:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:00:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0011.md",
+          "description": "Redirect targets are bounded to HTTPS/loopback HTTP, no credentials/fragments, finite URL length, at most three hops, and no cycles.",
+          "result": "pass",
+          "source_revision": "be03c617a437366792d128d312ecc537856fe621",
+          "observed_at": "2026-11-23T17:00:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:00:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0011.md",
+          "description": "Changed origin or declared artifact path changes the authorization tuple and re-evaluates remembered approval; exact same-URL byte replacement remains a separate integrity/versioning concern.",
+          "result": "pass",
+          "source_revision": "be03c617a437366792d128d312ecc537856fe621",
+          "observed_at": "2026-11-23T17:00:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:00:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0011.md",
+          "description": "Session 0011 records Profile 0.3 redirect policy, controlled fixtures, browser fail-closed behavior, limitations and exact CI.",
+          "result": "pass",
+          "source_revision": "be03c617a437366792d128d312ecc537856fe621",
+          "observed_at": "2026-11-23T17:00:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:00:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0011.md",
+          "description": "Phase exit observed: an unapproved changed-origin redirect cannot silently expand access and blocked redirects leave the local learner usable.",
+          "result": "pass",
+          "source_revision": "be03c617a437366792d128d312ecc537856fe621",
+          "observed_at": "2026-11-23T17:00:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:05:44+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0012.md",
+          "description": "links.json explicitly maps both published networks to exact empty publisher-owned binding maps because no symbolic external-network reference exists; no unresolved peer URL is fabricated.",
+          "result": "pass",
+          "source_revision": "47f84a1f8ee47cf7f9a049aaa8286d3142d8648c",
+          "observed_at": "2026-11-23T17:05:44+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:05:44+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0012.md",
+          "description": "Top-site llm_router metadata is published separately from allowed_peers/peer_policy, naming /api/infer and the direct BYOK router without credentials.",
+          "result": "pass",
+          "source_revision": "47f84a1f8ee47cf7f9a049aaa8286d3142d8648c",
+          "observed_at": "2026-11-23T17:05:44+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:05:44+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0012.md",
+          "description": "PUBLIC_ARTIFACT_INVENTORY.md lists exact manifest, graph, links, runtime and API paths while labeling proposed URLs as undeployed.",
+          "result": "pass",
+          "source_revision": "47f84a1f8ee47cf7f9a049aaa8286d3142d8648c",
+          "observed_at": "2026-11-23T17:05:44+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:05:44+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0012.md",
+          "description": "Publication phase artifact includes manifest, two resolved graphs, links map, peer policy/router metadata, tests and the pre-release URL inventory.",
+          "result": "pass",
+          "source_revision": "47f84a1f8ee47cf7f9a049aaa8286d3142d8648c",
+          "observed_at": "2026-11-23T17:05:44+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:05:44+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0012.md",
+          "description": "Phase exit observed in Chromium: the caller loads the publication through /agents/agent-manifest.json, selects exact learner and executes the resolved graph; exact-name failure tests remain enforced.",
+          "result": "pass",
+          "source_revision": "47f84a1f8ee47cf7f9a049aaa8286d3142d8648c",
+          "observed_at": "2026-11-23T17:05:44+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:11:35+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0013.md",
+          "description": "Peer agents share the caller composition/model/deadline budgets; deterministic maxAgents test stops nested work with the caller's agent_calls limit.",
+          "result": "pass",
+          "source_revision": "37d0a45371db717b5f44c2f839b8bbb8345538e7",
+          "observed_at": "2026-11-23T17:11:35+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:11:35+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0013.md",
+          "description": "Composition-limit errors expose a sanitized limit category and bounded control-character-stripped partial text that the learner labels incomplete; no completed result is claimed.",
+          "result": "pass",
+          "source_revision": "37d0a45371db717b5f44c2f839b8bbb8345538e7",
+          "observed_at": "2026-11-23T17:11:35+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:11:35+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0013.md",
+          "description": "Phase exit observed: over-budget and cycle fixtures stop predictably while ordinary repeated-agent runs remain valid.",
+          "result": "pass",
+          "source_revision": "37d0a45371db717b5f44c2f839b8bbb8345538e7",
+          "observed_at": "2026-11-23T17:11:35+05:45"
+        }
+      ]
+    },
+    "SUTRA-P023-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:21:26+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0014.md",
+          "description": "Host-owned ActionRegistry is passed through runNetwork; CRUSE-v1 learner invocation receives only the exact caller/network catalog, while invalid registries fail before model execution.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:21:26+05:45"
+        }
+      ]
+    },
+    "SUTRA-P023-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:21:26+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0014.md",
+          "description": "Runtime entry, CRUSE-v1 public graph, host action registry and successful local Chromium invocation form the reviewed browser runtime artifact; live provider invocation remains separate.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:21:26+05:45"
+        }
+      ]
+    },
+    "SUTRA-P029-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:21:26+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0014.md",
+          "description": "Registered save-review-card and export-receipt as local-only write actions with strict receipt schemas and host-owned execution handlers.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:21:26+05:45"
+        }
+      ]
+    },
+    "SUTRA-P029-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:21:26+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0014.md",
+          "description": "Phase exit observed in Chromium/unit tests: cancel executes no write, frozen reviewed payloads cannot change after preview, and changed arguments require a fresh preparation/confirmation.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:21:26+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Chromium previews save and export action payloads before any local persistence or download; cancel executes no action.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Reviewed receipt includes exact cue/source IDs, source/media hashes, source version, interval and verification status.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Visible UI states browser-only storage/no account and exposes Delete local review for persisted cards.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Registry plans and receipt arguments are recursively frozen; saved values match the confirmed reviewed receipt.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Tests cover storage quota/security rejection, ambiguous persistence and export failure with no automatic retry.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Chromium restores the saved card after reload; review-store validation rejects corrupt/stale catalog data.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Chromium and unit tests verify deleting a saved review removes the associated local record.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Export action schema accepts only the validated receipt; browser exporter serializes only that receipt and has no BYOK/private prompt path.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Session 0015 plus registered action module, review store and Chromium save/export flow form the reviewed phase artifact.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P046-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:23:27+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Phase exit observed on controlled fixture: confirmed preview equals saved data, reload/delete work, and storage failure remains visible.",
+          "result": "pass",
+          "source_revision": "0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c",
+          "observed_at": "2026-11-23T17:23:27+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:45:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Safe provenance inspector/export evidence for Phase 047, including bounded history, canary redaction, action outcomes and playback/evidence isolation.",
+          "result": "pass",
+          "source_revision": "ee4a4829ee756b756b4d2dad7cc1223cf84d8e70",
+          "observed_at": "2026-11-23T17:45:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:45:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Safe provenance inspector/export evidence for Phase 047, including bounded history, canary redaction, action outcomes and playback/evidence isolation.",
+          "result": "pass",
+          "source_revision": "ee4a4829ee756b756b4d2dad7cc1223cf84d8e70",
+          "observed_at": "2026-11-23T17:45:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:45:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Safe provenance inspector/export evidence for Phase 047, including bounded history, canary redaction, action outcomes and playback/evidence isolation.",
+          "result": "pass",
+          "source_revision": "ee4a4829ee756b756b4d2dad7cc1223cf84d8e70",
+          "observed_at": "2026-11-23T17:45:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:45:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Safe provenance inspector/export evidence for Phase 047, including bounded history, canary redaction, action outcomes and playback/evidence isolation.",
+          "result": "pass",
+          "source_revision": "ee4a4829ee756b756b4d2dad7cc1223cf84d8e70",
+          "observed_at": "2026-11-23T17:45:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:45:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Safe provenance inspector/export evidence for Phase 047, including bounded history, canary redaction, action outcomes and playback/evidence isolation.",
+          "result": "pass",
+          "source_revision": "ee4a4829ee756b756b4d2dad7cc1223cf84d8e70",
+          "observed_at": "2026-11-23T17:45:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:45:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Safe provenance inspector/export evidence for Phase 047, including bounded history, canary redaction, action outcomes and playback/evidence isolation.",
+          "result": "pass",
+          "source_revision": "ee4a4829ee756b756b4d2dad7cc1223cf84d8e70",
+          "observed_at": "2026-11-23T17:45:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:45:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Safe provenance inspector/export evidence for Phase 047, including bounded history, canary redaction, action outcomes and playback/evidence isolation.",
+          "result": "pass",
+          "source_revision": "ee4a4829ee756b756b4d2dad7cc1223cf84d8e70",
+          "observed_at": "2026-11-23T17:45:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:45:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Safe provenance inspector/export evidence for Phase 047, including bounded history, canary redaction, action outcomes and playback/evidence isolation.",
+          "result": "pass",
+          "source_revision": "ee4a4829ee756b756b4d2dad7cc1223cf84d8e70",
+          "observed_at": "2026-11-23T17:45:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:45:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Safe provenance inspector/export evidence for Phase 047, including bounded history, canary redaction, action outcomes and playback/evidence isolation.",
+          "result": "pass",
+          "source_revision": "ee4a4829ee756b756b4d2dad7cc1223cf84d8e70",
+          "observed_at": "2026-11-23T17:45:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:45:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Safe provenance inspector/export evidence for Phase 047, including bounded history, canary redaction, action outcomes and playback/evidence isolation.",
+          "result": "pass",
+          "source_revision": "ee4a4829ee756b756b4d2dad7cc1223cf84d8e70",
+          "observed_at": "2026-11-23T17:45:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:59:22+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Chromium exercises the shipped play/pause, mute/volume, captions and seek controls against actual native media; fullscreen control dispatch is verified with a controlled Fullscreen API shim while the headless real-fullscreen limitation is retained.",
+          "result": "pass",
+          "source_revision": "b8ef8baef4ff8176eb13290e021e9db50b4c8a7a",
+          "observed_at": "2026-11-23T17:59:22+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:59:22+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "At 360x800 the document does not horizontally clip and play/mute/captions/fullscreen controls remain within the viewport and keyboard focusable.",
+          "result": "pass",
+          "source_revision": "b8ef8baef4ff8176eb13290e021e9db50b4c8a7a",
+          "observed_at": "2026-11-23T17:59:22+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:59:22+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Session 0017 records the SUTRA player adapter, actual control/media observations, source replacement, native media error/retry surface and explicit missing-codec limitation.",
+          "result": "pass",
+          "source_revision": "b8ef8baef4ff8176eb13290e021e9db50b4c8a7a",
+          "observed_at": "2026-11-23T17:59:22+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Guided first-viewer question and ordered local task replace an empty-chat dead end.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Video/timing transcript, separate evidence validation and review-card actions are presented as one coherent learner workspace.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Guided card visibly names synthetic-timing-fixture v1 and timing-transcript-v1.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Core journey explicitly models empty/loading/ready/denied/error/completed with browser-observed transitions.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Visible next-human-action guidance and source/evidence panels remain discoverable without opening technical details.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Runtime/peer/BYOK/provenance controls are collapsed behind an optional developer disclosure by default.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "LEARNER_WORKSPACE.md specifies desktop/narrow/zoom reflow and final CSS/browser 360px checks implement that contract.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Fresh Chromium viewer completes load, peer-denial/local recovery, cue navigation, evidence review, confirmed save and delete without opening runtime details.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "LEARNER_WORKSPACE.md plus Session 0018 form the reviewed responsive interaction/state artifact.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Phase exit observed: fresh viewer sees question, supporting cue/source identity and next action without developer trace.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Pure seek policy distinguishes live/unknown duration, no seekable range, outside duration and outside current seek window before changing media state.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Evidence cue is keyboard-activated with Enter; corrupt media produces specific unavailable-seek feedback and no success claim.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Session 0018 records seek policy, native TimeRanges handling, keyboard interaction and actual-currentTime evidence.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Phase exit observed: valid target lands within one second on supported media and unavailable seeking is described accurately.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Versioned transcript cues render as buttons with stable accessible time-range/text names.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Search is bounded to 80 characters/100 results and exposes explicit no-results state.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Actual media time sets valid aria-current=true without moving focus or scrolling.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "ArrowUp/Down/Home/End navigation and native button activation are implemented; Chromium exercises ArrowDown plus Enter.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Transcript metadata visibly links source ID/version, media hash identity, transcript version and SHA-256.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Active-cue updates never call scrollIntoView; browser test confirms zero calls while focus remains in search.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Missing transcript and missing captions are separate browser states; malformed/oversized cue data fails closed.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Transcript metadata explicitly marks translated=false and UI labels original synthetic English rather than replacing it with translation.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Session 0018 plus timing-transcript.vtt, metadata, bounded transcript index and browser interaction form the reviewed transcript artifact.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P044-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:22:28+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Phase exit observed: keyboard search/navigation work and absent transcript/caption states are explicit.",
+          "result": "pass",
+          "source_revision": "31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5",
+          "observed_at": "2026-11-23T18:22:28+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:33:54+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0019.md",
+          "description": "Local timing evidence and written peer guide render as separate source cards rather than blended answer text.",
+          "result": "pass",
+          "source_revision": "227e33ebedb0e42aefa28141c617b164a43dce1a",
+          "observed_at": "2026-11-23T18:33:54+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-02": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:33:54+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0019.md",
+          "description": "Both cards display source/version, date, scope, provenance and claim window.",
+          "result": "pass",
+          "source_revision": "227e33ebedb0e42aefa28141c617b164a43dce1a",
+          "observed_at": "2026-11-23T18:33:54+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-03": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:33:54+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0019.md",
+          "description": "Comparison classifier emits agreement_unverified only when claim ID, structured time window and exact excerpt all match.",
+          "result": "pass",
+          "source_revision": "227e33ebedb0e42aefa28141c617b164a43dce1a",
+          "observed_at": "2026-11-23T18:33:54+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:33:54+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0019.md",
+          "description": "Deliberate 2–4s versus 5–7s fixture renders conflict_unresolved and human review does not change that classification.",
+          "result": "pass",
+          "source_revision": "227e33ebedb0e42aefa28141c617b164a43dce1a",
+          "observed_at": "2026-11-23T18:33:54+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-05": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:33:54+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0019.md",
+          "description": "Initial/missing, denied and invalid peer states explicitly infer neither agreement nor conflict while local evidence remains visible.",
+          "result": "pass",
+          "source_revision": "227e33ebedb0e42aefa28141c617b164a43dce1a",
+          "observed_at": "2026-11-23T18:33:54+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:33:54+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0019.md",
+          "description": "Local card retains #t=2,4 media reference and peer card links exact checklist.evidence.json claim fragment.",
+          "result": "pass",
+          "source_revision": "227e33ebedb0e42aefa28141c617b164a43dce1a",
+          "observed_at": "2026-11-23T18:33:54+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:33:54+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0019.md",
+          "description": "Chromium denial test produces zero peer-evidence requests and preserves local source card/utility.",
+          "result": "pass",
+          "source_revision": "227e33ebedb0e42aefa28141c617b164a43dce1a",
+          "observed_at": "2026-11-23T18:33:54+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:33:54+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0019.md",
+          "description": "Visible Chromium comparison exercises the deliberately conflicting independent peer evidence fixture.",
+          "result": "pass",
+          "source_revision": "227e33ebedb0e42aefa28141c617b164a43dce1a",
+          "observed_at": "2026-11-23T18:33:54+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:33:54+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0019.md",
+          "description": "Session 0019 records the comparison classifier, peer evidence artifact, consent boundary, UI and browser evidence.",
+          "result": "pass",
+          "source_revision": "227e33ebedb0e42aefa28141c617b164a43dce1a",
+          "observed_at": "2026-11-23T18:33:54+05:45"
+        }
+      ]
+    },
+    "SUTRA-P045-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T18:33:54+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0019.md",
+          "description": "Phase exit observed: conflict remains visibly unresolved through review and no inferred agreement is labeled verified.",
+          "result": "pass",
+          "source_revision": "227e33ebedb0e42aefa28141c617b164a43dce1a",
+          "observed_at": "2026-11-23T18:33:54+05:45"
+        }
+      ]
     }
   },
   "blockers": [],
@@ -2849,7 +5078,7 @@
   "release": {
     "state": "not_started",
     "proposed_app_url": "https://sutra.aafnaipatro.com/",
-    "proposed_peer_url": "https://sutra-guide.aafnaipatro.com/",
+    "proposed_peer_url": null,
     "verified_app_url": null,
     "verified_peer_url": null,
     "source_revision": null,
@@ -2872,9 +5101,5 @@
     "deadline_baseline": "2027-01-11T21:45:00+05:45",
     "deadline_requires_recheck": true
   },
-  "notes": [
-    "Task checkbox state is authoritative; this register carries evidence and resume pointers.",
-    "A delivered package is not an official Devpost submission.",
-    "Participant release gate: no public deployment, domain/route assignment, public inference enablement or promotion until all applicable major checklist product/security/conformance/acceptance gates have current passing evidence. Dry-run bundling is not release."
-  ]
+  "notes": "Decision 0010 supersedes the earlier breadth-first community plan. Old receipt records remain legacy compatibility but no longer prove P017/P057. Consent inspector remains historical/example work; third-party MCP fixture was removed from the working branch."
 }

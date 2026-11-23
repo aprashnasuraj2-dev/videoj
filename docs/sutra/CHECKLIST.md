@@ -14,6 +14,20 @@ This is the active, user-requested SUTRA work plan. It expands the attached 100-
 
 No SUTRA product task is completed merely because this checklist exists. The initial implementation state is 0 verified of 1,000. Later totals must come from the actual files, not this historical sentence.
 
+## Current priority override — 23 November 2026
+
+The numbered phase IDs remain stable, but the living execution order is now:
+
+1. **Flagship community artifact:** replace the bespoke evidence receipt as the public interchange format with a small W3C Web Annotation profile using `SpecificResource` + `FragmentSelector`, Media Fragment temporal selectors (`t=start,end`) and SRI-style SHA-256 integrity metadata. Keep "hash matches bytes, not truth" explicit. P017/P052/P056/P057/P060/P084/P092 carry this work.
+2. **Keep BYOK:** P030 is no longer a first-cut optional feature. A user-chosen browser key is a deliberate no-host-inference-cost path, an explicit proof that the key remains on the caller/router boundary, and the fallback if funded inference is throttled. Funded inference still remains the clean judge path.
+3. **Short real lesson and early physical iPhone seek:** target about three minutes, approximately 0.8 Mbps total average bitrate and an actually measured file below 25 MiB. Test real iPhone decode/seek before final media-host selection rather than waiting for the late device matrix.
+4. **Run provenance:** the visible inspector must expose spec commit, pinned runtime revision, graph SHA-256, model ID, router, contacted origins, call counts, consent decisions and errors while excluding credentials/private prompts.
+5. **Real site-boundary evidence:** the guide/peer must ship on a different registrable domain from the caller, not another `aafnaipatro.com` subdomain. Same-owner remains disclosed and does not count as independent adoption.
+6. **External proof:** after a signed-out public build exists, have at least one other challenge entrant load the guide/network and run the flagship evidence quickstart; optionally load one unrelated public entrant network outside the filmed judge path. After public URLs are stable, open the official `cognizant-ai-labs/agentic-web` `docs/agentic_websites.md` PR.
+7. **Cut before core quality:** P039 public third-party MCP product work, P048 Nepali localization, P058 consent-inspector community packaging, P059 starter packaging and P069 load testing are deferred/non-blocking unless a later observed defect makes one necessary. Runtime consent remains mandatory. The already-built MCP/consent fixtures may remain as regression examples but are not submission-centerpiece claims.
+
+These are scope/prioritization changes, not retroactive evidence. Completed checks remain historical where valid; tasks made stale by the evidence-format change must be revalidated against the new profile.
+
 ## Workstreams
 
 | # | Detailed checklist | Original phases | Initial tasks | Original target window |

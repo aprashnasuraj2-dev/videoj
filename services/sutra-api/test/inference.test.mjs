@@ -1,4 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {handleInference,UPSTREAM,inferenceStatus} from '../inference.js';import {InferenceQuota} from '../quota.js';import worker,{handleSourceTools} from '../worker.js';import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
+import {createOpenRouterByokAdapter,OPENROUTER_CHAT_URL} from '../../../packages/sutra-inference/byok.js';
 const payload=()=>({model:'operator-approved',stream:true,messages:[{role:'user',content:'hello'}],tools:[]});
 const request=(body=payload(),extra={})=>new Request('https://sutra.test/api/infer',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json','CF-Connecting-IP':'192.0.2.1',...extra},body:JSON.stringify(body)});
 const environment=(reserve=async()=>Response.json({allowed:true}))=>({SUTRA_ENABLE_INFERENCE:'true',SUTRA_PROVIDER_KEY:'SERVER_ONLY_KEY_MARKER',SUTRA_CLIENT_HASH_SECRET:'a'.repeat(32),SUTRA_ALLOWED_ORIGIN:'https://sutra.test',SUTRA_MODELS:'operator-approved',SUTRA_MAX_OUTPUT_TOKENS:'512',SUTRA_QUOTA:{idFromName:x=>x,get:()=>({fetch:reserve})}});
@@ -18,3 +19,33 @@ test('worker status is honest and unknown APIs never fall through to assets',asy
 test('cancelling during quota response decoding stops before provider contact',async()=>{const abort=new AbortController();const env=environment(async()=>new Response(new ReadableStream({start(){}})));let upstream=0;const pending=handleInference(new Request(request(),{signal:abort.signal}),env,{fetchImpl:async()=>{upstream++;return sse();}});setTimeout(()=>abort.abort(),15);assert.equal((await pending).status,503);assert.equal(upstream,0);});
 test('cancelling a stalled upstream fetch terminates without leaking transport details',async()=>{const abort=new AbortController();let started;const ready=new Promise(resolve=>{started=resolve;});const pending=handleInference(new Request(request(),{signal:abort.signal}),environment(),{fetchImpl:()=>{started();return new Promise(()=>{});}});await ready;abort.abort();const response=await pending;assert.equal(response.status,502);assert.match(await response.text(),/UPSTREAM_UNAVAILABLE/);});
 test('cancelling the public stream aborts provider work',async()=>{let upstreamSignal;const response=await handleInference(request(),environment(),{fetchImpl:async(url,opts)=>{upstreamSignal=opts.signal;return new Response(new ReadableStream({start(){}}),{headers:{'Content-Type':'text/event-stream'}});}});await response.body.cancel();assert.equal(upstreamSignal.aborted,true);});
+
+test('funded quota exhaustion does not disable caller BYOK and BYOK authorization failure does not disable funded inference',async()=>{
+ let upstreamCalls=0;
+ const exhausted=await handleInference(request(),environment(async()=>new Response('',{status:429})),{fetchImpl:async()=>{upstreamCalls++;return sse();}});
+ assert.equal(exhausted.status,429);
+ assert.equal(upstreamCalls,0);
+ const key='synthetic-fallback-byok-key',routerCalls=[];
+ const byok=createOpenRouterByokAdapter({key,model:'openrouter/free',fetchImpl:async(url,options)=>{
+  routerCalls.push({url,headers:options.headers,body:options.body});
+  return sse();
+ }});
+ assert.equal((await byok.chat({messages:[{role:'user',content:'independent fallback'}]})).content,'hello');
+ assert.equal(routerCalls.length,1);
+ assert.equal(routerCalls[0].url,OPENROUTER_CHAT_URL);
+ assert.equal(routerCalls[0].headers.Authorization,'Bearer '+key);
+ assert.ok(!routerCalls[0].body.includes(key));
+ byok.clear();
+
+ const invalidByok=createOpenRouterByokAdapter({key:'synthetic-invalid-key',model:'openrouter/free',fetchImpl:async()=>new Response('bad key',{status:401})});
+ await assert.rejects(invalidByok.chat({messages:[{role:'user',content:'test'}]}),e=>e.code==='BYOK_AUTH');
+ const funded=await handleInference(request(),environment(),{fetchImpl:async(url,options)=>{
+  assert.equal(url,UPSTREAM);
+  assert.equal(options.headers.Authorization,'Bearer SERVER_ONLY_KEY_MARKER');
+  return sse();
+ }});
+ assert.equal(funded.status,200);
+ const fundedBody=await funded.text();
+ assert.ok(fundedBody.includes('[DONE]'));
+ assert.ok(!fundedBody.includes(key));
+});

@@ -1,3 +1,8 @@
+export {PROFILE_ID,ANNOTATION_CONTEXT,MEDIA_FRAGMENTS,parseMediaFragment,cueHref,validateAnnotationProfile,validateIntegrityManifest,sha256Integrity,verifyIntegrity,parseWebVtt,validateEvidenceBytes} from './annotation.js';
+export {cueLinkData,mountCueLink} from './cue-link.js';
+
+// Legacy SUTRA receipt v1 compatibility follows. New integrations should use
+// the Web Annotation media-evidence profile exported above.
 /** Shape and source-reference checks only. This does not verify semantic truth or publisher trust. */
 const HASH = /^[a-f0-9]{64}$/;
 const ID = /^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$/;

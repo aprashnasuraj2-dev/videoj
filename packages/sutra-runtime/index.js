@@ -1,6 +1,6 @@
 import {createSourceMcp} from './source-mcp.js';
 import {fetchJsonWithConsent} from '../sutra-consent/index.js';
-import {AgentNetwork, validateNetwork} from './vendor/nsdeploy/kernel.js';
+import {AgentNetwork, validateNetwork, isExternalAgent, isMcpTool, parseExternalAgent, filterSlyData} from './vendor/nsdeploy/kernel.js';
 import {runAgent} from './vendor/nsdeploy/runner.js';
 import {checkSchema, validateData} from './vendor/nsdeploy/actions.js';
 import {TraceBus} from './vendor/nsdeploy/trace.js';
@@ -12,7 +12,7 @@ const fail=(code,message)=>{throw new RuntimeError(code,message);};
 const plain=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 const allowed=(object,keys,where)=>{for(const key of Object.keys(object))if(!keys.includes(key))fail('UNSUPPORTED_FIELD',`Unsupported ${where} field.`);};
 const idPattern=/^[A-Za-z][A-Za-z0-9_]{0,59}$/;
-const defaults=Object.freeze({maxDepth:3,maxAgents:12,maxModelCalls:8,maxSteps:8,concurrency:2,timeoutMs:60000,maxOutputChars:16000});
+const defaults=Object.freeze({maxDepth:3,maxAgents:12,maxModelCalls:8,maxSteps:8,concurrency:2,timeoutMs:60000,maxOutputChars:16000,maxRemoteCalls:2,maxCallsPerPeer:1});
 export function executionLimits(input={}){
  if(!plain(input))fail('LIMIT_CONFIG','Limits must be an object.');
  const out={...defaults};
@@ -39,9 +39,9 @@ function assertJsonData(value,ancestors=new Set(),depth=0){
  ancestors.delete(value);
 }
 
-// The current profile deliberately accepts local declarative agents only.
-// Peer/MCP/action/code loading must be integrated with consent in later phases.
-export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false}={}){
+// External declarative peers remain disabled by default and require an explicit consent-gated host surface.
+// Third-party MCP remains outside this narrowed release scope; only the existing same-origin source capability is allowed.
+export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false,allowPeerNetworks=false}={}){
  const bounds=executionLimits(limits);
  assertJsonData(definition);
  let json;
@@ -50,14 +50,15 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
  let raw;
  try{raw=JSON.parse(json,(key,value)=>{if(['__proto__','constructor','prototype'].includes(key))fail('NETWORK_DATA','Unsafe data key.');return value;});}catch(error){if(error instanceof RuntimeError)throw error;fail('NETWORK_DATA','Invalid network data.');}
  if(!plain(raw))fail('NETWORK_DATA','Network must be an object.');
- allowed(raw,['metadata','tools','llm_config','max_steps'],'network');
+ allowed(raw,['metadata','tools','llm_config','max_steps','cruse'],'network');
+ if(raw.cruse!==undefined){if(!plain(raw.cruse)||Object.keys(raw.cruse).some(key=>key!=='version')||raw.cruse.version!==1)fail('PRESENTATION','CRUSE presentation metadata must be exactly version 1.');}
  if(!idPattern.test(name)||!idPattern.test(frontMan))fail('NETWORK_ID','Invalid network/front identity.');
  if(!plain(raw.metadata)||typeof raw.metadata.description!=='string'||raw.metadata.description.length>2000)fail('METADATA','Network needs a bounded description.');
  if(!Array.isArray(raw.tools)||raw.tools.length<1||raw.tools.length>32)fail('AGENTS','Network requires one to 32 agents.');
  const names=new Set();
  for(const agent of raw.tools){
   if(!plain(agent))fail('AGENT','Invalid agent object.');
-  allowed(agent,['name','function','instructions','tools','llm_config','max_steps'],'agent');
+  allowed(agent,['name','function','instructions','tools','llm_config','max_steps','allow'],'agent');
   if(!idPattern.test(agent.name)||['constructor','prototype','__proto__'].includes(agent.name)||names.has(agent.name))fail('AGENT_NAME','Invalid or duplicate agent name.');
   names.add(agent.name);
   if(typeof agent.instructions!=='string'||!agent.instructions.trim()||agent.instructions.length>12000)fail('INSTRUCTIONS','Agent needs bounded public instructions.');
@@ -65,20 +66,44 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
   allowed(agent.function,['description','parameters'],'function');
   try{checkSchema(agent.function.parameters);}catch{fail('SCHEMA','Unsupported or malformed invocation schema.');}
   if(agent.function.parameters.type!=='object'||agent.function.parameters.additionalProperties!==false)fail('SCHEMA','Invocation schema must reject extra object fields.');
-  if(!Array.isArray(agent.tools)||agent.tools.length>16||agent.tools.some(ref=>typeof ref!=='string'&&!(allowSourceTools===true&&plain(ref)&&Object.keys(ref).length===1&&ref.url==='/api/source-tools')))fail('TOOLS','Agent needs a bounded local tool list.');
+  if(!Array.isArray(agent.tools)||agent.tools.length>16)fail('TOOLS','Agent needs a bounded tool list.');
+  for(const ref of agent.tools){
+   if(typeof ref==='string')continue;
+   const sourceDescriptor=allowSourceTools===true&&plain(ref)&&Object.keys(ref).length===1&&ref.url==='/api/source-tools';
+   if(!sourceDescriptor)fail('TOOLS','External capability descriptors are disabled in this runtime profile.');
+  }
   if(new Set(agent.tools.map(r=>JSON.stringify(r))).size!==agent.tools.length)fail('TOOLS','Duplicate local references are unsupported.');
   const steps=agent.max_steps??raw.max_steps??bounds.maxSteps;
   if(!Number.isInteger(steps)||steps<1||steps>bounds.maxSteps)fail('STEPS','Invalid or over-budget step count.');
   agent.max_steps=steps;
   if(agent.llm_config!==undefined){if(!plain(agent.llm_config))fail('MODEL','Invalid model hints.');allowed(agent.llm_config,['model_name'],'model');if(typeof agent.llm_config.model_name!=='string')fail('MODEL','Invalid model hint.');}
+  if(agent.allow!==undefined){
+   if(!plain(agent.allow))fail('PRIVATE_CONTEXT_POLICY','Agent private-context policy must be an object.');
+   allowed(agent.allow,['to_downstream','to_upstream'],'private-context allow');
+   for(const direction of ['to_downstream','to_upstream'])if(agent.allow[direction]!==undefined){
+    const rule=agent.allow[direction];if(!plain(rule))fail('PRIVATE_CONTEXT_POLICY','Private-context direction policy must be an object.');
+    allowed(rule,['sly_data'],'private-context direction');
+    if(rule.sly_data!==undefined&&(!Array.isArray(rule.sly_data)||rule.sly_data.length>16||rule.sly_data.some(key=>!idPattern.test(key))||new Set(rule.sly_data).size!==rule.sly_data.length))fail('PRIVATE_CONTEXT_POLICY','Private-context fields must be unique bounded identifiers; wildcards are disabled.');
+   }
+  }
+
  }
  if(raw.llm_config!==undefined){if(!plain(raw.llm_config))fail('MODEL','Invalid network model hints.');allowed(raw.llm_config,['model_name'],'model');if(typeof raw.llm_config.model_name!=='string')fail('MODEL','Invalid model hint.');}
- for(const agent of raw.tools)for(const ref of agent.tools)if(typeof ref==='string'&&!names.has(ref))fail('REFERENCE','External or missing capabilities are unavailable in this local profile.');
+ for(const agent of raw.tools)for(const ref of agent.tools){
+  if(typeof ref!=='string'||names.has(ref))continue;
+  if(allowPeerNetworks&&isExternalAgent(ref)&&!isMcpTool(ref)){
+   let peer;try{peer=new URL(ref);}catch{fail('REFERENCE','Peer network URL must be absolute.');}
+   const loopback=['localhost','127.0.0.1','[::1]'].includes(peer.hostname);
+   if(peer.username||peer.password||peer.search||peer.hash||peer.protocol!=='https:'&&!(peer.protocol==='http:'&&loopback))fail('REFERENCE','Peer URL is outside the approved transport profile.');
+   continue;
+  }
+  fail('REFERENCE','External, MCP or missing capabilities are unavailable in this runtime profile.');
+ }
  const byName=new Map(raw.tools.map(a=>[a.name,a]));
  function visit(name,chain=[]){
   if(chain.includes(name))fail('CYCLE','Composition cycle rejected before execution.');
   if(chain.length>=bounds.maxDepth)fail('DEPTH','Composition depth exceeds runtime policy.');
-  for(const ref of byName.get(name).tools)if(typeof ref==='string')visit(ref,[...chain,name]);
+  for(const ref of byName.get(name).tools)if(typeof ref==='string'&&byName.has(ref))visit(ref,[...chain,name]);
  }
  for(const agent of raw.tools)visit(agent.name);
  const network=new AgentNetwork(raw,name);
@@ -89,26 +114,65 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
 
 // Model adapters are explicitly injected; there is no keyless automatic mock fallback.
 // A scripted-test adapter is only a test driver, not a live inference service.
-export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools}={}){
- const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools});
+function validateExternalHost(external){
+ if(external===undefined)return null;
+ if(!plain(external)||!external.inspector||typeof external.inspector.authorize!=='function')fail('EXTERNAL_CONFIG','External capability use requires the consent inspector.');
+ let base;
+ try{base=new URL(external.baseOrigin);}catch{fail('EXTERNAL_CONFIG','External capability use requires an absolute caller base origin.');}
+ const loopback=['localhost','127.0.0.1','[::1]'].includes(base.hostname);
+ if(base.origin!==external.baseOrigin||base.username||base.password||base.pathname!=='/'||base.search||base.hash||base.protocol!=='https:'&&!(base.protocol==='http:'&&loopback))fail('EXTERNAL_CONFIG','Caller base origin must be an exact HTTPS origin (loopback HTTP for development).');
+ if(external.fetchImpl!==undefined&&typeof external.fetchImpl!=='function')fail('EXTERNAL_CONFIG','External artifact fetch implementation must be callable.');
+ if(external.peerContext!==undefined){
+  if(!plain(external.peerContext)||Object.keys(external.peerContext).length>16)fail('EXTERNAL_CONFIG','Peer private-context policy must be a bounded exact-URL map.');
+  for(const [peerUrl,policy] of Object.entries(external.peerContext)){
+   let peer;try{peer=new URL(peerUrl);}catch{fail('EXTERNAL_CONFIG','Peer private-context policy key must be an absolute network URL.');}
+   if(peer.href!==peerUrl||peer.search||peer.hash||peer.username||peer.password)fail('EXTERNAL_CONFIG','Peer private-context policy key must be the exact canonical network URL.');
+   if(!plain(policy))fail('EXTERNAL_CONFIG','Peer private-context policy must be an object.');
+   allowed(policy,['downstream','upstream'],'peer private-context policy');
+   for(const direction of ['downstream','upstream'])if(policy[direction]!==undefined){
+    const keys=policy[direction];if(!Array.isArray(keys)||keys.length>16||keys.some(key=>!idPattern.test(key))||new Set(keys).size!==keys.length)fail('EXTERNAL_CONFIG','Peer private-context field names must be unique bounded identifiers.');
+   }
+  }
+ }
+ return {...external,baseOrigin:base.origin};
+}
+function safePeerFailure(error){
+ const code=error?.code;
+ if(code==='CONSENT_DENIED')return new RuntimeError('PEER_CONSENT_DENIED','Peer contact was denied before the requested public artifact was retrieved.');
+ if(code==='NETWORK_MATCH')return new RuntimeError('PEER_NETWORK_MATCH','Peer load failed: the requested exact network name is not published exactly once.');
+ if(code==='MANIFEST')return new RuntimeError('PEER_MANIFEST','Peer load failed: the public manifest is malformed or incomplete.');
+ if(['CONTACT_RESPONSE','CONTACT_JSON','CONTACT_SIZE','CONTACT_FETCH','CONTACT_REDIRECT','ARTIFACT_URL','ARTIFACT_ORIGIN','CYCLE','REFERENCE','VALIDATION','FRONT','UNSUPPORTED_FIELD','TOOLS','SCHEMA','AGENT','AGENTS','AGENT_NAME','INSTRUCTIONS','FUNCTION','PRIVATE_CONTEXT_POLICY','MODEL','STEPS','NETWORK_DATA','NETWORK_SIZE','METADATA'].includes(code))return new RuntimeError('PEER_ARTIFACT','Peer load failed: the declared public network artifact is unavailable or invalid.');
+ if(code==='ARTIFACT_TIMEOUT'||code==='CANCELLED')return new RuntimeError(code,'Peer load stopped before a usable network was established.');
+ return new RuntimeError('PEER_UNAVAILABLE','Peer load failed before a usable network was established.');
+}
+export async function runNetwork({definition,name='learner',frontMan='learner',request,model,modelName='',limits={},signal,onEvent,sourceTools,actionRegistry,external,privateContext={}}={}){
+ const host=validateExternalHost(external);
+ if(actionRegistry!==undefined&&(!actionRegistry||typeof actionRegistry.catalog!=='function'||typeof actionRegistry.validatePresentation!=='function'))fail('ACTION_REGISTRY','Action registry must expose catalog and presentation validation.');
+ const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeerNetworks:!!host});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
+ if(!plain(privateContext)||Object.keys(privateContext).length>32||Object.keys(privateContext).some(key=>!idPattern.test(key)))fail('PRIVATE_CONTEXT','Private context must use bounded identifier keys.');
+ assertJsonData(privateContext);let privateBytes;try{privateBytes=new TextEncoder().encode(JSON.stringify(privateContext)).length;}catch{fail('PRIVATE_CONTEXT','Private context must be finite JSON data.');}
+ if(privateBytes>8192)fail('PRIVATE_CONTEXT','Private context exceeds the 8 KiB runtime limit.');
+ const initialPrivateContext=structuredClone(privateContext);
  if(!model||typeof model.chat!=='function'||!['scripted-test','provider'].includes(model.mode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
+ if(typeof modelName!=='string'||modelName.length>120||/[\u0000-\u001f\u007f]/.test(modelName))fail('MODEL_POLICY','Caller model selection must be bounded text.');
+ const selectedModel=modelName.trim();
+ if(host&&model.mode==='provider'&&!selectedModel)fail('MODEL_POLICY','External peer execution requires an explicit caller-selected provider model.');
  if(signal?.aborted)fail('CANCELLED','Run cancelled before model execution.');
  const bounds=compiled.limits,controller=new AbortController();
  const aborted=()=>controller.abort(signal?.reason??new RuntimeError('CANCELLED','Run cancelled.'));
  if(signal?.aborted)aborted();else signal?.addEventListener('abort',aborted,{once:true});
  const trace=new TraceBus(),events=[];let modelCalls=0,active=0,totalOutput=0,failure=null,closed=false;const waiters=[];
  const check=()=>{if(closed)fail('CLOSED','Run is closed.');if(controller.signal.aborted)throw controller.signal.reason;};
- const emit=event=>{const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,100);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
+ const emit=event=>{const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','origin','network'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,160);for(const key of ['attempt','maxAttempts'])if(Number.isInteger(event[key])&&event[key]>=1&&event[key]<=12)safe[key]=event[key];if(event.kind==='composition_limit'&&typeof event.reason==='string'){const r=event.reason;safe.limit=r.includes('agent invocations')?'agent_calls':r.includes('third-party calls')?'remote_calls':r.includes('already consulted')?'peer_repeat':r.includes('deadline')?'deadline':'composition';}if(Array.isArray(event.contextKeys))safe.contextKeys=event.contextKeys.filter(key=>idPattern.test(key)).slice(0,16);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
  trace.addEventListener('event',e=>emit(e.detail));
  const abortWaiters=()=>{for(const wake of waiters.splice(0))wake();};controller.signal.addEventListener('abort',abortWaiters);
  const deadline=setTimeout(()=>controller.abort(new RuntimeError('TIMEOUT','Run exceeded its elapsed time limit.')),bounds.timeoutMs);
  let rejectAbort;
  const stopped=new Promise((_,reject)=>{rejectAbort=()=>reject(controller.signal.reason);controller.signal.addEventListener('abort',rejectAbort,{once:true});if(controller.signal.aborted)rejectAbort();});
- // An abort may precede the first awaited race; retain an observer to avoid unhandled rejection.
  stopped.catch(()=>{});
  const guardedModel={chat:async args=>{
-  check();if(modelCalls>=bounds.maxModelCalls)fail('MODEL_LIMIT','Model-call budget exceeded.');modelCalls++;
+  check();if(selectedModel&&args.model!==selectedModel)fail('MODEL_POLICY','Peer or graph model hint attempted to bypass the caller-selected model.');if(modelCalls>=bounds.maxModelCalls)fail('MODEL_LIMIT','Model-call budget exceeded.');modelCalls++;
   while(active>=bounds.concurrency){await new Promise(resolve=>waiters.push(resolve));check();}
   active++;const span=trace.start('model_call',{mode:model.mode,parent:args.parentSpan});
   try{
@@ -129,16 +193,52 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   }catch(error){failure=error;controller.abort(error);trace.fail(span,new Error('Model or tool boundary failed.'));throw error;}
   finally{active--;waiters.shift()?.();}
  }};
- const composition={remoteCalls:0,peerCalls:new Map(),maxRemoteCalls:0,maxCallsPerPeer:0,agentCalls:0,maxAgentCalls:bounds.maxAgents,deadlineSeconds:bounds.timeoutMs/1000,deadline:Date.now()+bounds.timeoutMs};
- const unavailable=()=>fail('CAPABILITY_UNAVAILABLE','External capabilities are disabled in this local runtime profile.');
+ const composition={remoteCalls:0,peerCalls:new Map(),maxRemoteCalls:host?bounds.maxRemoteCalls:0,maxCallsPerPeer:host?bounds.maxCallsPerPeer:0,agentCalls:0,maxAgentCalls:bounds.maxAgents,deadlineSeconds:bounds.timeoutMs/1000,deadline:Date.now()+bounds.timeoutMs};
+ const unavailable=()=>fail('CAPABILITY_UNAVAILABLE','External capabilities are disabled in this runtime profile.');
  try{
- const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
- const guardSource=method=>async(...args)=>{check();try{return await rawSourceClient[method](...args);}catch{const error=new RuntimeError('CAPABILITY_UNAVAILABLE','Source retrieval failed; no completed source result is claimed.');failure=error;controller.abort(error);throw error;}};
- const sourceClient=rawSourceClient?{listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
- const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:'fixture-only',modelOverride:'',resolveRemote:unavailable,resolveMcp:sourceClient?async ref=>{check();if(ref?.url!=='/api/source-tools')return unavailable();return sourceClient;}:unavailable,resolveLink:unavailable,requestConsent:async()=> 'decline'};
+  const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal,onAttempt:({method,attempt,maxAttempts})=>trace.note('source_attempt',{tool:method,attempt,maxAttempts})}):null;
+  const guardSource=method=>async(...args)=>{check();try{return await rawSourceClient[method](...args);}catch{const error=new RuntimeError('CAPABILITY_UNAVAILABLE','Source retrieval failed; no completed source result is claimed.');failure=error;controller.abort(error);throw error;}};
+  const sourceClient=rawSourceClient?{url:(sourceTools?.origin??host?.baseOrigin??'https://sutra.invalid')+'/api/source-tools',listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
+  const requestConsent=async intent=>intent?.kind==='network'?'allow':'decline';
+  const resolveMcp=sourceClient?async ref=>{check();if(ref?.url==='/api/source-tools')return sourceClient;return unavailable();}:unavailable;
+  const resolveRemote=host?async function(peerUrl,chain,parentSpan){
+   const callerContext=this;
+   check();
+   let loaded;
+   try{loaded=await loadPeerNetwork({peerUrl,inspector:host.inspector,fetchImpl:host.fetchImpl??fetch,signal:controller.signal,timeoutMs:Math.min(5000,bounds.timeoutMs)});}
+   catch(error){throw safePeerFailure(error);}
+   const peerCompiled=compileNetwork(loaded.definition,{name:loaded.name,frontMan:loaded.frontMan,limits:bounds});
+   const parsed=parseExternalAgent(peerUrl,host.baseOrigin),key=`${parsed.origin}::${parsed.agentName}`;
+   return {
+    async invoke(envelope,{chain:parentChain=[]}={}){
+     check();
+     const exactPolicy=host.peerContext?.[new URL(peerUrl).href]??{};
+     const permitted=filterSlyData(plain(envelope?.sly_data)?envelope.sly_data:{},exactPolicy.downstream??[]);
+     trace.note('private_context',{parent:parentSpan,origin:loaded.origin,network:loaded.name,contextKeys:Object.keys(permitted)});
+     const peerCtx={
+      network:peerCompiled.network,frontMan:peerCompiled.frontMan,baseOrigin:loaded.origin,displayOrigin:loaded.origin,
+      llm:guardedModel,trace,composition,slyData:permitted,history:[],isTop:false,
+      mock:model.mode==='scripted-test',apiKey:'',defaultModel:selectedModel||'fixture-only',modelOverride:selectedModel,resolveRemote:unavailable,
+      resolveMcp:unavailable,resolveLink:unavailable,requestConsent:async()=> 'decline'
+     };
+     const result=await runAgent(peerCtx,peerCompiled.frontMan,String(envelope?.user_message?.text??''),parentSpan,[...parentChain,key]);
+     const peerFront=peerCompiled.network.getAgentSpec(peerCompiled.frontMan);
+     const peerUpstream=peerFront?.allow?.to_upstream?.sly_data??[],hostUpstream=exactPolicy.upstream??[];
+     const upstreamKeys=peerUpstream.filter(field=>hostUpstream.includes(field));
+     const returned=filterSlyData(peerCtx.slyData,upstreamKeys);
+     if(!plain(callerContext?.slyData))fail('PRIVATE_CONTEXT','Caller private context is unavailable for an upstream merge.');
+     for(const [field,value] of Object.entries(returned))callerContext.slyData[field]=structuredClone(value);
+     trace.note('private_context_upstream',{parent:parentSpan,origin:loaded.origin,network:loaded.name,contextKeys:Object.keys(returned)});
+     return result;
+    }
+   };
+  }:unavailable;
+  const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:host?.baseOrigin??sourceTools?.origin??'https://sutra.invalid',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:initialPrivateContext,history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:selectedModel||'fixture-only',modelOverride:selectedModel,resolveRemote,resolveMcp,resolveLink:unavailable,requestConsent,actions:actionRegistry};
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
-  if(!result.text||events.some(e=>e.kind==='composition_limit'))fail('INCOMPLETE','Execution stopped before a complete answer.');
-  return {text:result.text,mode:model.mode,modelCalls,agentCalls:composition.agentCalls,events};
+  if(!result.text)fail('INCOMPLETE','Execution stopped before a complete answer.');
+  const budgetStop=events.find(e=>e.kind==='composition_limit');
+  if(budgetStop){const error=new RuntimeError('COMPOSITION_LIMIT',`Execution stopped at the ${budgetStop.limit||'composition'} budget; partial output is incomplete and is not a verified result.`);error.limit=budgetStop.limit||'composition';error.partialText=result.text.replace(/[\u0000-\u001f\u007f]/g,' ').slice(0,2000);throw error;}
+  return {text:result.text,mode:model.mode,modelCalls,agentCalls:composition.agentCalls,remoteCalls:composition.remoteCalls,events};
  }catch(error){if(error instanceof RuntimeError)throw error;if(controller.signal.aborted&&controller.signal.reason instanceof RuntimeError)throw controller.signal.reason;fail('RUN_FAILED','Runtime execution failed; no completed result is claimed.');}
  finally{closed=true;clearTimeout(deadline);signal?.removeEventListener('abort',aborted);controller.signal.removeEventListener('abort',rejectAbort);controller.signal.removeEventListener('abort',abortWaiters);abortWaiters();}
 }
@@ -226,10 +326,10 @@ async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,all
  let graphUrl;
  try{graphUrl=new URL(entry.hocon,base);}catch{fail('ARTIFACT_URL','Invalid declared peer graph URL.');}
  const graphLoopback=['localhost','127.0.0.1','[::1]'].includes(graphUrl.hostname);
- if(graphUrl.username||graphUrl.password||graphUrl.hash||graphUrl.protocol!=='https:'&&!(graphUrl.protocol==='http:'&&graphLoopback))fail('ARTIFACT_ORIGIN','Declared peer graph must use approved HTTP(S) without credentials or fragment.');
+ if(graphUrl.username||graphUrl.password||graphUrl.hash||graphUrl.search||graphUrl.pathname.length>160||graphUrl.protocol!=='https:'&&!(graphUrl.protocol==='http:'&&graphLoopback))fail('ARTIFACT_ORIGIN','Declared peer graph must use approved HTTP(S), a bounded path and no credentials, query or fragment.');
  const definition=await fetchJsonWithConsent({
   inspector,
-  contact:{origin:graphUrl.origin,kind:'peer_graph',purpose:'Retrieve the declared peer network definition',disclosure:['network name'],network:networkName},
+  contact:{origin:graphUrl.origin,kind:'peer_graph',purpose:'Retrieve the declared peer network definition at '+graphUrl.pathname,disclosure:['network name'],network:networkName},
   url:graphUrl.href,fetchImpl,maxBytes:65536,signal
  });
  compileNetwork(definition,{name:networkName,frontMan:entry.front_man,allowSourceTools});

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "source": {
+    "id": "synthetic-written-checklist",
+    "version": "v1",
+    "publishedAt": "2026-11-23",
+    "scope": "Synthetic written timing checklist fixture; engineering conflict test only.",
+    "provenance": "Publisher-owned peer fixture. Rights-cleared lesson corpus and factual reviewer remain pending."
+  },
+  "claim": {
+    "id": "timing-marker-window",
+    "start": 5,
+    "end": 7,
+    "excerpt": "Synthetic written checklist fixture places the timing marker at 00:05–00:07. This is deliberately conflicting test data."
+  },
+  "verification": "unverified"
+}

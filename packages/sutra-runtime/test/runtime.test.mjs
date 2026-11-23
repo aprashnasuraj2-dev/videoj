@@ -1,5 +1,6 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
-import {compileNetwork,runNetwork,executionLimits} from '../index.js';import {createScriptedModel} from '../testing.js';
+import {compileNetwork,runNetwork,executionLimits} from '../index.js';
+import {ActionRegistry} from '../vendor/nsdeploy/actions.js';import {createScriptedModel} from '../testing.js';
 const graph=JSON.parse(fs.readFileSync(new URL('../examples/learner.network.json',import.meta.url)));
 const copy=()=>structuredClone(graph);const run=(opts={})=>runNetwork({definition:copy(),request:'Inspect the synthetic cue.',model:createScriptedModel(),...opts});
 test('reference loop runs two agents and three scripted model steps',async()=>{const result=await run();assert.equal(result.mode,'scripted-test');assert.equal(result.agentCalls,2);assert.equal(result.modelCalls,3);assert.match(result.text,/No live AI/);assert.ok(result.events.some(e=>e.kind==='agent'&&e.agent==='evidence'));});
@@ -23,7 +24,12 @@ test('pre-aborted run makes no model calls',async()=>{const controller=new Abort
 test('timeout terminates a non-cooperating model',async()=>{const start=Date.now();await assert.rejects(run({limits:{timeoutMs:20},model:{mode:'scripted-test',chat:()=>new Promise(()=>{})}}),e=>e.code==='TIMEOUT');assert.ok(Date.now()-start<1000);});
 test('mid-run cancellation terminates a non-cooperating model',async()=>{const controller=new AbortController();const job=run({signal:controller.signal,model:{mode:'scripted-test',chat:()=>new Promise(()=>{})}});setTimeout(()=>controller.abort(),10);await assert.rejects(job);});
 test('model-call budget stops delegation, no final success claimed',async()=>assert.rejects(run({limits:{maxModelCalls:1}})));
-test('agent budget stop is not treated as completed answer',async()=>assert.rejects(run({limits:{maxAgents:1}}),e=>['INCOMPLETE','RUN_FAILED'].includes(e.code)));
+test('agent budget stop identifies the exhausted limit and preserves incomplete partial text',async()=>{
+ await assert.rejects(run({limits:{maxAgents:1}}),e=>{
+  assert.equal(e.code,'COMPOSITION_LIMIT');assert.equal(e.limit,'agent_calls');
+  assert.match(e.message,/agent_calls budget/);assert.match(e.message,/partial output is incomplete/i);assert.equal(typeof e.partialText,'string');assert.ok(e.partialText.length>0);return true;
+ });
+});
 test('repeated runs may invoke the same agent normally',async()=>{await run();await run();});
 for(const [label,response,code]of[
  ['unknown call',{content:'',toolCalls:[{id:'1',type:'function',function:{name:'not_available',arguments:'{}'}}]},'TOOL_UNAVAILABLE'],
@@ -34,7 +40,7 @@ for(const [label,response,code]of[
 ])test(label+' is rejected',async()=>assert.rejects(run({model:{mode:'scripted-test',chat:async()=>response}}),e=>e.code===code));
 test('output ceiling is enforced',async()=>assert.rejects(run({limits:{maxOutputChars:5},model:{mode:'scripted-test',chat:async()=>({content:'too long',toolCalls:[]})}}),e=>e.code==='OUTPUT_LIMIT'));
 test('step exhaustion is incomplete, not successful empty answer',async()=>assert.rejects(run({limits:{maxSteps:1},definition:{...copy(),max_steps:1}}),e=>e.code==='INCOMPLETE'));
-test('safe events never expose request, tool arguments or model text',async()=>{const seen=[];await run({request:'synthetic-private-canary',onEvent:e=>seen.push(e)});assert.ok(!JSON.stringify(seen).includes('synthetic-private-canary'));for(const event of seen)assert.ok(Object.keys(event).every(k=>['kind','phase','id','parent','status','agent','tool'].includes(k)));});
+test('safe events never expose request, tool arguments or model text',async()=>{const seen=[];await run({request:'synthetic-private-canary',onEvent:e=>seen.push(e)});assert.ok(!JSON.stringify(seen).includes('synthetic-private-canary'));for(const event of seen)assert.ok(Object.keys(event).every(k=>['kind','phase','id','parent','status','agent','tool','origin','network','attempt','maxAttempts','limit'].includes(k)));});
 test('executable JS and nonfinite data are not silently serialized away',()=>{for(const value of [()=>1,Symbol('x'),NaN,undefined]){const g=copy();g.metadata.extra=value;assert.throws(()=>compileNetwork(g),e=>e.code==='NETWORK_DATA');}});
 test('parallel child model calls never exceed concurrency two',async()=>{
  const g=copy();const helper=structuredClone(g.tools[1]);helper.name='evidence2';g.tools.push(helper);g.tools[0].tools.push('evidence2');let active=0,peak=0;
@@ -47,3 +53,58 @@ test('parallel child model calls never exceed concurrency two',async()=>{
 test('adapter failures are sanitized and viewer errors do not control execution',async()=>{await assert.rejects(run({model:{mode:'scripted-test',chat:async()=>{throw Error('synthetic-secret');}}}),e=>e.code==='RUN_FAILED'&&!e.message.includes('synthetic-secret'));await run({onEvent:()=>{throw Error('viewer failed');}});});
 test('data accessors and toJSON callbacks never execute during compilation',()=>{let calls=0;const g=copy();Object.defineProperty(g.metadata,'extra',{enumerable:true,get(){calls++;return 'unsafe';}});assert.throws(()=>compileNetwork(g),e=>e.code==='NETWORK_DATA');assert.equal(calls,0);const h=copy();h.metadata.toJSON=()=>{calls++;return {description:'hidden conversion'};};assert.throws(()=>compileNetwork(h),e=>e.code==='NETWORK_DATA');assert.equal(calls,0);});
 test('nonplain and deeply nested publication data is rejected',()=>{const g=copy();g.metadata.extra=new Date();assert.throws(()=>compileNetwork(g),e=>e.code==='NETWORK_DATA');const h=copy();let cursor=h.metadata;for(let i=0;i<25;i++){cursor.more={};cursor=cursor.more;}assert.throws(()=>compileNetwork(h),e=>e.code==='NETWORK_DATA');});
+
+test('cancellation while a delegated agent is stalled prevents later model calls',async()=>{
+ let beginChild,calls=0;
+ const childStarted=new Promise(resolve=>{beginChild=resolve;});
+ const model={mode:'scripted-test',async chat({tools}){
+  calls++;
+  if(calls===1)return {content:'',toolCalls:[{id:'delegate-1',type:'function',function:{name:'evidence',arguments:'{"request":"inspect"}'}}]};
+  if(calls===2){beginChild();return new Promise(()=>{});}
+  throw Error('No model call may occur after cancellation.');
+ }};
+ const controller=new AbortController();
+ const pending=run({model,signal:controller.signal});
+ await childStarted;
+ controller.abort();
+ await assert.rejects(pending);
+ assert.equal(calls,2,'cancellation must prevent additional model steps');
+});
+
+test('budget partial output is bounded and control characters are removed',async()=>{
+ const g=copy();let seq=0;
+ const model={mode:'scripted-test',async chat({tools,messages}){
+  seq++;
+  if(tools.length&&!messages.some(m=>m.role==='tool'))return {content:'',toolCalls:[{id:'one',type:'function',function:{name:'evidence',arguments:'{"request":"x"}'}}]};
+  return {content:'safe-partial\u0000 '+('x'.repeat(2500)),toolCalls:[]};
+ }};
+ await assert.rejects(run({definition:g,model,limits:{maxAgents:1}}),e=>{
+  assert.equal(e.code,'COMPOSITION_LIMIT');assert.ok(e.partialText.length<=2000);assert.equal(e.partialText.includes('\u0000'),false);return true;
+ });
+});
+
+test('host action registry exposes only its narrow catalog through the runtime prompt',async()=>{
+ const registry=new ActionRegistry();
+ const ref=registry.register({base:'https://sutra.invalid',network:'learner'},{
+  name:'save-review-card',description:'Save reviewed fixture locally.',
+  inputSchema:{type:'object',properties:{receiptId:{type:'string',minLength:1,maxLength:40}},required:['receiptId'],additionalProperties:false},
+  effect:'write',availability:'local-only',callerOrigins:['https://sutra.invalid'],timeoutMs:1000
+ },async()=>({ok:true}));
+ const seen=[];const capture={mode:'scripted-test',async chat(args){seen.push(args.messages.map(m=>m.content).join('\n'));return {content:'fixture action catalog inspected',toolCalls:[]};}};
+ const result=await run({model:capture,actionRegistry:registry});
+ assert.match(result.text,/fixture action catalog inspected/);assert.equal(seen.length,1);
+ assert.ok(seen[0].includes(ref));assert.ok(seen[0].includes('save-review-card'));assert.ok(seen[0].includes('"effect":"write"'));
+});
+test('invalid action registry is rejected before model execution',async()=>{
+ let calls=0;
+ await assert.rejects(run({actionRegistry:{catalog(){return[];}},model:{mode:'scripted-test',async chat(){calls++;return {content:'x',toolCalls:[]};}}}),e=>e.code==='ACTION_REGISTRY');
+ assert.equal(calls,0);
+});
+
+test('CRUSE metadata is bounded to exact version 1',async()=>{
+ for(const cruse of [{version:2},{version:1,extra:true},'v1']){
+  const g=copy();g.cruse=cruse;let calls=0;
+  await assert.rejects(run({definition:g,model:{mode:'scripted-test',async chat(){calls++;return {content:'x',toolCalls:[]};}}}),e=>e.code==='PRESENTATION');
+  assert.equal(calls,0);
+ }
+});

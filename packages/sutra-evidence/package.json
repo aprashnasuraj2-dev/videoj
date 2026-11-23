@@ -1,12 +1,26 @@
 {
   "name": "@sutra/evidence",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Dependency-free evidence receipt validation for SUTRA and other browser tools",
+  "description": "Dependency-free Web Annotation media-cue evidence profile and validator",
   "license": "Apache-2.0",
-  "exports": {".": "./index.js", "./schema": "./receipt.schema.json"},
-  "bin": {"sutra-evidence": "./cli.mjs"},
-  "scripts": {"test": "node --test", "validate:example": "node cli.mjs examples/receipt.json examples/sources.json"},
-  "engines": {"node": ">=22"}
+  "exports": {
+    ".": "./index.js",
+    "./annotation": "./annotation.js",
+    "./cue-link": "./cue-link.js",
+    "./legacy-schema": "./receipt.schema.json"
+  },
+  "bin": {
+    "sutra-evidence": "./annotation-cli.mjs",
+    "sutra-evidence-legacy": "./cli.mjs"
+  },
+  "scripts": {
+    "test": "node --test",
+    "validate:example": "node annotation-cli.mjs examples/annotation.json examples/integrity-manifest.json examples/transcript-v3.vtt",
+    "validate:legacy": "node cli.mjs examples/receipt.json examples/sources.json"
+  },
+  "engines": {
+    "node": ">=22"
+  }
 }

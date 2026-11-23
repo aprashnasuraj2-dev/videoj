@@ -154,23 +154,23 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P068-09` Produce and review the phase artifact: Cache/retention matrix and stale-build checks.
 - [ ] `SUTRA-P068-10` Close phase 068 only after its applicable tasks have evidence and its exit condition is observed: Graph and media versions do not silently mismatch; deleting local cards and BYOK state removes their stored copies.
 
-## Phase 069 - Run narrowly scoped load checks
+## Phase 069 - Deferred broad load testing
 
 - **Baseline effort:** 1.5 person-hours; **owner:** E.
-- **Original phase dependencies:** 28,63,65-68. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Use a permitted synthetic load of 20 simultaneous sessions against staging with model stubs, then a small capped live run. Measure limits without consuming production quota unnecessarily.
-- **Phase exit:** No cross-session state leakage occurs; server limits hold and lab load is not advertised as proven internet-scale capacity.
+- **Scope decision:** `SUTRA-DECISION-0010`. Broad 20-session/load-number work is cut before evidence quality, BYOK isolation, physical iPhone playback and public interoperability. Ordinary finite-budget regression tests remain mandatory.
+- **Intent if resumed:** Use permitted synthetic staging load first and a very small capped live sample without consuming production quota for vanity capacity numbers.
+- **Phase exit if resumed:** No cross-session leakage occurs; lab measurements are not advertised as internet-scale capacity.
 
-- [ ] `SUTRA-P069-01` Use a permitted staging environment and an explicit test ceiling
-- [ ] `SUTRA-P069-02` Run 20 simultaneous synthetic sessions with model stubs first
-- [ ] `SUTRA-P069-03` Verify per-session state and consent do not leak across sessions
-- [ ] `SUTRA-P069-04` Inspect concurrency and request limits under failures
-- [ ] `SUTRA-P069-05` Perform only a small capped live model load sample
-- [ ] `SUTRA-P069-06` Record CPU/request/token behavior and observed errors
-- [ ] `SUTRA-P069-07` Do not consume production quota merely to generate impressive load numbers
-- [ ] `SUTRA-P069-08` State that laboratory load does not establish internet-scale reliability
-- [ ] `SUTRA-P069-09` Produce and review the phase artifact: Load results and capacity assumptions.
-- [ ] `SUTRA-P069-10` Close phase 069 only after its applicable tasks have evidence and its exit condition is observed: No cross-session state leakage occurs; server limits hold and lab load is not advertised as proven internet-scale capacity.
+- [-] `SUTRA-P069-01` Use a permitted staging environment and an explicit test ceiling
+- [-] `SUTRA-P069-02` Run 20 simultaneous synthetic sessions with model stubs first
+- [-] `SUTRA-P069-03` Verify per-session state and consent do not leak across sessions
+- [-] `SUTRA-P069-04` Inspect concurrency and request limits under failures
+- [-] `SUTRA-P069-05` Perform only a small capped live model load sample
+- [-] `SUTRA-P069-06` Record CPU/request/token behavior and observed errors
+- [-] `SUTRA-P069-07` Do not consume production quota merely to generate impressive load numbers
+- [-] `SUTRA-P069-08` State that laboratory load does not establish internet-scale reliability
+- [-] `SUTRA-P069-09` Produce and review the phase artifact: load results and capacity assumptions.
+- [-] `SUTRA-P069-10` Close phase 069 only if load testing is later resumed and evidenced.
 
 ## Phase 070 - Close the resilience milestone
 

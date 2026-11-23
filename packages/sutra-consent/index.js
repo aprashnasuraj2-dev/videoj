@@ -3,7 +3,7 @@ export class ConsentError extends Error {
 }
 const fail=(code,message)=>{throw new ConsentError(code,message);};
 const plain=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
-const contactKinds=new Set(['peer_manifest','peer_graph','mcp_discovery','mcp_call']);
+const contactKinds=new Set(['peer_manifest','peer_graph','peer_evidence','mcp_discovery','mcp_call']);
 const labelPattern=/^[A-Za-z][A-Za-z0-9 _-]{0,79}$/;
 const networkPattern=/^[A-Za-z][A-Za-z0-9_]{0,59}$/;
 const allowed=(object,keys)=>{for(const key of Object.keys(object))if(!keys.includes(key))fail('CONTACT_FIELD','Unsupported contact metadata field.');};
@@ -90,17 +90,45 @@ async function readBoundedJson(response,maxBytes,signal){
   const bytes=new Uint8Array(total);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
   try{return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{fail('CONTACT_JSON','Approved contact did not return valid UTF-8 JSON.');}
 }
-export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetch,maxBytes=65536,signal}={}){
+export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetch,maxBytes=65536,maxRedirects=3,signal}={}){
   if(!inspector||typeof inspector.perform!=='function')fail('INSPECTOR','A consent inspector is required.');
   if(!Number.isInteger(maxBytes)||maxBytes<1||maxBytes>65536)fail('CONTACT_SIZE','Response limit must be within 1–65536 bytes.');
-  const normalized=normalizeContact(contact);
+  if(!Number.isInteger(maxRedirects)||maxRedirects<0||maxRedirects>3)fail('CONTACT_REDIRECT','Redirect limit must be within 0–3 hops.');
+  const initial=normalizeContact(contact);
   let target;
   try{target=new URL(url);}catch{fail('CONTACT_URL','Approved contact URL must be absolute.');}
-  if(target.origin!==normalized.origin||target.username||target.password||!['https:','http:'].includes(target.protocol))fail('CONTACT_URL','Approved contact URL must stay on the consented origin.');
-  return inspector.perform(normalized,async()=>{
-    let response;
-    try{response=await fetchImpl(target.href,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',signal,headers:{Accept:'application/json'}});}catch{if(signal?.aborted)fail('CANCELLED','Approved contact was cancelled.');fail('CONTACT_FETCH','Approved contact could not be fetched.');}
-    if(response.url&&new URL(response.url).origin!==normalized.origin)fail('CONTACT_REDIRECT','Approved contact changed origin.');
-    return readBoundedJson(response,maxBytes,signal);
-  });
+  const validTarget=(value,expectedOrigin)=>{
+    const loopback=['localhost','127.0.0.1','[::1]'].includes(value.hostname);
+    if(value.origin!==expectedOrigin||value.username||value.password||value.hash||value.href.length>2048||value.protocol!=='https:'&&!(value.protocol==='http:'&&loopback))fail('CONTACT_URL','Approved contact URL must stay on the consented secure origin without credentials or fragments.');
+  };
+  validTarget(target,initial.origin);
+  let currentContact=initial,redirects=0;
+  const visited=new Set([target.href]);
+  for(;;){
+    const outcome=await inspector.perform(currentContact,async()=>{
+      let response;
+      try{response=await fetchImpl(target.href,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',signal,headers:{Accept:'application/json'}});}catch{if(signal?.aborted)fail('CANCELLED','Approved contact was cancelled.');fail('CONTACT_FETCH','Approved contact could not be fetched.');}
+      if(response.redirected||(response.url&&response.url!==target.href))fail('CONTACT_REDIRECT','Approved contact followed or changed its declared URL before re-consent.');
+      if(response.status>=300&&response.status<400){
+        const location=response.headers?.get('location');void response.body?.cancel().catch(()=>{});
+        if(!location)fail('CONTACT_REDIRECT','Redirect response did not expose a reviewable destination.');
+        if(redirects>=maxRedirects)fail('CONTACT_REDIRECT','Approved contact exceeded the redirect-hop limit.');
+        let next;try{next=new URL(location,target);}catch{fail('CONTACT_REDIRECT','Redirect destination is invalid.');}
+        const loopback=['localhost','127.0.0.1','[::1]'].includes(next.hostname);
+        if(next.username||next.password||next.hash||next.href.length>2048||next.protocol!=='https:'&&!(next.protocol==='http:'&&loopback))fail('CONTACT_REDIRECT','Redirect destination is outside the approved public-artifact transport profile.');
+        if(visited.has(next.href))fail('CONTACT_REDIRECT','Redirect cycle detected before another contact.');
+        return {kind:'redirect',target:next};
+      }
+      return {kind:'value',value:await readBoundedJson(response,maxBytes,signal)};
+    });
+    if(outcome.kind==='value')return outcome.value;
+    redirects++;target=outcome.target;visited.add(target.href);
+    const path=(target.pathname||'/').slice(0,80),basePurpose=initial.purpose.slice(0,135);
+    currentContact=normalizeContact({
+      origin:target.origin,kind:initial.kind,
+      purpose:`${basePurpose}; redirected artifact ${path}`,
+      disclosure:[...initial.disclosure],...(initial.network?{network:initial.network}:{})
+    });
+    validTarget(target,currentContact.origin);
+  }
 }

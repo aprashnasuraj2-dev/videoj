@@ -2,14 +2,26 @@ import {createSourceTools} from '../sutra-source-tools/index.js';
 import {validateReceipt} from '../sutra-evidence/index.js';
 import {validateData} from './vendor/nsdeploy/actions.js';
 const bad=()=>{throw Error('Bounded source capability unavailable.');};
-export function createSourceMcp({origin,sources,fetchImpl=fetch,signal}={}){
+export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onAttempt}={}){
+ if(onAttempt!==undefined&&typeof onAttempt!=='function')bad();
  const base=new URL(origin);if(base.origin!==origin||base.protocol!=='https:'&&!(base.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(base.hostname)))bad();
  const definitions=createSourceTools(sources).list();let sequence=0,initialized=false,calls=0;
  async function rpc(method,params,notification=false){
-  if(++calls>12)bad();const controller=new AbortController(),cancel=()=>controller.abort();signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)cancel();const timer=setTimeout(cancel,5000);let rejectAbort;const stopped=new Promise((_,reject)=>{rejectAbort=()=>reject(Error('Source request cancelled.'));controller.signal.addEventListener('abort',rejectAbort,{once:true});if(controller.signal.aborted)rejectAbort();});stopped.catch(()=>{});
+  const controller=new AbortController(),cancel=()=>controller.abort();signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)cancel();const timer=setTimeout(cancel,5000);let rejectAbort;const stopped=new Promise((_,reject)=>{rejectAbort=()=>reject(Error('Source request cancelled.'));controller.signal.addEventListener('abort',rejectAbort,{once:true});if(controller.signal.aborted)rejectAbort();});stopped.catch(()=>{});
   try{
-   const id=++sequence;
-   const response=await Promise.race([fetchImpl(`${origin}/api/source-tools`,{method:'POST',redirect:'error',credentials:'same-origin',signal:controller.signal,headers:{'Content-Type':'application/json',Accept:'application/json, text/event-stream','MCP-Protocol-Version':'2025-06-18'},body:JSON.stringify({jsonrpc:'2.0',...(notification?{}:{id}),method,params})}),stopped]);
+   const id=++sequence,maxAttempts=2;let response;
+   for(let attempt=1;attempt<=maxAttempts;attempt++){
+    if(++calls>12)bad();
+    try{onAttempt?.(Object.freeze({method,attempt,maxAttempts}));}catch{}
+    try{
+     response=await Promise.race([fetchImpl(`${origin}/api/source-tools`,{method:'POST',redirect:'error',credentials:'same-origin',signal:controller.signal,headers:{'Content-Type':'application/json',Accept:'application/json, text/event-stream','MCP-Protocol-Version':'2025-06-18'},body:JSON.stringify({jsonrpc:'2.0',...(notification?{}:{id}),method,params})}),stopped]);
+    }catch(error){
+     if(controller.signal.aborted||attempt===maxAttempts)throw error;
+     continue;
+    }
+    if(response.status>=500&&attempt<maxAttempts){void response.body?.cancel().catch(()=>{});continue;}
+    break;
+   }
    if(notification){if(response.status!==202)bad();return;}
    if(!response.ok||!response.headers.get('content-type')?.includes('application/json')||response.url&&new URL(response.url).origin!==origin)bad();
    const reader=response.body?.getReader();if(!reader)bad();const chunks=[];let count=0;

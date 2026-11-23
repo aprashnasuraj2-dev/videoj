@@ -13,3 +13,45 @@ test('shared Video.js runtime is resolved from the app dependency boundary',()=>
 test('timing fixture metadata matches actual media bytes and cue receipt',async()=>{const {createHash}=await import('node:crypto');const {validateReceipt}=await import('../../../packages/sutra-evidence/index.js');const meta=JSON.parse(fs.readFileSync(path.join(app,'src/fixtures/timing-source.json')));const bytes=fs.readFileSync(path.join(app,'public/media/timing-fixture.mp4'));assert.equal(createHash('sha256').update(bytes).digest('hex'),meta.source.mediaHash);assert.equal(validateReceipt(meta.receipt,{sources:[meta.source]}).level,'catalog_matched');});
 test('published local graph matches independent runtime example',()=>{assert.deepEqual(JSON.parse(fs.readFileSync(path.join(app,'public/agents/learner.network.json'))),JSON.parse(fs.readFileSync(path.join(app,'../../packages/sutra-runtime/examples/learner.network.json'))));});
 test('client assets exclude server credential/config identifiers and fixed paid upstream',()=>{for(const name of fs.readdirSync(path.join(app,'dist/assets'))){if(!name.endsWith('.js'))continue;const content=fs.readFileSync(path.join(app,'dist/assets',name),'utf8');for(const marker of ['SUTRA_PROVIDER_KEY','SUTRA_CLIENT_HASH_SECRET','SERVER_ONLY_KEY_MARKER','https://api.openai.com/v1/chat/completions'])assert.ok(!content.includes(marker),`server-only marker leaked into ${name}`);}});
+
+test('public manifest keeps inference metadata separate from peer policy',()=>{
+ const manifest=JSON.parse(fs.readFileSync(path.join(app,'public/agents/agent-manifest.json')));
+ assert.equal(manifest.llm_router.base_url,'/api/infer');
+ assert.equal(manifest.llm_router.byok_router,'https://openrouter.ai/api/v1');
+ assert.equal(manifest.llm_router.mock,false);
+ assert.deepEqual(manifest.allowed_peers,[]);
+ assert.deepEqual(manifest.peer_policy,{mode:'closed'});
+ assert.equal(JSON.stringify(manifest).includes('SUTRA_PROVIDER_KEY'),false);
+});
+test('publisher links map is exact and does not fabricate an unresolved peer binding',()=>{
+ const links=JSON.parse(fs.readFileSync(path.join(app,'public/agents/links.json')));
+ assert.deepEqual(links,{version:1,networks:{learner:{},source_learner:{}}});
+});
+test('pre-release artifact inventory names all bundled public agent surfaces',()=>{
+ const inventory=fs.readFileSync(path.join(app,'../../docs/sutra/PUBLIC_ARTIFACT_INVENTORY.md'),'utf8');
+ for(const marker of ['/agents/agent-manifest.json','/agents/learner.network.json','/agents/source_learner.network.json','/agents/links.json','/api/infer','/api/source-tools'])assert.ok(inventory.includes(marker),marker);
+ assert.match(inventory,/peer public origin is intentionally \*\*unset\*\*/i);
+ assert.match(inventory,/not deployment evidence/i);
+});
+
+test('learner UI exposes composition budget category and labels partial output incomplete',()=>{
+ const source=fs.readFileSync(path.join(app,'src/main.js'),'utf8');
+ assert.match(source,/COMPOSITION_LIMIT/);
+ assert.match(source,/Incomplete partial output/);
+ assert.match(source,/No completed (?:peer )?result is claimed/);
+});
+
+test('player adapter forwards compatibility/error surfaces without demo coupling',()=>{
+ const source=fs.readFileSync(path.join(app,'src/player-adapter.js'),'utf8'),imports=source.split('\n').filter(line=>line.startsWith('import ')).join('\n');
+ for(const marker of ['compatibilitySource','fallbackUrl','poster','replaceSource','setVolume','setCaptions'])assert.ok(source.includes(marker),marker);
+ assert.doesNotMatch(imports,/apps\/preview|detour\//i);
+});
+
+test('timing transcript metadata matches its bytes and timing media identity',async()=>{
+ const {createHash}=await import('node:crypto');
+ const meta=JSON.parse(fs.readFileSync(path.join(app,'src/fixtures/timing-transcript.json')));
+ const source=JSON.parse(fs.readFileSync(path.join(app,'src/fixtures/timing-source.json'))).source;
+ const bytes=fs.readFileSync(path.join(app,'public/media/timing-transcript.vtt'));
+ assert.equal(createHash('sha256').update(bytes).digest('hex'),meta.transcriptHash);
+ assert.equal(meta.sourceId,source.id);assert.equal(meta.sourceVersion,source.version);assert.equal(meta.mediaHash,source.mediaHash);assert.equal(meta.duration,source.duration);assert.equal(meta.translated,false);
+});

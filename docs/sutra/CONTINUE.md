@@ -6,6 +6,14 @@ This applies to SUTRA continuation requests, regardless of case or surrounding p
 
 The participant explicitly directed on 23 November 2026: do not jump to release before all major checklist work is complete. Keep public deployment, domain/route assignment, public inference enablement and promotion closed until the applicable major product, security, conformance and acceptance gates have current passing evidence. A passing build, browser fixture or deployment-free dry-run alone cannot satisfy this gate. Continue independent engineering and report remaining major gates; do not treat a Cloudflare configuration file as release authorization.
 
+## Current prioritization
+
+When choosing among dependency-ready tasks, prefer the standards-based evidence profile and portable validator, run provenance, BYOK key isolation, the short real lesson/media route and early physical-iPhone seek. Preserve funded inference as the clean visitor/judge path but do not sacrifice BYOK merely to simplify funding.
+
+Treat these as non-blocking/deferred unless a concrete regression requires them: public third-party MCP product integration (P039), Nepali localization (P048), community packaging of the consent inspector/starter (P058-P059) and synthetic load testing (P069). Do not remove mandatory runtime consent simply because the reusable consent-inspector artifact is demoted.
+
+The guide/peer release must use a different registrable domain from the caller. Do not count same-owner origin separation as independent adoption. After a stable public URL exists, prioritize one outside-entrant load/install observation and an official agentic-websites list PR before optional polish.
+
 ## Resume sequence
 
 1. Read root `AGENTS.md` and applicable nested instructions. Use the repo selected by the user; do not guess from unrelated player projects.

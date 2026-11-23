@@ -131,3 +131,184 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Final peer candidate `4acb6e1aeddcba3bbf44b240069a4afe5a0f4ceb` passed the full SUTRA workflow: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45146010597/job/137595359493.
 - Credited P031-01/02/04/05/06/07/08/09. Total is 186/1000; phase 031 stays open. P031-03 actual corpus provenance and P031-10 distinct public HTTPS remain pending and are not simulated by loopback.
 - Next: P032-08 invocation-visible peer failure, P033-03 third-party MCP consent, then P035-01 caller-local peer execution. Public release remains closed.
+
+
+## SUTRA-SESSION-0008 — BYOK in-flight credential revocation
+
+- Checkpoint: 2026-11-23T16:07:00+05:45; working branch `sutra/peer-invocation`, PR #48; tested candidate `092c8d2c601bcfd7075a4062a4c13460257aaa90`.
+- Fixed a BYOK revocation gap: `clear()` formerly removed the closure secret for future calls but did not cancel model requests already in flight. Active request abort controllers are now tracked and aborted when the key is cleared, with cleanup in `finally`.
+- Added a node-test regression checking an already active fetch is aborted, no later transport occurs, and cancellation errors do not expose a synthetic secret.
+- GitHub Actions register and evidence jobs passed for the candidate. Shell CI had completed install, production build, app tests, inference/source/consent/API tests, pinned-vendor verification, runtime tests and independent-peer tests; Chromium installation and browser execution were still underway at the time this entry was recorded.
+- Not yet credited as new `[x]` items: original total stays 186/1000 until the final shell CI result is inspected. In particular P030-02 production CORS cannot be verified using a browser route fixture alone.
+- Next: inspect the exact candidate shell result, retain failure evidence if needed and continue the phase 030 BYOK credential-isolation checklist. Release, funded inference and public routes remain off.
+
+
+### Session 0008 verification and checklist reconciliation
+
+- 2026-11-23T16:14:09+05:45: the code candidate `092c8d2c601bcfd7075a4062a4c13460257aaa90` completed all three Actions workflows successfully, including the full Chromium shell job https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061. This closes the earlier pending-browser verification; it remains a synthetic OpenRouter fixture, not a real live router CORS/account test.
+- Reconciled `SUTRA-SESSION-0007` evidence at `79d9d01562e039c6c2d47887c92396026913acc7`, independently confirmed shell CI success at https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45150180216. Credited P032-08/10, P033-03/10, P034-02..09, P035-01..10, P036-01/02/03/05/07/08/09 and P038-01..10.
+- Credited BYOK P030-01/03/04/05/06/07/09 against the passing latest canary, deletion and key-revocation tests, with the actual source revision recorded in `progress.json`.
+- Total rises from 186 to **232 verified items**, **15 fully verified phases**. No synthetic fixture is counted as public HTTPS CORS, real model quality, live funded inference, factual lesson validation or independent outside adoption.
+- Open P030-02 actual permitted router CORS, P030-08 independent funded-path failure, P034-01 staging/public HTTPS, P036-04 upstream field policy and P037-07 full redirects. Release stays blocked under SUTRA-DECISION-0008.
+
+### Session 0008 redirect/path-consent hardening — in verification
+
+- Scope: P037-04/06/07/08 targeted engineering, not yet claimed verified.
+- fetchJsonWithConsent now rejects redirected responses and response URLs differing from the disclosed target, even if a custom transport silently followed a same-origin redirect. Native fetch still uses redirect:error, credentials:omit.
+- New real loopback HTTP tests cover same-origin, changed-origin and looping redirects, denied-before-transport and normal direct read. Chromium checks blocked manifest redirects while local lesson evidence remains functional.
+- Manifest-declared graph path changes now require a fresh session approval; query-bearing or overlong graph paths fail before graph contact. Changed-path and query-denial regression fixtures added.
+- Prior candidate 49e4f00178063c0f484dd6582883f947a754b547 FAILED the browser assertion: a blocked peer load may surface inside the invoking agent tool result rather than top-level (PEER_ARTIFACT). Corrected observable assertion; failed CI retained at https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45157301045 and not credited as success.
+- Redirect rejection is deliberately stricter than full Profile 0.3 redirect interoperability. Same-URL changed content is not yet hash-bound to authorization. No public HTTPS or third-party-publisher validation; phase 037 remains incomplete.
+- Do not credit checklist tasks before complete, passing current candidate CI. Historical verified baseline remains 232/1000.
+
+### Session 0008 redirect validation and timestamped checkpoint
+
+- 2026-11-23T16:26:24+05:45: the final redirect/path-consent candidate `e5af69d975ec0c7fc4c84c3e20b84036e3302cca` passed all three Actions workflows, including Chromium shell run https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158153046. Verified P037-06/07/08 against actual fail-closed and local-lesson observations; total **235/1,000** with 15 complete phases. Re-consent for accepted changed-origin redirects and changed-content graph approval remain OPEN.
+- Withdrawn the proposed peer URL at the caller's same registrable domain. A separately controlled registrable domain remains an unverified external release dependency; no domain or route was configured.
+- Appended additional concurrent BYOK revocation regression on the branch after the redirect candidate. That later test requires its own passing CI before its result is counted; earlier BYOK single-call cancellation was already verified.
+
+### Session 0008 streaming, cancellation and independent inference-path closure
+
+- 2026-11-23T16:33:00+05:45: code candidate `29d686bd4f3fdb99565e3a3e4c904d12018ff27a` passed runtime tests and full Chromium shell: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45159138495. A delegated child that stalls after the first tool call is now explicitly tested: cancellation prevents a third model step. Existing streaming tool-fragment, malformed result, incomplete stream and failure sanitization tests were reconciled; P026-02/03/04/05/06 verified. P026-01 explicit run lifecycle and P026-08 media-continuity cancellation remain open.
+- 2026-11-23T16:30:00+05:45: verified P030-08 synthetic independence at `106da667c68b1645fa33674b08785db5a97f2fd3`, shell https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158656419. A funded quota 429 does not block BYOK; BYOK auth 401 does not prevent an otherwise configured funded adapter. No live funded account or browser CORS is claimed.
+- 2026-11-23T16:31:00+05:45: verified P037-05 on `cf60561ad82fdef78b3b41e4bc1f530d21192a8a`, shell https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158831857: redirect requests omit Authorization/Cookie and changed-origin targets receive no request. Full redirect acceptance/reconsent stays open.
+- Total **242/1000**, fifteen fully verified phases. Source, checklist, machine register and evidence link synchronized in PR #48. No release or official submission.
+
+
+## SUTRA-SESSION-0009 — Explicit lifecycle, cancellation/media continuity and bounded read retry
+
+- Observed 2026-11-23T16:51:55+05:45. Started from PR #48 with 242/1000 verified and Phase 026 partially complete.
+- Added `apps/sutra/src/run-lifecycle.js` with explicit idle, running, cancelling, failed and complete states plus unit tests for valid transitions and incomplete cancellation.
+- Wired peer composition to a fresh AbortController per run, a visible lifecycle status, a cancel control, cancellation provenance and pending-consent cleanup. Cancelled output is explicitly incomplete and never presented as verified/completed.
+- Added Chromium cancellation coverage: after page reload and mounting the synthetic native timing fixture, the peer URL is re-entered, the manifest request is intentionally stalled, the run is cancelled, lifecycle ends failed/incomplete, and the video subsequently plays, advances its native media clock and pauses normally.
+- Added bounded source-read retry behavior: at most two transport attempts per RPC; one retry for transport rejection or 5xx only. Successful malformed content/schema failures are not retried. Each attempt emits sanitized method/attempt/maxAttempts metadata.
+- Retained two failed browser candidates: run 45161277792 exposed a timing-sensitive state assertion; run 45161634271 exposed that page reload correctly cleared the peer URL. Both were fixed in the fixture and remain non-passing history.
+- Final product candidate `fb300b9df50a59768c64ee0d8f7c01389d74f27f` passed build, app tests, inference/source/consent/API tests, pinned runtime verification, runtime tests, independent peer tests and Chromium: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45161898243.
+- Verified P026-01/07/08/09/10; Phase 026 closes. New total **247/1000**, **16 fully verified phases**.
+- Corrected stale documentation that still named a same-registrable-domain peer proposal; peer public origin remains unset and must use a different registrable domain.
+- Next independent task: P036-04 private-context upstream/downstream handling. P030-02 live router CORS/account, public HTTPS, original media/rights, factual review, physical-device evidence, release and submission remain open.
+
+
+## SUTRA-SESSION-0010 — Separate upstream/downstream private context and receipt boundary
+
+- Observed 2026-11-23T16:56:19+05:45; tested candidate `621520e1636deb39686e7aef462e8b481c4558cd`.
+- Converted the caller-local peer resolver to use the per-tool-call context already supplied by the pinned runner, without changing vendored runtime files or their hashes.
+- Upstream private context now requires intersection of the peer front agent's `allow.to_upstream.sly_data` and the caller host's exact peer-URL `upstream` allow-list. Returned values merge only into that call's private snapshot; trace export records names only.
+- Tests cover caller narrower than peer, peer narrower than caller, absent downstream secret not recreated upstream, and no private values in result/events.
+- Added receipt-smuggling integration: an extra `apiKey` field proposed for a receipt is rejected as `UNKNOWN_FIELD` without echoing its value.
+- Full build/runtime/peer/Chromium workflow passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45162744214.
+- Verified P036-04/06/10; Phase 036 closes. New total **250/1000**, **17 fully verified phases**.
+- Next P037-01 redirect origin/policy handling. Existing fail-closed redirect behavior remains; no public release or provider claim.
+
+
+## SUTRA-SESSION-0011 — Redirect destination re-consent and bounded policy
+
+- Observed 2026-11-23T17:00:00+05:45; tested source candidate `be03c617a437366792d128d312ecc537856fe621`.
+- Rechecked Profile 0.3 commit `a0ceda34e4f2e653223e13e63282abc9b60eaf7c`: normal browser redirects are allowed, but a redirect to a different origin must be treated as a new destination under the same consent policy.
+- Preserved native browser `redirect:error` when JavaScript cannot inspect a changed origin before contact. Added bounded continuation only for transports that expose a raw 3xx Location before another request.
+- Redirect policy now caps hops, rejects cycles/credentials/fragments/unsafe schemes, creates a new consent tuple for changed origin/path, and requires approval before the next request.
+- Tests cover changed-origin deny with zero second-origin contact, explicit second-origin approval, same-origin changed-path re-evaluation despite session memory, cycles and hop limits. Existing browser/loopback no-credential/fail-closed/local-lesson tests remain green.
+- Full shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45163356204; register/evidence runs 45163356065 / 45163356138 passed on the tested candidate.
+- Verified P037-01/02/03/04/09/10; Phase 037 closes. New total **256/1000**, **18 fully verified phases**.
+- Same-URL byte replacement without a declared content binding is not treated as a redirect scope change; integrity/versioning remains a separate concern and no stronger claim is made.
+- Next: Phase 022 publication bundle/inventory audit. Live P030-02 router CORS/account and public HTTPS P034 remain external gates. No release or submission.
+
+
+## SUTRA-SESSION-0012 — Caller public artifact bundle and manifest boundary
+
+- Observed 2026-11-23T17:05:44+05:45; tested publication source candidate `47f84a1f8ee47cf7f9a049aaa8286d3142d8648c`.
+- Added top-site `llm_router` metadata to the public manifest, separately from `allowed_peers` and `peer_policy`: same-origin `/api/infer`, `mock:false`, and direct BYOK router `https://openrouter.ai/api/v1`. No credential is published and the default endpoint remains operator-disabled.
+- Updated `links.json` to explicitly include `learner` and `source_learner` with empty publisher-owned maps. This is intentional: the graphs have no symbolic external-network reference and the distinct public peer URL is not yet established. No fake binding was added.
+- Added `PUBLIC_ARTIFACT_INVENTORY.md` covering the manifest, both graphs, links, browser runtime and APIs, with every proposed public URL labeled undeployed/unverified and peer origin unset.
+- Added build tests for router/peer metadata separation, exact empty link maps, secret absence and inventory coverage.
+- Full product shell/Chromium passed on https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45164065404. That candidate's register job failed only because Session 0011 had not yet been appended; the checkpoint transaction was corrected in later commits and the failed register run remains historical.
+- Verified P022-04/06/08/09/10; Phase 022 closes. New total **261/1000**, **19 fully verified phases**.
+- Next: P023-05 browser action boundary; live router CORS/account, public HTTPS/CORS and all release gates remain open.
+
+
+## SUTRA-SESSION-0013 — Shared execution budgets and visible diagnostics
+
+- Observed 2026-11-23T17:11:35+05:45; tested source candidate `37d0a45371db717b5f44c2f839b8bbb8345538e7`.
+- Nested peer agents share caller composition/model/deadline budgets. A too-small caller agent budget stops nested peer work under the same `agent_calls` category.
+- Runtime events map fixed budget failures to sanitized categories. `COMPOSITION_LIMIT` carries the category and a bounded control-character-stripped partial text; learner UI labels that text incomplete and never claims a completed result.
+- An intermediate assertion incorrectly assumed partial model text itself would mention the limit; the model had already produced “test complete”. The corrected invariant is authoritative runtime/UI incomplete labeling rather than rewriting model text.
+- Full shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45165087393.
+- Verified P028-04/07/10; Phase 028 closes. New total **264/1000**, **20 fully verified phases**.
+- Next browser action registration/review work; live provider/public HTTPS gates remain open.
+
+
+## SUTRA-SESSION-0014 — Host action registry and reviewed local writes
+
+- Observed 2026-11-23T17:21:26+05:45; tested source candidate `0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c`.
+- Exposed an optional host-owned ActionRegistry through `runNetwork`; malformed registries fail before model execution.
+- Opted the learner graph into exact CRUSE v1 and bounded the compiler to that exact presentation metadata shape. The pinned runner then exposes only the exact caller/network action catalog as proposals, never executable functions.
+- Registered `save-review-card` and `export-receipt` as local-only `write` actions with strict nested receipt schemas, immutable plans and revalidation against the source catalog.
+- Refactored the visible review flow to execute confirmed save/export through the registry. Chromium observes cancel/no write, one saved review, one local JSON download, reload persistence and no duplicate saved card from export.
+- Retained failures: run 45165924184 showed the graph had not opted into CRUSE; run 45166333206 showed `innerText` on a closed details element was an invalid observability assertion. Both were fixed without weakening the runtime.
+- Final shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45166574357.
+- Verified P023-05/P023-09 and P029-01/P029-10. Phase 029 closes; Phase 023 remains open on real configured inference P023-03.
+
+
+## SUTRA-SESSION-0015 — Review-card learner-flow reconciliation
+
+- Observed 2026-11-23T17:23:27+05:45; source/evidence remains `0e0c42c9ab2e060a61f299ff23b90ffcd9ffc52c`.
+- Reconciled the now-tested registry flow plus existing review-store tests against Phase 046. This is accounting of observed behavior, not ten newly implemented features.
+- Verified preview-before-effect, exact cue/source-version receipt fields, browser-only storage disclosure, immutable confirmed payload, quota/unknown/export failure handling, reload/stale-data validation, deletion and export isolation from prompts/router credentials.
+- Session 0015 evidence: `docs/sutra/evidence/implementation/SESSION-0015.md`.
+- Verified P046-01..10; Phase 046 closes. New total **278/1000**, **22 fully verified phases**.
+- Next independent learner-quality work: provenance inspector, ordinary media-control/browser checks or transcript experience. Live provider/public HTTPS/release remain blocked.
+
+
+## SUTRA-SESSION-0016 — Safe run-provenance inspector
+
+- Observed 2026-11-23T17:45:49+05:45; tested source candidate `ee4a4829ee756b756b4d2dad7cc1223cf84d8e70`.
+- Added a bounded allow-list provenance store with up to 12 completed runs and four overlapping active runs keyed by explicit run ID.
+- Local, source and peer runs now expose exact spec/runtime/build identity, graph SHA-256 SRI, model/router, contacted origins, sanitized agent/tool names, call counts, elapsed/budget data, consent decisions, action statuses and fixed error codes.
+- Added user-initiated redacted JSON export. Raw prompts, model text, tool arguments, receipt payloads and private values are never part of the provenance input schema.
+- Tightened identifier redaction after tests found two leakage classes: credential-shaped strings that looked like valid public IDs, and runtime labels that bypassed the common sanitizer.
+- Chromium downloads/validates the provenance JSON, confirms the BYOK canary and routed prompt text are absent, and proves deleting the optional inspector does not break evidence validation or native playback.
+- Retained failures 45169335475, 45169474354, 45169623505 and 45169892087; final full shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45170096228.
+- Verified P047-01..10; Phase 047 closes. New total **288/1000**, **23 fully verified phases**.
+- Next: Phase 042 ordinary media controls/error/focus checks. Live provider/public HTTPS/release remain external/blocked.
+
+
+## SUTRA-SESSION-0017 — Reusable player controls and media-error coverage
+
+- Observed 2026-11-23T17:59:22+05:45; tested SUTRA source candidate `b8ef8baef4ff8176eb13290e021e9db50b4c8a7a`.
+- Chromium exercises the shipped DHAGO play/pause, mute/volume, captions and seek controls against actual native media; same-player source replacement reloads metadata and retains controls.
+- Fullscreen control dispatch is verified through a controlled Fullscreen API shim after real headless fullscreen timed out. The failure remains retained and no visual-headless fullscreen claim is made; the reusable DHAGO suite separately contains real fullscreen geometry tests.
+- At 360×800 core player controls remain inside the viewport and keyboard focusable.
+- A corrupt MP4 object URL produces a native media error and exposes the shipped retry control. The adapter forwards compatibility source/fallback/poster options without importing preview or DETOUR code.
+- A genuine alternate-codec SUTRA fixture is still missing. Therefore P042-06 and P042-10 remain open; component fallback mechanism is not treated as system acceptance.
+- Full SUTRA shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45171777112.
+- Verified P042-05/P042-08/P042-09. New total **291/1000**; Phase 042 remains open.
+- Next: versioned transcript experience tied to the 8-second timing fixture.
+
+
+## SUTRA-SESSION-0018 — Guided workspace, explicit seekability and timing transcript
+
+- Observed 2026-11-23T18:22:28+05:45; tested source candidate `31a1a8a83a0c39dd8b4c68fcd71bd8d3283a4cb5`.
+- Added the guided first-viewer task, visible active synthetic source/transcript versions, explicit core states (empty/loading/ready/denied/error/completed), next-human-action guidance and a collapsed-by-default runtime/peer/BYOK/provenance disclosure.
+- Added `LEARNER_WORKSPACE.md` with the responsive/state interaction contract and a separate fresh Chromium viewer that observes loading by holding the media request, survives peer denial locally and completes a confirmed review-card save without opening developer controls.
+- Added `seek-policy.js` with distinct live/unknown duration, no-range, outside-duration and outside-current-window outcomes. Evidence cue activation now uses keyboard and reports unavailable seeking without claiming success.
+- Added a separate 0–8 second `timing-transcript.vtt` bound to `synthetic-timing-fixture v1`, versioned as `timing-transcript-v1` with SHA-256 `9128748a8a5b636e2bcb99f738fc613d6cc7bcc253546dae45f4a3cf05285881`. The 12–18 second evidence annotation remains visibly separate.
+- Added bounded transcript search, keyboard navigation, valid `aria-current="true"`, active-cue highlighting with no focus/scroll stealing, missing-transcript state and missing-caption state.
+- Retained failures 45173250994 (async transcript/caption coupling), 45174231410 (invalid empty aria-current) and 45175480362 (caption track remained pending while disabled); each produced a product/test-boundary fix.
+- Final full shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45175869357; register/evidence 45175869381 / 45175869292 passed.
+- Verified Phase 041 (10 tasks), remaining Phase 043 tasks (4) and Phase 044 (10). New total **315/1000**, **26 fully verified phases**.
+- Phase 042 remains open on a genuine alternate-codec compatibility path. Live provider/router CORS, public HTTPS, original lesson rights/factual review, physical-device evidence and release remain open.
+
+
+## SUTRA-SESSION-0019 — Source-separated peer comparison
+
+- Observed 2026-11-23T18:33:54+05:45; tested source candidate `227e33ebedb0e42aefa28141c617b164a43dce1a`.
+- Added a separately published `/agents/checklist.evidence.json` artifact to the independent SUTRA peer. It is not embedded in or implicitly loaded with the agent graph.
+- Added explicit `peer_evidence` consent kind and a visible comparison loader using the same bounded credential-free JSON fetch boundary as other public peer artifacts.
+- Added conservative comparison states: missing, unsupported, conflict_unresolved and agreement_unverified. Agreement requires exact claim ID, time value and exact excerpt.
+- Visible comparison keeps local 2–4 second timing evidence and peer 5–7 second written guide in separate cards with source date, scope, provenance, excerpts and exact source references.
+- Chromium proves denied peer evidence performs zero evidence requests and leaves local evidence usable; an allowed attempt performs exactly one credential-free evidence GET and renders conflict_unresolved.
+- Marking the comparison reviewed does not resolve or verify the conflict.
+- Integrated run discovered a nondeterministic corrupt-media duration assumption; adapter now checks authoritative native `media.error` before seekability policy.
+- Full shell/Chromium passed: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45177623668; register/evidence 45177623608 / 45177623712 passed.
+- Verified P045-01..10; Phase 045 closes. New total **325/1000**, **27 fully verified phases**.
+- Next independent queue: Phase 049 accessibility/mobile; Phase 042 genuine alternate-codec proof and live provider/public HTTPS remain open.

@@ -1,6 +1,7 @@
 {
   "version": 1,
   "networks": {
-    "learner": {}
+    "learner": {},
+    "source_learner": {}
   }
 }

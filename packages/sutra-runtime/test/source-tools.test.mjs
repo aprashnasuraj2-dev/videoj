@@ -8,3 +8,32 @@ test('MCP redirect/HTML fallback and oversized replies refused',async()=>{for(co
 test('cancellation interrupts noncooperating source transport',async()=>{const abort=new AbortController();const client=createSourceMcp({...sourceTools,signal:abort.signal,fetchImpl:()=>new Promise(()=>{})});const pending=client.listTools();abort.abort();await assert.rejects(pending);});
 
 test('unavailable source discovery and failed source calls terminate the whole composition',async()=>{for(const method of ['initialize','tools/call']){let calls=0;await assert.rejects(runNetwork({definition:graph,request:'find timing',model:createSourceScriptedModel(),sourceTools:{...sourceTools,fetchImpl:async(url,opts)=>{calls++;if(JSON.parse(opts.body).method===method)throw Error('private transport failure');return transport(url,opts);}}}),e=>e.code==='CAPABILITY_UNAVAILABLE'&&!e.message.includes('private'));assert.ok(calls>0);}});
+
+test('transient read transport failure retries once and records sanitized attempt counts',async()=>{
+ let injected=false;const methods=[];
+ const result=await runNetwork({definition:graph,request:'find timing',model:createSourceScriptedModel(),sourceTools:{...sourceTools,fetchImpl:async(url,opts)=>{
+  const method=JSON.parse(opts.body).method;methods.push(method);
+  if(method==='tools/call'&&!injected){injected=true;throw Error('synthetic-private-transient');}
+  return transport(url,opts);
+ }}});
+ assert.match(result.text,/Synthetic timing marker/);
+ assert.equal(methods.filter(m=>m==='tools/call').length,3,'two logical reads plus one retry');
+ const attempts=result.events.filter(e=>e.kind==='source_attempt'&&e.tool==='tools/call');
+ assert.ok(attempts.some(e=>e.attempt===2&&e.maxAttempts===2));
+ assert.ok(attempts.every(e=>e.attempt>=1&&e.attempt<=2&&e.maxAttempts===2));
+ assert.ok(!JSON.stringify(result.events).includes('synthetic-private-transient'));
+});
+test('5xx source response retries once but malformed successful data does not retry',async()=>{
+ let first503=true;const attempts=[];
+ const client=createSourceMcp({...sourceTools,onAttempt:e=>attempts.push(e),fetchImpl:async(url,opts)=>{
+  const method=JSON.parse(opts.body).method;
+  if(method==='initialize'&&first503){first503=false;return new Response('',{status:503});}
+  return transport(url,opts);
+ }});
+ await client.listTools();
+ assert.deepEqual(attempts.filter(e=>e.method==='initialize').map(e=>e.attempt),[1,2]);
+
+ const malformedAttempts=[];const malformed=createSourceMcp({...sourceTools,onAttempt:e=>malformedAttempts.push(e),fetchImpl:async()=>new Response('<html>bad</html>',{status:200,headers:{'Content-Type':'text/html'}})});
+ await assert.rejects(malformed.listTools());
+ assert.deepEqual(malformedAttempts.map(e=>e.attempt),[1],'schema/content failure must not be retried');
+});

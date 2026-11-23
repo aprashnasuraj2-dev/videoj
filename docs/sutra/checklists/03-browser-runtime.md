@@ -38,13 +38,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P022-01` Create agent-manifest.json matching the pinned runtime schema
 - [x] `SUTRA-P022-02` Declare each network name, front_man and hocon location exactly
 - [x] `SUTRA-P022-03` Publish the resolved network JSON at the declared HTTP path
-- [ ] `SUTRA-P022-04` Create links.json with exact symbolic-to-peer-network bindings
+- [x] `SUTRA-P022-04` Create links.json with exact symbolic-to-peer-network bindings
 - [x] `SUTRA-P022-05` Declare peer policy independently from address resolution
-- [ ] `SUTRA-P022-06` Keep top-site inference configuration distinct from peer metadata
+- [x] `SUTRA-P022-06` Keep top-site inference configuration distinct from peer metadata
 - [x] `SUTRA-P022-07` Check trailing slashes, relative URLs and nested site-base resolution
-- [ ] `SUTRA-P022-08` List manifest, graph, links and runtime URLs in a public artifact inventory
-- [ ] `SUTRA-P022-09` Produce and review the phase artifact: Public artifact bundle and URL inventory.
-- [ ] `SUTRA-P022-10` Close phase 022 only after its applicable tasks have evidence and its exit condition is observed: A caller resolves /agents/learner through /agents/agent-manifest.json and selects only the exact named entry.
+- [x] `SUTRA-P022-08` List manifest, graph, links and runtime URLs in a public artifact inventory
+- [x] `SUTRA-P022-09` Produce and review the phase artifact: Public artifact bundle and URL inventory.
+- [x] `SUTRA-P022-10` Close phase 022 only after its applicable tasks have evidence and its exit condition is observed: A caller resolves /agents/learner through /agents/agent-manifest.json and selects only the exact named entry.
 
 ## Phase 023 - Mount real browser orchestration
 
@@ -57,11 +57,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P023-02` Parse the public graph in JavaScript executed by the browser
 - [ ] `SUTRA-P023-03` Start a real front-agent invocation using configured inference
 - [x] `SUTRA-P023-04` Observe an internal agent delegation and structured return
-- [ ] `SUTRA-P023-05` Expose narrow registered actions through the runtime interface
+- [x] `SUTRA-P023-05` Expose narrow registered actions through the runtime interface
 - [x] `SUTRA-P023-06` Record browser execution evidence separately from provider inference execution
 - [x] `SUTRA-P023-07` Ensure the server proxy does not secretly own orchestration
 - [x] `SUTRA-P023-08` Verify initial errors are visible without opening developer tools
-- [ ] `SUTRA-P023-09` Produce and review the phase artifact: Runtime entry module and first local run.
+- [x] `SUTRA-P023-09` Produce and review the phase artifact: Runtime entry module and first local run.
 - [ ] `SUTRA-P023-10` Close phase 023 only after its applicable tasks have evidence and its exit condition is observed: Browser traces prove graph execution and internal delegation; a server-only chat endpoint is insufficient.
 
 ## Phase 024 - Add pre-execution network validation
@@ -86,7 +86,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 
 - **Baseline effort:** 3 person-hours; **owner:** E+P.
 - **Original phase dependencies:** 07,23. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Implement a narrow same-origin default-inference proxy with a fixed approved upstream and model policy. Keep its provider credential server-side. Stream output and enforce payload and output ceilings.
+- **Intent:** Implement a narrow same-origin funded default-inference proxy with a fixed approved upstream and model policy. Keep its provider credential server-side. This remains the no-setup judge path, while P030 BYOK remains a separate user-funded fallback rather than being cut to preserve host budget. Stream output and enforce payload and output ceilings.
 - **Phase exit:** A new visitor completes the live task without bringing a key; no provider secret appears in assets, prompts or logs.
 
 - [x] `SUTRA-P025-01` Implement one narrow same-origin default-inference endpoint
@@ -107,16 +107,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Handle streamed function calls, user cancellation, malformed model responses, provider errors and incomplete streams. Abort child operations when the run is cancelled.
 - **Phase exit:** Cancellation prevents new calls; an interrupted answer is visibly incomplete and is never presented as a completed verified result.
 
-- [ ] `SUTRA-P026-01` Represent idle, running, cancelling, failed and complete states explicitly
-- [ ] `SUTRA-P026-02` Assemble streamed function-call arguments only after valid completion
-- [ ] `SUTRA-P026-03` Handle malformed model output and unexpected provider payloads
-- [ ] `SUTRA-P026-04` Propagate model and child-agent errors without inventing success
-- [ ] `SUTRA-P026-05` Abort outstanding reads and prevent new children after cancellation
-- [ ] `SUTRA-P026-06` Label interrupted text as incomplete rather than verified output
-- [ ] `SUTRA-P026-07` Bound retries for clearly failed reads with recorded attempt counts
-- [ ] `SUTRA-P026-08` Verify cancellation does not disrupt ordinary media controls
-- [ ] `SUTRA-P026-09` Produce and review the phase artifact: Typed run lifecycle and actionable error states.
-- [ ] `SUTRA-P026-10` Close phase 026 only after its applicable tasks have evidence and its exit condition is observed: Cancellation prevents new calls; an interrupted answer is visibly incomplete and is never presented as a completed verified result.
+- [x] `SUTRA-P026-01` Represent idle, running, cancelling, failed and complete states explicitly
+- [x] `SUTRA-P026-02` Assemble streamed function-call arguments only after valid completion
+- [x] `SUTRA-P026-03` Handle malformed model output and unexpected provider payloads
+- [x] `SUTRA-P026-04` Propagate model and child-agent errors without inventing success
+- [x] `SUTRA-P026-05` Abort outstanding reads and prevent new children after cancellation
+- [x] `SUTRA-P026-06` Label interrupted text as incomplete rather than verified output
+- [x] `SUTRA-P026-07` Bound retries for clearly failed reads with recorded attempt counts
+- [x] `SUTRA-P026-08` Verify cancellation does not disrupt ordinary media controls
+- [x] `SUTRA-P026-09` Produce and review the phase artifact: Typed run lifecycle and actionable error states.
+- [x] `SUTRA-P026-10` Close phase 026 only after its applicable tasks have evidence and its exit condition is observed: Cancellation prevents new calls; an interrupted answer is visibly incomplete and is never presented as a completed verified result.
 
 ## Phase 027 - Register grounded local read actions
 
@@ -146,13 +146,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P028-01` Configure finite composition depth and total invocation count
 - [x] `SUTRA-P028-02` Configure remote-call count, concurrency and wall-clock ceilings
 - [x] `SUTRA-P028-03` Bound history, artifact sizes, output tokens and tool result size
-- [ ] `SUTRA-P028-04` Account for nested peer work inside the caller’s active budget
+- [x] `SUTRA-P028-04` Account for nested peer work inside the caller’s active budget
 - [x] `SUTRA-P028-05` Detect actual composition cycles without banning legitimate repeated agents
 - [x] `SUTRA-P028-06` Cancel descendants and stop further requests when a budget is exhausted
-- [ ] `SUTRA-P028-07` Show which limit stopped execution and preserve safe partial results
+- [x] `SUTRA-P028-07` Show which limit stopped execution and preserve safe partial results
 - [x] `SUTRA-P028-08` Exercise each limit using deterministic fixtures and a valid control run
 - [x] `SUTRA-P028-09` Produce and review the phase artifact: Runtime budget controller and limit diagnostics.
-- [ ] `SUTRA-P028-10` Close phase 028 only after its applicable tasks have evidence and its exit condition is observed: A composition cycle and an intentional over-budget request stop predictably; ordinary repeated-agent work is not falsely rejected as a cycle.
+- [x] `SUTRA-P028-10` Close phase 028 only after its applicable tasks have evidence and its exit condition is observed: A composition cycle and an intentional over-budget request stop predictably; ordinary repeated-agent work is not falsely rejected as a cycle.
 
 ## Phase 029 - Implement reviewed local write actions
 
@@ -161,7 +161,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Add save-review-card and export-receipt with explicit effect classification. Bind the reviewed payload to the executed action and source version. Surface persisted receipt or unknown outcome accurately.
 - **Phase exit:** Cancelling writes changes no stored state; changing arguments after review requires a fresh confirmation.
 
-- [ ] `SUTRA-P029-01` Register save-review-card and export-receipt with explicit effects
+- [x] `SUTRA-P029-01` Register save-review-card and export-receipt with explicit effects
 - [x] `SUTRA-P029-02` Validate proposed payload and bind it to the current source version
 - [x] `SUTRA-P029-03` Show destination, arguments and local persistence meaning before confirmation
 - [x] `SUTRA-P029-04` Require a new confirmation if the reviewed payload changes
@@ -170,22 +170,22 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P029-07` Distinguish successful persistence, rejection and unknown outcome
 - [x] `SUTRA-P029-08` Ensure the browser never blindly repeats an ambiguous write
 - [x] `SUTRA-P029-09` Produce and review the phase artifact: Write proposal, confirmation and receipt flow.
-- [ ] `SUTRA-P029-10` Close phase 029 only after its applicable tasks have evidence and its exit condition is observed: Cancelling writes changes no stored state; changing arguments after review requires a fresh confirmation.
+- [x] `SUTRA-P029-10` Close phase 029 only after its applicable tasks have evidence and its exit condition is observed: Cancelling writes changes no stored state; changing arguments after review requires a fresh confirmation.
 
-## Phase 030 - Add optional direct BYOK safely
+## Phase 030 - Keep direct BYOK as a first-class caller path
 
 - **Baseline effort:** 2 person-hours; **owner:** E.
-- **Original phase dependencies:** 25-29. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work); original phase order is not a blanket prohibition on independent engineering.
-- **Intent:** Offer only a tested browser-CORS-compatible router path with in-memory credentials and clear deletion. Keep the funded default as the judge path. If capacity is short, remove BYOK UI and publish it as unsupported.
-- **Phase exit:** If shipped, keys go only to the selected router and never to peer artifacts, actions, analytics, traces or exports.
+- **Original phase dependencies:** 25-29. See [dependency policy](../CONTINUE.md#dependencies-and-independent-work). **Priority override:** implementation may proceed once caller-local routing/key-isolation boundaries exist; it does not need to wait for funded-provider activation.
+- **Intent:** Keep a user-chosen browser key path so inference cost can remain with the user when desired and so the project can directly prove that caller credentials never reach a second site. Use only tested browser-CORS-compatible routers, keep credentials in memory, and provide explicit deletion. Funded inference remains the no-setup judge path; BYOK is also the resilience path if funded inference throttles.
+- **Phase exit:** A live/synthetic key-canary run shows the key goes only to the selected router and never to peer artifacts, actions, analytics, traces, exports or storage; deleting the key removes the in-memory state.
 
-- [ ] `SUTRA-P030-01` Decide whether optional BYOK remains in scope after the default path works
-- [ ] `SUTRA-P030-02` Use only a tested permitted router with browser CORS support
-- [ ] `SUTRA-P030-03` Keep BYOK credentials in memory and provide explicit deletion
-- [ ] `SUTRA-P030-04` Prevent peer metadata from overriding caller router or model policy
-- [ ] `SUTRA-P030-05` Send keys only in authorized model requests to the selected router
-- [ ] `SUTRA-P030-06` Check URLs, prompts, actions, traces, analytics and exports for key canaries
-- [ ] `SUTRA-P030-07` Stop with a clear setup error if a required key is absent
-- [ ] `SUTRA-P030-08` If omitted, remove BYOK affordances and record the optional-scope decision
-- [ ] `SUTRA-P030-09` Produce and review the phase artifact: BYOK adapter and disclosure, or a documented omission decision.
-- [ ] `SUTRA-P030-10` Close phase 030 only after its applicable tasks have evidence and its exit condition is observed: If shipped, keys go only to the selected router and never to peer artifacts, actions, analytics, traces or exports.
+- [x] `SUTRA-P030-01` Keep BYOK in shipped scope as a deliberate caller-funded inference path, not an optional first cut
+- [ ] `SUTRA-P030-02` Use only a tested permitted router with browser CORS support and an explicit router origin
+- [x] `SUTRA-P030-03` Keep BYOK credentials in memory only and provide explicit deletion/reset
+- [x] `SUTRA-P030-04` Prevent peer metadata from overriding caller router or model policy
+- [x] `SUTRA-P030-05` Send keys only in authorized model requests to the selected router and never to peer artifact origins
+- [x] `SUTRA-P030-06` Check URLs, prompts, actions, traces, analytics, exports and browser storage for synthetic key canaries
+- [x] `SUTRA-P030-07` Stop with a clear setup error if BYOK is selected but its required key/model configuration is absent
+- [x] `SUTRA-P030-08` Prove the funded path and BYOK path can fail independently, with BYOK remaining usable when funded inference is throttled/unavailable
+- [x] `SUTRA-P030-09` Produce and review the phase artifact: BYOK adapter, key-isolation trace and deletion/fallback behavior.
+- [ ] `SUTRA-P030-10` Close phase 030 only after its applicable tasks have evidence and its exit condition is observed: User keys reach only the selected router and never the second site or exported evidence.
