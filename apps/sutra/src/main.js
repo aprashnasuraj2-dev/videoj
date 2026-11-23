@@ -82,7 +82,7 @@ function transcriptBytes(){
  if(!transcriptBytesPromise)transcriptBytesPromise=fetch(new URL(`${import.meta.env.BASE_URL}evidence/transcript-v3.vtt`,location.origin),{credentials:'omit',redirect:'error',cache:'no-store'}).then(async response=>{if(!response.ok)throw Error('transcript');const bytes=await response.arrayBuffer();if(bytes.byteLength>256*1024)throw Error('transcript-size');return bytes;});
  return transcriptBytesPromise;
 }
-async function check(altered=false){
+async function check(altered=false,userInitiated=false){
  const input=structuredClone(evidenceAnnotation);if(altered)input.body.value='This changed sentence is not in the source cue.';
  const transcript=evidenceManifest.resources.find(resource=>resource.role==='transcript'),panel=document.querySelector('#result'),integrity=document.querySelector('#transcript-integrity');
  try{
@@ -91,17 +91,17 @@ async function check(altered=false){
   integrity.dataset.state=matched?'matched':'invalid';integrity.textContent=matched?'transcript v3 ✓ matches manifest. Hash proves bytes, not truth.':'transcript v3 ✕ does not match manifest.';
   panel.dataset.state=result.valid?'matched':'invalid';
   panel.textContent=result.valid?'Annotation, transcript SHA-256, cue interval and exact quotation match. Factual truth has not been checked.':`Evidence rejected: ${result.errors.map(e=>e.code).join(', ')}.`;
-  if(result.valid)setJourneyState(timingPlayer?'ready':'empty','evidence bytes and quotation are consistent; factual truth is still unverified.','Preview the review card before any local save.');
+  if(result.valid&&userInitiated)setJourneyState(timingPlayer?'ready':'empty','evidence bytes and quotation are consistent; factual truth is still unverified.','Preview the review card before any local save.');
  }catch{integrity.dataset.state='invalid';integrity.textContent='transcript v3 integrity unavailable.';panel.dataset.state='invalid';panel.textContent='Evidence check unavailable. No match is claimed.';}
  const shape=validateAnnotationProfile(input,{manifest:evidenceManifest});
  document.querySelector('#details').hidden=false;document.querySelector('#source').textContent=evidenceAnnotation.target.source.id;
  document.querySelector('#cue-id').textContent=`${evidenceAnnotation.body.id} · ${evidenceAnnotation.target.selector.value}`;document.querySelector('#cue-href').textContent=shape.valid?cueHref(input):'invalid cue';
  document.querySelector('#cue').setAttribute('aria-pressed',String(!altered));
 }
-document.querySelector('#cue').addEventListener('click',()=>void check());
-document.querySelector('#check').addEventListener('click',()=>void check());
-document.querySelector('#alter').addEventListener('click',()=>void check(true));
-void check();
+document.querySelector('#cue').addEventListener('click',()=>void check(false,true));
+document.querySelector('#check').addEventListener('click',()=>void check(false,true));
+document.querySelector('#alter').addEventListener('click',()=>void check(true,true));
+void check(false,false);
 
 const runButton=document.querySelector('#run-network');
 runButton.addEventListener('click',async()=>{
