@@ -100,7 +100,7 @@ export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetc
   return inspector.perform(normalized,async()=>{
     let response;
     try{response=await fetchImpl(target.href,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',signal,headers:{Accept:'application/json'}});}catch{if(signal?.aborted)fail('CANCELLED','Approved contact was cancelled.');fail('CONTACT_FETCH','Approved contact could not be fetched.');}
-    if(response.url&&new URL(response.url).origin!==normalized.origin)fail('CONTACT_REDIRECT','Approved contact changed origin.');
+    if(response.redirected||(response.url&&response.url!==target.href))fail('CONTACT_REDIRECT','Approved contact followed or changed its declared URL.');
     return readBoundedJson(response,maxBytes,signal);
   });
 }
