@@ -13,7 +13,9 @@ export function mountComparisonView(host,{receipt,seekTo}={}){
  const local=receipt&&typeof receipt.sourceId==='string'?{
   sourceKind:'video',sourceId:receipt.sourceId,sourceVersion:receipt.sourceVersion,
   title:'Actual synthetic timing-cue catalog',scope:'synthetic_timing_only',claimKey:'marker_presence',
-  value:'marker_present',excerpt:receipt.excerpt,start:receipt.start,end:receipt.end
+  value:'marker_present',excerpt:receipt.excerpt,start:receipt.start,end:receipt.end,
+  provenance:'SUTRA local synthetic timing catalog, not human-reviewed footage',
+  observedAt:receipt.retrievedAt,dateBasis:'Fixture receipt retrieval timestamp'
  }:null;
  const controls=node('div','actions');
  const compare=node('button','primary','Inspect available evidence');
@@ -39,7 +41,9 @@ export function mountComparisonView(host,{receipt,seekTo}={}){
   const list=node('dl','comparison-metadata');
   for(const [k,v] of [
    ['Source',claim.sourceId],['Version',claim.sourceVersion],
-   ['Scope',claim.scope],['Claim key',claim.claimKey],['Structured value',valueText(claim.value)]
+   ['Scope',claim.scope],['Claim key',claim.claimKey],['Structured value',valueText(claim.value)],
+   ['Provenance',claim.provenance],['Recorded timestamp',claim.observedAt??'Not supplied'],
+   ['Date meaning',claim.dateBasis??'Not supplied']
   ]){
    const dt=node('dt',null,k),dd=node('dd',null,v);list.append(dt,dd);
   }
