@@ -201,7 +201,11 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    // Run the published data as local agents under the caller's one model
    // adapter, total model budget, trace and abort signal. Never send prompt
    // text or an API key to the artifact-serving peer origin.
-   return runAgent(peerCtx,peer.frontMan,message.user_message.text,span,visited);
+   const result=await runAgent(peerCtx,peer.frontMan,message.user_message.text,span,visited);
+   // Private context uses a separate return allowlist. The peer cannot widen it:
+   // only fields already present in the caller-owned side channel can return.
+   const returning=privatePolicy.upstream(url,loaded.name,peerCtx.slyData);
+   return Object.keys(returning).length?{...result,private_context:returning}:result;
   }};
  };
  const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:approvedModel,modelOverride:approvedModel,resolveRemote:resolvePeer,resolveMcp:async ref=>{
