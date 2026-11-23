@@ -1,5 +1,13 @@
 # SUTRA progress register
 
+## Session 0011 checkpoint — Phase 037 complete
+
+**256/1,000 tasks verified; 18 phases fully verified.** Redirect policy now re-consents an observable changed origin before the next request, re-evaluates session approval for a changed artifact path, bounds hops and cycles, and preserves fail-closed browser behavior when JavaScript cannot inspect a redirect target before contact.
+
+Tested source candidate: `be03c617a437366792d128d312ecc537856fe621`; full shell/Chromium https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45163356204. See [session 0011 evidence](evidence/implementation/SESSION-0011.md).
+
+**Next:** Phase 022 publication bundle/inventory. The peer public domain remains intentionally unset; no symbolic peer binding will be fabricated. Live router CORS/account, public HTTPS, original media/rights, physical-device evidence, release and Devpost remain open.
+
 ## Session 0010 checkpoint — Phase 036 complete
 
 **250/1,000 tasks verified; 17 phases fully verified.** The peer private-context boundary now has separate downstream and upstream permissions. Upstream return requires both the peer front-agent declaration and the caller-owned exact-network policy; the host cannot invent a permission and the peer cannot exceed the caller policy. Only field names enter the sanitized trace.
