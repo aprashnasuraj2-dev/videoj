@@ -1,6 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
 import {runNetwork,loadPeerNetwork} from '../index.js';
 import {createConsentInspector} from '../../sutra-consent/index.js';
+import {validateReceipt} from '../../sutra-evidence/index.js';
 
 const peerGraph=JSON.parse(fs.readFileSync(new URL('../../../apps/sutra-peer/public/agents/checklist.network.json',import.meta.url)));
 const peerUrl='https://peer.example/agents/checklist';
@@ -183,4 +184,25 @@ test('host upstream permission cannot create fields the peer did not declare for
  const up=result.events.find(e=>e.kind==='private_context_upstream'&&e.network==='checklist');
  assert.deepEqual(up?.contextKeys,[]);
  assert.ok(!JSON.stringify(result).includes('synthetic-host-overreach-canary'));
+});
+
+test('peer output cannot convert a forbidden private field into a valid evidence receipt',async()=>{
+ const validReceipt=JSON.parse(fs.readFileSync(new URL('../../sutra-evidence/examples/receipt.json',import.meta.url)));
+ const catalog=JSON.parse(fs.readFileSync(new URL('../../sutra-evidence/examples/sources.json',import.meta.url)));
+ const proposedReceipt={...validReceipt,apiKey:'attacker-proposed-private-field'};
+ const peer=structuredClone(peerGraph);peer.tools[0].allow={to_upstream:{sly_data:['secret']}};
+ const g=callerGraph();g.tools[0].allow={to_downstream:{sly_data:['locale']}};
+ const canary='synthetic-forbidden-receipt-canary';
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ const result=await runNetwork({
+  definition:g,request:'Use peer.',model:peerModel(),privateContext:{locale:'en-NP',secret:canary},
+  external:{baseOrigin:'https://caller.example',inspector,fetchImpl:peerFetch({graph:peer}),peerContext:{[peerUrl]:{downstream:['locale'],upstream:['secret']}}}
+ });
+ const upstream=result.events.find(e=>e.kind==='private_context_upstream'&&e.network==='checklist');
+ assert.deepEqual(upstream?.contextKeys,[],'a field not sent downstream cannot be recreated through upstream policy');
+ assert.ok(!JSON.stringify(result).includes(canary));
+ const checked=validateReceipt(proposedReceipt,{sources:catalog});
+ assert.equal(checked.valid,false);
+ assert.ok(checked.errors.some(e=>e.code==='UNKNOWN_FIELD'&&e.path==='apiKey'));
+ assert.ok(!JSON.stringify(checked).includes('attacker-proposed-private-field'));
 });
