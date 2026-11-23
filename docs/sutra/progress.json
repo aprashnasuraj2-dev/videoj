@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T16:29:00+05:45",
+  "updated_at": "2026-11-23T16:26:24+05:45",
   "work_branch": "sutra/peer-invocation",
   "last_observed_code_sha": "e5af69d975ec0c7fc4c84c3e20b84036e3302cca",
   "last_session_id": "SUTRA-SESSION-0008",
@@ -3839,40 +3839,40 @@
     },
     "SUTRA-P037-06": {
       "state": "verified",
-      "verified_at": "2026-11-23T16:29:00+05:45",
+      "verified_at": "2026-11-23T16:26:24+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158153046",
           "description": "SUTRA-P037-06: passing real loopback redirect matrix and controlled browser redirect refusal/local evidence continuity on exact candidate. This is fail-closed behavior, not redirect acceptance, re-consent or public HTTPS conformance.",
           "result": "pass",
           "source_revision": "e5af69d975ec0c7fc4c84c3e20b84036e3302cca",
-          "observed_at": "2026-11-23T16:29:00+05:45"
+          "observed_at": "2026-11-23T16:26:24+05:45"
         }
       ]
     },
     "SUTRA-P037-07": {
       "state": "verified",
-      "verified_at": "2026-11-23T16:29:00+05:45",
+      "verified_at": "2026-11-23T16:26:24+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158153046",
           "description": "SUTRA-P037-07: passing real loopback redirect matrix and controlled browser redirect refusal/local evidence continuity on exact candidate. This is fail-closed behavior, not redirect acceptance, re-consent or public HTTPS conformance.",
           "result": "pass",
           "source_revision": "e5af69d975ec0c7fc4c84c3e20b84036e3302cca",
-          "observed_at": "2026-11-23T16:29:00+05:45"
+          "observed_at": "2026-11-23T16:26:24+05:45"
         }
       ]
     },
     "SUTRA-P037-08": {
       "state": "verified",
-      "verified_at": "2026-11-23T16:29:00+05:45",
+      "verified_at": "2026-11-23T16:26:24+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45158153046",
           "description": "SUTRA-P037-08: passing real loopback redirect matrix and controlled browser redirect refusal/local evidence continuity on exact candidate. This is fail-closed behavior, not redirect acceptance, re-consent or public HTTPS conformance.",
           "result": "pass",
           "source_revision": "e5af69d975ec0c7fc4c84c3e20b84036e3302cca",
-          "observed_at": "2026-11-23T16:29:00+05:45"
+          "observed_at": "2026-11-23T16:26:24+05:45"
         }
       ]
     }
