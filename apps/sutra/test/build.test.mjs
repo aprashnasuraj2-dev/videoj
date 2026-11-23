@@ -46,3 +46,12 @@ test('player adapter forwards compatibility/error surfaces without demo coupling
  for(const marker of ['compatibilitySource','fallbackUrl','poster','replaceSource','setVolume','setCaptions'])assert.ok(source.includes(marker),marker);
  assert.doesNotMatch(imports,/apps\/preview|detour\//i);
 });
+
+test('timing transcript metadata matches its bytes and timing media identity',async()=>{
+ const {createHash}=await import('node:crypto');
+ const meta=JSON.parse(fs.readFileSync(path.join(app,'src/fixtures/timing-transcript.json')));
+ const source=JSON.parse(fs.readFileSync(path.join(app,'src/fixtures/timing-source.json'))).source;
+ const bytes=fs.readFileSync(path.join(app,'public/media/timing-transcript.vtt'));
+ assert.equal(createHash('sha256').update(bytes).digest('hex'),meta.transcriptHash);
+ assert.equal(meta.sourceId,source.id);assert.equal(meta.sourceVersion,source.version);assert.equal(meta.mediaHash,source.mediaHash);assert.equal(meta.duration,source.duration);assert.equal(meta.translated,false);
+});
