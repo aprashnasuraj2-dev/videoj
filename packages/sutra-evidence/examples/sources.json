@@ -1,0 +1,17 @@
+[
+  {
+    "id": "synthetic-lesson-v1",
+    "hash": "c9f53f60e7fac966495e481a5c5237b89fcf08c13dc46961c96bf50017068421",
+    "duration": 30,
+    "cues": [
+      {
+        "id": "record-reading",
+        "start": 12,
+        "end": 18,
+        "text": "Synthetic example: record the displayed reading in the handover card."
+      }
+    ],
+    "version": "synthetic-v1",
+    "mediaHash": "0789330a37a8dcf273594d27c2f0926232fe7c12715cdd2f8c7644d5f48e0be1"
+  }
+]

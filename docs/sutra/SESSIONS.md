@@ -38,3 +38,13 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - Decisions, newly discovered tasks and updated dependencies.
 - Exact next action, pending participant inputs and independent alternatives.
 - Actual code/release/submission states; checkpoint commit resolved after saving.
+
+## SUTRA-SESSION-0002 - Implement evidence receipts and validator
+
+- Timestamp: 2026-11-23T13:08:08+05:45; resumed remote main cbd3be50545e98a6d1b13c58e59d403b7cde7906; no intervening main changes. Root instructions, handoff and latest decisions were freshly read.
+- Added the standalone `packages/sutra-evidence/` schema, browser-callable validator, CLI, synthetic examples, README and 22 passing tests.
+- Defined the audience/task in PRODUCT_BRIEF; reviewer identity remains pending.
+- Completed 28 checks: P002 items 01-06,08-09 and all phase 017/057 checks. Phase 002 remains incomplete; no app or conformance phase was credited.
+- Evidence: `evidence/implementation/SESSION-0002.md` plus candidate file hashes.
+- Scope: decision 0004 records independent early contract/tool implementation.
+- Next: P003-01 rules/spec refresh, P011 source map, P012 isolated shell. No public deployment, paid inference, outreach or official filing occurred.

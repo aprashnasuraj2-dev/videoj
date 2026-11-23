@@ -125,16 +125,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Move schema validation into packages/sutra-evidence/ with no UI/player import. Ship a CLI or simple callable module, example receipts and documented error codes.
 - **Phase exit:** A clean host validates one good receipt and rejects three bad fixtures without the SUTRA app or private services.
 
-- [ ] `SUTRA-P057-01` Create a standalone evidence package without UI or media dependencies
-- [ ] `SUTRA-P057-02` Publish the receipt schema and supported version rules
-- [ ] `SUTRA-P057-03` Expose a documented validator API and simple command-line entry point
-- [ ] `SUTRA-P057-04` Return stable error codes for missing source, invalid time and altered hash
-- [ ] `SUTRA-P057-05` Bundle valid and invalid synthetic fixtures
-- [ ] `SUTRA-P057-06` Avoid requiring the learner application or private service credentials
-- [ ] `SUTRA-P057-07` Run the validator from a separate clean host
-- [ ] `SUTRA-P057-08` Document semantic-validation limits and compatibility expectations
-- [ ] `SUTRA-P057-09` Produce and review the phase artifact: Open Kit artifact 1: evidence schema and validator.
-- [ ] `SUTRA-P057-10` Close phase 057 only after its applicable tasks have evidence and its exit condition is observed: A clean host validates one good receipt and rejects three bad fixtures without the SUTRA app or private services.
+- [x] `SUTRA-P057-01` Create a standalone evidence package without UI or media dependencies
+- [x] `SUTRA-P057-02` Publish the receipt schema and supported version rules
+- [x] `SUTRA-P057-03` Expose a documented validator API and simple command-line entry point
+- [x] `SUTRA-P057-04` Return stable error codes for missing source, invalid time and altered hash
+- [x] `SUTRA-P057-05` Bundle valid and invalid synthetic fixtures
+- [x] `SUTRA-P057-06` Avoid requiring the learner application or private service credentials
+- [x] `SUTRA-P057-07` Run the validator from a separate clean host
+- [x] `SUTRA-P057-08` Document semantic-validation limits and compatibility expectations
+- [x] `SUTRA-P057-09` Produce and review the phase artifact: Open Kit artifact 1: evidence schema and validator.
+- [x] `SUTRA-P057-10` Close phase 057 only after its applicable tasks have evidence and its exit condition is observed: A clean host validates one good receipt and rejects three bad fixtures without the SUTRA app or private services.
 
 ## Phase 058 - Extract the peer-consent inspector
 
