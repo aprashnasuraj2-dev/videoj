@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T16:33:00+05:45",
+  "updated_at": "2026-11-23T16:51:55+05:45",
   "work_branch": "sutra/peer-invocation",
-  "last_observed_code_sha": "29d686bd4f3fdb99565e3a3e4c904d12018ff27a",
-  "last_session_id": "SUTRA-SESSION-0008",
-  "stage": "runtime_streaming_peer_security_verified",
+  "last_observed_code_sha": "fb300b9df50a59768c64ee0d8f7c01389d74f27f",
+  "last_session_id": "SUTRA-SESSION-0009",
+  "stage": "phase_026_lifecycle_complete",
   "current_task": null,
-  "next_task": "SUTRA-P026-01",
+  "next_task": "SUTRA-P036-04",
   "ready_engineering_queue": [
-    "SUTRA-P026-01",
-    "SUTRA-P030-02",
     "SUTRA-P036-04",
-    "SUTRA-P037-01"
+    "SUTRA-P037-01",
+    "SUTRA-P022-04",
+    "SUTRA-P030-02"
   ],
-  "next_action": "Implement explicit idle/running/cancelling/failed/complete UI lifecycle under P026-01, visibly distinguish incomplete results and test cancellation while the media player remains usable. Live model CORS (P030-02) and production HTTPS are separate external gates. Keep public release closed.",
+  "next_action": "Continue independent engineering with P036-04 upstream/downstream private-context policy or P037 redirect policy; P030-02 remains an external live-router CORS/account gate. Keep public release, paid inference and submission closed.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -3964,6 +3964,71 @@
           "result": "pass",
           "source_revision": "29d686bd4f3fdb99565e3a3e4c904d12018ff27a",
           "observed_at": "2026-11-23T16:33:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-01": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:51:55+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Explicit idle/running/cancelling/failed/complete lifecycle rendered in an ARIA live region and exercised in unit/Chromium tests.",
+          "result": "pass",
+          "source_revision": "fb300b9df50a59768c64ee0d8f7c01389d74f27f",
+          "observed_at": "2026-11-23T16:51:55+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-07": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:51:55+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Read-only source RPC retries are capped at two attempts; transport/5xx retry once, malformed successful data does not retry, and sanitized attempt counts are recorded.",
+          "result": "pass",
+          "source_revision": "fb300b9df50a59768c64ee0d8f7c01389d74f27f",
+          "observed_at": "2026-11-23T16:51:55+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:51:55+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Chromium cancels a stalled peer run and then proves the native timing video can still play, advance its actual media clock and pause.",
+          "result": "pass",
+          "source_revision": "fb300b9df50a59768c64ee0d8f7c01389d74f27f",
+          "observed_at": "2026-11-23T16:51:55+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:51:55+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Phase artifact includes the lifecycle module, browser cancellation/media test, bounded retry implementation and revision-linked session evidence.",
+          "result": "pass",
+          "source_revision": "fb300b9df50a59768c64ee0d8f7c01389d74f27f",
+          "observed_at": "2026-11-23T16:51:55+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T16:51:55+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0009.md",
+          "description": "Phase exit observed: cancellation prevents continued work, interrupted output is explicitly incomplete, and ordinary media remains functional.",
+          "result": "pass",
+          "source_revision": "fb300b9df50a59768c64ee0d8f7c01389d74f27f",
+          "observed_at": "2026-11-23T16:51:55+05:45"
         }
       ]
     }
