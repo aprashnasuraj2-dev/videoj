@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {handleInference,UPSTREAM,inferenceStatus} from '../inference.js';import {InferenceQuota} from '../quota.js';import worker,{handleSourceTools,securityHeaders,allowedPeerOrigins} from '../worker.js';import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {handleInference,UPSTREAM,inferenceStatus} from '../inference.js';import {InferenceQuota} from '../quota.js';import worker,{handleSourceTools,securityHeaders,allowedPeerOrigins,withCachePolicy} from '../worker.js';import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
 const payload=()=>({model:'operator-approved',stream:true,messages:[{role:'user',content:'hello'}],tools:[]});
 const request=(body=payload(),extra={})=>new Request('https://sutra.test/api/infer',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json','CF-Connecting-IP':'192.0.2.1',...extra},body:JSON.stringify(body)});
 let leaseSequence=0;
@@ -101,4 +101,19 @@ test('direct nonbrowser caller that spoofs allowed Origin still hits client quot
  const second=await handleInference(request(),env,{fetchImpl});assert.equal(second.status,429);
  assert.equal(upstream,1);
  const errorBody=await second.text();assert.match(errorBody,/QUOTA/);assert.ok(!errorBody.includes('192.0.2.1'));
+});
+
+test('cache policy separates private APIs, mutable pointers and explicitly versioned public artifacts',()=>{
+ const apply=url=>withCachePolicy(new Response('x'),new Request(url)).headers.get('Cache-Control');
+ assert.equal(apply('https://sutra.test/api/infer'),'no-store');
+ assert.equal(apply('https://sutra.test/api/status'),'no-store');
+ assert.equal(apply('https://sutra.test/'),'public, max-age=0, must-revalidate');
+ assert.equal(apply('https://sutra.test/index.html'),'public, max-age=0, must-revalidate');
+ assert.equal(apply('https://sutra.test/agents/agent-manifest.json'),'public, max-age=0, must-revalidate');
+ assert.equal(apply('https://sutra.test/agents/links.json'),'public, max-age=0, must-revalidate');
+ assert.equal(apply('https://sutra.test/agents/learner.network.json'),'public, max-age=0, must-revalidate');
+ assert.equal(apply('https://sutra.test/agents/learner.network.json?v=abc'),'public, max-age=31536000, immutable');
+ assert.equal(apply('https://sutra.test/media/timing-fixture.mp4'),'public, max-age=0, must-revalidate');
+ assert.equal(apply('https://sutra.test/media/timing-fixture.mp4?v=abc'),'public, max-age=31536000, immutable');
+ assert.equal(apply('https://sutra.test/assets/index-contenthash.js'),'public, max-age=31536000, immutable');
 });
