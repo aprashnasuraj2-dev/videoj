@@ -1,19 +1,19 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T17:00:00+05:45",
+  "updated_at": "2026-11-23T17:05:44+05:45",
   "work_branch": "sutra/peer-invocation",
-  "last_observed_code_sha": "be03c617a437366792d128d312ecc537856fe621",
-  "last_session_id": "SUTRA-SESSION-0011",
-  "stage": "phase_037_redirect_policy_complete",
+  "last_observed_code_sha": "47f84a1f8ee47cf7f9a049aaa8286d3142d8648c",
+  "last_session_id": "SUTRA-SESSION-0012",
+  "stage": "phase_022_publication_bundle_complete",
   "current_task": null,
-  "next_task": "SUTRA-P022-04",
+  "next_task": "SUTRA-P023-05",
   "ready_engineering_queue": [
-    "SUTRA-P022-04",
+    "SUTRA-P023-05",
     "SUTRA-P030-02",
     "SUTRA-P034-01"
   ],
-  "next_action": "Audit and complete the public artifact/link inventory in Phase 022 without inventing a peer URL; keep live router CORS P030-02 and public HTTPS P034-01 as external gates. Public release, paid inference and submission remain closed.",
+  "next_action": "Reconcile Phase 023 browser orchestration/action tasks against current source and implement any missing narrow registered action boundary. P030-02 live router CORS/account and P034-01 public HTTPS remain external gates. Do not release.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -4145,6 +4145,71 @@
           "result": "pass",
           "source_revision": "be03c617a437366792d128d312ecc537856fe621",
           "observed_at": "2026-11-23T17:00:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-04": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:05:44+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0012.md",
+          "description": "links.json explicitly maps both published networks to exact empty publisher-owned binding maps because no symbolic external-network reference exists; no unresolved peer URL is fabricated.",
+          "result": "pass",
+          "source_revision": "47f84a1f8ee47cf7f9a049aaa8286d3142d8648c",
+          "observed_at": "2026-11-23T17:05:44+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-06": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:05:44+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0012.md",
+          "description": "Top-site llm_router metadata is published separately from allowed_peers/peer_policy, naming /api/infer and the direct BYOK router without credentials.",
+          "result": "pass",
+          "source_revision": "47f84a1f8ee47cf7f9a049aaa8286d3142d8648c",
+          "observed_at": "2026-11-23T17:05:44+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-08": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:05:44+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0012.md",
+          "description": "PUBLIC_ARTIFACT_INVENTORY.md lists exact manifest, graph, links, runtime and API paths while labeling proposed URLs as undeployed.",
+          "result": "pass",
+          "source_revision": "47f84a1f8ee47cf7f9a049aaa8286d3142d8648c",
+          "observed_at": "2026-11-23T17:05:44+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-09": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:05:44+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0012.md",
+          "description": "Publication phase artifact includes manifest, two resolved graphs, links map, peer policy/router metadata, tests and the pre-release URL inventory.",
+          "result": "pass",
+          "source_revision": "47f84a1f8ee47cf7f9a049aaa8286d3142d8648c",
+          "observed_at": "2026-11-23T17:05:44+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-10": {
+      "state": "verified",
+      "verified_at": "2026-11-23T17:05:44+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0012.md",
+          "description": "Phase exit observed in Chromium: the caller loads the publication through /agents/agent-manifest.json, selects exact learner and executes the resolved graph; exact-name failure tests remain enforced.",
+          "result": "pass",
+          "source_revision": "47f84a1f8ee47cf7f9a049aaa8286d3142d8648c",
+          "observed_at": "2026-11-23T17:05:44+05:45"
         }
       ]
     }
