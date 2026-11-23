@@ -69,7 +69,6 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.equal(peerRequests.length-peerBefore,2);assert.ok(peerRequests.every(request=>request.method==='GET'&&!request.headers.authorization&&!request.headers.cookie));
   const peerTrace=await page.locator('#network-trace').innerText();assert.match(peerTrace,/learner \/ learner @ sutra-local/);assert.match(peerTrace,/checklist \/ checklist @ http:\/\/127\.0\.0\.1:4195/);assert.match(await page.locator('#prov-graph').innerText(),/sha256-/);assert.match(await page.locator('#prov-origins').innerText(),/127\.0\.0\.1:4195/);
 
-  document;
   await page.locator('#use-byok').check();const missingPeer=peerRequests.length,missingRouter=routerRequests.length;await page.getByRole('button',{name:'Run consented peer composition'}).click();await page.waitForFunction(()=>document.querySelector('#peer-network-result').textContent.includes('(BYOK_SETUP)'));assert.equal(peerRequests.length,missingPeer);assert.equal(routerRequests.length,missingRouter);
   const keyCanary='synthetic-byok-browser-canary-987654';await page.locator('#byok-model').fill('openrouter/free');await page.locator('#byok-key').fill(keyCanary);await page.getByRole('button',{name:'Use key in memory'}).click();assert.equal(await page.locator('#byok-key').inputValue(),'');assert.match(await page.locator('#byok-status').innerText(),/ready in memory/);assert.ok(!(await page.content()).includes(keyCanary));
 
