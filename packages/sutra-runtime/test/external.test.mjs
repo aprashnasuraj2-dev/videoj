@@ -1,0 +1,86 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
+import {runNetwork} from '../index.js';
+import {createConsentInspector} from '../../sutra-consent/index.js';
+
+const peerGraph=JSON.parse(fs.readFileSync(new URL('../../../apps/sutra-peer/public/agents/checklist.network.json',import.meta.url)));
+const peerUrl='https://peer.example/agents/checklist';
+const schema={type:'object',properties:{request:{type:'string',minLength:1,maxLength:1200}},required:['request'],additionalProperties:false};
+const callerGraph=()=>({metadata:{description:'Caller-local peer composition fixture.'},max_steps:6,tools:[{name:'learner',function:{description:'Delegate to the exact declared peer.',parameters:schema},instructions:'Use the declared peer when available. If it is unavailable or denied, report that exact outcome and continue locally.',tools:[peerUrl]}]});
+const mcpGraph=()=>({metadata:{description:'Caller-local third-party MCP consent fixture.'},max_steps:4,tools:[{name:'learner',function:{description:'Use the declared read tool when approved.',parameters:schema},instructions:'Use the MCP tool only when it is available after consent. Otherwise continue without it.',tools:[{url:'https://mcp.example/mcp',tools:['lookup']}]}]});
+const call=(name,args,id='fixture-call')=>({content:'',toolCalls:[{id,type:'function',function:{name,arguments:JSON.stringify(args)}}]});
+function peerModel(){
+ let seq=0;
+ return {mode:'scripted-test',async chat({messages,tools,signal}){
+  signal?.throwIfAborted();const names=tools.map(t=>t.function.name),toolMessages=messages.filter(m=>m.role==='tool');
+  if(names.includes('agents_checklist'))return toolMessages.length?{content:'Caller observed peer tool result: '+toolMessages[0].content,toolCalls:[]}:call('agents_checklist',{request:'Check the published source state.'},'top-'+(++seq));
+  if(names.includes('source_select'))return toolMessages.length?{content:'Peer checklist result: '+toolMessages[0].content,toolCalls:[]}:call('source_select',{request:'Return the actual provenance state.'},'peer-'+(++seq));
+  return {content:'Peer helper result: rights-cleared lesson provenance remains pending.',toolCalls:[]};
+ }};
+}
+function peerFetch({manifest={networks:[{name:'checklist',front_man:'checklist',hocon:'./checklist.network.json'}]},graph=peerGraph,calls=[]}={}){
+ return async(url,options)=>{
+  calls.push({url,credentials:options.credentials,authorization:options.headers?.Authorization,redirect:options.redirect});
+  if(url.endsWith('/agent-manifest.json'))return Response.json(manifest);
+  if(url.endsWith('/checklist.network.json'))return Response.json(graph);
+  throw Error('unexpected peer fetch');
+ };
+}
+test('caller runs fetched peer data locally with one shared model adapter, budgets and trace',async()=>{
+ const decisions=[],fetches=[];const inspector=createConsentInspector({decide:async intent=>{decisions.push({kind:intent.kind,origin:intent.origin,network:intent.network});return {decision:'allow',scope:'once'};}});
+ const result=await runNetwork({definition:callerGraph(),request:'Use the checklist peer.',model:peerModel(),external:{baseOrigin:'https://caller.example',inspector,fetchImpl:peerFetch({calls:fetches})}});
+ assert.match(result.text,/Caller observed peer tool result/);assert.match(result.text,/Peer checklist result/);
+ assert.equal(result.agentCalls,3);assert.equal(result.remoteCalls,1);assert.equal(result.modelCalls,5);
+ assert.deepEqual(decisions,[{kind:'peer_manifest',origin:'https://peer.example',network:'checklist'},{kind:'peer_graph',origin:'https://peer.example',network:'checklist'}]);
+ assert.equal(fetches.length,2);assert.ok(fetches.every(x=>x.credentials==='omit'&&x.redirect==='error'&&x.authorization===undefined));
+ const agents=result.events.filter(e=>e.kind==='agent'&&e.phase==='start');
+ assert.ok(agents.some(e=>e.origin==='sutra-local'&&e.network==='learner'&&e.agent==='learner'));
+ assert.ok(agents.some(e=>e.origin==='https://peer.example'&&e.network==='checklist'&&e.agent==='checklist'));
+ assert.ok(agents.some(e=>e.origin==='https://peer.example'&&e.network==='checklist'&&e.agent==='source_select'));
+});
+test('specific peer loader failure is returned to the invoking network instead of silently selecting another network',async()=>{
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ const fetchImpl=peerFetch({manifest:{networks:[{name:'checklist_plus',front_man:'checklist',hocon:'./other.json'}]}});
+ const result=await runNetwork({definition:callerGraph(),request:'Use the checklist peer.',model:peerModel(),external:{baseOrigin:'https://caller.example',inspector,fetchImpl}});
+ assert.match(result.text,/requested exact network name is not published exactly once/);assert.equal(result.remoteCalls,1);
+});
+test('peer denial performs no artifact request and the invoking network can continue locally',async()=>{
+ let fetches=0;const inspector=createConsentInspector({decide:async intent=>({decision:intent.kind==='peer_manifest'?'deny':'allow',scope:'once'})});
+ const result=await runNetwork({definition:callerGraph(),request:'Use the checklist peer.',model:peerModel(),external:{baseOrigin:'https://caller.example',inspector,fetchImpl:async()=>{fetches++;throw Error('must not fetch');}}});
+ assert.equal(fetches,0);assert.match(result.text,/Peer contact was denied before the requested public artifact was retrieved/);
+});
+test('peer agents consume the same caller agent budget',async()=>{
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ await assert.rejects(runNetwork({definition:callerGraph(),request:'Use the checklist peer.',model:peerModel(),limits:{maxAgents:2},external:{baseOrigin:'https://caller.example',inspector,fetchImpl:peerFetch()}}),e=>e.code==='INCOMPLETE');
+});
+function mcpModel(){
+ let seq=0;
+ return {mode:'scripted-test',async chat({messages,tools,signal}){
+  signal?.throwIfAborted();const toolMessages=messages.filter(m=>m.role==='tool');
+  if(!tools.length)return {content:'Caller continued without third-party MCP.',toolCalls:[]};
+  if(!toolMessages.length)return call(tools[0].function.name,{request:'public lookup'},'mcp-'+(++seq));
+  return {content:'Caller observed MCP tool result: '+toolMessages[0].content,toolCalls:[]};
+ }};
+}
+function fakeMcp(counters){
+ return {url:'https://mcp.example/mcp',async listTools(){counters.list++;return [{name:'lookup',description:'Read a synthetic public lookup result.',inputSchema:schema},{name:'unlisted',description:'Must remain hidden.',inputSchema:schema}];},async callTool(name,args){counters.call++;return JSON.stringify({name,args,truthStatus:'unverified'});}};
+}
+test('third-party MCP discovery denial occurs before resolver or tools/list contact',async()=>{
+ const counters={resolve:0,list:0,call:0};const inspector=createConsentInspector({decide:async intent=>({decision:intent.kind==='mcp_discovery'?'deny':'allow',scope:'once'})});
+ const result=await runNetwork({definition:mcpGraph(),request:'Try the declared lookup.',model:mcpModel(),external:{baseOrigin:'https://caller.example',inspector,async resolveMcp(){counters.resolve++;return fakeMcp(counters);}}});
+ assert.match(result.text,/continued without third-party MCP/);assert.deepEqual(counters,{resolve:0,list:0,call:0});
+});
+test('third-party MCP call denial happens after approved discovery but before tools/call',async()=>{
+ const counters={resolve:0,list:0,call:0},seen=[];const inspector=createConsentInspector({decide:async intent=>{seen.push(intent.kind);return {decision:intent.kind==='mcp_call'?'deny':'allow',scope:'once'};}});
+ const result=await runNetwork({definition:mcpGraph(),request:'Try the declared lookup.',model:mcpModel(),external:{baseOrigin:'https://caller.example',inspector,async resolveMcp(){counters.resolve++;return fakeMcp(counters);}}});
+ assert.deepEqual(seen,['mcp_discovery','mcp_call']);assert.deepEqual(counters,{resolve:1,list:1,call:0});assert.match(result.text,/declined to send this request/);
+});
+test('approved third-party MCP exposes only declared tools and calls through the consent boundary',async()=>{
+ const counters={resolve:0,list:0,call:0},seen=[];const inspector=createConsentInspector({decide:async intent=>{seen.push({kind:intent.kind,origin:intent.origin,disclosure:[...intent.disclosure]});return {decision:'allow',scope:'once'};}});
+ const result=await runNetwork({definition:mcpGraph(),request:'Try the declared lookup.',model:mcpModel(),external:{baseOrigin:'https://caller.example',inspector,async resolveMcp(){counters.resolve++;return fakeMcp(counters);}}});
+ assert.deepEqual(counters,{resolve:1,list:1,call:1});assert.match(result.text,/truthStatus/);assert.deepEqual(seen.map(x=>x.kind),['mcp_discovery','mcp_call']);assert.ok(seen.every(x=>x.origin==='https://mcp.example'));
+ assert.deepEqual(seen[0].disclosure,['tool names','tool schemas']);assert.deepEqual(seen[1].disclosure,['tool arguments']);
+});
+test('external capabilities remain disabled without an explicit host boundary',async()=>{
+ let modelCalls=0;await assert.rejects(runNetwork({definition:callerGraph(),request:'x',model:{mode:'scripted-test',async chat(){modelCalls++;return {content:'x',toolCalls:[]};}}}),e=>e.code==='REFERENCE');assert.equal(modelCalls,0);
+ await assert.rejects(runNetwork({definition:mcpGraph(),request:'x',model:{mode:'scripted-test',async chat(){modelCalls++;return {content:'x',toolCalls:[]};}}}),e=>['TOOLS','REFERENCE'].includes(e.code));assert.equal(modelCalls,0);
+});
