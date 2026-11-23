@@ -47,16 +47,20 @@ void check();
 
 const runButton=document.querySelector('#run-network');
 runButton.addEventListener('click',async()=>{
- runButton.disabled=true;const status=document.querySelector('#network-result'),list=document.querySelector('#network-trace');list.replaceChildren();status.textContent='Loading local data-only network…';
+ runButton.disabled=true;const status=document.querySelector('#network-result'),list=document.querySelector('#network-trace'),events=[];list.replaceChildren();status.textContent='Loading local data-only network…';
+ const provId=beginProvenance({kind:'local_scripted',modelId:'fixture-only',router:'scripted local fixture',limits:DEFAULT_LIMITS});let graphSha='unknown';
  try{
   const baseUrl=new URL(`${import.meta.env.BASE_URL}agents/`,location.origin).href;
-  const published=await loadLocalNetwork({baseUrl,expectedOrigin:location.origin});
+  const published=await loadLocalNetwork({baseUrl,expectedOrigin:location.origin});graphSha=await sha256Integrity(JSON.stringify(published.definition));
   const result=await runNetwork({...published,request:'Inspect synthetic source consistency.',model:createScriptedModel(),actionRegistry:getReviewActions().registry,onEvent:event=>{
-   if(event.kind==='agent'&&event.phase==='start'){const item=document.createElement('li');item.textContent=`${event.agent} agent started in this browser (scripted driver)`;list.append(item);}
+   events.push(event);if(event.kind==='agent'&&event.phase==='start'){const item=document.createElement('li');item.textContent=`${event.agent} agent started in this browser (scripted driver)`;list.append(item);}
   }});
   status.textContent=`${result.text} ${result.agentCalls} agent invocations; ${result.modelCalls} scripted model steps.`;
- }catch(error){const budget=error.code==='COMPOSITION_LIMIT'?` Limit: ${error.limit||'composition'}. Incomplete partial output: ${error.partialText||'none'}.`:'';status.textContent=`Network test stopped (${error.code||'LOAD_FAILED'}).${budget} No completed result is claimed.`;}
- finally{runButton.disabled=false;}
+  finishProvenance(provId,{graphSha,modelId:'fixture-only',router:'scripted local fixture',origins:[location.origin],runtimeEvents:result.events,agentCalls:result.agentCalls,modelCalls:result.modelCalls,remoteCalls:result.remoteCalls,status:'complete'});
+ }catch(error){
+  const budget=error.code==='COMPOSITION_LIMIT'?` Limit: ${error.limit||'composition'}. Incomplete partial output: ${error.partialText||'none'}.`:'';status.textContent=`Network test stopped (${error.code||'LOAD_FAILED'}).${budget} No completed result is claimed.`;
+  const counts=countRuntimeEvents(events);finishProvenance(provId,{graphSha,modelId:'fixture-only',router:'scripted local fixture',origins:[location.origin],runtimeEvents:events,...counts,status:error.code==='COMPOSITION_LIMIT'?'partial':'failed',errorCode:error.code||'LOAD_FAILED'});
+ }finally{runButton.disabled=false;}
 });
 
 let timingPlayer=null,timingObjectUrl=null;
@@ -134,7 +138,7 @@ reviewDialog.addEventListener('cancel',event=>{event.preventDefault();cancelRevi
 confirmReviewButton.addEventListener('click',async()=>{
  if(!reviewAction)return;const current=reviewAction;reviewAction=null;reviewDialog.close();
  try{
-  const receipts=await getReviewActions().execute(current.plan,async summary=>JSON.stringify(summary)===current.preview,`review-ui-${crypto.randomUUID()}`);
+  const receipts=await getReviewActions().execute(current.plan,async summary=>JSON.stringify(summary)===current.preview,`review-ui-${crypto.randomUUID()}`);recordActionProvenance(receipts||[]);
   const receipt=receipts?.[0];
   if(!receipt){reviewStatus.textContent='Reviewed action was not confirmed. Nothing was changed.';return;}
   if(receipt.status==='unknown'){reviewStatus.textContent='Action outcome is unknown. Inspect local state before trying again; no automatic retry will occur.';return;}
@@ -147,12 +151,14 @@ try{getReviewActions();renderReviews();}catch{reviewStatus.textContent='Existing
 
 const sourceButton=document.querySelector('#run-source-network');
 sourceButton.addEventListener('click',async()=>{
- sourceButton.disabled=true;const status=document.querySelector('#source-network-result');status.textContent='Loading the synthetic source network…';
+ sourceButton.disabled=true;const status=document.querySelector('#source-network-result'),events=[];status.textContent='Loading the synthetic source network…';
+ const provId=beginProvenance({kind:'source_scripted',modelId:'fixture-only',router:'scripted local fixture',limits:DEFAULT_LIMITS});let graphSha='unknown';
  try{
-  const published=await loadLocalNetwork({baseUrl:new URL(`${import.meta.env.BASE_URL}agents/`,location.origin).href,networkName:'source_learner',expectedOrigin:location.origin,allowSourceTools:true});
-  const result=await runNetwork({...published,request:'Find the synthetic timing cue.',model:createSourceScriptedModel(),sourceTools:{origin:location.origin,sources:[timingFixture.source]}});
+  const published=await loadLocalNetwork({baseUrl:new URL(`${import.meta.env.BASE_URL}agents/`,location.origin).href,networkName:'source_learner',expectedOrigin:location.origin,allowSourceTools:true});graphSha=await sha256Integrity(JSON.stringify(published.definition));
+  const result=await runNetwork({...published,request:'Find the synthetic timing cue.',model:createSourceScriptedModel(),sourceTools:{origin:location.origin,sources:[timingFixture.source]},onEvent:event=>events.push(event)});
   status.textContent=`${result.text} ${result.agentCalls} agent invocations; ${result.modelCalls} scripted model steps; two source reads.`;
- }catch{status.textContent='Source retrieval unavailable. No completed source result is claimed. Live inference remains disabled.';}
+  finishProvenance(provId,{graphSha,modelId:'fixture-only',router:'scripted local fixture',origins:[location.origin],runtimeEvents:result.events,agentCalls:result.agentCalls,modelCalls:result.modelCalls,remoteCalls:result.remoteCalls,status:'complete'});
+ }catch(error){status.textContent='Source retrieval unavailable. No completed source result is claimed. Live inference remains disabled.';const counts=countRuntimeEvents(events);finishProvenance(provId,{graphSha,modelId:'fixture-only',router:'scripted local fixture',origins:[location.origin],runtimeEvents:events,...counts,status:'failed',errorCode:error.code||'SOURCE_FAILED'});}
  finally{sourceButton.disabled=false;}
 });
 
@@ -202,6 +208,7 @@ function renderProvenance(snapshot=provenanceStore.latest()){
  }catch{const status=document.querySelector('#prov-export-status');if(status)status.textContent='Provenance inspector unavailable. Learning and playback remain independent.';}
 }
 function beginProvenance(input){try{return provenanceStore.begin(input);}catch{return null;}}
+function countRuntimeEvents(events=[]){return {agentCalls:events.filter(e=>e.kind==='agent'&&e.phase==='start').length,modelCalls:events.filter(e=>e.kind==='model_call'&&e.phase==='start').length,remoteCalls:events.some(e=>e.kind==='agent'&&e.phase==='start'&&e.origin&&e.origin!=='sutra-local')?1:0};}
 function finishProvenance(runId,input){
  try{const snapshot=provenanceStore.finish({runId,...input});renderProvenance(snapshot);return snapshot;}
  catch{const status=document.querySelector('#prov-export-status');if(status)status.textContent='Provenance update failed. The underlying run result is unchanged.';return null;}
