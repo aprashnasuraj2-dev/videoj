@@ -32,9 +32,7 @@ MCP servers, SSE responses, auth flows or third-party discovery.
    Cloudflare secret management: `SUTRA_PROVIDER_KEY` and a random
    `SUTRA_CLIENT_HASH_SECRET` of at least 32 characters. Never use a VITE variable,
    frontend storage, browser key entry, committed `.env` or a ZIP to supply these.
-4. Keep the default quotas conservative: 100 model calls/day global; 8/client/day;
-   512 output tokens/call. Hard configuration maxima: 1,000 global, client <= global,
-   1,024 output tokens. A full agent task may consume up to 8 model calls.
+4. Keep the default quotas conservative: 100 model calls/day global; 8/client/day; **2 active provider calls at once**; 512 output tokens/call. Hard configuration maxima: 1,000 global, client <= global, 10 concurrent calls, 1,024 output tokens. A full agent task may consume up to 8 model calls.
 5. Apply/review the DO migration and validate the Wrangler bundle/deployment in a
    separate nonproduction environment. Wrangler 4.166.0 dry-run passed on 2026-11-23 (72 assets, 32.49 KiB Worker /9.16 KiB gzip); no deployment has been observed. Account routing, secret setup and live visitor checks
    remain pending. Enable only after budget/model approval and those checks.
@@ -44,10 +42,9 @@ key. Caller-supplied URL, authorization, token caps and extra payload fields are
 rejected. Request body <=32 KiB, 32 messages, 24,000 message-content characters,
 16 tool schemas; supported closed schemas only. Output/stream caps are documented
 in the inference package. Body/quota deadline: 5 seconds; provider deadline: 30.
-No automatic retries or quota refunds follow ambiguous/failed provider requests.
+No automatic provider retries or daily-quota refunds follow ambiguous/failed provider requests. Active-concurrency leases are released separately so a failed stream does not block all later traffic until the next UTC day.
 
-The quota DO uses one global named instance and an atomic storage transaction.
-Daily client identities are HMAC hashes of the Cloudflare-supplied IP plus UTC day;
+The quota DO uses one global named instance and atomic storage transactions. A successful reservation creates a 45-second active lease; at most `SUTRA_MAX_CONCURRENT` leases may exist. The Worker releases a lease after provider rejection/failure, completed or incomplete stream, and client stream cancellation. Expired leases are pruned during later reservations. Daily/client usage is deliberately **not refunded** after provider work starts, avoiding automatic retry spend. Daily client identities are HMAC hashes of the Cloudflare-supplied IP plus UTC day;
 no raw IP, prompt, content or provider secret is stored in quota state. Old-day
 state is replaced on the next request. Shared NAT users share a client allowance;
 rotating IPs can evade that allowance, but the global ceiling still applies.
