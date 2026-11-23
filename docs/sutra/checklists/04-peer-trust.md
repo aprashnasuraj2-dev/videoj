@@ -125,16 +125,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Check new destinations when redirects change origin. Limit declared artifact origins and re-evaluate cached approvals when scope changes. Fail closed when browser redirect behavior cannot enforce the policy.
 - **Phase exit:** A redirect to an unapproved origin cannot silently expand access; the original site remains responsive.
 
-- [ ] `SUTRA-P037-01` Identify redirects that change destination origin before further disclosure
-- [ ] `SUTRA-P037-02` Reapply destination policy and required consent at each changed origin
-- [ ] `SUTRA-P037-03` Bound the set of acceptable declared artifact destinations
-- [ ] `SUTRA-P037-04` Re-evaluate approval when peer scope or content binding changes materially
+- [x] `SUTRA-P037-01` Identify redirects that change destination origin before further disclosure
+- [x] `SUTRA-P037-02` Reapply destination policy and required consent at each changed origin
+- [x] `SUTRA-P037-03` Bound the set of acceptable declared artifact destinations
+- [x] `SUTRA-P037-04` Re-evaluate approval when peer scope or content binding changes materially
 - [x] `SUTRA-P037-05` Avoid leaking authentication headers across redirect chains
 - [x] `SUTRA-P037-06` Handle browser redirect limitations by failing closed when necessary
 - [x] `SUTRA-P037-07` Test same-origin, changed-origin, looping and denied redirect fixtures
 - [x] `SUTRA-P037-08` Keep the local lesson functional after a blocked peer redirect
-- [ ] `SUTRA-P037-09` Produce and review the phase artifact: Redirect fixtures and policy-change handling.
-- [ ] `SUTRA-P037-10` Close phase 037 only after its applicable tasks have evidence and its exit condition is observed: A redirect to an unapproved origin cannot silently expand access; the original site remains responsive.
+- [x] `SUTRA-P037-09` Produce and review the phase artifact: Redirect fixtures and policy-change handling.
+- [x] `SUTRA-P037-10` Close phase 037 only after its applicable tasks have evidence and its exit condition is observed: A redirect to an unapproved origin cannot silently expand access; the original site remains responsive.
 
 ## Phase 038 - Keep untrusted peer instructions contained
 
