@@ -141,3 +141,12 @@ Append entries; never erase failures or silently rewrite previous completion cla
 - GitHub Actions register and evidence jobs passed for the candidate. Shell CI had completed install, production build, app tests, inference/source/consent/API tests, pinned-vendor verification, runtime tests and independent-peer tests; Chromium installation and browser execution were still underway at the time this entry was recorded.
 - Not yet credited as new `[x]` items: original total stays 186/1000 until the final shell CI result is inspected. In particular P030-02 production CORS cannot be verified using a browser route fixture alone.
 - Next: inspect the exact candidate shell result, retain failure evidence if needed and continue the phase 030 BYOK credential-isolation checklist. Release, funded inference and public routes remain off.
+
+
+### Session 0008 verification and checklist reconciliation
+
+- 2026-11-23T16:14:09+05:45: the code candidate `092c8d2c601bcfd7075a4062a4c13460257aaa90` completed all three Actions workflows successfully, including the full Chromium shell job https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45155920061. This closes the earlier pending-browser verification; it remains a synthetic OpenRouter fixture, not a real live router CORS/account test.
+- Reconciled `SUTRA-SESSION-0007` evidence at `79d9d01562e039c6c2d47887c92396026913acc7`, independently confirmed shell CI success at https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45150180216. Credited P032-08/10, P033-03/10, P034-02..09, P035-01..10, P036-01/02/03/05/07/08/09 and P038-01..10.
+- Credited BYOK P030-01/03/04/05/06/07/09 against the passing latest canary, deletion and key-revocation tests, with the actual source revision recorded in `progress.json`.
+- Total rises from 186 to **232 verified items**, **15 fully verified phases**. No synthetic fixture is counted as public HTTPS CORS, real model quality, live funded inference, factual lesson validation or independent outside adoption.
+- Open P030-02 actual permitted router CORS, P030-08 independent funded-path failure, P034-01 staging/public HTTPS, P036-04 upstream field policy and P037-07 full redirects. Release stays blocked under SUTRA-DECISION-0008.
