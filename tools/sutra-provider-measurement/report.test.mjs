@@ -11,8 +11,9 @@ const base=()=>({schema:1,sourceRevision:'a'.repeat(40),provider:'provider',mode
  ]});
 test('complete observed usage produces transparent mean p95 projection and sensitivity including retries',()=>{
  const r=buildProviderCostReport(base());assert.equal(r.costComplete,true);assert.equal(r.observed.providerRequests,4);assert.equal(r.observed.retries,1);
- assert.equal(r.completedRunMeanUsd,0.0068);assert.equal(r.completedRunP95Usd,0.0098);assert.equal(r.projectedMonthlyUsd,6.8);
- assert.equal(r.sensitivity.oneFullMeanRetryUsd,0.0136);assert.ok(r.sensitivity.doubledPromptMeanUsd>r.completedRunMeanUsd);
+ assert.ok(Math.abs(r.completedRunMeanUsd-0.0071)<1e-12);assert.ok(Math.abs(r.completedRunP95Usd-0.0088)<1e-12);assert.ok(Math.abs(r.observedRunMeanUsd-0.0071)<1e-12);
+ assert.ok(Math.abs(r.projectedMonthlyUsd-7.1)<1e-12);
+ assert.ok(Math.abs(r.sensitivity.oneFullObservedRunRetryUsd-0.0142)<1e-12);assert.ok(r.sensitivity.doubledPromptObservedRunMeanUsd>r.observedRunMeanUsd);
 });
 test('any missing request usage nulls mean p95 monthly and sensitivity instead of estimating',()=>{
  const x=base();x.runs[0].requests[1].usage=null;const r=buildProviderCostReport(x);
@@ -23,10 +24,12 @@ test('failed and cancelled requests remain visible in spend record rather than d
  const x=base();x.runs.push({id:'r3',outcome:'failed',observedAt:'2026-11-24T00:03:00Z',requests:[{sequence:1,outcome:'failed',retry:false,usage:{promptTokens:500,completionTokens:0}}]});
  x.runs.push({id:'r4',outcome:'cancelled',observedAt:'2026-11-24T00:04:00Z',requests:[{sequence:1,outcome:'cancelled',retry:false,usage:null}]});
  const r=buildProviderCostReport(x);assert.equal(r.observed.failedRuns,1);assert.equal(r.observed.cancelledRuns,1);assert.equal(r.observed.providerRequests,6);assert.equal(r.costComplete,false);
+ const y=base();y.runs.push({id:'r3',outcome:'failed',observedAt:'2026-11-24T00:03:00Z',requests:[{sequence:1,outcome:'failed',retry:false,usage:{promptTokens:500,completionTokens:0}}]});
+ const known=buildProviderCostReport(y);assert.equal(known.costComplete,true);assert.ok(known.observedRunMeanUsd<known.completedRunMeanUsd,'failed paid attempt participates in observed-run denominator');
 });
 test('malformed prices, duplicate runs, negative tokens and fabricated monthly scale fail closed',()=>{
  for(const mutate of [
   x=>x.priceBasis.promptPerMillion=-1,x=>x.runs[1].id='r1',x=>x.runs[0].requests[0].usage.promptTokens=-1,x=>x.monthlyRunScenario=0,
-  x=>x.runs[0].requests[0].usage={promptTokens:1,completionTokens:1,totalTokens:2}
+  x=>x.runs[0].requests[0].usage={promptTokens:1,completionTokens:1,totalTokens:2},x=>x.runs[0].requests[1].sequence=1
  ]){const x=base();mutate(x);assert.throws(()=>buildProviderCostReport(x));}
 });

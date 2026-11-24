@@ -14,6 +14,6 @@ Required live sample fields:
 - every provider request sequence, retry flag and outcome;
 - prompt/completion tokens when the provider reports them.
 
-The tool computes completed-run mean and nearest-rank p95 cost, an explicit monthly-run scenario, doubled-prompt sensitivity and one-full-mean-retry sensitivity. Failed/cancelled requests stay visible in the raw run rows. The arithmetic is not a billing guarantee.
+The tool computes both all-observed-run and completed-run mean/nearest-rank p95 cost. Monthly projection uses the **all observed run** mean so paid failed attempts are not silently excluded. It also reports doubled-prompt and one-full-observed-run-retry sensitivity. Failed/cancelled requests stay visible in the raw run rows. The arithmetic is not a billing guarantee.
 
 Synthetic unit tests validate the calculation only. They are not P066 live-cost evidence and do not authorize paid inference.
