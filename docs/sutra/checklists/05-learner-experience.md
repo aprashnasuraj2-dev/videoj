@@ -148,7 +148,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P048-03` Have a human review Nepali technical terms and ambiguity
 - [x] `SUTRA-P048-04` Retain original source excerpts when translations are shown
 - [x] `SUTRA-P048-05` Preserve selected lesson, cue and run state during language switching
-- [ ] `SUTRA-P048-06` Format timestamps, units and dates consistently across languages
+- [x] `SUTRA-P048-06` Format timestamps, units and dates consistently across languages
 - [x] `SUTRA-P048-07` Check fallback text and missing localization keys
 - [x] `SUTRA-P048-08` Cut optional localization polish before compromising core runtime correctness
 - [ ] `SUTRA-P048-09` Produce and review the phase artifact: Localized core screens and reviewed terminology list.
@@ -179,13 +179,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Run the entire hero journey without a developer console. Review loading, empty, denied, source-conflict and success states for clarity and consistency.
 - **Phase exit:** A new viewer can finish the task using the visible UI; the local learning flow survives peer denial.
 
-- [ ] `SUTRA-P050-01` Complete the hero journey without console commands or hidden setup
+- [x] `SUTRA-P050-01` Complete the hero journey without console commands or hidden setup
 - [ ] `SUTRA-P050-02` Check first-load instructions and default funded inference discovery
-- [ ] `SUTRA-P050-03` Inspect all loading, empty, denied, conflict and success transitions
-- [ ] `SUTRA-P050-04` Confirm evidence selection and saved-card feedback are consistent
-- [ ] `SUTRA-P050-05` Verify peer refusal leaves local lesson/transcript functionality useful
-- [ ] `SUTRA-P050-06` Review mobile core task and keyboard-only completion
-- [ ] `SUTRA-P050-07` Prioritize usability blockers over additional features
-- [ ] `SUTRA-P050-08` Record the complete-product gate against the current build revision
-- [ ] `SUTRA-P050-09` Produce and review the phase artifact: Milestone C walkthrough and remaining issue priorities.
+- [x] `SUTRA-P050-03` Inspect all loading, empty, denied, conflict and success transitions
+- [x] `SUTRA-P050-04` Confirm evidence selection and saved-card feedback are consistent
+- [x] `SUTRA-P050-05` Verify peer refusal leaves local lesson/transcript functionality useful
+- [x] `SUTRA-P050-06` Review mobile core task and keyboard-only completion
+- [x] `SUTRA-P050-07` Prioritize usability blockers over additional features
+- [x] `SUTRA-P050-08` Record the complete-product gate against the current build revision
+- [x] `SUTRA-P050-09` Produce and review the phase artifact: Milestone C walkthrough and remaining issue priorities.
 - [ ] `SUTRA-P050-10` Close phase 050 only after its applicable tasks have evidence and its exit condition is observed: A new viewer can finish the task using the visible UI; the local learning flow survives peer denial.
