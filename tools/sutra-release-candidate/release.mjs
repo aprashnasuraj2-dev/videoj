@@ -23,9 +23,9 @@ export function validateReleaseConfig(config){
  if(config.backend==='self_hosted'?!gateway(config.selfHostedGatewayUrl):config.selfHostedGatewayUrl!==null)throw Error('Invalid inference backend configuration.');
  const live=config.liveEvidence;
  const expectedUpstream=config.backend==='self_hosted'?config.selfHostedGatewayUrl:HOSTED_ENDPOINT;
- if(!exact(live,['status','backend','model','upstreamUrlSha256','gatewayBuildSha256','costEvidenceKind','observedAt','runRecordHash','costReportHash','usageComplete','judgePathPassed'])||live.status!=='live_verified'||live.backend!==config.backend||live.model!==config.model||
+ if(!exact(live,['status','backend','model','upstreamUrlSha256','gatewayBuildSha256','costEvidenceKind','observedAt','runRecordHash','costReportHash','usageComplete','noAutomaticRetries','judgePathPassed'])||live.status!=='live_verified'||live.backend!==config.backend||live.model!==config.model||
   live.costEvidenceKind!==(config.backend==='self_hosted'?'self_hosted_resource':'provider_pricing')||
-  !SHA256.test(live.upstreamUrlSha256)||live.upstreamUrlSha256!==digest(expectedUpstream)||(config.backend==='self_hosted'?!SHA256.test(live.gatewayBuildSha256):live.gatewayBuildSha256!==null)||!time(live.observedAt)||!SHA256.test(live.runRecordHash)||!SHA256.test(live.costReportHash)||live.usageComplete!==true||live.judgePathPassed!==true)throw Error('Live inference evidence is incomplete.');
+  !SHA256.test(live.upstreamUrlSha256)||live.upstreamUrlSha256!==digest(expectedUpstream)||(config.backend==='self_hosted'?!SHA256.test(live.gatewayBuildSha256):live.gatewayBuildSha256!==null)||!time(live.observedAt)||!SHA256.test(live.runRecordHash)||!SHA256.test(live.costReportHash)||live.usageComplete!==true||live.noAutomaticRetries!==true||live.judgePathPassed!==true)throw Error('Live inference evidence is incomplete.');
  const budget=config.budgetEvidence;
  if(!exact(budget,['approved','costMode','spendCeilingUsd','judgingReserveRuns','evidenceRef'])||budget.approved!==true||!['operator_owned','provider_billed'].includes(budget.costMode)||typeof budget.spendCeilingUsd!=='number'||!Number.isFinite(budget.spendCeilingUsd)||
   budget.spendCeilingUsd<0||budget.spendCeilingUsd>10000||!Number.isInteger(budget.judgingReserveRuns)||budget.judgingReserveRuns<20||budget.judgingReserveRuns>100000||!privateRef(budget.evidenceRef)||

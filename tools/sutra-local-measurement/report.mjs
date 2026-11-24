@@ -17,7 +17,7 @@ export function buildSelfHostedResourceReport(input){
  const hardware=input.hardware;
  if(!exact(hardware,['gpuModel','vramGiB','systemRamGiB'])||typeof hardware.gpuModel!=='string'||hardware.gpuModel.trim().length<2||hardware.gpuModel.length>160||!finite(hardware.vramGiB,.1,1024)||!finite(hardware.systemRamGiB,.1,4096))throw Error('Invalid hardware evidence.');
  const cost=input.costBasis;
- if(!exact(cost,['electricityUsdPerKwh','hardwareAmortizationUsdPerHour','effectiveAt','source'])||!finite(cost.electricityUsdPerKwh,0,100)||!finite(cost.hardwareAmortizationUsdPerHour,0,10000)||!ISO.test(cost.effectiveAt)||!Number.isFinite(Date.parse(cost.effectiveAt))||typeof cost.source!=='string'||cost.source.trim().length<4||cost.source.length>500)throw Error('Invalid self-hosted cost basis.');
+ if(!exact(cost,['electricityUsdPerKwh','hardwareAmortizationUsdPerHour','energyMeasurement','effectiveAt','source'])||!finite(cost.electricityUsdPerKwh,0,100)||!finite(cost.hardwareAmortizationUsdPerHour,0,10000)||!['wall_meter_total','wall_meter_incremental'].includes(cost.energyMeasurement)||!ISO.test(cost.effectiveAt)||!Number.isFinite(Date.parse(cost.effectiveAt))||typeof cost.source!=='string'||cost.source.trim().length<4||cost.source.length>500)throw Error('Invalid self-hosted cost basis.');
  const batchIds=new Set(),requestIds=new Set(),runs=[],latencies=[],completedLatencies=[],byConcurrency=new Map();
  let attempts=0,completed=0,failed=0,cancelled=0,modelCalls=0,retries=0,promptTokens=0,completionTokens=0,unknownUsage=0,totalEnergyWh=0,totalWallMs=0;
  for(const raw of input.batches){
@@ -26,7 +26,7 @@ export function buildSelfHostedResourceReport(input){
   const row={id:raw.id,observedAt:raw.observedAt,concurrency:raw.concurrency,durationMs:raw.durationMs,energyWh:raw.energyWh,attempts:raw.requests.length,completed:0,failed:0,cancelled:0};
   const group=byConcurrency.get(raw.concurrency)??{concurrency:raw.concurrency,latencies:[],completed:0,failed:0,cancelled:0,batches:0};group.batches++;
   for(const req of raw.requests){
-   if(!exact(req,['id','outcome','latencyMs','modelCalls','retryCount','usage'])||typeof req.id!=='string'||!ID.test(req.id)||requestIds.has(req.id)||!['completed','failed','cancelled'].includes(req.outcome)||!finite(req.latencyMs,0,3_600_000)||!integer(req.modelCalls,0,32)||!integer(req.retryCount,0,32))throw Error('Invalid self-hosted request.');
+   if(!exact(req,['id','outcome','latencyMs','modelCalls','retryCount','usage'])||typeof req.id!=='string'||!ID.test(req.id)||requestIds.has(req.id)||!['completed','failed','cancelled'].includes(req.outcome)||!finite(req.latencyMs,0,3_600_000)||req.latencyMs>raw.durationMs||!integer(req.modelCalls,0,32)||req.outcome==='completed'&&req.modelCalls<1||!integer(req.retryCount,0,32)||req.retryCount>req.modelCalls)throw Error('Invalid self-hosted request.');
    requestIds.add(req.id);attempts++;modelCalls+=req.modelCalls;retries+=req.retryCount;latencies.push(req.latencyMs);group.latencies.push(req.latencyMs);row[req.outcome]++;group[req.outcome]++;
    if(req.outcome==='completed'){completed++;completedLatencies.push(req.latencyMs);}else if(req.outcome==='failed')failed++;else cancelled++;
    if(req.usage===null){unknownUsage++;continue;}
@@ -43,7 +43,7 @@ export function buildSelfHostedResourceReport(input){
  const meanCost=operationalCostUsd/attempts;
  return freeze({schema:1,kind:'self_hosted_resource',sourceRevision:input.sourceRevision,backend:'self_hosted',model:input.model,gatewayUrlSha256:input.gatewayUrlSha256,gatewayBuildSha256:input.gatewayBuildSha256,engine:{...engine},weights:{...weights},hardware:{...hardware},costBasis:{...cost},
   observed:{batches:runs.length,attempts,completed,failed,cancelled,modelCalls,retries,unknownUsageRequests:unknownUsage,totalEnergyWh,totalWallMs,promptTokens,completionTokens},
-  usageComplete,latencyP50Ms:percentile(latencies,.5),latencyP95Ms:percentile(latencies,.95),completedLatencyP50Ms:completedLatencies.length?percentile(completedLatencies,.5):null,completedLatencyP95Ms:completedLatencies.length?percentile(completedLatencies,.95):null,
+  usageComplete,noAutomaticRetries:retries===0,latencyP50Ms:percentile(latencies,.5),latencyP95Ms:percentile(latencies,.95),completedLatencyP50Ms:completedLatencies.length?percentile(completedLatencies,.5):null,completedLatencyP95Ms:completedLatencies.length?percentile(completedLatencies,.95):null,
   energyWhPerAttempt:totalEnergyWh/attempts,energyCostUsd,hardwareTimeCostUsd,observedOperationalCostUsd:operationalCostUsd,observedAttemptMeanUsd:meanCost,monthlyRunScenario:input.monthlyRunScenario,projectedMonthlyOperationalUsd:meanCost*input.monthlyRunScenario,
   concurrency,runs,
   limitation:'Operational cost covers only the supplied electricity and hardware-amortization basis. It excludes network, tunnel, labor, taxes, replacement risk and any unobserved infrastructure cost. Synthetic input cannot establish real hardware performance.'

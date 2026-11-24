@@ -15,7 +15,8 @@
     "backend": null,
     "costEvidenceKind": null,
     "upstreamUrlSha256": null,
-    "gatewayBuildSha256": null
+    "gatewayBuildSha256": null,
+    "noAutomaticRetries": null
   },
   "budgetEvidence": {
     "approved": null,
