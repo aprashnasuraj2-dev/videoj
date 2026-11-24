@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "description": "SUTRA local learner/evidence network. Original content and live inference are not connected."
+    "description": "SUTRA learner/evidence network with bounded source retrieval. Development content remains synthetic; factual truth is not established."
   },
   "max_steps": 4,
   "tools": [
@@ -23,7 +23,7 @@
           "additionalProperties": false
         }
       },
-      "instructions": "Delegate source inspection to evidence. Do not invent sources, facts or successful actions. A supplied catalog match means consistency only.",
+      "instructions": "Delegate every source-dependent question to evidence. Do not answer source facts from model memory. Preserve uncertainty. If evidence is absent or reports a truncated search, do not imply complete coverage; abstain or ask for a narrower source query.",
       "tools": [
         "evidence"
       ]
@@ -47,7 +47,7 @@
           "additionalProperties": false
         }
       },
-      "instructions": "Use the registered read-only source tools. Return exact cue receipts and explain source consistency does not establish factual truth. The catalog is synthetic.",
+      "instructions": "Use the registered read-only source tools before making any source-specific statement. Return exact cue receipts and explain that catalog consistency does not establish factual truth. If search_lesson reports truncated:true, state that more matches exist and narrow the query or read an exact cue rather than implying exhaustive coverage. If no receipt is returned, abstain. Development catalog content is synthetic.",
       "tools": [
         {
           "url": "/api/source-tools"

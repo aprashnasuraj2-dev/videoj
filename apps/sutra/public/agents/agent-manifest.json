@@ -9,8 +9,8 @@
     {
       "name": "source_learner",
       "front_man": "learner",
-      "hocon": "./v/61afec6b5cac95776050428c1e5f10bb58decf5b/source_learner.network.json",
-      "description": "Scripted source retrieval through bounded same-origin MCP; synthetic catalog, no factual truth claim."
+      "hocon": "./v/f30974b8591eb421f903ca5e17a8e2f47bf0e3c2/source_learner.network.json",
+      "description": "Bounded source retrieval with explicit truncation/abstention semantics; development catalog remains synthetic."
     },
     {
       "name": "linked_learner",
