@@ -21,16 +21,16 @@ export function buildSelfHostedResourceReport(input){
  const batchIds=new Set(),requestIds=new Set(),runs=[],latencies=[],completedLatencies=[],byConcurrency=new Map(),windows=[];
  let attempts=0,completed=0,failed=0,cancelled=0,modelCalls=0,retries=0,promptTokens=0,completionTokens=0,unknownUsage=0,totalEnergyWh=0,totalWallMs=0;
  for(const raw of input.batches){
-  if(!exact(raw,['id','observedAt','concurrency','durationMs','energyWh','requests'])||typeof raw.id!=='string'||!ID.test(raw.id)||batchIds.has(raw.id)||!ISO.test(raw.observedAt)||!Number.isFinite(Date.parse(raw.observedAt))||!integer(raw.concurrency,1,16)||!finite(raw.durationMs,1,3_600_000)||!finite(raw.energyWh,0,100_000)||!Array.isArray(raw.requests)||raw.requests.length!==raw.concurrency)throw Error('Invalid self-hosted batch.');
+  if(!exact(raw,['id','observedAt','concurrency','durationMs','energyWh','requests'])||typeof raw.id!=='string'||!ID.test(raw.id)||batchIds.has(raw.id)||!ISO.test(raw.observedAt)||!Number.isFinite(Date.parse(raw.observedAt))||Date.parse(raw.observedAt)<Date.parse(cost.effectiveAt)||!integer(raw.concurrency,1,16)||!finite(raw.durationMs,1,3_600_000)||!finite(raw.energyWh,0,100_000)||!Array.isArray(raw.requests)||raw.requests.length!==raw.concurrency)throw Error('Invalid self-hosted batch.');
   batchIds.add(raw.id);const startMs=Date.parse(raw.observedAt),endMs=startMs+raw.durationMs;windows.push({id:raw.id,startMs,endMs});totalEnergyWh+=raw.energyWh;totalWallMs+=raw.durationMs;
   const row={id:raw.id,observedAt:raw.observedAt,concurrency:raw.concurrency,durationMs:raw.durationMs,energyWh:raw.energyWh,attempts:raw.requests.length,completed:0,failed:0,cancelled:0};
   const group=byConcurrency.get(raw.concurrency)??{concurrency:raw.concurrency,latencies:[],completed:0,failed:0,cancelled:0,batches:0};group.batches++;
   for(const req of raw.requests){
-   if(!exact(req,['id','outcome','latencyMs','modelCalls','retryCount','usage'])||typeof req.id!=='string'||!ID.test(req.id)||requestIds.has(req.id)||!['completed','failed','cancelled'].includes(req.outcome)||!finite(req.latencyMs,0,3_600_000)||req.latencyMs>raw.durationMs||!integer(req.modelCalls,0,32)||req.outcome==='completed'&&req.modelCalls<1||!integer(req.retryCount,0,32)||req.retryCount>req.modelCalls)throw Error('Invalid self-hosted request.');
+   if(!exact(req,['id','outcome','latencyMs','modelCalls','retryCount','usage'])||typeof req.id!=='string'||!ID.test(req.id)||requestIds.has(req.id)||!['completed','failed','cancelled'].includes(req.outcome)||!finite(req.latencyMs,0,3_600_000)||req.latencyMs>raw.durationMs||!integer(req.modelCalls,0,32)||req.outcome==='completed'&&req.modelCalls<1||!integer(req.retryCount,0,32)||req.retryCount>req.modelCalls||req.modelCalls>0&&req.retryCount===req.modelCalls)throw Error('Invalid self-hosted request.');
    requestIds.add(req.id);attempts++;modelCalls+=req.modelCalls;retries+=req.retryCount;latencies.push(req.latencyMs);group.latencies.push(req.latencyMs);row[req.outcome]++;group[req.outcome]++;
    if(req.outcome==='completed'){completed++;completedLatencies.push(req.latencyMs);}else if(req.outcome==='failed')failed++;else cancelled++;
    if(req.usage===null){unknownUsage++;continue;}
-   if(!exact(req.usage,['promptTokens','completionTokens'])||!integer(req.usage.promptTokens,0,10_000_000)||!integer(req.usage.completionTokens,0,10_000_000))throw Error('Invalid token usage.');
+   if(!exact(req.usage,['promptTokens','completionTokens'])||!integer(req.usage.promptTokens,0,10_000_000)||!integer(req.usage.completionTokens,0,10_000_000)||req.modelCalls===0&&(req.usage.promptTokens!==0||req.usage.completionTokens!==0))throw Error('Invalid token usage.');
    promptTokens+=req.usage.promptTokens;completionTokens+=req.usage.completionTokens;
   }
   byConcurrency.set(raw.concurrency,group);runs.push(row);

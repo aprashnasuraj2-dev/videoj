@@ -28,6 +28,7 @@ async function fixture(){
  await fsp.writeFile(path.join(root,'agents','agent-manifest.json'),JSON.stringify(manifest));await fsp.writeFile(path.join(root,'agents','links.json'),JSON.stringify(links));
  for(const name of names){await fsp.writeFile(path.join(root,'agents','v','old',name+'.network.json'),JSON.stringify(graph));await fsp.writeFile(path.join(root,'agents',name+'.network.json'),JSON.stringify(graph));}
  await fsp.mkdir(path.join(root,'agents','v','historical'),{recursive:true});await fsp.writeFile(path.join(root,'agents','v','historical','source_learner.network.json'),JSON.stringify(graph));await fsp.writeFile(path.join(root,'agents','artifact-inventory.json'),'{}');
+ await fsp.writeFile(path.join(root,'_headers'),'/*\n  X-Content-Type-Options: nosniff\n');
  await fsp.writeFile(path.join(root,'runtime','sutra-runtime.js'),'export const runtime=true;\n');await fsp.writeFile(path.join(root,'index.html'),'<!doctype html><main id="app"></main>');await fsp.writeFile(path.join(root,'assets','app.js'),'console.log("app");');
  await fsp.writeFile(path.join(root,'content','content-profile.json'),profileBytes);await fsp.writeFile(path.join(root,'content','source-catalog.json'),catalogBytes);await fsp.writeFile(path.join(root,'content','content-pack-record.json'),JSON.stringify(packRecord,null,2)+'\n');
  await fsp.writeFile(path.join(root,'media','release',mediaSha,'lesson.mp4'),mediaBytes);await fsp.writeFile(path.join(root,'media','release',mediaSha,'poster.svg'),'<svg/>');await fsp.writeFile(path.join(root,'media','release',transcriptSha,'chapters.vtt'),'WEBVTT\n');await fsp.writeFile(path.join(root,'media','release',transcriptSha,'captions.vtt'),'WEBVTT\n');
@@ -96,4 +97,30 @@ test('candidate rejects unknown public files, traversal spellings, and a symlink
   await fsp.symlink(src,alias,'dir');await assert.rejects(materializeReleaseCandidate({sourceDist:alias,outputDir:out,config:cfg()}),/symlink/);
   await assert.rejects(materializeReleaseCandidate({sourceDist:src,outputDir:path.join(alias,'child'),config:cfg()}),/separate trees/);
  }finally{await fsp.rm(alias,{force:true});await fsp.rm(src,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
+});
+
+test('candidate refuses missing required playback and security files before creating any output',async()=>{
+ for(const rel of ['_headers',reviewedProfile.media.poster.slice(1),reviewedProfile.media.chapters.slice(1),reviewedProfile.media.captions.slice(1),'assets/app.js']){
+  const src=await fixture(),out=src+'-out';try{
+   await fsp.unlink(path.join(src,rel));await assert.rejects(materializeReleaseCandidate({sourceDist:src,outputDir:out,config:cfg()}),/Required candidate file missing|compiled JavaScript entry/);assert.equal(fs.existsSync(out),false);
+  }finally{await fsp.rm(src,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
+ }
+});
+test('candidate checks pack path binding and refuses undeclared metadata even when record digest is consistent',async()=>{
+ for(const alter of [p=>p.publicPaths.guide='/guides/wrong.html',p=>p.privateAnnotation='private-canary']){
+  const src=await fixture(),out=src+'-out';try{
+   const p=structuredClone(packRecord);alter(p);
+   const core={schema:p.schema,contentVersion:p.contentVersion,intakeRecordHash:p.intakeRecordHash,profileSha256:p.profileSha256,catalogSha256:p.catalogSha256,mediaSha256:p.mediaSha256,transcriptSha256:p.transcriptSha256,guideSha256:p.guideSha256,publicPaths:p.publicPaths};
+   p.recordHash=sha(Buffer.from(JSON.stringify(core,null,2)+'\n'));await fsp.writeFile(path.join(src,'content','content-pack-record.json'),JSON.stringify(p,null,2)+'\n');
+   await assert.rejects(materializeReleaseCandidate({sourceDist:src,outputDir:out,config:cfg()}),/public paths|record is missing or invalid/);assert.equal(fs.existsSync(out),false);
+  }finally{await fsp.rm(src,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
+ }
+});
+test('candidate omits private reference strings and unbound pack annotations from public files',async()=>{
+ const src=await fixture(),out=src+'-out';try{
+  const p={...packRecord,limitation:'Private annotation canary'};await fsp.writeFile(path.join(src,'content','content-pack-record.json'),JSON.stringify(p,null,2)+'\n');
+  await materializeReleaseCandidate({sourceDist:src,outputDir:out,config:cfg()});
+  const publicPack=await fsp.readFile(path.join(out,'content','content-pack-record.json'),'utf8');assert.equal(publicPack.includes('Private annotation canary'),false);assert.equal(JSON.parse(publicPack).recordHash,packRecord.recordHash);
+  const release=await fsp.readFile(path.join(out,'agents','release-candidate.json'),'utf8');assert.equal(release.includes('private:'),false);
+ }finally{await fsp.rm(src,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
 });

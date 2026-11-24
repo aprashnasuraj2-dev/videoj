@@ -21,3 +21,11 @@ test('adjacent non-overlapping windows are allowed and observedAt is the window 
  const x=base();x.batches[1].observedAt='2026-11-24T00:01:02Z';
  const r=buildSelfHostedResourceReport(x);assert.equal(r.observed.batches,2);assert.equal(r.observed.totalWallMs,5000);
 });
+
+test('self-hosted resource records reject future cost basis and internally impossible call/token accounting',()=>{
+ for(const mutate of [x=>x.costBasis.effectiveAt='2026-11-25T00:00:00Z',x=>x.batches[0].requests[0].retryCount=3,x=>{x.batches[1].requests[1].modelCalls=0;}]){
+  const x=base();mutate(x);assert.throws(()=>buildSelfHostedResourceReport(x));
+ }
+ const x=base();x.batches[1].requests[1].modelCalls=0;x.batches[1].requests[1].usage={promptTokens:0,completionTokens:0};
+ assert.equal(buildSelfHostedResourceReport(x).usageComplete,true);
+});

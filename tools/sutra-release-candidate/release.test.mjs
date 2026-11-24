@@ -22,6 +22,9 @@ test('release preparation publishes one exact funded router, one peer and model-
  assert.equal(out.links.networks.linked_learner.guide_peer,'https://guide.example/agents/checklist');
  for(const entry of out.manifest.networks){const g=out.graphs[entry.name];assert.equal(g.graph.llm_config.model_name,'provider/model-v1');assert.match(g.sha256,/^[a-f0-9]{64}$/);assert.equal(entry.hocon,g.path);assert.match(g.path,new RegExp('^\\./release/'+g.sha256+'/'));}
  assert.equal(validatePreparedRelease(out).valid,true);
+ assert.equal(Object.hasOwn(out.releaseRecord.budgetEvidence,'evidenceRef'),false);
+ assert.equal(Object.hasOwn(out.releaseRecord.contentEvidence,'evidenceRef'),false);
+ assert.equal(JSON.stringify(out).includes('private:'),false,'private input-only references must never enter published artifacts');
 });
 test('release artifact verification detects manifest, peer, graph and record drift',()=>{
  for(const mutate of [

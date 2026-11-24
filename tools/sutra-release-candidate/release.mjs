@@ -74,12 +74,14 @@ export function prepareReleaseArtifacts({manifest,links,graphs,config}){
   peer_policy:{mode:'closed'},
   deployment:{mode:'static',runtime:'/runtime/sutra-runtime.js',self_contained_runtime:true,browser_mock:false,direct_byok:false,direct_mcp_requires_cors:true,public_mcp_facade:false}
  };
+ const {evidenceRef:privateBudgetRef,...publicBudget}=cfg.budgetEvidence;
+ const {evidenceRef:privateContentRef,...publicContent}=cfg.contentEvidence;
  const releaseRecord={
   schema:1,sourceRevision:cfg.sourceRevision,publicOrigin:cfg.publicOrigin,peerOrigin:cfg.peerOrigin,backend:cfg.backend,model:cfg.model,
-  spec:{...cfg.spec},liveEvidence:{...cfg.liveEvidence},budgetEvidence:{...cfg.budgetEvidence},contentEvidence:{...cfg.contentEvidence},
+  spec:{...cfg.spec},liveEvidence:{...cfg.liveEvidence},budgetEvidence:publicBudget,contentEvidence:publicContent,
   manifestSha256:digest(canonical(releaseManifest)),linksSha256:digest(canonical(outLinks)),
   graphSha256:Object.fromEntries(Object.entries(outputGraphs).map(([name,v])=>[name,v.sha256])),
-  limitation:'This record proves deterministic release-artifact construction from supplied evidence identifiers. It cannot prove provider billing, budget approval authenticity, public deployment, TLS/CORS reachability, entrant eligibility, or factual content review.'
+  limitation:'This record proves deterministic release-artifact construction from supplied evidence identifiers. Private evidence references are intentionally omitted. It cannot prove provider billing, budget approval authenticity, public deployment, TLS/CORS reachability, entrant eligibility, or factual content review.'
  };
  return freeze({manifest:releaseManifest,links:outLinks,graphs:outputGraphs,releaseRecord:{...releaseRecord,recordSha256:digest(canonical(releaseRecord))}});
 }

@@ -47,3 +47,11 @@ test('offline CLI reports complete synthetic file and distinguishes incomplete v
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'sutra-cost-')),file=path.join(dir,'incomplete.json');fs.writeFileSync(file,JSON.stringify(input));
  try{const incomplete=spawnSync(process.execPath,[cli,file],{encoding:'utf8'});assert.equal(incomplete.status,3);assert.equal(JSON.parse(incomplete.stdout).costComplete,false);}finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
+
+test('cost report rejects unsafe tokens, overflow-capable prices, missing attempt sequences and future-effective prices',()=>{
+ for(const mutate of [x=>x.priceBasis.promptPerMillion=Number.MAX_VALUE,x=>x.runs[0].requests[0].usage.promptTokens=Number.MAX_SAFE_INTEGER+1,x=>x.runs[0].requests[0].usage.completionTokens=10_000_001,x=>x.runs[0].requests[1].sequence=3,x=>x.runs[0].requests[0].retry=true,x=>x.priceBasis.effectiveAt='2026-11-25T00:00:00Z']){
+  const x=base();mutate(x);assert.throws(()=>buildProviderCostReport(x));
+ }
+ const x=base();x.priceBasis.promptPerMillion=1_000_000;x.priceBasis.completionPerMillion=1_000_000;x.runs[0].requests[0].usage={promptTokens:10_000_000,completionTokens:10_000_000};
+ const r=buildProviderCostReport(x);assert.ok(Number.isFinite(r.projectedMonthlyUsd));assert.equal(r.costComplete,true);assert.equal(JSON.parse(JSON.stringify(r)).costComplete,true);
+});

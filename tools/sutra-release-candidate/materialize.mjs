@@ -93,7 +93,8 @@ export async function materializeReleaseCandidate({sourceDist,outputDir,config})
  // Walk before any content read. Reject symlinks and special files throughout the input tree.
  const sourceFiles=await walk(source);
  const packRecord=await readJson(source,'content/content-pack-record.json',65536);
- if(!packRecord||packRecord.schema!==1||packRecord.contentVersion!==cfg.contentEvidence.contentVersion||!packRecord.publicPaths||typeof packRecord.recordHash!=='string'||!/^[a-f0-9]{64}$/.test(packRecord.recordHash))throw Error('Reviewed content pack record is missing or invalid.');
+ const packFields=['schema','contentVersion','intakeRecordHash','profileSha256','catalogSha256','mediaSha256','transcriptSha256','guideSha256','publicPaths','recordHash','limitation'];
+ if(!packRecord||Object.keys(packRecord).length!==packFields.length||packFields.some(k=>!Object.hasOwn(packRecord,k))||typeof packRecord.limitation!=='string'||packRecord.limitation.length>2048||packRecord.schema!==1||packRecord.contentVersion!==cfg.contentEvidence.contentVersion||!packRecord.publicPaths||typeof packRecord.recordHash!=='string'||!/^[a-f0-9]{64}$/.test(packRecord.recordHash))throw Error('Reviewed content pack record is missing or invalid.');
  const packCore={schema:packRecord.schema,contentVersion:packRecord.contentVersion,intakeRecordHash:packRecord.intakeRecordHash,profileSha256:packRecord.profileSha256,catalogSha256:packRecord.catalogSha256,mediaSha256:packRecord.mediaSha256,transcriptSha256:packRecord.transcriptSha256,guideSha256:packRecord.guideSha256,publicPaths:packRecord.publicPaths};
  if(digest(Buffer.from(JSON.stringify(packCore,null,2)+'\n'))!==packRecord.recordHash)throw Error('Reviewed content pack record hash mismatch.');
  const ev=cfg.contentEvidence;
@@ -110,6 +111,8 @@ export async function materializeReleaseCandidate({sourceDist,outputDir,config})
  if(content.source.hash!==evidence.transcriptSha256||content.source.mediaHash!==evidence.mediaSha256)throw Error('Release transcript/media identity mismatch.');
  if(content.profile.videoClaim.scope!==content.profile.guideClaim.scope||content.profile.videoClaim.claimKey!==content.profile.guideClaim.claimKey)throw Error('Release comparison sources do not address the same declared question.');
  const mediaPath=content.profile.media.video.slice(1),transcriptPath=content.profile.transcript.path.slice(1),guidePath=content.profile.guideClaim.sourceHref.split('#')[0].slice(1);
+ const expectedPaths={profile:'/content/content-profile.json',catalog:'/content/source-catalog.json',media:'/'+mediaPath,transcript:'/'+transcriptPath,guide:'/'+guidePath};
+ if(Object.keys(packRecord.publicPaths).length!==Object.keys(expectedPaths).length||Object.entries(expectedPaths).some(([k,v])=>packRecord.publicPaths[k]!==v))throw Error('Content pack public paths do not match reviewed profile.');
  const mediaFile=await regularFile(source,mediaPath,300*1024*1024),transcriptFile=await regularFile(source,transcriptPath,10*1024*1024),guideFile=await regularFile(source,guidePath,10*1024*1024);
  if(digest(mediaFile.bytes)!==evidence.mediaSha256||digest(transcriptFile.bytes)!==evidence.transcriptSha256||digest(guideFile.bytes)!==evidence.guideSha256||
   content.profile.transcript.sha256!==evidence.transcriptSha256||content.profile.guideClaim.sourceHash!==evidence.guideSha256)throw Error('Release media/transcript/guide bytes do not match reviewed evidence.');
@@ -139,8 +142,13 @@ export async function materializeReleaseCandidate({sourceDist,outputDir,config})
   if(!required.has(rel)&&!/^assets\/[A-Za-z0-9_.-]+\.(?:js|css|woff2?|ttf)$/.test(rel))throw Error('Unexpected candidate input path: '+rel);
   approved.push(file);
  }
+ const approvedPaths=new Set(approved.map(x=>x.rel));
+ for(const rel of required)if(!approvedPaths.has(rel))throw Error('Required candidate file missing: '+rel);
+ if(!approved.some(x=>/^assets\/[A-Za-z0-9_.-]+\.js$/.test(x.rel)))throw Error('Candidate compiled JavaScript entry is missing.');
  await copyTree(source,destination,approved);
 
+ // The core and its hash are already validated; do not publish arbitrary private annotation text.
+ await fs.writeFile(path.join(destination,'content','content-pack-record.json'),JSON.stringify({...packCore,recordHash:packRecord.recordHash,limitation:'Byte packaging is structurally verified. Legal rights, reviewer competence, semantic truth and public deployment remain separate evidence.'},null,2)+'\n');
  await fs.writeFile(path.join(destination,'agents','agent-manifest.json'),JSON.stringify(prepared.manifest,null,2)+'\n');
  await fs.writeFile(path.join(destination,'agents','links.json'),JSON.stringify(prepared.links,null,2)+'\n');
  for(const value of Object.values(prepared.graphs)){

@@ -11,7 +11,7 @@ After real model/backend, resource-budget and judge-path evidence exists, this g
 - every network receives the same approved top-site `llm_config.model_name`;
 - transformed graph bytes are stored under SHA-256 content paths;
 - the symbolic guide link is rewritten to the exact release peer origin;
-- the release record binds source revision, launch/current spec pins, live-run/cost hashes and a private budget-approval reference.
+- the release record binds source revision, launch/current spec pins, live-run/cost hashes and structured budget/content attestations; private reference strings remain input-only.
 
 The gate **refuses** to build from the current router-free development manifest unless the supplied release config says live inference usage is complete, observed automatic retries are zero, the exact backend/model clean judge path passed, the cost evidence kind matches the backend (`self_hosted_resource` or `provider_pricing`), resource-budget approval exists and at least 20 judging-reserve runs remain. `self_hosted` requires one exact HTTPS gateway URL, a SHA-256 of the exact gateway URL plus a separate SHA-256 identity for the gateway build used by the live evidence, and operator-owned cost mode; `hosted` requires provider-billed cost mode and cannot carry a self-hosted gateway URL.
 
@@ -42,3 +42,5 @@ The Worker refuses `/api/status`, source tools and inference when these release 
 Live-run evidence identifiers must match the exact candidate source revision, content version and reviewed profile/catalog/transcript/media/guide hashes. A valid measurement for a different source revision or content pack cannot authorize the new candidate. Validation recomputes manifest and links hashes, checks exact network membership, compares canonical graph bytes with their structured graph and verifies each hash-addressed path. Worker policy rendering also uses the actual Worker quota validator. These are structural checks of supplied records, not authentication of the original live-run evidence or a release authorization.
 
 The isolated materializer filters the public tree to recognized publication files and compiled assets, rejects unknown paths, omits all recognized old graph versions/aliases and the development artifact inventory, resolves the destination parent before checking overlap, and rejects a symlinked input root. This does not prove that a trusted build's compiled JS contains no embedded credentials; source/build review remains required. No cloud operation is involved.
+
+Mandatory headers, runtime, entry point, compiled JavaScript, reviewed media/poster/captions/chapters/transcript/guide and content metadata must be present before output creation. The content-pack path map must match the reviewed profile. Public records omit private evidence references and replace unbound annotation text with a fixed limitation; this is not comprehensive secret scanning or evidence authenticity verification.
