@@ -145,12 +145,13 @@ test('external MCP discloses exact query for each one-time decision without pers
 });
 
 test('both MCP hosts accept only empty 202 notification acknowledgement before proceeding',async()=>{
- for(const kind of ['source','external'])for(const scenario of ['null','empty-stream','one-byte','oversize','declared-nonempty','partial','held-cancel']){
+ for(const kind of ['source','external'])for(const scenario of ['null','empty-stream','one-byte','held-byte','oversize','declared-nonempty','partial','held-cancel']){
   const abort=new AbortController(),requests=[];let disposed=0;
   const makeAck=()=>{
    if(scenario==='null')return new Response(null,{status:202});
    if(scenario==='empty-stream')return new Response(new ReadableStream({start(c){c.close();}}),{status:202});
    if(scenario==='one-byte')return new Response(new ReadableStream({start(c){c.enqueue(Uint8Array.of(120));c.close();}}),{status:202});
+   if(scenario==='held-byte')return new Response(new ReadableStream({start(c){c.enqueue(Uint8Array.of(120));},cancel(){disposed++;}}),{status:202});
    if(scenario==='oversize')return new Response(new ReadableStream({start(c){c.enqueue(Uint8Array.of(120,121));},cancel(){disposed++;}}),{status:202});
    if(scenario==='declared-nonempty')return new Response(null,{status:202,headers:{'Content-Length':'1'}});
    if(scenario==='partial')return new Response(null,{status:202,headers:{'Content-Range':'bytes 0-0/1'}});
@@ -169,8 +170,12 @@ test('both MCP hosts accept only empty 202 notification acknowledgement before p
   if(['null','empty-stream'].includes(scenario)){
    assert.ok((await pending).length>0);assert.deepEqual(requests,['initialize','notifications/initialized','tools/list']);
   }else{
-   await assert.rejects(pending);assert.deepEqual(requests,['initialize','notifications/initialized']);
-   if(['oversize','held-cancel'].includes(scenario))await waitFor(()=>disposed===1);
+   if(scenario==='held-byte'){
+    const rejected=await Promise.race([pending.then(()=>false,()=>true),new Promise(resolve=>setTimeout(()=>resolve(false),500))]);
+    assert.equal(rejected,true,'first forbidden byte must fail without waiting for EOF or network deadline');
+   }else await assert.rejects(pending);
+   assert.deepEqual(requests,['initialize','notifications/initialized']);
+   if(['held-byte','oversize','held-cancel'].includes(scenario))await waitFor(()=>disposed===1);
   }
   assert.ok(!ack.body?.locked);
  }

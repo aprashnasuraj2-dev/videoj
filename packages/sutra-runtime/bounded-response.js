@@ -6,7 +6,7 @@ export class BoundedResponseError extends Error{
 const bad=code=>{throw new BoundedResponseError(code);};
 const cancelBody=body=>{try{void Promise.resolve(body?.cancel()).catch(()=>{});}catch{}};
 export async function readBoundedResponse({url,fetchImpl=fetch,init={},signal,maxBytes,inspect}={}){
- if(typeof url!=='string'||typeof fetchImpl!=='function'||typeof inspect!=='function'||!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>65536)bad('CONFIG');
+ if(typeof url!=='string'||typeof fetchImpl!=='function'||typeof inspect!=='function'||!Number.isSafeInteger(maxBytes)||maxBytes<0||maxBytes>65536)bad('CONFIG');
  const check=()=>{if(signal?.aborted)bad('ABORTED');};check();
  let stop,received,reader,finished=false;
  const stopped=new Promise((_,reject)=>{stop=()=>reject(new BoundedResponseError('ABORTED'));signal?.addEventListener('abort',stop,{once:true});});
@@ -24,7 +24,9 @@ export async function readBoundedResponse({url,fetchImpl=fetch,init={},signal,ma
   check();
   if(!response||!response.headers||!Number.isInteger(response.status))bad('RESPONSE');
   if(response.redirected||response.url&&response.url!==url)bad('REDIRECT');
-  // Notifications and unavailable statuses must not leave an unread body.
+  // Unavailable statuses may skip their body, but a zero-byte budget
+  // explicitly validates an acknowledgement stream to EOF. Any first byte
+  // fails immediately; a held-open empty stream remains deadline-bound.
   if(inspect(response)===false)return {response,bytes:null};
   if(Number(response.headers.get('content-length'))>maxBytes)bad('SIZE');
   reader=response.body?.getReader();if(!reader)bad('BODY');

@@ -14,7 +14,7 @@ export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt
   signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)cancel();
   const timer=setTimeout(cancel,5000),id=++sequence;
   try{
-   const {bytes}=await readBoundedResponse({url:`${origin}/api/source-tools`,fetchImpl,signal:controller.signal,maxBytes:notification?1:32768,init:{
+   const {bytes}=await readBoundedResponse({url:`${origin}/api/source-tools`,fetchImpl,signal:controller.signal,maxBytes:notification?0:32768,init:{
     method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json, text/event-stream','MCP-Protocol-Version':'2025-06-18'},
     body:JSON.stringify({jsonrpc:'2.0',...(notification?{}:{id}),method,params})
    },inspect:response=>{
