@@ -2,6 +2,16 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0010 observed-head reconciliation — 2026-11-24
+
+**271 / 1,000 verified task checks (27.1%); 18 / 100 phases fully complete.** Phase **036 (destination-scoped private context)** and phase **039 (read-only MCP compatibility)** now close against exact observed code `545f2c310beb9ac4e5e3a4e30603dd6640cf67d7` and [green learner/browser CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45293913993/job/138109358437). The browser fixture observed an approved source-backed read, destructive discovery refusal and a real held-open five-second service timeout; private-context tests bind fields to the exact peer URL+network with separate downstream/upstream allowlists and canary-safe traces.
+
+This checkpoint reconciles already-green branch work; it does **not** claim production HTTPS interoperability, a third-party MCP publisher, factual truth, rights-cleared lesson content, live funded inference or participant acceptance. Public release and Devpost submission remain closed. [Session 0010 evidence](evidence/implementation/SESSION-0010.md).
+
+**Next engineering cursor:** `SUTRA-P041-04` learner-visible state model, then optional inspector/accessibility consolidation. Human/content/external gates remain explicit blockers rather than synthetic substitutes.
+
+---
+
 ## Session 0009 final implementation checkpoint — 2026-11-23
 
 **263 / 1,000 verified task checks (26.3%); 16 / 100 phases fully complete.** This session added 59 verified checks and closed phases **035 (caller-local peer execution), 044 (accessible transcript), and 046 (validated local review-card action flow)**. Checklist checks differ in effort; this percentage does not measure overall engineering time, market readiness or challenge compliance.
