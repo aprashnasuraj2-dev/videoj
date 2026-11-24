@@ -1,5 +1,6 @@
 import {plain,InferenceError,readSse,makeAccumulator,abortable,MAX_SSE_BYTES} from '../../packages/sutra-inference/protocol.js';
 import {checkSchema,validateData} from '../../packages/sutra-runtime/vendor/nsdeploy/actions.js';
+import {parseUniqueJson} from '../../packages/sutra-runtime/strict-json.js';
 import {quotaLimits,sourceQuotaLimits,MAX_INPUT_BYTES,admissionWindow,ADMISSION_MS} from './quota.js';
 import {readQuotaReply} from './quota-transport.js';
 export const UPSTREAM='https://api.openai.com/v1/chat/completions';
@@ -51,7 +52,7 @@ export async function readJson(request,max=32768){
    if(!value.byteLength)continue;
    data.set(value,total);total+=value.byteLength;
   }
-  return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(data.subarray(0,total)));
+  return parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(data.subarray(0,total)),{maxChars:max,maxDepth:32});
  }finally{
   clearTimeout(timer);request.signal.removeEventListener('abort',cancel);
   try{void Promise.resolve(reader.cancel()).catch(()=>{});}catch{}
@@ -83,7 +84,7 @@ function validPayload(body,models){
    for(const call of message.tool_calls){
     if(!plain(call)||Object.keys(call).some(k=>!['id','type','function'].includes(k))||call.type!=='function'||typeof call.id!=='string'||!call.id||call.id.length>100||seenCalls.has(call.id)||!plain(call.function)||Object.keys(call.function).some(k=>!['name','arguments'].includes(k))||!/^\w{1,100}$/.test(call.function.name??'')||typeof call.function.arguments!=='string'||call.function.arguments.length>8000)throw Error();
     const schema=toolByName.get(call.function.name);if(!schema)throw Error();
-    let args;try{args=JSON.parse(call.function.arguments);validateData(schema,args);}catch{throw Error();}
+    let args;try{args=parseUniqueJson(call.function.arguments,{maxChars:8000,maxDepth:16});validateData(schema,args);}catch{throw Error();}
     seenCalls.add(call.id);pending.set(call.id,call.function.name);
    }
   }

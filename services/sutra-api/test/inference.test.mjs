@@ -578,3 +578,16 @@ test('empty request fragments fail before quota or provider contact',async()=>{
  const result=await handleInference(req,environment(async()=>{reserved++;return Response.json({allowed:true});}),{fetchImpl:()=>{contacts++;return sse();}});
  assert.equal(result.status,400);assert.equal(reserved,0);assert.equal(contacts,0);assert.ok(pulls<=258);assert.equal(cancelled,1);assert.equal(req.body.locked,false);
 });
+
+test('ambiguous request JSON and historical tool arguments fail before quota or upstream',async()=>{
+ let quota=0,upstream=0;
+ const env=environment(async()=>{quota++;throw Error('must not reserve');});
+ const raw=(body,path='/api/infer')=>new Request('https://sutra.test'+path,{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json'},body});
+ const duplicate='{"model":"unapproved","model":"operator-approved","stream":true,"messages":[{"role":"user","content":"hello"}],"tools":[]}';
+ const schema={type:'object',properties:{request:{type:'string'}},required:['request'],additionalProperties:false};
+ const history={...payload(),tools:[{type:'function',function:{name:'evidence',description:'Read',parameters:schema}}],messages:[{role:'user',content:'hello'},{role:'assistant',content:null,tool_calls:[{id:'one',type:'function',function:{name:'evidence',arguments:'{"request":"first","request":"second"}'}}]},{role:'tool',tool_call_id:'one',name:'evidence',content:'fixture'}]};
+ for(const body of [duplicate,JSON.stringify(history)])assert.equal((await handleInference(raw(body),env,{fetchImpl:async()=>{upstream++;throw Error('must not contact');}})).status,400);
+ const rpc='{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"search_lesson","arguments":{"query":"first","query":"timing"}}}';
+ assert.equal((await handleSourceTools(raw(rpc,'/api/source-tools'),env)).status,400);
+ assert.equal(quota,0);assert.equal(upstream,0);
+});

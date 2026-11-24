@@ -179,3 +179,19 @@ test('agent budget exhaustion stops before an extra synthesis call',async()=>{
  await assert.rejects(run({limits:{maxAgents:1},model:{mode:'scripted-test',chat(args){calls++;return base.chat(args);}}}),e=>e.code==='AGENT_LIMIT'&&e.diagnostics.modelCalls===1);
  assert.equal(calls,1);
 });
+
+test('ambiguous duplicate argument keys are refused before any child invocation',async()=>{
+ for(const args of ['{"request":"first","request":"second"}','{"request":"first","re\\u0071uest":"second"}']){
+  let calls=0;
+  await assert.rejects(run({model:{mode:'scripted-test',chat(){calls++;return {content:'',toolCalls:[{id:'ambiguous',type:'function',function:{name:'evidence',arguments:args}}]};}}}),e=>e.code==='ARGUMENTS'&&e.diagnostics.agentCalls===1);
+  assert.equal(calls,1);
+ }
+});
+test('contradictory completion metadata and extra call fields are refused before dispatch',async()=>{
+ const call={id:'one',type:'function',function:{name:'evidence',arguments:'{"request":"inspect"}'}};
+ for(const response of [{content:'incomplete',toolCalls:[],finishReason:'length'},{content:'filtered',toolCalls:[],finishReason:'content_filter'},{content:'',toolCalls:[call],finishReason:'stop'},{content:'',toolCalls:[],finishReason:'tool_calls'},{content:'',toolCalls:[{...call,privateField:'unapproved'}]},{content:'',toolCalls:[{...call,function:{...call.function,privateField:'unapproved'}}]}]){
+  let calls=0;
+  await assert.rejects(run({model:{mode:'scripted-test',chat(){calls++;return response;}}}),e=>['MODEL_RESPONSE','TOOL_CALL'].includes(e.code)&&e.diagnostics.agentCalls===1);
+  assert.equal(calls,1);
+ }
+});

@@ -1,5 +1,6 @@
 // Shared narrow host transport. The caller owns status/protocol policy and
 // deadlines; this boundary owns credentialless exact-URL reads and disposal.
+import {parseUniqueJson} from './strict-json.js';
 export class BoundedResponseError extends Error{
  constructor(code){super('Bounded response stopped ('+code+').');this.name='BoundedResponseError';this.code=code;}
 }
@@ -55,7 +56,7 @@ export async function readBoundedResponse({url,fetchImpl=fetch,init={},signal,ma
 }
 export function parseJsonRpcResult(bytes,id,invalid){
  let data;
- try{data=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{invalid('JSON');}
+ try{data=parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(bytes),{maxChars:65536,maxDepth:32});}catch{invalid('JSON');}
  if(!data||typeof data!=='object'||Array.isArray(data)||data.jsonrpc!=='2.0'||data.id!==id||Object.hasOwn(data,'error')||!data.result||typeof data.result!=='object'||Array.isArray(data.result))invalid('RPC');
  return data.result;
 }

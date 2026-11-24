@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T20:47:00+05:45",
+  "updatedAt": "2026-11-24T20:52:41+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -1299,8 +1299,8 @@
     {
       "id": "R-058",
       "severity": "medium",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Source contact configuration executes or drifts before admission",
       "mechanism": "Direct destructuring and source object reuse; explicit dynamic tool catalog not refused.",
       "userEffect": "Inconsistent source authority or unexpected side effects.",
@@ -1313,15 +1313,19 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
           "sourceRevision": "ec283a1efea23ef482e9d0f39ae382f2bb771f4f"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "d707fc98e2d4362fec6768667097ad78f491db1b"
         }
       ],
-      "unblockCondition": "Exact adversarial and ordinary runtime/learner/browser regression evidence passes."
+      "unblockCondition": null
     },
     {
       "id": "R-059",
       "severity": "medium",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Server timestamp misrepresented as local receipt observation",
       "mechanism": "Server controls retrievedAt even after exact catalog match.",
       "userEffect": "A future or historical timestamp may appear to be the caller's retrieval observation.",
@@ -1334,9 +1338,55 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
           "sourceRevision": "ec283a1efea23ef482e9d0f39ae382f2bb771f4f"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "d707fc98e2d4362fec6768667097ad78f491db1b"
         }
       ],
-      "unblockCondition": "Exact adversarial and ordinary runtime/learner/browser regression evidence passes."
+      "unblockCondition": null
+    },
+    {
+      "id": "R-060",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Duplicate tool-call identity can execute before server history rejection",
+      "mechanism": "Host only tracked response-local IDs; API enforces historical uniqueness.",
+      "userEffect": "Repeated source contact/spend and a failed subsequent model call.",
+      "affectedTasks": [
+        "SUTRA-X010-37",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Track prior IDs from canonical conversation; reject contradictory result and extra call metadata before dispatch.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "d707fc98e2d4362fec6768667097ad78f491db1b"
+        }
+      ],
+      "unblockCondition": "Exact adversarial, positive runtime/API/browser regressions pass."
+    },
+    {
+      "id": "R-061",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Ambiguous duplicate JSON member names accepted as last-wins data",
+      "mechanism": "JSON.parse silently collapses repeated keys, including escaped aliases, across invocation and wire boundaries.",
+      "userEffect": "Different processors or reviewers may disagree on admitted arguments and evidence.",
+      "affectedTasks": [
+        "SUTRA-X010-38",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Bounded duplicate-aware scanner before platform parse; reject excessive nesting and preserve ordinary JSON.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "d707fc98e2d4362fec6768667097ad78f491db1b"
+        }
+      ],
+      "unblockCondition": "Exact adversarial, positive runtime/API/browser regressions pass."
     }
   ]
 }

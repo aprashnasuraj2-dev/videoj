@@ -47,3 +47,14 @@ test('source host origin and transport are pinned across runtime observer mutati
  const result=await runNetwork({definition:graph,request:'find timing',model:createSourceScriptedModel(),sourceTools:config,onEvent(){config.origin='https://other.test';config.fetchImpl=()=>{substituted++;throw Error('wrong destination');};}});
  assert.match(result.text,/Synthetic timing marker/);assert.equal(substituted,0);assert.ok(seen.length>=4);assert.ok(seen.every(url=>url==='https://sutra.test/api/source-tools'));
 });
+
+test('duplicate call identity in a later source-agent round stops before repeated source transport',async()=>{
+ let modelCalls=0,reads=0;
+ const model={mode:'scripted-test',chat({tools}){
+  modelCalls++;
+  const name=tools.some(t=>t.function.name==='evidence')?'evidence':'mcp_search_lesson';
+  return {content:'',finishReason:'tool_calls',toolCalls:[{id:name==='evidence'?'delegate':'duplicate-source-read',type:'function',function:{name,arguments:name==='evidence'?'{"request":"find timing"}':'{"query":"timing"}'}}]};
+ }};
+ await assert.rejects(runNetwork({definition:graph,request:'find timing',model,sourceTools:{...sourceTools,fetchImpl:async(url,opts)=>{if(JSON.parse(opts.body).method==='tools/call')reads++;return transport(url,opts);}}}),e=>e.code==='TOOL_CALL'&&e.diagnostics.modelCalls===3);
+ assert.equal(modelCalls,3);assert.equal(reads,1);
+});

@@ -184,3 +184,15 @@ test('server retrieval time cannot impersonate caller observation time',async()=
  const observed=Date.parse(seen[0].retrievedAt);assert.ok(observed>=before&&observed<=Date.now());assert.notEqual(seen[0].retrievedAt,serverTime);
  assert.equal(seen[0].excerpt,fixture.receipt.excerpt);
 });
+
+test('ambiguous JSON-RPC member identity cannot admit source evidence',async()=>{
+ const seen=[];
+ const c=createSourceMcp({origin:'https://sutra.test',sources:catalog,onReceipt:r=>seen.push(r),fetchImpl:async(_url,opts)=>{
+  const rpc=JSON.parse(opts.body);
+  if(rpc.method==='notifications/initialized')return new Response(null,{status:202});
+  if(rpc.method==='initialize')return Response.json({jsonrpc:'2.0',id:rpc.id,result:{protocolVersion:'2025-06-18'}});
+  const output=tools.call(rpc.params.name,rpc.params.arguments);
+  return new Response('{"jsonrpc":"2.0","id":'+rpc.id+',"result":{"structuredContent":null,"structuredContent":'+JSON.stringify(output)+'}}',{headers:{'Content-Type':'application/json'}});
+ }});
+ await assert.rejects(c.callTool('search_lesson',{query:'timing'}),e=>e.code==='SOURCE_CAPABILITY');assert.deepEqual(seen,[]);
+});

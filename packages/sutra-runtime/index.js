@@ -1,4 +1,5 @@
 import {createSourceMcp,admitSourceConfig} from './source-mcp.js';
+import {parseUniqueJson} from './strict-json.js';
 import {createExternalReadMcp,validateExternalMcpConfig,snapshotContactConfig} from './external-mcp.js';
 import {fetchJsonWithConsent,pinConsentInspector} from '../sutra-consent/index.js';
 import {readBoundedResponse,BoundedResponseError,isFullJson} from './bounded-response.js';
@@ -206,13 +207,16 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    if(!plain(response)||typeof response.content!=='string'||!Array.isArray(response.toolCalls)||response.toolCalls.length>bounds.concurrency)fail('MODEL_RESPONSE','Malformed or excessive model result.');
    totalOutput+=response.content.length;
    if(totalOutput>bounds.maxOutputChars)fail('OUTPUT_LIMIT','Model output budget exceeded.');
-   const ids=new Set();
+   if(response.finishReason!==undefined&&response.finishReason!==(response.toolCalls.length?'tool_calls':'stop'))fail('MODEL_RESPONSE','Model did not report a complete result consistent with its tool calls.');
+   // IDs are unique over this agent conversation, not merely one response.
+   // The same identifier in another independent child history is legitimate.
+   const ids=new Set(args.messages.flatMap(m=>Array.isArray(m.tool_calls)?m.tool_calls.map(c=>c.id):[]));
    for(const call of response.toolCalls){
-    if(!plain(call)||typeof call.id!=='string'||!call.id||call.id.length>100||ids.has(call.id)||call.type!=='function'||!plain(call.function))fail('TOOL_CALL','Invalid tool call.');ids.add(call.id);
+    if(!plain(call)||Object.keys(call).some(k=>!['id','type','function'].includes(k))||typeof call.id!=='string'||!call.id||call.id.length>100||ids.has(call.id)||call.type!=='function'||!plain(call.function)||Object.keys(call.function).some(k=>!['name','arguments'].includes(k)))fail('TOOL_CALL','Invalid tool call.');ids.add(call.id);
     const schema=schemaByName.get(call.function.name);
     if(!schema)fail('TOOL_UNAVAILABLE','Model requested an unavailable tool.');
     if(typeof call.function.arguments!=='string'||call.function.arguments.length>8000)fail('ARGUMENTS','Tool arguments exceed the data limit.');
-    try{validateData(schema,JSON.parse(call.function.arguments));}catch{fail('ARGUMENTS','Tool arguments failed the declared invocation schema.');}
+    try{validateData(schema,parseUniqueJson(call.function.arguments,{maxChars:8000,maxDepth:16}));}catch{fail('ARGUMENTS','Tool arguments failed the declared unambiguous invocation schema.');}
    }
    completedModelCalls++;trace.end(span,{status:'ok'});return response;
   }catch(error){if(!failure)failure=error;controller.abort(error);trace.fail(span,new Error('Model or tool boundary failed.'));throw error;}
