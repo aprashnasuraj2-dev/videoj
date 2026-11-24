@@ -1,21 +1,25 @@
-import { mkdir, cp, copyFile, writeFile, lstat, readdir, rm, realpath } from 'node:fs/promises';
+import { mkdir, copyFile, writeFile, lstat, rm, realpath } from 'node:fs/promises';
 import { resolve, dirname, join, relative, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 
 const repo = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const packages = ['sutra-runtime','sutra-consent','sutra-actions','sutra-source-tools','sutra-evidence'];
 const excluded = new Set(['node_modules','dist','coverage','test','tests','.git','.env','.npmrc']);
+// Copy only tracked source paths; never include untracked local credentials.
 async function copySafe(src,dst) {
-  const stat=await lstat(src);
-  if(stat.isSymbolicLink()) throw Error('Symlink refused: '+src);
-  if(stat.isDirectory()) {
-    await mkdir(dst,{recursive:true});
-    for(const name of (await readdir(src)).sort()){
-      if(excluded.has(name)||name.startsWith('.')||/\.(?:pem|key|p12|pfx)$/i.test(name))continue;
-      await copySafe(join(src,name),join(dst,name));
-    }
-  } else if(stat.isFile()) await copyFile(src,dst);
-  else throw Error('Unexpected file type');
+  const prefix=relative(repo,src).split('\\').join('/');
+  const files=execFileSync('git',['ls-files','-z','--',prefix+'/'],{cwd:repo,encoding:'utf8'}).split('\0').filter(Boolean).sort();
+  if(!files.length)throw Error('No tracked files for '+prefix);
+  const rootReal=await realpath(src);
+  for(const path of files){
+    const rel=path.slice(prefix.length+1), parts=rel.split('/');
+    if(parts.some(name=>excluded.has(name)||name.startsWith('.')||/\.(?:pem|key|p12|pfx)$/i.test(name)))continue;
+    const input=join(src,...parts), output=join(dst,...parts);
+    const stat=await lstat(input), canonical=await realpath(input);
+    if(!stat.isFile()||canonical!==join(rootReal,...parts))throw Error('Symlink or non-file refused: '+path);
+    await mkdir(dirname(output),{recursive:true});await copyFile(input,output);
+  }
 }
 export async function createStarter(destination) {
   if(typeof destination!=='string'||!destination.trim())throw Error('A new output directory is required');

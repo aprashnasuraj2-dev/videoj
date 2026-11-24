@@ -1,0 +1,37 @@
+name: Validate SUTRA Open Kit candidate
+on:
+  pull_request:
+    paths:
+      - 'tools/sutra-open-kit/**'
+      - 'tools/sutra-starter/**'
+      - 'packages/sutra-*/**'
+      - '.github/workflows/sutra-open-kit.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify candidate, deterministic rebuild and tamper/secret rejection
+        run: node --test tools/sutra-open-kit/test.mjs
+      - name: Clean source-distribution checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          target="$RUNNER_TEMP/sutra-open-kit"
+          node tools/sutra-open-kit/build.mjs build "$target"
+          node tools/sutra-open-kit/build.mjs verify "$target"
+          cd "$target/evidence-validator"
+          node cli.mjs examples/receipt.json examples/sources.json
+          cd "$target/consent-inspector"
+          node --input-type=module -e "import {createConsentInspector} from './index.js'; const i=createConsentInspector({decide:async()=>({decision:'deny',scope:'once'})}); let called=0; try {await i.perform({origin:'https://peer.example',kind:'peer_manifest',purpose:'Load example manifest',disclosure:['network name']},()=>{called++})} catch(e) {if(e.code!=='CONSENT_DENIED')throw e;} if(called)throw Error('Denied contact executed');"
+          cd "$target/publisher-starter"
+          npm install --ignore-scripts --offline --no-audit --no-fund
+          npm run verify:vendor
+          npm test
