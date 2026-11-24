@@ -49,3 +49,7 @@ All cited upstream capabilities are vendor documentation, not measurements of SU
 ### Implementation reconciliation, 2026-11-24
 
 The no-model learner question route is first in the user journey, builds its bounded index only on first use, supports Nepali combining marks and creates exact local source receipts. The [model trial matrix](MODEL_TRIAL_MATRIX.md) scopes real Qwen open-weight comparisons without implying VRAM, tool accuracy or cost measurements. The separate loopback-only gateway passed seven contract tests, but real hardware, TLS deployment and meaningful model benchmark remain blocked.
+
+### Source/secret boundaries verified on the current learner revision
+
+Browser inference and catalog-source POSTs send no ambient cookies. Malformed nested tool-call envelopes are refused at the Worker **before** quota admission, and the loopback gateway revalidates roles, tool envelopes and context independently. A real Node HTTP integration tests cancellation propagation through the Worker and gateway into a local **fake** SSE model process; this is stronger than a mocked fetch but still not evidence of physical GPU/model quality. First-load HTML now exposes an accessible status while same-origin content bytes are validated and does not offer model, playback or review actions prematurely.

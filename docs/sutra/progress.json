@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T06:15:38Z",
+  "updated_at": "2026-11-24T06:43:31Z",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
-  "last_session_id": "SUTRA-SESSION-0031",
-  "stage": "local_first_inference_and_stabilization",
+  "last_observed_code_sha": "4b1c27daff748f723a564afad6f9310274c83404",
+  "last_session_id": "SUTRA-SESSION-0032",
+  "stage": "source_cookie_gateway_input_hardening_verified",
   "current_task": null,
   "next_task": "SUTRA-P078-02",
   "ready_engineering_queue": [
-    "SUTRA-P078-05",
     "SUTRA-P041-10",
+    "SUTRA-P078-07",
     "SUTRA-P054-01",
     "SUTRA-P066-01",
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Continue independent P078 source/consent/default-inference stabilization with zero-model local-first path. Real-model quality/energy/token acceptance X007-08 is blocked on authorized hardware; do not deploy or count human/rights/factual truth gates as passed.",
+  "next_action": "Continue actual consent, source-version and default inference stabilization. No operator-authorized real open-weight model/host means X007-08 remains blocked. Keep P078-02 and P041-10 pending until source-truth/human or actual model evidence required by their exit conditions. Reconcile candidate metric freshness with the exact code revision, never claim app/browser test as physical or human review.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -11040,6 +11040,146 @@
       "state": "blocked",
       "blocker_id": "SUTRA-LOCAL-HARDWARE",
       "next_action": "Use actual approved model/hardware for source-accuracy and cost profiling; do not simulate acceptance."
+    },
+    "SUTRA-X007-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:43:31Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45342446357/job/138269051024",
+          "description": "Model adapter and source MCP use credential omission. Browser integration plants a same-origin cookie and checks all API requests; runtime unit/CI verified.",
+          "result": "pass",
+          "source_revision": "4b1c27daff748f723a564afad6f9310274c83404",
+          "observed_at": "2026-11-24T06:43:31Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0032.md",
+          "description": "Exact code and observed acceptance limitations retained.",
+          "result": "pass",
+          "source_revision": "4b1c27daff748f723a564afad6f9310274c83404",
+          "observed_at": "2026-11-24T06:43:31Z"
+        }
+      ]
+    },
+    "SUTRA-X007-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:43:31Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45342446357/job/138269051024",
+          "description": "Two end-to-end Node HTTP integration cases pass with actual loopback sockets and injected fake local model, never a real GPU or paid backend.",
+          "result": "pass",
+          "source_revision": "4b1c27daff748f723a564afad6f9310274c83404",
+          "observed_at": "2026-11-24T06:43:31Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0032.md",
+          "description": "Exact code and observed acceptance limitations retained.",
+          "result": "pass",
+          "source_revision": "4b1c27daff748f723a564afad6f9310274c83404",
+          "observed_at": "2026-11-24T06:43:31Z"
+        }
+      ]
+    },
+    "SUTRA-X007-11": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:43:31Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45342446357/job/138269051024",
+          "description": "Worker API negative payload tests demonstrate zero quota/provider contact for forged nested URL/metadata fields.",
+          "result": "pass",
+          "source_revision": "4b1c27daff748f723a564afad6f9310274c83404",
+          "observed_at": "2026-11-24T06:43:31Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0032.md",
+          "description": "Exact code and observed acceptance limitations retained.",
+          "result": "pass",
+          "source_revision": "4b1c27daff748f723a564afad6f9310274c83404",
+          "observed_at": "2026-11-24T06:43:31Z"
+        }
+      ]
+    },
+    "SUTRA-X007-12": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:43:31Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45342446357/job/138269051024",
+          "description": "Fresh Chromium browser changes locale on the first question-to-card flow and verifies active result translation without changing receipt identity.",
+          "result": "pass",
+          "source_revision": "4b1c27daff748f723a564afad6f9310274c83404",
+          "observed_at": "2026-11-24T06:43:31Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0032.md",
+          "description": "Exact code and observed acceptance limitations retained.",
+          "result": "pass",
+          "source_revision": "4b1c27daff748f723a564afad6f9310274c83404",
+          "observed_at": "2026-11-24T06:43:31Z"
+        }
+      ]
+    },
+    "SUTRA-X007-13": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:43:31Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45342446498",
+          "description": "Resilience browser holds the profile GET, checks loading heading, busy state, no controls/network, then releases and observes validated app. Impact-mapping regression and workflow passed.",
+          "result": "pass",
+          "source_revision": "4b1c27daff748f723a564afad6f9310274c83404",
+          "observed_at": "2026-11-24T06:43:31Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0032.md",
+          "description": "Exact code and observed acceptance limitations retained.",
+          "result": "pass",
+          "source_revision": "4b1c27daff748f723a564afad6f9310274c83404",
+          "observed_at": "2026-11-24T06:43:31Z"
+        }
+      ]
+    },
+    "SUTRA-X007-14": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:43:31Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45342446341/job/138269050591",
+          "description": "Gateway loopback tests reject forged role/tool metadata and oversized context before upstream contact; all seven gateway tests passed.",
+          "result": "pass",
+          "source_revision": "4b1c27daff748f723a564afad6f9310274c83404",
+          "observed_at": "2026-11-24T06:43:31Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0032.md",
+          "description": "Exact code and observed acceptance limitations retained.",
+          "result": "pass",
+          "source_revision": "4b1c27daff748f723a564afad6f9310274c83404",
+          "observed_at": "2026-11-24T06:43:31Z"
+        }
+      ]
+    },
+    "SUTRA-P078-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:43:31Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45342446498",
+          "description": "Scoped revision diff 450746f..4b1c27d contains only SUTRA app/packages/worker/gateway/evidence files. No unrelated DHAGO/DETOUR feature or release change; relevant CI passed.",
+          "result": "pass",
+          "source_revision": "4b1c27daff748f723a564afad6f9310274c83404",
+          "observed_at": "2026-11-24T06:43:31Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0032.md",
+          "description": "Exact code and observed acceptance limitations retained.",
+          "result": "pass",
+          "source_revision": "4b1c27daff748f723a564afad6f9310274c83404",
+          "observed_at": "2026-11-24T06:43:31Z"
+        }
+      ]
     }
   },
   "blockers": [

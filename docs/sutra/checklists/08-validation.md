@@ -147,7 +147,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P078-02` Fix consent, source-version and default-inference blockers before polish
 - [x] `SUTRA-P078-03` Use development fixtures rather than tuning on frozen held-out cases
 - [x] `SUTRA-P078-04` Record affected files and evidence invalidated by each fix
-- [ ] `SUTRA-P078-05` Avoid introducing new unrelated features during stabilization
+- [x] `SUTRA-P078-05` Avoid introducing new unrelated features during stabilization
 - [x] `SUTRA-P078-06` Preserve benchmark failures and previous results for comparison
 - [ ] `SUTRA-P078-07` Check mobile and keyboard blockers observed in the pilot
 - [x] `SUTRA-P078-08` Record remaining issue severity and user-visible effect

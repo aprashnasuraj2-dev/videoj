@@ -58,3 +58,10 @@ Required items discovered after the original plan remain release blockers until 
 - [x] `SUTRA-X007-06` Provide a separate operator-owned loopback gateway with model/token allowlist, request/stream/time/concurrency limits, cancellation and no automatic retries.
 - [x] `SUTRA-X007-07` Complete fresh-visitor citation-to-review-card save/reload/delete via zero-model route, and verify local lookup still works offline after content validation.
 - [!] `SUTRA-X007-08` Verify an authorized real open-weight model on owned hardware with correct tool-call stream, source accuracy, latency p50/p95, concurrency, costs and secure externally reachable operator TLS gateway. Simulated source and model tests never constitute real hardware acceptance.
+
+- [x] `SUTRA-X007-09` Ensure browser inference and source-tool POSTs omit browser cookies, including when a same-origin cookie canary is present; no BYOK or personal key is forwarded.
+- [x] `SUTRA-X007-10` Verify the entire simulated local inference pipeline: browser-facing adapter → Worker quota → authenticated loopback gateway → fake local SSE model → bounded agent runtime, including abort propagation, quota release and no retry.
+- [x] `SUTRA-X007-11` Reject unknown nested tool-call and tool-definition metadata at the Worker boundary before a quota reservation or provider request.
+- [x] `SUTRA-X007-12` Provide translated Nepali and English labels, local question results, and receipt actions for the primary zero-model workflow, preserving explicit working-draft translation status.
+- [x] `SUTRA-X007-13` Render an accessible pending-content loading view before asynchronous profile/catalog/transcript validation, never expose model/media/review controls while pending, and map HTML changes to affected browser, performance and security checks.
+- [x] `SUTRA-X007-14` Validate self-hosted gateway message roles, nested model tool calls, context size and tool definitions independently of Worker validation; reject unknown metadata before the local model.

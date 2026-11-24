@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "recordedAt": "2026-11-24T06:15:38Z",
+  "recordedAt": "2026-11-24T06:43:31Z",
   "metrics": [
     {
       "id": "engineering_baseline",
-      "sourceRevision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+      "sourceRevision": "4b1c27daff748f723a564afad6f9310274c83404",
       "invalidatedBy": [
         "grounding-evaluation"
       ],
@@ -14,8 +14,8 @@
         "retrievalPassed": 20,
         "adversarialCases": 10,
         "adversarialPassed": 10,
-        "directMedianMs": 0.020621499999997184,
-        "delegatedMedianMs": 2.0099479999999943,
+        "directMedianMs": 0.021067999999992537,
+        "delegatedMedianMs": 2.2866564999999994,
         "directModelCalls": 0,
         "delegatedModelCalls": 90,
         "medianDelegatedModelCalls": 4.5,
@@ -27,7 +27,7 @@
     },
     {
       "id": "desktop_browser_matrix",
-      "sourceRevision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+      "sourceRevision": "4b1c27daff748f723a564afad6f9310274c83404",
       "invalidatedBy": [
         "browser-matrix"
       ],
@@ -43,7 +43,7 @@
     },
     {
       "id": "hero_journey",
-      "sourceRevision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+      "sourceRevision": "4b1c27daff748f723a564afad6f9310274c83404",
       "invalidatedBy": [
         "critical-journey"
       ],
@@ -61,26 +61,29 @@
         "providerSnapshotDriftRejected": true,
         "freshViewerLocalQuestionToSavedCard": true,
         "offlineSourceLookupNoNewRequests": true,
-        "sourceOnlyModelCalls": 0
+        "sourceOnlyModelCalls": 0,
+        "immediateAccessibleSourceLoadingState": true,
+        "freeSourceQuestionAndReviewCard": true,
+        "nepaliLocalResultsReversible": true
       }
     },
     {
       "id": "lab_performance",
-      "sourceRevision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+      "sourceRevision": "4b1c27daff748f723a564afad6f9310274c83404",
       "invalidatedBy": [
         "performance-profile"
       ],
       "profile": "Chromium headless 151.0.7922.34, viewport 1280x800, 1 Mbps down/up, 150 ms laboratory shaping",
       "values": {
-        "shellGzipBytes": 457231,
-        "transcriptUsableMs": 2851,
-        "encodedBytesAtTranscript": 215597,
+        "shellGzipBytes": 458664,
+        "transcriptUsableMs": 2892,
+        "encodedBytesAtTranscript": 220727,
         "mediaRequestsBeforeExplicitLoad": 0,
-        "videoReadyAfterClickMs": 3493,
-        "encodedBytesAfterVideo": 590184,
+        "videoReadyAfterClickMs": 3512,
+        "encodedBytesAfterVideo": 595314,
         "incrementalEncodedBytesAfterVideo": 374587,
         "mediaEncodedBytes": null,
-        "nativeSeekFeedbackMs": 65,
+        "nativeSeekFeedbackMs": 66,
         "mediaEncodedBytesObserved": false,
         "sourceMediaResponseBytes": 8327,
         "sourceMediaResponseCount": 1
@@ -127,7 +130,7 @@
     },
     {
       "id": "security_boundary",
-      "sourceRevision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+      "sourceRevision": "4b1c27daff748f723a564afad6f9310274c83404",
       "invalidatedBy": [
         "security-boundary"
       ],
@@ -143,12 +146,17 @@
         "selfHostedSevenGatewayTestsPassed": true,
         "implicitPaidFallbackDisabled": true,
         "checkedInInferenceDisabled": true,
-        "liveHardware": "untested"
+        "liveHardware": "untested",
+        "browserInferenceCookiesOmitted": true,
+        "browserSourceToolsCookiesOmitted": true,
+        "workerUnknownNestedToolFieldsRejected": true,
+        "gatewayIndependentNestedToolValidation": true,
+        "liveExternalEndpoint": "untested"
       }
     },
     {
       "id": "local_zero_model_dev",
-      "sourceRevision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+      "sourceRevision": "4b1c27daff748f723a564afad6f9310274c83404",
       "invalidatedBy": [
         "grounding-evaluation",
         "critical-journey"
@@ -169,7 +177,7 @@
     },
     {
       "id": "selfhost_gateway_contract",
-      "sourceRevision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+      "sourceRevision": "4b1c27daff748f723a564afad6f9310274c83404",
       "invalidatedBy": [
         "local-inference-gateway",
         "security-boundary",
@@ -182,7 +190,11 @@
         "maxConcurrent": 2,
         "realModelCompatibility": null,
         "realHardwareCost": null,
-        "serverKeyToBrowser": false
+        "serverKeyToBrowser": false,
+        "fullFakeModelHttpChain": true,
+        "abortClosesLocalModelSocket": true,
+        "quotaReleaseOnCancel": true,
+        "nestedToolEnvelopeValidation": true
       }
     }
   ]

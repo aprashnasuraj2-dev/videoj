@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0032 — 2026-11-24
+
+**609/1,000 original verified; 644/1,036 total verified; 45/100 fully verified phases; 6 historical omissions; 1 real-hardware blocker.** Source `4b1c27daff748f723a564afad6f9310274c83404` passed all **19 CI workflows**: 315 learner-side automated tests (100 app + 95 action/inference/API + 112 runtime + 8 peer), 7 standalone gateway tests, ten Chromium integrations and Chromium/Firefox/WebKit compatibility. The app now has immediate accessible content-validation status, true query-time cookie isolation, translated Nepali source UI, a complete local fake-model cancellation chain and stronger nested-tool rejection. User/hardware/provider/release gates remain open. [Evidence](evidence/implementation/SESSION-0032.md).
+
+---
+
 ## Session 0031 — 2026-11-24
 
 **608/1,000 original checks verified; 637/1,030 total; 45/100 fully verified phases; six omissions; one hardware-dependent blocker.** Exact `450746ff4b1bf9ba9b1eb30a115ede1f0e042968` passed all **19 workflows**, 312 automated learner tests plus seven standalone gateway tests, 10 Chromium integration profiles and the Chromium/Firefox/WebKit headless matrix. Source-only local answer, verified positive media bytes, explicit self-hosted alternative, fresh viewer and offline citation are implemented. Live hardware, original lesson rights, human evidence truth and release remain unverified. [Evidence](evidence/implementation/SESSION-0031.md).
