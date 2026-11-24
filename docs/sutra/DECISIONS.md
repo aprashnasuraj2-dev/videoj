@@ -147,3 +147,14 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Content-hashed runtime assets and physical versioned graph copies are immutable; HTML/manifests/mutable aliases revalidate; APIs are `no-store`. Media remains byte-hash verified and revalidated rather than claiming immutable filename semantics.
 - Alternative rejected: route all static assets through the Worker simply to attach headers. That would unnecessarily turn ordinary learner traffic into dynamic Worker invocations and compete with the already significant shared Patro workload.
 - The read-only Cloudflare audit cannot prove billing headroom because the connected OAuth grant lacks Billing Read. No final SUTRA domain/route or production static-vs-Worker sample exists, so phase 065 remains open.
+
+## SUTRA-DECISION-0017 - Preserve responsive chronology and bound draft localization
+
+- Observed 2026-11-24T06:12:47+05:45; exact tested code `2686e3cacdd3e4d552820ccaf57b968a7544ddb4`; green CI: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126.
+- P041-07 says to specify desktop, narrow-screen and zoom behavior **before styling**. The learner already had styles before this retrospective audit, so that historical sequence cannot be made true after the fact. Mark P041-07 intentionally omitted, record the responsive contract now, and retain P041-08 fresh-viewer acceptance as a real blocker. The omission does not count as verified work or close phase 041.
+- Alternative rejected: simply check P041-07 because current 360 px and 200% zoom tests pass. That would confuse current system quality with the process chronology the task explicitly asked for.
+- The replacement control is the reviewed responsive interaction map plus automated 360 px/200% regression checks. Future styling changes must update both together.
+- For phase 048, English remains canonical and complete. The 52-key Nepali catalog is explicitly a machine-authored draft; no human terminology review is claimed. Only explicitly tagged interface nodes are translated, while source excerpts/provenance remain original data and run/media state is preserved.
+- Optional localization polish is cut before runtime correctness: dynamic peer/MCP/runtime diagnostics and locale-specific date/unit formatting remain pending rather than receiving unreviewed partial translations. P048-03, P048-06 and P048-09 therefore remain open.
+- No release authorization changes. Original lesson rights, factual review, physical accessibility, public independent interoperability, live paid inference, production Cloudflare headroom/routes and participant testing remain separate gates.
+
