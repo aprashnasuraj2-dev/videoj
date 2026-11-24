@@ -168,3 +168,23 @@ test('configured status publishes only the same-origin publisher-funded router c
  const configured=await worker.fetch(new Request('https://sutra.test/api/status'),environment());const c=await configured.json();
  assert.equal(c.inference,'configured');assert.equal(c.model,'operator-approved');assert.equal(c.routerBase,'/api/v1');assert.equal(c.publisherFunded,true);assert.equal(c.byok,false);
 });
+
+test('publisher-funded facade accepts the current upstream reference-runtime request shape without visitor key',async()=>{
+ const referenceBody={model:'operator-approved',messages:[{role:'user',content:'Find the source-backed lesson step.'}],stream:true,
+  tools:[{type:'function',function:{name:'source_lookup',description:'Read source evidence.',parameters:{type:'object',properties:{request:{type:'string'}},required:['request']}}}],tool_choice:'auto'};
+ let seen;
+ const response=await handleInference(request(referenceBody,{},'/api/v1/chat/completions'),environment(),{fetchImpl:async(_url,opts)=>{seen=JSON.parse(opts.body);return sse();}});
+ assert.equal(response.status,200);assert.equal(seen.model,'operator-approved');assert.equal(seen.stream,true);assert.equal(seen.tool_choice,'auto');
+ assert.equal(seen.tools[0].function.name,'source_lookup');assert.equal(seen.max_completion_tokens,512);assert.deepEqual(seen.stream_options,{include_usage:true});
+ assert.equal(Object.hasOwn(seen,'max_tokens'),false);assert.equal(Object.hasOwn(seen,'Authorization'),false);
+});
+test('facade still rejects caller-controlled provider knobs, explicit additionalProperties true and tool_choice without tools',async()=>{
+ for(const body of [
+  {...payload(),temperature:0.9},
+  {model:'operator-approved',messages:[{role:'user',content:'x'}],stream:true,tool_choice:'auto'},
+  {model:'operator-approved',messages:[{role:'user',content:'x'}],stream:true,tools:[{type:'function',function:{name:'x',description:'x',parameters:{type:'object',properties:{},additionalProperties:true}}}],tool_choice:'auto'}
+ ]){
+  let contacted=0;const response=await handleInference(request(body,{},'/api/v1/chat/completions'),environment(),{fetchImpl:async()=>{contacted++;return sse();}});
+  assert.equal(response.status,400);assert.equal(contacted,0);
+ }
+});
