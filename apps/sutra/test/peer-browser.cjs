@@ -103,6 +103,14 @@ const assert=require('node:assert/strict');
   assert.equal(await page.locator('#peer-status').getAttribute('data-state'),'denied');
   assert.equal((await page.locator('#peer-exec-state').textContent()).trim(),'Denied');
   assert.equal(peerRequests.length,previous,'workbench denial sends no request');
+  // Refusing the real peer path must not degrade local learning/evidence.
+  await page.getByRole('button',{name:'Check example',exact:true}).click();
+  assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
+  const localTranscript=page.getByRole('searchbox',{name:'Search synthetic transcript'});
+  await localTranscript.fill('timing marker');
+  assert.equal(await page.locator('#timing-transcript-panel .transcript-cue').count(),1);
+  await localTranscript.fill('');
+  assert.equal(peerRequests.length,previous,'local evidence/transcript after denial make no peer request');
   await page.getByRole('button',{name:'Run scripted peer test'}).click();
   await page.getByRole('dialog',{name:'Approve real public artifact access?'}).waitFor();
   await page.getByRole('button',{name:'Allow this GET once'}).click();
