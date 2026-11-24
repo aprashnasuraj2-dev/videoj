@@ -137,7 +137,8 @@
         "tools/sutra-starter/",
         "apps/sutra/public/guides/",
         "apps/sutra/public/_",
-        "apps/sutra/tools/"
+        "apps/sutra/tools/",
+        "tools/sutra-open-kit/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA publisher starter",

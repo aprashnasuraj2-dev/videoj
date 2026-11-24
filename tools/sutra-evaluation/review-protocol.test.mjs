@@ -21,7 +21,8 @@ test('exact 20/10/10 held-out shape and neutral Hxxx case IDs are required',()=>
 test('blind review packet hides category and expected evidence, and shuffles grouped source order deterministically',()=>{
  const set=build(),packet=createBlindReviewPacket(set,{orderSeed:'recorded-blind-seed-v1'}),packet2=createBlindReviewPacket(set,{orderSeed:'recorded-blind-seed-v1'});
  const json=JSON.stringify(packet);assert.deepEqual(packet,packet2);assert.equal(packet.cases.length,40);
- for(const secret of ['expected','kind','cue-','source-a','source_backed_unverified'])assert.ok(!json.includes(secret),secret);
+ for(const item of packet.cases)assert.deepEqual(Object.keys(item).sort(),['id','prompt']);
+ for(const secret of ['cue-','source-a','source_backed_unverified'])assert.ok(!json.includes(secret),secret);
  assert.notDeepEqual(packet.cases.map(c=>c.id),set.cases.map(c=>c.id));
  assert.match(packet.packetHash,/^[a-f0-9]{64}$/);
 });
