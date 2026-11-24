@@ -71,16 +71,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Commit to evidence-linked video learning plus a portable peer checklist network. Compare a generic assistant, full learning-management platform and a conformance-only tool. Keep one hero workflow.
 - **Phase exit:** No accounts, payments, certification, arbitrary web crawling or autonomous external writes enter the minimum release.
 
-- [ ] `SUTRA-P004-01` Document why portable guide composition adds value to a video task
-- [ ] `SUTRA-P004-02` Compare generic chatbot, infrastructure-only inspector and full learning platform
-- [ ] `SUTRA-P004-03` Select one hero task and explicitly list deferred user journeys
-- [ ] `SUTRA-P004-04` Separate minimum release scope from removable optional enhancements
-- [ ] `SUTRA-P004-05` Keep customer records, payments, operational device writes and certificates out of scope
-- [ ] `SUTRA-P004-06` Specify manual transcript search as the measurable counterexample
-- [ ] `SUTRA-P004-07` Decide whether optional BYOK fits remaining effort and security capacity
-- [ ] `SUTRA-P004-08` Record the decision and the evidence that would reverse it
-- [ ] `SUTRA-P004-09` Produce and review the phase artifact: Product decision note and a must-have / optional / deferred scope list.
-- [ ] `SUTRA-P004-10` Close phase 004 only after its applicable tasks have evidence and its exit condition is observed: No accounts, payments, certification, arbitrary web crawling or autonomous external writes enter the minimum release.
+- [x] `SUTRA-P004-01` Document why portable guide composition adds value to a video task
+- [x] `SUTRA-P004-02` Compare generic chatbot, infrastructure-only inspector and full learning platform
+- [x] `SUTRA-P004-03` Select one hero task and explicitly list deferred user journeys
+- [x] `SUTRA-P004-04` Separate minimum release scope from removable optional enhancements
+- [x] `SUTRA-P004-05` Keep customer records, payments, operational device writes and certificates out of scope
+- [x] `SUTRA-P004-06` Specify manual transcript search as the measurable counterexample
+- [x] `SUTRA-P004-07` Decide whether optional BYOK fits remaining effort and security capacity
+- [x] `SUTRA-P004-08` Record the decision and the evidence that would reverse it
+- [x] `SUTRA-P004-09` Produce and review the phase artifact: Product decision note and a must-have / optional / deferred scope list.
+- [x] `SUTRA-P004-10` Close phase 004 only after its applicable tasks have evidence and its exit condition is observed: No accounts, payments, certification, arbitrary web crawling or autonomous external writes enter the minimum release.
 
 ## Phase 005 - Design the 110-second proof sequence
 
@@ -107,16 +107,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Allocate attention equally across technical implementation, design, impact and idea quality. Define product evidence and community-tool evidence for each; treat conformance as a separate prerequisite.
 - **Phase exit:** Each criterion links to a planned screen, test or real observation rather than a promotional adjective.
 
-- [ ] `SUTRA-P006-01` Create a separate pass/fail conformity gate before scoring quality
-- [ ] `SUTRA-P006-02` Give equal planning weight to all four published judging criteria
-- [ ] `SUTRA-P006-03` Assign a visible product artifact to technological implementation
-- [ ] `SUTRA-P006-04` Assign an end-to-end learner journey to coherent product design
-- [ ] `SUTRA-P006-05` Assign measured audience outcomes and reusable tools to potential impact
-- [ ] `SUTRA-P006-06` Explain the idea’s non-obvious mechanism without unsupported uniqueness claims
-- [ ] `SUTRA-P006-07` Map every advertised achievement to an executable check or observation
-- [ ] `SUTRA-P006-08` Avoid inventing a numeric organizer scoring scale or probability of winning
-- [ ] `SUTRA-P006-09` Produce and review the phase artifact: Four-column evidence scorecard and pass/fail checklist.
-- [ ] `SUTRA-P006-10` Close phase 006 only after its applicable tasks have evidence and its exit condition is observed: Each criterion links to a planned screen, test or real observation rather than a promotional adjective.
+- [x] `SUTRA-P006-01` Create a separate pass/fail conformity gate before scoring quality
+- [x] `SUTRA-P006-02` Give equal planning weight to all four published judging criteria
+- [x] `SUTRA-P006-03` Assign a visible product artifact to technological implementation
+- [x] `SUTRA-P006-04` Assign an end-to-end learner journey to coherent product design
+- [x] `SUTRA-P006-05` Assign measured audience outcomes and reusable tools to potential impact
+- [x] `SUTRA-P006-06` Explain the idea’s non-obvious mechanism without unsupported uniqueness claims
+- [x] `SUTRA-P006-07` Map every advertised achievement to an executable check or observation
+- [x] `SUTRA-P006-08` Avoid inventing a numeric organizer scoring scale or probability of winning
+- [x] `SUTRA-P006-09` Produce and review the phase artifact: Four-column evidence scorecard and pass/fail checklist.
+- [x] `SUTRA-P006-10` Close phase 006 only after its applicable tasks have evidence and its exit condition is observed: Each criterion links to a planned screen, test or real observation rather than a promotional adjective.
 
 ## Phase 007 - Establish effort and spend limits
 
@@ -179,13 +179,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Approve the evaluation set, denial tests, 10-person pilot target, 20 live hero runs and two external-builder trial target. Define measurement methods before implementation.
 - **Phase exit:** Targets are labeled prospective; failed targets will be reported as results, not silently edited into success.
 
-- [ ] `SUTRA-P010-01` Freeze the core hero success criteria before prompt tuning
-- [ ] `SUTRA-P010-02` Define the 40-case answerable, unsupported and conflict evaluation split
-- [ ] `SUTRA-P010-03` Define live-run count, success threshold and latency measurement method
-- [ ] `SUTRA-P010-04` Define pilot recruitment target and unaided task-completion metric
-- [ ] `SUTRA-P010-05` Define outside-builder setup target and intervention-count recording
-- [ ] `SUTRA-P010-06` Define security gates and what failures block public release
-- [ ] `SUTRA-P010-07` Mark every numerical target as prospective, not achieved
-- [ ] `SUTRA-P010-08` Record baseline revision and a process for documented target changes
-- [ ] `SUTRA-P010-09` Produce and review the phase artifact: Acceptance baseline and dated milestone gates.
-- [ ] `SUTRA-P010-10` Close phase 010 only after its applicable tasks have evidence and its exit condition is observed: Targets are labeled prospective; failed targets will be reported as results, not silently edited into success.
+- [x] `SUTRA-P010-01` Freeze the core hero success criteria before prompt tuning
+- [x] `SUTRA-P010-02` Define the 40-case answerable, unsupported and conflict evaluation split
+- [x] `SUTRA-P010-03` Define live-run count, success threshold and latency measurement method
+- [x] `SUTRA-P010-04` Define pilot recruitment target and unaided task-completion metric
+- [x] `SUTRA-P010-05` Define outside-builder setup target and intervention-count recording
+- [x] `SUTRA-P010-06` Define security gates and what failures block public release
+- [x] `SUTRA-P010-07` Mark every numerical target as prospective, not achieved
+- [x] `SUTRA-P010-08` Record baseline revision and a process for documented target changes
+- [x] `SUTRA-P010-09` Produce and review the phase artifact: Acceptance baseline and dated milestone gates.
+- [x] `SUTRA-P010-10` Close phase 010 only after its applicable tasks have evidence and its exit condition is observed: Targets are labeled prospective; failed targets will be reported as results, not silently edited into success.

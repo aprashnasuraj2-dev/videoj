@@ -1,20 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T08:14:00+05:45",
+  "updated_at": "2026-11-24T08:36:33+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "794fdbd33cb2c962e486c284bdb394c5886cc7af",
-  "last_session_id": "SUTRA-SESSION-0018",
-  "stage": "indexed_source_and_receipt_action_paths_verified",
+  "last_observed_code_sha": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+  "last_session_id": "SUTRA-SESSION-0019",
+  "stage": "strategy_scope_acceptance_debt_closed_product_revalidation_pending",
   "current_task": null,
   "next_task": "SUTRA-P041-08",
   "ready_engineering_queue": [
-    "SUTRA-P054-01",
+    "SUTRA-P045-03",
+    "SUTRA-P045-06",
     "SUTRA-P054-09",
-    "SUTRA-P053-02",
-    "SUTRA-P045-06"
+    "SUTRA-P053-06",
+    "SUTRA-P078-01"
   ],
-  "next_action": "Check final browser matrix for 794fdbd33cb2c962e486c284bdb394c5886cc7af; continue offline engineering on measured delegation, reproducible evaluation instrumentation and source provenance. Real provider token usage, held-out human review and actual guide remain pending; no cloud or release work.",
+  "next_action": "Reconcile current-head learner/browser/evaluation/impact CI after provenance and learner-first changes; then credit only exact passing product checks. Continue engineering-only; human review, live provider, physical device, public interoperability and deployment remain closed.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -8842,6 +8843,396 @@
           "result": "pass",
           "source_revision": "794fdbd33cb2c962e486c284bdb394c5886cc7af",
           "observed_at": "2026-11-24T08:14:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P004-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PRODUCT-SCOPE-DECISION-2026-11-24.md",
+          "description": "Portable guide composition is justified only where separate capability/provenance adds learner value; literal lookup stays zero-model.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P004-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PRODUCT-SCOPE-DECISION-2026-11-24.md",
+          "description": "Compared generic chatbot, infrastructure-only inspector, full LMS and selected evidence-linked learner plus portable guide.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P004-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PRODUCT-SCOPE-DECISION-2026-11-24.md",
+          "description": "One hero workflow selected; accounts, LMS breadth, operational writes and other deferred journeys listed explicitly.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P004-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PRODUCT-SCOPE-DECISION-2026-11-24.md",
+          "description": "Must-have, optional and deferred scope separated; optional polish cannot displace correctness/security gates.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P004-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PRODUCT-SCOPE-DECISION-2026-11-24.md",
+          "description": "Customer records, payments, device writes, certificates, arbitrary crawling and autonomous external writes excluded from minimum release.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P004-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PRODUCT-SCOPE-DECISION-2026-11-24.md",
+          "description": "Manual transcript plus written-checklist search fixed as the measurable counterexample; a manual win must be preserved.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P004-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PRODUCT-SCOPE-DECISION-2026-11-24.md",
+          "description": "Direct BYOK is excluded from minimum release because it adds credential/router surface without required hero benefit.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P004-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PRODUCT-SCOPE-DECISION-2026-11-24.md",
+          "description": "Explicit six-condition reversal test recorded for reconsidering BYOK without compromising free judge path.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P004-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PRODUCT-SCOPE-DECISION-2026-11-24.md",
+          "description": "Reviewed product scope decision artifact records selected/rejected alternatives, minimum/optional/deferred scope and counterexample.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P004-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PRODUCT-SCOPE-DECISION-2026-11-24.md",
+          "description": "Exit observed in documented minimum scope: no accounts/payments/certification/arbitrary crawling/autonomous external writes.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P006-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/JUDGING-EVIDENCE-SCORECARD-2026-11-24.md",
+          "description": "Separate pass/fail conformance prerequisite defined before subjective quality evidence.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P006-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/JUDGING-EVIDENCE-SCORECARD-2026-11-24.md",
+          "description": "All four published judging criteria receive equal planning treatment; no invented numeric scoring scale.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P006-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/JUDGING-EVIDENCE-SCORECARD-2026-11-24.md",
+          "description": "Technological implementation mapped to visible runtime/peer/evidence mechanisms and executable checks.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P006-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/JUDGING-EVIDENCE-SCORECARD-2026-11-24.md",
+          "description": "Product design mapped to contiguous learner-first evidence journey and observable browser states.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P006-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/JUDGING-EVIDENCE-SCORECARD-2026-11-24.md",
+          "description": "Potential impact mapped to measured audience outcomes plus reusable tools; unmeasured adoption stays explicit.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P006-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/JUDGING-EVIDENCE-SCORECARD-2026-11-24.md",
+          "description": "Non-obvious idea mechanism explained as authority/provenance separation without unsupported uniqueness claim.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P006-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/JUDGING-EVIDENCE-SCORECARD-2026-11-24.md",
+          "description": "Claim families mapped to minimum executable/observed evidence required before wording them as achieved.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P006-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/JUDGING-EVIDENCE-SCORECARD-2026-11-24.md",
+          "description": "Scorecard explicitly forbids invented organizer score or win probability.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P006-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/JUDGING-EVIDENCE-SCORECARD-2026-11-24.md",
+          "description": "Four-criterion evidence scorecard and conformance checklist artifact produced and reviewed against current gaps.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P006-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/JUDGING-EVIDENCE-SCORECARD-2026-11-24.md",
+          "description": "Each criterion now links to planned/observed screens, tests or external evidence rather than promotional adjectives.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P010-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ACCEPTANCE-BASELINE-2026-11-24.md",
+          "description": "Core hero success definition preserves source evidence, uncertainty, consent and truthful action outcomes; model answer alone is insufficient.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P010-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ACCEPTANCE-BASELINE-2026-11-24.md",
+          "description": "Prospective held-out split fixed at 20 answerable, 10 unanswerable and 10 conflict/adversarial cases.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P010-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ACCEPTANCE-BASELINE-2026-11-24.md",
+          "description": "Live target fixed at 20 fresh runs, >=19 successes and p95 <=25s with nearest-rank method.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P010-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ACCEPTANCE-BASELINE-2026-11-24.md",
+          "description": "Pilot target fixed at >=8/10 unaided completions with assistance/time/misunderstanding recording.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P010-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ACCEPTANCE-BASELINE-2026-11-24.md",
+          "description": "Outside-builder target fixed at two independent builders <=15 minutes with every intervention recorded.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P010-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ACCEPTANCE-BASELINE-2026-11-24.md",
+          "description": "Security release-blocking failures enumerated: leaks, consent bypass, override, unbounded work, ambiguous writes, bad evidence, stale versions, spend and judge-path failures.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P010-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ACCEPTANCE-BASELINE-2026-11-24.md",
+          "description": "All numerical targets labeled prospective; no target is represented as achieved by planning.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P010-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ACCEPTANCE-BASELINE-2026-11-24.md",
+          "description": "Original plan/PDF provenance and versioned target-change process recorded; retroactive lowering after poor results prohibited.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P010-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ACCEPTANCE-BASELINE-2026-11-24.md",
+          "description": "Acceptance baseline artifact consolidates hero definition, targets, measurement methods, security gates and unknowns.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P010-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:36:33+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ACCEPTANCE-BASELINE-2026-11-24.md",
+          "description": "Exit observed at planning level: targets remain prospective and failure/negative evidence must be reported rather than edited into success.",
+          "result": "pass",
+          "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
+          "observed_at": "2026-11-24T08:36:33+05:45"
         }
       ]
     }

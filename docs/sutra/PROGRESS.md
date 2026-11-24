@@ -2,6 +2,14 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0019 — 2026-11-24
+
+**518/1,000 original checks verified; 524/1,006 total; 40/100 phases fully verified; 1 historical omission.**
+
+Revision `dae002d5c76bd5b58901e65aac3c4dd97b51e5ba` closes planning debt in phases **004, 006 and 010** with explicit product-scope, judging-evidence and prospective-acceptance artifacts. Direct BYOK and platform breadth are outside minimum release; manual transcript search remains the counterexample; conformance remains pass/fail before four equal judging criteria; original numerical targets remain prospective and cannot be lowered retroactively after poor results. No current product/provenance change is credited until exact-head CI is reconciled. Human/live/public gates remain open. [Session evidence](evidence/implementation/SESSION-0019.md).
+
+---
+
 ## Session 0018 — 2026-11-24
 
 **488/1,000 original checks verified; 494/1,006 total; 37/100 phases fully verified; 1 historical omission.**
