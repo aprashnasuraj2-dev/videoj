@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'tools/sutra-provider-measurement/**'
+      - 'tools/sutra-local-measurement/**'
       - '.github/workflows/sutra-provider-measurement.yml'
   workflow_dispatch:
 permissions:
@@ -16,4 +17,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node --test tools/sutra-provider-measurement/*.test.mjs
+      - run: node --test tools/sutra-provider-measurement/*.test.mjs tools/sutra-local-measurement/*.test.mjs
