@@ -2,6 +2,8 @@
 // Not a general-purpose MCP client: no OAuth, sessions, SSE, server requests,
 // filesystem access, writes, dynamic tools or arbitrary credentials.
 import {validateData} from './vendor/nsdeploy/actions.js';
+import {snapshotDataRecord} from '../sutra-evidence/index.js';
+import {readBoundedResponse,BoundedResponseError,parseJsonRpcResult,isFullJson} from './bounded-response.js';
 
 export class ExternalMcpError extends Error {
  constructor(code,message){super(message);this.name='ExternalMcpError';this.code=code;}
@@ -30,106 +32,76 @@ export function validateExternalMcpConfig(value){
 }
 export function createExternalReadMcp(options,{signal}={}){
  const {url,origin,inspector,fetchImpl}=validateExternalMcpConfig(options);
- let sequence=0,rpcCount=0,initialized=false;
- const contact=(kind,purpose,disclosure)=>({origin,kind,purpose,disclosure});
- const stopped=(controller)=>{
-  let onAbort;
-  const promise=new Promise((_,reject)=>{
-   onAbort=()=>reject(new ExternalMcpError('MCP_TIMEOUT','Approved third-party MCP operation was cancelled or timed out.'));
-   controller.signal.addEventListener('abort',onAbort,{once:true});
-   if(controller.signal.aborted)onAbort();
-  });
-  promise.catch(()=>{});
-  return {promise,close:()=>controller.signal.removeEventListener('abort',onAbort)};
- };
- async function rpc(method,params,notification=false){
-  if(signal?.aborted)fail('MCP_CANCELLED','Third-party MCP operation was cancelled.');
-  if(++rpcCount>8)fail('MCP_LIMIT','External MCP request budget exceeded.');
+ let sequence=0,rpcCount=0,initialized=false,initialization=null;
+ const contact=(kind,purpose,disclosure)=>({origin,kind,purpose,disclosure,resource:url});
+ const check=active=>{if(active?.aborted)fail('MCP_CANCELLED','Third-party MCP operation was cancelled.');};
+ async function rpc(method,params,notification=false,active=signal){
+  check(active);if(++rpcCount>8)fail('MCP_LIMIT','External MCP request budget exceeded.');
   const controller=new AbortController(),cancel=()=>controller.abort();
-  signal?.addEventListener('abort',cancel,{once:true});
-  const timeout=setTimeout(cancel,5000),abort=stopped(controller);
-  const id=++sequence;
-  const body=JSON.stringify({jsonrpc:'2.0',...(notification?{}:{id}),method,params});
+  active?.addEventListener('abort',cancel,{once:true});if(active?.aborted)cancel();
+  const timeout=setTimeout(cancel,5000),id=++sequence;
   try{
-   let response;
-   try{response=await Promise.race([fetchImpl(url,{
-     method:'POST',redirect:'error',credentials:'omit',cache:'no-store',signal:controller.signal,
-     headers:{'Content-Type':'application/json',Accept:'application/json, text/event-stream','MCP-Protocol-Version':'2025-06-18'},
-     body
-   }),abort.promise]);}
-   catch(error){
-    if(error instanceof ExternalMcpError)throw error;
-    if(signal?.aborted)fail('MCP_CANCELLED','Third-party MCP operation was cancelled.');
-    if(controller.signal.aborted)fail('MCP_TIMEOUT','Third-party MCP endpoint exceeded the five-second operation limit.');
-    fail('MCP_TRANSPORT','External MCP transport failed.');
-   }
-   if(response?.url){
-    let actual;try{actual=new URL(response.url);}catch{fail('MCP_RESPONSE','Invalid MCP response URL.');}
-    if(actual.href!==url)fail('MCP_REDIRECT','External MCP changed endpoint.');
-   }
-   if(notification){if(response.status!==202)fail('MCP_RESPONSE','Expected 202 for MCP notification.');return null;}
-   if(!response?.ok||!/^application\/json(?:\s*;|$)/i.test(response.headers?.get('content-type')??'')||response.headers.get('mcp-session-id'))fail('MCP_RESPONSE','External MCP JSON-only stateless response unavailable.');
-   const reader=response.body?.getReader();
-   if(!reader)fail('MCP_RESPONSE','External MCP response body unavailable.');
-   const chunks=[];let total=0;
-   try{
-    while(true){
-     let next;
-     try{next=await Promise.race([reader.read(),abort.promise]);}catch(error){
-      if(error instanceof ExternalMcpError)throw error;
-      fail(signal?.aborted?'MCP_CANCELLED':'MCP_TIMEOUT',signal?.aborted?'Third-party MCP operation was cancelled.':'Third-party MCP response exceeded the five-second operation limit.');
-     }
-     if(next.done)break;
-     total+=next.value.byteLength;
-     if(total>32768)fail('MCP_SIZE','Third-party MCP response exceeded 32 KiB.');
-     chunks.push(next.value);
-    }
-   }finally{void reader.cancel().catch(()=>{});reader.releaseLock();}
-   const bytes=new Uint8Array(total);let offset=0;
-   for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.byteLength;}
-   let data;
-   try{data=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}
-   catch{fail('MCP_JSON','External MCP result is not valid UTF-8 JSON.');}
-   if(!data||typeof data!=='object'||Array.isArray(data)||data.jsonrpc!=='2.0'||data.id!==id||data.error||!data.result||typeof data.result!=='object')fail('MCP_RPC','External MCP returned a mismatched or failed JSON-RPC response.');
-   return data.result;
-  }finally{
-   clearTimeout(timeout);signal?.removeEventListener('abort',cancel);abort.close();controller.abort();
-  }
+   const {bytes}=await readBoundedResponse({url,fetchImpl,signal:controller.signal,maxBytes:32768,init:{
+    method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json, text/event-stream','MCP-Protocol-Version':'2025-06-18'},
+    body:JSON.stringify({jsonrpc:'2.0',...(notification?{}:{id}),method,params})
+   },inspect:response=>{
+    if(response.headers.has('mcp-session-id'))fail('MCP_RESPONSE','External MCP requires stateless responses.');
+    const protocol=response.headers.get('mcp-protocol-version');if(protocol&&protocol!=='2025-06-18')fail('MCP_PROTOCOL','Unexpected response protocol version.');
+    if(notification){if(response.status!==202)fail('MCP_RESPONSE','Expected 202 for MCP notification.');return false;}
+    if(!isFullJson(response))fail('MCP_RESPONSE','External MCP JSON-only stateless response unavailable.');
+    return true;
+   }});
+   check(active);if(controller.signal.aborted)fail('MCP_TIMEOUT','Third-party MCP response exceeded the operation limit.');
+   if(notification)return null;
+   return parseJsonRpcResult(bytes,id,code=>fail('MCP_'+code,'External MCP returned invalid or mismatched JSON-RPC data.'));
+  }catch(error){
+   if(active?.aborted)fail('MCP_CANCELLED','Third-party MCP operation was cancelled.');
+   if(controller.signal.aborted)fail('MCP_TIMEOUT','Third-party MCP endpoint exceeded the five-second operation limit.');
+   if(error instanceof BoundedResponseError)fail(error.code==='REDIRECT'?'MCP_REDIRECT':error.code==='SIZE'?'MCP_SIZE':error.code==='TRANSPORT'?'MCP_TRANSPORT':'MCP_RESPONSE','External MCP transport response was refused.');
+   throw error;
+  }finally{clearTimeout(timeout);active?.removeEventListener('abort',cancel);controller.abort();}
  }
  async function discover(){
-  if(initialized)return;
-  // One approval covers initialization and read-only discovery only.
-  await inspector.perform(contact('mcp_discovery','Discover one preapproved public read-only tool',['tool name']),async()=>{
-   const init=await rpc('initialize',{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'sutra-read-only',version:'0.1.0'}});
-   if(init.protocolVersion!=='2025-06-18'||init.capabilities?.tools===undefined)fail('MCP_PROTOCOL','Expected exact MCP version and tool capabilities.');
-   await rpc('notifications/initialized',{},true);
-   const catalog=await rpc('tools/list',{});
-   if(!Array.isArray(catalog.tools)||catalog.tools.length!==1)fail('MCP_TOOLS','Unexpected tool discovery result.');
-   const tool=catalog.tools[0];
-   if(tool.name!==readTool.name||JSON.stringify(tool.inputSchema)!==JSON.stringify(readTool.inputSchema)||tool.annotations?.readOnlyHint!==true||tool.annotations?.destructiveHint===true)fail('MCP_TOOLS','External tool is outside the approved read-only contract.');
-  });
-  initialized=true;
+  check(signal);if(initialized)return;
+  if(!initialization)initialization=(async()=>{
+   // One approval covers the fixed initialization/read-only discovery sequence.
+   await inspector.perform(contact('mcp_discovery','Discover one preapproved public read-only tool',['tool name']),async(_contact,approvedSignal)=>{
+    const active=signal&&approvedSignal?AbortSignal.any([signal,approvedSignal]):signal??approvedSignal;
+    const init=await rpc('initialize',{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'sutra-read-only',version:'0.1.0'}},false,active);
+    if(init.protocolVersion!=='2025-06-18'||init.capabilities?.tools===undefined)fail('MCP_PROTOCOL','Expected exact MCP version and tool capabilities.');
+    await rpc('notifications/initialized',{},true,active);
+    const catalog=await rpc('tools/list',{},false,active);
+    if(!Array.isArray(catalog.tools)||catalog.tools.length!==1)fail('MCP_TOOLS','Unexpected tool discovery result.');
+    const tool=catalog.tools[0];
+    if(tool.name!==readTool.name||JSON.stringify(tool.inputSchema)!==JSON.stringify(readTool.inputSchema)||tool.annotations?.readOnlyHint!==true||tool.annotations?.destructiveHint===true)fail('MCP_TOOLS','External tool is outside the approved read-only contract.');
+    check(active);
+   },{signal});
+   check(signal);initialized=true;
+  })();
+  const pending=initialization;
+  try{await pending;check(signal);}finally{if(initialization===pending)initialization=null;}
  }
  return Object.freeze({
   url,
   async listTools(){
-   await discover();
+   await discover();check(signal);
    return [structuredClone(readTool)];
   },
   async callTool(name,args){
-   if(name!==readTool.name)fail('MCP_TOOL','Unapproved MCP tool name.');
-   try{validateData(readTool.inputSchema,args);}catch{fail('MCP_ARGUMENTS','External MCP argument schema refused input.');}
-   await discover();
-   return inspector.perform(contact('mcp_call','Read a preapproved public data record',['tool name','query text']),async()=>{
-    const response=await rpc('tools/call',{name,arguments:args});
+   check(signal);if(name!==readTool.name)fail('MCP_TOOL','Unapproved MCP tool name.');
+   try{args=Object.freeze(snapshotDataRecord(args,2));validateData(readTool.inputSchema,args);if(!args.query.trim()||/[\u0000-\u001f\u007f]/.test(args.query))throw Error('Invalid query');}catch{fail('MCP_ARGUMENTS','External MCP argument schema refused input.');}
+   await discover();check(signal);
+   return inspector.perform(contact('mcp_call','Read a preapproved public data record',['tool name','query text']),async(_contact,approvedSignal)=>{
+    const active=signal&&approvedSignal?AbortSignal.any([signal,approvedSignal]):signal??approvedSignal;
+    const response=await rpc('tools/call',{name,arguments:args},false,active);check(active);
     const payload=response.structuredContent;
     if(response.isError||!payload||payload.version!==1||payload.truthStatus!=='unverified'||!Array.isArray(payload.items)||payload.items.length>5)fail('MCP_RESULT','External read did not produce the expected bounded unverified records.');
-    const items=payload.items.map(item=>{
-     if(!item||typeof item!=='object'||Array.isArray(item)||Object.keys(item).sort().join(',')!=='excerpt,id'||typeof item.id!=='string'||item.id.length<1||item.id.length>80||typeof item.excerpt!=='string'||item.excerpt.length>1200)fail('MCP_RESULT','External read included unsupported content.');
-     return {id:item.id,excerpt:item.excerpt};
+    const ids=new Set(),items=payload.items.map(item=>{
+     if(!item||typeof item!=='object'||Array.isArray(item)||Object.keys(item).sort().join(',')!=='excerpt,id'||typeof item.id!=='string'||!item.id.trim()||item.id.length>80||ids.has(item.id)||typeof item.excerpt!=='string'||!item.excerpt.trim()||item.excerpt.length>1200)fail('MCP_RESULT','External read included unsupported content.');
+     ids.add(item.id);return {id:item.id,excerpt:item.excerpt};
     });
-    return JSON.stringify({sourceType:'third_party_unverified',truthStatus:'unverified',items});
-   });
+    check(active);return JSON.stringify({sourceType:'third_party_unverified',truthStatus:'unverified',items});
+   },{signal});
   }
  });
 }

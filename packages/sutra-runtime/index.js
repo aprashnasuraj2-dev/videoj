@@ -163,8 +163,9 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const rawExternal=third?createExternalReadMcp(thirdPartyMcp,{signal:controller.signal}):null;
  const guardExternal=method=>async(...args)=>{
   check();
-  try{return await rawExternal[method](...args);}
+  try{const result=await rawExternal[method](...args);check();return result;}
   catch(error){
+   if(controller.signal.aborted)throw controller.signal.reason;
    const safeCode=typeof error?.code==='string'&&/^[A-Z][A-Z0-9_]{1,50}$/.test(error.code)?error.code:'MCP_FAILED';
    const stopped=new RuntimeError('EXTERNAL_'+safeCode,`External MCP ${method==='listTools'?'discovery':'call'} stopped (${safeCode}); no completed read is claimed.`);
    failure=stopped;controller.abort(stopped);throw stopped;
@@ -179,8 +180,9 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   let loaded,peer;
   try{
    loaded=await loadPeerNetwork({peerUrl:url,inspector:peerRuntime.inspector,fetchImpl:peerRuntime.fetchImpl??fetch,signal:controller.signal,timeoutMs:Math.min(bounds.timeoutMs,5000)});
-   peer=compileNetwork(loaded.definition,{name:loaded.name,frontMan:loaded.frontMan,limits:bounds});
+   check();peer=compileNetwork(loaded.definition,{name:loaded.name,frontMan:loaded.frontMan,limits:bounds});
   }catch(error){
+   if(controller.signal.aborted)throw controller.signal.reason;
    const code=typeof error?.code==='string'&&/^[A-Z][A-Z0-9_]{1,50}$/.test(error.code)?error.code:'LOAD_FAILED';
    const controlled=new RuntimeError('PEER_'+code,`Peer artifact loading stopped (${code}); no completed peer answer is claimed.`);
    failure=controlled;controller.abort(controlled);throw controlled;
@@ -204,7 +206,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    // Run the published data as local agents under the caller's one model
    // adapter, total model budget, trace and abort signal. Never send prompt
    // text or an API key to the artifact-serving peer origin.
-   const result=await runAgent(peerCtx,peer.frontMan,message.user_message.text,span,visited);
+   const result=await runAgent(peerCtx,peer.frontMan,message.user_message.text,span,visited);check();
    // Private context uses a separate return allowlist. The peer cannot widen it:
    // only fields already present in the caller-owned side channel can return.
    const returning=privatePolicy.upstream(url,loaded.name,peerCtx.slyData);
