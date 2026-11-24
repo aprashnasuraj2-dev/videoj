@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T18:02:22.555+05:45",
+  "updated_at": "2026-11-24T18:50:30.888+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "279aae37f487a8da97f1303a6c48fdd5bc6be586",
-  "last_session_id": "SUTRA-SESSION-0041",
+  "last_observed_code_sha": "95f898842d1f93d0d2c6f6434cb5d4c8ed72001e",
+  "last_session_id": "SUTRA-SESSION-0042",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P078-02",
   "ready_engineering_queue": [
-    "SUTRA-X010-05",
+    "SUTRA-X010-11",
     "SUTRA-P041-10",
     "SUTRA-P078-07",
     "SUTRA-P054-01",
@@ -17,7 +17,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Resume P078-02 and X010-05: adversarially investigate ambiguous late quota admission, current 45-second lease expiry, conservative daily charges and safe release ordering. P041-10 needs genuine first-time viewer exit evidence; P054-01/P066-01 real model measurement remains separate. Keep no-release, no paid model, no submission boundaries; verify checkpoint register CI.",
+  "next_action": "Check exact 4ff29cb7b6e80b6702fa64455c8ba5755c8356e9 learner and browser matrix logs (45399432386 and 45399432717); X010-11 remains pending until all pass. Continue P078-02 adversarial engineering; retain human/live model and public release gates.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -11856,6 +11856,126 @@
           "observed_at": "2026-11-24T18:02:22.555+05:45"
         }
       ]
+    },
+    "SUTRA-X010-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T18:50:30.888+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45398118884/job/138459236530",
+          "description": "Bind quota admission to UTC day and short deadline; unknown admitted lease expires after 45 seconds, no refund/replay; actual local SQLite Durable Object shows eight competing denials and eventual recovery.",
+          "result": "pass",
+          "source_revision": "1d7f8b14b66dfc84f34f45bf843aaec6d09c6982",
+          "observed_at": "2026-11-24T18:50:30.888+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "description": "Intermediate exact source CI and scope limits.",
+          "result": "pass",
+          "source_revision": "1d7f8b14b66dfc84f34f45bf843aaec6d09c6982",
+          "observed_at": "2026-11-24T18:50:30.888+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T18:50:30.888+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45398118660/job/138459235043",
+          "description": "Bound SSE frame and total bytes; honor downstream backpressure, cancellation between buffered frames, one bounded lease release attempt before successful terminal completion.",
+          "result": "pass",
+          "source_revision": "1d7f8b14b66dfc84f34f45bf843aaec6d09c6982",
+          "observed_at": "2026-11-24T18:50:30.888+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "description": "Intermediate exact source CI and scope limits.",
+          "result": "pass",
+          "source_revision": "1d7f8b14b66dfc84f34f45bf843aaec6d09c6982",
+          "observed_at": "2026-11-24T18:50:30.888+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T18:50:30.888+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45397757522/job/138457957732",
+          "description": "Use runtime-supported manual redirect mode server-side, reject redirects before follow; actual local Workerd SQLite admission and expiry with no external provider.",
+          "result": "pass",
+          "source_revision": "a458822ca1895d6d4484abf2c31ba93eb539ccd5",
+          "observed_at": "2026-11-24T18:50:30.888+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "description": "Intermediate exact source CI and scope limits.",
+          "result": "pass",
+          "source_revision": "a458822ca1895d6d4484abf2c31ba93eb539ccd5",
+          "observed_at": "2026-11-24T18:50:30.888+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T18:50:30.888+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45398289393/job/138459829551",
+          "description": "Exact portable /api/v1/chat/completions ingress path; query rejection, no unexpected redirect or response identity, cancel late binding body.",
+          "result": "pass",
+          "source_revision": "1c590629fc9653f552d0a7bde0291c8f705027f1",
+          "observed_at": "2026-11-24T18:50:30.888+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "description": "Intermediate exact source CI and scope limits.",
+          "result": "pass",
+          "source_revision": "1c590629fc9653f552d0a7bde0291c8f705027f1",
+          "observed_at": "2026-11-24T18:50:30.888+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T18:50:30.888+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45398601652/job/138460937799",
+          "description": "Preserve peer origin when deriving site base from authority-like pathname; no wrong-origin consent or trusted private grant dispatch.",
+          "result": "pass",
+          "source_revision": "a1cda45274ea7fb4c2f3a0a50d1c9cd22e66526b",
+          "observed_at": "2026-11-24T18:50:30.888+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "description": "Intermediate exact source CI and scope limits.",
+          "result": "pass",
+          "source_revision": "a1cda45274ea7fb4c2f3a0a50d1c9cd22e66526b",
+          "observed_at": "2026-11-24T18:50:30.888+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T18:50:30.888+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45398897525/job/138461989728",
+          "description": "Native-looking save rejection only with exact unchanged readback; unknown post-effect failure, no replay; completed proposal cannot certify changed/reused record.",
+          "result": "pass",
+          "source_revision": "95f898842d1f93d0d2c6f6434cb5d4c8ed72001e",
+          "observed_at": "2026-11-24T18:50:30.888+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "description": "Intermediate exact source CI and scope limits.",
+          "result": "pass",
+          "source_revision": "95f898842d1f93d0d2c6f6434cb5d4c8ed72001e",
+          "observed_at": "2026-11-24T18:50:30.888+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -11941,6 +12061,7 @@
     "Session 0041: actual start head fd155719232ee14cca1f8e12e11e0a7323fa2346, 33 commits ahead of supplied checkpoint. Exact 65038c2b4a3bb353565f94ba91307760dfc8d9ee 19/19; latest 27a4a7034e447365491471e343acc657af17e843 19/19 successful observed at checkpoint. Native history test fresh-loaded with masked notRestoredReasons, not a BFCache pass. 666/1059 verified overall; no original checklist closure.",
     "Session 0041 continuation: fd8878bc0ed9ca982579b0f0d8bd4b81a470039f 19/19 workflows; native full Chromium BFCache restored in both test profiles, existing media blob retained paused and seekable. X009-07 and X010-03 verified; 668/1060 overall, original 609/1000 unchanged. Check new documentation head and tracker audit.",
     "Session 0041 further continuation: 34025444560d62b310154634e94e3bfda5890bde 19/19, browser/Worker abort handoff tests pass; 279aae37f487a8da97f1303a6c48fdd5bc6be586 18/19 observed with package/API unit step successful. 668/1062 overall, original 609/1000. Quota lost-response ambiguity remains explicitly open.",
-    "Final observation 2026-11-24T18:02:22.555+05:45: 279aae37f487a8da97f1303a6c48fdd5bc6be586 19/19 workflows including exact learner logs for bounded Worker body; 669/1062 verified overall, 609/1000 original, no original phase closure. X010-05 remains pending."
+    "Final observation 2026-11-24T18:02:22.555+05:45: 279aae37f487a8da97f1303a6c48fdd5bc6be586 19/19 workflows including exact learner logs for bounded Worker body; 669/1062 verified overall, 609/1000 original, no original phase closure. X010-05 remains pending.",
+    "Session 0042 checkpoint: quota lost-response/day/deadline and actual local SQLite DO, SSE backpressure/teardown, Workerd redirect compatibility, exact ingress, peer base authority, review save uncertainty verified. 675/1068 overall; original 609/1000. 95f898842d1f93d0d2c6f6434cb5d4c8ed72001e 19/19, media revision 4ff29cb7b6e80b6702fa64455c8ba5755c8356e9 17/19 observed; media task remains pending."
   ]
 }

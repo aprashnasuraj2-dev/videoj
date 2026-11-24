@@ -260,3 +260,7 @@ Actual full Chromium (not headless shell) history navigation to the real local g
 ### Session 0041 further continuation — 2026-11-24T18:01:37.257+05:45
 
 Use one fixed bounded buffer before Worker quota admission; chunk count cannot cause retained chunk-array growth. Strict decoding, abort checks and unconditional reader cleanup. At provider/Worker response handoff retain ownership until acceptance, including abort between response resolution and signal recheck. Keep conservative quota accounting: a lost reservation response can leave an unknown lease for up to its 45-second TTL; do not refund daily budgets or introduce unsafe release/retry ordering. Track X010-05 before changing protocol.
+
+## SUTRA-DECISION-0032 — Admission, stream and exact identity boundaries
+
+2026-11-24T18:50:30.888+05:45: preserve conservative daily quota on unknown admission; bind day/deadline and retain bounded lease expiry. Test real local Workerd without deployment. Use manual server redirects plus explicit refusal, preserve browser redirect:error. Terminal success waits for bounded teardown attempt; no automatic retry. Preserve exact peer origin before consent/private dispatch. Save rejection requires unchanged readback; unknown never replays. Native verified mount is invalidated on source/track drift; its regression remains pending until exact CI. [Evidence](evidence/implementation/SESSION-0042.md).

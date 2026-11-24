@@ -8,9 +8,11 @@ The participant explicitly directed on 23 November 2026: do not jump to release 
 
 On 24 November the participant explicitly tightened the ordering: stop further deployment preparation and prioritize the unfinished engineering checklist. Do not reconnect cloud accounts or advance domain/DNS, staging/public deployment, release or promotion merely because build candidates exist. Keep genuine human/external gates pending and continue independent local/CI engineering; use the latest register queue and dependency checks.
 
-## Latest implementation checkpoint — 0041
+## Latest implementation checkpoint — 0042
 
-Last fully verified product source: `279aae37f487a8da97f1303a6c48fdd5bc6be586` (19/19 workflows). Resolve actual draft PR #49 head before changes; [session 0041](evidence/implementation/SESSION-0041.md) records all intermediate failures and exact job evidence. Resume P078-02 and X010-05: adversarially investigate ambiguous late quota admission, current 45-second lease expiry, conservative daily charges and safe release ordering. P041-10 needs genuine first-time viewer exit evidence; P054-01/P066-01 real model measurement remains separate. Keep no-release, no paid model, no submission boundaries; verify checkpoint register CI.
+**609/1,000 original; 675/1,068 overall verified; 45/100 original phases fully verified; six omissions; one hardware blocker.** Verified X010-05–10; exact latest fully passing product source `95f898842d1f93d0d2c6f6434cb5d4c8ed72001e` (19/19); subsequent media source revision `4ff29cb7b6e80b6702fa64455c8ba5755c8356e9` observed 17/19 with learner and matrix pending, X010-11 open. P078-02 remains open. No public release or live inference. [Session 0042 evidence](evidence/implementation/SESSION-0042.md).
+
+Check exact 4ff29cb7b6e80b6702fa64455c8ba5755c8356e9 learner and browser matrix logs (45399432386 and 45399432717); X010-11 remains pending until all pass. Continue P078-02 adversarial engineering; retain human/live model and public release gates.
 
 ## Resume sequence
 

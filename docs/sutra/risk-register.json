@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T18:02:22.555+05:45",
+  "updatedAt": "2026-11-24T18:50:30.888+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -613,8 +613,8 @@
     {
       "id": "R-028",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Ambiguous quota admission after response loss",
       "mechanism": "Durable Object may commit reserve before lost/cancelled response reveals generated lease ID. Worker cannot release unknown ID; active slot may remain until 45-second expiry.",
       "userEffect": "Transient concurrency denial; daily reservation charges remain conservative.",
@@ -622,14 +622,144 @@
         "SUTRA-X010-05",
         "SUTRA-P078-02"
       ],
-      "mitigation": "Existing lease TTL bounds stale admission; no provider request when reserve unconfirmed, no automatic retry/refund. Require adversarial ordering tests before changing quota protocol.",
+      "mitigation": "UTC-day and admission deadline bound to request and rechecked within transaction; lost-response cancellation never contacts upstream or refunds/replays; real local SQLite DO confirms 45-second expiry. Deployed service and cost evidence remain separate gates.",
       "evidence": [
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
           "sourceRevision": "279aae37f487a8da97f1303a6c48fdd5bc6be586"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "1d7f8b14b66dfc84f34f45bf843aaec6d09c6982"
         }
       ],
-      "unblockCondition": "Demonstrate bounded ambiguous admission, serialized reserve/release ordering and resource counters under cancellation and rollover; distinguish actual deployed DO evidence from test doubles."
+      "unblockCondition": null
+    },
+    {
+      "id": "R-029",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "SSE buffering and terminal lease ordering",
+      "mechanism": "Buffered frames can continue after abort; eager drain ignores downstream demand; DONE may precede lease teardown.",
+      "userEffect": "Memory/resource pressure or apparent success after cancellation.",
+      "affectedTasks": [
+        "SUTRA-X010-06",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Bound frames/bytes; pull-driven stream, abort checks and bounded cleanup.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "1d7f8b14b66dfc84f34f45bf843aaec6d09c6982"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-030",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Server redirect mode incompatible with Workerd",
+      "mechanism": "Browser-supported redirect:error throws in Workerd.",
+      "userEffect": "All legitimate reservations fail in actual runtime.",
+      "affectedTasks": [
+        "SUTRA-X010-07",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Server manual mode with explicit response status/identity refusal; real local runtime regression.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "a458822ca1895d6d4484abf2c31ba93eb539ccd5"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-031",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Portable route missing at Pages boundary",
+      "mechanism": "Published API path not in exact ingress allowlist; late service replies can retain body.",
+      "userEffect": "Portable client fails or stale reply leaks resources.",
+      "affectedTasks": [
+        "SUTRA-X010-08",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Exact alias and query parity; abort-safe late body ownership.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "1c590629fc9653f552d0a7bde0291c8f705027f1"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-032",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Peer path interpreted as another authority",
+      "mechanism": "URL construction treats authority-like pathname as a network-relative reference.",
+      "userEffect": "Wrong peer origin could inherit consent/private context.",
+      "affectedTasks": [
+        "SUTRA-X010-09",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Assign pathname on the already parsed target and assert origin/path.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "a1cda45274ea7fb4c2f3a0a50d1c9cd22e66526b"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-033",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Save exception misclassified as rejection",
+      "mechanism": "Storage may commit before native-looking exception; duplicate completion may refer to changed record.",
+      "userEffect": "Misleading rejection, replay or wrong success.",
+      "affectedTasks": [
+        "SUTRA-X010-10",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Exact unchanged readback or unknown; immutable bounded identity and no replay.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "95f898842d1f93d0d2c6f6434cb5d4c8ed72001e"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-034",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Verified native media/track source drift",
+      "mechanism": "Native element may change source/track after initial verification.",
+      "userEffect": "Cue/seek success on substituted media.",
+      "affectedTasks": [
+        "SUTRA-X010-11",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Pin exact source/track identities; revoke/dispose, transcript-only and explicit retry.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9"
+        }
+      ],
+      "unblockCondition": "Inspect exact learner and browser matrix CI, correct any failure and verify source drift and explicit recovery."
     }
   ]
 }
