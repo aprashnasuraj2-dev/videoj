@@ -234,26 +234,43 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
 
 // Same-origin publication loader for the restricted local profile. Cross-origin
 // loading is deliberately refused until the consent-aware peer loader is shipped.
-async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigin,fetchImpl=fetch,signal,allowSourceTools=false,resolvePublishedLinks=false}={}){
+async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigin,fetchImpl=fetch,signal,allowSourceTools=false,resolvePublishedLinks=false,retryUnavailableReads=false,attemptLog}={}){
  let base;
  try{base=new URL(baseUrl);}catch{fail('ARTIFACT_URL','Use a complete agent site-base URL.');}
  const loopback=['localhost','127.0.0.1','[::1]'].includes(base.hostname);
  if(base.origin!==expectedOrigin||base.username||base.password||base.search||base.hash||base.protocol!=='https:'&&!(base.protocol==='http:'&&loopback))fail('ARTIFACT_ORIGIN','Only the approved same-origin HTTPS site base is available (loopback HTTP for development).');
  if(!idPattern.test(networkName))fail('NETWORK_ID','Invalid exact network name.');
  if(!base.pathname.endsWith('/'))base.pathname+='/';
- async function read(url,maxBytes){
-  let response;
-  try{response=await fetchImpl(url.href,{credentials:'omit',redirect:'error',cache:'no-store',signal,headers:{Accept:'application/json'}});}catch{if(signal?.aborted)fail('CANCELLED','Artifact load cancelled.');fail('ARTIFACT_FETCH','Public artifact could not be fetched.');}
-  if(!response.ok||!response.headers.get('content-type')?.toLowerCase().includes('application/json'))fail('ARTIFACT_RESPONSE','Artifact must return successful JSON, not an HTML fallback.');
-  if(response.url&&new URL(response.url).origin!==expectedOrigin)fail('ARTIFACT_ORIGIN','Unexpected artifact response origin.');
-  const reader=response.body?.getReader();if(!reader)fail('ARTIFACT_RESPONSE','Artifact body unavailable.');
-  let bytes=0;const chunks=[];
-  try{for(;;){signal?.throwIfAborted();const {done,value}=await reader.read();if(done)break;bytes+=value.byteLength;if(bytes>maxBytes)fail('ARTIFACT_SIZE','Artifact exceeds the published data limit.');chunks.push(value);}}
-  finally{await reader.cancel().catch(()=>{});reader.releaseLock();}
-  const data=new Uint8Array(bytes);let offset=0;for(const chunk of chunks){data.set(chunk,offset);offset+=chunk.byteLength;}
-  try{return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(data));}catch{fail('ARTIFACT_JSON','Artifact is not valid UTF-8 JSON.');}
+ let remainingRetries=retryUnavailableReads===true?1:0;
+ async function read(kind,url,maxBytes){
+  for(let attempt=1;;attempt++){
+   if(signal?.aborted)fail('CANCELLED','Artifact load cancelled.');
+   const event={artifact:kind,attempt,status:'started'};attemptLog.push(event);
+   try{
+    let response;
+    try{response=await fetchImpl(url.href,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',signal,headers:{Accept:'application/json'}});}catch{if(signal?.aborted)fail('CANCELLED','Artifact load cancelled.');fail('ARTIFACT_FETCH','Public artifact could not be fetched.');}
+    if(signal?.aborted)fail('CANCELLED','Artifact load cancelled.');
+    if(response.redirected||response.url&&new URL(response.url).origin!==expectedOrigin)fail('ARTIFACT_ORIGIN','Unexpected artifact response origin or redirect.');
+    if([502,503,504].includes(response.status)){
+     event.status='unavailable';void response.body?.cancel().catch(()=>{});
+     if(remainingRetries>0){remainingRetries--;continue;}
+     fail('ARTIFACT_UNAVAILABLE','Public artifact service is unavailable.');
+    }
+    if(!response.ok||!response.headers.get('content-type')?.toLowerCase().includes('application/json'))fail('ARTIFACT_RESPONSE','Artifact must return successful JSON, not an HTML fallback.');
+    const reader=response.body?.getReader();if(!reader)fail('ARTIFACT_RESPONSE','Artifact body unavailable.');
+    let bytes=0;const chunks=[];
+    try{for(;;){signal?.throwIfAborted();const {done,value}=await reader.read();if(done)break;bytes+=value.byteLength;if(bytes>maxBytes)fail('ARTIFACT_SIZE','Artifact exceeds the published data limit.');chunks.push(value);}}
+    finally{void reader.cancel().catch(()=>{});reader.releaseLock();}
+    const data=new Uint8Array(bytes);let offset=0;for(const chunk of chunks){data.set(chunk,offset);offset+=chunk.byteLength;}
+    let parsed;try{parsed=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(data));}catch{fail('ARTIFACT_JSON','Artifact is not valid UTF-8 JSON.');}
+    event.status='completed';return parsed;
+   }catch(error){
+    if(event.status==='started')event.status=signal?.aborted?'cancelled':'failed';
+    throw error;
+   }
+  }
  }
- const manifest=await read(new URL('agent-manifest.json',base),16384);
+ const manifest=await read('manifest',new URL('agent-manifest.json',base),16384);
  if(!plain(manifest)||!Array.isArray(manifest.networks)||manifest.networks.length>32)fail('MANIFEST','Invalid public network index.');
  const matching=manifest.networks.filter(entry=>plain(entry)&&entry.name===networkName);
  if(matching.length!==1)fail('NETWORK_MATCH','Exactly one matching published network is required.');
@@ -264,11 +281,11 @@ async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigi
  if(graphUrl.origin!==expectedOrigin||graphUrl.username||graphUrl.password||graphUrl.hash)fail('ARTIFACT_ORIGIN','External data requires the future consent-aware loader.');
  // No executable site modules, coded bundles or inference metadata are acted on.
  if(manifest.coded_tools||manifest.actions)fail('UNSUPPORTED_CAPABILITY','Executable publication metadata is disabled in the local profile.');
- let definition=await read(graphUrl,65536);
+ let definition=await read('definition',graphUrl,65536);
  const artifacts={manifest:new URL('agent-manifest.json',base).href,definition:graphUrl.href};
  if(resolvePublishedLinks===true){
   const linksUrl=new URL('links.json',base);
-  definition=resolveSymbolicPeerLinks(definition,await read(linksUrl,16384),entry.name);
+  definition=resolveSymbolicPeerLinks(definition,await read('links',linksUrl,16384),entry.name);
   artifacts.links=linksUrl.href;
  }
  compileNetwork(definition,{name:entry.name,frontMan:entry.front_man,allowSourceTools,allowPeers:resolvePublishedLinks===true});
@@ -284,7 +301,15 @@ export async function loadLocalNetwork({signal,timeoutMs=5000,...options}={}){
  let stop;const stopped=new Promise((_,reject)=>{stop=()=>reject(controller.signal.reason);controller.signal.addEventListener('abort',stop,{once:true});});
  stopped.catch(()=>{});
  const timer=setTimeout(()=>controller.abort(new RuntimeError('ARTIFACT_TIMEOUT','Artifact loading exceeded its time limit.')),timeoutMs);
- try{return await Promise.race([loadLocalNetworkData({...options,signal:controller.signal}),stopped]);}
+ const attemptLog=[];
+ const snapshot=()=>Object.freeze(attemptLog.map(event=>Object.freeze({...event,status:event.status==='started'&&controller.signal.aborted?'cancelled':event.status})));
+ try{
+  const result=await Promise.race([loadLocalNetworkData({...options,signal:controller.signal,attemptLog}),stopped]);
+  return {...result,readAttempts:snapshot()};
+ }catch(error){
+  const controlled=error instanceof RuntimeError?error:new RuntimeError('ARTIFACT_FETCH','Artifact load failed before a usable network was established.');
+  controlled.readAttempts=snapshot();throw controlled;
+ }
  finally{clearTimeout(timer);signal?.removeEventListener('abort',cancel);controller.signal.removeEventListener('abort',stop);controller.abort();}
 }
 

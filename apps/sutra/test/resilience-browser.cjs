@@ -43,6 +43,24 @@ const assert=require('node:assert/strict');
   assert.match(await offlinePage.locator('#network-result').innerText(),/scripted/i);
   assert.match(await offlinePage.locator('section[aria-labelledby="runtime-title"]').innerText(),/No live AI/);
 
+  // Only a clearly unavailable same-origin GET permits a single bounded retry.
+  let unavailable=0;
+  await offlinePage.route('**/agents/agent-manifest.json',async route=>{
+   if(++unavailable===1)return route.fulfill({status:503,contentType:'text/plain',body:'Unavailable'});
+   return route.continue();
+  });
+  await offlinePage.getByRole('button',{name:'Run scripted network test'}).click();
+  await offlinePage.waitForFunction(()=>document.querySelector('#network-result').textContent.includes('3 (1 retried)'));
+  assert.equal(unavailable,2);
+  await offlinePage.unroute('**/agents/agent-manifest.json');
+  let persistent=0;
+  await offlinePage.route('**/agents/agent-manifest.json',route=>{persistent++;return route.fulfill({status:503,body:'Unavailable'});});
+  await offlinePage.getByRole('button',{name:'Run scripted network test'}).click();
+  await offlinePage.waitForFunction(()=>document.querySelector('#network-result').textContent.includes('ARTIFACT_UNAVAILABLE'));
+  assert.match(await offlinePage.locator('#network-result').innerText(),/2 \(1 retried\)/);
+  assert.equal(persistent,2);
+  await offlinePage.unroute('**/agents/agent-manifest.json');
+  console.log('PASS: known 503 local public GET retry is capped once per load, actual attempt counts visible, persistent failure remains incomplete.');
   console.log('PASS: offline startup fails honestly, mid-artifact network loss yields no completed run, loaded evidence remains usable, and explicit online retry restores only a visibly scripted result.');
  }finally{
   if(browser)await browser.close();server.kill();

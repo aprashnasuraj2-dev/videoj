@@ -91,3 +91,13 @@ test('linked publication contains exact aliases and no peer-owned inference rout
  assert.deepEqual(manifest.peer_policy,{mode:'closed'});
  for(const publicDoc of [manifest,links])for(const field of ['apiKey','inference','router','modelOverride','credentials'])assert.equal(Object.hasOwn(publicDoc,field),false);
 });
+
+test('generated inventory exactly binds manifest, links, graphs and built runtime bytes',async()=>{
+ const {createInventory}=await import('../tools/publication-inventory.mjs');
+ const stored=JSON.parse(fs.readFileSync(path.join(app,'dist/agents/artifact-inventory.json')));
+ assert.deepEqual(stored,await createInventory());
+ assert.deepEqual(stored.networks.map(n=>n.name),['learner','source_learner','linked_learner']);
+ assert.ok(stored.runtimePaths.some(p=>p.endsWith('.js')));assert.equal(stored.inferenceDiscoveryPath,'/api/status');
+ assert.ok(stored.artifacts.every(a=>/^[0-9a-f]{64}$/.test(a.sha256)&&a.bytes>0));
+ assert.ok(stored.artifacts.every(a=>a.path.startsWith('/agents/')||a.path.startsWith('/assets/')));
+});

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "vite build",
+    "build": "vite build && node tools/publication-inventory.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "test": "node --test test/*.test.mjs",
     "test:browser": "node test/browser.cjs && node test/consent-example.cjs && node test/peer-browser.cjs && node test/mcp-browser.cjs && node test/accessibility-browser.cjs && node test/security-policy-browser.cjs && node test/resilience-browser.cjs && node test/performance-browser.cjs && node test/hero-browser.cjs && node test/provider-browser.cjs",

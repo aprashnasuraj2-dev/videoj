@@ -50,17 +50,18 @@ document.querySelector('#cue').addEventListener('click',()=>check());
 document.querySelector('#check').addEventListener('click',()=>check());
 document.querySelector('#alter').addEventListener('click',()=>check(true));
 
+const readAttemptLabel=attempts=>Array.isArray(attempts)&&attempts.length?' Public artifact GET attempts: '+attempts.length+' ('+attempts.filter(a=>a.attempt>1).length+' retried).':'';
 const runButton=document.querySelector('#run-network');
 runButton.addEventListener('click',async()=>{
  runButton.disabled=true;const status=document.querySelector('#network-result'),list=document.querySelector('#network-trace');list.replaceChildren();setStatus(status,'loading','Loading local data-only network…');
  try{
   const baseUrl=new URL(`${import.meta.env.BASE_URL}agents/`,location.origin).href;
-  const published=await loadLocalNetwork({baseUrl,expectedOrigin:location.origin});
+  const published=await loadLocalNetwork({baseUrl,expectedOrigin:location.origin,retryUnavailableReads:true});
   const result=await runNetwork({...published,request:'Inspect synthetic source consistency.',model:createScriptedModel(),onEvent:event=>{
    if(event.kind==='agent'&&event.phase==='start'){const item=document.createElement('li');item.textContent=`${event.agent} agent started in this browser (scripted driver)`;list.append(item);}
   }});
-  setStatus(status,'completed',`${result.text} ${result.agentCalls} agent invocations; ${result.modelCalls} scripted model steps.`);
- }catch(error){setStatus(status,'error',`Network test stopped (${error.code||'LOAD_FAILED'}). No completed result is claimed.`);}
+  setStatus(status,'completed',`${result.text} ${result.agentCalls} agent invocations; ${result.modelCalls} scripted model steps.${readAttemptLabel(published.readAttempts)}`);
+ }catch(error){setStatus(status,'error',`Network test stopped (${error.code||'LOAD_FAILED'}). No completed result is claimed.${readAttemptLabel(error.readAttempts)}`);}
  finally{runButton.disabled=false;}
 });
 
