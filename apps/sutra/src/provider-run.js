@@ -2,7 +2,7 @@ import {compileNetwork,runNetwork} from '../../../packages/sutra-runtime/index.j
 import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
 import {abortable} from '../../../packages/sutra-inference/protocol.js';
 import {validateReceipt,snapshotDataRecord,snapshotDataArray} from '../../../packages/sutra-evidence/index.js';
-import {loadContentProfile} from '../../../packages/sutra-content-profile/index.js';
+import {loadContentProfile,readContentBytes} from '../../../packages/sutra-content-profile/index.js';
 const modelPattern=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/;
 const validOrigin=origin=>{const u=new URL(origin);return u.origin===origin&&(u.protocol==='https:'||u.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(u.hostname));};
 const plain=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
@@ -53,14 +53,19 @@ export function createReceiptCollector({sources,limit=20}={}){
  });
 }
 async function readPublicJson({url,origin,fetchImpl,signal,maxBytes}){
- signal?.throwIfAborted();
- const response=await abortable(fetchImpl(url,{method:'GET',redirect:'error',credentials:'omit',cache:'no-store',headers:{Accept:'application/json'},signal}),signal);
- if(!response.ok||response.redirected||!response.headers.get('content-type')?.includes('application/json')||response.url&&new URL(response.url).origin!==origin)throw Error('Unavailable public contract');
- const reader=response.body?.getReader();if(!reader)throw Error('Unavailable public contract');let size=0;const parts=[];
- try{for(;;){const {done,value}=await abortable(reader.read(),signal);if(done)break;size+=value.byteLength;if(size>maxBytes)throw Error('Oversized public contract');parts.push(value);}}finally{void reader.cancel().catch(()=>{});}
- const bytes=new Uint8Array(size);let offset=0;for(const part of parts){bytes.set(part,offset);offset+=part.length;}
- const data=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));if(!plain(data))throw Error('Invalid public contract');return data;
+ // Provider availability is a security-significant preflight, not generic
+ // ambient JSON. Reuse the exact same path/response/abort/decoded-byte
+ // boundary as the independently versioned lesson source reads: the response
+ // must be a complete JSON 200 for this exact resource, without cookies or
+ // redirects, and late/held bodies must be disposed even on cancellation.
+ const {response,bytes}=await readContentBytes({url,origin,fetchImpl,signal,maxBytes,accept:'application/json'});
+ if(response.headers.get('content-type')?.split(';',1)[0].trim().toLowerCase()!=='application/json')throw Error('Unavailable public contract');
+ let data;try{data=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}
+ catch{throw Error('Invalid public contract');}
+ if(!plain(data))throw Error('Invalid public contract');
+ return data;
 }
+
 export async function discoverProvider({origin,loadedContent,fetchImpl=fetch,signal}={}){
  if(!validOrigin(origin))throw Error('Invalid caller origin');
  const controller=new AbortController(),abort=()=>controller.abort(),timer=setTimeout(abort,5000);

@@ -53,3 +53,42 @@ test('pre-aborted provider discovery never contacts status',async()=>{
  await assert.rejects(discoverProvider({origin:'https://example.test',signal:c.signal,fetchImpl:async()=>{calls++;throw Error('unexpected');}}));
  assert.equal(calls,0);
 });
+
+test('provider status preflight refuses same-origin substituted URL, partial response and dishonest content type before additional GETs',async()=>{
+ const valid={inference:'disabled',sourceTools:'catalog',content:{},factualTruth:'unverified'},base='https://example.test';
+ for(const response of [
+  Object.defineProperty(Response.json(valid),'url',{value:base+'/other-status'}),
+  new Response(JSON.stringify(valid),{status:206,headers:{'Content-Type':'application/json'}}),
+  new Response(JSON.stringify(valid),{headers:{'Content-Type':'text/html; application/json'}}),
+  new Response(JSON.stringify(valid),{headers:{'Content-Type':'application/json','Content-Range':'bytes 0-8/9'}})
+ ]){
+  let calls=0;
+  await assert.rejects(discoverProvider({origin:base,fetchImpl:async(url,opts)=>{
+   calls++;assert.equal(url,base+'/api/status');assert.equal(opts.credentials,'omit');assert.equal(opts.redirect,'error');return response;
+  }}));
+  assert.equal(calls,1,'bad preflight cannot continue to a manifest or model');
+  assert.equal(response.body.locked,false);
+ }
+});
+test('provider status noncooperative transport disposes response after cancellation without further contact',async()=>{
+ const controller=new AbortController(),base='https://example.test';
+ let release,started=false,cancelled=0;
+ const pending=discoverProvider({origin:base,signal:controller.signal,fetchImpl:async(url,opts)=>{
+  assert.equal(url,base+'/api/status');assert.equal(opts.credentials,'omit');started=true;
+  return new Promise(resolve=>{release=resolve;});
+ }});
+ for(let i=0;i<100&&!started;i++)await new Promise(resolve=>setTimeout(resolve,0));
+ assert.equal(started,true);controller.abort();
+ await assert.rejects(pending);
+ release(new Response(new ReadableStream({cancel(){cancelled++;}}),{headers:{'Content-Type':'application/json'}}));
+ for(let i=0;i<100&&!cancelled;i++)await new Promise(resolve=>setTimeout(resolve,0));
+ assert.equal(cancelled,1);
+});
+test('provider disabled preflight uses one credentialless exact JSON request and no model call',async()=>{
+ let calls=0,options;
+ const output=await discoverProvider({origin:'https://example.test',fetchImpl:async(url,opts)=>{
+  calls++;options=opts;assert.equal(url,'https://example.test/api/status');
+  return Response.json({inference:'disabled',sourceTools:'catalog',content:{},factualTruth:'unverified'});
+ }});
+ assert.deepEqual(output,{state:'disabled'});assert.equal(calls,1);assert.equal(options.credentials,'omit');assert.equal(options.headers.Accept,'application/json');
+});
