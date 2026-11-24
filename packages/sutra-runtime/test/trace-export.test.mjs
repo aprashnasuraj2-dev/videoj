@@ -61,3 +61,31 @@ test('refuses unsupported report modes, outcomes or non-array inputs',()=>{
 });
 
 test('failure reason is a bounded stable code, not arbitrary private data',()=>{assert.equal(createSafeTraceReceipt({outcome:'partial',reason:'MODEL_LIMIT',modelCalls:4}).reason,'MODEL_LIMIT');assert.equal(createSafeTraceReceipt({outcome:'partial',reason:canary}).reason,null);});
+
+test('trace array accessors, caller methods and nested disclosure getters never execute',()=>{
+ let calls=0;
+ const events=[{kind:'agent',agent:'learner'},{kind:'tool'}];
+ Object.defineProperty(events,'1',{get(){calls++;return {kind:canary};}});
+ Object.defineProperty(events,'slice',{value(){calls++;throw Error('must not execute');}});
+ Object.defineProperty(events,'constructor',{get(){calls++;throw Error('must not execute');}});
+ const labels=['network name','hidden'];
+ Object.defineProperty(labels,'1',{get(){calls++;return canary;}});
+ Object.defineProperty(labels,'slice',{value(){calls++;throw Error('must not execute');}});
+ const contacts=[{type:'intent',disclosure:labels}];
+ const out=createSafeTraceReceipt({events,contactEvents:contacts});
+ assert.equal(calls,0);assert.deepEqual(out.events,[{kind:'agent',agent:'learner'}]);
+ assert.deepEqual(out.consent,[{type:'intent',disclosure:['network name']}]);assert.equal(out.truncated,true);
+ assert.doesNotMatch(JSON.stringify(out),new RegExp(canary));
+ const top={};Object.defineProperty(top,'events',{get(){calls++;return events;}});
+ assert.throws(()=>createSafeTraceReceipt(top),/own data/);assert.equal(calls,0);
+});
+test('the downloaded formatted UTF-8 report is bounded, even with non-ASCII public labels',()=>{
+ const unicode='नेपाल😀'.repeat(80);
+ const event={phase:unicode,kind:unicode,id:unicode,parent:unicode,status:unicode,agent:unicode,tool:unicode,network:unicode,origin:unicode};
+ const contact={at:unicode,type:unicode,origin:unicode,contactKind:unicode,purpose:unicode,network:unicode,decision:unicode,scope:unicode,source:unicode,status:unicode,disclosure:Array(12).fill(unicode)};
+ const input={events:Array(128).fill(event),contactEvents:Array(128).fill(contact),reason:'PEER_'+'A'.repeat(100000)};
+ const text=serializeSafeTraceReceipt(input),bytes=new TextEncoder().encode(text),out=JSON.parse(text);
+ assert.ok(bytes.length<=65536);assert.equal(out.truncated,true);assert.equal(out.reason,null);
+ assert.ok(out.events.length&&out.consent.length);assert.ok(text.endsWith('\n'));
+ assert.deepEqual(out,createSafeTraceReceipt(input));
+});
