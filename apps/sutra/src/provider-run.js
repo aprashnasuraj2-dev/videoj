@@ -1,6 +1,7 @@
 import {compileNetwork,runNetwork} from '../../../packages/sutra-runtime/index.js';
 import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
 import {abortable} from '../../../packages/sutra-inference/protocol.js';
+import {validateReceipt,snapshotDataRecord,snapshotDataArray} from '../../../packages/sutra-evidence/index.js';
 import {loadContentProfile} from '../../../packages/sutra-content-profile/index.js';
 const modelPattern=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/;
 const validOrigin=origin=>{const u=new URL(origin);return u.origin===origin&&(u.protocol==='https:'||u.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(u.hostname));};
@@ -10,18 +11,29 @@ const contentError=()=>Object.assign(Error('Published content changed; reload th
 const contractError=()=>Object.assign(Error('Provider publication changed; check availability again.'),{code:'CONTRACT_CHANGED'});
 const contentIdentity=content=>({profileSha256:content.artifacts.profileSha256,catalogSha256:content.artifacts.catalogSha256,transcriptSha256:content.artifacts.transcriptSha256,contentVersion:content.profile.contentVersion,contentMode:content.profile.mode,primarySourceId:content.profile.primarySourceId});
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
-export function createReceiptCollector(limit=20){
+// Source MCP validates each response; this is a second, UI-owned boundary.
+// Even a faulty observer or a mutable host catalog cannot turn an arbitrary
+// record into a completed evidence-backed interpretation.
+export function createReceiptCollector({sources,limit=20}={}){
  if(!Number.isInteger(limit)||limit<1||limit>20)throw Error('Invalid receipt limit');
- const values=new Map();let overflow=false;
+ if(!snapshotDataArray(sources,20).length)throw Error('Receipt catalog required');
+ const values=new Map();let overflow=false,invalid=false;
+ const matched=receipt=>validateReceipt(receipt,{sources}).level==='catalog_matched';
  return Object.freeze({
   add(receipt){
-   if(!plain(receipt)||typeof receipt.sourceId!=='string'||typeof receipt.cueId!=='string')throw Error('Invalid receipt');
-   const key=receipt.sourceId+'\u0000'+receipt.cueId;
-   if(values.has(key)){values.set(key,receipt);return true;}
+   let exact;
+   try{exact=Object.freeze({...snapshotDataRecord(receipt,32)});if(!matched(exact))throw Error('Invalid receipt');}
+   catch{invalid=true;throw Error('Invalid receipt');}
+   const key=exact.sourceId+'\u0000'+exact.cueId;
+   if(values.has(key)){values.set(key,exact);return true;}
    if(values.size>=limit){overflow=true;return false;}
-   values.set(key,receipt);return true;
+   values.set(key,exact);return true;
   },
-  snapshot(){return Object.freeze({receipts:Object.freeze([...values.values()].map(v=>Object.freeze({...v}))),overflow});}
+  snapshot(){
+   const receipts=[];
+   for(const value of values.values()){if(matched(value))receipts.push(value);else invalid=true;}
+   return Object.freeze({receipts:Object.freeze(receipts),overflow,invalid});
+  }
  });
 }
 async function readPublicJson({url,origin,fetchImpl,signal,maxBytes}){
@@ -72,7 +84,7 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
  if(!validOrigin(origin)||typeof model!=='string'||!modelPattern.test(model)||model==='mock-1'||typeof question!=='string'||!question.trim()||question.length>1200)throw Error('Invalid run input');
  const controller=new AbortController(),abort=()=>controller.abort();
  signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
- const receiptCollector=createReceiptCollector(),usage={calls:0,reported:0,promptTokens:0,completionTokens:0,totalTokens:0};
+ const receiptCollector=createReceiptCollector({sources:loadedContent.sources}),usage={calls:0,reported:0,promptTokens:0,completionTokens:0,totalTokens:0};
  // Scope the public version precondition to the two caller-owned POST endpoints.
  // It is not an authentication token, and never travels to peer origins or the provider.
  let catalogRejected=false,contractRejected=false;
@@ -104,6 +116,7 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
   if(contractRejected)throw Error('Inference configuration precondition rejected.');
   if(catalogRejected)throw Error('Catalog precondition rejected.');
   const evidence=receiptCollector.snapshot();
+  if(evidence.invalid){const invalid=Error('Independent receipt validation failed.');invalid.code='SOURCE_EVIDENCE_INVALID';throw invalid;}
   if(evidence.overflow){const excess=Error('Source receipt limit exceeded.');excess.code='SOURCE_EVIDENCE_LIMIT';throw excess;}
   if(!evidence.receipts.length){const missing=Error('No independently catalog-matched source receipt.');missing.code='SOURCE_EVIDENCE_REQUIRED';throw missing;}
   return {model,text:result.text,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,usage:{...usage,complete:usage.reported===usage.calls},truthStatus:'unverified'};
