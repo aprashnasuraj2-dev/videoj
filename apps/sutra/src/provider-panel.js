@@ -6,12 +6,19 @@ import {executionLimits} from '../../../packages/sutra-runtime/index.js';
 export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=location.origin}){
  const sources=loadedContent.sources;
  const $=id=>document.getElementById(id);
- const check=$('provider-check'),run=$('provider-run'),cancel=$('provider-cancel'),question=$('provider-question'),status=$('provider-status'),output=$('provider-output'),answer=$('provider-answer'),list=$('provider-receipts'),metrics=$('provider-metrics'),actionStatus=$('provider-action-status');
+ const check=$('provider-check'),run=$('provider-run'),cancel=$('provider-cancel'),question=$('provider-question'),status=$('provider-status'),output=$('provider-output'),answer=$('provider-answer'),list=$('provider-receipts'),metrics=$('provider-metrics'),resultContextLabel=$('provider-result-context'),actionStatus=$('provider-action-status');
  const consentDialog=$('provider-consent-dialog'),consentBackend=$('provider-consent-backend'),consentModel=$('provider-consent-model'),consentChars=$('provider-consent-chars'),consentBudget=$('provider-consent-budget'),consentDeny=$('provider-consent-deny'),consentAllow=$('provider-consent-allow');
  const runtimeBounds=executionLimits();
- let model=null,approvedContract=null,active=null,pendingApproval=null,epoch=0;
+ let model=null,approvedContract=null,active=null,pendingApproval=null,epoch=0,resultContext=null;
  const set=(s,m)=>applyScreenState(status,s,m);
- const clear=()=>{epoch++;output.hidden=true;answer.textContent='';list.replaceChildren();metrics.textContent='';actionStatus.textContent='';};
+ const clear=()=>{epoch++;resultContext=null;output.hidden=true;answer.textContent='';list.replaceChildren();metrics.textContent='';actionStatus.textContent='';resultContextLabel.textContent='';};
+ function labelResult(){
+  if(!resultContext)return;
+  const context=resultContext,earlierQuestion=context.question!==question.value,earlierConfiguration=context.contract!==approvedContract;
+  const scope=earlierQuestion?'Earlier run for a different question. Not an answer to the current question. ':earlierConfiguration?'Earlier run under its previously approved configuration. Not a result from the current configuration. ':active||pendingApproval?'Earlier run; the new run has not replaced it yet. ':'Last run for this question. ';
+  resultContextLabel.textContent=scope+(context.complete?'Completed interpretation, unverified. ':'Incomplete run; independently matched receipts only. ')+context.contract.model+' ('+(context.contract.backend==='self_hosted'?'operator self-hosted':'external hosted')+').';
+ }
+ function identifyResult(approval,complete){resultContext=Object.freeze({question:approval.question,contract:approval.contract,complete});labelResult();}
  function renderReceipts(receipts){
   const current=epoch;
   for(const receipt of receipts){
@@ -26,6 +33,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   run.disabled=!!active||waiting||!model;
   cancel.disabled=!active||active.kind!=='run'||active.controller.signal.aborted;
   question.disabled=!!active||waiting||!model;
+  labelResult();
  }
  function closeConsent(){
   if(consentDialog.open)consentDialog.close();
@@ -47,7 +55,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   try{
    const result=await runProviderLesson({origin,approvedContract,loadedContent,question:approval.question,signal:operation.controller.signal,onModelStart:()=>{operation.started=true;clear();set('running','Running the configured model and bounded source tools…');}});
    if(operation.controller.signal.aborted)throw Error('cancelled');
-   answer.textContent=result.text;
+   identifyResult(approval,true);answer.textContent=result.text;
    renderReceipts(result.receipts);
    const u=result.usage;metrics.textContent=result.agentCalls+' agent invocations · '+result.modelCalls+' model calls · '+u.reported+'/'+u.calls+' calls reported token usage. '+(u.complete?'Reported input/output/total tokens: '+u.promptTokens+'/'+u.completionTokens+'/'+u.totalTokens+'.':'Usage incomplete; total run cost is unknown.')+' No automatic retries.';
    output.hidden=false;set('completed','Model run completed. Interpretation remains unverified; retrieved receipts establish catalog consistency only.');
@@ -55,7 +63,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
    if(operation.started)clear();const cancelled=operation.controller.signal.aborted;const code=cancelled?'CANCELLED':error?.code??'RUN_FAILED';const partial=error?.partial;
    if(code==='CONTENT_CHANGED'||code==='CONTRACT_CHANGED'){model=null;approvedContract=null;set('error',code==='CONTENT_CHANGED'?'Published lesson changed. Reload the lesson before using inference. No model request was made.':'Provider publication changed. Check inference availability again. No model request was made.');return;}
    if(code==='CONTENT_CHANGED_DURING_RUN'||code==='CONTRACT_CHANGED_DURING_RUN'){model=null;approvedContract=null;}
-   if(partial?.receipts?.length){answer.textContent='No completed answer. Only independently catalog-matched receipts from completed reads are preserved below.';renderReceipts(partial.receipts);metrics.textContent=partial.modelCalls+' model calls started; usage incomplete. No automatic retries.';output.hidden=false;}
+   if(partial?.receipts?.length){identifyResult(approval,false);answer.textContent='No completed answer. Only independently catalog-matched receipts from completed reads are preserved below.';renderReceipts(partial.receipts);metrics.textContent=partial.modelCalls+' model calls started; usage incomplete. No automatic retries.';output.hidden=false;}
    if(code==='CONTENT_CHANGED_DURING_RUN'){set('error','The server rejected the lesson version during this run. Earlier calls may have occurred. No completed answer is claimed; reload the lesson before checking inference again.');return;}
    if(code==='CONTRACT_CHANGED_DURING_RUN'){set('error','The server rejected the approved inference configuration during this run. Earlier calls may have occurred. No completed answer is claimed; check inference availability again.');return;}
    if(code==='SOURCE_EVIDENCE_REQUIRED'){set('empty','The model returned without any independently catalog-matched source receipt. Its interpretation was discarded; no completed answer is claimed.');return;}
@@ -68,7 +76,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   }finally{active=null;controls();(run.disabled?check:run).focus();}
  }
  check.addEventListener('click',async()=>{
-  if(active||pendingApproval)return;model=null;approvedContract=null;clear();
+  if(active||pendingApproval)return;model=null;approvedContract=null;
   const operation={kind:'check',controller:new AbortController()};active=operation;controls();set('loading','Checking configuration without calling a model…');
   try{const found=await discoverProvider({origin,loadedContent,signal:operation.controller.signal});
    if(found.state==='configured'){model=found.model;approvedContract=found.contract;set('idle','Model configured: '+model+' ('+(found.backend==='self_hosted'?'operator self-hosted':'external hosted')+'). A run may still be refused by quota or provider availability. No personal key is needed.');}
@@ -98,8 +106,11 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   closeConsent();
   void executeApprovedRun(approval);
  });
- question.addEventListener('input',()=>{if(!active&&!pendingApproval){clear();if(model)set('idle','Question changed. Submit explicitly to retrieve new model results.');}});
+ question.addEventListener('input',()=>{
+  if(pendingApproval){denyConsent();return;}
+  if(!active){labelResult();if(model)set('idle','Question changed. Any visible earlier result belongs to its previous run. Submit explicitly to retrieve new model results.');}
+ });
  cancel.addEventListener('click',()=>{if(active?.kind==='run'){active.controller.abort();controls();set('cancelling','Cancelling inference…');}});
- window.addEventListener('pagehide',()=>{active?.controller.abort();if(consentDialog.open)consentDialog.close();pendingApproval=null;model=null;approvedContract=null;epoch++;controls();});
+ window.addEventListener('pagehide',()=>{active?.controller.abort();if(consentDialog.open)consentDialog.close();pendingApproval=null;model=null;approvedContract=null;clear();controls();});
  controls();
 }

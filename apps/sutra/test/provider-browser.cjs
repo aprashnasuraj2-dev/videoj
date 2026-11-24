@@ -107,6 +107,20 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-consent-dialog').open);
   assert.equal(calls,4);await page.getByRole('button',{name:'Cancel',exact:true}).click();await page.waitForFunction(()=>!document.querySelector('#provider-consent-dialog').open);
   assert.equal(calls,4);assert.equal(await page.locator('#provider-output').isHidden(),false);assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
+  // Editing the next question must not silently discard or relabel the old result.
+  const oldQuestion=await page.getByLabel('Question about the source lesson').inputValue();
+  await page.getByLabel('Question about the source lesson').fill('A different question that has not been sent.');
+  assert.match(await page.locator('#provider-result-context').textContent(),/Not an answer to the current question/);
+  assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
+  await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-consent-dialog').open);
+  await page.getByRole('button',{name:'Cancel',exact:true}).click();assert.equal(calls,4);
+  assert.match(await page.locator('#provider-result-context').textContent(),/Not an answer to the current question/);
+  assert.equal(await page.locator('#provider-output').isHidden(),false);
+  await page.getByLabel('Question about the source lesson').fill(oldQuestion);
+  await page.getByRole('button',{name:'Check inference availability'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
+  assert.equal(calls,4);assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
+  assert.match(await page.locator('#provider-result-context').textContent(),/Not a result from the current configuration/);
   // Cancellation after explicit approval but before the first model POST
   // preserves the prior answer and its exact receipts.
   holdStatus=true;statusHeld=false;await runOnce();
