@@ -27,14 +27,22 @@ export class InferenceQuota{
    try{
     const outcome=await this.ctx.storage.transaction(async tx=>{
      const now=this.clock(),day=new Date(now).toISOString().slice(0,10);if(!Number.isSafeInteger(now))throw Error('Invalid quota clock');
-     let state=await tx.get('source-quota');
+     // Keep the global counter small and shard per-client counters across 256
+     // pseudorandom HMAC buckets. A single hot day can never grow one Durable
+     // Object value with tens of thousands of client keys.
+     const bucket=input.clientKey.slice(0,2),bucketKey='source-quota:'+bucket;
+     let state=await tx.get('source-quota'),clients=await tx.get(bucketKey);
      if(state){
-      if(!map(state)||!/^\d{4}-\d{2}-\d{2}$/.test(state.day??'')||state.day>day||!map(state.clients)||!safe(state.total,0,100000))throw Error('Invalid source quota state');
-      if(state.day!==day)state={day,total:0,clients:{}};
-     }else state={day,total:0,clients:{}};
-     const used=state.clients[input.clientKey]??0;if(!safe(used,0,100000))throw Error('Invalid source client count');
-     if(state.total>=limits.max||used>=limits.perClient){await tx.put('source-quota',state);return {allowed:false};}
-     state.total++;state.clients[input.clientKey]=used+1;await tx.put('source-quota',state);return {allowed:true};
+      if(!map(state)||!/^\d{4}-\d{2}-\d{2}$/.test(state.day??'')||state.day>day||!safe(state.total,0,100000)||Object.keys(state).some(k=>!['day','total'].includes(k)))throw Error('Invalid source quota state');
+      if(state.day!==day)state={day,total:0};
+     }else state={day,total:0};
+     if(clients){
+      if(!map(clients)||!/^\d{4}-\d{2}-\d{2}$/.test(clients.day??'')||clients.day>day||!map(clients.counts)||Object.keys(clients).some(k=>!['day','counts'].includes(k)))throw Error('Invalid source client bucket');
+      if(clients.day!==day)clients={day,counts:{}};
+     }else clients={day,counts:{}};
+     const used=clients.counts[input.clientKey]??0;if(!safe(used,0,100000))throw Error('Invalid source client count');
+     if(state.total>=limits.max||used>=limits.perClient){await tx.put('source-quota',state);await tx.put(bucketKey,clients);return {allowed:false};}
+     state.total++;clients.counts[input.clientKey]=used+1;await tx.put('source-quota',state);await tx.put(bucketKey,clients);return {allowed:true};
     });
     return Response.json(outcome,{status:outcome.allowed?200:429});
    }catch{return new Response('',{status:503});}

@@ -14,7 +14,7 @@ test('quota denial, malformed quota and storage errors prevent provider contact'
 test('upstream errors and truncated streams never expose raw fields',async()=>{for(const upstream of [new Response('SERVER_ONLY_KEY_MARKER',{status:401}),sse('')]){const response=await handleInference(request(),environment(),{fetchImpl:async()=>upstream});const body=await response.text();assert.equal(body.includes('SERVER_ONLY_KEY_MARKER'),false);assert.equal(body.includes('PRIVATE_PROVIDER_FIELD'),false);if(response.ok){assert.ok(body.includes('INCOMPLETE_STREAM'));assert.equal(body.includes('[DONE]'),false);}}});
 test('body and request ceilings fail before quota or provider',async()=>{let reserved=0;const env=environment(async()=>{reserved++;return Response.json({allowed:true});});for(const body of [{...payload(),messages:[{role:'user',content:'x'.repeat(33000)}]},{...payload(),tools:new Array(17).fill({})},{...payload(),max_completion_tokens:9999},{...payload(),messages:[{role:'tool',content:'x',tool_call_id:'unknown'}]}])assert.equal((await handleInference(request(body),env)).status,400);assert.equal(reserved,0);});
 test('request cancellation prevents upstream',async()=>{const c=new AbortController();c.abort();const r=new Request(request(),{signal:c.signal});let calls=0;const response=await handleInference(r,environment(),{fetchImpl:async()=>{calls++;return sse();}});assert.ok(response.status>=400);assert.equal(calls,0);});
-function storage(){let state;let queue=Promise.resolve();return {transaction(fn){const run=queue.then(()=>fn({get:async()=>structuredClone(state),put:async(k,v)=>{state=structuredClone(v);}}));queue=run.catch(()=>{});return run;},inspect:()=>state};}
+function storage(){const values=new Map();let queue=Promise.resolve();return {transaction(fn){const run=queue.then(()=>fn({get:async k=>structuredClone(values.get(k)),put:async(k,v)=>{values.set(k,structuredClone(v));}}));queue=run.catch(()=>{});return run;},inspect:(key='quota')=>structuredClone(values.get(key)),keys:()=>[...values.keys()]};}
 const quotaRequest=(key,inputBytes=100,outputTokens=64)=>new Request('https://quota.internal/reserve',{method:'POST',body:JSON.stringify({clientKey:key.repeat(64),inputBytes,outputTokens})});
 const quotaRelease=lease=>new Request('https://quota.internal/release',{method:'POST',body:JSON.stringify({lease})});
 test('transactional quota caps active concurrency, daily clients and resets on a new UTC day',async()=>{
@@ -44,6 +44,8 @@ test('source-tool read quota protects Worker capacity without charging discovery
  const sameClient=await rpc('tools/call',{name:'search_lesson',arguments:{query:'timing'}});assert.equal(sameClient.status,429);
  const secondClient=await rpc('tools/call',{name:'read_cue',arguments:{sourceId:'synthetic-timing-fixture',cueId:'timing-marker'}},'192.0.2.11');assert.equal(secondClient.status,200);
  const global=await rpc('tools/call',{name:'search_lesson',arguments:{query:'timing'}},'192.0.2.12');assert.equal(global.status,429);
+ const sourceGlobal=store.inspect('source-quota');assert.deepEqual(Object.keys(sourceGlobal).sort(),['day','total']);assert.equal(sourceGlobal.total,2);
+ const bucketKeys=store.keys().filter(k=>k.startsWith('source-quota:'));assert.ok(bucketKeys.length>=1);for(const key of bucketKeys){const bucket=store.inspect(key);assert.deepEqual(Object.keys(bucket).sort(),['counts','day']);assert.ok(Object.keys(bucket.counts).length<=2);}
 });
 test('MCP source endpoint lists bounded read tools and rejects arbitrary capabilities',async()=>{const rpc=async(method,params)=>{const response=await handleSourceTools(new Request('https://sutra.test/api/source-tools',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})}));return response.json();};assert.equal((await rpc('initialize')).result.serverInfo.name,'sutra-source-tools');assert.deepEqual((await rpc('tools/list')).result.tools.map(x=>x.name),['search_lesson','read_cue']);const result=(await rpc('tools/call',{name:'search_lesson',arguments:{query:'timing'}})).result;assert.equal(result.isError,false);assert.equal(result.structuredContent.receipts[0].verification,'unverified');assert.equal((await rpc('tools/call',{name:'fetch',arguments:{url:'https://evil.test'}})).result.isError,true);assert.equal((await rpc('tools/call',{name:'read_cue',arguments:{sourceId:'wrong',cueId:'wrong'}})).result.isError,true);});
 test('worker status is honest and unknown APIs never fall through to assets',async()=>{const status=await worker.fetch(new Request('https://sutra.test/api/status'),{});assert.equal((await status.json()).inference,'disabled');let assets=0;assert.equal((await worker.fetch(new Request('https://sutra.test/api/arbitrary'),{ASSETS:{fetch:()=>{assets++;}}})).status,404);assert.equal(assets,0);});
@@ -256,4 +258,17 @@ test('release content identity must match the Worker-compiled catalog before sta
   const status=await worker.fetch(new Request('https://sutra.test/api/status'),env);assert.equal(status.status,503);assert.match(await status.text(),/CONTENT_BINDING_MISMATCH/);
   const source=await worker.fetch(new Request('https://sutra.test/api/source-tools',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'tools/list'})}),env);assert.equal(source.status,503);
  }
+});
+
+test('source quota sharding prevents a single stored value from accumulating all clients',async()=>{
+ const store=storage(),q=new InferenceQuota({storage:store},{SUTRA_MAX_DAILY_SOURCE_READS:'300',SUTRA_MAX_CLIENT_SOURCE_READS:'1'});
+ for(let i=0;i<256;i++){
+  const key=i.toString(16).padStart(2,'0')+'a'.repeat(62);
+  const response=await q.fetch(new Request('https://quota.internal/source-read',{method:'POST',body:JSON.stringify({clientKey:key})}));
+  assert.equal(response.status,200);
+ }
+ assert.equal(store.inspect('source-quota').total,256);
+ const buckets=store.keys().filter(k=>k.startsWith('source-quota:'));assert.equal(buckets.length,256);
+ assert.ok(buckets.every(key=>Object.keys(store.inspect(key).counts).length===1));
+ assert.equal(Object.hasOwn(store.inspect('source-quota'),'clients'),false);
 });
