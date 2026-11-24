@@ -39,3 +39,12 @@ test('guide fixtures and executable tests are explicitly classified while markdo
  assert.deepEqual(tests.unmapped,[]);assert.ok(tests.affectedSuites.includes('verification-tests'));
  const docs=classifyChangedFiles(['apps/sutra/README.md'],map);assert.deepEqual(docs.unmapped,[]);
 });
+
+test('expensive browser/evaluation workflows do not use catch-all app or package triggers',()=>{
+ const matrix=fs.readFileSync(new URL('../../../.github/workflows/sutra-browser-matrix.yml',import.meta.url),'utf8');
+ const evaluation=fs.readFileSync(new URL('../../../.github/workflows/sutra-evaluation.yml',import.meta.url),'utf8');
+ assert.doesNotMatch(matrix,/apps\/sutra\/\*\*/);assert.doesNotMatch(matrix,/packages\/sutra-\*\/\*\*/);
+ assert.match(matrix,/apps\/sutra\/src\/\*\*/);assert.match(matrix,/packages\/sutra-runtime\/\*\*/);
+ assert.doesNotMatch(evaluation,/apps\/sutra\/\*\*/);assert.doesNotMatch(evaluation,/packages\/sutra-\*\/\*\*/);
+ assert.match(evaluation,/apps\/sutra\/src\/comparison\.js/);assert.match(evaluation,/tools\/sutra-evaluation\/\*\*/);
+});
