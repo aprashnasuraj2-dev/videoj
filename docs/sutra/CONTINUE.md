@@ -10,9 +10,9 @@ On 24 November the participant explicitly tightened the ordering: stop further d
 
 ## Latest implementation checkpoint — 0045
 
-**712/1,098 overall verified; 616/1,000 original; 379 pending; six omissions; one hardware blocker.** X010-40 exact all 19 workflows passed. X010-41 technical lexical qualifier implementation awaits exact CI; no credit before verification.
+**712/1,099 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-41 exact learner build and unit tests pass, full CI pending. X010-42 shared receipt seek focus and reactivation implementation awaits actual Chromium/full CI.
 
-Next: Verify exact technical-token learner and complete CI; continue independent engineering; no release or paid inference.
+Next: Verify exact X010-41 technical retrieval and X010-42 shared receipt keyboard regressions; retain pending status until full candidate CI.
 
 ## Resume sequence
 

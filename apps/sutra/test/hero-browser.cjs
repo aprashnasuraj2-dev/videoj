@@ -566,13 +566,23 @@ const assert=require('node:assert/strict');
   await page.evaluate(()=>{
    const video=document.querySelector('video'),d=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'currentTime');
    Object.defineProperty(video,'seeking',{configurable:true,get(){return true;}});
-   Object.defineProperty(video,'currentTime',{configurable:true,get(){return d.get.call(this);},set(){}});
+   window.__receiptSeekWrites=0;
+   Object.defineProperty(video,'currentTime',{configurable:true,get(){return d.get.call(this);},set(){window.__receiptSeekWrites++;}});
   });
   try{
    const stale=await page.getByRole('button',{name:'Seek to matched cue'}).elementHandle();
-   await stale.click();await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('Checking native'));
+   await stale.focus();await page.keyboard.press('Enter');
+   await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('Checking native'));
+   assert.equal(await stale.evaluate(button=>document.activeElement===button),true,'receipt seek retains keyboard focus while waiting');
+   assert.equal(await stale.getAttribute('aria-busy'),'true');
+   assert.equal(await stale.evaluate(button=>button.disabled),false);
+   const initialWrites=await page.evaluate(()=>window.__receiptSeekWrites);
+   assert.equal(initialWrites,1,'first activation makes one native seek request');
+   await page.keyboard.press('Enter');await page.keyboard.press('Space');
+   assert.equal(await page.evaluate(()=>window.__receiptSeekWrites),initialWrites,'repeated keyboard activation cannot restart a busy receipt seek');
+   assert.equal(await stale.evaluate(button=>document.activeElement===button),true);
    await direct.fill('unavailable voltage threshold');
-   await page.waitForFunction(button=>!button.disabled,stale,{timeout:1000});
+   await page.waitForFunction(button=>!button.hasAttribute('aria-busy'),stale,{timeout:1000});
    assert.equal(await page.locator('#direct-results li').count(),0);
    await stale.dispose();
    const held=await cue.elementHandle();await held.click();
@@ -581,7 +591,7 @@ const assert=require('node:assert/strict');
    await page.waitForFunction(()=>!document.querySelector('.transcript-cue'));
    await page.waitForFunction(button=>!button.hasAttribute('aria-busy'),held,{timeout:1000});
    await held.dispose();
-  }finally{await page.evaluate(()=>{const video=document.querySelector('video');delete video.currentTime;delete video.seeking;});}
+  }finally{await page.evaluate(()=>{const video=document.querySelector('video');delete video.currentTime;delete video.seeking;delete window.__receiptSeekWrites;});}
   await direct.fill('timing marker');await direct.press('Enter');await search.fill('timing marker');
   await page.getByRole('button',{name:'Seek to matched cue'}).click();
   await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('Native media reached'));

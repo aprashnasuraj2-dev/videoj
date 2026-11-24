@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T21:05:00+05:45",
+  "updatedAt": "2026-11-24T21:06:04+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -1462,6 +1462,27 @@
         }
       ],
       "unblockCondition": "Exact positive/negative technical lexical tests and complete learner/browser regression pass."
+    },
+    {
+      "id": "R-065",
+      "severity": "medium",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Receipt seek temporarily removes the focused keyboard control",
+      "mechanism": "Native disabled state is used while the asynchronous cue seek is pending; browser focus may leave the button.",
+      "userEffect": "Keyboard learners can lose their current place when a receipt seek is held, and no focus preservation regression was asserted.",
+      "affectedTasks": [
+        "SUTRA-X010-42",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Keep focusable button and aria-busy; reject repeated activation while busy; preserve result-revocation cancellation and disabled stale controls.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "0bf20d61ac4b9cfa030e09ebdf3a210946ea9184"
+        }
+      ],
+      "unblockCondition": "Exact actual Chromium keyboard/held native seek counterexample, cancellation and fresh retry pass with complete CI."
     }
   ]
 }

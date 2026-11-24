@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T21:05:00+05:45",
+  "updated_at": "2026-11-24T21:06:04+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
   "last_observed_code_sha": "b72f64606d76be1dfe5114af80d15c496ba6dd6b",
   "last_session_id": "SUTRA-SESSION-0045",
@@ -16,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Verify exact technical-token learner and complete CI; continue independent engineering; no release or paid inference.",
+  "next_action": "Verify exact X010-41 technical retrieval and X010-42 shared receipt keyboard regressions; retain pending status until full candidate CI.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -12807,6 +12807,7 @@
     "**708/1,095 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-35/36 verified 19/19. Added X010-37/38 tool-call history integrity and ambiguous wire JSON candidates; no credit until exact CI.",
     "**708/1,096 overall verified; 616/1,000 original; 381 pending; six omissions; one hardware blocker.** X010-37/38 exact learner runtime and package/API unit steps passed, full CI pending. Added X010-39 provider destination/body/consent binding candidate; no credit before exact CI.",
     "**711/1,097 overall verified; 616/1,000 original; 379 pending; six omissions; one hardware blocker.** X010-37/38 and X010-39 exact 19/19 verified. X010-40 implementation at b72f64606d76be1dfe5114af80d15c496ba6dd6b; exact full CI pending, no credit yet.",
-    "**712/1,098 overall verified; 616/1,000 original; 379 pending; six omissions; one hardware blocker.** X010-40 exact all 19 workflows passed. X010-41 technical lexical qualifier implementation awaits exact CI; no credit before verification."
+    "**712/1,098 overall verified; 616/1,000 original; 379 pending; six omissions; one hardware blocker.** X010-40 exact all 19 workflows passed. X010-41 technical lexical qualifier implementation awaits exact CI; no credit before verification.",
+    "**712/1,099 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-41 exact learner build and unit tests pass, full CI pending. X010-42 shared receipt seek focus and reactivation implementation awaits actual Chromium/full CI."
   ]
 }

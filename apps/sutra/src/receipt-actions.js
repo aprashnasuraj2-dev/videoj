@@ -24,7 +24,10 @@ export function createReceiptActionRow({receipt,sources,seekTo,prepareReview,act
  const excerpt=el('blockquote',exact.excerpt),actions=el('div');actions.className='actions';
  const seek=el('button',seekLabel),review=el('button',reviewLabel);seek.type=review.type='button';
  seek.addEventListener('click',async()=>{
-  if(!isCurrent()||seek.disabled)return;const operation=seekScope.begin();seek.disabled=true;
+  // Keep the focused control in the keyboard order during native media wait.
+  // Busy is state, not permission to start a second request from the same button.
+  if(!isCurrent()||seek.disabled||seek.hasAttribute('aria-busy'))return;
+  const operation=seekScope.begin();seek.setAttribute('aria-busy','true');
   const current=()=>isCurrent()&&seekScope.current(operation);
   actionStatus.textContent='Checking native media availability…';
   try{
@@ -32,7 +35,10 @@ export function createReceiptActionRow({receipt,sources,seekTo,prepareReview,act
    if(!isNativeCueReached(actual,exact.start,exact.end))throw Error('Not reached');
    if(current())actionStatus.textContent='Native media reached the matched source cue. No factual verification.';
   }catch{if(current())actionStatus.textContent='Cue seek unavailable. Load the media explicitly; no seek success is claimed.';}
-  finally{seekScope.finish(operation);seek.disabled=seek.dataset.sutraRevoked==='true';}
+  finally{seekScope.finish(operation);seek.removeAttribute('aria-busy');
+   // A stale provider result may have been revoked by its owning surface.
+   if(seek.dataset.sutraRevoked==='true')seek.disabled=true;
+  }
  });
  review.addEventListener('click',()=>{
   if(!isCurrent())return;

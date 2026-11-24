@@ -341,3 +341,7 @@ X010-26 verified 19/19 at 76d13792d57fdfd321074a026747c72a306337b1; X010-27 exac
 ## SUTRA-DECISION-0046 — Conservative technical lexical matching
 
 Preserve literal measurement qualifiers and unit case instead of removing them during word extraction. Prefer abstention to incompatible lexical matches. This does not infer unit equivalence, arithmetic, measurement association or semantic truth. Exact literal source search remains available. X010-41 must pass exact CI before credit.
+
+## SUTRA-DECISION-0047 — Preserve receipt seek keyboard focus
+
+Use an explicit busy state rather than transient native disablement in the shared receipt action row; guard reactivation synchronously, retain result revocation and native seek cancellation. Actual browser Enter/Space and one-write regression required. No screen-reader or physical-device claim.
