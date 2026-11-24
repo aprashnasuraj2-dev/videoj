@@ -110,6 +110,6 @@ test('synthetic written comparison link is byte-bound to the published guide and
  const [file,fragment]=claim.sourceHref.slice(2).split('#');
  const bytes=fs.readFileSync(path.join(app,'public',file));
  assert.equal(createHash('sha256').update(bytes).digest('hex'),claim.sourceHash);
- const text=bytes.toString('utf8');assert.ok(fragment);assert.match(text,new RegExp('id=["\\']'+fragment+'["\\']'));
+ const text=bytes.toString('utf8');assert.ok(fragment);assert.ok(text.includes('id="'+fragment+'"')||text.includes("id='"+fragment+"'"));
  assert.ok(text.includes(claim.excerpt));assert.match(text,/not a real publisher, reviewed guide, factual authority/);
 });
