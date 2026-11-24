@@ -1,7 +1,7 @@
 import {createSourceTools} from '../../../packages/sutra-source-tools/index.js';
 import {snapshotDataArray,snapshotDataRecord,validateReceipt} from '../../../packages/sutra-evidence/index.js';
 import {applyScreenState} from './status-state.js';
-import {translate} from './localization.js';
+import {translate,formatLocalAmbiguity} from './localization.js';
 import {createReceiptActionRow} from './receipt-actions.js';
 
 // This is deliberately lexical retrieval: no embeddings, model or network access.
@@ -91,7 +91,13 @@ export function mountLocalAnswer({root,sources,seekTo,prepareReview}){
  let lookup=null,unavailable=false,epoch=0;
  // Build only on the first explicit question. Text-first viewers do not pay
  // the memory/CPU cost of indexing a large valid catalog at page startup.
- const show=(state,key)=>{status.dataset.i18n=key;applyScreenState(status,state,translate(key,document.documentElement.lang||'en'));};
+ const show=(state,key,found)=>{
+  status.dataset.i18n=key;
+  delete status.dataset.matchCount;delete status.dataset.returnedCount;delete status.dataset.truncated;
+  if(found){status.dataset.matchCount=String(found.matchCount);status.dataset.returnedCount=String(found.receipts.length);status.dataset.truncated=String(found.truncated);}
+  const locale=document.documentElement.lang||'en';
+  applyScreenState(status,state,found?.state==='ambiguous'?formatLocalAmbiguity(found.matchCount,found.receipts.length,locale):translate(key,locale));
+ };
  const clear=()=>{epoch++;list.replaceChildren();actionStatus.textContent='';};
  input.addEventListener('input',()=>{clear();show('idle','local.status.changed');});
  form.addEventListener('submit',event=>{
@@ -106,7 +112,7 @@ export function mountLocalAnswer({root,sources,seekTo,prepareReview}){
    unavailable:['error','local.status.unavailable']
   };
   if(messages[found.state]){const [state,key]=messages[found.state];show(state,key);return;}
-  show(found.state==='matched'?'completed':'empty',found.state==='matched'?'local.status.matched':'local.status.ambiguous');
+  show(found.state==='matched'?'completed':'empty',found.state==='matched'?'local.status.matched':found.truncated?'local.status.truncated':'local.status.ambiguous',found);
   for(const receipt of found.receipts){
    const row=createReceiptActionRow({receipt,sources,seekTo,prepareReview,actionStatus,isCurrent:()=>current===epoch,seekLabel:translate('local.action.seek',document.documentElement.lang||'en'),reviewLabel:translate('local.action.review',document.documentElement.lang||'en')});
    if(row){

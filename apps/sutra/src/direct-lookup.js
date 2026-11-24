@@ -17,8 +17,8 @@ export function createDirectLookup({sources,now}={}){
    let found;
    try{found=tools.call('search_lesson',{query});}catch{return result('unavailable');}
    const receipts=found.receipts;
-   if(!Array.isArray(receipts)||!Number.isInteger(found.returnedCount)||found.returnedCount!==receipts.length||typeof found.truncated!=='boolean'||receipts.some(receipt=>!validateEvidenceClaim({version:1,kind:'source_excerpt',text:receipt.excerpt,receipt},{sources:catalog}).valid))return result('unavailable');
-   return result(receipts.length?'matched':'no_match',receipts,{returnedCount:found.returnedCount,truncated:found.truncated});
+   if(!Array.isArray(receipts)||!Number.isInteger(found.returnedCount)||found.returnedCount!==receipts.length||!Number.isInteger(found.matchCount)||found.matchCount<found.returnedCount||found.matchCount>10000||found.returnedCount!==Math.min(5,found.matchCount)||typeof found.truncated!=='boolean'||found.truncated!==(found.matchCount>found.returnedCount)||receipts.some(receipt=>!validateEvidenceClaim({version:1,kind:'source_excerpt',text:receipt.excerpt,receipt},{sources:catalog}).valid))return result('unavailable');
+   return result(found.matchCount>1?'ambiguous':receipts.length?'matched':'no_match',receipts,{returnedCount:found.returnedCount,matchCount:found.matchCount,truncated:found.truncated});
   }
  });
 }
@@ -36,8 +36,8 @@ export function mountDirectLookup({root,sources,seekTo,prepareReview}){
   if(found.state==='unavailable'){applyScreenState(status,'error','The source could not be validated. No result is claimed.');return;}
   if(found.state==='no_match'){applyScreenState(status,'empty','No matching source cue. Abstaining rather than inventing an answer. 0 model calls.');return;}
   applyScreenState(status,'completed',found.truncated?
-   found.returnedCount+' source cues shown; more matching cues exist. Narrow the exact wording for complete coverage. 0 model calls, 0 network requests. Factual truth remains unverified.':
-   found.returnedCount+' catalog-matched source cue(s). Search coverage is complete for this literal phrase. 0 model calls, 0 network requests. Factual truth remains unverified.');
+   found.returnedCount+' of '+found.matchCount+' matching source cues shown (truncated). No single answer selected. Narrow the exact wording for complete coverage. 0 model calls, 0 network requests. Factual truth remains unverified.':
+   found.returnedCount+' catalog-matched source cue(s). Search coverage is complete for this literal phrase. '+(found.state==='ambiguous'?'Multiple matches; no single answer selected. ':'')+'0 model calls, 0 network requests. Factual truth remains unverified.');
   for(const receipt of found.receipts){
    const row=createReceiptActionRow({receipt,sources,seekTo,prepareReview,actionStatus,isCurrent:()=>current===epoch,seekLabel:'Seek to matched cue',reviewLabel:'Preview matched review card'});
    if(row)list.append(row);

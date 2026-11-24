@@ -12,7 +12,7 @@ export class SourceToolError extends Error{constructor(code){super(`Source tool 
 export function createSourceTools(catalog,{now=()=>new Date().toISOString()}={}){
  // Project immutable primitive source/cue fields into an indexed catalog.
  // Registration is O(cues), with one independent singleton validation per cue;
- // exact reads use source/cue maps, and literal search stops after five matches.
+ // exact reads use source/cue maps; literal search counts all matches within the bounded catalog.
  const rows=[],bySource=new Map();let textUnits=0;
  try{
   const sources=snapshotDataArray(catalog,20);
@@ -51,16 +51,16 @@ export function createSourceTools(catalog,{now=()=>new Date().toISOString()}={})
     const hasStart=args.start!==undefined,hasEnd=args.end!==undefined;
     if(hasStart!==hasEnd||hasStart&&(!Number.isFinite(args.start)||!Number.isFinite(args.end)||args.end<=args.start))throw new SourceToolError('ARGUMENTS');
     filters={...(args.sourceId!==undefined?{sourceId:args.sourceId}:{}),...(hasStart?{start:args.start,end:args.end}:{})};
-    matches=[];let truncated=false;
+    matches=[];let matchCount=0;
     const candidates=args.sourceId===undefined?rows:bySource.get(args.sourceId)?.rows??[];
     for(const r of candidates){
      if(!r.folded.includes(query)||hasStart&&(r.cue.start<args.start||r.cue.end>args.end))continue;
-     if(matches.length===5){truncated=true;break;}
-     matches.push(r);
+     matchCount++;
+     if(matches.length<5)matches.push(r);
     }
-    filters={filters,returnedCount:matches.length,truncated};
+    filters={filters,returnedCount:matches.length,matchCount,truncated:matchCount>matches.length};
    }else{const row=bySource.get(args.sourceId)?.byCue.get(args.cueId);if(!row)throw new SourceToolError('NOT_FOUND');matches=[row];}
-   const receipts=matches.map(receipt);const result={version:1,receipts,limit:name==='search_lesson'?5:1,truthStatus:'unverified',...(name==='search_lesson'?{filters:filters.filters,returnedCount:filters.returnedCount,truncated:filters.truncated}:{})};if(new TextEncoder().encode(JSON.stringify(result)).length>16000)throw new SourceToolError('OUTPUT_SIZE');return result;
+   const receipts=matches.map(receipt);const result={version:1,receipts,limit:name==='search_lesson'?5:1,truthStatus:'unverified',...(name==='search_lesson'?{filters:filters.filters,returnedCount:filters.returnedCount,matchCount:filters.matchCount,truncated:filters.truncated}:{})};if(new TextEncoder().encode(JSON.stringify(result)).length>16000)throw new SourceToolError('OUTPUT_SIZE');return result;
   },
  };
 }

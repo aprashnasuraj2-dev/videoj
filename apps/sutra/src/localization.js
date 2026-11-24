@@ -15,7 +15,8 @@ const EN=Object.freeze({
  'local.status.unavailable':"A source receipt could not be validated. No answer is claimed.",
  'local.status.index':"Local indexing is unavailable; exact source search remains available.",
  'local.status.matched':"One lexically matching source excerpt; relevance and factual truth remain unverified. 0 model calls, 0 network requests.",
- 'local.status.ambiguous':"Multiple matching source excerpts; up to five shown. No single answer is selected. 0 model calls, 0 network requests.",
+ 'local.status.ambiguous':"{shown} of {total} matching source excerpts shown. No single answer is selected. 0 model calls, 0 network requests.",
+ 'local.status.truncated':"{shown} of {total} matching source excerpts shown (truncated). No single answer is selected. Narrow the question for complete coverage. 0 model calls, 0 network requests.",
  'local.action.seek':"Seek to local source cue",
  'local.action.review':"Preview local review card",
  'language.en':'English',
@@ -93,7 +94,8 @@ const NE=Object.freeze({
  'local.status.unavailable':"स्रोतको उद्धरण जाँच्न सकिएन। उत्तर बनाइएको छैन।",
  'local.status.index':"स्थानीय सूची बनाउन सकिएन। ठ्याक्कै शब्द खोज्ने विकल्प उपलब्ध छ।",
  'local.status.matched':"स्रोतमा शब्द मिल्ने एउटा अंश भेटियो। सान्दर्भिकता र तथ्यात्मक सत्यता पुष्टि भएको छैन। मोडेल कल ०, नेटवर्क अनुरोध ०।",
- 'local.status.ambiguous':"स्रोतका धेरै अंश मिल्छन्। बढीमा पाँच अंश देखाइन्छन्। एउटा मात्र उत्तर छानिएको छैन। मोडेल कल ०, नेटवर्क अनुरोध ०।",
+ 'local.status.ambiguous':"मिलेका {total} स्रोत अंशमध्ये {shown} देखाइएका छन्। एउटा मात्र उत्तर छानिएको छैन। मोडेल कल ०, नेटवर्क अनुरोध ०।",
+ 'local.status.truncated':"मिलेका {total} स्रोत अंशमध्ये {shown} मात्र देखाइएका छन्। बाँकी अंश देखाइएको छैन। एउटा मात्र उत्तर छानिएको छैन। सबै मिल्दो अंश हेर्न प्रश्न थप स्पष्ट बनाउनुहोस्। मोडेल कल ०, नेटवर्क अनुरोध ०।",
  'local.action.seek':"मिल्दो स्रोतको समय खोल्नुहोस्",
  'local.action.review':"स्थानीय समीक्षा कार्ड पूर्वावलोकन",
  'language.en':'English',
@@ -164,12 +166,19 @@ export function translate(key,locale='en'){
  const chosen=localeCatalog[locale]??EN;
  return chosen[key]??EN[key]??key;
 }
+// The displayed count describes lexical matches, not semantic entailment.
+export function formatLocalAmbiguity(total,shown,locale='en'){
+ if(!Number.isInteger(total)||total<2||total>5000||shown!==Math.min(total,5))return translate('local.status.unavailable',locale);
+ return translate(total>shown?'local.status.truncated':'local.status.ambiguous',locale)
+  .replace('{total}',formatNumber(total,locale)).replace('{shown}',formatNumber(shown,locale));
+}
 export function applyLocale(root,locale='en'){
  if(!root||typeof root.querySelectorAll!=='function')throw new TypeError('Localization root is required.');
  const resolved=localeCatalog[locale]?locale:'en';
  for(const node of root.querySelectorAll('[data-i18n]')){
   const key=node.getAttribute('data-i18n');
-  node.textContent=translate(key,resolved);
+  node.textContent=key==='local.status.ambiguous'||key==='local.status.truncated'?
+   formatLocalAmbiguity(Number(node.getAttribute('data-match-count')),Number(node.getAttribute('data-returned-count')),resolved):translate(key,resolved);
  }
  for(const node of root.querySelectorAll('[data-i18n-placeholder]')){
   const key=node.getAttribute('data-i18n-placeholder');

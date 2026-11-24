@@ -17,10 +17,10 @@ test('search filters bind candidates to one source and a containing time interva
  const all=t.call('search_lesson',{query:'timing marker'});assert.equal(all.receipts.length,3);
  const scoped=t.call('search_lesson',{query:'timing marker',sourceId:'second-source'});
  assert.deepEqual(scoped.receipts.map(r=>r.cueId),['early','late']);
- assert.deepEqual(scoped.filters,{sourceId:'second-source'});assert.equal(scoped.returnedCount,2);assert.equal(scoped.truncated,false);
+ assert.deepEqual(scoped.filters,{sourceId:'second-source'});assert.equal(scoped.returnedCount,2);assert.equal(scoped.matchCount,2);assert.equal(scoped.truncated,false);
  const interval=t.call('search_lesson',{query:'timing marker',sourceId:'second-source',start:0,end:5});
  assert.deepEqual(interval.receipts.map(r=>r.cueId),['early']);
- assert.deepEqual(interval.filters,{sourceId:'second-source',start:0,end:5});assert.equal(interval.returnedCount,1);assert.equal(interval.truncated,false);
+ assert.deepEqual(interval.filters,{sourceId:'second-source',start:0,end:5});assert.equal(interval.returnedCount,1);assert.equal(interval.matchCount,1);assert.equal(interval.truncated,false);
  assert.equal(t.call('search_lesson',{query:'timing marker',sourceId:'second-source',start:4,end:9}).receipts.length,0);
 });
 test('search interval filters require a finite ordered pair and cannot widen past schema bounds',()=>{
@@ -55,7 +55,7 @@ test('maximum 20x500 short-cue catalog preserves order, exact scope, duplicate r
  const sources=Array.from({length:20},(_,i)=>({...fixture.source,id:'source-'+i,duration:1000,cues:Array.from({length:500},(_,j)=>({id:'cue-'+j,start:j,end:j+0.5,text:'Timing '+i+' '+j}))}));
  const t=createSourceTools(sources,{now:()=>fixture.receipt.retrievedAt});
  const first=t.call('search_lesson',{query:'timing'}).receipts;
- assert.deepEqual(first.map(r=>r.cueId),['cue-0','cue-1','cue-2','cue-3','cue-4']);assert.ok(first.every(r=>r.sourceId==='source-0'));const all=t.call('search_lesson',{query:'timing'});assert.equal(all.returnedCount,5);assert.equal(all.truncated,true);
+ assert.deepEqual(first.map(r=>r.cueId),['cue-0','cue-1','cue-2','cue-3','cue-4']);assert.ok(first.every(r=>r.sourceId==='source-0'));const all=t.call('search_lesson',{query:'timing'});assert.equal(all.returnedCount,5);assert.equal(all.matchCount,10000);assert.equal(all.truncated,true);
  const exact=t.call('read_cue',{sourceId:'source-19',cueId:'cue-499'}).receipts[0];
  assert.equal(exact.excerpt,'Timing 19 499');assert.equal(validateReceipt(exact,{sources}).level,'catalog_matched');
  assert.deepEqual(t.call('search_lesson',{query:'timing',sourceId:'source-19',start:498,end:500}).receipts.map(r=>r.cueId),['cue-498','cue-499']);
@@ -73,4 +73,13 @@ test('literal search normalizes Unicode compatibility forms before matching with
  const result=t.call('search_lesson',{query:'क़दम'});
  assert.equal(result.receipts.length,1);assert.equal(result.receipts[0].excerpt,'क़दम जाँच गर्नुहोस्');
  assert.equal(result.returnedCount,1);assert.equal(result.truncated,false);
+});
+
+test('literal count includes overlapping cues without conflating source filters, cap or zero matches',()=>{
+ const source=structuredClone(fixture.source);source.cues=Array.from({length:7},(_,i)=>({id:'overlap-'+i,start:2,end:4,text:i===6?'Other cue':'Ｔiming marker'}));
+ const second={...source,id:'source-two',cues:source.cues.slice(0,2)};
+ const tools=createSourceTools([source,second],{now:()=>fixture.receipt.retrievedAt});
+ for(const [args,count] of [[{query:'timing marker'},8],[{query:'timing marker',sourceId:source.id},6],[{query:'timing marker',sourceId:second.id,start:2,end:4},2],[{query:'timing marker',start:3,end:4},0],[{query:'timing marker',sourceId:'unknown-source'},0]]){
+  const found=tools.call('search_lesson',args);assert.equal(found.matchCount,count);assert.equal(found.returnedCount,Math.min(5,count));assert.equal(found.receipts.length,Math.min(5,count));assert.equal(found.truncated,count>5);
+ }
 });

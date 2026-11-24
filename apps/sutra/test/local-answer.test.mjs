@@ -73,3 +73,8 @@ test('phrase ranking cannot hide alternative fully matching cues and the receipt
  assert.equal(result.receipts.length,5);assert.equal(result.receipts[0].cueId,'match-0');
  assert.equal(result.truthStatus,'unverified');
 });
+
+test('local lexical index refuses its deliberate 5000-cue limit without returning partial coverage',()=>{
+ const sources=Array.from({length:11},(_,i)=>({...fixture.source,id:'local-source-'+i,duration:1000,cues:Array.from({length:i===10?1:500},(_,j)=>({id:'cue-'+j,start:j,end:j+0.5,text:'timing marker'}))}));
+ assert.throws(()=>createLocalAnswer({sources}),/LOCAL_INDEX_SIZE/);
+});

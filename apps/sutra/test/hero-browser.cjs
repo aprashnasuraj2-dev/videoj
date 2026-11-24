@@ -2,6 +2,7 @@ const {chromium}=require('playwright');
 const {spawn}=require('node:child_process');
 const path=require('node:path');
 const net=require('node:net');
+const fs=require('node:fs');const {createHash}=require('node:crypto');
 const assert=require('node:assert/strict');
 
 (async()=>{
@@ -56,6 +57,39 @@ const assert=require('node:assert/strict');
    await first.locator('#language-select').selectOption('en');
    assert.match(await first.locator('#local-answer-status').innerText(),/0 model calls/);
   }finally{await freshContext.close();}
+
+  // An isolated, hash-consistent synthetic profile with six overlapping cues
+  // must show five receipts AND the complete count, including after a locale
+  // switch; the original public fixture and actual source text remain unchanged.
+  const ambiguityContext=await browser.newContext({viewport:{width:1280,height:800}});
+  try{
+   const ambiguous=await ambiguityContext.newPage();const apiOrMedia=[];
+   ambiguous.on('request',r=>{if(r.url().includes('/api/')||r.url().includes('/media/timing-fixture.mp4'))apiOrMedia.push(r.url());});
+   const profile=JSON.parse(fs.readFileSync(path.join(app,'public/content/content-profile.json'),'utf8'));
+   const catalog=JSON.parse(fs.readFileSync(path.join(app,'public/content/source-catalog.json'),'utf8'));
+   profile.contentVersion=catalog.contentVersion='synthetic-ambiguity-browser-fixture-v1';
+   const source=catalog.sources[0];source.version='ambiguity-fixture-v1';
+   for(let i=1;i<6;i++)source.cues.push({...source.cues[0],id:'alternative-'+i});
+   const catalogBytes=JSON.stringify(catalog);profile.catalog.sha256=createHash('sha256').update(catalogBytes).digest('hex');
+   await ambiguous.route('**/content/content-profile.json',r=>r.fulfill({json:profile}));
+   await ambiguous.route('**/content/source-catalog.json',r=>r.fulfill({contentType:'application/json',body:catalogBytes}));
+   await ambiguous.goto(base);
+   const question=ambiguous.getByRole('searchbox',{name:'Question for local source lookup'});
+   await question.fill('Where is the timing marker?');await question.press('Enter');
+   const status=ambiguous.locator('#local-answer-status');
+   assert.match(await status.innerText(),/5 of 6 matching source excerpts shown \(truncated\)/);
+   assert.equal(await status.getAttribute('data-state'),'empty','ambiguity must not claim a completed answer');
+   assert.equal(await ambiguous.locator('#local-answer-results li').count(),5);
+   await ambiguous.locator('#language-select').selectOption('ne');assert.match(await status.innerText(),/६.*५/);
+   await ambiguous.locator('#language-select').selectOption('en');assert.match(await status.innerText(),/5 of 6 matching/);
+   const literal=ambiguous.getByRole('searchbox',{name:'Exact source wording'});
+   await literal.fill('timing marker');await literal.press('Enter');
+   assert.match(await ambiguous.locator('#direct-status').innerText(),/5 of 6 matching source cues shown \(truncated\)/);
+   assert.equal(await ambiguous.locator('#direct-results li').count(),5);
+   await question.fill('unavailable voltage threshold');await question.press('Enter');
+   assert.equal(await status.getAttribute('data-match-count'),null);assert.equal(await ambiguous.locator('#local-answer-results li').count(),0);
+   assert.deepEqual(apiOrMedia,[]);
+  }finally{await ambiguityContext.close();}
 
   let delayed=true;
   await page.route('**/media/timing-fixture.mp4*',async route=>{

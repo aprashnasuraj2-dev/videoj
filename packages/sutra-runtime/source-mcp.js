@@ -29,11 +29,11 @@ export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt
  return {
   async listTools(){await ready();const result=await rpc('tools/list',{});if(!Array.isArray(result.tools)||result.tools.length!==definitions.length)bad();for(const d of definitions){const matches=result.tools.filter(t=>t.name===d.name);if(matches.length!==1||JSON.stringify(matches[0].inputSchema)!==JSON.stringify(d.inputSchema))bad();}return structuredClone(definitions);},
   async callTool(name,args){const d=definitions.find(t=>t.name===name);if(!d)bad();validateData(d.inputSchema,args);const expected=local.call(name,args);if(name==='search_lesson'&&expected.truncated)bad('SOURCE_QUERY_TOO_BROAD');await ready();const result=await rpc('tools/call',{name,arguments:args});const output=result.structuredContent;
-   const allowed=name==='search_lesson'?['version','receipts','limit','truthStatus','filters','returnedCount','truncated']:['version','receipts','limit','truthStatus'];
+   const allowed=name==='search_lesson'?['version','receipts','limit','truthStatus','filters','returnedCount','matchCount','truncated']:['version','receipts','limit','truthStatus'];
    if(result.isError||!output||typeof output!=='object'||Array.isArray(output)||Object.keys(output).some(k=>!allowed.includes(k))||output.version!==1||output.truthStatus!=='unverified'||output.limit!==expected.limit||!Array.isArray(output.receipts)||output.receipts.length>(name==='read_cue'?1:5)||name==='read_cue'&&output.receipts.length!==1)bad();
    if(output.receipts.length!==expected.receipts.length)bad();
    if(name==='search_lesson'){
-    if(!Number.isInteger(output.returnedCount)||output.returnedCount!==output.receipts.length||output.returnedCount!==expected.returnedCount||typeof output.truncated!=='boolean'||output.truncated!==expected.truncated||JSON.stringify(output.filters)!==JSON.stringify(expected.filters))bad();
+    if(!Number.isInteger(output.returnedCount)||output.returnedCount!==output.receipts.length||output.returnedCount!==expected.returnedCount||!Number.isInteger(output.matchCount)||output.matchCount!==expected.matchCount||typeof output.truncated!=='boolean'||output.truncated!==expected.truncated||JSON.stringify(output.filters)!==JSON.stringify(expected.filters))bad();
     if(output.truncated)bad('SOURCE_QUERY_TOO_BROAD');
    }
    for(const [index,receipt] of output.receipts.entries()){
@@ -44,7 +44,7 @@ export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt
    if(prospective.size>maxReceipts)bad('SOURCE_EVIDENCE_LIMIT');
    for(const key of nextKeys)seenReceiptKeys.add(key);
    for(const receipt of output.receipts){try{onReceipt?.(structuredClone(receipt));}catch{/* Observer does not control source capability. */}}
-   const safe={version:1,receipts:output.receipts,truthStatus:'unverified',...(name==='search_lesson'?{returnedCount:output.returnedCount,truncated:output.truncated,filters:output.filters}:{})};
+   const safe={version:1,receipts:output.receipts,truthStatus:'unverified',...(name==='search_lesson'?{returnedCount:output.returnedCount,matchCount:output.matchCount,truncated:output.truncated,filters:output.filters}:{})};
    return JSON.stringify(safe);
   },
  };
