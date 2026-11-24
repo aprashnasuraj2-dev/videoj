@@ -19,3 +19,5 @@ Run `npm test` here. The included corpus is a synthetic timing fixture, not an
 original educational lesson. No independent adoption or real learner benefit has
 yet been measured. The source registry and validator are intended community tools;
 publication documentation, licensing audit and external builder trials remain gates.
+
+The registry additionally caps aggregate cue text at 4,000,000 UTF-16 code units and rejects non-data descriptors before reading them. Registration indexes source/cue identity in linear cue count; exact lookup uses nested maps, and literal search stops at five matches. Receipts are independently checked against immutable projected source and cue metadata. The ceiling is not a promise of a particular device latency. Parse untrusted wire JSON; executable proxies are outside the library contract.

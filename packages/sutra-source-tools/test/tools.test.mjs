@@ -39,3 +39,30 @@ test('fixed query and filters are reproducible and preserve exact source excerpt
  assert.equal(first.receipts[0].end,fixture.source.cues[0].end);
  assert.equal(first.truthStatus,'unverified');
 });
+
+test('catalog registration and tool arguments never invoke ordinary accessors or toJSON',()=>{
+ let executed=0;
+ const accessor=structuredClone(fixture.source);Object.defineProperty(accessor.cues[0],'text',{enumerable:true,get(){executed++;return fixture.source.cues[0].text;}});
+ const jsonHook={...fixture.source,toJSON(){executed++;return fixture.source;}};
+ for(const value of [accessor,jsonHook])assert.throws(()=>createSourceTools([value]),/CATALOG/);
+ const args={};Object.defineProperty(args,'query',{enumerable:true,get(){executed++;return 'timing';}});
+ assert.throws(()=>create().call('search_lesson',args),/ARGUMENTS/);
+ const hidden={query:'timing'};Object.defineProperty(hidden,'extra',{value:'private-canary'});
+ assert.throws(()=>create().call('search_lesson',hidden),/ARGUMENTS/);
+ assert.equal(executed,0);
+});
+test('maximum 20x500 short-cue catalog preserves order, exact scope, duplicate rejection and five-result cap',()=>{
+ const sources=Array.from({length:20},(_,i)=>({...fixture.source,id:'source-'+i,duration:1000,cues:Array.from({length:500},(_,j)=>({id:'cue-'+j,start:j,end:j+0.5,text:'Timing '+i+' '+j}))}));
+ const t=createSourceTools(sources,{now:()=>fixture.receipt.retrievedAt});
+ const first=t.call('search_lesson',{query:'timing'}).receipts;
+ assert.deepEqual(first.map(r=>r.cueId),['cue-0','cue-1','cue-2','cue-3','cue-4']);assert.ok(first.every(r=>r.sourceId==='source-0'));
+ const exact=t.call('read_cue',{sourceId:'source-19',cueId:'cue-499'}).receipts[0];
+ assert.equal(exact.excerpt,'Timing 19 499');assert.equal(validateReceipt(exact,{sources}).level,'catalog_matched');
+ assert.deepEqual(t.call('search_lesson',{query:'timing',sourceId:'source-19',start:498,end:500}).receipts.map(r=>r.cueId),['cue-498','cue-499']);
+ const duplicate=structuredClone(sources[0]);duplicate.cues[499].id='cue-0';assert.throws(()=>createSourceTools([duplicate]),/CATALOG/);
+});
+test('aggregate text budget and empty-source metadata are enforced',()=>{
+ const heavy=Array.from({length:5},(_,i)=>({...fixture.source,id:'source-'+i,duration:1000,cues:Array.from({length:500},(_,j)=>({id:'cue-'+j,start:j,end:j+0.5,text:'x'.repeat(2000)}))}));
+ assert.throws(()=>createSourceTools(heavy),/CATALOG/);
+ assert.throws(()=>createSourceTools([{...fixture.source,hash:'bad',cues:[]}]),/CATALOG/);
+});

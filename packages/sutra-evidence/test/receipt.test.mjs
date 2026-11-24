@@ -71,3 +71,31 @@ test('claim cannot self-upgrade, add fields or hide invalid receipt behind inter
   const result=validateEvidenceClaim(claim,{sources});assert.equal(result.valid,false);assert.equal(result.state,'unsupported');
  }
 });
+
+test('receipt and claim reject executable or hidden record fields without invoking ordinary getters',()=>{
+ let executed=0;
+ const bad={...receipt};Object.defineProperty(bad,'excerpt',{enumerable:true,get(){executed++;return receipt.excerpt;}});
+ const hidden={...receipt};Object.defineProperty(hidden,'hidden',{value:'private-canary'});
+ const symbol={...receipt,[Symbol('extra')]:'private-canary'};
+ const inherited=Object.assign(Object.create({extra:true}),receipt);
+ for(const value of [bad,hidden,symbol,inherited]){
+  const result=run(value);assert.equal(result.valid,false);assert.ok(!JSON.stringify(result).includes('private-canary'));
+ }
+ const claim={version:1,kind:'source_excerpt',receipt};Object.defineProperty(claim,'text',{enumerable:true,get(){executed++;return receipt.excerpt;}});
+ assert.equal(validateEvidenceClaim(claim,{sources}).state,'unsupported');
+ assert.equal(validateEvidenceClaim({version:1,kind:'source_excerpt',text:receipt.excerpt,receipt:bad},{sources}).state,'unsupported');
+ assert.equal(executed,0);
+});
+test('catalog array and source/cue descriptors reject getters, sparse data and custom prototypes',()=>{
+ let executed=0;
+ const accessor=(obj,key,value)=>{Object.defineProperty(obj,key,{enumerable:true,configurable:true,get(){executed++;return value;}});return obj;};
+ const a=structuredClone(sources);accessor(a,'0',sources[0]);
+ const b=structuredClone(sources);accessor(b[0],'id',sources[0].id);
+ const c=structuredClone(sources);accessor(c[0].cues[0],'text',sources[0].cues[0].text);
+ const d=structuredClone(sources);delete d[0].cues[0];
+ const f=structuredClone(sources);f.filter=()=>{executed++;return sources;};
+ for(const catalog of [a,b,c,d,f]){
+  const result=run(receipt,catalog);assert.equal(result.valid,false);assert.ok(result.errors.some(e=>e.code==='CATALOG'));
+ }
+ assert.equal(executed,0);
+});

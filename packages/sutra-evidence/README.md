@@ -31,3 +31,5 @@ Return levels:
 Unknown receipt properties are rejected, including fields named for credentials/private prompts. Callers must still prevent sensitive content being placed inside an excerpt and control who supplies the catalog. This library does not isolate secrets, execute peer code, fetch URLs or grant consent.
 
 CLI exit codes: 0 accepted at the reported level; 1 invalid receipt/catalog; 2 usage, unreadable/oversized input or malformed JSON. The CLI supports files up to 2 MiB each; the API bounds catalog count to 10,000 but the host must also bound transport bytes.
+
+The JavaScript API accepts ordinary plain/null-prototype records and dense arrays, not custom prototypes, accessors, hidden fields, symbols or serialization hooks. Descriptor checks do not invoke ordinary getters; this is not a sandbox for Proxy traps or arbitrary caller code. Parse untrusted wire JSON before validation. Matching cue lists are capped at 10,000 entries.

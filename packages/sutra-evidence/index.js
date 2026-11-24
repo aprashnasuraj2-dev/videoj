@@ -2,6 +2,37 @@
 const HASH = /^[a-f0-9]{64}$/;
 const ID = /^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,127}$/;
 const isObject = x => x !== null && typeof x === 'object' && !Array.isArray(x);
+// Only own enumerable data properties of ordinary JSON-shaped records are read.
+// Do not treat this as a JavaScript sandbox: proxies and executable callers are
+// outside this contract. Deserialize untrusted wire data with JSON.parse first.
+export function snapshotDataRecord(value, maxKeys=64) {
+  if (!isObject(value)) throw new TypeError('Expected data record.');
+  const proto=Object.getPrototypeOf(value);
+  if(proto!==Object.prototype && proto!==null) throw new TypeError('Expected plain data record.');
+  const names=Reflect.ownKeys(value);
+  if(names.length>maxKeys) throw new TypeError('Too many fields.');
+  const out=Object.create(null);
+  for(const name of names){
+    const d=Object.getOwnPropertyDescriptor(value,name);
+    if(typeof name!=='string'||['__proto__','constructor','prototype','toJSON'].includes(name)||!d?.enumerable||!Object.hasOwn(d,'value')||typeof d.value==='function'||typeof d.value==='symbol')
+      throw new TypeError('Unsafe data property.');
+    out[name]=d.value;
+  }
+  return out;
+}
+export function snapshotDataArray(value,maxLength=10000){
+  if(!Array.isArray(value)||Object.getPrototypeOf(value)!==Array.prototype)throw new TypeError('Expected data array.');
+  const length=Object.getOwnPropertyDescriptor(value,'length')?.value;
+  if(!Number.isSafeInteger(length)||length<0||length>maxLength||Reflect.ownKeys(value).length!==length+1)
+    throw new TypeError('Invalid array size or fields.');
+  const result=[];
+  for(let i=0;i<length;i++){
+    const d=Object.getOwnPropertyDescriptor(value,String(i));
+    if(!d?.enumerable||!Object.hasOwn(d,'value'))throw new TypeError('Sparse or executable data array.');
+    result.push(d.value);
+  }
+  return result;
+}
 const keys = ['version', 'sourceId', 'sourceHash', 'sourceVersion', 'mediaHash', 'cueId', 'start', 'end', 'excerpt', 'retrievedAt', 'verification'];
 const datePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
 function validDate(value) {
@@ -16,6 +47,7 @@ export function validateReceipt(receipt, { sources } = {}) {
   const errors = [];
   const fail = (code, path) => errors.push({ code, path }); // Do not echo untrusted/private values.
   if (!isObject(receipt)) return {valid:false, level:'invalid', errors:[{code:'RECEIPT_TYPE',path:''}]};
+  try {receipt=snapshotDataRecord(receipt,32);}catch{return {valid:false,level:'invalid',errors:[{code:'RECEIPT_DATA',path:''}]};}
   for (const key of keys) if (!Object.hasOwn(receipt,key)) fail('REQUIRED',key);
   for (const key of Object.keys(receipt)) if (!keys.includes(key)) fail('UNKNOWN_FIELD',key);
   if (receipt.version !== 1) fail('VERSION','version');
@@ -34,7 +66,9 @@ export function validateReceipt(receipt, { sources } = {}) {
   if (!Array.isArray(sources) || sources.length > 10000) {
     fail('CATALOG','sources'); return {valid:false,level:'invalid',errors};
   }
-  const matches = sources.filter(s => isObject(s) && s.id === receipt.sourceId);
+  let matches;
+  try{matches=snapshotDataArray(sources).map(s=>snapshotDataRecord(s)).filter(s=>s.id===receipt.sourceId);}
+  catch{fail('CATALOG','sources');return {valid:false,level:'invalid',errors};}
   if (matches.length !== 1) fail(matches.length ? 'AMBIGUOUS_SOURCE' : 'MISSING_SOURCE','sourceId');
   else {
     const source = matches[0];
@@ -44,7 +78,9 @@ export function validateReceipt(receipt, { sources } = {}) {
       if (source.mediaHash !== receipt.mediaHash) fail('MEDIA_MISMATCH','mediaHash');
       if (source.hash !== receipt.sourceHash) fail('HASH_MISMATCH','sourceHash');
       if (receipt.end > source.duration) fail('OUTSIDE_MEDIA','end');
-      const cues = source.cues.filter(c => isObject(c) && c.id === receipt.cueId);
+      let cues;
+      try{cues=snapshotDataArray(source.cues).map(c=>snapshotDataRecord(c)).filter(c=>c.id===receipt.cueId);}
+      catch{fail('CATALOG','sources');return {valid:false,level:'invalid',errors};}
       if (cues.length !== 1) fail(cues.length ? 'AMBIGUOUS_CUE' : 'MISSING_CUE','cueId');
       else {
         const cue = cues[0];
@@ -72,12 +108,14 @@ export function validateEvidenceClaim(claim,{sources}={}){
   const errors=[],fail=(code,path)=>errors.push({code,path});
   const allowed=['version','kind','text','receipt'];
   if(!isObject(claim))return {valid:false,state:'unsupported',truthStatus:'unverified',errors:[{code:'CLAIM_TYPE',path:''}],sourceRef:null};
+  try{claim=snapshotDataRecord(claim,16);}catch{return {valid:false,state:'unsupported',truthStatus:'unverified',errors:[{code:'CLAIM_DATA',path:''}],sourceRef:null};}
   for(const key of allowed)if(!Object.hasOwn(claim,key))fail('REQUIRED',key);
   for(const key of Object.keys(claim))if(!allowed.includes(key))fail('UNKNOWN_FIELD',key);
   if(claim.version!==1)fail('CLAIM_VERSION','version');
   if(!['source_excerpt','interpretation'].includes(claim.kind))fail('CLAIM_KIND','kind');
   if(typeof claim.text!=='string'||!claim.text.trim()||claim.text.length>4000)fail('CLAIM_TEXT','text');
   if(errors.length)return {valid:false,state:'unsupported',truthStatus:'unverified',errors,sourceRef:null};
+  try{claim.receipt=snapshotDataRecord(claim.receipt,32);}catch{return {valid:false,state:'unsupported',truthStatus:'unverified',errors:[{code:'RECEIPT_DATA',path:'receipt'}],sourceRef:null};}
   const receiptResult=validateReceipt(claim.receipt,{sources});
   if(!receiptResult.valid||receiptResult.level!=='catalog_matched'){
     for(const error of receiptResult.errors)fail(error.code,`receipt.${error.path}`);
