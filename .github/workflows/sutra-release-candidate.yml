@@ -17,3 +17,16 @@ jobs:
         with:
           node-version: '22'
       - run: node --test tools/sutra-release-candidate/*.test.mjs
+      - name: Build development bundle required by candidate materializer
+        working-directory: apps/sutra
+        run: npm ci && npm run build
+      - name: Incomplete release template must not materialize
+        run: |
+          set +e
+          node tools/sutra-release-candidate/cli.mjs tools/sutra-release-candidate/release-config.template.json apps/sutra/dist "$RUNNER_TEMP/sutra-release"
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ] || [ -e "$RUNNER_TEMP/sutra-release" ]; then
+            echo "Incomplete release template unexpectedly produced a candidate" >&2
+            exit 1
+          fi

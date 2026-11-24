@@ -18,3 +18,14 @@ The gate **refuses** to build from the current router-free development manifest 
 That is structural evidence only. The tool cannot prove that budget approval is authentic, that the provider will stay available, that public HTTPS/CORS works, that the content is licensed/factually reviewed or that Devpost accepts the project.
 
 The output is a release overlay concept, not a deployment command. No cloud/DNS operation exists here.
+
+
+## Materialize an isolated candidate
+
+After a **real completed** release config exists:
+
+\`node tools/sutra-release-candidate/cli.mjs release-config.json apps/sutra/dist /NEW/EMPTY/release-dir\`
+
+The materializer refuses an existing or overlapping destination, hidden entries, symlinks, path escape and oversized files. It copies regular development build files, removes manifest-indexed development graph variants, writes only SHA-256-addressed release graph variants, replaces manifest/links, binds the stable public runtime and UI-entry hashes, and emits \`/agents/release-candidate.json\` plus a non-self-referential candidate inventory digest.
+
+It performs no deployment and has no cloud credentials. CI additionally proves the checked-in incomplete template cannot generate a candidate.
