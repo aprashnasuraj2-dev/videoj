@@ -61,7 +61,12 @@
         "apps/sutra/package.json",
         "apps/sutra/package-lock.json",
         "apps/sutra/vite.config",
-        "packages/sutra-"
+        "packages/sutra-runtime/",
+        "packages/sutra-evidence/",
+        "packages/sutra-source-tools/",
+        "packages/sutra-consent/",
+        "packages/sutra-inference/",
+        "packages/sutra-actions/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA browser compatibility matrix"
