@@ -90,6 +90,15 @@ const contrast=(a,b)=>{
   // The native captions track must carry a short authored cue and be capable of
   // entering showing mode. This checks the actual WebVTT path; it does not
   // pretend to be a human readability or screen-reader assessment.
+  const captionTrackAvailable=await page.locator('video').evaluate(video=>{
+   const track=Array.from(video.textTracks).find(item=>item.kind==='captions');
+   if(!track)return false;
+   // Non-default text tracks may remain unloaded while disabled. Hidden mode
+   // requests the authored WebVTT without rendering it yet.
+   track.mode='hidden';
+   return true;
+  });
+  assert.equal(captionTrackAvailable,true);
   await page.waitForFunction(()=>Array.from(document.querySelector('video').textTracks)
    .some(track=>track.kind==='captions'&&track.cues&&track.cues.length>0));
   const caption=await page.locator('video').evaluate(video=>{
