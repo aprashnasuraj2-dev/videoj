@@ -19,7 +19,8 @@ const assert=require('node:assert/strict');
   assert.equal(offlineFailed,true,'without a cached/offline package, startup must fail rather than impersonate a local live run');
   await context.setOffline(false);
   await offlinePage.goto(base);await offlinePage.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
-  assert.match(await offlinePage.locator('.notice').innerText(),/Synthetic example/);
+  assert.match(await offlinePage.locator('.notice').innerText(),/Synthetic development content/);
+  assert.match(await offlinePage.locator('.notice').innerText(),/not factual training guidance/);
   assert.match(await offlinePage.locator('#network-result').innerText(),/not started/i);
 
   // Lose network only after the graph GET has left the browser.

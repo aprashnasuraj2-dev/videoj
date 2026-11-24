@@ -55,7 +55,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.getByRole('button',{name:'Confirm local save'}).click();
   await page.waitForFunction(()=>document.querySelector('#review-list').children.length===1);
   assert.equal(calls,4);
-  await page.getByLabel('Question about the synthetic lesson').fill('Locate the timing marker again.');
+  await page.getByLabel('Question about the source lesson').fill('Locate the timing marker again.');
   assert.equal(await page.locator('#provider-output').isHidden(),true);
   assert.equal(await page.getByRole('button',{name:'Preview retrieved review card'}).count(),0);
   mode='partial';await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,7);assert.match(await page.locator('#provider-status').textContent(),/PROVIDER_QUOTA/);assert.match(await page.locator('#provider-answer').textContent(),/No completed answer/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.equal(await page.locator('#provider-output').isHidden(),false);
@@ -73,7 +73,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   mode='hold';await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>!document.querySelector('#provider-cancel').disabled);
   for(let i=0;i<50&&calls<9;i++)await new Promise(r=>setTimeout(r,20));assert.equal(calls,9);
   await page.getByRole('button',{name:'Cancel inference'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='cancelled');assert.equal(await page.locator('#provider-output').isHidden(),true);
-  await page.getByRole('button',{name:'Inspect timing cue at 00:02'}).click();await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Synthetic cue reached'));
+  await page.getByRole('button',{name:'Inspect featured source cue'}).click();await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
   assert.deepEqual(errors,[]);console.log('PASS: visible opt-in model discovery, synthetic provider transport, independently matched receipts, token counts, quota failure, cancellation, no retry and native media unaffected.');
  }finally{await browser?.close();server.kill('SIGTERM');}
 })().catch(e=>{console.error(e);process.exitCode=1;});
