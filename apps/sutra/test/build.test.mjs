@@ -4,9 +4,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import config from '../vite.config.js';
+import runtimeConfig from '../vite.runtime.config.js';
 const app=fileURLToPath(new URL('../',import.meta.url));
 test('output remains inside isolated app',()=>assert.equal(config.build.outDir,path.join(app,'dist')));
-test('Vite root does not depend on preview app',()=>assert.equal(config.root,app));
+test('Vite root does not depend on preview app',()=>{assert.equal(config.root,app);assert.equal(runtimeConfig.root,app);assert.equal(runtimeConfig.build.emptyOutDir,false);assert.equal(runtimeConfig.publicDir,false);});
 test('built bundle exists with relative assets',()=>{const html=fs.readFileSync(path.join(app,'dist/index.html'),'utf8');assert.match(html,/\.\/assets\//);});
 test('source imports evidence but no preview or DETOUR modules',()=>{const s=fs.readFileSync(path.join(app,'src/main.js'),'utf8');assert.match(s,/packages\/sutra-evidence/);assert.doesNotMatch(s,/apps\/preview|detour\/|videojs\(/);});
 test('shared Video.js runtime is resolved from the app dependency boundary',()=>{assert.ok(config.resolve.dedupe.includes('@videojs/html'));const pkg=JSON.parse(fs.readFileSync(path.join(app,'package.json')));assert.equal(pkg.dependencies['@videojs/html'],'10.4.0');assert.equal(pkg.dependencies['@videojs/mux-video'],'10.4.0');});
@@ -99,7 +100,7 @@ test('generated inventory exactly binds manifest, links, graphs and built runtim
  assert.deepEqual(stored.networks.map(n=>n.name),['learner','source_learner','linked_learner']);
  assert.ok(stored.runtimePaths.some(p=>p.endsWith('.js')));assert.equal(stored.inferenceDiscoveryPath,'/api/status');
  assert.ok(stored.artifacts.every(a=>/^[0-9a-f]{64}$/.test(a.sha256)&&a.bytes>0));
- assert.ok(stored.artifacts.every(a=>a.path.startsWith('/agents/')||a.path.startsWith('/assets/')));
+ assert.ok(stored.artifacts.every(a=>a.path.startsWith('/agents/')||a.path.startsWith('/assets/')||a.path.startsWith('/runtime/')));
 });
 
 test('synthetic written comparison link is byte-bound to the published guide and exact anchor excerpt',async()=>{
