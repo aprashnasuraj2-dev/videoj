@@ -1,7 +1,7 @@
 import {createSourceTools} from '../../../packages/sutra-source-tools/index.js';
 import {validateEvidenceClaim,snapshotDataArray,snapshotDataRecord} from '../../../packages/sutra-evidence/index.js';
 import {applyScreenState} from './status-state.js';
-import {createReceiptActionRow} from './receipt-actions.js';
+import {createReceiptActionRow,createReceiptSeekScope} from './receipt-actions.js';
 
 const result=(state,receipts=[],extra={})=>Object.freeze({state,receipts:Object.freeze(receipts.map(r=>Object.freeze({...r}))),modelCalls:0,networkRequests:0,truthStatus:'unverified',...extra});
 export function createDirectLookup({sources,now}={}){
@@ -26,7 +26,9 @@ export function mountDirectLookup({root,sources,seekTo,prepareReview}){
  const $=id=>root.querySelector('#'+id),form=$('direct-form'),input=$('direct-query'),status=$('direct-status'),list=$('direct-results'),actionStatus=$('direct-action-status');
  let lookup,epoch=0;
  try{lookup=createDirectLookup({sources});}catch{applyScreenState(status,'error','Source catalog unavailable; no result is claimed.');}
- const clear=()=>{epoch++;list.replaceChildren();actionStatus.textContent='';};
+ const seekScope=createReceiptSeekScope();
+ const clear=()=>{seekScope.cancel();epoch++;list.replaceChildren();actionStatus.textContent='';};
+ window.addEventListener('pagehide',()=>{if(seekScope.cancel())actionStatus.textContent='Cue seek cancelled on navigation; no seek success is claimed.';});
  input.addEventListener('input',()=>{clear();applyScreenState(status,'idle','Search the revised phrase. Previous source actions are no longer available.');});
  form.addEventListener('submit',event=>{
   event.preventDefault();clear();const current=epoch;
@@ -39,7 +41,7 @@ export function mountDirectLookup({root,sources,seekTo,prepareReview}){
    found.returnedCount+' of '+found.matchCount+' matching source cues shown (truncated). No single answer selected. Narrow the exact wording for complete coverage. 0 model calls, 0 network requests. Factual truth remains unverified.':
    found.returnedCount+' catalog-matched source cue(s). Search coverage is complete for this literal phrase. '+(found.state==='ambiguous'?'Multiple matches; no single answer selected. ':'')+'0 model calls, 0 network requests. Factual truth remains unverified.');
   for(const receipt of found.receipts){
-   const row=createReceiptActionRow({receipt,sources,seekTo,prepareReview,actionStatus,isCurrent:()=>current===epoch,seekLabel:'Seek to matched cue',reviewLabel:'Preview matched review card'});
+   const row=createReceiptActionRow({receipt,sources,seekTo,prepareReview,actionStatus,seekScope,isCurrent:()=>current===epoch,seekLabel:'Seek to matched cue',reviewLabel:'Preview matched review card'});
    if(row)list.append(row);
   }
   if(!list.children.length)applyScreenState(status,'error','No current catalog-matched source receipt is available.');

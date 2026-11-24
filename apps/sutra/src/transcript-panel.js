@@ -1,5 +1,5 @@
 import {isNativeCueReached} from './seek-policy.js';
-import {createReceiptActionRow} from './receipt-actions.js';
+import {createReceiptActionRow,createReceiptSeekScope} from './receipt-actions.js';
 import {applyLocale,translate} from './localization.js';
 // Evidence-linked transcript navigation. Source identity and native media time
 // remain authoritative. No synthetic clock, guessed captions, or auto-follow scroll.
@@ -27,6 +27,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media,readReceipt,prepa
  host.replaceChildren();
  let disposed=false;
  let currentCues=[];
+ const cueScope=createReceiptSeekScope(),inspectionScope=createReceiptSeekScope();
  let lastText='',renderEpoch=0,seekEpoch=0,inspectEpoch=0,selectedCueId=null;
  const inspectable=typeof readReceipt==='function'&&typeof prepareReview==='function'&&typeof seekReceipt==='function';
  const section=el('section','transcript-browser');
@@ -84,7 +85,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media,readReceipt,prepa
   controls[next]?.focus();
  }
  function clearInspection(){
-  inspectEpoch++;selectedCueId=null;
+  inspectionScope.cancel();inspectEpoch++;selectedCueId=null;
   for(const {inspect,details} of buttonMap.values())if(inspect){inspect.setAttribute('aria-expanded','false');details.replaceChildren();details.hidden=true;}
  }
  function inspectCue(id){
@@ -98,7 +99,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media,readReceipt,prepa
   const results=el('ul','transcript-receipt-results');
   try{
    const receipt=readReceipt(id);
-   const row=createReceiptActionRow({receipt,sources:[source],seekTo:seekReceipt,prepareReview,actionStatus:status,isCurrent:current,seekLabel:translate('transcript.receipt.seek',locale),reviewLabel:translate('transcript.receipt.review',locale)});
+   const row=createReceiptActionRow({receipt,sources:[source],seekTo:seekReceipt,prepareReview,actionStatus:status,seekScope:inspectionScope,isCurrent:current,seekLabel:translate('transcript.receipt.seek',locale),reviewLabel:translate('transcript.receipt.review',locale)});
    if(!row||receipt.cueId!==id)throw Error('Receipt identity mismatch.');
    const buttons=row.querySelectorAll('button');buttons[0].dataset.i18n='transcript.receipt.seek';buttons[1].dataset.i18n='transcript.receipt.review';
    results.append(row);const intro=el('p','muted');intro.dataset.i18n='transcript.receipt.matched';entry.details.append(intro,results,status);
@@ -107,7 +108,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media,readReceipt,prepa
  }
  function render(){
   if(disposed)return;
-  clearInspection();const epoch=++renderEpoch;seekEpoch++;
+  clearInspection();cueScope.cancel();const epoch=++renderEpoch;seekEpoch++;
   const raw=input.value;
   const query=raw.normalize('NFKC').trim().toLocaleLowerCase('en');
   lastText=query;
@@ -138,19 +139,20 @@ export function mountTranscriptPanel(host,{source,onSeek,media,readReceipt,prepa
    button.addEventListener('click',async()=>{
     if(disposed||epoch!==renderEpoch||!list.contains(button)||button.dataset.busy==='true')return;
     const operation=++seekEpoch;
-    const current=()=>!disposed&&epoch===renderEpoch&&operation===seekEpoch&&list.contains(button);
     if(typeof onSeek!=='function'){
      status('Seek unavailable: no native media adapter is connected.');
      return;
     }
+    const owner=cueScope.begin();
+    const current=()=>!disposed&&epoch===renderEpoch&&operation===seekEpoch&&cueScope.current(owner)&&list.contains(button);
     button.dataset.busy='true';button.setAttribute('aria-busy','true');
     try{
-     const actual=await onSeek(cue.start);
+     const actual=await onSeek(cue.start,{signal:owner.signal});
      if(!isNativeCueReached(actual,cue.start,cue.end))throw Error('Native seek did not reach the cue.');
      if(current()){status('Native media reached '+formatTime(actual)+'. Source cue '+cue.id+' selected; no factual verification.');updateActive();}
     }catch{
      if(current())status('The cue could not be reached in the current media. No seek success is claimed.');
-    }finally{delete button.dataset.busy;button.removeAttribute('aria-busy');}
+    }finally{cueScope.finish(owner);delete button.dataset.busy;button.removeAttribute('aria-busy');}
    });
    item.append(button);
    let inspect,details;
@@ -171,13 +173,15 @@ export function mountTranscriptPanel(host,{source,onSeek,media,readReceipt,prepa
   status(currentCues.length+' of '+items.length+' source cues shown. Use arrow keys within cue controls.');
   updateActive();applyLocale(section,document.documentElement.lang||'en');
  }
+ const cancelPending=()=>{const pending=cueScope.cancel();inspectionScope.cancel();if(pending)status('Cue seek cancelled on navigation; no seek success is claimed.');};
  input.addEventListener('input',render);
  media?.addEventListener?.('timeupdate',updateActive);
  media?.addEventListener?.('seeked',updateActive);
  render();
  return Object.freeze({
+  cancelPending,
   dispose(){
-   disposed=true;renderEpoch++;seekEpoch++;inspectEpoch++;selectedCueId=null;
+   cancelPending();disposed=true;renderEpoch++;seekEpoch++;inspectEpoch++;selectedCueId=null;
    media?.removeEventListener?.('timeupdate',updateActive);
    media?.removeEventListener?.('seeked',updateActive);
    host.replaceChildren();

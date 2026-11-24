@@ -1,6 +1,6 @@
 import {discoverProvider,runProviderLesson} from './provider-run.js';
 import {applyScreenState} from './status-state.js';
-import {createReceiptActionRow} from './receipt-actions.js';
+import {createReceiptActionRow,createReceiptSeekScope} from './receipt-actions.js';
 import {executionLimits} from '../../../packages/sutra-runtime/index.js';
 
 export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=location.origin}){
@@ -11,11 +11,12 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
  const runtimeBounds=executionLimits();
  let model=null,approvedContract=null,active=null,pendingApproval=null,epoch=0,resultContext=null,actionsRevoked=false;
  const set=(s,m)=>applyScreenState(status,s,m);
- const clear=()=>{epoch++;resultContext=null;actionsRevoked=false;output.hidden=true;answer.textContent='';list.replaceChildren();metrics.textContent='';actionStatus.textContent='';resultContextLabel.textContent='';};
+ const seekScope=createReceiptSeekScope();
+ const clear=()=>{seekScope.cancel();epoch++;resultContext=null;actionsRevoked=false;output.hidden=true;answer.textContent='';list.replaceChildren();metrics.textContent='';actionStatus.textContent='';resultContextLabel.textContent='';};
  // Preserve earlier source text but do not resurrect its action authority after an edit or rediscovery.
  function revokeResultActions(){
   if(!resultContext||actionsRevoked)return;
-  actionsRevoked=true;epoch++;actionStatus.textContent='Earlier source excerpts remain visible; these actions are no longer active. Find the excerpt locally or run again explicitly.';
+  seekScope.cancel();actionsRevoked=true;epoch++;actionStatus.textContent='Earlier source excerpts remain visible; these actions are no longer active. Find the excerpt locally or run again explicitly.';
   for(const button of list.querySelectorAll('button')){button.dataset.sutraRevoked='true';button.disabled=true;}
  }
  function labelResult(){
@@ -28,7 +29,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
  function renderReceipts(receipts){
   const current=epoch;
   for(const receipt of receipts){
-   const row=createReceiptActionRow({receipt,sources,seekTo,prepareReview,actionStatus,isCurrent:()=>current===epoch&&!active&&!pendingApproval,seekLabel:'Seek to retrieved cue',reviewLabel:'Preview retrieved review card'});
+   const row=createReceiptActionRow({receipt,sources,seekTo,prepareReview,actionStatus,seekScope,isCurrent:()=>current===epoch&&!active&&!pendingApproval,seekLabel:'Seek to retrieved cue',reviewLabel:'Preview retrieved review card'});
    if(row)list.append(row);
   }
   if(!list.children.length){const li=document.createElement('li');li.textContent='No current catalog-matched source receipt is available. Do not treat model interpretation as evidence.';list.append(li);}
@@ -57,6 +58,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
    set('error','Inference approval became stale. Check availability and review the run again. No model request was made.');
    model=null;approvedContract=null;controls();return;
   }
+  if(seekScope.cancel())actionStatus.textContent='Earlier cue seek cancelled; no seek success is claimed.';
   const operation={kind:'run',controller:new AbortController(),started:false};active=operation;controls();
   set('running','Rechecking the approved configuration. Previous results remain visible until a new model request starts…');
   try{
@@ -99,6 +101,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   if(active||pendingApproval||!model||!approvedContract)return;
   const value=question.value;
   if(!value.trim()||value.length>1200){set('input_error','Enter a question of 1–1200 characters.');return;}
+  if(seekScope.cancel())actionStatus.textContent='Earlier cue seek cancelled; no seek success is claimed.';
   pendingApproval=Object.freeze({question:value,model,contract:approvedContract});
   consentBackend.textContent=approvedContract.backend==='self_hosted'?'Operator self-hosted gateway':'External hosted provider';
   consentModel.textContent=model;

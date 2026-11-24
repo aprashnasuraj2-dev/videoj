@@ -107,9 +107,9 @@ const releaseMediaUrls=()=>{for(const url of mediaObjectUrls)URL.revokeObjectURL
 const transcriptHost=document.querySelector('#timing-transcript-panel');
 const transcriptOptions={source:timingFixture.source,contentMode:content.profile.mode,readReceipt:cueId=>receiptForCue(content,cueId,{retrievedAt:new Date().toISOString()}),prepareReview:prepareReviewFor,seekReceipt};
 timingTranscript=mountTranscriptPanel(transcriptHost,{
- ...transcriptOptions,onSeek:seconds=>{
+ ...transcriptOptions,onSeek:(seconds,options)=>{
   if(!timingPlayer)throw new Error('Native media is not loaded.');
-  return timingPlayer.seek(seconds);
+  return timingPlayer.seek(seconds,options);
  }
 });
 const comparisonView=mountComparisonView(document.querySelector('#comparison-body'),{
@@ -123,7 +123,7 @@ function remountTimingTranscript(player){
  timingTranscript?.dispose();
  timingTranscript=mountTranscriptPanel(transcriptHost,{
   ...transcriptOptions,...(player?{media:player.media}:{}),
-  onSeek:seconds=>{if(!player||timingPlayer!==player)throw Error('Verified native media is not loaded.');return player.seek(seconds);}
+  onSeek:(seconds,options)=>{if(!player||timingPlayer!==player)throw Error('Verified native media is not loaded.');return player.seek(seconds,options);}
  });
  if(previous?.queryText)timingTranscript.search(previous.queryText);
  if(previous?.selectedCueId)timingTranscript.inspect(previous.selectedCueId);
@@ -187,7 +187,7 @@ seekTiming.addEventListener('click',async()=>{
 
 // A page retained by browser back/forward cache is still the same document.
 // Preserve its local transcript and media blob; remote consent is revoked independently.
-window.addEventListener('pagehide',event=>{mediaLoad?.abort();timingPlayer?.cancelSeek();comparisonView.cancelPending();if(event.persisted){try{timingPlayer?.media.pause();}catch{}return;}timingPlayer?.dispose();timingTranscript?.dispose();releaseMediaUrls();});
+window.addEventListener('pagehide',event=>{mediaLoad?.abort();timingPlayer?.cancelSeek();timingTranscript?.cancelPending();comparisonView.cancelPending();if(event.persisted){try{timingPlayer?.media.pause();}catch{}return;}timingPlayer?.dispose();timingTranscript?.dispose();releaseMediaUrls();});
 
 let reviewStore=null,reviewActions=null,reviewProposal=null,lastReviewAttempt=null,reviewBusy=false,reviewViewEpoch=0;
 const reviewMutations=createReviewMutationQueue();
@@ -337,10 +337,10 @@ window.addEventListener('pagehide',()=>{
 
 document.querySelector('#read-playback').addEventListener('click',()=>{document.querySelector('#playback-state').textContent=JSON.stringify(timingPlayer?.readState()??{available:false,reason:'media_not_loaded'});});
 
-async function seekReceipt(receipt){
+async function seekReceipt(receipt,options){
  const source=timingFixture.source,player=timingPlayer;
  if(validateReceipt(receipt,{sources:content.sources}).level!=='catalog_matched'||!player||receipt.sourceId!==source.id||receipt.sourceVersion!==source.version||receipt.sourceHash!==source.hash||receipt.mediaHash!==source.mediaHash)throw Error('Exact receipt media not loaded');
- const actual=await player.seek(receipt.start);
+ const actual=await player.seek(receipt.start,options);
  if(timingPlayer!==player||!isNativeCueReached(actual,receipt.start,receipt.end))throw Error('Native playback did not reach the exact cue interval');
  return actual;
 }

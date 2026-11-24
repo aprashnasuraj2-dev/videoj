@@ -511,6 +511,32 @@ const assert=require('node:assert/strict');
    await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('no seek success'));
   }finally{await page.evaluate(()=>{const v=document.querySelector('video');delete v.currentTime;delete v.seeking;delete window.__releaseSutraSeek;});}
 
+  // Revoking a result must cancel its native wait, not merely hide its later
+  // status. Hold a seek with no native event; edit the query, then start a
+  // fresh action. The stale detached control must promptly leave its busy state.
+  await page.evaluate(()=>{
+   const video=document.querySelector('video'),d=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'currentTime');
+   Object.defineProperty(video,'seeking',{configurable:true,get(){return true;}});
+   Object.defineProperty(video,'currentTime',{configurable:true,get(){return d.get.call(this);},set(){}});
+  });
+  try{
+   const stale=await page.getByRole('button',{name:'Seek to matched cue'}).elementHandle();
+   await stale.click();await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('Checking native'));
+   await direct.fill('unavailable voltage threshold');
+   await stale.waitForElementState('enabled',{timeout:1000});
+   assert.equal(await page.locator('#direct-results li').count(),0);
+   await stale.dispose();
+   const held=await cue.elementHandle();await held.click();
+   await page.waitForFunction(()=>document.querySelector('.transcript-cue')?.getAttribute('aria-busy')==='true');
+   await search.fill('unavailable voltage threshold');
+   await page.waitForFunction(()=>!document.querySelector('.transcript-cue'));
+   assert.equal(await held.evaluate(button=>button.getAttribute('aria-busy')),null);
+   await held.dispose();
+  }finally{await page.evaluate(()=>{const video=document.querySelector('video');delete video.currentTime;delete video.seeking;});}
+  await direct.fill('timing marker');await direct.press('Enter');await search.fill('timing marker');
+  await page.getByRole('button',{name:'Seek to matched cue'}).click();
+  await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('Native media reached'));
+
   // Inject a native seek that lands just before the cue, inside the old one-second
   // tolerance. The actual native time is observable, but no cue success is allowed.
   await page.evaluate(()=>{const video=document.querySelector('video'),d=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'currentTime');Object.defineProperty(video,'currentTime',{configurable:true,get(){return d.get.call(this);},set(t){d.set.call(this,t===2?1.5:t);}});});
