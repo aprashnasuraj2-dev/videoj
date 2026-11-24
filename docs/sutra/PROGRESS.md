@@ -2,6 +2,13 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0040 — 2026-11-24
+
+**609/1,000 original; 663/1,055 total verified; 45/100 phases fully verified; six omissions; one hardware blocker, 385 pending original.** `4debb2ad2503bbce0265398804542d4d2d645cba` passed 19/19 workflows including learner integration and three headless engines. All optional scripted run epochs and simulated consent preview now reject stale async authority on navigation; local unknown delete/clear status is explicit. Two X009 checks credited. `P078-02` and pilot-observed `P078-07` remain open; no original major acceptance or release closed. [Evidence](evidence/implementation/SESSION-0040.md).
+
+---
+
+
 ## Session 0039 — 2026-11-24
 
 **609/1,000 original verified; 661/1,053 total verified; 45/100 fully verified phases, six omissions, one hardware blocker, 385 pending.** Exact `d49d0afd0acf8305526f2ebed3b1a09a62e54a47` 19/19 CI. The review mutation queue now resolves a caller's timeout promptly after a noncooperating effect enters while retaining the still-running exclusive lock; cancellation after entry is **unknown**, not an invented successful or rejected write. Existing X009-02 strengthened, no additional task counted. [Evidence](evidence/implementation/SESSION-0039.md). No real rights-cleared content, live hardware model, human pilot, public HTTPS adoption or release was established.

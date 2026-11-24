@@ -241,3 +241,8 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 ### Session 0039 addendum to SUTRA-DECISION-0029 — 2026-11-24T17:10:50.352+05:45
 
 A post-entry timeout must settle the **caller** promptly but must not release the browser's exclusive storage lock ahead of a still-running callback. Doing so would permit competing writes and ambiguous lost-update outcomes. The original late callback remains under its existing lock and the caller receives an **unknown** outcome; no automatic replay. [Bounded fault-injection evidence](evidence/implementation/SESSION-0039.md).
+
+## SUTRA-DECISION-0030 — Revoke simulated test authority on navigation
+
+- 2026-11-24T17:18:41.699+05:45; X009-04..05, P078-02. Even clearly labeled developer-only scripted network and synthetic consent exercises must follow the same authority lifetime boundary as real source/peer flows. Never let a late manifest or consent callback reassert a completed result after navigation. Keep fresh retries explicit and independent.
+- Alternative rejected: leave these test controls exempt because they are not paid inference. They still make real same-origin artifact/source contacts and may teach users unsafe success semantics. Synthetic pagehide injection is controlled regression evidence, not production BFCache or actual user approval evidence. [Session 0040](evidence/implementation/SESSION-0040.md).

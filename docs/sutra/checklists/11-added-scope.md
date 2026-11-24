@@ -95,3 +95,8 @@ Required items discovered after the original plan remain release blockers until 
 - [x] `SUTRA-X009-03` Reject persisted review envelopes with unknown private fields before re-saving them; keep standalone export's existing secret-stripping behavior and explicit recovery.
 
 The three checks cover local, cooperative browser review operations. Storage access from unrelated same-origin scripts remains outside the app-owned Web Locks boundary; explicit source truth, human rights and cross-site production constraints are unchanged.
+
+- [x] `SUTRA-X009-04` Isolate optional scripted network and source-read run epochs, abort queued artifact/source operations on navigation, suppress stale traces and result claims, and permit an independent fresh retry.
+- [x] `SUTRA-X009-05` Require exactly one pending synthetic consent preview, settle Escape/denial and navigation without stale session grants or duplicate simulated operations, and keep all external network contacts at zero.
+
+Both are isolated learner/developer regressions verified in automated browser and unit suites. Synthetic `pagehide` tests do not assert actual BFCache eligibility or true third-party authorization. These checks do not modify public release gates.

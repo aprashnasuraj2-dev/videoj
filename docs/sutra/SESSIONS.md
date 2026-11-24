@@ -1,5 +1,10 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0040 — 2026-11-24
+
+- 2026-11-24T17:18:41.699+05:45: **609/1,000 original; 663/1,055 total verified; 45 fully verified phases, six omissions, one hardware blocker.** Final source `4debb2ad2503bbce0265398804542d4d2d645cba` passed 19/19 CI with all ten Chromium integrations and Chromium/Firefox/WebKit matrix. Added X009-04..05: scripted developer-source run navigation revocation, no stale traces, and one active synthetic consent preview, Escape/pagehide denial and fresh retry. UI now distinguishes unknown deletion/clear outcomes. `P078-02` stays pending, no release. [Evidence](evidence/implementation/SESSION-0040.md).
+
+
 ## SUTRA-SESSION-0039 — 2026-11-24
 
 - 2026-11-24T17:10:50.352+05:45: Source `d49d0afd0acf8305526f2ebed3b1a09a62e54a47` **19/19 green workflows**. Bounded waiting for a never-settling local review write after lock acquisition, without prematurely releasing the exclusive lock: post-entry timeout/revocation is **unknown**, queued nonentry is **rejected before mutation**, and no replay occurs. Existing X009-02 revalidated; totals unchanged at 661/1,053 overall, 609/1,000 original, 45 fully verified phases. No release or original gate closure. [Evidence](evidence/implementation/SESSION-0039.md).

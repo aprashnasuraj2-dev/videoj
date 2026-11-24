@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T17:10:50.352+05:45",
+  "updated_at": "2026-11-24T17:18:41.699+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "d49d0afd0acf8305526f2ebed3b1a09a62e54a47",
-  "last_session_id": "SUTRA-SESSION-0039",
+  "last_observed_code_sha": "4debb2ad2503bbce0265398804542d4d2d645cba",
+  "last_session_id": "SUTRA-SESSION-0040",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P078-02",
@@ -16,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Resume SUTRA-P078-02 without release preparation: check peer/workbench consent and stale async authority, then source snapshot/metadata edge cases and integrated failure recovery; keep P078-07 pending genuine pilot observation and all real content/model/human/public release gates closed.",
+  "next_action": "Resume P078-02 deep stabilization: inspect the default inference/source identity and peer consent pathways for remaining stale-result, data ownership and denial bugs. Add targeted tests for ambiguous review-delete/clear outcomes if meaningful. Preserve P078-07 for actual pilot observations and all real content, model, hardware, public interoperability and release gates.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -11688,6 +11688,46 @@
           "observed_at": "2026-11-24T17:06:54.579+05:45"
         }
       ]
+    },
+    "SUTRA-X009-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T17:18:41.699+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45384889251/job/138413132412",
+          "description": "Isolate optional scripted network and source-read run epochs, abort queued artifact/source operations on navigation, suppress stale traces and result claims, and permit an independent fresh retry. Relevant learner unit and Chromium browser tests executed in successful integrated job.",
+          "result": "pass",
+          "source_revision": "4debb2ad2503bbce0265398804542d4d2d645cba",
+          "observed_at": "2026-11-24T17:18:41.699+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0040.md",
+          "description": "Regression mechanism, exact CI evidence, limitations and no-release boundary.",
+          "result": "pass",
+          "source_revision": "4debb2ad2503bbce0265398804542d4d2d645cba",
+          "observed_at": "2026-11-24T17:18:41.699+05:45"
+        }
+      ]
+    },
+    "SUTRA-X009-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T17:18:41.699+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45384889251/job/138413132412",
+          "description": "Require exactly one pending synthetic consent preview, settle Escape/denial and navigation without stale session grants or duplicate simulated operations, and keep all external network contacts at zero. Relevant learner unit and Chromium browser tests executed in successful integrated job.",
+          "result": "pass",
+          "source_revision": "4debb2ad2503bbce0265398804542d4d2d645cba",
+          "observed_at": "2026-11-24T17:18:41.699+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0040.md",
+          "description": "Regression mechanism, exact CI evidence, limitations and no-release boundary.",
+          "result": "pass",
+          "source_revision": "4debb2ad2503bbce0265398804542d4d2d645cba",
+          "observed_at": "2026-11-24T17:18:41.699+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -11768,6 +11808,7 @@
     "Session 0036: exact current code 19/19 CI; source cancellation/snapshot and independent final evidence collector added. No original phase closure; private evidence references remain input-only. Measurement validation is arithmetic/schema only; do not treat a fixture as live evidence.",
     "Session 0037: exact code 19/19 workflows, 367 learner-side automated tests, all ten Chromium integrations and three browser engines. Added X007-23..26. Persisted pagehide is synthetic lifecycle fault injection, not observed BFCache eligibility. Exact seek checks do not establish factual truth or actual lesson rights. No original phase closure.",
     "Session 0038: original count unchanged, X009-01..03 new verified checks on 1fe4a7bc6239e8749268e0f032e6fec702ff6f89 with 19/19 observed workflows. Post-effect review cancellation is unknown and not a replay trigger; noncooperating same-origin scripts remain outside the cooperative lock contract. No release gate changed.",
-    "Session 0039: precise X009-02 noncooperating-effect test passed 19/19 CI on d49d0afd0acf8305526f2ebed3b1a09a62e54a47; no new original or added-scope task credited. Post-entry cancellation is unknown while lock remains held."
+    "Session 0039: precise X009-02 noncooperating-effect test passed 19/19 CI on d49d0afd0acf8305526f2ebed3b1a09a62e54a47; no new original or added-scope task credited. Post-entry cancellation is unknown while lock remains held.",
+    "Session 0040: two new verified X009-04..05 developer-run and simulated-consent async authority checks on exact 4debb2ad2503bbce0265398804542d4d2d645cba 19/19 green; unknown delete/clear UI copy reviewed but no separate task credited. No original acceptance closed."
   ]
 }
