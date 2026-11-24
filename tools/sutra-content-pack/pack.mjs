@@ -92,14 +92,16 @@ export async function buildContentPack({manifest,semantic,contentRoot,outputDir}
  if(!guideText.includes(meta.guideClaim.excerpt))throw Error('Guide excerpt missing.');
  const ext=path.extname(assetPaths.media).toLowerCase();if(ext!=='.mp4'&&ext!=='.webm')throw Error('Reviewed media must be MP4 or WebM.');
  const guideName=path.basename(assetPaths.guide);if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}\.html$/i.test(guideName))throw Error('Reviewed guide must be a safe HTML file.');
- const safeGuideBytes=Buffer.from(makeSafeGuideExcerpt(meta,observed.guide.sha256)),publishedGuideSha=digest(safeGuideBytes);
+ const guideProvenance=('Safe published excerpt derivative of reviewed guide input; '+meta.guideClaim.provenance).slice(0,240);
+ const guideMeta={...meta,guideClaim:{...meta.guideClaim,provenance:guideProvenance}};
+ const safeGuideBytes=Buffer.from(makeSafeGuideExcerpt(guideMeta,observed.guide.sha256)),publishedGuideSha=digest(safeGuideBytes);
  const mediaBase='media/release/'+observed.media.sha256,transcriptBase='transcripts/release/'+observed.transcript.sha256,guideBase='guides/release/'+publishedGuideSha;
  const sourceCatalog={schema:1,contentVersion:meta.contentVersion,sources:[{id:meta.sourceId,version:meta.sourceVersion,hash:observed.transcript.sha256,mediaHash:observed.media.sha256,duration:manifest.lesson.durationSeconds,cues:meta.cues}]};
  const catalogBytes=Buffer.from(canonical(sourceCatalog)),catalogSha=digest(catalogBytes);
  const profile={schema:1,mode:'reviewed',contentVersion:meta.contentVersion,title:meta.title,observedAt:meta.observedAt,primarySourceId:meta.sourceId,featuredCueId:meta.featuredCueId,
   catalog:{path:'./source-catalog.json',sha256:catalogSha},transcript:{path:'/'+transcriptBase+'/lesson.txt',sha256:observed.transcript.sha256},
   media:{video:'/'+mediaBase+'/lesson'+ext,poster:'/'+mediaBase+'/poster.svg',chapters:'/'+transcriptBase+'/chapters.vtt',captions:'/'+transcriptBase+'/captions.vtt'},
-  videoClaim:meta.videoClaim,guideClaim:{sourceKind:'guide',sourceId:'reviewed-guide',sourceVersion:meta.contentVersion,title:meta.guideClaim.title,scope:meta.guideClaim.scope,claimKey:meta.guideClaim.claimKey,value:meta.guideClaim.value,excerpt:meta.guideClaim.excerpt,provenance:meta.guideClaim.provenance,sourceHref:'/'+guideBase+'/'+guideName+'#'+meta.guideClaim.anchor,sourceHash:publishedGuideSha,observedAt:meta.observedAt,dateBasis:meta.guideClaim.dateBasis},ui:meta.ui};
+  videoClaim:meta.videoClaim,guideClaim:{sourceKind:'guide',sourceId:'reviewed-guide',sourceVersion:meta.contentVersion,title:meta.guideClaim.title,scope:meta.guideClaim.scope,claimKey:meta.guideClaim.claimKey,value:meta.guideClaim.value,excerpt:meta.guideClaim.excerpt,provenance:guideProvenance,sourceHref:'/'+guideBase+'/'+guideName+'#'+meta.guideClaim.anchor,sourceHash:publishedGuideSha,observedAt:meta.observedAt,dateBasis:meta.guideClaim.dateBasis},ui:meta.ui};
  validateContentProfile(profile,sourceCatalog);
  const profileBytes=Buffer.from(canonical(profile)),profileSha=digest(profileBytes);
  await fs.mkdir(out,{recursive:false});
