@@ -35,7 +35,9 @@ test('source href must be a bounded local path and survives the immutable compar
  const claims=pair();assert.match(claims.guide.sourceHref,/^\.\/guides\//);
  const result=compareClaimPair(claims);assert.equal(result.guide.sourceHref,claims.guide.sourceHref);assert.match(result.guide.sourceHash,/^[a-f0-9]{64}$/);
  const badHash=pair();badHash.guide.sourceHash='bad';assert.equal(compareClaimPair(badHash).status,'invalid_source');
- for(const href of ['https://evil.example/x','//evil.example/x','../secret','./ok/../secret','./bad\\path','./x\nprivate']){
+ const noHref=pair();delete noHref.guide.sourceHref;assert.equal(compareClaimPair(noHref).status,'invalid_source');
+ const noHash=pair();delete noHash.guide.sourceHash;assert.equal(compareClaimPair(noHash).status,'invalid_source');
+ for(const href of ['https://evil.example/x','//evil.example/x','../secret','./ok/../secret','./bad\\path','./x\nprivate','./guide.html?variant=other#x']){
   const bad=pair();bad.guide.sourceHref=href;assert.equal(compareClaimPair(bad).status,'invalid_source');
  }
 });

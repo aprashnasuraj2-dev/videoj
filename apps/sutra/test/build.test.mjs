@@ -101,3 +101,15 @@ test('generated inventory exactly binds manifest, links, graphs and built runtim
  assert.ok(stored.artifacts.every(a=>/^[0-9a-f]{64}$/.test(a.sha256)&&a.bytes>0));
  assert.ok(stored.artifacts.every(a=>a.path.startsWith('/agents/')||a.path.startsWith('/assets/')));
 });
+
+test('synthetic written comparison link is byte-bound to the published guide and exact anchor excerpt',async()=>{
+ const {createHash}=await import('node:crypto');
+ const {syntheticComparison}=await import('../src/comparison.js');
+ const claim=syntheticComparison.guide;
+ assert.match(claim.sourceHash,/^[a-f0-9]{64}$/);assert.match(claim.sourceHref,/^\.\/guides\//);
+ const [file,fragment]=claim.sourceHref.slice(2).split('#');
+ const bytes=fs.readFileSync(path.join(app,'public',file));
+ assert.equal(createHash('sha256').update(bytes).digest('hex'),claim.sourceHash);
+ const text=bytes.toString('utf8');assert.ok(fragment);assert.match(text,new RegExp('id=["\\']'+fragment+'["\\']'));
+ assert.ok(text.includes(claim.excerpt));assert.match(text,/not a real publisher, reviewed guide, factual authority/);
+});

@@ -6,13 +6,14 @@ const id=/^[A-Za-z][A-Za-z0-9_.:-]{0,99}$/;
 const sourceKind=new Set(['video','guide']);
 const sha256=/^[a-f0-9]{64}$/;
 const safeSourceHref=v=>v===undefined||typeof v==='string'&&v.length<=300&&!/[\u0000-\u001f\u007f\\]/.test(v)&&
- (v.startsWith('./')||v.startsWith('/'))&&!/(^|\/)\.\.(?:\/|$)/.test(v)&&!/^\/\//.test(v);
+ (v.startsWith('./')||v.startsWith('/'))&&!v.includes('?')&&!/(^|\/)\.\.(?:\/|$)/.test(v)&&!/^\/\//.test(v);
 const isClaim=c=>!!c&&typeof c==='object'&&!Array.isArray(c)&&
  sourceKind.has(c.sourceKind)&&safeString(c.sourceId,100)&&id.test(c.sourceId)&&
  safeString(c.sourceVersion,100)&&safeString(c.scope,160)&&
  safeString(c.claimKey,100)&&id.test(c.claimKey)&&
  (safeString(c.value,120)||Number.isFinite(c.value)||typeof c.value==='boolean')&&
  safeString(c.excerpt,1200)&&safeString(c.title,120)&&safeSourceHref(c.sourceHref)&&(c.sourceHash===undefined||typeof c.sourceHash==='string'&&sha256.test(c.sourceHash))&&
+ (c.sourceKind!=='guide'||typeof c.sourceHref==='string'&&typeof c.sourceHash==='string')&&
  (c.cueId===undefined||typeof c.cueId==='string'&&/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$/.test(c.cueId))&&
  (c.start===undefined&&c.end===undefined||Number.isFinite(c.start)&&Number.isFinite(c.end)&&c.start>=0&&c.end>c.start)&&
  safeString(c.provenance,240)&&
