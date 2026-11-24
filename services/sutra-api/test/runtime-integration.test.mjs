@@ -57,3 +57,33 @@ test('real provider adapter contract drives multi-agent runtime through same-ori
  assert.deepEqual(events.map(e=>e.path),['/reserve','/release','/reserve','/release','/reserve','/release']);
  assert.ok(!JSON.stringify(result).includes('SERVER_ONLY_INTEGRATION_KEY'));
 });
+
+
+test('network loss during delegated provider run fails incomplete and only explicit fresh retry succeeds',async()=>{
+ const events=[],env=environment(events);let clientCalls=0;
+ const flaky=createProviderAdapter({
+  origin:'https://sutra.test',model:'operator-approved',
+  fetchImpl:async(url,opts)=>{
+   clientCalls++;
+   if(clientCalls===2)throw new TypeError('synthetic caller-to-proxy network loss');
+   return handleInference(new Request(url,{...opts,headers:{...opts.headers,Origin:'https://sutra.test','CF-Connecting-IP':'192.0.2.45'}}),env,{
+    fetchImpl:async(upstreamUrl,upstreamOpts)=>upstreamFor(JSON.parse(upstreamOpts.body))
+   });
+  }
+ });
+ await assert.rejects(runNetwork({definition:graph,request:'Inspect synthetic source consistency.',model:flaky}),error=>error.code==='RUN_FAILED');
+ assert.equal(clientCalls,2);
+ assert.equal(events.filter(e=>e.kind==='quota'&&e.path==='/reserve').length,1,'failed second client transport cannot reserve or spend');
+
+ const retryEvents=[],retryEnv=environment(retryEvents);
+ const working=createProviderAdapter({
+  origin:'https://sutra.test',model:'operator-approved',
+  fetchImpl:async(url,opts)=>handleInference(new Request(url,{...opts,headers:{...opts.headers,Origin:'https://sutra.test','CF-Connecting-IP':'192.0.2.46'}}),retryEnv,{
+   fetchImpl:async(upstreamUrl,upstreamOpts)=>upstreamFor(JSON.parse(upstreamOpts.body))
+  })
+ });
+ const result=await runNetwork({definition:graph,request:'Inspect synthetic source consistency.',model:working});
+ assert.match(result.text,/completed after evidence delegation/);
+ assert.equal(result.modelCalls,3);
+ assert.equal(retryEvents.filter(e=>e.kind==='quota'&&e.path==='/reserve').length,3);
+});
