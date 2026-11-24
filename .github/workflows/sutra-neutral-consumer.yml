@@ -1,0 +1,28 @@
+name: Validate SUTRA neutral consumer
+on:
+  pull_request:
+    paths:
+      - 'tools/sutra-neutral-consumer/**'
+      - 'apps/sutra-peer/**'
+      - 'packages/sutra-runtime/**'
+      - '.github/workflows/sutra-neutral-consumer.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  neutral:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node packages/sutra-runtime/verify-vendor.mjs
+      - working-directory: apps/sutra
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install --with-deps chromium
+      - run: node tools/sutra-neutral-consumer/browser.cjs
