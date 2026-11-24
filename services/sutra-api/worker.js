@@ -72,13 +72,22 @@ export async function handleSourceTools(request,env={}){
  if(request.method!=='POST')return json({error:{code:'METHOD'}},405);
  if(request.headers.get('Origin')!==new URL(request.url).origin||!request.headers.get('Content-Type')?.startsWith('application/json'))return json({error:{code:'ORIGIN_OR_HEADERS'}},403);
  let rpc;try{rpc=await readJson(request,4096);}catch{return json({error:{code:'PAYLOAD'}},400);}
- if(!rpc||rpc.jsonrpc!=='2.0'||typeof rpc.method!=='string'||!(typeof rpc.id==='string'&&rpc.id.length<=100||Number.isSafeInteger(rpc.id)||rpc.id===undefined))return json({error:{code:'RPC'}},400);
- if(rpc.method==='notifications/initialized'&&rpc.id===undefined)return new Response(null,{status:202});
+ if(!rpc||typeof rpc!=='object'||Array.isArray(rpc)||Object.keys(rpc).some(k=>!['jsonrpc','id','method','params'].includes(k))||rpc.jsonrpc!=='2.0'||typeof rpc.method!=='string'||!(typeof rpc.id==='string'&&rpc.id.length<=100||Number.isSafeInteger(rpc.id)||rpc.id===undefined))return json({error:{code:'RPC'}},400);
+ const emptyParams=value=>value===undefined||value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).length===0;
+ if(rpc.method==='notifications/initialized'&&rpc.id===undefined){
+  if(!emptyParams(rpc.params))return json({error:{code:'RPC'}},400);
+  return new Response(null,{status:202});
+ }
  if(rpc.id===undefined)return json({error:{code:'RPC'}},400);
  const result=value=>json({jsonrpc:'2.0',id:rpc.id,result:value});
- if(rpc.method==='initialize')return result({protocolVersion:'2025-06-18',capabilities:{tools:{listChanged:false}},serverInfo:{name:'sutra-source-tools',version:'0.1.0'}});
- if(rpc.method==='tools/list')return result({tools:sourceTools.list().map(({effect,...d})=>({...d,annotations:{readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:false}}))});
+ if(rpc.method==='initialize'){
+  const p=rpc.params;
+  if(!p||typeof p!=='object'||Array.isArray(p)||Object.keys(p).some(k=>!['protocolVersion','capabilities','clientInfo'].includes(k))||p.protocolVersion!=='2025-06-18'||!p.capabilities||typeof p.capabilities!=='object'||Array.isArray(p.capabilities)||Object.keys(p.capabilities).length||!p.clientInfo||typeof p.clientInfo!=='object'||Array.isArray(p.clientInfo)||Object.keys(p.clientInfo).some(k=>!['name','version'].includes(k))||typeof p.clientInfo.name!=='string'||!p.clientInfo.name||p.clientInfo.name.length>100||typeof p.clientInfo.version!=='string'||!p.clientInfo.version||p.clientInfo.version.length>40)return json({error:{code:'RPC'}},400);
+  return result({protocolVersion:'2025-06-18',capabilities:{tools:{listChanged:false}},serverInfo:{name:'sutra-source-tools',version:'0.1.0'}});
+ }
+ if(rpc.method==='tools/list'){if(!emptyParams(rpc.params))return json({error:{code:'RPC'}},400);return result({tools:sourceTools.list().map(({effect,...d})=>({...d,annotations:{readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:false}}))});}
  if(rpc.method==='tools/call'){
+  if(!rpc.params||typeof rpc.params!=='object'||Array.isArray(rpc.params)||Object.keys(rpc.params).some(k=>!['name','arguments'].includes(k)))return json({error:{code:'RPC'}},400);
   const definition=sourceDefinitions.get(rpc.params?.name);
   try{if(!definition)throw Error();validateData(definition.inputSchema,rpc.params?.arguments);}catch{return result({content:[{type:'text',text:'Source tool unavailable; no result is claimed.'}],isError:true});}
   const sourceQuotaRequested=env.SUTRA_MAX_DAILY_SOURCE_READS!==undefined||env.SUTRA_MAX_CLIENT_SOURCE_READS!==undefined;

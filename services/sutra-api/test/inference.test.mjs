@@ -47,6 +47,18 @@ test('source-tool read quota protects Worker capacity without charging discovery
  const sourceGlobal=store.inspect('source-quota');assert.deepEqual(Object.keys(sourceGlobal).sort(),['day','total']);assert.equal(sourceGlobal.total,2);
  const bucketKeys=store.keys().filter(k=>k.startsWith('source-quota:'));assert.ok(bucketKeys.length>=1);for(const key of bucketKeys){const bucket=store.inspect(key);assert.deepEqual(Object.keys(bucket).sort(),['counts','day']);assert.ok(Object.keys(bucket.counts).length<=2);}
 });
+test('source MCP rejects unknown transport metadata and malformed method params before quota',async()=>{
+ let quota=0;const env={SUTRA_MAX_DAILY_SOURCE_READS:'10',SUTRA_MAX_CLIENT_SOURCE_READS:'2',SUTRA_CLIENT_HASH_SECRET:'s'.repeat(32),SUTRA_QUOTA:{idFromName:x=>x,get:()=>({fetch:async()=>{quota++;return Response.json({allowed:true});}})}};
+ const send=body=>handleSourceTools(new Request('https://sutra.test/api/source-tools',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json'},body:JSON.stringify(body)}),env);
+ for(const body of [
+  {jsonrpc:'2.0',id:1,method:'tools/call',params:{name:'search_lesson',arguments:{query:'timing'}},url:'https://evil.test'},
+  {jsonrpc:'2.0',id:1,method:'tools/call',params:{name:'search_lesson',arguments:{query:'timing'},credential:'x'}},
+  {jsonrpc:'2.0',id:1,method:'tools/list',params:{cursor:'attacker'}},
+  {jsonrpc:'2.0',id:1,method:'initialize',params:{protocolVersion:'2025-06-18',capabilities:{roots:{}},clientInfo:{name:'x',version:'1'}}},
+  {jsonrpc:'2.0',method:'notifications/initialized',params:{secret:'x'}}
+ ])assert.equal((await send(body)).status,400);
+ assert.equal(quota,0);
+});
 test('MCP source endpoint lists bounded read tools and rejects arbitrary capabilities',async()=>{const rpc=async(method,params)=>{const response=await handleSourceTools(new Request('https://sutra.test/api/source-tools',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})}));return response.json();};assert.equal((await rpc('initialize')).result.serverInfo.name,'sutra-source-tools');assert.deepEqual((await rpc('tools/list')).result.tools.map(x=>x.name),['search_lesson','read_cue']);const result=(await rpc('tools/call',{name:'search_lesson',arguments:{query:'timing'}})).result;assert.equal(result.isError,false);assert.equal(result.structuredContent.receipts[0].verification,'unverified');assert.equal((await rpc('tools/call',{name:'fetch',arguments:{url:'https://evil.test'}})).result.isError,true);assert.equal((await rpc('tools/call',{name:'read_cue',arguments:{sourceId:'wrong',cueId:'wrong'}})).result.isError,true);});
 test('worker status is honest and unknown APIs never fall through to assets',async()=>{const status=await worker.fetch(new Request('https://sutra.test/api/status'),{});assert.equal((await status.json()).inference,'disabled');let assets=0;assert.equal((await worker.fetch(new Request('https://sutra.test/api/arbitrary'),{ASSETS:{fetch:()=>{assets++;}}})).status,404);assert.equal(assets,0);});
 test('cancelling during quota response decoding stops before provider contact',async()=>{const abort=new AbortController();const env=environment(async()=>new Response(new ReadableStream({start(){}})));let upstream=0;const pending=handleInference(new Request(request(),{signal:abort.signal}),env,{fetchImpl:async()=>{upstream++;return sse();}});setTimeout(()=>abort.abort(),15);assert.equal((await pending).status,503);assert.equal(upstream,0);});
