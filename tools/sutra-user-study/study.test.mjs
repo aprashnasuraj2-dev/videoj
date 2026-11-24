@@ -10,6 +10,8 @@ test('plan is deterministic, exactly 5/5 first-method balanced and assigns both 
  const a=plan(),b=plan();assert.deepEqual(a,b);assert.equal(a.rows.length,10);
  assert.equal(a.rows.filter(r=>r.order[0]==='sutra').length,5);assert.equal(a.rows.filter(r=>r.order[0]==='manual').length,5);
  assert.ok(a.rows.every(r=>new Set(r.variants).size===2));assert.match(a.seedFingerprint,/^\d{10}$/);
+ const assignment=(method,variant)=>a.rows.filter(r=>{const j=r.order.indexOf(method);return r.variants[j]===variant;}).length;
+ assert.deepEqual({sutraA:assignment('sutra','A'),sutraB:assignment('sutra','B'),manualA:assignment('manual','A'),manualB:assignment('manual','B')},{sutraA:5,sutraB:5,manualA:5,manualB:5});
 });
 
 test('complete paired valid-evidence study computes target metrics without dropping slow rows',()=>{

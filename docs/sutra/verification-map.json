@@ -185,6 +185,17 @@
       ],
       "invalidates": [],
       "reason": "Changes to executable product tests must run the relevant verification suites but do not by themselves rewrite measured product metrics."
+    },
+    {
+      "id": "user-study-readiness",
+      "prefixes": [
+        "tools/sutra-user-study/"
+      ],
+      "requiredWorkflows": [
+        "Validate SUTRA user-study scoring gate"
+      ],
+      "invalidates": [],
+      "reason": "Changes to the counterbalanced study protocol must pass its scorer/assignment tests; no human-study metric exists until real participant observations are collected."
     }
   ]
 }

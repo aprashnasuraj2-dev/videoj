@@ -61,3 +61,8 @@ test('specialized expensive workflows gate jobs on revision-bound metric freshne
  assert.match(evaluation,/engineering_baseline/);assert.match(evaluation,/needs: freshness/);assert.match(evaluation,/run_evaluation/);assert.match(evaluation,/workflow_dispatch/);
  for(const text of [matrix,evaluation]){assert.match(text,/fetch-depth: 0/);assert.match(text,/github\.event\.pull_request\.head\.sha/);assert.match(text,/impact\.mjs --metrics/);}
 });
+
+test('user-study readiness tooling is explicitly mapped without inventing a participant metric',()=>{
+ const r=classifyChangedFiles(['tools/sutra-user-study/study.mjs'],map);
+ assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('user-study-readiness'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA user-study scoring gate'));assert.deepEqual(r.invalidatedMetrics,[]);
+});

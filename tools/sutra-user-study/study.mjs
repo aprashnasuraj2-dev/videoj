@@ -13,7 +13,7 @@ export function makeCounterbalancedPlan({participantCount=10,seed=''}={}){
  const offset=h%10,rotated=[...ids.slice(offset),...ids.slice(0,offset)];
  const rows=rotated.map((participant,index)=>{
   const order=index<5?['sutra','manual']:['manual','sutra'];
-  const variants=index%2===0?['A','B']:['B','A'];
+  const groupIndex=index%5;const variants=groupIndex%2===0?['A','B']:['B','A'];
   return {participant,order,variants};
  }).sort((a,b)=>a.participant.localeCompare(b.participant));
  return freeze({schema:1,participantCount:10,seedFingerprint:String(h).padStart(10,'0'),rows});
