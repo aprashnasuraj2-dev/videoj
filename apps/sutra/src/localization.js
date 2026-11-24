@@ -1,3 +1,4 @@
+import {formatIsoDateTime,formatMillisecondPair,formatNumber} from './locale-format.js';
 const EN=Object.freeze({
  'language.label':'Language',
  'language.en':'English',
@@ -125,6 +126,19 @@ export function applyLocale(root,locale='en'){
  for(const node of root.querySelectorAll('[data-i18n-placeholder]')){
   const key=node.getAttribute('data-i18n-placeholder');
   node.setAttribute('placeholder',translate(key,resolved));
+ }
+ for(const node of root.querySelectorAll('[data-format-datetime]')){
+  const raw=node.getAttribute('data-format-datetime');
+  try{node.textContent=formatIsoDateTime(raw,resolved);}catch{node.textContent='Invalid timestamp';}
+ }
+ for(const node of root.querySelectorAll('[data-format-ms-pair]')){
+  const current=Number(node.getAttribute('data-format-current-ms'));
+  const limit=Number(node.getAttribute('data-format-limit-ms'));
+  try{node.textContent=formatMillisecondPair(current,limit,resolved);}catch{node.textContent='Invalid duration';}
+ }
+ for(const node of root.querySelectorAll('[data-format-number]')){
+  const raw=Number(node.getAttribute('data-format-number'));
+  try{node.textContent=formatNumber(raw,resolved);}catch{node.textContent='Invalid number';}
  }
  root.documentElement?.setAttribute?.('lang',resolved);
  return resolved;
