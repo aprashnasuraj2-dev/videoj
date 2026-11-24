@@ -28,7 +28,7 @@ export function createSourceTools(catalog,{now=()=>new Date().toISOString()}={})
     if(typeof cue.text!=='string'||cue.text.length>2000||byCue.has(cue.id))throw new Error('Bad cue.');
     textUnits+=cue.text.length;
     if(textUnits>4_000_000)throw new Error('Catalog text budget exceeded.');
-    const row={source,cue,folded:cue.text.toLocaleLowerCase('en')};
+    const row={source,cue,folded:cue.text.normalize('NFKC').toLocaleLowerCase('en')};
     const sample=receipt(row);
     if(validateReceipt(sample,{sources:[{...source,cues:[cue]}]}).level!=='catalog_matched')throw new Error('Invalid source reference.');
     byCue.set(cue.id,row);sourceRows.push(row);rows.push(row);
@@ -47,16 +47,16 @@ export function createSourceTools(catalog,{now=()=>new Date().toISOString()}={})
   list(){return structuredClone(definitions);},
   call(name,args){const definition=definitions.find(d=>d.name===name);if(!definition)throw new SourceToolError('UNKNOWN_TOOL');try{args=snapshotDataRecord(args,8);validateData(definition.inputSchema,args);}catch{throw new SourceToolError('ARGUMENTS');}
    let matches,filters={};if(name==='search_lesson'){
-    const query=args.query.trim().toLocaleLowerCase('en');if(!query)throw new SourceToolError('ARGUMENTS');
+    const query=args.query.normalize('NFKC').trim().toLocaleLowerCase('en');if(!query)throw new SourceToolError('ARGUMENTS');
     const hasStart=args.start!==undefined,hasEnd=args.end!==undefined;
     if(hasStart!==hasEnd||hasStart&&(!Number.isFinite(args.start)||!Number.isFinite(args.end)||args.end<=args.start))throw new SourceToolError('ARGUMENTS');
     filters={...(args.sourceId!==undefined?{sourceId:args.sourceId}:{}),...(hasStart?{start:args.start,end:args.end}:{})};
-    matches=[];
+    matches=[];let matchCount=0;
     const candidates=args.sourceId===undefined?rows:bySource.get(args.sourceId)?.rows??[];
     for(const r of candidates){
-     if(r.folded.includes(query)&&(!hasStart||r.cue.start>=args.start&&r.cue.end<=args.end))matches.push(r);
-     if(matches.length===5)break;
+     if(r.folded.includes(query)&&(!hasStart||r.cue.start>=args.start&&r.cue.end<=args.end)){matchCount++;if(matches.length<5)matches.push(r);}
     }
+    filters={...filters,matchCount,truncated:matchCount>matches.length};
    }else{const row=bySource.get(args.sourceId)?.byCue.get(args.cueId);if(!row)throw new SourceToolError('NOT_FOUND');matches=[row];}
    const receipts=matches.map(receipt);const result={version:1,receipts,limit:name==='search_lesson'?5:1,truthStatus:'unverified',...(name==='search_lesson'?{filters}:{})};if(new TextEncoder().encode(JSON.stringify(result)).length>16000)throw new SourceToolError('OUTPUT_SIZE');return result;
   },
