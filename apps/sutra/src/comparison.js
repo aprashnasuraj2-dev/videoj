@@ -10,6 +10,8 @@ const isClaim=c=>!!c&&typeof c==='object'&&!Array.isArray(c)&&
  safeString(c.claimKey,100)&&id.test(c.claimKey)&&
  (safeString(c.value,120)||Number.isFinite(c.value)||typeof c.value==='boolean')&&
  safeString(c.excerpt,1200)&&safeString(c.title,120)&&
+ (c.cueId===undefined||typeof c.cueId==='string'&&/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$/.test(c.cueId))&&
+ (c.start===undefined&&c.end===undefined||Number.isFinite(c.start)&&Number.isFinite(c.end)&&c.start>=0&&c.end>c.start)&&
  safeString(c.provenance,240)&&
  (c.observedAt===undefined||typeof c.observedAt==='string'&&
   !Number.isNaN(Date.parse(c.observedAt))&&c.observedAt.length<=40)&&
@@ -18,6 +20,7 @@ const shallow=c=>Object.freeze({
  sourceKind:c.sourceKind,sourceId:c.sourceId,sourceVersion:c.sourceVersion,scope:c.scope,
  claimKey:c.claimKey,value:c.value,excerpt:c.excerpt,title:c.title,provenance:c.provenance,
  ...(c.observedAt?{observedAt:c.observedAt,dateBasis:c.dateBasis??'Recorded observation'}:{}),
+ ...(c.cueId!==undefined?{cueId:c.cueId}:{}),
  ...(Number.isFinite(c.start)&&Number.isFinite(c.end)&&c.start>=0&&c.end>c.start?{start:c.start,end:c.end}:{})
 });
 export function compareClaimPair({video=null,guide=null}={}){

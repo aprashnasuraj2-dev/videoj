@@ -8,14 +8,16 @@ export function createScriptedModel(){
 }
 
 // Exercises real source transport with deterministic decisions, never model inference.
-export function createSourceScriptedModel(){
+export function createSourceScriptedModel({query='timing'}={}){
+ if(typeof query!=='string'||!query.trim()||query.length>120)throw new TypeError('One bounded literal fixture query is required.');
  let sequence=0;
  return {mode:'scripted-test',async chat({messages,tools,signal}){
   signal?.throwIfAborted();const called=messages.filter(m=>m.role==='tool');
   const call=(name,args)=>({content:'',toolCalls:[{id:`source-fixture-${++sequence}`,type:'function',function:{name,arguments:JSON.stringify(args)}}]});
   if(tools.some(t=>t.function.name==='evidence'))return called.length?{content:called[0].content,toolCalls:[]}:call('evidence',{request:'Find the synthetic timing cue.'});
-  if(!called.length)return call('mcp_search_lesson',{query:'timing'});
-  const search=JSON.parse(called[0].content);const cue=search.receipts?.[0];if(!cue)throw Error('No source result.');
+  if(!called.length)return call('mcp_search_lesson',{query});
+  const search=JSON.parse(called[0].content);if(search.truthStatus!=='unverified'||!Array.isArray(search.receipts))throw Error('Invalid source result.');
+  const cue=search.receipts[0];if(!cue)return {content:'Scripted source test abstains: no matching source cue. No factual conclusion or live AI is claimed.',toolCalls:[]};
   if(called.length===1)return call('mcp_read_cue',{sourceId:cue.sourceId,cueId:cue.cueId});
   const read=JSON.parse(called[1].content);if(!read.receipts?.[0])throw Error('No cue result.');
   return {content:`Scripted source test complete. ${read.receipts[0].excerpt} Source consistency only; factual truth remains unverified. No live AI was used.`,toolCalls:[]};

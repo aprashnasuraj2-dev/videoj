@@ -1,0 +1,30 @@
+name: Validate SUTRA engineering evaluation
+on:
+  pull_request:
+    paths:
+      - 'apps/sutra/**'
+      - 'packages/sutra-*/**'
+      - 'services/sutra-api/**'
+      - 'tools/sutra-evaluation/**'
+      - 'docs/sutra/evaluation/**'
+      - '.github/workflows/sutra-evaluation.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tools/sutra-evaluation/baseline.test.mjs
+      - run: node tools/sutra-evaluation/baseline.mjs > "${RUNNER_TEMP}/sutra-engineering-evaluation.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sutra-engineering-evaluation
+          path: ${{ runner.temp }}/sutra-engineering-evaluation.json

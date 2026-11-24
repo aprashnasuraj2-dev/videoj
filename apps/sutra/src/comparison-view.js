@@ -15,7 +15,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
  if(!host||typeof host.replaceChildren!=='function')throw Error('Comparison host missing.');
  const evidence=receipt?validateEvidenceClaim({version:1,kind:'source_excerpt',text:receipt.excerpt,receipt},{sources}):null;
  const local=evidence?.valid&&evidence.state==='source_backed_unverified'?{
-  sourceKind:'video',sourceId:evidence.sourceRef.sourceId,sourceVersion:evidence.sourceRef.sourceVersion,
+  sourceKind:'video',sourceId:evidence.sourceRef.sourceId,sourceVersion:evidence.sourceRef.sourceVersion,cueId:evidence.sourceRef.cueId,
   title:'Actual synthetic timing-cue catalog',scope:'synthetic_timing_only',claimKey:'marker_presence',
   value:'marker_present',excerpt:evidence.excerpt,start:evidence.sourceRef.start,end:evidence.sourceRef.end,
   provenance:'SUTRA local synthetic timing catalog, not human-reviewed footage',

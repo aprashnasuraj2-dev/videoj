@@ -58,3 +58,11 @@ test('claim objects are snapshotted and cannot be altered to rewrite a result',(
  assert.equal(result.video.excerpt,syntheticComparison.video.excerpt);
  assert.equal(Object.isFrozen(result),true);
 });
+
+test('cue identity survives comparison and malformed timing cannot become valid untimed evidence',()=>{
+ const claims=pair();claims.video.cueId='timing-marker';claims.video.start=2;claims.video.end=4;
+ const result=compareClaimPair(claims);assert.equal(result.video.cueId,'timing-marker');assert.equal(result.video.start,2);
+ for(const mutate of [c=>{c.video.cueId='bad\ncue';},c=>{c.video.start=5;},c=>{delete c.video.end;},c=>{c.video.end=Infinity;}]){
+  const broken=structuredClone(claims);mutate(broken);assert.equal(compareClaimPair(broken).status,'invalid_source');
+ }
+});
