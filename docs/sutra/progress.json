@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T19:14:26.874+05:45",
+  "updated_at": "2026-11-24T19:31:57.810+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "05dbd04ec5243c1fb835769ff9bf45bb7c4e4486",
+  "last_observed_code_sha": "a72c70fb128e48f08459c957749fbf018a7ad6bd",
   "last_session_id": "SUTRA-SESSION-0042",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
@@ -16,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Inspect exact fragment-budget candidate 05d8948b90972f1fbc1095bf3554f1c3a363c452, correct failures and verify X010-18; continue P078-02. Preserve concurrent P007 capacity work and human/rights/live-model/public-release gates.",
+  "next_action": "Continue P078-02 with dependency-ready engineering. Inspect exact learner baaff96faf5649285b7ffd7ed93ed7842e7dc291 (run 45406604981); do not count X010-22 until full CI passes. Preserve independent P007 capacity work; P041-10/P078-07 require genuine viewer/pilot evidence, P054-01/P066-01 actual provider measurements, P020-02 rights-cleared corpus, P005-08 entrant voice. No deploy, paid model, public release or submission.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -12101,6 +12101,86 @@
           "observed_at": "2026-11-24T19:14:26.874+05:45"
         }
       ]
+    },
+    "SUTRA-X010-18": {
+      "state": "verified",
+      "verified_at": "2026-11-24T19:31:57.810+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45403690687/job/138478612055",
+          "description": "Bound zero-length/tiny-fragment work in all reviewed readers, yield to event-loop cancellation, per-read abort races; local Workerd also passed. Exact revision 19/19 workflows.",
+          "result": "pass",
+          "source_revision": "05d8948b90972f1fbc1095bf3554f1c3a363c452",
+          "observed_at": "2026-11-24T19:31:57.810+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "description": "Session evidence, exact revision and scope limits.",
+          "result": "pass",
+          "source_revision": "05d8948b90972f1fbc1095bf3554f1c3a363c452",
+          "observed_at": "2026-11-24T19:31:57.810+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-19": {
+      "state": "verified",
+      "verified_at": "2026-11-24T19:31:57.810+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45404185984/job/138480337873",
+          "description": "Observe real Chromium same-document BFCache restoration while native verified media is actively playing; pause on return, no implicit resume, cross-tab evidence refreshed. Requires X009-07 and X010-11. Exact revision 19/19 workflows.",
+          "result": "pass",
+          "source_revision": "53151c80d53b9d06b412e9e9292ac18dc26cd4f6",
+          "observed_at": "2026-11-24T19:31:57.810+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "description": "Session evidence, exact revision and scope limits.",
+          "result": "pass",
+          "source_revision": "53151c80d53b9d06b412e9e9292ac18dc26cd4f6",
+          "observed_at": "2026-11-24T19:31:57.810+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-20": {
+      "state": "verified",
+      "verified_at": "2026-11-24T19:31:57.810+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45404493937/job/138481410653",
+          "description": "Invalidate presentation authority of all queued review actions on pagehide; hold cooperative lock, cancel queued mutation and download, verify no stale outcome and fresh explicit recovery. Requires X010-10 and X010-12. Exact revision 19/19 workflows.",
+          "result": "pass",
+          "source_revision": "cbb29f87912ea4349c139765713c04bce60c91fd",
+          "observed_at": "2026-11-24T19:31:57.810+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "description": "Session evidence, exact revision and scope limits.",
+          "result": "pass",
+          "source_revision": "cbb29f87912ea4349c139765713c04bce60c91fd",
+          "observed_at": "2026-11-24T19:31:57.810+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-21": {
+      "state": "verified",
+      "verified_at": "2026-11-24T19:31:57.810+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45406247460/job/138487643823",
+          "description": "Align comparison claim size/data bounds and canonical path/anchor identity; require exact reviewed compiler derivative reconstructed from immutable declared metadata and escaped excerpt; reject same-hash-consistent deceptive markup, hidden wrapper or mismatched metadata. Verify compiler round-trip and Chromium. Requires X010-11 and X010-18. Exact revision 19/19 workflows.",
+          "result": "pass",
+          "source_revision": "a72c70fb128e48f08459c957749fbf018a7ad6bd",
+          "observed_at": "2026-11-24T19:31:57.810+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "description": "Session evidence, exact revision and scope limits.",
+          "result": "pass",
+          "source_revision": "a72c70fb128e48f08459c957749fbf018a7ad6bd",
+          "observed_at": "2026-11-24T19:31:57.810+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -12190,6 +12270,7 @@
     "Session 0042 checkpoint: quota lost-response/day/deadline and actual local SQLite DO, SSE backpressure/teardown, Workerd redirect compatibility, exact ingress, peer base authority, review save uncertainty verified. 675/1068 overall; original 609/1000. 95f898842d1f93d0d2c6f6434cb5d4c8ed72001e 19/19, media revision 4ff29cb7b6e80b6702fa64455c8ba5755c8356e9 17/19 observed; media task remains pending.",
     "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9 19/19 exact workflows, 142+150+141+8=441 automated non-browser tests, Chromium BFCache both profiles; 676/1068 verified, 385 pending, original 609/1000. X010-11 verified.",
     "2026-11-24T19:04:33.362+05:45: **678/1,070 overall verified; 609/1,000 original; 385 pending; six omissions; one hardware blocker.** X010-12–13 exact revisions passed 19/19 workflows. SSE revision `e7ccecf9eae71bd4c0c1aaf3b4e9ac4989b81f37` 446 non-browser tests (142 app, 155 package/API, 141 runtime, 8 peer), Chromium learner and three-engine matrix. Newer head `c8fc9f4528fa45379c87968964aadb92eb80db63` includes additional lifecycle changes not credited here. P078-02 remains open.",
-    "2026-11-24T19:14:26.874+05:45: **682/1,075 overall verified; 609/1,000 original; 386 pending; six omissions; one hardware blocker.** X010-14–17 verified at exact 19/19 source revisions; latest `05dbd04ec5243c1fb835769ff9bf45bb7c4e4486` 450 non-browser tests (142 app, 155 package/API, 145 runtime, 8 peer), learner Chromium and three-engine matrix. X010-18 candidate `05d8948b90972f1fbc1095bf3554f1c3a363c452` awaiting exact CI; do not count pending candidate. P078-02 open. No public release or live model."
+    "2026-11-24T19:14:26.874+05:45: **682/1,075 overall verified; 609/1,000 original; 386 pending; six omissions; one hardware blocker.** X010-14–17 verified at exact 19/19 source revisions; latest `05dbd04ec5243c1fb835769ff9bf45bb7c4e4486` 450 non-browser tests (142 app, 155 package/API, 145 runtime, 8 peer), learner Chromium and three-engine matrix. X010-18 candidate `05d8948b90972f1fbc1095bf3554f1c3a363c452` awaiting exact CI; do not count pending candidate. P078-02 open. No public release or live model.",
+    "2026-11-24T19:31:57.810+05:45: 686/1079 overall verified; 609/1000 original; 386 pending. X010-18–21 exact source CI all 19/19. X010-22 18/19 at observation. Continue P078-02 with dependency-ready engineering. Inspect exact learner baaff96faf5649285b7ffd7ed93ed7842e7dc291 (run 45406604981); do not count X010-22 until full CI passes. Preserve independent P007 capacity work; P041-10/P078-07 require genuine viewer/pilot evidence, P054-01/P066-01 actual provider measurements, P020-02 rights-cleared corpus, P005-08 entrant voice. No deploy, paid model, public release or submission."
   ]
 }

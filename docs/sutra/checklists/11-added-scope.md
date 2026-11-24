@@ -133,4 +133,12 @@ Both are isolated learner/developer regressions verified in automated browser an
 
 - [x] `SUTRA-X010-17` Require HTTP 202 empty notification acknowledgement before either narrow MCP host continues; enforce zero-byte budget and cancel immediately at first forbidden byte even without EOF. Verify null/empty stream, partial, declared body, held-byte and held-cancellation cases, plus separate-origin browser failure. Requires X010-01.
 
-- [ ] `SUTRA-X010-18` Bound zero-length and tiny-fragment work across Worker pre-admission JSON, content, consent, shared response and inference SSE readers; yield to event-loop cancellation; avoid accumulating reactions on a long-lived stop promise; verify actual CI including local Workerd. Requires X010-04, X010-06 and X010-17.
+- [x] `SUTRA-X010-18` Bound zero-length and tiny-fragment work across Worker pre-admission JSON, content, consent, shared response and inference SSE readers; yield to event-loop cancellation; avoid accumulating reactions on a long-lived stop promise; verify actual CI including local Workerd. Requires X010-04, X010-06 and X010-17.
+
+- [x] `SUTRA-X010-19` Observe real Chromium same-document BFCache restoration while native verified media is actively playing; pause on return, no implicit resume, cross-tab evidence refreshed. Requires X009-07 and X010-11.
+
+- [x] `SUTRA-X010-20` Invalidate presentation authority of all queued review actions on pagehide; hold cooperative lock, cancel queued mutation and download, verify no stale outcome and fresh explicit recovery. Requires X010-10 and X010-12.
+
+- [x] `SUTRA-X010-21` Align comparison claim size/data bounds and canonical path/anchor identity; require exact reviewed compiler derivative reconstructed from immutable declared metadata and escaped excerpt; reject same-hash-consistent deceptive markup, hidden wrapper or mismatched metadata. Verify compiler round-trip and Chromium. Requires X010-11 and X010-18.
+
+- [ ] `SUTRA-X010-22` Explicit no-referrer policy for browser peer/MCP/public content/inference reads; fixed provider POST header set, no ambient adapter metadata or credentials. Test actual browser peer/MCP and same-origin API, injected header/referrer canary, and local Workerd compatibility. Requires X010-01 and X010-17.

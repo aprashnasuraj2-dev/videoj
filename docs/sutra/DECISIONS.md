@@ -277,3 +277,7 @@ Use one fixed bounded buffer before Worker quota admission; chunk count cannot c
 ### Further lifecycle and protocol boundaries — 2026-11-24T19:14:26.874+05:45
 
 Revoke native seek waiting authority as soon as results change; preserve focus only when the transcript owned it. Bound actual serialized UTF-8 trace exports without executing ordinary array metadata. For the pinned MCP 2025-06-18 narrow JSON-only profile, accepted notification is empty HTTP 202; verify EOF or fail at first byte, do not proceed after malformed acknowledgement. This does not claim general MCP transport conformance. New fragment budget is a fail-closed work bound; exact verification pending. See [session evidence](evidence/implementation/SESSION-0042.md).
+
+### Further boundary verification — 2026-11-24T19:31:57.810+05:45
+
+Bound work independently of bytes; real BFCache while playing must pause without implicit resume. Review outcome presentation is revoked at pagehide even if storage work already began. Reviewed written guide must equal the canonical compiler derivative from the declared text and metadata; digest of original input remains a recorded claim, not independent verification. Explicit no-referrer and closed provider header contract prevent ambient caller metadata; normal Origin remains available for CORS. Privacy candidate awaiting learner.

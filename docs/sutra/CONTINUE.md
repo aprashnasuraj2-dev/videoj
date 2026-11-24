@@ -10,9 +10,9 @@ On 24 November the participant explicitly tightened the ordering: stop further d
 
 ## Latest implementation checkpoint — 0042
 
-2026-11-24T19:14:26.874+05:45: **682/1,075 overall verified; 609/1,000 original; 386 pending; six omissions; one hardware blocker.** X010-14–17 verified at exact 19/19 source revisions; latest `05dbd04ec5243c1fb835769ff9bf45bb7c4e4486` 450 non-browser tests (142 app, 155 package/API, 145 runtime, 8 peer), learner Chromium and three-engine matrix. X010-18 candidate `05d8948b90972f1fbc1095bf3554f1c3a363c452` awaiting exact CI; do not count pending candidate. P078-02 open. No public release or live model.
+2026-11-24T19:31:57.810+05:45: **686/1,079 overall verified; 609/1,000 original; 386 pending; six omissions; one hardware blocker.** X010-18–21 19/19 exact CI; latest fully verified source `a72c70fb128e48f08459c957749fbf018a7ad6bd`. X010-22 at 18/19, not credited. Actual Chromium native BFCache restored no-media, paused and playing profiles. P078-02 remains open. [Evidence](evidence/implementation/SESSION-0042.md).
 
-Inspect exact fragment-budget candidate 05d8948b90972f1fbc1095bf3554f1c3a363c452, correct failures and verify X010-18; continue P078-02. Preserve concurrent P007 capacity work and human/rights/live-model/public-release gates. [Session evidence](evidence/implementation/SESSION-0042.md).
+Current code head: `baaff96faf5649285b7ffd7ed93ed7842e7dc291`. Continue P078-02 with dependency-ready engineering. Inspect exact learner baaff96faf5649285b7ffd7ed93ed7842e7dc291 (run 45406604981); do not count X010-22 until full CI passes. Preserve independent P007 capacity work; P041-10/P078-07 require genuine viewer/pilot evidence, P054-01/P066-01 actual provider measurements, P020-02 rights-cleared corpus, P005-08 entrant voice. No deploy, paid model, public release or submission.
 
 ## Resume sequence
 

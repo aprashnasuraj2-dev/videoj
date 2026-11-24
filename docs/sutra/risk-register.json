@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T19:14:26.874+05:45",
+  "updatedAt": "2026-11-24T19:31:57.810+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -890,8 +890,8 @@
     {
       "id": "R-041",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Byte-budget bypass via empty or tiny stream fragments",
       "mechanism": "Unlimited zero-byte chunks and microtask-only reads can starve deadlines; repeated races against one unresolved cancellation promise can retain reactions.",
       "userEffect": "CPU/memory pressure or delayed cancellation, including pre-admission Worker requests.",
@@ -899,14 +899,98 @@
         "SUTRA-X010-18",
         "SUTRA-P078-02"
       ],
-      "mitigation": "Patch committed: cap empty fragments at 256, large content fragments at 131072, yield every 1024 reads or SSE lines; per-read abort race. Exact CI pending.",
+      "mitigation": "Patch committed: cap empty fragments at 256, large content fragments at 131072, yield every 1024 reads or SSE lines; per-read abort race. Exact CI 19/19, including Workerd.",
       "evidence": [
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
           "sourceRevision": "05d8948b90972f1fbc1095bf3554f1c3a363c452"
         }
       ],
-      "unblockCondition": "Observe exact source CI including Workerd and all browser profiles; fix any regression."
+      "unblockCondition": null
+    },
+    {
+      "id": "R-042",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Native playback left running on history restoration",
+      "mechanism": "Browser freeze during active playback could leave an old operation or media state implicitly active.",
+      "userEffect": "Potential stale evidence, privacy leakage or failed learner operation.",
+      "affectedTasks": [
+        "SUTRA-X010-19",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Actual Chromium same-document restored while playing, paused on return; no cross-browser BFCache claim.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "53151c80d53b9d06b412e9e9292ac18dc26cd4f6"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-043",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Stale queued local review outcome",
+      "mechanism": "A queued lock operation can settle after pagehide and overwrite fresh status or attempt download.",
+      "userEffect": "Potential stale evidence, privacy leakage or failed learner operation.",
+      "affectedTasks": [
+        "SUTRA-X010-20",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "All review outcome presentation epochs revoked at navigation, cooperative lock and no mutation replay.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "cbb29f87912ea4349c139765713c04bce60c91fd"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-044",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Hash-consistent but uninspectable written derivative",
+      "mechanism": "Fragment parsing can omit hidden wrapper attributes; source path normalization or claim size mismatch can misrepresent evidence.",
+      "userEffect": "Potential stale evidence, privacy leakage or failed learner operation.",
+      "affectedTasks": [
+        "SUTRA-X010-21",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Shared canonical derivative and canonical URLs, exact bytes and metadata, no original-source truth or arbitrary HTML sanitizer claim.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "a72c70fb128e48f08459c957749fbf018a7ad6bd"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-045",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Ambient request metadata outside consent contract",
+      "mechanism": "Default referrer can reveal caller URL and arbitrary adapter headers can carry private data.",
+      "userEffect": "Potential stale evidence, privacy leakage or failed learner operation.",
+      "affectedTasks": [
+        "SUTRA-X010-22",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Explicit no-referrer, fixed provider headers, credentialless approved contacts. CORS Origin is a normal transport requirement, not hidden identity.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "baaff96faf5649285b7ffd7ed93ed7842e7dc291"
+        }
+      ],
+      "unblockCondition": "Observe full exact learner/browser and Workerd CI."
     }
   ]
 }
