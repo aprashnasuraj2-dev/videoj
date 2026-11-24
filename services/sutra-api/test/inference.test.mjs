@@ -145,7 +145,15 @@ test('cache policy separates private APIs, mutable pointers and explicitly versi
  assert.equal(apply('https://sutra.test/agents/v/abc/learner.network.json'),'public, max-age=31536000, immutable');
  assert.equal(apply('https://sutra.test/agents/learner.network.json?v=abc'),'public, max-age=0, must-revalidate');
  assert.equal(apply('https://sutra.test/media/timing-fixture.mp4'),'public, max-age=0, must-revalidate');
- assert.equal(apply('https://sutra.test/media/timing-fixture.mp4?v=abc'),'public, max-age=31536000, immutable');
+ assert.equal(apply('https://sutra.test/media/timing-fixture.mp4?v=abc'),'public, max-age=0, must-revalidate');
+ const digest='a'.repeat(64);
+ assert.equal(apply('https://sutra.test/media/release/'+digest+'/lesson.mp4'),'public, max-age=31536000, immutable');
+ assert.equal(apply('https://sutra.test/media/release/'+digest+'/lesson.webm?v='+digest),'public, max-age=31536000, immutable');
+ for(const suffix of ['/lesson.mp4?v=wrong','/lesson.mp4?v='+digest+'&x=1','/poster.svg?v='+digest]){
+  assert.equal(apply('https://sutra.test/media/release/'+digest+suffix),'public, max-age=0, must-revalidate');
+ }
+ assert.equal(withCachePolicy(new Response('missing',{status:404}),new Request('https://sutra.test/media/release/'+digest+'/lesson.mp4?v='+digest)).headers.get('Cache-Control'),'public, max-age=0, must-revalidate');
+ assert.equal(withCachePolicy(new Response('missing',{status:404}),new Request('https://sutra.test/assets/index-contenthash.js')).headers.get('Cache-Control'),'public, max-age=0, must-revalidate');
  assert.equal(apply('https://sutra.test/assets/index-contenthash.js'),'public, max-age=31536000, immutable');
 });
 

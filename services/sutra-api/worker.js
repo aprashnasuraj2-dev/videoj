@@ -59,8 +59,16 @@ export function withCachePolicy(response,request){
  const url=new URL(request.url),path=url.pathname,headers=new Headers(response.headers);
  let policy='public, max-age=0, must-revalidate';
  if(path.startsWith('/api/'))policy='no-store';
- else if(path.startsWith('/assets/')||path.startsWith('/agents/v/'))policy='public, max-age=31536000, immutable';
- else if(url.searchParams.has('v')&&path.startsWith('/media/'))policy='public, max-age=31536000, immutable';
+ else if(response.status===200&&(path.startsWith('/assets/')||path.startsWith('/agents/v/')))policy='public, max-age=31536000, immutable';
+ else {
+  // A caller-defined ?v= value is not evidence of immutable media bytes.
+  // Only the complete digest-shaped reviewed lesson path is safely
+  // content-addressed. Its poster and VTT derivatives are not necessarily
+  // bound to the media hash, so they retain revalidation semantics.
+  const media=path.match(/^\/media\/release\/([a-f0-9]{64})\/lesson\.(?:mp4|webm)$/);
+  const params=[...url.searchParams];
+  if(response.status===200&&media&&(params.length===0||params.length===1&&params[0][0]==='v'&&params[0][1]===media[1]))policy='public, max-age=31536000, immutable';
+ }
  else if(path==='/'||path.endsWith('.html')||path.endsWith('/agent-manifest.json')||path.endsWith('/links.json')||path.endsWith('.network.json')||path.startsWith('/media/'))policy='public, max-age=0, must-revalidate';
  headers.set('Cache-Control',policy);
  return new Response(response.body,{status:response.status,statusText:response.statusText,headers});
