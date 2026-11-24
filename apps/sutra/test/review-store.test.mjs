@@ -87,7 +87,7 @@ test('source catalog registration snapshots nested data without calling attacker
  assert.throws(()=>createReviewStore({storage:f.storage,sources:[source]}),/Unsafe data property/);
  const other=structuredClone(fixture.source);
  Object.defineProperty(other,'toJSON',{enumerable:true,value(){calls++;return fixture.source;}});
- assert.throws(()=>createReviewStore({storage:f.storage,sources:[other]}),/Unexpected source field/);
+ assert.throws(()=>createReviewStore({storage:f.storage,sources:[other]}),/Unsafe data property/);
  assert.equal(calls,0);assert.equal(f.writes,0);
 });
 test('review catalog snapshot survives caller mutation while exact receipt remains tied to original source',()=>{
