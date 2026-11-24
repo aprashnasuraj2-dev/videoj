@@ -1,3 +1,4 @@
+import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 export class InferenceError extends Error{constructor(code){super(`Inference stopped (${code}); no complete result is claimed.`);this.name='InferenceError';this.code=code;}}
 export const stop=code=>{throw new InferenceError(code);};
 export const plain=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
@@ -36,7 +37,7 @@ export async function* readSse(response,{signal,maxBytes=MAX_SSE_BYTES}={}){
      if(!present)continue;
      if(type&&type!=='message')stop('STREAM_EVENT');
      if(payload.trim()==='[DONE]'){yield {done:true};return;}
-     let parsed;try{parsed=JSON.parse(payload);}catch{stop('STREAM_JSON');}
+     let parsed;try{parsed=parseUniqueJson(payload,{maxChars:MAX_SSE_LINE_CHARS,maxDepth:32});}catch{stop('STREAM_JSON');}
      if(!plain(parsed)||parsed.error)stop('UPSTREAM_STREAM');yield {data:parsed};
      continue;
     }
@@ -92,7 +93,7 @@ export function makeAccumulator(){
    // Never convert an earlier length/content_filter finish into success.
    if(chunk.usage){if(!finish||usage)stop('USAGE_SEQUENCE');usage=chunk.usage;}
    return chunk;},
-  finish(){if(ended)stop('AFTER_FINISH');ended=true;if(!['stop','tool_calls'].includes(finish))stop('INCOMPLETE_RESULT');const calls=tools.filter(Boolean);if(calls.length!==tools.length||new Set(calls.map(c=>c.id)).size!==calls.length)stop('TOOL_SHAPE');if(finish==='tool_calls'&&!calls.length||finish==='stop'&&calls.length)stop('TOOL_SHAPE');for(const call of calls){if(!call.id||!call.function.name)stop('TOOL_SHAPE');try{if(!plain(JSON.parse(call.function.arguments)))stop('TOOL_SHAPE');}catch{stop('TOOL_SHAPE');}}return {content,toolCalls:calls,finishReason:finish,usage};},
+  finish(){if(ended)stop('AFTER_FINISH');ended=true;if(!['stop','tool_calls'].includes(finish))stop('INCOMPLETE_RESULT');const calls=tools.filter(Boolean);if(calls.length!==tools.length||new Set(calls.map(c=>c.id)).size!==calls.length)stop('TOOL_SHAPE');if(finish==='tool_calls'&&!calls.length||finish==='stop'&&calls.length)stop('TOOL_SHAPE');for(const call of calls){if(!call.id||!call.function.name)stop('TOOL_SHAPE');try{if(!plain(parseUniqueJson(call.function.arguments,{maxChars:8000,maxDepth:16})))stop('TOOL_SHAPE');}catch{stop('TOOL_SHAPE');}}return {content,toolCalls:calls,finishReason:finish,usage};},
   get ended(){return ended;},
  };
 }

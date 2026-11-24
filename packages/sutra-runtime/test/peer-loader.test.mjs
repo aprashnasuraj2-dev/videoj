@@ -118,3 +118,18 @@ test('standalone peer loader refuses executable configuration and coercible dest
  await assert.rejects(loadPeerNetwork({...valid,timeoutMs:{valueOf(){touched++;return 50;}}}),e=>e.code==='LIMIT_CONFIG');
  assert.equal(touched,0);assert.equal(contacts,0);assert.equal(decisions,0);
 });
+
+test('ambiguous peer publication fails before model or additional graph consent',async()=>{
+ for(const stage of ['manifest','graph']){
+  const intents=[],calls=[];
+  const inspector=createConsentInspector({decide:async intent=>{intents.push(intent.kind);return {decision:'allow',scope:'once'};}});
+  await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async url=>{
+   const isManifest=url.endsWith('agent-manifest.json');calls.push(url);
+   const body=isManifest?(stage==='manifest'?'{"networks":[],"networks":'+JSON.stringify(manifest().networks)+'}':JSON.stringify(manifest())):
+    '{"tools":[],'+JSON.stringify(graph).slice(1);
+   return new Response(body,{headers:{'Content-Type':'application/json'}});
+  }}),e=>e.code===(stage==='manifest'?'MANIFEST_UNAVAILABLE':'GRAPH_UNAVAILABLE'));
+  assert.equal(calls.length,stage==='manifest'?1:2);
+  assert.deepEqual(intents,stage==='manifest'?['peer_manifest']:['peer_manifest','peer_graph']);
+ }
+});

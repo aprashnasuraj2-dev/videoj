@@ -132,3 +132,10 @@ test('approved JSON rejects unbounded empty transport fragments',async()=>{
  await assert.rejects(fetchJsonWithConsent({inspector,contact:contact(),url:'https://peer.example/a.json',fetchImpl:()=>response}),e=>e.code==='CONTACT_SIZE');
  assert.ok(pulls<=258);assert.equal(cancelled,1);assert.equal(response.body.locked,false);
 });
+
+test('approved JSON contact rejects duplicate decoded field names and records failure',async()=>{
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'once'})});
+ let calls=0;
+ await assert.rejects(fetchJsonWithConsent({inspector,contact:contact(),url:'https://peer.example/agent-manifest.json',fetchImpl:async()=>{calls++;return new Response('{"networks":[],"networ\\u006bs":[{}]}',{headers:{'Content-Type':'application/json'}});}}),e=>e.code==='CONTACT_JSON');
+ assert.equal(calls,1);assert.equal(inspector.exportEvents().at(-1).status,'failed');
+});

@@ -1,3 +1,4 @@
+import {parseUniqueJson} from './strict-json.js';
 export class ConsentError extends Error {
   constructor(code,message){super(message);this.name='ConsentError';this.code=code;}
 }
@@ -159,7 +160,7 @@ async function readBoundedJson(response,maxBytes,signal){
       if(++chunks%1024===0){await new Promise(resolve=>setTimeout(resolve,0));check(signal);}
       bytes.set(value,total);total+=value.byteLength;
     }
-    try{return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes.subarray(0,total)));}catch{fail('CONTACT_JSON','Approved contact did not return valid UTF-8 JSON.');}
+    try{return parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(bytes.subarray(0,total)),{maxChars:maxBytes,maxDepth:32});}catch{fail('CONTACT_JSON','Approved contact did not return valid UTF-8 JSON.');}
   } finally {
     if(reader){cancelBody(reader);try{reader.releaseLock();}catch{}}
     else cancelBody(response?.body);

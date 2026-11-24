@@ -132,3 +132,13 @@ test('SSE empty chunks are bounded and comment-only bursts remain cancellable',a
  const timer=setTimeout(()=>controller.abort(),0);let terminal=false;
  try{await assert.rejects(async()=>{for await(const x of readSse(busy,{signal:controller.signal}))terminal||=!!x.done;},e=>e.code==='CANCELLED');assert.equal(terminal,false);assert.equal(busy.body.locked,false);}finally{clearTimeout(timer);}
 });
+
+test('ambiguous SSE chunk or fully assembled tool arguments cannot establish completion',async()=>{
+ const raw='data: {"choices":[],"choic\\u0065s":[{"index":0,"delta":{"content":"last wins"},"finish_reason":"stop"}]}\n\ndata: [DONE]\n\n';
+ const adapter=createProviderAdapter({origin:'https://sutra.test',model:'approved',fetchImpl:async()=>new Response(raw,{headers:{'Content-Type':'text/event-stream'}})});
+ await assert.rejects(adapter.chat({messages:[]}),e=>e.code==='STREAM_JSON');
+ const a=makeAccumulator();
+ a.accept(chunk({tool_calls:[{index:0,id:'call',type:'function',function:{name:'read',arguments:'{"query":"first",'}}]}));
+ a.accept(chunk({tool_calls:[{index:0,function:{arguments:'"qu\\u0065ry":"second"}'}}]},'tool_calls'));
+ assert.throws(()=>a.finish(),/TOOL_SHAPE/);
+});

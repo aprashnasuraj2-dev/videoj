@@ -245,3 +245,20 @@ test('known artifact MIME is checked before opening a potentially held response 
   assert.equal(cancelled,1);assert.equal(response.body.locked,false);assert.ok(pulls<=1);
  }
 });
+
+test('byte-hash-matched catalog still refuses ambiguous JSON member identity',async()=>{
+ const ambiguous='{"schema":0,'+JSON.stringify(catalog).slice(1);
+ const p=structuredClone(profile);p.catalog.sha256=createHash('sha256').update(ambiguous).digest('hex');
+ const calls=[];
+ await assert.rejects(loadContentProfile({baseUrl:'https://sutra.example/content/',fetchImpl:async url=>{
+  calls.push(url);return response(url.endsWith('content-profile.json')?p:ambiguous,url);
+ }}),/CONTENT_JSON/);
+ assert.equal(calls.length,2,'even correct raw catalog digest cannot establish unambiguous data');
+});
+test('ambiguous content profile cannot request its declared catalog',async()=>{
+ const calls=[];
+ await assert.rejects(loadContentProfile({baseUrl:'https://sutra.example/content/',fetchImpl:async url=>{
+  calls.push(url);return response('{"mode":"reviewed",'+JSON.stringify(profile).slice(1),url);
+ }}),/CONTENT_JSON/);
+ assert.equal(calls.length,1);
+});

@@ -185,3 +185,11 @@ test('model POST observer is invoked only at actual transport attempt and cannot
  await wrapped(origin+'/api/source-tools',{method:'POST',body:'{}'});assert.deepEqual(order,['source']);
  await wrapped(origin+'/api/v1/chat/completions',{method:'POST',body:'{}'});assert.deepEqual(order,['source','model','observed']);
 });
+
+test('ambiguous provider status never authorizes manifest or model discovery',async()=>{
+ const seen=[];
+ await assert.rejects(discoverProvider({origin:'https://example.test',fetchImpl:async url=>{
+  seen.push(url);return new Response('{"inference":"configured","inference":"disabled","sourceTools":"catalog","content":{},"factualTruth":"unverified"}',{headers:{'Content-Type':'application/json'}});
+ }}),/Invalid public contract/);
+ assert.deepEqual(seen,['https://example.test/api/status']);
+});

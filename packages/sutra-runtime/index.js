@@ -343,7 +343,7 @@ async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigi
      if(remainingRetries>0){remainingRetries--;continue;}
      fail('ARTIFACT_UNAVAILABLE','Public artifact service is unavailable.');
     }
-    let parsed;try{parsed=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{fail('ARTIFACT_JSON','Artifact is not valid UTF-8 JSON.');}
+    let parsed;try{parsed=parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(bytes),{maxChars:maxBytes,maxDepth:32});}catch{fail('ARTIFACT_JSON','Artifact is not valid UTF-8 JSON.');}
     event.status='completed';return parsed;
    }catch(error){
     if(event.status==='started')event.status=signal?.aborted?'cancelled':'failed';

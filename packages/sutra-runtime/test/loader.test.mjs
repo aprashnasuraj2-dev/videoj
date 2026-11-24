@@ -15,3 +15,16 @@ test('publisher executable metadata rejected without loading code',async()=>{con
 test('noncooperating fetch has an elapsed timeout',async()=>assert.rejects(loadLocalNetwork({...base,timeoutMs:20,fetchImpl:()=>new Promise(()=>{})}),e=>e.code==='ARTIFACT_TIMEOUT'));
 test('pre-cancelled artifact loading makes no request',async()=>{const controller=new AbortController();controller.abort();let calls=0;await assert.rejects(loadLocalNetwork({...base,signal:controller.signal,fetchImpl:()=>{calls++;}}),e=>e.code==='CANCELLED');assert.equal(calls,0);});
 test('artifact cancellation interrupts a stalled fetch',async()=>{const controller=new AbortController();const job=loadLocalNetwork({...base,signal:controller.signal,fetchImpl:()=>new Promise(()=>{})});setTimeout(()=>controller.abort(),10);await assert.rejects(job,e=>e.code==='CANCELLED');});
+
+test('ambiguous manifest or graph JSON cannot select a last-wins publication',async()=>{
+ for(const stage of ['manifest','graph']){
+  const calls=[];
+  await assert.rejects(loadLocalNetwork({...base,fetchImpl:async url=>{
+   const isManifest=url.endsWith('agent-manifest.json');calls.push(url);
+   const body=isManifest?(stage==='manifest'?'{"networks":[],"networks":'+JSON.stringify(manifest.networks)+'}':JSON.stringify(manifest)):
+    '{"tools":[],'+JSON.stringify(graph).slice(1);
+   return new Response(body,{headers:{'Content-Type':'application/json'}});
+  }}),e=>e.code==='ARTIFACT_JSON');
+  assert.equal(calls.length,stage==='manifest'?1:2);
+ }
+});

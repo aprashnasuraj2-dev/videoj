@@ -1,3 +1,4 @@
+import {parseUniqueJson} from '../../../packages/sutra-consent/strict-json.js';
 import {compileNetwork,runNetwork} from '../../../packages/sutra-runtime/index.js';
 import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
 import {abortable} from '../../../packages/sutra-inference/protocol.js';
@@ -85,7 +86,7 @@ async function readPublicJson({url,origin,fetchImpl,signal,maxBytes}){
  // redirects, and late/held bodies must be disposed even on cancellation.
  const {response,bytes}=await readContentBytes({url,origin,fetchImpl,signal,maxBytes,accept:'application/json'});
  if(response.headers.get('content-type')?.split(';',1)[0].trim().toLowerCase()!=='application/json')throw Error('Unavailable public contract');
- let data;try{data=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}
+ let data;try{data=parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(bytes),{maxChars:maxBytes,maxDepth:32});}
  catch{throw Error('Invalid public contract');}
  if(!plain(data))throw Error('Invalid public contract');
  return data;

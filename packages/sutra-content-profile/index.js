@@ -1,3 +1,4 @@
+import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {snapshotDataRecord,snapshotDataArray} from '../sutra-evidence/index.js';
 export const MAX_REVIEWED_MEDIA_BYTES=24*1024*1024;
 const MEDIA_TYPES=new Set(['video/mp4','video/webm']);
@@ -87,7 +88,7 @@ const boundedBytes=readContentBytes;
 const boundedJson=async({url,origin,fetchImpl,signal,maxBytes})=>{
  const {response,bytes}=await boundedBytes({url,origin,fetchImpl,signal,maxBytes,accept:'application/json'});
  if(response.headers.get('content-type')?.split(';',1)[0].trim().toLowerCase()!=='application/json')throw Error('CONTENT_RESPONSE');
- let data;try{data=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{throw Error('CONTENT_JSON');}
+ let data;try{data=parseUniqueJson(new TextDecoder('utf-8',{fatal:true}).decode(bytes),{maxChars:maxBytes,maxDepth:32});}catch{throw Error('CONTENT_JSON');}
  if(!plain(data))throw Error('CONTENT_JSON');return {data,bytes};
 };
 const validSource=source=>plain(source)&&validId(source.id)&&safeText(source.version,128)&&validHash(source.hash)&&validHash(source.mediaHash)&&Number.isFinite(source.duration)&&source.duration>0&&source.duration<=86400&&Array.isArray(source.cues)&&source.cues.length>0&&source.cues.length<=500&&new Set(source.cues.map(x=>x?.id)).size===source.cues.length&&source.cues.every(c=>plain(c)&&validId(c.id)&&Number.isFinite(c.start)&&Number.isFinite(c.end)&&c.start>=0&&c.end>c.start&&c.end<=source.duration&&safeText(c.text,2000));
