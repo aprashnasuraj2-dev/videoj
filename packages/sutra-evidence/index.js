@@ -59,3 +59,46 @@ export function validateReceipt(receipt, { sources } = {}) {
   }
   return {valid:errors.length===0,level:errors.length ? 'invalid':'catalog_matched',errors};
 }
+
+
+/**
+ * Validate one renderable claim against an independently supplied source catalog.
+ * This is an evidence-link check, not semantic/factual verification.
+ *
+ * Claim v1 shape:
+ * {version:1, kind:'source_excerpt'|'interpretation', text:string, receipt:<receipt v1>}
+ */
+export function validateEvidenceClaim(claim,{sources}={}){
+  const errors=[],fail=(code,path)=>errors.push({code,path});
+  const allowed=['version','kind','text','receipt'];
+  if(!isObject(claim))return {valid:false,state:'unsupported',truthStatus:'unverified',errors:[{code:'CLAIM_TYPE',path:''}],sourceRef:null};
+  for(const key of allowed)if(!Object.hasOwn(claim,key))fail('REQUIRED',key);
+  for(const key of Object.keys(claim))if(!allowed.includes(key))fail('UNKNOWN_FIELD',key);
+  if(claim.version!==1)fail('CLAIM_VERSION','version');
+  if(!['source_excerpt','interpretation'].includes(claim.kind))fail('CLAIM_KIND','kind');
+  if(typeof claim.text!=='string'||!claim.text.trim()||claim.text.length>4000)fail('CLAIM_TEXT','text');
+  if(errors.length)return {valid:false,state:'unsupported',truthStatus:'unverified',errors,sourceRef:null};
+  const receiptResult=validateReceipt(claim.receipt,{sources});
+  if(!receiptResult.valid||receiptResult.level!=='catalog_matched'){
+    for(const error of receiptResult.errors)fail(error.code,`receipt.${error.path}`);
+    if(receiptResult.valid&&receiptResult.level!=='catalog_matched')fail('CATALOG_REQUIRED','receipt');
+    return {valid:false,state:'unsupported',truthStatus:'unverified',errors,sourceRef:null};
+  }
+  if(claim.kind==='source_excerpt'&&claim.text!==claim.receipt.excerpt){
+    fail('CLAIM_QUOTE_MISMATCH','text');
+    return {valid:false,state:'unsupported',truthStatus:'unverified',errors,sourceRef:null};
+  }
+  const sourceRef=Object.freeze({
+    sourceId:claim.receipt.sourceId,sourceVersion:claim.receipt.sourceVersion,
+    sourceHash:claim.receipt.sourceHash,mediaHash:claim.receipt.mediaHash,
+    cueId:claim.receipt.cueId,start:claim.receipt.start,end:claim.receipt.end
+  });
+  return {
+    valid:true,
+    state:claim.kind==='source_excerpt'?'source_backed_unverified':'interpretation_unverified',
+    truthStatus:'unverified',
+    errors:[],
+    sourceRef,
+    excerpt:claim.receipt.excerpt
+  };
+}
