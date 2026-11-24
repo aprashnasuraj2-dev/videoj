@@ -22,6 +22,17 @@ export function mountTimingPlayer(host,{source,poster,chapters,captions}){
  }
  return {element:player,media,readState:()=>readPlaybackState(media),
   ready:()=>waitFor('loadedmetadata',()=>media.readyState>=1),
+  async replaceSource(nextSource){
+   if(typeof nextSource!=='string'||!nextSource.trim()||nextSource.length>4096)throw new Error('Replacement media source is invalid.');
+   try{media.pause();}catch{}
+   // Reset native state before changing source so stale duration/currentTime is
+   // never interpreted as the replacement media being ready.
+   media.removeAttribute('src');media.load();
+   await waitFor('loadedmetadata',()=>media.readyState>=1&&Number.isFinite(media.duration)&&media.duration>0,()=>{
+    media.src=nextSource;media.load();
+   });
+   return readPlaybackState(media);
+  },
   async seek(seconds){
    validateNativeSeekTarget(media,seconds);
    await waitFor('seeked',()=>!media.seeking&&Math.abs(media.currentTime-seconds)<=1,()=>{media.currentTime=seconds;});
