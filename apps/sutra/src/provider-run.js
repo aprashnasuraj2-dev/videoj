@@ -86,6 +86,7 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
   controller.signal.throwIfAborted();
   const result=await runNetwork({...fresh.published,request:question.trim(),model:measured,signal:controller.signal,sourceTools:{origin,sources:loadedContent.sources,fetchImpl:boundFetch,onReceipt:receipt=>{const key=receipt.sourceId+'\u0000'+receipt.cueId;if(receipts.size<20||receipts.has(key))receipts.set(key,receipt);}}});
   if(catalogRejected)throw Error('Catalog precondition rejected.');
+  if(!receipts.size){const missing=Error('No independently catalog-matched source receipt.');missing.code='SOURCE_EVIDENCE_REQUIRED';throw missing;}
   return {model,text:result.text,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:[...receipts.values()],usage:{...usage,complete:usage.reported===usage.calls},truthStatus:'unverified'};
  }catch(error){
   // Only independently validated receipts survive a failed run. Never retain partial model text.

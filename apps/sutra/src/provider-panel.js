@@ -54,6 +54,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
    if(code==='CONTENT_CHANGED_DURING_RUN'){model=null;approvedContract=null;}
    if(partial?.receipts?.length){answer.textContent='No completed answer. Only independently catalog-matched receipts from completed reads are preserved below.';renderReceipts(partial.receipts);metrics.textContent=partial.modelCalls+' model calls started; usage incomplete. No automatic retries.';output.hidden=false;}
    if(code==='CONTENT_CHANGED_DURING_RUN'){set('error','The server rejected the lesson version during this run. Earlier calls may have occurred. No completed answer is claimed; reload the lesson before checking inference again.');return;}
+   if(code==='SOURCE_EVIDENCE_REQUIRED'){set('empty','The model returned without any independently catalog-matched source receipt. Its interpretation was discarded; no completed answer is claimed.');return;}
    set(cancelled?'cancelled':'error',(cancelled?'Inference cancelled.':'Inference stopped ('+code+').')+' No completed answer is claimed. The local lesson remains available; retry only explicitly.');
   }finally{active=null;controls();(run.disabled?check:run).focus();}
  }
