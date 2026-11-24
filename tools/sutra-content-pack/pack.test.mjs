@@ -35,7 +35,8 @@ test('compiler emits one reviewed hash-addressed pack that passes the shared con
  try{
   const r=await buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:out});
   assert.equal(r.profile.mode,'reviewed');assert.equal(validateContentProfile(r.profile,r.sourceCatalog).profile.mode,'reviewed');
-  assert.ok(r.profile.media.video.includes(r.record.mediaSha256));assert.ok(r.profile.transcript.path.includes(r.record.transcriptSha256));assert.ok(r.profile.guideClaim.sourceHref.includes(r.record.guideSha256));
+  assert.ok(r.profile.media.video.includes(r.record.mediaSha256));assert.ok(r.profile.transcript.path.includes(r.record.transcriptSha256));assert.ok(r.profile.guideClaim.sourceHref.includes(r.record.guideSha256));assert.equal(r.profile.guideClaim.sourceHash,r.record.guideSha256);
+  const publicGuide=fs.readFileSync(path.join(out,r.profile.guideClaim.sourceHref.split('#')[0].slice(1)));assert.equal(sha(publicGuide),r.record.guideSha256);assert.match(publicGuide.toString('utf8'),new RegExp(sha(f.guide)));assert.match(publicGuide.toString('utf8'),/default-src 'none'/);
   assert.match(r.record.recordHash,/^[a-f0-9]{64}$/);assert.match(r.record.intakeRecordHash,/^[a-f0-9]{64}$/);
   for(const rel of [r.profile.media.video,r.profile.transcript.path,r.profile.guideClaim.sourceHref.split('#')[0]])assert.ok(fs.existsSync(path.join(out,rel.slice(1))));
   assert.match(fs.readFileSync(path.join(out,r.profile.media.captions.slice(1)),'utf8'),/00:00:02\.000 --> 00:00:07\.000/);
@@ -80,5 +81,18 @@ test('pack compiler rejects accessor-backed semantic and manifest data without i
   Object.defineProperty(f.semantic,'title',{enumerable:true,get(){touched++;return 'bad';}});
   await assert.rejects(buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:out}),/Invalid semantic metadata data/);assert.equal(touched,0);
   const g=await fixture();try{Object.defineProperty(g.manifest,'assets',{enumerable:true,get(){touched++;return {};}});await assert.rejects(buildContentPack({manifest:g.manifest,semantic:g.semantic,contentRoot:g.root,outputDir:g.root+'-out'}),/Invalid content manifest data/);assert.equal(touched,0);}finally{await fsp.rm(g.root,{recursive:true,force:true});await fsp.rm(g.root+'-out',{recursive:true,force:true});}
+ }finally{await fsp.rm(f.root,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
+});
+
+test('published written-guide excerpt cannot execute active markup from the reviewed input',async()=>{
+ const f=await fixture(),out=f.root+'-out';
+ try{
+  const hostile=Buffer.from('<!doctype html><script src="/assets/hostile.js"></script><section id="isolate">Disconnect power. Verify zero energy.<img src="https://tracker.invalid/x"></section><form action="/api/source-tools"></form>');
+  await fsp.writeFile(path.join(f.root,'text','guide.html'),hostile);f.manifest.assets.guide.sha256=sha(hostile);
+  const r=await buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:out});
+  const published=fs.readFileSync(path.join(out,r.profile.guideClaim.sourceHref.split('#')[0].slice(1)),'utf8');
+  assert.doesNotMatch(published,/<script|<img|<form|tracker\.invalid|hostile\.js/i);
+  assert.match(published,/Safe published excerpt/);assert.match(published,/Disconnect power\. Verify zero energy\./);assert.match(published,new RegExp(sha(hostile)));
+  assert.equal(sha(Buffer.from(published)),r.profile.guideClaim.sourceHash);
  }finally{await fsp.rm(f.root,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
 });

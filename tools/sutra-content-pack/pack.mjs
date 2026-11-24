@@ -67,6 +67,9 @@ function makeVtt(cues,suffix){
 function makePoster(title){
  return '<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="'+html(title)+'"><rect width="1280" height="720" fill="#111"/><text x="80" y="360" fill="#fff" font-family="system-ui,sans-serif" font-size="54">'+html(title)+'</text><text x="80" y="430" fill="#ccc" font-family="system-ui,sans-serif" font-size="28">Reviewed lesson media</text></svg>';
 }
+function makeSafeGuideExcerpt(meta,inputSha){
+ return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; base-uri \'none\'; form-action \'none\'; object-src \'none\'"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html(meta.guideClaim.title)+'</title></head><body><main><h1>'+html(meta.guideClaim.title)+'</h1><p>Safe published excerpt generated from the reviewed written-guide input. It preserves the reviewed excerpt as text and does not publish executable source markup.</p><dl><dt>Scope</dt><dd>'+html(meta.guideClaim.scope)+'</dd><dt>Claim key</dt><dd>'+html(meta.guideClaim.claimKey)+'</dd><dt>Provenance</dt><dd>'+html(meta.guideClaim.provenance)+'</dd><dt>Date basis</dt><dd>'+html(meta.guideClaim.dateBasis)+'</dd><dt>Reviewed input SHA-256</dt><dd><code>'+html(inputSha)+'</code></dd></dl><section id="'+html(meta.guideClaim.anchor)+'"><h2>Reviewed excerpt</h2><blockquote>'+html(meta.guideClaim.excerpt)+'</blockquote></section></main></body></html>\n';
+}
 async function write(root,relative,bytes){
  if(!safePath(relative))throw Error('Unsafe output path.');
  const target=path.join(root,...relative.split('/'));await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,bytes,{flag:'wx'});
@@ -89,23 +92,24 @@ export async function buildContentPack({manifest,semantic,contentRoot,outputDir}
  if(!guideText.includes(meta.guideClaim.excerpt))throw Error('Guide excerpt missing.');
  const ext=path.extname(assetPaths.media).toLowerCase();if(ext!=='.mp4'&&ext!=='.webm')throw Error('Reviewed media must be MP4 or WebM.');
  const guideName=path.basename(assetPaths.guide);if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}\.html$/i.test(guideName))throw Error('Reviewed guide must be a safe HTML file.');
- const mediaBase='media/release/'+observed.media.sha256,transcriptBase='transcripts/release/'+observed.transcript.sha256,guideBase='guides/release/'+observed.guide.sha256;
+ const safeGuideBytes=Buffer.from(makeSafeGuideExcerpt(meta,observed.guide.sha256)),publishedGuideSha=digest(safeGuideBytes);
+ const mediaBase='media/release/'+observed.media.sha256,transcriptBase='transcripts/release/'+observed.transcript.sha256,guideBase='guides/release/'+publishedGuideSha;
  const sourceCatalog={schema:1,contentVersion:meta.contentVersion,sources:[{id:meta.sourceId,version:meta.sourceVersion,hash:observed.transcript.sha256,mediaHash:observed.media.sha256,duration:manifest.lesson.durationSeconds,cues:meta.cues}]};
  const catalogBytes=Buffer.from(canonical(sourceCatalog)),catalogSha=digest(catalogBytes);
  const profile={schema:1,mode:'reviewed',contentVersion:meta.contentVersion,title:meta.title,observedAt:meta.observedAt,primarySourceId:meta.sourceId,featuredCueId:meta.featuredCueId,
   catalog:{path:'./source-catalog.json',sha256:catalogSha},transcript:{path:'/'+transcriptBase+'/lesson.txt',sha256:observed.transcript.sha256},
   media:{video:'/'+mediaBase+'/lesson'+ext,poster:'/'+mediaBase+'/poster.svg',chapters:'/'+transcriptBase+'/chapters.vtt',captions:'/'+transcriptBase+'/captions.vtt'},
-  videoClaim:meta.videoClaim,guideClaim:{sourceKind:'guide',sourceId:'reviewed-guide',sourceVersion:meta.contentVersion,title:meta.guideClaim.title,scope:meta.guideClaim.scope,claimKey:meta.guideClaim.claimKey,value:meta.guideClaim.value,excerpt:meta.guideClaim.excerpt,provenance:meta.guideClaim.provenance,sourceHref:'/'+guideBase+'/'+guideName+'#'+meta.guideClaim.anchor,sourceHash:observed.guide.sha256,observedAt:meta.observedAt,dateBasis:meta.guideClaim.dateBasis},ui:meta.ui};
+  videoClaim:meta.videoClaim,guideClaim:{sourceKind:'guide',sourceId:'reviewed-guide',sourceVersion:meta.contentVersion,title:meta.guideClaim.title,scope:meta.guideClaim.scope,claimKey:meta.guideClaim.claimKey,value:meta.guideClaim.value,excerpt:meta.guideClaim.excerpt,provenance:meta.guideClaim.provenance,sourceHref:'/'+guideBase+'/'+guideName+'#'+meta.guideClaim.anchor,sourceHash:publishedGuideSha,observedAt:meta.observedAt,dateBasis:meta.guideClaim.dateBasis},ui:meta.ui};
  validateContentProfile(profile,sourceCatalog);
  const profileBytes=Buffer.from(canonical(profile)),profileSha=digest(profileBytes);
  await fs.mkdir(out,{recursive:false});
  await write(out,'content/content-profile.json',profileBytes);await write(out,'content/source-catalog.json',catalogBytes);
  await write(out,mediaBase+'/lesson'+ext,media.bytes);await write(out,mediaBase+'/poster.svg',makePoster(meta.title));
  await write(out,transcriptBase+'/lesson.txt',transcript.bytes);await write(out,transcriptBase+'/chapters.vtt',makeVtt(meta.cues,'-chapter'));await write(out,transcriptBase+'/captions.vtt',makeVtt(meta.cues,''));
- await write(out,guideBase+'/'+guideName,guide.bytes);
- const core={schema:1,contentVersion:meta.contentVersion,intakeRecordHash:intake.recordHash,profileSha256:profileSha,catalogSha256:catalogSha,mediaSha256:observed.media.sha256,transcriptSha256:observed.transcript.sha256,guideSha256:observed.guide.sha256,
+ await write(out,guideBase+'/'+guideName,safeGuideBytes);
+ const core={schema:1,contentVersion:meta.contentVersion,intakeRecordHash:intake.recordHash,profileSha256:profileSha,catalogSha256:catalogSha,mediaSha256:observed.media.sha256,transcriptSha256:observed.transcript.sha256,guideSha256:publishedGuideSha,
   publicPaths:{profile:'/content/content-profile.json',catalog:'/content/source-catalog.json',media:profile.media.video,transcript:profile.transcript.path,guide:profile.guideClaim.sourceHref.split('#')[0]}};
- const record={...core,recordHash:digest(Buffer.from(canonical(core))),limitation:'Byte packaging is verified. Legal rights, reviewer competence, cue timing correctness, semantic truth and public deployment remain human/external evidence.'};
+ const record={...core,recordHash:digest(Buffer.from(canonical(core))),limitation:'Byte packaging is verified. The published guide is a non-executable excerpt derivative bound to the reviewed guide-input hash; the intake record retains the original byte declaration. Legal rights, reviewer competence, cue timing correctness, semantic truth and public deployment remain human/external evidence.'};
  await write(out,'content/content-pack-record.json',canonical(record));
  return {profile,sourceCatalog,record};
 }
