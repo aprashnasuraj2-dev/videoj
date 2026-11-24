@@ -121,8 +121,8 @@ const assert=require('node:assert/strict');
   assert.match(await page.locator('#peer-elapsed').innerText(),/^\d+ ms \/ 60,000 ms$/);
   assert.ok(parseInt(await page.locator('#peer-elapsed').innerText(),10)>=0);
   assert.equal(await page.locator('#peer-contact-count').innerText(),'2 completed');
-  assert.match(await page.locator('#peer-trace').innerText(),/Tool · checklist/);
-  assert.match(await page.locator('#peer-trace').innerText(),/Tool · evidence/);
+  assert.match(await page.locator('#peer-trace').innerText(),/Tool · agents_checklist/);
+  assert.match(await page.locator('#peer-trace').innerText(),/Tool · source_select/);
   assert.deepEqual(peerRequests.slice(previous).map(r=>new URL(r.url).pathname),
    ['/agents/agent-manifest.json','/agents/checklist.network.json']);
   assert.match(await page.locator('#peer-trace').innerText(),/Loaded peer/);
