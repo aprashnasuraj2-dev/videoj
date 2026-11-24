@@ -19,3 +19,11 @@ test('build output is a self-contained static publication',()=>{
 test('origin configuration distinguishes local preview from proposed undeployed production',()=>{
  const c=read('peer.config.json');assert.equal(c.preview_origin,'http://127.0.0.1:4185');assert.equal(c.production_status,'proposed_not_deployed');assert.match(c.production_origin,/^https:\/\//);assert.notEqual(c.preview_origin,c.production_origin);assert.equal(c.ownership,'same_project_owner');
 });
+
+test('Pages guide candidate has scoped public JSON CORS and no functions',()=>{
+ const headers=fs.readFileSync(path.join(root,'dist/_headers'),'utf8');assert.match(headers,/\/agents\/\*\n  Access-Control-Allow-Origin: \*/);
+ assert.equal((headers.match(/Access-Control-Allow-Origin/g)||[]).length,1);
+ assert.doesNotMatch(headers,/Access-Control-Allow-Credentials/);
+ const cfg=read('wrangler.jsonc');assert.equal(cfg.name,'sutra-guide');assert.equal(cfg.pages_build_output_dir,'./dist');assert.equal(cfg.services,undefined);assert.equal(cfg.routes,undefined);
+ assert.equal(fs.existsSync(path.join(root,'functions')),false);
+});

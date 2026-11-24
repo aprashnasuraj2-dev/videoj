@@ -14,7 +14,7 @@
     "SUTRA_MAX_DAILY_INPUT_BYTES": "3379200",
     "SUTRA_MAX_DAILY_OUTPUT_TOKENS": "51200",
     "SUTRA_MAX_CONCURRENT": "2",
-    "SUTRA_PEER_ORIGINS": ""
+    "SUTRA_PEER_ORIGINS": "https://sutra-guide.aafnaipatro.com"
   },
   "durable_objects": {
     "bindings": [

@@ -12,3 +12,6 @@ Independent static package for the SUTRA peer publication surface.
 `npm run build` produces `dist/` with only the static page/config/source assets and public agent files. `npm run preview` serves that build on loopback and adds permissive CORS only to files under `/agents/` for local cross-origin testing.
 
 The caller and proposed peer production origins are under the same project owner. That disclosure prevents a two-origin test from being misrepresented as independent community adoption.
+
+## CloudflareB Pages candidate
+The isolated Pages config and built `_headers` apply restrictive browser headers and scope credentialless public CORS to `/agents/*`; the guide has no Functions or Worker binding. The proposed hostname still belongs to the Patro DNS account, and only a later approved Pages domain association/DNS-only CNAME can establish public HTTPS. No domain, public project, or independent adoption is claimed by this configuration.
