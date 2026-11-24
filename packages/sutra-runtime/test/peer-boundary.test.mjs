@@ -130,3 +130,14 @@ test('host security boundary follows hostile peer instructions while runtime cap
  assert.ok(!JSON.stringify(result.events).includes('PRIVATE_CONTEXT_CANARY_123'));
  assert.deepEqual(networkRequests.map(x=>new URL(x.url).origin),['https://peer.example','https://peer.example']);
 });
+
+
+test('peer runtime option accessors and hidden metadata are refused before model or contact',async()=>{
+ let touched=0,models=0,contacts=0;
+ const good={inspector:inspector(),fetchImpl:async()=>{contacts++;throw Error('no contact');}};
+ const model={mode:'scripted-test',chat(){models++;throw Error('no model');}};
+ const bad={...good};Object.defineProperty(bad,'fetchImpl',{enumerable:true,get(){touched++;return good.fetchImpl;}});
+ const hidden={...good};Object.defineProperty(hidden,'extra',{value:true});
+ for(const peerRuntime of [bad,hidden,Object.assign(Object.create({}),good)])await assert.rejects(runNetwork({definition:caller(),request:'Read',model,peerRuntime}),e=>e.code==='PEER_CONFIG');
+ assert.equal(touched,0);assert.equal(models,0);assert.equal(contacts,0);
+});

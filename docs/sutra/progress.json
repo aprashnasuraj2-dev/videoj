@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T20:08:41+05:45",
+  "updated_at": "2026-11-24T20:10:40+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "7acc489f26a56537aa72232b3bc90ef8a49913a4",
+  "last_observed_code_sha": "b9c89b6543c1c99786d86486020d728ac8a7ecda",
   "last_session_id": "SUTRA-SESSION-0044",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
-  "next_task": "SUTRA-X010-31",
+  "next_task": "SUTRA-X010-33",
   "ready_engineering_queue": [
     "SUTRA-P041-10",
     "SUTRA-P078-07",
@@ -16,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Observe exact action-registry/full learner CI; credit X010-31/32 and P023-05 only after full evidence; verify X010-33 peer-envelope projection. Continue dependency-ready engineering, no deployment or paid inference.",
+  "next_action": "Observe exact X010-33/34 full CI, then continue dependency-ready P078-02 engineering; no deployment or paid inference.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -12481,6 +12481,66 @@
           "observed_at": "2026-11-24T20:08:41+05:45"
         }
       ]
+    },
+    "SUTRA-X010-31": {
+      "state": "verified",
+      "verified_at": "2026-11-24T20:10:40+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45413162060",
+          "description": "Exact full learner passed and all 19 workflows passed, including inert registration, frozen review, reentry and normal save/export.",
+          "result": "pass",
+          "source_revision": "b9c89b6543c1c99786d86486020d728ac8a7ecda",
+          "observed_at": "2026-11-24T20:10:40+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "description": "Implementation, test scope and residual limits.",
+          "result": "pass",
+          "source_revision": "b9c89b6543c1c99786d86486020d728ac8a7ecda",
+          "observed_at": "2026-11-24T20:10:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-32": {
+      "state": "verified",
+      "verified_at": "2026-11-24T20:10:40+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45413162090",
+          "description": "Exact built runtime export, host-only cancel/confirm/consume and Chromium/Firefox/WebKit checks passed; full learner and 19/19 workflows also passed.",
+          "result": "pass",
+          "source_revision": "b9c89b6543c1c99786d86486020d728ac8a7ecda",
+          "observed_at": "2026-11-24T20:10:40+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "description": "Implementation, test scope and residual limits.",
+          "result": "pass",
+          "source_revision": "b9c89b6543c1c99786d86486020d728ac8a7ecda",
+          "observed_at": "2026-11-24T20:10:40+05:45"
+        }
+      ]
+    },
+    "SUTRA-P023-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T20:10:40+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45413162090",
+          "description": "Exact built runtime export, host-only cancel/confirm/consume and Chromium/Firefox/WebKit checks passed; full learner and 19/19 workflows also passed.",
+          "result": "pass",
+          "source_revision": "b9c89b6543c1c99786d86486020d728ac8a7ecda",
+          "observed_at": "2026-11-24T20:10:40+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "description": "Implementation, test scope and residual limits.",
+          "result": "pass",
+          "source_revision": "b9c89b6543c1c99786d86486020d728ac8a7ecda",
+          "observed_at": "2026-11-24T20:10:40+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -12581,6 +12641,7 @@
     "X010-27 verified at exact 19/19; new X010-28/29 tool namespace and adapter input ownership candidates awaiting exact CI. P078-02 remains pending.",
     "X010-28/29 pending full exact CI; runtime unit step passed. Added X010-30 early composition failure candidate; no credit until exact CI.",
     "X010-28/29 verified 19/19 at 7d90ed92d6fdb1e64b9898e74c0118cd4645485d. X010-30 pending full exact CI. Added X010-31/32 inert action definitions, immutable proposal validation and built public runtime host-only API candidates; no credit until exact CI.",
-    "X010-30 exact 19/19; added X010-33 structured peer response projection candidate. X010-31/32 remain pending full exact learner CI."
+    "X010-30 exact 19/19; added X010-33 structured peer response projection candidate. X010-31/32 remain pending full exact learner CI.",
+    "X010-31/32 and P023-05 exact 19/19; added X010-34 contact configuration candidate. X010-33 remains pending full exact CI."
   ]
 }

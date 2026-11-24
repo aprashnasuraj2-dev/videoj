@@ -57,7 +57,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P023-02` Parse the public graph in JavaScript executed by the browser
 - [ ] `SUTRA-P023-03` Start a real front-agent invocation using configured inference
 - [x] `SUTRA-P023-04` Observe an internal agent delegation and structured return
-- [ ] `SUTRA-P023-05` Expose narrow registered actions through the runtime interface
+- [x] `SUTRA-P023-05` Expose narrow registered actions through the runtime interface
 - [x] `SUTRA-P023-06` Record browser execution evidence separately from provider inference execution
 - [x] `SUTRA-P023-07` Ensure the server proxy does not secretly own orchestration
 - [x] `SUTRA-P023-08` Verify initial errors are visible without opening developer tools

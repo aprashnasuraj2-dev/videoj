@@ -1,5 +1,5 @@
 import {createSourceMcp} from './source-mcp.js';
-import {createExternalReadMcp,validateExternalMcpConfig} from './external-mcp.js';
+import {createExternalReadMcp,validateExternalMcpConfig,snapshotContactConfig} from './external-mcp.js';
 import {fetchJsonWithConsent,pinConsentInspector} from '../sutra-consent/index.js';
 import {readBoundedResponse,BoundedResponseError,isFullJson} from './bounded-response.js';
 import {AgentNetwork, validateNetwork, parseExternalAgent} from './vendor/nsdeploy/kernel.js';
@@ -126,8 +126,8 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
 export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,peerRuntime,thirdPartyMcp,privateContext,peerContextGrants}={}){
  let admittedPeer=null;
  if(peerRuntime!==undefined){
-  if(!plain(peerRuntime))fail('PEER_CONFIG','Peer invocation requires an explicit contact inspector and optional fetch implementation.');
-  allowed(peerRuntime,['inspector','fetchImpl'],'peer runtime');
+  try{peerRuntime=snapshotContactConfig(peerRuntime,['inspector','fetchImpl'],'PEER_CONFIG');}
+  catch{fail('PEER_CONFIG','Peer invocation requires supported own data fields for inspector and optional fetch implementation.');}
   const fetchImpl=peerRuntime.fetchImpl;
   if(fetchImpl!==undefined&&typeof fetchImpl!=='function')fail('PEER_CONFIG','Peer invocation requires a callable optional fetch implementation.');
   let inspector;
@@ -389,6 +389,7 @@ export async function loadLocalNetwork({signal,timeoutMs=5000,...options}={}){
 
 
 function parsePeerNetworkReference(peerUrl){
+ if(typeof peerUrl!=='string'||!peerUrl||peerUrl.length>2048||/[\u0000-\u0020\u007f]/.test(peerUrl))fail('PEER_URL','Peer network URL must be a bounded primitive string without control characters or spaces.');
  let target;
  try{target=new URL(peerUrl);}catch{fail('PEER_URL','Peer network URL must be absolute.');}
  const loopback=['localhost','127.0.0.1','[::1]'].includes(target.hostname);
@@ -475,8 +476,17 @@ async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,all
  * separately approved contacts; redirects are fail-closed until redirect-policy
  * handling is implemented.
  */
-export async function loadPeerNetwork({signal,timeoutMs=5000,contactTimeoutMs=Math.min(timeoutMs,5000),...options}={}){
- if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000||!Number.isInteger(contactTimeoutMs)||contactTimeoutMs<1||contactTimeoutMs>5000)fail('LIMIT_CONFIG','Peer load budget must be 1–60000 ms, each approved GET 1–5000 ms.');
+export async function loadPeerNetwork(input={}){
+ let options;
+ try{options=snapshotContactConfig(input,['peerUrl','inspector','fetchImpl','signal','timeoutMs','contactTimeoutMs','allowSourceTools'],'PEER_CONFIG');}
+ catch{fail('PEER_CONFIG','Peer loader configuration must contain supported own data fields.');}
+ const {signal,timeoutMs=5000,contactTimeoutMs:suppliedContactTimeout,...contactOptions}=options;
+ if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000)fail('LIMIT_CONFIG','Peer load budget must be 1–60000 ms.');
+ const contactTimeoutMs=suppliedContactTimeout===undefined?Math.min(timeoutMs,5000):suppliedContactTimeout;
+ if(!Number.isInteger(contactTimeoutMs)||contactTimeoutMs<1||contactTimeoutMs>5000)fail('LIMIT_CONFIG','Each approved GET budget must be 1–5000 ms.');
+ // Validate the primitive destination before pinning authority or entering the race.
+ parsePeerNetworkReference(contactOptions.peerUrl);
+ if(contactOptions.fetchImpl!==undefined&&typeof contactOptions.fetchImpl!=='function')fail('PEER_CONFIG','Peer loader transport must be callable.');
  if(signal?.aborted)fail('CANCELLED','Peer artifact loading cancelled.');
  const controller=new AbortController();
  const cancel=()=>controller.abort(new RuntimeError('CANCELLED','Peer artifact loading cancelled.'));
@@ -484,7 +494,7 @@ export async function loadPeerNetwork({signal,timeoutMs=5000,contactTimeoutMs=Ma
  let stop;const stopped=new Promise((_,reject)=>{stop=()=>reject(controller.signal.reason);controller.signal.addEventListener('abort',stop,{once:true});});
  stopped.catch(()=>{});
  const timer=setTimeout(()=>controller.abort(new RuntimeError('ARTIFACT_TIMEOUT','Peer artifact loading exceeded its time limit.')),timeoutMs);
- try{return await Promise.race([loadPeerNetworkData({...options,inspector:pinConsentInspector(options.inspector),contactTimeoutMs,signal:controller.signal}),stopped]);}
+ try{return await Promise.race([loadPeerNetworkData({...contactOptions,inspector:pinConsentInspector(contactOptions.inspector),contactTimeoutMs,signal:controller.signal}),stopped]);}
  catch(error){
   if(controller.signal.aborted&&controller.signal.reason instanceof RuntimeError)throw controller.signal.reason;
   if(error instanceof RuntimeError||error?.name==='ConsentError')throw error;

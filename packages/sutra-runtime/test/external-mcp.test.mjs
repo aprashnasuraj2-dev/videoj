@@ -163,3 +163,18 @@ test('external MCP cannot substitute the admitted consent method between discove
  assert.deepEqual(requests.map(r=>r.body.method),['initialize','notifications/initialized','tools/list']);
  assert.equal(bypassCalls,0);
 });
+
+
+test('external MCP admission rejects option accessors and URL normalization before model or discovery',async()=>{
+ let touched=0,contacts=0,models=0,decisions=0;
+ const good={url:target,inspector:inspector(async()=>{decisions++;return 'allow';}),fetchImpl:async()=>{contacts++;throw Error('no contact');}};
+ const model={mode:'scripted-test',chat(){models++;throw Error('no model');}};
+ for(const key of ['url','inspector','fetchImpl']){
+  const bad={...good};Object.defineProperty(bad,key,{enumerable:true,get(){touched++;return good[key];}});
+  await assert.rejects(run({model,thirdPartyMcp:bad}),e=>e.code==='MCP_CONFIG');
+ }
+ const hidden={...good};Object.defineProperty(hidden,'extra',{value:true});
+ await assert.rejects(run({model,thirdPartyMcp:hidden}),e=>e.code==='MCP_CONFIG');
+ for(const url of [{toString(){touched++;return target;}},'https://read-only.example/m\tcp'])await assert.rejects(run({model,thirdPartyMcp:{...good,url}}),e=>e.code==='MCP_URL');
+ assert.equal(touched,0);assert.equal(models,0);assert.equal(contacts,0);assert.equal(decisions,0);
+});

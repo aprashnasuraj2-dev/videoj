@@ -101,3 +101,20 @@ test('authority-like site path cannot replace the peer URL origin during manifes
  assert.deepEqual(loaded.artifacts,{manifest:manifestUrl,definition:graphUrl});
  assert.deepEqual(calls,[manifestUrl,graphUrl]);assert.deepEqual(intents,calls.map(url=>['https://peer.example',url]));
 });
+
+
+test('standalone peer loader refuses executable configuration and coercible destination or timeout before contact',async()=>{
+ let touched=0,contacts=0,decisions=0;
+ const inspector=createConsentInspector({decide:async()=>{decisions++;return 'allow';}});
+ const fetchImpl=async()=>{contacts++;throw Error('no contact expected');};
+ const valid={peerUrl,inspector,fetchImpl};
+ for(const key of ['peerUrl','inspector','fetchImpl','timeoutMs']){
+  const bad={...valid};Object.defineProperty(bad,key,{enumerable:true,get(){touched++;return valid[key];}});
+  await assert.rejects(loadPeerNetwork(bad),e=>e.code==='PEER_CONFIG');
+ }
+ const hidden={...valid};Object.defineProperty(hidden,'extra',{value:true});
+ await assert.rejects(loadPeerNetwork(hidden),e=>e.code==='PEER_CONFIG');
+ for(const url of [{toString(){touched++;return peerUrl;}},'https://peer.example/agents/tra\tnsit','https://peer.example/'+('a'.repeat(2048))+'/transit'])await assert.rejects(loadPeerNetwork({...valid,peerUrl:url}),e=>e.code==='PEER_URL');
+ await assert.rejects(loadPeerNetwork({...valid,timeoutMs:{valueOf(){touched++;return 50;}}}),e=>e.code==='LIMIT_CONFIG');
+ assert.equal(touched,0);assert.equal(contacts,0);assert.equal(decisions,0);
+});

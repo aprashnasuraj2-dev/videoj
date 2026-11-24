@@ -23,3 +23,9 @@ X010-29: prior adapter input passed live messages and toolSchemas by reference. 
 2026-11-24T20:08:41+05:45: **701/1,090 overall verified; 615/1,000 original; 382 pending; six omissions; one hardware blocker.** X010-30 verified 19/19 at 7acc489f26a56537aa72232b3bc90ef8a49913a4. X010-31/32 at 18/19, full learner pending. Added X010-33 peer structured-return projection candidate; no completion credit until exact CI.
 
 X010-33 projects peer response rather than forwarding the upstream protocol envelope. The counterexample attempts to return disallowed locale as protocol metadata plus a debug canary while a permitted preference remains in the host-owned side channel. Keep only host-labelled text and allowed structured fields. Plain text is untrusted, not semantically redacted. No vendor changes, public deployment, paid inference or human acceptance.
+
+## Follow-up — contact configuration admission
+
+2026-11-24T20:10:40+05:45: **704/1,091 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-31/32 and P023-05 verified 19/19 at b9c89b6543c1c99786d86486020d728ac8a7ecda. X010-33 pending exact CI. Added X010-34 contact configuration candidate; no completion credit until exact CI.
+
+Exact action-registry [learner](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45413162060) and [three-engine browser matrix](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45413162090) passed. P023-05 is the narrow host registration interface, not model-authorized write execution; other original phase gates remain open. X010-34 removes option getters, hidden fields, URL coercion/control normalization and default timeout coercion from the contact admission boundary. Counterexamples check zero model, consent and transport side effects. No vendor edits. No local repository test claim, public release, live provider or physical/human acceptance.

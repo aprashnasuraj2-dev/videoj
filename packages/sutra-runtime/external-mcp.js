@@ -19,10 +19,21 @@ const readTool=Object.freeze({
   required:['query'],additionalProperties:false
  }
 });
+// Shallow host configuration is not arbitrary executable metadata. Retain
+// admitted callback references without invoking getters or conversion hooks.
+export function snapshotContactConfig(value,keys,code){
+ if(!value||typeof value!=='object'||Array.isArray(value)||![Object.prototype,null].includes(Object.getPrototypeOf(value)))fail(code,'Contact configuration must be a plain record.');
+ const result=Object.create(null);
+ for(const key of Reflect.ownKeys(value)){
+  const desc=Object.getOwnPropertyDescriptor(value,key);
+  if(typeof key!=='string'||!keys.includes(key)||!desc?.enumerable||!Object.hasOwn(desc,'value'))fail(code,'Contact configuration must contain only supported own data fields.');
+  result[key]=desc.value;
+ }
+ return result;
+}
 export function validateExternalMcpConfig(value){
- if(!value||typeof value!=='object'||Array.isArray(value)||Object.getPrototypeOf(value)!==Object.prototype)fail('MCP_CONFIG','External MCP configuration must be a plain object.');
- if(Object.keys(value).some(key=>!['url','inspector','fetchImpl'].includes(key)))fail('MCP_CONFIG','Unsupported external MCP host configuration.');
- if(typeof value.url!=='string'||value.url.length>2048)fail('MCP_URL','External MCP requires a fixed complete endpoint URL.');
+ value=snapshotContactConfig(value,['url','inspector','fetchImpl'],'MCP_CONFIG');
+ if(typeof value.url!=='string'||value.url.length>2048||/[\u0000-\u0020\u007f]/.test(value.url))fail('MCP_URL','External MCP requires a fixed complete endpoint URL.');
  let parsed;
  try{parsed=new URL(value.url);}catch{fail('MCP_URL','External MCP endpoint URL is invalid.');}
  const loopback=['127.0.0.1','localhost','[::1]'].includes(parsed.hostname);
