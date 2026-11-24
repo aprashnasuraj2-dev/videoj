@@ -97,9 +97,10 @@ export async function materializeReleaseCandidate({sourceDist,outputDir,config})
  if(profileSha!==evidence.profileSha256||catalogSha!==evidence.catalogSha256||content.profile.catalog.sha256!==catalogSha)throw Error('Release content profile/catalog hash mismatch.');
  if(content.source.hash!==evidence.transcriptSha256||content.source.mediaHash!==evidence.mediaSha256)throw Error('Release transcript/media identity mismatch.');
  if(content.profile.videoClaim.scope!==content.profile.guideClaim.scope||content.profile.videoClaim.claimKey!==content.profile.guideClaim.claimKey)throw Error('Release comparison sources do not address the same declared question.');
- const mediaPath=content.profile.media.video.slice(1),guidePath=content.profile.guideClaim.sourceHref.split('#')[0].slice(1);
- const mediaFile=await regularFile(source,mediaPath,300*1024*1024),guideFile=await regularFile(source,guidePath,10*1024*1024);
- if(digest(mediaFile.bytes)!==evidence.mediaSha256||digest(guideFile.bytes)!==evidence.guideSha256||content.profile.guideClaim.sourceHash!==evidence.guideSha256)throw Error('Release media/guide bytes do not match reviewed evidence.');
+ const mediaPath=content.profile.media.video.slice(1),transcriptPath=content.profile.transcript.path.slice(1),guidePath=content.profile.guideClaim.sourceHref.split('#')[0].slice(1);
+ const mediaFile=await regularFile(source,mediaPath,300*1024*1024),transcriptFile=await regularFile(source,transcriptPath,10*1024*1024),guideFile=await regularFile(source,guidePath,10*1024*1024);
+ if(digest(mediaFile.bytes)!==evidence.mediaSha256||digest(transcriptFile.bytes)!==evidence.transcriptSha256||digest(guideFile.bytes)!==evidence.guideSha256||
+  content.profile.transcript.sha256!==evidence.transcriptSha256||content.profile.guideClaim.sourceHash!==evidence.guideSha256)throw Error('Release media/transcript/guide bytes do not match reviewed evidence.');
  if(/synthetic|fixture|pending/i.test(content.profile.ui.noticeTitle+' '+content.profile.ui.noticeBody))throw Error('Reviewed release content still carries development-only UI claims.');
 
  const manifest=await readJson(source,'agents/agent-manifest.json',65536);
