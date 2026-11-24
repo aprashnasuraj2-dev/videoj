@@ -1,22 +1,20 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T05:49:41+05:45",
+  "updated_at": "2026-11-24T06:12:47+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "e1122ec58c7a773b41e4470dc0139a897049f912",
-  "last_session_id": "SUTRA-SESSION-0010",
-  "stage": "security_resilience_performance_integrated",
+  "last_observed_code_sha": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+  "last_session_id": "SUTRA-SESSION-0011",
+  "stage": "player_inspector_a11y_bilingual_core_hardened",
   "current_task": null,
-  "next_task": "SUTRA-P041-07",
+  "next_task": "SUTRA-P041-08",
   "ready_engineering_queue": [
-    "SUTRA-P041-07",
-    "SUTRA-P042-06",
-    "SUTRA-P047-04",
-    "SUTRA-P049-03",
+    "SUTRA-P048-06",
     "SUTRA-P068-06",
-    "SUTRA-P065-03"
+    "SUTRA-P050-01",
+    "SUTRA-P050-03"
   ],
-  "next_action": "Continue development-only learner/acceptance hardening: specify responsive/zoom behavior and finish media source/decode failure coverage; then close inspector partial-failure semantics and cache rollout evidence. External/public gates remain blocked on rights-cleared content, human factual review, physical accessibility, public HTTPS peers/MCP, live provider budget, Cloudflare billing/headroom and final routes. Do not release or submit.",
+  "next_action": "Continue development-only engineering while participant/human gates stay open: define/test locale-safe timestamp/unit/date presentation (P048-06), then implement multi-version immutable rollout retention (P068-06) and exercise the visible hero-state walkthrough without claiming fresh-viewer acceptance. Do not release, deploy routes, enable paid inference or submit.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -6258,6 +6256,272 @@
           "result": "pass",
           "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
           "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-07": {
+      "state": "omitted",
+      "decision_id": "SUTRA-DECISION-0017",
+      "reason": "The task requires responsive/zoom behavior to have been specified before styling, but the learner was already styled before this retrospective checkpoint. Current responsive behavior can be tested and documented, but the historical sequence cannot be made true after the fact.",
+      "scope_basis": "Process-chronology requirement only. Current responsive behavior remains governed by the reviewed interaction map and automated 360px/200% zoom regression checks; fresh-viewer acceptance remains pending."
+    },
+    "SUTRA-P041-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:12:47+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/RESPONSIVE-INTERACTION-MAP-2026-11-24.md",
+          "description": "Reviewed responsive interaction map records desktop, <=760px, 360px and 200% zoom behavior, screen-state semantics and interaction order; chronology limitation is explicit.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126",
+          "description": "Exact tested code passed 52 learner/app tests, 49 consent/inference/source/API tests, 97 runtime/peer/privacy tests, 7 independent peer tests, pinned upstream integrity, and eight Chromium integration profiles.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:12:47+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0011.md",
+          "description": "Native media replacement distinguishes invalid source, unsupported decode, load failure, timeout and restore failure; Chromium observed unsupported replacement and restoration of the prior playable source without claiming replacement success.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126",
+          "description": "Exact tested code passed 52 learner/app tests, 49 consent/inference/source/API tests, 97 runtime/peer/privacy tests, 7 independent peer tests, pinned upstream integrity, and eight Chromium integration profiles.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:12:47+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0011.md",
+          "description": "Native media replacement distinguishes invalid source, unsupported decode, load failure, timeout and restore failure; Chromium observed unsupported replacement and restoration of the prior playable source without claiming replacement success.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126",
+          "description": "Exact tested code passed 52 learner/app tests, 49 consent/inference/source/API tests, 97 runtime/peer/privacy tests, 7 independent peer tests, pinned upstream integrity, and eight Chromium integration profiles.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:12:47+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0011.md",
+          "description": "Inspector and safe export distinguish partial external-read failure from unknown side-effect outcome; wrong-name peer fixture observed one completed approved read, no completed peer result, and a redacted partial receipt.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126",
+          "description": "Exact tested code passed 52 learner/app tests, 49 consent/inference/source/API tests, 97 runtime/peer/privacy tests, 7 independent peer tests, pinned upstream integrity, and eight Chromium integration profiles.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:12:47+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0011.md",
+          "description": "Inspector and safe export distinguish partial external-read failure from unknown side-effect outcome; wrong-name peer fixture observed one completed approved read, no completed peer result, and a redacted partial receipt.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126",
+          "description": "Exact tested code passed 52 learner/app tests, 49 consent/inference/source/API tests, 97 runtime/peer/privacy tests, 7 independent peer tests, pinned upstream integrity, and eight Chromium integration profiles.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        }
+      ]
+    },
+    "SUTRA-P048-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:12:47+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/LOCALIZATION-INVENTORY-2026-11-24.md",
+          "description": "Bounded 52-key English + 52-key Nepali-draft catalog: English canonical, source excerpts/provenance excluded from translation, locale switch preserves selected cue and completed run state, fallback is deterministic, and optional diagnostic/date-unit polish is intentionally deferred pending human terminology review.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126",
+          "description": "Exact tested code passed 52 learner/app tests, 49 consent/inference/source/API tests, 97 runtime/peer/privacy tests, 7 independent peer tests, pinned upstream integrity, and eight Chromium integration profiles.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        }
+      ]
+    },
+    "SUTRA-P048-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:12:47+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/LOCALIZATION-INVENTORY-2026-11-24.md",
+          "description": "Bounded 52-key English + 52-key Nepali-draft catalog: English canonical, source excerpts/provenance excluded from translation, locale switch preserves selected cue and completed run state, fallback is deterministic, and optional diagnostic/date-unit polish is intentionally deferred pending human terminology review.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126",
+          "description": "Exact tested code passed 52 learner/app tests, 49 consent/inference/source/API tests, 97 runtime/peer/privacy tests, 7 independent peer tests, pinned upstream integrity, and eight Chromium integration profiles.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        }
+      ]
+    },
+    "SUTRA-P048-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:12:47+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/LOCALIZATION-INVENTORY-2026-11-24.md",
+          "description": "Bounded 52-key English + 52-key Nepali-draft catalog: English canonical, source excerpts/provenance excluded from translation, locale switch preserves selected cue and completed run state, fallback is deterministic, and optional diagnostic/date-unit polish is intentionally deferred pending human terminology review.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126",
+          "description": "Exact tested code passed 52 learner/app tests, 49 consent/inference/source/API tests, 97 runtime/peer/privacy tests, 7 independent peer tests, pinned upstream integrity, and eight Chromium integration profiles.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        }
+      ]
+    },
+    "SUTRA-P048-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:12:47+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/LOCALIZATION-INVENTORY-2026-11-24.md",
+          "description": "Bounded 52-key English + 52-key Nepali-draft catalog: English canonical, source excerpts/provenance excluded from translation, locale switch preserves selected cue and completed run state, fallback is deterministic, and optional diagnostic/date-unit polish is intentionally deferred pending human terminology review.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126",
+          "description": "Exact tested code passed 52 learner/app tests, 49 consent/inference/source/API tests, 97 runtime/peer/privacy tests, 7 independent peer tests, pinned upstream integrity, and eight Chromium integration profiles.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        }
+      ]
+    },
+    "SUTRA-P048-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:12:47+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/LOCALIZATION-INVENTORY-2026-11-24.md",
+          "description": "Bounded 52-key English + 52-key Nepali-draft catalog: English canonical, source excerpts/provenance excluded from translation, locale switch preserves selected cue and completed run state, fallback is deterministic, and optional diagnostic/date-unit polish is intentionally deferred pending human terminology review.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126",
+          "description": "Exact tested code passed 52 learner/app tests, 49 consent/inference/source/API tests, 97 runtime/peer/privacy tests, 7 independent peer tests, pinned upstream integrity, and eight Chromium integration profiles.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        }
+      ]
+    },
+    "SUTRA-P048-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:12:47+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/LOCALIZATION-INVENTORY-2026-11-24.md",
+          "description": "Bounded 52-key English + 52-key Nepali-draft catalog: English canonical, source excerpts/provenance excluded from translation, locale switch preserves selected cue and completed run state, fallback is deterministic, and optional diagnostic/date-unit polish is intentionally deferred pending human terminology review.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126",
+          "description": "Exact tested code passed 52 learner/app tests, 49 consent/inference/source/API tests, 97 runtime/peer/privacy tests, 7 independent peer tests, pinned upstream integrity, and eight Chromium integration profiles.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        }
+      ]
+    },
+    "SUTRA-P049-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:12:47+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0011.md",
+          "description": "Targeted Chromium accessibility run observed sampled >=4.5:1 contrast, reduced motion, 200% CSS zoom without horizontal clipping and an authored native WebVTT caption cue enabled through the actual caption control. Physical touch and screen-reader testing remain separate.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126",
+          "description": "Exact tested code passed 52 learner/app tests, 49 consent/inference/source/API tests, 97 runtime/peer/privacy tests, 7 independent peer tests, pinned upstream integrity, and eight Chromium integration profiles.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        }
+      ]
+    },
+    "SUTRA-P065-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:12:47+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CLOUDFLARE-CAPACITY-2026-11-24.md",
+          "description": "Read-only connected-account audit found no DNS record, Worker custom domain or wildcard/subdomain Worker route collision for sutra.aafnaipatro.com or sutra-guide.aafnaipatro.com. No Cloudflare configuration was changed.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0011.md",
+          "description": "Session 0011 records the point-in-time route-precedence observation and its limits; production route ownership and billing/headroom remain unverified.",
+          "result": "pass",
+          "source_revision": "2686e3cacdd3e4d552820ccaf57b968a7544ddb4",
+          "observed_at": "2026-11-24T06:12:47+05:45"
         }
       ]
     }
