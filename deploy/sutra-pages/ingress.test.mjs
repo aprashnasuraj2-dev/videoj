@@ -39,3 +39,23 @@ test('candidate service binding does not allow an arbitrary forwarded hostname',
  const response=await onRequest({request,env:{SUTRA_API:{fetch:r=>worker.fetch(r,{SUTRA_ENABLE_INFERENCE:'false'})}}});
  assert.equal(response.status,403);
 });
+
+test('Worker asset response cache policy rejects partial, mutable and ambiguous reviewed media',async()=>{
+ const hash='a'.repeat(64),prefix='/media/release/'+hash,immutable='public, max-age=31536000, immutable',mutable='public, max-age=0, must-revalidate';
+ for(const [path,status,range,expected] of [
+  [prefix+'/lesson.mp4',200,null,immutable],
+  [prefix+'/lesson.webm?v='+hash,200,null,immutable],
+  [prefix+'/lesson.mp4?v='+hash+'&v='+hash,200,null,mutable],
+  [prefix+'/captions.vtt?v='+hash,200,null,mutable],
+  [prefix+'/poster.svg?v='+hash,200,null,mutable],
+  [prefix+'/lesson.mp4',206,'bytes 0-1/10',mutable],
+  [prefix+'/lesson.mp4',200,'bytes 0-1/10',mutable],
+  ['/assets/index-hash.js',200,'bytes 0-1/10',mutable],
+  [prefix+'/lesson.mp4',404,null,mutable]
+ ]){
+  const response=await worker.fetch(req(path),{ASSETS:{fetch:()=>new Response('xx',{status,headers:range?{'Content-Range':range}:{}})}});
+  assert.equal(response.status,status,path);
+  assert.equal(response.headers.get('cache-control'),expected,path);
+  assert.equal(await response.text(),'xx',path);
+ }
+});
