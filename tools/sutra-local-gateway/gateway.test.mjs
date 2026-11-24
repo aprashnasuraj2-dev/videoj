@@ -91,3 +91,22 @@ test('client abort interrupts a held-open streaming model response without retry
   assert.equal(modelCalls,1);
  }finally{await stop(gateway);}
 });
+
+test('a late upstream response cannot escape the deadline and become a successful model stream',async()=>{
+ let calls=0;
+ const gateway=createGateway({token,model,upstreamPort:11434,timeoutMs:20,fetchImpl:async()=>{
+  calls++;await new Promise(resolve=>setTimeout(resolve,65));
+  // Simulates an upstream implementation which ignores the abort signal.
+  return new Response(new ReadableStream({start(){}}),{headers:{'Content-Type':'text/event-stream'}});
+ }});
+ const port=await listen(gateway);
+ try{
+  const result=await fetch('http://127.0.0.1:'+port+'/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(valid())});
+  assert.equal(result.status,502);
+  assert.match(await result.text(),/GATEWAY_UNAVAILABLE/);
+  assert.equal(calls,1);
+ }finally{await stop(gateway);}
+});
+test('gateway deadline remains bounded and cannot be disabled by a caller or test harness',()=>{
+ for(const timeoutMs of [0,-1,30001,Infinity,1.5,'1000'])assert.throws(()=>createGateway({token,model,upstreamPort:11434,timeoutMs}),/GATEWAY_TIMEOUT_CONFIG/);
+});

@@ -22,8 +22,9 @@ function safePayload(data,model){
     data.stream_options?.include_usage!==true||Object.keys(data.stream_options??{}).some(k=>k!=='include_usage'))return false;
  return true;
 }
-export function createGateway({token,model,upstreamPort,fetchImpl=fetch}={}){
+export function createGateway({token,model,upstreamPort,fetchImpl=fetch,timeoutMs=30000}={}){
  const config=validateGatewayConfig({token,model,upstreamPort}),expected=sha('Bearer '+config.token);
+ if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>30000)throw Error('GATEWAY_TIMEOUT_CONFIG');
  let active=0;
  const server=http.createServer(async(req,res)=>{
   const fail=(status)=>{if(!res.headersSent){res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify({error:{code:'GATEWAY_UNAVAILABLE'}}));}else res.destroy();};
@@ -44,16 +45,17 @@ export function createGateway({token,model,upstreamPort,fetchImpl=fetch}={}){
   // Loopback-only target is constructed, never supplied by request or publication.
   const target='http://127.0.0.1:'+config.upstreamPort+'/v1/chat/completions';
   const controller=new AbortController();
-  const deadline=setTimeout(()=>controller.abort(),30000);
+  const deadline=setTimeout(()=>controller.abort(),timeoutMs);
   const close=()=>controller.abort();
   res.on('close',close);
   try{
    const upstream=await fetchImpl(target,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json'},body:JSON.stringify(value),signal:controller.signal});
+   if(controller.signal.aborted)throw Error('UPSTREAM_TIMEOUT');
    if(!upstream.ok||upstream.redirected||!upstream.headers.get('content-type')?.toLowerCase().includes('text/event-stream')||!upstream.body){fail(502);return;}
    res.writeHead(200,{'Content-Type':'text/event-stream','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
    let streamed=0;
    const reader=upstream.body.getReader();
-   const aborted=new Promise((_,reject)=>controller.signal.addEventListener('abort',()=>reject(Error('UPSTREAM_CANCELLED')),{once:true}));
+   const aborted=new Promise((_,reject)=>{const stop=()=>reject(Error('UPSTREAM_CANCELLED'));controller.signal.addEventListener('abort',stop,{once:true});if(controller.signal.aborted)stop();});
    aborted.catch(()=>{});
    try{
     for(;;){
