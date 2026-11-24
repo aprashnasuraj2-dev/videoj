@@ -47,7 +47,7 @@
           "additionalProperties": false
         }
       },
-      "instructions": "Use the registered read-only source tools before making any source-specific statement. Return exact cue receipts and explain that catalog consistency does not establish factual truth. If search_lesson reports truncated:true, state that more matches exist and narrow the query or read an exact cue rather than implying exhaustive coverage. If no receipt is returned, abstain. Development catalog content is synthetic.",
+      "instructions": "Use the registered read-only source tools before making any source-specific statement. Return exact cue receipts and explain that catalog consistency does not establish factual truth. Broad source searches are mechanically refused when more than five cues match. Use a specific query; never imply exhaustive coverage from a truncated result. If no receipt is returned, abstain. Development catalog content is synthetic.",
       "tools": [
         {
           "url": "/api/source-tools"

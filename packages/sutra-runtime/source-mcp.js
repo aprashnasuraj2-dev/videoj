@@ -34,6 +34,7 @@ export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt
    if(output.receipts.length!==expected.receipts.length)bad();
    if(name==='search_lesson'){
     if(!Number.isInteger(output.returnedCount)||output.returnedCount!==output.receipts.length||output.returnedCount!==expected.returnedCount||typeof output.truncated!=='boolean'||output.truncated!==expected.truncated||JSON.stringify(output.filters)!==JSON.stringify(expected.filters))bad();
+    if(output.truncated)bad('SOURCE_QUERY_TOO_BROAD');
    }
    for(const [index,receipt] of output.receipts.entries()){
     if(!validateReceipt(receipt,{sources}).valid||Object.keys(expected.receipts[index]).some(key=>key!=='retrievedAt'&&expected.receipts[index][key]!==receipt[key]))bad();

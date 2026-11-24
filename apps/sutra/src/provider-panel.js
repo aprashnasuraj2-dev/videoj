@@ -58,6 +58,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
    if(code==='SOURCE_EVIDENCE_LIMIT'){set('empty','Source retrieval exceeded the bounded evidence display. The model interpretation was discarded rather than hiding additional source cues. Narrow the question and run again explicitly.');return;}
    if(code==='SOURCE_QUOTA'){set('denied','The bounded source-read allowance is exhausted for now. No completed model answer is claimed. The already loaded lesson, transcript and local question path remain available.');return;}
    if(code==='SOURCE_UNAVAILABLE'){set('error','The source service is temporarily unavailable. No completed model answer is claimed. The already loaded local lesson remains available.');return;}
+   if(code==='SOURCE_QUERY_TOO_BROAD'){set('empty','The model asked for a source search with more matches than the bounded evidence view can show. No excerpts or model interpretation from that incomplete search are presented. Ask a narrower question and run explicitly again.');return;}
    set(cancelled?'cancelled':'error',(cancelled?'Inference cancelled.':'Inference stopped ('+code+').')+' No completed answer is claimed. The local lesson remains available; retry only explicitly.');
   }finally{active=null;controls();(run.disabled?check:run).focus();}
  }
