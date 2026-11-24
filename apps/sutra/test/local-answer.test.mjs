@@ -78,3 +78,10 @@ test('local lexical index refuses its deliberate 5000-cue limit without returnin
  const sources=Array.from({length:11},(_,i)=>({...fixture.source,id:'local-source-'+i,duration:1000,cues:Array.from({length:i===10?1:500},(_,j)=>({id:'cue-'+j,start:j,end:j+0.5,text:'timing marker'}))}));
  assert.throws(()=>createLocalAnswer({sources}),/LOCAL_INDEX_SIZE/);
 });
+
+test('local question retrieval supports the longest accepted source and cue identifiers',()=>{
+ const source=structuredClone(fixture.source);source.id='s'.repeat(128);source.cues[0].id='c'.repeat(128);
+ const r=createLocalAnswer({sources:[source],now:()=>fixture.receipt.retrievedAt}).query('timing marker');
+ assert.equal(r.state,'matched');assert.equal(r.receipts[0].sourceId,source.id);assert.equal(r.receipts[0].cueId,source.cues[0].id);
+ assert.equal(r.modelCalls,0);assert.equal(r.networkRequests,0);
+});

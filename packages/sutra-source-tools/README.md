@@ -7,7 +7,7 @@ closed input schemas and `effect: read`; `call(name, arguments)` supports:
 | Capability | Input | Output bound |
 | --- | --- | --- |
 | `search_lesson` | NFKC-normalized literal query, 1–120 characters | at most 5 exact cue receipts plus `returnedCount`, exact `matchCount` and `truncated` completeness metadata |
-| `read_cue` | exact source ID and cue ID | exactly 1 cue, or an error |
+| `read_cue` | exact source ID and cue ID (1–128 characters, matching the catalog identifier ceiling) | exactly 1 cue, or an error |
 
 No URLs, selectors, scripts, writes or arbitrary fetches are accepted. Catalogs
 have at most 20 sources and 500 cues/source, with 2,000 characters/cue; each result

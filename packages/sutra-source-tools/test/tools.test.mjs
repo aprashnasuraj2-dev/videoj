@@ -83,3 +83,14 @@ test('literal count includes overlapping cues without conflating source filters,
   const found=tools.call('search_lesson',args);assert.equal(found.matchCount,count);assert.equal(found.returnedCount,Math.min(5,count));assert.equal(found.receipts.length,Math.min(5,count));assert.equal(found.truncated,count>5);
  }
 });
+
+test('all valid catalog identifiers up to 128 characters remain searchable and exactly readable',()=>{
+ const source=structuredClone(fixture.source);source.id='s'.repeat(128);source.cues[0].id='c'.repeat(128);
+ const t=createSourceTools([source],{now:()=>fixture.receipt.retrievedAt});
+ const search=t.call('search_lesson',{query:'timing',sourceId:source.id});
+ assert.equal(search.matchCount,1);assert.equal(search.receipts[0].cueId,source.cues[0].id);
+ const read=t.call('read_cue',{sourceId:source.id,cueId:source.cues[0].id});assert.deepEqual(read.receipts,search.receipts);
+ assert.throws(()=>t.call('search_lesson',{query:'timing',sourceId:source.id+'s'}),/ARGUMENTS/);
+ assert.throws(()=>t.call('read_cue',{sourceId:source.id,cueId:source.cues[0].id+'c'}),/ARGUMENTS/);
+ assert.throws(()=>createSourceTools([{...source,id:source.id+'s'}]),/CATALOG/);
+});

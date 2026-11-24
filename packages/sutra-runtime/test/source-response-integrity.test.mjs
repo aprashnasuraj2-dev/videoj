@@ -114,3 +114,16 @@ test('cancellation during tool response produces no late receipt or model-facing
  await assert.rejects(c.callTool('search_lesson',{query:'timing'}),e=>e.code==='SOURCE_CANCELLED');
  assert.deepEqual(methods,['initialize','notifications/initialized','tools/call']);assert.deepEqual(seen,[]);
 });
+
+test('source MCP exact read agrees with maximum-length valid catalog identifiers',async()=>{
+ const source=structuredClone(fixture.source);source.id='s'.repeat(128);source.cues[0].id='c'.repeat(128);
+ const t=createSourceTools([source]);const seen=[];
+ const c=createSourceMcp({origin:'https://sutra.test',sources:[source],onReceipt:r=>seen.push(r),fetchImpl:async(_url,opts)=>{
+  const rpc=JSON.parse(opts.body);
+  if(rpc.method==='initialize')return Response.json({jsonrpc:'2.0',id:rpc.id,result:{protocolVersion:'2025-06-18'}});
+  if(rpc.method==='notifications/initialized')return new Response(null,{status:202});
+  return Response.json({jsonrpc:'2.0',id:rpc.id,result:{structuredContent:t.call(rpc.params.name,rpc.params.arguments),isError:false}});
+ }});
+ const result=JSON.parse(await c.callTool('read_cue',{sourceId:source.id,cueId:source.cues[0].id}));
+ assert.equal(result.receipts.length,1);assert.equal(result.receipts[0].cueId,source.cues[0].id);assert.deepEqual(result.receipts,seen);
+});

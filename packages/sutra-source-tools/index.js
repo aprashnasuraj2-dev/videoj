@@ -5,8 +5,8 @@ const text=maxLength=>({type:'string',minLength:1,maxLength});
 const number={type:'number',minimum:0,maximum:86400};
 const definitions=[
  {name:'search_lesson',description:'Find literal text in the fixed local source catalog, optionally constrained to one source and a containing time interval. Results establish source consistency, not factual truth.',effect:'read',
-  inputSchema:schema({query:text(120),sourceId:text(100),start:number,end:number},['query'])},
- {name:'read_cue',description:'Read one exact cue from the fixed local source catalog by source and cue ID.',effect:'read',inputSchema:schema({sourceId:text(100),cueId:text(100)})},
+  inputSchema:schema({query:text(120),sourceId:text(128),start:number,end:number},['query'])},
+ {name:'read_cue',description:'Read one exact cue from the fixed local source catalog by source and cue ID.',effect:'read',inputSchema:schema({sourceId:text(128),cueId:text(128)})},
 ];
 export class SourceToolError extends Error{constructor(code){super(`Source tool unavailable (${code}).`);this.code=code;}}
 export function createSourceTools(catalog,{now=()=>new Date().toISOString()}={}){
