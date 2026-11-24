@@ -207,6 +207,17 @@
       ],
       "invalidates": [],
       "reason": "Changes to the outside-builder adoption protocol must pass its de-identified trial scorer; no adoption metric exists until real external trials occur."
+    },
+    {
+      "id": "physical-device-readiness",
+      "prefixes": [
+        "tools/sutra-device-check/"
+      ],
+      "requiredWorkflows": [
+        "Validate SUTRA physical-device evidence gate"
+      ],
+      "invalidates": [],
+      "reason": "Changes to the physical-device record protocol must pass its completeness/core-flow tests; no physical-device metric exists until a human attests a real device observation."
     }
   ]
 }

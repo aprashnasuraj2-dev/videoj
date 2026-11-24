@@ -24,7 +24,7 @@ export function validatePhysicalDeviceRecord(input){
    ((row.status==='fail'||row.status==='unsupported')&&!row.detail.trim()))throw Error('Invalid check row: '+key);
   checks[key]={...row};
  }
- const core=['pageLoad','directLookup','mediaDecode','playPause','nativeSeek','consentDeny','reviewPreviewSave','narrowScroll','touchTargets','errorRecovery'];
+ const core=['pageLoad','directLookup','mediaDecode','playPause','nativeSeek','captions','consentDeny','reviewPreviewSave','narrowScroll','touchTargets','errorRecovery'];
  const coreFailures=core.filter(key=>checks[key].status!=='pass');
  const untested=checkKeys.filter(key=>checks[key].status==='untested'),unsupported=checkKeys.filter(key=>checks[key].status==='unsupported'),failures=checkKeys.filter(key=>checks[key].status==='fail');
  const normalized={schema:1,deviceId:input.deviceId,platform:input.platform,osVersion:input.osVersion,browser:input.browser,browserVersion:input.browserVersion,

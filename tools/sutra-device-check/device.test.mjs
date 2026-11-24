@@ -19,3 +19,8 @@ test('untested core check, emulator-like missing attestation and hidden fields f
 test('failed or unsupported statuses require a visible detail',()=>{
  for(const status of ['fail','unsupported']){const x=base();x.checks.captions=row(status,'');assert.throws(()=>validatePhysicalDeviceRecord(x),/captions/);}
 });
+
+test('captions are part of the physical core result even when fullscreen is allowed to be reported unsupported',()=>{
+ const x=base();x.checks.captions=row('unsupported','Native captions were unavailable on this physical-browser record.');
+ const r=validatePhysicalDeviceRecord(x);assert.equal(r.coreTouchResult,'fail');assert.deepEqual(r.coreFailures,['captions']);assert.deepEqual(r.unsupported,['captions','fullscreen']);
+});

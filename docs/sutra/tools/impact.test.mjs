@@ -71,3 +71,8 @@ test('outside-builder readiness tooling is explicitly mapped without inventing a
  const r=classifyChangedFiles(['tools/sutra-builder-trial/trial.mjs'],map);
  assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('builder-trial-readiness'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA outside-builder trial gate'));assert.deepEqual(r.invalidatedMetrics,[]);
 });
+
+test('physical-device readiness tooling is mapped without turning emulation into physical evidence',()=>{
+ const r=classifyChangedFiles(['tools/sutra-device-check/device.mjs'],map);
+ assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('physical-device-readiness'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA physical-device evidence gate'));assert.deepEqual(r.invalidatedMetrics,[]);
+});
