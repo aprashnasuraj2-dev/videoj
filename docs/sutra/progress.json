@@ -1,21 +1,22 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T05:48:49+05:45",
+  "updated_at": "2026-11-24T05:49:41+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+  "last_observed_code_sha": "e1122ec58c7a773b41e4470dc0139a897049f912",
   "last_session_id": "SUTRA-SESSION-0010",
-  "stage": "private_context_and_read_only_mcp_phase_exits_verified",
+  "stage": "security_resilience_performance_integrated",
   "current_task": null,
-  "next_task": "SUTRA-P041-04",
+  "next_task": "SUTRA-P041-07",
   "ready_engineering_queue": [
-    "SUTRA-P041-04",
-    "SUTRA-P047-01",
-    "SUTRA-P049-01",
-    "SUTRA-P045-03",
-    "SUTRA-P042-05"
+    "SUTRA-P041-07",
+    "SUTRA-P042-06",
+    "SUTRA-P047-04",
+    "SUTRA-P049-03",
+    "SUTRA-P068-06",
+    "SUTRA-P065-03"
   ],
-  "next_action": "Define and test learner-visible loading, empty, denied, error and completed states for P041-04; then consolidate the optional execution inspector and accessibility evidence. Keep rights-cleared factual content, live funded inference, independent HTTPS interoperability and release gates separate.",
+  "next_action": "Continue development-only learner/acceptance hardening: specify responsive/zoom behavior and finish media source/decode failure coverage; then close inspector partial-failure semantics and cache rollout evidence. External/public gates remain blocked on rights-cleared content, human factual review, physical accessibility, public HTTPS peers/MCP, live provider budget, Cloudflare billing/headroom and final routes. Do not release or submit.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -4517,6 +4518,1746 @@
           "result": "pass",
           "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
           "observed_at": "2026-11-24T05:48:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Host-owned peer security boundary labels public peer/tool/source text untrusted while runtime-owned destination, write, model, credential and private-context policies reject hostile overrides; public attack marker reaches the model but the private canary does not. This is defense in depth, not universal prompt-injection immunity.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P038-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Host-owned peer security boundary labels public peer/tool/source text untrusted while runtime-owned destination, write, model, credential and private-context policies reject hostile overrides; public attack marker reaches the model but the private canary does not. This is defense in depth, not universal prompt-injection immunity.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Learner peer workbench now exposes explicit idle/loading/consent/completed/denied/error states and keeps router/tool/budget/timing details behind an optional inspector; no live provider is implied.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P041-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Learner peer workbench now exposes explicit idle/loading/consent/completed/denied/error states and keeps router/tool/budget/timing details behind an optional inspector; no live provider is implied.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Chromium exercises actual native play/pause, volume, captions, fullscreen and seek with responsive host styles; player artifact remains isolated from DETOUR. Missing-decode/source-change coverage is still open, so phase 042 is not closed.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Chromium exercises actual native play/pause, volume, captions, fullscreen and seek with responsive host styles; player artifact remains isolated from DETOUR. Missing-decode/source-change coverage is still open, so phase 042 is not closed.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P042-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Chromium exercises actual native play/pause, volume, captions, fullscreen and seek with responsive host styles; player artifact remains isolated from DETOUR. Missing-decode/source-change coverage is still open, so phase 042 is not closed.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Seek policy explicitly rejects live/unknown-duration, empty/gapped and invalid ranges while valid evidence cues reach native currentTime within tolerance; unavailable seeking is reported honestly.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P043-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Seek policy explicitly rejects live/unknown-duration, empty/gapped and invalid ranges while valid evidence cues reach native currentTime within tolerance; unavailable seeking is reported honestly.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Optional inspector shows router identity, canonical agent/tool names, model/agent budgets and elapsed limit without raw prompts/results; fake credential/private canaries stay absent from UI/downloaded trace.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Optional inspector shows router identity, canonical agent/tool names, model/agent budgets and elapsed limit without raw prompts/results; fake credential/private canaries stay absent from UI/downloaded trace.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P047-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Optional inspector shows router identity, canonical agent/tool names, model/agent budgets and elapsed limit without raw prompts/results; fake credential/private canaries stay absent from UI/downloaded trace.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P049-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Targeted Chromium accessibility evidence covers names/IDs, live-region discipline, keyboard/modal focus, >=24px targets, reduced motion, sampled >=4.5:1 contrast context, 200% zoom and 360px layout. Physical touch and human screen-reader tests remain open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P049-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Targeted Chromium accessibility evidence covers names/IDs, live-region discipline, keyboard/modal focus, >=24px targets, reduced motion, sampled >=4.5:1 contrast context, 200% zoom and 360px layout. Physical touch and human screen-reader tests remain open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P049-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Targeted Chromium accessibility evidence covers names/IDs, live-region discipline, keyboard/modal focus, >=24px targets, reduced motion, sampled >=4.5:1 contrast context, 200% zoom and 360px layout. Physical touch and human screen-reader tests remain open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P049-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Targeted Chromium accessibility evidence covers names/IDs, live-region discipline, keyboard/modal focus, >=24px targets, reduced motion, sampled >=4.5:1 contrast context, 200% zoom and 360px layout. Physical touch and human screen-reader tests remain open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P049-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Targeted Chromium accessibility evidence covers names/IDs, live-region discipline, keyboard/modal focus, >=24px targets, reduced motion, sampled >=4.5:1 contrast context, 200% zoom and 360px layout. Physical touch and human screen-reader tests remain open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P049-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Targeted Chromium accessibility evidence covers names/IDs, live-region discipline, keyboard/modal focus, >=24px targets, reduced motion, sampled >=4.5:1 contrast context, 200% zoom and 360px layout. Physical touch and human screen-reader tests remain open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P049-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Targeted Chromium accessibility evidence covers names/IDs, live-region discipline, keyboard/modal focus, >=24px targets, reduced motion, sampled >=4.5:1 contrast context, 200% zoom and 360px layout. Physical touch and human screen-reader tests remain open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P061-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Failure matrix covers offline startup, mid-artifact and mid-provider-run network loss, missing/stale media, missing poster, 404/malformed/timed-out peer artifacts and explicit recovery. Failed or scripted paths never impersonate a completed live run.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P061-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Failure matrix covers offline startup, mid-artifact and mid-provider-run network loss, missing/stale media, missing poster, 404/malformed/timed-out peer artifacts and explicit recovery. Failed or scripted paths never impersonate a completed live run.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P061-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Failure matrix covers offline startup, mid-artifact and mid-provider-run network loss, missing/stale media, missing poster, 404/malformed/timed-out peer artifacts and explicit recovery. Failed or scripted paths never impersonate a completed live run.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P061-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Failure matrix covers offline startup, mid-artifact and mid-provider-run network loss, missing/stale media, missing poster, 404/malformed/timed-out peer artifacts and explicit recovery. Failed or scripted paths never impersonate a completed live run.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P061-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Failure matrix covers offline startup, mid-artifact and mid-provider-run network loss, missing/stale media, missing poster, 404/malformed/timed-out peer artifacts and explicit recovery. Failed or scripted paths never impersonate a completed live run.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P061-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Failure matrix covers offline startup, mid-artifact and mid-provider-run network loss, missing/stale media, missing poster, 404/malformed/timed-out peer artifacts and explicit recovery. Failed or scripted paths never impersonate a completed live run.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P061-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Failure matrix covers offline startup, mid-artifact and mid-provider-run network loss, missing/stale media, missing poster, 404/malformed/timed-out peer artifacts and explicit recovery. Failed or scripted paths never impersonate a completed live run.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P061-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Failure matrix covers offline startup, mid-artifact and mid-provider-run network loss, missing/stale media, missing poster, 404/malformed/timed-out peer artifacts and explicit recovery. Failed or scripted paths never impersonate a completed live run.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P061-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Failure matrix covers offline startup, mid-artifact and mid-provider-run network loss, missing/stale media, missing poster, 404/malformed/timed-out peer artifacts and explicit recovery. Failed or scripted paths never impersonate a completed live run.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P061-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Failure matrix covers offline startup, mid-artifact and mid-provider-run network loss, missing/stale media, missing poster, 404/malformed/timed-out peer artifacts and explicit recovery. Failed or scripted paths never impersonate a completed live run.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P062-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Local action tests preserve completed/rejected/unknown write outcomes, request ID and approved evidence receipt; ambiguous post-write exceptions are not retried and later state inspection can reveal the side effect. This is local browser persistence, not a hosted integration-write claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P062-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Local action tests preserve completed/rejected/unknown write outcomes, request ID and approved evidence receipt; ambiguous post-write exceptions are not retried and later state inspection can reveal the side effect. This is local browser persistence, not a hosted integration-write claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P062-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Local action tests preserve completed/rejected/unknown write outcomes, request ID and approved evidence receipt; ambiguous post-write exceptions are not retried and later state inspection can reveal the side effect. This is local browser persistence, not a hosted integration-write claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P062-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Local action tests preserve completed/rejected/unknown write outcomes, request ID and approved evidence receipt; ambiguous post-write exceptions are not retried and later state inspection can reveal the side effect. This is local browser persistence, not a hosted integration-write claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P062-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Local action tests preserve completed/rejected/unknown write outcomes, request ID and approved evidence receipt; ambiguous post-write exceptions are not retried and later state inspection can reveal the side effect. This is local browser persistence, not a hosted integration-write claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P062-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Local action tests preserve completed/rejected/unknown write outcomes, request ID and approved evidence receipt; ambiguous post-write exceptions are not retried and later state inspection can reveal the side effect. This is local browser persistence, not a hosted integration-write claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P062-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Local action tests preserve completed/rejected/unknown write outcomes, request ID and approved evidence receipt; ambiguous post-write exceptions are not retried and later state inspection can reveal the side effect. This is local browser persistence, not a hosted integration-write claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P062-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Local action tests preserve completed/rejected/unknown write outcomes, request ID and approved evidence receipt; ambiguous post-write exceptions are not retried and later state inspection can reveal the side effect. This is local browser persistence, not a hosted integration-write claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P062-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Local action tests preserve completed/rejected/unknown write outcomes, request ID and approved evidence receipt; ambiguous post-write exceptions are not retried and later state inspection can reveal the side effect. This is local browser persistence, not a hosted integration-write claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P062-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Local action tests preserve completed/rejected/unknown write outcomes, request ID and approved evidence receipt; ambiguous post-write exceptions are not retried and later state inspection can reveal the side effect. This is local browser persistence, not a hosted integration-write claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P063-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Inference boundary has fixed upstream/model, input/output ceilings, server-only key, HMAC client/global quota, active concurrency leases, no automatic retries, kill switch, direct-call abuse test and exact provider-adapter->proxy->synthetic-upstream->multi-agent integration.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P063-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Inference boundary has fixed upstream/model, input/output ceilings, server-only key, HMAC client/global quota, active concurrency leases, no automatic retries, kill switch, direct-call abuse test and exact provider-adapter->proxy->synthetic-upstream->multi-agent integration.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P063-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Inference boundary has fixed upstream/model, input/output ceilings, server-only key, HMAC client/global quota, active concurrency leases, no automatic retries, kill switch, direct-call abuse test and exact provider-adapter->proxy->synthetic-upstream->multi-agent integration.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P063-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Inference boundary has fixed upstream/model, input/output ceilings, server-only key, HMAC client/global quota, active concurrency leases, no automatic retries, kill switch, direct-call abuse test and exact provider-adapter->proxy->synthetic-upstream->multi-agent integration.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P063-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Inference boundary has fixed upstream/model, input/output ceilings, server-only key, HMAC client/global quota, active concurrency leases, no automatic retries, kill switch, direct-call abuse test and exact provider-adapter->proxy->synthetic-upstream->multi-agent integration.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P063-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Inference boundary has fixed upstream/model, input/output ceilings, server-only key, HMAC client/global quota, active concurrency leases, no automatic retries, kill switch, direct-call abuse test and exact provider-adapter->proxy->synthetic-upstream->multi-agent integration.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P063-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Inference boundary has fixed upstream/model, input/output ceilings, server-only key, HMAC client/global quota, active concurrency leases, no automatic retries, kill switch, direct-call abuse test and exact provider-adapter->proxy->synthetic-upstream->multi-agent integration.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P063-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Inference boundary has fixed upstream/model, input/output ceilings, server-only key, HMAC client/global quota, active concurrency leases, no automatic retries, kill switch, direct-call abuse test and exact provider-adapter->proxy->synthetic-upstream->multi-agent integration.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P063-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Inference boundary has fixed upstream/model, input/output ceilings, server-only key, HMAC client/global quota, active concurrency leases, no automatic retries, kill switch, direct-call abuse test and exact provider-adapter->proxy->synthetic-upstream->multi-agent integration.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P063-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Inference boundary has fixed upstream/model, input/output ceilings, server-only key, HMAC client/global quota, active concurrency leases, no automatic retries, kill switch, direct-call abuse test and exact provider-adapter->proxy->synthetic-upstream->multi-agent integration.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P064-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Built learner uses static _headers plus matching API security headers, no ads/analytics surface, same-origin default connect policy, strict referrer/frame/content protections, and Chromium proves local features work while unexpected script/connect destinations yield CSP violations and zero responses.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P064-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Built learner uses static _headers plus matching API security headers, no ads/analytics surface, same-origin default connect policy, strict referrer/frame/content protections, and Chromium proves local features work while unexpected script/connect destinations yield CSP violations and zero responses.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P064-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Built learner uses static _headers plus matching API security headers, no ads/analytics surface, same-origin default connect policy, strict referrer/frame/content protections, and Chromium proves local features work while unexpected script/connect destinations yield CSP violations and zero responses.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P064-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Built learner uses static _headers plus matching API security headers, no ads/analytics surface, same-origin default connect policy, strict referrer/frame/content protections, and Chromium proves local features work while unexpected script/connect destinations yield CSP violations and zero responses.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P064-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Built learner uses static _headers plus matching API security headers, no ads/analytics surface, same-origin default connect policy, strict referrer/frame/content protections, and Chromium proves local features work while unexpected script/connect destinations yield CSP violations and zero responses.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P064-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Built learner uses static _headers plus matching API security headers, no ads/analytics surface, same-origin default connect policy, strict referrer/frame/content protections, and Chromium proves local features work while unexpected script/connect destinations yield CSP violations and zero responses.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P064-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Built learner uses static _headers plus matching API security headers, no ads/analytics surface, same-origin default connect policy, strict referrer/frame/content protections, and Chromium proves local features work while unexpected script/connect destinations yield CSP violations and zero responses.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P064-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Built learner uses static _headers plus matching API security headers, no ads/analytics surface, same-origin default connect policy, strict referrer/frame/content protections, and Chromium proves local features work while unexpected script/connect destinations yield CSP violations and zero responses.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P064-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Built learner uses static _headers plus matching API security headers, no ads/analytics surface, same-origin default connect policy, strict referrer/frame/content protections, and Chromium proves local features work while unexpected script/connect destinations yield CSP violations and zero responses.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P064-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Built learner uses static _headers plus matching API security headers, no ads/analytics surface, same-origin default connect policy, strict referrer/frame/content protections, and Chromium proves local features work while unexpected script/connect destinations yield CSP violations and zero responses.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P065-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CLOUDFLARE-CAPACITY-2026-11-24.md",
+          "description": "Read-only connected Cloudflare audit inventories current Worker workload/routes and repo configuration separates static SUTRA assets from /api/* Worker-first execution. Billing/headroom, final subdomain precedence and production request sampling remain blocked/open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P065-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CLOUDFLARE-CAPACITY-2026-11-24.md",
+          "description": "Read-only connected Cloudflare audit inventories current Worker workload/routes and repo configuration separates static SUTRA assets from /api/* Worker-first execution. Billing/headroom, final subdomain precedence and production request sampling remain blocked/open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P065-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CLOUDFLARE-CAPACITY-2026-11-24.md",
+          "description": "Read-only connected Cloudflare audit inventories current Worker workload/routes and repo configuration separates static SUTRA assets from /api/* Worker-first execution. Billing/headroom, final subdomain precedence and production request sampling remain blocked/open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P065-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CLOUDFLARE-CAPACITY-2026-11-24.md",
+          "description": "Read-only connected Cloudflare audit inventories current Worker workload/routes and repo configuration separates static SUTRA assets from /api/* Worker-first execution. Billing/headroom, final subdomain precedence and production request sampling remain blocked/open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P065-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CLOUDFLARE-CAPACITY-2026-11-24.md",
+          "description": "Read-only connected Cloudflare audit inventories current Worker workload/routes and repo configuration separates static SUTRA assets from /api/* Worker-first execution. Billing/headroom, final subdomain precedence and production request sampling remain blocked/open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P067-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PERFORMANCE-2026-11-24.md",
+          "description": "Measured Chromium lab at 1 Mbps/150ms: 393,302-byte gzip shell, transcript usable in 1,378ms, zero MP4 requests before explicit action, video ready in 3,448ms and native seek feedback 64ms. Laboratory result only.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P067-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PERFORMANCE-2026-11-24.md",
+          "description": "Measured Chromium lab at 1 Mbps/150ms: 393,302-byte gzip shell, transcript usable in 1,378ms, zero MP4 requests before explicit action, video ready in 3,448ms and native seek feedback 64ms. Laboratory result only.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P067-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PERFORMANCE-2026-11-24.md",
+          "description": "Measured Chromium lab at 1 Mbps/150ms: 393,302-byte gzip shell, transcript usable in 1,378ms, zero MP4 requests before explicit action, video ready in 3,448ms and native seek feedback 64ms. Laboratory result only.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P067-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PERFORMANCE-2026-11-24.md",
+          "description": "Measured Chromium lab at 1 Mbps/150ms: 393,302-byte gzip shell, transcript usable in 1,378ms, zero MP4 requests before explicit action, video ready in 3,448ms and native seek feedback 64ms. Laboratory result only.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P067-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PERFORMANCE-2026-11-24.md",
+          "description": "Measured Chromium lab at 1 Mbps/150ms: 393,302-byte gzip shell, transcript usable in 1,378ms, zero MP4 requests before explicit action, video ready in 3,448ms and native seek feedback 64ms. Laboratory result only.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P067-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PERFORMANCE-2026-11-24.md",
+          "description": "Measured Chromium lab at 1 Mbps/150ms: 393,302-byte gzip shell, transcript usable in 1,378ms, zero MP4 requests before explicit action, video ready in 3,448ms and native seek feedback 64ms. Laboratory result only.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P067-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PERFORMANCE-2026-11-24.md",
+          "description": "Measured Chromium lab at 1 Mbps/150ms: 393,302-byte gzip shell, transcript usable in 1,378ms, zero MP4 requests before explicit action, video ready in 3,448ms and native seek feedback 64ms. Laboratory result only.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P067-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PERFORMANCE-2026-11-24.md",
+          "description": "Measured Chromium lab at 1 Mbps/150ms: 393,302-byte gzip shell, transcript usable in 1,378ms, zero MP4 requests before explicit action, video ready in 3,448ms and native seek feedback 64ms. Laboratory result only.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P067-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PERFORMANCE-2026-11-24.md",
+          "description": "Measured Chromium lab at 1 Mbps/150ms: 393,302-byte gzip shell, transcript usable in 1,378ms, zero MP4 requests before explicit action, video ready in 3,448ms and native seek feedback 64ms. Laboratory result only.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P067-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PERFORMANCE-2026-11-24.md",
+          "description": "Measured Chromium lab at 1 Mbps/150ms: 393,302-byte gzip shell, transcript usable in 1,378ms, zero MP4 requests before explicit action, video ready in 3,448ms and native seek feedback 64ms. Laboratory result only.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P068-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Cache/retention design uses physical content-versioned graph paths, revalidated mutable pointers, no-store APIs, SHA-bound media, bounded/deletable local review storage and no other first-party browser persistence. Rollout retention and BYOK deletion remain open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P068-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Cache/retention design uses physical content-versioned graph paths, revalidated mutable pointers, no-store APIs, SHA-bound media, bounded/deletable local review storage and no other first-party browser persistence. Rollout retention and BYOK deletion remain open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P068-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Cache/retention design uses physical content-versioned graph paths, revalidated mutable pointers, no-store APIs, SHA-bound media, bounded/deletable local review storage and no other first-party browser persistence. Rollout retention and BYOK deletion remain open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P068-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Cache/retention design uses physical content-versioned graph paths, revalidated mutable pointers, no-store APIs, SHA-bound media, bounded/deletable local review storage and no other first-party browser persistence. Rollout retention and BYOK deletion remain open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P068-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Cache/retention design uses physical content-versioned graph paths, revalidated mutable pointers, no-store APIs, SHA-bound media, bounded/deletable local review storage and no other first-party browser persistence. Rollout retention and BYOK deletion remain open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P068-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Cache/retention design uses physical content-versioned graph paths, revalidated mutable pointers, no-store APIs, SHA-bound media, bounded/deletable local review storage and no other first-party browser persistence. Rollout retention and BYOK deletion remain open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P068-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Cache/retention design uses physical content-versioned graph paths, revalidated mutable pointers, no-store APIs, SHA-bound media, bounded/deletable local review storage and no other first-party browser persistence. Rollout retention and BYOK deletion remain open.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P069-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "20-session local CI lab held accepted synthetic provider streams open: 4 accepted, 16 concurrency-limited, 4 provider calls, zero retries and zero cross-session canary leakage. No staging/live-model/CPU-token capacity claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P069-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "20-session local CI lab held accepted synthetic provider streams open: 4 accepted, 16 concurrency-limited, 4 provider calls, zero retries and zero cross-session canary leakage. No staging/live-model/CPU-token capacity claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P069-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "20-session local CI lab held accepted synthetic provider streams open: 4 accepted, 16 concurrency-limited, 4 provider calls, zero retries and zero cross-session canary leakage. No staging/live-model/CPU-token capacity claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P069-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "20-session local CI lab held accepted synthetic provider streams open: 4 accepted, 16 concurrency-limited, 4 provider calls, zero retries and zero cross-session canary leakage. No staging/live-model/CPU-token capacity claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P069-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "20-session local CI lab held accepted synthetic provider streams open: 4 accepted, 16 concurrency-limited, 4 provider calls, zero retries and zero cross-session canary leakage. No staging/live-model/CPU-token capacity claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        }
+      ]
+    },
+    "SUTRA-P069-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:49:41+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "20-session local CI lab held accepted synthetic provider streams open: 4 accepted, 16 concurrency-limited, 4 provider calls, zero retries and zero cross-session canary leakage. No staging/live-model/CPU-token capacity claim.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543",
+          "description": "Exact tested implementation green: 46 learner + 46 consent/inference/source/API + 96 runtime/peer/privacy + 7 peer-package tests, 10 pinned hashes, eight browser profiles, 20-session synthetic concurrency lab and measured low-bandwidth profile.",
+          "result": "pass",
+          "source_revision": "e1122ec58c7a773b41e4470dc0139a897049f912",
+          "observed_at": "2026-11-24T05:49:41+05:45"
         }
       ]
     }
