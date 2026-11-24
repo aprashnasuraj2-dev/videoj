@@ -29,7 +29,7 @@ test('second independent loopback origin, exact peer, consent order and zero den
  await assert.rejects(loadPeerNetwork({peerUrl:peer+'/agents/learn',inspector:allow,fetchImpl}),e=>e.code==='NETWORK_MATCH');
 });
 test('safe host action requires a single-use explicit proposal',async()=>{
- let writes=0;const registry=createLocalActionRegistry([{name:'acknowledge',effect:'write_local',destination:'Memory',description:'Synthetic acknowledgement',validate:a=>a.acknowledged===true&&Object.keys(a).length===1,execute:()=>++writes}],{idFactory:()=> 'proposal-example'});
+ let writes=0,sequence=0;const registry=createLocalActionRegistry([{name:'acknowledge',effect:'write_local',destination:'Memory',description:'Synthetic acknowledgement',validate:a=>a.acknowledged===true&&Object.keys(a).length===1,execute:()=>++writes}],{idFactory:()=> 'proposal-example-'+(++sequence)});
  assert.throws(()=>registry.prepare('acknowledge',{acknowledged:false}));const cancelled=registry.prepare('acknowledge',{acknowledged:true});registry.cancel(cancelled.id);assert.equal(writes,0);await assert.rejects(registry.execute(cancelled.id));
- const approved=registry.prepare('acknowledge',{acknowledged:true});assert.equal(writes,0);await registry.execute(approved.id);assert.equal(writes,1);await assert.rejects(registry.execute(approved.id));assert.equal(writes,1);
+ const approved=registry.prepare('acknowledge',{acknowledged:true});assert.notEqual(approved.id,cancelled.id);await assert.rejects(registry.execute(cancelled.id));assert.equal(writes,0);await registry.execute(approved.id);assert.equal(writes,1);await assert.rejects(registry.execute(approved.id));assert.equal(writes,1);
 });
