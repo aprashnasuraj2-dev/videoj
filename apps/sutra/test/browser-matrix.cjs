@@ -26,10 +26,18 @@ const engines={chromium,firefox,webkit};
     const runtime=await import('/runtime/sutra-runtime.js');
     const response=await fetch('/agents/learner.network.json',{credentials:'omit',cache:'no-store'});if(!response.ok)throw Error('runtime graph unavailable');
     const definition=await response.json(),compiled=runtime.compileNetwork(definition,{name:'learner',frontMan:'learner'});
-    return {name:compiled.name,frontMan:compiled.frontMan,profile:runtime.sutraRuntimeProfile,runType:typeof runtime.runNetwork,peerType:typeof runtime.loadPeerNetwork};
+    let writes=0,ids=0;
+    const registry=runtime.createLocalActionRegistry([{name:'save-fixture',effect:'write_local',destination:'Test memory only',description:'Save reviewed fixture',validate:args=>args.value==='approved',execute:args=>{writes++;return args.value;}}],{idFactory:()=> 'matrix-'+(++ids)});
+    const denied=registry.prepare('save-fixture',{value:'approved'});registry.cancel(denied.id);
+    let cancelled=false,replay=false;
+    try{await registry.execute(denied.id);}catch(e){cancelled=e.code==='PROPOSAL_MISSING';}
+    const approved=registry.prepare('save-fixture',{value:'approved'});const value=await registry.execute(approved.id);
+    try{await registry.execute(approved.id);}catch(e){replay=e.code==='PROPOSAL_MISSING';}
+    return {name:compiled.name,frontMan:compiled.frontMan,profile:runtime.sutraRuntimeProfile,runType:typeof runtime.runNetwork,peerType:typeof runtime.loadPeerNetwork,actions:{writes,value,cancelled,replay,pending:registry.pendingCount(),metadata:registry.list()}};
    });
    assert.equal(result.name,'learner');assert.equal(result.frontMan,'learner');assert.equal(result.profile.execution,'browser');assert.equal(result.profile.byok,false);assert.equal(result.runType,'function');assert.equal(result.peerType,'function');
-   return 'Stable /runtime/sutra-runtime.js imported and compiled the public learner graph in '+engine;
+   assert.deepEqual(result.actions,{writes:1,value:'approved',cancelled:true,replay:true,pending:0,metadata:[{name:'save-fixture',effect:'write_local',destination:'Test memory only',description:'Save reviewed fixture'}]});
+   return 'Stable /runtime/sutra-runtime.js compiled the graph and exercised host-only registry cancel/confirm/replay refusal in '+engine;
   });
   await step('evidence',async()=>{await button('Check example').click();assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');await button('Try altered quotation').click();assert.notEqual(await page.locator('#result').getAttribute('data-state'),'matched');});
   await step('graph',async()=>{await button('Run scripted network test').click();await page.waitForFunction(()=>document.querySelector('#network-result').dataset.state==='completed');assert.match(await page.locator('#network-result').textContent(),/No live AI|scripted/i);});

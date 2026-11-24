@@ -58,34 +58,57 @@ function boundedClone(value){
 export class LocalActionError extends Error{
  constructor(code,message){super(message);this.name='LocalActionError';this.code=code;}
 }
-export function createLocalActionRegistry(definitions,{idFactory=()=>globalThis.crypto?.randomUUID?.()}={}){
- if(!Array.isArray(definitions)||definitions.length<1||definitions.length>32)throw new TypeError('One to 32 local action definitions required.');
- const byName=new Map();
- for(const definition of definitions){
-  if(!plain(definition)||!NAME.test(definition.name)||byName.has(definition.name)||
+const definitionKeys=['name','effect','destination','description','validate','execute'];
+function snapshotDefinition(raw){
+ if(!plain(raw)||Reflect.ownKeys(raw).length!==definitionKeys.length)throw new TypeError('Invalid local action definition.');
+ const definition={};
+ for(const key of definitionKeys){
+  const field=Object.getOwnPropertyDescriptor(raw,key);
+  if(!field?.enumerable||!Object.hasOwn(field,'value'))throw new TypeError('Invalid local action definition.');
+  definition[key]=field.value;
+ }
+ if(typeof definition.name!=='string'||!NAME.test(definition.name)||
    !EFFECTS.has(definition.effect)||typeof definition.destination!=='string'||!definition.destination.trim()||definition.destination.length>160||
    typeof definition.description!=='string'||!definition.description.trim()||definition.description.length>300||
    typeof definition.validate!=='function'||typeof definition.execute!=='function')throw new TypeError('Invalid local action definition.');
-  byName.set(definition.name,Object.freeze({...definition}));
+ return Object.freeze(definition);
+}
+export function createLocalActionRegistry(definitions,{idFactory=()=>globalThis.crypto?.randomUUID?.()}={}){
+ if(!Array.isArray(definitions)||Object.getPrototypeOf(definitions)!==Array.prototype||definitions.length<1||definitions.length>32||
+  Reflect.ownKeys(definitions).length!==definitions.length+1||typeof idFactory!=='function')throw new TypeError('One to 32 local action definitions required.');
+ const byName=new Map();
+ for(let i=0;i<definitions.length;i++){
+  const entry=Object.getOwnPropertyDescriptor(definitions,String(i));
+  if(!entry?.enumerable||!Object.hasOwn(entry,'value'))throw new TypeError('Invalid local action definition.');
+  const definition=snapshotDefinition(entry.value);
+  if(byName.has(definition.name))throw new TypeError('Invalid local action definition.');
+  byName.set(definition.name,definition);
  }
- const pending=new Map(),issued=new Set();
+ const pending=new Map(),issued=new Set();let preparing=false;
  const list=()=>[...byName.values()].map(definition=>Object.freeze({
   name:definition.name,effect:definition.effect,destination:definition.destination,description:definition.description
  }));
  return Object.freeze({
   list,
   prepare(name,args){
+   if(preparing)throw new LocalActionError('REENTRANT_PREPARE','Action preparation is already in progress.');
    const definition=byName.get(name);if(!definition)throw new LocalActionError('UNKNOWN_ACTION','Unknown local action.');
    if(pending.size>=8)throw new LocalActionError('PENDING_LIMIT','Too many unconfirmed local actions.');
-   const snapshot=boundedClone(args);
-   let accepted=false;try{accepted=definition.validate(snapshot)===true;}catch{}
-   if(!accepted)throw new LocalActionError('ARGUMENTS','Local action arguments were rejected.');
    if(issued.size>=MAX_PROPOSALS)throw new LocalActionError('PROPOSAL_LIMIT','Local action session exhausted; reload before preparing another action.');
-   const id=idFactory();
-   if(typeof id!=='string'||! /^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(id)||issued.has(id))throw new LocalActionError('PROPOSAL_ID','Local action proposal identity unavailable.');
-   const stored=freezeDeep(snapshot);issued.add(id);pending.set(id,{definition,args:stored});
-   return freezeDeep({id,name:definition.name,effect:definition.effect,destination:definition.destination,
-    description:definition.description,args:boundedClone(stored)});
+   preparing=true;
+   try{
+    // Validators inspect the immutable proposal, never rewrite it. The same
+    // bytes are shown for review and later cloned into the execution handler.
+    const snapshot=freezeDeep(boundedClone(args));
+    let accepted=false;try{accepted=definition.validate(snapshot)===true;}catch{}
+    if(!accepted)throw new LocalActionError('ARGUMENTS','Local action arguments were rejected.');
+    const id=idFactory();
+    if(typeof id!=='string'||! /^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(id)||issued.has(id))throw new LocalActionError('PROPOSAL_ID','Local action proposal identity unavailable.');
+    const proposal=freezeDeep({id,name:definition.name,effect:definition.effect,destination:definition.destination,
+     description:definition.description,args:boundedClone(snapshot)});
+    issued.add(id);pending.set(id,{definition,args:snapshot});
+    return proposal;
+   }finally{preparing=false;}
   },
   cancel(id){return pending.delete(id);},
   async execute(id){

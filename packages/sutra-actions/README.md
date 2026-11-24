@@ -16,3 +16,10 @@ keys, non-finite values and sparse/nonstandard arrays. The aggregate UTF-8 JSON 
 This package does not itself grant network access, persistence, model access, or
 factual verification. Handlers remain host-owned code and must enforce their own
 domain-specific validation.
+
+Action definitions are a closed, own-data registration contract (six fields), with
+primitive names and dense ordinary arrays. The validator receives the immutable
+argument snapshot and must return a boolean; it cannot silently rewrite reviewed
+arguments. Reentrant preparation is refused, including from the identity factory.
+The browser runtime may export this host-owned registry, but public graph/model
+output cannot obtain its registration or execute authority.

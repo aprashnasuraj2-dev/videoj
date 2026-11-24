@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T20:02:51+05:45",
+  "updated_at": "2026-11-24T20:04:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "b6e059ecd353df776bb41d4349622530bcd20d75",
+  "last_observed_code_sha": "7d90ed92d6fdb1e64b9898e74c0118cd4645485d",
   "last_session_id": "SUTRA-SESSION-0044",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
-  "next_task": "SUTRA-X010-28",
+  "next_task": "SUTRA-X010-30",
   "ready_engineering_queue": [
     "SUTRA-P041-10",
     "SUTRA-P078-07",
@@ -16,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Verify exact X010-28/29/30 full CI; continue P078-02 independent engineering. Preserve real-content, human, provider, infrastructure and public-release gates.",
+  "next_action": "Verify exact X010-30/31/32 full CI; review P023-05 only after built runtime matrix passes. Continue P078-02 independent engineering; no release or paid inference.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -12421,6 +12421,46 @@
           "observed_at": "2026-11-24T20:00:31+05:45"
         }
       ]
+    },
+    "SUTRA-X010-28": {
+      "state": "verified",
+      "verified_at": "2026-11-24T20:04:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45412294342/job/138509033901",
+          "description": "Exact full learner and all 19 workflows passed for capability collision and adapter mutation regressions.",
+          "result": "pass",
+          "source_revision": "7d90ed92d6fdb1e64b9898e74c0118cd4645485d",
+          "observed_at": "2026-11-24T20:04:00+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "description": "Implementation, exact CI and scoped limitations.",
+          "result": "pass",
+          "source_revision": "7d90ed92d6fdb1e64b9898e74c0118cd4645485d",
+          "observed_at": "2026-11-24T20:04:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-29": {
+      "state": "verified",
+      "verified_at": "2026-11-24T20:04:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45412294342/job/138509033901",
+          "description": "Exact full learner and all 19 workflows passed for capability collision and adapter mutation regressions.",
+          "result": "pass",
+          "source_revision": "7d90ed92d6fdb1e64b9898e74c0118cd4645485d",
+          "observed_at": "2026-11-24T20:04:00+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "description": "Implementation, exact CI and scoped limitations.",
+          "result": "pass",
+          "source_revision": "7d90ed92d6fdb1e64b9898e74c0118cd4645485d",
+          "observed_at": "2026-11-24T20:04:00+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -12519,6 +12559,7 @@
     "X010-24/25 verified 19/19 at 7b072b73ed9657b52df46a427fe67fb6ede2e053. X010-26 pending full exact CI. Added X010-27 private-grant inert metadata candidate; no credit until exact CI.",
     "X010-26 verified 19/19 at 76d13792d57fdfd321074a026747c72a306337b1; X010-27 exact runtime unit step passed; full workflow evidence pending, no completion credit. P078-02 remains pending. No deployment or submission.",
     "X010-27 verified at exact 19/19; new X010-28/29 tool namespace and adapter input ownership candidates awaiting exact CI. P078-02 remains pending.",
-    "X010-28/29 pending full exact CI; runtime unit step passed. Added X010-30 early composition failure candidate; no credit until exact CI."
+    "X010-28/29 pending full exact CI; runtime unit step passed. Added X010-30 early composition failure candidate; no credit until exact CI.",
+    "X010-28/29 verified 19/19 at 7d90ed92d6fdb1e64b9898e74c0118cd4645485d. X010-30 pending full exact CI. Added X010-31/32 inert action definitions, immutable proposal validation and built public runtime host-only API candidates; no credit until exact CI."
   ]
 }

@@ -127,7 +127,7 @@ test('direct BYOK is intentionally absent from the learner client boundary',()=>
 test('built candidate exposes a stable public browser runtime module backed by the same restricted runtime code',async()=>{
  const runtimePath=path.join(app,'dist/runtime/sutra-runtime.js');assert.ok(fs.existsSync(runtimePath));
  const mod=await import(pathToFileURL(runtimePath).href+'?t='+Date.now());
- for(const name of ['compileNetwork','executionLimits','loadLocalNetwork','loadPeerNetwork','resolveSymbolicPeerLinks','runNetwork','createProviderAdapter','createConsentInspector'])assert.equal(typeof mod[name],'function',name);
+ for(const name of ['compileNetwork','executionLimits','loadLocalNetwork','loadPeerNetwork','resolveSymbolicPeerLinks','runNetwork','createProviderAdapter','createConsentInspector','createLocalActionRegistry','LocalActionError'])assert.equal(typeof mod[name],'function',name);
  assert.deepEqual(mod.sutraRuntimeProfile,{name:'sutra-restricted-browser-runtime',version:'0.1.0',execution:'browser',networkFormat:'resolved-neuro-san-json',defaultInference:'publisher-funded-optional-until-release',byok:false,truthGuarantee:'none'});
  const inventory=JSON.parse(fs.readFileSync(path.join(app,'dist/agents/artifact-inventory.json'),'utf8'));
  assert.equal(inventory.publicRuntimePath,'/runtime/sutra-runtime.js');

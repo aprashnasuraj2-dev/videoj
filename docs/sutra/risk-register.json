@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T20:02:51+05:45",
+  "updatedAt": "2026-11-24T20:04:00+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -1124,8 +1124,8 @@
     {
       "id": "R-051",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Distinct capabilities alias one model-facing tool",
       "mechanism": "Pinned runner safeName normalizes and truncates paths; duplicate labels overwrite dispatch table entries.",
       "userEffect": "A model may select one apparent capability while dispatch binds another.",
@@ -1138,15 +1138,19 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
           "sourceRevision": "0f983873e9a9da3143fcf2a283f8d510555920bf"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "7d90ed92d6fdb1e64b9898e74c0118cd4645485d"
         }
       ],
-      "unblockCondition": "Exact adversarial collision and positive runtime/browser regressions pass."
+      "unblockCondition": null
     },
     {
       "id": "R-052",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Model adapter mutates canonical history or tool validation schema",
       "mechanism": "Runner passes shared messages and schema references; adapter transformations could widen validation or pollute future prompts.",
       "userEffect": "Incorrect tool arguments or conversation evidence may be accepted.",
@@ -1159,9 +1163,13 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
           "sourceRevision": "0f983873e9a9da3143fcf2a283f8d510555920bf"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "7d90ed92d6fdb1e64b9898e74c0118cd4645485d"
         }
       ],
-      "unblockCondition": "Exact schema mutation and multi-step isolation regressions pass."
+      "unblockCondition": null
     },
     {
       "id": "R-053",
@@ -1183,6 +1191,48 @@
         }
       ],
       "unblockCondition": "Exact local/peer child exhaustion, no-extra-call and normal runtime/browser checks pass."
+    },
+    {
+      "id": "R-054",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Action registration or validation can rewrite reviewed authority",
+      "mechanism": "Definition property access/coercion and validator mutation precede proposal freezing; reentrant callbacks can race pending caps.",
+      "userEffect": "Ambiguous reviewed payload or proposal identity/accounting.",
+      "affectedTasks": [
+        "SUTRA-X010-31",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Strict own-data registration, immutable validator input and preparation reentry refusal.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "7acc489f26a56537aa72232b3bc90ef8a49913a4"
+        }
+      ],
+      "unblockCondition": "Exact adversarial action registry and normal learner save/export tests pass."
+    },
+    {
+      "id": "R-055",
+      "severity": "medium",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Stable browser runtime lacks host-only action registration interface",
+      "mechanism": "Action package and learner UI existed, but the published runtime module did not expose the reviewed host registry.",
+      "userEffect": "Reusable runtime consumer cannot exercise the narrow action API through the same stable module.",
+      "affectedTasks": [
+        "SUTRA-X010-32",
+        "SUTRA-P023-05"
+      ],
+      "mitigation": "Export host registry and test real built module across three engines; retain no model/graph write access.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "7acc489f26a56537aa72232b3bc90ef8a49913a4"
+        }
+      ],
+      "unblockCondition": "Exact built runtime browser matrix and normal learner CI pass."
     }
   ]
 }

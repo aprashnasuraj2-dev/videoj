@@ -103,3 +103,37 @@ test('bounded session refuses new proposals rather than evicting old confirmatio
  assert.equal(registry.pendingCount(),0);
  assert.throws(()=>registry.prepare('save-review-card',{value:'approved'}),e=>e.code==='PROPOSAL_LIMIT');
 });
+
+test('action registration rejects executable descriptors and coercible names without invoking them',()=>{
+ let touched=0;
+ const definition=()=>({name:'save-review-card',effect:'write_local',destination:'browser',description:'Review',validate:()=>true,execute:()=>{}});
+ const bad=[];
+ bad.push([{...definition(),name:{toString(){touched++;return 'save-review-card';}}}]);
+ for(const key of ['name','effect','destination','description','validate','execute']){
+  const d=definition();Object.defineProperty(d,key,{enumerable:true,get(){touched++;return 'bad';}});bad.push([d]);
+ }
+ const entries=[];Object.defineProperty(entries,'0',{enumerable:true,get(){touched++;return definition();}});bad.push(entries);
+ const custom=[definition()];custom[Symbol.iterator]=function*(){touched++;yield definition();};bad.push(custom);
+ const extra=definition();Object.defineProperty(extra,'secret',{value:'hidden'});bad.push([extra]);
+ bad.push(new Array(1));
+ for(const input of bad)assert.throws(()=>createLocalActionRegistry(input),TypeError);
+ assert.equal(touched,0);
+});
+test('validator sees immutable reviewed bytes and cannot silently normalize or mutate them',async()=>{
+ let executed;
+ const registry=createLocalActionRegistry([{name:'save-review-card',effect:'write_local',destination:'browser',description:'Review',
+  validate(args){assert.ok(Object.isFrozen(args));assert.ok(Object.isFrozen(args.nested));Reflect.set(args.nested,'count',99);return true;},
+  execute(args){executed=args;return 'done';}}],{idFactory:()=> 'proposal-frozen'});
+ const proposal=registry.prepare('save-review-card',{nested:{count:1}});
+ assert.equal(proposal.args.nested.count,1);
+ assert.equal(await registry.execute(proposal.id),'done');assert.equal(executed.nested.count,1);
+});
+test('reentrant validator and identity factory cannot exceed proposal ceiling or create hidden proposals',()=>{
+ let registry,attempts=0,ids=0;
+ const reenter=()=>{attempts++;assert.throws(()=>registry.prepare('save-review-card',{value:'approved'}),e=>e.code==='REENTRANT_PREPARE');};
+ registry=createLocalActionRegistry([{name:'save-review-card',effect:'write_local',destination:'browser',description:'Review',
+  validate(){reenter();return true;},execute:()=>{}}],{idFactory(){reenter();return 'proposal-'+(++ids);}});
+ for(let i=0;i<8;i++)registry.prepare('save-review-card',{value:'approved'});
+ assert.equal(attempts,16);assert.equal(ids,8);assert.equal(registry.pendingCount(),8);
+ assert.throws(()=>registry.prepare('save-review-card',{value:'approved'}),e=>e.code==='PENDING_LIMIT');
+});

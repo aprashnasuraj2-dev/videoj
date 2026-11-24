@@ -309,3 +309,7 @@ X010-26 verified 19/19 at 76d13792d57fdfd321074a026747c72a306337b1; X010-27 exac
 ## SUTRA-DECISION-0038 — Incomplete composition cannot certify synthesis
 
 2026-11-24T20:02:51+05:45: X010-30. The upstream runner may express child step exhaustion or composition skips as ordinary tool-return text. This profile must stop when any required agent has no complete text or hits a composition limit; do not spend extra model calls synthesizing a failed path. Preserve typed earlier model/source/peer failures. Candidate uses host-observed upstream trace events, no vendor edits. Pending exact CI.
+
+## SUTRA-DECISION-0039 — Host action registration and stable runtime interface
+
+2026-11-24T20:04:00+05:45: X010-31/32 and P023-05. Validators inspect frozen reviewed arguments; they cannot silently normalize them. Reject hidden/executable registration metadata and reentrant proposal creation. Expose the reviewed registry via the stable browser runtime for trusted UI/host code only, not as a model or public graph execution capability. Exercise cancellation, one explicit execution and stale replay refusal in the actual built browser runtime. No new write authority for model outputs. Pending exact CI.
