@@ -95,6 +95,27 @@ const assert=require('node:assert/strict');
    await a.getByRole('button',{name:'Delete local review'}).first().click();
    await a.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('Could not delete'));
    assert.equal(await a.evaluate(k=>JSON.parse(localStorage.getItem(k)).length,key),2);
+   // A transport/storage implementation can change bytes and then throw.
+   // The real learner UI must refresh the list and disclose uncertainty.
+   await a.evaluate(k=>{const original=Storage.prototype.setItem;window.__restoreReviewSet=()=>{Storage.prototype.setItem=original;};Storage.prototype.setItem=function(name,value){original.call(this,name,value);if(name===k)throw Error('synthetic post-write failure');};},key);
+   try{
+    await a.getByRole('button',{name:'Delete local review'}).first().click();
+    await a.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('deletion outcome is unknown'));
+    assert.equal(await a.evaluate(k=>JSON.parse(localStorage.getItem(k)).length,key),1);
+    assert.equal(await a.locator('#review-list li').count(),1);
+   }finally{await a.evaluate(()=>window.__restoreReviewSet());}
+   const legacy='sutra.synthetic-review-cards.v1';
+   await a.evaluate(k=>localStorage.setItem(k,'legacy fixture'),legacy);
+   await a.locator('#clear-local-reviews').click();
+   await a.evaluate(k=>{const original=Storage.prototype.removeItem;window.__restoreReviewRemove=()=>{Storage.prototype.removeItem=original;};Storage.prototype.removeItem=function(name){if(name===k)throw new DOMException('synthetic second-key failure','SecurityError');original.call(this,name);};},legacy);
+   try{
+    await a.locator('#confirm-clear-reviews').click();
+    await a.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('clear outcome is unknown'));
+    assert.equal(await a.evaluate(k=>localStorage.getItem(k),key),null);
+    assert.equal(await a.evaluate(k=>localStorage.getItem(k),legacy),'legacy fixture');
+    assert.equal(await a.locator('#review-list li').count(),0);
+    assert.equal(await a.locator('#download-review-attempt').isHidden(),true);
+   }finally{await a.evaluate(()=>window.__restoreReviewRemove());}
   }finally{await concurrentContext.close();}
 
   // An isolated, hash-consistent synthetic profile with six overlapping cues

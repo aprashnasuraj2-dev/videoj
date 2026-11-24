@@ -109,3 +109,24 @@ test('unexpected stored envelope fields fail closed rather than propagating secr
  assert.equal(f.values.get(key).includes('synthetic-canary-do-not-export'),true,'refusal does not rewrite or silently discard corrupted storage');
  f.store.clear();assert.deepEqual(f.store.inspect(),[]);
 });
+
+test('delete effect followed by exception or failed readback is unknown, not a definite refusal',()=>{
+ for(const mode of ['remove','rewrite','readback']){
+  const f=setup(),a=f.store.commit(f.store.prepare(fixture.receipt));
+  if(mode==='rewrite')f.store.commit(f.store.prepare(fixture.receipt));
+  const inspect=f.store.inspect()[0],read=f.storage.getItem;let calls=0;
+  if(mode==='rewrite')f.storage.setItem=(k,v)=>{calls++;f.values.set(k,v);throw Error('post-write');};
+  else f.storage.removeItem=k=>{calls++;f.values.delete(k);if(mode==='remove')throw Error('post-delete');};
+  if(mode==='readback')f.storage.getItem=k=>{if(calls)throw Error('readback');return read(k);};
+  assert.throws(inspect.removeIfUnchanged,e=>e.outcome==='unknown');
+  assert.equal(calls,1);assert.equal((JSON.parse(f.values.get(key)??'[]')).some(x=>x.id===a.id),false);
+ }
+});
+test('clear partially succeeding is unknown even if second key raises a native-looking error',()=>{
+ const f=setup(),legacy='sutra.synthetic-review-cards.v1';f.store.commit(f.store.prepare(fixture.receipt));f.values.set(legacy,'legacy');f.values.set('unrelated','keep');
+ const confirmed=f.store.captureClear();let calls=0;
+ f.storage.removeItem=k=>{calls++;if(k===legacy)throw new DOMException('denied','SecurityError');f.values.delete(k);};
+ assert.throws(confirmed,e=>e.outcome==='unknown');
+ assert.equal(calls,2);assert.equal(f.values.has(key),false);assert.equal(f.values.get(legacy),'legacy');assert.equal(f.values.get('unrelated'),'keep');
+ assert.throws(confirmed,/changed/);assert.equal(calls,2,'stale confirmation cannot replay partial clear');
+});

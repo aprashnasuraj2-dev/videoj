@@ -4,7 +4,7 @@ export const REVIEW_STORAGE_KEY='sutra.review-cards.v2';
 export const LEGACY_REVIEW_STORAGE_KEY='sutra.synthetic-review-cards.v1';
 const KEY=REVIEW_STORAGE_KEY;
 const clone=value=>JSON.parse(JSON.stringify(value));
-export class ReviewOutcomeError extends Error{constructor(outcome){super('Local persistence could not be confirmed.');this.outcome=outcome;}}
+export class ReviewOutcomeError extends Error{constructor(outcome,message='Local persistence could not be confirmed.'){super(message);this.outcome=outcome;}}
 export class ReviewDataStaleError extends Error{
  constructor(staleCount){super('Saved review data no longer matches the active source catalog.');this.code='STALE_REVIEW_DATA';this.staleCount=staleCount;}
 }
@@ -55,15 +55,24 @@ export function createReviewStore({storage,sources,idFactory=()=>crypto.randomUU
    const next=records.filter(record=>record.id!==id);
    if(records.length===next.length)throw Error('Saved review not found.');
    // Last-card deletion removes the application key, not merely its rendered row.
-   if(next.length===0)storage.removeItem(KEY);else storage.setItem(KEY,JSON.stringify(next));
-   if(storage.getItem(KEY)!==(next.length?JSON.stringify(next):null))throw Error('Deletion not confirmed.');
+   const encoded=next.length?JSON.stringify(next):null;
+   // After entering the destructive write, an exception or failed readback
+   // cannot distinguish no effect from a partial or completed deletion.
+   try{
+    if(encoded===null)storage.removeItem(KEY);else storage.setItem(KEY,encoded);
+    if(storage.getItem(KEY)!==encoded)throw Error();
+   }catch{throw new ReviewOutcomeError('unknown','Deletion not confirmed.');}
    pending.delete(id); // Completed IDs contain no receipt payload.
  }
  function clear(){
    // Explicit recovery for corrupt/stale storage, with no parse and no broad origin wipe.
    pending.clear();completed.clear();
-   storage.removeItem(KEY);storage.removeItem(LEGACY_REVIEW_STORAGE_KEY);
-   if(storage.getItem(KEY)!==null||storage.getItem(LEGACY_REVIEW_STORAGE_KEY)!==null)throw Error('Local review deletion not confirmed.');
+   // Clearing two application keys is not an atomic storage transaction.
+   // Even a known exception on the second key may follow a successful first.
+   try{
+    storage.removeItem(KEY);storage.removeItem(LEGACY_REVIEW_STORAGE_KEY);
+    if(storage.getItem(KEY)!==null||storage.getItem(LEGACY_REVIEW_STORAGE_KEY)!==null)throw Error();
+   }catch{throw new ReviewOutcomeError('unknown','Local review deletion not confirmed.');}
  }
  return {
   list,inspect,
