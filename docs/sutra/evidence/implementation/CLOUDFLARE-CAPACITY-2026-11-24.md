@@ -33,6 +33,31 @@ References:
 - https://developers.cloudflare.com/workers/platform/limits/
 - https://developers.cloudflare.com/workers/static-assets/billing-and-limitations/
 
+## Proposed SUTRA hostname precedence check
+
+A second read-only check used the proposed caller and peer hostnames already recorded in the SUTRA register:
+
+- `sutra.aafnaipatro.com`
+- `sutra-guide.aafnaipatro.com`
+
+At observation time:
+
+- exact DNS-record lookups returned no record for either hostname;
+- the account Worker custom-domain inventory contained neither hostname;
+- the zone Worker-route inventory contained neither hostname and no wildcard subdomain route such as `*.aafnaipatro.com/*`;
+- the existing routes are specific to the apex host/path space (for example existing `aafnaipatro.com/...` patterns), so they do not by themselves establish a SUTRA subdomain binding;
+- the existing apex custom domain `aafnaipatro.com -> patro` is an exact hostname mapping and is not evidence that a different subdomain is captured.
+
+Cloudflare routing documentation retrieved on 2026-11-24 states that custom domains are configured for the requested hostname and that, when multiple Worker route patterns match, the most specific route wins. A Worker route also requires a resolving DNS record for the hostname before normal traffic can reach it.
+
+References:
+- https://developers.cloudflare.com/workers/configuration/routing/routes/
+- https://developers.cloudflare.com/workers/configuration/routing/custom-domains/
+
+**Result for P065-03:** no current route/domain/DNS precedence collision was observed for the two proposed SUTRA hostnames. This is a point-in-time read-only audit, not a reservation of those names and not production-route evidence. Re-check immediately before any eventual DNS/domain creation because account configuration can change.
+
+No DNS record, Worker custom domain, Worker route, script, setting or deployment was created or modified by this audit.
+
 ## SUTRA configuration implications
 
 Current development config in `services/sutra-api/wrangler.jsonc` has:
@@ -52,7 +77,7 @@ The static `_headers` file now carries the browser security policy because ordin
 
 - It does not prove account billing headroom or the active Cloudflare subscription tier.
 - It does not establish a safe request forecast for a public SUTRA launch.
-- It does not test route precedence for final SUTRA domains because no SUTRA Worker domain is configured.
+- It does not prove production route precedence after a future deployment. The two proposed SUTRA hostnames were checked read-only and showed no present collision, but neither is configured/reserved.
 - It does not prove that production CDN/static requests will remain outside Worker invocation until an actual deployed request sample is observed.
 - It does not authorize deployment, DNS changes, Worker domain creation or route modification.
 
@@ -61,7 +86,7 @@ The static `_headers` file now carries the browser security policy because ordin
 Keep phase 065 open. Before public release:
 
 1. obtain a billing/request usage source with sufficient permission, or explicitly document the plan/request ceiling from the participant's account;
-2. select final SUTRA caller and peer hostnames and re-check domain/route ownership;
+2. re-confirm the proposed/final SUTRA caller and peer hostnames immediately before DNS/domain creation and re-check route ownership;
 3. deploy only after the participant release gate is lifted;
 4. capture a dated production request sample distinguishing static asset requests from `/api/infer` Worker invocations;
 5. confirm the deployment does not route SUTRA static pages through the existing `patro` Worker.
