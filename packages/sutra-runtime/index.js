@@ -271,7 +271,11 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    // Private context uses a separate return allowlist. The peer cannot widen it:
    // only fields already present in the caller-owned side channel can return.
    const returning=privatePolicy.upstream(url,loaded.name,peerCtx.slyData);
-   return Object.keys(returning).length?{...result,private_context:returning}:result;
+   // Project the peer result, not its arbitrary upstream parsed envelope.
+   // Model-controlled protocol, presentation and rejected proposals are not
+   // approved structured return channels. Plain text remains untrusted.
+   return {cruse:1,text:result.text,presentation:null,source:{origin:loaded.origin,network:loaded.name,agent:peer.frontMan},
+    ...(Object.keys(returning).length?{private_context:returning}:{})};
   }};
  };
  const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:adapterMode==='scripted-test',apiKey:'',defaultModel:approvedModel,modelOverride:approvedModel,resolveRemote:resolvePeer,resolveMcp:async ref=>{

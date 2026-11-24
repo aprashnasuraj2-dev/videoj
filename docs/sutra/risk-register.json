@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T20:04:00+05:45",
+  "updatedAt": "2026-11-24T20:08:41+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -1174,8 +1174,8 @@
     {
       "id": "R-053",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Parent synthesizes completed answer after child exhaustion",
       "mechanism": "Pinned runner returns empty child text on step exhaustion or budget skip as a normal tool response; host only checked top-level final text.",
       "userEffect": "A misleading completed answer and extra model spend after a failed dependency.",
@@ -1188,9 +1188,13 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
           "sourceRevision": "7d90ed92d6fdb1e64b9898e74c0118cd4645485d"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "7acc489f26a56537aa72232b3bc90ef8a49913a4"
         }
       ],
-      "unblockCondition": "Exact local/peer child exhaustion, no-extra-call and normal runtime/browser checks pass."
+      "unblockCondition": null
     },
     {
       "id": "R-054",
@@ -1233,6 +1237,27 @@
         }
       ],
       "unblockCondition": "Exact built runtime browser matrix and normal learner CI pass."
+    },
+    {
+      "id": "R-056",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Peer protocol envelope bypasses structured return policy",
+      "mechanism": "Upstream parser preserves arbitrary model-controlled protocol/presentation/proposal metadata; host spreads peer result into parent tool content.",
+      "userEffect": "Structured metadata can bypass the independently approved return-field allowlist.",
+      "affectedTasks": [
+        "SUTRA-X010-33",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Project host-labelled text and approved side-channel fields; discard other metadata; document plain-text residual risk.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "b9c89b6543c1c99786d86486020d728ac8a7ecda"
+        }
+      ],
+      "unblockCondition": "Exact hostile-envelope canary, directional grant and full normal runtime/browser checks pass."
     }
   ]
 }

@@ -166,3 +166,19 @@ test('invalid private grant is rejected before any model or peer contact',async(
  await assert.rejects(runNetwork({definition:definition(),request:'Inspect source.',model:{mode:'scripted-test',chat(){modelCalls++;}},privateContext:{locale:'ne-NP'},peerContextGrants:[grant],peerRuntime:{inspector:inspector(),fetchImpl:async()=>{contacts++;}}}),e=>e.code==='PRIVATE_CONTEXT_DESTINATION');
  assert.equal(touched,0);assert.equal(modelCalls,0);assert.equal(contacts,0);
 });
+
+
+test('peer protocol metadata cannot bypass the independent structured return allowlist',async()=>{
+ const base=createScriptedModel(),seen=[];
+ const model={...base,async chat(args){
+  if(args.origin==='https://peer.example')return {content:JSON.stringify({Mode:'Response',Name:'transit',Response:'Public peer result.',private_context:{locale:'ne-NP'},debug:'PEER_PROTOCOL_CANARY'}),toolCalls:[]};
+  for(const m of args.messages.filter(m=>m.role==='tool'))seen.push(JSON.parse(m.content));
+  return base.chat(args);
+ }};
+ const result=await runNetwork({definition:definition(),request:'Inspect synthetic cue.',model,
+  privateContext:{locale:'ne-NP',preference:'concise'},
+  peerContextGrants:[{peerUrl,network:'transit',toPeer:['locale','preference'],toCaller:['preference']}],peerRuntime:{inspector:inspector(),fetchImpl}});
+ assert.ok(result.text);assert.equal(seen.length,1);
+ assert.deepEqual(seen[0],{cruse:1,text:'Public peer result.',presentation:null,source:{origin:'https://peer.example',network:'transit',agent:'learner'},private_context:{preference:'concise'}});
+ assert.ok(!JSON.stringify(seen).includes('ne-NP'));assert.ok(!JSON.stringify(seen).includes('PEER_PROTOCOL_CANARY'));
+});

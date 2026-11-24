@@ -17,3 +17,9 @@ X010-29: prior adapter input passed live messages and toolSchemas by reference. 
 ## Follow-up — action boundary and public runtime interface
 
 2026-11-24T20:04:00+05:45: X010-28/29 verified 19/19 at 7d90ed92d6fdb1e64b9898e74c0118cd4645485d. X010-30 pending full exact CI. Added X010-31/32 inert action definitions, immutable proposal validation and built public runtime host-only API candidates; no credit until exact CI. Exact prior [learner](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45412294342/job/138509033901) and all 19 workflows passed for namespace and adapter input isolation. New action registry candidate refuses executable metadata and primitive-name coercion, freezes reviewed arguments before validation, refuses preparation reentry even from identity factory, and exposes registry through the stable browser runtime. Tests include actual built module cancel/confirm/consume in each browser engine; no model action registration or arbitrary network writes. P023-05 stays pending until exact matrix passes. **700/1,089 overall verified; 615/1,000 original; 382 pending; six omissions; one hardware blocker.**
+
+## Follow-up — peer return boundary
+
+2026-11-24T20:08:41+05:45: **701/1,090 overall verified; 615/1,000 original; 382 pending; six omissions; one hardware blocker.** X010-30 verified 19/19 at 7acc489f26a56537aa72232b3bc90ef8a49913a4. X010-31/32 at 18/19, full learner pending. Added X010-33 peer structured-return projection candidate; no completion credit until exact CI.
+
+X010-33 projects peer response rather than forwarding the upstream protocol envelope. The counterexample attempts to return disallowed locale as protocol metadata plus a debug canary while a permitted preference remains in the host-owned side channel. Keep only host-labelled text and allowed structured fields. Plain text is untrusted, not semantically redacted. No vendor changes, public deployment, paid inference or human acceptance.
