@@ -36,9 +36,32 @@ const path=require('node:path');const net=require('node:net');const assert=requi
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
   await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='completed');
   assert.equal(calls,4);assert.match(await page.locator('#provider-answer').textContent(),/Synthetic provider fixture/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.match(await page.locator('#provider-metrics').textContent(),/80\/20\/100/);
+  // A model result grants neither media transfer nor persistence.
+  await page.getByRole('button',{name:'Seek to retrieved cue'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-action-status').textContent.includes('Cue seek unavailable'));
+  assert.equal(calls,4);
+  await page.getByRole('button',{name:'Preview retrieved review card'}).click();
+  const preview=JSON.parse(await page.locator('#review-preview').textContent());
+  assert.equal(preview.args.receipt.cueId,'timing-marker');
+  assert.equal(await page.locator('#review-list li').count(),0);
+  await page.getByRole('button',{name:'Confirm local save'}).click();
+  await page.waitForFunction(()=>document.querySelector('#review-list').children.length===1);
+  assert.equal(calls,4);
+  await page.getByLabel('Question about the synthetic lesson').fill('Locate the timing marker again.');
+  assert.equal(await page.locator('#provider-output').isHidden(),true);
+  assert.equal(await page.getByRole('button',{name:'Preview retrieved review card'}).count(),0);
   mode='partial';await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,7);assert.match(await page.locator('#provider-status').textContent(),/PROVIDER_QUOTA/);assert.match(await page.locator('#provider-answer').textContent(),/No completed answer/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.equal(await page.locator('#provider-output').isHidden(),false);
-  mode='quota';await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,8);assert.equal(await page.locator('#provider-output').isHidden(),true);
+  // Incomplete interpretation preserves independently retrieved receipts and local actions.
+  await page.getByRole('button',{name:'Preview retrieved review card'}).click();
+  assert.match(await page.locator('#review-preview').textContent(),/timing-marker/);
+  await page.getByRole('button',{name:'Cancel',exact:true}).click();
+  assert.equal(await page.locator('#review-list li').count(),1);
+  assert.equal(calls,7);
   await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();await page.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
+  await page.getByRole('button',{name:'Seek to retrieved cue'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-action-status').textContent.includes('Native media reached'));
+  assert.equal(calls,7);
+  mode='quota';await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,8);assert.equal(await page.locator('#provider-output').isHidden(),true);
   mode='hold';await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>!document.querySelector('#provider-cancel').disabled);
   for(let i=0;i<50&&calls<9;i++)await new Promise(r=>setTimeout(r,20));assert.equal(calls,9);
   await page.getByRole('button',{name:'Cancel inference'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='cancelled');assert.equal(await page.locator('#provider-output').isHidden(),true);

@@ -1,10 +1,16 @@
 import {createSourceTools} from '../../../packages/sutra-source-tools/index.js';
-import {validateEvidenceClaim} from '../../../packages/sutra-evidence/index.js';
+import {validateEvidenceClaim,snapshotDataArray,snapshotDataRecord} from '../../../packages/sutra-evidence/index.js';
 import {applyScreenState} from './status-state.js';
+import {createReceiptActionRow} from './receipt-actions.js';
 
 const result=(state,receipts=[])=>Object.freeze({state,receipts:Object.freeze(receipts.map(r=>Object.freeze({...r}))),modelCalls:0,networkRequests:0,truthStatus:'unverified'});
 export function createDirectLookup({sources,now}={}){
- const catalog=structuredClone(sources),tools=createSourceTools(catalog,now?{now}:{});
+ const catalog=snapshotDataArray(sources,20).map(raw=>{
+  const source=snapshotDataRecord(raw);
+  return {id:source.id,version:source.version,hash:source.hash,mediaHash:source.mediaHash,duration:source.duration,
+   cues:snapshotDataArray(source.cues,500).map(c=>{const cue=snapshotDataRecord(c);return {id:cue.id,start:cue.start,end:cue.end,text:cue.text};})};
+ });
+ const tools=createSourceTools(catalog,now?{now}:{});
  return Object.freeze({
   search(query){
    if(typeof query!=='string'||!query.trim()||query.length>120)return result('invalid_query');
@@ -15,7 +21,6 @@ export function createDirectLookup({sources,now}={}){
   }
  });
 }
-const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
 export function mountDirectLookup({root,sources,seekTo,prepareReview}){
  const $=id=>root.querySelector('#'+id),form=$('direct-form'),input=$('direct-query'),status=$('direct-status'),list=$('direct-results'),actionStatus=$('direct-action-status');
  let lookup,epoch=0;
@@ -31,23 +36,9 @@ export function mountDirectLookup({root,sources,seekTo,prepareReview}){
   if(found.state==='no_match'){applyScreenState(status,'empty','No matching source cue. Abstaining rather than inventing an answer. 0 model calls.');return;}
   applyScreenState(status,'completed',found.receipts.length+' catalog-matched source cue(s). 0 model calls, 0 network requests. Factual truth remains unverified.');
   for(const receipt of found.receipts){
-   const row=el('li'),identity=el('p',receipt.sourceId+' / '+receipt.sourceVersion+' · '+receipt.cueId+' · '+receipt.start+'–'+receipt.end+' s');
-   const excerpt=el('blockquote',receipt.excerpt),actions=el('div');actions.className='actions';
-   const seek=el('button','Seek to matched cue'),review=el('button','Preview matched review card');seek.type=review.type='button';
-   seek.addEventListener('click',async()=>{
-    if(current!==epoch||seek.disabled)return;seek.disabled=true;
-    actionStatus.textContent='Checking native media availability…';
-    try{const actual=await seekTo(receipt.start);if(!Number.isFinite(actual)||Math.abs(actual-receipt.start)>1)throw Error('Not reached');
-     if(current===epoch)actionStatus.textContent='Native media reached the matched source cue. No factual verification.';
-    }catch{if(current===epoch)actionStatus.textContent='Cue seek unavailable. Load the media explicitly; no seek success is claimed.';}
-    finally{seek.disabled=false;}
-   });
-   review.addEventListener('click',()=>{
-    if(current!==epoch)return;
-    try{actionStatus.textContent=prepareReview(receipt)===true?'Exact receipt preview opened; no review saved yet.':'Review unavailable; nothing was saved.';}
-    catch{actionStatus.textContent='Review unavailable; nothing was saved.';}
-   });
-   actions.append(seek,review);row.append(identity,excerpt,actions);list.append(row);
+   const row=createReceiptActionRow({receipt,sources,seekTo,prepareReview,actionStatus,isCurrent:()=>current===epoch,seekLabel:'Seek to matched cue',reviewLabel:'Preview matched review card'});
+   if(row)list.append(row);
   }
+  if(!list.children.length)applyScreenState(status,'error','No current catalog-matched source receipt is available.');
  });
 }

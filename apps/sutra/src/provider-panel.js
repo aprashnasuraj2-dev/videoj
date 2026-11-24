@@ -1,12 +1,20 @@
 import {discoverProvider,runProviderLesson} from './provider-run.js';
 import {applyScreenState} from './status-state.js';
-export function mountProviderPanel({baseUrl,sources,origin=location.origin}){
+import {createReceiptActionRow} from './receipt-actions.js';
+export function mountProviderPanel({baseUrl,sources,seekTo,prepareReview,origin=location.origin}){
  const $=id=>document.getElementById(id);
- const check=$('provider-check'),run=$('provider-run'),cancel=$('provider-cancel'),question=$('provider-question'),status=$('provider-status'),output=$('provider-output'),answer=$('provider-answer'),list=$('provider-receipts'),metrics=$('provider-metrics');
- let model=null,active=null;
+ const check=$('provider-check'),run=$('provider-run'),cancel=$('provider-cancel'),question=$('provider-question'),status=$('provider-status'),output=$('provider-output'),answer=$('provider-answer'),list=$('provider-receipts'),metrics=$('provider-metrics'),actionStatus=$('provider-action-status');
+ let model=null,active=null,epoch=0;
  const set=(s,m)=>applyScreenState(status,s,m);
- const clear=()=>{output.hidden=true;answer.textContent='';list.replaceChildren();metrics.textContent='';};
- function renderReceipts(receipts){for(const receipt of receipts){const li=document.createElement('li');li.textContent=receipt.sourceId+' / '+receipt.sourceVersion+' · '+receipt.start+'–'+receipt.end+' s · '+receipt.excerpt;list.append(li);}}
+ const clear=()=>{epoch++;output.hidden=true;answer.textContent='';list.replaceChildren();metrics.textContent='';actionStatus.textContent='';};
+ function renderReceipts(receipts){
+  const current=epoch;
+  for(const receipt of receipts){
+   const row=createReceiptActionRow({receipt,sources,seekTo,prepareReview,actionStatus,isCurrent:()=>current===epoch&&!active,seekLabel:'Seek to retrieved cue',reviewLabel:'Preview retrieved review card'});
+   if(row)list.append(row);
+  }
+  if(!list.children.length){const li=document.createElement('li');li.textContent='No current catalog-matched source receipt is available. Do not treat model interpretation as evidence.';list.append(li);}
+ }
  function controls(){check.disabled=!!active;run.disabled=!!active||!model;cancel.disabled=!active||active.kind!=='run'||active.controller.signal.aborted;question.disabled=!!active||!model;}
  check.addEventListener('click',async()=>{
   if(active)return;model=null;clear();
@@ -26,7 +34,6 @@ export function mountProviderPanel({baseUrl,sources,origin=location.origin}){
    if(operation.controller.signal.aborted)throw Error('cancelled');
    answer.textContent=result.text;
    renderReceipts(result.receipts);
-   if(!result.receipts.length){const li=document.createElement('li');li.textContent='No catalog-matched source receipt was retrieved. Do not treat the model answer as evidence.';list.append(li);}
    const u=result.usage;metrics.textContent=result.agentCalls+' agent invocations · '+result.modelCalls+' model calls · '+u.reported+'/'+u.calls+' calls reported token usage. '+(u.complete?'Reported input/output/total tokens: '+u.promptTokens+'/'+u.completionTokens+'/'+u.totalTokens+'.':'Usage incomplete; total run cost is unknown.')+' No automatic retries.';
    output.hidden=false;set('completed','Model run completed. Interpretation remains unverified; retrieved receipts establish catalog consistency only.');
   }catch(error){clear();const cancelled=operation.controller.signal.aborted;const code=cancelled?'CANCELLED':error?.code??'RUN_FAILED';const partial=error?.partial;
@@ -34,7 +41,8 @@ export function mountProviderPanel({baseUrl,sources,origin=location.origin}){
    set(cancelled?'cancelled':'error',(cancelled?'Inference cancelled.':'Inference stopped ('+code+').')+' No completed answer is claimed. The local lesson remains available; retry only explicitly.');}
   finally{active=null;controls();run.focus();}
  });
+ question.addEventListener('input',()=>{if(!active){clear();if(model)set('idle','Question changed. Submit explicitly to retrieve new model results.');}});
  cancel.addEventListener('click',()=>{if(active?.kind==='run'){active.controller.abort();controls();set('cancelling','Cancelling inference…');}});
- window.addEventListener('pagehide',()=>{active?.controller.abort();model=null;});
+ window.addEventListener('pagehide',()=>{active?.controller.abort();model=null;epoch++;});
  controls();
 }
