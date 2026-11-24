@@ -311,6 +311,30 @@ const assert=require('node:assert/strict');
    assert.deepEqual(native,{start:source.cues[0].start,end:source.cues[0].end,text:source.cues[0].text});
    assert.equal(trackRequests.length,0,'reviewed playback cannot fetch independent poster or track bytes');
    await reviewPage.getByRole('button',{name:'Inspect featured source cue'}).click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
+   // The bytes may have the same duration and even the same contents, but
+   // a native source not created by this verified mount cannot certify a cue.
+   const originalBlob=await reviewPage.locator('video').evaluate(v=>v.currentSrc);
+   const swapped=await reviewPage.evaluate(async src=>{
+    const blob=await (await fetch(src)).blob(),url=URL.createObjectURL(blob),video=document.querySelector('video');
+    video.src=url;video.load();return url;
+   },originalBlob);
+   await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Native media or track source changed'));
+   assert.equal(await reviewPage.locator('video').count(),0);assert.equal(await reviewPage.locator('#seek-timing').isHidden(),true);
+   assert.equal(await reviewPage.locator('#timing-transcript-panel .transcript-cue').count(),1);
+   assert.equal(await reviewPage.evaluate(async src=>{try{await fetch(src);return false;}catch{return true;}},originalBlob),true,'old verified media blob revoked');
+   await reviewPage.evaluate(src=>URL.revokeObjectURL(src),swapped);
+   await load.click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
+   const originalTrack=await reviewPage.locator('video track[kind="captions"]').getAttribute('src');
+   const substitutedTrack=await reviewPage.locator('video track[kind="captions"]').evaluate(track=>{
+    const url=URL.createObjectURL(new Blob(['WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nsubstituted caption\n'],{type:'text/vtt'}));track.src=url;return url;
+   });
+   await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Native media or track source changed'));
+   assert.equal(await reviewPage.locator('video').count(),0);
+   assert.equal(await reviewPage.evaluate(async src=>{try{await fetch(src);return false;}catch{return true;}},originalTrack),true,'old reviewed track blob revoked');
+   await reviewPage.evaluate(src=>URL.revokeObjectURL(src),substitutedTrack);
+   await load.click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
+   await reviewPage.getByRole('button',{name:'Inspect featured source cue'}).click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
+   assert.equal(requests.length,5,'only explicit retries reload source bytes; no implicit replacement');
   }finally{await reviewedContext.close();}
 
   let delayed=true;

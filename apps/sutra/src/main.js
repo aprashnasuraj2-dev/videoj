@@ -118,6 +118,26 @@ const comparisonView=mountComparisonView(document.querySelector('#comparison-bod
 });
 const mediaHost=document.querySelector('.media-empty'),timingStatus=document.querySelector('#timing-status'),seekTiming=document.querySelector('#seek-timing'),cancelTiming=document.querySelector('#cancel-timing');
 const mediaPlaceholder=[...mediaHost.childNodes].map(node=>node.cloneNode(true));
+function remountTimingTranscript(player){
+ const previous=timingTranscript?.state();
+ timingTranscript?.dispose();
+ timingTranscript=mountTranscriptPanel(transcriptHost,{
+  ...transcriptOptions,...(player?{media:player.media}:{}),
+  onSeek:seconds=>{if(!player||timingPlayer!==player)throw Error('Verified native media is not loaded.');return player.seek(seconds);}
+ });
+ if(previous?.queryText)timingTranscript.search(previous.queryText);
+ if(previous?.selectedCueId)timingTranscript.inspect(previous.selectedCueId);
+}
+function resetTimingMedia(player){
+ if(timingPlayer&&timingPlayer!==player)return;
+ player?.dispose();timingPlayer=null;
+ mediaHost.replaceChildren(...mediaPlaceholder.map(node=>node.cloneNode(true)));mediaHost.classList.remove('player-mounted');
+ applyContentLabels();releaseMediaUrls();remountTimingTranscript(null);
+ seekTiming.hidden=true;seekTiming.disabled=false;
+ document.querySelector('#playback-state').textContent='';
+ document.querySelector('#load-timing').disabled=false;
+}
+
 cancelTiming.addEventListener('click',()=>{if(mediaLoad){mediaLoad.abort();cancelTiming.disabled=true;}});
 document.querySelector('#load-timing').addEventListener('click',async event=>{
  const button=event.currentTarget;if(mediaLoad||timingPlayer)return;
@@ -134,7 +154,12 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
   // reviewed content. Reviewed tracks derive locally from the validated cue
   // catalog; no remote poster/track requests are needed.
   const tracks=reviewed?deriveReviewedTracks(timingFixture.source):null;
-  candidatePlayer=mountTimingPlayer(mediaHost,{source:mediaSource,
+  candidatePlayer=mountTimingPlayer(mediaHost,{source:mediaSource,bindVerifiedSource:true,
+   onSourceInvalidated(){
+    if(timingPlayer!==candidatePlayer){operation.abort();return;}
+    resetTimingMedia(candidatePlayer);
+    setStatus(timingStatus,'error','Native media or track source changed. Reload the hash-checked source; no playback or seek success is claimed.');
+   },
    poster:reviewed?undefined:versioned(content.profile.media.poster,timingFixture.source.mediaHash),
    chapters:reviewed?(tracks.chapters?localMediaUrl(tracks.chapters,'text/vtt'):undefined):versioned(content.profile.media.chapters,timingFixture.source.hash),
    captions:reviewed?localMediaUrl(tracks.captions,'text/vtt'):versioned(content.profile.media.captions,timingFixture.source.hash)});
@@ -142,32 +167,27 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
   // Receipt/compare/transcript actions never see a media adapter before the
   // active source duration has been validated. Keep the text query on remount.
   timingPlayer=candidatePlayer;
-  const previousState=timingTranscript?.state();
-  timingTranscript?.dispose();
-  timingTranscript=mountTranscriptPanel(transcriptHost,{
-   ...transcriptOptions,media:timingPlayer.media,onSeek:seconds=>timingPlayer.seek(seconds)
-  });
-  if(previousState?.queryText)timingTranscript.search(previousState.queryText);
-  if(previousState?.selectedCueId)timingTranscript.inspect(previousState.selectedCueId);
+  remountTimingTranscript(timingPlayer);
   setStatus(timingStatus,'completed',`${content.profile.mode==='reviewed'?'Reviewed hash-checked':'Synthetic hash-checked'} source media loaded. Actual media duration: ${timingPlayer.media.duration.toFixed(1)} seconds.${reviewed?' Captions derived from the bound source catalog.'+(tracks.chapters?'':' Overlapping cues: chapter navigation omitted.'):''}`);seekTiming.hidden=false;
- }catch(error){if(candidatePlayer){try{candidatePlayer.media.pause();candidatePlayer.media.removeAttribute('src');candidatePlayer.media.load();}catch{}timingPlayer=null;mediaHost.replaceChildren(...mediaPlaceholder.map(node=>node.cloneNode(true)));mediaHost.classList.remove('player-mounted');applyContentLabels();}releaseMediaUrls();seekTiming.hidden=true;setStatus(timingStatus,operation.signal.aborted?'cancelled':'error',operation.signal.aborted?'Media load cancelled. Transcript and evidence remain available; no playback success is claimed.':error?.code==='MEDIA_UNSUPPORTED'?'This browser cannot decode the source media. Transcript and evidence remain available; no playback success is claimed.':'Source media unavailable. No playback or seek success is claimed.');button.disabled=false;}
+ }catch(error){if(candidatePlayer)resetTimingMedia(candidatePlayer);else releaseMediaUrls();seekTiming.hidden=true;setStatus(timingStatus,operation.signal.aborted?'cancelled':'error',operation.signal.aborted?'Media load cancelled. Transcript and evidence remain available; no playback success is claimed.':error?.code==='MEDIA_UNSUPPORTED'?'This browser cannot decode the source media. Transcript and evidence remain available; no playback success is claimed.':'Source media unavailable. No playback or seek success is claimed.');button.disabled=false;}
  finally{if(mediaLoad===operation)mediaLoad=null;cancelTiming.hidden=true;cancelTiming.disabled=false;if(!timingPlayer&&document.activeElement===cancelTiming)button.focus({preventScroll:true});}
 });
 seekTiming.addEventListener('click',async()=>{
- seekTiming.disabled=true;
+ const player=timingPlayer;seekTiming.disabled=true;
  try{
   const fixture=timingFixture;
   const result=validateReceipt(fixture.receipt,{sources:content.sources});
   if(!result.valid)throw Error('Invalid featured source cue.');
   const actual=await seekReceipt(fixture.receipt);
+  if(timingPlayer!==player)return;
   setStatus(timingStatus,'completed',`Source cue reached. Actual native media time: ${actual.toFixed(2)} seconds. Consistency check only; no factual verification.`);
- }catch{setStatus(timingStatus,'error','The source cue could not be reached. Check media availability; no seek success is claimed.');}
- finally{seekTiming.disabled=false;}
+ }catch{if(timingPlayer===player)setStatus(timingStatus,'error','The source cue could not be reached. Check media availability; no seek success is claimed.');}
+ finally{if(timingPlayer===player)seekTiming.disabled=false;}
 });
 
 // A page retained by browser back/forward cache is still the same document.
 // Preserve its local transcript and media blob; remote consent is revoked independently.
-window.addEventListener('pagehide',event=>{mediaLoad?.abort();timingPlayer?.cancelSeek();comparisonView.cancelPending();if(event.persisted){try{timingPlayer?.media.pause();}catch{}return;}timingTranscript?.dispose();releaseMediaUrls();});
+window.addEventListener('pagehide',event=>{mediaLoad?.abort();timingPlayer?.cancelSeek();comparisonView.cancelPending();if(event.persisted){try{timingPlayer?.media.pause();}catch{}return;}timingPlayer?.dispose();timingTranscript?.dispose();releaseMediaUrls();});
 
 let reviewStore=null,reviewActions=null,reviewProposal=null,lastReviewAttempt=null,reviewBusy=false;
 const reviewMutations=createReviewMutationQueue();

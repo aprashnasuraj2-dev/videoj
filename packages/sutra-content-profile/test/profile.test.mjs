@@ -194,3 +194,12 @@ test('profile loader rejects JSON content type lookalikes without reading additi
  await assert.rejects(loadContentProfile({baseUrl:'https://sutra.example/content/',fetchImpl:async()=>{contacts++;return new Response(JSON.stringify(profile),{headers:{'Content-Type':'text/application/json'}});}}),/CONTENT_RESPONSE/);
  assert.equal(contacts,1);
 });
+
+test('public content reader rejects non-HTTP(S) same-origin blob and wrong media type before reading',async()=>{
+ const origin='https://sutra.example';let contacts=0,cancelled=0,pulls=0;
+ await assert.rejects(readContentBytes({url:'blob:'+origin+'/fixture',origin,maxBytes:32,fetchImpl:()=>{contacts++;}}),/CONTENT_READ_CONFIG/);
+ assert.equal(contacts,0);
+ const response=new Response(new ReadableStream({pull(){pulls++;},cancel(){cancelled++;}}),{headers:{'Content-Type':'text/html'}});
+ await assert.rejects(readContentBytes({url:origin+'/media/file.mp4',origin,maxBytes:32,accept:'video/mp4',fetchImpl:()=>{contacts++;return response;}}),/CONTENT_MEDIA_RESPONSE/);
+ assert.equal(contacts,1);assert.equal(cancelled,1);assert.equal(response.body.locked,false);assert.ok(pulls<=1);
+});
