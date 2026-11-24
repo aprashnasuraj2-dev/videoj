@@ -1,11 +1,11 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T08:42:00+05:45",
+  "updatedAt": "2026-11-24T08:41:00+05:45",
   "risks": [
     {
       "id": "R-001",
       "severity": "blocker",
-      "state": "mitigated_pending_revalidation",
+      "state": "resolved",
       "releaseBlocking": false,
       "title": "Structured-value match could be misread as source agreement",
       "mechanism": "Comparison previously emitted a consistent-unverified state when structured values matched even if source excerpts differed.",
@@ -18,10 +18,14 @@
       "evidence": [
         {
           "artifact": "docs/sutra/evidence/implementation/COMPARISON-PROVENANCE-2026-11-24.md",
-          "sourceRevision": "015b79b2da6e2dd7db58f57485191bf32e4d78be"
+          "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/CURRENT-METRICS-0EF8A613-2026-11-24.md",
+          "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b"
         }
       ],
-      "unblockCondition": "Exact current revision must pass full learner and affected browser/evaluation workflows before checklist closure."
+      "unblockCondition": null
     },
     {
       "id": "R-002",
@@ -71,7 +75,7 @@
     {
       "id": "R-004",
       "severity": "high",
-      "state": "mitigated_pending_revalidation",
+      "state": "resolved",
       "releaseBlocking": false,
       "title": "Historical metrics could silently survive material source changes",
       "mechanism": "Progress prose stores source SHAs, but there was no machine path-to-evidence invalidation map.",
@@ -86,10 +90,14 @@
       "evidence": [
         {
           "artifact": "docs/sutra/evidence/implementation/VERIFICATION-IMPACT-2026-11-24.md",
-          "sourceRevision": "1ecd814b2a7665dbe68d0d956450117913edb857"
+          "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/CURRENT-METRICS-0EF8A613-2026-11-24.md",
+          "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b"
         }
       ],
-      "unblockCondition": "Impact workflow must pass on the exact current revision and remain mapped for all managed product paths."
+      "unblockCondition": null
     },
     {
       "id": "R-005",
