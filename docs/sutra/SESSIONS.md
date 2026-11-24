@@ -1,5 +1,11 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0017 — 2026-11-24
+
+- Exact-head all-nine-green `c6b321fbaab38549b8df97cb56e0f44745546083`: P022 and P026 close, five evaluation/delegation controls credited; development fixtures deliberately not counted as held-out human review. SUTRA-P022-04, SUTRA-P022-06, SUTRA-P022-08, SUTRA-P022-09, SUTRA-P022-10, SUTRA-P026-07, SUTRA-P026-09, SUTRA-P026-10, SUTRA-P053-04, SUTRA-P054-02, SUTRA-P054-05, SUTRA-P054-06, SUTRA-P054-08.
+- Direct lookup UI candidate `43c658b64492d4c0cfb38995ffbb6a5010d21480` pending integrated browser evidence. Next source and delegation hardening. [Evidence](evidence/implementation/SESSION-0017.md).
+
+
 ## SUTRA-SESSION-0016 — 2026-11-24
 
 - Reconciled exact-head green learner and three-engine matrix at `2d414536b45ab77d3883a7f211d28296eea4e36f`. P028 closed; eight P077 checks credited, physical hardware remains pending. SUTRA-P028-04, SUTRA-P028-07, SUTRA-P028-10, SUTRA-P077-01, SUTRA-P077-02, SUTRA-P077-03, SUTRA-P077-05, SUTRA-P077-06, SUTRA-P077-07, SUTRA-P077-08, SUTRA-P077-09.

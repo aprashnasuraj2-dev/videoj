@@ -172,3 +172,9 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Preserve exact local write readback and action effect labels. A completed action is only what was observed; browser download requested does not prove file persistence. LocalStorage readback is not a cross-tab transaction guarantee; no claim of atomic simultaneous writes.
 - Preserve only independently catalog-matched receipts on stopped model runs; never present partial model text as a completed answer. Report actual started calls and explicit stable failure categories without exposing private error bodies. Regressions remain open until passing CI.
 - Multi-engine desktop headless validation does not substitute for physical touch, screen-reader users, human content review or live inference. No public release or cloud changes.
+
+## SUTRA-DECISION-0020 — Explicit literal lookup and narrowly bounded public GET recovery
+
+- The benchmark demonstrates no retrieval gain from scripted delegation for simple literal matching (20/20 on both paths); offer a direct zero-model path, retain separate opt-in semantic and portable peer paths. Synthetic fixture scores do not establish answer quality, model economics or semantic truth.
+- The same-origin public artifact loader defaults to one attempt. Only the explicit scripted test opts into one extra GET after a received 502/503/504, within the original deadline and shared budget. No auto-retry for model/provider, POST, writes, external peer, missing/invalid/malformed/redirected data, transport ambiguity or cancellation. Show actual attempt counts.
+- Build inventory provides local byte identity, not publisher authentication. No public deployment or cloud action authorized.

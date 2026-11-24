@@ -2,6 +2,14 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0017 — 2026-11-24
+
+**485/1,000 original checks verified; 488/1,003 total; 37/100 phases fully verified; 1 historical omission.**
+
+Exact code `c6b321fbaab38549b8df97cb56e0f44745546083` passed all nine workflows, including [learner](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45311833994/job/138169188245), [engineering evaluation](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45311834036/job/138169188443) and [browser matrix](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45311833937). P022 and P026 closed. Synthetic baseline: 20/20 exact retrieval, 10/10 adversarial abstention; direct 0 model calls/0 RPC vs 90 scripted calls/90 RPC. Real provider tokens/semantic truth unmeasured. Direct-lookup UI at `43c658b64492d4c0cfb38995ffbb6a5010d21480` is committed but not credited before integrated CI. Human-reviewed held-out cases and actual guide provenance remain open. [Session evidence](evidence/implementation/SESSION-0017.md).
+
+---
+
 ## Session 0016 — 2026-11-24
 
 **472/1,000 original checks verified; 475/1,003 total; 35/100 phases fully verified; 1 historical omission.**

@@ -1,21 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T08:01:00+05:45",
+  "updated_at": "2026-11-24T08:09:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "2d414536b45ab77d3883a7f211d28296eea4e36f",
-  "last_session_id": "SUTRA-SESSION-0016",
-  "stage": "budget_and_desktop_matrix_verified",
+  "last_observed_code_sha": "c6b321fbaab38549b8df97cb56e0f44745546083",
+  "last_session_id": "SUTRA-SESSION-0017",
+  "stage": "publication_lifecycle_and_synthetic_baseline_verified",
   "current_task": null,
   "next_task": "SUTRA-P041-08",
   "ready_engineering_queue": [
-    "SUTRA-P022-04",
-    "SUTRA-P022-06",
-    "SUTRA-P026-07",
-    "SUTRA-P054-02",
-    "SUTRA-P053-02"
+    "SUTRA-P054-03",
+    "SUTRA-P054-04",
+    "SUTRA-P054-07",
+    "SUTRA-P053-02",
+    "SUTRA-P045-06"
   ],
-  "next_action": "Continue engineering-only with exact symbolic links and manifest separation, bounded read attempt diagnostics, deterministic direct lookup baseline and synthetic evaluation fixtures; physical/human gates remain pending.",
+  "next_action": "Check direct-lookup UI revision 43c658b64492d4c0cfb38995ffbb6a5010d21480; complete evidence-linked direct vs delegated engineering, strengthen source security and provenance, retain human-reviewed held-out evaluation and release gates as pending.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -8596,6 +8596,175 @@
           "result": "pass",
           "source_revision": "2d414536b45ab77d3883a7f211d28296eea4e36f",
           "observed_at": "2026-11-24T08:01:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:09:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Named symbolic guide_peer resolves exactly from same-origin links.json, no default fallback/shadowing/unused aliases, explicit peerRuntime and independent consent still required.",
+          "result": "pass",
+          "source_revision": "c6b321fbaab38549b8df97cb56e0f44745546083",
+          "observed_at": "2026-11-24T08:09:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:09:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Public manifest/link build check and hostile peer model-hint tests: no peer routing credentials; actual selected model is caller-owned and separate /api/status discovery.",
+          "result": "pass",
+          "source_revision": "c6b321fbaab38549b8df97cb56e0f44745546083",
+          "observed_at": "2026-11-24T08:09:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:09:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Build emits /agents/artifact-inventory.json with exact network/graph/link/runtime paths and SHA-256, verified against build bytes (68 listed files, 3 networks).",
+          "result": "pass",
+          "source_revision": "c6b321fbaab38549b8df97cb56e0f44745546083",
+          "observed_at": "2026-11-24T08:09:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:09:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Generated inventory and documented data/authority boundaries reviewed and tested in full build.",
+          "result": "pass",
+          "source_revision": "c6b321fbaab38549b8df97cb56e0f44745546083",
+          "observed_at": "2026-11-24T08:09:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P022-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:09:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Exact local manifest selection, nested site base, versioned graph bytes, symbolic links with default closed policy and full learner tests pass.",
+          "result": "pass",
+          "source_revision": "c6b321fbaab38549b8df97cb56e0f44745546083",
+          "observed_at": "2026-11-24T08:09:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:09:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Browser observes 503 recovery after one bounded retry, persistent 503 stops after two GETs with actual attempt counts; tests refuse ambiguous transport, redirect, malformed body and cancellation retries.",
+          "result": "pass",
+          "source_revision": "c6b321fbaab38549b8df97cb56e0f44745546083",
+          "observed_at": "2026-11-24T08:09:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:09:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Typed lifecycle, sanitized counters, cancellation, partial receipts and explicit bounded public GET diagnostics observed in passing learner browser and runtime tests.",
+          "result": "pass",
+          "source_revision": "c6b321fbaab38549b8df97cb56e0f44745546083",
+          "observed_at": "2026-11-24T08:09:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P026-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:09:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Integrated provider cancellation leaves native playback usable, preserves only valid independent receipts, no completed model text; local retry budget is shared and persistent failure incomplete.",
+          "result": "pass",
+          "source_revision": "c6b321fbaab38549b8df97cb56e0f44745546083",
+          "observed_at": "2026-11-24T08:09:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P053-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:09:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Documented denominators for exact cue accuracy, citation validity, supported-claim precision, abstention recall and coverage; semantic metrics stay null without human evaluation.",
+          "result": "pass",
+          "source_revision": "c6b321fbaab38549b8df97cb56e0f44745546083",
+          "observed_at": "2026-11-24T08:09:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P054-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:09:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Engineering-v1 CI compares direct and delegated exact cue retrieval on 20 synthetic queries; both 20/20, direct 0 calls vs 90 scripted model calls/90 RPCs.",
+          "result": "pass",
+          "source_revision": "c6b321fbaab38549b8df97cb56e0f44745546083",
+          "observed_at": "2026-11-24T08:09:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P054-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:09:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Actual source transport returns bounded JSON receipts, not unbounded model narrative; worker/client enforce output and exact result match.",
+          "result": "pass",
+          "source_revision": "c6b321fbaab38549b8df97cb56e0f44745546083",
+          "observed_at": "2026-11-24T08:09:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P054-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:09:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Independent local catalog check validates every source receipt and rejects missing/extra/altered results outside model preference.",
+          "result": "pass",
+          "source_revision": "c6b321fbaab38549b8df97cb56e0f44745546083",
+          "observed_at": "2026-11-24T08:09:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P054-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:09:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0017.md",
+          "description": "Benchmark measures exact cue correctness and abstention rather than treating more agents as quality; real tokens and semantic precision null.",
+          "result": "pass",
+          "source_revision": "c6b321fbaab38549b8df97cb56e0f44745546083",
+          "observed_at": "2026-11-24T08:09:00+05:45"
         }
       ]
     }
