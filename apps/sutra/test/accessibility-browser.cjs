@@ -87,17 +87,27 @@ const contrast=(a,b)=>{
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Actual media duration: 8.0 seconds.'));
   assert.equal(await page.locator('video').count(),1);
   assert.equal(await page.getByRole('searchbox',{name:'Search synthetic transcript'}).count(),1);
+  const captions=page.locator('media-captions-button');assert.equal(await captions.count(),1);
+  await captions.click();
+  await page.locator('video').evaluate(video=>{video.currentTime=1;});
+  await page.waitForFunction(()=>Array.from(document.querySelector('video').textTracks).some(track=>track.kind==='captions'&&track.mode==='showing'&&track.activeCues?.length));
+  const captionState=await page.locator('video').evaluate(video=>{
+   const track=Array.from(video.textTracks).find(t=>t.kind==='captions');
+   return {mode:track?.mode,text:track?.activeCues?.[0]?.text??'',buttonVisible:!!document.querySelector('media-captions-button')?.getBoundingClientRect().width};
+  });
+  assert.equal(captionState.mode,'showing');assert.match(captionState.text,/Silent synthetic timing fixture/);assert.equal(captionState.buttonVisible,true);
 
   // 200% CSS zoom regression in Chromium plus the existing narrow-layout boundary.
   await page.setViewportSize({width:1280,height:900});
   await page.evaluate(()=>document.documentElement.style.zoom='2');
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1),true,'200% Chromium CSS zoom should not create horizontal clipping');
+  const captionBox=await captions.boundingBox();assert.ok(captionBox&&captionBox.width>=24&&captionBox.height>=24,'caption control remains reachable at 200% zoom');
   await page.evaluate(()=>document.documentElement.style.zoom='1');
   await page.setViewportSize({width:360,height:800});
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'360px core layout stays within viewport');
 
   assert.deepEqual(errors,[]);
-  console.log('PASS: targeted automated a11y audit: unique IDs/names, live-region discipline, sampled 4.5:1 contrast, reduced motion, keyboard/modal focus restoration, >=24px targets, synthetic media/transcript, 200% CSS zoom and 360px layout. Physical touch and screen-reader tests remain separate.');
+  console.log('PASS: targeted automated a11y audit: unique IDs/names, live-region discipline, sampled 4.5:1 contrast, reduced motion, keyboard/modal focus restoration, >=24px targets, active native captions, synthetic media/transcript, 200% CSS zoom and 360px layout. Physical touch and screen-reader tests remain separate.');
  }finally{
   if(browser)await browser.close();
   server.kill();
