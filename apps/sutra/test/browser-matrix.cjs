@@ -4,7 +4,7 @@ const {spawn}=require('node:child_process');
 const fs=require('node:fs'),path=require('node:path'),net=require('node:net'),assert=require('node:assert/strict'),crypto=require('node:crypto');
 const app=path.resolve(__dirname,'..');
 const fixture=JSON.parse(fs.readFileSync(path.join(app,'src/fixtures/timing-source.json')));
-const key='sutra.synthetic-review-cards.v1';
+const key='sutra.review-cards.v2';
 const engine=process.env.SUTRA_BROWSER_ENGINE||'chromium';
 const engines={chromium,firefox,webkit};
 (async()=>{

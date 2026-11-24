@@ -84,7 +84,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   const reviewDownloadPromise=page.waitForEvent('download');
   await page.getByRole('button',{name:'Download saved receipt'}).click();
   const reviewDownload=await reviewDownloadPromise;
-  assert.equal(reviewDownload.suggestedFilename(),'sutra-synthetic-review.json');
+  assert.equal(reviewDownload.suggestedFilename(),'sutra-source-review.json');
   const exportedReview=JSON.parse(fs.readFileSync(await reviewDownload.path(),'utf8'));
   assert.equal(exportedReview.type,'sutra-local-review-export');
   assert.equal(exportedReview.truthStatus,'unverified');
@@ -102,7 +102,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.getByRole('button',{name:'Preview source review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();
   await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);
   await page.evaluate(()=>{
-   const key='sutra.synthetic-review-cards.v1',rows=JSON.parse(localStorage.getItem(key));
+   const key='sutra.review-cards.v2',rows=JSON.parse(localStorage.getItem(key));
    rows[0].receipt.sourceVersion='retired-v0';localStorage.setItem(key,JSON.stringify(rows));
   });
   await page.reload();
@@ -115,7 +115,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   // Known quota rejection: zero persisted record, explicit rejected receipt, no retry.
   await page.evaluate(()=>{
    window.__sutraOriginalSetItem=Storage.prototype.setItem;window.__sutraWriteCalls=0;
-   Storage.prototype.setItem=function(key,value){if(key==='sutra.synthetic-review-cards.v1'){window.__sutraWriteCalls++;throw new DOMException('quota','QuotaExceededError');}return window.__sutraOriginalSetItem.call(this,key,value);};
+   Storage.prototype.setItem=function(key,value){if(key==='sutra.review-cards.v2'){window.__sutraWriteCalls++;throw new DOMException('quota','QuotaExceededError');}return window.__sutraOriginalSetItem.call(this,key,value);};
   });
   await page.getByRole('button',{name:'Preview source review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();
   assert.match(await page.locator('#review-status').innerText(),/rejected before confirmation/);
@@ -127,7 +127,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   // Ambiguous failure after the write side effect: do not claim failure or retry.
   await page.evaluate(()=>{
    const original=Storage.prototype.setItem;window.__sutraOriginalSetItem=original;window.__sutraWriteCalls=0;
-   Storage.prototype.setItem=function(key,value){if(key==='sutra.synthetic-review-cards.v1'){window.__sutraWriteCalls++;original.call(this,key,value);throw new Error('synthetic disconnect after write');}return original.call(this,key,value);};
+   Storage.prototype.setItem=function(key,value){if(key==='sutra.review-cards.v2'){window.__sutraWriteCalls++;original.call(this,key,value);throw new Error('synthetic disconnect after write');}return original.call(this,key,value);};
   });
   await page.getByRole('button',{name:'Preview source review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();
   assert.match(await page.locator('#review-status').innerText(),/outcome is unknown/);assert.equal(await page.evaluate(()=>window.__sutraWriteCalls),1);

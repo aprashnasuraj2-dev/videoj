@@ -10,7 +10,7 @@ const sources=[fixture.source];
 for(const outcome of ['completed','rejected','unknown'])test(`review attempt export preserves ${outcome} without changing reviewed payload`,()=>{
  const result=createReviewAttemptReceipt(base(outcome),{sources});
  assert.equal(result.outcome,outcome);assert.equal(result.requestId,'review-attempt-1');
- assert.deepEqual(result.receipt,fixture.receipt);assert.equal(result.truthStatus,'unverified');
+ assert.deepEqual(result.receipt,fixture.receipt);assert.equal(result.truthStatus,'unverified');assert.equal(result.reportVersion,2);assert.equal(result.contentKind,'source-review');
  assert.match(result.retryPolicy,/never automatically retry/);
  if(outcome==='unknown')assert.match(result.outcomeMeaning,/may have happened/);
 });
