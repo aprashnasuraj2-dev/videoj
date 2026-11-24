@@ -12,14 +12,39 @@ const safePublicPath=v=>typeof v==='string'&&v.length<=300&&v.startsWith('/')&&s
 const safeGuideHref=v=>safePublicPath(v)&&v.includes('#')&&v.indexOf('#')===v.lastIndexOf('#')&&/^[A-Za-z0-9._:-]{1,128}$/.test(v.split('#')[1]);
 const freeze=v=>{if(v&&typeof v==='object'&&!Object.isFrozen(v)){Object.values(v).forEach(freeze);Object.freeze(v);}return v;};
 const hash=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(b=>b.toString(16).padStart(2,'0')).join('');
-const boundedBytes=async({url,origin,fetchImpl,signal,maxBytes,accept})=>{
- const response=await fetchImpl(url,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',headers:{Accept:accept},signal});
- if(!response.ok||response.redirected||response.url&&new URL(response.url).origin!==origin)throw Error('CONTENT_RESPONSE');
- if(Number(response.headers.get('content-length'))>maxBytes)throw Error('CONTENT_SIZE');
- const reader=response.body?.getReader();if(!reader)throw Error('CONTENT_BODY');let total=0;const chunks=[];
- try{for(;;){const {done,value}=await reader.read();if(done)break;total+=value.byteLength;if(total>maxBytes)throw Error('CONTENT_SIZE');chunks.push(value);}}finally{void reader.cancel().catch(()=>{});}
- const bytes=new Uint8Array(total);let off=0;for(const c of chunks){bytes.set(c,off);off+=c.length;}return {response,bytes};
-};
+// Public same-origin content reads only; bound decoded bytes, including when
+// Content-Length is missing or a compressed wire length understates the body.
+export async function readContentBytes({url,origin,fetchImpl=fetch,signal,maxBytes,accept='application/octet-stream'}={}){
+ const target=new URL(url);
+ if(target.origin!==origin||target.username||target.password||!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>2*1024*1024)throw Error('CONTENT_READ_CONFIG');
+ signal?.throwIfAborted();
+ let reader,response,abort;
+ const stopped=new Promise((_,reject)=>{abort=()=>reject(Error('CONTENT_CANCELLED'));signal?.addEventListener('abort',abort,{once:true});});
+ stopped.catch(()=>{});
+ try{
+  response=await Promise.race([fetchImpl(target.href,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',headers:{Accept:accept},signal}),stopped]);
+  if(!response.ok||response.redirected||response.url&&new URL(response.url).origin!==origin)throw Error('CONTENT_RESPONSE');
+  if(Number(response.headers.get('content-length'))>maxBytes)throw Error('CONTENT_SIZE');
+  reader=response.body?.getReader();if(!reader)throw Error('CONTENT_BODY');
+  let total=0;const chunks=[];
+  for(;;){
+   signal?.throwIfAborted();
+   const {done,value}=await Promise.race([reader.read(),stopped]);
+   if(done)break;
+   if(!(value instanceof Uint8Array))throw Error('CONTENT_BODY');
+   if(value.byteLength>maxBytes-total)throw Error('CONTENT_SIZE');
+   if(value.byteLength){total+=value.byteLength;chunks.push(value);}
+  }
+  signal?.throwIfAborted();
+  const bytes=new Uint8Array(total);let off=0;for(const c of chunks){bytes.set(c,off);off+=c.length;}
+  return {response,bytes};
+ }finally{
+  signal?.removeEventListener('abort',abort);
+  if(reader){void reader.cancel().catch(()=>{});try{reader.releaseLock();}catch{}}
+  else if(response?.body){void response.body.cancel().catch(()=>{});}
+ }
+}
+const boundedBytes=readContentBytes;
 const boundedJson=async({url,origin,fetchImpl,signal,maxBytes})=>{
  const {response,bytes}=await boundedBytes({url,origin,fetchImpl,signal,maxBytes,accept:'application/json'});
  if(!response.headers.get('content-type')?.toLowerCase().includes('application/json'))throw Error('CONTENT_RESPONSE');

@@ -13,7 +13,7 @@ import {applyScreenState} from './status-state.js';
 import {mountProviderPanel} from './provider-panel.js';
 import {mountDirectLookup} from './direct-lookup.js';
 import {applyLocale,localeMeta} from './localization.js';
-import {loadContentProfile,receiptForFeatured} from '../../../packages/sutra-content-profile/index.js';
+import {loadContentProfile,receiptForFeatured,readContentBytes} from '../../../packages/sutra-content-profile/index.js';
 
 const contentBase=new URL(`${import.meta.env.BASE_URL}content/`,location.origin).href;
 let content;
@@ -113,9 +113,7 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
    if(!content.profile.media.video.includes(timingFixture.source.mediaHash))throw Error('Reviewed media path is not content-addressed.');
    mediaSource=versioned(content.profile.media.video,timingFixture.source.mediaHash);
   }else{
-   const response=await fetch(versioned(content.profile.media.video,timingFixture.source.mediaHash),{credentials:'omit',redirect:'error',signal:AbortSignal.timeout(10000)});
-   if(!response.ok||Number(response.headers.get('content-length'))>1024*1024)throw Error('Source media download failed.');
-   const bytes=await response.arrayBuffer();if(bytes.byteLength>1024*1024)throw Error('Synthetic source media exceeds the development validation limit.');
+   const {bytes}=await readContentBytes({url:versioned(content.profile.media.video,timingFixture.source.mediaHash),origin:location.origin,signal:AbortSignal.timeout(10000),maxBytes:1024*1024,accept:'video/mp4'});
    const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');
    if(digest!==timingFixture.source.mediaHash)throw Error('Media version mismatch.');
    timingObjectUrl=URL.createObjectURL(new Blob([bytes],{type:'video/mp4'}));mediaSource=timingObjectUrl;

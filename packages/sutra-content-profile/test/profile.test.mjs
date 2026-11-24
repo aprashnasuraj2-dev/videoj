@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {loadContentProfile,receiptForFeatured,validateContentProfile} from '../index.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {readContentBytes,loadContentProfile,receiptForFeatured,validateContentProfile} from '../index.js';
 const profile={"schema":1,"mode":"synthetic","contentVersion":"synthetic-timing-v1","title":"Synthetic timing lesson fixture","observedAt":"2026-11-23T00:00:00Z","primarySourceId":"synthetic-timing-fixture","featuredCueId":"timing-marker","catalog":{"path":"./source-catalog.json","sha256":"a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333"},"transcript":{"path":"/transcripts/synthetic-timing.txt","sha256":"a1930687d25bfe7fe8f2483c55d1aca83cdc3f4dcc39424dd6569aea9fe9660d"},"media":{"video":"/media/timing-fixture.mp4","poster":"/media/timing-poster.svg","chapters":"/media/timing-chapters.vtt","captions":"/media/timing-captions.vtt"},"videoClaim":{"title":"Synthetic timing cue","scope":"synthetic_timing_only","claimKey":"marker_presence","value":"marker_present","provenance":"SUTRA synthetic timing catalog; not human-reviewed footage","dateBasis":"Fixture metadata date"},"guideClaim":null,"ui":{"noticeTitle":"Synthetic development content","noticeBody":"This content profile is a test fixture. It demonstrates source consistency and browser behavior, not factual training guidance."}};
 const catalog={
   "schema": 1,
@@ -87,4 +87,25 @@ test('URL normalization and encoded traversal cannot escape the declared artifac
  for(const path of ['/transcripts/%2e%2e/secret.txt','/transcripts/x.txt\t']){
   const p=structuredClone(profile);p.transcript.path=path;assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_TRANSCRIPT/);
  }
+});
+
+test('content reader bounds decoded streams without relying on Content-Length and cancels on rejection',async()=>{
+ let cancelled=false,reads=0;
+ const stream=new ReadableStream({pull(c){reads++;c.enqueue(new Uint8Array(8));},cancel(){cancelled=true;}});
+ await assert.rejects(readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:12,fetchImpl:async()=>new Response(stream)}),/CONTENT_SIZE/);
+ assert.equal(cancelled,true);assert.ok(reads<=4);
+ const good=await readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:3,fetchImpl:async()=>new Response(new Uint8Array([1,2,3]))});
+ assert.deepEqual([...good.bytes],[1,2,3]);
+ let contacts=0;
+ await assert.rejects(readContentBytes({url:'https://elsewhere.example/source',origin:'https://sutra.example',maxBytes:3,fetchImpl:async()=>{contacts++;}}),/CONTENT_READ_CONFIG/);
+ assert.equal(contacts,0);
+});
+test('content reader cancellation releases a held-open body and rejects before a pre-cancelled fetch',async()=>{
+ const controller=new AbortController();let cancelled=false,contacts=0;
+ const stream=new ReadableStream({cancel(){cancelled=true;}});
+ const pending=readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:32,signal:controller.signal,fetchImpl:async()=>{contacts++;return new Response(stream);}});
+ await new Promise(resolve=>setTimeout(resolve,5));controller.abort();
+ await assert.rejects(pending);assert.equal(cancelled,true);
+ await assert.rejects(readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:32,signal:controller.signal,fetchImpl:async()=>{contacts++;}}));
+ assert.equal(contacts,1);
 });

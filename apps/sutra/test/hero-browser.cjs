@@ -83,6 +83,13 @@ const assert=require('node:assert/strict');
   await page.getByRole('button',{name:'Check written source integrity'}).click();
   await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('could not be confirmed'));
   await page.unroute('**/guides/synthetic-comparison-guide.html*');
+  // Hold a valid guide response, then switch the comparison before completion.
+  let releaseGuide,observeGuide,finishGuide;const guideStarted=new Promise(r=>observeGuide=r),guideFinished=new Promise(r=>finishGuide=r);
+  await page.route('**/guides/synthetic-comparison-guide.html*',async route=>{observeGuide();await new Promise(r=>releaseGuide=r);try{await route.fulfill({contentType:'text/html',body:guideText});}catch{}finally{finishGuide();}});
+  await page.getByRole('button',{name:'Check written source integrity'}).click();await guideStarted;
+  await page.getByRole('button',{name:'Inspect available evidence'}).click();releaseGuide();await guideFinished;
+  await page.unroute('**/guides/synthetic-comparison-guide.html*');
+  assert.equal(await page.locator('#comparison-body .comparison-seek-status').innerText(),'','obsolete guide completion must not attach to the new comparison');
   await page.getByRole('button',{name:'Inspect available evidence'}).click();
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
 
