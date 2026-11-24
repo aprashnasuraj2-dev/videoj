@@ -10,7 +10,7 @@ On 24 November the participant explicitly tightened the ordering: stop further d
 
 ## Latest implementation checkpoint — 0041
 
-Most recent fully observed passing source: `fd8878bc0ed9ca982579b0f0d8bd4b81a470039f`. Draft PR #49 actual source and checkpoint parent must be resolved before changes. Session 0041 [evidence](evidence/implementation/SESSION-0041.md) includes real native BFCache observations (full Chromium), latest 19/19 and remaining limits. Resume P078-02: audit browser adapter and Worker upstream abort handoff for rejected/received response disposal and bounded quota admission ambiguity (late reservation, 45-second lease expiry; no refund/retry). Continue dependency-ready P041-10, P054-01, P066-01, P020-02 and P005-08, preserving pilot-observed P078-07 and all real content, hardware, human and public release gates.
+Current code head at checkpoint: `279aae37f487a8da97f1303a6c48fdd5bc6be586`; fully observed passing source: `34025444560d62b310154634e94e3bfda5890bde`. Draft PR #49; compare actual head before changes. [Session 0041 evidence](evidence/implementation/SESSION-0041.md). Resume P078-02 at exact head; verify pending exact-source learner and matrix for 279aae37f487a8da97f1303a6c48fdd5bc6be586. Investigate ambiguous late quota admission X010-05, bounded by current 45-second lease expiry; no unsafe refund or retry. P041-10 requires actual first-time viewer exit evidence, not synthetic acceptance; P054-01/P066-01 real model measurements remain separate from fake engine. Continue independent ready tasks, preserve human/pilot/hardware/content/public release gates.
 
 ## Resume sequence
 

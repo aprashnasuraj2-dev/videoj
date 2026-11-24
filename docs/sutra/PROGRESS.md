@@ -13,6 +13,11 @@ Next: Confirm exact CI for 27a4a7034e447365491471e343acc657af17e843 (including l
 
 Next: Resume P078-02: audit browser adapter and Worker upstream abort handoff for rejected/received response disposal and bounded quota admission ambiguity (late reservation, 45-second lease expiry; no refund/retry). Continue dependency-ready P041-10, P054-01, P066-01, P020-02 and P005-08, preserving pilot-observed P078-07 and all real content, hardware, human and public release gates.
 
+
+**Further continuation (2026-11-24T18:01:37.257+05:45): 668/1,062 total verified, 609/1,000 original.** Exact `34025444560d62b310154634e94e3bfda5890bde` 19/19: provider/Worker abort handoff body disposal and one known quota release. Latest code `279aae37f487a8da97f1303a6c48fdd5bc6be586` 18/19 observed; bounded request memory and reader cleanup tests unit/package/API step passed, full checks not yet credited. Quota late admission risk remains open. [Evidence](evidence/implementation/SESSION-0041.md).
+
+Next: Resume P078-02 at exact head; verify pending exact-source learner and matrix for 279aae37f487a8da97f1303a6c48fdd5bc6be586. Investigate ambiguous late quota admission X010-05, bounded by current 45-second lease expiry; no unsafe refund or retry. P041-10 requires actual first-time viewer exit evidence, not synthetic acceptance; P054-01/P066-01 real model measurements remain separate from fake engine. Continue independent ready tasks, preserve human/pilot/hardware/content/public release gates.
+
 ---
 
 ## Session 0040 — 2026-11-24

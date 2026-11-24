@@ -256,3 +256,7 @@ A post-entry timeout must settle the **caller** promptly but must not release th
 ### Session 0041 continuation — 2026-11-24T17:57:22.475+05:45
 
 Actual full Chromium (not headless shell) history navigation to the real local guide restored the same document, native persisted events and existing paused media blob. Distinguish this verified scoped Chromium fixture from the earlier fresh-load fallback and from untested Firefox/WebKit BFCache, physical devices or live acceptance. Native media has one current seek owner across components; a superseded or revoked request may not certify success, but already-applied native movement cannot be rolled back. Comparison integrity reads revoke their action controller on navigation/mode change. No release authorization.
+
+### Session 0041 further continuation — 2026-11-24T18:01:37.257+05:45
+
+Use one fixed bounded buffer before Worker quota admission; chunk count cannot cause retained chunk-array growth. Strict decoding, abort checks and unconditional reader cleanup. At provider/Worker response handoff retain ownership until acceptance, including abort between response resolution and signal recheck. Keep conservative quota accounting: a lost reservation response can leave an unknown lease for up to its 45-second TTL; do not refund daily budgets or introduce unsafe release/retry ordering. Track X010-05 before changing protocol.
