@@ -20,8 +20,8 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
   observedAt:receipt.retrievedAt,dateBasis:'Fixture receipt retrieval timestamp'
  }:null;
  const controls=node('div','actions');
- const compare=node('button','primary','Inspect available evidence');
- const conflict=node('button',null,'Demonstrate a synthetic conflict');
+ const compare=node('button','primary','Inspect available evidence');compare.dataset.i18n='comparison.inspect';
+ const conflict=node('button',null,'Demonstrate a synthetic conflict');conflict.dataset.i18n='comparison.conflict';
  compare.type=conflict.type='button';
  controls.append(compare,conflict);
  const status=node('p','comparison-status');
@@ -29,7 +29,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
  const cards=node('div','comparison-cards');
  const seekStatus=node('p','comparison-seek-status');
  seekStatus.setAttribute('role','status');
- const note=node('p','muted','Comparisons evaluate exact declared values and source scope, not the truth of either claim. The conflict example is hypothetical and unrelated to original lesson footage.');
+ const note=node('p','muted','Comparisons evaluate exact declared values and source scope, not the truth of either claim. The conflict example is hypothetical and unrelated to original lesson footage.');note.dataset.i18n='comparison.note';
  host.replaceChildren(controls,status,cards,seekStatus,note);
  let activeMode='available';
  function card(title,claim){
@@ -37,17 +37,19 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
   const heading=node('h3',null,title);
   article.append(heading);
   if(!claim){
-   article.append(node('p','comparison-missing','No reviewed source excerpt or provenance is connected.'));
+   const missing=node('p','comparison-missing','No reviewed source excerpt or provenance is connected.');missing.dataset.i18n='comparison.missing';article.append(missing);
    return article;
   }
   const list=node('dl','comparison-metadata');
-  for(const [k,v] of [
-   ['Source',claim.sourceId],['Version',claim.sourceVersion],
-   ['Scope',claim.scope],['Claim key',claim.claimKey],['Structured value',valueText(claim.value)],
-   ['Provenance',claim.provenance],['Recorded timestamp',claim.observedAt??'Not supplied'],
-   ['Date meaning',claim.dateBasis??'Not supplied']
+  for(const [key,k,v] of [
+   ['comparison.meta.source','Source',claim.sourceId],['comparison.meta.version','Version',claim.sourceVersion],
+   ['comparison.meta.scope','Scope',claim.scope],['comparison.meta.claim','Claim key',claim.claimKey],
+   ['comparison.meta.value','Structured value',valueText(claim.value)],
+   ['comparison.meta.provenance','Provenance',claim.provenance],
+   ['comparison.meta.timestamp','Recorded timestamp',claim.observedAt??'Not supplied'],
+   ['comparison.meta.date','Date meaning',claim.dateBasis??'Not supplied']
   ]){
-   const dt=node('dt',null,k),dd=node('dd',null,v);list.append(dt,dd);
+   const dt=node('dt',null,k),dd=node('dd',null,v);dt.dataset.i18n=key;list.append(dt,dd);
   }
   article.append(list,node('blockquote','comparison-excerpt',claim.excerpt));
   if(activeMode==='available'&&claim.sourceKind==='video'&&
@@ -71,7 +73,9 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
  function render(){
   const comparison=compareClaimPair(activeMode==='available'?
    {video:local,guide:null}:syntheticComparison);
-  cards.replaceChildren(card('Video-side source',comparison.video),card('Written guide-side source',comparison.guide));
+  const videoCard=card('Video-side source',comparison.video),guideCard=card('Written guide-side source',comparison.guide);
+  videoCard.querySelector('h3').dataset.i18n='comparison.video';guideCard.querySelector('h3').dataset.i18n='comparison.guide';
+  cards.replaceChildren(videoCard,guideCard);
   status.dataset.state=comparison.status;
   const prefix={
    missing_source:'Missing evidence',unresolved_conflict:'Unresolved disagreement',
