@@ -128,3 +128,22 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - User-triggered execution/review downloads project bounded whitelisted fields rather than serializing raw event, model or localStorage objects; accessor getters are not executed and synthetic/unverified status is explicit. Possible browser download failures are not reported as saved success.
 - Alternative: follow browser redirects automatically or serialize full debug events for reproducibility. Rejected due unexpected destination/contact expansion and potential private prompt, key or result leakage. Detailed forensic debugging remains an explicitly limited development feature, not a general public trace export.
 - No participant release authorization changed; public URLs, paid inference and final official submission remain gated.
+
+## SUTRA-DECISION-0015 - Separate daily spend quota from active paid-request concurrency
+
+- Verified at `e1122ec58c7a773b41e4470dc0139a897049f912`; green CI: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543.
+- Decision: a quota reservation increments conservative daily/client usage and creates a separate 45-second active lease. Active leases cap simultaneous paid upstream work (`SUTRA_MAX_CONCURRENT`, default 2; hard maximum 10). Completion, cancellation and provider failure release only the active lease; admitted daily usage is **not refunded**.
+- Reason: daily request ceilings limit total spend but do not stop a burst from creating many simultaneous provider requests. A concurrency lease bounds that burst without adding automatic retries or pretending a failed provider request was free.
+- A 20-session synthetic CI lab held admitted streams open while all sessions requested service: 4 were admitted under the test ceiling, 16 received concurrency-limit responses, 4 provider calls occurred, no automatic retry occurred and session canaries did not cross payloads.
+- Alternative rejected: queue every excess request or refund failed upstream work. Queuing can extend cost/latency beyond the caller deadline; refunds plus automatic retry can duplicate ambiguous provider spend. The current policy prefers an explicit 429 and fresh user action.
+- This is a local direct-handler/DO-transaction fixture, not staging or internet-scale capacity evidence.
+
+## SUTRA-DECISION-0016 - Keep static learner traffic outside Worker execution; secure static and API layers separately
+
+- Verified code revision `e1122ec58c7a773b41e4470dc0139a897049f912`; Cloudflare account audit dated 2026-11-24 in `evidence/implementation/CLOUDFLARE-CAPACITY-2026-11-24.md`.
+- Decision: preserve `assets.run_worker_first: ["/api/*"]`. HTML, hashed JS/CSS, public graphs, transcript/track files and media are intended to use the static asset layer; only SUTRA API routes enter Worker code.
+- Because ordinary static responses bypass Worker code, `apps/sutra/public/_headers` is the learner-page browser-security policy. Worker responses apply the matching API policy. CI compares both layers to prevent silent drift.
+- Default static CSP permits only same-origin connections; no external peer origin is configured. A future approved public peer requires an explicit static `connect-src` update and a fresh production-header browser test.
+- Content-hashed runtime assets and physical versioned graph copies are immutable; HTML/manifests/mutable aliases revalidate; APIs are `no-store`. Media remains byte-hash verified and revalidated rather than claiming immutable filename semantics.
+- Alternative rejected: route all static assets through the Worker simply to attach headers. That would unnecessarily turn ordinary learner traffic into dynamic Worker invocations and compete with the already significant shared Patro workload.
+- The read-only Cloudflare audit cannot prove billing headroom because the connected OAuth grant lacks Billing Read. No final SUTRA domain/route or production static-vs-Worker sample exists, so phase 065 remains open.
