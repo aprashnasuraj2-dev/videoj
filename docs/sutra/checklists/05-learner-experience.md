@@ -23,9 +23,9 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P041-04` Define loading, empty, denied, error and completed screen states
 - [x] `SUTRA-P041-05` Keep the source comparison and next human action discoverable
 - [x] `SUTRA-P041-06` Place technical execution details in an optional inspector
-- [ ] `SUTRA-P041-07` Specify desktop, narrow screen and zoom behavior before styling
+- [-] `SUTRA-P041-07` Specify desktop, narrow screen and zoom behavior before styling
 - [ ] `SUTRA-P041-08` Walk through the complete question-to-card flow with a fresh viewer
-- [ ] `SUTRA-P041-09` Produce and review the phase artifact: Responsive screen design and interaction map.
+- [x] `SUTRA-P041-09` Produce and review the phase artifact: Responsive screen design and interaction map.
 - [ ] `SUTRA-P041-10` Close phase 041 only after its applicable tasks have evidence and its exit condition is observed: A first-time viewer sees the question, supporting cue and next action without opening a developer trace.
 
 ## Phase 042 - Integrate the DHAGO reusable player
@@ -40,11 +40,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P042-03` Preserve the installed v10 custom-element playback runtime
 - [x] `SUTRA-P042-04` Observe actual native media state rather than synthesizing progress
 - [x] `SUTRA-P042-05` Verify ordinary play, pause, volume, seek and fullscreen behavior
-- [ ] `SUTRA-P042-06` Handle source changes, missing decode support and media load errors
+- [x] `SUTRA-P042-06` Handle source changes, missing decode support and media load errors
 - [x] `SUTRA-P042-07` Avoid coupling the player to agents, model state or DETOUR internals
 - [x] `SUTRA-P042-08` Check host styles do not break player focus and narrow-screen controls
 - [x] `SUTRA-P042-09` Produce and review the phase artifact: SUTRA player adapter and ordinary controls.
-- [ ] `SUTRA-P042-10` Close phase 042 only after its applicable tasks have evidence and its exit condition is observed: Play, pause, seek, volume, captions and fullscreen work; no DETOUR code or existing demo media is imported.
+- [x] `SUTRA-P042-10` Close phase 042 only after its applicable tasks have evidence and its exit condition is observed: Play, pause, seek, volume, captions and fullscreen work; no DETOUR code or existing demo media is imported.
 
 ## Phase 043 - Connect evidence cards to real playback
 
@@ -128,13 +128,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P047-01` Show selected router identity without displaying credentials
 - [x] `SUTRA-P047-02` Display contacted origins and approved versus denied contact events
 - [x] `SUTRA-P047-03` Show agent and tool names with bounded timing and budget information
-- [ ] `SUTRA-P047-04` Represent partial failures and unknown action outcomes accurately
+- [x] `SUTRA-P047-04` Represent partial failures and unknown action outcomes accurately
 - [x] `SUTRA-P047-05` Redact credentials, private fields and unnecessary raw prompt text
 - [x] `SUTRA-P047-06` Bound trace memory and support safe user-initiated export
 - [x] `SUTRA-P047-07` Test credential canaries in inspector UI and downloaded files
 - [x] `SUTRA-P047-08` Ensure optional inspector failures never break media playback
 - [x] `SUTRA-P047-09` Produce and review the phase artifact: Redacted trace panel and export format.
-- [ ] `SUTRA-P047-10` Close phase 047 only after its applicable tasks have evidence and its exit condition is observed: A synthetic credential canary is absent from the UI and downloaded trace; trace failures do not break playback.
+- [x] `SUTRA-P047-10` Close phase 047 only after its applicable tasks have evidence and its exit condition is observed: A synthetic credential canary is absent from the UI and downloaded trace; trace failures do not break playback.
 
 ## Phase 048 - Make the core flow bilingual
 
@@ -143,14 +143,14 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Support English and Nepali labels and lesson summaries with human review of technical terms. Keep source quotations in their original language and label translations.
 - **Phase exit:** Language switching retains run state and cue links; English remains complete for judges and community builders.
 
-- [ ] `SUTRA-P048-01` Inventory core learner labels and error messages requiring translation
-- [ ] `SUTRA-P048-02` Keep English complete for judges and external builders
+- [x] `SUTRA-P048-01` Inventory core learner labels and error messages requiring translation
+- [x] `SUTRA-P048-02` Keep English complete for judges and external builders
 - [ ] `SUTRA-P048-03` Have a human review Nepali technical terms and ambiguity
-- [ ] `SUTRA-P048-04` Retain original source excerpts when translations are shown
-- [ ] `SUTRA-P048-05` Preserve selected lesson, cue and run state during language switching
+- [x] `SUTRA-P048-04` Retain original source excerpts when translations are shown
+- [x] `SUTRA-P048-05` Preserve selected lesson, cue and run state during language switching
 - [ ] `SUTRA-P048-06` Format timestamps, units and dates consistently across languages
-- [ ] `SUTRA-P048-07` Check fallback text and missing localization keys
-- [ ] `SUTRA-P048-08` Cut optional localization polish before compromising core runtime correctness
+- [x] `SUTRA-P048-07` Check fallback text and missing localization keys
+- [x] `SUTRA-P048-08` Cut optional localization polish before compromising core runtime correctness
 - [ ] `SUTRA-P048-09` Produce and review the phase artifact: Localized core screens and reviewed terminology list.
 - [ ] `SUTRA-P048-10` Close phase 048 only after its applicable tasks have evidence and its exit condition is observed: Language switching retains run state and cue links; English remains complete for judges and community builders.
 
@@ -163,7 +163,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 
 - [x] `SUTRA-P049-01` Check meaningful labels, visible focus and keyboard order for the core task
 - [x] `SUTRA-P049-02` Verify dynamic announcements are useful and not repeatedly disruptive
-- [ ] `SUTRA-P049-03` Test contrast, 200-percent zoom, reduced motion and readable captions
+- [x] `SUTRA-P049-03` Test contrast, 200-percent zoom, reduced motion and readable captions
 - [x] `SUTRA-P049-04` Verify 360px layouts without horizontal clipping of core controls
 - [x] `SUTRA-P049-05` Test touch targets and modal focus restoration
 - [x] `SUTRA-P049-06` Run an automated accessibility audit and review its actual findings
