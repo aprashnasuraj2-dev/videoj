@@ -21,6 +21,16 @@ const engines={chromium,firefox,webkit};
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(!r.url().startsWith(origin+'/')&&!r.url().startsWith('blob:'+origin+'/'))external.push(r.url());});
   await page.goto(origin);
   const button=name=>page.getByRole('button',{name,exact:true});
+  await step('public_runtime',async()=>{
+   const result=await page.evaluate(async()=>{
+    const runtime=await import('/runtime/sutra-runtime.js');
+    const response=await fetch('/agents/learner.network.json',{credentials:'omit',cache:'no-store'});if(!response.ok)throw Error('runtime graph unavailable');
+    const definition=await response.json(),compiled=runtime.compileNetwork(definition,{name:'learner',frontMan:'learner'});
+    return {name:compiled.name,frontMan:compiled.frontMan,profile:runtime.sutraRuntimeProfile,runType:typeof runtime.runNetwork,peerType:typeof runtime.loadPeerNetwork};
+   });
+   assert.equal(result.name,'learner');assert.equal(result.frontMan,'learner');assert.equal(result.profile.execution,'browser');assert.equal(result.profile.byok,false);assert.equal(result.runType,'function');assert.equal(result.peerType,'function');
+   return 'Stable /runtime/sutra-runtime.js imported and compiled the public learner graph in '+engine;
+  });
   await step('evidence',async()=>{await button('Check example').click();assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');await button('Try altered quotation').click();assert.notEqual(await page.locator('#result').getAttribute('data-state'),'matched');});
   await step('graph',async()=>{await button('Run scripted network test').click();await page.waitForFunction(()=>document.querySelector('#network-result').dataset.state==='completed');assert.match(await page.locator('#network-result').textContent(),/No live AI|scripted/i);});
   await step('consent_denial',async()=>{await button('Preview synthetic peer contact').click();await button('Deny').click();await page.waitForFunction(()=>document.querySelector('#consent-status').dataset.state==='denied');assert.equal(external.length,0);});
