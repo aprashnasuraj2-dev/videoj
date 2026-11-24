@@ -8,7 +8,7 @@ const el=(name,className,text)=>{
 };
 const validCue=(cue,duration)=>
  cue&&typeof cue==='object'&&!Array.isArray(cue)&&
- typeof cue.id==='string'&&/^[A-Za-z0-9_-]{1,100}$/.test(cue.id)&&
+ typeof cue.id==='string'&&/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(cue.id)&&
  typeof cue.text==='string'&&cue.text.trim()&&cue.text.length<=4000&&
  Number.isFinite(cue.start)&&Number.isFinite(cue.end)&&
  cue.start>=0&&cue.end>cue.start&&cue.end<=duration&&
@@ -24,7 +24,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synt
  host.replaceChildren();
  let disposed=false;
  let currentCues=[];
- let lastText='';
+ let lastText='',renderEpoch=0,seekEpoch=0;
  const section=el('section','transcript-browser');
  const heading=el('h3',null,'Follow the source cue');heading.dataset.i18n='transcript.follow';
  heading.id='timing-transcript-title';
@@ -64,8 +64,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synt
   if(disposed)return;
   const t=media?.currentTime;
   const actual=typeof t==='number'&&Number.isFinite(t)&&t>=0?t:null;
-  for(const [id,button] of buttonMap){
-   const cue=currentCues.find(c=>c.id===id);
+  for(const {cue,button} of buttonMap.values()){
    const active=!!cue&&actual!==null&&actual>=cue.start&&actual<cue.end;
    button.setAttribute('aria-current',active?'true':'false');
   }
@@ -82,10 +81,13 @@ export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synt
  }
  function render(){
   if(disposed)return;
-  const query=input.value.normalize('NFKC').trim().slice(0,160).toLocaleLowerCase('en');
+  const epoch=++renderEpoch;seekEpoch++;
+  const raw=input.value;
+  const query=raw.normalize('NFKC').trim().toLocaleLowerCase('en');
   lastText=query;
-  currentCues=items.filter(cue=>cue.text.normalize('NFKC').toLocaleLowerCase('en').includes(query));
   buttonMap.clear();list.replaceChildren();
+  if(raw.length>160||query.length>640){currentCues=[];status('Transcript query is too long. Shorten it; no partial match is claimed.');return;}
+  currentCues=items.filter(cue=>cue.text.normalize('NFKC').toLocaleLowerCase('en').includes(query));
   if(!valid){
    status('No usable transcript cues are available for this media. The local player remains usable.');
    return;
@@ -108,7 +110,9 @@ export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synt
    button.setAttribute('aria-label','Seek to '+formatTime(cue.start)+': '+cue.text);
    button.addEventListener('keydown',onCueKey);
    button.addEventListener('click',async()=>{
-    if(button.dataset.busy==='true')return;
+    if(disposed||epoch!==renderEpoch||!list.contains(button)||button.dataset.busy==='true')return;
+    const operation=++seekEpoch;
+    const current=()=>!disposed&&epoch===renderEpoch&&operation===seekEpoch&&list.contains(button);
     if(typeof onSeek!=='function'){
      status('Seek unavailable: no native media adapter is connected.');
      return;
@@ -117,13 +121,12 @@ export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synt
     try{
      const actual=await onSeek(cue.start);
      if(!Number.isFinite(actual)||Math.abs(actual-cue.start)>1)throw Error('Native seek did not reach the cue.');
-     status('Native media reached '+formatTime(actual)+'. Source cue '+cue.id+' selected; no factual verification.');
-     updateActive();
+     if(current()){status('Native media reached '+formatTime(actual)+'. Source cue '+cue.id+' selected; no factual verification.');updateActive();}
     }catch{
-     status('The cue could not be reached in the current media. No seek success is claimed.');
+     if(current())status('The cue could not be reached in the current media. No seek success is claimed.');
     }finally{delete button.dataset.busy;button.removeAttribute('aria-busy');}
    });
-   item.append(button);list.append(item);buttonMap.set(cue.id,button);
+   item.append(button);list.append(item);buttonMap.set(cue.id,{cue,button});
   }
   status(currentCues.length+' of '+items.length+' source cues shown. Use arrow keys within cue controls.');
   updateActive();
@@ -134,15 +137,15 @@ export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synt
  render();
  return Object.freeze({
   dispose(){
-   disposed=true;
+   disposed=true;renderEpoch++;seekEpoch++;
    media?.removeEventListener?.('timeupdate',updateActive);
    media?.removeEventListener?.('seeked',updateActive);
    host.replaceChildren();
   },
   search(query){
    if(disposed)return;
-   input.value=String(query??'').slice(0,160);render();
+   input.value=typeof query==='string'?query:'';render();
   },
-  state(){return Object.freeze({sourceId,version,query:lastText,visibleCueCount:currentCues.length});}
+  state(){return Object.freeze({sourceId,version,query:lastText,queryText:input.value,visibleCueCount:currentCues.length});}
  });
 }

@@ -107,6 +107,7 @@ mountComparisonView(document.querySelector('#comparison-body'),{
 const mediaHost=document.querySelector('.media-empty'),timingStatus=document.querySelector('#timing-status'),seekTiming=document.querySelector('#seek-timing');
 document.querySelector('#load-timing').addEventListener('click',async event=>{
  const button=event.currentTarget;button.disabled=true;setStatus(timingStatus,'loading','Loading the active source media…');
+ let candidatePlayer=null;
  try{
   const {mountTimingPlayer}=await import('./player-adapter.js');
   const versioned=(publicPath,version)=>{const url=new URL(publicPath,location.origin);url.searchParams.set('v',version);return url.href;};
@@ -120,17 +121,22 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
    if(digest!==timingFixture.source.mediaHash)throw Error('Media version mismatch.');
    timingObjectUrl=URL.createObjectURL(new Blob([bytes],{type:'video/mp4'}));mediaSource=timingObjectUrl;
   }
-  timingPlayer=mountTimingPlayer(mediaHost,{source:mediaSource,
+  candidatePlayer=mountTimingPlayer(mediaHost,{source:mediaSource,
    poster:versioned(content.profile.media.poster,timingFixture.source.mediaHash),
    chapters:versioned(content.profile.media.chapters,timingFixture.source.hash),
    captions:versioned(content.profile.media.captions,timingFixture.source.hash)});
-  mediaHost.classList.add('player-mounted');await timingPlayer.ready();if(Math.abs(timingPlayer.media.duration-timingFixture.source.duration)>.1)throw Error('Media duration mismatch.');
+  mediaHost.classList.add('player-mounted');await candidatePlayer.ready();if(Math.abs(candidatePlayer.media.duration-timingFixture.source.duration)>.1)throw Error('Media duration mismatch.');
+  // Receipt/compare/transcript actions never see a media adapter before the
+  // active source duration has been validated. Keep the text query on remount.
+  timingPlayer=candidatePlayer;
+  const previousQuery=timingTranscript?.state().queryText??'';
   timingTranscript?.dispose();
   timingTranscript=mountTranscriptPanel(transcriptHost,{
    source:timingFixture.source,contentMode:content.profile.mode,media:timingPlayer.media,onSeek:seconds=>timingPlayer.seek(seconds)
   });
+  if(previousQuery)timingTranscript.search(previousQuery);
   setStatus(timingStatus,'completed',`${content.profile.mode==='reviewed'?'Reviewed content-addressed':'Synthetic hash-checked'} source media loaded. Actual media duration: ${timingPlayer.media.duration.toFixed(1)} seconds.`);seekTiming.hidden=false;
- }catch(error){if(timingPlayer){try{timingPlayer.media.pause();timingPlayer.media.removeAttribute('src');timingPlayer.media.load();}catch{}timingPlayer=null;mediaHost.replaceChildren();mediaHost.classList.remove('player-mounted');}if(timingObjectUrl){URL.revokeObjectURL(timingObjectUrl);timingObjectUrl=null;}seekTiming.hidden=true;setStatus(timingStatus,'error',error?.code==='MEDIA_UNSUPPORTED'?'This browser cannot decode the source media. Transcript and evidence remain available; no playback success is claimed.':'Source media unavailable. No playback or seek success is claimed.');button.disabled=false;}
+ }catch(error){if(candidatePlayer){try{candidatePlayer.media.pause();candidatePlayer.media.removeAttribute('src');candidatePlayer.media.load();}catch{}timingPlayer=null;mediaHost.replaceChildren();mediaHost.classList.remove('player-mounted');}if(timingObjectUrl){URL.revokeObjectURL(timingObjectUrl);timingObjectUrl=null;}seekTiming.hidden=true;setStatus(timingStatus,'error',error?.code==='MEDIA_UNSUPPORTED'?'This browser cannot decode the source media. Transcript and evidence remain available; no playback success is claimed.':'Source media unavailable. No playback or seek success is claimed.');button.disabled=false;}
 });
 seekTiming.addEventListener('click',async()=>{
  seekTiming.disabled=true;

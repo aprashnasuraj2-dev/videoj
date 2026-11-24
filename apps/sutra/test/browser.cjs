@@ -43,8 +43,13 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/two signatures/);
   assert.match(await page.locator('#comparison-body .comparison-card').last().innerText(),/three signatures/);
   assert.match(await page.locator('#comparison-body .comparison-card').last().innerText(),/not an external publisher/);
+  const obsoleteGuideCheck=await page.getByRole('button',{name:'Check written source integrity'}).elementHandle();
   await page.getByRole('button',{name:'Inspect available evidence'}).click();
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
+  const beforeObsoleteCheck=requests.length;
+  await obsoleteGuideCheck.evaluate(async button=>{button.click();await new Promise(r=>setTimeout(r,30));});
+  assert.equal(requests.length,beforeObsoleteCheck,'detached comparison check cannot initiate a source fetch');
+  assert.equal(await page.locator('#comparison-body .comparison-seek-status').innerText(),'');await obsoleteGuideCheck.dispose();
   await page.getByRole('button',{name:'Check example',exact:true}).click();assert.match(await page.locator('#result').innerText(),/Catalog matched/);assert.match(await page.locator('#result').innerText(),/Factual truth has not been checked/);
   // Language switching changes only tagged interface labels. It must not
   // remount source evidence or erase current validation state.

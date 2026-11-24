@@ -38,6 +38,8 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
  const beginAction=()=>{guideController?.abort();guideController=null;return {generation,operation:++operation};};
  const current=token=>token.generation===generation&&token.operation===operation;
  function card(title,claim){
+  const cardGeneration=generation;
+  const active=button=>cardGeneration===generation&&cards.contains(button);
   const article=node('article','comparison-card');
   const heading=node('h3',null,title);
   article.append(heading);
@@ -68,6 +70,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
    if(claim.sourceHash){
     const verify=node('button',null,'Check written source integrity');verify.type='button';
     verify.addEventListener('click',async()=>{
+     if(!active(verify)||verify.disabled)return;
      const token=beginAction(),controller=new AbortController();guideController=controller;
      verify.disabled=true;seekStatus.textContent='Checking written source bytes and anchored excerpt…';
      try{
@@ -92,6 +95,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
    const button=node('button',null,'Inspect native video cue at '+String(claim.start)+' seconds');
    button.type='button';
    button.addEventListener('click',async()=>{
+    if(!active(button))return;
     const token=beginAction();seekStatus.textContent='Checking actual native seek availability…';
     try{
      const reached=await seekTo(claim.start);
