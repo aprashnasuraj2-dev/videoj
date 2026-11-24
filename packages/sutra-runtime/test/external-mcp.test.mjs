@@ -121,3 +121,28 @@ test('cancelling a non-cooperating read-only transport settles the invocation',a
  await assert.rejects(promise);
  assert.equal(requests.length,1);
 });
+
+test('incomplete or dynamic discovery cannot establish the fixed external read-only contract',async()=>{
+ for(const [method,modify] of [
+  ['initialize',r=>{r.capabilities.tools=null;}],
+  ['initialize',r=>{r.capabilities.tools=[];}],
+  ['initialize',r=>{r.capabilities.tools={listChanged:true};}],
+  ['initialize',r=>{r.capabilities.tools={listChanged:'false'};}],
+  ['tools/list',r=>{r.nextCursor='uninspected-tools';}],
+  ['tools/list',r=>{r.nextCursor='';}],
+  ['tools/list',r=>{r.tools=[null];}]
+ ]){
+  const requests=[],decisions=[];
+  const consent=inspector(async intent=>{decisions.push(intent.kind);return 'allow';});
+  await assert.rejects(run({thirdPartyMcp:{url:target,inspector:consent,fetchImpl:mockTransport(requests,(body,rpc)=>{if(rpc.method===method)modify(body.result);})}}),e=>e.code==='EXTERNAL_CONTACT_FAILED');
+  assert.deepEqual(requests.map(r=>r.body.method),method==='initialize'?['initialize']:['initialize','notifications/initialized','tools/list']);
+  assert.deepEqual(decisions,['mcp_discovery']);
+  assert.ok(!consent.exportEvents().some(e=>e.type==='outcome'&&e.status==='completed'));
+ }
+});
+test('explicit static capability and complete external catalog still allow one separately approved read',async()=>{
+ const requests=[];
+ const result=await run({thirdPartyMcp:{url:target,inspector:inspector(),fetchImpl:mockTransport(requests,(body,rpc)=>{if(rpc.method==='initialize')body.result.capabilities.tools.listChanged=false;})}});
+ assert.match(result.text,/third_party_unverified/);
+ assert.deepEqual(requests.map(r=>r.body.method),['initialize','notifications/initialized','tools/list','tools/call']);
+});

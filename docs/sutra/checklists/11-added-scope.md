@@ -141,4 +141,6 @@ Both are isolated learner/developer regressions verified in automated browser an
 
 - [x] `SUTRA-X010-21` Align comparison claim size/data bounds and canonical path/anchor identity; require exact reviewed compiler derivative reconstructed from immutable declared metadata and escaped excerpt; reject same-hash-consistent deceptive markup, hidden wrapper or mismatched metadata. Verify compiler round-trip and Chromium. Requires X010-11 and X010-18.
 
-- [ ] `SUTRA-X010-22` Explicit no-referrer policy for browser peer/MCP/public content/inference reads; fixed provider POST header set, no ambient adapter metadata or credentials. Test actual browser peer/MCP and same-origin API, injected header/referrer canary, and local Workerd compatibility. Requires X010-01 and X010-17.
+- [x] `SUTRA-X010-22` Explicit no-referrer policy for browser peer/MCP/public content/inference reads; fixed provider POST header set, no ambient adapter metadata or credentials. Test actual browser peer/MCP and same-origin API, injected header/referrer canary, and local Workerd compatibility. Requires X010-01 and X010-17.
+
+- [ ] `SUTRA-X010-23` Reject incomplete/paginated MCP tool discovery and dynamic or malformed external tool capability declarations before advertising fixed read-only tools; do not follow cursors or request additional consent. Verify hostile cursor, malformed tools/capabilities, zero tools/call after failure and complete static positive control. Requires X010-17 and X010-22. Narrow profile only; remote tool semantics remain unverified.

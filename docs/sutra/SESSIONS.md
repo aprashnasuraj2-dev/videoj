@@ -1,5 +1,10 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0043 — 2026-11-24
+
+- 2026-11-24T19:39:00+05:45: **687/1,080 overall verified; 609/1,000 original; 386 pending; six omissions; one hardware blocker.** Reconciled X010-22 exact source be3665ae5608c38ba3af371783d858a275269999: 19/19 workflows successful, including full learner, all three browser engines and local Workerd. X010-23 new candidate: refuse paginated/malformed tool catalogs and dynamic external tool capability declarations; no completion credit until exact CI. P078-02 remains pending. [Evidence](evidence/implementation/SESSION-0043.md).
+- Next: observe exact candidate tests before credit; maintain external acceptance gates and draft-only branch.
+
 ## SUTRA-SESSION-0042 — 2026-11-24
 
 - 2026-11-24T19:31:57.810+05:45: **686/1,079 overall verified; 609/1,000 original; 386 pending; six omissions; one hardware blocker.** X010-18–21 19/19 exact CI; latest fully verified source `a72c70fb128e48f08459c957749fbf018a7ad6bd`. X010-22 at 18/19, not credited. Actual Chromium native BFCache restored no-media, paused and playing profiles. P078-02 remains open. [Evidence](evidence/implementation/SESSION-0042.md).

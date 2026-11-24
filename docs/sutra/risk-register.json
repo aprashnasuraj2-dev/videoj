@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T19:31:57.810+05:45",
+  "updatedAt": "2026-11-24T19:39:00+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -974,8 +974,8 @@
     {
       "id": "R-045",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Ambient request metadata outside consent contract",
       "mechanism": "Default referrer can reveal caller URL and arbitrary adapter headers can carry private data.",
       "userEffect": "Potential stale evidence, privacy leakage or failed learner operation.",
@@ -988,9 +988,34 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
           "sourceRevision": "baaff96faf5649285b7ffd7ed93ed7842e7dc291"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "be3665ae5608c38ba3af371783d858a275269999"
         }
       ],
-      "unblockCondition": "Observe full exact learner/browser and Workerd CI."
+      "unblockCondition": null
+    },
+    {
+      "id": "R-046",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Partial or dynamic MCP discovery represented as complete",
+      "mechanism": "A tools/list response can contain the expected tool(s) plus a pagination cursor, while a dynamic tools capability can announce unsupported list-change semantics.",
+      "userEffect": "A partial tool catalog may be represented as a verified fixed read-only capability; malformed discovery may fail inconsistently.",
+      "affectedTasks": [
+        "SUTRA-X010-23",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Refuse pagination, malformed entries and dynamic external capabilities; retain narrow fixed schemas and separate approval.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "be3665ae5608c38ba3af371783d858a275269999"
+        }
+      ],
+      "unblockCondition": "Observe exact candidate regression and full affected CI; no claim of external semantic conformance."
     }
   ]
 }

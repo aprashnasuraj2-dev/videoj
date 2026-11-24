@@ -127,3 +127,21 @@ test('source MCP exact read agrees with maximum-length valid catalog identifiers
  const result=JSON.parse(await c.callTool('read_cue',{sourceId:source.id,cueId:source.cues[0].id}));
  assert.equal(result.receipts.length,1);assert.equal(result.receipts[0].cueId,source.cues[0].id);assert.deepEqual(result.receipts,seen);
 });
+
+test('source MCP refuses paginated or malformed discovery instead of certifying a partial catalog',async()=>{
+ for(const variant of ['cursor','empty-cursor','null-tool','array-tool']){
+  const methods=[];
+  const c=createSourceMcp({origin:'https://sutra.test',sources:catalog,fetchImpl:async(_url,opts)=>{
+   const rpc=JSON.parse(opts.body);methods.push(rpc.method);
+   if(rpc.method==='notifications/initialized')return new Response(null,{status:202});
+   const result=rpc.method==='initialize'?{protocolVersion:'2025-06-18'}:{tools:tools.list()};
+   if(rpc.method==='tools/list'){
+    if(variant==='cursor'||variant==='empty-cursor')result.nextCursor=variant==='cursor'?'uninspected-tools':'';
+    else result.tools[0]=variant==='null-tool'?null:[];
+   }
+   return Response.json({jsonrpc:'2.0',id:rpc.id,result});
+  }});
+  await assert.rejects(c.listTools(),e=>e.code==='SOURCE_CAPABILITY');
+  assert.deepEqual(methods,['initialize','notifications/initialized','tools/list']);
+ }
+});

@@ -8,11 +8,11 @@ The participant explicitly directed on 23 November 2026: do not jump to release 
 
 On 24 November the participant explicitly tightened the ordering: stop further deployment preparation and prioritize the unfinished engineering checklist. Do not reconnect cloud accounts or advance domain/DNS, staging/public deployment, release or promotion merely because build candidates exist. Keep genuine human/external gates pending and continue independent local/CI engineering; use the latest register queue and dependency checks.
 
-## Latest implementation checkpoint — 0042
+## Latest implementation checkpoint — 0043
 
-2026-11-24T19:31:57.810+05:45: **686/1,079 overall verified; 609/1,000 original; 386 pending; six omissions; one hardware blocker.** X010-18–21 19/19 exact CI; latest fully verified source `a72c70fb128e48f08459c957749fbf018a7ad6bd`. X010-22 at 18/19, not credited. Actual Chromium native BFCache restored no-media, paused and playing profiles. P078-02 remains open. [Evidence](evidence/implementation/SESSION-0042.md).
+2026-11-24T19:39:00+05:45: **687/1,080 overall verified; 609/1,000 original; 386 pending; six omissions; one hardware blocker.** Reconciled X010-22 exact source be3665ae5608c38ba3af371783d858a275269999: 19/19 workflows successful, including full learner, all three browser engines and local Workerd. X010-23 new candidate: refuse paginated/malformed tool catalogs and dynamic external tool capability declarations; no completion credit until exact CI. P078-02 remains pending. [Evidence](evidence/implementation/SESSION-0043.md).
 
-Current code head: `baaff96faf5649285b7ffd7ed93ed7842e7dc291`. Continue P078-02 with dependency-ready engineering. Verify corrected X010-22 exact CI. Playwright represents a deliberately empty referrer as an empty string for some routed requests; accept absent or empty only, never a nonempty referrer. Actual MCP server still requires no referer header. Continue P078-02; preserve independent capacity, human/rights/live-model/public-release gates. Preserve independent P007 capacity work; P041-10/P078-07 require genuine viewer/pilot evidence, P054-01/P066-01 actual provider measurements, P020-02 rights-cleared corpus, P005-08 entrant voice. No deploy, paid model, public release or submission.
+Next: verify X010-23 exact CI; continue P078-02. Preserve P007 capacity work and all human/rights/live-model/public-release gates. No deployment, paid inference or submission.
 
 ## Resume sequence
 

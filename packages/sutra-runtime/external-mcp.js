@@ -68,10 +68,11 @@ export function createExternalReadMcp(options,{signal}={}){
    await inspector.perform(contact('mcp_discovery','Discover one preapproved public read-only tool',['tool name']),async(_contact,approvedSignal)=>{
     const active=signal&&approvedSignal?AbortSignal.any([signal,approvedSignal]):signal??approvedSignal;
     const init=await rpc('initialize',{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'sutra-read-only',version:'0.1.0'}},false,active);
-    if(init.protocolVersion!=='2025-06-18'||init.capabilities?.tools===undefined)fail('MCP_PROTOCOL','Expected exact MCP version and tool capabilities.');
+    const capability=init.capabilities?.tools;
+    if(init.protocolVersion!=='2025-06-18'||!capability||typeof capability!=='object'||Array.isArray(capability)||Object.hasOwn(capability,'listChanged')&&capability.listChanged!==false)fail('MCP_PROTOCOL','Expected exact MCP version and static tool capabilities.');
     await rpc('notifications/initialized',{},true,active);
     const catalog=await rpc('tools/list',{},false,active);
-    if(!Array.isArray(catalog.tools)||catalog.tools.length!==1)fail('MCP_TOOLS','Unexpected tool discovery result.');
+    if(Object.hasOwn(catalog,'nextCursor')||!Array.isArray(catalog.tools)||catalog.tools.length!==1||!catalog.tools[0]||typeof catalog.tools[0]!=='object'||Array.isArray(catalog.tools[0]))fail('MCP_TOOLS','Unexpected tool discovery result.');
     const tool=catalog.tools[0];
     if(tool.name!==readTool.name||JSON.stringify(tool.inputSchema)!==JSON.stringify(readTool.inputSchema)||tool.annotations?.readOnlyHint!==true||tool.annotations?.destructiveHint===true)fail('MCP_TOOLS','External tool is outside the approved read-only contract.');
     check(active);

@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T19:33:11.220+05:45",
+  "updated_at": "2026-11-24T19:39:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "a72c70fb128e48f08459c957749fbf018a7ad6bd",
-  "last_session_id": "SUTRA-SESSION-0042",
+  "last_observed_code_sha": "be3665ae5608c38ba3af371783d858a275269999",
+  "last_session_id": "SUTRA-SESSION-0043",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
-  "next_task": "SUTRA-X010-22",
+  "next_task": "SUTRA-X010-23",
   "ready_engineering_queue": [
     "SUTRA-P041-10",
     "SUTRA-P078-07",
@@ -16,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Verify corrected X010-22 exact CI. Playwright represents a deliberately empty referrer as an empty string for some routed requests; accept absent or empty only, never a nonempty referrer. Actual MCP server still requires no referer header. Continue P078-02; preserve independent capacity, human/rights/live-model/public-release gates.",
+  "next_action": "Observe exact X010-23 runtime tests and all affected CI before credit; continue P078-02 adversarial engineering. No deployment, paid model, public release or submission.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -12181,6 +12181,26 @@
           "observed_at": "2026-11-24T19:31:57.810+05:45"
         }
       ]
+    },
+    "SUTRA-X010-22": {
+      "state": "verified",
+      "verified_at": "2026-11-24T19:39:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45407262147/job/138491210874",
+          "description": "Corrected privacy regression and full learner suite; all 19 workflows successful at exact source.",
+          "result": "pass",
+          "source_revision": "be3665ae5608c38ba3af371783d858a275269999",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "description": "Exact workflow/job evidence, no-referrer scope and residual limits.",
+          "result": "pass",
+          "source_revision": "be3665ae5608c38ba3af371783d858a275269999",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -12272,6 +12292,7 @@
     "2026-11-24T19:04:33.362+05:45: **678/1,070 overall verified; 609/1,000 original; 385 pending; six omissions; one hardware blocker.** X010-12–13 exact revisions passed 19/19 workflows. SSE revision `e7ccecf9eae71bd4c0c1aaf3b4e9ac4989b81f37` 446 non-browser tests (142 app, 155 package/API, 141 runtime, 8 peer), Chromium learner and three-engine matrix. Newer head `c8fc9f4528fa45379c87968964aadb92eb80db63` includes additional lifecycle changes not credited here. P078-02 remains open.",
     "2026-11-24T19:14:26.874+05:45: **682/1,075 overall verified; 609/1,000 original; 386 pending; six omissions; one hardware blocker.** X010-14–17 verified at exact 19/19 source revisions; latest `05dbd04ec5243c1fb835769ff9bf45bb7c4e4486` 450 non-browser tests (142 app, 155 package/API, 145 runtime, 8 peer), learner Chromium and three-engine matrix. X010-18 candidate `05d8948b90972f1fbc1095bf3554f1c3a363c452` awaiting exact CI; do not count pending candidate. P078-02 open. No public release or live model.",
     "2026-11-24T19:31:57.810+05:45: 686/1079 overall verified; 609/1000 original; 386 pending. X010-18–21 exact source CI all 19/19. X010-22 18/19 at observation. Continue P078-02 with dependency-ready engineering. Inspect exact learner baaff96faf5649285b7ffd7ed93ed7842e7dc291 (run 45406604981); do not count X010-22 until full CI passes. Preserve independent P007 capacity work; P041-10/P078-07 require genuine viewer/pilot evidence, P054-01/P066-01 actual provider measurements, P020-02 rights-cleared corpus, P005-08 entrant voice. No deploy, paid model, public release or submission.",
-    "Audit on c1230291b09d8150ec927ace978bfc5df88ea884 caught a closed resume cursor; corrected next_task to pending X010-22. Prior privacy learner failed on empty vs absent Playwright representation, not a nonempty leaked URL; keep gate pending."
+    "Audit on c1230291b09d8150ec927ace978bfc5df88ea884 caught a closed resume cursor; corrected next_task to pending X010-22. Prior privacy learner failed on empty vs absent Playwright representation, not a nonempty leaked URL; keep gate pending.",
+    "Reconciled X010-22 exact source be3665ae5608c38ba3af371783d858a275269999: 19/19 workflows successful, including full learner, all three browser engines and local Workerd. X010-23 new candidate: refuse paginated/malformed tool catalogs and dynamic external tool capability declarations; no completion credit until exact CI. P078-02 remains pending."
   ]
 }

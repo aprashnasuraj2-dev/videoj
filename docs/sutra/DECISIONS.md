@@ -281,3 +281,7 @@ Revoke native seek waiting authority as soon as results change; preserve focus o
 ### Further boundary verification — 2026-11-24T19:31:57.810+05:45
 
 Bound work independently of bytes; real BFCache while playing must pause without implicit resume. Review outcome presentation is revoked at pagehide even if storage work already began. Reviewed written guide must equal the canonical compiler derivative from the declared text and metadata; digest of original input remains a recorded claim, not independent verification. Explicit no-referrer and closed provider header contract prevent ambient caller metadata; normal Origin remains available for CORS. Privacy candidate awaiting learner.
+
+## SUTRA-DECISION-0033 — Complete static MCP discovery only
+
+2026-11-24T19:39:00+05:45: X010-23. Reject any pagination cursor (including empty) rather than following it or claiming a partial catalog is exhaustive. Reject a dynamic or malformed external tools capability because the narrow stateless client cannot safely track tool-list changes. Explicit static capability or omitted listChanged with complete one-tool discovery remains compatible. Source direct calls retain the independently indexed local capability contract; a successful static catalog is not proof of third-party tool semantics. Pending exact CI. [Evidence](evidence/implementation/SESSION-0043.md).
