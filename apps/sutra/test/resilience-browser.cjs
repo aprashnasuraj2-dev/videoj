@@ -107,7 +107,7 @@ const assert=require('node:assert/strict');
   const offlineRequests=[];
   damaged.on('request',r=>{if(r.url().includes('/api/')||r.url().includes('/media/'))offlineRequests.push(r.url());});
   await damaged.getByRole('searchbox',{name:'Question for local source lookup'}).fill('Where is the timing marker?');
-  await damaged.getByRole('button',{name:'Find cited answer locally'}).click();
+  await damaged.getByRole('button',{name:'Find cited source locally'}).click();
   assert.equal(await damaged.locator('#local-answer-status').getAttribute('data-state'),'completed');
   assert.match(await damaged.locator('#local-answer-results').innerText(),/Synthetic timing marker/);
   assert.equal(offlineRequests.length,0,'local source question must not attempt network while offline');
