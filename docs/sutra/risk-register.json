@@ -1074,8 +1074,8 @@
     {
       "id": "R-049",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Mutable host contact dispatch changes between approvals",
       "mechanism": "A viewer or first contact can replace peer runtime inspector/transport or mutable inspector perform property before the next separately consented operation.",
       "userEffect": "Unexpected artifact contact or disclosure despite the original decision policy.",
@@ -1088,9 +1088,13 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
           "sourceRevision": "7b072b73ed9657b52df46a427fe67fb6ede2e053"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "76d13792d57fdfd321074a026747c72a306337b1"
         }
       ],
-      "unblockCondition": "Exact mutation, denial and normal browser/runtime tests pass."
+      "unblockCondition": null
     },
     {
       "id": "R-050",

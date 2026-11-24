@@ -297,3 +297,7 @@ X010-26. Capture the original inspector perform method and its receiver plus pee
 ## SUTRA-DECISION-0036 — Inert private grant descriptors
 
 X010-27. Peer identity is bounded primitive text, not a coercible object. Private grants and field lists use dense ordinary data arrays and enumerable own fields; no custom iterators, executable descriptors, metadata or reserved names. Snapshot and validate before runtime admission. Preserve exact normalized URL and independent grant directions; this is a data boundary rather than a JS sandbox. Pending exact CI.
+
+## Session 0043 verification addendum
+
+X010-26 verified 19/19 at 76d13792d57fdfd321074a026747c72a306337b1; X010-27 exact runtime unit step passed; full workflow evidence pending, no completion credit. P078-02 remains pending. No deployment or submission.

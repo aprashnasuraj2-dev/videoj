@@ -23,3 +23,11 @@ X010-24/25 pending exact CI. Added X010-26 candidate to pin host-selected consen
 ## Follow-up — private grant inert data
 
 X010-24/25 verified 19/19 at 7b072b73ed9657b52df46a427fe67fb6ede2e053. X010-26 pending full exact CI. Added X010-27 private-grant inert metadata candidate; no credit until exact CI. The [exact learner job for X010-24/25](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45409352616/job/138498633452) and all 19 workflows passed. New candidate closes URL object coercion, getter and iterator paths in private grants, including sparse/extra array metadata and invalid field names. Tests use observable counters to establish zero getter/coercion/iterator execution and zero model/peer contacts before rejection; valid null-prototype grant remains supported. Existing exact destination and direction constraints remain intact. No live model, user acceptance or release claim. **696/1,084 overall verified; 615/1,000 original; 381 pending; six omissions; one hardware blocker.**
+
+## Exact CI reconciliation
+
+X010-26 verified 19/19 at 76d13792d57fdfd321074a026747c72a306337b1; X010-27 exact runtime unit step passed; full workflow evidence pending, no completion credit. P078-02 remains pending. No deployment or submission.
+
+- X010-26: [learner job](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45409664508/job/138499712002), exact source `76d13792d57fdfd321074a026747c72a306337b1`, 19/19 successful.
+
+**697/1,084 overall verified; 615/1,000 original; 380 pending; six omissions; one hardware blocker.**

@@ -10,9 +10,9 @@ On 24 November the participant explicitly tightened the ordering: stop further d
 
 ## Latest implementation checkpoint — 0043
 
-**696/1,084 overall verified; 615/1,000 original; 381 pending; six omissions; one hardware blocker.** X010-24/25 verified 19/19 at 7b072b73ed9657b52df46a427fe67fb6ede2e053. X010-26 pending full exact CI. Added X010-27 private-grant inert metadata candidate; no credit until exact CI. [Evidence](evidence/implementation/SESSION-0043.md).
+**697/1,084 overall verified; 615/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-26 verified 19/19 at 76d13792d57fdfd321074a026747c72a306337b1; X010-27 exact runtime unit step passed; full workflow evidence pending, no completion credit. P078-02 remains pending. No deployment or submission. [Evidence](evidence/implementation/SESSION-0043.md).
 
-Next: Verify pending X010-26/27 full exact CI, inspect any failing intermediate evidence; continue P078-02. Preserve original P007/rights/actual provider/human/public release gates. No deployment or submission.
+Next: Verify exact X010-27 full CI, inspect any failures; continue P078-02. Preserve genuine human/external gates. No deployment or submission.
 
 ## Resume sequence
 
