@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0035 — 2026-11-24
+
+**609/1,000 original verified; 652/1,044 total verified; 45/100 fully verified phases; six omissions; one hardware blocker; 385 pending.** Reconciled register and actual intervening SUTRA diff; fixed hero selector regression, complete literal/local ambiguity, per-request backend identity, cancelled-preflight evidence retention and release-candidate artifact integrity. Six implementation revisions each have 19/19 green workflow conclusions; final release job executed 15/15 tests and incomplete-template rejection. No original phase closure; P078-02 remains pending. [Evidence](evidence/implementation/SESSION-0035.md).
+
+---
+
 ## Session 0034 — 2026-11-24
 
 **609/1,000 original verified; 648/1,040 total verified; 45/100 fully verified phases; six omissions; one hardware blocker.** Added X007-16..18: full lexical constraint coverage, ambiguity independent of ranking, and immutable terminal SSE status/consistent token accounting. Exact first learner browser step and latest app/API test steps passed; latest source `8ef181639ca57a2f95569d0f9e977ea84e65a4f2` at observation: 18/19 successful workflow conclusions. Remaining workflow results are pending, not credited. No original phase closure or real model/human/release gate inferred. P078-02 remains pending. [Evidence](evidence/implementation/SESSION-0034.md).

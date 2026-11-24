@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T13:05:44+05:45",
+  "updatedAt": "2026-11-24T15:07:00+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -257,6 +257,69 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0034.md",
           "sourceRevision": "8ef181639ca57a2f95569d0f9e977ea84e65a4f2"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-013",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Backend identity drift after learner approval",
+      "mechanism": "Same model name/backend type could point at a replaced gateway or changed credentials or limits.",
+      "userEffect": "Approval could silently transfer to a different inference configuration.",
+      "affectedTasks": [
+        "SUTRA-X007-19",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Opaque per-request configuration precondition; reject mismatches before quota/upstream. Does not attest remote model weights.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0035.md",
+          "sourceRevision": "db3d29330dcdfcaf3b992d76bf3af1c1bbc48f5b"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-014",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Cancellation during a later inference preflight erases completed evidence",
+      "mechanism": "The old output was cleared before the first new model request.",
+      "userEffect": "A cancelled preflight could destroy the learner's previous valid result.",
+      "affectedTasks": [
+        "SUTRA-X007-20",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Delay clearing to actual model attempt; keep run epoch and stale action guards.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0035.md",
+          "sourceRevision": "2b5256bfa6feb8cf9f1dc26382c2565bb03c07b6"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-015",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Release candidate can inherit stale evidence or unexpected files",
+      "mechanism": "Incomplete source/content binding and unfiltered historical graph files could survive candidate materialization.",
+      "userEffect": "An apparently consistent package could carry stale or unintended public artifacts.",
+      "affectedTasks": [
+        "SUTRA-X008-01",
+        "SUTRA-X008-02"
+      ],
+      "mitigation": "Exact revision/content and byte checks; public path allowlist; actual quota validation; trusted stable source tree. Independent live gates remain.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0035.md",
+          "sourceRevision": "89694bec2a59a3259983ab44d60d9934f5869872"
         }
       ],
       "unblockCondition": null

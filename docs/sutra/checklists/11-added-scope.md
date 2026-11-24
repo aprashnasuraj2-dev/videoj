@@ -71,3 +71,11 @@ Required items discovered after the original plan remain release blockers until 
 - [x] `SUTRA-X007-16` Refuse incomplete lexical coverage and preserve single-digit, single-letter and oversized unknown query constraints rather than silently stripping them; verify unit cases and the visible no-result Chromium regression without network or model calls.
 - [x] `SUTRA-X007-17` Treat all fully matching cues as ambiguous regardless of phrase-rank distance; expose the bounded five-receipt display and preserve complete match count and truncation metadata.
 - [x] `SUTRA-X007-18` Reject rewritten terminal SSE finish reasons, duplicate/early or inconsistent terminal token usage; verify protocol units and full fake local HTTP chain refusal with no retry and released quota lease.
+
+- [x] `SUTRA-X007-19` Bind every snapshot-aware inference POST to the server-issued opaque configuration version; reject changed backend, exact gateway, credentials, model, limits or missing/malformed contract before quota/provider contact; no implicit retry. Portable calls without either snapshot header are a distinct interface.
+- [x] `SUTRA-X007-20` Preserve existing completed evidence through a later cancelled inference preflight; clear only on actual new model execution, keep old detached review actions inert, and never merge previous and new run evidence.
+
+## X008 — Candidate identity and publication boundary
+
+- [x] `SUTRA-X008-01` Reject release-candidate evidence measured for another source revision or reviewed content identity; verify exact manifest, links, canonical graph bytes, graph membership and worker quota validity. Structural fixture only; not live measurement or release readiness.
+- [x] `SUTRA-X008-02` Materialize only recognized release files; omit all stale development graph versions and synthetic publication inventory/content, reject unknown public files, traversal, symlink roots/ancestors and aliased source/output overlap. Trusted stable build tree required; not secret scanning.

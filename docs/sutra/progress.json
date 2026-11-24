@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T13:05:44+05:45",
+  "updated_at": "2026-11-24T15:07:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "8ef181639ca57a2f95569d0f9e977ea84e65a4f2",
-  "last_session_id": "SUTRA-SESSION-0034",
-  "stage": "local_evidence_and_terminal_stream_stabilized",
+  "last_observed_code_sha": "89694bec2a59a3259983ab44d60d9934f5869872",
+  "last_session_id": "SUTRA-SESSION-0035",
+  "stage": "source_consent_and_candidate_evidence_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P078-02",
   "ready_engineering_queue": [
@@ -16,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Reconcile exact latest browser matrix/learner workflow results; preserve stricter lexical abstention and immutable stream terminal state. Continue P078-02 source-version, consent and default-inference blockers; real operator model/GPU, human source truth/rights, pilot and provider cost remain unverified. Keep release/deployment/paid inference closed.",
+  "next_action": "Continue P078-02: fail closed in source MCP on pre-aborted signals and mutable arguments across async initialization; verify zero transport and no late receipt, then recheck learner closure table. Real engine, rights, human acceptance, economics and public interoperability remain open. Do not deploy or enable paid inference.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -10738,7 +10738,7 @@
     },
     "SUTRA-X006-01": {
       "state": "verified",
-      "verified_at": "2026-11-24T05:46:15Z",
+      "verified_at": "2026-11-24T15:07:00+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45335478185/job/138246429557",
@@ -10753,12 +10753,19 @@
           "result": "pass",
           "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
           "observed_at": "2026-11-24T05:46:15Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45363800348/job/138340226545",
+          "description": "Revalidated browser exact graph/profile drift and approval/cancel paths; browser step executed.",
+          "result": "pass",
+          "source_revision": "2b5256bfa6feb8cf9f1dc26382c2565bb03c07b6",
+          "observed_at": "2026-11-24T15:07:00+05:45"
         }
       ]
     },
     "SUTRA-X006-02": {
       "state": "verified",
-      "verified_at": "2026-11-24T05:46:15Z",
+      "verified_at": "2026-11-24T15:07:00+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45335478185/job/138246429557",
@@ -10773,6 +10780,13 @@
           "result": "pass",
           "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
           "observed_at": "2026-11-24T05:46:15Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45363443002/job/138338993613",
+          "description": "Revalidated server catalog precondition and mid-run 409 handling; package and browser steps executed.",
+          "result": "pass",
+          "source_revision": "db3d29330dcdfcaf3b992d76bf3af1c1bbc48f5b",
+          "observed_at": "2026-11-24T15:07:00+05:45"
         }
       ]
     },
@@ -10958,7 +10972,7 @@
     },
     "SUTRA-X007-04": {
       "state": "verified",
-      "verified_at": "2026-11-24T06:15:38Z",
+      "verified_at": "2026-11-24T15:07:00+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45339004529/job/138257848583",
@@ -10973,6 +10987,13 @@
           "result": "pass",
           "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
           "observed_at": "2026-11-24T06:15:38Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45363443002/job/138338993613",
+          "description": "Revalidated explicit backend and no implicit hosted fallback with configuration identity guard.",
+          "result": "pass",
+          "source_revision": "db3d29330dcdfcaf3b992d76bf3af1c1bbc48f5b",
+          "observed_at": "2026-11-24T15:07:00+05:45"
         }
       ]
     },
@@ -11223,7 +11244,7 @@
     },
     "SUTRA-X007-17": {
       "state": "verified",
-      "verified_at": "2026-11-24T13:05:44+05:45",
+      "verified_at": "2026-11-24T15:07:00+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45346978248/job/138283802992",
@@ -11238,6 +11259,13 @@
           "result": "pass",
           "source_revision": "8ef181639ca57a2f95569d0f9e977ea84e65a4f2",
           "observed_at": "2026-11-24T13:05:44+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45362920127/job/138337213975",
+          "description": "Revalidated full bounded matching count, MCP agreement, six-cue localized browser ambiguity and five receipt cap.",
+          "result": "pass",
+          "source_revision": "ac894925e3c978e1d6d281211f7084d0f0d6dd72",
+          "observed_at": "2026-11-24T15:07:00+05:45"
         }
       ]
     },
@@ -11258,6 +11286,86 @@
           "result": "pass",
           "source_revision": "8ef181639ca57a2f95569d0f9e977ea84e65a4f2",
           "observed_at": "2026-11-24T13:05:44+05:45"
+        }
+      ]
+    },
+    "SUTRA-X007-19": {
+      "state": "verified",
+      "verified_at": "2026-11-24T15:07:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45363443002/job/138338993613",
+          "description": "Bind every snapshot-aware inference POST to the server-issued opaque configuration version; reject changed backend, exact gateway, credentials, model, limits or missing/malformed contract before quota/provider contact; no implicit retry. Portable calls without either snapshot header are a distinct interface.",
+          "result": "pass",
+          "source_revision": "db3d29330dcdfcaf3b992d76bf3af1c1bbc48f5b",
+          "observed_at": "2026-11-24T15:07:00+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0035.md",
+          "description": "Scoped observations, failure history and limits.",
+          "result": "pass",
+          "source_revision": "db3d29330dcdfcaf3b992d76bf3af1c1bbc48f5b",
+          "observed_at": "2026-11-24T15:07:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X007-20": {
+      "state": "verified",
+      "verified_at": "2026-11-24T15:07:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45363800348/job/138340226545",
+          "description": "Preserve existing completed evidence through a later cancelled inference preflight; clear only on actual new model execution, keep old detached review actions inert, and never merge previous and new run evidence.",
+          "result": "pass",
+          "source_revision": "2b5256bfa6feb8cf9f1dc26382c2565bb03c07b6",
+          "observed_at": "2026-11-24T15:07:00+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0035.md",
+          "description": "Scoped observations, failure history and limits.",
+          "result": "pass",
+          "source_revision": "2b5256bfa6feb8cf9f1dc26382c2565bb03c07b6",
+          "observed_at": "2026-11-24T15:07:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X008-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T15:07:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45363800386/job/138340226035",
+          "description": "Reject release-candidate evidence measured for another source revision or reviewed content identity; verify exact manifest, links, canonical graph bytes, graph membership and worker quota validity. Structural fixture only; not live measurement or release readiness.",
+          "result": "pass",
+          "source_revision": "2b5256bfa6feb8cf9f1dc26382c2565bb03c07b6",
+          "observed_at": "2026-11-24T15:07:00+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0035.md",
+          "description": "Scoped observations, failure history and limits.",
+          "result": "pass",
+          "source_revision": "2b5256bfa6feb8cf9f1dc26382c2565bb03c07b6",
+          "observed_at": "2026-11-24T15:07:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X008-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T15:07:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45364178653/job/138341519230",
+          "description": "Materialize only recognized release files; omit all stale development graph versions and synthetic publication inventory/content, reject unknown public files, traversal, symlink roots/ancestors and aliased source/output overlap. Trusted stable build tree required; not secret scanning.",
+          "result": "pass",
+          "source_revision": "89694bec2a59a3259983ab44d60d9934f5869872",
+          "observed_at": "2026-11-24T15:07:00+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0035.md",
+          "description": "Scoped observations, failure history and limits.",
+          "result": "pass",
+          "source_revision": "89694bec2a59a3259983ab44d60d9934f5869872",
+          "observed_at": "2026-11-24T15:07:00+05:45"
         }
       ]
     }
@@ -11335,6 +11443,7 @@
     "Task checkbox state is authoritative; this register carries evidence and resume pointers.",
     "A delivered package is not an official Devpost submission.",
     "Participant release gate: no public deployment, domain/route assignment, public inference enablement or promotion until all applicable major checklist product/security/conformance/acceptance gates have current passing evidence. Dry-run bundling is not release.",
-    "Participant reiterated 2026-11-24: no jumping to deployment while hundreds of checklist items remain; spend subsequent sessions on checklist implementation and observed verification. Existing dry-run candidate is not authorization to deploy or continue deployment work."
+    "Participant reiterated 2026-11-24: no jumping to deployment while hundreds of checklist items remain; spend subsequent sessions on checklist implementation and observed verification. Existing dry-run candidate is not authorization to deploy or continue deployment work.",
+    "Session 0035: older performance/quality observations remain revision-scoped; use impact freshness output, not historical numbers as current evidence. Candidate fixtures and green CI do not authorize release."
   ]
 }
