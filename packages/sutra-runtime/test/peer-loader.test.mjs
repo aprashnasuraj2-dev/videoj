@@ -84,3 +84,20 @@ test('404 peer manifest and invalid JSON are visible artifact failures',async()=
  await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async()=>new Response('missing',{status:404})}),e=>e.code==='MANIFEST_UNAVAILABLE');
  await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async()=>new Response('{bad',{headers:{'Content-Type':'application/json'}})}),e=>e.code==='MANIFEST_UNAVAILABLE');
 });
+
+test('authority-like site path cannot replace the peer URL origin during manifest resolution',async()=>{
+ const target='https://peer.example//other.example/agents/%74ransit';
+ const manifestUrl='https://peer.example//other.example/agents/agent-manifest.json';
+ const graphUrl='https://peer.example//other.example/agents/transit.network.json';
+ const intents=[],calls=[];
+ const inspector=createConsentInspector({decide:async intent=>{intents.push([intent.origin,intent.resource]);return {decision:'allow',scope:'once'};}});
+ const fetchImpl=async url=>{
+  calls.push(url);
+  assert.ok([manifestUrl,graphUrl].includes(url),'no implicit authority switch');
+  return response(url===manifestUrl?manifest():graph);
+ };
+ const loaded=await loadPeerNetwork({peerUrl:target,inspector,fetchImpl});
+ assert.equal(loaded.name,'transit');assert.equal(loaded.origin,'https://peer.example');
+ assert.deepEqual(loaded.artifacts,{manifest:manifestUrl,definition:graphUrl});
+ assert.deepEqual(calls,[manifestUrl,graphUrl]);assert.deepEqual(intents,calls.map(url=>['https://peer.example',url]));
+});

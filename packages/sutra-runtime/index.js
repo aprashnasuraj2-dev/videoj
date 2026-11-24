@@ -350,7 +350,11 @@ function parsePeerNetworkReference(peerUrl){
  try{networkName=decodeURIComponent(encodedName);}catch{fail('PEER_URL','Peer network name has invalid encoding.');}
  if(!validId(networkName))fail('NETWORK_ID','Peer URL final path component is not a supported exact network name.');
  const basePath=parts.join('/')+'/';
- const base=new URL(basePath,target.origin);
+ // The preceding path is a pathname, never a URL reference. Resolving a
+ // leading "//host" as a reference would replace the approved peer origin
+ // and could apply that peer's private-context policy to a different site.
+ const base=new URL(target.href);base.pathname=basePath;
+ if(base.origin!==target.origin||base.pathname!==basePath)fail('PEER_URL','Peer site base did not preserve the requested origin and path.');
  return {target,base,networkName};
 }
 

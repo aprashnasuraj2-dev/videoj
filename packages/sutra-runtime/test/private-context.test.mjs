@@ -119,3 +119,22 @@ test('returning private context needs an independent toCaller grant',async()=>{
  assert.ok(allowed.some(text=>text.includes('private_context')&&text.includes('ne-NP')));
  assert.ok(allowed.every(text=>!text.includes('PRIVATE_CONTEXT_CANARY_123')));
 });
+
+test('authority-like peer pathname cannot apply a trusted private grant to an implicitly substituted site',async()=>{
+ const target='https://peer.example//other.example/agents/transit';
+ const g=definition();g.tools[0].tools=[target];
+ const base=createScriptedModel(),prompts=[],contacts=[],decisions=[];
+ const model={...base,async chat(args){prompts.push({origin:args.origin,messages:JSON.stringify(args.messages)});return base.chat(args);}};
+ const result=await runNetwork({definition:g,request:'Inspect the synthetic cue.',model,
+  privateContext:{locale:'ne-NP',secretCanary:'NOT_APPROVED_PRIVATE_CANARY'},
+  peerContextGrants:[{peerUrl:target,network:'transit',toPeer:['locale'],toCaller:[]}],
+  peerRuntime:{inspector:createConsentInspector({decide:async intent=>{decisions.push(intent.origin);return {decision:'allow',scope:'once'};}}),
+   fetchImpl:async url=>{contacts.push(url);assert.equal(new URL(url).origin,'https://peer.example');return Response.json(url.endsWith('agent-manifest.json')?manifest:sourceGraph);}}
+ });
+ assert.equal(result.modelCalls,5);
+ assert.deepEqual(contacts,['https://peer.example//other.example/agents/agent-manifest.json','https://peer.example//other.example/agents/transit.network.json']);
+ assert.deepEqual(decisions,['https://peer.example','https://peer.example']);
+ assert.ok(prompts.some(p=>p.origin==='https://peer.example'&&p.messages.includes('ne-NP')));
+ assert.ok(prompts.every(p=>!p.messages.includes('NOT_APPROVED_PRIVATE_CANARY')));
+ assert.ok(prompts.filter(p=>p.origin==='sutra-local').every(p=>!p.messages.includes('ne-NP')));
+});
