@@ -6,9 +6,12 @@ const numeric=(vars,key,min,max)=>{const n=Number(vars[key]);if(!Number.isIntege
 export function renderWorkerConfig({baseConfig,releaseConfig}){
  const cfg=validateReleaseConfig(releaseConfig);
  if(!plain(baseConfig)||typeof baseConfig.name!=='string'||!baseConfig.name||typeof baseConfig.main!=='string'||!baseConfig.main||baseConfig.workers_dev!==false||baseConfig.preview_urls!==false||!plain(baseConfig.vars))throw Error('Invalid private Worker base config.');
- if(Object.hasOwn(baseConfig.vars,'SUTRA_PROVIDER_KEY')||Object.hasOwn(baseConfig.vars,'SUTRA_CLIENT_HASH_SECRET'))throw Error('Secret values/names must not be stored in public Worker vars.');
- const vars={...baseConfig.vars,
+ if(['SUTRA_PROVIDER_KEY','SUTRA_SELF_HOSTED_TOKEN','SUTRA_CLIENT_HASH_SECRET'].some(key=>Object.hasOwn(baseConfig.vars,key)))throw Error('Secret values/names must not be stored in public Worker vars.');
+ const cleanVars={...baseConfig.vars};delete cleanVars.SUTRA_SELF_HOSTED_UPSTREAM_URL;
+ const vars={...cleanVars,
   SUTRA_ENABLE_INFERENCE:'true',
+  SUTRA_INFERENCE_BACKEND:cfg.backend,
+  ...(cfg.backend==='self_hosted'?{SUTRA_SELF_HOSTED_UPSTREAM_URL:cfg.selfHostedGatewayUrl}:{}),
   SUTRA_ALLOWED_ORIGIN:cfg.publicOrigin,
   SUTRA_MODELS:cfg.model,
   SUTRA_PEER_ORIGINS:cfg.peerOrigin,
@@ -22,9 +25,10 @@ export function renderWorkerConfig({baseConfig,releaseConfig}){
  if(Number(vars.SUTRA_MAX_CLIENT_CALLS)>Number(vars.SUTRA_MAX_DAILY_CALLS))throw Error('Client call ceiling exceeds global ceiling.');
  if(Number(vars.SUTRA_MAX_DAILY_OUTPUT_TOKENS)>Number(vars.SUTRA_MAX_DAILY_CALLS)*Number(vars.SUTRA_MAX_OUTPUT_TOKENS))throw Error('Output-token ceiling exceeds call/output reservation envelope.');
  const rendered={...structuredClone(baseConfig),vars};
- const publicRecord={schema:1,sourceRevision:cfg.sourceRevision,workerName:rendered.name,publicOrigin:cfg.publicOrigin,peerOrigin:cfg.peerOrigin,model:cfg.model,
+ const requiredSecretBindings=cfg.backend==='self_hosted'?['SUTRA_SELF_HOSTED_TOKEN','SUTRA_CLIENT_HASH_SECRET']:['SUTRA_PROVIDER_KEY','SUTRA_CLIENT_HASH_SECRET'];
+ const publicRecord={schema:1,sourceRevision:cfg.sourceRevision,workerName:rendered.name,publicOrigin:cfg.publicOrigin,peerOrigin:cfg.peerOrigin,backend:cfg.backend,model:cfg.model,
   policy:{maxOutputTokens:Number(vars.SUTRA_MAX_OUTPUT_TOKENS),maxDailyCalls:Number(vars.SUTRA_MAX_DAILY_CALLS),maxClientCalls:Number(vars.SUTRA_MAX_CLIENT_CALLS),maxDailyInputBytes:Number(vars.SUTRA_MAX_DAILY_INPUT_BYTES),maxDailyOutputTokens:Number(vars.SUTRA_MAX_DAILY_OUTPUT_TOKENS),maxConcurrent:Number(vars.SUTRA_MAX_CONCURRENT)},
-  requiredSecretBindings:['SUTRA_PROVIDER_KEY','SUTRA_CLIENT_HASH_SECRET'],
+  requiredSecretBindings,
   limitation:'This rendered config contains no secret values and does not prove that platform secrets, Durable Object migrations, billing, routes or deployment are present.'};
  return Object.freeze({config:Object.freeze(rendered),record:Object.freeze({...publicRecord,recordHash:digest(publicRecord)})});
 }

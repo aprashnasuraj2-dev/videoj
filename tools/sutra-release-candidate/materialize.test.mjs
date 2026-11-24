@@ -13,9 +13,9 @@ const profileBytes=Buffer.from(JSON.stringify(reviewedProfile,null,2)+'\n'),prof
 const packCore={schema:1,contentVersion:'lesson-v1',intakeRecordHash:'4'.repeat(64),profileSha256:profileSha,catalogSha256:catalogSha,mediaSha256:mediaSha,transcriptSha256:transcriptSha,guideSha256:guideSha,publicPaths:{profile:'/content/content-profile.json',catalog:'/content/source-catalog.json',media:reviewedProfile.media.video,transcript:reviewedProfile.transcript.path,guide:reviewedProfile.guideClaim.sourceHref.split('#')[0]}};
 const packRecord={...packCore,recordHash:sha(Buffer.from(JSON.stringify(packCore,null,2)+'\n')),limitation:'fixture'};
 const contentEvidence={status:'reviewed_attested',contentVersion:'lesson-v1',profileSha256:profileSha,catalogSha256:catalogSha,mediaSha256:mediaSha,transcriptSha256:transcriptSha,guideSha256:guideSha,intakeRecordHash:'4'.repeat(64),rightsAttested:true,factualReviewAttested:true,evidenceRef:'private:content/lesson-v1'};
-const cfg=()=>({schema:1,sourceRevision:'a'.repeat(40),publicOrigin:'https://sutra.example',peerOrigin:'https://guide.example',model:'provider/model-v1',
- liveEvidence:{status:'live_verified',model:'provider/model-v1',observedAt:'2026-11-24T01:00:00Z',runRecordHash:'b'.repeat(64),costReportHash:'c'.repeat(64),usageComplete:true,judgePathPassed:true},
- budgetEvidence:{approved:true,spendCeilingUsd:25,judgingReserveRuns:50,evidenceRef:'private:budget/sutra-001'},contentEvidence,
+const cfg=()=>({schema:1,sourceRevision:'a'.repeat(40),publicOrigin:'https://sutra.example',peerOrigin:'https://guide.example',backend:'self_hosted',selfHostedGatewayUrl:'https://operator.example/v1/chat/completions',model:'provider/model-v1',
+ liveEvidence:{status:'live_verified',backend:'self_hosted',model:'provider/model-v1',observedAt:'2026-11-24T01:00:00Z',runRecordHash:'b'.repeat(64),costReportHash:'c'.repeat(64),usageComplete:true,judgePathPassed:true},
+ budgetEvidence:{approved:true,costMode:'operator_owned',spendCeilingUsd:0,judgingReserveRuns:50,evidenceRef:'private:budget/sutra-001'},contentEvidence,
  spec:{launchCommit:launchSpecCommit,compatibilityCommit:currentSpecCommit,compatibilityBlob:currentSpecBlob}});
 
 async function fixture(){

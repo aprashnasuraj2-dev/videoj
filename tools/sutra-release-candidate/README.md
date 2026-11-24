@@ -2,7 +2,7 @@
 
 This module exists because the development build is deliberately **not** a release candidate: its manifest has no `llm_router`, inference is disabled, and its graphs do not name an operator-approved live model.
 
-After the real provider/budget/judge-path evidence exists, this gate prepares the public agent artifacts deterministically:
+After real model/backend, resource-budget and judge-path evidence exists, this gate prepares the public agent artifacts deterministically. The preferred credentialless learner remains the no-model path; optional inference may be explicitly `self_hosted` or `hosted`, with no backend fallback:
 
 - manifest publishes exactly one same-origin publisher-funded router at `<public origin>/api/v1`;
 - manifest names the stable public browser runtime at `/runtime/sutra-runtime.js`;
@@ -13,7 +13,7 @@ After the real provider/budget/judge-path evidence exists, this gate prepares th
 - the symbolic guide link is rewritten to the exact release peer origin;
 - the release record binds source revision, launch/current spec pins, live-run/cost hashes and a private budget-approval reference.
 
-The gate **refuses** to build from the current router-free development manifest unless the supplied release config says live provider usage is complete, the clean judge path passed, budget approval exists and at least 20 judging-reserve runs remain.
+The gate **refuses** to build from the current router-free development manifest unless the supplied release config says live inference usage is complete, the exact backend/model clean judge path passed, resource-budget approval exists and at least 20 judging-reserve runs remain. `self_hosted` requires one exact HTTPS gateway URL and operator-owned cost mode; `hosted` requires provider-billed cost mode and cannot carry a self-hosted gateway URL.
 
 That is structural evidence only. The tool cannot prove that budget approval is authentic, that the provider will stay available, that public HTTPS/CORS works, that the content is licensed/factually reviewed or that Devpost accepts the project.
 
@@ -35,6 +35,6 @@ It performs no deployment and has no cloud credentials. CI additionally proves t
 
 `node tools/sutra-release-candidate/worker-config-cli.mjs services/sutra-api/wrangler.private.jsonc release-config.json > rendered-worker.json`
 
-The renderer changes only public/non-secret policy: enables inference, binds the exact caller origin, approved model and peer origin, and validates the existing quota/concurrency envelope. It refuses any provider key or client-HMAC secret in public `vars`.
+The renderer changes only non-secret policy: enables inference only in the materialized candidate config, binds the exact caller origin, approved backend/model and peer origin, and validates the existing quota/concurrency envelope. `self_hosted` binds the reviewed HTTPS gateway and requires `SUTRA_SELF_HOSTED_TOKEN`; `hosted` requires `SUTRA_PROVIDER_KEY`. Both require `SUTRA_CLIENT_HASH_SECRET`. It refuses all of those secret names/values in public `vars` and removes stale self-hosted gateway state when hosted mode is selected.
 
 Actual secret values remain platform secret bindings and are never written by this tool. A rendered config is not deployment evidence; the later live status/public-manifest check must still prove that the deployed Worker and public artifacts agree.

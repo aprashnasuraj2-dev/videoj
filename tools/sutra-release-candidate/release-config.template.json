@@ -11,13 +11,15 @@
     "runRecordHash": null,
     "costReportHash": null,
     "usageComplete": null,
-    "judgePathPassed": null
+    "judgePathPassed": null,
+    "backend": null
   },
   "budgetEvidence": {
     "approved": null,
     "spendCeilingUsd": null,
     "judgingReserveRuns": null,
-    "evidenceRef": "private:budget/REPLACE"
+    "evidenceRef": "private:budget/REPLACE",
+    "costMode": "operator_owned"
   },
   "spec": {
     "launchCommit": "fd872b9221aeb8ff762b75a5badbf84b23c133cc",
@@ -36,5 +38,7 @@
     "rightsAttested": null,
     "factualReviewAttested": null,
     "evidenceRef": "private:content/REPLACE"
-  }
+  },
+  "backend": "self_hosted",
+  "selfHostedGatewayUrl": null
 }
