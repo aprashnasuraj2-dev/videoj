@@ -327,7 +327,7 @@ const consentInspector=createConsentInspector({decide:(intent,{signal}={})=>new 
  catch{finishConsent('deny','once',entry);}
 })});
 consentDialog.addEventListener('cancel',event=>{event.preventDefault();finishConsent('deny');});
-consentDialog.addEventListener('close',()=>{if(pendingConsentDecision)finishConsent('deny');});
+consentDialog.addEventListener('close',()=>{if(!consentDialog.open&&pendingConsentDecision)finishConsent('deny');});
 document.querySelector('#deny-peer-contact').addEventListener('click',()=>finishConsent('deny','once'));
 document.querySelector('#allow-peer-once').addEventListener('click',()=>finishConsent('allow','once'));
 document.querySelector('#allow-peer-session').addEventListener('click',()=>finishConsent('allow','session'));
