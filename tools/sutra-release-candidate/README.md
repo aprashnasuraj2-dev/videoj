@@ -29,3 +29,12 @@ After a **real completed** release config exists:
 The materializer refuses an existing or overlapping destination, hidden entries, symlinks, path escape and oversized files. It copies regular development build files, removes manifest-indexed development graph variants, writes only SHA-256-addressed release graph variants, replaces manifest/links, binds the stable public runtime and UI-entry hashes, and emits \`/agents/release-candidate.json\` plus a non-self-referential candidate inventory digest.
 
 It performs no deployment and has no cloud credentials. CI additionally proves the checked-in incomplete template cannot generate a candidate.
+
+
+## Render the private Worker policy from the same release config
+
+`node tools/sutra-release-candidate/worker-config-cli.mjs services/sutra-api/wrangler.private.jsonc release-config.json > rendered-worker.json`
+
+The renderer changes only public/non-secret policy: enables inference, binds the exact caller origin, approved model and peer origin, and validates the existing quota/concurrency envelope. It refuses any provider key or client-HMAC secret in public `vars`.
+
+Actual secret values remain platform secret bindings and are never written by this tool. A rendered config is not deployment evidence; the later live status/public-manifest check must still prove that the deployed Worker and public artifacts agree.
