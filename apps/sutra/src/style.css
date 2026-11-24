@@ -100,3 +100,6 @@ html[data-locale=ne] .language-review-note{font-weight:650}
 
 /* Keep the judge/learner journey contiguous; technical interoperability controls come afterward. */
 .developer-divider{margin-top:34px;padding:24px 28px;border-top:2px solid #bccbc1;background:#f5f7f2;border-radius:12px 12px 0 0}.developer-divider h2{margin:4px 0 8px}.developer-divider p{max-width:850px;margin-bottom:0}.developer-divider+.runtime-lab{margin-top:12px}
+
+/* First-load task map: the core journey is understandable before optional technical detail. */
+.journey-map{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 8px}.journey-map a{display:flex;flex-direction:column;gap:5px;min-width:0;padding:13px 14px;border:1px solid #cbd7ce;border-radius:10px;background:#fbfcf8;color:inherit;text-decoration:none}.journey-map a:hover{border-color:#789688}.journey-map a:focus-visible{outline:3px solid #ad651e;outline-offset:3px}.journey-map strong{font-size:13px}.journey-map span{font-size:11px;color:#596e64;line-height:1.45}.journey-note{font-size:11px;color:#596e64;margin:0 0 18px}@media(max-width:760px){.journey-map{grid-template-columns:1fr}.journey-map a{padding:11px 12px}}

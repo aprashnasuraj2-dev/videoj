@@ -33,6 +33,11 @@ const assert=require('node:assert/strict');
   assert.equal(await page.locator('#timing-status').getAttribute('data-state'),'empty');
   assert.equal(await page.locator('#consent-status').getAttribute('data-state'),'empty');
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
+  assert.deepEqual(await page.locator('.journey-map a').evaluateAll(nodes=>nodes.map(n=>({href:n.getAttribute('href'),text:n.textContent.trim()}))),[
+   {href:'#direct-lookup',text:'1 · Find the sourceStart with exact words. No model call is required.'},
+   {href:'#comparison-title',text:'2 · Compare evidenceKeep missing or conflicting sources visibly separate.'},
+   {href:'#review-title',text:'3 · Keep a reviewed referencePreview the exact receipt before anything is saved.'}
+  ]);
   assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('#comparison-title,#review-title,#developer-tools-title,#runtime-title')].map(x=>x.id)),['comparison-title','review-title','developer-tools-title','runtime-title'],'core comparison/review must precede developer tooling');
 
   // Direct evidence selection is a complete usable path before inference or media transfer.
