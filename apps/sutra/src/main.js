@@ -72,7 +72,7 @@ timingTranscript=mountTranscriptPanel(transcriptHost,{
  }
 });
 mountComparisonView(document.querySelector('#comparison-body'),{
- receipt:timingFixture.receipt,seekTo:seconds=>timingPlayer?.seek(seconds)
+ receipt:timingFixture.receipt,sources:[timingFixture.source],seekTo:seconds=>timingPlayer?.seek(seconds)
 });
 const mediaHost=document.querySelector('.media-empty'),timingStatus=document.querySelector('#timing-status'),seekTiming=document.querySelector('#seek-timing');
 document.querySelector('#load-timing').addEventListener('click',async event=>{
