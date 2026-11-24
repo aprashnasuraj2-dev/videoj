@@ -121,7 +121,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
        // The reviewed compiler emits one text-only blockquote; the bundled
        // synthetic example uses a paragraph. Never accept a substring buried
        // in heading, hidden markup, or a second duplicate anchor.
-       const excerptTag='P';
+       const excerptTag=claim.sourceId==='fixture_guide'&&activeMode==='conflict'?'P':'BLOCKQUOTE';
        const candidates=anchored?Array.from(anchored.children).filter(element=>element.tagName===excerptTag):[];
        const exact=candidates.length===1?candidates[0]:null;
        if(!anchored||anchored.tagName!=='SECTION'||!exact||exact.attributes.length||exact.children.length||exact.textContent!==claim.excerpt)throw Error('Anchored excerpt mismatch');

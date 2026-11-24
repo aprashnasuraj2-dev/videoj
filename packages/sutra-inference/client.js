@@ -14,7 +14,7 @@ export function createProviderAdapter({origin,model,fetchImpl=fetch,timeoutMs=30
    // while disposing any response body that arrives after cancellation.
    const pending=Promise.resolve().then(()=>{
     if(controller.signal.aborted)stop('CANCELLED');
-    return fetchImpl(url,{method:'POST',credentials:'omit',redirect:'error',cache:'no-store',headers:{'Content-Type':'application/json'},body:JSON.stringify({model,messages,tools,stream:true}),signal:controller.signal});
+    return fetchImpl(url,{method:'POST',credentials:'omit',redirect:'error',cache:'no-store',referrer:'',referrerPolicy:'no-referrer',headers:{'Content-Type':'application/json'},body:JSON.stringify({model,messages,tools,stream:true}),signal:controller.signal});
    }).then(value=>{
     if(finished||controller.signal.aborted){dispose(value?.body);stop('CANCELLED');}
     received=value;return value;

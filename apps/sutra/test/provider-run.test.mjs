@@ -107,16 +107,16 @@ test('bounded provider POST adds exact version preconditions but never ambient c
  const wrapped=createBoundProviderTransport({origin,approvedContract:approval(),onPrecondition:reason=>rejections.push(reason),fetchImpl:async(url,opts)=>{
   calls.push({url,opts});return new Response(null,{status:409,headers:{'X-Sutra-Precondition':url.endsWith('/completions')?'inference':'catalog'}});
  }});
- await wrapped(origin+'/api/source-tools',{method:'POST',headers:{Cookie:'synthetic-private-cookie',Authorization:'Bearer synthetic-secret','X-Sutra-Inference-Contract':'bad','Content-Type':'application/json'}});
+ await wrapped(origin+'/api/source-tools',{method:'POST',headers:{Cookie:'synthetic-private-cookie',Authorization:'Bearer synthetic-secret','X-Sutra-Inference-Contract':'bad','X-Private-Key':'hidden-canary','MCP-Protocol-Version':'malicious','Content-Type':'application/json'},referrer:origin+'/private?secret=canary',referrerPolicy:'unsafe-url',keepalive:true});
  await wrapped(origin+'/api/v1/chat/completions',{method:'POST',headers:{Authorization:'Bearer synthetic-secret','Content-Type':'application/json'}});
  assert.deepEqual(rejections,['catalog','inference']);
  assert.equal(calls.length,2);
  for(const call of calls){
   assert.equal(call.opts.credentials,'omit');assert.equal(call.opts.redirect,'error');assert.equal(call.opts.cache,'no-store');
-  assert.equal(call.opts.headers.get('Cookie'),null);assert.equal(call.opts.headers.get('Authorization'),null);
+  assert.equal(call.opts.headers.get('Cookie'),null);assert.equal(call.opts.headers.get('Authorization'),null);assert.equal(call.opts.headers.get('X-Private-Key'),null);assert.equal(call.opts.referrer,'');assert.equal(call.opts.referrerPolicy,'no-referrer');assert.equal(call.opts.keepalive,undefined);
   assert.equal(call.opts.headers.get('X-Sutra-Catalog-Sha256'),'c'.repeat(64));
  }
- assert.equal(calls[0].opts.headers.get('X-Sutra-Inference-Contract'),null);
+ assert.equal(calls[0].opts.headers.get('X-Sutra-Inference-Contract'),null);assert.equal(calls[0].opts.headers.get('MCP-Protocol-Version'),'2025-06-18');assert.equal(calls[0].opts.headers.get('Accept'),'application/json, text/event-stream');
  assert.equal(calls[1].opts.headers.get('X-Sutra-Inference-Contract'),'a'.repeat(64));
 });
 

@@ -32,7 +32,7 @@ const assert=require('node:assert/strict');
   const pageErrors=[],peerRequests=[];
   page.on('pageerror',error=>pageErrors.push(error.message));
   page.on('request',request=>{if(request.url().startsWith(peer+'/'))peerRequests.push({method:request.method(),url:request.url(),headers:request.headers(),cookie:request.headers().cookie});});
-  await page.goto(learner);
+  await page.goto(learner+'/?private=REFERRER_CANARY');
   const modules=Object.fromEntries([
    ['runtime','packages/sutra-runtime/index.js'],
    ['model','packages/sutra-runtime/testing.js'],
@@ -74,7 +74,7 @@ const assert=require('node:assert/strict');
   assert.equal(allowed.agentCalls,3);assert.equal(allowed.modelCalls,5);
   assert.deepEqual(peerRequests.map(request=>new URL(request.url).pathname),
    ['/agents/agent-manifest.json','/agents/checklist.network.json']);
-  assert.ok(peerRequests.every(request=>request.method==='GET'&&!request.cookie));
+  assert.ok(peerRequests.every(request=>request.method==='GET'&&!request.cookie&&!request.headers.referer));
   assert.ok(peerRequests.every(request=>!JSON.stringify(request.headers).includes('BYOK_PRIVATE_BROWSER_CANARY_DO_NOT_LEAK')));
   assert.ok(allowed.decisions.some(event=>event.contactKind==='peer_manifest'&&event.decision==='allow'));
   assert.ok(allowed.decisions.some(event=>event.contactKind==='peer_graph'&&event.decision==='allow'));

@@ -176,7 +176,7 @@ export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetc
     try{
       let response;
       try{
-        response=await raceAbort(()=>Promise.resolve(fetchImpl(target.href,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',signal:active,headers:{Accept:'application/json'}})).then(value=>{
+        response=await raceAbort(()=>Promise.resolve(fetchImpl(target.href,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',referrer:'',referrerPolicy:'no-referrer',signal:active,headers:{Accept:'application/json'}})).then(value=>{
           if(finished||active?.aborted){cancelBody(value?.body);throw cancelled();}
           received=value;return value;
         }),active);

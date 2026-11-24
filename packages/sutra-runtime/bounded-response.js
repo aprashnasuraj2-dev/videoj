@@ -13,7 +13,7 @@ export async function readBoundedResponse({url,fetchImpl=fetch,init={},signal,ma
  stopped.catch(()=>{});
  try{
   const incoming=Promise.resolve().then(()=>{
-   check();return fetchImpl(url,{...init,credentials:'omit',redirect:'error',cache:'no-store',signal});
+   check();return fetchImpl(url,{...init,credentials:'omit',redirect:'error',cache:'no-store',referrer:'',referrerPolicy:'no-referrer',signal});
   }).then(value=>{
    if(finished||signal?.aborted){cancelBody(value?.body);bad('ABORTED');}
    received=value;return value;

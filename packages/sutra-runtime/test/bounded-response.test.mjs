@@ -13,8 +13,8 @@ test('shared transport cancels late headers, held body and skipped notification 
  for(const phase of ['headers','body','skip']){
   let release,started=false,cancelled=0;
   const controller=new AbortController(),response=new Response(new ReadableStream({cancel(){cancelled++;}}),{headers});
-  const pending=readBoundedResponse({url,signal:controller.signal,maxBytes:32,init:{method:'GET',credentials:'include',redirect:'follow'},inspect:()=>phase!=='skip',fetchImpl:async(_url,opts)=>{
-   started=true;assert.equal(opts.credentials,'omit');assert.equal(opts.redirect,'error');
+  const pending=readBoundedResponse({url,signal:controller.signal,maxBytes:32,init:{method:'GET',credentials:'include',redirect:'follow',referrer:'https://private.test/path',referrerPolicy:'unsafe-url'},inspect:()=>phase!=='skip',fetchImpl:async(_url,opts)=>{
+   started=true;assert.equal(opts.credentials,'omit');assert.equal(opts.redirect,'error');assert.equal(opts.referrer,'');assert.equal(opts.referrerPolicy,'no-referrer');
    if(phase==='headers')return new Promise(resolve=>{release=resolve;});return response;
   }});
   await waitFor(()=>started);

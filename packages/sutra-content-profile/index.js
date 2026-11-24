@@ -31,7 +31,7 @@ export async function readContentBytes({url,origin,fetchImpl=fetch,signal,maxByt
  const stopped=new Promise((_,reject)=>{abort=()=>reject(Error('CONTENT_CANCELLED'));signal?.addEventListener('abort',abort,{once:true});});
  stopped.catch(()=>{});
  try{
-  const incoming=Promise.resolve(fetchImpl(target.href,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',headers:{Accept:accept},signal})).then(value=>{
+  const incoming=Promise.resolve(fetchImpl(target.href,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',referrer:'',referrerPolicy:'no-referrer',headers:{Accept:accept},signal})).then(value=>{
    if(finished||signal?.aborted){cancelBody(value?.body);throw Error('CONTENT_CANCELLED');}
    received=value;return value;
   });

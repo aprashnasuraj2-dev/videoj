@@ -11,7 +11,7 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
 (async()=>{
  const app=path.resolve(__dirname,'..');const root=path.resolve(app,'../..');
  const timing=JSON.parse(fs.readFileSync(path.join(app,'src/fixtures/timing-source.json'),'utf8'));
- let cors=true,serviceMode='normal';let posts=[],cookieSeen=[],authorizationSeen=[],bodyCanarySeen=[];
+ let cors=true,serviceMode='normal';let posts=[],cookieSeen=[],authorizationSeen=[],referrerSeen=[],bodyCanarySeen=[];
  const server=http.createServer(async(req,res)=>{
   if(req.url!=='/mcp'){res.writeHead(404);res.end();return;}
   const origin=req.headers.origin;
@@ -33,7 +33,7 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
    return;
   }
   cookieSeen.push(req.headers.cookie??null);
-  authorizationSeen.push(req.headers.authorization??null);
+  authorizationSeen.push(req.headers.authorization??null);referrerSeen.push(req.headers.referer??null);
   let body='';for await(const chunk of req){body+=chunk;if(body.length>20000){res.writeHead(413);res.end();return;}}
   bodyCanarySeen.push(body.includes('BYOK_PRIVATE_MCP_BROWSER_CANARY'));
   const rpc=JSON.parse(body);posts.push(rpc.method);
@@ -60,7 +60,7 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
   browser=await chromium.launch({headless:true});
   const page=await browser.newPage({viewport:{width:1024,height:800}});
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto(caller);
+  await page.goto(caller+'/?private=REFERRER_CANARY');
   await page.evaluate(()=>document.cookie='test-site-cookie=must-not-travel; SameSite=Lax');
   async function attempt(choice){
    return page.evaluate(async({root,endpoint,choice})=>{
@@ -108,7 +108,7 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
   assert.ok(yes.text.includes(timing.receipt.sourceId+'/'+timing.receipt.cueId));
   assert.deepEqual(posts.slice(before),['initialize','notifications/initialized','tools/list','tools/call']);
   assert.ok(cookieSeen.every(value=>value===null),'No cookies sent to MCP origin');
-  assert.ok(authorizationSeen.every(value=>value===null),'No model authorization forwarded to MCP origin');
+  assert.ok(authorizationSeen.every(value=>value===null),'No model authorization forwarded to MCP origin');assert.ok(referrerSeen.every(value=>value===null),'No caller URL or ambient referrer sent to MCP origin');
   assert.ok(bodyCanarySeen.every(value=>value===false),'BYOK canary never enters third-party MCP payload');
   assert.deepEqual(yes.decisions,['mcp_discovery','mcp_call']);
   assert.ok(!JSON.stringify(yes.consent).includes('synthetic-secret-canary'));

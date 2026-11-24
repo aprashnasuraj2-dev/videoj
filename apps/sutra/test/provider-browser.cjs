@@ -13,8 +13,8 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   // Same-origin cookies can exist from another site path. SUTRA source/API
   // requests never depend on them or disclose them to model/source tools.
   await page.context().addCookies([{name:'sutra-cookie-canary',value:'do-not-send',url:base}]);
-  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(r.url().includes('/api/')){requests.push(r.url());assert.equal(r.headers().cookie,undefined,'no SUTRA API request should inherit browser cookies');}});
-  await page.goto(base);await page.getByRole('heading',{name:'Ask about the evidence.'}).waitFor();
+  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(r.url().includes('/api/')){requests.push(r.url());assert.equal(r.headers().cookie,undefined,'no SUTRA API request should inherit browser cookies');assert.equal(r.headers().referer,undefined,'no API request should disclose caller page URL');}});
+  await page.goto(base+'/?private=REFERRER_CANARY');await page.getByRole('heading',{name:'Ask about the evidence.'}).waitFor();
   assert.match(await page.locator('#provider-panel').innerText(),/self-hosted or external hosted model/);
   assert.match(await page.locator('#provider-panel').innerText(),/not running in your browser/);
   assert.equal(requests.length,0,'static visit must not check dynamic status automatically');

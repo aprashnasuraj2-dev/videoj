@@ -116,12 +116,11 @@ export function createBoundProviderTransport({origin,approvedContract,fetchImpl=
   let target;
   try{target=new URL(url,origin);}catch{throw Error('PROVIDER_ROUTE');}
   if(target.origin!==origin||target.username||target.password||target.search||target.hash||options.method!=='POST'||!permitted.has(target.pathname)||target.href!==origin+target.pathname)throw Error('PROVIDER_ROUTE');
-  const headers=new Headers(options.headers);
-  // No browser credential can be imported through an injected model adapter.
-  headers.delete('Authorization');headers.delete('Cookie');headers.delete('Proxy-Authorization');
-  headers.set('X-Sutra-Catalog-Sha256',contract.content.catalogSha256);
+  // Reconstruct the complete header contract instead of forwarding arbitrary
+  // adapter metadata or trying to enumerate every possible credential header.
+  const headers=new Headers({'Content-Type':'application/json','X-Sutra-Catalog-Sha256':contract.content.catalogSha256});
   if(target.pathname==='/api/v1/chat/completions')headers.set('X-Sutra-Inference-Contract',contract.inferenceContractId);
-  else headers.delete('X-Sutra-Inference-Contract');
+  else{headers.set('Accept','application/json, text/event-stream');headers.set('MCP-Protocol-Version','2025-06-18');}
   const signal=options.signal;
   signal?.throwIfAborted();
   let response,received,finished=false;
@@ -131,7 +130,7 @@ export function createBoundProviderTransport({origin,approvedContract,fetchImpl=
    // The binding layer owns rejected bodies until it hands a response off.
    const incoming=Promise.resolve().then(()=>{
     signal?.throwIfAborted();
-    return fetchImpl(target.href,{...options,method:'POST',credentials:'omit',redirect:'error',cache:'no-store',headers,signal});
+    return fetchImpl(target.href,{method:'POST',body:options.body,credentials:'omit',redirect:'error',cache:'no-store',referrer:'',referrerPolicy:'no-referrer',headers,signal});
    }).then(value=>{
     if(finished||signal?.aborted){dispose(value);throw Error('PROVIDER_CANCELLED');}
     received=value;return value;

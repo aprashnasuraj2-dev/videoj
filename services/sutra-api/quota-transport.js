@@ -8,7 +8,7 @@ export async function readQuotaReply(quota,path,payload,signal){
   // Workerd does not implement Fetch's redirect:'error'. Manual is the
   // runtime-supported non-following mode; the exact status/URL checks below
   // still reject every redirect without contacting its Location.
-  url:'https://quota.internal'+path,fetchImpl:(url,init)=>quota.fetch(url,{...init,redirect:'manual'}),signal,maxBytes:512,
+  url:'https://quota.internal'+path,fetchImpl:(url,{referrer,referrerPolicy,...init})=>quota.fetch(url,{...init,redirect:'manual'}),signal,maxBytes:512,
   init:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)},
   inspect:response=>{if(response.status!==200)return false;if(!isFullJson(response))throw Error('Quota response');return true;}
  });
