@@ -24,8 +24,8 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   assert.equal(requests.filter(x=>x.endsWith('/api/infer')||x.endsWith('/api/v1/chat/completions')).length,0);
   await page.getByRole('button',{name:'Check example',exact:true}).click();assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
   // Test transport only: intercept the provider endpoint; never contact a paid model.
-  let inferenceContract='a'.repeat(64);
-  await page.route('**/api/status',r=>r.fulfill({json:{inference:'configured',model:'synthetic-provider-test',backend:'self_hosted',inferenceContractId:inferenceContract,routerBase:'/api/v1',publisherFunded:true,byok:false,sourceTools:'catalog',content:{mode:'synthetic',contentVersion:'synthetic-timing-v1',catalogSha256:'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333',primarySourceId:'synthetic-timing-fixture'},factualTruth:'unverified'}}));
+  let inferenceContract='a'.repeat(64),holdStatus=false,statusHeld=false;
+  await page.route('**/api/status',async r=>{if(holdStatus){statusHeld=true;await new Promise(resolve=>setTimeout(resolve,800));await r.abort().catch(()=>{});return;}return r.fulfill({json:{inference:'configured',model:'synthetic-provider-test',backend:'self_hosted',inferenceContractId:inferenceContract,routerBase:'/api/v1',publisherFunded:true,byok:false,sourceTools:'catalog',content:{mode:'synthetic',contentVersion:'synthetic-timing-v1',catalogSha256:'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333',primarySourceId:'synthetic-timing-fixture'},factualTruth:'unverified'}});});
   const releaseGraph=JSON.parse(fs.readFileSync(path.join(app,'public/agents/source_learner.network.json'),'utf8'));releaseGraph.llm_config={model_name:'synthetic-provider-test'};
   const releaseManifest=JSON.parse(fs.readFileSync(path.join(app,'public/agents/agent-manifest.json'),'utf8'));
   releaseManifest.llm_router={base_url:base+'/api/v1',mock:false,publisher_funded:true};releaseManifest.allowed_peers=['https://guide.example'];releaseManifest.deployment={mode:'static',self_contained_runtime:true,browser_mock:false,direct_byok:false,direct_mcp_requires_cors:true,public_mcp_facade:false};
@@ -107,6 +107,18 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-consent-dialog').open);
   assert.equal(calls,4);await page.getByRole('button',{name:'Cancel',exact:true}).click();await page.waitForFunction(()=>!document.querySelector('#provider-consent-dialog').open);
   assert.equal(calls,4);assert.equal(await page.locator('#provider-output').isHidden(),false);assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
+  // Cancellation after explicit approval but before the first model POST
+  // preserves the prior answer and its exact receipts.
+  holdStatus=true;statusHeld=false;await runOnce();
+  for(let i=0;i<50&&!statusHeld;i++)await new Promise(r=>setTimeout(r,20));assert.equal(statusHeld,true);
+  assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
+  await page.getByRole('button',{name:'Cancel inference'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='cancelled');
+  holdStatus=false;
+  assert.equal(calls,4);assert.match(await page.locator('#provider-status').textContent(),/before a model request/);
+  assert.equal(await page.locator('#provider-output').isHidden(),false);
+  assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
+  assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);
   // A model result grants neither media transfer nor persistence.
   await page.getByRole('button',{name:'Seek to retrieved cue'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-action-status').textContent.includes('Cue seek unavailable'));
@@ -118,7 +130,9 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.getByRole('button',{name:'Confirm local save'}).click();
   await page.waitForFunction(()=>document.querySelector('#review-list').children.length===1);
   assert.equal(calls,4);
+  const oldReview=await page.getByRole('button',{name:'Preview retrieved review card'}).elementHandle();
   mode='no-receipt';await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='empty');
+  await oldReview.evaluate(button=>button.click());assert.equal(await page.locator('#clear-review-dialog').evaluate(dialog=>dialog.open),false);
   assert.equal(calls,7);assert.match(await page.locator('#provider-status').textContent(),/interpretation was discarded/);assert.equal(await page.locator('#provider-output').isHidden(),true);
   await page.getByLabel('Question about the source lesson').fill('Locate the timing marker again.');
   assert.equal(await page.locator('#provider-output').isHidden(),true);

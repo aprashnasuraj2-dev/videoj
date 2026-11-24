@@ -67,7 +67,7 @@ export async function discoverProvider({origin,loadedContent,fetchImpl=fetch,sig
   return {state:'configured',model:data.model,backend:data.backend,contract,published};
  }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controller.abort();}
 }
-export async function runProviderLesson({origin,approvedContract,loadedContent,question,fetchImpl=fetch,signal}={}){
+export async function runProviderLesson({origin,approvedContract,loadedContent,question,fetchImpl=fetch,signal,onModelStart=()=>{}}={}){
  const model=approvedContract?.model;
  if(!validOrigin(origin)||typeof model!=='string'||!modelPattern.test(model)||model==='mock-1'||typeof question!=='string'||!question.trim()||question.length>1200)throw Error('Invalid run input');
  const controller=new AbortController(),abort=()=>controller.abort();
@@ -87,6 +87,7 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
  };
  const adapter=createProviderAdapter({origin,model,fetchImpl:boundFetch});
  const measured={...adapter,async chat(args){
+  controller.signal.throwIfAborted();if(usage.calls===0)onModelStart();
   usage.calls++;const answer=await adapter.chat(args);
   if(answer.usage){usage.reported++;usage.promptTokens+=answer.usage.prompt_tokens;usage.completionTokens+=answer.usage.completion_tokens;usage.totalTokens+=answer.usage.total_tokens;}
   return answer;
