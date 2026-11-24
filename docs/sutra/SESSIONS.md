@@ -1,5 +1,10 @@
 # SUTRA session history
 
+
+## SUTRA-SESSION-0010 — 2026-11-24
+
+Observed current branch head `545f2c310beb9ac4e5e3a4e30603dd6640cf67d7` green in both learner/browser and register workflows; reconciled eight previously pending checks. Closed phase 036 exact destination-scoped private context and phase 039 controlled read-only MCP compatibility. New total: 271/1,000 checks, 18/100 phases. No public release, paid inference or submission. Evidence: [SESSION-0010](evidence/implementation/SESSION-0010.md).
+
 Append entries; never erase failures or silently rewrite previous completion claims. Each continuation reads the latest entry plus the active handoff and actual source. Task state lives in checkboxes; evidence/cursor lives in `progress.json`.
 
 ## SUTRA-SESSION-0001 - Checklist and resumable register bootstrap
