@@ -59,3 +59,45 @@ test('Worker asset response cache policy rejects partial, mutable and ambiguous 
   assert.equal(await response.text(),'xx',path);
  }
 });
+
+test('published router path reaches the exact same disabled inference handler as the legacy alias',async()=>{
+ const seen=[];const env={SUTRA_API:{fetch:r=>{seen.push(r);return worker.fetch(r,{SUTRA_ENABLE_INFERENCE:'false'});}}};
+ for(const path of ['/api/infer','/api/v1/chat/completions']){
+  const original=req(path,{method:'POST',headers:{Origin:base,'Content-Type':'application/json','X-Sutra-Inference-Contract':'a'.repeat(64)},body:'{}'});
+  const result=await onRequest({request:original,env});
+  assert.equal(result.status,503);assert.match(await result.text(),/DISABLED/);assert.equal(seen.at(-1),original);
+ }
+ assert.equal(seen.length,2);
+ for(const path of ['/api/v1/chat/completions?x=1','/api/v1/chat/completions/','/api/v1/chat/%63ompletions'])assert.equal((await onRequest({request:req(path,{method:'POST'}),env})).status,404);
+ assert.equal((await onRequest({request:req('/api/v1/chat/completions'),env})).status,405);
+ assert.equal(seen.length,2);
+});
+test('ingress cancellation during binding response wait disposes late body without exposing stale success',async()=>{
+ const controller=new AbortController();let enter,resolve,cancelled=0,contacts=0;
+ const ready=new Promise(r=>{enter=r;});
+ const pending=onRequest({request:req('/api/status',{signal:controller.signal}),env:{SUTRA_API:{fetch(){contacts++;enter();return new Promise(r=>{resolve=r;});}}}});
+ await ready;controller.abort();
+ assert.equal((await pending).status,499);
+ resolve(new Response(new ReadableStream({cancel(){cancelled++;}})));
+ for(let i=0;i<30&&!cancelled;i++)await new Promise(r=>setTimeout(r,0));
+ assert.equal(cancelled,1);assert.equal(contacts,1);
+});
+test('ingress never forwards unexpected binding redirects or substituted response identity',async()=>{
+ for(const scenario of ['redirect','url','redirected']){
+  let cancelled=0,contacts=0;
+  const response=new Response(new ReadableStream({cancel(){cancelled++;}}),{status:scenario==='redirect'?307:200,headers:{Location:'https://not-approved.invalid/private'}});
+  if(scenario==='url')Object.defineProperty(response,'url',{value:base+'/api/other'});
+  if(scenario==='redirected')Object.defineProperty(response,'redirected',{value:true});
+  const result=await onRequest({request:req('/api/status'),env:{SUTRA_API:{fetch(){contacts++;return response;}}}});
+  assert.equal(result.status,502);assert.equal(result.headers.has('location'),false);assert.equal(cancelled,1);assert.equal(contacts,1);
+ }
+});
+
+test('direct Worker and Pages both refuse query-bearing API routes',async()=>{
+ for(const path of ['/api/status?x=1','/api/infer?x=1','/api/v1/chat/completions?x=1','/api/source-tools?x=1']){
+  const original=req(path,{method:path.includes('status')?'GET':'POST'});
+  let calls=0;
+  const env={SUTRA_QUOTA:{idFromName(){calls++;throw Error('quota must not be contacted');}},ASSETS:{fetch(){calls++;throw Error('asset must not be contacted');}}};
+  assert.equal((await worker.fetch(original,env)).status,404);assert.equal(calls,0);
+ }
+});

@@ -124,11 +124,12 @@ export async function handleSourceTools(request,env={}){
  return json({jsonrpc:'2.0',id:rpc.id,error:{code:-32601,message:'Method unavailable.'}});
 }
 export default {async fetch(request,env){
- const path=new URL(request.url).pathname;let response;
+ const url=new URL(request.url),path=url.pathname;let response;
  const inferencePath=path==='/api/infer'||path==='/api/v1/chat/completions';
  const contentBoundPath=inferencePath||path==='/api/source-tools'||path==='/api/status';
  const catalogPrecondition=request.headers.get('X-Sutra-Catalog-Sha256');
- if(contentBoundPath&&!contentBindingMatches(env)){
+ if(path.startsWith('/api/')&&url.search){response=json({error:{code:'NOT_FOUND'}},404);}
+ else if(contentBoundPath&&!contentBindingMatches(env)){
   response=json({error:{code:'CONTENT_BINDING_MISMATCH'}},503);
  }
  // Optional public precondition for snapshot-aware callers. Generic portable
