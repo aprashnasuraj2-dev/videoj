@@ -64,6 +64,17 @@ try{
  const third=await post('/reserve',reserve('b'));assert.equal(third.status,200);
  assert.equal((await release(third.body.lease)).status,200);
  assert.equal((await post('/reserve',reserve('c'))).status,429,'daily count remains charged after release and expiry');
+ const model=async(scenario,client='192.0.2.1')=>{
+  const response=await fetch(origin+'/test-inference?scenario='+scenario,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({client}),signal:AbortSignal.timeout(10000)});
+  return {status:response.status,contacts:Number(response.headers.get('X-Local-Provider-Contacts')),text:await response.text(),location:response.headers.get('location')};
+ };
+ const disabled=await model('disabled');assert.equal(disabled.status,503);assert.equal(disabled.contacts,0);
+ const success=await model('success');assert.equal(success.status,200);assert.equal(success.contacts,1);assert.match(success.text,/local workerd fixture/);assert.match(success.text,/data: \[DONE\]/);assert.doesNotMatch(success.text,/PRIVATE_PROVIDER_CANARY|LOCAL_SYNTHETIC_KEY/);
+ const redirect=await model('redirect');assert.equal(redirect.status,502);assert.equal(redirect.contacts,1);assert.equal(redirect.location,null);assert.doesNotMatch(redirect.text,/not-contacted|PRIVATE_PROVIDER_CANARY/);
+ const capped=await model('success');assert.equal(capped.status,429);assert.equal(capped.contacts,0);
+ const malformed=await model('malformed','192.0.2.2');assert.equal(malformed.status,200);assert.equal(malformed.contacts,1);assert.match(malformed.text,/INCOMPLETE_STREAM/);assert.doesNotMatch(malformed.text,/\[DONE\]/);
+ const globalCap=await model('success','192.0.2.3');assert.equal(globalCap.status,429);assert.equal(globalCap.contacts,0);
+ console.log('WORKERD_INFERENCE '+JSON.stringify({localOnly:true,simulatedUpstream:true,realDurableStorage:true,disabledContacts:0,completeSse:true,redirectRefused:true,malformedIncomplete:true,perClientAndGlobalCap:true,privateFieldsAbsent:true}));
  console.log('WORKERD_QUOTA '+JSON.stringify({localOnly:true,sqlite:true,wrangler:'4.166.0',oldDayRefused:true,expiredRefused:true,concurrencyDenials:denied.length,sourceCap:true,unknownLeaseRecovered:true,elapsedSinceLostReplyMs:Date.now()-lostAt,perClientAndDailyChargeRetained:true,releaseIdempotent:true}));
 }catch(error){console.error(log);throw error;}
 finally{

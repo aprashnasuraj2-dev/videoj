@@ -526,3 +526,27 @@ test('Worker uses Workerd-compatible non-following redirect mode; all redirects 
   assert.equal(response.headers.has('location'),false);assert.doesNotMatch(await response.text(),/unapproved|PRIVATE_REDIRECT_BODY/);
  }
 });
+
+test('successful terminal frame waits for bounded quota teardown; cancellation during teardown cannot certify DONE',async()=>{
+ for(const abortDuringRelease of [false,true]){
+  let releaseEntered,unblockRelease,releases=0;const abort=new AbortController();
+  const entered=new Promise(resolve=>{releaseEntered=resolve;});
+  const env=environment(async url=>{
+   if(new URL(url).pathname==='/release'){
+    releases++;releaseEntered();await new Promise(resolve=>{unblockRelease=resolve;});return Response.json({released:true});
+   }
+   return Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000923'});
+  });
+  const response=await handleInference(new Request(request(),{signal:abort.signal}),env,{fetchImpl:async()=>sse()});
+  const reader=response.body.getReader(),decoder=new TextDecoder();
+  assert.match(decoder.decode((await reader.read()).value),/hello/);
+  assert.match(decoder.decode((await reader.read()).value),/stop/);
+  const last=reader.read();last.catch(()=>{});await entered;
+  const observed=await Promise.race([last.then(()=>true,()=>true),new Promise(resolve=>setTimeout(()=>resolve(false),15))]);
+  assert.equal(observed,false,'terminal must remain pending until release settles');
+  if(abortDuringRelease)abort.abort();unblockRelease();
+  if(abortDuringRelease)await assert.rejects(last,e=>e.code==='CANCELLED');
+  else {assert.equal(decoder.decode((await last).value),'data: [DONE]\n\n');assert.equal((await reader.read()).done,true);}
+  reader.releaseLock();assert.equal(releases,1);
+ }
+});

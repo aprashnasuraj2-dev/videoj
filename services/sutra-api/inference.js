@@ -182,7 +182,7 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
  }
  const encoder=new TextEncoder(),accumulator=makeAccumulator();
  const iterator=readSse(upstream,{signal:controller.signal})[Symbol.asyncIterator]();
- let terminal=false,finalized,sink,emitted=0;
+ let terminal=false,finalized,sink,emitted=0,consumerCancelled=false;
  // Finalize exactly once on EOF, parser rejection, client cancellation or
  // deadline, including while a backpressured consumer issues no more reads.
  const finish=()=>{
@@ -223,7 +223,16 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
     if(frame.done)throw new InferenceError('INCOMPLETE_STREAM');
     if(frame.value.done){
      accumulator.finish();controller.signal.throwIfAborted();
-     send(out,'data: [DONE]\n\n');out.close();await finish();return;
+     const doneBytes=encoder.encode('data: [DONE]\n\n');
+     if(doneBytes.byteLength>MAX_SSE_BYTES-emitted)throw new InferenceError('STREAM_SIZE');
+     // Do not expose successful terminal completion before the bounded lease
+     // release attempt settles. The next explicit run should not race our
+     // own successful teardown. Failed release still falls back to lease TTL.
+     await finish();
+     if(consumerCancelled)return;
+     if(request.signal.aborted){try{out.error(new InferenceError('CANCELLED'));}catch{}return;}
+     try{out.enqueue(doneBytes);out.close();}catch{try{out.error(new InferenceError('INCOMPLETE_STREAM'));}catch{}}
+     return;
     }
     const clean=accumulator.accept(frame.value.data);
     send(out,`data: ${JSON.stringify(clean)}\n\n`);
@@ -234,7 +243,7 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
     await finish();
    }
   },
-  cancel(){return finish();},
+  cancel(){consumerCancelled=true;return finish();},
  });
  return new Response(stream,{headers:{'Content-Type':'text/event-stream','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 }
