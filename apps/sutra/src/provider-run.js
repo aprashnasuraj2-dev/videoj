@@ -101,6 +101,29 @@ export async function discoverProvider({origin,loadedContent,fetchImpl=fetch,sig
   return {state:'configured',model:data.model,backend:data.backend,contract,published};
  }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controller.abort();}
 }
+// Only two caller-owned POST endpoints may receive approved inference context.
+// An unexpected URL, method, query or credentials must be refused before
+// transport, not silently forwarded outside the precondition boundary.
+export function createBoundProviderTransport({origin,approvedContract,fetchImpl=fetch,onPrecondition=()=>{}}={}){
+ const contract=snapshotApprovedContract(approvedContract);
+ if(!validOrigin(origin)||typeof fetchImpl!=='function'||typeof onPrecondition!=='function')throw contractError();
+ const permitted=new Set(['/api/v1/chat/completions','/api/source-tools']);
+ return async(url,options={})=>{
+  let target;
+  try{target=new URL(url,origin);}catch{throw Error('PROVIDER_ROUTE');}
+  if(target.origin!==origin||target.username||target.password||target.search||target.hash||options.method!=='POST'||!permitted.has(target.pathname)||target.href!==origin+target.pathname)throw Error('PROVIDER_ROUTE');
+  const headers=new Headers(options.headers);
+  // No browser credential can be imported through an injected model adapter.
+  headers.delete('Authorization');headers.delete('Cookie');headers.delete('Proxy-Authorization');
+  headers.set('X-Sutra-Catalog-Sha256',contract.content.catalogSha256);
+  if(target.pathname==='/api/v1/chat/completions')headers.set('X-Sutra-Inference-Contract',contract.inferenceContractId);
+  else headers.delete('X-Sutra-Inference-Contract');
+  const response=await fetchImpl(target.href,{...options,method:'POST',credentials:'omit',redirect:'error',cache:'no-store',headers});
+  if(response?.redirected||response?.url&&response.url!==target.href)throw Error('PROVIDER_ROUTE');
+  if(response.status===409)onPrecondition(target.pathname==='/api/v1/chat/completions'&&response.headers.get('X-Sutra-Precondition')==='inference'?'inference':'catalog');
+  return response;
+ };
+}
 export async function runProviderLesson({origin,approvedContract,loadedContent,question,fetchImpl=fetch,signal,onModelStart=()=>{}}={}){
  approvedContract=snapshotApprovedContract(approvedContract);
  const model=approvedContract.model;
@@ -111,15 +134,7 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
  // Scope the public version precondition to the two caller-owned POST endpoints.
  // It is not an authentication token, and never travels to peer origins or the provider.
  let catalogRejected=false,contractRejected=false;
- const boundFetch=async(url,options={})=>{
-  const target=new URL(url,origin);
-  if(target.origin!==origin||options.method!=='POST'||!['/api/v1/chat/completions','/api/source-tools'].includes(target.pathname))return fetchImpl(url,options);
-  const headers=new Headers(options.headers);headers.set('X-Sutra-Catalog-Sha256',approvedContract.content.catalogSha256);
-  if(target.pathname==='/api/v1/chat/completions')headers.set('X-Sutra-Inference-Contract',approvedContract.inferenceContractId);
-  const response=await fetchImpl(url,{...options,headers});
-  if(response.status===409){if(target.pathname==='/api/v1/chat/completions'&&response.headers.get('X-Sutra-Precondition')==='inference')contractRejected=true;else catalogRejected=true;}
-  return response;
- };
+ const boundFetch=createBoundProviderTransport({origin,approvedContract,fetchImpl,onPrecondition:kind=>{if(kind==='inference')contractRejected=true;else catalogRejected=true;}});
  const adapter=createProviderAdapter({origin,model,fetchImpl:boundFetch});
  const measured={...adapter,async chat(args){
   controller.signal.throwIfAborted();if(usage.calls===0)onModelStart();

@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {createReceiptCollector,snapshotApprovedContract,discoverProvider} from '../src/provider-run.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {createReceiptCollector,snapshotApprovedContract,discoverProvider,createBoundProviderTransport} from '../src/provider-run.js';
 
 const receipt=(i,source='source')=>({version:1,sourceId:source,sourceVersion:'v1',sourceHash:'a'.repeat(64),mediaHash:'b'.repeat(64),cueId:'cue-'+i,start:i,end:i+1,excerpt:'cue '+i,retrievedAt:'2026-11-24T00:00:00Z',verification:'unverified'});
 
@@ -91,4 +91,31 @@ test('provider disabled preflight uses one credentialless exact JSON request and
   return Response.json({inference:'disabled',sourceTools:'catalog',content:{},factualTruth:'unverified'});
  }});
  assert.deepEqual(output,{state:'disabled'});assert.equal(calls,1);assert.equal(options.credentials,'omit');assert.equal(options.headers.Accept,'application/json');
+});
+
+test('provider POST transport refuses all undeclared cross-origin, non-POST and query-bearing calls before transport',async()=>{
+ const origin='https://example.test',calls=[];
+ const wrapped=createBoundProviderTransport({origin,approvedContract:approval(),fetchImpl:async(url,opts)=>{calls.push({url,opts});return Response.json({ok:true});}});
+ for(const url of ['https://evil.example/api/source-tools',origin+'/api/status',origin+'/api/source-tools?token=canary',origin+'/api/v1/chat/completions#hidden',origin+'/api/source-tools/../status']){
+  await assert.rejects(wrapped(url,{method:'POST'}),/PROVIDER_ROUTE/);
+ }
+ for(const options of [{method:'GET'},{method:'PATCH'},{method:'post'}])await assert.rejects(wrapped(origin+'/api/source-tools',options),/PROVIDER_ROUTE/);
+ assert.equal(calls.length,0);
+});
+test('bounded provider POST adds exact version preconditions but never ambient credentials or extra router identity',async()=>{
+ const origin='https://example.test',calls=[],rejections=[];
+ const wrapped=createBoundProviderTransport({origin,approvedContract:approval(),onPrecondition:reason=>rejections.push(reason),fetchImpl:async(url,opts)=>{
+  calls.push({url,opts});return new Response(null,{status:409,headers:{'X-Sutra-Precondition':url.endsWith('/completions')?'inference':'catalog'}});
+ }});
+ await wrapped(origin+'/api/source-tools',{method:'POST',headers:{Cookie:'synthetic-private-cookie',Authorization:'Bearer synthetic-secret','X-Sutra-Inference-Contract':'bad','Content-Type':'application/json'}});
+ await wrapped(origin+'/api/v1/chat/completions',{method:'POST',headers:{Authorization:'Bearer synthetic-secret','Content-Type':'application/json'}});
+ assert.deepEqual(rejections,['catalog','inference']);
+ assert.equal(calls.length,2);
+ for(const call of calls){
+  assert.equal(call.opts.credentials,'omit');assert.equal(call.opts.redirect,'error');assert.equal(call.opts.cache,'no-store');
+  assert.equal(call.opts.headers.get('Cookie'),null);assert.equal(call.opts.headers.get('Authorization'),null);
+  assert.equal(call.opts.headers.get('X-Sutra-Catalog-Sha256'),'c'.repeat(64));
+ }
+ assert.equal(calls[0].opts.headers.get('X-Sutra-Inference-Contract'),null);
+ assert.equal(calls[1].opts.headers.get('X-Sutra-Inference-Contract'),'a'.repeat(64));
 });
