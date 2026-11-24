@@ -1,6 +1,9 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {inferenceBackend,inferenceStatus,handleInference,UPSTREAM} from '../inference.js';
 import worker from '../worker.js';
+import fs from 'node:fs';
+import {runNetwork} from '../../../packages/sutra-runtime/index.js';
+import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
 const url='https://operator-gateway.example/v1/chat/completions';
 const env={
  SUTRA_ENABLE_INFERENCE:'true',SUTRA_INFERENCE_BACKEND:'self_hosted',SUTRA_SELF_HOSTED_UPSTREAM_URL:url,SUTRA_SELF_HOSTED_TOKEN:'PRIVATE_GATEWAY_TEST_SECRET',
@@ -54,4 +57,30 @@ test('upstream redirects and incompatible streams never produce completed output
  assert.equal(redirect.status,502);
  const malformed=await handleInference(req(),env,{fetchImpl:async()=>new Response('not-a-stream',{headers:{'Content-Type':'application/json'}})});
  assert.equal(malformed.status,502);
+});
+
+test('self-hosted provider drives real restricted multi-agent orchestration under caller ownership',async()=>{
+ const graph=JSON.parse(fs.readFileSync(new URL('../../../packages/sutra-runtime/examples/learner.network.json',import.meta.url)));
+ const providerBodies=[];
+ const encode=chunks=>new Response(chunks.map(c=>'data: '+JSON.stringify(c)+'\n\n').join('')+'data: [DONE]\n\n',{headers:{'Content-Type':'text/event-stream'}});
+ const chunk=(delta,reason)=>({choices:[{index:0,delta,finish_reason:reason}]});
+ const adapter=createProviderAdapter({origin:'https://sutra.test',model:'local-tool-model',fetchImpl:async(requestUrl,opts)=>{
+  assert.equal(requestUrl,'https://sutra.test/api/v1/chat/completions');assert.equal(opts.headers.Authorization,undefined);
+  return handleInference(new Request(requestUrl,{method:'POST',headers:{...opts.headers,Origin:'https://sutra.test'},body:opts.body,signal:opts.signal}),env,{
+   fetchImpl:async(gatewayUrl,upstream)=>{
+    assert.equal(gatewayUrl,url);assert.equal(upstream.headers.Authorization,'Bearer PRIVATE_GATEWAY_TEST_SECRET');
+    const body=JSON.parse(upstream.body);providerBodies.push(body);
+    const toolResult=body.messages.some(m=>m.role==='tool'),hasTools=body.tools.length>0;
+    if(hasTools&&!toolResult)return encode([chunk({tool_calls:[{index:0,id:'delegate-evidence',type:'function',function:{name:'evidence',arguments:'{"request":"Check catalog source cue."}'}}]},'tool_calls')]);
+    if(!hasTools)return encode([chunk({content:'Local source helper; unverified.'},'stop')]);
+    return encode([chunk({content:'Self-hosted tool-backed interpretation. Exact sources require independent receipts; factual truth unverified.'},'stop')]);
+   }
+  });
+ }});
+ const result=await runNetwork({definition:graph,request:'Find the source cue; no unsupported factual claims.',model:adapter});
+ assert.equal(result.mode,'provider');assert.equal(result.agentCalls,2);assert.equal(result.modelCalls,3);
+ assert.equal(providerBodies.length,3);
+ assert.ok(providerBodies.every(b=>b.model==='local-tool-model'&&b.max_tokens===256&&b.max_completion_tokens===undefined));
+ assert.match(result.text,/factual truth unverified/);
+ assert.ok(!JSON.stringify(result).includes('PRIVATE_GATEWAY_TEST_SECRET'));
 });
