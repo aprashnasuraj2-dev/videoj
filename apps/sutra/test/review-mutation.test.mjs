@@ -44,3 +44,15 @@ test('revoked already-entered storage effect is unknown, never a proven rejectio
  await new Promise(resolve=>setTimeout(resolve,0));assert.equal(called,1);
  queue.revoke();release();await assert.rejects(pending,e=>e.outcome==='unknown');
 });
+
+test('noncooperating entered mutation stops waiting at deadline but retains lock ownership',async()=>{
+ const cooperativeLock=cooperative(),queue=createReviewMutationQueue({locks:cooperativeLock.locks,timeoutMs:90});
+ let entered=false,otherInvoked=false;
+ const unresolved=queue.run(()=>{entered=true;return new Promise(()=>{});});
+ for(let i=0;i<100&&!entered;i++)await new Promise(resolve=>setTimeout(resolve,0));
+ assert.equal(entered,true);
+ await assert.rejects(unresolved,error=>error.outcome==='unknown');
+ await assert.rejects(queue.run(()=>{otherInvoked=true;}),error=>error.name==='TimeoutError');
+ assert.equal(otherInvoked,false,'a timed out effect must not open the exclusive lock to later writes');
+ assert.equal(cooperativeLock.maxActive,1);
+});

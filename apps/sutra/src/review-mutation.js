@@ -12,23 +12,37 @@ export function createReviewMutationQueue({locks=globalThis.navigator?.locks,tim
   async run(effect){
    if(typeof effect!=='function'||typeof locks?.request!=='function')throw Error('Safe review mutation locking is unavailable.');
    const controller=lifetime,deadline=AbortSignal.timeout(timeoutMs),signal=AbortSignal.any([controller.signal,deadline]);
-   let invoked=false;
+   let invoked=false,onAbort;
+   // Race the caller's waiting period separately from the lock callback.
+   // On timeout after invocation we return UNKNOWN promptly, but deliberately
+   // DO NOT release a running lock effect early: its late mutation would then
+   // race a later action. The browser will release the lock when that effect
+   // settles or its document is destroyed.
+   const stopped=new Promise((_,reject)=>{
+    onAbort=()=>reject(signal.reason);
+    signal.addEventListener('abort',onAbort,{once:true});
+    if(signal.aborted)onAbort();
+   });
+   stopped.catch(()=>{});
    try{
-    const result=await locks.request(REVIEW_LOCK_NAME,{mode:'exclusive',signal},async()=>{
+    const operation=Promise.resolve(locks.request(REVIEW_LOCK_NAME,{mode:'exclusive',signal},async()=>{
      signal.throwIfAborted();
-     // No network or user decision may be awaited under the storage lock.
-     // If revocation follows invocation, the side effect could already exist:
-     // report UNKNOWN, not a falsely certain rejection or completion.
      invoked=true;
      const value=await effect();
      if(signal.aborted)throw new ReviewMutationOutcomeError();
      return value;
-    });
+    }));
+    // If the caller's race terminates, observe the detached lock promise so
+    // a later rejection cannot become an unhandled process/browser event.
+    operation.catch(()=>{});
+    const result=await Promise.race([operation,stopped]);
     if(signal.aborted)throw new ReviewMutationOutcomeError();
     return result;
    }catch(error){
     if(signal.aborted&&invoked)throw new ReviewMutationOutcomeError();
     throw error;
+   }finally{
+    signal.removeEventListener('abort',onAbort);
    }
   },
   revoke(){const previous=lifetime;lifetime=new AbortController();previous.abort();}
