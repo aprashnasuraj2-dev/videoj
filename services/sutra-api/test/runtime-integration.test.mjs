@@ -19,7 +19,7 @@ function upstreamFor(body){
 function environment(events){
  let lease=0;
  return {
-  SUTRA_ENABLE_INFERENCE:'true',SUTRA_PROVIDER_KEY:'SERVER_ONLY_INTEGRATION_KEY',
+  SUTRA_ENABLE_INFERENCE:'true',SUTRA_INFERENCE_BACKEND:'hosted',SUTRA_PROVIDER_KEY:'SERVER_ONLY_INTEGRATION_KEY',
   SUTRA_CLIENT_HASH_SECRET:'b'.repeat(32),SUTRA_ALLOWED_ORIGIN:'https://sutra.test',
   SUTRA_MODELS:'operator-approved',SUTRA_MAX_OUTPUT_TOKENS:'512',SUTRA_MAX_DAILY_CALLS:'100',SUTRA_MAX_CLIENT_CALLS:'8',SUTRA_MAX_CONCURRENT:'2',
   SUTRA_QUOTA:{idFromName:x=>x,get:()=>({fetch:async(url,opts)=>{

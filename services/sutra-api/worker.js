@@ -1,4 +1,4 @@
-import {handleInference,inferenceStatus,configuredModels,readJson} from './inference.js';
+import {handleInference,inferenceStatus,inferenceBackend,configuredModels,readJson} from './inference.js';
 import {createSourceTools} from '../../packages/sutra-source-tools/index.js';
 import contentProfileDocument from '../../apps/sutra/public/content/content-profile.json' with {type:'json'};
 import sourceCatalogDocument from '../../apps/sutra/public/content/source-catalog.json' with {type:'json'};
@@ -82,7 +82,7 @@ export default {async fetch(request,env){
  else if(path==='/api/source-tools')response=await handleSourceTools(request);
  else if(path==='/api/status'&&request.method==='GET'){
   const configured=inferenceStatus(env);
-  response=json({inference:configured?'configured':'disabled',...(configured?{model:configuredModels(env)[0],routerBase:'/api/v1',publisherFunded:true,byok:false}:{}),sourceTools:'catalog',content:{mode:activeContent.profile.mode,contentVersion:activeContent.profile.contentVersion,catalogSha256:activeContent.profile.catalog.sha256,primarySourceId:activeContent.profile.primarySourceId},factualTruth:'unverified'});
+  response=json({inference:configured?'configured':'disabled',...(configured?{model:configuredModels(env)[0],routerBase:'/api/v1',publisherFunded:true,byok:false,backend:inferenceBackend(env).mode}:{}),sourceTools:'catalog',content:{mode:activeContent.profile.mode,contentVersion:activeContent.profile.contentVersion,catalogSha256:activeContent.profile.catalog.sha256,primarySourceId:activeContent.profile.primarySourceId},factualTruth:'unverified'});
  }
  else if(path.startsWith('/api/'))response=json({error:{code:'NOT_FOUND'}},404);
  else response=await (env.ASSETS?.fetch(request)??new Response('Not found',{status:404}));

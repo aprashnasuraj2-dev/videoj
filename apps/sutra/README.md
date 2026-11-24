@@ -65,3 +65,7 @@ It deliberately does **not** copy `index.html`, `agents/agent-manifest.json`, ca
 ### Zero-model source question mode
 
 The learner includes an explicit **Ask locally** path implemented in `src/local-answer.js`. A bounded lexical index over the already verified source catalog provides exact source cue receipts, seek and review actions without any model call, account, added dependency, or request after the initial content loads. Questions are matched by shared normalized source tokens; it deliberately abstains on unsupported wording, insufficient overlap, and near-equal source matches. It does **not** generate summaries, reason semantically, evaluate factual correctness, or replace review. The existing exact-phrase source search stays available if the local index hits its bounded limit. The optional provider lane is separate.
+
+### Operator self-hosted inference option
+
+The optional Worker proxy can select `SUTRA_INFERENCE_BACKEND=self_hosted` with a separately authenticated HTTPS OpenAI-compatible gateway (Ollama or llama.cpp), rather than an external per-token billed model. Server configuration and secrets remain separate from the browser. This option is not enabled or benchmarked on actual hardware. Model quality, supported tool-call streams, VRAM, time-to-first-token, electricity, bandwidth and reliability must be measured before launch. The zero-model source question feature remains fully independent from either backend.

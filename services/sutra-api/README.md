@@ -21,14 +21,14 @@ source test uses real endpoint requests with deterministic scripted decisions.
 This client deliberately supports this site's JSON-only MCP profile, not arbitrary
 MCP servers, SSE responses, auth flows or third-party discovery.
 
-## Operator setup, before enabling paid inference
+## Operator setup, before enabling any hosted inference
 
 1. Build the isolated app: `npm --prefix apps/sutra ci` and
    `npm --prefix apps/sutra run build`.
 2. Choose an actual available provider model and obtain budget authorization.
    `SUTRA_MODELS` is an exact comma-separated allowlist (1–3 models). It is empty
    by default. Model availability, pricing and provider compatibility are unverified.
-3. Set the exact deployed HTTPS `SUTRA_ALLOWED_ORIGIN`; configure secrets through
+3. Choose `SUTRA_INFERENCE_BACKEND=self_hosted` (recommended if an operator can run a GPU gateway) or explicitly select `hosted` for an externally billed provider. Without an explicit backend, **inference is disabled** even when a key exists. Set the exact deployed HTTPS `SUTRA_ALLOWED_ORIGIN`; configure secrets through
    Cloudflare secret management: `SUTRA_PROVIDER_KEY` and a random
    `SUTRA_CLIENT_HASH_SECRET` of at least 32 characters. Never use a VITE variable,
    frontend storage, browser key entry, committed `.env` or a ZIP to supply these.
@@ -37,8 +37,7 @@ MCP servers, SSE responses, auth flows or third-party discovery.
    separate nonproduction environment. Wrangler 4.166.0 dry-run passed on 2026-11-23 (72 assets, 32.49 KiB Worker /9.16 KiB gzip); no deployment has been observed. Account routing, secret setup and live visitor checks
    remain pending. Enable only after budget/model approval and those checks.
 
-Only the fixed `https://api.openai.com/v1/chat/completions` can receive the server
-key. Caller-supplied URL, authorization, token caps and extra payload fields are
+In explicit `hosted` mode, only the fixed `https://api.openai.com/v1/chat/completions` receives the external server key. In `self_hosted` mode only the operator-configured canonical HTTPS `SUTRA_SELF_HOSTED_UPSTREAM_URL` ending in `/v1/chat/completions` receives the separate `SUTRA_SELF_HOSTED_TOKEN`; no user-entered endpoint can be forwarded. A private authenticated TLS gateway is required. `localhost`, raw IPs, URL credentials, queries, fragments, redirects and unauthenticated gateways are refused. The token remains server-side; zero provider invoice does not mean zero machine, electricity, bandwidth or operations cost. Never expose an unprotected Ollama/llama.cpp server on the public internet. The Worker is not a LAN-to-browser bridge. Caller-supplied URL, authorization, token caps and extra payload fields are
 rejected. Request body <=32 KiB, 32 messages, 24,000 message-content characters,
 16 tool schemas; supported closed schemas only. Output/stream caps are documented
 in the inference package. Body/quota deadline: 5 seconds; provider deadline: 30.
@@ -104,3 +103,7 @@ The route existing in code does **not** mean inference is live. Checked-in confi
 ### Snapshot-aware learner precondition
 
 The learner sends the public `X-Sutra-Catalog-Sha256` header on its caller-owned inference and source-tools POSTs. A provided value that does not match the Worker's active catalog returns HTTP 409 with `CONTENT_VERSION_MISMATCH` before quota reservation or source-tool execution. The header is not a credential or authorization mechanism; portable clients may omit it under the existing contract. It does not verify factual truth, pin the Worker implementation, or guarantee that already-completed requests can be undone. The browser preflight independently checks the mounted profile/transcript and exact approved graph, and refuses to present an answer from a run that encounters a catalog-version rejection.
+
+### Self-hosted OpenAI-compatible engines (explicit opt-in, not deployed)
+
+Configure a separately owned authenticated HTTPS reverse proxy forwarding only the permitted POST `/v1/chat/completions` to a local Ollama or llama.cpp server. The gateway enforces the worker's bearer secret, mTLS/firewall/rate limits where possible, and never exposes the engine directly. Set `SUTRA_INFERENCE_BACKEND=self_hosted`, `SUTRA_SELF_HOSTED_UPSTREAM_URL=https://operator-owned-gateway.example/v1/chat/completions` (illustrative only), `SUTRA_SELF_HOSTED_TOKEN` (random 16+ character private secret), an exact `SUTRA_MODELS` allowlist plus the normal quotas and origin. The endpoint path is fixed; client-supplied URLs/headers never change it. The worker strips unapproved fields, caps output, checks streaming syntax and returns no completed answer on incompatible tool-call chunks. `max_tokens` and streamed usage are requested in this mode; actual engine support requires a pinned model/runtime compatibility evaluation. Do not enable inference without a secure reachable gateway, tested tool-calling model, resource budget and explicit operator authorization. The checked-in deployment remains disabled.

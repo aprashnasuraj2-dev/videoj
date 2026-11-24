@@ -2,6 +2,25 @@ import {plain,InferenceError,readSse,makeAccumulator,abortable} from '../../pack
 import {checkSchema} from '../../packages/sutra-runtime/vendor/nsdeploy/actions.js';
 import {quotaLimits,MAX_INPUT_BYTES} from './quota.js';
 export const UPSTREAM='https://api.openai.com/v1/chat/completions';
+// No inference backend is selected implicitly. The self-hosted mode requires a
+// private authenticated HTTPS gateway; never forward to caller-supplied URLs.
+export function inferenceBackend(env={}){
+ const mode=env.SUTRA_INFERENCE_BACKEND;
+ if(mode==='hosted'){
+  return typeof env.SUTRA_PROVIDER_KEY==='string'&&env.SUTRA_PROVIDER_KEY.length>=8
+   ?Object.freeze({mode,url:UPSTREAM,credential:env.SUTRA_PROVIDER_KEY}):null;
+ }
+ if(mode!=='self_hosted')return null;
+ if(typeof env.SUTRA_SELF_HOSTED_UPSTREAM_URL!=='string'||typeof env.SUTRA_SELF_HOSTED_TOKEN!=='string'||env.SUTRA_SELF_HOSTED_TOKEN.length<16)return null;
+ let url;try{url=new URL(env.SUTRA_SELF_HOSTED_UPSTREAM_URL);}catch{return null;}
+ const host=url.hostname;
+ const labels=host.split('.');
+ if(url.protocol!=='https:'||url.port||url.username||url.password||url.search||url.hash||url.pathname!=='/v1/chat/completions'||url.href!==env.SUTRA_SELF_HOSTED_UPSTREAM_URL||
+  !/^[a-z0-9.-]+$/.test(host)||labels.length<2||labels.some(label=>!label||label.startsWith('-')||label.endsWith('-'))||
+  /^(?:[0-9.]+|localhost)$/i.test(host)||['local','localhost','internal','invalid'].includes(labels.at(-1)))return null;
+ return Object.freeze({mode,url:url.href,credential:env.SUTRA_SELF_HOSTED_TOKEN});
+}
+
 const error=(code,status)=>Response.json({error:{code,message:'Inference is unavailable or stopped; no complete result is claimed.'}},{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 export async function readJson(request,max=32768){
  const reader=request.body?.getReader();if(!reader)throw Error('body');let total=0;const chunks=[];const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);const cancel=()=>controller.abort();request.signal.addEventListener('abort',cancel,{once:true});if(request.signal.aborted)cancel();
@@ -35,17 +54,21 @@ export function inferenceStatus(env={}){
   Number.isInteger(Number(env.SUTRA_MAX_OUTPUT_TOKENS))&&Number(env.SUTRA_MAX_OUTPUT_TOKENS)>=64&&Number(env.SUTRA_MAX_OUTPUT_TOKENS)<=1024&&
   Number.isInteger(concurrent)&&concurrent>=1&&concurrent<=10&&!!quotaLimits(env)&&
   configuredModels(env).length>0&&env.SUTRA_ENABLE_INFERENCE==='true'&&
-  typeof env.SUTRA_PROVIDER_KEY==='string'&&env.SUTRA_PROVIDER_KEY.length>=8&&
+  !!inferenceBackend(env)&&
   typeof env.SUTRA_CLIENT_HASH_SECRET==='string'&&env.SUTRA_CLIENT_HASH_SECRET.length>=32&&!!env.SUTRA_QUOTA&&typeof env.SUTRA_MODELS==='string';
 }
 export async function handleInference(request,env,{fetchImpl=fetch}={}){
  if(request.method!=='POST')return error('METHOD',405);
  if(!inferenceStatus(env))return error('DISABLED',503);
  const origin=new URL(request.url).origin;if(request.headers.get('Origin')!==origin||origin!==env.SUTRA_ALLOWED_ORIGIN||request.headers.has('Authorization')||!request.headers.get('Content-Type')?.startsWith('application/json'))return error('ORIGIN_OR_HEADERS',403);
- const models=configuredModels(env);const maxOutput=Number(env.SUTRA_MAX_OUTPUT_TOKENS);
+ const models=configuredModels(env),backend=inferenceBackend(env);const maxOutput=Number(env.SUTRA_MAX_OUTPUT_TOKENS);
  if(!models.length||models.length>3||models.some(m=>!m||m.length>100)||!Number.isInteger(maxOutput)||maxOutput<64||maxOutput>1024)return error('CONFIG',503);
  let body;try{body=validPayload(await readJson(request),models);}catch{return error('PAYLOAD',400);}
- const upstreamBody=JSON.stringify({...body,max_completion_tokens:maxOutput,stream_options:{include_usage:true},...(body.tools.length?{tool_choice:'auto'}:{})});
+ const upstreamBody=JSON.stringify({...body,
+  ...(backend.mode==='self_hosted'?{max_tokens:maxOutput}:{max_completion_tokens:maxOutput}),
+  stream_options:{include_usage:true},
+  ...(backend.mode==='hosted'&&body.tools.length?{tool_choice:'auto'}:{})
+ });
  const inputBytes=new TextEncoder().encode(upstreamBody).byteLength;
  if(inputBytes<1||inputBytes>MAX_INPUT_BYTES)return error('PAYLOAD',400);
  let quota,lease,released=false;
@@ -69,9 +92,9 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
  const controller=new AbortController(),cancel=()=>controller.abort();request.signal.addEventListener('abort',cancel,{once:true});const timer=setTimeout(cancel,30000);
  const cleanup=()=>{clearTimeout(timer);request.signal.removeEventListener('abort',cancel);};
  let upstream;
- try{upstream=await abortable(fetchImpl(UPSTREAM,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json',Authorization:`Bearer ${env.SUTRA_PROVIDER_KEY}`},body:upstreamBody,signal:controller.signal}),controller.signal);}
+ try{upstream=await abortable(fetchImpl(backend.url,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json',Authorization:`Bearer ${backend.credential}`},body:upstreamBody,signal:controller.signal}),controller.signal);}
  catch{controller.abort();cleanup();await releaseQuota();return error('UPSTREAM_UNAVAILABLE',502);}
- if(!upstream.ok||!upstream.headers.get('content-type')?.includes('text/event-stream')){void upstream.body?.cancel().catch(()=>{});cleanup();await releaseQuota();return error('UPSTREAM_REJECTED',502);}
+ if(upstream.redirected||!upstream.ok||!upstream.headers.get('content-type')?.includes('text/event-stream')){void upstream.body?.cancel().catch(()=>{});cleanup();await releaseQuota();return error('UPSTREAM_REJECTED',502);}
  const encoder=new TextEncoder();
  const stream=new ReadableStream({
   async start(sink){

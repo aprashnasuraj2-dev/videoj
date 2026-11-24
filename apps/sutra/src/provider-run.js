@@ -26,11 +26,11 @@ export async function discoverProvider({origin,loadedContent,fetchImpl=fetch,sig
   const data=await readPublicJson({url:origin+'/api/status',origin,fetchImpl,signal:controller.signal,maxBytes:4096});
   if(data.sourceTools!=='catalog'||data.factualTruth!=='unverified'||!['configured','disabled'].includes(data.inference)||!plain(data.content)||Object.keys(data.content).some(k=>!['mode','contentVersion','catalogSha256','primarySourceId'].includes(k)))throw Error('Invalid status');
   const allowedDisabled=['inference','sourceTools','content','factualTruth'];
-  const allowedConfigured=[...allowedDisabled,'model','routerBase','publisherFunded','byok'];
+  const allowedConfigured=[...allowedDisabled,'model','routerBase','publisherFunded','byok','backend'];
   const allowed=data.inference==='disabled'?allowedDisabled:allowedConfigured;
   if(Object.keys(data).some(k=>!allowed.includes(k)))throw Error('Unexpected status metadata');
   if(data.inference==='disabled'){if(Object.keys(data).some(k=>!allowedDisabled.includes(k)))throw Error('Invalid disabled status');return {state:'disabled'};}
-  if(typeof data.model!=='string'||!modelPattern.test(data.model)||data.model==='mock-1'||data.routerBase!=='/api/v1'||data.publisherFunded!==true||data.byok!==false)throw Error('Invalid model/router status');
+  if(typeof data.model!=='string'||!modelPattern.test(data.model)||data.model==='mock-1'||data.routerBase!=='/api/v1'||data.publisherFunded!==true||data.byok!==false||!['hosted','self_hosted'].includes(data.backend))throw Error('Invalid model/router status');
   if(!loadedContent)throw contentError();
   const content=await loadContentProfile({baseUrl:origin+'/content/',fetchImpl,signal:controller.signal});
   if(!same(contentIdentity(content),contentIdentity(loadedContent)))throw contentError();
@@ -48,9 +48,9 @@ export async function discoverProvider({origin,loadedContent,fetchImpl=fetch,sig
   if(!plain(graph.llm_config)||Object.keys(graph.llm_config).some(k=>k!=='model_name')||graph.llm_config.model_name!==data.model)throw Error('Published model does not match configured provider');
   const published={definition:graph,name:'source_learner',frontMan:entries[0].front_man,artifacts:{manifest:origin+'/agents/agent-manifest.json',definition:graphUrl.href}};
   compileNetwork(graph,{name:published.name,frontMan:published.frontMan,allowSourceTools:true});
-  const contract=Object.freeze({model:data.model,router:router.base_url,content:Object.freeze(contentIdentity(content)),graphUrl:graphUrl.href,frontMan:published.frontMan,graphSha256:await sha(graph)});
+  const contract=Object.freeze({backend:data.backend,model:data.model,router:router.base_url,content:Object.freeze(contentIdentity(content)),graphUrl:graphUrl.href,frontMan:published.frontMan,graphSha256:await sha(graph)});
   controller.signal.throwIfAborted();
-  return {state:'configured',model:data.model,contract,published};
+  return {state:'configured',model:data.model,backend:data.backend,contract,published};
  }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controller.abort();}
 }
 export async function runProviderLesson({origin,approvedContract,loadedContent,question,fetchImpl=fetch,signal}={}){

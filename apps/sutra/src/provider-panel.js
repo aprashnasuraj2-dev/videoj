@@ -21,7 +21,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   if(active)return;model=null;approvedContract=null;clear();
   const operation={kind:'check',controller:new AbortController()};active=operation;controls();set('loading','Checking configuration without calling a model…');
   try{const found=await discoverProvider({origin,loadedContent,signal:operation.controller.signal});
-   if(found.state==='configured'){model=found.model;approvedContract=found.contract;set('idle','Model configured: '+model+'. A run may still be refused by quota or provider availability. No personal key is needed.');}
+   if(found.state==='configured'){model=found.model;approvedContract=found.contract;set('idle','Model configured: '+model+' ('+(found.backend==='self_hosted'?'operator self-hosted':'external hosted')+'). A run may still be refused by quota or provider availability. No personal key is needed.');}
    else set('denied','Site-funded inference is disabled. The lesson, transcript, source checks and local review remain available.');
   }catch(error){set('error',error?.code==='CONTENT_CHANGED'?'Published lesson changed. Reload the lesson before checking inference again. No model request was made.':'Inference configuration could not be confirmed. No model request was made.');}
   finally{active=null;controls();}
