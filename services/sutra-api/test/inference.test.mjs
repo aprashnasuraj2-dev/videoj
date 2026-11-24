@@ -570,3 +570,11 @@ test('incomplete SSE terminal event and named error event cannot produce Worker 
   assert.match(text,/INCOMPLETE_STREAM/);assert.doesNotMatch(text,/\[DONE\]/);
  }
 });
+
+test('empty request fragments fail before quota or provider contact',async()=>{
+ let pulls=0,cancelled=0,reserved=0,contacts=0;
+ const stream=new ReadableStream({pull(c){pulls++;c.enqueue(new Uint8Array(0));},cancel(){cancelled++;}});
+ const req=new Request('https://sutra.test/api/infer',{method:'POST',headers:request().headers,body:stream,duplex:'half'});
+ const result=await handleInference(req,environment(async()=>{reserved++;return Response.json({allowed:true});}),{fetchImpl:()=>{contacts++;return sse();}});
+ assert.equal(result.status,400);assert.equal(reserved,0);assert.equal(contacts,0);assert.ok(pulls<=258);assert.equal(cancelled,1);assert.equal(req.body.locked,false);
+});

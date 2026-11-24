@@ -143,11 +143,12 @@ async function readBoundedJson(response,maxBytes,signal){
     if(!response?.ok||response.status!==200||response.headers?.has('content-range')||!/^application\/json(?:\s*;|$)/i.test(response.headers?.get('content-type')??''))fail('CONTACT_RESPONSE','Approved contact must return complete successful JSON.');
     if(Number(response.headers.get('content-length'))>maxBytes)fail('CONTACT_SIZE','Approved contact exceeded the response limit.');
     reader=response.body?.getReader();if(!reader)fail('CONTACT_RESPONSE','Approved contact response body is unavailable.');
-    const bytes=new Uint8Array(maxBytes);let total=0;
+    const bytes=new Uint8Array(maxBytes);let total=0,empty=0,chunks=0;
     for(;;){
       const {done,value}=await raceAbort(()=>reader.read(),signal);check(signal);if(done)break;
       if(!(value instanceof Uint8Array))fail('CONTACT_RESPONSE','Approved contact returned an invalid byte stream.');
-      if(value.byteLength>maxBytes-total)fail('CONTACT_SIZE','Approved contact exceeded the response limit.');
+      if(value.byteLength>maxBytes-total||!value.byteLength&&++empty>256)fail('CONTACT_SIZE','Approved contact exceeded the response limit.');
+      if(++chunks%1024===0){await new Promise(resolve=>setTimeout(resolve,0));check(signal);}
       bytes.set(value,total);total+=value.byteLength;
     }
     try{return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes.subarray(0,total)));}catch{fail('CONTACT_JSON','Approved contact did not return valid UTF-8 JSON.');}

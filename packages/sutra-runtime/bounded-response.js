@@ -30,12 +30,20 @@ export async function readBoundedResponse({url,fetchImpl=fetch,init={},signal,ma
   if(inspect(response)===false)return {response,bytes:null};
   if(Number(response.headers.get('content-length'))>maxBytes)bad('SIZE');
   reader=response.body?.getReader();if(!reader)bad('BODY');
-  const bytes=new Uint8Array(maxBytes);let total=0;
+  const bytes=new Uint8Array(maxBytes);let total=0,empty=0,chunks=0;
   for(;;){
-   check();const {done,value}=await Promise.race([reader.read(),stopped]);check();
+   check();
+   // A fresh abort race per read avoids retaining one reaction on a
+   // single pending cancellation promise for every incoming fragment.
+   let interrupt;
+   const interrupted=new Promise((_,reject)=>{interrupt=()=>reject(new BoundedResponseError('ABORTED'));signal?.addEventListener('abort',interrupt,{once:true});});
+   let result;try{result=await Promise.race([reader.read(),interrupted]);}finally{signal?.removeEventListener('abort',interrupt);}
+   check();const {done,value}=result;
    if(done)break;
    if(!(value instanceof Uint8Array))bad('BODY');
-   if(value.byteLength>maxBytes-total)bad('SIZE');
+   if(value.byteLength>maxBytes-total||!value.byteLength&&++empty>256)bad('SIZE');
+   // Give timers and user cancellation a chance to run during microtask-only pulls.
+   if(++chunks%1024===0){await new Promise(resolve=>setTimeout(resolve,0));check();}
    bytes.set(value,total);total+=value.byteLength;
   }
   return {response,bytes:bytes.subarray(0,total)};

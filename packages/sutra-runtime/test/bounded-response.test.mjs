@@ -180,3 +180,16 @@ test('both MCP hosts accept only empty 202 notification acknowledgement before p
   assert.ok(!ack.body?.locked);
  }
 });
+
+test('empty chunks cannot bypass response budget; finite empties and timer cancellation remain supported',async()=>{
+ let pulls=0,cancelled=0;
+ const response=new Response(new ReadableStream({pull(c){pulls++;c.enqueue(new Uint8Array(0));},cancel(){cancelled++;}}));
+ await assert.rejects(readBoundedResponse({url,maxBytes:0,inspect:()=>true,fetchImpl:()=>response}),e=>e.code==='SIZE');
+ assert.ok(pulls<=258);assert.equal(cancelled,1);assert.equal(response.body.locked,false);
+ const finite=new Response(new ReadableStream({start(c){for(let i=0;i<256;i++)c.enqueue(new Uint8Array(0));c.close();}}));
+ assert.equal((await readBoundedResponse({url,maxBytes:0,inspect:()=>true,fetchImpl:()=>finite})).bytes.length,0);
+ const controller=new AbortController();let count=0;
+ const busy=new Response(new ReadableStream({pull(c){count++;c.enqueue(Uint8Array.of(1));}}));
+ const timer=setTimeout(()=>controller.abort(),0);
+ try{await assert.rejects(readBoundedResponse({url,maxBytes:65536,inspect:()=>true,signal:controller.signal,fetchImpl:()=>busy}),e=>e.code==='ABORTED');assert.ok(count<=1025);assert.equal(busy.body.locked,false);}finally{clearTimeout(timer);}
+});

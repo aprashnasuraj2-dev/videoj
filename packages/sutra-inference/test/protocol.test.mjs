@@ -122,3 +122,13 @@ test('SSE event aggregate bound cannot be bypassed by many small data fields',as
  await assert.rejects(async()=>{for await(const x of readSse(response))void x;},e=>e.code==='STREAM_SIZE');
  assert.equal(response.body.locked,false);
 });
+
+test('SSE empty chunks are bounded and comment-only bursts remain cancellable',async()=>{
+ let pulls=0,cancelled=0;
+ const response=new Response(new ReadableStream({pull(c){pulls++;c.enqueue(new Uint8Array(0));},cancel(){cancelled++;}}));
+ await assert.rejects(async()=>{for await(const x of readSse(response))void x;},e=>e.code==='STREAM_SIZE');
+ assert.ok(pulls<=258);assert.equal(cancelled,1);assert.equal(response.body.locked,false);
+ const controller=new AbortController(),busy=new Response(':\n'.repeat(40000)+'data: [DONE]\n\n');
+ const timer=setTimeout(()=>controller.abort(),0);let terminal=false;
+ try{await assert.rejects(async()=>{for await(const x of readSse(busy,{signal:controller.signal}))terminal||=!!x.done;},e=>e.code==='CANCELLED');assert.equal(terminal,false);assert.equal(busy.body.locked,false);}finally{clearTimeout(timer);}
+});

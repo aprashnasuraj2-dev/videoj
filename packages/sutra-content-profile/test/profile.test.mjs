@@ -203,3 +203,15 @@ test('public content reader rejects non-HTTP(S) same-origin blob and wrong media
  await assert.rejects(readContentBytes({url:origin+'/media/file.mp4',origin,maxBytes:32,accept:'video/mp4',fetchImpl:()=>{contacts++;return response;}}),/CONTENT_MEDIA_RESPONSE/);
  assert.equal(contacts,1);assert.equal(cancelled,1);assert.equal(response.body.locked,false);assert.ok(pulls<=1);
 });
+
+test('artifact readers bound empty fragments and yield to cancellation during tiny-fragment transport',async()=>{
+ let pulls=0,cancelled=0;
+ const response=new Response(new ReadableStream({pull(c){pulls++;c.enqueue(new Uint8Array(0));},cancel(){cancelled++;}}));
+ const origin='https://sutra.example',url=origin+'/source';
+ await assert.rejects(readContentBytes({origin,url,maxBytes:32,fetchImpl:()=>response}),/CONTENT_SIZE/);
+ assert.ok(pulls<=258);assert.equal(cancelled,1);assert.equal(response.body.locked,false);
+ const controller=new AbortController();let count=0;
+ const busy=new Response(new ReadableStream({pull(c){count++;c.enqueue(Uint8Array.of(1));}}));
+ const timer=setTimeout(()=>controller.abort(),0);
+ try{await assert.rejects(readContentBytes({origin,url,maxBytes:65536,signal:controller.signal,fetchImpl:()=>busy}));assert.ok(count<=1025);assert.equal(busy.body.locked,false);}finally{clearTimeout(timer);}
+});

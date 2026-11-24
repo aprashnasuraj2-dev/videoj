@@ -40,15 +40,19 @@ export async function readContentBytes({url,origin,fetchImpl=fetch,signal,maxByt
   if(MEDIA_TYPES.has(accept)&&response.headers.get('content-type')?.split(';',1)[0].trim().toLowerCase()!==accept)throw Error('CONTENT_MEDIA_RESPONSE');
   if(Number(response.headers.get('content-length'))>maxBytes)throw Error('CONTENT_SIZE');
   reader=response.body?.getReader();if(!reader)throw Error('CONTENT_BODY');
-  let total=0,buffer=new Uint8Array(Math.min(maxBytes,16384));
+  let total=0,empty=0,chunks=0,buffer=new Uint8Array(Math.min(maxBytes,16384));
   // Geometric growth bounds allocation even if a transport sends millions
   // of tiny chunks. Never retain one object for every incoming fragment.
   for(;;){
    signal?.throwIfAborted();
-   const {done,value}=await Promise.race([reader.read(),stopped]);
+   let interrupt;
+   const interrupted=new Promise((_,reject)=>{interrupt=()=>reject(Error('CONTENT_CANCELLED'));signal?.addEventListener('abort',interrupt,{once:true});});
+   let result;try{result=await Promise.race([reader.read(),interrupted]);}finally{signal?.removeEventListener('abort',interrupt);}
+   const {done,value}=result;
    signal?.throwIfAborted();if(done)break;
    if(!(value instanceof Uint8Array))throw Error('CONTENT_BODY');
-   if(value.byteLength>maxBytes-total)throw Error('CONTENT_SIZE');
+   if(value.byteLength>maxBytes-total||!value.byteLength&&++empty>256||++chunks>131072)throw Error('CONTENT_SIZE');
+   if(chunks%1024===0){await new Promise(resolve=>setTimeout(resolve,0));signal?.throwIfAborted();}
    if(!value.byteLength)continue;
    if(total+value.byteLength>buffer.length){
     const next=new Uint8Array(Math.min(maxBytes,Math.max(buffer.length*2,total+value.byteLength)));

@@ -9,14 +9,15 @@ const MAX_SSE_LINE_CHARS=32768;
 export async function* readSse(response,{signal,maxBytes=MAX_SSE_BYTES}={}){
  if(!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>MAX_SSE_BYTES)stop('STREAM_SIZE');
  const reader=response.body?.getReader();if(!reader)stop('MISSING_STREAM');
- const decoder=new TextDecoder('utf-8',{fatal:true});let buffer='',total=0,abort,skipLf=false,data='',hasData=false,eventType='';
- const stopped=new Promise((_,reject)=>{abort=()=>reject(new InferenceError('CANCELLED'));signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();});stopped.catch(()=>{});
+ const decoder=new TextDecoder('utf-8',{fatal:true});let buffer='',total=0,empty=0,chunks=0,lines=0,skipLf=false,data='',hasData=false,eventType='';
  try{
   for(;;){
-   if(signal?.aborted)stop('CANCELLED');const {done,value}=await Promise.race([reader.read(),stopped]);
+   if(signal?.aborted)stop('CANCELLED');const {done,value}=await abortable(reader.read(),signal);
    if(signal?.aborted)stop('CANCELLED');
    if(!done&&!(value instanceof Uint8Array))stop('STREAM_ENCODING');
-   if(value){total+=value.byteLength;if(total>maxBytes)stop('STREAM_SIZE');}
+   if(value){total+=value.byteLength;if(total>maxBytes||!value.byteLength&&++empty>256)stop('STREAM_SIZE');
+    if(++chunks%1024===0){await new Promise(resolve=>setTimeout(resolve,0));if(signal?.aborted)stop('CANCELLED');}}
+
    try{buffer+=decoder.decode(value??new Uint8Array(),{stream:!done});}catch{stop('STREAM_ENCODING');}
    for(;;){
     if(signal?.aborted)stop('CANCELLED');
@@ -26,6 +27,7 @@ export async function* readSse(response,{signal,maxBytes=MAX_SSE_BYTES}={}){
     const newline=buffer.search(/[\r\n]/);
     if(newline<0)break;
     if(newline>MAX_SSE_LINE_CHARS)stop('STREAM_SIZE');
+    if(++lines%1024===0){await new Promise(resolve=>setTimeout(resolve,0));if(signal?.aborted)stop('CANCELLED');}
     const line=buffer.slice(0,newline),ending=buffer[newline];buffer=buffer.slice(newline+1);
     if(ending==='\r')skipLf=true;
     if(line===''){
@@ -53,7 +55,7 @@ export async function* readSse(response,{signal,maxBytes=MAX_SSE_BYTES}={}){
    // EOF never dispatches a pending unterminated event.
    if(done)stop('INCOMPLETE_STREAM');
   }
- }finally{signal?.removeEventListener('abort',abort);try{void Promise.resolve(reader.cancel()).catch(()=>{});}catch{}try{reader.releaseLock();}catch{}}
+ }finally{try{void Promise.resolve(reader.cancel()).catch(()=>{});}catch{}try{reader.releaseLock();}catch{}}
 }
 export function sanitizeChunk(raw){
  if(!plain(raw)||!Array.isArray(raw.choices)||raw.choices.length>1)stop('STREAM_SHAPE');
@@ -95,7 +97,7 @@ export function makeAccumulator(){
  };
 }
 export async function abortable(promise,signal){
- if(signal?.aborted)stop('CANCELLED');let cancel;
+ if(signal?.aborted){void Promise.resolve(promise).catch(()=>{});stop('CANCELLED');}let cancel;
  const stopped=new Promise((_,reject)=>{cancel=()=>reject(new InferenceError('CANCELLED'));signal?.addEventListener('abort',cancel,{once:true});});
  try{return await Promise.race([promise,stopped]);}finally{signal?.removeEventListener('abort',cancel);}
 }

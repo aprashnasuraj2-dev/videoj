@@ -37,7 +37,7 @@ export async function readJson(request,max=32768){
  request.signal.throwIfAborted();
  if(!Number.isSafeInteger(max)||max<1||max>32768)throw Error('size');
  const reader=request.body?.getReader();if(!reader)throw Error('body');
- const data=new Uint8Array(max);let total=0;
+ const data=new Uint8Array(max);let total=0,empty=0,chunks=0;
  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);const cancel=()=>controller.abort();
  request.signal.addEventListener('abort',cancel,{once:true});if(request.signal.aborted)cancel();
  try{
@@ -46,7 +46,8 @@ export async function readJson(request,max=32768){
    const {value,done}=await abortable(reader.read(),controller.signal);
    controller.signal.throwIfAborted();
    if(done)break;
-   if(!(value instanceof Uint8Array)||value.byteLength>max-total)throw Error('size');
+   if(!(value instanceof Uint8Array)||value.byteLength>max-total||!value.byteLength&&++empty>256)throw Error('size');
+   if(++chunks%1024===0){await new Promise(resolve=>setTimeout(resolve,0));controller.signal.throwIfAborted();}
    if(!value.byteLength)continue;
    data.set(value,total);total+=value.byteLength;
   }

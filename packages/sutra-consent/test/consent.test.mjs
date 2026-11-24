@@ -125,3 +125,10 @@ test('operation-local event observer remains complete after the bounded session 
  assert.deepEqual(events.map(e=>e.type),['intent','decision','outcome']);
  assert.equal(events[1].source,'remembered');assert.equal(events[2].status,'completed');
 });
+
+test('approved JSON rejects unbounded empty transport fragments',async()=>{
+ let pulls=0,cancelled=0;const response=new Response(new ReadableStream({pull(c){pulls++;c.enqueue(new Uint8Array(0));},cancel(){cancelled++;}}),{headers:{'Content-Type':'application/json'}});
+ const inspector=createConsentInspector({decide:async()=> 'allow'});
+ await assert.rejects(fetchJsonWithConsent({inspector,contact:contact(),url:'https://peer.example/a.json',fetchImpl:()=>response}),e=>e.code==='CONTACT_SIZE');
+ assert.ok(pulls<=258);assert.equal(cancelled,1);assert.equal(response.body.locked,false);
+});
