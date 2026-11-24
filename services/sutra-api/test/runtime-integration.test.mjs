@@ -71,7 +71,7 @@ test('network loss during delegated provider run fails incomplete and only expli
    });
   }
  });
- await assert.rejects(runNetwork({definition:graph,request:'Inspect synthetic source consistency.',model:flaky}),error=>error.code==='RUN_FAILED');
+ await assert.rejects(runNetwork({definition:graph,request:'Inspect synthetic source consistency.',model:flaky}),error=>error.code==='PROVIDER_TRANSPORT'&&error.diagnostics.modelCalls===2&&error.diagnostics.completedModelCalls===1);
  assert.equal(clientCalls,2);
  assert.equal(events.filter(e=>e.kind==='quota'&&e.path==='/reserve').length,1,'failed second client transport cannot reserve or spend');
 
