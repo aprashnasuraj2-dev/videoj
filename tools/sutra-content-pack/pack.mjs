@@ -5,6 +5,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {assessContentManifest,snapshotContentManifest} from '../sutra-content-intake/intake.mjs';
 import {validateContentProfile,MAX_REVIEWED_MEDIA_BYTES,deriveReviewedTracks} from '../../packages/sutra-content-profile/index.js';
+import {renderReviewedGuideDerivative} from '../../packages/sutra-content-profile/guide-derivative.js';
 
 const ID=/^[A-Za-z][A-Za-z0-9._:-]{0,127}$/;
 const validId=v=>typeof v==='string'&&ID.test(v);
@@ -83,9 +84,7 @@ export function assertReviewedGuideFragment(input,anchor,excerpt){
  const decoded=raw.replace(/&(amp|lt|gt|quot|#39);/g,(_,key)=>entity[key]);
  if(decoded!==excerpt)throw Error('Guide anchored excerpt does not exactly match the reviewed text.');
 }
-function makeSafeGuideExcerpt(meta,inputSha){
- return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; base-uri \'none\'; form-action \'none\'; object-src \'none\'"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html(meta.guideClaim.title)+'</title></head><body><main><h1>'+html(meta.guideClaim.title)+'</h1><p>Safe published excerpt generated from the reviewed written-guide input. It preserves the reviewed excerpt as text and does not publish executable source markup.</p><dl><dt>Scope</dt><dd>'+html(meta.guideClaim.scope)+'</dd><dt>Claim key</dt><dd>'+html(meta.guideClaim.claimKey)+'</dd><dt>Provenance</dt><dd>'+html(meta.guideClaim.provenance)+'</dd><dt>Date basis</dt><dd>'+html(meta.guideClaim.dateBasis)+'</dd><dt>Reviewed input SHA-256</dt><dd><code>'+html(inputSha)+'</code></dd></dl><section id="'+html(meta.guideClaim.anchor)+'"><h2>Reviewed excerpt</h2><blockquote>'+html(meta.guideClaim.excerpt)+'</blockquote></section></main></body></html>\n';
-}
+
 async function write(root,relative,bytes){
  if(!safePath(relative))throw Error('Unsafe output path.');
  const target=path.join(root,...relative.split('/'));await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,bytes,{flag:'wx'});
@@ -113,7 +112,7 @@ export async function buildContentPack({manifest,semantic,contentRoot,outputDir}
  const guideName=path.basename(assetPaths.guide);if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}\.html$/i.test(guideName))throw Error('Reviewed guide must be a safe HTML file.');
  const guideProvenance=Array.from('Safe published excerpt derivative of reviewed guide input; '+meta.guideClaim.provenance).slice(0,240).join('');
  const guideMeta={...meta,guideClaim:{...meta.guideClaim,provenance:guideProvenance}};
- const safeGuideBytes=Buffer.from(makeSafeGuideExcerpt(guideMeta,observed.guide.sha256));if(safeGuideBytes.length>65536)throw Error('Safe guide excerpt exceeds browser integrity-read budget.');const publishedGuideSha=digest(safeGuideBytes);
+ const safeGuideBytes=Buffer.from(renderReviewedGuideDerivative(guideMeta.guideClaim,guideMeta.guideClaim.anchor,observed.guide.sha256));if(safeGuideBytes.length>65536)throw Error('Safe guide excerpt exceeds browser integrity-read budget.');const publishedGuideSha=digest(safeGuideBytes);
  const mediaBase='media/release/'+observed.media.sha256,transcriptBase='transcripts/release/'+observed.transcript.sha256,guideBase='guides/release/'+publishedGuideSha;
  const sourceCatalog={schema:1,contentVersion:meta.contentVersion,sources:[{id:meta.sourceId,version:meta.sourceVersion,hash:observed.transcript.sha256,mediaHash:observed.media.sha256,duration:manifest.lesson.durationSeconds,cues:meta.cues}]};
  const catalogBytes=Buffer.from(canonical(sourceCatalog)),catalogSha=digest(catalogBytes);

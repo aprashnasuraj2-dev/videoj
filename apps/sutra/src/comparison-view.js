@@ -1,5 +1,6 @@
 import {isNativeCueReached} from './seek-policy.js';
 import {readContentBytes} from '../../../packages/sutra-content-profile/index.js';
+import {assertReviewedGuideDerivative} from '../../../packages/sutra-content-profile/guide-derivative.js';
 import {compareClaimPair,syntheticComparison} from './comparison.js';
 import {applyLocale} from './localization.js';
 import {validateEvidenceClaim} from '../../../packages/sutra-evidence/index.js';
@@ -105,20 +106,27 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
       if(response.headers.get('content-type')?.split(';',1)[0].trim().toLowerCase()!=='text/html')throw Error('Unexpected source response');
       const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');
       if(digest!==claim.sourceHash)throw Error('Source hash mismatch');
-      // Template content stays inert and detached: never mount source markup.
-      const template=document.createElement('template');template.innerHTML=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
-      assertInspectableGuide(template.content);
-      const anchor=href.hash.slice(1);
-      const matching=Array.from(template.content.querySelectorAll('[id]')).filter(element=>element.id===anchor);
-      const anchored=matching.length===1?matching[0]:null;
-      // The reviewed compiler emits one text-only blockquote; the bundled
-      // synthetic example uses a paragraph. Never accept a substring buried
-      // in heading, hidden markup, or a second duplicate anchor.
-      const excerptTag=claim.sourceId==='fixture_guide'&&activeMode==='conflict'?'P':'BLOCKQUOTE';
-      const candidates=anchored?Array.from(anchored.children).filter(element=>element.tagName===excerptTag):[];
-      const exact=candidates.length===1?candidates[0]:null;
-      if(!anchored||anchored.tagName!=='SECTION'||!exact||exact.attributes.length||exact.children.length||exact.textContent!==claim.excerpt)throw Error('Anchored excerpt mismatch');
-      for(let element=anchored;element;element=element.parentElement)if(element.hidden||element.hasAttribute('aria-hidden')||element.hasAttribute('style')||element.tagName==='TEMPLATE')throw Error('Hidden or uninspectable source anchor');
+      const text=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(bytes),anchor=href.hash.slice(1);
+      if(contentMode==='reviewed'&&activeMode==='available'){
+       // Template parsing can drop wrapper attributes, e.g. <body hidden>.
+       // Require the same canonical derivative the compiler would emit,
+       // including metadata, wrapper, CSP and exact escaped excerpt.
+       assertReviewedGuideDerivative(text,claim,anchor);
+      }else{
+       // Template content stays inert and detached: never mount source markup.
+       const template=document.createElement('template');template.innerHTML=text;
+       assertInspectableGuide(template.content);
+       const matching=Array.from(template.content.querySelectorAll('[id]')).filter(element=>element.id===anchor);
+       const anchored=matching.length===1?matching[0]:null;
+       // The reviewed compiler emits one text-only blockquote; the bundled
+       // synthetic example uses a paragraph. Never accept a substring buried
+       // in heading, hidden markup, or a second duplicate anchor.
+       const excerptTag='P';
+       const candidates=anchored?Array.from(anchored.children).filter(element=>element.tagName===excerptTag):[];
+       const exact=candidates.length===1?candidates[0]:null;
+       if(!anchored||anchored.tagName!=='SECTION'||!exact||exact.attributes.length||exact.children.length||exact.textContent!==claim.excerpt)throw Error('Anchored excerpt mismatch');
+       for(let element=anchored;element;element=element.parentElement)if(element.hidden||element.hasAttribute('aria-hidden')||element.hasAttribute('style')||element.tagName==='TEMPLATE')throw Error('Hidden or uninspectable source anchor');
+      }
       if(current(token))seekStatus.textContent='Written source bytes and anchored excerpt match this comparison record. This does not establish factual truth.';
      }catch{if(current(token))seekStatus.textContent='Written source integrity could not be confirmed. Do not treat the linked excerpt as matching this comparison record.';}
      finally{finishAction(token);verify.disabled=false;}

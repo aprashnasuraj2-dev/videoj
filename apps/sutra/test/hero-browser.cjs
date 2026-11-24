@@ -305,10 +305,12 @@ const assert=require('node:assert/strict');
    const catalog=JSON.parse(fs.readFileSync(path.join(app,'public/content/source-catalog.json'),'utf8'));
    const source=catalog.sources[0],mediaBytes=fs.readFileSync(path.join(app,'public/media/timing-fixture.mp4')),textBytes=fs.readFileSync(path.join(app,'public/transcripts/synthetic-timing.txt'));
    profile.mode='reviewed';profile.media.video='/media/release/'+source.mediaHash+'/lesson.mp4';profile.transcript.path='/transcripts/release/'+source.hash+'/lesson.txt';
-   const validGuide='<html><body><section id="claim"><h2>Reviewed excerpt</h2><blockquote>Test only.</blockquote></section></body></html>';
-   const wrongGuide='<html><body><section id="claim"><h2>Test only.</h2><blockquote>Different claim.</blockquote></section></body></html>';
+   const {renderReviewedGuideDerivative}=await import('../../../packages/sutra-content-profile/guide-derivative.js');
+   const guideClaim={sourceKind:'guide',sourceId:'test-guide',sourceVersion:'v1',title:'Test guide',scope:profile.videoClaim.scope,claimKey:profile.videoClaim.claimKey,value:profile.videoClaim.value,excerpt:'Test only.',provenance:'Synthetic routing test, not reviewed content',observedAt:profile.observedAt,dateBasis:'Synthetic routing fixture'};
+   const validGuide=renderReviewedGuideDerivative(guideClaim,'claim','a'.repeat(64));
+   const wrongGuide=renderReviewedGuideDerivative({...guideClaim,excerpt:'Different claim.'},'claim','a'.repeat(64)).replace('<h2>Reviewed excerpt</h2>','<h2>Test only.</h2>');
    const guideHash=require('node:crypto').createHash('sha256').update(validGuide).digest('hex');
-   profile.guideClaim={sourceKind:'guide',sourceId:'test-guide',sourceVersion:'v1',title:'Test guide',scope:profile.videoClaim.scope,claimKey:profile.videoClaim.claimKey,value:profile.videoClaim.value,excerpt:'Test only.',provenance:'Synthetic routing test, not reviewed content',sourceHref:'/guides/release/'+guideHash+'/guide.html#claim',sourceHash:guideHash};
+   profile.guideClaim={...guideClaim,sourceHref:'/guides/release/'+guideHash+'/guide.html#claim',sourceHash:guideHash};
    let guideRequests=0;
    await reviewPage.route('**'+profile.guideClaim.sourceHref.split('#')[0],r=>{guideRequests++;assert.equal(r.request().headers().cookie,undefined);return r.fulfill({contentType:'text/html',body:validGuide});});
    await reviewPage.route('**/content/content-profile.json',r=>r.fulfill({json:profile}));
@@ -332,7 +334,10 @@ const assert=require('node:assert/strict');
    for(const deceptive of [
     '<html><head><style>section{display:none}</style></head><body><section id="claim"><blockquote>Test only.</blockquote></section></body></html>',
     '<html><head><meta http-equiv="refresh" content="0;url=https://not-contacted.invalid/"></head><body><section id="claim"><blockquote>Test only.</blockquote></section></body></html>',
-    '<html><body><section id="claim" class="concealed"><blockquote>Test only.</blockquote></section></body></html>'
+    '<html><body><section id="claim" class="concealed"><blockquote>Test only.</blockquote></section></body></html>',
+    validGuide.replace('<body>','<body hidden>'),
+    validGuide.replace('<html lang="en">','<html lang="en" style="display:none">'),
+    validGuide.replace('Synthetic routing fixture','Different date basis')
    ]){
     const digest=require('node:crypto').createHash('sha256').update(deceptive).digest('hex');
     profile.guideClaim.sourceHref='/guides/release/'+digest+'/guide.html#claim';profile.guideClaim.sourceHash=digest;
