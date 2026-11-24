@@ -165,3 +165,10 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Existing two-account configuration is a compiled development candidate, not public launch authorization or proof of Cloudflare capacity. Do not contact/reconnect Cloudflare accounts, assign domains, mutate DNS or enable funded inference as part of routine continuation.
 - Keep unverified original and added-scope tasks pending. Do not mark human acceptance, actual content rights, live provider evidence or public interoperability complete using synthetic tests. No additional optional tasks waived here; direct BYOK remains unshipped and its scope decision pending.
 - Reject treating packaging or compilation as an engineering milestone that supersedes incomplete runtime, learner and interoperability work. Prioritize P026, P029, P028, P022, P071 and P077 where independently ready.
+
+## SUTRA-DECISION-0019 — Competition quality means useful, independently inspectable learner outcomes
+
+- Participant reiterated the goal is exceptional competition quality, not mere deployment. No claimed entrant count, award outcome or invented organizer scoring. Prioritize integrated evidence-to-media-to-action journeys, portable agent data, meaningful uncertainty, measured baseline and robust browser execution. Avoid adding ornamental agents or features that do not improve the learner outcome.
+- Preserve exact local write readback and action effect labels. A completed action is only what was observed; browser download requested does not prove file persistence. LocalStorage readback is not a cross-tab transaction guarantee; no claim of atomic simultaneous writes.
+- Preserve only independently catalog-matched receipts on stopped model runs; never present partial model text as a completed answer. Report actual started calls and explicit stable failure categories without exposing private error bodies. Regressions remain open until passing CI.
+- Multi-engine desktop headless validation does not substitute for physical touch, screen-reader users, human content review or live inference. No public release or cloud changes.

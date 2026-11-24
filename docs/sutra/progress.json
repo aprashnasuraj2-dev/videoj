@@ -1,26 +1,24 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T01:39:34Z",
+  "updated_at": "2026-11-24T01:54:48Z",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "f69d6c169cd588a4ebaef938884a986714da71eb",
-  "last_session_id": "SUTRA-SESSION-0014",
-  "stage": "engineering_checklist_first_open_kit_verified",
+  "last_observed_code_sha": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+  "last_session_id": "SUTRA-SESSION-0015",
+  "stage": "neutral_consumer_and_registered_actions_verified",
   "current_task": null,
   "next_task": "SUTRA-P041-08",
   "ready_engineering_queue": [
-    "SUTRA-P071-01",
-    "SUTRA-P026-01",
-    "SUTRA-P026-07",
-    "SUTRA-P029-01",
-    "SUTRA-X001-01",
-    "SUTRA-X001-02",
     "SUTRA-P028-04",
     "SUTRA-P028-07",
+    "SUTRA-P026-07",
+    "SUTRA-P077-01",
     "SUTRA-P022-04",
-    "SUTRA-P077-01"
+    "SUTRA-P022-06",
+    "SUTRA-P054-02",
+    "SUTRA-P053-02"
   ],
-  "next_action": "Verify pending CI for neutral consumer and explicit inference lifecycle states at c10155d78fe7329638c6e8182a23fa8074df9df6. Then complete local action registration and readback, shared budget diagnostics, symbolic links and cross-browser validation. Prioritize incomplete original checklist engineering and newly discovered correctness gaps; keep deployment, DNS and release work locked. Do not waive optional or mandatory tasks to inflate progress. Human acceptance, actual content rights and live provider proof remain separate pending gates.",
+  "next_action": "Check exact-head CI for shared budget, typed provider failures and retained catalog-matched partial evidence at cb5091e95b4c786e4c5b9dd4b97ae14a62a8455f, and the 3-engine browser compatibility matrix. Fix failing integrated behavior, then reconcile P028/P026/P077. Continue P022 symbolic links and P054 learner usefulness/delegation efficiency; prioritize evidence-grounded learning, independent portability and truthful resilience over deployment or feature count. Keep actual paid provider, original rights-reviewed lesson, physical testing and human acceptance pending. No deployment, DNS or release.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -8158,6 +8156,306 @@
           "result": "pass",
           "source_revision": "f69d6c169cd588a4ebaef938884a986714da71eb",
           "observed_at": "2026-11-24T01:39:34Z"
+        }
+      ]
+    },
+    "SUTRA-P071-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Standalone independent consumer page served from separate loopback HTTP origin.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45307542089/job/138154945074",
+          "description": "Standalone independent consumer page served from separate loopback HTTP origin.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-P071-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Consumer directly uses pinned upstream kernel and runner with generic narrow data-only JSON loader.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45307542089/job/138154945074",
+          "description": "Consumer directly uses pinned upstream kernel and runner with generic narrow data-only JSON loader.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-P071-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "No SUTRA learner or host adapter imports, no private endpoints or provider credentials.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45307542089/job/138154945074",
+          "description": "No SUTRA learner or host adapter imports, no private endpoints or provider credentials.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-P071-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Real Chromium exact-name manifest and graph GETs; duplicate/wrong names fail.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45307542089/job/138154945074",
+          "description": "Real Chromium exact-name manifest and graph GETs; duplicate/wrong names fail.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-P071-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Caller-owned fixed synthetic model remains authoritative despite publisher model hint.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45307542089/job/138154945074",
+          "description": "Caller-owned fixed synthetic model remains authoritative despite publisher model hint.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-P071-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Separate manifest/graph denial, missing graph, absent CORS and unsupported external capability tested.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45307542089/job/138154945074",
+          "description": "Separate manifest/graph denial, missing graph, absent CORS and unsupported external capability tested.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-P071-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Reproducible instructions in tools/sutra-neutral-consumer/README.md; same-owner origins documented.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45307542089/job/138154945074",
+          "description": "Reproducible instructions in tools/sutra-neutral-consumer/README.md; same-owner origins documented.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-P071-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Explicit same-owner local synthetic laboratory, no adoption or live provider claim.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45307542089/job/138154945074",
+          "description": "Explicit same-owner local synthetic laboratory, no adoption or live provider claim.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-P071-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Consumer source, browser harness and README exercised by CI.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45307542089/job/138154945074",
+          "description": "Consumer source, browser harness and README exercised by CI.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-P071-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Graph executes two agents and three synthetic caller model steps without SUTRA-only integration code; separate owner adoption remains untested.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45307542089/job/138154945074",
+          "description": "Graph executes two agents and three synthetic caller model steps without SUTRA-only integration code; separate owner adoption remains untested.",
+          "result": "pass",
+          "source_revision": "416ed5f3648a370653ba5adc0b64e389c1106e7c",
+          "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-P026-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Explicit idle/running/cancelling/error/completed states implemented and full learner browser suite passed.",
+          "result": "pass",
+          "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45308177809/job/138157027451",
+          "description": "Explicit idle/running/cancelling/error/completed states implemented and full learner browser suite passed.",
+          "result": "pass",
+          "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+          "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-P029-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Real learner save-review-card and export-receipt registered with write_local/download effects, exact reviewed payload and current-record validation.",
+          "result": "pass",
+          "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45308177809/job/138157027451",
+          "description": "Real learner save-review-card and export-receipt registered with write_local/download effects, exact reviewed payload and current-record validation.",
+          "result": "pass",
+          "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+          "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-P029-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Cancelled proposal never writes; frozen reviewed arguments and explicit confirm; real browser save/export/delete and ambiguous outcomes exercised.",
+          "result": "pass",
+          "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45308177809/job/138157027451",
+          "description": "Cancelled proposal never writes; frozen reviewed arguments and explicit confirm; real browser save/export/delete and ambiguous outcomes exercised.",
+          "result": "pass",
+          "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+          "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-X001-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Exact write readback, no-op or changed write classified unknown; cross-instance persisted ID uniqueness and deletion readback tests.",
+          "result": "pass",
+          "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45308177809/job/138157027451",
+          "description": "Exact write readback, no-op or changed write classified unknown; cross-instance persisted ID uniqueness and deletion readback tests.",
+          "result": "pass",
+          "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+          "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-X001-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T01:54:48Z",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+          "description": "Registered actual learner actions with explicit effects and current-snapshot export validation; test rejects stale and deleted exports.",
+          "result": "pass",
+          "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+          "observed_at": "2026-11-24T01:54:48Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45308177809/job/138157027451",
+          "description": "Registered actual learner actions with explicit effects and current-snapshot export validation; test rejects stale and deleted exports.",
+          "result": "pass",
+          "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+          "observed_at": "2026-11-24T01:54:48Z"
         }
       ]
     }

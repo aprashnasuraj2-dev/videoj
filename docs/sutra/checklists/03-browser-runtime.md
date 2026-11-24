@@ -107,7 +107,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Handle streamed function calls, user cancellation, malformed model responses, provider errors and incomplete streams. Abort child operations when the run is cancelled.
 - **Phase exit:** Cancellation prevents new calls; an interrupted answer is visibly incomplete and is never presented as a completed verified result.
 
-- [ ] `SUTRA-P026-01` Represent idle, running, cancelling, failed and complete states explicitly
+- [x] `SUTRA-P026-01` Represent idle, running, cancelling, failed and complete states explicitly
 - [x] `SUTRA-P026-02` Assemble streamed function-call arguments only after valid completion
 - [x] `SUTRA-P026-03` Handle malformed model output and unexpected provider payloads
 - [x] `SUTRA-P026-04` Propagate model and child-agent errors without inventing success
@@ -161,7 +161,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Add save-review-card and export-receipt with explicit effect classification. Bind the reviewed payload to the executed action and source version. Surface persisted receipt or unknown outcome accurately.
 - **Phase exit:** Cancelling writes changes no stored state; changing arguments after review requires a fresh confirmation.
 
-- [ ] `SUTRA-P029-01` Register save-review-card and export-receipt with explicit effects
+- [x] `SUTRA-P029-01` Register save-review-card and export-receipt with explicit effects
 - [x] `SUTRA-P029-02` Validate proposed payload and bind it to the current source version
 - [x] `SUTRA-P029-03` Show destination, arguments and local persistence meaning before confirmation
 - [x] `SUTRA-P029-04` Require a new confirmation if the reviewed payload changes
@@ -170,7 +170,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P029-07` Distinguish successful persistence, rejection and unknown outcome
 - [x] `SUTRA-P029-08` Ensure the browser never blindly repeats an ambiguous write
 - [x] `SUTRA-P029-09` Produce and review the phase artifact: Write proposal, confirmation and receipt flow.
-- [ ] `SUTRA-P029-10` Close phase 029 only after its applicable tasks have evidence and its exit condition is observed: Cancelling writes changes no stored state; changing arguments after review requires a fresh confirmation.
+- [x] `SUTRA-P029-10` Close phase 029 only after its applicable tasks have evidence and its exit condition is observed: Cancelling writes changes no stored state; changing arguments after review requires a fresh confirmation.
 
 ## Phase 030 - Add optional direct BYOK safely
 

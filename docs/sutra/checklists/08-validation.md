@@ -17,16 +17,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** From a separate clean origin, consume the published SUTRA network using the compatible generic loader. Avoid app-specific imports and inspect the exact artifacts requested.
 - **Phase exit:** The network loads without SUTRA-only integration code; same-owner test infrastructure is identified as such.
 
-- [ ] `SUTRA-P071-01` Create a consumer page on a separate clean origin
-- [ ] `SUTRA-P071-02` Load the published network using a compatible generic loader
-- [ ] `SUTRA-P071-03` Avoid SUTRA-specific imports, private endpoints and hidden state
-- [ ] `SUTRA-P071-04` Verify exact-name manifest resolution and public artifact requests
-- [ ] `SUTRA-P071-05` Run the graph with the consumer’s own active router policy
-- [ ] `SUTRA-P071-06` Check denial and unavailable graph behavior from the consumer
-- [ ] `SUTRA-P071-07` Document reproduction commands and deployment relationships
-- [ ] `SUTRA-P071-08` Distinguish a neutral harness from actual third-party adoption
-- [ ] `SUTRA-P071-09` Produce and review the phase artifact: Independent-consumer harness and reproduction instructions.
-- [ ] `SUTRA-P071-10` Close phase 071 only after its applicable tasks have evidence and its exit condition is observed: The network loads without SUTRA-only integration code; same-owner test infrastructure is identified as such.
+- [x] `SUTRA-P071-01` Create a consumer page on a separate clean origin
+- [x] `SUTRA-P071-02` Load the published network using a compatible generic loader
+- [x] `SUTRA-P071-03` Avoid SUTRA-specific imports, private endpoints and hidden state
+- [x] `SUTRA-P071-04` Verify exact-name manifest resolution and public artifact requests
+- [x] `SUTRA-P071-05` Run the graph with the consumer’s own active router policy
+- [x] `SUTRA-P071-06` Check denial and unavailable graph behavior from the consumer
+- [x] `SUTRA-P071-07` Document reproduction commands and deployment relationships
+- [x] `SUTRA-P071-08` Distinguish a neutral harness from actual third-party adoption
+- [x] `SUTRA-P071-09` Produce and review the phase artifact: Independent-consumer harness and reproduction instructions.
+- [x] `SUTRA-P071-10` Close phase 071 only after its applicable tasks have evidence and its exit condition is observed: The network loads without SUTRA-only integration code; same-owner test infrastructure is identified as such.
 
 ## Phase 072 - Run and report the 40-case evaluation
 

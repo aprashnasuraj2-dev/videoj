@@ -10,6 +10,6 @@ Required items discovered after the original plan remain release blockers until 
 
 ## X001 — Newly discovered correctness checks
 
-- [ ] `SUTRA-X001-01` Verify successful local review writes with readback, rejecting ambiguous storage outcomes and preventing duplicate persisted IDs after reload.
-- [ ] `SUTRA-X001-02` Verify runtime and learner action registration use explicit effects and reject stale export snapshots.
+- [x] `SUTRA-X001-01` Verify successful local review writes with readback, rejecting ambiguous storage outcomes and preventing duplicate persisted IDs after reload.
+- [x] `SUTRA-X001-02` Verify runtime and learner action registration use explicit effects and reject stale export snapshots.
 - [x] `SUTRA-X001-03` Verify quota daily resource limits and retain unexpired leases across UTC midnight without refund or new provider contact after rejection.

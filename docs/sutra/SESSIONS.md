@@ -1,6 +1,18 @@
 # SUTRA session history
 
 
+## SUTRA-SESSION-0015 — 2026-11-24
+
+**461/1,000 original checks verified; 464/1,003 total checks verified; 34/100 phases fully verified; 1 historical omission.** Not a release-readiness score.
+
+Previous neutral consumer passed on `416ed5f3648a370653ba5adc0b64e389c1106e7c` ([CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45307542089/job/138154945074)), closing P071 in its explicitly same-owner local synthetic profile. Registered learner save/export, readback, duplicate-ID rejection, stale export refusal, and explicit lifecycle passed full learner CI at `6dd61639351552bf6780b8e196e130f2e9f713dd` ([CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45308177809/job/138157027451)), closing P029 and X001-01/02 and crediting P026-01.
+
+Shared-budget error diagnostics and independently matched partial receipts are implemented but not credited pending green integrated CI. First browser regression exposed loss of provider quota code; the next test exposed an old generic-transport expectation. Fix lineage: f05b1118a1434d5cab06bb118206a42ae751fecd → 128bff28c1e0db1739ea6623ddbb624827991987 → `cb5091e95b4c786e4c5b9dd4b97ae14a62a8455f`. Retain both failed runs. Three-engine browser matrix added: first observed Chromium and Firefox native decode, seeking/play, captions, fullscreen, evidence, graph, denial and download all passed. WebKit pending; physical touch and screen reader remain untested. No blanket browser compatibility claim.
+
+Next: verify integrated budget/partial evidence and browser matrix; then exact symbolic peer links, stronger evidence-grounded learning task and measured direct-lookup baseline. Keep deployment closed. [Session evidence](evidence/implementation/SESSION-0015.md).
+
+---
+
 ## SUTRA-SESSION-0014 — 2026-11-24
 
 **448/1,000 original checks verified; 449/1,003 total checks verified; 32/100 phases fully verified; 1 historical omission.** Counts are neither effort-weighted nor a release readiness measure.
