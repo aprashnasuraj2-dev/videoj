@@ -226,6 +226,19 @@ const assert=require('node:assert/strict');
   await page.getByRole('button',{name:'Inspect native video cue at 2 seconds'}).click();
   await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status')?.textContent.includes('Native media reached'));
 
+  // Inject a native seek that lands just before the cue, inside the old one-second
+  // tolerance. The actual native time is observable, but no cue success is allowed.
+  await page.evaluate(()=>{const video=document.querySelector('video'),d=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'currentTime');Object.defineProperty(video,'currentTime',{configurable:true,get(){return d.get.call(this);},set(t){d.set.call(this,t===2?1.5:t);}});});
+  try{
+   await page.getByRole('button',{name:'Inspect featured source cue'}).click();
+   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('no seek success'));
+   await cue.click();await page.waitForFunction(()=>document.querySelector('#timing-transcript-panel .transcript-status').textContent.includes('No seek success'));
+   await page.getByRole('button',{name:'Seek to matched cue'}).click();await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('no seek success'));
+   await page.getByRole('button',{name:'Inspect native video cue at 2 seconds'}).click();await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('no successful seek'));
+   assert.ok(await page.locator('video').evaluate(v=>v.currentTime<2&&v.currentTime>=1));
+  }finally{await page.evaluate(()=>{delete document.querySelector('video').currentTime;});}
+  await cue.click();await page.waitForFunction(()=>document.querySelector('#timing-transcript-panel .transcript-status').textContent.includes('Native media reached'));
+
   await page.getByRole('button',{name:'Preview source review card'}).click();
   await page.getByRole('dialog',{name:'Review before local save'}).waitFor();
   assert.match(await page.locator('#review-preview').innerText(),/synthetic-timing-fixture/);

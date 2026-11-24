@@ -1,3 +1,4 @@
+import {isNativeCueReached} from './seek-policy.js';
 // Evidence-linked transcript navigation. Source identity and native media time
 // remain authoritative. No synthetic clock, guessed captions, or auto-follow scroll.
 const el=(name,className,text)=>{
@@ -120,7 +121,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synt
     button.dataset.busy='true';button.setAttribute('aria-busy','true');
     try{
      const actual=await onSeek(cue.start);
-     if(!Number.isFinite(actual)||Math.abs(actual-cue.start)>1)throw Error('Native seek did not reach the cue.');
+     if(!isNativeCueReached(actual,cue.start,cue.end))throw Error('Native seek did not reach the cue.');
      if(current()){status('Native media reached '+formatTime(actual)+'. Source cue '+cue.id+' selected; no factual verification.');updateActive();}
     }catch{
      if(current())status('The cue could not be reached in the current media. No seek success is claimed.');

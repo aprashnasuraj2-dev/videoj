@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {validateNativeSeekTarget} from '../src/seek-policy.js';
+import {validateNativeSeekTarget,isNativeCueReached} from '../src/seek-policy.js';
 
 const ranges=(pairs=[])=>({length:pairs.length,start:i=>pairs[i][0],end:i=>pairs[i][1]});
 
@@ -26,4 +26,12 @@ test('invalid or out-of-duration targets fail before mutating media state',()=>{
  const media={duration:8,seekable:ranges([[0,8]])};
  for(const value of [-1,9,Infinity,NaN])assert.throws(()=>validateNativeSeekTarget(media,value));
  assert.throws(()=>validateNativeSeekTarget(null,2));
+});
+
+
+test('native seek receipt must land inside the exact cue, not merely within one second of its start',()=>{
+ for(const actual of [1.5,1.999,2.1,2.5,NaN,Infinity])assert.equal(isNativeCueReached(actual,2,2.1),false,String(actual));
+ for(const actual of [2,2.05,2.099])assert.equal(isNativeCueReached(actual,2,2.1),true,String(actual));
+ assert.equal(isNativeCueReached(4,2,5),false,'long cue still requires landing near the requested start');
+ assert.equal(isNativeCueReached(2,2,2),false);assert.equal(isNativeCueReached(0,-1,2),false);
 });

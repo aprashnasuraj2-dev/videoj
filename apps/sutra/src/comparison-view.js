@@ -1,3 +1,4 @@
+import {isNativeCueReached} from './seek-policy.js';
 import {readContentBytes} from '../../../packages/sutra-content-profile/index.js';
 import {compareClaimPair,syntheticComparison} from './comparison.js';
 import {applyLocale} from './localization.js';
@@ -99,7 +100,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
     const token=beginAction();seekStatus.textContent='Checking actual native seek availability…';
     try{
      const reached=await seekTo(claim.start);
-     if(!Number.isFinite(reached)||Math.abs(reached-claim.start)>1)throw Error('Native cue not confirmed');
+     if(!isNativeCueReached(reached,claim.start,claim.end))throw Error('Native cue not confirmed');
      if(current(token))seekStatus.textContent='Native media reached the catalog cue. This does not verify the claim.';
     }catch{
      if(current(token))seekStatus.textContent='Video cue unavailable. Load the source media first; no successful seek is claimed.';

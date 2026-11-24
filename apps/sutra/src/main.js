@@ -1,3 +1,4 @@
+import {isNativeCueReached} from './seek-policy.js';
 import './style.css';
 import {createReviewStore,REVIEW_STORAGE_KEY} from './review-store.js';
 import {createReviewActions} from './review-actions.js';
@@ -144,7 +145,7 @@ seekTiming.addEventListener('click',async()=>{
   const fixture=timingFixture;
   const result=validateReceipt(fixture.receipt,{sources:content.sources});
   if(!result.valid)throw Error('Invalid featured source cue.');
-  const actual=await timingPlayer.seek(fixture.receipt.start);
+  const actual=await seekReceipt(fixture.receipt);
   setStatus(timingStatus,'completed',`Source cue reached. Actual native media time: ${actual.toFixed(2)} seconds. Consistency check only; no factual verification.`);
  }catch{setStatus(timingStatus,'error','The source cue could not be reached. Check media availability; no seek success is claimed.');}
  finally{seekTiming.disabled=false;}
@@ -250,10 +251,12 @@ sourceButton.addEventListener('click',async()=>{
 
 document.querySelector('#read-playback').addEventListener('click',()=>{document.querySelector('#playback-state').textContent=JSON.stringify(timingPlayer?.readState()??{available:false,reason:'media_not_loaded'});});
 
-function seekReceipt(receipt){
+async function seekReceipt(receipt){
  const source=timingFixture.source;
  if(!timingPlayer||receipt.sourceId!==source.id||receipt.sourceVersion!==source.version||receipt.sourceHash!==source.hash||receipt.mediaHash!==source.mediaHash)throw Error('Exact receipt media not loaded');
- return timingPlayer.seek(receipt.start);
+ const actual=await timingPlayer.seek(receipt.start);
+ if(!isNativeCueReached(actual,receipt.start,receipt.end))throw Error('Native playback did not reach the exact cue interval');
+ return actual;
 }
 mountDirectLookup({root:document.querySelector('#direct-lookup'),sources:content.sources,seekTo:seekReceipt,prepareReview:prepareReviewFor});
 mountLocalAnswer({root:document.querySelector('#local-answer'),sources:content.sources,seekTo:seekReceipt,prepareReview:prepareReviewFor});

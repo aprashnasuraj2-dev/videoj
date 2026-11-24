@@ -13,3 +13,9 @@ export function validateNativeSeekTarget(media,seconds){
  if(!available)throw new Error('The requested cue is outside available seek ranges.');
  return seconds;
 }
+
+// Reaching a timestamp near the target is not enough to claim that an exact
+// source interval was reached. The end boundary is exclusive, like active cues.
+export function isNativeCueReached(actual,start,end){
+ return Number.isFinite(actual)&&Number.isFinite(start)&&Number.isFinite(end)&&start>=0&&end>start&&actual>=start&&actual<end&&actual-start<=1;
+}

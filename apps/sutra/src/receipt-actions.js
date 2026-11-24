@@ -1,3 +1,4 @@
+import {isNativeCueReached} from './seek-policy.js';
 import {snapshotDataRecord,validateReceipt} from '../../../packages/sutra-evidence/index.js';
 const el=(tag,text)=>{const node=document.createElement(tag);if(text!==undefined)node.textContent=text;return node;};
 /** A validated source receipt enables a local user action, never a model proposal or a write by itself. */
@@ -15,7 +16,7 @@ export function createReceiptActionRow({receipt,sources,seekTo,prepareReview,act
   actionStatus.textContent='Checking native media availability…';
   try{
    const actual=await seekTo(exact);
-   if(!Number.isFinite(actual)||Math.abs(actual-exact.start)>1)throw Error('Not reached');
+   if(!isNativeCueReached(actual,exact.start,exact.end))throw Error('Not reached');
    if(isCurrent())actionStatus.textContent='Native media reached the matched source cue. No factual verification.';
   }catch{if(isCurrent())actionStatus.textContent='Cue seek unavailable. Load the media explicitly; no seek success is claimed.';}
   finally{seek.disabled=seek.dataset.sutraRevoked==='true';}
