@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {prepareReleaseArtifacts,validatePreparedRelease,validateReleaseConfig} from './release.mjs';
+import {validateContentProfile} from '../../packages/sutra-content-profile/index.js';
 
 const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
 const MAX_FILE=300*1024*1024,MAX_TOTAL=500*1024*1024;
@@ -85,6 +86,22 @@ export async function materializeReleaseCandidate({sourceDist,outputDir,config})
  if(!sourceStat.isDirectory()||sourceStat.isSymbolicLink())throw Error('Source dist must be a real directory.');
  if(destination.startsWith(source+path.sep)||source.startsWith(destination+path.sep)||destination===source)throw Error('Source and output must be separate trees.');
 
+ const profileFile=await regularFile(source,'content/content-profile.json',65536);
+ let profileDocument;try{profileDocument=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(profileFile.bytes));}catch{throw Error('Invalid release content profile JSON.');}
+ if(profileDocument?.catalog?.path!=='./source-catalog.json')throw Error('Release content catalog path must be the fixed local source-catalog path.');
+ const catalogFile=await regularFile(source,'content/source-catalog.json',262144);
+ let catalogDocument;try{catalogDocument=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(catalogFile.bytes));}catch{throw Error('Invalid release source catalog JSON.');}
+ const content=validateContentProfile(profileDocument,catalogDocument),evidence=cfg.contentEvidence;
+ if(content.profile.mode!=='reviewed'||content.profile.contentVersion!==evidence.contentVersion||content.profile.guideClaim===null)throw Error('Release content profile is not reviewed.');
+ const profileSha=digest(profileFile.bytes),catalogSha=digest(catalogFile.bytes);
+ if(profileSha!==evidence.profileSha256||catalogSha!==evidence.catalogSha256||content.profile.catalog.sha256!==catalogSha)throw Error('Release content profile/catalog hash mismatch.');
+ if(content.source.hash!==evidence.transcriptSha256||content.source.mediaHash!==evidence.mediaSha256)throw Error('Release transcript/media identity mismatch.');
+ if(content.profile.videoClaim.scope!==content.profile.guideClaim.scope||content.profile.videoClaim.claimKey!==content.profile.guideClaim.claimKey)throw Error('Release comparison sources do not address the same declared question.');
+ const mediaPath=content.profile.media.video.slice(1),guidePath=content.profile.guideClaim.sourceHref.split('#')[0].slice(1);
+ const mediaFile=await regularFile(source,mediaPath,300*1024*1024),guideFile=await regularFile(source,guidePath,10*1024*1024);
+ if(digest(mediaFile.bytes)!==evidence.mediaSha256||digest(guideFile.bytes)!==evidence.guideSha256||content.profile.guideClaim.sourceHash!==evidence.guideSha256)throw Error('Release media/guide bytes do not match reviewed evidence.');
+ if(/synthetic|fixture|pending/i.test(content.profile.ui.noticeTitle+' '+content.profile.ui.noticeBody))throw Error('Reviewed release content still carries development-only UI claims.');
+
  const manifest=await readJson(source,'agents/agent-manifest.json',65536);
  const links=await readJson(source,'agents/links.json',65536),graphs={},stale=new Set();
  for(const entry of manifest.networks??[]){
@@ -113,7 +130,7 @@ export async function materializeReleaseCandidate({sourceDist,outputDir,config})
  const runtime=await regularFile(destination,'runtime/sutra-runtime.js',2*1024*1024);
  const index=await regularFile(destination,'index.html',2*1024*1024);
  const verified=validatePreparedRelease(prepared),inventory=await inventoryCandidate(destination);
- const record={...prepared.releaseRecord,runtimeSha256:digest(runtime.bytes),indexSha256:digest(index.bytes),candidateInventorySha256:inventory.inventorySha256,
+ const record={...prepared.releaseRecord,runtimeSha256:digest(runtime.bytes),indexSha256:digest(index.bytes),candidateInventorySha256:inventory.inventorySha256,content:{mode:content.profile.mode,contentVersion:content.profile.contentVersion,profileSha256:profileSha,catalogSha256:catalogSha,mediaSha256:evidence.mediaSha256,transcriptSha256:evidence.transcriptSha256,guideSha256:evidence.guideSha256},
   stageOne:{interactionUi:'/index.html',runtime:'/runtime/sutra-runtime.js',manifest:'/agents/agent-manifest.json',links:'/agents/links.json',router:prepared.manifest.llm_router.base_url,networkCount:prepared.manifest.networks.length}};
  const recordCore=structuredClone(record);delete recordCore.recordSha256;
  record.recordSha256=digest(Buffer.from(JSON.stringify(recordCore,null,2)+'\n'));
