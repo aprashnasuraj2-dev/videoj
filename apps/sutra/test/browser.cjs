@@ -12,7 +12,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.goto(base);await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
   assert.equal(await page.locator('#network-result').getAttribute('data-state'),'empty');assert.equal(await page.locator('#source-network-result').getAttribute('data-state'),'empty');assert.equal(await page.locator('#timing-status').getAttribute('data-state'),'empty');
   // Text-first path stays usable before the optional MP4 is requested.
-  const initialTranscript=page.getByRole('searchbox',{name:'Search synthetic transcript'});
+  const initialTranscript=page.getByRole('searchbox',{name:'Search source transcript'});
   assert.equal(await initialTranscript.count(),1);
   assert.equal(requests.some(url=>url.includes('/media/timing-fixture.mp4')),false);
   await initialTranscript.fill('timing marker');
@@ -26,8 +26,8 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.equal(await page.locator('#comparison-body .comparison-next-step').getAttribute('data-disposition'),'abstain');
   assert.match(await page.locator('#comparison-body .comparison-next-step').innerText(),/missing original source/);
   assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/synthetic-timing-fixture/);
-  assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/Fixture receipt retrieval timestamp/);
-  assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/SUTRA local synthetic timing catalog/);
+  assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/Fixture metadata date/);
+  assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/SUTRA synthetic timing catalog/);
   await page.getByRole('button',{name:'Inspect native video cue at 2 seconds'}).click();
   assert.match(await page.locator('#comparison-body .comparison-seek-status').innerText(),/Video cue unavailable/);
   await page.getByRole('button',{name:'Demonstrate a synthetic conflict'}).click();
@@ -79,8 +79,8 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.route('**/agents/v/**/learner.network.json',route=>route.abort());await page.getByRole('button',{name:'Run scripted network test'}).click();await page.waitForFunction(()=>document.querySelector('#network-result').textContent.includes('No completed result is claimed.'));await page.unroute('**/agents/v/**/learner.network.json');
   await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();await page.getByRole('dialog',{name:'External contact request'}).waitFor();assert.match(await page.locator('#consent-origin').innerText(),/peer\.invalid/);assert.match(await page.locator('#consent-purpose').innerText(),/public peer manifest/);assert.match(await page.locator('#consent-disclosure').innerText(),/network name/);const externalBeforeDeny=external.length;await page.getByRole('button',{name:'Deny',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#consent-status').textContent.includes('denied before'));assert.equal(await page.locator('#consent-status').getAttribute('data-state'),'denied');assert.equal(external.length,externalBeforeDeny);assert.match(await page.locator('#consent-events').textContent(),/decision|deny/i);
   await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();await page.getByRole('button',{name:'Allow for this session (simulate)'}).click();await page.waitForFunction(()=>document.querySelector('#consent-status').textContent.includes('Simulated operations: 1'));const externalBeforeRemembered=external.length;await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();await page.waitForFunction(()=>document.querySelector('#consent-status').textContent.includes('Simulated operations: 2'));assert.equal(external.length,externalBeforeRemembered);assert.match(await page.locator('#consent-events').textContent(),/remembered/);
-  await page.getByRole('button',{name:'Preview synthetic review card'}).click();await page.getByRole('button',{name:'Cancel',exact:true}).click();assert.equal(await page.locator('#review-list li').count(),0);
-  await page.getByRole('button',{name:'Preview synthetic review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);assert.match(await page.locator('#review-status').innerText(),/not factual verification/);
+  await page.getByRole('button',{name:'Preview source review card'}).click();await page.getByRole('button',{name:'Cancel',exact:true}).click();assert.equal(await page.locator('#review-list li').count(),0);
+  await page.getByRole('button',{name:'Preview source review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);assert.match(await page.locator('#review-status').innerText(),/not factual verification/);
   const reviewDownloadPromise=page.waitForEvent('download');
   await page.getByRole('button',{name:'Download saved receipt'}).click();
   const reviewDownload=await reviewDownloadPromise;
@@ -99,7 +99,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
 
   // A saved receipt from an older source version must become visible stale data
   // after reload, never a silently migrated or downloadable valid card.
-  await page.getByRole('button',{name:'Preview synthetic review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();
+  await page.getByRole('button',{name:'Preview source review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();
   await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);
   await page.evaluate(()=>{
    const key='sutra.synthetic-review-cards.v1',rows=JSON.parse(localStorage.getItem(key));
@@ -117,7 +117,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
    window.__sutraOriginalSetItem=Storage.prototype.setItem;window.__sutraWriteCalls=0;
    Storage.prototype.setItem=function(key,value){if(key==='sutra.synthetic-review-cards.v1'){window.__sutraWriteCalls++;throw new DOMException('quota','QuotaExceededError');}return window.__sutraOriginalSetItem.call(this,key,value);};
   });
-  await page.getByRole('button',{name:'Preview synthetic review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();
+  await page.getByRole('button',{name:'Preview source review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();
   assert.match(await page.locator('#review-status').innerText(),/rejected before confirmation/);
   assert.equal(await page.locator('#review-list li').count(),0);assert.equal(await page.evaluate(()=>window.__sutraWriteCalls),1);
   const rejectedDownloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Download last save outcome'}).click();
@@ -129,7 +129,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
    const original=Storage.prototype.setItem;window.__sutraOriginalSetItem=original;window.__sutraWriteCalls=0;
    Storage.prototype.setItem=function(key,value){if(key==='sutra.synthetic-review-cards.v1'){window.__sutraWriteCalls++;original.call(this,key,value);throw new Error('synthetic disconnect after write');}return original.call(this,key,value);};
   });
-  await page.getByRole('button',{name:'Preview synthetic review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();
+  await page.getByRole('button',{name:'Preview source review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();
   assert.match(await page.locator('#review-status').innerText(),/outcome is unknown/);assert.equal(await page.evaluate(()=>window.__sutraWriteCalls),1);
   const unknownDownloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Download last save outcome'}).click();
   const unknown=JSON.parse(fs.readFileSync(await (await unknownDownloadPromise).path(),'utf8'));assert.equal(unknown.outcome,'unknown');assert.match(unknown.outcomeMeaning,/may have happened/);
@@ -139,28 +139,28 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.getByRole('button',{name:'Read current playback state',exact:true}).click();assert.equal(JSON.parse(await page.locator('#playback-state').innerText()).available,false);
   // A missing media response must fail honestly and allow a later explicit retry.
   await page.route('**/media/timing-fixture.mp4*',route=>route.fulfill({status:404,contentType:'text/plain',body:'missing fixture'}));
-  await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
-  await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Timing fixture unavailable.'));
+  await page.getByRole('button',{name:'Load source media'}).click();
+  await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source media unavailable.'));
   assert.equal(await page.locator('#timing-status').getAttribute('data-state'),'error');
   assert.equal(await page.locator('video').count(),0);
-  assert.equal(await page.getByRole('button',{name:'Load synthetic timing fixture'}).isEnabled(),true);
+  assert.equal(await page.getByRole('button',{name:'Load source media'}).isEnabled(),true);
   await page.unroute('**/media/timing-fixture.mp4*');
   // A stale deployment may return HTTP 200 with the wrong bytes. Hash binding
   // must stop before Blob/player mount and leave an explicit retry path.
   await page.route('**/media/timing-fixture.mp4*',route=>route.fulfill({status:200,contentType:'video/mp4',body:'stale-media-bytes'}));
-  await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
-  await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Timing fixture unavailable.'));
+  await page.getByRole('button',{name:'Load source media'}).click();
+  await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source media unavailable.'));
   assert.equal(await page.locator('video').count(),0);
   await page.unroute('**/media/timing-fixture.mp4*');
   // Poster is independent of media decode: a missing poster must not turn a
   // successful native video load into an unavailable lesson.
   await page.route('**/media/timing-poster.svg*',route=>route.fulfill({status:404,contentType:'text/plain',body:'missing poster'}));
-  await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
+  await page.getByRole('button',{name:'Load source media'}).click();
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Actual media duration: 8.0 seconds.'));
   assert.equal(await page.locator('#timing-status').getAttribute('data-state'),'completed');
   assert.ok(requests.some(url=>url.includes('/media/timing-poster.svg')),'host-supplied poster request is independently observable');
   await page.unroute('**/media/timing-poster.svg*');
-  const transcriptSearch=page.getByRole('searchbox',{name:'Search synthetic transcript'});
+  const transcriptSearch=page.getByRole('searchbox',{name:'Search source transcript'});
   assert.match(await page.locator('#timing-transcript-panel .transcript-meta').innerText(),/synthetic-timing-fixture.*v1/);
   await transcriptSearch.fill('not-in-the-fixture');
   assert.equal(await page.locator('#timing-transcript-panel .transcript-cue').count(),0);
@@ -177,8 +177,8 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('Native media reached'));
   assert.ok(Math.abs(await page.locator('video').evaluate(v=>v.currentTime)-2)<=1);
   const media=page.locator('video');assert.equal(await media.count(),1);
-  await page.getByRole('button',{name:'Inspect timing cue at 00:02'}).click();
-  await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Synthetic cue reached.'));
+  await page.getByRole('button',{name:'Inspect featured source cue'}).click();
+  await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached.'));
   assert.ok(Math.abs(await media.evaluate(video=>video.currentTime)-2)<=1);
   // Ordinary player controls must drive the native media state.
   const playControl=page.locator('media-play-button'),muteControl=page.locator('media-mute-button'),

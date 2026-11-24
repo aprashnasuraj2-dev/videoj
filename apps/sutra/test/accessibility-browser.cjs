@@ -83,10 +83,10 @@ const contrast=(a,b)=>{
   for(const t of targets)assert.ok(t.w>=24&&t.h>=24,JSON.stringify(t));
 
   // Actual synthetic media/transcript still works under reduced-motion preference.
-  await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
+  await page.getByRole('button',{name:'Load source media'}).click();
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Actual media duration: 8.0 seconds.'));
   assert.equal(await page.locator('video').count(),1);
-  assert.equal(await page.getByRole('searchbox',{name:'Search synthetic transcript'}).count(),1);
+  assert.equal(await page.getByRole('searchbox',{name:'Search source transcript'}).count(),1);
   // The native captions track must carry a short authored cue and be capable of
   // entering showing mode. This checks the actual WebVTT path; it does not
   // pretend to be a human readability or screen-reader assessment.

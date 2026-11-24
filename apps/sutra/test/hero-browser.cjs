@@ -86,19 +86,19 @@ const assert=require('node:assert/strict');
   await page.getByRole('button',{name:'Inspect available evidence'}).click();
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
 
-  await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
+  await page.getByRole('button',{name:'Load source media'}).click();
   assert.equal(await page.locator('#timing-status').getAttribute('data-state'),'loading','visible loading state appears while media bytes are delayed');
   await page.waitForFunction(()=>document.querySelector('#timing-status')?.dataset.state==='completed');
   assert.match(await page.locator('#timing-status').innerText(),/Actual media duration: 8.0 seconds/);
 
-  await page.getByRole('button',{name:'Inspect timing cue at 00:02'}).click();
-  await page.waitForFunction(()=>document.querySelector('#timing-status')?.textContent.includes('Synthetic cue reached'));
+  await page.getByRole('button',{name:'Inspect featured source cue'}).click();
+  await page.waitForFunction(()=>document.querySelector('#timing-status')?.textContent.includes('Source cue reached'));
   assert.equal(await page.locator('#timing-status').getAttribute('data-state'),'completed');
 
   await direct.fill('timing marker');await direct.press('Enter');
   await page.getByRole('button',{name:'Seek to matched cue'}).click();
   await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('Native media reached'));
-  const search=page.getByRole('searchbox',{name:'Search synthetic transcript'});
+  const search=page.getByRole('searchbox',{name:'Search source transcript'});
   await search.fill('timing marker');
   const cue=page.locator('#timing-transcript-panel .transcript-cue');
   assert.equal(await cue.count(),1);
@@ -108,7 +108,7 @@ const assert=require('node:assert/strict');
   await page.getByRole('button',{name:'Inspect native video cue at 2 seconds'}).click();
   await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status')?.textContent.includes('Native media reached'));
 
-  await page.getByRole('button',{name:'Preview synthetic review card'}).click();
+  await page.getByRole('button',{name:'Preview source review card'}).click();
   await page.getByRole('dialog',{name:'Review before local save'}).waitFor();
   assert.match(await page.locator('#review-preview').innerText(),/synthetic-timing-fixture/);
   await page.getByRole('button',{name:'Confirm local save'}).click();
@@ -139,11 +139,11 @@ const assert=require('node:assert/strict');
   await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
   await page.getByRole('button',{name:'Check example',exact:true}).focus();await page.keyboard.press('Enter');
   assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
-  await page.getByRole('button',{name:'Load synthetic timing fixture'}).focus();await page.keyboard.press('Enter');
+  await page.getByRole('button',{name:'Load source media'}).focus();await page.keyboard.press('Enter');
   await page.waitForFunction(()=>document.querySelector('#timing-status')?.dataset.state==='completed');
-  await page.getByRole('button',{name:'Inspect timing cue at 00:02'}).focus();await page.keyboard.press('Enter');
-  await page.waitForFunction(()=>document.querySelector('#timing-status')?.textContent.includes('Synthetic cue reached'));
-  await page.getByRole('button',{name:'Preview synthetic review card'}).focus();await page.keyboard.press('Enter');
+  await page.getByRole('button',{name:'Inspect featured source cue'}).focus();await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>document.querySelector('#timing-status')?.textContent.includes('Source cue reached'));
+  await page.getByRole('button',{name:'Preview source review card'}).focus();await page.keyboard.press('Enter');
   await page.getByRole('dialog',{name:'Review before local save'}).waitFor();
   await page.getByRole('button',{name:'Confirm local save'}).focus();await page.keyboard.press('Enter');
   await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);

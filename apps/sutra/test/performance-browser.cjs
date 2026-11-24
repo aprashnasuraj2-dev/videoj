@@ -54,25 +54,25 @@ const listFiles=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(entry=>
 
   const start=performance.now();
   await page.goto(base,{waitUntil:'domcontentloaded'});
-  await page.getByRole('searchbox',{name:'Search synthetic transcript'}).waitFor();
+  await page.getByRole('searchbox',{name:'Search source transcript'}).waitFor();
   const transcriptMs=performance.now()-start;
   const bytesAtTranscript=encoded;
   assert.equal(mediaRequests.length,0,'text-first transcript cannot trigger MP4 download');
   assert.ok(transcriptMs<5000,`transcript usable in ${Math.round(transcriptMs)}ms exceeds 5s target`);
 
-  await page.getByRole('searchbox',{name:'Search synthetic transcript'}).fill('timing marker');
+  await page.getByRole('searchbox',{name:'Search source transcript'}).fill('timing marker');
   assert.equal(await page.locator('#timing-transcript-panel .transcript-cue').count(),1);
 
   const videoStart=performance.now();
-  await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
+  await page.getByRole('button',{name:'Load source media'}).click();
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Actual media duration: 8.0 seconds.'),null,{timeout:15000});
   const videoReadyMs=performance.now()-videoStart;
   const bytesAfterVideo=encoded;
   assert.equal(mediaRequests.length,1);
 
   const seekStart=performance.now();
-  await page.getByRole('button',{name:'Inspect timing cue at 00:02'}).click();
-  await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Synthetic cue reached.'));
+  await page.getByRole('button',{name:'Inspect featured source cue'}).click();
+  await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached.'));
   const seekMs=performance.now()-seekStart;
   assert.ok(Math.abs(await page.locator('video').evaluate(video=>video.currentTime)-2)<=1);
 
