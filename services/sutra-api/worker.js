@@ -67,6 +67,12 @@ export function withCachePolicy(response,request){
 
 const json=(data,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 // Restricted, stateless JSON-RPC/MCP facade. No caller URL, filesystem or DOM access.
+const validClientCapabilities=caps=>{
+ if(!caps||typeof caps!=='object'||Array.isArray(caps)||Object.keys(caps).some(k=>!['roots','sampling','elicitation'].includes(k)))return false;
+ if(caps.roots!==undefined&&(!caps.roots||typeof caps.roots!=='object'||Array.isArray(caps.roots)||Object.keys(caps.roots).some(k=>k!=='listChanged')||caps.roots.listChanged!==undefined&&typeof caps.roots.listChanged!=='boolean'))return false;
+ for(const key of ['sampling','elicitation'])if(caps[key]!==undefined&&(!caps[key]||typeof caps[key]!=='object'||Array.isArray(caps[key])||Object.keys(caps[key]).length))return false;
+ return true;
+};
 export async function handleSourceTools(request,env={}){
  if(request.headers.has('MCP-Protocol-Version')&&request.headers.get('MCP-Protocol-Version')!=='2025-06-18')return json({error:{code:'PROTOCOL'}},400);
  if(request.method!=='POST')return json({error:{code:'METHOD'}},405);
@@ -82,7 +88,7 @@ export async function handleSourceTools(request,env={}){
  const result=value=>json({jsonrpc:'2.0',id:rpc.id,result:value});
  if(rpc.method==='initialize'){
   const p=rpc.params;
-  if(!p||typeof p!=='object'||Array.isArray(p)||Object.keys(p).some(k=>!['protocolVersion','capabilities','clientInfo'].includes(k))||p.protocolVersion!=='2025-06-18'||!p.capabilities||typeof p.capabilities!=='object'||Array.isArray(p.capabilities)||Object.keys(p.capabilities).length||!p.clientInfo||typeof p.clientInfo!=='object'||Array.isArray(p.clientInfo)||Object.keys(p.clientInfo).some(k=>!['name','version'].includes(k))||typeof p.clientInfo.name!=='string'||!p.clientInfo.name||p.clientInfo.name.length>100||typeof p.clientInfo.version!=='string'||!p.clientInfo.version||p.clientInfo.version.length>40)return json({error:{code:'RPC'}},400);
+  if(!p||typeof p!=='object'||Array.isArray(p)||Object.keys(p).some(k=>!['protocolVersion','capabilities','clientInfo'].includes(k))||p.protocolVersion!=='2025-06-18'||!validClientCapabilities(p.capabilities)||!p.clientInfo||typeof p.clientInfo!=='object'||Array.isArray(p.clientInfo)||Object.keys(p.clientInfo).some(k=>!['name','version'].includes(k))||typeof p.clientInfo.name!=='string'||!p.clientInfo.name||p.clientInfo.name.length>100||typeof p.clientInfo.version!=='string'||!p.clientInfo.version||p.clientInfo.version.length>40)return json({error:{code:'RPC'}},400);
   return result({protocolVersion:'2025-06-18',capabilities:{tools:{listChanged:false}},serverInfo:{name:'sutra-source-tools',version:'0.1.0'}});
  }
  if(rpc.method==='tools/list'){if(!emptyParams(rpc.params))return json({error:{code:'RPC'}},400);return result({tools:sourceTools.list().map(({effect,...d})=>({...d,annotations:{readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:false}}))});}

@@ -10,7 +10,7 @@ public release. Existing AafnaiPatro/player routes have not been changed.
 - `POST /api/infer`: internal SUTRA same-origin alias for the fixed funded provider path.
 - `POST /api/v1/chat/completions`: publisher-funded OpenAI-compatible browser-router facade backed by the **same** validation/quota/streaming core. It accepts no visitor Authorization header and returns 503 while disabled/incompletely configured.
 - `/api/source-tools`: restricted stateless MCP JSON transport, protocol pin
-  2025-06-18; initialize/initialized, tools/list, tools/call; GET returns 405.
+  2025-06-18; initialize/initialized, tools/list, tools/call; GET returns 405. Initialization accepts only bounded standard client capabilities (`roots`, empty `sampling`, empty `elicitation`) and never turns them into server-side powers.
   Origin checks protect the browser boundary. The catalog is public synthetic data.
 - `GET /api/status`: configured/disabled inference and honest synthetic-catalog state; when configured, publishes `routerBase: /api/v1`, `publisherFunded: true`, `byok: false` plus the approved model.
 - Other `/api/*`: 404, never the HTML asset fallback.
@@ -28,9 +28,7 @@ MCP servers, SSE responses, auth flows or third-party discovery.
 2. Choose an actual available provider model and obtain budget authorization.
    `SUTRA_MODELS` is an exact comma-separated allowlist (1–3 models). It is empty
    by default. Model availability, pricing and provider compatibility are unverified.
-3. Choose `SUTRA_INFERENCE_BACKEND=self_hosted` (recommended if an operator can run a GPU gateway) or explicitly select `hosted` for an externally billed provider. Without an explicit backend, **inference is disabled** even when a key exists. Set the exact deployed HTTPS `SUTRA_ALLOWED_ORIGIN`; configure secrets through
-   Cloudflare secret management: `SUTRA_PROVIDER_KEY` and a random
-   `SUTRA_CLIENT_HASH_SECRET` of at least 32 characters. Never use a VITE variable,
+3. Choose `SUTRA_INFERENCE_BACKEND=self_hosted` (recommended if an operator can run a GPU gateway) or explicitly select `hosted` for an externally billed provider. Without an explicit backend, **inference is disabled** even when a key exists. Set the exact deployed HTTPS `SUTRA_ALLOWED_ORIGIN`; configure a random `SUTRA_CLIENT_HASH_SECRET` of at least 32 characters through Cloudflare secret management. Hosted mode additionally requires `SUTRA_PROVIDER_KEY`; self-hosted mode instead requires `SUTRA_SELF_HOSTED_TOKEN` and the exact authenticated gateway URL. Never use a VITE variable,
    frontend storage, browser key entry, committed `.env` or a ZIP to supply these.
 4. Keep the default quotas conservative: 100 model calls/day global; 8/client/day; **2 active provider calls at once**; 512 output tokens/call. Hard configuration maxima: 1,000 global, client <= global, 10 concurrent calls, 1,024 output tokens. A full agent task may consume up to 8 model calls.
 5. Apply/review the DO migration and validate the Wrangler bundle/deployment in a
@@ -43,7 +41,7 @@ rejected. Request body <=32 KiB, 32 messages, 24,000 message-content characters,
 in the inference package. Body/quota deadline: 5 seconds; provider deadline: 30.
 No automatic provider retries or daily-quota refunds follow ambiguous/failed provider requests. Active-concurrency leases are released separately so a failed stream does not block all later traffic until the next UTC day.
 
-The quota DO uses one global named instance and atomic storage transactions. A successful reservation creates a 45-second active lease; at most `SUTRA_MAX_CONCURRENT` leases may exist. The Worker releases a lease after provider rejection/failure, completed or incomplete stream, and client stream cancellation. Expired leases are pruned during later reservations. Daily/client usage is deliberately **not refunded** after provider work starts, avoiding automatic retry spend. Daily client identities are HMAC hashes of the Cloudflare-supplied IP plus UTC day;
+The quota DO uses one global named instance and atomic storage transactions. A successful reservation creates a 45-second active lease; at most `SUTRA_MAX_CONCURRENT` leases may exist. The Worker releases a lease after provider rejection/failure, completed or incomplete stream, and client stream cancellation. Expired leases are pruned during later reservations. Daily/client usage is deliberately **not refunded** after provider work starts, avoiding automatic retry spend. Daily inference client identities are HMAC hashes of the Cloudflare-supplied IP plus UTC day. Public source-tool reads have separate global/client daily ceilings; client counters are sharded across 256 HMAC-prefix storage buckets so one Durable Object value does not grow with the entire daily client population;
 no raw IP, prompt, content or provider secret is stored in quota state. Old-day
 state is replaced on the next request. Shared NAT users share a client allowance;
 rotating IPs can evade that allowance, but the global ceiling still applies.
