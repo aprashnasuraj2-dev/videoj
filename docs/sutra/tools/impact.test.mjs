@@ -118,3 +118,11 @@ test('reviewed-content pack compiler is mapped to every content-sensitive eviden
  assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('content-pack-readiness'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA reviewed content pack compiler'));
  for(const metric of ['engineering_baseline','hero_journey','desktop_browser_matrix','lab_performance','provider_cost','publication_inventory'])assert.ok(r.invalidatedMetrics.includes(metric),metric);
 });
+
+test('local action implementation changes trigger both its standalone tests and learner verification',()=>{
+ const r=classifyChangedFiles(['packages/sutra-actions/index.js'],map);
+ assert.ok(r.requiredWorkflows.includes('Validate SUTRA learner shell'));
+ const workflow=fs.readFileSync(new URL('../../../.github/workflows/sutra-shell.yml',import.meta.url),'utf8');
+ assert.equal((workflow.match(/packages\/sutra-actions\/\*\*/g)||[]).length,2);
+ assert.match(workflow,/packages\/sutra-actions\/test\/\*\.test\.mjs/);
+});
