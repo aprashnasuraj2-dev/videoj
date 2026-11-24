@@ -102,6 +102,43 @@ const assert=require('node:assert/strict');
    assert.deepEqual(apiOrMedia,[]);
   }finally{await ambiguityContext.close();}
 
+  // Synthetic reviewed-mode routing fixture: correct digest-shaped path is not
+  // sufficient. Reject altered bytes before any native player can be mounted;
+  // preserve transcript and recover only on an explicit correct retry.
+  const reviewedContext=await browser.newContext();
+  try{
+   const reviewPage=await reviewedContext.newPage(),requests=[];
+   const profile=JSON.parse(fs.readFileSync(path.join(app,'public/content/content-profile.json'),'utf8'));
+   const catalog=JSON.parse(fs.readFileSync(path.join(app,'public/content/source-catalog.json'),'utf8'));
+   const source=catalog.sources[0],mediaBytes=fs.readFileSync(path.join(app,'public/media/timing-fixture.mp4')),textBytes=fs.readFileSync(path.join(app,'public/transcripts/synthetic-timing.txt'));
+   profile.mode='reviewed';profile.media.video='/media/release/'+source.mediaHash+'/lesson.mp4';profile.transcript.path='/transcripts/release/'+source.hash+'/lesson.txt';
+   profile.guideClaim={sourceKind:'guide',sourceId:'test-guide',sourceVersion:'v1',title:'Test guide',scope:profile.videoClaim.scope,claimKey:profile.videoClaim.claimKey,value:profile.videoClaim.value,excerpt:'Test only.',provenance:'Synthetic routing test, not reviewed content',sourceHref:'/guides/release/'+'f'.repeat(64)+'/guide.html#claim',sourceHash:'f'.repeat(64)};
+   await reviewPage.route('**/content/content-profile.json',r=>r.fulfill({json:profile}));
+   await reviewPage.route('**'+profile.transcript.path,r=>r.fulfill({contentType:'text/plain',body:textBytes}));
+   let phase='wrong',releaseHeld,held=false;
+   await reviewPage.route('**'+profile.media.video+'*',async r=>{
+    requests.push(r.request().url());assert.equal(r.request().headers().cookie,undefined);
+    if(phase==='hold'){held=true;await new Promise(resolve=>{releaseHeld=resolve;});return r.abort().catch(()=>{});}
+    return r.fulfill({contentType:'video/mp4',body:phase==='wrong'?Buffer.concat([mediaBytes,Buffer.from([0])]):mediaBytes});
+   });
+   await reviewedContext.addCookies([{name:'media-canary',value:'not-for-media',url:base}]);
+   await reviewPage.goto(base);await reviewPage.getByRole('searchbox',{name:'Search source transcript'}).fill('timing marker');assert.equal(requests.length,0);
+   const load=reviewPage.getByRole('button',{name:'Load source media'});
+   await load.click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='error');
+   assert.equal(await reviewPage.locator('video').count(),0);assert.equal(await reviewPage.locator('#timing-transcript-panel .transcript-cue').count(),1);
+   assert.equal(await reviewPage.locator('#seek-timing').isHidden(),true);
+   phase='hold';await load.click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='loading');
+   for(let i=0;i<50&&!held;i++)await new Promise(r=>setTimeout(r,20));assert.equal(held,true);
+   await reviewPage.getByRole('button',{name:'Cancel media load'}).click();
+   await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='cancelled');
+   releaseHeld();assert.equal(await reviewPage.locator('video').count(),0);
+   phase='correct';await load.click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
+   assert.match(await reviewPage.locator('#timing-status').textContent(),/Reviewed hash-checked/);
+   assert.equal(await reviewPage.locator('video').evaluate(v=>v.currentSrc.startsWith('blob:')),true);
+   assert.equal(requests.length,3,'only explicit full media GETs; no remote native refetch');
+   await reviewPage.getByRole('button',{name:'Inspect featured source cue'}).click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
+  }finally{await reviewedContext.close();}
+
   let delayed=true;
   await page.route('**/media/timing-fixture.mp4*',async route=>{
    if(delayed){delayed=false;await new Promise(r=>setTimeout(r,350));}

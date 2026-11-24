@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {assessContentManifest} from '../sutra-content-intake/intake.mjs';
-import {validateContentProfile} from '../../packages/sutra-content-profile/index.js';
+import {validateContentProfile,MAX_REVIEWED_MEDIA_BYTES} from '../../packages/sutra-content-profile/index.js';
 
 const ID=/^[A-Za-z][A-Za-z0-9._:-]{0,127}$/;
 const ISO=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
@@ -83,8 +83,8 @@ export async function buildContentPack({manifest,semantic,contentRoot,outputDir}
  if(out===root||out.startsWith(root+path.sep)||root.startsWith(out+path.sep))throw Error('Content source and output trees must not overlap.');
  let assetPaths;try{const m=snapshotDataRecord(manifest,10),a=snapshotDataRecord(m.assets,5);assetPaths={};for(const kind of ['media','transcript','guide'])assetPaths[kind]=snapshotDataRecord(a[kind],4).path;}catch{throw Error('Invalid content manifest data.');}
  try{await fs.lstat(out);throw Error('Output already exists; refuse overwrite.');}catch(error){if(error?.code!=='ENOENT')throw error;}
- const media=await readRegular(root,assetPaths.media,250*1024*1024);
- const transcript=await readRegular(root,assetPaths.transcript,10*1024*1024);
+ const media=await readRegular(root,assetPaths.media,MAX_REVIEWED_MEDIA_BYTES);
+ const transcript=await readRegular(root,assetPaths.transcript,2*1024*1024);
  const guide=await readRegular(root,assetPaths.guide,10*1024*1024);
  const observed={media:{path:assetPaths.media,sha256:digest(media.bytes),bytes:media.size},transcript:{path:assetPaths.transcript,sha256:digest(transcript.bytes),bytes:transcript.size},guide:{path:assetPaths.guide,sha256:digest(guide.bytes),bytes:guide.size}};
  const intake=assessContentManifest(manifest,{observedFiles:observed});
@@ -109,6 +109,7 @@ export async function buildContentPack({manifest,semantic,contentRoot,outputDir}
   videoClaim:meta.videoClaim,guideClaim:{sourceKind:'guide',sourceId:'reviewed-guide',sourceVersion:meta.contentVersion,title:meta.guideClaim.title,scope:meta.guideClaim.scope,claimKey:meta.guideClaim.claimKey,value:meta.guideClaim.value,excerpt:meta.guideClaim.excerpt,provenance:guideProvenance,sourceHref:'/'+guideBase+'/'+guideName+'#'+meta.guideClaim.anchor,sourceHash:publishedGuideSha,observedAt:meta.observedAt,dateBasis:meta.guideClaim.dateBasis},ui:meta.ui};
  validateContentProfile(profile,sourceCatalog);
  const profileBytes=Buffer.from(canonical(profile)),profileSha=digest(profileBytes);
+ if(profileBytes.length>32768||catalogBytes.length>262144)throw Error('Content metadata exceeds learner read budget.');
  await fs.mkdir(out,{recursive:false});
  await write(out,'content/content-profile.json',profileBytes);await write(out,'content/source-catalog.json',catalogBytes);
  await write(out,mediaBase+'/lesson'+ext,media.bytes);await write(out,mediaBase+'/poster.svg',makePoster(meta.title));

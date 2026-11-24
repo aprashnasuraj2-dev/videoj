@@ -7,7 +7,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {buildContentPack} from './pack.mjs';
 import {contentReviewStatement} from '../sutra-content-intake/intake.mjs';
-import {validateContentProfile} from '../../packages/sutra-content-profile/index.js';
+import {validateContentProfile,MAX_REVIEWED_MEDIA_BYTES} from '../../packages/sutra-content-profile/index.js';
 
 const sha=x=>createHash('sha256').update(x).digest('hex');
 async function fixture(){
@@ -110,4 +110,12 @@ test('compiler refuses symlinked input ancestors and output aliases into input t
   await assert.rejects(buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:path.join(alias,'public-copy')}),/must not overlap/);
   assert.equal(fs.existsSync(path.join(f.root,'public-copy')),false);
  }finally{await fsp.rm(alias,{force:true});await fsp.rm(f.root,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});await fsp.rm(outside,{recursive:true,force:true});}
+});
+
+test('compiler refuses oversized learner media and transcript before creating output',async()=>{
+ for(const [rel,limit] of [['media/lesson.mp4',MAX_REVIEWED_MEDIA_BYTES],['text/transcript.txt',2*1024*1024]]){
+  const f=await fixture(),out=f.root+'-out';
+  try{await fsp.truncate(path.join(f.root,rel),limit+1);await assert.rejects(buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:out}),/Invalid source file/);assert.equal(fs.existsSync(out),false);}
+  finally{await fsp.rm(f.root,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
+ }
 });

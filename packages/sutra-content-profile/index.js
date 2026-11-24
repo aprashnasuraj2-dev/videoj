@@ -1,4 +1,6 @@
 import {snapshotDataRecord,snapshotDataArray} from '../sutra-evidence/index.js';
+export const MAX_REVIEWED_MEDIA_BYTES=24*1024*1024;
+const MEDIA_TYPES=new Set(['video/mp4','video/webm']);
 const SHA=/^[a-f0-9]{64}$/,ID=/^[A-Za-z][A-Za-z0-9._:-]{0,127}$/;
 const validId=v=>typeof v==='string'&&ID.test(v);
 const validHash=v=>typeof v==='string'&&SHA.test(v);
@@ -18,9 +20,9 @@ const hash=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SH
 // Content-Length is missing or a compressed wire length understates the body.
 export async function readContentBytes({url,origin,fetchImpl=fetch,signal,maxBytes,accept='application/octet-stream'}={}){
  const target=new URL(url);
- if(target.origin!==origin||target.username||target.password||!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>2*1024*1024)throw Error('CONTENT_READ_CONFIG');
+ if(target.origin!==origin||target.username||target.password||!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>(MEDIA_TYPES.has(accept)?MAX_REVIEWED_MEDIA_BYTES:2*1024*1024))throw Error('CONTENT_READ_CONFIG');
  signal?.throwIfAborted();
- let reader,response,abort,finished=false;
+ let reader,response,received,abort,finished=false;
  // A transport may disregard AbortSignal. Dispose a response arriving after
  // the caller stopped, rather than leaving an unconsumed body running.
  const cancelBody=body=>{try{void Promise.resolve(body?.cancel()).catch(()=>{});}catch{}};
@@ -29,7 +31,7 @@ export async function readContentBytes({url,origin,fetchImpl=fetch,signal,maxByt
  try{
   const incoming=Promise.resolve(fetchImpl(target.href,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',headers:{Accept:accept},signal})).then(value=>{
    if(finished||signal?.aborted){cancelBody(value?.body);throw Error('CONTENT_CANCELLED');}
-   return value;
+   received=value;return value;
   });
   response=await Promise.race([incoming,stopped]);
   signal?.throwIfAborted();
@@ -57,8 +59,20 @@ export async function readContentBytes({url,origin,fetchImpl=fetch,signal,maxByt
  }finally{
   finished=true;signal?.removeEventListener('abort',abort);
   if(reader){cancelBody(reader);try{reader.releaseLock();}catch{}}
-  else if(response?.body)cancelBody(response.body);
+  else if((response??received)?.body)cancelBody((response??received).body);
  }
+}
+// Fetch the complete media artifact once, validate the decoded bytes, then let
+// the caller mount only a blob from those bytes. A digest-shaped path or a
+// matching native duration is not byte verification.
+export async function readVerifiedLessonMedia({url,origin,mediaHash,mode,fetchImpl=fetch,signal}={}){
+ const target=new URL(url),ext=target.pathname.split('.').pop()?.toLowerCase(),mime=ext==='mp4'?'video/mp4':ext==='webm'?'video/webm':null;
+ if(!mime||!validHash(mediaHash)||!['synthetic','reviewed'].includes(mode)||mode==='reviewed'&&!target.pathname.split('/').includes(mediaHash))throw Error('CONTENT_MEDIA_CONFIG');
+ const {response,bytes}=await readContentBytes({url:target.href,origin,fetchImpl,signal,maxBytes:mode==='reviewed'?MAX_REVIEWED_MEDIA_BYTES:1024*1024,accept:mime});
+ if(response.headers.get('content-type')?.split(';',1)[0].trim().toLowerCase()!==mime||!bytes.byteLength)throw Error('CONTENT_MEDIA_RESPONSE');
+ if(await hash(bytes)!==mediaHash)throw Error('CONTENT_MEDIA_HASH');
+ signal?.throwIfAborted();
+ return {bytes,mime};
 }
 const boundedBytes=readContentBytes;
 const boundedJson=async({url,origin,fetchImpl,signal,maxBytes})=>{

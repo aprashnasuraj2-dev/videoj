@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';import {readContentBytes,loadContentProfile,receiptForFeatured,validateContentProfile} from '../index.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';import {readVerifiedLessonMedia,MAX_REVIEWED_MEDIA_BYTES,readContentBytes,loadContentProfile,receiptForFeatured,validateContentProfile} from '../index.js';
 const profile={"schema":1,"mode":"synthetic","contentVersion":"synthetic-timing-v1","title":"Synthetic timing lesson fixture","observedAt":"2026-11-23T00:00:00Z","primarySourceId":"synthetic-timing-fixture","featuredCueId":"timing-marker","catalog":{"path":"./source-catalog.json","sha256":"a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333"},"transcript":{"path":"/transcripts/synthetic-timing.txt","sha256":"a1930687d25bfe7fe8f2483c55d1aca83cdc3f4dcc39424dd6569aea9fe9660d"},"media":{"video":"/media/timing-fixture.mp4","poster":"/media/timing-poster.svg","chapters":"/media/timing-chapters.vtt","captions":"/media/timing-captions.vtt"},"videoClaim":{"title":"Synthetic timing cue","scope":"synthetic_timing_only","claimKey":"marker_presence","value":"marker_present","provenance":"SUTRA synthetic timing catalog; not human-reviewed footage","dateBasis":"Fixture metadata date"},"guideClaim":null,"ui":{"noticeTitle":"Synthetic development content","noticeBody":"This content profile is a test fixture. It demonstrates source consistency and browser behavior, not factual training guidance."}};
 const catalog={
   "schema": 1,
@@ -158,4 +158,14 @@ test('tiny fragments preserve exact bytes without an array of retained chunks',a
  const stream=new ReadableStream({pull(controller){if(i===expected.length)controller.close();else controller.enqueue(expected.subarray(i,++i));}});
  const result=await readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:expected.length,fetchImpl:async()=>new Response(stream)});
  assert.deepEqual(result.bytes,expected);
+});
+
+test('reviewed media requires complete exact bytes, type, digest path and no credentials',async()=>{
+ const bytes=new Uint8Array([1,2,3,4]),mediaHash=createHash('sha256').update(bytes).digest('hex'),origin='https://sutra.example',url=origin+'/media/release/'+mediaHash+'/lesson.webm';let calls=0;
+ const fetchImpl=async (target,options)=>{calls++;assert.equal(target,url);assert.equal(options.credentials,'omit');assert.equal(options.redirect,'error');assert.equal(options.headers.Accept,'video/webm');return new Response(bytes,{headers:{'Content-Type':'video/webm'}});};
+ const verified=await readVerifiedLessonMedia({url,origin,mediaHash,mode:'reviewed',fetchImpl});assert.deepEqual(verified.bytes,bytes);assert.equal(verified.mime,'video/webm');assert.equal(calls,1);
+ for(const r of [new Response(new Uint8Array([1,2,3,5]),{headers:{'Content-Type':'video/webm'}}),new Response(bytes,{headers:{'Content-Type':'text/html'}}),new Response(bytes,{status:206,headers:{'Content-Type':'video/webm'}}),new Response(bytes,{headers:{'Content-Type':'video/webm','Content-Length':String(MAX_REVIEWED_MEDIA_BYTES+1)}})]){
+  await assert.rejects(readVerifiedLessonMedia({url,origin,mediaHash,mode:'reviewed',fetchImpl:async()=>r}));
+ }
+ await assert.rejects(readVerifiedLessonMedia({url:origin+'/media/not-'+mediaHash+'/lesson.webm',origin,mediaHash,mode:'reviewed',fetchImpl}),/CONTENT_MEDIA_CONFIG/);assert.equal(calls,1);
 });

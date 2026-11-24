@@ -10,21 +10,24 @@ export function mountTimingPlayer(host,{source,poster,chapters,captions}){
  if(!media)throw new Error('Native media element unavailable.');
  // Actual native state remains authoritative. No timer synthesizes progress.
  const mediaError=(code,message)=>{const error=new Error(message);error.name='MediaOperationError';error.code=code;return error;};
- function waitFor(event,predicate,act){
+ function waitFor(event,predicate,act,signal){
   return new Promise((resolve,reject)=>{
    let timer,settled=false;
-   const cleanup=()=>{clearTimeout(timer);media.removeEventListener(event,changed);media.removeEventListener('error',failed);};
+   const cleanup=()=>{signal?.removeEventListener('abort',aborted);clearTimeout(timer);media.removeEventListener(event,changed);media.removeEventListener('error',failed);};
    const stop=error=>{if(settled)return;settled=true;cleanup();reject(error);};
+   const aborted=()=>stop(mediaError('MEDIA_CANCELLED','Media operation cancelled.'));
    const changed=()=>{if(!settled&&predicate()){settled=true;cleanup();resolve();}};
    const failed=()=>stop(mediaError(media.error?.code===4?'MEDIA_UNSUPPORTED':'MEDIA_LOAD_FAILED',
     media.error?.code===4?'The selected media format or source is not supported.':'Media could not complete the requested operation.'));
+   if(signal?.aborted){aborted();return;}
+   signal?.addEventListener('abort',aborted,{once:true});
    media.addEventListener(event,changed);media.addEventListener('error',failed,{once:true});
    timer=setTimeout(()=>stop(mediaError('MEDIA_TIMEOUT','Media operation exceeded the ten-second limit.')),10000);
    try{act?.();if(media.error)failed();else changed();}catch(error){stop(error);}
   });
  }
  return {element:player,media,readState:()=>readPlaybackState(media),
-  ready:()=>waitFor('loadedmetadata',()=>media.readyState>=1),
+  ready:({signal}={})=>waitFor('loadedmetadata',()=>media.readyState>=1,undefined,signal),
   async replaceSource(nextSource){
    if(typeof nextSource!=='string'||!nextSource.trim()||nextSource.length>4096)throw mediaError('MEDIA_SOURCE','Replacement media source is invalid.');
    const previous=media.currentSrc||media.getAttribute('src')||'';

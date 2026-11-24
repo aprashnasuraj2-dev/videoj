@@ -13,3 +13,5 @@ CLI: `node tools/sutra-content-pack/cli.mjs CONTENT_MANIFEST.json SEMANTIC_METAD
 The output must be integrated into the SUTRA public tree in a separate explicit change; this compiler never overwrites an existing app directory.
 
 The source root and each intermediate input directory must be real directories (no symlink ancestors within the root). The physical output parent is resolved and output must not overlap the source tree. This assumes a trusted, stable input filesystem during compilation; it is not a guarantee against concurrent path replacement by another process.
+
+The compiler's output must fit the browser's complete verification budget: media <=24 MiB, transcript <=2 MiB, catalog <=256 KiB and profile <=32 KiB. Larger private originals can remain in intake; re-encode and re-review the exact derivative rather than publishing an unplayable or unverified artifact.
