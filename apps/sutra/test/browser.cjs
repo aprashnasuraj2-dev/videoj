@@ -154,25 +154,6 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.ok(await page.evaluate(()=>document.fullscreenElement?.closest('video-player')!==null||document.fullscreenElement?.tagName==='VIDEO-PLAYER'||document.fullscreenElement?.tagName==='MEDIA-CONTAINER'));
   await fullscreenControl.click();await page.waitForFunction(()=>document.fullscreenElement===null);
   assert.equal(await media.evaluate(video=>video.paused),true);
-  const replaceResult=await page.evaluate(async()=>{
-   const {mountTimingPlayer}=await import('/src/player-adapter.js');
-   const host=document.createElement('div');host.style.display='none';document.body.append(host);
-   const valid=new URL('/media/timing-fixture.mp4',location.origin).href;
-   const adapter=mountTimingPlayer(host,{source:valid});
-   await adapter.ready();
-   let decodeRejected=false;
-   try{await adapter.replaceSource('data:video/mp4;base64,AAAA');}catch{decodeRejected=true;}
-   const afterBad=adapter.readState();
-   const recovered=await adapter.replaceSource(valid);
-   const current=adapter.readState();
-   host.remove();
-   return {decodeRejected,afterBad,recovered,current};
-  });
-  assert.equal(replaceResult.decodeRejected,true,'invalid replacement must reject on native decode/load error');
-  assert.equal(replaceResult.afterBad.available,false,'failed replacement cannot retain stale ready metadata');
-  assert.equal(replaceResult.recovered.available,true);
-  assert.equal(replaceResult.current.available,true);
-  assert.ok(Math.abs(replaceResult.current.duration-8)<.1);
   await page.getByRole('button',{name:'Read current playback state',exact:true}).click();const snapshot=JSON.parse(await page.locator('#playback-state').innerText());assert.equal(snapshot.available,true);assert.equal(snapshot.paused,true);assert.equal(snapshot.duration,await media.evaluate(video=>video.duration));assert.ok(Math.abs(snapshot.currentTime-await media.evaluate(video=>video.currentTime))<.1);
   // Source replacement is explicit and transactional: a valid replacement
   // reaches native metadata, while unsupported bytes fail and restore the last
