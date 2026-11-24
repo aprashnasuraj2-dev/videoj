@@ -1,6 +1,8 @@
 // Separate operator-owned loopback gateway. No cloud deployment, model download,
 // or external network contact happens when this module is imported.
 import http from 'node:http';
+import {resolve} from 'node:path';
+import {pathToFileURL} from 'node:url';
 import {createHash,timingSafeEqual} from 'node:crypto';
 const MAX_BODY=33792,MAX_STREAM=262144;
 const sha=value=>createHash('sha256').update(value).digest();
@@ -22,7 +24,8 @@ function safePayload(data,model){
 }
 export function createGateway({token,model,upstreamPort,fetchImpl=fetch}={}){
  const config=validateGatewayConfig({token,model,upstreamPort}),expected=sha('Bearer '+config.token);
- return http.createServer(async(req,res)=>{
+ let active=0;
+ const server=http.createServer(async(req,res)=>{
   const fail=(status)=>{if(!res.headersSent){res.writeHead(status,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(JSON.stringify({error:{code:'GATEWAY_UNAVAILABLE'}}));}else res.destroy();};
   if(req.method!=='POST'||req.url!=='/v1/chat/completions'){fail(404);return;}
   const values=req.headersDistinct?.authorization??[];
@@ -36,6 +39,8 @@ export function createGateway({token,model,upstreamPort,fetchImpl=fetch}={}){
   }catch{fail(413);return;}
   let value;try{value=JSON.parse(Buffer.concat(parts).toString('utf8'));}catch{fail(400);return;}
   if(!safePayload(value,config.model)){fail(400);return;}
+  if(active>=2){fail(429);return;}
+  active++;
   // Loopback-only target is constructed, never supplied by request or publication.
   const target='http://127.0.0.1:'+config.upstreamPort+'/v1/chat/completions';
   const controller=new AbortController();
@@ -53,10 +58,13 @@ export function createGateway({token,model,upstreamPort,fetchImpl=fetch}={}){
    }
    res.end();
   }catch{fail(502);}
-  finally{clearTimeout(deadline);res.off('close',close);controller.abort();}
+  finally{clearTimeout(deadline);res.off('close',close);controller.abort();active--;}
  });
+ server.requestTimeout=10000;
+ server.headersTimeout=10000;
+ return server;
 }
-if(process.argv[1]&&import.meta.url===new URL('file://'+process.argv[1]).href){
+if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
  try{
   const port=Number(process.env.SUTRA_GATEWAY_PORT??8443),upstreamPort=Number(process.env.SUTRA_GATEWAY_UPSTREAM_PORT??11434);
   if(!validPort(port))throw Error('GATEWAY_PORT');

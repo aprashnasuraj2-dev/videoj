@@ -42,3 +42,27 @@ test('wrong upstream format and redirect are rejected without leaking upstream d
   finally{await stop(gateway);}
  }
 });
+
+test('gateway caps its own concurrent model requests and releases slots after cancellation',async()=>{
+ let resume=[],arrived=0;
+ const fetchImpl=async(_url,{signal})=>{
+  arrived++;return new Promise((resolve,reject)=>{
+   const onAbort=()=>reject(Error('aborted'));
+   signal.addEventListener('abort',onAbort,{once:true});
+   resume.push(()=>{signal.removeEventListener('abort',onAbort);resolve(new Response('data: [DONE]\\n\\n',{headers:{'Content-Type':'text/event-stream'}}));});
+  });
+ };
+ const gateway=createGateway({token,model,upstreamPort:11434,fetchImpl}),port=await listen(gateway);
+ const base='http://127.0.0.1:'+port+'/v1/chat/completions',headers={'Content-Type':'application/json',Authorization:'Bearer '+token};
+ const send=()=>fetch(base,{method:'POST',headers,body:JSON.stringify(valid())});
+ try{
+  const one=send(),two=send();
+  for(let i=0;i<100&&arrived<2;i++)await new Promise(r=>setTimeout(r,10));
+  assert.equal(arrived,2);
+  assert.equal((await send()).status,429,'third inference cannot bypass active gateway limit');
+  resume.forEach(f=>f());
+  assert.equal((await one).status,200);assert.equal((await two).status,200);
+  const fourth=send();for(let i=0;i<100&&arrived<3;i++)await new Promise(r=>setTimeout(r,10));
+  assert.equal(arrived,3);resume[2]();assert.equal((await fourth).status,200);
+ }finally{await stop(gateway);}
+});
