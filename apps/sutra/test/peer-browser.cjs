@@ -220,6 +220,32 @@ const assert=require('node:assert/strict');
   assert.ok(contextResult.localPrompts.some(text=>text.includes('private_context')&&text.includes('ne-NP')));
   assert.ok(contextResult.localPrompts.every(text=>!text.includes('PRIVATE_BROWSER_CONTEXT_CANARY_456')));
   assert.ok(!JSON.stringify(contextResult.events).includes('PRIVATE_BROWSER_CONTEXT_CANARY_456'));
+  // Source replacement is explicit and transactional: a valid replacement
+  // reaches native metadata, while unsupported bytes fail and restore the last
+  // working source rather than leaving the learner on a broken media element.
+  const sourceSwap=await page.evaluate(async({root,learner})=>{
+   const {mountTimingPlayer}=await import('/@fs/'+root+'/apps/sutra/src/player-adapter.js');
+   const host=document.createElement('div');host.hidden=true;document.body.append(host);
+   const fixture=new URL(learner+'/media/timing-fixture.mp4?source-swap=initial',location.href).href;
+   const replacement=new URL(learner+'/media/timing-fixture.mp4?source-swap=replacement',location.href).href;
+   const adapter=mountTimingPlayer(host,{source:fixture});
+   await adapter.ready();
+   const first=adapter.media.currentSrc;
+   const replaced=await adapter.replaceSource(replacement);
+   const second=adapter.media.currentSrc;
+   const bad=URL.createObjectURL(new Blob(['not a decodable mp4'],{type:'video/mp4'}));
+   let failure=null;
+   try{await adapter.replaceSource(bad);}catch(error){failure={code:error.code??null,recovered:error.recovered===true};}
+   URL.revokeObjectURL(bad);
+   const restored=adapter.media.currentSrc===second&&adapter.media.readyState>=1&&Number.isFinite(adapter.media.duration);
+   host.remove();
+   return {first,second,replaced,failure,restored};
+  },{root,learner});
+  assert.notEqual(sourceSwap.first,sourceSwap.second,'valid source replacement must reach a distinct native URL');
+  assert.equal(sourceSwap.replaced.available,true);
+  assert.deepEqual(sourceSwap.failure,{code:'MEDIA_UNSUPPORTED',recovered:true});
+  assert.equal(sourceSwap.restored,true,'unsupported replacement restores the prior playable source');
+
   const transcript=await page.evaluate(async root=>{
    const {mountTranscriptPanel}=await import('/@fs/'+root+'/apps/sutra/src/transcript-panel.js');
    const container=document.createElement('div');document.body.append(container);
