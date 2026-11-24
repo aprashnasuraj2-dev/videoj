@@ -24,7 +24,7 @@ test('20-session local lab preserves prompt isolation and enforces four active p
  const env={
   SUTRA_ENABLE_INFERENCE:'true',SUTRA_PROVIDER_KEY:'SERVER_LOAD_TEST_KEY',
   SUTRA_CLIENT_HASH_SECRET:'c'.repeat(32),SUTRA_ALLOWED_ORIGIN:'https://sutra.test',
-  SUTRA_MODELS:'operator-approved',SUTRA_MAX_OUTPUT_TOKENS:'512',SUTRA_MAX_CONCURRENT:'4',
+  SUTRA_MODELS:'operator-approved',SUTRA_MAX_OUTPUT_TOKENS:'512',SUTRA_MAX_DAILY_CALLS:'40',SUTRA_MAX_CLIENT_CALLS:'2',SUTRA_MAX_CONCURRENT:'4',
   SUTRA_QUOTA:{idFromName:x=>x,get:()=>fetcher}
  };
  const bodies=[],providerCalls=new Map(),held=[];

@@ -1,5 +1,6 @@
 import {plain,InferenceError,readSse,makeAccumulator,abortable} from '../../packages/sutra-inference/protocol.js';
 import {checkSchema} from '../../packages/sutra-runtime/vendor/nsdeploy/actions.js';
+import {quotaLimits,MAX_INPUT_BYTES} from './quota.js';
 export const UPSTREAM='https://api.openai.com/v1/chat/completions';
 const error=(code,status)=>Response.json({error:{code,message:'Inference is unavailable or stopped; no complete result is claimed.'}},{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 export async function readJson(request,max=32768){
@@ -30,7 +31,7 @@ export function inferenceStatus(env={}){
  const concurrent=Number(env.SUTRA_MAX_CONCURRENT);
  return typeof env.SUTRA_ALLOWED_ORIGIN==='string'&&/^https:\/\/[^/]+$/.test(env.SUTRA_ALLOWED_ORIGIN)&&
   Number.isInteger(Number(env.SUTRA_MAX_OUTPUT_TOKENS))&&Number(env.SUTRA_MAX_OUTPUT_TOKENS)>=64&&Number(env.SUTRA_MAX_OUTPUT_TOKENS)<=1024&&
-  Number.isInteger(concurrent)&&concurrent>=1&&concurrent<=10&&
+  Number.isInteger(concurrent)&&concurrent>=1&&concurrent<=10&&!!quotaLimits(env)&&
   configuredModels(env).length>0&&env.SUTRA_ENABLE_INFERENCE==='true'&&
   typeof env.SUTRA_PROVIDER_KEY==='string'&&env.SUTRA_PROVIDER_KEY.length>=8&&
   typeof env.SUTRA_CLIENT_HASH_SECRET==='string'&&env.SUTRA_CLIENT_HASH_SECRET.length>=32&&!!env.SUTRA_QUOTA&&typeof env.SUTRA_MODELS==='string';
@@ -42,10 +43,13 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
  const models=configuredModels(env);const maxOutput=Number(env.SUTRA_MAX_OUTPUT_TOKENS);
  if(!models.length||models.length>3||models.some(m=>!m||m.length>100)||!Number.isInteger(maxOutput)||maxOutput<64||maxOutput>1024)return error('CONFIG',503);
  let body;try{body=validPayload(await readJson(request),models);}catch{return error('PAYLOAD',400);}
+ const upstreamBody=JSON.stringify({...body,max_completion_tokens:maxOutput,stream_options:{include_usage:true},...(body.tools.length?{tool_choice:'auto'}:{})});
+ const inputBytes=new TextEncoder().encode(upstreamBody).byteLength;
+ if(inputBytes<1||inputBytes>MAX_INPUT_BYTES)return error('PAYLOAD',400);
  let quota,lease,released=false;
  const releaseQuota=async()=>{
   if(released||!quota||!lease)return;released=true;
-  try{await quota.fetch('https://quota.internal/release',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lease})});}catch{}
+  try{const signal=AbortSignal.timeout(5000);await abortable(quota.fetch('https://quota.internal/release',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lease}),signal}),signal);}catch{}
  };
  try{
   const secret=await crypto.subtle.importKey('raw',new TextEncoder().encode(env.SUTRA_CLIENT_HASH_SECRET),{name:'HMAC',hash:'SHA-256'},false,['sign']);
@@ -53,7 +57,7 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
   const signature=await crypto.subtle.sign('HMAC',secret,new TextEncoder().encode(identity));const clientKey=Array.from(new Uint8Array(signature),b=>b.toString(16).padStart(2,'0')).join('');
   quota=env.SUTRA_QUOTA.get(env.SUTRA_QUOTA.idFromName('sutra-inference-global-v1'));
   const quotaSignal=AbortSignal.any([request.signal,AbortSignal.timeout(5000)]);
-  const reservation=await abortable(quota.fetch('https://quota.internal/reserve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientKey}),signal:quotaSignal}),quotaSignal);
+  const reservation=await abortable(quota.fetch('https://quota.internal/reserve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientKey,inputBytes,outputTokens:maxOutput}),signal:quotaSignal}),quotaSignal);
   if(!reservation.ok)return error(reservation.status===429?'QUOTA':'QUOTA_UNAVAILABLE',reservation.status===429?429:503);
   const reservationData=await abortable(reservation.json(),quotaSignal);
   if(reservationData.allowed!==true||typeof reservationData.lease!=='string'||!/^[0-9a-f-]{36}$/i.test(reservationData.lease))return error('QUOTA_UNAVAILABLE',503);
@@ -63,7 +67,7 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
  const controller=new AbortController(),cancel=()=>controller.abort();request.signal.addEventListener('abort',cancel,{once:true});const timer=setTimeout(cancel,30000);
  const cleanup=()=>{clearTimeout(timer);request.signal.removeEventListener('abort',cancel);};
  let upstream;
- try{upstream=await abortable(fetchImpl(UPSTREAM,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json',Authorization:`Bearer ${env.SUTRA_PROVIDER_KEY}`},body:JSON.stringify({...body,max_completion_tokens:maxOutput,stream_options:{include_usage:true},...(body.tools.length?{tool_choice:'auto'}:{})}),signal:controller.signal}),controller.signal);}
+ try{upstream=await abortable(fetchImpl(UPSTREAM,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json',Authorization:`Bearer ${env.SUTRA_PROVIDER_KEY}`},body:upstreamBody,signal:controller.signal}),controller.signal);}
  catch{controller.abort();cleanup();await releaseQuota();return error('UPSTREAM_UNAVAILABLE',502);}
  if(!upstream.ok||!upstream.headers.get('content-type')?.includes('text/event-stream')){void upstream.body?.cancel().catch(()=>{});cleanup();await releaseQuota();return error('UPSTREAM_REJECTED',502);}
  const encoder=new TextEncoder();

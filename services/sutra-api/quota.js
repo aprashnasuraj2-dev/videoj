@@ -1,40 +1,62 @@
-// Durable Object class uses only standard Web APIs and ctx.storage transactions.
-// Daily reservations are conservative: once admitted they consume daily/client quota
-// even if the provider later fails. Active leases separately cap paid concurrency.
+// Internal Durable Object: atomic daily/client/resource admission and active leases.
+// A reservation consumes its full requested resource allowance even on ambiguous failure.
+export const MAX_INPUT_BYTES=33792; // 32 KiB validated client body plus bounded server fields.
+export const MAX_OUTPUT_TOKENS=1024;
+const safe=(x,min,max)=>Number.isSafeInteger(x)&&x>=min&&x<=max;
+const map=x=>x&&typeof x==='object'&&!Array.isArray(x);
+export function quotaLimits(env={}){
+ const max=Number(env.SUTRA_MAX_DAILY_CALLS),perClient=Number(env.SUTRA_MAX_CLIENT_CALLS),maxConcurrent=Number(env.SUTRA_MAX_CONCURRENT);
+ const maxInput=Number(env.SUTRA_MAX_DAILY_INPUT_BYTES??max*MAX_INPUT_BYTES),maxOutput=Number(env.SUTRA_MAX_DAILY_OUTPUT_TOKENS??max*MAX_OUTPUT_TOKENS);
+ if(!safe(max,1,1000)||!safe(perClient,1,max)||!safe(maxConcurrent,1,Math.min(10,max))||!safe(maxInput,1,max*MAX_INPUT_BYTES)||!safe(maxOutput,1,max*MAX_OUTPUT_TOKENS))return null;
+ return {max,perClient,maxConcurrent,maxInput,maxOutput};
+}
 export class InferenceQuota{
- constructor(ctx,env){this.ctx=ctx;this.env=env;}
+ constructor(ctx,env,{clock=Date.now}={}){this.ctx=ctx;this.env=env;this.clock=clock;}
  async fetch(request){
   if(request.method!=='POST')return new Response('',{status:404});
   const pathname=new URL(request.url).pathname;
   if(!['/reserve','/release'].includes(pathname))return new Response('',{status:404});
-  const max=Number(this.env.SUTRA_MAX_DAILY_CALLS),perClient=Number(this.env.SUTRA_MAX_CLIENT_CALLS),
-   maxConcurrent=Number(this.env.SUTRA_MAX_CONCURRENT);
-  if(!Number.isInteger(max)||max<1||max>1000||!Number.isInteger(perClient)||perClient<1||perClient>max||
-   !Number.isInteger(maxConcurrent)||maxConcurrent<1||maxConcurrent>10||maxConcurrent>max)return new Response('',{status:503});
   let input;try{const text=await request.text();if(text.length>512)throw Error();input=JSON.parse(text);}catch{return new Response('',{status:400});}
   if(pathname==='/release'){
-   if(!input||typeof input.lease!=='string'||!/^[0-9a-f-]{36}$/i.test(input.lease))return new Response('',{status:400});
+   if(!map(input)||Object.keys(input).length!==1||typeof input.lease!=='string'||!/^[0-9a-f-]{36}$/i.test(input.lease))return new Response('',{status:400});
    try{
     await this.ctx.storage.transaction(async tx=>{
-     const state=await tx.get('quota');if(!state?.active||typeof state.active!=='object')return;
+     const state=await tx.get('quota');if(!map(state?.active))return;
      if(Object.hasOwn(state.active,input.lease)){delete state.active[input.lease];await tx.put('quota',state);}
     });
     return Response.json({released:true});
    }catch{return new Response('',{status:503});}
   }
-  if(!input||!/^[a-f0-9]{64}$/.test(input.clientKey??''))return new Response('',{status:400});
-  const day=new Date().toISOString().slice(0,10),now=Date.now(),lease=crypto.randomUUID(),leaseMs=45000;
+  const limits=quotaLimits(this.env);if(!limits)return new Response('',{status:503});
+  const {max,perClient,maxConcurrent,maxInput,maxOutput}=limits;
+  if(!map(input)||Object.keys(input).length!==3||!/^[a-f0-9]{64}$/.test(input.clientKey??'')||!safe(input.inputBytes,1,MAX_INPUT_BYTES)||!safe(input.outputTokens,64,MAX_OUTPUT_TOKENS))return new Response('',{status:400});
   try{
    const outcome=await this.ctx.storage.transaction(async tx=>{
+    // Sample time inside the transaction; do not admit using stale queued time.
+    const now=this.clock(),day=new Date(now).toISOString().slice(0,10),lease=crypto.randomUUID(),leaseMs=45000;
+    if(!Number.isSafeInteger(now))throw Error('Invalid quota clock');
     let state=await tx.get('quota');
-    if(!state||state.day!==day)state={day,total:0,clients:{},active:{}};
-    if(!state.clients||typeof state.clients!=='object')state.clients={};
-    if(!state.active||typeof state.active!=='object')state.active={};
-    for(const [id,expires] of Object.entries(state.active))if(!Number.isFinite(expires)||expires<=now)delete state.active[id];
-    const used=state.clients[input.clientKey]??0;
-    if(state.total>=max||used>=perClient){await tx.put('quota',state);return {allowed:false,reason:'daily'};}
-    if(Object.keys(state.active).length>=maxConcurrent){await tx.put('quota',state);return {allowed:false,reason:'concurrency'};}
-    state.total++;state.clients[input.clientKey]=used+1;state.active[lease]=now+leaseMs;
+    if(state){
+     if(!map(state)||!/^\d{4}-\d{2}-\d{2}$/.test(state.day??'')||state.day>day||!map(state.active)||!map(state.clients)||!safe(state.total,0,1000))throw Error('Invalid stored quota state');
+     for(const [id,expires] of Object.entries(state.active)){
+      if(!/^[0-9a-f-]{36}$/i.test(id)||!Number.isSafeInteger(expires))throw Error('Invalid stored lease');
+      if(expires<=now)delete state.active[id];
+     }
+     // Active calls can straddle UTC midnight. Preserve unexpired leases across daily reset.
+     if(state.day!==day)state={day,total:0,inputBytes:0,outputTokens:0,clients:{},active:state.active};
+    }else state={day,total:0,inputBytes:0,outputTokens:0,clients:{},active:{}};
+    // Legacy same-day state had only call counts. Conservatively charge the former per-call maximum.
+    if(state.inputBytes===undefined)state.inputBytes=state.total*MAX_INPUT_BYTES;
+    if(state.outputTokens===undefined)state.outputTokens=state.total*MAX_OUTPUT_TOKENS;
+    if(!safe(state.inputBytes,0,1000*MAX_INPUT_BYTES)||!safe(state.outputTokens,0,1000*MAX_OUTPUT_TOKENS))throw Error('Invalid stored resource counters');
+    const used=state.clients[input.clientKey]??0;if(!safe(used,0,1000))throw Error('Invalid stored client count');
+    let reason=null;
+    if(state.total>=max||used>=perClient)reason='daily';
+    else if(state.inputBytes+input.inputBytes>maxInput||state.outputTokens+input.outputTokens>maxOutput)reason='resource';
+    else if(Object.keys(state.active).length>=maxConcurrent)reason='concurrency';
+    if(reason){await tx.put('quota',state);return {allowed:false,reason};}
+    state.total++;state.inputBytes+=input.inputBytes;state.outputTokens+=input.outputTokens;
+    state.clients[input.clientKey]=used+1;state.active[lease]=now+leaseMs;
     await tx.put('quota',state);return {allowed:true,lease};
    });
    return Response.json(outcome,{status:outcome.allowed?200:429});

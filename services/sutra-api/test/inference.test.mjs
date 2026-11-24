@@ -6,16 +6,16 @@ const environment=(reserve=async(url,opts)=>{
  const path=new URL(url).pathname;
  if(path==='/release')return Response.json({released:true});
  return Response.json({allowed:true,lease:'00000000-0000-4000-8000-'+String(++leaseSequence).padStart(12,'0')});
-})=>({SUTRA_ENABLE_INFERENCE:'true',SUTRA_PROVIDER_KEY:'SERVER_ONLY_KEY_MARKER',SUTRA_CLIENT_HASH_SECRET:'a'.repeat(32),SUTRA_ALLOWED_ORIGIN:'https://sutra.test',SUTRA_MODELS:'operator-approved',SUTRA_MAX_OUTPUT_TOKENS:'512',SUTRA_MAX_CONCURRENT:'2',SUTRA_QUOTA:{idFromName:x=>x,get:()=>({fetch:reserve})}});
+})=>({SUTRA_ENABLE_INFERENCE:'true',SUTRA_PROVIDER_KEY:'SERVER_ONLY_KEY_MARKER',SUTRA_CLIENT_HASH_SECRET:'a'.repeat(32),SUTRA_ALLOWED_ORIGIN:'https://sutra.test',SUTRA_MODELS:'operator-approved',SUTRA_MAX_OUTPUT_TOKENS:'512',SUTRA_MAX_DAILY_CALLS:'100',SUTRA_MAX_CLIENT_CALLS:'8',SUTRA_MAX_CONCURRENT:'2',SUTRA_QUOTA:{idFromName:x=>x,get:()=>({fetch:reserve})}});
 const sse=(suffix='data: [DONE]\n\n')=>new Response('data: {"choices":[{"index":0,"delta":{"content":"hello"},"finish_reason":null}],"secret":"PRIVATE_PROVIDER_FIELD"}\n\ndata: {"choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}\n\n'+suffix,{headers:{'Content-Type':'text/event-stream'}});
 test('disabled by default; no upstream before validation',async()=>{let calls=0;const fetchImpl=()=>{calls++;throw Error();};assert.equal((await handleInference(request(),{}, {fetchImpl})).status,503);for(const req of [request(payload(),{Origin:'https://evil.test'}),request({...payload(),url:'http://internal'}),request({...payload(),model:'unapproved'}),request(payload(),{Authorization:'Bearer client-key'})])assert.ok((await handleInference(req,environment(),{fetchImpl})).status>=400);assert.equal(calls,0);assert.equal(inferenceStatus({...environment(),SUTRA_MAX_OUTPUT_TOKENS:'99999'}),false);});
-test('fixed upstream, server key and imposed cap; sanitized streaming works end to end',async()=>{let reserved,released=0;const env=environment(async(url,opts)=>{if(new URL(url).pathname==='/release'){released++;return Response.json({released:true});}reserved=JSON.parse(opts.body);return Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000111'});});const adapter=createProviderAdapter({origin:'https://sutra.test',model:'operator-approved',fetchImpl:async(url,opts)=>handleInference(new Request(url,{...opts,headers:{...opts.headers,Origin:'https://sutra.test'}}),env,{fetchImpl:async(url,opts)=>{assert.equal(url,UPSTREAM);assert.equal(opts.headers.Authorization,'Bearer SERVER_ONLY_KEY_MARKER');assert.equal(opts.redirect,'error');const body=JSON.parse(opts.body);assert.equal(body.max_completion_tokens,512);return sse();}})});assert.equal((await adapter.chat({messages:payload().messages})).content,'hello');assert.match(reserved.clientKey,/^[a-f0-9]{64}$/);assert.equal(JSON.stringify(reserved).includes('192.0.2.1'),false);assert.equal(released,1);});
+test('fixed upstream, server key and imposed cap; sanitized streaming works end to end',async()=>{let reserved,released=0;const env=environment(async(url,opts)=>{if(new URL(url).pathname==='/release'){released++;return Response.json({released:true});}reserved=JSON.parse(opts.body);return Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000111'});});const adapter=createProviderAdapter({origin:'https://sutra.test',model:'operator-approved',fetchImpl:async(url,opts)=>handleInference(new Request(url,{...opts,headers:{...opts.headers,Origin:'https://sutra.test'}}),env,{fetchImpl:async(url,opts)=>{assert.equal(url,UPSTREAM);assert.equal(opts.headers.Authorization,'Bearer SERVER_ONLY_KEY_MARKER');assert.equal(opts.redirect,'error');const body=JSON.parse(opts.body);assert.equal(body.max_completion_tokens,512);return sse();}})});assert.equal((await adapter.chat({messages:payload().messages})).content,'hello');assert.match(reserved.clientKey,/^[a-f0-9]{64}$/);assert.equal(reserved.outputTokens,512);assert.ok(reserved.inputBytes>0);assert.equal(JSON.stringify(reserved).includes('192.0.2.1'),false);assert.equal(released,1);});
 test('quota denial, malformed quota and storage errors prevent provider contact',async()=>{for(const reserve of [async()=>new Response('',{status:429}),async()=>Response.json({allowed:false}),async()=>{throw Error('private');}]){let calls=0;const response=await handleInference(request(),environment(reserve),{fetchImpl:async()=>{calls++;return sse();}});assert.ok([429,503].includes(response.status));assert.equal(calls,0);assert.equal((await response.text()).includes('private'),false);}});
 test('upstream errors and truncated streams never expose raw fields',async()=>{for(const upstream of [new Response('SERVER_ONLY_KEY_MARKER',{status:401}),sse('')]){const response=await handleInference(request(),environment(),{fetchImpl:async()=>upstream});const body=await response.text();assert.equal(body.includes('SERVER_ONLY_KEY_MARKER'),false);assert.equal(body.includes('PRIVATE_PROVIDER_FIELD'),false);if(response.ok){assert.ok(body.includes('INCOMPLETE_STREAM'));assert.equal(body.includes('[DONE]'),false);}}});
 test('body and request ceilings fail before quota or provider',async()=>{let reserved=0;const env=environment(async()=>{reserved++;return Response.json({allowed:true});});for(const body of [{...payload(),messages:[{role:'user',content:'x'.repeat(33000)}]},{...payload(),tools:new Array(17).fill({})},{...payload(),max_completion_tokens:9999},{...payload(),messages:[{role:'tool',content:'x',tool_call_id:'unknown'}]}])assert.equal((await handleInference(request(body),env)).status,400);assert.equal(reserved,0);});
 test('request cancellation prevents upstream',async()=>{const c=new AbortController();c.abort();const r=new Request(request(),{signal:c.signal});let calls=0;const response=await handleInference(r,environment(),{fetchImpl:async()=>{calls++;return sse();}});assert.ok(response.status>=400);assert.equal(calls,0);});
 function storage(){let state;let queue=Promise.resolve();return {transaction(fn){const run=queue.then(()=>fn({get:async()=>structuredClone(state),put:async(k,v)=>{state=structuredClone(v);}}));queue=run.catch(()=>{});return run;},inspect:()=>state};}
-const quotaRequest=key=>new Request('https://quota.internal/reserve',{method:'POST',body:JSON.stringify({clientKey:key.repeat(64)})});
+const quotaRequest=(key,inputBytes=100,outputTokens=64)=>new Request('https://quota.internal/reserve',{method:'POST',body:JSON.stringify({clientKey:key.repeat(64),inputBytes,outputTokens})});
 const quotaRelease=lease=>new Request('https://quota.internal/release',{method:'POST',body:JSON.stringify({lease})});
 test('transactional quota caps active concurrency, daily clients and resets on a new UTC day',async()=>{
  const store=storage(),env={SUTRA_MAX_DAILY_CALLS:'3',SUTRA_MAX_CLIENT_CALLS:'2',SUTRA_MAX_CONCURRENT:'2'};
@@ -117,4 +117,32 @@ test('cache policy separates private APIs, mutable pointers and explicitly versi
  assert.equal(apply('https://sutra.test/media/timing-fixture.mp4'),'public, max-age=0, must-revalidate');
  assert.equal(apply('https://sutra.test/media/timing-fixture.mp4?v=abc'),'public, max-age=31536000, immutable');
  assert.equal(apply('https://sutra.test/assets/index-contenthash.js'),'public, max-age=31536000, immutable');
+});
+
+test('resource ceilings charge admitted work without refund, reject before provider, and preserve other counters',async()=>{
+ const store=storage(),cfg={SUTRA_MAX_DAILY_CALLS:'10',SUTRA_MAX_CLIENT_CALLS:'10',SUTRA_MAX_CONCURRENT:'2',SUTRA_MAX_DAILY_INPUT_BYTES:'250',SUTRA_MAX_DAILY_OUTPUT_TOKENS:'192'};
+ const q=new InferenceQuota({storage:store},cfg);
+ const first=await q.fetch(quotaRequest('a',150,128));assert.equal(first.status,200);await q.fetch(quotaRelease((await first.json()).lease));
+ assert.equal((await q.fetch(quotaRequest('a',101,64))).status,429);
+ assert.equal((await q.fetch(quotaRequest('a',100,65))).status,429);
+ const second=await q.fetch(quotaRequest('b',100,64));assert.equal(second.status,200);await q.fetch(quotaRelease((await second.json()).lease));
+ assert.equal((await q.fetch(quotaRequest('c',1,64))).status,429);assert.equal(store.inspect().total,2);assert.equal(store.inspect().inputBytes,250);assert.equal(store.inspect().outputTokens,192);
+});
+test('UTC midnight resets daily counters without dropping active provider leases',async()=>{
+ const store=storage();let now=Date.parse('2026-11-24T23:59:59Z');
+ const q=new InferenceQuota({storage:store},{SUTRA_MAX_DAILY_CALLS:'10',SUTRA_MAX_CLIENT_CALLS:'2',SUTRA_MAX_CONCURRENT:'1'},{clock:()=>now});
+ const first=await q.fetch(quotaRequest('a'));assert.equal(first.status,200);const lease=(await first.json()).lease;now+=2000;
+ assert.equal((await q.fetch(quotaRequest('b'))).status,429);assert.equal(store.inspect().day,'2026-11-25');assert.equal(store.inspect().total,0);assert.equal(Object.keys(store.inspect().active).length,1);
+ await q.fetch(quotaRelease(lease));assert.equal((await q.fetch(quotaRequest('b'))).status,200);assert.equal(store.inspect().total,1);
+});
+test('legacy quota counters are conservatively migrated; backwards clock and invalid fields fail closed',async()=>{
+ const store=storage(),now=Date.parse('2026-11-24T12:00:00Z');const q=new InferenceQuota({storage:store},{SUTRA_MAX_DAILY_CALLS:'10',SUTRA_MAX_CLIENT_CALLS:'2',SUTRA_MAX_CONCURRENT:'2',SUTRA_MAX_DAILY_INPUT_BYTES:'33792',SUTRA_MAX_DAILY_OUTPUT_TOKENS:'1024'},{clock:()=>now});
+ await store.transaction(tx=>tx.put('quota',{day:'2026-11-24',total:1,clients:{},active:{}}));assert.equal((await q.fetch(quotaRequest('a'))).status,429);assert.equal(store.inspect().inputBytes,33792);
+ await store.transaction(tx=>tx.put('quota',{day:'2026-11-25',total:0,clients:{},active:{}}));assert.equal((await q.fetch(quotaRequest('a'))).status,503);
+ assert.equal((await q.fetch(quotaRequest('a',0,64))).status,400);
+});
+test('resource rejection occurs at actual inference handler before upstream',async()=>{
+ const store=storage(),cfg={SUTRA_MAX_DAILY_CALLS:'5',SUTRA_MAX_CLIENT_CALLS:'5',SUTRA_MAX_CONCURRENT:'1',SUTRA_MAX_DAILY_INPUT_BYTES:'1',SUTRA_MAX_DAILY_OUTPUT_TOKENS:'512'};
+ const q=new InferenceQuota({storage:store},cfg);const env={...environment(),...cfg,SUTRA_QUOTA:{idFromName:x=>x,get:()=>({fetch:(url,opts)=>q.fetch(new Request(url,opts))})}};
+ let calls=0;const response=await handleInference(request(),env,{fetchImpl:async()=>{calls++;return sse();}});assert.equal(response.status,429);assert.equal(calls,0);assert.equal(store.inspect().total,0);
 });
