@@ -20,9 +20,9 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P041-01` Design the initial task prompt so users avoid an empty chat dead end
 - [x] `SUTRA-P041-02` Place video, transcript, evidence and review card in one coherent workspace
 - [x] `SUTRA-P041-03` Make the active lesson and selected source version visible
-- [ ] `SUTRA-P041-04` Define loading, empty, denied, error and completed screen states
+- [x] `SUTRA-P041-04` Define loading, empty, denied, error and completed screen states
 - [x] `SUTRA-P041-05` Keep the source comparison and next human action discoverable
-- [ ] `SUTRA-P041-06` Place technical execution details in an optional inspector
+- [x] `SUTRA-P041-06` Place technical execution details in an optional inspector
 - [ ] `SUTRA-P041-07` Specify desktop, narrow screen and zoom behavior before styling
 - [ ] `SUTRA-P041-08` Walk through the complete question-to-card flow with a fresh viewer
 - [ ] `SUTRA-P041-09` Produce and review the phase artifact: Responsive screen design and interaction map.
@@ -39,11 +39,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P042-02` Use host-supplied media, poster, captions and chapter tracks
 - [x] `SUTRA-P042-03` Preserve the installed v10 custom-element playback runtime
 - [x] `SUTRA-P042-04` Observe actual native media state rather than synthesizing progress
-- [ ] `SUTRA-P042-05` Verify ordinary play, pause, volume, seek and fullscreen behavior
+- [x] `SUTRA-P042-05` Verify ordinary play, pause, volume, seek and fullscreen behavior
 - [ ] `SUTRA-P042-06` Handle source changes, missing decode support and media load errors
 - [x] `SUTRA-P042-07` Avoid coupling the player to agents, model state or DETOUR internals
-- [ ] `SUTRA-P042-08` Check host styles do not break player focus and narrow-screen controls
-- [ ] `SUTRA-P042-09` Produce and review the phase artifact: SUTRA player adapter and ordinary controls.
+- [x] `SUTRA-P042-08` Check host styles do not break player focus and narrow-screen controls
+- [x] `SUTRA-P042-09` Produce and review the phase artifact: SUTRA player adapter and ordinary controls.
 - [ ] `SUTRA-P042-10` Close phase 042 only after its applicable tasks have evidence and its exit condition is observed: Play, pause, seek, volume, captions and fullscreen work; no DETOUR code or existing demo media is imported.
 
 ## Phase 043 - Connect evidence cards to real playback
@@ -56,13 +56,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P043-01` Validate cue ranges against actual loaded media duration
 - [x] `SUTRA-P043-02` Seek only after explicit viewer intent and required metadata availability
 - [x] `SUTRA-P043-03` Observe actual currentTime after seeking rather than an optimistic timer
-- [ ] `SUTRA-P043-04` Handle missing seekable ranges, live sources and nonseekable media
+- [x] `SUTRA-P043-04` Handle missing seekable ranges, live sources and nonseekable media
 - [x] `SUTRA-P043-05` Preserve correct source identity across media replacement
 - [x] `SUTRA-P043-06` Show the exact source cue and time range on evidence cards
 - [x] `SUTRA-P043-07` Provide keyboard activation and clear unavailable-seek feedback
 - [x] `SUTRA-P043-08` Measure supported seeking against the one-second target tolerance
 - [x] `SUTRA-P043-09` Produce and review the phase artifact: Evidence-to-seek interaction and actual-state feedback.
-- [ ] `SUTRA-P043-10` Close phase 043 only after its applicable tasks have evidence and its exit condition is observed: A seek reaches within one second of the valid target on supported test media; unavailable seeking is described accurately.
+- [x] `SUTRA-P043-10` Close phase 043 only after its applicable tasks have evidence and its exit condition is observed: A seek reaches within one second of the valid target on supported test media; unavailable seeking is described accurately.
 
 ## Phase 044 - Add an inspectable transcript experience
 
@@ -125,13 +125,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Add an optional panel showing agent names, contacted origins, approvals, budget use and errors. Log concise events without raw private prompts or credentials.
 - **Phase exit:** A synthetic credential canary is absent from the UI and downloaded trace; trace failures do not break playback.
 
-- [ ] `SUTRA-P047-01` Show selected router identity without displaying credentials
+- [x] `SUTRA-P047-01` Show selected router identity without displaying credentials
 - [x] `SUTRA-P047-02` Display contacted origins and approved versus denied contact events
-- [ ] `SUTRA-P047-03` Show agent and tool names with bounded timing and budget information
+- [x] `SUTRA-P047-03` Show agent and tool names with bounded timing and budget information
 - [ ] `SUTRA-P047-04` Represent partial failures and unknown action outcomes accurately
 - [x] `SUTRA-P047-05` Redact credentials, private fields and unnecessary raw prompt text
 - [x] `SUTRA-P047-06` Bound trace memory and support safe user-initiated export
-- [ ] `SUTRA-P047-07` Test credential canaries in inspector UI and downloaded files
+- [x] `SUTRA-P047-07` Test credential canaries in inspector UI and downloaded files
 - [x] `SUTRA-P047-08` Ensure optional inspector failures never break media playback
 - [x] `SUTRA-P047-09` Produce and review the phase artifact: Redacted trace panel and export format.
 - [ ] `SUTRA-P047-10` Close phase 047 only after its applicable tasks have evidence and its exit condition is observed: A synthetic credential canary is absent from the UI and downloaded trace; trace failures do not break playback.
@@ -161,15 +161,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Check tab order, visible focus, names, contrast, reduced motion, zoom, live announcements and 360px layouts. Test real touch interaction on available hardware.
 - **Phase exit:** Core task is keyboard usable; no critical automated accessibility finding remains; physical and emulated tests are labeled separately.
 
-- [ ] `SUTRA-P049-01` Check meaningful labels, visible focus and keyboard order for the core task
-- [ ] `SUTRA-P049-02` Verify dynamic announcements are useful and not repeatedly disruptive
+- [x] `SUTRA-P049-01` Check meaningful labels, visible focus and keyboard order for the core task
+- [x] `SUTRA-P049-02` Verify dynamic announcements are useful and not repeatedly disruptive
 - [ ] `SUTRA-P049-03` Test contrast, 200-percent zoom, reduced motion and readable captions
-- [ ] `SUTRA-P049-04` Verify 360px layouts without horizontal clipping of core controls
-- [ ] `SUTRA-P049-05` Test touch targets and modal focus restoration
-- [ ] `SUTRA-P049-06` Run an automated accessibility audit and review its actual findings
+- [x] `SUTRA-P049-04` Verify 360px layouts without horizontal clipping of core controls
+- [x] `SUTRA-P049-05` Test touch targets and modal focus restoration
+- [x] `SUTRA-P049-06` Run an automated accessibility audit and review its actual findings
 - [ ] `SUTRA-P049-07` Exercise available physical touch hardware separately from emulation
-- [ ] `SUTRA-P049-08` Record device/browser versions, unresolved barriers and their user impact
-- [ ] `SUTRA-P049-09` Produce and review the phase artifact: Accessibility findings and corrected high-impact issues.
+- [x] `SUTRA-P049-08` Record device/browser versions, unresolved barriers and their user impact
+- [x] `SUTRA-P049-09` Produce and review the phase artifact: Accessibility findings and corrected high-impact issues.
 - [ ] `SUTRA-P049-10` Close phase 049 only after its applicable tasks have evidence and its exit condition is observed: Core task is keyboard usable; no critical automated accessibility finding remains; physical and emulated tests are labeled separately.
 
 ## Phase 050 - Close the complete-product milestone
