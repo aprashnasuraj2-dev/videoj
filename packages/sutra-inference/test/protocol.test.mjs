@@ -31,3 +31,40 @@ test('token usage is consistent and cannot be emitted early or replaced after co
  const final=makeAccumulator();final.accept({...chunk({content:'complete'},'stop'),usage:usage.usage});
  assert.deepEqual(final.finish().usage,usage.usage);
 });
+
+test('exact SSE provider endpoint rejects substituted 200, partial success and fake content type',async()=>{
+ const url='https://sutra.test/api/v1/chat/completions',valid='data: '+JSON.stringify(chunk({content:'fake successful model output'},'stop'))+'\n\ndata: [DONE]\n\n';
+ for(const response of [
+  Object.defineProperty(new Response(valid,{headers:{'Content-Type':'text/event-stream'}}),'url',{value:'https://sutra.test/api/other'}),
+  new Response(valid,{status:206,headers:{'Content-Type':'text/event-stream'}}),
+  new Response(valid,{headers:{'Content-Type':'text/html; text/event-stream'}}),
+  new Response(valid,{headers:{'Content-Type':'text/event-stream','Content-Range':'bytes 0-5/6'}})
+ ]){
+  let count=0;
+  const adapter=createProviderAdapter({origin:'https://sutra.test',model:'approved',fetchImpl:async(target,opts)=>{
+   count++;assert.equal(target,url);assert.equal(opts.credentials,'omit');assert.equal(opts.redirect,'error');assert.equal(opts.cache,'no-store');return response;
+  }});
+  await assert.rejects(adapter.chat({messages:[]}),e=>['STREAM_TYPE','TRANSPORT'].includes(e.code));
+  assert.equal(count,1);assert.equal(response.body.locked,false);
+ }
+});
+test('noncooperating SSE transport returning after cancellation disposes its unread body',async()=>{
+ let started=false,release,cancelled=0;
+ const adapter=createProviderAdapter({origin:'https://sutra.test',model:'approved',timeoutMs:25,fetchImpl:()=>{started=true;return new Promise(resolve=>{release=resolve;});}});
+ const pending=adapter.chat({messages:[]});
+ for(let i=0;i<100&&!started;i++)await new Promise(resolve=>setTimeout(resolve,0));
+ assert.equal(started,true);
+ await assert.rejects(pending,e=>e.code==='CANCELLED');
+ const response=new Response(new ReadableStream({cancel(){cancelled++;}}),{headers:{'Content-Type':'text/event-stream'}});
+ release(response);
+ for(let i=0;i<100&&!cancelled;i++)await new Promise(resolve=>setTimeout(resolve,0));
+ assert.equal(cancelled,1);assert.equal(response.body.locked,false);
+});
+test('provider error bodies do not remain live and no response content is surfaced in errors',async()=>{
+ for(const status of [429,503,500]){
+  let cancelled=0;const response=new Response(new ReadableStream({cancel(){cancelled++;}}),{status,headers:{'Content-Type':'text/event-stream'}});
+  const adapter=createProviderAdapter({origin:'https://sutra.test',model:'approved',fetchImpl:async()=>response});
+  await assert.rejects(adapter.chat({messages:[]}));
+  assert.equal(cancelled,1);assert.equal(response.body.locked,false);
+ }
+});

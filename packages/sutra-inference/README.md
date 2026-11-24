@@ -13,3 +13,5 @@ characters per call bound memory. Unknown provider fields are discarded.
 
 Run `npm test` here. Tests inject a transport and perform no paid provider calls.
 See `services/sutra-api/README.md` for the disabled server/operator boundary.
+
+The default-inference browser SSE boundary accepts only a complete HTTP 200 text/event-stream from the fixed exact same-origin chat endpoint, with no cookies, redirects or cache. Incomplete/partial response status and content-range refuse completion; late noncooperative responses and rejected error streams are disposed. The protocol remains bounded in decoded bytes and model calls, but none of these controls proves upstream model truth or privacy practices.
