@@ -1,4 +1,4 @@
-// Cooperative cross-document serialization for application-owned localStorage
+// Cooperative cross-document serialization for application-owned review storage
 // mutations. Other scripts/devtools can still mutate the origin: the store
 // compares destructive snapshots and confirms exact post-write readback.
 export const REVIEW_LOCK_NAME='sutra.review-cards.mutation.v2';
@@ -11,8 +11,8 @@ export function createReviewMutationQueue({locks=globalThis.navigator?.locks,tim
    const controller=lifetime,deadline=AbortSignal.timeout(timeoutMs),signal=AbortSignal.any([controller.signal,deadline]);
    return locks.request(REVIEW_LOCK_NAME,{mode:'exclusive',signal},()=>{
     signal.throwIfAborted();
-    // Application effects must be synchronous. Holding a browser-wide lock
-    // across an unbounded promise would make recovery unreliable.
+    // The app calls bounded synchronous store operations (or their immediate
+    // registry promise). No network or user decision is awaited under this lock.
     return effect();
    });
   },
