@@ -2,7 +2,7 @@ const {chromium}=require('playwright');
 const {spawn}=require('node:child_process');
 const fs=require('node:fs');const path=require('node:path');const assert=require('node:assert/strict');
 (async()=>{
- const app=path.resolve(__dirname,'..');const base='http://127.0.0.1:4183';
+ const app=path.resolve(__dirname,'..'),root=path.resolve(app,'../..');const base='http://127.0.0.1:4183';
  const server=spawn(process.execPath,[path.join(app,'node_modules/vite/bin/vite.js'),'preview','--host','127.0.0.1','--port','4183','--strictPort'],{cwd:app,stdio:'pipe'});
  let browser;let exited=false,serverLog='';for(const output of [server.stdout,server.stderr])output.on('data',data=>{serverLog=(serverLog+data.toString()).slice(-8000);});server.on('exit',()=>exited=true);
  try{
