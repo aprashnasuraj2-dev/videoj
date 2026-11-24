@@ -26,7 +26,7 @@ test('rollout retention carries old hashed JS/CSS and content-addressed graphs b
  write(next,'agents/agent-manifest.json','{"new":true}');
  write(next,'agents/learner.network.json','{"new":"alias"}');
  const result=retainRolloutAssets({previousDir:previous,nextDir:next});
- assert.deepEqual(result.copied.sort(),[
+ assert.deepEqual([...result.copied].sort(),[
   `agents/v/${oldHash}/learner.network.json`,'assets/index-OLDHASH99.js','assets/theme-OLDHASH88.css'
  ].sort());
  assert.equal(fs.readFileSync(path.join(next,'index.html'),'utf8'),'NEW HTML');
