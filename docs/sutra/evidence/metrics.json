@@ -1,23 +1,24 @@
 {
   "schema": 1,
-  "recordedAt": "2026-11-24T08:20:00+05:45",
+  "recordedAt": "2026-11-24T08:35:01+05:45",
   "metrics": [
     {
       "id": "engineering_baseline",
-      "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e",
+      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
       "invalidatedBy": [
         "grounding-evaluation"
       ],
-      "profile": "in-process synthetic, no paid provider or held-out semantics",
+      "profile": "in-process synthetic model and source handler, no network/paid inference; no held-out semantics",
       "values": {
         "retrievalCases": 20,
         "retrievalPassed": 20,
         "adversarialCases": 10,
         "adversarialPassed": 10,
-        "directMedianMs": 0.035867,
-        "delegatedMedianMs": 3.404983,
+        "directMedianMs": 0.030092,
+        "delegatedMedianMs": 3.519918,
         "directModelCalls": 0,
         "delegatedModelCalls": 90,
+        "medianDelegatedModelCalls": 4.5,
         "directRpc": 0,
         "delegatedRpc": 90,
         "providerTokens": null,
@@ -26,53 +27,64 @@
     },
     {
       "id": "desktop_browser_matrix",
-      "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e",
+      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
       "invalidatedBy": [
         "browser-matrix"
       ],
-      "profile": "headless desktop engines, synthetic media fixture",
+      "profile": "headless desktop engines, synthetic media fixture cb0cdcb04039eb2bfc62a22462f0a040c1a23c2bdfd24f1403669569c2f22c5e",
       "values": {
-        "chromium": "pass",
-        "firefox": "pass",
-        "webkit": "pass",
+        "chromium": "151.0.7922.34 pass",
+        "firefox": "153.0 pass",
+        "webkit": "26.5 pass",
+        "viewport": "1280x800 and 360x800",
         "physicalTouch": "untested",
         "humanScreenReader": "untested"
       }
     },
     {
       "id": "hero_journey",
-      "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e",
+      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
       "invalidatedBy": [
         "critical-journey"
       ],
       "profile": "Chromium CI synthetic learner journey",
       "values": {
         "result": "pass",
+        "learnerFirstOrder": true,
+        "firstLoadJourneyMap": true,
+        "writtenSourceHashCheck": true,
+        "alteredWrittenSourceRefused": true,
         "peerDenialPreservesLocalFlow": true,
         "narrowKeyboardJourney": true
       }
     },
     {
       "id": "lab_performance",
-      "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e",
+      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
       "invalidatedBy": [
         "performance-profile"
       ],
-      "profile": "Chromium CI, 1 Mbps/150 ms laboratory shaping",
+      "profile": "Chromium headless 151.0.7922.34, viewport 1280x800, 1 Mbps down/up, 150 ms laboratory shaping",
       "values": {
-        "transcriptUsableUnder5s": true,
-        "mp4RequestsBeforeExplicitLoad": 0,
-        "gzipShellUnder700KiB": true
+        "shellGzipBytes": 418268,
+        "transcriptUsableMs": 1911,
+        "encodedBytesAtTranscript": 192406,
+        "mediaRequestsBeforeExplicitLoad": 0,
+        "videoReadyAfterClickMs": 3470,
+        "encodedBytesAfterVideo": 573860,
+        "incrementalEncodedBytesAfterVideo": 381454,
+        "mediaEncodedBytes": 8502,
+        "nativeSeekFeedbackMs": 61
       }
     },
     {
       "id": "neutral_peer_interop",
-      "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e",
+      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
       "invalidatedBy": [
         "peer-interop",
         "security-boundary"
       ],
-      "profile": "same-owner local two-origin synthetic consumer",
+      "profile": "same-owner local two-origin synthetic consumer; independent public adoption not established",
       "values": {
         "result": "pass",
         "independentExternalAdoption": false
@@ -80,7 +92,7 @@
     },
     {
       "id": "publication_inventory",
-      "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e",
+      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
       "invalidatedBy": [
         "publication-integrity"
       ],
@@ -92,15 +104,33 @@
     },
     {
       "id": "provider_cost",
-      "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e",
+      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
       "invalidatedBy": [
         "provider-cost"
       ],
-      "profile": "no live funded provider measured",
+      "profile": "synthetic provider path only; no live funded provider measured",
       "values": {
         "actualProviderTokens": null,
         "actualRunCost": null,
+        "priceBasis": null,
         "status": "unmeasured"
+      }
+    },
+    {
+      "id": "security_boundary",
+      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+      "invalidatedBy": [
+        "security-boundary"
+      ],
+      "profile": "finite automated project checks; not universal security proof",
+      "values": {
+        "learnerShell": "pass",
+        "neutralConsumer": "pass",
+        "cloudflareIngress": "pass",
+        "consentDenialZeroContact": true,
+        "callerOwnedModelPolicy": true,
+        "credentialCanaryLeakObserved": false,
+        "externalPublicProduction": "untested"
       }
     }
   ]
