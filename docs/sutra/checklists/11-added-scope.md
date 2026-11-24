@@ -124,3 +124,13 @@ Both are isolated learner/developer regressions verified in automated browser an
 - [x] `SUTRA-X010-12` Serialize saved-review downloads with cooperative mutation lock, revalidate captured record after acquisition, revoke queued actions on navigation and invalidate late UI outcomes. Verify held-lock mutation, navigation and explicit fresh download in Chromium. Requires X010-10.
 
 - [x] `SUTRA-X010-13` Require complete SSE event framing with CR/LF/CRLF, multiline data, aggregate bounds and named-error refusal; EOF without full terminal event is incomplete, standard id/retry metadata does not reconnect. Reject JSON media-type lookalikes before quota or body reads. Requires X010-06 and X010-07.
+
+- [x] `SUTRA-X010-14` Cancel pending native seek waits when a receipt result is revoked by replacement, supersession or navigation; pass a shared cancellation signal through receipt, transcript, provider and local-answer interactions. Verify held native event, query replacement and fresh retry. Requires X010-03 and X010-11.
+
+- [x] `SUTRA-X010-15` Preserve focused transcript control and exact text selection through verified media remount; restore explicit load focus on media identity invalidation when focus was in media controls. Verify delayed media and backward selection. Requires X010-11 and X010-14.
+
+- [x] `SUTRA-X010-16` Bound sanitized trace export to actual formatted UTF-8 bytes (64 KiB); avoid executable ordinary array metadata and repeatedly encoding large Unicode tails. Preserve maximal balanced prefix via binary search. Verify Unicode, accessor and prefix adversarial fixtures.
+
+- [x] `SUTRA-X010-17` Require HTTP 202 empty notification acknowledgement before either narrow MCP host continues; enforce zero-byte budget and cancel immediately at first forbidden byte even without EOF. Verify null/empty stream, partial, declared body, held-byte and held-cancellation cases, plus separate-origin browser failure. Requires X010-01.
+
+- [ ] `SUTRA-X010-18` Bound zero-length and tiny-fragment work across Worker pre-admission JSON, content, consent, shared response and inference SSE readers; yield to event-loop cancellation; avoid accumulating reactions on a long-lived stop promise; verify actual CI including local Workerd. Requires X010-04, X010-06 and X010-17.

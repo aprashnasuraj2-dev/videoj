@@ -272,3 +272,8 @@ Use one fixed bounded buffer before Worker quota admission; chunk count cannot c
 ### Review download and SSE framing follow-up
 
 2026-11-24T19:04:33.362+05:45: Cooperative mutation lock governs saved receipt export; recheck immutable record and view epoch. A complete bounded SSE event, not a single line, establishes terminal success. Standard ID/retry metadata never reconnects; JSON media type is exact. No live model or release authorization.
+
+
+### Further lifecycle and protocol boundaries — 2026-11-24T19:14:26.874+05:45
+
+Revoke native seek waiting authority as soon as results change; preserve focus only when the transcript owned it. Bound actual serialized UTF-8 trace exports without executing ordinary array metadata. For the pinned MCP 2025-06-18 narrow JSON-only profile, accepted notification is empty HTTP 202; verify EOF or fail at first byte, do not proceed after malformed acknowledgement. This does not claim general MCP transport conformance. New fragment budget is a fail-closed work bound; exact verification pending. See [session evidence](evidence/implementation/SESSION-0042.md).

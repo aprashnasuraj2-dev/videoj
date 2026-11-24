@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T19:04:33.362+05:45",
+  "updatedAt": "2026-11-24T19:14:26.874+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -802,6 +802,111 @@
         }
       ],
       "unblockCondition": null
+    },
+    {
+      "id": "R-037",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Stale seek owner keeps waiting after result authority is revoked.",
+      "mechanism": "Stale seek owner keeps waiting after result authority is revoked.",
+      "userEffect": "Incorrect, stale or unavailable user-visible evidence and interactions.",
+      "affectedTasks": [
+        "SUTRA-X010-14",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Cancel outstanding waits, preserve explicit fresh action; cannot undo physical seek already applied.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "643871ffb96a623bf79799b1afa7a4845631df5d"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-038",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Asynchronous remount steals keyboard focus or loses query selection.",
+      "mechanism": "Asynchronous remount steals keyboard focus or loses query selection.",
+      "userEffect": "Incorrect, stale or unavailable user-visible evidence and interactions.",
+      "affectedTasks": [
+        "SUTRA-X010-15",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Capture/restore focused controls only; restore explicit load focus on invalidation. Physical/screen-reader tests remain open.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "c8fc9f4528fa45379c87968964aadb92eb80db63"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-039",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Compact UTF-16 budgeting underestimates downloadable bytes; repeated tail scans waste CPU; caller array metadata may execute.",
+      "mechanism": "Compact UTF-16 budgeting underestimates downloadable bytes; repeated tail scans waste CPU; caller array metadata may execute.",
+      "userEffect": "Incorrect, stale or unavailable user-visible evidence and interactions.",
+      "affectedTasks": [
+        "SUTRA-X010-16",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Own descriptors, bounded prefixes and actual formatted UTF-8 budget; binary-search monotonic balanced prefix. Trusted labels and no executable Proxy sandbox claim.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "57679f6e9f664034cbbd71b5819ceb838d2d3846"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-040",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Nonempty 202 treated as valid acknowledgement; one-byte held stream delays failure.",
+      "mechanism": "Nonempty 202 treated as valid acknowledgement; one-byte held stream delays failure.",
+      "userEffect": "Incorrect, stale or unavailable user-visible evidence and interactions.",
+      "affectedTasks": [
+        "SUTRA-X010-17",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Require zero-byte EOF; malformed response cancels reader, cannot progress discovery. Restricted stateless JSON-only MCP profile, not general SSE support.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "05dbd04ec5243c1fb835769ff9bf45bb7c4e4486"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-041",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Byte-budget bypass via empty or tiny stream fragments",
+      "mechanism": "Unlimited zero-byte chunks and microtask-only reads can starve deadlines; repeated races against one unresolved cancellation promise can retain reactions.",
+      "userEffect": "CPU/memory pressure or delayed cancellation, including pre-admission Worker requests.",
+      "affectedTasks": [
+        "SUTRA-X010-18",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Patch committed: cap empty fragments at 256, large content fragments at 131072, yield every 1024 reads or SSE lines; per-read abort race. Exact CI pending.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "05d8948b90972f1fbc1095bf3554f1c3a363c452"
+        }
+      ],
+      "unblockCondition": "Observe exact source CI including Workerd and all browser profiles; fix any regression."
     }
   ]
 }
