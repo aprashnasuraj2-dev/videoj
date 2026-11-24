@@ -89,6 +89,33 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.route('**/agents/v/**/learner.network.json',route=>route.abort());await page.getByRole('button',{name:'Run scripted network test'}).click();await page.waitForFunction(()=>document.querySelector('#network-result').textContent.includes('No completed result is claimed.'));await page.unroute('**/agents/v/**/learner.network.json');
   await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();await page.getByRole('dialog',{name:'External contact request'}).waitFor();assert.match(await page.locator('#consent-origin').innerText(),/peer\.invalid/);assert.match(await page.locator('#consent-purpose').innerText(),/public peer manifest/);assert.match(await page.locator('#consent-disclosure').innerText(),/network name/);const externalBeforeDeny=external.length;await page.getByRole('button',{name:'Deny',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#consent-status').textContent.includes('denied before'));assert.equal(await page.locator('#consent-status').getAttribute('data-state'),'denied');assert.equal(external.length,externalBeforeDeny);assert.match(await page.locator('#consent-events').textContent(),/decision|deny/i);
   await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();await page.getByRole('button',{name:'Allow for this session (simulate)'}).click();await page.waitForFunction(()=>document.querySelector('#consent-status').textContent.includes('Simulated operations: 1'));const externalBeforeRemembered=external.length;await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();await page.waitForFunction(()=>document.querySelector('#consent-status').textContent.includes('Simulated operations: 2'));assert.equal(external.length,externalBeforeRemembered);assert.match(await page.locator('#consent-events').textContent(),/remembered/);
+  // A duplicate preview activation cannot replace a pending permission
+  // resolver. Escape must settle the exact pending decision, and navigating
+  // while the modal is open revokes session permission and any late click.
+  const previewContext=await browser.newContext();
+  try{
+   const preview=await previewContext.newPage(),previewErrors=[],requests=[];
+   preview.on('pageerror',error=>previewErrors.push(error.message));
+   preview.on('request',r=>{if(!r.url().startsWith(base+'/'))requests.push(r.url());});
+   await preview.goto(base);
+   const start=preview.getByRole('button',{name:'Preview synthetic peer contact'});
+   await start.click();await preview.getByRole('dialog',{name:'External contact request'}).waitFor();
+   assert.equal(await start.isDisabled(),true);
+   await preview.evaluate(()=>document.querySelector('#preview-peer-contact').click());
+   assert.equal(await preview.getByRole('dialog',{name:'External contact request'}).isVisible(),true);
+   await preview.keyboard.press('Escape');
+   await preview.waitForFunction(()=>document.querySelector('#consent-status').dataset.state==='denied');
+   assert.equal(await start.isDisabled(),false);
+   await start.click();await preview.getByRole('dialog',{name:'External contact request'}).waitFor();
+   await preview.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
+   await preview.waitForFunction(()=>document.querySelector('#consent-status').dataset.state==='cancelled');
+   await preview.evaluate(()=>document.querySelector('#allow-peer-session').click());
+   assert.equal(await preview.getByRole('dialog',{name:'External contact request'}).isVisible(),false);
+   await start.click();await preview.getByRole('dialog',{name:'External contact request'}).waitFor();
+   await preview.getByRole('button',{name:'Deny',exact:true}).click();
+   await preview.waitForFunction(()=>document.querySelector('#consent-status').dataset.state==='denied');
+   assert.deepEqual(requests,[]);assert.deepEqual(previewErrors,[]);
+  }finally{await previewContext.close();}
   await page.getByRole('button',{name:'Preview source review card'}).click();await page.getByRole('button',{name:'Cancel',exact:true}).click();assert.equal(await page.locator('#review-list li').count(),0);
   await page.getByRole('button',{name:'Preview source review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);assert.match(await page.locator('#review-status').innerText(),/not factual verification/);
   const reviewDownloadPromise=page.waitForEvent('download');

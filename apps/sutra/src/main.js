@@ -305,23 +305,57 @@ mountProviderPanel({loadedContent:content,seekTo:seekReceipt,prepareReview:prepa
 mountPeerWorkbench({baseUrl:new URL(`${import.meta.env.BASE_URL}agents/`,location.origin).href});
 
 const consentDialog=document.querySelector('#consent-dialog'),consentStatus=document.querySelector('#consent-status'),consentEvents=document.querySelector('#consent-events');
-let resolveConsent=null,simulatedPeerOperations=0;
+const consentPreviewButton=document.querySelector('#preview-peer-contact');
+let pendingConsentDecision=null,consentPreview=null,simulatedPeerOperations=0;
 const peerContact={origin:'https://peer.invalid/',kind:'peer_manifest',purpose:'Load a declared public peer manifest',disclosure:['network name','requested capability'],network:'checklist'};
-const consentInspector=createConsentInspector({decide:intent=>new Promise(resolve=>{
- resolveConsent=resolve;document.querySelector('#consent-origin').textContent=intent.origin;document.querySelector('#consent-purpose').textContent=intent.purpose;document.querySelector('#consent-disclosure').textContent=intent.disclosure.join(', ');consentDialog.showModal();
+function finishConsent(decision,scope='once',expected=pendingConsentDecision){
+ if(!expected||pendingConsentDecision!==expected)return;
+ pendingConsentDecision=null;expected.signal?.removeEventListener('abort',expected.abort);
+ if(consentDialog.open)consentDialog.close();
+ const permitted=decision==='allow'&&consentPreview===expected.owner&&!expected.signal?.aborted&&!expected.owner.signal.aborted;
+ expected.resolve({decision:permitted?'allow':'deny',scope:permitted?scope:'once'});
+}
+const consentInspector=createConsentInspector({decide:(intent,{signal}={})=>new Promise(resolve=>{
+ const owner=consentPreview;
+ if(!owner||signal?.aborted||owner.signal.aborted||pendingConsentDecision){resolve({decision:'deny',scope:'once'});return;}
+ const entry={resolve,owner,signal,abort:null};entry.abort=()=>finishConsent('deny','once',entry);
+ pendingConsentDecision=entry;signal?.addEventListener('abort',entry.abort,{once:true});
+ document.querySelector('#consent-origin').textContent=intent.origin;
+ document.querySelector('#consent-purpose').textContent=intent.purpose;
+ document.querySelector('#consent-disclosure').textContent=intent.disclosure.join(', ');
+ try{consentDialog.showModal();document.querySelector('#deny-peer-contact').focus();}
+ catch{finishConsent('deny','once',entry);}
 })});
-function finishConsent(decision,scope='once'){if(!resolveConsent)return;const resolve=resolveConsent;resolveConsent=null;consentDialog.close();resolve({decision,scope});}
+consentDialog.addEventListener('cancel',event=>{event.preventDefault();finishConsent('deny');});
+consentDialog.addEventListener('close',()=>{if(pendingConsentDecision)finishConsent('deny');});
 document.querySelector('#deny-peer-contact').addEventListener('click',()=>finishConsent('deny','once'));
 document.querySelector('#allow-peer-once').addEventListener('click',()=>finishConsent('allow','once'));
 document.querySelector('#allow-peer-session').addEventListener('click',()=>finishConsent('allow','session'));
-document.querySelector('#preview-peer-contact').addEventListener('click',async()=>{
+consentPreviewButton.addEventListener('click',async()=>{
+ if(consentPreview)return;
+ const operation=new AbortController();consentPreview=operation;consentPreviewButton.disabled=true;
+ const valid=()=>consentPreview===operation&&!operation.signal.aborted;
  setStatus(consentStatus,'loading','Evaluating consent before any simulated peer operation…');
  try{
-  await consentInspector.perform(peerContact,async()=>{simulatedPeerOperations++;return {simulated:true};});
-  setStatus(consentStatus,'completed','Consent allowed the simulated operation. No external request was made. Simulated operations: '+simulatedPeerOperations+'.');
+  await consentInspector.perform(peerContact,async()=>{
+   if(!valid())return;
+   simulatedPeerOperations++;return {simulated:true};
+  },{signal:operation.signal});
+  if(valid())setStatus(consentStatus,'completed','Consent allowed the simulated operation. No external request was made. Simulated operations: '+simulatedPeerOperations+'.');
  }catch(error){
-  setStatus(consentStatus,error.code==='CONSENT_DENIED'?'denied':'error',error.code==='CONSENT_DENIED'?'Contact denied before the simulated operation. Local lesson and evidence remain available.':'Consent flow stopped. No external request was made.');
+  if(valid())setStatus(consentStatus,error.code==='CONSENT_DENIED'?'denied':'error',error.code==='CONSENT_DENIED'?'Contact denied before the simulated operation. Local lesson and evidence remain available.':'Consent flow stopped. No external request was made.');
+ }finally{
+  if(consentPreview===operation){
+   consentPreview=null;consentPreviewButton.disabled=false;
+   consentEvents.textContent=JSON.stringify(consentInspector.exportEvents(),null,2);
+  }
  }
+});
+window.addEventListener('pagehide',()=>{
+ const pending=consentPreview;pending?.abort();consentPreview=null;
+ consentInspector.clearSession();finishConsent('deny');
+ consentPreviewButton.disabled=false;
+ if(pending)setStatus(consentStatus,'cancelled','Synthetic consent preview cancelled on navigation. No operation completion is claimed.');
  consentEvents.textContent=JSON.stringify(consentInspector.exportEvents(),null,2);
 });
 
