@@ -69,7 +69,8 @@
         "packages/sutra-consent/",
         "packages/sutra-inference/",
         "packages/sutra-actions/",
-        "apps/sutra/public/guides/"
+        "apps/sutra/public/guides/",
+        "apps/sutra/vite.runtime.config.js"
       ],
       "requiredWorkflows": [
         "Validate SUTRA browser compatibility matrix"
@@ -102,7 +103,8 @@
         "apps/sutra/public/media/",
         "apps/sutra/package.json",
         "apps/sutra/package-lock.json",
-        "apps/sutra/vite.config"
+        "apps/sutra/vite.config",
+        "apps/sutra/vite.runtime.config.js"
       ],
       "requiredWorkflows": [
         "Validate SUTRA learner shell"
@@ -140,7 +142,8 @@
         "apps/sutra/public/guides/",
         "apps/sutra/public/_",
         "apps/sutra/tools/",
-        "tools/sutra-open-kit/"
+        "tools/sutra-open-kit/",
+        "apps/sutra/vite.runtime.config.js"
       ],
       "requiredWorkflows": [
         "Validate SUTRA publisher starter",

@@ -91,3 +91,10 @@ test('release-candidate tooling is mapped without turning templates into release
  const r=classifyChangedFiles(['tools/sutra-release-candidate/release.mjs'],map);
  assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('release-candidate-readiness'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA release-candidate artifact gate'));assert.deepEqual(r.invalidatedMetrics,[]);
 });
+
+test('standalone runtime build configuration is explicitly mapped to browser, performance and publication evidence',()=>{
+ const r=classifyChangedFiles(['apps/sutra/vite.runtime.config.js'],map);
+ assert.deepEqual(r.unmapped,[]);
+ for(const id of ['browser-matrix','performance-profile','publication-integrity'])assert.ok(r.affectedSuites.includes(id),id);
+ for(const metric of ['desktop_browser_matrix','lab_performance','publication_inventory'])assert.ok(r.invalidatedMetrics.includes(metric),metric);
+});
