@@ -153,3 +153,35 @@ test('bound POST stops promptly and disposes late 409 without reporting stale pr
  sources[0].version='v2';assert.throws(()=>c.add({...receipt(1),sourceVersion:'v2'}),/Invalid receipt/);
  assert.equal(c.snapshot().invalid,true);assert.deepEqual(c.snapshot().receipts,[]);
 });
+
+test('approved provider contract cannot authorize a different caller origin or graph origin',()=>{
+ let calls=0,touched=0;const fetchImpl=()=>{calls++;};
+ for(const [origin,approvedContract] of [['https://different.test',approval()],['https://example.test',{...approval(),graphUrl:'https://different.test/agents/graph.json'}],['https://example.test',{...approval(),graphUrl:'https://example.test/agents/graph.json?extra=private'}],[{toString(){touched++;return 'https://example.test';}},approval()]]){
+  assert.throws(()=>createBoundProviderTransport({origin,approvedContract,fetchImpl}),e=>e.code==='CONTRACT_CHANGED');
+ }
+ assert.equal(calls,0);assert.equal(touched,0);
+});
+test('bound POST pins primitive exact URL and body before asynchronous dispatch',async()=>{
+ const origin='https://example.test',sent=[];let touched=0;
+ const wrapped=createBoundProviderTransport({origin,approvedContract:approval(),fetchImpl:async(url,opts)=>{sent.push([url,opts.body]);return Response.json({ok:true});}});
+ const target=origin+'/api/source-tools';
+ for(const url of ['/api/source-tools',origin+'/api/other/../source-tools',target+' ',{toString(){touched++;return target;}}])await assert.rejects(wrapped(url,{method:'POST'}),/PROVIDER_ROUTE/);
+ for(const key of ['method','body','signal']){
+  const opts={method:'POST',body:'{}'};Object.defineProperty(opts,key,{enumerable:true,get(){touched++;return undefined;}});
+  await assert.rejects(wrapped(target,opts),/PROVIDER_ROUTE/);
+ }
+ await assert.rejects(wrapped(target,{method:'POST',body:'क'.repeat(11000)}),/PROVIDER_ROUTE/);
+ assert.equal(touched,0);assert.deepEqual(sent,[]);
+ const opts={method:'POST',body:'{"query":"approved"}'};
+ const pending=wrapped(target,opts);opts.body='{"query":"substituted"}';opts.method='GET';
+ await pending;assert.deepEqual(sent,[[target,'{"query":"approved"}']]);
+});
+test('model POST observer is invoked only at actual transport attempt and cannot replace dispatch',async()=>{
+ const origin='https://example.test',order=[];
+ const wrapped=createBoundProviderTransport({origin,approvedContract:approval(),fetchImpl:async url=>{order.push(url.endsWith('/completions')?'model':'source');return Response.json({ok:true});},onModelDispatch(){order.push('observed');throw Error('viewer failure');}});
+ const controller=new AbortController();
+ const stopped=wrapped(origin+'/api/v1/chat/completions',{method:'POST',body:'{}',signal:controller.signal});controller.abort();
+ await assert.rejects(stopped);assert.deepEqual(order,[]);
+ await wrapped(origin+'/api/source-tools',{method:'POST',body:'{}'});assert.deepEqual(order,['source']);
+ await wrapped(origin+'/api/v1/chat/completions',{method:'POST',body:'{}'});assert.deepEqual(order,['source','model','observed']);
+});

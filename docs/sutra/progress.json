@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T20:52:41+05:45",
+  "updated_at": "2026-11-24T20:55:23+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
   "last_observed_code_sha": "d707fc98e2d4362fec6768667097ad78f491db1b",
   "last_session_id": "SUTRA-SESSION-0045",
@@ -16,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Observe exact X010-35/36/37/38 CI and reconcile; continue P078-02 engineering. Preserve actual content, human, provider and release gates.",
+  "next_action": "Observe exact X010-37/38/39 full CI, reconcile only after passing; continue P078-02 source and consent integrity. Preserve no paid inference or deployment.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -12724,6 +12724,7 @@
     "X010-30 exact 19/19; added X010-33 structured peer response projection candidate. X010-31/32 remain pending full exact learner CI.",
     "X010-31/32 and P023-05 exact 19/19; added X010-34 contact configuration candidate. X010-33 remains pending full exact CI.",
     "X010-33/34 verified 19/19. Added X010-35/36 source configuration/static initialization and caller observation timestamp candidates; exact CI pending.",
-    "**708/1,095 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-35/36 verified 19/19. Added X010-37/38 tool-call history integrity and ambiguous wire JSON candidates; no credit until exact CI."
+    "**708/1,095 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-35/36 verified 19/19. Added X010-37/38 tool-call history integrity and ambiguous wire JSON candidates; no credit until exact CI.",
+    "**708/1,096 overall verified; 616/1,000 original; 381 pending; six omissions; one hardware blocker.** X010-37/38 exact learner runtime and package/API unit steps passed, full CI pending. Added X010-39 provider destination/body/consent binding candidate; no credit before exact CI."
   ]
 }

@@ -329,3 +329,7 @@ X010-26 verified 19/19 at 76d13792d57fdfd321074a026747c72a306337b1; X010-27 exac
 ## SUTRA-DECISION-0043 — Unambiguous tool-call history and wire JSON
 
 2026-11-24T20:52:41+05:45: X010-37/38. The server already rejects duplicate historical call IDs but the host could execute a repeated source read before that later rejection. Refuse repeated IDs per actual conversation, not globally across independent child invocations. Require a coherent completion reason when supplied and exact call fields. Reject duplicate decoded JSON keys via bounded scanner before platform JSON.parse in model arguments, server request body and MCP JSON-RPC responses. Escaped aliases are the same key; nested independent objects may reuse names. Do not rewrite upstream vendor code. Pending exact CI.
+
+## SUTRA-DECISION-0044 — Provider approval binds actual destination and POST attempt
+
+2026-11-24T20:55:23+05:45: X010-39. Standalone bound transport must not accept an approval issued for another origin or normalized URL aliases. Snapshot consumed primitive body and method before asynchronous transport, ignore unrelated ambient metadata. Preserve the exact displayed question; no silent trimming. UI clears previous result only when a model POST is actually attempted (not proof of server receipt or paid processing). Observer failures cannot replace dispatch. Pending exact CI.

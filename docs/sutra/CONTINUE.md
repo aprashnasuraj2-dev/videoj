@@ -10,9 +10,9 @@ On 24 November the participant explicitly tightened the ordering: stop further d
 
 ## Latest implementation checkpoint — 0045
 
-2026-11-24T20:52:41+05:45: **708/1,095 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-35/36 verified 19/19. Added X010-37/38 tool-call history integrity and ambiguous wire JSON candidates; no credit until exact CI. [Evidence](evidence/implementation/SESSION-0045.md).
+2026-11-24T20:55:23+05:45: **708/1,096 overall verified; 616/1,000 original; 381 pending; six omissions; one hardware blocker.** X010-37/38 exact learner runtime and package/API unit steps passed, full CI pending. Added X010-39 provider destination/body/consent binding candidate; no credit before exact CI. [Evidence](evidence/implementation/SESSION-0045.md).
 
-Next: Observe exact X010-35/36/37/38 CI and reconcile; continue P078-02 engineering. Preserve actual content, human, provider and release gates.
+Next: Observe exact X010-37/38/39 full CI, reconcile only after passing; continue P078-02 source and consent integrity. Preserve no paid inference or deployment.
 
 ## Resume sequence
 

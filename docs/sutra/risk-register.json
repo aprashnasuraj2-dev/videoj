@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T20:52:41+05:45",
+  "updatedAt": "2026-11-24T20:55:23+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -1387,6 +1387,27 @@
         }
       ],
       "unblockCondition": "Exact adversarial, positive runtime/API/browser regressions pass."
+    },
+    {
+      "id": "R-062",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Approved provider destination or question differs from dispatched request",
+      "mechanism": "Standalone transport did not match contract router/graph origin, accepted normalized URLs and reread mutable body; run trimmed consent text and notified model start at adapter entry.",
+      "userEffect": "Ambiguous disclosure scope, incorrect previous-result lifecycle or substituted request data.",
+      "affectedTasks": [
+        "SUTRA-X010-39",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Bind exact approved origin and routes, snapshot consumed body, preserve exact question and report actual POST attempt.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "85d771e3721bfad5e2df27fc44d3242f8124b2a5"
+        }
+      ],
+      "unblockCondition": "Exact zero-contact, mutable body, cancelled dispatch and Chromium equality regressions pass."
     }
   ]
 }

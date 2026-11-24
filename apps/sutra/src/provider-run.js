@@ -5,13 +5,34 @@ import {validateReceipt,snapshotDataRecord,snapshotDataArray} from '../../../pac
 import {loadContentProfile,readContentBytes} from '../../../packages/sutra-content-profile/index.js';
 import {snapshotSourceCatalog} from './source-catalog-snapshot.js';
 const modelPattern=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/;
-const validOrigin=origin=>{const u=new URL(origin);return u.origin===origin&&(u.protocol==='https:'||u.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(u.hostname));};
+const validOrigin=origin=>{
+ if(typeof origin!=='string'||!origin||origin.length>2048||/[\u0000-\u0020\u007f]/.test(origin))return false;
+ try{const u=new URL(origin);return u.origin===origin&&(u.protocol==='https:'||u.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(u.hostname));}catch{return false;}
+};
 const plain=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
 const sha=async value=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(value))))).map(b=>b.toString(16).padStart(2,'0')).join('');
 const contentError=()=>Object.assign(Error('Published content changed; reload the lesson before using inference.'),{code:'CONTENT_CHANGED'});
 const contractError=()=>Object.assign(Error('Provider publication changed; check availability again.'),{code:'CONTRACT_CHANGED'});
 const contentIdentity=content=>({profileSha256:content.artifacts.profileSha256,catalogSha256:content.artifacts.catalogSha256,transcriptSha256:content.artifacts.transcriptSha256,contentVersion:content.profile.contentVersion,contentMode:content.profile.mode,primarySourceId:content.profile.primarySourceId});
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+function assertContractOrigin(contract,origin){
+ if(!validOrigin(origin)||contract.router!==origin+'/api/v1')throw contractError();
+ let graph;try{graph=new URL(contract.graphUrl);}catch{throw contractError();}
+ if(graph.href!==contract.graphUrl||graph.origin!==origin||graph.username||graph.password||graph.search||graph.hash||!graph.pathname.startsWith('/agents/'))throw contractError();
+}
+// Read only the three consumed options. Ambient headers/referrer/etc. are
+// deliberately ignored, but executable descriptors cannot supply authority.
+function postOptions(options){
+ if(!options||typeof options!=='object'||![Object.prototype,null].includes(Object.getPrototypeOf(options)))throw Error('PROVIDER_ROUTE');
+ const exact=Object.create(null);
+ for(const key of ['method','body','signal']){
+  const d=Object.getOwnPropertyDescriptor(options,key);
+  if(d&&(!d.enumerable||!Object.hasOwn(d,'value')))throw Error('PROVIDER_ROUTE');
+  exact[key]=d?.value;
+ }
+ if(exact.method!=='POST'||exact.body!==undefined&&(typeof exact.body!=='string'||exact.body.length>32768||new TextEncoder().encode(exact.body).length>32768))throw Error('PROVIDER_ROUTE');
+ return exact;
+}
 // Own a closed primitive consent record before discovery or a callback can run.
 export function snapshotApprovedContract(value){
  try{
@@ -108,20 +129,20 @@ export async function discoverProvider({origin,loadedContent,fetchImpl=fetch,sig
 // Only two caller-owned POST endpoints may receive approved inference context.
 // An unexpected URL, method, query or credentials must be refused before
 // transport, not silently forwarded outside the precondition boundary.
-export function createBoundProviderTransport({origin,approvedContract,fetchImpl=fetch,onPrecondition=()=>{}}={}){
+export function createBoundProviderTransport({origin,approvedContract,fetchImpl=fetch,onPrecondition=()=>{},onModelDispatch=()=>{}}={}){
  const contract=snapshotApprovedContract(approvedContract);
- if(!validOrigin(origin)||typeof fetchImpl!=='function'||typeof onPrecondition!=='function')throw contractError();
- const permitted=new Set(['/api/v1/chat/completions','/api/source-tools']);
+ assertContractOrigin(contract,origin);
+ if(typeof fetchImpl!=='function'||typeof onPrecondition!=='function'||typeof onModelDispatch!=='function')throw contractError();
+ const permitted=new Set([origin+'/api/v1/chat/completions',origin+'/api/source-tools']);
  return async(url,options={})=>{
-  let target;
-  try{target=new URL(url,origin);}catch{throw Error('PROVIDER_ROUTE');}
-  if(target.origin!==origin||target.username||target.password||target.search||target.hash||options.method!=='POST'||!permitted.has(target.pathname)||target.href!==origin+target.pathname)throw Error('PROVIDER_ROUTE');
+  if(typeof url!=='string'||!permitted.has(url))throw Error('PROVIDER_ROUTE');
+  const {body,signal}=postOptions(options);
+  const target=new URL(url);
   // Reconstruct the complete header contract instead of forwarding arbitrary
   // adapter metadata or trying to enumerate every possible credential header.
   const headers=new Headers({'Content-Type':'application/json','X-Sutra-Catalog-Sha256':contract.content.catalogSha256});
   if(target.pathname==='/api/v1/chat/completions')headers.set('X-Sutra-Inference-Contract',contract.inferenceContractId);
   else{headers.set('Accept','application/json, text/event-stream');headers.set('MCP-Protocol-Version','2025-06-18');}
-  const signal=options.signal;
   signal?.throwIfAborted();
   let response,received,finished=false;
   const dispose=value=>{try{void Promise.resolve(value?.body?.cancel()).catch(()=>{});}catch{}};
@@ -130,7 +151,10 @@ export function createBoundProviderTransport({origin,approvedContract,fetchImpl=
    // The binding layer owns rejected bodies until it hands a response off.
    const incoming=Promise.resolve().then(()=>{
     signal?.throwIfAborted();
-    return fetchImpl(target.href,{method:'POST',body:options.body,credentials:'omit',redirect:'error',cache:'no-store',referrer:'',referrerPolicy:'no-referrer',headers,signal});
+    // Mark a model POST attempt only at actual transport invocation, not
+    // adapter entry or preflight. The observer is not dispatch authority.
+    try{return fetchImpl(target.href,{method:'POST',body,credentials:'omit',redirect:'error',cache:'no-store',referrer:'',referrerPolicy:'no-referrer',headers,signal});}
+    finally{if(target.pathname==='/api/v1/chat/completions'){try{onModelDispatch();}catch{}}}
    }).then(value=>{
     if(finished||signal?.aborted){dispose(value);throw Error('PROVIDER_CANCELLED');}
     received=value;return value;
@@ -149,20 +173,25 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
  approvedContract=snapshotApprovedContract(approvedContract);
  const model=approvedContract.model;
  if(!validOrigin(origin)||typeof model!=='string'||!modelPattern.test(model)||model==='mock-1'||typeof question!=='string'||!question.trim()||question.length>1200)throw Error('Invalid run input');
+ assertContractOrigin(approvedContract,origin);
+ if(typeof onModelStart!=='function')throw contractError();
  const controller=new AbortController(),abort=()=>controller.abort();
- signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
  const receiptCollector=createReceiptCollector({sources:loadedContent.sources}),usage={calls:0,reported:0,promptTokens:0,completionTokens:0,totalTokens:0};
  // Scope the public version precondition to the two caller-owned POST endpoints.
  // It is not an authentication token, and never travels to peer origins or the provider.
- let catalogRejected=false,contractRejected=false;
- const boundFetch=createBoundProviderTransport({origin,approvedContract,fetchImpl,onPrecondition:kind=>{if(kind==='inference')contractRejected=true;else catalogRejected=true;}});
+ let catalogRejected=false,contractRejected=false,modelDispatched=false;
+ const boundFetch=createBoundProviderTransport({origin,approvedContract,fetchImpl,
+  onPrecondition:kind=>{if(kind==='inference')contractRejected=true;else catalogRejected=true;},
+  onModelDispatch:()=>{if(!modelDispatched){modelDispatched=true;onModelStart();}}});
  const adapter=createProviderAdapter({origin,model,fetchImpl:boundFetch});
  const measured={...adapter,async chat(args){
-  controller.signal.throwIfAborted();if(usage.calls===0)onModelStart();
+  controller.signal.throwIfAborted();
   usage.calls++;const answer=await adapter.chat(args);
   if(answer.usage){usage.reported++;usage.promptTokens+=answer.usage.prompt_tokens;usage.completionTokens+=answer.usage.completion_tokens;usage.totalTokens+=answer.usage.total_tokens;}
   return answer;
  }};
+ // Complete synchronous setup before installing the run's cancellation listener.
+ signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
  try{
   // Recheck immediately before every explicit run, then execute that exact in-memory graph.
   // The caller's mounted lesson remains the authority for local source receipts.
@@ -171,7 +200,7 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
   catch(error){if(controller.signal.aborted||error?.code==='CONTENT_CHANGED')throw error;throw contractError();}
   if(fresh.state!=='configured'||!same(fresh.contract,approvedContract))throw contractError();
   controller.signal.throwIfAborted();
-  const result=await runNetwork({...fresh.published,request:question.trim(),model:measured,signal:controller.signal,sourceTools:{origin,sources:loadedContent.sources,fetchImpl:boundFetch,onReceipt:receipt=>receiptCollector.add(receipt)}});
+  const result=await runNetwork({...fresh.published,request:question,model:measured,signal:controller.signal,sourceTools:{origin,sources:loadedContent.sources,fetchImpl:boundFetch,onReceipt:receipt=>receiptCollector.add(receipt)}});
   if(contractRejected)throw Error('Inference configuration precondition rejected.');
   if(catalogRejected)throw Error('Catalog precondition rejected.');
   const evidence=receiptCollector.snapshot();
