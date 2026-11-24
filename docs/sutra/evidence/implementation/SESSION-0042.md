@@ -76,3 +76,8 @@ Actual Chromium same-document history restoration both with/without media. Synth
 - Wall-clock interval from session start 12:44:09 UTC to this checkpoint exceeds one hour. Multiple user interruptions and concurrent repository changes occurred; uninterrupted focused 60-minute duration cannot be established. No human acceptance, real-content or live-provider evidence was invented. No release, deployment, paid inference or submission.
 
 Exact next: Continue P078-02 with dependency-ready engineering. Inspect exact learner baaff96faf5649285b7ffd7ed93ed7842e7dc291 (run 45406604981); do not count X010-22 until full CI passes. Preserve independent P007 capacity work; P041-10/P078-07 require genuine viewer/pilot evidence, P054-01/P066-01 actual provider measurements, P020-02 rights-cleared corpus, P005-08 entrant voice. No deploy, paid model, public release or submission.
+
+### Exact failures and corrections
+
+- [Register audit](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45407055448/job/138490485928) on `c1230291b09d8150ec927ace978bfc5df88ea884` reported correct counts but refused a closed next_task. Set next_task to pending X010-22, without changing the validator.
+- [Privacy learner failure](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45406604981/job/138488913473) on `baaff96faf5649285b7ffd7ed93ed7842e7dc291`: Playwright returned empty string, not undefined, for the deliberately empty referrer. The cross-origin actual MCP server test passed with no referer header. Correct routed-request assertion to reject every nonempty referrer while allowing empty/absent representation; retain exact real HTTP server assertion and all privacy canaries. No verification credit until corrected full CI.
