@@ -3,6 +3,7 @@ import {createProviderAdapter} from '../../../packages/sutra-inference/client.js
 import {abortable} from '../../../packages/sutra-inference/protocol.js';
 import {validateReceipt,snapshotDataRecord,snapshotDataArray} from '../../../packages/sutra-evidence/index.js';
 import {loadContentProfile,readContentBytes} from '../../../packages/sutra-content-profile/index.js';
+import {snapshotSourceCatalog} from './source-catalog-snapshot.js';
 const modelPattern=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/;
 const validOrigin=origin=>{const u=new URL(origin);return u.origin===origin&&(u.protocol==='https:'||u.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(u.hostname));};
 const plain=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
@@ -33,8 +34,11 @@ export function snapshotApprovedContract(value){
 export function createReceiptCollector({sources,limit=20}={}){
  if(!Number.isInteger(limit)||limit<1||limit>20)throw Error('Invalid receipt limit');
  if(!snapshotDataArray(sources,20).length)throw Error('Receipt catalog required');
+ const catalog=snapshotSourceCatalog(sources);
  const values=new Map();let overflow=false,invalid=false;
- const matched=receipt=>validateReceipt(receipt,{sources}).level==='catalog_matched';
+ // A mutable replacement must not mint new evidence under the old run.
+ // Keep drift detection as well as the immutable original authority.
+ const matched=receipt=>validateReceipt(receipt,{sources:catalog}).level==='catalog_matched'&&validateReceipt(receipt,{sources}).level==='catalog_matched';
  return Object.freeze({
   add(receipt){
    let exact;
@@ -120,7 +124,7 @@ export function createBoundProviderTransport({origin,approvedContract,fetchImpl=
   else headers.delete('X-Sutra-Inference-Contract');
   const signal=options.signal;
   signal?.throwIfAborted();
-  let response,finished=false;
+  let response,received,finished=false;
   const dispose=value=>{try{void Promise.resolve(value?.body?.cancel()).catch(()=>{});}catch{}};
   try{
    // A noncooperating injected transport can return after the caller stops.
@@ -130,7 +134,7 @@ export function createBoundProviderTransport({origin,approvedContract,fetchImpl=
     return fetchImpl(target.href,{...options,method:'POST',credentials:'omit',redirect:'error',cache:'no-store',headers,signal});
    }).then(value=>{
     if(finished||signal?.aborted){dispose(value);throw Error('PROVIDER_CANCELLED');}
-    return value;
+    received=value;return value;
    });
    response=await abortable(incoming,signal);
    signal?.throwIfAborted();
@@ -138,7 +142,7 @@ export function createBoundProviderTransport({origin,approvedContract,fetchImpl=
    if(response.status===409)onPrecondition(target.pathname==='/api/v1/chat/completions'&&response.headers.get('X-Sutra-Precondition')==='inference'?'inference':'catalog');
    signal?.throwIfAborted();
    return response;
-  }catch(error){dispose(response);throw error;}
+  }catch(error){dispose(response??received);throw error;}
   finally{finished=true;}
  };
 }

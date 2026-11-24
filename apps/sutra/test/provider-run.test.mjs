@@ -145,3 +145,11 @@ test('bound POST stops promptly and disposes late 409 without reporting stale pr
  await assert.rejects(wrapped(origin+'/api/source-tools',{method:'POST',signal:controller.signal}));
  assert.equal(calls,1);
 });
+
+ test('receipt collector cannot mint evidence from a catalog changed after initialization',()=>{
+ const sources=sourcesFor('source'),c=createReceiptCollector({sources});
+ sources[0].cues[0].text='forged cue';
+ assert.throws(()=>c.add({...receipt(0),excerpt:'forged cue'}),/Invalid receipt/);
+ sources[0].version='v2';assert.throws(()=>c.add({...receipt(1),sourceVersion:'v2'}),/Invalid receipt/);
+ assert.equal(c.snapshot().invalid,true);assert.deepEqual(c.snapshot().receipts,[]);
+});
