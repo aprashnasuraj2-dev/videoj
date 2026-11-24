@@ -125,3 +125,48 @@ test('one cancelled client request closes the real gateway and loopback model st
   await close(engine);
  }
 });
+
+test('local model HTTP 200 with truncated SSE is never treated as a completed answer', {timeout:12000},async()=>{
+ let localCalls=0,reservations=0,releases=0;
+ const engine=http.createServer(async(req,res)=>{
+  const chunks=[];for await(const chunk of req)chunks.push(chunk);
+  localCalls++;
+  res.writeHead(200,{'Content-Type':'text/event-stream'});
+  res.end('data: {"choices":[{"index":0,"delta":{"content":"This sounds like a convincing but incomplete local answer."},"finish_reason":null}]}\n\n');
+  // No completed choice, no [DONE], and no real source verification.
+ });
+ const port=await listen(engine);
+ const gateway=createGateway({token:secret,model,upstreamPort:port}),gport=await listen(gateway);
+ const env={
+  SUTRA_INFERENCE_BACKEND:'self_hosted',SUTRA_ENABLE_INFERENCE:'true',SUTRA_MODELS:model,
+  SUTRA_SELF_HOSTED_UPSTREAM_URL:publicGateway,SUTRA_SELF_HOSTED_TOKEN:secret,
+  SUTRA_ALLOWED_ORIGIN:origin,SUTRA_CLIENT_HASH_SECRET:'h'.repeat(32),
+  SUTRA_MAX_OUTPUT_TOKENS:'256',SUTRA_MAX_DAILY_CALLS:'100',SUTRA_MAX_CLIENT_CALLS:'8',SUTRA_MAX_CONCURRENT:'2',
+  SUTRA_QUOTA:{idFromName:()=> 'mock-quota',get:()=>({fetch:async endpoint=>{
+   if(new URL(endpoint).pathname==='/release'){releases++;return Response.json({released:true});}
+   reservations++;return Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000001'});
+  }})}
+ };
+ try{
+  const adapter=createProviderAdapter({origin,model,fetchImpl:async(url,opts)=>{
+   assert.equal(opts.credentials,'omit');
+   return handleInference(new Request(url,{method:'POST',headers:{...opts.headers,Origin:origin},body:opts.body,signal:opts.signal}),env,{
+    fetchImpl:async(target,params)=>{
+     assert.equal(target,publicGateway);
+     return fetch('http://127.0.0.1:'+gport+'/v1/chat/completions',params);
+    }
+   });
+  }});
+  await assert.rejects(adapter.chat({messages:[{role:'user',content:'Inspect source.'}],tools:[]}),error=>
+   ['UPSTREAM_STREAM','INCOMPLETE_STREAM'].includes(error?.code),'a premature local-model EOF cannot produce an answer');
+  for(let i=0;i<100&&releases<1;i++)await new Promise(resolve=>setTimeout(resolve,10));
+  assert.equal(localCalls,1,'no paid/local retry after incomplete stream');
+  assert.equal(reservations,1);
+  assert.equal(releases,1,'quota lease released after incomplete streaming');
+ }finally{
+  gateway.closeAllConnections();
+  engine.closeAllConnections();
+  await close(gateway);
+  await close(engine);
+ }
+});
