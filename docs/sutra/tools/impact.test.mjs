@@ -81,3 +81,8 @@ test('real-content intake tooling is mapped without converting rights declaratio
  const r=classifyChangedFiles(['tools/sutra-content-intake/intake.mjs'],map);
  assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('content-intake-readiness'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA real-content intake gate'));assert.deepEqual(r.invalidatedMetrics,[]);
 });
+
+test('screen-reader readiness tooling is mapped without converting automated audits into human AT evidence',()=>{
+ const r=classifyChangedFiles(['tools/sutra-screenreader-check/screenreader.mjs'],map);
+ assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('screenreader-readiness'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA screen-reader evidence gate'));assert.deepEqual(r.invalidatedMetrics,[]);
+});

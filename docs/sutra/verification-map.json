@@ -229,6 +229,17 @@
       ],
       "invalidates": [],
       "reason": "Changes to real-content intake validation must pass byte/path/declaration tests; no rights or factual-review metric exists until real assets and human evidence are supplied."
+    },
+    {
+      "id": "screenreader-readiness",
+      "prefixes": [
+        "tools/sutra-screenreader-check/"
+      ],
+      "requiredWorkflows": [
+        "Validate SUTRA screen-reader evidence gate"
+      ],
+      "invalidates": [],
+      "reason": "Changes to the human screen-reader acceptance record protocol must pass its completeness/core-interaction tests; automated checks never become human AT evidence."
     }
   ]
 }
