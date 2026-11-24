@@ -41,18 +41,18 @@ export function createExternalReadMcp(options,{signal}={}){
   active?.addEventListener('abort',cancel,{once:true});if(active?.aborted)cancel();
   const timeout=setTimeout(cancel,5000),id=++sequence;
   try{
-   const {bytes}=await readBoundedResponse({url,fetchImpl,signal:controller.signal,maxBytes:32768,init:{
+   const {bytes}=await readBoundedResponse({url,fetchImpl,signal:controller.signal,maxBytes:notification?1:32768,init:{
     method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json, text/event-stream','MCP-Protocol-Version':'2025-06-18'},
     body:JSON.stringify({jsonrpc:'2.0',...(notification?{}:{id}),method,params})
    },inspect:response=>{
     if(response.headers.has('mcp-session-id'))fail('MCP_RESPONSE','External MCP requires stateless responses.');
     const protocol=response.headers.get('mcp-protocol-version');if(protocol&&protocol!=='2025-06-18')fail('MCP_PROTOCOL','Unexpected response protocol version.');
-    if(notification){if(response.status!==202)fail('MCP_RESPONSE','Expected 202 for MCP notification.');return false;}
+    if(notification){if(response.status!==202||response.headers.has('content-range')||response.headers.has('content-length')&&response.headers.get('content-length')!=='0')fail('MCP_RESPONSE','Expected empty 202 for MCP notification.');return response.body!==null;}
     if(!isFullJson(response))fail('MCP_RESPONSE','External MCP JSON-only stateless response unavailable.');
     return true;
    }});
    check(active);if(controller.signal.aborted)fail('MCP_TIMEOUT','Third-party MCP response exceeded the operation limit.');
-   if(notification)return null;
+   if(notification){if(bytes?.byteLength)fail('MCP_RESPONSE','Expected empty 202 for MCP notification.');return null;}
    return parseJsonRpcResult(bytes,id,code=>fail('MCP_'+code,'External MCP returned invalid or mismatched JSON-RPC data.'));
   }catch(error){
    if(active?.aborted)fail('MCP_CANCELLED','Third-party MCP operation was cancelled.');

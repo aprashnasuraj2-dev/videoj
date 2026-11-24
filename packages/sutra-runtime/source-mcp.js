@@ -14,20 +14,20 @@ export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt
   signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)cancel();
   const timer=setTimeout(cancel,5000),id=++sequence;
   try{
-   const {bytes}=await readBoundedResponse({url:`${origin}/api/source-tools`,fetchImpl,signal:controller.signal,maxBytes:32768,init:{
+   const {bytes}=await readBoundedResponse({url:`${origin}/api/source-tools`,fetchImpl,signal:controller.signal,maxBytes:notification?1:32768,init:{
     method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json, text/event-stream','MCP-Protocol-Version':'2025-06-18'},
     body:JSON.stringify({jsonrpc:'2.0',...(notification?{}:{id}),method,params})
    },inspect:response=>{
     if(response.headers.has('mcp-session-id'))bad('SOURCE_RESPONSE');
     const protocol=response.headers.get('mcp-protocol-version');if(protocol&&protocol!=='2025-06-18')bad('SOURCE_RESPONSE');
-    if(notification){if(response.status!==202)bad('SOURCE_RESPONSE');return false;}
+    if(notification){if(response.status!==202||response.headers.has('content-range')||response.headers.has('content-length')&&response.headers.get('content-length')!=='0')bad('SOURCE_RESPONSE');return response.body!==null;}
     if(response.status===429)bad('SOURCE_QUOTA');
     if(response.status===409)bad('SOURCE_VERSION');
     if(response.status===503)bad('SOURCE_UNAVAILABLE');
     if(!isFullJson(response))bad('SOURCE_RESPONSE');return true;
    }});
    if(controller.signal.aborted)bad('SOURCE_CANCELLED');
-   if(notification)return;
+   if(notification){if(bytes?.byteLength)bad('SOURCE_RESPONSE');return;}
    return parseJsonRpcResult(bytes,id,()=>bad());
   }catch(error){
    if(controller.signal.aborted)bad('SOURCE_CANCELLED');

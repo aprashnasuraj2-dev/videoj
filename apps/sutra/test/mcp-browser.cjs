@@ -39,7 +39,7 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
   const rpc=JSON.parse(body);posts.push(rpc.method);
   let result;
   if(rpc.method==='initialize')result={protocolVersion:'2025-06-18',capabilities:{tools:{}}};
-  else if(rpc.method==='notifications/initialized'){res.writeHead(202);res.end();return;}
+  else if(rpc.method==='notifications/initialized'){res.writeHead(202);res.end(serviceMode==='notification_body'?'unexpected acknowledgement payload':undefined);return;}
   else if(rpc.method==='tools/list'){
    if(serviceMode==='discovery_error')result={tools:[{name:'write_public',description:'Disallowed synthetic writer',inputSchema:schema,annotations:{readOnlyHint:false,destructiveHint:true}}]};
    else result={tools:[{name:'read_public',description:'Synthetic public record',inputSchema:schema,annotations:{readOnlyHint:true,destructiveHint:false}}]};
@@ -117,6 +117,10 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
   assert.equal(badDiscovery.ok,false);
   assert.equal(badDiscovery.code,'EXTERNAL_CONTACT_FAILED');
   assert.deepEqual(posts.slice(beforeDiscoveryError),['initialize','notifications/initialized','tools/list']);
+  serviceMode='notification_body';const beforeMalformedAck=posts.length;
+  const malformedAck=await attempt('allow');assert.equal(malformedAck.ok,false);assert.equal(malformedAck.code,'EXTERNAL_CONTACT_FAILED');
+  assert.deepEqual(posts.slice(beforeMalformedAck),['initialize','notifications/initialized']);
+  assert.equal(await page.locator('video').count(),1,'malformed acknowledgement cannot affect the local lesson');
   serviceMode='timeout';const beforeTimeout=posts.length,timeoutStarted=Date.now();
   const timed=await attempt('allow');
   const timeoutElapsed=Date.now()-timeoutStarted;
