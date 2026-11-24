@@ -10,7 +10,7 @@ On 24 November the participant explicitly tightened the ordering: stop further d
 
 ## Latest implementation checkpoint — 0041
 
-Actual source head at checkpoint: `27a4a7034e447365491471e343acc657af17e843`; most recent fully observed passing source: `27a4a7034e447365491471e343acc657af17e843`. Compare both to actual draft PR #49 head before changes. Do not treat the supplied older b142ab05 SHA as current. Read [session 0041 evidence](evidence/implementation/SESSION-0041.md) and inspect actual job logs, particularly run 45390120291 and matrix 45390120254. Confirm exact CI for 27a4a7034e447365491471e343acc657af17e843 (including learner browser and three-engine matrix if still pending); investigate actual Chromium BFCache eligibility using full browser and native navigation diagnostics; test retained paused media and cross-tab storage refresh on genuine restoration. Continue P078-02; no production release, paid model, human acceptance or pilot gate is closed.
+Most recent fully observed passing source: `fd8878bc0ed9ca982579b0f0d8bd4b81a470039f`. Draft PR #49 actual source and checkpoint parent must be resolved before changes. Session 0041 [evidence](evidence/implementation/SESSION-0041.md) includes real native BFCache observations (full Chromium), latest 19/19 and remaining limits. Resume P078-02: audit browser adapter and Worker upstream abort handoff for rejected/received response disposal and bounded quota admission ambiguity (late reservation, 45-second lease expiry; no refund/retry). Continue dependency-ready P041-10, P054-01, P066-01, P020-02 and P005-08, preserving pilot-observed P078-07 and all real content, hardware, human and public release gates.
 
 ## Resume sequence
 

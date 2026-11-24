@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T17:51:56.466+05:45",
+  "updatedAt": "2026-11-24T17:57:22.475+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -519,8 +519,8 @@
     {
       "id": "R-024",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Genuine history restoration not yet observed",
       "mechanism": "Synthetic pagehide and a real history reload cannot establish BFCache eligibility or restored media behavior.",
       "userEffect": "Stale local rows or authority may survive a browser freeze.",
@@ -529,14 +529,18 @@
         "SUTRA-X007-25",
         "SUTRA-P078-02"
       ],
-      "mitigation": "Refresh local state on native persisted pageshow; existing fallback verified. Actual restoration still unobserved.",
+      "mitigation": "Refresh local state on native persisted pageshow. Actual full Chromium restored original document twice, with and without existing media; verified storage drift, no stale review authority and retained paused blob. Other engines' BFCache eligibility is not asserted.",
       "evidence": [
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
           "sourceRevision": "65038c2b4a3bb353565f94ba91307760dfc8d9ee"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "fd8878bc0ed9ca982579b0f0d8bd4b81a470039f"
         }
       ],
-      "unblockCondition": "Observe native persisted pageshow, same document ID, storage drift and retained media paused using a genuinely restored browser document."
+      "unblockCondition": null
     },
     {
       "id": "R-025",
@@ -556,6 +560,27 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
           "sourceRevision": "27a4a7034e447365491471e343acc657af17e843"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-026",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Superseded native seek or late written-source verification",
+      "mechanism": "Multiple UI entry points could observe a newer seek's timestamp or stale guide response after navigation.",
+      "userEffect": "An obsolete action could report a source cue reached or written source match.",
+      "affectedTasks": [
+        "SUTRA-X010-03",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "One active native seek owner, abort superseded operations, source identity recheck, explicit comparison action revocation on navigation/mode change. Cancellation does not undo an already-applied native seek.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "fd8878bc0ed9ca982579b0f0d8bd4b81a470039f"
         }
       ],
       "unblockCondition": null

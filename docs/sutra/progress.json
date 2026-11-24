@@ -1,15 +1,14 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T17:51:56.466+05:45",
+  "updated_at": "2026-11-24T17:57:22.475+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "27a4a7034e447365491471e343acc657af17e843",
+  "last_observed_code_sha": "fd8878bc0ed9ca982579b0f0d8bd4b81a470039f",
   "last_session_id": "SUTRA-SESSION-0041",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P078-02",
   "ready_engineering_queue": [
-    "SUTRA-X009-07",
     "SUTRA-P041-10",
     "SUTRA-P078-07",
     "SUTRA-P054-01",
@@ -17,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Confirm exact CI for 27a4a7034e447365491471e343acc657af17e843 (including learner browser and three-engine matrix if still pending); investigate actual Chromium BFCache eligibility using full browser and native navigation diagnostics; test retained paused media and cross-tab storage refresh on genuine restoration. Continue P078-02; no production release, paid model, human acceptance or pilot gate is closed.",
+  "next_action": "Resume P078-02: audit browser adapter and Worker upstream abort handoff for rejected/received response disposal and bounded quota admission ambiguity (late reservation, 45-second lease expiry; no refund/retry). Continue dependency-ready P041-10, P054-01, P066-01, P020-02 and P005-08, preserving pilot-observed P078-07 and all real content, hardware, human and public release gates.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -11789,6 +11788,46 @@
           "observed_at": "2026-11-24T17:51:56.466+05:45"
         }
       ]
+    },
+    "SUTRA-X009-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T17:57:22.475+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45390880363/job/138433943892",
+          "description": "Full Chromium channel actual pageshow.persisted=true and same document ID both with and without media; old review removed in second tab, stale pending modal/export closed, retained blob URL unchanged and paused, native seek and fresh save pass.",
+          "result": "pass",
+          "source_revision": "fd8878bc0ed9ca982579b0f0d8bd4b81a470039f",
+          "observed_at": "2026-11-24T17:57:22.475+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "description": "Exact test scope and remaining limits.",
+          "result": "pass",
+          "source_revision": "fd8878bc0ed9ca982579b0f0d8bd4b81a470039f",
+          "observed_at": "2026-11-24T17:57:22.475+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T17:57:22.475+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45390880363/job/138433943892",
+          "description": "Overlapping cross-component native seek attempts cannot borrow a newer operation's same-cue success; written guide read held across synthetic pagehide aborts and fresh explicit retry succeeds. Genuine BFCache regressions remain passing.",
+          "result": "pass",
+          "source_revision": "fd8878bc0ed9ca982579b0f0d8bd4b81a470039f",
+          "observed_at": "2026-11-24T17:57:22.475+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "description": "Exact test scope and remaining limits.",
+          "result": "pass",
+          "source_revision": "fd8878bc0ed9ca982579b0f0d8bd4b81a470039f",
+          "observed_at": "2026-11-24T17:57:22.475+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -11871,6 +11910,7 @@
     "Session 0038: original count unchanged, X009-01..03 new verified checks on 1fe4a7bc6239e8749268e0f032e6fec702ff6f89 with 19/19 observed workflows. Post-effect review cancellation is unknown and not a replay trigger; noncooperating same-origin scripts remain outside the cooperative lock contract. No release gate changed.",
     "Session 0039: precise X009-02 noncooperating-effect test passed 19/19 CI on d49d0afd0acf8305526f2ebed3b1a09a62e54a47; no new original or added-scope task credited. Post-entry cancellation is unknown while lock remains held.",
     "Session 0040: two new verified X009-04..05 developer-run and simulated-consent async authority checks on exact 4debb2ad2503bbce0265398804542d4d2d645cba 19/19 green; unknown delete/clear UI copy reviewed but no separate task credited. No original acceptance closed.",
-    "Session 0041: actual start head fd155719232ee14cca1f8e12e11e0a7323fa2346, 33 commits ahead of supplied checkpoint. Exact 65038c2b4a3bb353565f94ba91307760dfc8d9ee 19/19; latest 27a4a7034e447365491471e343acc657af17e843 19/19 successful observed at checkpoint. Native history test fresh-loaded with masked notRestoredReasons, not a BFCache pass. 666/1059 verified overall; no original checklist closure."
+    "Session 0041: actual start head fd155719232ee14cca1f8e12e11e0a7323fa2346, 33 commits ahead of supplied checkpoint. Exact 65038c2b4a3bb353565f94ba91307760dfc8d9ee 19/19; latest 27a4a7034e447365491471e343acc657af17e843 19/19 successful observed at checkpoint. Native history test fresh-loaded with masked notRestoredReasons, not a BFCache pass. 666/1059 verified overall; no original checklist closure.",
+    "Session 0041 continuation: fd8878bc0ed9ca982579b0f0d8bd4b81a470039f 19/19 workflows; native full Chromium BFCache restored in both test profiles, existing media blob retained paused and seekable. X009-07 and X010-03 verified; 668/1060 overall, original 609/1000 unchanged. Check new documentation head and tracker audit."
   ]
 }
