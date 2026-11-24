@@ -1,16 +1,23 @@
 const {chromium}=require('playwright');
 const {spawn}=require('node:child_process');
 const path=require('node:path');
+const net=require('node:net');
 const assert=require('node:assert/strict');
 
 (async()=>{
- const app=path.resolve(__dirname,'..'),base='http://127.0.0.1:4190';
- const server=spawn(process.execPath,[path.join(app,'node_modules/vite/bin/vite.js'),'preview','--host','127.0.0.1','--port','4190','--strictPort'],{cwd:app,stdio:'pipe'});
+ const app=path.resolve(__dirname,'..');
+ const port=await new Promise((resolve,reject)=>{
+  const probe=net.createServer();probe.once('error',reject);probe.listen(0,'127.0.0.1',()=>{
+   const selected=probe.address().port;probe.close(error=>error?reject(error):resolve(selected));
+  });
+ });
+ const base='http://127.0.0.1:'+port;
+ const server=spawn(process.execPath,[path.join(app,'node_modules/vite/bin/vite.js'),'preview','--host','127.0.0.1','--port',String(port),'--strictPort'],{cwd:app,stdio:'pipe'});
  let browser,exited=false,serverLog='';for(const output of [server.stdout,server.stderr])output.on('data',d=>serverLog=(serverLog+d.toString()).slice(-8000));server.on('exit',()=>exited=true);
  try{
   let ready=false;
   for(let i=0;i<60;i++){if(exited)throw Error('Preview exited: '+serverLog);try{const r=await fetch(base,{signal:AbortSignal.timeout(500)});if(r.ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,200));}
-  assert.ok(ready,'hero preview ready');
+  if(!ready)throw Error('Hero preview not ready: '+serverLog);
   browser=await chromium.launch({headless:true});
   const page=await browser.newPage({viewport:{width:1280,height:960}});
   const errors=[],external=[];page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(!r.url().startsWith(base+'/')&&!r.url().startsWith('blob:'+base+'/'))external.push(r.url());});
