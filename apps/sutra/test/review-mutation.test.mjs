@@ -28,7 +28,7 @@ test('navigation revokes an already entered pending result without claiming comp
  assert.equal(await queue.run(()=>7),7,'new lifetime works without inheriting previous operation');
 });
 test('a queued review never executes after pagehide even if the lock becomes available',async()=>{
- let release;const locks={request(_name,{signal},effect)=>new Promise((resolve,reject)=>{
+ let release;const locks={request:(_name,{signal},effect)=>new Promise((resolve,reject)=>{
   release=()=>Promise.resolve().then(()=>signal.aborted?reject(signal.reason):effect()).then(resolve,reject);
  })};
  const queue=createReviewMutationQueue({locks}),calls=[];
