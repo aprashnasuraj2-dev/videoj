@@ -75,10 +75,15 @@ export function validateContentProfile(profile,catalog){
  if(!validGuide(profile.guideClaim)||profile.mode==='reviewed'&&profile.guideClaim===null)throw Error('CONTENT_GUIDE');
  if(!exact(profile.ui,['noticeTitle','noticeBody'])||!safeText(profile.ui.noticeTitle,120)||!safeText(profile.ui.noticeBody,400))throw Error('CONTENT_UI');
  if(!exact(catalog,['schema','contentVersion','sources'])||catalog.schema!==1||catalog.contentVersion!==profile.contentVersion||!Array.isArray(catalog.sources)||catalog.sources.length<1||catalog.sources.length>20||!catalog.sources.every(validSource)||new Set(catalog.sources.map(s=>s.id)).size!==catalog.sources.length)throw Error('CONTENT_CATALOG');
+ // Schema 1 declares exactly one transcript/media artifact binding. An extra
+ // catalog source would have no independently bound transcript/media artifact.
+ // Multi-source retrieval tools remain available to hosts with their own bindings.
+ if(catalog.sources.length!==1)throw Error('CONTENT_UNBOUND_SOURCE');
  const source=catalog.sources.find(s=>s.id===profile.primarySourceId),cue=source?.cues.find(c=>c.id===profile.featuredCueId);
  if(!source||!cue||source.hash!==profile.transcript.sha256)throw Error('CONTENT_PRIMARY');
  if(profile.mode==='reviewed'){
-  if(!profile.media.video.includes(source.mediaHash)||!profile.transcript.path.includes(source.hash)||!profile.guideClaim.sourceHref.includes(profile.guideClaim.sourceHash))throw Error('CONTENT_ADDRESSING');
+  const addressed=(value,digest)=>value.split('#',1)[0].split('/').includes(digest);
+  if(!addressed(profile.media.video,source.mediaHash)||!addressed(profile.transcript.path,source.hash)||!addressed(profile.guideClaim.sourceHref,profile.guideClaim.sourceHash))throw Error('CONTENT_ADDRESSING');
  }
  return freeze({profile:structuredClone(profile),sources:structuredClone(catalog.sources),source:structuredClone(source),featuredCue:structuredClone(cue)});
 }
@@ -101,7 +106,8 @@ export async function loadContentProfile({baseUrl,fetchImpl=fetch,signal,timeout
   if(await hash(transcriptResult.bytes)!==validated.profile.transcript.sha256)throw Error('CONTENT_TRANSCRIPT_HASH');
   let transcriptText;try{transcriptText=new TextDecoder('utf-8',{fatal:true}).decode(transcriptResult.bytes);}catch{throw Error('CONTENT_TRANSCRIPT_UTF8');}
   for(const cue of validated.source.cues)if(!transcriptText.includes(cue.text))throw Error('CONTENT_TRANSCRIPT_CUE');
-  return freeze({...validated,artifacts:{profile:new URL('content-profile.json',base).href,profileSha256:await hash(profileResult.bytes),catalog:catalogUrl.href,catalogSha256:profile.catalog.sha256,transcript:transcriptUrl.href,transcriptSha256:validated.profile.transcript.sha256}});
+  const profileSha256=await hash(profileResult.bytes);controller.signal.throwIfAborted();
+  return freeze({...validated,artifacts:{profile:new URL('content-profile.json',base).href,profileSha256,catalog:catalogUrl.href,catalogSha256:profile.catalog.sha256,transcript:transcriptUrl.href,transcriptSha256:validated.profile.transcript.sha256}});
  }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controller.abort();}
 }
 export function receiptForFeatured(content,{retrievedAt}={}){

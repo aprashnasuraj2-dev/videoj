@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {readContentBytes,loadContentProfile,receiptForFeatured,validateContentProfile} from '../index.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';import {readContentBytes,loadContentProfile,receiptForFeatured,validateContentProfile} from '../index.js';
 const profile={"schema":1,"mode":"synthetic","contentVersion":"synthetic-timing-v1","title":"Synthetic timing lesson fixture","observedAt":"2026-11-23T00:00:00Z","primarySourceId":"synthetic-timing-fixture","featuredCueId":"timing-marker","catalog":{"path":"./source-catalog.json","sha256":"a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333"},"transcript":{"path":"/transcripts/synthetic-timing.txt","sha256":"a1930687d25bfe7fe8f2483c55d1aca83cdc3f4dcc39424dd6569aea9fe9660d"},"media":{"video":"/media/timing-fixture.mp4","poster":"/media/timing-poster.svg","chapters":"/media/timing-chapters.vtt","captions":"/media/timing-captions.vtt"},"videoClaim":{"title":"Synthetic timing cue","scope":"synthetic_timing_only","claimKey":"marker_presence","value":"marker_present","provenance":"SUTRA synthetic timing catalog; not human-reviewed footage","dateBasis":"Fixture metadata date"},"guideClaim":null,"ui":{"noticeTitle":"Synthetic development content","noticeBody":"This content profile is a test fixture. It demonstrates source consistency and browser behavior, not factual training guidance."}};
 const catalog={
   "schema": 1,
@@ -108,4 +108,23 @@ test('content reader cancellation releases a held-open body and rejects before a
  await assert.rejects(pending);assert.equal(cancelled,true);
  await assert.rejects(readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:32,signal:controller.signal,fetchImpl:async()=>{contacts++;}}));
  assert.equal(contacts,1);
+});
+
+test('schema one refuses a second catalog source with no independently bound transcript or media',async()=>{
+ const extra=structuredClone(catalog);extra.sources.push({...structuredClone(extra.sources[0]),id:'unbound-secondary',hash:'e'.repeat(64),mediaHash:'d'.repeat(64),cues:[{id:'unbound-claim',start:0,end:1,text:'This text does not exist in the declared transcript.'}]});
+ const bytes=JSON.stringify(extra),p=structuredClone(profile);p.catalog.sha256=createHash('sha256').update(bytes).digest('hex');
+ assert.throws(()=>validateContentProfile(p,extra),/CONTENT_UNBOUND_SOURCE/);
+ const contacted=[];const fetchImpl=async url=>{contacted.push(url);return new Response(url.endsWith('/content-profile.json')?JSON.stringify(p):bytes,{headers:{'Content-Type':'application/json'}});};
+ await assert.rejects(loadContentProfile({baseUrl:'https://sutra.example/content/',fetchImpl}),/CONTENT_UNBOUND_SOURCE/);
+ assert.equal(contacted.length,2,'reject the unbound catalog before fetching transcript or mounting any receipt');
+});
+test('reviewed artifact address requires exact digest path segment, not a substring or fragment',()=>{
+ const p=structuredClone(profile);p.mode='reviewed';
+ const mediaHash=catalog.sources[0].mediaHash,transcriptHash=p.transcript.sha256,guideHash='f'.repeat(64);
+ p.media.video='/media/release/'+mediaHash+'/lesson.mp4';p.transcript.path='/transcripts/release/'+transcriptHash+'/lesson.txt';
+ p.guideClaim={sourceKind:'guide',sourceId:'guide',sourceVersion:'v1',title:'Guide',scope:p.videoClaim.scope,claimKey:p.videoClaim.claimKey,value:p.videoClaim.value,excerpt:'Reviewed guide excerpt.',provenance:'Reviewed written guide',sourceHref:'/guides/release/'+guideHash+'/guide.html#claim',sourceHash:guideHash};
+ assert.equal(validateContentProfile(p,catalog).profile.mode,'reviewed');
+ for(const alter of [q=>q.media.video='/media/release/not-'+mediaHash+'/lesson.mp4',q=>q.transcript.path='/transcripts/release/'+transcriptHash+'-suffix/lesson.txt',q=>q.guideClaim.sourceHref='/guides/guide.html#'+guideHash]){
+  const q=structuredClone(p);alter(q);assert.throws(()=>validateContentProfile(q,catalog),/CONTENT_ADDRESSING/);
+ }
 });

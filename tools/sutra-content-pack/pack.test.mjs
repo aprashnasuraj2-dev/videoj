@@ -96,3 +96,18 @@ test('published written-guide excerpt cannot execute active markup from the revi
   assert.equal(sha(Buffer.from(published)),r.profile.guideClaim.sourceHash);
  }finally{await fsp.rm(f.root,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
 });
+
+test('compiler refuses symlinked input ancestors and output aliases into input tree',async()=>{
+ const f=await fixture(),out=f.root+'-out',outside=await fsp.mkdtemp(path.join(os.tmpdir(),'sutra-content-outside-')),alias=f.root+'-alias';
+ try{
+  await fsp.rename(path.join(f.root,'text'),path.join(outside,'text'));
+  await fsp.symlink(path.join(outside,'text'),path.join(f.root,'text'),'dir');
+  await assert.rejects(buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:out}),/Invalid source directory/);
+  assert.equal(fs.existsSync(out),false);
+  await fsp.unlink(path.join(f.root,'text'));await fsp.rename(path.join(outside,'text'),path.join(f.root,'text'));
+  await fsp.symlink(f.root,alias,'dir');
+  await assert.rejects(buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:alias,outputDir:out}),/real directory/);
+  await assert.rejects(buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:path.join(alias,'public-copy')}),/must not overlap/);
+  assert.equal(fs.existsSync(path.join(f.root,'public-copy')),false);
+ }finally{await fsp.rm(alias,{force:true});await fsp.rm(f.root,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});await fsp.rm(outside,{recursive:true,force:true});}
+});

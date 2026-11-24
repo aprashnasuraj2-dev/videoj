@@ -11,3 +11,5 @@ The pack record is non-sensitive and contains only published hashes/public paths
 CLI: `node tools/sutra-content-pack/cli.mjs CONTENT_MANIFEST.json SEMANTIC_METADATA.json CONTENT_ROOT OUTPUT_DIR`.
 
 The output must be integrated into the SUTRA public tree in a separate explicit change; this compiler never overwrites an existing app directory.
+
+The source root and each intermediate input directory must be real directories (no symlink ancestors within the root). The physical output parent is resolved and output must not overlap the source tree. This assumes a trusted, stable input filesystem during compilation; it is not a guarantee against concurrent path replacement by another process.

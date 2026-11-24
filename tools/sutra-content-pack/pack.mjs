@@ -22,6 +22,8 @@ async function readRegular(root,relative,max){
  if(!safePath(relative))throw Error('Unsafe source path: '+relative);
  const full=path.resolve(root,...relative.split('/')),prefix=path.resolve(root)+path.sep;
  if(!full.startsWith(prefix))throw Error('Source path escaped root.');
+ let current=path.resolve(root);const parts=relative.split('/');
+ for(const part of parts.slice(0,-1)){current=path.join(current,part);const ancestor=await fs.lstat(current);if(!ancestor.isDirectory()||ancestor.isSymbolicLink())throw Error('Invalid source directory: '+relative);}
  const stat=await fs.lstat(full);
  if(!stat.isFile()||stat.isSymbolicLink()||stat.size<1||stat.size>max)throw Error('Invalid source file: '+relative);
  return {full,bytes:await fs.readFile(full),size:stat.size};
@@ -75,7 +77,10 @@ async function write(root,relative,bytes){
  const target=path.join(root,...relative.split('/'));await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,bytes,{flag:'wx'});
 }
 export async function buildContentPack({manifest,semantic,contentRoot,outputDir}){
- const meta=validateSemantic(semantic),root=await fs.realpath(path.resolve(contentRoot)),out=path.resolve(outputDir);
+ const meta=validateSemantic(semantic),requestedRoot=path.resolve(contentRoot),requestedOut=path.resolve(outputDir);
+ const rootStat=await fs.lstat(requestedRoot);if(!rootStat.isDirectory()||rootStat.isSymbolicLink())throw Error('Content root must be a real directory.');
+ const root=await fs.realpath(requestedRoot),out=path.join(await fs.realpath(path.dirname(requestedOut)),path.basename(requestedOut));
+ if(out===root||out.startsWith(root+path.sep)||root.startsWith(out+path.sep))throw Error('Content source and output trees must not overlap.');
  let assetPaths;try{const m=snapshotDataRecord(manifest,10),a=snapshotDataRecord(m.assets,5);assetPaths={};for(const kind of ['media','transcript','guide'])assetPaths[kind]=snapshotDataRecord(a[kind],4).path;}catch{throw Error('Invalid content manifest data.');}
  try{await fs.lstat(out);throw Error('Output already exists; refuse overwrite.');}catch(error){if(error?.code!=='ENOENT')throw error;}
  const media=await readRegular(root,assetPaths.media,250*1024*1024);

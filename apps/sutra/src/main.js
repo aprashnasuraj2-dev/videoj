@@ -125,7 +125,7 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
    poster:versioned(content.profile.media.poster,timingFixture.source.mediaHash),
    chapters:versioned(content.profile.media.chapters,timingFixture.source.hash),
    captions:versioned(content.profile.media.captions,timingFixture.source.hash)});
-  mediaHost.classList.add('player-mounted');await candidatePlayer.ready();if(Math.abs(candidatePlayer.media.duration-timingFixture.source.duration)>.1)throw Error('Media duration mismatch.');
+  mediaHost.classList.add('player-mounted');await candidatePlayer.ready();if(!Number.isFinite(candidatePlayer.media.duration)||candidatePlayer.media.duration<=0||Math.abs(candidatePlayer.media.duration-timingFixture.source.duration)>.1)throw Error('Media duration mismatch.');
   // Receipt/compare/transcript actions never see a media adapter before the
   // active source duration has been validated. Keep the text query on remount.
   timingPlayer=candidatePlayer;
