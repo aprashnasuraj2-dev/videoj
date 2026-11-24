@@ -38,12 +38,12 @@ const assert=require('node:assert/strict');
    await loadingPage.goto(base,{waitUntil:'commit'});
    await intercepted;
    await loadingPage.getByRole('heading',{name:'Loading source lesson'}).waitFor();
-   assert.equal(await loadingPage.locator('#app').getAttribute('aria-busy'),'true');
+   assert.equal(await loadingPage.locator('#main').getAttribute('aria-busy'),'true');
    assert.equal(await loadingPage.locator('#provider-check,#prepare-review,#load-timing,#local-answer-query').count(),0);
    assert.equal(initialMediaCalls,0);
    releaseProfile();
    await loadingPage.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
-   assert.equal(await loadingPage.locator('#app').getAttribute('aria-busy'),null);
+   assert.equal(await loadingPage.locator('#main').getAttribute('aria-busy'),null);
    assert.equal(interceptedCount,1);
   }finally{releaseProfile?.();await loadingPage.close();}
   
