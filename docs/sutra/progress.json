@@ -1,21 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-23T19:47:30+05:45",
+  "updated_at": "2026-11-24T05:48:49+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
-  "last_session_id": "SUTRA-SESSION-0009",
-  "stage": "learner_workflow_and_security_boundary_integrated",
+  "last_observed_code_sha": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+  "last_session_id": "SUTRA-SESSION-0010",
+  "stage": "private_context_and_read_only_mcp_phase_exits_verified",
   "current_task": null,
-  "next_task": "SUTRA-P039-05",
+  "next_task": "SUTRA-P041-04",
   "ready_engineering_queue": [
-    "SUTRA-P039-05",
-    "SUTRA-P036-03",
-    "SUTRA-P045-03",
     "SUTRA-P041-04",
-    "SUTRA-P049-01"
+    "SUTRA-P047-01",
+    "SUTRA-P049-01",
+    "SUTRA-P045-03",
+    "SUTRA-P042-05"
   ],
-  "next_action": "Add controlled source-backed read-only MCP transport with exact catalog provenance; test the successful grounded synthetic read, discovery failure and real timeout for P039-05. Then define destination-bound private context transfer, connect rights-cleared guide content, and run human/HTTPS/provider acceptance when permitted. Public release, funded inference and Devpost stay closed.",
+  "next_action": "Define and test learner-visible loading, empty, denied, error and completed states for P041-04; then consolidate the optional execution inspector and accessibility evidence. Keep rights-cleared factual content, live funded inference, independent HTTPS interoperability and release gates separate.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -4357,6 +4357,166 @@
           "result": "pass",
           "source_revision": "141635df81697e7daed5a166815ab2ac3f3e1bb9",
           "observed_at": "2026-11-23T19:47:30+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:48:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Exact peer URL+network private-context grants, separate toPeer/toCaller permissions, canary-safe return projection and browser/unit evidence; ordinary delegated text remains outside this side-channel guarantee.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45293913993/job/138109358437",
+          "description": "Exact-head GitHub Actions green: app/build/unit/runtime/peer suites and eight Chromium scripts including destination-bound private context and source-backed MCP held-timeout behavior.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:48:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Exact peer URL+network private-context grants, separate toPeer/toCaller permissions, canary-safe return projection and browser/unit evidence; ordinary delegated text remains outside this side-channel guarantee.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45293913993/job/138109358437",
+          "description": "Exact-head GitHub Actions green: app/build/unit/runtime/peer suites and eight Chromium scripts including destination-bound private context and source-backed MCP held-timeout behavior.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:48:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Exact peer URL+network private-context grants, separate toPeer/toCaller permissions, canary-safe return projection and browser/unit evidence; ordinary delegated text remains outside this side-channel guarantee.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45293913993/job/138109358437",
+          "description": "Exact-head GitHub Actions green: app/build/unit/runtime/peer suites and eight Chromium scripts including destination-bound private context and source-backed MCP held-timeout behavior.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:48:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Exact peer URL+network private-context grants, separate toPeer/toCaller permissions, canary-safe return projection and browser/unit evidence; ordinary delegated text remains outside this side-channel guarantee.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45293913993/job/138109358437",
+          "description": "Exact-head GitHub Actions green: app/build/unit/runtime/peer suites and eight Chromium scripts including destination-bound private context and source-backed MCP held-timeout behavior.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:48:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Exact peer URL+network private-context grants, separate toPeer/toCaller permissions, canary-safe return projection and browser/unit evidence; ordinary delegated text remains outside this side-channel guarantee.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45293913993/job/138109358437",
+          "description": "Exact-head GitHub Actions green: app/build/unit/runtime/peer suites and eight Chromium scripts including destination-bound private context and source-backed MCP held-timeout behavior.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P036-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:48:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Exact peer URL+network private-context grants, separate toPeer/toCaller permissions, canary-safe return projection and browser/unit evidence; ordinary delegated text remains outside this side-channel guarantee.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45293913993/job/138109358437",
+          "description": "Exact-head GitHub Actions green: app/build/unit/runtime/peer suites and eight Chromium scripts including destination-bound private context and source-backed MCP held-timeout behavior.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P039-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:48:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Controlled cross-origin browser MCP fixture observed approved source-backed read, disallowed discovery failure and a real held-open five-second timeout; no fallback or CORS/security bypass.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45293913993/job/138109358437",
+          "description": "Exact-head GitHub Actions green: app/build/unit/runtime/peer suites and eight Chromium scripts including destination-bound private context and source-backed MCP held-timeout behavior.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        }
+      ]
+    },
+    "SUTRA-P039-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:48:49+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0010.md",
+          "description": "Controlled cross-origin browser MCP fixture observed approved source-backed read, disallowed discovery failure and a real held-open five-second timeout; no fallback or CORS/security bypass.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45293913993/job/138109358437",
+          "description": "Exact-head GitHub Actions green: app/build/unit/runtime/peer suites and eight Chromium scripts including destination-bound private context and source-backed MCP held-timeout behavior.",
+          "result": "pass",
+          "source_revision": "545f2c310beb9ac4e5e3a4e30603dd6640cf67d7",
+          "observed_at": "2026-11-24T05:48:49+05:45"
         }
       ]
     }
