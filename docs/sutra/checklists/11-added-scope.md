@@ -78,6 +78,11 @@ Required items discovered after the original plan remain release blockers until 
 - [x] `SUTRA-X007-21` Snapshot validated source tool arguments before asynchronous initialization; pre-aborted requests must not contact transport, cancelled handshakes must not proceed, and late source results must not enter a timed-out or cancelled runtime.
 - [x] `SUTRA-X007-22` Independently validate and freeze final provider-result receipts against the mounted catalog; invalid or stale receipts must prevent completed interpretation even if the transport observer error is swallowed, and only still-valid receipts may survive an incomplete run.
 
+- [x] `SUTRA-X007-23` Prevent detached transcript/comparison controls from initiating source fetch or seek, suppress stale action results, preserve literal transcript query across media mounting and accept valid 128-character cue IDs; verify native duration before enabling media actions.
+- [x] `SUTRA-X007-24` Require exactly one bound source in schema-1 content profiles, exact digest path segments for reviewed artifacts and primitive string identities without implicit coercion or caller conversion hooks; reject cancelled profile loads.
+- [x] `SUTRA-X007-25` Revoke inference authority and outstanding asynchronous operations on pagehide, preserve validated local transcript and media for persisted navigation, and prove delayed discovery cannot overwrite a fresh operation; actual browser BFCache eligibility remains separate.
+- [x] `SUTRA-X007-26` Require observed native seek to land inside the exact half-open cited cue interval, not just within a one-second tolerance; independently guard transcript, receipt, comparison and featured-cue paths and verify browser fault injection plus recovery.
+
 ## X008 — Candidate identity and publication boundary
 
 - [x] `SUTRA-X008-01` Reject release-candidate evidence measured for another source revision or reviewed content identity; verify exact manifest, links, canonical graph bytes, graph membership and worker quota validity. Structural fixture only; not live measurement or release readiness.

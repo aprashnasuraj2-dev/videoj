@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T15:27:36+05:45",
+  "updatedAt": "2026-11-24T15:40:00+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -374,6 +374,106 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0036.md",
           "sourceRevision": "fd65f94aa7fda3dd7ff2291396d29e43c2d40903"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-018",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Detached source action or query drift",
+      "mechanism": "Old controls could retain action authority or overwrite current status; media remount could lose the typed query.",
+      "userEffect": "Incorrect action or lost learner context.",
+      "affectedTasks": [
+        "SUTRA-X007-23",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Check connected/current epoch, reject stale completions, preserve raw query, validate native duration before enabling actions.",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45368333620/job/138355779438",
+          "sourceRevision": "803fa82abdc9425bcf16a5a7d06a342c62a9db7c"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "sourceRevision": "352db704c1bd12d11ef26788c2809e779d8f59ed"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-019",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Ambiguous or coercible content identity",
+      "mechanism": "Multiple sources could be paired with one media/transcript; substring digest or regex coercion could accept misleading identity or execute conversion hooks.",
+      "userEffect": "Wrong source binding or unexpected executable behavior.",
+      "affectedTasks": [
+        "SUTRA-X007-24",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Require single bound source, exact segment, strict string validation and final cancellation check.",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45368926736/job/138357815005",
+          "sourceRevision": "cc49b369526a3313c272e3dc5cc29e87457692f6"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "sourceRevision": "352db704c1bd12d11ef26788c2809e779d8f59ed"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-020",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Navigation lifecycle authority drift",
+      "mechanism": "Late discovery could re-enable stale inference approval; pagehide could destroy retained local evidence.",
+      "userEffect": "Unexpected inference permission or broken return navigation.",
+      "affectedTasks": [
+        "SUTRA-X007-25",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Revoke operation epoch and provider contract, abort stale async work and keep local media paused for persisted pagehide.",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45369073727/job/138358312229",
+          "sourceRevision": "6d069fbe5b549d302fe5db96e049be14f22e090f"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "sourceRevision": "352db704c1bd12d11ef26788c2809e779d8f59ed"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-021",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "False-positive native cue seek",
+      "mechanism": "A one-second tolerance could certify a timestamp before or outside a short cue.",
+      "userEffect": "Learner sees a source-seek success not supported by playback.",
+      "affectedTasks": [
+        "SUTRA-X007-26",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Finite half-open interval and bounded start offset; verify source identity and independently reject wrong cue landing.",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45369320925/job/138359162050",
+          "sourceRevision": "352db704c1bd12d11ef26788c2809e779d8f59ed"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "sourceRevision": "352db704c1bd12d11ef26788c2809e779d8f59ed"
         }
       ],
       "unblockCondition": null

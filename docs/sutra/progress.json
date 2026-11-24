@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T15:27:36+05:45",
+  "updated_at": "2026-11-24T15:40:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "dc7bef783a4214ac014911ae310c4af3cd91d771",
-  "last_session_id": "SUTRA-SESSION-0036",
-  "stage": "source_consent_and_candidate_evidence_stabilization",
+  "last_observed_code_sha": "352db704c1bd12d11ef26788c2809e779d8f59ed",
+  "last_session_id": "SUTRA-SESSION-0037",
+  "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P078-02",
   "ready_engineering_queue": [
@@ -16,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Continue P078-02: complete current stabilization evidence review, then verify real authorized reviewed content and operator backend pairing only when inputs exist. Keep default inference off. Advance independent learner/source/interoperability checklist work without deploying, paying, or claiming human/real-model acceptance.",
+  "next_action": "Reconcile checkpoint and current PR CI. P078-02 stays pending: inspect reviewed-media byte verification versus content-addressed path/native duration (including bounded reads and source identity), late noncooperative source response disposal, and remaining peer/workbench async authority paths; implement and verify independent zero-cost fixes. P041-10/P078-07 require genuine learner/pilot evidence, and real reviewed content/operator backend pairing, token/cost, provenance and narrator gates stay open until inputs exist. No deployment, paid inference, release or submission.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -11443,6 +11443,13 @@
           "result": "pass",
           "source_revision": "dc7bef783a4214ac014911ae310c4af3cd91d771",
           "observed_at": "2026-11-24T15:27:36+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45368654210/job/138356874558",
+          "description": "Reviewed content-pack compiler rejects symlinked input ancestors and output aliases into input tree; stable trusted input assumption remains.",
+          "result": "pass",
+          "source_revision": "282658494942174698d8d9c75ed2c94235f92b39",
+          "observed_at": "2026-11-24T15:40:00+05:45"
         }
       ]
     },
@@ -11490,6 +11497,121 @@
           "result": "pass",
           "source_revision": "dc7bef783a4214ac014911ae310c4af3cd91d771",
           "observed_at": "2026-11-24T15:27:36+05:45"
+        }
+      ]
+    },
+    "SUTRA-X007-23": {
+      "state": "verified",
+      "verified_at": "2026-11-24T15:40:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45368333620/job/138355779438",
+          "description": "Intervening UI changes reviewed; exact browser suite including stale controls, cue IDs and query retention passed.",
+          "result": "pass",
+          "source_revision": "803fa82abdc9425bcf16a5a7d06a342c62a9db7c",
+          "observed_at": "2026-11-24T15:40:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45369320925/job/138359162050",
+          "description": "Current integrated learner suite re-executed on exact code; see scoped limits in session evidence.",
+          "result": "pass",
+          "source_revision": "352db704c1bd12d11ef26788c2809e779d8f59ed",
+          "observed_at": "2026-11-24T15:40:00+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "description": "Session reconciliation and exact revision/test limits.",
+          "result": "pass",
+          "source_revision": "352db704c1bd12d11ef26788c2809e779d8f59ed",
+          "observed_at": "2026-11-24T15:40:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X007-24": {
+      "state": "verified",
+      "verified_at": "2026-11-24T15:40:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45368926736/job/138357815005",
+          "description": "Exact content-profile suite rejects invalid source count/path/identity and verifies conversion hooks never execute; earlier concurrent commit adds path and abort protections.",
+          "result": "pass",
+          "source_revision": "cc49b369526a3313c272e3dc5cc29e87457692f6",
+          "observed_at": "2026-11-24T15:40:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45369320925/job/138359162050",
+          "description": "Current integrated learner suite re-executed on exact code; see scoped limits in session evidence.",
+          "result": "pass",
+          "source_revision": "352db704c1bd12d11ef26788c2809e779d8f59ed",
+          "observed_at": "2026-11-24T15:40:00+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "description": "Session reconciliation and exact revision/test limits.",
+          "result": "pass",
+          "source_revision": "352db704c1bd12d11ef26788c2809e779d8f59ed",
+          "observed_at": "2026-11-24T15:40:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45368653995/job/138356874399",
+          "description": "Single-source and reviewed digest path regressions passed.",
+          "result": "pass",
+          "source_revision": "282658494942174698d8d9c75ed2c94235f92b39",
+          "observed_at": "2026-11-24T15:40:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X007-25": {
+      "state": "verified",
+      "verified_at": "2026-11-24T15:40:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45369073727/job/138358312229",
+          "description": "Chromium provider regression dispatches persisted pagehide during held discovery; no model POST, local media/query preserved, fresh discovery unaffected and native cue seek works.",
+          "result": "pass",
+          "source_revision": "6d069fbe5b549d302fe5db96e049be14f22e090f",
+          "observed_at": "2026-11-24T15:40:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45369320925/job/138359162050",
+          "description": "Current integrated learner suite re-executed on exact code; see scoped limits in session evidence.",
+          "result": "pass",
+          "source_revision": "352db704c1bd12d11ef26788c2809e779d8f59ed",
+          "observed_at": "2026-11-24T15:40:00+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "description": "Session reconciliation and exact revision/test limits.",
+          "result": "pass",
+          "source_revision": "352db704c1bd12d11ef26788c2809e779d8f59ed",
+          "observed_at": "2026-11-24T15:40:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X007-26": {
+      "state": "verified",
+      "verified_at": "2026-11-24T15:40:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45369320925/job/138359162050",
+          "description": "117 app tests include subsecond interval guard; Chromium hero forces actual seek to 1.5s for 2–4s cue, denies all four paths, restores normal seek and passes.",
+          "result": "pass",
+          "source_revision": "352db704c1bd12d11ef26788c2809e779d8f59ed",
+          "observed_at": "2026-11-24T15:40:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45369320925/job/138359162050",
+          "description": "Current integrated learner suite re-executed on exact code; see scoped limits in session evidence.",
+          "result": "pass",
+          "source_revision": "352db704c1bd12d11ef26788c2809e779d8f59ed",
+          "observed_at": "2026-11-24T15:40:00+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
+          "description": "Session reconciliation and exact revision/test limits.",
+          "result": "pass",
+          "source_revision": "352db704c1bd12d11ef26788c2809e779d8f59ed",
+          "observed_at": "2026-11-24T15:40:00+05:45"
         }
       ]
     }
@@ -11569,6 +11691,7 @@
     "Participant release gate: no public deployment, domain/route assignment, public inference enablement or promotion until all applicable major checklist product/security/conformance/acceptance gates have current passing evidence. Dry-run bundling is not release.",
     "Participant reiterated 2026-11-24: no jumping to deployment while hundreds of checklist items remain; spend subsequent sessions on checklist implementation and observed verification. Existing dry-run candidate is not authorization to deploy or continue deployment work.",
     "Session 0035: older performance/quality observations remain revision-scoped; use impact freshness output, not historical numbers as current evidence. Candidate fixtures and green CI do not authorize release.",
-    "Session 0036: exact current code 19/19 CI; source cancellation/snapshot and independent final evidence collector added. No original phase closure; private evidence references remain input-only. Measurement validation is arithmetic/schema only; do not treat a fixture as live evidence."
+    "Session 0036: exact current code 19/19 CI; source cancellation/snapshot and independent final evidence collector added. No original phase closure; private evidence references remain input-only. Measurement validation is arithmetic/schema only; do not treat a fixture as live evidence.",
+    "Session 0037: exact code 19/19 workflows, 367 learner-side automated tests, all ten Chromium integrations and three browser engines. Added X007-23..26. Persisted pagehide is synthetic lifecycle fault injection, not observed BFCache eligibility. Exact seek checks do not establish factual truth or actual lesson rights. No original phase closure."
   ]
 }
