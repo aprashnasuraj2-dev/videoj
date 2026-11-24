@@ -337,3 +337,32 @@ test('malformed configured source quota disables optional model execution rather
  assert.equal(inferenceStatus(env),false);
  assert.equal((await handleInference(request(),env,{fetchImpl:async()=>{calls++;return sse();}})).status,503);assert.equal(calls,0);
 });
+
+test('upstream must return a complete exact SSE 200 before streaming or emitting DONE',async()=>{
+ const good='data: {"choices":[{"index":0,"delta":{"content":"unexpected"},"finish_reason":"stop"}]}\n\ndata: [DONE]\n\n';
+ for(const response of [
+  Object.defineProperty(new Response(good,{headers:{'Content-Type':'text/event-stream'}}),'url',{value:'https://api.openai.com/v1/other'}),
+  new Response(good,{status:206,headers:{'Content-Type':'text/event-stream'}}),
+  new Response(good,{headers:{'Content-Type':'text/html; text/event-stream'}}),
+  new Response(good,{headers:{'Content-Type':'text/event-stream','Content-Range':'bytes 0-5/6'}})
+ ]){
+  let release=0,upstream=0;
+  const env=environment(async(url)=>new URL(url).pathname==='/release'?(release++,Response.json({released:true})):Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000919'}));
+  const publicResponse=await handleInference(request(),env,{fetchImpl:async(url,opts)=>{upstream++;assert.equal(url,UPSTREAM);assert.equal(opts.credentials,'omit');assert.equal(opts.redirect,'error');assert.equal(opts.cache,'no-store');return response;}});
+  assert.equal(publicResponse.status,502);
+  assert.doesNotMatch(await publicResponse.text(),/unexpected|\[DONE\]/);
+  assert.equal(upstream,1);assert.equal(release,1);assert.equal(response.body.locked,false);
+ }
+});
+test('late upstream response body is disposed and quota lease released once after aborted request',async()=>{
+ const abort=new AbortController();let started=false,releaseFetch,released=0,cancelled=0;
+ const env=environment(async url=>new URL(url).pathname==='/release'?(released++,Response.json({released:true})):Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000919'}));
+ const pending=handleInference(new Request(request(),{signal:abort.signal}),env,{fetchImpl:()=>{started=true;return new Promise(resolve=>{releaseFetch=resolve;});}});
+ for(let i=0;i<100&&!started;i++)await new Promise(resolve=>setTimeout(resolve,0));
+ assert.equal(started,true);
+ abort.abort();const result=await pending;assert.equal(result.status,502);
+ const late=new Response(new ReadableStream({cancel(){cancelled++;}}),{headers:{'Content-Type':'text/event-stream'}});
+ releaseFetch(late);
+ for(let i=0;i<100&&!cancelled;i++)await new Promise(resolve=>setTimeout(resolve,0));
+ assert.equal(cancelled,1);assert.equal(released,1);assert.equal(late.body.locked,false);
+});

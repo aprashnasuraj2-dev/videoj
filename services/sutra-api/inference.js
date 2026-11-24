@@ -138,10 +138,27 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
  if(request.signal.aborted){await releaseQuota();return error('CANCELLED',499);}
  const controller=new AbortController(),cancel=()=>controller.abort();request.signal.addEventListener('abort',cancel,{once:true});const timer=setTimeout(cancel,30000);
  const cleanup=()=>{clearTimeout(timer);request.signal.removeEventListener('abort',cancel);};
- let upstream;
- try{upstream=await abortable(fetchImpl(backend.url,{method:'POST',redirect:'error',headers:{'Content-Type':'application/json',Authorization:`Bearer ${backend.credential}`},body:upstreamBody,signal:controller.signal}),controller.signal);}
- catch{controller.abort();cleanup();await releaseQuota();return error('UPSTREAM_UNAVAILABLE',502);}
- if(upstream.redirected||!upstream.ok||!upstream.headers.get('content-type')?.includes('text/event-stream')){void upstream.body?.cancel().catch(()=>{});cleanup();await releaseQuota();return error('UPSTREAM_REJECTED',502);}
+ let upstream,finished=false;
+ const dispose=body=>{try{void Promise.resolve(body?.cancel()).catch(()=>{});}catch{}};
+ try{
+  // An injected or upstream transport may ignore AbortSignal and return a
+  // response after the public request has timed out. Such late bodies must
+  // never be streamed, retained or represented as a successful provider call.
+  const incoming=Promise.resolve().then(()=>{
+   controller.signal.throwIfAborted();
+   return fetchImpl(backend.url,{method:'POST',redirect:'error',credentials:'omit',cache:'no-store',headers:{'Content-Type':'application/json',Authorization:`Bearer ${backend.credential}`},body:upstreamBody,signal:controller.signal});
+  }).then(value=>{
+   if(finished||controller.signal.aborted){dispose(value?.body);throw Error('Cancelled upstream');}
+   return value;
+  });
+  upstream=await abortable(incoming,controller.signal);
+  controller.signal.throwIfAborted();
+ }catch{finished=true;controller.abort();cleanup();await releaseQuota();return error('UPSTREAM_UNAVAILABLE',502);}
+ finally{finished=true;}
+ if(upstream?.redirected||upstream?.url&&upstream.url!==backend.url||upstream?.status!==200||upstream.headers.has('content-range')||
+    !/^text\/event-stream(?:\s*;|$)/i.test(upstream.headers.get('content-type')??'')){
+  dispose(upstream?.body);controller.abort();cleanup();await releaseQuota();return error('UPSTREAM_REJECTED',502);
+ }
  const encoder=new TextEncoder();
  const stream=new ReadableStream({
   async start(sink){
