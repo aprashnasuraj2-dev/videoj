@@ -2,6 +2,14 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0023 — 2026-11-24
+
+**587/1,000 original checks verified; 596/1,009 total; 43/100 phases fully verified; 6 omissions.**
+
+Credentialless two-origin peer artifact/CORS mechanics and strict no-follow redirect policy are reconciled. **Phase 037 closes**; phase 034 remains open only for real staging/intended-public HTTPS evidence. Specialized browser/evaluation CI triggers are narrowed and all ten workflows passed at `0e57504…`, crediting P079-07. [Session evidence](evidence/implementation/SESSION-0023.md).
+
+---
+
 ## Session 0022 — 2026-11-24
 
 **573/1,000 original checks verified; 582/1,009 total; 42/100 phases fully verified; 6 omissions.**

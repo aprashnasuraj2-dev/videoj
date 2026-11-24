@@ -1,21 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T08:45:01+05:45",
+  "updated_at": "2026-11-24T08:50:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "91302d0d2080f635208202e3096e5c7234489f85",
-  "last_session_id": "SUTRA-SESSION-0022",
-  "stage": "partial_demo_foundation_byok_and_resilience_reconciled",
+  "last_observed_code_sha": "0e57504bac43f13e4a8c6d66de9e5963884458fb",
+  "last_session_id": "SUTRA-SESSION-0023",
+  "stage": "peer_cors_redirect_and_targeted_revalidation_reconciled",
   "current_task": null,
   "next_task": "SUTRA-P041-08",
   "ready_engineering_queue": [
+    "SUTRA-P034-01",
+    "SUTRA-P040-01",
     "SUTRA-P078-02",
-    "SUTRA-P079-07",
     "SUTRA-P054-01",
-    "SUTRA-P020-02",
-    "SUTRA-P005-08"
+    "SUTRA-P020-02"
   ],
-  "next_action": "Continue independent engineering on stabilization/targeted CI and live-provider measurement instrumentation without enabling paid inference. Real corpus, narrator, funded provider, physical accessibility and public interop remain explicit gates.",
+  "next_action": "Continue engineering-only work that does not require public deployment; keep P034 public-origin exit and P040 HTTPS milestone blocked until release gate permits authorized public origins.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -10019,6 +10019,188 @@
       "decision_id": "SUTRA-DECISION-0022",
       "reason": "A missing-BYOK-key setup error is not applicable because BYOK is not a supported setup mode.",
       "scope_basis": "Phase 030 explicitly defines BYOK as optional and permits removing its UI when capacity/security priorities favor the funded default. The omission cannot be used to satisfy the still-open funded judge-path requirement."
+    },
+    "SUTRA-P034-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:50:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CORS-REDIRECT-POLICY-2026-11-24.md",
+          "description": "Chromium two-origin peer fetches manifest/graph with credentials omitted; denial produces zero artifact request.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:50:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:50:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CORS-REDIRECT-POLICY-2026-11-24.md",
+          "description": "Peer publication exposes CORS only on /agents/* and uses simple public GET; no credentialed/private method surface.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:50:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:50:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CORS-REDIRECT-POLICY-2026-11-24.md",
+          "description": "Public artifact CORS is separate from inference/authentication; peer static package has no private server/provider dependency.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:50:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:50:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CORS-REDIRECT-POLICY-2026-11-24.md",
+          "description": "Actual Chromium cross-origin fetch and denial behavior is tested rather than relying on curl/header inspection.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:50:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:50:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CORS-REDIRECT-POLICY-2026-11-24.md",
+          "description": "Publication test rejects Access-Control-Allow-Credentials with wildcard CORS and public graph contains no API-key/Authorization metadata.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:50:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:50:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CORS-REDIRECT-POLICY-2026-11-24.md",
+          "description": "Browser CORS/unavailable access fails closed with usable error while local lesson remains available.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:50:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:50:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CORS-REDIRECT-POLICY-2026-11-24.md",
+          "description": "Cross-origin permission is explicitly documented as transport permission, not publisher trust or factual truth.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:50:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P034-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:50:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CORS-REDIRECT-POLICY-2026-11-24.md",
+          "description": "Header and two-origin browser evidence artifact produced; public HTTPS-origin task remains open.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:50:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:50:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CORS-REDIRECT-POLICY-2026-11-24.md",
+          "description": "External artifact reads set redirect:error, so changed destination cannot be followed before policy evaluation/disclosure.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:50:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:50:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CORS-REDIRECT-POLICY-2026-11-24.md",
+          "description": "Current policy refuses redirect expansion entirely; any future destination must be a fresh exact contact/consent rather than inherited approval.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:50:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:50:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CORS-REDIRECT-POLICY-2026-11-24.md",
+          "description": "Peer/public artifact destination is bounded by exact approved origin and exact network URL/name.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:50:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:50:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CORS-REDIRECT-POLICY-2026-11-24.md",
+          "description": "Remembered consent key includes exact origin/kind/purpose/disclosure/network, so material scope/content-binding changes require new approval tuple.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:50:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P037-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:50:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CORS-REDIRECT-POLICY-2026-11-24.md",
+          "description": "Redirect fixtures cannot expand access; cross-site destination receives zero contact and local video/evidence remains responsive.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:50:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P079-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:50:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/TARGETED-CI-SCOPE-2026-11-24.md",
+          "description": "Specialized three-engine and engineering-evaluation workflows now use actual dependency surfaces instead of catch-all app/package triggers; broad learner integration remains the safety net.",
+          "result": "pass",
+          "source_revision": "0e57504bac43f13e4a8c6d66de9e5963884458fb",
+          "observed_at": "2026-11-24T08:50:00+05:45"
+        }
+      ]
     }
   },
   "blockers": [],

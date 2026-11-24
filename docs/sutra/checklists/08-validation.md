@@ -167,7 +167,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P079-04` Recheck the critical integrated journey after fixes
 - [x] `SUTRA-P079-05` Tie updated evidence to the candidate source revision
 - [x] `SUTRA-P079-06` Keep old numbers labeled historical instead of reusing them silently
-- [ ] `SUTRA-P079-07` Avoid broad repeated testing without an unresolved reason
+- [x] `SUTRA-P079-07` Avoid broad repeated testing without an unresolved reason
 - [ ] `SUTRA-P079-08` Verify reported metrics match the implementation that will ship
 - [ ] `SUTRA-P079-09` Produce and review the phase artifact: Final affected-check results and comparison against prior data.
 - [ ] `SUTRA-P079-10` Close phase 079 only after its applicable tasks have evidence and its exit condition is observed: Reported metrics correspond to the candidate revision; earlier numbers are not reused after material changes.
