@@ -32,6 +32,6 @@ test('source MCP maps bounded HTTP capacity states without exposing response bod
    return new Response('private source capacity detail',{status});
   }});
   await assert.rejects(d.callTool('search_lesson',{query:'timing'}),e=>e.code===code&&!e.message.includes('private source capacity detail'));
-  assert.equal(calls,4);
+  assert.equal(calls,3,'direct call initializes, acknowledges, then performs the failing tool call');
  }
 });
