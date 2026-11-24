@@ -118,49 +118,74 @@ const assert=require('node:assert/strict');
    }finally{await a.evaluate(()=>window.__restoreReviewRemove());}
   }finally{await concurrentContext.close();}
 
-  // Use real cross-document history navigation, not a synthetic PageTransitionEvent.
-  // Playwright disables Chromium BFCache by default; enable its actual behavior
-  // in this isolated browser only. If the runner cannot restore the document,
-  // record the reason and verify the honest fresh-navigation fallback instead.
-  const historyBrowser=await chromium.launch({headless:true,ignoreDefaultArgs:['--disable-back-forward-cache']});
+  // Real cross-document history navigation. Use the full Chromium browser
+  // (new headless), not the separate headless shell, and enable its BFCache.
+  // CDP diagnostic reasons are recorded independently of the web API's
+  // privacy-masked notRestoredReasons. Neither a reload nor a fabricated
+  // PageTransitionEvent may stand in for restored-document evidence.
+  const historyBrowser=await chromium.launch({headless:true,channel:'chromium',ignoreDefaultArgs:['--disable-back-forward-cache']});
   try{
-   const historyContext=await historyBrowser.newContext();
-   const learner=await historyContext.newPage(),writer=await historyContext.newPage();
-   await learner.addInitScript(()=>{
-    window.__sutraHistory={documentId:crypto.randomUUID(),shows:[]};
-    window.addEventListener('pageshow',event=>window.__sutraHistory.shows.push(event.persisted));
-   });
-   await Promise.all([learner.goto(base),writer.goto(base)]);
-   await learner.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
-   await writer.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
-   await learner.waitForFunction(()=>window.__sutraHistory.shows.length>0);
-   const firstId=await learner.evaluate(()=>window.__sutraHistory.documentId);
-   await learner.getByRole('button',{name:'Preview source review card'}).click();
-   await learner.getByRole('button',{name:'Confirm local save'}).click();
-   await learner.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
-   await writer.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
-   // Leave a new unconfirmed proposal behind; it must not survive navigation.
-   await learner.getByRole('button',{name:'Preview source review card'}).click();
-   await learner.goto(base+'/agents/agent-manifest.json');
-   await writer.getByRole('button',{name:'Delete local review'}).click();
-   await writer.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);
-   await learner.goBack({waitUntil:'domcontentloaded',timeout:15000});
-   await learner.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
-   await learner.waitForFunction(()=>window.__sutraHistory.shows.length>0);
-   const observation=await learner.evaluate(()=>({
-    ...window.__sutraHistory,
-    notRestoredReasons:performance.getEntriesByType('navigation')[0]?.notRestoredReasons?.toJSON?.()??null
-   }));
-   const restored=observation.documentId===firstId;
-   assert.equal(observation.shows.at(-1),restored,'same document and actual persisted pageshow must agree');
-   assert.equal(await learner.locator('#review-dialog').evaluate(dialog=>dialog.open),false);
-   assert.equal(await learner.locator('#review-list li').count(),0);
-   assert.equal(await learner.locator('#download-review-attempt').isHidden(),true);
-   console.log('ACTUAL_BFCACHE '+JSON.stringify({restored,notRestoredReasons:observation.notRestoredReasons}));
-   await learner.getByRole('button',{name:'Preview source review card'}).click();
-   await learner.getByRole('button',{name:'Confirm local save'}).click();
-   await learner.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
-   await historyContext.close();
+   for(const withMedia of [false,true]){
+    const historyContext=await historyBrowser.newContext();
+    try{
+     const learner=await historyContext.newPage(),writer=await historyContext.newPage();
+     const cdp=await historyContext.newCDPSession(learner),misses=[];
+     await cdp.send('Page.enable');
+     cdp.on('Page.backForwardCacheNotUsed',event=>misses.push((event.notRestoredExplanations??[]).map(x=>({type:x.type,reason:x.reason}))));
+     await learner.addInitScript(()=>{
+      window.__sutraHistory={documentId:crypto.randomUUID(),shows:[],hides:[]};
+      window.addEventListener('pageshow',event=>window.__sutraHistory.shows.push(event.persisted));
+      window.addEventListener('pagehide',event=>window.__sutraHistory.hides.push(event.persisted));
+     });
+     await Promise.all([learner.goto(base),writer.goto(base)]);
+     await learner.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+     await writer.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+     await learner.waitForFunction(()=>window.__sutraHistory.shows.length>0);
+     const first=await learner.evaluate(()=>({...window.__sutraHistory}));
+     let mediaSrc=null;
+     if(withMedia){
+      await learner.getByRole('button',{name:'Load source media'}).click();
+      await learner.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
+      mediaSrc=await learner.locator('video').evaluate(v=>{v.pause();return v.currentSrc;});
+      assert.ok(mediaSrc.startsWith('blob:'));
+     }
+     await learner.getByRole('button',{name:'Preview source review card'}).click();
+     await learner.getByRole('button',{name:'Confirm local save'}).click();
+     await learner.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+     await writer.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+     await learner.getByRole('button',{name:'Preview source review card'}).click();
+     await learner.goto(base+'/guides/synthetic-comparison-guide.html');
+     await writer.getByRole('button',{name:'Delete local review'}).click();
+     await writer.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);
+     await learner.goBack({waitUntil:'commit',timeout:15000});
+     await learner.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+     await learner.waitForFunction(({documentId,shows})=>{
+      const state=window.__sutraHistory;
+      return state&&(state.documentId!==documentId?state.shows.length>0:state.shows.length>shows.length);
+     },first);
+     const observation=await learner.evaluate(()=>({
+      ...window.__sutraHistory,
+      notRestoredReasons:performance.getEntriesByType('navigation')[0]?.notRestoredReasons?.toJSON?.()??null
+     }));
+     const restored=observation.documentId===first.documentId;
+     assert.equal(observation.shows.at(-1),restored,'same document and actual persisted pageshow must agree');
+     if(restored)assert.equal(observation.hides.at(-1),true);
+     assert.equal(await learner.locator('#review-dialog').evaluate(dialog=>dialog.open),false);
+     assert.equal(await learner.locator('#review-list li').count(),0);
+     assert.equal(await learner.locator('#download-review-attempt').isHidden(),true);
+     if(withMedia&&restored){
+      assert.equal(await learner.locator('video').evaluate(v=>v.currentSrc),mediaSrc,'restored document must retain the same verified media URL');
+      assert.equal(await learner.locator('video').evaluate(v=>v.paused),true);
+      await learner.getByRole('button',{name:'Inspect featured source cue'}).click();
+      await learner.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
+     }
+     if(withMedia&&!restored)assert.equal(await learner.locator('video').count(),0,'fresh document must not claim retained native media');
+     console.log('ACTUAL_BFCACHE '+JSON.stringify({withMedia,restored,notRestoredReasons:observation.notRestoredReasons,cdpMisses:misses}));
+     await learner.getByRole('button',{name:'Preview source review card'}).click();
+     await learner.getByRole('button',{name:'Confirm local save'}).click();
+     await learner.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+    }finally{await historyContext.close();}
+   }
   }finally{await historyBrowser.close();}
 
   // An isolated, hash-consistent synthetic profile with six overlapping cues
