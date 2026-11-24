@@ -65,3 +65,5 @@ Required items discovered after the original plan remain release blockers until 
 - [x] `SUTRA-X007-12` Provide translated Nepali and English labels, local question results, and receipt actions for the primary zero-model workflow, preserving explicit working-draft translation status.
 - [x] `SUTRA-X007-13` Render an accessible pending-content loading view before asynchronous profile/catalog/transcript validation, never expose model/media/review controls while pending, and map HTML changes to affected browser, performance and security checks.
 - [x] `SUTRA-X007-14` Validate self-hosted gateway message roles, nested model tool calls, context size and tool definitions independently of Worker validation; reject unknown metadata before the local model.
+
+- [x] `SUTRA-X007-15` Reject a truncated HTTP-200 local model SSE stream end-to-end: no completed answer, no automatic retry and eventual quota lease release.

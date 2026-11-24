@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0033 — 2026-11-24
+
+**609/1,000 original verified; 645/1,037 total verified; 45/100 fully verified phases; six omissions; one real-model hardware blocker.** Added and verified X007-15: local model HTTP 200 with partial SSE and no completion signal must not produce an answer. The complete adapter→Worker→gateway→local fake engine regression passed, with one call and released quota lease, alongside all 19 CI workflows on exact `221bf89a836b3299cfd924fbd5ff5aaf49659afe` (316 learner tests + seven gateway tests). **No real model accuracy, cost, deployment or human review inferred.** [Evidence](evidence/implementation/SESSION-0033.md).
+
+---
+
 ## Session 0032 — 2026-11-24
 
 **609/1,000 original verified; 644/1,036 total verified; 45/100 fully verified phases; 6 historical omissions; 1 real-hardware blocker.** Source `4b1c27daff748f723a564afad6f9310274c83404` passed all **19 CI workflows**: 315 learner-side automated tests (100 app + 95 action/inference/API + 112 runtime + 8 peer), 7 standalone gateway tests, ten Chromium integrations and Chromium/Firefox/WebKit compatibility. The app now has immediate accessible content-validation status, true query-time cookie isolation, translated Nepali source UI, a complete local fake-model cancellation chain and stronger nested-tool rejection. User/hardware/provider/release gates remain open. [Evidence](evidence/implementation/SESSION-0032.md).
