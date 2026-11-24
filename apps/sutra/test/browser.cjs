@@ -93,6 +93,21 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.equal(completedAttempt.outcome,'completed');assert.equal(completedAttempt.requestId,exportedReview.id);
   await page.reload();assert.equal(await page.locator('#review-list li').count(),1);await page.getByRole('button',{name:'Delete local review'}).click();assert.equal(await page.locator('#review-list li').count(),0);
 
+  // A saved receipt from an older source version must become visible stale data
+  // after reload, never a silently migrated or downloadable valid card.
+  await page.getByRole('button',{name:'Preview synthetic review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();
+  assert.equal(await page.locator('#review-list li').count(),1);
+  await page.evaluate(()=>{
+   const key='sutra.synthetic-review-cards.v1',rows=JSON.parse(localStorage.getItem(key));
+   rows[0].receipt.sourceVersion='retired-v0';localStorage.setItem(key,JSON.stringify(rows));
+  });
+  await page.reload();
+  assert.match(await page.locator('#review-status').innerText(),/stale after source\/media version drift/i);
+  assert.equal(await page.locator('#review-list [data-state=stale]').count(),1);
+  assert.match(await page.locator('#review-list').innerText(),/retired-v0/);
+  assert.equal(await page.getByRole('button',{name:'Download saved receipt'}).count(),0,'stale evidence has no valid-download action');
+  await page.getByRole('button',{name:'Delete stale local review'}).click();assert.equal(await page.locator('#review-list li').count(),0);
+
   // Known quota rejection: zero persisted record, explicit rejected receipt, no retry.
   await page.evaluate(()=>{
    window.__sutraOriginalSetItem=Storage.prototype.setItem;window.__sutraWriteCalls=0;
