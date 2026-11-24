@@ -73,3 +73,12 @@ test('compiler never overwrites an existing output directory',async()=>{
  try{await fsp.mkdir(out);await assert.rejects(buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:out}),/already exists/);}
  finally{await fsp.rm(f.root,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
 });
+
+test('pack compiler rejects accessor-backed semantic and manifest data without invoking getters',async()=>{
+ const f=await fixture(),out=f.root+'-out';let touched=0;
+ try{
+  Object.defineProperty(f.semantic,'title',{enumerable:true,get(){touched++;return 'bad';}});
+  await assert.rejects(buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:out}),/Invalid semantic metadata data/);assert.equal(touched,0);
+  const g=await fixture();try{Object.defineProperty(g.manifest,'assets',{enumerable:true,get(){touched++;return {};}});await assert.rejects(buildContentPack({manifest:g.manifest,semantic:g.semantic,contentRoot:g.root,outputDir:g.root+'-out'}),/Invalid content manifest data/);assert.equal(touched,0);}finally{await fsp.rm(g.root,{recursive:true,force:true});await fsp.rm(g.root+'-out',{recursive:true,force:true});}
+ }finally{await fsp.rm(f.root,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
+});

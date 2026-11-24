@@ -1,3 +1,4 @@
+import {snapshotDataRecord} from '../../packages/sutra-evidence/index.js';
 import {createHash} from 'node:crypto';
 const SHA=/^[a-f0-9]{64}$/,ID=/^[A-Za-z][A-Za-z0-9._-]{0,79}$/,RIGHTS=new Set(['owned','licensed','written_permission']);
 const plain=v=>!!v&&typeof v==='object'&&!Array.isArray(v)&&Object.getPrototypeOf(v)===Object.prototype;
@@ -9,6 +10,16 @@ const safePath=p=>typeof p==='string'&&p.length<=240&&!p.startsWith('/')&&!p.inc
 const reviewStatement='A competent human reviewer checked the transcript and written guide against the designated lesson media and recorded factual corrections before release.';
 
 export function assessContentManifest(manifest,{observedFiles}={}){
+ try{
+  const m=snapshotDataRecord(manifest,10),lesson=snapshotDataRecord(m.lesson,4),assetRoot=snapshotDataRecord(m.assets,5),rightsRoot=snapshotDataRecord(m.rights,5),review=snapshotDataRecord(m.review,5),observedRoot=snapshotDataRecord(observedFiles,5);
+  const assets={},rights={},observed={};
+  for(const kind of ['media','transcript','guide']){
+   const a=snapshotDataRecord(assetRoot[kind],4),r=snapshotDataRecord(rightsRoot[kind],5),o=snapshotDataRecord(observedRoot[kind],5);
+   assets[kind]={path:a.path,sha256:a.sha256};rights[kind]={basis:r.basis,evidenceRef:r.evidenceRef,publicDistributionDeclared:r.publicDistributionDeclared};observed[kind]={path:o.path,sha256:o.sha256,bytes:o.bytes};
+  }
+  manifest={schema:m.schema,contentVersion:m.contentVersion,lesson:{title:lesson.title,durationSeconds:lesson.durationSeconds},assets,rights,review:{status:review.status,reviewedAt:review.reviewedAt,statement:review.statement}};
+  observedFiles=observed;
+ }catch{throw Error('Invalid content manifest data.');}
  if(!exact(manifest,['schema','contentVersion','lesson','assets','rights','review'])||manifest.schema!==1||typeof manifest.contentVersion!=='string'||!ID.test(manifest.contentVersion))throw Error('Invalid content manifest.');
  if(!exact(manifest.lesson,['title','durationSeconds'])||typeof manifest.lesson.title!=='string'||!manifest.lesson.title.trim()||manifest.lesson.title.length>160||
   typeof manifest.lesson.durationSeconds!=='number'||!Number.isFinite(manifest.lesson.durationSeconds)||manifest.lesson.durationSeconds<=0||manifest.lesson.durationSeconds>3600)throw Error('Invalid lesson declaration.');

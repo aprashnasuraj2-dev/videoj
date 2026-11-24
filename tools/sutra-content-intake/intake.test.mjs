@@ -37,3 +37,10 @@ test('content intake record has deterministic identity and changes when reviewed
  assert.equal(a.recordHash,b.recordHash);assert.match(a.recordHash,/^[a-f0-9]{64}$/);
  const o=observed();o.media.bytes+=1;const changed=assessContentManifest(m,{observedFiles:o});assert.notEqual(changed.recordHash,a.recordHash);
 });
+
+test('content intake rejects accessor-backed manifest/observed data without executing accessors',()=>{
+ let touched=0;const m=manifest();Object.defineProperty(m,'lesson',{enumerable:true,get(){touched++;return {title:'x',durationSeconds:1};}});
+ assert.throws(()=>assessContentManifest(m,{observedFiles:observed()}),/Invalid content manifest data/);assert.equal(touched,0);
+ const o=observed();Object.defineProperty(o.media,'bytes',{enumerable:true,get(){touched++;return 1;}});
+ assert.throws(()=>assessContentManifest(manifest(),{observedFiles:o}),/Invalid content manifest data/);assert.equal(touched,0);
+});

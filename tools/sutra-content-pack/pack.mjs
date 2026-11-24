@@ -1,3 +1,4 @@
+import {snapshotDataRecord,snapshotDataArray} from '../../packages/sutra-evidence/index.js';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
@@ -33,6 +34,14 @@ function validateClaim(c,guide){
  if(guide&&(typeof c.excerpt!=='string'||!c.excerpt.trim()||c.excerpt.length>1200||!ID.test(c.anchor||'')))throw Error('Invalid guide claim.');
 }
 function validateSemantic(meta){
+ try{
+  const m=snapshotDataRecord(meta,16),rawCues=snapshotDataArray(m.cues,500),video=snapshotDataRecord(m.videoClaim,12),guide=snapshotDataRecord(m.guideClaim,16),ui=snapshotDataRecord(m.ui,4);
+  const cues=rawCues.map(raw=>{const c=snapshotDataRecord(raw,8);return {id:c.id,start:c.start,end:c.end,text:c.text};});
+  meta={schema:m.schema,contentVersion:m.contentVersion,title:m.title,observedAt:m.observedAt,sourceId:m.sourceId,sourceVersion:m.sourceVersion,featuredCueId:m.featuredCueId,cues,
+   videoClaim:{title:video.title,scope:video.scope,claimKey:video.claimKey,value:video.value,provenance:video.provenance,dateBasis:video.dateBasis},
+   guideClaim:{title:guide.title,scope:guide.scope,claimKey:guide.claimKey,value:guide.value,excerpt:guide.excerpt,provenance:guide.provenance,anchor:guide.anchor,dateBasis:guide.dateBasis},
+   ui:{noticeTitle:ui.noticeTitle,noticeBody:ui.noticeBody}};
+ }catch{throw Error('Invalid semantic metadata data.');}
  const keys=['schema','contentVersion','title','observedAt','sourceId','sourceVersion','featuredCueId','cues','videoClaim','guideClaim','ui'];
  if(!exact(meta,keys)||meta.schema!==1||!ID.test(meta.contentVersion||'')||typeof meta.title!=='string'||!meta.title.trim()||meta.title.length>160||!ISO.test(meta.observedAt)||
   !ID.test(meta.sourceId||'')||typeof meta.sourceVersion!=='string'||!meta.sourceVersion.trim()||meta.sourceVersion.length>100||!ID.test(meta.featuredCueId||'')||
@@ -64,11 +73,12 @@ async function write(root,relative,bytes){
 }
 export async function buildContentPack({manifest,semantic,contentRoot,outputDir}){
  const meta=validateSemantic(semantic),root=await fs.realpath(path.resolve(contentRoot)),out=path.resolve(outputDir);
+ let assetPaths;try{const m=snapshotDataRecord(manifest,10),a=snapshotDataRecord(m.assets,5);assetPaths={};for(const kind of ['media','transcript','guide'])assetPaths[kind]=snapshotDataRecord(a[kind],4).path;}catch{throw Error('Invalid content manifest data.');}
  try{await fs.lstat(out);throw Error('Output already exists; refuse overwrite.');}catch(error){if(error?.code!=='ENOENT')throw error;}
- const media=await readRegular(root,manifest.assets?.media?.path,250*1024*1024);
- const transcript=await readRegular(root,manifest.assets?.transcript?.path,10*1024*1024);
- const guide=await readRegular(root,manifest.assets?.guide?.path,10*1024*1024);
- const observed={media:{path:manifest.assets.media.path,sha256:digest(media.bytes),bytes:media.size},transcript:{path:manifest.assets.transcript.path,sha256:digest(transcript.bytes),bytes:transcript.size},guide:{path:manifest.assets.guide.path,sha256:digest(guide.bytes),bytes:guide.size}};
+ const media=await readRegular(root,assetPaths.media,250*1024*1024);
+ const transcript=await readRegular(root,assetPaths.transcript,10*1024*1024);
+ const guide=await readRegular(root,assetPaths.guide,10*1024*1024);
+ const observed={media:{path:assetPaths.media,sha256:digest(media.bytes),bytes:media.size},transcript:{path:assetPaths.transcript,sha256:digest(transcript.bytes),bytes:transcript.size},guide:{path:assetPaths.guide,sha256:digest(guide.bytes),bytes:guide.size}};
  const intake=assessContentManifest(manifest,{observedFiles:observed});
  if(!intake.structuralIntakeComplete||intake.contentVersion!==meta.contentVersion)throw Error('Content intake is not structurally complete for this version.');
  if(meta.cues.some(c=>c.end>manifest.lesson.durationSeconds))throw Error('Cue timing exceeds declared lesson duration.');
@@ -77,8 +87,8 @@ export async function buildContentPack({manifest,semantic,contentRoot,outputDir}
  for(const cue of meta.cues)if(!transcriptText.includes(cue.text))throw Error('Transcript does not contain exact cue text: '+cue.id);
  if(!guideText.includes('id="'+meta.guideClaim.anchor+'"')&&!guideText.includes("id='"+meta.guideClaim.anchor+"'"))throw Error('Guide anchor missing.');
  if(!guideText.includes(meta.guideClaim.excerpt))throw Error('Guide excerpt missing.');
- const ext=path.extname(manifest.assets.media.path).toLowerCase();if(ext!=='.mp4'&&ext!=='.webm')throw Error('Reviewed media must be MP4 or WebM.');
- const guideName=path.basename(manifest.assets.guide.path);if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}\.html$/i.test(guideName))throw Error('Reviewed guide must be a safe HTML file.');
+ const ext=path.extname(assetPaths.media).toLowerCase();if(ext!=='.mp4'&&ext!=='.webm')throw Error('Reviewed media must be MP4 or WebM.');
+ const guideName=path.basename(assetPaths.guide);if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}\.html$/i.test(guideName))throw Error('Reviewed guide must be a safe HTML file.');
  const mediaBase='media/release/'+observed.media.sha256,transcriptBase='transcripts/release/'+observed.transcript.sha256,guideBase='guides/release/'+observed.guide.sha256;
  const sourceCatalog={schema:1,contentVersion:meta.contentVersion,sources:[{id:meta.sourceId,version:meta.sourceVersion,hash:observed.transcript.sha256,mediaHash:observed.media.sha256,duration:manifest.lesson.durationSeconds,cues:meta.cues}]};
  const catalogBytes=Buffer.from(canonical(sourceCatalog)),catalogSha=digest(catalogBytes);
