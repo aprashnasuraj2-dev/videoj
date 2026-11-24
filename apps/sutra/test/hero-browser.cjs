@@ -89,6 +89,25 @@ const assert=require('node:assert/strict');
    await b.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('rejected before confirmation'));
    await a.evaluate(()=>window.__releaseReviewLock());
    assert.equal(await a.evaluate(k=>JSON.parse(localStorage.getItem(k)).length,key),2);
+   // Exports also need the cooperative lock and a current snapshot. Change
+   // the record from the exporting tab itself (no storage event in that tab)
+   // while the lock is held, then reject its old captured download action.
+   const downloads=[];b.on('download',d=>downloads.push(d));
+   await hold();await b.getByRole('button',{name:'Download saved receipt'}).first().click();
+   await b.waitForFunction(()=>[...document.querySelectorAll('#review-list .review-action')].some(x=>x.disabled));
+   assert.equal(downloads.length,0,'no download may bypass the held mutation lock');
+   await b.evaluate(k=>{const rows=JSON.parse(localStorage.getItem(k));rows[0].savedAt='2026-02-01T00:00:00.000Z';localStorage.setItem(k,JSON.stringify(rows));},key);
+   await a.evaluate(()=>window.__releaseReviewLock());
+   await b.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('No export success is claimed'));
+   assert.equal(downloads.length,0,'changed record cannot authorize the queued download');
+   await hold();await b.getByRole('button',{name:'Download saved receipt'}).first().click();
+   await b.waitForFunction(()=>[...document.querySelectorAll('#review-list .review-action')].some(x=>x.disabled));
+   await b.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
+   await b.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('No export success is claimed'));
+   await a.evaluate(()=>window.__releaseReviewLock());
+   assert.equal(downloads.length,0,'revoked queued export must never start');
+   const freshDownload=b.waitForEvent('download');await b.getByRole('button',{name:'Download saved receipt'}).first().click();
+   await freshDownload;assert.equal(downloads.length,1,'an explicit fresh action can request a current download');
    // Same-document out-of-band mutation emits no storage event. The still
    // visible delete control must compare the exact captured record, not ID.
    await a.evaluate(k=>{const rows=JSON.parse(localStorage.getItem(k));rows[0].savedAt='2026-01-01T00:00:00.000Z';localStorage.setItem(k,JSON.stringify(rows));},key);
