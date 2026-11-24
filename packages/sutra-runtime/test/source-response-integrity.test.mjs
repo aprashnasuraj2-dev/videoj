@@ -58,18 +58,12 @@ test('source receipt ceiling cannot be disabled or raised above the host maximum
  for(const value of [0,21,1.5])assert.throws(()=>createSourceMcp({origin:'https://sutra.test',sources:catalog,maxReceipts:value}),e=>e.code==='SOURCE_CONFIG');
 });
 
-test('truncated source searches are rejected before any partial excerpt reaches the model or observer',async()=>{
+test('truncated source searches fail from the mounted catalog before discovery, quota or partial excerpts',async()=>{
  const source=structuredClone(fixture.source);source.duration=20;
  source.cues=Array.from({length:6},(_,i)=>({id:'broad-'+i,start:i*2,end:i*2+1,text:'Shared broad marker '+i}));
- const local=createSourceTools([source]),seen=[];
- const client=createSourceMcp({origin:'https://sutra.test',sources:[source],onReceipt:r=>seen.push(r),fetchImpl:async(_url,opts)=>{
-  const rpc=JSON.parse(opts.body);
-  if(rpc.method==='initialize')return Response.json({jsonrpc:'2.0',id:rpc.id,result:{protocolVersion:'2025-06-18'}});
-  if(rpc.method==='notifications/initialized')return new Response(null,{status:202});
-  if(rpc.method==='tools/list')return Response.json({jsonrpc:'2.0',id:rpc.id,result:{tools:local.list()}});
-  if(rpc.method==='tools/call'){const output=local.call(rpc.params.name,rpc.params.arguments);assert.equal(output.truncated,true);assert.equal(output.receipts.length,5);return Response.json({jsonrpc:'2.0',id:rpc.id,result:{content:[{type:'text',text:JSON.stringify(output)}],structuredContent:output,isError:false}});}
-  throw Error('unexpected RPC');
- }});
+ let transportCalls=0;const seen=[];
+ const client=createSourceMcp({origin:'https://sutra.test',sources:[source],onReceipt:r=>seen.push(r),fetchImpl:async()=>{transportCalls++;throw Error('transport must not be reached');}});
  await assert.rejects(client.callTool('search_lesson',{query:'broad marker'}),e=>e.code==='SOURCE_QUERY_TOO_BROAD');
- assert.deepEqual(seen,[],'first five of a larger result set must not be exposed as if complete');
+ assert.equal(transportCalls,0,'mounted catalog can prove truncation before any source RPC or quota spend');
+ assert.deepEqual(seen,[],'no subset of a broad result may reach the model or observer');
 });
