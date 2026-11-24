@@ -25,7 +25,7 @@ const assert=require('node:assert/strict');
   // Lose network only after the graph GET has left the browser.
   let releaseRoute,routeObserved;
   const routed=new Promise(resolve=>{routeObserved=resolve;});
-  await offlinePage.route('**/agents/learner.network.json',async route=>{
+  await offlinePage.route('**/agents/v/**/learner.network.json',async route=>{
    routeObserved();
    await new Promise(resolve=>{releaseRoute=resolve;});
    try{await route.continue();}catch{}
@@ -37,7 +37,7 @@ const assert=require('node:assert/strict');
   // Local, already-loaded evidence remains useful during the network failure.
   await offlinePage.getByRole('button',{name:'Check example',exact:true}).click();
   assert.match(await offlinePage.locator('#result').innerText(),/Catalog matched/);
-  await context.setOffline(false);await offlinePage.unroute('**/agents/learner.network.json');
+  await context.setOffline(false);await offlinePage.unroute('**/agents/v/**/learner.network.json');
   await offlinePage.getByRole('button',{name:'Run scripted network test'}).click();
   await offlinePage.waitForFunction(()=>document.querySelector('#network-result').textContent.includes('2 agent invocations; 3 scripted model steps.'));
   assert.match(await offlinePage.locator('#network-result').innerText(),/scripted/i);
