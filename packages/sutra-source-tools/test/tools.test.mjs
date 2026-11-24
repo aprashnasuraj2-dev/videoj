@@ -1,6 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {createSourceTools} from '../index.js';import {validateReceipt} from '../../sutra-evidence/index.js';import fixture from '../../../apps/sutra/src/fixtures/timing-source.json' with {type:'json'};
 const create=()=>createSourceTools([fixture.source],{now:()=>fixture.receipt.retrievedAt});
-test('exact scoped retrieval is catalog matched; truth remains unverified',()=>{const tools=create();for(const result of [tools.call('search_lesson',{query:'TIMING'}),tools.call('read_cue',{sourceId:fixture.source.id,cueId:'timing-marker'})]){assert.equal(result.receipts.length,1);assert.equal(validateReceipt(result.receipts[0],{sources:[fixture.source]}).level,'catalog_matched');assert.equal(result.truthStatus,'unverified');if(result.limit===5){assert.equal(result.matchCount,1);assert.equal(result.truncated,false);}assert.deepEqual(result.receipts[0],fixture.receipt);}});
+test('exact scoped retrieval is catalog matched; truth remains unverified',()=>{const tools=create();for(const result of [tools.call('search_lesson',{query:'TIMING'}),tools.call('read_cue',{sourceId:fixture.source.id,cueId:'timing-marker'})]){assert.equal(result.receipts.length,1);assert.equal(validateReceipt(result.receipts[0],{sources:[fixture.source]}).level,'catalog_matched');assert.equal(result.truthStatus,'unverified');if(result.limit===5){assert.equal(result.returnedCount,1);assert.equal(result.truncated,false);}assert.deepEqual(result.receipts[0],fixture.receipt);}});
 test('closed schemas reject URL, DOM, code, unknown names and missing fields',()=>{const t=create();for(const [name,args]of [['fetch',{url:'https://evil.test'}],['read_cue',{sourceId:fixture.source.id,cueId:'timing-marker',script:'alert(1)'}],['search_lesson',{query:'x',selector:'body'}],['read_cue',{sourceId:fixture.source.id}],['search_lesson',{query:' '.repeat(3)}],['search_lesson',{query:'x'.repeat(121)}]])assert.throws(()=>t.call(name,args));});
 test('catalog is snapshotted and exposed definitions cannot mutate it',()=>{const sources=[structuredClone(fixture.source)];const t=createSourceTools(sources);sources[0].cues[0].text='changed';const list=t.list();list[0].name='fetch';assert.equal(t.list()[0].effect,'read');assert.equal(t.call('search_lesson',{query:'timing'}).receipts[0].excerpt,fixture.source.cues[0].text);});
 test('invalid/ambiguous sources, cues, ranges and hashes fail at registration',()=>{for(const sources of [[],[fixture.source,fixture.source],[{...fixture.source,cues:[...fixture.source.cues,...fixture.source.cues]}],[{...fixture.source,duration:1}],[{...fixture.source,mediaHash:'wrong'}],[{...fixture.source,cues:[{...fixture.source.cues[0],text:'x'.repeat(2001)}]}]])assert.throws(()=>createSourceTools(sources));});
@@ -17,10 +17,10 @@ test('search filters bind candidates to one source and a containing time interva
  const all=t.call('search_lesson',{query:'timing marker'});assert.equal(all.receipts.length,3);
  const scoped=t.call('search_lesson',{query:'timing marker',sourceId:'second-source'});
  assert.deepEqual(scoped.receipts.map(r=>r.cueId),['early','late']);
- assert.deepEqual(scoped.filters,{sourceId:'second-source'});assert.equal(scoped.matchCount,2);assert.equal(scoped.truncated,false);
+ assert.deepEqual(scoped.filters,{sourceId:'second-source'});assert.equal(scoped.returnedCount,2);assert.equal(scoped.truncated,false);
  const interval=t.call('search_lesson',{query:'timing marker',sourceId:'second-source',start:0,end:5});
  assert.deepEqual(interval.receipts.map(r=>r.cueId),['early']);
- assert.deepEqual(interval.filters,{sourceId:'second-source',start:0,end:5});assert.equal(interval.matchCount,1);assert.equal(interval.truncated,false);
+ assert.deepEqual(interval.filters,{sourceId:'second-source',start:0,end:5});assert.equal(interval.returnedCount,1);assert.equal(interval.truncated,false);
  assert.equal(t.call('search_lesson',{query:'timing marker',sourceId:'second-source',start:4,end:9}).receipts.length,0);
 });
 test('search interval filters require a finite ordered pair and cannot widen past schema bounds',()=>{
@@ -55,7 +55,7 @@ test('maximum 20x500 short-cue catalog preserves order, exact scope, duplicate r
  const sources=Array.from({length:20},(_,i)=>({...fixture.source,id:'source-'+i,duration:1000,cues:Array.from({length:500},(_,j)=>({id:'cue-'+j,start:j,end:j+0.5,text:'Timing '+i+' '+j}))}));
  const t=createSourceTools(sources,{now:()=>fixture.receipt.retrievedAt});
  const first=t.call('search_lesson',{query:'timing'}).receipts;
- assert.deepEqual(first.map(r=>r.cueId),['cue-0','cue-1','cue-2','cue-3','cue-4']);assert.ok(first.every(r=>r.sourceId==='source-0'));const all=t.call('search_lesson',{query:'timing'});assert.equal(all.matchCount,10000);assert.equal(all.truncated,true);
+ assert.deepEqual(first.map(r=>r.cueId),['cue-0','cue-1','cue-2','cue-3','cue-4']);assert.ok(first.every(r=>r.sourceId==='source-0'));const all=t.call('search_lesson',{query:'timing'});assert.equal(all.returnedCount,5);assert.equal(all.truncated,true);
  const exact=t.call('read_cue',{sourceId:'source-19',cueId:'cue-499'}).receipts[0];
  assert.equal(exact.excerpt,'Timing 19 499');assert.equal(validateReceipt(exact,{sources}).level,'catalog_matched');
  assert.deepEqual(t.call('search_lesson',{query:'timing',sourceId:'source-19',start:498,end:500}).receipts.map(r=>r.cueId),['cue-498','cue-499']);

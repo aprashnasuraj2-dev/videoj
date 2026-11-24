@@ -51,14 +51,16 @@ export function createSourceTools(catalog,{now=()=>new Date().toISOString()}={})
     const hasStart=args.start!==undefined,hasEnd=args.end!==undefined;
     if(hasStart!==hasEnd||hasStart&&(!Number.isFinite(args.start)||!Number.isFinite(args.end)||args.end<=args.start))throw new SourceToolError('ARGUMENTS');
     filters={...(args.sourceId!==undefined?{sourceId:args.sourceId}:{}),...(hasStart?{start:args.start,end:args.end}:{})};
-    matches=[];let matchCount=0;
+    matches=[];let truncated=false;
     const candidates=args.sourceId===undefined?rows:bySource.get(args.sourceId)?.rows??[];
     for(const r of candidates){
-     if(r.folded.includes(query)&&(!hasStart||r.cue.start>=args.start&&r.cue.end<=args.end)){matchCount++;if(matches.length<5)matches.push(r);}
+     if(!r.folded.includes(query)||hasStart&&(r.cue.start<args.start||r.cue.end>args.end))continue;
+     if(matches.length===5){truncated=true;break;}
+     matches.push(r);
     }
-    filters={filters,matchCount,truncated:matchCount>matches.length};
+    filters={filters,returnedCount:matches.length,truncated};
    }else{const row=bySource.get(args.sourceId)?.byCue.get(args.cueId);if(!row)throw new SourceToolError('NOT_FOUND');matches=[row];}
-   const receipts=matches.map(receipt);const result={version:1,receipts,limit:name==='search_lesson'?5:1,truthStatus:'unverified',...(name==='search_lesson'?{filters:filters.filters,matchCount:filters.matchCount,truncated:filters.truncated}:{})};if(new TextEncoder().encode(JSON.stringify(result)).length>16000)throw new SourceToolError('OUTPUT_SIZE');return result;
+   const receipts=matches.map(receipt);const result={version:1,receipts,limit:name==='search_lesson'?5:1,truthStatus:'unverified',...(name==='search_lesson'?{filters:filters.filters,returnedCount:filters.returnedCount,truncated:filters.truncated}:{})};if(new TextEncoder().encode(JSON.stringify(result)).length>16000)throw new SourceToolError('OUTPUT_SIZE');return result;
   },
  };
 }
