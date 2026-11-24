@@ -86,3 +86,8 @@ test('screen-reader readiness tooling is mapped without converting automated aud
  const r=classifyChangedFiles(['tools/sutra-screenreader-check/screenreader.mjs'],map);
  assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('screenreader-readiness'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA screen-reader evidence gate'));assert.deepEqual(r.invalidatedMetrics,[]);
 });
+
+test('release-candidate tooling is mapped without turning templates into release evidence',()=>{
+ const r=classifyChangedFiles(['tools/sutra-release-candidate/release.mjs'],map);
+ assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('release-candidate-readiness'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA release-candidate artifact gate'));assert.deepEqual(r.invalidatedMetrics,[]);
+});

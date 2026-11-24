@@ -240,6 +240,17 @@
       ],
       "invalidates": [],
       "reason": "Changes to the human screen-reader acceptance record protocol must pass its completeness/core-interaction tests; automated checks never become human AT evidence."
+    },
+    {
+      "id": "release-candidate-readiness",
+      "prefixes": [
+        "tools/sutra-release-candidate/"
+      ],
+      "requiredWorkflows": [
+        "Validate SUTRA release-candidate artifact gate"
+      ],
+      "invalidates": [],
+      "reason": "Changes to the evidence-bound release artifact constructor must pass model/router/peer/hash drift tests; no public-release metric exists until a real candidate is built and deployed."
     }
   ]
 }
