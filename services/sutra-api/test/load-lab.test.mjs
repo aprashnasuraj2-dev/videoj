@@ -4,8 +4,13 @@ import {handleInference} from '../inference.js';
 import {InferenceQuota} from '../quota.js';
 
 function storage(){
- let value;
- return {async transaction(fn){const tx={get:async()=>structuredClone(value),put:async(_,v)=>{value=structuredClone(v);}};return fn(tx);},inspect:()=>structuredClone(value)};
+ let value,tail=Promise.resolve();
+ return {async transaction(fn){
+  let release;const previous=tail;tail=new Promise(resolve=>{release=resolve;});
+  await previous;
+  try{const tx={get:async()=>structuredClone(value),put:async(_,v)=>{value=structuredClone(v);}};return await fn(tx);}
+  finally{release();}
+ },inspect:()=>structuredClone(value)};
 }
 const sse=text=>new Response(`data: ${JSON.stringify({choices:[{index:0,delta:{content:text},finish_reason:null}]})}\n\ndata: ${JSON.stringify({choices:[{index:0,delta:{},finish_reason:'stop'}]})}\n\ndata: [DONE]\n\n`,{headers:{'Content-Type':'text/event-stream'}});
 const request=(i)=>new Request('https://sutra.test/api/infer',{method:'POST',headers:{
