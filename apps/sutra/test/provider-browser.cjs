@@ -50,7 +50,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   assert.equal(manifestReads,1);assert.equal(graphReads,1);assert.equal(calls,0,'provider discovery must bind public contract before any model call');assert.match(await page.locator('#provider-status').textContent(),/Model configured/);
   const runOnce=async()=>{
    const before=calls;
-   await runOnce();
+   await page.getByRole('button',{name:'Ask configured model'}).click();
    await page.waitForFunction(()=>document.querySelector('#provider-consent-dialog').open);
    assert.equal(calls,before,'opening inference consent must not call the model');
    assert.match(await page.locator('#provider-consent-backend').textContent(),/self-hosted/);
