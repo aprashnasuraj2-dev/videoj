@@ -106,6 +106,22 @@ const assert=require('node:assert/strict');
   await page.getByRole('button',{name:'Delete local review'}).focus();await page.keyboard.press('Enter');
   assert.equal(await page.locator('#review-list li').count(),0);
 
+  assert.equal(await page.evaluate(()=>localStorage.getItem('sutra.synthetic-review-cards.v1')),null);
+  assert.equal(await page.locator('#download-review-attempt').isHidden(),true);
+  assert.equal(await page.locator('#review-preview').textContent(),'');
+  await page.evaluate(()=>{localStorage.setItem('sutra.synthetic-review-cards.v1','corrupt fixture canary');localStorage.setItem('unrelated-browser-key','keep');});
+  await page.reload();
+  assert.match(await page.locator('#review-status').innerText(),/could not be read/);
+  await page.getByRole('button',{name:'Clear all local review data'}).click();
+  await page.getByRole('button',{name:'Keep local reviews'}).click();
+  assert.equal(await page.evaluate(()=>localStorage.getItem('sutra.synthetic-review-cards.v1')),'corrupt fixture canary');
+  await page.getByRole('button',{name:'Clear all local review data'}).click();
+  await page.getByRole('button',{name:'Confirm clear local reviews'}).click();
+  assert.match(await page.locator('#review-status').innerText(),/cleared from this browser/);
+  assert.deepEqual(await page.evaluate(()=>[localStorage.getItem('sutra.synthetic-review-cards.v1'),localStorage.getItem('unrelated-browser-key'),sessionStorage.length]),[null,'keep',0]);
+  await page.reload();
+  assert.equal(await page.locator('#review-list li').count(),0);
+  assert.equal(await page.locator('#download-review-attempt').isHidden(),true);
   assert.deepEqual(errors,[]);
   console.log('PASS: visible hero journey covers empty/loading/conflict/success/denied states, evidence-to-native-media seek, review save/delete, refusal resilience and a 360px keyboard-activated local completion without developer-console setup or external requests.');
  }finally{

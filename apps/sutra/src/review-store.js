@@ -6,7 +6,7 @@ export class ReviewDataStaleError extends Error{
  constructor(staleCount){super('Saved review data no longer matches the active source catalog.');this.code='STALE_REVIEW_DATA';this.staleCount=staleCount;}
 }
 export function createReviewStore({storage,sources,idFactory=()=>crypto.randomUUID()}){
- const catalog=clone(sources),pending=new Map(),completed=new Map();
+ const catalog=clone(sources),pending=new Map(),completed=new Set();
  function rawRecords(){
   const raw=storage.getItem(KEY);if(raw===null)return [];
   if(typeof raw!=='string'||raw.length>65536)throw Error('Local review data is unavailable or too large.');
@@ -52,7 +52,11 @@ export function createReviewStore({storage,sources,idFactory=()=>crypto.randomUU
   },
   cancel(id){pending.delete(id);},
   commit(id){
-   if(completed.has(id))return clone(completed.get(id));
+   if(completed.has(id)){
+    const current=list().find(record=>record.id===id);
+    if(!current)throw Error('Previously completed review no longer exists.');
+    return clone(current);
+   }
    if(!pending.has(id))throw Error('Review preview expired or was cancelled.');
    const receipt=pending.get(id);pending.delete(id); // Consume proposal before persistence; never automatically retry.
    if(!validateReceipt(receipt,{sources:catalog}).valid)throw Error('Source changed before confirmation.');
@@ -60,12 +64,22 @@ export function createReviewStore({storage,sources,idFactory=()=>crypto.randomUU
    const record={id,receipt,synthetic:true,savedAt:new Date().toISOString()};
    const encoded=JSON.stringify([...records,record]);if(encoded.length>65536)throw Error('Local review data exceeds its limit.');
    try{storage.setItem(KEY,encoded);}catch(error){throw new ReviewOutcomeError(['QuotaExceededError','SecurityError'].includes(error?.name)?'rejected':'unknown');} // Never infer success from an attempted write.
-   completed.set(id,record);while(completed.size>20)completed.delete(completed.keys().next().value);
+   completed.add(id);while(completed.size>20)completed.delete(completed.values().next().value);
    return clone(record);
   },
   remove(id){
    const records=rawRecords(),next=records.filter(record=>record.id!==id);
-   if(records.length!==next.length)storage.setItem(KEY,JSON.stringify(next));
+   if(records.length===next.length)throw Error('Saved review not found.');
+   // Last-card deletion removes the application key, not merely its rendered row.
+   if(next.length===0)storage.removeItem(KEY);else storage.setItem(KEY,JSON.stringify(next));
+   if(rawRecords().some(record=>record.id===id))throw Error('Deletion not confirmed.');
+   pending.delete(id); // Completed IDs contain no receipt payload.
+  },
+  clear(){
+   // Explicit recovery for corrupt/stale storage, with no parse and no broad origin wipe.
+   pending.clear();completed.clear();
+   storage.removeItem(KEY);
+   if(storage.getItem(KEY)!==null)throw Error('Local review deletion not confirmed.');
   },
  };
 }
