@@ -5,8 +5,9 @@ import {createReceiptActionRow} from './receipt-actions.js';
 
 // This is deliberately lexical retrieval: no embeddings, model or network access.
 // Do not synthesize, paraphrase or claim that a matched cue answers the question.
-const STOP=new Set(('a an and are as at be by can could did do does for from how i in is it its me of on or our please show source tell that the their there these this those to us video was were what when where which who why will with would you your about explain find give happen happens happened lesson mentioned say says said occur occurs').split(' '));
-const WORDS=/[\p{L}\p{N}]+/gu;
+const STOP=new Set(('a an and are as at be by can could did do does for from how i in is it its me of on or our please show source tell that the their there these this those to us video was were what when where which who why will with would you your about explain find give happen happens happened lesson mentioned say says said occur occurs कहाँ कसरी कति के कुन कसलाई मलाई छ छन् हो हुन्छ कहाँनेर पाठमा पाठको यो यी त्यो तथा र वा मा को का कि कृपया देखाउनुहोस् भन्नुहोस्').split(' '));
+// Combining marks are part of Indic words; dropping \\p{M} breaks Nepali evidence matching.
+const WORDS=/[\p{L}\p{M}\p{N}]+/gu;
 const toks=text=>[...(text.normalize('NFKC').toLocaleLowerCase('en').match(WORDS)??[])]
   .filter(w=>w.length>=2&&w.length<=48&&!STOP.has(w));
 const snapshot=(state,receipts=[],extra={})=>Object.freeze({
