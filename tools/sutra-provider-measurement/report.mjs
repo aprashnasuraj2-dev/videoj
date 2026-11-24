@@ -1,4 +1,4 @@
-const SHA=/^[a-f0-9]{40}$/i,ID=/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
+const SHA=/^[a-f0-9]{40}$/i,ID=/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/,ISO=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
 const plain=v=>!!v&&typeof v==='object'&&!Array.isArray(v)&&Object.getPrototypeOf(v)===Object.prototype;
 const exact=(o,keys,required=keys)=>plain(o)&&Object.keys(o).every(k=>keys.includes(k))&&required.every(k=>Object.hasOwn(o,k));
 const finiteNonnegative=v=>typeof v==='number'&&Number.isFinite(v)&&v>=0;
@@ -10,12 +10,12 @@ export function buildProviderCostReport(input){
   !Number.isInteger(input.monthlyRunScenario)||input.monthlyRunScenario<1||input.monthlyRunScenario>1_000_000)throw Error('Invalid measurement envelope.');
  const price=input.priceBasis;
  if(!exact(price,['promptPerMillion','completionPerMillion','effectiveAt','source'])||!finiteNonnegative(price.promptPerMillion)||!finiteNonnegative(price.completionPerMillion)||
-  !Number.isFinite(Date.parse(price.effectiveAt))||typeof price.source!=='string'||price.source.trim().length<4||price.source.length>500)throw Error('Invalid price basis.');
+  !ISO.test(price.effectiveAt)||!Number.isFinite(Date.parse(price.effectiveAt))||typeof price.source!=='string'||price.source.trim().length<4||price.source.length>500)throw Error('Invalid price basis.');
  if(!Array.isArray(input.runs)||!input.runs.length||input.runs.length>100)throw Error('One to 100 observed runs required.');
  const runIds=new Set(),runs=[];let incompleteRequests=0,totalRequests=0,totalRetries=0;
  for(const raw of input.runs){
   if(!exact(raw,['id','outcome','observedAt','requests'])||typeof raw.id!=='string'||!ID.test(raw.id)||runIds.has(raw.id)||
-   !['completed','failed','cancelled'].includes(raw.outcome)||!Number.isFinite(Date.parse(raw.observedAt))||!Array.isArray(raw.requests)||!raw.requests.length||raw.requests.length>32)throw Error('Invalid observed run.');
+   !['completed','failed','cancelled'].includes(raw.outcome)||!ISO.test(raw.observedAt)||!Number.isFinite(Date.parse(raw.observedAt))||!Array.isArray(raw.requests)||!raw.requests.length||raw.requests.length>32)throw Error('Invalid observed run.');
   runIds.add(raw.id);let prompt=0,completion=0,knownCost=0,complete=true,retries=0;
   const sequences=new Set();
   for(const req of raw.requests){

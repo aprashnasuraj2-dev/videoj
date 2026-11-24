@@ -17,3 +17,13 @@ Required live sample fields:
 The tool computes both all-observed-run and completed-run mean/nearest-rank p95 cost. Monthly projection uses the **all observed run** mean so paid failed attempts are not silently excluded. It also reports doubled-prompt and one-full-observed-run-retry sensitivity. Failed/cancelled requests stay visible in the raw run rows. The arithmetic is not a billing guarantee.
 
 Synthetic unit tests validate the calculation only. They are not P066 live-cost evidence and do not authorize paid inference.
+
+## CLI
+
+The measurement tool is offline:
+
+`node tools/sutra-provider-measurement/cli.mjs MEASUREMENT.json > report.json`
+
+Exit 0 means the supplied record has complete token usage and cost arithmetic was produced. Exit 3 means the JSON is structurally valid but cost completeness is false because at least one request has unknown usage. Exit 2 is invalid input/usage. Input is capped at 512 KiB. Timestamps require an explicit timezone.
+
+`example.synthetic.json` is deliberately fake data with provider/model labels that cannot be confused with a live sample. Never cite its costs.

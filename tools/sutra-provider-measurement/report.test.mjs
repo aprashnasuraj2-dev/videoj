@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {buildProviderCostReport} from './report.mjs';
+import test from 'node:test';import assert from 'node:assert/strict';import {spawnSync} from 'node:child_process';import {buildProviderCostReport} from './report.mjs';
 const base=()=>({schema:1,sourceRevision:'a'.repeat(40),provider:'provider',model:'model-v1',currency:'USD',
  priceBasis:{promptPerMillion:2,completionPerMillion:8,effectiveAt:'2026-11-24T00:00:00Z',source:'operator-recorded provider price page'},
  monthlyRunScenario:1000,runs:[
@@ -32,4 +32,15 @@ test('malformed prices, duplicate runs, negative tokens and fabricated monthly s
   x=>x.priceBasis.promptPerMillion=-1,x=>x.runs[1].id='r1',x=>x.runs[0].requests[0].usage.promptTokens=-1,x=>x.monthlyRunScenario=0,
   x=>x.runs[0].requests[0].usage={promptTokens:1,completionTokens:1,totalTokens:2},x=>x.runs[0].requests[1].sequence=1
  ]){const x=base();mutate(x);assert.throws(()=>buildProviderCostReport(x));}
+});
+
+test('price and run timestamps require explicit timezone rather than environment-dependent parsing',()=>{
+ for(const mutate of [x=>x.priceBasis.effectiveAt='2026-11-24',x=>x.runs[0].observedAt='2026-11-24T00:01:00']){
+  const x=base();mutate(x);assert.throws(()=>buildProviderCostReport(x));
+ }
+});
+
+test('offline CLI reports complete synthetic file and distinguishes incomplete valid record',()=>{
+ const cli=new URL('./cli.mjs',import.meta.url).pathname,sample=new URL('./example.synthetic.json',import.meta.url).pathname;
+ const ok=spawnSync(process.execPath,[cli,sample],{encoding:'utf8'});assert.equal(ok.status,0);const report=JSON.parse(ok.stdout);assert.equal(report.costComplete,true);assert.equal(report.provider,'synthetic-example-not-live');
 });
