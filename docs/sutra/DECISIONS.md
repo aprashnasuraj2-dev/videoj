@@ -198,3 +198,11 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Preserve the original 40-case split, 20 live runs, 10-person pilot target, two outside-builder target, reference/precision thresholds and client-performance targets as prospective acceptance criteria.
 - Every final measurement binds to an immutable candidate revision. Material target changes require a dated versioned decision before final measurement, preserving the prior target and reason.
 - Negative results and failures remain in denominators. Engineering-v1 development fixtures cannot be relabeled as held-out evaluation.
+
+## SUTRA-DECISION-0024 — Default to zero-model evidence, keep self-hosted optional and paid inference explicit
+
+- Observed 2026-11-24: the learner-first question path uses bounded lexical citation-only retrieval and safe abstention, not generative summaries or a factual-truth claim. A source/profile mismatch still stops inference.
+- Self-hosted inference is an explicit backend to the bounded Worker, routed only through a separately authenticated operator TLS gateway to a loopback-only local model; neither weights nor a live model/production service was supplied. The gateway has independent model/token, 2-concurrency, 30-second and streamed-byte limits.
+- Alternative rejected for the default: automatic public paid API and multi-gigabyte WebGPU weight download. Both introduce undefined funded spend, availability, hardware, bandwidth, privacy and browser compatibility constraints. Free external provider tiers are not a reliable competition service without independent quotas/terms. WebGPU remains a research option, not a shipped fallback.
+- Zero vendor-token bill is not zero compute, electricity or hosted infrastructure cost. The model-candidate matrix distinguishes artifact sizes from actual VRAM and source accuracy. Human-checked corpus, genuine GPU model/tool streams, measured costs, independent human testing and public HTTPS remain mandatory where applicable; no release gate is waived.
+- Evidence: [Session 0031](evidence/implementation/SESSION-0031.md), [inference alternatives](INFERENCE_ALTERNATIVES.md), [hardware trial matrix](MODEL_TRIAL_MATRIX.md).

@@ -46,4 +46,15 @@ Required items discovered after the original plan remain release blockers until 
 - [x] `SUTRA-X006-04` Fail closed on mixed or corrupted content at startup without mounting actionable controls or causing model/media requests; permit explicit revalidation by reload.
 - [x] `SUTRA-X006-05` Bound decoded source response bytes during streaming, not after allocation; cancel oversized or held-open body reads and prevent cross-origin or pre-cancelled fetches.
 - [x] `SUTRA-X006-06` Discard obsolete asynchronous guide-check and seek messages when comparison selection changes; parse hash-matched source HTML in a detached inert template.
-- [ ] `SUTRA-X006-07` Reconcile browser network instrumentation when explicit media playback succeeds but the reported media encoded-byte counter is zero. Require a deterministic media-specific measurement or mark that component unknown; do not infer zero post-click transfer from the inconsistent counter.
+- [x] `SUTRA-X006-07` Reconcile browser network instrumentation when explicit media playback succeeds but the reported media encoded-byte counter is zero. Require a deterministic media-specific measurement or mark that component unknown; do not infer zero post-click transfer from the inconsistent counter.
+
+## X007 — No-model local answers and explicit self-hosted inference
+
+- [x] `SUTRA-X007-01` Provide a zero-model natural-language question path that returns only catalog-matched local cue receipts, zero query-time API calls and explicit unsupported abstention.
+- [x] `SUTRA-X007-02` Snapshot primitive source and cue data for local retrieval; reject stale caller mutations and preserve Nepali Unicode combining marks.
+- [x] `SUTRA-X007-03` Evaluate 20 answerable, 10 unsupported and 10 adversarial/ambiguous authored synthetic local cases, retaining honest development-only status.
+- [x] `SUTRA-X007-04` Support explicitly enabled self_hosted or hosted Worker model backends but no implicit paid fallback; retain quota, catalog version and secret controls.
+- [x] `SUTRA-X007-05` Exercise the same bounded multi-agent source workflow on a simulated self-hosted OpenAI-compatible SSE tool stream, never leaking the gateway secret.
+- [x] `SUTRA-X007-06` Provide a separate operator-owned loopback gateway with model/token allowlist, request/stream/time/concurrency limits, cancellation and no automatic retries.
+- [x] `SUTRA-X007-07` Complete fresh-visitor citation-to-review-card save/reload/delete via zero-model route, and verify local lookup still works offline after content validation.
+- [!] `SUTRA-X007-08` Verify an authorized real open-weight model on owned hardware with correct tool-call stream, source accuracy, latency p50/p95, concurrency, costs and secure externally reachable operator TLS gateway. Simulated source and model tests never constitute real hardware acceptance.

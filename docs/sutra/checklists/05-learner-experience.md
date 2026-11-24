@@ -24,7 +24,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P041-05` Keep the source comparison and next human action discoverable
 - [x] `SUTRA-P041-06` Place technical execution details in an optional inspector
 - [-] `SUTRA-P041-07` Specify desktop, narrow screen and zoom behavior before styling
-- [ ] `SUTRA-P041-08` Walk through the complete question-to-card flow with a fresh viewer
+- [x] `SUTRA-P041-08` Walk through the complete question-to-card flow with a fresh viewer
 - [x] `SUTRA-P041-09` Produce and review the phase artifact: Responsive screen design and interaction map.
 - [ ] `SUTRA-P041-10` Close phase 041 only after its applicable tasks have evidence and its exit condition is observed: A first-time viewer sees the question, supporting cue and next action without opening a developer trace.
 

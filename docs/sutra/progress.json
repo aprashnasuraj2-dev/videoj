@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T05:46:15Z",
+  "updated_at": "2026-11-24T06:15:38Z",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "64d43320128786e6932a16bc708fb0383b101812",
-  "last_session_id": "SUTRA-SESSION-0030",
-  "stage": "source_snapshot_hardened_measurement_reconciliation",
+  "last_observed_code_sha": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+  "last_session_id": "SUTRA-SESSION-0031",
+  "stage": "local_first_inference_and_stabilization",
   "current_task": null,
-  "next_task": "SUTRA-X006-07",
+  "next_task": "SUTRA-P078-02",
   "ready_engineering_queue": [
-    "SUTRA-P078-02",
-    "SUTRA-P041-08",
+    "SUTRA-P078-05",
+    "SUTRA-P041-10",
     "SUTRA-P054-01",
     "SUTRA-P066-01",
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Reconcile media transfer instrumentation on current head: explicit video request and playback pass, but raw mediaEncodedBytes is zero. Preserve raw observations, do not claim zero post-click media bytes. Confirm remaining publisher starter workflow. Continue dependency-ready stabilization without closing funded provider, human, rights, public HTTPS or release gates.",
+  "next_action": "Continue independent P078 source/consent/default-inference stabilization with zero-model local-first path. Real-model quality/energy/token acceptance X007-08 is blocked on authorized hardware; do not deploy or count human/rights/factual truth gates as passed.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -10855,9 +10855,204 @@
           "observed_at": "2026-11-24T05:46:15Z"
         }
       ]
+    },
+    "SUTRA-X006-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:15:38Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45339004529/job/138257848583",
+          "description": "One completed 8,327-byte media HTTP response measured after explicit user click; browser CDP media-only encoded counter honestly null; zero MP4 requests before click.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0031.md",
+          "description": "Implementation and limits recorded at exact revision.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        }
+      ]
+    },
+    "SUTRA-P041-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:15:38Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45339004529/job/138257848583",
+          "description": "New clean browser completes no-model question to exact source review preview and explicit save, reload and delete, without touching developer controls.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0031.md",
+          "description": "Implementation and limits recorded at exact revision.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        }
+      ]
+    },
+    "SUTRA-X007-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:15:38Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45339004529/job/138257848583",
+          "description": "Source query and browser journey pass, with zero model and extra query-time network requests.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0031.md",
+          "description": "Implementation and limits recorded at exact revision.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        }
+      ]
+    },
+    "SUTRA-X007-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:15:38Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45339004529/job/138257848583",
+          "description": "Multilingual token and caller-mutation-after-registration tests pass with exact consistent receipts.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0031.md",
+          "description": "Implementation and limits recorded at exact revision.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        }
+      ]
+    },
+    "SUTRA-X007-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:15:38Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45339004529/job/138257848583",
+          "description": "40/40 authored development expected behaviors pass; no held-out human factual accuracy claim.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0031.md",
+          "description": "Implementation and limits recorded at exact revision.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        }
+      ]
+    },
+    "SUTRA-X007-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:15:38Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45339004529/job/138257848583",
+          "description": "Worker tests verify status, source mismatch, explicit config, invalid host/model refusal and disabled checked-in deployment candidates.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0031.md",
+          "description": "Implementation and limits recorded at exact revision.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        }
+      ]
+    },
+    "SUTRA-X007-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:15:38Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45339004529/job/138257848583",
+          "description": "Synthetic two-agent and three-model-call integration passes; real tool-call model remains untested.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0031.md",
+          "description": "Implementation and limits recorded at exact revision.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        }
+      ]
+    },
+    "SUTRA-X007-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:15:38Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45339004555/job/138257848723",
+          "description": "Seven independent gateway CI tests pass, including late upstream response and held-open client cancellation.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0031.md",
+          "description": "Implementation and limits recorded at exact revision.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        }
+      ]
+    },
+    "SUTRA-X007-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T06:15:38Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45339004529/job/138257848583",
+          "description": "Fresh Chromium first-viewer and offline loaded-catalog journeys pass without API/model/media requests.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0031.md",
+          "description": "Implementation and limits recorded at exact revision.",
+          "result": "pass",
+          "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+          "observed_at": "2026-11-24T06:15:38Z"
+        }
+      ]
+    },
+    "SUTRA-X007-08": {
+      "state": "blocked",
+      "blocker_id": "SUTRA-LOCAL-HARDWARE",
+      "next_action": "Use actual approved model/hardware for source-accuracy and cost profiling; do not simulate acceptance."
     }
   },
-  "blockers": [],
+  "blockers": [
+    {
+      "id": "SUTRA-LOCAL-HARDWARE",
+      "reason": "No operator-authorized machine, pinned licensed weights, genuinely reachable secure gateway or hardware/energy budget is available to run live open-weight inference.",
+      "unblock_condition": "Participant provides/approves real operator hardware, exact licensed model, engine and private authenticated TLS route, plus a resource/cost budget.",
+      "independent_work": "Improve zero-model evidence path, source-consent hardening, synthetic tool-call contract and local/CI resilience without model contact.",
+      "task_ids": [
+        "SUTRA-X007-08"
+      ]
+    }
+  ],
   "pending_inputs": [
     {
       "id": "INPUT-ELIGIBILITY",
@@ -10882,6 +11077,12 @@
       "owner": "participant",
       "scope": "consenting testers and physical-device availability when phases are ready",
       "independent_work": "Prepare reproducible tasks and label unavailable conditions untested."
+    },
+    {
+      "id": "INPUT-LOCAL-HARDWARE",
+      "owner": "participant",
+      "scope": "actual available operator model GPU/CPU, approved quantization/license, secure TLS and energy/hosting budget",
+      "independent_work": "Continue local source-only correctness, gateway tests, browser and synthetic evaluation without external connections."
     }
   ],
   "release": {

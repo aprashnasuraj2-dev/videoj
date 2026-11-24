@@ -1,5 +1,10 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0031 — 2026-11-24
+
+- **608/1,000 original checks verified; 637/1,030 total; 45/100 fully verified phases; six omissions; one hardware-dependent blocker.** X006-07 and P041-08 verified. Seven X007 engineering checks verified; X007-08 blocked on real model/hardware rather than falsely satisfied by simulated output.
+- Added zero-model local query, Nepali Unicode and immutable snapshot tests, 40 synthetic lexical cases, selfhost backend/gateway, CI, early timeout rejection, and first-viewer/offline source-citation experience. Reconciled three earlier test regressions with passing current CI. Full current source `450746ff4b1bf9ba9b1eb30a115ede1f0e042968` passed 19/19 workflows. [Evidence](evidence/implementation/SESSION-0031.md).
+
 ## SUTRA-SESSION-0030 — 2026-11-24
 
 - Reconciled Session 0029 checkpoint (18/18 workflows passed). Hardened mounted source/graph approval, per-request catalog precondition, canonical artifact paths, startup recovery, bounded streaming reads, and obsolete comparison completion handling.

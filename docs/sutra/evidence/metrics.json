@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "recordedAt": "2026-11-24T05:46:15Z",
+  "recordedAt": "2026-11-24T06:15:38Z",
   "metrics": [
     {
       "id": "engineering_baseline",
-      "sourceRevision": "64d43320128786e6932a16bc708fb0383b101812",
+      "sourceRevision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
       "invalidatedBy": [
         "grounding-evaluation"
       ],
@@ -14,8 +14,8 @@
         "retrievalPassed": 20,
         "adversarialCases": 10,
         "adversarialPassed": 10,
-        "directMedianMs": 0.035266000000007125,
-        "delegatedMedianMs": 3.8981064999999973,
+        "directMedianMs": 0.020621499999997184,
+        "delegatedMedianMs": 2.0099479999999943,
         "directModelCalls": 0,
         "delegatedModelCalls": 90,
         "medianDelegatedModelCalls": 4.5,
@@ -27,7 +27,7 @@
     },
     {
       "id": "desktop_browser_matrix",
-      "sourceRevision": "64d43320128786e6932a16bc708fb0383b101812",
+      "sourceRevision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
       "invalidatedBy": [
         "browser-matrix"
       ],
@@ -43,7 +43,7 @@
     },
     {
       "id": "hero_journey",
-      "sourceRevision": "64d43320128786e6932a16bc708fb0383b101812",
+      "sourceRevision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
       "invalidatedBy": [
         "critical-journey"
       ],
@@ -58,26 +58,32 @@
         "narrowKeyboardJourney": true,
         "obsoleteGuideResultDiscarded": true,
         "mixedContentRecovery": true,
-        "providerSnapshotDriftRejected": true
+        "providerSnapshotDriftRejected": true,
+        "freshViewerLocalQuestionToSavedCard": true,
+        "offlineSourceLookupNoNewRequests": true,
+        "sourceOnlyModelCalls": 0
       }
     },
     {
       "id": "lab_performance",
-      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+      "sourceRevision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
       "invalidatedBy": [
         "performance-profile"
       ],
       "profile": "Chromium headless 151.0.7922.34, viewport 1280x800, 1 Mbps down/up, 150 ms laboratory shaping",
       "values": {
-        "shellGzipBytes": 418268,
-        "transcriptUsableMs": 1911,
-        "encodedBytesAtTranscript": 192406,
+        "shellGzipBytes": 457231,
+        "transcriptUsableMs": 2851,
+        "encodedBytesAtTranscript": 215597,
         "mediaRequestsBeforeExplicitLoad": 0,
-        "videoReadyAfterClickMs": 3470,
-        "encodedBytesAfterVideo": 573860,
-        "incrementalEncodedBytesAfterVideo": 381454,
-        "mediaEncodedBytes": 8502,
-        "nativeSeekFeedbackMs": 61
+        "videoReadyAfterClickMs": 3493,
+        "encodedBytesAfterVideo": 590184,
+        "incrementalEncodedBytesAfterVideo": 374587,
+        "mediaEncodedBytes": null,
+        "nativeSeekFeedbackMs": 65,
+        "mediaEncodedBytesObserved": false,
+        "sourceMediaResponseBytes": 8327,
+        "sourceMediaResponseCount": 1
       }
     },
     {
@@ -121,7 +127,7 @@
     },
     {
       "id": "security_boundary",
-      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+      "sourceRevision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
       "invalidatedBy": [
         "security-boundary"
       ],
@@ -133,7 +139,50 @@
         "consentDenialZeroContact": true,
         "callerOwnedModelPolicy": true,
         "credentialCanaryLeakObserved": false,
-        "externalPublicProduction": "untested"
+        "externalPublicProduction": "untested",
+        "selfHostedSevenGatewayTestsPassed": true,
+        "implicitPaidFallbackDisabled": true,
+        "checkedInInferenceDisabled": true,
+        "liveHardware": "untested"
+      }
+    },
+    {
+      "id": "local_zero_model_dev",
+      "sourceRevision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+      "invalidatedBy": [
+        "grounding-evaluation",
+        "critical-journey"
+      ],
+      "profile": "40 authored synthetic lexical development cases; no human semantic review or provider calls",
+      "values": {
+        "answerable": 20,
+        "matched": 20,
+        "unsupported": 10,
+        "abstained": 10,
+        "adversarialAmbiguous": 10,
+        "handled": 10,
+        "modelCalls": 0,
+        "queryTimeNetworkRequests": 0,
+        "semanticPrecision": null,
+        "realCorpus": false
+      }
+    },
+    {
+      "id": "selfhost_gateway_contract",
+      "sourceRevision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
+      "invalidatedBy": [
+        "local-inference-gateway",
+        "security-boundary",
+        "provider-cost"
+      ],
+      "profile": "seven loopback gateway contract tests and mocked Worker multi-agent SSE; live compute untested",
+      "values": {
+        "gatewayTests": 7,
+        "loopbackOnly": true,
+        "maxConcurrent": 2,
+        "realModelCompatibility": null,
+        "realHardwareCost": null,
+        "serverKeyToBrowser": false
       }
     }
   ]

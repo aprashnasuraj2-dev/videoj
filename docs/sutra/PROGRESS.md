@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0031 — 2026-11-24
+
+**608/1,000 original checks verified; 637/1,030 total; 45/100 fully verified phases; six omissions; one hardware-dependent blocker.** Exact `450746ff4b1bf9ba9b1eb30a115ede1f0e042968` passed all **19 workflows**, 312 automated learner tests plus seven standalone gateway tests, 10 Chromium integration profiles and the Chromium/Firefox/WebKit headless matrix. Source-only local answer, verified positive media bytes, explicit self-hosted alternative, fresh viewer and offline citation are implemented. Live hardware, original lesson rights, human evidence truth and release remain unverified. [Evidence](evidence/implementation/SESSION-0031.md).
+
+---
+
 ## Session 0030 — 2026-11-24
 
 **607/1,000 original checks verified; 628/1,022 total; 45/100 fully verified phases; six omissions.** Six newly discovered source-integrity checks are verified; one media transfer instrumentation discrepancy is open. The latest product revision `64d43320128786e6932a16bc708fb0383b101812` passed 297 automated tests, ten Chromium integration profiles, and the three-engine browser matrix. At observation, 17/18 workflows passed and publisher starter was still running. No original phase or external gate was credited. [Evidence](evidence/implementation/SESSION-0030.md).

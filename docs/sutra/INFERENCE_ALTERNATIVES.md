@@ -45,3 +45,7 @@ The optional provider path remains same-origin to the browser. If the operator e
 - Transformers.js WebGPU device caveats: https://huggingface.co/docs/transformers.js/en/guides/webgpu
 
 All cited upstream capabilities are vendor documentation, not measurements of SUTRA hardware or model correctness.
+
+### Implementation reconciliation, 2026-11-24
+
+The no-model learner question route is first in the user journey, builds its bounded index only on first use, supports Nepali combining marks and creates exact local source receipts. The [model trial matrix](MODEL_TRIAL_MATRIX.md) scopes real Qwen open-weight comparisons without implying VRAM, tool accuracy or cost measurements. The separate loopback-only gateway passed seven contract tests, but real hardware, TLS deployment and meaningful model benchmark remain blocked.
