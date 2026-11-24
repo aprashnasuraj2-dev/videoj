@@ -46,6 +46,14 @@ test('bounded exporter truncates large public events and never copies arbitrary 
  assert.ok(out.events[0].network.length<=100);
  assert.ok(out.consent[0].purpose.length<=160);
 });
+test('partial and unknown outcomes remain distinct from completed or failed',()=>{
+ const partial=createSafeTraceReceipt({outcome:'partial',events:[{kind:'tool',status:'failed'}],contactEvents:[]});
+ const unknown=createSafeTraceReceipt({outcome:'unknown',events:[],contactEvents:[]});
+ assert.equal(partial.outcome,'partial');
+ assert.equal(unknown.outcome,'unknown');
+ assert.notEqual(partial.outcome,'completed');assert.notEqual(partial.outcome,'failed');
+ assert.notEqual(unknown.outcome,'completed');assert.notEqual(unknown.outcome,'failed');
+});
 test('refuses unsupported report modes, outcomes or non-array inputs',()=>{
  assert.throws(()=>createSafeTraceReceipt({mode:'secret-provider'}));
  assert.throws(()=>createSafeTraceReceipt({outcome:'unproven-success'}));
