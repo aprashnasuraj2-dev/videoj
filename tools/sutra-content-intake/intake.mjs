@@ -32,7 +32,7 @@ export function assessContentManifest(manifest,{observedFiles}={}){
  if(review.status==='reviewed'&&(typeof review.reviewedAt!=='string'||!/^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:\d{2})$/.test(review.reviewedAt)||!Number.isFinite(Date.parse(review.reviewedAt))||review.statement!==reviewStatement))throw Error('Reviewed declaration is incomplete.');
  const bytesMatch=Object.values(assets).every(a=>a.hashMatches),rightsDeclared=Object.values(rights).every(r=>r.publicDistributionDeclared===true),reviewDeclared=review.status==='reviewed';
  return freeze({schema:1,contentVersion:manifest.contentVersion,lesson:{...manifest.lesson},assets,rights,review:{...review},
-  bytesMatch,rightsDeclared,reviewDeclared,releaseEvidenceComplete:bytesMatch&&rightsDeclared&&reviewDeclared,
+  bytesMatch,rightsDeclared,reviewDeclared,structuralIntakeComplete:bytesMatch&&rightsDeclared&&reviewDeclared,
   limitation:'Byte hashes are verified against supplied file observations. Rights basis/public-distribution declarations and reviewer competence/truthfulness are human evidence and are not proven by this tool.'});
 }
 

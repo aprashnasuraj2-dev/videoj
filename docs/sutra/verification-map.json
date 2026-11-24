@@ -218,6 +218,17 @@
       ],
       "invalidates": [],
       "reason": "Changes to the physical-device record protocol must pass its completeness/core-flow tests; no physical-device metric exists until a human attests a real device observation."
+    },
+    {
+      "id": "content-intake-readiness",
+      "prefixes": [
+        "tools/sutra-content-intake/"
+      ],
+      "requiredWorkflows": [
+        "Validate SUTRA real-content intake gate"
+      ],
+      "invalidates": [],
+      "reason": "Changes to real-content intake validation must pass byte/path/declaration tests; no rights or factual-review metric exists until real assets and human evidence are supplied."
     }
   ]
 }

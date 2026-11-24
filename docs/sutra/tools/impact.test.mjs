@@ -76,3 +76,8 @@ test('physical-device readiness tooling is mapped without turning emulation into
  const r=classifyChangedFiles(['tools/sutra-device-check/device.mjs'],map);
  assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('physical-device-readiness'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA physical-device evidence gate'));assert.deepEqual(r.invalidatedMetrics,[]);
 });
+
+test('real-content intake tooling is mapped without converting rights declarations into verified rights',()=>{
+ const r=classifyChangedFiles(['tools/sutra-content-intake/intake.mjs'],map);
+ assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('content-intake-readiness'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA real-content intake gate'));assert.deepEqual(r.invalidatedMetrics,[]);
+});

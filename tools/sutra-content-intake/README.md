@@ -10,7 +10,7 @@ A structurally complete result requires:
 - an opaque rights evidence reference and explicit public-distribution declaration for each asset;
 - a reviewed status with the fixed factual-review statement and timezone-bearing review time.
 
-**Important:** `releaseEvidenceComplete:true` means these fields and byte identities are structurally complete. It does not prove the rights documents are authentic, the declaration is legally sufficient, or the reviewer is competent/truthful. Those remain participant/human evidence gates.
+**Important:** `structuralIntakeComplete:true` means these fields and byte identities are structurally complete. It does not prove the rights documents are authentic, the declaration is legally sufficient, or the reviewer is competent/truthful. Those remain participant/human evidence gates.
 
 Do not put contracts, reviewer names, email addresses or other private rights documents in the public manifest. Use an opaque private-record reference.
 
