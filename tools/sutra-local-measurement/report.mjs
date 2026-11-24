@@ -18,11 +18,11 @@ export function buildSelfHostedResourceReport(input){
  if(!exact(hardware,['gpuModel','vramGiB','systemRamGiB'])||typeof hardware.gpuModel!=='string'||hardware.gpuModel.trim().length<2||hardware.gpuModel.length>160||!finite(hardware.vramGiB,.1,1024)||!finite(hardware.systemRamGiB,.1,4096))throw Error('Invalid hardware evidence.');
  const cost=input.costBasis;
  if(!exact(cost,['electricityUsdPerKwh','hardwareAmortizationUsdPerHour','energyMeasurement','effectiveAt','source'])||!finite(cost.electricityUsdPerKwh,0,100)||!finite(cost.hardwareAmortizationUsdPerHour,0,10000)||!['wall_meter_total','wall_meter_incremental'].includes(cost.energyMeasurement)||!ISO.test(cost.effectiveAt)||!Number.isFinite(Date.parse(cost.effectiveAt))||typeof cost.source!=='string'||cost.source.trim().length<4||cost.source.length>500)throw Error('Invalid self-hosted cost basis.');
- const batchIds=new Set(),requestIds=new Set(),runs=[],latencies=[],completedLatencies=[],byConcurrency=new Map();
+ const batchIds=new Set(),requestIds=new Set(),runs=[],latencies=[],completedLatencies=[],byConcurrency=new Map(),windows=[];
  let attempts=0,completed=0,failed=0,cancelled=0,modelCalls=0,retries=0,promptTokens=0,completionTokens=0,unknownUsage=0,totalEnergyWh=0,totalWallMs=0;
  for(const raw of input.batches){
   if(!exact(raw,['id','observedAt','concurrency','durationMs','energyWh','requests'])||typeof raw.id!=='string'||!ID.test(raw.id)||batchIds.has(raw.id)||!ISO.test(raw.observedAt)||!Number.isFinite(Date.parse(raw.observedAt))||!integer(raw.concurrency,1,16)||!finite(raw.durationMs,1,3_600_000)||!finite(raw.energyWh,0,100_000)||!Array.isArray(raw.requests)||raw.requests.length!==raw.concurrency)throw Error('Invalid self-hosted batch.');
-  batchIds.add(raw.id);totalEnergyWh+=raw.energyWh;totalWallMs+=raw.durationMs;
+  batchIds.add(raw.id);const startMs=Date.parse(raw.observedAt),endMs=startMs+raw.durationMs;windows.push({id:raw.id,startMs,endMs});totalEnergyWh+=raw.energyWh;totalWallMs+=raw.durationMs;
   const row={id:raw.id,observedAt:raw.observedAt,concurrency:raw.concurrency,durationMs:raw.durationMs,energyWh:raw.energyWh,attempts:raw.requests.length,completed:0,failed:0,cancelled:0};
   const group=byConcurrency.get(raw.concurrency)??{concurrency:raw.concurrency,latencies:[],completed:0,failed:0,cancelled:0,batches:0};group.batches++;
   for(const req of raw.requests){
@@ -35,6 +35,7 @@ export function buildSelfHostedResourceReport(input){
   }
   byConcurrency.set(raw.concurrency,group);runs.push(row);
  }
+ windows.sort((a,b)=>a.startMs-b.startMs||a.endMs-b.endMs);for(let i=1;i<windows.length;i++)if(windows[i].startMs<windows[i-1].endMs)throw Error('Overlapping self-hosted measurement windows would double-count time or energy.');
  const energyCostUsd=totalEnergyWh/1000*cost.electricityUsdPerKwh;
  const hardwareTimeCostUsd=totalWallMs/3_600_000*cost.hardwareAmortizationUsdPerHour;
  const operationalCostUsd=energyCostUsd+hardwareTimeCostUsd;

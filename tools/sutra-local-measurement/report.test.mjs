@@ -12,3 +12,12 @@ test('duplicate ids, impossible concurrency, negative energy and malformed hardw
 test('failed and cancelled attempts remain in denominators and concurrency groups',()=>{const x=base();x.batches.push({id:'b3',observedAt:'2026-11-24T00:03:00Z',concurrency:1,durationMs:1200,energyWh:5,requests:[{id:'r4',outcome:'cancelled',latencyMs:1100,modelCalls:1,retryCount:0,usage:null}]});const r=buildSelfHostedResourceReport(x);assert.equal(r.observed.attempts,4);assert.equal(r.observed.cancelled,1);assert.equal(r.usageComplete,false);assert.equal(r.concurrency.find(g=>g.concurrency===1).attempts,2);});
 
 test('observed retries remain measurable but are explicitly noncompliant with SUTRA no-auto-retry policy',()=>{const x=base();x.batches[0].requests[0].modelCalls=3;x.batches[0].requests[0].retryCount=1;const r=buildSelfHostedResourceReport(x);assert.equal(r.observed.retries,1);assert.equal(r.noAutomaticRetries,false);});
+
+test('measurement windows cannot overlap because hardware time and wall energy would be double-counted',()=>{
+ const x=base();x.batches[1].observedAt='2026-11-24T00:01:01Z';
+ assert.throws(()=>buildSelfHostedResourceReport(x),/Overlapping self-hosted measurement windows/);
+});
+test('adjacent non-overlapping windows are allowed and observedAt is the window start',()=>{
+ const x=base();x.batches[1].observedAt='2026-11-24T00:01:02Z';
+ const r=buildSelfHostedResourceReport(x);assert.equal(r.observed.batches,2);assert.equal(r.observed.totalWallMs,5000);
+});
