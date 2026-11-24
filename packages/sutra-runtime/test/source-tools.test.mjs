@@ -33,3 +33,17 @@ test('composition timeout while a source call is held does not become a source e
  assert.equal(observed,1);assert.equal(receipts,0);
  deliver(late);await new Promise(r=>setTimeout(r,0));assert.equal(receipts,0,'late valid response cannot enter stopped composition');assert.equal(observed,1);
 });
+
+test('runtime source options refuse executable metadata before any model or source contact',async()=>{
+ let touched=0,models=0,contacts=0;
+ const opts={...sourceTools,fetchImpl:()=>{contacts++;}};
+ Object.defineProperty(opts,'origin',{enumerable:true,get(){touched++;return 'https://sutra.test';}});
+ await assert.rejects(runNetwork({definition:graph,request:'find timing',model:{mode:'scripted-test',chat(){models++;}},sourceTools:opts}),e=>e.code==='SOURCE_CONFIG');
+ assert.equal(touched,0);assert.equal(models,0);assert.equal(contacts,0);
+});
+test('source host origin and transport are pinned across runtime observer mutations',async()=>{
+ const seen=[],config={...sourceTools,fetchImpl:async(url,opts)=>{seen.push(url);return transport(url,opts);}};
+ let substituted=0;
+ const result=await runNetwork({definition:graph,request:'find timing',model:createSourceScriptedModel(),sourceTools:config,onEvent(){config.origin='https://other.test';config.fetchImpl=()=>{substituted++;throw Error('wrong destination');};}});
+ assert.match(result.text,/Synthetic timing marker/);assert.equal(substituted,0);assert.ok(seen.length>=4);assert.ok(seen.every(url=>url==='https://sutra.test/api/source-tools'));
+});

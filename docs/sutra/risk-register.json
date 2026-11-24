@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T20:10:40+05:45",
+  "updatedAt": "2026-11-24T20:47:00+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -1249,8 +1249,8 @@
     {
       "id": "R-056",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Peer protocol envelope bypasses structured return policy",
       "mechanism": "Upstream parser preserves arbitrary model-controlled protocol/presentation/proposal metadata; host spreads peer result into parent tool content.",
       "userEffect": "Structured metadata can bypass the independently approved return-field allowlist.",
@@ -1263,15 +1263,19 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
           "sourceRevision": "b9c89b6543c1c99786d86486020d728ac8a7ecda"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "7fcb6a67e3f17025d2d832f664b5830750e251b0"
         }
       ],
-      "unblockCondition": "Exact hostile-envelope canary, directional grant and full normal runtime/browser checks pass."
+      "unblockCondition": null
     },
     {
       "id": "R-057",
       "severity": "medium",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Contact configuration executes metadata before admission",
       "mechanism": "Peer/MCP options use direct property access, spread, URL coercion and Math.min default timeout before strict validation.",
       "userEffect": "Unexpected side effects or silently normalized destination before authorized contact.",
@@ -1284,9 +1288,55 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
           "sourceRevision": "7fcb6a67e3f17025d2d832f664b5830750e251b0"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "ec283a1efea23ef482e9d0f39ae382f2bb771f4f"
         }
       ],
-      "unblockCondition": "Exact zero-side-effect hostile option tests and positive transport/runtime/browser checks pass."
+      "unblockCondition": null
+    },
+    {
+      "id": "R-058",
+      "severity": "medium",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Source contact configuration executes or drifts before admission",
+      "mechanism": "Direct destructuring and source object reuse; explicit dynamic tool catalog not refused.",
+      "userEffect": "Inconsistent source authority or unexpected side effects.",
+      "affectedTasks": [
+        "SUTRA-X010-35",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Own-data source config snapshot, static explicit capability declaration, pin selected origin/transport.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "ec283a1efea23ef482e9d0f39ae382f2bb771f4f"
+        }
+      ],
+      "unblockCondition": "Exact adversarial and ordinary runtime/learner/browser regression evidence passes."
+    },
+    {
+      "id": "R-059",
+      "severity": "medium",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Server timestamp misrepresented as local receipt observation",
+      "mechanism": "Server controls retrievedAt even after exact catalog match.",
+      "userEffect": "A future or historical timestamp may appear to be the caller's retrieval observation.",
+      "affectedTasks": [
+        "SUTRA-X010-36",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Stamp validated response with caller clock; retain unverified truth label.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "ec283a1efea23ef482e9d0f39ae382f2bb771f4f"
+        }
+      ],
+      "unblockCondition": "Exact adversarial and ordinary runtime/learner/browser regression evidence passes."
     }
   ]
 }

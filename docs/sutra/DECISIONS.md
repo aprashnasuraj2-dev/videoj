@@ -321,3 +321,7 @@ X010-26 verified 19/19 at 76d13792d57fdfd321074a026747c72a306337b1; X010-27 exac
 ## SUTRA-DECISION-0041 — Contact configuration admission
 
 2026-11-24T20:10:40+05:45: X010-34. Peer and MCP contact configuration must be shallow own data records, not executable metadata; callback identities remain host-owned references. Validate standalone peer primitive destination and timeout before coercion, pinning or contact. Reject URL control/space normalization. This is not isolation of arbitrary trusted callback internals or proxies. Pending exact CI. X010-32 and P023-05 verified together against the built runtime interface; P023-03/09/10 remain pending.
+
+## SUTRA-DECISION-0042 — Source admission and observation ownership
+
+2026-11-24T20:47:00+05:45: X010-35/36. Pin source metadata like peer contact metadata. Explicit capability declarations must describe a static catalog; retain narrow legacy fixture compatibility when the declaration is absent. Server-provided timestamp is shape-checked but the caller records its own observation at successful admission. No trusted clock or semantic truth claim. Pending exact CI.

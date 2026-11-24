@@ -145,3 +145,42 @@ test('source MCP refuses paginated or malformed discovery instead of certifying 
   assert.deepEqual(methods,['initialize','notifications/initialized','tools/list']);
  }
 });
+
+test('source admission rejects getters, hidden fields, coercible origins and invalid callbacks without execution',()=>{
+ let touched=0,contacts=0;
+ const base={origin:'https://sutra.test',sources:catalog,fetchImpl:()=>{contacts++;}};
+ for(const key of ['origin','sources','fetchImpl','onReceipt','maxReceipts']){
+  const bad={...base};Object.defineProperty(bad,key,{enumerable:true,get(){touched++;return base[key];}});
+  assert.throws(()=>createSourceMcp(bad),e=>e.code==='SOURCE_CONFIG');
+ }
+ const hidden={...base};Object.defineProperty(hidden,'extra',{value:true});
+ for(const bad of [hidden,{...base,origin:{toString(){touched++;return base.origin;}}},{...base,origin:'https://sutra.te\tst'},{...base,onReceipt:true},{...base,fetchImpl:0}])assert.throws(()=>createSourceMcp(bad),e=>e.code==='SOURCE_CONFIG');
+ assert.equal(touched,0);assert.equal(contacts,0);
+});
+test('explicit source capability declaration must be a static tool catalog',async()=>{
+ for(const cap of [null,[],{}, {tools:null},{tools:[]},{tools:{listChanged:true}},{tools:{listChanged:'false'}}]){
+  const methods=[];
+  const c=createSourceMcp({origin:'https://sutra.test',sources:catalog,fetchImpl:async(_url,opts)=>{
+   const rpc=JSON.parse(opts.body);methods.push(rpc.method);
+   return Response.json({jsonrpc:'2.0',id:rpc.id,result:{protocolVersion:'2025-06-18',capabilities:cap}});
+  }});
+  await assert.rejects(c.callTool('search_lesson',{query:'timing'}),e=>e.code==='SOURCE_CAPABILITY');
+  assert.deepEqual(methods,['initialize']);
+ }
+ const methods=[];
+ const c=createSourceMcp({origin:'https://sutra.test',sources:catalog,fetchImpl:async(_url,opts)=>{
+  const rpc=JSON.parse(opts.body);methods.push(rpc.method);
+  if(rpc.method==='notifications/initialized')return new Response(null,{status:202});
+  const result=rpc.method==='initialize'?{protocolVersion:'2025-06-18',capabilities:{tools:{listChanged:false}}}:{tools:tools.list()};
+  return Response.json({jsonrpc:'2.0',id:rpc.id,result});
+ }});
+ assert.equal((await c.listTools()).length,2);assert.deepEqual(methods,['initialize','notifications/initialized','tools/list']);
+});
+test('server retrieval time cannot impersonate caller observation time',async()=>{
+ const seen=[],before=Date.now(),serverTime='2099-01-01T00:00:00.000Z';
+ const c=client(o=>{o.receipts[0].retrievedAt=serverTime;},seen);
+ const result=JSON.parse(await c.callTool('search_lesson',{query:'timing'}));
+ assert.equal(seen.length,1);assert.deepEqual(result.receipts,seen);
+ const observed=Date.parse(seen[0].retrievedAt);assert.ok(observed>=before&&observed<=Date.now());assert.notEqual(seen[0].retrievedAt,serverTime);
+ assert.equal(seen[0].excerpt,fixture.receipt.excerpt);
+});

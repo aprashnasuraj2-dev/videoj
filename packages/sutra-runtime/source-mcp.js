@@ -1,11 +1,20 @@
 import {createSourceTools} from '../sutra-source-tools/index.js';
 import {validateReceipt,snapshotDataRecord} from '../sutra-evidence/index.js';
 import {validateData} from './vendor/nsdeploy/actions.js';
+import {snapshotContactConfig} from './external-mcp.js';
 import {readBoundedResponse,BoundedResponseError,parseJsonRpcResult,isFullJson} from './bounded-response.js';
 export class SourceMcpError extends Error{constructor(code){super('Bounded source capability stopped ('+code+').');this.name='SourceMcpError';this.code=code;}}
 const bad=code=>{throw new SourceMcpError(code??'SOURCE_CAPABILITY');};
-export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt,maxReceipts=20}={}){
- const base=new URL(origin);if(base.origin!==origin||base.protocol!=='https:'&&!(base.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(base.hostname))||!Number.isInteger(maxReceipts)||maxReceipts<1||maxReceipts>20)bad('SOURCE_CONFIG');
+export function admitSourceConfig(input){
+ let config;try{config=snapshotContactConfig(input,['origin','sources','fetchImpl','signal','onReceipt','maxReceipts'],'SOURCE_CONFIG');}catch{bad('SOURCE_CONFIG');}
+ const {origin,sources,fetchImpl=fetch,signal,onReceipt,maxReceipts=20}=config;
+ if(typeof origin!=='string'||!origin||origin.length>2048||/[\u0000-\u0020\u007f]/.test(origin)||typeof fetchImpl!=='function'||onReceipt!==undefined&&typeof onReceipt!=='function'||!Number.isInteger(maxReceipts)||maxReceipts<1||maxReceipts>20)bad('SOURCE_CONFIG');
+ let base;try{base=new URL(origin);}catch{bad('SOURCE_CONFIG');}
+ if(base.origin!==origin||base.protocol!=='https:'&&!(base.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(base.hostname)))bad('SOURCE_CONFIG');
+ return Object.freeze({origin,sources,fetchImpl,signal,onReceipt,maxReceipts});
+}
+export function createSourceMcp(input={}){
+ const {origin,sources,fetchImpl,signal,onReceipt,maxReceipts}=admitSourceConfig(input);
  const local=createSourceTools(sources),definitions=local.list(),seenReceiptKeys=new Set();let sequence=0,initialized=false,initialization=null,calls=0;
  const checkCancelled=()=>{if(signal?.aborted)bad('SOURCE_CANCELLED');};
  async function rpc(method,params,notification=false){
@@ -39,7 +48,12 @@ export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt
   checkCancelled();if(initialized)return;
   if(!initialization)initialization=(async()=>{
    const result=await rpc('initialize',{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'sutra-bounded-host',version:'0.1.0'}});
-   if(result.protocolVersion!=='2025-06-18')bad();await rpc('notifications/initialized',{},true);checkCancelled();initialized=true;
+   // An explicitly declared tool catalog must be static. Older narrow
+   // source fixtures omit capabilities; independent catalog checks still
+   // protect their results. No dynamic discovery or server callbacks.
+   const cap=result.capabilities,toolCap=cap?.tools;
+   if(result.protocolVersion!=='2025-06-18'||cap!==undefined&&(!cap||typeof cap!=='object'||Array.isArray(cap)||!toolCap||typeof toolCap!=='object'||Array.isArray(toolCap)||Object.hasOwn(toolCap,'listChanged')&&toolCap.listChanged!==false))bad();
+   await rpc('notifications/initialized',{},true);checkCancelled();initialized=true;
   })();
   const pending=initialization;try{await pending;checkCancelled();}finally{if(initialization===pending)initialization=null;}
  }
@@ -59,13 +73,17 @@ export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt
     // caller-owned catalog after asynchronous transport.
     if(validateReceipt(receipt).level!=='shape_only'||Object.keys(expected.receipts[index]).some(key=>key!=='retrievedAt'&&expected.receipts[index][key]!==receipt[key]))bad();
    }
-   const nextKeys=output.receipts.map(receipt=>receipt.sourceId+'\u0000'+receipt.cueId),prospective=new Set(seenReceiptKeys);
+   // The server timestamp is shape-checked above, but is not the caller's
+   // observation. Stamp the verified response at local receipt admission.
+   const observedAt=new Date().toISOString();
+   const receipts=output.receipts.map(receipt=>({...receipt,retrievedAt:observedAt}));
+   const nextKeys=receipts.map(receipt=>receipt.sourceId+'\u0000'+receipt.cueId),prospective=new Set(seenReceiptKeys);
    for(const key of nextKeys)prospective.add(key);
    if(prospective.size>maxReceipts)bad('SOURCE_EVIDENCE_LIMIT');
    checkCancelled();for(const key of nextKeys)seenReceiptKeys.add(key);
-   for(const receipt of output.receipts){checkCancelled();try{onReceipt?.(structuredClone(receipt));}catch{/* Observer does not control source capability. */}}
+   for(const receipt of receipts){checkCancelled();try{onReceipt?.(structuredClone(receipt));}catch{/* Observer does not control source capability. */}}
    checkCancelled();
-   const safe={version:1,receipts:output.receipts,truthStatus:'unverified',...(name==='search_lesson'?{returnedCount:output.returnedCount,matchCount:output.matchCount,truncated:output.truncated,filters:output.filters}:{})};
+   const safe={version:1,receipts,truthStatus:'unverified',...(name==='search_lesson'?{returnedCount:output.returnedCount,matchCount:output.matchCount,truncated:output.truncated,filters:output.filters}:{})};
    return JSON.stringify(safe);
   },
  };

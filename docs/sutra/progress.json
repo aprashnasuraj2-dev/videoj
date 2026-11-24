@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T20:10:40+05:45",
+  "updated_at": "2026-11-24T20:47:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "b9c89b6543c1c99786d86486020d728ac8a7ecda",
-  "last_session_id": "SUTRA-SESSION-0044",
+  "last_observed_code_sha": "ec283a1efea23ef482e9d0f39ae382f2bb771f4f",
+  "last_session_id": "SUTRA-SESSION-0045",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
-  "next_task": "SUTRA-X010-33",
+  "next_task": "SUTRA-X010-35",
   "ready_engineering_queue": [
     "SUTRA-P041-10",
     "SUTRA-P078-07",
@@ -16,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Observe exact X010-33/34 full CI, then continue dependency-ready P078-02 engineering; no deployment or paid inference.",
+  "next_action": "Observe exact X010-35/36 CI; continue source, consent and inference integrity engineering under P078-02. Keep real-content, live-model, human and release gates pending.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -12541,6 +12541,46 @@
           "observed_at": "2026-11-24T20:10:40+05:45"
         }
       ]
+    },
+    "SUTRA-X010-33": {
+      "state": "verified",
+      "verified_at": "2026-11-24T20:47:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45413753998",
+          "description": "Exact learner and all 19 workflows passed for this candidate, including adversarial regressions.",
+          "result": "pass",
+          "source_revision": "7fcb6a67e3f17025d2d832f664b5830750e251b0",
+          "observed_at": "2026-11-24T20:47:00+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "description": "CI reconciliation and scoped engineering evidence.",
+          "result": "pass",
+          "source_revision": "7fcb6a67e3f17025d2d832f664b5830750e251b0",
+          "observed_at": "2026-11-24T20:47:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-34": {
+      "state": "verified",
+      "verified_at": "2026-11-24T20:47:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45414159794",
+          "description": "Exact learner and all 19 workflows passed for this candidate, including adversarial regressions.",
+          "result": "pass",
+          "source_revision": "ec283a1efea23ef482e9d0f39ae382f2bb771f4f",
+          "observed_at": "2026-11-24T20:47:00+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "description": "CI reconciliation and scoped engineering evidence.",
+          "result": "pass",
+          "source_revision": "ec283a1efea23ef482e9d0f39ae382f2bb771f4f",
+          "observed_at": "2026-11-24T20:47:00+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -12642,6 +12682,7 @@
     "X010-28/29 pending full exact CI; runtime unit step passed. Added X010-30 early composition failure candidate; no credit until exact CI.",
     "X010-28/29 verified 19/19 at 7d90ed92d6fdb1e64b9898e74c0118cd4645485d. X010-30 pending full exact CI. Added X010-31/32 inert action definitions, immutable proposal validation and built public runtime host-only API candidates; no credit until exact CI.",
     "X010-30 exact 19/19; added X010-33 structured peer response projection candidate. X010-31/32 remain pending full exact learner CI.",
-    "X010-31/32 and P023-05 exact 19/19; added X010-34 contact configuration candidate. X010-33 remains pending full exact CI."
+    "X010-31/32 and P023-05 exact 19/19; added X010-34 contact configuration candidate. X010-33 remains pending full exact CI.",
+    "X010-33/34 verified 19/19. Added X010-35/36 source configuration/static initialization and caller observation timestamp candidates; exact CI pending."
   ]
 }

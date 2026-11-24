@@ -1,4 +1,4 @@
-import {createSourceMcp} from './source-mcp.js';
+import {createSourceMcp,admitSourceConfig} from './source-mcp.js';
 import {createExternalReadMcp,validateExternalMcpConfig,snapshotContactConfig} from './external-mcp.js';
 import {fetchJsonWithConsent,pinConsentInspector} from '../sutra-consent/index.js';
 import {readBoundedResponse,BoundedResponseError,isFullJson} from './bounded-response.js';
@@ -135,6 +135,9 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   admittedPeer=Object.freeze({inspector,fetchImpl:fetchImpl??fetch});
  }
  const third=thirdPartyMcp===undefined?null:validateExternalMcpConfig(thirdPartyMcp);
+ // Snapshot source contact metadata before observers or model work, and use
+ // the same pinned origin in both the client and runner context.
+ if(sourceTools!==undefined){try{sourceTools=admitSourceConfig(sourceTools);}catch{fail('SOURCE_CONFIG','Source tool host configuration was refused.');}}
  let privatePolicy;
  try{privatePolicy=createPrivateContextPolicy({values:privateContext??{},grants:peerContextGrants??[]});}
  catch(error){fail(error?.code??'PRIVATE_CONTEXT_POLICY','Private context policy is invalid.');}
