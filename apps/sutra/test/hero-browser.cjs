@@ -153,7 +153,8 @@ const assert=require('node:assert/strict');
   // PageTransitionEvent may stand in for restored-document evidence.
   const historyBrowser=await chromium.launch({headless:true,channel:'chromium',ignoreDefaultArgs:['--disable-back-forward-cache']});
   try{
-   for(const withMedia of [false,true]){
+   for(const mediaMode of ['none','paused','playing']){
+    const withMedia=mediaMode!=='none';
     const historyContext=await historyBrowser.newContext();
     try{
      const learner=await historyContext.newPage(),writer=await historyContext.newPage();
@@ -161,9 +162,12 @@ const assert=require('node:assert/strict');
      await cdp.send('Page.enable');
      cdp.on('Page.backForwardCacheNotUsed',event=>misses.push((event.notRestoredExplanations??[]).map(x=>({type:x.type,reason:x.reason}))));
      await learner.addInitScript(()=>{
-      window.__sutraHistory={documentId:crypto.randomUUID(),shows:[],hides:[]};
+      window.__sutraHistory={documentId:crypto.randomUUID(),shows:[],hides:[],playingAtHide:[]};
       window.addEventListener('pageshow',event=>window.__sutraHistory.shows.push(event.persisted));
-      window.addEventListener('pagehide',event=>window.__sutraHistory.hides.push(event.persisted));
+      window.addEventListener('pagehide',event=>{
+       window.__sutraHistory.hides.push(event.persisted);
+       const video=document.querySelector('video');window.__sutraHistory.playingAtHide.push(!!video&&!video.paused&&!video.ended);
+      });
      });
      await Promise.all([learner.goto(base),writer.goto(base)]);
      await learner.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
@@ -182,6 +186,12 @@ const assert=require('node:assert/strict');
      await learner.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
      await writer.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
      await learner.getByRole('button',{name:'Preview source review card'}).click();
+     if(mediaMode==='playing'){
+      // A real native playing element is distinct from the existing paused
+      // fixture. Muted looping avoids autoplay and short-fixture EOF races.
+      await learner.locator('video').evaluate(async v=>{v.muted=true;v.loop=true;await v.play();});
+      await learner.waitForFunction(()=>{const v=document.querySelector('video');return v&&!v.paused&&!v.ended&&v.currentTime>0;});
+     }
      await learner.goto(base+'/guides/synthetic-comparison-guide.html');
      await writer.getByRole('button',{name:'Delete local review'}).click();
      await writer.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);
@@ -197,7 +207,7 @@ const assert=require('node:assert/strict');
      }));
      const restored=observation.documentId===first.documentId;
      assert.equal(observation.shows.at(-1),restored,'same document and actual persisted pageshow must agree');
-     if(restored)assert.equal(observation.hides.at(-1),true);
+     if(restored){assert.equal(observation.hides.at(-1),true);assert.equal(observation.playingAtHide.at(-1),mediaMode==='playing');}
      assert.equal(await learner.locator('#review-dialog').evaluate(dialog=>dialog.open),false);
      assert.equal(await learner.locator('#review-list li').count(),0);
      assert.equal(await learner.locator('#download-review-attempt').isHidden(),true);
@@ -208,7 +218,7 @@ const assert=require('node:assert/strict');
       await learner.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
      }
      if(withMedia&&!restored)assert.equal(await learner.locator('video').count(),0,'fresh document must not claim retained native media');
-     console.log('ACTUAL_BFCACHE '+JSON.stringify({withMedia,restored,notRestoredReasons:observation.notRestoredReasons,cdpMisses:misses}));
+     console.log('ACTUAL_BFCACHE '+JSON.stringify({withMedia,mediaMode,restored,playingAtHide:observation.playingAtHide.at(-1)??null,notRestoredReasons:observation.notRestoredReasons,cdpMisses:misses}));
      await learner.getByRole('button',{name:'Preview source review card'}).click();
      await learner.getByRole('button',{name:'Confirm local save'}).click();
      await learner.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
