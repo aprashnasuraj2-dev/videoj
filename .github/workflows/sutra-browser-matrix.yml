@@ -14,12 +14,38 @@ on:
       - 'packages/sutra-source-tools/**'
       - 'packages/sutra-consent/**'
       - 'packages/sutra-actions/**'
+      - 'docs/sutra/verification-map.json'
+      - 'docs/sutra/evidence/metrics.json'
+      - 'docs/sutra/tools/impact.mjs'
       - '.github/workflows/sutra-browser-matrix.yml'
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      run_matrix: ${{ steps.gate.outputs.run_matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - id: gate
+        env:
+          TARGET_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          FORCE_RUN: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          node docs/sutra/tools/impact.mjs --metrics "$TARGET_SHA" > "$RUNNER_TEMP/metrics.json"
+          node -e "const fs=require('fs');const d=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+'/metrics.json'));const m=d.metrics.find(x=>x.id==='desktop_browser_matrix');const force=process.env.FORCE_RUN==='true';fs.appendFileSync(process.env.GITHUB_OUTPUT,'run_matrix='+(force||!m||m.status==='stale')+'\n');"
+          cat "$RUNNER_TEMP/metrics.json"
   browser:
+    needs: freshness
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.freshness.outputs.run_matrix == 'true' }}
     strategy:
       fail-fast: false
       matrix:

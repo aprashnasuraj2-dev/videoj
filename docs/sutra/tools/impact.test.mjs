@@ -53,3 +53,11 @@ test('provider measurement tooling is mapped to provider-cost revalidation rathe
  const r=classifyChangedFiles(['tools/sutra-provider-measurement/report.mjs'],map);
  assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('provider-cost'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA provider measurement gate'));assert.ok(r.invalidatedMetrics.includes('provider_cost'));
 });
+
+test('specialized expensive workflows gate jobs on revision-bound metric freshness for long-lived PRs',()=>{
+ const matrix=fs.readFileSync(new URL('../../../.github/workflows/sutra-browser-matrix.yml',import.meta.url),'utf8');
+ const evaluation=fs.readFileSync(new URL('../../../.github/workflows/sutra-evaluation.yml',import.meta.url),'utf8');
+ assert.match(matrix,/desktop_browser_matrix/);assert.match(matrix,/needs: freshness/);assert.match(matrix,/run_matrix/);assert.match(matrix,/workflow_dispatch/);
+ assert.match(evaluation,/engineering_baseline/);assert.match(evaluation,/needs: freshness/);assert.match(evaluation,/run_evaluation/);assert.match(evaluation,/workflow_dispatch/);
+ for(const text of [matrix,evaluation]){assert.match(text,/fetch-depth: 0/);assert.match(text,/github\.event\.pull_request\.head\.sha/);assert.match(text,/impact\.mjs --metrics/);}
+});
