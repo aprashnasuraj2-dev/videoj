@@ -5,13 +5,13 @@ const graph=name=>({metadata:{description:name},max_steps:4,tools:[{name:'learne
 const graphs={learner:graph('learner'),source_learner:graph('source'),linked_learner:graph('linked')};
 const links={version:1,networks:{learner:{},source_learner:{},linked_learner:{guide_peer:'https://old.invalid/agents/checklist'}}};
 const config=()=>({schema:1,sourceRevision:'a'.repeat(40),publicOrigin:'https://sutra.example',peerOrigin:'https://guide.example',backend:'self_hosted',selfHostedGatewayUrl:'https://operator.example/v1/chat/completions',model:'provider/model-v1',
- liveEvidence:{status:'live_verified',backend:'self_hosted',model:'provider/model-v1',upstreamUrlSha256:'d8a0b14806289f7180a5d62f58009f9306970fadc331c7438b4505ce40b4eeb4',gatewayBuildSha256:'d'.repeat(64),costEvidenceKind:'self_hosted_resource',observedAt:'2026-11-24T01:00:00Z',runRecordHash:'b'.repeat(64),costReportHash:'c'.repeat(64),usageComplete:true,noAutomaticRetries:true,judgePathPassed:true},
+ liveEvidence:{status:'live_verified',backend:'self_hosted',model:'provider/model-v1',upstreamUrlSha256:'d8a0b14806289f7180a5d62f58009f9306970fadc331c7438b4505ce40b4eeb4',gatewayBuildSha256:'d'.repeat(64),sourceRevision:'a'.repeat(40),contentVersion:'lesson-v1',profileSha256:'d'.repeat(64),catalogSha256:'e'.repeat(64),transcriptSha256:'2'.repeat(64),mediaSha256:'1'.repeat(64),guideSha256:'3'.repeat(64),costEvidenceKind:'self_hosted_resource',observedAt:'2026-11-24T01:00:00Z',runRecordHash:'b'.repeat(64),costReportHash:'c'.repeat(64),usageComplete:true,noAutomaticRetries:true,judgePathPassed:true},
  budgetEvidence:{approved:true,costMode:'operator_owned',spendCeilingUsd:0,judgingReserveRuns:50,evidenceRef:'private:budget/sutra-001'},
  contentEvidence:{status:'reviewed_attested',contentVersion:'lesson-v1',profileSha256:'d'.repeat(64),catalogSha256:'e'.repeat(64),mediaSha256:'1'.repeat(64),transcriptSha256:'2'.repeat(64),guideSha256:'3'.repeat(64),intakeRecordHash:'4'.repeat(64),rightsAttested:true,factualReviewAttested:true,evidenceRef:'private:content/lesson-v1'},
  spec:{launchCommit:launchSpecCommit,compatibilityCommit:currentSpecCommit,compatibilityBlob:currentSpecBlob}});
 test('release config refuses placeholders, incomplete live usage, weak reserve and stale spec pin',()=>{
  assert.equal(validateReleaseConfig(config()).model,'provider/model-v1');
- for(const mutate of [x=>x.model='mock-1',x=>x.backend='hosted',x=>x.selfHostedGatewayUrl='http://operator.example/v1/chat/completions',x=>x.liveEvidence.backend='hosted',x=>x.liveEvidence.upstreamUrlSha256='f'.repeat(64),x=>x.liveEvidence.costEvidenceKind='provider_pricing',x=>x.liveEvidence.usageComplete=false,x=>x.liveEvidence.noAutomaticRetries=false,x=>x.liveEvidence.judgePathPassed=false,x=>x.budgetEvidence.judgingReserveRuns=5,x=>x.budgetEvidence.evidenceRef='https://private.example/doc',x=>x.contentEvidence.rightsAttested=false,x=>x.contentEvidence.status='pending',x=>x.contentEvidence.profileSha256='bad',x=>x.spec.compatibilityCommit='d'.repeat(40)]){
+ for(const mutate of [x=>x.model='mock-1',x=>x.backend='hosted',x=>x.selfHostedGatewayUrl='http://operator.example/v1/chat/completions',x=>x.liveEvidence.backend='hosted',x=>x.liveEvidence.upstreamUrlSha256='f'.repeat(64),x=>x.liveEvidence.costEvidenceKind='provider_pricing',x=>x.liveEvidence.sourceRevision='b'.repeat(40),x=>x.liveEvidence.contentVersion='other-lesson',x=>x.liveEvidence.catalogSha256='f'.repeat(64),x=>x.liveEvidence.profileSha256='f'.repeat(64),x=>x.liveEvidence.transcriptSha256='f'.repeat(64),x=>x.liveEvidence.mediaSha256='f'.repeat(64),x=>x.liveEvidence.guideSha256='f'.repeat(64),x=>x.liveEvidence.usageComplete=false,x=>x.liveEvidence.noAutomaticRetries=false,x=>x.liveEvidence.judgePathPassed=false,x=>x.budgetEvidence.judgingReserveRuns=5,x=>x.budgetEvidence.evidenceRef='https://private.example/doc',x=>x.contentEvidence.rightsAttested=false,x=>x.contentEvidence.status='pending',x=>x.contentEvidence.profileSha256='bad',x=>x.spec.compatibilityCommit='d'.repeat(40)]){
   const x=config();mutate(x);assert.throws(()=>validateReleaseConfig(x));
  }
 });
@@ -25,6 +25,10 @@ test('release preparation publishes one exact funded router, one peer and model-
 });
 test('release artifact verification detects manifest, peer, graph and record drift',()=>{
  for(const mutate of [
+  o=>o.manifest.networks[0].front_man='different',
+  o=>o.links.networks.learner.extra='https://evil.example/agents/extra',
+  o=>o.graphs.learner.graph.tools[0].instructions='Changed but bytes untouched',
+  o=>o.graphs.learner.path='./release/wrong/learner.network.json',
   o=>o.manifest.llm_router.base_url='https://evil.example/v1',
   o=>o.manifest.deployment.runtime='/assets/hidden.js',
   o=>o.manifest.allowed_peers.push('https://extra.example'),

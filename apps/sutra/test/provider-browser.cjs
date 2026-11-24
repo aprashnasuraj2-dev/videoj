@@ -132,7 +132,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   assert.equal(calls,4);
   const oldReview=await page.getByRole('button',{name:'Preview retrieved review card'}).elementHandle();
   mode='no-receipt';await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='empty');
-  await oldReview.evaluate(button=>button.click());assert.equal(await page.locator('#clear-review-dialog').evaluate(dialog=>dialog.open),false);
+  await oldReview.evaluate(button=>button.click());assert.equal(await page.locator('#review-dialog').evaluate(dialog=>dialog.open),false);
   assert.equal(calls,7);assert.match(await page.locator('#provider-status').textContent(),/interpretation was discarded/);assert.equal(await page.locator('#provider-output').isHidden(),true);
   await page.getByLabel('Question about the source lesson').fill('Locate the timing marker again.');
   assert.equal(await page.locator('#provider-output').isHidden(),true);

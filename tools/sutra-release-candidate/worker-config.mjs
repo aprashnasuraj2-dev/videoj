@@ -1,5 +1,6 @@
 import {createHash} from 'node:crypto';
 import {validateReleaseConfig} from './release.mjs';
+import {quotaLimits,sourceQuotaLimits} from '../../services/sutra-api/quota.js';
 const plain=v=>!!v&&typeof v==='object'&&!Array.isArray(v)&&Object.getPrototypeOf(v)===Object.prototype;
 const digest=v=>createHash('sha256').update(JSON.stringify(v,null,2)+'\n').digest('hex');
 const numeric=(vars,key,min,max)=>{const n=Number(vars[key]);if(!Number.isInteger(n)||n<min||n>max)throw Error('Invalid '+key);return String(n);};
@@ -28,6 +29,7 @@ export function renderWorkerConfig({baseConfig,releaseConfig}){
   SUTRA_MAX_DAILY_SOURCE_READS:numeric(baseConfig.vars,'SUTRA_MAX_DAILY_SOURCE_READS',1,100000),
   SUTRA_MAX_CLIENT_SOURCE_READS:numeric(baseConfig.vars,'SUTRA_MAX_CLIENT_SOURCE_READS',1,100000)
  };
+ if(!quotaLimits(vars)||!sourceQuotaLimits(vars))throw Error('Rendered quota envelope would disable the inference/source service.');
  if(Number(vars.SUTRA_MAX_CLIENT_SOURCE_READS)>Number(vars.SUTRA_MAX_DAILY_SOURCE_READS))throw Error('Client source-read ceiling exceeds global ceiling.');
  if(Number(vars.SUTRA_MAX_CLIENT_CALLS)>Number(vars.SUTRA_MAX_DAILY_CALLS))throw Error('Client call ceiling exceeds global ceiling.');
  if(Number(vars.SUTRA_MAX_DAILY_OUTPUT_TOKENS)>Number(vars.SUTRA_MAX_DAILY_CALLS)*Number(vars.SUTRA_MAX_OUTPUT_TOKENS))throw Error('Output-token ceiling exceeds call/output reservation envelope.');

@@ -23,7 +23,7 @@ export function validateReleaseConfig(config){
  if(config.backend==='self_hosted'?!gateway(config.selfHostedGatewayUrl):config.selfHostedGatewayUrl!==null)throw Error('Invalid inference backend configuration.');
  const live=config.liveEvidence;
  const expectedUpstream=config.backend==='self_hosted'?config.selfHostedGatewayUrl:HOSTED_ENDPOINT;
- if(!exact(live,['status','backend','model','upstreamUrlSha256','gatewayBuildSha256','costEvidenceKind','observedAt','runRecordHash','costReportHash','usageComplete','noAutomaticRetries','judgePathPassed'])||live.status!=='live_verified'||live.backend!==config.backend||live.model!==config.model||
+ if(!exact(live,['status','backend','model','upstreamUrlSha256','gatewayBuildSha256','sourceRevision','contentVersion','profileSha256','catalogSha256','transcriptSha256','mediaSha256','guideSha256','costEvidenceKind','observedAt','runRecordHash','costReportHash','usageComplete','noAutomaticRetries','judgePathPassed'])||live.status!=='live_verified'||live.backend!==config.backend||live.model!==config.model||
   live.costEvidenceKind!==(config.backend==='self_hosted'?'self_hosted_resource':'provider_pricing')||
   !SHA256.test(live.upstreamUrlSha256)||live.upstreamUrlSha256!==digest(expectedUpstream)||(config.backend==='self_hosted'?!SHA256.test(live.gatewayBuildSha256):live.gatewayBuildSha256!==null)||!time(live.observedAt)||!SHA256.test(live.runRecordHash)||!SHA256.test(live.costReportHash)||live.usageComplete!==true||live.noAutomaticRetries!==true||live.judgePathPassed!==true)throw Error('Live inference evidence is incomplete.');
  const budget=config.budgetEvidence;
@@ -35,6 +35,7 @@ export function validateReleaseConfig(config){
   content.status!=='reviewed_attested'||typeof content.contentVersion!=='string'||!/^[A-Za-z][A-Za-z0-9._-]{0,99}$/.test(content.contentVersion)||
   !SHA256.test(content.profileSha256)||!SHA256.test(content.catalogSha256)||!SHA256.test(content.mediaSha256)||!SHA256.test(content.transcriptSha256)||!SHA256.test(content.guideSha256)||!SHA256.test(content.intakeRecordHash)||
   content.rightsAttested!==true||content.factualReviewAttested!==true||!privateRef(content.evidenceRef))throw Error('Reviewed content evidence is incomplete.');
+ if(live.sourceRevision!==config.sourceRevision||live.contentVersion!==content.contentVersion||['profileSha256','catalogSha256','transcriptSha256','mediaSha256','guideSha256'].some(key=>live[key]!==content[key]))throw Error('Live inference evidence does not bind this source revision and reviewed content.');
  if(!exact(config.spec,['launchCommit','compatibilityCommit','compatibilityBlob'])||config.spec.launchCommit!==launchSpecCommit||config.spec.compatibilityCommit!==currentSpecCommit||config.spec.compatibilityBlob!==currentSpecBlob)throw Error('Specification pin is not the reviewed release pin.');
  return freeze(structuredClone(config));
 }
@@ -86,13 +87,15 @@ export function prepareReleaseArtifacts({manifest,links,graphs,config}){
 export function validatePreparedRelease({manifest,links,graphs,releaseRecord}){
  if(!plain(releaseRecord)||!SHA40.test(releaseRecord.sourceRevision)||!BACKENDS.has(releaseRecord.backend)||!SHA256.test(releaseRecord.recordSha256))throw Error('Invalid release record.');
  const recordCopy=structuredClone(releaseRecord);delete recordCopy.recordSha256;if(digest(canonical(recordCopy))!==releaseRecord.recordSha256)throw Error('Release record hash mismatch.');
+ if(!plain(manifest)||!plain(links)||digest(canonical(manifest))!==releaseRecord.manifestSha256||digest(canonical(links))!==releaseRecord.linksSha256)throw Error('Release manifest/links hash mismatch.');
  if(!plain(manifest?.llm_router)||manifest.llm_router.base_url!==releaseRecord.publicOrigin+'/api/v1'||manifest.llm_router.publisher_funded!==true||manifest.llm_router.mock!==false||Object.hasOwn(manifest.llm_router,'byok_router'))throw Error('Invalid publisher-funded manifest router.');
  if(manifest.deployment?.runtime!=='/runtime/sutra-runtime.js'||manifest.deployment?.self_contained_runtime!==true||manifest.deployment?.browser_mock!==false||manifest.deployment?.direct_byok!==false)throw Error('Invalid release runtime metadata.');
  if(!Array.isArray(manifest.allowed_peers)||manifest.allowed_peers.length!==1||manifest.allowed_peers[0]!==releaseRecord.peerOrigin||manifest.peer_policy?.mode!=='closed')throw Error('Invalid release peer policy.');
  if(!plain(links?.networks)||links.networks.linked_learner?.guide_peer!==releaseRecord.peerOrigin+'/agents/checklist')throw Error('Release links do not match peer origin.');
- if(!Array.isArray(manifest.networks)||manifest.networks.length!==Object.keys(graphs).length)throw Error('Release network set mismatch.');
+ if(!plain(graphs)||!plain(releaseRecord.graphSha256)||!Array.isArray(manifest.networks)||manifest.networks.length<1||manifest.networks.length>32||new Set(manifest.networks.map(e=>e?.name)).size!==manifest.networks.length||manifest.networks.length!==Object.keys(graphs).length||manifest.networks.length!==Object.keys(releaseRecord.graphSha256).length)throw Error('Release network set mismatch.');
  for(const entry of manifest.networks){
-  const g=graphs[entry.name];if(!g||g.graph?.llm_config?.model_name!==releaseRecord.model||g.sha256!==releaseRecord.graphSha256?.[entry.name]||digest(g.bytes)!==g.sha256||entry.hocon!==g.path)throw Error('Release graph/model/hash mismatch.');
+  if(!plain(entry)||typeof entry.name!=='string'||!/^[A-Za-z][A-Za-z0-9_]{0,59}$/.test(entry.name)||!Object.hasOwn(graphs,entry.name)||!Object.hasOwn(releaseRecord.graphSha256,entry.name))throw Error('Invalid release network identity.');
+  const g=graphs[entry.name];if(!plain(g)||!plain(g.graph)||typeof g.bytes!=='string'||!SHA256.test(g.sha256)||g.graph?.llm_config?.model_name!==releaseRecord.model||g.sha256!==releaseRecord.graphSha256[entry.name]||digest(g.bytes)!==g.sha256||canonical(g.graph)!==g.bytes||g.path!=='./release/'+g.sha256+'/'+entry.name+'.network.json'||entry.hocon!==g.path)throw Error('Release graph/model/hash mismatch.');
  }
  return freeze({valid:true,sourceRevision:releaseRecord.sourceRevision,backend:releaseRecord.backend,model:releaseRecord.model,router:manifest.llm_router.base_url,peer:releaseRecord.peerOrigin,networkCount:manifest.networks.length});
 }

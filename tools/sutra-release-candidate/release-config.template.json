@@ -16,7 +16,14 @@
     "costEvidenceKind": null,
     "upstreamUrlSha256": null,
     "gatewayBuildSha256": null,
-    "noAutomaticRetries": null
+    "noAutomaticRetries": null,
+    "sourceRevision": null,
+    "contentVersion": null,
+    "profileSha256": null,
+    "catalogSha256": null,
+    "transcriptSha256": null,
+    "mediaSha256": null,
+    "guideSha256": null
   },
   "budgetEvidence": {
     "approved": null,
