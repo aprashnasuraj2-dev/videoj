@@ -10,7 +10,7 @@ const freeze=v=>{if(v&&typeof v==='object'&&!Object.isFrozen(v)){Object.values(v
 const hash=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(b=>b.toString(16).padStart(2,'0')).join('');
 const boundedBytes=async({url,origin,fetchImpl,signal,maxBytes,accept})=>{
  const response=await fetchImpl(url,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',headers:{Accept:accept},signal});
- if(!response.ok||response.url&&new URL(response.url).origin!==origin)throw Error('CONTENT_RESPONSE');
+ if(!response.ok||response.redirected||response.url&&new URL(response.url).origin!==origin)throw Error('CONTENT_RESPONSE');
  if(Number(response.headers.get('content-length'))>maxBytes)throw Error('CONTENT_SIZE');
  const reader=response.body?.getReader();if(!reader)throw Error('CONTENT_BODY');let total=0;const chunks=[];
  try{for(;;){const {done,value}=await reader.read();if(done)break;total+=value.byteLength;if(total>maxBytes)throw Error('CONTENT_SIZE');chunks.push(value);}}finally{void reader.cancel().catch(()=>{});}
@@ -72,7 +72,7 @@ export async function loadContentProfile({baseUrl,fetchImpl=fetch,signal,timeout
   if(await hash(transcriptResult.bytes)!==validated.profile.transcript.sha256)throw Error('CONTENT_TRANSCRIPT_HASH');
   let transcriptText;try{transcriptText=new TextDecoder('utf-8',{fatal:true}).decode(transcriptResult.bytes);}catch{throw Error('CONTENT_TRANSCRIPT_UTF8');}
   for(const cue of validated.source.cues)if(!transcriptText.includes(cue.text))throw Error('CONTENT_TRANSCRIPT_CUE');
-  return freeze({...validated,artifacts:{profile:new URL('content-profile.json',base).href,catalog:catalogUrl.href,catalogSha256:profile.catalog.sha256,transcript:transcriptUrl.href,transcriptSha256:validated.profile.transcript.sha256}});
+  return freeze({...validated,artifacts:{profile:new URL('content-profile.json',base).href,profileSha256:await hash(profileResult.bytes),catalog:catalogUrl.href,catalogSha256:profile.catalog.sha256,transcript:transcriptUrl.href,transcriptSha256:validated.profile.transcript.sha256}});
  }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controller.abort();}
 }
 export function receiptForFeatured(content,{retrievedAt}={}){

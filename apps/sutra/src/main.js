@@ -19,9 +19,12 @@ const contentBase=new URL(`${import.meta.env.BASE_URL}content/`,location.origin)
 let content;
 try{content=await loadContentProfile({baseUrl:contentBase});}
 catch{
- document.querySelector('#app').innerHTML='<main id="main"><h1>Source content unavailable</h1><p>The content profile or catalog could not be validated. No lesson evidence, model context, review action or playback result is available.</p></main>';
- throw new Error('CONTENT_UNAVAILABLE');
+ document.querySelector('#app').innerHTML='<main id="main"><section class="runtime-lab" aria-labelledby="content-unavailable-title"><h1 id="content-unavailable-title" tabindex="-1">Source content unavailable</h1><p role="status" aria-live="polite">The lesson, catalog or transcript could not be validated. No lesson evidence, model context, review action or playback result is available.</p><button id="retry-content" class="primary">Reload and check lesson</button></section></main>';
+ document.querySelector('#retry-content').addEventListener('click',()=>location.reload(),{once:true});
+ // Stop initialization without an uncaught rejection or stale fallback.
+ document.querySelector('#content-unavailable-title').focus();
 }
+if(content){
 const timingFixture=Object.freeze({source:content.source,receipt:receiptForFeatured(content)}),sources=content.sources,receipt=timingFixture.receipt;
 document.querySelector('#app').innerHTML=`<header><a class="brand" href="#main">SUTRA<span>Learning, linked to evidence</span></a><div class="header-tools"><span id="content-stage" class="stage">Content loading</span><label class="language-control"><span data-i18n="language.label">Language</span><select id="language-select" aria-describedby="language-review-note"><option value="en" data-i18n="language.en">English</option><option value="ne" data-i18n="language.ne">नेपाली (draft)</option></select></label></div></header>
 <main id="main"><p id="language-review-note" class="language-review-note" data-i18n="language.review">Nepali terminology is a working draft pending human review.</p><div class="eyebrow" data-i18n="hero.eyebrow">A moment in the lesson. A source you can inspect.</div><h1><span data-i18n="hero.title.primary">Find the moment.</span><br><span data-i18n="hero.title.secondary">Keep the evidence.</span></h1><p class="intro" data-i18n="hero.intro">Connect a lesson’s exact words to a reviewable record. Inspect where an answer comes from before you use it.</p>
@@ -245,7 +248,7 @@ function seekReceipt(receipt){
  return timingPlayer.seek(receipt.start);
 }
 mountDirectLookup({root:document.querySelector('#direct-lookup'),sources:content.sources,seekTo:seekReceipt,prepareReview:prepareReviewFor});
-mountProviderPanel({baseUrl:new URL(`${import.meta.env.BASE_URL}agents/`,location.origin).href,sources:content.sources,seekTo:seekReceipt,prepareReview:prepareReviewFor});
+mountProviderPanel({loadedContent:content,seekTo:seekReceipt,prepareReview:prepareReviewFor});
 mountPeerWorkbench({baseUrl:new URL(`${import.meta.env.BASE_URL}agents/`,location.origin).href});
 
 const consentDialog=document.querySelector('#consent-dialog'),consentStatus=document.querySelector('#consent-status'),consentEvents=document.querySelector('#consent-events');
@@ -268,3 +271,5 @@ document.querySelector('#preview-peer-contact').addEventListener('click',async()
  }
  consentEvents.textContent=JSON.stringify(consentInspector.exportEvents(),null,2);
 });
+
+}

@@ -24,9 +24,9 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   const releaseManifest=JSON.parse(fs.readFileSync(path.join(app,'public/agents/agent-manifest.json'),'utf8'));
   releaseManifest.llm_router={base_url:base+'/api/v1',mock:false,publisher_funded:true};releaseManifest.allowed_peers=['https://guide.example'];releaseManifest.deployment={mode:'static',self_contained_runtime:true,browser_mock:false,direct_byok:false,direct_mcp_requires_cors:true,public_mcp_facade:false};
   releaseManifest.networks=releaseManifest.networks.map(n=>n.name==='source_learner'?{...n,hocon:'./release/test/source_learner.network.json'}:n);
-  let manifestReads=0,graphReads=0;
+  let manifestReads=0,graphReads=0,graphDrift=false;
   await page.route('**/agents/agent-manifest.json',r=>{manifestReads++;return r.fulfill({json:releaseManifest});});
-  await page.route('**/agents/release/test/source_learner.network.json',r=>{graphReads++;return r.fulfill({json:releaseGraph});});
+  await page.route('**/agents/release/test/source_learner.network.json',r=>{graphReads++;return r.fulfill({json:graphDrift?{...releaseGraph,metadata:{...releaseGraph.metadata,description:'Changed graph after approval'}}:releaseGraph});});
   let mode='complete',calls=0;const chunk=(delta,finish_reason=null)=>({choices:[{index:0,delta,finish_reason}]});
   const sse=items=>items.map(x=>'data: '+JSON.stringify(x)+'\n\n').join('')+'data: [DONE]\n\n';
   await page.route('**/api/v1/chat/completions',async r=>{
@@ -42,6 +42,25 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.getByRole('button',{name:'Check inference availability'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
   assert.equal(manifestReads,1);assert.equal(graphReads,1);assert.equal(calls,0,'provider discovery must bind public contract before any model call');assert.match(await page.locator('#provider-status').textContent(),/Model configured/);
+  // A different but valid graph cannot inherit approval from discovery.
+  graphDrift=true;
+  await page.getByRole('button',{name:'Ask configured model'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Provider publication changed'));
+  assert.equal(calls,0);assert.equal(await page.locator('#provider-run').isDisabled(),true);
+  graphDrift=false;
+  await page.getByRole('button',{name:'Check inference availability'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
+  // Even profile-only metadata drift invalidates the mounted lesson binding.
+  const profile=JSON.parse(fs.readFileSync(path.join(app,'public/content/content-profile.json'),'utf8'));
+  await page.route('**/content/content-profile.json',r=>r.fulfill({json:{...profile,title:'Changed lesson after approval'}}));
+  await page.getByRole('button',{name:'Ask configured model'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Published lesson changed'));
+  assert.equal(calls,0);assert.equal(await page.locator('#provider-run').isDisabled(),true);
+  await page.getByRole('button',{name:'Check example',exact:true}).click();
+  assert.equal(await page.locator('#result').getAttribute('data-state'),'matched','old local lesson remains a valid local snapshot');
+  await page.unroute('**/content/content-profile.json');
+  await page.getByRole('button',{name:'Check inference availability'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
   await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='completed');
   assert.equal(calls,4);assert.match(await page.locator('#provider-answer').textContent(),/Synthetic provider fixture/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.match(await page.locator('#provider-metrics').textContent(),/80\/20\/100/);
   // A model result grants neither media transfer nor persistence.

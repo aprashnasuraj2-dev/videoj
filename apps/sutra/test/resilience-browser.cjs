@@ -61,6 +61,24 @@ const assert=require('node:assert/strict');
   assert.match(await offlinePage.locator('#network-result').innerText(),/2 \(1 retried\)/);
   assert.equal(persistent,2);
   await offlinePage.unroute('**/agents/agent-manifest.json');
+  // Reject a mixed publication before mounting any actionable UI; explicit reload recovers.
+  const damaged=await context.newPage(),damageErrors=[],damageRequests=[];
+  damaged.on('pageerror',e=>damageErrors.push(e.message));
+  damaged.on('request',r=>damageRequests.push(r.url()));
+  await damaged.route('**/transcripts/synthetic-timing.txt',r=>r.fulfill({contentType:'text/plain',body:'altered transcript'}));
+  await damaged.goto(base);
+  await damaged.getByRole('heading',{name:'Source content unavailable'}).waitFor();
+  assert.equal(await damaged.locator('#provider-check,#prepare-review,#load-timing,#direct-form').count(),0);
+  assert.equal(damageRequests.filter(u=>u.includes('/api/')||u.includes('/media/')).length,0);
+  assert.deepEqual(damageErrors,[]);
+  await damaged.unroute('**/transcripts/synthetic-timing.txt');
+  await damaged.getByRole('button',{name:'Reload and check lesson'}).click();
+  await damaged.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+  await damaged.getByRole('button',{name:'Check example',exact:true}).click();
+  assert.equal(await damaged.locator('#result').getAttribute('data-state'),'matched');
+  assert.deepEqual(damageErrors,[]);
+  await damaged.close();
+  console.log('PASS: mixed content refuses all actionable UI and explicit reload restores a validated lesson.');
   console.log('PASS: known 503 local public GET retry is capped once per load, actual attempt counts visible, persistent failure remains incomplete.');
   console.log('PASS: offline startup fails honestly, mid-artifact network loss yields no completed run, loaded evidence remains usable, and explicit online retry restores only a visibly scripted result.');
  }finally{
