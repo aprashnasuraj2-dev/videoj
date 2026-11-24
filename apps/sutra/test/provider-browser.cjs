@@ -30,7 +30,8 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   let mode='complete',calls=0;const chunk=(delta,finish_reason=null)=>({choices:[{index:0,delta,finish_reason}]});
   const sse=items=>items.map(x=>'data: '+JSON.stringify(x)+'\n\n').join('')+'data: [DONE]\n\n';
   await page.route('**/api/v1/chat/completions',async r=>{
-   calls++;const body=r.request().postDataJSON();assert.equal(body.model,'synthetic-provider-test');assert.equal(r.request().headers().authorization,undefined);
+   calls++;assert.equal(r.request().headers()['x-sutra-catalog-sha256'],'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333');const body=r.request().postDataJSON();assert.equal(body.model,'synthetic-provider-test');assert.equal(r.request().headers().authorization,undefined);
+   if(mode==='catalog-drift'&&body.messages.some(m=>m.role==='tool'&&m.name==='mcp_search_lesson')){await r.fulfill({status:409,json:{error:{code:'CONTENT_VERSION_MISMATCH'}}});return;}
    if(mode==='hold'){await new Promise(resolve=>setTimeout(resolve,800));await r.abort().catch(()=>{});return;}
    if(mode==='quota'||mode==='partial'&&body.messages.some(m=>m.role==='tool'&&m.name==='mcp_search_lesson')){await r.fulfill({status:429,json:{error:{code:'QUOTA'}}});return;}
    const names=body.tools.map(t=>t.function.name),hasResult=body.messages.some(m=>m.role==='tool');let data;
@@ -93,6 +94,12 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   for(let i=0;i<50&&calls<9;i++)await new Promise(r=>setTimeout(r,20));assert.equal(calls,9);
   await page.getByRole('button',{name:'Cancel inference'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='cancelled');assert.equal(await page.locator('#provider-output').isHidden(),true);
   await page.getByRole('button',{name:'Inspect featured source cue'}).click();await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
+  mode='catalog-drift';await page.getByRole('button',{name:'Ask configured model'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('server rejected the lesson version'));
+  assert.equal(calls,12,'one explicit run stops at third model attempt; no retries');
+  assert.equal(await page.locator('#provider-run').isDisabled(),true);
+  assert.match(await page.locator('#provider-answer').textContent(),/No completed answer/);
+  assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);
   assert.deepEqual(errors,[]);console.log('PASS: visible opt-in model discovery, synthetic provider transport, independently matched receipts, token counts, quota failure, cancellation, no retry and native media unaffected.');
  }finally{await browser?.close();server.kill('SIGTERM');}
 })().catch(e=>{console.error(e);process.exitCode=1;});

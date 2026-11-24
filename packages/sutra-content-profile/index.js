@@ -3,9 +3,13 @@ const SHA=/^[a-f0-9]{64}$/,ID=/^[A-Za-z][A-Za-z0-9._:-]{0,127}$/;
 const plain=v=>!!v&&typeof v==='object'&&!Array.isArray(v)&&Object.getPrototypeOf(v)===Object.prototype;
 const exact=(o,keys,required=keys)=>plain(o)&&Object.keys(o).every(k=>keys.includes(k))&&required.every(k=>Object.hasOwn(o,k));
 const safeText=(v,n)=>typeof v==='string'&&v.trim()&&v.length<=n&&!/[\u0000-\u001f\u007f]/.test(v);
-const safeRelative=v=>typeof v==='string'&&v.length<=240&&!v.startsWith('/')&&!v.includes('\\')&&!v.includes('?')&&!v.includes('#')&&!v.split('/').some(x=>x==='..'||x==='');
-const safePublicPath=v=>typeof v==='string'&&v.length<=300&&v.startsWith('/')&&!v.startsWith('//')&&!v.includes('\\')&&!v.includes('?')&&!v.split('#',1)[0].split('/').includes('..');
-const safeGuideHref=v=>safePublicPath(v)&&v.includes('#')&&v.indexOf('#')===v.lastIndexOf('#')&&v.split('#')[1].length>0;
+// Canonical ASCII artifact names only. Reject URL-normalized control characters,
+// percent-encoded dot segments and backslashes before any fetch or player mount.
+const pathPart=/^[A-Za-z0-9._~-]+$/;
+const safeSegments=parts=>parts.every(p=>pathPart.test(p)&&p!=='.'&&p!=='..');
+const safeRelative=v=>typeof v==='string'&&v.length<=240&&safeSegments((v.startsWith('./')?v.slice(2):v).split('/'));
+const safePublicPath=v=>typeof v==='string'&&v.length<=300&&v.startsWith('/')&&safeSegments(v.split('#',1)[0].slice(1).split('/'));
+const safeGuideHref=v=>safePublicPath(v)&&v.includes('#')&&v.indexOf('#')===v.lastIndexOf('#')&&/^[A-Za-z0-9._:-]{1,128}$/.test(v.split('#')[1]);
 const freeze=v=>{if(v&&typeof v==='object'&&!Object.isFrozen(v)){Object.values(v).forEach(freeze);Object.freeze(v);}return v;};
 const hash=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(b=>b.toString(16).padStart(2,'0')).join('');
 const boundedBytes=async({url,origin,fetchImpl,signal,maxBytes,accept})=>{

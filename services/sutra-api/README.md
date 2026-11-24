@@ -99,3 +99,8 @@ In addition to daily call and per-client ceilings, the quota object atomically r
 The future top-site manifest can publish the caller origin plus `/api/v1` as its default publisher-funded router. The OpenAI-compatible `POST /api/v1/chat/completions` route is not a second provider implementation: it enters the same `handleInference` function as `/api/infer`, so origin checks, visitor-Authorization rejection, exact model allowlist, payload/schema bounds, global/client/resource quota, concurrency lease, fixed upstream, server-only provider key, sanitized usage/SSE stream, cancellation and no automatic retry remain identical.
 
 The route existing in code does **not** mean inference is live. Checked-in configs keep `SUTRA_ENABLE_INFERENCE=false` and an empty model allowlist. A release manifest must not publish the router as usable until the live-provider/cost/release gates pass.
+
+
+### Snapshot-aware learner precondition
+
+The learner sends the public `X-Sutra-Catalog-Sha256` header on its caller-owned inference and source-tools POSTs. A provided value that does not match the Worker's active catalog returns HTTP 409 with `CONTENT_VERSION_MISMATCH` before quota reservation or source-tool execution. The header is not a credential or authorization mechanism; portable clients may omit it under the existing contract. It does not verify factual truth, pin the Worker implementation, or guarantee that already-completed requests can be undone. The browser preflight independently checks the mounted profile/transcript and exact approved graph, and refuses to present an answer from a run that encounters a catalog-version rejection.

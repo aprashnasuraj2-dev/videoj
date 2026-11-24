@@ -76,3 +76,15 @@ test('reviewed mode requires hash-addressed media, transcript and written guide 
  assert.equal(validateContentProfile(p,catalog).profile.mode,'reviewed');
  const bad=structuredClone(p);bad.media.video='/media/lesson.mp4';assert.throws(()=>validateContentProfile(bad,catalog),/CONTENT_ADDRESSING/);
 });
+
+test('URL normalization and encoded traversal cannot escape the declared artifact path',()=>{
+ for(const path of ['/media/%2e%2e/x.mp4','/media/./x.mp4','/media//x.mp4','/\t/evil.example/x.mp4','/media/x.mp4\n','/media/%5csecret.mp4']){
+  const p=structuredClone(profile);p.media.video=path;assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_MEDIA/);
+ }
+ for(const path of ['./%2e%2e/catalog.json','./nested/../catalog.json','./catalog.json\n','./nested//catalog.json']){
+  const p=structuredClone(profile);p.catalog.path=path;assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_CATALOG_REF/);
+ }
+ for(const path of ['/transcripts/%2e%2e/secret.txt','/transcripts/x.txt\t']){
+  const p=structuredClone(profile);p.transcript.path=path;assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_TRANSCRIPT/);
+ }
+});

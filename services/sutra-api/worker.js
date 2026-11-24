@@ -71,7 +71,14 @@ export async function handleSourceTools(request){
 }
 export default {async fetch(request,env){
  const path=new URL(request.url).pathname;let response;
- if(path==='/api/infer'||path==='/api/v1/chat/completions')response=await handleInference(request,env);
+ const inferencePath=path==='/api/infer'||path==='/api/v1/chat/completions';
+ const catalogPrecondition=request.headers.get('X-Sutra-Catalog-Sha256');
+ // Optional public precondition for snapshot-aware callers. Generic portable
+ // clients retain their existing router/MCP contract; this is not access control.
+ if((inferencePath||path==='/api/source-tools')&&request.method==='POST'&&request.headers.get('Origin')===new URL(request.url).origin&&catalogPrecondition!==null&&catalogPrecondition!==activeContent.profile.catalog.sha256){
+  response=json({error:{code:'CONTENT_VERSION_MISMATCH'}},409);
+ }
+ else if(inferencePath)response=await handleInference(request,env);
  else if(path==='/api/source-tools')response=await handleSourceTools(request);
  else if(path==='/api/status'&&request.method==='GET'){
   const configured=inferenceStatus(env);

@@ -59,7 +59,18 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
  const controller=new AbortController(),abort=()=>controller.abort();
  signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
  const receipts=new Map(),usage={calls:0,reported:0,promptTokens:0,completionTokens:0,totalTokens:0};
- const adapter=createProviderAdapter({origin,model,fetchImpl});
+ // Scope the public version precondition to the two caller-owned POST endpoints.
+ // It is not an authentication token, and never travels to peer origins or the provider.
+ let catalogRejected=false;
+ const boundFetch=async(url,options={})=>{
+  const target=new URL(url,origin);
+  if(target.origin!==origin||options.method!=='POST'||!['/api/v1/chat/completions','/api/source-tools'].includes(target.pathname))return fetchImpl(url,options);
+  const headers=new Headers(options.headers);headers.set('X-Sutra-Catalog-Sha256',approvedContract.content.catalogSha256);
+  const response=await fetchImpl(url,{...options,headers});
+  if(response.status===409)catalogRejected=true;
+  return response;
+ };
+ const adapter=createProviderAdapter({origin,model,fetchImpl:boundFetch});
  const measured={...adapter,async chat(args){
   usage.calls++;const answer=await adapter.chat(args);
   if(answer.usage){usage.reported++;usage.promptTokens+=answer.usage.prompt_tokens;usage.completionTokens+=answer.usage.completion_tokens;usage.totalTokens+=answer.usage.total_tokens;}
@@ -68,14 +79,17 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
  try{
   // Recheck immediately before every explicit run, then execute that exact in-memory graph.
   // The caller's mounted lesson remains the authority for local source receipts.
-  const fresh=await discoverProvider({origin,loadedContent,fetchImpl,signal:controller.signal});
+  let fresh;
+  try{fresh=await discoverProvider({origin,loadedContent,fetchImpl,signal:controller.signal});}
+  catch(error){if(controller.signal.aborted||error?.code==='CONTENT_CHANGED')throw error;throw contractError();}
   if(fresh.state!=='configured'||!same(fresh.contract,approvedContract))throw contractError();
   controller.signal.throwIfAborted();
-  const result=await runNetwork({...fresh.published,request:question.trim(),model:measured,signal:controller.signal,sourceTools:{origin,sources:loadedContent.sources,fetchImpl,onReceipt:receipt=>{const key=receipt.sourceId+'\u0000'+receipt.cueId;if(receipts.size<20||receipts.has(key))receipts.set(key,receipt);}}});
+  const result=await runNetwork({...fresh.published,request:question.trim(),model:measured,signal:controller.signal,sourceTools:{origin,sources:loadedContent.sources,fetchImpl:boundFetch,onReceipt:receipt=>{const key=receipt.sourceId+'\u0000'+receipt.cueId;if(receipts.size<20||receipts.has(key))receipts.set(key,receipt);}}});
+  if(catalogRejected)throw Error('Catalog precondition rejected.');
   return {model,text:result.text,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:[...receipts.values()],usage:{...usage,complete:usage.reported===usage.calls},truthStatus:'unverified'};
  }catch(error){
   // Only independently validated receipts survive a failed run. Never retain partial model text.
-  const code=signal?.aborted?'CANCELLED':typeof error?.code==='string'&&/^[A-Z_]{2,64}$/.test(error.code)?error.code:'RUN_FAILED';
+  const code=signal?.aborted?'CANCELLED':catalogRejected?'CONTENT_CHANGED_DURING_RUN':typeof error?.code==='string'&&/^[A-Z_]{2,64}$/.test(error.code)?error.code:'RUN_FAILED';
   const stopped=new Error('Provider lesson stopped');stopped.code=code;
   stopped.partial=Object.freeze({receipts:[...receipts.values()],usage:{...usage,complete:false},agentCalls:error?.diagnostics?.agentCalls??null,modelCalls:error?.diagnostics?.modelCalls??usage.calls});
   throw stopped;
