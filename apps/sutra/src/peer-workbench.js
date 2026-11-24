@@ -11,20 +11,29 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
  const urlInput=byId('peer-url'), runButton=byId('run-peer'),
   status=byId('peer-status'), trace=byId('peer-trace'), consentLog=byId('peer-consent-log');
  const dialog=byId('peer-consent-dialog'),exportButton=byId('export-peer-trace'),
-  execState=byId('peer-exec-state'),agentBudget=byId('peer-agent-budget'),
+  execState=byId('peer-exec-state'),outcomeState=byId('peer-outcome'),agentBudget=byId('peer-agent-budget'),
   modelBudget=byId('peer-model-budget'),toolCount=byId('peer-tool-count'),
   elapsed=byId('peer-elapsed'),contactCount=byId('peer-contact-count');
- let pendingDecision=null, running=false, activeController=null,lastReceipt=null,runStarted=0,observedTools=0;
- const completedContacts=()=>inspector.exportEvents().filter(event=>event.type==='outcome'&&event.status==='completed').length;
- const setState=(state,{agentCalls=0,modelCalls=0}={})=>{
+ let pendingDecision=null, running=false, activeController=null,lastReceipt=null,runStarted=0,observedTools=0,runCompletedContacts=0;
+ const setState=(state,{agentCalls=0,modelCalls=0,outcome=null}={})=>{
   const labels={idle:'Idle',loading:'Loading local network',consent:'Awaiting external approval',completed:'Completed',denied:'Denied',cancelled:'Cancelled',error:'Stopped with error',input_error:'Input required'};
+  const outcomes={
+   completed:'Completed',
+   denied:'Denied before a completed peer result',
+   cancelled:'Cancelled before a completed peer result',
+   failed:'Failed before a completed peer result',
+   partial:'Partial failure — some approved reads completed; no peer result',
+   unknown:'Unknown — a side effect may have happened',
+  };
   execState.textContent=labels[state]??'Stopped';
+  outcomeState.textContent=outcome?outcomes[outcome]??'Stopped without a completed result':
+   state==='loading'||state==='consent'?'In progress':state==='input_error'?'Rejected before execution':'Not started';
   applyScreenState(status,state);
   agentBudget.textContent=Math.min(Number.isInteger(agentCalls)?agentCalls:0,12)+' / 12 used';
   modelBudget.textContent=Math.min(Number.isInteger(modelCalls)?modelCalls:0,8)+' / 8 used';
   toolCount.textContent=String(observedTools);
   elapsed.textContent=(runStarted?Math.max(0,Math.round(performance.now()-runStarted)):0)+' ms / 60,000 ms';
-  contactCount.textContent=completedContacts()+' completed';
+  contactCount.textContent=runCompletedContacts+' completed this run';
  };
  const finish=(decision,scope='once')=>{
   if(!pendingDecision)return;
@@ -72,7 +81,7 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
    setState('input_error');return;
   }
   running=true;runButton.disabled=true;lastReceipt=null;exportButton.disabled=true;
-  runStarted=performance.now();observedTools=0;activeController=new AbortController();
+  runStarted=performance.now();observedTools=0;runCompletedContacts=0;activeController=new AbortController();
   const currentEvents=[],consentStart=inspector.exportEvents().length;
   resetTrace();setState('loading');
   status.textContent='Checking the local learner network. No external contact occurs before approval.';
@@ -97,19 +106,21 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
    status.textContent='Scripted peer test complete: '+result.agentCalls+
     ' caller-local agent invocations and '+result.modelCalls+
     ' scripted model steps. Public graph data only; no live inference or factual verification.';
-   setState('completed',{agentCalls:result.agentCalls,modelCalls:result.modelCalls});
+   runCompletedContacts=lastReceipt.contactEvents.filter(event=>event.type==='outcome'&&event.status==='completed').length;
+   setState('completed',{agentCalls:result.agentCalls,modelCalls:result.modelCalls,outcome:'completed'});
   }catch(error){
    const code=typeof error?.code==='string'&&/^[A-Z][A-Z0-9_]{1,50}$/.test(error.code)?error.code:'STOPPED';
-   lastReceipt={mode:'scripted-test',
-    outcome:code.includes('DENIED')?'denied':code==='CANCELLED'?'cancelled':'failed',
-    modelCalls:null,agentCalls:null,events:currentEvents,
-    contactEvents:inspector.exportEvents().slice(consentStart)};
-   status.textContent='Peer test stopped ('+code+'). No completed peer result is claimed. Local lesson and evidence are unaffected.';
-   setState(code.includes('DENIED')?'denied':code==='CANCELLED'?'cancelled':'error');
+   const contactEvents=inspector.exportEvents().slice(consentStart);
+   runCompletedContacts=contactEvents.filter(event=>event.type==='outcome'&&event.status==='completed').length;
+   const outcome=code.includes('DENIED')?'denied':code==='CANCELLED'?'cancelled':runCompletedContacts?'partial':'failed';
+   lastReceipt={mode:'scripted-test',outcome,
+    modelCalls:null,agentCalls:null,events:currentEvents,contactEvents};
+   status.textContent='Peer test stopped ('+code+'). '+(outcome==='partial'?'Some approved public reads completed, but no peer result is claimed.':'No completed peer result is claimed.')+' Local lesson and evidence are unaffected.';
+   setState(code.includes('DENIED')?'denied':code==='CANCELLED'?'cancelled':'error',{outcome});
   }finally{
    running=false;runButton.disabled=false;activeController=null;
    exportButton.disabled=!lastReceipt;renderConsentEvents();
-   setState(status.dataset.state,{agentCalls:lastReceipt?.agentCalls??0,modelCalls:lastReceipt?.modelCalls??0});
+   setState(status.dataset.state,{agentCalls:lastReceipt?.agentCalls??0,modelCalls:lastReceipt?.modelCalls??0,outcome:lastReceipt?.outcome??null});
    // Return keyboard users to the control that initiated the modal flow.
    if(['denied','error','cancelled'].includes(status.dataset.state))runButton.focus({preventScroll:true});
   }
