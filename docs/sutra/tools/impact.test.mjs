@@ -53,6 +53,10 @@ test('provider measurement tooling is mapped to provider-cost revalidation rathe
  const r=classifyChangedFiles(['tools/sutra-provider-measurement/report.mjs'],map);
  assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('provider-cost'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA provider measurement gate'));assert.ok(r.invalidatedMetrics.includes('provider_cost'));
 });
+test('self-hosted resource measurement is mapped to the same cost evidence family without pretending it is provider pricing',()=>{
+ const r=classifyChangedFiles(['tools/sutra-local-measurement/report.mjs'],map);
+ assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('provider-cost'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA provider measurement gate'));assert.ok(r.invalidatedMetrics.includes('provider_cost'));
+});
 
 test('specialized expensive workflows gate jobs on revision-bound metric freshness for long-lived PRs',()=>{
  const matrix=fs.readFileSync(new URL('../../../.github/workflows/sutra-browser-matrix.yml',import.meta.url),'utf8');

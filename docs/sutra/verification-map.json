@@ -144,7 +144,8 @@
         "tools/sutra-provider-measurement/",
         "packages/sutra-content-profile/",
         "apps/sutra/public/content/",
-        "apps/sutra/public/transcripts/"
+        "apps/sutra/public/transcripts/",
+        "tools/sutra-local-measurement/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA learner shell",
@@ -153,7 +154,7 @@
       "invalidates": [
         "provider_cost"
       ],
-      "reason": "Provider transport, prompt/context or quota changes can alter calls, token usage and cost."
+      "reason": "Inference transport, prompt/context, quota or measured hosted/self-hosted cost inputs can alter calls, token/resource usage and operational cost."
     },
     {
       "id": "publication-integrity",
