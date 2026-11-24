@@ -301,3 +301,7 @@ X010-27. Peer identity is bounded primitive text, not a coercible object. Privat
 ## Session 0043 verification addendum
 
 X010-26 verified 19/19 at 76d13792d57fdfd321074a026747c72a306337b1; X010-27 exact runtime unit step passed; full workflow evidence pending, no completion credit. P078-02 remains pending. No deployment or submission.
+
+## SUTRA-DECISION-0037 — Model-facing namespace and input ownership
+
+2026-11-24T20:00:31+05:45: X010-28/29. The pinned runner maps distinct capabilities into safeName labels and may overwrite identical names. Refuse collisions before discovery; use the actual pinned name algorithm, not a final-path assumption. Detach model messages and tool schemas so adapter transformations cannot rewrite canonical history or validation authority. No changes to the pinned upstream modules. Pending exact CI. [Evidence](evidence/implementation/SESSION-0044.md).

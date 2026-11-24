@@ -2,8 +2,8 @@ import {createSourceMcp} from './source-mcp.js';
 import {createExternalReadMcp,validateExternalMcpConfig} from './external-mcp.js';
 import {fetchJsonWithConsent,pinConsentInspector} from '../sutra-consent/index.js';
 import {readBoundedResponse,BoundedResponseError,isFullJson} from './bounded-response.js';
-import {AgentNetwork, validateNetwork} from './vendor/nsdeploy/kernel.js';
-import {runAgent} from './vendor/nsdeploy/runner.js';
+import {AgentNetwork, validateNetwork, parseExternalAgent} from './vendor/nsdeploy/kernel.js';
+import {runAgent, safeName} from './vendor/nsdeploy/runner.js';
 import {checkSchema, validateData} from './vendor/nsdeploy/actions.js';
 import {TraceBus} from './vendor/nsdeploy/trace.js';
 import {createPrivateContextPolicy,privateContextPrompt} from './private-context.js';
@@ -97,6 +97,17 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
   const dest=new URL(ref);
   if(dest.hostname.split('.').includes('mcp')||dest.pathname.split('/').includes('mcp'))fail('REFERENCE','MCP endpoints are not permitted through peer composition.');
  }
+ // The pinned runner keys dispatch by safeName, not the original reference.
+ // Reject collisions before discovery (including collisions across peer
+ // origins, punctuation/truncation and fixed narrow MCP capabilities).
+ for(const agent of raw.tools){
+  const exposed=new Set();
+  for(const ref of agent.tools){
+   const namesForRef=typeof ref==='string'?[safeName(names.has(ref)?ref:parseExternalAgent(ref).agentName)]:
+    ref.url==='/api/source-tools'?['mcp_search_lesson','mcp_read_cue']:['mcp_read_public'];
+   for(const tool of namesForRef){if(exposed.has(tool))fail('TOOL_NAME_COLLISION','Distinct capabilities cannot share one model-facing tool name.');exposed.add(tool);}
+  }
+ }
  const byName=new Map(raw.tools.map(a=>[a.name,a]));
  function visit(name,chain=[]){
   if(chain.includes(name))fail('CYCLE','Composition cycle rejected before execution.');
@@ -158,8 +169,20 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   while(active>=bounds.concurrency){await new Promise(resolve=>waiters.push(resolve));check();}
   active++;const span=trace.start('model_call',{mode:adapterMode,parent:args.parentSpan});
   try{
-   check();startedModelCalls++;
-   const candidate=await Promise.race([Reflect.apply(adapterChat,model,[{...args,model:approvedModel,signal:controller.signal,onContentDelta:undefined}]),stopped]);check();
+   check();
+   // The runner owns its history and callable schemas. An adapter receives
+   // detached data; even a cooperative adapter may transform inputs in place.
+   // Keep the original dispatch contract independent from adapter mutations.
+   let offeredTools,offeredMessages;
+   try{offeredTools=structuredClone(args.tools);offeredMessages=structuredClone(args.messages);}catch{fail('MODEL_INPUT','Model input could not be isolated.');}
+   const schemaByName=new Map();
+   for(const tool of args.tools){
+    const name=tool.function.name;
+    if(schemaByName.has(name))fail('TOOL_NAME_COLLISION','Distinct capabilities cannot share one model-facing tool name.');
+    schemaByName.set(name,tool.function.parameters);
+   }
+   startedModelCalls++;
+   const candidate=await Promise.race([Reflect.apply(adapterChat,model,[{...args,tools:offeredTools,messages:offeredMessages,model:approvedModel,signal:controller.signal,onContentDelta:undefined}]),stopped]);check();
    // Treat adapter results as untrusted data before the pinned runner sees
    // them. This catches accessors, shared expansion and sparse tool arrays.
    let response;try{response=snapshotJsonData(candidate,131072,'MODEL_RESPONSE');}catch{fail('MODEL_RESPONSE','Malformed or excessive model result.');}
@@ -169,7 +192,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    const ids=new Set();
    for(const call of response.toolCalls){
     if(!plain(call)||typeof call.id!=='string'||!call.id||call.id.length>100||ids.has(call.id)||call.type!=='function'||!plain(call.function))fail('TOOL_CALL','Invalid tool call.');ids.add(call.id);
-    const schema=args.tools.find(t=>t.function.name===call.function.name)?.function.parameters;
+    const schema=schemaByName.get(call.function.name);
     if(!schema)fail('TOOL_UNAVAILABLE','Model requested an unavailable tool.');
     if(typeof call.function.arguments!=='string'||call.function.arguments.length>8000)fail('ARGUMENTS','Tool arguments exceed the data limit.');
     try{validateData(schema,JSON.parse(call.function.arguments));}catch{fail('ARGUMENTS','Tool arguments failed the declared invocation schema.');}

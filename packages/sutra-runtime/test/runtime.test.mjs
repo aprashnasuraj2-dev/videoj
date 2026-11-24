@@ -111,3 +111,49 @@ test('host adapter mode, model identity and dispatch function are pinned for one
  assert.equal(result.mode,'scripted-test');assert.equal(result.modelCalls,3);
  assert.equal(originalCalls,3);assert.equal(replacementCalls,0);assert.match(result.text,/No live AI/);
 });
+
+test('tool namespace collisions are refused before model, discovery or peer contact',async()=>{
+ const cases=[
+  {refs:['https://one.example/agents/transit','https://two.example/agents/transit']},
+  {refs:['https://one.example/agents/a-b/transit','https://one.example/agents/a_b/transit']},
+  {refs:['https://one.example/'+('x'.repeat(61))+'/one','https://one.example/'+('x'.repeat(61))+'/two']},
+  {refs:['agents_transit','https://one.example/agents/transit'],local:'agents_transit'},
+  {refs:['mcp_read_cue',{url:'/api/source-tools'}],local:'mcp_read_cue',source:true},
+  {refs:['mcp_read_public',{url:'https://read-only.example/mcp'}],local:'mcp_read_public',external:true}
+ ];
+ for(const fixture of cases){
+  const g=copy();g.tools[0].tools=fixture.refs;
+  if(fixture.local)g.tools[1].name=fixture.local;
+  let models=0,contacts=0,decisions=0;
+  const inspector={perform(){decisions++;throw Error('must not contact');}};
+  await assert.rejects(run({definition:g,model:{mode:'scripted-test',chat(){models++;}},
+   peerRuntime:{inspector,fetchImpl(){contacts++;}},
+   ...(fixture.source?{sourceTools:{origin:'https://sutra.test',sources:[]}}:{}),
+   ...(fixture.external?{thirdPartyMcp:{url:'https://read-only.example/mcp',inspector,fetchImpl(){contacts++;}}}:{})
+  }),e=>e.code==='TOOL_NAME_COLLISION');
+  assert.equal(models,0);assert.equal(contacts,0);assert.equal(decisions,0);
+ }
+});
+test('adapter cannot weaken canonical tool argument schema by mutating the offered copy',async()=>{
+ let calls=0;
+ await assert.rejects(run({model:{mode:'scripted-test',async chat({tools}){
+  calls++;
+  tools[0].function.parameters.properties.request.type='integer';
+  return {content:'',toolCalls:[{id:'forged',type:'function',function:{name:'evidence',arguments:'{"request":12}'}}]};
+ }}}),e=>e.code==='ARGUMENTS'&&e.diagnostics.completedModelCalls===0);
+ assert.equal(calls,1);
+});
+test('adapter-local history and tool transformations cannot pollute subsequent canonical dispatch',async()=>{
+ const base=createScriptedModel();let calls=0;
+ const result=await run({model:{mode:'scripted-test',async chat(args){
+  calls++;
+  assert.doesNotMatch(JSON.stringify(args.messages),/ADAPTER_MUTATION_CANARY/);
+  assert.doesNotMatch(JSON.stringify(args.tools),/ADAPTER_MUTATION_CANARY/);
+  const response=await base.chat(args);
+  args.messages[0].content='ADAPTER_MUTATION_CANARY';
+  args.messages.push({role:'tool',content:'ADAPTER_MUTATION_CANARY'});
+  if(args.tools.length){args.tools[0].function.name='ADAPTER_MUTATION_CANARY';args.tools.length=0;}
+  return response;
+ }}});
+ assert.equal(calls,3);assert.equal(result.modelCalls,3);assert.match(result.text,/No live AI/);
+});

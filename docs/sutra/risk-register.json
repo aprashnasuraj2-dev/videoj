@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T19:39:00+05:45",
+  "updatedAt": "2026-11-24T20:00:31+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -1099,8 +1099,8 @@
     {
       "id": "R-050",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Private grant metadata can execute before policy admission",
       "mechanism": "URL coercion, grant property getters and arbitrary array iteration occur while processing caller-owned private-context grants.",
       "userEffect": "Unexpected side effects before admission or inconsistent exact grant interpretation.",
@@ -1113,9 +1113,55 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
           "sourceRevision": "76d13792d57fdfd321074a026747c72a306337b1"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "b6e059ecd353df776bb41d4349622530bcd20d75"
         }
       ],
-      "unblockCondition": "Exact grant adversarial and normal runtime/browser regression pass."
+      "unblockCondition": null
+    },
+    {
+      "id": "R-051",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Distinct capabilities alias one model-facing tool",
+      "mechanism": "Pinned runner safeName normalizes and truncates paths; duplicate labels overwrite dispatch table entries.",
+      "userEffect": "A model may select one apparent capability while dispatch binds another.",
+      "affectedTasks": [
+        "SUTRA-X010-28",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Preflight exact pinned naming for all references and reject duplicate labels; recheck model-bound tool table.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "0f983873e9a9da3143fcf2a283f8d510555920bf"
+        }
+      ],
+      "unblockCondition": "Exact adversarial collision and positive runtime/browser regressions pass."
+    },
+    {
+      "id": "R-052",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Model adapter mutates canonical history or tool validation schema",
+      "mechanism": "Runner passes shared messages and schema references; adapter transformations could widen validation or pollute future prompts.",
+      "userEffect": "Incorrect tool arguments or conversation evidence may be accepted.",
+      "affectedTasks": [
+        "SUTRA-X010-29",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Detach offered history and schema; validate against canonical tool-name/schema map.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "0f983873e9a9da3143fcf2a283f8d510555920bf"
+        }
+      ],
+      "unblockCondition": "Exact schema mutation and multi-step isolation regressions pass."
     }
   ]
 }
