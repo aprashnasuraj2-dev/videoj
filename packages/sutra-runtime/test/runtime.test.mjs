@@ -52,3 +52,18 @@ test('stopped run reports safe actual model counts and stable limit reason witho
 test('noncooperating provider cancellation reports started but not completed call',async()=>{const c=new AbortController();let begin;const started=new Promise(r=>begin=r);const job=run({signal:c.signal,model:{mode:'scripted-test',chat(){begin();return new Promise(()=>{});}}});await started;c.abort();await assert.rejects(job,e=>e.code==='CANCELLED'&&e.diagnostics.modelCalls===1&&e.diagnostics.completedModelCalls===0);});
 
 test('typed provider quota failure survives vendor child error handling without leaking messages',async()=>{const {InferenceError}=await import('../../sutra-inference/protocol.js');const scripted=createScriptedModel();let calls=0;await assert.rejects(run({model:{mode:'provider',approvedModel:'synthetic-provider',chat(args){if(++calls===2)throw new InferenceError('QUOTA');return scripted.chat(args);}}}),e=>e.code==='PROVIDER_QUOTA'&&e.diagnostics.modelCalls===2&&e.diagnostics.completedModelCalls===1);assert.equal(calls,2);});
+
+test('aggregate graph budget stops shared DAG expansion and oversized primitive strings before serialization',()=>{
+ const g=copy();let dag={leaf:'1234567890'};for(let i=0;i<19;i++)dag={left:dag,right:dag};
+ g.metadata.extra=dag;assert.throws(()=>compileNetwork(g),e=>e.code==='NETWORK_SIZE');
+ const oversized=copy();oversized.metadata.description='🧪'.repeat(30000);assert.throws(()=>compileNetwork(oversized),e=>e.code==='NETWORK_SIZE');
+});
+test('sparse arrays, inherited conversion hooks and coercible network identities are refused without execution',()=>{
+ let touched=0;const g=copy();const array=[];array.length=100;g.metadata.extra=array;
+ assert.throws(()=>compileNetwork(g),e=>e.code==='NETWORK_DATA');
+ class Hostile extends Array{toJSON(){touched++;return [];}}
+ const h=copy();h.metadata.extra=new Hostile();assert.throws(()=>compileNetwork(h),e=>e.code==='NETWORK_DATA');
+ const identity={toString(){touched++;return 'learner';}};assert.throws(()=>compileNetwork(copy(),{name:identity}),e=>e.code==='NETWORK_ID');
+ const limits={};Object.defineProperty(limits,'maxDepth',{enumerable:true,get(){touched++;return 3;}});assert.throws(()=>executionLimits(limits),e=>e.code==='LIMIT_CONFIG');
+ assert.equal(touched,0);
+});
