@@ -2,7 +2,7 @@
 
 This tool is for the future rights-cleared lesson/video, transcript and written guide. It does not supply content and it cannot prove licensing or reviewer competence.
 
-The CLI reads actual bounded files from a content root, refuses symlinks/path escape, computes SHA-256, and compares them with the manifest. The manifest also carries de-identified rights declarations and a human factual-review status.
+The CLI reads actual bounded files from a real, non-aliased content root, refuses symlink leaves/ancestors and path escape, computes SHA-256 in fixed-size chunks, and compares observed identities with the manifest. It checks opened file metadata and bytes read; a trusted stable input tree is still required, not an adversarial concurrent filesystem sandbox. The manifest also carries de-identified rights declarations and a human factual-review status.
 
 A structurally complete result requires:
 - matching media/transcript/guide bytes;

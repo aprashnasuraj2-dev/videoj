@@ -51,3 +51,14 @@ test('intake rejects coercible hashes, unknown declarations and nested accessor 
  const o=observed();o.media.sha256=hash;assert.throws(()=>assessContentManifest(manifest(),{observedFiles:o}));assert.equal(touched,0);
  const extra=manifest();extra.rights.media.unreviewed='yes';assert.throws(()=>assessContentManifest(extra,{observedFiles:observed()}));
 });
+
+test('CLI refuses symlinked asset ancestor and aliased content root even when hashes match',()=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'sutra-intake-ancestor-'));try{
+  const root=path.join(dir,'root'),outside=path.join(dir,'outside'),alias=path.join(dir,'alias');fs.mkdirSync(root);fs.mkdirSync(outside);fs.mkdirSync(path.join(root,'text'));fs.writeFileSync(path.join(outside,'lesson.mp4'),data.media);fs.writeFileSync(path.join(root,'text/transcript.txt'),data.transcript);fs.writeFileSync(path.join(root,'text/guide.txt'),data.guide);fs.symlinkSync(outside,path.join(root,'media'),'dir');
+  const mf=path.join(dir,'manifest.json');fs.writeFileSync(mf,JSON.stringify(manifest()));const cli=new URL('./cli.mjs',import.meta.url).pathname;
+  const bad=spawnSync(process.execPath,[cli,mf,root],{encoding:'utf8'});assert.equal(bad.status,2);assert.match(bad.stderr,/ancestor/);
+  fs.unlinkSync(path.join(root,'media'));fs.mkdirSync(path.join(root,'media'));fs.writeFileSync(path.join(root,'media/lesson.mp4'),data.media);fs.symlinkSync(root,alias,'dir');
+  const aliased=spawnSync(process.execPath,[cli,mf,alias],{encoding:'utf8'});assert.equal(aliased.status,2);assert.match(aliased.stderr,/root/);
+  const good=spawnSync(process.execPath,[cli,mf,root],{encoding:'utf8'});assert.equal(good.status,0);assert.equal(JSON.parse(good.stdout).bytesMatch,true);
+ }finally{fs.rmSync(dir,{recursive:true,force:true});}
+});
