@@ -285,3 +285,7 @@ Bound work independently of bytes; real BFCache while playing must pause without
 ## SUTRA-DECISION-0033 — Complete static MCP discovery only
 
 2026-11-24T19:39:00+05:45: X010-23. Reject any pagination cursor (including empty) rather than following it or claiming a partial catalog is exhaustive. Reject a dynamic or malformed external tools capability because the narrow stateless client cannot safely track tool-list changes. Explicit static capability or omitted listChanged with complete one-tool discovery remains compatible. Source direct calls retain the independently indexed local capability contract; a successful static catalog is not proof of third-party tool semantics. Pending exact CI. [Evidence](evidence/implementation/SESSION-0043.md).
+
+## SUTRA-DECISION-0034 — Canonical observer and adapter identity
+
+X010-24/25. Freeze runtime trace scalar events before observers; detach listener on settlement. Pin adapter mode, approved model and actual callable at admission with original receiver binding. A viewer may fail or mutate its own state but may not rewrite stored event evidence or swap the dispatch function mid-run. This is an accidental/host callback integrity boundary, not a sandbox for arbitrary same-origin executable code. Pending exact CI.

@@ -123,21 +123,23 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  catch(error){fail(error?.code??'PRIVATE_CONTEXT_POLICY','Private context policy is invalid.');}
  const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeers:!!peerRuntime,externalMcpUrl:third?.url??null});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
- if(!model||typeof model.chat!=='function'||!['scripted-test','provider'].includes(model.mode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
+ const adapterMode=model?.mode,adapterChat=model?.chat;
+ if(typeof adapterChat!=='function'||!['scripted-test','provider'].includes(adapterMode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
  // The caller, not an untrusted graph (including a fetched peer), owns
  // provider/model selection. Model hints may exist in published data but never
  // control the actual adapter dispatch. A live adapter must declare one fixed,
  // host-approved model; the server separately enforces its own allowlist.
- const approvedModel=model.mode==='scripted-test'?'mock-1':model.approvedModel;
- if(typeof approvedModel!=='string'||! /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,119}$/.test(approvedModel)||approvedModel==='mock-1'&&model.mode==='provider')fail('MODEL_POLICY','Provider adapter must supply one fixed approved model identifier.');
+ const approvedModel=adapterMode==='scripted-test'?'mock-1':model.approvedModel;
+ if(typeof approvedModel!=='string'||! /^[A-Za-z0-9][A-Za-z0-9._:/-]{0,119}$/.test(approvedModel)||approvedModel==='mock-1'&&adapterMode==='provider')fail('MODEL_POLICY','Provider adapter must supply one fixed approved model identifier.');
  if(signal?.aborted)fail('CANCELLED','Run cancelled before model execution.');
  const bounds=compiled.limits,controller=new AbortController();
  const aborted=()=>controller.abort(signal?.reason??new RuntimeError('CANCELLED','Run cancelled.'));
  if(signal?.aborted)aborted();else signal?.addEventListener('abort',aborted,{once:true});
  const trace=new TraceBus(),events=[];let modelCalls=0,startedModelCalls=0,completedModelCalls=0,active=0,totalOutput=0,failure=null,closed=false,limitHit=null;const waiters=[];
  const check=()=>{if(closed)fail('CLOSED','Run is closed.');if(controller.signal.aborted)throw controller.signal.reason;};
- const emit=event=>{if(event.kind==='composition_limit')limitHit=Number.isInteger(event.remoteCalls)?'REMOTE_LIMIT':'AGENT_LIMIT';const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','network','origin'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,100);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
- trace.addEventListener('event',e=>emit(e.detail));
+ const emit=event=>{if(closed)return;if(event.kind==='composition_limit')limitHit=Number.isInteger(event.remoteCalls)?'REMOTE_LIMIT':'AGENT_LIMIT';const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','network','origin'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,100);Object.freeze(safe);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
+ const observeTrace=e=>emit(e.detail);
+ trace.addEventListener('event',observeTrace);
  const abortWaiters=()=>{for(const wake of waiters.splice(0))wake();};controller.signal.addEventListener('abort',abortWaiters);
  const deadline=setTimeout(()=>controller.abort(new RuntimeError('TIMEOUT','Run exceeded its elapsed time limit.')),bounds.timeoutMs);
  let rejectAbort;
@@ -148,10 +150,10 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const guardedModel={chat:async args=>{
   check();if(modelCalls>=bounds.maxModelCalls)stopRun(new RuntimeError('MODEL_LIMIT','Model-call budget exceeded.'));modelCalls++;
   while(active>=bounds.concurrency){await new Promise(resolve=>waiters.push(resolve));check();}
-  active++;const span=trace.start('model_call',{mode:model.mode,parent:args.parentSpan});
+  active++;const span=trace.start('model_call',{mode:adapterMode,parent:args.parentSpan});
   try{
    check();startedModelCalls++;
-   const candidate=await Promise.race([model.chat({...args,model:approvedModel,signal:controller.signal,onContentDelta:undefined}),stopped]);check();
+   const candidate=await Promise.race([Reflect.apply(adapterChat,model,[{...args,model:approvedModel,signal:controller.signal,onContentDelta:undefined}]),stopped]);check();
    // Treat adapter results as untrusted data before the pinned runner sees
    // them. This catches accessors, shared expansion and sparse tool arrays.
    let response;try{response=snapshotJsonData(candidate,131072,'MODEL_RESPONSE');}catch{fail('MODEL_RESPONSE','Malformed or excessive model result.');}
@@ -229,7 +231,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
    return Object.keys(returning).length?{...result,private_context:returning}:result;
   }};
  };
- const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:model.mode==='scripted-test',apiKey:'',defaultModel:approvedModel,modelOverride:approvedModel,resolveRemote:resolvePeer,resolveMcp:async ref=>{
+ const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:adapterMode==='scripted-test',apiKey:'',defaultModel:approvedModel,modelOverride:approvedModel,resolveRemote:resolvePeer,resolveMcp:async ref=>{
   check();
   if(ref?.url==='/api/source-tools'&&sourceClient)return sourceClient;
   if(ref?.url===third?.url&&externalClient)return externalClient;
@@ -238,7 +240,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
   if(limitHit)fail(limitHit,'Composition agent or remote-call budget stopped execution.');
   if(!result.text)fail('INCOMPLETE','Execution stopped before a complete answer.');
-  return {text:result.text,mode:model.mode,modelCalls:startedModelCalls,agentCalls:composition.agentCalls,events};
+  return {text:result.text,mode:adapterMode,modelCalls:startedModelCalls,agentCalls:composition.agentCalls,events};
  }catch(error){
   // Expose bounded counters and sanitized reason only; never return partial model text or arbitrary error details.
   const source=failure??(controller.signal.aborted?controller.signal.reason:error);
@@ -247,7 +249,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   safe.diagnostics=Object.freeze({agentCalls:composition.agentCalls,modelCalls:startedModelCalls,completedModelCalls,remoteCalls:composition.remoteCalls,maxAgents:bounds.maxAgents,maxModelCalls:bounds.maxModelCalls,reason:code});
   throw safe;
  }
- finally{closed=true;clearTimeout(deadline);signal?.removeEventListener('abort',aborted);controller.signal.removeEventListener('abort',rejectAbort);controller.signal.removeEventListener('abort',abortWaiters);abortWaiters();}
+ finally{closed=true;trace.removeEventListener('event',observeTrace);clearTimeout(deadline);signal?.removeEventListener('abort',aborted);controller.signal.removeEventListener('abort',rejectAbort);controller.signal.removeEventListener('abort',abortWaiters);abortWaiters();}
 }
 
 // Same-origin publication loader for the restricted local profile. Cross-origin

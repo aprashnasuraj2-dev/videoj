@@ -3,11 +3,11 @@
   "project": "SUTRA",
   "updated_at": "2026-11-24T19:39:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "be3665ae5608c38ba3af371783d858a275269999",
+  "last_observed_code_sha": "143e5bd0e95002df0863b3d9f536cc917df8406c",
   "last_session_id": "SUTRA-SESSION-0043",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
-  "next_task": "SUTRA-X010-23",
+  "next_task": "SUTRA-X010-24",
   "ready_engineering_queue": [
     "SUTRA-P041-10",
     "SUTRA-P078-07",
@@ -16,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Observe exact X010-23 runtime tests and all affected CI before credit; continue P078-02 adversarial engineering. No deployment, paid model, public release or submission.",
+  "next_action": "Verify exact pending X010-23/24/25 workflow results; continue P078-02 adversarial engineering. P007-02/04/07/10 stay pending until actual availability/spend/reserve. No deployment, paid inference, release or submission.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -12201,6 +12201,146 @@
           "observed_at": "2026-11-24T19:39:00+05:45"
         }
       ]
+    },
+    "SUTRA-P007-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T19:39:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/EFFORT-RESOURCE-CAPACITY-0042.md",
+          "description": "Reviewed all 100 original phase estimates: 168.5 hours plus 25.275 hours named integration contingency.",
+          "result": "pass",
+          "source_revision": "be3665ae5608c38ba3af371783d858a275269999",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45407262174/job/138491211152",
+          "description": "Exact source provider/local measurement gate, 20 tests passed, including five offline capacity tests; not live-provider evidence.",
+          "result": "pass",
+          "source_revision": "be3665ae5608c38ba3af371783d858a275269999",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P007-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T19:39:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/EFFORT-RESOURCE-CAPACITY-0042.md",
+          "description": "Reviewed distinct inference, media, hosting, hardware, optional services and human costs; no unknown price treated as zero.",
+          "result": "pass",
+          "source_revision": "be3665ae5608c38ba3af371783d858a275269999",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45407262174/job/138491211152",
+          "description": "Exact source provider/local measurement gate, 20 tests passed, including five offline capacity tests; not live-provider evidence.",
+          "result": "pass",
+          "source_revision": "be3665ae5608c38ba3af371783d858a275269999",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P007-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T19:39:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/EFFORT-RESOURCE-CAPACITY-0042.md",
+          "description": "Verified offline admission arithmetic and doubled bytes/output/context/explicit full retry sensitivity; no measured provider cost claim.",
+          "result": "pass",
+          "source_revision": "be3665ae5608c38ba3af371783d858a275269999",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45407262174/job/138491211152",
+          "description": "Exact source provider/local measurement gate, 20 tests passed, including five offline capacity tests; not live-provider evidence.",
+          "result": "pass",
+          "source_revision": "be3665ae5608c38ba3af371783d858a275269999",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P007-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T19:39:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/EFFORT-RESOURCE-CAPACITY-0042.md",
+          "description": "Reviewed explicit optional scope-cut order while preserving mandatory evidence/security/rights/acceptance gates.",
+          "result": "pass",
+          "source_revision": "be3665ae5608c38ba3af371783d858a275269999",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45407262174/job/138491211152",
+          "description": "Exact source provider/local measurement gate, 20 tests passed, including five offline capacity tests; not live-provider evidence.",
+          "result": "pass",
+          "source_revision": "be3665ae5608c38ba3af371783d858a275269999",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P007-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T19:39:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/EFFORT-RESOURCE-CAPACITY-0042.md",
+          "description": "Reviewed explicit unknown prices, provider billing/headroom, participant/tester availability, physical hardware and infrastructure access.",
+          "result": "pass",
+          "source_revision": "be3665ae5608c38ba3af371783d858a275269999",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45407262174/job/138491211152",
+          "description": "Exact source provider/local measurement gate, 20 tests passed, including five offline capacity tests; not live-provider evidence.",
+          "result": "pass",
+          "source_revision": "be3665ae5608c38ba3af371783d858a275269999",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P007-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T19:39:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/EFFORT-RESOURCE-CAPACITY-0042.md",
+          "description": "Reviewed generated effort and capacity worksheet with cost categories and scope-cut order; all 20 measurement-gate tests passed at exact prior source.",
+          "result": "pass",
+          "source_revision": "be3665ae5608c38ba3af371783d858a275269999",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45407262174/job/138491211152",
+          "description": "Exact source provider/local measurement gate, 20 tests passed, including five offline capacity tests; not live-provider evidence.",
+          "result": "pass",
+          "source_revision": "be3665ae5608c38ba3af371783d858a275269999",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-23": {
+      "state": "verified",
+      "verified_at": "2026-11-24T19:39:00+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45408776352/job/138496577182",
+          "description": "Exact full learner CI and 19/19 workflows for static discovery regression.",
+          "result": "pass",
+          "source_revision": "143e5bd0e95002df0863b3d9f536cc917df8406c",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "description": "Scoped counterexample, regression and remaining limitations.",
+          "result": "pass",
+          "source_revision": "143e5bd0e95002df0863b3d9f536cc917df8406c",
+          "observed_at": "2026-11-24T19:39:00+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -12293,6 +12433,7 @@
     "2026-11-24T19:14:26.874+05:45: **682/1,075 overall verified; 609/1,000 original; 386 pending; six omissions; one hardware blocker.** X010-14–17 verified at exact 19/19 source revisions; latest `05dbd04ec5243c1fb835769ff9bf45bb7c4e4486` 450 non-browser tests (142 app, 155 package/API, 145 runtime, 8 peer), learner Chromium and three-engine matrix. X010-18 candidate `05d8948b90972f1fbc1095bf3554f1c3a363c452` awaiting exact CI; do not count pending candidate. P078-02 open. No public release or live model.",
     "2026-11-24T19:31:57.810+05:45: 686/1079 overall verified; 609/1000 original; 386 pending. X010-18–21 exact source CI all 19/19. X010-22 18/19 at observation. Continue P078-02 with dependency-ready engineering. Inspect exact learner baaff96faf5649285b7ffd7ed93ed7842e7dc291 (run 45406604981); do not count X010-22 until full CI passes. Preserve independent P007 capacity work; P041-10/P078-07 require genuine viewer/pilot evidence, P054-01/P066-01 actual provider measurements, P020-02 rights-cleared corpus, P005-08 entrant voice. No deploy, paid model, public release or submission.",
     "Audit on c1230291b09d8150ec927ace978bfc5df88ea884 caught a closed resume cursor; corrected next_task to pending X010-22. Prior privacy learner failed on empty vs absent Playwright representation, not a nonempty leaked URL; keep gate pending.",
-    "Reconciled X010-22 exact source be3665ae5608c38ba3af371783d858a275269999: 19/19 workflows successful, including full learner, all three browser engines and local Workerd. X010-23 new candidate: refuse paginated/malformed tool catalogs and dynamic external tool capability declarations; no completion credit until exact CI. P078-02 remains pending."
+    "Reconciled X010-22 exact source be3665ae5608c38ba3af371783d858a275269999: 19/19 workflows successful, including full learner, all three browser engines and local Workerd. X010-23 new candidate: refuse paginated/malformed tool catalogs and dynamic external tool capability declarations; no completion credit until exact CI. P078-02 remains pending.",
+    "Reconciled P007-01/03/05/06/08/09 from reviewed offline worksheet and 20/20 exact measurement-gate tests. X010-23 19/19 verified. X010-24/25 new trace-observer isolation and pinned adapter identity candidates; no credit until exact CI."
   ]
 }

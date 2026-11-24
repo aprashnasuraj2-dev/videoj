@@ -74,3 +74,40 @@ test('adapter result accessors and unbounded extras never execute or enter the r
  for(const response of [getter,sparse,giant])await assert.rejects(run({model:{mode:'scripted-test',chat:async()=>response}}),e=>e.code==='MODEL_RESPONSE'&&e.diagnostics.completedModelCalls===0);
  assert.equal(touched,0);
 });
+
+test('viewer cannot mutate canonical trace entries or append unapproved private fields',async()=>{
+ const seen=[];
+ const result=await run({onEvent:event=>{
+  seen.push(event);
+  Reflect.set(event,'kind','forged');
+  Reflect.set(event,'privateCanary','PRIVATE_TRACE_CANARY');
+  Reflect.deleteProperty(event,'phase');
+ }});
+ assert.ok(seen.length>0);
+ assert.ok(seen.every(Object.isFrozen));
+ assert.deepEqual(result.events,seen);
+ assert.ok(result.events.every(e=>e.kind!=='forged'&&typeof e.phase==='string'));
+ assert.doesNotMatch(JSON.stringify(result.events),/PRIVATE_TRACE_CANARY/);
+ assert.equal(result.agentCalls,2);assert.equal(result.modelCalls,3);
+});
+test('settled cancelled run never emits additional viewer trace events after noncooperative model resolution',async()=>{
+ const controller=new AbortController(),seen=[];let release,started;
+ const begun=new Promise(resolve=>{started=resolve;});
+ const pending=run({signal:controller.signal,onEvent:e=>seen.push(e),model:{mode:'scripted-test',chat(){started();return new Promise(resolve=>{release=resolve;});}}});
+ await begun;controller.abort();
+ await assert.rejects(pending,e=>e.code==='CANCELLED');
+ const count=seen.length;
+ release({content:'late private result',toolCalls:[]});
+ await new Promise(resolve=>setTimeout(resolve,20));
+ assert.equal(seen.length,count);assert.doesNotMatch(JSON.stringify(seen),/late private result/);
+});
+test('host adapter mode, model identity and dispatch function are pinned for one run despite viewer mutation',async()=>{
+ const model=createScriptedModel(),original=model.chat;let originalCalls=0,replacementCalls=0;
+ model.chat=function(args){assert.equal(this,model);assert.equal(args.model,'mock-1');originalCalls++;return original.call(this,args);};
+ const result=await run({model,onEvent:()=>{
+  model.mode='provider';model.approvedModel='unapproved-provider';
+  model.chat=async()=>{replacementCalls++;return {content:'forged provider result',toolCalls:[]};};
+ }});
+ assert.equal(result.mode,'scripted-test');assert.equal(result.modelCalls,3);
+ assert.equal(originalCalls,3);assert.equal(replacementCalls,0);assert.match(result.text,/No live AI/);
+});

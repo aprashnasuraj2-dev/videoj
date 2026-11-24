@@ -10,9 +10,9 @@ On 24 November the participant explicitly tightened the ordering: stop further d
 
 ## Latest implementation checkpoint — 0043
 
-2026-11-24T19:39:00+05:45: **687/1,080 overall verified; 609/1,000 original; 386 pending; six omissions; one hardware blocker.** Reconciled X010-22 exact source be3665ae5608c38ba3af371783d858a275269999: 19/19 workflows successful, including full learner, all three browser engines and local Workerd. X010-23 new candidate: refuse paginated/malformed tool catalogs and dynamic external tool capability declarations; no completion credit until exact CI. P078-02 remains pending. [Evidence](evidence/implementation/SESSION-0043.md).
+**694/1,082 overall verified; 615/1,000 original; 381 pending; six omissions; one hardware blocker.** Reconciled P007-01/03/05/06/08/09 from reviewed offline worksheet and 20/20 exact measurement-gate tests. X010-23 19/19 verified. X010-24/25 new trace-observer isolation and pinned adapter identity candidates; no credit until exact CI. [Evidence](evidence/implementation/SESSION-0043.md).
 
-Next: verify X010-23 exact CI; continue P078-02. Preserve P007 capacity work and all human/rights/live-model/public-release gates. No deployment, paid inference or submission.
+Next: Verify exact pending X010-23/24/25 workflow results; continue P078-02 adversarial engineering. P007-02/04/07/10 stay pending until actual availability/spend/reserve. No deployment, paid inference, release or submission.
 
 ## Resume sequence
 

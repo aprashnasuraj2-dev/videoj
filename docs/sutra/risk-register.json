@@ -999,8 +999,8 @@
     {
       "id": "R-046",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Partial or dynamic MCP discovery represented as complete",
       "mechanism": "A tools/list response can contain the expected tool(s) plus a pagination cursor, while a dynamic tools capability can announce unsupported list-change semantics.",
       "userEffect": "A partial tool catalog may be represented as a verified fixed read-only capability; malformed discovery may fail inconsistently.",
@@ -1013,9 +1013,55 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
           "sourceRevision": "be3665ae5608c38ba3af371783d858a275269999"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "143e5bd0e95002df0863b3d9f536cc917df8406c"
         }
       ],
-      "unblockCondition": "Observe exact candidate regression and full affected CI; no claim of external semantic conformance."
+      "unblockCondition": null
+    },
+    {
+      "id": "R-047",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Viewer mutates canonical runtime trace or receives post-settlement events",
+      "mechanism": "Canonical stored event shared with observer; trace listener retained after settlement.",
+      "userEffect": "Misleading execution evidence, injected fields or stale UI updates.",
+      "affectedTasks": [
+        "SUTRA-X010-24",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Freeze scalar event, detach observer on settlement, reject closed-run events.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "143e5bd0e95002df0863b3d9f536cc917df8406c"
+        }
+      ],
+      "unblockCondition": "Exact runtime and learner regression pass."
+    },
+    {
+      "id": "R-048",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Adapter identity changes after run admission",
+      "mechanism": "Mutable model object mode and callable read again after asynchronous entry or viewer callback.",
+      "userEffect": "Scripted output can be mislabelled as provider output or invoke an unintended adapter.",
+      "affectedTasks": [
+        "SUTRA-X010-25",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Pin original callable, mode and model name at admission; keep receiver binding.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "143e5bd0e95002df0863b3d9f536cc917df8406c"
+        }
+      ],
+      "unblockCondition": "Exact mutation counterexample and normal provider/scripted regression pass."
     }
   ]
 }

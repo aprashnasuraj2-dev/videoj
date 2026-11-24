@@ -125,15 +125,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Confirm available hours against this plan; reserve 15% for integration failures. Set model, hosting and media budgets, plus a stop rule when funded inference reaches its approved cap.
 - **Phase exit:** The calendar has a named daily capacity; model cost assumptions and unknown provider prices are shown separately.
 
-- [ ] `SUTRA-P007-01` Sum person-hour estimates and add a named integration contingency
+- [x] `SUTRA-P007-01` Sum person-hour estimates and add a named integration contingency
 - [ ] `SUTRA-P007-02` Record participant availability and tasks requiring genuine human involvement
-- [ ] `SUTRA-P007-03` Separate inference, media, hosting and optional service cost assumptions
+- [x] `SUTRA-P007-03` Separate inference, media, hosting and optional service cost assumptions
 - [ ] `SUTRA-P007-04` Select an approved spend ceiling before enabling funded inference
-- [ ] `SUTRA-P007-05` Calculate baseline capacity and sensitivity to doubled token/retry usage
-- [ ] `SUTRA-P007-06` Name the first optional scope cuts when available hours shrink
+- [x] `SUTRA-P007-05` Calculate baseline capacity and sensitivity to doubled token/retry usage
+- [x] `SUTRA-P007-06` Name the first optional scope cuts when available hours shrink
 - [ ] `SUTRA-P007-07` Reserve availability funding through the verified judging end date
-- [ ] `SUTRA-P007-08` Record missing prices, tester availability and infrastructure access honestly
-- [ ] `SUTRA-P007-09` Produce and review the phase artifact: Effort baseline, cost worksheet and scope-cut order.
+- [x] `SUTRA-P007-08` Record missing prices, tester availability and infrastructure access honestly
+- [x] `SUTRA-P007-09` Produce and review the phase artifact: Effort baseline, cost worksheet and scope-cut order.
 - [ ] `SUTRA-P007-10` Close phase 007 only after its applicable tasks have evidence and its exit condition is observed: The calendar has a named daily capacity; model cost assumptions and unknown provider prices are shown separately.
 
 ## Phase 008 - Choose deployment origins and isolation
