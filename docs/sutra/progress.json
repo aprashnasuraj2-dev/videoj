@@ -1,21 +1,22 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T05:28:01Z",
+  "updated_at": "2026-11-24T05:46:15Z",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "db74626f710e0c8413b529d0478e1b26758976dc",
-  "last_session_id": "SUTRA-SESSION-0029",
-  "stage": "integrated_browser_regression_reconciliation",
+  "last_observed_code_sha": "64d43320128786e6932a16bc708fb0383b101812",
+  "last_session_id": "SUTRA-SESSION-0030",
+  "stage": "source_snapshot_hardened_measurement_reconciliation",
   "current_task": null,
-  "next_task": "SUTRA-P078-02",
+  "next_task": "SUTRA-X006-07",
   "ready_engineering_queue": [
+    "SUTRA-P078-02",
     "SUTRA-P041-08",
     "SUTRA-P054-01",
     "SUTRA-P066-01",
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Inspect exact db74626 learner CI, retain any failures, repair remaining profile drift without weakening assertions. Reconcile stabilization, then progress independent engineering without closing live, human, rights, cloud or release gates.",
+  "next_action": "Reconcile media transfer instrumentation on current head: explicit video request and playback pass, but raw mediaEncodedBytes is zero. Preserve raw observations, do not claim zero post-click media bytes. Confirm remaining publisher starter workflow. Continue dependency-ready stabilization without closing funded provider, human, rights, public HTTPS or release gates.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -10732,6 +10733,126 @@
           "result": "pass",
           "source_revision": "36bc51d1b039d88c7bd50a080e15c8296bc62060",
           "observed_at": "2026-11-24T05:28:01Z"
+        }
+      ]
+    },
+    "SUTRA-X006-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:46:15Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45335478185/job/138246429557",
+          "description": "Browser provider profile refused both graph drift and mounted profile drift with zero model calls; exact validated graph then executed.",
+          "result": "pass",
+          "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
+          "observed_at": "2026-11-24T05:46:15Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0030.md",
+          "description": "Revision-specific implementation and evidence boundaries.",
+          "result": "pass",
+          "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
+          "observed_at": "2026-11-24T05:46:15Z"
+        }
+      ]
+    },
+    "SUTRA-X006-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:46:15Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45335478185/job/138246429557",
+          "description": "Worker tests reject stale/malformed header before quota; browser mid-run 409 stops on the third attempted model request, preserves independent receipts and disables inference.",
+          "result": "pass",
+          "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
+          "observed_at": "2026-11-24T05:46:15Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0030.md",
+          "description": "Revision-specific implementation and evidence boundaries.",
+          "result": "pass",
+          "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
+          "observed_at": "2026-11-24T05:46:15Z"
+        }
+      ]
+    },
+    "SUTRA-X006-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:46:15Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45335478185/job/138246429557",
+          "description": "Profile unit tests exercised encoded dot segments, backslash, repeated slash and control characters.",
+          "result": "pass",
+          "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
+          "observed_at": "2026-11-24T05:46:15Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0030.md",
+          "description": "Revision-specific implementation and evidence boundaries.",
+          "result": "pass",
+          "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
+          "observed_at": "2026-11-24T05:46:15Z"
+        }
+      ]
+    },
+    "SUTRA-X006-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:46:15Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45335478185/job/138246429557",
+          "description": "Resilience browser test corrupts transcript, confirms no actionable UI or API/media requests, then reloads valid content and completes a local check.",
+          "result": "pass",
+          "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
+          "observed_at": "2026-11-24T05:46:15Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0030.md",
+          "description": "Revision-specific implementation and evidence boundaries.",
+          "result": "pass",
+          "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
+          "observed_at": "2026-11-24T05:46:15Z"
+        }
+      ]
+    },
+    "SUTRA-X006-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:46:15Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45335478185/job/138246429557",
+          "description": "Content reader unit tests passed for missing length, aggregate overflow, cancellation, exact boundary and zero cross-origin contact; integrated media and guide checks passed.",
+          "result": "pass",
+          "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
+          "observed_at": "2026-11-24T05:46:15Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0030.md",
+          "description": "Revision-specific implementation and evidence boundaries.",
+          "result": "pass",
+          "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
+          "observed_at": "2026-11-24T05:46:15Z"
+        }
+      ]
+    },
+    "SUTRA-X006-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:46:15Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45335478185/job/138246429557",
+          "description": "Integrated hero browser test held a guide response while switching mode and asserted no obsolete result in the replacement view; normal guide hash check and tamper refusal still pass.",
+          "result": "pass",
+          "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
+          "observed_at": "2026-11-24T05:46:15Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0030.md",
+          "description": "Revision-specific implementation and evidence boundaries.",
+          "result": "pass",
+          "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
+          "observed_at": "2026-11-24T05:46:15Z"
         }
       ]
     }

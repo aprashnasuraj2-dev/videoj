@@ -1,5 +1,10 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0030 — 2026-11-24
+
+- Reconciled Session 0029 checkpoint (18/18 workflows passed). Hardened mounted source/graph approval, per-request catalog precondition, canonical artifact paths, startup recovery, bounded streaming reads, and obsolete comparison completion handling.
+- Verified X006-01..06; X006-07 remains open for media transfer counter discrepancy. 607/1,000 original; 628/1,022 overall; 45 fully verified phases; six omissions. Exact current learner and three browser engines green, 17/18 workflows at observation. No public release, actual provider spend, participant or live rights evidence inferred. [Evidence](evidence/implementation/SESSION-0030.md).
+
 ## SUTRA-SESSION-0029 — 2026-11-24
 
 - Observed standalone action/review tests, first Chromium persistence profile, independent starter and Open Kit pass; restored eight prior checks and added three new verified checks. 607/1,000 original; 622/1,015 total; 45 complete phases; six omissions.

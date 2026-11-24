@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "recordedAt": "2026-11-24T08:35:01+05:45",
+  "recordedAt": "2026-11-24T05:46:15Z",
   "metrics": [
     {
       "id": "engineering_baseline",
-      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+      "sourceRevision": "64d43320128786e6932a16bc708fb0383b101812",
       "invalidatedBy": [
         "grounding-evaluation"
       ],
@@ -14,8 +14,8 @@
         "retrievalPassed": 20,
         "adversarialCases": 10,
         "adversarialPassed": 10,
-        "directMedianMs": 0.030092,
-        "delegatedMedianMs": 3.519918,
+        "directMedianMs": 0.035266000000007125,
+        "delegatedMedianMs": 3.8981064999999973,
         "directModelCalls": 0,
         "delegatedModelCalls": 90,
         "medianDelegatedModelCalls": 4.5,
@@ -27,7 +27,7 @@
     },
     {
       "id": "desktop_browser_matrix",
-      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+      "sourceRevision": "64d43320128786e6932a16bc708fb0383b101812",
       "invalidatedBy": [
         "browser-matrix"
       ],
@@ -43,7 +43,7 @@
     },
     {
       "id": "hero_journey",
-      "sourceRevision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+      "sourceRevision": "64d43320128786e6932a16bc708fb0383b101812",
       "invalidatedBy": [
         "critical-journey"
       ],
@@ -55,7 +55,10 @@
         "writtenSourceHashCheck": true,
         "alteredWrittenSourceRefused": true,
         "peerDenialPreservesLocalFlow": true,
-        "narrowKeyboardJourney": true
+        "narrowKeyboardJourney": true,
+        "obsoleteGuideResultDiscarded": true,
+        "mixedContentRecovery": true,
+        "providerSnapshotDriftRejected": true
       }
     },
     {

@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0030 — 2026-11-24
+
+**607/1,000 original checks verified; 628/1,022 total; 45/100 fully verified phases; six omissions.** Six newly discovered source-integrity checks are verified; one media transfer instrumentation discrepancy is open. The latest product revision `64d43320128786e6932a16bc708fb0383b101812` passed 297 automated tests, ten Chromium integration profiles, and the three-engine browser matrix. At observation, 17/18 workflows passed and publisher starter was still running. No original phase or external gate was credited. [Evidence](evidence/implementation/SESSION-0030.md).
+
+---
+
 ## Session 0029 — 2026-11-24
 
 **607/1,000 original checks verified; 622/1,015 total; 45/100 phases fully verified; 6 omissions.** Scope-specific revalidation restores eight reopened checks and verifies three new action-registry requirements. Relevant action/review unit tests, initial Chromium persistence profile, starter and Open Kit passed. Full integrated learner CI remains unresolved: accessibility passes, but later resilience fixture assertions required updates. Latest test-only candidate `db74626f710e0c8413b529d0478e1b26758976dc` pending CI. No external/human/provider/release gate credited. [Evidence](evidence/implementation/SESSION-0029.md).
