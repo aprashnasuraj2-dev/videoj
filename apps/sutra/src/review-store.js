@@ -14,7 +14,11 @@ export function createReviewStore({storage,sources,idFactory=()=>crypto.randomUU
   const raw=storage.getItem(KEY);if(raw===null)return [];
   if(typeof raw!=='string'||raw.length>65536)throw Error('Local review data is unavailable or too large.');
   let records;try{records=JSON.parse(raw);}catch{throw Error('Local review data is unreadable.');}
-  if(!Array.isArray(records)||records.length>10||records.some(r=>!r||typeof r!=='object'||Array.isArray(r)||typeof r.id!=='string'||!r.id||r.id.length>100||r.schema!==2||r.kind!=='source-review'||!r.receipt||typeof r.receipt!=='object'||Array.isArray(r.receipt)||typeof r.savedAt!=='string'||r.savedAt.length>40))
+  // A stored record may be stale relative to current media, but must retain
+  // the exact declared envelope. Unknown extensions cannot piggyback on an
+  // otherwise valid source receipt and then be recopied into future writes.
+  const permitted=['schema','kind','id','receipt','savedAt'];
+  if(!Array.isArray(records)||records.length>10||records.some(r=>!r||typeof r!=='object'||Array.isArray(r)||Object.keys(r).length!==permitted.length||permitted.some(k=>!Object.hasOwn(r,k))||typeof r.id!=='string'||!r.id||r.id.length>100||r.schema!==2||r.kind!=='source-review'||!r.receipt||typeof r.receipt!=='object'||Array.isArray(r.receipt)||typeof r.savedAt!=='string'||r.savedAt.length>40))
    throw Error('Local review data has an unsupported shape.');
   if(new Set(records.map(r=>r.id)).size!==records.length||records.some(r=>! /^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(r.id)||!Number.isFinite(Date.parse(r.savedAt))))throw Error('Local review identity is invalid or duplicated.');
   return records;

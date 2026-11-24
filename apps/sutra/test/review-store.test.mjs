@@ -97,3 +97,15 @@ test('review catalog snapshot survives caller mutation while exact receipt remai
  const proposal=store.prepare(fixture.receipt),saved=store.commit(proposal.id);
  assert.equal(saved.receipt.excerpt,fixture.receipt.excerpt);assert.equal(store.list().length,1);
 });
+
+test('unexpected stored envelope fields fail closed rather than propagating secrets through a later write',()=>{
+ const f=setup(),saved=f.store.commit(f.store.prepare(fixture.receipt).id);
+ const rows=JSON.parse(f.values.get(key));
+ rows[0].unexpectedPrivateValue='synthetic-canary-do-not-export';
+ f.values.set(key,JSON.stringify(rows));
+ assert.throws(()=>f.store.inspect(),/unsupported shape/);
+ assert.throws(()=>f.store.list(),/unsupported shape/);
+ const other=f.store.prepare(fixture.receipt);assert.throws(()=>f.store.commit(other.id),/unsupported shape/);
+ assert.equal(f.values.get(key).includes('synthetic-canary-do-not-export'),true,'refusal does not rewrite or silently discard corrupted storage');
+ f.store.clear();assert.deepEqual(f.store.inspect(),[]);
+});
