@@ -35,12 +35,19 @@ test('incomparable and invalid evidence abstain instead of manufacturing citatio
  assert.deepEqual(invalidGuidance.sourceRefs,[]);
 });
 
-test('matching structured values remain an unverified match, never certification',()=>{
+test('matching structured values with different excerpts still abstain from claiming agreement',()=>{
  const claims=pair();claims.guide.value=claims.video.value;
+ const guidance=buildUncertaintyGuidance(compareClaimPair(claims));
+ assert.equal(guidance.disposition,'abstain');
+ assert.equal(guidance.certification,'none');
+ assert.match(guidance.nextAction,/original excerpts/);
+});
+test('exact matching values and excerpts permit only an unverified textual match',()=>{
+ const claims=pair();claims.guide.value=claims.video.value;claims.guide.excerpt=claims.video.excerpt;
  const guidance=buildUncertaintyGuidance(compareClaimPair(claims));
  assert.equal(guidance.disposition,'unverified_match');
  assert.equal(guidance.certification,'none');
- assert.match(guidance.nextAction,/source reliability/);
+ assert.match(guidance.nextAction,/provenance and factual reliability/);
 });
 
 test('unknown states are rejected rather than receiving generic confident guidance',()=>{
