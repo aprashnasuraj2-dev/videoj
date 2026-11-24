@@ -192,6 +192,40 @@ const assert=require('node:assert/strict');
    await page.unroute(peer+'/agents/agent-manifest.json');
   }
   assert.deepEqual(crossSite,[],'unapproved redirect destination never contacted');
+  // A pagehide while approval is pending must not allow late clicks to contact
+  // the peer or restore a session grant. A subsequent run owns its own dialog.
+  const beforeLifecycle=peerRequests.length;
+  await page.getByLabel('Exact peer network URL').fill(peer+'/agents/checklist');
+  await page.getByRole('button',{name:'Run scripted peer test'}).click();
+  await page.getByRole('dialog',{name:'Approve real public artifact access?'}).waitFor();
+  assert.equal(await page.locator('#peer-resource').textContent(),peer+'/agents/agent-manifest.json');
+  await page.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
+  await page.waitForFunction(()=>document.querySelector('#peer-status').dataset.state==='cancelled');
+  await page.evaluate(()=>document.querySelector('#peer-allow-session').click());
+  assert.equal(peerRequests.length,beforeLifecycle);assert.equal(await page.locator('#export-peer-trace').isDisabled(),true);
+  await page.getByRole('button',{name:'Run scripted peer test'}).click();
+  await page.getByRole('dialog',{name:'Approve real public artifact access?'}).waitFor();
+  await page.getByRole('button',{name:'Deny external request'}).click();
+  await page.waitForFunction(()=>document.querySelector('#peer-status').dataset.state==='denied');
+  assert.equal(peerRequests.length,beforeLifecycle);
+  // Hold an already approved GET, cancel in the visible workbench, then retry
+  // explicitly. The old read cannot produce a completed receipt or late UI.
+  let releaseHeld,held=false;
+  await page.route(peer+'/agents/agent-manifest.json',async route=>{held=true;await new Promise(resolve=>{releaseHeld=resolve;});return route.abort().catch(()=>{});});
+  await page.getByRole('button',{name:'Run scripted peer test'}).click();
+  await page.getByRole('dialog',{name:'Approve real public artifact access?'}).waitFor();
+  await page.getByRole('button',{name:'Allow this GET once'}).click();
+  for(let i=0;i<50&&!held;i++)await new Promise(resolve=>setTimeout(resolve,20));assert.equal(held,true);
+  await page.getByRole('button',{name:'Cancel peer execution'}).click();
+  await page.waitForFunction(()=>document.querySelector('#peer-status').dataset.state==='cancelled');
+  releaseHeld();await page.unroute(peer+'/agents/agent-manifest.json');
+  assert.match(await page.locator('#peer-status').textContent(),/no completed peer result/);
+  const afterCancel=peerRequests.length;
+  await page.getByRole('button',{name:'Run scripted peer test'}).click();
+  await page.getByRole('dialog',{name:'Approve real public artifact access?'}).waitFor();
+  await page.getByRole('button',{name:'Deny external request'}).click();
+  await page.waitForFunction(()=>document.querySelector('#peer-status').dataset.state==='denied');
+  assert.equal(peerRequests.length,afterCancel);assert.doesNotMatch(await page.locator('#peer-consent-log').textContent(),/"status": "completed"/);
   await page.getByRole('button',{name:'Check example',exact:true}).click();
   assert.match(await page.locator('#result').innerText(),/Catalog matched/);
   await page.getByRole('button',{name:'Load source media'}).click();

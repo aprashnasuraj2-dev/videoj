@@ -68,19 +68,20 @@ export function createConsentInspector({decide,onEvent,now=()=>new Date().toISOS
   const sessionApprovals=new Set(),events=[];
   let sessionController=new AbortController();
   const key=c=>JSON.stringify([c.origin,c.kind,c.purpose,c.disclosure,c.network??'',c.resource??'']);
-  const record=(contact,type,extra={})=>{
+  const record=(contact,type,extra={},observe)=>{
     const safe=eventCopy({at:String(now()),type,origin:contact.origin,contactKind:contact.kind,purpose:contact.purpose,disclosure:contact.disclosure,...(contact.network?{network:contact.network}:{}),...extra});
     if(events.length<512)events.push(safe);
     try{onEvent?.(safe);}catch{}
+    try{observe?.(safe);}catch{}
     return safe;
   };
-  async function authorize(input,{signal}={}){
+  async function authorize(input,{signal,onEvent:observe}={}){
     const active=combine(sessionController.signal,signal);
     check(active);
     const contact=normalizeContact(input),id=key(contact);
-    record(contact,'intent');check(active);
+    record(contact,'intent',{},observe);check(active);
     if(sessionApprovals.has(id)){
-      record(contact,'decision',{decision:'allow',scope:'session',source:'remembered'});check(active);
+      record(contact,'decision',{decision:'allow',scope:'session',source:'remembered'},observe);check(active);
       return {contact,decision:'allow',scope:'session'};
     }
     let answer;
@@ -92,10 +93,10 @@ export function createConsentInspector({decide,onEvent,now=()=>new Date().toISOS
     answer=dataRecord(answer,['decision','scope'],'DECISION_INVALID');
     if(!['allow','deny'].includes(answer.decision)||!['once','session'].includes(answer.scope))fail('DECISION_INVALID','Consent decision must explicitly allow or deny with a valid scope.');
     if(answer.decision==='deny'){
-      record(contact,'decision',{decision:'deny',scope:'once',source:'user'});
+      record(contact,'decision',{decision:'deny',scope:'once',source:'user'},observe);
       throw new ConsentError('CONSENT_DENIED','External contact was denied before any approved operation.');
     }
-    record(contact,'decision',{decision:'allow',scope:answer.scope,source:'user'});check(active);
+    record(contact,'decision',{decision:'allow',scope:answer.scope,source:'user'},observe);check(active);
     if(answer.scope==='session'){
       // A long-lived standalone inspector cannot accumulate unbounded grants.
       if(sessionApprovals.size>=128)sessionApprovals.delete(sessionApprovals.values().next().value);
@@ -103,20 +104,20 @@ export function createConsentInspector({decide,onEvent,now=()=>new Date().toISOS
     }
     return {contact,decision:'allow',scope:answer.scope};
   }
-  async function perform(input,effect,{signal}={}){
+  async function perform(input,effect,{signal,onEvent:observe}={}){
     if(typeof effect!=='function')fail('CONTACT_EFFECT','Approved contact operation must be callable.');
     const active=combine(sessionController.signal,signal);
-    const approval=await authorize(input,{signal:active});
+    const approval=await authorize(input,{signal:active,onEvent:observe});
     check(active);
     let value;
     try{
       value=await raceAbort(()=>effect(approval.contact,active),active);check(active);
     }catch(error){
-      record(approval.contact,'outcome',{status:'failed',scope:approval.scope});
+      record(approval.contact,'outcome',{status:'failed',scope:approval.scope},observe);
       if(error instanceof ConsentError)throw error;
       throw new ConsentError('CONTACT_FAILED','Approved external contact failed.');
     }
-    record(approval.contact,'outcome',{status:'completed',scope:approval.scope});check(active);
+    record(approval.contact,'outcome',{status:'completed',scope:approval.scope},observe);check(active);
     return value;
   }
   return Object.freeze({

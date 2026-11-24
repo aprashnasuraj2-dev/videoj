@@ -115,3 +115,13 @@ test('contact and decision ordinary accessors are rejected without execution',as
  const inspector=createConsentInspector({decide:async()=>answer});
  await assert.rejects(inspector.perform(contact(),async()=>{touched++;}),e=>e.code==='DECISION_INVALID');assert.equal(touched,0);
 });
+
+test('operation-local event observer remains complete after the bounded session history fills',async()=>{
+ const inspector=createConsentInspector({decide:async()=>({decision:'allow',scope:'session'})});
+ for(let i=0;i<180;i++)await inspector.perform(contact(),async()=>{});
+ assert.equal(inspector.exportEvents().length,512);
+ const events=[];
+ await inspector.perform(contact(),async()=>{}, {onEvent:e=>events.push(e)});
+ assert.deepEqual(events.map(e=>e.type),['intent','decision','outcome']);
+ assert.equal(events[1].source,'remembered');assert.equal(events[2].status,'completed');
+});
