@@ -81,13 +81,15 @@ export function createLocalAnswer({sources,now}={}){
 export function mountLocalAnswer({root,sources,seekTo,prepareReview}){
  const $=id=>root.querySelector('#'+id);
  const form=$('local-answer-form'),input=$('local-answer-query'),status=$('local-answer-status'),list=$('local-answer-results'),actionStatus=$('local-answer-action-status');
- let lookup=null,epoch=0;
- try{lookup=createLocalAnswer({sources});}catch{applyScreenState(status,'error','This catalog cannot be indexed locally. Exact transcript search remains available.');}
+ let lookup=null,unavailable=false,epoch=0;
+ // Build only on the first explicit question. Text-first viewers do not pay
+ // the memory/CPU cost of indexing a large valid catalog at page startup.
  const clear=()=>{epoch++;list.replaceChildren();actionStatus.textContent='';};
  input.addEventListener('input',()=>{clear();applyScreenState(status,'idle','Question changed. Previous source actions are unavailable.');});
  form.addEventListener('submit',event=>{
   event.preventDefault();clear();const current=epoch;
-  if(!lookup){applyScreenState(status,'error','Local ranking unavailable; use exact source search.');return;}
+  if(unavailable){applyScreenState(status,'error','Local ranking unavailable; use exact source search.');return;}
+  if(!lookup){try{lookup=createLocalAnswer({sources});}catch{unavailable=true;applyScreenState(status,'error','This catalog exceeds the bounded local index or failed validation; use exact source search.');return;}}
   const found=lookup.query(input.value);
   const messages={
    invalid_query:['input_error','Enter a question of 1–240 characters.'],
