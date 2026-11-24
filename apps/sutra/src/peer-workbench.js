@@ -32,7 +32,9 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
   agentBudget.textContent=Math.min(Number.isInteger(agentCalls)?agentCalls:0,12)+' / 12 used';
   modelBudget.textContent=Math.min(Number.isInteger(modelCalls)?modelCalls:0,8)+' / 8 used';
   toolCount.textContent=String(observedTools);
-  elapsed.textContent=(runStarted?Math.max(0,Math.round(performance.now()-runStarted)):0)+' ms / 60,000 ms';
+  const elapsedMs=runStarted?Math.max(0,Math.round(performance.now()-runStarted)):0;
+  elapsed.dataset.formatMsPair='true';elapsed.dataset.formatCurrentMs=String(elapsedMs);elapsed.dataset.formatLimitMs='60000';
+  elapsed.textContent=elapsedMs+' ms / 60,000 ms';
   contactCount.textContent=runCompletedContacts+' completed this run';
  };
  const finish=(decision,scope='once')=>{
