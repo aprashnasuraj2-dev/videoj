@@ -17,6 +17,11 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.equal(requests.some(url=>url.includes('/media/timing-fixture.mp4')),false);
   await initialTranscript.fill('timing marker');
   assert.equal(await page.locator('#timing-transcript-panel .transcript-cue').count(),1);
+  // Compatibility-normalized query text must behave the same without changing displayed source bytes.
+  await initialTranscript.fill('ｔｉｍｉｎｇ marker');
+  assert.equal(await page.locator('#timing-transcript-panel .transcript-cue').count(),1);
+  assert.match(await page.locator('#timing-transcript-panel .transcript-cue').innerText(),/Synthetic timing marker/);
+  await initialTranscript.fill('timing marker');
   await page.locator('#timing-transcript-panel .transcript-cue').click();
   assert.match(await page.locator('#timing-transcript-panel .transcript-status').innerText(),/could not be reached/);
   assert.equal(requests.some(url=>url.includes('/media/timing-fixture.mp4')),false,'transcript interaction must not autoload video');

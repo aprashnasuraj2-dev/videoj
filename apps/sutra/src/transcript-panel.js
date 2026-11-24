@@ -82,9 +82,9 @@ export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synt
  }
  function render(){
   if(disposed)return;
-  const query=input.value.trim().slice(0,160).toLocaleLowerCase('en');
+  const query=input.value.normalize('NFKC').trim().slice(0,160).toLocaleLowerCase('en');
   lastText=query;
-  currentCues=items.filter(cue=>cue.text.toLocaleLowerCase('en').includes(query));
+  currentCues=items.filter(cue=>cue.text.normalize('NFKC').toLocaleLowerCase('en').includes(query));
   buttonMap.clear();list.replaceChildren();
   if(!valid){
    status('No usable transcript cues are available for this media. The local player remains usable.');

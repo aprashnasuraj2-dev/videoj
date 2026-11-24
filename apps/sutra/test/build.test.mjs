@@ -133,3 +133,17 @@ test('built candidate exposes a stable public browser runtime module backed by t
  assert.equal(inventory.publicRuntimePath,'/runtime/sutra-runtime.js');
  const entry=inventory.artifacts.find(x=>x.path==='/runtime/sutra-runtime.js');assert.equal(entry.kind,'browser_runtime');assert.match(entry.sha256,/^[a-f0-9]{64}$/);
 });
+
+test('reviewed guide excerpt route has a defense-in-depth no-execution header policy',()=>{
+ const lines=fs.readFileSync(path.join(app,'public/_headers'),'utf8').split(/\r?\n/);
+ const headers={};let active=false;
+ for(const line of lines){
+  if(line.trim()==='/guides/release/*'){active=true;continue;}
+  if(active&&!/^\s/.test(line)&&line.trim())break;
+  if(!active||!line.trim())continue;
+  const colon=line.indexOf(':');if(colon>0)headers[line.slice(0,colon).trim()]=line.slice(colon+1).trim();
+ }
+ assert.equal(headers['Content-Security-Policy'],"default-src 'none'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'none'; script-src 'none'; style-src 'none'; img-src 'none'; media-src 'none'; font-src 'none'; connect-src 'none'");
+ assert.equal(headers['Referrer-Policy'],'no-referrer');assert.equal(headers['X-Content-Type-Options'],'nosniff');assert.equal(headers['X-Frame-Options'],'DENY');
+ assert.equal(headers['Cache-Control'],'public, max-age=31536000, immutable');
+});
