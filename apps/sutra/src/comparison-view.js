@@ -1,6 +1,7 @@
 import {compareClaimPair,syntheticComparison} from './comparison.js';
 import {applyLocale} from './localization.js';
 import {validateEvidenceClaim} from '../../../packages/sutra-evidence/index.js';
+import {buildUncertaintyGuidance} from './uncertainty-guidance.js';
 
 const node=(tag,cls,text)=>{
  const item=document.createElement(tag);
@@ -30,8 +31,9 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
  const cards=node('div','comparison-cards');
  const seekStatus=node('p','comparison-seek-status');
  seekStatus.setAttribute('role','status');
+ const nextStep=node('p','comparison-next-step');nextStep.setAttribute('role','note');
  const note=node('p','muted','Comparisons evaluate exact declared values and source scope, not the truth of either claim. The conflict example is hypothetical and unrelated to original lesson footage.');note.dataset.i18n='comparison.note';
- host.replaceChildren(controls,status,cards,seekStatus,note);
+ host.replaceChildren(controls,status,nextStep,cards,seekStatus,note);
  let activeMode='available';
  function card(title,claim){
   const article=node('article','comparison-card');
@@ -86,6 +88,9 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
    consistent_unverified:'Structured match, truth unverified'
   }[comparison.status]??'Not evaluated';
   status.textContent=prefix+'. '+comparison.reason;
+  const guidance=buildUncertaintyGuidance(comparison);
+  nextStep.dataset.disposition=guidance.disposition;
+  nextStep.textContent='Next human step: '+guidance.nextAction;
   seekStatus.textContent='';
   applyLocale(host,document.documentElement.lang||'en');
   return comparison.status;
