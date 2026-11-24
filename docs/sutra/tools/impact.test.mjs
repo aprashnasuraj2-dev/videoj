@@ -105,3 +105,10 @@ test('shared content profile changes invalidate every evidence family that depen
  for(const id of ['grounding-evaluation','critical-journey','browser-matrix','performance-profile','provider-cost','publication-integrity'])assert.ok(r.affectedSuites.includes(id),id);
  for(const metric of ['engineering_baseline','hero_journey','desktop_browser_matrix','lab_performance','provider_cost','publication_inventory'])assert.ok(r.invalidatedMetrics.includes(metric),metric);
 });
+
+test('published transcript byte changes invalidate semantic, browser, performance, cost and publication evidence',()=>{
+ const r=classifyChangedFiles(['apps/sutra/public/transcripts/lesson.txt'],map);
+ assert.deepEqual(r.unmapped,[]);
+ for(const id of ['grounding-evaluation','critical-journey','browser-matrix','performance-profile','provider-cost','publication-integrity'])assert.ok(r.affectedSuites.includes(id),id);
+ for(const metric of ['engineering_baseline','hero_journey','desktop_browser_matrix','lab_performance','provider_cost','publication_inventory'])assert.ok(r.invalidatedMetrics.includes(metric),metric);
+});

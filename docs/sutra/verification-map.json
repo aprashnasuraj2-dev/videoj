@@ -25,7 +25,8 @@
         "docs/sutra/evaluation/",
         "apps/sutra/public/guides/",
         "packages/sutra-content-profile/",
-        "apps/sutra/public/content/"
+        "apps/sutra/public/content/",
+        "apps/sutra/public/transcripts/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA engineering evaluation",
@@ -49,7 +50,8 @@
         "services/sutra-api/",
         "apps/sutra/public/guides/",
         "packages/sutra-content-profile/",
-        "apps/sutra/public/content/"
+        "apps/sutra/public/content/",
+        "apps/sutra/public/transcripts/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA learner shell"
@@ -76,7 +78,8 @@
         "apps/sutra/public/guides/",
         "apps/sutra/vite.runtime.config.js",
         "packages/sutra-content-profile/",
-        "apps/sutra/public/content/"
+        "apps/sutra/public/content/",
+        "apps/sutra/public/transcripts/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA browser compatibility matrix"
@@ -112,7 +115,8 @@
         "apps/sutra/vite.config",
         "apps/sutra/vite.runtime.config.js",
         "packages/sutra-content-profile/",
-        "apps/sutra/public/content/"
+        "apps/sutra/public/content/",
+        "apps/sutra/public/transcripts/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA learner shell"
@@ -130,7 +134,8 @@
         "services/sutra-api/",
         "tools/sutra-provider-measurement/",
         "packages/sutra-content-profile/",
-        "apps/sutra/public/content/"
+        "apps/sutra/public/content/",
+        "apps/sutra/public/transcripts/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA learner shell",
@@ -155,7 +160,8 @@
         "tools/sutra-open-kit/",
         "apps/sutra/vite.runtime.config.js",
         "packages/sutra-content-profile/",
-        "apps/sutra/public/content/"
+        "apps/sutra/public/content/",
+        "apps/sutra/public/transcripts/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA publisher starter",
