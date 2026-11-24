@@ -113,3 +113,12 @@ test('synthetic written comparison link is byte-bound to the published guide and
  const text=bytes.toString('utf8');assert.ok(fragment);assert.ok(text.includes('id="'+fragment+'"')||text.includes("id='"+fragment+"'"));
  assert.ok(text.includes(claim.excerpt));assert.match(text,/not a real publisher, reviewed guide, factual authority/);
 });
+
+test('direct BYOK is intentionally absent from the learner client boundary',()=>{
+ const source=fs.readFileSync(path.join(app,'src/main.js'),'utf8')+fs.readFileSync(path.join(app,'src/provider-panel.js'),'utf8')+fs.readFileSync(path.join(app,'src/provider-run.js'),'utf8');
+ assert.doesNotMatch(source,/<input[^>]*(?:api[-_ ]?key|token|credential)/i);
+ assert.doesNotMatch(source,/<textarea[^>]*(?:api[-_ ]?key|token|credential)/i);
+ assert.doesNotMatch(source,/localStorage\.(?:setItem|getItem)\([^)]*(?:key|token|credential)/i);
+ assert.match(source,/No personal API key is accepted/);
+ assert.match(source,/Direct BYOK is not supported/);
+});
