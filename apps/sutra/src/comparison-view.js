@@ -15,7 +15,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
  if(!host||typeof host.replaceChildren!=='function')throw Error('Comparison host missing.');
  const evidence=receipt?validateEvidenceClaim({version:1,kind:'source_excerpt',text:receipt.excerpt,receipt},{sources}):null;
  const local=evidence?.valid&&evidence.state==='source_backed_unverified'?{
-  sourceKind:'video',sourceId:evidence.sourceRef.sourceId,sourceVersion:evidence.sourceRef.sourceVersion,cueId:evidence.sourceRef.cueId,
+  sourceKind:'video',sourceId:evidence.sourceRef.sourceId,sourceVersion:evidence.sourceRef.sourceVersion,sourceHash:evidence.sourceRef.sourceHash,cueId:evidence.sourceRef.cueId,
   title:'Actual synthetic timing-cue catalog',scope:'synthetic_timing_only',claimKey:'marker_presence',
   value:'marker_present',excerpt:evidence.excerpt,start:evidence.sourceRef.start,end:evidence.sourceRef.end,
   provenance:'SUTRA local synthetic timing catalog, not human-reviewed footage',
@@ -45,7 +45,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
   }
   const list=node('dl','comparison-metadata');
   for(const [key,k,v] of [
-   ['comparison.meta.source','Source',claim.sourceId],['comparison.meta.version','Version',claim.sourceVersion],
+   ['comparison.meta.source','Source',claim.sourceId],['comparison.meta.version','Version',claim.sourceVersion],['comparison.meta.hash','Source hash',claim.sourceHash??'Not supplied'],
    ['comparison.meta.scope','Scope',claim.scope],['comparison.meta.claim','Claim key',claim.claimKey],
    ['comparison.meta.value','Structured value',valueText(claim.value)],
    ['comparison.meta.provenance','Provenance',claim.provenance],
@@ -61,8 +61,28 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
   article.append(list,excerpt);
   if(claim.sourceKind==='guide'&&claim.sourceHref){
    const link=node('a','comparison-source-link','Open written source excerpt');
-   link.href=new URL(claim.sourceHref,location.href).href;link.target='_blank';link.rel='noopener noreferrer';
+   const href=new URL(claim.sourceHref,location.href);link.href=href.href;link.target='_blank';link.rel='noopener noreferrer';
    link.setAttribute('aria-describedby',excerpt.id);article.append(link);
+   if(claim.sourceHash){
+    const verify=node('button',null,'Check written source integrity');verify.type='button';
+    verify.addEventListener('click',async()=>{
+     verify.disabled=true;seekStatus.textContent='Checking written source bytes and anchored excerpt…';
+     try{
+      const response=await fetch(href.href,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',signal:AbortSignal.timeout(5000),headers:{Accept:'text/html'}});
+      if(!response.ok||response.url&&new URL(response.url).origin!==location.origin||!response.headers.get('content-type')?.toLowerCase().includes('text/html'))throw Error('Unexpected source response');
+      if(Number(response.headers.get('content-length'))>65536)throw Error('Source too large');
+      const bytes=await response.arrayBuffer();if(bytes.byteLength>65536)throw Error('Source too large');
+      const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');
+      if(digest!==claim.sourceHash)throw Error('Source hash mismatch');
+      const text=new TextDecoder('utf-8',{fatal:true}).decode(bytes),doc=new DOMParser().parseFromString(text,'text/html');
+      const anchored=href.hash?doc.getElementById(decodeURIComponent(href.hash.slice(1))):doc.body;
+      if(!anchored||!anchored.textContent.includes(claim.excerpt))throw Error('Anchored excerpt mismatch');
+      seekStatus.textContent='Written source bytes and anchored excerpt match this comparison record. This does not establish factual truth.';
+     }catch{seekStatus.textContent='Written source integrity could not be confirmed. Do not treat the linked excerpt as matching this comparison record.';}
+     finally{verify.disabled=false;}
+    });
+    article.append(verify);
+   }
   }
   if(activeMode==='available'&&claim.sourceKind==='video'&&
    Number.isFinite(claim.start)&&typeof seekTo==='function'){

@@ -68,8 +68,15 @@ const assert=require('node:assert/strict');
   const guideLink=page.getByRole('link',{name:'Open written source excerpt'});
   assert.equal(await guideLink.count(),1);
   const guideHref=await guideLink.getAttribute('href');assert.match(guideHref,/\/guides\/synthetic-comparison-guide\.html#signature-count$/);
+  await page.getByRole('button',{name:'Check written source integrity'}).click();
+  await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('bytes and anchored excerpt match'));
+  assert.match(await page.locator('#comparison-body .comparison-seek-status').innerText(),/does not establish factual truth/);
   const guideText=await page.evaluate(async href=>(await fetch(href,{credentials:'omit'})).text(),guideHref);
   assert.match(guideText,/In this invented example, the handover needs three signatures\./);
+  await page.route('**/guides/synthetic-comparison-guide.html*',route=>route.fulfill({contentType:'text/html',body:'<!doctype html><p id="signature-count">altered source</p>'}));
+  await page.getByRole('button',{name:'Check written source integrity'}).click();
+  await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('could not be confirmed'));
+  await page.unroute('**/guides/synthetic-comparison-guide.html*');
   await page.getByRole('button',{name:'Inspect available evidence'}).click();
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
 
