@@ -10,6 +10,8 @@ const sourceCatalog={schema:1,contentVersion:'lesson-v1',sources:[{id:'lesson-so
 const catalogBytes=Buffer.from(JSON.stringify(sourceCatalog,null,2)+'\n'),catalogSha=sha(catalogBytes);
 const reviewedProfile={schema:1,mode:'reviewed',contentVersion:'lesson-v1',title:'Reviewed lesson',observedAt:'2026-11-24T01:00:00Z',primarySourceId:'lesson-source',featuredCueId:'featured',catalog:{path:'./source-catalog.json',sha256:catalogSha},media:{video:'/media/lesson.mp4',poster:'/media/poster.svg',chapters:'/media/chapters.vtt',captions:'/media/captions.vtt'},videoClaim:{title:'Video source',scope:'lesson_step',claimKey:'step_presence',value:true,provenance:'Reviewed lesson media',dateBasis:'Review observation'},guideClaim:{sourceKind:'guide',sourceId:'guide',sourceVersion:'v1',title:'Written guide',scope:'lesson_step',claimKey:'step_presence',value:true,excerpt:'Reviewed guide excerpt.',provenance:'Reviewed written guide',sourceHref:'/guides/reviewed.html#claim',sourceHash:guideSha,observedAt:'2026-11-24T01:00:00Z',dateBasis:'Review observation'},ui:{noticeTitle:'Reviewed lesson evidence',noticeBody:'Media, transcript and guide are version-bound to the reviewed content record.'}};
 const profileBytes=Buffer.from(JSON.stringify(reviewedProfile,null,2)+'\n'),profileSha=sha(profileBytes);
+const packCore={schema:1,contentVersion:'lesson-v1',intakeRecordHash:'4'.repeat(64),profileSha256:profileSha,catalogSha256:catalogSha,mediaSha256:mediaSha,transcriptSha256:transcriptSha,guideSha256:guideSha,publicPaths:{profile:'/content/content-profile.json',catalog:'/content/source-catalog.json',media:reviewedProfile.media.video,transcript:reviewedProfile.transcript.path,guide:reviewedProfile.guideClaim.sourceHref.split('#')[0]}};
+const packRecord={...packCore,recordHash:sha(Buffer.from(JSON.stringify(packCore,null,2)+'\n')),limitation:'fixture'};
 const contentEvidence={status:'reviewed_attested',contentVersion:'lesson-v1',profileSha256:profileSha,catalogSha256:catalogSha,mediaSha256:mediaSha,transcriptSha256:transcriptSha,guideSha256:guideSha,intakeRecordHash:'4'.repeat(64),rightsAttested:true,factualReviewAttested:true,evidenceRef:'private:content/lesson-v1'};
 const sha=value=>createHash('sha256').update(value).digest('hex');
 const mediaBytes=Buffer.from('reviewed-media-bytes'),transcriptBytes=Buffer.from('Reviewed source cue.\n'),guideBytes=Buffer.from('<!doctype html><section id="claim">Reviewed guide excerpt.</section>');
@@ -34,7 +36,7 @@ async function fixture(){
  await fsp.writeFile(path.join(root,'agents','agent-manifest.json'),JSON.stringify(manifest));await fsp.writeFile(path.join(root,'agents','links.json'),JSON.stringify(links));
  for(const name of names){await fsp.writeFile(path.join(root,'agents','v','old',name+'.network.json'),JSON.stringify(graph));await fsp.writeFile(path.join(root,'agents',name+'.network.json'),JSON.stringify(graph));}
  await fsp.writeFile(path.join(root,'runtime','sutra-runtime.js'),'export const runtime=true;\n');await fsp.writeFile(path.join(root,'index.html'),'<!doctype html><main id="app"></main>');await fsp.writeFile(path.join(root,'assets','app.js'),'console.log("app");');
- await fsp.writeFile(path.join(root,'content','content-profile.json'),profileBytes);await fsp.writeFile(path.join(root,'content','source-catalog.json'),catalogBytes);
+ await fsp.writeFile(path.join(root,'content','content-profile.json'),profileBytes);await fsp.writeFile(path.join(root,'content','source-catalog.json'),catalogBytes);await fsp.writeFile(path.join(root,'content','content-pack-record.json'),JSON.stringify(packRecord,null,2)+'\n');
  await fsp.writeFile(path.join(root,'media','release',mediaSha,'lesson.mp4'),mediaBytes);await fsp.writeFile(path.join(root,'media','release',mediaSha,'poster.svg'),'<svg/>');await fsp.writeFile(path.join(root,'media','release',transcriptSha,'chapters.vtt'),'WEBVTT\n');await fsp.writeFile(path.join(root,'media','release',transcriptSha,'captions.vtt'),'WEBVTT\n');
  await fsp.writeFile(path.join(root,'transcripts','release',transcriptSha,'lesson.txt'),transcriptBytes);await fsp.writeFile(path.join(root,'guides','release',guideSha,'reviewed.html'),guideBytes);
  await fsp.writeFile(path.join(root,'content','content-profile.json'),profileBytes);await fsp.writeFile(path.join(root,'content','source-catalog.json'),catalogBytes);
@@ -81,4 +83,14 @@ test('release materializer rejects public transcript drift even when config and 
   await fsp.writeFile(path.join(src,'transcripts','release',transcriptSha,'lesson.txt'),'altered transcript');
   await assert.rejects(materializeReleaseCandidate({sourceDist:src,outputDir:out,config:cfg()}),/media\/transcript\/guide bytes/);
  }finally{await fsp.rm(src,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
+});
+
+test('release materializer rejects a missing, altered or differently bound content-pack record',async()=>{
+ for(const mutate of [
+  async root=>fsp.unlink(path.join(root,'content','content-pack-record.json')),
+  async root=>{const p=structuredClone(packRecord);p.mediaSha256='f'.repeat(64);await fsp.writeFile(path.join(root,'content','content-pack-record.json'),JSON.stringify(p,null,2)+'\n');},
+  async root=>{const p=structuredClone(packRecord);p.recordHash='f'.repeat(64);await fsp.writeFile(path.join(root,'content','content-pack-record.json'),JSON.stringify(p,null,2)+'\n');}
+ ]){
+  const src=await fixture(),out=src+'-pack-record-reject';try{await mutate(src);await assert.rejects(materializeReleaseCandidate({sourceDist:src,outputDir:out,config:cfg()}));}finally{await fsp.rm(src,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
+ }
 });

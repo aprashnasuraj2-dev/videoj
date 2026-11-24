@@ -86,6 +86,12 @@ export async function materializeReleaseCandidate({sourceDist,outputDir,config})
  if(!sourceStat.isDirectory()||sourceStat.isSymbolicLink())throw Error('Source dist must be a real directory.');
  if(destination.startsWith(source+path.sep)||source.startsWith(destination+path.sep)||destination===source)throw Error('Source and output must be separate trees.');
 
+ const packRecord=await readJson(source,'content/content-pack-record.json',65536);
+ if(!packRecord||packRecord.schema!==1||packRecord.contentVersion!==cfg.contentEvidence.contentVersion||!packRecord.publicPaths||typeof packRecord.recordHash!=='string'||!/^[a-f0-9]{64}$/.test(packRecord.recordHash))throw Error('Reviewed content pack record is missing or invalid.');
+ const packCore={schema:packRecord.schema,contentVersion:packRecord.contentVersion,intakeRecordHash:packRecord.intakeRecordHash,profileSha256:packRecord.profileSha256,catalogSha256:packRecord.catalogSha256,mediaSha256:packRecord.mediaSha256,transcriptSha256:packRecord.transcriptSha256,guideSha256:packRecord.guideSha256,publicPaths:packRecord.publicPaths};
+ if(digest(Buffer.from(JSON.stringify(packCore,null,2)+'\n'))!==packRecord.recordHash)throw Error('Reviewed content pack record hash mismatch.');
+ const ev=cfg.contentEvidence;
+ if(packRecord.intakeRecordHash!==ev.intakeRecordHash||packRecord.profileSha256!==ev.profileSha256||packRecord.catalogSha256!==ev.catalogSha256||packRecord.mediaSha256!==ev.mediaSha256||packRecord.transcriptSha256!==ev.transcriptSha256||packRecord.guideSha256!==ev.guideSha256)throw Error('Release config does not bind the reviewed content pack record.');
  const profileFile=await regularFile(source,'content/content-profile.json',65536);
  let profileDocument;try{profileDocument=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(profileFile.bytes));}catch{throw Error('Invalid release content profile JSON.');}
  if(profileDocument?.catalog?.path!=='./source-catalog.json')throw Error('Release content catalog path must be the fixed local source-catalog path.');
@@ -131,7 +137,7 @@ export async function materializeReleaseCandidate({sourceDist,outputDir,config})
  const runtime=await regularFile(destination,'runtime/sutra-runtime.js',2*1024*1024);
  const index=await regularFile(destination,'index.html',2*1024*1024);
  const verified=validatePreparedRelease(prepared),inventory=await inventoryCandidate(destination);
- const record={...prepared.releaseRecord,runtimeSha256:digest(runtime.bytes),indexSha256:digest(index.bytes),candidateInventorySha256:inventory.inventorySha256,content:{mode:content.profile.mode,contentVersion:content.profile.contentVersion,profileSha256:profileSha,catalogSha256:catalogSha,mediaSha256:evidence.mediaSha256,transcriptSha256:evidence.transcriptSha256,guideSha256:evidence.guideSha256},
+ const record={...prepared.releaseRecord,contentPackRecordHash:packRecord.recordHash,runtimeSha256:digest(runtime.bytes),indexSha256:digest(index.bytes),candidateInventorySha256:inventory.inventorySha256,content:{mode:content.profile.mode,contentVersion:content.profile.contentVersion,profileSha256:profileSha,catalogSha256:catalogSha,mediaSha256:evidence.mediaSha256,transcriptSha256:evidence.transcriptSha256,guideSha256:evidence.guideSha256},
   stageOne:{interactionUi:'/index.html',runtime:'/runtime/sutra-runtime.js',manifest:'/agents/agent-manifest.json',links:'/agents/links.json',router:prepared.manifest.llm_router.base_url,networkCount:prepared.manifest.networks.length}};
  const recordCore=structuredClone(record);delete recordCore.recordSha256;
  record.recordSha256=digest(Buffer.from(JSON.stringify(recordCore,null,2)+'\n'));
