@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T18:01:37.257+05:45",
+  "updatedAt": "2026-11-24T18:02:22.555+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -592,8 +592,8 @@
     {
       "id": "R-027",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Pre-admission request-body chunk overhead",
       "mechanism": "Array of chunks retained independently of byte ceiling; zero-length chunks and many small chunks increase memory; cancellation could leave reader locked.",
       "userEffect": "Resource pressure or unavailable requests before quota.",
@@ -608,7 +608,7 @@
           "sourceRevision": "279aae37f487a8da97f1303a6c48fdd5bc6be586"
         }
       ],
-      "unblockCondition": "Observe complete exact revision learner and browser CI."
+      "unblockCondition": null
     },
     {
       "id": "R-028",

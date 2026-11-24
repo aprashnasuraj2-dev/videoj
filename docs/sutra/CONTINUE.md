@@ -10,7 +10,7 @@ On 24 November the participant explicitly tightened the ordering: stop further d
 
 ## Latest implementation checkpoint — 0041
 
-Current code head at checkpoint: `279aae37f487a8da97f1303a6c48fdd5bc6be586`; fully observed passing source: `34025444560d62b310154634e94e3bfda5890bde`. Draft PR #49; compare actual head before changes. [Session 0041 evidence](evidence/implementation/SESSION-0041.md). Resume P078-02 at exact head; verify pending exact-source learner and matrix for 279aae37f487a8da97f1303a6c48fdd5bc6be586. Investigate ambiguous late quota admission X010-05, bounded by current 45-second lease expiry; no unsafe refund or retry. P041-10 requires actual first-time viewer exit evidence, not synthetic acceptance; P054-01/P066-01 real model measurements remain separate from fake engine. Continue independent ready tasks, preserve human/pilot/hardware/content/public release gates.
+Last fully verified product source: `279aae37f487a8da97f1303a6c48fdd5bc6be586` (19/19 workflows). Resolve actual draft PR #49 head before changes; [session 0041](evidence/implementation/SESSION-0041.md) records all intermediate failures and exact job evidence. Resume P078-02 and X010-05: adversarially investigate ambiguous late quota admission, current 45-second lease expiry, conservative daily charges and safe release ordering. P041-10 needs genuine first-time viewer exit evidence; P054-01/P066-01 real model measurement remains separate. Keep no-release, no paid model, no submission boundaries; verify checkpoint register CI.
 
 ## Resume sequence
 

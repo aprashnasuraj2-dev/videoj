@@ -18,6 +18,11 @@ Next: Resume P078-02: audit browser adapter and Worker upstream abort handoff fo
 
 Next: Resume P078-02 at exact head; verify pending exact-source learner and matrix for 279aae37f487a8da97f1303a6c48fdd5bc6be586. Investigate ambiguous late quota admission X010-05, bounded by current 45-second lease expiry; no unsafe refund or retry. P041-10 requires actual first-time viewer exit evidence, not synthetic acceptance; P054-01/P066-01 real model measurements remain separate from fake engine. Continue independent ready tasks, preserve human/pilot/hardware/content/public release gates.
 
+
+**Final CI observation (2026-11-24T18:02:22.555+05:45): 669/1,062 total verified; 609/1,000 original; 45 original phases; 386 pending overall, one blocked, six omitted.** Exact `279aae37f487a8da97f1303a6c48fdd5bc6be586` passed 19/19 workflows. Actual [learner log](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45391665958/job/138436695602) confirms both new body regressions, 140 app + 139 package/API + 139 runtime + 8 peer = 426 tests, real Chromium BFCache restored in both profiles, ten Chromium integrations passed. X010-05 and P078-02 remain open. No original gate closed.
+
+Next: Resume P078-02 and X010-05: adversarially investigate ambiguous late quota admission, current 45-second lease expiry, conservative daily charges and safe release ordering. P041-10 needs genuine first-time viewer exit evidence; P054-01/P066-01 real model measurement remains separate. Keep no-release, no paid model, no submission boundaries; verify checkpoint register CI.
+
 ---
 
 ## Session 0040 — 2026-11-24
