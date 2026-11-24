@@ -12,6 +12,7 @@ test('standalone HTTP publication and exact local execution',async t=>{
  await assert.rejects(loadLocalNetwork({baseUrl:origin+'/agents/',expectedOrigin:origin,networkName:'missing'}),e=>e.code==='NETWORK_MATCH');
  const page=await fetch(origin);assert.equal(page.status,200);assert.match(page.headers.get('content-security-policy'),/connect-src 'self'/);
  assert.equal((await fetch(origin+'/packages/sutra-runtime/index.js')).status,200);
+ const generated=await fetch(origin+'/packages/sutra-runtime/vendor/nsdeploy/generated/graph.gen.mjs');assert.equal(generated.status,200);assert.match(generated.headers.get('content-type'),/javascript/);
  for(const path of ['/README.md','/package.json','/.env','/agents/unknown.json'])assert.equal((await fetch(origin+path)).status,404);
  assert.equal((await fetch(origin+'/agents/links.json',{method:'POST'})).status,405);
 });
