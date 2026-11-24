@@ -20,6 +20,23 @@ const TOOL_FIELDS=new Set(['type','function']);
 const TOOL_FN_FIELDS=new Set(['name','description','parameters']);
 const isRecord=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const exactFields=(v,keys)=>isRecord(v)&&Object.keys(v).every(k=>keys.has(k));
+const SCHEMA_KEYS=new Set(['type','properties','required','additionalProperties','items','enum','minimum','maximum','minLength','maxLength','minItems','maxItems','format','title','description','default']);
+const SCHEMA_TYPES=new Set(['object','array','string','integer','number','boolean']);
+const BAD_KEYS=new Set(['__proto__','prototype','constructor']);
+function validSchema(schema,depth=0){
+ if(!isRecord(schema)||depth>8||!SCHEMA_TYPES.has(schema.type)||Object.keys(schema).some(k=>BAD_KEYS.has(k)||!SCHEMA_KEYS.has(k)&&!k.startsWith('x-')))return false;
+ for(const key of ['minimum','maximum','minLength','maxLength','minItems','maxItems'])if(schema[key]!==undefined&&!Number.isFinite(schema[key]))return false;
+ if(schema.enum!==undefined&&(!Array.isArray(schema.enum)||!schema.enum.length||schema.enum.length>64))return false;
+ if(schema.format!==undefined&&!['date','email'].includes(schema.format))return false;
+ if(schema.type==='object'){
+  if(!isRecord(schema.properties)||Object.keys(schema.properties).length>64||schema.additionalProperties!==false)return false;
+  if(Object.keys(schema.properties).some(k=>BAD_KEYS.has(k)||!k||k.length>100))return false;
+  if(schema.required!==undefined&&(!Array.isArray(schema.required)||schema.required.length>64||new Set(schema.required).size!==schema.required.length||schema.required.some(k=>typeof k!=='string'||!Object.hasOwn(schema.properties,k))))return false;
+  return Object.values(schema.properties).every(child=>validSchema(child,depth+1));
+ }
+ if(schema.type==='array')return validSchema(schema.items,depth+1);
+ return schema.properties===undefined&&schema.required===undefined&&schema.additionalProperties===undefined&&schema.items===undefined;
+}
 function validMessages(messages){
  const previous=new Set();let textSize=0,user=false;
  for(const m of messages){
@@ -45,7 +62,7 @@ function validTools(tools){
  return tools.every(t=>exactFields(t,TOOL_FIELDS)&&t.type==='function'&&exactFields(t.function,TOOL_FN_FIELDS)&&
   typeof t.function.name==='string'&&/^\w{1,100}$/.test(t.function.name)&&
   typeof t.function.description==='string'&&t.function.description.length<=2000&&
-  isRecord(t.function.parameters)&&t.function.parameters.type==='object');
+  validSchema(t.function.parameters)&&t.function.parameters.type==='object');
 }
 function safePayload(data,model){
  if(!data||typeof data!=='object'||Array.isArray(data)||Object.keys(data).some(k=>!['model','messages','tools','stream','max_tokens','stream_options'].includes(k))||
