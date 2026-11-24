@@ -121,9 +121,9 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const bounds=compiled.limits,controller=new AbortController();
  const aborted=()=>controller.abort(signal?.reason??new RuntimeError('CANCELLED','Run cancelled.'));
  if(signal?.aborted)aborted();else signal?.addEventListener('abort',aborted,{once:true});
- const trace=new TraceBus(),events=[];let modelCalls=0,startedModelCalls=0,completedModelCalls=0,active=0,totalOutput=0,failure=null,closed=false,limitHit=false;const waiters=[];
+ const trace=new TraceBus(),events=[];let modelCalls=0,startedModelCalls=0,completedModelCalls=0,active=0,totalOutput=0,failure=null,closed=false,limitHit=null;const waiters=[];
  const check=()=>{if(closed)fail('CLOSED','Run is closed.');if(controller.signal.aborted)throw controller.signal.reason;};
- const emit=event=>{if(event.kind==='composition_limit')limitHit=true;const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','network','origin'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,100);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
+ const emit=event=>{if(event.kind==='composition_limit')limitHit=Number.isInteger(event.remoteCalls)?'REMOTE_LIMIT':'AGENT_LIMIT';const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','network','origin'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,100);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
  trace.addEventListener('event',e=>emit(e.detail));
  const abortWaiters=()=>{for(const wake of waiters.splice(0))wake();};controller.signal.addEventListener('abort',abortWaiters);
  const deadline=setTimeout(()=>controller.abort(new RuntimeError('TIMEOUT','Run exceeded its elapsed time limit.')),bounds.timeoutMs);
@@ -218,7 +218,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   return unavailable();
  },resolveLink:unavailable,requestConsent:async info=>info?.kind==='network'&&!!peerRuntime||info?.kind==='mcp'&&!!third?'proceed':'decline'};
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
-  if(limitHit)fail('AGENT_LIMIT','Composition agent or remote-call budget stopped execution.');
+  if(limitHit)fail(limitHit,'Composition agent or remote-call budget stopped execution.');
   if(!result.text)fail('INCOMPLETE','Execution stopped before a complete answer.');
   return {text:result.text,mode:model.mode,modelCalls:startedModelCalls,agentCalls:composition.agentCalls,events};
  }catch(error){

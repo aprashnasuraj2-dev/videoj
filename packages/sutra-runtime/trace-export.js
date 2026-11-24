@@ -34,7 +34,7 @@ export function createSafeTraceReceipt({events=[],contactEvents=[],outcome='fail
  });
  const core={schemaVersion:1,reportType:'sutra-sanitized-execution',mode,outcome,
   modelCalls:clampCount(modelCalls,8),agentCalls:clampCount(agentCalls,12),
-  reason:typeof reason==='string'&&/^(?:MODEL_LIMIT|AGENT_LIMIT|OUTPUT_LIMIT|TIMEOUT|CANCELLED|INCOMPLETE|RUN_FAILED|STOPPED|PEER_[A-Z_]+|EXTERNAL_[A-Z_]+|PROVIDER_[A-Z_]+)$/.test(reason)?reason:null,
+  reason:typeof reason==='string'&&/^(?:MODEL_LIMIT|AGENT_LIMIT|REMOTE_LIMIT|OUTPUT_LIMIT|TIMEOUT|CANCELLED|INCOMPLETE|RUN_FAILED|STOPPED|PEER_[A-Z_]+|EXTERNAL_[A-Z_]+|PROVIDER_[A-Z_]+)$/.test(reason)?reason:null,
   events:limitedEvents,consent:limitedContacts,
   truncated:events.length>128||contactEvents.length>128};
  // Guard against unusually long public labels combining into oversized exports.

@@ -1,4 +1,4 @@
-export class InferenceError extends Error{constructor(code){super(`Inference stopped (${code}); no complete result is claimed.`);this.code=code;}}
+export class InferenceError extends Error{constructor(code){super(`Inference stopped (${code}); no complete result is claimed.`);this.name='InferenceError';this.code=code;}}
 export const stop=code=>{throw new InferenceError(code);};
 export const plain=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 export async function* readSse(response,{signal,maxBytes=262144}={}){
