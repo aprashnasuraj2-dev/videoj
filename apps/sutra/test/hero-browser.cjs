@@ -81,15 +81,26 @@ const assert=require('node:assert/strict');
   await page.setViewportSize({width:360,height:800});
   await page.getByRole('button',{name:'Delete local review'}).click();
   assert.equal(await page.locator('#review-list li').count(),0);
-  await page.getByRole('button',{name:'Preview synthetic review card'}).focus();
-  await page.keyboard.press('Enter');
+
+  // Re-run the local core path at 360 px using keyboard activation only.
+  await page.reload();
+  await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+  await page.getByRole('button',{name:'Check example',exact:true}).focus();await page.keyboard.press('Enter');
+  assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
+  await page.getByRole('button',{name:'Load synthetic timing fixture'}).focus();await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>document.querySelector('#timing-status')?.dataset.state==='completed');
+  await page.getByRole('button',{name:'Inspect timing cue at 00:02'}).focus();await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>document.querySelector('#timing-status')?.textContent.includes('Synthetic cue reached'));
+  await page.getByRole('button',{name:'Preview synthetic review card'}).focus();await page.keyboard.press('Enter');
   await page.getByRole('dialog',{name:'Review before local save'}).waitFor();
-  await page.getByRole('button',{name:'Cancel',exact:true}).focus();
-  await page.keyboard.press('Enter');
-  assert.match(await page.locator('#review-status').innerText(),/cancelled/i);
+  await page.getByRole('button',{name:'Confirm local save'}).focus();await page.keyboard.press('Enter');
+  assert.equal(await page.locator('#review-list li').count(),1);
+  assert.match(await page.locator('#review-status').innerText(),/not factual verification/);
+  await page.getByRole('button',{name:'Delete local review'}).focus();await page.keyboard.press('Enter');
+  assert.equal(await page.locator('#review-list li').count(),0);
 
   assert.deepEqual(errors,[]);
-  console.log('PASS: visible hero journey covers empty/loading/conflict/success/denied states, evidence-to-native-media seek, review save/delete, refusal resilience and 360px keyboard review controls without developer-console setup or external requests.');
+  console.log('PASS: visible hero journey covers empty/loading/conflict/success/denied states, evidence-to-native-media seek, review save/delete, refusal resilience and a 360px keyboard-activated local completion without developer-console setup or external requests.');
  }finally{
   await browser?.close().catch(()=>{});
   server.kill('SIGTERM');
