@@ -94,7 +94,7 @@ export async function buildContentPack({manifest,semantic,contentRoot,outputDir}
  const guideName=path.basename(assetPaths.guide);if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}\.html$/i.test(guideName))throw Error('Reviewed guide must be a safe HTML file.');
  const guideProvenance=Array.from('Safe published excerpt derivative of reviewed guide input; '+meta.guideClaim.provenance).slice(0,240).join('');
  const guideMeta={...meta,guideClaim:{...meta.guideClaim,provenance:guideProvenance}};
- const safeGuideBytes=Buffer.from(makeSafeGuideExcerpt(guideMeta,observed.guide.sha256)),publishedGuideSha=digest(safeGuideBytes);
+ const safeGuideBytes=Buffer.from(makeSafeGuideExcerpt(guideMeta,observed.guide.sha256));if(safeGuideBytes.length>65536)throw Error('Safe guide excerpt exceeds browser integrity-read budget.');const publishedGuideSha=digest(safeGuideBytes);
  const mediaBase='media/release/'+observed.media.sha256,transcriptBase='transcripts/release/'+observed.transcript.sha256,guideBase='guides/release/'+publishedGuideSha;
  const sourceCatalog={schema:1,contentVersion:meta.contentVersion,sources:[{id:meta.sourceId,version:meta.sourceVersion,hash:observed.transcript.sha256,mediaHash:observed.media.sha256,duration:manifest.lesson.durationSeconds,cues:meta.cues}]};
  const catalogBytes=Buffer.from(canonical(sourceCatalog)),catalogSha=digest(catalogBytes);

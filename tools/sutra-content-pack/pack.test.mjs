@@ -36,7 +36,7 @@ test('compiler emits one reviewed hash-addressed pack that passes the shared con
   const r=await buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:out});
   assert.equal(r.profile.mode,'reviewed');assert.equal(validateContentProfile(r.profile,r.sourceCatalog).profile.mode,'reviewed');
   assert.ok(r.profile.media.video.includes(r.record.mediaSha256));assert.ok(r.profile.transcript.path.includes(r.record.transcriptSha256));assert.ok(r.profile.guideClaim.sourceHref.includes(r.record.guideSha256));assert.equal(r.profile.guideClaim.sourceHash,r.record.guideSha256);assert.match(r.profile.guideClaim.provenance,/Safe published excerpt derivative/);
-  const publicGuide=fs.readFileSync(path.join(out,r.profile.guideClaim.sourceHref.split('#')[0].slice(1)));assert.equal(sha(publicGuide),r.record.guideSha256);assert.match(publicGuide.toString('utf8'),new RegExp(sha(f.guide)));assert.match(publicGuide.toString('utf8'),/default-src 'none'/);
+  const publicGuide=fs.readFileSync(path.join(out,r.profile.guideClaim.sourceHref.split('#')[0].slice(1)));assert.equal(sha(publicGuide),r.record.guideSha256);assert.ok(publicGuide.length<=65536);assert.match(publicGuide.toString('utf8'),new RegExp(sha(f.guide)));assert.match(publicGuide.toString('utf8'),/default-src 'none'/);
   assert.match(r.record.recordHash,/^[a-f0-9]{64}$/);assert.match(r.record.intakeRecordHash,/^[a-f0-9]{64}$/);
   for(const rel of [r.profile.media.video,r.profile.transcript.path,r.profile.guideClaim.sourceHref.split('#')[0]])assert.ok(fs.existsSync(path.join(out,rel.slice(1))));
   assert.match(fs.readFileSync(path.join(out,r.profile.media.captions.slice(1)),'utf8'),/00:00:02\.000 --> 00:00:07\.000/);
