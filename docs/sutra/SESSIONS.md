@@ -4,6 +4,8 @@
 
 - 2026-11-24T15:40:00+05:45: **609/1,000 original verified; 658/1,050 total verified; 45/100 fully verified phases; six omissions; one hardware blocker; 385 pending.** Reconciled two intervening commits and concurrent source/pack change; pushed three incremental code commits, each 19/19 green; observed integrated browser and exact unit logs. Added X007-23..26. No original phase closure, paid inference, human acceptance, public deployment, release, merge or submission. [Evidence and resume](evidence/implementation/SESSION-0037.md).
 
+- Checkpoint correction: initial checklist audit passed, risk audit failed on external URL in a repository-local evidence field; corrected to session evidence path without changing source, counts or validation. See Session 0037 correction.
+
 ## SUTRA-SESSION-0036 — 2026-11-24
 
 - 2026-11-24T15:27:36+05:45: **609/1,000 original verified; 654/1,046 total verified; 45/100 fully verified phases; six omissions; one hardware blocker; 385 pending.** Eleven implementation/test revisions after 0035, including one preserved Worker assertion failure and correction. Final exact code 19/19 CI. Two new scoped requirements verified, earlier checks revalidated. No external model, human acceptance, production service, spend, release or submission. [Evidence and P078-02 closure table](evidence/implementation/SESSION-0036.md).

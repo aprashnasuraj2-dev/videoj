@@ -29,3 +29,7 @@ Source consistency and action authority improved in four new scoped tasks; no or
 Next: reconcile checkpoint CI and new head; inspect reviewed-media byte verification versus content-addressed path/native duration including bounded fetch, then noncooperative source body cleanup and remaining peer/workbench authority boundaries. Execute independent fixes. P041-10 and P078-07 cannot be checked merely from controlled browser success; P054-01/P066-01 require actual model/cost evidence, P020-02/P005-08 need real provenance/narrator. Keep participant release gate closed.
 
 609/1000 original; 658/1050 total verified; 45 fully verified phases; 385 pending, six omitted, one hardware blocker. Exact code source SHA above; documentation checkpoint identity is resolved from branch after commit.
+
+## Checkpoint audit correction
+
+Checkpoint af2c6ca7ab1b4143ee921866f99e71a3a9711696: [register job](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45369839470/job/138360937847) passed checklist/evidence/cursor validation (1050 tasks, 658 verified; 45 full phases, one with omissions), but risk validation failed because direct CI URLs were entered into a field requiring an existing repository-local artifact. Corrected R-018..21 to point to this evidence file, retaining exact source revisions; CI URLs remain here and in task evidence. No validator weakened, code or completion counts changed. Recheck corrected checkpoint CI; source revision remains 352db704c1bd12d11ef26788c2809e779d8f59ed.
