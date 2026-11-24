@@ -2,7 +2,7 @@ import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
+import {fileURLToPath,pathToFileURL} from 'node:url';
 import config from '../vite.config.js';
 const app=fileURLToPath(new URL('../',import.meta.url));
 test('output remains inside isolated app',()=>assert.equal(config.build.outDir,path.join(app,'dist')));
@@ -121,4 +121,14 @@ test('direct BYOK is intentionally absent from the learner client boundary',()=>
  assert.doesNotMatch(source,/localStorage\.(?:setItem|getItem)\([^)]*(?:key|token|credential)/i);
  assert.match(source,/No personal API key is accepted/);
  assert.match(source,/Direct BYOK is not supported/);
+});
+
+test('built candidate exposes a stable public browser runtime module backed by the same restricted runtime code',async()=>{
+ const runtimePath=path.join(app,'dist/runtime/sutra-runtime.js');assert.ok(fs.existsSync(runtimePath));
+ const mod=await import(pathToFileURL(runtimePath).href+'?t='+Date.now());
+ for(const name of ['compileNetwork','executionLimits','loadLocalNetwork','loadPeerNetwork','resolveSymbolicPeerLinks','runNetwork','createProviderAdapter','createConsentInspector'])assert.equal(typeof mod[name],'function',name);
+ assert.deepEqual(mod.sutraRuntimeProfile,{name:'sutra-restricted-browser-runtime',version:'0.1.0',execution:'browser',networkFormat:'resolved-neuro-san-json',defaultInference:'publisher-funded-optional-until-release',byok:false,truthGuarantee:'none'});
+ const inventory=JSON.parse(fs.readFileSync(path.join(app,'dist/agents/artifact-inventory.json'),'utf8'));
+ assert.equal(inventory.publicRuntimePath,'/runtime/sutra-runtime.js');
+ const entry=inventory.artifacts.find(x=>x.path==='/runtime/sutra-runtime.js');assert.equal(entry.kind,'browser_runtime');assert.match(entry.sha256,/^[a-f0-9]{64}$/);
 });
