@@ -111,6 +111,10 @@ const contrast=(a,b)=>{
   assert.deepEqual(caption,{label:'English descriptions',language:'en',mode:'showing',
    text:'Silent synthetic timing fixture. Not a training lesson.',start:0,end:8});
   const captions=page.locator('media-captions-button');assert.equal(await captions.count(),1);
+  await page.locator('video').evaluate(video=>{
+   const track=Array.from(video.textTracks).find(item=>item.kind==='captions');
+   if(track)track.mode='hidden';
+  });
   await captions.click();
   await page.locator('video').evaluate(video=>{video.currentTime=1;});
   await page.waitForFunction(()=>Array.from(document.querySelector('video').textTracks).some(track=>track.kind==='captions'&&track.mode==='showing'&&track.activeCues?.length));
