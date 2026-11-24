@@ -2,6 +2,23 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0011 learner-state, media-recovery and bilingual-core checkpoint — 2026-11-24
+
+**371 / 1,000 verified task checks (37.1%); 27 / 100 phases fully verified; 1 checklist item intentionally omitted with recorded rationale.** Checklist count is not effort-weighted and does not equal release readiness.
+
+**Exact tested implementation:** `2686e3cacdd3e4d552820ccaf57b968a7544ddb4` — [green learner/build/browser CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126). It passed 52 learner/app tests, 49 consent/inference/source/API tests, 97 runtime/peer/privacy tests, 7 peer-publication tests, the 10 pinned upstream hashes and eight Chromium integration profiles.
+
+This checkpoint closes **phase 042 (DHAGO player integration)** and **phase 047 (safe execution inspector)**. New verified behavior includes transactional media source replacement with unsupported-decode recovery to the last playable source; explicit partial-vs-unknown execution outcomes; native authored-caption loading through the actual caption control; a bounded English/Nepali-draft core localization layer that preserves evidence/run state and never translates source excerpts; the responsive interaction artifact; and a read-only no-collision check for the proposed SUTRA caller/peer hostnames.
+
+**Chronology correction:** `SUTRA-P041-07` required responsive behavior to be specified *before styling*. Styling already existed, so that historical sequence cannot truthfully be recreated. It is intentionally omitted under Decision 0017; the current responsive contract is instead documented and regression-tested at 360 px and 200% zoom. Fresh-viewer acceptance remains open.
+
+**Still open and release-blocking:** rights-cleared original lesson/video and reviewed written guide, human factual review, real semantic comparison, human Nepali terminology review, physical touch/screen-reader acceptance, independent public HTTPS peer/MCP evidence, live funded provider/budget, Cloudflare billing/headroom and final production routing, rollout/rollback evidence, participant research and challenge eligibility. Public deployment, paid inference, final ZIP and Devpost submission remain closed.
+
+**Next engineering cursor:** `SUTRA-P041-08` is the next original checklist item but requires a fresh viewer. Independent engineering continues with `P048-06` locale-safe timestamp/unit/date presentation, then `P068-06` multi-version immutable rollout retention and visible hero-state walkthrough hardening. [Session evidence](evidence/implementation/SESSION-0011.md) · [responsive map](evidence/implementation/RESPONSIVE-INTERACTION-MAP-2026-11-24.md) · [localization inventory](evidence/implementation/LOCALIZATION-INVENTORY-2026-11-24.md) · [Cloudflare audit](evidence/implementation/CLOUDFLARE-CAPACITY-2026-11-24.md).
+
+---
+
+
 ## Session 0010 final engineering checkpoint — 2026-11-24
 
 **358 / 1,000 verified task checks (35.8%); 25 / 100 phases fully complete.** Checklist count is not effort-weighted and does not equal release readiness.
