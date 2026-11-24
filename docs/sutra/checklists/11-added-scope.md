@@ -11,7 +11,7 @@ Required items discovered after the original plan remain release blockers until 
 ## X001 — Newly discovered correctness checks
 
 - [x] `SUTRA-X001-01` Verify successful local review writes with readback, rejecting ambiguous storage outcomes and preventing duplicate persisted IDs after reload.
-- [x] `SUTRA-X001-02` Verify runtime and learner action registration use explicit effects and reject stale export snapshots.
+- [ ] `SUTRA-X001-02` Verify runtime and learner action registration use explicit effects and reject stale export snapshots.
 - [x] `SUTRA-X001-03` Verify quota daily resource limits and retain unexpired leases across UTC midnight without refund or new provider contact after rejection.
 
 ## X002 — Evidence-library and receipt-action regressions
@@ -31,3 +31,9 @@ Required items discovered after the original plan remain release blockers until 
 - [x] `SUTRA-X004-01` Validate a bounded provider-cost record with exact source revision, provider/model, explicit-timezone price basis, run/request outcomes, unique request sequences and complete-or-null token usage; include failed/cancelled attempts in the observed spend record.
 - [x] `SUTRA-X004-02` Refuse mean, p95, monthly projection and sensitivity when any request usage is unknown; when complete, project from all observed runs rather than completed runs only, and report doubled-prompt plus one-full-run-retry sensitivity.
 - [x] `SUTRA-X004-03` Provide an offline bounded CLI, unmistakably synthetic example, dedicated CI and verification-impact mapping; the tool performs no provider contact and cannot be cited as live-cost evidence.
+
+## X005 — Local action confirmation identity and resource boundaries
+
+- [ ] `SUTRA-X005-01` Prove a cancelled, consumed or failed action proposal identity cannot be reused for another payload during the registry lifetime; stale confirmation never executes a later action. The 4,096-identity ceiling must fail closed, not evict identities.
+- [ ] `SUTRA-X005-02` Charge the aggregate 16 KiB serialized UTF-8 JSON budget during argument traversal; reject shared expansion, oversize Unicode and escapes, sparse arrays and non-index array fields before handler invocation.
+- [ ] `SUTRA-X005-03` Directly execute standalone action regression tests in learner CI and trigger that workflow on action-package changes; revalidate the standalone publisher starter and Open Kit consumer against the same single-use contract.

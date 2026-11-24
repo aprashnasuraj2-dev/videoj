@@ -1,21 +1,25 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T09:08:00+05:45",
+  "updated_at": "2026-11-24T11:11:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "b7d057164a48cef9d801c8bbf6af3fa4b35d374d",
-  "last_session_id": "SUTRA-SESSION-0027",
-  "stage": "origin_isolation_planning_closed_without_deployment",
+  "last_observed_code_sha": "36bc51d1b039d88c7bd50a080e15c8296bc62060",
+  "last_session_id": "SUTRA-SESSION-0028",
+  "stage": "action_confirmation_regression_repair_pending_ci",
   "current_task": null,
-  "next_task": "SUTRA-P041-08",
+  "next_task": "SUTRA-X005-01",
   "ready_engineering_queue": [
+    "SUTRA-X005-02",
+    "SUTRA-X005-03",
+    "SUTRA-P029-04",
+    "SUTRA-P059-03",
+    "SUTRA-P060-10",
+    "SUTRA-P041-08",
     "SUTRA-P054-01",
     "SUTRA-P066-01",
-    "SUTRA-P078-02",
-    "SUTRA-P020-02",
-    "SUTRA-P005-08"
+    "SUTRA-P078-02"
   ],
-  "next_action": "Continue engineering/human-evidence readiness only. Recheck exact DNS/routes only when release gate authorizes a future binding; no cloud mutation is authorized by phase 008 completion.",
+  "next_action": "Check exact current source learner, standalone action tests, starter, Open Kit, browser matrix and materializer CI. Re-credit reopened tasks only with applicable current passing evidence. Then continue dependency-ready engineering; keep cloud, public release, funded inference and human gates closed.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -1653,17 +1657,21 @@
       ]
     },
     "SUTRA-P029-04": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:51:05+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
-          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
-          "result": "pass",
-          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
-          "observed_at": "2026-11-23T13:51:05+05:45"
-        }
-      ]
+      "state": "pending",
+      "previous_verification": {
+        "state": "verified",
+        "verified_at": "2026-11-23T13:51:05+05:45",
+        "evidence": [
+          {
+            "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+            "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+            "result": "pass",
+            "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+            "observed_at": "2026-11-23T13:51:05+05:45"
+          }
+        ]
+      },
+      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
     },
     "SUTRA-P029-05": {
       "state": "verified",
@@ -1679,17 +1687,21 @@
       ]
     },
     "SUTRA-P029-06": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:51:05+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
-          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
-          "result": "pass",
-          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
-          "observed_at": "2026-11-23T13:51:05+05:45"
-        }
-      ]
+      "state": "pending",
+      "previous_verification": {
+        "state": "verified",
+        "verified_at": "2026-11-23T13:51:05+05:45",
+        "evidence": [
+          {
+            "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+            "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+            "result": "pass",
+            "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+            "observed_at": "2026-11-23T13:51:05+05:45"
+          }
+        ]
+      },
+      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
     },
     "SUTRA-P029-07": {
       "state": "verified",
@@ -1705,17 +1717,21 @@
       ]
     },
     "SUTRA-P029-08": {
-      "state": "verified",
-      "verified_at": "2026-11-23T13:51:05+05:45",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
-          "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
-          "result": "pass",
-          "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
-          "observed_at": "2026-11-23T13:51:05+05:45"
-        }
-      ]
+      "state": "pending",
+      "previous_verification": {
+        "state": "verified",
+        "verified_at": "2026-11-23T13:51:05+05:45",
+        "evidence": [
+          {
+            "artifact": "docs/sutra/evidence/implementation/SESSION-0004.md",
+            "description": "Restricted runtime/reference-loop tests, exact publication/data checks, candidate build and app/review unit tests; initial player/runtime browser behavior also passed CI. Final extra browser cases remain separately pending.",
+            "result": "pass",
+            "source_revision": "9100c0e4ebd2fde2c8827f3a5cb6e709873ec8a1",
+            "observed_at": "2026-11-23T13:51:05+05:45"
+          }
+        ]
+      },
+      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
     },
     "SUTRA-P029-09": {
       "state": "verified",
@@ -7597,24 +7613,28 @@
       ]
     },
     "SUTRA-P059-03": {
-      "state": "verified",
-      "verified_at": "2026-11-24T01:39:34Z",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0014.md",
-          "description": "Pinned upstream runtime and safe single-use local acknowledgement action.",
-          "result": "pass",
-          "source_revision": "f69d6c169cd588a4ebaef938884a986714da71eb",
-          "observed_at": "2026-11-24T01:39:34Z"
-        },
-        {
-          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45306536848/job/138151640658",
-          "description": "Pinned upstream runtime and safe single-use local acknowledgement action.",
-          "result": "pass",
-          "source_revision": "f69d6c169cd588a4ebaef938884a986714da71eb",
-          "observed_at": "2026-11-24T01:39:34Z"
-        }
-      ]
+      "state": "pending",
+      "previous_verification": {
+        "state": "verified",
+        "verified_at": "2026-11-24T01:39:34Z",
+        "evidence": [
+          {
+            "artifact": "docs/sutra/evidence/implementation/SESSION-0014.md",
+            "description": "Pinned upstream runtime and safe single-use local acknowledgement action.",
+            "result": "pass",
+            "source_revision": "f69d6c169cd588a4ebaef938884a986714da71eb",
+            "observed_at": "2026-11-24T01:39:34Z"
+          },
+          {
+            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45306536848/job/138151640658",
+            "description": "Pinned upstream runtime and safe single-use local acknowledgement action.",
+            "result": "pass",
+            "source_revision": "f69d6c169cd588a4ebaef938884a986714da71eb",
+            "observed_at": "2026-11-24T01:39:34Z"
+          }
+        ]
+      },
+      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
     },
     "SUTRA-P059-04": {
       "state": "verified",
@@ -7737,24 +7757,28 @@
       ]
     },
     "SUTRA-P059-10": {
-      "state": "verified",
-      "verified_at": "2026-11-24T01:39:34Z",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0014.md",
-          "description": "Clean independent install executes two agents; exact-name peer resolution succeeds in two-origin loopback test.",
-          "result": "pass",
-          "source_revision": "f69d6c169cd588a4ebaef938884a986714da71eb",
-          "observed_at": "2026-11-24T01:39:34Z"
-        },
-        {
-          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45306536848/job/138151640658",
-          "description": "Clean independent install executes two agents; exact-name peer resolution succeeds in two-origin loopback test.",
-          "result": "pass",
-          "source_revision": "f69d6c169cd588a4ebaef938884a986714da71eb",
-          "observed_at": "2026-11-24T01:39:34Z"
-        }
-      ]
+      "state": "pending",
+      "previous_verification": {
+        "state": "verified",
+        "verified_at": "2026-11-24T01:39:34Z",
+        "evidence": [
+          {
+            "artifact": "docs/sutra/evidence/implementation/SESSION-0014.md",
+            "description": "Clean independent install executes two agents; exact-name peer resolution succeeds in two-origin loopback test.",
+            "result": "pass",
+            "source_revision": "f69d6c169cd588a4ebaef938884a986714da71eb",
+            "observed_at": "2026-11-24T01:39:34Z"
+          },
+          {
+            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45306536848/job/138151640658",
+            "description": "Clean independent install executes two agents; exact-name peer resolution succeeds in two-origin loopback test.",
+            "result": "pass",
+            "source_revision": "f69d6c169cd588a4ebaef938884a986714da71eb",
+            "observed_at": "2026-11-24T01:39:34Z"
+          }
+        ]
+      },
+      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
     },
     "SUTRA-P060-01": {
       "state": "verified",
@@ -7937,24 +7961,28 @@
       ]
     },
     "SUTRA-P060-10": {
-      "state": "verified",
-      "verified_at": "2026-11-24T01:39:34Z",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0014.md",
-          "description": "All three components have their own documented purpose, entry point and license; inventory and archive checks pass.",
-          "result": "pass",
-          "source_revision": "f69d6c169cd588a4ebaef938884a986714da71eb",
-          "observed_at": "2026-11-24T01:39:34Z"
-        },
-        {
-          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45306536924/job/138151640456",
-          "description": "All three components have their own documented purpose, entry point and license; inventory and archive checks pass.",
-          "result": "pass",
-          "source_revision": "f69d6c169cd588a4ebaef938884a986714da71eb",
-          "observed_at": "2026-11-24T01:39:34Z"
-        }
-      ]
+      "state": "pending",
+      "previous_verification": {
+        "state": "verified",
+        "verified_at": "2026-11-24T01:39:34Z",
+        "evidence": [
+          {
+            "artifact": "docs/sutra/evidence/implementation/SESSION-0014.md",
+            "description": "All three components have their own documented purpose, entry point and license; inventory and archive checks pass.",
+            "result": "pass",
+            "source_revision": "f69d6c169cd588a4ebaef938884a986714da71eb",
+            "observed_at": "2026-11-24T01:39:34Z"
+          },
+          {
+            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45306536924/job/138151640456",
+            "description": "All three components have their own documented purpose, entry point and license; inventory and archive checks pass.",
+            "result": "pass",
+            "source_revision": "f69d6c169cd588a4ebaef938884a986714da71eb",
+            "observed_at": "2026-11-24T01:39:34Z"
+          }
+        ]
+      },
+      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
     },
     "SUTRA-P026-02": {
       "state": "verified",
@@ -8397,24 +8425,28 @@
       ]
     },
     "SUTRA-P029-10": {
-      "state": "verified",
-      "verified_at": "2026-11-24T01:54:48Z",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
-          "description": "Cancelled proposal never writes; frozen reviewed arguments and explicit confirm; real browser save/export/delete and ambiguous outcomes exercised.",
-          "result": "pass",
-          "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
-          "observed_at": "2026-11-24T01:54:48Z"
-        },
-        {
-          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45308177809/job/138157027451",
-          "description": "Cancelled proposal never writes; frozen reviewed arguments and explicit confirm; real browser save/export/delete and ambiguous outcomes exercised.",
-          "result": "pass",
-          "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
-          "observed_at": "2026-11-24T01:54:48Z"
-        }
-      ]
+      "state": "pending",
+      "previous_verification": {
+        "state": "verified",
+        "verified_at": "2026-11-24T01:54:48Z",
+        "evidence": [
+          {
+            "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+            "description": "Cancelled proposal never writes; frozen reviewed arguments and explicit confirm; real browser save/export/delete and ambiguous outcomes exercised.",
+            "result": "pass",
+            "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+            "observed_at": "2026-11-24T01:54:48Z"
+          },
+          {
+            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45308177809/job/138157027451",
+            "description": "Cancelled proposal never writes; frozen reviewed arguments and explicit confirm; real browser save/export/delete and ambiguous outcomes exercised.",
+            "result": "pass",
+            "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+            "observed_at": "2026-11-24T01:54:48Z"
+          }
+        ]
+      },
+      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
     },
     "SUTRA-X001-01": {
       "state": "verified",
@@ -8437,24 +8469,28 @@
       ]
     },
     "SUTRA-X001-02": {
-      "state": "verified",
-      "verified_at": "2026-11-24T01:54:48Z",
-      "evidence": [
-        {
-          "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
-          "description": "Registered actual learner actions with explicit effects and current-snapshot export validation; test rejects stale and deleted exports.",
-          "result": "pass",
-          "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
-          "observed_at": "2026-11-24T01:54:48Z"
-        },
-        {
-          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45308177809/job/138157027451",
-          "description": "Registered actual learner actions with explicit effects and current-snapshot export validation; test rejects stale and deleted exports.",
-          "result": "pass",
-          "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
-          "observed_at": "2026-11-24T01:54:48Z"
-        }
-      ]
+      "state": "pending",
+      "previous_verification": {
+        "state": "verified",
+        "verified_at": "2026-11-24T01:54:48Z",
+        "evidence": [
+          {
+            "artifact": "docs/sutra/evidence/implementation/SESSION-0015.md",
+            "description": "Registered actual learner actions with explicit effects and current-snapshot export validation; test rejects stale and deleted exports.",
+            "result": "pass",
+            "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+            "observed_at": "2026-11-24T01:54:48Z"
+          },
+          {
+            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45308177809/job/138157027451",
+            "description": "Registered actual learner actions with explicit effects and current-snapshot export validation; test rejects stale and deleted exports.",
+            "result": "pass",
+            "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
+            "observed_at": "2026-11-24T01:54:48Z"
+          }
+        ]
+      },
+      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
     },
     "SUTRA-P028-04": {
       "state": "verified",

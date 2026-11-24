@@ -2,6 +2,14 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0028 — 2026-11-24
+
+**600/1,000 original checks verified; 611/1,015 total; 42/100 phases fully verified; 6 omissions.** Lower counts are deliberate regression reconciliation, not loss of historical evidence.
+
+Current head at inspection `c54ef5d` had learner and materializer CI failures. Three engineering commits correct stale accessible test labels, duplicate materializer fixtures, a local-action identity-reuse edge case, traversal-time aggregate byte limits, missing standalone action CI coverage, and starter compatibility. The materializer suite passed at `17d5232`; exact final product revision `36bc51d1b039d88c7bd50a080e15c8296bc62060` still requires full current CI reconciliation. Reopened seven original action/starter/Open Kit checks plus X001-02; added X005-01..03 pending. No deployment, provider funding, public release, participant testing or submission. [Session evidence](evidence/implementation/SESSION-0028.md).
+
+---
+
 ## Session 0027 — 2026-11-24
 
 **607/1,000 original checks verified; 619/1,012 total; 45/100 phases fully verified; 6 omissions.**

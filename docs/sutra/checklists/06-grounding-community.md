@@ -163,14 +163,14 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 
 - [x] `SUTRA-P059-01` Create a minimal two-agent starter with synthetic licensed content
 - [x] `SUTRA-P059-02` Include manifest, resolved graph and named peer-link examples
-- [x] `SUTRA-P059-03` Wire a pinned runtime and one safe registered local action
+- [ ] `SUTRA-P059-03` Wire a pinned runtime and one safe registered local action
 - [x] `SUTRA-P059-04` Document default inference setup without embedding real secrets
 - [x] `SUTRA-P059-05` Include a second-origin example and denied-origin walkthrough
 - [x] `SUTRA-P059-06` Keep starter build/install commands independent of the learner app
 - [x] `SUTRA-P059-07` Retain required upstream license and NOTICE material
 - [x] `SUTRA-P059-08` Verify clean publication and exact-name network loading
 - [x] `SUTRA-P059-09` Produce and review the phase artifact: Open Kit artifact 3: publisher starter and example peer.
-- [x] `SUTRA-P059-10` Close phase 059 only after its applicable tasks have evidence and its exit condition is observed: A clean install serves the example without the main app; manifest and exact-name peer loading work.
+- [ ] `SUTRA-P059-10` Close phase 059 only after its applicable tasks have evidence and its exit condition is observed: A clean install serves the example without the main app; manifest and exact-name peer loading work.
 
 ## Phase 060 - Publish a versioned Open Kit candidate
 
@@ -188,4 +188,4 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P060-07` Scan archives for private material and secret canaries
 - [x] `SUTRA-P060-08` Record what remains unverified before asking outsiders to try it
 - [x] `SUTRA-P060-09` Produce and review the phase artifact: Versioned community release candidate and public documentation paths.
-- [x] `SUTRA-P060-10` Close phase 060 only after its applicable tasks have evidence and its exit condition is observed: Each tool has its own purpose, entry point, license and runnable example; no private data or tokens are packaged.
+- [ ] `SUTRA-P060-10` Close phase 060 only after its applicable tasks have evidence and its exit condition is observed: Each tool has its own purpose, entry point, license and runnable example; no private data or tokens are packaged.

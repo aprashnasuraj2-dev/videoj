@@ -1,5 +1,10 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0028 — 2026-11-24
+
+- Reconciled current-head red CI, repaired accessible locators/materializer fixtures, hardened proposal identity and traversal budgets, directly wired standalone action tests and updated independent starter. Source `36bc51d1b039d88c7bd50a080e15c8296bc62060`; materializer green at `17d5232`; integrated final evidence pending.
+- Reopened SUTRA-P029-04, SUTRA-P029-06, SUTRA-P029-08, SUTRA-P029-10, SUTRA-P059-03, SUTRA-P059-10, SUTRA-P060-10, SUTRA-X001-02; X005-01..03 pending. 600/1,000 original; 611/1,015 total; 42 complete phases; six omissions. [Evidence](evidence/implementation/SESSION-0028.md).
+
 ## SUTRA-SESSION-0027 — 2026-11-24
 
 - Closed phase 008 at `b7d057164a48cef9d801c8bbf6af3fa4b35d374d` with origin/contact/cookie/rollback isolation planning based on repository docs plus archived read-only Cloudflare evidence. No new account/DNS/deployment action.
