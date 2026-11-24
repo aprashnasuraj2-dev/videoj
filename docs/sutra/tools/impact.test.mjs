@@ -31,3 +31,11 @@ test('metric freshness is revision-aware and does not erase historical values',(
  assert.equal(metricFreshness(metric,['browser-matrix']).status,'current');
  assert.equal(metric.sourceRevision,'a'.repeat(40));
 });
+
+test('guide fixtures and executable tests are explicitly classified while markdown remains documentation-only',()=>{
+ const guide=classifyChangedFiles(['apps/sutra/public/guides/example.html'],map);
+ assert.ok(guide.affectedSuites.includes('grounding-evaluation'));assert.ok(guide.affectedSuites.includes('publication-integrity'));assert.deepEqual(guide.unmapped,[]);
+ const tests=classifyChangedFiles(['apps/sutra/test/hero-browser.cjs'],map);
+ assert.deepEqual(tests.unmapped,[]);assert.ok(tests.affectedSuites.includes('verification-tests'));
+ const docs=classifyChangedFiles(['apps/sutra/README.md'],map);assert.deepEqual(docs.unmapped,[]);
+});

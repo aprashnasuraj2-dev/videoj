@@ -10,7 +10,7 @@ export function classifyChangedFiles(files,map=defaultMap()){
  for(const file of clean){
   const hit=map.suites.filter(s=>matches(file,s));
   for(const suite of hit)suiteMap.set(suite.id,suite);
-  if(map.managedRoots.some(prefix=>file.startsWith(prefix))&&!hit.length)unmapped.push(file);
+  if(map.managedRoots.some(prefix=>file.startsWith(prefix))&&!hit.length&&!file.endsWith('.md'))unmapped.push(file);
  }
  const suites=[...suiteMap.values()].sort((a,b)=>a.id.localeCompare(b.id));
  return Object.freeze({changedFiles:Object.freeze(clean),affectedSuites:Object.freeze(suites.map(s=>s.id)),

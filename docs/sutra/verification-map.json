@@ -22,7 +22,8 @@
         "packages/sutra-runtime/",
         "services/sutra-api/",
         "tools/sutra-evaluation/",
-        "docs/sutra/evaluation/"
+        "docs/sutra/evaluation/",
+        "apps/sutra/public/guides/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA engineering evaluation",
@@ -43,7 +44,8 @@
         "packages/sutra-source-tools/",
         "packages/sutra-runtime/",
         "packages/sutra-inference/",
-        "services/sutra-api/"
+        "services/sutra-api/",
+        "apps/sutra/public/guides/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA learner shell"
@@ -66,7 +68,8 @@
         "packages/sutra-source-tools/",
         "packages/sutra-consent/",
         "packages/sutra-inference/",
-        "packages/sutra-actions/"
+        "packages/sutra-actions/",
+        "apps/sutra/public/guides/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA browser compatibility matrix"
@@ -131,7 +134,10 @@
         "apps/sutra/tools/publication-inventory",
         "apps/sutra-peer/",
         "deploy/sutra-pages/",
-        "tools/sutra-starter/"
+        "tools/sutra-starter/",
+        "apps/sutra/public/guides/",
+        "apps/sutra/public/_",
+        "apps/sutra/tools/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA publisher starter",
@@ -151,7 +157,9 @@
         "packages/sutra-consent/",
         "packages/sutra-inference/",
         "services/sutra-api/",
-        "deploy/sutra-pages/"
+        "deploy/sutra-pages/",
+        "apps/sutra/public/_headers",
+        "apps/sutra/public/_routes"
       ],
       "requiredWorkflows": [
         "Validate SUTRA learner shell",
@@ -162,6 +170,18 @@
         "security_boundary"
       ],
       "reason": "Contact, consent, inference, API or ingress changes can affect credentials, disclosure and execution boundaries."
+    },
+    {
+      "id": "verification-tests",
+      "prefixes": [
+        "apps/sutra/test/"
+      ],
+      "requiredWorkflows": [
+        "Validate SUTRA learner shell",
+        "Validate SUTRA browser compatibility matrix"
+      ],
+      "invalidates": [],
+      "reason": "Changes to executable product tests must run the relevant verification suites but do not by themselves rewrite measured product metrics."
     }
   ]
 }
