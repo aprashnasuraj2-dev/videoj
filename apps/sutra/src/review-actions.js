@@ -13,7 +13,7 @@ export function createReviewActions({store,sources,download,idFactory}){
   {name:'export-receipt',effect:'download',destination:'Browser-managed local file download',description:'Request a download of the exact current catalog-matched saved receipt.',
    validate:a=>shape(a,['id','snapshot'])&&typeof a.id==='string'&&a.snapshot?.id===a.id&&(()=>{try{serializeReviewExport(a.snapshot,{sources:catalog});return true;}catch{return false;}})(),
    execute:a=>{const current=store.inspect().find(r=>r.id===a.id&&r.status==='valid')?.record;if(!current||!exact(current,a.snapshot))throw Error('Saved review changed or was deleted; inspect it again.');
-    const json=serializeReviewExport(current,{sources:catalog});download(json,'sutra-synthetic-review.json');return {outcome:'download_requested',id:a.id};}}
+    const json=serializeReviewExport(current,{sources:catalog});download(json,'sutra-source-review.json');return {outcome:'download_requested',id:a.id};}}
  ],idFactory?{idFactory}:{});
  return registry;
 }

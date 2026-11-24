@@ -15,12 +15,12 @@ export function createReviewAttemptReceipt(attempt,{sources}={}){
   !plain(receipt)||!outcomes.has(outcome)||typeof observedAt!=='string'||observedAt.length>40||Number.isNaN(Date.parse(observedAt)))throw Error('Review attempt is malformed.');
  if(!validateReceipt(receipt,{sources}).valid)throw Error('Review attempt source receipt is stale or invalid.');
  return Object.freeze({
-  reportVersion:1,type:'sutra-local-review-attempt',requestId,outcome,observedAt,
+  reportVersion:2,type:'sutra-local-review-attempt',requestId,outcome,observedAt,
   retryPolicy:'never automatically retry an unknown or rejected local write',
   outcomeMeaning:outcome==='completed'?'Local storage write and exact readback were observed.':
    outcome==='rejected'?'The write was rejected before success was observed.':
    'The write may have happened before an exception; inspect current local records before any new action.',
-  truthStatus:'unverified',synthetic:true,
+  truthStatus:'unverified',contentKind:'source-review',
   receipt:Object.freeze(structuredClone(receipt))
  });
 }

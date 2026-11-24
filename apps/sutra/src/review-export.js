@@ -9,9 +9,9 @@ function dataField(object,key){
  return descriptor.value;
 }
 export function createReviewExport(record,{sources}={}){
- if(!plain(record))throw Error('Not a supported synthetic saved review.');
- const receiptData=dataField(record,'receipt'),synthetic=dataField(record,'synthetic');
- if(!plain(receiptData)||synthetic!==true)throw Error('Not a supported synthetic saved review.');
+ if(!plain(record))throw Error('Not a supported source review.');
+ const receiptData=dataField(record,'receipt'),schema=dataField(record,'schema'),kind=dataField(record,'kind');
+ if(!plain(receiptData)||schema!==2||kind!=='source-review')throw Error('Not a supported source review.');
  const id=dataField(record,'id'),savedAt=dataField(record,'savedAt');
  if(typeof id!=='string'||! /^[A-Za-z0-9_-]{1,100}$/.test(id)||
   typeof savedAt!=='string'||savedAt.length>40||Number.isNaN(Date.parse(savedAt)))throw Error('Saved review identity or date is invalid.');
@@ -19,9 +19,9 @@ export function createReviewExport(record,{sources}={}){
  for(const key of fields)receipt[key]=dataField(receiptData,key);
  if(!validateReceipt(receipt,{sources}).valid)throw Error('Saved review no longer matches the provided source catalog.');
  return Object.freeze({
-  reportVersion:1,type:'sutra-local-review-export',id,
-  savedAt,synthetic:true,truthStatus:'unverified',
-  warning:'Local source-catalog consistency is not factual verification or proof of a real original lesson.',
+  reportVersion:2,type:'sutra-local-review-export',id,
+  savedAt,contentKind:'source-review',truthStatus:'unverified',
+  warning:'Local source-catalog consistency is not factual verification, certification, or proof that the underlying source is correct.',
   receipt:Object.freeze(receipt)
  });
 }
