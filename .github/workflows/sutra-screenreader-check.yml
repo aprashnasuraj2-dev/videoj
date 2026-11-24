@@ -1,0 +1,19 @@
+name: Validate SUTRA screen-reader evidence gate
+on:
+  pull_request:
+    paths:
+      - 'tools/sutra-screenreader-check/**'
+      - '.github/workflows/sutra-screenreader-check.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  screenreader:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test tools/sutra-screenreader-check/*.test.mjs
