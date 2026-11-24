@@ -12,7 +12,7 @@ test('private Worker config does not expose workers.dev or activate inference',a
 test('status and synthetic MCP use real Worker handler with original URL and headers',async()=>{
  let calls=0;const env={SUTRA_API:{fetch:r=>{calls++;return worker.fetch(r,{SUTRA_ENABLE_INFERENCE:'false'});}}};
  const status=await onRequest({request:req('/api/status'),env});assert.equal(status.status,200);assert.equal((await status.json()).inference,'disabled');assert.equal(status.headers.get('cache-control'),'no-store');
- const body={jsonrpc:'2.0',id:1,method:'initialize'};
+ const body={jsonrpc:'2.0',id:1,method:'initialize',params:{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'ingress-test',version:'1'}}};
  const mcp=await onRequest({request:req('/api/source-tools',{method:'POST',headers:{Origin:base,'Content-Type':'application/json'},body:JSON.stringify(body)}),env});
  assert.equal(mcp.status,200);assert.equal((await mcp.json()).result.protocolVersion,'2025-06-18');
  const denied=await onRequest({request:req('/api/source-tools',{method:'POST',headers:{Origin:'https://wrong.example','Content-Type':'application/json'},body:JSON.stringify(body)}),env});assert.equal(denied.status,403);
