@@ -35,3 +35,25 @@ test('source MCP maps bounded HTTP capacity states without exposing response bod
   assert.equal(calls,3,'direct call initializes, acknowledges, then performs the failing tool call');
  }
 });
+
+test('source MCP enforces a run-wide unique receipt ceiling before hidden evidence can reach the model',async()=>{
+ const source=structuredClone(fixture.source);
+ source.duration=12;
+ source.cues.push({id:'second-cue',start:6,end:8,text:'Second bounded source cue.'});
+ const local=createSourceTools([source]),seen=[];
+ const client=createSourceMcp({origin:'https://sutra.test',sources:[source],maxReceipts:1,onReceipt:r=>seen.push(r),fetchImpl:async(_url,opts)=>{
+  const rpc=JSON.parse(opts.body);
+  if(rpc.method==='initialize')return Response.json({jsonrpc:'2.0',id:rpc.id,result:{protocolVersion:'2025-06-18'}});
+  if(rpc.method==='notifications/initialized')return new Response(null,{status:202});
+  if(rpc.method==='tools/list')return Response.json({jsonrpc:'2.0',id:rpc.id,result:{tools:local.list()}});
+  if(rpc.method==='tools/call'){const output=local.call(rpc.params.name,rpc.params.arguments);return Response.json({jsonrpc:'2.0',id:rpc.id,result:{content:[{type:'text',text:JSON.stringify(output)}],structuredContent:output,isError:false}});}
+  throw Error('unexpected RPC');
+ }});
+ await client.callTool('read_cue',{sourceId:source.id,cueId:source.cues[0].id});
+ assert.equal(seen.length,1);
+ await assert.rejects(client.callTool('read_cue',{sourceId:source.id,cueId:'second-cue'}),e=>e.code==='SOURCE_EVIDENCE_LIMIT');
+ assert.equal(seen.length,1,'overflow receipt is rejected before the observer or model sees it');
+});
+test('source receipt ceiling cannot be disabled or raised above the host maximum',()=>{
+ for(const value of [0,21,1.5])assert.throws(()=>createSourceMcp({origin:'https://sutra.test',sources:catalog,maxReceipts:value}),e=>e.code==='SOURCE_CONFIG');
+});

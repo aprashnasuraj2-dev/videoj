@@ -3,9 +3,9 @@ import {validateReceipt} from '../sutra-evidence/index.js';
 import {validateData} from './vendor/nsdeploy/actions.js';
 export class SourceMcpError extends Error{constructor(code){super('Bounded source capability stopped ('+code+').');this.name='SourceMcpError';this.code=code;}}
 const bad=code=>{throw new SourceMcpError(code??'SOURCE_CAPABILITY');};
-export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt}={}){
- const base=new URL(origin);if(base.origin!==origin||base.protocol!=='https:'&&!(base.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(base.hostname)))bad();
- const local=createSourceTools(sources),definitions=local.list();let sequence=0,initialized=false,calls=0;
+export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt,maxReceipts=20}={}){
+ const base=new URL(origin);if(base.origin!==origin||base.protocol!=='https:'&&!(base.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(base.hostname))||!Number.isInteger(maxReceipts)||maxReceipts<1||maxReceipts>20)bad('SOURCE_CONFIG');
+ const local=createSourceTools(sources),definitions=local.list(),seenReceiptKeys=new Set();let sequence=0,initialized=false,calls=0;
  async function rpc(method,params,notification=false){
   if(++calls>12)bad();const controller=new AbortController(),cancel=()=>controller.abort();signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)cancel();const timer=setTimeout(cancel,5000);let rejectAbort;const stopped=new Promise((_,reject)=>{rejectAbort=()=>reject(Error('Source request cancelled.'));controller.signal.addEventListener('abort',rejectAbort,{once:true});if(controller.signal.aborted)rejectAbort();});stopped.catch(()=>{});
   try{
@@ -38,6 +38,10 @@ export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt
    for(const [index,receipt] of output.receipts.entries()){
     if(!validateReceipt(receipt,{sources}).valid||Object.keys(expected.receipts[index]).some(key=>key!=='retrievedAt'&&expected.receipts[index][key]!==receipt[key]))bad();
    }
+   const nextKeys=output.receipts.map(receipt=>receipt.sourceId+'\u0000'+receipt.cueId),prospective=new Set(seenReceiptKeys);
+   for(const key of nextKeys)prospective.add(key);
+   if(prospective.size>maxReceipts)bad('SOURCE_EVIDENCE_LIMIT');
+   for(const key of nextKeys)seenReceiptKeys.add(key);
    for(const receipt of output.receipts){try{onReceipt?.(structuredClone(receipt));}catch{/* Observer does not control source capability. */}}
    const safe={version:1,receipts:output.receipts,truthStatus:'unverified',...(name==='search_lesson'?{returnedCount:output.returnedCount,truncated:output.truncated,filters:output.filters}:{})};
    return JSON.stringify(safe);
