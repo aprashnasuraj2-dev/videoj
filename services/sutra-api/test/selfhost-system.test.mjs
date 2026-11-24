@@ -83,7 +83,7 @@ test('one cancelled client request closes the real gateway and loopback model st
   const parts=[];for await(const part of req)parts.push(part);
   calls++;res.on('close',()=>{closed=true;});
   res.writeHead(200,{'Content-Type':'text/event-stream'});
-  res.write(sse([event({content:'Partial unverified text, never a completed response.'},null)]).replace('data: [DONE]\\n\\n',''));
+  res.write(sse([event({content:'Partial unverified text, never a completed response.'},null)]).replace('data: [DONE]\n\n',''));
   started();
   // A deliberately held-open model stream; no [DONE] may be invented.
  });
