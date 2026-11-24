@@ -98,3 +98,10 @@ test('standalone runtime build configuration is explicitly mapped to browser, pe
  for(const id of ['browser-matrix','performance-profile','publication-integrity'])assert.ok(r.affectedSuites.includes(id),id);
  for(const metric of ['desktop_browser_matrix','lab_performance','publication_inventory'])assert.ok(r.invalidatedMetrics.includes(metric),metric);
 });
+
+test('shared content profile changes invalidate every evidence family that depends on lesson bytes/context',()=>{
+ const r=classifyChangedFiles(['packages/sutra-content-profile/index.js','apps/sutra/public/content/content-profile.json'],map);
+ assert.deepEqual(r.unmapped,[]);
+ for(const id of ['grounding-evaluation','critical-journey','browser-matrix','performance-profile','provider-cost','publication-integrity'])assert.ok(r.affectedSuites.includes(id),id);
+ for(const metric of ['engineering_baseline','hero_journey','desktop_browser_matrix','lab_performance','provider_cost','publication_inventory'])assert.ok(r.invalidatedMetrics.includes(metric),metric);
+});

@@ -23,7 +23,9 @@
         "services/sutra-api/",
         "tools/sutra-evaluation/",
         "docs/sutra/evaluation/",
-        "apps/sutra/public/guides/"
+        "apps/sutra/public/guides/",
+        "packages/sutra-content-profile/",
+        "apps/sutra/public/content/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA engineering evaluation",
@@ -45,7 +47,9 @@
         "packages/sutra-runtime/",
         "packages/sutra-inference/",
         "services/sutra-api/",
-        "apps/sutra/public/guides/"
+        "apps/sutra/public/guides/",
+        "packages/sutra-content-profile/",
+        "apps/sutra/public/content/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA learner shell"
@@ -70,7 +74,9 @@
         "packages/sutra-inference/",
         "packages/sutra-actions/",
         "apps/sutra/public/guides/",
-        "apps/sutra/vite.runtime.config.js"
+        "apps/sutra/vite.runtime.config.js",
+        "packages/sutra-content-profile/",
+        "apps/sutra/public/content/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA browser compatibility matrix"
@@ -104,7 +110,9 @@
         "apps/sutra/package.json",
         "apps/sutra/package-lock.json",
         "apps/sutra/vite.config",
-        "apps/sutra/vite.runtime.config.js"
+        "apps/sutra/vite.runtime.config.js",
+        "packages/sutra-content-profile/",
+        "apps/sutra/public/content/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA learner shell"
@@ -120,7 +128,9 @@
         "apps/sutra/src/provider-",
         "packages/sutra-inference/",
         "services/sutra-api/",
-        "tools/sutra-provider-measurement/"
+        "tools/sutra-provider-measurement/",
+        "packages/sutra-content-profile/",
+        "apps/sutra/public/content/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA learner shell",
@@ -143,7 +153,9 @@
         "apps/sutra/public/_",
         "apps/sutra/tools/",
         "tools/sutra-open-kit/",
-        "apps/sutra/vite.runtime.config.js"
+        "apps/sutra/vite.runtime.config.js",
+        "packages/sutra-content-profile/",
+        "apps/sutra/public/content/"
       ],
       "requiredWorkflows": [
         "Validate SUTRA publisher starter",

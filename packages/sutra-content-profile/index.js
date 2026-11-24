@@ -1,3 +1,4 @@
+import {snapshotDataRecord,snapshotDataArray} from '../sutra-evidence/index.js';
 const SHA=/^[a-f0-9]{64}$/,ID=/^[A-Za-z][A-Za-z0-9._:-]{0,127}$/;
 const plain=v=>!!v&&typeof v==='object'&&!Array.isArray(v)&&Object.getPrototypeOf(v)===Object.prototype;
 const exact=(o,keys,required=keys)=>plain(o)&&Object.keys(o).every(k=>keys.includes(k))&&required.every(k=>Object.hasOwn(o,k));
@@ -18,6 +19,18 @@ const boundedJson=async({url,origin,fetchImpl,signal,maxBytes})=>{
 const validSource=source=>plain(source)&&ID.test(source.id??'')&&safeText(source.version,128)&&SHA.test(source.hash??'')&&SHA.test(source.mediaHash??'')&&Number.isFinite(source.duration)&&source.duration>0&&source.duration<=86400&&Array.isArray(source.cues)&&source.cues.length>0&&source.cues.length<=500&&new Set(source.cues.map(x=>x?.id)).size===source.cues.length&&source.cues.every(c=>plain(c)&&ID.test(c.id??'')&&Number.isFinite(c.start)&&Number.isFinite(c.end)&&c.start>=0&&c.end>c.start&&c.end<=source.duration&&safeText(c.text,2000));
 const validGuide=claim=>claim===null||plain(claim)&&claim.sourceKind==='guide'&&ID.test(claim.sourceId??'')&&safeText(claim.sourceVersion,100)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&ID.test(claim.claimKey??'')&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.excerpt,1200)&&safeText(claim.provenance,240)&&safeRelative(claim.sourceHref)&&claim.sourceHref.includes('#')&&SHA.test(claim.sourceHash??'');
 export function validateContentProfile(profile,catalog){
+ try{
+  const p=snapshotDataRecord(profile,16),catalogRef=snapshotDataRecord(p.catalog,4),media=snapshotDataRecord(p.media,8),ui=snapshotDataRecord(p.ui,4);
+  const guide=p.guideClaim===null?null:snapshotDataRecord(p.guideClaim,20);
+  const c=snapshotDataRecord(catalog,8),rawSources=snapshotDataArray(c.sources,20),sources=rawSources.map(raw=>{
+   const s=snapshotDataRecord(raw,10),rawCues=snapshotDataArray(s.cues,500),cues=rawCues.map(rawCue=>{
+    const cue=snapshotDataRecord(rawCue,8);return {id:cue.id,start:cue.start,end:cue.end,text:cue.text};
+   });
+   return {id:s.id,version:s.version,hash:s.hash,mediaHash:s.mediaHash,duration:s.duration,cues};
+  });
+  profile={schema:p.schema,mode:p.mode,contentVersion:p.contentVersion,title:p.title,primarySourceId:p.primarySourceId,featuredCueId:p.featuredCueId,catalog:{path:catalogRef.path,sha256:catalogRef.sha256},media:{video:media.video,poster:media.poster,chapters:media.chapters,captions:media.captions},guideClaim:guide?{...guide}:null,ui:{noticeTitle:ui.noticeTitle,noticeBody:ui.noticeBody}};
+  catalog={schema:c.schema,contentVersion:c.contentVersion,sources};
+ }catch{throw Error('CONTENT_DATA');}
  if(!exact(profile,['schema','mode','contentVersion','title','primarySourceId','featuredCueId','catalog','media','guideClaim','ui'])||profile.schema!==1||!['synthetic','reviewed'].includes(profile.mode)||!safeText(profile.contentVersion,100)||!safeText(profile.title,160)||!ID.test(profile.primarySourceId??'')||!ID.test(profile.featuredCueId??''))throw Error('CONTENT_PROFILE');
  if(!exact(profile.catalog,['path','sha256'])||!safeRelative(profile.catalog.path)||!SHA.test(profile.catalog.sha256??''))throw Error('CONTENT_CATALOG_REF');
  if(!exact(profile.media,['video','poster','chapters','captions'])||Object.values(profile.media).some(x=>!safeRelative(x)))throw Error('CONTENT_MEDIA');
