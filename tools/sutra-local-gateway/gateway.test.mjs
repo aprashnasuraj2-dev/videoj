@@ -47,6 +47,29 @@ test('loopback gateway authenticates, bounds requests and streams only fixed-mod
   assert.deepEqual(upstreamEvents,[{path:'/v1/chat/completions',model,stream:true,max_tokens:256}]);
  }finally{await stop(gateway);await stop(engine);}
 });
+test('gateway rejects undeclared, invalid, duplicated and unresolved historical tool calls before the model',async()=>{
+ let upstream=0;const gateway=createGateway({token,model,upstreamPort:11434,fetchImpl:async()=>{upstream++;return new Response('data: [DONE]\\n\\n',{headers:{'Content-Type':'text/event-stream'}});}}),port=await listen(gateway);
+ const endpoint='http://127.0.0.1:'+port+'/v1/chat/completions',headers={'Content-Type':'application/json',Authorization:'Bearer '+token};
+ const schema={type:'object',properties:{request:{type:'string',minLength:1,maxLength:120}},required:['request'],additionalProperties:false};
+ const declared={type:'function',function:{name:'read_source',description:'Read source.',parameters:schema}};
+ const call={id:'call-1',type:'function',function:{name:'read_source',arguments:'{"request":"timing"}'}};
+ const user={role:'user',content:'Find timing'},assistant={role:'assistant',content:null,tool_calls:[call]},tool={role:'tool',tool_call_id:'call-1',name:'read_source',content:'{"ok":true}'};
+ const good={...valid(),messages:[user,assistant,tool],tools:[declared]};
+ try{
+  const ok=await fetch(endpoint,{method:'POST',headers,body:JSON.stringify(good)});assert.equal(ok.status,200);assert.equal(upstream,1);
+  for(const body of [
+   {...good,messages:[user,assistant]},
+   {...good,messages:[user,assistant,tool,tool]},
+   {...good,messages:[user,assistant,{...tool,name:'other'}]},
+   {...good,messages:[user,assistant,{role:'user',content:'interleave'},tool]},
+   {...good,messages:[user,{...assistant,tool_calls:[{...call,function:{name:'missing_tool',arguments:'{}'}}]},tool]},
+   {...good,messages:[user,{...assistant,tool_calls:[{...call,function:{name:'read_source',arguments:'{"request":""}'}}]},tool]},
+   {...good,tools:[declared,{...declared}]}
+  ])assert.equal((await fetch(endpoint,{method:'POST',headers,body:JSON.stringify(body)})).status,400);
+  assert.equal(upstream,1,'rejected history must not reach loopback model');
+ }finally{await stop(gateway);}
+});
+
 test('wrong upstream format and redirect are rejected without leaking upstream details',async()=>{
  const cases=[new Response('private upstream details',{status:500}),new Response('{"secret":"x"}',{headers:{'Content-Type':'application/json'}}),new Response('',{status:302,headers:{Location:'http://other.example'}})];
  for(const fake of cases){

@@ -37,40 +37,68 @@ function validSchema(schema,depth=0){
  if(schema.type==='array')return validSchema(schema.items,depth+1);
  return schema.properties===undefined&&schema.required===undefined&&schema.additionalProperties===undefined&&schema.items===undefined;
 }
-function validMessages(messages){
- const previous=new Set();let textSize=0,user=false;
+function validValue(schema,value,depth=0){
+ if(depth>8)return false;
+ if(schema.enum!==undefined&&!schema.enum.some(v=>JSON.stringify(v)===JSON.stringify(value)))return false;
+ if(schema.type==='object'){
+  if(!isRecord(value))return false;
+  for(const key of schema.required??[])if(!Object.hasOwn(value,key))return false;
+  for(const [key,v] of Object.entries(value)){if(BAD_KEYS.has(key)||!Object.hasOwn(schema.properties,key)||!validValue(schema.properties[key],v,depth+1))return false;}
+  return true;
+ }
+ if(schema.type==='array')return Array.isArray(value)&&value.length>=(schema.minItems??0)&&value.length<=(schema.maxItems??1000)&&value.every(v=>validValue(schema.items,v,depth+1));
+ if(schema.type==='integer'||schema.type==='number')return typeof value==='number'&&Number.isFinite(value)&&(schema.type!=='integer'||Number.isInteger(value))&&value>=(schema.minimum??-Infinity)&&value<=(schema.maximum??Infinity);
+ if(schema.type==='string'){
+  if(typeof value!=='string'||value.length<(schema.minLength??0)||value.length>(schema.maxLength??65536))return false;
+  if(schema.format==='email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))return false;
+  if(schema.format==='date'&&(!/^\d{4}-\d{2}-\d{2}$/.test(value)||!Number.isFinite(Date.parse(value))||new Date(value).toISOString().slice(0,10)!==value))return false;
+  return true;
+ }
+ return schema.type==='boolean'&&typeof value==='boolean';
+}
+function validTools(tools){
+ if(!Array.isArray(tools)||tools.length>16)return null;
+ const map=new Map();
+ for(const t of tools){
+  if(!exactFields(t,TOOL_FIELDS)||t.type!=='function'||!exactFields(t.function,TOOL_FN_FIELDS)||
+   typeof t.function.name!=='string'||!/^\w{1,100}$/.test(t.function.name)||map.has(t.function.name)||
+   typeof t.function.description!=='string'||t.function.description.length>2000||
+   !validSchema(t.function.parameters)||t.function.parameters.type!=='object')return null;
+  map.set(t.function.name,t.function.parameters);
+ }
+ return map;
+}
+function validMessages(messages,toolByName){
+ const seen=new Set(),pending=new Map();let textSize=0,user=false;
  for(const m of messages){
   if(!exactFields(m,MESSAGE_FIELDS)||!['system','user','tool','assistant'].includes(m.role))return false;
   if(typeof m.content!=='string'&&!(m.role==='assistant'&&m.content===null))return false;
   if(typeof m.content==='string'){textSize+=m.content.length;if(textSize>24000)return false;}
   if(m.role==='user')user=true;
+  if(m.role==='tool'){
+   if(m.tool_calls!==undefined||typeof m.tool_call_id!=='string'||!pending.has(m.tool_call_id)||m.name!==pending.get(m.tool_call_id))return false;
+   pending.delete(m.tool_call_id);continue;
+  }
+  if(m.tool_call_id!==undefined||m.name!==undefined||pending.size)return false;
   if(m.tool_calls!==undefined){
-   if(m.role!=='assistant'||!Array.isArray(m.tool_calls)||m.tool_calls.length>8)return false;
+   if(m.role!=='assistant'||!Array.isArray(m.tool_calls)||!m.tool_calls.length||m.tool_calls.length>8)return false;
    for(const call of m.tool_calls){
-    if(!exactFields(call,CALL_FIELDS)||call.type!=='function'||typeof call.id!=='string'||!call.id||call.id.length>100||previous.has(call.id))return false;
-    const fn=call.function;
-    if(!exactFields(fn,FN_FIELDS)||typeof fn.name!=='string'||!/^\w{1,100}$/.test(fn.name)||typeof fn.arguments!=='string'||fn.arguments.length>8000)return false;
-    previous.add(call.id);
+    if(!exactFields(call,CALL_FIELDS)||call.type!=='function'||typeof call.id!=='string'||!call.id||call.id.length>100||seen.has(call.id))return false;
+    const fn=call.function;if(!exactFields(fn,FN_FIELDS)||typeof fn.name!=='string'||!/^\w{1,100}$/.test(fn.name)||typeof fn.arguments!=='string'||fn.arguments.length>8000)return false;
+    const schema=toolByName.get(fn.name);if(!schema)return false;
+    let args;try{args=JSON.parse(fn.arguments);}catch{return false;}if(!validValue(schema,args))return false;
+    seen.add(call.id);pending.set(call.id,fn.name);
    }
   }
-  if(m.role==='tool'&&(typeof m.tool_call_id!=='string'||!previous.has(m.tool_call_id)))return false;
-  if(m.tool_call_id!==undefined&&m.role!=='tool')return false;
  }
- return user;
-}
-function validTools(tools){
- return tools.every(t=>exactFields(t,TOOL_FIELDS)&&t.type==='function'&&exactFields(t.function,TOOL_FN_FIELDS)&&
-  typeof t.function.name==='string'&&/^\w{1,100}$/.test(t.function.name)&&
-  typeof t.function.description==='string'&&t.function.description.length<=2000&&
-  validSchema(t.function.parameters)&&t.function.parameters.type==='object');
+ return user&&pending.size===0;
 }
 function safePayload(data,model){
  if(!data||typeof data!=='object'||Array.isArray(data)||Object.keys(data).some(k=>!['model','messages','tools','stream','max_tokens','stream_options'].includes(k))||
     data.model!==model||data.stream!==true||!Array.isArray(data.messages)||data.messages.length<1||data.messages.length>32||
-    !validMessages(data.messages)||
-    !Array.isArray(data.tools)||data.tools.length>16||!validTools(data.tools)||
     !Number.isInteger(data.max_tokens)||data.max_tokens<64||data.max_tokens>1024||
     data.stream_options?.include_usage!==true||Object.keys(data.stream_options??{}).some(k=>k!=='include_usage'))return false;
+ const toolByName=validTools(data.tools);if(!toolByName||!validMessages(data.messages,toolByName))return false;
  return true;
 }
 export function createGateway({token,model,upstreamPort,fetchImpl=fetch,timeoutMs=30000}={}){
