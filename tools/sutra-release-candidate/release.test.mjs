@@ -5,7 +5,7 @@ const graph=name=>({metadata:{description:name},max_steps:4,tools:[{name:'learne
 const graphs={learner:graph('learner'),source_learner:graph('source'),linked_learner:graph('linked')};
 const links={version:1,networks:{learner:{},source_learner:{},linked_learner:{guide_peer:'https://old.invalid/agents/checklist'}}};
 const config=()=>({schema:1,sourceRevision:'a'.repeat(40),publicOrigin:'https://sutra.example',peerOrigin:'https://guide.example',backend:'self_hosted',selfHostedGatewayUrl:'https://operator.example/v1/chat/completions',model:'provider/model-v1',
- liveEvidence:{status:'live_verified',backend:'self_hosted',model:'provider/model-v1',observedAt:'2026-11-24T01:00:00Z',runRecordHash:'b'.repeat(64),costReportHash:'c'.repeat(64),usageComplete:true,judgePathPassed:true},
+ liveEvidence:{status:'live_verified',backend:'self_hosted',model:'provider/model-v1',upstreamSha256:'d8a0b14806289f7180a5d62f58009f9306970fadc331c7438b4505ce40b4eeb4',observedAt:'2026-11-24T01:00:00Z',runRecordHash:'b'.repeat(64),costReportHash:'c'.repeat(64),usageComplete:true,judgePathPassed:true},
  budgetEvidence:{approved:true,costMode:'operator_owned',spendCeilingUsd:0,judgingReserveRuns:50,evidenceRef:'private:budget/sutra-001'},
  contentEvidence:{status:'reviewed_attested',contentVersion:'lesson-v1',profileSha256:'d'.repeat(64),catalogSha256:'e'.repeat(64),mediaSha256:'1'.repeat(64),transcriptSha256:'2'.repeat(64),guideSha256:'3'.repeat(64),intakeRecordHash:'4'.repeat(64),rightsAttested:true,factualReviewAttested:true,evidenceRef:'private:content/lesson-v1'},
  spec:{launchCommit:launchSpecCommit,compatibilityCommit:currentSpecCommit,compatibilityBlob:currentSpecBlob}});
@@ -38,4 +38,4 @@ test('development manifest must remain router-free so disabled development is ne
  assert.throws(()=>prepareReleaseArtifacts({manifest:withRouter,links,graphs,config:config()}),/router-free/);
 });
 
-test('hosted release mode is explicit and cannot inherit self-hosted gateway metadata',()=>{const x=config();x.backend='hosted';x.selfHostedGatewayUrl=null;x.liveEvidence.backend='hosted';x.budgetEvidence.costMode='provider_billed';x.budgetEvidence.spendCeilingUsd=25;assert.equal(validateReleaseConfig(x).backend,'hosted');x.selfHostedGatewayUrl='https://operator.example/v1/chat/completions';assert.throws(()=>validateReleaseConfig(x),/backend/);});
+test('hosted release mode is explicit and cannot inherit self-hosted gateway metadata',()=>{const x=config();x.backend='hosted';x.selfHostedGatewayUrl=null;x.liveEvidence.backend='hosted';x.liveEvidence.upstreamSha256='82141e272189210ab931267ec91313de3460102092ac4f85b284b44db52b0caf';x.budgetEvidence.costMode='provider_billed';x.budgetEvidence.spendCeilingUsd=25;assert.equal(validateReleaseConfig(x).backend,'hosted');x.selfHostedGatewayUrl='https://operator.example/v1/chat/completions';assert.throws(()=>validateReleaseConfig(x),/backend/);});
