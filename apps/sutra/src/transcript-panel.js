@@ -173,7 +173,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media,readReceipt,prepa
   status(currentCues.length+' of '+items.length+' source cues shown. Use arrow keys within cue controls.');
   updateActive();applyLocale(section,document.documentElement.lang||'en');
  }
- const cancelPending=()=>{const pending=cueScope.cancel();inspectionScope.cancel();if(pending)status('Cue seek cancelled on navigation; no seek success is claimed.');};
+ const cancelPending=()=>{const pending=cueScope.cancel(),inspecting=inspectionScope.cancel();if(pending)status('Cue seek cancelled on navigation; no seek success is claimed.');if(inspecting){const target=buttonMap.get(selectedCueId)?.details?.querySelector('.transcript-status');if(target)target.textContent='Cue seek cancelled on navigation; no seek success is claimed.';}};
  input.addEventListener('input',render);
  media?.addEventListener?.('timeupdate',updateActive);
  media?.addEventListener?.('seeked',updateActive);

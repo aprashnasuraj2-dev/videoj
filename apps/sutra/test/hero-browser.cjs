@@ -523,14 +523,14 @@ const assert=require('node:assert/strict');
    const stale=await page.getByRole('button',{name:'Seek to matched cue'}).elementHandle();
    await stale.click();await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('Checking native'));
    await direct.fill('unavailable voltage threshold');
-   await stale.waitForElementState('enabled',{timeout:1000});
+   await page.waitForFunction(button=>!button.disabled,stale,{timeout:1000});
    assert.equal(await page.locator('#direct-results li').count(),0);
    await stale.dispose();
    const held=await cue.elementHandle();await held.click();
    await page.waitForFunction(()=>document.querySelector('.transcript-cue')?.getAttribute('aria-busy')==='true');
    await search.fill('unavailable voltage threshold');
    await page.waitForFunction(()=>!document.querySelector('.transcript-cue'));
-   assert.equal(await held.evaluate(button=>button.getAttribute('aria-busy')),null);
+   await page.waitForFunction(button=>!button.hasAttribute('aria-busy'),held,{timeout:1000});
    await held.dispose();
   }finally{await page.evaluate(()=>{const video=document.querySelector('video');delete video.currentTime;delete video.seeking;});}
   await direct.fill('timing marker');await direct.press('Enter');await search.fill('timing marker');
