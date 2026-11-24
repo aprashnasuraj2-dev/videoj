@@ -757,10 +757,6 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
           "sourceRevision": "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9"
-        },
-        {
-          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45399432386/job/138463821342",
-          "sourceRevision": "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9"
         }
       ],
       "unblockCondition": null
