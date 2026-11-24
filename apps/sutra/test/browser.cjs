@@ -48,7 +48,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.equal(await page.locator('#result').getAttribute('data-state'),'matched','validation state survives locale switch');
   await page.locator('#language-select').selectOption('en');
   assert.equal(await page.locator('html').getAttribute('lang'),'en');
-  assert.equal((await page.locator('h1').innerText()).trim(),'Find the moment. Keep the evidence.');
+  assert.equal((await page.locator('h1').innerText()).replace(/\\s+/g,' ').trim(),'Find the moment. Keep the evidence.');
   await page.getByRole('button',{name:'Try altered quotation'}).click();assert.match(await page.locator('#result').innerText(),/QUOTE_MISMATCH/);
   await page.locator('#cue').focus();await page.keyboard.press('Enter');assert.equal(await page.locator('#cue').getAttribute('aria-pressed'),'true');
   await page.getByRole('button',{name:'Run scripted network test'}).click();await page.waitForFunction(()=>document.querySelector('#network-result').textContent.includes('2 agent invocations; 3 scripted model steps.'));assert.equal(await page.locator('#network-result').getAttribute('data-state'),'completed');assert.equal(await page.locator('#network-trace li').count(),2);assert.match(await page.locator('#network-result').innerText(),/No live AI/);
