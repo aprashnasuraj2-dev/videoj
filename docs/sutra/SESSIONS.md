@@ -1,5 +1,10 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0025 — 2026-11-24
+
+- Credited P040-02..09 from exact green controlled browser/runtime evidence. P040-01/10 remain blocked on authorized public HTTPS replay.
+- 597/1,000 original; 606/1,009 total; 44 complete phases; six omissions. [Evidence](evidence/implementation/SESSION-0025.md).
+
 ## SUTRA-SESSION-0024 — 2026-11-24
 
 - Closed phase 068 with P068-07/10: scoped review deletion + verified absence of BYOK persistence.

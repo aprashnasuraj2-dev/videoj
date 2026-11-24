@@ -1,21 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T08:53:00+05:45",
+  "updated_at": "2026-11-24T08:58:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "cde6aa6fd4ff246c17267657ac59940da6797f9f",
-  "last_session_id": "SUTRA-SESSION-0024",
-  "stage": "bounded_cache_and_supported_storage_deletion_closed",
+  "last_observed_code_sha": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+  "last_session_id": "SUTRA-SESSION-0025",
+  "stage": "milestone_b_controlled_mechanics_reconciled_https_replay_blocked",
   "current_task": null,
   "next_task": "SUTRA-P041-08",
   "ready_engineering_queue": [
+    "SUTRA-P040-01",
+    "SUTRA-P034-01",
     "SUTRA-P078-02",
     "SUTRA-P054-01",
-    "SUTRA-P034-01",
-    "SUTRA-P020-02",
-    "SUTRA-P005-08"
+    "SUTRA-P020-02"
   ],
-  "next_action": "Continue autonomous engineering that does not require real content/public deployment; preserve live-provider, human, physical-device and public-origin blockers.",
+  "next_action": "Continue non-deployment engineering and provider measurement readiness. Public HTTPS interoperability replay remains intentionally blocked by release ordering.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -10225,6 +10225,110 @@
           "result": "pass",
           "source_revision": "25500b5d9e50e9879c0555a1b09c67ae543c79b1",
           "observed_at": "2026-11-24T08:53:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P040-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:58:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-B-INTEROP-REVIEW-2026-11-24.md",
+          "description": "Controlled two-agent publication and grounded internal invocation are observed through browser/runtime/source-tool tests.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:58:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P040-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:58:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-B-INTEROP-REVIEW-2026-11-24.md",
+          "description": "Exact-name second loopback-origin load executes peer agents caller-locally; same-owner/loopback limitation remains explicit.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:58:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P040-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:58:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-B-INTEROP-REVIEW-2026-11-24.md",
+          "description": "Denied origin, wrong/invalid graph, cycle and agent/model budget refusal behavior are exercised without fake completion.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:58:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P040-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:58:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-B-INTEROP-REVIEW-2026-11-24.md",
+          "description": "Host model policy resists hostile peer/caller hints and private-context canaries remain destination-bound/default-denied.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:58:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P040-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:58:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-B-INTEROP-REVIEW-2026-11-24.md",
+          "description": "Mandatory controlled-environment checks are linked to dated immutable evidence revisions; public HTTPS remains separately missing.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:58:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P040-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:58:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-B-INTEROP-REVIEW-2026-11-24.md",
+          "description": "Project receipt/context/quota/UI extensions are separated from core agentic-web conformance claims.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:58:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P040-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:58:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-B-INTEROP-REVIEW-2026-11-24.md",
+          "description": "Milestone review explicitly blocks progression on missing HTTPS evidence instead of waiving it for completion percentage.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:58:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P040-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:58:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-B-INTEROP-REVIEW-2026-11-24.md",
+          "description": "Milestone B evidence/gap artifact lists observed mechanics and the exact public-HTTPS replay blocker.",
+          "result": "pass",
+          "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
+          "observed_at": "2026-11-24T08:58:00+05:45"
         }
       ]
     }

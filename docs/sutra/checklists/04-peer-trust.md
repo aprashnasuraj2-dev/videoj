@@ -180,12 +180,12 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** All required observable behaviors pass or block progression; no extension is represented as a normative requirement.
 
 - [ ] `SUTRA-P040-01` Replay the complete specification interoperability checklist on HTTPS
-- [ ] `SUTRA-P040-02` Verify two-agent publication and actual grounded internal invocation
-- [ ] `SUTRA-P040-03` Verify exact-name second-origin loading and caller-local execution
-- [ ] `SUTRA-P040-04` Verify denied origin, invalid graph, cycle and budget refusal behavior
-- [ ] `SUTRA-P040-05` Verify router inheritance and private-context denial with canaries
-- [ ] `SUTRA-P040-06` Link every mandatory check to a dated source revision and evidence
-- [ ] `SUTRA-P040-07` Distinguish optional extensions from the core conformance claim
-- [ ] `SUTRA-P040-08` Block the milestone on missing evidence or a critical boundary failure
-- [ ] `SUTRA-P040-09` Produce and review the phase artifact: Milestone B evidence and conformance gap list.
+- [x] `SUTRA-P040-02` Verify two-agent publication and actual grounded internal invocation
+- [x] `SUTRA-P040-03` Verify exact-name second-origin loading and caller-local execution
+- [x] `SUTRA-P040-04` Verify denied origin, invalid graph, cycle and budget refusal behavior
+- [x] `SUTRA-P040-05` Verify router inheritance and private-context denial with canaries
+- [x] `SUTRA-P040-06` Link every mandatory check to a dated source revision and evidence
+- [x] `SUTRA-P040-07` Distinguish optional extensions from the core conformance claim
+- [x] `SUTRA-P040-08` Block the milestone on missing evidence or a critical boundary failure
+- [x] `SUTRA-P040-09` Produce and review the phase artifact: Milestone B evidence and conformance gap list.
 - [ ] `SUTRA-P040-10` Close phase 040 only after its applicable tasks have evidence and its exit condition is observed: All required observable behaviors pass or block progression; no extension is represented as a normative requirement.

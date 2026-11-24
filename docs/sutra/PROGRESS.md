@@ -2,6 +2,14 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0025 — 2026-11-24
+
+**597/1,000 original checks verified; 606/1,009 total; 44/100 phases fully verified; 6 omissions.**
+
+Milestone B controlled-environment mechanics are reconciled with P040-02..09. The full HTTPS replay and milestone exit remain open; loopback/same-owner browser evidence is not relabeled public interoperability. [Session evidence](evidence/implementation/SESSION-0025.md).
+
+---
+
 ## Session 0024 — 2026-11-24
 
 **589/1,000 original checks verified; 598/1,009 total; 44/100 phases fully verified; 6 omissions.**
