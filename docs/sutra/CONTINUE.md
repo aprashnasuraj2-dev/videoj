@@ -10,9 +10,9 @@ On 24 November the participant explicitly tightened the ordering: stop further d
 
 ## Latest implementation checkpoint — 0045
 
-2026-11-24T21:00:07+05:45: **711/1,097 overall verified; 616/1,000 original; 379 pending; six omissions; one hardware blocker.** X010-37/38 and X010-39 exact 19/19 verified. X010-40 implementation at b72f64606d76be1dfe5114af80d15c496ba6dd6b; exact full CI pending, no credit yet. [Evidence](evidence/implementation/SESSION-0045.md).
+**712/1,098 overall verified; 616/1,000 original; 379 pending; six omissions; one hardware blocker.** X010-40 exact all 19 workflows passed. X010-41 technical lexical qualifier implementation awaits exact CI; no credit before verification.
 
-Next: Observe exact X010-40 full CI; continue dependency-ready P078-02 engineering and do not advance public release or paid inference.
+Next: Verify exact technical-token learner and complete CI; continue independent engineering; no release or paid inference.
 
 ## Resume sequence
 

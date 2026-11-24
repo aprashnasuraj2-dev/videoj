@@ -7,12 +7,22 @@ import {createReceiptActionRow,createReceiptSeekScope} from './receipt-actions.j
 // This is deliberately lexical retrieval: no embeddings, model or network access.
 // Do not synthesize, paraphrase or claim that a matched cue answers the question.
 const STOP=new Set(('a an and are as at be by can could did do does for from how i in is it its me of on or our please show source tell that the their there these this those to us video was were what when where which who why will with would you your about explain find give happen happens happened lesson mentioned say says said occur occurs कहाँ कसरी कति के कुन कसलाई मलाई छ छन् हो हुन्छ कहाँनेर पाठमा पाठको यो यी त्यो तथा र वा मा को का कि कृपया देखाउनुहोस् भन्नुहोस्').split(' '));
-// Combining marks are part of Indic words; dropping \\p{M} breaks Nepali evidence matching.
-const WORDS=/[\p{L}\p{M}\p{N}]+/gu;
-// Uppercase A/I may be literal terminal or diagram labels; never erase them as articles.
-// Lowercase natural-language articles remain stopwords; exact literal search is available.
-const termsOf=text=>[...(text.normalize('NFKC').match(WORDS)??[])]
-  .map(w=>w==='A'||w==='I'?w:w.toLocaleLowerCase('en')).filter(w=>!STOP.has(w));
+// Preserve technical qualifiers as one token: sign, decimal, comparator, ratio,
+// range, exponent, percent, and compound identifier. Do not infer equivalence
+// between units or reorder digits. Keep Indic combining marks in ordinary words.
+const WORDS=/(?:(?:[<>]=?|!=|[≤≥≠=±])\s*)?[+\-−]?\s*(?:\p{Nd}+(?:[.,:/–-]\p{Nd}+)*|[.]\p{Nd}+)(?:[eE][+\-−]?\p{Nd}+)?(?:\s*%|\s*°[\p{L}]?|[\p{L}\p{M}]+)?(?![\p{L}\p{M}\p{N}_]|[._:/-][\p{L}\p{M}\p{N}])|[\p{L}\p{M}\p{N}]+(?:[._:/-][\p{L}\p{M}\p{N}]+)*/gu;
+// Case-sensitive unit spellings: e.g. mW is not MW, Mbps is not MBps.
+// Uppercase A/I may be terminal labels; lowercase articles remain stopwords.
+const UNIT_CASE=new Set('a i ma ka μa v mv kv w mw kw gw μw db dbm hz khz mhz ghz bps kbps mbps gbps mb mib kb kib gb gib ms μs ns s mm cm m km pa kpa mpa gpa ω'.split(' '));
+const normalizeTerm=word=>{
+ const w=word.replace(/−/g,'-').replace(/^≥/,'>=').replace(/^≤/,'<=').replace(/^≠/,'!=').replace(/\s+/g,'');
+ const lower=w.toLocaleLowerCase('en');
+ const suffix=w.match(/[\p{L}\p{M}]+$/u)?.[0];
+ const number=/^(?:[<>]=?|!=|[=±])?[+\-]?(?:\p{Nd}|[.]\p{Nd})/u.test(w);
+ // Compound identifiers retain spelling; numeric quantities retain unit case.
+ return UNIT_CASE.has(lower)||number&&suffix&&UNIT_CASE.has(suffix.toLocaleLowerCase('en'))||!number&&/[._:/-]/.test(w)?w:lower;
+};
+const termsOf=text=>[...(text.normalize('NFKC').match(WORDS)??[])].map(normalizeTerm).filter(w=>!STOP.has(w));
 const toks=text=>termsOf(text).filter(w=>w.length<=48);
 const snapshot=(state,receipts=[],extra={})=>Object.freeze({
  state,receipts:Object.freeze(receipts.map(r=>Object.freeze({...r}))),modelCalls:0,networkRequests:0,

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T21:00:07+05:45",
+  "updatedAt": "2026-11-24T21:05:00+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -1424,8 +1424,8 @@
     {
       "id": "R-063",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Ambiguous publication or SSE JSON can select last-wins authority",
       "mechanism": "Additional artifact and stream loaders still used JSON.parse with duplicate decoded keys; raw content digest did not resolve ambiguous interpretation.",
       "userEffect": "Different graph, source or completion interpretation across consumers despite matching bytes.",
@@ -1440,7 +1440,28 @@
           "sourceRevision": "b72f64606d76be1dfe5114af80d15c496ba6dd6b"
         }
       ],
-      "unblockCondition": "Exact adversarial and normal package, learner, browser and Open Kit regressions pass."
+      "unblockCondition": null
+    },
+    {
+      "id": "R-064",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Technical lexical qualifiers can collapse into conflicting matches",
+      "mechanism": "Word-only tokenization discards signs, operators, decimal separators, ratios, compound ID punctuation and unit case.",
+      "userEffect": "Local evidence search may show a different technical measurement as a lexical match.",
+      "affectedTasks": [
+        "SUTRA-X010-41",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Conservative technical tokens and exact unit spelling; no conversion, semantics or universal notation claim.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "5539910d9668bc8e2d3e07c2032038726d8b9ca8"
+        }
+      ],
+      "unblockCondition": "Exact positive/negative technical lexical tests and complete learner/browser regression pass."
     }
   ]
 }

@@ -101,3 +101,57 @@ test('catalog text and identity validation precede local indexing',()=>{
  const source=structuredClone(fixture.source);source.cues[0].text='x '.repeat(10000);
  assert.throws(()=>createLocalAnswer({sources:[source]}),/CATALOG/);
 });
+
+test('technical lexical constraints preserve signs, decimal order, operators, unit case and compound identifiers',()=>{
+ const source=structuredClone(fixture.source);source.duration=40;
+ const examples=[
+  ['negative','Optical threshold ≤ −25.5 dBm.'],
+  ['positive','Optical threshold >= +25.5 dBm.'],
+  ['decimal','Decimal reading 2.5 V.'],
+  ['power','Power marker 2.5 mW.'],
+  ['attached','Attached power 2.5mW.'],
+  ['ratio','Ratio marker 2/3.'],
+  ['port','Port identifier OLT-1/A.'],
+  ['underscore','Panel identifier OLT_1.'],
+  ['range','Range marker 10–20.'],
+  ['percent','Percentage marker 100 %.'],
+  ['exponent','Exponent marker 5e-3.'],
+  ['fraction','Fraction marker .5V.'],
+  ['speed','Speed marker 10 Mbps.'],
+  ['nepali','सङ्केत २५.५।'],
+  ['not-equal','Comparison marker ≠ 10.']
+ ];
+ source.cues=examples.map(([id,text],i)=>({id,text,start:i*2,end:i*2+1}));
+ const lookup=createLocalAnswer({sources:[source],now:()=>fixture.receipt.retrievedAt});
+ for(const [query,id] of [
+  ['optical threshold <= -25.5 dBm','negative'],
+  ['optical threshold ≥ +25.5 dBm','positive'],
+  ['decimal reading 2.5 V','decimal'],
+  ['power marker 2.5 mW','power'],
+  ['attached power 2.5mW','attached'],
+  ['ratio marker 2/3','ratio'],
+  ['port identifier OLT-1/A','port'],
+  ['panel identifier OLT_1','underscore'],
+  ['range marker 10–20','range'],
+  ['percentage marker 100%','percent'],
+  ['exponent marker 5e-3','exponent'],
+  ['fraction marker .5V','fraction'],
+  ['speed marker 10 Mbps','speed'],
+  ['सङ्केत २५.५','nepali'],
+  ['comparison marker != 10','not-equal']
+ ]){
+  const r=lookup.query(query);assert.equal(r.state,'matched',query);assert.equal(r.receipts[0].cueId,id,query);
+  assert.equal(r.receipts[0].excerpt,examples.find(([key])=>key===id)[1]);
+  assert.equal(r.truthStatus,'unverified');assert.equal(r.modelCalls,0);assert.equal(r.networkRequests,0);
+ }
+ for(const query of [
+  'optical threshold <= +25.5 dBm','optical threshold >= -25.5 dBm','optical threshold <= -5.25 dBm',
+  'optical threshold 25.5 dBm','decimal reading 5.2 V','power marker 2.5 MW','attached power 2.5MW',
+  'ratio marker 3/2','port identifier OLT-1/B','port identifier A/OLT-1','panel identifier OLT_2',
+  'range marker 10 20','percentage marker 100','exponent marker 5e+3','fraction marker 5V',
+  'speed marker 10 MBps','सङ्केत ५.२५','comparison marker = 10'
+ ]){
+  const r=lookup.query(query);assert.equal(r.state,'no_match',query);assert.deepEqual(r.receipts,[]);
+  assert.equal(r.modelCalls,0);assert.equal(r.networkRequests,0);
+ }
+});
