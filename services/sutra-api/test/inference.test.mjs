@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {handleInference,UPSTREAM,inferenceStatus} from '../inference.js';import {InferenceQuota} from '../quota.js';import worker,{handleSourceTools,securityHeaders,allowedPeerOrigins,withCachePolicy} from '../worker.js';import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {handleInference,UPSTREAM,inferenceStatus} from '../inference.js';import {InferenceQuota} from '../quota.js';import worker,{handleSourceTools,securityHeaders,allowedPeerOrigins,withCachePolicy,contentBindingMatches} from '../worker.js';import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
 const payload=()=>({model:'operator-approved',stream:true,messages:[{role:'user',content:'hello'}],tools:[]});
 const request=(body=payload(),extra={},path='/api/infer')=>new Request('https://sutra.test'+path,{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json','CF-Connecting-IP':'192.0.2.1',...extra},body:JSON.stringify(body)});
 let leaseSequence=0;
@@ -239,4 +239,21 @@ test('historical tool-call messages must form one declared, schema-valid, fully 
  reserve=0;upstream=0;
  for(const body of invalid){const response=await handleInference(request(body),env,{fetchImpl:async()=>{upstream++;return sse();}});assert.equal(response.status,400);}
  assert.equal(reserve,0);assert.equal(upstream,0);
+});
+
+test('release content identity must match the Worker-compiled catalog before status, source tools or inference are exposed',async()=>{
+ assert.equal(contentBindingMatches({}),true,'development mode remains explicit when no release binding is supplied');
+ const exact={SUTRA_CONTENT_VERSION:'synthetic-timing-v1',SUTRA_CONTENT_MODE:'synthetic',SUTRA_CATALOG_SHA256:'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333',SUTRA_TRANSCRIPT_SHA256:'a1930687d25bfe7fe8f2483c55d1aca83cdc3f4dcc39424dd6569aea9fe9660d'};
+ assert.equal(contentBindingMatches(exact),true);
+ for(const mutate of [
+  x=>x.SUTRA_CONTENT_VERSION='reviewed-v2',
+  x=>x.SUTRA_CONTENT_MODE='reviewed',
+  x=>x.SUTRA_CATALOG_SHA256='f'.repeat(64),
+  x=>x.SUTRA_TRANSCRIPT_SHA256='e'.repeat(64),
+  x=>delete x.SUTRA_CONTENT_MODE
+ ]){
+  const env={...exact};mutate(env);assert.equal(contentBindingMatches(env),false);
+  const status=await worker.fetch(new Request('https://sutra.test/api/status'),env);assert.equal(status.status,503);assert.match(await status.text(),/CONTENT_BINDING_MISMATCH/);
+  const source=await worker.fetch(new Request('https://sutra.test/api/source-tools',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'tools/list'})}),env);assert.equal(source.status,503);
+ }
 });

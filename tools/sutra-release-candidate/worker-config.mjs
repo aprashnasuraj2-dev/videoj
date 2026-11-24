@@ -15,6 +15,10 @@ export function renderWorkerConfig({baseConfig,releaseConfig}){
   SUTRA_ALLOWED_ORIGIN:cfg.publicOrigin,
   SUTRA_MODELS:cfg.model,
   SUTRA_PEER_ORIGINS:cfg.peerOrigin,
+  SUTRA_CONTENT_VERSION:cfg.contentEvidence.contentVersion,
+  SUTRA_CONTENT_MODE:'reviewed',
+  SUTRA_CATALOG_SHA256:cfg.contentEvidence.catalogSha256,
+  SUTRA_TRANSCRIPT_SHA256:cfg.contentEvidence.transcriptSha256,
   SUTRA_MAX_OUTPUT_TOKENS:numeric(baseConfig.vars,'SUTRA_MAX_OUTPUT_TOKENS',64,1024),
   SUTRA_MAX_DAILY_CALLS:numeric(baseConfig.vars,'SUTRA_MAX_DAILY_CALLS',1,100000),
   SUTRA_MAX_CLIENT_CALLS:numeric(baseConfig.vars,'SUTRA_MAX_CLIENT_CALLS',1,1000),
@@ -30,6 +34,7 @@ export function renderWorkerConfig({baseConfig,releaseConfig}){
  const rendered={...structuredClone(baseConfig),vars};
  const requiredSecretBindings=cfg.backend==='self_hosted'?['SUTRA_SELF_HOSTED_TOKEN','SUTRA_CLIENT_HASH_SECRET']:['SUTRA_PROVIDER_KEY','SUTRA_CLIENT_HASH_SECRET'];
  const publicRecord={schema:1,sourceRevision:cfg.sourceRevision,workerName:rendered.name,publicOrigin:cfg.publicOrigin,peerOrigin:cfg.peerOrigin,backend:cfg.backend,model:cfg.model,upstreamUrlSha256:cfg.liveEvidence.upstreamUrlSha256,gatewayBuildSha256:cfg.liveEvidence.gatewayBuildSha256,
+  contentBinding:{mode:'reviewed',contentVersion:cfg.contentEvidence.contentVersion,catalogSha256:cfg.contentEvidence.catalogSha256,transcriptSha256:cfg.contentEvidence.transcriptSha256},
   policy:{maxOutputTokens:Number(vars.SUTRA_MAX_OUTPUT_TOKENS),maxDailyCalls:Number(vars.SUTRA_MAX_DAILY_CALLS),maxClientCalls:Number(vars.SUTRA_MAX_CLIENT_CALLS),maxDailyInputBytes:Number(vars.SUTRA_MAX_DAILY_INPUT_BYTES),maxDailyOutputTokens:Number(vars.SUTRA_MAX_DAILY_OUTPUT_TOKENS),maxConcurrent:Number(vars.SUTRA_MAX_CONCURRENT),maxDailySourceReads:Number(vars.SUTRA_MAX_DAILY_SOURCE_READS),maxClientSourceReads:Number(vars.SUTRA_MAX_CLIENT_SOURCE_READS)},
   requiredSecretBindings,
   limitation:'This rendered config contains no secret values and does not prove that platform secrets, Durable Object migrations, billing, routes or deployment are present.'};

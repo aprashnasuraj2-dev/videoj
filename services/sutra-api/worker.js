@@ -8,6 +8,14 @@ import {validateContentProfile} from '../../packages/sutra-content-profile/index
 export {InferenceQuota} from './quota.js';
 const activeContent=validateContentProfile(contentProfileDocument,sourceCatalogDocument);
 const sourceTools=createSourceTools(activeContent.sources);
+const bindingKeys=['SUTRA_CONTENT_VERSION','SUTRA_CONTENT_MODE','SUTRA_CATALOG_SHA256','SUTRA_TRANSCRIPT_SHA256'];
+export function contentBindingMatches(env={}){
+ const configured=bindingKeys.some(key=>env[key]!==undefined);
+ if(!configured)return true;
+ if(bindingKeys.some(key=>typeof env[key]!=='string'||!env[key]))return false;
+ return env.SUTRA_CONTENT_VERSION===activeContent.profile.contentVersion&&env.SUTRA_CONTENT_MODE===activeContent.profile.mode&&
+  env.SUTRA_CATALOG_SHA256===activeContent.profile.catalog.sha256&&env.SUTRA_TRANSCRIPT_SHA256===activeContent.source.hash;
+}
 const sourceDefinitions=new Map(sourceTools.list().map(definition=>[definition.name,definition]));
 
 export function allowedPeerOrigins(env={}){
@@ -88,10 +96,14 @@ export async function handleSourceTools(request,env={}){
 export default {async fetch(request,env){
  const path=new URL(request.url).pathname;let response;
  const inferencePath=path==='/api/infer'||path==='/api/v1/chat/completions';
+ const contentBoundPath=inferencePath||path==='/api/source-tools'||path==='/api/status';
  const catalogPrecondition=request.headers.get('X-Sutra-Catalog-Sha256');
+ if(contentBoundPath&&!contentBindingMatches(env)){
+  response=json({error:{code:'CONTENT_BINDING_MISMATCH'}},503);
+ }
  // Optional public precondition for snapshot-aware callers. Generic portable
  // clients retain their existing router/MCP contract; this is not access control.
- if((inferencePath||path==='/api/source-tools')&&request.method==='POST'&&request.headers.get('Origin')===new URL(request.url).origin&&catalogPrecondition!==null&&catalogPrecondition!==activeContent.profile.catalog.sha256){
+ else if((inferencePath||path==='/api/source-tools')&&request.method==='POST'&&request.headers.get('Origin')===new URL(request.url).origin&&catalogPrecondition!==null&&catalogPrecondition!==activeContent.profile.catalog.sha256){
   response=json({error:{code:'CONTENT_VERSION_MISMATCH'}},409);
  }
  else if(inferencePath)response=await handleInference(request,env);
