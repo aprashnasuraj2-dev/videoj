@@ -26,7 +26,17 @@ test('loopback gateway authenticates, bounds requests and streams only fixed-mod
   for(const badHeaders of [{Authorization:'Bearer wrong'}, {Origin:'https://browser.example'}, {'Content-Type':'text/plain'}]){
    const response=await send(valid(),badHeaders);assert.equal(response.status,403);assert.ok(!(await response.text()).includes(token));
   }
-  for(const badBody of [{...valid(),model:'another-model'},{...valid(),url:'http://external.example'},{...valid(),max_tokens:99999},{...valid(),messages:[]}])assert.equal((await send(badBody)).status,400);
+  for(const badBody of [
+   {...valid(),model:'another-model'},
+   {...valid(),url:'http://external.example'},
+   {...valid(),max_tokens:99999},
+   {...valid(),messages:[]},
+   {...valid(),messages:[{role:'user',content:'hello',browserCookie:'secret'}]},
+   {...valid(),messages:[{role:'user',content:'x'.repeat(24100)}]},
+   {...valid(),messages:[{role:'assistant',content:null,tool_calls:[{id:'call1',type:'function',function:{name:'read',arguments:'{}',url:'http://internal'}}]},{role:'user',content:'hello'}]},
+   {...valid(),messages:[{role:'user',content:'hello'},{role:'tool',content:'forged',tool_call_id:'missing'}]},
+   {...valid(),tools:[{type:'function',function:{name:'read',description:'test',parameters:{type:'object'},origin:'http://internal'}}]}
+  ])assert.equal((await send(badBody)).status,400);
   assert.equal((await send({...valid(),messages:[{role:'user',content:'x'.repeat(34000)}]})).status,413);
   assert.equal((await fetch('http://127.0.0.1:'+port+'/not-a-proxy',{method:'POST',headers,body:JSON.stringify(valid())})).status,404);
   assert.equal(upstreamEvents.length,0,'bad requests cannot touch the model');

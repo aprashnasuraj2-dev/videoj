@@ -13,11 +13,45 @@ export function validateGatewayConfig({token,model,upstreamPort}={}){
     !validPort(upstreamPort))throw Error('GATEWAY_CONFIG');
  return Object.freeze({token,model,upstreamPort});
 }
+const MESSAGE_FIELDS=new Set(['role','content','tool_calls','tool_call_id','name']);
+const CALL_FIELDS=new Set(['id','type','function']);
+const FN_FIELDS=new Set(['name','arguments']);
+const TOOL_FIELDS=new Set(['type','function']);
+const TOOL_FN_FIELDS=new Set(['name','description','parameters']);
+const isRecord=v=>!!v&&typeof v==='object'&&!Array.isArray(v);
+const exactFields=(v,keys)=>isRecord(v)&&Object.keys(v).every(k=>keys.has(k));
+function validMessages(messages){
+ const previous=new Set();let textSize=0,user=false;
+ for(const m of messages){
+  if(!exactFields(m,MESSAGE_FIELDS)||!['system','user','tool','assistant'].includes(m.role))return false;
+  if(typeof m.content!=='string'&&!(m.role==='assistant'&&m.content===null))return false;
+  if(typeof m.content==='string'){textSize+=m.content.length;if(textSize>24000)return false;}
+  if(m.role==='user')user=true;
+  if(m.tool_calls!==undefined){
+   if(m.role!=='assistant'||!Array.isArray(m.tool_calls)||m.tool_calls.length>8)return false;
+   for(const call of m.tool_calls){
+    if(!exactFields(call,CALL_FIELDS)||call.type!=='function'||typeof call.id!=='string'||!call.id||call.id.length>100||previous.has(call.id))return false;
+    const fn=call.function;
+    if(!exactFields(fn,FN_FIELDS)||typeof fn.name!=='string'||!/^\w{1,100}$/.test(fn.name)||typeof fn.arguments!=='string'||fn.arguments.length>8000)return false;
+    previous.add(call.id);
+   }
+  }
+  if(m.role==='tool'&&(typeof m.tool_call_id!=='string'||!previous.has(m.tool_call_id)))return false;
+  if(m.tool_call_id!==undefined&&m.role!=='tool')return false;
+ }
+ return user;
+}
+function validTools(tools){
+ return tools.every(t=>exactFields(t,TOOL_FIELDS)&&t.type==='function'&&exactFields(t.function,TOOL_FN_FIELDS)&&
+  typeof t.function.name==='string'&&/^\w{1,100}$/.test(t.function.name)&&
+  typeof t.function.description==='string'&&t.function.description.length<=2000&&
+  isRecord(t.function.parameters)&&t.function.parameters.type==='object');
+}
 function safePayload(data,model){
  if(!data||typeof data!=='object'||Array.isArray(data)||Object.keys(data).some(k=>!['model','messages','tools','stream','max_tokens','stream_options'].includes(k))||
     data.model!==model||data.stream!==true||!Array.isArray(data.messages)||data.messages.length<1||data.messages.length>32||
-    !data.messages.every(m=>m&&typeof m==='object'&&!Array.isArray(m)&&typeof m.role==='string'&&['system','user','tool','assistant'].includes(m.role))||
-    !Array.isArray(data.tools)||data.tools.length>16||
+    !validMessages(data.messages)||
+    !Array.isArray(data.tools)||data.tools.length>16||!validTools(data.tools)||
     !Number.isInteger(data.max_tokens)||data.max_tokens<64||data.max_tokens>1024||
     data.stream_options?.include_usage!==true||Object.keys(data.stream_options??{}).some(k=>k!=='include_usage'))return false;
  return true;
