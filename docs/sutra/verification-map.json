@@ -272,6 +272,24 @@
       ],
       "invalidates": [],
       "reason": "Changes to the evidence-bound release artifact constructor must pass model/router/peer/hash drift tests; no public-release metric exists until a real candidate is built and deployed."
+    },
+    {
+      "id": "content-pack-readiness",
+      "prefixes": [
+        "tools/sutra-content-pack/"
+      ],
+      "requiredWorkflows": [
+        "Validate SUTRA reviewed content pack compiler"
+      ],
+      "invalidates": [
+        "engineering_baseline",
+        "hero_journey",
+        "desktop_browser_matrix",
+        "lab_performance",
+        "provider_cost",
+        "publication_inventory"
+      ],
+      "reason": "Changes to reviewed-content packaging can alter public content bytes, source identities, browser behavior, provider context and release artifact identity even before a real pack is integrated."
     }
   ]
 }

@@ -112,3 +112,9 @@ test('published transcript byte changes invalidate semantic, browser, performanc
  for(const id of ['grounding-evaluation','critical-journey','browser-matrix','performance-profile','provider-cost','publication-integrity'])assert.ok(r.affectedSuites.includes(id),id);
  for(const metric of ['engineering_baseline','hero_journey','desktop_browser_matrix','lab_performance','provider_cost','publication_inventory'])assert.ok(r.invalidatedMetrics.includes(metric),metric);
 });
+
+test('reviewed-content pack compiler is mapped to every content-sensitive evidence family',()=>{
+ const r=classifyChangedFiles(['tools/sutra-content-pack/pack.mjs'],map);
+ assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('content-pack-readiness'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA reviewed content pack compiler'));
+ for(const metric of ['engineering_baseline','hero_journey','desktop_browser_matrix','lab_performance','provider_cost','publication_inventory'])assert.ok(r.invalidatedMetrics.includes(metric),metric);
+});
