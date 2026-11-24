@@ -57,3 +57,22 @@ test('static _headers security boundary matches default Worker API policy and ke
  assert.deepEqual(wrangler.assets.run_worker_first,['/api/*']);
  assert.equal(wrangler.vars.SUTRA_PEER_ORIGINS,'');
 });
+
+
+test('first-party browser storage is limited to the explicit local review controller',()=>{
+ const roots=[
+  path.join(app,'src'),
+  path.join(app,'../../packages/sutra-inference'),
+  path.join(app,'../../packages/sutra-runtime'),
+  path.join(app,'../../packages/sutra-consent')
+ ];
+ const files=[];
+ const walk=dir=>{for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const full=path.join(dir,entry.name);if(entry.isDirectory()){if(entry.name!=='vendor'&&entry.name!=='node_modules')walk(full);}else if(/\.(?:js|mjs)$/.test(entry.name))files.push(full);}};
+ for(const root of roots)walk(root);
+ const hits=[];
+ for(const file of files){
+  const text=fs.readFileSync(file,'utf8');
+  for(const marker of ['localStorage','sessionStorage','indexedDB','document.cookie'])if(text.includes(marker))hits.push({file:path.relative(app,file),marker});
+ }
+ assert.deepEqual(hits,[{file:'src/main.js',marker:'localStorage'}]);
+});
