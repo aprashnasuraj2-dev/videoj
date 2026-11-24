@@ -23,6 +23,30 @@ const assert=require('node:assert/strict');
   assert.match(await offlinePage.locator('.notice').innerText(),/not factual training guidance/);
   assert.match(await offlinePage.locator('#network-result').innerText(),/not started/i);
 
+  // A fresh, uninitialized viewer sees an accessible loading state immediately.
+  // This must not impersonate usable evidence while profile bytes are pending.
+  const loadingPage=await context.newPage();
+  let releaseProfile,profileStarted;const intercepted=new Promise(resolve=>profileStarted=resolve);
+  let interceptedCount=0,initialMediaCalls=0;
+  loadingPage.on('request',req=>{if(req.url().includes('/api/')||req.url().includes('/media/timing-fixture.mp4'))initialMediaCalls++;});
+  await loadingPage.route('**/content/content-profile.json',async route=>{
+   interceptedCount++;profileStarted();
+   await new Promise(resolve=>releaseProfile=resolve);
+   try{await route.continue();}catch{}
+  });
+  try{
+   await loadingPage.goto(base,{waitUntil:'commit'});
+   await intercepted;
+   await loadingPage.getByRole('heading',{name:'Loading source lesson'}).waitFor();
+   assert.equal(await loadingPage.locator('#app').getAttribute('aria-busy'),'true');
+   assert.equal(await loadingPage.locator('#provider-check,#prepare-review,#load-timing,#local-answer-query').count(),0);
+   assert.equal(initialMediaCalls,0);
+   releaseProfile();
+   await loadingPage.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+   assert.equal(await loadingPage.locator('#app').getAttribute('aria-busy'),null);
+   assert.equal(interceptedCount,1);
+  }finally{releaseProfile?.();await loadingPage.close();}
+  
   // Lose network only after the graph GET has left the browser.
   let releaseRoute,routeObserved;
   const routed=new Promise(resolve=>{routeObserved=resolve;});
