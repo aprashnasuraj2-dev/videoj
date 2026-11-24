@@ -274,3 +274,15 @@ test('source quota sharding prevents a single stored value from accumulating all
  assert.ok(buckets.every(key=>Object.keys(store.inspect(key).counts).length===1));
  assert.equal(Object.hasOwn(store.inspect('source-quota'),'clients'),false);
 });
+
+test('source quota resets global and sharded client counters on UTC day rollover while rejecting backwards time',async()=>{
+ const store=storage();let now=Date.parse('2026-11-24T23:59:59Z');
+ const q=new InferenceQuota({storage:store},{SUTRA_MAX_DAILY_SOURCE_READS:'2',SUTRA_MAX_CLIENT_SOURCE_READS:'1'},{clock:()=>now});
+ const key='ab'+'c'.repeat(62),req=()=>new Request('https://quota.internal/source-read',{method:'POST',body:JSON.stringify({clientKey:key})});
+ assert.equal((await q.fetch(req())).status,200);assert.equal((await q.fetch(req())).status,429);
+ assert.equal(store.inspect('source-quota').total,1);assert.equal(store.inspect('source-quota:ab').counts[key],1);
+ now+=2000;assert.equal((await q.fetch(req())).status,200,'new UTC day gets fresh global and client allowance');
+ assert.equal(store.inspect('source-quota').day,'2026-11-25');assert.equal(store.inspect('source-quota').total,1);
+ assert.equal(store.inspect('source-quota:ab').day,'2026-11-25');assert.equal(store.inspect('source-quota:ab').counts[key],1);
+ now=Date.parse('2026-11-24T12:00:00Z');assert.equal((await q.fetch(req())).status,503,'backwards clock fails closed rather than reopening quota');
+});
