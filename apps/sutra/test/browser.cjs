@@ -47,6 +47,10 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.equal(await page.locator('#cue-text').innerText(),originalCueText,'original source wording is not translated');
   assert.equal(await page.locator('#result').getAttribute('data-state'),'matched','validation state survives locale switch');
   assert.equal(await page.locator('#cue').getAttribute('aria-pressed'),'true','selected evidence cue survives locale switch');
+  const localizedDate=page.locator('#comparison-body [data-format-datetime]').first();
+  assert.match(await localizedDate.getAttribute('data-format-datetime'),/^2026-/,'canonical evidence timestamp remains UTC ISO data');
+  assert.match(await localizedDate.innerText(),/२०२६/,'Nepali display uses localized numerals while retaining Gregorian year');
+  assert.match(await page.locator('#peer-elapsed').innerText(),/६०[,.]?००० ms/,'elapsed limit preserves ms while localizing numerals');
   const localizedComparisonButtons=page.locator('#comparison-body .actions button');
   await localizedComparisonButtons.nth(1).click();
   assert.match(await page.locator('#comparison-body .comparison-card h3').first().innerText(),/भिडियो/,'rerendered comparison keeps selected locale');
@@ -56,6 +60,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.locator('#language-select').selectOption('en');
   assert.equal(await page.locator('html').getAttribute('lang'),'en');
   assert.equal((await page.locator('h1').innerText()).replace(/\s+/g,' ').trim(),'Find the moment. Keep the evidence.');
+  assert.match(await page.locator('#peer-elapsed').innerText(),/60,000 ms/,'English elapsed limit uses the same millisecond unit and value');
   await page.getByRole('button',{name:'Try altered quotation'}).click();assert.match(await page.locator('#result').innerText(),/QUOTE_MISMATCH/);
   await page.locator('#cue').focus();await page.keyboard.press('Enter');assert.equal(await page.locator('#cue').getAttribute('aria-pressed'),'true');
   await page.getByRole('button',{name:'Run scripted network test'}).click();await page.waitForFunction(()=>document.querySelector('#network-result').textContent.includes('2 agent invocations; 3 scripted model steps.'));assert.equal(await page.locator('#network-result').getAttribute('data-state'),'completed');assert.equal(await page.locator('#network-trace li').count(),2);assert.match(await page.locator('#network-result').innerText(),/No live AI/);
