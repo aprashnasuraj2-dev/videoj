@@ -134,7 +134,12 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   const unknownDownloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Download last save outcome'}).click();
   const unknown=JSON.parse(fs.readFileSync(await (await unknownDownloadPromise).path(),'utf8'));assert.equal(unknown.outcome,'unknown');assert.match(unknown.outcomeMeaning,/may have happened/);
   await page.evaluate(()=>{Storage.prototype.setItem=window.__sutraOriginalSetItem;});
-  await page.reload();assert.equal(await page.locator('#review-list li').count(),1,'unknown outcome can reveal a real prior side effect on later inspection');
+  // The content profile initializes asynchronously; page load alone is not the
+   // local review-store readiness signal. Verify the actual prior write first.
+   assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('sutra.review-cards.v2'))?.length),1,'unknown outcome side effect must be visible in local storage');
+   await page.reload();await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+   await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+   assert.equal(await page.locator('#review-list li').count(),1,'unknown outcome can reveal a real prior side effect on later inspection');
   await page.getByRole('button',{name:'Delete local review'}).click();assert.equal(await page.locator('#review-list li').count(),0);
   await page.getByRole('button',{name:'Read current playback state',exact:true}).click();assert.equal(JSON.parse(await page.locator('#playback-state').innerText()).available,false);
   // A missing media response must fail honestly and allow a later explicit retry.
