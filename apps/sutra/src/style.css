@@ -76,3 +76,10 @@
  html{scroll-behavior:auto!important}
  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;transition-delay:0s!important}
 }
+
+/* Shared learner screen-state semantics: content stays readable without color alone. */
+[role="status"][data-state]{border-left:3px solid transparent}
+[role="status"][data-state=loading],[role="status"][data-state=consent]{border-left-color:#6f806f}
+[role="status"][data-state=completed]{border-left-color:#357561}
+[role="status"][data-state=denied],[role="status"][data-state=input_error],[role="status"][data-state=cancelled],[role="status"][data-state=error]{border-left-color:#ad651e}
+[role="status"][aria-busy=true]::before{content:"Working · ";font-weight:700}
