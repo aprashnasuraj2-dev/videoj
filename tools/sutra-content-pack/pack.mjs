@@ -1,11 +1,13 @@
 import {snapshotDataRecord,snapshotDataArray} from '../../packages/sutra-evidence/index.js';
 import fs from 'node:fs/promises';
+import {constants as fsConstants} from 'node:fs';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
-import {assessContentManifest} from '../sutra-content-intake/intake.mjs';
+import {assessContentManifest,snapshotContentManifest} from '../sutra-content-intake/intake.mjs';
 import {validateContentProfile,MAX_REVIEWED_MEDIA_BYTES,deriveReviewedTracks} from '../../packages/sutra-content-profile/index.js';
 
 const ID=/^[A-Za-z][A-Za-z0-9._:-]{0,127}$/;
+const validId=v=>typeof v==='string'&&ID.test(v);
 const ISO=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
 const plain=v=>!!v&&typeof v==='object'&&!Array.isArray(v)&&Object.getPrototypeOf(v)===Object.prototype;
 const exact=(o,keys)=>plain(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
@@ -21,14 +23,23 @@ async function readRegular(root,relative,max){
  for(const part of parts.slice(0,-1)){current=path.join(current,part);const ancestor=await fs.lstat(current);if(!ancestor.isDirectory()||ancestor.isSymbolicLink())throw Error('Invalid source directory: '+relative);}
  const stat=await fs.lstat(full);
  if(!stat.isFile()||stat.isSymbolicLink()||stat.size<1||stat.size>max)throw Error('Invalid source file: '+relative);
- return {full,bytes:await fs.readFile(full),size:stat.size};
+ const handle=await fs.open(full,fsConstants.O_RDONLY|(fsConstants.O_NOFOLLOW??0));
+ try{
+  const before=await handle.stat();
+  if(!before.isFile()||before.dev!==stat.dev||before.ino!==stat.ino||before.size!==stat.size)throw Error('Source identity changed: '+relative);
+  const buffer=Buffer.allocUnsafe(stat.size+1);let read=0;
+  while(read<buffer.length){const result=await handle.read(buffer,read,buffer.length-read,read);if(!result.bytesRead)break;read+=result.bytesRead;}
+  const after=await handle.stat();
+  if(read!==stat.size||after.size!==stat.size||after.mtimeMs!==before.mtimeMs)throw Error('Source changed during bounded read: '+relative);
+  return {full,bytes:buffer.subarray(0,read),size:read};
+ }finally{await handle.close();}
 }
 function validateClaim(c,guide){
  const keys=guide?['title','scope','claimKey','value','excerpt','provenance','anchor','dateBasis']:['title','scope','claimKey','value','provenance','dateBasis'];
  if(!exact(c,keys)||typeof c.title!=='string'||!c.title.trim()||c.title.length>120||typeof c.scope!=='string'||!c.scope.trim()||c.scope.length>160||
-  !ID.test(c.claimKey||'')||!['string','number','boolean'].includes(typeof c.value)||typeof c.provenance!=='string'||!c.provenance.trim()||c.provenance.length>240||
+  !validId(c.claimKey)||!['string','number','boolean'].includes(typeof c.value)||typeof c.provenance!=='string'||!c.provenance.trim()||c.provenance.length>240||
   typeof c.dateBasis!=='string'||!c.dateBasis.trim()||c.dateBasis.length>120)throw Error('Invalid claim metadata.');
- if(guide&&(typeof c.excerpt!=='string'||!c.excerpt.trim()||c.excerpt.length>1200||!ID.test(c.anchor||'')))throw Error('Invalid guide claim.');
+ if(guide&&(typeof c.excerpt!=='string'||!c.excerpt.trim()||c.excerpt.length>1200||!validId(c.anchor)))throw Error('Invalid guide claim.');
 }
 function validateSemantic(meta){
  try{
@@ -40,12 +51,12 @@ function validateSemantic(meta){
    ui:{noticeTitle:ui.noticeTitle,noticeBody:ui.noticeBody}};
  }catch{throw Error('Invalid semantic metadata data.');}
  const keys=['schema','contentVersion','title','observedAt','sourceId','sourceVersion','featuredCueId','cues','videoClaim','guideClaim','ui'];
- if(!exact(meta,keys)||meta.schema!==1||!ID.test(meta.contentVersion||'')||typeof meta.title!=='string'||!meta.title.trim()||meta.title.length>160||!ISO.test(meta.observedAt)||
-  !ID.test(meta.sourceId||'')||typeof meta.sourceVersion!=='string'||!meta.sourceVersion.trim()||meta.sourceVersion.length>100||!ID.test(meta.featuredCueId||'')||
+ if(!exact(meta,keys)||meta.schema!==1||!validId(meta.contentVersion)||typeof meta.title!=='string'||!meta.title.trim()||meta.title.length>160||(typeof meta.observedAt!=='string'||!ISO.test(meta.observedAt))||
+  !validId(meta.sourceId)||typeof meta.sourceVersion!=='string'||!meta.sourceVersion.trim()||meta.sourceVersion.length>100||!validId(meta.featuredCueId)||
   !Array.isArray(meta.cues)||meta.cues.length<1||meta.cues.length>500)throw Error('Invalid semantic metadata.');
  const ids=new Set();
  for(const cue of meta.cues){
-  if(!exact(cue,['id','start','end','text'])||!ID.test(cue.id||'')||ids.has(cue.id)||!Number.isFinite(cue.start)||!Number.isFinite(cue.end)||cue.start<0||cue.end<=cue.start||
+  if(!exact(cue,['id','start','end','text'])||!validId(cue.id)||ids.has(cue.id)||!Number.isFinite(cue.start)||!Number.isFinite(cue.end)||cue.start<0||cue.end<=cue.start||
    typeof cue.text!=='string'||!cue.text.trim()||cue.text.length>2000)throw Error('Invalid cue metadata.');
   ids.add(cue.id);
  }
@@ -59,6 +70,19 @@ function validateSemantic(meta){
 function makePoster(title){
  return '<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="'+html(title)+'"><rect width="1280" height="720" fill="#111"/><text x="80" y="360" fill="#fff" font-family="system-ui,sans-serif" font-size="54">'+html(title)+'</text><text x="80" y="430" fill="#ccc" font-family="system-ui,sans-serif" font-size="28">Reviewed lesson media</text></svg>';
 }
+// A deliberate authoring interchange format, not an HTML sanitizer/parser.
+// Require one explicit text-only anchored section with no surrounding HTML,
+// attributes, comments, hidden text, scripts, duplicate IDs or entity tricks.
+// A richer original must be reviewed/exported as this exact derivative.
+export function assertReviewedGuideFragment(input,anchor,excerpt){
+ const match=/^\s*(?:<!doctype html>\s*)?<section id=(["'])([A-Za-z][A-Za-z0-9._:-]{0,127})\1>([^<>]*)<\/section>\s*$/i.exec(input);
+ if(!match||match[2]!==anchor)throw Error('Guide must be one exact reviewed text-only anchored section.');
+ const entity={amp:'&',lt:'<',gt:'>',quot:'"','#39':"'"};
+ const raw=match[3];
+ if(/&(?!(?:amp|lt|gt|quot|#39);)/.test(raw))throw Error('Guide contains unsupported entity syntax.');
+ const decoded=raw.replace(/&(amp|lt|gt|quot|#39);/g,(_,key)=>entity[key]);
+ if(decoded!==excerpt)throw Error('Guide anchored excerpt does not exactly match the reviewed text.');
+}
 function makeSafeGuideExcerpt(meta,inputSha){
  return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; base-uri \'none\'; form-action \'none\'; object-src \'none\'"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+html(meta.guideClaim.title)+'</title></head><body><main><h1>'+html(meta.guideClaim.title)+'</h1><p>Safe published excerpt generated from the reviewed written-guide input. It preserves the reviewed excerpt as text and does not publish executable source markup.</p><dl><dt>Scope</dt><dd>'+html(meta.guideClaim.scope)+'</dd><dt>Claim key</dt><dd>'+html(meta.guideClaim.claimKey)+'</dd><dt>Provenance</dt><dd>'+html(meta.guideClaim.provenance)+'</dd><dt>Date basis</dt><dd>'+html(meta.guideClaim.dateBasis)+'</dd><dt>Reviewed input SHA-256</dt><dd><code>'+html(inputSha)+'</code></dd></dl><section id="'+html(meta.guideClaim.anchor)+'"><h2>Reviewed excerpt</h2><blockquote>'+html(meta.guideClaim.excerpt)+'</blockquote></section></main></body></html>\n';
 }
@@ -67,11 +91,12 @@ async function write(root,relative,bytes){
  const target=path.join(root,...relative.split('/'));await fs.mkdir(path.dirname(target),{recursive:true});await fs.writeFile(target,bytes,{flag:'wx'});
 }
 export async function buildContentPack({manifest,semantic,contentRoot,outputDir}){
+ manifest=snapshotContentManifest(manifest);
  const meta=validateSemantic(semantic),requestedRoot=path.resolve(contentRoot),requestedOut=path.resolve(outputDir);
  const rootStat=await fs.lstat(requestedRoot);if(!rootStat.isDirectory()||rootStat.isSymbolicLink())throw Error('Content root must be a real directory.');
  const root=await fs.realpath(requestedRoot),out=path.join(await fs.realpath(path.dirname(requestedOut)),path.basename(requestedOut));
  if(out===root||out.startsWith(root+path.sep)||root.startsWith(out+path.sep))throw Error('Content source and output trees must not overlap.');
- let assetPaths;try{const m=snapshotDataRecord(manifest,10),a=snapshotDataRecord(m.assets,5);assetPaths={};for(const kind of ['media','transcript','guide'])assetPaths[kind]=snapshotDataRecord(a[kind],4).path;}catch{throw Error('Invalid content manifest data.');}
+ const assetPaths=Object.fromEntries(['media','transcript','guide'].map(kind=>[kind,manifest.assets[kind].path]));
  try{await fs.lstat(out);throw Error('Output already exists; refuse overwrite.');}catch(error){if(error?.code!=='ENOENT')throw error;}
  const media=await readRegular(root,assetPaths.media,MAX_REVIEWED_MEDIA_BYTES);
  const transcript=await readRegular(root,assetPaths.transcript,2*1024*1024);
@@ -83,8 +108,7 @@ export async function buildContentPack({manifest,semantic,contentRoot,outputDir}
  let transcriptText,guideText;
  try{transcriptText=new TextDecoder('utf-8',{fatal:true}).decode(transcript.bytes);guideText=new TextDecoder('utf-8',{fatal:true}).decode(guide.bytes);}catch{throw Error('Transcript and guide must be UTF-8.');}
  for(const cue of meta.cues)if(!transcriptText.includes(cue.text))throw Error('Transcript does not contain exact cue text: '+cue.id);
- if(!guideText.includes('id="'+meta.guideClaim.anchor+'"')&&!guideText.includes("id='"+meta.guideClaim.anchor+"'"))throw Error('Guide anchor missing.');
- if(!guideText.includes(meta.guideClaim.excerpt))throw Error('Guide excerpt missing.');
+ assertReviewedGuideFragment(guideText,meta.guideClaim.anchor,meta.guideClaim.excerpt);
  const ext=path.extname(assetPaths.media).toLowerCase();if(ext!=='.mp4'&&ext!=='.webm')throw Error('Reviewed media must be MP4 or WebM.');
  const guideName=path.basename(assetPaths.guide);if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}\.html$/i.test(guideName))throw Error('Reviewed guide must be a safe HTML file.');
  const guideProvenance=Array.from('Safe published excerpt derivative of reviewed guide input; '+meta.guideClaim.provenance).slice(0,240).join('');

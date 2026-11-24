@@ -9,17 +9,34 @@ const digest=v=>createHash('sha256').update(canonical(v)).digest('hex');
 const safePath=p=>typeof p==='string'&&p.length<=240&&!p.startsWith('/')&&!p.includes('\\')&&!p.split('/').some(x=>!x||x==='.'||x==='..'||x.startsWith('.'));
 const reviewStatement='A competent human reviewer checked the transcript and written guide against the designated lesson media and recorded factual corrections before release.';
 
-export function assessContentManifest(manifest,{observedFiles}={}){
+// Snapshot private declarations synchronously, before a compiler awaits any
+// filesystem work. Reject unknown fields and nonprimitive values rather than
+// letting a caller mutate or coerce rights/hash evidence later.
+export function snapshotContentManifest(value){
  try{
-  const m=snapshotDataRecord(manifest,10),lesson=snapshotDataRecord(m.lesson,4),assetRoot=snapshotDataRecord(m.assets,5),rightsRoot=snapshotDataRecord(m.rights,5),review=snapshotDataRecord(m.review,5),observedRoot=snapshotDataRecord(observedFiles,5);
-  const assets={},rights={},observed={};
+  const record=(v,keys)=>{const r=snapshotDataRecord(v,keys.length);if(Object.keys(r).length!==keys.length||keys.some(k=>!Object.hasOwn(r,k)))throw Error('shape');return r;};
+  const primitive=(v)=>{if(v!==null&&!['string','number','boolean'].includes(typeof v))throw Error('primitive');return v;};
+  const leaves=(v,keys)=>Object.fromEntries(Object.entries(record(v,keys)).map(([k,x])=>[k,primitive(x)]));
+  const m=record(value,['schema','contentVersion','lesson','assets','rights','review']),assetRoot=record(m.assets,['media','transcript','guide']),rightsRoot=record(m.rights,['media','transcript','guide']);
+  const assets={},rights={};
   for(const kind of ['media','transcript','guide']){
-   const a=snapshotDataRecord(assetRoot[kind],4),r=snapshotDataRecord(rightsRoot[kind],5),o=snapshotDataRecord(observedRoot[kind],5);
-   assets[kind]={path:a.path,sha256:a.sha256};rights[kind]={basis:r.basis,evidenceRef:r.evidenceRef,publicDistributionDeclared:r.publicDistributionDeclared};observed[kind]={path:o.path,sha256:o.sha256,bytes:o.bytes};
+   assets[kind]=leaves(assetRoot[kind],['path','sha256']);rights[kind]=leaves(rightsRoot[kind],['basis','evidenceRef','publicDistributionDeclared']);
   }
-  manifest={schema:m.schema,contentVersion:m.contentVersion,lesson:{title:lesson.title,durationSeconds:lesson.durationSeconds},assets,rights,review:{status:review.status,reviewedAt:review.reviewedAt,statement:review.statement}};
+  return freeze({schema:primitive(m.schema),contentVersion:primitive(m.contentVersion),lesson:leaves(m.lesson,['title','durationSeconds']),assets,rights,review:leaves(m.review,['status','reviewedAt','statement'])});
+ }catch{throw Error('Invalid content manifest data.');}
+}
+export function assessContentManifest(manifest,{observedFiles}={}){
+ manifest=snapshotContentManifest(manifest);
+ try{
+  const root=snapshotDataRecord(observedFiles,3),observed={};
+  if(Object.keys(root).length!==3)throw Error('shape');
+  for(const kind of ['media','transcript','guide']){
+   const o=snapshotDataRecord(root[kind],3);if(Object.keys(o).length!==3||!['path','sha256','bytes'].every(k=>Object.hasOwn(o,k)))throw Error('shape');
+   observed[kind]={path:o.path,sha256:o.sha256,bytes:o.bytes};
+  }
   observedFiles=observed;
  }catch{throw Error('Invalid content manifest data.');}
+
  if(!exact(manifest,['schema','contentVersion','lesson','assets','rights','review'])||manifest.schema!==1||typeof manifest.contentVersion!=='string'||!ID.test(manifest.contentVersion))throw Error('Invalid content manifest.');
  if(!exact(manifest.lesson,['title','durationSeconds'])||typeof manifest.lesson.title!=='string'||!manifest.lesson.title.trim()||manifest.lesson.title.length>160||
   typeof manifest.lesson.durationSeconds!=='number'||!Number.isFinite(manifest.lesson.durationSeconds)||manifest.lesson.durationSeconds<=0||manifest.lesson.durationSeconds>3600)throw Error('Invalid lesson declaration.');
@@ -27,8 +44,8 @@ export function assessContentManifest(manifest,{observedFiles}={}){
  const limits={media:250*1024*1024,transcript:10*1024*1024,guide:10*1024*1024},assets={};
  for(const kind of Object.keys(limits)){
   const declared=manifest.assets[kind],observed=observedFiles[kind];
-  if(!exact(declared,['path','sha256'])||!safePath(declared.path)||!SHA.test(declared.sha256)||!exact(observed,['path','sha256','bytes'])||
-   observed.path!==declared.path||!SHA.test(observed.sha256)||!Number.isInteger(observed.bytes)||observed.bytes<1||observed.bytes>limits[kind])throw Error('Invalid '+kind+' asset metadata.');
+  if(!exact(declared,['path','sha256'])||!safePath(declared.path)||(typeof declared.sha256!=='string'||!SHA.test(declared.sha256))||!exact(observed,['path','sha256','bytes'])||
+   observed.path!==declared.path||(typeof observed.sha256!=='string'||!SHA.test(observed.sha256))||!Number.isInteger(observed.bytes)||observed.bytes<1||observed.bytes>limits[kind])throw Error('Invalid '+kind+' asset metadata.');
   assets[kind]={path:declared.path,sha256:declared.sha256,bytes:observed.bytes,hashMatches:declared.sha256===observed.sha256};
  }
  if(!exact(manifest.rights,['media','transcript','guide']))throw Error('Rights declarations required.');

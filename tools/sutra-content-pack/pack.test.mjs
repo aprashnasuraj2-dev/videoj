@@ -5,7 +5,7 @@ import fsp from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
-import {buildContentPack} from './pack.mjs';
+import {buildContentPack,assertReviewedGuideFragment} from './pack.mjs';
 import {contentReviewStatement} from '../sutra-content-intake/intake.mjs';
 import {validateContentProfile,MAX_REVIEWED_MEDIA_BYTES,deriveReviewedTracks} from '../../packages/sutra-content-profile/index.js';
 
@@ -84,16 +84,29 @@ test('pack compiler rejects accessor-backed semantic and manifest data without i
  }finally{await fsp.rm(f.root,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
 });
 
-test('published written-guide excerpt cannot execute active markup from the reviewed input',async()=>{
- const f=await fixture(),out=f.root+'-out';
- try{
-  const hostile=Buffer.from('<!doctype html><script src="/assets/hostile.js"></script><section id="isolate">Disconnect power. Verify zero energy.<img src="https://tracker.invalid/x"></section><form action="/api/source-tools"></form>');
-  await fsp.writeFile(path.join(f.root,'text','guide.html'),hostile);f.manifest.assets.guide.sha256=sha(hostile);
-  const r=await buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:out});
-  const published=fs.readFileSync(path.join(out,r.profile.guideClaim.sourceHref.split('#')[0].slice(1)),'utf8');
-  assert.doesNotMatch(published,/<script|<img|<form|tracker\.invalid|hostile\.js/i);
-  assert.match(published,/Safe published excerpt/);assert.match(published,/Disconnect power\. Verify zero energy\./);assert.match(published,new RegExp(sha(hostile)));
-  assert.equal(sha(Buffer.from(published)),r.profile.guideClaim.sourceHash);
+test('compiler rejects active, hidden, duplicate or detached guide markup instead of claiming anchored evidence',async()=>{
+ const cases=[
+  '<!doctype html><script src="/assets/hostile.js"></script><section id="isolate">Disconnect power. Verify zero energy.</section>',
+  '<section id="isolate">Wrong text.</section><p>Disconnect power. Verify zero energy.</p>',
+  '<!--<section id="isolate">Disconnect power. Verify zero energy.</section>-->',
+  '<section id="isolate" hidden>Disconnect power. Verify zero energy.</section>',
+  '<section id="isolate">Disconnect power. Verify zero energy.</section><section id="isolate">duplicate</section>'
+ ];
+ for(const value of cases){const f=await fixture(),out=f.root+'-out';try{
+  const bytes=Buffer.from(value);await fsp.writeFile(path.join(f.root,'text','guide.html'),bytes);f.manifest.assets.guide.sha256=sha(bytes);
+  await assert.rejects(buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:out}),/Guide/);assert.equal(fs.existsSync(out),false);
+ }finally{await fsp.rm(f.root,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}}
+});
+test('guide fragment decoding preserves literal markup text and rejects ambiguous entities',()=>{
+ assert.doesNotThrow(()=>assertReviewedGuideFragment('<section id="claim">A &amp; B &lt;tag&gt; &#39;quote&#39;</section>','claim',"A & B <tag> 'quote'"));
+ assert.throws(()=>assertReviewedGuideFragment('<section id="claim">A &unknown; B</section>','claim','A &unknown; B'),/entity/);
+ assert.throws(()=>assertReviewedGuideFragment('<section id="claim">A &amp;lt; B</section>','claim','A < B'),/exactly match/);
+});
+test('compiler snapshots the reviewed manifest before awaiting source files',async()=>{
+ const f=await fixture(),out=f.root+'-out';try{
+  const result=buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:out});
+  f.manifest.lesson.durationSeconds=1;f.manifest.rights.media.publicDistributionDeclared=false;f.manifest.assets.media.sha256='f'.repeat(64);
+  const pack=await result;assert.equal(pack.sourceCatalog.sources[0].duration,12);
  }finally{await fsp.rm(f.root,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
 });
 

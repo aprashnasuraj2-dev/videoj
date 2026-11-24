@@ -44,3 +44,10 @@ test('content intake rejects accessor-backed manifest/observed data without exec
  const o=observed();Object.defineProperty(o.media,'bytes',{enumerable:true,get(){touched++;return 1;}});
  assert.throws(()=>assessContentManifest(manifest(),{observedFiles:o}),/Invalid content manifest data/);assert.equal(touched,0);
 });
+
+test('intake rejects coercible hashes, unknown declarations and nested accessor fields',()=>{
+ let touched=0;const hash={toString(){touched++;return 'a'.repeat(64);}};
+ const m=manifest();m.assets.media.sha256=hash;assert.throws(()=>assessContentManifest(m,{observedFiles:observed()}));assert.equal(touched,0);
+ const o=observed();o.media.sha256=hash;assert.throws(()=>assessContentManifest(manifest(),{observedFiles:o}));assert.equal(touched,0);
+ const extra=manifest();extra.rights.media.unreviewed='yes';assert.throws(()=>assessContentManifest(extra,{observedFiles:observed()}));
+});
