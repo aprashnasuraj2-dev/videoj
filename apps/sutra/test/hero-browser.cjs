@@ -86,9 +86,24 @@ const assert=require('node:assert/strict');
    await Promise.all([a,b].map(p=>p.waitForFunction(()=>document.querySelectorAll('#review-list li').length===2)));
    await hold();await confirm(b);
    await b.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
-   await b.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('rejected before confirmation'));
+   await b.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('Review action interrupted by navigation'));
+   assert.equal(await b.locator('#download-review-attempt').isHidden(),true,'a revoked save must not publish a late outcome receipt');
    await a.evaluate(()=>window.__releaseReviewLock());
    assert.equal(await a.evaluate(k=>JSON.parse(localStorage.getItem(k)).length,key),2);
+   // Revoke queued destructive actions too, and prevent old callback
+   // status from replacing the navigation invalidation message.
+   for(const operation of ['delete','clear']){
+    await hold();
+    if(operation==='delete')await b.getByRole('button',{name:'Delete local review'}).first().click();
+    else{await b.locator('#clear-local-reviews').click();await b.locator('#confirm-clear-reviews').click();}
+    await b.waitForFunction(async name=>(await navigator.locks.query()).pending.some(lock=>lock.name===name),lockName);
+    await b.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
+    await b.waitForFunction(async name=>!(await navigator.locks.query()).pending.some(lock=>lock.name===name),lockName);
+    await a.evaluate(()=>window.__releaseReviewLock());
+    assert.equal(await a.evaluate(k=>JSON.parse(localStorage.getItem(k)).length,key),2,'revoked '+operation+' cannot mutate local data');
+    assert.match(await b.locator('#review-status').textContent(),/Review action interrupted by navigation/);
+    assert.equal(await b.locator('#download-review-attempt').isHidden(),true);
+   }
    // Exports also need the cooperative lock and a current snapshot. Change
    // the record from the exporting tab itself (no storage event in that tab)
    // while the lock is held, then reject its old captured download action.
@@ -103,7 +118,8 @@ const assert=require('node:assert/strict');
    await hold();await b.getByRole('button',{name:'Download saved receipt'}).first().click();
    await b.waitForFunction(()=>[...document.querySelectorAll('#review-list .review-action')].some(x=>x.disabled));
    await b.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
-   await b.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('No export success is claimed'));
+   await b.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('Review action interrupted by navigation'));
+   await b.waitForFunction(async name=>!(await navigator.locks.query()).pending.some(lock=>lock.name===name),lockName);
    await a.evaluate(()=>window.__releaseReviewLock());
    assert.equal(downloads.length,0,'revoked queued export must never start');
    const freshDownload=b.waitForEvent('download');await b.getByRole('button',{name:'Download saved receipt'}).first().click();

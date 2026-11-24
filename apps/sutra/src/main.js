@@ -213,9 +213,9 @@ function getReviewActions(){if(!reviewActions)reviewActions=createReviewActions(
 function forgetReviewAttempt(id){if(lastReviewAttempt&&(id===undefined||lastReviewAttempt.requestId===id)){lastReviewAttempt=null;reviewAttemptButton.hidden=true;}}
 async function removeDisplayedReview(itemState,item,list){
  if(reviewBusy||!list.contains(item))return;
- reviewBusy=true;
- try{await reviewMutations.run(()=>{if(!list.contains(item))throw Error('Review row is no longer current.');itemState.removeIfUnchanged();});forgetReviewAttempt(itemState.id);renderReviews();reviewStatus.textContent=itemState.status==='stale'?'Stale local review deleted.':'Local review deleted.';}
- catch(error){if(error?.outcome==='unknown')forgetReviewAttempt(itemState.id);try{renderReviews();}catch{}reviewStatus.textContent=error?.outcome==='unknown'?'Local review deletion outcome is unknown. The record may already have changed; inspect current reviews before another action. No automatic retry.':'Could not delete this local review. It may have changed; inspect again. No successful deletion is claimed.';}
+ const epoch=reviewViewEpoch;reviewBusy=true;
+ try{await reviewMutations.run(()=>{if(!list.contains(item))throw Error('Review row is no longer current.');itemState.removeIfUnchanged();});forgetReviewAttempt(itemState.id);renderReviews();if(epoch===reviewViewEpoch)reviewStatus.textContent=itemState.status==='stale'?'Stale local review deleted.':'Local review deleted.';}
+ catch(error){if(error?.outcome==='unknown')forgetReviewAttempt(itemState.id);try{renderReviews();}catch{}if(epoch===reviewViewEpoch)reviewStatus.textContent=error?.outcome==='unknown'?'Local review deletion outcome is unknown. The record may already have changed; inspect current reviews before another action. No automatic retry.':'Could not delete this local review. It may have changed; inspect again. No successful deletion is claimed.';}
  finally{reviewBusy=false;}
 }
 function renderReviews(){
@@ -295,13 +295,19 @@ document.querySelector('#cancel-clear-reviews').addEventListener('click',closeCl
 clearDialog.addEventListener('cancel',event=>{event.preventDefault();closeClear();});
 document.querySelector('#confirm-clear-reviews').addEventListener('click',async()=>{
  if(!clearDialog.open||!clearSnapshot||reviewBusy)return;
- const confirmed=clearSnapshot;closeClear();reviewBusy=true;
- try{await reviewMutations.run(confirmed);if(reviewProposal)getReviewActions().cancel(reviewProposal.id);reviewProposal=null;document.querySelector('#review-preview').textContent='';forgetReviewAttempt();renderReviews();reviewStatus.textContent='Local review data cleared from this browser. Previously downloaded files are not deleted.';}
- catch(error){if(error?.outcome==='unknown'){if(reviewProposal)getReviewActions().cancel(reviewProposal.id);reviewProposal=null;document.querySelector('#review-preview').textContent='';forgetReviewAttempt();}try{renderReviews();}catch{}reviewStatus.textContent=error?.outcome==='unknown'?'Local review clear outcome is unknown. Some data may already have been removed; inspect current records before trying again. No automatic retry.':'Could not confirm clearing local review data. Inspect before trying again; no automatic retry.';}
+ const confirmed=clearSnapshot,epoch=reviewViewEpoch;closeClear();reviewBusy=true;
+ try{await reviewMutations.run(confirmed);if(reviewProposal)getReviewActions().cancel(reviewProposal.id);reviewProposal=null;document.querySelector('#review-preview').textContent='';forgetReviewAttempt();renderReviews();if(epoch===reviewViewEpoch)reviewStatus.textContent='Local review data cleared from this browser. Previously downloaded files are not deleted.';}
+ catch(error){if(error?.outcome==='unknown'){if(reviewProposal)getReviewActions().cancel(reviewProposal.id);reviewProposal=null;document.querySelector('#review-preview').textContent='';forgetReviewAttempt();}try{renderReviews();}catch{}if(epoch===reviewViewEpoch)reviewStatus.textContent=error?.outcome==='unknown'?'Local review clear outcome is unknown. Some data may already have been removed; inspect current records before trying again. No automatic retry.':'Could not confirm clearing local review data. Inspect before trying again; no automatic retry.';}
  finally{reviewBusy=false;}
 });
 window.addEventListener('storage',event=>{if(event.key!==REVIEW_STORAGE_KEY&&event.key!==LEGACY_REVIEW_STORAGE_KEY&&event.key!==null)return;reviewViewEpoch++;if(reviewProposal)cancelReview();if(clearDialog.open)closeClear();forgetReviewAttempt();try{renderReviews();reviewStatus.textContent='Local review collection changed in another tab. Inspect the updated records.';}catch{reviewStatus.textContent='Local review data changed and could not be read.';}});
-window.addEventListener('pagehide',()=>{reviewMutations.revoke();if(reviewProposal)cancelReview();if(clearDialog.open)closeClear();});
+window.addEventListener('pagehide',()=>{
+ // Revoke presentation authority at pagehide, not only when pageshow
+ // arrives: a pending mutation may settle before the page is frozen.
+ reviewViewEpoch++;reviewMutations.revoke();forgetReviewAttempt();
+ if(reviewProposal)cancelReview();if(clearDialog.open)closeClear();
+ if(reviewBusy)reviewStatus.textContent='Review action interrupted by navigation. An already started operation may have changed local data or requested a download. No export success is claimed. Inspect current reviews before another action.';
+});
  // A restored document can have missed storage notifications while frozen.
  // Re-read local records before exposing old rows or downloadable outcomes.
 window.addEventListener('pageshow',event=>{
