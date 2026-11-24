@@ -10,6 +10,9 @@ const env={
  SUTRA_ENABLE_INFERENCE:'true',SUTRA_INFERENCE_BACKEND:'self_hosted',SUTRA_SELF_HOSTED_UPSTREAM_URL:url,SUTRA_SELF_HOSTED_TOKEN:gatewayToken,
  SUTRA_ALLOWED_ORIGIN:'https://sutra.test',SUTRA_MODELS:'local-tool-model',SUTRA_CLIENT_HASH_SECRET:'x'.repeat(32),
  SUTRA_MAX_OUTPUT_TOKENS:'256',SUTRA_MAX_DAILY_CALLS:'10',SUTRA_MAX_CLIENT_CALLS:'2',SUTRA_MAX_CONCURRENT:'2',
+ SUTRA_CONTENT_VERSION:'synthetic-timing-v1',SUTRA_CONTENT_MODE:'synthetic',
+ SUTRA_CATALOG_SHA256:'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333',
+ SUTRA_TRANSCRIPT_SHA256:'a1930687d25bfe7fe8f2483c55d1aca83cdc3f4dcc39424dd6569aea9fe9660d',
  SUTRA_QUOTA:{idFromName:()=> 'global',get:()=>({fetch:async req=>new URL(req).pathname==='/release'?Response.json({released:true}):Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000001'})})}
 };
 const req=(body={model:'local-tool-model',messages:[{role:'user',content:'Where is the source cue?'}],stream:true,tools:[]})=>new Request('https://sutra.test/api/v1/chat/completions',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json'},body:JSON.stringify(body)});
