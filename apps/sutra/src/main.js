@@ -135,7 +135,7 @@ function resetTimingMedia(player){
  player?.dispose();timingPlayer=null;
  mediaHost.replaceChildren(...mediaPlaceholder.map(node=>node.cloneNode(true)));mediaHost.classList.remove('player-mounted');
  applyContentLabels();releaseMediaUrls();remountTimingTranscript(null);
- seekTiming.hidden=true;seekTiming.disabled=false;
+ seekTiming.hidden=true;seekTiming.disabled=false;seekTiming.removeAttribute('aria-busy');
  document.querySelector('#playback-state').textContent='';
  const retry=document.querySelector('#load-timing');retry.disabled=false;
  if(focusedMedia)retry.focus({preventScroll:true});
@@ -176,7 +176,8 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
  finally{if(mediaLoad===operation)mediaLoad=null;cancelTiming.hidden=true;cancelTiming.disabled=false;if(document.activeElement===cancelTiming)(timingPlayer?seekTiming:button).focus({preventScroll:true});}
 });
 seekTiming.addEventListener('click',async()=>{
- const player=timingPlayer;seekTiming.disabled=true;
+ const player=timingPlayer;if(!player||seekTiming.hidden||seekTiming.disabled||seekTiming.hasAttribute('aria-busy'))return;
+ seekTiming.setAttribute('aria-busy','true');
  try{
   const fixture=timingFixture;
   const result=validateReceipt(fixture.receipt,{sources:content.sources});
@@ -185,7 +186,7 @@ seekTiming.addEventListener('click',async()=>{
   if(timingPlayer!==player)return;
   setStatus(timingStatus,'completed',`Source cue reached. Actual native media time: ${actual.toFixed(2)} seconds. Consistency check only; no factual verification.`);
  }catch{if(timingPlayer===player)setStatus(timingStatus,'error','The source cue could not be reached. Check media availability; no seek success is claimed.');}
- finally{if(timingPlayer===player)seekTiming.disabled=false;}
+ finally{if(timingPlayer===player)seekTiming.removeAttribute('aria-busy');}
 });
 
 // A page retained by browser back/forward cache is still the same document.

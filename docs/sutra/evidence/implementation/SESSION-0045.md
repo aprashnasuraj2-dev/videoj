@@ -33,3 +33,9 @@ X010-40 exact `b72f64606d76be1dfe5114af80d15c496ba6dd6b`: 19/19 successful workf
 X010-41 exact `0bf20d61ac4b9cfa030e09ebdf3a210946ea9184` learner build, app unit, package/API, runtime and independent peer build steps passed in [45424276367](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45424276367/job/138551878243); browser/full matrix still pending. Added X010-42/R-065: the shared receipt action no longer disables a focused seek button merely for pending native media; aria-busy guards repeated activation. Browser counterexample holds native seeking, checks focus and exact one currentTime setter call under Enter/Space, then revokes result and checks the detached button clears busy state and fresh cue works. Full exact candidate CI pending.
 
 **712/1,099 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-41 exact learner build and unit tests pass, full CI pending. X010-42 shared receipt seek focus and reactivation implementation awaits actual Chromium/full CI.
+
+### Featured and comparison pending actions — 2026-11-24T21:08:28+05:45
+
+X010-41 exact `0bf20d61ac4b9cfa030e09ebdf3a210946ea9184`: all 19 workflow conclusions successful, learner [45424276367](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45424276367), browser matrix 45424276504. Resolved R-064. Added X010-43/R-066 for remaining featured/comparison/guide keyboard focus and reactivation paths, with actual held native and route tests and distinct-action supersession. X010-42 and X010-43 not credited before exact full CI.
+
+**713/1,100 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-41 exact 19/19 verified. X010-42 shared receipt focus and X010-43 featured/comparison/guide busy-state candidates pending exact full CI.

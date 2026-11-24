@@ -94,9 +94,9 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
    if(claim.sourceHash){
     const verify=node('button',null,'Check written source integrity');verify.type='button';
     verify.addEventListener('click',async()=>{
-     if(!active(verify)||verify.disabled)return;
+     if(!active(verify)||verify.disabled||verify.hasAttribute('aria-busy'))return;
      const token=beginAction(),controller=token.controller;
-     verify.disabled=true;seekStatus.textContent='Checking written source bytes and anchored excerpt…';
+     verify.setAttribute('aria-busy','true');seekStatus.textContent='Checking written source bytes and anchored excerpt…';
      try{
       const signal=AbortSignal.any([controller.signal,AbortSignal.timeout(5000)]);
       // Fragments identify document-local anchors and never form part of
@@ -129,7 +129,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
       }
       if(current(token))seekStatus.textContent='Written source bytes and anchored excerpt match this comparison record. This does not establish factual truth.';
      }catch{if(current(token))seekStatus.textContent='Written source integrity could not be confirmed. Do not treat the linked excerpt as matching this comparison record.';}
-     finally{finishAction(token);verify.disabled=false;}
+     finally{finishAction(token);verify.removeAttribute('aria-busy');}
     });
     article.append(verify);
    }
@@ -139,15 +139,15 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
    const button=node('button',null,'Inspect native video cue at '+String(claim.start)+' seconds');
    button.type='button';
    button.addEventListener('click',async()=>{
-    if(!active(button))return;
-    const token=beginAction();seekStatus.textContent='Checking actual native seek availability…';
+    if(!active(button)||button.disabled||button.hasAttribute('aria-busy'))return;
+    const token=beginAction();button.setAttribute('aria-busy','true');seekStatus.textContent='Checking actual native seek availability…';
     try{
      const reached=await seekTo(claim.start,{signal:token.controller.signal});
      if(!isNativeCueReached(reached,claim.start,claim.end))throw Error('Native cue not confirmed');
      if(current(token))seekStatus.textContent='Native media reached the catalog cue. This does not verify the claim.';
     }catch{
      if(current(token))seekStatus.textContent='Video cue unavailable. Load the source media first; no successful seek is claimed.';
-    }finally{finishAction(token);}
+    }finally{finishAction(token);button.removeAttribute('aria-busy');}
    });
    article.append(button);
   }

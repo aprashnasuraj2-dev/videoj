@@ -10,9 +10,9 @@ On 24 November the participant explicitly tightened the ordering: stop further d
 
 ## Latest implementation checkpoint — 0045
 
-**712/1,099 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-41 exact learner build and unit tests pass, full CI pending. X010-42 shared receipt seek focus and reactivation implementation awaits actual Chromium/full CI.
+**713/1,100 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-41 exact 19/19 verified. X010-42 shared receipt focus and X010-43 featured/comparison/guide busy-state candidates pending exact full CI.
 
-Next: Verify exact X010-41 technical retrieval and X010-42 shared receipt keyboard regressions; retain pending status until full candidate CI.
+Next: Verify exact X010-42 shared receipt and X010-43 featured/comparison keyboard candidates, reconcile only passed evidence, continue independent engineering.
 
 ## Resume sequence
 

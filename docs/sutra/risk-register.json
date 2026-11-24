@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T21:06:04+05:45",
+  "updatedAt": "2026-11-24T21:08:28+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -1445,8 +1445,8 @@
     {
       "id": "R-064",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Technical lexical qualifiers can collapse into conflicting matches",
       "mechanism": "Word-only tokenization discards signs, operators, decimal separators, ratios, compound ID punctuation and unit case.",
       "userEffect": "Local evidence search may show a different technical measurement as a lexical match.",
@@ -1459,9 +1459,13 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
           "sourceRevision": "5539910d9668bc8e2d3e07c2032038726d8b9ca8"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "0bf20d61ac4b9cfa030e09ebdf3a210946ea9184"
         }
       ],
-      "unblockCondition": "Exact positive/negative technical lexical tests and complete learner/browser regression pass."
+      "unblockCondition": null
     },
     {
       "id": "R-065",
@@ -1483,6 +1487,27 @@
         }
       ],
       "unblockCondition": "Exact actual Chromium keyboard/held native seek counterexample, cancellation and fresh retry pass with complete CI."
+    },
+    {
+      "id": "R-066",
+      "severity": "medium",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Featured cue and comparison busy controls have inconsistent keyboard activation behavior",
+      "mechanism": "Featured and guide controls temporarily use native disabled; comparison cue permits repeat activation while waiting.",
+      "userEffect": "Focus can leave the active control or repeated keyboard activation can restart pending work.",
+      "affectedTasks": [
+        "SUTRA-X010-43",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Use explicit aria-busy and synchronous reactivation guard while retaining native cancellation and current operation authority.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "a6e2caa6db8828afec15183eb50745f1311e69f3"
+        }
+      ],
+      "unblockCondition": "Exact held native seek/guide transport Chromium counterexamples and all applicable regressions pass."
     }
   ]
 }

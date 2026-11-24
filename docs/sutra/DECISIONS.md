@@ -345,3 +345,7 @@ Preserve literal measurement qualifiers and unit case instead of removing them d
 ## SUTRA-DECISION-0047 — Preserve receipt seek keyboard focus
 
 Use an explicit busy state rather than transient native disablement in the shared receipt action row; guard reactivation synchronously, retain result revocation and native seek cancellation. Actual browser Enter/Space and one-write regression required. No screen-reader or physical-device claim.
+
+## SUTRA-DECISION-0048 — Consistent pending control semantics
+
+Keep featured native cue and written-guide integrity buttons focusable while pending, and guard repeated activation on comparison native cue. Allow distinct actions to supersede prior work; do not restore authority to stale results. Require held native/transport actual-browser regressions, not screen-reader or physical-device claims.
