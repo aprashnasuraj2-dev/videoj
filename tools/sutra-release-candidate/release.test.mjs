@@ -17,7 +17,7 @@ test('release config refuses placeholders, incomplete live usage, weak reserve a
 test('release preparation publishes one exact funded router, one peer and model-bound immutable graphs',()=>{
  const out=prepareReleaseArtifacts({manifest,links,graphs,config:config()});
  assert.deepEqual(out.manifest.llm_router,{base_url:'https://sutra.example/api/v1',mock:false,publisher_funded:true});
- assert.equal(Object.hasOwn(out.manifest.llm_router,'byok_router'),false);assert.deepEqual(out.manifest.allowed_peers,['https://guide.example']);
+ assert.equal(Object.hasOwn(out.manifest.llm_router,'byok_router'),false);assert.equal(out.manifest.deployment.runtime,'/runtime/sutra-runtime.js');assert.deepEqual(out.manifest.allowed_peers,['https://guide.example']);
  assert.equal(out.links.networks.linked_learner.guide_peer,'https://guide.example/agents/checklist');
  for(const entry of out.manifest.networks){const g=out.graphs[entry.name];assert.equal(g.graph.llm_config.model_name,'provider/model-v1');assert.match(g.sha256,/^[a-f0-9]{64}$/);assert.equal(entry.hocon,g.path);assert.match(g.path,new RegExp('^\\./release/'+g.sha256+'/'));}
  assert.equal(validatePreparedRelease(out).valid,true);
@@ -25,6 +25,7 @@ test('release preparation publishes one exact funded router, one peer and model-
 test('release artifact verification detects manifest, peer, graph and record drift',()=>{
  for(const mutate of [
   o=>o.manifest.llm_router.base_url='https://evil.example/v1',
+  o=>o.manifest.deployment.runtime='/assets/hidden.js',
   o=>o.manifest.allowed_peers.push('https://extra.example'),
   o=>o.links.networks.linked_learner.guide_peer='https://evil.example/agents/checklist',
   o=>o.graphs.learner.graph.llm_config.model_name='other',

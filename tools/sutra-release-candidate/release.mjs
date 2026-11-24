@@ -59,7 +59,7 @@ export function prepareReleaseArtifacts({manifest,links,graphs,config}){
   llm_router:{base_url:cfg.publicOrigin+'/api/v1',mock:false,publisher_funded:true},
   allowed_peers:[cfg.peerOrigin],
   peer_policy:{mode:'closed'},
-  deployment:{mode:'static',self_contained_runtime:true,browser_mock:false,direct_byok:false,direct_mcp_requires_cors:true,public_mcp_facade:false}
+  deployment:{mode:'static',runtime:'/runtime/sutra-runtime.js',self_contained_runtime:true,browser_mock:false,direct_byok:false,direct_mcp_requires_cors:true,public_mcp_facade:false}
  };
  const releaseRecord={
   schema:1,sourceRevision:cfg.sourceRevision,publicOrigin:cfg.publicOrigin,peerOrigin:cfg.peerOrigin,model:cfg.model,
@@ -75,6 +75,7 @@ export function validatePreparedRelease({manifest,links,graphs,releaseRecord}){
  if(!plain(releaseRecord)||!SHA40.test(releaseRecord.sourceRevision)||!SHA256.test(releaseRecord.recordSha256))throw Error('Invalid release record.');
  const recordCopy=structuredClone(releaseRecord);delete recordCopy.recordSha256;if(digest(canonical(recordCopy))!==releaseRecord.recordSha256)throw Error('Release record hash mismatch.');
  if(!plain(manifest?.llm_router)||manifest.llm_router.base_url!==releaseRecord.publicOrigin+'/api/v1'||manifest.llm_router.publisher_funded!==true||manifest.llm_router.mock!==false||Object.hasOwn(manifest.llm_router,'byok_router'))throw Error('Invalid publisher-funded manifest router.');
+ if(manifest.deployment?.runtime!=='/runtime/sutra-runtime.js'||manifest.deployment?.self_contained_runtime!==true||manifest.deployment?.browser_mock!==false||manifest.deployment?.direct_byok!==false)throw Error('Invalid release runtime metadata.');
  if(!Array.isArray(manifest.allowed_peers)||manifest.allowed_peers.length!==1||manifest.allowed_peers[0]!==releaseRecord.peerOrigin||manifest.peer_policy?.mode!=='closed')throw Error('Invalid release peer policy.');
  if(!plain(links?.networks)||links.networks.linked_learner?.guide_peer!==releaseRecord.peerOrigin+'/agents/checklist')throw Error('Release links do not match peer origin.');
  if(!Array.isArray(manifest.networks)||manifest.networks.length!==Object.keys(graphs).length)throw Error('Release network set mismatch.');

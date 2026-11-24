@@ -5,6 +5,7 @@ This module exists because the development build is deliberately **not** a relea
 After the real provider/budget/judge-path evidence exists, this gate prepares the public agent artifacts deterministically:
 
 - manifest publishes exactly one same-origin publisher-funded router at `<public origin>/api/v1`;
+- manifest names the stable public browser runtime at `/runtime/sutra-runtime.js`;
 - no BYOK router is published;
 - one exact peer origin is allowed under closed policy;
 - every network receives the same approved top-site `llm_config.model_name`;
