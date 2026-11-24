@@ -7,7 +7,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
  const sources=loadedContent.sources;
  const $=id=>document.getElementById(id);
  const check=$('provider-check'),run=$('provider-run'),cancel=$('provider-cancel'),question=$('provider-question'),status=$('provider-status'),output=$('provider-output'),answer=$('provider-answer'),list=$('provider-receipts'),metrics=$('provider-metrics'),resultContextLabel=$('provider-result-context'),actionStatus=$('provider-action-status');
- const consentDialog=$('provider-consent-dialog'),consentBackend=$('provider-consent-backend'),consentModel=$('provider-consent-model'),consentChars=$('provider-consent-chars'),consentBudget=$('provider-consent-budget'),consentDeny=$('provider-consent-deny'),consentAllow=$('provider-consent-allow');
+ const consentDialog=$('provider-consent-dialog'),consentBackend=$('provider-consent-backend'),consentModel=$('provider-consent-model'),consentChars=$('provider-consent-chars'),consentQuestion=$('provider-consent-question'),consentBudget=$('provider-consent-budget'),consentDeny=$('provider-consent-deny'),consentAllow=$('provider-consent-allow');
  const runtimeBounds=executionLimits();
  let model=null,approvedContract=null,active=null,pendingApproval=null,epoch=0,resultContext=null,actionsRevoked=false;
  const set=(s,m)=>applyScreenState(status,s,m);
@@ -42,8 +42,9 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   labelResult();
  }
  function closeConsent(){
+  pendingApproval=null;consentQuestion.textContent='';
   if(consentDialog.open)consentDialog.close();
-  pendingApproval=null;controls();
+  controls();
  }
  function denyConsent(){
   if(!pendingApproval)return;
@@ -101,17 +102,17 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   pendingApproval=Object.freeze({question:value,model,contract:approvedContract});
   consentBackend.textContent=approvedContract.backend==='self_hosted'?'Operator self-hosted gateway':'External hosted provider';
   consentModel.textContent=model;
-  consentChars.textContent=String(value.length);
+  consentChars.textContent=String(value.length);consentQuestion.textContent=value;
   consentBudget.textContent='Up to '+runtimeBounds.maxModelCalls+' model calls, '+runtimeBounds.maxAgents+' agent invocations and '+Math.round(runtimeBounds.timeoutMs/1000)+' seconds for this run. No automatic retry.';
   controls();
   set('consent','Review the inference data flow. No model request has been made yet.');
-  consentDialog.showModal();
-  consentDeny.focus();
+  try{consentDialog.showModal();consentDeny.focus();}catch{closeConsent();set('error','Approval could not be displayed. No model request was made.');}
  });
  consentDeny.addEventListener('click',denyConsent);
  consentDialog.addEventListener('cancel',event=>{event.preventDefault();denyConsent();});
+ consentDialog.addEventListener('close',()=>{if(!consentDialog.open&&pendingApproval)denyConsent();});
  consentAllow.addEventListener('click',()=>{
-  if(!pendingApproval)return;
+  if(!pendingApproval||!consentDialog.open){if(pendingApproval)denyConsent();return;}
   const approval=pendingApproval;
   closeConsent();
   void executeApprovedRun(approval);
@@ -122,6 +123,6 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   if(!active){labelResult();if(model)set('idle','Question changed. Any visible earlier result belongs to its previous run. Submit explicitly to retrieve new model results.');}
  });
  cancel.addEventListener('click',()=>{if(active?.kind==='run'){active.controller.abort();controls();set('cancelling','Cancelling inference…');}});
- window.addEventListener('pagehide',()=>{const previous=active;active=null;previous?.controller.abort();if(consentDialog.open)consentDialog.close();pendingApproval=null;model=null;approvedContract=null;clear();controls();set('idle','Inference approval cleared when leaving this page. Check availability again before a new run.');});
+ window.addEventListener('pagehide',()=>{const previous=active;active=null;previous?.controller.abort();closeConsent();model=null;approvedContract=null;clear();controls();set('idle','Inference approval cleared when leaving this page. Check availability again before a new run.');});
  controls();
 }

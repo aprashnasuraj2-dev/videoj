@@ -63,6 +63,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
    await page.getByRole('button',{name:'Ask configured model'}).click();
    await page.waitForFunction(()=>document.querySelector('#provider-consent-dialog').open);
    assert.equal(calls,before,'opening inference consent must not call the model');
+   assert.equal(await page.locator('#provider-consent-question').textContent(),await page.locator('#provider-question').inputValue());
    assert.match(await page.locator('#provider-consent-backend').textContent(),/self-hosted/);
    assert.equal(await page.locator('#provider-consent-model').textContent(),'synthetic-provider-test');
    assert.match(await page.locator('#provider-consent-budget').textContent(),/Up to 8 model calls, 12 agent invocations and 60 seconds.*No automatic retry/);
@@ -75,6 +76,15 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   assert.equal(calls,0);await page.getByRole('button',{name:'Cancel',exact:true}).click();
   await page.waitForFunction(()=>!document.querySelector('#provider-consent-dialog').open);
   assert.equal(calls,0);assert.match(await page.locator('#provider-status').textContent(),/not started/);
+  assert.equal(await page.locator('#provider-consent-question').textContent(),'');
+  // Closing a modal by native/scripted lifecycle is not approval. A stale
+  // hidden control cannot authorize even a model preflight.
+  await page.getByRole('button',{name:'Ask configured model'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-consent-dialog').open);
+  await page.evaluate(()=>{document.querySelector('#provider-consent-dialog').close();document.querySelector('#provider-consent-allow').click();});
+  await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='cancelled');
+  assert.equal(calls,0);assert.equal(await page.locator('#provider-consent-question').textContent(),'');
+  assert.equal(await page.locator('#provider-run').isEnabled(),true);
   await page.getByRole('button',{name:'Check example',exact:true}).click();assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
   // A different but valid graph cannot inherit approval from discovery.
   graphDrift=true;
