@@ -112,8 +112,8 @@ timingTranscript=mountTranscriptPanel(transcriptHost,{
   return timingPlayer.seek(seconds);
  }
 });
-mountComparisonView(document.querySelector('#comparison-body'),{
- receipt:timingFixture.receipt,sources:content.sources,seekTo:seconds=>timingPlayer?.seek(seconds),
+const comparisonView=mountComparisonView(document.querySelector('#comparison-body'),{
+ receipt:timingFixture.receipt,sources:content.sources,seekTo:(seconds,options)=>timingPlayer?.seek(seconds,options),
  videoClaim:content.profile.videoClaim,guideClaim:content.profile.guideClaim,contentMode:content.profile.mode
 });
 const mediaHost=document.querySelector('.media-empty'),timingStatus=document.querySelector('#timing-status'),seekTiming=document.querySelector('#seek-timing'),cancelTiming=document.querySelector('#cancel-timing');
@@ -167,7 +167,7 @@ seekTiming.addEventListener('click',async()=>{
 
 // A page retained by browser back/forward cache is still the same document.
 // Preserve its local transcript and media blob; remote consent is revoked independently.
-window.addEventListener('pagehide',event=>{mediaLoad?.abort();if(event.persisted){try{timingPlayer?.media.pause();}catch{}return;}timingTranscript?.dispose();releaseMediaUrls();});
+window.addEventListener('pagehide',event=>{mediaLoad?.abort();timingPlayer?.cancelSeek();comparisonView.cancelPending();if(event.persisted){try{timingPlayer?.media.pause();}catch{}return;}timingTranscript?.dispose();releaseMediaUrls();});
 
 let reviewStore=null,reviewActions=null,reviewProposal=null,lastReviewAttempt=null,reviewBusy=false;
 const reviewMutations=createReviewMutationQueue();
@@ -302,10 +302,10 @@ window.addEventListener('pagehide',()=>{
 document.querySelector('#read-playback').addEventListener('click',()=>{document.querySelector('#playback-state').textContent=JSON.stringify(timingPlayer?.readState()??{available:false,reason:'media_not_loaded'});});
 
 async function seekReceipt(receipt){
- const source=timingFixture.source;
- if(!timingPlayer||receipt.sourceId!==source.id||receipt.sourceVersion!==source.version||receipt.sourceHash!==source.hash||receipt.mediaHash!==source.mediaHash)throw Error('Exact receipt media not loaded');
- const actual=await timingPlayer.seek(receipt.start);
- if(!isNativeCueReached(actual,receipt.start,receipt.end))throw Error('Native playback did not reach the exact cue interval');
+ const source=timingFixture.source,player=timingPlayer;
+ if(validateReceipt(receipt,{sources:content.sources}).level!=='catalog_matched'||!player||receipt.sourceId!==source.id||receipt.sourceVersion!==source.version||receipt.sourceHash!==source.hash||receipt.mediaHash!==source.mediaHash)throw Error('Exact receipt media not loaded');
+ const actual=await player.seek(receipt.start);
+ if(timingPlayer!==player||!isNativeCueReached(actual,receipt.start,receipt.end))throw Error('Native playback did not reach the exact cue interval');
  return actual;
 }
 mountDirectLookup({root:document.querySelector('#direct-lookup'),sources:content.sources,seekTo:seekReceipt,prepareReview:prepareReviewFor});

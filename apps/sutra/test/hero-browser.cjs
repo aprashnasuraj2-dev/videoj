@@ -372,6 +372,16 @@ const assert=require('node:assert/strict');
   await page.getByRole('button',{name:'Inspect available evidence'}).click();releaseGuide();await guideFinished;
   await page.unroute('**/guides/synthetic-comparison-guide.html*');
   assert.equal(await page.locator('#comparison-body .comparison-seek-status').innerText(),'','obsolete guide completion must not attach to the new comparison');
+  // Controlled lifecycle injection: old guide bytes must not certify a result after navigation revocation.
+  await page.getByRole('button',{name:'Demonstrate a synthetic conflict'}).click();
+  let navRelease,navStart,navFinish;const navStarted=new Promise(r=>navStart=r),navFinished=new Promise(r=>navFinish=r);
+  await page.route('**/guides/synthetic-comparison-guide.html*',async route=>{navStart();await new Promise(r=>navRelease=r);try{await route.fulfill({contentType:'text/html',body:guideText});}catch{}finally{navFinish();}});
+  await page.getByRole('button',{name:'Check written source integrity'}).click();await navStarted;
+  await page.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
+  navRelease();await navFinished;await page.unroute('**/guides/synthetic-comparison-guide.html*');
+  assert.match(await page.locator('#comparison-body .comparison-seek-status').innerText(),/cancelled on navigation/);
+  await page.getByRole('button',{name:'Check written source integrity'}).click();
+  await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('bytes and anchored excerpt match'));
   await page.getByRole('button',{name:'Inspect available evidence'}).click();
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
 
@@ -427,6 +437,27 @@ const assert=require('node:assert/strict');
 
   await page.getByRole('button',{name:'Inspect native video cue at 2 seconds'}).click();
   await page.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status')?.textContent.includes('Native media reached'));
+
+  // Two distinct UI entry points request the same native cue. Hold the first
+  // request, then allow the second to reach real native media. Only the second
+  // operation may claim success, even though the timestamp matches both.
+  await page.evaluate(()=>{
+   const video=document.querySelector('video'),time=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'currentTime'),seeking=Object.getOwnPropertyDescriptor(HTMLMediaElement.prototype,'seeking');
+   video.pause();let pending=true;
+   Object.defineProperty(video,'seeking',{configurable:true,get(){return pending||seeking.get.call(this);}});
+   Object.defineProperty(video,'currentTime',{configurable:true,get(){return time.get.call(this);},set(t){if(pending){pending=false;return;}time.set.call(this,t);}});
+   // Keep the first operation pending until the newer action is explicitly selected.
+   let held=true;Object.defineProperty(video,'seeking',{configurable:true,get(){return held||seeking.get.call(this);}});
+   window.__releaseSutraSeek=()=>{held=false;};
+  });
+  try{
+   await page.getByRole('button',{name:'Seek to matched cue'}).click();
+   await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('Checking native'));
+   await page.evaluate(()=>window.__releaseSutraSeek());
+   await page.getByRole('button',{name:'Inspect featured source cue'}).click();
+   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
+   await page.waitForFunction(()=>document.querySelector('#direct-action-status').textContent.includes('no seek success'));
+  }finally{await page.evaluate(()=>{const v=document.querySelector('video');delete v.currentTime;delete v.seeking;delete window.__releaseSutraSeek;});}
 
   // Inject a native seek that lands just before the cue, inside the old one-second
   // tolerance. The actual native time is observable, but no cue success is allowed.

@@ -35,9 +35,11 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
  const nextStep=node('p','comparison-next-step');nextStep.setAttribute('role','note');
  const note=node('p','muted','Comparisons evaluate exact declared values and source scope, not the truth of either claim. The separate conflict demonstration remains hypothetical.');note.dataset.i18n='comparison.note';
  host.replaceChildren(controls,status,nextStep,cards,seekStatus,note);
- let activeMode='available',generation=0,operation=0,guideController=null;
- const beginAction=()=>{guideController?.abort();guideController=null;return {generation,operation:++operation};};
- const current=token=>token.generation===generation&&token.operation===operation;
+ let activeMode='available',generation=0,operation=0,activeAction=null;
+ const invalidateAction=()=>{activeAction?.controller.abort();activeAction=null;operation++;};
+ const beginAction=()=>{invalidateAction();return activeAction={generation,operation,controller:new AbortController()};};
+ const current=token=>activeAction===token&&token.generation===generation&&token.operation===operation&&!token.controller.signal.aborted;
+ const finishAction=token=>{if(activeAction===token)activeAction=null;};
  function card(title,claim){
   const cardGeneration=generation;
   const active=button=>cardGeneration===generation&&cards.contains(button);
@@ -72,7 +74,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
     const verify=node('button',null,'Check written source integrity');verify.type='button';
     verify.addEventListener('click',async()=>{
      if(!active(verify)||verify.disabled)return;
-     const token=beginAction(),controller=new AbortController();guideController=controller;
+     const token=beginAction(),controller=token.controller;
      verify.disabled=true;seekStatus.textContent='Checking written source bytes and anchored excerpt…';
      try{
       const signal=AbortSignal.any([controller.signal,AbortSignal.timeout(5000)]);
@@ -98,7 +100,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
       for(let element=anchored;element;element=element.parentElement)if(element.hidden||element.hasAttribute('aria-hidden')||element.hasAttribute('style')||element.tagName==='TEMPLATE')throw Error('Hidden or uninspectable source anchor');
       if(current(token))seekStatus.textContent='Written source bytes and anchored excerpt match this comparison record. This does not establish factual truth.';
      }catch{if(current(token))seekStatus.textContent='Written source integrity could not be confirmed. Do not treat the linked excerpt as matching this comparison record.';}
-     finally{if(guideController===controller)guideController=null;verify.disabled=false;}
+     finally{finishAction(token);verify.disabled=false;}
     });
     article.append(verify);
    }
@@ -111,19 +113,19 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
     if(!active(button))return;
     const token=beginAction();seekStatus.textContent='Checking actual native seek availability…';
     try{
-     const reached=await seekTo(claim.start);
+     const reached=await seekTo(claim.start,{signal:token.controller.signal});
      if(!isNativeCueReached(reached,claim.start,claim.end))throw Error('Native cue not confirmed');
      if(current(token))seekStatus.textContent='Native media reached the catalog cue. This does not verify the claim.';
     }catch{
      if(current(token))seekStatus.textContent='Video cue unavailable. Load the source media first; no successful seek is claimed.';
-    }
+    }finally{finishAction(token);}
    });
    article.append(button);
   }
   return article;
  }
  function render(){
-  generation++;beginAction();
+  generation++;invalidateAction();
   const comparison=compareClaimPair(activeMode==='available'?{video:local,guide:guideClaim}:syntheticComparison);
   const videoCard=card('Video-side source',comparison.video),guideCard=card('Written guide-side source',comparison.guide);
   videoCard.querySelector('h3').dataset.i18n='comparison.video';guideCard.querySelector('h3').dataset.i18n='comparison.guide';
@@ -150,5 +152,5 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
   activeMode='conflict';conflict.classList.add('primary');compare.classList.remove('primary');render();
  });
  render();
- return {showAvailable(){activeMode='available';render();},showConflict(){activeMode='conflict';render();}};
+ return {showAvailable(){activeMode='available';render();},showConflict(){activeMode='conflict';render();},cancelPending(){if(activeAction){invalidateAction();seekStatus.textContent='Comparison action cancelled on navigation. No successful result is claimed.';}}};
 }

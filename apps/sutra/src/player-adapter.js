@@ -9,6 +9,8 @@ export function mountTimingPlayer(host,{source,poster,chapters,captions}){
  const media=player.querySelector('video');
  if(!media)throw new Error('Native media element unavailable.');
  // Actual native state remains authoritative. No timer synthesizes progress.
+ let activeSeek=null;
+ const cancelSeek=()=>{const previous=activeSeek;activeSeek=null;previous?.abort();};
  const mediaError=(code,message)=>{const error=new Error(message);error.name='MediaOperationError';error.code=code;return error;};
  function waitFor(event,predicate,act,signal){
   return new Promise((resolve,reject)=>{
@@ -16,7 +18,7 @@ export function mountTimingPlayer(host,{source,poster,chapters,captions}){
    const cleanup=()=>{signal?.removeEventListener('abort',aborted);clearTimeout(timer);media.removeEventListener(event,changed);media.removeEventListener('error',failed);};
    const stop=error=>{if(settled)return;settled=true;cleanup();reject(error);};
    const aborted=()=>stop(mediaError('MEDIA_CANCELLED','Media operation cancelled.'));
-   const changed=()=>{if(!settled&&predicate()){settled=true;cleanup();resolve();}};
+   const changed=()=>{try{if(!settled&&predicate()){settled=true;cleanup();resolve();}}catch(error){stop(error);}};
    const failed=()=>stop(mediaError(media.error?.code===4?'MEDIA_UNSUPPORTED':'MEDIA_LOAD_FAILED',
     media.error?.code===4?'The selected media format or source is not supported.':'Media could not complete the requested operation.'));
    if(signal?.aborted){aborted();return;}
@@ -28,8 +30,10 @@ export function mountTimingPlayer(host,{source,poster,chapters,captions}){
  }
  return {element:player,media,readState:()=>readPlaybackState(media),
   ready:({signal}={})=>waitFor('loadedmetadata',()=>media.readyState>=1,undefined,signal),
+  cancelSeek,
   async replaceSource(nextSource){
    if(typeof nextSource!=='string'||!nextSource.trim()||nextSource.length>4096)throw mediaError('MEDIA_SOURCE','Replacement media source is invalid.');
+   cancelSeek();
    const previous=media.currentSrc||media.getAttribute('src')||'';
    const setSource=source=>{media.removeAttribute('src');media.load();media.src=source;media.load();};
    try{media.pause();}catch{}
@@ -52,10 +56,17 @@ export function mountTimingPlayer(host,{source,poster,chapters,captions}){
    }
    return readPlaybackState(media);
   },
-  async seek(seconds){
-   validateNativeSeekTarget(media,seconds);
-   await waitFor('seeked',()=>!media.seeking&&Math.abs(media.currentTime-seconds)<=1,()=>{media.currentTime=seconds;});
-   return media.currentTime;
+  async seek(seconds,{signal}={}){
+   signal?.throwIfAborted();validateNativeSeekTarget(media,seconds);
+   cancelSeek();const owner=new AbortController();activeSeek=owner;
+   const bound=signal?AbortSignal.any([signal,owner.signal]):owner.signal;
+   const source=media.currentSrc;
+   try{
+    await waitFor('seeked',()=>!media.seeking&&Math.abs(media.currentTime-seconds)<=1,()=>{media.currentTime=seconds;},bound);
+    bound.throwIfAborted();
+    if(activeSeek!==owner||media.currentSrc!==source)throw mediaError('MEDIA_CANCELLED','Native seek authority changed.');
+    return media.currentTime;
+   }finally{if(activeSeek===owner)activeSeek=null;}
   }
  };
 }
