@@ -48,9 +48,25 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.getByRole('button',{name:'Check inference availability'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
   assert.equal(manifestReads,1);assert.equal(graphReads,1);assert.equal(calls,0,'provider discovery must bind public contract before any model call');assert.match(await page.locator('#provider-status').textContent(),/Model configured/);
+  const runOnce=async()=>{
+   const before=calls;
+   await runOnce();
+   await page.waitForFunction(()=>document.querySelector('#provider-consent-dialog').open);
+   assert.equal(calls,before,'opening inference consent must not call the model');
+   assert.match(await page.locator('#provider-consent-backend').textContent(),/self-hosted/);
+   assert.equal(await page.locator('#provider-consent-model').textContent(),'synthetic-provider-test');
+   await page.getByRole('button',{name:'Run inference once'}).click();
+  };
+  // Consent cancellation is a true zero-model path and does not disable local evidence.
+  await page.getByRole('button',{name:'Ask configured model'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-consent-dialog').open);
+  assert.equal(calls,0);await page.getByRole('button',{name:'Cancel',exact:true}).click();
+  await page.waitForFunction(()=>!document.querySelector('#provider-consent-dialog').open);
+  assert.equal(calls,0);assert.match(await page.locator('#provider-status').textContent(),/not started/);
+  await page.getByRole('button',{name:'Check example',exact:true}).click();assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
   // A different but valid graph cannot inherit approval from discovery.
   graphDrift=true;
-  await page.getByRole('button',{name:'Ask configured model'}).click();
+  await runOnce();
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Provider publication changed'));
   assert.equal(calls,0);assert.equal(await page.locator('#provider-run').isDisabled(),true);
   graphDrift=false;
@@ -59,7 +75,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   // Even profile-only metadata drift invalidates the mounted lesson binding.
   const profile=JSON.parse(fs.readFileSync(path.join(app,'public/content/content-profile.json'),'utf8'));
   await page.route('**/content/content-profile.json',r=>r.fulfill({json:{...profile,title:'Changed lesson after approval'}}));
-  await page.getByRole('button',{name:'Ask configured model'}).click();
+  await runOnce();
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Published lesson changed'));
   assert.equal(calls,0);assert.equal(await page.locator('#provider-run').isDisabled(),true);
   await page.getByRole('button',{name:'Check example',exact:true}).click();
@@ -67,7 +83,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.unroute('**/content/content-profile.json');
   await page.getByRole('button',{name:'Check inference availability'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
-  await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='completed');
+  await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='completed');
   assert.equal(calls,4);assert.match(await page.locator('#provider-answer').textContent(),/Synthetic provider fixture/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.match(await page.locator('#provider-metrics').textContent(),/80\/20\/100/);
   // A model result grants neither media transfer nor persistence.
   await page.getByRole('button',{name:'Seek to retrieved cue'}).click();
@@ -83,7 +99,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.getByLabel('Question about the source lesson').fill('Locate the timing marker again.');
   assert.equal(await page.locator('#provider-output').isHidden(),true);
   assert.equal(await page.getByRole('button',{name:'Preview retrieved review card'}).count(),0);
-  mode='partial';await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,7);assert.match(await page.locator('#provider-status').textContent(),/PROVIDER_QUOTA/);assert.match(await page.locator('#provider-answer').textContent(),/No completed answer/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.equal(await page.locator('#provider-output').isHidden(),false);
+  mode='partial';await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,7);assert.match(await page.locator('#provider-status').textContent(),/PROVIDER_QUOTA/);assert.match(await page.locator('#provider-answer').textContent(),/No completed answer/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.equal(await page.locator('#provider-output').isHidden(),false);
   // Incomplete interpretation preserves independently retrieved receipts and local actions.
   await page.getByRole('button',{name:'Preview retrieved review card'}).click();
   assert.match(await page.locator('#review-preview').textContent(),/timing-marker/);
@@ -94,12 +110,12 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.getByRole('button',{name:'Seek to retrieved cue'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-action-status').textContent.includes('Native media reached'));
   assert.equal(calls,7);
-  mode='quota';await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,8);assert.equal(await page.locator('#provider-output').isHidden(),true);
-  mode='hold';await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>!document.querySelector('#provider-cancel').disabled);
+  mode='quota';await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,8);assert.equal(await page.locator('#provider-output').isHidden(),true);
+  mode='hold';await runOnce();await page.waitForFunction(()=>!document.querySelector('#provider-cancel').disabled);
   for(let i=0;i<50&&calls<9;i++)await new Promise(r=>setTimeout(r,20));assert.equal(calls,9);
   await page.getByRole('button',{name:'Cancel inference'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='cancelled');assert.equal(await page.locator('#provider-output').isHidden(),true);
   await page.getByRole('button',{name:'Inspect featured source cue'}).click();await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
-  mode='catalog-drift';await page.getByRole('button',{name:'Ask configured model'}).click();
+  mode='catalog-drift';await runOnce();
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('server rejected the lesson version'));
   assert.equal(calls,12,'one explicit run stops at third model attempt; no retries');
   assert.equal(await page.locator('#provider-run').isDisabled(),true);
