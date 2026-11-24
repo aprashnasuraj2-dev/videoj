@@ -50,7 +50,7 @@ const assert=require('node:assert/strict');
    assert.equal(externalCalls.length,0,'the first viewer question-to-card flow is entirely model-free and media-free');
    await first.reload();await first.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
    await first.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
-   await first.getByRole('button',{name:'Delete local review'}).click();
+   await first.getByRole('button',{name:'Delete local review'}).click();await first.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);
    assert.equal(await first.locator('#review-list li').count(),0);
    // Locale changes must translate the primary free-inference task and current
    // result rather than only translating the preexisting hero or navigation.
@@ -184,7 +184,7 @@ const assert=require('node:assert/strict');
   await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
   const saved=await page.evaluate(()=>JSON.parse(localStorage.getItem('sutra.review-cards.v2'))[0].receipt);
   assert.deepEqual(saved,exactPreview);
-  await page.getByRole('button',{name:'Delete local review'}).click();
+  await page.getByRole('button',{name:'Delete local review'}).click();await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);
   assert.equal(await page.locator('#review-list li').count(),0);
   await direct.fill('unavailable voltage threshold');assert.equal(await page.locator('#direct-results li').count(),0);
   await page.getByRole('button',{name:'Check example',exact:true}).click();
@@ -305,7 +305,7 @@ const assert=require('node:assert/strict');
   assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
 
   await page.setViewportSize({width:360,height:800});
-  await page.getByRole('button',{name:'Delete local review'}).click();
+  await page.getByRole('button',{name:'Delete local review'}).click();await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);
   assert.equal(await page.locator('#review-list li').count(),0);
 
   // Re-run the local core path at 360 px using keyboard activation only.
@@ -323,6 +323,7 @@ const assert=require('node:assert/strict');
   await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);
   assert.match(await page.locator('#review-status').innerText(),/not factual verification/);
   await page.getByRole('button',{name:'Delete local review'}).focus();await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);
   assert.equal(await page.locator('#review-list li').count(),0);
 
   assert.equal(await page.evaluate(()=>localStorage.getItem('sutra.review-cards.v2')),null);
@@ -337,7 +338,7 @@ const assert=require('node:assert/strict');
   assert.equal(await page.evaluate(()=>localStorage.getItem('sutra.review-cards.v2')),'corrupt fixture canary');
   await page.getByRole('button',{name:'Clear all local review data'}).click();
   await page.getByRole('button',{name:'Confirm clear local reviews'}).click();
-  assert.match(await page.locator('#review-status').innerText(),/cleared from this browser/);
+  await page.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('cleared from this browser'));assert.match(await page.locator('#review-status').innerText(),/cleared from this browser/);
   assert.deepEqual(await page.evaluate(()=>[localStorage.getItem('sutra.review-cards.v2'),localStorage.getItem('unrelated-browser-key'),sessionStorage.length]),[null,'keep',0]);
   await page.reload();
   await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();

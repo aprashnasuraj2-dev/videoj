@@ -21,10 +21,11 @@ export function createReviewStore({storage,sources,idFactory=()=>crypto.randomUU
  function inspect(){
   return rawRecords().map(record=>{
    const validation=validateReceipt(record.receipt,{sources:catalog});
-   if(validation.valid)return Object.freeze({id:record.id,status:'valid',record:clone(record),errors:[]});
+   const expected=JSON.stringify(record),removeIfUnchanged=()=>remove(record.id,expected);
+   if(validation.valid)return Object.freeze({id:record.id,status:'valid',record:clone(record),errors:[],removeIfUnchanged});
    const receipt=record.receipt??{};
    return Object.freeze({
-    id:record.id,status:'stale',
+    id:record.id,status:'stale',removeIfUnchanged,
     provenance:Object.freeze({
      sourceId:typeof receipt.sourceId==='string'?receipt.sourceId:'unknown',
      sourceVersion:typeof receipt.sourceVersion==='string'?receipt.sourceVersion:'unknown',
@@ -42,6 +43,22 @@ export function createReviewStore({storage,sources,idFactory=()=>crypto.randomUU
   const inspected=inspect(),stale=inspected.filter(item=>item.status==='stale');
   if(stale.length)throw new ReviewDataStaleError(stale.length);
   return inspected.map(item=>clone(item.record));
+ }
+ function remove(id,expected){
+   const records=rawRecords(),current=records.find(record=>record.id===id);
+   if(expected!==undefined&&(!current||JSON.stringify(current)!==expected))throw Error('Saved review changed; inspect it again before deletion.');
+   const next=records.filter(record=>record.id!==id);
+   if(records.length===next.length)throw Error('Saved review not found.');
+   // Last-card deletion removes the application key, not merely its rendered row.
+   if(next.length===0)storage.removeItem(KEY);else storage.setItem(KEY,JSON.stringify(next));
+   if(storage.getItem(KEY)!==(next.length?JSON.stringify(next):null))throw Error('Deletion not confirmed.');
+   pending.delete(id); // Completed IDs contain no receipt payload.
+ }
+ function clear(){
+   // Explicit recovery for corrupt/stale storage, with no parse and no broad origin wipe.
+   pending.clear();completed.clear();
+   storage.removeItem(KEY);storage.removeItem(LEGACY_REVIEW_STORAGE_KEY);
+   if(storage.getItem(KEY)!==null||storage.getItem(LEGACY_REVIEW_STORAGE_KEY)!==null)throw Error('Local review deletion not confirmed.');
  }
  return {
   list,inspect,
@@ -72,19 +89,11 @@ export function createReviewStore({storage,sources,idFactory=()=>crypto.randomUU
    completed.add(id);while(completed.size>20)completed.delete(completed.values().next().value);
    return clone(record);
   },
-  remove(id){
-   const records=rawRecords(),next=records.filter(record=>record.id!==id);
-   if(records.length===next.length)throw Error('Saved review not found.');
-   // Last-card deletion removes the application key, not merely its rendered row.
-   if(next.length===0)storage.removeItem(KEY);else storage.setItem(KEY,JSON.stringify(next));
-   if(storage.getItem(KEY)!==(next.length?JSON.stringify(next):null))throw Error('Deletion not confirmed.');
-   pending.delete(id); // Completed IDs contain no receipt payload.
+  remove,
+  captureClear(){
+   const current=storage.getItem(KEY),legacy=storage.getItem(LEGACY_REVIEW_STORAGE_KEY);
+   return ()=>{if(storage.getItem(KEY)!==current||storage.getItem(LEGACY_REVIEW_STORAGE_KEY)!==legacy)throw Error('Local review collection changed; confirm clearing again.');clear();};
   },
-  clear(){
-   // Explicit recovery for corrupt/stale storage, with no parse and no broad origin wipe.
-   pending.clear();completed.clear();
-   storage.removeItem(KEY);storage.removeItem(LEGACY_REVIEW_STORAGE_KEY);
-   if(storage.getItem(KEY)!==null||storage.getItem(LEGACY_REVIEW_STORAGE_KEY)!==null)throw Error('Local review deletion not confirmed.');
-  },
+  clear,
  };
 }

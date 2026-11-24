@@ -72,3 +72,11 @@ test('legacy synthetic review key is never read as an active source review and e
  assert.deepEqual(f.store.list(),[],'legacy data is quarantined, not auto-migrated');
  f.store.clear();assert.equal(f.values.has('sutra.synthetic-review-cards.v1'),false);assert.equal(f.values.has('sutra.review-cards.v2'),false);assert.equal(f.values.get('unrelated'),'keep');
 });
+
+test('destructive review actions are exact snapshots, not reusable record IDs or collection permissions',()=>{
+ const f=setup(),p=f.store.prepare(fixture.receipt);f.store.commit(p.id);
+ const stale=f.store.inspect()[0],clear=f.store.captureClear();
+ const raw=JSON.parse(f.values.get(key));raw[0].savedAt='2026-01-01T00:00:00.000Z';f.values.set(key,JSON.stringify(raw));
+ assert.throws(stale.removeIfUnchanged,/changed/);assert.throws(clear,/changed/);assert.equal(f.store.list().length,1);
+ f.store.inspect()[0].removeIfUnchanged();assert.equal(f.values.has(key),false);
+});

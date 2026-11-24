@@ -1,6 +1,7 @@
 import {isNativeCueReached} from './seek-policy.js';
 import './style.css';
-import {createReviewStore,REVIEW_STORAGE_KEY} from './review-store.js';
+import {createReviewStore,REVIEW_STORAGE_KEY,LEGACY_REVIEW_STORAGE_KEY} from './review-store.js';
+import {createReviewMutationQueue} from './review-mutation.js';
 import {createReviewActions} from './review-actions.js';
 import {loadLocalNetwork,runNetwork} from '../../../packages/sutra-runtime/index.js';
 import {createScriptedModel,createSourceScriptedModel} from '../../../packages/sutra-runtime/testing.js';
@@ -160,6 +161,7 @@ seekTiming.addEventListener('click',async()=>{
 window.addEventListener('pagehide',event=>{mediaLoad?.abort();if(event.persisted){try{timingPlayer?.media.pause();}catch{}return;}timingTranscript?.dispose();releaseMediaUrls();});
 
 let reviewStore=null,reviewActions=null,reviewProposal=null,lastReviewAttempt=null,reviewBusy=false;
+const reviewMutations=createReviewMutationQueue();
 const reviewDialog=document.querySelector('#review-dialog'),reviewStatus=document.querySelector('#review-status'),reviewAttemptButton=document.querySelector('#download-review-attempt');
 function setReviewAttempt(proposal,outcome){
  lastReviewAttempt={requestId:proposal.id,receipt:proposal.args.receipt,outcome,observedAt:new Date().toISOString()};
@@ -177,6 +179,13 @@ reviewAttemptButton.addEventListener('click',()=>{
 function getReviewStore(){if(!reviewStore)reviewStore=createReviewStore({storage:localStorage,sources:content.sources});return reviewStore;}
 function getReviewActions(){if(!reviewActions)reviewActions=createReviewActions({store:getReviewStore(),sources:content.sources,download(json,filename){const url=URL.createObjectURL(new Blob([json],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}});return reviewActions;}
 function forgetReviewAttempt(id){if(lastReviewAttempt&&(id===undefined||lastReviewAttempt.requestId===id)){lastReviewAttempt=null;reviewAttemptButton.hidden=true;}}
+async function removeDisplayedReview(itemState,item,list){
+ if(reviewBusy||!list.contains(item))return;
+ reviewBusy=true;
+ try{await reviewMutations.run(()=>{if(!list.contains(item))throw Error('Review row is no longer current.');itemState.removeIfUnchanged();});forgetReviewAttempt(itemState.id);renderReviews();reviewStatus.textContent=itemState.status==='stale'?'Stale local review deleted.':'Local review deleted.';}
+ catch{try{renderReviews();}catch{}reviewStatus.textContent='Could not delete this local review. It may have changed; inspect again. No successful deletion is claimed.';}
+ finally{reviewBusy=false;}
+}
 function renderReviews(){
  const list=document.querySelector('#review-list');list.replaceChildren();
  const inspected=getReviewStore().inspect();
@@ -186,21 +195,21 @@ function renderReviews(){
    const p=itemState.provenance;
    label.textContent=`Stale local review · source ${p.sourceId} / ${p.sourceVersion} · cue ${p.cueId} · revalidation required`;
    label.dataset.state='stale';remove.textContent='Delete stale local review';
-   remove.addEventListener('click',()=>{try{getReviewStore().remove(itemState.id);forgetReviewAttempt(itemState.id);renderReviews();reviewStatus.textContent='Stale local review deleted.';}catch{reviewStatus.textContent='Could not delete this stale local review; no successful deletion is claimed.';}});
+   remove.addEventListener('click',()=>removeDisplayedReview(itemState,item,list));
    item.append(label,remove);list.append(item);continue;
   }
   const record=itemState.record,download=document.createElement('button');
   label.textContent=`Source review · cue ${record.receipt.start}–${record.receipt.end}s · ${record.receipt.sourceVersion} `;remove.textContent='Delete local review';
   download.textContent='Download saved receipt';download.className='review-action';
   download.addEventListener('click',async()=>{
-   if(reviewBusy)return;
+   if(reviewBusy||!list.contains(item))return;
    try{
     const proposal=getReviewActions().prepare('export-receipt',{id:record.id,snapshot:record});
     await getReviewActions().execute(proposal.id);
     reviewStatus.textContent='Source receipt download requested. This does not confirm the browser saved the file or that the source is factually true.';
    }catch{reviewStatus.textContent='This receipt changed, was deleted or could not be validated for download. No export success is claimed.';try{renderReviews();}catch{}}
   });
-  remove.addEventListener('click',()=>{try{getReviewStore().remove(record.id);forgetReviewAttempt(record.id);renderReviews();reviewStatus.textContent='Local review deleted.';}catch{reviewStatus.textContent='Could not delete this local review; no successful deletion is claimed.';}});
+  remove.addEventListener('click',()=>removeDisplayedReview(itemState,item,list));
   item.append(label,download,remove);list.append(item);
  }
  if(inspected.some(item=>item.status==='stale'))reviewStatus.textContent='One or more saved reviews are stale after source/media version drift. They are not shown as valid evidence; inspect provenance and delete or re-run the review.';
@@ -218,10 +227,11 @@ document.querySelector('#prepare-review').addEventListener('click',()=>prepareRe
 document.querySelector('#cancel-review').addEventListener('click',cancelReview);
 reviewDialog.addEventListener('cancel',event=>{event.preventDefault();cancelReview();});
 document.querySelector('#confirm-review').addEventListener('click',async()=>{
- if(!reviewProposal||reviewBusy)return;reviewBusy=true;const proposal=reviewProposal;reviewProposal=null;document.querySelector('#review-preview').textContent='';reviewDialog.close();
+ if(!reviewDialog.open||!reviewProposal||reviewBusy)return;reviewBusy=true;const proposal=reviewProposal;reviewProposal=null;document.querySelector('#review-preview').textContent='';reviewDialog.close();
  let saved;
- try{saved=await getReviewActions().execute(proposal.id);}
+ try{saved=await reviewMutations.run(()=>getReviewActions().execute(proposal.id));}
  catch(error){
+  getReviewActions().cancel(proposal.id);
   const outcome=error.outcome==='unknown'?'unknown':'rejected';setReviewAttempt(proposal,outcome);
   reviewStatus.textContent=outcome==='unknown'?'Save outcome is unknown. Inspect local reviews before trying again; no automatic retry will occur.':'Local save was rejected before confirmation. The action will not be automatically retried.';
   reviewBusy=false;return;
@@ -230,16 +240,20 @@ document.querySelector('#confirm-review').addEventListener('click',async()=>{
  try{renderReviews();reviewStatus.textContent='Source review saved in this browser. This is a source-consistency record, not factual verification.';}catch{reviewStatus.textContent='The local save returned successfully, but the review list could not be refreshed.';}
 });
 const clearDialog=document.querySelector('#clear-review-dialog'),clearButton=document.querySelector('#clear-local-reviews');
-clearButton.addEventListener('click',()=>clearDialog.showModal());
-function closeClear(){clearDialog.close();clearButton.focus();}
+let clearSnapshot=null;
+clearButton.addEventListener('click',()=>{if(reviewBusy||clearDialog.open)return;try{clearSnapshot=getReviewStore().captureClear();clearDialog.showModal();}catch{clearSnapshot=null;reviewStatus.textContent='Local review data could not be inspected for clearing.';}});
+function closeClear(){clearSnapshot=null;if(clearDialog.open)clearDialog.close();clearButton.focus();}
 document.querySelector('#cancel-clear-reviews').addEventListener('click',closeClear);
 clearDialog.addEventListener('cancel',event=>{event.preventDefault();closeClear();});
-document.querySelector('#confirm-clear-reviews').addEventListener('click',()=>{
- closeClear();
- try{if(reviewBusy)throw Error('Save in progress');if(reviewProposal)getReviewActions().cancel(reviewProposal.id);getReviewStore().clear();reviewProposal=null;document.querySelector('#review-preview').textContent='';forgetReviewAttempt();renderReviews();reviewStatus.textContent='Local review data cleared from this browser. Previously downloaded files are not deleted.';}
+document.querySelector('#confirm-clear-reviews').addEventListener('click',async()=>{
+ if(!clearDialog.open||!clearSnapshot||reviewBusy)return;
+ const confirmed=clearSnapshot;closeClear();reviewBusy=true;
+ try{await reviewMutations.run(confirmed);if(reviewProposal)getReviewActions().cancel(reviewProposal.id);reviewProposal=null;document.querySelector('#review-preview').textContent='';forgetReviewAttempt();renderReviews();reviewStatus.textContent='Local review data cleared from this browser. Previously downloaded files are not deleted.';}
  catch{reviewStatus.textContent='Could not confirm clearing local review data. Inspect before trying again; no automatic retry.';}
+ finally{reviewBusy=false;}
 });
-window.addEventListener('storage',event=>{if(event.key!==REVIEW_STORAGE_KEY&&event.key!==null)return;if(reviewProposal){cancelReview();}forgetReviewAttempt();try{renderReviews();reviewStatus.textContent='Local review collection changed in another tab. Inspect the updated records.';}catch{reviewStatus.textContent='Local review data changed and could not be read.';}});
+window.addEventListener('storage',event=>{if(event.key!==REVIEW_STORAGE_KEY&&event.key!==LEGACY_REVIEW_STORAGE_KEY&&event.key!==null)return;if(reviewProposal)cancelReview();if(clearDialog.open)closeClear();forgetReviewAttempt();try{renderReviews();reviewStatus.textContent='Local review collection changed in another tab. Inspect the updated records.';}catch{reviewStatus.textContent='Local review data changed and could not be read.';}});
+window.addEventListener('pagehide',()=>{reviewMutations.revoke();if(reviewProposal)cancelReview();if(clearDialog.open)closeClear();});
 try{renderReviews();}catch{reviewStatus.textContent='Existing local review data could not be read. Other learning features remain available.';}
 
 const sourceButton=document.querySelector('#run-source-network');

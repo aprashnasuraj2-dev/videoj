@@ -105,7 +105,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.getByRole('button',{name:'Download last save outcome'}).click();
   const completedAttempt=JSON.parse(fs.readFileSync(await (await completedAttemptDownload).path(),'utf8'));
   assert.equal(completedAttempt.outcome,'completed');assert.equal(completedAttempt.requestId,exportedReview.id);
-  await page.reload();await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);await page.getByRole('button',{name:'Delete local review'}).click();assert.equal(await page.locator('#review-list li').count(),0);
+  await page.reload();await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);await page.getByRole('button',{name:'Delete local review'}).click();await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);assert.equal(await page.locator('#review-list li').count(),0);
 
   // A saved receipt from an older source version must become visible stale data
   // after reload, never a silently migrated or downloadable valid card.
@@ -120,7 +120,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.equal(await page.locator('#review-list [data-state=stale]').count(),1);
   assert.match(await page.locator('#review-list').innerText(),/retired-v0/);
   assert.equal(await page.getByRole('button',{name:'Download saved receipt'}).count(),0,'stale evidence has no valid-download action');
-  await page.getByRole('button',{name:'Delete stale local review'}).click();assert.equal(await page.locator('#review-list li').count(),0);
+  await page.getByRole('button',{name:'Delete stale local review'}).click();await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);assert.equal(await page.locator('#review-list li').count(),0);
 
   // Known quota rejection: zero persisted record, explicit rejected receipt, no retry.
   await page.evaluate(()=>{
@@ -128,7 +128,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
    Storage.prototype.setItem=function(key,value){if(key==='sutra.review-cards.v2'){window.__sutraWriteCalls++;throw new DOMException('quota','QuotaExceededError');}return window.__sutraOriginalSetItem.call(this,key,value);};
   });
   await page.getByRole('button',{name:'Preview source review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();
-  assert.match(await page.locator('#review-status').innerText(),/rejected before confirmation/);
+  await page.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('rejected before confirmation'));assert.match(await page.locator('#review-status').innerText(),/rejected before confirmation/);
   assert.equal(await page.locator('#review-list li').count(),0);assert.equal(await page.evaluate(()=>window.__sutraWriteCalls),1);
   const rejectedDownloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Download last save outcome'}).click();
   const rejected=JSON.parse(fs.readFileSync(await (await rejectedDownloadPromise).path(),'utf8'));assert.equal(rejected.outcome,'rejected');
@@ -140,7 +140,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
    Storage.prototype.setItem=function(key,value){if(key==='sutra.review-cards.v2'){window.__sutraWriteCalls++;original.call(this,key,value);throw new Error('synthetic disconnect after write');}return original.call(this,key,value);};
   });
   await page.getByRole('button',{name:'Preview source review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();
-  assert.match(await page.locator('#review-status').innerText(),/outcome is unknown/);assert.equal(await page.evaluate(()=>window.__sutraWriteCalls),1);
+  await page.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('outcome is unknown'));assert.match(await page.locator('#review-status').innerText(),/outcome is unknown/);assert.equal(await page.evaluate(()=>window.__sutraWriteCalls),1);
   const unknownDownloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Download last save outcome'}).click();
   const unknown=JSON.parse(fs.readFileSync(await (await unknownDownloadPromise).path(),'utf8'));assert.equal(unknown.outcome,'unknown');assert.match(unknown.outcomeMeaning,/may have happened/);
   await page.evaluate(()=>{Storage.prototype.setItem=window.__sutraOriginalSetItem;});
@@ -150,7 +150,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
    await page.reload();await page.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
    await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
    assert.equal(await page.locator('#review-list li').count(),1,'unknown outcome can reveal a real prior side effect on later inspection');
-  await page.getByRole('button',{name:'Delete local review'}).click();assert.equal(await page.locator('#review-list li').count(),0);
+  await page.getByRole('button',{name:'Delete local review'}).click();await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);assert.equal(await page.locator('#review-list li').count(),0);
   await page.getByRole('button',{name:'Read current playback state',exact:true}).click();assert.equal(JSON.parse(await page.locator('#playback-state').innerText()).available,false);
   // A missing media response must fail honestly and allow a later explicit retry.
   await page.route('**/media/timing-fixture.mp4*',route=>route.fulfill({status:404,contentType:'text/plain',body:'missing fixture'}));
