@@ -37,6 +37,18 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.getByRole('button',{name:'Inspect available evidence'}).click();
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
   await page.getByRole('button',{name:'Check example',exact:true}).click();assert.match(await page.locator('#result').innerText(),/Catalog matched/);assert.match(await page.locator('#result').innerText(),/Factual truth has not been checked/);
+  // Language switching changes only tagged interface labels. It must not
+  // remount source evidence or erase current validation state.
+  const originalCueText=await page.locator('#cue-text').innerText();
+  assert.equal(await page.locator('#language-select').getAttribute('data-nepali-reviewed'),'false');
+  await page.locator('#language-select').selectOption('ne');
+  assert.equal(await page.locator('html').getAttribute('lang'),'ne');
+  assert.match(await page.locator('h1').innerText(),/क्षण/);
+  assert.equal(await page.locator('#cue-text').innerText(),originalCueText,'original source wording is not translated');
+  assert.equal(await page.locator('#result').getAttribute('data-state'),'matched','validation state survives locale switch');
+  await page.locator('#language-select').selectOption('en');
+  assert.equal(await page.locator('html').getAttribute('lang'),'en');
+  assert.equal((await page.locator('h1').innerText()).trim(),'Find the moment. Keep the evidence.');
   await page.getByRole('button',{name:'Try altered quotation'}).click();assert.match(await page.locator('#result').innerText(),/QUOTE_MISMATCH/);
   await page.locator('#cue').focus();await page.keyboard.press('Enter');assert.equal(await page.locator('#cue').getAttribute('aria-pressed'),'true');
   await page.getByRole('button',{name:'Run scripted network test'}).click();await page.waitForFunction(()=>document.querySelector('#network-result').textContent.includes('2 agent invocations; 3 scripted model steps.'));assert.equal(await page.locator('#network-result').getAttribute('data-state'),'completed');assert.equal(await page.locator('#network-trace li').count(),2);assert.match(await page.locator('#network-result').innerText(),/No live AI/);
