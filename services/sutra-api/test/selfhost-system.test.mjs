@@ -75,3 +75,53 @@ test('complete model-free browser-facing adapter -> Worker -> authenticated gate
   await close(engine);
  }
 });
+
+test('one cancelled client request closes the real gateway and loopback model stream without retry', {timeout:12000},async()=>{
+ let started,closed=false,reservations=0,releases=0,calls=0;
+ const engineStarted=new Promise(resolve=>started=resolve);
+ const engine=http.createServer(async(req,res)=>{
+  const parts=[];for await(const part of req)parts.push(part);
+  calls++;res.on('close',()=>{closed=true;});
+  res.writeHead(200,{'Content-Type':'text/event-stream'});
+  res.write(sse([event({content:'Partial unverified text, never a completed response.'},null)]).replace('data: [DONE]\\n\\n',''));
+  started();
+  // A deliberately held-open model stream; no [DONE] may be invented.
+ });
+ const enginePort=await listen(engine);
+ const gateway=createGateway({token:secret,model,upstreamPort:enginePort}),gatewayPort=await listen(gateway);
+ const env={
+  SUTRA_INFERENCE_BACKEND:'self_hosted',SUTRA_ENABLE_INFERENCE:'true',SUTRA_MODELS:model,
+  SUTRA_SELF_HOSTED_UPSTREAM_URL:publicGateway,SUTRA_SELF_HOSTED_TOKEN:secret,
+  SUTRA_ALLOWED_ORIGIN:origin,SUTRA_CLIENT_HASH_SECRET:'h'.repeat(32),
+  SUTRA_MAX_OUTPUT_TOKENS:'256',SUTRA_MAX_DAILY_CALLS:'100',SUTRA_MAX_CLIENT_CALLS:'8',SUTRA_MAX_CONCURRENT:'2',
+  SUTRA_QUOTA:{idFromName:()=> 'mock-quota',get:()=>({fetch:async u=>{
+   if(new URL(u).pathname==='/release'){releases++;return Response.json({released:true});}
+   reservations++;return Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000001'});
+  }})}
+ };
+ const abort=new AbortController();
+ try{
+  const adapter=createProviderAdapter({origin,model,fetchImpl:async(url,options)=>
+   handleInference(new Request(url,{method:'POST',headers:{...options.headers,Origin:origin},body:options.body,signal:options.signal}),env,{
+    fetchImpl:async(gatewayUrl,opts)=>{
+     assert.equal(gatewayUrl,publicGateway);
+     return fetch('http://127.0.0.1:'+gatewayPort+'/v1/chat/completions',opts);
+    }
+   })
+  });
+  const pending=adapter.chat({messages:[{role:'user',content:'Synthetic cancel test'}],tools:[],signal:abort.signal});
+  await engineStarted;
+  abort.abort();
+  await assert.rejects(pending,error=>['CANCELLED','TRANSPORT'].includes(error?.code),'cancelled stream cannot return completed text');
+  for(let i=0;i<150&&(!closed||releases<1);i++)await new Promise(resolve=>setTimeout(resolve,10));
+  assert.equal(calls,1,'no automatic model retries');
+  assert.equal(closed,true,'gateway must disconnect from the local model');
+  assert.equal(reservations,1);
+  assert.equal(releases,1,'the Worker must eventually release the admission slot');
+ }finally{
+  gateway.closeAllConnections();
+  engine.closeAllConnections();
+  await close(gateway);
+  await close(engine);
+ }
+});
