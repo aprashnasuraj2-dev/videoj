@@ -27,6 +27,7 @@ async function fixture(){
  const links={version:1,networks:{learner:{},source_learner:{},linked_learner:{guide_peer:'https://old.invalid/agents/checklist'}}};
  await fsp.writeFile(path.join(root,'agents','agent-manifest.json'),JSON.stringify(manifest));await fsp.writeFile(path.join(root,'agents','links.json'),JSON.stringify(links));
  for(const name of names){await fsp.writeFile(path.join(root,'agents','v','old',name+'.network.json'),JSON.stringify(graph));await fsp.writeFile(path.join(root,'agents',name+'.network.json'),JSON.stringify(graph));}
+ await fsp.mkdir(path.join(root,'agents','v','historical'),{recursive:true});await fsp.writeFile(path.join(root,'agents','v','historical','source_learner.network.json'),JSON.stringify(graph));await fsp.writeFile(path.join(root,'agents','artifact-inventory.json'),'{}');
  await fsp.writeFile(path.join(root,'runtime','sutra-runtime.js'),'export const runtime=true;\n');await fsp.writeFile(path.join(root,'index.html'),'<!doctype html><main id="app"></main>');await fsp.writeFile(path.join(root,'assets','app.js'),'console.log("app");');
  await fsp.writeFile(path.join(root,'content','content-profile.json'),profileBytes);await fsp.writeFile(path.join(root,'content','source-catalog.json'),catalogBytes);await fsp.writeFile(path.join(root,'content','content-pack-record.json'),JSON.stringify(packRecord,null,2)+'\n');
  await fsp.writeFile(path.join(root,'media','release',mediaSha,'lesson.mp4'),mediaBytes);await fsp.writeFile(path.join(root,'media','release',mediaSha,'poster.svg'),'<svg/>');await fsp.writeFile(path.join(root,'media','release',transcriptSha,'chapters.vtt'),'WEBVTT\n');await fsp.writeFile(path.join(root,'media','release',transcriptSha,'captions.vtt'),'WEBVTT\n');
@@ -39,6 +40,7 @@ test('materializer creates separate release tree, removes stale dev graphs and w
   const r=await materializeReleaseCandidate({sourceDist:src,outputDir:out,config:cfg()});assert.equal(r.verified.valid,true);assert.match(r.record.runtimeSha256,/^[a-f0-9]{64}$/);assert.equal(r.record.stageOne.runtime,'/runtime/sutra-runtime.js');
   const manifest=JSON.parse(fs.readFileSync(path.join(out,'agents','agent-manifest.json')));assert.equal(manifest.llm_router.publisher_funded,true);
   for(const entry of manifest.networks){assert.match(entry.hocon,/^\.\/release\/[a-f0-9]{64}\//);assert.equal(fs.existsSync(path.join(out,'agents',entry.name+'.network.json')),false);assert.equal(fs.existsSync(path.join(out,'agents','v','old',entry.name+'.network.json')),false);assert.equal(fs.existsSync(path.join(out,'agents',entry.hocon.slice(2))),true);}
+  assert.equal(fs.existsSync(path.join(out,'agents','v')),false);assert.equal(fs.existsSync(path.join(out,'agents','artifact-inventory.json')),false);
   assert.equal(fs.readFileSync(path.join(out,'assets','app.js'),'utf8'),'console.log("app");');assert.ok(fs.existsSync(path.join(out,'agents','release-candidate.json')));
  }finally{await fsp.rm(src,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
 });
@@ -83,4 +85,15 @@ test('release materializer rejects a missing, altered or differently bound conte
  ]){
   const src=await fixture(),out=src+'-pack-record-reject';try{await mutate(src);await assert.rejects(materializeReleaseCandidate({sourceDist:src,outputDir:out,config:cfg()}));}finally{await fsp.rm(src,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
  }
+});
+
+test('candidate rejects unknown public files, traversal spellings, and a symlink root or aliased output overlap',async()=>{
+ const src=await fixture(),out=src+'-out',alias=src+'-alias';try{
+  await fsp.writeFile(path.join(src,'secrets.json'),'{"canary":"not for publication"}');
+  await assert.rejects(materializeReleaseCandidate({sourceDist:src,outputDir:out,config:cfg()}),/Unexpected candidate input path/);assert.equal(fs.existsSync(out),false);await fsp.unlink(path.join(src,'secrets.json'));
+  const manifestPath=path.join(src,'agents','agent-manifest.json'),original=await fsp.readFile(manifestPath,'utf8'),changed=JSON.parse(original);changed.networks[0].hocon='./v/old/../old/learner.network.json';await fsp.writeFile(manifestPath,JSON.stringify(changed));
+  await assert.rejects(materializeReleaseCandidate({sourceDist:src,outputDir:out,config:cfg()}),/Unsafe development graph URL/);await fsp.writeFile(manifestPath,original);
+  await fsp.symlink(src,alias,'dir');await assert.rejects(materializeReleaseCandidate({sourceDist:alias,outputDir:out,config:cfg()}),/symlink/);
+  await assert.rejects(materializeReleaseCandidate({sourceDist:src,outputDir:path.join(alias,'child'),config:cfg()}),/separate trees/);
+ }finally{await fsp.rm(alias,{force:true});await fsp.rm(src,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
 });

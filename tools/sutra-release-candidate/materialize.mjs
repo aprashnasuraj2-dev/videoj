@@ -13,6 +13,7 @@ async function regularFile(root,relative,max=MAX_FILE){
  if(!safeRelative(relative))throw Error('Unsafe candidate path: '+relative);
  const full=path.resolve(root,...relative.split('/')),prefix=path.resolve(root)+path.sep;
  if(!full.startsWith(prefix))throw Error('Candidate path escaped root.');
+ let dir=root;for(const part of relative.split('/').slice(0,-1)){dir=path.join(dir,part);const parent=await fs.lstat(dir);if(!parent.isDirectory()||parent.isSymbolicLink())throw Error('Candidate input contains a symlink or non-directory ancestor.');}
  const stat=await fs.lstat(full);
  if(!stat.isFile()||stat.isSymbolicLink()||stat.size<1||stat.size>max)throw Error('Candidate input is not a bounded regular file: '+relative);
  return {full,bytes:await fs.readFile(full)};
@@ -32,8 +33,8 @@ async function walk(root,dir=root,out=[]){
  }
  return out;
 }
-async function copyTree(source,destination){
- const files=await walk(source),total=files.reduce((s,f)=>s+f.size,0);
+async function copyTree(source,destination,files){
+ const total=files.reduce((s,f)=>s+f.size,0);
  if(total>MAX_TOTAL)throw Error('Candidate source exceeds aggregate size bound.');
  await fs.mkdir(destination,{recursive:false});
  for(const file of files){
@@ -67,7 +68,7 @@ async function removeEmptyParents(root,relative){
  }
 }
 export async function inventoryCandidate(root,{exclude=['agents/release-candidate.json']}={}){
- const files=(await walk(root)).filter(f=>!exclude.includes(f.rel)).sort((a,b)=>a.rel.localeCompare(b.rel));
+ const files=(await walk(root)).filter(f=>!exclude.includes(f.rel)).sort((a,b)=>a.rel<b.rel?-1:a.rel>b.rel?1:0);
  const out=[];let total=0;
  for(const file of files){
   const bytes=await fs.readFile(file.full);total+=bytes.length;
@@ -79,13 +80,18 @@ export async function inventoryCandidate(root,{exclude=['agents/release-candidat
 
 export async function materializeReleaseCandidate({sourceDist,outputDir,config}){
  const cfg=validateReleaseConfig(config);
- const source=await fs.realpath(path.resolve(sourceDist)),destination=path.resolve(outputDir);
+ const requested=path.resolve(sourceDist),requestedStat=await fs.lstat(requested);
+ if(!requestedStat.isDirectory()||requestedStat.isSymbolicLink())throw Error('Source dist must be a real directory, not a symlink.');
+ const source=await fs.realpath(requested),requestedOutput=path.resolve(outputDir);
+ const destination=path.join(await fs.realpath(path.dirname(requestedOutput)),path.basename(requestedOutput));
  try{await fs.lstat(destination);throw Error('Release output already exists; refuse overwrite.');}
  catch(error){if(error?.code!=='ENOENT')throw error;}
  const sourceStat=await fs.lstat(source);
  if(!sourceStat.isDirectory()||sourceStat.isSymbolicLink())throw Error('Source dist must be a real directory.');
  if(destination.startsWith(source+path.sep)||source.startsWith(destination+path.sep)||destination===source)throw Error('Source and output must be separate trees.');
 
+ // Walk before any content read. Reject symlinks and special files throughout the input tree.
+ const sourceFiles=await walk(source);
  const packRecord=await readJson(source,'content/content-pack-record.json',65536);
  if(!packRecord||packRecord.schema!==1||packRecord.contentVersion!==cfg.contentEvidence.contentVersion||!packRecord.publicPaths||typeof packRecord.recordHash!=='string'||!/^[a-f0-9]{64}$/.test(packRecord.recordHash))throw Error('Reviewed content pack record is missing or invalid.');
  const packCore={schema:packRecord.schema,contentVersion:packRecord.contentVersion,intakeRecordHash:packRecord.intakeRecordHash,profileSha256:packRecord.profileSha256,catalogSha256:packRecord.catalogSha256,mediaSha256:packRecord.mediaSha256,transcriptSha256:packRecord.transcriptSha256,guideSha256:packRecord.guideSha256,publicPaths:packRecord.publicPaths};
@@ -114,7 +120,7 @@ export async function materializeReleaseCandidate({sourceDist,outputDir,config})
  for(const entry of manifest.networks??[]){
   if(typeof entry?.name!=='string'||typeof entry?.hocon!=='string')throw Error('Invalid development manifest network.');
   const graphUrl=new URL(entry.hocon,'https://candidate.invalid/agents/');
-  if(graphUrl.origin!=='https://candidate.invalid'||graphUrl.search||graphUrl.hash||!graphUrl.pathname.startsWith('/agents/'))throw Error('Unsafe development graph URL.');
+  if(!/^\.\/v\/[A-Za-z0-9_-]+\/[A-Za-z][A-Za-z0-9_]{0,59}\.network\.json$/.test(entry.hocon)||graphUrl.origin!=='https://candidate.invalid'||graphUrl.search||graphUrl.hash||graphUrl.pathname!=='/agents/'+entry.hocon.slice(2))throw Error('Unsafe development graph URL.');
   const relative=graphUrl.pathname.slice(1);
   graphs[entry.name]=await readJson(source,relative,128*1024);stale.add(relative);
   const alias='agents/'+entry.name+'.network.json';
@@ -122,8 +128,18 @@ export async function materializeReleaseCandidate({sourceDist,outputDir,config})
   catch(error){if(error?.code!=='ENOENT')throw error;}
  }
  const prepared=prepareReleaseArtifacts({manifest,links,graphs,config:cfg});
- await copyTree(source,destination);
- for(const relative of stale){await removeIfPresent(destination,relative);await removeEmptyParents(destination,relative);}
+ // Only known publication paths and compiled browser assets may enter a candidate.
+ // Drop every historical graph, development-only inventory and old synthetic lesson file;
+ // the candidate inventory is freshly computed after writing the release graphs.
+ const required=new Set(['index.html','_headers','runtime/sutra-runtime.js','agents/agent-manifest.json','agents/links.json','content/content-profile.json','content/source-catalog.json','content/content-pack-record.json',mediaPath,transcriptPath,guidePath,content.profile.media.poster.slice(1),content.profile.media.chapters.slice(1),content.profile.media.captions.slice(1)]);
+ const devOnly=new Set(['agents/artifact-inventory.json','guides/synthetic-comparison-guide.html','media/timing-captions.vtt','media/timing-chapters.vtt','media/timing-fixture.mp4','media/timing-poster.svg','media/timing-source.json','transcripts/synthetic-timing.txt']);
+ const approved=[];
+ for(const file of sourceFiles){const rel=file.rel;
+  if(stale.has(rel)||devOnly.has(rel)||/^agents\/v\/[A-Za-z0-9_-]+\/[A-Za-z][A-Za-z0-9_]{0,59}\.network\.json$/.test(rel)||/^agents\/[A-Za-z][A-Za-z0-9_]{0,59}\.network\.json$/.test(rel))continue;
+  if(!required.has(rel)&&!/^assets\/[A-Za-z0-9_.-]+\.(?:js|css|woff2?|ttf)$/.test(rel))throw Error('Unexpected candidate input path: '+rel);
+  approved.push(file);
+ }
+ await copyTree(source,destination,approved);
 
  await fs.writeFile(path.join(destination,'agents','agent-manifest.json'),JSON.stringify(prepared.manifest,null,2)+'\n');
  await fs.writeFile(path.join(destination,'agents','links.json'),JSON.stringify(prepared.links,null,2)+'\n');
@@ -134,6 +150,7 @@ export async function materializeReleaseCandidate({sourceDist,outputDir,config})
   await fs.mkdir(path.dirname(target),{recursive:true});
   await fs.writeFile(target,value.bytes);
  }
+ // Build input is assumed stable and trusted while materializing; path controls do not scan arbitrary JS for embedded secrets.
  const runtime=await regularFile(destination,'runtime/sutra-runtime.js',2*1024*1024);
  const index=await regularFile(destination,'index.html',2*1024*1024);
  const verified=validatePreparedRelease(prepared),inventory=await inventoryCandidate(destination);
