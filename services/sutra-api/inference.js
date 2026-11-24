@@ -165,7 +165,9 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
   // never be streamed, retained or represented as a successful provider call.
   const incoming=Promise.resolve().then(()=>{
    controller.signal.throwIfAborted();
-   return fetchImpl(backend.url,{method:'POST',redirect:'error',credentials:'omit',cache:'no-store',headers:{'Content-Type':'application/json',Authorization:`Bearer ${backend.credential}`},body:upstreamBody,signal:controller.signal});
+   // Cloudflare Workers supports manual, not redirect:'error'. Never follow
+   // a redirect carrying a server credential; require exact full SSE 200.
+   return fetchImpl(backend.url,{method:'POST',redirect:'manual',credentials:'omit',cache:'no-store',headers:{'Content-Type':'application/json',Authorization:`Bearer ${backend.credential}`},body:upstreamBody,signal:controller.signal});
   }).then(value=>{
    if(finished||controller.signal.aborted){dispose(value?.body);throw Error('Cancelled upstream');}
    received=value;return value;

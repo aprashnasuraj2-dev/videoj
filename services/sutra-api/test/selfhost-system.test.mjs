@@ -69,7 +69,7 @@ test('complete model-free browser-facing adapter -> Worker -> authenticated gate
     fetchImpl:async(upstreamUrl,upstreamOptions)=>{
      assert.equal(upstreamUrl,publicGateway);
      assert.equal(upstreamOptions.headers.Authorization,'Bearer '+secret);
-     assert.equal(upstreamOptions.redirect,'error');
+     assert.equal(upstreamOptions.redirect,'manual');
      return fetchMappedGateway(gatewayPort,upstreamOptions);
     }
    });
