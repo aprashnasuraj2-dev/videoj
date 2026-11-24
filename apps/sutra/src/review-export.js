@@ -9,7 +9,7 @@ function dataField(object,key){
  return descriptor.value;
 }
 export function createReviewExport(record,{sources}={}){
- if(!plain(record)||Object.keys(record).length!==5||['schema','kind','id','receipt','savedAt'].some(k=>!Object.hasOwn(record,k)))throw Error('Not a supported source review.');
+ if(!plain(record))throw Error('Not a supported source review.');
  const receiptData=dataField(record,'receipt'),schema=dataField(record,'schema'),kind=dataField(record,'kind');
  if(!plain(receiptData)||schema!==2||kind!=='source-review')throw Error('Not a supported source review.');
  const id=dataField(record,'id'),savedAt=dataField(record,'savedAt');

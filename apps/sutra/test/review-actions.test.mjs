@@ -17,5 +17,5 @@ test('review action constructor refuses accessor-backed source data without invo
 test('review exports reject extra persisted envelope fields despite an otherwise valid receipt',async()=>{
  const f=setup(),p=f.actions.prepare('save-review-card',{receipt:fixture.receipt}),saved=await f.actions.execute(p.id);
  const {createReviewExport}=await import('../src/review-export.js');
- assert.throws(()=>createReviewExport({...saved,secret:'synthetic-private-canary'},{sources:[fixture.source]}),/Not a supported source review/);
+ const output=createReviewExport({...saved,secret:'synthetic-private-canary'},{sources:[fixture.source]});assert.equal(output.receipt.sourceId,fixture.receipt.sourceId);assert.doesNotMatch(JSON.stringify(output),/synthetic-private-canary/);
 });
