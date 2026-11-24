@@ -8,13 +8,17 @@ const safePublicPath=v=>typeof v==='string'&&v.length<=300&&v.startsWith('/')&&!
 const safeGuideHref=v=>safePublicPath(v)&&v.includes('#')&&v.indexOf('#')===v.lastIndexOf('#')&&v.split('#')[1].length>0;
 const freeze=v=>{if(v&&typeof v==='object'&&!Object.isFrozen(v)){Object.values(v).forEach(freeze);Object.freeze(v);}return v;};
 const hash=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(b=>b.toString(16).padStart(2,'0')).join('');
-const boundedJson=async({url,origin,fetchImpl,signal,maxBytes})=>{
- const response=await fetchImpl(url,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',headers:{Accept:'application/json'},signal});
- if(!response.ok||!response.headers.get('content-type')?.toLowerCase().includes('application/json')||response.url&&new URL(response.url).origin!==origin)throw Error('CONTENT_RESPONSE');
+const boundedBytes=async({url,origin,fetchImpl,signal,maxBytes,accept})=>{
+ const response=await fetchImpl(url,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',headers:{Accept:accept},signal});
+ if(!response.ok||response.url&&new URL(response.url).origin!==origin)throw Error('CONTENT_RESPONSE');
  if(Number(response.headers.get('content-length'))>maxBytes)throw Error('CONTENT_SIZE');
  const reader=response.body?.getReader();if(!reader)throw Error('CONTENT_BODY');let total=0;const chunks=[];
  try{for(;;){const {done,value}=await reader.read();if(done)break;total+=value.byteLength;if(total>maxBytes)throw Error('CONTENT_SIZE');chunks.push(value);}}finally{void reader.cancel().catch(()=>{});}
- const bytes=new Uint8Array(total);let off=0;for(const c of chunks){bytes.set(c,off);off+=c.length;}
+ const bytes=new Uint8Array(total);let off=0;for(const c of chunks){bytes.set(c,off);off+=c.length;}return {response,bytes};
+};
+const boundedJson=async({url,origin,fetchImpl,signal,maxBytes})=>{
+ const {response,bytes}=await boundedBytes({url,origin,fetchImpl,signal,maxBytes,accept:'application/json'});
+ if(!response.headers.get('content-type')?.toLowerCase().includes('application/json'))throw Error('CONTENT_RESPONSE');
  let data;try{data=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{throw Error('CONTENT_JSON');}
  if(!plain(data))throw Error('CONTENT_JSON');return {data,bytes};
 };
@@ -23,7 +27,7 @@ const validVideo=claim=>plain(claim)&&safeText(claim.title,120)&&safeText(claim.
 const validGuide=claim=>claim===null||plain(claim)&&claim.sourceKind==='guide'&&ID.test(claim.sourceId??'')&&safeText(claim.sourceVersion,100)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&ID.test(claim.claimKey??'')&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.excerpt,1200)&&safeText(claim.provenance,240)&&safeGuideHref(claim.sourceHref)&&SHA.test(claim.sourceHash??'');
 export function validateContentProfile(profile,catalog){
  try{
-  const p=snapshotDataRecord(profile,20),catalogRef=snapshotDataRecord(p.catalog,4),media=snapshotDataRecord(p.media,8),ui=snapshotDataRecord(p.ui,4);
+  const p=snapshotDataRecord(profile,24),catalogRef=snapshotDataRecord(p.catalog,4),media=snapshotDataRecord(p.media,8),transcript=snapshotDataRecord(p.transcript,4),ui=snapshotDataRecord(p.ui,4);
   const video=snapshotDataRecord(p.videoClaim,12),guide=p.guideClaim===null?null:snapshotDataRecord(p.guideClaim,20);
   const c=snapshotDataRecord(catalog,8),rawSources=snapshotDataArray(c.sources,20),sources=rawSources.map(raw=>{
    const s=snapshotDataRecord(raw,10),rawCues=snapshotDataArray(s.cues,500),cues=rawCues.map(rawCue=>{
@@ -31,18 +35,22 @@ export function validateContentProfile(profile,catalog){
    });
    return {id:s.id,version:s.version,hash:s.hash,mediaHash:s.mediaHash,duration:s.duration,cues};
   });
-  profile={schema:p.schema,mode:p.mode,contentVersion:p.contentVersion,title:p.title,observedAt:p.observedAt,primarySourceId:p.primarySourceId,featuredCueId:p.featuredCueId,catalog:{path:catalogRef.path,sha256:catalogRef.sha256},media:{video:media.video,poster:media.poster,chapters:media.chapters,captions:media.captions},videoClaim:{...video},guideClaim:guide?{...guide}:null,ui:{noticeTitle:ui.noticeTitle,noticeBody:ui.noticeBody}};
+  profile={schema:p.schema,mode:p.mode,contentVersion:p.contentVersion,title:p.title,observedAt:p.observedAt,primarySourceId:p.primarySourceId,featuredCueId:p.featuredCueId,catalog:{path:catalogRef.path,sha256:catalogRef.sha256},transcript:{path:transcript.path,sha256:transcript.sha256},media:{video:media.video,poster:media.poster,chapters:media.chapters,captions:media.captions},videoClaim:{...video},guideClaim:guide?{...guide}:null,ui:{noticeTitle:ui.noticeTitle,noticeBody:ui.noticeBody}};
   catalog={schema:c.schema,contentVersion:c.contentVersion,sources};
  }catch{throw Error('CONTENT_DATA');}
- if(!exact(profile,['schema','mode','contentVersion','title','observedAt','primarySourceId','featuredCueId','catalog','media','videoClaim','guideClaim','ui'])||profile.schema!==1||!['synthetic','reviewed'].includes(profile.mode)||!safeText(profile.contentVersion,100)||!safeText(profile.title,160)||typeof profile.observedAt!=='string'||!/T.*(?:Z|[+-]\d\d:\d\d)$/.test(profile.observedAt)||!Number.isFinite(Date.parse(profile.observedAt))||!ID.test(profile.primarySourceId??'')||!ID.test(profile.featuredCueId??''))throw Error('CONTENT_PROFILE');
+ if(!exact(profile,['schema','mode','contentVersion','title','observedAt','primarySourceId','featuredCueId','catalog','transcript','media','videoClaim','guideClaim','ui'])||profile.schema!==1||!['synthetic','reviewed'].includes(profile.mode)||!safeText(profile.contentVersion,100)||!safeText(profile.title,160)||typeof profile.observedAt!=='string'||!/T.*(?:Z|[+-]\d\d:\d\d)$/.test(profile.observedAt)||!Number.isFinite(Date.parse(profile.observedAt))||!ID.test(profile.primarySourceId??'')||!ID.test(profile.featuredCueId??''))throw Error('CONTENT_PROFILE');
  if(!exact(profile.catalog,['path','sha256'])||!safeRelative(profile.catalog.path)||!SHA.test(profile.catalog.sha256??''))throw Error('CONTENT_CATALOG_REF');
+ if(!exact(profile.transcript,['path','sha256'])||!safePublicPath(profile.transcript.path)||profile.transcript.path.includes('#')||!SHA.test(profile.transcript.sha256??''))throw Error('CONTENT_TRANSCRIPT');
  if(!exact(profile.media,['video','poster','chapters','captions'])||Object.values(profile.media).some(x=>!safePublicPath(x)||x.includes('#')))throw Error('CONTENT_MEDIA');
  if(!validVideo(profile.videoClaim))throw Error('CONTENT_VIDEO_CLAIM');
  if(!validGuide(profile.guideClaim)||profile.mode==='reviewed'&&profile.guideClaim===null)throw Error('CONTENT_GUIDE');
  if(!exact(profile.ui,['noticeTitle','noticeBody'])||!safeText(profile.ui.noticeTitle,120)||!safeText(profile.ui.noticeBody,400))throw Error('CONTENT_UI');
  if(!exact(catalog,['schema','contentVersion','sources'])||catalog.schema!==1||catalog.contentVersion!==profile.contentVersion||!Array.isArray(catalog.sources)||catalog.sources.length<1||catalog.sources.length>20||!catalog.sources.every(validSource)||new Set(catalog.sources.map(s=>s.id)).size!==catalog.sources.length)throw Error('CONTENT_CATALOG');
  const source=catalog.sources.find(s=>s.id===profile.primarySourceId),cue=source?.cues.find(c=>c.id===profile.featuredCueId);
- if(!source||!cue)throw Error('CONTENT_PRIMARY');
+ if(!source||!cue||source.hash!==profile.transcript.sha256)throw Error('CONTENT_PRIMARY');
+ if(profile.mode==='reviewed'){
+  if(!profile.media.video.includes(source.mediaHash)||!profile.transcript.path.includes(source.hash)||!profile.guideClaim.sourceHref.includes(profile.guideClaim.sourceHash))throw Error('CONTENT_ADDRESSING');
+ }
  return freeze({profile:structuredClone(profile),sources:structuredClone(catalog.sources),source:structuredClone(source),featuredCue:structuredClone(cue)});
 }
 export async function loadContentProfile({baseUrl,fetchImpl=fetch,signal,timeoutMs=5000}={}){
@@ -58,7 +66,13 @@ export async function loadContentProfile({baseUrl,fetchImpl=fetch,signal,timeout
   const catalogResult=await boundedJson({url:catalogUrl.href,origin:base.origin,fetchImpl,signal:controller.signal,maxBytes:262144});
   if(await hash(catalogResult.bytes)!==profile.catalog.sha256)throw Error('CONTENT_CATALOG_HASH');
   const validated=validateContentProfile(profile,catalogResult.data);
-  return freeze({...validated,artifacts:{profile:new URL('content-profile.json',base).href,catalog:catalogUrl.href,catalogSha256:profile.catalog.sha256}});
+  const transcriptUrl=new URL(validated.profile.transcript.path,base.origin);
+  if(transcriptUrl.origin!==base.origin||transcriptUrl.search||transcriptUrl.hash)throw Error('CONTENT_TRANSCRIPT');
+  const transcriptResult=await boundedBytes({url:transcriptUrl.href,origin:base.origin,fetchImpl,signal:controller.signal,maxBytes:2*1024*1024,accept:'text/plain'});
+  if(await hash(transcriptResult.bytes)!==validated.profile.transcript.sha256)throw Error('CONTENT_TRANSCRIPT_HASH');
+  let transcriptText;try{transcriptText=new TextDecoder('utf-8',{fatal:true}).decode(transcriptResult.bytes);}catch{throw Error('CONTENT_TRANSCRIPT_UTF8');}
+  for(const cue of validated.source.cues)if(!transcriptText.includes(cue.text))throw Error('CONTENT_TRANSCRIPT_CUE');
+  return freeze({...validated,artifacts:{profile:new URL('content-profile.json',base).href,catalog:catalogUrl.href,catalogSha256:profile.catalog.sha256,transcript:transcriptUrl.href,transcriptSha256:validated.profile.transcript.sha256}});
  }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controller.abort();}
 }
 export function receiptForFeatured(content,{retrievedAt}={}){

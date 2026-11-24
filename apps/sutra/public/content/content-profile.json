@@ -8,7 +8,7 @@
   "featuredCueId": "timing-marker",
   "catalog": {
     "path": "./source-catalog.json",
-    "sha256": "a92e4c0e29691f8cc65cbc2707bb3359b4b351bde929f73299062e7dc05503cb"
+    "sha256": "a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333"
   },
   "media": {
     "video": "/media/timing-fixture.mp4",
@@ -28,5 +28,9 @@
   "ui": {
     "noticeTitle": "Synthetic development content",
     "noticeBody": "This content profile is a test fixture. It demonstrates source consistency and browser behavior, not factual training guidance."
+  },
+  "transcript": {
+    "path": "/transcripts/synthetic-timing.txt",
+    "sha256": "a1930687d25bfe7fe8f2483c55d1aca83cdc3f4dcc39424dd6569aea9fe9660d"
   }
 }
