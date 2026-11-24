@@ -290,6 +290,20 @@
         "publication_inventory"
       ],
       "reason": "Changes to reviewed-content packaging can alter public content bytes, source identities, browser behavior, provider context and release artifact identity even before a real pack is integrated."
+    },
+    {
+      "id": "local-inference-gateway",
+      "prefixes": [
+        "tools/sutra-local-gateway/"
+      ],
+      "requiredWorkflows": [
+        "Validate SUTRA local inference gateway"
+      ],
+      "invalidates": [
+        "security_boundary",
+        "provider_cost"
+      ],
+      "reason": "Operator-owned loopback model gateway changes can affect secret isolation, resource bounds, compatibility, inference cost and failure isolation; local integration tests do not establish live GPU readiness."
     }
   ]
 }

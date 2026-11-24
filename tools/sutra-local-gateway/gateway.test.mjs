@@ -1,0 +1,44 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import http from 'node:http';import {createGateway,validateGatewayConfig} from './gateway.mjs';
+const token='GATEWAY_SECRET_'+ 'x'.repeat(42),model='ollama-tool-model';
+async function listen(server){await new Promise((resolve,reject)=>server.once('error',reject).listen(0,'127.0.0.1',resolve));return server.address().port;}
+const stop=server=>new Promise(resolve=>server.close(()=>resolve()));
+const valid=()=>({model,stream:true,max_tokens:256,stream_options:{include_usage:true},messages:[{role:'user',content:'Find catalog evidence'}],tools:[]});
+test('gateway rejects bad config without opening a network listener',()=>{
+ for(const bad of [{token:'short',model,upstreamPort:11434},{token,model:'bad name',upstreamPort:11434},{token,model,upstreamPort:0},{token,model,upstreamPort:65536}]){
+  assert.throws(()=>validateGatewayConfig(bad),/GATEWAY_CONFIG/);
+ }
+});
+test('loopback gateway authenticates, bounds requests and streams only fixed-model SSE',async()=>{
+ const upstreamEvents=[];
+ const engine=http.createServer(async(req,res)=>{
+  const chunks=[];for await(const chunk of req)chunks.push(chunk);
+  const data=JSON.parse(Buffer.concat(chunks).toString());
+  upstreamEvents.push({path:req.url,model:data.model,stream:data.stream,max_tokens:data.max_tokens});
+  res.writeHead(200,{'Content-Type':'text/event-stream'});
+  res.end('data: {"choices":[{"index":0,"delta":{"content":"Local model fixture, unverified."},"finish_reason":"stop"}]}\n\ndata: [DONE]\n\n');
+ });
+ const upstreamPort=await listen(engine);
+ const gateway=createGateway({token,model,upstreamPort}),port=await listen(gateway);
+ const base='http://127.0.0.1:'+port+'/v1/chat/completions',headers={'Content-Type':'application/json',Authorization:'Bearer '+token};
+ const send=(body=valid(),extra={})=>fetch(base,{method:'POST',headers:{...headers,...extra},body:JSON.stringify(body)});
+ try{
+  for(const badHeaders of [{Authorization:'Bearer wrong'}, {Origin:'https://browser.example'}, {'Content-Type':'text/plain'}]){
+   const response=await send(valid(),badHeaders);assert.equal(response.status,403);assert.ok(!(await response.text()).includes(token));
+  }
+  for(const badBody of [{...valid(),model:'another-model'},{...valid(),url:'http://external.example'},{...valid(),max_tokens:99999},{...valid(),messages:[]}])assert.equal((await send(badBody)).status,400);
+  assert.equal((await send({...valid(),messages:[{role:'user',content:'x'.repeat(34000)}]})).status,413);
+  assert.equal((await fetch('http://127.0.0.1:'+port+'/not-a-proxy',{method:'POST',headers,body:JSON.stringify(valid())})).status,404);
+  assert.equal(upstreamEvents.length,0,'bad requests cannot touch the model');
+  const response=await send();assert.equal(response.status,200);assert.match(await response.text(),/Local model fixture, unverified/);
+  assert.deepEqual(upstreamEvents,[{path:'/v1/chat/completions',model,stream:true,max_tokens:256}]);
+ }finally{await stop(gateway);await stop(engine);}
+});
+test('wrong upstream format and redirect are rejected without leaking upstream details',async()=>{
+ const cases=[new Response('private upstream details',{status:500}),new Response('{"secret":"x"}',{headers:{'Content-Type':'application/json'}}),new Response('',{status:302,headers:{Location:'http://other.example'}})];
+ for(const fake of cases){
+  const gateway=createGateway({token,model,upstreamPort:11434,fetchImpl:async()=>fake}),port=await listen(gateway);
+  try{const r=await fetch('http://127.0.0.1:'+port+'/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},body:JSON.stringify(valid())});assert.equal(r.status,502);assert.doesNotMatch(await r.text(),/private upstream|other.example/);}
+  finally{await stop(gateway);}
+ }
+});
