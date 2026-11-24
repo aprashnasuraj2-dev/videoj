@@ -67,7 +67,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
   if(claim.sourceKind==='guide'&&claim.sourceHref){
    const link=node('a','comparison-source-link','Open written source excerpt');
    const href=new URL(claim.sourceHref,location.href);link.href=href.href;link.target='_blank';link.rel='noopener noreferrer';
-   link.setAttribute('aria-describedby',excerpt.id);article.append(link);
+   link.setAttribute('aria-describedby',excerpt.id);article.append(link,node('p','muted','Opening the original URL is a separate navigation, not a promise that its current bytes match. Check integrity here before relying on the excerpt.'));
    if(claim.sourceHash){
     const verify=node('button',null,'Check written source integrity');verify.type='button';
     verify.addEventListener('click',async()=>{
@@ -76,14 +76,26 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
      verify.disabled=true;seekStatus.textContent='Checking written source bytes and anchored excerpt…';
      try{
       const signal=AbortSignal.any([controller.signal,AbortSignal.timeout(5000)]);
-      const {response,bytes}=await readContentBytes({url:href.href,origin:location.origin,signal,maxBytes:65536,accept:'text/html'});
-      if(!response.headers.get('content-type')?.toLowerCase().includes('text/html'))throw Error('Unexpected source response');
+      // Fragments identify document-local anchors and never form part of
+      // HTTP artifact identity. Bind the request to the exact hashless URL.
+      const documentUrl=new URL(href.href);documentUrl.hash='';
+      const {response,bytes}=await readContentBytes({url:documentUrl.href,origin:location.origin,signal,maxBytes:65536,accept:'text/html'});
+      if(response.headers.get('content-type')?.split(';',1)[0].trim().toLowerCase()!=='text/html')throw Error('Unexpected source response');
       const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');
       if(digest!==claim.sourceHash)throw Error('Source hash mismatch');
       // Template content stays inert and detached: never mount source markup.
       const template=document.createElement('template');template.innerHTML=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
-      const anchored=href.hash?template.content.getElementById(decodeURIComponent(href.hash.slice(1))):template.content;
-      if(!anchored||!anchored.textContent.includes(claim.excerpt))throw Error('Anchored excerpt mismatch');
+      const anchor=decodeURIComponent(href.hash.slice(1));
+      const matching=Array.from(template.content.querySelectorAll('[id]')).filter(element=>element.id===anchor);
+      const anchored=matching.length===1?matching[0]:null;
+      // The reviewed compiler emits one text-only blockquote; the bundled
+      // synthetic example uses a paragraph. Never accept a substring buried
+      // in heading, hidden markup, or a second duplicate anchor.
+      const excerptTag=claim.sourceId==='fixture_guide'&&activeMode==='conflict'?'P':'BLOCKQUOTE';
+      const candidates=anchored?Array.from(anchored.children).filter(element=>element.tagName===excerptTag):[];
+      const exact=candidates.length===1?candidates[0]:null;
+      if(!anchored||anchored.tagName!=='SECTION'||!exact||exact.attributes.length||exact.children.length||exact.textContent!==claim.excerpt)throw Error('Anchored excerpt mismatch');
+      for(let element=anchored;element;element=element.parentElement)if(element.hidden||element.hasAttribute('aria-hidden')||element.hasAttribute('style')||element.tagName==='TEMPLATE')throw Error('Hidden or uninspectable source anchor');
       if(current(token))seekStatus.textContent='Written source bytes and anchored excerpt match this comparison record. This does not establish factual truth.';
      }catch{if(current(token))seekStatus.textContent='Written source integrity could not be confirmed. Do not treat the linked excerpt as matching this comparison record.';}
      finally{if(guideController===controller)guideController=null;verify.disabled=false;}
