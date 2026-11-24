@@ -1,0 +1,41 @@
+name: Validate SUTRA browser compatibility matrix
+on:
+  pull_request:
+    paths:
+      - 'apps/sutra/**'
+      - 'packages/sutra-*/**'
+      - '.github/workflows/sutra-browser-matrix.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, firefox, webkit]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - working-directory: apps/sutra
+        run: |
+          npm ci
+          npm run build
+          npx playwright install --with-deps ${{ matrix.engine }}
+      - working-directory: apps/sutra
+        env:
+          SUTRA_BROWSER_ENGINE: ${{ matrix.engine }}
+          SUTRA_SOURCE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node test/browser-matrix.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sutra-browser-matrix-${{ matrix.engine }}
+          path: apps/sutra/test-output/browser-matrix-*.json
+          if-no-files-found: error

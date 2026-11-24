@@ -98,7 +98,7 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
    source:timingFixture.source,media:timingPlayer.media,onSeek:seconds=>timingPlayer.seek(seconds)
   });
   setStatus(timingStatus,'completed',`Synthetic timing fixture loaded. Actual media duration: ${timingPlayer.media.duration.toFixed(1)} seconds. Original lesson still pending.`);seekTiming.hidden=false;
- }catch{if(timingObjectUrl){URL.revokeObjectURL(timingObjectUrl);timingObjectUrl=null;}setStatus(timingStatus,'error','Timing fixture unavailable. No playback or seek success is claimed.');button.disabled=false;}
+ }catch(error){if(timingPlayer){try{timingPlayer.media.pause();timingPlayer.media.removeAttribute('src');timingPlayer.media.load();}catch{}timingPlayer=null;mediaHost.replaceChildren();mediaHost.classList.remove('player-mounted');}if(timingObjectUrl){URL.revokeObjectURL(timingObjectUrl);timingObjectUrl=null;}seekTiming.hidden=true;setStatus(timingStatus,'error',error?.code==='MEDIA_UNSUPPORTED'?'This browser cannot decode the fixture. Transcript and evidence remain available; no playback success is claimed.':'Timing fixture unavailable. No playback or seek success is claimed.');button.disabled=false;}
 });
 seekTiming.addEventListener('click',async()=>{
  seekTiming.disabled=true;

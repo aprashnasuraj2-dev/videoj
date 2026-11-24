@@ -20,7 +20,7 @@ export function mountTimingPlayer(host,{source,poster,chapters,captions}){
     media.error?.code===4?'The selected media format or source is not supported.':'Media could not complete the requested operation.'));
    media.addEventListener(event,changed);media.addEventListener('error',failed,{once:true});
    timer=setTimeout(()=>stop(mediaError('MEDIA_TIMEOUT','Media operation exceeded the ten-second limit.')),10000);
-   try{act?.();changed();}catch(error){stop(error);}
+   try{act?.();if(media.error)failed();else changed();}catch(error){stop(error);}
   });
  }
  return {element:player,media,readState:()=>readPlaybackState(media),
