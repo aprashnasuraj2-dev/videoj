@@ -40,11 +40,11 @@ export async function discoverProvider({origin,loadedContent,fetchImpl=fetch,sig
   const data=await readPublicJson({url:origin+'/api/status',origin,fetchImpl,signal:controller.signal,maxBytes:4096});
   if(data.sourceTools!=='catalog'||data.factualTruth!=='unverified'||!['configured','disabled'].includes(data.inference)||!plain(data.content)||Object.keys(data.content).some(k=>!['mode','contentVersion','catalogSha256','primarySourceId'].includes(k)))throw Error('Invalid status');
   const allowedDisabled=['inference','sourceTools','content','factualTruth'];
-  const allowedConfigured=[...allowedDisabled,'model','routerBase','publisherFunded','byok','backend'];
+  const allowedConfigured=[...allowedDisabled,'model','routerBase','publisherFunded','byok','backend','inferenceContractId'];
   const allowed=data.inference==='disabled'?allowedDisabled:allowedConfigured;
   if(Object.keys(data).some(k=>!allowed.includes(k)))throw Error('Unexpected status metadata');
   if(data.inference==='disabled'){if(Object.keys(data).some(k=>!allowedDisabled.includes(k)))throw Error('Invalid disabled status');return {state:'disabled'};}
-  if(typeof data.model!=='string'||!modelPattern.test(data.model)||data.model==='mock-1'||data.routerBase!=='/api/v1'||data.publisherFunded!==true||data.byok!==false||!['hosted','self_hosted'].includes(data.backend))throw Error('Invalid model/router status');
+  if(typeof data.model!=='string'||!modelPattern.test(data.model)||data.model==='mock-1'||data.routerBase!=='/api/v1'||data.publisherFunded!==true||data.byok!==false||!['hosted','self_hosted'].includes(data.backend)||typeof data.inferenceContractId!=='string'||!/^[a-f0-9]{64}$/.test(data.inferenceContractId))throw Error('Invalid model/router status');
   if(!loadedContent)throw contentError();
   const content=await loadContentProfile({baseUrl:origin+'/content/',fetchImpl,signal:controller.signal});
   if(!same(contentIdentity(content),contentIdentity(loadedContent)))throw contentError();
@@ -62,7 +62,7 @@ export async function discoverProvider({origin,loadedContent,fetchImpl=fetch,sig
   if(!plain(graph.llm_config)||Object.keys(graph.llm_config).some(k=>k!=='model_name')||graph.llm_config.model_name!==data.model)throw Error('Published model does not match configured provider');
   const published={definition:graph,name:'source_learner',frontMan:entries[0].front_man,artifacts:{manifest:origin+'/agents/agent-manifest.json',definition:graphUrl.href}};
   compileNetwork(graph,{name:published.name,frontMan:published.frontMan,allowSourceTools:true});
-  const contract=Object.freeze({backend:data.backend,model:data.model,router:router.base_url,content:Object.freeze(contentIdentity(content)),graphUrl:graphUrl.href,frontMan:published.frontMan,graphSha256:await sha(graph)});
+  const contract=Object.freeze({backend:data.backend,model:data.model,inferenceContractId:data.inferenceContractId,router:router.base_url,content:Object.freeze(contentIdentity(content)),graphUrl:graphUrl.href,frontMan:published.frontMan,graphSha256:await sha(graph)});
   controller.signal.throwIfAborted();
   return {state:'configured',model:data.model,backend:data.backend,contract,published};
  }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controller.abort();}
@@ -75,13 +75,14 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
  const receiptCollector=createReceiptCollector(),usage={calls:0,reported:0,promptTokens:0,completionTokens:0,totalTokens:0};
  // Scope the public version precondition to the two caller-owned POST endpoints.
  // It is not an authentication token, and never travels to peer origins or the provider.
- let catalogRejected=false;
+ let catalogRejected=false,contractRejected=false;
  const boundFetch=async(url,options={})=>{
   const target=new URL(url,origin);
   if(target.origin!==origin||options.method!=='POST'||!['/api/v1/chat/completions','/api/source-tools'].includes(target.pathname))return fetchImpl(url,options);
   const headers=new Headers(options.headers);headers.set('X-Sutra-Catalog-Sha256',approvedContract.content.catalogSha256);
+  if(target.pathname==='/api/v1/chat/completions')headers.set('X-Sutra-Inference-Contract',approvedContract.inferenceContractId);
   const response=await fetchImpl(url,{...options,headers});
-  if(response.status===409)catalogRejected=true;
+  if(response.status===409){if(target.pathname==='/api/v1/chat/completions'&&response.headers.get('X-Sutra-Precondition')==='inference')contractRejected=true;else catalogRejected=true;}
   return response;
  };
  const adapter=createProviderAdapter({origin,model,fetchImpl:boundFetch});
@@ -99,6 +100,7 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
   if(fresh.state!=='configured'||!same(fresh.contract,approvedContract))throw contractError();
   controller.signal.throwIfAborted();
   const result=await runNetwork({...fresh.published,request:question.trim(),model:measured,signal:controller.signal,sourceTools:{origin,sources:loadedContent.sources,fetchImpl:boundFetch,onReceipt:receipt=>receiptCollector.add(receipt)}});
+  if(contractRejected)throw Error('Inference configuration precondition rejected.');
   if(catalogRejected)throw Error('Catalog precondition rejected.');
   const evidence=receiptCollector.snapshot();
   if(evidence.overflow){const excess=Error('Source receipt limit exceeded.');excess.code='SOURCE_EVIDENCE_LIMIT';throw excess;}
@@ -106,7 +108,7 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
   return {model,text:result.text,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,usage:{...usage,complete:usage.reported===usage.calls},truthStatus:'unverified'};
  }catch(error){
   // Only independently validated receipts survive a failed run. Never retain partial model text.
-  const code=signal?.aborted?'CANCELLED':catalogRejected?'CONTENT_CHANGED_DURING_RUN':typeof error?.code==='string'&&/^[A-Z_]{2,64}$/.test(error.code)?error.code:'RUN_FAILED';
+  const code=signal?.aborted?'CANCELLED':contractRejected?'CONTRACT_CHANGED_DURING_RUN':catalogRejected?'CONTENT_CHANGED_DURING_RUN':typeof error?.code==='string'&&/^[A-Z_]{2,64}$/.test(error.code)?error.code:'RUN_FAILED';
   const stopped=new Error('Provider lesson stopped');stopped.code=code;
   stopped.partial=Object.freeze({receipts:receiptCollector.snapshot().receipts,usage:{...usage,complete:false},agentCalls:error?.diagnostics?.agentCalls??null,modelCalls:error?.diagnostics?.modelCalls??usage.calls});
   throw stopped;

@@ -14,6 +14,7 @@ export async function clientKeyForRequest(request,secretValue){
 export function inferenceBackend(env={}){
  const mode=env.SUTRA_INFERENCE_BACKEND;
  if(mode==='hosted'){
+  if(env.SUTRA_SELF_HOSTED_UPSTREAM_URL!==undefined)return null;
   return typeof env.SUTRA_PROVIDER_KEY==='string'&&env.SUTRA_PROVIDER_KEY.length>=8
    ?Object.freeze({mode,url:UPSTREAM,credential:env.SUTRA_PROVIDER_KEY}):null;
  }
@@ -82,12 +83,30 @@ export function inferenceStatus(env={}){
   !!inferenceBackend(env)&&
   typeof env.SUTRA_CLIENT_HASH_SECRET==='string'&&env.SUTRA_CLIENT_HASH_SECRET.length>=32&&!!env.SUTRA_QUOTA&&typeof env.SUTRA_MODELS==='string';
 }
+// Public, opaque configuration version; NOT a credential, model attestation or consent token.
+// Domain-separated from daily client HMACs. No question, client identifier or raw secret leaves this function.
+export async function inferenceContractId(env={},snapshot={backend:inferenceBackend(env),models:configuredModels(env),maxOutput:Number(env.SUTRA_MAX_OUTPUT_TOKENS)}){
+ const {backend,models,maxOutput}=snapshot;
+ if(!backend||typeof env.SUTRA_CLIENT_HASH_SECRET!=='string'||env.SUTRA_CLIENT_HASH_SECRET.length<32)throw Error('CONTRACT_CONFIG');
+ const enc=new TextEncoder(),key=await crypto.subtle.importKey('raw',enc.encode(env.SUTRA_CLIENT_HASH_SECRET),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+ const message=JSON.stringify(['sutra-inference-contract-v1',backend.mode,backend.url,backend.credential,models,maxOutput,env.SUTRA_ALLOWED_ORIGIN,quotaLimits(env)]);
+ const signature=await crypto.subtle.sign('HMAC',key,enc.encode(message));
+ return Array.from(new Uint8Array(signature),b=>b.toString(16).padStart(2,'0')).join('');
+}
 export async function handleInference(request,env,{fetchImpl=fetch}={}){
  if(request.method!=='POST')return error('METHOD',405);
  if(!inferenceStatus(env))return error('DISABLED',503);
  const origin=new URL(request.url).origin;if(request.headers.get('Origin')!==origin||origin!==env.SUTRA_ALLOWED_ORIGIN||request.headers.has('Authorization')||!request.headers.get('Content-Type')?.startsWith('application/json'))return error('ORIGIN_OR_HEADERS',403);
  const models=configuredModels(env),backend=inferenceBackend(env);const maxOutput=Number(env.SUTRA_MAX_OUTPUT_TOKENS);
  if(!models.length||models.length>3||models.some(m=>!m||m.length>100)||!Number.isInteger(maxOutput)||maxOutput<64||maxOutput>1024)return error('CONFIG',503);
+ // Snapshot-aware requests must pin the exact server configuration before body read,
+ // quota or upstream contact. Generic portable callers may omit both preconditions.
+ const expected=request.headers.get('X-Sutra-Inference-Contract');
+ if(expected!==null||request.headers.has('X-Sutra-Catalog-Sha256')){
+  let matches=false;
+  try{matches=/^[a-f0-9]{64}$/.test(expected??'')&&expected===await inferenceContractId(env,{backend,models,maxOutput});}catch{}
+  if(!matches)return Response.json({error:{code:'INFERENCE_CONTRACT_MISMATCH'}},{status:409,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Sutra-Precondition':'inference'}});
+ }
  let body;try{body=validPayload(await readJson(request),models);}catch{return error('PAYLOAD',400);}
  const upstreamBody=JSON.stringify({...body,
   ...(backend.mode==='self_hosted'?{max_tokens:maxOutput}:{max_completion_tokens:maxOutput}),

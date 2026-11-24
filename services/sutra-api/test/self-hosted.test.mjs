@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {inferenceBackend,inferenceStatus,handleInference,UPSTREAM} from '../inference.js';
+import {inferenceBackend,inferenceStatus,inferenceContractId,handleInference,UPSTREAM} from '../inference.js';
 import worker from '../worker.js';
 import fs from 'node:fs';
 import {runNetwork} from '../../../packages/sutra-runtime/index.js';
@@ -20,6 +20,7 @@ const sse=()=>new Response('data: {"choices":[{"index":0,"delta":{"content":"Unv
 test('self-hosted endpoint is opt-in; hosted never falls back implicitly',()=>{
  assert.equal(inferenceStatus({...env,SUTRA_INFERENCE_BACKEND:undefined}),false);
  assert.equal(inferenceStatus({...env,SUTRA_INFERENCE_BACKEND:'hosted'}),false);
+ assert.equal(inferenceStatus({...env,SUTRA_INFERENCE_BACKEND:'hosted',SUTRA_PROVIDER_KEY:'SERVER_ONLY_HOSTED_TEST'}),false,'stale gateway URL in hosted mode fails closed');
  assert.equal(inferenceStatus({...env,SUTRA_SELF_HOSTED_TOKEN:undefined}),false);
  assert.equal(inferenceStatus(env),true);
  assert.equal(inferenceBackend(env).url,url);
@@ -30,7 +31,7 @@ test('self-hosted endpoint is opt-in; hosted never falls back implicitly',()=>{
 test('self-hosted status reveals backend but never the gateway, token or internal route',async()=>{
  const response=await worker.fetch(new Request('https://sutra.test/api/status'),env);
  const data=await response.json();assert.equal(data.inference,'configured');assert.equal(data.backend,'self_hosted');
- assert.equal(data.model,'local-tool-model');assert.equal(data.byok,false);
+ assert.equal(data.model,'local-tool-model');assert.equal(data.byok,false);assert.match(data.inferenceContractId,/^[a-f0-9]{64}$/);assert.equal(data.inferenceContractId,await inferenceContractId(env));
  assert.ok(!JSON.stringify(data).includes(gatewayToken));
  assert.ok(!JSON.stringify(data).includes('operator-gateway.example'));
 });
@@ -100,4 +101,25 @@ test('checked-in Worker candidates remain off regardless of externally installed
   for(const key of ['SUTRA_SELF_HOSTED_TOKEN','SUTRA_SELF_HOSTED_UPSTREAM_URL','SUTRA_PROVIDER_KEY','SUTRA_CLIENT_HASH_SECRET'])assert.equal(config.vars[key],undefined,name+':'+key);
   assert.equal(inferenceStatus(config.vars),false,name);
  }
+});
+
+test('snapshot-aware model POSTs pin the exact backend before quota or upstream, including mid-run changes',async()=>{
+ const approved=await inferenceContractId(env);
+ assert.equal(approved,await inferenceContractId({...env}));
+ const changed=[{...env,SUTRA_SELF_HOSTED_UPSTREAM_URL:'https://replacement-gateway.example/v1/chat/completions'},{...env,SUTRA_SELF_HOSTED_TOKEN:'rotated-secret-'+ 'r'.repeat(32)},{...env,SUTRA_INFERENCE_BACKEND:'hosted',SUTRA_SELF_HOSTED_UPSTREAM_URL:undefined,SUTRA_PROVIDER_KEY:'HOSTED_TEST_ONLY_KEY'},{...env,SUTRA_MODELS:'local-tool-model,other-model'},{...env,SUTRA_MAX_OUTPUT_TOKENS:'512'},{...env,SUTRA_CLIENT_HASH_SECRET:'y'.repeat(32)}];
+ let upstream=0,quota=0;
+ const snapshotRequest=(id=approved)=>{const r=req();r.headers.set('X-Sutra-Catalog-Sha256',env.SUTRA_CATALOG_SHA256);if(id!==null)r.headers.set('X-Sutra-Inference-Contract',id);return r;};
+ const ok=await handleInference(snapshotRequest(),env,{fetchImpl:async(u,opts)=>{upstream++;assert.equal(u,url);assert.equal(opts.headers['X-Sutra-Inference-Contract'],undefined);return sse();}});
+ assert.equal(ok.status,200);await ok.text();assert.equal(upstream,1);
+ for(const config of changed){
+  assert.equal(inferenceStatus(config),true);assert.notEqual(await inferenceContractId(config),approved);
+  const guarded={...config,SUTRA_QUOTA:{idFromName(){quota++;throw Error('must not reserve');}}};
+  const rejected=await handleInference(snapshotRequest(),guarded,{fetchImpl:async()=>{upstream++;return sse();}});
+  assert.equal(rejected.status,409);assert.equal(rejected.headers.get('X-Sutra-Precondition'),'inference');assert.deepEqual(await rejected.json(),{error:{code:'INFERENCE_CONTRACT_MISMATCH'}});
+ }
+ for(const malformed of [null,'','wrong','f'.repeat(64)]){
+  const rejected=await handleInference(snapshotRequest(malformed),{...env,SUTRA_QUOTA:{idFromName(){quota++;throw Error('must not reserve');}}},{fetchImpl:async()=>{upstream++;return sse();}});
+  assert.equal(rejected.status,409);
+ }
+ assert.equal(quota,0);assert.equal(upstream,1);
 });

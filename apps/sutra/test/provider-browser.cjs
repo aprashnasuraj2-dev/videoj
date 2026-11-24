@@ -24,7 +24,8 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   assert.equal(requests.filter(x=>x.endsWith('/api/infer')||x.endsWith('/api/v1/chat/completions')).length,0);
   await page.getByRole('button',{name:'Check example',exact:true}).click();assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
   // Test transport only: intercept the provider endpoint; never contact a paid model.
-  await page.route('**/api/status',r=>r.fulfill({json:{inference:'configured',model:'synthetic-provider-test',backend:'self_hosted',routerBase:'/api/v1',publisherFunded:true,byok:false,sourceTools:'catalog',content:{mode:'synthetic',contentVersion:'synthetic-timing-v1',catalogSha256:'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333',primarySourceId:'synthetic-timing-fixture'},factualTruth:'unverified'}}));
+  let inferenceContract='a'.repeat(64);
+  await page.route('**/api/status',r=>r.fulfill({json:{inference:'configured',model:'synthetic-provider-test',backend:'self_hosted',inferenceContractId:inferenceContract,routerBase:'/api/v1',publisherFunded:true,byok:false,sourceTools:'catalog',content:{mode:'synthetic',contentVersion:'synthetic-timing-v1',catalogSha256:'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333',primarySourceId:'synthetic-timing-fixture'},factualTruth:'unverified'}}));
   const releaseGraph=JSON.parse(fs.readFileSync(path.join(app,'public/agents/source_learner.network.json'),'utf8'));releaseGraph.llm_config={model_name:'synthetic-provider-test'};
   const releaseManifest=JSON.parse(fs.readFileSync(path.join(app,'public/agents/agent-manifest.json'),'utf8'));
   releaseManifest.llm_router={base_url:base+'/api/v1',mock:false,publisher_funded:true};releaseManifest.allowed_peers=['https://guide.example'];releaseManifest.deployment={mode:'static',self_contained_runtime:true,browser_mock:false,direct_byok:false,direct_mcp_requires_cors:true,public_mcp_facade:false};
@@ -35,13 +36,15 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   let mode='complete',calls=0;const chunk=(delta,finish_reason=null)=>({choices:[{index:0,delta,finish_reason}]});
   const sse=items=>items.map(x=>'data: '+JSON.stringify(x)+'\n\n').join('')+'data: [DONE]\n\n';
   await page.route('**/api/source-tools',async r=>{
+   assert.equal(r.request().headers()['x-sutra-inference-contract'],undefined);
    if(mode!=='source-quota')return r.fallback();
    const rpc=r.request().postDataJSON();
    if(rpc.method!=='tools/call')return r.fallback();
    await r.fulfill({status:429,contentType:'application/json',body:JSON.stringify({error:{code:'SOURCE_QUOTA'}})});
   });
   await page.route('**/api/v1/chat/completions',async r=>{
-   calls++;assert.equal(r.request().headers()['x-sutra-catalog-sha256'],'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333');const body=r.request().postDataJSON();assert.equal(body.model,'synthetic-provider-test');assert.equal(r.request().headers().authorization,undefined);assert.equal(r.request().headers().cookie,undefined);
+   calls++;assert.equal(r.request().headers()['x-sutra-inference-contract'],inferenceContract);assert.equal(r.request().headers()['x-sutra-catalog-sha256'],'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333');const body=r.request().postDataJSON();assert.equal(body.model,'synthetic-provider-test');assert.equal(r.request().headers().authorization,undefined);assert.equal(r.request().headers().cookie,undefined);
+   if(mode==='contract-drift'&&body.messages.some(m=>m.role==='tool'&&m.name==='mcp_search_lesson')){await r.fulfill({status:409,headers:{'X-Sutra-Precondition':'inference'},json:{error:{code:'INFERENCE_CONTRACT_MISMATCH'}}});return;}
    if(mode==='catalog-drift'&&body.messages.some(m=>m.role==='tool'&&m.name==='mcp_search_lesson')){await r.fulfill({status:409,json:{error:{code:'CONTENT_VERSION_MISMATCH'}}});return;}
    if(mode==='no-receipt'&&body.tools.some(t=>t.function.name==='mcp_search_lesson')&&!body.messages.some(m=>m.role==='tool')){await r.fulfill({contentType:'text/event-stream',body:sse([chunk({content:'Synthetic source specialist skipped retrieval; this must not become a completed answer.'},'stop'),{choices:[],usage:{prompt_tokens:20,completion_tokens:5,total_tokens:25}}])});return;}
    if(mode==='hold'){await new Promise(resolve=>setTimeout(resolve,800));await r.abort().catch(()=>{});return;}
@@ -79,6 +82,11 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Provider publication changed'));
   assert.equal(calls,0);assert.equal(await page.locator('#provider-run').isDisabled(),true);
   graphDrift=false;
+  await page.getByRole('button',{name:'Check inference availability'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
+  inferenceContract='b'.repeat(64);await runOnce();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Provider publication changed'));
+  assert.equal(calls,0);assert.equal(await page.locator('#provider-run').isDisabled(),true);
   await page.getByRole('button',{name:'Check inference availability'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
   // Even profile-only metadata drift invalidates the mounted lesson binding.
@@ -138,6 +146,13 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('server rejected the lesson version'));
   assert.equal(calls,beforeSourceQuota+5,'source quota adds two model attempts; later catalog drift still stops at the third model attempt with no retry');
   assert.equal(await page.locator('#provider-run').isDisabled(),true);
+  assert.match(await page.locator('#provider-answer').textContent(),/No completed answer/);
+  assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);
+  await page.getByRole('button',{name:'Check inference availability'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
+  const beforeContractDrift=calls;mode='contract-drift';await runOnce();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('server rejected the approved inference configuration'));
+  assert.equal(calls,beforeContractDrift+3);assert.equal(await page.locator('#provider-run').isDisabled(),true);
   assert.match(await page.locator('#provider-answer').textContent(),/No completed answer/);
   assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);
   assert.deepEqual(errors,[]);console.log('PASS: visible opt-in model discovery, synthetic provider transport, independently matched receipts, token counts, quota failure, cancellation, no retry and native media unaffected.');
