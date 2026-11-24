@@ -63,6 +63,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
    assert.match(await page.locator('#provider-consent-backend').textContent(),/self-hosted/);
    assert.equal(await page.locator('#provider-consent-model').textContent(),'synthetic-provider-test');
    assert.match(await page.locator('#provider-consent-budget').textContent(),/Up to 8 model calls, 12 agent invocations and 60 seconds.*No automatic retry/);
+   assert.match(await page.locator('#provider-consent-dialog').textContent(),/daily HMAC quota key/);assert.match(await page.locator('#provider-consent-dialog').textContent(),/Backend logging or retention is not verified/);
    await page.getByRole('button',{name:'Run inference once'}).click();
   };
   // Consent cancellation is a true zero-model path and does not disable local evidence.
