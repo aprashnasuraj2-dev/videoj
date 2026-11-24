@@ -2,6 +2,13 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0038 — 2026-11-24
+
+**609/1,000 original verified; 661/1,053 total verified; 45/100 fully verified phases; six omissions; one hardware blocker; 385 pending.** Exact source `1fe4a7bc6239e8749268e0f032e6fec702ff6f89` passed 19/19 workflows including learner build/unit/browser integrations and the Chromium/Firefox/WebKit headless matrix. Review action catalog data is snapshotted without caller getter execution, navigation cancellation after an invoked local mutation is **unknown**, and persisted record envelopes cannot silently propagate unrecognized fields. Three new scoped checks added; no original checklist item or user/hardware/content/release gate is closed. `SUTRA-P078-02` and `SUTRA-P078-07` remain pending. The register check on this **checkpoint** needs its own CI observation. [Evidence](evidence/implementation/SESSION-0038.md).
+
+---
+
+
 ## Session 0037 — 2026-11-24
 
 **609/1,000 original verified; 658/1,050 total verified; 45/100 fully verified phases; six omissions; one hardware blocker; 385 pending.** Exact code `352db704c1bd12d11ef26788c2809e779d8f59ed`: 19/19 workflows; 117 app + 117 package/API + 125 runtime + 8 peer tests; all ten Chromium profiles and three browser engines executed. Reconciled concurrent source/pack fixes; hardened primitive content identity, navigation cancellation/local preservation and exact native cue seek. Four scoped added requirements verified; no original phase closure. P078-02 remains pending. Next: reviewed-media byte/path boundary, noncooperative response cleanup and peer/workbench authority review; retain human/model/content gates. [Evidence](evidence/implementation/SESSION-0037.md).

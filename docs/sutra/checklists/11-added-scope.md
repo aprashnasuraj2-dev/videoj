@@ -87,3 +87,11 @@ Required items discovered after the original plan remain release blockers until 
 
 - [x] `SUTRA-X008-01` Reject release-candidate evidence measured for another source revision or reviewed content identity; verify exact manifest, links, canonical graph bytes, graph membership and worker quota validity. Structural fixture only; not live measurement or release readiness.
 - [x] `SUTRA-X008-02` Materialize only recognized release files; omit all stale development graph versions and synthetic publication inventory/content, reject unknown public files, traversal, symlink roots/ancestors and aliased source/output overlap. Trusted stable build tree required; not secret scanning.
+
+## X009 — Review persistence trust and navigation outcome classification
+
+- [x] `SUTRA-X009-01` Reject executable/accessor-backed or mutable caller source catalogs before review storage/action creation; preserve the exact mounted primitive source and cue snapshot.
+- [x] `SUTRA-X009-02` Treat a local review mutation cancelled after its effect begins as an unknown outcome, not success or proven rejection; pre-entry revocation must make zero writes.
+- [x] `SUTRA-X009-03` Reject persisted review envelopes with unknown private fields before re-saving them; keep standalone export's existing secret-stripping behavior and explicit recovery.
+
+The three checks cover local, cooperative browser review operations. Storage access from unrelated same-origin scripts remains outside the app-owned Web Locks boundary; explicit source truth, human rights and cross-site production constraints are unchanged.

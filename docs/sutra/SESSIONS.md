@@ -1,5 +1,11 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0038 — 2026-11-24
+
+- 2026-11-24T17:06:54.579+05:45: **609/1,000 original; 661/1,053 total verified; 45/100 complete phases; six omissions; one hardware blocker, 385 pending.** Exact product source `1fe4a7bc6239e8749268e0f032e6fec702ff6f89` passed 19/19 workflows, including build, development fixtures, learner browser integrations and three headless engines. Hardened review source snapshots, post-invocation cancellation unknown outcome, and strict stored review envelope while retaining safe standalone export. Added X009-01..03, no original gate closure. No deployment, real model, human pilot, merge or submission. [Detailed evidence](evidence/implementation/SESSION-0038.md).
+- Earlier CI failures at `d5869169` and `668ac029` were diagnosed and fixed; they remain historical failures, not passing evidence.
+
+
 ## SUTRA-SESSION-0037 — 2026-11-24
 
 - 2026-11-24T15:40:00+05:45: **609/1,000 original verified; 658/1,050 total verified; 45/100 fully verified phases; six omissions; one hardware blocker; 385 pending.** Reconciled two intervening commits and concurrent source/pack change; pushed three incremental code commits, each 19/19 green; observed integrated browser and exact unit logs. Added X007-23..26. No original phase closure, paid inference, human acceptance, public deployment, release, merge or submission. [Evidence and resume](evidence/implementation/SESSION-0037.md).

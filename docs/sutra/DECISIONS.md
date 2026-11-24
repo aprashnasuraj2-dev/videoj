@@ -231,3 +231,9 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - On navigation revoke inference authority, abort stale async work and retain only validated local evidence/media on persisted pagehide (pause video). A new discovery must establish its own authority. Synthetic persisted-event testing does not prove real browser BFCache eligibility.
 - Native receipt success must observe actual time in the cited half-open interval and within the start tolerance. A seek outside that interval cannot be certified even if within one second. Correctness takes priority over optimistic playback success; manual navigation remains available.
 - Keep default model off, preserve public portable tools, and retain participant/human/provider gates. [Session 0037](evidence/implementation/SESSION-0037.md).
+
+## SUTRA-DECISION-0029 — Exact local review data and honest post-action cancellation
+
+- 2026-11-24T17:06:54.579+05:45; X009-01..03, P078-02. Local review actions consume only an inert source/cue catalog snapshot, not accessor-bearing caller objects. Persisted envelopes are exact and cannot silently carry undeclared private fields into later writes; standalone explicit exports retain the previously tested secret-stripping contract.
+- A queued mutation revoked before effect entry is rejected before any app-owned write. If revocation occurs after entry, mark the result **unknown**, because the side effect may already have happened; never auto-retry or claim success/rejection. Browser Web Locks serialize only cooperative same-origin clients. Independent scripts, power loss, and absence of a lock provider remain outside the guarantee.
+- Alternative rejected: silently accepting extra persisted fields or classifying every aborted mutation as definitely rejected. Both create information leakage or ambiguous replay hazards. No original human/provider/content/release gate is waived; see [Session 0038](evidence/implementation/SESSION-0038.md).
