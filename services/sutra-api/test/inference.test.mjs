@@ -455,3 +455,27 @@ test('partial, non-JSON, oversized or substituted quota success cannot reach pro
   assert.equal(result.status,503);assert.equal(contacts,0);assert.equal(response.body.locked,false);
  }
 });
+
+test('Worker SSE applies downstream backpressure and releases on cancellation while consumer is idle',async()=>{
+ let pulls=0,cancelled=0,releases=0;
+ const abort=new AbortController(),enc=new TextEncoder();
+ const upstream=new Response(new ReadableStream({
+  pull(c){pulls++;c.enqueue(enc.encode('data: {"choices":[{"index":0,"delta":{"content":"x"},"finish_reason":null}]}\n\n'));},
+  cancel(){cancelled++;}
+ }),{headers:{'Content-Type':'text/event-stream'}});
+ const env=environment(async url=>{
+  if(new URL(url).pathname==='/release'){releases++;return Response.json({released:true});}
+  return Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000921'});
+ });
+ const response=await handleInference(new Request(request(),{signal:abort.signal}),env,{fetchImpl:async()=>upstream});
+ assert.equal(response.status,200);
+ await new Promise(resolve=>setTimeout(resolve,20));
+ assert.ok(pulls>=1&&pulls<=3,'idle downstream must not drain unlimited upstream events: '+pulls);
+ const reader=response.body.getReader();
+ const first=await reader.read();assert.equal(first.done,false);assert.match(new TextDecoder().decode(first.value),/content/);
+ abort.abort();
+ await assert.rejects(reader.read());
+ reader.releaseLock();
+ for(let i=0;i<100&&(!cancelled||!releases);i++)await new Promise(resolve=>setTimeout(resolve,0));
+ assert.equal(cancelled,1);assert.equal(releases,1);assert.equal(upstream.body.locked,false);
+});

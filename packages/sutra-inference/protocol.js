@@ -1,25 +1,32 @@
 export class InferenceError extends Error{constructor(code){super(`Inference stopped (${code}); no complete result is claimed.`);this.name='InferenceError';this.code=code;}}
 export const stop=code=>{throw new InferenceError(code);};
 export const plain=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
-export async function* readSse(response,{signal,maxBytes=262144}={}){
+export const MAX_SSE_BYTES=262144;
+const MAX_SSE_LINE_CHARS=32768;
+export async function* readSse(response,{signal,maxBytes=MAX_SSE_BYTES}={}){
+ if(!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>MAX_SSE_BYTES)stop('STREAM_SIZE');
  const reader=response.body?.getReader();if(!reader)stop('MISSING_STREAM');
  const decoder=new TextDecoder('utf-8',{fatal:true});let buffer='',total=0,abort;
  const stopped=new Promise((_,reject)=>{abort=()=>reject(new InferenceError('CANCELLED'));signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();});stopped.catch(()=>{});
  try{
   for(;;){
    if(signal?.aborted)stop('CANCELLED');const {done,value}=await Promise.race([reader.read(),stopped]);
+   if(signal?.aborted)stop('CANCELLED');
+   if(!done&&!(value instanceof Uint8Array))stop('STREAM_ENCODING');
    if(value){total+=value.byteLength;if(total>maxBytes)stop('STREAM_SIZE');}
    try{buffer+=decoder.decode(value??new Uint8Array(),{stream:!done});}catch{stop('STREAM_ENCODING');}
    let newline;
    while((newline=buffer.indexOf('\n'))>=0){
+    if(signal?.aborted)stop('CANCELLED');
+    if(newline>MAX_SSE_LINE_CHARS)stop('STREAM_SIZE');
     const line=buffer.slice(0,newline).trim();buffer=buffer.slice(newline+1);if(!line||line.startsWith(':')||line.startsWith('event:'))continue;
     if(!line.startsWith('data:'))stop('STREAM_FORMAT');const data=line.slice(5).trim();
     if(data==='[DONE]'){yield {done:true};return;}
     let parsed;try{parsed=JSON.parse(data);}catch{stop('STREAM_JSON');}if(!plain(parsed)||parsed.error)stop('UPSTREAM_STREAM');yield {data:parsed};
    }
-   if(buffer.length>32768)stop('STREAM_SIZE');if(done)stop('INCOMPLETE_STREAM');
+   if(buffer.length>MAX_SSE_LINE_CHARS)stop('STREAM_SIZE');if(done)stop('INCOMPLETE_STREAM');
   }
- }finally{signal?.removeEventListener('abort',abort);void reader.cancel().catch(()=>{});try{reader.releaseLock();}catch{}}
+ }finally{signal?.removeEventListener('abort',abort);try{void Promise.resolve(reader.cancel()).catch(()=>{});}catch{}try{reader.releaseLock();}catch{}}
 }
 export function sanitizeChunk(raw){
  if(!plain(raw)||!Array.isArray(raw.choices)||raw.choices.length>1)stop('STREAM_SHAPE');

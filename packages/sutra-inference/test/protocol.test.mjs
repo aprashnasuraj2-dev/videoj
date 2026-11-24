@@ -80,3 +80,21 @@ test('provider cancellation at response ownership handoff disposes the stream wi
   assert.equal(disposed,1,'each rejected response body is disposed exactly once');assert.equal(response.body.locked,false);
  }
 });
+
+test('cancellation while SSE generator is suspended between buffered lines prevents late DONE',async()=>{
+ const abort=new AbortController(),response=sse([chunk({content:'first'}),chunk({},'stop')]);
+ const iterator=readSse(response,{signal:abort.signal});
+ assert.deepEqual((await iterator.next()).value,{data:chunk({content:'first'})});
+ abort.abort();
+ await assert.rejects(iterator.next(),e=>e.code==='CANCELLED');
+ assert.equal(response.body.locked,false);
+});
+test('SSE complete lines obey the same limit as fragmented lines and reject non-byte chunks',async()=>{
+ for(const response of [
+  new Response('data: '+JSON.stringify({...chunk({content:'ok'},'stop'),ignored:'x'.repeat(33000)})+'\n\ndata: [DONE]\n\n'),
+  new Response(new ReadableStream({start(c){c.enqueue('not a Uint8Array');c.close();}}))
+ ]){
+  await assert.rejects(async()=>{for await(const frame of readSse(response))void frame;},e=>['STREAM_SIZE','STREAM_ENCODING'].includes(e.code));
+  assert.equal(response.body.locked,false);
+ }
+});

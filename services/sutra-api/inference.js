@@ -1,4 +1,4 @@
-import {plain,InferenceError,readSse,makeAccumulator,abortable} from '../../packages/sutra-inference/protocol.js';
+import {plain,InferenceError,readSse,makeAccumulator,abortable,MAX_SSE_BYTES} from '../../packages/sutra-inference/protocol.js';
 import {checkSchema,validateData} from '../../packages/sutra-runtime/vendor/nsdeploy/actions.js';
 import {quotaLimits,sourceQuotaLimits,MAX_INPUT_BYTES,admissionWindow,ADMISSION_MS} from './quota.js';
 import {readQuotaReply} from './quota-transport.js';
@@ -178,15 +178,61 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
     !/^text\/event-stream(?:\s*;|$)/i.test(upstream.headers.get('content-type')??'')){
   dispose(upstream?.body);controller.abort();cleanup();await releaseQuota();return error('UPSTREAM_REJECTED',502);
  }
- const encoder=new TextEncoder();
+ const encoder=new TextEncoder(),accumulator=makeAccumulator();
+ const iterator=readSse(upstream,{signal:controller.signal})[Symbol.asyncIterator]();
+ let terminal=false,finalized,sink,emitted=0;
+ // Finalize exactly once on EOF, parser rejection, client cancellation or
+ // deadline, including while a backpressured consumer issues no more reads.
+ const finish=()=>{
+  if(finalized)return finalized;
+  terminal=true;controller.signal.removeEventListener('abort',onAbort);
+  controller.abort();cleanup();
+  finalized=(async()=>{
+   try{await iterator.return();}catch{}
+   // The generator may never have been entered. Dispose an unlocked
+   // upstream body in that case as well as after iterator cleanup.
+   dispose(upstream.body);
+   await releaseQuota();
+  })();
+  return finalized;
+ };
+ const onAbort=()=>{
+  if(terminal)return;
+  try{sink?.error(new InferenceError('CANCELLED'));}catch{}
+  void finish();
+ };
+ const send=(out,text)=>{
+  const bytes=encoder.encode(text);
+  if(bytes.byteLength>MAX_SSE_BYTES-emitted)throw new InferenceError('STREAM_SIZE');
+  emitted+=bytes.byteLength;out.enqueue(bytes);
+ };
  const stream=new ReadableStream({
-  async start(sink){
-   const accumulator=makeAccumulator();
-   try{for await(const chunk of readSse(upstream,{signal:controller.signal})){if(chunk.done){accumulator.finish();sink.enqueue(encoder.encode('data: [DONE]\n\n'));sink.close();return;}const clean=accumulator.accept(chunk.data);sink.enqueue(encoder.encode(`data: ${JSON.stringify(clean)}\n\n`));}}
-   catch{try{sink.enqueue(encoder.encode('data: {"error":{"code":"INCOMPLETE_STREAM"}}\n\n'));sink.close();}catch{}}
-   finally{controller.abort();cleanup();await releaseQuota();}
+  start(out){
+   sink=out;controller.signal.addEventListener('abort',onAbort,{once:true});
+   if(controller.signal.aborted)onAbort();
   },
-  cancel(){controller.abort();cleanup();void releaseQuota();},
+  async pull(out){
+   if(terminal)return;
+   try{
+    controller.signal.throwIfAborted();
+    const frame=await iterator.next();
+    if(terminal)return;
+    controller.signal.throwIfAborted();
+    if(frame.done)throw new InferenceError('INCOMPLETE_STREAM');
+    if(frame.value.done){
+     accumulator.finish();controller.signal.throwIfAborted();
+     send(out,'data: [DONE]\n\n');out.close();await finish();return;
+    }
+    const clean=accumulator.accept(frame.value.data);
+    send(out,`data: ${JSON.stringify(clean)}\n\n`);
+   }catch{
+    if(terminal)return;
+    try{send(out,'data: {"error":{"code":"INCOMPLETE_STREAM"}}\n\n');out.close();}
+    catch{try{out.error(new InferenceError('INCOMPLETE_STREAM'));}catch{}}
+    await finish();
+   }
+  },
+  cancel(){return finish();},
  });
  return new Response(stream,{headers:{'Content-Type':'text/event-stream','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 }
