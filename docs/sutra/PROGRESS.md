@@ -2,6 +2,13 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0039 — 2026-11-24
+
+**609/1,000 original verified; 661/1,053 total verified; 45/100 fully verified phases, six omissions, one hardware blocker, 385 pending.** Exact `d49d0afd0acf8305526f2ebed3b1a09a62e54a47` 19/19 CI. The review mutation queue now resolves a caller's timeout promptly after a noncooperating effect enters while retaining the still-running exclusive lock; cancellation after entry is **unknown**, not an invented successful or rejected write. Existing X009-02 strengthened, no additional task counted. [Evidence](evidence/implementation/SESSION-0039.md). No real rights-cleared content, live hardware model, human pilot, public HTTPS adoption or release was established.
+
+---
+
+
 ## Session 0038 — 2026-11-24
 
 **609/1,000 original verified; 661/1,053 total verified; 45/100 fully verified phases; six omissions; one hardware blocker; 385 pending.** Exact source `1fe4a7bc6239e8749268e0f032e6fec702ff6f89` passed 19/19 workflows including learner build/unit/browser integrations and the Chromium/Firefox/WebKit headless matrix. Review action catalog data is snapshotted without caller getter execution, navigation cancellation after an invoked local mutation is **unknown**, and persisted record envelopes cannot silently propagate unrecognized fields. Three new scoped checks added; no original checklist item or user/hardware/content/release gate is closed. `SUTRA-P078-02` and `SUTRA-P078-07` remain pending. The register check on this **checkpoint** needs its own CI observation. [Evidence](evidence/implementation/SESSION-0038.md).
