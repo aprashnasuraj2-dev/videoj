@@ -67,7 +67,7 @@ const assert=require('node:assert/strict');
   await page.getByRole('dialog',{name:'Review before local save'}).waitFor();
   assert.match(await page.locator('#review-preview').innerText(),/synthetic-timing-fixture/);
   await page.getByRole('button',{name:'Confirm local save'}).click();
-  assert.equal(await page.locator('#review-list li').count(),1);
+  await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);
   assert.match(await page.locator('#review-status').innerText(),/not factual verification/);
 
   await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();
@@ -101,7 +101,7 @@ const assert=require('node:assert/strict');
   await page.getByRole('button',{name:'Preview synthetic review card'}).focus();await page.keyboard.press('Enter');
   await page.getByRole('dialog',{name:'Review before local save'}).waitFor();
   await page.getByRole('button',{name:'Confirm local save'}).focus();await page.keyboard.press('Enter');
-  assert.equal(await page.locator('#review-list li').count(),1);
+  await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);
   assert.match(await page.locator('#review-status').innerText(),/not factual verification/);
   await page.getByRole('button',{name:'Delete local review'}).focus();await page.keyboard.press('Enter');
   assert.equal(await page.locator('#review-list li').count(),0);

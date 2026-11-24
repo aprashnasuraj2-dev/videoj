@@ -17,7 +17,7 @@ export function createReviewAttemptReceipt(attempt,{sources}={}){
  return Object.freeze({
   reportVersion:1,type:'sutra-local-review-attempt',requestId,outcome,observedAt,
   retryPolicy:'never automatically retry an unknown or rejected local write',
-  outcomeMeaning:outcome==='completed'?'Local storage returned success.':
+  outcomeMeaning:outcome==='completed'?'Local storage write and exact readback were observed.':
    outcome==='rejected'?'The write was rejected before success was observed.':
    'The write may have happened before an exception; inspect current local records before any new action.',
   truthStatus:'unverified',synthetic:true,

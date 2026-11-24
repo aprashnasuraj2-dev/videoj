@@ -80,7 +80,7 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();await page.getByRole('dialog',{name:'External contact request'}).waitFor();assert.match(await page.locator('#consent-origin').innerText(),/peer\.invalid/);assert.match(await page.locator('#consent-purpose').innerText(),/public peer manifest/);assert.match(await page.locator('#consent-disclosure').innerText(),/network name/);const externalBeforeDeny=external.length;await page.getByRole('button',{name:'Deny',exact:true}).click();await page.waitForFunction(()=>document.querySelector('#consent-status').textContent.includes('denied before'));assert.equal(await page.locator('#consent-status').getAttribute('data-state'),'denied');assert.equal(external.length,externalBeforeDeny);assert.match(await page.locator('#consent-events').textContent(),/decision|deny/i);
   await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();await page.getByRole('button',{name:'Allow for this session (simulate)'}).click();await page.waitForFunction(()=>document.querySelector('#consent-status').textContent.includes('Simulated operations: 1'));const externalBeforeRemembered=external.length;await page.getByRole('button',{name:'Preview synthetic peer contact'}).click();await page.waitForFunction(()=>document.querySelector('#consent-status').textContent.includes('Simulated operations: 2'));assert.equal(external.length,externalBeforeRemembered);assert.match(await page.locator('#consent-events').textContent(),/remembered/);
   await page.getByRole('button',{name:'Preview synthetic review card'}).click();await page.getByRole('button',{name:'Cancel',exact:true}).click();assert.equal(await page.locator('#review-list li').count(),0);
-  await page.getByRole('button',{name:'Preview synthetic review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();assert.equal(await page.locator('#review-list li').count(),1);assert.match(await page.locator('#review-status').innerText(),/not factual verification/);
+  await page.getByRole('button',{name:'Preview synthetic review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);assert.match(await page.locator('#review-status').innerText(),/not factual verification/);
   const reviewDownloadPromise=page.waitForEvent('download');
   await page.getByRole('button',{name:'Download saved receipt'}).click();
   const reviewDownload=await reviewDownloadPromise;
@@ -95,12 +95,12 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.getByRole('button',{name:'Download last save outcome'}).click();
   const completedAttempt=JSON.parse(fs.readFileSync(await (await completedAttemptDownload).path(),'utf8'));
   assert.equal(completedAttempt.outcome,'completed');assert.equal(completedAttempt.requestId,exportedReview.id);
-  await page.reload();assert.equal(await page.locator('#review-list li').count(),1);await page.getByRole('button',{name:'Delete local review'}).click();assert.equal(await page.locator('#review-list li').count(),0);
+  await page.reload();await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);await page.getByRole('button',{name:'Delete local review'}).click();assert.equal(await page.locator('#review-list li').count(),0);
 
   // A saved receipt from an older source version must become visible stale data
   // after reload, never a silently migrated or downloadable valid card.
   await page.getByRole('button',{name:'Preview synthetic review card'}).click();await page.getByRole('button',{name:'Confirm local save'}).click();
-  assert.equal(await page.locator('#review-list li').count(),1);
+  await page.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);assert.equal(await page.locator('#review-list li').count(),1);
   await page.evaluate(()=>{
    const key='sutra.synthetic-review-cards.v1',rows=JSON.parse(localStorage.getItem(key));
    rows[0].receipt.sourceVersion='retired-v0';localStorage.setItem(key,JSON.stringify(rows));

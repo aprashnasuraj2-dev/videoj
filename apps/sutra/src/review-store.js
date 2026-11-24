@@ -1,5 +1,6 @@
 import {validateReceipt} from '../../../packages/sutra-evidence/index.js';
-const KEY='sutra.synthetic-review-cards.v1';
+export const REVIEW_STORAGE_KEY='sutra.synthetic-review-cards.v1';
+const KEY=REVIEW_STORAGE_KEY;
 const clone=value=>JSON.parse(JSON.stringify(value));
 export class ReviewOutcomeError extends Error{constructor(outcome){super('Local persistence could not be confirmed.');this.outcome=outcome;}}
 export class ReviewDataStaleError extends Error{
@@ -13,6 +14,7 @@ export function createReviewStore({storage,sources,idFactory=()=>crypto.randomUU
   let records;try{records=JSON.parse(raw);}catch{throw Error('Local review data is unreadable.');}
   if(!Array.isArray(records)||records.length>10||records.some(r=>!r||typeof r!=='object'||Array.isArray(r)||typeof r.id!=='string'||!r.id||r.id.length>100||r.synthetic!==true||!r.receipt||typeof r.receipt!=='object'||Array.isArray(r.receipt)||typeof r.savedAt!=='string'||r.savedAt.length>40))
    throw Error('Local review data has an unsupported shape.');
+  if(new Set(records.map(r=>r.id)).size!==records.length||records.some(r=>! /^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(r.id)||!Number.isFinite(Date.parse(r.savedAt))))throw Error('Local review identity is invalid or duplicated.');
   return records;
  }
  function inspect(){
@@ -60,10 +62,12 @@ export function createReviewStore({storage,sources,idFactory=()=>crypto.randomUU
    if(!pending.has(id))throw Error('Review preview expired or was cancelled.');
    const receipt=pending.get(id);pending.delete(id); // Consume proposal before persistence; never automatically retry.
    if(!validateReceipt(receipt,{sources:catalog}).valid)throw Error('Source changed before confirmation.');
-   const records=list();if(records.length>=10)throw Error('Ten fixture reviews are already saved. Delete one before saving again.');
+   const records=list();if(records.some(record=>record.id===id))throw Error('Review identifier already exists in storage.');if(records.length>=10)throw Error('Ten fixture reviews are already saved. Delete one before saving again.');
    const record={id,receipt,synthetic:true,savedAt:new Date().toISOString()};
    const encoded=JSON.stringify([...records,record]);if(encoded.length>65536)throw Error('Local review data exceeds its limit.');
    try{storage.setItem(KEY,encoded);}catch(error){throw new ReviewOutcomeError(['QuotaExceededError','SecurityError'].includes(error?.name)?'rejected':'unknown');} // Never infer success from an attempted write.
+   // A successful setItem return is insufficient: require exact readback before claiming completion.
+   try{if(storage.getItem(KEY)!==encoded)throw Error('Readback mismatch');}catch{throw new ReviewOutcomeError('unknown');}
    completed.add(id);while(completed.size>20)completed.delete(completed.values().next().value);
    return clone(record);
   },
@@ -72,7 +76,7 @@ export function createReviewStore({storage,sources,idFactory=()=>crypto.randomUU
    if(records.length===next.length)throw Error('Saved review not found.');
    // Last-card deletion removes the application key, not merely its rendered row.
    if(next.length===0)storage.removeItem(KEY);else storage.setItem(KEY,JSON.stringify(next));
-   if(rawRecords().some(record=>record.id===id))throw Error('Deletion not confirmed.');
+   if(storage.getItem(KEY)!==(next.length?JSON.stringify(next):null))throw Error('Deletion not confirmed.');
    pending.delete(id); // Completed IDs contain no receipt payload.
   },
   clear(){

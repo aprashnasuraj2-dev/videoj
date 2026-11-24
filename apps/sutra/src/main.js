@@ -1,5 +1,6 @@
 import './style.css';
-import {createReviewStore} from './review-store.js';
+import {createReviewStore,REVIEW_STORAGE_KEY} from './review-store.js';
+import {createReviewActions} from './review-actions.js';
 import timingFixture from './fixtures/timing-source.json';
 import {loadLocalNetwork,runNetwork} from '../../../packages/sutra-runtime/index.js';
 import {createScriptedModel,createSourceScriptedModel} from '../../../packages/sutra-runtime/testing.js';
@@ -8,7 +9,6 @@ import {createConsentInspector} from '../../../packages/sutra-consent/index.js';
 import {mountPeerWorkbench} from './peer-workbench.js';
 import {mountTranscriptPanel} from './transcript-panel.js';
 import {mountComparisonView} from './comparison-view.js';
-import {serializeReviewExport} from './review-export.js';
 import {serializeReviewAttemptReceipt} from './review-attempt.js';
 import receipt from '../../../packages/sutra-evidence/examples/receipt.json';
 import sources from '../../../packages/sutra-evidence/examples/sources.json';
@@ -114,10 +114,10 @@ seekTiming.addEventListener('click',async()=>{
 
 window.addEventListener('pagehide',()=>{timingTranscript?.dispose();if(timingObjectUrl)URL.revokeObjectURL(timingObjectUrl);});
 
-let reviewStore=null,reviewProposal=null,lastReviewAttempt=null;
+let reviewStore=null,reviewActions=null,reviewProposal=null,lastReviewAttempt=null,reviewBusy=false;
 const reviewDialog=document.querySelector('#review-dialog'),reviewStatus=document.querySelector('#review-status'),reviewAttemptButton=document.querySelector('#download-review-attempt');
 function setReviewAttempt(proposal,outcome){
- lastReviewAttempt={requestId:proposal.id,receipt:proposal.receipt,outcome,observedAt:new Date().toISOString()};
+ lastReviewAttempt={requestId:proposal.id,receipt:proposal.args.receipt,outcome,observedAt:new Date().toISOString()};
  reviewAttemptButton.hidden=false;
 }
 reviewAttemptButton.addEventListener('click',()=>{
@@ -130,6 +130,7 @@ reviewAttemptButton.addEventListener('click',()=>{
  }catch{reviewStatus.textContent='The last save outcome could not be validated for download.';}
 });
 function getReviewStore(){if(!reviewStore)reviewStore=createReviewStore({storage:localStorage,sources:[timingFixture.source]});return reviewStore;}
+function getReviewActions(){if(!reviewActions)reviewActions=createReviewActions({store:getReviewStore(),sources:[timingFixture.source],download(json,filename){const url=URL.createObjectURL(new Blob([json],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}});return reviewActions;}
 function forgetReviewAttempt(id){if(lastReviewAttempt&&(id===undefined||lastReviewAttempt.requestId===id)){lastReviewAttempt=null;reviewAttemptButton.hidden=true;}}
 function renderReviews(){
  const list=document.querySelector('#review-list');list.replaceChildren();
@@ -146,37 +147,37 @@ function renderReviews(){
   const record=itemState.record,download=document.createElement('button');
   label.textContent=`Synthetic timing review · cue ${record.receipt.start}–${record.receipt.end}s · ${record.receipt.sourceVersion} `;remove.textContent='Delete local review';
   download.textContent='Download saved receipt';download.className='review-action';
-  download.addEventListener('click',()=>{
+  download.addEventListener('click',async()=>{
+   if(reviewBusy)return;
    try{
-    const json=serializeReviewExport(record,{sources:[timingFixture.source]});
-    const url=URL.createObjectURL(new Blob([json],{type:'application/json'}));
-    const anchor=document.createElement('a');anchor.href=url;anchor.download='sutra-synthetic-review.json';
-    document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    const proposal=getReviewActions().prepare('export-receipt',{id:record.id,snapshot:record});
+    await getReviewActions().execute(proposal.id);
     reviewStatus.textContent='Synthetic receipt download requested. This does not confirm the browser saved the file or that the source is factually true.';
-   }catch{reviewStatus.textContent='This receipt could not be validated for download. No export success is claimed.';}
+   }catch{reviewStatus.textContent='This receipt changed, was deleted or could not be validated for download. No export success is claimed.';try{renderReviews();}catch{}}
   });
   remove.addEventListener('click',()=>{try{getReviewStore().remove(record.id);forgetReviewAttempt(record.id);renderReviews();reviewStatus.textContent='Local review deleted.';}catch{reviewStatus.textContent='Could not delete this local review; no successful deletion is claimed.';}});
   item.append(label,download,remove);list.append(item);
  }
  if(inspected.some(item=>item.status==='stale'))reviewStatus.textContent='One or more saved reviews are stale after source/media version drift. They are not shown as valid evidence; inspect provenance and delete or re-run the review.';
 }
-function cancelReview(){if(reviewProposal){getReviewStore().cancel(reviewProposal.id);reviewProposal=null;}document.querySelector('#review-preview').textContent='';reviewDialog.close();reviewStatus.textContent='Review cancelled. No card was saved.';}
+function cancelReview(){if(reviewProposal){getReviewActions().cancel(reviewProposal.id);reviewProposal=null;}document.querySelector('#review-preview').textContent='';reviewDialog.close();reviewStatus.textContent='Review cancelled. No card was saved.';}
 document.querySelector('#prepare-review').addEventListener('click',()=>{
- try{reviewProposal=getReviewStore().prepare(timingFixture.receipt);document.querySelector('#review-preview').textContent=JSON.stringify(reviewProposal,null,2);reviewDialog.showModal();}
+ if(reviewBusy||reviewProposal)return;
+ try{reviewProposal=getReviewActions().prepare('save-review-card',{receipt:timingFixture.receipt});document.querySelector('#review-preview').textContent=JSON.stringify(reviewProposal,null,2);reviewDialog.showModal();}
  catch{reviewStatus.textContent='Local review is unavailable. Nothing was saved.';}
 });
 document.querySelector('#cancel-review').addEventListener('click',cancelReview);
 reviewDialog.addEventListener('cancel',event=>{event.preventDefault();cancelReview();});
-document.querySelector('#confirm-review').addEventListener('click',()=>{
- if(!reviewProposal)return;const proposal=reviewProposal;reviewProposal=null;document.querySelector('#review-preview').textContent='';reviewDialog.close();
+document.querySelector('#confirm-review').addEventListener('click',async()=>{
+ if(!reviewProposal||reviewBusy)return;reviewBusy=true;const proposal=reviewProposal;reviewProposal=null;document.querySelector('#review-preview').textContent='';reviewDialog.close();
  let saved;
- try{saved=getReviewStore().commit(proposal.id);}
+ try{saved=await getReviewActions().execute(proposal.id);}
  catch(error){
   const outcome=error.outcome==='unknown'?'unknown':'rejected';setReviewAttempt(proposal,outcome);
   reviewStatus.textContent=outcome==='unknown'?'Save outcome is unknown. Inspect local reviews before trying again; no automatic retry will occur.':'Local save was rejected before confirmation. The action will not be automatically retried.';
-  return;
+  reviewBusy=false;return;
  }
- setReviewAttempt(proposal,'completed');
+ reviewBusy=false;setReviewAttempt(proposal,'completed');
  try{renderReviews();reviewStatus.textContent='Synthetic review saved in this browser. This is a source-consistency record, not factual verification.';}catch{reviewStatus.textContent='The local save returned successfully, but the review list could not be refreshed.';}
 });
 const clearDialog=document.querySelector('#clear-review-dialog'),clearButton=document.querySelector('#clear-local-reviews');
@@ -186,9 +187,10 @@ document.querySelector('#cancel-clear-reviews').addEventListener('click',closeCl
 clearDialog.addEventListener('cancel',event=>{event.preventDefault();closeClear();});
 document.querySelector('#confirm-clear-reviews').addEventListener('click',()=>{
  closeClear();
- try{getReviewStore().clear();reviewProposal=null;document.querySelector('#review-preview').textContent='';forgetReviewAttempt();renderReviews();reviewStatus.textContent='Local review data cleared from this browser. Previously downloaded files are not deleted.';}
+ try{if(reviewBusy)throw Error('Save in progress');if(reviewProposal)getReviewActions().cancel(reviewProposal.id);getReviewStore().clear();reviewProposal=null;document.querySelector('#review-preview').textContent='';forgetReviewAttempt();renderReviews();reviewStatus.textContent='Local review data cleared from this browser. Previously downloaded files are not deleted.';}
  catch{reviewStatus.textContent='Could not confirm clearing local review data. Inspect before trying again; no automatic retry.';}
 });
+window.addEventListener('storage',event=>{if(event.key!==REVIEW_STORAGE_KEY&&event.key!==null)return;if(reviewProposal){cancelReview();}forgetReviewAttempt();try{renderReviews();reviewStatus.textContent='Local review collection changed in another tab. Inspect the updated records.';}catch{reviewStatus.textContent='Local review data changed and could not be read.';}});
 try{renderReviews();}catch{reviewStatus.textContent='Existing local review data could not be read. Other learning features remain available.';}
 
 const sourceButton=document.querySelector('#run-source-network');
