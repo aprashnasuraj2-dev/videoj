@@ -45,3 +45,19 @@ The comparison panel defaults to a **missing guide claim**: loading a peer graph
 ## Important acceptance gaps
 
 The branch's synthetic and loopback demonstrations do not prove actual independent HTTPS interoperability, publisher trust, original-lesson rights, a factual-review process, real model accuracy, production browser CORS, human user research, hardware coverage or external builder adoption. A real default funded model and approved service budget are still participant-owned inputs. Keep public deployment and official Devpost filing closed until the major checklist gates have current evidence.
+
+## Rollout retention (development / pre-release)
+
+SUTRA keeps mutable pointers and immutable content separate. A future rollout that must keep a stale client working can merge immutable files from the immediately previous static build into the newly built directory:
+
+```bash
+npm run rollout:retain -- --previous /path/to/previous-dist --next ./dist
+```
+
+The helper copies only:
+
+- Vite-style hashed files under `assets/`;
+- content-addressed network graphs under `agents/v/<git-blob-sha>/...`, after verifying the directory hash matches the graph bytes.
+
+It deliberately does **not** copy `index.html`, `agents/agent-manifest.json`, canonical `agents/*.network.json`, media, API responses, credentials or other mutable pointers. If the same immutable path exists with different bytes, the helper fails instead of overwriting it. This is a local rollout mechanism and test fixture; it is not evidence that Cloudflare has retained a previous production deployment.
+
