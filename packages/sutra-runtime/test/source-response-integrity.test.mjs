@@ -6,5 +6,17 @@ function client(mutate,seen){return createSourceMcp({origin:'https://sutra.test'
  let result;if(rpc.method==='initialize')result={protocolVersion:'2025-06-18'};else if(rpc.method==='tools/list')result={tools:tools.list()};else {const output=tools.call(rpc.params.name,rpc.params.arguments);mutate?.(output);result={structuredContent:output,isError:false};}
  return Response.json({jsonrpc:'2.0',id:rpc.id,result});
  }});}
-test('source observer receives independently checked receipts only',async()=>{const seen=[];const c=client(null,seen);await c.callTool('search_lesson',{query:'timing',sourceId:fixture.source.id,start:1,end:5});assert.equal(seen.length,1);assert.equal(seen[0].cueId,fixture.receipt.cueId);});
+test('source observer and model-facing result preserve validated completeness metadata only',async()=>{const seen=[];const c=client(null,seen);const text=await c.callTool('search_lesson',{query:'timing',sourceId:fixture.source.id,start:1,end:5});const parsed=JSON.parse(text);assert.equal(seen.length,1);assert.equal(seen[0].cueId,fixture.receipt.cueId);assert.equal(parsed.returnedCount,1);assert.equal(parsed.truncated,false);assert.deepEqual(parsed.filters,{sourceId:fixture.source.id,start:1,end:5});assert.deepEqual(Object.keys(parsed).sort(),['filters','receipts','returnedCount','truncated','truthStatus','version']);});
 test('omitted, duplicated, reordered or inconsistent result is rejected before observer',async()=>{for(const mutation of [o=>o.receipts=[],o=>o.receipts.push(o.receipts[0]),o=>o.receipts[0].excerpt='changed']){const seen=[];await assert.rejects(client(mutation,seen).callTool('search_lesson',{query:'timing'}));assert.equal(seen.length,0);}});
+
+test('tampered search completeness, filters or extra response fields are rejected before reaching the model',async()=>{
+ for(const mutation of [
+  o=>{o.returnedCount=0;},
+  o=>{o.truncated=true;},
+  o=>{o.filters={sourceId:'other'};},
+  o=>{o.privateCanary='must-not-pass';}
+ ]){
+  const seen=[];await assert.rejects(client(mutation,seen).callTool('search_lesson',{query:'timing',sourceId:fixture.source.id}));
+  assert.equal(seen.length,0);
+ }
+});

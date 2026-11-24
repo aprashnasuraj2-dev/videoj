@@ -21,14 +21,19 @@ export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt
  async function ready(){if(initialized)return;const result=await rpc('initialize',{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'sutra-bounded-host',version:'0.1.0'}});if(result.protocolVersion!=='2025-06-18')bad();await rpc('notifications/initialized',{},true);initialized=true;}
  return {
   async listTools(){await ready();const result=await rpc('tools/list',{});if(!Array.isArray(result.tools)||result.tools.length!==definitions.length)bad();for(const d of definitions){const matches=result.tools.filter(t=>t.name===d.name);if(matches.length!==1||JSON.stringify(matches[0].inputSchema)!==JSON.stringify(d.inputSchema))bad();}return structuredClone(definitions);},
-  async callTool(name,args){const d=definitions.find(t=>t.name===name);if(!d)bad();validateData(d.inputSchema,args);const expected=local.call(name,args).receipts;await ready();const result=await rpc('tools/call',{name,arguments:args});const output=result.structuredContent;
-   if(result.isError||!output||output.version!==1||output.truthStatus!=='unverified'||!Array.isArray(output.receipts)||output.receipts.length>(name==='read_cue'?1:5)||name==='read_cue'&&output.receipts.length!==1)bad();
-   if(output.receipts.length!==expected.length)bad();
+  async callTool(name,args){const d=definitions.find(t=>t.name===name);if(!d)bad();validateData(d.inputSchema,args);const expected=local.call(name,args);await ready();const result=await rpc('tools/call',{name,arguments:args});const output=result.structuredContent;
+   const allowed=name==='search_lesson'?['version','receipts','limit','truthStatus','filters','returnedCount','truncated']:['version','receipts','limit','truthStatus'];
+   if(result.isError||!output||typeof output!=='object'||Array.isArray(output)||Object.keys(output).some(k=>!allowed.includes(k))||output.version!==1||output.truthStatus!=='unverified'||output.limit!==expected.limit||!Array.isArray(output.receipts)||output.receipts.length>(name==='read_cue'?1:5)||name==='read_cue'&&output.receipts.length!==1)bad();
+   if(output.receipts.length!==expected.receipts.length)bad();
+   if(name==='search_lesson'){
+    if(!Number.isInteger(output.returnedCount)||output.returnedCount!==output.receipts.length||output.returnedCount!==expected.returnedCount||typeof output.truncated!=='boolean'||output.truncated!==expected.truncated||JSON.stringify(output.filters)!==JSON.stringify(expected.filters))bad();
+   }
    for(const [index,receipt] of output.receipts.entries()){
-    if(!validateReceipt(receipt,{sources}).valid||Object.keys(expected[index]).some(key=>key!=='retrievedAt'&&expected[index][key]!==receipt[key]))bad();
+    if(!validateReceipt(receipt,{sources}).valid||Object.keys(expected.receipts[index]).some(key=>key!=='retrievedAt'&&expected.receipts[index][key]!==receipt[key]))bad();
    }
    for(const receipt of output.receipts){try{onReceipt?.(structuredClone(receipt));}catch{/* Observer does not control source capability. */}}
-   return JSON.stringify({version:1,receipts:output.receipts,truthStatus:'unverified'});
+   const safe={version:1,receipts:output.receipts,truthStatus:'unverified',...(name==='search_lesson'?{returnedCount:output.returnedCount,truncated:output.truncated,filters:output.filters}:{})};
+   return JSON.stringify(safe);
   },
  };
 }
