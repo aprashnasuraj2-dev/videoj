@@ -4,6 +4,7 @@ import {loadLocalNetwork,runNetwork} from '../../../packages/sutra-runtime/index
 import {createScriptedModel} from '../../../packages/sutra-runtime/testing.js';
 import {createConsentInspector} from '../../../packages/sutra-consent/index.js';
 import {serializeSafeTraceReceipt} from '../../../packages/sutra-runtime/trace-export.js';
+import {applyScreenState} from './status-state.js';
 
 export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',location.href).href}={}){
  const byId=id=>root.querySelector('#'+id);
@@ -18,7 +19,7 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
  const setState=(state,{agentCalls=0,modelCalls=0}={})=>{
   const labels={idle:'Idle',loading:'Loading local network',consent:'Awaiting external approval',completed:'Completed',denied:'Denied',cancelled:'Cancelled',error:'Stopped with error',input_error:'Input required'};
   execState.textContent=labels[state]??'Stopped';
-  status.dataset.state=state;
+  applyScreenState(status,state);
   agentBudget.textContent=Math.min(Number.isInteger(agentCalls)?agentCalls:0,12)+' / 12 used';
   modelBudget.textContent=Math.min(Number.isInteger(modelCalls)?modelCalls:0,8)+' / 8 used';
   toolCount.textContent=String(observedTools);
