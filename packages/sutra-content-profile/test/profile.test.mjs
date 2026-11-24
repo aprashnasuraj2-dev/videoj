@@ -215,3 +215,33 @@ test('artifact readers bound empty fragments and yield to cancellation during ti
  const timer=setTimeout(()=>controller.abort(),0);
  try{await assert.rejects(readContentBytes({origin,url,maxBytes:65536,signal:controller.signal,fetchImpl:()=>busy}));assert.ok(count<=1025);assert.equal(busy.body.locked,false);}finally{clearTimeout(timer);}
 });
+
+test('claim metadata rejects unknown nested values, cycles and unbounded dates before cloning',()=>{
+ let touched=0;
+ const nested={};Object.defineProperty(nested,'secret',{enumerable:true,get(){touched++;return 'private';}});
+ const cyclic={};cyclic.self=cyclic;
+ for(const extra of [nested,cyclic]){
+  const p=structuredClone(profile);p.videoClaim.extra=extra;
+  assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_VIDEO_CLAIM/);
+ }
+ const reviewed=structuredClone(profile);reviewed.mode='reviewed';
+ reviewed.transcript.path='/transcripts/release/'+reviewed.transcript.sha256+'/lesson.txt';
+ reviewed.media.video='/media/release/'+catalog.sources[0].mediaHash+'/lesson.mp4';
+ reviewed.guideClaim={sourceKind:'guide',sourceId:'guide',sourceVersion:'v1',title:'Guide',scope:reviewed.videoClaim.scope,claimKey:reviewed.videoClaim.claimKey,value:reviewed.videoClaim.value,excerpt:'Reviewed guide excerpt.',provenance:'Reviewed written guide',sourceHref:'/guides/release/'+'f'.repeat(64)+'/reviewed.html#claim',sourceHash:'f'.repeat(64),observedAt:'2024-02-29T09:00:00+05:45',dateBasis:'Date of observation'};
+ assert.equal(validateContentProfile(reviewed,catalog).profile.guideClaim.dateBasis,'Date of observation');
+ for(const [field,value] of [['extra',nested],['observedAt',nested],['observedAt','2026-02-29T00:00:00Z'],['observedAt','2026-01-01T24:00:00Z'],['dateBasis',cyclic],['dateBasis','x'.repeat(121)]]){
+  const p=structuredClone(reviewed);p.guideClaim[field]=value;assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_GUIDE/);
+ }
+ for(const value of ['2026-02-30T00:00:00Z','2026-01-01T24:00:00Z','2026-01-01T00:00:60Z']){
+  const p=structuredClone(profile);p.observedAt=value;assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_PROFILE/);
+ }
+ assert.equal(touched,0,'unknown or invalid nested data must not reach structuredClone getters');
+});
+
+test('known artifact MIME is checked before opening a potentially held response body',async()=>{
+ for(const [accept,error] of [['application/json','CONTENT_RESPONSE'],['text/plain','CONTENT_TRANSCRIPT_TYPE'],['text/html','CONTENT_RESPONSE']]){
+  let cancelled=0,pulls=0;const response=new Response(new ReadableStream({pull(){pulls++;},cancel(){cancelled++;}}),{headers:{'Content-Type':'application/octet-stream'}});
+  await assert.rejects(readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:32,accept,fetchImpl:()=>response}),new RegExp(error));
+  assert.equal(cancelled,1);assert.equal(response.body.locked,false);assert.ok(pulls<=1);
+ }
+});

@@ -82,3 +82,17 @@ test('cue identity survives comparison and malformed timing cannot become valid 
   const broken=structuredClone(claims);mutate(broken);assert.equal(compareClaimPair(broken).status,'invalid_source');
  }
 });
+
+test('comparison accepts the same maximum video identity, version, claim key and cue text as the content profile',()=>{
+ const claims=pair();claims.video.sourceId='v'+'a'.repeat(127);claims.video.sourceVersion='v'.repeat(128);claims.video.claimKey=claims.guide.claimKey='c'+'b'.repeat(127);claims.video.excerpt='x'.repeat(2000);
+ const result=compareClaimPair(claims);assert.equal(result.status,'unresolved_conflict');assert.equal(result.video.excerpt.length,2000);assert.equal(result.video.sourceId,claims.video.sourceId);
+ claims.video.excerpt+='x';assert.equal(compareClaimPair(claims).status,'invalid_source');
+ claims.video.excerpt='x';claims.guide.excerpt='x'.repeat(1201);assert.equal(compareClaimPair(claims).status,'invalid_source');
+});
+
+test('ordinary claim or input accessors never execute when comparison refuses data',()=>{
+ let touched=0;const claims=pair();Object.defineProperty(claims.video,'value',{enumerable:true,get(){touched++;return 2;}});
+ assert.equal(compareClaimPair(claims).status,'invalid_source');
+ const input={};Object.defineProperty(input,'video',{enumerable:true,get(){touched++;return pair().video;}});
+ assert.equal(compareClaimPair(input).status,'invalid_source');assert.equal(touched,0);
+});

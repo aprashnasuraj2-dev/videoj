@@ -1,18 +1,19 @@
 // Evidence-aware comparison. The engine compares narrowly declared structured
 // claims, not semantic truth or the credibility of either source.
+import {snapshotDataRecord} from '../../../packages/sutra-evidence/index.js';
 const safeString=(v,n)=>typeof v==='string'&&v.trim().length>0&&v.length<=n&&
  !/[\u0000-\u001f\u007f]/.test(v);
-const id=/^[A-Za-z][A-Za-z0-9_.:-]{0,99}$/;
+const id=/^[A-Za-z][A-Za-z0-9_.:-]{0,127}$/;
 const sourceKind=new Set(['video','guide']);
 const sha256=/^[a-f0-9]{64}$/;
 const safeSourceHref=v=>v===undefined||typeof v==='string'&&v.length<=300&&!/[\u0000-\u001f\u007f\\]/.test(v)&&
  (v.startsWith('./')||v.startsWith('/'))&&!v.includes('?')&&!/(^|\/)\.\.(?:\/|$)/.test(v)&&!/^\/\//.test(v);
 const isClaim=c=>!!c&&typeof c==='object'&&!Array.isArray(c)&&
- sourceKind.has(c.sourceKind)&&safeString(c.sourceId,100)&&id.test(c.sourceId)&&
- safeString(c.sourceVersion,100)&&safeString(c.scope,160)&&
- safeString(c.claimKey,100)&&id.test(c.claimKey)&&
+ sourceKind.has(c.sourceKind)&&safeString(c.sourceId,128)&&id.test(c.sourceId)&&
+ safeString(c.sourceVersion,128)&&safeString(c.scope,160)&&
+ safeString(c.claimKey,128)&&id.test(c.claimKey)&&
  (safeString(c.value,120)||Number.isFinite(c.value)||typeof c.value==='boolean')&&
- safeString(c.excerpt,1200)&&safeString(c.title,120)&&safeSourceHref(c.sourceHref)&&(c.sourceHash===undefined||typeof c.sourceHash==='string'&&sha256.test(c.sourceHash))&&
+ safeString(c.excerpt,c.sourceKind==='video'?2000:1200)&&safeString(c.title,120)&&safeSourceHref(c.sourceHref)&&(c.sourceHash===undefined||typeof c.sourceHash==='string'&&sha256.test(c.sourceHash))&&
  (c.sourceKind!=='guide'||typeof c.sourceHref==='string'&&typeof c.sourceHash==='string')&&
  (c.cueId===undefined||typeof c.cueId==='string'&&/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$/.test(c.cueId))&&
  (c.start===undefined&&c.end===undefined||Number.isFinite(c.start)&&Number.isFinite(c.end)&&c.start>=0&&c.end>c.start)&&
@@ -28,7 +29,13 @@ const shallow=c=>Object.freeze({
  ...(c.cueId!==undefined?{cueId:c.cueId}:{}),
  ...(Number.isFinite(c.start)&&Number.isFinite(c.end)&&c.start>=0&&c.end>c.start?{start:c.start,end:c.end}:{})
 });
-export function compareClaimPair({video=null,guide=null}={}){
+export function compareClaimPair(input={}){
+ let video=null,guide=null;
+ try{
+  const data=snapshotDataRecord(input,4);
+  video=data.video==null?null:snapshotDataRecord(data.video,20);
+  guide=data.guide==null?null:snapshotDataRecord(data.guide,20);
+ }catch{return Object.freeze({status:'invalid_source',reason:'One or more source records lack bounded identity, version, excerpt or claim metadata.',video:null,guide:null});}
  if(video!==null&&!isClaim(video)||guide!==null&&!isClaim(guide)){
   return Object.freeze({status:'invalid_source',reason:'One or more source records lack bounded identity, version, excerpt or claim metadata.',video:null,guide:null});
  }

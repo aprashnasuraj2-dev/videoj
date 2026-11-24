@@ -1,6 +1,7 @@
 import {snapshotDataRecord,snapshotDataArray} from '../sutra-evidence/index.js';
 export const MAX_REVIEWED_MEDIA_BYTES=24*1024*1024;
 const MEDIA_TYPES=new Set(['video/mp4','video/webm']);
+const EXACT_ARTIFACT_TYPES=new Set(['application/json','text/plain','text/html']);
 const SHA=/^[a-f0-9]{64}$/,ID=/^[A-Za-z][A-Za-z0-9._:-]{0,127}$/;
 const validId=v=>typeof v==='string'&&ID.test(v);
 const validHash=v=>typeof v==='string'&&SHA.test(v);
@@ -37,12 +38,14 @@ export async function readContentBytes({url,origin,fetchImpl=fetch,signal,maxByt
   response=await Promise.race([incoming,stopped]);
   signal?.throwIfAborted();
   if(!response.ok||response.status!==200||response.redirected||response.url&&response.url!==target.href||response.headers.has('content-range'))throw Error('CONTENT_RESPONSE');
-  if(MEDIA_TYPES.has(accept)&&response.headers.get('content-type')?.split(';',1)[0].trim().toLowerCase()!==accept)throw Error('CONTENT_MEDIA_RESPONSE');
+  const actualType=response.headers.get('content-type')?.split(';',1)[0].trim().toLowerCase();
+  if(MEDIA_TYPES.has(accept)&&actualType!==accept)throw Error('CONTENT_MEDIA_RESPONSE');
+  if(EXACT_ARTIFACT_TYPES.has(accept)&&actualType!==accept)throw Error(accept==='text/plain'?'CONTENT_TRANSCRIPT_TYPE':'CONTENT_RESPONSE');
   if(Number(response.headers.get('content-length'))>maxBytes)throw Error('CONTENT_SIZE');
   reader=response.body?.getReader();if(!reader)throw Error('CONTENT_BODY');
   let total=0,empty=0,chunks=0,buffer=new Uint8Array(Math.min(maxBytes,16384));
-  // Geometric growth bounds allocation even if a transport sends millions
-  // of tiny chunks. Never retain one object for every incoming fragment.
+  // Geometric growth bounds allocation; an independent fragment ceiling
+  // also bounds scheduling work. Never retain every fragment.
   for(;;){
    signal?.throwIfAborted();
    let interrupt;
@@ -88,8 +91,18 @@ const boundedJson=async({url,origin,fetchImpl,signal,maxBytes})=>{
  if(!plain(data))throw Error('CONTENT_JSON');return {data,bytes};
 };
 const validSource=source=>plain(source)&&validId(source.id)&&safeText(source.version,128)&&validHash(source.hash)&&validHash(source.mediaHash)&&Number.isFinite(source.duration)&&source.duration>0&&source.duration<=86400&&Array.isArray(source.cues)&&source.cues.length>0&&source.cues.length<=500&&new Set(source.cues.map(x=>x?.id)).size===source.cues.length&&source.cues.every(c=>plain(c)&&validId(c.id)&&Number.isFinite(c.start)&&Number.isFinite(c.end)&&c.start>=0&&c.end>c.start&&c.end<=source.duration&&safeText(c.text,2000));
-const validVideo=claim=>plain(claim)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&validId(claim.claimKey)&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.provenance,240)&&safeText(claim.dateBasis,120);
-const validGuide=claim=>claim===null||plain(claim)&&claim.sourceKind==='guide'&&validId(claim.sourceId)&&safeText(claim.sourceVersion,100)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&validId(claim.claimKey)&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.excerpt,1200)&&safeText(claim.provenance,240)&&safeGuideHref(claim.sourceHref)&&validHash(claim.sourceHash);
+const observedAtValid=v=>{
+ if(typeof v!=='string'||v.length>40)return false;
+ const fields=/^(\d{4})-(\d\d)-(\d\d)T(\d\d):(\d\d):(\d\d)(?:\.\d{1,3})?(?:Z|[+-]\d\d:\d\d)$/.exec(v);
+ if(!fields)return false;
+ const [year,month,day,hour,minute,second]=fields.slice(1).map(Number);
+ const leap=year%4===0&&(year%100!==0||year%400===0),days=[31,leap?29:28,31,30,31,30,31,31,30,31,30,31];
+ return month>=1&&month<=12&&day>=1&&day<=days[month-1]&&hour<24&&minute<60&&second<60&&Number.isFinite(Date.parse(v));
+};
+const VIDEO_FIELDS=['title','scope','claimKey','value','provenance','dateBasis'];
+const GUIDE_REQUIRED=['sourceKind','sourceId','sourceVersion','title','scope','claimKey','value','excerpt','provenance','sourceHref','sourceHash'];
+const validVideo=claim=>exact(claim,VIDEO_FIELDS)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&validId(claim.claimKey)&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.provenance,240)&&safeText(claim.dateBasis,120);
+const validGuide=claim=>claim===null||exact(claim,[...GUIDE_REQUIRED,'observedAt','dateBasis'],GUIDE_REQUIRED)&&claim.sourceKind==='guide'&&validId(claim.sourceId)&&safeText(claim.sourceVersion,100)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&validId(claim.claimKey)&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.excerpt,1200)&&safeText(claim.provenance,240)&&safeGuideHref(claim.sourceHref)&&validHash(claim.sourceHash)&&(!Object.hasOwn(claim,'observedAt')||observedAtValid(claim.observedAt))&&(!Object.hasOwn(claim,'dateBasis')||safeText(claim.dateBasis,120));
 // Derive the actual native tracks from the same catalog that binds the receipt.
 // WebVTT is millisecond-based; never silently round a source interval or
 // transform its text into different wording. Overlap is valid for captions,
@@ -124,7 +137,7 @@ export function validateContentProfile(profile,catalog){
   profile={schema:p.schema,mode:p.mode,contentVersion:p.contentVersion,title:p.title,observedAt:p.observedAt,primarySourceId:p.primarySourceId,featuredCueId:p.featuredCueId,catalog:{path:catalogRef.path,sha256:catalogRef.sha256},transcript:{path:transcript.path,sha256:transcript.sha256},media:{video:media.video,poster:media.poster,chapters:media.chapters,captions:media.captions},videoClaim:{...video},guideClaim:guide?{...guide}:null,ui:{noticeTitle:ui.noticeTitle,noticeBody:ui.noticeBody}};
   catalog={schema:c.schema,contentVersion:c.contentVersion,sources};
  }catch{throw Error('CONTENT_DATA');}
- if(!exact(profile,['schema','mode','contentVersion','title','observedAt','primarySourceId','featuredCueId','catalog','transcript','media','videoClaim','guideClaim','ui'])||profile.schema!==1||!['synthetic','reviewed'].includes(profile.mode)||!safeText(profile.contentVersion,100)||!safeText(profile.title,160)||typeof profile.observedAt!=='string'||!/T.*(?:Z|[+-]\d\d:\d\d)$/.test(profile.observedAt)||!Number.isFinite(Date.parse(profile.observedAt))||!validId(profile.primarySourceId)||!validId(profile.featuredCueId))throw Error('CONTENT_PROFILE');
+ if(!exact(profile,['schema','mode','contentVersion','title','observedAt','primarySourceId','featuredCueId','catalog','transcript','media','videoClaim','guideClaim','ui'])||profile.schema!==1||!['synthetic','reviewed'].includes(profile.mode)||!safeText(profile.contentVersion,100)||!safeText(profile.title,160)||!observedAtValid(profile.observedAt)||!validId(profile.primarySourceId)||!validId(profile.featuredCueId))throw Error('CONTENT_PROFILE');
  if(!exact(profile.catalog,['path','sha256'])||!safeRelative(profile.catalog.path)||!validHash(profile.catalog.sha256))throw Error('CONTENT_CATALOG_REF');
  if(!exact(profile.transcript,['path','sha256'])||!safePublicPath(profile.transcript.path)||profile.transcript.path.includes('#')||!validHash(profile.transcript.sha256))throw Error('CONTENT_TRANSCRIPT');
  if(!exact(profile.media,['video','poster','chapters','captions'])||Object.values(profile.media).some(x=>!safePublicPath(x)||x.includes('#')))throw Error('CONTENT_MEDIA');
