@@ -130,3 +130,23 @@ test('clear partially succeeding is unknown even if second key raises a native-l
  assert.equal(calls,2);assert.equal(f.values.has(key),false);assert.equal(f.values.get(legacy),'legacy');assert.equal(f.values.get('unrelated'),'keep');
  assert.throws(confirmed,/changed/);assert.equal(calls,2,'stale confirmation cannot replay partial clear');
 });
+
+test('native-looking save exception is rejected only with exact unchanged pre-write readback',()=>{
+ for(const name of ['QuotaExceededError','SecurityError'])for(const effect of ['unchanged','changed','unreadable']){
+  const f=setup(),prior=f.store.commit(f.store.prepare(fixture.receipt).id),read=f.storage.getItem;
+  let invoked=false,calls=0;
+  f.storage.setItem=(k,v)=>{invoked=true;calls++;if(effect==='changed')f.values.set(k,v);throw new DOMException('fixture',name);};
+  if(effect==='unreadable')f.storage.getItem=k=>{if(invoked)throw Error('cannot confirm');return read(k);};
+  const proposal=f.store.prepare(fixture.receipt);
+  assert.throws(()=>f.store.commit(proposal.id),e=>e.outcome===(effect==='unchanged'?'rejected':'unknown'));
+  assert.throws(()=>f.store.commit(proposal.id));assert.equal(calls,1);
+  const records=JSON.parse(f.values.get(key));assert.equal(records[0].id,prior.id);assert.equal(records.length,effect==='changed'?2:1);
+ }
+});
+test('completed proposal cannot return a changed valid record or a later reused id as the original success',()=>{
+ const f=setup(),p=f.store.prepare(fixture.receipt),saved=f.store.commit(p.id);
+ let records=JSON.parse(f.values.get(key));records[0].receipt.retrievedAt='2026-01-01T00:00:00.000Z';
+ f.values.set(key,JSON.stringify(records));assert.throws(()=>f.store.commit(p.id),/changed/);
+ f.values.set(key,JSON.stringify([saved]));f.store.remove(p.id);
+ f.values.set(key,JSON.stringify([saved]));assert.throws(()=>f.store.commit(p.id),/no longer exists/);
+});

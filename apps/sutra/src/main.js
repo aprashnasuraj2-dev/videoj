@@ -241,7 +241,9 @@ document.querySelector('#confirm-review').addEventListener('click',async()=>{
  try{saved=await reviewMutations.run(()=>getReviewActions().execute(proposal.id));}
  catch(error){
   getReviewActions().cancel(proposal.id);
-  const outcome=error.outcome==='unknown'?'unknown':'rejected';setReviewAttempt(proposal,outcome);
+  const outcome=error.outcome==='unknown'?'unknown':'rejected';
+  try{renderReviews();}catch{} // The write may already have changed the collection.
+  setReviewAttempt(proposal,outcome);
   reviewStatus.textContent=outcome==='unknown'?'Save outcome is unknown. Inspect local reviews before trying again; no automatic retry will occur.':'Local save was rejected before confirmation. The action will not be automatically retried.';
   reviewBusy=false;return;
  }

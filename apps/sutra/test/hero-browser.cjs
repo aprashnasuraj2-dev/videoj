@@ -104,6 +104,15 @@ const assert=require('node:assert/strict');
     assert.equal(await a.evaluate(k=>JSON.parse(localStorage.getItem(k)).length,key),1);
     assert.equal(await a.locator('#review-list li').count(),1);
    }finally{await a.evaluate(()=>window.__restoreReviewSet());}
+   // A native-looking quota exception after writing is not a proven refusal.
+   await a.evaluate(k=>{const original=Storage.prototype.setItem;window.__restoreReviewSet=()=>{Storage.prototype.setItem=original;};Storage.prototype.setItem=function(name,value){original.call(this,name,value);if(name===k)throw new DOMException('synthetic post-save exception','QuotaExceededError');};},key);
+   try{
+    await confirm(a);
+    await a.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('Save outcome is unknown'));
+    assert.equal(await a.evaluate(k=>JSON.parse(localStorage.getItem(k)).length,key),2);
+    assert.equal(await a.locator('#review-list li').count(),2);
+    assert.equal(await a.locator('#download-review-attempt').isHidden(),false);
+   }finally{await a.evaluate(()=>window.__restoreReviewSet());}
    const legacy='sutra.synthetic-review-cards.v1';
    await a.evaluate(k=>localStorage.setItem(k,'legacy fixture'),legacy);
    await a.locator('#clear-local-reviews').click();
