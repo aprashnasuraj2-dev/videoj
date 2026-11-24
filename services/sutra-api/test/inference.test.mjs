@@ -188,3 +188,23 @@ test('facade still rejects caller-controlled provider knobs, explicit additional
   assert.equal(response.status,400);assert.equal(contacted,0);
  }
 });
+
+test('unknown nested tool-call metadata fails before quota or provider',async()=>{
+ let reservations=0,upstream=0;
+ const env=environment(async()=>{reservations++;throw Error('Unexpected quota access');});
+ const call={id:'call-001',type:'function',function:{name:'source_lookup',arguments:'{}'}};
+ const assistant={role:'assistant',content:null,tool_calls:[call]};
+ const tool={type:'function',function:{name:'source_lookup',description:'Read source.',parameters:{type:'object',properties:{request:{type:'string'}},required:['request'],additionalProperties:false}}};
+ const candidates=[
+  {...payload(),messages:[payload().messages[0],{...assistant,tool_calls:[{...call,url:'https://attacker.example'}]}]},
+  {...payload(),messages:[payload().messages[0],{...assistant,tool_calls:[{...call,function:{...call.function,upstream:'http://internal'}}]}]},
+  {...payload(),tools:[{...tool,network:'https://evil.example'}]},
+  {...payload(),messages:[payload().messages[0],{...assistant,tool_calls:[{...call,secret:'leak'}]}]},
+  {...payload(),tools:[{...tool,function:{...tool.function,url:'http://internal'}}]}
+ ];
+ for(const body of candidates){
+  const response=await handleInference(request(body),env,{fetchImpl:async()=>{upstream++;return sse();}});
+  assert.equal(response.status,400,'unknown nested metadata must fail closed');
+ }
+ assert.equal(reservations,0);assert.equal(upstream,0);
+});

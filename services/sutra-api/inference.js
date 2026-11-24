@@ -35,11 +35,11 @@ function validPayload(body,models){
  for(const message of body.messages){
   if(!plain(message)||!['system','user','assistant','tool'].includes(message.role)||Object.keys(message).some(k=>!['role','content','tool_calls','tool_call_id','name'].includes(k)))throw Error();
   if(typeof message.content!=='string'&&!(message.role==='assistant'&&message.content===null))throw Error();chars+=(message.content??'').length;if(chars>24000)throw Error();if(message.role==='user')user=true;
-  if(message.tool_calls!==undefined){if(message.role!=='assistant'||!Array.isArray(message.tool_calls)||message.tool_calls.length>8)throw Error();for(const call of message.tool_calls){if(!plain(call)||call.type!=='function'||typeof call.id!=='string'||call.id.length>100||calls.has(call.id)||!plain(call.function)||!/^\w{1,100}$/.test(call.function.name??'')||typeof call.function.arguments!=='string'||call.function.arguments.length>8000)throw Error();calls.add(call.id);}}
+  if(message.tool_calls!==undefined){if(message.role!=='assistant'||!Array.isArray(message.tool_calls)||message.tool_calls.length>8)throw Error();for(const call of message.tool_calls){if(!plain(call)||Object.keys(call).some(k=>!['id','type','function'].includes(k))||call.type!=='function'||typeof call.id!=='string'||call.id.length>100||calls.has(call.id)||!plain(call.function)||Object.keys(call.function).some(k=>!['name','arguments'].includes(k))||!/^\w{1,100}$/.test(call.function.name??'')||typeof call.function.arguments!=='string'||call.function.arguments.length>8000)throw Error();calls.add(call.id);}}
   if(message.role==='tool'&&(!calls.has(message.tool_call_id)||typeof message.content!=='string'))throw Error();
  }
  if(!user)throw Error();
- for(const tool of tools){if(!plain(tool)||tool.type!=='function'||!plain(tool.function)||Object.keys(tool.function).some(k=>!['name','description','parameters'].includes(k))||!/^\w{1,100}$/.test(tool.function.name??'')||typeof tool.function.description!=='string')throw Error();checkSchema(tool.function.parameters);if(tool.function.parameters.type!=='object'||tool.function.parameters.additionalProperties===true)throw Error();}
+ for(const tool of tools){if(!plain(tool)||Object.keys(tool).some(k=>!['type','function'].includes(k))||tool.type!=='function'||!plain(tool.function)||Object.keys(tool.function).some(k=>!['name','description','parameters'].includes(k))||!/^\w{1,100}$/.test(tool.function.name??'')||typeof tool.function.description!=='string')throw Error();checkSchema(tool.function.parameters);if(tool.function.parameters.type!=='object'||tool.function.parameters.additionalProperties===true)throw Error();}
  return {model:body.model,messages:body.messages,tools,stream:true};
 }
 const modelPattern=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/;
