@@ -19,7 +19,7 @@ const formatTime=n=>{
  return String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
 };
 
-export function mountTranscriptPanel(host,{source,onSeek,media}={}){
+export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synthetic'}={}){
  if(!host||typeof host.replaceChildren!=='function')throw Error('Transcript host missing.');
  host.replaceChildren();
  let disposed=false;
@@ -31,7 +31,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media}={}){
  section.setAttribute('aria-labelledby',heading.id);
  section.append(heading);
  const meta=el('p','transcript-meta');
- const searchLabel=el('label',null,'Search synthetic transcript');searchLabel.dataset.i18n='transcript.search';
+ const searchLabel=el('label',null,'Search source transcript');searchLabel.dataset.i18n='transcript.search';
  const input=el('input','transcript-search');
  input.type='search';input.maxLength=160;input.placeholder='Search cue wording';input.dataset.i18nPlaceholder='transcript.placeholder';
  input.autocomplete='off';input.id='timing-transcript-search';
@@ -53,9 +53,9 @@ export function mountTranscriptPanel(host,{source,onSeek,media}={}){
  let captionTrackConfirmed=false;
  try{captionTrackConfirmed=Array.from(media?.textTracks??[]).some(track=>
   track.kind==='captions'||track.kind==='subtitles');}catch{}
- meta.textContent='Synthetic source '+sourceId+' · '+version+
+ meta.textContent=(contentMode==='reviewed'?'Reviewed':'Synthetic')+' source '+sourceId+' · '+version+
   ' · '+(valid?items.length:0)+' cue'+(items.length===1?'':'s')+
-  '. Source consistency only; original lesson review pending. '+
+  '. Source consistency only; factual truth remains a separate review question. '+
   (captionTrackConfirmed?'A native caption track is present but its accuracy is unverified.':
    'No native caption track is confirmed; the catalog transcript is independent.');
  const buttonMap=new Map();
@@ -117,7 +117,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media}={}){
     try{
      const actual=await onSeek(cue.start);
      if(!Number.isFinite(actual)||Math.abs(actual-cue.start)>1)throw Error('Native seek did not reach the cue.');
-     status('Native media reached '+formatTime(actual)+'. Synthetic cue '+cue.id+' selected; no factual verification.');
+     status('Native media reached '+formatTime(actual)+'. Source cue '+cue.id+' selected; no factual verification.');
      updateActive();
     }catch{
      status('The cue could not be reached in the current media. No seek success is claimed.');
@@ -125,7 +125,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media}={}){
    });
    item.append(button);list.append(item);buttonMap.set(cue.id,button);
   }
-  status(currentCues.length+' of '+items.length+' synthetic source cues shown. Use arrow keys within cue controls.');
+  status(currentCues.length+' of '+items.length+' source cues shown. Use arrow keys within cue controls.');
   updateActive();
  }
  input.addEventListener('input',render);
