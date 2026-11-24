@@ -86,3 +86,40 @@ test('external MCP revocation before decision or during transport cannot send a 
   assert.equal(requests.length,phase==='approval'?0:1);assert.ok(!inspector.exportEvents().some(x=>x.status==='completed'));
  }
 });
+
+import {loadLocalNetwork,loadPeerNetwork} from '../index.js';
+const baseUrl=origin+'/agents/';
+const manifest=()=>Response.json({networks:[{name:'learner',front_man:'learner',hocon:'graph.json'}]});
+const graph=()=>Response.json({metadata:{description:'Bounded fixture'},tools:[{name:'learner',function:{description:'Fixture',parameters:{type:'object',properties:{request:{type:'string'}},required:['request'],additionalProperties:false}},instructions:'Answer.',tools:[]}]});
+test('local loader cancels late headers and held bodies, retains timeout reason and sends no graph GET',async()=>{
+ for(const phase of ['headers','body']){
+  let release,started=false,cancelled=0,calls=0;
+  const response=new Response(new ReadableStream({cancel(){cancelled++;}}),{headers});
+  const pending=loadLocalNetwork({baseUrl,expectedOrigin:origin,timeoutMs:35,fetchImpl:async()=>{calls++;started=true;if(phase==='headers')return new Promise(resolve=>{release=resolve;});return response;}});
+  await waitFor(()=>started);await assert.rejects(pending,e=>e.code==='ARTIFACT_TIMEOUT'&&e.readAttempts[0].status==='cancelled');
+  release?.(response);await waitFor(()=>cancelled===1);assert.equal(calls,1);assert.equal(response.body.locked,false);
+ }
+});
+test('local loader rejects partial JSON and same-origin resource substitution; only explicit 503 retries',async()=>{
+ for(const response of [new Response('{}',{status:206,headers}),Object.defineProperty(manifest(),'url',{value:baseUrl+'other.json'})]){
+  let calls=0;
+  await assert.rejects(loadLocalNetwork({baseUrl,expectedOrigin:origin,retryUnavailableReads:true,fetchImpl:async()=>{calls++;return response;}}),e=>['ARTIFACT_RESPONSE','ARTIFACT_ORIGIN'].includes(e.code));
+  assert.equal(calls,1);assert.equal(response.body.locked,false);
+ }
+ let calls=0,cancelled=0;
+ const result=await loadLocalNetwork({baseUrl,expectedOrigin:origin,retryUnavailableReads:true,fetchImpl:async()=>{calls++;if(calls===1)return new Response(new ReadableStream({cancel(){cancelled++;}}),{status:503});return calls===2?manifest():graph();}});
+ assert.equal(calls,3);assert.equal(cancelled,1);assert.deepEqual(result.readAttempts.map(x=>x.status),['unavailable','completed','completed']);
+});
+test('human peer approval time is separate from each GET deadline within the overall budget',async()=>{
+ const approvals=[],calls=[];
+ const inspector=createConsentInspector({decide:async intent=>{approvals.push(intent.kind);await new Promise(resolve=>setTimeout(resolve,40));return 'allow';}});
+ const result=await loadPeerNetwork({peerUrl:baseUrl+'learner',inspector,timeoutMs:1000,contactTimeoutMs:20,fetchImpl:async url=>{calls.push(url);return calls.length===1?manifest():graph();}});
+ assert.equal(result.name,'learner');assert.deepEqual(approvals,['peer_manifest','peer_graph']);assert.equal(calls.length,2);
+});
+test('approved peer GET times out without waiting for noncooperative transport and disposes late body',async()=>{
+ let release,cancelled=0,calls=0;
+ const inspector=createConsentInspector({decide:async()=> 'allow'});
+ const pending=loadPeerNetwork({peerUrl:baseUrl+'learner',inspector,timeoutMs:1000,contactTimeoutMs:30,fetchImpl:async()=>{calls++;return new Promise(resolve=>{release=resolve;});}});
+ await waitFor(()=>calls===1);await assert.rejects(pending,e=>e.code==='MANIFEST_UNAVAILABLE');
+ release(new Response(new ReadableStream({cancel(){cancelled++;}}),{headers}));await waitFor(()=>cancelled===1);assert.equal(calls,1);
+});

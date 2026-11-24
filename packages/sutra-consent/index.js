@@ -147,9 +147,10 @@ async function readBoundedJson(response,maxBytes,signal){
     else cancelBody(response?.body);
   }
 }
-export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetch,maxBytes=65536,signal}={}){
+export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetch,maxBytes=65536,signal,timeoutMs=5000}={}){
   if(!inspector||typeof inspector.perform!=='function')fail('INSPECTOR','A consent inspector is required.');
   if(!Number.isInteger(maxBytes)||maxBytes<1||maxBytes>65536)fail('CONTACT_SIZE','Response limit must be within 1–65536 bytes.');
+  if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>5000)fail('CONTACT_TIMEOUT','Approved GET timeout must be within 1–5000 ms.');
   check(signal);
   const normalized=normalizeContact(contact);
   let target;
@@ -158,7 +159,9 @@ export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetc
   if(target.origin!==normalized.origin||target.username||target.password||target.hash||target.href.length>2048||!['https:','http:'].includes(target.protocol)||normalized.resource&&normalized.resource!==target.href)fail('CONTACT_URL','Approved contact URL must stay on the consented origin and exact resource.');
   const bound=Object.freeze({...normalized,resource:target.href});
   return inspector.perform(bound,async(_contact,approvedSignal)=>{
-    const active=combine(signal,approvedSignal);
+    const parent=combine(signal,approvedSignal),deadline=new AbortController();
+    const timer=setTimeout(()=>deadline.abort(),timeoutMs);
+    const active=combine(parent,deadline.signal);
     let received,handedOff=false,finished=false;
     try{
       let response;
@@ -171,6 +174,7 @@ export async function fetchJsonWithConsent({inspector,contact,url,fetchImpl=fetc
       check(active);
       if(response.redirected||response.url&&response.url!==target.href)fail('CONTACT_REDIRECT','Approved contact changed its exact resource.');
       handedOff=true;return await readBoundedJson(response,maxBytes,active);
-    }finally{finished=true;if(!handedOff)cancelBody(received?.body);}
+    }catch(error){if(deadline.signal.aborted&&!parent?.aborted)fail('CONTACT_TIMEOUT','Approved GET exceeded its network deadline.');throw error;}
+    finally{clearTimeout(timer);finished=true;if(!handedOff)cancelBody(received?.body);}
   },{signal});
 }

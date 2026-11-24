@@ -1,6 +1,7 @@
 import {createSourceMcp} from './source-mcp.js';
 import {createExternalReadMcp,validateExternalMcpConfig} from './external-mcp.js';
 import {fetchJsonWithConsent} from '../sutra-consent/index.js';
+import {readBoundedResponse,BoundedResponseError,isFullJson} from './bounded-response.js';
 import {AgentNetwork, validateNetwork} from './vendor/nsdeploy/kernel.js';
 import {runAgent} from './vendor/nsdeploy/runner.js';
 import {checkSchema, validateData} from './vendor/nsdeploy/actions.js';
@@ -179,7 +180,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   check();if(!peerRuntime)return unavailable();
   let loaded,peer;
   try{
-   loaded=await loadPeerNetwork({peerUrl:url,inspector:peerRuntime.inspector,fetchImpl:peerRuntime.fetchImpl??fetch,signal:controller.signal,timeoutMs:Math.min(bounds.timeoutMs,5000)});
+   loaded=await loadPeerNetwork({peerUrl:url,inspector:peerRuntime.inspector,fetchImpl:peerRuntime.fetchImpl??fetch,signal:controller.signal,timeoutMs:bounds.timeoutMs,contactTimeoutMs:Math.min(bounds.timeoutMs,5000)});
    check();peer=compileNetwork(loaded.definition,{name:loaded.name,frontMan:loaded.frontMan,limits:bounds});
   }catch(error){
    if(controller.signal.aborted)throw controller.signal.reason;
@@ -249,22 +250,29 @@ async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigi
    if(signal?.aborted)fail('CANCELLED','Artifact load cancelled.');
    const event={artifact:kind,attempt,status:'started'};attemptLog.push(event);
    try{
-    let response;
-    try{response=await fetchImpl(url.href,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',signal,headers:{Accept:'application/json'}});}catch{if(signal?.aborted)fail('CANCELLED','Artifact load cancelled.');fail('ARTIFACT_FETCH','Public artifact could not be fetched.');}
-    if(signal?.aborted)fail('CANCELLED','Artifact load cancelled.');
-    if(response.redirected||response.url&&new URL(response.url).origin!==expectedOrigin)fail('ARTIFACT_ORIGIN','Unexpected artifact response origin or redirect.');
+    let response,bytes;
+    try{
+     ({response,bytes}=await readBoundedResponse({url:url.href,fetchImpl,signal,maxBytes,init:{method:'GET',headers:{Accept:'application/json'}},inspect(value){
+      if([502,503,504].includes(value.status))return false;
+      if(!isFullJson(value))fail('ARTIFACT_RESPONSE','Artifact must return complete successful JSON, not an HTML fallback.');
+      return true;
+     }}));
+    }catch(error){
+     if(signal?.aborted)throw signal.reason;
+     if(error instanceof RuntimeError)throw error;
+     if(error instanceof BoundedResponseError){
+      const codes={REDIRECT:'ARTIFACT_ORIGIN',SIZE:'ARTIFACT_SIZE',TRANSPORT:'ARTIFACT_FETCH',BODY:'ARTIFACT_RESPONSE',RESPONSE:'ARTIFACT_RESPONSE'};
+      fail(codes[error.code]??'ARTIFACT_FETCH','Public artifact could not be read within its policy.');
+     }
+     fail('ARTIFACT_FETCH','Public artifact could not be fetched.');
+    }
+    if(signal?.aborted)throw signal.reason;
     if([502,503,504].includes(response.status)){
-     event.status='unavailable';void response.body?.cancel().catch(()=>{});
+     event.status='unavailable';
      if(remainingRetries>0){remainingRetries--;continue;}
      fail('ARTIFACT_UNAVAILABLE','Public artifact service is unavailable.');
     }
-    if(!response.ok||!response.headers.get('content-type')?.toLowerCase().includes('application/json'))fail('ARTIFACT_RESPONSE','Artifact must return successful JSON, not an HTML fallback.');
-    const reader=response.body?.getReader();if(!reader)fail('ARTIFACT_RESPONSE','Artifact body unavailable.');
-    let bytes=0;const chunks=[];
-    try{for(;;){signal?.throwIfAborted();const {done,value}=await reader.read();if(done)break;bytes+=value.byteLength;if(bytes>maxBytes)fail('ARTIFACT_SIZE','Artifact exceeds the published data limit.');chunks.push(value);}}
-    finally{void reader.cancel().catch(()=>{});reader.releaseLock();}
-    const data=new Uint8Array(bytes);let offset=0;for(const chunk of chunks){data.set(chunk,offset);offset+=chunk.byteLength;}
-    let parsed;try{parsed=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(data));}catch{fail('ARTIFACT_JSON','Artifact is not valid UTF-8 JSON.');}
+    let parsed;try{parsed=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{fail('ARTIFACT_JSON','Artifact is not valid UTF-8 JSON.');}
     event.status='completed';return parsed;
    }catch(error){
     if(event.status==='started')event.status=signal?.aborted?'cancelled':'failed';
@@ -309,7 +317,7 @@ export async function loadLocalNetwork({signal,timeoutMs=5000,...options}={}){
   const result=await Promise.race([loadLocalNetworkData({...options,signal:controller.signal,attemptLog}),stopped]);
   return {...result,readAttempts:snapshot()};
  }catch(error){
-  const controlled=error instanceof RuntimeError?error:new RuntimeError('ARTIFACT_FETCH','Artifact load failed before a usable network was established.');
+  const controlled=controller.signal.aborted&&controller.signal.reason instanceof RuntimeError?controller.signal.reason:error instanceof RuntimeError?error:new RuntimeError('ARTIFACT_FETCH','Artifact load failed before a usable network was established.');
   controlled.readAttempts=snapshot();throw controlled;
  }
  finally{clearTimeout(timer);signal?.removeEventListener('abort',cancel);controller.signal.removeEventListener('abort',stop);controller.abort();}
@@ -364,16 +372,16 @@ export function resolveSymbolicPeerLinks(definition,document,networkName){
  return result;
 }
 
-async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,allowSourceTools=false}={}){
+async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,allowSourceTools=false,contactTimeoutMs}={}){
  const {base,networkName}=parsePeerNetworkReference(peerUrl);
  const manifestUrl=new URL('agent-manifest.json',base);
  let manifest;
  try{manifest=await fetchJsonWithConsent({
   inspector,
   contact:{origin:manifestUrl.origin,kind:'peer_manifest',purpose:'Resolve the exact published peer network',disclosure:['network name'],network:networkName},
-  url:manifestUrl.href,fetchImpl,maxBytes:16384,signal
+  url:manifestUrl.href,fetchImpl,maxBytes:16384,signal,timeoutMs:contactTimeoutMs
  });}
- catch(error){if(/^CONTACT_(?:FAILED|RESPONSE|SIZE|JSON|FETCH|REDIRECT)$/.test(error?.code??''))fail('MANIFEST_UNAVAILABLE','The peer manifest was unavailable or not a valid public JSON response.');throw error;}
+ catch(error){if(/^CONTACT_(?:FAILED|RESPONSE|SIZE|JSON|FETCH|REDIRECT|TIMEOUT)$/.test(error?.code??''))fail('MANIFEST_UNAVAILABLE','The peer manifest was unavailable or not a valid public JSON response.');throw error;}
  if(!plain(manifest)||!Array.isArray(manifest.networks)||manifest.networks.length<1||manifest.networks.length>32)fail('MANIFEST','Invalid public peer network index.');
  if(manifest.coded_tools||manifest.actions)fail('UNSUPPORTED_CAPABILITY','Executable peer publication metadata is disabled in this profile.');
  const matching=manifest.networks.filter(entry=>plain(entry)&&entry.name===networkName);
@@ -388,9 +396,9 @@ async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,all
  try{definition=await fetchJsonWithConsent({
   inspector,
   contact:{origin:graphUrl.origin,kind:'peer_graph',purpose:'Retrieve the declared peer network definition',disclosure:['network name'],network:networkName},
-  url:graphUrl.href,fetchImpl,maxBytes:65536,signal
+  url:graphUrl.href,fetchImpl,maxBytes:65536,signal,timeoutMs:contactTimeoutMs
  });}
- catch(error){if(/^CONTACT_(?:FAILED|RESPONSE|SIZE|JSON|FETCH|REDIRECT)$/.test(error?.code??''))fail('GRAPH_UNAVAILABLE','The declared peer graph was unavailable or not a valid public JSON response.');throw error;}
+ catch(error){if(/^CONTACT_(?:FAILED|RESPONSE|SIZE|JSON|FETCH|REDIRECT|TIMEOUT)$/.test(error?.code??''))fail('GRAPH_UNAVAILABLE','The declared peer graph was unavailable or not a valid public JSON response.');throw error;}
  compileNetwork(definition,{name:networkName,frontMan:entry.front_man,allowSourceTools});
  return {definition,name:networkName,frontMan:entry.front_man,artifacts:{manifest:manifestUrl.href,definition:graphUrl.href},origin:base.origin};
 }
@@ -401,8 +409,8 @@ async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,all
  * separately approved contacts; redirects are fail-closed until redirect-policy
  * handling is implemented.
  */
-export async function loadPeerNetwork({signal,timeoutMs=5000,...options}={}){
- if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>5000)fail('LIMIT_CONFIG','Peer artifact load timeout must be within 1–5000 ms.');
+export async function loadPeerNetwork({signal,timeoutMs=5000,contactTimeoutMs=Math.min(timeoutMs,5000),...options}={}){
+ if(!Number.isInteger(timeoutMs)||timeoutMs<1||timeoutMs>60000||!Number.isInteger(contactTimeoutMs)||contactTimeoutMs<1||contactTimeoutMs>5000)fail('LIMIT_CONFIG','Peer load budget must be 1–60000 ms, each approved GET 1–5000 ms.');
  if(signal?.aborted)fail('CANCELLED','Peer artifact loading cancelled.');
  const controller=new AbortController();
  const cancel=()=>controller.abort(new RuntimeError('CANCELLED','Peer artifact loading cancelled.'));
@@ -410,10 +418,10 @@ export async function loadPeerNetwork({signal,timeoutMs=5000,...options}={}){
  let stop;const stopped=new Promise((_,reject)=>{stop=()=>reject(controller.signal.reason);controller.signal.addEventListener('abort',stop,{once:true});});
  stopped.catch(()=>{});
  const timer=setTimeout(()=>controller.abort(new RuntimeError('ARTIFACT_TIMEOUT','Peer artifact loading exceeded its time limit.')),timeoutMs);
- try{return await Promise.race([loadPeerNetworkData({...options,signal:controller.signal}),stopped]);}
+ try{return await Promise.race([loadPeerNetworkData({...options,contactTimeoutMs,signal:controller.signal}),stopped]);}
  catch(error){
-  if(error instanceof RuntimeError||error?.name==='ConsentError')throw error;
   if(controller.signal.aborted&&controller.signal.reason instanceof RuntimeError)throw controller.signal.reason;
+  if(error instanceof RuntimeError||error?.name==='ConsentError')throw error;
   fail('PEER_LOAD_FAILED','Peer artifact loading failed before a usable network was established.');
  } finally {
   clearTimeout(timer);signal?.removeEventListener('abort',cancel);controller.signal.removeEventListener('abort',stop);controller.abort();
