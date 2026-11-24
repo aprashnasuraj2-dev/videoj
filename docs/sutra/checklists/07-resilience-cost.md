@@ -149,10 +149,10 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P068-04` Bound local trace/card storage and define deletion semantics
 - [x] `SUTRA-P068-05` Test graph/media version skew after a deployment
 - [x] `SUTRA-P068-06` Retain required old hashed assets through rollout where appropriate
-- [ ] `SUTRA-P068-07` Verify deleting BYOK and cards removes their stored copies
+- [x] `SUTRA-P068-07` Verify deleting BYOK and cards removes their stored copies
 - [x] `SUTRA-P068-08` Document retention without claiming a hosted scheduler or backup exists
 - [x] `SUTRA-P068-09` Produce and review the phase artifact: Cache/retention matrix and stale-build checks.
-- [ ] `SUTRA-P068-10` Close phase 068 only after its applicable tasks have evidence and its exit condition is observed: Graph and media versions do not silently mismatch; deleting local cards and BYOK state removes their stored copies.
+- [x] `SUTRA-P068-10` Close phase 068 only after its applicable tasks have evidence and its exit condition is observed: Graph and media versions do not silently mismatch; deleting local cards and BYOK state removes their stored copies.
 
 ## Phase 069 - Run narrowly scoped load checks
 

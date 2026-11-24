@@ -1,5 +1,10 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0024 — 2026-11-24
+
+- Closed phase 068 with P068-07/10: scoped review deletion + verified absence of BYOK persistence.
+- 589/1,000 original; 598/1,009 total; 44 complete phases; six omissions. [Evidence](evidence/implementation/SESSION-0024.md).
+
 ## SUTRA-SESSION-0023 — 2026-11-24
 
 - Credited P034-02..09, P037-01..04/10 and P079-07. Closed phase 037; P034 public HTTPS origin remains open.

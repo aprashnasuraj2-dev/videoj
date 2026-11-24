@@ -2,6 +2,14 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0024 — 2026-11-24
+
+**589/1,000 original checks verified; 598/1,009 total; 44/100 phases fully verified; 6 omissions.**
+
+Phase **068** closes: SUTRA review storage deletes cleanly without clearing unrelated browser data, and direct BYOK has no persistence because it is intentionally absent. BYOK reintroduction would reopen the deletion check. [Session evidence](evidence/implementation/SESSION-0024.md).
+
+---
+
 ## Session 0023 — 2026-11-24
 
 **587/1,000 original checks verified; 596/1,009 total; 43/100 phases fully verified; 6 omissions.**
