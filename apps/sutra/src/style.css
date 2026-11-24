@@ -92,3 +92,5 @@
 .language-review-note{font-size:11px;color:#596e64;margin:0 0 10px;max-width:760px}
 html[data-locale=ne] .language-review-note{font-weight:650}
 @media(max-width:760px){header{flex-wrap:wrap}.header-tools{width:100%;justify-content:space-between}.language-control{flex:1 1 180px;justify-content:flex-end}.language-control select{max-width:100%}}
+
+#provider-panel label{display:block;font-size:13px;font-weight:650;margin:14px 0 6px}#provider-question{width:100%;max-width:100%;box-sizing:border-box;padding:10px;border:1px solid #94afa2;border-radius:7px;font:inherit;resize:vertical;color:inherit;background:#fffef9}#provider-answer,#provider-receipts li,#provider-metrics{overflow-wrap:anywhere;white-space:pre-wrap}#provider-output[hidden]{display:none}

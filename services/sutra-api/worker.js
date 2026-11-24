@@ -1,4 +1,4 @@
-import {handleInference,inferenceStatus,readJson} from './inference.js';
+import {handleInference,inferenceStatus,configuredModels,readJson} from './inference.js';
 import {createSourceTools} from '../../packages/sutra-source-tools/index.js';
 import fixture from '../../apps/sutra/src/fixtures/timing-source.json' with {type:'json'};
 export {InferenceQuota} from './quota.js';
@@ -70,7 +70,10 @@ export default {async fetch(request,env){
  const path=new URL(request.url).pathname;let response;
  if(path==='/api/infer')response=await handleInference(request,env);
  else if(path==='/api/source-tools')response=await handleSourceTools(request);
- else if(path==='/api/status'&&request.method==='GET')response=json({inference:inferenceStatus(env)?'configured':'disabled',sourceTools:'synthetic-catalog',factualTruth:'unverified'});
+ else if(path==='/api/status'&&request.method==='GET'){
+  const configured=inferenceStatus(env);
+  response=json({inference:configured?'configured':'disabled',...(configured?{model:configuredModels(env)[0]}:{}),sourceTools:'synthetic-catalog',factualTruth:'unverified'});
+ }
  else if(path.startsWith('/api/'))response=json({error:{code:'NOT_FOUND'}},404);
  else response=await (env.ASSETS?.fetch(request)??new Response('Not found',{status:404}));
  return withSecurityHeaders(withCachePolicy(response,request),env);

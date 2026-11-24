@@ -20,12 +20,18 @@ function validPayload(body,models){
  for(const tool of body.tools){if(!plain(tool)||tool.type!=='function'||!plain(tool.function)||Object.keys(tool.function).some(k=>!['name','description','parameters'].includes(k))||!/^\w{1,100}$/.test(tool.function.name??'')||typeof tool.function.description!=='string')throw Error();checkSchema(tool.function.parameters);if(tool.function.parameters.type!=='object'||tool.function.parameters.additionalProperties!==false)throw Error();}
  return body;
 }
-export function inferenceStatus(env){
+const modelPattern=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/;
+export function configuredModels(env={}){
+ if(typeof env.SUTRA_MODELS!=='string')return [];
+ const models=env.SUTRA_MODELS.split(',').map(s=>s.trim());
+ return models.length<=3&&new Set(models).size===models.length&&models.every(m=>modelPattern.test(m)&&m!=='mock-1')?models:[];
+}
+export function inferenceStatus(env={}){
  const concurrent=Number(env.SUTRA_MAX_CONCURRENT);
  return typeof env.SUTRA_ALLOWED_ORIGIN==='string'&&/^https:\/\/[^/]+$/.test(env.SUTRA_ALLOWED_ORIGIN)&&
   Number.isInteger(Number(env.SUTRA_MAX_OUTPUT_TOKENS))&&Number(env.SUTRA_MAX_OUTPUT_TOKENS)>=64&&Number(env.SUTRA_MAX_OUTPUT_TOKENS)<=1024&&
   Number.isInteger(concurrent)&&concurrent>=1&&concurrent<=10&&
-  env.SUTRA_MODELS?.split(',').length<=3&&!!env.SUTRA_MODELS?.trim()&&env.SUTRA_ENABLE_INFERENCE==='true'&&
+  configuredModels(env).length>0&&env.SUTRA_ENABLE_INFERENCE==='true'&&
   typeof env.SUTRA_PROVIDER_KEY==='string'&&env.SUTRA_PROVIDER_KEY.length>=8&&
   typeof env.SUTRA_CLIENT_HASH_SECRET==='string'&&env.SUTRA_CLIENT_HASH_SECRET.length>=32&&!!env.SUTRA_QUOTA&&typeof env.SUTRA_MODELS==='string';
 }
@@ -33,7 +39,7 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
  if(request.method!=='POST')return error('METHOD',405);
  if(!inferenceStatus(env))return error('DISABLED',503);
  const origin=new URL(request.url).origin;if(request.headers.get('Origin')!==origin||origin!==env.SUTRA_ALLOWED_ORIGIN||request.headers.has('Authorization')||!request.headers.get('Content-Type')?.startsWith('application/json'))return error('ORIGIN_OR_HEADERS',403);
- const models=env.SUTRA_MODELS.split(',').map(s=>s.trim());const maxOutput=Number(env.SUTRA_MAX_OUTPUT_TOKENS);
+ const models=configuredModels(env);const maxOutput=Number(env.SUTRA_MAX_OUTPUT_TOKENS);
  if(!models.length||models.length>3||models.some(m=>!m||m.length>100)||!Number.isInteger(maxOutput)||maxOutput<64||maxOutput>1024)return error('CONFIG',503);
  let body;try{body=validPayload(await readJson(request),models);}catch{return error('PAYLOAD',400);}
  let quota,lease,released=false;

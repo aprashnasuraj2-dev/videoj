@@ -1,0 +1,10 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {createSourceMcp} from '../source-mcp.js';import {createSourceTools} from '../../sutra-source-tools/index.js';
+const fixture=JSON.parse(fs.readFileSync(new URL('../../../apps/sutra/src/fixtures/timing-source.json',import.meta.url)));
+const catalog=[fixture.source],tools=createSourceTools(catalog);
+function client(mutate,seen){return createSourceMcp({origin:'https://sutra.test',sources:catalog,onReceipt:r=>seen.push(r),fetchImpl:async(url,opts)=>{
+ const rpc=JSON.parse(opts.body);if(rpc.method==='notifications/initialized')return new Response(null,{status:202});
+ let result;if(rpc.method==='initialize')result={protocolVersion:'2025-06-18'};else if(rpc.method==='tools/list')result={tools:tools.list()};else {const output=tools.call(rpc.params.name,rpc.params.arguments);mutate?.(output);result={structuredContent:output,isError:false};}
+ return Response.json({jsonrpc:'2.0',id:rpc.id,result});
+ }});}
+test('source observer receives independently checked receipts only',async()=>{const seen=[];const c=client(null,seen);await c.callTool('search_lesson',{query:'timing',sourceId:fixture.source.id,start:1,end:5});assert.equal(seen.length,1);assert.equal(seen[0].cueId,fixture.receipt.cueId);});
+test('omitted, duplicated, reordered or inconsistent result is rejected before observer',async()=>{for(const mutation of [o=>o.receipts=[],o=>o.receipts.push(o.receipts[0]),o=>o.receipts[0].excerpt='changed']){const seen=[];await assert.rejects(client(mutation,seen).callTool('search_lesson',{query:'timing'}));assert.equal(seen.length,0);}});
