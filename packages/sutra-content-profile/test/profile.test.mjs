@@ -137,3 +137,25 @@ test('artifact hashes and identifiers reject coercible objects without executing
  const p=structuredClone(profile);p.featuredCueId={toString(){touched++;return 'timing-marker';}};
  assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_PROFILE/);assert.equal(touched,0);
 });
+
+
+test('late noncooperative response is disposed after cancellation without reading its body',async()=>{
+ const controller=new AbortController();let resolveFetch,cancelled=0;
+ const late=new Promise(resolve=>{resolveFetch=resolve;});
+ const pending=readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:32,signal:controller.signal,fetchImpl:()=>late});
+ controller.abort();await assert.rejects(pending,/CONTENT_CANCELLED/);
+ resolveFetch(new Response(new ReadableStream({cancel(){cancelled++;}})));
+ await new Promise(resolve=>setTimeout(resolve,0));assert.equal(cancelled,1);
+});
+test('complete artifact reads reject partial status and content-range even when bytes fit',async()=>{
+ for(const response of [new Response('abc',{status:206}),new Response('abc',{headers:{'Content-Range':'bytes 0-2/3'}})]){
+  await assert.rejects(readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:8,fetchImpl:async()=>response}),/CONTENT_RESPONSE/);
+  assert.equal(response.body.locked,false);
+ }
+});
+test('tiny fragments preserve exact bytes without an array of retained chunks',async()=>{
+ let i=0;const expected=Uint8Array.from({length:33000},(_,j)=>j%251);
+ const stream=new ReadableStream({pull(controller){if(i===expected.length)controller.close();else controller.enqueue(expected.subarray(i,++i));}});
+ const result=await readContentBytes({url:'https://sutra.example/source',origin:'https://sutra.example',maxBytes:expected.length,fetchImpl:async()=>new Response(stream)});
+ assert.deepEqual(result.bytes,expected);
+});

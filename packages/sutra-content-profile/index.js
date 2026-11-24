@@ -20,30 +20,44 @@ export async function readContentBytes({url,origin,fetchImpl=fetch,signal,maxByt
  const target=new URL(url);
  if(target.origin!==origin||target.username||target.password||!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>2*1024*1024)throw Error('CONTENT_READ_CONFIG');
  signal?.throwIfAborted();
- let reader,response,abort;
+ let reader,response,abort,finished=false;
+ // A transport may disregard AbortSignal. Dispose a response arriving after
+ // the caller stopped, rather than leaving an unconsumed body running.
+ const cancelBody=body=>{try{void Promise.resolve(body?.cancel()).catch(()=>{});}catch{}};
  const stopped=new Promise((_,reject)=>{abort=()=>reject(Error('CONTENT_CANCELLED'));signal?.addEventListener('abort',abort,{once:true});});
  stopped.catch(()=>{});
  try{
-  response=await Promise.race([fetchImpl(target.href,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',headers:{Accept:accept},signal}),stopped]);
-  if(!response.ok||response.redirected||response.url&&new URL(response.url).origin!==origin)throw Error('CONTENT_RESPONSE');
+  const incoming=Promise.resolve(fetchImpl(target.href,{method:'GET',credentials:'omit',redirect:'error',cache:'no-store',headers:{Accept:accept},signal})).then(value=>{
+   if(finished||signal?.aborted){cancelBody(value?.body);throw Error('CONTENT_CANCELLED');}
+   return value;
+  });
+  response=await Promise.race([incoming,stopped]);
+  signal?.throwIfAborted();
+  if(!response.ok||response.status!==200||response.redirected||response.url&&new URL(response.url).origin!==origin||response.headers.has('content-range'))throw Error('CONTENT_RESPONSE');
   if(Number(response.headers.get('content-length'))>maxBytes)throw Error('CONTENT_SIZE');
   reader=response.body?.getReader();if(!reader)throw Error('CONTENT_BODY');
-  let total=0;const chunks=[];
+  let total=0,buffer=new Uint8Array(Math.min(maxBytes,16384));
+  // Geometric growth bounds allocation even if a transport sends millions
+  // of tiny chunks. Never retain one object for every incoming fragment.
   for(;;){
    signal?.throwIfAborted();
    const {done,value}=await Promise.race([reader.read(),stopped]);
    if(done)break;
    if(!(value instanceof Uint8Array))throw Error('CONTENT_BODY');
    if(value.byteLength>maxBytes-total)throw Error('CONTENT_SIZE');
-   if(value.byteLength){total+=value.byteLength;chunks.push(value);}
+   if(!value.byteLength)continue;
+   if(total+value.byteLength>buffer.length){
+    const next=new Uint8Array(Math.min(maxBytes,Math.max(buffer.length*2,total+value.byteLength)));
+    next.set(buffer.subarray(0,total));buffer=next;
+   }
+   buffer.set(value,total);total+=value.byteLength;
   }
   signal?.throwIfAborted();
-  const bytes=new Uint8Array(total);let off=0;for(const c of chunks){bytes.set(c,off);off+=c.length;}
-  return {response,bytes};
+  return {response,bytes:buffer.subarray(0,total)};
  }finally{
-  signal?.removeEventListener('abort',abort);
-  if(reader){void reader.cancel().catch(()=>{});try{reader.releaseLock();}catch{}}
-  else if(response?.body){void response.body.cancel().catch(()=>{});}
+  finished=true;signal?.removeEventListener('abort',abort);
+  if(reader){cancelBody(reader);try{reader.releaseLock();}catch{}}
+  else if(response?.body)cancelBody(response.body);
  }
 }
 const boundedBytes=readContentBytes;
