@@ -3,6 +3,8 @@ const SHA=/^[a-f0-9]{64}$/,ID=/^[A-Za-z][A-Za-z0-9._-]{0,79}$/,RIGHTS=new Set(['
 const plain=v=>!!v&&typeof v==='object'&&!Array.isArray(v)&&Object.getPrototypeOf(v)===Object.prototype;
 const exact=(o,keys)=>plain(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
 const freeze=v=>{if(v&&typeof v==='object'&&!Object.isFrozen(v)){Object.values(v).forEach(freeze);Object.freeze(v);}return v;};
+const canonical=v=>Array.isArray(v)?'['+v.map(canonical).join(',')+']':plain(v)?'{'+Object.keys(v).sort().map(k=>JSON.stringify(k)+':'+canonical(v[k])).join(',')+'}':JSON.stringify(v);
+const digest=v=>createHash('sha256').update(canonical(v)).digest('hex');
 const safePath=p=>typeof p==='string'&&p.length<=240&&!p.startsWith('/')&&!p.includes('\\')&&!p.split('/').some(x=>!x||x==='.'||x==='..'||x.startsWith('.'));
 const reviewStatement='A competent human reviewer checked the transcript and written guide against the designated lesson media and recorded factual corrections before release.';
 
@@ -31,9 +33,10 @@ export function assessContentManifest(manifest,{observedFiles}={}){
  if(review.status==='pending'&&(review.reviewedAt!==null||review.statement!==null))throw Error('Pending review cannot claim completion fields.');
  if(review.status==='reviewed'&&(typeof review.reviewedAt!=='string'||!/^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:\d{2})$/.test(review.reviewedAt)||!Number.isFinite(Date.parse(review.reviewedAt))||review.statement!==reviewStatement))throw Error('Reviewed declaration is incomplete.');
  const bytesMatch=Object.values(assets).every(a=>a.hashMatches),rightsDeclared=Object.values(rights).every(r=>r.publicDistributionDeclared===true),reviewDeclared=review.status==='reviewed';
- return freeze({schema:1,contentVersion:manifest.contentVersion,lesson:{...manifest.lesson},assets,rights,review:{...review},
+ const core={schema:1,contentVersion:manifest.contentVersion,lesson:{...manifest.lesson},assets,rights,review:{...review},
   bytesMatch,rightsDeclared,reviewDeclared,structuralIntakeComplete:bytesMatch&&rightsDeclared&&reviewDeclared,
-  limitation:'Byte hashes are verified against supplied file observations. Rights basis/public-distribution declarations and reviewer competence/truthfulness are human evidence and are not proven by this tool.'});
+  limitation:'Byte hashes are verified against supplied file observations. Rights basis/public-distribution declarations and reviewer competence/truthfulness are human evidence and are not proven by this tool.'};
+ return freeze({...core,recordHash:digest(core)});
 }
 
 export const contentReviewStatement=reviewStatement;

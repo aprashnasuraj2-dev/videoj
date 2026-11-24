@@ -30,3 +30,10 @@ test('rights evidence references must stay opaque/private rather than exposing p
  }
  const m=manifest();m.rights.media.evidenceRef='private:rights/media-2026-001';assert.equal(assessContentManifest(m,{observedFiles:observed()}).rights.media.evidenceRef,'private:rights/media-2026-001');
 });
+
+test('content intake record has deterministic identity and changes when reviewed asset evidence changes',()=>{
+ const m=manifest();m.review={status:'reviewed',reviewedAt:'2026-11-24T00:00:00Z',statement:contentReviewStatement};
+ const a=assessContentManifest(m,{observedFiles:observed()}),b=assessContentManifest(m,{observedFiles:observed()});
+ assert.equal(a.recordHash,b.recordHash);assert.match(a.recordHash,/^[a-f0-9]{64}$/);
+ const o=observed();o.media.bytes+=1;const changed=assessContentManifest(m,{observedFiles:o});assert.notEqual(changed.recordHash,a.recordHash);
+});
