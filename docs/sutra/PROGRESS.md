@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0034 — 2026-11-24
+
+**609/1,000 original verified; 648/1,040 total verified; 45/100 fully verified phases; six omissions; one hardware blocker.** Added X007-16..18: full lexical constraint coverage, ambiguity independent of ranking, and immutable terminal SSE status/consistent token accounting. Exact first learner browser step and latest app/API test steps passed; latest source `8ef181639ca57a2f95569d0f9e977ea84e65a4f2` at observation: 18/19 successful workflow conclusions. Remaining workflow results are pending, not credited. No original phase closure or real model/human/release gate inferred. P078-02 remains pending. [Evidence](evidence/implementation/SESSION-0034.md).
+
+---
+
 ## Session 0033 — 2026-11-24
 
 **609/1,000 original verified; 645/1,037 total verified; 45/100 fully verified phases; six omissions; one real-model hardware blocker.** Added and verified X007-15: local model HTTP 200 with partial SSE and no completion signal must not produce an answer. The complete adapter→Worker→gateway→local fake engine regression passed, with one call and released quota lease, alongside all 19 CI workflows on exact `221bf89a836b3299cfd924fbd5ff5aaf49659afe` (316 learner tests + seven gateway tests). **No real model accuracy, cost, deployment or human review inferred.** [Evidence](evidence/implementation/SESSION-0033.md).

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T08:41:00+05:45",
+  "updatedAt": "2026-11-24T13:05:44+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -216,6 +216,50 @@
         }
       ],
       "unblockCondition": "Obtain authorized billing/headroom evidence and a dated production request sample after deployment gates open."
+    },
+    {
+      "id": "R-011",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Local lexical retrieval silently dropped query constraints and alternate matches",
+      "mechanism": "Partial coverage, discarded short/long terms and phrase score thresholds could hide a required term or competing exact source cue.",
+      "userEffect": "Learners could receive an apparently specific single excerpt despite unmatched constraints or alternative excerpts.",
+      "affectedTasks": [
+        "SUTRA-X007-16",
+        "SUTRA-X007-17",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Require full retained term coverage, refuse oversized terms, preserve single-character terms, report ambiguity across all fully matching cues with a five-receipt cap. Semantic review remains separate.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0034.md",
+          "sourceRevision": "a45764e11ae022bd63b6beff1fd24c6894fd1ae9"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-012",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Stream terminal reason and token usage could be overwritten",
+      "mechanism": "A second empty finish frame could replace an incomplete finish, while later or arithmetically inconsistent usage could be treated as final.",
+      "userEffect": "An incomplete answer could appear completed or untrustworthy usage could drive cost reporting.",
+      "affectedTasks": [
+        "SUTRA-X007-18",
+        "SUTRA-P078-02",
+        "SUTRA-P066-01"
+      ],
+      "mitigation": "Reject post-finish choices, repeated/early usage and inconsistent token arithmetic; fail incomplete with no retry. Real-engine compatibility and economics remain open.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0034.md",
+          "sourceRevision": "8ef181639ca57a2f95569d0f9e977ea84e65a4f2"
+        }
+      ],
+      "unblockCondition": null
     }
   ]
 }

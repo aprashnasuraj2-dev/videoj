@@ -67,3 +67,7 @@ Required items discovered after the original plan remain release blockers until 
 - [x] `SUTRA-X007-14` Validate self-hosted gateway message roles, nested model tool calls, context size and tool definitions independently of Worker validation; reject unknown metadata before the local model.
 
 - [x] `SUTRA-X007-15` Reject a truncated HTTP-200 local model SSE stream end-to-end: no completed answer, no automatic retry and eventual quota lease release.
+
+- [x] `SUTRA-X007-16` Refuse incomplete lexical coverage and preserve single-digit, single-letter and oversized unknown query constraints rather than silently stripping them; verify unit cases and the visible no-result Chromium regression without network or model calls.
+- [x] `SUTRA-X007-17` Treat all fully matching cues as ambiguous regardless of phrase-rank distance; expose the bounded five-receipt display and preserve complete match count and truncation metadata.
+- [x] `SUTRA-X007-18` Reject rewritten terminal SSE finish reasons, duplicate/early or inconsistent terminal token usage; verify protocol units and full fake local HTTP chain refusal with no retry and released quota lease.

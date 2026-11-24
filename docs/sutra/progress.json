@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T06:47:55Z",
+  "updated_at": "2026-11-24T13:05:44+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "221bf89a836b3299cfd924fbd5ff5aaf49659afe",
-  "last_session_id": "SUTRA-SESSION-0033",
-  "stage": "local_model_stream_failure_stabilized",
+  "last_observed_code_sha": "8ef181639ca57a2f95569d0f9e977ea84e65a4f2",
+  "last_session_id": "SUTRA-SESSION-0034",
+  "stage": "local_evidence_and_terminal_stream_stabilized",
   "current_task": null,
   "next_task": "SUTRA-P078-02",
   "ready_engineering_queue": [
@@ -16,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Continue source/version/consent/default-inference work against real candidate constraints. All automated synthetic client→Worker→loopback gateway→fake model success, cancellation and incomplete SSE paths pass. Actual operator model/GPU, human content rights/truth review, independent participant testing and live gateway costs remain unverified; maintain release gate.",
+  "next_action": "Reconcile exact latest browser matrix/learner workflow results; preserve stricter lexical abstention and immutable stream terminal state. Continue P078-02 source-version, consent and default-inference blockers; real operator model/GPU, human source truth/rights, pilot and provider cost remain unverified. Keep release/deployment/paid inference closed.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -11198,6 +11198,66 @@
           "description": "Exact revision security/semantic limitations and failure evidence; no real open-weight model.",
           "source_revision": "221bf89a836b3299cfd924fbd5ff5aaf49659afe",
           "observed_at": "2026-11-24T06:47:55Z"
+        }
+      ]
+    },
+    "SUTRA-X007-16": {
+      "state": "verified",
+      "verified_at": "2026-11-24T13:05:44+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45346885551/job/138283488041",
+          "description": "Full lexical constraints and single-character/oversized unknown term refusal: app tests and exact Chromium browser step passed; zero-model behavior is not semantic verification.",
+          "result": "pass",
+          "source_revision": "a45764e11ae022bd63b6beff1fd24c6894fd1ae9",
+          "observed_at": "2026-11-24T13:05:44+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0034.md",
+          "description": "Scoped implementation and actual test-step observation; limitations retained.",
+          "result": "pass",
+          "source_revision": "a45764e11ae022bd63b6beff1fd24c6894fd1ae9",
+          "observed_at": "2026-11-24T13:05:44+05:45"
+        }
+      ]
+    },
+    "SUTRA-X007-17": {
+      "state": "verified",
+      "verified_at": "2026-11-24T13:05:44+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45346978248/job/138283802992",
+          "description": "Six fully matching synthetic cues remain ambiguous with five displayed receipts, full match count and truncation metadata; exact app test step passed.",
+          "result": "pass",
+          "source_revision": "8ef181639ca57a2f95569d0f9e977ea84e65a4f2",
+          "observed_at": "2026-11-24T13:05:44+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0034.md",
+          "description": "Scoped implementation and actual test-step observation; limitations retained.",
+          "result": "pass",
+          "source_revision": "8ef181639ca57a2f95569d0f9e977ea84e65a4f2",
+          "observed_at": "2026-11-24T13:05:44+05:45"
+        }
+      ]
+    },
+    "SUTRA-X007-18": {
+      "state": "verified",
+      "verified_at": "2026-11-24T13:05:44+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45346978248/job/138283802992",
+          "description": "Shared protocol and real loopback fake-model system tests pass in exact standalone action/inference/source/consent/profile/API CI step: immutable finish, consistent terminal usage, one call, no retry and released lease; no real model.",
+          "result": "pass",
+          "source_revision": "8ef181639ca57a2f95569d0f9e977ea84e65a4f2",
+          "observed_at": "2026-11-24T13:05:44+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0034.md",
+          "description": "Scoped implementation and actual test-step observation; limitations retained.",
+          "result": "pass",
+          "source_revision": "8ef181639ca57a2f95569d0f9e977ea84e65a4f2",
+          "observed_at": "2026-11-24T13:05:44+05:45"
         }
       ]
     }

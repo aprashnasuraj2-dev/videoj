@@ -206,3 +206,9 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Alternative rejected for the default: automatic public paid API and multi-gigabyte WebGPU weight download. Both introduce undefined funded spend, availability, hardware, bandwidth, privacy and browser compatibility constraints. Free external provider tiers are not a reliable competition service without independent quotas/terms. WebGPU remains a research option, not a shipped fallback.
 - Zero vendor-token bill is not zero compute, electricity or hosted infrastructure cost. The model-candidate matrix distinguishes artifact sizes from actual VRAM and source accuracy. Human-checked corpus, genuine GPU model/tool streams, measured costs, independent human testing and public HTTPS remain mandatory where applicable; no release gate is waived.
 - Evidence: [Session 0031](evidence/implementation/SESSION-0031.md), [inference alternatives](INFERENCE_ALTERNATIVES.md), [hardware trial matrix](MODEL_TRIAL_MATRIX.md).
+
+## SUTRA-DECISION-0025 — Fail closed on local query constraints and terminal stream state
+
+- 2026-11-24T13:05:44+05:45; X007-16..18, P078-02. Choose complete retained lexical-term coverage over 80% coverage and silent token stripping, with all full matches counted as ambiguous even when exact phrases rank higher. This sacrifices recall, not source identity; exact transcript search remains available. Stopword filtering does not establish semantic support.
+- Treat terminal model finish as immutable and terminal token usage as one internally consistent observation. Alternative rejected: allow a later empty stop or replacement usage to overwrite earlier state. Nonconforming engines must receive an explicit reviewed compatibility adapter, not an implicit paid fallback.
+- Preserve no-model default, no real-model claim, original rights/human acceptance, hardware and release gates. See [Session 0034](evidence/implementation/SESSION-0034.md).
