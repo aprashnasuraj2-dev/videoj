@@ -15,7 +15,17 @@ const snapshot=(state,receipts=[],extra={})=>Object.freeze({
  truthStatus:'unverified',generation:'none',...extra
 });
 export function createLocalAnswer({sources,now}={}){
- const raw=snapshotDataArray(sources,20),rows=[];
+ // Own a complete primitive snapshot. Never revalidate against caller-owned cue
+ // references; they may mutate after registration without changing the index.
+ const raw=snapshotDataArray(sources,20).map(original=>{
+  const source=snapshotDataRecord(original,12);
+  return {id:source.id,version:source.version,hash:source.hash,mediaHash:source.mediaHash,duration:source.duration,
+   cues:snapshotDataArray(source.cues,500).map(c=>{
+    const cue=snapshotDataRecord(c,8);
+    return {id:cue.id,start:cue.start,end:cue.end,text:cue.text};
+   })};
+ });
+ const rows=[];
  // Reject an oversized index rather than causing a memory freeze on low-end phones.
  // Even a fully valid source catalog can be too large for in-browser ranking.
  let terms=0;
