@@ -1,5 +1,10 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0022 — 2026-11-24
+
+- Credited 27 original checks across P005/P020/P030/P070. P030 contains five explicit optional omissions; fully verified phase count remains 42.
+- 573/1,000 original; 582/1,009 total; six omissions. Real narrator/corpus/funded path/cost and public/human gates remain open. [Evidence](evidence/implementation/SESSION-0022.md).
+
 ## SUTRA-SESSION-0021 — 2026-11-24
 
 - Exact product `0ef8a613c1c8d6db522d50a1088f9528ad055d4b` all ten workflows green. Closed phase 045 and credited selected P053/P054/P078/P079 plus X003 protocol mechanics; no human/live/provider/public evidence inferred.

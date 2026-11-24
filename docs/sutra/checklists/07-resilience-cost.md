@@ -179,13 +179,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Review failure, privacy, proxy, media, cost and route evidence against the acceptance baseline. Cut optional UI polish or BYOK if critical issues remain.
 - **Phase exit:** No credential leak, consent bypass, double write, broken default judge path or uncontrolled spend remains open.
 
-- [ ] `SUTRA-P070-01` Review all privacy, consent and ambiguous-write results together
+- [x] `SUTRA-P070-01` Review all privacy, consent and ambiguous-write results together
 - [ ] `SUTRA-P070-02` Confirm the funded default judge path works after hardening
 - [ ] `SUTRA-P070-03` Check media, source versions, route usage and cost caps
-- [ ] `SUTRA-P070-04` Fix any credential canary leak before proceeding
-- [ ] `SUTRA-P070-05` Cut optional BYOK or polish if critical boundaries remain unresolved
-- [ ] `SUTRA-P070-06` Document unresolved limitations with practical user effects
-- [ ] `SUTRA-P070-07` Keep waived optional work separate from failed mandatory gates
-- [ ] `SUTRA-P070-08` Record the resilience milestone revision and evidence links
-- [ ] `SUTRA-P070-09` Produce and review the phase artifact: Milestone D risk register with resolved blockers.
+- [x] `SUTRA-P070-04` Fix any credential canary leak before proceeding
+- [x] `SUTRA-P070-05` Cut optional BYOK or polish if critical boundaries remain unresolved
+- [x] `SUTRA-P070-06` Document unresolved limitations with practical user effects
+- [x] `SUTRA-P070-07` Keep waived optional work separate from failed mandatory gates
+- [x] `SUTRA-P070-08` Record the resilience milestone revision and evidence links
+- [x] `SUTRA-P070-09` Produce and review the phase artifact: Milestone D risk register with resolved blockers.
 - [ ] `SUTRA-P070-10` Close phase 070 only after its applicable tasks have evidence and its exit condition is observed: No credential leak, consent bypass, double write, broken default judge path or uncontrolled spend remains open.

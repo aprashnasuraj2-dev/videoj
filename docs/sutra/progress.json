@@ -1,21 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T08:35:02+05:45",
+  "updated_at": "2026-11-24T08:45:01+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
-  "last_session_id": "SUTRA-SESSION-0021",
-  "stage": "comparison_provenance_stabilization_and_affected_evidence_rechecked",
+  "last_observed_code_sha": "91302d0d2080f635208202e3096e5c7234489f85",
+  "last_session_id": "SUTRA-SESSION-0022",
+  "stage": "partial_demo_foundation_byok_and_resilience_reconciled",
   "current_task": null,
   "next_task": "SUTRA-P041-08",
   "ready_engineering_queue": [
-    "SUTRA-P054-01",
     "SUTRA-P078-02",
     "SUTRA-P079-07",
-    "SUTRA-P053-02",
-    "SUTRA-P041-08"
+    "SUTRA-P054-01",
+    "SUTRA-P020-02",
+    "SUTRA-P005-08"
   ],
-  "next_action": "Continue engineering on release-blocking default funded-inference/cost instrumentation and remaining stabilization checks without enabling paid inference; retain human held-out review, fresh viewer, physical accessibility and public interoperability gates.",
+  "next_action": "Continue independent engineering on stabilization/targeted CI and live-provider measurement instrumentation without enabling paid inference. Real corpus, narrator, funded provider, physical accessibility and public interop remain explicit gates.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -9638,6 +9638,387 @@
           "observed_at": "2026-11-24T08:35:02+05:45"
         }
       ]
+    },
+    "SUTRA-P005-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/DEMO-STORYBOARD-110S-2026-11-24.md",
+          "description": "110-second browser timeline allocated with a 10-second hard-ceiling margin.",
+          "result": "pass",
+          "source_revision": "454955bbe48bdceba4b61627889c68aab92f1448",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P005-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/DEMO-STORYBOARD-110S-2026-11-24.md",
+          "description": "Storyboard visibly includes source query, exact timestamp/source evidence and native media seek.",
+          "result": "pass",
+          "source_revision": "454955bbe48bdceba4b61627889c68aab92f1448",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P005-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/DEMO-STORYBOARD-110S-2026-11-24.md",
+          "description": "Storyboard reserves destination/purpose/disclosure consent before any external peer contact.",
+          "result": "pass",
+          "source_revision": "454955bbe48bdceba4b61627889c68aab92f1448",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P005-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/DEMO-STORYBOARD-110S-2026-11-24.md",
+          "description": "Peer segment explicitly describes caller-local execution and forbids implying independent infrastructure without evidence.",
+          "result": "pass",
+          "source_revision": "454955bbe48bdceba4b61627889c68aab92f1448",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P005-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/DEMO-STORYBOARD-110S-2026-11-24.md",
+          "description": "Comparison, unresolved conflict, exact review preview and confirmed local receipt save are time-budgeted.",
+          "result": "pass",
+          "source_revision": "454955bbe48bdceba4b61627889c68aab92f1448",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P005-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/DEMO-STORYBOARD-110S-2026-11-24.md",
+          "description": "Storyboard reserves a visible denial plus bounded failure/cancellation state.",
+          "result": "pass",
+          "source_revision": "454955bbe48bdceba4b61627889c68aab92f1448",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P005-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/DEMO-STORYBOARD-110S-2026-11-24.md",
+          "description": "Final segment reserves reusable Open Kit evidence and actual observed results without adoption claims.",
+          "result": "pass",
+          "source_revision": "454955bbe48bdceba4b61627889c68aab92f1448",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P005-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/DEMO-STORYBOARD-110S-2026-11-24.md",
+          "description": "Time-coded 110-second browser demo outline produced with narration budget, edit rules, fallback cuts and recording gates.",
+          "result": "pass",
+          "source_revision": "454955bbe48bdceba4b61627889c68aab92f1448",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P020-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-A-FOUNDATION-REVIEW-2026-11-24.md",
+          "description": "App/package/output/reuse boundary reviewed against repository map and current isolated package.",
+          "result": "pass",
+          "source_revision": "91302d0d2080f635208202e3096e5c7234489f85",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P020-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-A-FOUNDATION-REVIEW-2026-11-24.md",
+          "description": "Pinned browser-runtime spike is confirmed to have resolved local graph/delegation integration uncertainty; remaining uncertainty is external/live.",
+          "result": "pass",
+          "source_revision": "91302d0d2080f635208202e3096e5c7234489f85",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P020-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CURRENT-METRICS-0EF8A613-2026-11-24.md",
+          "description": "Documented SUTRA build and full learner workflow passed on recorded product revision 0ef8a613.",
+          "result": "pass",
+          "source_revision": "91302d0d2080f635208202e3096e5c7234489f85",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P020-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-A-FOUNDATION-REVIEW-2026-11-24.md",
+          "description": "Missing rights-cleared lesson, guide, factual reviewer/provenance and human review are named as missing inputs, not completed.",
+          "result": "pass",
+          "source_revision": "91302d0d2080f635208202e3096e5c7234489f85",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P020-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-A-FOUNDATION-REVIEW-2026-11-24.md",
+          "description": "SUTRA build output is isolated at apps/sutra/dist and does not target root/DHAGO or DETOUR output directories.",
+          "result": "pass",
+          "source_revision": "91302d0d2080f635208202e3096e5c7234489f85",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P020-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PRODUCT-SCOPE-DECISION-2026-11-24.md",
+          "description": "Hero narrative re-reviewed as one evidence-linked learner task; optional model/peer tools remain supporting mechanisms.",
+          "result": "pass",
+          "source_revision": "91302d0d2080f635208202e3096e5c7234489f85",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P020-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-A-FOUNDATION-REVIEW-2026-11-24.md",
+          "description": "Foundation decision explicitly passes technical foundation while leaving real corpus/provenance gate blocked.",
+          "result": "pass",
+          "source_revision": "91302d0d2080f635208202e3096e5c7234489f85",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P020-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-A-FOUNDATION-REVIEW-2026-11-24.md",
+          "description": "Milestone A review artifact ties current technical evidence and named blockers to immutable revision evidence.",
+          "result": "pass",
+          "source_revision": "91302d0d2080f635208202e3096e5c7234489f85",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/BYOK-OMISSION-2026-11-24.md",
+          "description": "Direct BYOK explicitly decided out of minimum release after default-path/security review.",
+          "result": "pass",
+          "source_revision": "25500b5d9e50e9879c0555a1b09c67ae543c79b1",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/BYOK-OMISSION-2026-11-24.md",
+          "description": "Learner has no API-key/token/password affordance and records direct BYOK as unsupported.",
+          "result": "pass",
+          "source_revision": "25500b5d9e50e9879c0555a1b09c67ae543c79b1",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/BYOK-OMISSION-2026-11-24.md",
+          "description": "Documented BYOK omission artifact records rationale, current absence and strict reversal conditions.",
+          "result": "pass",
+          "source_revision": "25500b5d9e50e9879c0555a1b09c67ae543c79b1",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/BYOK-OMISSION-2026-11-24.md",
+          "description": "Applicable phase exit observed by omission: BYOK is not shipped, so no personal key is sent to peers/actions/analytics/traces/exports; funded judge path remains separate.",
+          "result": "pass",
+          "source_revision": "25500b5d9e50e9879c0555a1b09c67ae543c79b1",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P070-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-D-RESILIENCE-REVIEW-2026-11-24.md",
+          "description": "Privacy, consent, canary isolation, ambiguous writes, bounded execution and media/source drift results reviewed together.",
+          "result": "pass",
+          "source_revision": "c3e0cbc458a102095391c03209b926de4562ad4a",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P070-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-D-RESILIENCE-REVIEW-2026-11-24.md",
+          "description": "No credential canary leak is observed in the current finite security suites; peer/model policy boundaries remain caller-owned.",
+          "result": "pass",
+          "source_revision": "c3e0cbc458a102095391c03209b926de4562ad4a",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P070-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/BYOK-OMISSION-2026-11-24.md",
+          "description": "Optional BYOK surface is cut rather than displacing unresolved funded-path/content/public gates.",
+          "result": "pass",
+          "source_revision": "c3e0cbc458a102095391c03209b926de4562ad4a",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P070-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-D-RESILIENCE-REVIEW-2026-11-24.md",
+          "description": "Unresolved funded inference, real cost/content, physical accessibility, public interop and hosting limits documented with practical effects.",
+          "result": "pass",
+          "source_revision": "c3e0cbc458a102095391c03209b926de4562ad4a",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P070-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-D-RESILIENCE-REVIEW-2026-11-24.md",
+          "description": "Optional BYOK omission is explicitly separated from mandatory failed/open judge-path and cost gates.",
+          "result": "pass",
+          "source_revision": "c3e0cbc458a102095391c03209b926de4562ad4a",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P070-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-D-RESILIENCE-REVIEW-2026-11-24.md",
+          "description": "Milestone review names exact green product revision and evidence families.",
+          "result": "pass",
+          "source_revision": "c3e0cbc458a102095391c03209b926de4562ad4a",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P070-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:45:01+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/MILESTONE-D-RESILIENCE-REVIEW-2026-11-24.md",
+          "description": "Milestone D risk review artifact produced with resolved mechanisms and still-open release blockers.",
+          "result": "pass",
+          "source_revision": "c3e0cbc458a102095391c03209b926de4562ad4a",
+          "observed_at": "2026-11-24T08:45:01+05:45"
+        }
+      ]
+    },
+    "SUTRA-P030-02": {
+      "state": "omitted",
+      "decision_id": "SUTRA-DECISION-0022",
+      "reason": "BYOK is intentionally omitted; no browser router is selected or shipped. The free site-funded judge path remains the required model path.",
+      "scope_basis": "Phase 030 explicitly defines BYOK as optional and permits removing its UI when capacity/security priorities favor the funded default. The omission cannot be used to satisfy the still-open funded judge-path requirement."
+    },
+    "SUTRA-P030-03": {
+      "state": "omitted",
+      "decision_id": "SUTRA-DECISION-0022",
+      "reason": "BYOK credentials are not accepted, so an in-memory BYOK key lifecycle/delete UI is intentionally not implemented.",
+      "scope_basis": "Phase 030 explicitly defines BYOK as optional and permits removing its UI when capacity/security priorities favor the funded default. The omission cannot be used to satisfy the still-open funded judge-path requirement."
+    },
+    "SUTRA-P030-05": {
+      "state": "omitted",
+      "decision_id": "SUTRA-DECISION-0022",
+      "reason": "No BYOK key exists to send to a router; the optional router request path is intentionally omitted.",
+      "scope_basis": "Phase 030 explicitly defines BYOK as optional and permits removing its UI when capacity/security priorities favor the funded default. The omission cannot be used to satisfy the still-open funded judge-path requirement."
+    },
+    "SUTRA-P030-06": {
+      "state": "omitted",
+      "decision_id": "SUTRA-DECISION-0022",
+      "reason": "BYOK-specific key-canary checks are omitted with the BYOK feature. Server/provider credential isolation remains covered by separate mandatory security tests.",
+      "scope_basis": "Phase 030 explicitly defines BYOK as optional and permits removing its UI when capacity/security priorities favor the funded default. The omission cannot be used to satisfy the still-open funded judge-path requirement."
+    },
+    "SUTRA-P030-07": {
+      "state": "omitted",
+      "decision_id": "SUTRA-DECISION-0022",
+      "reason": "A missing-BYOK-key setup error is not applicable because BYOK is not a supported setup mode.",
+      "scope_basis": "Phase 030 explicitly defines BYOK as optional and permits removing its UI when capacity/security priorities favor the funded default. The omission cannot be used to satisfy the still-open funded judge-path requirement."
     }
   },
   "blockers": [],

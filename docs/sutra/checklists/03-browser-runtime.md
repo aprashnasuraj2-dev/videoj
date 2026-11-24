@@ -179,13 +179,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Offer only a tested browser-CORS-compatible router path with in-memory credentials and clear deletion. Keep the funded default as the judge path. If capacity is short, remove BYOK UI and publish it as unsupported.
 - **Phase exit:** If shipped, keys go only to the selected router and never to peer artifacts, actions, analytics, traces or exports.
 
-- [ ] `SUTRA-P030-01` Decide whether optional BYOK remains in scope after the default path works
-- [ ] `SUTRA-P030-02` Use only a tested permitted router with browser CORS support
-- [ ] `SUTRA-P030-03` Keep BYOK credentials in memory and provide explicit deletion
+- [x] `SUTRA-P030-01` Decide whether optional BYOK remains in scope after the default path works
+- [-] `SUTRA-P030-02` Use only a tested permitted router with browser CORS support
+- [-] `SUTRA-P030-03` Keep BYOK credentials in memory and provide explicit deletion
 - [x] `SUTRA-P030-04` Prevent peer metadata from overriding caller router or model policy
-- [ ] `SUTRA-P030-05` Send keys only in authorized model requests to the selected router
-- [ ] `SUTRA-P030-06` Check URLs, prompts, actions, traces, analytics and exports for key canaries
-- [ ] `SUTRA-P030-07` Stop with a clear setup error if a required key is absent
-- [ ] `SUTRA-P030-08` If omitted, remove BYOK affordances and record the optional-scope decision
-- [ ] `SUTRA-P030-09` Produce and review the phase artifact: BYOK adapter and disclosure, or a documented omission decision.
-- [ ] `SUTRA-P030-10` Close phase 030 only after its applicable tasks have evidence and its exit condition is observed: If shipped, keys go only to the selected router and never to peer artifacts, actions, analytics, traces or exports.
+- [-] `SUTRA-P030-05` Send keys only in authorized model requests to the selected router
+- [-] `SUTRA-P030-06` Check URLs, prompts, actions, traces, analytics and exports for key canaries
+- [-] `SUTRA-P030-07` Stop with a clear setup error if a required key is absent
+- [x] `SUTRA-P030-08` If omitted, remove BYOK affordances and record the optional-scope decision
+- [x] `SUTRA-P030-09` Produce and review the phase artifact: BYOK adapter and disclosure, or a documented omission decision.
+- [x] `SUTRA-P030-10` Close phase 030 only after its applicable tasks have evidence and its exit condition is observed: If shipped, keys go only to the selected router and never to peer artifacts, actions, analytics, traces or exports.

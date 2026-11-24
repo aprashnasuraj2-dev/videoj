@@ -89,15 +89,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Storyboard question, timestamp evidence, peer permission, local peer execution, confirmed review-card save and one visible refusal. Reserve room for the reusable kit and human explanation.
 - **Phase exit:** The complete story fits 110 seconds with a 10-second ceiling margin; no feature relies on a hidden narrator claim.
 
-- [ ] `SUTRA-P005-01` Allocate the demonstration timeline to an under-120-second final video
-- [ ] `SUTRA-P005-02` Storyboard the question, actual timestamp evidence and real media seek
-- [ ] `SUTRA-P005-03` Storyboard destination consent before any external peer contact
-- [ ] `SUTRA-P005-04` Show peer-local execution without claiming independently operated infrastructure
-- [ ] `SUTRA-P005-05` Show source comparison, human review and saved evidence receipt
-- [ ] `SUTRA-P005-06` Reserve time for a visible denial or bounded-execution failure
-- [ ] `SUTRA-P005-07` Reserve time to demonstrate public reusable tools and actual results
+- [x] `SUTRA-P005-01` Allocate the demonstration timeline to an under-120-second final video
+- [x] `SUTRA-P005-02` Storyboard the question, actual timestamp evidence and real media seek
+- [x] `SUTRA-P005-03` Storyboard destination consent before any external peer contact
+- [x] `SUTRA-P005-04` Show peer-local execution without claiming independently operated infrastructure
+- [x] `SUTRA-P005-05` Show source comparison, human review and saved evidence receipt
+- [x] `SUTRA-P005-06` Reserve time for a visible denial or bounded-execution failure
+- [x] `SUTRA-P005-07` Reserve time to demonstrate public reusable tools and actual results
 - [ ] `SUTRA-P005-08` Check the storyline can be explained in the entrant’s real voice
-- [ ] `SUTRA-P005-09` Produce and review the phase artifact: Time-coded browser demo outline.
+- [x] `SUTRA-P005-09` Produce and review the phase artifact: Time-coded browser demo outline.
 - [ ] `SUTRA-P005-10` Close phase 005 only after its applicable tasks have evidence and its exit condition is observed: The complete story fits 110 seconds with a 10-second ceiling margin; no feature relies on a hidden narrator claim.
 
 ## Phase 006 - Translate the judging rubric into evidence

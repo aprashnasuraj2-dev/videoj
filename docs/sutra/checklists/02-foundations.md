@@ -179,13 +179,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Run the isolated app build, inspect dependency boundaries and review the corpus and architecture. Confirm that the product still tells one coherent story.
 - **Phase exit:** App shell, licensed evidence corpus, runtime decision and proposed domains are ready; blockers are resolved or scoped out.
 
-- [ ] `SUTRA-P020-01` Review the app package and dependency boundary against repository instructions
+- [x] `SUTRA-P020-01` Review the app package and dependency boundary against repository instructions
 - [ ] `SUTRA-P020-02` Confirm the corpus, transcript and media provenance are available
-- [ ] `SUTRA-P020-03` Confirm the runtime spike resolved the highest integration uncertainty
-- [ ] `SUTRA-P020-04` Run the documented new-app build at a recorded source revision
-- [ ] `SUTRA-P020-05` Record missing participant inputs without presenting them as completed
-- [ ] `SUTRA-P020-06` Resolve any output-directory collision before feature implementation
-- [ ] `SUTRA-P020-07` Review the hero narrative against the current scope and effort
-- [ ] `SUTRA-P020-08` Record a foundation gate decision with named unresolved blockers
-- [ ] `SUTRA-P020-09` Produce and review the phase artifact: Milestone A review tied to the current SHA.
+- [x] `SUTRA-P020-03` Confirm the runtime spike resolved the highest integration uncertainty
+- [x] `SUTRA-P020-04` Run the documented new-app build at a recorded source revision
+- [x] `SUTRA-P020-05` Record missing participant inputs without presenting them as completed
+- [x] `SUTRA-P020-06` Resolve any output-directory collision before feature implementation
+- [x] `SUTRA-P020-07` Review the hero narrative against the current scope and effort
+- [x] `SUTRA-P020-08` Record a foundation gate decision with named unresolved blockers
+- [x] `SUTRA-P020-09` Produce and review the phase artifact: Milestone A review tied to the current SHA.
 - [ ] `SUTRA-P020-10` Close phase 020 only after its applicable tasks have evidence and its exit condition is observed: App shell, licensed evidence corpus, runtime decision and proposed domains are ready; blockers are resolved or scoped out.

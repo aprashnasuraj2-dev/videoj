@@ -2,6 +2,14 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0022 — 2026-11-24
+
+**573/1,000 original checks verified; 582/1,009 total; 42/100 phases fully verified; 6 omissions.**
+
+Reconciled partial milestones without false closure: 110-second demo planning (P005 except real narrator/exit), technical foundation (P020 except real corpus/exit), BYOK **complete with omissions** under Decision 0022, and reviewed resilience checks (P070 while funded path/cost remain open). Optional BYOK implementation checks are `[-]`, not successes. [Session evidence](evidence/implementation/SESSION-0022.md).
+
+---
+
 ## Session 0021 — 2026-11-24
 
 **546/1,000 original checks verified; 555/1,009 total; 42/100 phases fully verified; 1 historical omission.**
