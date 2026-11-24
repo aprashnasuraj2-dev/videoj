@@ -1,4 +1,5 @@
 import {validateReceipt} from '../../../packages/sutra-evidence/index.js';
+import {snapshotSourceCatalog} from './source-catalog-snapshot.js';
 export const REVIEW_STORAGE_KEY='sutra.review-cards.v2';
 export const LEGACY_REVIEW_STORAGE_KEY='sutra.synthetic-review-cards.v1';
 const KEY=REVIEW_STORAGE_KEY;
@@ -8,7 +9,7 @@ export class ReviewDataStaleError extends Error{
  constructor(staleCount){super('Saved review data no longer matches the active source catalog.');this.code='STALE_REVIEW_DATA';this.staleCount=staleCount;}
 }
 export function createReviewStore({storage,sources,idFactory=()=>crypto.randomUUID()}){
- const catalog=clone(sources),pending=new Map(),completed=new Set();
+ const catalog=snapshotSourceCatalog(sources),pending=new Map(),completed=new Set();
  function rawRecords(){
   const raw=storage.getItem(KEY);if(raw===null)return [];
   if(typeof raw!=='string'||raw.length>65536)throw Error('Local review data is unavailable or too large.');

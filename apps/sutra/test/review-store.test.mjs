@@ -80,3 +80,20 @@ test('destructive review actions are exact snapshots, not reusable record IDs or
  assert.throws(stale.removeIfUnchanged,/changed/);assert.throws(clear,/changed/);assert.equal(f.store.list().length,1);
  f.store.inspect()[0].removeIfUnchanged();assert.equal(f.values.has(key),false);
 });
+
+test('source catalog registration snapshots nested data without calling attacker-defined getters',()=>{
+ const f=setup(),source=structuredClone(fixture.source);let calls=0;
+ Object.defineProperty(source.cues[0],'text',{enumerable:true,get(){calls++;return fixture.source.cues[0].text;}});
+ assert.throws(()=>createReviewStore({storage:f.storage,sources:[source]}),/Unsafe data property/);
+ const other=structuredClone(fixture.source);
+ Object.defineProperty(other,'toJSON',{enumerable:true,value(){calls++;return fixture.source;}});
+ assert.throws(()=>createReviewStore({storage:f.storage,sources:[other]}),/Unexpected source field/);
+ assert.equal(calls,0);assert.equal(f.writes,0);
+});
+test('review catalog snapshot survives caller mutation while exact receipt remains tied to original source',()=>{
+ const f=setup(),source=structuredClone(fixture.source);
+ const store=createReviewStore({storage:f.storage,sources:[source],idFactory:()=> 'snapshot-1'});
+ source.version='changed';source.cues[0].text='changed after mount';
+ const proposal=store.prepare(fixture.receipt),saved=store.commit(proposal.id);
+ assert.equal(saved.receipt.excerpt,fixture.receipt.excerpt);assert.equal(store.list().length,1);
+});

@@ -1,11 +1,12 @@
 import {createLocalActionRegistry} from '../../../packages/sutra-actions/index.js';
 import {validateReceipt} from '../../../packages/sutra-evidence/index.js';
 import {serializeReviewExport} from './review-export.js';
+import {snapshotSourceCatalog} from './source-catalog-snapshot.js';
 const exact=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 const shape=(a,keys)=>a&&typeof a==='object'&&!Array.isArray(a)&&Object.keys(a).length===keys.length&&keys.every(k=>Object.hasOwn(a,k));
 export function createReviewActions({store,sources,download,idFactory}){
  if(!store||typeof download!=='function')throw TypeError('Review action host required.');
- const catalog=structuredClone(sources);
+ const catalog=snapshotSourceCatalog(sources);
  const registry=createLocalActionRegistry([
   {name:'save-review-card',effect:'write_local',destination:'This browser only (local storage)',description:'Save exactly the reviewed source receipt; not factual verification.',
    validate:a=>shape(a,['receipt'])&&validateReceipt(a.receipt,{sources:catalog}).valid,
