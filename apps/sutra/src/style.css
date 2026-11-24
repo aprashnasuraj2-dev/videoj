@@ -83,3 +83,12 @@
 [role="status"][data-state=completed]{border-left-color:#357561}
 [role="status"][data-state=denied],[role="status"][data-state=input_error],[role="status"][data-state=cancelled],[role="status"][data-state=error]{border-left-color:#ad651e}
 [role="status"][aria-busy=true]::before{content:"Working · ";font-weight:700}
+
+/* Core localization controls stay outside lesson/source state; switching text never remounts media or evidence. */
+.header-tools{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap}
+.language-control{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:650}
+.language-control select{font:inherit;color:inherit;background:#fffef9;border:1px solid #94afa2;border-radius:7px;padding:7px 28px 7px 9px;min-height:36px}
+.language-control select:focus-visible{outline:3px solid #ad651e;outline-offset:3px}
+.language-review-note{font-size:11px;color:#596e64;margin:0 0 10px;max-width:760px}
+html[data-locale=ne] .language-review-note{font-weight:650}
+@media(max-width:760px){header{flex-wrap:wrap}.header-tools{width:100%;justify-content:space-between}.language-control{flex:1 1 180px;justify-content:flex-end}.language-control select{max-width:100%}}
