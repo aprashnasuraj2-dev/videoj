@@ -184,3 +184,17 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Only independently catalog-matched receipt data enables local seek/review. Bind seek to the loaded source ID, version and both hashes; explicit review confirmation is still required. Clear outdated actions when the request changes. Incomplete model text never becomes a completed interpretation.
 - Source registry snapshots ordinary data descriptors without invoking getters/toJSON, indexes source/cue IDs, caps aggregate text and returns no more than five literal matches. Executable Proxy objects are outside the parsed wire-data contract. The 10,000-cue test is a development limit regression, not a production SLA.
 - Added X002 checks, no changed release authorization or waived human requirement.
+
+## SUTRA-DECISION-0022 — Keep BYOK and platform breadth outside the minimum release
+
+- Minimum product is the evidence-linked learner plus portable guide composition; developer inspection remains secondary to the learner task.
+- Direct BYOK is deferred. The free judge path must not require a personal key, and BYOK adds credential/CORS/router/privacy surface without a measured hero-task benefit. Reconsider only under the explicit reversal conditions in the product scope artifact.
+- Accounts, payments, certificates, arbitrary crawling, customer/device records and autonomous external writes remain outside minimum scope. Local review writes require explicit preview/confirmation.
+- Manual transcript + written-checklist search is the measurable counterexample. If it wins on time-to-valid-evidence or accuracy, revise the product claim rather than hiding the result.
+- This decision does not declare funded inference ready; live provider economics and default-judge-path evidence remain blockers.
+
+## SUTRA-DECISION-0023 — Freeze targets prospectively; never tune the target to the result
+
+- Preserve the original 40-case split, 20 live runs, 10-person pilot target, two outside-builder target, reference/precision thresholds and client-performance targets as prospective acceptance criteria.
+- Every final measurement binds to an immutable candidate revision. Material target changes require a dated versioned decision before final measurement, preserving the prior target and reason.
+- Negative results and failures remain in denominators. Engineering-v1 development fixtures cannot be relabeled as held-out evaluation.
