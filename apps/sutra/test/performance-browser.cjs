@@ -20,6 +20,7 @@ const listFiles=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(entry=>
 
 (async()=>{
  const app=path.resolve(__dirname,'..'),dist=path.join(app,'dist'),base='http://127.0.0.1:4285';
+ let servedMediaBodyBytes=0,completedMediaResponses=0,observedMediaServerRequests=0;
  const server=http.createServer((req,res)=>{
   const pathname=new URL(req.url,'http://local').pathname;
   const relative=pathname==='/'?'index.html':decodeURIComponent(pathname).replace(/^\/+/, '');
@@ -27,7 +28,10 @@ const listFiles=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(entry=>
   if(!file.startsWith(dist+path.sep)&&file!==path.join(dist,'index.html')){res.writeHead(403);res.end();return;}
   try{
    const stat=fs.statSync(file);if(!stat.isFile())throw Error();
+   const isMedia=pathname==='/media/timing-fixture.mp4'&&req.method==='GET';
+   if(isMedia)observedMediaServerRequests++;
    res.writeHead(200,{'Content-Type':mime(file),'Content-Length':stat.size,'Cache-Control':'no-store'});
+   if(isMedia)res.once('finish',()=>{servedMediaBodyBytes+=stat.size;completedMediaResponses++;});
    fs.createReadStream(file).pipe(res);
   }catch{res.writeHead(404,{'Content-Type':'text/plain'});res.end('not found');}
  });
@@ -69,6 +73,11 @@ const listFiles=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(entry=>
   const videoReadyMs=performance.now()-videoStart;
   const bytesAfterVideo=encoded;
   assert.equal(mediaRequests.length,1);
+  const sourceFixture=fs.readFileSync(path.join(dist,'media/timing-fixture.mp4'));
+  assert.equal(observedMediaServerRequests,1,'explicit media load creates exactly one source fixture GET');
+  assert.equal(completedMediaResponses,1,'a complete source body must actually leave the lab server');
+  assert.equal(servedMediaBodyBytes,sourceFixture.byteLength,'HTTP server confirms exact uncompressed fixture bytes delivered');
+  assert.ok(servedMediaBodyBytes>0,'never report zero media transfer after successful native playback');
 
   const seekStart=performance.now();
   await page.getByRole('button',{name:'Inspect featured source cue'}).click();
@@ -90,11 +99,14 @@ const listFiles=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(entry=>
    videoReadyAfterClickMs:Math.round(videoReadyMs),
    encodedBytesAfterVideo:Math.round(bytesAfterVideo),
    incrementalEncodedBytesAfterVideo:Math.round(bytesAfterVideo-bytesAtTranscript),
-   mediaEncodedBytes:Math.round(mediaEncoded),
+   mediaEncodedBytes:mediaEncoded>0?Math.round(mediaEncoded):null,
+   mediaEncodedBytesObserved:mediaEncoded>0,
+   sourceMediaResponseBytes:servedMediaBodyBytes,
+   sourceMediaResponseCount:completedMediaResponses,
    nativeSeekFeedbackMs:Math.round(seekMs)
   };
   console.log('PERF '+JSON.stringify(result));
-  console.log('PASS: 1 Mbps/150 ms lab profile keeps transcript usable <5s with zero MP4 requests, shell <=700 KiB gzip, then measures explicit video transfer and native seek feedback.');
+  console.log('PASS: 1 Mbps/150 ms lab profile keeps transcript usable <5s with zero MP4 requests, shell <=700 KiB gzip, server-confirmed positive MP4 response bytes, and native seek feedback. CDP transfer accounting is nullable when not observed.');
  }finally{
   if(browser)await browser.close();
   await new Promise(resolve=>server.close(()=>resolve()));
