@@ -18,7 +18,7 @@ export function createReceiptActionRow({receipt,sources,seekTo,prepareReview,act
    if(!Number.isFinite(actual)||Math.abs(actual-exact.start)>1)throw Error('Not reached');
    if(isCurrent())actionStatus.textContent='Native media reached the matched source cue. No factual verification.';
   }catch{if(isCurrent())actionStatus.textContent='Cue seek unavailable. Load the media explicitly; no seek success is claimed.';}
-  finally{seek.disabled=false;}
+  finally{seek.disabled=seek.dataset.sutraRevoked==='true';}
  });
  review.addEventListener('click',()=>{
   if(!isCurrent())return;

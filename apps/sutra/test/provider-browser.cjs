@@ -107,32 +107,6 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-consent-dialog').open);
   assert.equal(calls,4);await page.getByRole('button',{name:'Cancel',exact:true}).click();await page.waitForFunction(()=>!document.querySelector('#provider-consent-dialog').open);
   assert.equal(calls,4);assert.equal(await page.locator('#provider-output').isHidden(),false);assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
-  // Editing the next question must not silently discard or relabel the old result.
-  const oldQuestion=await page.getByLabel('Question about the source lesson').inputValue();
-  await page.getByLabel('Question about the source lesson').fill('A different question that has not been sent.');
-  assert.match(await page.locator('#provider-result-context').textContent(),/Not an answer to the current question/);
-  assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
-  await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-consent-dialog').open);
-  await page.getByRole('button',{name:'Cancel',exact:true}).click();assert.equal(calls,4);
-  assert.match(await page.locator('#provider-result-context').textContent(),/Not an answer to the current question/);
-  assert.equal(await page.locator('#provider-output').isHidden(),false);
-  await page.getByLabel('Question about the source lesson').fill(oldQuestion);
-  await page.getByRole('button',{name:'Check inference availability'}).click();
-  await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
-  assert.equal(calls,4);assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
-  assert.match(await page.locator('#provider-result-context').textContent(),/Not a result from the current configuration/);
-  // Cancellation after explicit approval but before the first model POST
-  // preserves the prior answer and its exact receipts.
-  holdStatus=true;statusHeld=false;await runOnce();
-  for(let i=0;i<50&&!statusHeld;i++)await new Promise(r=>setTimeout(r,20));assert.equal(statusHeld,true);
-  assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
-  await page.getByRole('button',{name:'Cancel inference'}).click();
-  await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='cancelled');
-  holdStatus=false;
-  assert.equal(calls,4);assert.match(await page.locator('#provider-status').textContent(),/before a model request/);
-  assert.equal(await page.locator('#provider-output').isHidden(),false);
-  assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
-  assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);
   // A model result grants neither media transfer nor persistence.
   await page.getByRole('button',{name:'Seek to retrieved cue'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-action-status').textContent.includes('Cue seek unavailable'));
@@ -145,6 +119,37 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.waitForFunction(()=>document.querySelector('#review-list').children.length===1);
   assert.equal(calls,4);
   const oldReview=await page.getByRole('button',{name:'Preview retrieved review card'}).elementHandle();
+  // Editing the next question must not silently discard or relabel the old result.
+  const oldQuestion=await page.getByLabel('Question about the source lesson').inputValue();
+  await page.getByLabel('Question about the source lesson').fill('A different question that has not been sent.');
+  assert.match(await page.locator('#provider-result-context').textContent(),/Not an answer to the current question/);
+  assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
+  assert.equal(await page.getByRole('button',{name:'Preview retrieved review card'}).isDisabled(),true);
+  assert.equal(await page.getByRole('button',{name:'Seek to retrieved cue'}).isDisabled(),true);
+  await oldReview.evaluate(button=>{button.disabled=false;button.click();});assert.equal(await page.locator('#review-dialog').evaluate(dialog=>dialog.open),false,'even a forcibly enabled earlier action is inert');
+  await oldReview.evaluate(button=>button.disabled=true);
+  await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-consent-dialog').open);
+  await page.getByRole('button',{name:'Cancel',exact:true}).click();assert.equal(calls,4);
+  assert.match(await page.locator('#provider-result-context').textContent(),/Not an answer to the current question/);
+  assert.equal(await page.locator('#provider-output').isHidden(),false);
+  await page.getByLabel('Question about the source lesson').fill(oldQuestion);
+  await page.getByRole('button',{name:'Check inference availability'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
+  assert.equal(calls,4);assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
+  assert.match(await page.locator('#provider-result-context').textContent(),/Not a result from the current configuration/);
+  assert.equal(await page.getByRole('button',{name:'Preview retrieved review card'}).isDisabled(),true,'editing back and rediscovering cannot resurrect an earlier action');
+  // Cancellation after explicit approval but before the first model POST
+  // preserves the prior answer and its exact receipts.
+  holdStatus=true;statusHeld=false;await runOnce();
+  for(let i=0;i<50&&!statusHeld;i++)await new Promise(r=>setTimeout(r,20));assert.equal(statusHeld,true);
+  assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
+  await page.getByRole('button',{name:'Cancel inference'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='cancelled');
+  holdStatus=false;
+  assert.equal(calls,4);assert.match(await page.locator('#provider-status').textContent(),/before a model request/);
+  assert.equal(await page.locator('#provider-output').isHidden(),false);
+  assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
+  assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);
   mode='no-receipt';await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='empty');
   await oldReview.evaluate(button=>button.click());assert.equal(await page.locator('#review-dialog').evaluate(dialog=>dialog.open),false);
   assert.equal(calls,7);assert.match(await page.locator('#provider-status').textContent(),/interpretation was discarded/);assert.equal(await page.locator('#provider-output').isHidden(),true);

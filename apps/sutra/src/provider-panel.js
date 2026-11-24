@@ -9,9 +9,15 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
  const check=$('provider-check'),run=$('provider-run'),cancel=$('provider-cancel'),question=$('provider-question'),status=$('provider-status'),output=$('provider-output'),answer=$('provider-answer'),list=$('provider-receipts'),metrics=$('provider-metrics'),resultContextLabel=$('provider-result-context'),actionStatus=$('provider-action-status');
  const consentDialog=$('provider-consent-dialog'),consentBackend=$('provider-consent-backend'),consentModel=$('provider-consent-model'),consentChars=$('provider-consent-chars'),consentBudget=$('provider-consent-budget'),consentDeny=$('provider-consent-deny'),consentAllow=$('provider-consent-allow');
  const runtimeBounds=executionLimits();
- let model=null,approvedContract=null,active=null,pendingApproval=null,epoch=0,resultContext=null;
+ let model=null,approvedContract=null,active=null,pendingApproval=null,epoch=0,resultContext=null,actionsRevoked=false;
  const set=(s,m)=>applyScreenState(status,s,m);
- const clear=()=>{epoch++;resultContext=null;output.hidden=true;answer.textContent='';list.replaceChildren();metrics.textContent='';actionStatus.textContent='';resultContextLabel.textContent='';};
+ const clear=()=>{epoch++;resultContext=null;actionsRevoked=false;output.hidden=true;answer.textContent='';list.replaceChildren();metrics.textContent='';actionStatus.textContent='';resultContextLabel.textContent='';};
+ // Preserve earlier source text but do not resurrect its action authority after an edit or rediscovery.
+ function revokeResultActions(){
+  if(!resultContext||actionsRevoked)return;
+  actionsRevoked=true;epoch++;actionStatus.textContent='Earlier source excerpts remain visible; these actions are no longer active. Find the excerpt locally or run again explicitly.';
+  for(const button of list.querySelectorAll('button')){button.dataset.sutraRevoked='true';button.disabled=true;}
+ }
  function labelResult(){
   if(!resultContext)return;
   const context=resultContext,earlierQuestion=context.question!==question.value,earlierConfiguration=context.contract!==approvedContract;
@@ -77,7 +83,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   }finally{active=null;controls();(run.disabled?check:run).focus();}
  }
  check.addEventListener('click',async()=>{
-  if(active||pendingApproval)return;model=null;approvedContract=null;
+  if(active||pendingApproval)return;revokeResultActions();model=null;approvedContract=null;
   const operation={kind:'check',controller:new AbortController()};active=operation;controls();set('loading','Checking configuration without calling a model…');
   try{const found=await discoverProvider({origin,loadedContent,signal:operation.controller.signal});
    if(found.state==='configured'){model=found.model;approvedContract=found.contract;set('idle','Model configured: '+model+' ('+(found.backend==='self_hosted'?'operator self-hosted':'external hosted')+'). A run may still be refused by quota or provider availability. No personal key is needed.');}
@@ -108,6 +114,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   void executeApprovedRun(approval);
  });
  question.addEventListener('input',()=>{
+  revokeResultActions();
   if(pendingApproval){denyConsent();return;}
   if(!active){labelResult();if(model)set('idle','Question changed. Any visible earlier result belongs to its previous run. Submit explicitly to retrieve new model results.');}
  });
