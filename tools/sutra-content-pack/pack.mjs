@@ -92,7 +92,7 @@ export async function buildContentPack({manifest,semantic,contentRoot,outputDir}
  if(!guideText.includes(meta.guideClaim.excerpt))throw Error('Guide excerpt missing.');
  const ext=path.extname(assetPaths.media).toLowerCase();if(ext!=='.mp4'&&ext!=='.webm')throw Error('Reviewed media must be MP4 or WebM.');
  const guideName=path.basename(assetPaths.guide);if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}\.html$/i.test(guideName))throw Error('Reviewed guide must be a safe HTML file.');
- const guideProvenance=('Safe published excerpt derivative of reviewed guide input; '+meta.guideClaim.provenance).slice(0,240);
+ const guideProvenance=Array.from('Safe published excerpt derivative of reviewed guide input; '+meta.guideClaim.provenance).slice(0,240).join('');
  const guideMeta={...meta,guideClaim:{...meta.guideClaim,provenance:guideProvenance}};
  const safeGuideBytes=Buffer.from(makeSafeGuideExcerpt(guideMeta,observed.guide.sha256)),publishedGuideSha=digest(safeGuideBytes);
  const mediaBase='media/release/'+observed.media.sha256,transcriptBase='transcripts/release/'+observed.transcript.sha256,guideBase='guides/release/'+publishedGuideSha;
