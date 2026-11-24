@@ -85,6 +85,33 @@ const assert=require('node:assert/strict');
   assert.match(await offlinePage.locator('#network-result').innerText(),/2 \(1 retried\)/);
   assert.equal(persistent,2);
   await offlinePage.unroute('**/agents/agent-manifest.json');
+  // A synthetic persisted navigation event must revoke *both* optional
+  // scripted network modes before a delayed manifest is allowed to finish.
+  // No stale completed status, trace or follow-on graph/tool request may appear.
+  for(const [label,statusId,sourceRun] of [
+   ['Run scripted network test','#network-result',false],
+   ['Run scripted source retrieval','#source-network-result',true]
+  ]){
+   let release,arrived;const seen=new Promise(resolve=>{arrived=resolve;}),manifestPath='**/agents/agent-manifest.json';
+   const requests=[];const collect=request=>{if(request.url().includes('/agents/')||request.url().includes('/api/source-tools'))requests.push(request.url());};
+   offlinePage.on('request',collect);
+   await offlinePage.route(manifestPath,async route=>{arrived();await new Promise(resolve=>{release=resolve;});return route.abort().catch(()=>{});});
+   try{
+    await offlinePage.getByRole('button',{name:label}).click();await seen;
+    const before=requests.length;
+    await offlinePage.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
+    await offlinePage.waitForFunction(selector=>document.querySelector(selector).dataset.state==='cancelled',statusId);
+    assert.equal(await offlinePage.getByRole('button',{name:label}).isDisabled(),false);
+    release();await new Promise(resolve=>setTimeout(resolve,100));
+    assert.equal(await offlinePage.locator(statusId).getAttribute('data-state'),'cancelled');
+    assert.match(await offlinePage.locator(statusId).innerText(),/No completed (?:source )?result is claimed/);
+    assert.equal(requests.length,before,'no continuation after abandoned manifest');
+   }finally{release?.();await offlinePage.unroute(manifestPath);offlinePage.off('request',collect);}
+  }
+  await offlinePage.getByRole('button',{name:'Run scripted network test'}).click();
+  await offlinePage.waitForFunction(()=>document.querySelector('#network-result').dataset.state==='completed');
+  assert.match(await offlinePage.locator('#network-result').innerText(),/scripted model steps/);
+
   // Reject a mixed publication before mounting any actionable UI; explicit reload recovers.
   const damaged=await context.newPage(),damageErrors=[],damageRequests=[];
   damaged.on('pageerror',e=>damageErrors.push(e.message));

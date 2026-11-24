@@ -2,6 +2,7 @@ import {isNativeCueReached} from './seek-policy.js';
 import './style.css';
 import {createReviewStore,REVIEW_STORAGE_KEY,LEGACY_REVIEW_STORAGE_KEY} from './review-store.js';
 import {createReviewMutationQueue} from './review-mutation.js';
+import {createScriptedRunAuthority} from './scripted-run-authority.js';
 import {createReviewActions} from './review-actions.js';
 import {loadLocalNetwork,runNetwork} from '../../../packages/sutra-runtime/index.js';
 import {createScriptedModel,createSourceScriptedModel} from '../../../packages/sutra-runtime/testing.js';
@@ -81,18 +82,22 @@ document.querySelector('#check').addEventListener('click',()=>check());
 document.querySelector('#alter').addEventListener('click',()=>check(true));
 
 const readAttemptLabel=attempts=>Array.isArray(attempts)&&attempts.length?' Public artifact GET attempts: '+attempts.length+' ('+attempts.filter(a=>a.attempt>1).length+' retried).':'';
+const scriptedAuthority=createScriptedRunAuthority();
 const runButton=document.querySelector('#run-network');
 runButton.addEventListener('click',async()=>{
+ const token=scriptedAuthority.begin('network');if(!token)return;
+ const signal=token.controller.signal,valid=()=>scriptedAuthority.current('network',token);
  runButton.disabled=true;const status=document.querySelector('#network-result'),list=document.querySelector('#network-trace');list.replaceChildren();setStatus(status,'loading','Loading local data-only network…');
  try{
   const baseUrl=new URL(`${import.meta.env.BASE_URL}agents/`,location.origin).href;
-  const published=await loadLocalNetwork({baseUrl,expectedOrigin:location.origin,retryUnavailableReads:true});
-  const result=await runNetwork({...published,request:'Inspect source consistency.',model:createScriptedModel(),onEvent:event=>{
-   if(event.kind==='agent'&&event.phase==='start'){const item=document.createElement('li');item.textContent=`${event.agent} agent started in this browser (scripted driver)`;list.append(item);}
+  const published=await loadLocalNetwork({baseUrl,expectedOrigin:location.origin,retryUnavailableReads:true,signal});
+  if(!valid())return;
+  const result=await runNetwork({...published,request:'Inspect source consistency.',model:createScriptedModel(),signal,onEvent:event=>{
+   if(valid()&&event.kind==='agent'&&event.phase==='start'){const item=document.createElement('li');item.textContent=`${event.agent} agent started in this browser (scripted driver)`;list.append(item);}
   }});
-  setStatus(status,'completed',`${result.text} ${result.agentCalls} agent invocations; ${result.modelCalls} scripted model steps.${readAttemptLabel(published.readAttempts)}`);
- }catch(error){setStatus(status,'error',`Network test stopped (${error.code||'LOAD_FAILED'}). No completed result is claimed.${readAttemptLabel(error.readAttempts)}`);}
- finally{runButton.disabled=false;}
+  if(valid())setStatus(status,'completed',`${result.text} ${result.agentCalls} agent invocations; ${result.modelCalls} scripted model steps.${readAttemptLabel(published.readAttempts)}`);
+ }catch(error){if(valid())setStatus(status,'error',`Network test stopped (${error.code||'LOAD_FAILED'}). No completed result is claimed.${readAttemptLabel(error.readAttempts)}`);}
+ finally{if(scriptedAuthority.finish('network',token))runButton.disabled=false;}
 });
 
 let timingPlayer=null,timingTranscript=null,mediaLoad=null;
@@ -262,13 +267,27 @@ try{renderReviews();}catch{reviewStatus.textContent='Existing local review data 
 
 const sourceButton=document.querySelector('#run-source-network');
 sourceButton.addEventListener('click',async()=>{
+ const token=scriptedAuthority.begin('source');if(!token)return;
+ const signal=token.controller.signal,valid=()=>scriptedAuthority.current('source',token);
  sourceButton.disabled=true;const status=document.querySelector('#source-network-result');setStatus(status,'loading','Loading the source network…');
  try{
-  const published=await loadLocalNetwork({baseUrl:new URL(`${import.meta.env.BASE_URL}agents/`,location.origin).href,networkName:'source_learner',expectedOrigin:location.origin,allowSourceTools:true});
-  const result=await runNetwork({...published,request:'Find the featured source cue.',model:createSourceScriptedModel(),sourceTools:{origin:location.origin,sources:content.sources}});
-  setStatus(status,'completed',`${result.text} ${result.agentCalls} agent invocations; ${result.modelCalls} scripted model steps; two source reads.`);
- }catch{setStatus(status,'error','Source retrieval unavailable. No completed source result is claimed. Live inference remains disabled.');}
- finally{sourceButton.disabled=false;}
+  const published=await loadLocalNetwork({baseUrl:new URL(`${import.meta.env.BASE_URL}agents/`,location.origin).href,networkName:'source_learner',expectedOrigin:location.origin,allowSourceTools:true,signal});
+  if(!valid())return;
+  const result=await runNetwork({...published,request:'Find the featured source cue.',model:createSourceScriptedModel(),sourceTools:{origin:location.origin,sources:content.sources},signal});
+  if(valid())setStatus(status,'completed',`${result.text} ${result.agentCalls} agent invocations; ${result.modelCalls} scripted model steps; two source reads.`);
+ }catch{if(valid())setStatus(status,'error','Source retrieval unavailable. No completed source result is claimed. Live inference remains disabled.');}
+ finally{if(scriptedAuthority.finish('source',token))sourceButton.disabled=false;}
+});
+window.addEventListener('pagehide',()=>{
+ const revoked=scriptedAuthority.revoke();
+ if(revoked.includes('network')){
+  runButton.disabled=false;document.querySelector('#network-trace').replaceChildren();
+  setStatus(document.querySelector('#network-result'),'cancelled','Scripted network cancelled on navigation. No completed result is claimed.');
+ }
+ if(revoked.includes('source')){
+  sourceButton.disabled=false;
+  setStatus(document.querySelector('#source-network-result'),'cancelled','Source retrieval cancelled on navigation. No completed source result is claimed.');
+ }
 });
 
 document.querySelector('#read-playback').addEventListener('click',()=>{document.querySelector('#playback-state').textContent=JSON.stringify(timingPlayer?.readState()??{available:false,reason:'media_not_loaded'});});
