@@ -128,3 +128,12 @@ test('reviewed artifact address requires exact digest path segment, not a substr
   const q=structuredClone(p);alter(q);assert.throws(()=>validateContentProfile(q,catalog),/CONTENT_ADDRESSING/);
  }
 });
+
+
+test('artifact hashes and identifiers reject coercible objects without executing conversion hooks',()=>{
+ let touched=0;const value={toString(){touched++;return catalog.sources[0].hash;}};
+ const bad=structuredClone(catalog);bad.sources[0].hash=value;
+ assert.throws(()=>validateContentProfile(profile,bad),/CONTENT_CATALOG/);assert.equal(touched,0);
+ const p=structuredClone(profile);p.featuredCueId={toString(){touched++;return 'timing-marker';}};
+ assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_PROFILE/);assert.equal(touched,0);
+});

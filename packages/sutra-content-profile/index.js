@@ -1,5 +1,7 @@
 import {snapshotDataRecord,snapshotDataArray} from '../sutra-evidence/index.js';
 const SHA=/^[a-f0-9]{64}$/,ID=/^[A-Za-z][A-Za-z0-9._:-]{0,127}$/;
+const validId=v=>typeof v==='string'&&ID.test(v);
+const validHash=v=>typeof v==='string'&&SHA.test(v);
 const plain=v=>!!v&&typeof v==='object'&&!Array.isArray(v)&&Object.getPrototypeOf(v)===Object.prototype;
 const exact=(o,keys,required=keys)=>plain(o)&&Object.keys(o).every(k=>keys.includes(k))&&required.every(k=>Object.hasOwn(o,k));
 const safeText=(v,n)=>typeof v==='string'&&v.trim()&&v.length<=n&&!/[\u0000-\u001f\u007f]/.test(v);
@@ -51,9 +53,9 @@ const boundedJson=async({url,origin,fetchImpl,signal,maxBytes})=>{
  let data;try{data=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{throw Error('CONTENT_JSON');}
  if(!plain(data))throw Error('CONTENT_JSON');return {data,bytes};
 };
-const validSource=source=>plain(source)&&ID.test(source.id??'')&&safeText(source.version,128)&&SHA.test(source.hash??'')&&SHA.test(source.mediaHash??'')&&Number.isFinite(source.duration)&&source.duration>0&&source.duration<=86400&&Array.isArray(source.cues)&&source.cues.length>0&&source.cues.length<=500&&new Set(source.cues.map(x=>x?.id)).size===source.cues.length&&source.cues.every(c=>plain(c)&&ID.test(c.id??'')&&Number.isFinite(c.start)&&Number.isFinite(c.end)&&c.start>=0&&c.end>c.start&&c.end<=source.duration&&safeText(c.text,2000));
-const validVideo=claim=>plain(claim)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&ID.test(claim.claimKey??'')&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.provenance,240)&&safeText(claim.dateBasis,120);
-const validGuide=claim=>claim===null||plain(claim)&&claim.sourceKind==='guide'&&ID.test(claim.sourceId??'')&&safeText(claim.sourceVersion,100)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&ID.test(claim.claimKey??'')&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.excerpt,1200)&&safeText(claim.provenance,240)&&safeGuideHref(claim.sourceHref)&&SHA.test(claim.sourceHash??'');
+const validSource=source=>plain(source)&&validId(source.id)&&safeText(source.version,128)&&validHash(source.hash)&&validHash(source.mediaHash)&&Number.isFinite(source.duration)&&source.duration>0&&source.duration<=86400&&Array.isArray(source.cues)&&source.cues.length>0&&source.cues.length<=500&&new Set(source.cues.map(x=>x?.id)).size===source.cues.length&&source.cues.every(c=>plain(c)&&validId(c.id)&&Number.isFinite(c.start)&&Number.isFinite(c.end)&&c.start>=0&&c.end>c.start&&c.end<=source.duration&&safeText(c.text,2000));
+const validVideo=claim=>plain(claim)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&validId(claim.claimKey)&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.provenance,240)&&safeText(claim.dateBasis,120);
+const validGuide=claim=>claim===null||plain(claim)&&claim.sourceKind==='guide'&&validId(claim.sourceId)&&safeText(claim.sourceVersion,100)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&validId(claim.claimKey)&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.excerpt,1200)&&safeText(claim.provenance,240)&&safeGuideHref(claim.sourceHref)&&validHash(claim.sourceHash);
 export function validateContentProfile(profile,catalog){
  try{
   const p=snapshotDataRecord(profile,24),catalogRef=snapshotDataRecord(p.catalog,4),media=snapshotDataRecord(p.media,8),transcript=snapshotDataRecord(p.transcript,4),ui=snapshotDataRecord(p.ui,4);
@@ -67,9 +69,9 @@ export function validateContentProfile(profile,catalog){
   profile={schema:p.schema,mode:p.mode,contentVersion:p.contentVersion,title:p.title,observedAt:p.observedAt,primarySourceId:p.primarySourceId,featuredCueId:p.featuredCueId,catalog:{path:catalogRef.path,sha256:catalogRef.sha256},transcript:{path:transcript.path,sha256:transcript.sha256},media:{video:media.video,poster:media.poster,chapters:media.chapters,captions:media.captions},videoClaim:{...video},guideClaim:guide?{...guide}:null,ui:{noticeTitle:ui.noticeTitle,noticeBody:ui.noticeBody}};
   catalog={schema:c.schema,contentVersion:c.contentVersion,sources};
  }catch{throw Error('CONTENT_DATA');}
- if(!exact(profile,['schema','mode','contentVersion','title','observedAt','primarySourceId','featuredCueId','catalog','transcript','media','videoClaim','guideClaim','ui'])||profile.schema!==1||!['synthetic','reviewed'].includes(profile.mode)||!safeText(profile.contentVersion,100)||!safeText(profile.title,160)||typeof profile.observedAt!=='string'||!/T.*(?:Z|[+-]\d\d:\d\d)$/.test(profile.observedAt)||!Number.isFinite(Date.parse(profile.observedAt))||!ID.test(profile.primarySourceId??'')||!ID.test(profile.featuredCueId??''))throw Error('CONTENT_PROFILE');
- if(!exact(profile.catalog,['path','sha256'])||!safeRelative(profile.catalog.path)||!SHA.test(profile.catalog.sha256??''))throw Error('CONTENT_CATALOG_REF');
- if(!exact(profile.transcript,['path','sha256'])||!safePublicPath(profile.transcript.path)||profile.transcript.path.includes('#')||!SHA.test(profile.transcript.sha256??''))throw Error('CONTENT_TRANSCRIPT');
+ if(!exact(profile,['schema','mode','contentVersion','title','observedAt','primarySourceId','featuredCueId','catalog','transcript','media','videoClaim','guideClaim','ui'])||profile.schema!==1||!['synthetic','reviewed'].includes(profile.mode)||!safeText(profile.contentVersion,100)||!safeText(profile.title,160)||typeof profile.observedAt!=='string'||!/T.*(?:Z|[+-]\d\d:\d\d)$/.test(profile.observedAt)||!Number.isFinite(Date.parse(profile.observedAt))||!validId(profile.primarySourceId)||!validId(profile.featuredCueId))throw Error('CONTENT_PROFILE');
+ if(!exact(profile.catalog,['path','sha256'])||!safeRelative(profile.catalog.path)||!validHash(profile.catalog.sha256))throw Error('CONTENT_CATALOG_REF');
+ if(!exact(profile.transcript,['path','sha256'])||!safePublicPath(profile.transcript.path)||profile.transcript.path.includes('#')||!validHash(profile.transcript.sha256))throw Error('CONTENT_TRANSCRIPT');
  if(!exact(profile.media,['video','poster','chapters','captions'])||Object.values(profile.media).some(x=>!safePublicPath(x)||x.includes('#')))throw Error('CONTENT_MEDIA');
  if(!validVideo(profile.videoClaim))throw Error('CONTENT_VIDEO_CLAIM');
  if(!validGuide(profile.guideClaim)||profile.mode==='reviewed'&&profile.guideClaim===null)throw Error('CONTENT_GUIDE');
@@ -95,7 +97,7 @@ export async function loadContentProfile({baseUrl,fetchImpl=fetch,signal,timeout
  const controller=new AbortController(),abort=()=>controller.abort(),timer=setTimeout(abort,Math.min(Math.max(timeoutMs,1),5000));signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
  try{
   const profileResult=await boundedJson({url:new URL('content-profile.json',base).href,origin:base.origin,fetchImpl,signal:controller.signal,maxBytes:32768}),profile=profileResult.data;
-  if(!plain(profile.catalog)||!safeRelative(profile.catalog.path)||!SHA.test(profile.catalog.sha256??''))throw Error('CONTENT_CATALOG_REF');
+  if(!plain(profile.catalog)||!safeRelative(profile.catalog.path)||!validHash(profile.catalog.sha256))throw Error('CONTENT_CATALOG_REF');
   const catalogUrl=new URL(profile.catalog.path,base);if(catalogUrl.origin!==base.origin||!catalogUrl.pathname.startsWith(base.pathname))throw Error('CONTENT_CATALOG_REF');
   const catalogResult=await boundedJson({url:catalogUrl.href,origin:base.origin,fetchImpl,signal:controller.signal,maxBytes:262144});
   if(await hash(catalogResult.bytes)!==profile.catalog.sha256)throw Error('CONTENT_CATALOG_HASH');
