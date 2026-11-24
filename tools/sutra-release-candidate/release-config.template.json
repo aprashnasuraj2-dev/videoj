@@ -23,5 +23,18 @@
     "launchCommit": "fd872b9221aeb8ff762b75a5badbf84b23c133cc",
     "compatibilityCommit": "d67755e762545de983e38a395ec45d89b77c9311",
     "compatibilityBlob": "b72fcdf433e323e30a6052e9e0c0718b835672c1"
+  },
+  "contentEvidence": {
+    "status": null,
+    "contentVersion": null,
+    "profileSha256": null,
+    "catalogSha256": null,
+    "mediaSha256": null,
+    "transcriptSha256": null,
+    "guideSha256": null,
+    "intakeRecordHash": null,
+    "rightsAttested": null,
+    "factualReviewAttested": null,
+    "evidenceRef": "private:content/REPLACE"
   }
 }

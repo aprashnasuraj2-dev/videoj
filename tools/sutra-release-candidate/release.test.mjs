@@ -7,10 +7,11 @@ const links={version:1,networks:{learner:{},source_learner:{},linked_learner:{gu
 const config=()=>({schema:1,sourceRevision:'a'.repeat(40),publicOrigin:'https://sutra.example',peerOrigin:'https://guide.example',model:'provider/model-v1',
  liveEvidence:{status:'live_verified',model:'provider/model-v1',observedAt:'2026-11-24T01:00:00Z',runRecordHash:'b'.repeat(64),costReportHash:'c'.repeat(64),usageComplete:true,judgePathPassed:true},
  budgetEvidence:{approved:true,spendCeilingUsd:25,judgingReserveRuns:50,evidenceRef:'private:budget/sutra-001'},
+ contentEvidence:{status:'reviewed_attested',contentVersion:'lesson-v1',profileSha256:'d'.repeat(64),catalogSha256:'e'.repeat(64),mediaSha256:'1'.repeat(64),transcriptSha256:'2'.repeat(64),guideSha256:'3'.repeat(64),intakeRecordHash:'4'.repeat(64),rightsAttested:true,factualReviewAttested:true,evidenceRef:'private:content/lesson-v1'},
  spec:{launchCommit:launchSpecCommit,compatibilityCommit:currentSpecCommit,compatibilityBlob:currentSpecBlob}});
 test('release config refuses placeholders, incomplete live usage, weak reserve and stale spec pin',()=>{
  assert.equal(validateReleaseConfig(config()).model,'provider/model-v1');
- for(const mutate of [x=>x.model='mock-1',x=>x.liveEvidence.usageComplete=false,x=>x.liveEvidence.judgePathPassed=false,x=>x.budgetEvidence.judgingReserveRuns=5,x=>x.budgetEvidence.evidenceRef='https://private.example/doc',x=>x.spec.compatibilityCommit='d'.repeat(40)]){
+ for(const mutate of [x=>x.model='mock-1',x=>x.liveEvidence.usageComplete=false,x=>x.liveEvidence.judgePathPassed=false,x=>x.budgetEvidence.judgingReserveRuns=5,x=>x.budgetEvidence.evidenceRef='https://private.example/doc',x=>x.contentEvidence.rightsAttested=false,x=>x.contentEvidence.status='pending',x=>x.contentEvidence.profileSha256='bad',x=>x.spec.compatibilityCommit='d'.repeat(40)]){
   const x=config();mutate(x);assert.throws(()=>validateReleaseConfig(x));
  }
 });

@@ -14,7 +14,7 @@ export const currentSpecCommit='d67755e762545de983e38a395ec45d89b77c9311';
 export const currentSpecBlob='b72fcdf433e323e30a6052e9e0c0718b835672c1';
 
 export function validateReleaseConfig(config){
- const keys=['schema','sourceRevision','publicOrigin','peerOrigin','model','liveEvidence','budgetEvidence','spec'];
+ const keys=['schema','sourceRevision','publicOrigin','peerOrigin','model','liveEvidence','budgetEvidence','contentEvidence','spec'];
  if(!exact(config,keys)||config.schema!==1||!SHA40.test(config.sourceRevision)||!origin(config.publicOrigin)||!origin(config.peerOrigin)||config.publicOrigin===config.peerOrigin||
   !MODEL.test(config.model)||config.model==='mock-1')throw Error('Invalid release configuration.');
  const live=config.liveEvidence;
@@ -23,6 +23,11 @@ export function validateReleaseConfig(config){
  const budget=config.budgetEvidence;
  if(!exact(budget,['approved','spendCeilingUsd','judgingReserveRuns','evidenceRef'])||budget.approved!==true||typeof budget.spendCeilingUsd!=='number'||!Number.isFinite(budget.spendCeilingUsd)||
   budget.spendCeilingUsd<=0||budget.spendCeilingUsd>10000||!Number.isInteger(budget.judgingReserveRuns)||budget.judgingReserveRuns<20||budget.judgingReserveRuns>100000||!privateRef(budget.evidenceRef))throw Error('Budget evidence is incomplete.');
+ const content=config.contentEvidence;
+ if(!exact(content,['status','contentVersion','profileSha256','catalogSha256','mediaSha256','transcriptSha256','guideSha256','intakeRecordHash','rightsAttested','factualReviewAttested','evidenceRef'])||
+  content.status!=='reviewed_attested'||typeof content.contentVersion!=='string'||!/^[A-Za-z][A-Za-z0-9._-]{0,99}$/.test(content.contentVersion)||
+  !SHA256.test(content.profileSha256)||!SHA256.test(content.catalogSha256)||!SHA256.test(content.mediaSha256)||!SHA256.test(content.transcriptSha256)||!SHA256.test(content.guideSha256)||!SHA256.test(content.intakeRecordHash)||
+  content.rightsAttested!==true||content.factualReviewAttested!==true||!privateRef(content.evidenceRef))throw Error('Reviewed content evidence is incomplete.');
  if(!exact(config.spec,['launchCommit','compatibilityCommit','compatibilityBlob'])||config.spec.launchCommit!==launchSpecCommit||config.spec.compatibilityCommit!==currentSpecCommit||config.spec.compatibilityBlob!==currentSpecBlob)throw Error('Specification pin is not the reviewed release pin.');
  return freeze(structuredClone(config));
 }
@@ -63,7 +68,7 @@ export function prepareReleaseArtifacts({manifest,links,graphs,config}){
  };
  const releaseRecord={
   schema:1,sourceRevision:cfg.sourceRevision,publicOrigin:cfg.publicOrigin,peerOrigin:cfg.peerOrigin,model:cfg.model,
-  spec:{...cfg.spec},liveEvidence:{...cfg.liveEvidence},budgetEvidence:{...cfg.budgetEvidence},
+  spec:{...cfg.spec},liveEvidence:{...cfg.liveEvidence},budgetEvidence:{...cfg.budgetEvidence},contentEvidence:{...cfg.contentEvidence},
   manifestSha256:digest(canonical(releaseManifest)),linksSha256:digest(canonical(outLinks)),
   graphSha256:Object.fromEntries(Object.entries(outputGraphs).map(([name,v])=>[name,v.sha256])),
   limitation:'This record proves deterministic release-artifact construction from supplied evidence identifiers. It cannot prove provider billing, budget approval authenticity, public deployment, TLS/CORS reachability, entrant eligibility, or factual content review.'
