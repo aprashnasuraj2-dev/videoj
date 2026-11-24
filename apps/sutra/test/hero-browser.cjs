@@ -45,6 +45,16 @@ const assert=require('node:assert/strict');
    await first.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
    await first.getByRole('button',{name:'Delete local review'}).click();
    assert.equal(await first.locator('#review-list li').count(),0);
+   // Locale changes must translate the primary free-inference task and current
+   // result rather than only translating the preexisting hero or navigation.
+   await first.locator('#language-select').selectOption('ne');
+   assert.match(await first.locator('#local-answer-title').innerText(),/स्रोत/);
+   assert.match(await first.locator('#local-answer-form button').innerText(),/स्रोत/);
+   await first.locator('#local-answer-query').fill('timing marker');
+   await first.locator('#local-answer-form button').click();
+   assert.match(await first.locator('#local-answer-status').innerText(),/मोडेल कल ०/);
+   await first.locator('#language-select').selectOption('en');
+   assert.match(await first.locator('#local-answer-status').innerText(),/0 model calls/);
   }finally{await freshContext.close();}
 
   let delayed=true;

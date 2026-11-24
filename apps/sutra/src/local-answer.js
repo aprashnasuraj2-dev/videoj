@@ -1,6 +1,7 @@
 import {createSourceTools} from '../../../packages/sutra-source-tools/index.js';
 import {snapshotDataArray,snapshotDataRecord,validateReceipt} from '../../../packages/sutra-evidence/index.js';
 import {applyScreenState} from './status-state.js';
+import {translate} from './localization.js';
 import {createReceiptActionRow} from './receipt-actions.js';
 
 // This is deliberately lexical retrieval: no embeddings, model or network access.
@@ -84,25 +85,31 @@ export function mountLocalAnswer({root,sources,seekTo,prepareReview}){
  let lookup=null,unavailable=false,epoch=0;
  // Build only on the first explicit question. Text-first viewers do not pay
  // the memory/CPU cost of indexing a large valid catalog at page startup.
+ const show=(state,key)=>{status.dataset.i18n=key;applyScreenState(status,state,translate(key,document.documentElement.lang||'en'));};
  const clear=()=>{epoch++;list.replaceChildren();actionStatus.textContent='';};
- input.addEventListener('input',()=>{clear();applyScreenState(status,'idle','Question changed. Previous source actions are unavailable.');});
+ input.addEventListener('input',()=>{clear();show('idle','local.status.changed');});
  form.addEventListener('submit',event=>{
   event.preventDefault();clear();const current=epoch;
-  if(unavailable){applyScreenState(status,'error','Local ranking unavailable; use exact source search.');return;}
-  if(!lookup){try{lookup=createLocalAnswer({sources});}catch{unavailable=true;applyScreenState(status,'error','This catalog exceeds the bounded local index or failed validation; use exact source search.');return;}}
+  if(unavailable){show('error','local.status.index');return;}
+  if(!lookup){try{lookup=createLocalAnswer({sources});}catch{unavailable=true;show('error','local.status.index');return;}}
   const found=lookup.query(input.value);
   const messages={
-   invalid_query:['input_error','Enter a question of 1–240 characters.'],
-   unsupported:['empty','The question has no supported specific source terms; no answer is claimed.'],
-   no_match:['empty','No supported lexical source match. Abstaining instead of inventing an answer.'],
-   unavailable:['error','A source receipt could not be validated. No answer is claimed.']
+   invalid_query:['input_error','local.status.invalid'],
+   unsupported:['empty','local.status.unsupported'],
+   no_match:['empty','local.status.nomatch'],
+   unavailable:['error','local.status.unavailable']
   };
-  if(messages[found.state]){const [s,m]=messages[found.state];applyScreenState(status,s,m+' 0 model calls, 0 network requests.');return;}
-  applyScreenState(status,found.state==='matched'?'completed':'empty',found.explanation+' 0 model calls, 0 network requests. Source consistency only.');
+  if(messages[found.state]){const [state,key]=messages[found.state];show(state,key);return;}
+  show(found.state==='matched'?'completed':'empty',found.state==='matched'?'local.status.matched':'local.status.ambiguous');
   for(const receipt of found.receipts){
-   const row=createReceiptActionRow({receipt,sources,seekTo,prepareReview,actionStatus,isCurrent:()=>current===epoch,seekLabel:'Seek to local source cue',reviewLabel:'Preview local review card'});
-   if(row)list.append(row);
+   const row=createReceiptActionRow({receipt,sources,seekTo,prepareReview,actionStatus,isCurrent:()=>current===epoch,seekLabel:translate('local.action.seek',document.documentElement.lang||'en'),reviewLabel:translate('local.action.review',document.documentElement.lang||'en')});
+   if(row){
+    const buttons=row.querySelectorAll('button');
+    if(buttons[0])buttons[0].dataset.i18n='local.action.seek';
+    if(buttons[1])buttons[1].dataset.i18n='local.action.review';
+    list.append(row);
+   }
   }
-  if(!list.children.length)applyScreenState(status,'error','No validated source excerpt could be displayed.');
+  if(!list.children.length)show('error','local.status.unavailable');
  });
 }
