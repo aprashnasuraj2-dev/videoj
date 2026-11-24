@@ -33,7 +33,7 @@ export function validateExternalMcpConfig(value){
 export function createExternalReadMcp(options,{signal}={}){
  const {url,origin,inspector,fetchImpl}=validateExternalMcpConfig(options);
  let sequence=0,rpcCount=0,initialized=false,initialization=null;
- const contact=(kind,purpose,disclosure)=>({origin,kind,purpose,disclosure,resource:url});
+ const contact=(kind,purpose,disclosure,preview)=>({origin,kind,purpose,disclosure,resource:url,...(preview?{preview}:{})});
  const check=active=>{if(active?.aborted)fail('MCP_CANCELLED','Third-party MCP operation was cancelled.');};
  async function rpc(method,params,notification=false,active=signal){
   check(active);if(++rpcCount>8)fail('MCP_LIMIT','External MCP request budget exceeded.');
@@ -91,7 +91,7 @@ export function createExternalReadMcp(options,{signal}={}){
    check(signal);if(name!==readTool.name)fail('MCP_TOOL','Unapproved MCP tool name.');
    try{args=Object.freeze(snapshotDataRecord(args,2));validateData(readTool.inputSchema,args);if(!args.query.trim()||/[\u0000-\u001f\u007f]/.test(args.query))throw Error('Invalid query');}catch{fail('MCP_ARGUMENTS','External MCP argument schema refused input.');}
    await discover();check(signal);
-   return inspector.perform(contact('mcp_call','Read a preapproved public data record',['tool name','query text']),async(_contact,approvedSignal)=>{
+   return inspector.perform(contact('mcp_call','Read a preapproved public data record',['tool name','query text'],{'tool name':name,'query text':args.query}),async(_contact,approvedSignal)=>{
     const active=signal&&approvedSignal?AbortSignal.any([signal,approvedSignal]):signal??approvedSignal;
     const response=await rpc('tools/call',{name,arguments:args},false,active);check(active);
     const payload=response.structuredContent;

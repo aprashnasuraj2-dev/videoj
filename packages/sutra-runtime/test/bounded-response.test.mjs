@@ -123,3 +123,23 @@ test('approved peer GET times out without waiting for noncooperative transport a
  await waitFor(()=>calls===1);await assert.rejects(pending,e=>e.code==='MANIFEST_UNAVAILABLE');
  release(new Response(new ReadableStream({cancel(){cancelled++;}}),{headers}));await waitFor(()=>cancelled===1);assert.equal(calls,1);
 });
+
+test('external MCP discloses exact query for each one-time decision without persisting it in consent events',async()=>{
+ const intents=[],requests=[];
+ const inspector=createConsentInspector({decide:async intent=>{
+  intents.push(intent);
+  if(intent.kind==='mcp_discovery')return {decision:'allow',scope:'session'};
+  if(intent.preview['query text']==='private-canary changed')return 'deny';
+  if(intent.preview['query text']==='invalid session attempt')return {decision:'allow',scope:'session'};
+  return 'allow';
+ }});
+ const client=createExternalReadMcp({url:externalUrl,inspector,fetchImpl:async(_url,opts)=>{const rpc=JSON.parse(opts.body);requests.push(rpc);return externalResponse(rpc);}});
+ await client.callTool('read_public',{query:' public exact  '});
+ await client.callTool('read_public',{query:' public exact  '});
+ await assert.rejects(client.callTool('read_public',{query:'private-canary changed'}),e=>e.code==='CONSENT_DENIED');
+ await assert.rejects(client.callTool('read_public',{query:'invalid session attempt'}),e=>e.code==='DECISION_INVALID');
+ const calls=intents.filter(i=>i.kind==='mcp_call');
+ assert.equal(calls.length,4);assert.deepEqual(calls[0].scopeOptions,['once']);assert.equal(calls[0].preview['query text'],' public exact  ');
+ assert.deepEqual(requests.filter(r=>r.method==='tools/call').map(r=>r.params.arguments.query),[' public exact  ',' public exact  ']);
+ const events=JSON.stringify(inspector.exportEvents());assert.ok(!events.includes('public exact')&&!events.includes('private-canary')&&!events.includes('invalid session attempt'));
+});

@@ -42,7 +42,7 @@ const publicText=(value,where,max)=>{
   return value.trim();
 };
 export function normalizeContact(input){
-  input=dataRecord(input,['origin','kind','purpose','disclosure','network','resource'],'CONTACT_METADATA');
+  input=dataRecord(input,['origin','kind','purpose','disclosure','network','resource','preview'],'CONTACT_METADATA');
   let target;
   if(typeof input.origin!=='string'||input.origin.length>2048)fail('CONTACT_ORIGIN','Contact origin must be an absolute URL.');
   try{target=new URL(input.origin);}catch{fail('CONTACT_ORIGIN','Contact origin must be an absolute URL.');}
@@ -59,7 +59,15 @@ export function normalizeContact(input){
     try{resource=new URL(input.resource);}catch{fail('CONTACT_URL','Invalid exact public resource.');}
     if(resource.origin!==target.origin||resource.username||resource.password||resource.hash||resource.href.length>2048)fail('CONTACT_URL','Resource must stay on the approved origin.');
   }
-  return Object.freeze({origin:target.origin,kind:input.kind,purpose,disclosure:Object.freeze([...disclosure]),...(input.network?{network:input.network}:{}),...(resource?{resource:resource.href}:{})});
+  let preview;
+  if(input.preview!==undefined){
+    // Values are for the decision surface only, never redacted event history
+    // or remembered grants. Require exact keys and preserve bytes/whitespace.
+    const raw=dataRecord(input.preview,disclosure,'DISCLOSURE_PREVIEW');
+    if(Object.keys(raw).length!==disclosure.length||disclosure.some(k=>!Object.hasOwn(raw,k)||typeof raw[k]!=='string'||!raw[k].trim()||raw[k].length>240||/[\u0000-\u001f\u007f]/.test(raw[k])))fail('DISCLOSURE_PREVIEW','Preview must contain exactly the bounded disclosed values.');
+    preview=Object.freeze({...raw});
+  }
+  return Object.freeze({origin:target.origin,kind:input.kind,purpose,disclosure:Object.freeze([...disclosure]),...(input.network?{network:input.network}:{}),...(resource?{resource:resource.href}:{}),...(preview?{preview}:{})});
 }
 const eventCopy=event=>Object.freeze({...event,disclosure:Object.freeze([...event.disclosure])});
 export function createConsentInspector({decide,onEvent,now=()=>new Date().toISOString()}={}){
@@ -80,12 +88,12 @@ export function createConsentInspector({decide,onEvent,now=()=>new Date().toISOS
     check(active);
     const contact=normalizeContact(input),id=key(contact);
     record(contact,'intent',{},observe);check(active);
-    if(sessionApprovals.has(id)){
+    if(!contact.preview&&sessionApprovals.has(id)){
       record(contact,'decision',{decision:'allow',scope:'session',source:'remembered'},observe);check(active);
       return {contact,decision:'allow',scope:'session'};
     }
     let answer;
-    try{answer=await raceAbort(()=>decide(Object.freeze({...contact,scopeOptions:Object.freeze(['once','session'])}),{signal:active}),active);}
+    try{answer=await raceAbort(()=>decide(Object.freeze({...contact,scopeOptions:Object.freeze(contact.preview?['once']:['once','session'])}),{signal:active}),active);}
     catch(error){if(active.aborted||error instanceof ConsentError&&error.code==='CANCELLED')throw cancelled();fail('DECISION_FAILED','Consent decision could not be completed.');}
     check(active);
     if(answer==='deny')answer={decision:'deny',scope:'once'};
@@ -96,6 +104,7 @@ export function createConsentInspector({decide,onEvent,now=()=>new Date().toISOS
       record(contact,'decision',{decision:'deny',scope:'once',source:'user'},observe);
       throw new ConsentError('CONSENT_DENIED','External contact was denied before any approved operation.');
     }
+    if(contact.preview&&answer.scope!=='once')fail('DECISION_INVALID','A contact disclosing exact values requires one-time approval.');
     record(contact,'decision',{decision:'allow',scope:answer.scope,source:'user'},observe);check(active);
     if(answer.scope==='session'){
       // A long-lived standalone inspector cannot accumulate unbounded grants.
