@@ -19,7 +19,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   assert.equal(requests.filter(x=>x.endsWith('/api/infer')||x.endsWith('/api/v1/chat/completions')).length,0);
   await page.getByRole('button',{name:'Check example',exact:true}).click();assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
   // Test transport only: intercept the provider endpoint; never contact a paid model.
-  await page.route('**/api/status',r=>r.fulfill({json:{inference:'configured',model:'synthetic-provider-test',routerBase:'/api/v1',publisherFunded:true,byok:false,sourceTools:'synthetic-catalog',factualTruth:'unverified'}}));
+  await page.route('**/api/status',r=>r.fulfill({json:{inference:'configured',model:'synthetic-provider-test',routerBase:'/api/v1',publisherFunded:true,byok:false,sourceTools:'catalog',content:{mode:'synthetic',contentVersion:'synthetic-timing-v1',catalogSha256:'a92e4c0e29691f8cc65cbc2707bb3359b4b351bde929f73299062e7dc05503cb',primarySourceId:'synthetic-timing-fixture'},factualTruth:'unverified'}}));
   const releaseGraph=JSON.parse(fs.readFileSync(path.join(app,'public/agents/source_learner.network.json'),'utf8'));releaseGraph.llm_config={model_name:'synthetic-provider-test'};
   const releaseManifest=JSON.parse(fs.readFileSync(path.join(app,'public/agents/agent-manifest.json'),'utf8'));
   releaseManifest.llm_router={base_url:base+'/api/v1',mock:false,publisher_funded:true};releaseManifest.allowed_peers=['https://guide.example'];releaseManifest.deployment={mode:'static',self_contained_runtime:true,browser_mock:false,direct_byok:false,direct_mcp_requires_cors:true,public_mcp_facade:false};
@@ -41,7 +41,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   });
   await page.getByRole('button',{name:'Check inference availability'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
-  assert.equal(manifestReads,1);assert.equal(graphReads,1);assert.equal(calls,0,'provider discovery must bind public contract before any model call');
+  assert.equal(manifestReads,1);assert.equal(graphReads,1);assert.equal(calls,0,'provider discovery must bind public contract before any model call');assert.match(await page.locator('#provider-status').textContent(),/Model configured/);
   await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='completed');
   assert.equal(calls,4);assert.match(await page.locator('#provider-answer').textContent(),/Synthetic provider fixture/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.match(await page.locator('#provider-metrics').textContent(),/80\/20\/100/);
   // A model result grants neither media transfer nor persistence.
