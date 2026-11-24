@@ -23,3 +23,10 @@ test('CLI computes actual file hashes from a bounded content root and refuses sy
   fs.unlinkSync(path.join(dir,'text/guide.txt'));fs.symlinkSync(path.join(dir,'text/transcript.txt'),path.join(dir,'text/guide.txt'));const bad=spawnSync(process.execPath,[cli,mf,dir],{encoding:'utf8'});assert.equal(bad.status,2);
  }finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
+
+test('rights evidence references must stay opaque/private rather than exposing public document URLs',()=>{
+ for(const ref of ['https://example.com/contract.pdf','/local/path','private:','private:../secret']){
+  const m=manifest();m.rights.media.evidenceRef=ref;assert.throws(()=>assessContentManifest(m,{observedFiles:observed()}));
+ }
+ const m=manifest();m.rights.media.evidenceRef='private:rights/media-2026-001';assert.equal(assessContentManifest(m,{observedFiles:observed()}).rights.media.evidenceRef,'private:rights/media-2026-001');
+});

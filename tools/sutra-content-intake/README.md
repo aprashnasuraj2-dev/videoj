@@ -12,6 +12,6 @@ A structurally complete result requires:
 
 **Important:** `structuralIntakeComplete:true` means these fields and byte identities are structurally complete. It does not prove the rights documents are authentic, the declaration is legally sufficient, or the reviewer is competent/truthful. Those remain participant/human evidence gates.
 
-Do not put contracts, reviewer names, email addresses or other private rights documents in the public manifest. Use an opaque private-record reference.
+Do not put contracts, reviewer names, email addresses or other private rights documents in the public manifest. Use an opaque `private:...` record reference. Public URLs and filesystem paths are rejected so a manifest cannot accidentally publish a contract/reviewer document location.
 
 CLI: `node tools/sutra-content-intake/cli.mjs MANIFEST.json CONTENT_ROOT > assessed.json`.

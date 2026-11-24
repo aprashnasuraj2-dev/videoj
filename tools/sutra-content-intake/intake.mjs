@@ -22,7 +22,7 @@ export function assessContentManifest(manifest,{observedFiles}={}){
  const rights={};
  for(const kind of Object.keys(limits)){
   const row=manifest.rights[kind];
-  if(!exact(row,['basis','evidenceRef','publicDistributionDeclared'])||!RIGHTS.has(row.basis)||typeof row.evidenceRef!=='string'||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{3,199}$/.test(row.evidenceRef)||
+  if(!exact(row,['basis','evidenceRef','publicDistributionDeclared'])||!RIGHTS.has(row.basis)||typeof row.evidenceRef!=='string'||!/^private:[A-Za-z0-9][A-Za-z0-9._/-]{2,191}$/.test(row.evidenceRef)||
     typeof row.publicDistributionDeclared!=='boolean')throw Error('Invalid '+kind+' rights declaration.');
   rights[kind]={...row};
  }
