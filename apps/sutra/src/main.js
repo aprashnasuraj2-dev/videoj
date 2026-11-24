@@ -103,24 +103,29 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
  const button=event.currentTarget;button.disabled=true;setStatus(timingStatus,'loading','Loading the active source media…');
  try{
   const {mountTimingPlayer}=await import('./player-adapter.js');
-  const base=new URL(`${import.meta.env.BASE_URL}media/`,location.origin);
-  const versioned=(name,version)=>{const url=new URL(name,base);url.searchParams.set('v',version);return url.href;};
-  const response=await fetch(versioned('timing-fixture.mp4',timingFixture.source.mediaHash),{credentials:'omit',redirect:'error',signal:AbortSignal.timeout(10000)});
-  if(!response.ok||Number(response.headers.get('content-length'))>1024*1024)throw Error('Source media download failed.');
-  const bytes=await response.arrayBuffer();if(bytes.byteLength>1024*1024)throw Error('Source media exceeds the current browser limit.');
-  const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');
-  if(digest!==timingFixture.source.mediaHash)throw Error('Media version mismatch.');
-  timingObjectUrl=URL.createObjectURL(new Blob([bytes],{type:'video/mp4'}));
-  timingPlayer=mountTimingPlayer(mediaHost,{source:timingObjectUrl,
-   poster:versioned('timing-poster.svg',timingFixture.source.mediaHash),
-   chapters:versioned('timing-chapters.vtt',timingFixture.source.hash),
-   captions:versioned('timing-captions.vtt',timingFixture.source.hash)});
+  const versioned=(publicPath,version)=>{const url=new URL(publicPath,location.origin);url.searchParams.set('v',version);return url.href;};
+  let mediaSource;
+  if(content.profile.mode==='reviewed'){
+   if(!content.profile.media.video.includes(timingFixture.source.mediaHash))throw Error('Reviewed media path is not content-addressed.');
+   mediaSource=versioned(content.profile.media.video,timingFixture.source.mediaHash);
+  }else{
+   const response=await fetch(versioned(content.profile.media.video,timingFixture.source.mediaHash),{credentials:'omit',redirect:'error',signal:AbortSignal.timeout(10000)});
+   if(!response.ok||Number(response.headers.get('content-length'))>1024*1024)throw Error('Source media download failed.');
+   const bytes=await response.arrayBuffer();if(bytes.byteLength>1024*1024)throw Error('Synthetic source media exceeds the development validation limit.');
+   const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');
+   if(digest!==timingFixture.source.mediaHash)throw Error('Media version mismatch.');
+   timingObjectUrl=URL.createObjectURL(new Blob([bytes],{type:'video/mp4'}));mediaSource=timingObjectUrl;
+  }
+  timingPlayer=mountTimingPlayer(mediaHost,{source:mediaSource,
+   poster:versioned(content.profile.media.poster,timingFixture.source.mediaHash),
+   chapters:versioned(content.profile.media.chapters,timingFixture.source.hash),
+   captions:versioned(content.profile.media.captions,timingFixture.source.hash)});
   mediaHost.classList.add('player-mounted');await timingPlayer.ready();if(Math.abs(timingPlayer.media.duration-timingFixture.source.duration)>.1)throw Error('Media duration mismatch.');
   timingTranscript?.dispose();
   timingTranscript=mountTranscriptPanel(transcriptHost,{
    source:timingFixture.source,contentMode:content.profile.mode,media:timingPlayer.media,onSeek:seconds=>timingPlayer.seek(seconds)
   });
-  setStatus(timingStatus,'completed',`${content.profile.mode==='reviewed'?'Reviewed':'Synthetic'} source media loaded. Actual media duration: ${timingPlayer.media.duration.toFixed(1)} seconds.`);seekTiming.hidden=false;
+  setStatus(timingStatus,'completed',`${content.profile.mode==='reviewed'?'Reviewed content-addressed':'Synthetic hash-checked'} source media loaded. Actual media duration: ${timingPlayer.media.duration.toFixed(1)} seconds.`);seekTiming.hidden=false;
  }catch(error){if(timingPlayer){try{timingPlayer.media.pause();timingPlayer.media.removeAttribute('src');timingPlayer.media.load();}catch{}timingPlayer=null;mediaHost.replaceChildren();mediaHost.classList.remove('player-mounted');}if(timingObjectUrl){URL.revokeObjectURL(timingObjectUrl);timingObjectUrl=null;}seekTiming.hidden=true;setStatus(timingStatus,'error',error?.code==='MEDIA_UNSUPPORTED'?'This browser cannot decode the source media. Transcript and evidence remain available; no playback success is claimed.':'Source media unavailable. No playback or seek success is claimed.');button.disabled=false;}
 });
 seekTiming.addEventListener('click',async()=>{
