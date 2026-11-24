@@ -46,6 +46,21 @@ test('claim validator preserves unsupported state for invented sources, altered 
  const noCatalog=validateEvidenceClaim(quote);
  assert.equal(noCatalog.valid,false);assert.equal(noCatalog.state,'unsupported');assert.ok(noCatalog.errors.some(e=>e.code==='CATALOG_REQUIRED'));
 });
+test('v1 quotation fidelity is intentionally exact rather than silently normalized',()=>{
+ for(const changed of [
+  receipt.excerpt+' ',
+  receipt.excerpt.replace('Synthetic','synthetic'),
+  receipt.excerpt.replace('record the displayed reading','record  the displayed reading')
+ ]){
+  const result=validateReceipt({...receipt,excerpt:changed},{sources});
+  assert.equal(result.valid,false);
+  assert.ok(result.errors.some(error=>error.code==='QUOTE_MISMATCH'));
+ }
+ const claim=validateEvidenceClaim({version:1,kind:'source_excerpt',text:' '+receipt.excerpt,receipt},{sources});
+ assert.equal(claim.valid,false);
+ assert.ok(claim.errors.some(error=>error.code==='CLAIM_QUOTE_MISMATCH'));
+});
+
 test('claim cannot self-upgrade, add fields or hide invalid receipt behind interpretation text',()=>{
  for(const claim of [
   {version:1,kind:'source_excerpt',text:receipt.excerpt,receipt,verification:'verified'},
