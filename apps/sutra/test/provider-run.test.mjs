@@ -119,3 +119,29 @@ test('bounded provider POST adds exact version preconditions but never ambient c
  assert.equal(calls[0].opts.headers.get('X-Sutra-Inference-Contract'),null);
  assert.equal(calls[1].opts.headers.get('X-Sutra-Inference-Contract'),'a'.repeat(64));
 });
+
+test('bound POST refuses substituted response identity and disposes rejected bodies before ownership transfer',async()=>{
+ const origin='https://example.test';
+ for(const defect of ['url','redirect','callback']){
+  let cancelled=0,observed=0;
+  const response=new Response(new ReadableStream({cancel(){cancelled++;}}),{status:defect==='callback'?409:200});
+  if(defect==='url')Object.defineProperty(response,'url',{value:origin+'/other'});
+  if(defect==='redirect')Object.defineProperty(response,'redirected',{value:true});
+  const wrapped=createBoundProviderTransport({origin,approvedContract:approval(),fetchImpl:async()=>response,onPrecondition:()=>{observed++;throw Error('observer failure');}});
+  await assert.rejects(wrapped(origin+'/api/source-tools',{method:'POST'}),defect==='callback'?/observer failure/:/PROVIDER_ROUTE/);
+  assert.equal(cancelled,1,defect);assert.equal(response.body.locked,false);assert.equal(observed,defect==='callback'?1:0);
+ }
+});
+test('bound POST stops promptly and disposes late 409 without reporting stale precondition or recontacting',async()=>{
+ const origin='https://example.test',controller=new AbortController();let calls=0,observed=0,cancelled=0,release,started;
+ const ready=new Promise(resolve=>{started=resolve;});
+ const wrapped=createBoundProviderTransport({origin,approvedContract:approval(),onPrecondition:()=>observed++,fetchImpl:async()=>{calls++;started();return new Promise(resolve=>{release=resolve;});}});
+ const pending=wrapped(origin+'/api/source-tools',{method:'POST',signal:controller.signal});
+ await ready;controller.abort();
+ await assert.rejects(pending);
+ release(new Response(new ReadableStream({cancel(){cancelled++;}}),{status:409}));
+ for(let i=0;i<100&&!cancelled;i++)await new Promise(resolve=>setTimeout(resolve,0));
+ assert.equal(cancelled,1);assert.equal(observed,0);
+ await assert.rejects(wrapped(origin+'/api/source-tools',{method:'POST',signal:controller.signal}));
+ assert.equal(calls,1);
+});

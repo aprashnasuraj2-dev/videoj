@@ -118,10 +118,28 @@ export function createBoundProviderTransport({origin,approvedContract,fetchImpl=
   headers.set('X-Sutra-Catalog-Sha256',contract.content.catalogSha256);
   if(target.pathname==='/api/v1/chat/completions')headers.set('X-Sutra-Inference-Contract',contract.inferenceContractId);
   else headers.delete('X-Sutra-Inference-Contract');
-  const response=await fetchImpl(target.href,{...options,method:'POST',credentials:'omit',redirect:'error',cache:'no-store',headers});
-  if(response?.redirected||response?.url&&response.url!==target.href)throw Error('PROVIDER_ROUTE');
-  if(response.status===409)onPrecondition(target.pathname==='/api/v1/chat/completions'&&response.headers.get('X-Sutra-Precondition')==='inference'?'inference':'catalog');
-  return response;
+  const signal=options.signal;
+  signal?.throwIfAborted();
+  let response,finished=false;
+  const dispose=value=>{try{void Promise.resolve(value?.body?.cancel()).catch(()=>{});}catch{}};
+  try{
+   // A noncooperating injected transport can return after the caller stops.
+   // The binding layer owns rejected bodies until it hands a response off.
+   const incoming=Promise.resolve().then(()=>{
+    signal?.throwIfAborted();
+    return fetchImpl(target.href,{...options,method:'POST',credentials:'omit',redirect:'error',cache:'no-store',headers,signal});
+   }).then(value=>{
+    if(finished||signal?.aborted){dispose(value);throw Error('PROVIDER_CANCELLED');}
+    return value;
+   });
+   response=await abortable(incoming,signal);
+   signal?.throwIfAborted();
+   if(response?.redirected||response?.url&&response.url!==target.href)throw Error('PROVIDER_ROUTE');
+   if(response.status===409)onPrecondition(target.pathname==='/api/v1/chat/completions'&&response.headers.get('X-Sutra-Precondition')==='inference'?'inference':'catalog');
+   signal?.throwIfAborted();
+   return response;
+  }catch(error){dispose(response);throw error;}
+  finally{finished=true;}
  };
 }
 export async function runProviderLesson({origin,approvedContract,loadedContent,question,fetchImpl=fetch,signal,onModelStart=()=>{}}={}){
