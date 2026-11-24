@@ -112,8 +112,8 @@ test('unexpected stored envelope fields fail closed rather than propagating secr
 
 test('delete effect followed by exception or failed readback is unknown, not a definite refusal',()=>{
  for(const mode of ['remove','rewrite','readback']){
-  const f=setup(),a=f.store.commit(f.store.prepare(fixture.receipt));
-  if(mode==='rewrite')f.store.commit(f.store.prepare(fixture.receipt));
+  const f=setup(),a=f.store.commit(f.store.prepare(fixture.receipt).id);
+  if(mode==='rewrite')f.store.commit(f.store.prepare(fixture.receipt).id);
   const inspect=f.store.inspect()[0],read=f.storage.getItem;let calls=0;
   if(mode==='rewrite')f.storage.setItem=(k,v)=>{calls++;f.values.set(k,v);throw Error('post-write');};
   else f.storage.removeItem=k=>{calls++;f.values.delete(k);if(mode==='remove')throw Error('post-delete');};
@@ -123,7 +123,7 @@ test('delete effect followed by exception or failed readback is unknown, not a d
  }
 });
 test('clear partially succeeding is unknown even if second key raises a native-looking error',()=>{
- const f=setup(),legacy='sutra.synthetic-review-cards.v1';f.store.commit(f.store.prepare(fixture.receipt));f.values.set(legacy,'legacy');f.values.set('unrelated','keep');
+ const f=setup(),legacy='sutra.synthetic-review-cards.v1';f.store.commit(f.store.prepare(fixture.receipt).id);f.values.set(legacy,'legacy');f.values.set('unrelated','keep');
  const confirmed=f.store.captureClear();let calls=0;
  f.storage.removeItem=k=>{calls++;if(k===legacy)throw new DOMException('denied','SecurityError');f.values.delete(k);};
  assert.throws(confirmed,e=>e.outcome==='unknown');
