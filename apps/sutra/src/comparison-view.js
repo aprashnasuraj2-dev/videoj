@@ -1,4 +1,5 @@
 import {compareClaimPair,syntheticComparison} from './comparison.js';
+import {validateEvidenceClaim} from '../../../packages/sutra-evidence/index.js';
 
 const node=(tag,cls,text)=>{
  const item=document.createElement(tag);
@@ -8,12 +9,13 @@ const node=(tag,cls,text)=>{
 };
 const valueText=value=>value===undefined?'Unavailable':String(value);
 
-export function mountComparisonView(host,{receipt,seekTo}={}){
+export function mountComparisonView(host,{receipt,sources,seekTo}={}){
  if(!host||typeof host.replaceChildren!=='function')throw Error('Comparison host missing.');
- const local=receipt&&typeof receipt.sourceId==='string'?{
-  sourceKind:'video',sourceId:receipt.sourceId,sourceVersion:receipt.sourceVersion,
+ const evidence=receipt?validateEvidenceClaim({version:1,kind:'source_excerpt',text:receipt.excerpt,receipt},{sources}):null;
+ const local=evidence?.valid&&evidence.state==='source_backed_unverified'?{
+  sourceKind:'video',sourceId:evidence.sourceRef.sourceId,sourceVersion:evidence.sourceRef.sourceVersion,
   title:'Actual synthetic timing-cue catalog',scope:'synthetic_timing_only',claimKey:'marker_presence',
-  value:'marker_present',excerpt:receipt.excerpt,start:receipt.start,end:receipt.end,
+  value:'marker_present',excerpt:evidence.excerpt,start:evidence.sourceRef.start,end:evidence.sourceRef.end,
   provenance:'SUTRA local synthetic timing catalog, not human-reviewed footage',
   observedAt:receipt.retrievedAt,dateBasis:'Fixture receipt retrieval timestamp'
  }:null;
