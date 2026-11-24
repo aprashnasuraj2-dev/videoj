@@ -74,3 +74,19 @@ Primary references refreshed 2026-11-23:
 The reference upstream runner is unchanged. SUTRA's host grants exactly one local
 MCP descriptor (`/api/source-tools`) when explicitly configured; peers, external
 MCP, coded tools, arbitrary REST and private context forwarding remain disabled.
+
+
+## Static assets, security headers and Worker-request separation
+
+`wrangler.jsonc` intentionally sets `assets.run_worker_first` to `["/api/*"]`. Normal SUTRA HTML, hashed JS/CSS, public graphs, text tracks and media should therefore be served by the static asset layer without entering Worker code. Do **not** broaden this to `true` merely to attach headers; that would convert ordinary learner asset traffic into Worker invocations and undermine the shared-capacity plan.
+
+Because static files bypass Worker code, `apps/sutra/public/_headers` is the authoritative default browser-security policy for the learner page. It currently allows only same-origin connections. A future approved public peer origin must be added deliberately and tested before release; there is no wildcard peer/connect source. The Worker applies the same baseline security fields to `/api/*` responses, and build tests compare both layers to prevent accidental drift.
+
+Cache classes are also intentionally split:
+
+- Vite content-hashed `/assets/*` and physically content-versioned `/agents/v/<git-blob>/...` graphs: long-lived immutable.
+- HTML, manifests, links, canonical/unversioned graphs and unversioned media aliases: revalidate.
+- `/api/*`, inference streams and error responses: `no-store`.
+- Media requests carry source-version query keys and byte-level SHA-256 verification before player mount; static media currently remains revalidated rather than claiming immutable filename semantics.
+
+The manifest points to retained graph copies under `/agents/v/<git-blob>/...`. CI computes the Git blob identity of the canonical graph and requires the declared physical version path to contain byte-identical data. A graph edit without a version-path update fails the build.
