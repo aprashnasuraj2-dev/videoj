@@ -56,9 +56,9 @@ export function createSourceTools(catalog,{now=()=>new Date().toISOString()}={})
     for(const r of candidates){
      if(r.folded.includes(query)&&(!hasStart||r.cue.start>=args.start&&r.cue.end<=args.end)){matchCount++;if(matches.length<5)matches.push(r);}
     }
-    filters={...filters,matchCount,truncated:matchCount>matches.length};
+    filters={filters,matchCount,truncated:matchCount>matches.length};
    }else{const row=bySource.get(args.sourceId)?.byCue.get(args.cueId);if(!row)throw new SourceToolError('NOT_FOUND');matches=[row];}
-   const receipts=matches.map(receipt);const result={version:1,receipts,limit:name==='search_lesson'?5:1,truthStatus:'unverified',...(name==='search_lesson'?{filters}:{})};if(new TextEncoder().encode(JSON.stringify(result)).length>16000)throw new SourceToolError('OUTPUT_SIZE');return result;
+   const receipts=matches.map(receipt);const result={version:1,receipts,limit:name==='search_lesson'?5:1,truthStatus:'unverified',...(name==='search_lesson'?{filters:filters.filters,matchCount:filters.matchCount,truncated:filters.truncated}:{})};if(new TextEncoder().encode(JSON.stringify(result)).length>16000)throw new SourceToolError('OUTPUT_SIZE');return result;
   },
  };
 }
