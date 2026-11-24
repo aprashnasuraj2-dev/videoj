@@ -7,8 +7,8 @@ const percentile=(values,p)=>{const s=[...values].sort((a,b)=>a-b);return s[Math
 const freeze=v=>{if(v&&typeof v==='object'&&!Object.isFrozen(v)){Object.values(v).forEach(freeze);Object.freeze(v);}return v;};
 
 export function buildSelfHostedResourceReport(input){
- if(!exact(input,['schema','sourceRevision','backend','model','gatewaySha256','engine','weights','hardware','costBasis','monthlyRunScenario','batches'])||
-  input.schema!==1||!SHA40.test(input.sourceRevision)||input.backend!=='self_hosted'||typeof input.model!=='string'||!ID.test(input.model)||!SHA256.test(input.gatewaySha256)||
+ if(!exact(input,['schema','sourceRevision','backend','model','gatewayUrlSha256','gatewayBuildSha256','engine','weights','hardware','costBasis','monthlyRunScenario','batches'])||
+  input.schema!==1||!SHA40.test(input.sourceRevision)||input.backend!=='self_hosted'||typeof input.model!=='string'||!ID.test(input.model)||!SHA256.test(input.gatewayUrlSha256)||!SHA256.test(input.gatewayBuildSha256)||
   !integer(input.monthlyRunScenario,1,1_000_000)||!Array.isArray(input.batches)||!input.batches.length||input.batches.length>100)throw Error('Invalid self-hosted measurement envelope.');
  const engine=input.engine;
  if(!exact(engine,['name','version'])||typeof engine.name!=='string'||!engine.name.trim()||engine.name.length>100||typeof engine.version!=='string'||!engine.version.trim()||engine.version.length>100)throw Error('Invalid engine identity.');
@@ -41,7 +41,7 @@ export function buildSelfHostedResourceReport(input){
  const concurrency=[...byConcurrency.values()].sort((a,b)=>a.concurrency-b.concurrency).map(g=>({concurrency:g.concurrency,batches:g.batches,attempts:g.latencies.length,completed:g.completed,failed:g.failed,cancelled:g.cancelled,latencyP50Ms:percentile(g.latencies,.5),latencyP95Ms:percentile(g.latencies,.95)}));
  const usageComplete=unknownUsage===0;
  const meanCost=operationalCostUsd/attempts;
- return freeze({schema:1,kind:'self_hosted_resource',sourceRevision:input.sourceRevision,backend:'self_hosted',model:input.model,gatewaySha256:input.gatewaySha256,engine:{...engine},weights:{...weights},hardware:{...hardware},costBasis:{...cost},
+ return freeze({schema:1,kind:'self_hosted_resource',sourceRevision:input.sourceRevision,backend:'self_hosted',model:input.model,gatewayUrlSha256:input.gatewayUrlSha256,gatewayBuildSha256:input.gatewayBuildSha256,engine:{...engine},weights:{...weights},hardware:{...hardware},costBasis:{...cost},
   observed:{batches:runs.length,attempts,completed,failed,cancelled,modelCalls,retries,unknownUsageRequests:unknownUsage,totalEnergyWh,totalWallMs,promptTokens,completionTokens},
   usageComplete,latencyP50Ms:percentile(latencies,.5),latencyP95Ms:percentile(latencies,.95),completedLatencyP50Ms:completedLatencies.length?percentile(completedLatencies,.5):null,completedLatencyP95Ms:completedLatencies.length?percentile(completedLatencies,.95):null,
   energyWhPerAttempt:totalEnergyWh/attempts,energyCostUsd,hardwareTimeCostUsd,observedOperationalCostUsd:operationalCostUsd,observedAttemptMeanUsd:meanCost,monthlyRunScenario:input.monthlyRunScenario,projectedMonthlyOperationalUsd:meanCost*input.monthlyRunScenario,

@@ -13,8 +13,9 @@
     "usageComplete": null,
     "judgePathPassed": null,
     "backend": null,
-    "upstreamSha256": null,
-    "costEvidenceKind": null
+    "costEvidenceKind": null,
+    "upstreamUrlSha256": null,
+    "gatewayBuildSha256": null
   },
   "budgetEvidence": {
     "approved": null,
