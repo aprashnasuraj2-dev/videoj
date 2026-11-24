@@ -52,9 +52,23 @@ export function createGateway({token,model,upstreamPort,fetchImpl=fetch}={}){
    if(!upstream.ok||upstream.redirected||!upstream.headers.get('content-type')?.toLowerCase().includes('text/event-stream')||!upstream.body){fail(502);return;}
    res.writeHead(200,{'Content-Type':'text/event-stream','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
    let streamed=0;
-   for await(const chunk of upstream.body){
-    streamed+=chunk.byteLength;if(streamed>MAX_STREAM)throw Error('UPSTREAM_SIZE');
-    if(!res.write(Buffer.from(chunk)))await new Promise((resolve,reject)=>{res.once('drain',resolve);res.once('close',reject);});
+   const reader=upstream.body.getReader();
+   const aborted=new Promise((_,reject)=>controller.signal.addEventListener('abort',()=>reject(Error('UPSTREAM_CANCELLED')),{once:true}));
+   aborted.catch(()=>{});
+   try{
+    for(;;){
+     const {done,value:chunk}=await Promise.race([reader.read(),aborted]);
+     if(done)break;
+     if(!(chunk instanceof Uint8Array)||chunk.byteLength>MAX_STREAM-streamed)throw Error('UPSTREAM_SIZE');
+     streamed+=chunk.byteLength;
+     if(!res.write(Buffer.from(chunk)))await Promise.race([
+      new Promise((resolve,reject)=>{res.once('drain',resolve);res.once('close',reject);}),
+      aborted
+     ]);
+    }
+   }finally{
+    void reader.cancel().catch(()=>{});
+    try{reader.releaseLock();}catch{}
    }
    res.end();
   }catch{fail(502);}

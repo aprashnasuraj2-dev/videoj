@@ -66,3 +66,28 @@ test('gateway caps its own concurrent model requests and releases slots after ca
   assert.equal(arrived,3);resume[2]();assert.equal((await fourth).status,200);
  }finally{await stop(gateway);}
 });
+
+test('client abort interrupts a held-open streaming model response without retry',async()=>{
+ let cancelObserved=false,modelCalls=0,streamStarted;
+ const ready=new Promise(resolve=>streamStarted=resolve);
+ const fetchImpl=async()=>{
+  modelCalls++;
+  return new Response(new ReadableStream({
+   start(controller){controller.enqueue(new TextEncoder().encode('data: {"choices":[]}\\n\\n'));streamStarted();},
+   cancel(){cancelObserved=true;}
+  }),{headers:{'Content-Type':'text/event-stream'}});
+ };
+ const gateway=createGateway({token,model,upstreamPort:11434,fetchImpl}),port=await listen(gateway);
+ const stopSignal=new AbortController();
+ try{
+  const response=await fetch('http://127.0.0.1:'+port+'/v1/chat/completions',{
+   method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+token},
+   body:JSON.stringify(valid()),signal:stopSignal.signal
+  });
+  await ready;await response.body.getReader().read();
+  stopSignal.abort();
+  for(let i=0;i<100&&!cancelObserved;i++)await new Promise(r=>setTimeout(r,10));
+  assert.equal(cancelObserved,true,'server must cancel a stream after client disconnect');
+  assert.equal(modelCalls,1);
+ }finally{await stop(gateway);}
+});
