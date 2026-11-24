@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {loadContentProfile,receiptForFeatured,validateContentProfile} from '../index.js';
-const profile={"schema":1,"mode":"synthetic","contentVersion":"synthetic-timing-v1","title":"Synthetic timing lesson fixture","observedAt":"2026-11-23T00:00:00Z","primarySourceId":"synthetic-timing-fixture","featuredCueId":"timing-marker","catalog":{"path":"./source-catalog.json","sha256":"a92e4c0e29691f8cc65cbc2707bb3359b4b351bde929f73299062e7dc05503cb"},"media":{"video":"../media/timing-fixture.mp4","poster":"../media/timing-poster.svg","chapters":"../media/timing-chapters.vtt","captions":"../media/timing-captions.vtt"},"videoClaim":{"title":"Synthetic timing cue","scope":"synthetic_timing_only","claimKey":"marker_presence","value":"marker_present","provenance":"SUTRA synthetic timing catalog; not human-reviewed footage","dateBasis":"Fixture metadata date"},"guideClaim":null,"ui":{"noticeTitle":"Synthetic development content","noticeBody":"This content profile is a test fixture. It demonstrates source consistency and browser behavior, not factual training guidance."}};
+const profile={"schema":1,"mode":"synthetic","contentVersion":"synthetic-timing-v1","title":"Synthetic timing lesson fixture","observedAt":"2026-11-23T00:00:00Z","primarySourceId":"synthetic-timing-fixture","featuredCueId":"timing-marker","catalog":{"path":"./source-catalog.json","sha256":"a92e4c0e29691f8cc65cbc2707bb3359b4b351bde929f73299062e7dc05503cb"},"media":{"video":"/media/timing-fixture.mp4","poster":"/media/timing-poster.svg","chapters":"/media/timing-chapters.vtt","captions":"/media/timing-captions.vtt"},"videoClaim":{"title":"Synthetic timing cue","scope":"synthetic_timing_only","claimKey":"marker_presence","value":"marker_present","provenance":"SUTRA synthetic timing catalog; not human-reviewed footage","dateBasis":"Fixture metadata date"},"guideClaim":null,"ui":{"noticeTitle":"Synthetic development content","noticeBody":"This content profile is a test fixture. It demonstrates source consistency and browser behavior, not factual training guidance."}};
 const catalog={
   "schema": 1,
   "contentVersion": "synthetic-timing-v1",
@@ -46,7 +46,18 @@ test('accessor-backed or executable-looking profile data is rejected without inv
 test('reviewed mode requires an independently declared written claim and video claim remains bounded metadata',()=>{
  const reviewed=structuredClone(profile);reviewed.mode='reviewed';
  assert.throws(()=>validateContentProfile(reviewed,catalog),/CONTENT_GUIDE/);
- reviewed.guideClaim={sourceKind:'guide',sourceId:'guide',sourceVersion:'v1',title:'Guide',scope:reviewed.videoClaim.scope,claimKey:reviewed.videoClaim.claimKey,value:reviewed.videoClaim.value,excerpt:'Reviewed guide excerpt.',provenance:'Reviewed written guide',sourceHref:'../guides/reviewed.html#claim',sourceHash:'f'.repeat(64)};
+ reviewed.guideClaim={sourceKind:'guide',sourceId:'guide',sourceVersion:'v1',title:'Guide',scope:reviewed.videoClaim.scope,claimKey:reviewed.videoClaim.claimKey,value:reviewed.videoClaim.value,excerpt:'Reviewed guide excerpt.',provenance:'Reviewed written guide',sourceHref:'/guides/reviewed.html#claim',sourceHash:'f'.repeat(64)};
  const c=validateContentProfile(reviewed,catalog);assert.equal(c.profile.guideClaim.scope,c.profile.videoClaim.scope);
  const bad=structuredClone(profile);bad.videoClaim.scope='';assert.throws(()=>validateContentProfile(bad,catalog),/CONTENT_VIDEO_CLAIM/);
+});
+
+test('public media/guide references are same-origin root paths without traversal, queries or protocol-relative escape',()=>{
+ for(const badPath of ['../media/x.mp4','//evil.example/x.mp4','/media/../secret','/media/x.mp4?token=1']){
+  const p=structuredClone(profile);p.media.video=badPath;assert.throws(()=>validateContentProfile(p,catalog),/CONTENT_MEDIA/);
+ }
+ const reviewed=structuredClone(profile);reviewed.mode='reviewed';
+ for(const badHref of ['../guides/x.html#c','//evil.example/x#c','/guides/../x#c','/guides/x.html?x=1#c','/guides/x.html']){
+  reviewed.guideClaim={sourceKind:'guide',sourceId:'guide',sourceVersion:'v1',title:'Guide',scope:reviewed.videoClaim.scope,claimKey:reviewed.videoClaim.claimKey,value:reviewed.videoClaim.value,excerpt:'Reviewed guide excerpt.',provenance:'Reviewed written guide',sourceHref:badHref,sourceHash:'f'.repeat(64)};
+  assert.throws(()=>validateContentProfile(reviewed,catalog),/CONTENT_GUIDE/);
+ }
 });

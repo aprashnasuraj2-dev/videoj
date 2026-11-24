@@ -18,7 +18,7 @@ const boundedJson=async({url,origin,fetchImpl,signal,maxBytes})=>{
 };
 const validSource=source=>plain(source)&&ID.test(source.id??'')&&safeText(source.version,128)&&SHA.test(source.hash??'')&&SHA.test(source.mediaHash??'')&&Number.isFinite(source.duration)&&source.duration>0&&source.duration<=86400&&Array.isArray(source.cues)&&source.cues.length>0&&source.cues.length<=500&&new Set(source.cues.map(x=>x?.id)).size===source.cues.length&&source.cues.every(c=>plain(c)&&ID.test(c.id??'')&&Number.isFinite(c.start)&&Number.isFinite(c.end)&&c.start>=0&&c.end>c.start&&c.end<=source.duration&&safeText(c.text,2000));
 const validVideo=claim=>plain(claim)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&ID.test(claim.claimKey??'')&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.provenance,240)&&safeText(claim.dateBasis,120);
-const validGuide=claim=>claim===null||plain(claim)&&claim.sourceKind==='guide'&&ID.test(claim.sourceId??'')&&safeText(claim.sourceVersion,100)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&ID.test(claim.claimKey??'')&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.excerpt,1200)&&safeText(claim.provenance,240)&&safeRelative(claim.sourceHref)&&claim.sourceHref.includes('#')&&SHA.test(claim.sourceHash??'');
+const validGuide=claim=>claim===null||plain(claim)&&claim.sourceKind==='guide'&&ID.test(claim.sourceId??'')&&safeText(claim.sourceVersion,100)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&ID.test(claim.claimKey??'')&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.excerpt,1200)&&safeText(claim.provenance,240)&&safeGuideHref(claim.sourceHref)&&SHA.test(claim.sourceHash??'');
 export function validateContentProfile(profile,catalog){
  try{
   const p=snapshotDataRecord(profile,20),catalogRef=snapshotDataRecord(p.catalog,4),media=snapshotDataRecord(p.media,8),ui=snapshotDataRecord(p.ui,4);
@@ -34,7 +34,7 @@ export function validateContentProfile(profile,catalog){
  }catch{throw Error('CONTENT_DATA');}
  if(!exact(profile,['schema','mode','contentVersion','title','observedAt','primarySourceId','featuredCueId','catalog','media','videoClaim','guideClaim','ui'])||profile.schema!==1||!['synthetic','reviewed'].includes(profile.mode)||!safeText(profile.contentVersion,100)||!safeText(profile.title,160)||typeof profile.observedAt!=='string'||!/T.*(?:Z|[+-]\d\d:\d\d)$/.test(profile.observedAt)||!Number.isFinite(Date.parse(profile.observedAt))||!ID.test(profile.primarySourceId??'')||!ID.test(profile.featuredCueId??''))throw Error('CONTENT_PROFILE');
  if(!exact(profile.catalog,['path','sha256'])||!safeRelative(profile.catalog.path)||!SHA.test(profile.catalog.sha256??''))throw Error('CONTENT_CATALOG_REF');
- if(!exact(profile.media,['video','poster','chapters','captions'])||Object.values(profile.media).some(x=>!safeRelative(x)))throw Error('CONTENT_MEDIA');
+ if(!exact(profile.media,['video','poster','chapters','captions'])||Object.values(profile.media).some(x=>!safePublicPath(x)||x.includes('#')))throw Error('CONTENT_MEDIA');
  if(!validVideo(profile.videoClaim))throw Error('CONTENT_VIDEO_CLAIM');
  if(!validGuide(profile.guideClaim)||profile.mode==='reviewed'&&profile.guideClaim===null)throw Error('CONTENT_GUIDE');
  if(!exact(profile.ui,['noticeTitle','noticeBody'])||!safeText(profile.ui.noticeTitle,120)||!safeText(profile.ui.noticeBody,400))throw Error('CONTENT_UI');

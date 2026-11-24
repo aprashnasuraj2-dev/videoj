@@ -11,10 +11,10 @@
     "sha256": "a92e4c0e29691f8cc65cbc2707bb3359b4b351bde929f73299062e7dc05503cb"
   },
   "media": {
-    "video": "../media/timing-fixture.mp4",
-    "poster": "../media/timing-poster.svg",
-    "chapters": "../media/timing-chapters.vtt",
-    "captions": "../media/timing-captions.vtt"
+    "video": "/media/timing-fixture.mp4",
+    "poster": "/media/timing-poster.svg",
+    "chapters": "/media/timing-chapters.vtt",
+    "captions": "/media/timing-captions.vtt"
   },
   "videoClaim": {
     "title": "Synthetic timing cue",
