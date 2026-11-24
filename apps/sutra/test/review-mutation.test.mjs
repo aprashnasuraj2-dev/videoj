@@ -1,11 +1,38 @@
 import test from 'node:test';import assert from 'node:assert/strict';
 import {createReviewMutationQueue,REVIEW_LOCK_NAME} from '../src/review-mutation.js';
-test('queued review operations are revoked on navigation and missing locks fail before mutation',async()=>{
- let requested,release,effects=0;
- const locks={request(name,options,callback){requested={name,options};return new Promise((resolve,reject)=>{options.signal.addEventListener('abort',()=>reject(options.signal.reason),{once:true});release=()=>{try{resolve(callback());}catch(error){reject(error);}};});}};
- const queue=createReviewMutationQueue({locks});
- const pending=queue.run(()=>{effects++;});assert.equal(requested.name,REVIEW_LOCK_NAME);assert.equal(requested.options.mode,'exclusive');
- queue.revoke();await assert.rejects(pending);release();assert.equal(effects,0);
- const next=queue.run(()=>{effects++;return 'saved';});release();assert.equal(await next,'saved');assert.equal(effects,1);
- await assert.rejects(createReviewMutationQueue({locks:null}).run(()=>{effects++;}),/unavailable/);assert.equal(effects,1);
+function cooperative(){
+ let held=false,active=0,maxActive=0,tail=Promise.resolve();
+ return {get maxActive(){return maxActive;},locks:{request(name,{mode,signal},effect){
+  assert.equal(name,REVIEW_LOCK_NAME);assert.equal(mode,'exclusive');
+  const run=tail.then(async()=>{signal.throwIfAborted();held=true;active++;maxActive=Math.max(maxActive,active);
+   try{return await effect();}finally{active--;held=false;}});
+  tail=run.catch(()=>{});return run;
+ }}};
+}
+test('review queue serializes callers and preserves results',async()=>{
+ const c=cooperative(),queue=createReviewMutationQueue({locks:c.locks});
+ const order=[];let release;
+ const a=queue.run(async()=>{order.push('a-start');await new Promise(resolve=>{release=resolve;});order.push('a-end');return 'first';});
+ const b=queue.run(()=>{order.push('b');return 'second';});
+ await new Promise(resolve=>setTimeout(resolve,0));assert.deepEqual(order,['a-start']);
+ release();assert.deepEqual(await Promise.all([a,b]),['first','second']);
+ assert.deepEqual(order,['a-start','a-end','b']);assert.equal(c.maxActive,1);
+});
+test('navigation revokes an already entered pending result without claiming completion',async()=>{
+ const c=cooperative(),queue=createReviewMutationQueue({locks:c.locks});
+ let release,entered=false;
+ const pending=queue.run(async()=>{entered=true;await new Promise(resolve=>{release=resolve;});return 'late success';});
+ for(let i=0;i<100&&!entered;i++)await new Promise(resolve=>setTimeout(resolve,0));
+ assert.equal(entered,true);queue.revoke();release();
+ await assert.rejects(pending,e=>e.name==='AbortError');
+ assert.equal(await queue.run(()=>7),7,'new lifetime works without inheriting previous operation');
+});
+test('a queued review never executes after pagehide even if the lock becomes available',async()=>{
+ let release;const locks={request(_name,{signal},effect)=>new Promise((resolve,reject)=>{
+  release=()=>Promise.resolve().then(()=>signal.aborted?reject(signal.reason):effect()).then(resolve,reject);
+ })};
+ const queue=createReviewMutationQueue({locks}),calls=[];
+ const pending=queue.run(()=>{calls.push('mutated');});
+ queue.revoke();release();await assert.rejects(pending,e=>e.name==='AbortError');
+ assert.deepEqual(calls,[],'no destructive effect after stale queue revocation');
 });

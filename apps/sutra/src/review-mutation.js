@@ -9,12 +9,17 @@ export function createReviewMutationQueue({locks=globalThis.navigator?.locks,tim
   async run(effect){
    if(typeof effect!=='function'||typeof locks?.request!=='function')throw Error('Safe review mutation locking is unavailable.');
    const controller=lifetime,deadline=AbortSignal.timeout(timeoutMs),signal=AbortSignal.any([controller.signal,deadline]);
-   return locks.request(REVIEW_LOCK_NAME,{mode:'exclusive',signal},()=>{
+   const result=await locks.request(REVIEW_LOCK_NAME,{mode:'exclusive',signal},async()=>{
     signal.throwIfAborted();
-    // The app calls bounded synchronous store operations (or their immediate
-    // registry promise). No network or user decision is awaited under this lock.
-    return effect();
+    // Only bounded synchronous local storage work (or an immediately settled
+    // registry promise) is valid here. Do not await network or user decisions:
+    // a noncooperating async effect cannot be undone after the lock is lost.
+    const value=await effect();
+    signal.throwIfAborted(); // No false completion after pagehide or deadline.
+    return value;
    });
+   signal.throwIfAborted(); // Covers revocation after the lock callback settles.
+   return result;
   },
   revoke(){const previous=lifetime;lifetime=new AbortController();previous.abort();}
  });
