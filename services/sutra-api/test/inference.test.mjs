@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {handleInference,UPSTREAM,inferenceStatus} from '../inference.js';import {InferenceQuota} from '../quota.js';import worker,{handleSourceTools,securityHeaders,allowedPeerOrigins,withCachePolicy,contentBindingMatches} from '../worker.js';import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {handleInference,UPSTREAM,inferenceStatus,readJson} from '../inference.js';import {InferenceQuota} from '../quota.js';import worker,{handleSourceTools,securityHeaders,allowedPeerOrigins,withCachePolicy,contentBindingMatches} from '../worker.js';import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
 const payload=()=>({model:'operator-approved',stream:true,messages:[{role:'user',content:'hello'}],tools:[]});
 const request=(body=payload(),extra={},path='/api/infer')=>new Request('https://sutra.test'+path,{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json','CF-Connecting-IP':'192.0.2.1',...extra},body:JSON.stringify(body)});
 let leaseSequence=0;
@@ -377,4 +377,26 @@ test('upstream response received at abort handoff is disposed before returning u
  assert.equal(result.status,502);assert.equal(contacts,1);assert.equal(released,1);
  for(let i=0;i<20&&!disposed;i++)await new Promise(resolve=>setTimeout(resolve,0));
  assert.equal(disposed,1,'upstream accepted by promise but rejected at signal recheck still belongs to Worker');assert.equal(response.body.locked,false);
+});
+
+test('Worker JSON reads use a bounded byte buffer across empty and tiny chunks, malformed UTF-8 and overflow',async()=>{
+ const bytes=new TextEncoder().encode('{"word":"नेपाल"}');let cancelled=0;
+ const stream=new ReadableStream({start(c){for(const b of bytes){c.enqueue(new Uint8Array(0));c.enqueue(Uint8Array.of(b));}c.close();},cancel(){cancelled++;}});
+ const req=new Request('https://sutra.test/api/infer',{method:'POST',body:stream,duplex:'half'});
+ assert.deepEqual(await readJson(req,bytes.length),{word:'नेपाल'});assert.equal(req.body.locked,false);assert.equal(cancelled,0);
+ for(const payload of [Uint8Array.of(0x22,0xc0,0xaf,0x22),new TextEncoder().encode('123456789')]){
+  const body=new ReadableStream({start(c){for(const b of payload)c.enqueue(Uint8Array.of(b));}});
+  const bad=new Request('https://sutra.test/api/infer',{method:'POST',body,duplex:'half'});
+  if(payload.length===4){const invalid=new Request('https://sutra.test/api/infer',{method:'POST',body:payload});await assert.rejects(readJson(invalid,8));assert.equal(invalid.body.locked,false);await bad.body.cancel();}
+  else{await assert.rejects(readJson(bad,8),/size/);assert.equal(bad.body.locked,false);}
+ }
+});
+test('cancelled held Worker JSON body releases reader and does not reach quota or upstream',async()=>{
+ const abort=new AbortController();let cancelled=0,reserved=0,contacts=0,started;
+ const pulled=new Promise(resolve=>{started=resolve;});
+ const body=new ReadableStream({pull(){started();return new Promise(()=>{});},cancel(){cancelled++;}});
+ const req=new Request('https://sutra.test/api/infer',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json'},body,duplex:'half',signal:abort.signal});
+ const pending=handleInference(req,environment(async()=>{reserved++;return Response.json({allowed:true});}),{fetchImpl:()=>{contacts++;return sse();}});
+ await pulled;abort.abort();const result=await pending;
+ assert.equal(result.status,499);assert.equal(reserved,0);assert.equal(contacts,0);assert.equal(cancelled,1);assert.equal(req.body.locked,false);
 });

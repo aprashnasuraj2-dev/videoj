@@ -31,9 +31,28 @@ export function inferenceBackend(env={}){
 
 const error=(code,status)=>Response.json({error:{code,message:'Inference is unavailable or stopped; no complete result is claimed.'}},{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 export async function readJson(request,max=32768){
- request.signal.throwIfAborted();const reader=request.body?.getReader();if(!reader)throw Error('body');let total=0;const chunks=[];const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);const cancel=()=>controller.abort();request.signal.addEventListener('abort',cancel,{once:true});if(request.signal.aborted)cancel();
- try{for(;;){const {value,done}=await abortable(reader.read(),controller.signal);if(done)break;total+=value.byteLength;if(total>max)throw Error('size');chunks.push(value);}}finally{clearTimeout(timer);request.signal.removeEventListener('abort',cancel);void reader.cancel().catch(()=>{});}
- const data=new Uint8Array(total);let offset=0;for(const chunk of chunks){data.set(chunk,offset);offset+=chunk.length;}return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(data));
+ request.signal.throwIfAborted();
+ if(!Number.isSafeInteger(max)||max<1||max>32768)throw Error('size');
+ const reader=request.body?.getReader();if(!reader)throw Error('body');
+ const data=new Uint8Array(max);let total=0;
+ const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);const cancel=()=>controller.abort();
+ request.signal.addEventListener('abort',cancel,{once:true});if(request.signal.aborted)cancel();
+ try{
+  for(;;){
+   controller.signal.throwIfAborted();
+   const {value,done}=await abortable(reader.read(),controller.signal);
+   controller.signal.throwIfAborted();
+   if(done)break;
+   if(!(value instanceof Uint8Array)||value.byteLength>max-total)throw Error('size');
+   if(!value.byteLength)continue;
+   data.set(value,total);total+=value.byteLength;
+  }
+  return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(data.subarray(0,total)));
+ }finally{
+  clearTimeout(timer);request.signal.removeEventListener('abort',cancel);
+  try{void Promise.resolve(reader.cancel()).catch(()=>{});}catch{}
+  try{reader.releaseLock();}catch{}
+ }
 }
 function validPayload(body,models){
  if(!plain(body)||Object.keys(body).some(k=>!['model','messages','tools','tool_choice','stream'].includes(k))||!models.includes(body.model)||body.stream!==true||!Array.isArray(body.messages)||body.messages.length<1||body.messages.length>32)throw Error();
