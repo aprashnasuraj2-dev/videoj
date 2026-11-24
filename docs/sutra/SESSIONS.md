@@ -1,6 +1,22 @@
 # SUTRA session history
 
 
+## SUTRA-SESSION-0011 — 2026-11-24
+
+- Exact tested code: `2686e3cacdd3e4d552820ccaf57b968a7544ddb4`; [green learner/build/browser CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45297219581/job/138120560126).
+- Register after observation: **371 / 1,000 verified**, **1 omitted**, **27 / 100 fully verified phases**.
+- Closed phase 042 by testing transactional source replacement, unsupported decode failure and recovery to the last playable native source.
+- Closed phase 047 by exposing and exporting a distinct partial peer outcome while preserving unknown side-effect semantics separately.
+- Added a 52-key English / 52-key Nepali-draft localization layer. Language switching preserves selected cue, comparison behavior and completed local run state; source excerpts/provenance remain untranslated. Human Nepali terminology review remains open.
+- Accessibility Chromium now observes authored WebVTT cue loading, the actual caption control, sampled contrast, reduced motion, >=24 px targets, 200% zoom and 360 px layout. Physical touch and screen-reader tests remain separate.
+- Read-only Cloudflare check found no current DNS/domain/route collision for `sutra.aafnaipatro.com` or `sutra-guide.aafnaipatro.com`; no Cloudflare mutation occurred.
+- P041-07 is intentionally omitted under Decision 0017 because its “before styling” chronology cannot be satisfied retrospectively. Current responsive behavior is documented separately and fresh-viewer acceptance remains pending.
+- No public release, route assignment, paid inference, final package or Devpost submission occurred.
+- Next original item: P041-08 fresh-viewer walkthrough. Independent engineering: P048-06, P068-06, then visible hero-state walkthrough hardening.
+- Evidence: [SESSION-0011](evidence/implementation/SESSION-0011.md), [responsive map](evidence/implementation/RESPONSIVE-INTERACTION-MAP-2026-11-24.md), [localization inventory](evidence/implementation/LOCALIZATION-INVENTORY-2026-11-24.md).
+
+
+
 ## SUTRA-SESSION-0010 — 2026-11-24
 
 Observed current branch head `545f2c310beb9ac4e5e3a4e30603dd6640cf67d7` green in both learner/browser and register workflows; reconciled eight previously pending checks. Closed phase 036 exact destination-scoped private context and phase 039 controlled read-only MCP compatibility. New total: 271/1,000 checks, 18/100 phases. No public release, paid inference or submission. Evidence: [SESSION-0010](evidence/implementation/SESSION-0010.md).
