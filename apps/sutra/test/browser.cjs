@@ -174,6 +174,31 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.equal(replaceResult.current.available,true);
   assert.ok(Math.abs(replaceResult.current.duration-8)<.1);
   await page.getByRole('button',{name:'Read current playback state',exact:true}).click();const snapshot=JSON.parse(await page.locator('#playback-state').innerText());assert.equal(snapshot.available,true);assert.equal(snapshot.paused,true);assert.equal(snapshot.duration,await media.evaluate(video=>video.duration));assert.ok(Math.abs(snapshot.currentTime-await media.evaluate(video=>video.currentTime))<.1);
+  // Source replacement is explicit and transactional: a valid replacement
+  // reaches native metadata, while unsupported bytes fail and restore the last
+  // working source rather than leaving the learner on a broken media element.
+  const sourceSwap=await page.evaluate(async root=>{
+   const {mountTimingPlayer}=await import('/@fs/'+root+'/apps/sutra/src/player-adapter.js');
+   const host=document.createElement('div');host.hidden=true;document.body.append(host);
+   const fixture=new URL('/media/timing-fixture.mp4?source-swap=initial',location.href).href;
+   const replacement=new URL('/media/timing-fixture.mp4?source-swap=replacement',location.href).href;
+   const adapter=mountTimingPlayer(host,{source:fixture});
+   await adapter.ready();
+   const first=adapter.media.currentSrc;
+   const replaced=await adapter.replaceSource(replacement);
+   const second=adapter.media.currentSrc;
+   const bad=URL.createObjectURL(new Blob(['not a decodable mp4'],{type:'video/mp4'}));
+   let failure=null;
+   try{await adapter.replaceSource(bad);}catch(error){failure={code:error.code??null,recovered:error.recovered===true};}
+   URL.revokeObjectURL(bad);
+   const restored=adapter.media.currentSrc===second&&adapter.media.readyState>=1&&Number.isFinite(adapter.media.duration);
+   host.remove();
+   return {first,second,replaced,failure,restored};
+  },root);
+  assert.notEqual(sourceSwap.first,sourceSwap.second,'valid source replacement must reach a distinct native URL');
+  assert.equal(sourceSwap.replaced.available,true);
+  assert.deepEqual(sourceSwap.failure,{code:'MEDIA_UNSUPPORTED',recovered:true});
+  assert.equal(sourceSwap.restored,true,'unsupported replacement restores the prior playable source');
   fs.mkdirSync(path.join(app,'test-output'),{recursive:true});await page.screenshot({path:path.join(app,'test-output/desktop.png'),fullPage:true});
   await page.setViewportSize({width:360,height:800});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.getByRole('button',{name:'Try altered quotation'}).click();assert.match(await page.locator('#result').innerText(),/QUOTE_MISMATCH/);
   await page.screenshot({path:path.join(app,'test-output/mobile.png'),fullPage:true});assert.deepEqual(errors,[]);assert.deepEqual(external,[]);assert.ok(!requests.some(url=>url.includes('/assets/mux-video-')),'native fixture must not load optional Mux chunk');
