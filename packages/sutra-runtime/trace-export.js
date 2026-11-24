@@ -5,7 +5,7 @@ const contactFields=['at','type','origin','contactKind','purpose','network','dec
 const safeText=(value,max=100)=>typeof value==='string'?
  value.replace(/[\u0000-\u001f\u007f]/g,'').slice(0,max):null;
 const clampCount=(n,max)=>Number.isInteger(n)&&n>=0?Math.min(n,max):null;
-const knownOutcome=new Set(['completed','denied','failed','cancelled']);
+const knownOutcome=new Set(['completed','denied','failed','cancelled','partial','unknown']);
 const allowedMode=new Set(['scripted-test','provider']);
 function safeObject(value,keys){
  if(!value||typeof value!=='object'||Array.isArray(value))return {};
