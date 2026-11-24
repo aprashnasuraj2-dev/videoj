@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {spawnSync} from 'node:child_process';import {buildProviderCostReport} from './report.mjs';
+import test from 'node:test';import assert from 'node:assert/strict';import {spawnSync} from 'node:child_process';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {buildProviderCostReport} from './report.mjs';
 const base=()=>({schema:1,sourceRevision:'a'.repeat(40),provider:'provider',model:'model-v1',currency:'USD',
  priceBasis:{promptPerMillion:2,completionPerMillion:8,effectiveAt:'2026-11-24T00:00:00Z',source:'operator-recorded provider price page'},
  monthlyRunScenario:1000,runs:[
@@ -43,7 +43,7 @@ test('price and run timestamps require explicit timezone rather than environment
 test('offline CLI reports complete synthetic file and distinguishes incomplete valid record',()=>{
  const cli=new URL('./cli.mjs',import.meta.url).pathname,sample=new URL('./example.synthetic.json',import.meta.url).pathname;
  const ok=spawnSync(process.execPath,[cli,sample],{encoding:'utf8'});assert.equal(ok.status,0);const report=JSON.parse(ok.stdout);assert.equal(report.costComplete,true);assert.equal(report.provider,'synthetic-example-not-live');
- const input=JSON.parse(await import('node:fs').then(fs=>fs.readFileSync(sample,'utf8')));input.runs[0].requests[1].usage=null;
- const fs=await import('node:fs'),os=await import('node:os'),path=await import('node:path');const dir=fs.mkdtempSync(path.join(os.tmpdir(),'sutra-cost-')),file=path.join(dir,'incomplete.json');fs.writeFileSync(file,JSON.stringify(input));
+ const input=JSON.parse(fs.readFileSync(sample,'utf8'));input.runs[0].requests[1].usage=null;
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'sutra-cost-')),file=path.join(dir,'incomplete.json');fs.writeFileSync(file,JSON.stringify(input));
  try{const incomplete=spawnSync(process.execPath,[cli,file],{encoding:'utf8'});assert.equal(incomplete.status,3);assert.equal(JSON.parse(incomplete.stdout).costComplete,false);}finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
