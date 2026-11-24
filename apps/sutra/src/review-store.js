@@ -42,10 +42,11 @@ export function createReviewStore({storage,sources,idFactory=()=>crypto.randomUU
  }
  return {
   list,inspect,
-  prepare(receipt){
+  prepare(receipt,{id:requestedId}={}){
    if(!validateReceipt(receipt,{sources:catalog}).valid)throw Error('Receipt does not match the approved source catalog.');
    if(pending.size>=4)throw Error('Close existing review previews first.');
-   const id=idFactory();if(typeof id!=='string'||!id||id.length>100||pending.has(id)||completed.has(id))throw Error('Review identifier unavailable.');
+   const id=requestedId??idFactory();
+   if(typeof id!=='string'||! /^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/.test(id)||pending.has(id)||completed.has(id))throw Error('Review identifier unavailable.');
    const payload=clone(receipt);pending.set(id,payload);
    return Object.freeze({id,receipt:Object.freeze(clone(payload)),destination:'This browser only',synthetic:true});
   },
