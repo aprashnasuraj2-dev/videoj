@@ -131,8 +131,17 @@ reviewAttemptButton.addEventListener('click',()=>{
 function getReviewStore(){if(!reviewStore)reviewStore=createReviewStore({storage:localStorage,sources:[timingFixture.source]});return reviewStore;}
 function renderReviews(){
  const list=document.querySelector('#review-list');list.replaceChildren();
- for(const record of getReviewStore().list()){
-  const item=document.createElement('li'),label=document.createElement('span'),remove=document.createElement('button'),download=document.createElement('button');
+ const inspected=getReviewStore().inspect();
+ for(const itemState of inspected){
+  const item=document.createElement('li'),label=document.createElement('span'),remove=document.createElement('button');
+  if(itemState.status==='stale'){
+   const p=itemState.provenance;
+   label.textContent=`Stale local review · source ${p.sourceId} / ${p.sourceVersion} · cue ${p.cueId} · revalidation required`;
+   label.dataset.state='stale';remove.textContent='Delete stale local review';
+   remove.addEventListener('click',()=>{try{getReviewStore().remove(itemState.id);renderReviews();reviewStatus.textContent='Stale local review deleted.';}catch{reviewStatus.textContent='Could not delete this stale local review; no successful deletion is claimed.';}});
+   item.append(label,remove);list.append(item);continue;
+  }
+  const record=itemState.record,download=document.createElement('button');
   label.textContent=`Synthetic timing review · cue ${record.receipt.start}–${record.receipt.end}s · ${record.receipt.sourceVersion} `;remove.textContent='Delete local review';
   download.textContent='Download saved receipt';download.className='review-action';
   download.addEventListener('click',()=>{
@@ -147,6 +156,7 @@ function renderReviews(){
   remove.addEventListener('click',()=>{try{getReviewStore().remove(record.id);renderReviews();reviewStatus.textContent='Local review deleted.';}catch{reviewStatus.textContent='Could not delete this local review; no successful deletion is claimed.';}});
   item.append(label,download,remove);list.append(item);
  }
+ if(inspected.some(item=>item.status==='stale'))reviewStatus.textContent='One or more saved reviews are stale after source/media version drift. They are not shown as valid evidence; inspect provenance and delete or re-run the review.';
 }
 function cancelReview(){if(reviewProposal){getReviewStore().cancel(reviewProposal.id);reviewProposal=null;}reviewDialog.close();reviewStatus.textContent='Review cancelled. No card was saved.';}
 document.querySelector('#prepare-review').addEventListener('click',()=>{
