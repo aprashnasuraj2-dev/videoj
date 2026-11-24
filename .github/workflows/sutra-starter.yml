@@ -14,6 +14,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -30,3 +32,10 @@ jobs:
           test -f LICENSE
           test -f packages/sutra-runtime/vendor/nsdeploy/UPSTREAM.json
           if find . -type l -print -quit | grep -q .; then exit 1; fi
+      - name: Install browser harness only
+        working-directory: apps/sutra
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install --with-deps chromium
+      - name: Exercise generated starter page in Chromium
+        run: node tools/sutra-starter/browser.cjs "$RUNNER_TEMP/sutra-publisher-starter"
