@@ -26,14 +26,14 @@ export function mountTranscriptPanel(host,{source,onSeek,media}={}){
  let currentCues=[];
  let lastText='';
  const section=el('section','transcript-browser');
- const heading=el('h3',null,'Follow the source cue');
+ const heading=el('h3',null,'Follow the source cue');heading.dataset.i18n='transcript.follow';
  heading.id='timing-transcript-title';
  section.setAttribute('aria-labelledby',heading.id);
  section.append(heading);
  const meta=el('p','transcript-meta');
- const searchLabel=el('label',null,'Search synthetic transcript');
+ const searchLabel=el('label',null,'Search synthetic transcript');searchLabel.dataset.i18n='transcript.search';
  const input=el('input','transcript-search');
- input.type='search';input.maxLength=160;input.placeholder='Search cue wording';
+ input.type='search';input.maxLength=160;input.placeholder='Search cue wording';input.dataset.i18nPlaceholder='transcript.placeholder';
  input.autocomplete='off';input.id='timing-transcript-search';
  searchLabel.htmlFor=input.id;
  const state=el('p','transcript-status');
