@@ -59,13 +59,15 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   const operation={kind:'run',controller:new AbortController(),started:false};active=operation;controls();
   set('running','Rechecking the approved configuration. Previous results remain visible until a new model request starts…');
   try{
-   const result=await runProviderLesson({origin,approvedContract,loadedContent,question:approval.question,signal:operation.controller.signal,onModelStart:()=>{operation.started=true;clear();set('running','Running the configured model and bounded source tools…');}});
+   const result=await runProviderLesson({origin,approvedContract,loadedContent,question:approval.question,signal:operation.controller.signal,onModelStart:()=>{if(active!==operation)return;operation.started=true;clear();set('running','Running the configured model and bounded source tools…');}});
+   if(active!==operation)return;
    if(operation.controller.signal.aborted)throw Error('cancelled');
    identifyResult(approval,true);answer.textContent=result.text;
    renderReceipts(result.receipts);
    const u=result.usage;metrics.textContent=result.agentCalls+' agent invocations · '+result.modelCalls+' model calls · '+u.reported+'/'+u.calls+' calls reported token usage. '+(u.complete?'Reported input/output/total tokens: '+u.promptTokens+'/'+u.completionTokens+'/'+u.totalTokens+'.':'Usage incomplete; total run cost is unknown.')+' No automatic retries.';
    output.hidden=false;set('completed','Model run completed. Interpretation remains unverified; retrieved receipts establish catalog consistency only.');
   }catch(error){
+   if(active!==operation)return;
    if(operation.started)clear();const cancelled=operation.controller.signal.aborted;const code=cancelled?'CANCELLED':error?.code??'RUN_FAILED';const partial=error?.partial;
    if(code==='CONTENT_CHANGED'||code==='CONTRACT_CHANGED'){model=null;approvedContract=null;set('error',code==='CONTENT_CHANGED'?'Published lesson changed. Reload the lesson before using inference. No model request was made.':'Provider publication changed. Check inference availability again. No model request was made.');return;}
    if(code==='CONTENT_CHANGED_DURING_RUN'||code==='CONTRACT_CHANGED_DURING_RUN'){model=null;approvedContract=null;}
@@ -80,16 +82,17 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
    if(code==='SOURCE_QUERY_TOO_BROAD'){set('empty','The model asked for a source search with more matches than the bounded evidence view can show. No excerpts or model interpretation from that incomplete search are presented. Ask a narrower question and run explicitly again.');return;}
    if(cancelled&&!operation.started){set('cancelled','Inference cancelled before a model request. Previous results, if any, remain unchanged.');return;}
    set(cancelled?'cancelled':'error',(cancelled?'Inference cancelled.':'Inference stopped ('+code+').')+' No completed answer is claimed. The local lesson remains available; retry only explicitly.');
-  }finally{active=null;controls();(run.disabled?check:run).focus();}
+  }finally{if(active===operation){active=null;controls();(run.disabled?check:run).focus();}}
  }
  check.addEventListener('click',async()=>{
   if(active||pendingApproval)return;revokeResultActions();model=null;approvedContract=null;
   const operation={kind:'check',controller:new AbortController()};active=operation;controls();set('loading','Checking configuration without calling a model…');
   try{const found=await discoverProvider({origin,loadedContent,signal:operation.controller.signal});
+   if(active!==operation||operation.controller.signal.aborted)return;
    if(found.state==='configured'){model=found.model;approvedContract=found.contract;set('idle','Model configured: '+model+' ('+(found.backend==='self_hosted'?'operator self-hosted':'external hosted')+'). A run may still be refused by quota or provider availability. No personal key is needed.');}
    else set('denied','Optional site-operated inference is disabled. The no-model source question, transcript and local review remain available.');
-  }catch(error){set('error',error?.code==='CONTENT_CHANGED'?'Published lesson changed. Reload the lesson before checking inference again. No model request was made.':'Inference configuration could not be confirmed. No model request was made.');}
-  finally{active=null;controls();}
+  }catch(error){if(active!==operation)return;set('error',error?.code==='CONTENT_CHANGED'?'Published lesson changed. Reload the lesson before checking inference again. No model request was made.':'Inference configuration could not be confirmed. No model request was made.');}
+  finally{if(active===operation){active=null;controls();}}
  });
  run.addEventListener('click',()=>{
   if(active||pendingApproval||!model||!approvedContract)return;
@@ -119,6 +122,6 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   if(!active){labelResult();if(model)set('idle','Question changed. Any visible earlier result belongs to its previous run. Submit explicitly to retrieve new model results.');}
  });
  cancel.addEventListener('click',()=>{if(active?.kind==='run'){active.controller.abort();controls();set('cancelling','Cancelling inference…');}});
- window.addEventListener('pagehide',()=>{active?.controller.abort();if(consentDialog.open)consentDialog.close();pendingApproval=null;model=null;approvedContract=null;clear();controls();});
+ window.addEventListener('pagehide',()=>{const previous=active;active=null;previous?.controller.abort();if(consentDialog.open)consentDialog.close();pendingApproval=null;model=null;approvedContract=null;clear();controls();set('idle','Inference approval cleared when leaving this page. Check availability again before a new run.');});
  controls();
 }

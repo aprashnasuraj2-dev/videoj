@@ -188,6 +188,25 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   assert.equal(calls,beforeContractDrift+3);assert.equal(await page.locator('#provider-run').isDisabled(),true);
   assert.match(await page.locator('#provider-answer').textContent(),/No completed answer/);
   assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);
+  // Exercise the persisted page lifecycle handler, not a claim of actual browser BFCache eligibility.
+  // A pending discovery must not republish a provider or erase a later operation after pagehide.
+  holdStatus=true;statusHeld=false;const beforeLifecycle=calls;
+  await page.getByRole('button',{name:'Check inference availability'}).click();
+  for(let i=0;i<50&&!statusHeld;i++)await new Promise(r=>setTimeout(r,20));assert.equal(statusHeld,true);
+  await page.getByRole('searchbox',{name:'Search source transcript'}).fill('timing marker');
+  await page.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
+  assert.equal(await page.locator('#provider-run').isDisabled(),true);
+  assert.equal(await page.locator('#provider-check').isDisabled(),false);
+  assert.equal(await page.locator('#provider-output').isHidden(),true);
+  assert.equal(await page.getByRole('searchbox',{name:'Search source transcript'}).inputValue(),'timing marker');
+  assert.equal(await page.locator('video').count(),1);
+  holdStatus=false;await page.getByRole('button',{name:'Check inference availability'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
+  await page.waitForTimeout(900);
+  assert.match(await page.locator('#provider-status').textContent(),/Model configured/);
+  assert.equal(await page.locator('#provider-run').isDisabled(),false);assert.equal(calls,beforeLifecycle);
+  await page.locator('#timing-transcript-panel .transcript-cue').click();
+  await page.waitForFunction(()=>document.querySelector('#timing-transcript-panel .transcript-status').textContent.includes('Native media reached'));
   assert.deepEqual(errors,[]);console.log('PASS: visible opt-in model discovery, synthetic provider transport, independently matched receipts, token counts, quota failure, cancellation, no retry and native media unaffected.');
  }finally{await browser?.close();server.kill('SIGTERM');}
 })().catch(e=>{console.error(e);process.exitCode=1;});

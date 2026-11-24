@@ -150,7 +150,9 @@ seekTiming.addEventListener('click',async()=>{
  finally{seekTiming.disabled=false;}
 });
 
-window.addEventListener('pagehide',()=>{timingTranscript?.dispose();if(timingObjectUrl)URL.revokeObjectURL(timingObjectUrl);});
+// A page retained by browser back/forward cache is still the same document.
+// Preserve its local transcript and media blob; remote consent is revoked independently.
+window.addEventListener('pagehide',event=>{if(event.persisted){try{timingPlayer?.media.pause();}catch{}return;}timingTranscript?.dispose();if(timingObjectUrl)URL.revokeObjectURL(timingObjectUrl);});
 
 let reviewStore=null,reviewActions=null,reviewProposal=null,lastReviewAttempt=null,reviewBusy=false;
 const reviewDialog=document.querySelector('#review-dialog'),reviewStatus=document.querySelector('#review-status'),reviewAttemptButton=document.querySelector('#download-review-attempt');
