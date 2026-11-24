@@ -164,13 +164,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P029-01` Register save-review-card and export-receipt with explicit effects
 - [x] `SUTRA-P029-02` Validate proposed payload and bind it to the current source version
 - [x] `SUTRA-P029-03` Show destination, arguments and local persistence meaning before confirmation
-- [ ] `SUTRA-P029-04` Require a new confirmation if the reviewed payload changes
+- [x] `SUTRA-P029-04` Require a new confirmation if the reviewed payload changes
 - [x] `SUTRA-P029-05` Prevent cancellation from changing stored user data
-- [ ] `SUTRA-P029-06` Bind request ID and receipt to the actual executed proposal
+- [x] `SUTRA-P029-06` Bind request ID and receipt to the actual executed proposal
 - [x] `SUTRA-P029-07` Distinguish successful persistence, rejection and unknown outcome
-- [ ] `SUTRA-P029-08` Ensure the browser never blindly repeats an ambiguous write
+- [x] `SUTRA-P029-08` Ensure the browser never blindly repeats an ambiguous write
 - [x] `SUTRA-P029-09` Produce and review the phase artifact: Write proposal, confirmation and receipt flow.
-- [ ] `SUTRA-P029-10` Close phase 029 only after its applicable tasks have evidence and its exit condition is observed: Cancelling writes changes no stored state; changing arguments after review requires a fresh confirmation.
+- [x] `SUTRA-P029-10` Close phase 029 only after its applicable tasks have evidence and its exit condition is observed: Cancelling writes changes no stored state; changing arguments after review requires a fresh confirmation.
 
 ## Phase 030 - Add optional direct BYOK safely
 

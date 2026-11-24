@@ -1,25 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T11:11:00+05:45",
+  "updated_at": "2026-11-24T05:28:01Z",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "36bc51d1b039d88c7bd50a080e15c8296bc62060",
-  "last_session_id": "SUTRA-SESSION-0028",
-  "stage": "action_confirmation_regression_repair_pending_ci",
+  "last_observed_code_sha": "db74626f710e0c8413b529d0478e1b26758976dc",
+  "last_session_id": "SUTRA-SESSION-0029",
+  "stage": "integrated_browser_regression_reconciliation",
   "current_task": null,
-  "next_task": "SUTRA-X005-01",
+  "next_task": "SUTRA-P078-02",
   "ready_engineering_queue": [
-    "SUTRA-X005-02",
-    "SUTRA-X005-03",
-    "SUTRA-P029-04",
-    "SUTRA-P059-03",
-    "SUTRA-P060-10",
     "SUTRA-P041-08",
     "SUTRA-P054-01",
     "SUTRA-P066-01",
-    "SUTRA-P078-02"
+    "SUTRA-P020-02",
+    "SUTRA-P005-08"
   ],
-  "next_action": "Check exact current source learner, standalone action tests, starter, Open Kit, browser matrix and materializer CI. Re-credit reopened tasks only with applicable current passing evidence. Then continue dependency-ready engineering; keep cloud, public release, funded inference and human gates closed.",
+  "next_action": "Inspect exact db74626 learner CI, retain any failures, repair remaining profile drift without weakening assertions. Reconcile stabilization, then progress independent engineering without closing live, human, rights, cloud or release gates.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -1657,7 +1653,24 @@
       ]
     },
     "SUTRA-P029-04": {
-      "state": "pending",
+      "state": "verified",
+      "verified_at": "2026-11-24T05:28:01Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45333248111/job/138239139600",
+          "description": "Action/review unit tests and initial browser profile passed exact confirmation binding, fresh IDs, cancellation, duplicate prevention and ambiguous persistence without retry.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0029.md",
+          "description": "Scope-specific evidence and retained failure lineage.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        }
+      ],
       "previous_verification": {
         "state": "verified",
         "verified_at": "2026-11-23T13:51:05+05:45",
@@ -1670,8 +1683,7 @@
             "observed_at": "2026-11-23T13:51:05+05:45"
           }
         ]
-      },
-      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
+      }
     },
     "SUTRA-P029-05": {
       "state": "verified",
@@ -1687,7 +1699,24 @@
       ]
     },
     "SUTRA-P029-06": {
-      "state": "pending",
+      "state": "verified",
+      "verified_at": "2026-11-24T05:28:01Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45333248111/job/138239139600",
+          "description": "Action/review unit tests and initial browser profile passed exact confirmation binding, fresh IDs, cancellation, duplicate prevention and ambiguous persistence without retry.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0029.md",
+          "description": "Scope-specific evidence and retained failure lineage.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        }
+      ],
       "previous_verification": {
         "state": "verified",
         "verified_at": "2026-11-23T13:51:05+05:45",
@@ -1700,8 +1729,7 @@
             "observed_at": "2026-11-23T13:51:05+05:45"
           }
         ]
-      },
-      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
+      }
     },
     "SUTRA-P029-07": {
       "state": "verified",
@@ -1717,7 +1745,24 @@
       ]
     },
     "SUTRA-P029-08": {
-      "state": "pending",
+      "state": "verified",
+      "verified_at": "2026-11-24T05:28:01Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45333248111/job/138239139600",
+          "description": "Action/review unit tests and initial browser profile passed exact confirmation binding, fresh IDs, cancellation, duplicate prevention and ambiguous persistence without retry.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0029.md",
+          "description": "Scope-specific evidence and retained failure lineage.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        }
+      ],
       "previous_verification": {
         "state": "verified",
         "verified_at": "2026-11-23T13:51:05+05:45",
@@ -1730,8 +1775,7 @@
             "observed_at": "2026-11-23T13:51:05+05:45"
           }
         ]
-      },
-      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
+      }
     },
     "SUTRA-P029-09": {
       "state": "verified",
@@ -7613,7 +7657,24 @@
       ]
     },
     "SUTRA-P059-03": {
-      "state": "pending",
+      "state": "verified",
+      "verified_at": "2026-11-24T05:28:01Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45333140583",
+          "description": "Independent publisher starter clean-host workflow passed with monotonic IDs and stale confirmation rejection.",
+          "result": "pass",
+          "source_revision": "36bc51d1b039d88c7bd50a080e15c8296bc62060",
+          "observed_at": "2026-11-24T05:28:01Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0029.md",
+          "description": "Scope-specific evidence and retained failure lineage.",
+          "result": "pass",
+          "source_revision": "36bc51d1b039d88c7bd50a080e15c8296bc62060",
+          "observed_at": "2026-11-24T05:28:01Z"
+        }
+      ],
       "previous_verification": {
         "state": "verified",
         "verified_at": "2026-11-24T01:39:34Z",
@@ -7633,8 +7694,7 @@
             "observed_at": "2026-11-24T01:39:34Z"
           }
         ]
-      },
-      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
+      }
     },
     "SUTRA-P059-04": {
       "state": "verified",
@@ -7757,7 +7817,24 @@
       ]
     },
     "SUTRA-P059-10": {
-      "state": "pending",
+      "state": "verified",
+      "verified_at": "2026-11-24T05:28:01Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45333140583",
+          "description": "Independent publisher starter clean-host workflow passed with monotonic IDs and stale confirmation rejection.",
+          "result": "pass",
+          "source_revision": "36bc51d1b039d88c7bd50a080e15c8296bc62060",
+          "observed_at": "2026-11-24T05:28:01Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0029.md",
+          "description": "Scope-specific evidence and retained failure lineage.",
+          "result": "pass",
+          "source_revision": "36bc51d1b039d88c7bd50a080e15c8296bc62060",
+          "observed_at": "2026-11-24T05:28:01Z"
+        }
+      ],
       "previous_verification": {
         "state": "verified",
         "verified_at": "2026-11-24T01:39:34Z",
@@ -7777,8 +7854,7 @@
             "observed_at": "2026-11-24T01:39:34Z"
           }
         ]
-      },
-      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
+      }
     },
     "SUTRA-P060-01": {
       "state": "verified",
@@ -7961,7 +8037,24 @@
       ]
     },
     "SUTRA-P060-10": {
-      "state": "pending",
+      "state": "verified",
+      "verified_at": "2026-11-24T05:28:01Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45333140586",
+          "description": "Standalone Open Kit inventory, archive and consumer checks passed.",
+          "result": "pass",
+          "source_revision": "36bc51d1b039d88c7bd50a080e15c8296bc62060",
+          "observed_at": "2026-11-24T05:28:01Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0029.md",
+          "description": "Scope-specific evidence and retained failure lineage.",
+          "result": "pass",
+          "source_revision": "36bc51d1b039d88c7bd50a080e15c8296bc62060",
+          "observed_at": "2026-11-24T05:28:01Z"
+        }
+      ],
       "previous_verification": {
         "state": "verified",
         "verified_at": "2026-11-24T01:39:34Z",
@@ -7981,8 +8074,7 @@
             "observed_at": "2026-11-24T01:39:34Z"
           }
         ]
-      },
-      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
+      }
     },
     "SUTRA-P026-02": {
       "state": "verified",
@@ -8425,7 +8517,24 @@
       ]
     },
     "SUTRA-P029-10": {
-      "state": "pending",
+      "state": "verified",
+      "verified_at": "2026-11-24T05:28:01Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45333248111/job/138239139600",
+          "description": "Action/review unit tests and initial browser profile passed exact confirmation binding, fresh IDs, cancellation, duplicate prevention and ambiguous persistence without retry.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0029.md",
+          "description": "Scope-specific evidence and retained failure lineage.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        }
+      ],
       "previous_verification": {
         "state": "verified",
         "verified_at": "2026-11-24T01:54:48Z",
@@ -8445,8 +8554,7 @@
             "observed_at": "2026-11-24T01:54:48Z"
           }
         ]
-      },
-      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
+      }
     },
     "SUTRA-X001-01": {
       "state": "verified",
@@ -8469,7 +8577,24 @@
       ]
     },
     "SUTRA-X001-02": {
-      "state": "pending",
+      "state": "verified",
+      "verified_at": "2026-11-24T05:28:01Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45333248111/job/138239139600",
+          "description": "Actual registered review actions and stale/deleted export tests passed.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0029.md",
+          "description": "Scope-specific evidence and retained failure lineage.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        }
+      ],
       "previous_verification": {
         "state": "verified",
         "verified_at": "2026-11-24T01:54:48Z",
@@ -8489,8 +8614,7 @@
             "observed_at": "2026-11-24T01:54:48Z"
           }
         ]
-      },
-      "next_action": "Revalidate against the revised single-use registry and exact current-head CI; see SESSION-0028."
+      }
     },
     "SUTRA-P028-04": {
       "state": "verified",
@@ -10534,6 +10658,80 @@
           "result": "pass",
           "source_revision": "b7d057164a48cef9d801c8bbf6af3fa4b35d374d",
           "observed_at": "2026-11-24T09:08:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X005-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:28:01Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45333248111/job/138239139600",
+          "description": "Standalone action tests passed stale identity rejection, 4096 cap and bounded aggregate UTF-8 JSON traversal including expansion, escaping, Unicode and malformed arrays.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0029.md",
+          "description": "Scope-specific evidence and retained failure lineage.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        }
+      ]
+    },
+    "SUTRA-X005-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:28:01Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45333248111/job/138239139600",
+          "description": "Standalone action tests passed stale identity rejection, 4096 cap and bounded aggregate UTF-8 JSON traversal including expansion, escaping, Unicode and malformed arrays.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0029.md",
+          "description": "Scope-specific evidence and retained failure lineage.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        }
+      ]
+    },
+    "SUTRA-X005-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T05:28:01Z",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45333248111/job/138239139600",
+          "description": "Explicit action package test step passed; package path triggers covered in impact suite; independent starter and Open Kit passed.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0029.md",
+          "description": "Scope-specific evidence and retained failure lineage.",
+          "result": "pass",
+          "source_revision": "ecf252a5b74aaa52874a7f6dbf5535a53f381eae",
+          "observed_at": "2026-11-24T05:28:01Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45333140583",
+          "description": "Independent starter passed.",
+          "result": "pass",
+          "source_revision": "36bc51d1b039d88c7bd50a080e15c8296bc62060",
+          "observed_at": "2026-11-24T05:28:01Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45333140586",
+          "description": "Open Kit passed.",
+          "result": "pass",
+          "source_revision": "36bc51d1b039d88c7bd50a080e15c8296bc62060",
+          "observed_at": "2026-11-24T05:28:01Z"
         }
       ]
     }

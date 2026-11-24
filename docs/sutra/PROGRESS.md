@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0029 — 2026-11-24
+
+**607/1,000 original checks verified; 622/1,015 total; 45/100 phases fully verified; 6 omissions.** Scope-specific revalidation restores eight reopened checks and verifies three new action-registry requirements. Relevant action/review unit tests, initial Chromium persistence profile, starter and Open Kit passed. Full integrated learner CI remains unresolved: accessibility passes, but later resilience fixture assertions required updates. Latest test-only candidate `db74626f710e0c8413b529d0478e1b26758976dc` pending CI. No external/human/provider/release gate credited. [Evidence](evidence/implementation/SESSION-0029.md).
+
+---
+
 ## Session 0028 — 2026-11-24
 
 **600/1,000 original checks verified; 611/1,015 total; 42/100 phases fully verified; 6 omissions.** Lower counts are deliberate regression reconciliation, not loss of historical evidence.

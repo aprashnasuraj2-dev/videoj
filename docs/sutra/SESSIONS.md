@@ -1,5 +1,10 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0029 — 2026-11-24
+
+- Observed standalone action/review tests, first Chromium persistence profile, independent starter and Open Kit pass; restored eight prior checks and added three new verified checks. 607/1,000 original; 622/1,015 total; 45 complete phases; six omissions.
+- Boot readiness repair verified for accessibility; resilience notice drift found and repaired with remaining provider labels and hero reload readiness. Integrated latest revision pending. [Evidence](evidence/implementation/SESSION-0029.md).
+
 ## SUTRA-SESSION-0028 — 2026-11-24
 
 - Reconciled current-head red CI, repaired accessible locators/materializer fixtures, hardened proposal identity and traversal budgets, directly wired standalone action tests and updated independent starter. Source `36bc51d1b039d88c7bd50a080e15c8296bc62060`; materializer green at `17d5232`; integrated final evidence pending.
