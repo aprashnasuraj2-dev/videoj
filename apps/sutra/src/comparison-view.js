@@ -50,7 +50,9 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
    ['comparison.meta.timestamp','Recorded timestamp',claim.observedAt??'Not supplied'],
    ['comparison.meta.date','Date meaning',claim.dateBasis??'Not supplied']
   ]){
-   const dt=node('dt',null,k),dd=node('dd',null,v);dt.dataset.i18n=key;list.append(dt,dd);
+   const dt=node('dt',null,k),dd=node('dd',null,v);dt.dataset.i18n=key;
+   if(key==='comparison.meta.timestamp'&&claim.observedAt)dd.dataset.formatDatetime=claim.observedAt;
+   list.append(dt,dd);
   }
   article.append(list,node('blockquote','comparison-excerpt',claim.excerpt));
   if(activeMode==='available'&&claim.sourceKind==='video'&&
