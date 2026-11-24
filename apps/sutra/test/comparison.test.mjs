@@ -19,11 +19,24 @@ test('missing peer claim preserves valid local source rather than claiming agree
  assert.equal(result.video.sourceId,video.sourceId);
  assert.equal(result.guide,null);
 });
-test('exact matching structured values remain unverified, not factual truth',()=>{
+test('matching structured values with different excerpts are not represented as agreement',()=>{
  const claims=pair();claims.guide.value=2;
  const result=compareClaimPair(claims);
- assert.equal(result.status,'consistent_unverified');
- assert.match(result.reason,/factual truth are not verified/);
+ assert.equal(result.status,'matching_values_unreviewed');
+ assert.match(result.reason,/Agreement is not established/);
+});
+test('only an exact excerpt plus exact structured value can reach the textual-match state',()=>{
+ const claims=pair();claims.guide.value=claims.video.value;claims.guide.excerpt=claims.video.excerpt;
+ const result=compareClaimPair(claims);
+ assert.equal(result.status,'exact_excerpt_match_unverified');
+ assert.match(result.reason,/textual consistency only/);
+});
+test('source href must be a bounded local path and survives the immutable comparison snapshot',()=>{
+ const claims=pair();assert.match(claims.guide.sourceHref,/^\.\/guides\//);
+ const result=compareClaimPair(claims);assert.equal(result.guide.sourceHref,claims.guide.sourceHref);
+ for(const href of ['https://evil.example/x','//evil.example/x','../secret','./ok/../secret','./bad\\path','./x\nprivate']){
+  const bad=pair();bad.guide.sourceHref=href;assert.equal(compareClaimPair(bad).status,'invalid_source');
+ }
 });
 test('different questions and source scope do not generate a false comparison',()=>{
  const claims=pair();claims.guide.scope='different_scope';

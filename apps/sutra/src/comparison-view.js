@@ -56,7 +56,14 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
    if(key==='comparison.meta.timestamp'&&claim.observedAt)dd.dataset.formatDatetime=claim.observedAt;
    list.append(dt,dd);
   }
-  article.append(list,node('blockquote','comparison-excerpt',claim.excerpt));
+  const excerpt=node('blockquote','comparison-excerpt',claim.excerpt);
+  excerpt.id='comparison-source-'+claim.sourceKind+'-'+claim.sourceId;
+  article.append(list,excerpt);
+  if(claim.sourceKind==='guide'&&claim.sourceHref){
+   const link=node('a','comparison-source-link','Open written source excerpt');
+   link.href=new URL(claim.sourceHref,location.href).href;link.target='_blank';link.rel='noopener noreferrer';
+   link.setAttribute('aria-describedby',excerpt.id);article.append(link);
+  }
   if(activeMode==='available'&&claim.sourceKind==='video'&&
    Number.isFinite(claim.start)&&typeof seekTo==='function'){
    const button=node('button',null,'Inspect native video cue at '+String(claim.start)+' seconds');
@@ -85,7 +92,8 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
   const prefix={
    missing_source:'Missing evidence',unresolved_conflict:'Unresolved disagreement',
    incomparable:'Not comparable',invalid_source:'Invalid source',
-   consistent_unverified:'Structured match, truth unverified'
+   matching_values_unreviewed:'Matching values, agreement unreviewed',
+   exact_excerpt_match_unverified:'Exact excerpt match, truth unverified'
   }[comparison.status]??'Not evaluated';
   status.textContent=prefix+'. '+comparison.reason;
   const guidance=buildUncertaintyGuidance(comparison);

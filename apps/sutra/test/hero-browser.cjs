@@ -65,6 +65,11 @@ const assert=require('node:assert/strict');
   await page.getByRole('button',{name:'Demonstrate a synthetic conflict'}).click();
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'unresolved_conflict');
   assert.match(await page.locator('#comparison-body .comparison-status').innerText(),/Neither side is declared factually correct/);
+  const guideLink=page.getByRole('link',{name:'Open written source excerpt'});
+  assert.equal(await guideLink.count(),1);
+  const guideHref=await guideLink.getAttribute('href');assert.match(guideHref,/\/guides\/synthetic-comparison-guide\.html#signature-count$/);
+  const guideText=await page.evaluate(async href=>(await fetch(href,{credentials:'omit'})).text(),guideHref);
+  assert.match(guideText,/In this invented example, the handover needs three signatures\./);
   await page.getByRole('button',{name:'Inspect available evidence'}).click();
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
 
