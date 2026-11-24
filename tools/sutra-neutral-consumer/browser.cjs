@@ -15,7 +15,7 @@ const close=s=>new Promise(r=>{s.closeAllConnections();s.close(r);});
   if(name==='agent-manifest.json'&&mode==='duplicate'){const m=JSON.parse(value);m.networks.push(m.networks[0]);value=JSON.stringify(m);}
   if(name==='checklist.network.json'&&mode==='hint'){const g=JSON.parse(value);g.llm_config={model_name:'publisher-unapproved-model'};value=JSON.stringify(g);}
   if(name==='checklist.network.json'&&mode==='external'){const g=JSON.parse(value);g.tools[0].tools.push('https://blocked.invalid/agents/other');value=JSON.stringify(g);}
-  res.writeHead(200,{'Content-Type':'application/json','Access-Control-Allow-Origin':'*','Cache-Control':'no-store'});res.end(value);
+  res.writeHead(200,{'Content-Type':'application/json',...(mode==='no-cors'?{}:{'Access-Control-Allow-Origin':'*'}),'Cache-Control':'no-store'});res.end(value);
  });
  const consumer=await open((req,res)=>{
   let data,type='text/javascript';
@@ -30,7 +30,7 @@ const close=s=>new Promise(r=>{s.closeAllConnections();s.close(r);});
   browser=await chromium.launch({headless:true});const page=await browser.newPage(),errors=[],unexpected=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(!r.url().startsWith(consumer.origin+'/')&&!r.url().startsWith(publisher.origin+'/'))unexpected.push(r.url());});
   await page.goto(consumer.origin);const run=page.getByRole('button',{name:'Inspect publication'}),allow=page.getByRole('button',{name:'Allow once'}),deny=page.getByRole('button',{name:'Deny'});
-  const status=async text=>page.waitForFunction(t=>document.querySelector('#status').textContent.includes(t),text);
+  const status=async text=>{await page.waitForFunction(()=>!document.querySelector('#run').disabled,null,{timeout:10000});assert.ok((await page.locator('#status').textContent()).includes(text),'Expected '+text+'; got '+await page.locator('#status').textContent());};
   await run.click();await deny.click();await status('DENIED');assert.equal(requests.length,0);
   await run.click();await allow.click();await deny.click();await status('DENIED');assert.deepEqual(requests.map(r=>r.path),['/agents/agent-manifest.json']);
   requests.length=0;await run.click();await allow.click();await allow.click();await status('Completed');
@@ -40,6 +40,7 @@ const close=s=>new Promise(r=>{s.closeAllConnections();s.close(r);});
   await page.locator('#network').fill('check');requests.length=0;await run.click();await allow.click();await status('NETWORK_MATCH');assert.equal(requests.length,1);
   await page.locator('#network').fill('checklist');mode='duplicate';requests.length=0;await run.click();await allow.click();await status('NETWORK_MATCH');assert.equal(requests.length,1);
   mode='missing';await run.click();await allow.click();await allow.click();await status('ARTIFACT_UNAVAILABLE');assert.equal(await page.locator('#output').textContent(),'');
+  mode='no-cors';requests.length=0;await run.click();await allow.click();await status('ARTIFACT_UNAVAILABLE');assert.equal(requests.length,1);assert.equal(await page.locator('#output').textContent(),'');
   mode='external';await run.click();await allow.click();await allow.click();await status('GRAPH_PROFILE');assert.equal(await page.locator('#output').textContent(),'');
   mode='hint';await run.click();await allow.click();await allow.click();await status('Completed');assert.deepEqual(JSON.parse(await page.locator('#output').textContent()).models,Array(3).fill('consumer-owned-fixture'));
   assert.deepEqual(errors,[]);assert.deepEqual(unexpected,[]);

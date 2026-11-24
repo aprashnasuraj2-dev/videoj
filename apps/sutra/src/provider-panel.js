@@ -19,7 +19,7 @@ export function mountProviderPanel({baseUrl,sources,origin=location.origin}){
  run.addEventListener('click',async()=>{
   if(active||!model)return;clear();
   if(!question.value.trim()||question.value.length>1200){set('input_error','Enter a question of 1–1200 characters.');return;}
-  const operation={kind:'run',controller:new AbortController()};active=operation;controls();set('loading','Running the configured model and bounded source tools…');
+  const operation={kind:'run',controller:new AbortController()};active=operation;controls();set('running','Running the configured model and bounded source tools…');
   try{
    const result=await runProviderLesson({origin,baseUrl,model,question:question.value,sources,signal:operation.controller.signal});
    if(operation.controller.signal.aborted)throw Error('cancelled');
@@ -31,7 +31,7 @@ export function mountProviderPanel({baseUrl,sources,origin=location.origin}){
   }catch{clear();set(operation.controller.signal.aborted?'cancelled':'error',operation.controller.signal.aborted?'Inference cancelled. No completed answer is claimed.':'Inference stopped or quota exhausted. No completed answer is claimed. The local lesson remains available; retry only explicitly.');}
   finally{active=null;controls();run.focus();}
  });
- cancel.addEventListener('click',()=>{if(active?.kind==='run'){active.controller.abort();controls();set('loading','Cancelling inference…');}});
+ cancel.addEventListener('click',()=>{if(active?.kind==='run'){active.controller.abort();controls();set('cancelling','Cancelling inference…');}});
  window.addEventListener('pagehide',()=>{active?.controller.abort();model=null;});
  controls();
 }

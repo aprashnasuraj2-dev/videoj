@@ -19,7 +19,8 @@ function approval(url,kind){
 }
 async function getData(url,kind,limit){
  if(!await approval(url,kind))fail('DENIED');
- const res=await fetch(url,{credentials:'omit',redirect:'error',cache:'no-store',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(5000)});
+ let res;
+ try{res=await fetch(url,{credentials:'omit',redirect:'error',cache:'no-store',referrerPolicy:'no-referrer',signal:AbortSignal.timeout(5000)});}catch{fail('ARTIFACT_UNAVAILABLE');}
  if(!res.ok||res.url!==url.href||!/^application\/json(?:;|$)/i.test(res.headers.get('content-type')||''))fail('ARTIFACT_UNAVAILABLE');
  const reader=res.body.getReader(),chunks=[];let total=0;
  try{for(;;){const {value,done}=await reader.read();if(done)break;total+=value.byteLength;if(total>limit)fail('ARTIFACT_SIZE');chunks.push(value);}}finally{void reader.cancel().catch(()=>{});}

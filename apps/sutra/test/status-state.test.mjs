@@ -9,9 +9,12 @@ function node(){
 }
 
 test('learner state contract explicitly defines required visible outcomes',()=>{
- for(const state of ['loading','empty','denied','error','completed'])assert.ok(learnerScreenStates[state],state);
+ for(const state of ['idle','loading','running','cancelling','cancelled','empty','denied','error','completed'])assert.ok(learnerScreenStates[state],state);
  assert.equal(learnerScreenStates.loading.busy,true);
  assert.equal(learnerScreenStates.completed.busy,false);
+ assert.equal(learnerScreenStates.running.busy,true);
+ assert.equal(learnerScreenStates.cancelling.busy,true);
+ assert.equal(learnerScreenStates.cancelled.busy,false);
 });
 
 test('state application exposes machine-readable state, tone and busy semantics without markup injection',()=>{
