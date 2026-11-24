@@ -60,9 +60,23 @@ export function createSafeTraceReceipt(input={}){
   truncated:limitedEvents.truncated||limitedContacts.truncated||disclosureTruncated};
  // Enforce the actual downloadable UTF-8 bytes, including pretty formatting
  // and trailing LF. Do not use UTF-16 length or compact JSON as a proxy.
- while(encoder.encode(encoded(core)).byteLength>MAX_BYTES&&(core.events.length||core.consent.length)){
-  if(core.events.length>=core.consent.length)core.events.pop();else core.consent.pop();
+ if(encoder.encode(encoded(core)).byteLength>MAX_BYTES){
   core.truncated=true;
+  const events=core.events,consent=core.consent;
+  // Preserve the previous balanced-tail pruning policy, but search its
+  // monotonic sequence of prefixes. At most nine full serializations for
+  // 256 candidate entries rather than repeatedly encoding every tail.
+  const prefixes=[[events.length,consent.length]];
+  let e=events.length,c=consent.length;
+  while(e||c){if(e>=c)e--;else c--;prefixes.push([e,c]);}
+  const candidate=i=>{const [e,c]=prefixes[i];return {...core,events:events.slice(0,e),consent:consent.slice(0,c)};};
+  let low=1,high=prefixes.length-1;
+  while(low<high){
+   const middle=Math.floor((low+high)/2);
+   if(encoder.encode(encoded(candidate(middle))).byteLength<=MAX_BYTES)high=middle;
+   else low=middle+1;
+  }
+  return candidate(low);
  }
  return core;
 }

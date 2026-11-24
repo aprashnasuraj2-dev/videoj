@@ -89,3 +89,22 @@ test('the downloaded formatted UTF-8 report is bounded, even with non-ASCII publ
  assert.ok(out.events.length&&out.consent.length);assert.ok(text.endsWith('\n'));
  assert.deepEqual(out,createSafeTraceReceipt(input));
 });
+
+test('UTF-8 trace pruning preserves the largest valid balanced prefix, not an arbitrary smaller budget',()=>{
+ const text='काठमाडौँ😀'.repeat(40),events=Array.from({length:128},(_,i)=>({id:'event-'+i,agent:text,network:text,tool:text})),contactEvents=Array.from({length:128},(_,i)=>({type:'intent',purpose:text,network:'contact-'+i,disclosure:Array(12).fill(text)}));
+ const output=createSafeTraceReceipt({events,contactEvents});
+ const size=value=>new TextEncoder().encode(JSON.stringify(value,null,2)+'\n').length;
+ assert.ok(size(output)<=65536);assert.equal(output.truncated,true);
+ // The balanced policy removes from events first when lengths are equal.
+ // Reconstruct exactly one previous state and verify that it overflows.
+ const previous=structuredClone(output);
+ if(output.events.length<output.consent.length){
+  const raw=events[output.events.length];
+  previous.events.push({id:raw.id,agent:raw.agent.slice(0,100),network:raw.network.slice(0,100),tool:raw.tool.slice(0,100)});
+ }else{
+  const raw=contactEvents[output.consent.length];
+  previous.consent.push({type:raw.type,purpose:raw.purpose.slice(0,160),network:raw.network.slice(0,100),disclosure:raw.disclosure.map(x=>x.slice(0,80))});
+ }
+ assert.ok(size(previous)>65536,'one extra balanced entry must exceed the actual output byte ceiling');
+ assert.equal(output.events[0].id,'event-0');assert.equal(output.consent[0].network,'contact-0');
+});
