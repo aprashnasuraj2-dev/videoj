@@ -1,12 +1,14 @@
 import {discoverProvider,runProviderLesson} from './provider-run.js';
 import {applyScreenState} from './status-state.js';
 import {createReceiptActionRow} from './receipt-actions.js';
+import {executionLimits} from '../../../packages/sutra-runtime/index.js';
 
 export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=location.origin}){
  const sources=loadedContent.sources;
  const $=id=>document.getElementById(id);
  const check=$('provider-check'),run=$('provider-run'),cancel=$('provider-cancel'),question=$('provider-question'),status=$('provider-status'),output=$('provider-output'),answer=$('provider-answer'),list=$('provider-receipts'),metrics=$('provider-metrics'),actionStatus=$('provider-action-status');
- const consentDialog=$('provider-consent-dialog'),consentBackend=$('provider-consent-backend'),consentModel=$('provider-consent-model'),consentChars=$('provider-consent-chars'),consentDeny=$('provider-consent-deny'),consentAllow=$('provider-consent-allow');
+ const consentDialog=$('provider-consent-dialog'),consentBackend=$('provider-consent-backend'),consentModel=$('provider-consent-model'),consentChars=$('provider-consent-chars'),consentBudget=$('provider-consent-budget'),consentDeny=$('provider-consent-deny'),consentAllow=$('provider-consent-allow');
+ const runtimeBounds=executionLimits();
  let model=null,approvedContract=null,active=null,pendingApproval=null,epoch=0;
  const set=(s,m)=>applyScreenState(status,s,m);
  const clear=()=>{epoch++;output.hidden=true;answer.textContent='';list.replaceChildren();metrics.textContent='';actionStatus.textContent='';};
@@ -79,6 +81,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   consentBackend.textContent=approvedContract.backend==='self_hosted'?'Operator self-hosted gateway':'External hosted provider';
   consentModel.textContent=model;
   consentChars.textContent=String(value.length);
+  consentBudget.textContent='Up to '+runtimeBounds.maxModelCalls+' model calls, '+runtimeBounds.maxAgents+' agent invocations and '+Math.round(runtimeBounds.timeoutMs/1000)+' seconds for this run. No automatic retry.';
   controls();
   set('consent','Review the inference data flow. No model request has been made yet.');
   consentDialog.showModal();
