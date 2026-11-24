@@ -12,6 +12,19 @@ const secret='TEST_GATEWAY_INTERNAL_'+ 'x'.repeat(48),model='self-host-integrati
 const origin='https://sutra.test',publicGateway='https://operator-gateway.example/v1/chat/completions';
 const listen=server=>new Promise((resolve,reject)=>server.once('error',reject).listen(0,'127.0.0.1',()=>resolve(server.address().port)));
 const close=server=>new Promise(resolve=>server.close(resolve));
+ // Real HTTP loopback substitutes for the configured HTTPS gateway in this
+ // integration only. Assert actual destination, then map response metadata.
+ // Production continues to reject any unexpected response URL.
+async function fetchMappedGateway(port,options){
+ const loopback='http://127.0.0.1:'+port+'/v1/chat/completions';
+ const response=await fetch(loopback,options);
+ assert.equal(response.url,loopback);
+ assert.equal(response.redirected,false);
+ const mapped=new Response(response.body,{status:response.status,statusText:response.statusText,headers:response.headers});
+ Object.defineProperty(mapped,'url',{value:publicGateway});
+ return mapped;
+}
+
 const event=(delta,finish)=>({choices:[{index:0,delta,finish_reason:finish}]});
 const sse=items=>items.map(item=>'data: '+JSON.stringify(item)+'\n\n').join('')+'data: [DONE]\n\n';
 test('complete model-free browser-facing adapter -> Worker -> authenticated gateway -> local fake engine -> delegated runtime', {timeout:12000},async()=>{
@@ -57,7 +70,7 @@ test('complete model-free browser-facing adapter -> Worker -> authenticated gate
      assert.equal(upstreamUrl,publicGateway);
      assert.equal(upstreamOptions.headers.Authorization,'Bearer '+secret);
      assert.equal(upstreamOptions.redirect,'error');
-     return fetch('http://127.0.0.1:'+gatewayPort+'/v1/chat/completions',upstreamOptions);
+     return fetchMappedGateway(gatewayPort,upstreamOptions);
     }
    });
   }});
@@ -105,7 +118,7 @@ test('one cancelled client request closes the real gateway and loopback model st
    handleInference(new Request(url,{method:'POST',headers:{...options.headers,Origin:origin},body:options.body,signal:options.signal}),env,{
     fetchImpl:async(gatewayUrl,opts)=>{
      assert.equal(gatewayUrl,publicGateway);
-     return fetch('http://127.0.0.1:'+gatewayPort+'/v1/chat/completions',opts);
+     return fetchMappedGateway(gatewayPort,opts);
     }
    })
   });
@@ -155,7 +168,7 @@ for(const failure of ['premature EOF','rewritten finish','inconsistent usage'])t
    return handleInference(new Request(url,{method:'POST',headers:{...opts.headers,Origin:origin},body:opts.body,signal:opts.signal}),env,{
     fetchImpl:async(target,params)=>{
      assert.equal(target,publicGateway);
-     return fetch('http://127.0.0.1:'+gport+'/v1/chat/completions',params);
+     return fetchMappedGateway(gport,params);
     }
    });
   }});
