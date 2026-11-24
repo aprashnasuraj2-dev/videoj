@@ -1,6 +1,6 @@
 import {plain,InferenceError,readSse,makeAccumulator,abortable} from '../../packages/sutra-inference/protocol.js';
 import {checkSchema,validateData} from '../../packages/sutra-runtime/vendor/nsdeploy/actions.js';
-import {quotaLimits,MAX_INPUT_BYTES} from './quota.js';
+import {quotaLimits,sourceQuotaLimits,MAX_INPUT_BYTES} from './quota.js';
 export const UPSTREAM='https://api.openai.com/v1/chat/completions';
 export async function clientKeyForRequest(request,secretValue){
  if(typeof secretValue!=='string'||secretValue.length<32)throw Error('CLIENT_KEY_CONFIG');
@@ -31,7 +31,7 @@ export function inferenceBackend(env={}){
 
 const error=(code,status)=>Response.json({error:{code,message:'Inference is unavailable or stopped; no complete result is claimed.'}},{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 export async function readJson(request,max=32768){
- const reader=request.body?.getReader();if(!reader)throw Error('body');let total=0;const chunks=[];const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);const cancel=()=>controller.abort();request.signal.addEventListener('abort',cancel,{once:true});if(request.signal.aborted)cancel();
+ request.signal.throwIfAborted();const reader=request.body?.getReader();if(!reader)throw Error('body');let total=0;const chunks=[];const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),5000);const cancel=()=>controller.abort();request.signal.addEventListener('abort',cancel,{once:true});if(request.signal.aborted)cancel();
  try{for(;;){const {value,done}=await abortable(reader.read(),controller.signal);if(done)break;total+=value.byteLength;if(total>max)throw Error('size');chunks.push(value);}}finally{clearTimeout(timer);request.signal.removeEventListener('abort',cancel);void reader.cancel().catch(()=>{});}
  const data=new Uint8Array(total);let offset=0;for(const chunk of chunks){data.set(chunk,offset);offset+=chunk.length;}return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(data));
 }
@@ -76,7 +76,8 @@ export function configuredModels(env={}){
 }
 export function inferenceStatus(env={}){
  const concurrent=Number(env.SUTRA_MAX_CONCURRENT);
- return typeof env.SUTRA_ALLOWED_ORIGIN==='string'&&/^https:\/\/[^/]+$/.test(env.SUTRA_ALLOWED_ORIGIN)&&
+ const sourceQuotaRequested=env.SUTRA_MAX_DAILY_SOURCE_READS!==undefined||env.SUTRA_MAX_CLIENT_SOURCE_READS!==undefined;
+ return (!sourceQuotaRequested||!!sourceQuotaLimits(env))&& typeof env.SUTRA_ALLOWED_ORIGIN==='string'&&/^https:\/\/[^/]+$/.test(env.SUTRA_ALLOWED_ORIGIN)&&
   Number.isInteger(Number(env.SUTRA_MAX_OUTPUT_TOKENS))&&Number(env.SUTRA_MAX_OUTPUT_TOKENS)>=64&&Number(env.SUTRA_MAX_OUTPUT_TOKENS)<=1024&&
   Number.isInteger(concurrent)&&concurrent>=1&&concurrent<=10&&!!quotaLimits(env)&&
   configuredModels(env).length>0&&env.SUTRA_ENABLE_INFERENCE==='true'&&
@@ -89,12 +90,13 @@ export async function inferenceContractId(env={},snapshot={backend:inferenceBack
  const {backend,models,maxOutput}=snapshot;
  if(!backend||typeof env.SUTRA_CLIENT_HASH_SECRET!=='string'||env.SUTRA_CLIENT_HASH_SECRET.length<32)throw Error('CONTRACT_CONFIG');
  const enc=new TextEncoder(),key=await crypto.subtle.importKey('raw',enc.encode(env.SUTRA_CLIENT_HASH_SECRET),{name:'HMAC',hash:'SHA-256'},false,['sign']);
- const message=JSON.stringify(['sutra-inference-contract-v1',backend.mode,backend.url,backend.credential,models,maxOutput,env.SUTRA_ALLOWED_ORIGIN,quotaLimits(env)]);
+ const message=JSON.stringify(['sutra-inference-contract-v2',backend.mode,backend.url,backend.credential,models,maxOutput,env.SUTRA_ALLOWED_ORIGIN,quotaLimits(env),sourceQuotaLimits(env),[env.SUTRA_CONTENT_MODE,env.SUTRA_CONTENT_VERSION,env.SUTRA_CATALOG_SHA256,env.SUTRA_TRANSCRIPT_SHA256]]);
  const signature=await crypto.subtle.sign('HMAC',key,enc.encode(message));
  return Array.from(new Uint8Array(signature),b=>b.toString(16).padStart(2,'0')).join('');
 }
 export async function handleInference(request,env,{fetchImpl=fetch}={}){
  if(request.method!=='POST')return error('METHOD',405);
+ if(request.signal.aborted)return error('CANCELLED',499);
  if(!inferenceStatus(env))return error('DISABLED',503);
  const origin=new URL(request.url).origin;if(request.headers.get('Origin')!==origin||origin!==env.SUTRA_ALLOWED_ORIGIN||request.headers.has('Authorization')||!request.headers.get('Content-Type')?.startsWith('application/json'))return error('ORIGIN_OR_HEADERS',403);
  const models=configuredModels(env),backend=inferenceBackend(env);const maxOutput=Number(env.SUTRA_MAX_OUTPUT_TOKENS);
@@ -107,7 +109,9 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
   try{matches=/^[a-f0-9]{64}$/.test(expected??'')&&expected===await inferenceContractId(env,{backend,models,maxOutput});}catch{}
   if(!matches)return Response.json({error:{code:'INFERENCE_CONTRACT_MISMATCH'}},{status:409,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Sutra-Precondition':'inference'}});
  }
- let body;try{body=validPayload(await readJson(request),models);}catch{return error('PAYLOAD',400);}
+ if(request.signal.aborted)return error('CANCELLED',499);
+ let body;try{body=validPayload(await readJson(request),models);}catch{return error(request.signal.aborted?'CANCELLED':'PAYLOAD',request.signal.aborted?499:400);}
+ if(request.signal.aborted)return error('CANCELLED',499);
  const upstreamBody=JSON.stringify({...body,
   ...(backend.mode==='self_hosted'?{max_tokens:maxOutput}:{max_completion_tokens:maxOutput}),
   stream_options:{include_usage:true},
@@ -122,14 +126,15 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
  };
  try{
   const clientKey=await clientKeyForRequest(request,env.SUTRA_CLIENT_HASH_SECRET);
+  if(request.signal.aborted)return error('CANCELLED',499);
   quota=env.SUTRA_QUOTA.get(env.SUTRA_QUOTA.idFromName('sutra-inference-global-v1'));
-  const quotaSignal=AbortSignal.any([request.signal,AbortSignal.timeout(5000)]);
+  const quotaSignal=AbortSignal.any([request.signal,AbortSignal.timeout(5000)]);quotaSignal.throwIfAborted();
   const reservation=await abortable(quota.fetch('https://quota.internal/reserve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientKey,inputBytes,outputTokens:maxOutput}),signal:quotaSignal}),quotaSignal);
   if(!reservation.ok)return error(reservation.status===429?'QUOTA':'QUOTA_UNAVAILABLE',reservation.status===429?429:503);
   const reservationData=await abortable(reservation.json(),quotaSignal);
   if(reservationData.allowed!==true||typeof reservationData.lease!=='string'||!/^[0-9a-f-]{36}$/i.test(reservationData.lease))return error('QUOTA_UNAVAILABLE',503);
   lease=reservationData.lease;
- }catch{return error('QUOTA_UNAVAILABLE',503);}
+ }catch{return error(request.signal.aborted?'CANCELLED':'QUOTA_UNAVAILABLE',request.signal.aborted?499:503);}
  if(request.signal.aborted){await releaseQuota();return error('CANCELLED',499);}
  const controller=new AbortController(),cancel=()=>controller.abort();request.signal.addEventListener('abort',cancel,{once:true});const timer=setTimeout(cancel,30000);
  const cleanup=()=>{clearTimeout(timer);request.signal.removeEventListener('abort',cancel);};

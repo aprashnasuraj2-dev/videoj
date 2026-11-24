@@ -303,3 +303,29 @@ test('source quota resets global and sharded client counters on UTC day rollover
  assert.equal(store.inspect('source-quota:ab').day,'2026-11-25');assert.equal(store.inspect('source-quota:ab').counts[key],1);
  now=Date.parse('2026-11-24T12:00:00Z');assert.equal((await q.fetch(req())).status,503,'backwards clock fails closed rather than reopening quota');
 });
+
+test('pre-aborted model and source requests touch neither quota nor upstream',async()=>{
+ const c=new AbortController();c.abort();let quota=0,upstream=0;
+ const env={...environment(),SUTRA_MAX_DAILY_SOURCE_READS:'10',SUTRA_MAX_CLIENT_SOURCE_READS:'2',SUTRA_QUOTA:{idFromName(){quota++;throw Error('must not touch');}}};
+ const model=await handleInference(new Request(request(),{signal:c.signal}),env,{fetchImpl:async()=>{upstream++;return sse();}});
+ assert.equal(model.status,499);assert.equal((await model.json()).error.code,'CANCELLED');
+ const source=await handleSourceTools(new Request(request({jsonrpc:'2.0',id:1,method:'tools/call',params:{name:'search_lesson',arguments:{query:'timing'}}},{},'/api/source-tools'),{signal:c.signal}),env);
+ assert.equal(source.status,499);assert.deepEqual(await source.json(),{error:{code:'SOURCE_CANCELLED'}});
+ assert.equal(quota,0);assert.equal(upstream,0);
+});
+test('cancellation during quota admission produces no upstream or completed source receipt',async()=>{
+ for(const source of [false,true]){
+  const c=new AbortController(),operations=[];let upstream=0;
+  const env={...environment(async(url,opts)=>{operations.push(new URL(url).pathname);c.abort();assert.equal(opts.signal.aborted,true);return Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000111'});}),SUTRA_MAX_DAILY_SOURCE_READS:'10',SUTRA_MAX_CLIENT_SOURCE_READS:'2'};
+  const body=source?{jsonrpc:'2.0',id:1,method:'tools/call',params:{name:'search_lesson',arguments:{query:'timing'}}}:payload();
+  const r=new Request(request(body,{},source?'/api/source-tools':'/api/infer'),{signal:c.signal});
+  const response=source?await handleSourceTools(r,env):await handleInference(r,env,{fetchImpl:async()=>{upstream++;return sse();}});
+  assert.equal(response.status,499);assert.ok(!JSON.stringify(await response.json()).includes('receipts'));assert.equal(upstream,0);
+  assert.deepEqual(operations,[source?'/source-read':'/reserve'],'no implicit retry; ambiguous reservation remains conservatively charged');
+ }
+});
+test('malformed configured source quota disables optional model execution rather than wasting a model call',async()=>{
+ const env={...environment(),SUTRA_MAX_DAILY_SOURCE_READS:'10',SUTRA_MAX_CLIENT_SOURCE_READS:'11'};let calls=0;
+ assert.equal(inferenceStatus(env),false);
+ assert.equal((await handleInference(request(),env,{fetchImpl:async()=>{calls++;return sse();}})).status,503);assert.equal(calls,0);
+});

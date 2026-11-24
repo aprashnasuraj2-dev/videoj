@@ -1,5 +1,6 @@
 import {handleInference,inferenceStatus,inferenceBackend,configuredModels,inferenceContractId,readJson,clientKeyForRequest} from './inference.js';
 import {createSourceTools} from '../../packages/sutra-source-tools/index.js';
+import {abortable} from '../../packages/sutra-inference/protocol.js';
 import {sourceQuotaLimits} from './quota.js';
 import {validateData} from '../../packages/sutra-runtime/vendor/nsdeploy/actions.js';
 import contentProfileDocument from '../../apps/sutra/public/content/content-profile.json' with {type:'json'};
@@ -77,7 +78,9 @@ export async function handleSourceTools(request,env={}){
  if(request.headers.has('MCP-Protocol-Version')&&request.headers.get('MCP-Protocol-Version')!=='2025-06-18')return json({error:{code:'PROTOCOL'}},400);
  if(request.method!=='POST')return json({error:{code:'METHOD'}},405);
  if(request.headers.get('Origin')!==new URL(request.url).origin||!request.headers.get('Content-Type')?.startsWith('application/json'))return json({error:{code:'ORIGIN_OR_HEADERS'}},403);
- let rpc;try{rpc=await readJson(request,4096);}catch{return json({error:{code:'PAYLOAD'}},400);}
+ if(request.signal.aborted)return json({error:{code:'SOURCE_CANCELLED'}},499);
+ let rpc;try{rpc=await readJson(request,4096);}catch{return json({error:{code:request.signal.aborted?'SOURCE_CANCELLED':'PAYLOAD'}},request.signal.aborted?499:400);}
+ if(request.signal.aborted)return json({error:{code:'SOURCE_CANCELLED'}},499);
  if(!rpc||typeof rpc!=='object'||Array.isArray(rpc)||Object.keys(rpc).some(k=>!['jsonrpc','id','method','params'].includes(k))||rpc.jsonrpc!=='2.0'||typeof rpc.method!=='string'||!(typeof rpc.id==='string'&&rpc.id.length<=100||Number.isSafeInteger(rpc.id)||rpc.id===undefined))return json({error:{code:'RPC'}},400);
  const emptyParams=value=>value===undefined||value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).length===0;
  if(rpc.method==='notifications/initialized'&&rpc.id===undefined){
@@ -100,11 +103,13 @@ export async function handleSourceTools(request,env={}){
   if(sourceQuotaRequested){
    if(!sourceQuotaLimits(env)||!env.SUTRA_QUOTA||typeof env.SUTRA_CLIENT_HASH_SECRET!=='string'||env.SUTRA_CLIENT_HASH_SECRET.length<32)return json({error:{code:'SOURCE_QUOTA_UNAVAILABLE'}},503);
    try{
-    const clientKey=await clientKeyForRequest(request,env.SUTRA_CLIENT_HASH_SECRET),quota=env.SUTRA_QUOTA.get(env.SUTRA_QUOTA.idFromName('sutra-inference-global-v1'));
-    const admission=await quota.fetch('https://quota.internal/source-read',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientKey}),signal:AbortSignal.timeout(5000)});
+    const clientKey=await clientKeyForRequest(request,env.SUTRA_CLIENT_HASH_SECRET);if(request.signal.aborted)return json({error:{code:'SOURCE_CANCELLED'}},499);
+    const quota=env.SUTRA_QUOTA.get(env.SUTRA_QUOTA.idFromName('sutra-inference-global-v1')),signal=AbortSignal.any([request.signal,AbortSignal.timeout(5000)]);signal.throwIfAborted();
+    const admission=await abortable(quota.fetch('https://quota.internal/source-read',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientKey}),signal}),signal);
     if(!admission.ok)return json({error:{code:admission.status===429?'SOURCE_QUOTA':'SOURCE_QUOTA_UNAVAILABLE'}},admission.status===429?429:503);
-   }catch{return json({error:{code:'SOURCE_QUOTA_UNAVAILABLE'}},503);}
+   }catch{return json({error:{code:request.signal.aborted?'SOURCE_CANCELLED':'SOURCE_QUOTA_UNAVAILABLE'}},request.signal.aborted?499:503);}
   }
+  if(request.signal.aborted)return json({error:{code:'SOURCE_CANCELLED'}},499);
   try{const output=sourceTools.call(rpc.params?.name,rpc.params?.arguments);return result({content:[{type:'text',text:JSON.stringify(output)}],structuredContent:output,isError:false});}catch{return result({content:[{type:'text',text:'Source tool unavailable; no result is claimed.'}],isError:true});}
  }
  return json({jsonrpc:'2.0',id:rpc.id,error:{code:-32601,message:'Method unavailable.'}});
