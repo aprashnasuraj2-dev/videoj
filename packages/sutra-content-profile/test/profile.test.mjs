@@ -46,7 +46,9 @@ test('accessor-backed or executable-looking profile data is rejected without inv
 test('reviewed mode requires an independently declared written claim and video claim remains bounded metadata',()=>{
  const reviewed=structuredClone(profile);reviewed.mode='reviewed';
  assert.throws(()=>validateContentProfile(reviewed,catalog),/CONTENT_GUIDE/);
- reviewed.guideClaim={sourceKind:'guide',sourceId:'guide',sourceVersion:'v1',title:'Guide',scope:reviewed.videoClaim.scope,claimKey:reviewed.videoClaim.claimKey,value:reviewed.videoClaim.value,excerpt:'Reviewed guide excerpt.',provenance:'Reviewed written guide',sourceHref:'/guides/reviewed.html#claim',sourceHash:'f'.repeat(64)};
+ reviewed.transcript.path='/transcripts/release/'+reviewed.transcript.sha256+'/lesson.txt';
+ reviewed.media.video='/media/release/'+catalog.sources[0].mediaHash+'/lesson.mp4';
+ reviewed.guideClaim={sourceKind:'guide',sourceId:'guide',sourceVersion:'v1',title:'Guide',scope:reviewed.videoClaim.scope,claimKey:reviewed.videoClaim.claimKey,value:reviewed.videoClaim.value,excerpt:'Reviewed guide excerpt.',provenance:'Reviewed written guide',sourceHref:'/guides/release/'+'f'.repeat(64)+'/reviewed.html#claim',sourceHash:'f'.repeat(64)};
  const c=validateContentProfile(reviewed,catalog);assert.equal(c.profile.guideClaim.scope,c.profile.videoClaim.scope);
  const bad=structuredClone(profile);bad.videoClaim.scope='';assert.throws(()=>validateContentProfile(bad,catalog),/CONTENT_VIDEO_CLAIM/);
 });
