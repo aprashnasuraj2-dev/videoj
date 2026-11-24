@@ -93,6 +93,20 @@ const assert=require('node:assert/strict');
   await page.getByRole('button',{name:'Inspect available evidence'}).click();
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
 
+  // The local citation-only question path is usable without model, provider, or media.
+  const localQuestion=page.getByRole('searchbox',{name:'Question for local source lookup'});
+  await localQuestion.fill('Where is the timing marker?');
+  const beforeLocal=await page.evaluate(()=>performance.getEntriesByType('resource').filter(x=>x.name.includes('/api/')).length);
+  await page.getByRole('button',{name:'Find cited answer locally'}).click();
+  assert.equal(await page.locator('#local-answer-status').getAttribute('data-state'),'completed');
+  assert.equal(await page.locator('#local-answer-results li').count(),1);
+  assert.match(await page.locator('#local-answer-results').innerText(),/Synthetic timing marker/);
+  assert.match(await page.locator('#local-answer-status').innerText(),/0 model calls, 0 network requests/);
+  assert.equal(await page.evaluate(()=>performance.getEntriesByType('resource').filter(x=>x.name.includes('/api/')).length),beforeLocal);
+  await localQuestion.fill('What is the safe voltage threshold?');
+  await page.getByRole('button',{name:'Find cited answer locally'}).click();
+  assert.equal(await page.locator('#local-answer-status').getAttribute('data-state'),'empty');
+  assert.equal(await page.locator('#local-answer-results li').count(),0);
   await page.getByRole('button',{name:'Load source media'}).click();
   assert.equal(await page.locator('#timing-status').getAttribute('data-state'),'loading','visible loading state appears while media bytes are delayed');
   await page.waitForFunction(()=>document.querySelector('#timing-status')?.dataset.state==='completed');

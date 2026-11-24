@@ -61,3 +61,7 @@ The helper copies only:
 
 It deliberately does **not** copy `index.html`, `agents/agent-manifest.json`, canonical `agents/*.network.json`, media, API responses, credentials or other mutable pointers. If the same immutable path exists with different bytes, the helper fails instead of overwriting it. This is a local rollout mechanism and test fixture; it is not evidence that Cloudflare has retained a previous production deployment.
 
+
+### Zero-model source question mode
+
+The learner includes an explicit **Ask locally** path implemented in `src/local-answer.js`. A bounded lexical index over the already verified source catalog provides exact source cue receipts, seek and review actions without any model call, account, added dependency, or request after the initial content loads. Questions are matched by shared normalized source tokens; it deliberately abstains on unsupported wording, insufficient overlap, and near-equal source matches. It does **not** generate summaries, reason semantically, evaluate factual correctness, or replace review. The existing exact-phrase source search stays available if the local index hits its bounded limit. The optional provider lane is separate.
