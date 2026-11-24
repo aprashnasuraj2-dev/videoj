@@ -1,0 +1,30 @@
+{
+  "name": "sutra-quota-local-test",
+  "main": "quota-worker.js",
+  "compatibility_date": "2026-11-23",
+  "workers_dev": false,
+  "preview_urls": false,
+  "vars": {
+    "SUTRA_MAX_DAILY_CALLS": "3",
+    "SUTRA_MAX_CLIENT_CALLS": "2",
+    "SUTRA_MAX_CONCURRENT": "1",
+    "SUTRA_MAX_DAILY_SOURCE_READS": "3",
+    "SUTRA_MAX_CLIENT_SOURCE_READS": "2"
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "TEST_QUOTA",
+        "class_name": "InferenceQuota"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "local-test-v1",
+      "new_sqlite_classes": [
+        "InferenceQuota"
+      ]
+    }
+  ]
+}

@@ -479,3 +479,33 @@ test('Worker SSE applies downstream backpressure and releases on cancellation wh
  for(let i=0;i<100&&(!cancelled||!releases);i++)await new Promise(resolve=>setTimeout(resolve,0));
  assert.equal(cancelled,1);assert.equal(releases,1);assert.equal(upstream.body.locked,false);
 });
+
+test('quota deadline is rechecked after storage reads and cannot charge a queued expired request',async()=>{
+ const store=storage();let now=Date.parse('2026-11-24T12:00:00Z'),readStarted,releaseRead;
+ const started=new Promise(resolve=>{readStarted=resolve;});
+ const wrapper={transaction:fn=>store.transaction(tx=>fn({...tx,async get(key){readStarted();await new Promise(resolve=>{releaseRead=resolve;});return tx.get(key);}}))};
+ const config={SUTRA_MAX_DAILY_CALLS:'4',SUTRA_MAX_CLIENT_CALLS:'2',SUTRA_MAX_CONCURRENT:'1'};
+ const quota=new InferenceQuota({storage:wrapper},config,{clock:()=>now});
+ const pending=quota.fetch(quotaRequest('a',100,64,now));
+ await started;now+=ADMISSION_MS;releaseRead();
+ assert.equal((await pending).status,503);assert.equal(store.inspect(),undefined);
+ const fresh=new InferenceQuota({storage:store},config,{clock:()=>now});
+ assert.equal((await fresh.fetch(quotaRequest('a',100,64,now))).status,200);
+});
+test('repeated ambiguous admissions consume bounded daily allowance without any refund or replay',async()=>{
+ const store=storage();let now=Date.parse('2026-11-24T12:00:00Z');
+ const quota=new InferenceQuota({storage:store},{SUTRA_MAX_DAILY_CALLS:'3',SUTRA_MAX_CLIENT_CALLS:'2',SUTRA_MAX_CONCURRENT:'1'},{clock:()=>now});
+ for(let i=0;i<2;i++){
+  const response=await quota.fetch(quotaRequest('a',100,64,now));assert.equal(response.status,200);
+  // Simulate a lost reply: no lease is read and no release is attempted.
+  await response.body.cancel();
+  for(let j=0;j<5;j++)assert.equal((await quota.fetch(quotaRequest('b',100,64,now))).status,429);
+  assert.equal(store.inspect().total,i+1);
+  now+=LEASE_MS;
+ }
+ assert.equal((await quota.fetch(quotaRequest('a',100,64,now))).status,429,'unknown/expired reservations still count toward client cap');
+ const final=await quota.fetch(quotaRequest('b',100,64,now));assert.equal(final.status,200);
+ await quota.fetch(quotaRelease((await final.json()).lease));
+ assert.equal((await quota.fetch(quotaRequest('c',100,64,now))).status,429,'global budget cannot be reset by release');
+ assert.equal(store.inspect().total,3);assert.equal(store.inspect().inputBytes,300);assert.equal(store.inspect().outputTokens,192);
+});

@@ -22,6 +22,8 @@ jobs:
         with:
           node-version: '22'
       - run: node --test deploy/sutra-pages/ingress.test.mjs
+      - name: Verify local Workerd SQLite quota admission and lost-response lease expiry
+        run: node services/sutra-api/test-local/quota-runtime.mjs
       - name: Build independent static candidates
         run: |
           npm --prefix apps/sutra ci
