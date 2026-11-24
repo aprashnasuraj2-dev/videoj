@@ -85,3 +85,16 @@ test('self-hosted provider drives real restricted multi-agent orchestration unde
  assert.match(result.text,/factual truth unverified/);
  assert.ok(!JSON.stringify(result).includes(gatewayToken));
 });
+
+test('checked-in Worker candidates remain off regardless of externally installed inference tools',async()=>{
+ const fs=await import('node:fs');
+ for(const name of ['wrangler.jsonc','wrangler.private.jsonc']){
+  const config=JSON.parse(fs.readFileSync(new URL('../'+name,import.meta.url),'utf8'));
+  assert.equal(config.vars.SUTRA_ENABLE_INFERENCE,'false',name);
+  assert.equal(config.vars.SUTRA_MODELS,'',name);
+  assert.equal(config.workers_dev,false,name);
+  assert.equal(config.vars.SUTRA_INFERENCE_BACKEND,undefined,name);
+  for(const key of ['SUTRA_SELF_HOSTED_TOKEN','SUTRA_SELF_HOSTED_UPSTREAM_URL','SUTRA_PROVIDER_KEY','SUTRA_CLIENT_HASH_SECRET'])assert.equal(config.vars[key],undefined,name+':'+key);
+  assert.equal(inferenceStatus(config.vars),false,name);
+ }
+});
