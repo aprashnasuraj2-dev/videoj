@@ -10,12 +10,19 @@ export default {async fetch(request,env){
  if(!['main','source'].includes(name))return new Response('',{status:400});
  try{
   const quota=env.TEST_QUOTA.get(env.TEST_QUOTA.idFromName('local-'+name));
-  const result=await readQuotaReply(quota,path==='/drop-reservation'?'/reserve':path,await request.json(),AbortSignal.timeout(5000));
+  const observed={async fetch(target,init){
+   try{
+    const response=await quota.fetch(target,init);
+    console.log('LOCAL_QUOTA_TRANSPORT',JSON.stringify({status:response.status,url:response.url,redirected:response.redirected,type:response.headers.get('content-type')}));
+    return response;
+   }catch(error){console.error('LOCAL_QUOTA_TRANSPORT_ERROR',String(error));throw error;}
+  }};
+  const result=await readQuotaReply(observed,path==='/drop-reservation'?'/reserve':path,await request.json(),AbortSignal.timeout(5000));
   if(path==='/drop-reservation'&&result.status===200){
    // Deliberately hide a real committed reservation response. The client
    // never receives the lease; no release or retry can be made from it.
    return Response.json({lostReply:true},{status:503});
   }
   return Response.json(result.data??{refused:true},{status:result.status});
- }catch{return Response.json({unavailable:true},{status:503});}
+ }catch(error){console.error('LOCAL_QUOTA_REPLY_ERROR',String(error));return Response.json({unavailable:true},{status:503});}
 }};
