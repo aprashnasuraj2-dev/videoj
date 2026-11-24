@@ -90,3 +90,5 @@ test('manifest failure and declared graph failure retain separate caller-visible
  }}}),e=>e.code==='PEER_GRAPH_UNAVAILABLE');
  assert.equal(calls,2);
 });
+
+test('peer and caller share actual admitted model counts and bounded failure diagnostics',async()=>{let calls=0;const adapter=createScriptedModel();await assert.rejects(drive({limits:{maxModelCalls:4},model:{...adapter,chat(a){calls++;return adapter.chat(a);}},peerRuntime:{inspector:approved(),fetchImpl:async url=>Response.json(url.endsWith('agent-manifest.json')?manifest():sourceGraph)}}),e=>{assert.equal(e.code,'MODEL_LIMIT');assert.equal(e.diagnostics.modelCalls,4);assert.equal(e.diagnostics.completedModelCalls,4);assert.equal(e.diagnostics.remoteCalls,1);assert.equal(e.diagnostics.agentCalls,3);return true;});assert.equal(calls,4);});

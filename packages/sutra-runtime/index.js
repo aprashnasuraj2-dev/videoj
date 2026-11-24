@@ -121,9 +121,9 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const bounds=compiled.limits,controller=new AbortController();
  const aborted=()=>controller.abort(signal?.reason??new RuntimeError('CANCELLED','Run cancelled.'));
  if(signal?.aborted)aborted();else signal?.addEventListener('abort',aborted,{once:true});
- const trace=new TraceBus(),events=[];let modelCalls=0,active=0,totalOutput=0,failure=null,closed=false;const waiters=[];
+ const trace=new TraceBus(),events=[];let modelCalls=0,startedModelCalls=0,completedModelCalls=0,active=0,totalOutput=0,failure=null,closed=false,limitHit=false;const waiters=[];
  const check=()=>{if(closed)fail('CLOSED','Run is closed.');if(controller.signal.aborted)throw controller.signal.reason;};
- const emit=event=>{const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','network','origin'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,100);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
+ const emit=event=>{if(event.kind==='composition_limit')limitHit=true;const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','network','origin'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,100);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
  trace.addEventListener('event',e=>emit(e.detail));
  const abortWaiters=()=>{for(const wake of waiters.splice(0))wake();};controller.signal.addEventListener('abort',abortWaiters);
  const deadline=setTimeout(()=>controller.abort(new RuntimeError('TIMEOUT','Run exceeded its elapsed time limit.')),bounds.timeoutMs);
@@ -131,12 +131,13 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const stopped=new Promise((_,reject)=>{rejectAbort=()=>reject(controller.signal.reason);controller.signal.addEventListener('abort',rejectAbort,{once:true});if(controller.signal.aborted)rejectAbort();});
  // An abort may precede the first awaited race; retain an observer to avoid unhandled rejection.
  stopped.catch(()=>{});
+ const stopRun=(error)=>{if(!failure)failure=error;if(!controller.signal.aborted)controller.abort(error);throw error;};
  const guardedModel={chat:async args=>{
-  check();if(modelCalls>=bounds.maxModelCalls)fail('MODEL_LIMIT','Model-call budget exceeded.');modelCalls++;
+  check();if(modelCalls>=bounds.maxModelCalls)stopRun(new RuntimeError('MODEL_LIMIT','Model-call budget exceeded.'));modelCalls++;
   while(active>=bounds.concurrency){await new Promise(resolve=>waiters.push(resolve));check();}
   active++;const span=trace.start('model_call',{mode:model.mode,parent:args.parentSpan});
   try{
-   check();
+   check();startedModelCalls++;
    const response=await Promise.race([model.chat({...args,model:approvedModel,signal:controller.signal,onContentDelta:undefined}),stopped]);check();
    if(!plain(response)||typeof response.content!=='string'||!Array.isArray(response.toolCalls)||response.toolCalls.length>bounds.concurrency)fail('MODEL_RESPONSE','Malformed or excessive model result.');
    totalOutput+=response.content.length;
@@ -149,8 +150,8 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
     if(typeof call.function.arguments!=='string'||call.function.arguments.length>8000)fail('ARGUMENTS','Tool arguments exceed the data limit.');
     try{validateData(schema,JSON.parse(call.function.arguments));}catch{fail('ARGUMENTS','Tool arguments failed the declared invocation schema.');}
    }
-   trace.end(span,{status:'ok'});return response;
-  }catch(error){failure=error;controller.abort(error);trace.fail(span,new Error('Model or tool boundary failed.'));throw error;}
+   completedModelCalls++;trace.end(span,{status:'ok'});return response;
+  }catch(error){if(!failure)failure=error;controller.abort(error);trace.fail(span,new Error('Model or tool boundary failed.'));throw error;}
   finally{active--;waiters.shift()?.();}
  }};
  const composition={remoteCalls:0,peerCalls:new Map(),maxRemoteCalls:peerRuntime?2:0,maxCallsPerPeer:peerRuntime?1:0,agentCalls:0,maxAgentCalls:bounds.maxAgents,deadlineSeconds:bounds.timeoutMs/1000,deadline:Date.now()+bounds.timeoutMs};
@@ -217,9 +218,17 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   return unavailable();
  },resolveLink:unavailable,requestConsent:async info=>info?.kind==='network'&&!!peerRuntime||info?.kind==='mcp'&&!!third?'proceed':'decline'};
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
-  if(!result.text||events.some(e=>e.kind==='composition_limit'))fail('INCOMPLETE','Execution stopped before a complete answer.');
-  return {text:result.text,mode:model.mode,modelCalls,agentCalls:composition.agentCalls,events};
- }catch(error){if(error instanceof RuntimeError)throw error;if(controller.signal.aborted&&controller.signal.reason instanceof RuntimeError)throw controller.signal.reason;fail('RUN_FAILED','Runtime execution failed; no completed result is claimed.');}
+  if(limitHit)fail('AGENT_LIMIT','Composition agent or remote-call budget stopped execution.');
+  if(!result.text)fail('INCOMPLETE','Execution stopped before a complete answer.');
+  return {text:result.text,mode:model.mode,modelCalls:startedModelCalls,agentCalls:composition.agentCalls,events};
+ }catch(error){
+  // Expose bounded counters and sanitized reason only; never return partial model text or arbitrary error details.
+  const source=failure??(controller.signal.aborted?controller.signal.reason:error);
+  const code=signal?.aborted?'CANCELLED':source instanceof RuntimeError?source.code:source?.name==='InferenceError'&&['QUOTA','UNAVAILABLE','REQUEST_REJECTED','STREAM_TYPE','INCOMPLETE_STREAM','CANCELLED','TRANSPORT'].includes(source.code)?'PROVIDER_'+source.code:'RUN_FAILED';
+  const safe=new RuntimeError(code,'Run stopped ('+code+'); no completed answer is claimed.');
+  safe.diagnostics=Object.freeze({agentCalls:composition.agentCalls,modelCalls:startedModelCalls,completedModelCalls,remoteCalls:composition.remoteCalls,maxAgents:bounds.maxAgents,maxModelCalls:bounds.maxModelCalls,reason:code});
+  throw safe;
+ }
  finally{closed=true;clearTimeout(deadline);signal?.removeEventListener('abort',aborted);controller.signal.removeEventListener('abort',rejectAbort);controller.signal.removeEventListener('abort',abortWaiters);abortWaiters();}
 }
 

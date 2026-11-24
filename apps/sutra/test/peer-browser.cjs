@@ -162,7 +162,7 @@ const assert=require('node:assert/strict');
   const partialDownloadPromise=page.waitForEvent('download');
   await page.getByRole('button',{name:'Download redacted execution JSON'}).click();
   const partialReceipt=JSON.parse(fs.readFileSync(await (await partialDownloadPromise).path(),'utf8'));
-  assert.equal(partialReceipt.outcome,'partial');
+  assert.equal(partialReceipt.outcome,'partial');assert.equal(partialReceipt.reason,'PEER_NETWORK_MATCH');assert.equal(partialReceipt.modelCalls,1);assert.equal(partialReceipt.agentCalls,1);assert.equal(await page.locator('#peer-model-budget').innerText(),'1 / 8 used');
   assert.ok(partialReceipt.consent.some(event=>event.status==='completed'));
   assert.ok(!JSON.stringify(partialReceipt).includes('Authorization'));
   assert.equal(peerRequests.length,previous+3,'workbench wrong name fetches only manifest');

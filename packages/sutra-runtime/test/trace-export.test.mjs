@@ -59,3 +59,5 @@ test('refuses unsupported report modes, outcomes or non-array inputs',()=>{
  assert.throws(()=>createSafeTraceReceipt({outcome:'unproven-success'}));
  assert.throws(()=>createSafeTraceReceipt({events:{privatePrompt:canary}}));
 });
+
+test('failure reason is a bounded stable code, not arbitrary private data',()=>{assert.equal(createSafeTraceReceipt({outcome:'partial',reason:'MODEL_LIMIT',modelCalls:4}).reason,'MODEL_LIMIT');assert.equal(createSafeTraceReceipt({outcome:'partial',reason:canary}).reason,null);});

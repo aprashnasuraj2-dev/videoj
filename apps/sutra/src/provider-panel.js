@@ -6,6 +6,7 @@ export function mountProviderPanel({baseUrl,sources,origin=location.origin}){
  let model=null,active=null;
  const set=(s,m)=>applyScreenState(status,s,m);
  const clear=()=>{output.hidden=true;answer.textContent='';list.replaceChildren();metrics.textContent='';};
+ function renderReceipts(receipts){for(const receipt of receipts){const li=document.createElement('li');li.textContent=receipt.sourceId+' / '+receipt.sourceVersion+' · '+receipt.start+'–'+receipt.end+' s · '+receipt.excerpt;list.append(li);}}
  function controls(){check.disabled=!!active;run.disabled=!!active||!model;cancel.disabled=!active||active.kind!=='run'||active.controller.signal.aborted;question.disabled=!!active||!model;}
  check.addEventListener('click',async()=>{
   if(active)return;model=null;clear();
@@ -24,11 +25,13 @@ export function mountProviderPanel({baseUrl,sources,origin=location.origin}){
    const result=await runProviderLesson({origin,baseUrl,model,question:question.value,sources,signal:operation.controller.signal});
    if(operation.controller.signal.aborted)throw Error('cancelled');
    answer.textContent=result.text;
-   for(const receipt of result.receipts){const li=document.createElement('li');li.textContent=receipt.sourceId+' / '+receipt.sourceVersion+' · '+receipt.start+'–'+receipt.end+' s · '+receipt.excerpt;list.append(li);}
+   renderReceipts(result.receipts);
    if(!result.receipts.length){const li=document.createElement('li');li.textContent='No catalog-matched source receipt was retrieved. Do not treat the model answer as evidence.';list.append(li);}
    const u=result.usage;metrics.textContent=result.agentCalls+' agent invocations · '+result.modelCalls+' model calls · '+u.reported+'/'+u.calls+' calls reported token usage. '+(u.complete?'Reported input/output/total tokens: '+u.promptTokens+'/'+u.completionTokens+'/'+u.totalTokens+'.':'Usage incomplete; total run cost is unknown.')+' No automatic retries.';
    output.hidden=false;set('completed','Model run completed. Interpretation remains unverified; retrieved receipts establish catalog consistency only.');
-  }catch{clear();set(operation.controller.signal.aborted?'cancelled':'error',operation.controller.signal.aborted?'Inference cancelled. No completed answer is claimed.':'Inference stopped or quota exhausted. No completed answer is claimed. The local lesson remains available; retry only explicitly.');}
+  }catch(error){clear();const cancelled=operation.controller.signal.aborted;const code=cancelled?'CANCELLED':error?.code??'RUN_FAILED';const partial=error?.partial;
+   if(partial?.receipts?.length){answer.textContent='No completed answer. Only independently catalog-matched receipts from completed reads are preserved below.';renderReceipts(partial.receipts);metrics.textContent=partial.modelCalls+' model calls started; usage incomplete. No automatic retries.';output.hidden=false;}
+   set(cancelled?'cancelled':'error',(cancelled?'Inference cancelled.':'Inference stopped ('+code+').')+' No completed answer is claimed. The local lesson remains available; retry only explicitly.');}
   finally{active=null;controls();run.focus();}
  });
  cancel.addEventListener('click',()=>{if(active?.kind==='run'){active.controller.abort();controls();set('cancelling','Cancelling inference…');}});

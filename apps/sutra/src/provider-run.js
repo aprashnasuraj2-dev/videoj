@@ -35,5 +35,11 @@ export async function runProviderLesson({origin,baseUrl,model,question,sources,f
   const published=await loadLocalNetwork({baseUrl,expectedOrigin:origin,networkName:'source_learner',allowSourceTools:true,fetchImpl,signal:controller.signal});
   const result=await runNetwork({...published,request:question.trim(),model:measured,signal:controller.signal,sourceTools:{origin,sources,fetchImpl,onReceipt:receipt=>{const key=receipt.sourceId+'\u0000'+receipt.cueId;if(receipts.size<20||receipts.has(key))receipts.set(key,receipt);}}});
   return {model,text:result.text,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:[...receipts.values()],usage:{...usage,complete:usage.reported===usage.calls},truthStatus:'unverified'};
+ }catch(error){
+  // Only independently validated receipts survive a failed run. Never retain partial model text.
+  const code=signal?.aborted?'CANCELLED':typeof error?.code==='string'&&/^[A-Z_]{2,64}$/.test(error.code)?error.code:'RUN_FAILED';
+  const stopped=new Error('Provider lesson stopped');stopped.code=code;
+  stopped.partial=Object.freeze({receipts:[...receipts.values()],usage:{...usage,complete:false},agentCalls:error?.diagnostics?.agentCalls??null,modelCalls:error?.diagnostics?.modelCalls??usage.calls});
+  throw stopped;
  }finally{signal?.removeEventListener('abort',abort);controller.abort();}
 }

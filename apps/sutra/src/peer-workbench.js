@@ -116,7 +116,7 @@ export function mountPeerWorkbench({root=document,baseUrl=new URL('./agents/',lo
    runCompletedContacts=contactEvents.filter(event=>event.type==='outcome'&&event.status==='completed').length;
    const outcome=code.includes('DENIED')?'denied':code==='CANCELLED'?'cancelled':runCompletedContacts?'partial':'failed';
    lastReceipt={mode:'scripted-test',outcome,
-    modelCalls:null,agentCalls:null,events:currentEvents,contactEvents};
+    modelCalls:error?.diagnostics?.modelCalls??null,agentCalls:error?.diagnostics?.agentCalls??null,reason:code,events:currentEvents,contactEvents};
    status.textContent='Peer test stopped ('+code+'). '+(outcome==='partial'?'Some approved public reads completed, but no peer result is claimed.':'No completed peer result is claimed.')+' Local lesson and evidence are unaffected.';
    setState(code.includes('DENIED')?'denied':code==='CANCELLED'?'cancelled':'error',{outcome});
   }finally{

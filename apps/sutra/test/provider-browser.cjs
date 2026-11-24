@@ -25,7 +25,7 @@ const path=require('node:path');const net=require('node:net');const assert=requi
   await page.route('**/api/infer',async r=>{
    calls++;const body=r.request().postDataJSON();assert.equal(body.model,'synthetic-provider-test');assert.equal(r.request().headers().authorization,undefined);
    if(mode==='hold'){await new Promise(resolve=>setTimeout(resolve,800));await r.abort().catch(()=>{});return;}
-   if(mode==='quota'){await r.fulfill({status:429,json:{error:{code:'QUOTA'}}});return;}
+   if(mode==='quota'||mode==='partial'&&body.messages.some(m=>m.role==='tool'&&m.name==='mcp_search_lesson')){await r.fulfill({status:429,json:{error:{code:'QUOTA'}}});return;}
    const names=body.tools.map(t=>t.function.name),hasResult=body.messages.some(m=>m.role==='tool');let data;
    if(names.includes('evidence')&&!hasResult)data=chunk({tool_calls:[{index:0,id:'delegate-1',type:'function',function:{name:'evidence',arguments:JSON.stringify({request:'Find timing marker'})}}]},'tool_calls');
    else if(names.includes('mcp_search_lesson')&&!hasResult)data=chunk({tool_calls:[{index:0,id:'read-1',type:'function',function:{name:'mcp_search_lesson',arguments:'{"query":"timing"}'}}]},'tool_calls');
@@ -36,10 +36,11 @@ const path=require('node:path');const net=require('node:net');const assert=requi
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
   await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='completed');
   assert.equal(calls,4);assert.match(await page.locator('#provider-answer').textContent(),/Synthetic provider fixture/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.match(await page.locator('#provider-metrics').textContent(),/80\/20\/100/);
-  mode='quota';await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,5);assert.equal(await page.locator('#provider-output').isHidden(),true);
+  mode='partial';await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,7);assert.match(await page.locator('#provider-status').textContent(),/PROVIDER_QUOTA/);assert.match(await page.locator('#provider-answer').textContent(),/No completed answer/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.equal(await page.locator('#provider-output').isHidden(),false);
+  mode='quota';await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='error');assert.equal(calls,8);assert.equal(await page.locator('#provider-output').isHidden(),true);
   await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();await page.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
   mode='hold';await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>!document.querySelector('#provider-cancel').disabled);
-  for(let i=0;i<50&&calls<6;i++)await new Promise(r=>setTimeout(r,20));assert.equal(calls,6);
+  for(let i=0;i<50&&calls<9;i++)await new Promise(r=>setTimeout(r,20));assert.equal(calls,9);
   await page.getByRole('button',{name:'Cancel inference'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='cancelled');assert.equal(await page.locator('#provider-output').isHidden(),true);
   await page.getByRole('button',{name:'Inspect timing cue at 00:02'}).click();await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Synthetic cue reached'));
   assert.deepEqual(errors,[]);console.log('PASS: visible opt-in model discovery, synthetic provider transport, independently matched receipts, token counts, quota failure, cancellation, no retry and native media unaffected.');
