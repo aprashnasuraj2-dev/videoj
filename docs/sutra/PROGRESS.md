@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0036 — 2026-11-24
+
+**609/1,000 original verified; 654/1,046 total verified; 45/100 fully verified phases; six omissions; one hardware blocker; 385 pending.** Exact code `dc7bef783a4214ac014911ae310c4af3cd91d771`: 19/19 workflows; learner/Chromium, three browser engines, 18/18 candidate and 15/15 measurement tests executed. Source cancellation and immutable arguments plus independent receipt validation verified; earlier action authority revoked without deleting prior evidence. No-model reading order, content/backend preconditions, mandatory publication files, private-reference exclusion and bounded measurement arithmetic strengthened. No original phase closure; P078-02 remains pending. [Evidence](evidence/implementation/SESSION-0036.md).
+
+---
+
 ## Session 0035 — 2026-11-24
 
 **609/1,000 original verified; 652/1,044 total verified; 45/100 fully verified phases; six omissions; one hardware blocker; 385 pending.** Reconciled register and actual intervening SUTRA diff; fixed hero selector regression, complete literal/local ambiguity, per-request backend identity, cancelled-preflight evidence retention and release-candidate artifact integrity. Six implementation revisions each have 19/19 green workflow conclusions; final release job executed 15/15 tests and incomplete-template rejection. No original phase closure; P078-02 remains pending. [Evidence](evidence/implementation/SESSION-0035.md).

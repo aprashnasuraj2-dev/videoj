@@ -75,6 +75,9 @@ Required items discovered after the original plan remain release blockers until 
 - [x] `SUTRA-X007-19` Bind every snapshot-aware inference POST to the server-issued opaque configuration version; reject changed backend, exact gateway, credentials, model, limits or missing/malformed contract before quota/provider contact; no implicit retry. Portable calls without either snapshot header are a distinct interface.
 - [x] `SUTRA-X007-20` Preserve existing completed evidence through a later cancelled inference preflight; clear only on actual new model execution, keep old detached review actions inert, and never merge previous and new run evidence.
 
+- [x] `SUTRA-X007-21` Snapshot validated source tool arguments before asynchronous initialization; pre-aborted requests must not contact transport, cancelled handshakes must not proceed, and late source results must not enter a timed-out or cancelled runtime.
+- [x] `SUTRA-X007-22` Independently validate and freeze final provider-result receipts against the mounted catalog; invalid or stale receipts must prevent completed interpretation even if the transport observer error is swallowed, and only still-valid receipts may survive an incomplete run.
+
 ## X008 — Candidate identity and publication boundary
 
 - [x] `SUTRA-X008-01` Reject release-candidate evidence measured for another source revision or reviewed content identity; verify exact manifest, links, canonical graph bytes, graph membership and worker quota validity. Structural fixture only; not live measurement or release readiness.

@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T15:07:00+05:45",
+  "updated_at": "2026-11-24T15:27:36+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "89694bec2a59a3259983ab44d60d9934f5869872",
-  "last_session_id": "SUTRA-SESSION-0035",
+  "last_observed_code_sha": "dc7bef783a4214ac014911ae310c4af3cd91d771",
+  "last_session_id": "SUTRA-SESSION-0036",
   "stage": "source_consent_and_candidate_evidence_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P078-02",
@@ -16,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Continue P078-02: fail closed in source MCP on pre-aborted signals and mutable arguments across async initialization; verify zero transport and no late receipt, then recheck learner closure table. Real engine, rights, human acceptance, economics and public interoperability remain open. Do not deploy or enable paid inference.",
+  "next_action": "Continue P078-02: complete current stabilization evidence review, then verify real authorized reviewed content and operator backend pairing only when inputs exist. Keep default inference off. Advance independent learner/source/interoperability checklist work without deploying, paying, or claiming human/real-model acceptance.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -8996,7 +8996,7 @@
     },
     "SUTRA-X002-03": {
       "state": "verified",
-      "verified_at": "2026-11-24T08:14:00+05:45",
+      "verified_at": "2026-11-24T15:27:36+05:45",
       "evidence": [
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
@@ -9004,6 +9004,13 @@
           "result": "pass",
           "source_revision": "794fdbd33cb2c962e486c284bdb394c5886cc7af",
           "observed_at": "2026-11-24T08:14:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45367066017/job/138351410723",
+          "description": "Revalidated prior source action revocation and fresh receipt actions after edit.",
+          "result": "pass",
+          "source_revision": "02f442726f22d9ec58d922362cbb775784d10efc",
+          "observed_at": "2026-11-24T15:27:36+05:45"
         }
       ]
     },
@@ -10495,7 +10502,7 @@
     },
     "SUTRA-X004-01": {
       "state": "verified",
-      "verified_at": "2026-11-24T09:02:00+05:45",
+      "verified_at": "2026-11-24T15:27:36+05:45",
       "evidence": [
         {
           "artifact": "docs/sutra/evidence/implementation/PROVIDER-COST-MEASUREMENT-GATE-2026-11-24.md",
@@ -10503,6 +10510,13 @@
           "result": "pass",
           "source_revision": "49de8a1e1fe1147a230cc40a5afcf162291c9e4e",
           "observed_at": "2026-11-24T09:02:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45367407172/job/138352616212",
+          "description": "15 combined provider/local measurement tests: reject nonfinite/overflow and impossible token quantities, missing attempt sequence and future-effective pricing; no live cost inferred.",
+          "result": "pass",
+          "source_revision": "dc7bef783a4214ac014911ae310c4af3cd91d771",
+          "observed_at": "2026-11-24T15:27:36+05:45"
         }
       ]
     },
@@ -10738,7 +10752,7 @@
     },
     "SUTRA-X006-01": {
       "state": "verified",
-      "verified_at": "2026-11-24T15:07:00+05:45",
+      "verified_at": "2026-11-24T15:27:36+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45335478185/job/138246429557",
@@ -10760,6 +10774,13 @@
           "result": "pass",
           "source_revision": "2b5256bfa6feb8cf9f1dc26382c2565bb03c07b6",
           "observed_at": "2026-11-24T15:07:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45366388057/job/138349083675",
+          "description": "Consent snapshot uses exact nested content and own data descriptors before asynchronous discovery.",
+          "result": "pass",
+          "source_revision": "c95042f90c797cac3631d7aca2961a715fbbc064",
+          "observed_at": "2026-11-24T15:27:36+05:45"
         }
       ]
     },
@@ -10832,7 +10853,7 @@
     },
     "SUTRA-X006-05": {
       "state": "verified",
-      "verified_at": "2026-11-24T05:46:15Z",
+      "verified_at": "2026-11-24T15:27:36+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45335478185/job/138246429557",
@@ -10847,6 +10868,13 @@
           "result": "pass",
           "source_revision": "64d43320128786e6932a16bc708fb0383b101812",
           "observed_at": "2026-11-24T05:46:15Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45364758665/job/138343494521",
+          "description": "Pre-aborted MCP requests avoid transport, cancelled/redirected handshakes cannot complete.",
+          "result": "pass",
+          "source_revision": "b48eeb10212b51cd54660484b62097931fcc9c49",
+          "observed_at": "2026-11-24T15:27:36+05:45"
         }
       ]
     },
@@ -10912,7 +10940,7 @@
     },
     "SUTRA-X007-01": {
       "state": "verified",
-      "verified_at": "2026-11-24T06:15:38Z",
+      "verified_at": "2026-11-24T15:27:36+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45339004529/job/138257848583",
@@ -10927,6 +10955,13 @@
           "result": "pass",
           "source_revision": "450746ff4b1bf9ba9b1eb30a115ede1f0e042968",
           "observed_at": "2026-11-24T06:15:38Z"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45366733956/job/138350264590",
+          "description": "First keyboard/reading-order path prioritizes local source search before optional inference; 360px and fresh zero-model path regression.",
+          "result": "pass",
+          "source_revision": "7cdf228bd3526465049fd179841791e34b894651",
+          "observed_at": "2026-11-24T15:27:36+05:45"
         }
       ]
     },
@@ -10972,7 +11007,7 @@
     },
     "SUTRA-X007-04": {
       "state": "verified",
-      "verified_at": "2026-11-24T15:07:00+05:45",
+      "verified_at": "2026-11-24T15:27:36+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45339004529/job/138257848583",
@@ -10994,6 +11029,13 @@
           "result": "pass",
           "source_revision": "db3d29330dcdfcaf3b992d76bf3af1c1bbc48f5b",
           "observed_at": "2026-11-24T15:07:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45366183561",
+          "description": "Corrected cancellation contract and verified no upstream contact; malformed source quota disables optional inference. Exact revision 19/19 workflow conclusions.",
+          "result": "pass",
+          "source_revision": "3be8b0f94ad6c182007ec5785fb3858c7f5a416a",
+          "observed_at": "2026-11-24T15:27:36+05:45"
         }
       ]
     },
@@ -11224,7 +11266,7 @@
     },
     "SUTRA-X007-16": {
       "state": "verified",
-      "verified_at": "2026-11-24T13:05:44+05:45",
+      "verified_at": "2026-11-24T15:27:36+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45346885551/job/138283488041",
@@ -11239,12 +11281,19 @@
           "result": "pass",
           "source_revision": "a45764e11ae022bd63b6beff1fd24c6894fd1ae9",
           "observed_at": "2026-11-24T13:05:44+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45366388057/job/138349083675",
+          "description": "Explicit uppercase A/I source constraints retained; descriptor-safe validation before bounded indexing.",
+          "result": "pass",
+          "source_revision": "c95042f90c797cac3631d7aca2961a715fbbc064",
+          "observed_at": "2026-11-24T15:27:36+05:45"
         }
       ]
     },
     "SUTRA-X007-17": {
       "state": "verified",
-      "verified_at": "2026-11-24T15:07:00+05:45",
+      "verified_at": "2026-11-24T15:27:36+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45346978248/job/138283802992",
@@ -11266,6 +11315,13 @@
           "result": "pass",
           "source_revision": "ac894925e3c978e1d6d281211f7084d0f0d6dd72",
           "observed_at": "2026-11-24T15:07:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45364954724/job/138344169644",
+          "description": "Aligned catalog, local and MCP accepted 128-character IDs; 129 refused; earlier ambiguity regressions retained.",
+          "result": "pass",
+          "source_revision": "7d29bae613160531901fc397bb6a473c6306b944",
+          "observed_at": "2026-11-24T15:27:36+05:45"
         }
       ]
     },
@@ -11291,7 +11347,7 @@
     },
     "SUTRA-X007-19": {
       "state": "verified",
-      "verified_at": "2026-11-24T15:07:00+05:45",
+      "verified_at": "2026-11-24T15:27:36+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45363443002/job/138338993613",
@@ -11306,12 +11362,19 @@
           "result": "pass",
           "source_revision": "db3d29330dcdfcaf3b992d76bf3af1c1bbc48f5b",
           "observed_at": "2026-11-24T15:07:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45366388057/job/138349083675",
+          "description": "Immutable exact consent contract before asynchronous discovery; backend contract includes content and source quota; reject malformed or changed identity.",
+          "result": "pass",
+          "source_revision": "c95042f90c797cac3631d7aca2961a715fbbc064",
+          "observed_at": "2026-11-24T15:27:36+05:45"
         }
       ]
     },
     "SUTRA-X007-20": {
       "state": "verified",
-      "verified_at": "2026-11-24T15:07:00+05:45",
+      "verified_at": "2026-11-24T15:27:36+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45363800348/job/138340226545",
@@ -11326,6 +11389,13 @@
           "result": "pass",
           "source_revision": "2b5256bfa6feb8cf9f1dc26382c2565bb03c07b6",
           "observed_at": "2026-11-24T15:07:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45367066017/job/138351410723",
+          "description": "Prior completed output is labeled, preserved on edit/rediscovery, and its action authority is permanently revoked, including detached forcibly enabled control.",
+          "result": "pass",
+          "source_revision": "02f442726f22d9ec58d922362cbb775784d10efc",
+          "observed_at": "2026-11-24T15:27:36+05:45"
         }
       ]
     },
@@ -11351,7 +11421,7 @@
     },
     "SUTRA-X008-02": {
       "state": "verified",
-      "verified_at": "2026-11-24T15:07:00+05:45",
+      "verified_at": "2026-11-24T15:27:36+05:45",
       "evidence": [
         {
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45364178653/job/138341519230",
@@ -11366,6 +11436,60 @@
           "result": "pass",
           "source_revision": "89694bec2a59a3259983ab44d60d9934f5869872",
           "observed_at": "2026-11-24T15:07:00+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45367406064/job/138352610990",
+          "description": "18/18 candidate tests; required file presence and exact pack path binding before creation; omit private reference strings and unbound annotations. Incomplete template refused.",
+          "result": "pass",
+          "source_revision": "dc7bef783a4214ac014911ae310c4af3cd91d771",
+          "observed_at": "2026-11-24T15:27:36+05:45"
+        }
+      ]
+    },
+    "SUTRA-X007-21": {
+      "state": "verified",
+      "verified_at": "2026-11-24T15:27:36+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45364758665/job/138343494521",
+          "description": "Source MCP snapshots ordinary data arguments before asynchronous handshake; pre-abort and cancelled initialization avoid transport/notification; rejected getters; no late receipt.",
+          "result": "pass",
+          "source_revision": "b48eeb10212b51cd54660484b62097931fcc9c49",
+          "observed_at": "2026-11-24T15:27:36+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45366885655/job/138350790774",
+          "description": "Timed-out runtime source operation keeps original reason and cannot contribute a late receipt.",
+          "result": "pass",
+          "source_revision": "ec841cf5451db41432aa76f2d3fd83dfaf3e204e",
+          "observed_at": "2026-11-24T15:27:36+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0036.md",
+          "description": "Source cancellation, immutable arguments and current integrated suite, limitations in Session 0036.",
+          "result": "pass",
+          "source_revision": "dc7bef783a4214ac014911ae310c4af3cd91d771",
+          "observed_at": "2026-11-24T15:27:36+05:45"
+        }
+      ]
+    },
+    "SUTRA-X007-22": {
+      "state": "verified",
+      "verified_at": "2026-11-24T15:27:36+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45365628272/job/138346486911",
+          "description": "Independent final collector freezes receipts, checks mounted catalog identity, and rejects completion after invalid evidence even if observer errors are swallowed.",
+          "result": "pass",
+          "source_revision": "fd65f94aa7fda3dd7ff2291396d29e43c2d40903",
+          "observed_at": "2026-11-24T15:27:36+05:45"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0036.md",
+          "description": "Final collector invalid/stale receipt behavior and current integrated suite, limitations in Session 0036.",
+          "result": "pass",
+          "source_revision": "dc7bef783a4214ac014911ae310c4af3cd91d771",
+          "observed_at": "2026-11-24T15:27:36+05:45"
         }
       ]
     }
@@ -11444,6 +11568,7 @@
     "A delivered package is not an official Devpost submission.",
     "Participant release gate: no public deployment, domain/route assignment, public inference enablement or promotion until all applicable major checklist product/security/conformance/acceptance gates have current passing evidence. Dry-run bundling is not release.",
     "Participant reiterated 2026-11-24: no jumping to deployment while hundreds of checklist items remain; spend subsequent sessions on checklist implementation and observed verification. Existing dry-run candidate is not authorization to deploy or continue deployment work.",
-    "Session 0035: older performance/quality observations remain revision-scoped; use impact freshness output, not historical numbers as current evidence. Candidate fixtures and green CI do not authorize release."
+    "Session 0035: older performance/quality observations remain revision-scoped; use impact freshness output, not historical numbers as current evidence. Candidate fixtures and green CI do not authorize release.",
+    "Session 0036: exact current code 19/19 CI; source cancellation/snapshot and independent final evidence collector added. No original phase closure; private evidence references remain input-only. Measurement validation is arithmetic/schema only; do not treat a fixture as live evidence."
   ]
 }

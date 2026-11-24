@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T15:07:00+05:45",
+  "updatedAt": "2026-11-24T15:27:36+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -273,11 +273,15 @@
         "SUTRA-X007-19",
         "SUTRA-P078-02"
       ],
-      "mitigation": "Opaque per-request configuration precondition; reject mismatches before quota/upstream. Does not attest remote model weights.",
+      "mitigation": "Opaque per-request configuration precondition; reject mismatches before quota/upstream. Does not attest remote model weights. Bind source quota/content and freeze consent before discovery.",
       "evidence": [
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0035.md",
           "sourceRevision": "db3d29330dcdfcaf3b992d76bf3af1c1bbc48f5b"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0036.md",
+          "sourceRevision": "c95042f90c797cac3631d7aca2961a715fbbc064"
         }
       ],
       "unblockCondition": null
@@ -294,11 +298,15 @@
         "SUTRA-X007-20",
         "SUTRA-P078-02"
       ],
-      "mitigation": "Delay clearing to actual model attempt; keep run epoch and stale action guards.",
+      "mitigation": "Delay clearing to actual model attempt; keep run epoch and stale action guards. Permanently revoke earlier action authority after edit or rediscovery.",
       "evidence": [
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0035.md",
           "sourceRevision": "2b5256bfa6feb8cf9f1dc26382c2565bb03c07b6"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0036.md",
+          "sourceRevision": "02f442726f22d9ec58d922362cbb775784d10efc"
         }
       ],
       "unblockCondition": null
@@ -315,11 +323,57 @@
         "SUTRA-X008-01",
         "SUTRA-X008-02"
       ],
-      "mitigation": "Exact revision/content and byte checks; public path allowlist; actual quota validation; trusted stable source tree. Independent live gates remain.",
+      "mitigation": "Exact revision/content and byte checks; public path allowlist; actual quota validation; trusted stable source tree. Independent live gates remain. Require intended publication files and exact path map; omit private references and unbound annotations.",
       "evidence": [
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0035.md",
           "sourceRevision": "89694bec2a59a3259983ab44d60d9934f5869872"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0036.md",
+          "sourceRevision": "dc7bef783a4214ac014911ae310c4af3cd91d771"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-016",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Mutable or cancelled source operation crosses async boundary",
+      "mechanism": "Caller arguments could change during handshake; delayed source results could arrive after abort/timeout.",
+      "userEffect": "Unapproved query or stale receipt enters the run.",
+      "affectedTasks": [
+        "SUTRA-X007-21",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Snapshot descriptor-safe primitive arguments before await; preabort and post-await checks; preserve terminal timeout/cancellation reason.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0036.md",
+          "sourceRevision": "ec841cf5451db41432aa76f2d3fd83dfaf3e204e"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-017",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Provider interpretation inherits invalid receipt",
+      "mechanism": "Receipt observer errors could be swallowed at transport/runtime boundary, allowing apparent completion.",
+      "userEffect": "Learner sees an interpretation without reliable catalog-matched evidence.",
+      "affectedTasks": [
+        "SUTRA-X007-22",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Independent final collector snapshot and catalog revalidation; sticky invalidity; reject completion and preserve only valid partial receipts.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0036.md",
+          "sourceRevision": "fd65f94aa7fda3dd7ff2291396d29e43c2d40903"
         }
       ],
       "unblockCondition": null
