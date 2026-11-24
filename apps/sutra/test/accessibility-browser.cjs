@@ -87,6 +87,20 @@ const contrast=(a,b)=>{
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Actual media duration: 8.0 seconds.'));
   assert.equal(await page.locator('video').count(),1);
   assert.equal(await page.getByRole('searchbox',{name:'Search synthetic transcript'}).count(),1);
+  // The native captions track must carry a short authored cue and be capable of
+  // entering showing mode. This checks the actual WebVTT path; it does not
+  // pretend to be a human readability or screen-reader assessment.
+  await page.waitForFunction(()=>Array.from(document.querySelector('video').textTracks)
+   .some(track=>track.kind==='captions'&&track.cues&&track.cues.length>0));
+  const caption=await page.locator('video').evaluate(video=>{
+   const track=Array.from(video.textTracks).find(item=>item.kind==='captions');
+   if(!track||!track.cues?.length)return null;
+   track.mode='showing';
+   const cue=track.cues[0];
+   return {label:track.label,language:track.language,mode:track.mode,text:cue.text,start:cue.startTime,end:cue.endTime};
+  });
+  assert.deepEqual(caption,{label:'English descriptions',language:'en',mode:'showing',
+   text:'Silent synthetic timing fixture. Not a training lesson.',start:0,end:8});
   const captions=page.locator('media-captions-button');assert.equal(await captions.count(),1);
   await captions.click();
   await page.locator('video').evaluate(video=>{video.currentTime=1;});
