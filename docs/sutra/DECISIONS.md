@@ -293,3 +293,7 @@ X010-24/25. Freeze runtime trace scalar events before observers; detach listener
 ## SUTRA-DECISION-0035 — Pin admitted contact dispatch
 
 X010-26. Capture the original inspector perform method and its receiver plus peer fetch function at admission; capture again at standalone loader entry. A mutable wrapper may not replace consent authority between approved manifest and graph or MCP discovery and call. Real decision callbacks and clearSession semantics remain on the original inspector, not cloned state. No authority to contact an outside service is added. Pending exact CI.
+
+## SUTRA-DECISION-0036 — Inert private grant descriptors
+
+X010-27. Peer identity is bounded primitive text, not a coercible object. Private grants and field lists use dense ordinary data arrays and enumerable own fields; no custom iterators, executable descriptors, metadata or reserved names. Snapshot and validate before runtime admission. Preserve exact normalized URL and independent grant directions; this is a data boundary rather than a JS sandbox. Pending exact CI.

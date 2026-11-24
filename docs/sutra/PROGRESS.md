@@ -4,6 +4,8 @@
 
 ## Session 0043 — 2026-11-24
 
+**696/1,084 overall verified; 615/1,000 original; 381 pending; six omissions; one hardware blocker.** X010-24/25 verified 19/19 at 7b072b73ed9657b52df46a427fe67fb6ede2e053. X010-26 pending full exact CI. Added X010-27 private-grant inert metadata candidate; no credit until exact CI. [Evidence](evidence/implementation/SESSION-0043.md).
+
 **694/1,083 overall verified; 615/1,000 original; 382 pending; six omissions; one hardware blocker.** X010-24/25 pending exact CI. Added X010-26 candidate to pin host-selected consent dispatch and peer transport across observer and asynchronous approval boundaries; no credit until exact CI. [Evidence](evidence/implementation/SESSION-0043.md).
 
 **694/1,082 overall verified; 615/1,000 original; 381 pending; six omissions; one hardware blocker.** Reconciled P007-01/03/05/06/08/09 from reviewed offline worksheet and 20/20 exact measurement-gate tests. X010-23 19/19 verified. X010-24/25 new trace-observer isolation and pinned adapter identity candidates; no credit until exact CI. [Evidence](evidence/implementation/SESSION-0043.md).

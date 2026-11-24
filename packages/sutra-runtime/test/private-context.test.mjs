@@ -138,3 +138,31 @@ test('authority-like peer pathname cannot apply a trusted private grant to an im
  assert.ok(prompts.every(p=>!p.messages.includes('NOT_APPROVED_PRIVATE_CANARY')));
  assert.ok(prompts.filter(p=>p.origin==='sutra-local').every(p=>!p.messages.includes('ne-NP')));
 });
+
+test('private grant metadata cannot invoke coercion, getters or custom array iteration',()=>{
+ let touched=0;
+ const grant=()=>({peerUrl,network:'transit',toPeer:['locale'],toCaller:[]});
+ const config=grants=>({values:{locale:'ne-NP'},grants});
+ const invalid=[];
+ invalid.push([{...grant(),peerUrl:{toString(){touched++;return peerUrl;}}}]);
+ for(const key of ['peerUrl','network','toPeer','toCaller']){
+  const item=grant();Object.defineProperty(item,key,{enumerable:true,get(){touched++;return 'unsafe';}});invalid.push([item]);
+ }
+ const getter=[];Object.defineProperty(getter,'0',{enumerable:true,get(){touched++;return grant();}});invalid.push(getter);
+ const fields=[];Object.defineProperty(fields,'0',{enumerable:true,get(){touched++;return 'locale';}});invalid.push([{...grant(),toPeer:fields}]);
+ const custom=[grant()];custom[Symbol.iterator]=function*(){touched++;yield grant();};invalid.push(custom);
+ class CustomFields extends Array{*[Symbol.iterator](){touched++;yield 'locale';}}
+ invalid.push([{...grant(),toPeer:new CustomFields('locale')}]);
+ const hidden=grant();Object.defineProperty(hidden,'hidden',{value:'private',enumerable:false});invalid.push([hidden]);
+ invalid.push(new Array(1),[{...grant(),toPeer:new Array(1)}],[{...grant(),toCaller:['constructor']}]);
+ for(const grants of invalid)assert.throws(()=>createPrivateContextPolicy(config(grants)),PrivateContextError);
+ assert.equal(touched,0);
+ const normal=Object.assign(Object.create(null),grant());
+ assert.deepEqual(createPrivateContextPolicy(config([normal])).downstream(peerUrl,'transit'),{locale:'ne-NP'});
+});
+test('invalid private grant is rejected before any model or peer contact',async()=>{
+ let touched=0,modelCalls=0,contacts=0;
+ const grant={peerUrl:{toString(){touched++;return peerUrl;}},network:'transit',toPeer:['locale']};
+ await assert.rejects(runNetwork({definition:definition(),request:'Inspect source.',model:{mode:'scripted-test',chat(){modelCalls++;}},privateContext:{locale:'ne-NP'},peerContextGrants:[grant],peerRuntime:{inspector:inspector(),fetchImpl:async()=>{contacts++;}}}),e=>e.code==='PRIVATE_CONTEXT_DESTINATION');
+ assert.equal(touched,0);assert.equal(modelCalls,0);assert.equal(contacts,0);
+});

@@ -1024,8 +1024,8 @@
     {
       "id": "R-047",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Viewer mutates canonical runtime trace or receives post-settlement events",
       "mechanism": "Canonical stored event shared with observer; trace listener retained after settlement.",
       "userEffect": "Misleading execution evidence, injected fields or stale UI updates.",
@@ -1038,15 +1038,19 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
           "sourceRevision": "143e5bd0e95002df0863b3d9f536cc917df8406c"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "7b072b73ed9657b52df46a427fe67fb6ede2e053"
         }
       ],
-      "unblockCondition": "Exact runtime and learner regression pass."
+      "unblockCondition": null
     },
     {
       "id": "R-048",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Adapter identity changes after run admission",
       "mechanism": "Mutable model object mode and callable read again after asynchronous entry or viewer callback.",
       "userEffect": "Scripted output can be mislabelled as provider output or invoke an unintended adapter.",
@@ -1059,9 +1063,13 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
           "sourceRevision": "143e5bd0e95002df0863b3d9f536cc917df8406c"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "7b072b73ed9657b52df46a427fe67fb6ede2e053"
         }
       ],
-      "unblockCondition": "Exact mutation counterexample and normal provider/scripted regression pass."
+      "unblockCondition": null
     },
     {
       "id": "R-049",
@@ -1083,6 +1091,27 @@
         }
       ],
       "unblockCondition": "Exact mutation, denial and normal browser/runtime tests pass."
+    },
+    {
+      "id": "R-050",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Private grant metadata can execute before policy admission",
+      "mechanism": "URL coercion, grant property getters and arbitrary array iteration occur while processing caller-owned private-context grants.",
+      "userEffect": "Unexpected side effects before admission or inconsistent exact grant interpretation.",
+      "affectedTasks": [
+        "SUTRA-X010-27",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Bound primitive URL, own enumerable data descriptors, dense ordinary arrays and reserved field rejection before admission.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "76d13792d57fdfd321074a026747c72a306337b1"
+        }
+      ],
+      "unblockCondition": "Exact grant adversarial and normal runtime/browser regression pass."
     }
   ]
 }

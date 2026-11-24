@@ -10,9 +10,9 @@ On 24 November the participant explicitly tightened the ordering: stop further d
 
 ## Latest implementation checkpoint — 0043
 
-**694/1,083 overall verified; 615/1,000 original; 382 pending; six omissions; one hardware blocker.** X010-24/25 pending exact CI. Added X010-26 candidate to pin host-selected consent dispatch and peer transport across observer and asynchronous approval boundaries; no credit until exact CI. [Evidence](evidence/implementation/SESSION-0043.md).
+**696/1,084 overall verified; 615/1,000 original; 381 pending; six omissions; one hardware blocker.** X010-24/25 verified 19/19 at 7b072b73ed9657b52df46a427fe67fb6ede2e053. X010-26 pending full exact CI. Added X010-27 private-grant inert metadata candidate; no credit until exact CI. [Evidence](evidence/implementation/SESSION-0043.md).
 
-Next: Verify pending X010-24/25/26 exact workflows and mutation tests; continue P078-02. Preserve P007 availability/spend/reserve, rights, actual provider, human and release gates. No deployment or submission.
+Next: Verify pending X010-26/27 full exact CI, inspect any failing intermediate evidence; continue P078-02. Preserve original P007/rights/actual provider/human/public release gates. No deployment or submission.
 
 ## Resume sequence
 

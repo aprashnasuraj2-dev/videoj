@@ -32,6 +32,7 @@ function normalizeValues(input,where='private context'){
  return Object.freeze(out);
 }
 function parsePeerIdentity(peerUrl){
+ if(typeof peerUrl!=='string'||!peerUrl||peerUrl.length>2048||/[\u0000-\u001f\u007f]/.test(peerUrl))fail('PRIVATE_CONTEXT_DESTINATION','Private context grant needs a bounded primitive peer URL.');
  let target;
  try{target=new URL(peerUrl);}catch{fail('PRIVATE_CONTEXT_DESTINATION','Private context grant needs an absolute peer URL.');}
  const loopback=['127.0.0.1','localhost','[::1]'].includes(target.hostname);
@@ -43,12 +44,18 @@ function parsePeerIdentity(peerUrl){
  if(!networkPattern.test(network))fail('PRIVATE_CONTEXT_DESTINATION','Private context destination network is invalid.');
  return Object.freeze({url:target.href,origin:target.origin,network});
 }
+function dataArray(value,max,label){
+ if(!Array.isArray(value)||Object.getPrototypeOf(value)!==Array.prototype||value.length>max||
+  Reflect.ownKeys(value).length!==value.length+1)fail('PRIVATE_CONTEXT_POLICY',label+' must be a dense bounded data array.');
+ const out=[];
+ for(let index=0;index<value.length;index++)out.push(ownData(value,String(index)));
+ return out;
+}
 function normalizeFieldList(value,label){
  if(value===undefined)return Object.freeze([]);
- if(!Array.isArray(value)||value.length>12)fail('PRIVATE_CONTEXT_POLICY',label+' must be a bounded field list.');
  const out=[];
- for(const field of value){
-  if(typeof field!=='string'||!fieldPattern.test(field)||field==='*')fail('PRIVATE_CONTEXT_POLICY','Private context wildcard or invalid field is not allowed.');
+ for(const field of dataArray(value,12,label)){
+  if(typeof field!=='string'||!fieldPattern.test(field)||['__proto__','constructor','prototype'].includes(field))fail('PRIVATE_CONTEXT_POLICY','Private context wildcard or invalid field is not allowed.');
   if(out.includes(field))fail('PRIVATE_CONTEXT_POLICY','Duplicate private context field grant.');
   out.push(field);
  }
@@ -56,18 +63,20 @@ function normalizeFieldList(value,label){
 }
 export function createPrivateContextPolicy({values={},grants=[]}={}){
  const hostValues=normalizeValues(values);
- if(!Array.isArray(grants)||grants.length>8)fail('PRIVATE_CONTEXT_POLICY','Private context grants must be a bounded array.');
  const table=new Map();
- for(const item of grants){
+ for(const item of dataArray(grants,8,'Private context grants')){
   if(!plain(item))fail('PRIVATE_CONTEXT_POLICY','Private context grant must be a plain object.');
-  const keys=Object.keys(item);
-  if(keys.some(k=>!['peerUrl','network','toPeer','toCaller'].includes(k)))fail('PRIVATE_CONTEXT_POLICY','Unsupported private context grant field.');
-  const identity=parsePeerIdentity(item.peerUrl);
-  if(typeof item.network!=='string'||item.network!==identity.network)fail('PRIVATE_CONTEXT_DESTINATION','Private context grant must bind the exact URL and network name.');
+  const fields={};
+  for(const key of Reflect.ownKeys(item)){
+   if(typeof key!=='string'||!['peerUrl','network','toPeer','toCaller'].includes(key))fail('PRIVATE_CONTEXT_POLICY','Unsupported private context grant field.');
+   fields[key]=ownData(item,key);
+  }
+  const identity=parsePeerIdentity(fields.peerUrl);
+  if(typeof fields.network!=='string'||fields.network!==identity.network)fail('PRIVATE_CONTEXT_DESTINATION','Private context grant must bind the exact URL and network name.');
   const key=identity.url+'::'+identity.network;
   if(table.has(key))fail('PRIVATE_CONTEXT_POLICY','Duplicate private context destination grant.');
-  const toPeer=normalizeFieldList(item.toPeer,'toPeer');
-  const toCaller=normalizeFieldList(item.toCaller,'toCaller');
+  const toPeer=normalizeFieldList(fields.toPeer,'toPeer');
+  const toCaller=normalizeFieldList(fields.toCaller,'toCaller');
   for(const field of [...toPeer,...toCaller])if(!Object.hasOwn(hostValues,field)&&toPeer.includes(field))fail('PRIVATE_CONTEXT_POLICY','Outbound private context grant references an unavailable host field.');
   table.set(key,Object.freeze({identity,toPeer,toCaller}));
  }
