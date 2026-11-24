@@ -1,0 +1,33 @@
+{
+  "name": "sutra-api-private",
+  "main": "worker.js",
+  "compatibility_date": "2026-11-23",
+  "workers_dev": false,
+  "preview_urls": false,
+  "vars": {
+    "SUTRA_ENABLE_INFERENCE": "false",
+    "SUTRA_ALLOWED_ORIGIN": "https://sutra.aafnaipatro.com",
+    "SUTRA_MODELS": "",
+    "SUTRA_MAX_OUTPUT_TOKENS": "512",
+    "SUTRA_MAX_DAILY_CALLS": "100",
+    "SUTRA_MAX_CLIENT_CALLS": "8",
+    "SUTRA_MAX_CONCURRENT": "2",
+    "SUTRA_PEER_ORIGINS": ""
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "SUTRA_QUOTA",
+        "class_name": "InferenceQuota"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "sutra-quota-v1",
+      "new_sqlite_classes": [
+        "InferenceQuota"
+      ]
+    }
+  ]
+}

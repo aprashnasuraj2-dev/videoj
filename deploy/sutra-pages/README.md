@@ -1,0 +1,7 @@
+# CloudflareB learner ingress candidate (not deployed)
+
+This directory is an isolated cross-account adaptation. Build the learner using its existing instructions, run node prepare.mjs here, and validate the resulting dist/_routes.json. Pages serves static assets; only /api/* invokes the Pages Function, which invokes the private API Worker by same-account service binding. The worker config is services/sutra-api/wrangler.private.jsonc. No public workers.dev or preview URL; inference disabled. No deployment command is executed by CI. The original Worker-with-assets config is preserved.
+
+Before staging: validate Wrangler packaging and Pages service-binding behavior; ensure both resources target CloudflareB and no production token is embedded. Verify Pages returns the intended static headers, CORS, exact routing, and that the private service preserves client identity, original Origin, cancellation and streaming. If CF-Connecting-IP changes or is missing at the service boundary, keep paid inference disabled until a trusted identity mechanism is proven. Requests through Pages Functions and the API Worker may incur two dynamic invocations; ordinary static traffic should incur neither. Use measured request attribution, not inference from configuration.
+
+For later DNS cutover, associate custom names with their Pages projects first; then create DNS-only CNAMEs in the Patro zone, with HTTPS and CORS verified. Never configure wildcard/apex changes or use a workers.dev CNAME shortcut. Keep public promotion gated.
