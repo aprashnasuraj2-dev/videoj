@@ -263,6 +263,15 @@ document.querySelector('#confirm-clear-reviews').addEventListener('click',async(
 });
 window.addEventListener('storage',event=>{if(event.key!==REVIEW_STORAGE_KEY&&event.key!==LEGACY_REVIEW_STORAGE_KEY&&event.key!==null)return;if(reviewProposal)cancelReview();if(clearDialog.open)closeClear();forgetReviewAttempt();try{renderReviews();reviewStatus.textContent='Local review collection changed in another tab. Inspect the updated records.';}catch{reviewStatus.textContent='Local review data changed and could not be read.';}});
 window.addEventListener('pagehide',()=>{reviewMutations.revoke();if(reviewProposal)cancelReview();if(clearDialog.open)closeClear();});
+ // A restored document can have missed storage notifications while frozen.
+ // Re-read local records before exposing old rows or downloadable outcomes.
+window.addEventListener('pageshow',event=>{
+ if(!event.persisted)return;
+ forgetReviewAttempt();
+ try{renderReviews();}
+ catch{reviewStatus.textContent='Local review data could not be refreshed after returning. Inspect again before another action.';return;}
+ if(!document.querySelector('#review-list [data-state="stale"]'))reviewStatus.textContent='Local reviews refreshed after returning. Inspect current records before another action.';
+});
 try{renderReviews();}catch{reviewStatus.textContent='Existing local review data could not be read. Other learning features remain available.';}
 
 const sourceButton=document.querySelector('#run-source-network');

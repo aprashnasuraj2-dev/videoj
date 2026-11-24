@@ -118,6 +118,51 @@ const assert=require('node:assert/strict');
    }finally{await a.evaluate(()=>window.__restoreReviewRemove());}
   }finally{await concurrentContext.close();}
 
+  // Use real cross-document history navigation, not a synthetic PageTransitionEvent.
+  // Playwright disables Chromium BFCache by default; enable its actual behavior
+  // in this isolated browser only. If the runner cannot restore the document,
+  // record the reason and verify the honest fresh-navigation fallback instead.
+  const historyBrowser=await chromium.launch({headless:true,ignoreDefaultArgs:['--disable-back-forward-cache']});
+  try{
+   const historyContext=await historyBrowser.newContext();
+   const learner=await historyContext.newPage(),writer=await historyContext.newPage();
+   await learner.addInitScript(()=>{
+    window.__sutraHistory={documentId:crypto.randomUUID(),shows:[]};
+    window.addEventListener('pageshow',event=>window.__sutraHistory.shows.push(event.persisted));
+   });
+   await Promise.all([learner.goto(base),writer.goto(base)]);
+   await learner.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+   await writer.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+   await learner.waitForFunction(()=>window.__sutraHistory.shows.length>0);
+   const firstId=await learner.evaluate(()=>window.__sutraHistory.documentId);
+   await learner.getByRole('button',{name:'Preview source review card'}).click();
+   await learner.getByRole('button',{name:'Confirm local save'}).click();
+   await learner.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+   await writer.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+   // Leave a new unconfirmed proposal behind; it must not survive navigation.
+   await learner.getByRole('button',{name:'Preview source review card'}).click();
+   await learner.goto(base+'/agents/agent-manifest.json');
+   await writer.getByRole('button',{name:'Delete local review'}).click();
+   await writer.waitForFunction(()=>document.querySelectorAll('#review-list li').length===0);
+   await learner.goBack({waitUntil:'domcontentloaded',timeout:15000});
+   await learner.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+   await learner.waitForFunction(()=>window.__sutraHistory.shows.length>0);
+   const observation=await learner.evaluate(()=>({
+    ...window.__sutraHistory,
+    notRestoredReasons:performance.getEntriesByType('navigation')[0]?.notRestoredReasons?.toJSON?.()??null
+   }));
+   const restored=observation.documentId===firstId;
+   assert.equal(observation.shows.at(-1),restored,'same document and actual persisted pageshow must agree');
+   assert.equal(await learner.locator('#review-dialog').evaluate(dialog=>dialog.open),false);
+   assert.equal(await learner.locator('#review-list li').count(),0);
+   assert.equal(await learner.locator('#download-review-attempt').isHidden(),true);
+   console.log('ACTUAL_BFCACHE '+JSON.stringify({restored,notRestoredReasons:observation.notRestoredReasons}));
+   await learner.getByRole('button',{name:'Preview source review card'}).click();
+   await learner.getByRole('button',{name:'Confirm local save'}).click();
+   await learner.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+   await historyContext.close();
+  }finally{await historyBrowser.close();}
+
   // An isolated, hash-consistent synthetic profile with six overlapping cues
   // must show five receipts AND the complete count, including after a locale
   // switch; the original public fixture and actual source text remain unchanged.
