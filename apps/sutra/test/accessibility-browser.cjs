@@ -78,7 +78,7 @@ const contrast=(a,b)=>{
   assert.equal(await page.evaluate(()=>document.activeElement?.id),'run-peer','denial returns focus to initiating control');
 
   // Minimum target size for core visible controls. 24 CSS px is the WCAG 2.2 AA target-size minimum.
-  const targets=await page.evaluate(()=>[...document.querySelectorAll('#language-select,#load-timing,#check,#alter,#peer-url,#run-peer,#peer-inspector>summary,#prepare-review,#direct-query,#direct-submit')]
+  const targets=await page.evaluate(()=>[...document.querySelectorAll('#language-select,#load-timing,#check,#alter,#peer-url,#run-peer,#peer-inspector>summary,#prepare-review,#direct-query,#direct-submit,.journey-map a')]
    .map(el=>{const r=el.getBoundingClientRect();return {id:el.id||'peer-inspector-summary',w:r.width,h:r.height};}));
   for(const t of targets)assert.ok(t.w>=24&&t.h>=24,JSON.stringify(t));
 
