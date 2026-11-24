@@ -1,4 +1,5 @@
 import {compareClaimPair,syntheticComparison} from './comparison.js';
+import {applyLocale} from './localization.js';
 import {validateEvidenceClaim} from '../../../packages/sutra-evidence/index.js';
 
 const node=(tag,cls,text)=>{
@@ -84,6 +85,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
   }[comparison.status]??'Not evaluated';
   status.textContent=prefix+'. '+comparison.reason;
   seekStatus.textContent='';
+  applyLocale(host,document.documentElement.lang||'en');
   return comparison.status;
  }
  compare.addEventListener('click',()=>{
