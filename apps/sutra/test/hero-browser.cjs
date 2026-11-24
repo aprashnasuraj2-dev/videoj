@@ -33,6 +33,7 @@ const assert=require('node:assert/strict');
   assert.equal(await page.locator('#timing-status').getAttribute('data-state'),'empty');
   assert.equal(await page.locator('#consent-status').getAttribute('data-state'),'empty');
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
+  assert.deepEqual(await page.evaluate(()=>[...document.querySelectorAll('#comparison-title,#review-title,#developer-tools-title,#runtime-title')].map(x=>x.id)),['comparison-title','review-title','developer-tools-title','runtime-title'],'core comparison/review must precede developer tooling');
 
   // Direct evidence selection is a complete usable path before inference or media transfer.
   const direct=page.getByRole('searchbox',{name:'Exact source wording'});

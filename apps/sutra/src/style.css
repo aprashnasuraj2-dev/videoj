@@ -97,3 +97,6 @@ html[data-locale=ne] .language-review-note{font-weight:650}
 
 /* Literal lookup remains separate from optional model interpretation. */
 #direct-form label{display:block;font-size:13px;font-weight:650;margin:12px 0 6px}#direct-query{flex:1;min-width:0;width:100%;max-width:100%;box-sizing:border-box;padding:10px;border:1px solid #94afa2;border-radius:7px;color:inherit;background:#fffef9;font:inherit;min-height:36px}#direct-results{padding:0;list-style:none}#direct-results li{border:1px solid #d0ddd2;border-radius:10px;padding:12px;margin:8px 0;overflow-wrap:anywhere}#direct-results li p{font-size:12px;margin:0 0 8px}#direct-results blockquote{margin:8px 0 12px;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}#direct-action-status{overflow-wrap:anywhere}
+
+/* Keep the judge/learner journey contiguous; technical interoperability controls come afterward. */
+.developer-divider{margin-top:34px;padding:24px 28px;border-top:2px solid #bccbc1;background:#f5f7f2;border-radius:12px 12px 0 0}.developer-divider h2{margin:4px 0 8px}.developer-divider p{max-width:850px;margin-bottom:0}.developer-divider+.runtime-lab{margin-top:12px}
