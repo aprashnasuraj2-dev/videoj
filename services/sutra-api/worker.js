@@ -1,12 +1,14 @@
 import {handleInference,inferenceStatus,inferenceBackend,configuredModels,readJson,clientKeyForRequest} from './inference.js';
 import {createSourceTools} from '../../packages/sutra-source-tools/index.js';
 import {sourceQuotaLimits} from './quota.js';
+import {validateData} from '../../packages/sutra-runtime/vendor/nsdeploy/actions.js';
 import contentProfileDocument from '../../apps/sutra/public/content/content-profile.json' with {type:'json'};
 import sourceCatalogDocument from '../../apps/sutra/public/content/source-catalog.json' with {type:'json'};
 import {validateContentProfile} from '../../packages/sutra-content-profile/index.js';
 export {InferenceQuota} from './quota.js';
 const activeContent=validateContentProfile(contentProfileDocument,sourceCatalogDocument);
 const sourceTools=createSourceTools(activeContent.sources);
+const sourceDefinitions=new Map(sourceTools.list().map(definition=>[definition.name,definition]));
 
 export function allowedPeerOrigins(env={}){
  const raw=typeof env.SUTRA_PEER_ORIGINS==='string'?env.SUTRA_PEER_ORIGINS.trim():'';
@@ -68,6 +70,8 @@ export async function handleSourceTools(request,env={}){
  if(rpc.method==='initialize')return result({protocolVersion:'2025-06-18',capabilities:{tools:{listChanged:false}},serverInfo:{name:'sutra-source-tools',version:'0.1.0'}});
  if(rpc.method==='tools/list')return result({tools:sourceTools.list().map(({effect,...d})=>({...d,annotations:{readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:false}}))});
  if(rpc.method==='tools/call'){
+  const definition=sourceDefinitions.get(rpc.params?.name);
+  try{if(!definition)throw Error();validateData(definition.inputSchema,rpc.params?.arguments);}catch{return result({content:[{type:'text',text:'Source tool unavailable; no result is claimed.'}],isError:true});}
   const sourceQuotaRequested=env.SUTRA_MAX_DAILY_SOURCE_READS!==undefined||env.SUTRA_MAX_CLIENT_SOURCE_READS!==undefined;
   if(sourceQuotaRequested){
    if(!sourceQuotaLimits(env)||!env.SUTRA_QUOTA||typeof env.SUTRA_CLIENT_HASH_SECRET!=='string'||env.SUTRA_CLIENT_HASH_SECRET.length<32)return json({error:{code:'SOURCE_QUOTA_UNAVAILABLE'}},503);
