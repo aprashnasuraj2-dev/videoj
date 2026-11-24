@@ -20,3 +20,16 @@ test('source quota and availability failures preserve bounded failure codes thro
   assert.equal(toolCalls,1);
  }
 });
+
+test('composition timeout while a source call is held does not become a source error or complete later',async()=>{
+ let observed=0,deliver,receipts=0,late;
+ const pending=runNetwork({definition:graph,request:'find timing',model:createSourceScriptedModel(),limits:{timeoutMs:200},sourceTools:{...sourceTools,onReceipt(){receipts++;},fetchImpl:async(url,opts)=>{
+  if(JSON.parse(opts.body).method==='tools/call'){
+   observed++;late=await transport(url,opts);return new Promise(r=>deliver=r);
+  }
+  return transport(url,opts);
+ }}});
+ await assert.rejects(pending,e=>e.code==='TIMEOUT'&&e.diagnostics.reason==='TIMEOUT');
+ assert.equal(observed,1);assert.equal(receipts,0);
+ deliver(late);await new Promise(r=>setTimeout(r,0));assert.equal(receipts,0,'late valid response cannot enter stopped composition');assert.equal(observed,1);
+});
