@@ -11,7 +11,7 @@ export function inferenceBackend(env={}){
    ?Object.freeze({mode,url:UPSTREAM,credential:env.SUTRA_PROVIDER_KEY}):null;
  }
  if(mode!=='self_hosted')return null;
- if(typeof env.SUTRA_SELF_HOSTED_UPSTREAM_URL!=='string'||typeof env.SUTRA_SELF_HOSTED_TOKEN!=='string'||env.SUTRA_SELF_HOSTED_TOKEN.length<16)return null;
+ if(typeof env.SUTRA_SELF_HOSTED_UPSTREAM_URL!=='string'||typeof env.SUTRA_SELF_HOSTED_TOKEN!=='string'||env.SUTRA_SELF_HOSTED_TOKEN.length<32)return null;
  let url;try{url=new URL(env.SUTRA_SELF_HOSTED_UPSTREAM_URL);}catch{return null;}
  const host=url.hostname;
  const labels=host.split('.');

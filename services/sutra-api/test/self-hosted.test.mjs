@@ -5,8 +5,9 @@ import fs from 'node:fs';
 import {runNetwork} from '../../../packages/sutra-runtime/index.js';
 import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
 const url='https://operator-gateway.example/v1/chat/completions';
+const gatewayToken='PRIVATE_GATEWAY_TEST_SECRET_'+ 'x'.repeat(20);
 const env={
- SUTRA_ENABLE_INFERENCE:'true',SUTRA_INFERENCE_BACKEND:'self_hosted',SUTRA_SELF_HOSTED_UPSTREAM_URL:url,SUTRA_SELF_HOSTED_TOKEN:'PRIVATE_GATEWAY_TEST_SECRET',
+ SUTRA_ENABLE_INFERENCE:'true',SUTRA_INFERENCE_BACKEND:'self_hosted',SUTRA_SELF_HOSTED_UPSTREAM_URL:url,SUTRA_SELF_HOSTED_TOKEN:gatewayToken,
  SUTRA_ALLOWED_ORIGIN:'https://sutra.test',SUTRA_MODELS:'local-tool-model',SUTRA_CLIENT_HASH_SECRET:'x'.repeat(32),
  SUTRA_MAX_OUTPUT_TOKENS:'256',SUTRA_MAX_DAILY_CALLS:'10',SUTRA_MAX_CLIENT_CALLS:'2',SUTRA_MAX_CONCURRENT:'2',
  SUTRA_QUOTA:{idFromName:()=> 'global',get:()=>({fetch:async req=>new URL(req).pathname==='/release'?Response.json({released:true}):Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000001'})})}
@@ -27,14 +28,14 @@ test('self-hosted status reveals backend but never the gateway, token or interna
  const response=await worker.fetch(new Request('https://sutra.test/api/status'),env);
  const data=await response.json();assert.equal(data.inference,'configured');assert.equal(data.backend,'self_hosted');
  assert.equal(data.model,'local-tool-model');assert.equal(data.byok,false);
- assert.ok(!JSON.stringify(data).includes('PRIVATE_GATEWAY_TEST_SECRET'));
+ assert.ok(!JSON.stringify(data).includes(gatewayToken));
  assert.ok(!JSON.stringify(data).includes('operator-gateway.example'));
 });
 test('self-hosted streaming uses only approved TLS gateway and server-owned bearer token with bounded usage',async()=>{
  let upstream=0,body=null,auth='',requestedUrl='';
  const response=await handleInference(req(),env,{fetchImpl:async(u,opts)=>{upstream++;requestedUrl=u;auth=opts.headers.Authorization;body=JSON.parse(opts.body);return sse();}});
  assert.equal(response.status,200);assert.equal(upstream,1);assert.equal(requestedUrl,url);
- assert.equal(auth,'Bearer PRIVATE_GATEWAY_TEST_SECRET');assert.equal(body.model,'local-tool-model');assert.equal(body.max_tokens,256);
+ assert.equal(auth,'Bearer '+gatewayToken);assert.equal(body.model,'local-tool-model');assert.equal(body.max_tokens,256);
  assert.equal(body.max_completion_tokens,undefined);assert.equal(body.stream_options.include_usage,true);
  assert.equal(body.tool_choice,undefined);
  const output=await response.text();assert.match(output,/Unverified local inference/);assert.match(output,/prompt_tokens/);assert.doesNotMatch(output,/PRIVATE_GATEWAY_TEST_SECRET/);
@@ -68,7 +69,7 @@ test('self-hosted provider drives real restricted multi-agent orchestration unde
   assert.equal(requestUrl,'https://sutra.test/api/v1/chat/completions');assert.equal(opts.headers.Authorization,undefined);
   return handleInference(new Request(requestUrl,{method:'POST',headers:{...opts.headers,Origin:'https://sutra.test'},body:opts.body,signal:opts.signal}),env,{
    fetchImpl:async(gatewayUrl,upstream)=>{
-    assert.equal(gatewayUrl,url);assert.equal(upstream.headers.Authorization,'Bearer PRIVATE_GATEWAY_TEST_SECRET');
+    assert.equal(gatewayUrl,url);assert.equal(upstream.headers.Authorization,'Bearer '+gatewayToken);
     const body=JSON.parse(upstream.body);providerBodies.push(body);
     const toolResult=body.messages.some(m=>m.role==='tool'),hasTools=body.tools.length>0;
     if(hasTools&&!toolResult)return encode([chunk({tool_calls:[{index:0,id:'delegate-evidence',type:'function',function:{name:'evidence',arguments:'{"request":"Check catalog source cue."}'}}]},'tool_calls')]);
@@ -82,5 +83,5 @@ test('self-hosted provider drives real restricted multi-agent orchestration unde
  assert.equal(providerBodies.length,3);
  assert.ok(providerBodies.every(b=>b.model==='local-tool-model'&&b.max_tokens===256&&b.max_completion_tokens===undefined));
  assert.match(result.text,/factual truth unverified/);
- assert.ok(!JSON.stringify(result).includes('PRIVATE_GATEWAY_TEST_SECRET'));
+ assert.ok(!JSON.stringify(result).includes(gatewayToken));
 });
