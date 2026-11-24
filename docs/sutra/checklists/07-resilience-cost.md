@@ -148,7 +148,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P068-03` Prevent public/shared caching of model responses and credentials
 - [x] `SUTRA-P068-04` Bound local trace/card storage and define deletion semantics
 - [x] `SUTRA-P068-05` Test graph/media version skew after a deployment
-- [ ] `SUTRA-P068-06` Retain required old hashed assets through rollout where appropriate
+- [x] `SUTRA-P068-06` Retain required old hashed assets through rollout where appropriate
 - [ ] `SUTRA-P068-07` Verify deleting BYOK and cards removes their stored copies
 - [x] `SUTRA-P068-08` Document retention without claiming a hosted scheduler or backup exists
 - [x] `SUTRA-P068-09` Produce and review the phase artifact: Cache/retention matrix and stale-build checks.
