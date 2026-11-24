@@ -45,3 +45,31 @@ test('Nepali Unicode combining marks remain within source words, without transla
  assert.equal(result.modelCalls,0);assert.equal(result.networkRequests,0);
  assert.equal(result.truthStatus,'unverified');
 });
+
+test('a missing lexical constraint cannot disappear through partial coverage or token length filtering',()=>{
+ const local=make();
+ for(const question of [
+  'synthetic timing marker training instruction voltage',
+  'synthetic timing marker training instruction 7',
+  'synthetic timing marker training instruction X',
+  'synthetic timing marker training instruction '+ 'z'.repeat(49)
+ ]){
+  const result=local.query(question);
+  assert.ok(['no_match','unsupported'].includes(result.state),question);
+  assert.deepEqual(result.receipts,[]);
+  assert.equal(result.modelCalls,0);assert.equal(result.networkRequests,0);
+ }
+ assert.equal(local.query('synthetic timing marker training instruction').state,'matched');
+});
+test('phrase ranking cannot hide alternative fully matching cues and the receipt cap is explicit',()=>{
+ const source=structuredClone(fixture.source);source.duration=20;
+ source.cues=Array.from({length:6},(_,i)=>({
+  id:'match-'+i,start:i*2,end:i*2+1,
+  text:i===0?'Timing marker':'Marker for timing'
+ }));
+ const result=createLocalAnswer({sources:[source],now:()=>fixture.receipt.retrievedAt}).query('timing marker');
+ assert.equal(result.state,'ambiguous');
+ assert.equal(result.matchCount,6);assert.equal(result.truncated,true);
+ assert.equal(result.receipts.length,5);assert.equal(result.receipts[0].cueId,'match-0');
+ assert.equal(result.truthStatus,'unverified');
+});

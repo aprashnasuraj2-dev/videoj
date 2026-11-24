@@ -9,8 +9,9 @@ import {createReceiptActionRow} from './receipt-actions.js';
 const STOP=new Set(('a an and are as at be by can could did do does for from how i in is it its me of on or our please show source tell that the their there these this those to us video was were what when where which who why will with would you your about explain find give happen happens happened lesson mentioned say says said occur occurs कहाँ कसरी कति के कुन कसलाई मलाई छ छन् हो हुन्छ कहाँनेर पाठमा पाठको यो यी त्यो तथा र वा मा को का कि कृपया देखाउनुहोस् भन्नुहोस्').split(' '));
 // Combining marks are part of Indic words; dropping \\p{M} breaks Nepali evidence matching.
 const WORDS=/[\p{L}\p{M}\p{N}]+/gu;
-const toks=text=>[...(text.normalize('NFKC').toLocaleLowerCase('en').match(WORDS)??[])]
-  .filter(w=>w.length>=2&&w.length<=48&&!STOP.has(w));
+const termsOf=text=>[...(text.normalize('NFKC').toLocaleLowerCase('en').match(WORDS)??[])]
+  .filter(w=>!STOP.has(w));
+const toks=text=>termsOf(text).filter(w=>w.length<=48);
 const snapshot=(state,receipts=[],extra={})=>Object.freeze({
  state,receipts:Object.freeze(receipts.map(r=>Object.freeze({...r}))),modelCalls:0,networkRequests:0,
  truthStatus:'unverified',generation:'none',...extra
@@ -49,8 +50,10 @@ export function createLocalAnswer({sources,now}={}){
  const docCount=rows.length;
  return Object.freeze({query(question){
   if(typeof question!=='string'||!question.trim()||question.length>240)return snapshot('invalid_query');
-  const queryTokens=[...new Set(toks(question))].slice(0,18);
-  if(!queryTokens.length||queryTokens.length>12)return snapshot('unsupported');
+  // Do not discard unfamiliar constraints (including single digits/letters or
+  // long words) and then call the remainder a match. Fail closed instead.
+  const queryTokens=[...new Set(termsOf(question))];
+  if(!queryTokens.length||queryTokens.length>12||queryTokens.some(w=>w.length>48))return snapshot('unsupported');
   const scored=[];
   for(const row of rows){
    let matched=0,weight=0;
@@ -59,22 +62,25 @@ export function createLocalAnswer({sources,now}={}){
    }
    if(!matched)continue;
    const coverage=matched/queryTokens.length;
-   if(coverage<.8||matched===1&&(queryTokens.length!==1||queryTokens[0].length<5))continue;
+   if(coverage!==1||matched===1&&queryTokens[0].length<5)continue;
    const phrase=row.folded.includes(queryTokens.join(' '))?1:0;
    const score=coverage*100+weight*8+phrase*6;
    scored.push({row,score});
   }
   if(!scored.length)return snapshot('no_match');
   scored.sort((a,b)=>b.score-a.score||a.row.rank-b.row.rank);
-  const best=scored[0].score,close=scored.filter(v=>best-v.score<4).slice(0,5);
+  // Phrase ranking changes display order, not whether alternatives exist.
+  // Cap rendered receipts while retaining the complete match count.
+  const close=scored.slice(0,5);
   try{
    const receipts=close.map(({row})=>{
     const receipt=tools.call('read_cue',{sourceId:row.sourceId,cueId:row.cueId}).receipts[0];
     if(validateReceipt(receipt,{sources:raw}).level!=='catalog_matched')throw Error('LOCAL_RECEIPT');
     return receipt;
    });
-   return snapshot(close.length===1?'matched':'ambiguous',receipts,{
-    explanation:close.length===1?'One lexically matching source excerpt; relevance and factual truth are unverified.':'Multiple near-equal lexical excerpts; no single answer selected.'
+   return snapshot(scored.length===1?'matched':'ambiguous',receipts,{
+    matchCount:scored.length,truncated:scored.length>close.length,
+    explanation:scored.length===1?'One lexically matching source excerpt; relevance and factual truth are unverified.':'Multiple lexical excerpts; up to five shown; no single answer selected.'
    });
   }catch{return snapshot('unavailable');}
  }});
