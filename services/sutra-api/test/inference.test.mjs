@@ -366,3 +366,15 @@ test('late upstream response body is disposed and quota lease released once afte
  for(let i=0;i<100&&!cancelled;i++)await new Promise(resolve=>setTimeout(resolve,0));
  assert.equal(cancelled,1);assert.equal(released,1);assert.equal(late.body.locked,false);
 });
+
+test('upstream response received at abort handoff is disposed before returning unavailable',async()=>{
+ const abort=new AbortController();let released=0,disposed=0,contacts=0;
+ const env=environment(async url=>new URL(url).pathname==='/release'?(released++,Response.json({released:true})):Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000920'}));
+ const response=new Response(new ReadableStream({cancel(){disposed++;}}),{headers:{'Content-Type':'text/event-stream'}});
+ const result=await handleInference(new Request(request(),{signal:abort.signal}),env,{fetchImpl:()=>{
+  contacts++;queueMicrotask(()=>queueMicrotask(()=>abort.abort()));return response;
+ }});
+ assert.equal(result.status,502);assert.equal(contacts,1);assert.equal(released,1);
+ for(let i=0;i<20&&!disposed;i++)await new Promise(resolve=>setTimeout(resolve,0));
+ assert.equal(disposed,1,'upstream accepted by promise but rejected at signal recheck still belongs to Worker');assert.equal(response.body.locked,false);
+});

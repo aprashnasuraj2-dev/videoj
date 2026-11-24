@@ -68,3 +68,15 @@ test('provider error bodies do not remain live and no response content is surfac
   assert.equal(cancelled,1);assert.equal(response.body.locked,false);
  }
 });
+
+test('provider cancellation at response ownership handoff disposes the stream without parsing it',async()=>{
+ for(const depth of [1,2,3]){
+  const abort=new AbortController();let disposed=0;
+  const response=new Response(new ReadableStream({cancel(){disposed++;}}),{headers:{'Content-Type':'text/event-stream'}});
+  const later=n=>n===0?abort.abort():queueMicrotask(()=>later(n-1));
+  const adapter=createProviderAdapter({origin:'https://sutra.test',model:'approved',fetchImpl:()=>{later(depth);return response;}});
+  await assert.rejects(adapter.chat({messages:[],signal:abort.signal}),e=>e.code==='CANCELLED');
+  for(let i=0;i<20&&!disposed;i++)await new Promise(resolve=>setTimeout(resolve,0));
+  assert.equal(disposed,1,'each rejected response body is disposed exactly once');assert.equal(response.body.locked,false);
+ }
+});
