@@ -8,6 +8,10 @@ The participant explicitly directed on 23 November 2026: do not jump to release 
 
 On 24 November the participant explicitly tightened the ordering: stop further deployment preparation and prioritize the unfinished engineering checklist. Do not reconnect cloud accounts or advance domain/DNS, staging/public deployment, release or promotion merely because build candidates exist. Keep genuine human/external gates pending and continue independent local/CI engineering; use the latest register queue and dependency checks.
 
+## Latest implementation checkpoint — 0041
+
+Actual source head at checkpoint: `27a4a7034e447365491471e343acc657af17e843`; most recent fully observed passing source: `27a4a7034e447365491471e343acc657af17e843`. Compare both to actual draft PR #49 head before changes. Do not treat the supplied older b142ab05 SHA as current. Read [session 0041 evidence](evidence/implementation/SESSION-0041.md) and inspect actual job logs, particularly run 45390120291 and matrix 45390120254. Confirm exact CI for 27a4a7034e447365491471e343acc657af17e843 (including learner browser and three-engine matrix if still pending); investigate actual Chromium BFCache eligibility using full browser and native navigation diagnostics; test retained paused media and cross-tab storage refresh on genuine restoration. Continue P078-02; no production release, paid model, human acceptance or pilot gate is closed.
+
 ## Resume sequence
 
 1. Read root `AGENTS.md` and applicable nested instructions. Use the repo selected by the user; do not guess from unrelated player projects.

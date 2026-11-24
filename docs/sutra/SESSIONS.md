@@ -1,5 +1,10 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0041 — 2026-11-24
+
+- 2026-11-24T17:51:56.466+05:45: **609/1,000 original; 666/1,059 overall verified; 45/100 original phases fully verified; six omissions; one hardware blocker.** Reconciled 33 intervening commits; restored Worker parse and exact complete cache rules; fixed test-only loopback identity mapping; hardened destructive review outcomes and bound provider response ownership; actual history traversal fresh-loaded, not BFCache restoration. Exact 65038c2b4a3bb353565f94ba91307760dfc8d9ee passed 19/19 workflows. Latest code `27a4a7034e447365491471e343acc657af17e843`: 19/19 successful observed, fully green. Immutable collector regression verified. P078-02 remains open. [Evidence](evidence/implementation/SESSION-0041.md).
+- Next: Confirm exact CI for 27a4a7034e447365491471e343acc657af17e843 (including learner browser and three-engine matrix if still pending); investigate actual Chromium BFCache eligibility using full browser and native navigation diagnostics; test retained paused media and cross-tab storage refresh on genuine restoration. Continue P078-02; no production release, paid model, human acceptance or pilot gate is closed.
+
 ## SUTRA-SESSION-0040 — 2026-11-24
 
 - 2026-11-24T17:18:41.699+05:45: **609/1,000 original; 663/1,055 total verified; 45 fully verified phases, six omissions, one hardware blocker.** Final source `4debb2ad2503bbce0265398804542d4d2d645cba` passed 19/19 CI with all ten Chromium integrations and Chromium/Firefox/WebKit matrix. Added X009-04..05: scripted developer-source run navigation revocation, no stale traces, and one active synthetic consent preview, Escape/pagehide denial and fresh retry. UI now distinguishes unknown deletion/clear outcomes. `P078-02` stays pending, no release. [Evidence](evidence/implementation/SESSION-0040.md).

@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T15:42:00+05:45",
+  "updatedAt": "2026-11-24T17:51:56.466+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -470,6 +470,92 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0037.md",
           "sourceRevision": "352db704c1bd12d11ef26788c2809e779d8f59ed"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-022",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Ambiguous destructive local review outcome",
+      "mechanism": "Storage changes may precede a thrown exception; two-key clear is not atomic.",
+      "userEffect": "Definite refusal or stale export may misrepresent deleted records.",
+      "affectedTasks": [
+        "SUTRA-X009-06",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Classify post-effect failures unknown, refresh storage and invalidate affected action evidence; no replay.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "65038c2b4a3bb353565f94ba91307760dfc8d9ee"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-023",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Rejected provider response body or late 409 callback",
+      "mechanism": "Binding rejects before downstream stream ownership; aborted transport may still settle.",
+      "userEffect": "Unconsumed stream or stale UI state.",
+      "affectedTasks": [
+        "SUTRA-X010-01",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Dispose rejected/late bodies and guard callbacks with cancellation; exact ingress and no ambient credentials.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "65038c2b4a3bb353565f94ba91307760dfc8d9ee"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-024",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Genuine history restoration not yet observed",
+      "mechanism": "Synthetic pagehide and a real history reload cannot establish BFCache eligibility or restored media behavior.",
+      "userEffect": "Stale local rows or authority may survive a browser freeze.",
+      "affectedTasks": [
+        "SUTRA-X009-07",
+        "SUTRA-X007-25",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Refresh local state on native persisted pageshow; existing fallback verified. Actual restoration still unobserved.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "65038c2b4a3bb353565f94ba91307760dfc8d9ee"
+        }
+      ],
+      "unblockCondition": "Observe native persisted pageshow, same document ID, storage drift and retained media paused using a genuinely restored browser document."
+    },
+    {
+      "id": "R-025",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Mutable source authority at final provider evidence collector",
+      "mechanism": "Matching only a caller-mutable current catalog could mint newly forged receipts.",
+      "userEffect": "Completed or partial model interpretation could carry changed source evidence.",
+      "affectedTasks": [
+        "SUTRA-X010-02",
+        "SUTRA-X007-22",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Match immutable original catalog and current validity independently; new negative unit test; full integration required.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0041.md",
+          "sourceRevision": "27a4a7034e447365491471e343acc657af17e843"
         }
       ],
       "unblockCondition": null

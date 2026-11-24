@@ -2,6 +2,14 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0041 — 2026-11-24
+
+**609/1,000 original; 666/1,059 overall verified; 45/100 original phases fully verified; six omissions; one hardware blocker.** Reconciled 33 intervening commits; restored Worker parse and exact complete cache rules; fixed test-only loopback identity mapping; hardened destructive review outcomes and bound provider response ownership; actual history traversal fresh-loaded, not BFCache restoration. Exact 65038c2b4a3bb353565f94ba91307760dfc8d9ee passed 19/19 workflows. Latest code `27a4a7034e447365491471e343acc657af17e843`: 19/19 successful observed, fully green. Immutable collector regression verified. P078-02 remains open. [Evidence](evidence/implementation/SESSION-0041.md).
+
+Next: Confirm exact CI for 27a4a7034e447365491471e343acc657af17e843 (including learner browser and three-engine matrix if still pending); investigate actual Chromium BFCache eligibility using full browser and native navigation diagnostics; test retained paused media and cross-tab storage refresh on genuine restoration. Continue P078-02; no production release, paid model, human acceptance or pilot gate is closed.
+
+---
+
 ## Session 0040 — 2026-11-24
 
 **609/1,000 original; 663/1,055 total verified; 45/100 phases fully verified; six omissions; one hardware blocker, 385 pending original.** `4debb2ad2503bbce0265398804542d4d2d645cba` passed 19/19 workflows including learner integration and three headless engines. All optional scripted run epochs and simulated consent preview now reject stale async authority on navigation; local unknown delete/clear status is explicit. Two X009 checks credited. `P078-02` and pilot-observed `P078-07` remain open; no original major acceptance or release closed. [Evidence](evidence/implementation/SESSION-0040.md).

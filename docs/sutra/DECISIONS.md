@@ -246,3 +246,9 @@ A post-entry timeout must settle the **caller** promptly but must not release th
 
 - 2026-11-24T17:18:41.699+05:45; X009-04..05, P078-02. Even clearly labeled developer-only scripted network and synthetic consent exercises must follow the same authority lifetime boundary as real source/peer flows. Never let a late manifest or consent callback reassert a completed result after navigation. Keep fresh retries explicit and independent.
 - Alternative rejected: leave these test controls exempt because they are not paid inference. They still make real same-origin artifact/source contacts and may teach users unsafe success semantics. Synthetic pagehide injection is controlled regression evidence, not production BFCache or actual user approval evidence. [Session 0040](evidence/implementation/SESSION-0040.md).
+
+## SUTRA-DECISION-0031 — Destructive ambiguity, transport body ownership and restoration evidence
+
+- 2026-11-24T17:51:56.466+05:45; X009-06..07, X010-01..02, P078-02. Treat destructive storage errors after effect entry as unknown; verify actual storage instead of reporting definite refusal or success. Explicit confirmation does not make a two-key clear atomic.
+- The layer rejecting a response owns its body until handoff. Late 409 must not notify a revoked operation. Keep exact response identity; test-only loopback mapping explicitly asserts actual loopback URL before mapping response metadata to virtual HTTPS. Do not loosen production identity for fixtures.
+- A native history traversal that reloads the page is not BFCache restoration. Keep real restoration open; record actual observed lifecycle and eligibility reason rather than replacing it with synthetic events. Source/catalog consistency remains distinct from factual truth. [Session 0041](evidence/implementation/SESSION-0041.md).

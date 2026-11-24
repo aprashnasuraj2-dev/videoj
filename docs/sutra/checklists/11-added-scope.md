@@ -100,3 +100,11 @@ The three checks cover local, cooperative browser review operations. Storage acc
 - [x] `SUTRA-X009-05` Require exactly one pending synthetic consent preview, settle Escape/denial and navigation without stale session grants or duplicate simulated operations, and keep all external network contacts at zero.
 
 Both are isolated learner/developer regressions verified in automated browser and unit suites. Synthetic `pagehide` tests do not assert actual BFCache eligibility or true third-party authorization. These checks do not modify public release gates.
+
+- [x] `SUTRA-X009-06` Distinguish post-effect delete/clear exception or failed readback from a proven pre-effect rejection; re-read actual list, invalidate affected export authority and never replay a partially successful mutation. Requires X009-02 and cooperative local storage; verify unit and real-browser fault injection.
+- [ ] `SUTRA-X009-07` Observe an actual BFCache restoration (same document ID and native pageshow.persisted=true), not merely synthetic lifecycle events or fresh history navigation. Requires X007-25 and X009-06; verify cross-tab deletion while frozen, no stale modal/export authority, retained valid media paused, and explicit fresh retry; document browser eligibility and reasons if no restoration occurs.
+
+## X010 — Provider transport ownership and immutable evidence authority
+
+- [x] `SUTRA-X010-01` Refuse unexpected POST response URL or redirects; dispose rejected/late response bodies, suppress stale contract/catalog 409 callbacks after cancellation, and make no transport call when pre-aborted. Requires X007-19 and X007-21; verify cancellation, substituted-response and failing-callback tests plus integrated browser checks.
+- [x] `SUTRA-X010-02` Bind final provider evidence to the original immutable source/cue snapshot as well as current-source validity; reject caller-mutated cue/version evidence before it can enter completed or partial results. Requires X009-01 and X007-22; verify forged matching-current-but-not-original receipts, sticky invalid state and full learner integration.
