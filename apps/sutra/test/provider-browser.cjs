@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');
 const {spawn}=require('node:child_process');
-const path=require('node:path');const net=require('node:net');const assert=require('node:assert/strict');
+const path=require('node:path');const net=require('node:net');const fs=require('node:fs');const assert=require('node:assert/strict');
 (async()=>{
  const app=path.resolve(__dirname,'..');
  const port=await new Promise((resolve,reject)=>{const s=net.createServer();s.once('error',reject);s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(e=>e?reject(e):resolve(p));});});
@@ -16,13 +16,20 @@ const path=require('node:path');const net=require('node:net');const assert=requi
   await page.getByRole('button',{name:'Check inference availability'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='denied');
   assert.equal(await page.getByRole('button',{name:'Ask configured model'}).isDisabled(),true);
-  assert.equal(requests.filter(x=>x.endsWith('/api/infer')).length,0);
+  assert.equal(requests.filter(x=>x.endsWith('/api/infer')||x.endsWith('/api/v1/chat/completions')).length,0);
   await page.getByRole('button',{name:'Check example',exact:true}).click();assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
   // Test transport only: intercept the provider endpoint; never contact a paid model.
-  await page.route('**/api/status',r=>r.fulfill({json:{inference:'configured',model:'synthetic-provider-test',sourceTools:'synthetic-catalog',factualTruth:'unverified'}}));
+  await page.route('**/api/status',r=>r.fulfill({json:{inference:'configured',model:'synthetic-provider-test',routerBase:'/api/v1',publisherFunded:true,byok:false,sourceTools:'synthetic-catalog',factualTruth:'unverified'}}));
+  const releaseGraph=JSON.parse(fs.readFileSync(path.join(app,'public/agents/source_learner.network.json'),'utf8'));releaseGraph.llm_config={model_name:'synthetic-provider-test'};
+  const releaseManifest=JSON.parse(fs.readFileSync(path.join(app,'public/agents/agent-manifest.json'),'utf8'));
+  releaseManifest.llm_router={base_url:base+'/api/v1',mock:false,publisher_funded:true};releaseManifest.allowed_peers=['https://guide.example'];releaseManifest.deployment={mode:'static',self_contained_runtime:true,browser_mock:false,direct_byok:false,direct_mcp_requires_cors:true,public_mcp_facade:false};
+  releaseManifest.networks=releaseManifest.networks.map(n=>n.name==='source_learner'?{...n,hocon:'./release/test/source_learner.network.json'}:n);
+  let manifestReads=0,graphReads=0;
+  await page.route('**/agents/agent-manifest.json',r=>{manifestReads++;return r.fulfill({json:releaseManifest});});
+  await page.route('**/agents/release/test/source_learner.network.json',r=>{graphReads++;return r.fulfill({json:releaseGraph});});
   let mode='complete',calls=0;const chunk=(delta,finish_reason=null)=>({choices:[{index:0,delta,finish_reason}]});
   const sse=items=>items.map(x=>'data: '+JSON.stringify(x)+'\n\n').join('')+'data: [DONE]\n\n';
-  await page.route('**/api/infer',async r=>{
+  await page.route('**/api/v1/chat/completions',async r=>{
    calls++;const body=r.request().postDataJSON();assert.equal(body.model,'synthetic-provider-test');assert.equal(r.request().headers().authorization,undefined);
    if(mode==='hold'){await new Promise(resolve=>setTimeout(resolve,800));await r.abort().catch(()=>{});return;}
    if(mode==='quota'||mode==='partial'&&body.messages.some(m=>m.role==='tool'&&m.name==='mcp_search_lesson')){await r.fulfill({status:429,json:{error:{code:'QUOTA'}}});return;}
@@ -34,6 +41,7 @@ const path=require('node:path');const net=require('node:net');const assert=requi
   });
   await page.getByRole('button',{name:'Check inference availability'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
+  assert.equal(manifestReads,1);assert.equal(graphReads,1);assert.equal(calls,0,'provider discovery must bind public contract before any model call');
   await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='completed');
   assert.equal(calls,4);assert.match(await page.locator('#provider-answer').textContent(),/Synthetic provider fixture/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.match(await page.locator('#provider-metrics').textContent(),/80\/20\/100/);
   // A model result grants neither media transfer nor persistence.
