@@ -39,3 +39,17 @@ The predeclared product targets are:
 If evidence validity differs, the speed claim becomes null/fail. If manual search is faster, the negative result stays negative.
 
 This arithmetic cannot prove task equivalence, participant eligibility, neutrality, consent or lack of coaching. Those are human-study evidence gates.
+
+## Freeze and score offline
+
+Create the assignment **before** the study and commit/archive the resulting plan hash in the study record:
+
+`node tools/sutra-user-study/cli.mjs plan RECORDED_SEED > plan.json`
+
+After the complete de-identified observation file exists:
+
+`node tools/sutra-user-study/cli.mjs score plan.json observations.json > report.json`
+
+The plan contains a SHA-256 identity of its assignment. The scorer refuses edits that do not match that frozen identity and emits a stable observation-set hash independent of row ordering. A valid negative product result exits successfully and remains a negative result; CLI status is not used to turn product failure into process failure.
+
+`observations.template.json` contains null placeholders only and is not valid study data.

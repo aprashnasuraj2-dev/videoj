@@ -1,8 +1,11 @@
+import {createHash} from 'node:crypto';
 const ID=/^P\d{2}$/,VARIANT=/^[AB]$/,METHOD=new Set(['sutra','manual']);
 const plain=v=>!!v&&typeof v==='object'&&!Array.isArray(v)&&Object.getPrototypeOf(v)===Object.prototype;
 const exact=(o,keys)=>plain(o)&&Object.keys(o).length===keys.length&&keys.every(k=>Object.hasOwn(o,k));
 const finitePositive=v=>typeof v==='number'&&Number.isFinite(v)&&v>0;
 const median=values=>{const a=[...values].sort((x,y)=>x-y),n=a.length,m=Math.floor(n/2);return n%2?a[m]:(a[m-1]+a[m])/2;};
+const canonical=value=>Array.isArray(value)?'['+value.map(canonical).join(',')+']':plain(value)?'{'+Object.keys(value).sort().map(k=>JSON.stringify(k)+':'+canonical(value[k])).join(',')+'}':JSON.stringify(value);
+const sha=value=>createHash('sha256').update(canonical(value)).digest('hex');
 const freeze=v=>{if(v&&typeof v==='object'&&!Object.isFrozen(v)){Object.values(v).forEach(freeze);Object.freeze(v);}return v;};
 
 export function makeCounterbalancedPlan({participantCount=10,seed=''}={}){
@@ -16,7 +19,8 @@ export function makeCounterbalancedPlan({participantCount=10,seed=''}={}){
   const groupIndex=index%5;const variants=groupIndex%2===0?['A','B']:['B','A'];
   return {participant,order,variants};
  }).sort((a,b)=>a.participant.localeCompare(b.participant));
- return freeze({schema:1,participantCount:10,seedFingerprint:String(h).padStart(10,'0'),rows});
+ const core={schema:1,participantCount:10,seedFingerprint:String(h).padStart(10,'0'),rows};
+ return freeze({...core,planHash:sha(core)});
 }
 
 function validateObservation(row){
@@ -29,7 +33,10 @@ function validateObservation(row){
 }
 
 export function scoreStudy({plan,observations}){
- if(!plain(plan)||plan.schema!==1||plan.participantCount!==10||!Array.isArray(plan.rows)||plan.rows.length!==10||!Array.isArray(observations)||observations.length!==20)throw Error('Complete ten-participant paired study required.');
+ if(!plain(plan)||plan.schema!==1||plan.participantCount!==10||typeof plan.seedFingerprint!=='string'||!/^\d{10}$/.test(plan.seedFingerprint)||typeof plan.planHash!=='string'||!/^[a-f0-9]{64}$/.test(plan.planHash)||
+  !Array.isArray(plan.rows)||plan.rows.length!==10||!Array.isArray(observations)||observations.length!==20)throw Error('Complete ten-participant paired study required.');
+ const core={schema:plan.schema,participantCount:plan.participantCount,seedFingerprint:plan.seedFingerprint,rows:plan.rows};
+ if(sha(core)!==plan.planHash)throw Error('Study assignment changed after freeze.');
  const planIds=new Set(plan.rows.map(r=>r.participant));if(planIds.size!==10)throw Error('Invalid plan participants.');
  const seen=new Set(),rows=observations.map(raw=>{
   const r=validateObservation(raw),key=r.participant+'|'+r.method;if(!planIds.has(r.participant)||seen.has(key))throw Error('Missing, duplicate or unknown participant-method row.');seen.add(key);return {...r};
@@ -59,7 +66,8 @@ export function scoreStudy({plan,observations}){
  const comparable=sutra.validEvidence===10&&manual.validEvidence===10;
  const improvement=comparable?(manual.medianValidEvidenceSeconds-sutra.medianValidEvidenceSeconds)/manual.medianValidEvidenceSeconds:null;
  const first={sutra:paired.filter(r=>r.order==='sutra-first'),manual:paired.filter(r=>r.order==='manual-first')};
- return freeze({schema:1,sutra,manual,paired,
+ const observationsHash=sha(rows.sort((a,b)=>(a.participant+'|'+a.method).localeCompare(b.participant+'|'+b.method)));
+ return freeze({schema:1,planHash:plan.planHash,observationsHash,sutra,manual,paired,
   evidenceAccuracyComparable:comparable,
   medianTimeReductionFraction:improvement,
   targetResult:{
