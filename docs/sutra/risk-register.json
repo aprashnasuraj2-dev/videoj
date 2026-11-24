@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T20:55:23+05:45",
+  "updatedAt": "2026-11-24T21:00:07+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -1349,8 +1349,8 @@
     {
       "id": "R-060",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Duplicate tool-call identity can execute before server history rejection",
       "mechanism": "Host only tracked response-local IDs; API enforces historical uniqueness.",
       "userEffect": "Repeated source contact/spend and a failed subsequent model call.",
@@ -1363,15 +1363,19 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
           "sourceRevision": "d707fc98e2d4362fec6768667097ad78f491db1b"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "85d771e3721bfad5e2df27fc44d3242f8124b2a5"
         }
       ],
-      "unblockCondition": "Exact adversarial, positive runtime/API/browser regressions pass."
+      "unblockCondition": null
     },
     {
       "id": "R-061",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Ambiguous duplicate JSON member names accepted as last-wins data",
       "mechanism": "JSON.parse silently collapses repeated keys, including escaped aliases, across invocation and wire boundaries.",
       "userEffect": "Different processors or reviewers may disagree on admitted arguments and evidence.",
@@ -1384,15 +1388,19 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
           "sourceRevision": "d707fc98e2d4362fec6768667097ad78f491db1b"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "85d771e3721bfad5e2df27fc44d3242f8124b2a5"
         }
       ],
-      "unblockCondition": "Exact adversarial, positive runtime/API/browser regressions pass."
+      "unblockCondition": null
     },
     {
       "id": "R-062",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Approved provider destination or question differs from dispatched request",
       "mechanism": "Standalone transport did not match contract router/graph origin, accepted normalized URLs and reread mutable body; run trimmed consent text and notified model start at adapter entry.",
       "userEffect": "Ambiguous disclosure scope, incorrect previous-result lifecycle or substituted request data.",
@@ -1405,9 +1413,34 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
           "sourceRevision": "85d771e3721bfad5e2df27fc44d3242f8124b2a5"
+        },
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "23dc80544c897e8b94371e4c246677dad0b19f80"
         }
       ],
-      "unblockCondition": "Exact zero-contact, mutable body, cancelled dispatch and Chromium equality regressions pass."
+      "unblockCondition": null
+    },
+    {
+      "id": "R-063",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Ambiguous publication or SSE JSON can select last-wins authority",
+      "mechanism": "Additional artifact and stream loaders still used JSON.parse with duplicate decoded keys; raw content digest did not resolve ambiguous interpretation.",
+      "userEffect": "Different graph, source or completion interpretation across consumers despite matching bytes.",
+      "affectedTasks": [
+        "SUTRA-X010-40",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Reuse bounded duplicate-aware scanner across consented/public artifact and SSE boundaries; preserve portable kit and exact hashes.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0045.md",
+          "sourceRevision": "b72f64606d76be1dfe5114af80d15c496ba6dd6b"
+        }
+      ],
+      "unblockCondition": "Exact adversarial and normal package, learner, browser and Open Kit regressions pass."
     }
   ]
 }

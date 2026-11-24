@@ -333,3 +333,7 @@ X010-26 verified 19/19 at 76d13792d57fdfd321074a026747c72a306337b1; X010-27 exac
 ## SUTRA-DECISION-0044 — Provider approval binds actual destination and POST attempt
 
 2026-11-24T20:55:23+05:45: X010-39. Standalone bound transport must not accept an approval issued for another origin or normalized URL aliases. Snapshot consumed primitive body and method before asynchronous transport, ignore unrelated ambient metadata. Preserve the exact displayed question; no silent trimming. UI clears previous result only when a model POST is actually attempted (not proof of server receipt or paid processing). Observer failures cannot replace dispatch. Pending exact CI.
+
+## SUTRA-DECISION-0045 — Consistent unambiguous publication and stream data
+
+2026-11-24T21:00:07+05:45: X010-40. One dependency-free scanner lives in the standalone consent package; retain the old runtime import as a re-export, so the kit copies all required source without importing a sibling runtime. Reuse at public manifests, graphs, lesson profile/catalog, provider status/graph and SSE event/assembled arguments. Raw content digest does not remove JSON ambiguity. Neutral consumer remains an independent implementation, not proof of every external parser's policy. Pending exact CI.
