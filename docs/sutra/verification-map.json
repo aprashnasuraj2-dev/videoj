@@ -59,7 +59,10 @@
       "invalidates": [
         "hero_journey"
       ],
-      "reason": "Learner, media, action, evidence or runtime changes can alter the visible end-to-end task."
+      "reason": "Learner, media, action, evidence or runtime changes can alter the visible end-to-end task.",
+      "exact": [
+        "apps/sutra/index.html"
+      ]
     },
     {
       "id": "browser-matrix",
@@ -87,7 +90,10 @@
       "invalidates": [
         "desktop_browser_matrix"
       ],
-      "reason": "Client/runtime/media changes can alter behavior across Chromium, Firefox and WebKit."
+      "reason": "Client/runtime/media changes can alter behavior across Chromium, Firefox and WebKit.",
+      "exact": [
+        "apps/sutra/index.html"
+      ]
     },
     {
       "id": "peer-interop",
@@ -124,7 +130,10 @@
       "invalidates": [
         "lab_performance"
       ],
-      "reason": "Bundle, media or learner changes can alter the transcript-first laboratory profile."
+      "reason": "Bundle, media or learner changes can alter the transcript-first laboratory profile.",
+      "exact": [
+        "apps/sutra/index.html"
+      ]
     },
     {
       "id": "provider-cost",
@@ -193,7 +202,10 @@
       "invalidates": [
         "security_boundary"
       ],
-      "reason": "Contact, consent, inference, API or ingress changes can affect credentials, disclosure and execution boundaries."
+      "reason": "Contact, consent, inference, API or ingress changes can affect credentials, disclosure and execution boundaries.",
+      "exact": [
+        "apps/sutra/index.html"
+      ]
     },
     {
       "id": "verification-tests",

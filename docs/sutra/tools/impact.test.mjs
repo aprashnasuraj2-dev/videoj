@@ -126,3 +126,11 @@ test('local action implementation changes trigger both its standalone tests and 
  assert.equal((workflow.match(/packages\/sutra-actions\/\*\*/g)||[]).length,2);
  assert.match(workflow,/packages\/sutra-actions\/test\/\*\.test\.mjs/);
 });
+
+test('HTML loading shell changes invalidate the first viewer, browser, performance and security evidence',()=>{
+ const result=classifyChangedFiles(['apps/sutra/index.html'],map);
+ for(const id of ['critical-journey','browser-matrix','performance-profile','security-boundary'])assert.ok(result.affectedSuites.includes(id),id);
+ assert.deepEqual(result.unmapped,[]);
+ assert.ok(result.requiredWorkflows.includes('Validate SUTRA learner shell'));
+ assert.ok(result.requiredWorkflows.includes('Validate SUTRA browser compatibility matrix'));
+});
