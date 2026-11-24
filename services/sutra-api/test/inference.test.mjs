@@ -171,7 +171,7 @@ test('configured status publishes only the same-origin publisher-funded router c
 
 test('publisher-funded facade accepts the current upstream reference-runtime request shape without visitor key',async()=>{
  const referenceBody={model:'operator-approved',messages:[{role:'user',content:'Find the source-backed lesson step.'}],stream:true,
-  tools:[{type:'function',function:{name:'source_lookup',description:'Read source evidence.',parameters:{type:'object',properties:{request:{type:'string'}},required:['request']}}}],tool_choice:'auto'};
+  tools:[{type:'function',function:{name:'source_lookup',description:'Read source evidence.',parameters:{type:'object',properties:{request:{type:'string'}},required:['request'],additionalProperties:false}}}],tool_choice:'auto'};
  let seen;
  const response=await handleInference(request(referenceBody,{},'/api/v1/chat/completions'),environment(),{fetchImpl:async(_url,opts)=>{seen=JSON.parse(opts.body);return sse();}});
  assert.equal(response.status,200);assert.equal(seen.model,'operator-approved');assert.equal(seen.stream,true);assert.equal(seen.tool_choice,'auto');
@@ -207,4 +207,25 @@ test('unknown nested tool-call metadata fails before quota or provider',async()=
   assert.equal(response.status,400,'unknown nested metadata must fail closed');
  }
  assert.equal(reservations,0);assert.equal(upstream,0);
+});
+
+test('historical tool-call messages must form one declared, schema-valid, fully resolved sequence before quota',async()=>{
+ const declared={type:'function',function:{name:'source_lookup',description:'Read source evidence.',parameters:{type:'object',properties:{request:{type:'string',minLength:1,maxLength:120}},required:['request'],additionalProperties:false}}};
+ const call={id:'call-1',type:'function',function:{name:'source_lookup',arguments:'{"request":"timing"}'}};
+ const user={role:'user',content:'Find timing'},assistant={role:'assistant',content:null,tool_calls:[call]},tool={role:'tool',tool_call_id:'call-1',name:'source_lookup',content:'{"ok":true}'};
+ let reserve=0,upstream=0;const env=environment(async(url)=>{if(new URL(url).pathname==='/release')return Response.json({released:true});reserve++;return Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000551'});});
+ const good={model:'operator-approved',stream:true,messages:[user,assistant,tool],tools:[declared],tool_choice:'auto'};
+ const ok=await handleInference(request(good),env,{fetchImpl:async()=>{upstream++;return sse();}});assert.equal(ok.status,200);await ok.text();assert.equal(reserve,1);assert.equal(upstream,1);
+ const invalid=[
+  {...good,messages:[user,assistant]},
+  {...good,messages:[user,assistant,{...tool,name:'other'}]},
+  {...good,messages:[user,assistant,tool,tool]},
+  {...good,messages:[user,assistant,{role:'user',content:'interleave'},tool]},
+  {...good,messages:[user,{...assistant,tool_calls:[{...call,function:{name:'undeclared',arguments:'{}'}}]},tool]},
+  {...good,messages:[user,{...assistant,tool_calls:[{...call,function:{name:'source_lookup',arguments:'{"request":""}'}}]},tool]},
+  {...good,tools:[declared,{...declared}]}
+ ];
+ reserve=0;upstream=0;
+ for(const body of invalid){const response=await handleInference(request(body),env,{fetchImpl:async()=>{upstream++;return sse();}});assert.equal(response.status,400);}
+ assert.equal(reserve,0);assert.equal(upstream,0);
 });

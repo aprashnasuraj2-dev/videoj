@@ -1,5 +1,5 @@
 import {plain,InferenceError,readSse,makeAccumulator,abortable} from '../../packages/sutra-inference/protocol.js';
-import {checkSchema} from '../../packages/sutra-runtime/vendor/nsdeploy/actions.js';
+import {checkSchema,validateData} from '../../packages/sutra-runtime/vendor/nsdeploy/actions.js';
 import {quotaLimits,MAX_INPUT_BYTES} from './quota.js';
 export const UPSTREAM='https://api.openai.com/v1/chat/completions';
 // No inference backend is selected implicitly. The self-hosted mode requires a
@@ -31,15 +31,33 @@ function validPayload(body,models){
  if(!plain(body)||Object.keys(body).some(k=>!['model','messages','tools','tool_choice','stream'].includes(k))||!models.includes(body.model)||body.stream!==true||!Array.isArray(body.messages)||body.messages.length<1||body.messages.length>32)throw Error();
  const tools=body.tools===undefined?[]:body.tools;if(!Array.isArray(tools)||tools.length>16)throw Error();
  if(body.tool_choice!==undefined&&(body.tool_choice!=='auto'||!tools.length))throw Error();
- let chars=0;const calls=new Set();let user=false;
+ const toolByName=new Map();
+ for(const tool of tools){
+  if(!plain(tool)||Object.keys(tool).some(k=>!['type','function'].includes(k))||tool.type!=='function'||!plain(tool.function)||Object.keys(tool.function).some(k=>!['name','description','parameters'].includes(k))||!/^\w{1,100}$/.test(tool.function.name??'')||typeof tool.function.description!=='string'||tool.function.description.length>2000||toolByName.has(tool.function.name))throw Error();
+  checkSchema(tool.function.parameters);if(tool.function.parameters.type!=='object'||tool.function.parameters.additionalProperties!==false)throw Error();
+  toolByName.set(tool.function.name,tool.function.parameters);
+ }
+ let chars=0,user=false;const seenCalls=new Set(),pending=new Map();
  for(const message of body.messages){
   if(!plain(message)||!['system','user','assistant','tool'].includes(message.role)||Object.keys(message).some(k=>!['role','content','tool_calls','tool_call_id','name'].includes(k)))throw Error();
-  if(typeof message.content!=='string'&&!(message.role==='assistant'&&message.content===null))throw Error();chars+=(message.content??'').length;if(chars>24000)throw Error();if(message.role==='user')user=true;
-  if(message.tool_calls!==undefined){if(message.role!=='assistant'||!Array.isArray(message.tool_calls)||message.tool_calls.length>8)throw Error();for(const call of message.tool_calls){if(!plain(call)||Object.keys(call).some(k=>!['id','type','function'].includes(k))||call.type!=='function'||typeof call.id!=='string'||call.id.length>100||calls.has(call.id)||!plain(call.function)||Object.keys(call.function).some(k=>!['name','arguments'].includes(k))||!/^\w{1,100}$/.test(call.function.name??'')||typeof call.function.arguments!=='string'||call.function.arguments.length>8000)throw Error();calls.add(call.id);}}
-  if(message.role==='tool'&&(!calls.has(message.tool_call_id)||typeof message.content!=='string'))throw Error();
+  if(typeof message.content!=='string'&&!(message.role==='assistant'&&message.content===null))throw Error();
+  chars+=(message.content??'').length;if(chars>24000)throw Error();if(message.role==='user')user=true;
+  if(message.role==='tool'){
+   if(message.tool_calls!==undefined||typeof message.tool_call_id!=='string'||!pending.has(message.tool_call_id)||message.name!==pending.get(message.tool_call_id))throw Error();
+   pending.delete(message.tool_call_id);continue;
+  }
+  if(message.tool_call_id!==undefined||message.name!==undefined||pending.size)throw Error();
+  if(message.tool_calls!==undefined){
+   if(message.role!=='assistant'||!Array.isArray(message.tool_calls)||!message.tool_calls.length||message.tool_calls.length>8)throw Error();
+   for(const call of message.tool_calls){
+    if(!plain(call)||Object.keys(call).some(k=>!['id','type','function'].includes(k))||call.type!=='function'||typeof call.id!=='string'||!call.id||call.id.length>100||seenCalls.has(call.id)||!plain(call.function)||Object.keys(call.function).some(k=>!['name','arguments'].includes(k))||!/^\w{1,100}$/.test(call.function.name??'')||typeof call.function.arguments!=='string'||call.function.arguments.length>8000)throw Error();
+    const schema=toolByName.get(call.function.name);if(!schema)throw Error();
+    let args;try{args=JSON.parse(call.function.arguments);validateData(schema,args);}catch{throw Error();}
+    seenCalls.add(call.id);pending.set(call.id,call.function.name);
+   }
+  }
  }
- if(!user)throw Error();
- for(const tool of tools){if(!plain(tool)||Object.keys(tool).some(k=>!['type','function'].includes(k))||tool.type!=='function'||!plain(tool.function)||Object.keys(tool.function).some(k=>!['name','description','parameters'].includes(k))||!/^\w{1,100}$/.test(tool.function.name??'')||typeof tool.function.description!=='string')throw Error();checkSchema(tool.function.parameters);if(tool.function.parameters.type!=='object'||tool.function.parameters.additionalProperties===true)throw Error();}
+ if(!user||pending.size)throw Error();
  return {model:body.model,messages:body.messages,tools,stream:true};
 }
 const modelPattern=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/;
