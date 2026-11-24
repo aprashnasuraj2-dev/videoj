@@ -16,7 +16,11 @@
     "SUTRA_MAX_CONCURRENT": "2",
     "SUTRA_PEER_ORIGINS": "https://sutra-guide.aafnaipatro.com",
     "SUTRA_MAX_DAILY_SOURCE_READS": "10000",
-    "SUTRA_MAX_CLIENT_SOURCE_READS": "500"
+    "SUTRA_MAX_CLIENT_SOURCE_READS": "500",
+    "SUTRA_CONTENT_VERSION": "synthetic-timing-v1",
+    "SUTRA_CONTENT_MODE": "synthetic",
+    "SUTRA_CATALOG_SHA256": "a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333",
+    "SUTRA_TRANSCRIPT_SHA256": "a1930687d25bfe7fe8f2483c55d1aca83cdc3f4dcc39424dd6569aea9fe9660d"
   },
   "durable_objects": {
     "bindings": [

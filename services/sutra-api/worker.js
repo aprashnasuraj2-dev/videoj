@@ -11,7 +11,8 @@ const sourceTools=createSourceTools(activeContent.sources);
 const bindingKeys=['SUTRA_CONTENT_VERSION','SUTRA_CONTENT_MODE','SUTRA_CATALOG_SHA256','SUTRA_TRANSCRIPT_SHA256'];
 export function contentBindingMatches(env={}){
  const configured=bindingKeys.some(key=>env[key]!==undefined);
- if(!configured)return true;
+ const required=env.SUTRA_ENABLE_INFERENCE==='true'||env.SUTRA_MAX_DAILY_SOURCE_READS!==undefined||env.SUTRA_MAX_CLIENT_SOURCE_READS!==undefined;
+ if(!configured)return !required;
  if(bindingKeys.some(key=>typeof env[key]!=='string'||!env[key]))return false;
  return env.SUTRA_CONTENT_VERSION===activeContent.profile.contentVersion&&env.SUTRA_CONTENT_MODE===activeContent.profile.mode&&
   env.SUTRA_CATALOG_SHA256===activeContent.profile.catalog.sha256&&env.SUTRA_TRANSCRIPT_SHA256===activeContent.source.hash;
