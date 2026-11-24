@@ -64,6 +64,39 @@ const assert=require('node:assert/strict');
    assert.match(await first.locator('#local-answer-status').innerText(),/0 model calls/);
   }finally{await freshContext.close();}
 
+  // Real same-origin browser tabs must serialize read/modify/write. Hold the
+  // shared lock until both users have explicitly confirmed their receipts;
+  // neither save may overwrite the other. Navigation revokes queued writes.
+  const concurrentContext=await browser.newContext();
+  try{
+   const a=await concurrentContext.newPage(),b=await concurrentContext.newPage();
+   await Promise.all([a.goto(base),b.goto(base)]);
+   await Promise.all([a,b].map(p=>p.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor()));
+   const key='sutra.review-cards.v2',lockName='sutra.review-cards.mutation.v2';
+   async function hold(){
+    await a.evaluate(name=>{window.__reviewLockHeld=false;void navigator.locks.request(name,()=>new Promise(resolve=>{window.__reviewLockHeld=true;window.__releaseReviewLock=resolve;}));},lockName);
+    await a.waitForFunction(()=>window.__reviewLockHeld);
+   }
+   async function confirm(p){await p.getByRole('button',{name:'Preview source review card'}).click();await p.getByRole('button',{name:'Confirm local save'}).click();await p.waitForFunction(()=>!document.querySelector('#review-dialog').open);}
+   await hold();await Promise.all([confirm(a),confirm(b)]);
+   assert.equal(await a.evaluate(k=>localStorage.getItem(k),key),null,'both confirmed operations await the exclusive origin lock');
+   await a.evaluate(()=>window.__releaseReviewLock());
+   await a.waitForFunction(k=>JSON.parse(localStorage.getItem(k)??'[]').length===2,key);
+   const records=await a.evaluate(k=>JSON.parse(localStorage.getItem(k)),key);assert.equal(new Set(records.map(x=>x.id)).size,2);
+   await Promise.all([a,b].map(p=>p.waitForFunction(()=>document.querySelectorAll('#review-list li').length===2)));
+   await hold();await confirm(b);
+   await b.evaluate(()=>window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true})));
+   await b.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('rejected before confirmation'));
+   await a.evaluate(()=>window.__releaseReviewLock());
+   assert.equal(await a.evaluate(k=>JSON.parse(localStorage.getItem(k)).length,key),2);
+   // Same-document out-of-band mutation emits no storage event. The still
+   // visible delete control must compare the exact captured record, not ID.
+   await a.evaluate(k=>{const rows=JSON.parse(localStorage.getItem(k));rows[0].savedAt='2026-01-01T00:00:00.000Z';localStorage.setItem(k,JSON.stringify(rows));},key);
+   await a.getByRole('button',{name:'Delete local review'}).first().click();
+   await a.waitForFunction(()=>document.querySelector('#review-status').textContent.includes('Could not delete'));
+   assert.equal(await a.evaluate(k=>JSON.parse(localStorage.getItem(k)).length,key),2);
+  }finally{await concurrentContext.close();}
+
   // An isolated, hash-consistent synthetic profile with six overlapping cues
   // must show five receipts AND the complete count, including after a locale
   // switch; the original public fixture and actual source text remain unchanged.
