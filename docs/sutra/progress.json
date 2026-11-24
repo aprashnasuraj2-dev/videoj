@@ -1,15 +1,14 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T18:50:30.888+05:45",
+  "updated_at": "2026-11-24T18:51:12.757+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "95f898842d1f93d0d2c6f6434cb5d4c8ed72001e",
+  "last_observed_code_sha": "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9",
   "last_session_id": "SUTRA-SESSION-0042",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P078-02",
   "ready_engineering_queue": [
-    "SUTRA-X010-11",
     "SUTRA-P041-10",
     "SUTRA-P078-07",
     "SUTRA-P054-01",
@@ -17,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Check exact 4ff29cb7b6e80b6702fa64455c8ba5755c8356e9 learner and browser matrix logs (45399432386 and 45399432717); X010-11 remains pending until all pass. Continue P078-02 adversarial engineering; retain human/live model and public release gates.",
+  "next_action": "Continue P078-02 with adversarial lifecycle and user-visible failure checks; inspect remaining original checklist gates without granting unavailable human, deployed-service or real-model evidence. Keep no release, no paid model, no submission. Verify checkpoint register.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -11976,6 +11975,26 @@
           "observed_at": "2026-11-24T18:50:30.888+05:45"
         }
       ]
+    },
+    "SUTRA-X010-11": {
+      "state": "verified",
+      "verified_at": "2026-11-24T18:51:12.757+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45399432386/job/138463821342",
+          "description": "Verified native media/track identity revocation, old blob disposal, transcript-only recovery and explicit remount; HTTP(S)/MIME rejection; exact revision 19/19.",
+          "result": "pass",
+          "source_revision": "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9",
+          "observed_at": "2026-11-24T18:51:12.757+05:45"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45399432717",
+          "description": "Exact browser matrix all jobs successful.",
+          "result": "pass",
+          "source_revision": "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9",
+          "observed_at": "2026-11-24T18:51:12.757+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -12062,6 +12081,7 @@
     "Session 0041 continuation: fd8878bc0ed9ca982579b0f0d8bd4b81a470039f 19/19 workflows; native full Chromium BFCache restored in both test profiles, existing media blob retained paused and seekable. X009-07 and X010-03 verified; 668/1060 overall, original 609/1000 unchanged. Check new documentation head and tracker audit.",
     "Session 0041 further continuation: 34025444560d62b310154634e94e3bfda5890bde 19/19, browser/Worker abort handoff tests pass; 279aae37f487a8da97f1303a6c48fdd5bc6be586 18/19 observed with package/API unit step successful. 668/1062 overall, original 609/1000. Quota lost-response ambiguity remains explicitly open.",
     "Final observation 2026-11-24T18:02:22.555+05:45: 279aae37f487a8da97f1303a6c48fdd5bc6be586 19/19 workflows including exact learner logs for bounded Worker body; 669/1062 verified overall, 609/1000 original, no original phase closure. X010-05 remains pending.",
-    "Session 0042 checkpoint: quota lost-response/day/deadline and actual local SQLite DO, SSE backpressure/teardown, Workerd redirect compatibility, exact ingress, peer base authority, review save uncertainty verified. 675/1068 overall; original 609/1000. 95f898842d1f93d0d2c6f6434cb5d4c8ed72001e 19/19, media revision 4ff29cb7b6e80b6702fa64455c8ba5755c8356e9 17/19 observed; media task remains pending."
+    "Session 0042 checkpoint: quota lost-response/day/deadline and actual local SQLite DO, SSE backpressure/teardown, Workerd redirect compatibility, exact ingress, peer base authority, review save uncertainty verified. 675/1068 overall; original 609/1000. 95f898842d1f93d0d2c6f6434cb5d4c8ed72001e 19/19, media revision 4ff29cb7b6e80b6702fa64455c8ba5755c8356e9 17/19 observed; media task remains pending.",
+    "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9 19/19 exact workflows, 142+150+141+8=441 automated non-browser tests, Chromium BFCache both profiles; 676/1068 verified, 385 pending, original 609/1000. X010-11 verified."
   ]
 }

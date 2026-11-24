@@ -10,9 +10,9 @@ On 24 November the participant explicitly tightened the ordering: stop further d
 
 ## Latest implementation checkpoint — 0042
 
-**609/1,000 original; 675/1,068 overall verified; 45/100 original phases fully verified; six omissions; one hardware blocker.** Verified X010-05–10; exact latest fully passing product source `95f898842d1f93d0d2c6f6434cb5d4c8ed72001e` (19/19); subsequent media source revision `4ff29cb7b6e80b6702fa64455c8ba5755c8356e9` observed 17/19 with learner and matrix pending, X010-11 open. P078-02 remains open. No public release or live inference. [Session 0042 evidence](evidence/implementation/SESSION-0042.md).
+2026-11-24T18:51:12.757+05:45: **676/1,068 overall verified; 609/1,000 original; 385 pending; six omissions; one hardware blocker.** Exact media revision `4ff29cb7b6e80b6702fa64455c8ba5755c8356e9` passed 19/19 workflows (441 non-browser tests, Chromium learner suite and three-engine browser matrix); X010-11 verified. P078-02 remains open.
 
-Check exact 4ff29cb7b6e80b6702fa64455c8ba5755c8356e9 learner and browser matrix logs (45399432386 and 45399432717); X010-11 remains pending until all pass. Continue P078-02 adversarial engineering; retain human/live model and public release gates.
+Continue P078-02 with adversarial lifecycle and user-visible failure checks; inspect remaining original checklist gates without granting unavailable human, deployed-service or real-model evidence. Keep no release, no paid model, no submission. Verify checkpoint register. [Evidence](evidence/implementation/SESSION-0042.md).
 
 ## Resume sequence
 

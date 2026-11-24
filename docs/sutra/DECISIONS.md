@@ -264,3 +264,7 @@ Use one fixed bounded buffer before Worker quota admission; chunk count cannot c
 ## SUTRA-DECISION-0032 — Admission, stream and exact identity boundaries
 
 2026-11-24T18:50:30.888+05:45: preserve conservative daily quota on unknown admission; bind day/deadline and retain bounded lease expiry. Test real local Workerd without deployment. Use manual server redirects plus explicit refusal, preserve browser redirect:error. Terminal success waits for bounded teardown attempt; no automatic retry. Preserve exact peer origin before consent/private dispatch. Save rejection requires unchanged readback; unknown never replays. Native verified mount is invalidated on source/track drift; its regression remains pending until exact CI. [Evidence](evidence/implementation/SESSION-0042.md).
+
+### Media regression verification
+
+2026-11-24T18:51:12.757+05:45: **676/1,068 overall verified; 609/1,000 original; 385 pending; six omissions; one hardware blocker.** Exact media revision `4ff29cb7b6e80b6702fa64455c8ba5755c8356e9` passed 19/19 workflows (441 non-browser tests, Chromium learner suite and three-engine browser matrix); X010-11 verified. P078-02 remains open. The pin binds native playback and track identities to the verified mount; deliberate same-origin DOM mutation is treated as drift, not proof of hostile-script isolation. Generic adapter replacement behavior remains available outside the pinned mount.

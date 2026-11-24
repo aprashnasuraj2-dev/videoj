@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T18:50:30.888+05:45",
+  "updatedAt": "2026-11-24T18:51:12.757+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -743,8 +743,8 @@
     {
       "id": "R-034",
       "severity": "high",
-      "state": "open",
-      "releaseBlocking": true,
+      "state": "resolved",
+      "releaseBlocking": false,
       "title": "Verified native media/track source drift",
       "mechanism": "Native element may change source/track after initial verification.",
       "userEffect": "Cue/seek success on substituted media.",
@@ -757,9 +757,13 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
           "sourceRevision": "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9"
+        },
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45399432386/job/138463821342",
+          "sourceRevision": "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9"
         }
       ],
-      "unblockCondition": "Inspect exact learner and browser matrix CI, correct any failure and verify source drift and explicit recovery."
+      "unblockCondition": null
     }
   ]
 }

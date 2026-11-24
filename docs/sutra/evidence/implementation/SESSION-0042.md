@@ -21,3 +21,9 @@ Actual local Wrangler 4.166.0 / Workerd SQLite storage, not a deployed Cloudflar
 Last fully passing revision 95f898842d1f93d0d2c6f6434cb5d4c8ed72001e: 142 app, 149 package/API, 141 runtime, 8 peer tests (440 non-browser automated tests), Chromium integration and matrix workflows. Actual Chromium BFCache fixture restored both profiles. Not Firefox/WebKit BFCache, human or physical-device acceptance. No public deployment, domain routing, release, model activation or submission. No original phase was closed.
 
 Next: Check exact 4ff29cb7b6e80b6702fa64455c8ba5755c8356e9 learner and browser matrix logs (45399432386 and 45399432717); X010-11 remains pending until all pass. Continue P078-02 adversarial engineering; retain human/live model and public release gates.
+
+## Follow-up verification
+
+2026-11-24T18:51:12.757+05:45: **676/1,068 overall verified; 609/1,000 original; 385 pending; six omissions; one hardware blocker.** Exact media revision `4ff29cb7b6e80b6702fa64455c8ba5755c8356e9` passed 19/19 workflows (441 non-browser tests, Chromium learner suite and three-engine browser matrix); X010-11 verified. P078-02 remains open.
+
+[Learner exact job](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45399432386/job/138463821342); [browser matrix](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45399432717); [local Workerd](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45399432850/job/138463822873). Learner counts 142 app, 150 package/API, 141 runtime, 8 peer. Actual Chromium same-document BFCache restoration observed both with/without media. Workerd unknown lease recovered after 45,468ms. The native source/track tests are local synthetic fixtures, not rights-cleared original lesson or physical-device acceptance. No deployed service or live model contact.
