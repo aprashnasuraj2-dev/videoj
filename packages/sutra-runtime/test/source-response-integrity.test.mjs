@@ -20,3 +20,18 @@ test('tampered search completeness, filters or extra response fields are rejecte
   assert.equal(seen.length,0);
  }
 });
+
+test('source MCP maps bounded HTTP capacity states without exposing response bodies',async()=>{
+ for(const [status,code] of [[429,'SOURCE_QUOTA'],[503,'SOURCE_UNAVAILABLE'],[409,'SOURCE_VERSION']]){
+  let calls=0;
+  const d=createSourceMcp({origin:'https://sutra.test',sources:catalog,fetchImpl:async(_url,opts)=>{
+   const rpc=JSON.parse(opts.body);calls++;
+   if(rpc.method==='initialize')return Response.json({jsonrpc:'2.0',id:rpc.id,result:{protocolVersion:'2025-06-18'}});
+   if(rpc.method==='notifications/initialized')return new Response(null,{status:202});
+   if(rpc.method==='tools/list')return Response.json({jsonrpc:'2.0',id:rpc.id,result:{tools:tools.list()}});
+   return new Response('private source capacity detail',{status});
+  }});
+  await assert.rejects(d.callTool('search_lesson',{query:'timing'}),e=>e.code===code&&!e.message.includes('private source capacity detail'));
+  assert.equal(calls,4);
+ }
+});

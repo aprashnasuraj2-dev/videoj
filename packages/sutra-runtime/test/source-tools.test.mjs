@@ -8,3 +8,15 @@ test('MCP redirect/HTML fallback and oversized replies refused',async()=>{for(co
 test('cancellation interrupts noncooperating source transport',async()=>{const abort=new AbortController();const client=createSourceMcp({...sourceTools,signal:abort.signal,fetchImpl:()=>new Promise(()=>{})});const pending=client.listTools();abort.abort();await assert.rejects(pending);});
 
 test('unavailable source discovery and failed source calls terminate the whole composition',async()=>{for(const method of ['initialize','tools/call']){let calls=0;await assert.rejects(runNetwork({definition:graph,request:'find timing',model:createSourceScriptedModel(),sourceTools:{...sourceTools,fetchImpl:async(url,opts)=>{calls++;if(JSON.parse(opts.body).method===method)throw Error('private transport failure');return transport(url,opts);}}}),e=>e.code==='CAPABILITY_UNAVAILABLE'&&!e.message.includes('private'));assert.ok(calls>0);}});
+
+test('source quota and availability failures preserve bounded failure codes through the runtime',async()=>{
+ for(const [status,code] of [[429,'SOURCE_QUOTA'],[503,'SOURCE_UNAVAILABLE']]){
+  let toolCalls=0;
+  await assert.rejects(runNetwork({definition:graph,request:'find timing',model:createSourceScriptedModel(),sourceTools:{...sourceTools,fetchImpl:async(url,opts)=>{
+   const method=JSON.parse(opts.body).method;
+   if(method==='tools/call'){toolCalls++;return new Response('private source capacity detail',{status});}
+   return transport(url,opts);
+  }}}),e=>e.code===code&&!e.message.includes('private source capacity detail'));
+  assert.equal(toolCalls,1);
+ }
+});

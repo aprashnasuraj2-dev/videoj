@@ -56,6 +56,8 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
    if(code==='CONTENT_CHANGED_DURING_RUN'){set('error','The server rejected the lesson version during this run. Earlier calls may have occurred. No completed answer is claimed; reload the lesson before checking inference again.');return;}
    if(code==='SOURCE_EVIDENCE_REQUIRED'){set('empty','The model returned without any independently catalog-matched source receipt. Its interpretation was discarded; no completed answer is claimed.');return;}
    if(code==='SOURCE_EVIDENCE_LIMIT'){set('empty','Source retrieval exceeded the bounded evidence display. The model interpretation was discarded rather than hiding additional source cues. Narrow the question and run again explicitly.');return;}
+   if(code==='SOURCE_QUOTA'){set('denied','The bounded source-read allowance is exhausted for now. No completed model answer is claimed. The already loaded lesson, transcript and local question path remain available.');return;}
+   if(code==='SOURCE_UNAVAILABLE'){set('error','The source service is temporarily unavailable. No completed model answer is claimed. The already loaded local lesson remains available.');return;}
    set(cancelled?'cancelled':'error',(cancelled?'Inference cancelled.':'Inference stopped ('+code+').')+' No completed answer is claimed. The local lesson remains available; retry only explicitly.');
   }finally{active=null;controls();(run.disabled?check:run).focus();}
  }

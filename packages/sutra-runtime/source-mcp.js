@@ -1,7 +1,8 @@
 import {createSourceTools} from '../sutra-source-tools/index.js';
 import {validateReceipt} from '../sutra-evidence/index.js';
 import {validateData} from './vendor/nsdeploy/actions.js';
-const bad=()=>{throw Error('Bounded source capability unavailable.');};
+export class SourceMcpError extends Error{constructor(code){super('Bounded source capability stopped ('+code+').');this.name='SourceMcpError';this.code=code;}}
+const bad=code=>{throw new SourceMcpError(code??'SOURCE_CAPABILITY');};
 export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt}={}){
  const base=new URL(origin);if(base.origin!==origin||base.protocol!=='https:'&&!(base.protocol==='http:'&&['127.0.0.1','localhost','[::1]'].includes(base.hostname)))bad();
  const local=createSourceTools(sources),definitions=local.list();let sequence=0,initialized=false,calls=0;
@@ -11,7 +12,13 @@ export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt
    const id=++sequence;
    const response=await Promise.race([fetchImpl(`${origin}/api/source-tools`,{method:'POST',redirect:'error',credentials:'omit',signal:controller.signal,headers:{'Content-Type':'application/json',Accept:'application/json, text/event-stream','MCP-Protocol-Version':'2025-06-18'},body:JSON.stringify({jsonrpc:'2.0',...(notification?{}:{id}),method,params})}),stopped]);
    if(notification){if(response.status!==202)bad();return;}
-   if(!response.ok||!response.headers.get('content-type')?.includes('application/json')||response.url&&new URL(response.url).origin!==origin)bad();
+   if(!response.ok){
+    if(response.status===429)bad('SOURCE_QUOTA');
+    if(response.status===409)bad('SOURCE_VERSION');
+    if(response.status===503)bad('SOURCE_UNAVAILABLE');
+    bad('SOURCE_RESPONSE');
+   }
+   if(!response.headers.get('content-type')?.includes('application/json')||response.url&&new URL(response.url).origin!==origin)bad('SOURCE_RESPONSE');
    const reader=response.body?.getReader();if(!reader)bad();const chunks=[];let count=0;
    try{for(;;){const {done,value}=await Promise.race([reader.read(),stopped]);if(done)break;count+=value.byteLength;if(count>32768)bad();chunks.push(value);}}finally{void reader.cancel().catch(()=>{});}
    const bytes=new Uint8Array(count);let offset=0;for(const c of chunks){bytes.set(c,offset);offset+=c.length;}
