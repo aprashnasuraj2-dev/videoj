@@ -22,6 +22,31 @@ const assert=require('node:assert/strict');
   const page=await browser.newPage({viewport:{width:1280,height:960}});
   const errors=[],external=[];page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(!r.url().startsWith(base+'/')&&!r.url().startsWith('blob:'+base+'/'))external.push(r.url());});
 
+  // A fresh viewer must reach a saved, reviewable source citation using only the
+  // no-model question route, without playback, developer panels, or account setup.
+  const freshContext=await browser.newContext({viewport:{width:1280,height:800}});
+  try{
+   const first=await freshContext.newPage(),externalCalls=[];
+   first.on('request',r=>{if(r.url().includes('/api/')||r.url().includes('/media/timing-fixture.mp4'))externalCalls.push(r.url());});
+   await first.goto(base);
+   await first.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+   assert.deepEqual(await first.locator('.journey-map a').first().getAttribute('href'),'#local-answer');
+   await first.getByRole('searchbox',{name:'Question for local source lookup'}).fill('Where is the timing marker?');
+   await first.getByRole('button',{name:'Find cited answer locally'}).click();
+   assert.equal(await first.locator('#local-answer-status').getAttribute('data-state'),'completed');
+   await first.getByRole('button',{name:'Preview local review card'}).click();
+   await first.getByRole('dialog',{name:'Review before local save'}).waitFor();
+   assert.equal(JSON.parse(await first.locator('#review-preview').textContent()).args.receipt.cueId,'timing-marker');
+   assert.equal(await first.locator('#review-list li').count(),0,'explicit confirmation required');
+   await first.getByRole('button',{name:'Confirm local save'}).click();
+   await first.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+   assert.equal(externalCalls.length,0,'the first viewer question-to-card flow is entirely model-free and media-free');
+   await first.reload();await first.getByRole('heading',{name:'Find the moment. Keep the evidence.'}).waitFor();
+   await first.waitForFunction(()=>document.querySelectorAll('#review-list li').length===1);
+   await first.getByRole('button',{name:'Delete local review'}).click();
+   assert.equal(await first.locator('#review-list li').count(),0);
+  }finally{await freshContext.close();}
+
   let delayed=true;
   await page.route('**/media/timing-fixture.mp4*',async route=>{
    if(delayed){delayed=false;await new Promise(r=>setTimeout(r,350));}

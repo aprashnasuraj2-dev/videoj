@@ -77,6 +77,21 @@ const assert=require('node:assert/strict');
   await damaged.getByRole('button',{name:'Check example',exact:true}).click();
   assert.equal(await damaged.locator('#result').getAttribute('data-state'),'matched');
   assert.deepEqual(damageErrors,[]);
+  // Model-free source retrieval must remain useful with an initially loaded,
+  // validated catalog after all browser network connectivity disappears.
+  await context.setOffline(true);
+  const offlineRequests=[];
+  damaged.on('request',r=>{if(r.url().includes('/api/')||r.url().includes('/media/'))offlineRequests.push(r.url());});
+  await damaged.getByRole('searchbox',{name:'Question for local source lookup'}).fill('Where is the timing marker?');
+  await damaged.getByRole('button',{name:'Find cited answer locally'}).click();
+  assert.equal(await damaged.locator('#local-answer-status').getAttribute('data-state'),'completed');
+  assert.match(await damaged.locator('#local-answer-results').innerText(),/Synthetic timing marker/);
+  assert.equal(offlineRequests.length,0,'local source question must not attempt network while offline');
+  await damaged.getByRole('button',{name:'Preview local review card'}).click();
+  await damaged.getByRole('dialog',{name:'Review before local save'}).waitFor();
+  await damaged.getByRole('dialog',{name:'Review before local save'}).getByRole('button',{name:'Cancel',exact:true}).click();
+  assert.deepEqual(damageErrors,[]);
+  await context.setOffline(false);
   await damaged.close();
   console.log('PASS: mixed content refuses all actionable UI and explicit reload restores a validated lesson.');
   console.log('PASS: known 503 local public GET retry is capped once per load, actual attempt counts visible, persistent failure remains incomplete.');
