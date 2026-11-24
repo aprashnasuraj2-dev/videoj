@@ -47,6 +47,12 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   assert.equal(await page.locator('#cue-text').innerText(),originalCueText,'original source wording is not translated');
   assert.equal(await page.locator('#result').getAttribute('data-state'),'matched','validation state survives locale switch');
   assert.equal(await page.locator('#cue').getAttribute('aria-pressed'),'true','selected evidence cue survives locale switch');
+  const localizedComparisonButtons=page.locator('#comparison-body .actions button');
+  await localizedComparisonButtons.nth(1).click();
+  assert.match(await page.locator('#comparison-body .comparison-card h3').first().innerText(),/भिडियो/,'rerendered comparison keeps selected locale');
+  assert.match(await page.locator('#comparison-body .comparison-excerpt').first().innerText(),/two signatures/,'source excerpt remains original-language data');
+  await localizedComparisonButtons.nth(0).click();
+  assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
   await page.locator('#language-select').selectOption('en');
   assert.equal(await page.locator('html').getAttribute('lang'),'en');
   assert.equal((await page.locator('h1').innerText()).replace(/\\s+/g,' ').trim(),'Find the moment. Keep the evidence.');
