@@ -161,16 +161,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Specify a framework-independent evidence schema/validator, a peer-consent inspector and an agentic-site starter. Identify the external builder job, documented interfaces and reusable boundaries.
 - **Phase exit:** A third-party builder can test the kit without importing DHAGO, DETOUR, private media, credentials or the learner app.
 
-- [ ] `SUTRA-P009-01` Define the evidence validator’s standalone builder job and contract
-- [ ] `SUTRA-P009-02` Define the consent inspector’s inputs, outputs and denial guarantee
-- [ ] `SUTRA-P009-03` Define the starter’s minimal publish-and-consume user journey
-- [ ] `SUTRA-P009-04` Exclude player imports, private corpus, private keys and hidden services
-- [ ] `SUTRA-P009-05` Choose public source, documentation and example locations for each tool
-- [ ] `SUTRA-P009-06` Specify required license, attribution and versioning boundaries
-- [ ] `SUTRA-P009-07` Define a clean-host installation task for outside developers
-- [ ] `SUTRA-P009-08` Define what would count as actual reuse versus merely downloading files
-- [ ] `SUTRA-P009-09` Produce and review the phase artifact: Open Kit API brief, intended users and sample adoption task.
-- [ ] `SUTRA-P009-10` Close phase 009 only after its applicable tasks have evidence and its exit condition is observed: A third-party builder can test the kit without importing DHAGO, DETOUR, private media, credentials or the learner app.
+- [x] `SUTRA-P009-01` Define the evidence validator’s standalone builder job and contract
+- [x] `SUTRA-P009-02` Define the consent inspector’s inputs, outputs and denial guarantee
+- [x] `SUTRA-P009-03` Define the starter’s minimal publish-and-consume user journey
+- [x] `SUTRA-P009-04` Exclude player imports, private corpus, private keys and hidden services
+- [x] `SUTRA-P009-05` Choose public source, documentation and example locations for each tool
+- [x] `SUTRA-P009-06` Specify required license, attribution and versioning boundaries
+- [x] `SUTRA-P009-07` Define a clean-host installation task for outside developers
+- [x] `SUTRA-P009-08` Define what would count as actual reuse versus merely downloading files
+- [x] `SUTRA-P009-09` Produce and review the phase artifact: Open Kit API brief, intended users and sample adoption task.
+- [x] `SUTRA-P009-10` Close phase 009 only after its applicable tasks have evidence and its exit condition is observed: A third-party builder can test the kit without importing DHAGO, DETOUR, private media, credentials or the learner app.
 
 ## Phase 010 - Freeze measurable acceptance targets
 

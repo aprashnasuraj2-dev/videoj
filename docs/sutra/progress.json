@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T08:36:33+05:45",
+  "updated_at": "2026-11-24T08:38:31+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
-  "last_session_id": "SUTRA-SESSION-0019",
-  "stage": "strategy_scope_acceptance_debt_closed_product_revalidation_pending",
+  "last_observed_code_sha": "5b8c97d4bb10e8e033aed90d5b83dc1cd433effb",
+  "last_session_id": "SUTRA-SESSION-0020",
+  "stage": "strategy_and_open_kit_contracts_closed_product_revalidation_pending",
   "current_task": null,
   "next_task": "SUTRA-P041-08",
   "ready_engineering_queue": [
@@ -15,7 +15,7 @@
     "SUTRA-P053-06",
     "SUTRA-P078-01"
   ],
-  "next_action": "Reconcile current-head learner/browser/evaluation/impact CI after provenance and learner-first changes; then credit only exact passing product checks. Continue engineering-only; human review, live provider, physical device, public interoperability and deployment remain closed.",
+  "next_action": "Reconcile current product head CI after learner-first/provenance changes; then credit exact passing product checks. Keep outside-builder adoption separate from Open Kit testability.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -9233,6 +9233,136 @@
           "result": "pass",
           "source_revision": "dae002d5c76bd5b58901e65aac3c4dd97b51e5ba",
           "observed_at": "2026-11-24T08:36:33+05:45"
+        }
+      ]
+    },
+    "SUTRA-P009-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:38:31+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/OPEN-KIT-API-BRIEF-2026-11-24.md",
+          "description": "Standalone evidence validator builder job and consistency-vs-truth contract defined with CLI/API and no learner/provider dependency.",
+          "result": "pass",
+          "source_revision": "5b8c97d4bb10e8e033aed90d5b83dc1cd433effb",
+          "observed_at": "2026-11-24T08:38:31+05:45"
+        }
+      ]
+    },
+    "SUTRA-P009-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:38:31+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/OPEN-KIT-API-BRIEF-2026-11-24.md",
+          "description": "Consent inspector inputs, redacted outputs, exact approval scope and zero-transport denial guarantee defined.",
+          "result": "pass",
+          "source_revision": "5b8c97d4bb10e8e033aed90d5b83dc1cd433effb",
+          "observed_at": "2026-11-24T08:38:31+05:45"
+        }
+      ]
+    },
+    "SUTRA-P009-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:38:31+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/OPEN-KIT-API-BRIEF-2026-11-24.md",
+          "description": "Starter publish-and-consume journey defined from manifest/network publication through exact local execution and consented second-origin example.",
+          "result": "pass",
+          "source_revision": "5b8c97d4bb10e8e033aed90d5b83dc1cd433effb",
+          "observed_at": "2026-11-24T08:38:31+05:45"
+        }
+      ]
+    },
+    "SUTRA-P009-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:38:31+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/OPEN-KIT-API-BRIEF-2026-11-24.md",
+          "description": "Kit explicitly excludes player app imports, private corpus/customer data, credentials, hidden services and autonomous writes.",
+          "result": "pass",
+          "source_revision": "5b8c97d4bb10e8e033aed90d5b83dc1cd433effb",
+          "observed_at": "2026-11-24T08:38:31+05:45"
+        }
+      ]
+    },
+    "SUTRA-P009-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:38:31+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/OPEN-KIT-API-BRIEF-2026-11-24.md",
+          "description": "Repository source/readme/example locations enumerated for evidence, consent, starter and aggregate Open Kit.",
+          "result": "pass",
+          "source_revision": "5b8c97d4bb10e8e033aed90d5b83dc1cd433effb",
+          "observed_at": "2026-11-24T08:38:31+05:45"
+        }
+      ]
+    },
+    "SUTRA-P009-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:38:31+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/OPEN-KIT-API-BRIEF-2026-11-24.md",
+          "description": "Apache-2.0 redistribution, upstream notices and artifact/schema/source-version boundaries specified.",
+          "result": "pass",
+          "source_revision": "5b8c97d4bb10e8e033aed90d5b83dc1cd433effb",
+          "observed_at": "2026-11-24T08:38:31+05:45"
+        }
+      ]
+    },
+    "SUTRA-P009-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:38:31+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/OPEN-KIT-API-BRIEF-2026-11-24.md",
+          "description": "Clean-host outside-builder task defines timer, environment/revision, valid result, interventions and <=15-minute target.",
+          "result": "pass",
+          "source_revision": "5b8c97d4bb10e8e033aed90d5b83dc1cd433effb",
+          "observed_at": "2026-11-24T08:38:31+05:45"
+        }
+      ]
+    },
+    "SUTRA-P009-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:38:31+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/OPEN-KIT-API-BRIEF-2026-11-24.md",
+          "description": "Independent reuse distinguished from clone/download, CI, same-owner demos, views/stars and maintainer copies.",
+          "result": "pass",
+          "source_revision": "5b8c97d4bb10e8e033aed90d5b83dc1cd433effb",
+          "observed_at": "2026-11-24T08:38:31+05:45"
+        }
+      ]
+    },
+    "SUTRA-P009-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:38:31+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/OPEN-KIT-API-BRIEF-2026-11-24.md",
+          "description": "Open Kit API/adoption brief produced with intended users, interfaces, sample builder task and evidence boundaries.",
+          "result": "pass",
+          "source_revision": "5b8c97d4bb10e8e033aed90d5b83dc1cd433effb",
+          "observed_at": "2026-11-24T08:38:31+05:45"
+        }
+      ]
+    },
+    "SUTRA-P009-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:38:31+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/OPEN-KIT-API-BRIEF-2026-11-24.md",
+          "description": "Exit observed at contract level: an outside builder can test synthetic artifacts without DHAGO, DETOUR, private media, credentials or learner app; actual independent adoption remains unclaimed.",
+          "result": "pass",
+          "source_revision": "5b8c97d4bb10e8e033aed90d5b83dc1cd433effb",
+          "observed_at": "2026-11-24T08:38:31+05:45"
         }
       ]
     }

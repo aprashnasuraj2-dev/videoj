@@ -2,6 +2,14 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0020 — 2026-11-24
+
+**528/1,000 original checks verified; 534/1,006 total; 41/100 phases fully verified; 1 historical omission.**
+
+Phase **009** closes at `5b8c97d4bb10e8e033aed90d5b83dc1cd433effb` with a standalone builder contract for the evidence validator, consent inspector and agentic-site starter. Clean-host testing is separated from genuine outside adoption; clones/downloads/CI/same-owner demos do not count as reuse. Phase 076 remains open. No product/provenance credit is added pending current-head CI. [Session evidence](evidence/implementation/SESSION-0020.md).
+
+---
+
 ## Session 0019 — 2026-11-24
 
 **518/1,000 original checks verified; 524/1,006 total; 40/100 phases fully verified; 1 historical omission.**

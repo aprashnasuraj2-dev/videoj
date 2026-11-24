@@ -1,5 +1,10 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0020 — 2026-11-24
+
+- Closed phase 009 at `5b8c97d4bb10e8e033aed90d5b83dc1cd433effb`: P009-01..10. Builder contracts, clean-host task, license/version boundaries and independent-reuse threshold are explicit.
+- 528/1,000 original; 534/1,006 total; 41 complete phases. Outside adoption remains phase 076, not inferred from project tests. [Evidence](evidence/implementation/SESSION-0020.md).
+
 ## SUTRA-SESSION-0019 — 2026-11-24
 
 - Closed strategy phases 004, 006 and 010 at artifact revision `dae002d5c76bd5b58901e65aac3c4dd97b51e5ba`: 30 original checks. Scope rejects BYOK/platform breadth from minimum release, evidence scorecard separates conformance from quality, and acceptance targets remain prospective with negative results preserved.
