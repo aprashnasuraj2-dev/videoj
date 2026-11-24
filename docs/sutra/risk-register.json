@@ -1,0 +1,213 @@
+{
+  "schema": 1,
+  "updatedAt": "2026-11-24T08:42:00+05:45",
+  "risks": [
+    {
+      "id": "R-001",
+      "severity": "blocker",
+      "state": "mitigated_pending_revalidation",
+      "releaseBlocking": false,
+      "title": "Structured-value match could be misread as source agreement",
+      "mechanism": "Comparison previously emitted a consistent-unverified state when structured values matched even if source excerpts differed.",
+      "userEffect": "A learner or judge could infer agreement that the source text did not establish.",
+      "affectedTasks": [
+        "SUTRA-P045-03",
+        "SUTRA-P045-06"
+      ],
+      "mitigation": "Require excerpt-gated textual match, retain separate disagreement/unreviewed states, link and hash-bind the written source fixture.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/COMPARISON-PROVENANCE-2026-11-24.md",
+          "sourceRevision": "015b79b2da6e2dd7db58f57485191bf32e4d78be"
+        }
+      ],
+      "unblockCondition": "Exact current revision must pass full learner and affected browser/evaluation workflows before checklist closure."
+    },
+    {
+      "id": "R-002",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Evidence/source APIs could invoke ordinary JavaScript accessors",
+      "mechanism": "Direct property access and JSON serialization can invoke getter or toJSON code supplied by an in-process caller.",
+      "userEffect": "A supposedly data-only validation boundary could execute caller-defined JavaScript before rejection.",
+      "affectedTasks": [
+        "SUTRA-X002-01",
+        "SUTRA-X002-02"
+      ],
+      "mitigation": "Inspect own data descriptors without invoking getters, reject unsafe descriptors/custom prototypes/sparse arrays, project primitive catalog fields and bound aggregate text.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "sourceRevision": "337337e6bf912f9e73127c6d2a20a971c5bde866"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-003",
+      "severity": "medium",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Literal retrieval used unnecessary agent orchestration",
+      "mechanism": "Simple exact wording retrieval traversed the delegated network even when deterministic catalog search was sufficient.",
+      "userEffect": "Higher latency/call count without measured retrieval benefit for literal lookup.",
+      "affectedTasks": [
+        "SUTRA-P054-02",
+        "SUTRA-P054-03",
+        "SUTRA-P054-04",
+        "SUTRA-P054-07",
+        "SUTRA-P054-08"
+      ],
+      "mitigation": "Expose direct zero-model lookup for literal source selection and reserve agent/model paths for tasks that need them.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evaluation/DECISION-DIRECT-LOOKUP.md",
+          "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-004",
+      "severity": "high",
+      "state": "mitigated_pending_revalidation",
+      "releaseBlocking": false,
+      "title": "Historical metrics could silently survive material source changes",
+      "mechanism": "Progress prose stores source SHAs, but there was no machine path-to-evidence invalidation map.",
+      "userEffect": "A later candidate could accidentally quote benchmark or browser results measured on materially different code.",
+      "affectedTasks": [
+        "SUTRA-P078-04",
+        "SUTRA-P079-01",
+        "SUTRA-P079-05",
+        "SUTRA-P079-06"
+      ],
+      "mitigation": "Revision-bound metric registry plus fail-closed change-impact classification and a PR artifact listing affected suites and stale metrics.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/VERIFICATION-IMPACT-2026-11-24.md",
+          "sourceRevision": "1ecd814b2a7665dbe68d0d956450117913edb857"
+        }
+      ],
+      "unblockCondition": "Impact workflow must pass on the exact current revision and remain mapped for all managed product paths."
+    },
+    {
+      "id": "R-005",
+      "severity": "blocker",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Held-out semantic evaluation is not human adjudicated",
+      "mechanism": "Engineering-v1 is public development data and therefore unsuitable as independent held-out semantic evidence.",
+      "userEffect": "Quoting it as final accuracy would overstate evidence quality and permit test-set leakage.",
+      "affectedTasks": [
+        "SUTRA-P053-01",
+        "SUTRA-P053-02",
+        "SUTRA-P053-03",
+        "SUTRA-P053-05",
+        "SUTRA-P053-10",
+        "SUTRA-P072-01"
+      ],
+      "mitigation": "Blind neutral-ID review/freeze protocol is implemented; no human-reviewed set is claimed.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/HELDOUT-REVIEW-PROTOCOL-2026-11-24.md",
+          "sourceRevision": "de648590c6f5ae0f05c98a95ce330c016fe2f5a8"
+        }
+      ],
+      "unblockCondition": "Create and human-review the real 20/10/10 set against designated source material, freeze it before final prompt tuning, then run the recorded live model."
+    },
+    {
+      "id": "R-006",
+      "severity": "blocker",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Original rights-cleared lesson and reviewed written guide are missing",
+      "mechanism": "Current learner content is explicitly synthetic and cannot establish real source provenance or semantic support.",
+      "userEffect": "The core demo cannot truthfully claim real educational evidence or final comparison quality.",
+      "affectedTasks": [
+        "SUTRA-P015-01",
+        "SUTRA-P031-03",
+        "SUTRA-P045-10"
+      ],
+      "mitigation": "Synthetic fixtures remain clearly labeled and are never represented as the original lesson.",
+      "evidence": [],
+      "unblockCondition": "Provide rights-cleared original lesson/video, written guide and human factual review evidence."
+    },
+    {
+      "id": "R-007",
+      "severity": "blocker",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Live funded provider economics are unmeasured",
+      "mechanism": "Provider tests use synthetic transport; actual tokens, price basis, run cost and judge-budget reserve are unknown.",
+      "userEffect": "A public judge path could fail or spend unpredictably even though quota mechanics pass synthetic tests.",
+      "affectedTasks": [
+        "SUTRA-P054-01",
+        "SUTRA-P066-01",
+        "SUTRA-P066-02",
+        "SUTRA-P066-03",
+        "SUTRA-P070-02"
+      ],
+      "mitigation": "Quota, concurrency, kill switch and no-retry behavior are implemented; paid inference remains disabled.",
+      "evidence": [],
+      "unblockCondition": "Approve provider/budget, run a small capped live sample, record exact model/token/price basis and preserve judging reserve."
+    },
+    {
+      "id": "R-008",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Physical touch and human screen-reader acceptance are untested",
+      "mechanism": "Desktop/headless engines and automated accessibility checks cannot reproduce physical touch hardware or human assistive-technology use.",
+      "userEffect": "Mobile or assistive users may encounter blockers not visible in CI.",
+      "affectedTasks": [
+        "SUTRA-P077-04",
+        "SUTRA-P077-10",
+        "SUTRA-P049-10"
+      ],
+      "mitigation": "Automated keyboard, zoom, target-size, captions and multi-engine checks are explicitly labeled as non-physical evidence.",
+      "evidence": [],
+      "unblockCondition": "Run the core journey on an available physical iPhone/Android device and complete human screen-reader acceptance."
+    },
+    {
+      "id": "R-009",
+      "severity": "blocker",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Independent public caller/peer interoperability is unproven",
+      "mechanism": "Neutral-consumer and peer tests are same-owner/local synthetic origins rather than independently operated public HTTPS sites.",
+      "userEffect": "Challenge interoperability claims would exceed observed evidence.",
+      "affectedTasks": [
+        "SUTRA-P031-10",
+        "SUTRA-P034-10",
+        "SUTRA-P040-10",
+        "SUTRA-P076-10"
+      ],
+      "mitigation": "Exact-name resolution, CORS, consent, denial and cross-origin behavior are tested locally without claiming outside adoption.",
+      "evidence": [],
+      "unblockCondition": "Obtain authorized public HTTPS caller/peer evidence and outside builder runs after release gates permit it."
+    },
+    {
+      "id": "R-010",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Production Cloudflare request and billing headroom are incomplete",
+      "mechanism": "Read-only account observation lacks Billing Read and no SUTRA production-domain request sample exists.",
+      "userEffect": "Production capacity/cost claims could be wrong despite static routing design.",
+      "affectedTasks": [
+        "SUTRA-P065-07",
+        "SUTRA-P065-08",
+        "SUTRA-P065-10"
+      ],
+      "mitigation": "Static assets are designed outside Worker-first API paths; no production capacity claim is made.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/CLOUDFLARE-CAPACITY-2026-11-24.md",
+          "sourceRevision": "e1122ec58c7a773b41e4470dc0139a897049f912"
+        }
+      ],
+      "unblockCondition": "Obtain authorized billing/headroom evidence and a dated production request sample after deployment gates open."
+    }
+  ]
+}
