@@ -20,7 +20,7 @@ const hash=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SH
 // Content-Length is missing or a compressed wire length understates the body.
 export async function readContentBytes({url,origin,fetchImpl=fetch,signal,maxBytes,accept='application/octet-stream'}={}){
  const target=new URL(url);
- if(target.origin!==origin||target.username||target.password||!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>(MEDIA_TYPES.has(accept)?MAX_REVIEWED_MEDIA_BYTES:2*1024*1024))throw Error('CONTENT_READ_CONFIG');
+ if(target.origin!==origin||target.username||target.password||target.hash||!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>(MEDIA_TYPES.has(accept)?MAX_REVIEWED_MEDIA_BYTES:2*1024*1024))throw Error('CONTENT_READ_CONFIG');
  signal?.throwIfAborted();
  let reader,response,received,abort,finished=false;
  // A transport may disregard AbortSignal. Dispose a response arriving after
@@ -35,7 +35,7 @@ export async function readContentBytes({url,origin,fetchImpl=fetch,signal,maxByt
   });
   response=await Promise.race([incoming,stopped]);
   signal?.throwIfAborted();
-  if(!response.ok||response.status!==200||response.redirected||response.url&&new URL(response.url).origin!==origin||response.headers.has('content-range'))throw Error('CONTENT_RESPONSE');
+  if(!response.ok||response.status!==200||response.redirected||response.url&&response.url!==target.href||response.headers.has('content-range'))throw Error('CONTENT_RESPONSE');
   if(Number(response.headers.get('content-length'))>maxBytes)throw Error('CONTENT_SIZE');
   reader=response.body?.getReader();if(!reader)throw Error('CONTENT_BODY');
   let total=0,buffer=new Uint8Array(Math.min(maxBytes,16384));
@@ -77,7 +77,7 @@ export async function readVerifiedLessonMedia({url,origin,mediaHash,mode,fetchIm
 const boundedBytes=readContentBytes;
 const boundedJson=async({url,origin,fetchImpl,signal,maxBytes})=>{
  const {response,bytes}=await boundedBytes({url,origin,fetchImpl,signal,maxBytes,accept:'application/json'});
- if(!response.headers.get('content-type')?.toLowerCase().includes('application/json'))throw Error('CONTENT_RESPONSE');
+ if(response.headers.get('content-type')?.split(';',1)[0].trim().toLowerCase()!=='application/json')throw Error('CONTENT_RESPONSE');
  let data;try{data=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}catch{throw Error('CONTENT_JSON');}
  if(!plain(data))throw Error('CONTENT_JSON');return {data,bytes};
 };
@@ -155,6 +155,7 @@ export async function loadContentProfile({baseUrl,fetchImpl=fetch,signal,timeout
   const transcriptUrl=new URL(validated.profile.transcript.path,base.origin);
   if(transcriptUrl.origin!==base.origin||transcriptUrl.search||transcriptUrl.hash)throw Error('CONTENT_TRANSCRIPT');
   const transcriptResult=await boundedBytes({url:transcriptUrl.href,origin:base.origin,fetchImpl,signal:controller.signal,maxBytes:2*1024*1024,accept:'text/plain'});
+  if(transcriptResult.response.headers.get('content-type')?.split(';',1)[0].trim().toLowerCase()!=='text/plain')throw Error('CONTENT_TRANSCRIPT_TYPE');
   if(await hash(transcriptResult.bytes)!==validated.profile.transcript.sha256)throw Error('CONTENT_TRANSCRIPT_HASH');
   let transcriptText;try{transcriptText=new TextDecoder('utf-8',{fatal:true}).decode(transcriptResult.bytes);}catch{throw Error('CONTENT_TRANSCRIPT_UTF8');}
   for(const cue of validated.source.cues)if(!transcriptText.includes(cue.text))throw Error('CONTENT_TRANSCRIPT_CUE');

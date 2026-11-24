@@ -151,7 +151,10 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   active++;const span=trace.start('model_call',{mode:model.mode,parent:args.parentSpan});
   try{
    check();startedModelCalls++;
-   const response=await Promise.race([model.chat({...args,model:approvedModel,signal:controller.signal,onContentDelta:undefined}),stopped]);check();
+   const candidate=await Promise.race([model.chat({...args,model:approvedModel,signal:controller.signal,onContentDelta:undefined}),stopped]);check();
+   // Treat adapter results as untrusted data before the pinned runner sees
+   // them. This catches accessors, shared expansion and sparse tool arrays.
+   let response;try{response=snapshotJsonData(candidate,131072,'MODEL_RESPONSE');}catch{fail('MODEL_RESPONSE','Malformed or excessive model result.');}
    if(!plain(response)||typeof response.content!=='string'||!Array.isArray(response.toolCalls)||response.toolCalls.length>bounds.concurrency)fail('MODEL_RESPONSE','Malformed or excessive model result.');
    totalOutput+=response.content.length;
    if(totalOutput>bounds.maxOutputChars)fail('OUTPUT_LIMIT','Model output budget exceeded.');

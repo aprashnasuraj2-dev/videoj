@@ -54,7 +54,7 @@ test('noncooperating provider cancellation reports started but not completed cal
 test('typed provider quota failure survives vendor child error handling without leaking messages',async()=>{const {InferenceError}=await import('../../sutra-inference/protocol.js');const scripted=createScriptedModel();let calls=0;await assert.rejects(run({model:{mode:'provider',approvedModel:'synthetic-provider',chat(args){if(++calls===2)throw new InferenceError('QUOTA');return scripted.chat(args);}}}),e=>e.code==='PROVIDER_QUOTA'&&e.diagnostics.modelCalls===2&&e.diagnostics.completedModelCalls===1);assert.equal(calls,2);});
 
 test('aggregate graph budget stops shared DAG expansion and oversized primitive strings before serialization',()=>{
- const g=copy();let dag={leaf:'1234567890'};for(let i=0;i<19;i++)dag={left:dag,right:dag};
+ const g=copy();let dag={leaf:'1234567890'};for(let i=0;i<16;i++)dag={left:dag,right:dag};
  g.metadata.extra=dag;assert.throws(()=>compileNetwork(g),e=>e.code==='NETWORK_SIZE');
  const oversized=copy();oversized.metadata.description='🧪'.repeat(30000);assert.throws(()=>compileNetwork(oversized),e=>e.code==='NETWORK_SIZE');
 });
@@ -65,5 +65,12 @@ test('sparse arrays, inherited conversion hooks and coercible network identities
  const h=copy();h.metadata.extra=new Hostile();assert.throws(()=>compileNetwork(h),e=>e.code==='NETWORK_DATA');
  const identity={toString(){touched++;return 'learner';}};assert.throws(()=>compileNetwork(copy(),{name:identity}),e=>e.code==='NETWORK_ID');
  const limits={};Object.defineProperty(limits,'maxDepth',{enumerable:true,get(){touched++;return 3;}});assert.throws(()=>executionLimits(limits),e=>e.code==='LIMIT_CONFIG');
+ assert.equal(touched,0);
+});
+
+test('adapter result accessors and unbounded extras never execute or enter the runner',async()=>{
+ let touched=0;const getter={toolCalls:[]};Object.defineProperty(getter,'content',{enumerable:true,get(){touched++;return 'untrusted';}});
+ const sparse={content:'',toolCalls:new Array(1)};const giant={content:'',toolCalls:[],extra:'x'.repeat(131073)};
+ for(const response of [getter,sparse,giant])await assert.rejects(run({model:{mode:'scripted-test',chat:async()=>response}}),e=>e.code==='MODEL_RESPONSE'&&e.diagnostics.completedModelCalls===0);
  assert.equal(touched,0);
 });

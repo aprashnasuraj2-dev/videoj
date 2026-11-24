@@ -180,3 +180,17 @@ test('reviewed native tracks preserve exact cue wording, deterministic order and
  const fractional=structuredClone(source);fractional.cues[1].start=.1255;assert.throws(()=>deriveReviewedTracks(fractional),/CONTENT_TRACK_TIMING/);
  const zero=structuredClone(source);zero.cues[1].end=.125;assert.throws(()=>deriveReviewedTracks(zero),/CONTENT_TRACK_TIMING/);
 });
+
+test('artifact reads reject same-origin response substitution and fragment-bearing request before bytes are accepted',async()=>{
+ const origin='https://sutra.example',url=origin+'/source';let cancelled=false,contacts=0;
+ const response=new Response(new ReadableStream({cancel(){cancelled=true;}}));Object.defineProperty(response,'url',{value:origin+'/other'});
+ await assert.rejects(readContentBytes({origin,url,maxBytes:32,fetchImpl:async()=>{contacts++;return response;}}),/CONTENT_RESPONSE/);
+ assert.equal(cancelled,true);
+ await assert.rejects(readContentBytes({origin,url:url+'#fragment',maxBytes:32,fetchImpl:async()=>{contacts++;}}),/CONTENT_READ_CONFIG/);
+ assert.equal(contacts,1);
+});
+test('profile loader rejects JSON content type lookalikes without reading additional artifacts',async()=>{
+ let contacts=0;
+ await assert.rejects(loadContentProfile({baseUrl:'https://sutra.example/content/',fetchImpl:async()=>{contacts++;return new Response(JSON.stringify(profile),{headers:{'Content-Type':'text/application/json'}});}}),/CONTENT_RESPONSE/);
+ assert.equal(contacts,1);
+});
