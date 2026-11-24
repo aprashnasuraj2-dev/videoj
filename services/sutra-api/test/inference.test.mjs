@@ -164,7 +164,7 @@ test('worker exposes disabled publisher-funded compatibility route without asset
 });
 test('configured status publishes only the same-origin publisher-funded router contract; disabled status publishes none',async()=>{
  const disabled=await worker.fetch(new Request('https://sutra.test/api/status'),{});const d=await disabled.json();
- assert.deepEqual(d,{inference:'disabled',sourceTools:'synthetic-catalog',factualTruth:'unverified'});
+ assert.deepEqual(d,{inference:'disabled',sourceTools:'catalog',content:{mode:'synthetic',contentVersion:'synthetic-timing-v1',catalogSha256:'a92e4c0e29691f8cc65cbc2707bb3359b4b351bde929f73299062e7dc05503cb',primarySourceId:'synthetic-timing-fixture'},factualTruth:'unverified'});
  const configured=await worker.fetch(new Request('https://sutra.test/api/status'),environment());const c=await configured.json();
  assert.equal(c.inference,'configured');assert.equal(c.model,'operator-approved');assert.equal(c.routerBase,'/api/v1');assert.equal(c.publisherFunded,true);assert.equal(c.byok,false);
 });

@@ -50,14 +50,14 @@ const EN=Object.freeze({
  'comparison.meta.date':'Date meaning',
  'comparison.note':'Comparisons evaluate exact declared values and source scope, not the truth of either claim. The conflict example is hypothetical and unrelated to original lesson footage.',
  'transcript.follow':'Follow the source cue',
- 'transcript.search':'Search synthetic transcript',
+ 'transcript.search':'Search source transcript',
  'transcript.placeholder':'Search cue wording',
  'review.confirm':'Confirm local save',
  'review.cancel':'Cancel',
  'review.section':'04 / YOUR REVIEW',
  'review.title':'Keep a reviewable reference.',
  'review.body':'Preview the synthetic timing receipt before saving it in this browser. No account, server write or factual verification is involved.',
- 'review.preview':'Preview synthetic review card',
+ 'review.preview':'Preview source review card',
  'peer.run':'Run scripted peer test'
 });
 const NE=Object.freeze({
