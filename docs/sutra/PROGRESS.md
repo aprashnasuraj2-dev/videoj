@@ -2,13 +2,21 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
-## Session 0010 observed-head reconciliation — 2026-11-24
+## Session 0010 final engineering checkpoint — 2026-11-24
 
-**271 / 1,000 verified task checks (27.1%); 18 / 100 phases fully complete.** Phase **036 (destination-scoped private context)** and phase **039 (read-only MCP compatibility)** now close against exact observed code `545f2c310beb9ac4e5e3a4e30603dd6640cf67d7` and [green learner/browser CI](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45293913993/job/138109358437). The browser fixture observed an approved source-backed read, destructive discovery refusal and a real held-open five-second service timeout; private-context tests bind fields to the exact peer URL+network with separate downstream/upstream allowlists and canary-safe traces.
+**358 / 1,000 verified task checks (35.8%); 25 / 100 phases fully complete.** Checklist count is not effort-weighted and does not equal release readiness.
 
-This checkpoint reconciles already-green branch work; it does **not** claim production HTTPS interoperability, a third-party MCP publisher, factual truth, rights-cleared lesson content, live funded inference or participant acceptance. Public release and Devpost submission remain closed. [Session 0010 evidence](evidence/implementation/SESSION-0010.md).
+**Exact tested implementation:** `e1122ec58c7a773b41e4470dc0139a897049f912` — [green GitHub Actions job](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45294044575/job/138109800543). It passed 46 learner tests, 46 consent/inference/source/API tests, 96 runtime/peer/privacy tests, 7 peer-package tests, all 10 pinned upstream hashes and eight browser/integration profiles.
 
-**Next engineering cursor:** `SUTRA-P041-04` learner-visible state model, then optional inspector/accessibility consolidation. Human/content/external gates remain explicit blockers rather than synthetic substitutes.
+This session closes phases **036, 038, 039, 043, 061, 062, 063, 064 and 067**. Major verified additions include exact destination-bound private context; hostile-peer containment; source-backed read-only MCP with real held-open timeout; native media controls/seek failure handling; completed/rejected/unknown local action receipts; inference concurrency leases and kill switch; static CSP with zero responses to disallowed destinations; offline/mid-model network-loss recovery; and measured transcript-first performance.
+
+Measured CI lab profile at 1 Mbps / 150 ms: **393,302-byte gzip shell**, transcript usable in **1,378 ms**, **0 MP4 requests** before explicit media action, video ready **3,448 ms** after click, and native seek feedback **64 ms**. The 20-session synthetic concurrency lab admitted 4 under its ceiling, rejected 16, made 4 provider calls, retried 0 and observed 0 cross-session canary leakage. These are laboratory results, not staging/internet-scale claims.
+
+A read-only connected Cloudflare audit observed 532,550 Workers observability events over 17–23 Nov UTC, dominated by existing `patro` traffic. Static SUTRA configuration intentionally keeps normal assets outside Worker-first execution; billing/headroom remains unknown because the connection lacks Billing Read. No SUTRA production domain or request sample exists.
+
+**Still open and release-blocking:** original rights-cleared lesson/video and written guide, human factual review, real semantic comparison, physical-device/screen-reader acceptance, public HTTPS caller+peer origins, independently operated MCP/peer evidence, live funded provider/budget, final Cloudflare route/headroom verification, multi-version rollout/rollback evidence, participant/user testing and challenge eligibility. Public deployment, paid inference, final ZIP and Devpost submission remain closed.
+
+**Next engineering cursor:** `SUTRA-P041-07`, followed by `P042-06`, `P047-04`, `P049-03`, `P068-06` and `P065-03`. [Detailed session evidence](evidence/implementation/SESSION-0010.md) · [performance table](evidence/implementation/PERFORMANCE-2026-11-24.md) · [Cloudflare capacity audit](evidence/implementation/CLOUDFLARE-CAPACITY-2026-11-24.md).
 
 ---
 
