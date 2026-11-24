@@ -1,5 +1,10 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0026 — 2026-11-24
+
+- Added and verified X004-01..03 provider-measurement readiness. Updated P079-07 evidence to actual freshness-gated skip behavior.
+- 597/1,000 original; 609/1,012 total; 44 complete phases; six omissions. Live provider/token/price evidence remains open. [Evidence](evidence/implementation/SESSION-0026.md).
+
 ## SUTRA-SESSION-0025 — 2026-11-24
 
 - Credited P040-02..09 from exact green controlled browser/runtime evidence. P040-01/10 remain blocked on authorized public HTTPS replay.

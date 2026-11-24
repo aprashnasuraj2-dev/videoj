@@ -2,6 +2,14 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0026 — 2026-11-24
+
+**597/1,000 original checks verified; 609/1,012 total; 44/100 phases fully verified; 6 omissions.**
+
+Added X004 provider-measurement readiness: fail-closed token/cost arithmetic, all-observed-run denominator, offline CLI and impact mapping are green on current head. No live provider/cost claim is made. P079-07 is strengthened with observed revision-bound CI skipping: both expensive evaluation and browser-matrix jobs were actually skipped while their metric evidence was current. [Session evidence](evidence/implementation/SESSION-0026.md).
+
+---
+
 ## Session 0025 — 2026-11-24
 
 **597/1,000 original checks verified; 606/1,009 total; 44/100 phases fully verified; 6 omissions.**

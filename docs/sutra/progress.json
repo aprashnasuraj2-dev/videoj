@@ -1,21 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T08:58:00+05:45",
+  "updated_at": "2026-11-24T09:02:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
-  "last_session_id": "SUTRA-SESSION-0025",
-  "stage": "milestone_b_controlled_mechanics_reconciled_https_replay_blocked",
+  "last_observed_code_sha": "49de8a1e1fe1147a230cc40a5afcf162291c9e4e",
+  "last_session_id": "SUTRA-SESSION-0026",
+  "stage": "provider_measurement_readiness_and_revision_bound_ci_verified",
   "current_task": null,
   "next_task": "SUTRA-P041-08",
   "ready_engineering_queue": [
-    "SUTRA-P040-01",
-    "SUTRA-P034-01",
-    "SUTRA-P078-02",
     "SUTRA-P054-01",
+    "SUTRA-P066-01",
+    "SUTRA-P078-02",
+    "SUTRA-P034-01",
     "SUTRA-P020-02"
   ],
-  "next_action": "Continue non-deployment engineering and provider measurement readiness. Public HTTPS interoperability replay remains intentionally blocked by release ordering.",
+  "next_action": "Continue engineering-only readiness and stabilization. Do not convert provider measurement tooling into P054/P066 live-cost evidence until an approved capped provider sample supplies actual model/token/price observations.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -10191,14 +10191,14 @@
     },
     "SUTRA-P079-07": {
       "state": "verified",
-      "verified_at": "2026-11-24T08:50:00+05:45",
+      "verified_at": "2026-11-24T09:02:00+05:45",
       "evidence": [
         {
           "artifact": "docs/sutra/evidence/implementation/TARGETED-CI-SCOPE-2026-11-24.md",
-          "description": "Specialized three-engine and engineering-evaluation workflows now use actual dependency surfaces instead of catch-all app/package triggers; broad learner integration remains the safety net.",
+          "description": "Revision-bound freshness jobs compare current head to recorded metric source SHA; on f4a8c78 and current head both engineering baseline and three-engine browser jobs were skipped while freshness jobs passed. workflow_dispatch still forces revalidation.",
           "result": "pass",
-          "source_revision": "0e57504bac43f13e4a8c6d66de9e5963884458fb",
-          "observed_at": "2026-11-24T08:50:00+05:45"
+          "source_revision": "f4a8c78ca5f158217ed45bf52bf757303c94d4fe",
+          "observed_at": "2026-11-24T09:02:00+05:45"
         }
       ]
     },
@@ -10329,6 +10329,45 @@
           "result": "pass",
           "source_revision": "0ef8a613c1c8d6db522d50a1088f9528ad055d4b",
           "observed_at": "2026-11-24T08:58:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X004-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T09:02:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PROVIDER-COST-MEASUREMENT-GATE-2026-11-24.md",
+          "description": "Current provider-measurement CI validates exact revision/model/price/run/request schemas, unique request sequences, explicit timezone timestamps and retains failed/cancelled/retry rows in the spend record.",
+          "result": "pass",
+          "source_revision": "49de8a1e1fe1147a230cc40a5afcf162291c9e4e",
+          "observed_at": "2026-11-24T09:02:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X004-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T09:02:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PROVIDER-COST-MEASUREMENT-GATE-2026-11-24.md",
+          "description": "Unknown request usage makes costComplete false and nulls mean/p95/monthly/sensitivity; complete reports use all-observed-run mean so failed paid attempts are not excluded and include prompt/retry sensitivity.",
+          "result": "pass",
+          "source_revision": "49de8a1e1fe1147a230cc40a5afcf162291c9e4e",
+          "observed_at": "2026-11-24T09:02:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X004-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T09:02:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/PROVIDER-COST-MEASUREMENT-GATE-2026-11-24.md",
+          "description": "Offline <=512 KiB CLI has distinct complete/incomplete/invalid exit states, synthetic non-provider example, dedicated green workflow and provider-cost impact-map binding; no live provider is contacted.",
+          "result": "pass",
+          "source_revision": "49de8a1e1fe1147a230cc40a5afcf162291c9e4e",
+          "observed_at": "2026-11-24T09:02:00+05:45"
         }
       ]
     }
