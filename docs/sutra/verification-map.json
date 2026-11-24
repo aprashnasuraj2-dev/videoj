@@ -117,10 +117,12 @@
       "prefixes": [
         "apps/sutra/src/provider-",
         "packages/sutra-inference/",
-        "services/sutra-api/"
+        "services/sutra-api/",
+        "tools/sutra-provider-measurement/"
       ],
       "requiredWorkflows": [
-        "Validate SUTRA learner shell"
+        "Validate SUTRA learner shell",
+        "Validate SUTRA provider measurement gate"
       ],
       "invalidates": [
         "provider_cost"

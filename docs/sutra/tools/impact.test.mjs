@@ -48,3 +48,8 @@ test('expensive browser/evaluation workflows do not use catch-all app or package
  assert.doesNotMatch(evaluation,/apps\/sutra\/\*\*/);assert.doesNotMatch(evaluation,/packages\/sutra-\*\/\*\*/);
  assert.match(evaluation,/apps\/sutra\/src\/comparison\.js/);assert.match(evaluation,/tools\/sutra-evaluation\/\*\*/);
 });
+
+test('provider measurement tooling is mapped to provider-cost revalidation rather than treated as orphan code',()=>{
+ const r=classifyChangedFiles(['tools/sutra-provider-measurement/report.mjs'],map);
+ assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('provider-cost'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA provider measurement gate'));assert.ok(r.invalidatedMetrics.includes('provider_cost'));
+});
