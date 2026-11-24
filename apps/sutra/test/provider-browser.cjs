@@ -85,6 +85,11 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.waitForFunction(()=>document.querySelector('#provider-status').textContent.includes('Model configured'));
   await runOnce();await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='completed');
   assert.equal(calls,4);assert.match(await page.locator('#provider-answer').textContent(),/Synthetic provider fixture/);assert.match(await page.locator('#provider-receipts').textContent(),/synthetic-timing-fixture/);assert.match(await page.locator('#provider-metrics').textContent(),/80\/20\/100/);
+  // Opening then cancelling a later run preserves the completed answer and creates no model traffic.
+  const completedAnswer=await page.locator('#provider-answer').textContent();
+  await page.getByRole('button',{name:'Ask configured model'}).click();await page.waitForFunction(()=>document.querySelector('#provider-consent-dialog').open);
+  assert.equal(calls,4);await page.getByRole('button',{name:'Cancel',exact:true}).click();await page.waitForFunction(()=>!document.querySelector('#provider-consent-dialog').open);
+  assert.equal(calls,4);assert.equal(await page.locator('#provider-output').isHidden(),false);assert.equal(await page.locator('#provider-answer').textContent(),completedAnswer);
   // A model result grants neither media transfer nor persistence.
   await page.getByRole('button',{name:'Seek to retrieved cue'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-action-status').textContent.includes('Cue seek unavailable'));

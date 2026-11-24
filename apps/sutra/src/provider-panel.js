@@ -40,7 +40,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
    set('error','Inference approval became stale. Check availability and review the run again. No model request was made.');
    model=null;approvedContract=null;controls();return;
   }
-  const operation={kind:'run',controller:new AbortController()};active=operation;controls();set('running','Running the configured model and bounded source tools…');
+  clear();const operation={kind:'run',controller:new AbortController()};active=operation;controls();set('running','Running the configured model and bounded source tools…');
   try{
    const result=await runProviderLesson({origin,approvedContract,loadedContent,question:approval.question,signal:operation.controller.signal});
    if(operation.controller.signal.aborted)throw Error('cancelled');
@@ -67,7 +67,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   finally{active=null;controls();}
  });
  run.addEventListener('click',()=>{
-  if(active||pendingApproval||!model||!approvedContract)return;clear();
+  if(active||pendingApproval||!model||!approvedContract)return;
   const value=question.value;
   if(!value.trim()||value.length>1200){set('input_error','Enter a question of 1–1200 characters.');return;}
   pendingApproval=Object.freeze({question:value,model,contract:approvedContract});
