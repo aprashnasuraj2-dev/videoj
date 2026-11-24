@@ -30,6 +30,11 @@ const contrast=(a,b)=>{
   await page.emulateMedia({reducedMotion:'reduce'});
   await page.goto('http://127.0.0.1:4189');
 
+  // Content-profile validation is asynchronous; do not audit the empty boot shell.
+  await page.locator('#peer-status').waitFor({state:'visible'});
+  assert.equal(await page.locator('#peer-status').getAttribute('role'),'status');
+  assert.equal(await page.locator('#peer-status').getAttribute('aria-live'),'polite');
+
   // Static automated checks: IDs, visible interactive names and live regions.
   const audit=await page.evaluate(()=>{
    const visible=e=>{const r=e.getBoundingClientRect(),s=getComputedStyle(e);return r.width>0&&r.height>0&&s.visibility!=='hidden'&&s.display!=='none';};
