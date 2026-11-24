@@ -24,7 +24,7 @@ test('navigation revokes an already entered pending result without claiming comp
  const pending=queue.run(async()=>{entered=true;await new Promise(resolve=>{release=resolve;});return 'late success';});
  for(let i=0;i<100&&!entered;i++)await new Promise(resolve=>setTimeout(resolve,0));
  assert.equal(entered,true);queue.revoke();release();
- await assert.rejects(pending,e=>e.name==='AbortError');
+ await assert.rejects(pending,e=>e.outcome==='unknown');
  assert.equal(await queue.run(()=>7),7,'new lifetime works without inheriting previous operation');
 });
 test('a queued review never executes after pagehide even if the lock becomes available',async()=>{
@@ -35,4 +35,12 @@ test('a queued review never executes after pagehide even if the lock becomes ava
  const pending=queue.run(()=>{calls.push('mutated');});
  queue.revoke();release();await assert.rejects(pending,e=>e.name==='AbortError');
  assert.deepEqual(calls,[],'no destructive effect after stale queue revocation');
+});
+
+test('revoked already-entered storage effect is unknown, never a proven rejection',async()=>{
+ let release,called=0;
+ const queue=createReviewMutationQueue({locks:{request:async(_name,_opts,cb)=>cb()}});
+ const pending=queue.run(async()=>{called++;await new Promise(resolve=>{release=resolve;});});
+ await new Promise(resolve=>setTimeout(resolve,0));assert.equal(called,1);
+ queue.revoke();release();await assert.rejects(pending,e=>e.outcome==='unknown');
 });
