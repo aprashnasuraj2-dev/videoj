@@ -161,16 +161,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Build a minimal two-agent example with manifest, links, runtime wiring, sample local action and clear deploy instructions. Use synthetic licensed data and preserve runtime attribution.
 - **Phase exit:** A clean install serves the example without the main app; manifest and exact-name peer loading work.
 
-- [ ] `SUTRA-P059-01` Create a minimal two-agent starter with synthetic licensed content
-- [ ] `SUTRA-P059-02` Include manifest, resolved graph and named peer-link examples
-- [ ] `SUTRA-P059-03` Wire a pinned runtime and one safe registered local action
-- [ ] `SUTRA-P059-04` Document default inference setup without embedding real secrets
-- [ ] `SUTRA-P059-05` Include a second-origin example and denied-origin walkthrough
-- [ ] `SUTRA-P059-06` Keep starter build/install commands independent of the learner app
-- [ ] `SUTRA-P059-07` Retain required upstream license and NOTICE material
-- [ ] `SUTRA-P059-08` Verify clean publication and exact-name network loading
-- [ ] `SUTRA-P059-09` Produce and review the phase artifact: Open Kit artifact 3: publisher starter and example peer.
-- [ ] `SUTRA-P059-10` Close phase 059 only after its applicable tasks have evidence and its exit condition is observed: A clean install serves the example without the main app; manifest and exact-name peer loading work.
+- [x] `SUTRA-P059-01` Create a minimal two-agent starter with synthetic licensed content
+- [x] `SUTRA-P059-02` Include manifest, resolved graph and named peer-link examples
+- [x] `SUTRA-P059-03` Wire a pinned runtime and one safe registered local action
+- [x] `SUTRA-P059-04` Document default inference setup without embedding real secrets
+- [x] `SUTRA-P059-05` Include a second-origin example and denied-origin walkthrough
+- [x] `SUTRA-P059-06` Keep starter build/install commands independent of the learner app
+- [x] `SUTRA-P059-07` Retain required upstream license and NOTICE material
+- [x] `SUTRA-P059-08` Verify clean publication and exact-name network loading
+- [x] `SUTRA-P059-09` Produce and review the phase artifact: Open Kit artifact 3: publisher starter and example peer.
+- [x] `SUTRA-P059-10` Close phase 059 only after its applicable tasks have evidence and its exit condition is observed: A clean install serves the example without the main app; manifest and exact-name peer loading work.
 
 ## Phase 060 - Publish a versioned Open Kit candidate
 
@@ -179,13 +179,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Write quickstarts, API boundaries, Apache-compatible notices and troubleshooting. Add a community test command described as project checks, not an official certification suite.
 - **Phase exit:** Each tool has its own purpose, entry point, license and runnable example; no private data or tokens are packaged.
 
-- [ ] `SUTRA-P060-01` Assign an immutable candidate version to each community artifact
-- [ ] `SUTRA-P060-02` Write a purpose, quickstart and public entry point for each tool
-- [ ] `SUTRA-P060-03` Explain supported environments and incompatible optional capabilities
-- [ ] `SUTRA-P060-04` Include troubleshooting for schema, CORS, consent and router failures
-- [ ] `SUTRA-P060-05` Expose public source and runnable synthetic examples
-- [ ] `SUTRA-P060-06` Label project checks as project checks rather than official certification
-- [ ] `SUTRA-P060-07` Scan archives for private material and secret canaries
-- [ ] `SUTRA-P060-08` Record what remains unverified before asking outsiders to try it
-- [ ] `SUTRA-P060-09` Produce and review the phase artifact: Versioned community release candidate and public documentation paths.
-- [ ] `SUTRA-P060-10` Close phase 060 only after its applicable tasks have evidence and its exit condition is observed: Each tool has its own purpose, entry point, license and runnable example; no private data or tokens are packaged.
+- [x] `SUTRA-P060-01` Assign an immutable candidate version to each community artifact
+- [x] `SUTRA-P060-02` Write a purpose, quickstart and public entry point for each tool
+- [x] `SUTRA-P060-03` Explain supported environments and incompatible optional capabilities
+- [x] `SUTRA-P060-04` Include troubleshooting for schema, CORS, consent and router failures
+- [x] `SUTRA-P060-05` Expose public source and runnable synthetic examples
+- [x] `SUTRA-P060-06` Label project checks as project checks rather than official certification
+- [x] `SUTRA-P060-07` Scan archives for private material and secret canaries
+- [x] `SUTRA-P060-08` Record what remains unverified before asking outsiders to try it
+- [x] `SUTRA-P060-09` Produce and review the phase artifact: Versioned community release candidate and public documentation paths.
+- [x] `SUTRA-P060-10` Close phase 060 only after its applicable tasks have evidence and its exit condition is observed: Each tool has its own purpose, entry point, license and runnable example; no private data or tokens are packaged.

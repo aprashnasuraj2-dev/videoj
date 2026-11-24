@@ -1,6 +1,18 @@
 # SUTRA session history
 
 
+## SUTRA-SESSION-0014 — 2026-11-24
+
+**448/1,000 original checks verified; 449/1,003 total checks verified; 32/100 phases fully verified; 1 historical omission.** Counts are neither effort-weighted nor a release readiness measure.
+
+Observed green implementation `f69d6c169cd588a4ebaef938884a986714da71eb`: [learner](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45306536932/job/138151640636), [starter](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45306536848/job/138151640658), [Open Kit](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45306536924/job/138151640456), [ingress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45306536919/job/138151640727). P059 and P060 verified at development-candidate scope. Credited six P026 streaming/cancellation checks, caller model policy, two cost/availability controls and one new resource-quota regression. Saved-card deletion and corruption recovery were observed; P068-07/10 remain pending because the BYOK decision has not been closed. No optional scope waived in this session.
+
+Subsequent neutral consumer `40107b5fb1f6bb2dbb94e65193db007cd4052883` passed positive and denial cases before the missing-CORS regression failed. Fix and explicit running/cancelling state committed at `c10155d78fe7329638c6e8182a23fa8074df9df6`, awaiting exact-revision CI; no P071 or new lifecycle completion credited yet. [Failed neutral job](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45307217621/job/138153884347).
+
+Participant instruction: **engineering checklist first, no further deployment work**. No account reconnection, DNS change, public deployment, paid inference, public package release or submission. Next: verify neutral/lifecycle CI, implement registered local actions and write-readback protection, then shared runtime budgets, symbolic links and browser matrix. [Session evidence](evidence/implementation/SESSION-0014.md).
+
+---
+
 ## SUTRA-SESSION-0013 — 2026-11-24
 
 - Exact tested implementation: `09deac5725b3e7e0b45b1cf7e5249305920c019f`; [full green learner/build/browser job](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45300306959/job/138130900092).

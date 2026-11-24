@@ -108,13 +108,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** Cancellation prevents new calls; an interrupted answer is visibly incomplete and is never presented as a completed verified result.
 
 - [ ] `SUTRA-P026-01` Represent idle, running, cancelling, failed and complete states explicitly
-- [ ] `SUTRA-P026-02` Assemble streamed function-call arguments only after valid completion
-- [ ] `SUTRA-P026-03` Handle malformed model output and unexpected provider payloads
-- [ ] `SUTRA-P026-04` Propagate model and child-agent errors without inventing success
-- [ ] `SUTRA-P026-05` Abort outstanding reads and prevent new children after cancellation
-- [ ] `SUTRA-P026-06` Label interrupted text as incomplete rather than verified output
+- [x] `SUTRA-P026-02` Assemble streamed function-call arguments only after valid completion
+- [x] `SUTRA-P026-03` Handle malformed model output and unexpected provider payloads
+- [x] `SUTRA-P026-04` Propagate model and child-agent errors without inventing success
+- [x] `SUTRA-P026-05` Abort outstanding reads and prevent new children after cancellation
+- [x] `SUTRA-P026-06` Label interrupted text as incomplete rather than verified output
 - [ ] `SUTRA-P026-07` Bound retries for clearly failed reads with recorded attempt counts
-- [ ] `SUTRA-P026-08` Verify cancellation does not disrupt ordinary media controls
+- [x] `SUTRA-P026-08` Verify cancellation does not disrupt ordinary media controls
 - [ ] `SUTRA-P026-09` Produce and review the phase artifact: Typed run lifecycle and actionable error states.
 - [ ] `SUTRA-P026-10` Close phase 026 only after its applicable tasks have evidence and its exit condition is observed: Cancellation prevents new calls; an interrupted answer is visibly incomplete and is never presented as a completed verified result.
 
@@ -182,7 +182,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P030-01` Decide whether optional BYOK remains in scope after the default path works
 - [ ] `SUTRA-P030-02` Use only a tested permitted router with browser CORS support
 - [ ] `SUTRA-P030-03` Keep BYOK credentials in memory and provide explicit deletion
-- [ ] `SUTRA-P030-04` Prevent peer metadata from overriding caller router or model policy
+- [x] `SUTRA-P030-04` Prevent peer metadata from overriding caller router or model policy
 - [ ] `SUTRA-P030-05` Send keys only in authorized model requests to the selected router
 - [ ] `SUTRA-P030-06` Check URLs, prompts, actions, traces, analytics and exports for key canaries
 - [ ] `SUTRA-P030-07` Stop with a clear setup error if a required key is absent

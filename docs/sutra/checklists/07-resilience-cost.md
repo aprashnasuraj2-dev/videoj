@@ -112,9 +112,9 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P066-03` Calculate mean and high-percentile observed run cost
 - [ ] `SUTRA-P066-04` Check the effect of doubled context and retry usage
 - [ ] `SUTRA-P066-05` Configure funded run/token caps and a readable exhaustion state
-- [ ] `SUTRA-P066-06` Verify the stop control prevents new paid upstream requests
+- [x] `SUTRA-P066-06` Verify the stop control prevents new paid upstream requests
 - [ ] `SUTRA-P066-07` Reserve funds for judging after development use
-- [ ] `SUTRA-P066-08` Keep static learning content usable when sponsored inference stops
+- [x] `SUTRA-P066-08` Keep static learning content usable when sponsored inference stops
 - [ ] `SUTRA-P066-09` Produce and review the phase artifact: Measured cost report and budget kill switch.
 - [ ] `SUTRA-P066-10` Close phase 066 only after its applicable tasks have evidence and its exit condition is observed: Projected monthly cost derives from observed runs; disabling sponsored inference stops additional paid requests.
 

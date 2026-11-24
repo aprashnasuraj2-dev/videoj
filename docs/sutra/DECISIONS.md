@@ -158,3 +158,10 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - Optional localization polish is cut before runtime correctness: dynamic peer/MCP/runtime diagnostics and locale-specific date/unit formatting remain pending rather than receiving unreviewed partial translations. P048-03, P048-06 and P048-09 therefore remain open.
 - No release authorization changes. Original lesson rights, factual review, physical accessibility, public independent interoperability, live paid inference, production Cloudflare headroom/routes and participant testing remain separate gates.
 
+
+## SUTRA-DECISION-0018 — Engineering checklist before any further deployment work
+
+- Participant reiterated on 2026-11-24 that deployment must not take precedence over the hundreds of incomplete checklist checks. Keep PR #49 draft and work confined to SUTRA source, local/CI validation and evidence.
+- Existing two-account configuration is a compiled development candidate, not public launch authorization or proof of Cloudflare capacity. Do not contact/reconnect Cloudflare accounts, assign domains, mutate DNS or enable funded inference as part of routine continuation.
+- Keep unverified original and added-scope tasks pending. Do not mark human acceptance, actual content rights, live provider evidence or public interoperability complete using synthetic tests. No additional optional tasks waived here; direct BYOK remains unshipped and its scope decision pending.
+- Reject treating packaging or compilation as an engineering milestone that supersedes incomplete runtime, learner and interoperability work. Prioritize P026, P029, P028, P022, P071 and P077 where independently ready.
