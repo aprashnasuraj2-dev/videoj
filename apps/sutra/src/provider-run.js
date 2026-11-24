@@ -11,6 +11,22 @@ const contentError=()=>Object.assign(Error('Published content changed; reload th
 const contractError=()=>Object.assign(Error('Provider publication changed; check availability again.'),{code:'CONTRACT_CHANGED'});
 const contentIdentity=content=>({profileSha256:content.artifacts.profileSha256,catalogSha256:content.artifacts.catalogSha256,transcriptSha256:content.artifacts.transcriptSha256,contentVersion:content.profile.contentVersion,contentMode:content.profile.mode,primarySourceId:content.profile.primarySourceId});
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+// Own a closed primitive consent record before discovery or a callback can run.
+export function snapshotApprovedContract(value){
+ try{
+  const keys=['backend','model','inferenceContractId','router','content','graphUrl','frontMan','graphSha256'];
+  const innerKeys=['profileSha256','catalogSha256','transcriptSha256','contentVersion','contentMode','primarySourceId'];
+  const data=snapshotDataRecord(value,keys.length),inner=snapshotDataRecord(data.content,innerKeys.length);
+  if(Object.keys(data).length!==keys.length||Object.keys(inner).length!==innerKeys.length||
+     keys.some(k=>k!=='content'&&(typeof data[k]!=='string'||!data[k]||data[k].length>2048))||
+     innerKeys.some(k=>typeof inner[k]!=='string'||!inner[k]||inner[k].length>256))throw Error();
+  const hash=v=>/^[a-f0-9]{64}$/.test(v);
+  if(!['hosted','self_hosted'].includes(data.backend)||!modelPattern.test(data.model)||data.model==='mock-1'||
+     ![data.inferenceContractId,data.graphSha256,inner.profileSha256,inner.catalogSha256,inner.transcriptSha256].every(hash))throw Error();
+  const content=Object.freeze(Object.fromEntries(innerKeys.map(k=>[k,inner[k]])));
+  return Object.freeze(Object.fromEntries(keys.map(k=>[k,k==='content'?content:data[k]])));
+ }catch{throw contractError();}
+}
 // Source MCP validates each response; this is a second, UI-owned boundary.
 // Even a faulty observer or a mutable host catalog cannot turn an arbitrary
 // record into a completed evidence-backed interpretation.
@@ -37,6 +53,7 @@ export function createReceiptCollector({sources,limit=20}={}){
  });
 }
 async function readPublicJson({url,origin,fetchImpl,signal,maxBytes}){
+ signal?.throwIfAborted();
  const response=await abortable(fetchImpl(url,{method:'GET',redirect:'error',credentials:'omit',cache:'no-store',headers:{Accept:'application/json'},signal}),signal);
  if(!response.ok||response.redirected||!response.headers.get('content-type')?.includes('application/json')||response.url&&new URL(response.url).origin!==origin)throw Error('Unavailable public contract');
  const reader=response.body?.getReader();if(!reader)throw Error('Unavailable public contract');let size=0;const parts=[];
@@ -80,7 +97,8 @@ export async function discoverProvider({origin,loadedContent,fetchImpl=fetch,sig
  }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controller.abort();}
 }
 export async function runProviderLesson({origin,approvedContract,loadedContent,question,fetchImpl=fetch,signal,onModelStart=()=>{}}={}){
- const model=approvedContract?.model;
+ approvedContract=snapshotApprovedContract(approvedContract);
+ const model=approvedContract.model;
  if(!validOrigin(origin)||typeof model!=='string'||!modelPattern.test(model)||model==='mock-1'||typeof question!=='string'||!question.trim()||question.length>1200)throw Error('Invalid run input');
  const controller=new AbortController(),abort=()=>controller.abort();
  signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();

@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {createReceiptCollector} from '../src/provider-run.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {createReceiptCollector,snapshotApprovedContract,discoverProvider} from '../src/provider-run.js';
 
 const receipt=(i,source='source')=>({version:1,sourceId:source,sourceVersion:'v1',sourceHash:'a'.repeat(64),mediaHash:'b'.repeat(64),cueId:'cue-'+i,start:i,end:i+1,excerpt:'cue '+i,retrievedAt:'2026-11-24T00:00:00Z',verification:'unverified'});
 
@@ -37,4 +37,19 @@ test('receipt collector revalidates earlier receipts when mounted source identit
  const sources=sourcesFor('source');const c=createReceiptCollector({sources});c.add(receipt(0));
  sources[0].version='v2';const out=c.snapshot();assert.equal(out.invalid,true);assert.deepEqual(out.receipts,[]);
  sources[0].version='v1';assert.equal(c.snapshot().invalid,true,'invalid evidence state remains sticky even if caller restores catalog');
+});
+
+const approval=()=>({backend:'self_hosted',model:'local-model',inferenceContractId:'a'.repeat(64),router:'https://example.test/api/v1',content:{profileSha256:'b'.repeat(64),catalogSha256:'c'.repeat(64),transcriptSha256:'d'.repeat(64),contentVersion:'v1',contentMode:'synthetic',primarySourceId:'source'},graphUrl:'https://example.test/agents/graph.json',frontMan:'learner',graphSha256:'e'.repeat(64)});
+test('approved contract snapshot is closed and unaffected by caller changes during discovery or model callbacks',()=>{
+ const raw=approval(),expected=structuredClone(raw),snapshot=snapshotApprovedContract(raw);
+ raw.inferenceContractId='f'.repeat(64);raw.content.catalogSha256='f'.repeat(64);raw.model='other';
+ assert.deepEqual(snapshot,expected);assert.ok(Object.isFrozen(snapshot));assert.ok(Object.isFrozen(snapshot.content));
+ for(const invalid of [{...approval(),secret:'private'},{...approval(),content:{...approval().content,secret:'private'}},{...approval(),inferenceContractId:'bad'}])assert.throws(()=>snapshotApprovedContract(invalid),e=>e.code==='CONTRACT_CHANGED');
+ let getter=0;const bad=approval();Object.defineProperty(bad.content,'catalogSha256',{enumerable:true,get(){getter++;return 'c'.repeat(64);}});
+ assert.throws(()=>snapshotApprovedContract(bad),e=>e.code==='CONTRACT_CHANGED');assert.equal(getter,0);
+});
+test('pre-aborted provider discovery never contacts status',async()=>{
+ const c=new AbortController();c.abort();let calls=0;
+ await assert.rejects(discoverProvider({origin:'https://example.test',signal:c.signal,fetchImpl:async()=>{calls++;throw Error('unexpected');}}));
+ assert.equal(calls,0);
 });

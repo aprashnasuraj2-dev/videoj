@@ -9,8 +9,10 @@ import {createReceiptActionRow} from './receipt-actions.js';
 const STOP=new Set(('a an and are as at be by can could did do does for from how i in is it its me of on or our please show source tell that the their there these this those to us video was were what when where which who why will with would you your about explain find give happen happens happened lesson mentioned say says said occur occurs कहाँ कसरी कति के कुन कसलाई मलाई छ छन् हो हुन्छ कहाँनेर पाठमा पाठको यो यी त्यो तथा र वा मा को का कि कृपया देखाउनुहोस् भन्नुहोस्').split(' '));
 // Combining marks are part of Indic words; dropping \\p{M} breaks Nepali evidence matching.
 const WORDS=/[\p{L}\p{M}\p{N}]+/gu;
-const termsOf=text=>[...(text.normalize('NFKC').toLocaleLowerCase('en').match(WORDS)??[])]
-  .filter(w=>!STOP.has(w));
+// Uppercase A/I may be literal terminal or diagram labels; never erase them as articles.
+// Lowercase natural-language articles remain stopwords; exact literal search is available.
+const termsOf=text=>[...(text.normalize('NFKC').match(WORDS)??[])]
+  .map(w=>w==='A'||w==='I'?w:w.toLocaleLowerCase('en')).filter(w=>!STOP.has(w));
 const toks=text=>termsOf(text).filter(w=>w.length<=48);
 const snapshot=(state,receipts=[],extra={})=>Object.freeze({
  state,receipts:Object.freeze(receipts.map(r=>Object.freeze({...r}))),modelCalls:0,networkRequests:0,
@@ -27,6 +29,8 @@ export function createLocalAnswer({sources,now}={}){
     return {id:cue.id,start:cue.start,end:cue.end,text:cue.text};
    })};
  });
+ // Validate the projected catalog before tokenizing untrusted text or building the index.
+ const tools=createSourceTools(raw,now?{now}:{});
  const rows=[];
  // Reject an oversized index rather than causing a memory freeze on low-end phones.
  // Even a fully valid source catalog can be too large for in-browser ranking.
@@ -44,8 +48,6 @@ export function createLocalAnswer({sources,now}={}){
    rows.push({sourceId:source.id,cueId:cue.id,start:cue.start,end:cue.end,words:unique,folded:cue.text.normalize('NFKC').toLocaleLowerCase('en'),rank:rows.length});
   }
  }
- // Single source of truth for actual receipts: the existing strict catalog tool.
- const tools=createSourceTools(raw,now?{now}:{});
  const df=new Map();for(const row of rows)for(const word of row.words)df.set(word,(df.get(word)??0)+1);
  const docCount=rows.length;
  return Object.freeze({query(question){

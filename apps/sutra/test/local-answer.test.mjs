@@ -85,3 +85,19 @@ test('local question retrieval supports the longest accepted source and cue iden
  assert.equal(r.state,'matched');assert.equal(r.receipts[0].sourceId,source.id);assert.equal(r.receipts[0].cueId,source.cues[0].id);
  assert.equal(r.modelCalls,0);assert.equal(r.networkRequests,0);
 });
+
+
+test('explicit uppercase A and I constraints are not erased as articles',()=>{
+ const local=make();
+ for(const q of ['timing marker A','timing marker Ａ','timing marker I'])assert.equal(local.query(q).state,'no_match',q);
+ const source=structuredClone(fixture.source);source.cues[0].text='Timing marker A.';
+ const labeled=createLocalAnswer({sources:[source]});
+ assert.equal(labeled.query('timing marker A').state,'matched');
+ assert.equal(labeled.query('timing marker Ａ').state,'matched');
+ assert.equal(labeled.query('find a timing marker').state,'matched');
+ assert.equal(labeled.query('timing marker I').state,'no_match');
+});
+test('catalog text and identity validation precede local indexing',()=>{
+ const source=structuredClone(fixture.source);source.cues[0].text='x '.repeat(10000);
+ assert.throws(()=>createLocalAnswer({sources:[source]}),/CATALOG/);
+});
