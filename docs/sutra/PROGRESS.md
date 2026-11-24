@@ -2,6 +2,25 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0013 grounding reconciliation — 2026-11-24
+
+**419 / 1,000 verified task checks (41.9%); 30 / 100 phases fully verified; 1 intentionally omitted checklist item.** Checklist percentage is not effort-weighted and does not equal release readiness.
+
+**Exact tested implementation:** `09deac5725b3e7e0b45b1cf7e5249305920c019f` — [green full learner/build/browser job](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45300306959/job/138130900092). The run passed 67 learner/app tests, 49 consent/inference/source/API tests, 97 runtime/peer/privacy tests, 7 independent peer-publication tests, all 10 pinned upstream hashes and nine Chromium profiles. The exact-head [evidence-library job](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45300306945/job/138130900607) also passed the standalone receipt/claim suite.
+
+This checkpoint closes **phase 051 (bounded deterministic transcript retrieval), phase 052 (answer/evidence validation), and phase 056 (source/media drift)**. It also credits the previously observed Session 0012 locale/date, immutable rollout and Milestone-C local-journey checks.
+
+**New drift behavior:** a saved card whose source version/hash/media/schema no longer matches is rendered as stale diagnostic provenance, not valid evidence. It loses the normal valid-download action, is not silently migrated, blocks mixing into a new valid collection until cleaned up, and remains explicitly deletable.
+
+**Uncertainty work:** phase 055 now has deterministic abstention for missing/conflicting/incomparable/invalid evidence, non-fabricated source references and a visible next-human-step policy. It remains open because the phase-053 40-case human-reviewed held-out evaluation set does not yet exist.
+
+**Still open:** P041 fresh-viewer acceptance; P048 human Nepali terminology review; P049 physical touch/screen-reader testing; P050 funded/default inference discovery; original rights-cleared lesson/reviewed guide/factual review; phase-053 held-out evaluation; independent public HTTPS peer/MCP evidence; live funded provider; production Cloudflare headroom/routes; real rollout/rollback; participant testing. No release, paid inference, final ZIP or Devpost submission is authorized.
+
+**Independent engineering cursor:** start **P059 agentic-site starter**, then P060 versioned Open Kit candidate. [Session 0013](evidence/implementation/SESSION-0013.md) · [retrieval](evidence/implementation/RETRIEVAL-2026-11-24.md) · [validation](evidence/implementation/EVIDENCE-VALIDATION-PIPELINE-2026-11-24.md) · [drift](evidence/implementation/VERSION-DRIFT-2026-11-24.md) · [uncertainty](evidence/implementation/UNCERTAINTY-GUIDANCE-2026-11-24.md).
+
+---
+
+
 ## Session 0011 learner-state, media-recovery and bilingual-core checkpoint — 2026-11-24
 
 **371 / 1,000 verified task checks (37.1%); 27 / 100 phases fully verified; 1 checklist item intentionally omitted with recorded rationale.** Checklist count is not effort-weighted and does not equal release readiness.
