@@ -106,3 +106,5 @@ html[data-locale=ne] .language-review-note{font-weight:650}
 
 /* Keep the primary local lookup in normal reading/tab order, before lesson media. */
 #local-answer+.workspace{margin-top:24px}
+
+.transcript-inspect{margin:5px 0;min-height:36px;font-size:12px}.transcript-receipt:not([hidden]){border:1px solid #b1c2b6;border-radius:8px;padding:10px;margin:6px 0;background:#fffef9;overflow-wrap:anywhere}.transcript-receipt-results{list-style:none;padding:0;margin:0}.transcript-receipt-results blockquote{margin:8px 0;padding:6px 10px;border-left:3px solid #357561}.transcript-receipt-results .actions{flex-wrap:wrap}

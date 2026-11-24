@@ -163,7 +163,14 @@ export async function loadContentProfile({baseUrl,fetchImpl=fetch,signal,timeout
   return freeze({...validated,artifacts:{profile:new URL('content-profile.json',base).href,profileSha256,catalog:catalogUrl.href,catalogSha256:profile.catalog.sha256,transcript:transcriptUrl.href,transcriptSha256:validated.profile.transcript.sha256}});
  }finally{clearTimeout(timer);signal?.removeEventListener('abort',abort);controller.abort();}
 }
-export function receiptForFeatured(content,{retrievedAt}={}){
- const {source,featuredCue}=content;if(!source||!featuredCue)throw Error('CONTENT_PRIMARY');
- return freeze({version:1,sourceId:source.id,sourceVersion:source.version,sourceHash:source.hash,mediaHash:source.mediaHash,cueId:featuredCue.id,start:featuredCue.start,end:featuredCue.end,excerpt:featuredCue.text,retrievedAt:retrievedAt??content.profile.observedAt,verification:'unverified'});
+export function receiptForCue(content,cueId,{retrievedAt}={}){
+ const source=content?.source;
+ if(typeof cueId!=='string'||!source||!Array.isArray(source.cues))throw Error('CONTENT_CUE');
+ const matches=source.cues.filter(cue=>cue.id===cueId);
+ if(matches.length!==1)throw Error('CONTENT_CUE');
+ const cue=matches[0];
+ return freeze({version:1,sourceId:source.id,sourceVersion:source.version,sourceHash:source.hash,mediaHash:source.mediaHash,cueId:cue.id,start:cue.start,end:cue.end,excerpt:cue.text,retrievedAt:retrievedAt??content.profile.observedAt,verification:'unverified'});
+}
+export function receiptForFeatured(content,options){
+ return receiptForCue(content,content?.featuredCue?.id,options);
 }

@@ -1,4 +1,6 @@
 import {isNativeCueReached} from './seek-policy.js';
+import {createReceiptActionRow} from './receipt-actions.js';
+import {applyLocale,translate} from './localization.js';
 // Evidence-linked transcript navigation. Source identity and native media time
 // remain authoritative. No synthetic clock, guessed captions, or auto-follow scroll.
 const el=(name,className,text)=>{
@@ -20,12 +22,13 @@ const formatTime=n=>{
  return String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
 };
 
-export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synthetic'}={}){
+export function mountTranscriptPanel(host,{source,onSeek,media,readReceipt,prepareReview,seekReceipt,contentMode='synthetic'}={}){
  if(!host||typeof host.replaceChildren!=='function')throw Error('Transcript host missing.');
  host.replaceChildren();
  let disposed=false;
  let currentCues=[];
- let lastText='',renderEpoch=0,seekEpoch=0;
+ let lastText='',renderEpoch=0,seekEpoch=0,inspectEpoch=0,selectedCueId=null;
+ const inspectable=typeof readReceipt==='function'&&typeof prepareReview==='function'&&typeof seekReceipt==='function';
  const section=el('section','transcript-browser');
  const heading=el('h3',null,'Follow the source cue');heading.dataset.i18n='transcript.follow';
  heading.id='timing-transcript-title';
@@ -72,7 +75,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synt
  }
  function onCueKey(event){
   if(!['ArrowDown','ArrowUp','Home','End'].includes(event.key))return;
-  const controls=[...list.querySelectorAll('button')];
+  const controls=[...list.querySelectorAll('.transcript-cue')];
   const pos=controls.indexOf(event.currentTarget);
   if(pos<0)return;
   event.preventDefault();
@@ -80,9 +83,31 @@ export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synt
    Math.max(0,Math.min(controls.length-1,pos+(event.key==='ArrowDown'?1:-1)));
   controls[next]?.focus();
  }
+ function clearInspection(){
+  inspectEpoch++;selectedCueId=null;
+  for(const {inspect,details} of buttonMap.values())if(inspect){inspect.setAttribute('aria-expanded','false');details.replaceChildren();details.hidden=true;}
+ }
+ function inspectCue(id){
+  const entry=buttonMap.get(id);
+  if(disposed||!entry?.inspect||!list.contains(entry.inspect))return false;
+  if(selectedCueId===id){clearInspection();return false;}
+  clearInspection();const epoch=inspectEpoch,render=renderEpoch,locale=document.documentElement.lang||'en';
+  const current=()=>!disposed&&render===renderEpoch&&epoch===inspectEpoch&&selectedCueId===id&&list.contains(entry.inspect);
+  selectedCueId=id;entry.inspect.setAttribute('aria-expanded','true');entry.details.hidden=false;
+  const status=el('p','transcript-status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+  const results=el('ul','transcript-receipt-results');
+  try{
+   const receipt=readReceipt(id);
+   const row=createReceiptActionRow({receipt,sources:[source],seekTo:seekReceipt,prepareReview,actionStatus:status,isCurrent:current,seekLabel:translate('transcript.receipt.seek',locale),reviewLabel:translate('transcript.receipt.review',locale)});
+   if(!row||receipt.cueId!==id)throw Error('Receipt identity mismatch.');
+   const buttons=row.querySelectorAll('button');buttons[0].dataset.i18n='transcript.receipt.seek';buttons[1].dataset.i18n='transcript.receipt.review';
+   results.append(row);const intro=el('p','muted');intro.dataset.i18n='transcript.receipt.matched';entry.details.append(intro,results,status);
+  }catch{const error=el('p','transcript-status');error.dataset.i18n='transcript.receipt.unavailable';entry.details.append(error);}
+  applyLocale(entry.details,locale);return true;
+ }
  function render(){
   if(disposed)return;
-  const epoch=++renderEpoch;seekEpoch++;
+  clearInspection();const epoch=++renderEpoch;seekEpoch++;
   const raw=input.value;
   const query=raw.normalize('NFKC').trim().toLocaleLowerCase('en');
   lastText=query;
@@ -127,10 +152,24 @@ export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synt
      if(current())status('The cue could not be reached in the current media. No seek success is claimed.');
     }finally{delete button.dataset.busy;button.removeAttribute('aria-busy');}
    });
-   item.append(button);list.append(item);buttonMap.set(cue.id,{cue,button});
+   item.append(button);
+   let inspect,details;
+   if(inspectable){
+    inspect=el('button','transcript-inspect');inspect.type='button';inspect.dataset.i18n='transcript.inspect';
+    // Keep the localized visible label in the accessible name; a separate
+    // cue ID disambiguates identical words and overlapping cue intervals.
+    const detailId='transcript-receipt-'+renderEpoch+'-'+buttonMap.size;
+    details=el('div','transcript-receipt');details.id=detailId;details.hidden=true;
+    inspect.setAttribute('aria-controls',detailId);inspect.setAttribute('aria-expanded','false');
+    inspect.setAttribute('aria-describedby',button.id=detailId+'-cue');
+    inspect.dataset.cueId=cue.id;
+    inspect.addEventListener('click',()=>{if(!disposed&&epoch===renderEpoch&&list.contains(inspect))inspectCue(cue.id);});
+    item.append(inspect,details);
+   }
+   list.append(item);buttonMap.set(cue.id,{cue,button,inspect,details});
   }
   status(currentCues.length+' of '+items.length+' source cues shown. Use arrow keys within cue controls.');
-  updateActive();
+  updateActive();applyLocale(section,document.documentElement.lang||'en');
  }
  input.addEventListener('input',render);
  media?.addEventListener?.('timeupdate',updateActive);
@@ -138,7 +177,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synt
  render();
  return Object.freeze({
   dispose(){
-   disposed=true;renderEpoch++;seekEpoch++;
+   disposed=true;renderEpoch++;seekEpoch++;inspectEpoch++;selectedCueId=null;
    media?.removeEventListener?.('timeupdate',updateActive);
    media?.removeEventListener?.('seeked',updateActive);
    host.replaceChildren();
@@ -147,6 +186,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media,contentMode='synt
    if(disposed)return;
    input.value=typeof query==='string'?query:'';render();
   },
-  state(){return Object.freeze({sourceId,version,query:lastText,queryText:input.value,visibleCueCount:currentCues.length});}
+  inspect:inspectCue,
+  state(){return Object.freeze({sourceId,version,query:lastText,queryText:input.value,visibleCueCount:currentCues.length,selectedCueId});}
  });
 }
