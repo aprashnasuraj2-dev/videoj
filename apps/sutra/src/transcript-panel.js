@@ -64,6 +64,31 @@ export function mountTranscriptPanel(host,{source,onSeek,media,readReceipt,prepa
   (captionTrackConfirmed?'A native caption track is present but its accuracy is unverified.':
    'No native caption track is confirmed; the catalog transcript is independent.');
  const buttonMap=new Map();
+ function captureFocus(){
+  const active=document.activeElement;
+  if(active===input)return {kind:'search',start:input.selectionStart,end:input.selectionEnd,direction:input.selectionDirection};
+  for(const [id,{button,inspect,details}] of buttonMap){
+   if(active===button)return {kind:'cue',id};
+   if(active===inspect)return {kind:'inspect',id};
+   if(details?.contains(active)){
+    const controls=[...details.querySelectorAll('button')],index=controls.indexOf(active);
+    if(index>=0)return {kind:'receipt',id,index};
+   }
+  }
+  return null;
+ }
+ function restoreFocus(saved){
+  if(disposed||!saved)return false;
+  if(saved.kind==='search'){
+   input.focus({preventScroll:true});
+   try{input.setSelectionRange(saved.start,saved.end,saved.direction);}catch{}
+   return true;
+  }
+  const entry=buttonMap.get(saved.id);
+  const target=saved.kind==='cue'?entry?.button:saved.kind==='inspect'?entry?.inspect:saved.kind==='receipt'?entry?.details?.querySelectorAll('button')[saved.index]:null;
+  (target&&!target.disabled&&target.isConnected?target:entry?.inspect??input).focus({preventScroll:true});
+  return true;
+ }
  const status=text=>{state.textContent=text;};
  function updateActive(){
   if(disposed)return;
@@ -179,7 +204,7 @@ export function mountTranscriptPanel(host,{source,onSeek,media,readReceipt,prepa
  media?.addEventListener?.('seeked',updateActive);
  render();
  return Object.freeze({
-  cancelPending,
+  cancelPending,captureFocus,restoreFocus,
   dispose(){
    cancelPending();disposed=true;renderEpoch++;seekEpoch++;inspectEpoch++;selectedCueId=null;
    media?.removeEventListener?.('timeupdate',updateActive);

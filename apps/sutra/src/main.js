@@ -119,7 +119,7 @@ const comparisonView=mountComparisonView(document.querySelector('#comparison-bod
 const mediaHost=document.querySelector('.media-empty'),timingStatus=document.querySelector('#timing-status'),seekTiming=document.querySelector('#seek-timing'),cancelTiming=document.querySelector('#cancel-timing');
 const mediaPlaceholder=[...mediaHost.childNodes].map(node=>node.cloneNode(true));
 function remountTimingTranscript(player){
- const previous=timingTranscript?.state();
+ const previous=timingTranscript?.state(),focus=timingTranscript?.captureFocus();
  timingTranscript?.dispose();
  timingTranscript=mountTranscriptPanel(transcriptHost,{
   ...transcriptOptions,...(player?{media:player.media}:{}),
@@ -127,15 +127,18 @@ function remountTimingTranscript(player){
  });
  if(previous?.queryText)timingTranscript.search(previous.queryText);
  if(previous?.selectedCueId)timingTranscript.inspect(previous.selectedCueId);
+ timingTranscript.restoreFocus(focus);
 }
 function resetTimingMedia(player){
  if(timingPlayer&&timingPlayer!==player)return;
+ const focusedMedia=mediaHost.contains(document.activeElement)||document.activeElement===seekTiming;
  player?.dispose();timingPlayer=null;
  mediaHost.replaceChildren(...mediaPlaceholder.map(node=>node.cloneNode(true)));mediaHost.classList.remove('player-mounted');
  applyContentLabels();releaseMediaUrls();remountTimingTranscript(null);
  seekTiming.hidden=true;seekTiming.disabled=false;
  document.querySelector('#playback-state').textContent='';
- document.querySelector('#load-timing').disabled=false;
+ const retry=document.querySelector('#load-timing');retry.disabled=false;
+ if(focusedMedia)retry.focus({preventScroll:true});
 }
 
 cancelTiming.addEventListener('click',()=>{if(mediaLoad){mediaLoad.abort();cancelTiming.disabled=true;}});
@@ -170,7 +173,7 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
   remountTimingTranscript(timingPlayer);
   setStatus(timingStatus,'completed',`${content.profile.mode==='reviewed'?'Reviewed hash-checked':'Synthetic hash-checked'} source media loaded. Actual media duration: ${timingPlayer.media.duration.toFixed(1)} seconds.${reviewed?' Captions derived from the bound source catalog.'+(tracks.chapters?'':' Overlapping cues: chapter navigation omitted.'):''}`);seekTiming.hidden=false;
  }catch(error){if(candidatePlayer)resetTimingMedia(candidatePlayer);else releaseMediaUrls();seekTiming.hidden=true;setStatus(timingStatus,operation.signal.aborted?'cancelled':'error',operation.signal.aborted?'Media load cancelled. Transcript and evidence remain available; no playback success is claimed.':error?.code==='MEDIA_UNSUPPORTED'?'This browser cannot decode the source media. Transcript and evidence remain available; no playback success is claimed.':'Source media unavailable. No playback or seek success is claimed.');button.disabled=false;}
- finally{if(mediaLoad===operation)mediaLoad=null;cancelTiming.hidden=true;cancelTiming.disabled=false;if(!timingPlayer&&document.activeElement===cancelTiming)button.focus({preventScroll:true});}
+ finally{if(mediaLoad===operation)mediaLoad=null;cancelTiming.hidden=true;cancelTiming.disabled=false;if(document.activeElement===cancelTiming)(timingPlayer?seekTiming:button).focus({preventScroll:true});}
 });
 seekTiming.addEventListener('click',async()=>{
  const player=timingPlayer;seekTiming.disabled=true;

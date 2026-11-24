@@ -344,12 +344,14 @@ const assert=require('node:assert/strict');
    await reviewPage.evaluate(src=>URL.revokeObjectURL(src),swapped);
    await load.click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
    const originalTrack=await reviewPage.locator('video track[kind="captions"]').getAttribute('src');
+   await reviewPage.getByRole('button',{name:'Inspect featured source cue'}).focus();
    const substitutedTrack=await reviewPage.locator('video track[kind="captions"]').evaluate(track=>{
     const url=URL.createObjectURL(new Blob(['WEBVTT\n\n00:00:00.000 --> 00:00:02.000\nsubstituted caption\n'],{type:'text/vtt'}));track.src=url;return url;
    });
    await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Native media or track source changed'));
    assert.equal(await reviewPage.locator('video').count(),0);
    assert.equal(await reviewPage.evaluate(async src=>{try{await fetch(src);return false;}catch{return true;}},originalTrack),true,'old reviewed track blob revoked');
+   assert.equal(await reviewPage.evaluate(()=>document.activeElement?.id),'load-timing','revoked native controls return keyboard focus to the explicit recovery action');
    await reviewPage.evaluate(src=>URL.revokeObjectURL(src),substitutedTrack);
    await load.click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
    await reviewPage.getByRole('button',{name:'Inspect featured source cue'}).click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
@@ -459,9 +461,12 @@ const assert=require('node:assert/strict');
   await preMediaSearch.fill('ｔｉｍｉｎｇ marker');
   await page.getByRole('button',{name:'Load source media'}).click();
   assert.equal(await page.locator('#timing-status').getAttribute('data-state'),'loading','visible loading state appears while media bytes are delayed');
+  await preMediaSearch.focus();
+  await preMediaSearch.evaluate(input=>input.setSelectionRange(2,5,'backward'));
   await page.waitForFunction(()=>document.querySelector('#timing-status')?.dataset.state==='completed');
   assert.match(await page.locator('#timing-status').innerText(),/Actual media duration: 8.0 seconds/);
   assert.equal(await preMediaSearch.inputValue(),'ｔｉｍｉｎｇ marker','media loading must preserve the exact typed transcript filter');
+  assert.deepEqual(await preMediaSearch.evaluate(input=>({focused:document.activeElement===input,start:input.selectionStart,end:input.selectionEnd,direction:input.selectionDirection})),{focused:true,start:2,end:5,direction:'backward'},'media verification must preserve the active transcript selection');
 
   await page.getByRole('button',{name:'Inspect featured source cue'}).click();
   await page.waitForFunction(()=>document.querySelector('#timing-status')?.textContent.includes('Source cue reached'));
