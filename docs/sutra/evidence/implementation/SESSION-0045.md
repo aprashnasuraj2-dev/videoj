@@ -39,3 +39,9 @@ X010-41 exact `0bf20d61ac4b9cfa030e09ebdf3a210946ea9184` learner build, app unit
 X010-41 exact `0bf20d61ac4b9cfa030e09ebdf3a210946ea9184`: all 19 workflow conclusions successful, learner [45424276367](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45424276367), browser matrix 45424276504. Resolved R-064. Added X010-43/R-066 for remaining featured/comparison/guide keyboard focus and reactivation paths, with actual held native and route tests and distinct-action supersession. X010-42 and X010-43 not credited before exact full CI.
 
 **713/1,100 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-41 exact 19/19 verified. X010-42 shared receipt focus and X010-43 featured/comparison/guide busy-state candidates pending exact full CI.
+
+### Exact receipt focus verification — 2026-11-24T21:09:58+05:45
+
+X010-42 exact `a6e2caa6db8828afec15183eb50745f1311e69f3` all 19 successful, learner [45424675181](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45424675181), browser matrix 45424675195. Resolved R-065. X010-43 still pending; independent original external acceptance remains blocked and deployment/submission untouched.
+
+**714/1,100 overall verified; 616/1,000 original; 379 pending; six omissions; one hardware blocker.** X010-42 exact 19/19 verified. X010-43 implementation cbddb72b6ce582e8919edf2ea186682f1813e15a pending exact CI; no credit yet.

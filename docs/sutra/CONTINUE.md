@@ -10,9 +10,9 @@ On 24 November the participant explicitly tightened the ordering: stop further d
 
 ## Latest implementation checkpoint — 0045
 
-**713/1,100 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-41 exact 19/19 verified. X010-42 shared receipt focus and X010-43 featured/comparison/guide busy-state candidates pending exact full CI.
+**714/1,100 overall verified; 616/1,000 original; 379 pending; six omissions; one hardware blocker.** X010-42 exact 19/19 verified. X010-43 implementation cbddb72b6ce582e8919edf2ea186682f1813e15a pending exact CI; no credit yet.
 
-Next: Verify exact X010-42 shared receipt and X010-43 featured/comparison keyboard candidates, reconcile only passed evidence, continue independent engineering.
+Next: Verify exact X010-43 featured/comparison keyboard candidate full CI, then select dependency-ready independent engineering. No release or paid inference.
 
 ## Resume sequence
 
