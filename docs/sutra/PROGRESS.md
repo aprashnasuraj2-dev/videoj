@@ -2,6 +2,14 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0016 — 2026-11-24
+
+**472/1,000 original checks verified; 475/1,003 total; 35/100 phases fully verified; 1 historical omission.**
+
+Exact checked head `2d414536b45ab77d3883a7f211d28296eea4e36f`: all eight workflows passed. [Learner](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45308672650/job/138158644093) verifies shared budgets and partial evidence; [desktop matrix](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45308672761) passes 10 checks in each of Chromium 151.0.7922.34, Firefox 153.0 and WebKit 26.5. P028 closes; P077 remains open for physical touch. No claim of physical iOS/Safari, factual truth, production or human acceptance. Next P022 symbolic links, P026 bounded read attempts, P054 baseline and P053 synthetic evaluation. [Session evidence](evidence/implementation/SESSION-0016.md).
+
+---
+
 ## Session 0015 — 2026-11-24
 
 **461/1,000 original checks verified; 464/1,003 total checks verified; 34/100 phases fully verified; 1 historical omission.** Not a release-readiness score.

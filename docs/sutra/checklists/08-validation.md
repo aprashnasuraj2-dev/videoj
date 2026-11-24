@@ -125,15 +125,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Run current Chromium, Firefox and WebKit regressions and an available physical iPhone/Android check. Record versions, media decode, seeking, fullscreen, captions, consent and export behavior.
 - **Phase exit:** Core workflow works in supported browsers; emulation is not reported as physical-device evidence.
 
-- [ ] `SUTRA-P077-01` Record current Chromium, Firefox and WebKit versions
-- [ ] `SUTRA-P077-02` Check actual decode, captions, seek and fullscreen behavior
-- [ ] `SUTRA-P077-03` Check graph execution, consent, card export and error states
+- [x] `SUTRA-P077-01` Record current Chromium, Firefox and WebKit versions
+- [x] `SUTRA-P077-02` Check actual decode, captions, seek and fullscreen behavior
+- [x] `SUTRA-P077-03` Check graph execution, consent, card export and error states
 - [ ] `SUTRA-P077-04` Use an available physical iPhone/Android device for touch verification
-- [ ] `SUTRA-P077-05` Label emulated, desktop-engine and physical evidence distinctly
-- [ ] `SUTRA-P077-06` Record unsupported codecs and browser capability limitations
-- [ ] `SUTRA-P077-07` Link failures to the exact source/media revision
-- [ ] `SUTRA-P077-08` Publish a matrix with pass, fail and untested entries
-- [ ] `SUTRA-P077-09` Produce and review the phase artifact: Browser matrix with pass/fail/untested cells.
+- [x] `SUTRA-P077-05` Label emulated, desktop-engine and physical evidence distinctly
+- [x] `SUTRA-P077-06` Record unsupported codecs and browser capability limitations
+- [x] `SUTRA-P077-07` Link failures to the exact source/media revision
+- [x] `SUTRA-P077-08` Publish a matrix with pass, fail and untested entries
+- [x] `SUTRA-P077-09` Produce and review the phase artifact: Browser matrix with pass/fail/untested cells.
 - [ ] `SUTRA-P077-10` Close phase 077 only after its applicable tasks have evidence and its exit condition is observed: Core workflow works in supported browsers; emulation is not reported as physical-device evidence.
 
 ## Phase 078 - Fix the highest-impact observed failures

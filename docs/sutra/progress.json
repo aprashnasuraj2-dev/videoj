@@ -1,24 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T01:54:48Z",
+  "updated_at": "2026-11-24T08:01:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "6dd61639351552bf6780b8e196e130f2e9f713dd",
-  "last_session_id": "SUTRA-SESSION-0015",
-  "stage": "neutral_consumer_and_registered_actions_verified",
+  "last_observed_code_sha": "2d414536b45ab77d3883a7f211d28296eea4e36f",
+  "last_session_id": "SUTRA-SESSION-0016",
+  "stage": "budget_and_desktop_matrix_verified",
   "current_task": null,
   "next_task": "SUTRA-P041-08",
   "ready_engineering_queue": [
-    "SUTRA-P028-04",
-    "SUTRA-P028-07",
-    "SUTRA-P026-07",
-    "SUTRA-P077-01",
     "SUTRA-P022-04",
     "SUTRA-P022-06",
+    "SUTRA-P026-07",
     "SUTRA-P054-02",
     "SUTRA-P053-02"
   ],
-  "next_action": "Check exact-head CI for shared budget, typed provider failures and retained catalog-matched partial evidence at cb5091e95b4c786e4c5b9dd4b97ae14a62a8455f, and the 3-engine browser compatibility matrix. Fix failing integrated behavior, then reconcile P028/P026/P077. Continue P022 symbolic links and P054 learner usefulness/delegation efficiency; prioritize evidence-grounded learning, independent portability and truthful resilience over deployment or feature count. Keep actual paid provider, original rights-reviewed lesson, physical testing and human acceptance pending. No deployment, DNS or release.",
+  "next_action": "Continue engineering-only with exact symbolic links and manifest separation, bounded read attempt diagnostics, deterministic direct lookup baseline and synthetic evaluation fixtures; physical/human gates remain pending.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -8456,6 +8453,149 @@
           "result": "pass",
           "source_revision": "6dd61639351552bf6780b8e196e130f2e9f713dd",
           "observed_at": "2026-11-24T01:54:48Z"
+        }
+      ]
+    },
+    "SUTRA-P028-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:01:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Shared caller/peer model/agent/remote counters; four admitted model calls stop fifth with MODEL_LIMIT in peer invocation tests.",
+          "result": "pass",
+          "source_revision": "2d414536b45ab77d3883a7f211d28296eea4e36f",
+          "observed_at": "2026-11-24T08:01:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:01:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Integrated provider and peer browser checks show typed quota/limit/failure and actual counters; retain only independently matched source receipts on interrupted run, not model text.",
+          "result": "pass",
+          "source_revision": "2d414536b45ab77d3883a7f211d28296eea4e36f",
+          "observed_at": "2026-11-24T08:01:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P028-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:01:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Full learner suite passes cycle, repeated-agent and over-budget regressions; integrated budget diagnostics and partial receipt boundary pass.",
+          "result": "pass",
+          "source_revision": "2d414536b45ab77d3883a7f211d28296eea4e36f",
+          "observed_at": "2026-11-24T08:01:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P077-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:01:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Exact desktop headless versions recorded for Chromium, Firefox and WebKit.",
+          "result": "pass",
+          "source_revision": "2d414536b45ab77d3883a7f211d28296eea4e36f",
+          "observed_at": "2026-11-24T08:01:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P077-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:01:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "All three engines observed native eight-second H.264 fixture decode, captions, seek/play and fullscreen.",
+          "result": "pass",
+          "source_revision": "2d414536b45ab77d3883a7f211d28296eea4e36f",
+          "observed_at": "2026-11-24T08:01:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P077-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:01:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "All three pass evidence, graph, denial, review save/export/delete and no page errors.",
+          "result": "pass",
+          "source_revision": "2d414536b45ab77d3883a7f211d28296eea4e36f",
+          "observed_at": "2026-11-24T08:01:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P077-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:01:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Explicit desktop-engine, physical touch untested and screen reader untested labels.",
+          "result": "pass",
+          "source_revision": "2d414536b45ab77d3883a7f211d28296eea4e36f",
+          "observed_at": "2026-11-24T08:01:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P077-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:01:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "H.264 probably, MP4 maybe, fullscreen observed on tested fixture; other codecs, native Safari/iOS and hardware not inferred.",
+          "result": "pass",
+          "source_revision": "2d414536b45ab77d3883a7f211d28296eea4e36f",
+          "observed_at": "2026-11-24T08:01:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P077-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:01:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Matrix logs bind exact head and media SHA-256; earlier failed provider runs retained separately.",
+          "result": "pass",
+          "source_revision": "2d414536b45ab77d3883a7f211d28296eea4e36f",
+          "observed_at": "2026-11-24T08:01:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P077-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:01:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Versioned matrix includes all ten checks and explicit untested rows.",
+          "result": "pass",
+          "source_revision": "2d414536b45ab77d3883a7f211d28296eea4e36f",
+          "observed_at": "2026-11-24T08:01:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P077-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:01:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0016.md",
+          "description": "Reviewed browser matrix evidence links and limits recorded.",
+          "result": "pass",
+          "source_revision": "2d414536b45ab77d3883a7f211d28296eea4e36f",
+          "observed_at": "2026-11-24T08:01:00+05:45"
         }
       ]
     }

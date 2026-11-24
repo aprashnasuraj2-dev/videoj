@@ -146,13 +146,13 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P028-01` Configure finite composition depth and total invocation count
 - [x] `SUTRA-P028-02` Configure remote-call count, concurrency and wall-clock ceilings
 - [x] `SUTRA-P028-03` Bound history, artifact sizes, output tokens and tool result size
-- [ ] `SUTRA-P028-04` Account for nested peer work inside the caller’s active budget
+- [x] `SUTRA-P028-04` Account for nested peer work inside the caller’s active budget
 - [x] `SUTRA-P028-05` Detect actual composition cycles without banning legitimate repeated agents
 - [x] `SUTRA-P028-06` Cancel descendants and stop further requests when a budget is exhausted
-- [ ] `SUTRA-P028-07` Show which limit stopped execution and preserve safe partial results
+- [x] `SUTRA-P028-07` Show which limit stopped execution and preserve safe partial results
 - [x] `SUTRA-P028-08` Exercise each limit using deterministic fixtures and a valid control run
 - [x] `SUTRA-P028-09` Produce and review the phase artifact: Runtime budget controller and limit diagnostics.
-- [ ] `SUTRA-P028-10` Close phase 028 only after its applicable tasks have evidence and its exit condition is observed: A composition cycle and an intentional over-budget request stop predictably; ordinary repeated-agent work is not falsely rejected as a cycle.
+- [x] `SUTRA-P028-10` Close phase 028 only after its applicable tasks have evidence and its exit condition is observed: A composition cycle and an intentional over-budget request stop predictably; ordinary repeated-agent work is not falsely rejected as a cycle.
 
 ## Phase 029 - Implement reviewed local write actions
 
