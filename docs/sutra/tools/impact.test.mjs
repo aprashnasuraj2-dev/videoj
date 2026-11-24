@@ -66,3 +66,8 @@ test('user-study readiness tooling is explicitly mapped without inventing a part
  const r=classifyChangedFiles(['tools/sutra-user-study/study.mjs'],map);
  assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('user-study-readiness'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA user-study scoring gate'));assert.deepEqual(r.invalidatedMetrics,[]);
 });
+
+test('outside-builder readiness tooling is explicitly mapped without inventing adoption evidence',()=>{
+ const r=classifyChangedFiles(['tools/sutra-builder-trial/trial.mjs'],map);
+ assert.deepEqual(r.unmapped,[]);assert.ok(r.affectedSuites.includes('builder-trial-readiness'));assert.ok(r.requiredWorkflows.includes('Validate SUTRA outside-builder trial gate'));assert.deepEqual(r.invalidatedMetrics,[]);
+});

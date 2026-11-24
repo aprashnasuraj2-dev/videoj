@@ -196,6 +196,17 @@
       ],
       "invalidates": [],
       "reason": "Changes to the counterbalanced study protocol must pass its scorer/assignment tests; no human-study metric exists until real participant observations are collected."
+    },
+    {
+      "id": "builder-trial-readiness",
+      "prefixes": [
+        "tools/sutra-builder-trial/"
+      ],
+      "requiredWorkflows": [
+        "Validate SUTRA outside-builder trial gate"
+      ],
+      "invalidates": [],
+      "reason": "Changes to the outside-builder adoption protocol must pass its de-identified trial scorer; no adoption metric exists until real external trials occur."
     }
   ]
 }
