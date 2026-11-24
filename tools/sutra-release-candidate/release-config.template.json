@@ -12,7 +12,8 @@
     "costReportHash": null,
     "usageComplete": null,
     "judgePathPassed": null,
-    "backend": null
+    "backend": null,
+    "upstreamSha256": null
   },
   "budgetEvidence": {
     "approved": null,

@@ -26,7 +26,7 @@ export function renderWorkerConfig({baseConfig,releaseConfig}){
  if(Number(vars.SUTRA_MAX_DAILY_OUTPUT_TOKENS)>Number(vars.SUTRA_MAX_DAILY_CALLS)*Number(vars.SUTRA_MAX_OUTPUT_TOKENS))throw Error('Output-token ceiling exceeds call/output reservation envelope.');
  const rendered={...structuredClone(baseConfig),vars};
  const requiredSecretBindings=cfg.backend==='self_hosted'?['SUTRA_SELF_HOSTED_TOKEN','SUTRA_CLIENT_HASH_SECRET']:['SUTRA_PROVIDER_KEY','SUTRA_CLIENT_HASH_SECRET'];
- const publicRecord={schema:1,sourceRevision:cfg.sourceRevision,workerName:rendered.name,publicOrigin:cfg.publicOrigin,peerOrigin:cfg.peerOrigin,backend:cfg.backend,model:cfg.model,
+ const publicRecord={schema:1,sourceRevision:cfg.sourceRevision,workerName:rendered.name,publicOrigin:cfg.publicOrigin,peerOrigin:cfg.peerOrigin,backend:cfg.backend,model:cfg.model,upstreamSha256:cfg.liveEvidence.upstreamSha256,
   policy:{maxOutputTokens:Number(vars.SUTRA_MAX_OUTPUT_TOKENS),maxDailyCalls:Number(vars.SUTRA_MAX_DAILY_CALLS),maxClientCalls:Number(vars.SUTRA_MAX_CLIENT_CALLS),maxDailyInputBytes:Number(vars.SUTRA_MAX_DAILY_INPUT_BYTES),maxDailyOutputTokens:Number(vars.SUTRA_MAX_DAILY_OUTPUT_TOKENS),maxConcurrent:Number(vars.SUTRA_MAX_CONCURRENT)},
   requiredSecretBindings,
   limitation:'This rendered config contains no secret values and does not prove that platform secrets, Durable Object migrations, billing, routes or deployment are present.'};

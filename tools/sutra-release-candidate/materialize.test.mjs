@@ -14,7 +14,7 @@ const packCore={schema:1,contentVersion:'lesson-v1',intakeRecordHash:'4'.repeat(
 const packRecord={...packCore,recordHash:sha(Buffer.from(JSON.stringify(packCore,null,2)+'\n')),limitation:'fixture'};
 const contentEvidence={status:'reviewed_attested',contentVersion:'lesson-v1',profileSha256:profileSha,catalogSha256:catalogSha,mediaSha256:mediaSha,transcriptSha256:transcriptSha,guideSha256:guideSha,intakeRecordHash:'4'.repeat(64),rightsAttested:true,factualReviewAttested:true,evidenceRef:'private:content/lesson-v1'};
 const cfg=()=>({schema:1,sourceRevision:'a'.repeat(40),publicOrigin:'https://sutra.example',peerOrigin:'https://guide.example',backend:'self_hosted',selfHostedGatewayUrl:'https://operator.example/v1/chat/completions',model:'provider/model-v1',
- liveEvidence:{status:'live_verified',backend:'self_hosted',model:'provider/model-v1',observedAt:'2026-11-24T01:00:00Z',runRecordHash:'b'.repeat(64),costReportHash:'c'.repeat(64),usageComplete:true,judgePathPassed:true},
+ liveEvidence:{status:'live_verified',backend:'self_hosted',model:'provider/model-v1',upstreamSha256:'d8a0b14806289f7180a5d62f58009f9306970fadc331c7438b4505ce40b4eeb4',observedAt:'2026-11-24T01:00:00Z',runRecordHash:'b'.repeat(64),costReportHash:'c'.repeat(64),usageComplete:true,judgePathPassed:true},
  budgetEvidence:{approved:true,costMode:'operator_owned',spendCeilingUsd:0,judgingReserveRuns:50,evidenceRef:'private:budget/sutra-001'},contentEvidence,
  spec:{launchCommit:launchSpecCommit,compatibilityCommit:currentSpecCommit,compatibilityBlob:currentSpecBlob}});
 

@@ -11,7 +11,7 @@ const config=()=>({schema:1,sourceRevision:'a'.repeat(40),publicOrigin:'https://
  spec:{launchCommit:launchSpecCommit,compatibilityCommit:currentSpecCommit,compatibilityBlob:currentSpecBlob}});
 test('release config refuses placeholders, incomplete live usage, weak reserve and stale spec pin',()=>{
  assert.equal(validateReleaseConfig(config()).model,'provider/model-v1');
- for(const mutate of [x=>x.model='mock-1',x=>x.backend='hosted',x=>x.selfHostedGatewayUrl='http://operator.example/v1/chat/completions',x=>x.liveEvidence.backend='hosted',x=>x.liveEvidence.usageComplete=false,x=>x.liveEvidence.judgePathPassed=false,x=>x.budgetEvidence.judgingReserveRuns=5,x=>x.budgetEvidence.evidenceRef='https://private.example/doc',x=>x.contentEvidence.rightsAttested=false,x=>x.contentEvidence.status='pending',x=>x.contentEvidence.profileSha256='bad',x=>x.spec.compatibilityCommit='d'.repeat(40)]){
+ for(const mutate of [x=>x.model='mock-1',x=>x.backend='hosted',x=>x.selfHostedGatewayUrl='http://operator.example/v1/chat/completions',x=>x.liveEvidence.backend='hosted',x=>x.liveEvidence.upstreamSha256='f'.repeat(64),x=>x.liveEvidence.usageComplete=false,x=>x.liveEvidence.judgePathPassed=false,x=>x.budgetEvidence.judgingReserveRuns=5,x=>x.budgetEvidence.evidenceRef='https://private.example/doc',x=>x.contentEvidence.rightsAttested=false,x=>x.contentEvidence.status='pending',x=>x.contentEvidence.profileSha256='bad',x=>x.spec.compatibilityCommit='d'.repeat(40)]){
   const x=config();mutate(x);assert.throws(()=>validateReleaseConfig(x));
  }
 });

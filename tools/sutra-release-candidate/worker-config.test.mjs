@@ -5,7 +5,7 @@ test('renderer binds exact release origin/model/peer while preserving bounded po
  const r=renderWorkerConfig({baseConfig:base(),releaseConfig:cfg()});
  assert.equal(r.config.vars.SUTRA_ENABLE_INFERENCE,'true');assert.equal(r.config.vars.SUTRA_INFERENCE_BACKEND,'self_hosted');assert.equal(r.config.vars.SUTRA_SELF_HOSTED_UPSTREAM_URL,'https://operator.example/v1/chat/completions');assert.equal(r.config.vars.SUTRA_ALLOWED_ORIGIN,'https://sutra.example');assert.equal(r.config.vars.SUTRA_MODELS,'provider/model-v1');assert.equal(r.config.vars.SUTRA_PEER_ORIGINS,'https://guide.example');
  assert.equal(r.config.workers_dev,false);assert.equal(r.config.preview_urls,false);assert.equal(Object.hasOwn(r.config.vars,'SUTRA_PROVIDER_KEY'),false);assert.equal(Object.hasOwn(r.config.vars,'SUTRA_CLIENT_HASH_SECRET'),false);
- assert.equal(r.record.backend,'self_hosted');assert.deepEqual(r.record.requiredSecretBindings,['SUTRA_SELF_HOSTED_TOKEN','SUTRA_CLIENT_HASH_SECRET']);assert.match(r.record.recordHash,/^[a-f0-9]{64}$/);
+ assert.equal(r.record.backend,'self_hosted');assert.equal(r.record.upstreamSha256,'d8a0b14806289f7180a5d62f58009f9306970fadc331c7438b4505ce40b4eeb4');assert.deepEqual(r.record.requiredSecretBindings,['SUTRA_SELF_HOSTED_TOKEN','SUTRA_CLIENT_HASH_SECRET']);assert.match(r.record.recordHash,/^[a-f0-9]{64}$/);
 });
 test('renderer refuses public secret vars, unsafe quota envelopes and release/model drift',()=>{
  for(const mutate of [

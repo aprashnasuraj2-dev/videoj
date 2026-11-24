@@ -9,6 +9,8 @@ const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
 const freeze=v=>{if(v&&typeof v==='object'&&!Object.isFrozen(v)){Object.values(v).forEach(freeze);Object.freeze(v);}return v;};
 const privateRef=v=>typeof v==='string'&&/^private:[A-Za-z0-9][A-Za-z0-9._/-]{2,191}$/.test(v);
 const time=v=>typeof v==='string'&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(v)&&Number.isFinite(Date.parse(v));
+const HOSTED_ENDPOINT='https://api.openai.com/v1/chat/completions';
+const gateway=value=>{if(typeof value!=='string')return null;try{const u=new URL(value),labels=u.hostname.split('.');return u.protocol==='https:'&&!u.port&&!u.username&&!u.password&&!u.search&&!u.hash&&u.pathname==='/v1/chat/completions'&&u.href===value&&/^[a-z0-9.-]+$/.test(u.hostname)&&labels.length>=2&&!labels.some(x=>!x||x.startsWith('-')||x.endsWith('-'))&&!['local','localhost','internal','invalid'].includes(labels.at(-1))&&!/^[0-9.]+$/.test(u.hostname)?u.href:null;}catch{return null;}};
 
 export const launchSpecCommit='fd872b9221aeb8ff762b75a5badbf84b23c133cc';
 export const currentSpecCommit='d67755e762545de983e38a395ec45d89b77c9311';
@@ -20,8 +22,9 @@ export function validateReleaseConfig(config){
   !BACKENDS.has(config.backend)||!MODEL.test(config.model)||config.model==='mock-1')throw Error('Invalid release configuration.');
  if(config.backend==='self_hosted'?!gateway(config.selfHostedGatewayUrl):config.selfHostedGatewayUrl!==null)throw Error('Invalid inference backend configuration.');
  const live=config.liveEvidence;
- if(!exact(live,['status','backend','model','observedAt','runRecordHash','costReportHash','usageComplete','judgePathPassed'])||live.status!=='live_verified'||live.backend!==config.backend||live.model!==config.model||
-  !time(live.observedAt)||!SHA256.test(live.runRecordHash)||!SHA256.test(live.costReportHash)||live.usageComplete!==true||live.judgePathPassed!==true)throw Error('Live provider evidence is incomplete.');
+ const expectedUpstream=config.backend==='self_hosted'?config.selfHostedGatewayUrl:HOSTED_ENDPOINT;
+ if(!exact(live,['status','backend','model','upstreamSha256','observedAt','runRecordHash','costReportHash','usageComplete','judgePathPassed'])||live.status!=='live_verified'||live.backend!==config.backend||live.model!==config.model||
+  !SHA256.test(live.upstreamSha256)||live.upstreamSha256!==digest(expectedUpstream)||!time(live.observedAt)||!SHA256.test(live.runRecordHash)||!SHA256.test(live.costReportHash)||live.usageComplete!==true||live.judgePathPassed!==true)throw Error('Live provider evidence is incomplete.');
  const budget=config.budgetEvidence;
  if(!exact(budget,['approved','costMode','spendCeilingUsd','judgingReserveRuns','evidenceRef'])||budget.approved!==true||!['operator_owned','provider_billed'].includes(budget.costMode)||typeof budget.spendCeilingUsd!=='number'||!Number.isFinite(budget.spendCeilingUsd)||
   budget.spendCeilingUsd<0||budget.spendCeilingUsd>10000||!Number.isInteger(budget.judgingReserveRuns)||budget.judgingReserveRuns<20||budget.judgingReserveRuns>100000||!privateRef(budget.evidenceRef)||
