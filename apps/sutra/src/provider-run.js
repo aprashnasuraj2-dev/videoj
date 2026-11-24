@@ -10,6 +10,20 @@ const contentError=()=>Object.assign(Error('Published content changed; reload th
 const contractError=()=>Object.assign(Error('Provider publication changed; check availability again.'),{code:'CONTRACT_CHANGED'});
 const contentIdentity=content=>({profileSha256:content.artifacts.profileSha256,catalogSha256:content.artifacts.catalogSha256,transcriptSha256:content.artifacts.transcriptSha256,contentVersion:content.profile.contentVersion,contentMode:content.profile.mode,primarySourceId:content.profile.primarySourceId});
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+export function createReceiptCollector(limit=20){
+ if(!Number.isInteger(limit)||limit<1||limit>20)throw Error('Invalid receipt limit');
+ const values=new Map();let overflow=false;
+ return Object.freeze({
+  add(receipt){
+   if(!plain(receipt)||typeof receipt.sourceId!=='string'||typeof receipt.cueId!=='string')throw Error('Invalid receipt');
+   const key=receipt.sourceId+'\u0000'+receipt.cueId;
+   if(values.has(key)){values.set(key,receipt);return true;}
+   if(values.size>=limit){overflow=true;return false;}
+   values.set(key,receipt);return true;
+  },
+  snapshot(){return Object.freeze({receipts:Object.freeze([...values.values()].map(v=>Object.freeze({...v}))),overflow});}
+ });
+}
 async function readPublicJson({url,origin,fetchImpl,signal,maxBytes}){
  const response=await abortable(fetchImpl(url,{method:'GET',redirect:'error',credentials:'omit',cache:'no-store',headers:{Accept:'application/json'},signal}),signal);
  if(!response.ok||response.redirected||!response.headers.get('content-type')?.includes('application/json')||response.url&&new URL(response.url).origin!==origin)throw Error('Unavailable public contract');
@@ -58,7 +72,7 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
  if(!validOrigin(origin)||typeof model!=='string'||!modelPattern.test(model)||model==='mock-1'||typeof question!=='string'||!question.trim()||question.length>1200)throw Error('Invalid run input');
  const controller=new AbortController(),abort=()=>controller.abort();
  signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
- const receipts=new Map(),usage={calls:0,reported:0,promptTokens:0,completionTokens:0,totalTokens:0};
+ const receiptCollector=createReceiptCollector(),usage={calls:0,reported:0,promptTokens:0,completionTokens:0,totalTokens:0};
  // Scope the public version precondition to the two caller-owned POST endpoints.
  // It is not an authentication token, and never travels to peer origins or the provider.
  let catalogRejected=false;
@@ -84,15 +98,17 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
   catch(error){if(controller.signal.aborted||error?.code==='CONTENT_CHANGED')throw error;throw contractError();}
   if(fresh.state!=='configured'||!same(fresh.contract,approvedContract))throw contractError();
   controller.signal.throwIfAborted();
-  const result=await runNetwork({...fresh.published,request:question.trim(),model:measured,signal:controller.signal,sourceTools:{origin,sources:loadedContent.sources,fetchImpl:boundFetch,onReceipt:receipt=>{const key=receipt.sourceId+'\u0000'+receipt.cueId;if(receipts.size<20||receipts.has(key))receipts.set(key,receipt);}}});
+  const result=await runNetwork({...fresh.published,request:question.trim(),model:measured,signal:controller.signal,sourceTools:{origin,sources:loadedContent.sources,fetchImpl:boundFetch,onReceipt:receipt=>receiptCollector.add(receipt)}});
   if(catalogRejected)throw Error('Catalog precondition rejected.');
-  if(!receipts.size){const missing=Error('No independently catalog-matched source receipt.');missing.code='SOURCE_EVIDENCE_REQUIRED';throw missing;}
-  return {model,text:result.text,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:[...receipts.values()],usage:{...usage,complete:usage.reported===usage.calls},truthStatus:'unverified'};
+  const evidence=receiptCollector.snapshot();
+  if(evidence.overflow){const excess=Error('Source receipt limit exceeded.');excess.code='SOURCE_EVIDENCE_LIMIT';throw excess;}
+  if(!evidence.receipts.length){const missing=Error('No independently catalog-matched source receipt.');missing.code='SOURCE_EVIDENCE_REQUIRED';throw missing;}
+  return {model,text:result.text,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,usage:{...usage,complete:usage.reported===usage.calls},truthStatus:'unverified'};
  }catch(error){
   // Only independently validated receipts survive a failed run. Never retain partial model text.
   const code=signal?.aborted?'CANCELLED':catalogRejected?'CONTENT_CHANGED_DURING_RUN':typeof error?.code==='string'&&/^[A-Z_]{2,64}$/.test(error.code)?error.code:'RUN_FAILED';
   const stopped=new Error('Provider lesson stopped');stopped.code=code;
-  stopped.partial=Object.freeze({receipts:[...receipts.values()],usage:{...usage,complete:false},agentCalls:error?.diagnostics?.agentCalls??null,modelCalls:error?.diagnostics?.modelCalls??usage.calls});
+  stopped.partial=Object.freeze({receipts:receiptCollector.snapshot().receipts,usage:{...usage,complete:false},agentCalls:error?.diagnostics?.agentCalls??null,modelCalls:error?.diagnostics?.modelCalls??usage.calls});
   throw stopped;
  }finally{signal?.removeEventListener('abort',abort);controller.abort();}
 }
