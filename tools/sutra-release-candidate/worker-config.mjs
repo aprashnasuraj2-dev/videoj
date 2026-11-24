@@ -20,14 +20,17 @@ export function renderWorkerConfig({baseConfig,releaseConfig}){
   SUTRA_MAX_CLIENT_CALLS:numeric(baseConfig.vars,'SUTRA_MAX_CLIENT_CALLS',1,1000),
   SUTRA_MAX_DAILY_INPUT_BYTES:numeric(baseConfig.vars,'SUTRA_MAX_DAILY_INPUT_BYTES',1024,1024*1024*1024),
   SUTRA_MAX_DAILY_OUTPUT_TOKENS:numeric(baseConfig.vars,'SUTRA_MAX_DAILY_OUTPUT_TOKENS',64,100000000),
-  SUTRA_MAX_CONCURRENT:numeric(baseConfig.vars,'SUTRA_MAX_CONCURRENT',1,10)
+  SUTRA_MAX_CONCURRENT:numeric(baseConfig.vars,'SUTRA_MAX_CONCURRENT',1,10),
+  SUTRA_MAX_DAILY_SOURCE_READS:numeric(baseConfig.vars,'SUTRA_MAX_DAILY_SOURCE_READS',1,100000),
+  SUTRA_MAX_CLIENT_SOURCE_READS:numeric(baseConfig.vars,'SUTRA_MAX_CLIENT_SOURCE_READS',1,100000)
  };
+ if(Number(vars.SUTRA_MAX_CLIENT_SOURCE_READS)>Number(vars.SUTRA_MAX_DAILY_SOURCE_READS))throw Error('Client source-read ceiling exceeds global ceiling.');
  if(Number(vars.SUTRA_MAX_CLIENT_CALLS)>Number(vars.SUTRA_MAX_DAILY_CALLS))throw Error('Client call ceiling exceeds global ceiling.');
  if(Number(vars.SUTRA_MAX_DAILY_OUTPUT_TOKENS)>Number(vars.SUTRA_MAX_DAILY_CALLS)*Number(vars.SUTRA_MAX_OUTPUT_TOKENS))throw Error('Output-token ceiling exceeds call/output reservation envelope.');
  const rendered={...structuredClone(baseConfig),vars};
  const requiredSecretBindings=cfg.backend==='self_hosted'?['SUTRA_SELF_HOSTED_TOKEN','SUTRA_CLIENT_HASH_SECRET']:['SUTRA_PROVIDER_KEY','SUTRA_CLIENT_HASH_SECRET'];
  const publicRecord={schema:1,sourceRevision:cfg.sourceRevision,workerName:rendered.name,publicOrigin:cfg.publicOrigin,peerOrigin:cfg.peerOrigin,backend:cfg.backend,model:cfg.model,upstreamUrlSha256:cfg.liveEvidence.upstreamUrlSha256,gatewayBuildSha256:cfg.liveEvidence.gatewayBuildSha256,
-  policy:{maxOutputTokens:Number(vars.SUTRA_MAX_OUTPUT_TOKENS),maxDailyCalls:Number(vars.SUTRA_MAX_DAILY_CALLS),maxClientCalls:Number(vars.SUTRA_MAX_CLIENT_CALLS),maxDailyInputBytes:Number(vars.SUTRA_MAX_DAILY_INPUT_BYTES),maxDailyOutputTokens:Number(vars.SUTRA_MAX_DAILY_OUTPUT_TOKENS),maxConcurrent:Number(vars.SUTRA_MAX_CONCURRENT)},
+  policy:{maxOutputTokens:Number(vars.SUTRA_MAX_OUTPUT_TOKENS),maxDailyCalls:Number(vars.SUTRA_MAX_DAILY_CALLS),maxClientCalls:Number(vars.SUTRA_MAX_CLIENT_CALLS),maxDailyInputBytes:Number(vars.SUTRA_MAX_DAILY_INPUT_BYTES),maxDailyOutputTokens:Number(vars.SUTRA_MAX_DAILY_OUTPUT_TOKENS),maxConcurrent:Number(vars.SUTRA_MAX_CONCURRENT),maxDailySourceReads:Number(vars.SUTRA_MAX_DAILY_SOURCE_READS),maxClientSourceReads:Number(vars.SUTRA_MAX_CLIENT_SOURCE_READS)},
   requiredSecretBindings,
   limitation:'This rendered config contains no secret values and does not prove that platform secrets, Durable Object migrations, billing, routes or deployment are present.'};
  return Object.freeze({config:Object.freeze(rendered),record:Object.freeze({...publicRecord,recordHash:digest(publicRecord)})});

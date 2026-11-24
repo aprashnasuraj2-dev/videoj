@@ -1,5 +1,6 @@
-import {handleInference,inferenceStatus,inferenceBackend,configuredModels,readJson} from './inference.js';
+import {handleInference,inferenceStatus,inferenceBackend,configuredModels,readJson,clientKeyForRequest} from './inference.js';
 import {createSourceTools} from '../../packages/sutra-source-tools/index.js';
+import {sourceQuotaLimits} from './quota.js';
 import contentProfileDocument from '../../apps/sutra/public/content/content-profile.json' with {type:'json'};
 import sourceCatalogDocument from '../../apps/sutra/public/content/source-catalog.json' with {type:'json'};
 import {validateContentProfile} from '../../packages/sutra-content-profile/index.js';
@@ -55,7 +56,7 @@ export function withCachePolicy(response,request){
 
 const json=(data,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 // Restricted, stateless JSON-RPC/MCP facade. No caller URL, filesystem or DOM access.
-export async function handleSourceTools(request){
+export async function handleSourceTools(request,env={}){
  if(request.headers.has('MCP-Protocol-Version')&&request.headers.get('MCP-Protocol-Version')!=='2025-06-18')return json({error:{code:'PROTOCOL'}},400);
  if(request.method!=='POST')return json({error:{code:'METHOD'}},405);
  if(request.headers.get('Origin')!==new URL(request.url).origin||!request.headers.get('Content-Type')?.startsWith('application/json'))return json({error:{code:'ORIGIN_OR_HEADERS'}},403);
@@ -66,7 +67,18 @@ export async function handleSourceTools(request){
  const result=value=>json({jsonrpc:'2.0',id:rpc.id,result:value});
  if(rpc.method==='initialize')return result({protocolVersion:'2025-06-18',capabilities:{tools:{listChanged:false}},serverInfo:{name:'sutra-source-tools',version:'0.1.0'}});
  if(rpc.method==='tools/list')return result({tools:sourceTools.list().map(({effect,...d})=>({...d,annotations:{readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:false}}))});
- if(rpc.method==='tools/call'){try{const output=sourceTools.call(rpc.params?.name,rpc.params?.arguments);return result({content:[{type:'text',text:JSON.stringify(output)}],structuredContent:output,isError:false});}catch{return result({content:[{type:'text',text:'Source tool unavailable; no result is claimed.'}],isError:true});}}
+ if(rpc.method==='tools/call'){
+  const sourceQuotaRequested=env.SUTRA_MAX_DAILY_SOURCE_READS!==undefined||env.SUTRA_MAX_CLIENT_SOURCE_READS!==undefined;
+  if(sourceQuotaRequested){
+   if(!sourceQuotaLimits(env)||!env.SUTRA_QUOTA||typeof env.SUTRA_CLIENT_HASH_SECRET!=='string'||env.SUTRA_CLIENT_HASH_SECRET.length<32)return json({error:{code:'SOURCE_QUOTA_UNAVAILABLE'}},503);
+   try{
+    const clientKey=await clientKeyForRequest(request,env.SUTRA_CLIENT_HASH_SECRET),quota=env.SUTRA_QUOTA.get(env.SUTRA_QUOTA.idFromName('sutra-inference-global-v1'));
+    const admission=await quota.fetch('https://quota.internal/source-read',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientKey}),signal:AbortSignal.timeout(5000)});
+    if(!admission.ok)return json({error:{code:admission.status===429?'SOURCE_QUOTA':'SOURCE_QUOTA_UNAVAILABLE'}},admission.status===429?429:503);
+   }catch{return json({error:{code:'SOURCE_QUOTA_UNAVAILABLE'}},503);}
+  }
+  try{const output=sourceTools.call(rpc.params?.name,rpc.params?.arguments);return result({content:[{type:'text',text:JSON.stringify(output)}],structuredContent:output,isError:false});}catch{return result({content:[{type:'text',text:'Source tool unavailable; no result is claimed.'}],isError:true});}
+ }
  return json({jsonrpc:'2.0',id:rpc.id,error:{code:-32601,message:'Method unavailable.'}});
 }
 export default {async fetch(request,env){
@@ -79,7 +91,7 @@ export default {async fetch(request,env){
   response=json({error:{code:'CONTENT_VERSION_MISMATCH'}},409);
  }
  else if(inferencePath)response=await handleInference(request,env);
- else if(path==='/api/source-tools')response=await handleSourceTools(request);
+ else if(path==='/api/source-tools')response=await handleSourceTools(request,env);
  else if(path==='/api/status'&&request.method==='GET'){
   const configured=inferenceStatus(env);
   response=json({inference:configured?'configured':'disabled',...(configured?{model:configuredModels(env)[0],routerBase:'/api/v1',publisherFunded:true,byok:false,backend:inferenceBackend(env).mode}:{}),sourceTools:'catalog',content:{mode:activeContent.profile.mode,contentVersion:activeContent.profile.contentVersion,catalogSha256:activeContent.profile.catalog.sha256,primarySourceId:activeContent.profile.primarySourceId},factualTruth:'unverified'});

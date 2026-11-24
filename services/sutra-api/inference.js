@@ -2,6 +2,13 @@ import {plain,InferenceError,readSse,makeAccumulator,abortable} from '../../pack
 import {checkSchema,validateData} from '../../packages/sutra-runtime/vendor/nsdeploy/actions.js';
 import {quotaLimits,MAX_INPUT_BYTES} from './quota.js';
 export const UPSTREAM='https://api.openai.com/v1/chat/completions';
+export async function clientKeyForRequest(request,secretValue){
+ if(typeof secretValue!=='string'||secretValue.length<32)throw Error('CLIENT_KEY_CONFIG');
+ const secret=await crypto.subtle.importKey('raw',new TextEncoder().encode(secretValue),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+ const identity=`${new Date().toISOString().slice(0,10)}:${(request.headers.get('CF-Connecting-IP')??'unknown').slice(0,64)}`;
+ const signature=await crypto.subtle.sign('HMAC',secret,new TextEncoder().encode(identity));
+ return Array.from(new Uint8Array(signature),b=>b.toString(16).padStart(2,'0')).join('');
+}
 // No inference backend is selected implicitly. The self-hosted mode requires a
 // private authenticated HTTPS gateway; never forward to caller-supplied URLs.
 export function inferenceBackend(env={}){
@@ -95,9 +102,7 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
   try{const signal=AbortSignal.timeout(5000);await abortable(quota.fetch('https://quota.internal/release',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lease}),signal}),signal);}catch{}
  };
  try{
-  const secret=await crypto.subtle.importKey('raw',new TextEncoder().encode(env.SUTRA_CLIENT_HASH_SECRET),{name:'HMAC',hash:'SHA-256'},false,['sign']);
-  const identity=`${new Date().toISOString().slice(0,10)}:${(request.headers.get('CF-Connecting-IP')??'unknown').slice(0,64)}`;
-  const signature=await crypto.subtle.sign('HMAC',secret,new TextEncoder().encode(identity));const clientKey=Array.from(new Uint8Array(signature),b=>b.toString(16).padStart(2,'0')).join('');
+  const clientKey=await clientKeyForRequest(request,env.SUTRA_CLIENT_HASH_SECRET);
   quota=env.SUTRA_QUOTA.get(env.SUTRA_QUOTA.idFromName('sutra-inference-global-v1'));
   const quotaSignal=AbortSignal.any([request.signal,AbortSignal.timeout(5000)]);
   const reservation=await abortable(quota.fetch('https://quota.internal/reserve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientKey,inputBytes,outputTokens:maxOutput}),signal:quotaSignal}),quotaSignal);
