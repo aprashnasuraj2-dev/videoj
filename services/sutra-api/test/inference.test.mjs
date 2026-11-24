@@ -550,3 +550,23 @@ test('successful terminal frame waits for bounded quota teardown; cancellation d
   reader.releaseLock();assert.equal(releases,1);
  }
 });
+
+test('JSON request media type is exact at both inference and source boundaries before body reads or quota',async()=>{
+ const env=environment();let quota=0,upstream=0;env.SUTRA_QUOTA={get(){quota++;throw Error('unexpected quota');},idFromName(){quota++;throw Error('unexpected quota');}};
+ for(const type of ['application/jsonp','application/json-unknown','text/plain, application/json']){
+  const response=await handleInference(request(payload(),{'Content-Type':type}),env,{fetchImpl:()=>{upstream++;return sse();}});
+  assert.equal(response.status,403);
+  const source=await handleSourceTools(new Request('https://sutra.test/api/source-tools',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':type},body:'{"jsonrpc":"2.0","id":1,"method":"tools/list"}'}));
+  assert.equal(source.status,403);
+ }
+ assert.equal(quota,0);assert.equal(upstream,0);
+ const source=await handleSourceTools(new Request('https://sutra.test/api/source-tools',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'Application/JSON; charset=utf-8'},body:'{"jsonrpc":"2.0","id":1,"method":"tools/list"}'}));
+ assert.equal(source.status,200);
+});
+test('incomplete SSE terminal event and named error event cannot produce Worker DONE',async()=>{
+ for(const suffix of ['data: [DONE]\n','event: error\ndata: [DONE]\n\n']){
+  const response=await handleInference(request(),environment(),{fetchImpl:()=>sse(suffix)});
+  assert.equal(response.status,200);const text=await response.text();
+  assert.match(text,/INCOMPLETE_STREAM/);assert.doesNotMatch(text,/\[DONE\]/);
+ }
+});

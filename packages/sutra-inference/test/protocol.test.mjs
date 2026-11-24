@@ -98,3 +98,27 @@ test('SSE complete lines obey the same limit as fragmented lines and reject non-
   assert.equal(response.body.locked,false);
  }
 });
+
+test('only a fully delimited SSE event can terminate a successful chat',async()=>{
+ const complete='data: '+JSON.stringify(chunk({content:'hello'},'stop'))+'\n\n';
+ for(const suffix of ['data: [DONE]','data: [DONE]\n','event: error\ndata: [DONE]\n\n','data: [DONE]\nnot-a-field: ignored\n\n']){
+  const response=new Response(complete+suffix,{headers:{'Content-Type':'text/event-stream'}});
+  const adapter=createProviderAdapter({origin:'https://sutra.test',model:'approved',fetchImpl:()=>response});
+  await assert.rejects(adapter.chat({messages:[]}),e=>['INCOMPLETE_STREAM','STREAM_EVENT','STREAM_FORMAT'].includes(e.code));
+  assert.equal(response.body.locked,false);
+ }
+});
+test('SSE uses true event framing with split CRLF, CR-only lines, multiline JSON and ignored resume metadata',async()=>{
+ const text=': ping\r\nid: opaque\r\nretry: 1\r\nevent: message\r\ndata: {"choices":[\r\ndata: {"index":0,"delta":{"content":"नेपाली"},"finish_reason":"stop"}]}\r\n\r\ndata: [DONE]\r\r';
+ const bytes=new TextEncoder().encode(text);
+ const response=new Response(new ReadableStream({start(c){for(const b of bytes)c.enqueue(new Uint8Array([b]));c.close();}}));
+ const a=makeAccumulator();let complete;
+ for await(const x of readSse(response)){if(x.done)complete=a.finish();else a.accept(x.data);}
+ assert.equal(complete.content,'नेपाली');assert.equal(response.body.locked,false);
+});
+test('SSE event aggregate bound cannot be bypassed by many small data fields',async()=>{
+ const text=Array.from({length:120},()=>'data: '+'x'.repeat(300)+'\n').join('')+'\n';
+ const response=new Response(text);
+ await assert.rejects(async()=>{for await(const x of readSse(response))void x;},e=>e.code==='STREAM_SIZE');
+ assert.equal(response.body.locked,false);
+});

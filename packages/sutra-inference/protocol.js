@@ -3,10 +3,13 @@ export const stop=code=>{throw new InferenceError(code);};
 export const plain=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
 export const MAX_SSE_BYTES=262144;
 const MAX_SSE_LINE_CHARS=32768;
+// Restricted chat-completion SSE profile. Decode actual events, not individual
+// data lines: an unterminated event (including DONE) cannot certify success.
+// Named non-message events are not part of this response contract.
 export async function* readSse(response,{signal,maxBytes=MAX_SSE_BYTES}={}){
  if(!Number.isSafeInteger(maxBytes)||maxBytes<1||maxBytes>MAX_SSE_BYTES)stop('STREAM_SIZE');
  const reader=response.body?.getReader();if(!reader)stop('MISSING_STREAM');
- const decoder=new TextDecoder('utf-8',{fatal:true});let buffer='',total=0,abort;
+ const decoder=new TextDecoder('utf-8',{fatal:true});let buffer='',total=0,abort,skipLf=false,data='',hasData=false,eventType='';
  const stopped=new Promise((_,reject)=>{abort=()=>reject(new InferenceError('CANCELLED'));signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();});stopped.catch(()=>{});
  try{
   for(;;){
@@ -15,16 +18,40 @@ export async function* readSse(response,{signal,maxBytes=MAX_SSE_BYTES}={}){
    if(!done&&!(value instanceof Uint8Array))stop('STREAM_ENCODING');
    if(value){total+=value.byteLength;if(total>maxBytes)stop('STREAM_SIZE');}
    try{buffer+=decoder.decode(value??new Uint8Array(),{stream:!done});}catch{stop('STREAM_ENCODING');}
-   let newline;
-   while((newline=buffer.indexOf('\n'))>=0){
+   for(;;){
     if(signal?.aborted)stop('CANCELLED');
+    // CR, LF and CRLF are SSE line endings. A CRLF pair may be split
+    // between chunks; process the CR once, then swallow its optional LF.
+    if(skipLf&&buffer.length){if(buffer[0]==='\n')buffer=buffer.slice(1);skipLf=false;}
+    const newline=buffer.search(/[\r\n]/);
+    if(newline<0)break;
     if(newline>MAX_SSE_LINE_CHARS)stop('STREAM_SIZE');
-    const line=buffer.slice(0,newline).trim();buffer=buffer.slice(newline+1);if(!line||line.startsWith(':')||line.startsWith('event:'))continue;
-    if(!line.startsWith('data:'))stop('STREAM_FORMAT');const data=line.slice(5).trim();
-    if(data==='[DONE]'){yield {done:true};return;}
-    let parsed;try{parsed=JSON.parse(data);}catch{stop('STREAM_JSON');}if(!plain(parsed)||parsed.error)stop('UPSTREAM_STREAM');yield {data:parsed};
+    const line=buffer.slice(0,newline),ending=buffer[newline];buffer=buffer.slice(newline+1);
+    if(ending==='\r')skipLf=true;
+    if(line===''){
+     const payload=data,type=eventType,present=hasData;
+     data='';eventType='';hasData=false;
+     if(!present)continue;
+     if(type&&type!=='message')stop('STREAM_EVENT');
+     if(payload.trim()==='[DONE]'){yield {done:true};return;}
+     let parsed;try{parsed=JSON.parse(payload);}catch{stop('STREAM_JSON');}
+     if(!plain(parsed)||parsed.error)stop('UPSTREAM_STREAM');yield {data:parsed};
+     continue;
+    }
+    if(line.startsWith(':'))continue;
+    const colon=line.indexOf(':'),field=colon<0?line:line.slice(0,colon);
+    let part=colon<0?'':line.slice(colon+1);if(part[0]===' ')part=part.slice(1);
+    if(field==='event'){eventType=part;continue;}
+    // These standard metadata fields do not trigger reconnection or a
+    // resume request: this host never retries a model operation.
+    if(field==='id'||field==='retry')continue;
+    if(field!=='data')stop('STREAM_FORMAT');
+    if(data.length+(hasData?1:0)+part.length>MAX_SSE_LINE_CHARS)stop('STREAM_SIZE');
+    data+=(hasData?'\n':'')+part;hasData=true;
    }
-   if(buffer.length>MAX_SSE_LINE_CHARS)stop('STREAM_SIZE');if(done)stop('INCOMPLETE_STREAM');
+   if(buffer.length>MAX_SSE_LINE_CHARS)stop('STREAM_SIZE');
+   // EOF never dispatches a pending unterminated event.
+   if(done)stop('INCOMPLETE_STREAM');
   }
  }finally{signal?.removeEventListener('abort',abort);try{void Promise.resolve(reader.cancel()).catch(()=>{});}catch{}try{reader.releaseLock();}catch{}}
 }

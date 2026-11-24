@@ -30,6 +30,8 @@ export function inferenceBackend(env={}){
  return Object.freeze({mode,url:url.href,credential:env.SUTRA_SELF_HOSTED_TOKEN});
 }
 
+// Match the media type, not a prefix such as application/jsonp.
+export const isJsonRequest=request=>/^application\/json(?:\s*;|$)/i.test(request.headers.get('Content-Type')??'');
 const error=(code,status)=>Response.json({error:{code,message:'Inference is unavailable or stopped; no complete result is claimed.'}},{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 export async function readJson(request,max=32768){
  request.signal.throwIfAborted();
@@ -118,7 +120,7 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
  if(request.method!=='POST')return error('METHOD',405);
  if(request.signal.aborted)return error('CANCELLED',499);
  if(!inferenceStatus(env))return error('DISABLED',503);
- const origin=new URL(request.url).origin;if(request.headers.get('Origin')!==origin||origin!==env.SUTRA_ALLOWED_ORIGIN||request.headers.has('Authorization')||!request.headers.get('Content-Type')?.startsWith('application/json'))return error('ORIGIN_OR_HEADERS',403);
+ const origin=new URL(request.url).origin;if(request.headers.get('Origin')!==origin||origin!==env.SUTRA_ALLOWED_ORIGIN||request.headers.has('Authorization')||!isJsonRequest(request))return error('ORIGIN_OR_HEADERS',403);
  const models=configuredModels(env),backend=inferenceBackend(env);const maxOutput=Number(env.SUTRA_MAX_OUTPUT_TOKENS);
  if(!models.length||models.length>3||models.some(m=>!m||m.length>100)||!Number.isInteger(maxOutput)||maxOutput<64||maxOutput>1024)return error('CONFIG',503);
  // Snapshot-aware requests must pin the exact server configuration before body read,

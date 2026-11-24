@@ -1,4 +1,4 @@
-import {handleInference,inferenceStatus,inferenceBackend,configuredModels,inferenceContractId,readJson,clientKeyForRequest} from './inference.js';
+import {handleInference,inferenceStatus,inferenceBackend,configuredModels,inferenceContractId,readJson,isJsonRequest,clientKeyForRequest} from './inference.js';
 import {createSourceTools} from '../../packages/sutra-source-tools/index.js';
 import {sourceQuotaLimits,admissionWindow,ADMISSION_MS} from './quota.js';
 import {readQuotaReply} from './quota-transport.js';
@@ -85,7 +85,7 @@ const validClientCapabilities=caps=>{
 export async function handleSourceTools(request,env={}){
  if(request.headers.has('MCP-Protocol-Version')&&request.headers.get('MCP-Protocol-Version')!=='2025-06-18')return json({error:{code:'PROTOCOL'}},400);
  if(request.method!=='POST')return json({error:{code:'METHOD'}},405);
- if(request.headers.get('Origin')!==new URL(request.url).origin||!request.headers.get('Content-Type')?.startsWith('application/json'))return json({error:{code:'ORIGIN_OR_HEADERS'}},403);
+ if(request.headers.get('Origin')!==new URL(request.url).origin||!isJsonRequest(request))return json({error:{code:'ORIGIN_OR_HEADERS'}},403);
  if(request.signal.aborted)return json({error:{code:'SOURCE_CANCELLED'}},499);
  let rpc;try{rpc=await readJson(request,4096);}catch{return json({error:{code:request.signal.aborted?'SOURCE_CANCELLED':'PAYLOAD'}},request.signal.aborted?499:400);}
  if(request.signal.aborted)return json({error:{code:'SOURCE_CANCELLED'}},499);
