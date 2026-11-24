@@ -72,7 +72,7 @@ const mime=file=>({
   assert.match(await page.locator('#result').innerText(),/Catalog matched/);
   await page.getByRole('button',{name:'Run scripted network test'}).click();
   await page.waitForFunction(()=>document.querySelector('#network-result').textContent.includes('2 agent invocations; 3 scripted model steps.'));
-  await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
+  await page.getByRole('button',{name:'Load source media'}).click();
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Actual media duration: 8.0 seconds.'));
   assert.equal(await page.locator('video').count(),1);
 

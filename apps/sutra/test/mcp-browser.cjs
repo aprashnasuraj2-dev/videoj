@@ -96,7 +96,7 @@ const schema={type:'object',properties:{query:{type:'string',minLength:1,maxLeng
   assert.deepEqual(noDiscovery.decisions,['mcp_discovery']);
   await page.getByRole('button',{name:'Check example',exact:true}).click();
   assert.match(await page.locator('#result').innerText(),/Catalog matched/);
-  await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
+  await page.getByRole('button',{name:'Load source media'}).click();
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Actual media duration: 8.0 seconds.'));
   assert.equal(await page.locator('video').count(),1,'Local native playback remains available after denied MCP discovery');
   const noCall=await attempt('deny-call');

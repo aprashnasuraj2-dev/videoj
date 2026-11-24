@@ -71,3 +71,35 @@ test('validation and pending ceilings are fail-closed',()=>{
  for(let n=0;n<8;n++)registry.prepare('save-review-card',{value:'approved'});
  assert.throws(()=>registry.prepare('save-review-card',{value:'approved'}),error=>error.code==='PENDING_LIMIT');
 });
+
+test('cancelled, completed and failed identities cannot be reused by a stale confirmation',async()=>{
+ for(const outcome of ['cancel','complete','fail']){
+  let calls=0;const registry=make({execute:async()=>{calls++;if(outcome==='fail')throw Error('ambiguous');}});
+  const first=registry.prepare('save-review-card',{value:'approved',version:1});
+  if(outcome==='cancel')registry.cancel(first.id);
+  else if(outcome==='fail')await assert.rejects(registry.execute(first.id),/ambiguous/);
+  else await registry.execute(first.id);
+  assert.throws(()=>registry.prepare('save-review-card',{value:'approved',version:2}),e=>e.code==='PROPOSAL_ID');
+  await assert.rejects(registry.execute(first.id),e=>e.code==='PROPOSAL_MISSING');
+  assert.equal(calls,outcome==='cancel'?0:1);
+ }
+});
+test('aggregate JSON byte budget rejects shared expansion, escaping, unicode and malformed arrays before handler',()=>{
+ const registry=make();
+ const shared=Array(100).fill('x'.repeat(200));
+ for(const nested of [Array(100).fill(shared),'\\'.repeat(9000),'क'.repeat(6000)]){
+  assert.throws(()=>registry.prepare('save-review-card',{value:'approved',nested}),/16 KiB/);
+ }
+ const sparse=[];sparse.length=100000000;
+ const extra=[1];extra.extra='ignored';
+ const hole=[1,,3];
+ for(const nested of [sparse,extra,hole])assert.throws(()=>registry.prepare('save-review-card',{value:'approved',nested}),/dense arrays/);
+ const valid=registry.prepare('save-review-card',{value:'approved',nested:[1,null,true,'क',{a:'b'}]});
+ assert.deepEqual(valid.args.nested,[1,null,true,'क',{a:'b'}]);
+});
+test('bounded session refuses new proposals rather than evicting old confirmation identities',()=>{
+ let i=0;const registry=make({idFactory:()=> 'proposal-'+(++i)});
+ for(let n=0;n<4096;n++){const p=registry.prepare('save-review-card',{value:'approved'});registry.cancel(p.id);}
+ assert.equal(registry.pendingCount(),0);
+ assert.throws(()=>registry.prepare('save-review-card',{value:'approved'}),e=>e.code==='PROPOSAL_LIMIT');
+});

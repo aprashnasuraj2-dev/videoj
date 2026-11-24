@@ -65,7 +65,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   await page.getByRole('button',{name:'Cancel',exact:true}).click();
   assert.equal(await page.locator('#review-list li').count(),1);
   assert.equal(calls,7);
-  await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();await page.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
+  await page.getByRole('button',{name:'Load source media'}).click();await page.waitForFunction(()=>document.querySelector('#timing-status').dataset.state==='completed');
   await page.getByRole('button',{name:'Seek to retrieved cue'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-action-status').textContent.includes('Native media reached'));
   assert.equal(calls,7);

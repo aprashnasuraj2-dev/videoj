@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import fs from 'node:fs';import fsp from 'node:fs/promises';import os from 'node:os';import path from 'node:path';import {createHash} from 'node:crypto';import {createHash} from 'node:crypto';
+import fs from 'node:fs';import fsp from 'node:fs/promises';import os from 'node:os';import path from 'node:path';import {createHash} from 'node:crypto';
 import {materializeReleaseCandidate,inventoryCandidate} from './materialize.mjs';
 import {launchSpecCommit,currentSpecCommit,currentSpecBlob} from './release.mjs';
 

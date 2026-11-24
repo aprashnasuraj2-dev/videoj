@@ -106,7 +106,7 @@ const assert=require('node:assert/strict');
   // Refusing the real peer path must not degrade local learning/evidence.
   await page.getByRole('button',{name:'Check example',exact:true}).click();
   assert.equal(await page.locator('#result').getAttribute('data-state'),'matched');
-  const localTranscript=page.getByRole('searchbox',{name:'Search synthetic transcript'});
+  const localTranscript=page.getByRole('searchbox',{name:'Search source transcript'});
   await localTranscript.fill('timing marker');
   assert.equal(await page.locator('#timing-transcript-panel .transcript-cue').count(),1);
   await localTranscript.fill('');
@@ -194,7 +194,7 @@ const assert=require('node:assert/strict');
   assert.deepEqual(crossSite,[],'unapproved redirect destination never contacted');
   await page.getByRole('button',{name:'Check example',exact:true}).click();
   assert.match(await page.locator('#result').innerText(),/Catalog matched/);
-  await page.getByRole('button',{name:'Load synthetic timing fixture'}).click();
+  await page.getByRole('button',{name:'Load source media'}).click();
   await page.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Actual media duration: 8.0 seconds.'));
   assert.equal(await page.locator('video').count(),1,'local native video works after blocked peer redirects');
   const contextBefore=peerRequests.length;
