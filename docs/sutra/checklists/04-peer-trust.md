@@ -143,7 +143,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Treat peer instructions and source text as untrusted model input. Remove arbitrary action/fetch access and remote coded-tool execution from this release. Test attempts to leak context or alter routing.
 - **Phase exit:** Test attacks cannot cause a blocked destination, unreviewed write, key leak or router override; limitations of prompt defenses are stated.
 
-- [ ] `SUTRA-P038-01` Treat peer instructions, transcript text and tool results as untrusted
+- [x] `SUTRA-P038-01` Treat peer instructions, transcript text and tool results as untrusted
 - [x] `SUTRA-P038-02` Create fixtures attempting key exfiltration and private-context disclosure
 - [x] `SUTRA-P038-03` Create fixtures attempting router override and unapproved destination calls
 - [x] `SUTRA-P038-04` Create fixtures attempting unreviewed writes and argument substitution
@@ -152,7 +152,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P038-07` Verify prompt-level defenses are not the only containment mechanism
 - [x] `SUTRA-P038-08` Record residual model manipulation risks without claiming universal immunity
 - [x] `SUTRA-P038-09` Produce and review the phase artifact: Adversarial peer fixture set and containment report.
-- [ ] `SUTRA-P038-10` Close phase 038 only after its applicable tasks have evidence and its exit condition is observed: Test attacks cannot cause a blocked destination, unreviewed write, key leak or router override; limitations of prompt defenses are stated.
+- [x] `SUTRA-P038-10` Close phase 038 only after its applicable tasks have evidence and its exit condition is observed: Test attacks cannot cause a blocked destination, unreviewed write, key leak or router override; limitations of prompt defenses are stated.
 
 ## Phase 039 - Add a compatible read-only MCP path
 
