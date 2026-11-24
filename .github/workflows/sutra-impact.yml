@@ -1,0 +1,48 @@
+name: Classify SUTRA verification impact
+on:
+  pull_request:
+    paths:
+      - 'apps/sutra/**'
+      - 'apps/sutra-peer/**'
+      - 'packages/sutra-*/**'
+      - 'services/sutra-api/**'
+      - 'tools/sutra-*/**'
+      - 'deploy/sutra-pages/**'
+      - 'docs/sutra/evaluation/**'
+      - 'docs/sutra/verification-map.json'
+      - 'docs/sutra/evidence/metrics.json'
+      - 'docs/sutra/tools/impact.mjs'
+      - 'docs/sutra/tools/impact.test.mjs'
+      - '.github/workflows/sutra-impact.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  impact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test docs/sutra/tools/impact.test.mjs
+      - name: Classify changed product evidence
+        if: github.event_name == 'pull_request'
+        run: node docs/sutra/tools/impact.mjs "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" > "${RUNNER_TEMP}/sutra-impact.json"
+      - name: Classify metric freshness
+        if: github.event_name == 'pull_request'
+        run: node docs/sutra/tools/impact.mjs --metrics "${{ github.event.pull_request.head.sha }}" > "${RUNNER_TEMP}/sutra-metric-freshness.json"
+      - name: Show evidence impact
+        if: github.event_name == 'pull_request'
+        run: cat "${RUNNER_TEMP}/sutra-impact.json" && cat "${RUNNER_TEMP}/sutra-metric-freshness.json"
+      - uses: actions/upload-artifact@v4
+        if: github.event_name == 'pull_request'
+        with:
+          name: sutra-verification-impact
+          path: |
+            ${{ runner.temp }}/sutra-impact.json
+            ${{ runner.temp }}/sutra-metric-freshness.json

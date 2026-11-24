@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "recordedAt": "2026-11-24T08:20:00+05:45",
+  "metrics": [
+    {
+      "id": "engineering_baseline",
+      "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e",
+      "invalidatedBy": [
+        "grounding-evaluation"
+      ],
+      "profile": "in-process synthetic, no paid provider or held-out semantics",
+      "values": {
+        "retrievalCases": 20,
+        "retrievalPassed": 20,
+        "adversarialCases": 10,
+        "adversarialPassed": 10,
+        "directMedianMs": 0.035867,
+        "delegatedMedianMs": 3.404983,
+        "directModelCalls": 0,
+        "delegatedModelCalls": 90,
+        "directRpc": 0,
+        "delegatedRpc": 90,
+        "providerTokens": null,
+        "semanticPrecision": null
+      }
+    },
+    {
+      "id": "desktop_browser_matrix",
+      "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e",
+      "invalidatedBy": [
+        "browser-matrix"
+      ],
+      "profile": "headless desktop engines, synthetic media fixture",
+      "values": {
+        "chromium": "pass",
+        "firefox": "pass",
+        "webkit": "pass",
+        "physicalTouch": "untested",
+        "humanScreenReader": "untested"
+      }
+    },
+    {
+      "id": "hero_journey",
+      "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e",
+      "invalidatedBy": [
+        "critical-journey"
+      ],
+      "profile": "Chromium CI synthetic learner journey",
+      "values": {
+        "result": "pass",
+        "peerDenialPreservesLocalFlow": true,
+        "narrowKeyboardJourney": true
+      }
+    },
+    {
+      "id": "lab_performance",
+      "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e",
+      "invalidatedBy": [
+        "performance-profile"
+      ],
+      "profile": "Chromium CI, 1 Mbps/150 ms laboratory shaping",
+      "values": {
+        "transcriptUsableUnder5s": true,
+        "mp4RequestsBeforeExplicitLoad": 0,
+        "gzipShellUnder700KiB": true
+      }
+    },
+    {
+      "id": "neutral_peer_interop",
+      "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e",
+      "invalidatedBy": [
+        "peer-interop",
+        "security-boundary"
+      ],
+      "profile": "same-owner local two-origin synthetic consumer",
+      "values": {
+        "result": "pass",
+        "independentExternalAdoption": false
+      }
+    },
+    {
+      "id": "publication_inventory",
+      "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e",
+      "invalidatedBy": [
+        "publication-integrity"
+      ],
+      "profile": "development build, not deployed",
+      "values": {
+        "byteBoundFiles": 68,
+        "networkIdentities": 3
+      }
+    },
+    {
+      "id": "provider_cost",
+      "sourceRevision": "3a1309bab9cd8d08ce32866118c94f3207a5209e",
+      "invalidatedBy": [
+        "provider-cost"
+      ],
+      "profile": "no live funded provider measured",
+      "values": {
+        "actualProviderTokens": null,
+        "actualRunCost": null,
+        "status": "unmeasured"
+      }
+    }
+  ]
+}
