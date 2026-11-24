@@ -84,6 +84,27 @@ const boundedJson=async({url,origin,fetchImpl,signal,maxBytes})=>{
 const validSource=source=>plain(source)&&validId(source.id)&&safeText(source.version,128)&&validHash(source.hash)&&validHash(source.mediaHash)&&Number.isFinite(source.duration)&&source.duration>0&&source.duration<=86400&&Array.isArray(source.cues)&&source.cues.length>0&&source.cues.length<=500&&new Set(source.cues.map(x=>x?.id)).size===source.cues.length&&source.cues.every(c=>plain(c)&&validId(c.id)&&Number.isFinite(c.start)&&Number.isFinite(c.end)&&c.start>=0&&c.end>c.start&&c.end<=source.duration&&safeText(c.text,2000));
 const validVideo=claim=>plain(claim)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&validId(claim.claimKey)&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.provenance,240)&&safeText(claim.dateBasis,120);
 const validGuide=claim=>claim===null||plain(claim)&&claim.sourceKind==='guide'&&validId(claim.sourceId)&&safeText(claim.sourceVersion,100)&&safeText(claim.title,120)&&safeText(claim.scope,160)&&validId(claim.claimKey)&&(safeText(claim.value,120)||Number.isFinite(claim.value)||typeof claim.value==='boolean')&&safeText(claim.excerpt,1200)&&safeText(claim.provenance,240)&&safeGuideHref(claim.sourceHref)&&validHash(claim.sourceHash);
+// Derive the actual native tracks from the same catalog that binds the receipt.
+// WebVTT is millisecond-based; never silently round a source interval or
+// transform its text into different wording. Overlap is valid for captions,
+// but not chapters, so an overlapping timeline gets no chapter navigation.
+export function deriveReviewedTracks(source){
+ const {duration,cues}=snapshotDataRecord(source,10);
+ if(!Number.isFinite(duration)||duration<=0||duration>86400)throw Error('CONTENT_TRACK_TIMING');
+ const millis=value=>{const ms=Math.round(value*1000);if(!Number.isFinite(value)||value<0||Math.abs(value*1000-ms)>1e-7)throw Error('CONTENT_TRACK_TIMING');return ms;};
+ const stamp=ms=>[Math.floor(ms/3600000),Math.floor(ms%3600000/60000),Math.floor(ms%60000/1000)].map(x=>String(x).padStart(2,'0')).join(':')+'.'+String(ms%1000).padStart(3,'0');
+ const ids=new Set(),rows=snapshotDataArray(cues,500).map(raw=>{
+  const {id,start,end,text}=snapshotDataRecord(raw,8);
+  if(!validId(id)||ids.has(id)||!safeText(text,2000)||end>duration)throw Error('CONTENT_TRACK_CUE');
+  ids.add(id);const a=millis(start),b=millis(end);if(b<=a)throw Error('CONTENT_TRACK_TIMING');
+  return {id,a,b,text:text.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')};
+ }).sort((a,b)=>a.a-b.a||a.b-b.b||(a.id<b.id?-1:a.id>b.id?1:0));
+ if(!rows.length)throw Error('CONTENT_TRACK_CUE');
+ const vtt=(suffix)=>'WEBVTT\n\n'+rows.map(c=>c.id+suffix+'\n'+stamp(c.a)+' --> '+stamp(c.b)+'\n'+c.text+'\n\n').join('');
+ const captions=vtt(''),overlap=rows.some((row,i)=>i>0&&row.a<rows[i-1].b),chapters=overlap?null:vtt('-chapter');
+ if(new TextEncoder().encode(captions).length>2*1024*1024||chapters&&new TextEncoder().encode(chapters).length>2*1024*1024)throw Error('CONTENT_TRACK_SIZE');
+ return Object.freeze({captions,chapters});
+}
 export function validateContentProfile(profile,catalog){
  try{
   const p=snapshotDataRecord(profile,24),catalogRef=snapshotDataRecord(p.catalog,4),media=snapshotDataRecord(p.media,8),transcript=snapshotDataRecord(p.transcript,4),ui=snapshotDataRecord(p.ui,4);
@@ -112,6 +133,7 @@ export function validateContentProfile(profile,catalog){
  const source=catalog.sources.find(s=>s.id===profile.primarySourceId),cue=source?.cues.find(c=>c.id===profile.featuredCueId);
  if(!source||!cue||source.hash!==profile.transcript.sha256)throw Error('CONTENT_PRIMARY');
  if(profile.mode==='reviewed'){
+  deriveReviewedTracks(source);
   const addressed=(value,digest)=>value.split('#',1)[0].split('/').includes(digest);
   if(!addressed(profile.media.video,source.mediaHash)||!addressed(profile.transcript.path,source.hash)||!addressed(profile.guideClaim.sourceHref,profile.guideClaim.sourceHash))throw Error('CONTENT_ADDRESSING');
  }

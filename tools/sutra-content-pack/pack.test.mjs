@@ -7,7 +7,7 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {buildContentPack} from './pack.mjs';
 import {contentReviewStatement} from '../sutra-content-intake/intake.mjs';
-import {validateContentProfile,MAX_REVIEWED_MEDIA_BYTES} from '../../packages/sutra-content-profile/index.js';
+import {validateContentProfile,MAX_REVIEWED_MEDIA_BYTES,deriveReviewedTracks} from '../../packages/sutra-content-profile/index.js';
 
 const sha=x=>createHash('sha256').update(x).digest('hex');
 async function fixture(){
@@ -118,4 +118,15 @@ test('compiler refuses oversized learner media and transcript before creating ou
   try{await fsp.truncate(path.join(f.root,rel),limit+1);await assert.rejects(buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:out}),/Invalid source file/);assert.equal(fs.existsSync(out),false);}
   finally{await fsp.rm(f.root,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
  }
+});
+
+test('compiled native tracks are exact shared catalog derivatives; overlapping chapters are omitted',async()=>{
+ const f=await fixture(),out=f.root+'-out';
+ try{
+  f.semantic.cues.push({id:'overlap',start:3,end:4,text:'Verify zero energy.'});
+  const r=await buildContentPack({manifest:f.manifest,semantic:f.semantic,contentRoot:f.root,outputDir:out}),expected=deriveReviewedTracks(r.sourceCatalog.sources[0]);
+  assert.equal(expected.chapters,null);
+  assert.equal(fs.readFileSync(path.join(out,r.profile.media.chapters.slice(1)),'utf8'),'WEBVTT\n\n');
+  assert.equal(fs.readFileSync(path.join(out,r.profile.media.captions.slice(1)),'utf8'),expected.captions);
+ }finally{await fsp.rm(f.root,{recursive:true,force:true});await fsp.rm(out,{recursive:true,force:true});}
 });

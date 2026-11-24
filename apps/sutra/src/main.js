@@ -15,7 +15,7 @@ import {mountProviderPanel} from './provider-panel.js';
 import {mountDirectLookup} from './direct-lookup.js';
 import {mountLocalAnswer} from './local-answer.js';
 import {applyLocale,localeMeta} from './localization.js';
-import {loadContentProfile,receiptForFeatured,readVerifiedLessonMedia} from '../../../packages/sutra-content-profile/index.js';
+import {loadContentProfile,receiptForFeatured,readVerifiedLessonMedia,deriveReviewedTracks} from '../../../packages/sutra-content-profile/index.js';
 
 const contentBase=new URL(`${import.meta.env.BASE_URL}content/`,location.origin).href;
 let content;
@@ -93,7 +93,10 @@ runButton.addEventListener('click',async()=>{
  finally{runButton.disabled=false;}
 });
 
-let timingPlayer=null,timingObjectUrl=null,timingTranscript=null,mediaLoad=null;
+let timingPlayer=null,timingTranscript=null,mediaLoad=null;
+const mediaObjectUrls=new Set();
+const localMediaUrl=(bytes,type)=>{const url=URL.createObjectURL(new Blob([bytes],{type}));mediaObjectUrls.add(url);return url;};
+const releaseMediaUrls=()=>{for(const url of mediaObjectUrls)URL.revokeObjectURL(url);mediaObjectUrls.clear();};
 const transcriptHost=document.querySelector('#timing-transcript-panel');
 timingTranscript=mountTranscriptPanel(transcriptHost,{
  source:timingFixture.source,contentMode:content.profile.mode,onSeek:seconds=>{
@@ -117,11 +120,15 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
   const versioned=(publicPath,version)=>{const url=new URL(publicPath,location.origin);url.searchParams.set('v',version);return url.href;};
   const verified=await readVerifiedLessonMedia({url:versioned(content.profile.media.video,timingFixture.source.mediaHash),origin:location.origin,mediaHash:timingFixture.source.mediaHash,mode:content.profile.mode,signal});
   signal.throwIfAborted();
-  timingObjectUrl=URL.createObjectURL(new Blob([verified.bytes],{type:verified.mime}));const mediaSource=timingObjectUrl;
+  const mediaSource=localMediaUrl(verified.bytes,verified.mime),reviewed=content.profile.mode==='reviewed';
+  // Do not let an independently mutable poster or VTT file masquerade as
+  // reviewed content. Reviewed tracks derive locally from the validated cue
+  // catalog; no remote poster/track requests are needed.
+  const tracks=reviewed?deriveReviewedTracks(timingFixture.source):null;
   candidatePlayer=mountTimingPlayer(mediaHost,{source:mediaSource,
-   poster:versioned(content.profile.media.poster,timingFixture.source.mediaHash),
-   chapters:versioned(content.profile.media.chapters,timingFixture.source.hash),
-   captions:versioned(content.profile.media.captions,timingFixture.source.hash)});
+   poster:reviewed?undefined:versioned(content.profile.media.poster,timingFixture.source.mediaHash),
+   chapters:reviewed?(tracks.chapters?localMediaUrl(tracks.chapters,'text/vtt'):undefined):versioned(content.profile.media.chapters,timingFixture.source.hash),
+   captions:reviewed?localMediaUrl(tracks.captions,'text/vtt'):versioned(content.profile.media.captions,timingFixture.source.hash)});
   mediaHost.classList.add('player-mounted');await candidatePlayer.ready({signal});signal.throwIfAborted();if(!Number.isFinite(candidatePlayer.media.duration)||candidatePlayer.media.duration<=0||Math.abs(candidatePlayer.media.duration-timingFixture.source.duration)>.1)throw Error('Media duration mismatch.');
   // Receipt/compare/transcript actions never see a media adapter before the
   // active source duration has been validated. Keep the text query on remount.
@@ -132,8 +139,8 @@ document.querySelector('#load-timing').addEventListener('click',async event=>{
    source:timingFixture.source,contentMode:content.profile.mode,media:timingPlayer.media,onSeek:seconds=>timingPlayer.seek(seconds)
   });
   if(previousQuery)timingTranscript.search(previousQuery);
-  setStatus(timingStatus,'completed',`${content.profile.mode==='reviewed'?'Reviewed hash-checked':'Synthetic hash-checked'} source media loaded. Actual media duration: ${timingPlayer.media.duration.toFixed(1)} seconds.`);seekTiming.hidden=false;
- }catch(error){if(candidatePlayer){try{candidatePlayer.media.pause();candidatePlayer.media.removeAttribute('src');candidatePlayer.media.load();}catch{}timingPlayer=null;mediaHost.replaceChildren();mediaHost.classList.remove('player-mounted');}if(timingObjectUrl){URL.revokeObjectURL(timingObjectUrl);timingObjectUrl=null;}seekTiming.hidden=true;setStatus(timingStatus,operation.signal.aborted?'cancelled':'error',operation.signal.aborted?'Media load cancelled. Transcript and evidence remain available; no playback success is claimed.':error?.code==='MEDIA_UNSUPPORTED'?'This browser cannot decode the source media. Transcript and evidence remain available; no playback success is claimed.':'Source media unavailable. No playback or seek success is claimed.');button.disabled=false;}
+  setStatus(timingStatus,'completed',`${content.profile.mode==='reviewed'?'Reviewed hash-checked':'Synthetic hash-checked'} source media loaded. Actual media duration: ${timingPlayer.media.duration.toFixed(1)} seconds.${reviewed?' Captions derived from the bound source catalog.'+(tracks.chapters?'':' Overlapping cues: chapter navigation omitted.'):''}`);seekTiming.hidden=false;
+ }catch(error){if(candidatePlayer){try{candidatePlayer.media.pause();candidatePlayer.media.removeAttribute('src');candidatePlayer.media.load();}catch{}timingPlayer=null;mediaHost.replaceChildren();mediaHost.classList.remove('player-mounted');}releaseMediaUrls();seekTiming.hidden=true;setStatus(timingStatus,operation.signal.aborted?'cancelled':'error',operation.signal.aborted?'Media load cancelled. Transcript and evidence remain available; no playback success is claimed.':error?.code==='MEDIA_UNSUPPORTED'?'This browser cannot decode the source media. Transcript and evidence remain available; no playback success is claimed.':'Source media unavailable. No playback or seek success is claimed.');button.disabled=false;}
  finally{if(mediaLoad===operation)mediaLoad=null;cancelTiming.hidden=true;cancelTiming.disabled=false;if(!timingPlayer&&document.activeElement===cancelTiming)button.focus({preventScroll:true});}
 });
 seekTiming.addEventListener('click',async()=>{
@@ -150,7 +157,7 @@ seekTiming.addEventListener('click',async()=>{
 
 // A page retained by browser back/forward cache is still the same document.
 // Preserve its local transcript and media blob; remote consent is revoked independently.
-window.addEventListener('pagehide',event=>{mediaLoad?.abort();if(event.persisted){try{timingPlayer?.media.pause();}catch{}return;}timingTranscript?.dispose();if(timingObjectUrl)URL.revokeObjectURL(timingObjectUrl);});
+window.addEventListener('pagehide',event=>{mediaLoad?.abort();if(event.persisted){try{timingPlayer?.media.pause();}catch{}return;}timingTranscript?.dispose();releaseMediaUrls();});
 
 let reviewStore=null,reviewActions=null,reviewProposal=null,lastReviewAttempt=null,reviewBusy=false;
 const reviewDialog=document.querySelector('#review-dialog'),reviewStatus=document.querySelector('#review-status'),reviewAttemptButton=document.querySelector('#download-review-attempt');

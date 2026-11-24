@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {assessContentManifest} from '../sutra-content-intake/intake.mjs';
-import {validateContentProfile,MAX_REVIEWED_MEDIA_BYTES} from '../../packages/sutra-content-profile/index.js';
+import {validateContentProfile,MAX_REVIEWED_MEDIA_BYTES,deriveReviewedTracks} from '../../packages/sutra-content-profile/index.js';
 
 const ID=/^[A-Za-z][A-Za-z0-9._:-]{0,127}$/;
 const ISO=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/;
@@ -13,11 +13,6 @@ const safePath=v=>typeof v==='string'&&v.length<=240&&!v.startsWith('/')&&!v.inc
 const digest=bytes=>createHash('sha256').update(bytes).digest('hex');
 const canonical=value=>JSON.stringify(value,null,2)+'\n';
 const html=s=>s.replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;');
-const vttText=s=>s.replace(/\r?\n/g,' ').replace(/-->/g,'→').trim();
-const stamp=seconds=>{
- const ms=Math.round(seconds*1000),h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),sec=Math.floor(ms%60000/1000),x=ms%1000;
- return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0')+'.'+String(x).padStart(3,'0');
-};
 async function readRegular(root,relative,max){
  if(!safePath(relative))throw Error('Unsafe source path: '+relative);
  const full=path.resolve(root,...relative.split('/')),prefix=path.resolve(root)+path.sep;
@@ -61,11 +56,6 @@ function validateSemantic(meta){
   /synthetic|fixture|pending/i.test(meta.ui.noticeTitle+' '+meta.ui.noticeBody))throw Error('Reviewed UI copy contains development-only claims.');
  return structuredClone(meta);
 }
-function makeVtt(cues,suffix){
- let out='WEBVTT\n\n';
- for(const cue of cues)out+=cue.id+suffix+'\n'+stamp(cue.start)+' --> '+stamp(cue.end)+'\n'+vttText(cue.text)+'\n\n';
- return out;
-}
 function makePoster(title){
  return '<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-label="'+html(title)+'"><rect width="1280" height="720" fill="#111"/><text x="80" y="360" fill="#fff" font-family="system-ui,sans-serif" font-size="54">'+html(title)+'</text><text x="80" y="430" fill="#ccc" font-family="system-ui,sans-serif" font-size="28">Reviewed lesson media</text></svg>';
 }
@@ -108,12 +98,13 @@ export async function buildContentPack({manifest,semantic,contentRoot,outputDir}
   media:{video:'/'+mediaBase+'/lesson'+ext,poster:'/'+mediaBase+'/poster.svg',chapters:'/'+transcriptBase+'/chapters.vtt',captions:'/'+transcriptBase+'/captions.vtt'},
   videoClaim:meta.videoClaim,guideClaim:{sourceKind:'guide',sourceId:'reviewed-guide',sourceVersion:meta.contentVersion,title:meta.guideClaim.title,scope:meta.guideClaim.scope,claimKey:meta.guideClaim.claimKey,value:meta.guideClaim.value,excerpt:meta.guideClaim.excerpt,provenance:guideProvenance,sourceHref:'/'+guideBase+'/'+guideName+'#'+meta.guideClaim.anchor,sourceHash:publishedGuideSha,observedAt:meta.observedAt,dateBasis:meta.guideClaim.dateBasis},ui:meta.ui};
  validateContentProfile(profile,sourceCatalog);
+ const tracks=deriveReviewedTracks(sourceCatalog.sources[0]);
  const profileBytes=Buffer.from(canonical(profile)),profileSha=digest(profileBytes);
  if(profileBytes.length>32768||catalogBytes.length>262144)throw Error('Content metadata exceeds learner read budget.');
  await fs.mkdir(out,{recursive:false});
  await write(out,'content/content-profile.json',profileBytes);await write(out,'content/source-catalog.json',catalogBytes);
  await write(out,mediaBase+'/lesson'+ext,media.bytes);await write(out,mediaBase+'/poster.svg',makePoster(meta.title));
- await write(out,transcriptBase+'/lesson.txt',transcript.bytes);await write(out,transcriptBase+'/chapters.vtt',makeVtt(meta.cues,'-chapter'));await write(out,transcriptBase+'/captions.vtt',makeVtt(meta.cues,''));
+ await write(out,transcriptBase+'/lesson.txt',transcript.bytes);await write(out,transcriptBase+'/chapters.vtt',tracks.chapters??'WEBVTT\n\n');await write(out,transcriptBase+'/captions.vtt',tracks.captions);
  await write(out,guideBase+'/'+guideName,safeGuideBytes);
  const core={schema:1,contentVersion:meta.contentVersion,intakeRecordHash:intake.recordHash,profileSha256:profileSha,catalogSha256:catalogSha,mediaSha256:observed.media.sha256,transcriptSha256:observed.transcript.sha256,guideSha256:publishedGuideSha,
   publicPaths:{profile:'/content/content-profile.json',catalog:'/content/source-catalog.json',media:profile.media.video,transcript:profile.transcript.path,guide:profile.guideClaim.sourceHref.split('#')[0]}};

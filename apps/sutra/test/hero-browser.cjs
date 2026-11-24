@@ -107,7 +107,8 @@ const assert=require('node:assert/strict');
   // preserve transcript and recover only on an explicit correct retry.
   const reviewedContext=await browser.newContext();
   try{
-   const reviewPage=await reviewedContext.newPage(),requests=[];
+   const reviewPage=await reviewedContext.newPage(),requests=[],trackRequests=[];
+   reviewPage.on('request',r=>{if(/\.(?:vtt|svg)(?:\?|$)/.test(r.url())&&r.url().startsWith(base))trackRequests.push(r.url());});
    const profile=JSON.parse(fs.readFileSync(path.join(app,'public/content/content-profile.json'),'utf8'));
    const catalog=JSON.parse(fs.readFileSync(path.join(app,'public/content/source-catalog.json'),'utf8'));
    const source=catalog.sources[0],mediaBytes=fs.readFileSync(path.join(app,'public/media/timing-fixture.mp4')),textBytes=fs.readFileSync(path.join(app,'public/transcripts/synthetic-timing.txt'));
@@ -136,6 +137,11 @@ const assert=require('node:assert/strict');
    assert.match(await reviewPage.locator('#timing-status').textContent(),/Reviewed hash-checked/);
    assert.equal(await reviewPage.locator('video').evaluate(v=>v.currentSrc.startsWith('blob:')),true);
    assert.equal(requests.length,3,'only explicit full media GETs; no remote native refetch');
+   await reviewPage.locator('video').evaluate(video=>{[...video.textTracks].find(t=>t.kind==='captions').mode='showing';});
+   await reviewPage.waitForFunction(()=>[...document.querySelector('video').textTracks].find(t=>t.kind==='captions')?.cues?.length===1);
+   const native=await reviewPage.locator('video').evaluate(video=>{const cue=[...video.textTracks].find(t=>t.kind==='captions').cues[0];return {start:cue.startTime,end:cue.endTime,text:cue.getCueAsHTML().textContent};});
+   assert.deepEqual(native,{start:source.cues[0].start,end:source.cues[0].end,text:source.cues[0].text});
+   assert.equal(trackRequests.length,0,'reviewed playback cannot fetch independent poster or track bytes');
    await reviewPage.getByRole('button',{name:'Inspect featured source cue'}).click();await reviewPage.waitForFunction(()=>document.querySelector('#timing-status').textContent.includes('Source cue reached'));
   }finally{await reviewedContext.close();}
 

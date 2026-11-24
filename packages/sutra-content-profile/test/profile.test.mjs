@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';import {readVerifiedLessonMedia,MAX_REVIEWED_MEDIA_BYTES,readContentBytes,loadContentProfile,receiptForFeatured,validateContentProfile} from '../index.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';import {deriveReviewedTracks,readVerifiedLessonMedia,MAX_REVIEWED_MEDIA_BYTES,readContentBytes,loadContentProfile,receiptForFeatured,validateContentProfile} from '../index.js';
 const profile={"schema":1,"mode":"synthetic","contentVersion":"synthetic-timing-v1","title":"Synthetic timing lesson fixture","observedAt":"2026-11-23T00:00:00Z","primarySourceId":"synthetic-timing-fixture","featuredCueId":"timing-marker","catalog":{"path":"./source-catalog.json","sha256":"a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333"},"transcript":{"path":"/transcripts/synthetic-timing.txt","sha256":"a1930687d25bfe7fe8f2483c55d1aca83cdc3f4dcc39424dd6569aea9fe9660d"},"media":{"video":"/media/timing-fixture.mp4","poster":"/media/timing-poster.svg","chapters":"/media/timing-chapters.vtt","captions":"/media/timing-captions.vtt"},"videoClaim":{"title":"Synthetic timing cue","scope":"synthetic_timing_only","claimKey":"marker_presence","value":"marker_present","provenance":"SUTRA synthetic timing catalog; not human-reviewed footage","dateBasis":"Fixture metadata date"},"guideClaim":null,"ui":{"noticeTitle":"Synthetic development content","noticeBody":"This content profile is a test fixture. It demonstrates source consistency and browser behavior, not factual training guidance."}};
 const catalog={
   "schema": 1,
@@ -168,4 +168,15 @@ test('reviewed media requires complete exact bytes, type, digest path and no cre
   await assert.rejects(readVerifiedLessonMedia({url,origin,mediaHash,mode:'reviewed',fetchImpl:async()=>r}));
  }
  await assert.rejects(readVerifiedLessonMedia({url:origin+'/media/not-'+mediaHash+'/lesson.webm',origin,mediaHash,mode:'reviewed',fetchImpl}),/CONTENT_MEDIA_CONFIG/);assert.equal(calls,1);
+});
+
+test('reviewed native tracks preserve exact cue wording, deterministic order and millisecond timing',()=>{
+ const source={duration:8,cues:[{id:'later',start:4,end:6,text:'A & B < C --> D'},{id:'earlier',start:0.125,end:4,text:'Literal <b>tag</b>'}]};
+ const tracks=deriveReviewedTracks(source);
+ assert.match(tracks.captions,/earlier\n00:00:00\.125 --> 00:00:04\.000\nLiteral &lt;b&gt;tag&lt;\/b&gt;/);
+ assert.match(tracks.captions,/A &amp; B &lt; C --&gt; D/);
+ assert.ok(tracks.captions.indexOf('earlier')<tracks.captions.indexOf('later'));assert.match(tracks.chapters,/earlier-chapter/);
+ const overlap=structuredClone(source);overlap.cues[0].start=3;assert.equal(deriveReviewedTracks(overlap).chapters,null);assert.match(deriveReviewedTracks(overlap).captions,/later/);
+ const fractional=structuredClone(source);fractional.cues[1].start=.1255;assert.throws(()=>deriveReviewedTracks(fractional),/CONTENT_TRACK_TIMING/);
+ const zero=structuredClone(source);zero.cues[1].end=.125;assert.throws(()=>deriveReviewedTracks(zero),/CONTENT_TRACK_TIMING/);
 });
