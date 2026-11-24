@@ -2,6 +2,14 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0021 — 2026-11-24
+
+**546/1,000 original checks verified; 555/1,009 total; 42/100 phases fully verified; 1 historical omission.**
+
+Exact product revision `0ef8a613c1c8d6db522d50a1088f9528ad055d4b` passed all **10** current workflows. Phase **045** closes with excerpt-gated agreement semantics and hash-bound written-source integrity. Held-out/development separation, delegation measurements, stabilization risk ranking, impact classification and exact affected-evidence rechecks receive only the checks actually observed; real provider tokens/cost, human held-out review and final release gates remain open. Current lab metrics: transcript 1,911 ms; gzip shell 418,268 B; video-ready 3,470 ms; seek feedback 61 ms. [Session evidence](evidence/implementation/SESSION-0021.md).
+
+---
+
 ## Session 0020 — 2026-11-24
 
 **528/1,000 original checks verified; 534/1,006 total; 41/100 phases fully verified; 1 historical omission.**

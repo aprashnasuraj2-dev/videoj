@@ -143,15 +143,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Prioritize broken evidence, task confusion, peer failures and mobile blockers over cosmetic additions. Update prompts only using development fixtures; preserve the frozen test set.
 - **Phase exit:** No blocker affects the filmed or judge workflow; unresolved limits are visible in release notes.
 
-- [ ] `SUTRA-P078-01` Rank observed failures by evidence correctness and core task impact
+- [x] `SUTRA-P078-01` Rank observed failures by evidence correctness and core task impact
 - [ ] `SUTRA-P078-02` Fix consent, source-version and default-inference blockers before polish
-- [ ] `SUTRA-P078-03` Use development fixtures rather than tuning on frozen held-out cases
-- [ ] `SUTRA-P078-04` Record affected files and evidence invalidated by each fix
+- [x] `SUTRA-P078-03` Use development fixtures rather than tuning on frozen held-out cases
+- [x] `SUTRA-P078-04` Record affected files and evidence invalidated by each fix
 - [ ] `SUTRA-P078-05` Avoid introducing new unrelated features during stabilization
-- [ ] `SUTRA-P078-06` Preserve benchmark failures and previous results for comparison
+- [x] `SUTRA-P078-06` Preserve benchmark failures and previous results for comparison
 - [ ] `SUTRA-P078-07` Check mobile and keyboard blockers observed in the pilot
-- [ ] `SUTRA-P078-08` Record remaining issue severity and user-visible effect
-- [ ] `SUTRA-P078-09` Produce and review the phase artifact: Issue resolutions tied to source revisions.
+- [x] `SUTRA-P078-08` Record remaining issue severity and user-visible effect
+- [x] `SUTRA-P078-09` Produce and review the phase artifact: Issue resolutions tied to source revisions.
 - [ ] `SUTRA-P078-10` Close phase 078 only after its applicable tasks have evidence and its exit condition is observed: No blocker affects the filmed or judge workflow; unresolved limits are visible in release notes.
 
 ## Phase 079 - Recheck affected evidence after fixes
@@ -161,12 +161,12 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Run only checks affected by changes plus the critical integrated journey. Re-run the fixed evaluation set if grounding logic changed; update benchmarks only when their implementation changed.
 - **Phase exit:** Reported metrics correspond to the candidate revision; earlier numbers are not reused after material changes.
 
-- [ ] `SUTRA-P079-01` Identify which checks each stabilization change actually affects
-- [ ] `SUTRA-P079-02` Re-run grounding evaluation when retrieval or claim validation changes
-- [ ] `SUTRA-P079-03` Re-run latency/cost measurements only after relevant behavior changes
-- [ ] `SUTRA-P079-04` Recheck the critical integrated journey after fixes
-- [ ] `SUTRA-P079-05` Tie updated evidence to the candidate source revision
-- [ ] `SUTRA-P079-06` Keep old numbers labeled historical instead of reusing them silently
+- [x] `SUTRA-P079-01` Identify which checks each stabilization change actually affects
+- [x] `SUTRA-P079-02` Re-run grounding evaluation when retrieval or claim validation changes
+- [x] `SUTRA-P079-03` Re-run latency/cost measurements only after relevant behavior changes
+- [x] `SUTRA-P079-04` Recheck the critical integrated journey after fixes
+- [x] `SUTRA-P079-05` Tie updated evidence to the candidate source revision
+- [x] `SUTRA-P079-06` Keep old numbers labeled historical instead of reusing them silently
 - [ ] `SUTRA-P079-07` Avoid broad repeated testing without an unresolved reason
 - [ ] `SUTRA-P079-08` Verify reported metrics match the implementation that will ship
 - [ ] `SUTRA-P079-09` Produce and review the phase artifact: Final affected-check results and comparison against prior data.

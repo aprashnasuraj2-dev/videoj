@@ -58,9 +58,9 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P053-03` Create 10 conflict or adversarial cases with expected safe handling
 - [x] `SUTRA-P053-04` Define supported-claim precision and citation validity denominators
 - [ ] `SUTRA-P053-05` Freeze cases and rubric before final prompt tuning
-- [ ] `SUTRA-P053-06` Separate development examples from the held-out evaluation set
+- [x] `SUTRA-P053-06` Separate development examples from the held-out evaluation set
 - [ ] `SUTRA-P053-07` Version later corrections and explain why expectations changed
-- [ ] `SUTRA-P053-08` Preserve failures rather than removing difficult cases from scoring
+- [x] `SUTRA-P053-08` Preserve failures rather than removing difficult cases from scoring
 - [ ] `SUTRA-P053-09` Produce and review the phase artifact: Versioned evaluation set and scoring rubric.
 - [ ] `SUTRA-P053-10` Close phase 053 only after its applicable tasks have evidence and its exit condition is observed: Each case has a human-reviewed expected result; test-set leakage and later modifications are disclosed.
 
@@ -79,7 +79,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P054-06` Keep source-reference checks outside model preference
 - [x] `SUTRA-P054-07` Measure before/after latency, call count and evidence accuracy
 - [x] `SUTRA-P054-08` Do not use the number of agents as a quality metric
-- [ ] `SUTRA-P054-09` Produce and review the phase artifact: Prompt/delegation revision with before-and-after measurements.
+- [x] `SUTRA-P054-09` Produce and review the phase artifact: Prompt/delegation revision with before-and-after measurements.
 - [ ] `SUTRA-P054-10` Close phase 054 only after its applicable tasks have evidence and its exit condition is observed: The task remains evidence-backed while median calls and token usage are measured; extra agents are not treated as quality by themselves.
 
 ## Phase 055 - Handle uncertainty and conflicting sources
