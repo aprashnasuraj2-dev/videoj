@@ -109,14 +109,14 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 
 - [x] `SUTRA-P036-01` Keep private context separate from ordinary request/response text
 - [x] `SUTRA-P036-02` Deny private-field forwarding across network boundaries by default
-- [ ] `SUTRA-P036-03` Bind allowed fields to an exact destination network identity
-- [ ] `SUTRA-P036-04` Apply separate upstream and downstream forwarding permissions
+- [x] `SUTRA-P036-03` Bind allowed fields to an exact destination network identity
+- [x] `SUTRA-P036-04` Apply separate upstream and downstream forwarding permissions
 - [x] `SUTRA-P036-05` Use synthetic secret canaries to inspect prompts and network requests
-- [ ] `SUTRA-P036-06` Verify peer results cannot smuggle forbidden private fields into receipts
+- [x] `SUTRA-P036-06` Verify peer results cannot smuggle forbidden private fields into receipts
 - [x] `SUTRA-P036-07` Explain that plain delegated text is not filtered as private context
-- [ ] `SUTRA-P036-08` Test both denied forwarding and an explicitly permitted non-secret field
-- [ ] `SUTRA-P036-09` Produce and review the phase artifact: Destination-scoped context filter and canary tests.
-- [ ] `SUTRA-P036-10` Close phase 036 only after its applicable tasks have evidence and its exit condition is observed: Synthetic secret canaries are absent from peer requests, prompts, outputs and trace export unless a specifically allowed test field is used.
+- [x] `SUTRA-P036-08` Test both denied forwarding and an explicitly permitted non-secret field
+- [x] `SUTRA-P036-09` Produce and review the phase artifact: Destination-scoped context filter and canary tests.
+- [x] `SUTRA-P036-10` Close phase 036 only after its applicable tasks have evidence and its exit condition is observed: Synthetic secret canaries are absent from peer requests, prompts, outputs and trace export unless a specifically allowed test field is used.
 
 ## Phase 037 - Handle redirects and policy changes
 
@@ -165,12 +165,12 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P039-02` Verify the pinned runtime’s MCP discovery and invocation support
 - [x] `SUTRA-P039-03` Ask permission before discovery and before calls according to policy
 - [x] `SUTRA-P039-04` Apply allowed-tool names and bounded argument/result schemas
-- [ ] `SUTRA-P039-05` Test successful grounded read, discovery error and service timeout
+- [x] `SUTRA-P039-05` Test successful grounded read, discovery error and service timeout
 - [x] `SUTRA-P039-06` Verify browser CORS and fail closed when access is unavailable
 - [x] `SUTRA-P039-07` Keep MCP authentication distinct from LLM router credentials
 - [x] `SUTRA-P039-08` Document the tested endpoint behavior without implying production availability
 - [x] `SUTRA-P039-09` Produce and review the phase artifact: MCP compatibility fixture and documented integration instructions.
-- [ ] `SUTRA-P039-10` Close phase 039 only after its applicable tasks have evidence and its exit condition is observed: At least one authorized tool read works; unavailable endpoints never trigger browser-security bypasses.
+- [x] `SUTRA-P039-10` Close phase 039 only after its applicable tasks have evidence and its exit condition is observed: At least one authorized tool read works; unavailable endpoints never trigger browser-security bypasses.
 
 ## Phase 040 - Close the interoperability milestone
 
