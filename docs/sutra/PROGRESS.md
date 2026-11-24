@@ -2,6 +2,14 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0027 — 2026-11-24
+
+**607/1,000 original checks verified; 619/1,012 total; 45/100 phases fully verified; 6 omissions.**
+
+Phase **008** closes without cloud mutation: existing Patro/DHAGO/DETOUR origins are inventoried to their actual evidence class, proposed SUTRA caller/guide origins and exact artifact bases are isolated, cookie/contact policy is explicit, and rollback is revision/artifact-based rather than a fallback onto existing project origins. Proposed names remain undeployed/unreserved and require future authorized recheck. [Session evidence](evidence/implementation/SESSION-0027.md).
+
+---
+
 ## Session 0026 — 2026-11-24
 
 **597/1,000 original checks verified; 609/1,012 total; 44/100 phases fully verified; 6 omissions.**

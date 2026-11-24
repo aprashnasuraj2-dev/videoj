@@ -1,21 +1,21 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T09:02:00+05:45",
+  "updated_at": "2026-11-24T09:08:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "49de8a1e1fe1147a230cc40a5afcf162291c9e4e",
-  "last_session_id": "SUTRA-SESSION-0026",
-  "stage": "provider_measurement_readiness_and_revision_bound_ci_verified",
+  "last_observed_code_sha": "b7d057164a48cef9d801c8bbf6af3fa4b35d374d",
+  "last_session_id": "SUTRA-SESSION-0027",
+  "stage": "origin_isolation_planning_closed_without_deployment",
   "current_task": null,
   "next_task": "SUTRA-P041-08",
   "ready_engineering_queue": [
     "SUTRA-P054-01",
     "SUTRA-P066-01",
     "SUTRA-P078-02",
-    "SUTRA-P034-01",
-    "SUTRA-P020-02"
+    "SUTRA-P020-02",
+    "SUTRA-P005-08"
   ],
-  "next_action": "Continue engineering-only readiness and stabilization. Do not convert provider measurement tooling into P054/P066 live-cost evidence until an approved capped provider sample supplies actual model/token/price observations.",
+  "next_action": "Continue engineering/human-evidence readiness only. Recheck exact DNS/routes only when release gate authorizes a future binding; no cloud mutation is authorized by phase 008 completion.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -10368,6 +10368,136 @@
           "result": "pass",
           "source_revision": "49de8a1e1fe1147a230cc40a5afcf162291c9e4e",
           "observed_at": "2026-11-24T09:02:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P008-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T09:08:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ORIGIN-MAP-ISOLATION-2026-11-24.md",
+          "description": "Existing Patro apex is grounded in archived read-only Cloudflare evidence; DHAGO/DETOUR public origins are inventoried from existing root project documentation without inventing backing-service ownership.",
+          "result": "pass",
+          "source_revision": "b7d057164a48cef9d801c8bbf6af3fa4b35d374d",
+          "observed_at": "2026-11-24T09:08:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P008-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T09:08:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ORIGIN-MAP-ISOLATION-2026-11-24.md",
+          "description": "Separate proposed caller sutra.aafnaipatro.com and peer sutra-guide.aafnaipatro.com origins, builds and roles are defined without overwriting existing Patro/DHAGO/DETOUR origins.",
+          "result": "pass",
+          "source_revision": "b7d057164a48cef9d801c8bbf6af3fa4b35d374d",
+          "observed_at": "2026-11-24T09:08:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P008-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T09:08:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ORIGIN-MAP-ISOLATION-2026-11-24.md",
+          "description": "Archived read-only audit found no exact DNS/custom-domain/route collision for the two proposed SUTRA hostnames at observation time; artifact explicitly requires recheck before any future authorized bind.",
+          "result": "pass",
+          "source_revision": "b7d057164a48cef9d801c8bbf6af3fa4b35d374d",
+          "observed_at": "2026-11-24T09:08:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P008-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T09:08:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ORIGIN-MAP-ISOLATION-2026-11-24.md",
+          "description": "Caller same-origin API/static-media contact, exact peer contact, ownership/account intent and browser credential policy are documented; peer metadata cannot select caller inference.",
+          "result": "pass",
+          "source_revision": "b7d057164a48cef9d801c8bbf6af3fa4b35d374d",
+          "observed_at": "2026-11-24T09:08:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P008-05": {
+      "state": "verified",
+      "verified_at": "2026-11-24T09:08:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ORIGIN-MAP-ISOLATION-2026-11-24.md",
+          "description": "Production, loopback/preview and revision/artifact-based rollback targets are separated for learner/peer; rollback never repurposes Patro/DHAGO/DETOUR origins.",
+          "result": "pass",
+          "source_revision": "b7d057164a48cef9d801c8bbf6af3fa4b35d374d",
+          "observed_at": "2026-11-24T09:08:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P008-06": {
+      "state": "verified",
+      "verified_at": "2026-11-24T09:08:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ORIGIN-MAP-ISOLATION-2026-11-24.md",
+          "description": "Current no-cookie design and future host-only cookie policy are documented; parent-domain cookies are prohibited for composition and same-owner subdomains remain distinct origins.",
+          "result": "pass",
+          "source_revision": "b7d057164a48cef9d801c8bbf6af3fa4b35d374d",
+          "observed_at": "2026-11-24T09:08:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P008-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T09:08:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ORIGIN-MAP-ISOLATION-2026-11-24.md",
+          "description": "Planned exact /agents/ bases and caller learner/source_learner/linked_learner plus peer checklist identities are enumerated; wrong names do not fall back.",
+          "result": "pass",
+          "source_revision": "b7d057164a48cef9d801c8bbf6af3fa4b35d374d",
+          "observed_at": "2026-11-24T09:08:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P008-08": {
+      "state": "verified",
+      "verified_at": "2026-11-24T09:08:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ORIGIN-MAP-ISOLATION-2026-11-24.md",
+          "description": "Same-owner SUTRA caller/guide origins are explicitly composition mechanics, not independent ecosystem adoption.",
+          "result": "pass",
+          "source_revision": "b7d057164a48cef9d801c8bbf6af3fa4b35d374d",
+          "observed_at": "2026-11-24T09:08:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P008-09": {
+      "state": "verified",
+      "verified_at": "2026-11-24T09:08:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ORIGIN-MAP-ISOLATION-2026-11-24.md",
+          "description": "Origin map artifact covers existing mappings, proposed app/peer, API/media contacts, cookie scope, exact public paths and rollback strategy with evidence-class labels.",
+          "result": "pass",
+          "source_revision": "b7d057164a48cef9d801c8bbf6af3fa4b35d374d",
+          "observed_at": "2026-11-24T09:08:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P008-10": {
+      "state": "verified",
+      "verified_at": "2026-11-24T09:08:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/ORIGIN-MAP-ISOLATION-2026-11-24.md",
+          "description": "Phase exit observed at planning level: existing project origins are identified to available evidence; SUTRA outputs and rollback targets are separately defined without deployment.",
+          "result": "pass",
+          "source_revision": "b7d057164a48cef9d801c8bbf6af3fa4b35d374d",
+          "observed_at": "2026-11-24T09:08:00+05:45"
         }
       ]
     }

@@ -1,5 +1,10 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0027 — 2026-11-24
+
+- Closed phase 008 at `b7d057164a48cef9d801c8bbf6af3fa4b35d374d` with origin/contact/cookie/rollback isolation planning based on repository docs plus archived read-only Cloudflare evidence. No new account/DNS/deployment action.
+- 607/1,000 original; 619/1,012 total; 45 complete phases; six omissions. [Evidence](evidence/implementation/SESSION-0027.md).
+
 ## SUTRA-SESSION-0026 — 2026-11-24
 
 - Added and verified X004-01..03 provider-measurement readiness. Updated P079-07 evidence to actual freshness-gated skip behavior.

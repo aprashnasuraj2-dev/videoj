@@ -143,16 +143,16 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Plan sutra.aafnaipatro.com for the app and sutra-guide.aafnaipatro.com for the peer. Treat both as proposed same-owner origins. Inspect actual routes before mapping them.
 - **Phase exit:** Existing Patro, DHAGO and DETOUR domain mappings are identified; new deployments have separate outputs and rollback targets.
 
-- [ ] `SUTRA-P008-01` Inventory existing AafnaiPatro, DHAGO and DETOUR origin mappings
-- [ ] `SUTRA-P008-02` Propose separate new caller and peer origins without overwriting existing ones
-- [ ] `SUTRA-P008-03` Check DNS/custom-domain availability and existing route precedence read-only
-- [ ] `SUTRA-P008-04` Identify inference and media origin ownership and intended browser contacts
-- [ ] `SUTRA-P008-05` Separate production, preview and rollback targets for both new applications
-- [ ] `SUTRA-P008-06` Document cookie scope and why subdomain isolation is an origin boundary
-- [ ] `SUTRA-P008-07` Specify exact public artifact base paths and network identifiers
-- [ ] `SUTRA-P008-08` Treat same-owner origins as composition evidence rather than independent adoption
-- [ ] `SUTRA-P008-09` Produce and review the phase artifact: Origin map covering new app, peer, inference and media.
-- [ ] `SUTRA-P008-10` Close phase 008 only after its applicable tasks have evidence and its exit condition is observed: Existing Patro, DHAGO and DETOUR domain mappings are identified; new deployments have separate outputs and rollback targets.
+- [x] `SUTRA-P008-01` Inventory existing AafnaiPatro, DHAGO and DETOUR origin mappings
+- [x] `SUTRA-P008-02` Propose separate new caller and peer origins without overwriting existing ones
+- [x] `SUTRA-P008-03` Check DNS/custom-domain availability and existing route precedence read-only
+- [x] `SUTRA-P008-04` Identify inference and media origin ownership and intended browser contacts
+- [x] `SUTRA-P008-05` Separate production, preview and rollback targets for both new applications
+- [x] `SUTRA-P008-06` Document cookie scope and why subdomain isolation is an origin boundary
+- [x] `SUTRA-P008-07` Specify exact public artifact base paths and network identifiers
+- [x] `SUTRA-P008-08` Treat same-owner origins as composition evidence rather than independent adoption
+- [x] `SUTRA-P008-09` Produce and review the phase artifact: Origin map covering new app, peer, inference and media.
+- [x] `SUTRA-P008-10` Close phase 008 only after its applicable tasks have evidence and its exit condition is observed: Existing Patro, DHAGO and DETOUR domain mappings are identified; new deployments have separate outputs and rollback targets.
 
 ## Phase 009 - Define the community Open Kit
 
