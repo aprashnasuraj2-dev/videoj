@@ -2,6 +2,13 @@
 // A reservation consumes its full requested resource allowance even on ambiguous failure.
 export const MAX_INPUT_BYTES=33792; // 32 KiB validated client body plus bounded server fields.
 export const MAX_OUTPUT_TOKENS=1024;
+export const ADMISSION_MS=5000, LEASE_MS=45000;
+export function admissionWindow(now=Date.now()){
+ if(!Number.isSafeInteger(now))throw Error('Invalid admission clock');
+ return Object.freeze({day:new Date(now).toISOString().slice(0,10),admitUntil:now+ADMISSION_MS});
+}
+const validWindow=(input,now)=>Number.isSafeInteger(now)&&typeof input.day==='string'&&input.day===new Date(now).toISOString().slice(0,10)&&Number.isSafeInteger(input.admitUntil)&&input.admitUntil>now&&input.admitUntil-now<=ADMISSION_MS+1000;
+const checkWindow=(input,now,signal)=>{if(signal.aborted||!validWindow(input,now))throw Error('Admission expired or UTC day changed');};
 const safe=(x,min,max)=>Number.isSafeInteger(x)&&x>=min&&x<=max;
 const map=x=>x&&typeof x==='object'&&!Array.isArray(x);
 export function sourceQuotaLimits(env={}){
@@ -23,10 +30,10 @@ export class InferenceQuota{
   let input;try{const text=await request.text();if(text.length>512)throw Error();input=JSON.parse(text);}catch{return new Response('',{status:400});}
   if(pathname==='/source-read'){
    const limits=sourceQuotaLimits(this.env);
-   if(!limits||!map(input)||Object.keys(input).length!==1||!/^[a-f0-9]{64}$/.test(input.clientKey??''))return new Response('',{status:limits?400:503});
+   if(!limits||!map(input)||Object.keys(input).length!==3||typeof input.day!=='string'||!Number.isSafeInteger(input.admitUntil)||typeof input.clientKey!=='string'||!/^[a-f0-9]{64}$/.test(input.clientKey))return new Response('',{status:limits?400:503});
    try{
     const outcome=await this.ctx.storage.transaction(async tx=>{
-     const now=this.clock(),day=new Date(now).toISOString().slice(0,10);if(!Number.isSafeInteger(now))throw Error('Invalid quota clock');
+     const now=this.clock();checkWindow(input,now,request.signal);const day=input.day;
      // Keep the global counter small and shard per-client counters across 256
      // pseudorandom HMAC buckets. A single hot day can never grow one Durable
      // Object value with tens of thousands of client keys.
@@ -41,6 +48,7 @@ export class InferenceQuota{
       if(clients.day!==day)clients={day,counts:{}};
      }else clients={day,counts:{}};
      const used=clients.counts[input.clientKey]??0;if(!safe(used,0,100000))throw Error('Invalid source client count');
+     checkWindow(input,this.clock(),request.signal);
      if(state.total>=limits.max||used>=limits.perClient){await tx.put('source-quota',state);await tx.put(bucketKey,clients);return {allowed:false};}
      state.total++;clients.counts[input.clientKey]=used+1;await tx.put('source-quota',state);await tx.put(bucketKey,clients);return {allowed:true};
     });
@@ -59,12 +67,11 @@ export class InferenceQuota{
   }
   const limits=quotaLimits(this.env);if(!limits)return new Response('',{status:503});
   const {max,perClient,maxConcurrent,maxInput,maxOutput}=limits;
-  if(!map(input)||Object.keys(input).length!==3||!/^[a-f0-9]{64}$/.test(input.clientKey??'')||!safe(input.inputBytes,1,MAX_INPUT_BYTES)||!safe(input.outputTokens,64,MAX_OUTPUT_TOKENS))return new Response('',{status:400});
+  if(!map(input)||Object.keys(input).length!==5||typeof input.day!=='string'||!Number.isSafeInteger(input.admitUntil)||typeof input.clientKey!=='string'||!/^[a-f0-9]{64}$/.test(input.clientKey)||!safe(input.inputBytes,1,MAX_INPUT_BYTES)||!safe(input.outputTokens,64,MAX_OUTPUT_TOKENS))return new Response('',{status:400});
   try{
    const outcome=await this.ctx.storage.transaction(async tx=>{
     // Sample time inside the transaction; do not admit using stale queued time.
-    const now=this.clock(),day=new Date(now).toISOString().slice(0,10),lease=crypto.randomUUID(),leaseMs=45000;
-    if(!Number.isSafeInteger(now))throw Error('Invalid quota clock');
+    const now=this.clock();checkWindow(input,now,request.signal);const day=input.day,lease=crypto.randomUUID();
     let state=await tx.get('quota');
     if(state){
      if(!map(state)||!/^\d{4}-\d{2}-\d{2}$/.test(state.day??'')||state.day>day||!map(state.active)||!map(state.clients)||!safe(state.total,0,1000))throw Error('Invalid stored quota state');
@@ -80,13 +87,14 @@ export class InferenceQuota{
     if(state.outputTokens===undefined)state.outputTokens=state.total*MAX_OUTPUT_TOKENS;
     if(!safe(state.inputBytes,0,1000*MAX_INPUT_BYTES)||!safe(state.outputTokens,0,1000*MAX_OUTPUT_TOKENS))throw Error('Invalid stored resource counters');
     const used=state.clients[input.clientKey]??0;if(!safe(used,0,1000))throw Error('Invalid stored client count');
+    checkWindow(input,this.clock(),request.signal);
     let reason=null;
     if(state.total>=max||used>=perClient)reason='daily';
     else if(state.inputBytes+input.inputBytes>maxInput||state.outputTokens+input.outputTokens>maxOutput)reason='resource';
     else if(Object.keys(state.active).length>=maxConcurrent)reason='concurrency';
     if(reason){await tx.put('quota',state);return {allowed:false,reason};}
     state.total++;state.inputBytes+=input.inputBytes;state.outputTokens+=input.outputTokens;
-    state.clients[input.clientKey]=used+1;state.active[lease]=now+leaseMs;
+    state.clients[input.clientKey]=used+1;state.active[lease]=now+LEASE_MS;
     await tx.put('quota',state);return {allowed:true,lease};
    });
    return Response.json(outcome,{status:outcome.allowed?200:429});

@@ -1,11 +1,12 @@
 import {plain,InferenceError,readSse,makeAccumulator,abortable} from '../../packages/sutra-inference/protocol.js';
 import {checkSchema,validateData} from '../../packages/sutra-runtime/vendor/nsdeploy/actions.js';
-import {quotaLimits,sourceQuotaLimits,MAX_INPUT_BYTES} from './quota.js';
+import {quotaLimits,sourceQuotaLimits,MAX_INPUT_BYTES,admissionWindow,ADMISSION_MS} from './quota.js';
+import {readQuotaReply} from './quota-transport.js';
 export const UPSTREAM='https://api.openai.com/v1/chat/completions';
-export async function clientKeyForRequest(request,secretValue){
+export async function clientKeyForRequest(request,secretValue,day=new Date().toISOString().slice(0,10)){
  if(typeof secretValue!=='string'||secretValue.length<32)throw Error('CLIENT_KEY_CONFIG');
  const secret=await crypto.subtle.importKey('raw',new TextEncoder().encode(secretValue),{name:'HMAC',hash:'SHA-256'},false,['sign']);
- const identity=`${new Date().toISOString().slice(0,10)}:${(request.headers.get('CF-Connecting-IP')??'unknown').slice(0,64)}`;
+ const identity=`${day}:${(request.headers.get('CF-Connecting-IP')??'unknown').slice(0,64)}`;
  const signature=await crypto.subtle.sign('HMAC',secret,new TextEncoder().encode(identity));
  return Array.from(new Uint8Array(signature),b=>b.toString(16).padStart(2,'0')).join('');
 }
@@ -141,18 +142,17 @@ export async function handleInference(request,env,{fetchImpl=fetch}={}){
  let quota,lease,released=false;
  const releaseQuota=async()=>{
   if(released||!quota||!lease)return;released=true;
-  try{const signal=AbortSignal.timeout(5000);await abortable(quota.fetch('https://quota.internal/release',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lease}),signal}),signal);}catch{}
+  try{const signal=AbortSignal.timeout(ADMISSION_MS);await readQuotaReply(quota,'/release',{lease},signal);}catch{}
  };
  try{
-  const clientKey=await clientKeyForRequest(request,env.SUTRA_CLIENT_HASH_SECRET);
-  if(request.signal.aborted)return error('CANCELLED',499);
+  const window=admissionWindow(),quotaSignal=AbortSignal.any([request.signal,AbortSignal.timeout(ADMISSION_MS)]);
+  const clientKey=await clientKeyForRequest(request,env.SUTRA_CLIENT_HASH_SECRET,window.day);
+  quotaSignal.throwIfAborted();
   quota=env.SUTRA_QUOTA.get(env.SUTRA_QUOTA.idFromName('sutra-inference-global-v1'));
-  const quotaSignal=AbortSignal.any([request.signal,AbortSignal.timeout(5000)]);quotaSignal.throwIfAborted();
-  const reservation=await abortable(quota.fetch('https://quota.internal/reserve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientKey,inputBytes,outputTokens:maxOutput}),signal:quotaSignal}),quotaSignal);
-  if(!reservation.ok)return error(reservation.status===429?'QUOTA':'QUOTA_UNAVAILABLE',reservation.status===429?429:503);
-  const reservationData=await abortable(reservation.json(),quotaSignal);
-  if(reservationData.allowed!==true||typeof reservationData.lease!=='string'||!/^[0-9a-f-]{36}$/i.test(reservationData.lease))return error('QUOTA_UNAVAILABLE',503);
-  lease=reservationData.lease;
+  const reservation=await readQuotaReply(quota,'/reserve',{clientKey,inputBytes,outputTokens:maxOutput,...window},quotaSignal);
+  if(reservation.status!==200)return error(reservation.status===429?'QUOTA':'QUOTA_UNAVAILABLE',reservation.status===429?429:503);
+  lease=reservation.data.lease;
+  if(Date.now()>=window.admitUntil){await releaseQuota();return error('QUOTA_UNAVAILABLE',503);}
  }catch{return error(request.signal.aborted?'CANCELLED':'QUOTA_UNAVAILABLE',request.signal.aborted?499:503);}
  if(request.signal.aborted){await releaseQuota();return error('CANCELLED',499);}
  const controller=new AbortController(),cancel=()=>controller.abort();request.signal.addEventListener('abort',cancel,{once:true});const timer=setTimeout(cancel,30000);

@@ -1,7 +1,7 @@
 import {handleInference,inferenceStatus,inferenceBackend,configuredModels,inferenceContractId,readJson,clientKeyForRequest} from './inference.js';
 import {createSourceTools} from '../../packages/sutra-source-tools/index.js';
-import {abortable} from '../../packages/sutra-inference/protocol.js';
-import {sourceQuotaLimits} from './quota.js';
+import {sourceQuotaLimits,admissionWindow,ADMISSION_MS} from './quota.js';
+import {readQuotaReply} from './quota-transport.js';
 import {validateData} from '../../packages/sutra-runtime/vendor/nsdeploy/actions.js';
 import contentProfileDocument from '../../apps/sutra/public/content/content-profile.json' with {type:'json'};
 import sourceCatalogDocument from '../../apps/sutra/public/content/source-catalog.json' with {type:'json'};
@@ -111,10 +111,11 @@ export async function handleSourceTools(request,env={}){
   if(sourceQuotaRequested){
    if(!sourceQuotaLimits(env)||!env.SUTRA_QUOTA||typeof env.SUTRA_CLIENT_HASH_SECRET!=='string'||env.SUTRA_CLIENT_HASH_SECRET.length<32)return json({error:{code:'SOURCE_QUOTA_UNAVAILABLE'}},503);
    try{
-    const clientKey=await clientKeyForRequest(request,env.SUTRA_CLIENT_HASH_SECRET);if(request.signal.aborted)return json({error:{code:'SOURCE_CANCELLED'}},499);
-    const quota=env.SUTRA_QUOTA.get(env.SUTRA_QUOTA.idFromName('sutra-inference-global-v1')),signal=AbortSignal.any([request.signal,AbortSignal.timeout(5000)]);signal.throwIfAborted();
-    const admission=await abortable(quota.fetch('https://quota.internal/source-read',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({clientKey}),signal}),signal);
-    if(!admission.ok)return json({error:{code:admission.status===429?'SOURCE_QUOTA':'SOURCE_QUOTA_UNAVAILABLE'}},admission.status===429?429:503);
+    const window=admissionWindow(),signal=AbortSignal.any([request.signal,AbortSignal.timeout(ADMISSION_MS)]);
+    const clientKey=await clientKeyForRequest(request,env.SUTRA_CLIENT_HASH_SECRET,window.day);signal.throwIfAborted();
+    const quota=env.SUTRA_QUOTA.get(env.SUTRA_QUOTA.idFromName('sutra-inference-global-v1'));
+    const admission=await readQuotaReply(quota,'/source-read',{clientKey,...window},signal);
+    if(admission.status!==200||Date.now()>=window.admitUntil)return json({error:{code:admission.status===429?'SOURCE_QUOTA':'SOURCE_QUOTA_UNAVAILABLE'}},admission.status===429?429:503);
    }catch{return json({error:{code:request.signal.aborted?'SOURCE_CANCELLED':'SOURCE_QUOTA_UNAVAILABLE'}},request.signal.aborted?499:503);}
   }
   if(request.signal.aborted)return json({error:{code:'SOURCE_CANCELLED'}},499);

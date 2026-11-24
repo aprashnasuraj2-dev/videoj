@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {handleInference,UPSTREAM,inferenceStatus,readJson} from '../inference.js';import {InferenceQuota} from '../quota.js';import worker,{handleSourceTools,securityHeaders,allowedPeerOrigins,withCachePolicy,contentBindingMatches} from '../worker.js';import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {handleInference,UPSTREAM,inferenceStatus,readJson} from '../inference.js';import {InferenceQuota,admissionWindow,ADMISSION_MS,LEASE_MS} from '../quota.js';import worker,{handleSourceTools,securityHeaders,allowedPeerOrigins,withCachePolicy,contentBindingMatches} from '../worker.js';import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
 const payload=()=>({model:'operator-approved',stream:true,messages:[{role:'user',content:'hello'}],tools:[]});
 const request=(body=payload(),extra={},path='/api/infer')=>new Request('https://sutra.test'+path,{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json','CF-Connecting-IP':'192.0.2.1',...extra},body:JSON.stringify(body)});
 let leaseSequence=0;
@@ -15,7 +15,7 @@ test('upstream errors and truncated streams never expose raw fields',async()=>{f
 test('body and request ceilings fail before quota or provider',async()=>{let reserved=0;const env=environment(async()=>{reserved++;return Response.json({allowed:true});});for(const body of [{...payload(),messages:[{role:'user',content:'x'.repeat(33000)}]},{...payload(),tools:new Array(17).fill({})},{...payload(),max_completion_tokens:9999},{...payload(),messages:[{role:'tool',content:'x',tool_call_id:'unknown'}]}])assert.equal((await handleInference(request(body),env)).status,400);assert.equal(reserved,0);});
 test('request cancellation prevents upstream',async()=>{const c=new AbortController();c.abort();const r=new Request(request(),{signal:c.signal});let calls=0;const response=await handleInference(r,environment(),{fetchImpl:async()=>{calls++;return sse();}});assert.ok(response.status>=400);assert.equal(calls,0);});
 function storage(){const values=new Map();let queue=Promise.resolve();return {transaction(fn){const run=queue.then(()=>fn({get:async k=>structuredClone(values.get(k)),put:async(k,v)=>{values.set(k,structuredClone(v));}}));queue=run.catch(()=>{});return run;},inspect:(key='quota')=>structuredClone(values.get(key)),keys:()=>[...values.keys()]};}
-const quotaRequest=(key,inputBytes=100,outputTokens=64)=>new Request('https://quota.internal/reserve',{method:'POST',body:JSON.stringify({clientKey:key.repeat(64),inputBytes,outputTokens})});
+const quotaRequest=(key,inputBytes=100,outputTokens=64,now=Date.now())=>new Request('https://quota.internal/reserve',{method:'POST',body:JSON.stringify({clientKey:key.repeat(64),inputBytes,outputTokens,...admissionWindow(now)})});
 const quotaRelease=lease=>new Request('https://quota.internal/release',{method:'POST',body:JSON.stringify({lease})});
 test('transactional quota caps active concurrency, daily clients and resets on a new UTC day',async()=>{
  const store=storage(),env={SUTRA_MAX_DAILY_CALLS:'3',SUTRA_MAX_CLIENT_CALLS:'2',SUTRA_MAX_CONCURRENT:'2'};
@@ -66,7 +66,7 @@ test('source MCP initialization accepts bounded standard read-client capabilitie
 });
 test('MCP source endpoint lists bounded read tools and rejects arbitrary capabilities',async()=>{const rpc=async(method,params)=>{const response=await handleSourceTools(new Request('https://sutra.test/api/source-tools',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method,params})}));return response.json();};assert.equal((await rpc('initialize',{protocolVersion:'2025-06-18',capabilities:{},clientInfo:{name:'test-client',version:'1'}})).result.serverInfo.name,'sutra-source-tools');assert.deepEqual((await rpc('tools/list')).result.tools.map(x=>x.name),['search_lesson','read_cue']);const result=(await rpc('tools/call',{name:'search_lesson',arguments:{query:'timing'}})).result;assert.equal(result.isError,false);assert.equal(result.structuredContent.receipts[0].verification,'unverified');assert.equal((await rpc('tools/call',{name:'fetch',arguments:{url:'https://evil.test'}})).result.isError,true);assert.equal((await rpc('tools/call',{name:'read_cue',arguments:{sourceId:'wrong',cueId:'wrong'}})).result.isError,true);});
 test('worker status is honest and unknown APIs never fall through to assets',async()=>{const status=await worker.fetch(new Request('https://sutra.test/api/status'),{});assert.equal((await status.json()).inference,'disabled');let assets=0;assert.equal((await worker.fetch(new Request('https://sutra.test/api/arbitrary'),{ASSETS:{fetch:()=>{assets++;}}})).status,404);assert.equal(assets,0);});
-test('cancelling during quota response decoding stops before provider contact',async()=>{const abort=new AbortController();const env=environment(async()=>new Response(new ReadableStream({start(){}})));let upstream=0;const pending=handleInference(new Request(request(),{signal:abort.signal}),env,{fetchImpl:async()=>{upstream++;return sse();}});setTimeout(()=>abort.abort(),15);const response=await pending;assert.equal(response.status,499);assert.equal((await response.json()).error.code,'CANCELLED');assert.equal(upstream,0);});
+test('cancelling during quota response decoding stops before provider contact',async()=>{const abort=new AbortController();const env=environment(async()=>new Response(new ReadableStream({start(){}}),{headers:{'Content-Type':'application/json'}}));let upstream=0;const pending=handleInference(new Request(request(),{signal:abort.signal}),env,{fetchImpl:async()=>{upstream++;return sse();}});setTimeout(()=>abort.abort(),15);const response=await pending;assert.equal(response.status,499);assert.equal((await response.json()).error.code,'CANCELLED');assert.equal(upstream,0);});
 test('cancelling a stalled upstream fetch terminates without leaking transport details',async()=>{const abort=new AbortController();let started;const ready=new Promise(resolve=>{started=resolve;});const pending=handleInference(new Request(request(),{signal:abort.signal}),environment(),{fetchImpl:()=>{started();return new Promise(()=>{});}});await ready;abort.abort();const response=await pending;assert.equal(response.status,502);assert.match(await response.text(),/UPSTREAM_UNAVAILABLE/);});
 test('cancelling the public stream aborts provider work',async()=>{let upstreamSignal;const response=await handleInference(request(),environment(),{fetchImpl:async(url,opts)=>{upstreamSignal=opts.signal;return new Response(new ReadableStream({start(){}}),{headers:{'Content-Type':'text/event-stream'}});}});await response.body.cancel();assert.equal(upstreamSignal.aborted,true);});
 
@@ -169,15 +169,15 @@ test('resource ceilings charge admitted work without refund, reject before provi
 test('UTC midnight resets daily counters without dropping active provider leases',async()=>{
  const store=storage();let now=Date.parse('2026-11-24T23:59:59Z');
  const q=new InferenceQuota({storage:store},{SUTRA_MAX_DAILY_CALLS:'10',SUTRA_MAX_CLIENT_CALLS:'2',SUTRA_MAX_CONCURRENT:'1'},{clock:()=>now});
- const first=await q.fetch(quotaRequest('a'));assert.equal(first.status,200);const lease=(await first.json()).lease;now+=2000;
- assert.equal((await q.fetch(quotaRequest('b'))).status,429);assert.equal(store.inspect().day,'2026-11-25');assert.equal(store.inspect().total,0);assert.equal(Object.keys(store.inspect().active).length,1);
- await q.fetch(quotaRelease(lease));assert.equal((await q.fetch(quotaRequest('b'))).status,200);assert.equal(store.inspect().total,1);
+ const first=await q.fetch(quotaRequest('a',100,64,now));assert.equal(first.status,200);const lease=(await first.json()).lease;now+=2000;
+ assert.equal((await q.fetch(quotaRequest('b',100,64,now))).status,429);assert.equal(store.inspect().day,'2026-11-25');assert.equal(store.inspect().total,0);assert.equal(Object.keys(store.inspect().active).length,1);
+ await q.fetch(quotaRelease(lease));assert.equal((await q.fetch(quotaRequest('b',100,64,now))).status,200);assert.equal(store.inspect().total,1);
 });
 test('legacy quota counters are conservatively migrated; backwards clock and invalid fields fail closed',async()=>{
  const store=storage(),now=Date.parse('2026-11-24T12:00:00Z');const q=new InferenceQuota({storage:store},{SUTRA_MAX_DAILY_CALLS:'10',SUTRA_MAX_CLIENT_CALLS:'2',SUTRA_MAX_CONCURRENT:'2',SUTRA_MAX_DAILY_INPUT_BYTES:'33792',SUTRA_MAX_DAILY_OUTPUT_TOKENS:'1024'},{clock:()=>now});
- await store.transaction(tx=>tx.put('quota',{day:'2026-11-24',total:1,clients:{},active:{}}));assert.equal((await q.fetch(quotaRequest('a'))).status,429);assert.equal(store.inspect().inputBytes,33792);
- await store.transaction(tx=>tx.put('quota',{day:'2026-11-25',total:0,clients:{},active:{}}));assert.equal((await q.fetch(quotaRequest('a'))).status,503);
- assert.equal((await q.fetch(quotaRequest('a',0,64))).status,400);
+ await store.transaction(tx=>tx.put('quota',{day:'2026-11-24',total:1,clients:{},active:{}}));assert.equal((await q.fetch(quotaRequest('a',100,64,now))).status,429);assert.equal(store.inspect().inputBytes,33792);
+ await store.transaction(tx=>tx.put('quota',{day:'2026-11-25',total:0,clients:{},active:{}}));assert.equal((await q.fetch(quotaRequest('a',100,64,now))).status,503);
+ assert.equal((await q.fetch(quotaRequest('a',0,64,now))).status,400);
 });
 test('resource rejection occurs at actual inference handler before upstream',async()=>{
  const store=storage(),cfg={SUTRA_MAX_DAILY_CALLS:'5',SUTRA_MAX_CLIENT_CALLS:'5',SUTRA_MAX_CONCURRENT:'1',SUTRA_MAX_DAILY_INPUT_BYTES:'1',SUTRA_MAX_DAILY_OUTPUT_TOKENS:'512'};
@@ -291,7 +291,7 @@ test('source quota sharding prevents a single stored value from accumulating all
  const store=storage(),q=new InferenceQuota({storage:store},{SUTRA_MAX_DAILY_SOURCE_READS:'300',SUTRA_MAX_CLIENT_SOURCE_READS:'1'});
  for(let i=0;i<256;i++){
   const key=i.toString(16).padStart(2,'0')+'a'.repeat(62);
-  const response=await q.fetch(new Request('https://quota.internal/source-read',{method:'POST',body:JSON.stringify({clientKey:key})}));
+  const response=await q.fetch(new Request('https://quota.internal/source-read',{method:'POST',body:JSON.stringify({clientKey:key,...admissionWindow()})}));
   assert.equal(response.status,200);
  }
  assert.equal(store.inspect('source-quota').total,256);
@@ -303,7 +303,7 @@ test('source quota sharding prevents a single stored value from accumulating all
 test('source quota resets global and sharded client counters on UTC day rollover while rejecting backwards time',async()=>{
  const store=storage();let now=Date.parse('2026-11-24T23:59:59Z');
  const q=new InferenceQuota({storage:store},{SUTRA_MAX_DAILY_SOURCE_READS:'2',SUTRA_MAX_CLIENT_SOURCE_READS:'1'},{clock:()=>now});
- const key='ab'+'c'.repeat(62),req=()=>new Request('https://quota.internal/source-read',{method:'POST',body:JSON.stringify({clientKey:key})});
+ const key='ab'+'c'.repeat(62),req=()=>new Request('https://quota.internal/source-read',{method:'POST',body:JSON.stringify({clientKey:key,...admissionWindow(now)})});
  assert.equal((await q.fetch(req())).status,200);assert.equal((await q.fetch(req())).status,429);
  assert.equal(store.inspect('source-quota').total,1);assert.equal(store.inspect('source-quota:ab').counts[key],1);
  now+=2000;assert.equal((await q.fetch(req())).status,200,'new UTC day gets fresh global and client allowance');
@@ -399,4 +399,59 @@ test('cancelled held Worker JSON body releases reader and does not reach quota o
  const pending=handleInference(req,environment(async()=>{reserved++;return Response.json({allowed:true});}),{fetchImpl:()=>{contacts++;return sse();}});
  await pulled;abort.abort();const result=await pending;
  assert.equal(result.status,499);assert.equal(reserved,0);assert.equal(contacts,0);assert.equal(cancelled,1);assert.equal(req.body.locked,false);
+});
+
+test('admission window refuses delayed queued reserve and old-day source hash before charging',async()=>{
+ let now=Date.parse('2026-11-24T23:59:57Z');const store=storage();
+ const cfg={SUTRA_MAX_DAILY_CALLS:'10',SUTRA_MAX_CLIENT_CALLS:'4',SUTRA_MAX_CONCURRENT:'2',SUTRA_MAX_DAILY_SOURCE_READS:'10',SUTRA_MAX_CLIENT_SOURCE_READS:'4'};
+ const q=new InferenceQuota({storage:store},cfg,{clock:()=>now});
+ const delayed=quotaRequest('a',100,64,now);
+ const oldDay=new Request('https://quota.internal/source-read',{method:'POST',body:JSON.stringify({clientKey:'a'.repeat(64),...admissionWindow(now)})});
+ now+=4000; // within original five seconds, but different UTC day
+ assert.equal((await q.fetch(delayed)).status,503);assert.equal((await q.fetch(oldDay)).status,503);
+ assert.equal(store.inspect(),undefined);assert.equal(store.inspect('source-quota'),undefined);
+ const expired=quotaRequest('a',100,64,now);now+=ADMISSION_MS;
+ assert.equal((await q.fetch(expired)).status,503);assert.equal(store.inspect(),undefined);
+ const fresh=await q.fetch(quotaRequest('a',100,64,now));assert.equal(fresh.status,200);assert.equal(store.inspect().total,1);
+});
+test('cancelled admitted request with lost quota response retains charge, expires its unknown lease, never retries or calls provider',async()=>{
+ let now=Date.now(),contacts=0,reserves=0,releases=0,releaseReply,admitted;
+ const store=storage(),cfg={SUTRA_MAX_DAILY_CALLS:'3',SUTRA_MAX_CLIENT_CALLS:'3',SUTRA_MAX_CONCURRENT:'1'};
+ const q=new InferenceQuota({storage:store},cfg,{clock:()=>now});
+ const ready=new Promise(resolve=>{admitted=resolve;});
+ const abort=new AbortController();
+ const env={...environment(async(url,opts)=>{
+  if(new URL(url).pathname==='/release'){releases++;return q.fetch(new Request(url,opts));}
+  reserves++;const response=await q.fetch(new Request(url,opts));assert.equal(response.status,200);await response.body.cancel();admitted();
+  return new Promise(resolve=>{releaseReply=resolve;});
+ }),...cfg};
+ const pending=handleInference(new Request(request(),{signal:abort.signal}),env,{fetchImpl:()=>{contacts++;return sse();}});
+ await ready;abort.abort();assert.equal((await pending).status,499);
+ assert.equal(reserves,1);assert.equal(releases,0);assert.equal(contacts,0);
+ const charged=store.inspect();assert.equal(charged.total,1);assert.equal(charged.outputTokens,512);
+ assert.equal(Object.keys(charged.active).length,1);
+ let disposed=0;releaseReply(new Response(new ReadableStream({cancel(){disposed++;}}),{headers:{'Content-Type':'application/json'}}));
+ for(let i=0;i<50&&!disposed;i++)await new Promise(resolve=>setTimeout(resolve,0));
+ assert.equal(disposed,1);
+ now+=LEASE_MS-1;
+ assert.equal((await q.fetch(quotaRequest('b',100,64,now))).status,429);assert.equal(store.inspect().total,1);
+ now+=1;
+ const fresh=await q.fetch(quotaRequest('b',100,64,now));assert.equal(fresh.status,200);
+ const lease=(await fresh.json()).lease;
+ // A delayed release of the original lease must not free another admission.
+ await q.fetch(quotaRelease(Object.keys(charged.active)[0]));
+ assert.deepEqual(Object.keys(store.inspect().active),[lease]);
+ assert.equal(store.inspect().total,2);assert.equal(store.inspect().outputTokens,576);
+ await q.fetch(quotaRelease(lease));assert.equal(store.inspect().total,2);
+});
+test('partial, non-JSON, oversized or substituted quota success cannot reach provider',async()=>{
+ for(const response of [
+  new Response('{}',{status:206,headers:{'Content-Type':'application/json'}}),
+  new Response('{"allowed":true}',{headers:{'Content-Type':'text/plain'}}),
+  Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000123',extra:'x'.repeat(600)}),
+  Object.defineProperty(Response.json({allowed:true,lease:'00000000-0000-4000-8000-000000000123'}),'url',{value:'https://quota.internal/other'})
+ ]){
+  let contacts=0;const result=await handleInference(request(),environment(async()=>response),{fetchImpl:()=>{contacts++;return sse();}});
+  assert.equal(result.status,503);assert.equal(contacts,0);assert.equal(response.body.locked,false);
+ }
 });
