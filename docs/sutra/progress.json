@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T18:51:12.757+05:45",
+  "updated_at": "2026-11-24T19:04:33.362+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9",
+  "last_observed_code_sha": "e7ccecf9eae71bd4c0c1aaf3b4e9ac4989b81f37",
   "last_session_id": "SUTRA-SESSION-0042",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
@@ -16,7 +16,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Continue P078-02 with adversarial lifecycle and user-visible failure checks; inspect remaining original checklist gates without granting unavailable human, deployed-service or real-model evidence. Keep no release, no paid model, no submission. Verify checkpoint register.",
+  "next_action": "Reconcile newer lifecycle commits and exact learner/browser results; continue independent P007 capacity checks and P078-02. Keep human, rights, live-model and release gates open.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -11995,6 +11995,32 @@
           "observed_at": "2026-11-24T18:51:12.757+05:45"
         }
       ]
+    },
+    "SUTRA-X010-12": {
+      "state": "verified",
+      "verified_at": "2026-11-24T19:04:33.362+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45400531177/job/138467624469",
+          "description": "Serialize saved-review downloads with cooperative mutation lock, revalidate captured record after acquisition, revoke queued actions on navigation and invalidate late UI outcomes. Verify held-lock mutation, navigation and explicit fresh download in Chromium. Requires X010-10. Exact source 19/19 workflows.",
+          "result": "pass",
+          "source_revision": "3478edc0ea515dc43e64fdbf7712b9c859197879",
+          "observed_at": "2026-11-24T19:04:33.362+05:45"
+        }
+      ]
+    },
+    "SUTRA-X010-13": {
+      "state": "verified",
+      "verified_at": "2026-11-24T19:04:33.362+05:45",
+      "evidence": [
+        {
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45400846312/job/138468708410",
+          "description": "Require complete SSE event framing with CR/LF/CRLF, multiline data, aggregate bounds and named-error refusal; EOF without full terminal event is incomplete, standard id/retry metadata does not reconnect. Reject JSON media-type lookalikes before quota or body reads. Requires X010-06 and X010-07. Exact source 19/19 workflows.",
+          "result": "pass",
+          "source_revision": "e7ccecf9eae71bd4c0c1aaf3b4e9ac4989b81f37",
+          "observed_at": "2026-11-24T19:04:33.362+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -12082,6 +12108,7 @@
     "Session 0041 further continuation: 34025444560d62b310154634e94e3bfda5890bde 19/19, browser/Worker abort handoff tests pass; 279aae37f487a8da97f1303a6c48fdd5bc6be586 18/19 observed with package/API unit step successful. 668/1062 overall, original 609/1000. Quota lost-response ambiguity remains explicitly open.",
     "Final observation 2026-11-24T18:02:22.555+05:45: 279aae37f487a8da97f1303a6c48fdd5bc6be586 19/19 workflows including exact learner logs for bounded Worker body; 669/1062 verified overall, 609/1000 original, no original phase closure. X010-05 remains pending.",
     "Session 0042 checkpoint: quota lost-response/day/deadline and actual local SQLite DO, SSE backpressure/teardown, Workerd redirect compatibility, exact ingress, peer base authority, review save uncertainty verified. 675/1068 overall; original 609/1000. 95f898842d1f93d0d2c6f6434cb5d4c8ed72001e 19/19, media revision 4ff29cb7b6e80b6702fa64455c8ba5755c8356e9 17/19 observed; media task remains pending.",
-    "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9 19/19 exact workflows, 142+150+141+8=441 automated non-browser tests, Chromium BFCache both profiles; 676/1068 verified, 385 pending, original 609/1000. X010-11 verified."
+    "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9 19/19 exact workflows, 142+150+141+8=441 automated non-browser tests, Chromium BFCache both profiles; 676/1068 verified, 385 pending, original 609/1000. X010-11 verified.",
+    "2026-11-24T19:04:33.362+05:45: **678/1,070 overall verified; 609/1,000 original; 385 pending; six omissions; one hardware blocker.** X010-12–13 exact revisions passed 19/19 workflows. SSE revision `e7ccecf9eae71bd4c0c1aaf3b4e9ac4989b81f37` 446 non-browser tests (142 app, 155 package/API, 141 runtime, 8 peer), Chromium learner and three-engine matrix. Newer head `c8fc9f4528fa45379c87968964aadb92eb80db63` includes additional lifecycle changes not credited here. P078-02 remains open."
   ]
 }

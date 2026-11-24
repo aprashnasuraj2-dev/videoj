@@ -268,3 +268,7 @@ Use one fixed bounded buffer before Worker quota admission; chunk count cannot c
 ### Media regression verification
 
 2026-11-24T18:51:12.757+05:45: **676/1,068 overall verified; 609/1,000 original; 385 pending; six omissions; one hardware blocker.** Exact media revision `4ff29cb7b6e80b6702fa64455c8ba5755c8356e9` passed 19/19 workflows (441 non-browser tests, Chromium learner suite and three-engine browser matrix); X010-11 verified. P078-02 remains open. The pin binds native playback and track identities to the verified mount; deliberate same-origin DOM mutation is treated as drift, not proof of hostile-script isolation. Generic adapter replacement behavior remains available outside the pinned mount.
+
+### Review download and SSE framing follow-up
+
+2026-11-24T19:04:33.362+05:45: Cooperative mutation lock governs saved receipt export; recheck immutable record and view epoch. A complete bounded SSE event, not a single line, establishes terminal success. Standard ID/retry metadata never reconnects; JSON media type is exact. No live model or release authorization.

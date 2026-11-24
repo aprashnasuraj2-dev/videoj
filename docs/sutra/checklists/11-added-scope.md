@@ -120,3 +120,7 @@ Both are isolated learner/developer regressions verified in automated browser an
 - [x] `SUTRA-X010-09` Preserve exact requested peer origin when deriving a site base from authority-like paths, before consent and private context dispatch. Requires peer exact-consent and artifact validation checks; verify end-to-end runtime with distinct origins and private grant.
 - [x] `SUTRA-X010-10` Classify a native-looking save error as rejected only after exact unchanged readback; otherwise unknown. Prevent replay and changed/reused record success. Requires X009-02, X009-06.
 - [x] `SUTRA-X010-11` Pin verified native media and track identity to the app mount; revoke stale seek/reporting authority, dispose/revoke old blobs and restore transcript with explicit recovery on drift. Refuse non-HTTP(S) and wrong media MIME before body reads. Requires X010-03; verified by actual learner and browser matrix at exact source revision.
+
+- [x] `SUTRA-X010-12` Serialize saved-review downloads with cooperative mutation lock, revalidate captured record after acquisition, revoke queued actions on navigation and invalidate late UI outcomes. Verify held-lock mutation, navigation and explicit fresh download in Chromium. Requires X010-10.
+
+- [x] `SUTRA-X010-13` Require complete SSE event framing with CR/LF/CRLF, multiline data, aggregate bounds and named-error refusal; EOF without full terminal event is incomplete, standard id/retry metadata does not reconnect. Reject JSON media-type lookalikes before quota or body reads. Requires X010-06 and X010-07.

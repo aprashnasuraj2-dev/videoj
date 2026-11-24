@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T18:51:12.757+05:45",
+  "updatedAt": "2026-11-24T19:04:33.362+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -757,6 +757,48 @@
         {
           "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
           "sourceRevision": "4ff29cb7b6e80b6702fa64455c8ba5755c8356e9"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-035",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Saved-review export races",
+      "mechanism": "Queued export can target a changed record or report success after navigation or cross-tab invalidation.",
+      "userEffect": "Wrong or stale record download/outcome.",
+      "affectedTasks": [
+        "SUTRA-X010-12",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Serialize export using the cooperative mutation lock; revalidate record and revoke view epoch.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "3478edc0ea515dc43e64fdbf7712b9c859197879"
+        }
+      ],
+      "unblockCondition": null
+    },
+    {
+      "id": "R-036",
+      "severity": "high",
+      "state": "resolved",
+      "releaseBlocking": false,
+      "title": "Incomplete SSE event and JSON media-type lookalikes",
+      "mechanism": "Line-level parsing could certify an unterminated or named-error terminal; prefix media type admitted lookalikes.",
+      "userEffect": "False completion or unwanted admission.",
+      "affectedTasks": [
+        "SUTRA-X010-13",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Require complete bounded SSE event with blank-line delimiter; exact JSON media-type match before body/quota/provider contact.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0042.md",
+          "sourceRevision": "e7ccecf9eae71bd4c0c1aaf3b4e9ac4989b81f37"
         }
       ],
       "unblockCondition": null
