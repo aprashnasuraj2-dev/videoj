@@ -7,12 +7,12 @@ public release. Existing AafnaiPatro/player routes have not been changed.
 
 ## Endpoints
 
-- `POST /api/infer`: fixed provider, validated payload, global transactional quota,
-  sanitized stream. Returns 503 while disabled or incompletely configured.
+- `POST /api/infer`: internal SUTRA same-origin alias for the fixed funded provider path.
+- `POST /api/v1/chat/completions`: publisher-funded OpenAI-compatible browser-router facade backed by the **same** validation/quota/streaming core. It accepts no visitor Authorization header and returns 503 while disabled/incompletely configured.
 - `/api/source-tools`: restricted stateless MCP JSON transport, protocol pin
   2025-06-18; initialize/initialized, tools/list, tools/call; GET returns 405.
   Origin checks protect the browser boundary. The catalog is public synthetic data.
-- `GET /api/status`: configured/disabled inference and honest synthetic-catalog state.
+- `GET /api/status`: configured/disabled inference and honest synthetic-catalog state; when configured, publishes `routerBase: /api/v1`, `publisherFunded: true`, `byok: false` plus the approved model.
 - Other `/api/*`: 404, never the HTML asset fallback.
 
 Development/preview middleware invokes this same handler with no secrets and
@@ -93,3 +93,9 @@ The manifest points to retained graph copies under `/agents/v/<git-blob>/...`. C
 
 ## Daily resource admission (not a dollar budget)
 In addition to daily call and per-client ceilings, the quota object atomically reserves the exact UTF-8 byte length of the validated outbound JSON request and the configured maximum requested output tokens. `SUTRA_MAX_DAILY_INPUT_BYTES` and `SUTRA_MAX_DAILY_OUTPUT_TOKENS` may be reduced independently. Checked-in disabled configurations allow at most 3,379,200 input JSON bytes and 51,200 requested output tokens per UTC day, still bounded by 100 admitted calls, 8 per client and 2 active calls. A rejected resource reservation produces 429 before any provider contact; an admitted reservation is not refunded after release, cancellation or failure. UTC date rollover resets daily counters but preserves unexpired active leases, preventing an accidental midnight concurrency burst. Legacy same-day state with only call counts is conservatively charged at prior hard per-call maxima. These are resource bounds, not actual provider token counts or billed USD. The provider may tokenize differently, bill failed calls or apply other charges; only observed provider usage/prices and provider-side spend controls support a cost claim. No paid inference is enabled.
+
+## Publisher-funded interoperability facade
+
+The future top-site manifest can publish the caller origin plus `/api/v1` as its default publisher-funded router. The OpenAI-compatible `POST /api/v1/chat/completions` route is not a second provider implementation: it enters the same `handleInference` function as `/api/infer`, so origin checks, visitor-Authorization rejection, exact model allowlist, payload/schema bounds, global/client/resource quota, concurrency lease, fixed upstream, server-only provider key, sanitized usage/SSE stream, cancellation and no automatic retry remain identical.
+
+The route existing in code does **not** mean inference is live. Checked-in configs keep `SUTRA_ENABLE_INFERENCE=false` and an empty model allowlist. A release manifest must not publish the router as usable until the live-provider/cost/release gates pass.

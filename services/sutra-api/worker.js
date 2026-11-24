@@ -68,11 +68,11 @@ export async function handleSourceTools(request){
 }
 export default {async fetch(request,env){
  const path=new URL(request.url).pathname;let response;
- if(path==='/api/infer')response=await handleInference(request,env);
+ if(path==='/api/infer'||path==='/api/v1/chat/completions')response=await handleInference(request,env);
  else if(path==='/api/source-tools')response=await handleSourceTools(request);
  else if(path==='/api/status'&&request.method==='GET'){
   const configured=inferenceStatus(env);
-  response=json({inference:configured?'configured':'disabled',...(configured?{model:configuredModels(env)[0]}:{}),sourceTools:'synthetic-catalog',factualTruth:'unverified'});
+  response=json({inference:configured?'configured':'disabled',...(configured?{model:configuredModels(env)[0],routerBase:'/api/v1',publisherFunded:true,byok:false}:{}),sourceTools:'synthetic-catalog',factualTruth:'unverified'});
  }
  else if(path.startsWith('/api/'))response=json({error:{code:'NOT_FOUND'}},404);
  else response=await (env.ASSETS?.fetch(request)??new Response('Not found',{status:404}));

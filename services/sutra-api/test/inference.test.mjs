@@ -1,6 +1,6 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {handleInference,UPSTREAM,inferenceStatus} from '../inference.js';import {InferenceQuota} from '../quota.js';import worker,{handleSourceTools,securityHeaders,allowedPeerOrigins,withCachePolicy} from '../worker.js';import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
 const payload=()=>({model:'operator-approved',stream:true,messages:[{role:'user',content:'hello'}],tools:[]});
-const request=(body=payload(),extra={})=>new Request('https://sutra.test/api/infer',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json','CF-Connecting-IP':'192.0.2.1',...extra},body:JSON.stringify(body)});
+const request=(body=payload(),extra={},path='/api/infer')=>new Request('https://sutra.test'+path,{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json','CF-Connecting-IP':'192.0.2.1',...extra},body:JSON.stringify(body)});
 let leaseSequence=0;
 const environment=(reserve=async(url,opts)=>{
  const path=new URL(url).pathname;
@@ -145,4 +145,26 @@ test('resource rejection occurs at actual inference handler before upstream',asy
  const store=storage(),cfg={SUTRA_MAX_DAILY_CALLS:'5',SUTRA_MAX_CLIENT_CALLS:'5',SUTRA_MAX_CONCURRENT:'1',SUTRA_MAX_DAILY_INPUT_BYTES:'1',SUTRA_MAX_DAILY_OUTPUT_TOKENS:'512'};
  const q=new InferenceQuota({storage:store},cfg);const env={...environment(),...cfg,SUTRA_QUOTA:{idFromName:x=>x,get:()=>({fetch:(url,opts)=>q.fetch(new Request(url,opts))})}};
  let calls=0;const response=await handleInference(request(),env,{fetchImpl:async()=>{calls++;return sse();}});assert.equal(response.status,429);assert.equal(calls,0);assert.equal(store.inspect().total,0);
+});
+
+test('publisher-funded OpenAI-compatible facade reuses the same validation, quota and sanitized SSE core',async()=>{
+ let upstream=0;
+ const env=environment();
+ const req=request(payload(),{},'/api/v1/chat/completions');
+ const response=await handleInference(req,env,{fetchImpl:async(url,opts)=>{upstream++;assert.equal(url,UPSTREAM);assert.equal(opts.headers.Authorization,'Bearer SERVER_ONLY_KEY_MARKER');return sse();}});
+ assert.equal(response.status,200);assert.equal(response.headers.get('Content-Type'),'text/event-stream');
+ const body=await response.text();assert.match(body,/data: \[DONE\]/);assert.equal(body.includes('PRIVATE_PROVIDER_FIELD'),false);assert.equal(upstream,1);
+});
+test('worker exposes disabled publisher-funded compatibility route without asset fallback, auth header or fake readiness',async()=>{
+ let assets=0;
+ const disabled=await worker.fetch(new Request('https://sutra.test/api/v1/chat/completions',{method:'POST',headers:{Origin:'https://sutra.test','Content-Type':'application/json'},body:JSON.stringify(payload())}),{ASSETS:{fetch:()=>{assets++;}}});
+ assert.equal(disabled.status,503);assert.equal(assets,0);assert.match(await disabled.text(),/DISABLED/);
+ const badAuth=await handleInference(request(payload(),{Authorization:'Bearer visitor-key'},'/api/v1/chat/completions'),environment(),{fetchImpl:async()=>{throw Error('must not contact');}});
+ assert.equal(badAuth.status,403);
+});
+test('configured status publishes only the same-origin publisher-funded router contract; disabled status publishes none',async()=>{
+ const disabled=await worker.fetch(new Request('https://sutra.test/api/status'),{});const d=await disabled.json();
+ assert.deepEqual(d,{inference:'disabled',sourceTools:'synthetic-catalog',factualTruth:'unverified'});
+ const configured=await worker.fetch(new Request('https://sutra.test/api/status'),environment());const c=await configured.json();
+ assert.equal(c.inference,'configured');assert.equal(c.model,'operator-approved');assert.equal(c.routerBase,'/api/v1');assert.equal(c.publisherFunded,true);assert.equal(c.byok,false);
 });
