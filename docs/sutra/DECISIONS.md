@@ -178,3 +178,9 @@ Entries are append-only. A later decision may supersede an earlier one, but reta
 - The benchmark demonstrates no retrieval gain from scripted delegation for simple literal matching (20/20 on both paths); offer a direct zero-model path, retain separate opt-in semantic and portable peer paths. Synthetic fixture scores do not establish answer quality, model economics or semantic truth.
 - The same-origin public artifact loader defaults to one attempt. Only the explicit scripted test opts into one extra GET after a received 502/503/504, within the original deadline and shared budget. No auto-retry for model/provider, POST, writes, external peer, missing/invalid/malformed/redirected data, transport ambiguity or cancellation. Show actual attempt counts.
 - Build inventory provides local byte identity, not publisher authentication. No public deployment or cloud action authorized.
+
+## SUTRA-DECISION-0021 — Common receipt action boundary and bounded source data
+
+- Only independently catalog-matched receipt data enables local seek/review. Bind seek to the loaded source ID, version and both hashes; explicit review confirmation is still required. Clear outdated actions when the request changes. Incomplete model text never becomes a completed interpretation.
+- Source registry snapshots ordinary data descriptors without invoking getters/toJSON, indexes source/cue IDs, caps aggregate text and returns no more than five literal matches. Executable Proxy objects are outside the parsed wire-data contract. The 10,000-cue test is a development limit regression, not a production SLA.
+- Added X002 checks, no changed release authorization or waived human requirement.

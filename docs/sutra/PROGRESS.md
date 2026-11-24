@@ -2,6 +2,14 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0018 — 2026-11-24
+
+**488/1,000 original checks verified; 494/1,006 total; 37/100 phases fully verified; 1 historical omission.**
+
+Source-security revision `337337e6bf912f9e73127c6d2a20a971c5bde866` all nine green. Shared receipt actions `794fdbd33cb2c962e486c284bdb394c5886cc7af` passed [full learner](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45312551764/job/138171591549), [evaluation](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45312551849/job/138171592042) and six other workflows; matrix still running at last check. Exact direct and model-retrieved receipts share explicit seek/review; ordinary executable data descriptors rejected; indexed catalog tested at 10,000 short cues. Three original delegation checks and three newly discovered regressions credited. No live provider, semantic truth, production capacity or human acceptance claimed. [Session evidence](evidence/implementation/SESSION-0018.md).
+
+---
+
 ## Session 0017 — 2026-11-24
 
 **485/1,000 original checks verified; 488/1,003 total; 37/100 phases fully verified; 1 historical omission.**

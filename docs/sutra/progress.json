@@ -1,21 +1,20 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-24T08:09:00+05:45",
+  "updated_at": "2026-11-24T08:14:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "c6b321fbaab38549b8df97cb56e0f44745546083",
-  "last_session_id": "SUTRA-SESSION-0017",
-  "stage": "publication_lifecycle_and_synthetic_baseline_verified",
+  "last_observed_code_sha": "794fdbd33cb2c962e486c284bdb394c5886cc7af",
+  "last_session_id": "SUTRA-SESSION-0018",
+  "stage": "indexed_source_and_receipt_action_paths_verified",
   "current_task": null,
   "next_task": "SUTRA-P041-08",
   "ready_engineering_queue": [
-    "SUTRA-P054-03",
-    "SUTRA-P054-04",
-    "SUTRA-P054-07",
+    "SUTRA-P054-01",
+    "SUTRA-P054-09",
     "SUTRA-P053-02",
     "SUTRA-P045-06"
   ],
-  "next_action": "Check direct-lookup UI revision 43c658b64492d4c0cfb38995ffbb6a5010d21480; complete evidence-linked direct vs delegated engineering, strengthen source security and provenance, retain human-reviewed held-out evaluation and release gates as pending.",
+  "next_action": "Check final browser matrix for 794fdbd33cb2c962e486c284bdb394c5886cc7af; continue offline engineering on measured delegation, reproducible evaluation instrumentation and source provenance. Real provider token usage, held-out human review and actual guide remain pending; no cloud or release work.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -8765,6 +8764,84 @@
           "result": "pass",
           "source_revision": "c6b321fbaab38549b8df97cb56e0f44745546083",
           "observed_at": "2026-11-24T08:09:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P054-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:14:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Source learner delegates solely to the evidence role with a closed read-only catalog; literal lookup now needs no model. Browser and evaluation jobs passed.",
+          "result": "pass",
+          "source_revision": "794fdbd33cb2c962e486c284bdb394c5886cc7af",
+          "observed_at": "2026-11-24T08:14:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P054-04": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:14:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Visible exact-wording lookup eliminates delegated model hops and source RPCs for literal retrieval; 20/20 expected cue sets retained in controlled regression.",
+          "result": "pass",
+          "source_revision": "794fdbd33cb2c962e486c284bdb394c5886cc7af",
+          "observed_at": "2026-11-24T08:14:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-P054-07": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:14:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Paired engineering-v1 benchmark compares exact-cue accuracy, median same-process latency and orchestration call counts; 20/20 on both paths, zero vs 90 scripted calls. Real inference tokens and semantic accuracy remain unmeasured.",
+          "result": "pass",
+          "source_revision": "794fdbd33cb2c962e486c284bdb394c5886cc7af",
+          "observed_at": "2026-11-24T08:14:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X002-01": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:14:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Descriptor checks refuse ordinary getters, custom prototypes, hidden/symbol fields, sparse arrays and toJSON hooks without invoking ordinary getters in receipt/catalog/tool API tests.",
+          "result": "pass",
+          "source_revision": "794fdbd33cb2c962e486c284bdb394c5886cc7af",
+          "observed_at": "2026-11-24T08:14:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X002-02": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:14:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Maximum 20x500 short-cue registration, exact scoped read, five-result cap, duplicate rejection and aggregate text bound passed source tests; no production throughput claim.",
+          "result": "pass",
+          "source_revision": "794fdbd33cb2c962e486c284bdb394c5886cc7af",
+          "observed_at": "2026-11-24T08:14:00+05:45"
+        }
+      ]
+    },
+    "SUTRA-X002-03": {
+      "state": "verified",
+      "verified_at": "2026-11-24T08:14:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0018.md",
+          "description": "Browser verifies matched provider receipts can open the exact review preview and save only after explicit confirmation, with no additional model calls; pre-media seek fails honestly, loaded-media seek works, partial receipts remain usable and question edits clear old actions.",
+          "result": "pass",
+          "source_revision": "794fdbd33cb2c962e486c284bdb394c5886cc7af",
+          "observed_at": "2026-11-24T08:14:00+05:45"
         }
       ]
     }

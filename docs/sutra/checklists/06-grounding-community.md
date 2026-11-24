@@ -73,11 +73,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 
 - [ ] `SUTRA-P054-01` Measure the baseline number of model calls and token usage
 - [x] `SUTRA-P054-02` Compare agent coordination against direct transcript lookup
-- [ ] `SUTRA-P054-03` Restrict delegation to source selection and useful verification roles
-- [ ] `SUTRA-P054-04` Remove redundant agent hops and repeated large context
+- [x] `SUTRA-P054-03` Restrict delegation to source selection and useful verification roles
+- [x] `SUTRA-P054-04` Remove redundant agent hops and repeated large context
 - [x] `SUTRA-P054-05` Use concise structured tool returns rather than unbounded narrative
 - [x] `SUTRA-P054-06` Keep source-reference checks outside model preference
-- [ ] `SUTRA-P054-07` Measure before/after latency, call count and evidence accuracy
+- [x] `SUTRA-P054-07` Measure before/after latency, call count and evidence accuracy
 - [x] `SUTRA-P054-08` Do not use the number of agents as a quality metric
 - [ ] `SUTRA-P054-09` Produce and review the phase artifact: Prompt/delegation revision with before-and-after measurements.
 - [ ] `SUTRA-P054-10` Close phase 054 only after its applicable tasks have evidence and its exit condition is observed: The task remains evidence-backed while median calls and token usage are measured; extra agents are not treated as quality by themselves.

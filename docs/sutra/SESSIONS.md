@@ -1,5 +1,10 @@
 # SUTRA session history
 
+## SUTRA-SESSION-0018 — 2026-11-24
+
+- Source security revision all nine green; shared direct/provider receipt action revision `794fdbd33cb2c962e486c284bdb394c5886cc7af` full learner and evaluation green, matrix pending at last observation. Verified SUTRA-P054-03, SUTRA-P054-04, SUTRA-P054-07, SUTRA-X002-01, SUTRA-X002-02, SUTRA-X002-03.
+- 488/1,000 original, 494/1,006 total, 37 complete phases. No public deployment, paid inference, human gate or release. [Evidence](evidence/implementation/SESSION-0018.md).
+
 ## SUTRA-SESSION-0017 — 2026-11-24
 
 - Exact-head all-nine-green `c6b321fbaab38549b8df97cb56e0f44745546083`: P022 and P026 close, five evaluation/delegation controls credited; development fixtures deliberately not counted as held-out human review. SUTRA-P022-04, SUTRA-P022-06, SUTRA-P022-08, SUTRA-P022-09, SUTRA-P022-10, SUTRA-P026-07, SUTRA-P026-09, SUTRA-P026-10, SUTRA-P053-04, SUTRA-P054-02, SUTRA-P054-05, SUTRA-P054-06, SUTRA-P054-08.
