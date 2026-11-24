@@ -1,6 +1,6 @@
 import {createSourceMcp} from './source-mcp.js';
 import {createExternalReadMcp,validateExternalMcpConfig} from './external-mcp.js';
-import {fetchJsonWithConsent} from '../sutra-consent/index.js';
+import {fetchJsonWithConsent,pinConsentInspector} from '../sutra-consent/index.js';
 import {readBoundedResponse,BoundedResponseError,isFullJson} from './bounded-response.js';
 import {AgentNetwork, validateNetwork} from './vendor/nsdeploy/kernel.js';
 import {runAgent} from './vendor/nsdeploy/runner.js';
@@ -113,15 +113,21 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
 // Model adapters are explicitly injected; there is no keyless automatic mock fallback.
 // A scripted-test adapter is only a test driver, not a live inference service.
 export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,peerRuntime,thirdPartyMcp,privateContext,peerContextGrants}={}){
+ let admittedPeer=null;
  if(peerRuntime!==undefined){
-  if(!plain(peerRuntime)||typeof peerRuntime.inspector?.perform!=='function'||peerRuntime.fetchImpl!==undefined&&typeof peerRuntime.fetchImpl!=='function')fail('PEER_CONFIG','Peer invocation requires an explicit contact inspector and optional fetch implementation.');
+  if(!plain(peerRuntime))fail('PEER_CONFIG','Peer invocation requires an explicit contact inspector and optional fetch implementation.');
   allowed(peerRuntime,['inspector','fetchImpl'],'peer runtime');
+  const fetchImpl=peerRuntime.fetchImpl;
+  if(fetchImpl!==undefined&&typeof fetchImpl!=='function')fail('PEER_CONFIG','Peer invocation requires a callable optional fetch implementation.');
+  let inspector;
+  try{inspector=pinConsentInspector(peerRuntime.inspector);}catch{fail('PEER_CONFIG','Peer invocation requires an explicit contact inspector.');}
+  admittedPeer=Object.freeze({inspector,fetchImpl:fetchImpl??fetch});
  }
  const third=thirdPartyMcp===undefined?null:validateExternalMcpConfig(thirdPartyMcp);
  let privatePolicy;
  try{privatePolicy=createPrivateContextPolicy({values:privateContext??{},grants:peerContextGrants??[]});}
  catch(error){fail(error?.code??'PRIVATE_CONTEXT_POLICY','Private context policy is invalid.');}
- const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeers:!!peerRuntime,externalMcpUrl:third?.url??null});
+ const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeers:!!admittedPeer,externalMcpUrl:third?.url??null});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
  const adapterMode=model?.mode,adapterChat=model?.chat;
  if(typeof adapterChat!=='function'||!['scripted-test','provider'].includes(adapterMode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
@@ -172,13 +178,13 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   }catch(error){if(!failure)failure=error;controller.abort(error);trace.fail(span,new Error('Model or tool boundary failed.'));throw error;}
   finally{active--;waiters.shift()?.();}
  }};
- const composition={remoteCalls:0,peerCalls:new Map(),maxRemoteCalls:peerRuntime?2:0,maxCallsPerPeer:peerRuntime?1:0,agentCalls:0,maxAgentCalls:bounds.maxAgents,deadlineSeconds:bounds.timeoutMs/1000,deadline:Date.now()+bounds.timeoutMs};
+ const composition={remoteCalls:0,peerCalls:new Map(),maxRemoteCalls:admittedPeer?2:0,maxCallsPerPeer:admittedPeer?1:0,agentCalls:0,maxAgentCalls:bounds.maxAgents,deadlineSeconds:bounds.timeoutMs/1000,deadline:Date.now()+bounds.timeoutMs};
  const unavailable=()=>fail('CAPABILITY_UNAVAILABLE','External capabilities are disabled in this local runtime profile.');
  try{
  const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
  const guardSource=method=>async(...args)=>{check();try{const result=await rawSourceClient[method](...args);check();return result;}catch(cause){if(controller.signal.aborted)throw controller.signal.reason;const safe=['SOURCE_QUOTA','SOURCE_VERSION','SOURCE_UNAVAILABLE','SOURCE_EVIDENCE_LIMIT','SOURCE_QUERY_TOO_BROAD'].includes(cause?.code)?cause.code:'CAPABILITY_UNAVAILABLE';return stopRun(new RuntimeError(safe,'Source retrieval failed ('+safe+'); no completed source result is claimed.'));}};
  const sourceClient=rawSourceClient?{listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
- const rawExternal=third?createExternalReadMcp(thirdPartyMcp,{signal:controller.signal}):null;
+ const rawExternal=third?createExternalReadMcp({url:third.url,inspector:third.inspector,fetchImpl:third.fetchImpl},{signal:controller.signal}):null;
  const guardExternal=method=>async(...args)=>{
   check();
   try{const result=await rawExternal[method](...args);check();return result;}
@@ -194,10 +200,10 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  // model-visible tool text; instead abort this host with its sanitized exact
  // failure code so a model cannot turn a failed load into a completed answer.
  const resolvePeer=async(url,chain,parentSpan)=>{
-  check();if(!peerRuntime)return unavailable();
+  check();if(!admittedPeer)return unavailable();
   let loaded,peer;
   try{
-   loaded=await loadPeerNetwork({peerUrl:url,inspector:peerRuntime.inspector,fetchImpl:peerRuntime.fetchImpl??fetch,signal:controller.signal,timeoutMs:bounds.timeoutMs,contactTimeoutMs:Math.min(bounds.timeoutMs,5000)});
+   loaded=await loadPeerNetwork({peerUrl:url,inspector:admittedPeer.inspector,fetchImpl:admittedPeer.fetchImpl,signal:controller.signal,timeoutMs:bounds.timeoutMs,contactTimeoutMs:Math.min(bounds.timeoutMs,5000)});
    check();peer=compileNetwork(loaded.definition,{name:loaded.name,frontMan:loaded.frontMan,limits:bounds});
   }catch(error){
    if(controller.signal.aborted)throw controller.signal.reason;
@@ -236,7 +242,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   if(ref?.url==='/api/source-tools'&&sourceClient)return sourceClient;
   if(ref?.url===third?.url&&externalClient)return externalClient;
   return unavailable();
- },resolveLink:unavailable,requestConsent:async info=>info?.kind==='network'&&!!peerRuntime||info?.kind==='mcp'&&!!third?'proceed':'decline'};
+ },resolveLink:unavailable,requestConsent:async info=>info?.kind==='network'&&!!admittedPeer||info?.kind==='mcp'&&!!third?'proceed':'decline'};
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
   if(limitHit)fail(limitHit,'Composition agent or remote-call budget stopped execution.');
   if(!result.text)fail('INCOMPLETE','Execution stopped before a complete answer.');
@@ -437,7 +443,7 @@ export async function loadPeerNetwork({signal,timeoutMs=5000,contactTimeoutMs=Ma
  let stop;const stopped=new Promise((_,reject)=>{stop=()=>reject(controller.signal.reason);controller.signal.addEventListener('abort',stop,{once:true});});
  stopped.catch(()=>{});
  const timer=setTimeout(()=>controller.abort(new RuntimeError('ARTIFACT_TIMEOUT','Peer artifact loading exceeded its time limit.')),timeoutMs);
- try{return await Promise.race([loadPeerNetworkData({...options,contactTimeoutMs,signal:controller.signal}),stopped]);}
+ try{return await Promise.race([loadPeerNetworkData({...options,inspector:pinConsentInspector(options.inspector),contactTimeoutMs,signal:controller.signal}),stopped]);}
  catch(error){
   if(controller.signal.aborted&&controller.signal.reason instanceof RuntimeError)throw controller.signal.reason;
   if(error instanceof RuntimeError||error?.name==='ConsentError')throw error;

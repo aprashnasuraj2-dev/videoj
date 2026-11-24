@@ -1062,6 +1062,27 @@
         }
       ],
       "unblockCondition": "Exact mutation counterexample and normal provider/scripted regression pass."
+    },
+    {
+      "id": "R-049",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Mutable host contact dispatch changes between approvals",
+      "mechanism": "A viewer or first contact can replace peer runtime inspector/transport or mutable inspector perform property before the next separately consented operation.",
+      "userEffect": "Unexpected artifact contact or disclosure despite the original decision policy.",
+      "affectedTasks": [
+        "SUTRA-X010-26",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Pin original callable and receiver, and immutable admitted peer transport. Use original consent state for actual approvals and revocation.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0043.md",
+          "sourceRevision": "7b072b73ed9657b52df46a427fe67fb6ede2e053"
+        }
+      ],
+      "unblockCondition": "Exact mutation, denial and normal browser/runtime tests pass."
     }
   ]
 }

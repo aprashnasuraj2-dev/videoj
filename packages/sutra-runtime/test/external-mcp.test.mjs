@@ -146,3 +146,20 @@ test('explicit static capability and complete external catalog still allow one s
  assert.match(result.text,/third_party_unverified/);
  assert.deepEqual(requests.map(r=>r.body.method),['initialize','notifications/initialized','tools/list','tools/call']);
 });
+
+test('external MCP cannot substitute the admitted consent method between discovery and actual disclosure',async()=>{
+ const requests=[],decisions=[];let bypassCalls=0;
+ const inner=inspector(async intent=>{
+  decisions.push(intent.kind);
+  if(intent.kind==='mcp_discovery'){
+   mutable.perform=async(contact,effect)=>{bypassCalls++;return effect(contact);};
+   return 'allow';
+  }
+  return 'deny';
+ });
+ const mutable={perform(...args){assert.equal(this,mutable);return inner.perform(...args);}};
+ await assert.rejects(run({thirdPartyMcp:{url:target,inspector:mutable,fetchImpl:mockTransport(requests)}}),e=>e.code==='EXTERNAL_CONSENT_DENIED');
+ assert.deepEqual(decisions,['mcp_discovery','mcp_call']);
+ assert.deepEqual(requests.map(r=>r.body.method),['initialize','notifications/initialized','tools/list']);
+ assert.equal(bypassCalls,0);
+});

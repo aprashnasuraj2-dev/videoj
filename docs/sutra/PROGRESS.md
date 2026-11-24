@@ -4,6 +4,8 @@
 
 ## Session 0043 — 2026-11-24
 
+**694/1,083 overall verified; 615/1,000 original; 382 pending; six omissions; one hardware blocker.** X010-24/25 pending exact CI. Added X010-26 candidate to pin host-selected consent dispatch and peer transport across observer and asynchronous approval boundaries; no credit until exact CI. [Evidence](evidence/implementation/SESSION-0043.md).
+
 **694/1,082 overall verified; 615/1,000 original; 381 pending; six omissions; one hardware blocker.** Reconciled P007-01/03/05/06/08/09 from reviewed offline worksheet and 20/20 exact measurement-gate tests. X010-23 19/19 verified. X010-24/25 new trace-observer isolation and pinned adapter identity candidates; no credit until exact CI. [Evidence](evidence/implementation/SESSION-0043.md).
 
 2026-11-24T19:39:00+05:45: **687/1,080 overall verified; 609/1,000 original; 386 pending; six omissions; one hardware blocker.** Reconciled X010-22 exact source be3665ae5608c38ba3af371783d858a275269999: 19/19 workflows successful, including full learner, all three browser engines and local Workerd. X010-23 new candidate: refuse paginated/malformed tool catalogs and dynamic external tool capability declarations; no completion credit until exact CI. P078-02 remains pending. [Evidence](evidence/implementation/SESSION-0043.md).

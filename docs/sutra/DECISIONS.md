@@ -289,3 +289,7 @@ Bound work independently of bytes; real BFCache while playing must pause without
 ## SUTRA-DECISION-0034 — Canonical observer and adapter identity
 
 X010-24/25. Freeze runtime trace scalar events before observers; detach listener on settlement. Pin adapter mode, approved model and actual callable at admission with original receiver binding. A viewer may fail or mutate its own state but may not rewrite stored event evidence or swap the dispatch function mid-run. This is an accidental/host callback integrity boundary, not a sandbox for arbitrary same-origin executable code. Pending exact CI.
+
+## SUTRA-DECISION-0035 — Pin admitted contact dispatch
+
+X010-26. Capture the original inspector perform method and its receiver plus peer fetch function at admission; capture again at standalone loader entry. A mutable wrapper may not replace consent authority between approved manifest and graph or MCP discovery and call. Real decision callbacks and clearSession semantics remain on the original inspector, not cloned state. No authority to contact an outside service is added. Pending exact CI.

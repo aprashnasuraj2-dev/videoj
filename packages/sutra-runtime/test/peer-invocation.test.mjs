@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {runNetwork} from '../index.js';
+import {runNetwork,loadPeerNetwork} from '../index.js';
 import {createScriptedModel} from '../testing.js';
 import {createConsentInspector} from '../../sutra-consent/index.js';
 
@@ -92,3 +92,24 @@ test('manifest failure and declared graph failure retain separate caller-visible
 });
 
 test('peer and caller share actual admitted model counts and bounded failure diagnostics',async()=>{let calls=0;const adapter=createScriptedModel();await assert.rejects(drive({limits:{maxModelCalls:4},model:{...adapter,chat(a){calls++;return adapter.chat(a);}},peerRuntime:{inspector:approved(),fetchImpl:async url=>Response.json(url.endsWith('agent-manifest.json')?manifest():sourceGraph)}}),e=>{assert.equal(e.code,'MODEL_LIMIT');assert.equal(e.diagnostics.modelCalls,4);assert.equal(e.diagnostics.completedModelCalls,4);assert.equal(e.diagnostics.remoteCalls,1);assert.equal(e.diagnostics.agentCalls,3);return true;});assert.equal(calls,4);});
+
+test('peer admission pins the original consent and transport before viewer callbacks',async()=>{
+ let originalFetch=0,replacementFetch=0,originalDecisions=0;
+ const config={inspector:approved(async()=>{originalDecisions++;return 'deny';}),fetchImpl:async()=>{originalFetch++;return Response.json(manifest());}};
+ await assert.rejects(drive({peerRuntime:config,onEvent:()=>{
+  config.inspector=approved();config.fetchImpl=async()=>{replacementFetch++;return Response.json(manifest());};
+ }}),e=>e.code==='PEER_CONSENT_DENIED');
+ assert.equal(originalDecisions,1);assert.equal(originalFetch,0);assert.equal(replacementFetch,0);
+});
+test('standalone peer loader pins inspector method and receiver across manifest and graph approvals',async()=>{
+ const decisions=[],calls=[];let bypassCalls=0;
+ const inner=approved(async contact=>{decisions.push(contact.kind);return contact.kind==='peer_manifest'?'allow':'deny';});
+ const inspector={perform(...args){assert.equal(this,inspector);return inner.perform(...args);}};
+ await assert.rejects(loadPeerNetwork({peerUrl,inspector,fetchImpl:async(url)=>{
+  calls.push(url);inspector.perform=async(contact,effect)=>{bypassCalls++;return effect(contact);};
+  return Response.json(manifest());
+ }}),e=>e.code==='CONSENT_DENIED');
+ assert.deepEqual(decisions,['peer_manifest','peer_graph']);
+ assert.deepEqual(calls,['https://peer.example/agents/agent-manifest.json']);
+ assert.equal(bypassCalls,0);
+});

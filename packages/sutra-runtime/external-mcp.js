@@ -3,6 +3,7 @@
 // filesystem access, writes, dynamic tools or arbitrary credentials.
 import {validateData} from './vendor/nsdeploy/actions.js';
 import {snapshotDataRecord} from '../sutra-evidence/index.js';
+import {pinConsentInspector} from '../sutra-consent/index.js';
 import {readBoundedResponse,BoundedResponseError,parseJsonRpcResult,isFullJson} from './bounded-response.js';
 
 export class ExternalMcpError extends Error {
@@ -26,9 +27,11 @@ export function validateExternalMcpConfig(value){
  try{parsed=new URL(value.url);}catch{fail('MCP_URL','External MCP endpoint URL is invalid.');}
  const loopback=['127.0.0.1','localhost','[::1]'].includes(parsed.hostname);
  if(parsed.username||parsed.password||parsed.search||parsed.hash||parsed.pathname!=='/mcp'||parsed.protocol!=='https:'&&!(parsed.protocol==='http:'&&loopback))fail('MCP_URL','External MCP requires a fixed HTTPS /mcp endpoint (HTTP loopback for tests).');
- if(typeof value.inspector?.perform!=='function')fail('MCP_CONFIG','External MCP requires an explicit consent inspector.');
- if(value.fetchImpl!==undefined&&typeof value.fetchImpl!=='function')fail('MCP_CONFIG','External MCP transport must be callable.');
- return Object.freeze({url:parsed.href,origin:parsed.origin,inspector:value.inspector,fetchImpl:value.fetchImpl??fetch});
+ let inspector;
+ try{inspector=pinConsentInspector(value.inspector);}catch{fail('MCP_CONFIG','External MCP requires an explicit consent inspector.');}
+ const fetchImpl=value.fetchImpl;
+ if(fetchImpl!==undefined&&typeof fetchImpl!=='function')fail('MCP_CONFIG','External MCP transport must be callable.');
+ return Object.freeze({url:parsed.href,origin:parsed.origin,inspector,fetchImpl:fetchImpl??fetch});
 }
 export function createExternalReadMcp(options,{signal}={}){
  const {url,origin,inspector,fetchImpl}=validateExternalMcpConfig(options);

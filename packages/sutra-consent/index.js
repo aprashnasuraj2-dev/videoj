@@ -69,6 +69,14 @@ export function normalizeContact(input){
   }
   return Object.freeze({origin:target.origin,kind:input.kind,purpose,disclosure:Object.freeze([...disclosure]),...(input.network?{network:input.network}:{}),...(resource?{resource:resource.href}:{}),...(preview?{preview}:{})});
 }
+// Pin the approved host callback, not the mutable property from which it was read.
+// This preserves method receiver semantics and does not elevate a custom
+// inspector into a security sandbox; its own internal policy remains trusted.
+export function pinConsentInspector(inspector){
+ const perform=inspector?.perform;
+ if(typeof perform!=='function')fail('INSPECTOR','A consent inspector is required.');
+ return Object.freeze({perform(...args){return Reflect.apply(perform,inspector,args);}});
+}
 const eventCopy=event=>Object.freeze({...event,disclosure:Object.freeze([...event.disclosure])});
 export function createConsentInspector({decide,onEvent,now=()=>new Date().toISOString()}={}){
   if(typeof decide!=='function')fail('DECISION_HANDLER','A user decision handler is required.');
