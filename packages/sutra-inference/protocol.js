@@ -40,19 +40,23 @@ export function sanitizeChunk(raw){
   return {index:0,delta,finish_reason:finish};
  });
  const out={choices};
- if(raw.usage!==undefined&&raw.usage!==null){const usage={};for(const key of ['prompt_tokens','completion_tokens','total_tokens']){if(!Number.isInteger(raw.usage[key])||raw.usage[key]<0||raw.usage[key]>1000000)stop('STREAM_SHAPE');usage[key]=raw.usage[key];}out.usage=usage;}
+ if(raw.usage!==undefined&&raw.usage!==null){const usage={};for(const key of ['prompt_tokens','completion_tokens','total_tokens']){if(!Number.isInteger(raw.usage[key])||raw.usage[key]<0||raw.usage[key]>1000000)stop('STREAM_SHAPE');usage[key]=raw.usage[key];}if(usage.prompt_tokens+usage.completion_tokens!==usage.total_tokens)stop('USAGE_INCONSISTENT');out.usage=usage;}
  return out;
 }
 export function makeAccumulator(){
  let content='',finish=null,usage=null,ended=false;const tools=[];
  return {
-  accept(raw){const chunk=sanitizeChunk(raw);if(chunk.usage)usage=chunk.usage;
-   for(const choice of chunk.choices){if(finish&&(choice.delta.content||choice.delta.tool_calls))stop('AFTER_FINISH');
+  accept(raw){if(ended)stop('AFTER_FINISH');const chunk=sanitizeChunk(raw);
+   for(const choice of chunk.choices){if(finish)stop('AFTER_FINISH');
     if(choice.delta.content){content+=choice.delta.content;if(content.length>16000)stop('OUTPUT_SIZE');}
     for(const call of choice.delta.tool_calls??[]){const tool=tools[call.index]??={id:'',type:'function',function:{name:'',arguments:''}};if(call.id){if(tool.id&&tool.id!==call.id)stop('TOOL_ID');tool.id=call.id;}if(call.function?.name)tool.function.name+=call.function.name;if(call.function?.arguments)tool.function.arguments+=call.function.arguments;if(tool.function.name.length>100||tool.function.arguments.length>8000)stop('OUTPUT_SIZE');}
     if(choice.finish_reason)finish=choice.finish_reason;
-   }return chunk;},
-  finish(){ended=true;if(!['stop','tool_calls'].includes(finish))stop('INCOMPLETE_RESULT');const calls=tools.filter(Boolean);if(calls.length!==tools.length||new Set(calls.map(c=>c.id)).size!==calls.length)stop('TOOL_SHAPE');if(finish==='tool_calls'&&!calls.length||finish==='stop'&&calls.length)stop('TOOL_SHAPE');for(const call of calls){if(!call.id||!call.function.name)stop('TOOL_SHAPE');try{if(!plain(JSON.parse(call.function.arguments)))stop('TOOL_SHAPE');}catch{stop('TOOL_SHAPE');}}return {content,toolCalls:calls,finishReason:finish,usage};},
+   }
+   // Usage is a single terminal observation, not an overwritable counter.
+   // Never convert an earlier length/content_filter finish into success.
+   if(chunk.usage){if(!finish||usage)stop('USAGE_SEQUENCE');usage=chunk.usage;}
+   return chunk;},
+  finish(){if(ended)stop('AFTER_FINISH');ended=true;if(!['stop','tool_calls'].includes(finish))stop('INCOMPLETE_RESULT');const calls=tools.filter(Boolean);if(calls.length!==tools.length||new Set(calls.map(c=>c.id)).size!==calls.length)stop('TOOL_SHAPE');if(finish==='tool_calls'&&!calls.length||finish==='stop'&&calls.length)stop('TOOL_SHAPE');for(const call of calls){if(!call.id||!call.function.name)stop('TOOL_SHAPE');try{if(!plain(JSON.parse(call.function.arguments)))stop('TOOL_SHAPE');}catch{stop('TOOL_SHAPE');}}return {content,toolCalls:calls,finishReason:finish,usage};},
   get ended(){return ended;},
  };
 }

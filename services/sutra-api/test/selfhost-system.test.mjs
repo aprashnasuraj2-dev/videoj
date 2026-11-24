@@ -126,14 +126,16 @@ test('one cancelled client request closes the real gateway and loopback model st
  }
 });
 
-test('local model HTTP 200 with truncated SSE is never treated as a completed answer', {timeout:12000},async()=>{
+for(const failure of ['premature EOF','rewritten finish','inconsistent usage'])test('local model HTTP 200 with '+failure+' is never treated as a completed answer', {timeout:12000},async()=>{
  let localCalls=0,reservations=0,releases=0;
  const engine=http.createServer(async(req,res)=>{
   const chunks=[];for await(const chunk of req)chunks.push(chunk);
   localCalls++;
   res.writeHead(200,{'Content-Type':'text/event-stream'});
-  res.end('data: {"choices":[{"index":0,"delta":{"content":"This sounds like a convincing but incomplete local answer."},"finish_reason":null}]}\n\n');
-  // No completed choice, no [DONE], and no real source verification.
+  const partial=event({content:'This sounds like a convincing but incomplete local answer.'},null);
+  if(failure==='premature EOF')res.end(sse([partial]).replace('data: [DONE]\n\n',''));
+  else if(failure==='rewritten finish')res.end(sse([partial,event({},'length'),event({},'stop')]));
+  else res.end(sse([partial,event({},'stop'),{choices:[],usage:{prompt_tokens:10,completion_tokens:5,total_tokens:1}}]));
  });
  const port=await listen(engine);
  const gateway=createGateway({token:secret,model,upstreamPort:port}),gport=await listen(gateway);
@@ -158,7 +160,7 @@ test('local model HTTP 200 with truncated SSE is never treated as a completed an
    });
   }});
   await assert.rejects(adapter.chat({messages:[{role:'user',content:'Inspect source.'}],tools:[]}),error=>
-   ['UPSTREAM_STREAM','INCOMPLETE_STREAM'].includes(error?.code),'a premature local-model EOF cannot produce an answer');
+   ['UPSTREAM_STREAM','INCOMPLETE_STREAM'].includes(error?.code),'a malformed local-model stream cannot produce an answer');
   for(let i=0;i<100&&releases<1;i++)await new Promise(resolve=>setTimeout(resolve,10));
   assert.equal(localCalls,1,'no paid/local retry after incomplete stream');
   assert.equal(reservations,1);

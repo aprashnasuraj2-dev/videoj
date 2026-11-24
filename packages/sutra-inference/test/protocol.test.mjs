@@ -11,3 +11,23 @@ test('byte ceiling and malformed lines fail',async()=>{for(const [response,optio
 test('client aborts stalled fetch and stalled stream',async()=>{for(const fetchImpl of [()=>new Promise(()=>{}),async()=>new Response(new ReadableStream({start(){}}),{headers:{'Content-Type':'text/event-stream'}})]){const adapter=createProviderAdapter({origin:'https://sutra.test',model:'approved',timeoutMs:15,fetchImpl});await assert.rejects(adapter.chat({messages:[]}),/CANCELLED/);}});
 test('HTTP errors are sanitized; no insecure remote endpoint',async()=>{for(const status of [429,503,500]){const adapter=createProviderAdapter({origin:'https://sutra.test',model:'approved',fetchImpl:async()=>new Response('private-key',{status})});await assert.rejects(adapter.chat({messages:[]}),e=>!e.message.includes('private-key'));}for(const origin of ['http://remote.test','https://sutra.test/path','https://user:pass@sutra.test'])assert.throws(()=>createProviderAdapter({origin,model:'approved'}),/CONFIG/);});
 test('post-finish mutation, bad tool arguments, duplicate IDs and sparse indices fail',()=>{const a=makeAccumulator();a.accept(chunk({},'stop'));assert.throws(()=>a.accept(chunk({content:'late'})));for(const tool_calls of [[{index:1,id:'x',function:{name:'read',arguments:'{}'}}],[{index:0,id:'x',function:{name:'read',arguments:'{}'}},{index:1,id:'x',function:{name:'read',arguments:'{}'}}],[{index:0,id:'x',function:{name:'read',arguments:'[]'}}]]){const a=makeAccumulator();a.accept(chunk({tool_calls},'tool_calls'));assert.throws(()=>a.finish());}});
+
+test('a terminal reason is immutable, including unsuccessful finishes followed by an empty stop frame',()=>{
+ for(const reason of ['length','content_filter','stop','tool_calls']){
+  const a=makeAccumulator();a.accept(chunk({content:'partial'},reason));
+  assert.throws(()=>a.accept(chunk({},'stop')),/AFTER_FINISH/);
+ }
+ const a=makeAccumulator();a.accept(chunk({content:'complete'},'stop'));a.finish();
+ assert.throws(()=>a.finish(),/AFTER_FINISH/);
+ assert.throws(()=>a.accept({choices:[]}),/AFTER_FINISH/);
+});
+test('token usage is consistent and cannot be emitted early or replaced after completion',()=>{
+ const usage={choices:[],usage:{prompt_tokens:10,completion_tokens:2,total_tokens:12}};
+ const early=makeAccumulator();assert.throws(()=>early.accept(usage),/USAGE_SEQUENCE/);
+ const duplicate=makeAccumulator();duplicate.accept(chunk({},'stop'));duplicate.accept(usage);
+ assert.throws(()=>duplicate.accept(usage),/USAGE_SEQUENCE/);
+ const bad=makeAccumulator();bad.accept(chunk({},'stop'));
+ assert.throws(()=>bad.accept({choices:[],usage:{...usage.usage,total_tokens:11}}),/USAGE_INCONSISTENT/);
+ const final=makeAccumulator();final.accept({...chunk({content:'complete'},'stop'),usage:usage.usage});
+ assert.deepEqual(final.finish().usage,usage.usage);
+});
