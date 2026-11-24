@@ -70,3 +70,47 @@ test('truncated source searches fail from the mounted catalog before discovery, 
  assert.equal(transportCalls,0,'mounted catalog can prove truncation before any source RPC or quota spend');
  assert.deepEqual(seen,[],'no subset of a broad result may reach the model or observer');
 });
+
+test('pre-aborted source capability never invokes even an injected transport',async()=>{
+ const abort=new AbortController();abort.abort();let calls=0;const seen=[];
+ const c=createSourceMcp({origin:'https://sutra.test',sources:catalog,signal:abort.signal,onReceipt:r=>seen.push(r),fetchImpl:async()=>{calls++;throw Error('must not run');}});
+ await assert.rejects(c.listTools(),e=>e.code==='SOURCE_CANCELLED');
+ await assert.rejects(c.callTool('search_lesson',{query:'timing'}),e=>e.code==='SOURCE_CANCELLED');
+ assert.equal(calls,0);assert.deepEqual(seen,[]);
+});
+test('cancel after initialization response prevents notification and tool transport',async()=>{
+ const abort=new AbortController(),methods=[];
+ const c=createSourceMcp({origin:'https://sutra.test',sources:catalog,signal:abort.signal,fetchImpl:async(_url,opts)=>{
+  const rpc=JSON.parse(opts.body);methods.push(rpc.method);abort.abort();
+  return Response.json({jsonrpc:'2.0',id:rpc.id,result:{protocolVersion:'2025-06-18'}});
+ }});
+ await assert.rejects(c.callTool('search_lesson',{query:'timing'}),e=>e.code==='SOURCE_CANCELLED');
+ assert.deepEqual(methods,['initialize']);
+});
+test('source call snapshots validated primitive arguments before asynchronous discovery',async()=>{
+ const args={query:'timing'},seen=[],sent=[];let resume;
+ const gate=new Promise(resolve=>{resume=resolve;});
+ const c=createSourceMcp({origin:'https://sutra.test',sources:catalog,onReceipt:r=>seen.push(r),fetchImpl:async(_url,opts)=>{
+  const rpc=JSON.parse(opts.body);if(rpc.method==='initialize'){await gate;return Response.json({jsonrpc:'2.0',id:rpc.id,result:{protocolVersion:'2025-06-18'}});}
+  if(rpc.method==='notifications/initialized')return new Response(null,{status:202});
+  sent.push(rpc.params.arguments);return Response.json({jsonrpc:'2.0',id:rpc.id,result:{structuredContent:tools.call(rpc.params.name,rpc.params.arguments),isError:false}});
+ }});
+ const pending=c.callTool('search_lesson',args);args.query='private canary';args.secret='must-not-send';resume();
+ const result=JSON.parse(await pending);assert.deepEqual(sent,[{query:'timing'}]);assert.equal(result.matchCount,1);assert.equal(seen.length,1);
+});
+test('executable source argument descriptors are refused without getter access or transport',async()=>{
+ let calls=0,reads=0;const args={get query(){reads++;return 'timing';}};
+ const c=createSourceMcp({origin:'https://sutra.test',sources:catalog,fetchImpl:async()=>{calls++;throw Error('must not run');}});
+ await assert.rejects(c.callTool('search_lesson',args),e=>e.code==='SOURCE_ARGUMENTS');assert.equal(calls,0);assert.equal(reads,0);
+});
+test('cancellation during tool response produces no late receipt or model-facing result',async()=>{
+ const abort=new AbortController(),seen=[],methods=[];
+ const c=createSourceMcp({origin:'https://sutra.test',sources:catalog,signal:abort.signal,onReceipt:r=>seen.push(r),fetchImpl:async(_url,opts)=>{
+  const rpc=JSON.parse(opts.body);methods.push(rpc.method);
+  if(rpc.method==='initialize')return Response.json({jsonrpc:'2.0',id:rpc.id,result:{protocolVersion:'2025-06-18'}});
+  if(rpc.method==='notifications/initialized')return new Response(null,{status:202});
+  const output=tools.call(rpc.params.name,rpc.params.arguments);abort.abort();return Response.json({jsonrpc:'2.0',id:rpc.id,result:{structuredContent:output,isError:false}});
+ }});
+ await assert.rejects(c.callTool('search_lesson',{query:'timing'}),e=>e.code==='SOURCE_CANCELLED');
+ assert.deepEqual(methods,['initialize','notifications/initialized','tools/call']);assert.deepEqual(seen,[]);
+});
