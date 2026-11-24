@@ -23,6 +23,8 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await initialTranscript.fill('');
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'missing_source');
   assert.match(await page.locator('#comparison-body .comparison-status').innerText(),/No reviewed guide claim/);
+  assert.equal(await page.locator('#comparison-body .comparison-next-step').getAttribute('data-disposition'),'abstain');
+  assert.match(await page.locator('#comparison-body .comparison-next-step').innerText(),/missing original source/);
   assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/synthetic-timing-fixture/);
   assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/Fixture receipt retrieval timestamp/);
   assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/SUTRA local synthetic timing catalog/);
@@ -31,6 +33,8 @@ const fs=require('node:fs');const path=require('node:path');const assert=require
   await page.getByRole('button',{name:'Demonstrate a synthetic conflict'}).click();
   assert.equal(await page.locator('#comparison-body .comparison-status').getAttribute('data-state'),'unresolved_conflict');
   assert.match(await page.locator('#comparison-body .comparison-status').innerText(),/Neither side is declared factually correct/);
+  assert.equal(await page.locator('#comparison-body .comparison-next-step').getAttribute('data-disposition'),'abstain');
+  assert.match(await page.locator('#comparison-body .comparison-next-step').innerText(),/do not select a winner automatically/);
   assert.match(await page.locator('#comparison-body .comparison-card').first().innerText(),/two signatures/);
   assert.match(await page.locator('#comparison-body .comparison-card').last().innerText(),/three signatures/);
   assert.match(await page.locator('#comparison-body .comparison-card').last().innerText(),/not an external publisher/);
