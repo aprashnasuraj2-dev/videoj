@@ -11,15 +11,14 @@ const node=(tag,cls,text)=>{
 };
 const valueText=value=>value===undefined?'Unavailable':String(value);
 
-export function mountComparisonView(host,{receipt,sources,seekTo}={}){
+export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guideClaim=null,contentMode='synthetic'}={}){
  if(!host||typeof host.replaceChildren!=='function')throw Error('Comparison host missing.');
  const evidence=receipt?validateEvidenceClaim({version:1,kind:'source_excerpt',text:receipt.excerpt,receipt},{sources}):null;
- const local=evidence?.valid&&evidence.state==='source_backed_unverified'?{
+ const local=evidence?.valid&&evidence.state==='source_backed_unverified'&&videoClaim?{
   sourceKind:'video',sourceId:evidence.sourceRef.sourceId,sourceVersion:evidence.sourceRef.sourceVersion,sourceHash:evidence.sourceRef.sourceHash,cueId:evidence.sourceRef.cueId,
-  title:'Actual synthetic timing-cue catalog',scope:'synthetic_timing_only',claimKey:'marker_presence',
-  value:'marker_present',excerpt:evidence.excerpt,start:evidence.sourceRef.start,end:evidence.sourceRef.end,
-  provenance:'SUTRA local synthetic timing catalog, not human-reviewed footage',
-  observedAt:receipt.retrievedAt,dateBasis:'Fixture receipt retrieval timestamp'
+  title:videoClaim.title,scope:videoClaim.scope,claimKey:videoClaim.claimKey,value:videoClaim.value,
+  excerpt:evidence.excerpt,start:evidence.sourceRef.start,end:evidence.sourceRef.end,provenance:videoClaim.provenance,
+  observedAt:receipt.retrievedAt,dateBasis:videoClaim.dateBasis
  }:null;
  const controls=node('div','actions');
  const compare=node('button','primary','Inspect available evidence');compare.dataset.i18n='comparison.inspect';
@@ -32,7 +31,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
  const seekStatus=node('p','comparison-seek-status');
  seekStatus.setAttribute('role','status');
  const nextStep=node('p','comparison-next-step');nextStep.setAttribute('role','note');
- const note=node('p','muted','Comparisons evaluate exact declared values and source scope, not the truth of either claim. The conflict example is hypothetical and unrelated to original lesson footage.');note.dataset.i18n='comparison.note';
+ const note=node('p','muted','Comparisons evaluate exact declared values and source scope, not the truth of either claim. The separate conflict demonstration remains hypothetical.');note.dataset.i18n='comparison.note';
  host.replaceChildren(controls,status,nextStep,cards,seekStatus,note);
  let activeMode='available';
  function card(title,claim){
@@ -93,9 +92,9 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
     try{
      const reached=await seekTo(claim.start);
      if(!Number.isFinite(reached)||Math.abs(reached-claim.start)>1)throw Error('Native cue not confirmed');
-     seekStatus.textContent='Native media reached the synthetic catalog cue. This does not verify the claim.';
+     seekStatus.textContent='Native media reached the catalog cue. This does not verify the claim.';
     }catch{
-     seekStatus.textContent='Video cue unavailable. Load the synthetic timing fixture first; no successful seek is claimed.';
+     seekStatus.textContent='Video cue unavailable. Load the source media first; no successful seek is claimed.';
     }
    });
    article.append(button);
@@ -103,8 +102,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo}={}){
   return article;
  }
  function render(){
-  const comparison=compareClaimPair(activeMode==='available'?
-   {video:local,guide:null}:syntheticComparison);
+  const comparison=compareClaimPair(activeMode==='available'?{video:local,guide:guideClaim}:syntheticComparison);
   const videoCard=card('Video-side source',comparison.video),guideCard=card('Written guide-side source',comparison.guide);
   videoCard.querySelector('h3').dataset.i18n='comparison.video';guideCard.querySelector('h3').dataset.i18n='comparison.guide';
   cards.replaceChildren(videoCard,guideCard);
