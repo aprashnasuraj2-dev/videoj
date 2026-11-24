@@ -154,7 +154,21 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  if(signal?.aborted)aborted();else signal?.addEventListener('abort',aborted,{once:true});
  const trace=new TraceBus(),events=[];let modelCalls=0,startedModelCalls=0,completedModelCalls=0,active=0,totalOutput=0,failure=null,closed=false,limitHit=null;const waiters=[];
  const check=()=>{if(closed)fail('CLOSED','Run is closed.');if(controller.signal.aborted)throw controller.signal.reason;};
- const emit=event=>{if(closed)return;if(event.kind==='composition_limit')limitHit=Number.isInteger(event.remoteCalls)?'REMOTE_LIMIT':'AGENT_LIMIT';const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','network','origin'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,100);Object.freeze(safe);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
+ const emit=event=>{
+  if(closed)return;
+  // The upstream runner may turn a budget skip or failed child into model
+  // visible text and then attempt a parent synthesis. A narrow evidence
+  // workflow cannot certify that partial composition as complete.
+  let fatal=null;
+  if(event.kind==='composition_limit'){
+   limitHit=Number.isInteger(event.remoteCalls)?'REMOTE_LIMIT':'AGENT_LIMIT';
+   fatal=new RuntimeError(limitHit,'Composition budget stopped execution.');
+  }else if(event.kind==='agent_result'&&(typeof event.text!=='string'||!event.text.trim())||
+    event.kind==='agent'&&event.phase==='end'&&(event.status==='error'||event.status==='ok'&&event.answerChars===0)){
+   fatal=new RuntimeError('INCOMPLETE','An agent stopped without a complete textual result.');
+  }
+  if(fatal&&!controller.signal.aborted){failure??=fatal;controller.abort(failure);}
+  const safe={phase:event.phase,kind:event.kind};for(const key of ['id','parent','status','agent','tool','network','origin'])if(typeof event[key]==='string')safe[key]=event[key].slice(0,100);Object.freeze(safe);if(events.length<512)events.push(safe);try{onEvent?.(safe);}catch{ /* Viewer callbacks never own execution policy. */ }};
  const observeTrace=e=>emit(e.detail);
  trace.addEventListener('event',observeTrace);
  const abortWaiters=()=>{for(const wake of waiters.splice(0))wake();};controller.signal.addEventListener('abort',abortWaiters);

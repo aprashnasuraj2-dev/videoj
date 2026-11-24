@@ -157,3 +157,25 @@ test('adapter-local history and tool transformations cannot pollute subsequent c
  }}});
  assert.equal(calls,3);assert.equal(result.modelCalls,3);assert.match(result.text,/No live AI/);
 });
+
+test('empty child result from step exhaustion aborts before parent synthesis',async()=>{
+ const g=copy();const leaf=structuredClone(g.tools[1]);leaf.name='leaf';leaf.tools=[];
+ g.tools[1].tools=['leaf'];g.tools[1].max_steps=1;g.tools.push(leaf);
+ const base=createScriptedModel();let calls=0;
+ await assert.rejects(run({definition:g,model:{mode:'scripted-test',chat(args){calls++;return base.chat(args);}}}),e=>e.code==='INCOMPLETE'&&e.diagnostics.modelCalls===3);
+ assert.equal(calls,3,'parent must not make a synthesis call after child exhaustion');
+});
+test('whitespace or presentation-only child text cannot become a completed parent answer',async()=>{
+ for(const content of ['   ','```cruse-ui\n{"version":1,"components":[]}\n```']){
+  const base=createScriptedModel();let calls=0;
+  await assert.rejects(run({model:{mode:'scripted-test',chat(args){
+   calls++;return args.tools.length?base.chat(args):{content,toolCalls:[]};
+  }}}),e=>e.code==='INCOMPLETE'&&e.diagnostics.modelCalls===2);
+  assert.equal(calls,2);
+ }
+});
+test('agent budget exhaustion stops before an extra synthesis call',async()=>{
+ let calls=0;const base=createScriptedModel();
+ await assert.rejects(run({limits:{maxAgents:1},model:{mode:'scripted-test',chat(args){calls++;return base.chat(args);}}}),e=>e.code==='AGENT_LIMIT'&&e.diagnostics.modelCalls===1);
+ assert.equal(calls,1);
+});

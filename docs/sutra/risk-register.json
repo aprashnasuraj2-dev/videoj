@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updatedAt": "2026-11-24T20:00:31+05:45",
+  "updatedAt": "2026-11-24T20:02:51+05:45",
   "risks": [
     {
       "id": "R-001",
@@ -1162,6 +1162,27 @@
         }
       ],
       "unblockCondition": "Exact schema mutation and multi-step isolation regressions pass."
+    },
+    {
+      "id": "R-053",
+      "severity": "high",
+      "state": "open",
+      "releaseBlocking": true,
+      "title": "Parent synthesizes completed answer after child exhaustion",
+      "mechanism": "Pinned runner returns empty child text on step exhaustion or budget skip as a normal tool response; host only checked top-level final text.",
+      "userEffect": "A misleading completed answer and extra model spend after a failed dependency.",
+      "affectedTasks": [
+        "SUTRA-X010-30",
+        "SUTRA-P078-02"
+      ],
+      "mitigation": "Abort host on observed incomplete child or composition-limit trace, preserving prior failure authority.",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0044.md",
+          "sourceRevision": "7d90ed92d6fdb1e64b9898e74c0118cd4645485d"
+        }
+      ],
+      "unblockCondition": "Exact local/peer child exhaustion, no-extra-call and normal runtime/browser checks pass."
     }
   ]
 }

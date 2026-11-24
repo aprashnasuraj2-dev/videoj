@@ -113,3 +113,10 @@ test('standalone peer loader pins inspector method and receiver across manifest 
  assert.deepEqual(calls,['https://peer.example/agents/agent-manifest.json']);
  assert.equal(bypassCalls,0);
 });
+
+test('peer child step exhaustion cannot be synthesized into a completed caller result',async()=>{
+ const peer=structuredClone(sourceGraph);peer.tools[0].max_steps=1;
+ const base=createScriptedModel();let calls=0,contacts=0;
+ await assert.rejects(drive({model:{mode:'scripted-test',chat(args){calls++;return base.chat(args);}},peerRuntime:{inspector:approved(),fetchImpl:async url=>{contacts++;return Response.json(url.endsWith('agent-manifest.json')?manifest():peer);}}}),e=>e.code==='INCOMPLETE'&&e.diagnostics.modelCalls===3);
+ assert.equal(contacts,2);assert.equal(calls,3);
+});

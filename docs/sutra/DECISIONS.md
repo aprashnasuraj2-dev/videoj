@@ -305,3 +305,7 @@ X010-26 verified 19/19 at 76d13792d57fdfd321074a026747c72a306337b1; X010-27 exac
 ## SUTRA-DECISION-0037 — Model-facing namespace and input ownership
 
 2026-11-24T20:00:31+05:45: X010-28/29. The pinned runner maps distinct capabilities into safeName labels and may overwrite identical names. Refuse collisions before discovery; use the actual pinned name algorithm, not a final-path assumption. Detach model messages and tool schemas so adapter transformations cannot rewrite canonical history or validation authority. No changes to the pinned upstream modules. Pending exact CI. [Evidence](evidence/implementation/SESSION-0044.md).
+
+## SUTRA-DECISION-0038 — Incomplete composition cannot certify synthesis
+
+2026-11-24T20:02:51+05:45: X010-30. The upstream runner may express child step exhaustion or composition skips as ordinary tool-return text. This profile must stop when any required agent has no complete text or hits a composition limit; do not spend extra model calls synthesizing a failed path. Preserve typed earlier model/source/peer failures. Candidate uses host-observed upstream trace events, no vendor edits. Pending exact CI.
