@@ -41,7 +41,7 @@ const assert=require('node:assert/strict');
   await offlinePage.getByRole('button',{name:'Run scripted network test'}).click();
   await offlinePage.waitForFunction(()=>document.querySelector('#network-result').textContent.includes('2 agent invocations; 3 scripted model steps.'));
   assert.match(await offlinePage.locator('#network-result').innerText(),/scripted/i);
-  assert.match(await offlinePage.locator('.runtime-lab').innerText(),/No live AI/);
+  assert.match(await offlinePage.locator('section[aria-labelledby="runtime-title"]').innerText(),/No live AI/);
 
   console.log('PASS: offline startup fails honestly, mid-artifact network loss yields no completed run, loaded evidence remains usable, and explicit online retry restores only a visibly scripted result.');
  }finally{
