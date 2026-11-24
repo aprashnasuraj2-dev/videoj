@@ -234,7 +234,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
 
 // Same-origin publication loader for the restricted local profile. Cross-origin
 // loading is deliberately refused until the consent-aware peer loader is shipped.
-async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigin,fetchImpl=fetch,signal,allowSourceTools=false}={}){
+async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigin,fetchImpl=fetch,signal,allowSourceTools=false,resolvePublishedLinks=false}={}){
  let base;
  try{base=new URL(baseUrl);}catch{fail('ARTIFACT_URL','Use a complete agent site-base URL.');}
  const loopback=['localhost','127.0.0.1','[::1]'].includes(base.hostname);
@@ -264,9 +264,15 @@ async function loadLocalNetworkData({baseUrl,networkName='learner',expectedOrigi
  if(graphUrl.origin!==expectedOrigin||graphUrl.username||graphUrl.password||graphUrl.hash)fail('ARTIFACT_ORIGIN','External data requires the future consent-aware loader.');
  // No executable site modules, coded bundles or inference metadata are acted on.
  if(manifest.coded_tools||manifest.actions)fail('UNSUPPORTED_CAPABILITY','Executable publication metadata is disabled in the local profile.');
- const definition=await read(graphUrl,65536);
- compileNetwork(definition,{name:entry.name,frontMan:entry.front_man,allowSourceTools});
- return {definition,name:entry.name,frontMan:entry.front_man,artifacts:{manifest:new URL('agent-manifest.json',base).href,definition:graphUrl.href}};
+ let definition=await read(graphUrl,65536);
+ const artifacts={manifest:new URL('agent-manifest.json',base).href,definition:graphUrl.href};
+ if(resolvePublishedLinks===true){
+  const linksUrl=new URL('links.json',base);
+  definition=resolveSymbolicPeerLinks(definition,await read(linksUrl,16384),entry.name);
+  artifacts.links=linksUrl.href;
+ }
+ compileNetwork(definition,{name:entry.name,frontMan:entry.front_man,allowSourceTools,allowPeers:resolvePublishedLinks===true});
+ return {definition,name:entry.name,frontMan:entry.front_man,artifacts};
 }
 
 export async function loadLocalNetwork({signal,timeoutMs=5000,...options}={}){
@@ -296,6 +302,39 @@ function parsePeerNetworkReference(peerUrl){
  const basePath=parts.join('/')+'/';
  const base=new URL(basePath,target.origin);
  return {target,base,networkName};
+}
+
+// Only the caller's same-origin publication can resolve symbols. Resolution is
+// not contact approval; the resulting absolute URL still requires peerRuntime
+// and a distinct consent decision for every external artifact contact.
+export function resolveSymbolicPeerLinks(definition,document,networkName){
+ assertJsonData(definition);assertJsonData(document);
+ const size=value=>new TextEncoder().encode(JSON.stringify(value)).length;
+ if(size(definition)>65536||size(document)>16384)fail('LINKS_SIZE','Published link or graph exceeds its data limit.');
+ if(!plain(document)||document.version!==1||!plain(document.networks)||Object.keys(document).some(k=>!['version','networks'].includes(k))||Object.keys(document.networks).length>32)fail('LINKS_SCHEMA','Expected a version-one named link map.');
+ if(!idPattern.test(networkName)||!plain(definition)||!Array.isArray(definition.tools))fail('LINKS_SCHEMA','Invalid symbolic network.');
+ for(const [network,map] of Object.entries(document.networks)){
+  if(!idPattern.test(network)||!plain(map)||Object.keys(map).length>16)fail('LINKS_SCHEMA','Invalid named link map.');
+  for(const [alias,target] of Object.entries(map)){
+   if(!idPattern.test(alias)||typeof target!=='string'||target.length>2048)fail('LINKS_SCHEMA','Invalid symbolic peer binding.');
+   const parsed=parsePeerNetworkReference(target);
+   if(parsed.target.href!==target||parsed.target.hostname.split('.').includes('mcp')||parsed.target.pathname.split('/').includes('mcp'))fail('LINKS_TARGET','Only canonical exact peer URLs may be bound.');
+  }
+ }
+ const map=Object.hasOwn(document.networks,networkName)?document.networks[networkName]:{};
+ const result=structuredClone(definition),local=new Set(result.tools.map(a=>a?.name)),used=new Set();
+ for(const alias of Object.keys(map))if(local.has(alias))fail('LINKS_COLLISION','A peer binding cannot shadow a local agent.');
+ for(const agent of result.tools){
+  if(!plain(agent)||!Array.isArray(agent.tools))fail('LINKS_SCHEMA','Invalid graph tool list.');
+  agent.tools=agent.tools.map(ref=>{
+   if(typeof ref!=='string'||local.has(ref)||/^https?:\/\//.test(ref))return ref;
+   if(!Object.hasOwn(map,ref))fail('LINKS_UNRESOLVED','No exact published binding for a symbolic peer.');
+   used.add(ref);return map[ref];
+  });
+  if(new Set(agent.tools.map(ref=>JSON.stringify(ref))).size!==agent.tools.length)fail('LINKS_COLLISION','Resolved references collide.');
+ }
+ if(Object.keys(map).some(alias=>!used.has(alias)))fail('LINKS_UNUSED','Selected network contains unused symbolic bindings.');
+ return result;
 }
 
 async function loadPeerNetworkData({peerUrl,inspector,fetchImpl=fetch,signal,allowSourceTools=false}={}){

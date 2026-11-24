@@ -76,3 +76,18 @@ test('first-party browser storage is limited to the explicit local review contro
  }
  assert.deepEqual(hits,[{file:'src/main.js',marker:'localStorage'}]);
 });
+
+
+test('linked publication contains exact aliases and no peer-owned inference routing',async()=>{
+ const {resolveSymbolicPeerLinks,compileNetwork}=await import('../../../packages/sutra-runtime/index.js');
+ const manifest=JSON.parse(fs.readFileSync(path.join(app,'public/agents/agent-manifest.json')));
+ const links=JSON.parse(fs.readFileSync(path.join(app,'public/agents/links.json')));
+ const linked=JSON.parse(fs.readFileSync(path.join(app,'public/agents/linked_learner.network.json')));
+ const result=resolveSymbolicPeerLinks(linked,links,'linked_learner');
+ assert.deepEqual(result.tools[0].tools,['https://sutra-guide.aafnaipatro.com/agents/checklist']);
+ assert.throws(()=>compileNetwork(linked,{name:'linked_learner'}),e=>e.code==='REFERENCE');
+ assert.throws(()=>compileNetwork(result,{name:'linked_learner'}),e=>e.code==='REFERENCE');
+ compileNetwork(result,{name:'linked_learner',allowPeers:true});
+ assert.deepEqual(manifest.peer_policy,{mode:'closed'});
+ for(const publicDoc of [manifest,links])for(const field of ['apiKey','inference','router','modelOverride','credentials'])assert.equal(Object.hasOwn(publicDoc,field),false);
+});

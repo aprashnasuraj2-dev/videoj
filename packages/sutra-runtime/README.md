@@ -60,3 +60,7 @@ A synthetic provider-key canary test places a private key-shaped value only in t
 ## Reusable sanitized execution receipts
 
 `packages/sutra-runtime/trace-export.js` exposes `createSafeTraceReceipt` and `serializeSafeTraceReceipt`. It deliberately projects only public whitelisted runtime/consent fields, avoids getters, caps events and JSON size, and never copies raw trace payloads. It is an execution record, not proof of factual truth, safety, user adoption or compliant public release. The learner's peer workbench permits a user-initiated JSON download, tested in Chromium.
+
+## Explicit symbolic publication links
+
+The caller may opt in to `loadLocalNetwork({..., networkName:'linked_learner', resolvePublishedLinks:true})`. It reads same-origin links.json after the selected graph; exact aliases in its network map resolve to canonical absolute peer network URLs. Local names cannot be shadowed. Missing/unused/ambiguous or invalid references fail before remote contact. Default loading rejects unresolved symbols. Address resolution is not permission: `runNetwork` still requires peerRuntime and each artifact contact requires separate explicit consent. Peer metadata cannot choose the caller model. Published linked_learner is a development example, not an assertion that the proposed guide hostname is live.

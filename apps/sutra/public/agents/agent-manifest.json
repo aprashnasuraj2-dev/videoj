@@ -11,6 +11,12 @@
       "front_man": "learner",
       "hocon": "./v/61afec6b5cac95776050428c1e5f10bb58decf5b/source_learner.network.json",
       "description": "Scripted source retrieval through bounded same-origin MCP; synthetic catalog, no factual truth claim."
+    },
+    {
+      "name": "linked_learner",
+      "front_man": "learner",
+      "hocon": "./v/bcf648decc4f80ab57279b4fa72dae0c80b26923/linked_learner.network.json",
+      "description": "Opt-in symbolic guide link; closed default policy, no deployed peer asserted."
     }
   ],
   "allowed_peers": [],
