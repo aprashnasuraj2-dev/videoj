@@ -96,7 +96,8 @@ timingTranscript=mountTranscriptPanel(transcriptHost,{
  }
 });
 mountComparisonView(document.querySelector('#comparison-body'),{
- receipt:timingFixture.receipt,sources:content.sources,seekTo:seconds=>timingPlayer?.seek(seconds)
+ receipt:timingFixture.receipt,sources:content.sources,seekTo:seconds=>timingPlayer?.seek(seconds),
+ videoClaim:content.profile.videoClaim,guideClaim:content.profile.guideClaim,contentMode:content.profile.mode
 });
 const mediaHost=document.querySelector('.media-empty'),timingStatus=document.querySelector('#timing-status'),seekTiming=document.querySelector('#seek-timing');
 document.querySelector('#load-timing').addEventListener('click',async event=>{
