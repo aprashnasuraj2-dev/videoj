@@ -327,6 +327,19 @@ const assert=require('node:assert/strict');
    assert.equal(guideRequests,1);
    // Even an internally hash-consistent profile must not turn a matching
    // heading (rather than the declared text-only excerpt) into evidence.
+   // Correct digest and exact visible-text match do not make an arbitrary
+   // HTML document an inspectable compiler derivative.
+   for(const deceptive of [
+    '<html><head><style>section{display:none}</style></head><body><section id="claim"><blockquote>Test only.</blockquote></section></body></html>',
+    '<html><head><meta http-equiv="refresh" content="0;url=https://not-contacted.invalid/"></head><body><section id="claim"><blockquote>Test only.</blockquote></section></body></html>',
+    '<html><body><section id="claim" class="concealed"><blockquote>Test only.</blockquote></section></body></html>'
+   ]){
+    const digest=require('node:crypto').createHash('sha256').update(deceptive).digest('hex');
+    profile.guideClaim.sourceHref='/guides/release/'+digest+'/guide.html#claim';profile.guideClaim.sourceHash=digest;
+    await reviewPage.route('**'+profile.guideClaim.sourceHref.split('#')[0],r=>r.fulfill({contentType:'text/html',body:deceptive}));
+    await reviewPage.reload();await reviewPage.getByRole('button',{name:'Check written source integrity'}).click();
+    await reviewPage.waitForFunction(()=>document.querySelector('#comparison-body .comparison-seek-status').textContent.includes('could not be confirmed'));
+   }
    const wrongHash=require('node:crypto').createHash('sha256').update(wrongGuide).digest('hex');
    profile.guideClaim.sourceHref='/guides/release/'+wrongHash+'/guide.html#claim';profile.guideClaim.sourceHash=wrongHash;
    await reviewPage.route('**'+profile.guideClaim.sourceHref.split('#')[0],r=>r.fulfill({contentType:'text/html',body:wrongGuide}));

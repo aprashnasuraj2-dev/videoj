@@ -6,8 +6,15 @@ const safeString=(v,n)=>typeof v==='string'&&v.trim().length>0&&v.length<=n&&
 const id=/^[A-Za-z][A-Za-z0-9_.:-]{0,127}$/;
 const sourceKind=new Set(['video','guide']);
 const sha256=/^[a-f0-9]{64}$/;
-const safeSourceHref=v=>v===undefined||typeof v==='string'&&v.length<=300&&!/[\u0000-\u001f\u007f\\]/.test(v)&&
- (v.startsWith('./')||v.startsWith('/'))&&!v.includes('?')&&!/(^|\/)\.\.(?:\/|$)/.test(v)&&!/^\/\//.test(v);
+// Match the content profile's canonical ASCII path/anchor boundary. The
+// synthetic fixture additionally permits its explicitly relative './' path.
+const safeSourceHref=v=>{
+ if(v===undefined)return true;
+ if(typeof v!=='string'||v.length>300||!v.startsWith('/')&&!v.startsWith('./'))return false;
+ const parts=v.split('#');if(parts.length!==2||!/^[A-Za-z0-9._:-]{1,128}$/.test(parts[1]))return false;
+ const segments=parts[0].slice(v.startsWith('./')?2:1).split('/');
+ return segments.every(p=>/^[A-Za-z0-9._~-]+$/.test(p)&&p!=='.'&&p!=='..');
+};
 const isClaim=c=>!!c&&typeof c==='object'&&!Array.isArray(c)&&
  sourceKind.has(c.sourceKind)&&safeString(c.sourceId,128)&&id.test(c.sourceId)&&
  safeString(c.sourceVersion,128)&&safeString(c.scope,160)&&

@@ -96,3 +96,12 @@ test('ordinary claim or input accessors never execute when comparison refuses da
  const input={};Object.defineProperty(input,'video',{enumerable:true,get(){touched++;return pair().video;}});
  assert.equal(compareClaimPair(input).status,'invalid_source');assert.equal(touched,0);
 });
+
+test('comparison rejects URL-normalized source paths and noncanonical anchors before exposing links',()=>{
+ for(const href of ['/guides/%2e%2e/secret.html#claim','./guides/%2Fhidden#claim','/guides//lesson.html#claim','./guides/./lesson.html#claim','/guides/a b.html#claim','/guides/a.html','/guides/a.html#','/guides/a.html#claim#extra','/guides/a.html#%63laim','/guides/a.html#'+ 'a'.repeat(129)]){
+  const claims=pair();claims.guide.sourceHref=href;const result=compareClaimPair(claims);
+  assert.equal(result.status,'invalid_source',href);assert.equal(result.guide,null);
+ }
+ const claims=pair();claims.guide.sourceHref='/guides/release/'+claims.guide.sourceHash+'/lesson.html#claim';
+ assert.equal(compareClaimPair(claims).status,'unresolved_conflict');
+});

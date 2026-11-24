@@ -12,6 +12,26 @@ const node=(tag,cls,text)=>{
  return item;
 };
 const valueText=value=>value===undefined?'Unavailable':String(value);
+// The reviewed pack compiler publishes a deliberately small text-only
+// derivative, not arbitrary web markup. Inert parsing prevents execution
+// during inspection; this additional policy rejects non-compiler markup
+// that could conceal an otherwise exact excerpt in the opened document.
+const guideElements=new Set(['META','TITLE','MAIN','H1','H2','P','DL','DT','DD','CODE','SECTION','BLOCKQUOTE']);
+function assertInspectableGuide(fragment){
+ for(const el of fragment.querySelectorAll('*')){
+  if(el.namespaceURI!=='http://www.w3.org/1999/xhtml'||!guideElements.has(el.tagName))throw Error('Unsupported guide markup');
+  if(el.tagName==='META'){
+   const names=[...el.attributes].map(a=>a.name).sort().join(',');
+   if(names==='charset'&&el.getAttribute('charset').toLowerCase()==='utf-8')continue;
+   if(names==='content,name'&&['referrer','viewport','robots'].includes(el.getAttribute('name').toLowerCase()))continue;
+   if(names==='content,http-equiv'&&el.getAttribute('http-equiv').toLowerCase()==='content-security-policy'&&el.getAttribute('content')==="default-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'")continue;
+   throw Error('Unsupported guide metadata');
+  }
+  if(el.tagName==='SECTION'){
+   if(el.attributes.length!==1||!el.hasAttribute('id')||!/^[A-Za-z0-9._:-]{1,128}$/.test(el.id))throw Error('Unsupported guide section');
+  }else if(el.attributes.length)throw Error('Unsupported guide attributes');
+ }
+}
 
 export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guideClaim=null,contentMode='synthetic'}={}){
  if(!host||typeof host.replaceChildren!=='function')throw Error('Comparison host missing.');
@@ -87,7 +107,8 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
       if(digest!==claim.sourceHash)throw Error('Source hash mismatch');
       // Template content stays inert and detached: never mount source markup.
       const template=document.createElement('template');template.innerHTML=new TextDecoder('utf-8',{fatal:true}).decode(bytes);
-      const anchor=decodeURIComponent(href.hash.slice(1));
+      assertInspectableGuide(template.content);
+      const anchor=href.hash.slice(1);
       const matching=Array.from(template.content.querySelectorAll('[id]')).filter(element=>element.id===anchor);
       const anchored=matching.length===1?matching[0]:null;
       // The reviewed compiler emits one text-only blockquote; the bundled
