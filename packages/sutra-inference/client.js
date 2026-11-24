@@ -6,7 +6,7 @@ export function createProviderAdapter({origin,model,fetchImpl=fetch,timeoutMs=30
  return {mode:'provider',approvedModel:model,async chat({messages,tools=[],signal}){
   if(signal?.aborted)stop('CANCELLED');const controller=new AbortController(),cancel=()=>controller.abort();signal?.addEventListener('abort',cancel,{once:true});const timer=setTimeout(cancel,timeoutMs);
   try{
-   const response=await abortable(fetchImpl(`${origin}/api/v1/chat/completions`,{method:'POST',credentials:'same-origin',redirect:'error',headers:{'Content-Type':'application/json'},body:JSON.stringify({model,messages,tools,stream:true}),signal:controller.signal}),controller.signal);
+   const response=await abortable(fetchImpl(`${origin}/api/v1/chat/completions`,{method:'POST',credentials:'omit',redirect:'error',headers:{'Content-Type':'application/json'},body:JSON.stringify({model,messages,tools,stream:true}),signal:controller.signal}),controller.signal);
    if(!response.ok)throw new InferenceError(response.status===503?'UNAVAILABLE':response.status===429?'QUOTA':'REQUEST_REJECTED');
    if(!response.headers.get('content-type')?.includes('text/event-stream'))stop('STREAM_TYPE');
    const accumulator=makeAccumulator();for await(const chunk of readSse(response,{signal:controller.signal})){if(chunk.done)return accumulator.finish();accumulator.accept(chunk.data);}stop('INCOMPLETE_STREAM');

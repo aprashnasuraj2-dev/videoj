@@ -9,7 +9,7 @@ export function createSourceMcp({origin,sources,fetchImpl=fetch,signal,onReceipt
   if(++calls>12)bad();const controller=new AbortController(),cancel=()=>controller.abort();signal?.addEventListener('abort',cancel,{once:true});if(signal?.aborted)cancel();const timer=setTimeout(cancel,5000);let rejectAbort;const stopped=new Promise((_,reject)=>{rejectAbort=()=>reject(Error('Source request cancelled.'));controller.signal.addEventListener('abort',rejectAbort,{once:true});if(controller.signal.aborted)rejectAbort();});stopped.catch(()=>{});
   try{
    const id=++sequence;
-   const response=await Promise.race([fetchImpl(`${origin}/api/source-tools`,{method:'POST',redirect:'error',credentials:'same-origin',signal:controller.signal,headers:{'Content-Type':'application/json',Accept:'application/json, text/event-stream','MCP-Protocol-Version':'2025-06-18'},body:JSON.stringify({jsonrpc:'2.0',...(notification?{}:{id}),method,params})}),stopped]);
+   const response=await Promise.race([fetchImpl(`${origin}/api/source-tools`,{method:'POST',redirect:'error',credentials:'omit',signal:controller.signal,headers:{'Content-Type':'application/json',Accept:'application/json, text/event-stream','MCP-Protocol-Version':'2025-06-18'},body:JSON.stringify({jsonrpc:'2.0',...(notification?{}:{id}),method,params})}),stopped]);
    if(notification){if(response.status!==202)bad();return;}
    if(!response.ok||!response.headers.get('content-type')?.includes('application/json')||response.url&&new URL(response.url).origin!==origin)bad();
    const reader=response.body?.getReader();if(!reader)bad();const chunks=[];let count=0;

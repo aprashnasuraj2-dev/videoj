@@ -10,7 +10,10 @@ const path=require('node:path');const net=require('node:net');const fs=require('
  try{
   let ready=false;for(let i=0;i<60;i++){try{if((await fetch(base)).ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,200));}assert.ok(ready,logs);
   browser=await chromium.launch({headless:true});const page=await browser.newPage();const errors=[],requests=[];
-  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(r.url().includes('/api/'))requests.push(r.url());});
+  // Same-origin cookies can exist from another site path. SUTRA source/API
+  // requests never depend on them or disclose them to model/source tools.
+  await page.context().addCookies([{name:'sutra-cookie-canary',value:'do-not-send',url:base}]);
+  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(r.url().includes('/api/')){requests.push(r.url());assert.equal(r.headers().cookie,undefined,'no SUTRA API request should inherit browser cookies');}});
   await page.goto(base);await page.getByRole('heading',{name:'Ask about the evidence.'}).waitFor();
   assert.equal(requests.length,0,'static visit must not check dynamic status automatically');
   await page.getByRole('button',{name:'Check inference availability'}).click();
@@ -30,7 +33,7 @@ const path=require('node:path');const net=require('node:net');const fs=require('
   let mode='complete',calls=0;const chunk=(delta,finish_reason=null)=>({choices:[{index:0,delta,finish_reason}]});
   const sse=items=>items.map(x=>'data: '+JSON.stringify(x)+'\n\n').join('')+'data: [DONE]\n\n';
   await page.route('**/api/v1/chat/completions',async r=>{
-   calls++;assert.equal(r.request().headers()['x-sutra-catalog-sha256'],'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333');const body=r.request().postDataJSON();assert.equal(body.model,'synthetic-provider-test');assert.equal(r.request().headers().authorization,undefined);
+   calls++;assert.equal(r.request().headers()['x-sutra-catalog-sha256'],'a12d95aab97bbc047a2b88d73f4814072c48c3f2e55adeb0381a7b8d36c45333');const body=r.request().postDataJSON();assert.equal(body.model,'synthetic-provider-test');assert.equal(r.request().headers().authorization,undefined);assert.equal(r.request().headers().cookie,undefined);
    if(mode==='catalog-drift'&&body.messages.some(m=>m.role==='tool'&&m.name==='mcp_search_lesson')){await r.fulfill({status:409,json:{error:{code:'CONTENT_VERSION_MISMATCH'}}});return;}
    if(mode==='hold'){await new Promise(resolve=>setTimeout(resolve,800));await r.abort().catch(()=>{});return;}
    if(mode==='quota'||mode==='partial'&&body.messages.some(m=>m.role==='tool'&&m.name==='mcp_search_lesson')){await r.fulfill({status:429,json:{error:{code:'QUOTA'}}});return;}

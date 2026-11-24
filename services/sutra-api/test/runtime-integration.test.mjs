@@ -36,7 +36,7 @@ test('real provider adapter contract drives multi-agent runtime through same-ori
   origin:'https://sutra.test',model:'operator-approved',
   fetchImpl:async(url,opts)=>{
    assert.equal(url,'https://sutra.test/api/v1/chat/completions');
-   assert.equal(opts.credentials,'same-origin');assert.equal(opts.redirect,'error');
+   assert.equal(opts.credentials,'omit');assert.equal(opts.redirect,'error');
    assert.equal(opts.headers.Authorization,undefined);
    return handleInference(new Request(url,{...opts,headers:{...opts.headers,Origin:'https://sutra.test','CF-Connecting-IP':'192.0.2.44'}}),env,{
     fetchImpl:async(upstreamUrl,upstreamOpts)=>{
