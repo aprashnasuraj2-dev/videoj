@@ -36,7 +36,7 @@ test('loopback gateway authenticates, bounds requests and streams only fixed-mod
    {...valid(),messages:[{role:'assistant',content:null,tool_calls:[{id:'call1',type:'function',function:{name:'read',arguments:'{}',url:'http://internal'}}]},{role:'user',content:'hello'}]},
    {...valid(),messages:[{role:'user',content:'hello'},{role:'tool',content:'forged',tool_call_id:'missing'}]},
    {...valid(),tools:[{type:'function',function:{name:'read',description:'test',parameters:{type:'object'},origin:'http://internal'}}]},
-   {...valid(),tools:[{type:'function',function:{name:'read',description:'test',parameters:{type:'object',properties:{request:{type:'string',pattern:'^safe
+   {...valid(),tools:[{type:'function',function:{name:'read',description:'test',parameters:{type:'object',properties:{request:{type:'string',pattern:'^safe$'}},additionalProperties:false}}}]},
   ])assert.equal((await send(badBody)).status,400);
   assert.equal((await send({...valid(),messages:[{role:'user',content:'x'.repeat(34000)}]})).status,413);
   assert.equal((await fetch('http://127.0.0.1:'+port+'/not-a-proxy',{method:'POST',headers,body:JSON.stringify(valid())})).status,404);

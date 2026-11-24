@@ -72,5 +72,5 @@ test('literal search normalizes Unicode compatibility forms before matching with
  const t=createSourceTools([source],{now:()=>fixture.receipt.retrievedAt});
  const result=t.call('search_lesson',{query:'क़दम'});
  assert.equal(result.receipts.length,1);assert.equal(result.receipts[0].excerpt,'क़दम जाँच गर्नुहोस्');
- assert.equal(result.matchCount,1);assert.equal(result.truncated,false);
+ assert.equal(result.returnedCount,1);assert.equal(result.truncated,false);
 });
