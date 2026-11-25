@@ -145,6 +145,36 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await page.waitForFunction(()=>document.querySelector('#quiz-status').dataset.state==='conditional_question_resolved');
   assert.deepEqual(errors,[]);assert.equal(peerRequests.length,6);
   console.log('PASS: withdrawal restores two indistinguishable worlds, archives historical evidence, restore requires new read.');
+  await page.getByRole('button',{name:'Start conflict investigation'}).click();
+  await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.state==='conditional_observation_plan');
+  await page.getByRole('button',{name:'Read first report'}).click();
+  await page.waitForFunction(()=>document.querySelector('#conflict-reads').textContent==='1');
+  await page.getByRole('button',{name:'Read copied report'}).click();
+  await page.waitForFunction(()=>document.querySelector('#conflict-reads').textContent==='2');
+  await page.getByRole('button',{name:'Read conflicting report'}).click();
+  await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.state==='inconsistent_observations');
+  assert.match(await page.locator('#conflict-status').innerText(),/read_a \+ read_b/);
+  assert.match(await page.locator('#conflict-detail').innerText(),/sample_one: read_a, read_copy/);
+  async function saveConflict(name){
+   const dl=page.waitForEvent('download');await page.getByRole('button',{name:'Export conflict investigation'}).click();
+   const bundle=JSON.parse(fs.readFileSync(await (await dl).path(),'utf8'));fs.writeFileSync(path.join(output,name),JSON.stringify(bundle,null,2));return bundle;
+  }
+  const conflicting=await saveConflict('conflict-evidence.json');assert.deepEqual(conflicting.result.conflict,['read_a','read_b']);
+  await page.screenshot({path:path.join(output,'conflicting-sources.png'),fullPage:true});
+  await page.getByRole('button',{name:'Withdraw shared lineage'}).click();
+  await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.state==='conditional_observation_plan');
+  assert.equal(await page.locator('#conflict-worlds').innerText(),'2');assert.equal(await page.locator('#conflict-next').innerText(),'read_c');
+  assert.equal(await page.locator('#conflict-a').isDisabled(),true);assert.equal(await page.locator('#conflict-copy').isDisabled(),true);
+  const withdrawn=await saveConflict('conflict-withdrawn.json');assert.deepEqual(withdrawn.result.unavailableSources,['lab_a','lab_copy']);
+  await page.getByRole('button',{name:'Restore shared lineage'}).click();
+  await page.waitForFunction(()=>!document.querySelector('#conflict-a').disabled);
+  assert.equal(await page.locator('#conflict-reads').innerText(),'1');
+  await page.getByRole('button',{name:'Read second variable'}).click();
+  await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.state==='invariant_decision');
+  assert.equal(await page.locator('#conflict-next').innerText(),'constraint_refuted');
+  await saveConflict('conflict-resolved.json');
+  assert.deepEqual(errors,[]);assert.equal(peerRequests.length,6);
+  console.log('PASS: browser conflict, minimum witness, declared lineage withdrawal and restoration, resolved after new observation.');
   await page.screenshot({path:path.join(output,'subgroup-investigation.png'),fullPage:true});
   console.log('PASS: consent-denied zero traffic, actual two-origin data-only scripted adviser, cheaper local policy 6→2, redundant and forged peers, exact standardized reversal, transfer, actual export.');
   await page.screenshot({path:path.join(output,'workspace.png'),fullPage:true});

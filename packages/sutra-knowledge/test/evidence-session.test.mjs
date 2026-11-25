@@ -40,3 +40,10 @@ test('single source withdrawal does not silently remove independent declared lin
  assert.deepEqual(restored.activeEvidence.map(e=>e.observationId),['read_b']);
  assert.deepEqual(restored.survivingWorlds,['w10','w11']);
 });
+
+test('shared parser bound and Unicode source identity remain fail closed',async()=>{
+ const {caseText}=await conflictFixture();
+ await assert.rejects(()=>evaluateEvidenceSession(caseText,' '.repeat(262145)),SyntaxError);
+ await assert.rejects(()=>sourceDigest('\ud800'),/EVIDENCE_SIZE/);
+ assert.notEqual(await sourceDigest('😀'),await sourceDigest('\ufffd'));
+});

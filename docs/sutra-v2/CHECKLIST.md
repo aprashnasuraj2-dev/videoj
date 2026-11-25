@@ -50,10 +50,11 @@ Pending until exact evidence; expand only when new concrete product requirements
 - [x] V2-A05 Actual two-origin browser consent, manifest and graph retrieval, leaf adviser execution with pinned scripted runtime, no credential/referrer disclosure, no contact after denial; no independent ownership claim.
 - [x] V2-L07 Read host-pinned original source after planning, exact value prunes worlds, preserve conditional result and transfer interpretation; reject changed bytes; export full case and observation receipt.
 
-- [ ] V2-F07 Simulate withdrawal of the single host-pinned source behind multiple published capabilities: retain valid world receipts, remove all dependent observations, restore two-world ambiguity, export historical/current separation; restoration requires new evidence read.
-- [ ] V2-L08 Independent fixed-profile Python subgroup replay of actual browser exports: exact graph and receipt recomputation, direct Fraction standardization, independently optimal two-world policy, withdrawal witness, five hostile mutations.
+- [x] V2-F07 Simulate withdrawal of the single host-pinned source behind multiple published capabilities: retain valid world receipts, remove all dependent observations, restore two-world ambiguity, export historical/current separation; restoration requires new evidence read.
+- [x] V2-L08 Independent fixed-profile Python subgroup replay of actual browser exports: exact graph and receipt recomputation, direct Fraction standardization, independently optimal two-world policy, withdrawal witness, five hostile mutations.
 
 - [ ] V2-F08 General finite evidence session: host-pinned source values, scope/dimension checks, exact world filtering, minimum-cardinality conflict witness, explicit source and declared-lineage withdrawal/restoration, historical evidence preserved and no auto-restoration.
-- [ ] V2-F09 Integrate generalized conflict session into actual learner/browser and independent replay; prove source/lineage behavior from actual exported observations.
+- [ ] V2-F09 Integrate generalized conflict session into actual learner/browser and prove source/lineage behavior from actual exported observations.
+- [ ] V2-F10 Independent general conflict replay and adversarial minimality benchmark; verify event/source pins, historical lineage, exact surviving worlds and witness.
 
 Verified kernel and independent reference evidence: [V2-001 observations](SESSIONS.md). Next: exact V2-L06/F06/A05/L07 CI; then generalized cross-origin F03/A02 and learner replay L04, measured content L03. Finish runtime authority and deployed Observatory gates. See PLAN.md for all 28 workstreams.

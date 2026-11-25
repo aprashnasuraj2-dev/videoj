@@ -12,7 +12,7 @@ const freeze=x=>{if(x&&typeof x==='object'){for(const v of Object.values(x))free
 const dimension=d=>Array.isArray(d)&&d.length===3&&d.every(x=>Number.isInteger(x)&&x>=-16&&x<=16&&!Object.is(x,-0));
 const sameDim=(a,b)=>a.every((x,i)=>x===b[i]);
 export async function sourceDigest(text){
- if(typeof text!=='string'||text.length>65536)fail('EVIDENCE_SIZE');
+ if(typeof text!=='string'||text.length>65536||/[\ud800-\udfff]/u.test(text))fail('EVIDENCE_SIZE');
  return 'sha256:'+Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text))),v=>v.toString(16).padStart(2,'0')).join('');
 }
 function exactValue(value){
@@ -31,7 +31,7 @@ function admit(text){
  !Array.isArray(c.worlds)||c.worlds.length<1||c.worlds.length>12||!Array.isArray(c.sources)||c.sources.length<1||c.sources.length>8||
  !Array.isArray(c.offers)||c.offers.length>8)fail('EVIDENCE_CASE');
  for(const w of c.worlds)if(!keys(w,['id','graphText','constraintId'])||!id(w.id)||!id(w.constraintId)||typeof w.graphText!=='string'||w.graphText.length>65536)fail('EVIDENCE_WORLD');
- for(const s of c.sources)if(!keys(s,['id','version','digest','lineage'])||!id(s.id)||!id(s.version)||!SHA.test(s.digest)||!id(s.lineage))fail('EVIDENCE_SOURCE_PIN');
+ for(const s of c.sources)if(!keys(s,['id','version','digest','lineage'])||!id(s.id)||!id(s.version)||typeof s.digest!=='string'||!SHA.test(s.digest)||!id(s.lineage))fail('EVIDENCE_SOURCE_PIN');
  for(const o of c.offers)if(!keys(o,['id','nodeId','sourceId','cost','dimension'])||!id(o.id)||!id(o.nodeId)||!id(o.sourceId)||!Number.isSafeInteger(o.cost)||o.cost<1||o.cost>1000000||!dimension(o.dimension)||!c.sources.some(s=>s.id===o.sourceId))fail('EVIDENCE_OFFER');
  if(!unique(c.worlds,'id')||!unique(c.sources,'id')||!unique(c.offers,'id'))fail('EVIDENCE_DUPLICATE');
  // Duplicate source/node offers can disguise repeated reads as corroboration.
@@ -57,7 +57,7 @@ function minimalConflict(reads,all){
 }
 export async function evaluateEvidenceSession(caseText,eventText='[]'){
  const c=admit(caseText);
- const events=parseUniqueJson(eventText,{maxChars:524288,maxDepth:6});
+ const events=parseUniqueJson(eventText,{maxChars:262144,maxDepth:6});
  if(!Array.isArray(events)||events.length>24)fail('EVIDENCE_EVENTS');
  const sources=new Map(c.sources.map(s=>[s.id,s])),offers=new Map(c.offers.map(o=>[o.id,o]));
  const worldReports=[];

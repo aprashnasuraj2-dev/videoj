@@ -5,10 +5,9 @@
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
   "session": "V2-005",
   "next": [
-    "V2-F07",
-    "V2-L08",
     "V2-F08",
     "V2-F09",
+    "V2-F10",
     "V2-F03",
     "V2-A02",
     "V2-L04",
@@ -17,7 +16,7 @@
     "V2-F05",
     "V2-O02"
   ],
-  "state": "subgroup_verified_withdrawal_and_general_conflict_candidate",
+  "state": "subgroup_withdrawal_verified_general_conflict_corrected_browser_candidate",
   "verified": [
     {
       "id": "V2-M01",
@@ -161,16 +160,28 @@
       "sourceRevision": "e45aadf344b9e9a8af6976cb6a827441d9c02ca8",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517311759/job/138879970561",
       "description": "Actual two-origin browser scripted adviser, denial zero traffic, consented requests, 6→2 cost reduction, redundant/forged capability, exact subgroup reversal and actual export; 25 Node groups passed."
+    },
+    {
+      "id": "V2-F07",
+      "sourceRevision": "c77cb1447d9253436634d74f59e7a56776cfedaa",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517521180/job/138880689328",
+      "description": "Actual Chromium source-withdrawal simulation and restored read; independent Python replay of actual subgroup and withdrawal exports including five hostile changes."
+    },
+    {
+      "id": "V2-L08",
+      "sourceRevision": "c77cb1447d9253436634d74f59e7a56776cfedaa",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517521180/job/138880689328",
+      "description": "Actual Chromium source-withdrawal simulation and restored read; independent Python replay of actual subgroup and withdrawal exports including five hostile changes."
     }
   ],
   "release": "not_authorized",
   "submission": "not_started",
   "lastFailed": {
-    "sourceRevision": "49764029d2f315f40fdd7f08da949f5d1170fc65",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45516629582/job/138877614814",
-    "reason": "browser instrumentation counted same-origin media blob as external request; final assertion failed"
+    "sourceRevision": "4003e816be93a97197faa472ef6f73d57bf5731f",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517668625/job/138881199452",
+    "reason": "General evidence session set event parser maxChars=524288 above shared parser cap 262144. Corrected in next candidate."
   },
-  "lastVerifiedKernelSource": "e45aadf344b9e9a8af6976cb6a827441d9c02ca8",
+  "lastVerifiedKernelSource": "c77cb1447d9253436634d74f59e7a56776cfedaa",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
