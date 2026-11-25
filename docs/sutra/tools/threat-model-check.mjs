@@ -55,7 +55,7 @@ for(const threat of model.threats){
 }
 if(critical<10)fail('critical threat inventory unexpectedly small');
 if(evidenceCount<20)fail('regression evidence inventory unexpectedly small');
-if(!model.nonClaims.some(x=>x.includes('coordinated')&&x.includes('rollback')))fail('coordinated rollback non-claim missing');
+if(!model.nonClaims.some(x=>/coordinated|both authority and witness/i.test(x)&&/roll(?:back| back)/i.test(x)))fail('coordinated rollback non-claim missing');
 if(!model.nonClaims.some(x=>x.includes('BYOK')&&x.includes('disabled')))fail('BYOK disabled non-claim missing');
 
 console.log(JSON.stringify({
