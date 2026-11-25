@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-056",
+  "session": "V2-057",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2861,13 +2861,20 @@
     {
       "id": "V2-LK02-INTENT-IR",
       "track": "B",
-      "status": "Implemented but unverified",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK01-SEMANTIC-TRIAGE"
       ],
-      "scope": "Preserve original natural-language question, candidate meanings and separate nine semantic obligations; source spans, entity, scope, unit, modality, negation, quantifier, baseline, causality, method, review and unknowns. V2-054 candidate: bounded separate annotation envelope with 13 explicit facets, exact source spans by reviewed binding/claim ID, separate nine obligations, original question and coverage, no truth or human sign-off. Automatic extraction and UI remain open.",
+      "scope": "Preserve original natural-language question, candidate meanings and separate nine semantic obligations; source spans, entity, scope, unit, modality, negation, quantifier, baseline, causality, method, review and unknowns. V2-054 candidate: bounded separate annotation envelope with 13 explicit facets, exact source spans by reviewed binding/claim ID, separate nine obligations, original question and coverage, no truth or human sign-off. Automatic extraction and UI remain open. Exact scoped annotation tests verified; wider automatic interpretation and review remain open.",
       "acceptance": "Closed versioned schema, exact source-bound extraction, omission/negation/scope adversaries; no invented inputs.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK02-INTENT-IR",
+          "sourceRevision": "6684c3f41fdf22c73aa9d43c89b273d63071f35f",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45603794880/job/139169262471",
+          "description": "All nine workflows green at V2-054, knowledge PR 45603794880 and push 45603785280. Scoped 13-facet annotations, nine obligations and exact source-linked references; broader semantic compiler remains open."
+        }
+      ]
     },
     {
       "id": "V2-LK03-PATHWAYS",
@@ -3009,12 +3016,12 @@
     {
       "id": "V2-LK15-UNIFIED-WORKSPACE",
       "track": "B",
-      "status": "Not started",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK07-AMBIGUITY-REVIEW",
         "V2-LK11-IMPACT-REPORT"
       ],
-      "scope": "Question → evidence → interpretations → review → investigation → conclusion → challenge → revision → export, manual/offline mode, accessible progressive disclosure.",
+      "scope": "Question → evidence → interpretations → review → investigation → conclusion → challenge → revision → export, manual/offline mode, accessible progressive disclosure. V2-057 candidate: manual reviewed workspace now preserves labels, source links, version export, separate pin, caller baseline import and evidence correction impact. Actual browser tests pending; stable candidate IDs, progressive source review, broader canvas, offline independent replay and accessibility acceptance remain open.",
       "acceptance": "Actual browser journey, persistence, cancel/error recovery, keyboard/mobile and no-model pathway.",
       "evidence": []
     },

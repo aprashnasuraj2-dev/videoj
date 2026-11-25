@@ -2,13 +2,18 @@ import {sealReviewedDraft,draftComparisonProposal} from '../../../packages/sutra
 import {exportReviewedProposal} from '../../../packages/sutra-knowledge/reviewed-claim-compiler.js';
 import {reviewedSnapshotDigest,MAX_REVIEWED_SNAPSHOT_BYTES} from '../../../packages/sutra-knowledge/reviewed-snapshot.js';
 import {exportReviewedOrderContrast} from '../../../packages/sutra-knowledge/reviewed-order-contrast.js';
+import {FACETS} from '../../../packages/sutra-knowledge/semantic-investigation.js';
+import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js';
+import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
+let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map();
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
 function control(){
  for(const id of controls)by(id).disabled=busy;
  if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;}
+ semanticControl();
 }
 function invalidate(message){epoch++;sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
@@ -22,7 +27,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 by('question').addEventListener('input',()=>invalidate('Question changed. Re-seal before evaluating a proposal.'));
@@ -68,14 +73,15 @@ function renderBatch(){
  by('batch-count').textContent=stagedProposals.length+' / 8 staged proposals';
  by('batch-list').replaceChildren();
  for(const p of stagedProposals){const row=document.createElement('p');row.textContent=p.id+' · '+new TextEncoder().encode(p.proposalText).length+' bytes (untrusted)';by('batch-list').append(row);}
+ renderSemanticRows();
 }
-function clearBatch(){stagedProposals=[];batchCurrent=null;by('batch-result').textContent='';renderBatch();}
+function clearBatch(){stagedProposals=[];batchCurrent=null;annotations=new Map();invalidateSemantic();by('batch-result').textContent='';renderBatch();}
 by('batch-add').onclick=()=>{
  if(busy||!sealed||!by('proposal').value||stagedProposals.length>=8)return;
  const p={id:'proposal_'+(stagedProposals.length+1),proposalText:by('proposal').value};
  const candidate=[...stagedProposals,p],batchText=JSON.stringify({version:1,contractDigest:sealed.pin,proposals:candidate});
  if(p.proposalText.length>65536||batchText.length>262144){status('refused','REFUSED: staged batch exceeds bounded input profile.');return;}
- stagedProposals=candidate;batchCurrent=null;by('batch-result').textContent='';renderBatch();control();status('staged','Exact untrusted proposal staged; later edits do not change this saved copy.');
+ stagedProposals=candidate;batchCurrent=null;invalidateSemantic();by('batch-result').textContent='';renderBatch();control();status('staged','Exact untrusted proposal staged; later edits do not change this saved copy.');
 };
 by('batch-clear').onclick=()=>{if(busy)return;clearBatch();control();status('sealed','Staged proposals cleared. Reviewed contract retained.');};
 by('batch-run').onclick=()=>work(async ticket=>{
@@ -89,4 +95,81 @@ by('batch-run').onclick=()=>work(async ticket=>{
  batchCurrent=bytes;status('batch_ready','Conditional order relations computed. Unaligned expressions remain unclassified; semantic relevance and source truth are not established.');
 });
 by('batch-export').onclick=()=>{if(batchCurrent&&!busy)download(batchCurrent,'sutra-reviewed-order-contrast.json','application/json');};
-renderBatch();refresh();control();
+function invalidateSemantic(){
+ semanticCurrent=null;impactCurrent=null;by('semantic-pin').textContent='No version evaluated.';by('semantic-result').textContent='';by('impact-result').textContent='';
+}
+function semanticControl(){
+ for(const e of by('semantic-list').querySelectorAll('input,select'))e.disabled=busy;
+ const ready=!!sealed&&stagedProposals.length>=2&&stagedProposals.every(p=>annotations.get(p.id)?.meaning.trim());
+ by('semantic-run').disabled=busy||!ready;
+ for(const id of ['semantic-export','semantic-export-pin','semantic-retain'])by(id).disabled=busy||!semanticCurrent;
+ by('baseline-file').disabled=busy;by('baseline-pin').disabled=busy;by('baseline-import').disabled=busy;
+ by('baseline-clear').disabled=busy||!baseline;by('impact-export').disabled=busy||!impactCurrent;
+}
+function renderSemanticRows(){
+ const list=by('semantic-list');list.replaceChildren();
+ for(const p of stagedProposals){
+  const a=annotations.get(p.id)??{meaning:'',binding:''};annotations.set(p.id,a);
+  const label=document.createElement('label'),input=document.createElement('input');
+  input.id='review-meaning-'+p.id;input.maxLength=2048;input.autocomplete='off';input.value=a.meaning;
+  label.htmlFor=input.id;label.textContent=p.id+' — proposed meaning';
+  const bindingLabel=document.createElement('label'),select=document.createElement('select');
+  select.id='review-meaning-link-'+p.id;bindingLabel.htmlFor=select.id;bindingLabel.textContent='Optional reviewed quantity reference';
+  const empty=document.createElement('option');empty.value='';empty.textContent='No reference declared';select.append(empty);
+  for(const b of bindings){const option=document.createElement('option');option.value=b.id;option.textContent=b.id;select.append(option);}
+  select.value=a.binding;
+  const change=()=>{epoch++;annotations.set(p.id,{meaning:input.value,binding:select.value});invalidateSemantic();semanticControl();};
+  input.addEventListener('input',change);select.addEventListener('change',change);
+  const row=document.createElement('div');row.append(label,input,bindingLabel,select);list.append(row);
+ }
+}
+function semanticText(version){
+ const i=version.report.investigation;
+ return [i.triage.state.replaceAll('_',' '),'Original question: '+i.originalQuestion.text,...i.candidates.map(c=>c.id+' — '+c.meaning+' · '+(c.computation?.status??c.reason)+' · '+c.questionCoverage+' · meaning UNVERIFIED · method UNRESOLVED'),'No source truth, relevance or decision authority established.'].join('\n');
+}
+function impactText(r){
+ return ['Source changes: '+(r.sourceChanges.map(s=>s.id+' '+s.change).join(', ')||'none'),'Question changed: '+(r.questionChanged?'yes':'no'),
+  ...r.candidates.map(c=>c.id+' — '+c.outcome.replaceAll('_',' ')+' · dependency affected '+(c.dependencyAffected?'yes':'no')+' · review '+(c.reviewRequired?'required':'no new scoped dependency issue')),
+  'New divergence: '+(r.triage.newDivergence?'yes':'no'),'Missing/unresolved: '+(r.missing.map(c=>c.id+' '+c.reason).join(', ')||'none'),'Full replay of both versions; no empirical or semantic assurance.'].join('\n');
+}
+function baselineState(){by('baseline-state').textContent=baseline?'Retained baseline '+baseline.digest+' · '+baseline.report.investigation.originalQuestion.text:'No baseline retained.';}
+by('semantic-run').onclick=()=>work(async ticket=>{
+ if(!sealed||stagedProposals.length<2)return;
+ invalidateSemantic();semanticControl();
+ const batchText=JSON.stringify({version:1,contractDigest:sealed.pin,proposals:stagedProposals});
+ const candidates=stagedProposals.map(p=>{
+  const a=annotations.get(p.id);if(!a?.meaning.trim())throw Error('SEMANTIC_MEANING_REQUIRED');
+  const facets=Object.fromEntries(FACETS.map(k=>[k,null]));
+  facets.definition={statement:a.meaning,references:a.binding?[{kind:'binding',id:a.binding}]:[]};
+  return {id:p.id,meaning:a.meaning,facets};
+ });
+ const annotationText=JSON.stringify({version:1,contractDigest:sealed.pin,batchDigest:await casePin(batchText),candidates});
+ const prior=baseline;
+ const version=await sealInvestigationVersion({previousDigest:prior?.digest??null,contractText:sealed.contractText,contractPin:sealed.pin,batchText,annotationText,annotationPin:await casePin(annotationText)});
+ if(ticket!==epoch)return;
+ const impact=prior?await compareInvestigationVersions(prior.versionText,prior.digest,version.versionText,version.digest):null;
+ if(ticket!==epoch)return;
+ semanticCurrent=version;impactCurrent=impact;
+ by('semantic-pin').textContent=version.digest;by('semantic-result').textContent=semanticText(version);
+ if(impact)by('impact-result').textContent=impactText(impact);
+ status('semantic_ready',impact?'Version replayed and compared with retained baseline. Conditional outcomes and unresolved meaning remain separate.':'Version sealed. Retain its digest separately; no interpretation or source truth established.');
+});
+by('semantic-export').onclick=()=>{if(semanticCurrent&&!busy)download(semanticCurrent.versionText,'sutra-investigation-version.json','application/json');};
+by('semantic-export-pin').onclick=()=>{if(semanticCurrent&&!busy)download(semanticCurrent.digest+'\n','sutra-investigation-version.sha256','text/plain');};
+by('semantic-retain').onclick=()=>{if(!semanticCurrent||busy)return;baseline=semanticCurrent;impactCurrent=null;by('impact-result').textContent='';baselineState();semanticControl();status('semantic_ready','Current version retained as baseline in this tab. Export the exact version and digest to keep it across sessions.');};
+by('baseline-clear').onclick=()=>{if(busy)return;baseline=null;impactCurrent=null;by('impact-result').textContent='';baselineState();semanticControl();};
+by('baseline-import').onclick=()=>{
+ const file=by('baseline-file').files?.[0],digest=by('baseline-pin').value.trim();
+ return work(async ticket=>{
+  if(!file||!file.size||file.size>262144)throw Error('REVISION_FILE_SIZE');
+  const bytes=new Uint8Array(await file.arrayBuffer());
+  if(bytes.length!==file.size||bytes.length>262144)throw Error('REVISION_FILE_SIZE');
+  const versionText=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(bytes);
+  const report=await replayInvestigationVersion(versionText,digest);if(ticket!==epoch)return;
+  baseline={versionText,digest,report};invalidateSemantic();baselineState();
+  by('baseline-file').value='';by('baseline-pin').value='';
+  status('baseline_ready','Exact saved baseline replayed from separately pinned bytes. Stage a corrected version to compare.');
+ });
+};
+by('impact-export').onclick=()=>{if(impactCurrent&&semanticCurrent&&baseline&&!busy)download(JSON.stringify({beforeVersion:baseline.versionText,beforeDigest:baseline.digest,afterVersion:semanticCurrent.versionText,afterDigest:semanticCurrent.digest,impact:impactCurrent}),'sutra-investigation-impact.json','application/json');};
+renderBatch();refresh();baselineState();control();

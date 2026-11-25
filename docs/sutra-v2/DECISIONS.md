@@ -18,3 +18,7 @@ Persist exact input bytes rather than trusted derived verdicts. The version dige
 ## V2-056
 
 Use explicit synthetic counterfactual plan over already admitted typed graphs. Do not edit actual source bytes, transplant real provenance onto hypothetical inputs or invent measurements. Every changed binding is consistent across duplicate graph leaves and proposals. Retain baseline conditional status; a divergence is a witness of different formal behavior only, not a semantic verdict. Fresh replay is the oracle for cache reuse, not independent semantic verification. Bound scenarios/candidates and retain unresolved computation under invalid arithmetic. Automatic test generation and domain feasibility are separate tasks.
+
+## V2-057
+
+Reuse the reviewed workspace instead of creating a disconnected synthetic-only UI. Require explicit candidate meaning text; optional source-bound reference is declared, not proof. Save exact version input and separate digest; no automatic localStorage, credentials or external disclosure. Re-import only after bounded UTF-8 decode and pin-checked full replay. Draft edits invalidate stale exports; retained baseline is intentionally separate and cleared explicitly. A stage-order ID is a manual, scoped correspondence rule, not semantic identity; candidate meaning or formula changes require review. Browser controls use textContent, no untrusted HTML. Full replay may be slower than incremental; no latency claim.
