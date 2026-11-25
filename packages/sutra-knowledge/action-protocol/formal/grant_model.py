@@ -32,7 +32,7 @@ def inv(s):
 def safe_steps(s):
     epoch,revoked,admitted,phase,effects,reconciled=s
     out=[]
-    if epoch<MAX:
+    if phase=="idle" and epoch<MAX:
         out.append(("AdvanceEpoch",(epoch+1,revoked,admitted,phase,effects,reconciled)))
     if phase=="idle" and active(s):
         out.append(("ReserveDispatch",(epoch,revoked,True,"dispatching",effects,reconciled)))
@@ -56,6 +56,8 @@ def mutant_steps(s,kind):
         out.append(("ReconcileUnadmitted",(epoch,revoked,admitted,phase,effects,True)))
     if kind=="race" and phase=="dispatching" and not revoked:
         out.append(("RevokeDuringDispatch",(epoch,True,admitted,phase,effects,reconciled)))
+    if kind=="epoch-race" and phase=="dispatching" and epoch<MAX:
+        out.append(("AdvanceEpochDuringDispatch",(epoch+1,revoked,admitted,phase,effects,reconciled)))
     if kind=="duplicate" and phase=="dispatching" and effects==1:
         out.append(("DuplicateEffect",(epoch,revoked,admitted,"idle",2,reconciled)))
     return out
@@ -99,6 +101,7 @@ for kind,expected in [
     ("expired","DispatchAuthorized"),
     ("reconcile","ReconcileRequiresAdmission"),
     ("race","DispatchAuthorized"),
+    ("epoch-race","DispatchAuthorized"),
     ("duplicate","AtMostOneEffect"),
 ]:
     discovered,trace,bad=counterexample(kind,expected)
