@@ -4,7 +4,7 @@ import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {alignedInvestigationExport,ALIGNED_VERSION} from './aligned-investigation.js';
 import {casePin} from './pinned-investigation.js';
 export const ALIGNED_CAPSULE='sutra-aligned-proof-capsule/v1';
-export const MAX_ALIGNED_CAPSULE_BYTES=1048576;
+export const MAX_ALIGNED_CAPSULE_BYTES=262144;
 const HASH=/^sha256:[a-f0-9]{64}$/;
 const LIMITATIONS=Object.freeze([
  'Finite aligned typed worlds and declared source lineage only.',

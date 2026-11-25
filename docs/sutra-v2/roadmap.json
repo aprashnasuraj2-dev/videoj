@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-027",
+  "session": "V2-028",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2550,7 +2550,16 @@
         "V2-D02-CAPSULE",
         "V2-D09-WIRE-PARITY"
       ],
-      "scope": "Exact aligned finite-case snapshot, separate independently retained case and snapshot pins, strict bounded replay, browser import/export and independent offline archive with explicit aligned profile. No automatic adoption, publisher identity, source truth, semantic validation, model completeness or freshness."
+      "scope": "Exact aligned finite-case snapshot, separate independently retained case and snapshot pins, strict bounded replay, browser import/export and independent offline archive with explicit aligned profile. No automatic adoption, publisher identity, source truth, semantic validation, model completeness or freshness. Exact capsule aggregate capped at 256 KiB, preserving shared strict parser.",
+      "failureEvidence": [
+        {
+          "sourceRevision": "12e2d7b221136d56f53103bb3205a6deeb1876ab",
+          "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576203164",
+          "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576209816",
+          "reason": "Both actual Chromium jobs failed at browser.cjs:388 waiting for valid aligned snapshot verification (push 139074648305, PR 139074670037). Push knowledge job 139074647736 failed all four new capsule groups (56 passed, 4 failed). The local exact blob 0063fa41d7aebdddfaad7bc0b5af34ed37e7f412 and test 85c326a1466467aacb2a205afd15781d65b671cc reproduced all four failures. Root cause: strict-json.js rejects maxChars > 262144 before parsing, so passing 1048576 refused every valid snapshot. Seven auxiliary workflows passed. Failed browser artifact 15004926225 digest sha256:51c9899a483c0e973b2bfe622f5e32e050f69ba8dfa06e2de090512a2a5bc51e preserved. No verification credit.",
+          "resolutionStatus": "candidate constrains exact bytes to 262144 in both implementations and browser, preserving shared parser; pending exact CI"
+        }
+      ]
     }
   ]
 }

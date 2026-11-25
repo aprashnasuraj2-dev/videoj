@@ -7,7 +7,7 @@ from verify_conflict import bounded_load, rawhash
 from verify_pinned_investigation import replay, alignment, ALIGNED_VERSION, bounded_text
 
 FORMAT='sutra-aligned-proof-capsule/v1'
-MAX_BYTES=1048576
+MAX_BYTES=262144
 PIN=re.compile(r'sha256:[a-f0-9]{64}',re.ASCII)
 LIMITATIONS=[
  'Finite aligned typed worlds and declared source lineage only.',
