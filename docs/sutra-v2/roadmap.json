@@ -372,8 +372,10 @@
           "adversarialTests": "Changed bytes, invalid inputs, missing module, excessive work",
           "verificationMethod": "Rust tests, browser matrix, size/startup benchmark",
           "status": "Not started",
-          "evidence": [],
-          "knownLimitations": "Existing bounded support tests are not general policy execution or physical hardware tests"
+          "evidence": [
+            "Candidate pending exact CI: V2-only static CSP, Chromium external-script negative control and exact Pages guide-origin transform; parent 9c6aaa593e99c5c469a28d154f611d2e57e3ae69"
+          ],
+          "knownLimitations": "Existing bounded support tests are not general policy execution or physical hardware tests Packaged V2 CSP fix awaits exact immutable source CI; deployed HTTPS remains unverified."
         }
       ]
     },

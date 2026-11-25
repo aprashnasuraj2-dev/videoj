@@ -3,8 +3,9 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-013",
+  "session": "V2-014",
   "next": [
+    "V2-P07-WASM",
     "V2-RUNTIME-02",
     "V2-P05-RECOVERY",
     "V2-P05-ROLLBACK",
@@ -17,7 +18,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "causal_compensation_authority_exact_verified_v2_entrypoint_migration_and_physical_durability_next",
+  "state": "v2_static_csp_wasm_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -255,7 +256,18 @@
     "resolutionRevision": "6a862dd5d349538d6bcc32335a810fbe08cbfd33",
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
-  "pendingCandidate": null,
+  "pendingCandidate": {
+    "sourceRevision": null,
+    "sourceParent": "9c6aaa593e99c5c469a28d154f611d2e57e3ae69",
+    "identityRule": "Immutable commit introducing this checkpoint; reconcile exact HEAD and record SHA after CI.",
+    "status": "candidate_pending_exact_ci",
+    "checks": [
+      "V2 static CSP",
+      "Chromium WASM and JS eval controls",
+      "Pages candidate exact guide-only policy delta",
+      "knowledge push and PR; ingress PR"
+    ]
+  },
   "previousPendingCandidate": {
     "sourceRevision": "1704e7c301f0edc8267659ad13a4e790ccd93642",
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45542920604",
@@ -4990,5 +5002,21 @@
     ],
     "evidenceRule": "Candidate code remains pending until the exact required workflow set for that immutable source revision is observed; later commits do not inherit earlier green CI.",
     "releaseRule": "Continuation alone authorizes no merge, release, paid inference, production/DNS change, public deployment or competition submission."
+  },
+  "reconciledEntryParent": {
+    "sourceRevision": "9c6aaa593e99c5c469a28d154f611d2e57e3ae69",
+    "prRuns": [
+      45565047379,
+      45565047355,
+      45565047258,
+      45565047410,
+      45565047405,
+      45565047260,
+      45565047340,
+      45565047262
+    ],
+    "pushRun": 45565038532,
+    "conclusion": "success",
+    "limitation": "parent CI did not test real packaged CSP; no packaging promotion"
   }
 }

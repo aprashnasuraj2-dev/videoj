@@ -3,6 +3,9 @@ import {copyFile,mkdir} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {dirname} from 'node:path';
 const source=new URL('../sutra/public/',import.meta.url),target=new URL('./dist/',import.meta.url);
-for(const name of ['content/content-profile.json','content/source-catalog.json','transcripts/synthetic-timing.txt','media/timing-fixture.mp4','_headers']){
+for(const name of ['content/content-profile.json','content/source-catalog.json','transcripts/synthetic-timing.txt','media/timing-fixture.mp4']){
  const dst=fileURLToPath(new URL(name,target));await mkdir(dirname(dst),{recursive:true});await copyFile(new URL(name,source),dst);
 }
+
+// The WASM-capable policy belongs to V2, not the inherited learner.
+await copyFile(new URL('./_headers',import.meta.url),new URL('_headers',target));

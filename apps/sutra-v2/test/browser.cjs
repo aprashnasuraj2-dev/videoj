@@ -15,12 +15,23 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
  });
  await new Promise(resolve=>peer.listen(0,'127.0.0.1',resolve));
  const peerOrigin='http://127.0.0.1:'+peer.address().port;
+ const {assertV2StaticHeaders,rootStaticPolicy}=await import('../static-headers.mjs');
+ const packagedPolicy=rootStaticPolicy(assertV2StaticHeaders(fs.readFileSync(path.join(dist,'_headers'),'utf8')));
+ const browserPolicy=packagedPolicy.replace("connect-src 'self';","connect-src 'self' "+peerOrigin+";");
+ const legacyPolicy=packagedPolicy.replace(" 'wasm-unsafe-eval'","");
+ // External script, not DevTools evaluation: CSP must govern actual compilation.
+ const probeScript="(async()=>{let wasm=false,js=false;try{await WebAssembly.compile(await (await fetch('/support-lattice.wasm')).arrayBuffer());wasm=true}catch{}try{new Function('return 1')();js=true}catch{}document.body.dataset.result=JSON.stringify({wasm,js})})()";
  const server=http.createServer((req,res)=>{
   try{
    const pathname=new URL(req.url,'http://localhost').pathname;
+   if(pathname==='/__csp_probe_v2'||pathname==='/__csp_probe_v1'){
+    res.writeHead(200,{'Content-Type':'text/html','Content-Security-Policy':pathname.endsWith('v2')?packagedPolicy:legacyPolicy,'Cache-Control':'no-store'});
+    res.end('<!doctype html><body><script src="/__csp_probe.js"></script></body>');return;
+   }
+   if(pathname==='/__csp_probe.js'){res.writeHead(200,{'Content-Type':'text/javascript','Cache-Control':'no-store'});res.end(probeScript);return;}
    const file=pathname==='/'?path.join(dist,'index.html'):path.resolve(dist,'.'+decodeURIComponent(pathname));
    if(!file.startsWith(dist+path.sep)||!fs.statSync(file).isFile()||!mime[path.extname(file)])throw Error('missing');
-   res.writeHead(200,{'Content-Type':mime[path.extname(file)],'Cache-Control':'no-store','Content-Security-Policy':"default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self' "+peerOrigin+"; img-src 'self'; media-src blob:; base-uri 'none'; form-action 'none'",'Referrer-Policy':'no-referrer'});res.end(fs.readFileSync(file));
+   res.writeHead(200,{'Content-Type':mime[path.extname(file)],'Cache-Control':'no-store','Content-Security-Policy':browserPolicy,'Referrer-Policy':'no-referrer'});res.end(fs.readFileSync(file));
   }catch{res.writeHead(404);res.end();}
  });
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
@@ -28,6 +39,13 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
  let browser;
  try{
   browser=await chromium.launch({headless:true});
+  const probe=await browser.newPage();
+  for(const [suffix,expected] of [['v1',{wasm:false,js:false}],['v2',{wasm:true,js:false}]]){
+   await probe.goto(origin+'/__csp_probe_'+suffix);
+   await probe.waitForFunction(()=>Boolean(document.body.dataset.result));
+   assert.deepEqual(JSON.parse(await probe.locator('body').getAttribute('data-result')),expected);
+  }
+  await probe.close();
   const page=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{const u=new URL(r.url());if(u.protocol==='blob:'&&u.origin===origin)return;if(u.origin!==origin||u.protocol!=='http:')external.push(r.url());});
   await page.goto(origin);

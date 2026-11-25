@@ -241,3 +241,13 @@ Exact source `b70312dfac3bcb2c4c5197270fad622e00d5df72` passed knowledge push `4
 - [ ] **Recovery boundary:** compensation recovery is allowed only for the same exact already-admitted compensation transaction and causal authorization; recovery does not grant authority for a new compensating effect.
 - [ ] **Formal negative controls:** the bounded CompensationAuthority model preserves separate authorization and prior-effect causality; mutants demonstrate that ordinary primary authority, missing compensation authority or missing prior APPLIED source must not be treated as safe compensation.
 - [ ] **Claim boundary:** a compensating action is not proof of physical reversal, atomic undo or restored external state. Real provider compensation semantics, physical power loss, identical-clone effects, coordinated rollback and provider-global billing remain open.
+
+## V2-014 — V2 static CSP / WASM candidate (pending exact CI)
+
+Observed parent `9c6aaa593e99c5c469a28d154f611d2e57e3ae69`: eight PR workflows and push knowledge run 45565038532 all reported success. Four intervening commits from `b70312dfac3bcb2c4c5197270fad622e00d5df72` reconcile navigation, compensation registration, V2 Pages entry and restored build evidence marker. The parent browser used a hand-written CSP while packaging copied V1 headers; it does not establish packaged WASM execution.
+
+- [ ] V2-only static policy permits WASM but not JS eval; V1/API policies unchanged.
+- [ ] Built headers are checked byte-for-byte against V2 source; legacy, unsafe-eval and weakened directive mutants rejected.
+- [ ] Actual Chromium external-script probe compares WASM compilation under V1 and V2 CSP; JS eval refused in both; main journey uses actual built policy plus explicit test peer.
+- [ ] Pages candidate must preserve all original assets and change only the exact approved guide origin; no deployment.
+- [ ] Exact source push/PR knowledge and ingress CI required before promotion or new product surface. Next: attackable conclusion product objective and vertical slice using existing conflict/lineage engine.

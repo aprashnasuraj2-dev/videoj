@@ -374,3 +374,13 @@ The Python mapper now checks transition semantics rather than merely monotone sn
 **Repository navigation correction.** Root README now names `docs/sutra-v2/` as the active SUTRA workspace. The historical `docs/sutra/` README and continuation contract carry explicit legacy pointers so an unqualified “continue with sutra” resolves to V2 while V1 evidence remains intact. This is navigation/continuation correction only: the release/deployment pipeline still builds `apps/sutra` until the V1→V2 entry-point migration is implemented and tested. No deployment, DNS, release or route cutover was performed.
 
 **Next engineering action.** Treat the V1→V2 main-entry migration as a compatibility/build project, not a string replacement: inventory `apps/sutra` deployment/runtime dependencies, decide whether V2 becomes the canonical app or is integrated into the legacy shell, update build/package/Pages/release/browser workflows together, and add a gate proving the built candidate actually renders the V2 product without silently dropping required V1 reusable adapters. In parallel, continue dependency-ready backend hardening such as physical-durability/provider-semantics evidence before any external write authorization.
+
+## V2-014 — V2 static CSP / WASM candidate (pending exact CI)
+
+Observed parent `9c6aaa593e99c5c469a28d154f611d2e57e3ae69`: eight PR workflows and push knowledge run 45565038532 all reported success. Four intervening commits from `b70312dfac3bcb2c4c5197270fad622e00d5df72` reconcile navigation, compensation registration, V2 Pages entry and restored build evidence marker. The parent browser used a hand-written CSP while packaging copied V1 headers; it does not establish packaged WASM execution.
+
+- [ ] V2-only static policy permits WASM but not JS eval; V1/API policies unchanged.
+- [ ] Built headers are checked byte-for-byte against V2 source; legacy, unsafe-eval and weakened directive mutants rejected.
+- [ ] Actual Chromium external-script probe compares WASM compilation under V1 and V2 CSP; JS eval refused in both; main journey uses actual built policy plus explicit test peer.
+- [ ] Pages candidate must preserve all original assets and change only the exact approved guide origin; no deployment.
+- [ ] Exact source push/PR knowledge and ingress CI required before promotion or new product surface. Next: attackable conclusion product objective and vertical slice using existing conflict/lineage engine.

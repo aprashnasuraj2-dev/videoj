@@ -572,3 +572,13 @@ The signed compensation authorization binds one exact prior reservation, the dig
 Recovery remains narrower than fresh compensation. It validates the same causal authorization and prior signed receipt, then can reconcile only the exact compensation grant already admitted by policy/transaction state; it does not create a new compensation authority after an ambiguous outcome.
 
 This closes the **synthetic explicit-compensation sub-gap** inside V2-RUNTIME-02, not RUNTIME-02 itself. A compensation effect may fail, overcorrect or fail to reverse the real-world primary effect. No real provider semantics, physical power-loss certification, clone-safe physical-effect fencing, coordinated rollback resistance, provider-global billing/spend or public external-write route is established. The next runtime work should target physical durability/provider semantics or another dependency-ready P0 boundary rather than browser exposure.
+
+## V2-014 — V2 static CSP / WASM candidate (pending exact CI)
+
+Observed parent `9c6aaa593e99c5c469a28d154f611d2e57e3ae69`: eight PR workflows and push knowledge run 45565038532 all reported success. Four intervening commits from `b70312dfac3bcb2c4c5197270fad622e00d5df72` reconcile navigation, compensation registration, V2 Pages entry and restored build evidence marker. The parent browser used a hand-written CSP while packaging copied V1 headers; it does not establish packaged WASM execution.
+
+- [ ] V2-only static policy permits WASM but not JS eval; V1/API policies unchanged.
+- [ ] Built headers are checked byte-for-byte against V2 source; legacy, unsafe-eval and weakened directive mutants rejected.
+- [ ] Actual Chromium external-script probe compares WASM compilation under V1 and V2 CSP; JS eval refused in both; main journey uses actual built policy plus explicit test peer.
+- [ ] Pages candidate must preserve all original assets and change only the exact approved guide origin; no deployment.
+- [ ] Exact source push/PR knowledge and ingress CI required before promotion or new product surface. Next: attackable conclusion product objective and vertical slice using existing conflict/lineage engine.
