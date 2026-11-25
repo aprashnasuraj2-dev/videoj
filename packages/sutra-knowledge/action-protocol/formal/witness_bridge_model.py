@@ -28,7 +28,7 @@ def inv(state):
 def safe_steps(s):
     a,w,i,ack=s
     out=[]
-    if i is None and a==w and a<MAX:
+    if i is None and a==w and ack==a and a<MAX:
         out.append(("Prepare",(a,w,(a,a+1),ack)))
     if i is not None:
         b,n=i
