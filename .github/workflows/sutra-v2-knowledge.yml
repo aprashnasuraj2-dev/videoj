@@ -17,6 +17,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Validate executable SUTRA v2 threat model coverage
+        run: node docs/sutra/tools/threat-model-check.mjs
       - name: Go offline checkpoint contract and adversarial tests
         run: |
           go version
