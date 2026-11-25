@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-047",
+  "session": "V2-048",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2751,11 +2751,19 @@
     },
     {
       "id": "V2-D22-REVIEWED-PROPOSAL-CONTRAST",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D21-REVIEWED-COMPILER"
       ],
-      "scope": "V2-044 candidate adds bounded multi-proposal contrast under one independently pinned reviewed contract. Replays every proposal; malformed agent proposals are refused individually while invalid host contract fails whole batch. Memoized exact expression digests ignore node renaming but preserve operator/operand order, typed binding identities and proposal-specific unknowns; flag same-operand comparisons, exact clones and distinct structures, separate conditional state agreement from semantic contradiction, expose shared source/binding/digest/declared-lineage sets. No majority-vote truth, algebraic equivalence, independent evidence or automatic adoption. Four test groups authored including 5 agreeing clones and a malformed proposal. Browser/independent contrast replay not yet implemented; exact CI pending. V2-045 candidate: fix an exponential shared-DAG signature traversal risk by memoizing in-flight promises, not completed hashes. Added depth-24 repeated-operand graph test requiring exactly 24 unique signature nodes; not a latency benchmark. Browser scripted 8-proposal challenge: five exact cloned self-comparisons, original comparison, reversed comparison and fabricated leaf; conditional majority is not authority. Separate Python reference reconstructs 21 admitted pair comparisons from independent host contract, exact structural hashes and explicit fixed malformed-leaf control; 16 tamper mutations authored. Generic refusal-order parity is not claimed. No live models or deployment. Exact CI pending."
+      "scope": "V2-044 candidate adds bounded multi-proposal contrast under one independently pinned reviewed contract. Replays every proposal; malformed agent proposals are refused individually while invalid host contract fails whole batch. Memoized exact expression digests ignore node renaming but preserve operator/operand order, typed binding identities and proposal-specific unknowns; flag same-operand comparisons, exact clones and distinct structures, separate conditional state agreement from semantic contradiction, expose shared source/binding/digest/declared-lineage sets. No majority-vote truth, algebraic equivalence, independent evidence or automatic adoption. Four test groups authored including 5 agreeing clones and a malformed proposal. Browser/independent contrast replay not yet implemented; exact CI pending. V2-045 candidate: fix an exponential shared-DAG signature traversal risk by memoizing in-flight promises, not completed hashes. Added depth-24 repeated-operand graph test requiring exactly 24 unique signature nodes; not a latency benchmark. Browser scripted 8-proposal challenge: five exact cloned self-comparisons, original comparison, reversed comparison and fabricated leaf; conditional majority is not authority. Separate Python reference reconstructs 21 admitted pair comparisons from independent host contract, exact structural hashes and explicit fixed malformed-leaf control; 16 tamper mutations authored. Generic refusal-order parity is not claimed. No live models or deployment. Exact CI pending.",
+      "evidence": [
+        {
+          "id": "V2-D22-REVIEWED-PROPOSAL-CONTRAST",
+          "sourceRevision": "b48e7739403029409e4deb7330f77fc3c67720aa",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45592867914/job/139131305653",
+          "description": "V2-045 b48e7739403029409e4deb7330f77fc3c67720aa passed all nine exact workflows (PR 45592867914, push 45592855249; browser jobs 139131305653 and 139131265987 independently reconstructed scripted contrast; knowledge jobs 139131305445 and 139131265724 passed). Promote scoped reviewed proposal contrast; no live model claim. V2-046/047 pending exact CI."
+        }
+      ]
     },
     {
       "id": "V2-D23-SOURCE-ECONOMICS",
@@ -2764,6 +2772,14 @@
         "V2-D11-ALIGNED-CASE"
       ],
       "scope": "V2-046 candidate: separate host-pinned shared-source acquisition and marginal field-read economic profile over replay-derived surviving worlds and available field partitions. Exact bounded minimax state is (world cell, acquired source set); nonnegative costs, acquisition charged once, no fabricated availability, explicit initial acquisition and event digest; compare same-cost per-field counterfactual separately from legacy declared effort. Synthetic worst-case 4 to 3 units expected, 256 exhaustive sequence-oracle controls authored; no real cost, privacy/disclosure authorization, expected utility, bulk-read assumption or global best-branch optimization. CI pending. V2-047 candidate: wire three actual browser source-economics modes (fresh, assumed previously acquired, withdrawn) with exact policy exports and no external requests. Fix controlled per-field comparison to honor the same initially-acquired source set; otherwise sunk-cost differences were misclassified as sharing benefits. Independent Python set-state minimax reconstructs exact fixture/economic pins, source availability, both policies and counts; 16 mutation challenges per export authored. Synthetic expected comparisons fresh 4/3, acquired 0/0, withdrawn 4/4. No measured cost or actual disclosure. Exact CI pending."
+    },
+    {
+      "id": "V2-D24-DISCLOSURE-FRONTIER",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D23-SOURCE-ECONOMICS"
+      ],
+      "scope": "V2-048 candidate: separately pinned explicit same-source joint observation actions with exact joint tuple partitions, hard worst-branch abstract exposure cap independent of effort, one-time source acquisition, and explicit unavailable-action exclusion. Distinguish budget infeasibility from insufficient offered information. No implicit full-source disclosure, real privacy estimate or authorization. Synthetic open 3 units vs bounded 4 units and cap-1 infeasibility; 512 independent sequence oracle controls authored. No browser/independent Python replay yet; exact CI pending."
     }
   ]
 }

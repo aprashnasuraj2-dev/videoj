@@ -3,10 +3,10 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-047",
+  "session": "V2-048",
   "next": [
-    "V2-D22-REVIEWED-PROPOSAL-CONTRAST",
     "V2-D23-SOURCE-ECONOMICS",
+    "V2-D24-DISCLOSURE-FRONTIER",
     "V2-P07-WASM",
     "V2-RUNTIME-02",
     "V2-P05-RECOVERY",
@@ -20,7 +20,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "source_economics_browser_and_reference_candidate_pending_exact_ci",
+  "state": "disclosure_frontier_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -351,7 +351,7 @@
     "resolutionRevision": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579569479/job/139085895592"
   },
-  "lastVerifiedKernelSource": "77c0865310b35be0f25c3f6d23e5eac55373818b",
+  "lastVerifiedKernelSource": "b48e7739403029409e4deb7330f77fc3c67720aa",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -362,16 +362,21 @@
   },
   "pendingCandidate": {
     "sourceRevision": null,
+    "sourceParent": "3a4cb80cd86afa6cfe84ec7c0be2cf2656fb976f",
+    "status": "candidate_pending_exact_ci",
+    "identityRule": "Resolve immutable containing commit.",
+    "checks": [
+      "V2-048 candidate: separately pinned explicit same-source joint observation actions with exact joint tuple partitions, hard worst-branch abstract exposure cap independent of effort, one-time source acquisition, and explicit unavailable-action exclusion. Distinguish budget infeasibility from insufficient offered information. No implicit full-source disclosure, real privacy estimate or authorization. Synthetic open 3 units vs bounded 4 units and cap-1 infeasibility; 512 independent sequence oracle controls authored. No browser/independent Python replay yet; exact CI pending."
+    ]
+  },
+  "previousPendingCandidate": {
+    "sourceRevision": "3a4cb80cd86afa6cfe84ec7c0be2cf2656fb976f",
     "sourceParent": "7bca7ccf25d32bc4c1043d8d5c2417ca1d930d8f",
     "status": "candidate_pending_exact_ci",
     "identityRule": "Resolve immutable containing commit.",
     "checks": [
       "V2-047 candidate: wire three actual browser source-economics modes (fresh, assumed previously acquired, withdrawn) with exact policy exports and no external requests. Fix controlled per-field comparison to honor the same initially-acquired source set; otherwise sunk-cost differences were misclassified as sharing benefits. Independent Python set-state minimax reconstructs exact fixture/economic pins, source availability, both policies and counts; 16 mutation challenges per export authored. Synthetic expected comparisons fresh 4/3, acquired 0/0, withdrawn 4/4. No measured cost or actual disclosure. Exact CI pending."
     ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": "7bca7ccf25d32bc4c1043d8d5c2417ca1d930d8f",
-    "description": "V2-046 candidate: separate host-pinned shared-source acquisition and marginal field-read economic profile over replay-derived surviving worlds and available field partitions. Exact bounded minimax state is (world cell, acquired source set); nonnegative costs, acquisition charged once, no fabricated availability, explicit initial acquisition and event digest; compare same-cost per-field counterfactual separately from legacy declared effort. Synthetic worst-case 4 to 3 units expected, 256 exhaustive sequence-oracle controls authored; no real cost, privacy/disclosure authorization, expected utility, bulk-read assumption or global best-branch optimization. CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [

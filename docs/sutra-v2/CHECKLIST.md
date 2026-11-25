@@ -486,3 +486,10 @@ V2-042 b3bfcf821c209d9d5de26728a69f27062e02bb7c and V2-043 77c0865310b35be0f25c3
 V2-044 exact 1fd9383382590dabf3212254203e51f25f23bc6c passed all nine workflows (PR knowledge 45592604140, push 45592596058). V2-045 b48e7739403029409e4deb7330f77fc3c67720aa push 45592855249 passed; PR knowledge 45592867914 was still running when checked; do not promote full contrast yet.
 
 - [ ] V2-D23: V2-047 candidate: wire three actual browser source-economics modes (fresh, assumed previously acquired, withdrawn) with exact policy exports and no external requests. Fix controlled per-field comparison to honor the same initially-acquired source set; otherwise sunk-cost differences were misclassified as sharing benefits. Independent Python set-state minimax reconstructs exact fixture/economic pins, source availability, both policies and counts; 16 mutation challenges per export authored. Synthetic expected comparisons fresh 4/3, acquired 0/0, withdrawn 4/4. No measured cost or actual disclosure. Exact CI pending.
+
+
+## V2-048 — explicit bundle and exposure-constrained planning
+
+V2-045 b48e7739403029409e4deb7330f77fc3c67720aa passed all nine exact workflows (PR 45592867914, push 45592855249; browser jobs 139131305653 and 139131265987 independently reconstructed scripted contrast; knowledge jobs 139131305445 and 139131265724 passed). Promote scoped reviewed proposal contrast; no live model claim. V2-046/047 pending exact CI.
+
+- [ ] V2-D24: V2-048 candidate: separately pinned explicit same-source joint observation actions with exact joint tuple partitions, hard worst-branch abstract exposure cap independent of effort, one-time source acquisition, and explicit unavailable-action exclusion. Distinguish budget infeasibility from insufficient offered information. No implicit full-source disclosure, real privacy estimate or authorization. Synthetic open 3 units vs bounded 4 units and cap-1 infeasibility; 512 independent sequence oracle controls authored. No browser/independent Python replay yet; exact CI pending.
