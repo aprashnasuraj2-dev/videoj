@@ -38,7 +38,7 @@ function control(){
 function invalidate(message){epoch++;clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 function options(element,items){element.replaceChildren();for(const id of items){const o=document.createElement('option');o.value=id;o.textContent=id;element.append(o);}}
-function clearQuestionPreview(){questionCurrent=null;questionExport=null;by('question-path-result').textContent='';by('question-path-snapshot-pin').textContent='';by('question-path-plan-pin').textContent='';}
+function clearQuestionPreview(){questionCurrent=null;questionExport=null;by('question-path-result').textContent='';by('question-path-snapshot-pin').textContent='';by('question-path-plan-pin').textContent='';by('question-path-disclosure').textContent='No mapping export available.';}
 function questionControl(){
  const pin=sealed?.pin??null;
  if(pin!==questionPathPin){
@@ -74,6 +74,8 @@ by('question-path-run').onclick=()=>work(async ticket=>{
  const exported=await exportReviewedQuestion(sealed.contractText,sealed.pin,plan,await casePin(plan)),result=exported.result;
  if(ticket!==epoch||result.contractDigest!==sealed?.pin)return;
  questionCurrent=result;
+ const sourceInventory=JSON.parse(sealed.contractText).sources.map(s=>s.id+' ('+new TextEncoder().encode(s.text).length+' source bytes)');
+ by('question-path-disclosure').textContent=exported.byteLength+' report bytes; includes original question, full reviewed source text from '+(sourceInventory.join(', ')||'no sources')+', all mappings and conditional results. '+(exported.portable?'Local download only; review before sharing.':'Exceeds the portable limit; no download.');
  if(exported.portable){questionExport={bytes:new TextEncoder().encode(exported.bundleText),digest:exported.snapshotPin};by('question-path-snapshot-pin').textContent=exported.snapshotPin;by('question-path-plan-pin').textContent=result.planDigest;}
  by('question-path-result').textContent=['Exact relation: '+result.relation.span.quote+' → '+result.relation.operator,...result.candidates.map(c=>c.meaning+' · '+c.conditionalState),result.qualification].join('\n');
  status('question_ready','Local grammar compiled. Review all supplied mappings and conditional outcomes before explicitly staging.');
