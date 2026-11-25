@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-054",
+  "session": "V2-055",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2929,22 +2929,22 @@
     {
       "id": "V2-LK08-KNOWLEDGE-GRAPH",
       "track": "B",
-      "status": "Not started",
+      "status": "Implemented but unverified",
       "dependencies": [
         "V2-LK02-INTENT-IR"
       ],
-      "scope": "Version claims, evidence, assumptions, hypotheses, definitions, observations, derived values, contradictions, questions, decisions, plans and proof artifacts; typed edge provenance.",
+      "scope": "Version claims, evidence, assumptions, hypotheses, definitions, observations, derived values, contradictions, questions, decisions, plans and proof artifacts; typed edge provenance. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open.",
       "acceptance": "Immutable identity and edge authority; distinguish human/model/formal relations; reject cycles in executable DAG.",
       "evidence": []
     },
     {
       "id": "V2-LK09-REVISION",
       "track": "B",
-      "status": "Not started",
+      "status": "Implemented but unverified",
       "dependencies": [
         "V2-LK08-KNOWLEDGE-GRAPH"
       ],
-      "scope": "Incremental evidence replacement/withdrawal, direct/transitive dependency invalidation, and historical reproducibility.",
+      "scope": "Incremental evidence replacement/withdrawal, direct/transitive dependency invalidation, and historical reproducibility. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open.",
       "acceptance": "Incremental equals full recompute; shared descendants, concurrency, stale cache, interrupted writes, cycles and simultaneous updates.",
       "evidence": []
     },
@@ -2962,12 +2962,12 @@
     {
       "id": "V2-LK11-IMPACT-REPORT",
       "track": "B",
-      "status": "Not started",
+      "status": "Implemented but unverified",
       "dependencies": [
         "V2-LK09-REVISION",
         "V2-LK07-AMBIGUITY-REVIEW"
       ],
-      "scope": "Explain changes, surviving/invalidated conclusions, new contradictions, reconsidered decisions, missing evidence and next investigation.",
+      "scope": "Explain changes, surviving/invalidated conclusions, new contradictions, reconsidered decisions, missing evidence and next investigation. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open.",
       "acceptance": "Two independent domain journeys, independently replayable export, old snapshots retained.",
       "evidence": []
     },

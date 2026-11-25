@@ -38,3 +38,7 @@ The Observatory CLI asserts a real deterministic state change, exact incremental
 ## Source-linked semantic investigation (candidate)
 
 `evaluateSemanticInvestigation(contractText,contractPin,batchText,annotationText,annotationPin)` extends reviewed proposal triage with a closed pinned annotation envelope. Original question, 13 explicit facets, nine separate obligations, exact quote/binding references, partial question coverage and refused branches remain visible. No automatic semantic interpretation, sign-off, authenticity, empirical truth or action authority. Full tests and independent replay are separate gates.
+
+## Versioned investigations (candidate)
+
+`sealInvestigationVersion` creates bounded exact input bytes with an optional predecessor digest. `replayInvestigationVersion` requires a separately retained digest and recomputes the semantic investigation. `compareInvestigationVersions` requires the exact parent and reports source/binding changes, scoped reverse dependencies, surviving or changed conditional outcomes, missing inputs and review candidates. Full replay of both versions is intentional; no incremental performance claim, empirical validity or independent semantic verification. Two synthetic domains in `examples/living-investigation.mjs` exercise the same architecture.
