@@ -2891,6 +2891,12 @@
           "sourceRevision": "6e36f4b361b287e575f20ef0b267cdb36cb1eacc",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45610178836",
           "description": "All ten exact workflows passed; formula tests and actual browser valid/invalid expression path."
+        },
+        {
+          "id": "V2-LK03-PATHWAYS",
+          "sourceRevision": "22a61fc0b120b6cc2989b8494cd2a834ad82f2cd",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612330510",
+          "description": "V2-081 exact 10/10 green; structured TSV coordinate and manual contract equality, hostile token and stale pin tests. Browser integration separate."
         }
       ]
     },
@@ -3041,7 +3047,7 @@
       "dependencies": [
         "V2-LK09-REVISION"
       ],
-      "scope": "Branch hypotheses, diff and restore investigations, preserve conflicting empirical claims in merges. V2-071 candidate: restore source draft from caller-pinned version, preserve historical candidates separately; explicit stable IDs and correction invalidation. Branch merge/concurrency and general persistence remain open. V2-076 candidate: compare two separately pinned direct children of an exact parent, detect different concurrent changes to source/binding/question/candidate objects, retain both impacts. No merge, multi-generation history or concurrency storage. V2-079 browser candidate: explicit other-child file and independent pin, exact common parent, all-three-version export, wrong pin and stale output refusal. No merge or multi-generation storage. V2-083 candidate: bounded multi-generation caller-held history with exact parent closure, explicit branch heads, restore, fork and serialized compare-and-swap within one instance. No automatic merge, cross-process persistence or independent history replay.",
+      "scope": "Branch hypotheses, diff and restore investigations, preserve conflicting empirical claims in merges. V2-071 candidate: restore source draft from caller-pinned version, preserve historical candidates separately; explicit stable IDs and correction invalidation. Branch merge/concurrency and general persistence remain open. V2-076 candidate: compare two separately pinned direct children of an exact parent, detect different concurrent changes to source/binding/question/candidate objects, retain both impacts. No merge, multi-generation history or concurrency storage. V2-079 browser candidate: explicit other-child file and independent pin, exact common parent, all-three-version export, wrong pin and stale output refusal. No merge or multi-generation storage. V2-083 candidate: bounded multi-generation caller-held history with exact parent closure, explicit branch heads, restore, fork and serialized compare-and-swap within one instance. No automatic merge, cross-process persistence or independent history replay. V2-085 candidate: browser explicit root, named branches, append, historical baseline restore, bounded archive and separate pin; Python independent replay of actual history export. No persistent cross-process store or merge.",
       "acceptance": "Conflicting updates explicit; identity not logical equivalence; restore exact historical version.",
       "evidence": [
         {

@@ -33,3 +33,5 @@ input{font:inherit;min-height:44px;border:1px solid var(--line);border-radius:6p
 #review-world-fields{display:grid;gap:12px;min-width:0}#review-world-fields select,#review-world-fields input{width:100%;min-width:0;max-width:100%}
 
 #review-table-panel{min-width:0;max-width:100%;overflow-wrap:anywhere}#review-table-panel select,#review-table-panel textarea,#review-table-panel input{width:100%;min-width:0;max-width:100%}#review-table-list{max-height:14rem;overflow:auto}
+
+#review-history-panel select,#review-history-panel input{width:100%;min-width:0;max-width:100%}#review-history-digest{overflow-wrap:anywhere}#review-history-result{max-height:24rem;overflow:auto}

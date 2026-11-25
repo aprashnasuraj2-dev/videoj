@@ -1,3 +1,4 @@
+import {createInvestigationHistory,openInvestigationHistory} from '../../../packages/sutra-knowledge/investigation-history.js';
 import {inspectReviewedTable,addReviewedTable} from '../../../packages/sutra-knowledge/reviewed-table.js';
 import {compareSiblingInvestigations} from '../../../packages/sutra-knowledge/sibling-branch-contrast.js';
 import {guidedLivingCase} from '../../../packages/sutra-knowledge/examples/guided-living-case.js';
@@ -19,7 +20,7 @@ import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigation
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
-let tablePreview=null,tableSelections=[];
+let tablePreview=null,tableSelections=[],history=null;
 const tableFields=['table-text','table-source','table-lineage','table-inspect','table-row','table-column','table-id','table-kind','table-unit','table-scope','table-dim-l','table-dim-m','table-dim-t','table-add','table-stage','table-clear'];
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
@@ -93,7 +94,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 async function loadGuidedCase(domain,corrected,ticket){
@@ -214,6 +215,7 @@ function semanticControl(){
  by('clarification-answer-run').disabled=busy||!clarificationCurrent||!clarificationCurrent.plan.questions.length;
  by('clarification-export').disabled=busy||!previewCurrent;
  for(const e of by('clarification-options').querySelectorAll('select'))e.disabled=busy;
+ historyControl();
 }
 function renderSemanticRows(){
  const list=by('semantic-list');list.replaceChildren();
@@ -432,5 +434,64 @@ by('branch-run').onclick=()=>work(async ticket=>{
  status('branch_ready','Both branches replayed from their exact common parent. Nothing merged or selected.');
 });
 by('branch-export').onclick=()=>{if(branchCurrent&&!busy)download(JSON.stringify(branchCurrent),'sutra-sibling-contrast.json','application/json');};
+function historyControl(){
+ const s=history?.snapshot(),branch=s?.view.branches.find(b=>b.name===by('history-branch').value);
+ by('history-create').disabled=busy||!!history||!semanticCurrent||semanticCurrent.report.previousDigest!==null;
+ by('history-append').disabled=busy||!branch||!semanticCurrent||semanticCurrent.report.previousDigest!==branch.head||s.view.versions.some(v=>v.digest===semanticCurrent.digest);
+ for(const id of ['history-branch','history-version','history-fork-name','history-fork','history-restore','history-export','history-export-pin','history-clear'])by(id).disabled=busy||!history;
+ for(const id of ['history-file','history-pin','history-import'])by(id).disabled=busy||!!history;
+ if(!busy&&!history)by('history-import').disabled=!by('history-file').files?.length||!by('history-pin').value.trim();
+}
+function renderHistory(){
+ const branch=by('history-branch'),version=by('history-version'),oldBranch=branch.value,oldVersion=version.value;
+ branch.replaceChildren();version.replaceChildren();
+ const s=history?.snapshot();
+ by('history-digest').textContent=s?.digest??'No history retained.';
+ if(!s){by('history-result').textContent='';historyControl();return;}
+ for(const b of s.view.branches){const o=document.createElement('option');o.value=b.name;o.textContent=b.name+' · '+b.head.slice(7,19);branch.append(o);}
+ for(const v of s.view.versions){const o=document.createElement('option');o.value=v.digest;o.textContent=v.digest.slice(7,19)+' · '+v.triage.replaceAll('_',' ');version.append(o);}
+ if(s.view.branches.some(b=>b.name===oldBranch))branch.value=oldBranch;
+ else if(s.view.branches.some(b=>b.name==='main'))branch.value='main';
+ if(s.view.versions.some(v=>v.digest===oldVersion))version.value=oldVersion;
+ by('history-result').textContent=[s.view.versions.length+' exact version(s) · '+s.view.branches.length+' branch(es)',...s.view.branches.map(b=>b.name+' → '+b.head),
+ ...s.view.versions.map(v=>v.digest.slice(7,19)+' · parent '+(v.parent?.slice(7,19)??'root')+' · '+v.triage.replaceAll('_',' ')),s.view.qualification].join('\n');
+ historyControl();
+}
+by('history-branch').onchange=historyControl;
+for(const id of ['history-file','history-pin'])by(id).addEventListener('input',historyControl);
+by('history-file').addEventListener('change',historyControl);
+by('history-create').onclick=()=>work(async ticket=>{
+ const v=semanticCurrent;if(history||!v)return;
+ const h=await createInvestigationHistory(v.versionText,v.digest);
+ if(ticket!==epoch||v!==semanticCurrent)return;history=h;renderHistory();status('history_ready','Root version retained in an in-memory history. Export exact bytes and a separate digest.');
+});
+by('history-append').onclick=()=>work(async ticket=>{
+ const h=history,v=semanticCurrent,s=h?.snapshot(),branch=by('history-branch').value,head=s?.view.branches.find(b=>b.name===branch)?.head;
+ if(!h||!v||!head)return;
+ await h.append({expectedHistoryPin:s.digest,branch,expectedHead:head,versionText:v.versionText,versionPin:v.digest});
+ if(ticket!==epoch||h!==history)return;renderHistory();status('history_ready','Current child appended to the explicitly selected branch. Prior versions remain intact.');
+});
+by('history-fork').onclick=()=>work(async ticket=>{
+ const h=history,s=h?.snapshot();if(!h)return;
+ const branch=by('history-fork-name').value;
+ await h.fork({expectedHistoryPin:s.digest,branch,fromDigest:by('history-version').value});
+ if(ticket!==epoch||h!==history)return;renderHistory();by('history-branch').value=branch;by('history-fork-name').value='';status('history_ready','New branch retained from the selected historical version. No version changed.');
+});
+by('history-restore').onclick=()=>{
+ if(busy||!history)return;
+ baseline=history.restore(by('history-version').value);invalidateSemantic();baselineState();control();
+ status('baseline_ready','Historical version restored as comparison baseline. Current draft text is unchanged; use the separate source restore action if desired.');
+};
+by('history-export').onclick=()=>{if(history&&!busy)download(history.snapshot().historyText,'sutra-investigation-history.json','application/json');};
+by('history-export-pin').onclick=()=>{if(history&&!busy)download(history.snapshot().digest+'\n','sutra-investigation-history.sha256','text/plain');};
+by('history-clear').onclick=()=>{if(!busy){history=null;renderHistory();status('history_cleared','In-memory history forgotten. Downloaded files, current draft and retained baseline are unchanged.');}};
+by('history-import').onclick=()=>work(async ticket=>{
+ if(history)return;
+ const file=by('history-file').files?.[0],digest=by('history-pin').value.trim();
+ if(!file||!file.size||file.size>262144)throw Error('HISTORY_FILE_SIZE');
+ const bytes=new Uint8Array(await file.arrayBuffer());if(bytes.length!==file.size||bytes.length>262144)throw Error('HISTORY_FILE_SIZE');
+ const h=await openInvestigationHistory(new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(bytes),digest);
+ if(ticket!==epoch)return;history=h;by('history-file').value='';by('history-pin').value='';renderHistory();status('history_ready','All exact versions and branch heads replayed from the saved history. No draft or baseline changed.');
+});
 by('impact-export').onclick=()=>{if(impactCurrent&&semanticCurrent&&baseline&&!busy)download(JSON.stringify({beforeVersion:baseline.versionText,beforeDigest:baseline.digest,afterVersion:semanticCurrent.versionText,afterDigest:semanticCurrent.digest,impact:impactCurrent}),'sutra-investigation-impact.json','application/json');};
 renderBatch();refresh();baselineState();control();

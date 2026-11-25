@@ -10,6 +10,7 @@ from verify_trial_snapshot import verify as verify_trial, MAX_BYTES as MAX_TRIAL
 from verify_reviewed_snapshot import verify as verify_reviewed, MAX_BYTES as MAX_REVIEWED_BYTES
 from verify_living_version import verify as verify_living, MAX_BYTES as MAX_LIVING_BYTES
 from verify_world_grid import verify as verify_grid, MAX_BYTES as MAX_GRID_BYTES
+from verify_investigation_history import verify as verify_history, MAX_BYTES as MAX_HISTORY_BYTES
 
 PIN_FILE = re.compile(rb'sha256:[a-f0-9]{64}(?:\r?\n)?', re.ASCII)
 
@@ -35,6 +36,7 @@ def main():
     profiles.add_argument('--reviewed',action='store_true',help='Explicitly select the reviewed compiler snapshot profile')
     profiles.add_argument('--living',action='store_true',help='Explicitly select exact living investigation version replay')
     profiles.add_argument('--world-grid',action='store_true',help='Explicitly select finite synthetic world grid replay')
+    profiles.add_argument('--history',action='store_true',help='Explicitly select bounded living investigation history replay')
     parser.add_argument('--version-pin',help='Separately retained living investigation version digest')
     parser.add_argument('--plan-pin',help='Separately retained synthetic grid plan digest')
     parser.add_argument('--contract-pin',help='Separately retained reviewed contract digest')
@@ -48,7 +50,10 @@ def main():
     if (args.version_pin is not None or args.plan_pin is not None) and not args.world_grid:parser.error('version and plan pins require --world-grid')
     try:
         pin=args.pin if args.pin is not None else load_pin(args.pin_file)
-        if args.world_grid:
+        if args.history:
+            with Path(args.capsule).open('rb') as f:data=f.read(MAX_HISTORY_BYTES+1)
+            result=verify_history(data,pin)
+        elif args.world_grid:
             with Path(args.capsule).open('rb') as f:data=f.read(MAX_GRID_BYTES+1)
             result=verify_grid(data,pin,args.version_pin,args.plan_pin)
         elif args.living:

@@ -774,6 +774,10 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
     await samplePage.locator('#review-sample-'+domain).click();await sampleState('sample_ready');
     await samplePage.locator('#review-semantic-run').click();await sampleState('semantic_ready');
     assert.match(await samplePage.locator('#review-semantic-result').innerText(),/AGREEMENT ON SUPPLIED CONDITIONAL OUTCOMES/);
+    if(domain==='finance'){
+     await samplePage.locator('#review-history-panel > summary').click();await samplePage.locator('#review-history-create').click();await sampleState('history_ready');
+     assert.match(await samplePage.locator('#review-history-result').innerText(),/1 exact version.*1 branch/);
+    }
     await samplePage.locator('#review-semantic-retain').click();await samplePage.locator('#review-sample-'+domain+'-corrected').click();await sampleState('sample_ready');
     assert.equal(await samplePage.locator('#review-semantic-run').isDisabled(),true);
     await samplePage.locator('#review-correspondence').check();await samplePage.locator('#review-semantic-run').click();await sampleState('semantic_ready');
@@ -787,16 +791,33 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
     fs.writeFileSync(path.join(output,'guided-'+domain+'-exposure.json'),JSON.stringify(a));
     assert.equal(await samplePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
     if(domain==='finance'){
+     await samplePage.locator('#review-history-append').click();await sampleState('history_ready');
+     await samplePage.locator('#review-history-version').selectOption({index:0});await samplePage.locator('#review-history-fork-name').fill('alternative');
+     await samplePage.locator('#review-history-fork').click();await sampleState('history_ready');
+     assert.equal(await samplePage.locator('#review-history-branch').inputValue(),'alternative');
      const left=samplePage.waitForEvent('download');await samplePage.locator('#review-semantic-export').click();const child=fs.readFileSync(await (await left).path());const childPin=await samplePage.locator('#review-semantic-pin').innerText();
      // Retain the same parent; change a candidate declaration to create a second child.
      const field=samplePage.locator('#review-meaning-operating_cash');await field.fill('Alternate declaration for operating cash');
      await samplePage.locator('#review-correspondence').check();await samplePage.locator('#review-semantic-run').click();await sampleState('semantic_ready');
+     await samplePage.locator('#review-history-append').click();await sampleState('history_ready');
+     assert.match(await samplePage.locator('#review-history-result').innerText(),/3 exact version.*2 branch/);
+     const historyPin=await samplePage.locator('#review-history-digest').innerText();
+     const archive=samplePage.waitForEvent('download');await samplePage.locator('#review-history-export').click();const historyBytes=fs.readFileSync(await (await archive).path());
+     fs.writeFileSync(path.join(output,'living-history.json'),historyBytes);fs.writeFileSync(path.join(output,'living-history.sha256'),historyPin+'\n');
+     const savedHistory=JSON.parse(historyBytes);assert.equal(savedHistory.versions.length,3);assert.equal(savedHistory.branches.length,2);
+     await samplePage.locator('#review-history-clear').click();await sampleState('history_cleared');
+     await samplePage.locator('#review-history-file').setInputFiles({name:'history.json',mimeType:'application/json',buffer:historyBytes});
+     await samplePage.locator('#review-history-pin').fill('sha256:'+'0'.repeat(64));await samplePage.locator('#review-history-import').click();await sampleState('refused');assert.match(await samplePage.locator('#review-history-digest').innerText(),/No history/);
+     await samplePage.locator('#review-history-pin').fill(historyPin);await samplePage.locator('#review-history-import').click();await sampleState('history_ready');
+     assert.equal(await samplePage.locator('#review-history-digest').innerText(),historyPin);
      await samplePage.locator('#review-branch-panel > summary').click();
      await samplePage.locator('#review-branch-file').setInputFiles({name:'child.json',mimeType:'application/json',buffer:child});
      await samplePage.locator('#review-branch-pin').fill('sha256:'+'0'.repeat(64));await samplePage.locator('#review-branch-run').click();await sampleState('refused');assert.equal(await samplePage.locator('#review-branch-export').isDisabled(),true);
      await samplePage.locator('#review-branch-pin').fill(childPin);await samplePage.locator('#review-branch-run').click();await sampleState('branch_ready');
      const branch=samplePage.waitForEvent('download');await samplePage.locator('#review-branch-export').click();const b=JSON.parse(fs.readFileSync(await (await branch).path(),'utf8'));assert.equal(b.result.decisionAuthority,'NONE');assert.equal(b.result.status,'NO_CONFLICTS_IN_COMPARED_OBJECTS');assert.ok(b.result.changes.some(r=>r.kind==='candidates'&&r.id==='operating_cash'&&r.classification==='LEFT_ONLY'));assert.ok(b.result.changes.some(r=>r.kind==='sources'&&r.classification==='SAME_CHANGE'));
      fs.writeFileSync(path.join(output,'guided-sibling-contrast.json'),JSON.stringify(b));await samplePage.locator('#review-branch-pin').fill('');assert.equal(await samplePage.locator('#review-branch-export').isDisabled(),true);
+     await samplePage.locator('#review-history-version').selectOption({index:0});await samplePage.locator('#review-history-restore').click();await sampleState('baseline_ready');assert.match(await samplePage.locator('#review-baseline-state').innerText(),new RegExp(savedHistory.versions[0].digest));
+     assert.equal(await samplePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await samplePage.locator('#review-history-clear').click();await sampleState('history_cleared');
     }
     await samplePage.locator('#review-baseline-clear').click();
    }

@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-084",
+  "session": "V2-085",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -34,7 +34,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "table_browser_interaction_fix_pending_exact_ci",
+  "state": "portable_history_browser_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -387,7 +387,7 @@
     "reason": "Actual TSV browser test passed selection queue, stale invalidation, staging and exact contract source/quotes; timed out filling expression textarea inside collapsed details. Remaining formula and layout assertions not exercised.",
     "resolutionStatus": "V2-084 explicitly opens existing expression disclosure before filling; exact CI pending."
   },
-  "lastVerifiedKernelSource": "10658db4cbf9394ab2f7c15569a51cc7f8f1d951",
+  "lastVerifiedKernelSource": "22a61fc0b120b6cc2989b8494cd2a834ad82f2cd",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -397,14 +397,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-085",
+    "parent": "e8984d04873eae76a1f0abe36f82a0333aea84db",
+    "description": "Browser history root/fork/append/restore/export/import with exact separate pin; independent Python archive parent closure and conditional replay, mutation tests against actual browser output. CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-084",
     "parent": "3d7f26717df5f97c229a5bd66bc83b9ddfabdeab",
     "description": "Correct real browser formula disclosure interaction in table journey; preserve failure and all assertions; exact CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-083",
-    "parent": "ff6b2d5db99de472e13dc3e384b780a45993d625",
-    "description": "Bounded caller-pinned multi-generation history, explicit branch fork and exact restore, single-instance serialized compare-and-swap and conflict tests; CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -1280,6 +1280,12 @@
       "sourceRevision": "10658db4cbf9394ab2f7c15569a51cc7f8f1d951",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612091477/job/139197949093",
       "description": "All 10 exact workflows green. Four synthetic revision cases 4/4 exact match; 14 full selections vs 10 targeted, four avoided. One-source edits 7 vs 3; all-source edits 7 vs 7. Diagnostic node counts only; no human effort or speedup claim."
+    },
+    {
+      "id": "V2-LK03-PATHWAYS",
+      "sourceRevision": "22a61fc0b120b6cc2989b8494cd2a834ad82f2cd",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612330510",
+      "description": "V2-081 exact 10/10 green; structured TSV coordinate and manual contract equality, hostile token and stale pin tests. Browser integration separate."
     }
   ],
   "reconciledCI": [
