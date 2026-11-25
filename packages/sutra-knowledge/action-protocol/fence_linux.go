@@ -30,6 +30,7 @@ const fenceStoreDomain = "SUTRA/admission-fence-store/v1\x00"
 const fenceReservationDomain = "SUTRA/admission-fence-reservation/v1\x00"
 const fenceViewDomain = "SUTRA/admission-fence-view/v1\x00"
 const fenceAttestationDomain = "SUTRA/admission-fence-attestation/v1\x00"
+const effectAbsenceDomain = "SUTRA/effect-absence-proof/v1\x00"
 const fenceIntentName = "fence-intent.bin"
 const fenceMaxTransitions = 8
 const fenceReservationBodySize = 32 * 4
@@ -38,6 +39,8 @@ const fenceViewSize = 4 + 32 + 32 + 32 + 32 + ed25519.SignatureSize
 const fenceAttestationSize = 32 + fenceViewSize + ed25519.SignatureSize
 const fencedResponseSize = authorityResponseSize + fenceViewSize + fenceReservationSize
 const fencedEnvelopeSize = authorityResponseSize + fenceAttestationSize + fenceReservationSize
+const effectAbsenceBodySize = 32 * 3
+const effectAbsenceProofSize = effectAbsenceBodySize + ed25519.SignatureSize
 
 var ErrFenceConflict = errors.New("admission fence conflict")
 var ErrFenceUnavailable = errors.New("admission fence unavailable or ambiguous")
@@ -89,6 +92,54 @@ func SignFenceReservation(ctx, before, after, requestHash, token Digest, authori
 }
 func VerifyFenceReservation(r FenceReservation, ctx Digest, authority ed25519.PublicKey) bool {
 	return ctx != (Digest{}) && len(authority) == ed25519.PublicKeySize && r.Before != (Digest{}) && r.After != (Digest{}) && r.Before != r.After && r.RequestHash != (Digest{}) && r.Token != (Digest{}) && ed25519.Verify(authority, r.message(ctx), r.Signature[:])
+}
+
+type EffectAbsenceProof struct {
+	ReservationHash Digest
+	RequestHash     Digest
+	Before          Digest
+	Signature       [ed25519.SignatureSize]byte
+}
+
+func (p EffectAbsenceProof) body() []byte {
+	b := append([]byte(nil), p.ReservationHash[:]...)
+	b = append(b, p.RequestHash[:]...)
+	return append(b, p.Before[:]...)
+}
+func (p EffectAbsenceProof) message(ctx Digest, authority ed25519.PublicKey) []byte {
+	b := append([]byte(effectAbsenceDomain), ctx[:]...)
+	b = append(b, authority...)
+	return append(b, p.body()...)
+}
+func (p EffectAbsenceProof) Bytes() []byte { return append(p.body(), p.Signature[:]...) }
+func ParseEffectAbsenceProof(raw []byte) (EffectAbsenceProof, error) {
+	var p EffectAbsenceProof
+	if len(raw) != effectAbsenceProofSize {
+		return p, ErrPolicy
+	}
+	copy(p.ReservationHash[:], raw[:32])
+	copy(p.RequestHash[:], raw[32:64])
+	copy(p.Before[:], raw[64:96])
+	copy(p.Signature[:], raw[96:])
+	if p.ReservationHash == (Digest{}) || p.RequestHash == (Digest{}) || p.Before == (Digest{}) {
+		return EffectAbsenceProof{}, ErrPolicy
+	}
+	return p, nil
+}
+func SignEffectAbsenceProof(ctx Digest, authority ed25519.PublicKey, reservation FenceReservation, signer ed25519.PrivateKey) (EffectAbsenceProof, error) {
+	if ctx == (Digest{}) || len(authority) != ed25519.PublicKeySize || len(signer) != ed25519.PrivateKeySize ||
+		!VerifyFenceReservation(reservation, ctx, authority) {
+		return EffectAbsenceProof{}, ErrPolicy
+	}
+	p := EffectAbsenceProof{ReservationHash: reservation.Hash(), RequestHash: reservation.RequestHash, Before: reservation.Before}
+	copy(p.Signature[:], ed25519.Sign(signer, p.message(ctx, authority)))
+	return p, nil
+}
+func VerifyEffectAbsenceProof(p EffectAbsenceProof, ctx Digest, authority ed25519.PublicKey, reservation FenceReservation, signer ed25519.PublicKey) bool {
+	return ctx != (Digest{}) && len(authority) == ed25519.PublicKeySize && len(signer) == ed25519.PublicKeySize &&
+		VerifyFenceReservation(reservation, ctx, authority) &&
+		p.ReservationHash == reservation.Hash() && p.RequestHash == reservation.RequestHash && p.Before == reservation.Before &&
+		ed25519.Verify(signer, p.message(ctx, authority), p.Signature[:])
 }
 
 type FenceView struct {
@@ -496,6 +547,18 @@ func (f *AdmissionFence) Abort(r FenceReservation) (FenceView, error) {
 	f.pending = nil
 	return f.viewLocked()
 }
+func (f *AdmissionFence) PendingReservation() (FenceReservation, bool, error) {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	if f.lock == nil || f.poisoned {
+		return FenceReservation{}, false, ErrStore
+	}
+	if f.pending == nil {
+		return FenceReservation{}, false, nil
+	}
+	return *f.pending, true, nil
+}
+
 func (f *AdmissionFence) Close() error {
 	f.mu.Lock()
 	defer f.mu.Unlock()
@@ -543,6 +606,20 @@ func (f *AdmissionFence) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Header().Set("Content-Type", media)
 		_, _ = w.Write(v.Bytes())
+		return
+	}
+	if r.URL.Path == "/fence/pending" && r.Method == http.MethodGet {
+		pending, exists, e := f.PendingReservation()
+		if e != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		if !exists {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		w.Header().Set("Content-Type", media)
+		_, _ = w.Write(pending.Bytes())
 		return
 	}
 	if r.Method != http.MethodPost || r.Header.Get("Content-Type") != media || (r.URL.Path != "/fence/reserve" && r.URL.Path != "/fence/finalize" && r.URL.Path != "/fence/abort") {
@@ -651,6 +728,33 @@ func (c *FenceClient) post(path string, reservation FenceReservation) (FenceView
 func (c *FenceClient) Reserve(r FenceReservation) (FenceView, error)  { return c.post("/fence/reserve", r) }
 func (c *FenceClient) Finalize(r FenceReservation) (FenceView, error) { return c.post("/fence/finalize", r) }
 func (c *FenceClient) Abort(r FenceReservation) (FenceView, error)    { return c.post("/fence/abort", r) }
+func (c *FenceClient) PendingReservation() (FenceReservation, bool, error) {
+	req, e := http.NewRequest(http.MethodGet, c.origin+"/fence/pending", nil)
+	if e != nil {
+		return FenceReservation{}, false, ErrFenceUnavailable
+	}
+	res, e := c.http.Do(req)
+	if e != nil || res == nil {
+		return FenceReservation{}, false, ErrFenceUnavailable
+	}
+	defer res.Body.Close()
+	if res.StatusCode == http.StatusNotFound {
+		return FenceReservation{}, false, nil
+	}
+	if res.StatusCode != http.StatusOK || res.Header.Get("Content-Type") != media || res.Request == nil || res.Request.URL.String() != c.origin+"/fence/pending" {
+		return FenceReservation{}, false, ErrFenceUnavailable
+	}
+	raw, e := io.ReadAll(io.LimitReader(res.Body, fenceReservationSize+1))
+	if e != nil || len(raw) != fenceReservationSize {
+		return FenceReservation{}, false, ErrFenceUnavailable
+	}
+	pending, e := ParseFenceReservation(raw)
+	if e != nil || !VerifyFenceReservation(pending, c.ctx, c.authority) {
+		return FenceReservation{}, false, ErrFenceUnavailable
+	}
+	return pending, true, nil
+}
+
 func (c *FenceClient) View() (FenceView, error) {
 	req, e := http.NewRequest(http.MethodGet, c.origin+"/fence", nil)
 	if e != nil {
@@ -802,9 +906,10 @@ func VerifyFencedEnvelope(e FencedEnvelope, req AuthorityRequest, challenge, ctx
 }
 
 type FencedCoordinator struct {
-	authority *SharedAuthority
-	fence     *FenceClient
-	fault     func(string) error
+	authority       *SharedAuthority
+	fence           *FenceClient
+	absenceAuthority ed25519.PublicKey
+	fault           func(string) error
 }
 
 func NewFencedCoordinator(authority *SharedAuthority, fence *FenceClient) (*FencedCoordinator, error) {
@@ -812,6 +917,14 @@ func NewFencedCoordinator(authority *SharedAuthority, fence *FenceClient) (*Fenc
 		return nil, ErrPolicy
 	}
 	return &FencedCoordinator{authority: authority, fence: fence}, nil
+}
+func NewFencedCoordinatorWithAbsenceAuthority(authority *SharedAuthority, fence *FenceClient, absenceAuthority ed25519.PublicKey) (*FencedCoordinator, error) {
+	c, e := NewFencedCoordinator(authority, fence)
+	if e != nil || len(absenceAuthority) != ed25519.PublicKeySize {
+		return nil, ErrPolicy
+	}
+	c.absenceAuthority = append(ed25519.PublicKey(nil), absenceAuthority...)
+	return c, nil
 }
 func (c *FencedCoordinator) intentPath() string { return filepath.Join(c.authority.dir, fenceIntentName) }
 func (c *FencedCoordinator) loadIntentLocked() (FenceReservation, bool, error) {
@@ -1063,6 +1176,56 @@ func (c *FencedCoordinator) processLocked(req AuthorityRequest) (FencedResponse,
 	}
 	return out, nil
 }
+func (c *FencedCoordinator) ResolveOrphanWithAbsenceProof(proof EffectAbsenceProof) error {
+	a := c.authority
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	if a.lock == nil || a.poisoned {
+		return ErrStore
+	}
+	if len(c.absenceAuthority) != ed25519.PublicKeySize {
+		return ErrPolicy
+	}
+	if _, exists, e := c.loadIntentLocked(); e != nil {
+		return e
+	} else if exists {
+		return ErrFenceConflict
+	}
+	view, e := c.fence.View()
+	if e != nil {
+		return ErrFenceUnavailable
+	}
+	current := a.headLocked()
+	if view.Head != current {
+		return ErrWitnessRollback
+	}
+	if view.Pending == (Digest{}) {
+		return ErrFenceConflict
+	}
+	pending, exists, e := c.fence.PendingReservation()
+	if e != nil {
+		return ErrFenceUnavailable
+	}
+	if !exists || pending.Hash() != view.Pending || pending.Before != current {
+		return ErrWitnessRollback
+	}
+	if !VerifyEffectAbsenceProof(proof, a.ctx, a.signer.Public().(ed25519.PublicKey), pending, c.absenceAuthority) {
+		return ErrPolicy
+	}
+	next, e := c.fence.Abort(pending)
+	if e != nil {
+		if errors.Is(e, ErrFenceConflict) {
+			return e
+		}
+		return ErrFenceUnavailable
+	}
+	if next.Head != current || next.Pending != (Digest{}) || next.Sequence != view.Sequence ||
+		next.Genesis != view.Genesis || next.LastReservation != view.LastReservation {
+		return ErrWitnessRollback
+	}
+	return nil
+}
+
 func (c *FencedCoordinator) Process(req AuthorityRequest) (FencedResponse, error) {
 	a := c.authority
 	a.mu.Lock()

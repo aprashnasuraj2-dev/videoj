@@ -15,6 +15,7 @@ import (
 )
 
 func fenceKeys() (ed25519.PublicKey, ed25519.PrivateKey) { return keys(14) }
+func absenceKeys() (ed25519.PublicKey, ed25519.PrivateKey) { return keys(19) }
 
 func TestAdmissionFenceReservationCASIdempotenceAndForgery(t *testing.T) {
 	origin := "http://127.0.0.1:1"
@@ -609,6 +610,171 @@ func TestFencedCoordinatorOrphanedAdmissionFailsClosed(t *testing.T) {
 		t.Fatal("orphan path crossed effect boundary", e, spent, total, effects)
 	}
 	t.Log("lost owner evidence leaves the exact pending reservation fail-closed: zero effects and no automatic abort or second admission")
+}
+
+func TestFencedCoordinatorOrphanResolutionRequiresExactAbsenceProof(t *testing.T) {
+	var fencePtr atomic.Pointer[AdmissionFence]
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fencePtr.Load().ServeHTTP(w, r)
+	}))
+	defer srv.Close()
+	ctx, approver, ak, authorityPub, authorityKey, callerPub, callerKey := authorityFixture(t, srv.URL)
+	fencePub, fenceKey := fenceKeys()
+	absencePub, absenceKey := absenceKeys()
+	a, e := CreateSharedAuthority(privateTemp(t), ctx, approver, authorityKey, callerPub, 2)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer a.Close()
+	genesis, _ := a.Head()
+	fence, e := CreateAdmissionFence(privateTemp(t), ctx, authorityPub, fenceKey, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer fence.Close()
+	fencePtr.Store(fence)
+	client, e := NewFenceClient(srv.URL, ctx, authorityPub, fencePub, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	coordinator, e := NewFencedCoordinatorWithAbsenceAuthority(a, client, absencePub)
+	if e != nil {
+		t.Fatal(e)
+	}
+	coordinator.fault = func(at string) error {
+		if at == "after-reserve" {
+			return errors.New("drop owner evidence before effect")
+		}
+		return nil
+	}
+	action := approve(t, 0, ctx, ak)
+	wire, _ := SignAuthorityRequest(0, AuthorityCommit, genesis, action, callerKey[0])
+	if _, e = coordinator.Process(wire); !errors.Is(e, ErrUnknown) {
+		t.Fatal("expected unknown reserve boundary", e)
+	}
+	pending, exists, e := client.PendingReservation()
+	if e != nil || !exists || pending.Before != genesis || pending.RequestHash != wire.Hash() {
+		t.Fatal("pending reservation unavailable", exists, e, pending)
+	}
+	viewBefore, e := client.View()
+	if e != nil || viewBefore.Pending != pending.Hash() {
+		t.Fatal("pending/view mismatch", e, viewBefore.Pending, pending.Hash())
+	}
+	if e = os.Remove(coordinator.intentPath()); e != nil {
+		t.Fatal(e)
+	}
+	_, wrongKey := keys(20)
+	forged, e := SignEffectAbsenceProof(ctx, authorityPub, pending, wrongKey)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if e = coordinator.ResolveOrphanWithAbsenceProof(forged); !errors.Is(e, ErrPolicy) {
+		t.Fatal("wrong absence signer resolved orphan", e)
+	}
+	stillPending, exists, e := client.PendingReservation()
+	if e != nil || !exists || !sameReservation(stillPending, pending) {
+		t.Fatal("forged proof changed pending reservation", e)
+	}
+	valid, e := SignEffectAbsenceProof(ctx, authorityPub, pending, absenceKey)
+	if e != nil || !VerifyEffectAbsenceProof(valid, ctx, authorityPub, pending, absencePub) {
+		t.Fatal("valid absence proof", e)
+	}
+	roundTrip, e := ParseEffectAbsenceProof(valid.Bytes())
+	if e != nil || roundTrip != valid {
+		t.Fatal("absence proof round trip", e)
+	}
+	altered := valid
+	altered.RequestHash[0] ^= 1
+	if VerifyEffectAbsenceProof(altered, ctx, authorityPub, pending, absencePub) {
+		t.Fatal("altered absence proof verified")
+	}
+	if e = coordinator.ResolveOrphanWithAbsenceProof(valid); e != nil {
+		t.Fatal("exact absence proof did not resolve pre-effect orphan", e)
+	}
+	if _, exists, e = client.PendingReservation(); e != nil || exists {
+		t.Fatal("resolved orphan still exposes pending reservation", exists, e)
+	}
+	viewAfter, e := client.View()
+	if e != nil || viewAfter.Head != genesis || viewAfter.Pending != (Digest{}) || viewAfter.Sequence != 0 {
+		t.Fatal("absence resolution advanced fence", e, viewAfter)
+	}
+	spent, total, effects, e := a.Counts()
+	if e != nil || spent != [authorityCallers]byte{} || total != 0 || effects != 0 {
+		t.Fatal("absence resolution crossed effect boundary", e, spent, total, effects)
+	}
+
+	coordinator.fault = nil
+	second := approve(t, 1, ctx, ak)
+	secondWire, _ := SignAuthorityRequest(1, AuthorityCommit, genesis, second, callerKey[1])
+	response, e := coordinator.Process(secondWire)
+	if e != nil || response.Authority.Outcome != AuthorityCommitted {
+		t.Fatal("fresh work did not resume after proven absence", e, response.Authority.Outcome)
+	}
+	spent, total, effects, e = a.Counts()
+	if e != nil || spent != [authorityCallers]byte{0, 1} || total != 1 || effects != 1 {
+		t.Fatal("post-resolution effect accounting", e, spent, total, effects)
+	}
+	t.Log("only an exact independently signed absence proof clears a pre-effect orphan; forged proof preserves the pending fence")
+}
+
+func TestFencedCoordinatorAbsenceProofCannotUndoKnownLocalEffect(t *testing.T) {
+	var fencePtr atomic.Pointer[AdmissionFence]
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fencePtr.Load().ServeHTTP(w, r)
+	}))
+	defer srv.Close()
+	ctx, approver, ak, authorityPub, authorityKey, callerPub, callerKey := authorityFixture(t, srv.URL)
+	fencePub, fenceKey := fenceKeys()
+	absencePub, absenceKey := absenceKeys()
+	a, e := CreateSharedAuthority(privateTemp(t), ctx, approver, authorityKey, callerPub, 2)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer a.Close()
+	genesis, _ := a.Head()
+	fence, e := CreateAdmissionFence(privateTemp(t), ctx, authorityPub, fenceKey, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer fence.Close()
+	fencePtr.Store(fence)
+	client, _ := NewFenceClient(srv.URL, ctx, authorityPub, fencePub, genesis)
+	coordinator, _ := NewFencedCoordinatorWithAbsenceAuthority(a, client, absencePub)
+	coordinator.fault = func(at string) error {
+		if at == "after-authority" {
+			return errors.New("lose coordinator evidence after effect")
+		}
+		return nil
+	}
+	action := approve(t, 0, ctx, ak)
+	wire, _ := SignAuthorityRequest(0, AuthorityCommit, genesis, action, callerKey[0])
+	if _, e = coordinator.Process(wire); !errors.Is(e, ErrUnknown) {
+		t.Fatal("post-effect fault did not become unknown", e)
+	}
+	pending, exists, e := client.PendingReservation()
+	if e != nil || !exists {
+		t.Fatal("post-effect pending reservation missing", e)
+	}
+	if e = os.Remove(coordinator.intentPath()); e != nil {
+		t.Fatal(e)
+	}
+	// The configured signer can lie. Local durable authority state must still
+	// prevent that proof from rewinding a transition known to have occurred.
+	lying, e := SignEffectAbsenceProof(ctx, authorityPub, pending, absenceKey)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if e = coordinator.ResolveOrphanWithAbsenceProof(lying); !errors.Is(e, ErrWitnessRollback) {
+		t.Fatal("absence proof rewound known local effect", e)
+	}
+	head, _ := a.Head()
+	spent, total, effects, e := a.Counts()
+	view, ve := client.View()
+	if e != nil || ve != nil || head == genesis || spent != [authorityCallers]byte{1, 0} || total != 1 || effects != 1 ||
+		view.Pending != pending.Hash() || view.Head != genesis {
+		t.Fatal("lying proof mutated known-effect state", e, ve, spent, total, effects, view)
+	}
+	t.Log("an absence signer cannot override a locally persisted effect; unresolved fence remains fail-closed")
 }
 
 func TestAdmissionFenceExhaustionIsExplicitAndNonMutating(t *testing.T) {

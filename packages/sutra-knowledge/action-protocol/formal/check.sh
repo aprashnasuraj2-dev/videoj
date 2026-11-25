@@ -195,3 +195,16 @@ fi
 cat "$WORK/fence-availability-steal.log"
 grep -F 'Invariant AtMostOneEffect is violated' "$WORK/fence-availability-steal.log"
 python3 fence_availability.py
+
+# An orphan may regain availability only with a separately trusted proof that
+# its exact external dispatch did not occur. Truthful proof is safe/live for
+# undispatched orphans; a lying proof must expose the delayed double-effect.
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-absence-proof" -config FenceAvailabilityProof.cfg FenceAvailability.tla > "$WORK/fence-absence-proof.log" 2>&1 || { cat "$WORK/fence-absence-proof.log"; exit 1; }
+cat "$WORK/fence-absence-proof.log"
+grep -F 'No error has been found' "$WORK/fence-absence-proof.log"
+if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-absence-lie" -config FenceAvailabilityLie.cfg FenceAvailability.tla > "$WORK/fence-absence-lie.log" 2>&1; then
+ cat "$WORK/fence-absence-lie.log"; echo 'lying absence proof unexpectedly preserved one effect' >&2; exit 1
+fi
+cat "$WORK/fence-absence-lie.log"
+grep -F 'Invariant AtMostOneEffect is violated' "$WORK/fence-absence-lie.log"
+python3 fence_absence.py
