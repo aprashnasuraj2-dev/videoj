@@ -106,7 +106,9 @@ test('global resource and call ceilings remain authoritative across profiles',()
  const x=ledger.reserve({profileId:a.profile.profileId,inputBytes:100,maxOutputTokens:75,now:0});
  const y=ledger.reserve({profileId:b.profile.profileId,inputBytes:100,maxOutputTokens:75,now:0});
  assert.throws(()=>ledger.reserve({profileId:a.profile.profileId,inputBytes:1,maxOutputTokens:1,now:5}),e=>e.code==='QUOTA','daily call cap survives lease expiry');
- assert.equal(ledger.prune(5),2);assert.equal(ledger.snapshot().global.used.active,0);
+ // reserve() prunes expired concurrency before evaluating the still-retained
+ // daily call/resource charge, so an explicit second prune is idempotent.
+ assert.equal(ledger.prune(5),0);assert.equal(ledger.snapshot().global.used.active,0);
  assert.equal(ledger.snapshot().global.used.calls,2);
  assert.equal(ledger.inspectLease(x.leaseId).state,'lease-expired');assert.equal(ledger.inspectLease(y.leaseId).state,'lease-expired');
 });
