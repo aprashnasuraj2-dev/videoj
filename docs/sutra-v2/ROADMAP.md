@@ -805,3 +805,10 @@ V2-044 candidate adds bounded multi-proposal contrast under one independently pi
 ## V2-045 — consensus challenge and shared-DAG bound
 
 V2-045 candidate: fix an exponential shared-DAG signature traversal risk by memoizing in-flight promises, not completed hashes. Added depth-24 repeated-operand graph test requiring exactly 24 unique signature nodes; not a latency benchmark. Browser scripted 8-proposal challenge: five exact cloned self-comparisons, original comparison, reversed comparison and fabricated leaf; conditional majority is not authority. Separate Python reference reconstructs 21 admitted pair comparisons from independent host contract, exact structural hashes and explicit fixed malformed-leaf control; 16 tamper mutations authored. Generic refusal-order parity is not claimed. No live models or deployment. Exact CI pending.
+
+
+## V2-046 — source economics candidate
+
+V2-042 b3bfcf821c209d9d5de26728a69f27062e02bb7c and V2-043 77c0865310b35be0f25c3f6d23e5eac55373818b each passed all nine exact workflows. Compiler PR 45592407931, push 45592396115; browser jobs 139129670568 and 139129708625 independently reconstructed actual compiler exports. Promote scoped reviewed compiler only.
+
+V2-046 candidate: separate host-pinned shared-source acquisition and marginal field-read economic profile over replay-derived surviving worlds and available field partitions. Exact bounded minimax state is (world cell, acquired source set); nonnegative costs, acquisition charged once, no fabricated availability, explicit initial acquisition and event digest; compare same-cost per-field counterfactual separately from legacy declared effort. Synthetic worst-case 4 to 3 units expected, 256 exhaustive sequence-oracle controls authored; no real cost, privacy/disclosure authorization, expected utility, bulk-read assumption or global best-branch optimization. CI pending.
