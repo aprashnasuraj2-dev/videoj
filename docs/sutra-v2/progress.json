@@ -3,9 +3,9 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-023",
+  "session": "V2-024",
   "next": [
-    "V2-D08-ROOT-IMPACT",
+    "V2-D09-WIRE-PARITY",
     "V2-P07-WASM",
     "V2-RUNTIME-02",
     "V2-P05-RECOVERY",
@@ -19,7 +19,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "root_impact_and_progressive_diagnosis_candidate_pending_exact_ci",
+  "state": "cross_language_capsule_differential_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -283,6 +283,12 @@
       "sourceRevision": "08264c69899ba6eb8aeb1fb16b8908d3e97c3a9f",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45572793560/job/139063288670",
       "description": "All nine exact-source workflows succeeded: knowledge PR 45572793560 and push 45572786501, ingress 45572793255, impact 45572793322, evaluation 45572793369, Open Kit 45572793487, legacy release 45572793532, publisher 45572793338, browser matrix 45572793303. Actual browser downloaded exact independent 55,058-byte Python archive; archive SHA-256 e8ea6051acba24600fd75496c8b316b633770db6ba2f98aa81c2701f1fcd87be. Deterministic rebuild, exact member source manifest, isolated execution with import shadow, one-byte tamper/refusal/restoration, historical pin counterexample, rehashed forgery, strict pins and missing input all passed. Actual browser artifact 15003426534 SHA-256 e2a683d8ecdfc4404bc7f01c7e469302244543d40b0b3f3aa80382d107d21e83 matched downloaded bytes. Downloaded archive independently executed locally with current pin/current capsule (REFUTED), current pin/old capsule (PIN_MISMATCH), and old pin/old capsule (SUPPORTED). No publisher authenticity, truth, or freshness claim."
+    },
+    {
+      "id": "V2-D08-ROOT-IMPACT",
+      "sourceRevision": "58e133202fa83765ee79ee6d8a18697999e47fb5",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45573411050/job/139065329647",
+      "description": "All nine exact-source workflows succeeded: knowledge PR 45573411050 and push 45573399840, ingress 45573411071, impact 45573411125, evaluation 45573411072, Open Kit 45573411243, legacy release 45573411108, publisher 45573411101, browser matrix 45573411052. The knowledge job passed all 48 tests, including 108 configurations and 162 actual exact-kernel root withdrawals, artifact parent refusal, and immutable replay. Both browser jobs passed root ancestry inspection, ten exact artifact identities, nine direct parents, contrasting withdrawal predictions, preserved conflicted state, progressive disclosure and all existing exports."
     }
   ],
   "release": "not_authorized",
@@ -296,7 +302,7 @@
     "resolutionRevision": "dc50b83369478f6ee2c96186a8c1e14bd18ce004",
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45570334106/job/139055127953"
   },
-  "lastVerifiedKernelSource": "08264c69899ba6eb8aeb1fb16b8908d3e97c3a9f",
+  "lastVerifiedKernelSource": "58e133202fa83765ee79ee6d8a18697999e47fb5",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -307,27 +313,26 @@
   },
   "pendingCandidate": {
     "sourceRevision": null,
-    "sourceParent": "08264c69899ba6eb8aeb1fb16b8908d3e97c3a9f",
+    "sourceParent": "58e133202fa83765ee79ee6d8a18697999e47fb5",
     "status": "candidate_pending_exact_ci",
+    "identityRule": "Resolve the immutable commit containing this checkpoint.",
+    "checks": [
+      "77 explicit differential controls on actual Chromium exported current and historical capsule bytes and actual downloaded standalone independent Python verifier",
+      "13 valid cases, 64 refusals; same refusal reasons, conclusion and all accepted digest identities; no reliance on agreement alone",
+      "all four scoped states and retained-pin counterexamples, bounded wire, schema, semantics and rehashed forgery controls",
+      "previous tests remain"
+    ]
+  },
+  "previousPendingCandidate": {
+    "sourceRevision": "58e133202fa83765ee79ee6d8a18697999e47fb5",
+    "sourceParent": "08264c69899ba6eb8aeb1fb16b8908d3e97c3a9f",
+    "status": "verified_exact_ci",
     "identityRule": "Resolve the immutable commit containing this checkpoint.",
     "checks": [
       "root ancestry and nonmutating single-lineage withdrawal projections compared with 162 actual exact-kernel withdrawals across 108 configurations",
       "explicit original/copy identities and parent pointers; malformed ancestry refusal",
       "primary diagnostic answers precede collapsed advanced world and threshold inspection",
       "browser conflict roots are not votes; two actual lineage previews, all ten identities, unchanged current verdict; retain all existing exports, guides and verification tests"
-    ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": "08264c69899ba6eb8aeb1fb16b8908d3e97c3a9f",
-    "sourceParent": "c42248a63399263f9cb4651024df9422d3d440c6",
-    "status": "verified_exact_ci",
-    "identityRule": "Resolve the immutable commit containing this checkpoint.",
-    "checks": [
-      "deterministic exact-source Python verifier ZIP application and manifest; no third-party dependencies",
-      "static build and Pages artifact preserve bundle and separately downloadable digest",
-      "actual browser downloads exact verifier and digest; no external requests",
-      "execute downloaded verifier in isolated Python with malicious import-shadow path, actual current and old capsules, exact restoration, altered bytes and semantic forgeries, malformed and missing pins",
-      "retain trust boundaries and previous tests"
     ]
   },
   "roadmap": "docs/sutra-v2/roadmap.json",

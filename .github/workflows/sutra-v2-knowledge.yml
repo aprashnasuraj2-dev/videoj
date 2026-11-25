@@ -170,6 +170,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/test_offline_verifier.py apps/sutra-v2/test-output/sutra-proof-verifier.pyz apps/sutra-v2/test-output/sutra-proof-verifier.pyz.sha256 apps/sutra-v2/test-output/capsule-current.json apps/sutra-v2/test-output/capsule-current.sha256 apps/sutra-v2/test-output/capsule-old.json apps/sutra-v2/test-output/capsule-old.sha256 > apps/sutra-v2/test-output/offline-verifier-reference.txt
           cat apps/sutra-v2/test-output/offline-verifier-reference.txt
+      - name: Differentially challenge JavaScript and actual downloaded independent Python verifier
+        run: |
+          node packages/sutra-knowledge/examples/capsule-parity.mjs apps/sutra-v2/test-output/capsule-current.json apps/sutra-v2/test-output/capsule-current.sha256 apps/sutra-v2/test-output/capsule-old.json apps/sutra-v2/test-output/capsule-old.sha256 apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/capsule-parity.txt
+          cat apps/sutra-v2/test-output/capsule-parity.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

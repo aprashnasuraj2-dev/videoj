@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-023",
+  "session": "V2-024",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2474,13 +2474,31 @@
     },
     {
       "id": "V2-D08-ROOT-IMPACT",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D05-WORLD-TRACE",
         "V2-D06-ASSUMPTIONS",
         "V2-D07-OFFLINE"
       ],
-      "scope": "Inspect exact root ancestry and nonmutating single-lineage effects on both claims; primary diagnostic answers before advanced inspection. No inferred independence or automatic withdrawal."
+      "scope": "Inspect exact root ancestry and nonmutating single-lineage effects on both claims; primary diagnostic answers before advanced inspection. No inferred independence or automatic withdrawal.",
+      "evidence": [
+        {
+          "id": "V2-D08-ROOT-IMPACT",
+          "sourceRevision": "58e133202fa83765ee79ee6d8a18697999e47fb5",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45573411050/job/139065329647",
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45573411050 and push 45573399840, ingress 45573411071, impact 45573411125, evaluation 45573411072, Open Kit 45573411243, legacy release 45573411108, publisher 45573411101, browser matrix 45573411052. The knowledge job passed all 48 tests, including 108 configurations and 162 actual exact-kernel root withdrawals, artifact parent refusal, and immutable replay. Both browser jobs passed root ancestry inspection, ten exact artifact identities, nine direct parents, contrasting withdrawal predictions, preserved conflicted state, progressive disclosure and all existing exports."
+        }
+      ]
+    },
+    {
+      "id": "V2-D09-WIRE-PARITY",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D02-CAPSULE",
+        "V2-D07-OFFLINE",
+        "V2-D08-ROOT-IMPACT"
+      ],
+      "scope": "Differential agreement on explicitly expected accepted/refused results and identities using actual exported and downloaded bytes. Not a universal proof of parser equivalence."
     }
   ]
 }
