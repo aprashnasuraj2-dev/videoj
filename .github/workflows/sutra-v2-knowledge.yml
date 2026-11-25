@@ -70,9 +70,7 @@ jobs:
         run: |
           rustc --version
           rustup target add wasm32-unknown-unknown
-          mkdir -p apps/sutra-v2/public
-          rustc --edition=2021 --target wasm32-unknown-unknown --crate-type=cdylib -C opt-level=s -C panic=abort -C strip=symbols packages/sutra-knowledge/support-lattice/wasm.rs -o apps/sutra-v2/public/support-lattice.wasm
-          sha256sum apps/sutra-v2/public/support-lattice.wasm
+          sh packages/sutra-knowledge/support-lattice/build-wasm.sh
       - run: node apps/sutra/node_modules/vite/bin/vite.js build apps/sutra-v2
       - run: node apps/sutra-v2/stage-lesson.mjs
       - run: node packages/sutra-runtime/verify-vendor.mjs
