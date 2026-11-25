@@ -17,7 +17,7 @@ const syntheticSend=providerId=>async({providerId:actual,model,credential,operat
  };
 };
 const workspace=createProviderWorkspace({
- catalog,globalLimits,defaultProfileLimits:profileLimits,leaseTicks:10,
+ catalog,globalLimits,defaultProfileLimits:profileLimits,leaseTicks:45000,
  transports:[
   {providerId:'provider-a',send:syntheticSend('provider-a')},
   {providerId:'provider-b',send:syntheticSend('provider-b')}
