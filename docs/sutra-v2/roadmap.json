@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-105",
+  "session": "V2-106",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2951,6 +2951,12 @@
           "sourceRevision": "78e9b5cc2670163b69e186c119b14c1486609581",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45710993527/job/139545046194",
           "description": "Existing controlled reconstruction unit and browser journey green at exact V2-102. New portable independent reconstruction profile remains pending."
+        },
+        {
+          "id": "V2-LK04-ROUNDTRIP",
+          "sourceRevision": "e3476be3c2b2c34dd7aae1be184858f133f6dcb8",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45711834940/job/139547926314",
+          "description": "Scoped actual browser independent roundtrip replay passed (before/after qualifier changes; 16 repinned mutations and 4 pin controls); whole revision pending at observation."
         }
       ]
     },

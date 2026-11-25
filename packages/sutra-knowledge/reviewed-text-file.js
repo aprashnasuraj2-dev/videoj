@@ -2,6 +2,7 @@
 // MIME-based trust, external fetch or automatic numeric extraction.
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {casePin} from './pinned-investigation.js';
+import {reviseReviewedSourceDraft} from './source-draft-restore.js';
 import {sealReviewedDraft} from './reviewed-draft.js';
 export const VERSION='sutra-reviewed-text-file/v1';
 export const MAX_FILE_BYTES=65536;
@@ -30,4 +31,19 @@ export async function addReviewedTextFile(draftText,input,{sourceId,lineage,sour
  const draft={...old,sources:[...old.sources,{id:sourceId,lineage,text:doc.text}]};
  const sealed=await sealReviewedDraft(JSON.stringify(draft));
  return freeze({version:VERSION,sourceId,sourceDigest:doc.sourceDigest,byteLength:doc.byteLength,draft,contractText:sealed.contractText,contractPin:sealed.pin,admittedNewBindings:0,decisionAuthority:'NONE',qualification:doc.qualification});
+}
+
+/** Exact replacement file: independent old/new source pins, existing source identity,
+ * no silent numeric remapping. Prior downloaded versions remain immutable. */
+export async function reviseReviewedTextFile(draftText,input,{sourceId,previousSourceDigest,sourceDigest}){
+ if(!id(sourceId))fail('IDENTITY');
+ const doc=await inspectReviewedTextFile(input);
+ if(doc.sourceDigest!==sourceDigest)fail('SOURCE_PIN');
+ const old=parseUniqueJson(draftText,{maxChars:262144,maxDepth:8});
+ await sealReviewedDraft(draftText);
+ const previous=old.sources.find(s=>s.id===sourceId);
+ if(!previous||await casePin(previous.text)!==previousSourceDigest)fail('PREVIOUS_SOURCE_PIN');
+ const revision=await reviseReviewedSourceDraft(draftText,sourceId,doc.text);
+ const sealed=await sealReviewedDraft(JSON.stringify(revision.draft));
+ return freeze({...revision,version:VERSION,previousSourceDigest,sourceDigest:doc.sourceDigest,byteLength:doc.byteLength,contractText:sealed.contractText,contractPin:sealed.pin,admittedNewBindings:0,decisionAuthority:'NONE',qualification:'Exact local replacement of one declared source. Every binding from that source is invalidated, including unchanged tokens; unaffected bindings and declared lineage are preserved. No source authenticity, automatic remapping, semantic truth or action authority.'});
 }

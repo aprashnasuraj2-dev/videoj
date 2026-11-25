@@ -1,4 +1,4 @@
-import {inspectReviewedTextFile,addReviewedTextFile,MAX_FILE_BYTES} from '../../../packages/sutra-knowledge/reviewed-text-file.js';
+import {inspectReviewedTextFile,addReviewedTextFile,reviseReviewedTextFile,MAX_FILE_BYTES} from '../../../packages/sutra-knowledge/reviewed-text-file.js';
 import {exportReviewedQuestion} from '../../../packages/sutra-knowledge/reviewed-question.js';
 import {evaluateReviewedFisher,FISHER_DESIGN} from '../../../packages/sutra-knowledge/reviewed-fisher.js';
 import {evaluateReviewedBinomial,DESIGN_OBLIGATIONS} from '../../../packages/sutra-knowledge/reviewed-binomial.js';
@@ -45,28 +45,42 @@ function clearTextFilePreview({clearFile=false}={}){
  if(clearFile)by('text-file').value='';
 }
 function textFileControl(){
- for(const id of ['text-file','text-file-source','text-file-lineage'])by(id).disabled=busy;
+ 
+ const mode=by('text-file-mode');mode.querySelector('option[value="replace"]').disabled=!sources.length;
+ if(!sources.length)mode.value='add';
+ const replace=mode.value==='replace';
+ by('text-file-new-fields').hidden=replace;by('text-file-replace-fields').hidden=!replace;
+ for(const id of ['text-file','text-file-mode'])by(id).disabled=busy;
+ for(const id of ['text-file-source','text-file-lineage'])by(id).disabled=busy||replace;
+ by('text-file-replace-source').disabled=busy||!replace;
  by('text-file-inspect').disabled=busy||!by('text-file').files?.length;
  by('text-file-stage').disabled=busy||!textFilePreview;
+ by('text-file-stage').textContent=replace?'Replace inspected source (invalidate its bindings)':'Stage inspected text';
 }
-by('text-file').onchange=()=>{clearTextFilePreview();textFileControl();};
+for(const id of ['text-file','text-file-mode','text-file-replace-source'])by(id).onchange=()=>{clearTextFilePreview();textFileControl();};
 for(const id of ['text-file-source','text-file-lineage'])by(id).oninput=()=>{clearTextFilePreview();textFileControl();};
 by('text-file-inspect').onclick=()=>work(async ticket=>{
  clearTextFilePreview();const file=by('text-file').files?.[0];
  if(!file||file.size<1||file.size>MAX_FILE_BYTES)throw Error('TEXT_FILE_SIZE');
  const bytes=new Uint8Array(await file.arrayBuffer()),doc=await inspectReviewedTextFile(bytes);
  if(ticket!==epoch||by('text-file').files?.[0]!==file)return;
- textFilePreview={bytes,doc,sourceId:by('text-file-source').value,lineage:by('text-file-lineage').value};
- by('text-file-preview').textContent=doc.byteLength+' bytes, '+doc.utf16Length+' UTF-16 units. Exact UTF-8 text; no quantity selected. Local preview only.\n'+doc.text;
+ const mode=by('text-file-mode').value;
+ const previous=mode==='replace'?sources.find(s=>s.id===by('text-file-replace-source').value):null;
+ if(mode==='replace'&&!previous)throw Error('TEXT_FILE_IDENTITY');
+ const previousSourceDigest=previous?await casePin(previous.text):null;
+ if(ticket!==epoch)return;
+ textFilePreview={bytes,doc,mode,previousSourceDigest,sourceId:previous?.id??by('text-file-source').value,lineage:previous?.lineage??by('text-file-lineage').value};
+ const invalidated=previous?bindings.filter(b=>b.sourceId===previous.id).map(b=>b.id):[];
+ by('text-file-preview').textContent=doc.byteLength+' bytes, '+doc.utf16Length+' UTF-16 units. Exact UTF-8 text; no quantity selected. Local preview only.'+(previous?'\nPrevious source digest: '+previousSourceDigest+'\nReplacement would invalidate: '+(invalidated.join(', ')||'none')+'. Other bindings remain.':'')+'\n'+doc.text;
  by('text-file-digest').textContent=doc.sourceDigest;status('text_file_inspected','Local file inspected without upload. Explicitly stage its exact text and review numeric spans separately.');
 });
 by('text-file-stage').onclick=()=>work(async ticket=>{
  const preview=textFilePreview;if(!preview)return;
- const r=await addReviewedTextFile(draft(),preview.bytes,{sourceId:preview.sourceId,lineage:preview.lineage,sourceDigest:preview.doc.sourceDigest});
+ const r=preview.mode==='replace'?await reviseReviewedTextFile(draft(),preview.bytes,{sourceId:preview.sourceId,previousSourceDigest:preview.previousSourceDigest,sourceDigest:preview.doc.sourceDigest}):await addReviewedTextFile(draft(),preview.bytes,{sourceId:preview.sourceId,lineage:preview.lineage,sourceDigest:preview.doc.sourceDigest});
  if(ticket!==epoch||preview!==textFilePreview)return;
  sources=structuredClone(r.draft.sources);bindings=structuredClone(r.draft.bindings);
  clearTextFilePreview({clearFile:true});for(const id of ['text-file-source','text-file-lineage'])by(id).value='';
- invalidate('Exact local file staged; zero automatically admitted quantities. Select and declare relevant numeric tokens.');refresh();by('source-pick').value=r.sourceId;by('select-text').value=sources.find(s=>s.id===r.sourceId).text;
+ invalidate(preview.mode==='replace'?'Exact source replaced. Reselect invalidated bindings: '+(r.invalidatedBindingIds.join(', ')||'none')+'. Retained bindings: '+(r.retainedBindingIds.join(', ')||'none')+'.':'Exact local file staged; zero automatically admitted quantities. Select and declare relevant numeric tokens.');refresh();by('source-pick').value=r.sourceId;by('select-text').value=sources.find(s=>s.id===r.sourceId).text;
 });
 function clearQuestionPreview(){questionCurrent=null;questionExport=null;by('question-path-result').textContent='';by('question-path-snapshot-pin').textContent='';by('question-path-plan-pin').textContent='';by('question-path-disclosure').textContent='No mapping export available.';}
 function questionControl(){
@@ -174,6 +188,7 @@ by('table-stage').onclick=()=>work(async ticket=>{
  status('table_staged','Exact table text and '+r.selectedCells.length+' reviewed numeric selections staged. No formula or meaning inferred.');
 });
 function refresh(){
+ const selected=by('text-file-replace-source').value;options(by('text-file-replace-source'),sources.map(s=>s.id));if(sources.some(s=>s.id===selected))by('text-file-replace-source').value=selected;textFileControl();
  options(by('source-revise-pick'),sources.map(s=>s.id));by('source-revise-text').value=sources[0]?.text??'';
  options(by('source-pick'),sources.map(s=>s.id));by('select-text').value=sources[0]?.text??'';
  options(by('left'),bindings.map(b=>b.id));options(by('right'),bindings.map(b=>b.id));if(bindings.length>1)by('right').selectedIndex=1;

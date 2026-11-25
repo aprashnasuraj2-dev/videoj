@@ -951,20 +951,35 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());if(r.url().includes('sutra-local-file-sentinel'))poison.push(r.url());});
    await page.goto(origin);await page.locator('#reviewed-workspace > summary').click();await page.locator('#review-text-file-panel > summary').click();
    const fill=(id,value)=>page.locator('#review-'+id).fill(value),click=id=>page.locator('#review-'+id).click(),state=s=>page.waitForFunction(x=>document.querySelector('#review-status').dataset.state===x,s);
-   await fill('question','Is site A higher than site B?');await fill('text-file-source','local_report');await fill('text-file-lineage','declared_root');
+   await fill('question','Is site A higher than site B?');
+   await fill('source-id','unaffected');await fill('lineage','other_root');await fill('source-text','Site C: 15.25;');await click('source-add');await state('draft');
+   await fill('kind','stress');await fill('unit','MPa');await fill('scope','sample_scope');await fill('dim-l','-1');await fill('dim-m','1');await fill('dim-t','-2');
+   await fill('binding-id','c');await page.locator('#review-select-text').evaluate(el=>{el.focus();const i=el.value.indexOf('15.25');el.setSelectionRange(i,i+5);});await click('binding-add');await state('draft');
+   await fill('text-file-source','local_report');await fill('text-file-lineage','declared_root');
    const file=page.locator('#review-text-file');
    await file.setInputFiles({name:'invalid.txt',mimeType:'text/plain',buffer:Buffer.from([0xc0,0xaf])});await click('text-file-inspect');await state('refused');assert.match(await page.locator('#review-status').innerText(),/TEXT_FILE_UTF8/);assert.equal(await page.locator('#review-text-file-stage').isDisabled(),true);
    const text='\ufeff測定 🧪 <img src="/sutra-local-file-sentinel">\nSite A: 12.50;\nSite B: 10.25;\n',bytes=Buffer.from(text,'utf8'),expected='sha256:'+require('node:crypto').createHash('sha256').update(bytes).digest('hex');
    await file.setInputFiles({name:'report.txt',mimeType:'text/plain',buffer:bytes});await click('text-file-inspect');await state('text_file_inspected');
    assert.equal(await page.locator('#review-text-file-digest').innerText(),expected);assert.match(await page.locator('#review-text-file-preview').textContent(),/sutra-local-file-sentinel/);assert.equal(await page.locator('#review-text-file-preview img').count(),0);
    await fill('text-file-lineage','changed_root');assert.equal(await page.locator('#review-text-file-stage').isDisabled(),true);await fill('text-file-lineage','declared_root');await click('text-file-inspect');await state('text_file_inspected');
-   await click('text-file-stage');await state('draft');assert.match(await page.locator('#review-staged').innerText(),/1 staged source\(s\) · 0 reviewed binding/);assert.equal(await page.locator('#review-select-text').inputValue(),text);
+   await click('text-file-stage');await state('draft');assert.match(await page.locator('#review-staged').innerText(),/2 staged source\(s\) · 1 reviewed binding/);assert.equal(await page.locator('#review-select-text').inputValue(),text);
    await fill('kind','stress');await fill('unit','MPa');await fill('scope','sample_scope');await fill('dim-l','-1');await fill('dim-m','1');await fill('dim-t','-2');
    for(const [id,token] of [['a','12.50'],['b','10.25']]){
     await fill('binding-id',id);await page.locator('#review-select-text').evaluate((el,token)=>{el.focus();const i=el.value.indexOf(token);el.setSelectionRange(i,i+token.length);},token);await click('binding-add');await state('draft');
    }
-   await click('seal');await state('sealed');const contract=JSON.parse(await page.locator('#review-contract').textContent());assert.equal(contract.sources[0].digest,expected);assert.equal(contract.sources[0].text,text);assert.equal(contract.bindings[0].span.start,Buffer.byteLength(text.slice(0,text.indexOf('12.50')),'utf8'));
-   await click('generate');await state('proposal');await click('run');await state('ready');assert.match(await page.locator('#review-result').innerText(),/CONDITIONALLY SATISFIED/);
+   await click('seal');await state('sealed');const contract=JSON.parse(await page.locator('#review-contract').textContent());assert.equal(contract.sources.find(s=>s.id==='local_report').digest,expected);assert.equal(contract.sources.find(s=>s.id==='local_report').text,text);assert.equal(contract.bindings.find(b=>b.id==='a').span.start,Buffer.byteLength(text.slice(0,text.indexOf('12.50')),'utf8'));
+   await page.locator('#review-left').selectOption('a');await page.locator('#review-right').selectOption('b');await click('generate');await state('proposal');await click('run');await state('ready');assert.match(await page.locator('#review-result').innerText(),/CONDITIONALLY SATISFIED/);
+   const oldContract=await page.locator('#review-contract').textContent(),oldPin=await page.locator('#review-pin').innerText();
+   await page.locator('#review-text-file-mode').selectOption('replace');await page.locator('#review-text-file-replace-source').selectOption('local_report');
+   const corrected=text.replace('12.50','8.25'),newDigest='sha256:'+require('node:crypto').createHash('sha256').update(corrected,'utf8').digest('hex');
+   await file.setInputFiles({name:'corrected.txt',mimeType:'text/plain',buffer:Buffer.from(corrected)});await click('text-file-inspect');await state('text_file_inspected');
+   assert.match(await page.locator('#review-text-file-preview').textContent(),/Replacement would invalidate: a, b/);assert.equal(await page.locator('#review-text-file-digest').innerText(),newDigest);
+   await click('text-file-stage');await state('draft');assert.match(await page.locator('#review-staged').innerText(),/2 staged source\(s\) · 1 reviewed binding/);assert.equal(await page.locator('#review-export').isDisabled(),true);assert.match(await page.locator('#review-binding-list').innerText(),/c = 15.25/);assert.equal(await page.locator('#review-select-text').inputValue(),corrected);
+   for(const [id,token] of [['a','8.25'],['b','10.25']]){
+    await fill('binding-id',id);await page.locator('#review-select-text').evaluate((el,token)=>{el.focus();const i=el.value.indexOf(token);el.setSelectionRange(i,i+token.length);},token);await click('binding-add');await state('draft');
+   }
+   await click('seal');await state('sealed');const next=JSON.parse(await page.locator('#review-contract').textContent());assert.notEqual(await page.locator('#review-pin').innerText(),oldPin);assert.equal(next.sources.find(s=>s.id==='local_report').digest,newDigest);assert.equal(next.sources.find(s=>s.id==='local_report').lineage,'declared_root');assert.deepEqual(next.bindings.find(b=>b.id==='c'),JSON.parse(oldContract).bindings.find(b=>b.id==='c'));
+   await page.locator('#review-left').selectOption('a');await page.locator('#review-right').selectOption('b');await click('generate');await state('proposal');await click('run');await state('ready');assert.match(await page.locator('#review-result').innerText(),/CONDITIONALLY REFUTED/);
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);assert.deepEqual(poison,[]);await page.close();
   }
   // Full first-minute tour from fresh browser state; no simulated verdicts.
