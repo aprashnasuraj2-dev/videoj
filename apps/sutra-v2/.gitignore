@@ -1,3 +1,4 @@
 dist/
 test-output/
 public/support-lattice.wasm
+src/generated-support-pin.js
