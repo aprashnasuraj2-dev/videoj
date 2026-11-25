@@ -12,8 +12,8 @@ Pending until exact evidence; expand only when new concrete product requirements
 - [x] V2-K06 Independent reference replay implementation with golden vectors (not importing kernel).
 - [x] V2-M02 Map new product area into existing impact classifier, preserve fail-closed handling of unclassified code, and require v2 CI without misclassifying legacy metrics; ensure Observatory/reference commands propagate nonzero exit codes. Discovered after first PR CI.
 - [ ] V2-K07 Reverse dependency index, measured traversal/hash/calculation scaling and failure limits.
-- [ ] V2-K08 Typed quantity conversion and explicit semantic assumption compatibility; compare same-dimension but different scopes.
-- [ ] V2-K09 Bind declared quantity kind/unit/scope into exact conversion graph; reject semantic incompatibility before equality constraint, prove torque-energy and condition counterexamples; replay graph independently (not independent semantic policy).
+- [x] V2-K08 Typed quantity conversion and explicit semantic assumption compatibility; compare same-dimension but different scopes.
+- [x] V2-K09 Bind declared quantity kind/unit/scope into exact conversion graph; reject semantic incompatibility before equality constraint, prove torque-energy and condition counterexamples; replay graph independently (not independent semantic policy).
 - [ ] V2-E01 Evidence identity and source-version adapter using actual existing receipt validator, no trust promotion.
 - [ ] V2-A01 Bridge compiled proof obligations into existing pinned browser agent runtime under explicit model/peer authority.
 - [ ] V2-A02 Publish a compatible data-only peer capability and validate consented actual browser execution.
@@ -21,10 +21,10 @@ Pending until exact evidence; expand only when new concrete product requirements
 - [ ] V2-D01 Formal mathematics and bounded counterexample checker.
 - [ ] V2-D02 Engineering model derivation and explicit constraints, independent numerical method.
 - [ ] V2-D03 Scientific/statistical evidence lineage and applicability; research-only medical adapter.
-- [ ] V2-U01 New workspace renders typed verification results and mutations using real kernel, no fake graph.
-- [ ] V2-U02 Browser exports the exact graph/report bytes, rejects stale UI authority after assumption changes, replays and refuses tampered reports; 360px keyboard and no external requests.
-- [ ] V2-A04 Closed host-approved method selection through actual pinned agent runtime; reject model-asserted status, unknown case/method and nonconstraint target before kernel evaluation; no live provider or arbitrary peer tools.
-- [ ] V2-D04 Two explicit section-moment calculation paths produce exact identical deflection and constraint with distinct receipt identities; distinguish shared formula from independent empirical evidence.
+- [x] V2-U01 New workspace renders typed verification results and mutations using real kernel, no fake graph.
+- [x] V2-U02 Browser exports the exact graph/report bytes, rejects stale UI authority after assumption changes, replays and refuses tampered reports; 360px keyboard and no external requests.
+- [x] V2-A04 Closed host-approved method selection through actual pinned agent runtime; reject model-asserted status, unknown case/method and nonconstraint target before kernel evaluation; no live provider or arbitrary peer tools.
+- [x] V2-D04 Two explicit section-moment calculation paths produce exact identical deflection and constraint with distinct receipt identities; distinguish shared formula from independent empirical evidence.
 - [ ] V2-O02 Capability declaration format, falsifiable independent test policies, sealed challenge cases.
 - [ ] V2-O03 Observatory records real browser and exact deployment observations; detect authorized synthetic faults.
 - [ ] V2-O04 Independent reproducibility and actual HTTPS browser self-test after authorized candidate deployment.
@@ -33,4 +33,10 @@ Pending until exact evidence; expand only when new concrete product requirements
 - [ ] V2-R01 Mandatory challenge conformance, free judge access, accepted human/security/cost/public release gates.
 - [ ] V2-R02 Final demo and submission package with genuine evidence; authorized submission separate.
 
-Verified kernel and independent reference evidence: [V2-001 observations](SESSIONS.md). Next: browser-integrated verification capability and runtime bridge V2-A01; preserve explicit semantic scope work V2-K08. See PLAN.md for all 28 workstreams.
+- [ ] V2-F01 Evaluate finite competing worlds with actual kernel receipts; compute optimal adaptive observation policy by bounded subset DP, explicit indistinguishable-world witness and unresolved-world abstention; compare independent exhaustive oracle.
+- [ ] V2-F02 Browser workspace exposes actual conditional plan, cost assumptions, opposite world results and impossibility witness; no fake measurements or automatic actions.
+- [ ] V2-F03 Independently published typed observation capability with explicit applicability, evidence lineage and cost; actual consented browser discovery, policy recomputation and hostile/duplicate capability rejection.
+- [ ] V2-F04 Accept a separately verified actual observation, prune only inconsistent declared worlds, revalidate affected artifacts; unknown outcomes and noise fail closed.
+- [ ] V2-F05 Minimal incompatible assumption sets and alternative support sets; bounded search with completeness indicator, common-source lineage.
+
+Verified kernel and independent reference evidence: [V2-001 observations](SESSIONS.md). Next: exact V2-F01 CI, browser V2-F02 and cross-origin V2-F03/A02; finish runtime authority and deployed Observatory gates. See PLAN.md for all 28 workstreams.

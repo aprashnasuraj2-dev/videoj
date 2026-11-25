@@ -25,3 +25,7 @@ Resumed at `04a452995be68f63a8d03d7792a595f498015c80`; all seven observed applic
 
 ### Semantic comparison candidate
 Added a closed scope compiler with exact SI conversion, explicit quantity kinds and subject/condition/reference-frame compatibility. Same-dimensional equal torque/energy and static/dynamic stress cannot reach an equality constraint. Distinct typed declarations bind into actual graph hashes; independent Python replay receives the compiled graph, not semantic policy. Added real UI, Node and browser cases; no credit until exact CI. Fixed stale agent/replay state flags on assumption change.
+
+## V2-003 — 2026-11-25
+
+Reconciled exact `ad3617a8200d1c527c86021de0cb3a553ec611e5`: all seven reported push/PR workflows passed; [knowledge and actual Chromium jobs](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45515636775) successful including reference replay, built browser, agent bridge and declared scope checks. Credit V2-U01/U02/A04/D04/K08/K09 only within their bounded development scope. No external peer or deployment claim; interrupted earlier external-peer proposal did not change branch. User requested differentiation beyond established agentic frameworks. Added prior-art-aware frontier priority and actual finite-world minimax solver, synthetic beam challenge, abstention witness, bounded adversarial tests and independent exhaustive worst-cost oracle. V2-F01 pending exact new CI. No merge/deployment/paid calls.

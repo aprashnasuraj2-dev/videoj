@@ -22,6 +22,10 @@ jobs:
         run: |
           node packages/sutra-knowledge/examples/observatory.mjs > sutra-v2-observation.json
           cat sutra-v2-observation.json
+      - name: Execute finite-world observation planning challenge
+        run: |
+          node --input-type=module -e "import {demonstrateFrontier} from './packages/sutra-knowledge/examples/frontier.mjs'; console.log(JSON.stringify(await demonstrateFrontier(),null,2));" > sutra-v2-frontier.json
+          cat sutra-v2-frontier.json
       - name: Independent Python reference replay
         run: |
           node packages/sutra-knowledge/examples/export-challenges.mjs > sutra-v2-challenges.json
@@ -32,6 +36,7 @@ jobs:
           name: sutra-v2-observation
           path: |
             sutra-v2-observation.json
+            sutra-v2-frontier.json
             sutra-v2-challenges.json
             sutra-v2-reference.json
   browser:

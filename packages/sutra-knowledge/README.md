@@ -22,3 +22,7 @@ The Observatory CLI asserts a real deterministic state change, exact incremental
 ## Declared scope comparison
 
 `scope.js` compiles eight explicitly typed quantity kinds, exact rational conversion factors and three declared scope identifiers (subject, condition, reference frame) into the existing kernel. Incompatible scope or quantity kind omits the equality constraint entirely; no semantic equivalence is inferred. Torque and energy share dimensions yet cannot be compared as the same quantity. Conversion and declarations are hash-bound through input basis strings; independent Python replay checks the resulting graph, not the separate semantic compiler's policy. No affine units, uncertainty intervals, automatic unit parsing or source identity verification.
+
+## Counterfactual evidence frontier
+
+`frontier.js` independently evaluates every declared world through the exact kernel, then solves a bounded deterministic observation problem via subset dynamic programming. Minimize worst-case additive cost, break ties by best-case cost then stable observation ID. At most 12 worlds, eight observations, 4095 nonempty subset states. No probability, measurement noise, unlisted world or automatic physical action. Costs/partitions are declared inputs, not independently verified. Nondecisive worlds abstain; if opposite decisions are observationally indistinguishable, return a concrete pair. The independent test oracle enumerates remaining-test trees. This is not a new decision-tree algorithm, clinical decision system or claim of world-first.

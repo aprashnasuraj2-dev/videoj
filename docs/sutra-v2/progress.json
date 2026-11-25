@@ -3,18 +3,18 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-002",
+  "session": "V2-003",
   "next": [
-    "V2-U01",
-    "V2-U02",
-    "V2-A04",
-    "V2-D04",
-    "V2-K08",
-    "V2-K09",
+    "V2-F01",
+    "V2-F02",
+    "V2-F03",
+    "V2-A02",
     "V2-A01",
+    "V2-F04",
+    "V2-F05",
     "V2-O02"
   ],
-  "state": "browser_bridge_and_scope_candidate_pending",
+  "state": "browser_scope_verified_frontier_candidate",
   "verified": [
     {
       "id": "V2-M01",
@@ -68,6 +68,42 @@
       "sourceRevision": "6a862dd5d349538d6bcc32335a810fbe08cbfd33",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424",
       "description": "Exact PR classifier succeeded with new suite mapping; explicit sequential commands and challenge upload succeeded in exact push kernel run 45514929515."
+    },
+    {
+      "id": "V2-U01",
+      "sourceRevision": "ad3617a8200d1c527c86021de0cb3a553ec611e5",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45515636775",
+      "description": "Exact push kernel and actual Chromium browser jobs both passed; semantic compiler graph replay, scripted local agent bridge and built browser journey. Scope policy itself is not independently implemented."
+    },
+    {
+      "id": "V2-U02",
+      "sourceRevision": "ad3617a8200d1c527c86021de0cb3a553ec611e5",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45515636775",
+      "description": "Exact push kernel and actual Chromium browser jobs both passed; semantic compiler graph replay, scripted local agent bridge and built browser journey. Scope policy itself is not independently implemented."
+    },
+    {
+      "id": "V2-A04",
+      "sourceRevision": "ad3617a8200d1c527c86021de0cb3a553ec611e5",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45515636775",
+      "description": "Exact push kernel and actual Chromium browser jobs both passed; semantic compiler graph replay, scripted local agent bridge and built browser journey. Scope policy itself is not independently implemented."
+    },
+    {
+      "id": "V2-D04",
+      "sourceRevision": "ad3617a8200d1c527c86021de0cb3a553ec611e5",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45515636775",
+      "description": "Exact push kernel and actual Chromium browser jobs both passed; semantic compiler graph replay, scripted local agent bridge and built browser journey. Scope policy itself is not independently implemented."
+    },
+    {
+      "id": "V2-K08",
+      "sourceRevision": "ad3617a8200d1c527c86021de0cb3a553ec611e5",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45515636775",
+      "description": "Exact push kernel and actual Chromium browser jobs both passed; semantic compiler graph replay, scripted local agent bridge and built browser journey. Scope policy itself is not independently implemented."
+    },
+    {
+      "id": "V2-K09",
+      "sourceRevision": "ad3617a8200d1c527c86021de0cb3a553ec611e5",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45515636775",
+      "description": "Exact push kernel and actual Chromium browser jobs both passed; semantic compiler graph replay, scripted local agent bridge and built browser journey. Scope policy itself is not independently implemented."
     }
   ],
   "release": "not_authorized",
@@ -77,7 +113,7 @@
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514643061",
     "reason": "test assertion expected TypeError instead of strict parser SyntaxError"
   },
-  "lastVerifiedKernelSource": "6a862dd5d349538d6bcc32335a810fbe08cbfd33",
+  "lastVerifiedKernelSource": "ad3617a8200d1c527c86021de0cb3a553ec611e5",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
