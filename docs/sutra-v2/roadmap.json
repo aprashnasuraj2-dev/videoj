@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-016",
+  "session": "V2-017",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2363,11 +2363,27 @@
     },
     {
       "id": "V2-D02-CAPSULE",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D01-ATTACK"
       ],
-      "scope": "Bounded synthetic case, exact bytes, separately retained pin, independent replay; no signer or freshness"
+      "scope": "Bounded synthetic case, exact bytes, separately retained pin, independent replay; no signer or freshness",
+      "evidence": [
+        {
+          "sourceRevision": "0d6305526d28df4064360162f1125835ca8f9962",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45569144216/job/139051201292",
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45569144216 and push 45569135925, ingress 45569144227, impact 45569144194, evaluation 45569144290, Open Kit 45569144212, legacy release 45569144200, publisher 45569144195, browser matrix 45569144271. Chromium exported exact old/current capsules and independent pins; verified current, rejected one-byte tamper, restored and reverified, and imported in fresh tab. Python independently verified actual bytes, rejected old snapshot against current pin, accepted old with old pin, refused six rehashed semantic/schema mutations and duplicate keys/UTF8/missing pin/oversize. Four targeted Node groups also passed locally with matching Git blobs. Scope is exact synthetic snapshot, not freshness or external truth."
+        }
+      ]
+    },
+    {
+      "id": "V2-D03-DIAGNOSIS",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D01-ATTACK",
+        "V2-D02-CAPSULE"
+      ],
+      "scope": "Exhaustive finite fixture root-subset support/refutation, conditional claim visibility under global conflict, correct plan branches and impossibility witnesses; independent replay."
     }
   ]
 }

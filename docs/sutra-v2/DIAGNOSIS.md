@@ -1,0 +1,9 @@
+# Conditional diagnosis — bounded fixture
+
+The global state is evaluated using every admitted observation; when no world survives it is CONFLICTED, never vacuously supported. A separately labelled conditional support or refutation subset must have at least one compatible world and the same claim outcome in every compatible world. Enumerate every subset of the at most four declared roots (16 subsets), retaining inclusion-minimal support, refutation and conflict sets. A subset is not a globally valid conclusion or authority to discard evidence. Unknown copying/correlation is outside the declared model.
+
+A global contradiction may hide the fact that the control claim has consistent conditional support. Original report a=0 gives conditional target support; disagreeing a=1 plus b=1 gives conditional refutation. Both can coexist without resolving the global contradiction. Minimal repairs are counterfactual state changes, not choices the system is authorized to make. In a consistent finite model, withdrawing evidence can weaken an invariant decision but cannot turn it into the opposite invariant decision, because the surviving-world set only expands.
+
+For the next observation, distinguish four states: model-invariant decision, a viable minimax observation plan with explicit outcome branches/costs, an impossibility witness (two opposite-decision worlds indistinguishable by every available test), and contradictory evidence requiring adjudication. The browser's recommended fixture-read button executes the actual recommended observation. It is a synthetic read, not external action.
+
+The new explanation export carries the original event history and the separately versioned explanation. The Python verifier independently reconstructs the same fixed case and all events, then enumerates compatible worlds using sets. Existing state v1 and Proof Capsule v1 remain unchanged. Candidate until exact-source CI including independent replay passes.

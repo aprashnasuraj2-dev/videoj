@@ -152,6 +152,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_capsule.py --challenge apps/sutra-v2/test-output/capsule-current.json apps/sutra-v2/test-output/capsule-current.sha256 apps/sutra-v2/test-output/capsule-old.json apps/sutra-v2/test-output/capsule-old.sha256 > apps/sutra-v2/test-output/capsule-reference.txt
           cat apps/sutra-v2/test-output/capsule-reference.txt
+      - name: Independently replay conditional support and decisive observation explanations
+        run: |
+          python3 packages/sutra-knowledge/reference/verify_explanation.py apps/sutra-v2/test-output/explanation-conflict.json apps/sutra-v2/test-output/explanation-opposite.json apps/sutra-v2/test-output/explanation-plan.json apps/sutra-v2/test-output/explanation-impossible.json > apps/sutra-v2/test-output/explanation-reference.txt
+          cat apps/sutra-v2/test-output/explanation-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

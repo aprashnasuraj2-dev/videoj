@@ -3,9 +3,9 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-016",
+  "session": "V2-017",
   "next": [
-    "V2-D02-CAPSULE",
+    "V2-D03-DIAGNOSIS",
     "V2-P07-WASM",
     "V2-RUNTIME-02",
     "V2-P05-RECOVERY",
@@ -19,7 +19,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "proof_capsule_candidate_pending_exact_ci",
+  "state": "conditional_diagnosis_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -247,6 +247,12 @@
       "sourceRevision": "6ad7b85dbc56406d38b84385cb58bae5128fe737",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45567774777/job/139046680946",
       "description": "All nine exact-source workflows succeeded: knowledge PR 45567774777 and push 45567766279, ingress 45567775133, impact 45567774809, evaluation 45567774773, Open Kit 45567774881, legacy release 45567774749, publisher 45567774972, browser matrix 45567774784. Actual Chromium produced six attack exports; independent Python refused 40 mutations (6+6+7+7+7+7). Three targeted Node groups also reproduced locally with exact Git blob hashes. Synthetic, declared ancestry only; no deployment."
+    },
+    {
+      "id": "V2-D02-CAPSULE",
+      "sourceRevision": "0d6305526d28df4064360162f1125835ca8f9962",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45569144216/job/139051201292",
+      "description": "All nine exact-source workflows succeeded: knowledge PR 45569144216 and push 45569135925, ingress 45569144227, impact 45569144194, evaluation 45569144290, Open Kit 45569144212, legacy release 45569144200, publisher 45569144195, browser matrix 45569144271. Chromium exported exact old/current capsules and independent pins; verified current, rejected one-byte tamper, restored and reverified, and imported in fresh tab. Python independently verified actual bytes, rejected old snapshot against current pin, accepted old with old pin, refused six rehashed semantic/schema mutations and duplicate keys/UTF8/missing pin/oversize. Four targeted Node groups also passed locally with matching Git blobs. Scope is exact synthetic snapshot, not freshness or external truth."
     }
   ],
   "release": "not_authorized",
@@ -260,7 +266,7 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45559702271/job/139020178838",
     "resolutionStatus": "resolved_import_then_strengthened_refinement_exact_all_required_workflows_success"
   },
-  "lastVerifiedKernelSource": "6ad7b85dbc56406d38b84385cb58bae5128fe737",
+  "lastVerifiedKernelSource": "0d6305526d28df4064360162f1125835ca8f9962",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -270,6 +276,20 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "sourceRevision": null,
+    "sourceParent": "0d6305526d28df4064360162f1125835ca8f9962",
+    "status": "candidate_pending_exact_ci",
+    "identityRule": "Resolve the immutable commit containing this checkpoint.",
+    "checks": [
+      "108 evidence configurations against direct truth table",
+      "minimal consistent support and refutation subsets",
+      "global contradiction vs local conditional support",
+      "observation branches and explicit impossibility witness",
+      "recommended fixture read",
+      "independent Python explanation replay"
+    ]
+  },
+  "previousPendingCandidate": {
     "sourceRevision": null,
     "sourceParent": "6ad7b85dbc56406d38b84385cb58bae5128fe737",
     "status": "candidate_pending_exact_ci",
@@ -281,20 +301,6 @@
       "rehashed semantics refusal",
       "fresh-tab verification",
       "historical replay counterexample",
-      "independent Python replay"
-    ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": null,
-    "sourceParent": "68c32ae70c523daf1e8e70a125ba6c5738bba4d9",
-    "status": "candidate_pending_exact_ci",
-    "identityRule": "Resolve the immutable commit containing this checkpoint.",
-    "checks": [
-      "critical and irrelevant withdrawal",
-      "ten artifacts one declared lineage",
-      "conflict repairs",
-      "minimax next observation",
-      "actual browser",
       "independent Python replay"
     ]
   },

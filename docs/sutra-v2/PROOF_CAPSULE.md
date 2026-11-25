@@ -21,3 +21,7 @@ Maximum input 262144 bytes; existing event bound 24. The outer envelope has exac
 A changed byte or whitespace must fail the original pin. If an attacker can replace the pin, rehashed forged results, source bytes, copy ancestry, case and algorithm IDs still fail model replay or admission. An independently retained old pin will verify the matching older valid snapshot: this is intentional and prevents overstating freshness. Coordinated replacement of the trusted pin and valid older snapshot is not detected by this contract. Unknown copying and correlated source errors remain outside the declared model.
 
 The browser verifier shares the JavaScript implementation; independent reproduction is the separate Python evaluator, executed against browser-produced bytes in CI. Candidate until exact-source knowledge push/PR and auxiliary gates pass.
+
+## Verified source
+
+Exact source 0d6305526d28df4064360162f1125835ca8f9962 passed all nine observed workflows. Browser job 139051201292 independently verified the actual exported current and old snapshots, including the old-pin counterexample. This promotes only the stated bounded capsule contract. The separate D03 diagnosis artifact does not alter the capsule v1 wire.
