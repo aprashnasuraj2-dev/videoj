@@ -11,6 +11,7 @@ import (
  "bytes"
  "crypto/ed25519"
  "crypto/rand"
+ "crypto/sha256"
  "encoding/binary"
  "errors"
  "io"
@@ -22,6 +23,7 @@ import (
 )
 
 const grantDomain = "SUTRA/action-grant/v1\x00"
+const grantIDDomain = "SUTRA/action-grant-id/v1\x00"
 const grantBookDomain = "SUTRA/action-grant-book/v1\x00"
 const grantIDSize = 16
 const maxGrantRevocations = 8
@@ -82,7 +84,15 @@ func IssueActionGrant(req Request,class GrantClass,notBefore,expiresAfter uint64
  if req.Key==(Key{})||req.Context==(Digest{})||(class!=GrantPrimary&&class!=GrantCompensation)||
   notBefore>expiresAfter||expiresAfter>maxGrantEpoch||len(consent)!=ed25519.PrivateKeySize{return ActionGrant{},ErrPolicy}
  g:=ActionGrant{RequestHash:req.Hash(),Context:req.Context,Class:class,NotBefore:notBefore,ExpiresAfter:expiresAfter}
- if _,e:=rand.Read(g.ID[:]);e!=nil{return ActionGrant{},e}
+ var nonce [grantIDSize]byte
+ if _,e:=rand.Read(nonce[:]);e!=nil{return ActionGrant{},e}
+ material:=append([]byte(grantIDDomain),nonce[:]...)
+ material=append(material,g.RequestHash[:]...)
+ material=append(material,g.Context[:]...)
+ material=append(material,byte(g.Class))
+ material=binary.BigEndian.AppendUint64(material,g.NotBefore)
+ material=binary.BigEndian.AppendUint64(material,g.ExpiresAfter)
+ digest:=sha256.Sum256(material);copy(g.ID[:],digest[:grantIDSize])
  if g.ID==(GrantID{}){return ActionGrant{},ErrPolicy}
  copy(g.Signature[:],ed25519.Sign(consent,g.message()))
  return g,nil
