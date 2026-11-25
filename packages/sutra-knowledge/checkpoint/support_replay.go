@@ -167,12 +167,16 @@ func verifySupportBundle(raw,caseBytes []byte)error{
  return nil
 }
 func verifySupportFiles(args []string,out io.Writer)error{
- if len(args)!=4{return fmt.Errorf("usage: verify-support trusted-case.json support-conflict.json support-withdrawn.json support-resolved.json")}
+ if len(args)!=7{return fmt.Errorf("usage: verify-support trusted-case.json support1.json evidence1.json support2.json evidence2.json support3.json evidence3.json")}
  caseBytes,e:=readBounded(args[0],maxCase);if e!=nil{return e}
- for i,p:=range args[1:]{
+ for i:=0;i<3;i++{
+  p:=args[1+2*i]
   raw,e:=readBounded(p,maxExport);if e!=nil{return e}
+  base,e:=readBounded(args[2+2*i],maxExport);if e!=nil{return e}
+  snapshot,e:=parseExport(base);if e!=nil||snapshot.caseDigest!=sum(caseBytes){return refused}
   if e=verifySupportBundle(raw,caseBytes);e!=nil{return fmt.Errorf("%s: %w",p,e)}
   m,_:=exactFields(raw,"version","caseText","events","projection","analysis")
+  b,e:=exactFields(base,"version","caseText","events","result");if e!=nil||!bytes.Equal(m["events"],b["events"]){return refused}
   var analysis map[string]any
   if json.Unmarshal(m["analysis"],&analysis)!=nil||analysis["current"]!=[]string{"conflict","ambiguous","refuted"}[i]{return refused}
   // Alter independently checked results while retaining valid JSON/case.
@@ -186,7 +190,10 @@ func verifySupportFiles(args []string,out io.Writer)error{
   bundle["analysis"]=analysis
   bundle["caseText"]=string(caseBytes)+" "
   bad,_:=json.Marshal(bundle);if verifySupportBundle(bad,caseBytes)==nil{return refused}
-  fmt.Fprintf(out,"ACCEPTED %s; rejected 7 altered reports\n",p)
+  bundle["caseText"]=string(caseBytes)
+  bundle["projection"]=nil
+  bad,_=json.Marshal(bundle);if verifySupportBundle(bad,caseBytes)==nil{return refused}
+  fmt.Fprintf(out,"ACCEPTED %s against matching evidence history; rejected 8 altered reports\n",p)
  }
  return nil
 }
