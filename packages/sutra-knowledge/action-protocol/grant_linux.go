@@ -96,20 +96,21 @@ type GrantBook struct{
  lock *os.File
  ctx Digest
  consent ed25519.PublicKey
+ approver ed25519.PublicKey
  signer ed25519.PrivateKey
  epoch uint64
  revoked []GrantID
  poisoned bool
  fault func(string)error
 }
-func CreateGrantBook(dir string,ctx Digest,consent ed25519.PublicKey,signer ed25519.PrivateKey,epoch uint64)(*GrantBook,error){
- return openGrantBook(dir,ctx,consent,signer,epoch,true)
+func CreateGrantBook(dir string,ctx Digest,consent,approver ed25519.PublicKey,signer ed25519.PrivateKey,epoch uint64)(*GrantBook,error){
+ return openGrantBook(dir,ctx,consent,approver,signer,epoch,true)
 }
-func OpenGrantBook(dir string,ctx Digest,consent ed25519.PublicKey,signer ed25519.PrivateKey)(*GrantBook,error){
- return openGrantBook(dir,ctx,consent,signer,0,false)
+func OpenGrantBook(dir string,ctx Digest,consent,approver ed25519.PublicKey,signer ed25519.PrivateKey)(*GrantBook,error){
+ return openGrantBook(dir,ctx,consent,approver,signer,0,false)
 }
-func openGrantBook(dir string,ctx Digest,consent ed25519.PublicKey,signer ed25519.PrivateKey,epoch uint64,create bool)(*GrantBook,error){
- if ctx==(Digest{})||len(consent)!=ed25519.PublicKeySize||len(signer)!=ed25519.PrivateKeySize||epoch>maxGrantEpoch||
+func openGrantBook(dir string,ctx Digest,consent,approver ed25519.PublicKey,signer ed25519.PrivateKey,epoch uint64,create bool)(*GrantBook,error){
+ if ctx==(Digest{})||len(consent)!=ed25519.PublicKeySize||len(approver)!=ed25519.PublicKeySize||len(signer)!=ed25519.PrivateKeySize||epoch>maxGrantEpoch||
   !bytes.Equal(ed25519.NewKeyFromSeed(signer[:ed25519.SeedSize]),signer){return nil,ErrPolicy}
  dir,e:=filepath.Abs(dir);if e!=nil{return nil,e}
  info,e:=os.Stat(dir);if e!=nil||!info.IsDir()||info.Mode().Perm()&0077!=0{return nil,ErrStore}
@@ -117,7 +118,7 @@ func openGrantBook(dir string,ctx Digest,consent ed25519.PublicKey,signer ed2551
  if e=syscall.Flock(int(lock.Fd()),syscall.LOCK_EX|syscall.LOCK_NB);e!=nil{
   lock.Close();if errors.Is(e,syscall.EWOULDBLOCK){return nil,ErrStoreBusy};return nil,e
  }
- b:=&GrantBook{dir:dir,lock:lock,ctx:ctx,consent:append(ed25519.PublicKey(nil),consent...),signer:append(ed25519.PrivateKey(nil),signer...),epoch:epoch}
+ b:=&GrantBook{dir:dir,lock:lock,ctx:ctx,consent:append(ed25519.PublicKey(nil),consent...),approver:append(ed25519.PublicKey(nil),approver...),signer:append(ed25519.PrivateKey(nil),signer...),epoch:epoch}
  ok:=false;defer func(){if !ok{b.Close()}}()
  if create{
   if _,e=os.Lstat(filepath.Join(dir,"grantbook.bin"));!errors.Is(e,os.ErrNotExist){return nil,ErrStore}
@@ -135,6 +136,7 @@ func openGrantBook(dir string,ctx Digest,consent ed25519.PublicKey,signer ed2551
 func (b *GrantBook) header(epoch uint64,n int)[]byte{
  out:=append([]byte(grantBookDomain),b.ctx[:]...)
  out=append(out,b.consent...)
+ out=append(out,b.approver...)
  out=append(out,b.signer.Public().(ed25519.PublicKey)...)
  out=binary.BigEndian.AppendUint64(out,epoch)
  return append(out,byte(n))
@@ -192,10 +194,13 @@ func (b *GrantBook) isRevokedLocked(id GrantID)bool{
  for _,x:=range b.revoked{if x==id{return true}}
  return false
 }
+func (b *GrantBook) validApprovedRequestLocked(req Request)bool{
+ return req.Context==b.ctx&&req.Key!=(Key{})&&req.Slot<maxSlots&&ed25519.Verify(b.approver,req.message(),req.Approval[:])
+}
 func (b *GrantBook) Revoke(g ActionGrant,req Request)error{
  b.mu.Lock();defer b.mu.Unlock()
  if b.lock==nil||b.poisoned{return ErrStore}
- if !VerifyActionGrant(g,req,b.consent)||g.Context!=b.ctx{return ErrPolicy}
+ if !b.validApprovedRequestLocked(req)||!VerifyActionGrant(g,req,b.consent)||g.Context!=b.ctx{return ErrPolicy}
  if b.isRevokedLocked(g.ID){return nil}
  if len(b.revoked)>=maxGrantRevocations{return ErrBudget}
  next:=append(append([]GrantID(nil),b.revoked...),g.ID)
@@ -205,7 +210,7 @@ func (b *GrantBook) Revoke(g ActionGrant,req Request)error{
 func (b *GrantBook) CheckDispatch(g ActionGrant,req Request,class GrantClass)error{
  b.mu.Lock();defer b.mu.Unlock()
  if b.lock==nil||b.poisoned{return ErrStore}
- if !VerifyActionGrant(g,req,b.consent)||g.Context!=b.ctx{return ErrPolicy}
+ if !b.validApprovedRequestLocked(req)||!VerifyActionGrant(g,req,b.consent)||g.Context!=b.ctx{return ErrPolicy}
  if g.Class!=class{return ErrGrantClass}
  if b.isRevokedLocked(g.ID){return ErrGrantRevoked}
  if b.epoch<g.NotBefore||b.epoch>g.ExpiresAfter{return ErrGrantInactive}
@@ -216,7 +221,7 @@ func (b *GrantBook) CheckDispatch(g ActionGrant,req Request,class GrantClass)err
 func (b *GrantBook) CheckReconcile(g ActionGrant,req Request)error{
  b.mu.Lock();defer b.mu.Unlock()
  if b.lock==nil||b.poisoned{return ErrStore}
- if !VerifyActionGrant(g,req,b.consent)||g.Context!=b.ctx{return ErrPolicy}
+ if !b.validApprovedRequestLocked(req)||!VerifyActionGrant(g,req,b.consent)||g.Context!=b.ctx{return ErrPolicy}
  return nil
 }
 
