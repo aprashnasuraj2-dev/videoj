@@ -22,6 +22,7 @@ import (
 const bridgeIntentDomain = "SUTRA/authority-witness-intent/v1\x00"
 const bridgeIntentSize = 32+32+32+ed25519.SignatureSize
 const bridgeIntentName = "witness-intent.bin"
+const witnessedResponseSize = authorityResponseSize+witnessViewSize
 
 var ErrWitnessUnavailable = errors.New("independent witness unavailable or ambiguous")
 
@@ -59,6 +60,26 @@ func signBridgeIntent(ctx Digest,requestHash,before,after Digest,key ed25519.Pri
 }
 func (i BridgeIntent) transition(ctx Digest,key ed25519.PrivateKey)(WitnessTransition,error){
  return SignWitnessTransition(ctx,i.Before,i.After,key)
+}
+
+type WitnessedResponse struct {
+ Authority AuthorityResponse
+ Witness WitnessView
+}
+func (r WitnessedResponse) Bytes()[]byte{
+ b:=append([]byte(nil),r.Authority.Bytes()...)
+ return append(b,r.Witness.Bytes()...)
+}
+func ParseWitnessedResponse(raw []byte)(WitnessedResponse,error){
+ if len(raw)!=witnessedResponseSize{return WitnessedResponse{},ErrPolicy}
+ authority,e:=ParseAuthorityResponse(raw[:authorityResponseSize]);if e!=nil{return WitnessedResponse{},e}
+ witness,e:=ParseWitnessView(raw[authorityResponseSize:]);if e!=nil{return WitnessedResponse{},e}
+ return WitnessedResponse{Authority:authority,Witness:witness},nil
+}
+func VerifyWitnessedResponse(r WitnessedResponse,req AuthorityRequest,ctx Digest,authority,witness ed25519.PublicKey,genesis Digest)bool{
+ return VerifyAuthorityResponse(r.Authority,req,authority)&&
+  VerifyWitnessViewPinned(r.Witness,ctx,authority,witness,genesis)&&
+  r.Witness.Head==r.Authority.After
 }
 
 type WitnessClient struct {
@@ -166,25 +187,63 @@ func (c *WitnessCoordinator) Recover()error{
  a:=c.authority;a.mu.Lock();defer a.mu.Unlock()
  return c.recoverLocked()
 }
-func (c *WitnessCoordinator) Process(req AuthorityRequest)(AuthorityResponse,error){
+func (c *WitnessCoordinator) Process(req AuthorityRequest)(WitnessedResponse,error){
  a:=c.authority;a.mu.Lock();defer a.mu.Unlock()
- if a.lock==nil||a.poisoned{return AuthorityResponse{},ErrStore}
- if e:=c.recoverLocked();e!=nil{return AuthorityResponse{},e}
- plan,e:=a.planLocked(req);if e!=nil{return AuthorityResponse{},e}
- if !plan.persist{return a.applyPlanLocked(req,plan)}
- intent,e:=signBridgeIntent(a.ctx,req.Hash(),plan.before,plan.after,a.signer);if e!=nil{return AuthorityResponse{},e}
- if e=c.persistIntentLocked(intent);e!=nil{return AuthorityResponse{},e}
- if c.fault!=nil{if e=c.fault("after-intent");e!=nil{return AuthorityResponse{},ErrUnknown}}
- response,e:=a.applyPlanLocked(req,plan);if e!=nil{return AuthorityResponse{},e}
- if c.fault!=nil{if e=c.fault("after-authority");e!=nil{return AuthorityResponse{},ErrUnknown}}
- transition,e:=intent.transition(a.ctx,a.signer);if e!=nil{return AuthorityResponse{},e}
+ if a.lock==nil||a.poisoned{return WitnessedResponse{},ErrStore}
+ if e:=c.recoverLocked();e!=nil{return WitnessedResponse{},e}
+ plan,e:=a.planLocked(req);if e!=nil{return WitnessedResponse{},e}
+ if !plan.persist{
+  response,e:=a.applyPlanLocked(req,plan);if e!=nil{return WitnessedResponse{},e}
+  view,e:=c.witness.View();if e!=nil{return WitnessedResponse{},ErrWitnessUnavailable}
+  witnessed:=WitnessedResponse{Authority:response,Witness:view}
+  if !VerifyWitnessedResponse(witnessed,req,a.ctx,a.signer.Public().(ed25519.PublicKey),c.witness.witness,c.witness.genesis){
+   return WitnessedResponse{},ErrWitnessRollback
+  }
+  return witnessed,nil
+ }
+ intent,e:=signBridgeIntent(a.ctx,req.Hash(),plan.before,plan.after,a.signer);if e!=nil{return WitnessedResponse{},e}
+ if e=c.persistIntentLocked(intent);e!=nil{return WitnessedResponse{},e}
+ if c.fault!=nil{if e=c.fault("after-intent");e!=nil{return WitnessedResponse{},ErrUnknown}}
+ response,e:=a.applyPlanLocked(req,plan);if e!=nil{return WitnessedResponse{},e}
+ if c.fault!=nil{if e=c.fault("after-authority");e!=nil{return WitnessedResponse{},ErrUnknown}}
+ transition,e:=intent.transition(a.ctx,a.signer);if e!=nil{return WitnessedResponse{},e}
  view,e:=c.witness.Advance(transition)
  if e!=nil{
   // A lost POST response is ambiguous. Keep the signed intent for Recover.
-  return AuthorityResponse{},ErrUnknown
+  return WitnessedResponse{},ErrUnknown
  }
- if view.Head!=plan.after{return AuthorityResponse{},ErrWitnessRollback}
- if c.fault!=nil{if e=c.fault("after-witness");e!=nil{return AuthorityResponse{},ErrUnknown}}
- if e=c.clearIntentLocked();e!=nil{return AuthorityResponse{},ErrUnknown}
- return response,nil
+ if view.Head!=plan.after{return WitnessedResponse{},ErrWitnessRollback}
+ if c.fault!=nil{if e=c.fault("after-witness");e!=nil{return WitnessedResponse{},ErrUnknown}}
+ if e=c.clearIntentLocked();e!=nil{return WitnessedResponse{},ErrUnknown}
+ witnessed:=WitnessedResponse{Authority:response,Witness:view}
+ if !VerifyWitnessedResponse(witnessed,req,a.ctx,a.signer.Public().(ed25519.PublicKey),c.witness.witness,c.witness.genesis){
+  return WitnessedResponse{},ErrWitnessRollback
+ }
+ return witnessed,nil
+}
+
+func (c *WitnessCoordinator) ServeHTTP(w http.ResponseWriter,r *http.Request){
+ w.Header().Set("Cache-Control","no-store")
+ if r.Method!=http.MethodPost||r.URL.Path!="/authority-witnessed"||r.URL.RawQuery!=""||r.Header.Get("Content-Type")!=media{
+  w.WriteHeader(http.StatusBadRequest);return
+ }
+ defer r.Body.Close()
+ raw,e:=io.ReadAll(io.LimitReader(r.Body,authorityRequestSize+1));if e!=nil||len(raw)!=authorityRequestSize{w.WriteHeader(http.StatusBadRequest);return}
+ req,e:=ParseAuthorityRequest(raw);if e!=nil{w.WriteHeader(http.StatusBadRequest);return}
+ response,e:=c.Process(req)
+ if e!=nil{
+  switch {
+  case errors.Is(e,ErrAuthorityAuth):
+   w.WriteHeader(http.StatusForbidden)
+  case errors.Is(e,ErrWitnessRollback):
+   w.WriteHeader(http.StatusConflict)
+  case errors.Is(e,ErrWitnessUnavailable),errors.Is(e,ErrUnknown):
+   w.WriteHeader(http.StatusServiceUnavailable)
+  default:
+   w.WriteHeader(http.StatusInternalServerError)
+  }
+  return
+ }
+ w.Header().Set("Content-Type",media)
+ _,_=w.Write(response.Bytes())
 }
