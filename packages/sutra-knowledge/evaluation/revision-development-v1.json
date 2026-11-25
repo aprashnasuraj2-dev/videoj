@@ -1,0 +1,946 @@
+{
+  "schemaVersion": 1,
+  "dataset": "sutra-revision-development-v1",
+  "split": "development_synthetic",
+  "annotation": "Developer-authored explicit state oracle, fixed before runner. Original fixture has two strict greater-than targets, both satisfied. Replacement values are ordered left/right, strict equality refutes; any missing target binding blocks. Invalid plans must refuse atomically. Not independent human annotation.",
+  "cases": [
+    {
+      "id": "finance-primary-reversal",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_REFUTED",
+          "CONDITIONALLY_SATISFIED"
+        ]
+      }
+    },
+    {
+      "id": "finance-secondary-reversal",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_SATISFIED",
+          "CONDITIONALLY_REFUTED"
+        ]
+      }
+    },
+    {
+      "id": "finance-both-reversal",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_REFUTED",
+          "CONDITIONALLY_REFUTED"
+        ]
+      }
+    },
+    {
+      "id": "finance-primary-equality",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            20,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_REFUTED",
+          "CONDITIONALLY_SATISFIED"
+        ]
+      }
+    },
+    {
+      "id": "finance-secondary-equality",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            20,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_SATISFIED",
+          "CONDITIONALLY_REFUTED"
+        ]
+      }
+    },
+    {
+      "id": "finance-both-preserve",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            30,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            40,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_SATISFIED",
+          "CONDITIONALLY_SATISFIED"
+        ]
+      }
+    },
+    {
+      "id": "finance-primary-partial-left",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            30,
+            20
+          ],
+          "select": [
+            "left"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "BLOCKED_MISSING_INPUT",
+          "CONDITIONALLY_SATISFIED"
+        ]
+      }
+    },
+    {
+      "id": "finance-primary-partial-right",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            30,
+            20
+          ],
+          "select": [
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "BLOCKED_MISSING_INPUT",
+          "CONDITIONALLY_SATISFIED"
+        ]
+      }
+    },
+    {
+      "id": "finance-secondary-partial-left",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            30,
+            20
+          ],
+          "select": [
+            "left"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_SATISFIED",
+          "BLOCKED_MISSING_INPUT"
+        ]
+      }
+    },
+    {
+      "id": "finance-secondary-no-reselection",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            30,
+            20
+          ],
+          "select": []
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_SATISFIED",
+          "BLOCKED_MISSING_INPUT"
+        ]
+      }
+    },
+    {
+      "id": "finance-withdraw-primary",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "withdraw",
+          "source": "primary"
+        }
+      ],
+      "expected": {
+        "states": [
+          "BLOCKED_MISSING_INPUT",
+          "CONDITIONALLY_SATISFIED"
+        ]
+      }
+    },
+    {
+      "id": "finance-withdraw-secondary",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "withdraw",
+          "source": "secondary"
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_SATISFIED",
+          "BLOCKED_MISSING_INPUT"
+        ]
+      }
+    },
+    {
+      "id": "finance-withdraw-both",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "withdraw",
+          "source": "primary"
+        },
+        {
+          "kind": "withdraw",
+          "source": "secondary"
+        }
+      ],
+      "expected": {
+        "states": [
+          "BLOCKED_MISSING_INPUT",
+          "BLOCKED_MISSING_INPUT"
+        ]
+      }
+    },
+    {
+      "id": "finance-mixed-reversal-withdraw",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "kind": "withdraw",
+          "source": "secondary"
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_REFUTED",
+          "BLOCKED_MISSING_INPUT"
+        ]
+      }
+    },
+    {
+      "id": "finance-mixed-withdraw-reversal",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "withdraw",
+          "source": "primary"
+        },
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "BLOCKED_MISSING_INPUT",
+          "CONDITIONALLY_REFUTED"
+        ]
+      }
+    },
+    {
+      "id": "finance-irrelevant-context",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "context",
+          "source": "context"
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_SATISFIED",
+          "CONDITIONALLY_SATISFIED"
+        ]
+      }
+    },
+    {
+      "id": "finance-mixed-stale-pin",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "kind": "withdraw",
+          "source": "secondary",
+          "fault": "stale-pin"
+        }
+      ],
+      "expected": {
+        "refusal": "SOURCE_PIN_OR_DUPLICATE"
+      }
+    },
+    {
+      "id": "finance-duplicate-source",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "withdraw",
+          "source": "primary"
+        },
+        {
+          "kind": "withdraw",
+          "source": "primary"
+        }
+      ],
+      "expected": {
+        "refusal": "SOURCE_PIN_OR_DUPLICATE"
+      }
+    },
+    {
+      "id": "finance-cross-source-reselection",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ],
+          "fault": "cross-source"
+        }
+      ],
+      "expected": {
+        "refusal": "REBINDING_SCOPE"
+      }
+    },
+    {
+      "id": "finance-forged-span",
+      "domain": "finance",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            30,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ],
+          "fault": "forged-span"
+        }
+      ],
+      "expected": {
+        "refusal": "COMPILER_QUOTE_MISMATCH"
+      }
+    },
+    {
+      "id": "engineering-primary-reversal",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_REFUTED",
+          "CONDITIONALLY_SATISFIED"
+        ]
+      }
+    },
+    {
+      "id": "engineering-secondary-reversal",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_SATISFIED",
+          "CONDITIONALLY_REFUTED"
+        ]
+      }
+    },
+    {
+      "id": "engineering-both-reversal",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_REFUTED",
+          "CONDITIONALLY_REFUTED"
+        ]
+      }
+    },
+    {
+      "id": "engineering-primary-equality",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            20,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_REFUTED",
+          "CONDITIONALLY_SATISFIED"
+        ]
+      }
+    },
+    {
+      "id": "engineering-secondary-equality",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            20,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_SATISFIED",
+          "CONDITIONALLY_REFUTED"
+        ]
+      }
+    },
+    {
+      "id": "engineering-both-preserve",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            30,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            40,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_SATISFIED",
+          "CONDITIONALLY_SATISFIED"
+        ]
+      }
+    },
+    {
+      "id": "engineering-primary-partial-left",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            30,
+            20
+          ],
+          "select": [
+            "left"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "BLOCKED_MISSING_INPUT",
+          "CONDITIONALLY_SATISFIED"
+        ]
+      }
+    },
+    {
+      "id": "engineering-primary-partial-right",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            30,
+            20
+          ],
+          "select": [
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "BLOCKED_MISSING_INPUT",
+          "CONDITIONALLY_SATISFIED"
+        ]
+      }
+    },
+    {
+      "id": "engineering-secondary-partial-left",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            30,
+            20
+          ],
+          "select": [
+            "left"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_SATISFIED",
+          "BLOCKED_MISSING_INPUT"
+        ]
+      }
+    },
+    {
+      "id": "engineering-secondary-no-reselection",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            30,
+            20
+          ],
+          "select": []
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_SATISFIED",
+          "BLOCKED_MISSING_INPUT"
+        ]
+      }
+    },
+    {
+      "id": "engineering-withdraw-primary",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "withdraw",
+          "source": "primary"
+        }
+      ],
+      "expected": {
+        "states": [
+          "BLOCKED_MISSING_INPUT",
+          "CONDITIONALLY_SATISFIED"
+        ]
+      }
+    },
+    {
+      "id": "engineering-withdraw-secondary",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "withdraw",
+          "source": "secondary"
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_SATISFIED",
+          "BLOCKED_MISSING_INPUT"
+        ]
+      }
+    },
+    {
+      "id": "engineering-withdraw-both",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "withdraw",
+          "source": "primary"
+        },
+        {
+          "kind": "withdraw",
+          "source": "secondary"
+        }
+      ],
+      "expected": {
+        "states": [
+          "BLOCKED_MISSING_INPUT",
+          "BLOCKED_MISSING_INPUT"
+        ]
+      }
+    },
+    {
+      "id": "engineering-mixed-reversal-withdraw",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "kind": "withdraw",
+          "source": "secondary"
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_REFUTED",
+          "BLOCKED_MISSING_INPUT"
+        ]
+      }
+    },
+    {
+      "id": "engineering-mixed-withdraw-reversal",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "withdraw",
+          "source": "primary"
+        },
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        }
+      ],
+      "expected": {
+        "states": [
+          "BLOCKED_MISSING_INPUT",
+          "CONDITIONALLY_REFUTED"
+        ]
+      }
+    },
+    {
+      "id": "engineering-irrelevant-context",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "context",
+          "source": "context"
+        }
+      ],
+      "expected": {
+        "states": [
+          "CONDITIONALLY_SATISFIED",
+          "CONDITIONALLY_SATISFIED"
+        ]
+      }
+    },
+    {
+      "id": "engineering-mixed-stale-pin",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "kind": "withdraw",
+          "source": "secondary",
+          "fault": "stale-pin"
+        }
+      ],
+      "expected": {
+        "refusal": "SOURCE_PIN_OR_DUPLICATE"
+      }
+    },
+    {
+      "id": "engineering-duplicate-source",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "withdraw",
+          "source": "primary"
+        },
+        {
+          "kind": "withdraw",
+          "source": "primary"
+        }
+      ],
+      "expected": {
+        "refusal": "SOURCE_PIN_OR_DUPLICATE"
+      }
+    },
+    {
+      "id": "engineering-cross-source-reselection",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "primary",
+          "values": [
+            10,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ],
+          "fault": "cross-source"
+        }
+      ],
+      "expected": {
+        "refusal": "REBINDING_SCOPE"
+      }
+    },
+    {
+      "id": "engineering-forged-span",
+      "domain": "engineering",
+      "operations": [
+        {
+          "kind": "replace",
+          "source": "secondary",
+          "values": [
+            30,
+            20
+          ],
+          "select": [
+            "left",
+            "right"
+          ],
+          "fault": "forged-span"
+        }
+      ],
+      "expected": {
+        "refusal": "COMPILER_QUOTE_MISMATCH"
+      }
+    }
+  ]
+}

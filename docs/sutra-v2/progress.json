@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-125",
+  "session": "V2-126",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Change grammar workspace and independent browser replay candidate; CI pending",
+  "state": "Frozen atomic revision development dataset; runner pending",
   "verified": [
     {
       "id": "V2-M01",
@@ -401,14 +401,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-126",
+    "parent": "5d1d7f2e41368baabbc36743d6e9d0ac19a7611b",
+    "description": "## V2-126 — Freeze 40 atomic revision development cases and reconcile change grammar\n\nV2-124 `bd28a996424762c209d161a08f5609c14d23640d` and V2-125 `5d1d7f2e41368baabbc36743d6e9d0ac19a7611b`: nine returned PR workflows green each; V2-125 knowledge 139576840210 and browser 139576839545 including actual downloaded question replay and adversarial mutations. Separate push runs not exposed. Freeze 40 explicit developer-authored revision cases across finance and engineering, 32 accepted and eight atomic refusal cases, before writing runner. Include strict equality, both-source replacement, partial/zero reselection, withdrawal, correction plus withdrawal, irrelevant source, stale pin, duplicate source, cross-source selection and forged quotation. Expected target states/refusal codes fixed by declared fixture arithmetic and protocol rules, not output from implementation. Next: matched fresh/session/transaction evaluation, retained-parent checks, scoped classifications, meaningful baseline comparison; no independent labels, time claim or 200-case completion. CI pending for dataset checkpoint."
+  },
+  "previousPendingCandidate": {
     "session": "V2-125",
     "parent": "bd28a996424762c209d161a08f5609c14d23640d",
     "description": "## V2-125 — Grounded change workflow and verified 40-case development result\n\nV2-123 exact 977ece7: all nine returned PR workflows green, knowledge 139574926959 and browser 139574927193. Frozen 40/40 matched precommitted expectations; 181 evaluated worlds, 410 executed candidate cells, 28 unresolved cells, 6 no-discovered-pair cases. Equal-grid/equal-budget comparison: prefix 13/42 discovered pairs, 57 review items; single-coordinate greedy 30/42, 26; unrestricted greedy and exact both 40/42, 36 items, 50 changed bindings, zero greedy counterexamples. No advantage over strong greedy in this set; no human-time/semantic-truth/held-out claim. Actual focused-probe browser download independently replayed and tamper-tested. Extend existing mapping panel (not a new parallel workflow): explicit direct/change grammar, exact three selections, conditional expressions shown, preserve blocked alternatives, clear stale previews upon mode/contract/mapping changes. Browser synthetic Unicode two-threshold journey and independent downloaded verifier plus mutations. V2-124 exact CI pending at observation; new candidate CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-124",
-    "parent": "977ece77d14a84dcdcbf0529c94eb5bcb8f2d8b8",
-    "description": "## V2-124 — Preserve change ambiguity in the grounded question compiler\n\nExtend existing closed question profile with a v2 plan for exact baseline/current/threshold UTF-16 selections. Unqualified change preserves signed difference and signed relative change; explicit prefixes select one; every caller-mapped alternative stays visible (including type-blocked or unresolved). Signed denominator convention disclosed; zero unresolved, negative base not conventional growth. Percentage/percentage-point/causal wording is refused, not inferred. Reuse expression compiler, evidence spans, semantic facets and existing offline question dispatch; independent Python constructs the graph separately. 36 accepted parity cases, two refused, additional adversarial unit cases; CI pending. Fix oversize question report to return nonportable before hashing. Browser change question controls remain open."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -1483,6 +1483,12 @@
       "sourceRevision": "e3476be3c2b2c34dd7aae1be184858f133f6dcb8",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45711834940/job/139547926314",
       "description": "Exact V2-104 all ten workflows passed; portable independent Python reconstruction before and after qualifier edits, 16 repinned mutations and four pin controls; scoped reconstruction only."
+    },
+    {
+      "id": "V2-LK03-PATHWAYS",
+      "sourceRevision": "5d1d7f2e41368baabbc36743d6e9d0ac19a7611b",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45720354098/job/139576839545",
+      "description": "Exact V2-125 nine returned PR workflows green; actual grounded change question browser and independent downloaded replay; closed grammar only."
     }
   ],
   "reconciledCI": [
@@ -5689,6 +5695,128 @@
         {
           "id": 45720059908,
           "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "PR observation only; separate push run not exposed."
+    },
+    {
+      "sourceRevision": "bd28a996424762c209d161a08f5609c14d23640d",
+      "runs": [
+        {
+          "id": 45720059908,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720059734,
+          "name": "Validate SUTRA learner shell",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720059731,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720060000,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720059718,
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720059858,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720059829,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720059800,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720059932,
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "PR observation only; separate push run not exposed."
+    },
+    {
+      "sourceRevision": "5d1d7f2e41368baabbc36743d6e9d0ac19a7611b",
+      "runs": [
+        {
+          "id": 45720354281,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720354287,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720354167,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720354096,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720354273,
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720354107,
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720354088,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720354277,
+          "name": "Validate SUTRA learner shell",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45720354098,
+          "name": "Validate SUTRA v2 knowledge kernel",
           "status": "completed",
           "conclusion": "success"
         }
