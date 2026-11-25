@@ -31,6 +31,30 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const page=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{const u=new URL(r.url());if(u.protocol==='blob:'&&u.origin===origin)return;if(u.origin!==origin||u.protocol!=='http:')external.push(r.url());});
   await page.goto(origin);
+  // Nontechnical multi-provider setup lab: two ephemeral profiles, no network,
+  // no credential left in the DOM after submission, and local routing only.
+  const providerKey=page.getByLabel('Test credential'),providerName=page.getByLabel('Profile name');
+  const alphaSecret='BROWSER_TEST_ALPHA_83f29c',betaSecret='BROWSER_TEST_BETA_a901d2';
+  await providerName.fill('Work AI');await providerKey.fill(alphaSecret);
+  await page.getByRole('button',{name:'Show'}).click();assert.equal(await providerKey.getAttribute('type'),'text');
+  await page.getByRole('button',{name:'Hide'}).click();assert.equal(await providerKey.getAttribute('type'),'password');
+  await page.getByRole('button',{name:'Add provider profile'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-count').textContent==='1');
+  assert.equal(await providerKey.inputValue(),'');assert.equal((await page.locator('body').innerText()).includes(alphaSecret),false);
+  await page.getByLabel('Provider').selectOption('provider-b');await providerName.fill('Research AI');await providerKey.fill(betaSecret);
+  await page.getByRole('button',{name:'Add provider profile'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-count').textContent==='2');
+  assert.equal(await providerKey.inputValue(),'');assert.equal((await page.locator('body').innerText()).includes(betaSecret),false);
+  assert.equal(await page.locator('.provider-card').count(),2);
+  await page.getByRole('button',{name:'Run local rehearsal'}).first().click();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='complete');
+  assert.equal(await page.locator('#provider-calls').innerText(),'1');assert.equal(await page.locator('#provider-active').innerText(),'0');
+  assert.match(await page.locator('#provider-status').innerText(),/No LLM request was sent/);
+  await page.locator('.provider-card').nth(1).getByRole('button',{name:'Remove'}).click();
+  await page.waitForFunction(()=>document.querySelector('#provider-count').textContent==='1');
+  assert.equal(await page.locator('.provider-card').count(),1);
+  assert.equal((await page.locator('body').innerText()).includes(alphaSecret),false);assert.equal((await page.locator('body').innerText()).includes(betaSecret),false);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   await page.getByRole('button',{name:'Evaluate graph'}).focus();await page.keyboard.press('Enter');
   await page.waitForFunction(()=>document.querySelector('#verdict').dataset.verdict==='constraint_satisfied');
   assert.equal(await page.locator('#deflection').innerText(),'3.70 mm');assert.equal(await page.locator('#counts').innerText(),'16 / 0');
