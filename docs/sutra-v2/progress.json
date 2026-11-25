@@ -3,8 +3,10 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-012",
+  "session": "V2-013",
   "next": [
+    "V2-RUNTIME-02",
+    "V2-P05-RECOVERY",
     "V2-P05-ROLLBACK",
     "V2-F11b",
     "V2-P06-REFINE",
@@ -12,11 +14,10 @@
     "V2-P04-CONSENT",
     "V2-P14-BUDGET",
     "V2-P14-BYOK-UX",
-    "V2-RUNTIME-02",
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "pre_effect_admission_fence_and_policy_ancestry_candidate_ci_pending",
+  "state": "admission_availability_and_policy_ancestry_exact_verified_raw_bypass_hardening_next",
   "verified": [
     {
       "id": "V2-M01",
@@ -237,15 +238,15 @@
   "release": "not_authorized",
   "submission": "not_started",
   "lastFailed": {
-    "sourceRevision": "8ffaa2dc1f8c0f0d4ea024d3561b56c480e090dc",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45536567342/job/138944505246",
-    "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45536572251/job/138944522284",
-    "reason": "Real HTTP final response loss exposes invalid exact +1 client sequence restriction",
-    "resolutionRevision": "085ae0d98159e894c90b2567100f8feaa058b867",
-    "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45536736996/job/138945076172",
-    "resolutionStatus": "exact_push_and_pr_knowledge_and_all_seven_workflows_success"
+    "sourceRevision": "9d0b86616ada66aff437de2f793bb87d2e548543",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546136496",
+    "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546144929",
+    "reason": "ClientPolicyAncestry passed exact finite safe/mutant gates, but FenceAvailability failed semantic analysis because four weak-fairness clauses multiply defined the same bound symbol c. No whole-job credit.",
+    "resolutionRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+    "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+    "resolutionStatus": "resolved_exact_all_seven_workflows_success"
   },
-  "lastVerifiedKernelSource": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
+  "lastVerifiedKernelSource": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -254,7 +255,8 @@
     "resolutionRevision": "6a862dd5d349538d6bcc32335a810fbe08cbfd33",
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
-  "pendingCandidate": {
+  "pendingCandidate": null,
+  "previousPendingCandidate": {
     "sourceRevision": "1704e7c301f0edc8267659ad13a4e790ccd93642",
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45542920604",
     "pushRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45542913848",
@@ -316,99 +318,6 @@
         "name": "Validate SUTRA v2 knowledge kernel",
         "status": "in_progress",
         "conclusion": null
-      }
-    ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537124323",
-    "pushRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625",
-    "checks": [
-      "All seven exact workflows",
-      "Go race, actual four process death points, lost witness and lost client reply",
-      "Original, anchored, strict bridge, lossy bridge and grant TLC/Python gates",
-      "65 trace events and five trace-checker mutants",
-      "Concurrent guarded calls and concurrent cloned authority negative control"
-    ],
-    "status": "exact_code_candidate_all_seven_workflows_success_documentation_commit_separate",
-    "observed": [
-      {
-        "id": 45537124234,
-        "event": "pull_request",
-        "name": "Classify SUTRA verification impact",
-        "status": "completed",
-        "conclusion": "success",
-        "jobIds": [
-          138946337190
-        ]
-      },
-      {
-        "id": 45537124253,
-        "event": "pull_request",
-        "name": "Validate SUTRA Open Kit candidate",
-        "status": "completed",
-        "conclusion": "success",
-        "jobIds": [
-          138946337444
-        ]
-      },
-      {
-        "id": 45537124296,
-        "event": "pull_request",
-        "name": "Validate SUTRA publisher starter",
-        "status": "completed",
-        "conclusion": "success",
-        "jobIds": [
-          138946337794
-        ]
-      },
-      {
-        "id": 45537124451,
-        "event": "pull_request",
-        "name": "Validate SUTRA engineering evaluation",
-        "status": "completed",
-        "conclusion": "success",
-        "jobIds": [
-          138946337733,
-          138946414041
-        ]
-      },
-      {
-        "id": 45537124325,
-        "event": "pull_request",
-        "name": "Validate SUTRA browser compatibility matrix",
-        "status": "completed",
-        "conclusion": "success",
-        "jobIds": [
-          138946337667,
-          138946399970,
-          138946400027,
-          138946400344
-        ]
-      },
-      {
-        "id": 45537124323,
-        "event": "pull_request",
-        "name": "Validate SUTRA v2 knowledge kernel",
-        "status": "completed",
-        "conclusion": "success",
-        "knowledgeJobId": 138946337538,
-        "jobIds": [
-          138946337538,
-          138946337799
-        ]
-      },
-      {
-        "id": 45537116625,
-        "event": "push",
-        "name": "Validate SUTRA v2 knowledge kernel",
-        "status": "completed",
-        "conclusion": "success",
-        "knowledgeJobId": 138946313221,
-        "jobIds": [
-          138946313221,
-          138946313679
-        ]
       }
     ]
   },
@@ -479,6 +388,78 @@
       "resolutionRevision": "085ae0d98159e894c90b2567100f8feaa058b867",
       "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45536736996/job/138945076172",
       "resolutionStatus": "exact_push_and_pr_knowledge_and_all_seven_workflows_success"
+    },
+    {
+      "sourceRevision": "1704e7c301f0edc8267659ad13a4e790ccd93642",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45542913848",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45542920604",
+      "reason": "Both exact knowledge runs later concluded cancelled after five auxiliary workflows succeeded; stale in-progress register state is preserved as history and no kernel credit is inherited.",
+      "resolutionRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+      "resolutionStatus": "resolved_or_superseded_by_exact_green_a9dd3fc6"
+    },
+    {
+      "sourceRevision": "7a47bb1d11872b14093f99d07aad395f82ba40f6",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45543608915",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45543616898",
+      "reason": "Continuation-governance revision; both exact knowledge runs concluded cancelled. Auxiliary greens do not promote kernel verification.",
+      "resolutionRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+      "resolutionStatus": "resolved_or_superseded_by_exact_green_a9dd3fc6"
+    },
+    {
+      "sourceRevision": "cd6e2962b89b841ee2783a5e1fa1f8a04497b041",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45544471746",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45544480606",
+      "reason": "Go/race tests including orphan/exhaustion passed, but both knowledge jobs were cancelled by the historical five-minute job limit while the inherited formal suite was still running; new availability model was not reached.",
+      "resolutionRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+      "resolutionStatus": "resolved_or_superseded_by_exact_green_a9dd3fc6"
+    },
+    {
+      "sourceRevision": "2303f261555db3f4be538d0873ce0c7252a6cd80",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45545199200",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45545206887",
+      "reason": "Raised CI headroom and corrected the Python availability mutant target, but review found ClientPolicyAncestry had an unbounded effects-in-Nat transition. Exact knowledge jobs were still stale/in-progress when superseded; no credit.",
+      "resolutionRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+      "resolutionStatus": "resolved_or_superseded_by_exact_green_a9dd3fc6"
+    },
+    {
+      "sourceRevision": "f4f80f1fd2ffed2539125af7f41d9db2425b496f",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45545660229",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45545665247",
+      "reason": "Exact knowledge jobs failed parsing ClientPolicyAncestry: precedence conflict between equality assignment and less-than predicate. Read-back also exposed incomplete new state-vector assignments, so revision was superseded.",
+      "resolutionRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+      "resolutionStatus": "resolved_or_superseded_by_exact_green_a9dd3fc6"
+    },
+    {
+      "sourceRevision": "6aa0609b8d21d8031630918a5f3b097f6d78fd46",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45545703618",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45545712676",
+      "reason": "Completed ancestry state-vector assignments but exact knowledge jobs still failed the same TLA less-than precedence parse conflict.",
+      "resolutionRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+      "resolutionStatus": "resolved_or_superseded_by_exact_green_a9dd3fc6"
+    },
+    {
+      "sourceRevision": "79e2241ae03a88cdbd3d832df4e9da7e06394c2d",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45545834927",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45545844504",
+      "reason": "Isolated explicit fresh-client provisioning lifecycle, but exact knowledge jobs failed the same ancestry predicate parser conflict before model checking.",
+      "resolutionRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+      "resolutionStatus": "resolved_or_superseded_by_exact_green_a9dd3fc6"
+    },
+    {
+      "sourceRevision": "9d0b86616ada66aff437de2f793bb87d2e548543",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546136496",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546144929",
+      "reason": "Ancestry formal gates now ran: safe 15,830 states and intended numeric/fresh-provisioning counterexamples appeared. Exact jobs then failed FenceAvailability semantic analysis due multiply-defined fairness binder c.",
+      "resolutionRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+      "resolutionStatus": "resolved_or_superseded_by_exact_green_a9dd3fc6"
     }
   ],
   "reconciledDurableCandidate": {
@@ -687,6 +668,41 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/commit/1704e7c301f0edc8267659ad13a4e790ccd93642",
       "description": "Candidate adds policy-witness freshness and returning-client exact ancestry pinning so numeric sequence alone cannot authorize a rolled alternate history.",
       "remaining": "A newly provisioned client with no retained prior pin can still accept a coordinated rolled pair; independent provisioning root/key lifecycle remains open."
+    },
+    {
+      "id": "V2-P05-RECOVERY",
+      "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+      "description": "Exact orphaned-admission and fence-exhaustion Go regressions pass; both are fail-closed/non-mutating. FenceAvailability preserves the liveness counterexample.",
+      "remaining": "Irrecoverable owner evidence can permanently deny admission; arbitrary external-effect resolution remains open."
+    },
+    {
+      "id": "V2-P05-ROLLBACK",
+      "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+      "description": "Pre-effect independent fence and concurrent clone gates pass at exact source; returning-client policy ancestry is exact rather than numeric-only.",
+      "remaining": "Fresh-client provisioning after coordinated rollback and coordinated rollback of trust domains remain open."
+    },
+    {
+      "id": "V2-P06-REFINE",
+      "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+      "description": "ClientPolicyAncestry safe TLC/Python and FenceAvailability safe/unsafe/liveness gates pass with intended named counterexamples.",
+      "remaining": "Bounded models/reference explorers are not universal implementation refinement or production external-effect proof."
+    },
+    {
+      "id": "V2-F11b",
+      "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+      "description": "Returning-client exact ancestry rejects alternate histories; explicit fresh-provisioning counterexample demonstrates the remaining trust-root gap.",
+      "remaining": "Independent provisioning/key distribution or transparency/quorum remains open."
+    },
+    {
+      "id": "V2-P04-CONSENT",
+      "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+      "description": "Grant-policy freshness and exact ancestry compose with fenced dispatch at exact source.",
+      "remaining": "Trusted time, real approval UX and fresh-client trust-root provisioning remain open."
     }
   ],
   "reconciledCI": [
@@ -1672,6 +1688,238 @@
       ],
       "complete": false,
       "description": "Current V2-012 candidate adds pre-effect admission fencing, consent+fence composition, grant-policy freshness witness, exact result/reservation binding, client policy ancestry and removal of the unpinned composite write path. Five non-knowledge workflows have succeeded; both exact knowledge runs remain in progress, so no verified-source promotion is recorded."
+    },
+    {
+      "sourceRevision": "1704e7c301f0edc8267659ad13a4e790ccd93642",
+      "complete": false,
+      "description": "Later reconciliation: five auxiliary PR workflows succeeded; knowledge push 45542913848 and PR 45542920604 concluded cancelled. No inherited verification credit.",
+      "runs": [
+        {
+          "id": 45542913848,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "cancelled"
+        },
+        {
+          "id": 45542920604,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "cancelled"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "7a47bb1d11872b14093f99d07aad395f82ba40f6",
+      "complete": false,
+      "description": "Continuation-governance source; both knowledge runs cancelled; no kernel promotion.",
+      "runs": [
+        {
+          "id": 45543608915,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "cancelled"
+        },
+        {
+          "id": 45543616898,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "cancelled"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "cd6e2962b89b841ee2783a5e1fa1f8a04497b041",
+      "complete": false,
+      "description": "Orphan/exhaustion Go candidate; five auxiliaries succeeded; both knowledge runs cancelled at historical five-minute timeout before new availability formal gate.",
+      "runs": [
+        {
+          "id": 45544471746,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "cancelled"
+        },
+        {
+          "id": 45544480606,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "cancelled"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "2303f261555db3f4be538d0873ce0c7252a6cd80",
+      "complete": false,
+      "description": "Superseded after review found unbounded ancestry counter; exact knowledge runs remained stale/in-progress at V2-013 reconciliation and receive no credit.",
+      "runs": [
+        {
+          "id": 45545199200,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 45545206887,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "in_progress",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "sourceRevision": "f4f80f1fd2ffed2539125af7f41d9db2425b496f",
+      "complete": false,
+      "description": "Both knowledge runs failed ancestry TLA parsing; auxiliary PR workflows succeeded.",
+      "runs": [
+        {
+          "id": 45545660229,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 45545665247,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "6aa0609b8d21d8031630918a5f3b097f6d78fd46",
+      "complete": false,
+      "description": "Both knowledge runs failed ancestry TLA parsing; auxiliary PR workflows succeeded.",
+      "runs": [
+        {
+          "id": 45545703618,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 45545712676,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "79e2241ae03a88cdbd3d832df4e9da7e06394c2d",
+      "complete": false,
+      "description": "Both knowledge runs failed ancestry TLA parsing; auxiliary PR workflows succeeded.",
+      "runs": [
+        {
+          "id": 45545834927,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 45545844504,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "9d0b86616ada66aff437de2f793bb87d2e548543",
+      "complete": false,
+      "description": "Ancestry safe and intended mutants executed; both knowledge runs failed FenceAvailability fairness-binder semantic analysis; five auxiliary PR workflows succeeded.",
+      "runs": [
+        {
+          "id": 45546136496,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 45546144929,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+      "complete": true,
+      "description": "Exact V2-013 kernel source: both knowledge runs plus all five auxiliary PR workflows completed successfully. Scoped admission availability and finite policy-ancestry evidence promoted; broad gates remain open.",
+      "runs": [
+        {
+          "id": 45546486966,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            138977247104,
+            138977247427
+          ]
+        },
+        {
+          "id": 45546494248,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            138977269443,
+            138977269672
+          ]
+        },
+        {
+          "id": 45546494229,
+          "event": "pull_request",
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45546494226,
+          "event": "pull_request",
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45546494245,
+          "event": "pull_request",
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45546494239,
+          "event": "pull_request",
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45546494225,
+          "event": "pull_request",
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
     }
   ],
   "inheritedV2012FailureIndex": {

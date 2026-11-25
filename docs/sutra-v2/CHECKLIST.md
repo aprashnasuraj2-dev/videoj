@@ -100,3 +100,17 @@ This section is intentionally **not checked off**. The branch advanced beyond th
 - [ ] **V2-P06-REFINE:** reconcile FenceAdmission, FenceClones, GrantPolicyFreshness and ClientPolicyAncestry formal gates against exact implementation tests; bounded models are not universal refinement.
 - [ ] **Exact CI promotion:** five non-knowledge workflows are successful. Knowledge PR run 45542920604 and push run 45542913848 are still in progress. Do not change `lastVerifiedKernelSource` from `8998fceab17b09ec8d1911945fd5bd90b7b26c89` until both pass.
 - [ ] **Production boundary:** no arbitrary external write, paid provider, real BYOK secret, release, merge or deployment is authorized by this candidate.
+
+
+## V2-013 exact admission availability and ancestry reconciliation — a9dd3fc6
+
+This checkpoint corrects the stale V2-012 candidate snapshot above; it does not rewrite it. Knowledge runs for `1704e7c3` and the later V2-012 continuation commit `7a47bb1d` were eventually cancelled, so neither inherited kernel credit. V2-013 preserves those cancellations and every failed/superseded formal revision in [progress.json](progress.json) and [SESSIONS.md](SESSIONS.md).
+
+Exact source `a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051` passed both knowledge workflows plus impact classification, Open Kit, publisher, engineering evaluation and browser compatibility. Scoped evidence now includes: pre-effect admission fencing; explicit orphan/exhaustion fail-closed behavior; a finite exact policy-ancestry model; a numeric-only alternate-history counterexample; an explicit fresh-client-after-coordinated-rollback counterexample; and the permanent steal-orphan delayed-double-effect negative control. This promotes the exact kernel source only; no broad phase/gate is complete.
+
+- [ ] **V2-P05-RECOVERY / availability:** orphaned admission is distinguishable and non-mutating, but if owner evidence is irrecoverably lost the safe behavior can deny future admission indefinitely. A timeout/lease alone is not proof that an arbitrary external effect did not dispatch.
+- [ ] **V2-P05-ROLLBACK / V2-F11b:** exact returning-client ancestry is checked, but a fresh client provisioned only after coordinated rollback can accept the rolled history. Independent provisioning/trust-root distribution remains open.
+- [ ] **V2-P06-REFINE:** TLC and independent Python agree on the bounded ancestry and admission-availability witnesses. This is finite model evidence, not a universal implementation refinement theorem.
+- [ ] **V2-RUNTIME-02 newly exposed boundary:** raw authority, post-effect witness and legacy grant HTTP handlers remain lower-layer laboratory surfaces. They must not be mountable as an accidental externally writable bypass around the anchored fenced-grant path.
+- [ ] **Arbitrary external effects:** current one-effect evidence is for the synthetic authority/fence laboratory. Global provider/service side-effect uniqueness still requires independently enforced fencing or upstream idempotency/reconciliation.
+- [ ] **Release boundary:** merge, release, deployment, real credentials, paid inference, external testing and competition submission remain unauthorized.

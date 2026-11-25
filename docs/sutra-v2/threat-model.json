@@ -8,7 +8,9 @@
     "Current checked-in inference is disabled by default and BYOK remains disabled; no live provider credential is authorized by this model.",
     "Browser-origin checks are not authentication against non-browser callers.",
     "A privileged attacker able to roll back both authority and witness trust domains can recreate an older mutually consistent state.",
-    "Exact credential canary scans detect direct secret echo only; they do not prove resistance to encoded, hashed, fragmented or transformed exfiltration by a compromised trusted adapter."
+    "Exact credential canary scans detect direct secret echo only; they do not prove resistance to encoded, hashed, fragmented or transformed exfiltration by a compromised trusted adapter.",
+    "Fail-closed orphaned admission preserves modeled safety at the cost of availability; clearing or leasing an orphan without proof of non-dispatch can permit duplicate delayed external effects.",
+    "Lower raw authority, post-effect witness, and legacy grant handlers remain laboratory layers at V2-013 and are not approved production external mutation surfaces."
   ],
   "principals": [
     {
@@ -687,6 +689,40 @@
         "V2-P01-THREAT",
         "V2-P03-TAINT",
         "V2-P14-BYOK-UX"
+      ]
+    },
+    {
+      "id": "T22-orphaned-admission-availability",
+      "severity": "critical",
+      "category": [
+        "availability",
+        "integrity"
+      ],
+      "mechanism": "A pre-effect fence reservation can outlive the coordinator evidence that owned it. Blindly clearing the orphan restores availability but can admit a second writer while a delayed first external effect remains possible; retaining it can deny future admission indefinitely.",
+      "invariant": "An orphaned reservation must remain fail-closed unless independently verifiable evidence proves the prior effect cannot occur; bounded exhaustion must refuse new reservations without mutating the fence or synthetic effect ledger.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/fence_linux_test.go",
+          "test": "TestFencedCoordinatorOrphanedAdmissionFailsClosed"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/fence_linux_test.go",
+          "test": "TestAdmissionFenceExhaustionIsExplicitAndNonMutating"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/FenceAvailability.tla",
+          "test": "PendingEventuallySettles"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/FenceAvailability.tla",
+          "test": "StealOrphan"
+        }
+      ],
+      "openGates": [
+        "V2-P05-RECOVERY",
+        "V2-P05-ROLLBACK",
+        "V2-P06-REFINE",
+        "V2-RUNTIME-02"
       ]
     }
   ]

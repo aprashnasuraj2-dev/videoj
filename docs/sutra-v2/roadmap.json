@@ -167,9 +167,14 @@
               "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221",
               "description": "Exact approval grants, epoch expiry, durable revocation, admitted-only reconcile, separate compensation, race serialization and six grant mutants pass."
+            },
+            {
+              "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+              "description": "Exact grant-policy freshness, exact returning-client ancestry, revocation/admission composition and fenced dispatch gates pass at the verified source."
             }
           ],
-          "knownLimitations": "Current signed fixture approval has no expiry or revocation\nV2-012 update: Host policy epoch is not trusted wall-clock time. Old valid signed GrantBook rollback restores earlier policy; real approval UI and independent anchor open.\nV2-012 candidate 1704e7c3: pre-effect admission/policy-ancestry work exists on branch; exact knowledge PR 45542920604 and push 45542913848 are still in progress, so this is not promoted verification evidence."
+          "knownLimitations": "Current signed fixture approval has no expiry or revocation\nV2-012 update: Host policy epoch is not trusted wall-clock time. Old valid signed GrantBook rollback restores earlier policy; real approval UI and independent anchor open.\nV2-012 candidate 1704e7c3: pre-effect admission/policy-ancestry work exists on branch; exact knowledge PR 45542920604 and push 45542913848 are still in progress, so this is not promoted verification evidence.\nV2-013: fresh clients with no retained ancestry pin still cannot distinguish a coordinated rolled trust-domain history; trusted-time/real approval UX remains open."
         }
       ]
     },
@@ -252,9 +257,14 @@
               "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221",
               "description": "Actual four process exits, lost final/witness HTTP responses, strict signed ledger+fresh challenge recovery and durable-intent tamper checks. Same-authority concurrent callers: one effect, one stale conflict, two contacts."
+            },
+            {
+              "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+              "description": "Exact Go race tests distinguish orphaned admission and bounded fence exhaustion as fail-closed/non-mutating; both knowledge workflows and all auxiliary workflows passed."
             }
           ],
-          "knownLimitations": "Authenticated loopback authority now owns action history and per-caller/global contact accounting atomically, and stale local caller state cannot reset quota. Still a synthetic single-authority fixture: no approval expiry/revocation, generic new-key lifecycle, hostile-network replay protection, provider spend accounting, physical power-loss certification or arbitrary upstream side effect.\nV2-012 update: No proof for all filesystem/power-loss failures, arbitrary upstream effects or liveness with indefinitely unavailable witness. Reconciliation needs remaining contact budget."
+          "knownLimitations": "Authenticated loopback authority now owns action history and per-caller/global contact accounting atomically, and stale local caller state cannot reset quota. Still a synthetic single-authority fixture: no approval expiry/revocation, generic new-key lifecycle, hostile-network replay protection, provider spend accounting, physical power-loss certification or arbitrary upstream side effect.\nV2-012 update: No proof for all filesystem/power-loss failures, arbitrary upstream effects or liveness with indefinitely unavailable witness. Reconciliation needs remaining contact budget.\nV2-013: loss of the reservation owner's durable evidence can leave admission permanently fail-closed. Clearing or leasing the orphan without proof of non-dispatch can permit delayed double effects for arbitrary external services."
         },
         {
           "id": "V2-P05-ROLLBACK",
@@ -306,9 +316,14 @@
               "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221",
               "description": "Fresh pinned witness composite, sequential clone rejected pre-mutation, concurrent clones yield one acknowledged branch but both persist one synthetic effect."
+            },
+            {
+              "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+              "description": "Exact pre-effect fencing and concurrent-clone regressions pass; admission is independently reserved before local synthetic effect persistence. Returning-client policy ancestry is exact rather than sequence-only."
             }
           ],
-          "knownLimitations": "A separately protected witness detects rollback of the authority store alone, but a privileged attacker able to restore both independently signed stores can recreate an old consistent pair. No public transparency log, quorum, trusted time, independently operated third party, key rotation/distribution protocol or separately authorized compensation exists yet.\nV2-012 update: Independent single witness does not fence simultaneous cloned authority local writes; coordinated rollback of both domains remains possible; key distribution and rotation open.\nV2-012 candidate 1704e7c3: pre-effect admission/policy-ancestry work exists on branch; exact knowledge PR 45542920604 and push 45542913848 are still in progress, so this is not promoted verification evidence."
+          "knownLimitations": "A separately protected witness detects rollback of the authority store alone, but a privileged attacker able to restore both independently signed stores can recreate an old consistent pair. No public transparency log, quorum, trusted time, independently operated third party, key rotation/distribution protocol or separately authorized compensation exists yet.\nV2-012 update: Independent single witness does not fence simultaneous cloned authority local writes; coordinated rollback of both domains remains possible; key distribution and rotation open.\nV2-012 candidate 1704e7c3: pre-effect admission/policy-ancestry work exists on branch; exact knowledge PR 45542920604 and push 45542913848 are still in progress, so this is not promoted verification evidence.\nV2-013: fresh provisioning after coordinated rollback remains an explicit counterexample; independently distributed monotonic trust/provisioning is still absent."
         }
       ]
     },
@@ -383,9 +398,14 @@
               "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221",
               "description": "65 observed events across eight concrete cases mapped by independent Python, five trace checker mutations rejected. Strict bridge 11/12, lossy 28/36, grant 40/80 states/edges; original and anchored retained."
+            },
+            {
+              "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+              "description": "Finite ClientPolicyAncestry and FenceAvailability TLC/Python gates pass at exact source, including named numeric-history, fresh-provisioning, orphan-liveness and steal-orphan AtMostOneEffect counterexamples."
             }
           ],
-          "knownLimitations": "One actual Go trace is independently replayed against the bounded transition mapping and budgets now match the TLA per-caller 2/global 3 profile. This is a trace witness, not a universal refinement theorem: Go collapses dispatch+delivery once bytes arrive, cryptography/binary parsing/storage are outside TLA, and authority snapshot rollback remains possible without an external monotonic witness.\nV2-012 update: Trace checking is not universal simulation; clone rejection is outside admitted safe model; timing, signatures and physical storage are abstracted.\nV2-012 candidate 1704e7c3: pre-effect admission/policy-ancestry work exists on branch; exact knowledge PR 45542920604 and push 45542913848 are still in progress, so this is not promoted verification evidence."
+          "knownLimitations": "One actual Go trace is independently replayed against the bounded transition mapping and budgets now match the TLA per-caller 2/global 3 profile. This is a trace witness, not a universal refinement theorem: Go collapses dispatch+delivery once bytes arrive, cryptography/binary parsing/storage are outside TLA, and authority snapshot rollback remains possible without an external monotonic witness.\nV2-012 update: Trace checking is not universal simulation; clone rejection is outside admitted safe model; timing, signatures and physical storage are abstracted.\nV2-012 candidate 1704e7c3: pre-effect admission/policy-ancestry work exists on branch; exact knowledge PR 45542920604 and push 45542913848 are still in progress, so this is not promoted verification evidence.\nV2-013: bounded state exploration and independent reference models are not universal Go refinement; arbitrary external effects, cryptography, storage/power-loss and trust-root provisioning remain outside the abstraction."
         }
       ]
     },
@@ -2124,7 +2144,14 @@
       "positiveTests": "Atomically advance witness head under concurrent callers",
       "adversarialTests": "Cloned signer, crash and conflicting CAS",
       "verificationMethod": "TLC and implementation concurrency tests",
-      "knownLimitations": "Independent witness CAS now rejects revisiting any observed head and consumers pin genesis, but coordinated rollback of authority+witness remains possible; no independently operated third party, transparency log/quorum, key-distribution/rotation protocol, witness two-phase TLA machine or full refinement exists."
+      "knownLimitations": "Independent witness CAS now rejects revisiting any observed head and consumers pin genesis, but coordinated rollback of authority+witness remains possible; no independently operated third party, transparency log/quorum, key-distribution/rotation protocol, witness two-phase TLA machine or full refinement exists.\nV2-013: exact ancestry protects returning clients only relative to retained pins; fresh-client provisioning after coordinated rollback remains unresolved.",
+      "additionalEvidence": [
+        {
+          "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+          "description": "Exact returning-client policy ancestry and grant-policy freshness gates pass; numeric high-water alone is rejected and a fresh-client coordinated-rollback limitation is demonstrated."
+        }
+      ]
     },
     {
       "id": "V2-F12a",
@@ -2275,7 +2302,11 @@
       "objective": "Durable transactional receiver or upstream idempotency contract: crash before/after effect, restart, concurrent keys, expiry/revocation, globally enforced budgets, signed status semantics and explicit compensation authorization. A local lock cannot make arbitrary remote effects atomic. Formal safe/unsafe TLA+ model and implementation refinement required before external writes.",
       "phase": "05",
       "status": "Implementation in progress",
-      "evidence": null,
+      "evidence": {
+        "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+        "description": "Exact pre-effect AdmissionFence candidate passes process/race, formal and independent reference gates, including explicit orphan/exhaustion behavior."
+      },
       "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
       "dependencies": [
         "V2-P05-STORE",
@@ -2290,7 +2321,7 @@
       "positiveTests": "Durable effect/ledger and explicit retry policy",
       "adversarialTests": "Crash, concurrent keys, unknown outcome, revoked approval and global budgets",
       "verificationMethod": "Go process and network integration, TLA refinement",
-      "knownLimitations": "Synthetic store verified; broader receiver gate open"
+      "knownLimitations": "Synthetic store verified; broader receiver gate open\nV2-013: lower raw authority/post-effect witness/legacy grant HTTP handlers are still mountable laboratory bypass surfaces and are the next hardening target; arbitrary external writes remain disabled."
     },
     {
       "id": "V2-RUNTIME-03",
@@ -2343,6 +2374,6 @@
     "duplicateIds": 0,
     "missingDependencies": 0,
     "dependencyCycles": 0,
-    "method": "V2-012 continuation: parsed all 90 nodes and traversed dependencies before and after partial-evidence updates; no requirement removed or completed."
+    "method": "V2-013 exact-source reconciliation: all existing nodes/dependencies retained; scoped evidence appended without completing any gate. Formal boundedness and negative controls checked at a9dd3fc6."
   }
 }
