@@ -131,3 +131,22 @@ func TestDurableReorderedAcknowledgements(t *testing.T){
  next,e:=store.Commit(approve(t,1,ctx,ak));if e!=nil||next.Version!=2{t.Fatal("duplicate effect",e)}
  t.Log("two actual TCP clients, second acknowledgement released before first; identical receipts and one effect")
 }
+
+func TestContactBookSignedRollbackCounterexample(t *testing.T){
+ var requests atomic.Int32
+ srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){requests.Add(1);w.WriteHeader(http.StatusNotFound)}));defer srv.Close()
+ _,p,_,pub,_,journal,approvals:=bookApprovals(t,srv.URL)
+ dir:=privateTemp(t)
+ b,e:=CreateContactBook(dir,srv.URL,"manifest-v1","session-1",p,pub,journal,approvals);if e!=nil{t.Fatal(e)};defer b.Close()
+ path:=filepath.Join(dir,"contacts.bin");old,e:=os.ReadFile(path);if e!=nil{t.Fatal(e)}
+ if _,e=b.Call(approvals[0].Key,FirstDispatch);!errors.Is(e,ErrUnknown){t.Fatal(e)}
+ if _,e=b.Call(approvals[0].Key,LookupStatus);!errors.Is(e,ErrAbsent){t.Fatal(e)}
+ if _,e=b.Call(approvals[0].Key,RetryApproval);!errors.Is(e,ErrContacts){t.Fatal(e)}
+ b.Close()
+ // Deliberately violate the trust assumption. A valid old signed journal is
+ // not distinguishable from a legitimate old journal without an external pin.
+ if e=os.WriteFile(path,old,0600);e!=nil{t.Fatal(e)}
+ b,e=OpenContactBook(dir,srv.URL,"manifest-v1","session-1",p,pub,journal,approvals);if e!=nil{t.Fatal(e)};defer b.Close()
+ if _,e=b.Call(approvals[0].Key,FirstDispatch);!errors.Is(e,ErrUnknown)||requests.Load()!=3{t.Fatal("signed rollback counterexample missing",e)}
+ t.Log("valid old caller journal resets its local budget if the trusted directory is rolled back; external monotonic caller anchor remains required")
+}

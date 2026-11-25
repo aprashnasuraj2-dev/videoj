@@ -30,3 +30,13 @@ for entry in 'Unauthorized Authorized' 'Budget BoundedContacts' 'Rollback NoRoll
  grep -F "Invariant $2 is violated" "$WORK/anchored-$1.log"
 done
 python3 anchored_model.py
+
+# Fair opportunity resolution; removing the fairness assumption must fail.
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/anchored-fair" -config AnchoredFair.cfg AnchoredRecovery.tla > "$WORK/anchored-fair.log" 2>&1 || { cat "$WORK/anchored-fair.log"; exit 1; }
+cat "$WORK/anchored-fair.log"
+grep -F 'No error has been found' "$WORK/anchored-fair.log"
+if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/anchored-unfair" -config AnchoredUnfair.cfg AnchoredRecovery.tla > "$WORK/anchored-unfair.log" 2>&1; then
+ cat "$WORK/anchored-unfair.log"; echo 'unfair model unexpectedly satisfied liveness' >&2; exit 1
+fi
+cat "$WORK/anchored-unfair.log"
+grep -F 'Temporal properties were violated' "$WORK/anchored-unfair.log"

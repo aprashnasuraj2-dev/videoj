@@ -73,4 +73,14 @@ BoundedContacts == Total <= 3 /\ \A c \in Clients: spent[c] <= 2
 ReceiptSound == acked \subseteq Entries(history)
 NoRollback == \A h \in published: Prefix(h,history)
 NoFork == \A h,j \in published: Prefix(h,j) \/ Prefix(j,h)
+Recover(c,k) ==
+ /\ k \in Entries(history)
+ /\ k \notin acked
+ /\ Status(c,k)
+FairSpec == Spec /\ (\A c \in Clients,k \in Allowed: WF_vars(Recover(c,k)))
+\* Opportunity resolution is not unconditional successful recovery: a caller
+\* may instead lose its remaining contact capacity.
+ConditionalRecovery ==
+ \A c \in Clients,k \in Allowed:
+  ((k \in Entries(history) /\ CanContact(c)) ~> (k \in acked \/ ~CanContact(c)))
 =============================================================================

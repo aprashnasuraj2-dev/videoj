@@ -27,7 +27,7 @@ No automatic blind dispatch after ambiguous outcome. A status absence does not p
 From the repository root:
 
 ```sh
-go test -race -count=1 -v packages/sutra-knowledge/action-protocol/protocol.go packages/sutra-knowledge/action-protocol/transport.go packages/sutra-knowledge/action-protocol/protocol_test.go packages/sutra-knowledge/action-protocol/durable_linux.go packages/sutra-knowledge/action-protocol/durable_linux_test.go
+go test -race -count=1 -v packages/sutra-knowledge/action-protocol/protocol.go packages/sutra-knowledge/action-protocol/transport.go packages/sutra-knowledge/action-protocol/protocol_test.go packages/sutra-knowledge/action-protocol/durable_linux.go packages/sutra-knowledge/action-protocol/durable_linux_test.go packages/sutra-knowledge/action-protocol/anchor_linux.go packages/sutra-knowledge/action-protocol/anchor_linux_test.go packages/sutra-knowledge/action-protocol/caller_linux.go packages/sutra-knowledge/action-protocol/caller_linux_test.go
 ```
 
 The tests use actual loopback TCP and close the socket after applying a synthetic effect; they also close it before commit, exercise concurrent duplicate submissions, wrong approval, audience and manifest substitution, forged receipt, redirect, contact and effect budget, malformed request size and occupied slot. No external write is performed.
@@ -43,3 +43,7 @@ The tests use actual loopback TCP and close the socket after applying a syntheti
 - No authenticated transport identity, revocation, expiration, multi-tenant key lifecycle, or distributed/global budget. Per-client contact limits reset if a new client is constructed; do not interpret them as a global spend limit.
 - No remote publisher execution or model tool registration. The loopback synthetic HTTP harness is not independent-site browser adoption.
 - The binary approval/receipt format is a prototype, not an official challenge protocol. Integrate with the existing browser consent and trace only after an explicit security review; separate proof of effect, policy decision, causal chain, and externally authenticated time.
+
+## V2-010 bounded candidates
+
+`Anchor` wraps a separately trusted durable authority; exact parent CAS serializes cooperating writers, and `VerifyAnchorView` validates ordered approvals and receipts against separately provisioned policy, keys and head. Cloning the anchor itself can still fork. `ContactBook` freezes exact host-approved keys, rejects duplicate slots and persists a signed reservation before each loopback request (two per approval, three for the book), with cached verified receipt and sticky unknown across reopen. It assumes one trusted private directory and signer; a valid older signed journal can reset its budget, and another book can bypass its cap. This is not a global provider budget. Neither primitive changes browser capabilities or exposes external writes. The CAS interface and journal transport are not yet integrated. See [formal/ANCHOR.md](formal/ANCHOR.md) for bounded safety, fairness and explicit implementation gaps.
