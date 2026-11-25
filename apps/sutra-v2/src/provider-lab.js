@@ -68,7 +68,7 @@ function render(){
    try{
     const handle=handles.get(profile.profileId);if(!handle)throw Error('MISSING_HANDLE');
     const result=await workspace.execute({
-     handle,model:model.value,inputBytes:256,maxOutputTokens:64,now:Math.floor(performance.now()),
+     handle,model:model.value,inputBytes:256,maxOutputTokens:64,
      operation:{kind:'routing_rehearsal',inputBytes:256}
     });
     setStatus(profile.label+' routed to '+result.model+' in the local synthetic adapter. No LLM request was sent.','complete');
