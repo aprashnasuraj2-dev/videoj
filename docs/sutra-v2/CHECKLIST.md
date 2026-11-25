@@ -4,7 +4,7 @@ V2-009: the dependency-aware active phase gates are in [ROADMAP.md](ROADMAP.md) 
 
 V2-010: RECOVERY, ROLLBACK and REFINE have new partial executable evidence in ROADMAP.md, roadmap.json and SESSIONS.md. No historical checkbox or fully verified status changed. The remaining external anchor, global budget and refinement gates are not closed.
 
-V2-011: authenticated shared external-process CAS, global bounded contact accounting and one concrete Go-to-TLA trace witness are exact-CI verified in their stated synthetic scope. A valid old signed authority snapshot still rolls back, so ROLLBACK and REFINE remain open. New product gate V2-P14-BYOK-UX captures nontechnical multi-provider key setup; no live credentials or paid inference were enabled.
+V2-011: authenticated shared external-process CAS, global bounded contact accounting and one concrete Go-to-TLA trace witness are exact-CI verified in their stated synthetic scope. A separately keyed monotonic witness now detects authority-only rollback and stale witness views, but coordinated rollback of both valid signed stores remains a verified counterexample. ROLLBACK and F11b remain unchecked/in progress. New product gate V2-P14-BYOK-UX captures nontechnical multi-provider key setup; no live credentials or paid inference were enabled.
 
 Pending until exact evidence; expand only when new concrete product requirements or counterexamples emerge. Baseline facts are not v2 feature credit.
 
