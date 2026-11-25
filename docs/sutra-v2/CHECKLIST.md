@@ -1,5 +1,11 @@
 # Active outcome checklist
 
+## Continuation discipline
+
+“Continue with SUTRA” is a cross-session execution instruction. Resolve the latest remote SUTRA HEAD/PR and CI, continue the unfinished dependency-ready engineering, and maintain this checklist together with `progress.json`, `roadmap.json`/ROADMAP.md and SESSIONS.md as evidence changes. Do not leave newly implemented work unregistered, and do not stop at a status recap while safe independent work remains.
+
+SUTRA1 under `docs/sutra/` remains intact. Its continuation/checkpoint/release rules and reusable implementation/evidence are inherited context for SUTRA2; the SUTRA1 learner checklist is historical coverage, not the active SUTRA2 queue. See [CONTINUE.md](CONTINUE.md).
+
 V2-009: the dependency-aware active phase gates are in [ROADMAP.md](ROADMAP.md) and [roadmap.json](roadmap.json). This original ID register is retained for historical traceability; no earlier failures or requirements removed.
 
 V2-010: RECOVERY, ROLLBACK and REFINE have new partial executable evidence in ROADMAP.md, roadmap.json and SESSIONS.md. No historical checkbox or fully verified status changed. The remaining external anchor, global budget and refinement gates are not closed.

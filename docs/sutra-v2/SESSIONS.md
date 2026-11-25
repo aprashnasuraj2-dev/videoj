@@ -189,3 +189,9 @@ Current candidate chain after the first fence implementation includes formal pre
 At reconciliation time, impact, Open Kit, publisher, engineering evaluation and browser compatibility had succeeded. Knowledge PR `45542920604` and push `45542913848` remained in progress. Therefore `lastVerifiedKernelSource` remains `8998fceab17b09ec8d1911945fd5bd90b7b26c89`.
 
 No gate is promoted to complete by this documentation update. Coordinated rollback, fresh-client provisioning, independent trust-root distribution, general refinement, arbitrary upstream effects, real provider billing, BYOK custody and physical power-loss certification remain open.
+
+## V2-012 continuation protocol clarification — 2026-11-25
+
+The phrase **“continue with SUTRA”** is now explicitly defined as a cross-session execution command. A continuation session must resolve the latest remote branch/PR and intervening CI, resume the current unfinished dependency-ready engineering, and keep implementation plus CHECKLIST/roadmap/progress/session evidence synchronized as work advances. It must not reset to the last conversational checkpoint or finish with only a status summary while independent authorized work remains.
+
+SUTRA1 is not discarded: `docs/sutra/CONTINUE.md`, its release/evidence/checkpoint rules, source, decisions and historical evidence remain inherited context. SUTRA2 remains the active roadmap; SUTRA1 checklist state is not automatically promoted into v2. No new release/deployment/paid-inference/submission authority is created by the continuation phrase.

@@ -3543,5 +3543,37 @@
         "url": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45529871252"
       }
     ]
+  },
+  "continuationPolicy": {
+    "version": 2,
+    "triggerPhrases": [
+      "continue sutra",
+      "continue with sutra",
+      "continue SUTRA",
+      "continue with SUTRA"
+    ],
+    "activeRoadmap": "docs/sutra-v2/roadmap.json",
+    "procedure": "docs/sutra-v2/CONTINUE.md",
+    "inheritedV1Procedure": "docs/sutra/CONTINUE.md",
+    "semantics": "Resume the latest remote SUTRA work and continue engineering; never reset to the last chat checkpoint or stop at a status-only handoff while dependency-ready authorized work remains.",
+    "checkpointTransaction": [
+      "resolve exact branch/PR HEAD and reconcile intervening commits",
+      "reconcile exact-source CI before granting or withdrawing verification credit",
+      "implement and adversarially validate the next dependency-ready task",
+      "update affected CHECKLIST.md and roadmap.json/ROADMAP.md state or limitations",
+      "update progress.json candidate/verified cursor, failures and evidence",
+      "append SESSIONS.md and DECISIONS.md when architecture/scope interpretation changes",
+      "commit the logical checkpoint and read back remote state",
+      "continue to the next dependency-ready task unless a genuine external blocker or explicit user stop applies"
+    ],
+    "v1Compatibility": [
+      "preserve docs/sutra and SUTRA1 implementation/evidence",
+      "inherit docs/sutra/CONTINUE.md checkpoint, release-gate, evidence and stop/continuation rules unless v2 explicitly tightens them",
+      "reuse legacy source/evidence when a v2 dependency references it",
+      "do not treat the SUTRA1 checklist as the active v2 priority queue",
+      "never erase or silently rewrite historical SUTRA1 failures, decisions or task state"
+    ],
+    "evidenceRule": "Candidate code remains pending until the exact required workflow set for that immutable source revision is observed; later commits do not inherit earlier green CI.",
+    "releaseRule": "Continuation alone authorizes no merge, release, paid inference, production/DNS change, public deployment or competition submission."
   }
 }
