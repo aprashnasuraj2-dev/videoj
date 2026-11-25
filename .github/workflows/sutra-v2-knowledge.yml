@@ -73,6 +73,10 @@ jobs:
           rustc --edition=2021 -O --test packages/sutra-knowledge/support-lattice/wasm.rs -o /tmp/sutra-support-abi-tests
           /tmp/sutra-support-abi-tests
       - run: node --test packages/sutra-knowledge/test/*.test.mjs
+      - name: Independently compare two-group conditional arithmetic
+        run: |
+          node packages/sutra-knowledge/examples/fisher-reference-cases.mjs > sutra-fisher-reference-cases.json
+          python3 packages/sutra-knowledge/reference/test_reviewed_fisher.py < sutra-fisher-reference-cases.json
       - name: Execute frozen synthetic living-knowledge pilot and scoped baseline comparison
         run: node packages/sutra-knowledge/evaluation/living-pilot.mjs
       - name: Execute frozen revision selection pilot

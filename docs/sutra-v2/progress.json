@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-093",
+  "session": "V2-094",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -36,7 +36,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "statistical_workspace_candidate_pending_exact_ci",
+  "state": "two_group_exact_statistical_profile_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -389,7 +389,7 @@
     "reason": "Inherited collapsed expression textarea failure in table browser test; history knowledge job passed.",
     "resolutionStatus": "Resolved at exact V2-084; all ten workflows green."
   },
-  "lastVerifiedKernelSource": "87b159df23fdb5255c28b7d0714b62abaae854c3",
+  "lastVerifiedKernelSource": "81f2cd4ef65eebfcc309397e1096d6dceccfba9c",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -399,14 +399,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-094",
+    "parent": "81f2cd4ef65eebfcc309397e1096d6dceccfba9c",
+    "description": "Reviewed two-group Fisher conditional exact test, independent Python fixed-margin replay, allocation oracle, tamper and pin controls. Exact CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-093",
     "parent": "8d311ea976e4c884c75bc3d26a07c0a1001fe5ed",
     "description": "Guided statistical sample and corrected source, design controls, exact export and independent Python math.comb replay; exact CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-092",
-    "parent": "734b52e382feedeb39885642f39993b7619fddb8",
-    "description": "Bounded exact binomial tail profile with explicit design and multiplicity obligations, exhaustive small-sample weighted oracle. Exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -1337,6 +1337,24 @@
       "sourceRevision": "87b159df23fdb5255c28b7d0714b62abaae854c3",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45615236070/job/139208785125",
       "description": "V2-090 exact 10/10 passed; actual engineering interval workspace and independent Python Fraction export replay, six mutation controls and stale pins."
+    },
+    {
+      "id": "V2-LK15-UNIFIED-WORKSPACE",
+      "sourceRevision": "734b52e382feedeb39885642f39993b7619fddb8",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45615925525",
+      "description": "Exact 10/10 green: living overview, keyboard entry and browser state invalidation."
+    },
+    {
+      "id": "V2-LK14-STATISTICAL-PROFILES",
+      "sourceRevision": "8d311ea976e4c884c75bc3d26a07c0a1001fe5ed",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45616285052",
+      "description": "Exact 10/10 green: reviewed binomial arithmetic and design obligations."
+    },
+    {
+      "id": "V2-LK14-STATISTICAL-PROFILES",
+      "sourceRevision": "81f2cd4ef65eebfcc309397e1096d6dceccfba9c",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45616887656/job/139214471649",
+      "description": "Exact 10/10 green: actual corrected statistical sample and independent binomial browser replay."
     }
   ],
   "reconciledCI": [
