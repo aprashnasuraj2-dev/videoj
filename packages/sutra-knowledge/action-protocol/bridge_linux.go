@@ -30,6 +30,15 @@ const witnessedEnvelopeSize = authorityResponseSize+witnessAttestationSize
 
 var ErrWitnessUnavailable = errors.New("independent witness unavailable or ambiguous")
 
+func randomWitnessChallenge()(Digest,error){
+ for i:=0;i<2;i++{
+  var challenge Digest
+  if _,e:=rand.Read(challenge[:]);e!=nil{return Digest{},e}
+  if challenge!=(Digest{}){return challenge,nil}
+ }
+ return Digest{},ErrUnknown
+}
+
 type BridgeIntent struct {
  RequestHash Digest
  Before Digest
@@ -320,6 +329,7 @@ type WitnessedAuthorityClient struct {
  head Digest
  sequence uint32
  http *http.Client
+ challenge func()(Digest,error)
  contacts int
 }
 func NewWitnessedAuthorityClient(origin string,caller byte,key ed25519.PrivateKey,authority,witness ed25519.PublicKey,ctx,genesis Digest,pin WitnessView,action Request)(*WitnessedAuthorityClient,error){
@@ -333,7 +343,7 @@ func NewWitnessedAuthorityClient(origin string,caller byte,key ed25519.PrivateKe
  h:=&http.Client{Transport:tr,Timeout:2*time.Second,CheckRedirect:func(*http.Request,[]*http.Request)error{return http.ErrUseLastResponse}}
  return &WitnessedAuthorityClient{
   origin:origin,caller:caller,key:append(ed25519.PrivateKey(nil),key...),authority:append(ed25519.PublicKey(nil),authority...),
-  witness:append(ed25519.PublicKey(nil),witness...),ctx:ctx,genesis:genesis,action:action,head:pin.Head,sequence:pin.Sequence,http:h,
+  witness:append(ed25519.PublicKey(nil),witness...),ctx:ctx,genesis:genesis,action:action,head:pin.Head,sequence:pin.Sequence,http:h,challenge:randomWitnessChallenge,
  },nil
 }
 func (c *WitnessedAuthorityClient) Head()Digest{c.mu.Lock();defer c.mu.Unlock();return c.head}
@@ -341,8 +351,7 @@ func (c *WitnessedAuthorityClient) Sequence()uint32{c.mu.Lock();defer c.mu.Unloc
 func (c *WitnessedAuthorityClient) Contacts()int{c.mu.Lock();defer c.mu.Unlock();return c.contacts}
 func (c *WitnessedAuthorityClient) exchange(op byte)(Receipt,WitnessedEnvelope,error){
  req,e:=SignAuthorityRequest(c.caller,op,c.head,c.action,c.key);if e!=nil{return Receipt{},WitnessedEnvelope{},e}
- var challenge Digest
- if _,e=rand.Read(challenge[:]);e!=nil{return Receipt{},WitnessedEnvelope{},ErrUnknown}
+ challenge,e:=c.challenge();if e!=nil||challenge==(Digest{}){return Receipt{},WitnessedEnvelope{},ErrUnknown}
  c.contacts++
  h,e:=http.NewRequest(http.MethodPost,c.origin+"/authority-witnessed",bytes.NewReader(req.Bytes()));if e!=nil{return Receipt{},WitnessedEnvelope{},ErrUnknown}
  h.GetBody=nil;h.Header.Set("Content-Type",media);h.Header.Set("Accept",media);h.Header.Set("X-Sutra-Witness-Challenge",hex.EncodeToString(challenge[:]))
