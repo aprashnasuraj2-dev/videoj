@@ -232,6 +232,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_source_economics.py apps/sutra-v2/test-output/economics-fresh.json apps/sutra-v2/test-output/economics-acquired.json apps/sutra-v2/test-output/economics-withdrawn.json > apps/sutra-v2/test-output/economics-reference.txt
           cat apps/sutra-v2/test-output/economics-reference.txt
+      - name: Independently reconstruct actual manually reviewed source selections
+        run: |
+          python3 packages/sutra-knowledge/reference/verify_reviewed_workspace.py apps/sutra-v2/test-output/reviewed-workspace.json > apps/sutra-v2/test-output/reviewed-workspace-reference.txt
+          cat apps/sutra-v2/test-output/reviewed-workspace-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

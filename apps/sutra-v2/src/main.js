@@ -131,3 +131,5 @@ import './trial-lab.js';
 import './compiler-lab.js';
 
 import './economics-lab.js';
+
+import './reviewed-workspace.js';

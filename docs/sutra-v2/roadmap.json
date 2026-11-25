@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-048",
+  "session": "V2-049",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2780,6 +2780,14 @@
         "V2-D23-SOURCE-ECONOMICS"
       ],
       "scope": "V2-048 candidate: separately pinned explicit same-source joint observation actions with exact joint tuple partitions, hard worst-branch abstract exposure cap independent of effort, one-time source acquisition, and explicit unavailable-action exclusion. Distinguish budget infeasibility from insufficient offered information. No implicit full-source disclosure, real privacy estimate or authorization. Synthetic open 3 units vs bounded 4 units and cap-1 infeasibility; 512 independent sequence oracle controls authored. No browser/independent Python replay yet; exact CI pending."
+    },
+    {
+      "id": "V2-D25-CALLER-REVIEWED-WORKSPACE",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D21-REVIEWED-COMPILER"
+      ],
+      "scope": "V2-049 candidate: actual caller-authored local reviewed workspace, up to eight staged immutable text sources and 64 reviewed bindings, UTF-16 selection converted to exact UTF-8 span, repeated numeric occurrence explicitly selectable, declared type/scope and dimensions, independent contract seal, user-selected comparator draft and editable untrusted JSON. Stale question/proposal invalidation, no network, explicit export contains pasted text, reset local draft only. Browser test uses two source texts including astral/multibyte prefix and repeated number, truncated token refusal, forged numeric leaf refusal and changed question pin; independent Python reconstructs expected contract and replays actual export. No automatic extraction, inference, semantic validity or source independence. Exact CI pending."
     }
   ]
 }

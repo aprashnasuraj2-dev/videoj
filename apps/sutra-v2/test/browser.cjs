@@ -609,6 +609,37 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   }
   assert.equal(await economicsPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   assert.deepEqual(economicsErrors,[]);assert.deepEqual(economicsExternal,[]);await economicsPage.close();
+  const reviewPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),reviewErrors=[],reviewExternal=[];
+  reviewPage.on('pageerror',e=>reviewErrors.push(e.message));reviewPage.on('request',r=>{if(new URL(r.url()).origin!==origin)reviewExternal.push(r.url());});
+  await reviewPage.goto(origin);await reviewPage.locator('#reviewed-workspace > summary').click();
+  const reviewFill=(id,value)=>reviewPage.locator('#review-'+id).fill(value);
+  const reviewState=s=>reviewPage.waitForFunction(state=>document.querySelector('#review-status').dataset.state===state&&!document.querySelector('#review-reset').disabled,s);
+  await reviewFill('question','Is site A higher than site B?');
+  async function stageReviewSource(id,lineage,value){
+   await reviewFill('source-id',id);await reviewFill('lineage',lineage);await reviewFill('source-text',value);await reviewPage.locator('#review-source-add').click();await reviewState('draft');
+   assert.equal(await reviewPage.locator('#review-source-pick').inputValue(),id);
+  }
+  await stageReviewSource('report_a','root_a','測定 🧪 A: 12.50; repeat: 12.50;');
+  await stageReviewSource('report_b','root_b','Site B: 10.25;');
+  await reviewFill('kind','stress');await reviewFill('unit','MPa');await reviewFill('scope','sample_scope');await reviewFill('dim-l','-1');await reviewFill('dim-m','1');await reviewFill('dim-t','-2');
+  async function selectReview(source,token,truncate=false){
+   await reviewPage.locator('#review-source-pick').selectOption(source);
+   await reviewPage.locator('#review-select-text').evaluate((e,args)=>{const i=e.value.lastIndexOf(args.token);e.focus();e.setSelectionRange(i+(args.truncate?1:0),i+args.token.length);},{token,truncate});
+  }
+  await reviewFill('binding-id','a');await selectReview('report_a','12.50',true);await reviewPage.locator('#review-binding-add').click();await reviewState('refused');
+  assert.match(await reviewPage.locator('#review-status').innerText(),/COMPILER_NUMBER_BOUNDARY/);
+  await selectReview('report_a','12.50');await reviewPage.locator('#review-binding-add').click();await reviewState('draft');
+  await reviewFill('binding-id','b');await selectReview('report_b','10.25');await reviewPage.locator('#review-binding-add').click();await reviewState('draft');
+  await reviewPage.locator('#review-seal').click();await reviewState('sealed');const reviewPin=await reviewPage.locator('#review-pin').innerText();assert.match(reviewPin,/^sha256:[a-f0-9]{64}$/);
+  await reviewPage.locator('#review-generate').click();await reviewState('proposal');await reviewPage.locator('#review-run').click();await reviewState('ready');
+  assert.match(await reviewPage.locator('#review-result').innerText(),/CONDITIONALLY SATISFIED/);
+  const reviewDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-export').click();const reviewBytes=fs.readFileSync(await (await reviewDownload).path());fs.writeFileSync(path.join(output,'reviewed-workspace.json'),reviewBytes);
+  assert.deepEqual(JSON.parse(reviewBytes).result.target.sourceIds,['report_a','report_b']);
+  const reviewForged=JSON.parse(await reviewPage.locator('#review-proposal').inputValue());reviewForged.nodes[0].value='999';await reviewFill('proposal',JSON.stringify(reviewForged));assert.equal(await reviewPage.locator('#review-export').isDisabled(),true);await reviewPage.locator('#review-run').click();await reviewState('refused');
+  await reviewFill('question','Is site A higher than site B? Revised.');assert.equal(await reviewPage.locator('#review-run').isDisabled(),true);assert.equal(await reviewPage.locator('#review-export').isDisabled(),true);
+  await reviewPage.locator('#review-seal').click();await reviewState('sealed');assert.notEqual(await reviewPage.locator('#review-pin').innerText(),reviewPin);
+  await reviewPage.locator('#review-reset').click();assert.equal(await reviewPage.locator('#review-question').inputValue(),'');assert.match(await reviewPage.locator('#review-staged').innerText(),/0 staged source/);
+  assert.equal(await reviewPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(reviewErrors,[]);assert.deepEqual(reviewExternal,[]);await reviewPage.close();
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});
