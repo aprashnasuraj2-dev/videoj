@@ -71,6 +71,7 @@ export function createEphemeralCredentialVault({catalog,randomBytes}={}){
   if(!profile||profile.handle!==handle)stop('HANDLE');
   return profile;
  };
+ const listProfiles=()=>Object.freeze([...profiles.values()].map(metadata));
 
  return Object.freeze({
   mode:'ephemeral-credential-vault',
@@ -84,7 +85,7 @@ export function createEphemeralCredentialVault({catalog,randomBytes}={}){
    profiles.set(id,profile);handles.set(handle,id);
    return Object.freeze({handle,profile:metadata(profile)});
   },
-  list(){return Object.freeze([...profiles.values()].map(metadata));},
+  list(){return listProfiles();},
   getHandle(profileId){
    if(typeof profileId!=='string'||!profiles.has(profileId))stop('MISSING');
    return profiles.get(profileId).handle;
@@ -106,7 +107,7 @@ export function createEphemeralCredentialVault({catalog,randomBytes}={}){
    return callback(profile.secret,metadata(profile));
   },
   exportMetadata(){
-   return Object.freeze({version:'sutra-provider-profiles-v1',profiles:this.list()});
+   return Object.freeze({version:'sutra-provider-profiles-v1',profiles:listProfiles()});
   }
  });
 }
