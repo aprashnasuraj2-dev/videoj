@@ -103,6 +103,10 @@ jobs:
           node packages/sutra-knowledge/evaluation/revision-development.mjs sutra-revision-development-bundles.json > sutra-revision-development.json || result=$?
           node -e "const r=require('./sutra-revision-development.json'); console.log(JSON.stringify({...r,rows:r.rows.filter(x=>!x.exactMatch)},null,2))"
           exit "$result"
+      - name: Independently reconstruct explicit evidence recovery and offline archive
+        run: |
+          node packages/sutra-knowledge/examples/evidence-recovery-reference-cases.mjs > sutra-evidence-recovery-reference-cases.json
+          python3 packages/sutra-knowledge/reference/test_evidence_recovery.py < sutra-evidence-recovery-reference-cases.json
       - name: Independently replay frozen atomic revision benchmark exports
         run: python3 packages/sutra-knowledge/reference/test_revision_development.py sutra-revision-development-bundles.json
       - name: Independently compare restricted question grammar across languages
@@ -147,6 +151,7 @@ jobs:
             sutra-assumption-development.json
             sutra-revision-development.json
             sutra-revision-development-bundles.json
+            sutra-evidence-recovery-reference-cases.json
             sutra-v2-frontier.json
             sutra-v2-conflict.json
             sutra-v2-challenges.json

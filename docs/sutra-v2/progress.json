@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-129",
+  "session": "V2-130",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Immediate atomic evidence recovery kernel candidate; CI and independent replay pending",
+  "state": "Independent immediate evidence recovery replay candidate; CI pending",
   "verified": [
     {
       "id": "V2-M01",
@@ -401,14 +401,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-130",
+    "parent": "300dad864dd6857f9dfb159939bcaa86ea8795d3",
+    "description": "## V2-130 — Independent two-transition evidence recovery replay\n\nPortable bounded recovery includes exact preceding transaction, new recovery plan and child; independently retained snapshot, ancestor, revision plan, current and recovery plan pins required. Python separately reconstructs source and binding restoration, candidate node correspondence, unchanged annotations, refusal preservation and impact; standalone deterministic offline archive dispatch uses explicit extra pins. Four fixture exports include restored and omitted sources, partial multi-source recovery, non-target input recovery, originally unknown reason-text counterexample and removed quote. Repinned altered child, semantic link, forged selection and pin adversaries; actual isolated archive comparison. CI pending; no browser integration or arbitrary ancestry recovery."
+  },
+  "previousPendingCandidate": {
     "session": "V2-129",
     "parent": "8d08f59158de63c5aa3a9f4f8b1252770f839e6f",
     "description": "## V2-129 — Recover explicitly selected lost inputs from a preceding atomic revision\n\nIntroduce bounded evidence recovery kernel using exact ancestor, preceding revision plan, independently retained current child and new recovery plan pins. Reconstruct the prior transaction rather than trust unknown-node reason text. Restore only explicitly selected missing bindings with preserved types, from newly supplied exact source bytes or current corrected source bytes. No restoration of old quotation/semantic links, arbitrary historical ancestry, source authenticity or automatic correspondence. Refused candidates stay quarantined. Tests cover withdrawal→recovery reversal, omitted binding→recovery, partial recovery, order independence, pin/cross-source/span adversaries and fresh/session parity. Kernel candidate; independent Python export and browser workflow pending. V2-128 exact CI observed running; no benchmark credit yet."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-128",
-    "parent": "80ee78d5e017bd3c0e8ce1ab32140a0876f4f851",
-    "description": "## V2-128 — Independent replay of the frozen revision corpus and CI configuration correction\n\nFix the V2-127 workflow artifact path indentation defect found by remote readback (no passing V2-127 evidence claimed; workflow runs not returned at observation). Extend the unchanged frozen runner to emit actual separately pinned transaction bundles; independently reconstruct all 32 accepted cases with Python and compare to the precommitted expected states. Reject 64 repinned mutations (altered child identity and claimed status). Preserve eight JS refusal cases and original parent replay; Python positive-bundle tests do not independently classify those rejected transactions. Verified readback of the dataset Git blob by recomputation. CI pending; no independent annotation, benchmark completion or release authority."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [

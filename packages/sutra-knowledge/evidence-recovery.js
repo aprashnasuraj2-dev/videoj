@@ -2,7 +2,7 @@
 // revision. Never infer correspondence from an unknown reason or revive old claims.
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {casePin} from './pinned-investigation.js';
-import {prepareEvidenceRevision} from './evidence-revision-transaction.js';
+import {prepareEvidenceRevision,exportEvidenceRevision} from './evidence-revision-transaction.js';
 import {validateReviewedContract} from './reviewed-claim-compiler.js';
 import {sealInvestigationVersion,compareInvestigationVersions} from './investigation-revision.js';
 export const VERSION='sutra-evidence-recovery/v1';
@@ -86,4 +86,16 @@ export async function prepareEvidenceRecovery(ancestorText,ancestorPin,revisionP
  return freeze({version:VERSION,ancestorDigest:ancestorPin,revisionPlanDigest:revisionPlanPin,parentDigest:currentPin,recoveryPlanDigest:recoveryPlanPin,
   restoredSourceIds:sorted([...restored.keys()]),recoveredBindingIds:sorted([...recovered.keys()]),stillMissingBindingIds:sorted([...lost].filter(id=>!recovered.has(id))),
   changes,child,impact,decisionAuthority:'NONE',qualification:QUAL});
+}
+
+/** Portable recovery binds both transitions. The nested prior snapshot digest is
+ * an integrity check; the caller must separately retain all four input pins. */
+export async function exportEvidenceRecovery(ancestorText,ancestorPin,revisionPlanText,revisionPlanPin,currentPin,recoveryPlanText,recoveryPlanPin){
+ const recovery=await prepareEvidenceRecovery(ancestorText,ancestorPin,revisionPlanText,revisionPlanPin,currentPin,recoveryPlanText,recoveryPlanPin);
+ const prior=await exportEvidenceRevision(ancestorText,ancestorPin,revisionPlanText,revisionPlanPin);
+ if(!prior.portable)return freeze({recovery,bundleText:null,byteLength:null,portable:false,snapshotPin:null,reason:'PRIOR_TRANSACTION_NOT_PORTABLE'});
+ const {child,...summary}=recovery;
+ const bundleText=JSON.stringify({...summary,priorTransactionText:prior.bundleText,priorTransactionDigest:prior.snapshotPin,recoveryPlanText,childVersion:child.versionText,childDigest:child.digest});
+ const byteLength=new TextEncoder().encode(bundleText).length,portable=byteLength<=262144;
+ return freeze({recovery,bundleText:portable?bundleText:null,byteLength,portable,snapshotPin:portable?await casePin(bundleText):null,reason:portable?null:'RECOVERY_BUNDLE_TOO_LARGE'});
 }
