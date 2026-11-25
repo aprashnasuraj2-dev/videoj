@@ -86,5 +86,6 @@ export async function exportWithdrawalRevision(versionText,versionPin,sourceId,s
   childVersion:revision.child.versionText,childDigest:revision.child.digest,changes:revision.changes,impact:revision.impact,
   decisionAuthority:'NONE',qualification:revision.qualification});
  const byteLength=new TextEncoder().encode(bundleText).length;
- return freeze({revision,bundleText,byteLength,portable:byteLength<=262144,snapshotPin:await casePin(bundleText),planDigest});
+ const portable=byteLength<=262144;
+ return freeze({revision,bundleText:portable?bundleText:null,byteLength,portable,snapshotPin:portable?await casePin(bundleText):null,planDigest});
 }
