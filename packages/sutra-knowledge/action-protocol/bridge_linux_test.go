@@ -5,6 +5,7 @@ package actionprotocol
 import (
  "bytes"
  "crypto/ed25519"
+ "encoding/hex"
  "errors"
  "io"
  "net/http"
@@ -188,21 +189,25 @@ func TestWitnessedResponseCompositeProofAndHTTPBoundary(t *testing.T){
  coordinator,e:=NewWitnessCoordinator(a,client);if e!=nil{t.Fatal(e)}
  api:=httptest.NewServer(coordinator);defer api.Close()
  req:=approve(t,0,ctx,ak);wire,_:=SignAuthorityRequest(0,AuthorityCommit,genesis,req,callerKey[0])
+ challenge:=Digest{1}
  httpReq,e:=http.NewRequest(http.MethodPost,api.URL+"/authority-witnessed",bytes.NewReader(wire.Bytes()));if e!=nil{t.Fatal(e)}
- httpReq.Header.Set("Content-Type",media)
+ httpReq.Header.Set("Content-Type",media);httpReq.Header.Set("X-Sutra-Witness-Challenge",hex.EncodeToString(challenge[:]))
  res,e:=http.DefaultClient.Do(httpReq);if e!=nil{t.Fatal(e)}
  raw,e:=io.ReadAll(res.Body);res.Body.Close();if e!=nil||res.StatusCode!=http.StatusOK||res.Header.Get("Content-Type")!=media{t.Fatal("witnessed endpoint",e,res.StatusCode)}
- combined,e:=ParseWitnessedResponse(raw);if e!=nil||!VerifyWitnessedResponse(combined,wire,ctx,authorityPub,witnessPub,genesis){t.Fatal("composite proof",e)}
- if combined.Authority.After!=combined.Witness.Head||combined.Authority.Outcome!=AuthorityCommitted{t.Fatal("head binding")}
- // Either half alone is insufficient for the composite verifier.
- forged:=combined;forged.Witness.Head=genesis
- if VerifyWitnessedResponse(forged,wire,ctx,authorityPub,witnessPub,genesis){t.Fatal("authority-only result accepted without matching witness")}
- forged=combined;forged.Authority.After=genesis
- if VerifyWitnessedResponse(forged,wire,ctx,authorityPub,witnessPub,genesis){t.Fatal("witness-only head accepted without matching authority response")}
- // A raw authority endpoint response has the wrong wire length and cannot be
- // interpreted as a witnessed acknowledgement.
- if _,e=ParseWitnessedResponse(combined.Authority.Bytes());e==nil{t.Fatal("raw authority response parsed as witnessed proof")}
- t.Log("external acknowledgement requires both exact authority receipt and pinned independent witness view at the same head")
+ envelope,e:=ParseWitnessedEnvelope(raw);if e!=nil||!VerifyWitnessedEnvelope(envelope,wire,challenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("attested composite proof",e)}
+ if envelope.Authority.After!=envelope.Attestation.View.Head||envelope.Authority.Outcome!=AuthorityCommitted{t.Fatal("head binding")}
+ // The static authority+witness pair remains internally verifiable, but only
+ // the challenge-bound envelope is an external acknowledgement.
+ combined:=WitnessedResponse{Authority:envelope.Authority,Witness:envelope.Attestation.View}
+ if !VerifyWitnessedResponse(combined,wire,ctx,authorityPub,witnessPub,genesis){t.Fatal("static pair invalid")}
+ forged:=envelope;forged.Attestation.View.Head=genesis
+ if VerifyWitnessedEnvelope(forged,wire,challenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("authority-only result accepted without matching witness")}
+ forged=envelope;forged.Authority.After=genesis
+ if VerifyWitnessedEnvelope(forged,wire,challenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("witness-only head accepted without matching authority response")}
+ wrongChallenge:=Digest{2}
+ if VerifyWitnessedEnvelope(envelope,wire,wrongChallenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("witness envelope replay accepted under a new challenge")}
+ if _,e=ParseWitnessedEnvelope(envelope.Authority.Bytes());e==nil{t.Fatal("raw authority response parsed as attested proof")}
+ t.Log("external acknowledgement requires exact authority receipt plus nonce-bound pinned witness attestation at the same head")
 }
 
 
@@ -222,13 +227,13 @@ func TestWitnessedAuthorityClientEndToEndAndTamperedComposite(t *testing.T){
 
  req0:=approve(t,0,ctx,ak)
  client0,e:=NewWitnessedAuthorityClient(authorityServer.URL,0,callerKey[0],authorityPub,witnessPub,ctx,genesis,rootView,req0);if e!=nil{t.Fatal(e)}
- receipt0,combined0,e:=client0.Commit();if e!=nil||receipt0.Version!=1||combined0.Authority.After!=combined0.Witness.Head{t.Fatal("first witnessed commit",e)}
- if client0.Head()!=combined0.Witness.Head||client0.Sequence()!=combined0.Witness.Sequence||client0.Contacts()!=1{t.Fatal("client head/contact state")}
+ receipt0,combined0,e:=client0.Commit();if e!=nil||receipt0.Version!=1||combined0.Authority.After!=combined0.Attestation.View.Head{t.Fatal("first witnessed commit",e)}
+ if client0.Head()!=combined0.Attestation.View.Head||client0.Sequence()!=combined0.Attestation.View.Sequence||client0.Contacts()!=1{t.Fatal("client head/contact state")}
 
  req1:=approve(t,1,ctx,ak)
- client1,e:=NewWitnessedAuthorityClient(authorityServer.URL,1,callerKey[1],authorityPub,witnessPub,ctx,genesis,combined0.Witness,req1);if e!=nil{t.Fatal(e)}
- receipt1,combined1,e:=client1.Commit();if e!=nil||receipt1.Version!=2||combined1.Authority.After!=combined1.Witness.Head{t.Fatal("second witnessed commit",e)}
- if client1.Head()!=combined1.Witness.Head||client1.Sequence()!=combined1.Witness.Sequence||client1.Contacts()!=1{t.Fatal("second client state")}
+ client1,e:=NewWitnessedAuthorityClient(authorityServer.URL,1,callerKey[1],authorityPub,witnessPub,ctx,genesis,combined0.Attestation.View,req1);if e!=nil{t.Fatal(e)}
+ receipt1,combined1,e:=client1.Commit();if e!=nil||receipt1.Version!=2||combined1.Authority.After!=combined1.Attestation.View.Head{t.Fatal("second witnessed commit",e)}
+ if client1.Head()!=combined1.Attestation.View.Head||client1.Sequence()!=combined1.Attestation.View.Sequence||client1.Contacts()!=1{t.Fatal("second client state")}
 
  // Proxy one otherwise-valid response and flip the last witness-signature byte.
  tamper:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
@@ -242,10 +247,47 @@ func TestWitnessedAuthorityClientEndToEndAndTamperedComposite(t *testing.T){
  // Only one aggregate contact remains. Use client 0's action as a status query
  // at the latest head; the server may advance durable contact state, but the
  // caller refuses the forged composite proof and returns unknown.
- tamperedClient,e:=NewWitnessedAuthorityClient(tamper.URL,0,callerKey[0],authorityPub,witnessPub,ctx,genesis,combined1.Witness,req0);if e!=nil{t.Fatal(e)}
+ tamperedClient,e:=NewWitnessedAuthorityClient(tamper.URL,0,callerKey[0],authorityPub,witnessPub,ctx,genesis,combined1.Attestation.View,req0);if e!=nil{t.Fatal(e)}
  if _,_,e=tamperedClient.Status();!errors.Is(e,ErrUnknown){t.Fatal("tampered composite accepted",e)}
  spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{2,1}||total!=3||effects!=2{t.Fatal("tamper contact accounting",spent,total,effects,e)}
  view,e:=witnessClient.View();if e!=nil{t.Fatal(e)};head,_:=a.Head()
  if view.Head!=head{t.Fatal("server state diverged after caller rejected forged transport")}
- t.Log("actual clients accepted only composite authority+witness proofs; tampered witness signature became unknown without refunding the real third contact")
+ t.Log("actual clients accepted only nonce-bound authority+witness envelopes; tampered witness signature became unknown without refunding the real third contact")
+}
+
+
+func TestWitnessChallengeStopsReplayToRolledBackClient(t *testing.T){
+ var witnessPtr atomic.Pointer[AuthorityWitness]
+ witnessServer:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){witnessPtr.Load().ServeHTTP(w,r)}));defer witnessServer.Close()
+ ctx,approver,ak,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,witnessServer.URL)
+ witnessPub,witnessKey:=witnessKeys()
+ authorityDir:=privateTemp(t);witnessDir:=privateTemp(t)
+ a,e:=CreateSharedAuthority(authorityDir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer a.Close()
+ genesis,_:=a.Head()
+ witness,e:=CreateAuthorityWitness(witnessDir,ctx,authorityPub,witnessKey,genesis);if e!=nil{t.Fatal(e)};witnessPtr.Store(witness);defer witness.Close()
+ rootView,e:=witness.View();if e!=nil{t.Fatal(e)}
+ witnessClient,e:=NewWitnessClient(witnessServer.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
+ coordinator,e:=NewWitnessCoordinator(a,witnessClient);if e!=nil{t.Fatal(e)}
+ api:=httptest.NewServer(coordinator);defer api.Close()
+
+ req:=approve(t,0,ctx,ak);wire,_:=SignAuthorityRequest(0,AuthorityCommit,genesis,req,callerKey[0])
+ firstChallenge:=Digest{1}
+ firstReq,e:=http.NewRequest(http.MethodPost,api.URL+"/authority-witnessed",bytes.NewReader(wire.Bytes()));if e!=nil{t.Fatal(e)}
+ firstReq.Header.Set("Content-Type",media);firstReq.Header.Set("X-Sutra-Witness-Challenge",hex.EncodeToString(firstChallenge[:]))
+ firstRes,e:=http.DefaultClient.Do(firstReq);if e!=nil{t.Fatal(e)}
+ captured,e:=io.ReadAll(firstRes.Body);firstRes.Body.Close();if e!=nil||firstRes.StatusCode!=http.StatusOK{t.Fatal("capture",e,firstRes.StatusCode)}
+ envelope,e:=ParseWitnessedEnvelope(captured);if e!=nil||!VerifyWitnessedEnvelope(envelope,wire,firstChallenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("captured envelope",e)}
+ // Counterfactual: the static pair alone is replayable to the exact old request.
+ static:=WitnessedResponse{Authority:envelope.Authority,Witness:envelope.Attestation.View}
+ if !VerifyWitnessedResponse(static,wire,ctx,authorityPub,witnessPub,genesis){t.Fatal("static replay control invalid")}
+
+ replayServer:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
+  w.Header().Set("Content-Type",media);w.WriteHeader(http.StatusOK);_,_=w.Write(captured)
+ }));defer replayServer.Close()
+ rolled,e:=NewWitnessedAuthorityClient(replayServer.URL,0,callerKey[0],authorityPub,witnessPub,ctx,genesis,rootView,req);if e!=nil{t.Fatal(e)}
+ rolled.challenge=func()(Digest,error){return Digest{2},nil}
+ if _,_,e=rolled.Commit();!errors.Is(e,ErrUnknown){t.Fatal("captured envelope replay accepted under fresh challenge",e)}
+ if rolled.Head()!=genesis||rolled.Sequence()!=0{t.Fatal("rolled-back client advanced on replay")}
+ spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{1,0}||total!=1||effects!=1{t.Fatal("replay proxy changed server accounting",spent,total,effects,e)}
+ t.Log("an exact old authority request plus captured signed witness view cannot be replayed as success when the client supplies a fresh witness challenge")
 }
