@@ -241,7 +241,7 @@
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45526366515/job/138910622318",
     "reason": "Go action-protocol build failed before execution because authority_linux_test.go referenced filepath without importing path/filepath."
   },
-  "lastVerifiedKernelSource": "322e05892ecfd5d7a67af7149b085ce19a873e8a",
+  "lastVerifiedKernelSource": "f2e5d2ed646dccf7ca6becf9a3a583a81f6c1d4d",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -251,28 +251,28 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
-    "sourceRevision": "322e05892ecfd5d7a67af7149b085ce19a873e8a",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527762530",
-    "pushRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527755339",
+    "sourceRevision": "f2e5d2ed646dccf7ca6becf9a3a583a81f6c1d4d",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45528425615",
+    "pushRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45528417307",
     "checks": [
-      "Independent witness authority-only rollback rejection",
+      "Witness rejects authority-signed return to seen head",
+      "Pinned genesis rejects same-key re-genesis",
+      "Authority-only rollback and stale witness refusal",
       "Actual separate witness-process CAS",
-      "Forged transition and stale CAS refusal",
-      "Coordinated authority+witness rollback counterexample",
-      "Existing authenticated shared-authority Go trace",
-      "Original and anchored TLC/fairness gates",
+      "Coordinated dual-domain rollback negative control",
+      "Existing shared-authority Go trace and TLC gates",
       "All six PR workflows plus push knowledge workflow"
     ],
-    "status": "exact_witness_candidate_all_seven_workflows_success",
+    "status": "exact_hardened_witness_candidate_all_seven_workflows_success",
     "observed": [
-      "PR knowledge 45527762530 / job 138915235534: success",
-      "PR browser job 138915235859: success",
-      "PR impact 45527762605: success",
-      "PR Open Kit 45527762926: success",
-      "PR engineering 45527762519: success",
-      "PR publisher 45527762540: success",
-      "PR browser matrix 45527762630: success",
-      "push knowledge 45527755339 / job 138915211031: success"
+      "PR knowledge 45528425615 / job 138917422848: success",
+      "PR browser job 138917422514: success",
+      "PR engineering 45528426059: success",
+      "PR Open Kit 45528425620: success",
+      "PR publisher 45528425621: success",
+      "PR impact 45528425828: success",
+      "PR browser matrix 45528425729: success",
+      "push knowledge 45528417307 / job 138917395964: success"
     ]
   },
   "previousPendingCandidate": {
@@ -443,6 +443,20 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527762530/job/138915235534",
       "description": "Exact Go race gate passed independently keyed/signed AuthorityWitness rollback detection, stale witness and forged transition refusal, actual separate witness-process CAS, and retained coordinated authority+witness rollback counterexample.",
       "remaining": "Witness protocol not yet a distinct TLA machine; no independent operator/key distribution/quorum; general refinement remains partial."
+    },
+    {
+      "id": "V2-P05-ROLLBACK",
+      "sourceRevision": "f2e5d2ed646dccf7ca6becf9a3a583a81f6c1d4d",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45528425615/job/138917422848",
+      "description": "Hardened witness exact Go race gate: a valid authority-signed transition back to a previously seen head is refused, witness views are structurally checked, consumers separately pin the original genesis, re-genesis with the same witness key is rejected by the pinned verifier, and prior authority-only rollback/separate-process CAS/coordinated dual-domain rollback controls remain passing.",
+      "remaining": "A separately protected witness detects rollback of the authority store alone, but a privileged attacker able to restore both independently signed stores can recreate an old consistent pair. No public transparency log, quorum, trusted time, independently operated third party, key rotation/distribution protocol or separately authorized compensation exists yet."
+    },
+    {
+      "id": "V2-F11b",
+      "sourceRevision": "f2e5d2ed646dccf7ca6becf9a3a583a81f6c1d4d",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45528425615/job/138917422848",
+      "description": "Hardened witness exact Go race gate: a valid authority-signed transition back to a previously seen head is refused, witness views are structurally checked, consumers separately pin the original genesis, re-genesis with the same witness key is rejected by the pinned verifier, and prior authority-only rollback/separate-process CAS/coordinated dual-domain rollback controls remain passing.",
+      "remaining": "Independent witness CAS now rejects revisiting any observed head and consumers pin genesis, but coordinated rollback of authority+witness remains possible; no independently operated third party, transparency log/quorum, key-distribution/rotation protocol, witness two-phase TLA machine or full refinement exists."
     }
   ],
   "reconciledCI": [

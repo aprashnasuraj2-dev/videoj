@@ -285,6 +285,11 @@
               "sourceRevision": "322e05892ecfd5d7a67af7149b085ce19a873e8a",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527762530/job/138915235534",
               "description": "Exact Go race gate passed a separately keyed/signed durable AuthorityWitness: authority-only rollback and stale witness views were rejected, forged authority transitions refused, and an actual separate witness server process advanced one authority-signed CAS then rejected the stale repeat. Permanent negative control restored both older valid authority and witness snapshots; the mutually consistent old pair reopened, proving coordinated dual-domain rollback remains possible and this is not consensus."
+            },
+            {
+              "sourceRevision": "f2e5d2ed646dccf7ca6becf9a3a583a81f6c1d4d",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45528425615/job/138917422848",
+              "description": "Hardened witness exact Go race gate: a valid authority-signed transition back to a previously seen head is refused, witness views are structurally checked, consumers separately pin the original genesis, re-genesis with the same witness key is rejected by the pinned verifier, and prior authority-only rollback/separate-process CAS/coordinated dual-domain rollback controls remain passing."
             }
           ],
           "knownLimitations": "A separately protected witness detects rollback of the authority store alone, but a privileged attacker able to restore both independently signed stores can recreate an old consistent pair. No public transparency log, quorum, trusted time, independently operated third party, key rotation/distribution protocol or separately authorized compensation exists yet."
@@ -2070,9 +2075,9 @@
       "status": "Implementation in progress",
       "evidence": {
         "id": "V2-F11b",
-        "sourceRevision": "322e05892ecfd5d7a67af7149b085ce19a873e8a",
-        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527762530/job/138915235534",
-        "description": "Exact Go race gate passed a separately keyed/signed durable AuthorityWitness: authority-only rollback and stale witness views were rejected, forged authority transitions refused, and an actual separate witness server process advanced one authority-signed CAS then rejected the stale repeat. Permanent negative control restored both older valid authority and witness snapshots; the mutually consistent old pair reopened, proving coordinated dual-domain rollback remains possible and this is not consensus."
+        "sourceRevision": "f2e5d2ed646dccf7ca6becf9a3a583a81f6c1d4d",
+        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45528425615/job/138917422848",
+        "description": "Hardened witness exact Go race gate: a valid authority-signed transition back to a previously seen head is refused, witness views are structurally checked, consumers separately pin the original genesis, re-genesis with the same witness key is rejected by the pinned verifier, and prior authority-only rollback/separate-process CAS/coordinated dual-domain rollback controls remain passing."
       },
       "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
       "dependencies": [
@@ -2086,7 +2091,7 @@
       "positiveTests": "Atomically advance witness head under concurrent callers",
       "adversarialTests": "Cloned signer, crash and conflicting CAS",
       "verificationMethod": "TLC and implementation concurrency tests",
-      "knownLimitations": "Independent single-witness CAS is implemented and process-tested, but coordinated rollback of authority+witness remains possible; the witness protocol is not yet modeled as a distinct TLA machine, no independent key distribution/operation or quorum exists, and implementation refinement is partial."
+      "knownLimitations": "Independent witness CAS now rejects revisiting any observed head and consumers pin genesis, but coordinated rollback of authority+witness remains possible; no independently operated third party, transparency log/quorum, key-distribution/rotation protocol, witness two-phase TLA machine or full refinement exists."
     },
     {
       "id": "V2-F12a",
