@@ -11,7 +11,11 @@ permissions:
 jobs:
   knowledge:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    # V2-013: the preserved formal suite grew beyond the historical five-minute
+    # budget once client-policy ancestry and admission models were added. Keep
+    # every safe/unsafe gate; provide bounded execution headroom instead of
+    # deleting models or weakening assertions to manufacture green CI.
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

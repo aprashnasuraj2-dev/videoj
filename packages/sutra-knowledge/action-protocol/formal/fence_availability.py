@@ -12,10 +12,17 @@ CLIENTS=("A","B")
 NONE=None
 START=(NONE,frozenset(),frozenset(),frozenset(),0)
 
-def inv(s):
+def type_inv(s):
     owner,alive,dispatched,effects,fence=s
     if owner not in (NONE,*CLIENTS) or not alive<=set(CLIENTS) or not dispatched<=set(CLIENTS) or not effects<=set(CLIENTS) or fence not in (0,1):
         return "TypeOK"
+    return None
+
+def inv(s):
+    owner,alive,dispatched,effects,fence=s
+    bad=type_inv(s)
+    if bad:
+        return bad
     if len(effects)>1:
         return "AtMostOneEffect"
     if fence==1 and len(effects)!=1:
@@ -23,6 +30,12 @@ def inv(s):
     if owner is NONE and fence!=1 and dispatched!=effects:
         return "OwnedOrQuiescent"
     return None
+
+def effect_inv(s):
+    bad=type_inv(s)
+    if bad:
+        return bad
+    return "AtMostOneEffect" if len(s[3])>1 else None
 
 def safe_steps(s):
     owner,alive,dispatched,effects,fence=s
@@ -49,11 +62,11 @@ def steal_steps(s):
         out.append((f"StealOrphan{owner}",(NONE,alive,dispatched,effects,fence)))
     return out
 
-def explore(stepper, stop=None):
+def explore(stepper, stop=None, checker=inv):
     q=deque([START]);prev={START:None};act={};edges=0
     while q:
         s=q.popleft()
-        bad=inv(s)
+        bad=checker(s)
         if bad:
             if stop==bad:
                 trace=[];cur=s
@@ -90,7 +103,11 @@ if any(s[0] is NONE for s in reachable):
     raise SystemExit("orphan unexpectedly self-settles without owner evidence")
 print("orphan liveness counterexample:",trace)
 
-seen,edges,bad,trace=explore(steal_steps,"AtMostOneEffect")
+# Mirror FenceAvailabilitySteal.cfg exactly: this negative control checks
+# TypeOK plus AtMostOneEffect, not the safe machine's stronger availability
+# invariants. Otherwise the reference can stop at an earlier, irrelevant
+# OwnedOrQuiescent violation and never demonstrate the intended double effect.
+seen,edges,bad,trace=explore(steal_steps,"AtMostOneEffect",effect_inv)
 if bad!="AtMostOneEffect":
     raise SystemExit(f"steal mutant expected AtMostOneEffect, got {bad}")
 print("steal orphan AtMostOneEffect counterexample:",trace)
