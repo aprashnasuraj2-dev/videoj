@@ -21,6 +21,8 @@ type pinnedPolicyTraceEvent struct {
 	Admitted        bool   `json:"admitted"`
 	Reconciled      bool   `json:"reconciled"`
 	PinMember       bool   `json:"pinMember"`
+	PinSequence     uint32 `json:"pinSequence"`
+	PinHead         string `json:"pinHead"`
 	PolicySequence  uint32 `json:"policySequence"`
 	PolicyHead      string `json:"policyHead"`
 	UpstreamEffects uint32 `json:"upstreamEffects"`
@@ -70,7 +72,8 @@ func pinnedPolicyTraceState(t *testing.T, f *pinnedTxnFixture, grant ActionGrant
 	return pinnedPolicyTraceEvent{
 		Op: op, Result: result, Epoch: epoch, NotBefore: grant.NotBefore, ExpiresAfter: grant.ExpiresAfter,
 		Revoked: revoked, Admitted: admitted, Reconciled: reconciled,
-		PinMember: pinMemberNow(t, f, pin, challenge), PolicySequence: view.Sequence,
+		PinMember: pinMemberNow(t, f, pin, challenge), PinSequence: pin.Sequence,
+		PinHead: hex.EncodeToString(pin.Head[:]), PolicySequence: view.Sequence,
 		PolicyHead: hex.EncodeToString(view.Head[:]), UpstreamEffects: upstreamEffects, LocalEffects: localEffects,
 	}
 }
@@ -89,6 +92,23 @@ func TestPinnedUpstreamTransactionPolicyRefinementTrace(t *testing.T) {
 			t.Fatal(e)
 		}
 		s.Events = append(s.Events, pinnedPolicyTraceState(t, f, grant, pin, "process", "success", false, Digest{23}))
+		trace.Scenarios = append(trace.Scenarios, s)
+	})
+
+	t.Run("historical-ancestor", func(t *testing.T) {
+		f := newPinnedTxnFixture(t, 2)
+		action := approve(t, 0, f.base.ctx, f.base.approverKey)
+		grant, _ := IssueActionGrant(action, GrantPrimary, 10, 12, f.base.consentKey)
+		req, pin := f.currentPinnedCommit(t, 0, action, grant, f.base.fenceGenesis)
+		if e := f.base.policy.AdvanceEpoch(10, 11); e != nil {
+			t.Fatal(e)
+		}
+		s := pinnedPolicyTraceScenario{Name: "historical-ancestor"}
+		s.Events = append(s.Events, pinnedPolicyTraceState(t, f, grant, pin, "init", "historical-member", false, Digest{44}))
+		if _, e := f.guard.processPinned(grant, req, pin, Digest{45}); e != nil {
+			t.Fatal(e)
+		}
+		s.Events = append(s.Events, pinnedPolicyTraceState(t, f, grant, pin, "process", "success", false, Digest{46}))
 		trace.Scenarios = append(trace.Scenarios, s)
 	})
 
