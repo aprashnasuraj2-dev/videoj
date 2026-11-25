@@ -228,6 +228,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_reviewed_contrast.py apps/sutra-v2/test-output/compiler-contrast.json > apps/sutra-v2/test-output/compiler-contrast-reference.txt
           cat apps/sutra-v2/test-output/compiler-contrast-reference.txt
+      - name: Independently reconstruct shared-source economics policies
+        run: |
+          python3 packages/sutra-knowledge/reference/verify_source_economics.py apps/sutra-v2/test-output/economics-fresh.json apps/sutra-v2/test-output/economics-acquired.json apps/sutra-v2/test-output/economics-withdrawn.json > apps/sutra-v2/test-output/economics-reference.txt
+          cat apps/sutra-v2/test-output/economics-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

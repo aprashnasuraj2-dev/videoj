@@ -4,21 +4,7 @@ import {casePin,capacityExample} from '../pinned-investigation.js';
 import {sourceDigest} from '../evidence-session.js';
 import {sourceEconomicsExport,solveSourcePolicy} from '../source-economics.js';
 import {pinnedInvestigationExport} from '../pinned-investigation.js';
-export async function economicsFixture(){
- const old=await capacityExample(),c=JSON.parse(old.caseText);
- c.worlds=c.worlds.filter(w=>!w.id.startsWith('load_20_'));
- c.sources=c.sources.filter(s=>['meter','capacity_record'].includes(s.id));
- c.offers=c.offers.filter(o=>['read_meter','read_capacity'].includes(o.id)).map(o=>({...o,cost:2}));
- const dimension=[0,0,0],sourceText=JSON.stringify({version:1,sourceId:'bundle',sourceVersion:'v1',scope:c.scope,values:{load:{value:'30/1',dimension},capacity:{value:'20/1',dimension}}});
- c.sources.push({id:'bundle',version:'v1',digest:await sourceDigest(sourceText),lineage:'bundle_root'});
- c.offers.push({id:'bundle_load',nodeId:'load',sourceId:'bundle',cost:3,dimension},{id:'bundle_capacity',nodeId:'capacity',sourceId:'bundle',cost:3,dimension});
- const caseText=JSON.stringify(c),pin=await casePin(caseText);
- async function run(events=[],acquired=[],mutate=e=>e){
-  const eventText=JSON.stringify(events),economicText=JSON.stringify(mutate({version:1,caseDigest:pin,eventDigest:await casePin(eventText),costUnit:c.costUnit,sourceCosts:c.sources.map(s=>({id:s.id,cost:s.id==='bundle'?3:2})),fieldCosts:c.offers.map(o=>({id:o.id,cost:0})),initiallyAcquired:acquired}));
-  return sourceEconomicsExport(caseText,pin,eventText,economicText,await casePin(economicText));
- }
- return {caseText,pin,run,sourceText,reads:old.reads};
-}
+import {economicsFixture} from '../examples/source-economics.mjs';
 test('shared source acquisition: exact 4 -> 3 units; no evidence mutation',async()=>{
  const f=await economicsFixture(),r=await f.run();
  assert.deepEqual(r.comparison,{legacyDeclaredWorstCost:4,perFieldCounterfactualWorstCost:4,sharedAcquisitionWorstCost:3,avoidedCost:1});
@@ -27,7 +13,7 @@ test('shared source acquisition: exact 4 -> 3 units; no evidence mutation',async
  assert.deepEqual(costs,[[3,0],[0,0]]);
  assert.equal((await pinnedInvestigationExport(f.caseText,f.pin)).result.report.activeEvidence.length,0);
  assert.ok(Object.isFrozen(r.result.plan));
- const acquired=await f.run([],['bundle']);assert.equal(acquired.result.plan.worstCost,0);
+ const acquired=await f.run([],['bundle']);assert.equal(acquired.result.plan.worstCost,0);assert.equal(acquired.comparison.perFieldCounterfactualWorstCost,0);assert.equal(acquired.comparison.avoidedCost,0);
  const withdrawn=await f.run([{type:'withdraw_source',sourceId:'bundle'}],['bundle']);assert.equal(withdrawn.result.plan.worstCost,4);assert.ok(!withdrawn.availableObservationIds.some(x=>x.startsWith('bundle_')));
  const known=await f.run([f.reads.read_meter]);assert.equal(known.result.plan.worstCost,2);
  const invariant=await f.run([f.reads.read_meter,f.reads.read_capacity]);assert.equal(invariant.result.plan.worstCost,0);

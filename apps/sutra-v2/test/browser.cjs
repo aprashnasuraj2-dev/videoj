@@ -597,6 +597,18 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const contrastCompilerDownload=compilerPage.waitForEvent('download');await compilerPage.locator('#compiler-contrast-export').click();const contrastCompilerBytes=fs.readFileSync(await (await contrastCompilerDownload).path());fs.writeFileSync(path.join(output,'compiler-contrast.json'),contrastCompilerBytes);
   const contrastCompilerResult=JSON.parse(contrastCompilerBytes).result;assert.equal(contrastCompilerResult.decisionAuthority,'NONE');assert.equal(contrastCompilerResult.counts.satisfied,6);assert.equal(contrastCompilerResult.counts.refuted,1);assert.equal(contrastCompilerResult.duplicateProposalGroups[0].ids.length,5);
   assert.deepEqual(compilerErrors,[]);assert.deepEqual(compilerExternal,[]);await compilerPage.close();
+  const economicsPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),economicsErrors=[],economicsExternal=[];
+  economicsPage.on('pageerror',e=>economicsErrors.push(e.message));economicsPage.on('request',r=>{if(new URL(r.url()).origin!==origin)economicsExternal.push(r.url());});
+  await economicsPage.goto(origin);await economicsPage.locator('#economics-lab > summary').click();
+  for(const [mode,field,shared,avoided] of [['fresh',4,3,1],['acquired',0,0,0],['withdrawn',4,4,0]]){
+   await economicsPage.locator('#economics-'+mode).click();
+   await economicsPage.waitForFunction(()=>document.querySelector('#economics-status').dataset.state==='ready'&&!document.querySelector('#economics-export').disabled);
+   for(const [id,v] of [['field',field],['shared',shared],['avoided',avoided]])assert.equal(await economicsPage.locator('#economics-'+id).innerText(),String(v));
+   const dl=economicsPage.waitForEvent('download');await economicsPage.locator('#economics-export').click();const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,'economics-'+mode+'.json'),bytes);
+   assert.equal(JSON.parse(bytes).comparison.sharedAcquisitionWorstCost,shared);
+  }
+  assert.equal(await economicsPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  assert.deepEqual(economicsErrors,[]);assert.deepEqual(economicsExternal,[]);await economicsPage.close();
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});

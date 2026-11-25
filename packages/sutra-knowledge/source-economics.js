@@ -90,7 +90,7 @@ export async function sourceEconomicsExport(caseText,caseDigest,eventText,econom
  const result=solveSourcePolicy(worlds,offers,sourceCosts,e.initiallyAcquired);
  // Reprice the SAME economic schedule with acquisition charged on every
  // field read: a controlled counterfactual, not the legacy declared costs.
- const independent=solveSourcePolicy(worlds,offers.map(o=>({...o,readCost:o.readCost+sourceCosts.find(s=>s.id===o.sourceId).cost})),sourceCosts.map(s=>({...s,cost:0})),[]);
+ const independent=solveSourcePolicy(worlds,offers.map(o=>({...o,readCost:o.readCost+(e.initiallyAcquired.includes(o.sourceId)?0:sourceCosts.find(s=>s.id===o.sourceId).cost)})),sourceCosts.map(s=>({...s,cost:0})),[]);
  const legacy=report.frontier;
  const comparison={legacyDeclaredWorstCost:legacy?.plan?.worstCost??null,perFieldCounterfactualWorstCost:independent.plan?.worstCost??null,sharedAcquisitionWorstCost:result.plan?.worstCost??null,avoidedCost:independent.plan&&result.plan?independent.plan.worstCost-result.plan.worstCost:null};
  if(comparison.avoidedCost!==null&&comparison.avoidedCost<0)fail('ECON_MONOTONICITY');
