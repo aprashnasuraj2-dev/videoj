@@ -3,8 +3,10 @@
 package actionprotocol
 
 import (
+ "bytes"
  "crypto/ed25519"
  "errors"
+ "io"
  "net/http"
  "net/http/httptest"
  "os"
@@ -122,7 +124,7 @@ func TestWitnessCoordinatorLostWitnessReplyRecoversWithoutSecondEffect(t *testin
  if view.Head!=head||view.Sequence!=1{t.Fatal("witness did not converge")}
  // Same stale caller request after recovery consumes the second contact but
  // cannot repeat the effect.
- response,e:=coordinator.Process(wire);if e!=nil||response.Outcome!=AuthorityConflict||response.Stale!=1{t.Fatal("stale retry",e,response)}
+ response,e:=coordinator.Process(wire);if e!=nil||response.Authority.Outcome!=AuthorityConflict||response.Authority.Stale!=1{t.Fatal("stale retry",e,response)}
  spent,total,effects,e=a.Counts();if e!=nil||spent!=[authorityCallers]byte{2,0}||total!=2||effects!=1{t.Fatal("stale retry accounting",spent,total,effects,e)}
  t.Log("witness POST response loss remained unknown; recovery observed committed witness head, cleared intent, and stale retry produced no duplicate effect")
 }
@@ -142,7 +144,7 @@ func TestWitnessCoordinatorSingleWitnessRejectsAuthorityCloneFork(t *testing.T){
  client,e:=NewWitnessClient(srv.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
  leftCoordinator,_:=NewWitnessCoordinator(left,client);rightCoordinator,_:=NewWitnessCoordinator(right,client)
  r0:=approve(t,0,ctx,ak);q0,_:=SignAuthorityRequest(0,AuthorityCommit,genesis,r0,callerKey[0])
- if response,e:=leftCoordinator.Process(q0);e!=nil||response.Outcome!=AuthorityCommitted{t.Fatal("left",e)}
+ if response,e:=leftCoordinator.Process(q0);e!=nil||response.Authority.Outcome!=AuthorityCommitted{t.Fatal("left",e)}
  left.Close()
  r1:=approve(t,1,ctx,ak);q1,_:=SignAuthorityRequest(1,AuthorityCommit,genesis,r1,callerKey[1])
  if _,e=rightCoordinator.Process(q1);!errors.Is(e,ErrWitnessRollback){t.Fatal("cloned authority fork not blocked by single witness",e)}
@@ -170,4 +172,35 @@ func TestWitnessCoordinatorTamperedIntentFailsClosed(t *testing.T){
  if e=coordinator.Recover();!errors.Is(e,ErrStore){t.Fatal("tampered signed intent accepted",e)}
  spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{}||total!=0||effects!=0{t.Fatal("tampered intent changed authority",spent,total,effects,e)}
  t.Log("tampered bridge intent fails closed before authority or witness mutation")
+}
+
+
+func TestWitnessedResponseCompositeProofAndHTTPBoundary(t *testing.T){
+ var witnessPtr atomic.Pointer[AuthorityWitness]
+ witnessServer:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){witnessPtr.Load().ServeHTTP(w,r)}));defer witnessServer.Close()
+ ctx,approver,ak,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,witnessServer.URL)
+ witnessPub,witnessKey:=witnessKeys()
+ authorityDir:=privateTemp(t);witnessDir:=privateTemp(t)
+ a,e:=CreateSharedAuthority(authorityDir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer a.Close()
+ genesis,_:=a.Head()
+ witness,e:=CreateAuthorityWitness(witnessDir,ctx,authorityPub,witnessKey,genesis);if e!=nil{t.Fatal(e)};witnessPtr.Store(witness);defer witness.Close()
+ client,e:=NewWitnessClient(witnessServer.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
+ coordinator,e:=NewWitnessCoordinator(a,client);if e!=nil{t.Fatal(e)}
+ api:=httptest.NewServer(coordinator);defer api.Close()
+ req:=approve(t,0,ctx,ak);wire,_:=SignAuthorityRequest(0,AuthorityCommit,genesis,req,callerKey[0])
+ httpReq,e:=http.NewRequest(http.MethodPost,api.URL+"/authority-witnessed",bytes.NewReader(wire.Bytes()));if e!=nil{t.Fatal(e)}
+ httpReq.Header.Set("Content-Type",media)
+ res,e:=http.DefaultClient.Do(httpReq);if e!=nil{t.Fatal(e)}
+ raw,e:=io.ReadAll(res.Body);res.Body.Close();if e!=nil||res.StatusCode!=http.StatusOK||res.Header.Get("Content-Type")!=media{t.Fatal("witnessed endpoint",e,res.StatusCode)}
+ combined,e:=ParseWitnessedResponse(raw);if e!=nil||!VerifyWitnessedResponse(combined,wire,ctx,authorityPub,witnessPub,genesis){t.Fatal("composite proof",e)}
+ if combined.Authority.After!=combined.Witness.Head||combined.Authority.Outcome!=AuthorityCommitted{t.Fatal("head binding")}
+ // Either half alone is insufficient for the composite verifier.
+ forged:=combined;forged.Witness.Head=genesis
+ if VerifyWitnessedResponse(forged,wire,ctx,authorityPub,witnessPub,genesis){t.Fatal("authority-only result accepted without matching witness")}
+ forged=combined;forged.Authority.After=genesis
+ if VerifyWitnessedResponse(forged,wire,ctx,authorityPub,witnessPub,genesis){t.Fatal("witness-only head accepted without matching authority response")}
+ // A raw authority endpoint response has the wrong wire length and cannot be
+ // interpreted as a witnessed acknowledgement.
+ if _,e=ParseWitnessedResponse(combined.Authority.Bytes());e==nil{t.Fatal("raw authority response parsed as witnessed proof")}
+ t.Log("external acknowledgement requires both exact authority receipt and pinned independent witness view at the same head")
 }
