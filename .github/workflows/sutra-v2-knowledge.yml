@@ -196,6 +196,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_proposal_challenge.py --challenge apps/sutra-v2/test-output/proposal-correct.json apps/sutra-v2/test-output/proposal-forged.json > apps/sutra-v2/test-output/proposal-reference.txt
           cat apps/sutra-v2/test-output/proposal-reference.txt
+      - name: Independently replay cross-branch receipt-only conflict and false-claim distinction
+        run: |
+          python3 packages/sutra-knowledge/reference/verify_proposal_clash.py --challenge apps/sutra-v2/test-output/clash-cross.json apps/sutra-v2/test-output/clash-compatible.json > apps/sutra-v2/test-output/clash-reference.txt
+          cat apps/sutra-v2/test-output/clash-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

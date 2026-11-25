@@ -496,6 +496,18 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const edited=JSON.parse(await proposalPage.locator('#pinned-proposal-text').inputValue());edited.claimedState='SUPPORTED';
   await proposalPage.locator('#pinned-proposal-text').fill(JSON.stringify(edited));assert.equal(await proposalPage.locator('#pinned-proposal-export').isDisabled(),true);
   const forged=await saveProposal('proposal-forged',false);assert.equal(forged.result.claim.recomputedState,'REFUTED');
+  async function saveClash(stem,expected){
+   await proposalPage.locator('#pinned-clash-run').click();await proposalPage.waitForFunction(()=>document.querySelector('#pinned-clash-status').dataset.state==='ready'&&!document.querySelector('#pinned-clash-export').disabled);
+   assert.equal(await proposalPage.locator('#pinned-state').innerText(),'SUPPORTED');assert.equal(await proposalPage.locator('#pinned-events').inputValue(),proposalOriginalEvents);
+   const dl=proposalPage.waitForEvent('download');await proposalPage.locator('#pinned-clash-export').click();const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,stem+'.json'),bytes);
+   const r=JSON.parse(bytes).result;assert.equal(r.classification,expected);return r;
+  }
+  const crossClash=await saveClash('clash-cross','CROSS_BRANCH_CLASH');
+  assert.deepEqual(crossClash.jointFinal.minimumObservationConflict,['read_alternate','read_meter']);assert.equal(crossClash.jointFinal.state,'CONFLICTED');
+  edited.eventText=proposalOriginalEvents;edited.claimedState='REFUTED';await proposalPage.locator('#pinned-proposal-text').fill(JSON.stringify(edited));
+  assert.equal(await proposalPage.locator('#pinned-clash-export').isDisabled(),true);assert.equal(await proposalPage.locator('#pinned-clash-run').isDisabled(),true);
+  await proposalPage.locator('#pinned-proposal-run').click();await proposalPage.waitForFunction(()=>document.querySelector('#pinned-proposal-status').dataset.state==='ready'&&!document.querySelector('#pinned-clash-run').disabled);
+  const compatibleClash=await saveClash('clash-compatible','JOINT_COMPATIBLE');assert.equal(compatibleClash.claim.matches,false);assert.equal(compatibleClash.jointFinal.state,'SUPPORTED');
   edited.caseDigest='sha256:'+'0'.repeat(64);await proposalPage.locator('#pinned-proposal-text').fill(JSON.stringify(edited));
   await proposalPage.locator('#pinned-proposal-run').click();await proposalPage.waitForFunction(()=>document.querySelector('#pinned-proposal-status').dataset.state==='refused');
   assert.equal(await proposalPage.locator('#pinned-proposal-export').isDisabled(),true);assert.equal(await proposalPage.locator('#pinned-state').innerText(),'SUPPORTED');

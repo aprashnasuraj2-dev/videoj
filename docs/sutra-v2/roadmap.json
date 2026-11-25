@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-033",
+  "session": "V2-034",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2617,7 +2617,7 @@
     },
     {
       "id": "V2-D15-COMPETING-PROPOSAL",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D11-ALIGNED-CASE",
         "V2-D14-WORLD-COVERAGE"
@@ -2629,9 +2629,28 @@
           "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579215618",
           "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579224571",
           "reason": "Both browser jobs 139084725945 and 139084693222 failed before any browser journey due to browser.cjs:494 SyntaxError: Identifier 'opposite' has already been declared. Existing explanation journey at line 356 and new proposal journey used same lexical identifier. Seven auxiliary workflows completed successfully; knowledge jobs were still in progress when recorded. No browser or full exact-source credit.",
-          "resolutionStatus": "corrected browser variable name; syntax preflight added; pending exact CI"
+          "resolutionStatus": "resolved at exact all-nine green source; prior browser journey retained; syntax preflight and paired oracle passed",
+          "resolutionRevision": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
+          "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579569479/job/139085895592"
+        }
+      ],
+      "evidence": [
+        {
+          "id": "V2-D15-COMPETING-PROPOSAL",
+          "sourceRevision": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579569479/job/139085895592",
+          "description": "All nine exact-source workflows passed: knowledge PR 45579569479 and push 45579560377, ingress 45579569447, impact 45579569525, evaluation 45579569470, Open Kit 45579569509, legacy release 45579569500, publisher 45579569551, browser matrix 45579569465. Knowledge job 139085895176 passed 75 tests including 256 direct-oracle ordered pairs, 12 opposite decisive pairs and 128 false assertions. Actual Chromium replayed both histories, marked false asserted state, refused foreign case, left current history unchanged; independent Python accepted two reports and refused 30 mutants. Corrected previous duplicate lexical binding; Node syntax preflight passed."
         }
       ]
+    },
+    {
+      "id": "V2-D16-CROSS-BRANCH-CLASH",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D15-COMPETING-PROPOSAL",
+        "V2-D08-ROOT-IMPACT"
+      ],
+      "scope": "Receipt-only counterfactual deduplicating exact shared final source bytes, comparing shared and joint reading survivor sets, minimum conflicting observations and declared roots, hypothetical repairs and availability disagreements. No merged history, source availability, source truth, independence or authority to adopt."
     }
   ]
 }

@@ -4,8 +4,9 @@ import {createAlignedCapsule,verifyAlignedCapsule,MAX_ALIGNED_CAPSULE_BYTES} fro
 import {exportMeasurementSensitivity} from '../../../packages/sutra-knowledge/measurement-sensitivity.js';
 import {exportCoverageAttack} from '../../../packages/sutra-knowledge/world-coverage-attack.js';
 import {exportProposalChallenge} from '../../../packages/sutra-knowledge/proposal-challenge.js';
+import {exportProposalClash} from '../../../packages/sutra-knowledge/proposal-clash.js';
 const by=id=>document.getElementById('pinned-'+id),txt=(id,v)=>{by(id).textContent=v;};
-let busy=false,current=null,sample=null,stage=null,cap=null,verifiedCap=null,rangeResult=null,coverageResult=null,proposalResult=null;
+let busy=false,current=null,sample=null,stage=null,cap=null,verifiedCap=null,rangeResult=null,coverageResult=null,proposalResult=null,clashResult=null;
 const capStatus=(state,text)=>{by('capsule-status').dataset.state=state;txt('capsule-status',text);};
 function clear(){current=null;clearRange();clearCoverage();clearProposal();by('result').hidden=true;txt('status','Input changed. Evaluate the exact current text.');}
 function refresh(){
@@ -19,6 +20,8 @@ function refresh(){
  by('coverage-export').disabled=busy||!coverageResult;
  for(const id of ['proposal-text','proposal-run'])by(id).disabled=busy||!current;
  by('proposal-export').disabled=busy||!proposalResult;
+ by('clash-run').disabled=busy||!proposalResult;
+ by('clash-export').disabled=busy||!clashResult;
  by('capsule-export').disabled=busy||!current;
  by('capsule-pin-export').disabled=busy||!cap;
  for(const id of ['capsule-case-pin','capsule-pin','capsule-file'])by(id).disabled=busy;
@@ -156,7 +159,7 @@ by('coverage-export').onclick=()=>{
  download(bytes,'sutra-coverage-diagnosis.json','application/json');
 };
 function proposalStatus(state,text){by('proposal-status').dataset.state=state;txt('proposal-status',text);}
-function clearProposal(){proposalResult=null;by('proposal-result').hidden=true;proposalStatus('idle','No competing proposal evaluated.');}
+function clearProposal(){proposalResult=null;clearClash();by('proposal-result').hidden=true;proposalStatus('idle','No competing proposal evaluated.');}
 by('proposal-text').oninput=()=>{clearProposal();refresh();};
 function renderProposal(){
  const r=proposalResult.result;
@@ -179,6 +182,27 @@ by('proposal-export').onclick=()=>{
  const bytes=new TextEncoder().encode(JSON.stringify(proposalResult));
  if(bytes.length>1048576){proposalStatus('refused','REFUSED: diagnosis export exceeds 1 MiB. Actual investigation unchanged.');return;}
  download(bytes,'sutra-proposal-diagnosis.json','application/json');
+};
+function clashStatus(state,text){by('clash-status').dataset.state=state;txt('clash-status',text);}
+function clearClash(){clashResult=null;by('clash-result').hidden=true;clashStatus('idle','No joint reading test evaluated.');}
+function renderClash(){
+ const r=clashResult.result,j=r.jointFinal,s=r.sharedFinal;
+ txt('clash-classification',r.classification==='CROSS_BRANCH_CLASH'?'Individually consistent branches contradict when their final readings are considered together.':r.classification==='BRANCH_ALREADY_CONFLICTED'?'At least one branch was already conflicted.':'No new contradiction from considering the two final reading sets together.');
+ txt('clash-shared',s.state+' · '+s.survivingWorlds.length+' compatible worlds\nShared readings: '+(s.observationIds.join(', ')||'none'));
+ txt('clash-joint',j.state+' · '+j.survivingWorlds.length+' compatible worlds\nSmallest conflicting observation set: '+(j.minimumObservationConflict?.join(' + ')||'none')+'\nMinimal conflicting declared roots: '+(j.minimum.conflict.map(x=>x.roots.join(' + ')).join('; ')||'none')+'\nHypothetical root-removal consistency repairs: '+(j.repairs.map(x=>x.remove.join(' + ')+' → '+x.state).join('; ')||'none')+'\nUnavailable in the other branch: '+JSON.stringify(r.unavailableInOtherBranch));
+ by('clash-result').hidden=false;clashStatus('ready','Receipt-only diagnostic. Neither actual history or source availability has changed.');
+}
+by('clash-run').onclick=async()=>{
+ if(busy||!current||!proposalResult)return;busy=true;clearClash();refresh();
+ try{clashResult=await exportProposalClash(current.caseText,current.result.caseDigest,current.eventText,by('proposal-text').value);renderClash();}
+ catch{clashResult=null;clashStatus('refused','REFUSED: joint reading diagnosis could not be reconstructed. Actual histories unchanged.');}
+ finally{busy=false;refresh();}
+};
+by('clash-export').onclick=()=>{
+ if(busy||!clashResult)return;
+ const bytes=new TextEncoder().encode(JSON.stringify(clashResult));
+ if(bytes.length>1048576){clashStatus('refused','REFUSED: diagnosis export exceeds 1 MiB.');return;}
+ download(bytes,'sutra-proposal-clash.json','application/json');
 };
 function download(bytes,name,type){
  const url=URL.createObjectURL(new Blob([bytes],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
