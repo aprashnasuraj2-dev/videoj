@@ -99,10 +99,11 @@ StealSpec == Init /\ [][StealNext]_vars
 
 FairSpec ==
     Spec
-    /\ \A c \in Clients : WF_vars(Dispatch(c))
-    /\ \A c \in Clients : WF_vars(AbortOwned(c))
-    /\ \A c \in Clients : WF_vars(Deliver(c))
-    /\ \A c \in Clients : WF_vars(FinalizeOwned(c))
+    /\ \A c \in Clients :
+        /\ WF_vars(Dispatch(c))
+        /\ WF_vars(AbortOwned(c))
+        /\ WF_vars(Deliver(c))
+        /\ WF_vars(FinalizeOwned(c))
 
 PendingEventuallySettles == (owner # None) ~> (owner = None)
 
