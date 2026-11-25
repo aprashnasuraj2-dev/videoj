@@ -82,3 +82,7 @@ This improves rollback detection only when witness key/store/latest view are
 protected independently. Restoring both older valid signed stores recreates an
 old mutually consistent pair, which the permanent negative test accepts. This is
 not a quorum, public transparency log, trusted timestamp or Byzantine consensus.
+
+## V2-012 witnessed transaction boundary
+
+Plan without mutating; persist signed intent; apply exact durable authority plan; CAS independent witness; clear intent; expose only nonce-bound, genesis-pinned composite proof. A client with lost replies may reconcile a monotonic sequence gap if the signed contact ledger, request hash, stale-parent classification and challenge agree. Raw authority transport is legacy/fixture only, not the production write route. Status recovery is contact-budget bounded. All four process crash points and both real HTTP loss points passed at `8998fceab17b09ec8d1911945fd5bd90b7b26c89` ([race gate](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221)). Concurrent cloned stores both may persist local synthetic effects; one witness acknowledges only one, loser retains intent and refuses recovery. Independent admission/fencing or upstream idempotency is mandatory before arbitrary external effects. Both-domain rollback and GrantBook rollback remain explicit negative controls. No physical-power-loss certification or consensus claim.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-011",
+  "session": "V2-012",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -161,9 +161,15 @@
           "positiveTests": "Approved original action succeeds",
           "adversarialTests": "Modified inputs, revoked approval, new-key replay and nested denied requests refused without contact",
           "verificationMethod": "Go adversarial and browser integration tests",
-          "status": "Not started",
-          "evidence": [],
-          "knownLimitations": "Current signed fixture approval has no expiry or revocation"
+          "status": "Implementation in progress",
+          "evidence": [
+            {
+              "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221",
+              "description": "Exact approval grants, epoch expiry, durable revocation, admitted-only reconcile, separate compensation, race serialization and six grant mutants pass."
+            }
+          ],
+          "knownLimitations": "Current signed fixture approval has no expiry or revocation\nV2-012 update: Host policy epoch is not trusted wall-clock time. Old valid signed GrantBook rollback restores earlier policy; real approval UI and independent anchor open."
         }
       ]
     },
@@ -241,9 +247,14 @@
               "sourceRevision": "1951512e9f9a9d566d723803d4fb42709888e8e3",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306/job/138912849718",
               "description": "Exact Go race gate passed authenticated caller signatures, atomic shared action+contact snapshot, lost-reply recovery across reopen, stale caller pin reconciliation, per-caller 2/global 3 durable accounting, live-budget rolled-cursor conflict, immutable copied caller identities, response tamper refusal, concurrent CAS one-effect serialization, actual separate authority server processes, corruption/failpoint poisoning, and preserved cloned-authority plus older-valid-snapshot rollback counterexamples. Independent Python accepted the actual four-event Go trace and mapped commit/status/budget behavior to bounded AnchoredRecovery transitions; original and anchored TLC safety/fairness/negative gates remained successful."
+            },
+            {
+              "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221",
+              "description": "Actual four process exits, lost final/witness HTTP responses, strict signed ledger+fresh challenge recovery and durable-intent tamper checks. Same-authority concurrent callers: one effect, one stale conflict, two contacts."
             }
           ],
-          "knownLimitations": "Authenticated loopback authority now owns action history and per-caller/global contact accounting atomically, and stale local caller state cannot reset quota. Still a synthetic single-authority fixture: no approval expiry/revocation, generic new-key lifecycle, hostile-network replay protection, provider spend accounting, physical power-loss certification or arbitrary upstream side effect."
+          "knownLimitations": "Authenticated loopback authority now owns action history and per-caller/global contact accounting atomically, and stale local caller state cannot reset quota. Still a synthetic single-authority fixture: no approval expiry/revocation, generic new-key lifecycle, hostile-network replay protection, provider spend accounting, physical power-loss certification or arbitrary upstream side effect.\nV2-012 update: No proof for all filesystem/power-loss failures, arbitrary upstream effects or liveness with indefinitely unavailable witness. Reconciliation needs remaining contact budget."
         },
         {
           "id": "V2-P05-ROLLBACK",
@@ -290,9 +301,14 @@
               "sourceRevision": "f2e5d2ed646dccf7ca6becf9a3a583a81f6c1d4d",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45528425615/job/138917422848",
               "description": "Hardened witness exact Go race gate: a valid authority-signed transition back to a previously seen head is refused, witness views are structurally checked, consumers separately pin the original genesis, re-genesis with the same witness key is rejected by the pinned verifier, and prior authority-only rollback/separate-process CAS/coordinated dual-domain rollback controls remain passing."
+            },
+            {
+              "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221",
+              "description": "Fresh pinned witness composite, sequential clone rejected pre-mutation, concurrent clones yield one acknowledged branch but both persist one synthetic effect."
             }
           ],
-          "knownLimitations": "A separately protected witness detects rollback of the authority store alone, but a privileged attacker able to restore both independently signed stores can recreate an old consistent pair. No public transparency log, quorum, trusted time, independently operated third party, key rotation/distribution protocol or separately authorized compensation exists yet."
+          "knownLimitations": "A separately protected witness detects rollback of the authority store alone, but a privileged attacker able to restore both independently signed stores can recreate an old consistent pair. No public transparency log, quorum, trusted time, independently operated third party, key rotation/distribution protocol or separately authorized compensation exists yet.\nV2-012 update: Independent single witness does not fence simultaneous cloned authority local writes; coordinated rollback of both domains remains possible; key distribution and rotation open."
         }
       ]
     },
@@ -362,9 +378,14 @@
               "sourceRevision": "1951512e9f9a9d566d723803d4fb42709888e8e3",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306/job/138912849718",
               "description": "Exact Go race gate passed authenticated caller signatures, atomic shared action+contact snapshot, lost-reply recovery across reopen, stale caller pin reconciliation, per-caller 2/global 3 durable accounting, live-budget rolled-cursor conflict, immutable copied caller identities, response tamper refusal, concurrent CAS one-effect serialization, actual separate authority server processes, corruption/failpoint poisoning, and preserved cloned-authority plus older-valid-snapshot rollback counterexamples. Independent Python accepted the actual four-event Go trace and mapped commit/status/budget behavior to bounded AnchoredRecovery transitions; original and anchored TLC safety/fairness/negative gates remained successful."
+            },
+            {
+              "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221",
+              "description": "65 observed events across eight concrete cases mapped by independent Python, five trace checker mutations rejected. Strict bridge 11/12, lossy 28/36, grant 40/80 states/edges; original and anchored retained."
             }
           ],
-          "knownLimitations": "One actual Go trace is independently replayed against the bounded transition mapping and budgets now match the TLA per-caller 2/global 3 profile. This is a trace witness, not a universal refinement theorem: Go collapses dispatch+delivery once bytes arrive, cryptography/binary parsing/storage are outside TLA, and authority snapshot rollback remains possible without an external monotonic witness."
+          "knownLimitations": "One actual Go trace is independently replayed against the bounded transition mapping and budgets now match the TLA per-caller 2/global 3 profile. This is a trace witness, not a universal refinement theorem: Go collapses dispatch+delivery once bytes arrive, cryptography/binary parsing/storage are outside TLA, and authority snapshot rollback remains possible without an external monotonic witness.\nV2-012 update: Trace checking is not universal simulation; clone rejection is outside admitted safe model; timing, signatures and physical storage are abstracted."
         }
       ]
     },
@@ -606,9 +627,15 @@
           "positiveTests": "Concurrent calls under quota, cancellation and actual usage reconciliation",
           "adversarialTests": "Malicious cost estimates, timeout, rate limit, credential canary",
           "verificationMethod": "Fake provider contract plus authorized real free route only",
-          "status": "Not started",
-          "evidence": [],
-          "knownLimitations": "No paid inference authorized; provider charging semantics vary"
+          "status": "Implementation in progress",
+          "evidence": [
+            {
+              "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221",
+              "description": "Existing fake provider ledger/workspace tests enforce host monotonic clock, reservation before contact, conservative unknown charges, bounded leases and retained audit."
+            }
+          ],
+          "knownLimitations": "No paid inference authorized; provider charging semantics vary\nV2-012 update: Process-local lab does not enforce durable global billing across restart, clones, multiple tenants or actual vendor charges."
         },
         {
           "id": "V2-P14-BYOK-UX",
@@ -625,9 +652,15 @@
           "positiveTests": "Fake provider profiles with masked onboarding, provider/model switching and independent bounded reservations; no live paid inference",
           "adversarialTests": "Credential canary, malicious peer/model asks for key, arbitrary endpoint, model-selected provider switch, stale credential handle, reload/export/log/DOM leakage and cross-profile confusion",
           "verificationMethod": "Browser integration, fake-provider relay/adapter tests, credential-canary scans and backend budget contract; authorized real provider only in a later separately approved gate",
-          "status": "Not started",
-          "evidence": [],
-          "knownLimitations": "Current checked-in service intentionally reports byok:false and rejects visitor credentials. Browser-vault versus ephemeral same-origin relay design is not yet selected; XSS/browser-extension exposure, provider CORS, storage persistence and provider-specific billing semantics require threat review."
+          "status": "Implementation in progress",
+          "evidence": [
+            {
+              "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221",
+              "description": "Existing fake-only nontechnical provider workspace, opaque handle policy, credential canary/metadata leakage tests, fixed host transports and no external calls in rehearsal."
+            }
+          ],
+          "knownLimitations": "Current checked-in service intentionally reports byok:false and rejects visitor credentials. Browser-vault versus ephemeral same-origin relay design is not yet selected; XSS/browser-extension exposure, provider CORS, storage persistence and provider-specific billing semantics require threat review.\nV2-012 update: No real key custody or paid inference authorized. XSS, extensions, persistence, CORS, provider idempotency and tenant isolation require separate review."
         }
       ]
     },
@@ -2310,6 +2343,6 @@
     "duplicateIds": 0,
     "missingDependencies": 0,
     "dependencyCycles": 0,
-    "method": "Parsed exact remote roadmap and traversed all 90 recorded dependency nodes in V2-011 after the independent witness candidate; historical dependency links are current engineering judgments, not retroactive proof."
+    "method": "V2-012 continuation: parsed all 90 nodes and traversed dependencies before and after partial-evidence updates; no requirement removed or completed."
   }
 }
