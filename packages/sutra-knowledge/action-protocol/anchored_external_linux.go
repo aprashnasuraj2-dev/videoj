@@ -233,57 +233,6 @@ func VerifyAnchoredFencedEnvelope(e AnchoredFencedEnvelope, grant ActionGrant, r
 		VerifyFencedEnvelope(e.Fenced, req, challenge, ctx, authority, fence, fenceGenesis)
 }
 
-func (g *AnchoredFencedGrantGuard) ProcessComposite(grant ActionGrant, req AuthorityRequest, challenge Digest) (AnchoredFencedEnvelope, error) {
-	if challenge == (Digest{}) {
-		return AnchoredFencedEnvelope{}, ErrPolicy
-	}
-	if e := g.coordinator.authority.preflight(req); e != nil {
-		return AnchoredFencedEnvelope{}, e
-	}
-	b := g.policy.book
-	b.mu.Lock()
-	defer b.mu.Unlock()
-	switch req.Op {
-	case AuthorityCommit:
-		if e := g.policy.reserveDispatchLocked(grant, req.Action, grant.Class); e != nil {
-			return AnchoredFencedEnvelope{}, e
-		}
-	case AuthorityStatus:
-		if e := g.policy.checkReconcileLocked(grant, req.Action); e != nil {
-			return AnchoredFencedEnvelope{}, e
-		}
-	default:
-		return AnchoredFencedEnvelope{}, ErrPolicy
-	}
-	policyHead := b.policyHeadLocked()
-	decision, e := signGrantPolicyDecision(b.ctx, grant, req, policyHead, b.epoch, b.signer)
-	if e != nil {
-		return AnchoredFencedEnvelope{}, e
-	}
-	// Policy freshness is obtained after exact policy admission but before the
-	// effect fence. The same caller challenge is later signed by the effect
-	// fence after authority convergence.
-	policyAttestation, e := g.policy.witness.AttestChallenge(challenge)
-	if e != nil {
-		return AnchoredFencedEnvelope{}, ErrGrantPolicyUnavailable
-	}
-	if policyAttestation.View.Head != policyHead {
-		return AnchoredFencedEnvelope{}, ErrGrantPolicyRollback
-	}
-	fenced, e := g.coordinator.ProcessAttested(req, challenge)
-	if e != nil {
-		return AnchoredFencedEnvelope{}, e
-	}
-	out := AnchoredFencedEnvelope{Fenced: fenced, Decision: decision, Policy: policyAttestation}
-	if !VerifyAnchoredFencedEnvelope(out, grant, req, challenge, b.ctx,
-		g.coordinator.authority.signer.Public().(ed25519.PublicKey), g.coordinator.fence.fence,
-		b.consent, b.signer.Public().(ed25519.PublicKey), g.policy.witness.witness,
-		g.coordinator.fence.genesis, g.policy.witness.genesis) {
-		return AnchoredFencedEnvelope{}, ErrWitnessRollback
-	}
-	return out, nil
-}
-
 func (g *AnchoredFencedGrantGuard) ProcessCompositePinned(grant ActionGrant, req AuthorityRequest, pin ClientPolicyPin, challenge Digest) (AnchoredFencedEnvelope, error) {
 	if challenge == (Digest{}) {
 		return AnchoredFencedEnvelope{}, ErrPolicy
