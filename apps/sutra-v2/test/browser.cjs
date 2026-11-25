@@ -646,8 +646,19 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const reviewDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-export').click();const reviewBytes=fs.readFileSync(await (await reviewDownload).path());fs.writeFileSync(path.join(output,'reviewed-workspace.json'),reviewBytes);
   assert.deepEqual(JSON.parse(reviewBytes).result.target.sourceIds,['report_a','report_b']);
   const reviewPinDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-export-pin').click();const reviewSnapshotPin=fs.readFileSync(await (await reviewPinDownload).path());fs.writeFileSync(path.join(output,'reviewed-workspace.sha256'),reviewSnapshotPin);assert.equal(reviewSnapshotPin.toString('ascii').trim(),await reviewPage.locator('#review-snapshot-pin').innerText());
-  const reviewForged=JSON.parse(await reviewPage.locator('#review-proposal').inputValue());reviewForged.nodes[0].value='999';await reviewFill('proposal',JSON.stringify(reviewForged));assert.equal(await reviewPage.locator('#review-export').isDisabled(),true);await reviewPage.locator('#review-run').click();await reviewState('refused');
-  await reviewFill('question','Is site A higher than site B? Revised.');assert.equal(await reviewPage.locator('#review-run').isDisabled(),true);assert.equal(await reviewPage.locator('#review-export').isDisabled(),true);
+  const reviewOriginal=JSON.parse(await reviewPage.locator('#review-proposal').inputValue());
+  await reviewPage.locator('#review-batch-add').click();await reviewState('staged');
+  for(const [op,reverse,hostile] of [['lt',true,false],['le',false,false],['lt',false,false],['gt',false,true]]){
+   const p=structuredClone(reviewOriginal),n=p.nodes.find(n=>n.id===p.targetId);n.op=op;if(reverse)n.args.reverse();if(hostile)p.nodes[0].value='999';
+   await reviewFill('proposal',JSON.stringify(p));await reviewPage.locator('#review-batch-add').click();await reviewState('staged');
+  }
+  assert.match(await reviewPage.locator('#review-batch-count').innerText(),/5 \/ 8/);
+  await reviewPage.locator('#review-batch-run').click();await reviewState('batch_ready');assert.match(await reviewPage.locator('#review-batch-result').innerText(),/4 admitted, 1 refused/);
+  const orderDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-batch-export').click();const orderBytes=fs.readFileSync(await (await orderDownload).path());fs.writeFileSync(path.join(output,'reviewed-order-contrast.json'),orderBytes);
+  const order=JSON.parse(orderBytes),at=(l,r)=>order.orderRelations.find(x=>x.left===l&&x.right===r);
+  assert.equal(at('proposal_1','proposal_2').relation,'EQUIVALENT');assert.equal(at('proposal_1','proposal_3').relation,'COMPLEMENT');assert.equal(at('proposal_1','proposal_4').relation,'MUTUALLY_EXCLUSIVE_NONEXHAUSTIVE');assert.deepEqual(at('proposal_1','proposal_4').uncovered,['EQ']);assert.equal(order.decisionAuthority,'NONE');
+  const reviewForged=JSON.parse(JSON.stringify(reviewOriginal));reviewForged.nodes[0].value='999';await reviewFill('proposal',JSON.stringify(reviewForged));assert.equal(await reviewPage.locator('#review-export').isDisabled(),true);await reviewPage.locator('#review-run').click();await reviewState('refused');
+  await reviewFill('question','Is site A higher than site B? Revised.');assert.equal(await reviewPage.locator('#review-batch-export').isDisabled(),true);assert.match(await reviewPage.locator('#review-batch-count').innerText(),/0 \/ 8/);assert.equal(await reviewPage.locator('#review-run').isDisabled(),true);assert.equal(await reviewPage.locator('#review-export').isDisabled(),true);
   await reviewPage.locator('#review-seal').click();await reviewState('sealed');assert.notEqual(await reviewPage.locator('#review-pin').innerText(),reviewPin);
   await reviewPage.locator('#review-reset').click();assert.equal(await reviewPage.locator('#review-question').inputValue(),'');assert.match(await reviewPage.locator('#review-staged').innerText(),/0 staged source/);
   assert.equal(await reviewPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(reviewErrors,[]);assert.deepEqual(reviewExternal,[]);await reviewPage.close();

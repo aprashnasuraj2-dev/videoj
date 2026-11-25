@@ -1,15 +1,16 @@
 import {sealReviewedDraft,draftComparisonProposal} from '../../../packages/sutra-knowledge/reviewed-draft.js';
 import {exportReviewedProposal} from '../../../packages/sutra-knowledge/reviewed-claim-compiler.js';
 import {reviewedSnapshotDigest,MAX_REVIEWED_SNAPSHOT_BYTES} from '../../../packages/sutra-knowledge/reviewed-snapshot.js';
+import {exportReviewedOrderContrast} from '../../../packages/sutra-knowledge/reviewed-order-contrast.js';
 const by=id=>document.getElementById('review-'+id);
-let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0;
-const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset'];
+let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
+const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
 function control(){
  for(const id of controls)by(id).disabled=busy;
- if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;}
+ if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;}
 }
-function invalidate(message){epoch++;sealed=null;current=null;by('pin').textContent='No current contract.';by('contract').textContent='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
+function invalidate(message){epoch++;sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 function options(element,items){element.replaceChildren();for(const id of items){const o=document.createElement('option');o.value=id;o.textContent=id;element.append(o);}}
 function refresh(){
@@ -43,7 +44,7 @@ by('binding-add').onclick=()=>{
 };
 by('seal').onclick=()=>work(async ticket=>{
  const result=await sealReviewedDraft(draft());if(ticket!==epoch)return;
- sealed=result;current=null;by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';by('pin').textContent=result.pin;by('contract').textContent=result.contractText;status('sealed','Reviewed contract sealed. Copy the pin independently if retaining evidence. No proposal evaluated.');
+ sealed=result;current=null;clearBatch();by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';by('pin').textContent=result.pin;by('contract').textContent=result.contractText;status('sealed','Reviewed contract sealed. Copy the pin independently if retaining evidence. No proposal evaluated.');
 });
 by('generate').onclick=()=>work(async ticket=>{
  if(!sealed)return;const p=await draftComparisonProposal(sealed.contractText,sealed.pin,by('left').value,by('right').value,by('op').value);if(ticket!==epoch)return;
@@ -63,4 +64,29 @@ function download(data,name,type){const url=URL.createObjectURL(new Blob([data],
 by('export').onclick=()=>{if(current&&!busy)download(current.bytes,'sutra-reviewed-workspace.json','application/json');};
 by('export-pin').onclick=()=>{if(current&&!busy)download(current.pin+'\n','sutra-reviewed-workspace.sha256','text/plain');};
 by('reset').onclick=()=>{if(busy)return;sources=[];bindings=[];for(const id of ['question','source-id','lineage','source-text','binding-id','kind','unit','scope'])by(id).value='';for(const id of ['dim-l','dim-m','dim-t'])by(id).value='0';invalidate('Draft cleared from this workspace. Previously downloaded files are unaffected.');refresh();};
-refresh();control();
+function renderBatch(){
+ by('batch-count').textContent=stagedProposals.length+' / 8 staged proposals';
+ by('batch-list').replaceChildren();
+ for(const p of stagedProposals){const row=document.createElement('p');row.textContent=p.id+' · '+new TextEncoder().encode(p.proposalText).length+' bytes (untrusted)';by('batch-list').append(row);}
+}
+function clearBatch(){stagedProposals=[];batchCurrent=null;by('batch-result').textContent='';renderBatch();}
+by('batch-add').onclick=()=>{
+ if(busy||!sealed||!by('proposal').value||stagedProposals.length>=8)return;
+ const p={id:'proposal_'+(stagedProposals.length+1),proposalText:by('proposal').value};
+ const candidate=[...stagedProposals,p],batchText=JSON.stringify({version:1,contractDigest:sealed.pin,proposals:candidate});
+ if(p.proposalText.length>65536||batchText.length>262144){status('refused','REFUSED: staged batch exceeds bounded input profile.');return;}
+ stagedProposals=candidate;batchCurrent=null;by('batch-result').textContent='';renderBatch();control();status('staged','Exact untrusted proposal staged; later edits do not change this saved copy.');
+};
+by('batch-clear').onclick=()=>{if(busy)return;clearBatch();control();status('sealed','Staged proposals cleared. Reviewed contract retained.');};
+by('batch-run').onclick=()=>work(async ticket=>{
+ if(!sealed||stagedProposals.length<2)return;
+ batchCurrent=null;by('batch-result').textContent='';control();
+ const text=JSON.stringify({version:1,contractDigest:sealed.pin,proposals:stagedProposals});
+ const bundle=await exportReviewedOrderContrast(sealed.contractText,sealed.pin,text);if(ticket!==epoch)return;
+ const bytes=new TextEncoder().encode(JSON.stringify(bundle));if(bytes.length>1048576)throw Error('DRAFT_BATCH_EXPORT_LIMIT');
+ const c=bundle.contrast.result;
+ by('batch-result').textContent=c.counts.admitted+' admitted, '+c.counts.refused+' refused · '+c.counts.distinctTypedStructures+' typed structures · NO DECISION AUTHORITY\n'+c.entries.map(e=>e.id+' · '+(e.computation?.status??e.reason)).join('\n')+'\n\n'+bundle.orderRelations.map(r=>r.left+' / '+r.right+' · '+(r.relation??r.status)+(r.orientation?' · '+r.orientation:'')+(r.uncovered?.length?' · both false possible: '+r.uncovered.join(', '):'')).join('\n');
+ batchCurrent=bytes;status('batch_ready','Conditional order relations computed. Unaligned expressions remain unclassified; semantic relevance and source truth are not established.');
+});
+by('batch-export').onclick=()=>{if(batchCurrent&&!busy)download(batchCurrent,'sutra-reviewed-order-contrast.json','application/json');};
+renderBatch();refresh();control();
