@@ -83,6 +83,10 @@ jobs:
         run: |
           node packages/sutra-knowledge/examples/withdrawal-reference-cases.mjs > sutra-withdrawal-reference-cases.json
           python3 packages/sutra-knowledge/reference/test_withdrawal_revision.py < sutra-withdrawal-reference-cases.json
+      - name: Independently verify atomic evidence revision and repinned plan tampering
+        run: |
+          node packages/sutra-knowledge/examples/evidence-revision-reference-cases.mjs > sutra-evidence-revision-reference-cases.json
+          python3 packages/sutra-knowledge/reference/test_evidence_revision.py < sutra-evidence-revision-reference-cases.json
       - name: Independently compare restricted question grammar across languages
         run: |
           node packages/sutra-knowledge/examples/question-reference-cases.mjs > sutra-question-reference-cases.json
