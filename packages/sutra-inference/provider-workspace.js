@@ -46,10 +46,10 @@ function sanitizeProviderValue(value,secret,{depth=0,budget={chars:0,nodes:0}}={
  return Object.freeze(out);
 }
 
-export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimits,leaseTicks=45,randomBytes,transports=[]}={}){
+export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimits,leaseTicks=45000,randomBytes,transports=[],clock=Date.now}={}){
  const vault=createEphemeralCredentialVault({catalog,randomBytes});
  const ledger=createProviderBudgetLedger({global:globalLimits,profiles:[],leaseTicks,randomBytes});
- if(!plain(defaultProfileLimits)||!Array.isArray(transports)||transports.length>vault.providers.length)stop('CONFIG');
+ if(!plain(defaultProfileLimits)||!Array.isArray(transports)||transports.length>vault.providers.length||typeof clock!=='function')stop('CONFIG');
  const providerIds=new Set(vault.providers.map(p=>p.id)),transportById=new Map();
  for(const entry of transports){
   if(!closed(entry,['providerId','send'])||!providerIds.has(entry.providerId)||transportById.has(entry.providerId)||typeof entry.send!=='function')stop('CONFIG');
@@ -98,8 +98,9 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
   },
   budgetSnapshot(){return ledger.snapshot();},
   async execute(input={}){
-   if(!closed(input,['handle','model','inputBytes','maxOutputTokens','now','operation']))stop('REQUEST');
-   const {handle,model,inputBytes,maxOutputTokens,now,operation}=input;
+   if(!closed(input,['handle','model','inputBytes','maxOutputTokens','operation']))stop('REQUEST');
+   const {handle,model,inputBytes,maxOutputTokens,operation}=input;
+   const now=clock();
    const profile=profileMeta(handle);
    if(typeof model!=='string'||!modelPattern.test(model)||!profile.models.includes(model))stop('MODEL');
    const transport=transportById.get(profile.providerId);if(typeof transport!=='function')stop('TRANSPORT');
