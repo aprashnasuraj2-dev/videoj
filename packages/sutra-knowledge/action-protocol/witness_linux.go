@@ -21,9 +21,11 @@ import (
 const witnessDomain = "SUTRA/shared-authority-witness/v1\x00"
 const witnessTransitionDomain = "SUTRA/shared-authority-witness-transition/v1\x00"
 const witnessViewDomain = "SUTRA/shared-authority-witness-view/v1\x00"
+const witnessAttestationDomain = "SUTRA/shared-authority-witness-attestation/v1\x00"
 const witnessMaxTransitions = 8
 const witnessTransitionSize = 32+32+ed25519.SignatureSize
 const witnessViewSize = 4+32+32+ed25519.SignatureSize
+const witnessAttestationSize = 32+witnessViewSize+ed25519.SignatureSize
 
 var ErrWitnessConflict = errors.New("witness head changed")
 var ErrWitnessRollback = errors.New("authority head does not match independent witness")
@@ -87,6 +89,37 @@ func VerifyWitnessView(v WitnessView,ctx Digest,authority,witness ed25519.Public
 }
 func VerifyWitnessViewPinned(v WitnessView,ctx Digest,authority,witness ed25519.PublicKey,genesis Digest)bool{
  return genesis!=(Digest{})&&v.Genesis==genesis&&VerifyWitnessView(v,ctx,authority,witness)
+}
+
+
+type WitnessAttestation struct {
+ Challenge Digest
+ View WitnessView
+ Signature [ed25519.SignatureSize]byte
+}
+func (a WitnessAttestation) message(ctx Digest,authority ed25519.PublicKey)[]byte{
+ b:=append([]byte(witnessAttestationDomain),ctx[:]...)
+ b=append(b,authority...)
+ b=append(b,a.Challenge[:]...)
+ return append(b,a.View.Bytes()...)
+}
+func (a WitnessAttestation) Bytes()[]byte{
+ b:=append([]byte(nil),a.Challenge[:]...)
+ b=append(b,a.View.Bytes()...)
+ return append(b,a.Signature[:]...)
+}
+func ParseWitnessAttestation(raw []byte)(WitnessAttestation,error){
+ var a WitnessAttestation
+ if len(raw)!=witnessAttestationSize{return a,ErrPolicy}
+ copy(a.Challenge[:],raw[:32])
+ view,e:=ParseWitnessView(raw[32:32+witnessViewSize]);if e!=nil{return a,e}
+ a.View=view;copy(a.Signature[:],raw[32+witnessViewSize:])
+ return a,nil
+}
+func VerifyWitnessAttestation(a WitnessAttestation,expected Digest,ctx Digest,authority,witness ed25519.PublicKey,genesis Digest)bool{
+ return expected!=(Digest{})&&a.Challenge==expected&&
+  VerifyWitnessViewPinned(a.View,ctx,authority,witness,genesis)&&
+  ed25519.Verify(witness,a.message(ctx,authority),a.Signature[:])
 }
 
 type AuthorityWitness struct {
@@ -174,12 +207,23 @@ func (w *AuthorityWitness) headLocked()Digest{
  if len(w.transitions)==0{return w.genesis}
  return w.transitions[len(w.transitions)-1].After
 }
-func (w *AuthorityWitness) View()(WitnessView,error){
- w.mu.Lock();defer w.mu.Unlock()
+func (w *AuthorityWitness) viewLocked()(WitnessView,error){
  if w.lock==nil||w.poisoned{return WitnessView{},ErrStore}
  v:=WitnessView{Sequence:uint32(len(w.transitions)),Genesis:w.genesis,Head:w.headLocked()}
  copy(v.Signature[:],ed25519.Sign(w.signer,v.message(w.ctx,w.authority)))
  return v,nil
+}
+func (w *AuthorityWitness) View()(WitnessView,error){
+ w.mu.Lock();defer w.mu.Unlock()
+ return w.viewLocked()
+}
+func (w *AuthorityWitness) Attest(challenge Digest)(WitnessAttestation,error){
+ w.mu.Lock();defer w.mu.Unlock()
+ if challenge==(Digest{}){return WitnessAttestation{},ErrPolicy}
+ view,e:=w.viewLocked();if e!=nil{return WitnessAttestation{},e}
+ a:=WitnessAttestation{Challenge:challenge,View:view}
+ copy(a.Signature[:],ed25519.Sign(w.signer,a.message(w.ctx,w.authority)))
+ return a,nil
 }
 func (w *AuthorityWitness) Advance(t WitnessTransition)(WitnessView,error){
  w.mu.Lock();defer w.mu.Unlock()
@@ -215,10 +259,19 @@ func OpenSharedAuthorityWitnessed(dir string,ctx Digest,approver ed25519.PublicK
 
 func (w *AuthorityWitness) ServeHTTP(rw http.ResponseWriter,r *http.Request){
  rw.Header().Set("Cache-Control","no-store")
- if r.URL.Path!="/witness"||r.URL.RawQuery!=""{rw.WriteHeader(http.StatusBadRequest);return}
+ if r.URL.RawQuery!=""{rw.WriteHeader(http.StatusBadRequest);return}
+ if r.URL.Path=="/witness/view"{
+  if r.Method!=http.MethodPost||r.Header.Get("Content-Type")!=media{rw.WriteHeader(http.StatusBadRequest);return}
+  defer r.Body.Close()
+  raw,e:=io.ReadAll(io.LimitReader(r.Body,33));if e!=nil||len(raw)!=32{rw.WriteHeader(http.StatusBadRequest);return}
+  var challenge Digest;copy(challenge[:],raw)
+  attestation,e:=w.Attest(challenge);if e!=nil{rw.WriteHeader(http.StatusInternalServerError);return}
+  rw.Header().Set("Content-Type",media);_,_=rw.Write(attestation.Bytes());return
+ }
+ if r.URL.Path!="/witness"{rw.WriteHeader(http.StatusBadRequest);return}
  if r.Method==http.MethodGet{
   v,e:=w.View();if e!=nil{rw.WriteHeader(http.StatusInternalServerError);return}
-  rw.Header().Set("Content-Type",media);rw.Write(v.Bytes());return
+  rw.Header().Set("Content-Type",media);_,_=rw.Write(v.Bytes());return
  }
  if r.Method!=http.MethodPost||r.Header.Get("Content-Type")!=media{rw.WriteHeader(http.StatusBadRequest);return}
  defer r.Body.Close();raw,e:=io.ReadAll(io.LimitReader(r.Body,witnessTransitionSize+1))
@@ -229,5 +282,5 @@ func (w *AuthorityWitness) ServeHTTP(rw http.ResponseWriter,r *http.Request){
   if errors.Is(e,ErrWitnessConflict){rw.WriteHeader(http.StatusConflict)}else if errors.Is(e,ErrPolicy){rw.WriteHeader(http.StatusForbidden)}else{rw.WriteHeader(http.StatusInternalServerError)}
   return
  }
- rw.Header().Set("Content-Type",media);rw.Write(v.Bytes())
+ rw.Header().Set("Content-Type",media);_,_=rw.Write(v.Bytes())
 }
