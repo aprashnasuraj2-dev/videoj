@@ -1,5 +1,6 @@
 # “Continue with sutra” execution procedure
 
+> **Legacy SUTRA1 continuation contract.** For an unqualified current request such as **“continue sutra”** or **“continue with sutra”**, first follow [docs/sutra-v2/CONTINUE.md](../sutra-v2/CONTINUE.md). Use this file only as inherited SUTRA1 checkpoint/release logic or when the user explicitly asks to resume SUTRA1.
 This applies to SUTRA continuation requests, regardless of case or surrounding punctuation. It is an instruction for a future active assistant session, not a background automation, model invocation or permission to contact other people.
 
 ## Public release gate

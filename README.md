@@ -56,8 +56,10 @@ The repository root builds **DHAGO**. `detour/` is a separate project with its o
 
 Both are open-source source distributions, not official Video.js skins or npm registry releases. Browser, media-decoder and device behavior varies; consult the integration constraints before deploying. Prior planning records are preserved in version history, rather than treated as current product instructions.
 
-## SUTRA - planned agentic learning companion
+## SUTRA 2.0 — knowledge compiler and investigative learning
 
-The active [SUTRA workspace](docs/sutra/README.md) contains the user-requested [detailed checklist](docs/sutra/CHECKLIST.md), [progress register](docs/sutra/PROGRESS.md) and [continuation procedure](docs/sutra/CONTINUE.md) for the Open Agentic Web Challenge. Say **“continue with sutra”** to resume from verified repository status and carry out the next dependency-ready task.
+The active SUTRA product workspace is [`docs/sutra-v2/`](docs/sutra-v2/README.md): [continuation procedure](docs/sutra-v2/CONTINUE.md), [active roadmap](docs/sutra-v2/ROADMAP.md), [checklist](docs/sutra-v2/CHECKLIST.md), [machine progress cursor](docs/sutra-v2/progress.json), and [session evidence](docs/sutra-v2/SESSIONS.md). Say **“continue with sutra”** to reconcile the latest remote SUTRA branch/PR and continue the next dependency-ready V2 engineering task.
 
-At tracker bootstrap this is a planned separate application, not a shipped player or public agent service. Use the register for the current implementation/release state. Existing DHAGO and DETOUR boundaries remain as documented above.
+The original [`docs/sutra/`](docs/sutra/README.md) workspace is preserved as the SUTRA1 historical baseline, evidence register, and reusable implementation source; it is **not** the current product priority queue. `apps/sutra` is the legacy learner/runtime base and `apps/sutra-v2` is the current V2 browser laboratory. The public/release packaging still targets the legacy learner until an explicit, tested V1→V2 entry-point migration is completed; passing V2 kernel CI alone is not release authorization.
+
+Existing DHAGO and DETOUR boundaries remain independent. No SUTRA deployment, DNS cutover, paid inference, release, or competition submission is implied by development progress.

@@ -1,5 +1,6 @@
 # SUTRA project workspace
 
+> **Historical SUTRA1 workspace.** The active product roadmap and continuation entry point are now [SUTRA 2.0](../sutra-v2/README.md) and [docs/sutra-v2/CONTINUE.md](../sutra-v2/CONTINUE.md). Preserve this workspace as historical evidence and reusable source; do not use its old task queue as the default for “continue with sutra”.
 SUTRA is the planned evidence-linked learning companion for the Open Agentic Web Challenge. The source repository is `aprashnasuraj2-dev/videoj`; the proposed release uses new AafnaiPatro Cloudflare origins. Existing DHAGO and DETOUR remain independent player projects.
 
 **Status at bootstrap:** planning and resume infrastructure only. No SUTRA app, peer, inference service, community package or public release exists at the inspected code baseline. Read current status before repeating that historical statement.
