@@ -149,15 +149,19 @@ func OpenSharedAuthority(dir string,ctx Digest,approver ed25519.PublicKey,signer
 func openSharedAuthority(dir string,ctx Digest,approver ed25519.PublicKey,signer ed25519.PrivateKey,callers [authorityCallers]ed25519.PublicKey,limit uint32,create bool)(*SharedAuthority,error){
  receiver,e:=NewReceiver(ctx,approver,signer,limit);if e!=nil{return nil,e}
  if !bytes.Equal(ed25519.NewKeyFromSeed(signer[:ed25519.SeedSize]),signer){return nil,ErrPolicy}
- for _,key:=range callers{if len(key)!=ed25519.PublicKeySize{return nil,ErrPolicy}}
- if bytes.Equal(callers[0],callers[1]){return nil,ErrPolicy}
+ var pinned [authorityCallers]ed25519.PublicKey
+ for i,key:=range callers{
+  if len(key)!=ed25519.PublicKeySize{return nil,ErrPolicy}
+  pinned[i]=append(ed25519.PublicKey(nil),key...)
+ }
+ if bytes.Equal(pinned[0],pinned[1]){return nil,ErrPolicy}
  dir,e=filepath.Abs(dir);if e!=nil{return nil,e}
  info,e:=os.Stat(dir);if e!=nil||!info.IsDir()||info.Mode().Perm()&0077!=0{return nil,ErrStore}
  lock,e:=os.OpenFile(filepath.Join(dir,"authority.lock"),os.O_CREATE|os.O_RDWR,0600);if e!=nil{return nil,e}
  if e=syscall.Flock(int(lock.Fd()),syscall.LOCK_EX|syscall.LOCK_NB);e!=nil{
   lock.Close();if errors.Is(e,syscall.EWOULDBLOCK){return nil,ErrStoreBusy};return nil,e
  }
- a:=&SharedAuthority{dir:dir,lock:lock,ctx:ctx,approver:append(ed25519.PublicKey(nil),approver...),signer:append(ed25519.PrivateKey(nil),signer...),callers:callers,limit:limit,receiver:receiver}
+ a:=&SharedAuthority{dir:dir,lock:lock,ctx:ctx,approver:append(ed25519.PublicKey(nil),approver...),signer:append(ed25519.PrivateKey(nil),signer...),callers:pinned,limit:limit,receiver:receiver}
  ok:=false;defer func(){if !ok{a.Close()}}()
  path:=filepath.Join(dir,"authority.bin")
  if create{
