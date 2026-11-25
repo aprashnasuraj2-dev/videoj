@@ -46,7 +46,7 @@ grep -F 'Temporal property ConditionalRecovery was violated' "$WORK/anchored-unf
 java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/witness-bridge-safe" -config WitnessBridgeSafe.cfg WitnessBridge.tla > "$WORK/witness-bridge-safe.log" 2>&1 || { cat "$WORK/witness-bridge-safe.log"; exit 1; }
 cat "$WORK/witness-bridge-safe.log"
 grep -F 'No error has been found' "$WORK/witness-bridge-safe.log"
-for entry in 'Early WitnessNotAhead' 'Double GapBound' 'Clear RecoverableGap'; do
+for entry in 'Early WitnessNotAhead' 'Double GapBound' 'Clear RecoverableGap' 'Ack AckNotAhead'; do
  set -- $entry
  if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/witness-bridge-$1" -config "WitnessBridge$1.cfg" WitnessBridge.tla > "$WORK/witness-bridge-$1.log" 2>&1; then
   cat "$WORK/witness-bridge-$1.log"; echo "witness bridge mutant $1 unexpectedly succeeded" >&2; exit 1
