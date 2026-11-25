@@ -1000,6 +1000,45 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    assert.equal(await page.locator('#review-generate').isDisabled(),true);
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);assert.deepEqual(poison,[]);await page.close();
   }
+  // A retained finance investigation: withdrawing capital-spending evidence must
+  // preserve the operating-cash result and make the free-cash comparison unresolved.
+  {
+   const p=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
+   p.on('pageerror',e=>errors.push(e.message));p.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());});
+   await p.goto(origin);await p.locator('#reviewed-workspace > summary').click();await p.locator('#review-sample-panel > summary').click();
+   const click=id=>p.locator('#review-'+id).click(),state=s=>p.waitForFunction(x=>document.querySelector('#review-status').dataset.state===x&&!document.querySelector('#review-reset').disabled,s);
+   await click('sample-finance');await state('sample_ready');await click('semantic-run');await state('semantic_ready');
+   const parentPin=await p.locator('#review-semantic-pin').innerText();
+   async function saveVersion(name){
+    const download=p.waitForEvent('download');await click('semantic-export');const bytes=fs.readFileSync(await (await download).path());
+    const pin=await p.locator('#review-semantic-pin').innerText();
+    fs.writeFileSync(path.join(output,'living-withdraw-'+name+'.json'),bytes);fs.writeFileSync(path.join(output,'living-withdraw-'+name+'.sha256'),pin+'\n');
+    return JSON.parse(bytes);
+   }
+   const parent=await saveVersion('before');await click('semantic-retain');
+   await p.locator('#review-source-revise-panel > summary').click();
+   await p.locator('#review-source-revise-pick').selectOption('investment_report');
+   await click('source-withdraw-version-preview');await state('withdrawal_version_preview');
+   assert.match(await p.locator('#review-source-withdraw-version-result').innerText(),/after_capital · TARGET_EVIDENCE_WITHDRAWN.*BLOCKED_MISSING_INPUT/);
+   assert.match(await p.locator('#review-source-withdraw-version-result').innerText(),/operating_cash · NO_SCOPED_SOURCE_DEPENDENCY.*CONDITIONALLY_SATISFIED/);
+   assert.equal(await p.locator('#review-semantic-pin').innerText(),parentPin);
+   assert.equal(await p.locator('#review-source-withdraw-apply').isDisabled(),true);
+   await p.locator('#review-source-revise-pick').selectOption('cash_report');
+   assert.equal(await p.locator('#review-source-withdraw-version-apply').isDisabled(),true);
+   await p.locator('#review-source-revise-pick').selectOption('investment_report');await click('source-withdraw-version-preview');await state('withdrawal_version_preview');
+   await click('source-withdraw-version-apply');await state('semantic_ready');
+   assert.notEqual(await p.locator('#review-semantic-pin').innerText(),parentPin);
+   assert.match(await p.locator('#review-impact-result').innerText(),/investment_report WITHDRAWN/);
+   assert.match(await p.locator('#review-impact-result').innerText(),/PREVIOUS CONDITIONAL RESULT UNRESOLVED/);
+   assert.match(await p.locator('#review-impact-result').innerText(),/CONDITIONAL RESULT SURVIVES/);
+   assert.match(await p.locator('#review-baseline-state').innerText(),new RegExp(parentPin));
+   const child=await saveVersion('after');assert.equal(child.previousDigest,parentPin);
+   assert.deepEqual(JSON.parse(child.contractText).sources,JSON.parse(parent.contractText).sources.filter(s=>s.id!=='investment_report'));
+   const d=p.waitForEvent('download');await click('impact-export');fs.writeFileSync(path.join(output,'living-withdraw-impact.json'),fs.readFileSync(await (await d).path()));
+   await click('baseline-restore');await state('restored');assert.match(await p.locator('#review-staged').innerText(),/2 staged source.*4 reviewed binding/);
+   assert.equal(await p.locator('#review-semantic-export').isDisabled(),true);assert.equal(await p.locator('#review-source-withdraw-version-apply').isDisabled(),true);
+   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await p.close();
+  }
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});

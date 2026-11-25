@@ -1,3 +1,4 @@
+import {prepareWithdrawalRevision} from '../../../packages/sutra-knowledge/withdrawal-revision.js';
 import {inspectReviewedTextFile,addReviewedTextFile,reviseReviewedTextFile,MAX_FILE_BYTES} from '../../../packages/sutra-knowledge/reviewed-text-file.js';
 import {exportReviewedQuestion} from '../../../packages/sutra-knowledge/reviewed-question.js';
 import {evaluateReviewedFisher,FISHER_DESIGN} from '../../../packages/sutra-knowledge/reviewed-fisher.js';
@@ -36,12 +37,13 @@ function control(){
  for(const id of controls)by(id).disabled=busy;
  if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;by('candidate-id').disabled=!sealed;by('expression').disabled=!sealed;by('expression-generate').disabled=!sealed||!by('expression').value.trim();by('source-revise').disabled=!sources.length;by('source-revise-pick').disabled=!sources.length;by('source-revise-text').disabled=!sources.length;}
  semanticControl();tableControl();questionControl();textFileControl();
- by('source-withdraw-preview').disabled=busy||!sources.length;by('source-withdraw-apply').disabled=busy||!withdrawalPreview;
+ by('source-withdraw-preview').disabled=busy||!sources.length;by('source-withdraw-apply').disabled=busy||!withdrawalPreview||!!withdrawalPreview.revision;
+ by('source-withdraw-version-preview').disabled=busy||!sources.length||!baseline;by('source-withdraw-version-apply').disabled=busy||!withdrawalPreview?.revision||withdrawalPreview.parent!==baseline;
 }
 function invalidate(message){epoch++;clearWithdrawalPreview();clearTextFilePreview({clearFile:true});clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 function options(element,items){element.replaceChildren();for(const id of items){const o=document.createElement('option');o.value=id;o.textContent=id;element.append(o);}}
-function clearWithdrawalPreview(){withdrawalPreview=null;by('source-withdraw-summary').textContent='No withdrawal preview.';}
+function clearWithdrawalPreview(){withdrawalPreview=null;by('source-withdraw-summary').textContent='No withdrawal preview.';by('source-withdraw-version-result').textContent='';}
 function clearTextFilePreview({clearFile=false}={}){
  textFilePreview=null;by('text-file-preview').textContent='No local file inspected.';by('text-file-digest').textContent='';
  if(clearFile)by('text-file').value='';
@@ -233,11 +235,40 @@ by('source-withdraw-preview').onclick=()=>work(async ticket=>{
  status('withdrawal_preview','Review the consequences, then explicitly confirm withdrawal.');
 });
 by('source-withdraw-apply').onclick=()=>work(async ticket=>{
- const p=withdrawalPreview;if(!p||p.wire!==draft()||p.sourceId!==by('source-revise-pick').value){clearWithdrawalPreview();throw Error('RESTORE_WITHDRAW_SOURCE_PIN');}
+ const p=withdrawalPreview;if(!p||p.revision||p.wire!==draft()||p.sourceId!==by('source-revise-pick').value){clearWithdrawalPreview();throw Error('RESTORE_WITHDRAW_SOURCE_PIN');}
  const r=await withdrawReviewedSourceDraft(p.wire,p.sourceId,p.pin);
  if(ticket!==epoch||p!==withdrawalPreview||p.wire!==draft())return;
  sources=structuredClone(r.draft.sources);bindings=structuredClone(r.draft.bindings);
  invalidate('Source '+r.sourceId+' withdrawn from current draft. Invalidated bindings: '+(r.invalidatedBindingIds.join(', ')||'none')+'. Retained bindings: '+(r.retainedBindingIds.join(', ')||'none')+'. Historical versions unchanged.');refresh();
+});
+by('source-withdraw-version-preview').onclick=()=>work(async ticket=>{
+ clearWithdrawalPreview();
+ const parent=baseline,wire=draft(),source=sources.find(s=>s.id===by('source-revise-pick').value);
+ if(!parent||!source)throw Error('REVISION_WITHDRAW_BASELINE');
+ const seal=await sealReviewedDraft(wire),pin=await casePin(source.text);
+ if(seal.pin!==parent.report.investigation.contractDigest)throw Error('REVISION_WITHDRAW_BASELINE');
+ const revision=await prepareWithdrawalRevision(parent.versionText,parent.digest,source.id,pin);
+ if(ticket!==epoch||parent!==baseline||wire!==draft()||source.id!==by('source-revise-pick').value)return;
+ withdrawalPreview={wire,sourceId:source.id,pin,parent,revision};
+ by('source-withdraw-version-result').textContent=['Proposed child of '+parent.digest,
+  ...revision.changes.map(c=>c.id+' · '+c.classification+' · '+c.before+' → '+c.after+' · missing bindings: '+(c.targetBindings.join(', ')||'none')+' · removed links: '+c.removedReferences.length+' · removed quotations: '+c.removedClaims.length),
+  revision.qualification,'No change applied. Confirm to use this child; existing staged proposals will be replaced.'].join('\n');
+ status('withdrawal_version_preview','Review all candidate consequences. No change applied.');
+});
+by('source-withdraw-version-apply').onclick=()=>work(async ticket=>{
+ const p=withdrawalPreview;
+ if(!p?.revision||p.parent!==baseline||p.wire!==draft()||p.sourceId!==by('source-revise-pick').value){clearWithdrawalPreview();throw Error('REVISION_WITHDRAW_BASELINE');}
+ const {revision}=p,child=revision.child,v=JSON.parse(child.versionText),b=JSON.parse(v.batchText),a=JSON.parse(v.annotationText);
+ if(ticket!==epoch)return;
+ sources=structuredClone(revision.draft.sources);bindings=structuredClone(revision.draft.bindings);
+ invalidate('Source withdrawn; exact proposed child replayed after explicit confirmation.');refresh();
+ sealed={contractText:v.contractText,pin:v.contractPin};stagedProposals=structuredClone(b.proposals);
+ annotations=new Map(a.candidates.map(c=>[c.id,{meaning:c.meaning,binding:c.facets.definition?.references.find(x=>x.kind==='binding')?.id??'',facets:Object.fromEntries(Object.entries(c.facets).filter(([k,f])=>k!=='definition'&&f).map(([k,f])=>[k,{statement:f.statement,binding:f.references.find(x=>x.kind==='binding')?.id??''}])),generatedFacets:structuredClone(c.facets)}]));
+ by('pin').textContent=sealed.pin;by('contract').textContent=sealed.contractText;
+ by('proposal').value=stagedProposals[0].proposalText;renderBatch();semanticCurrent=child;impactCurrent=revision.impact;renderWorldAxes();
+ by('semantic-pin').textContent=child.digest;by('semantic-result').textContent=semanticText(child);by('impact-result').textContent=impactText(revision.impact);
+ by('source-withdraw-version-result').textContent='Confirmed child '+child.digest+'; retained baseline '+p.parent.digest+'. Review unresolved meaning and missing evidence before making any decision.';
+ status('semantic_ready','Withdrawal child replayed. Previous conditional results can become unresolved; no meaning or source truth established.');
 });
 by('source-revise').onclick=()=>work(async ticket=>{
  const r=await reviseReviewedSourceDraft(draft(),by('source-revise-pick').value,by('source-revise-text').value);if(ticket!==epoch)return;
@@ -432,7 +463,7 @@ function impactText(r){
   ...r.candidates.map(c=>c.id+' — '+c.outcome.replaceAll('_',' ')+' · dependency affected '+(c.dependencyAffected?'yes':'no')+' · review '+(c.reviewRequired?'required':'no new scoped dependency issue')),
   'New divergence: '+(r.triage.newDivergence?'yes':'no'),'Missing/unresolved: '+(r.missing.map(c=>c.id+' '+c.reason).join(', ')||'none'),'Full replay of both versions; no empirical or semantic assurance.'].join('\n');
 }
-function baselineState(){by('correspondence').checked=false;by('baseline-state').textContent=baseline?'Retained baseline '+baseline.digest+' · '+baseline.report.investigation.originalQuestion.text:'No baseline retained.';by('baseline-candidates').textContent=baseline?baseline.report.investigation.candidates.map(c=>c.id+' · '+c.meaning).join('\n'):'';}
+function baselineState(){clearWithdrawalPreview();by('correspondence').checked=false;by('baseline-state').textContent=baseline?'Retained baseline '+baseline.digest+' · '+baseline.report.investigation.originalQuestion.text:'No baseline retained.';by('baseline-candidates').textContent=baseline?baseline.report.investigation.candidates.map(c=>c.id+' · '+c.meaning).join('\n'):'';}
 by('correspondence').onchange=()=>semanticControl();
 by('semantic-run').onclick=()=>work(async ticket=>{
  if(!sealed||stagedProposals.length<2||baseline&&!by('correspondence').checked)return;
@@ -441,8 +472,8 @@ by('semantic-run').onclick=()=>work(async ticket=>{
  const candidates=stagedProposals.map(p=>{
   const a=annotations.get(p.id);if(!a?.meaning.trim())throw Error('SEMANTIC_MEANING_REQUIRED');
   const facets=Object.fromEntries(FACETS.map(k=>[k,null]));
-  facets.definition=a.generatedFacets?.definition??{statement:a.meaning,references:a.binding?[{kind:'binding',id:a.binding}]:[]};
-  for(const k of FACETS.filter(k=>k!=='definition')){const f=a.facets[k];if(a.generatedFacets?.[k])facets[k]=a.generatedFacets[k];else if(f?.statement.trim())facets[k]={statement:f.statement,references:f.binding?[{kind:'binding',id:f.binding}]:[]};else if(f?.binding)throw Error('SEMANTIC_FACET_STATEMENT_REQUIRED');}
+  facets.definition=a.generatedFacets&&Object.hasOwn(a.generatedFacets,'definition')?a.generatedFacets.definition:{statement:a.meaning,references:a.binding?[{kind:'binding',id:a.binding}]:[]};
+  for(const k of FACETS.filter(k=>k!=='definition')){const f=a.facets[k];if(a.generatedFacets&&Object.hasOwn(a.generatedFacets,k))facets[k]=a.generatedFacets[k];else if(f?.statement.trim())facets[k]={statement:f.statement,references:f.binding?[{kind:'binding',id:f.binding}]:[]};else if(f?.binding)throw Error('SEMANTIC_FACET_STATEMENT_REQUIRED');}
   return {id:p.id,meaning:a.meaning,facets};
  });
  const annotationText=JSON.stringify({version:1,contractDigest:sealed.pin,batchDigest:await casePin(batchText),candidates});

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-108",
+  "session": "V2-109",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -3071,7 +3071,7 @@
       "dependencies": [
         "V2-LK08-KNOWLEDGE-GRAPH"
       ],
-      "scope": "Incremental evidence replacement/withdrawal, direct/transitive dependency invalidation, and historical reproducibility. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. Scoped unit/CI evidence registered; broader acceptance remains open. V2-108 candidate: exact pinned single-source draft withdrawal with explicit preview/confirmation, complete affected-binding invalidation and unchanged historical versions; no reuse or authority claim; exact CI pending.",
+      "scope": "Incremental evidence replacement/withdrawal, direct/transitive dependency invalidation, and historical reproducibility. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. Scoped unit/CI evidence registered; broader acceptance remains open. V2-108 candidate: exact pinned single-source draft withdrawal with explicit preview/confirmation, complete affected-binding invalidation and unchanged historical versions; no reuse or authority claim; exact CI pending. V2-109 candidate: exact pinned source withdrawal child, stable candidate identifiers, typed unknowns, contextual/target distinction and refused-parent quarantine; full replay, human preview/confirmation, CI pending.",
       "acceptance": "Incremental equals full recompute; shared descendants, concurrency, stale cache, interrupted writes, cycles and simultaneous updates.",
       "evidence": [
         {
@@ -3085,6 +3085,12 @@
           "sourceRevision": "69aabf2636dc44ba176d21fd4a0bd06a987ab62c",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45606969626/job/139180244382",
           "description": "All 10 exact workflows passed; projected source-bound reuse agrees with fresh reports across two domains. Diagnostic only, no speedup claim."
+        },
+        {
+          "id": "V2-LK09-REVISION",
+          "sourceRevision": "9e64d0403f4f37ca34f45e142456191200c4fc01",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45714795537/job/139557975035",
+          "description": "Exact V2-108 nine returned PR workflows green; pinned draft withdrawal kernel/browser regressions passed, retained unrelated bindings and invalidated stale export. Separate push run not observed; broad gate open."
         }
       ]
     },
@@ -3132,7 +3138,7 @@
         "V2-LK09-REVISION",
         "V2-LK07-AMBIGUITY-REVIEW"
       ],
-      "scope": "Explain changes, surviving/invalidated conclusions, new contradictions, reconsidered decisions, missing evidence and next investigation. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending. Scoped unit/CI evidence registered; broader acceptance remains open.",
+      "scope": "Explain changes, surviving/invalidated conclusions, new contradictions, reconsidered decisions, missing evidence and next investigation. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending. Scoped unit/CI evidence registered; broader acceptance remains open. V2-109 candidate: exact pinned source withdrawal child, stable candidate identifiers, typed unknowns, contextual/target distinction and refused-parent quarantine; full replay, human preview/confirmation, CI pending.",
       "acceptance": "Two independent domain journeys, independently replayable export, old snapshots retained.",
       "evidence": [
         {
@@ -3249,7 +3255,7 @@
         "V2-LK07-AMBIGUITY-REVIEW",
         "V2-LK11-IMPACT-REPORT"
       ],
-      "scope": "Question → evidence → interpretations → review → investigation → conclusion → challenge → revision → export, manual/offline mode, accessible progressive disclosure. V2-057 candidate: manual reviewed workspace now preserves labels, source links, version export, separate pin, caller baseline import and evidence correction impact. Actual browser tests pending; stable candidate IDs, progressive source review, broader canvas, offline independent replay and accessibility acceptance remain open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending. V2-108 candidate: exact pinned single-source draft withdrawal with explicit preview/confirmation, complete affected-binding invalidation and unchanged historical versions; no reuse or authority claim; exact CI pending.",
+      "scope": "Question → evidence → interpretations → review → investigation → conclusion → challenge → revision → export, manual/offline mode, accessible progressive disclosure. V2-057 candidate: manual reviewed workspace now preserves labels, source links, version export, separate pin, caller baseline import and evidence correction impact. Actual browser tests pending; stable candidate IDs, progressive source review, broader canvas, offline independent replay and accessibility acceptance remain open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending. V2-108 candidate: exact pinned single-source draft withdrawal with explicit preview/confirmation, complete affected-binding invalidation and unchanged historical versions; no reuse or authority claim; exact CI pending. V2-109 candidate: exact pinned source withdrawal child, stable candidate identifiers, typed unknowns, contextual/target distinction and refused-parent quarantine; full replay, human preview/confirmation, CI pending.",
       "acceptance": "Actual browser journey, persistence, cancel/error recovery, keyboard/mobile and no-model pathway.",
       "evidence": [
         {
@@ -3269,6 +3275,12 @@
           "sourceRevision": "734b52e382feedeb39885642f39993b7619fddb8",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45615925525",
           "description": "Exact 10/10 green: living overview, keyboard entry and browser state invalidation."
+        },
+        {
+          "id": "V2-LK15-UNIFIED-WORKSPACE",
+          "sourceRevision": "9e64d0403f4f37ca34f45e142456191200c4fc01",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45714795537/job/139557975035",
+          "description": "Exact V2-108 nine returned PR workflows green; pinned draft withdrawal kernel/browser regressions passed, retained unrelated bindings and invalidated stale export. Separate push run not observed; broad gate open."
         }
       ]
     },

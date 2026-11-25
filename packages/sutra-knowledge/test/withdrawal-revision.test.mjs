@@ -1,0 +1,58 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {casePin} from '../pinned-investigation.js';
+import {livingFixture} from '../examples/living-investigation.mjs';
+import {sealInvestigationVersion,replayInvestigationVersion} from '../investigation-revision.js';
+import {prepareWithdrawalRevision} from '../withdrawal-revision.js';
+const contract=v=>JSON.parse(JSON.parse(v.versionText).contractText);
+const sourcePin=(v,id)=>contract(v).sources.find(s=>s.id===id).digest;
+const version=async(v,batch,annotation)=>{
+ const a=JSON.parse(v.versionText),batchText=JSON.stringify(batch);
+ const annotationText=JSON.stringify({...annotation,batchDigest:await casePin(batchText)});
+ return sealInvestigationVersion({...a,batchText,annotationText,annotationPin:await casePin(annotationText)});
+};
+for(const domain of ['finance','engineering'])test(domain+': exact child preserves surviving result, withdraws dependent result and retains parent replay',async()=>{
+ const v=await livingFixture(domain),pin=sourcePin(v,'secondary');
+ const r=await prepareWithdrawalRevision(v.versionText,v.digest,'secondary',pin);
+ assert.deepEqual(r.impact.sourceChanges,[{id:'secondary',change:'WITHDRAWN'}]);
+ const first=r.changes.find(x=>x.id==='primary_view'),second=r.changes.find(x=>x.id==='secondary_view');
+ assert.equal(first.classification,'NO_SCOPED_SOURCE_DEPENDENCY');assert.equal(first.after,first.before);
+ assert.equal(second.classification,'TARGET_EVIDENCE_WITHDRAWN');assert.equal(second.after,'BLOCKED_MISSING_INPUT');
+ assert.deepEqual(second.targetBindings,['other','second']);assert.equal(second.changedInputs.length,2);assert.equal(second.removedReferences.length,2);
+ assert.equal(r.child.report.previousDigest,v.digest);assert.equal(r.decisionAuthority,'NONE');
+ assert.deepEqual(await replayInvestigationVersion(v.versionText,v.digest),v.report);
+ assert.deepEqual(await replayInvestigationVersion(r.child.versionText,r.child.digest),r.child.report);
+ assert.deepEqual(await prepareWithdrawalRevision(v.versionText,v.digest,'secondary',pin),r);
+ await assert.rejects(prepareWithdrawalRevision(v.versionText,v.digest,'secondary','sha256:'+'0'.repeat(64)),/RESTORE_WITHDRAW_SOURCE_PIN/);
+ await assert.rejects(prepareWithdrawalRevision(v.versionText+' ',v.digest,'secondary',pin),/REVISION_PIN/);
+ await assert.rejects(prepareWithdrawalRevision(r.child.versionText,r.child.digest,'secondary',pin),/RESTORE_WITHDRAW_SOURCE_PIN/);
+ const r2=await prepareWithdrawalRevision(r.child.versionText,r.child.digest,'primary',sourcePin(r.child,'primary'));
+ assert.ok(r2.changes.every(c=>c.after==='BLOCKED_MISSING_INPUT'));
+});
+test('non-target nodes, quoted claims and contextual references are explicitly distinguished',async()=>{
+ const v=await livingFixture(),raw=JSON.parse(v.versionText),batch=JSON.parse(raw.batchText),ann=JSON.parse(raw.annotationText);
+ const p=JSON.parse(batch.proposals[0].proposalText),s=contract(v).sources.find(x=>x.id==='secondary');
+ p.nodes.push({id:'unused',kind:'input',bindingId:'second'});
+ p.claims.push({id:'external_quote',kind:'quoted_assertion',span:{sourceId:s.id,start:0,end:s.text.length,quote:s.text}});
+ batch.proposals[0].proposalText=JSON.stringify(p);
+ ann.candidates[0].facets.method={statement:'Contextual wording retained',references:[{kind:'claim',id:'external_quote'},{kind:'binding',id:'second'}]};
+ const old=await version(v,batch,ann),r=await prepareWithdrawalRevision(old.versionText,old.digest,'secondary',s.digest),row=r.changes[0];
+ assert.equal(row.classification,'CONTEXT_OR_NONTARGET_WITHDRAWN');assert.deepEqual(row.targetBindings,[]);
+ assert.deepEqual(row.changedInputs,[{nodeId:'unused',bindingId:'second'}]);assert.deepEqual(row.removedClaims,['external_quote']);
+ assert.equal(row.removedReferences.length,2);assert.equal(row.before,row.after);
+ assert.equal(r.child.report.investigation.candidates[0].facets.method.status,'UNSUPPORTED_DECLARATION');
+ assert.equal(r.child.report.investigation.candidates[0].facets.method.statement,'Contextual wording retained');
+ assert.equal(r.impact.candidates[0].reviewRequired,true);
+});
+test('refused parent with a deliberately future-valid child pin stays quarantined',async()=>{
+ const v=await livingFixture(),pin=sourcePin(v,'secondary'),normal=await prepareWithdrawalRevision(v.versionText,v.digest,'secondary',pin);
+ const raw=JSON.parse(v.versionText),batch=JSON.parse(raw.batchText),ann=JSON.parse(raw.annotationText);
+ const future=JSON.parse(batch.proposals[0].proposalText);future.contractDigest=JSON.parse(normal.child.versionText).contractPin;
+ batch.proposals[0].proposalText=JSON.stringify(future);
+ const old=await version(v,batch,ann);assert.equal(old.report.investigation.candidates[0].admission,'REFUSED');
+ const r=await prepareWithdrawalRevision(old.versionText,old.digest,'secondary',pin);
+ assert.equal(r.changes[0].classification,'REFUSED_PARENT_QUARANTINED');assert.equal(r.changes[0].after,'REFUSED');
+ assert.equal(r.child.report.investigation.candidates[0].admission,'REFUSED');
+ assert.equal(JSON.parse(JSON.parse(r.child.versionText).batchText).proposals[0].id,'primary_view');
+ assert.equal(JSON.parse(JSON.parse(JSON.parse(r.child.versionText).batchText).proposals[0].proposalText).quarantinedProposalDigest,await casePin(batch.proposals[0].proposalText));
+});
