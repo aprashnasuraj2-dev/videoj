@@ -39,7 +39,8 @@ function sanitizeProviderValue(value,secret,{depth=0,budget={chars:0,nodes:0}}={
  if(keys.length>128||keys.some(k=>typeof k!=='string')||Object.values(descriptors).some(d=>typeof d.get==='function'||typeof d.set==='function'))stop('PROVIDER_RESULT');
  const out=Object.create(null);
  for(const key of keys){
-  budget.chars+=key.length;if(budget.chars>65536||secret&&key.includes(secret))stop('SECRET_ECHO');
+  budget.chars+=key.length;if(budget.chars>65536)stop('PROVIDER_RESULT');
+  if(secret&&key.includes(secret))stop('SECRET_ECHO');
   out[key]=sanitizeProviderValue(descriptors[key].value,secret,{depth:depth+1,budget});
  }
  return Object.freeze(out);
@@ -87,12 +88,16 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
    const profile=profileMeta(handle);
    if(typeof model!=='string'||!modelPattern.test(model)||!profile.models.includes(model))stop('MODEL');
    if(typeof transport!=='function')stop('TRANSPORT');
+   // Snapshot operation data before budget reservation or secret release. This
+   // rejects accessors/functions/cycles and prevents transport-side mutation of
+   // caller-owned data from changing the admitted operation after the fact.
+   const safeOperation=sanitizeProviderValue(operation,'');
    let lease;
    try{lease=ledger.reserve({profileId:profile.profileId,inputBytes,maxOutputTokens,now});}
    catch(error){if(error instanceof BudgetLedgerError)stop(error.code==='PROFILE_DISABLED'?'PROFILE_DISABLED':'BUDGET');throw error;}
    try{
     const raw=await vault.use(handle,profile.providerId,(secret,meta)=>transport(Object.freeze({
-     providerId:meta.providerId,model,credential:secret,leaseId:lease.leaseId,operation
+     providerId:meta.providerId,model,credential:secret,leaseId:lease.leaseId,operation:safeOperation
     })));
     let report,secret;
     // Re-enter the vault only for bounded secret-echo detection; do not retain
