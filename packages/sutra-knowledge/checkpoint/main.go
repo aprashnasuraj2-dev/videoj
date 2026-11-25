@@ -235,4 +235,62 @@ func run(args []string,out io.Writer) error {
  }{"sutra-checkpoint/v1",a.Session,hex.EncodeToString(pub),a.Latest.String(),receipts,
  "Ephemeral CI witness; observed byte-prefix integrity only. No truth, pre-genesis completeness, trusted time, external witness, or persistent freshness claim."})
 }
-func main(){if e:=run(os.Args[1:],os.Stdout);e!=nil{fmt.Fprintln(os.Stderr,e);os.Exit(1)}}
+// Verify a received checkpoint using separately obtained key, case and latest ID.
+// The embedded key/ID are informational only. The exact export is mandatory.
+func decodeDigest(s string)(Digest,error){
+ var d Digest
+ b,e:=hex.DecodeString(s);if e!=nil||len(b)!=len(d)||hex.EncodeToString(b)!=s{return d,refused}
+ copy(d[:],b);return d,nil
+}
+func fromReceipt(session string,r Receipt)(Checkpoint,error){
+ c:=Checkpoint{Session:session,Sequence:r.Sequence,Count:r.Count}
+ fields:=[]struct{s string;d *Digest}{{r.CaseDigest,&c.CaseDigest},{r.EventHead,&c.Head},
+ {r.ExportDigest,&c.ExportDigest},{r.Previous,&c.Previous}}
+ for _,f:=range fields{d,e:=decodeDigest(f.s);if e!=nil{return Checkpoint{},e};*f.d=d}
+ b,e:=hex.DecodeString(r.Signature);if e!=nil||len(b)!=len(c.Signature)||hex.EncodeToString(b)!=r.Signature{return Checkpoint{},refused}
+ copy(c.Signature[:],b)
+ if c.ID().String()!=r.ID{return Checkpoint{},refused}
+ return c,nil
+}
+func verifyFile(args []string,out io.Writer)error{
+ if len(args)!=6{return errors.New("usage: verify trusted-case.json session trusted-public-key-hex trusted-latest-id-hex receipt-report.json export.json")}
+ caseBytes,e:=readBounded(args[0],maxCase);if e!=nil{return e}
+ if e=strictJSON(caseBytes,maxCase);e!=nil{return e}
+ key,e:=hex.DecodeString(args[2]);if e!=nil||len(key)!=ed25519.PublicKeySize{return refused}
+ latest,e:=decodeDigest(args[3]);if e!=nil{return e}
+ a:=Anchor{Session:args[1],CaseDigest:sum(caseBytes),Key:ed25519.PublicKey(key),Latest:latest}
+ data,e:=readBounded(args[4],maxExport);if e!=nil{return e}
+ if e=strictJSON(data,maxExport);e!=nil{return e}
+ var report struct{
+  Profile string
+  Session string
+  PublicKey string
+  Latest string
+  Receipts []Receipt
+  Qualification string
+ }
+ d:=json.NewDecoder(bytes.NewReader(data));d.DisallowUnknownFields()
+ if d.Decode(&report)!=nil||report.Profile!="sutra-checkpoint/v1"||report.Session!=a.Session||
+ report.PublicKey!=hex.EncodeToString(a.Key)||report.Latest!=a.Latest.String()||
+ len(report.Receipts)==0||len(report.Receipts)>maxEvents+1{return refused}
+ // Verify signatures and linkage for the supplied checkpoints; only the last
+ // export is available here, so previous raw event prefixes are not replayed.
+ var previous Digest
+ for i,r:=range report.Receipts{
+  c,e:=fromReceipt(report.Session,r)
+  if e!=nil||c.CaseDigest!=a.CaseDigest||c.Sequence!=uint32(i)||c.Previous!=previous||
+  c.Count>maxEvents||(i>0&&c.Count<=report.Receipts[i-1].Count)||
+  !ed25519.Verify(a.Key,c.message(),c.Signature[:]){return refused}
+  previous=c.ID()
+ }
+ c,e:=fromReceipt(report.Session,report.Receipts[len(report.Receipts)-1]);if e!=nil{return e}
+ raw,e:=readBounded(args[5],maxExport);if e!=nil{return e}
+ if _,e=verify(raw,c,a);e!=nil{return e}
+ _,e=fmt.Fprintln(out,"ACCEPTED exact externally anchored latest checkpoint",c.ID().String())
+ return e
+}
+func main(){
+ args:=os.Args[1:];var e error
+ if len(args)>0&&args[0]=="verify"{e=verifyFile(args[1:],os.Stdout)}else{e=run(args,os.Stdout)}
+ if e!=nil{fmt.Fprintln(os.Stderr,e);os.Exit(1)}
+}
