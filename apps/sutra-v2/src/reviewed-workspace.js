@@ -32,7 +32,10 @@ let roundtripCurrent=null,textFilePreview=null,withdrawalPreview=null,withdrawal
 let baselineReplay=null,currentReplay=null;
 let transactionQueue=[],transactionSelections=[],transactionPreview=null,transactionExport=null,probeCurrent=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
-let questionCurrent=null,questionExport=null,questionPathPin=null,questionSelections={left:null,right:null};
+let questionCurrent=null,questionExport=null,questionPathPin=null,questionSelections={left:null,right:null,threshold:null};
+const questionSides=['left','right','threshold'];
+const questionMode=()=>by('question-path-mode').value==='change';
+const activeQuestionSides=()=>questionMode()?questionSides:questionSides.slice(0,2);
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
 const tableFields=['table-text','table-source','table-lineage','table-inspect','table-row','table-column','table-id','table-kind','table-unit','table-scope','table-dim-l','table-dim-m','table-dim-t','table-add','table-stage','table-clear'];
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected','sample-statistics','sample-statistics-corrected','sample-two-groups','sample-two-groups-corrected'];
@@ -92,26 +95,39 @@ by('text-file-stage').onclick=()=>work(async ticket=>{
  invalidate(preview.mode==='replace'?'Exact source replaced. Reselect invalidated bindings: '+(r.invalidatedBindingIds.join(', ')||'none')+'. Retained bindings: '+(r.retainedBindingIds.join(', ')||'none')+'.':'Exact local file staged; zero automatically admitted quantities. Select and declare relevant numeric tokens.');refresh();by('source-pick').value=r.sourceId;by('select-text').value=sources.find(s=>s.id===r.sourceId).text;
 });
 function clearQuestionPreview(){questionCurrent=null;questionExport=null;by('question-path-result').textContent='';by('question-path-snapshot-pin').textContent='';by('question-path-plan-pin').textContent='';by('question-path-disclosure').textContent='No mapping export available.';}
+function resetQuestionSelections(){
+ questionSelections={left:null,right:null,threshold:null};clearQuestionPreview();
+ for(const side of questionSides){
+  by('question-path-'+side+'-span').textContent='No selection.';
+  options(by('question-path-'+side+'-binding'),sealed?bindings.map(b=>b.id):[]);
+  by('question-path-'+side+'-binding').selectedIndex=-1;
+ }
+}
 function questionControl(){
  const pin=sealed?.pin??null;
  if(pin!==questionPathPin){
-  questionPathPin=pin;questionSelections={left:null,right:null};clearQuestionPreview();
-  by('question-path-text').value=sealed?JSON.parse(sealed.contractText).question.text:'';
-  for(const side of ['left','right']){
-   by('question-path-'+side+'-span').textContent='No selection.';
-   options(by('question-path-'+side+'-binding'),sealed?bindings.map(b=>b.id):[]);
-   by('question-path-'+side+'-binding').selectedIndex=-1;
-  }
+  questionPathPin=pin;
+  const q=sealed?JSON.parse(sealed.contractText).question.text:'';
+  by('question-path-text').value=q;
+  by('question-path-mode').value=/^Is the (?:change|signed difference|signed relative change) from /.test(q)?'change':'comparison';
+  resetQuestionSelections();
  }
- const mapped=side=>by('question-path-'+side+'-binding').selectedOptions.length;
- for(const id of ['question-path-text','question-path-left','question-path-right','question-path-left-binding','question-path-right-binding'])by(id).disabled=busy||!sealed;
- by('question-path-run').disabled=busy||!sealed||!questionSelections.left||!questionSelections.right||!mapped('left')||!mapped('right');
+ const change=questionMode(),active=activeQuestionSides(),mapped=side=>by('question-path-'+side+'-binding').selectedOptions.length;
+ by('question-path-left').textContent=change?'Capture baseline selection':'Capture left selection';
+ by('question-path-right').textContent=change?'Capture current selection':'Capture right selection';
+ by('question-path-left-label').textContent=(change?'Baseline':'Left')+' quantity mappings (select all plausible)';
+ by('question-path-right-label').textContent=(change?'Current':'Right')+' quantity mappings (select all plausible)';
+ by('question-path-threshold').hidden=!change;by('question-path-threshold-fields').hidden=!change;
+ for(const id of ['question-path-text','question-path-mode'])by(id).disabled=busy||!sealed;
+ for(const side of questionSides)for(const id of ['question-path-'+side,'question-path-'+side+'-binding'])by(id).disabled=busy||!sealed||!active.includes(side);
+ by('question-path-run').disabled=busy||!sealed||!active.every(side=>questionSelections[side]&&mapped(side));
  by('question-path-stage').disabled=busy||!sealed||!questionCurrent||questionCurrent.contractDigest!==pin;
  for(const id of ['question-path-export','question-path-export-pin'])by(id).disabled=busy||!questionExport;
 }
-for(const side of ['left','right']){
+by('question-path-mode').onchange=()=>{resetQuestionSelections();control();};
+for(const side of questionSides){
  by('question-path-'+side).onclick=()=>{
-  if(busy||!sealed)return;
+  if(busy||!sealed||!activeQuestionSides().includes(side))return;
   const el=by('question-path-text'),start=el.selectionStart,end=el.selectionEnd;
   questionSelections[side]=end>start?{start,end}:null;
   by('question-path-'+side+'-span').textContent=end>start?JSON.stringify(el.value.slice(start,end)):'No selection.';
@@ -120,17 +136,17 @@ for(const side of ['left','right']){
  by('question-path-'+side+'-binding').onchange=()=>{clearQuestionPreview();control();};
 }
 by('question-path-run').onclick=()=>work(async ticket=>{
- if(!sealed||!questionSelections.left||!questionSelections.right)return;
+ if(!sealed||!activeQuestionSides().every(side=>questionSelections[side]&&by('question-path-'+side+'-binding').selectedOptions.length))return;
  clearQuestionPreview();
  const operand=side=>({...questionSelections[side],bindingIds:Array.from(by('question-path-'+side+'-binding').selectedOptions,o=>o.value)});
- const plan=JSON.stringify({version:1,contractDigest:sealed.pin,left:operand('left'),right:operand('right')});
+ const plan=JSON.stringify(questionMode()?{version:2,contractDigest:sealed.pin,baseline:operand('left'),current:operand('right'),threshold:operand('threshold')}:{version:1,contractDigest:sealed.pin,left:operand('left'),right:operand('right')});
  const exported=await exportReviewedQuestion(sealed.contractText,sealed.pin,plan,await casePin(plan)),result=exported.result;
  if(ticket!==epoch||result.contractDigest!==sealed?.pin)return;
  questionCurrent=result;
  const sourceInventory=JSON.parse(sealed.contractText).sources.map(s=>s.id+' ('+new TextEncoder().encode(s.text).length+' source bytes)');
  by('question-path-disclosure').textContent=exported.byteLength+' report bytes; includes original question, full reviewed source text from '+(sourceInventory.join(', ')||'no sources')+', all mappings and conditional results. '+(exported.portable?'Local download only; review before sharing.':'Exceeds the portable limit; no download.');
  if(exported.portable){questionExport={bytes:new TextEncoder().encode(exported.bundleText),digest:exported.snapshotPin};by('question-path-snapshot-pin').textContent=exported.snapshotPin;by('question-path-plan-pin').textContent=result.planDigest;}
- by('question-path-result').textContent=['Exact relation: '+result.relation.span.quote+' → '+result.relation.operator,...result.candidates.map(c=>c.meaning+' · '+c.conditionalState),result.qualification].join('\n');
+ by('question-path-result').textContent=['Exact relation: '+result.relation.span.quote+' → '+result.relation.operator,...result.candidates.map(c=>c.meaning+' · '+c.conditionalState+' · '+c.expression),result.qualification].join('\n');
  status('question_ready','Local grammar compiled. Review all supplied mappings and conditional outcomes before explicitly staging.');
 });
 by('question-path-export').onclick=()=>{if(!busy&&questionExport)download(questionExport.bytes,'sutra-reviewed-question.json','application/json');};
@@ -139,7 +155,7 @@ by('question-path-stage').onclick=()=>{
  const r=questionCurrent;
  if(busy||!sealed||!r||r.contractDigest!==sealed.pin)return;
  epoch++;stagedProposals=structuredClone(r.proposals);batchCurrent=null;current=null;invalidateSemantic();
- annotations=new Map(r.candidates.map(c=>[c.id,{meaning:c.meaning,binding:c.leftBinding,facets:Object.fromEntries(Object.entries(c.facets).filter(([k,v])=>k!=='definition'&&v).map(([k,v])=>[k,{statement:v.statement,binding:v.references.find(x=>x.kind==='binding')?.id??''}])),generatedFacets:structuredClone(c.facets)}]));
+ annotations=new Map(r.candidates.map(c=>[c.id,{meaning:c.meaning,binding:c.leftBinding??c.baselineBinding,facets:Object.fromEntries(Object.entries(c.facets).filter(([k,v])=>k!=='definition'&&v).map(([k,v])=>[k,{statement:v.statement,binding:v.references.find(x=>x.kind==='binding')?.id??''}])),generatedFacets:structuredClone(c.facets)}]));
  by('proposal').value=r.proposals[0].proposalText;by('result').textContent='';by('snapshot-pin').textContent='';by('batch-result').textContent='';
  clearQuestionPreview();renderBatch();control();
  status('question_staged',r.proposals.length===1?'One untrusted proposal staged. Evaluate it individually; no artificial consensus.':'All declared alternatives staged with exact question claims. Review meanings before sealing an investigation.');

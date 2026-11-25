@@ -960,6 +960,32 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    await fill('facet-question_1-negation','Caller revised negation declaration');assert.equal(await tablePage.locator('#review-semantic-export').isDisabled(),true);
    await click('semantic-run');await state('semantic_ready');
    await fill('question','Is current revenue higher than prior revenue?');assert.equal(await tablePage.locator('#review-question-path-stage').isDisabled(),true);
+   // The same mapping workspace preserves absolute-unit and ratio alternatives.
+   await fill('question','Is the change from 前期売上 to 今期売上 greater than limit?');
+   await fill('source-id','thresholds');await fill('lineage','declared_limit');await fill('source-text','Amount: 15; Ratio: 1/4;');await click('source-add');await state('draft');
+   async function bindThreshold(id,token,kind,unit){
+    await fill('binding-id',id);await fill('kind',kind);await fill('unit',unit);await fill('scope','same_company');
+    await tablePage.locator('#review-select-text').evaluate((el,token)=>{el.focus();const i=el.value.indexOf(token);el.setSelectionRange(i,i+token.length);},token);
+    await click('binding-add');await state('draft');
+   }
+   await bindThreshold('amount_limit','15','currency_amount','USD');await bindThreshold('ratio_limit','1/4','ratio','one');
+   await click('seal');await state('sealed');assert.equal(await tablePage.locator('#review-question-path-mode').inputValue(),'change');
+   async function mapChange(){
+    await capture('left','前期売上');await capture('right','今期売上');await capture('threshold','limit');
+    await tablePage.locator('#review-question-path-left-binding').selectOption('old_rev');await tablePage.locator('#review-question-path-right-binding').selectOption('new_rev');await tablePage.locator('#review-question-path-threshold-binding').selectOption(['amount_limit','ratio_limit']);
+    await click('question-path-run');await state('question_ready');
+   }
+   await mapChange();const changeText=await tablePage.locator('#review-question-path-result').innerText();
+   assert.match(changeText,/Signed difference.*CONDITIONALLY_SATISFIED/);assert.match(changeText,/Signed relative change.*CONDITIONALLY_REFUTED/);assert.match(changeText,/BLOCKED_TYPE/);
+   assert.match(changeText,/negative baseline is not conventional positive-base growth/);
+   const changeContract=await tablePage.locator('#review-pin').innerText(),changePlan=await tablePage.locator('#review-question-path-plan-pin').innerText();
+   const changeFile=tablePage.waitForEvent('download');await click('question-path-export');await (await changeFile).saveAs(path.join(output,'reviewed-change-question.json'));
+   const changePinFile=tablePage.waitForEvent('download');await click('question-path-export-pin');await (await changePinFile).saveAs(path.join(output,'reviewed-change-question.sha256'));
+   fs.writeFileSync(path.join(output,'reviewed-change-question-contract.sha256'),changeContract+'\n');fs.writeFileSync(path.join(output,'reviewed-change-question-plan.sha256'),changePlan+'\n');
+   await tablePage.locator('#review-question-path-mode').selectOption('comparison');assert.equal(await tablePage.locator('#review-question-path-export').isDisabled(),true);assert.equal(await tablePage.locator('#review-question-path-threshold').isVisible(),false);
+   await tablePage.locator('#review-question-path-mode').selectOption('change');assert.equal(await tablePage.locator('#review-question-path-run').isDisabled(),true);await mapChange();
+   await click('question-path-stage');await state('question_staged');assert.match(await tablePage.locator('#review-batch-count').innerText(),/4 \/ 8/);
+   await click('semantic-run');await state('semantic_ready');assert.match(await tablePage.locator('#review-semantic-result').innerText(),/BLOCKED_TYPE/);
    assert.equal(await tablePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);assert.deepEqual(poisonRequests,[]);assert.equal(await tablePage.evaluate(()=>typeof globalThis.sutraPoison),'undefined');assert.equal(await tablePage.evaluate(()=>JSON.stringify({...localStorage,...sessionStorage}).includes('sutra-poison-sentinel')),false);await tablePage.reload();await tablePage.locator('#reviewed-workspace > summary').click();assert.equal(await tablePage.locator('#review-question').inputValue(),'');assert.match(await tablePage.locator('#review-staged').innerText(),/0 staged source/);assert.equal(await tablePage.locator('#review-question-path-export').isDisabled(),true);await tablePage.close();
   }
   // Local UTF-8 document import: bytes, selection offsets, refusal and no network.
