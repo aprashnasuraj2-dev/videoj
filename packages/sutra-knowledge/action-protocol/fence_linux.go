@@ -30,7 +30,7 @@ const fenceStoreDomain = "SUTRA/admission-fence-store/v1\x00"
 const fenceReservationDomain = "SUTRA/admission-fence-reservation/v1\x00"
 const fenceViewDomain = "SUTRA/admission-fence-view/v1\x00"
 const fenceAttestationDomain = "SUTRA/admission-fence-attestation/v1\x00"
-const effectAbsenceDomain = "SUTRA/effect-absence-proof/v1\x00"
+const effectClosureDomain = "SUTRA/effect-nonapplication-closure/v1\x00"
 const fenceIntentName = "fence-intent.bin"
 const fenceMaxTransitions = 8
 const fenceReservationBodySize = 32 * 4
@@ -39,8 +39,8 @@ const fenceViewSize = 4 + 32 + 32 + 32 + 32 + ed25519.SignatureSize
 const fenceAttestationSize = 32 + fenceViewSize + ed25519.SignatureSize
 const fencedResponseSize = authorityResponseSize + fenceViewSize + fenceReservationSize
 const fencedEnvelopeSize = authorityResponseSize + fenceAttestationSize + fenceReservationSize
-const effectAbsenceBodySize = 32 * 3
-const effectAbsenceProofSize = effectAbsenceBodySize + ed25519.SignatureSize
+const effectClosureBodySize = 32 * 5
+const effectClosureProofSize = effectClosureBodySize + ed25519.SignatureSize
 
 var ErrFenceConflict = errors.New("admission fence conflict")
 var ErrFenceUnavailable = errors.New("admission fence unavailable or ambiguous")
@@ -94,51 +94,61 @@ func VerifyFenceReservation(r FenceReservation, ctx Digest, authority ed25519.Pu
 	return ctx != (Digest{}) && len(authority) == ed25519.PublicKeySize && r.Before != (Digest{}) && r.After != (Digest{}) && r.Before != r.After && r.RequestHash != (Digest{}) && r.Token != (Digest{}) && ed25519.Verify(authority, r.message(ctx), r.Signature[:])
 }
 
-type EffectAbsenceProof struct {
+// EffectClosureProof is not a point-in-time status observation. Its signer
+// attests that the exact reservation/idempotency identity is permanently
+// closed without application and therefore cannot later produce an effect.
+type EffectClosureProof struct {
 	ReservationHash Digest
 	RequestHash     Digest
 	Before          Digest
+	After           Digest
+	Token           Digest
 	Signature       [ed25519.SignatureSize]byte
 }
 
-func (p EffectAbsenceProof) body() []byte {
+func (p EffectClosureProof) body() []byte {
 	b := append([]byte(nil), p.ReservationHash[:]...)
 	b = append(b, p.RequestHash[:]...)
-	return append(b, p.Before[:]...)
+	b = append(b, p.Before[:]...)
+	b = append(b, p.After[:]...)
+	return append(b, p.Token[:]...)
 }
-func (p EffectAbsenceProof) message(ctx Digest, authority ed25519.PublicKey) []byte {
-	b := append([]byte(effectAbsenceDomain), ctx[:]...)
+func (p EffectClosureProof) message(ctx Digest, authority ed25519.PublicKey) []byte {
+	b := append([]byte(effectClosureDomain), ctx[:]...)
 	b = append(b, authority...)
 	return append(b, p.body()...)
 }
-func (p EffectAbsenceProof) Bytes() []byte { return append(p.body(), p.Signature[:]...) }
-func ParseEffectAbsenceProof(raw []byte) (EffectAbsenceProof, error) {
-	var p EffectAbsenceProof
-	if len(raw) != effectAbsenceProofSize {
+func (p EffectClosureProof) Bytes() []byte { return append(p.body(), p.Signature[:]...) }
+func ParseEffectClosureProof(raw []byte) (EffectClosureProof, error) {
+	var p EffectClosureProof
+	if len(raw) != effectClosureProofSize {
 		return p, ErrPolicy
 	}
 	copy(p.ReservationHash[:], raw[:32])
 	copy(p.RequestHash[:], raw[32:64])
 	copy(p.Before[:], raw[64:96])
-	copy(p.Signature[:], raw[96:])
-	if p.ReservationHash == (Digest{}) || p.RequestHash == (Digest{}) || p.Before == (Digest{}) {
-		return EffectAbsenceProof{}, ErrPolicy
+	copy(p.After[:], raw[96:128])
+	copy(p.Token[:], raw[128:160])
+	copy(p.Signature[:], raw[160:])
+	if p.ReservationHash == (Digest{}) || p.RequestHash == (Digest{}) || p.Before == (Digest{}) || p.After == (Digest{}) || p.Token == (Digest{}) {
+		return EffectClosureProof{}, ErrPolicy
 	}
 	return p, nil
 }
-func SignEffectAbsenceProof(ctx Digest, authority ed25519.PublicKey, reservation FenceReservation, signer ed25519.PrivateKey) (EffectAbsenceProof, error) {
+func SignEffectClosureProof(ctx Digest, authority ed25519.PublicKey, reservation FenceReservation, signer ed25519.PrivateKey) (EffectClosureProof, error) {
 	if ctx == (Digest{}) || len(authority) != ed25519.PublicKeySize || len(signer) != ed25519.PrivateKeySize ||
 		!VerifyFenceReservation(reservation, ctx, authority) {
-		return EffectAbsenceProof{}, ErrPolicy
+		return EffectClosureProof{}, ErrPolicy
 	}
-	p := EffectAbsenceProof{ReservationHash: reservation.Hash(), RequestHash: reservation.RequestHash, Before: reservation.Before}
+	p := EffectClosureProof{ReservationHash: reservation.Hash(), RequestHash: reservation.RequestHash, Before: reservation.Before, After: reservation.After, Token: reservation.Token}
 	copy(p.Signature[:], ed25519.Sign(signer, p.message(ctx, authority)))
 	return p, nil
 }
-func VerifyEffectAbsenceProof(p EffectAbsenceProof, ctx Digest, authority ed25519.PublicKey, reservation FenceReservation, signer ed25519.PublicKey) bool {
+func VerifyEffectClosureProof(p EffectClosureProof, ctx Digest, authority ed25519.PublicKey, reservation FenceReservation, signer ed25519.PublicKey) bool {
 	return ctx != (Digest{}) && len(authority) == ed25519.PublicKeySize && len(signer) == ed25519.PublicKeySize &&
 		VerifyFenceReservation(reservation, ctx, authority) &&
-		p.ReservationHash == reservation.Hash() && p.RequestHash == reservation.RequestHash && p.Before == reservation.Before &&
+		p.ReservationHash == reservation.Hash() && p.RequestHash == reservation.RequestHash &&
+		p.Before == reservation.Before && p.After == reservation.After && p.Token == reservation.Token &&
 		ed25519.Verify(signer, p.message(ctx, authority), p.Signature[:])
 }
 
@@ -908,7 +918,7 @@ func VerifyFencedEnvelope(e FencedEnvelope, req AuthorityRequest, challenge, ctx
 type FencedCoordinator struct {
 	authority       *SharedAuthority
 	fence           *FenceClient
-	absenceAuthority ed25519.PublicKey
+	closureAuthority ed25519.PublicKey
 	fault           func(string) error
 }
 
@@ -918,12 +928,15 @@ func NewFencedCoordinator(authority *SharedAuthority, fence *FenceClient) (*Fenc
 	}
 	return &FencedCoordinator{authority: authority, fence: fence}, nil
 }
-func NewFencedCoordinatorWithAbsenceAuthority(authority *SharedAuthority, fence *FenceClient, absenceAuthority ed25519.PublicKey) (*FencedCoordinator, error) {
+// NewFencedCoordinatorWithClosureAuthority configures a separately keyed
+// upstream/idempotency authority. It may resolve an orphan only by attesting
+// permanent non-application of that exact reservation identity.
+func NewFencedCoordinatorWithClosureAuthority(authority *SharedAuthority, fence *FenceClient, closureAuthority ed25519.PublicKey) (*FencedCoordinator, error) {
 	c, e := NewFencedCoordinator(authority, fence)
-	if e != nil || len(absenceAuthority) != ed25519.PublicKeySize {
+	if e != nil || len(closureAuthority) != ed25519.PublicKeySize {
 		return nil, ErrPolicy
 	}
-	c.absenceAuthority = append(ed25519.PublicKey(nil), absenceAuthority...)
+	c.closureAuthority = append(ed25519.PublicKey(nil), closureAuthority...)
 	return c, nil
 }
 func (c *FencedCoordinator) intentPath() string { return filepath.Join(c.authority.dir, fenceIntentName) }
@@ -1176,14 +1189,16 @@ func (c *FencedCoordinator) processLocked(req AuthorityRequest) (FencedResponse,
 	}
 	return out, nil
 }
-func (c *FencedCoordinator) ResolveOrphanWithAbsenceProof(proof EffectAbsenceProof) error {
+// ResolveOrphanWithClosureProof restores availability only after an external
+// authority permanently closes the exact idempotency identity without effect.
+func (c *FencedCoordinator) ResolveOrphanWithClosureProof(proof EffectClosureProof) error {
 	a := c.authority
 	a.mu.Lock()
 	defer a.mu.Unlock()
 	if a.lock == nil || a.poisoned {
 		return ErrStore
 	}
-	if len(c.absenceAuthority) != ed25519.PublicKeySize {
+	if len(c.closureAuthority) != ed25519.PublicKeySize {
 		return ErrPolicy
 	}
 	if _, exists, e := c.loadIntentLocked(); e != nil {
@@ -1209,7 +1224,7 @@ func (c *FencedCoordinator) ResolveOrphanWithAbsenceProof(proof EffectAbsencePro
 	if !exists || pending.Hash() != view.Pending || pending.Before != current {
 		return ErrWitnessRollback
 	}
-	if !VerifyEffectAbsenceProof(proof, a.ctx, a.signer.Public().(ed25519.PublicKey), pending, c.absenceAuthority) {
+	if !VerifyEffectClosureProof(proof, a.ctx, a.signer.Public().(ed25519.PublicKey), pending, c.closureAuthority) {
 		return ErrPolicy
 	}
 	next, e := c.fence.Abort(pending)

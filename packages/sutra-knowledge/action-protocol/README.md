@@ -108,6 +108,15 @@ still a local synthetic atomic effect, so these models do not prove a production
 provider transaction protocol. A real external write path needs an upstream
 idempotency/fencing contract or a separately authorized resolution mechanism;
 wall-clock lease expiry alone is not accepted as evidence that an effect did not
+
+A separately keyed recovery contract is narrower: an orphan may be aborted only
+after an external idempotency authority signs a proof that the exact reservation
+identity (request hash, before/after heads and random admission token) is
+**permanently closed without application**, not merely absent at one instant.
+A truthful closure therefore makes later execution of that identity a contract
+violation. The formal lying-closure mutant preserves the delayed-double-effect
+counterexample when that promise is false. This is a protocol requirement for a
+future upstream adapter, not evidence that any real provider offers it.
 occur.
 
 
