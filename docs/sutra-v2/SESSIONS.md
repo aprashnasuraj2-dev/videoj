@@ -766,3 +766,8 @@ V2-070 exact all ten workflows passed. Add explicit optional four-axis controls 
 ## V2-074 — Exact failure correction
 
 V2-071 all ten exact workflows green; actual historical source restoration and reversed-order stable ID comparison passed including independent Python impact. V2-072 knowledge failed 2/170 tests at COMPILER_NUMBER_BOUNDARY because fixture indexOf('2') selected the last digit of 12; actual browser passed. Correct the fixture by anchoring each source token to its label, not the compiler. V2-073 browser preflight failed duplicate gridPin identifier before execution. Put the new world-grid browser test in its own lexical block, preserving every assertion and independent replay. Both failures retained in machine history. No new grid or expression credit until exact CI; no release.
+
+
+## V2-075 — Structural exposure and conservative shared-source cuts
+
+Reuse pinned living graph and compiler target dependencies. Union sources by identical declared lineage or exact bytes, retain explicit join reasons and never infer independence across remaining cohorts. Separate context-only dependencies, question quantities and unresolved candidates. Collapse exact target structures for cut counting, enumerate minimum cohort sets hitting at least one reviewed input of each decisive supplied graph (<=8 cohorts, 255 subsets). Finance fixture same issuer root yields one cut, engineering distinct declared routes yields two; duplicate bytes under conflicting lineage bridge cohorts transitively. No physical outage, truth reversal, causal dependency or alternate evidence completeness claim. Tests include withdrawal and stale pin. Exact CI pending; V2-074 fixes remain pending.

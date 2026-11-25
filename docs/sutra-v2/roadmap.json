@@ -3073,11 +3073,11 @@
     {
       "id": "V2-LK13-STRUCTURAL-WEAKNESS",
       "track": "B",
-      "status": "Not started",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK08-KNOWLEDGE-GRAPH"
       ],
-      "scope": "Reuse lineage for shared trial, dataset, route, supplier, underlying model and economic exposure; common cuts and sensitivity templates.",
+      "scope": "Reuse lineage for shared trial, dataset, route, supplier, underlying model and economic exposure; common cuts and sensitivity templates. V2-075 candidate: conservative connected cohorts from exact source bytes and host-declared lineage, distinct decisive target structures, exact minimum input-touch cuts over at most eight cohorts; unknown ancestry and context-only dependencies preserved. No physical failure or empirical independence proof.",
       "acceptance": "Unknown ancestry stays unknown; independent fixtures across domains; no counting URLs as independence.",
       "evidence": []
     },
