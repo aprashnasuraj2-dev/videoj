@@ -6,8 +6,8 @@
   "session": "V2-011",
   "next": [
     "V2-P05-ROLLBACK",
+    "V2-F11b",
     "V2-P06-REFINE",
-    "V2-P05-RECOVERY",
     "V2-P01-THREAT",
     "V2-P04-CONSENT",
     "V2-P14-BUDGET",
@@ -16,7 +16,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "authenticated_shared_authority_external_process_and_trace_refinement_partial",
+  "state": "independent_witness_rejects_authority_only_rollback_coordinated_dual_domain_rollback_open",
   "verified": [
     {
       "id": "V2-M01",
@@ -241,7 +241,7 @@
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45526366515/job/138910622318",
     "reason": "Go action-protocol build failed before execution because authority_linux_test.go referenced filepath without importing path/filepath."
   },
-  "lastVerifiedKernelSource": "1951512e9f9a9d566d723803d4fb42709888e8e3",
+  "lastVerifiedKernelSource": "322e05892ecfd5d7a67af7149b085ce19a873e8a",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -251,27 +251,28 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
-    "sourceRevision": "1951512e9f9a9d566d723803d4fb42709888e8e3",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306",
-    "pushRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527024146",
+    "sourceRevision": "322e05892ecfd5d7a67af7149b085ce19a873e8a",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527762530",
+    "pushRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527755339",
     "checks": [
-      "Authenticated shared-authority Go race tests",
-      "Independent actual Go trace replay",
-      "Original and anchored TLC safety/fairness/negative gates",
-      "Actual separate authority server process replacement",
-      "Signed-authority rollback counterexample",
+      "Independent witness authority-only rollback rejection",
+      "Actual separate witness-process CAS",
+      "Forged transition and stale CAS refusal",
+      "Coordinated authority+witness rollback counterexample",
+      "Existing authenticated shared-authority Go trace",
+      "Original and anchored TLC/fairness gates",
       "All six PR workflows plus push knowledge workflow"
     ],
-    "status": "exact_code_candidate_all_seven_workflows_success",
+    "status": "exact_witness_candidate_all_seven_workflows_success",
     "observed": [
-      "PR knowledge 45527040306 / job 138912849718: success",
-      "PR browser job 138912849355: success",
-      "PR Open Kit 45527040235: success",
-      "PR impact 45527040263: success",
-      "PR publisher 45527040399: success",
-      "PR engineering 45527040308: success",
-      "PR browser matrix 45527040403: success",
-      "push knowledge 45527024146 / job 138912797107: success"
+      "PR knowledge 45527762530 / job 138915235534: success",
+      "PR browser job 138915235859: success",
+      "PR impact 45527762605: success",
+      "PR Open Kit 45527762926: success",
+      "PR engineering 45527762519: success",
+      "PR publisher 45527762540: success",
+      "PR browser matrix 45527762630: success",
+      "push knowledge 45527755339 / job 138915211031: success"
     ]
   },
   "previousPendingCandidate": {
@@ -428,6 +429,20 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306/job/138912849718",
       "description": "Exact Go race gate passed authenticated caller signatures, atomic shared action+contact snapshot, lost-reply recovery across reopen, stale caller pin reconciliation, per-caller 2/global 3 durable accounting, live-budget rolled-cursor conflict, immutable copied caller identities, response tamper refusal, concurrent CAS one-effect serialization, actual separate authority server processes, corruption/failpoint poisoning, and preserved cloned-authority plus older-valid-snapshot rollback counterexamples. Independent Python accepted the actual four-event Go trace and mapped commit/status/budget behavior to bounded AnchoredRecovery transitions; original and anchored TLC safety/fairness/negative gates remained successful.",
       "remaining": "One actual Go trace is independently replayed against the bounded transition mapping and budgets now match the TLA per-caller 2/global 3 profile. This is a trace witness, not a universal refinement theorem: Go collapses dispatch+delivery once bytes arrive, cryptography/binary parsing/storage are outside TLA, and authority snapshot rollback remains possible without an external monotonic witness."
+    },
+    {
+      "id": "V2-P05-ROLLBACK",
+      "sourceRevision": "322e05892ecfd5d7a67af7149b085ce19a873e8a",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527762530/job/138915235534",
+      "description": "Exact Go race gate passed independently keyed/signed AuthorityWitness rollback detection, stale witness and forged transition refusal, actual separate witness-process CAS, and retained coordinated authority+witness rollback counterexample.",
+      "remaining": "Coordinated rollback of both independently signed stores remains possible; independent operation/key distribution or transparency/quorum decision, key rotation, compensation and threat review remain open."
+    },
+    {
+      "id": "V2-F11b",
+      "sourceRevision": "322e05892ecfd5d7a67af7149b085ce19a873e8a",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527762530/job/138915235534",
+      "description": "Exact Go race gate passed independently keyed/signed AuthorityWitness rollback detection, stale witness and forged transition refusal, actual separate witness-process CAS, and retained coordinated authority+witness rollback counterexample.",
+      "remaining": "Witness protocol not yet a distinct TLA machine; no independent operator/key distribution/quorum; general refinement remains partial."
     }
   ],
   "reconciledCI": [
