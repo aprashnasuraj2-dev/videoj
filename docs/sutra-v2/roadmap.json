@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-022",
+  "session": "V2-023",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2457,12 +2457,30 @@
     },
     {
       "id": "V2-D07-OFFLINE",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D02-CAPSULE",
         "V2-D06-ASSUMPTIONS"
       ],
-      "scope": "Deterministic portable independent Python verifier distribution; actual browser download and execution with independently retained digest. No deployment or publisher authenticity claim."
+      "scope": "Deterministic portable independent Python verifier distribution; actual browser download and execution with independently retained digest. No deployment or publisher authenticity claim.",
+      "evidence": [
+        {
+          "id": "V2-D07-OFFLINE",
+          "sourceRevision": "08264c69899ba6eb8aeb1fb16b8908d3e97c3a9f",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45572793560/job/139063288670",
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45572793560 and push 45572786501, ingress 45572793255, impact 45572793322, evaluation 45572793369, Open Kit 45572793487, legacy release 45572793532, publisher 45572793338, browser matrix 45572793303. Actual browser downloaded exact independent 55,058-byte Python archive; archive SHA-256 e8ea6051acba24600fd75496c8b316b633770db6ba2f98aa81c2701f1fcd87be. Deterministic rebuild, exact member source manifest, isolated execution with import shadow, one-byte tamper/refusal/restoration, historical pin counterexample, rehashed forgery, strict pins and missing input all passed. Actual browser artifact 15003426534 SHA-256 e2a683d8ecdfc4404bc7f01c7e469302244543d40b0b3f3aa80382d107d21e83 matched downloaded bytes. Downloaded archive independently executed locally with current pin/current capsule (REFUTED), current pin/old capsule (PIN_MISMATCH), and old pin/old capsule (SUPPORTED). No publisher authenticity, truth, or freshness claim."
+        }
+      ]
+    },
+    {
+      "id": "V2-D08-ROOT-IMPACT",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D05-WORLD-TRACE",
+        "V2-D06-ASSUMPTIONS",
+        "V2-D07-OFFLINE"
+      ],
+      "scope": "Inspect exact root ancestry and nonmutating single-lineage effects on both claims; primary diagnostic answers before advanced inspection. No inferred independence or automatic withdrawal."
     }
   ]
 }

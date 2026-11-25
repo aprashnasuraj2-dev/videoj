@@ -386,6 +386,14 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await guideStep('restore','copies','SUPPORTED');
   await guideStep('copies','disagree','SUPPORTED');assert.match(await guidePage.locator('#debug-guide-summary').innerText(),/10 original-lineage artifacts = 1 declared root/);
   await guideStep('disagree','withdraw','CONFLICTED');await checkFirstScreen('conflicted');
+  assert.match(await guidePage.locator('#debug-guide-summary').innerText(),/Disagreeing measurement: 1 artifact, 1 declared root/);
+  assert.equal(await guidePage.locator('#debug-world-inspection').getAttribute('open'),null);assert.equal(await guidePage.locator('#debug-assumption-inspection').getAttribute('open'),null);
+  assert.equal(await guidePage.locator('#debug-groups [data-lineage="sample_one"]').getAttribute('data-target-preview'),'UNDERDETERMINED');
+  assert.equal(await guidePage.locator('#debug-groups [data-lineage="sample_two"]').getAttribute('data-target-preview'),'SUPPORTED');
+  const lineage=guidePage.locator('#debug-groups [data-lineage="sample_one"]');await lineage.locator('summary').click();
+  assert.equal(await lineage.locator('[data-artifact]').count(),10);assert.equal(await lineage.locator('[data-parent="lab_a"]').count(),9);
+  assert.match(await lineage.locator('[data-artifact="copy_01"] code').innerText(),/^sha256:[a-f0-9]{64}$/);
+  assert.equal(await guidePage.locator('#debug-state').getAttribute('data-state'),'CONFLICTED');await lineage.locator('summary').click();
   await guideStep('withdraw','plan-observe','UNDERDETERMINED');
   await guideStep('plan-observe','capsule-export','REFUTED');await checkFirstScreen('refuted');
   const guideCapsuleDl=guidePage.waitForEvent('download');await guideStep('capsule-export','capsule-pin-export','REFUTED');
@@ -424,6 +432,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    assert.equal(await worldPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   }
   async function saveWorld(name){
+   if(await worldPage.locator('#debug-world-inspection').getAttribute('open')===null)await worldPage.locator('#debug-world-inspection > summary').click();
    const dl=worldPage.waitForEvent('download');await worldPage.locator('#debug-world-export').click();
    const bundle=JSON.parse(fs.readFileSync(await (await dl).path(),'utf8'));fs.writeFileSync(path.join(output,name),JSON.stringify(bundle,null,2));return bundle.trace;
   }
@@ -458,7 +467,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    const dl=assumptionPage.waitForEvent('download');await assumptionPage.locator('#debug-assumption-export').click();
    const bundle=JSON.parse(fs.readFileSync(await (await dl).path(),'utf8'));fs.writeFileSync(path.join(output,name),JSON.stringify(bundle,null,2));return bundle.sensitivity;
   }
-  await assumptionStep('start','SUPPORTED');
+  await assumptionStep('start','SUPPORTED');await assumptionPage.locator('#debug-assumption-inspection > summary').click();
   await testLimit('0/1','UNDERDETERMINED','SUPPORTED');const baselineSensitivity=await saveAssumption('assumption-baseline.json');assert.deepEqual(baselineSensitivity.minimumSampledChange,{halfUnits:1,limits:['1/2']});
   await assumptionStep('withdraw','UNDERDETERMINED');await testLimit('2/1','SUPPORTED','UNDERDETERMINED');await saveAssumption('assumption-withdrawn.json');
   await assumptionStep('restore','SUPPORTED');await assumptionStep('copies','SUPPORTED');await assumptionStep('disagree','CONFLICTED');

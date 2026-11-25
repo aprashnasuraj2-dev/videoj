@@ -4,6 +4,7 @@ import {analyzeSupport} from './support-wasm.js';
 import {guidedAction} from './demo-guide.mjs';
 import {traceVerifiedDebuggerState,WORLD_TRACE_VERSION} from '../../../packages/sutra-knowledge/debugger-world-trace.js';
 import {sensitivityVerifiedDebuggerState,ASSUMPTION_VERSION} from '../../../packages/sutra-knowledge/debugger-assumptions.js';
+import {rootImpactVerifiedState} from '../../../packages/sutra-knowledge/debugger-root-impact.js';
 import {createProofCapsule,verifyProofCapsule,mutateCapsuleByte,MAX_CAPSULE_BYTES} from '../../../packages/sutra-knowledge/proof-capsule.js';
 const by=id=>document.getElementById('debug-'+id),txt=(id,value)=>{by(id).textContent=value;};
 const labels={target:'The system stays within its limit',control_ok:'The separate control is normal',sample_one:'Original report and copies',sample_two:'Independent-declared measurement',sample_three:'Second-variable measurement',sample_control:'Separate control measurement',read_b:'Read the disagreeing measurement',read_c:'Measure the second variable',read_a:'Read the original report',read_control:'Read the control'};
@@ -11,7 +12,7 @@ const display=id=>labels[id]??id;
 const states={SUPPORTED:'Supported',REFUTED:'Refuted',CONFLICTED:'Conflicted',UNDERDETERMINED:'Underdetermined',UNVERIFIED:'Unverified'};
 const expected={SUPPORTED:'satisfied',REFUTED:'refuted',CONFLICTED:'conflict',UNDERDETERMINED:'ambiguous'};
 const ids=['start','withdraw','restore','copies','disagree','withdraw-other','observe','control','export','plan-observe','explanation-export','world-export','assumption-export','assumption-limit'];
-let events=[],result=null,explanation=null,worldTrace=null,assumptionSensitivity=null,busy=false,capsuleBusy=false;
+let events=[],result=null,explanation=null,worldTrace=null,assumptionSensitivity=null,rootImpact=null,busy=false,capsuleBusy=false;
 let capsuleOriginal=null,capsuleWorking=null,capsuleAnchor=null,capsuleIdentity=null,capsuleVerified=false,capsuleTampered=false;
 let capsuleSourceHistory=null,capsulePinRequested=false,capsuleChallenge='none',capsuleFailureReason=null;
 const has=id=>result?.report.activeEvidence.some(a=>a.observationId===id);
@@ -49,10 +50,22 @@ function render(previous){
  renderWorldTrace(previous);
  renderAssumptions();
  by('groups').replaceChildren();
- for(const [root,artifacts] of Object.entries(r.groups)){
-  const li=document.createElement('li'),heading=document.createElement('strong'),detail=document.createElement('span');
-  heading.textContent=display(root);detail.textContent=artifacts.length+' artifact'+(artifacts.length===1?'':'s')+' → 1 declared root';li.append(heading,detail);by('groups').append(li);
+ for(const impact of rootImpact){
+  const li=document.createElement('li'),heading=document.createElement('strong'),detail=document.createElement('span'),preview=document.createElement('p'),inspect=document.createElement('details'),summary=document.createElement('summary'),artifacts=document.createElement('ul');
+  li.dataset.lineage=impact.lineage;li.dataset.targetPreview=impact.claims.target.state;li.dataset.controlPreview=impact.claims.control_ok.state;
+  heading.textContent=display(impact.lineage);
+  detail.textContent=impact.artifacts.length+' artifact'+(impact.artifacts.length===1?'':'s')+' → 1 declared root · '+impact.reading.variable+' = '+impact.reading.value.replace('/1','');
+  preview.className='root-preview';preview.textContent='If withdrawn: '+states[r.claims.target.state]+' → '+states[impact.claims.target.state]+'; control '+states[r.claims.control_ok.state]+' → '+states[impact.claims.control_ok.state]+'. '+impact.newlyAdmitted.length+' world'+(impact.newlyAdmitted.length===1?' returns.':'s return.');
+  summary.textContent='Inspect '+impact.artifacts.length+' artifact '+(impact.artifacts.length===1?'identity':'identities');
+  artifacts.className='root-artifacts';
+  for(const a of impact.artifacts){
+   const item=document.createElement('li'),identity=document.createElement('strong'),digest=document.createElement('code');
+   item.dataset.artifact=a.id;item.dataset.parent=a.parent??'';identity.textContent=a.id+(a.parent?' ← '+a.parent:' · original');digest.textContent=a.digest;
+   item.append(identity,digest);artifacts.append(item);
+  }
+  inspect.append(summary,artifacts);li.append(heading,detail,preview,inspect);by('groups').append(li);
  }
+ if(!rootImpact.length){const li=document.createElement('li');li.textContent='No admitted evidence roots.';by('groups').append(li);}
  txt('details',JSON.stringify({caseDigest:r.caseDigest,historyDigest:r.historyDigest,artifacts:r.activeArtifacts,conflict:r.conflict,diagnostics:r.diagnostics,qualification:r.qualification},null,2));
 }
 function renderAssumptions(){
@@ -128,8 +141,8 @@ async function work(make,resetGuide=false){
   const next=await make(),{result:computed,explanation:diagnosis}=await evaluateDebuggerExplanation(JSON.stringify(next));
   const support=await analyzeSupport(computed.projection);
   if(!support.complete||support.current!==expected[computed.claims.target.state]||JSON.stringify(support.survivingWorlds)!==JSON.stringify(computed.claims.target.survivingWorlds)||computed.conflict&&!support.conflicts.some(x=>JSON.stringify(x)===JSON.stringify(computed.conflict)))throw Error('DEBUGGER_SUPPORT_DISAGREEMENT');
-  const trace=traceVerifiedDebuggerState(computed),sensitivity=await sensitivityVerifiedDebuggerState(computed);
-  const previous=result;events=next;result=computed;explanation=diagnosis;worldTrace=trace;assumptionSensitivity=sensitivity;
+  const trace=traceVerifiedDebuggerState(computed),sensitivity=await sensitivityVerifiedDebuggerState(computed),impact=rootImpactVerifiedState(computed);
+  const previous=result;events=next;result=computed;explanation=diagnosis;worldTrace=trace;assumptionSensitivity=sensitivity;rootImpact=impact;
   if(resetGuide){capsuleSourceHistory=null;capsulePinRequested=false;capsuleChallenge='none';by('assumption-limit').value='1/1';}
   render(previous);txt('notice','Recomputed locally · exact graph and Rust support engine agree.');
  }catch{txt('notice','Operation refused. The last verified-in-session result is unchanged.');}
@@ -180,7 +193,8 @@ function refreshGuide(){
  if(result){
   const copies=result.groups.sample_one?.length??0;
   const control=result.claims.control_ok.state;
-  summary.textContent=(copies>1?copies+' original-lineage artifacts = 1 declared root. ':'')+(control==='CONFLICTED'&&explanation.claims.control_ok.conditionalSupport.length?'Separate control has conditional support; the full model is conflicted.':'Separate control: '+states[control]+'.');
+  const rival=result.groups.sample_two?.length??0;
+  summary.textContent=(copies>1?copies+' original-lineage artifacts = 1 declared root. ':'')+(copies&&rival?'Disagreeing measurement: 1 artifact, 1 declared root. ':'')+(control==='CONFLICTED'&&explanation.claims.control_ok.conditionalSupport.length?'Separate control has conditional support; the full model is conflicted.':'Separate control: '+states[control]+'.');
  }
  const proof=by('guide-proof');proof.hidden=!result||capsuleSourceHistory!==result.historyDigest;
  if(!proof.hidden)proof.textContent=capsuleChallenge==='restored'&&capsuleVerified?'Proof: one-byte attack refused; exact original reverified.':capsuleChallenge==='rejected'?'Proof: altered bytes refused against the unchanged digest.':capsuleVerified?'Proof: exact snapshot replay verified locally.':'Proof snapshot prepared; browser save outcome is not confirmed.';
