@@ -774,7 +774,11 @@
         },
         {
           "path": "packages/sutra-knowledge/action-protocol/formal/FenceAvailability.tla",
-          "test": "LieClosed / AtMostOneEffect"
+          "test": "LieClosed(c)"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/FenceAvailabilityLie.cfg",
+          "test": "INVARIANT AtMostOneEffect"
         }
       ],
       "openGates": [
