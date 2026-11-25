@@ -88,3 +88,12 @@ Once a pre-effect fence admits an exact external-effect identity, a lost request
 Exact source `b60fc4fee0f1bc3603b0cabbdb0fcd5b13998854` makes the safer recovery rule executable in a private transaction laboratory. Recovery races the same identity through the upstream terminal authority: `CloseUnapplied` may make it durably CLOSED, in which case the local fence can abort; if APPLIED already won, closure conflicts and signed APPLIED status plus exact receipt retry force local acknowledgement/finalization. Tests drop the Apply before receiver execution and after receiver APPLIED, then verify zero effect versus one reconciled effect respectively.
 
 The guarantee remains scoped to one current upstream authority history. Rolling back or cloning that authority remains T25; a real provider has not implemented the protocol. The transaction coordinator is not externally mountable and is not yet bound to current grant/policy ancestry, so RUNTIME-02, P04 consent, P05 rollback and release gates remain open.
+
+
+## T27 — consent/policy interleaving and alternate ancestry
+
+A signed caller pin is not sufficient if it names an alternate policy branch, and an active grant check is not sufficient if revocation/epoch mutation can enter after that check but before effect admission. Exact source `dea58567d68d07c50eb31e9175db3f2a3619aa8e` addresses both mechanisms in the private upstream transaction composition: current retained-history membership is proven before grant admission mutation, and the GrantBook mutex spans the final active-grant decision through fence admission and upstream dispatch.
+
+The recovery capability is narrower than fresh dispatch. Later revocation may not erase or duplicate an already admitted ambiguous effect; `checkReconcileLocked` therefore allows exact reconciliation only for a grant already durably admitted, while the same revoked grant remains forbidden for a new dispatch. Tests demonstrate both directions.
+
+This is not distributed consent consensus. Coordinated rollback of the policy book and witness, fresh provisioning from a rolled pair, hostile/cloned trust-domain ownership and the fact that the composed transaction guard is still private remain explicit limitations.

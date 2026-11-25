@@ -172,3 +172,18 @@ Failed source `7d52edd85498a01514a9fb84ef98532886cac480` is retained: knowledge 
 - [ ] **Mount boundary:** `upstreamTransactionCoordinator` is package-private, has no HTTP handler and is included in the reflection non-mountability regression. It is not an approved external write route.
 - [ ] **Next consent/policy composition:** the transaction path still lacks the strongest anchored exact-current-grant + policy-ancestry gate. Do not export or mount it. Next work is to bind the private transaction dispatch to current grant/revocation/policy ancestry before the reservation/upstream effect.
 - [ ] **Remaining:** no real provider, compensation authorization, physical power-loss certification, global monotonic anti-rollback, provider billing/spend or universal exactly-once claim.
+
+
+## V2-013 pinned consent/policy composition on upstream transaction — dea58567d68d
+
+Exact source `dea58567d68d07c50eb31e9175db3f2a3619aa8e` passed knowledge push `45558332199`, knowledge PR `45558339999`, impact `45558339975`, Open Kit `45558339921`, publisher `45558339940`, engineering `45558339945` and browser compatibility `45558339963`.
+
+- [ ] **V2-P04-CONSENT / pre-mutation ancestry:** the caller-signed exact policy pin must be a member of the current independently witnessed policy history before `reserveDispatchLocked` can add the grant to the admitted set. A cryptographically valid alternate-head pin is rejected with no policy/admission/upstream/local-effect mutation.
+- [ ] **Fresh dispatch authorization:** revoked and expired grants, wrong caller pin and an already-stale authority head are rejected before upstream effect; wrong authority head is also rejected before grant-policy mutation in the nonconcurrent path. The transaction rechecks authority state under lock before intent/reservation/upstream contact.
+- [ ] **Revocation/epoch interleaving:** the GrantBook mutex remains held from final policy admission through the private transaction's independent fence reservation and upstream dispatch. The race regression uses `TryLock` at the post-reserve seam to prove legitimate revocation cannot enter that interval.
+- [ ] **Recovery is not fresh consent:** an already admitted ambiguous APPLIED identity can reconcile after later revocation, because reconciliation creates no new effect; the revoked grant then fails any fresh dispatch. A never-admitted grant receives `ErrGrantNotDispatched`.
+- [ ] **Missing fence:** a current valid grant with unavailable fence produces zero upstream/local effect. After the fence returns, the admitted pre-effect intent is terminally CLOSED and cleared without effect.
+- [ ] **Causal evidence:** the private success envelope binds exact policy decision/current membership, challenge-bound final fence attestation, authority response, reservation and upstream signed receipt.
+- [ ] **Mount boundary:** `pinnedUpstreamTransactionGuard` is package-private, does not implement `http.Handler`, and creates no new external write route.
+- [ ] **Next V2-P06-REFINE:** map actual fresh/revoked/reconcile/alternate-ancestry Go traces to the existing GrantLifecycle and ClientPolicyAncestry models; do not count the existing models alone as implementation refinement.
+- [ ] **Remaining consent limitation:** coordinated policy-book+witness rollback and fresh-client provisioning remain executable counterexamples; the single-process policy mutex is not distributed consensus or protection from cloned/hostile trust domains.

@@ -17,7 +17,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "upstream_transaction_coupling_exact_verified_pinned_consent_composition_next",
+  "state": "pinned_consent_policy_upstream_transaction_exact_verified_policy_trace_refinement_next",
   "verified": [
     {
       "id": "V2-M01",
@@ -246,7 +246,7 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047/job/138998539263",
     "resolutionStatus": "resolved_exact_all_seven_workflows_success"
   },
-  "lastVerifiedKernelSource": "b60fc4fee0f1bc3603b0cabbdb0fcd5b13998854",
+  "lastVerifiedKernelSource": "dea58567d68d07c50eb31e9175db3f2a3619aa8e",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -849,6 +849,27 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45557311348/job/139012396161",
       "description": "A durable single-upstream-authority effect limit survives the transaction path. When the second external effect exceeds the upstream budget, the coordinator remains unknown/fail-closed until recovery durably closes that exact identity, aborts admission and leaves local acknowledgement/contact state unchanged.",
       "remaining": "This is a synthetic effect-count budget inside one non-rolled-back authority history, not provider billing/spend accounting. Cloning/rollback can recreate budget; no real provider cost authority is integrated."
+    },
+    {
+      "id": "V2-P04-CONSENT",
+      "sourceRevision": "dea58567d68d07c50eb31e9175db3f2a3619aa8e",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45558339999/job/139015729145",
+      "description": "Private pinned transaction guard verifies caller pin signature, exact grant identity/class, current independent policy-witness ancestry membership and exact current authority head before grant admission/effect. Alternate-branch pin is rejected before admitted-set mutation; revoked/expired grants, wrong authority head and wrong caller pin reach zero upstream/local effect. GrantBook mutex is held from final policy admission across pre-effect fence and upstream transaction, preventing legitimate concurrent revoke/epoch mutation from interleaving in that interval.",
+      "remaining": "This is private/synthetic composition, not the externally mounted route. Coordinated policy-book+witness rollback/fresh-client provisioning remain counterexamples, and the mutex cannot protect against an operator who clones/rolls back all trust domains or bypasses the coordinator."
+    },
+    {
+      "id": "V2-P05-RECOVERY",
+      "sourceRevision": "dea58567d68d07c50eb31e9175db3f2a3619aa8e",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45558339999/job/139015729145",
+      "description": "An already-admitted ambiguous upstream APPLIED effect remains reconcilable after grant revocation using checkReconcileLocked plus exact retained policy ancestry; recovery creates no new effect. After reconciliation the revoked grant cannot authorize a fresh dispatch. A never-admitted grant cannot gain recovery authority.",
+      "remaining": "Real provider and coordinated rollback semantics remain unverified; recovery evidence is synthetic and in-process around the policy coordinator."
+    },
+    {
+      "id": "V2-RUNTIME-02",
+      "sourceRevision": "dea58567d68d07c50eb31e9175db3f2a3619aa8e",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45558339999/job/139015729145",
+      "description": "The private upstream transaction is now composition-gated by exact grant/current policy/ancestry and authority-head checks, then returns a causal envelope binding policy decision+membership, upstream receipt, authority result and fresh challenge-bound fence attestation.",
+      "remaining": "The approved externally mountable AnchoredFencedGrantGuard still uses the local synthetic FencedCoordinator rather than this private upstream transaction lab. No generic external upstream write route is authorized or exposed."
     }
   ],
   "reconciledCI": [
@@ -2668,6 +2689,70 @@
         },
         {
           "id": 45557311819,
+          "event": "pull_request",
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "dea58567d68d07c50eb31e9175db3f2a3619aa8e",
+      "complete": true,
+      "description": "Exact-green private strongest-composition laboratory: caller-signed policy pin must belong to current independently witnessed ancestry before grant admission mutation; active exact grant/policy then remains locked against legitimate revocation/epoch interleaving through upstream admission/effect. Revoked/expired/wrong-head/wrong-caller/alternate-branch/missing-fence paths produce zero upstream effect. Already-admitted ambiguous APPLIED can reconcile after revocation, while fresh post-revocation dispatch remains forbidden.",
+      "runs": [
+        {
+          "id": 45558332199,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            139015704792,
+            139015704972
+          ]
+        },
+        {
+          "id": 45558339999,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            139015729145,
+            139015729550
+          ]
+        },
+        {
+          "id": 45558339975,
+          "event": "pull_request",
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45558339921,
+          "event": "pull_request",
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45558339940,
+          "event": "pull_request",
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45558339945,
+          "event": "pull_request",
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45558339963,
           "event": "pull_request",
           "name": "Validate SUTRA browser compatibility matrix",
           "status": "completed",

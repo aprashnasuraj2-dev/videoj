@@ -869,6 +869,40 @@
         "V2-P05-ROLLBACK",
         "V2-P22-RELEASE"
       ]
+    },
+    {
+      "id": "T27-consent-policy-interleaving-and-alternate-pin",
+      "severity": "critical",
+      "category": [
+        "integrity"
+      ],
+      "mechanism": "If an alternate policy-branch pin is checked only after grant admission, or if legitimate revocation/epoch mutation can interleave after the final consent check but before effect admission, policy state can authorize a transaction under a stale or contradictory consent view.",
+      "invariant": "Fresh dispatch requires the caller-signed exact pin to be a member of the current independently witnessed policy history before grant admission mutation; the active grant/current epoch and legitimate policy mutation lock remain valid through independent fence admission and upstream dispatch. Recovery is distinct: an already admitted identity may reconcile after revocation but cannot create a new effect.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/pinned_upstream_transaction_linux_test.go",
+          "test": "TestPinnedUpstreamTransactionAlternatePolicyPinRejectedBeforeAdmissionMutation"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/pinned_upstream_transaction_linux_test.go",
+          "test": "TestPinnedUpstreamTransactionGrantRevocationCannotInterleaveAdmissionToEffect"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/pinned_upstream_transaction_linux_test.go",
+          "test": "TestPinnedUpstreamTransactionRevocationAfterAmbiguousAppliedEffectStillReconciles"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/pinned_upstream_transaction_linux_test.go",
+          "test": "TestPinnedUpstreamTransactionRevokedAndExpiredGrantFailBeforeEffect"
+        }
+      ],
+      "openGates": [
+        "V2-P04-CONSENT",
+        "V2-P06-REFINE",
+        "V2-RUNTIME-02",
+        "V2-P05-ROLLBACK",
+        "V2-P22-RELEASE"
+      ]
     }
   ]
 }

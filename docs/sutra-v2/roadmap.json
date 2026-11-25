@@ -162,19 +162,12 @@
           "adversarialTests": "Modified inputs, revoked approval, new-key replay and nested denied requests refused without contact",
           "verificationMethod": "Go adversarial and browser integration tests",
           "status": "Implementation in progress",
-          "evidence": [
-            {
-              "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
-              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221",
-              "description": "Exact approval grants, epoch expiry, durable revocation, admitted-only reconcile, separate compensation, race serialization and six grant mutants pass."
-            },
-            {
-              "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
-              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
-              "description": "Exact grant-policy freshness, exact returning-client ancestry, revocation/admission composition and fenced dispatch gates pass at the verified source."
-            }
-          ],
-          "knownLimitations": "Current signed fixture approval has no expiry or revocation\nV2-012 update: Host policy epoch is not trusted wall-clock time. Old valid signed GrantBook rollback restores earlier policy; real approval UI and independent anchor open.\nV2-012 candidate 1704e7c3: pre-effect admission/policy-ancestry work exists on branch; exact knowledge PR 45542920604 and push 45542913848 are still in progress, so this is not promoted verification evidence.\nV2-013: fresh clients with no retained ancestry pin still cannot distinguish a coordinated rolled trust-domain history; trusted-time/real approval UX remains open."
+          "evidence": {
+            "sourceRevision": "dea58567d68d07c50eb31e9175db3f2a3619aa8e",
+            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45558339999/job/139015729145",
+            "description": "Exact-current grant/policy composition on the private upstream transaction path: exact caller pin membership is checked against current independent ancestry before grant admission mutation; active grant validity and authority head are checked before effect; policy mutex spans legitimate revocation/epoch race interval; admitted ambiguous effects can reconcile after revocation but revoked grants cannot create fresh effects."
+          },
+          "knownLimitations": "Private synthetic path only. Coordinated rollback of policy book+witness and fresh provisioning remain explicit limitations; universal cross-process policy atomicity is not claimed. Concrete implementation-to-GrantLifecycle/ancestry trace mapping is next."
         }
       ]
     },
@@ -228,9 +221,9 @@
           "verificationMethod": "Race-enabled transport integration and failpoint tests",
           "status": "Implementation in progress",
           "evidence": {
-            "sourceRevision": "b60fc4fee0f1bc3603b0cabbdb0fcd5b13998854",
-            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45557311348/job/139012396161",
-            "description": "Ambiguous external dispatch now resolves via exact upstream APPLIED-vs-CLOSED state rather than point-in-time absence. CLOSED permits fence abort; APPLIED forces local acknowledgement/finalization. Actual TCP loss before and after effect, restart after effect, and lost finalize response passed."
+            "sourceRevision": "dea58567d68d07c50eb31e9175db3f2a3619aa8e",
+            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45558339999/job/139015729145",
+            "description": "Revocation after an already admitted ambiguous APPLIED effect does not strand recovery: exact admitted-history reconciliation completes without redispatch, while fresh post-revocation dispatch is refused."
           },
           "knownLimitations": "Synthetic loopback authority and filesystem only; real provider/physical power-failure semantics unverified. Coordinated rollback and upstream signer+snapshot rollback remain counterexamples."
         },
@@ -2242,9 +2235,9 @@
       "phase": "05",
       "status": "Implementation in progress",
       "evidence": {
-        "sourceRevision": "b60fc4fee0f1bc3603b0cabbdb0fcd5b13998854",
-        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45557311348",
-        "description": "Exact-green private transaction-coupling lab: durable full request+reservation intent, pre-effect independent admission, upstream APPLIED before local acknowledgement, causal receipt binding, and APPLIED-vs-CLOSED ambiguity recovery. Lost-before-effect, lost-after-effect, restart, lost-finalize, budget, concurrent-clone and tamper regressions pass under race CI."
+        "sourceRevision": "dea58567d68d07c50eb31e9175db3f2a3619aa8e",
+        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45558339999",
+        "description": "Private transaction path now composes exact grant, current independently witnessed policy ancestry, current authority head, pre-effect admission, upstream APPLIED/CLOSED transaction, local authority result and fresh fence attestation. No additional HTTP write route exists."
       },
       "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
       "dependencies": [
@@ -2260,7 +2253,7 @@
       "positiveTests": "Durable effect/ledger and explicit retry policy",
       "adversarialTests": "Crash, concurrent keys, unknown outcome, revoked approval and global budgets",
       "verificationMethod": "Go process and network integration, TLA refinement",
-      "knownLimitations": "RUNTIME-02 remains open. The transaction coordinator is intentionally package-private and synthetic; it is not yet composed with the strongest anchored exact-grant/current-policy path and is not a real upstream provider adapter. Upstream clone/rollback, physical power loss, explicit compensation authorization, expiry/revocation in the transaction path, provider-global billing and global freshness remain unresolved."
+      "knownLimitations": "RUNTIME-02 remains open: the externally mountable composite still performs only the established local synthetic effect; real provider integration is absent. Upstream/policy coordinated rollback, physical power loss, compensation authorization, provider-global billing and external monotonic freshness remain unresolved."
     },
     {
       "id": "V2-RUNTIME-03",
