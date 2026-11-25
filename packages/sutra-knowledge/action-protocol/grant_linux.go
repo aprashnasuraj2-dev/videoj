@@ -294,7 +294,7 @@ func NewGrantGuard(book *GrantBook,coordinator *WitnessCoordinator)(*GrantGuard,
 }
 func (g *GrantGuard) Commit(grant ActionGrant,req AuthorityRequest,class GrantClass)(WitnessedResponse,error){
  if req.Op!=AuthorityCommit{return WitnessedResponse{},ErrPolicy}
- if !g.coordinator.authority.authenticate(req){return WitnessedResponse{},ErrAuthorityAuth}
+ if e:=g.coordinator.authority.preflight(req);e!=nil{return WitnessedResponse{},e}
  // Hold the grant-book mutex across the authority/witness transaction so a
  // concurrent revocation cannot pass between the last policy check and dispatch.
  g.book.mu.Lock();defer g.book.mu.Unlock()
@@ -311,14 +311,14 @@ func (g *GrantGuard) ProcessAttested(grant ActionGrant,req AuthorityRequest,chal
  if challenge==(Digest{}){return WitnessedEnvelope{},ErrPolicy}
  switch req.Op{
  case AuthorityCommit:
-  if !g.coordinator.authority.authenticate(req){return WitnessedEnvelope{},ErrAuthorityAuth}
+  if e:=g.coordinator.authority.preflight(req);e!=nil{return WitnessedEnvelope{},e}
   // The intent class comes from the signed grant itself. No external class
   // parameter can reinterpret primary consent as compensation consent.
   g.book.mu.Lock();defer g.book.mu.Unlock()
   if e:=g.book.reserveDispatchLocked(grant,req.Action,grant.Class);e!=nil{return WitnessedEnvelope{},e}
   return g.coordinator.ProcessAttested(req,challenge)
  case AuthorityStatus:
-  if !g.coordinator.authority.authenticate(req){return WitnessedEnvelope{},ErrAuthorityAuth}
+  if e:=g.coordinator.authority.preflight(req);e!=nil{return WitnessedEnvelope{},e}
   if e:=g.book.CheckReconcile(grant,req.Action);e!=nil{return WitnessedEnvelope{},e}
   return g.coordinator.ProcessAttested(req,challenge)
  default:
