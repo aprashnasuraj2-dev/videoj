@@ -822,6 +822,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    await select('old_rev',1,1);await select('new_rev',1,2);await select('old_exp',2,1);await select('new_exp',2,2);
    await click('table-stage');await state('table_staged');assert.match(await tablePage.locator('#review-staged').innerText(),/1 staged source.*4 reviewed binding/);
    await click('seal');await state('sealed');const contract=JSON.parse(await tablePage.locator('#review-contract').textContent());assert.equal(contract.sources[0].text,source);assert.deepEqual(contract.bindings.map(b=>b.span.quote),['100','120','50','70']);
+   await tablePage.locator('#review-expression-panel > summary').click();assert.ok(await tablePage.locator('#review-expression').isVisible());
    await fill('expression','[new_rev]-[new_exp]>[old_rev]-[old_exp]');await click('expression-generate');await state('proposal');await click('run');await state('ready');
    assert.match(await tablePage.locator('#review-result').innerText(),/CONDITIONALLY REFUTED/);
    assert.equal(await tablePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await tablePage.close();

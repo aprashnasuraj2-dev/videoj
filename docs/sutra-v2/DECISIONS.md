@@ -149,3 +149,8 @@ V2-079 10/10 exact workflows passed; scoped sibling browser evidence registered.
 ## V2-083 — Bounded transactional investigation history
 
 Add caller-pinned portable history of up to 12 versions and 8 branch heads under existing 256 KiB total wire bound. Replay every exact version in parent-before-child order; require one root, unique digests/branches and reachability from a retained head. Explicit fork from historical version; append only direct child to matching branch head. Serialize transactions within one instance, compare expected history digest at execution, commit only after full validation, preserve failed-state immutability and queue recovery. Tests exercise multi-generation history, historical fork, sibling correction/withdrawal conflict, exact restore, concurrent stale writer, malformed parent/order and unreachable versions. No disk persistence, multi-tab/process CAS, merge or independent replay claim. Exact CI pending.
+
+
+## V2-084 — Table browser acceptance correction and measured selection counts
+
+V2-080 exact 10/10 workflows green. Four synthetic revision cases matched exact rebuilt bytes, 14 full reselections versus 10 targeted (four avoided); one-source changes 7 vs 3 and all-source changes 7 vs 7. No wall-time, human-effort or superiority claim. V2-082 browser job 139199448847 failed after exact contract staging because the test attempted to fill an invisible textarea in the collapsed formula disclosure. Open the existing disclosure through its summary and assert visible; preserve the failed run and every numeric, layout and request assertion. V2-081 scoped knowledge/browser jobs passed; complete exact workflows still to reconcile. V2-083 history candidate pending. No release.
