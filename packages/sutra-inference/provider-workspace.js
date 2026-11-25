@@ -46,10 +46,15 @@ function sanitizeProviderValue(value,secret,{depth=0,budget={chars:0,nodes:0}}={
  return Object.freeze(out);
 }
 
-export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimits,leaseTicks=45,randomBytes}={}){
+export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimits,leaseTicks=45,randomBytes,transports=[]}={}){
  const vault=createEphemeralCredentialVault({catalog,randomBytes});
  const ledger=createProviderBudgetLedger({global:globalLimits,profiles:[],leaseTicks,randomBytes});
- if(!plain(defaultProfileLimits))stop('CONFIG');
+ if(!plain(defaultProfileLimits)||!Array.isArray(transports)||transports.length>vault.providers.length)stop('CONFIG');
+ const providerIds=new Set(vault.providers.map(p=>p.id)),transportById=new Map();
+ for(const entry of transports){
+  if(!closed(entry,['providerId','send'])||!providerIds.has(entry.providerId)||transportById.has(entry.providerId)||typeof entry.send!=='function')stop('CONFIG');
+  transportById.set(entry.providerId,entry.send);
+ }
 
  const profileMeta=handle=>{
   try{return vault.describe(handle);}catch(error){if(error instanceof CredentialVaultError)stop('HANDLE');throw error;}
@@ -59,11 +64,19 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
  return Object.freeze({
   mode:'provider-workspace-laboratory',
   providers:vault.providers,
-  addProfile({providerId,label,credential,limits=defaultProfileLimits}={}){
+  addProfile(input={}){
+   if(!plain(input))stop('PROFILE');
+   const keys=Reflect.ownKeys(input),descriptors=Object.getOwnPropertyDescriptors(input);
+   if(keys.some(k=>typeof k!=='string')||!(keys.length===3||keys.length===4)||
+    !['providerId','label','credential'].every(k=>keys.includes(k))||
+    keys.some(k=>!['providerId','label','credential','limits'].includes(k))||
+    Object.values(descriptors).some(d=>typeof d.get==='function'||typeof d.set==='function'))stop('PROFILE');
+   const providerId=descriptors.providerId.value,label=descriptors.label.value,credential=descriptors.credential.value;
+   const profileLimits=keys.includes('limits')?descriptors.limits.value:defaultProfileLimits;
    let added;
    try{
     added=vault.addProfile({providerId,label,credential});
-    ledger.registerProfile({profileId:added.profile.profileId,limits});
+    ledger.registerProfile({profileId:added.profile.profileId,limits:profileLimits});
     return Object.freeze({handle:added.handle,profile:added.profile,budget:budgetRow(added.profile.profileId)});
    }catch(error){
     if(added){try{vault.remove(added.handle);}catch{}}
@@ -84,13 +97,12 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
    })));
   },
   budgetSnapshot(){return ledger.snapshot();},
-  async execute({handle,model,inputBytes,maxOutputTokens,now,operation,transport}={}){
+  async execute(input={}){
+   if(!closed(input,['handle','model','inputBytes','maxOutputTokens','now','operation']))stop('REQUEST');
+   const {handle,model,inputBytes,maxOutputTokens,now,operation}=input;
    const profile=profileMeta(handle);
    if(typeof model!=='string'||!modelPattern.test(model)||!profile.models.includes(model))stop('MODEL');
-   if(typeof transport!=='function')stop('TRANSPORT');
-   // Snapshot operation data before budget reservation or secret release. This
-   // rejects accessors/functions/cycles and prevents transport-side mutation of
-   // caller-owned data from changing the admitted operation after the fact.
+   const transport=transportById.get(profile.providerId);if(typeof transport!=='function')stop('TRANSPORT');
    const safeOperation=sanitizeProviderValue(operation,'');
    let lease;
    try{lease=ledger.reserve({profileId:profile.profileId,inputBytes,maxOutputTokens,now});}
@@ -99,19 +111,14 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
     const raw=await vault.use(handle,profile.providerId,(secret,meta)=>transport(Object.freeze({
      providerId:meta.providerId,model,credential:secret,leaseId:lease.leaseId,operation:safeOperation
     })));
-    let report,secret;
-    // Re-enter the vault only for bounded secret-echo detection; do not retain
-    // the credential in workspace metadata or returned values.
+    let secret;
     await vault.use(handle,profile.providerId,value=>{secret=value;});
     if(!closed(raw,['actualInputBytes','actualOutputTokens','value']))stop('PROVIDER_RESULT');
     const value=sanitizeProviderValue(raw.value,secret);
     try{ledger.settle(lease.leaseId,{actualInputBytes:raw.actualInputBytes,actualOutputTokens:raw.actualOutputTokens,now});}
     catch(error){if(error instanceof BudgetLedgerError)stop('USAGE');throw error;}
-    report=Object.freeze({profile,model,lease:ledger.inspectLease(lease.leaseId),value});
-    return report;
+    return Object.freeze({profile,model,lease:ledger.inspectLease(lease.leaseId),value});
    }catch(error){
-    // Provider contact or trusted transport may already have happened. Preserve
-    // the full admission and an active unknown lease rather than retry/refund.
     try{ledger.markUnknown(lease.leaseId,{now});}catch{}
     if(error instanceof ProviderWorkspaceError)throw error;
     stop('PROVIDER_UNKNOWN');
