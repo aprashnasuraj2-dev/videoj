@@ -204,7 +204,6 @@ func TestAnchoredFencedExternalRejectsLegacyWriteRoutesWithoutStateChange(t *tes
 		}
 		req.Header.Set("Content-Type", media)
 		req.Header.Set("Accept", media)
-		req.Header.Set(fenceChallengeHeader, "01"+string(make([]byte, 62)))
 		res, e := http.DefaultClient.Do(req)
 		if e != nil {
 			t.Fatal(e)
