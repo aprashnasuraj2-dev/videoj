@@ -8,9 +8,11 @@ import (
  "encoding/hex"
  "encoding/json"
  "errors"
+ "net"
  "net/http"
  "net/http/httptest"
  "os"
+ "os/exec"
  "path/filepath"
  "sync"
  "sync/atomic"
@@ -203,4 +205,48 @@ func TestSharedAuthorityRolledBackCursorConsumesBudgetWithoutRepeatingEffect(t *
  spent,total,effects,e=a.Counts();if e!=nil||spent!=[authorityCallers]byte{2,1}||total!=3||effects!=2{t.Fatal("final shared accounting",spent,total,effects,e)}
  if !VerifyAuthorityResponse(committed,first,authorityPub)||!VerifyAuthorityResponse(refused,replay,authorityPub)||!VerifyAuthorityResponse(last,fresh,authorityPub){t.Fatal("signed response verification")}
  t.Log("rolled-back caller cursor spent its remaining contact on stale conflict; effect stayed at one until independent caller used final global contact")
+}
+
+
+func TestSharedAuthorityExternalProcessCAS(t *testing.T){
+ if os.Getenv("SUTRA_AUTHORITY_SERVER_CHILD")=="1"{
+  origin:=os.Getenv("SUTRA_AUTHORITY_SERVER_ORIGIN")
+  ctx,approver,_,_,authorityKey,callerPub,_:=authorityFixture(t,origin)
+  a,e:=OpenSharedAuthority(os.Getenv("SUTRA_AUTHORITY_SERVER_DIR"),ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer a.Close()
+  file:=os.NewFile(3,"sutra-authority-listener");if file==nil{t.Fatal("missing listener fd")};defer file.Close()
+  listener,e:=net.FileListener(file);if e!=nil{t.Fatal(e)};defer listener.Close()
+  _=http.Serve(listener,a)
+  return
+ }
+ listener,e:=net.Listen("tcp","127.0.0.1:0");if e!=nil{t.Fatal(e)};defer listener.Close()
+ origin:="http://"+listener.Addr().String()
+ ctx,approver,ak,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,origin)
+ dir:=privateTemp(t)
+ a,e:=CreateSharedAuthority(dir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)}
+ root,e:=a.Head();if e!=nil{t.Fatal(e)};a.Close()
+ start:=func()*exec.Cmd{
+  file,e:=listener.(*net.TCPListener).File();if e!=nil{t.Fatal(e)}
+  cmd:=exec.Command(os.Args[0],"-test.run=^TestSharedAuthorityExternalProcessCAS$")
+  cmd.Env=append(os.Environ(),"SUTRA_AUTHORITY_SERVER_CHILD=1","SUTRA_AUTHORITY_SERVER_ORIGIN="+origin,"SUTRA_AUTHORITY_SERVER_DIR="+dir)
+  cmd.ExtraFiles=[]*os.File{file}
+  if e=cmd.Start();e!=nil{file.Close();t.Fatal(e)}
+  file.Close()
+  return cmd
+ }
+ stop:=func(cmd *exec.Cmd){
+  if cmd==nil||cmd.Process==nil{return}
+  _=cmd.Process.Kill();_=cmd.Wait()
+ }
+ req0:=approve(t,0,ctx,ak);req1:=approve(t,1,ctx,ak)
+ child:=start()
+ c0,e:=NewAuthorityClient(origin,0,callerKey[0],authorityPub,req0,root);if e!=nil{stop(child);t.Fatal(e)}
+ first,resp,e:=c0.Commit();if e!=nil||first.Version!=1||resp.TotalSpent!=1{stop(child);t.Fatal("external process commit",e)}
+ stop(child)
+ child=start()
+ c1,e:=NewAuthorityClient(origin,1,callerKey[1],authorityPub,req1,resp.After);if e!=nil{stop(child);t.Fatal(e)}
+ second,resp2,e:=c1.Commit();if e!=nil||second.Version!=2||resp2.TotalSpent!=2{stop(child);t.Fatal("restarted external process commit",e)}
+ stop(child)
+ a,e=OpenSharedAuthority(dir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer a.Close()
+ spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{1,1}||total!=2||effects!=2{t.Fatal("external durable counts",spent,total,effects,e)}
+ t.Log("two distinct authority server processes used the same authenticated CAS store; signed history and shared counts survived process replacement")
 }
