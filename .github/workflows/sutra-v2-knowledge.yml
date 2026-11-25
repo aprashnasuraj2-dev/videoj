@@ -19,6 +19,8 @@ jobs:
           node-version: 24
       - name: Validate executable SUTRA v2 threat model coverage
         run: node docs/sutra/tools/threat-model-check.mjs
+      - name: Run bounded inference and opaque credential boundary tests
+        run: node --test packages/sutra-inference/test/*.test.mjs
       - name: Go offline checkpoint contract and adversarial tests
         run: |
           go version
