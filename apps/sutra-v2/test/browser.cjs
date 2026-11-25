@@ -907,6 +907,28 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    await tablePage.locator('#review-expression-panel > summary').click();assert.ok(await tablePage.locator('#review-expression').isVisible());
    await fill('expression','[new_rev]-[new_exp]>[old_rev]-[old_exp]');await click('expression-generate');await state('proposal');await click('run');await state('ready');
    assert.match(await tablePage.locator('#review-result').innerText(),/CONDITIONALLY REFUTED/);
+   const mappedQuestion='Is current revenue not less than prior revenue?';
+   await fill('question',mappedQuestion);await click('seal');await state('sealed');
+   await tablePage.locator('#review-question-path-panel > summary').click();
+   async function capture(side,name){await tablePage.locator('#review-question-path-text').evaluate((el,name)=>{el.focus();const i=el.value.indexOf(name);el.setSelectionRange(i,i+name.length);},name);await click('question-path-'+side);}
+   await capture('left','current revenue');await capture('right','prior revenue');
+   await tablePage.locator('#review-question-path-left-binding').selectOption(['new_rev','old_exp']);
+   await tablePage.locator('#review-question-path-right-binding').selectOption('old_rev');
+   await click('question-path-run');await state('question_ready');
+   const qp=await tablePage.locator('#review-question-path-result').innerText();
+   assert.match(qp,/not less than/);assert.match(qp,/CONDITIONALLY_SATISFIED/);assert.match(qp,/CONDITIONALLY_REFUTED/);
+   await tablePage.locator('#review-question-path-left-binding').selectOption('new_rev');assert.equal(await tablePage.locator('#review-question-path-stage').isDisabled(),true);
+   await click('question-path-run');await state('question_ready');await click('question-path-stage');await state('question_staged');
+   assert.match(await tablePage.locator('#review-batch-count').innerText(),/1 \/ 8/);assert.equal(await tablePage.locator('#review-semantic-run').isDisabled(),true);
+   await tablePage.locator('#review-question-path-left-binding').selectOption(['new_rev','old_exp']);await click('question-path-run');await state('question_ready');await click('question-path-stage');await state('question_staged');
+   assert.match(await tablePage.locator('#review-batch-count').innerText(),/2 \/ 8/);
+   await click('semantic-run');await state('semantic_ready');
+   const semantic=await tablePage.locator('#review-semantic-result').innerText();assert.match(semantic,/CONDITIONALLY_SATISFIED/);assert.match(semantic,/CONDITIONALLY_REFUTED/);
+   await tablePage.locator('#review-semantic-list > div').first().locator('details > summary').click();
+   assert.match(await tablePage.locator('#review-semantic-list').innerText(),/claim:relation_phrase/);
+   await fill('facet-question_1-negation','Caller revised negation declaration');assert.equal(await tablePage.locator('#review-semantic-export').isDisabled(),true);
+   await click('semantic-run');await state('semantic_ready');
+   await fill('question','Is current revenue higher than prior revenue?');assert.equal(await tablePage.locator('#review-question-path-stage').isDisabled(),true);
    assert.equal(await tablePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await tablePage.close();
   }
   // Full first-minute tour from fresh browser state; no simulated verdicts.

@@ -1,3 +1,4 @@
+import {compileReviewedQuestion} from '../../../packages/sutra-knowledge/reviewed-question.js';
 import {evaluateReviewedFisher,FISHER_DESIGN} from '../../../packages/sutra-knowledge/reviewed-fisher.js';
 import {evaluateReviewedBinomial,DESIGN_OBLIGATIONS} from '../../../packages/sutra-knowledge/reviewed-binomial.js';
 import {evaluateReviewedIntervals} from '../../../packages/sutra-knowledge/reviewed-interval.js';
@@ -24,6 +25,7 @@ import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigation
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
+let questionCurrent=null,questionPathPin=null,questionSelections={left:null,right:null};
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
 const tableFields=['table-text','table-source','table-lineage','table-inspect','table-row','table-column','table-id','table-kind','table-unit','table-scope','table-dim-l','table-dim-m','table-dim-t','table-add','table-stage','table-clear'];
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected','sample-statistics','sample-statistics-corrected','sample-two-groups','sample-two-groups-corrected'];
@@ -31,11 +33,58 @@ function status(state,message){by('status').dataset.state=state;by('status').tex
 function control(){
  for(const id of controls)by(id).disabled=busy;
  if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;by('candidate-id').disabled=!sealed;by('expression').disabled=!sealed;by('expression-generate').disabled=!sealed||!by('expression').value.trim();by('source-revise').disabled=!sources.length;by('source-revise-pick').disabled=!sources.length;by('source-revise-text').disabled=!sources.length;}
- semanticControl();tableControl();
+ semanticControl();tableControl();questionControl();
 }
 function invalidate(message){epoch++;clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 function options(element,items){element.replaceChildren();for(const id of items){const o=document.createElement('option');o.value=id;o.textContent=id;element.append(o);}}
+function clearQuestionPreview(){questionCurrent=null;by('question-path-result').textContent='';}
+function questionControl(){
+ const pin=sealed?.pin??null;
+ if(pin!==questionPathPin){
+  questionPathPin=pin;questionSelections={left:null,right:null};clearQuestionPreview();
+  by('question-path-text').value=sealed?JSON.parse(sealed.contractText).question.text:'';
+  for(const side of ['left','right']){
+   by('question-path-'+side+'-span').textContent='No selection.';
+   options(by('question-path-'+side+'-binding'),sealed?bindings.map(b=>b.id):[]);
+   by('question-path-'+side+'-binding').selectedIndex=-1;
+  }
+ }
+ const mapped=side=>by('question-path-'+side+'-binding').selectedOptions.length;
+ for(const id of ['question-path-text','question-path-left','question-path-right','question-path-left-binding','question-path-right-binding'])by(id).disabled=busy||!sealed;
+ by('question-path-run').disabled=busy||!sealed||!questionSelections.left||!questionSelections.right||!mapped('left')||!mapped('right');
+ by('question-path-stage').disabled=busy||!sealed||!questionCurrent||questionCurrent.contractDigest!==pin;
+}
+for(const side of ['left','right']){
+ by('question-path-'+side).onclick=()=>{
+  if(busy||!sealed)return;
+  const el=by('question-path-text'),start=el.selectionStart,end=el.selectionEnd;
+  questionSelections[side]=end>start?{start,end}:null;
+  by('question-path-'+side+'-span').textContent=end>start?JSON.stringify(el.value.slice(start,end)):'No selection.';
+  clearQuestionPreview();control();
+ };
+ by('question-path-'+side+'-binding').onchange=()=>{clearQuestionPreview();control();};
+}
+by('question-path-run').onclick=()=>work(async ticket=>{
+ if(!sealed||!questionSelections.left||!questionSelections.right)return;
+ clearQuestionPreview();
+ const operand=side=>({...questionSelections[side],bindingIds:Array.from(by('question-path-'+side+'-binding').selectedOptions,o=>o.value)});
+ const plan=JSON.stringify({version:1,contractDigest:sealed.pin,left:operand('left'),right:operand('right')});
+ const result=await compileReviewedQuestion(sealed.contractText,sealed.pin,plan,await casePin(plan));
+ if(ticket!==epoch||result.contractDigest!==sealed?.pin)return;
+ questionCurrent=result;
+ by('question-path-result').textContent=['Exact relation: '+result.relation.span.quote+' → '+result.relation.operator,...result.candidates.map(c=>c.meaning+' · '+c.conditionalState),result.qualification].join('\n');
+ status('question_ready','Local grammar compiled. Review all supplied mappings and conditional outcomes before explicitly staging.');
+});
+by('question-path-stage').onclick=()=>{
+ const r=questionCurrent;
+ if(busy||!sealed||!r||r.contractDigest!==sealed.pin)return;
+ epoch++;stagedProposals=structuredClone(r.proposals);batchCurrent=null;current=null;invalidateSemantic();
+ annotations=new Map(r.candidates.map(c=>[c.id,{meaning:c.meaning,binding:c.leftBinding,facets:Object.fromEntries(Object.entries(c.facets).filter(([k,v])=>k!=='definition'&&v).map(([k,v])=>[k,{statement:v.statement,binding:v.references.find(x=>x.kind==='binding')?.id??''}])),generatedFacets:structuredClone(c.facets)}]));
+ by('proposal').value=r.proposals[0].proposalText;by('result').textContent='';by('snapshot-pin').textContent='';by('batch-result').textContent='';
+ clearQuestionPreview();renderBatch();control();
+ status('question_staged',r.proposals.length===1?'One untrusted proposal staged. Evaluate it individually; no artificial consensus.':'All declared alternatives staged with exact question claims. Review meanings before sealing an investigation.');
+};
 function clearTablePreview(){
  tablePreview=null;tableSelections=[];by('table-row').replaceChildren();by('table-column').replaceChildren();by('table-cell').textContent='';by('table-list').textContent='';by('table-status').textContent='Inspect exact pasted text before selecting cells.';
 }
@@ -98,7 +147,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL|BINOMIAL|FISHER)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL|BINOMIAL|FISHER|QUESTION)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 async function loadGuidedCase(domain,corrected,ticket){
@@ -283,9 +332,10 @@ function renderSemanticRows(){
   const empty=document.createElement('option');empty.value='';empty.textContent='No reference declared';select.append(empty);
   for(const b of bindings){const option=document.createElement('option');option.value=b.id;option.textContent=b.id;select.append(option);}
   select.value=a.binding;
-  const change=()=>{epoch++;a.meaning=input.value;a.binding=select.value;annotations.set(p.id,a);invalidateSemantic();semanticControl();};
+  const inherited=document.createElement('small');const inheritedText=()=>{inherited.textContent=a.generatedFacets?.definition?'Generated links: '+a.generatedFacets.definition.references.map(r=>r.kind+':'+r.id).join(', ')+' (retained until edited).':'';};inheritedText();
+  const change=()=>{epoch++;if(a.generatedFacets)delete a.generatedFacets.definition;inheritedText();a.meaning=input.value;a.binding=select.value;annotations.set(p.id,a);invalidateSemantic();semanticControl();};
   input.addEventListener('input',change);select.addEventListener('change',change);
-  const row=document.createElement('div');row.append(label,input,bindingLabel,select);
+  const row=document.createElement('div');row.append(label,input,bindingLabel,select,inherited);
   const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Review additional qualifiers (optional)';details.append(summary);
   for(const facet of FACETS.filter(k=>k!=='definition')){
    const field=document.createElement('div');field.className='pinned-fields';
@@ -295,8 +345,9 @@ function renderSemanticRows(){
    const empty=document.createElement('option');empty.value='';empty.textContent='No reference declared';ref.append(empty);
    for(const binding of bindings){const o=document.createElement('option');o.value=binding.id;o.textContent=binding.id;ref.append(o);}
    const stored=a.facets[facet]??{statement:'',binding:''};input.value=stored.statement;ref.value=stored.binding;
-   const changed=()=>{epoch++;a.facets[facet]={statement:input.value,binding:ref.value};annotations.set(p.id,a);invalidateSemantic();semanticControl();};
-   input.addEventListener('input',changed);ref.addEventListener('change',changed);field.append(label,input,refLabel,ref);details.append(field);
+   const inherited=document.createElement('small');const inheritedText=()=>{inherited.textContent=a.generatedFacets?.[facet]?'Generated links: '+a.generatedFacets[facet].references.map(r=>r.kind+':'+r.id).join(', ')+' (retained until edited).':'';};inheritedText();
+   const changed=()=>{epoch++;if(a.generatedFacets)delete a.generatedFacets[facet];inheritedText();a.facets[facet]={statement:input.value,binding:ref.value};annotations.set(p.id,a);invalidateSemantic();semanticControl();};
+   input.addEventListener('input',changed);ref.addEventListener('change',changed);field.append(label,input,refLabel,ref,inherited);details.append(field);
   }
   row.append(details);list.append(row);
  }
@@ -319,8 +370,8 @@ by('semantic-run').onclick=()=>work(async ticket=>{
  const candidates=stagedProposals.map(p=>{
   const a=annotations.get(p.id);if(!a?.meaning.trim())throw Error('SEMANTIC_MEANING_REQUIRED');
   const facets=Object.fromEntries(FACETS.map(k=>[k,null]));
-  facets.definition={statement:a.meaning,references:a.binding?[{kind:'binding',id:a.binding}]:[]};
-  for(const k of FACETS.filter(k=>k!=='definition')){const f=a.facets[k];if(f?.statement.trim())facets[k]={statement:f.statement,references:f.binding?[{kind:'binding',id:f.binding}]:[]};else if(f?.binding)throw Error('SEMANTIC_FACET_STATEMENT_REQUIRED');}
+  facets.definition=a.generatedFacets?.definition??{statement:a.meaning,references:a.binding?[{kind:'binding',id:a.binding}]:[]};
+  for(const k of FACETS.filter(k=>k!=='definition')){const f=a.facets[k];if(a.generatedFacets?.[k])facets[k]=a.generatedFacets[k];else if(f?.statement.trim())facets[k]={statement:f.statement,references:f.binding?[{kind:'binding',id:f.binding}]:[]};else if(f?.binding)throw Error('SEMANTIC_FACET_STATEMENT_REQUIRED');}
   return {id:p.id,meaning:a.meaning,facets};
  });
  const annotationText=JSON.stringify({version:1,contractDigest:sealed.pin,batchDigest:await casePin(batchText),candidates});

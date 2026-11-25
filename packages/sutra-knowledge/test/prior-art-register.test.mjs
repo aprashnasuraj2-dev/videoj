@@ -11,7 +11,7 @@ test('research register preserves all mandated references, evidence scope and fa
  for(const url of required)assert.ok(r.sources.some(s=>s.url===url));
  for(const s of r.sources){
   assert.match(s.id,/^PA\d\d$/);assert.equal(new URL(s.url).protocol,'https:');
-  for(const field of ['title','authors','level','known','sutra','test','gap'])assert.ok(typeof s[field]==='string'&&s[field].trim().length>10,s.id+' '+field);
+  for(const field of ['title','authors','level','known','sutra','test','gap'])assert.ok(typeof s[field]==='string'&&s[field].trim().length>(field==='authors'?0:10),s.id+' '+field);
   assert.ok(md.includes(s.url),s.id);assert.ok(md.includes(s.test),s.id);assert.ok(md.includes(s.gap),s.id);
  }
 });

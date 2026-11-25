@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-099",
+  "session": "V2-100",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -3281,6 +3281,12 @@
           "sourceRevision": "10658db4cbf9394ab2f7c15569a51cc7f8f1d951",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612091477/job/139197949093",
           "description": "All 10 exact workflows green. Four synthetic revision cases 4/4 exact match; 14 full selections vs 10 targeted, four avoided. One-source edits 7 vs 3; all-source edits 7 vs 7. Diagnostic node counts only; no human effort or speedup claim."
+        },
+        {
+          "id": "V2-LK17-BENCHMARK",
+          "sourceRevision": "29c0778feb9f5930d062155bb9ca0613cd68f17c",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45709323776/job/139539358426",
+          "description": "Scoped kernel experiment passed, whole revision 9/10 due to impact classification. 6/6 vectors, 67 candidate evaluations, 4/6 distinguishing. Raw majority 2 wrong-only, 1 abstention; deduplicated majority 0 wrong-only, 4 abstentions; retain-all kept 11 wrong instances, no correct candidate lost, no semantic selection. Synthetic developer labels; no superiority claim."
         }
       ]
     },
