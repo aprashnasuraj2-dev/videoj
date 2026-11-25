@@ -491,8 +491,8 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    const dl=proposalPage.waitForEvent('download');await proposalPage.locator('#pinned-proposal-export').click();
    const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,stem+'.json'),bytes);return JSON.parse(bytes);
   }
-  const opposite=await saveProposal('proposal-correct',true);
-  assert.equal(opposite.result.comparison,'OPPOSITE_DECISIVE_STATES');assert.deepEqual(opposite.result.worlds.shared,[]);assert.equal(opposite.result.history.commonPrefix.state,'UNDERDETERMINED');
+  const oppositeProposal=await saveProposal('proposal-correct',true);
+  assert.equal(oppositeProposal.result.comparison,'OPPOSITE_DECISIVE_STATES');assert.deepEqual(oppositeProposal.result.worlds.shared,[]);assert.equal(oppositeProposal.result.history.commonPrefix.state,'UNDERDETERMINED');
   const edited=JSON.parse(await proposalPage.locator('#pinned-proposal-text').inputValue());edited.claimedState='SUPPORTED';
   await proposalPage.locator('#pinned-proposal-text').fill(JSON.stringify(edited));assert.equal(await proposalPage.locator('#pinned-proposal-export').isDisabled(),true);
   const forged=await saveProposal('proposal-forged',false);assert.equal(forged.result.claim.recomputedState,'REFUTED');

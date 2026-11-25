@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-032",
+  "session": "V2-033",
   "next": [
     "V2-D15-COMPETING-PROPOSAL",
     "V2-P07-WASM",
@@ -19,7 +19,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "competing_proposal_candidate_pending_exact_ci",
+  "state": "competing_proposal_syntax_correction_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -330,13 +330,11 @@
   "release": "not_authorized",
   "submission": "not_started",
   "lastFailed": {
-    "sourceRevision": "88f94467148a6e5d7deb0f5232a2768d24323f87",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576689738",
-    "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576697835",
-    "reason": "Both actual Chromium journeys passed their browser execution and all preceding independent replay steps, but the new aligned capsule differential step failed at aligned-capsule-parity.mjs:60 in jobs 139076301919 and 139076274007. Test expected ENVELOPE_SCHEMA from the legacy profile when fed the deeply nested aligned wire; the actual legacy depth-4 parser refuses before schema with WIRE_REFUSED. Both local JS and Python legacy verifiers reproduce WIRE_REFUSED. No downgrade/acceptance occurred. Seven auxiliary workflows passed; full exact-source credit withheld. PR failed artifact 15004078329 digest sha256:3c06d9c9e374445132e437a6efca49bf55cd4819c898e2a61084dd7c2e239270.",
-    "resolutionStatus": "resolved at exact all-nine green source; shared parser unchanged, exact cross-profile refusal order tested",
-    "resolutionRevision": "441b8fa44ad0a8332e5ef7f0ecd980fd0c4e0d82",
-    "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45577083295/job/139077570567"
+    "sourceRevision": "30e19bc37c0e029b48087262363821c66481dfa6",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579215618",
+    "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579224571",
+    "reason": "Both browser jobs 139084725945 and 139084693222 failed before any browser journey due to browser.cjs:494 SyntaxError: Identifier 'opposite' has already been declared. Existing explanation journey at line 356 and new proposal journey used same lexical identifier. Seven auxiliary workflows completed successfully; knowledge jobs were still in progress when recorded. No browser or full exact-source credit.",
+    "resolutionStatus": "corrected browser variable name; syntax preflight added; pending exact CI"
   },
   "lastVerifiedKernelSource": "6919d3e7a55b4843563efa0b129c78c1480e7f78",
   "resolvedIssue": {
@@ -349,7 +347,7 @@
   },
   "pendingCandidate": {
     "sourceRevision": null,
-    "sourceParent": "6919d3e7a55b4843563efa0b129c78c1480e7f78",
+    "sourceParent": "30e19bc37c0e029b48087262363821c66481dfa6",
     "status": "candidate_pending_exact_ci",
     "identityRule": "Resolve the immutable commit containing this checkpoint.",
     "checks": [
@@ -357,20 +355,22 @@
       "opposite decisive states disjoint survivors; both branches retain independent histories; no adoption",
       "canonical common event prefix replay distinct from final shared readings, exact event digests, divergent tails, evidence roots and availability",
       "invalid source, foreign case, malformed event or claimed state refused; false claim reported without endorsing it",
-      "four exact local Node groups; two independent Python replay reports and 30 mutated reports refused; actual browser exact CI pending"
+      "four exact local Node groups; two independent Python replay reports and 30 mutated reports refused; actual browser exact CI pending",
+      "corrected duplicate lexical binding; full corrected browser source compiled in V8 before commit; CI node --check before dependency install",
+      "256 ordered subset pairs against independent direct arithmetic/set oracle: 12 opposite decisive pairs, 128 false asserted states, all passed locally"
     ]
   },
   "previousPendingCandidate": {
-    "sourceRevision": "6919d3e7a55b4843563efa0b129c78c1480e7f78",
-    "sourceParent": "c66f1453d286f66bcfa3a189ba00efdcbb090dca",
-    "status": "verified_exact_ci",
+    "sourceRevision": "30e19bc37c0e029b48087262363821c66481dfa6",
+    "sourceParent": "6919d3e7a55b4843563efa0b129c78c1480e7f78",
+    "status": "failed_exact_ci",
     "identityRule": "Resolve the immutable commit containing this checkpoint.",
     "checks": [
-      "one aligned omitted-world candidate, explicit existing base and input-only exact overrides; normalized duplicate and world-budget refusal",
-      "admitted evidence, source availability, history, existing world receipts and capsule remain unchanged",
-      "compatible omitted world can destroy decisiveness; incompatible candidate shows exact evidence blockers; unresolved candidate remains unverified",
-      "independent Python replay of compatible and excluded candidate; 26 local mutations refused; actual browser independent replay pending",
-      "stale diagnostics cleared; no variant adoption or release"
+      "replay untrusted competing proposal against same caller-pinned aligned case; compare asserted and recomputed state",
+      "opposite decisive states disjoint survivors; both branches retain independent histories; no adoption",
+      "canonical common event prefix replay distinct from final shared readings, exact event digests, divergent tails, evidence roots and availability",
+      "invalid source, foreign case, malformed event or claimed state refused; false claim reported without endorsing it",
+      "four exact local Node groups; two independent Python replay reports and 30 mutated reports refused; actual browser exact CI pending"
     ]
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
@@ -610,6 +610,13 @@
       "resolutionStatus": "resolved at exact all-nine green source; shared parser unchanged, exact cross-profile refusal order tested",
       "resolutionRevision": "441b8fa44ad0a8332e5ef7f0ecd980fd0c4e0d82",
       "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45577083295/job/139077570567"
+    },
+    {
+      "sourceRevision": "30e19bc37c0e029b48087262363821c66481dfa6",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579215618",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579224571",
+      "reason": "Both browser jobs 139084725945 and 139084693222 failed before any browser journey due to browser.cjs:494 SyntaxError: Identifier 'opposite' has already been declared. Existing explanation journey at line 356 and new proposal journey used same lexical identifier. Seven auxiliary workflows completed successfully; knowledge jobs were still in progress when recorded. No browser or full exact-source credit.",
+      "resolutionStatus": "corrected browser variable name; syntax preflight added; pending exact CI"
     }
   ],
   "reconciledDurableCandidate": {

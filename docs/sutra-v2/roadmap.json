@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-032",
+  "session": "V2-033",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2622,7 +2622,16 @@
         "V2-D11-ALIGNED-CASE",
         "V2-D14-WORLD-COVERAGE"
       ],
-      "scope": "Untrusted hypothetical agent proposal with same case digest, separate event history and asserted state; recompute both histories and shared canonical prefix, compare receipts, declared roots, availability, survivors, minimal sets and policies. No identity, independent corroboration, authorization, external inference, truth or adoption."
+      "scope": "Untrusted hypothetical agent proposal with same case digest, separate event history and asserted state; recompute both histories and shared canonical prefix, compare receipts, declared roots, availability, survivors, minimal sets and policies. No identity, independent corroboration, authorization, external inference, truth or adoption.",
+      "failureEvidence": [
+        {
+          "sourceRevision": "30e19bc37c0e029b48087262363821c66481dfa6",
+          "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579215618",
+          "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579224571",
+          "reason": "Both browser jobs 139084725945 and 139084693222 failed before any browser journey due to browser.cjs:494 SyntaxError: Identifier 'opposite' has already been declared. Existing explanation journey at line 356 and new proposal journey used same lexical identifier. Seven auxiliary workflows completed successfully; knowledge jobs were still in progress when recorded. No browser or full exact-source credit.",
+          "resolutionStatus": "corrected browser variable name; syntax preflight added; pending exact CI"
+        }
+      ]
     }
   ]
 }

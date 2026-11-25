@@ -122,6 +122,8 @@ jobs:
           node-version: 24
           cache: npm
           cache-dependency-path: apps/sutra/package-lock.json
+      - name: Preflight browser journey syntax before dependencies and build
+        run: node --check apps/sutra-v2/test/browser.cjs
       - run: npm ci --prefix apps/sutra
       - name: Build isolated Rust WebAssembly support engine and canonical SUTRA v2 browser artifact
         run: |
