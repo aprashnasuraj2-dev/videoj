@@ -158,6 +158,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_explanation.py apps/sutra-v2/test-output/explanation-conflict.json apps/sutra-v2/test-output/explanation-opposite.json apps/sutra-v2/test-output/explanation-plan.json apps/sutra-v2/test-output/explanation-impossible.json > apps/sutra-v2/test-output/explanation-reference.txt
           cat apps/sutra-v2/test-output/explanation-reference.txt
+      - name: Independently replay actual world traces and blocking-root counterexamples
+        run: |
+          python3 packages/sutra-knowledge/reference/verify_world_trace.py apps/sutra-v2/test-output/world-trace-baseline.json apps/sutra-v2/test-output/world-trace-withdrawn.json apps/sutra-v2/test-output/world-trace-copied.json apps/sutra-v2/test-output/world-trace-conflicted.json apps/sutra-v2/test-output/world-trace-resolved.json > apps/sutra-v2/test-output/world-trace-reference.txt
+          cat apps/sutra-v2/test-output/world-trace-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

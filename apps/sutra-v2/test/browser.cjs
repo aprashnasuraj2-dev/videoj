@@ -401,7 +401,45 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.match(await guidePage.locator('#debug-guide-proof').innerText(),/exact original reverified/);
   const guideElapsed=Date.now()-guideStarted;assert.ok(guideElapsed<60000,'automated guided journey exceeded 60 seconds');
   fs.writeFileSync(path.join(output,'debugger-guide-timing.json'),JSON.stringify({elapsedMs:guideElapsed,viewport:{width:360,height:800},actions:12,qualification:'Automated local Chromium timing, not a human usability study.'},null,2));
+  // An explicit restart begins a new ceremony even if the eventual history digest is identical.
+  await guidePage.locator('#debug-manual > summary').click();
+  await guidePage.locator('#debug-start').click();
+  await guidePage.waitForFunction(()=>document.querySelector('#debug-guide-next').dataset.action==='withdraw'&&!document.querySelector('#debug-guide-next').disabled);
+  await guideStep('withdraw','restore','UNDERDETERMINED');
+  await guideStep('restore','copies','SUPPORTED');
+  await guideStep('copies','disagree','SUPPORTED');
+  await guideStep('disagree','withdraw','CONFLICTED');
+  await guideStep('withdraw','plan-observe','UNDERDETERMINED');
+  await guideStep('plan-observe','capsule-export','REFUTED');
+  assert.equal(await guidePage.locator('#debug-guide-proof').getAttribute('hidden'),'');
   assert.deepEqual(guideErrors,[]);assert.deepEqual(guideExternal,[]);await guidePage.close();
+  const worldPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),worldErrors=[],worldExternal=[];
+  worldPage.on('pageerror',e=>worldErrors.push(e.message));worldPage.on('request',r=>{if(new URL(r.url()).origin!==origin)worldExternal.push(r.url());});
+  await worldPage.goto(origin);await worldPage.locator('#debug-manual > summary').click();
+  async function worldStep(id,state,alive){
+   await worldPage.locator('#debug-'+id).click();
+   await worldPage.waitForFunction(s=>document.querySelector('#debug-state').dataset.state===s&&!document.querySelector('#debug-start').disabled,state);
+   assert.equal(await worldPage.locator('#debug-world-map tr').count(),8);
+   assert.deepEqual(await worldPage.locator('#debug-world-map tr[data-survives=true]').evaluateAll(rows=>rows.map(row=>row.dataset.world)),alive);
+   assert.equal(await worldPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  }
+  async function saveWorld(name){
+   const dl=worldPage.waitForEvent('download');await worldPage.locator('#debug-world-export').click();
+   const bundle=JSON.parse(fs.readFileSync(await (await dl).path(),'utf8'));fs.writeFileSync(path.join(output,name),JSON.stringify(bundle,null,2));return bundle.trace;
+  }
+  await worldStep('start','SUPPORTED',['w001','w011']);const traceBaseline=await saveWorld('world-trace-baseline.json');
+  await worldStep('withdraw','UNDERDETERMINED',['w001','w011','w101','w111']);
+  assert.match(await worldPage.locator('#debug-world-delta').innerText(),/2 returned/);await saveWorld('world-trace-withdrawn.json');
+  await worldStep('restore','SUPPORTED',['w001','w011']);
+  await worldStep('copies','SUPPORTED',['w001','w011']);const traceCopied=await saveWorld('world-trace-copied.json');assert.deepEqual(traceCopied.worlds,traceBaseline.worlds);
+  await worldStep('disagree','CONFLICTED',[]);await saveWorld('world-trace-conflicted.json');
+  assert.match(await worldPage.locator('[data-world=w001]').innerText(),/Independent-declared measurement: a=1 \(world 0\)/);
+  assert.match(await worldPage.locator('[data-world=w111]').innerText(),/Original report and copies: a=0 \(world 1\)/);
+  await worldPage.locator('.world-map').scrollIntoViewIfNeeded();await worldPage.screenshot({path:path.join(output,'world-trace-conflicted.png'),fullPage:false});
+  await worldStep('withdraw','UNDERDETERMINED',['w101','w111']);await worldStep('plan-observe','REFUTED',['w111']);
+  await saveWorld('world-trace-resolved.json');await worldPage.locator('.world-map').scrollIntoViewIfNeeded();await worldPage.screenshot({path:path.join(output,'world-trace-resolved.png'),fullPage:false});
+  assert.deepEqual(worldErrors,[]);assert.deepEqual(worldExternal,[]);await worldPage.close();
+  console.log('PASS: all eight world rows, exact blocker values, copy invariance, withdrawal deltas, fresh guide ceremony and five real world trace exports.');
   const desktopGuide=await browser.newPage({viewport:{width:1440,height:900}});await desktopGuide.goto(origin);await desktopGuide.locator('#debug-guide-next').click();
   await desktopGuide.waitForFunction(()=>document.querySelector('#debug-guide-next').dataset.action==='withdraw'&&!document.querySelector('#debug-guide-next').disabled);
   const desktopRect=await desktopGuide.locator('#debug-guide-next').boundingBox();assert.ok(desktopRect&&desktopRect.y+desktopRect.height<=900);

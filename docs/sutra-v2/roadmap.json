@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-019",
+  "session": "V2-020",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2406,12 +2406,29 @@
     },
     {
       "id": "V2-D04-GUIDE",
-      "status": "Implemented but unverified",
+      "status": "Integration verified",
       "dependencies": [
         "V2-D03-DIAGNOSIS",
         "V2-D02-CAPSULE"
       ],
-      "scope": "First-minute local guided challenge, progressive disclosure, actual 12-action route, keyboard/mobile/desktop checks, exact capsule equality; no human usability study or deployment."
+      "scope": "First-minute local guided challenge, progressive disclosure, actual 12-action route, keyboard/mobile/desktop checks, exact capsule equality; no human usability study or deployment.",
+      "evidence": [
+        {
+          "id": "V2-D04-GUIDE",
+          "sourceRevision": "793187573699da06e16bd5b337349007158abdb6",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45570855086/job/139056839918",
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45570855086 and push 45570848503, ingress 45570855153, impact 45570855061, evaluation 45570855254, Open Kit 45570855237, legacy release 45570855300, publisher 45570855074, browser matrix 45570855215. Actual 12-action guided route passed keyboard start, first-viewport checks at 360x800 and 1440x900, exact guided capsule equality to independently verified current bytes, pin mismatch, exact restoration, zero external requests. PR browser artifact 15001768812 SHA-256 2d54dc4a85610950e04a07af46a642c4e5b6fe6fec99d39e939a71fe96952699 verified locally; actual mobile and desktop screenshots inspected; elapsed 891 ms is automated Chromium timing, not a human usability study. No deployment."
+        }
+      ]
+    },
+    {
+      "id": "V2-D05-WORLD-TRACE",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D03-DIAGNOSIS",
+        "V2-D04-GUIDE"
+      ],
+      "scope": "Explicit per-world hypotheses, expected vs observed readings, exact blocking root sets and world readmission delta; independently replayable fixed-fixture trace; guide reset boundary."
     }
   ]
 }

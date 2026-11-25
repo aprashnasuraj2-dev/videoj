@@ -2,14 +2,15 @@ import {debuggerBaseline,debuggerCopies,debuggerRead,DEBUGGER_VERSION} from '../
 import {evaluateDebuggerExplanation,EXPLANATION_VERSION} from '../../../packages/sutra-knowledge/debugger-explanation.js';
 import {analyzeSupport} from './support-wasm.js';
 import {guidedAction} from './demo-guide.mjs';
+import {traceVerifiedDebuggerState,WORLD_TRACE_VERSION} from '../../../packages/sutra-knowledge/debugger-world-trace.js';
 import {createProofCapsule,verifyProofCapsule,mutateCapsuleByte,MAX_CAPSULE_BYTES} from '../../../packages/sutra-knowledge/proof-capsule.js';
 const by=id=>document.getElementById('debug-'+id),txt=(id,value)=>{by(id).textContent=value;};
 const labels={target:'The system stays within its limit',control_ok:'The separate control is normal',sample_one:'Original report and copies',sample_two:'Independent-declared measurement',sample_three:'Second-variable measurement',sample_control:'Separate control measurement',read_b:'Read the disagreeing measurement',read_c:'Measure the second variable',read_a:'Read the original report',read_control:'Read the control'};
 const display=id=>labels[id]??id;
 const states={SUPPORTED:'Supported',REFUTED:'Refuted',CONFLICTED:'Conflicted',UNDERDETERMINED:'Underdetermined',UNVERIFIED:'Unverified'};
 const expected={SUPPORTED:'satisfied',REFUTED:'refuted',CONFLICTED:'conflict',UNDERDETERMINED:'ambiguous'};
-const ids=['start','withdraw','restore','copies','disagree','withdraw-other','observe','control','export','plan-observe','explanation-export'];
-let events=[],result=null,explanation=null,busy=false,capsuleBusy=false;
+const ids=['start','withdraw','restore','copies','disagree','withdraw-other','observe','control','export','plan-observe','explanation-export','world-export'];
+let events=[],result=null,explanation=null,worldTrace=null,busy=false,capsuleBusy=false;
 let capsuleOriginal=null,capsuleWorking=null,capsuleAnchor=null,capsuleIdentity=null,capsuleVerified=false,capsuleTampered=false;
 let capsuleSourceHistory=null,capsulePinRequested=false,capsuleChallenge='none',capsuleFailureReason=null;
 const has=id=>result?.report.activeEvidence.some(a=>a.observationId===id);
@@ -44,12 +45,33 @@ function render(previous){
  txt('why',target.state==='CONFLICTED'?'Two admitted measurements disagree. Copies cannot outvote a contradiction.':target.state==='UNDERDETERMINED'?'Surviving worlds disagree; evidence cannot decide the claim.':target.state==='SUPPORTED'?'Every surviving world satisfies the declared limit.':'Every surviving world violates the declared limit.');
  txt('cuts',cuts.length?cuts.map(c=>c.removed.map(display).join(' + ')+' → '+states[c.claims.target.state]).join('\n'):'No minimum change is claimed for this state.');
  renderExplanation(explanation);
+ renderWorldTrace(previous);
  by('groups').replaceChildren();
  for(const [root,artifacts] of Object.entries(r.groups)){
   const li=document.createElement('li'),heading=document.createElement('strong'),detail=document.createElement('span');
   heading.textContent=display(root);detail.textContent=artifacts.length+' artifact'+(artifacts.length===1?'':'s')+' → 1 declared root';li.append(heading,detail);by('groups').append(li);
  }
  txt('details',JSON.stringify({caseDigest:r.caseDigest,historyDigest:r.historyDigest,artifacts:r.activeArtifacts,conflict:r.conflict,diagnostics:r.diagnostics,qualification:r.qualification},null,2));
+}
+function renderWorldTrace(previous){
+ const host=by('world-map');host.replaceChildren();
+ const prior=new Set(previous?.claims.target.survivingWorlds??[]),current=new Set(result.claims.target.survivingWorlds);
+ const returned=[...current].filter(id=>!prior.has(id)),excluded=[...prior].filter(id=>!current.has(id));
+ txt('world-delta',previous?current.size+' / 8 survive · '+returned.length+' returned · '+excluded.length+' newly excluded.':current.size+' / 8 survive under the admitted observations.');
+ const value=x=>x.replace('/1','');
+ for(const w of worldTrace.worlds){
+  const row=document.createElement('tr');row.dataset.world=w.id;row.dataset.survives=String(w.survives);row.dataset.decision=w.decisions.target;
+  if(previous)row.dataset.change=returned.includes(w.id)?'returned':excluded.includes(w.id)?'excluded':'unchanged';
+  const hyp=document.createElement('th');hyp.scope='row';const name=document.createElement('strong'),assignment=document.createElement('small');
+  name.textContent=w.id;assignment.textContent='a='+value(w.assumptions.a)+' · b='+value(w.assumptions.b)+' · c='+value(w.assumptions.c);hyp.append(name,assignment);
+  const rule=document.createElement('td');rule.textContent=w.decisions.target==='constraint_satisfied'?'Within limit':'Exceeds limit';
+  const fit=document.createElement('td'),status=document.createElement('strong');status.textContent=w.survives?'Survives':w.blockingRoots.length+' blocking root'+(w.blockingRoots.length===1?'':'s');fit.append(status);
+  if(w.survives){const ok=document.createElement('small');ok.textContent='All active readings agree';fit.append(ok);}
+  else for(const check of w.checks.filter(c=>!c.compatible)){
+   const line=document.createElement('small');line.dataset.observation=check.observationId;line.dataset.lineage=check.lineage;line.textContent=display(check.lineage)+': '+check.variable+'='+value(check.observedValue)+' (world '+value(check.expectedValue)+')';fit.append(line);
+  }
+  row.append(hyp,rule,fit);host.append(row);
+ }
 }
 function renderExplanation(diagnosis){
  const host=by('conditional-claims');host.replaceChildren();
@@ -84,18 +106,21 @@ function renderExplanation(diagnosis){
   else txt('next','No verified decisive observation plan is available.');
  }
 }
-async function work(make){
+async function work(make,resetGuide=false){
  if(busy||capsuleBusy)return;busy=true;refresh();txt('notice','Recomputing from admitted evidence…');
  try{
   const next=await make(),{result:computed,explanation:diagnosis}=await evaluateDebuggerExplanation(JSON.stringify(next));
   const support=await analyzeSupport(computed.projection);
   if(!support.complete||support.current!==expected[computed.claims.target.state]||JSON.stringify(support.survivingWorlds)!==JSON.stringify(computed.claims.target.survivingWorlds)||computed.conflict&&!support.conflicts.some(x=>JSON.stringify(x)===JSON.stringify(computed.conflict)))throw Error('DEBUGGER_SUPPORT_DISAGREEMENT');
-  const previous=result;events=next;result=computed;explanation=diagnosis;render(previous);txt('notice','Recomputed locally · exact graph and Rust support engine agree.');
+  const trace=traceVerifiedDebuggerState(computed);
+  const previous=result;events=next;result=computed;explanation=diagnosis;worldTrace=trace;
+  if(resetGuide){capsuleSourceHistory=null;capsulePinRequested=false;capsuleChallenge='none';}
+  render(previous);txt('notice','Recomputed locally · exact graph and Rust support engine agree.');
  }catch{txt('notice','Operation refused. The last verified-in-session result is unchanged.');}
  finally{busy=false;refresh();}
 }
 const add=(...e)=>[...events,...e];
-by('start').onclick=()=>work(debuggerBaseline);
+by('start').onclick=()=>work(debuggerBaseline,true);
 by('withdraw').onclick=()=>work(()=>add({type:'withdraw_lineage',lineage:'sample_one'}));
 by('restore').onclick=()=>work(async()=>add({type:'restore_lineage',lineage:'sample_one'},await debuggerRead('read_a')));
 by('copies').onclick=()=>work(async()=>add(await debuggerCopies()));
@@ -106,6 +131,10 @@ by('plan-observe').onclick=()=>work(async()=>{
  if(explanation?.next.kind!=='observe')throw Error('NO_PLAN');
  return add(await debuggerRead(explanation.next.observationId));
 });
+by('world-export').onclick=()=>{
+ if(!result||!worldTrace||busy||capsuleBusy)return;
+ downloadBytes(JSON.stringify({version:WORLD_TRACE_VERSION,events,trace:worldTrace},null,2),'sutra-world-trace.json','application/json');
+};
 by('explanation-export').onclick=()=>{
  if(!result||!explanation||busy||capsuleBusy)return;
  downloadBytes(JSON.stringify({version:EXPLANATION_VERSION,events,explanation},null,2),'sutra-conditional-diagnosis.json','application/json');
