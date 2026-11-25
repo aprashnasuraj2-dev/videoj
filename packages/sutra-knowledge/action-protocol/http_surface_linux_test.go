@@ -23,6 +23,7 @@ func TestExternalHTTPWriteSurfaceRequiresAnchoredFencedComposite(t *testing.T) {
 		(*upstreamWitnessCoordinator)(nil),
 		(*upstreamTransactionCoordinator)(nil),
 		(*pinnedUpstreamTransactionGuard)(nil),
+		(*pinnedCompensationGuard)(nil),
 	}
 	for _, layer := range lowerEffectLayers {
 		typ := reflect.TypeOf(layer)

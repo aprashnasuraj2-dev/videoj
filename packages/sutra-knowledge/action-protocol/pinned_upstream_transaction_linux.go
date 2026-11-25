@@ -81,6 +81,18 @@ func (g *pinnedUpstreamTransactionGuard) validatePinnedCurrentHistoryLocked(
 func (g *pinnedUpstreamTransactionGuard) processPinned(
 	grant ActionGrant, req AuthorityRequest, pin ClientPolicyPin, challenge Digest,
 ) (pinnedUpstreamTransactionEnvelope, error) {
+	if grant.Class != GrantPrimary {
+		return pinnedUpstreamTransactionEnvelope{}, ErrGrantClass
+	}
+	return g.processPinnedClass(grant, req, pin, challenge, GrantPrimary)
+}
+
+func (g *pinnedUpstreamTransactionGuard) processPinnedClass(
+	grant ActionGrant, req AuthorityRequest, pin ClientPolicyPin, challenge Digest, expectedClass GrantClass,
+) (pinnedUpstreamTransactionEnvelope, error) {
+	if grant.Class != expectedClass {
+		return pinnedUpstreamTransactionEnvelope{}, ErrGrantClass
+	}
 	if challenge == (Digest{}) || req.Op != AuthorityCommit {
 		return pinnedUpstreamTransactionEnvelope{}, ErrPolicy
 	}
@@ -117,7 +129,7 @@ func (g *pinnedUpstreamTransactionGuard) processPinned(
 	if _, e := g.validatePinnedCurrentHistoryLocked(grant, req, pin, challenge); e != nil {
 		return pinnedUpstreamTransactionEnvelope{}, e
 	}
-	if e := g.policy.reserveDispatchLocked(grant, req.Action, grant.Class); e != nil {
+	if e := g.policy.reserveDispatchLocked(grant, req.Action, expectedClass); e != nil {
 		return pinnedUpstreamTransactionEnvelope{}, e
 	}
 
@@ -173,6 +185,18 @@ func (g *pinnedUpstreamTransactionGuard) processPinned(
 func (g *pinnedUpstreamTransactionGuard) recoverPinned(
 	grant ActionGrant, req AuthorityRequest, pin ClientPolicyPin, challenge Digest,
 ) error {
+	if grant.Class != GrantPrimary {
+		return ErrGrantClass
+	}
+	return g.recoverPinnedClass(grant, req, pin, challenge, GrantPrimary)
+}
+
+func (g *pinnedUpstreamTransactionGuard) recoverPinnedClass(
+	grant ActionGrant, req AuthorityRequest, pin ClientPolicyPin, challenge Digest, expectedClass GrantClass,
+) error {
+	if grant.Class != expectedClass {
+		return ErrGrantClass
+	}
 	if challenge == (Digest{}) || req.Op != AuthorityCommit {
 		return ErrPolicy
 	}

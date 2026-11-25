@@ -247,3 +247,20 @@ fi
 cat "$WORK/upstream-witness-coordinated.log"
 grep -F 'Invariant AtMostOnePhysicalEffect is violated' "$WORK/upstream-witness-coordinated.log"
 python3 upstream_witness.py
+
+# Compensation is a new effect and requires both an exact prior APPLIED source
+# and a separately scoped causal authorization. The unsafe profiles prove that
+# a compensation label, ordinary primary grant or missing source is insufficient.
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/compensation-safe" -config CompensationAuthoritySafe.cfg CompensationAuthority.tla > "$WORK/compensation-safe.log" 2>&1 || { cat "$WORK/compensation-safe.log"; exit 1; }
+cat "$WORK/compensation-safe.log"
+grep -F 'No error has been found' "$WORK/compensation-safe.log"
+for profile in NoAuth Primary NoPrior; do
+ cfg="CompensationAuthority${profile}.cfg"
+ log="$WORK/compensation-${profile}.log"
+ if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/compensation-${profile}" -config "$cfg" CompensationAuthority.tla > "$log" 2>&1; then
+  cat "$log"; echo "compensation unsafe profile ${profile} unexpectedly satisfied causal authority" >&2; exit 1
+ fi
+ cat "$log"
+ grep -F 'Invariant CompensationRequiresCausalAuthority is violated' "$log"
+done
+python3 compensation_authority.py
