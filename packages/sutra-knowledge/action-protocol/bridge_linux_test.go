@@ -363,7 +363,7 @@ func TestWitnessedAuthorityClientEndToEndAndTamperedComposite(t *testing.T){
  rootView,e:=witness.View();if e!=nil{t.Fatal(e)}
  witnessClient,e:=NewWitnessClient(witnessServer.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
  coordinator,e:=NewWitnessCoordinator(a,witnessClient);if e!=nil{t.Fatal(e)}
- authorityServer:=httptest.NewServer(coordinator);defer authorityServer.Close()
+ authorityServer:=httptest.NewServer(http.HandlerFunc(coordinator.serveHTTP));defer authorityServer.Close()
 
  req0:=approve(t,0,ctx,ak)
  client0,e:=NewWitnessedAuthorityClient(authorityServer.URL,0,callerKey[0],authorityPub,witnessPub,ctx,genesis,rootView,req0);if e!=nil{t.Fatal(e)}
@@ -408,7 +408,7 @@ func TestWitnessChallengeStopsReplayToRolledBackClient(t *testing.T){
  rootView,e:=witness.View();if e!=nil{t.Fatal(e)}
  witnessClient,e:=NewWitnessClient(witnessServer.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
  coordinator,e:=NewWitnessCoordinator(a,witnessClient);if e!=nil{t.Fatal(e)}
- api:=httptest.NewServer(coordinator);defer api.Close()
+ api:=httptest.NewServer(http.HandlerFunc(coordinator.serveHTTP));defer api.Close()
 
  req:=approve(t,0,ctx,ak);wire,_:=SignAuthorityRequest(0,AuthorityCommit,genesis,req,callerKey[0])
  firstChallenge:=Digest{1}

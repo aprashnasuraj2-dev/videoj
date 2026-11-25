@@ -215,7 +215,7 @@ func TestSharedAuthorityExternalProcessCAS(t *testing.T){
   a,e:=OpenSharedAuthority(os.Getenv("SUTRA_AUTHORITY_SERVER_DIR"),ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer a.Close()
   file:=os.NewFile(3,"sutra-authority-listener");if file==nil{t.Fatal("missing listener fd")};defer file.Close()
   listener,e:=net.FileListener(file);if e!=nil{t.Fatal(e)};defer listener.Close()
-  _=http.Serve(listener,a)
+  _=http.Serve(listener,http.HandlerFunc(a.serveHTTP))
   return
  }
  listener,e:=net.Listen("tcp","127.0.0.1:0");if e!=nil{t.Fatal(e)};defer listener.Close()
