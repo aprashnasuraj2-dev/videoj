@@ -10,7 +10,7 @@
     "A privileged attacker able to roll back both authority and witness trust domains can recreate an older mutually consistent state.",
     "Exact credential canary scans detect direct secret echo only; they do not prove resistance to encoded, hashed, fragmented or transformed exfiltration by a compromised trusted adapter.",
     "Fail-closed orphaned admission preserves modeled safety at the cost of availability; clearing or leasing an orphan without proof of non-dispatch can permit duplicate delayed external effects.",
-    "Lower raw authority, post-effect witness, and legacy grant handlers remain laboratory layers at V2-013 and are not approved production external mutation surfaces."
+    "Lower raw authority, post-effect witness and legacy grant layers remain laboratory APIs, but they no longer implement http.Handler directly; deliberate custom wrappers or source modification can still bypass the approved composite and remain outside the guarantee."
   ],
   "principals": [
     {
@@ -723,6 +723,30 @@
         "V2-P05-ROLLBACK",
         "V2-P06-REFINE",
         "V2-RUNTIME-02"
+      ]
+    },
+    {
+      "id": "T23-lower-write-surface-bypass",
+      "severity": "critical",
+      "category": [
+        "integrity"
+      ],
+      "mechanism": "A deployment or integration exposes a lower raw authority, post-effect witness, legacy grant layer, or unpinned composite operation as a network write surface, bypassing the returning-client policy pin and strongest pre-effect fenced-grant composition.",
+      "invariant": "Lower effect-capable layers must not implement http.Handler directly; the anchored fenced-grant composite must not export its unpinned Commit, Status or ProcessAttested methods; legacy write routes on the surviving composite must reject without changing authority, fence or policy state.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/http_surface_linux_test.go",
+          "test": "TestExternalHTTPWriteSurfaceRequiresAnchoredFencedComposite"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/anchored_external_linux_test.go",
+          "test": "TestAnchoredFencedExternalRejectsLegacyWriteRoutesWithoutStateChange"
+        }
+      ],
+      "openGates": [
+        "V2-RUNTIME-02",
+        "V2-P01-THREAT",
+        "V2-P22-RELEASE"
       ]
     }
   ]

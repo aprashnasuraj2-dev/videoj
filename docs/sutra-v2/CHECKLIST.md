@@ -114,3 +114,13 @@ Exact source `a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051` passed both knowledge wo
 - [ ] **V2-RUNTIME-02 newly exposed boundary:** raw authority, post-effect witness and legacy grant HTTP handlers remain lower-layer laboratory surfaces. They must not be mountable as an accidental externally writable bypass around the anchored fenced-grant path.
 - [ ] **Arbitrary external effects:** current one-effect evidence is for the synthetic authority/fence laboratory. Global provider/service side-effect uniqueness still requires independently enforced fencing or upstream idempotency/reconciliation.
 - [ ] **Release boundary:** merge, release, deployment, real credentials, paid inference, external testing and competition submission remain unauthorized.
+
+
+## V2-013 network write-surface hardening — e64e35c73f7d
+
+Exact source `e64e35c73f7dcef09d4457a24d9963c1a7deeb73` passed knowledge push `45550645649`, knowledge PR `45550654471`, impact `45550654371`, Open Kit `45550654523`, publisher `45550654402`, engineering evaluation `45550654330`, and browser compatibility `45550654389`. The earlier `fce5501c` and `16b20699` knowledge failures are retained in [SESSIONS.md](SESSIONS.md) and [progress.json](progress.json); neither receives completion credit.
+
+- [ ] **V2-RUNTIME-02 / mount boundary:** direct `http.Handler` implementation was removed from raw receiver, durable receiver, shared authority, post-effect witness coordinator and legacy grant guard. Same-package failure labs wrap their private handlers explicitly. This closes accidental direct mounting only.
+- [ ] **V2-RUNTIME-02 / pinned composite:** unpinned `AnchoredFencedGrantGuard.Commit`, `Status` and `ProcessAttested` are package-private regression methods. The externally callable mutation path requires the signed client policy pin and retained-history membership through `ProcessCompositePinned` / the exact composite HTTP route.
+- [ ] **V2-RUNTIME-02 / legacy routes:** `/commit`, `/status`, `/authority`, `/authority-witnessed`, `/authority-granted` and a query-bearing composite route are rejected by the surviving composite; authority counts/head, fence view and policy view remain unchanged in the regression.
+- [ ] **Remaining transaction gate:** deliberate custom wrappers around lower in-process labs, arbitrary upstream side effects, orphan resolution, expiry/revocation lifecycle, compensation authorization, coordinated trust-domain rollback, physical power-loss behavior and provider-global budgets remain open. No external write route is authorized.

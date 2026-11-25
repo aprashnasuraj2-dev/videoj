@@ -262,9 +262,14 @@
               "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
               "description": "Exact Go race tests distinguish orphaned admission and bounded fence exhaustion as fail-closed/non-mutating; both knowledge workflows and all auxiliary workflows passed."
+            },
+            {
+              "sourceRevision": "e64e35c73f7dcef09d4457a24d9963c1a7deeb73",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550654471",
+              "description": "Exact V2-013 hardening: lower effect layers no longer implement http.Handler directly; current anchored composite unpinned methods are package-private; legacy write routes reject with authority/fence/policy state unchanged. Both knowledge runs and all auxiliary workflows passed."
             }
           ],
-          "knownLimitations": "Authenticated loopback authority now owns action history and per-caller/global contact accounting atomically, and stale local caller state cannot reset quota. Still a synthetic single-authority fixture: no approval expiry/revocation, generic new-key lifecycle, hostile-network replay protection, provider spend accounting, physical power-loss certification or arbitrary upstream side effect.\nV2-012 update: No proof for all filesystem/power-loss failures, arbitrary upstream effects or liveness with indefinitely unavailable witness. Reconciliation needs remaining contact budget.\nV2-013: loss of the reservation owner's durable evidence can leave admission permanently fail-closed. Clearing or leasing the orphan without proof of non-dispatch can permit delayed double effects for arbitrary external services."
+          "knownLimitations": "Authenticated loopback authority now owns action history and per-caller/global contact accounting atomically, and stale local caller state cannot reset quota. Still a synthetic single-authority fixture: no approval expiry/revocation, generic new-key lifecycle, hostile-network replay protection, provider spend accounting, physical power-loss certification or arbitrary upstream side effect.\nV2-012 update: No proof for all filesystem/power-loss failures, arbitrary upstream effects or liveness with indefinitely unavailable witness. Reconciliation needs remaining contact budget.\nV2-013: loss of the reservation owner's durable evidence can leave admission permanently fail-closed. Clearing or leasing the orphan without proof of non-dispatch can permit delayed double effects for arbitrary external services.\nV2-013 network surface: accidental direct HTTP mounting of lower effect layers is closed, but deliberate custom wrappers around exported in-process laboratory operations remain possible. This does not establish arbitrary external-effect atomicity."
         },
         {
           "id": "V2-P05-ROLLBACK",
@@ -2303,9 +2308,9 @@
       "phase": "05",
       "status": "Implementation in progress",
       "evidence": {
-        "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
-        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
-        "description": "Exact pre-effect AdmissionFence candidate passes process/race, formal and independent reference gates, including explicit orphan/exhaustion behavior."
+        "sourceRevision": "e64e35c73f7dcef09d4457a24d9963c1a7deeb73",
+        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550654471",
+        "description": "Exact network-surface hardening passes both knowledge workflows plus all auxiliary workflows: lower effectful handlers are non-mountable by type, unpinned current-composite methods are not exported, and legacy write routes preserve authority/fence/policy state."
       },
       "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
       "dependencies": [
@@ -2321,7 +2326,7 @@
       "positiveTests": "Durable effect/ledger and explicit retry policy",
       "adversarialTests": "Crash, concurrent keys, unknown outcome, revoked approval and global budgets",
       "verificationMethod": "Go process and network integration, TLA refinement",
-      "knownLimitations": "Synthetic store verified; broader receiver gate open\nV2-013: lower raw authority/post-effect witness/legacy grant HTTP handlers are still mountable laboratory bypass surfaces and are the next hardening target; arbitrary external writes remain disabled."
+      "knownLimitations": "Synthetic durable/fenced recovery and exact mount hardening are verified within the bounded laboratory. V2-RUNTIME-02 remains open: deliberate wrappers around lower in-process labs are possible; arbitrary upstream effects need an independently enforced idempotency/fencing/reconciliation contract; orphaned admission can remain unavailable; coordinated trust-domain rollback, expiry/revocation, compensation authorization, physical power-loss semantics and provider-global budgets remain unresolved."
     },
     {
       "id": "V2-RUNTIME-03",

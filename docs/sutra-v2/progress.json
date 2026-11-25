@@ -17,7 +17,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "admission_availability_and_policy_ancestry_exact_verified_raw_bypass_hardening_next",
+  "state": "network_mount_bypass_exact_verified_runtime02_external_effect_contract_next",
   "verified": [
     {
       "id": "V2-M01",
@@ -238,15 +238,15 @@
   "release": "not_authorized",
   "submission": "not_started",
   "lastFailed": {
-    "sourceRevision": "9d0b86616ada66aff437de2f793bb87d2e548543",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546136496",
-    "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546144929",
-    "reason": "ClientPolicyAncestry passed exact finite safe/mutant gates, but FenceAvailability failed semantic analysis because four weak-fairness clauses multiply defined the same bound symbol c. No whole-job credit.",
-    "resolutionRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
-    "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
+    "sourceRevision": "16b20699848352c0a91211b5f3485f54476fede3",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550046026",
+    "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550052462",
+    "reason": "Both knowledge runs reached the Go action-protocol compile and failed because a generated explanatory comment contained literal \\\\n text, producing a Go syntax error before the private-method hardening regression could execute. Browser and five auxiliary PR workflows succeeded; no whole-kernel credit.",
+    "resolutionRevision": "e64e35c73f7dcef09d4457a24d9963c1a7deeb73",
+    "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550654471/job/138990758148",
     "resolutionStatus": "resolved_exact_all_seven_workflows_success"
   },
-  "lastVerifiedKernelSource": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
+  "lastVerifiedKernelSource": "e64e35c73f7dcef09d4457a24d9963c1a7deeb73",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -460,6 +460,24 @@
       "resolutionRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
       "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
       "resolutionStatus": "resolved_or_superseded_by_exact_green_a9dd3fc6"
+    },
+    {
+      "sourceRevision": "fce5501c80e2ef7e324448a2e72ea06efbb5a2c3",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45549308940",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45549315320",
+      "reason": "After removing public ServeHTTP from lower effect layers, three same-package laboratory tests still passed SharedAuthority/WitnessCoordinator directly as http.Handler; Go build failed before runtime tests. This was harness fallout, not evidence against the mount restriction.",
+      "resolutionRevision": "b09c77a181612e5f4a8ee55da0d0dbd4c914e5a3",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45549603805",
+      "resolutionStatus": "resolved_exact_all_seven_workflows_success"
+    },
+    {
+      "sourceRevision": "16b20699848352c0a91211b5f3485f54476fede3",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550046026",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550052462",
+      "reason": "Generated comment contained literal \\\\n text and caused Go syntax failure before the unpinned-method export regression executed.",
+      "resolutionRevision": "e64e35c73f7dcef09d4457a24d9963c1a7deeb73",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550654471/job/138990758148",
+      "resolutionStatus": "resolved_exact_all_seven_workflows_success"
     }
   ],
   "reconciledDurableCandidate": {
@@ -703,6 +721,13 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
       "description": "Grant-policy freshness and exact ancestry compose with fenced dispatch at exact source.",
       "remaining": "Trusted time, real approval UX and fresh-client trust-root provisioning remain open."
+    },
+    {
+      "id": "V2-RUNTIME-02",
+      "sourceRevision": "e64e35c73f7dcef09d4457a24d9963c1a7deeb73",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550654471/job/138990758148",
+      "description": "Exact hardening removes direct http.Handler conformance from lower effect layers, removes exported unpinned methods from the current anchored composite, includes the surface regression in exact CI, and rejects legacy write routes with authority/fence/policy state unchanged. Both knowledge runs and all five auxiliary PR workflows pass.",
+      "remaining": "Gate remains open: lower in-process laboratory operations can be deliberately wrapped; arbitrary upstream effects need independently enforced idempotency/fencing/reconciliation; orphan liveness, coordinated trust-root rollback, expiry/revocation, compensation authorization, power-loss semantics and provider-global budgets remain unresolved."
     }
   ],
   "reconciledCI": [
@@ -1914,6 +1939,224 @@
         },
         {
           "id": 45546494225,
+          "event": "pull_request",
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "fce5501c80e2ef7e324448a2e72ea06efbb5a2c3",
+      "complete": false,
+      "description": "Mount-hardening candidate: five auxiliary PR workflows and browser subjob succeeded, but push and PR knowledge runs failed Go build because same-package lab servers still expected lower layers to implement http.Handler.",
+      "runs": [
+        {
+          "id": 45549308940,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 45549315320,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "b09c77a181612e5f4a8ee55da0d0dbd4c914e5a3",
+      "complete": true,
+      "description": "Lower-layer direct HTTP mount restriction and adapted private laboratory handlers: both knowledge runs plus all five auxiliary PR workflows completed successfully.",
+      "runs": [
+        {
+          "id": 45549597176,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45549603805,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45549603766,
+          "event": "pull_request",
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45549603780,
+          "event": "pull_request",
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45549603765,
+          "event": "pull_request",
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45549603774,
+          "event": "pull_request",
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45549603764,
+          "event": "pull_request",
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "16b20699848352c0a91211b5f3485f54476fede3",
+      "complete": false,
+      "description": "Unpinned current-composite methods were made package-private, but both knowledge runs failed a generated-comment Go syntax error; five auxiliary PR workflows and both browser subjobs succeeded.",
+      "runs": [
+        {
+          "id": 45550046026,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 45550052462,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "fb12791d73c8aac02a2a4e0dd2c2d776594800c4",
+      "complete": true,
+      "description": "Corrected composite API hardening: lower effect layers non-mountable directly and unpinned current-composite methods absent from the exported method set; both knowledge runs and all auxiliary workflows succeeded.",
+      "runs": [
+        {
+          "id": 45550284960,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45550290163,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45550290213,
+          "event": "pull_request",
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45550290145,
+          "event": "pull_request",
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45550290130,
+          "event": "pull_request",
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45550290230,
+          "event": "pull_request",
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45550290219,
+          "event": "pull_request",
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "e64e35c73f7dcef09d4457a24d9963c1a7deeb73",
+      "complete": true,
+      "description": "Final V2-013 network-surface checkpoint: exact type/method hardening plus legacy-route state-preservation regression; both knowledge runs and all five auxiliary PR workflows completed successfully.",
+      "runs": [
+        {
+          "id": 45550645649,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            138990728331,
+            138990728671
+          ]
+        },
+        {
+          "id": 45550654471,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            138990757718,
+            138990758148
+          ]
+        },
+        {
+          "id": 45550654371,
+          "event": "pull_request",
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45550654523,
+          "event": "pull_request",
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45550654402,
+          "event": "pull_request",
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45550654330,
+          "event": "pull_request",
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45550654389,
           "event": "pull_request",
           "name": "Validate SUTRA browser compatibility matrix",
           "status": "completed",
