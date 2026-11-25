@@ -5,6 +5,8 @@ package actionprotocol
 import (
  "crypto/ed25519"
  "errors"
+ "sync"
+ "time"
  "net/http"
  "net/http/httptest"
  "os"
@@ -96,6 +98,59 @@ func TestGrantBookModifiedInputNewKeyFutureAndExpiryRefusedBeforeContact(t *test
  latest,_:=a.Head();expiredWire,_:=SignAuthorityRequest(0,AuthorityCommit,latest,original,callerKey[0])
  if _,e=guard.Commit(grant,expiredWire,GrantPrimary);!errors.Is(e,ErrGrantInactive){t.Fatal("expired grant dispatched",e)}
  t.Log("future, modified, fresh-key and expired dispatches are refused; only exact active consent reaches the authority")
+}
+
+func TestGrantBookUnadmittedStatusAndInvalidActionApprovalRefusedBeforeContact(t *testing.T){
+ book,guard,a,witness,client,srv,ctx,ak,_,consentKey,callerKey:=grantFixture(t)
+ defer srv.Close();defer witness.Close();defer a.Close();defer book.Close()
+ req:=approve(t,0,ctx,ak);grant,e:=IssueActionGrant(req,GrantPrimary,10,20,consentKey);if e!=nil{t.Fatal(e)}
+ root,_:=a.Head();statusWire,_:=SignAuthorityRequest(0,AuthorityStatus,root,req,callerKey[0])
+ before,e:=client.View();if e!=nil{t.Fatal(e)}
+ if _,e=guard.Status(grant,statusWire);!errors.Is(e,ErrGrantNotDispatched){t.Fatal("unadmitted grant reconciled",e)}
+ after,e:=client.View();if e!=nil{t.Fatal(e)}
+ spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{}||total!=0||effects!=0||before.Head!=after.Head||before.Sequence!=after.Sequence{t.Fatal("unadmitted status contacted authority")}
+
+ // Consent can sign arbitrary bytes, but the GrantBook independently pins the
+ // action approver. A consent signature around a request with a forged action
+ // approval must fail before witness/authority contact.
+ forged:=req;forged.Slot=1
+ forgedGrant,e:=IssueActionGrant(forged,GrantPrimary,10,20,consentKey);if e!=nil{t.Fatal(e)}
+ forgedWire,_:=SignAuthorityRequest(0,AuthorityCommit,root,forged,callerKey[0])
+ if _,e=guard.Commit(forgedGrant,forgedWire,GrantPrimary);!errors.Is(e,ErrPolicy){t.Fatal("consent signature bypassed action approval",e)}
+ spent,total,effects,e=a.Counts();if e!=nil||spent!=[authorityCallers]byte{}||total!=0||effects!=0{t.Fatal("forged action reached authority",spent,total,effects,e)}
+ t.Log("status requires a prior durable dispatch admission; consent signature cannot replace the independently pinned action approval")
+}
+
+func TestGrantGuardSerializesRevocationAgainstDispatchBoundary(t *testing.T){
+ book,guard,a,witness,_,srv,ctx,ak,_,consentKey,callerKey:=grantFixture(t)
+ defer srv.Close();defer witness.Close();defer a.Close();defer book.Close()
+ req:=approve(t,0,ctx,ak);grant,e:=IssueActionGrant(req,GrantPrimary,10,20,consentKey);if e!=nil{t.Fatal(e)}
+ root,_:=a.Head();wire,_:=SignAuthorityRequest(0,AuthorityCommit,root,req,callerKey[0])
+ entered:=make(chan struct{});release:=make(chan struct{})
+ guard.coordinator.fault=func(at string)error{
+  if at=="after-intent"{
+   close(entered);<-release
+  }
+  return nil
+ }
+ commitDone:=make(chan error,1)
+ go func(){_,e:=guard.Commit(grant,wire,GrantPrimary);commitDone<-e}()
+ <-entered
+ revokeDone:=make(chan error,1)
+ go func(){revokeDone<-book.Revoke(grant,req)}()
+ select{
+ case e:=<-revokeDone:
+  t.Fatal("revocation crossed active dispatch boundary",e)
+ case <-time.After(50*time.Millisecond):
+ }
+ close(release)
+ if e:=<-commitDone;e!=nil{t.Fatal("admitted dispatch",e)}
+ if e:=<-revokeDone;e!=nil{t.Fatal("post-dispatch revoke",e)}
+ guard.coordinator.fault=nil
+ latest,_:=a.Head();retry,_:=SignAuthorityRequest(0,AuthorityCommit,latest,req,callerKey[0])
+ if _,e=guard.Commit(grant,retry,GrantPrimary);!errors.Is(e,ErrGrantRevoked){t.Fatal("revocation did not block later dispatch",e)}
+ spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{1,0}||total!=1||effects!=1{t.Fatal("revocation serialization counts",spent,total,effects,e)}
+ t.Log("revocation cannot interleave after the final grant check but before an admitted transaction; once revoke completes, later effect dispatch is refused")
 }
 
 func TestGrantBookSeparateCompensationApproval(t *testing.T){
