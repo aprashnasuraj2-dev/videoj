@@ -82,7 +82,11 @@ func ParseWitnessView(b []byte)(WitnessView,error){
 func VerifyWitnessView(v WitnessView,ctx Digest,authority,witness ed25519.PublicKey)bool{
  return ctx!=(Digest{})&&len(authority)==ed25519.PublicKeySize&&len(witness)==ed25519.PublicKeySize&&
   v.Genesis!=(Digest{})&&v.Head!=(Digest{})&&v.Sequence<=witnessMaxTransitions&&
+  ((v.Sequence==0)==(v.Head==v.Genesis))&&
   ed25519.Verify(witness,v.message(ctx,authority),v.Signature[:])
+}
+func VerifyWitnessViewPinned(v WitnessView,ctx Digest,authority,witness ed25519.PublicKey,genesis Digest)bool{
+ return genesis!=(Digest{})&&v.Genesis==genesis&&VerifyWitnessView(v,ctx,authority,witness)
 }
 
 type AuthorityWitness struct {
@@ -148,11 +152,11 @@ func (w *AuthorityWitness) decode(raw []byte)([]WitnessTransition,error){
  if !ed25519.Verify(w.signer.Public().(ed25519.PublicKey),body,raw[len(body):]){return nil,ErrStore}
  n:=int(body[header-1])
  if n>witnessMaxTransitions||len(body)!=header+n*witnessTransitionSize||!bytes.Equal(body[:header],w.header(n)){return nil,ErrStore}
- current:=w.genesis;out:=make([]WitnessTransition,0,n)
+ current:=w.genesis;out:=make([]WitnessTransition,0,n);seen:=map[Digest]bool{w.genesis:true}
  for i:=0;i<n;i++{
   start:=header+i*witnessTransitionSize;t,e:=parseWitnessTransition(body[start:start+witnessTransitionSize]);if e!=nil{return nil,e}
-  if t.Before!=current||t.After==(Digest{})||t.After==t.Before||!ed25519.Verify(w.authority,witnessTransitionMessage(w.ctx,t.Before,t.After),t.AuthoritySignature[:]){return nil,ErrStore}
-  out=append(out,t);current=t.After
+  if t.Before!=current||t.After==(Digest{})||t.After==t.Before||seen[t.After]||!ed25519.Verify(w.authority,witnessTransitionMessage(w.ctx,t.Before,t.After),t.AuthoritySignature[:]){return nil,ErrStore}
+  out=append(out,t);seen[t.After]=true;current=t.After
  }
  return out,nil
 }
@@ -182,7 +186,9 @@ func (w *AuthorityWitness) Advance(t WitnessTransition)(WitnessView,error){
  if w.lock==nil||w.poisoned{return WitnessView{},ErrStore}
  current:=w.headLocked()
  if t.Before!=current{return WitnessView{},ErrWitnessConflict}
- if len(w.transitions)>=witnessMaxTransitions||t.After==(Digest{})||t.After==t.Before||
+ seen:=t.After==w.genesis
+ for _,prior:=range w.transitions{if prior.After==t.After{seen=true;break}}
+ if len(w.transitions)>=witnessMaxTransitions||t.After==(Digest{})||t.After==t.Before||seen||
   !ed25519.Verify(w.authority,witnessTransitionMessage(w.ctx,t.Before,t.After),t.AuthoritySignature[:]){return WitnessView{},ErrPolicy}
  next:=append(append([]WitnessTransition(nil),w.transitions...),t)
  if e:=w.persist(next);e!=nil{w.poisoned=true;return WitnessView{},ErrUnknown}
@@ -199,8 +205,8 @@ func (w *AuthorityWitness) Close()error{
 
 // OpenSharedAuthorityWitnessed obtains no trust from the authority store itself:
 // the caller supplies an independently retrieved signed witness view.
-func OpenSharedAuthorityWitnessed(dir string,ctx Digest,approver ed25519.PublicKey,authorityKey ed25519.PrivateKey,callers [authorityCallers]ed25519.PublicKey,limit uint32,view WitnessView,witnessPub ed25519.PublicKey)(*SharedAuthority,error){
- if len(authorityKey)!=ed25519.PrivateKeySize||!VerifyWitnessView(view,ctx,authorityKey.Public().(ed25519.PublicKey),witnessPub){return nil,ErrPolicy}
+func OpenSharedAuthorityWitnessed(dir string,ctx Digest,approver ed25519.PublicKey,authorityKey ed25519.PrivateKey,callers [authorityCallers]ed25519.PublicKey,limit uint32,genesis Digest,view WitnessView,witnessPub ed25519.PublicKey)(*SharedAuthority,error){
+ if len(authorityKey)!=ed25519.PrivateKeySize||!VerifyWitnessViewPinned(view,ctx,authorityKey.Public().(ed25519.PublicKey),witnessPub,genesis){return nil,ErrPolicy}
  a,e:=OpenSharedAuthority(dir,ctx,approver,authorityKey,callers,limit);if e!=nil{return nil,e}
  head,e:=a.Head()
  if e!=nil||head!=view.Head{a.Close();return nil,ErrWitnessRollback}
