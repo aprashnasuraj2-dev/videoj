@@ -179,3 +179,13 @@ All seven workflow IDs for each listed revision and all final-code job IDs are i
 **Approval/provider boundary.** Existing fake-provider and exact grant laboratories pass bounded tests; consent uses host epoch, not trusted time, and grant-book rollback remains a counterexample. The ephemeral opaque credential rehearsal is a safe development choice, not a production BYOK design. Production browser-only vault exposes key to XSS/extensions; same-origin relay moves custody to server and requires tenant isolation, operator/access controls and encryption; ephemeral session avoids at-rest storage but requires re-entry after every refresh. No cost/re-entry numbers are measured; choose ephemeral fake-only until threat review and real host budget/durability contract. No real secrets, paid inference, deployment, merge, release or submission. Raw authority route remains a standalone test path; must not be mounted as a bypass in future externally writable runtime. No proof of universal freshness if nonce source or trust keys compromised. No real provider timeout/idempotency billing guarantee.
 
 **Integrity.** All 22 protected original blobs remain identical to `f2e5d2ed646dccf7ca6becf9a3a583a81f6c1d4d`. 62 historical IDs + 28 gates = 90 nodes, zero missing dependencies, duplicates or cycles. No historical completion or gate accepted by this continuation. Recovery, rollback, refinement, F11b, consent, budget and BYOK remain open.
+
+## V2-012 continuation — 1704e7c301f0edc8267659ad13a4e790ccd93642
+
+The progress register had not yet been advanced for the admission-fence/policy-ancestry work after `8998fcea`. Reconciled now as a **pending candidate**, not verified completion.
+
+Current candidate chain after the first fence implementation includes formal pre-effect admission and clone fencing; exact consent composed with fenced dispatch; grant-policy freshness witness; exact admission-reservation/result binding; policy-pinned composite proof; numeric-high-water alternate-history challenge; returning-client ancestry membership; removal of the unpinned composite write path; and formal client-ancestry/provisioning counterexamples.
+
+At reconciliation time, impact, Open Kit, publisher, engineering evaluation and browser compatibility had succeeded. Knowledge PR `45542920604` and push `45542913848` remained in progress. Therefore `lastVerifiedKernelSource` remains `8998fceab17b09ec8d1911945fd5bd90b7b26c89`.
+
+No gate is promoted to complete by this documentation update. Coordinated rollback, fresh-client provisioning, independent trust-root distribution, general refinement, arbitrary upstream effects, real provider billing, BYOK custody and physical power-loss certification remain open.

@@ -169,7 +169,7 @@
               "description": "Exact approval grants, epoch expiry, durable revocation, admitted-only reconcile, separate compensation, race serialization and six grant mutants pass."
             }
           ],
-          "knownLimitations": "Current signed fixture approval has no expiry or revocation\nV2-012 update: Host policy epoch is not trusted wall-clock time. Old valid signed GrantBook rollback restores earlier policy; real approval UI and independent anchor open."
+          "knownLimitations": "Current signed fixture approval has no expiry or revocation\nV2-012 update: Host policy epoch is not trusted wall-clock time. Old valid signed GrantBook rollback restores earlier policy; real approval UI and independent anchor open.\nV2-012 candidate 1704e7c3: pre-effect admission/policy-ancestry work exists on branch; exact knowledge PR 45542920604 and push 45542913848 are still in progress, so this is not promoted verification evidence."
         }
       ]
     },
@@ -308,7 +308,7 @@
               "description": "Fresh pinned witness composite, sequential clone rejected pre-mutation, concurrent clones yield one acknowledged branch but both persist one synthetic effect."
             }
           ],
-          "knownLimitations": "A separately protected witness detects rollback of the authority store alone, but a privileged attacker able to restore both independently signed stores can recreate an old consistent pair. No public transparency log, quorum, trusted time, independently operated third party, key rotation/distribution protocol or separately authorized compensation exists yet.\nV2-012 update: Independent single witness does not fence simultaneous cloned authority local writes; coordinated rollback of both domains remains possible; key distribution and rotation open."
+          "knownLimitations": "A separately protected witness detects rollback of the authority store alone, but a privileged attacker able to restore both independently signed stores can recreate an old consistent pair. No public transparency log, quorum, trusted time, independently operated third party, key rotation/distribution protocol or separately authorized compensation exists yet.\nV2-012 update: Independent single witness does not fence simultaneous cloned authority local writes; coordinated rollback of both domains remains possible; key distribution and rotation open.\nV2-012 candidate 1704e7c3: pre-effect admission/policy-ancestry work exists on branch; exact knowledge PR 45542920604 and push 45542913848 are still in progress, so this is not promoted verification evidence."
         }
       ]
     },
@@ -385,7 +385,7 @@
               "description": "65 observed events across eight concrete cases mapped by independent Python, five trace checker mutations rejected. Strict bridge 11/12, lossy 28/36, grant 40/80 states/edges; original and anchored retained."
             }
           ],
-          "knownLimitations": "One actual Go trace is independently replayed against the bounded transition mapping and budgets now match the TLA per-caller 2/global 3 profile. This is a trace witness, not a universal refinement theorem: Go collapses dispatch+delivery once bytes arrive, cryptography/binary parsing/storage are outside TLA, and authority snapshot rollback remains possible without an external monotonic witness.\nV2-012 update: Trace checking is not universal simulation; clone rejection is outside admitted safe model; timing, signatures and physical storage are abstracted."
+          "knownLimitations": "One actual Go trace is independently replayed against the bounded transition mapping and budgets now match the TLA per-caller 2/global 3 profile. This is a trace witness, not a universal refinement theorem: Go collapses dispatch+delivery once bytes arrive, cryptography/binary parsing/storage are outside TLA, and authority snapshot rollback remains possible without an external monotonic witness.\nV2-012 update: Trace checking is not universal simulation; clone rejection is outside admitted safe model; timing, signatures and physical storage are abstracted.\nV2-012 candidate 1704e7c3: pre-effect admission/policy-ancestry work exists on branch; exact knowledge PR 45542920604 and push 45542913848 are still in progress, so this is not promoted verification evidence."
         }
       ]
     },

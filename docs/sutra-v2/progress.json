@@ -16,7 +16,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "bounded_witness_bridge_and_lossy_trace_verified_concurrent_clone_local_effect_counterexample_open",
+  "state": "pre_effect_admission_fence_and_policy_ancestry_candidate_ci_pending",
   "verified": [
     {
       "id": "V2-M01",
@@ -255,6 +255,71 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "sourceRevision": "1704e7c301f0edc8267659ad13a4e790ccd93642",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45542920604",
+    "pushRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45542913848",
+    "checks": [
+      "Independent pre-effect admission fence before SharedAuthority persistence",
+      "Concurrent cloned-authority test must permit at most one local synthetic effect",
+      "FenceAdmission and FenceClones safe/unsafe formal gates",
+      "Exact consent composed with fenced dispatch and grant-policy freshness witness",
+      "Returning-client exact policy ancestry, numeric-high-water negative control and fresh-provisioning limitation",
+      "All seven exact workflows; knowledge push and PR must both complete successfully before promotion"
+    ],
+    "status": "candidate_five_of_seven_workflows_success_two_knowledge_runs_in_progress",
+    "observed": [
+      {
+        "id": 45542920638,
+        "event": "pull_request",
+        "name": "Classify SUTRA verification impact",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 45542920575,
+        "event": "pull_request",
+        "name": "Validate SUTRA Open Kit candidate",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 45542920592,
+        "event": "pull_request",
+        "name": "Validate SUTRA publisher starter",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 45542920622,
+        "event": "pull_request",
+        "name": "Validate SUTRA engineering evaluation",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 45542920590,
+        "event": "pull_request",
+        "name": "Validate SUTRA browser compatibility matrix",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 45542920604,
+        "event": "pull_request",
+        "name": "Validate SUTRA v2 knowledge kernel",
+        "status": "in_progress",
+        "conclusion": null
+      },
+      {
+        "id": 45542913848,
+        "event": "push",
+        "name": "Validate SUTRA v2 knowledge kernel",
+        "status": "in_progress",
+        "conclusion": null
+      }
+    ]
+  },
+  "previousPendingCandidate": {
     "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537124323",
     "pushRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625",
@@ -345,31 +410,6 @@
           138946313679
         ]
       }
-    ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": "f2e5d2ed646dccf7ca6becf9a3a583a81f6c1d4d",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45528425615",
-    "pushRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45528417307",
-    "checks": [
-      "Witness rejects authority-signed return to seen head",
-      "Pinned genesis rejects same-key re-genesis",
-      "Authority-only rollback and stale witness refusal",
-      "Actual separate witness-process CAS",
-      "Coordinated dual-domain rollback negative control",
-      "Existing shared-authority Go trace and TLC gates",
-      "All six PR workflows plus push knowledge workflow"
-    ],
-    "status": "exact_hardened_witness_candidate_all_seven_workflows_success",
-    "observed": [
-      "PR knowledge 45528425615 / job 138917422848: success",
-      "PR browser job 138917422514: success",
-      "PR engineering 45528426059: success",
-      "PR Open Kit 45528425620: success",
-      "PR publisher 45528425621: success",
-      "PR impact 45528425828: success",
-      "PR browser matrix 45528425729: success",
-      "push knowledge 45528417307 / job 138917395964: success"
     ]
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
@@ -619,6 +659,34 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221",
       "description": "Existing fake-only nontechnical provider workspace, opaque handle policy, credential canary/metadata leakage tests, fixed host transports and no external calls in rehearsal.",
       "remaining": "No real key custody or paid inference authorized. XSS, extensions, persistence, CORS, provider idempotency and tenant isolation require separate review."
+    },
+    {
+      "id": "V2-P05-ROLLBACK",
+      "sourceRevision": "1704e7c301f0edc8267659ad13a4e790ccd93642",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/commit/1704e7c301f0edc8267659ad13a4e790ccd93642",
+      "description": "Candidate moves independent admission before authority persistence and adds FenceClones/FenceAdmission models plus exact client policy ancestry checks. This is candidate implementation evidence only until both knowledge jobs succeed.",
+      "remaining": "Coordinated rollback of all relevant trust domains and fresh-client provisioning remain explicit counterexamples; no quorum/transparency service or external fencing authority is yet deployed."
+    },
+    {
+      "id": "V2-P04-CONSENT",
+      "sourceRevision": "1704e7c301f0edc8267659ad13a4e790ccd93642",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/commit/1704e7c301f0edc8267659ad13a4e790ccd93642",
+      "description": "Candidate composes exact grant validation with fenced dispatch and a grant-policy freshness witness before effect admission.",
+      "remaining": "Current policy witness is still a local trust domain. Coordinated book+witness rollback and independent trusted-time/real approval UX remain open."
+    },
+    {
+      "id": "V2-P06-REFINE",
+      "sourceRevision": "1704e7c301f0edc8267659ad13a4e790ccd93642",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/commit/1704e7c301f0edc8267659ad13a4e790ccd93642",
+      "description": "Candidate adds FenceAdmission, FenceClones, GrantPolicyFreshness and ClientPolicyAncestry TLA/Python gates, including bypass, double-reservation, stale-policy, numeric-high-water and provisioning mutants.",
+      "remaining": "Formal gates are bounded models, not universal Go refinement; exact current knowledge CI is still pending."
+    },
+    {
+      "id": "V2-F11b",
+      "sourceRevision": "1704e7c301f0edc8267659ad13a4e790ccd93642",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/commit/1704e7c301f0edc8267659ad13a4e790ccd93642",
+      "description": "Candidate adds policy-witness freshness and returning-client exact ancestry pinning so numeric sequence alone cannot authorize a rolled alternate history.",
+      "remaining": "A newly provisioned client with no retained prior pin can still accept a coordinated rolled pair; independent provisioning root/key lifecycle remains open."
     }
   ],
   "reconciledCI": [
@@ -1548,6 +1616,62 @@
       ],
       "complete": true,
       "description": "Immutable grant preflight and concurrent-clone counterexample; all seven workflows pass"
+    },
+    {
+      "sourceRevision": "1704e7c301f0edc8267659ad13a4e790ccd93642",
+      "runs": [
+        {
+          "id": 45542920638,
+          "event": "pull_request",
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45542920575,
+          "event": "pull_request",
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45542920592,
+          "event": "pull_request",
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45542920622,
+          "event": "pull_request",
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45542920590,
+          "event": "pull_request",
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45542920604,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 45542913848,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "in_progress",
+          "conclusion": null
+        }
+      ],
+      "complete": false,
+      "description": "Current V2-012 candidate adds pre-effect admission fencing, consent+fence composition, grant-policy freshness witness, exact result/reservation binding, client policy ancestry and removal of the unpinned composite write path. Five non-knowledge workflows have succeeded; both exact knowledge runs remain in progress, so no verified-source promotion is recorded."
     }
   ],
   "inheritedV2012FailureIndex": {

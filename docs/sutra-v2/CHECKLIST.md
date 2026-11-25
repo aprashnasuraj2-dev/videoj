@@ -82,3 +82,15 @@ Verified kernel and independent reference evidence: [V2-001 observations](SESSIO
 ## V2-012 partial evidence (not completion)
 
 Exact code candidate `8998fceab17b09ec8d1911945fd5bd90b7b26c89` passed both hosted knowledge jobs. See [SESSIONS.md](SESSIONS.md) and [progress.json](progress.json) for append-only failures and evidence. All original checkboxes are unchanged. Concurrent cloned-authority local effects, coordinated dual-domain rollback, grant-book rollback, full refinement, real approval lifecycle, production BYOK and durable provider budgets remain open.
+
+## V2-012 admission-fence continuation — current candidate 1704e7c3
+
+This section is intentionally **not checked off**. The branch advanced beyond the previously documented 8998fcea candidate. Current source `1704e7c301f0edc8267659ad13a4e790ccd93642` adds independent pre-effect admission fencing, exact consent/fence composition, a grant-policy freshness witness, exact reservation/result binding, returning-client policy ancestry and removal of the unpinned composite write path.
+
+- [ ] **V2-RUNTIME-02 / V2-P05-RECOVERY:** prove the fenced path across exact CI, process death, lost reserve/finalize replies and restart. Pre-effect reservation must abort with zero effects; post-effect recovery must converge without a second effect.
+- [ ] **V2-P05-ROLLBACK:** verify concurrent cloned authorities cannot both persist local effects on the fenced path. Preserve the old unfenced clone race as a permanent negative control.
+- [ ] **V2-P04-CONSENT:** verify an exact, current grant-policy view is required before fenced dispatch; invalid or stale grant must fail before admission/effect.
+- [ ] **V2-F11b:** verify policy-witness freshness and exact returning-client ancestry. Numeric high-water alone is insufficient; fresh provisioning after coordinated rollback remains an explicit limitation.
+- [ ] **V2-P06-REFINE:** reconcile FenceAdmission, FenceClones, GrantPolicyFreshness and ClientPolicyAncestry formal gates against exact implementation tests; bounded models are not universal refinement.
+- [ ] **Exact CI promotion:** five non-knowledge workflows are successful. Knowledge PR run 45542920604 and push run 45542913848 are still in progress. Do not change `lastVerifiedKernelSource` from `8998fceab17b09ec8d1911945fd5bd90b7b26c89` until both pass.
+- [ ] **Production boundary:** no arbitrary external write, paid provider, real BYOK secret, release, merge or deployment is authorized by this candidate.
