@@ -34,10 +34,10 @@ const fenceIntentName = "fence-intent.bin"
 const fenceMaxTransitions = 8
 const fenceReservationBodySize = 32 * 4
 const fenceReservationSize = fenceReservationBodySize + ed25519.SignatureSize
-const fenceViewSize = 4 + 32 + 32 + 32 + ed25519.SignatureSize
+const fenceViewSize = 4 + 32 + 32 + 32 + 32 + ed25519.SignatureSize
 const fenceAttestationSize = 32 + fenceViewSize + ed25519.SignatureSize
-const fencedResponseSize = authorityResponseSize + fenceViewSize
-const fencedEnvelopeSize = authorityResponseSize + fenceAttestationSize
+const fencedResponseSize = authorityResponseSize + fenceViewSize + fenceReservationSize
+const fencedEnvelopeSize = authorityResponseSize + fenceAttestationSize + fenceReservationSize
 
 var ErrFenceConflict = errors.New("admission fence conflict")
 var ErrFenceUnavailable = errors.New("admission fence unavailable or ambiguous")
@@ -90,18 +90,20 @@ func VerifyFenceReservation(r FenceReservation, ctx Digest, authority ed25519.Pu
 }
 
 type FenceView struct {
-	Sequence  uint32
-	Genesis   Digest
-	Head      Digest
-	Pending   Digest
-	Signature [ed25519.SignatureSize]byte
+	Sequence        uint32
+	Genesis         Digest
+	Head            Digest
+	Pending         Digest
+	LastReservation Digest
+	Signature       [ed25519.SignatureSize]byte
 }
 
 func (v FenceView) body() []byte {
 	b := binary.BigEndian.AppendUint32(nil, v.Sequence)
 	b = append(b, v.Genesis[:]...)
 	b = append(b, v.Head[:]...)
-	return append(b, v.Pending[:]...)
+	b = append(b, v.Pending[:]...)
+	return append(b, v.LastReservation[:]...)
 }
 func (v FenceView) message(ctx Digest, authority ed25519.PublicKey) []byte {
 	b := append([]byte(fenceViewDomain), ctx[:]...)
@@ -118,11 +120,23 @@ func ParseFenceView(raw []byte) (FenceView, error) {
 	copy(v.Genesis[:], raw[4:36])
 	copy(v.Head[:], raw[36:68])
 	copy(v.Pending[:], raw[68:100])
-	copy(v.Signature[:], raw[100:])
+	copy(v.LastReservation[:], raw[100:132])
+	copy(v.Signature[:], raw[132:])
 	return v, nil
 }
 func VerifyFenceView(v FenceView, ctx Digest, authority, fence ed25519.PublicKey) bool {
-	return ctx != (Digest{}) && len(authority) == ed25519.PublicKeySize && len(fence) == ed25519.PublicKeySize && v.Genesis != (Digest{}) && v.Head != (Digest{}) && v.Sequence <= fenceMaxTransitions && ((v.Sequence == 0) == (v.Head == v.Genesis)) && ed25519.Verify(fence, v.message(ctx, authority), v.Signature[:])
+	if ctx == (Digest{}) || len(authority) != ed25519.PublicKeySize || len(fence) != ed25519.PublicKeySize ||
+		v.Genesis == (Digest{}) || v.Head == (Digest{}) || v.Sequence > fenceMaxTransitions {
+		return false
+	}
+	if v.Sequence == 0 {
+		if v.Head != v.Genesis || v.LastReservation != (Digest{}) {
+			return false
+		}
+	} else if v.Head == v.Genesis || v.LastReservation == (Digest{}) {
+		return false
+	}
+	return ed25519.Verify(fence, v.message(ctx, authority), v.Signature[:])
 }
 func VerifyFenceViewPinned(v FenceView, ctx Digest, authority, fence ed25519.PublicKey, genesis Digest) bool {
 	return genesis != (Digest{}) && v.Genesis == genesis && VerifyFenceView(v, ctx, authority, fence)
@@ -363,6 +377,9 @@ func (f *AdmissionFence) viewLocked() (FenceView, error) {
 		return FenceView{}, ErrStore
 	}
 	v := FenceView{Sequence: uint32(len(f.commits)), Genesis: f.genesis, Head: f.headLocked()}
+	if len(f.commits) > 0 {
+		v.LastReservation = f.commits[len(f.commits)-1].Hash()
+	}
 	if f.pending != nil {
 		v.Pending = f.pending.Hash()
 	}
@@ -665,12 +682,14 @@ func (c *FenceClient) AttestChallenge(challenge Digest) (FenceAttestation, error
 }
 
 type FencedResponse struct {
-	Authority AuthorityResponse
-	Fence     FenceView
+	Authority   AuthorityResponse
+	Fence       FenceView
+	Reservation FenceReservation
 }
 func (r FencedResponse) Bytes() []byte {
 	b := append([]byte(nil), r.Authority.Bytes()...)
-	return append(b, r.Fence.Bytes()...)
+	b = append(b, r.Fence.Bytes()...)
+	return append(b, r.Reservation.Bytes()...)
 }
 func ParseFencedResponse(raw []byte) (FencedResponse, error) {
 	if len(raw) != fencedResponseSize {
@@ -680,20 +699,30 @@ func ParseFencedResponse(raw []byte) (FencedResponse, error) {
 	if e != nil {
 		return FencedResponse{}, e
 	}
-	f, e := ParseFenceView(raw[authorityResponseSize:])
+	f, e := ParseFenceView(raw[authorityResponseSize : authorityResponseSize+fenceViewSize])
 	if e != nil {
 		return FencedResponse{}, e
 	}
-	return FencedResponse{Authority: a, Fence: f}, nil
+	reservationRaw := raw[authorityResponseSize+fenceViewSize:]
+	var reservation FenceReservation
+	if !bytes.Equal(reservationRaw, make([]byte, fenceReservationSize)) {
+		reservation, e = ParseFenceReservation(reservationRaw)
+		if e != nil {
+			return FencedResponse{}, e
+		}
+	}
+	return FencedResponse{Authority: a, Fence: f, Reservation: reservation}, nil
 }
 
 type FencedEnvelope struct {
 	Authority   AuthorityResponse
 	Attestation FenceAttestation
+	Reservation FenceReservation
 }
 func (e FencedEnvelope) Bytes() []byte {
 	b := append([]byte(nil), e.Authority.Bytes()...)
-	return append(b, e.Attestation.Bytes()...)
+	b = append(b, e.Attestation.Bytes()...)
+	return append(b, e.Reservation.Bytes()...)
 }
 func ParseFencedEnvelope(raw []byte) (FencedEnvelope, error) {
 	if len(raw) != fencedEnvelopeSize {
@@ -703,11 +732,19 @@ func ParseFencedEnvelope(raw []byte) (FencedEnvelope, error) {
 	if er != nil {
 		return FencedEnvelope{}, er
 	}
-	att, er := ParseFenceAttestation(raw[authorityResponseSize:])
+	att, er := ParseFenceAttestation(raw[authorityResponseSize : authorityResponseSize+fenceAttestationSize])
 	if er != nil {
 		return FencedEnvelope{}, er
 	}
-	return FencedEnvelope{Authority: a, Attestation: att}, nil
+	reservationRaw := raw[authorityResponseSize+fenceAttestationSize:]
+	var reservation FenceReservation
+	if !bytes.Equal(reservationRaw, make([]byte, fenceReservationSize)) {
+		reservation, er = ParseFenceReservation(reservationRaw)
+		if er != nil {
+			return FencedEnvelope{}, er
+		}
+	}
+	return FencedEnvelope{Authority: a, Attestation: att, Reservation: reservation}, nil
 }
 func validFencedContact(r AuthorityResponse, req AuthorityRequest, view FenceView) bool {
 	if view.Pending != (Digest{}) || r.Before == (Digest{}) || r.After == (Digest{}) || r.After != view.Head || r.CallerSpent > r.TotalSpent || view.Sequence != uint32(r.TotalSpent) {
@@ -730,11 +767,28 @@ func validFencedContact(r AuthorityResponse, req AuthorityRequest, view FenceVie
 	}
 	return req.Op == AuthorityCommit && (r.Outcome == AuthorityCommitted || r.Outcome == AuthorityConflict)
 }
+func validFenceReservationProof(reservation FenceReservation, response AuthorityResponse, req AuthorityRequest, ctx Digest, authority ed25519.PublicKey, view FenceView) bool {
+	if response.Outcome == AuthorityBudget {
+		return reservation == (FenceReservation{}) && response.Before == response.After
+	}
+	if !VerifyFenceReservation(reservation, ctx, authority) ||
+		reservation.Before != response.Before || reservation.After != response.After ||
+		reservation.RequestHash != req.Hash() || view.LastReservation != reservation.Hash() {
+		return false
+	}
+	return true
+}
 func VerifyFencedResponse(r FencedResponse, req AuthorityRequest, ctx Digest, authority, fence ed25519.PublicKey, genesis Digest) bool {
-	return VerifyAuthorityResponse(r.Authority, req, authority) && VerifyFenceViewPinned(r.Fence, ctx, authority, fence, genesis) && validFencedContact(r.Authority, req, r.Fence)
+	return VerifyAuthorityResponse(r.Authority, req, authority) &&
+		VerifyFenceViewPinned(r.Fence, ctx, authority, fence, genesis) &&
+		validFencedContact(r.Authority, req, r.Fence) &&
+		validFenceReservationProof(r.Reservation, r.Authority, req, ctx, authority, r.Fence)
 }
 func VerifyFencedEnvelope(e FencedEnvelope, req AuthorityRequest, challenge, ctx Digest, authority, fence ed25519.PublicKey, genesis Digest) bool {
-	return VerifyAuthorityResponse(e.Authority, req, authority) && VerifyFenceAttestation(e.Attestation, challenge, ctx, authority, fence, genesis) && validFencedContact(e.Authority, req, e.Attestation.View)
+	return VerifyAuthorityResponse(e.Authority, req, authority) &&
+		VerifyFenceAttestation(e.Attestation, challenge, ctx, authority, fence, genesis) &&
+		validFencedContact(e.Authority, req, e.Attestation.View) &&
+		validFenceReservationProof(e.Reservation, e.Authority, req, ctx, authority, e.Attestation.View)
 }
 
 type FencedCoordinator struct {
@@ -986,7 +1040,7 @@ func (c *FencedCoordinator) processLocked(req AuthorityRequest) (FencedResponse,
 			return FencedResponse{}, ErrUnknown
 		}
 	}
-	out := FencedResponse{Authority: response, Fence: finalized}
+	out := FencedResponse{Authority: response, Fence: finalized, Reservation: reservation}
 	if !VerifyFencedResponse(out, req, a.ctx, a.signer.Public().(ed25519.PublicKey), c.fence.fence, c.fence.genesis) {
 		return FencedResponse{}, ErrWitnessRollback
 	}
@@ -1016,7 +1070,7 @@ func (c *FencedCoordinator) ProcessAttested(req AuthorityRequest, challenge Dige
 	if attestation.View != response.Fence {
 		return FencedEnvelope{}, ErrWitnessRollback
 	}
-	envelope := FencedEnvelope{Authority: response.Authority, Attestation: attestation}
+	envelope := FencedEnvelope{Authority: response.Authority, Attestation: attestation, Reservation: response.Reservation}
 	if !VerifyFencedEnvelope(envelope, req, challenge, a.ctx, a.signer.Public().(ed25519.PublicKey), c.fence.fence, c.fence.genesis) {
 		return FencedEnvelope{}, ErrWitnessRollback
 	}

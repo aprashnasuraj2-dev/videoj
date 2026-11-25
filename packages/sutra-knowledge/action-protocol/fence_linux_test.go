@@ -410,3 +410,124 @@ func TestFencedCoordinatorLostReserveAndFinalizeReplies(t *testing.T) {
 	}
 	t.Log("lost reserve reply aborts before effect; lost finalize reply recovers committed effect without a second transition")
 }
+
+
+func TestFencedEnvelopeBindsExactReservation(t *testing.T) {
+	var fencePtr atomic.Pointer[AdmissionFence]
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { fencePtr.Load().ServeHTTP(w, r) }))
+	defer srv.Close()
+	ctx, approver, ak, authorityPub, authorityKey, callerPub, callerKey := authorityFixture(t, srv.URL)
+	fencePub, fenceKey := fenceKeys()
+	a, e := CreateSharedAuthority(privateTemp(t), ctx, approver, authorityKey, callerPub, 2)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer a.Close()
+	genesis, _ := a.Head()
+	fence, e := CreateAdmissionFence(privateTemp(t), ctx, authorityPub, fenceKey, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer fence.Close()
+	fencePtr.Store(fence)
+	client, _ := NewFenceClient(srv.URL, ctx, authorityPub, fencePub, genesis)
+	coordinator, _ := NewFencedCoordinator(a, client)
+	action := approve(t, 0, ctx, ak)
+	req, _ := SignAuthorityRequest(0, AuthorityCommit, genesis, action, callerKey[0])
+	challenge := Digest{8}
+	envelope, e := coordinator.ProcessAttested(req, challenge)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if envelope.Reservation.RequestHash != req.Hash() ||
+		envelope.Reservation.Before != envelope.Authority.Before ||
+		envelope.Reservation.After != envelope.Authority.After ||
+		envelope.Attestation.View.LastReservation != envelope.Reservation.Hash() ||
+		!VerifyFencedEnvelope(envelope, req, challenge, ctx, authorityPub, fencePub, genesis) {
+		t.Fatal("exact reservation proof missing")
+	}
+	// Negative control 1: authority signs another internally valid reservation
+	// for the same transition but the wrong exact caller request.
+	wrong, e := SignFenceReservation(ctx, envelope.Authority.Before, envelope.Authority.After, Digest{9}, Digest{10}, authorityKey)
+	if e != nil {
+		t.Fatal(e)
+	}
+	forged := envelope
+	forged.Reservation = wrong
+	if !VerifyFenceReservation(forged.Reservation, ctx, authorityPub) {
+		t.Fatal("negative control reservation lacks valid authority signature")
+	}
+	if VerifyFencedEnvelope(forged, req, challenge, ctx, authorityPub, fencePub, genesis) {
+		t.Fatal("validly signed wrong-request reservation accepted")
+	}
+	// Negative control 2: even a separately valid fence attestation cannot
+	// substitute a different last-reservation commitment.
+	forged = envelope
+	forged.Attestation.View.LastReservation = Digest{11}
+	copy(forged.Attestation.View.Signature[:], ed25519.Sign(fenceKey, forged.Attestation.View.message(ctx, authorityPub)))
+	copy(forged.Attestation.Signature[:], ed25519.Sign(fenceKey, forged.Attestation.message(ctx, authorityPub)))
+	if !VerifyFenceAttestation(forged.Attestation, challenge, ctx, authorityPub, fencePub, genesis) {
+		t.Fatal("negative control attestation not independently valid")
+	}
+	if VerifyFencedEnvelope(forged, req, challenge, ctx, authorityPub, fencePub, genesis) {
+		t.Fatal("fence-attested different reservation accepted")
+	}
+	if _, e = ParseFencedEnvelope(envelope.Bytes()[:len(envelope.Bytes())-fenceReservationSize]); e == nil {
+		t.Fatal("envelope without reservation proof parsed")
+	}
+	t.Log("external fence proof binds exact request, before/after heads and retained admission reservation across two signatures")
+}
+
+func TestFencedBudgetResponseMintsNoReservation(t *testing.T) {
+	var fencePtr atomic.Pointer[AdmissionFence]
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { fencePtr.Load().ServeHTTP(w, r) }))
+	defer srv.Close()
+	ctx, approver, ak, authorityPub, authorityKey, callerPub, callerKey := authorityFixture(t, srv.URL)
+	fencePub, fenceKey := fenceKeys()
+	a, e := CreateSharedAuthority(privateTemp(t), ctx, approver, authorityKey, callerPub, 2)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer a.Close()
+	genesis, _ := a.Head()
+	fence, e := CreateAdmissionFence(privateTemp(t), ctx, authorityPub, fenceKey, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer fence.Close()
+	fencePtr.Store(fence)
+	client, _ := NewFenceClient(srv.URL, ctx, authorityPub, fencePub, genesis)
+	coordinator, _ := NewFencedCoordinator(a, client)
+	action := approve(t, 0, ctx, ak)
+	head := genesis
+	// Three real contacts exhaust aggregate authority budget and therefore
+	// produce exactly three finalized admission reservations.
+	for _, caller := range []byte{0, 0, 1} {
+		req, _ := SignAuthorityRequest(caller, AuthorityStatus, head, action, callerKey[caller])
+		envelope, e := coordinator.ProcessAttested(req, Digest{byte(caller + 20)})
+		if e != nil {
+			t.Fatal("contact", caller, e)
+		}
+		head = envelope.Authority.After
+		if envelope.Reservation == (FenceReservation{}) || envelope.Attestation.View.LastReservation != envelope.Reservation.Hash() {
+			t.Fatal("accepted contact lacks reservation proof")
+		}
+	}
+	req, _ := SignAuthorityRequest(1, AuthorityStatus, head, action, callerKey[1])
+	challenge := Digest{30}
+	budget, e := coordinator.ProcessAttested(req, challenge)
+	if e != nil || budget.Authority.Outcome != AuthorityBudget || budget.Authority.Before != budget.Authority.After {
+		t.Fatal("budget response", e, budget.Authority.Outcome)
+	}
+	if budget.Reservation != (FenceReservation{}) {
+		t.Fatal("budget refusal minted reservation")
+	}
+	if !VerifyFencedEnvelope(budget, req, challenge, ctx, authorityPub, fencePub, genesis) {
+		t.Fatal("budget no-op proof invalid")
+	}
+	view, e := client.View()
+	if e != nil || view.Sequence != 3 || view.Head != head || view.LastReservation == (Digest{}) {
+		t.Fatal("budget refusal changed fence", e, view)
+	}
+	t.Log("exhausted budget returns a signed no-op at the existing fence head with no phantom admission reservation")
+}
