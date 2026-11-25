@@ -127,8 +127,8 @@ function impactFromReports(beforeText,beforePin,afterText,afterPin,before,after,
  const nextReview=candidates.filter(c=>c.reviewRequired).map(c=>c.id);
  return freeze({version:'sutra-investigation-impact/v1',beforeDigest:beforePin,afterDigest:afterPin,questionChanged,sourceChanges,bindingChanges,
   affectedDependencyNodes:ordered([...affectedBefore,...affectedAfter]),candidates,triage:{before:oldTriage,after:newTriage,newDivergence:oldTriage!=='DIVERGENT_CONDITIONAL_OUTCOMES'&&newTriage==='DIVERGENT_CONDITIONAL_OUTCOMES'},
-  missing,nextReview,decisionAuthority:'NONE',recomputation:session?'PROVENANCE_BOUND_SESSION_REPLAY':'FULL_REPLAY_BOTH_VERSIONS',
-  qualification:session?'Survival means only matching conditional outcomes; the prior exact local report is retained and the current version re-admitted with provenance-bound arithmetic reuse. Source, meaning, method and applicability remain unverified. No independent cache or speedup claim.':'Survival means only matching conditional outcomes; source, meaning, method and applicability remain unverified. Source withdrawal does not establish falsity. Dependency impact is scoped to admitted target and supplied context; no incremental speedup or global completeness claimed.'});
+  missing,nextReview,decisionAuthority:'NONE',recomputation:session==='fresh'?'RETAINED_BASELINE_FRESH_CURRENT':session?'PROVENANCE_BOUND_SESSION_REPLAY':'FULL_REPLAY_BOTH_VERSIONS',
+  qualification:session==='fresh'?'Survival means only matching conditional outcomes; the exact local parent report is retained and current arithmetic is evaluated fresh. No semantic or empirical assurance.':session?'Survival means only matching conditional outcomes; the prior exact local report is retained and the current version re-admitted with provenance-bound arithmetic reuse. Source, meaning, method and applicability remain unverified. No independent cache or speedup claim.':'Survival means only matching conditional outcomes; source, meaning, method and applicability remain unverified. Source withdrawal does not establish falsity. Dependency impact is scoped to admitted target and supplied context; no incremental speedup or global completeness claimed.'});
 }
 
 // A session is a private, bounded, linear version cursor. Fork explicitly to
@@ -139,9 +139,10 @@ function replaySession(semantic,head=null){
  async function run(versionText,expectedPin){
   const v=await admitVersion(versionText,expectedPin);
   if(head&&head.digest!==expectedPin&&v.previousDigest!==head.digest)fail('SESSION_PARENT');
-  const next=semantic.fork(),out=await next.evaluate(v.contractText,v.contractPin,v.batchText,v.annotationText,v.annotationPin);
+  const next=semantic?.fork()??null;
+  const out=next?await next.evaluate(v.contractText,v.contractPin,v.batchText,v.annotationText,v.annotationPin):{result:await evaluateSemanticInvestigation(v.contractText,v.contractPin,v.batchText,v.annotationText,v.annotationPin),stats:null};
   const report=versionReport(v,expectedPin,out.result);
-  const impact=head&&head.digest!==expectedPin?impactFromReports(head.versionText,head.digest,versionText,expectedPin,head.report,report,true):null;
+  const impact=head&&head.digest!==expectedPin?impactFromReports(head.versionText,head.digest,versionText,expectedPin,head.report,report,semantic?true:'fresh'):null;
   const version=freeze({versionText,digest:expectedPin,report});
   // Commit only after version admission, annotation reconstruction, graph and
   // impact all succeed. No public or imported report can seed the cache.
@@ -150,8 +151,12 @@ function replaySession(semantic,head=null){
  return Object.freeze({
   async replay(versionText,expectedPin){if(busy)throw Error('REVISION_SESSION_BUSY');busy=true;try{return await run(versionText,expectedPin);}finally{busy=false;}},
   async seal(input){if(busy)throw Error('REVISION_SESSION_BUSY');busy=true;try{const wire=versionWire(input);return await run(wire,await casePin(wire));}finally{busy=false;}},
-  fork(){if(busy)throw Error('REVISION_SESSION_BUSY');return replaySession(semantic.fork(),head);},
+  fork(){if(busy)throw Error('REVISION_SESSION_BUSY');return replaySession(semantic?.fork()??null,head);},
   head(){return head?.digest??null;}
  });
 }
 export function createInvestigationReplaySession(){return replaySession(createSemanticInvestigationSession());}
+
+// Strong no-cache comparator: identical trusted cursor, parent checks and impact;
+// recompile current arithmetic once using the ordinary fresh compiler.
+export function createFreshInvestigationReplaySession(){return replaySession(null);}

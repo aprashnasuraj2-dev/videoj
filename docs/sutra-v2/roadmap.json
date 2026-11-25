@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-113",
+  "session": "V2-114",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -3071,7 +3071,7 @@
       "dependencies": [
         "V2-LK08-KNOWLEDGE-GRAPH"
       ],
-      "scope": "Incremental evidence replacement/withdrawal, direct/transitive dependency invalidation, and historical reproducibility. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. Scoped unit/CI evidence registered; broader acceptance remains open. V2-108 candidate: exact pinned single-source draft withdrawal with explicit preview/confirmation, complete affected-binding invalidation and unchanged historical versions; no reuse or authority claim; exact CI pending. V2-109 candidate: exact pinned source withdrawal child, stable candidate identifiers, typed unknowns, contextual/target distinction and refused-parent quarantine; full replay, human preview/confirmation, CI pending. V2-110 candidate: independently replayable exact source-withdrawal transformation report, source-ID-bound plan pin, explicit disclosure and stale-export revocation, repinned adversaries; pending CI. V2-111 candidate: private provenance-bound arithmetic reuse with rebuilt exact current receipts, source admission and transactional fork; fresh parity and adversarial tests; full investigation integration and performance measurement pending. V2-112 candidate: transactional per-candidate cache through exact semantic version replay, explicit fork and linear parent, retirement, impact parity and measured local work; pending exact CI and workspace integration. V2-113 candidate: actual browser session reuse, independently fresh impact export, private triage boundary and stale-stat invalidation; CI pending.",
+      "scope": "Incremental evidence replacement/withdrawal, direct/transitive dependency invalidation, and historical reproducibility. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. Scoped unit/CI evidence registered; broader acceptance remains open. V2-108 candidate: exact pinned single-source draft withdrawal with explicit preview/confirmation, complete affected-binding invalidation and unchanged historical versions; no reuse or authority claim; exact CI pending. V2-109 candidate: exact pinned source withdrawal child, stable candidate identifiers, typed unknowns, contextual/target distinction and refused-parent quarantine; full replay, human preview/confirmation, CI pending. V2-110 candidate: independently replayable exact source-withdrawal transformation report, source-ID-bound plan pin, explicit disclosure and stale-export revocation, repinned adversaries; pending CI. V2-111 candidate: private provenance-bound arithmetic reuse with rebuilt exact current receipts, source admission and transactional fork; fresh parity and adversarial tests; full investigation integration and performance measurement pending. V2-112 candidate: transactional per-candidate cache through exact semantic version replay, explicit fork and linear parent, retirement, impact parity and measured local work; pending exact CI and workspace integration. V2-113 candidate: actual browser session reuse, independently fresh impact export, private triage boundary and stale-stat invalidation; CI pending. V2-114 candidate: strong fresh-current retained-parent comparator and paired repeated 264-node workload; exact parity and descriptive timing; CI pending.",
       "acceptance": "Incremental equals full recompute; shared descendants, concurrency, stale cache, interrupted writes, cycles and simultaneous updates.",
       "evidence": [
         {
@@ -3103,6 +3103,12 @@
           "sourceRevision": "19bde9ebd3792f4af7e51324f1379074f12198dc",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45715681018/job/139560999393",
           "description": "Nine exact returned PR workflows green; independent pinned source withdrawal transformation, actual browser report and adversarial replay. Separate push run not exposed; broader gate open."
+        },
+        {
+          "id": "V2-LK09-REVISION",
+          "sourceRevision": "01f18b5a375f73f55b3cfc0f47aae5dfff7ec63b",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45716191802/job/139562734872",
+          "description": "Nine returned PR workflows passed; actual private revision sessions exact fresh parity, correction 3/6 and withdrawal 3/3 outcomes reused across two domains. Historical single-run timing used redundant fresh path; no performance conclusion. Separate push run not exposed."
         }
       ]
     },
@@ -3345,7 +3351,7 @@
       "dependencies": [
         "V2-LK01-SEMANTIC-TRIAGE"
       ],
-      "scope": "Freeze staged 200 independently specified/annotated cases: 40 semantic,40 assumption,40 revision,30 ancestry,30 acquisition,20 replay/tamper; distinct synthetic/public/expert splits. V2-060 candidate: frozen 16-case synthetic development spec, exact candidate-state scoring, coverage/accuracy and unsupported decisive counts, first-candidate ablation and enumerate-all comparator. No held-out/external annotations, live models or broad superiority; exact CI pending. V2-080 candidate: four synthetic revision selection cases, full-reselection comparison, exact version reconstruction and all-source no-savings controls. No human effort/time or independent benchmark. V2-097 candidate: six developer-authored cases with exact expected execution vectors and matched programs/scenarios, first-candidate, raw and exact-program-deduplicated strict signature majority, retain-all plus witnesses. No reproduction of published method, independent annotations or semantic selection claim.",
+      "scope": "Freeze staged 200 independently specified/annotated cases: 40 semantic,40 assumption,40 revision,30 ancestry,30 acquisition,20 replay/tamper; distinct synthetic/public/expert splits. V2-060 candidate: frozen 16-case synthetic development spec, exact candidate-state scoring, coverage/accuracy and unsupported decisive counts, first-candidate ablation and enumerate-all comparator. No held-out/external annotations, live models or broad superiority; exact CI pending. V2-080 candidate: four synthetic revision selection cases, full-reselection comparison, exact version reconstruction and all-source no-savings controls. No human effort/time or independent benchmark. V2-097 candidate: six developer-authored cases with exact expected execution vectors and matched programs/scenarios, first-candidate, raw and exact-program-deduplicated strict signature majority, retain-all plus witnesses. No reproduction of published method, independent annotations or semantic selection claim. V2-114 candidate: strong fresh-current retained-parent comparator and paired repeated 264-node workload; exact parity and descriptive timing; CI pending.",
       "acceptance": "Held-out separation; seven matched baselines (LLM, tools, solver, debate, domain software, SUTRA matched/offline); accuracy AND coverage, effort/cost, revision, replay, security, ablations and intervals.",
       "evidence": [
         {
@@ -3371,6 +3377,12 @@
           "sourceRevision": "29c0778feb9f5930d062155bb9ca0613cd68f17c",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45709323776/job/139539358426",
           "description": "Scoped kernel experiment passed, whole revision 9/10 due to impact classification. 6/6 vectors, 67 candidate evaluations, 4/6 distinguishing. Raw majority 2 wrong-only, 1 abstention; deduplicated majority 0 wrong-only, 4 abstentions; retain-all kept 11 wrong instances, no correct candidate lost, no semantic selection. Synthetic developer labels; no superiority claim."
+        },
+        {
+          "id": "V2-LK17-BENCHMARK",
+          "sourceRevision": "01f18b5a375f73f55b3cfc0f47aae5dfff7ec63b",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45716191802/job/139562734872",
+          "description": "Nine returned PR workflows passed; actual private revision sessions exact fresh parity, correction 3/6 and withdrawal 3/3 outcomes reused across two domains. Historical single-run timing used redundant fresh path; no performance conclusion. Separate push run not exposed."
         }
       ]
     },

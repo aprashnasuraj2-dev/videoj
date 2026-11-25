@@ -53,3 +53,13 @@ test('extra public arguments cannot replace private semantic triage',async()=>{
  const result=await evaluateSemanticInvestigation(x.contractText,x.contractPin,x.batchText,x.annotationText,x.annotationPin,async()=>{called=true;throw Error('injected');});
  assert.equal(called,false);assert.deepEqual(result,v.report.investigation);
 });
+
+test('strong fresh comparator retains the exact cursor but does not reuse arithmetic',async()=>{
+ const {createFreshInvestigationReplaySession}=await import('../investigation-revision.js');
+ const a=await livingFixture(),b=await livingFixture('finance',{previousDigest:a.digest,revised:true}),c=await livingFixture('finance',{previousDigest:a.digest,irrelevant:true});
+ const f=createFreshInvestigationReplaySession();await f.replay(a.versionText,a.digest);const sibling=f.fork();
+ const r=await f.replay(b.versionText,b.digest);assert.equal(r.stats,null);assert.equal(r.impact.recomputation,'RETAINED_BASELINE_FRESH_CURRENT');
+ assert.deepEqual(r.report,b.report);assert.deepEqual(comparable(r.impact),comparable(await compareInvestigationVersions(a.versionText,a.digest,b.versionText,b.digest)));
+ await assert.rejects(f.replay(c.versionText,c.digest),/REVISION_SESSION_PARENT/);assert.equal(f.head(),b.digest);
+ assert.deepEqual((await sibling.replay(c.versionText,c.digest)).report,c.report);
+});
