@@ -299,3 +299,27 @@ func TestGrantGuardExternalBoundaryConsentBeforeWitnessContact(t *testing.T){
  if statusEnvelope.Authority.Receipt!=envelope.Authority.Receipt{t.Fatal("reconciliation receipt changed")}
  t.Log("external consent boundary rejects future, new-key, unadmitted-status, malformed-challenge and revoked dispatch before witness contact; exact admitted status remains reconcilable")
 }
+
+func TestGrantGuardConcurrentPreflightAndWitnessedCommit(t *testing.T){
+ book,guard,a,witness,client,srv,ctx,ak,_,consentKey,callerKey:=grantFixture(t)
+ defer srv.Close();defer witness.Close();defer a.Close();defer book.Close()
+ root,_:=a.Head()
+ r0,r1:=approve(t,0,ctx,ak),approve(t,1,ctx,ak)
+ g0,e:=IssueActionGrant(r0,GrantPrimary,10,11,consentKey);if e!=nil{t.Fatal(e)}
+ g1,e:=IssueActionGrant(r1,GrantPrimary,10,11,consentKey);if e!=nil{t.Fatal(e)}
+ q0,_:=SignAuthorityRequest(0,AuthorityCommit,root,r0,callerKey[0])
+ q1,_:=SignAuthorityRequest(1,AuthorityCommit,root,r1,callerKey[1])
+ start:=make(chan struct{})
+ type result struct{response WitnessedResponse;err error}
+ results:=make(chan result,2)
+ go func(){<-start;r,e:=guard.Commit(g0,q0,GrantPrimary);results<-result{r,e}}()
+ go func(){<-start;r,e:=guard.Commit(g1,q1,GrantPrimary);results<-result{r,e}}()
+ close(start)
+ var commits,conflicts int
+ for i:=0;i<2;i++{r:=<-results;if r.err!=nil{t.Fatal(r.err)}
+  switch r.response.Authority.Outcome{case AuthorityCommitted:commits++;case AuthorityConflict:conflicts++;default:t.Fatal(r.response.Authority.Outcome)}
+ }
+ spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{1,1}||total!=2||effects!=1||commits!=1||conflicts!=1{t.Fatal("concurrent accounting",spent,total,effects,commits,conflicts,e)}
+ head,_:=a.Head();view,e:=client.View();if e!=nil||view.Head!=head||view.Sequence!=2{t.Fatal("witness mismatch",view,e)}
+ t.Log("concurrent guarded callers serialized: one committed effect, one stale conflict, two witnessed contacts")
+}

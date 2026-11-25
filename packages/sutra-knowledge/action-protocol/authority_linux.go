@@ -254,7 +254,10 @@ func (a *SharedAuthority) signResponse(req AuthorityRequest,outcome byte,stale b
 func (a *SharedAuthority) preflight(req AuthorityRequest)error{
  if req.Caller>=authorityCallers{return ErrAuthorityAuth}
  if req.Op!=AuthorityCommit&&req.Op!=AuthorityStatus{return ErrPolicy}
- if !a.receiver.admit(req.Action){return ErrPolicy}
+ // Preflight is also called outside a.mu by GrantGuard. Use only immutable
+ // policy fields; the receiver pointer is swapped during a committed plan.
+ r:=req.Action
+ if r.Context!=a.ctx||r.Key==(Key{})||r.Slot>=maxSlots||!ed25519.Verify(a.approver,r.message(),r.Approval[:]){return ErrPolicy}
  if !ed25519.Verify(a.callers[req.Caller],req.message(),req.Signature[:]){return ErrAuthorityAuth}
  return nil
 }

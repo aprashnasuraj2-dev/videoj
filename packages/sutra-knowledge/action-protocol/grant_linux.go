@@ -303,6 +303,7 @@ func (g *GrantGuard) Commit(grant ActionGrant,req AuthorityRequest,class GrantCl
 }
 func (g *GrantGuard) Status(grant ActionGrant,req AuthorityRequest)(WitnessedResponse,error){
  if req.Op!=AuthorityStatus{return WitnessedResponse{},ErrPolicy}
+ if e:=g.coordinator.authority.preflight(req);e!=nil{return WitnessedResponse{},e}
  if e:=g.book.CheckReconcile(grant,req.Action);e!=nil{return WitnessedResponse{},e}
  return g.coordinator.Process(req)
 }

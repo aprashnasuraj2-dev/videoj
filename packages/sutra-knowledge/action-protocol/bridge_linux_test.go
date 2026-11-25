@@ -505,3 +505,47 @@ func TestWitnessedAuthorityClientLostFinalReplyRecoversStatus(t *testing.T){
  view,e:=witnessClient.View();if e!=nil||view.Head!=recovered.Authority.After||view.Sequence!=2{t.Fatal("witness not converged",e)}
  t.Log("real HTTP final envelope loss recovered identical receipt via fresh authenticated status across a two-version witness gap; exactly two contacts and one effect")
 }
+
+func TestWitnessCoordinatorConcurrentAuthorityClonesCounterexample(t *testing.T){
+ var witnessPtr atomic.Pointer[AuthorityWitness]
+ srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){witnessPtr.Load().ServeHTTP(w,r)}));defer srv.Close()
+ ctx,approver,ak,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,srv.URL)
+ witnessPub,witnessKey:=witnessKeys()
+ leftDir,rightDir,witnessDir:=privateTemp(t),privateTemp(t),privateTemp(t)
+ left,e:=CreateSharedAuthority(leftDir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer left.Close()
+ genesis,_:=left.Head()
+ raw,e:=os.ReadFile(filepath.Join(leftDir,"authority.bin"));if e!=nil{t.Fatal(e)}
+ if e=os.WriteFile(filepath.Join(rightDir,"authority.bin"),raw,0600);e!=nil{t.Fatal(e)}
+ right,e:=OpenSharedAuthority(rightDir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer right.Close()
+ witness,e:=CreateAuthorityWitness(witnessDir,ctx,authorityPub,witnessKey,genesis);if e!=nil{t.Fatal(e)};defer witness.Close();witnessPtr.Store(witness)
+ client,e:=NewWitnessClient(srv.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
+ c0,e:=NewWitnessCoordinator(left,client);if e!=nil{t.Fatal(e)}
+ c1,e:=NewWitnessCoordinator(right,client);if e!=nil{t.Fatal(e)}
+ arrived:=make(chan struct{},2);release:=make(chan struct{})
+ pause:=func(at string)error{if at=="after-authority"{arrived<-struct{}{};<-release};return nil}
+ c0.fault=pause;c1.fault=pause
+ r0,r1:=approve(t,0,ctx,ak),approve(t,1,ctx,ak)
+ q0,_:=SignAuthorityRequest(0,AuthorityCommit,genesis,r0,callerKey[0]);q1,_:=SignAuthorityRequest(1,AuthorityCommit,genesis,r1,callerKey[1])
+ n0,n1:=Digest{1},Digest{2}
+ type result struct{index int;envelope WitnessedEnvelope;err error}
+ results:=make(chan result,2)
+ go func(){r,e:=c0.ProcessAttested(q0,n0);results<-result{0,r,e}}()
+ go func(){r,e:=c1.ProcessAttested(q1,n1);results<-result{1,r,e}}()
+ // Both stores must cross the local commit before either can attempt witness CAS.
+ for i:=0;i<2;i++{select{case <-arrived:case r:=<-results:close(release);t.Fatalf("unexpected early result %d: %v",r.index,r.err)}}
+ close(release)
+ winners,losers:=0,0;loser:=-1
+ requests:=[]AuthorityRequest{q0,q1};nonces:=[]Digest{n0,n1}
+ for i:=0;i<2;i++{r:=<-results
+  if r.err==nil{if !VerifyWitnessedEnvelope(r.envelope,requests[r.index],nonces[r.index],ctx,authorityPub,witnessPub,genesis){t.Fatal("invalid winner proof")};winners++
+  }else if errors.Is(r.err,ErrUnknown){losers++;loser=r.index}else{t.Fatal(r.err)}
+ }
+ if winners!=1||losers!=1{t.Fatal("fork acknowledgement",winners,losers)}
+ stores:=[]*SharedAuthority{left,right};coords:=[]*WitnessCoordinator{c0,c1}
+ for i,a:=range stores{_,total,effects,e:=a.Counts();if e!=nil||total!=1||effects!=1{t.Fatal("expected local fork",i,total,effects,e)}}
+ if _,e=os.Stat(coords[loser].intentPath());e!=nil{t.Fatal("loser intent missing",e)}
+ if e=coords[loser].Recover();!errors.Is(e,ErrWitnessRollback){t.Fatal("losing fork recovery did not fail closed",e)}
+ view,e:=client.View();winnerHead,_:=stores[1-loser].Head()
+ if e!=nil||view.Head!=winnerHead||view.Sequence!=1{t.Fatal("single witness diverged",view,e)}
+ t.Log("counterexample: concurrent cloned authority stores each persist one local synthetic effect; only one receives a fresh witness acknowledgement, the losing fork retains its intent and cannot recover")
+}
