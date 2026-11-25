@@ -716,3 +716,8 @@ V2-061 full learner build succeeded but storage test failed (149 pass, 1 fail; j
 ## V2-064 — Browser qualifier review and round-trip inspection
 
 Add optional per-candidate controls for every remaining qualifier beyond definition, with optional reviewed quantity reference and refusal of references without a statement. Keep user declaration separate from truth. Explicit local reconstruction of the exact pinned version displays target-reachable instructions, question coverage, qualifiers and structural differences, with no semantic-equivalence or decision authority. Draft changes clear the displayed report and disable reconstruction; all output uses textContent. Actual browser assertions cover reconstruction, refused proposal, uncertainty, stale-output invalidation and existing 360px viewport acceptance. Exact CI pending; prior failed learner acceptance remains tracked.
+
+
+## V2-065 — Qualifier review acceptance and pilot observations
+
+Require actual browser user edits of time and negation facets: exact linked declaration and unsupported declaration stay distinct, edit invalidates previous version, reconstruct again without truth credit, retain 360px viewport test. Preserve generic historical archive/temp/release output exclusions in root .gitignore; only retired demo-specific patterns remain removed. Exact V2-060 pilot log (job 139174268795): first-candidate 15/16 answered, 4/15 correct and 11 unsupported decisive. Simple enumerate-all and SUTRA both 4/16 answered, 4/4 correct, zero unsupported decisive. No advantage over enumerate-all demonstrated on this synthetic set. Preserve V2-062 inherited learner failure. Latest exact CI pending; no release authority.

@@ -3086,6 +3086,12 @@
           "sourceRevision": "de81a94d520d3721cb5c339677e696465913734a",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45605230125",
           "description": "All nine exact workflows green; frozen 16-case developer-authored development pilot executed with matched deterministic baselines. Not held-out, externally annotated, 200-case or live-model evidence."
+        },
+        {
+          "id": "V2-LK17-BENCHMARK",
+          "sourceRevision": "de81a94d520d3721cb5c339677e696465913734a",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45605230125/job/139174268795",
+          "description": "Actual pilot log: first-candidate 15/16 answered (93.75%), 4/15 correct (26.67%), 11 unsupported decisive; simple enumerate-all and SUTRA both 4/16 answered (25%), 4/4 correct, zero unsupported decisive. Synthetic development only; no competitive advantage over enumerate-all demonstrated."
         }
       ]
     },

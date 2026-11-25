@@ -709,6 +709,18 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.deepEqual(impact.impact.sourceChanges,[{id:'report_b',change:'CHANGED'}]);assert.equal(impact.impact.candidates.filter(c=>c.outcome==='CONDITIONAL_RESULT_REVERSED').length,4);
   assert.equal(impact.impact.decisionAuthority,'NONE');
   const newPin=await reviewPage.locator('#review-semantic-pin').innerText();assert.equal(impact.afterDigest,newPin);fs.writeFileSync(path.join(output,'living-after.json'),impact.afterVersion);fs.writeFileSync(path.join(output,'living-after.sha256'),newPin+'\n');
+  // Qualifier edits are declared evidence-linked context, never semantic proof.
+  await reviewPage.locator('#review-semantic-list > div').first().locator('details > summary').click();
+  await reviewPage.locator('#review-facet-proposal_1-time').fill('Review measurement period');
+  await reviewPage.locator('#review-facet-proposal_1-time-binding').selectOption('a');
+  await reviewPage.locator('#review-facet-proposal_1-negation').fill('Not lower');
+  assert.equal(await reviewPage.locator('#review-semantic-export').isDisabled(),true);
+  await reviewPage.locator('#review-semantic-run').click();await reviewState('semantic_ready');
+  await reviewPage.locator('#review-roundtrip-run').click();await reviewState('roundtrip_ready');
+  const qualifiers=await reviewPage.locator('#review-roundtrip-result').innerText();
+  assert.match(qualifiers,/time: Review measurement period · SOURCE_LINKED_DECLARATION/);
+  assert.match(qualifiers,/negation: Not lower · UNSUPPORTED_DECLARATION/);
+  assert.match(qualifiers,/entailment and method UNVERIFIED/);
   const livingLayout=await reviewPage.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.right>innerWidth+1;}).slice(0,20).map(e=>({tag:e.tagName,id:e.id,className:typeof e.className==='string'?e.className:'',right:e.getBoundingClientRect().right,width:e.getBoundingClientRect().width}))}));assert.ok(livingLayout.scrollWidth<=livingLayout.width,JSON.stringify(livingLayout));assert.deepEqual(reviewErrors,[]);assert.deepEqual(reviewExternal,[]);await reviewPage.close();
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];

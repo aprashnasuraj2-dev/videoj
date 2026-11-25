@@ -9,3 +9,11 @@ test-results/
 test-output/
 .DS_Store
 *.log
+
+# Generated handoff, candidate archives and temporary artifacts.
+tmp/
+handoff/
+published-dist/
+release-package/
+*.tgz
+*.zip

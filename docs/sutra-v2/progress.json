@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-064",
+  "session": "V2-065",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK04-ROUNDTRIP",
@@ -28,7 +28,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "semantic_roundtrip_workspace_candidate_pending_exact_ci",
+  "state": "qualifier_review_acceptance_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -375,11 +375,10 @@
   "release": "not_authorized",
   "submission": "not_started",
   "lastFailed": {
-    "sourceRevision": "6ff1d6063a173235fb285f607f30dbbfa41f098e",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45605934090",
-    "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45605934090/job/139176666038",
-    "reason": "Full inherited learner build passed; 149 tests passed and one storage scanner failed because two inference security test fixtures mention forbidden browser storage APIs. Do not waive full learner acceptance.",
-    "resolutionStatus": "Candidate scopes exclusions to exact test roots; scans JS/TS production and rejects literal production imports of test fixtures; exact CI pending."
+    "sourceRevision": "2b3322b62956914184095b0b276bfc1e8266e855",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45606127505",
+    "reason": "Inherited learner storage scanner still failed before scope correction; retain exact revision failure.",
+    "resolutionStatus": "V2-063 scope correction candidate; full learner and exact revision CI pending."
   },
   "lastVerifiedKernelSource": "de81a94d520d3721cb5c339677e696465913734a",
   "resolvedIssue": {
@@ -391,14 +390,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-065",
+    "parent": "a52f1f82c4597a7ee9cd0483b173bcd803d04524",
+    "description": "Actual qualifier-edit browser assertions; retain SUTRA archive ignore patterns and exact pilot metrics, CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-064",
     "parent": "dfa1437f35f0c7e1e0889e65261a49bd18ef840b",
     "description": "Browser per-facet review and pinned controlled-language reconstruction with stale-output invalidation; exact CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-063",
-    "parent": "2b3322b62956914184095b0b276bfc1e8266e855",
-    "description": "Correct inherited storage guard scope; exact learner and controlled round-trip CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -674,6 +673,12 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45605934090/job/139176666038",
       "reason": "Full inherited learner build passed; 149 tests passed and one storage scanner failed because two inference security test fixtures mention forbidden browser storage APIs. Do not waive full learner acceptance.",
       "resolutionStatus": "Candidate scopes exclusions to exact test roots; scans JS/TS production and rejects literal production imports of test fixtures; exact CI pending."
+    },
+    {
+      "sourceRevision": "2b3322b62956914184095b0b276bfc1e8266e855",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45606127505",
+      "reason": "Inherited learner storage scanner still failed before scope correction; retain exact revision failure.",
+      "resolutionStatus": "V2-063 scope correction candidate; full learner and exact revision CI pending."
     }
   ],
   "reconciledDurableCandidate": {
@@ -1127,6 +1132,12 @@
       "sourceRevision": "de81a94d520d3721cb5c339677e696465913734a",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45605230125",
       "description": "All nine exact workflows green; frozen 16-case developer-authored development pilot executed with matched deterministic baselines. Not held-out, externally annotated, 200-case or live-model evidence."
+    },
+    {
+      "id": "V2-LK17-BENCHMARK",
+      "sourceRevision": "de81a94d520d3721cb5c339677e696465913734a",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45605230125/job/139174268795",
+      "description": "Actual pilot log: first-candidate 15/16 answered (93.75%), 4/15 correct (26.67%), 11 unsupported decisive; simple enumerate-all and SUTRA both 4/16 answered (25%), 4/4 correct, zero unsupported decisive. Synthetic development only; no competitive advantage over enumerate-all demonstrated."
     }
   ],
   "reconciledCI": [
