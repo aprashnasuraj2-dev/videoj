@@ -91,6 +91,12 @@ jobs:
         run: |
           node packages/sutra-knowledge/examples/probe-suite-reference-cases.mjs > sutra-probe-suite-reference-cases.json
           python3 packages/sutra-knowledge/reference/test_semantic_probe_suite.py < sutra-probe-suite-reference-cases.json
+      - name: Execute frozen 40-case assumption benchmark against matched review selectors
+        run: |
+          result=0
+          node packages/sutra-knowledge/evaluation/assumption-development.mjs > sutra-assumption-development.json || result=$?
+          node -e "const r=require('./sutra-assumption-development.json'); console.log(JSON.stringify({...r,rows:r.rows.filter(x=>!x.exactMatch)},null,2))"
+          exit "$result"
       - name: Independently compare restricted question grammar across languages
         run: |
           node packages/sutra-knowledge/examples/question-reference-cases.mjs > sutra-question-reference-cases.json
@@ -126,6 +132,7 @@ jobs:
           path: |
             sutra-v2-observation.json
             sutra-v2-revision-pilot.json
+            sutra-assumption-development.json
             sutra-v2-frontier.json
             sutra-v2-conflict.json
             sutra-v2-challenges.json

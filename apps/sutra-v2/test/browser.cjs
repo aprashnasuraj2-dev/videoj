@@ -714,7 +714,10 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.match(await reviewPage.locator('#review-probe-summary').innerText(),/1 \/ 1 discovered structural differences covered by 1 review assignment/);
   assert.equal(await reviewPage.locator('#review-probe-cards article').count(),1);
   const probeDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-probe-export').click();const probeBytes=fs.readFileSync(await (await probeDownload).path());
+  await reviewPage.locator('#review-probe-panel details').filter({hasText:'Independent replay digests'}).locator('summary').click();
   const probe=JSON.parse(probeBytes),probePin=await reviewPage.locator('#review-probe-snapshot-pin').innerText(),probePlan=await reviewPage.locator('#review-probe-plan-pin').innerText();
+  assert.equal(probePlan,probe.planDigest);
+  for(const [id,expected] of [['probe-export-pin',probePin],['probe-plan-pin-export',probePlan]]){const event=reviewPage.waitForEvent('download');await reviewPage.locator('#review-'+id).click();assert.equal(fs.readFileSync(await (await event).path(),'utf8'),expected+'\n');}
   assert.equal(probePin,'sha256:'+require('node:crypto').createHash('sha256').update(probeBytes).digest('hex'));assert.equal(probe.result.decisionAuthority,'NONE');
   fs.writeFileSync(path.join(output,'living-probe-suite.json'),probeBytes);fs.writeFileSync(path.join(output,'living-probe-suite.sha256'),probePin+'\n');fs.writeFileSync(path.join(output,'living-probe-plan.sha256'),probePlan+'\n');
   await reviewPage.locator('#review-probe-budget').selectOption('2');assert.equal(await reviewPage.locator('#review-probe-export').isDisabled(),true);
