@@ -35,7 +35,8 @@ jobs:
       - run: node --test docs/sutra/tools/impact.test.mjs
       - name: Classify changed product evidence
         if: github.event_name == 'pull_request'
-        run: node docs/sutra/tools/impact.mjs "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" > "${RUNNER_TEMP}/sutra-impact.json"
+        run: |
+          node docs/sutra/tools/impact.mjs "${{ github.event.pull_request.base.sha }}" "${{ github.event.pull_request.head.sha }}" > "${RUNNER_TEMP}/sutra-impact.json" || { cat "${RUNNER_TEMP}/sutra-impact.json"; exit 1; }
       - name: Classify metric freshness
         if: github.event_name == 'pull_request'
         run: node docs/sutra/tools/impact.mjs --metrics "${{ github.event.pull_request.head.sha }}" > "${RUNNER_TEMP}/sutra-metric-freshness.json"

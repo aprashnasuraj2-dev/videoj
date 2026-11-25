@@ -340,13 +340,16 @@
         "docs/sutra-v2/roadmap.json",
         "apps/sutra/public/media/timing-fixture.mp4",
         "apps/sutra/src/seek-policy.js",
-        "docs/sutra-v2/threat-model.json"
+        "docs/sutra-v2/threat-model.json",
+        "docs/sutra-v2/evaluation/prior-art.json",
+        "docs/sutra-v2/evaluation/PRIOR_ART.md",
+        "docs/sutra-v2/evaluation/PROTOCOL.md"
       ],
       "requiredWorkflows": [
         "Validate SUTRA v2 knowledge kernel"
       ],
       "invalidates": [],
-      "reason": "Exact-quantity verification, browser workspace, pinned runtime, evidence and consent dependency changes require revision-bound v2 kernel/browser CI; do not misclassify legacy learner metrics. Includes the legacy hash-bound lesson profile, source registry, timing fixture and native seek policy."
+      "reason": "Exact-quantity verification, browser workspace, pinned runtime, evidence and consent dependency changes require revision-bound v2 kernel/browser CI; do not misclassify legacy learner metrics. Includes the legacy hash-bound lesson profile, source registry, timing fixture and native seek policy. Explicit research register and evaluation protocol changes require the v2 verification workflow, but do not establish research validity."
     }
   ]
 }

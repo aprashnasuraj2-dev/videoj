@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-097",
+  "session": "V2-098",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -3190,6 +3190,12 @@
           "sourceRevision": "81f2cd4ef65eebfcc309397e1096d6dceccfba9c",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45616887656/job/139214471649",
           "description": "Exact 10/10 green: actual corrected statistical sample and independent binomial browser replay."
+        },
+        {
+          "id": "V2-LK14-STATISTICAL-PROFILES",
+          "sourceRevision": "135e25a00f963ad8c88cae6f39b26b0a6349226f",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45708878554/job/139537814652",
+          "description": "Exact V2-095 10/10 passed. Actual Chromium two-group comparison and corrected source, multiplicity and design changes, independent offline Python replay; kernel includes small-allocation oracle and 18 cross-language cases. No clinical/causal inference or verified sampling."
         }
       ]
     },

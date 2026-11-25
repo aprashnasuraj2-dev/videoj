@@ -161,3 +161,14 @@ test('v2 integrated learner source changes require v2 verification as well as le
   const r=classifyChangedFiles([file],map);assert.deepEqual(r.unmapped,[]);assert.ok(r.requiredWorkflows.includes('Validate SUTRA v2 knowledge kernel'),file);
  }
 });
+
+test('v2 research register and protocol are explicitly classified without waiving unknown paths',()=>{
+ const files=['docs/sutra-v2/evaluation/prior-art.json','docs/sutra-v2/evaluation/PRIOR_ART.md','docs/sutra-v2/evaluation/PROTOCOL.md'];
+ for(const file of files){
+  const r=classifyChangedFiles([file],map);
+  assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);
+  assert.ok(r.requiredWorkflows.includes('Validate SUTRA v2 knowledge kernel'));
+  assert.deepEqual(r.invalidatedMetrics,[]);
+ }
+ assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/evaluation/unknown.json'],map).unmapped,['docs/sutra-v2/evaluation/unknown.json']);
+});
