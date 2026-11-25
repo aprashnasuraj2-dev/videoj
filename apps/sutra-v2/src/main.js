@@ -113,3 +113,5 @@ scopeButton.addEventListener('click',async()=>{
  }catch{if(ticket===scopeEpoch)by('scope-status').textContent='Scope verification refused.';}
  finally{scopeBusy=false;scopeButton.removeAttribute('aria-busy');}
 });
+
+import './investigation.js';

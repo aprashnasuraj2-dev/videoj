@@ -4,14 +4,14 @@ const path=require('node:path'),fs=require('node:fs'),http=require('node:http'),
 const requireLegacy=createRequire(path.resolve(__dirname,'../../sutra/package.json'));
 const {chromium}=requireLegacy('playwright');
 const dist=path.resolve(__dirname,'../dist');
-const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css'};
+const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.txt':'text/plain','.mp4':'video/mp4'};
 (async()=>{
  const server=http.createServer((req,res)=>{
   try{
    const pathname=new URL(req.url,'http://localhost').pathname;
    const file=pathname==='/'?path.join(dist,'index.html'):path.resolve(dist,'.'+decodeURIComponent(pathname));
    if(!file.startsWith(dist+path.sep)||!fs.statSync(file).isFile()||!mime[path.extname(file)])throw Error('missing');
-   res.writeHead(200,{'Content-Type':mime[path.extname(file)],'Cache-Control':'no-store','Content-Security-Policy':"default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'",'Referrer-Policy':'no-referrer'});res.end(fs.readFileSync(file));
+   res.writeHead(200,{'Content-Type':mime[path.extname(file)],'Cache-Control':'no-store','Content-Security-Policy':"default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; media-src blob:; base-uri 'none'; form-action 'none'",'Referrer-Policy':'no-referrer'});res.end(fs.readFileSync(file));
   }catch{res.writeHead(404);res.end();}
  });
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
@@ -44,6 +44,30 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css'};
    await page.getByRole('button',{name:'Check compatibility'}).click();
    await page.waitForFunction(s=>document.querySelector('#scope-result').dataset.state===s,expected);
   }
+  await page.getByRole('button',{name:'Compute observation strategy'}).click();
+  await page.waitForFunction(()=>document.querySelector('#frontier-status').dataset.state==='conditional_observation_plan');
+  assert.match(await page.locator('#frontier-status').innerText(),/Best-case 2 · worst-case 7/);
+  await page.getByRole('button',{name:'Remove decisive observations'}).click();
+  await page.waitForFunction(()=>document.querySelector('#frontier-status').dataset.state==='insufficient_observations');
+  assert.match(await page.locator('#frontier-status').innerText(),/high_heavy from high_light/);
+  await page.getByLabel('Your prediction').selectOption('not_before');
+  await page.getByRole('button',{name:'Plan investigation'}).click();
+  await page.waitForFunction(()=>document.querySelector('#learn-status').dataset.state==='planned');
+  assert.equal(await page.locator('#learn-worlds article').count(),2);
+  await page.getByRole('button',{name:'Read decisive cue'}).click();
+  await page.waitForFunction(()=>document.querySelector('#learn-status').dataset.state==='catalog_question_resolved');
+  assert.match(await page.locator('#learn-status').innerText(),/prediction revised/);
+  assert.equal(await page.locator('#learn-worlds article').count(),1);
+  assert.match(await page.locator('#learn-evidence').innerText(),/2–4 s/);
+  await page.getByRole('button',{name:'Inspect source video at cue'}).click();
+  await page.waitForFunction(()=>document.querySelector('#learn-media-status').dataset.state==='cue_reached',{},{timeout:20000});
+  assert.ok(await page.locator('#learn-video').evaluate(v=>v.currentSrc.startsWith('blob:')&&v.currentTime>=2&&v.currentTime<4));
+  const learnerDownload=page.waitForEvent('download');await page.getByRole('button',{name:'Export learning evidence'}).click();
+  const ld=await learnerDownload;const learning=JSON.parse(fs.readFileSync(await ld.path(),'utf8'));
+  assert.equal(learning.result.evidence.level,'catalog_matched');assert.equal(learning.result.truthStatus,'unverified');
+  assert.equal(learning.result.feedback,'prediction_revised');
+  await page.getByLabel('Your prediction').selectOption('before');assert.equal(await page.locator('#learn-export').isDisabled(),true);
+  assert.equal(await page.locator('#learn-video').isHidden(),true);
   const downloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Download graph + report'}).click();
   const download=await downloadPromise;assert.equal(download.suggestedFilename(),'sutra-proof.json');const exported=JSON.parse(fs.readFileSync(await download.path(),'utf8'));
   assert.equal(JSON.parse(exported.reportText).graphDigest,await page.locator('#identity').innerText());
@@ -52,6 +76,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css'};
   const output=path.resolve(__dirname,'../test-output');fs.mkdirSync(output,{recursive:true});
   await page.screenshot({path:path.join(output,'workspace.png'),fullPage:true});
   fs.writeFileSync(path.join(output,'browser-report.json'),JSON.stringify(exported,null,2));
+  fs.writeFileSync(path.join(output,'learning-evidence.json'),JSON.stringify(learning,null,2));
   console.log('PASS: built browser workspace, 360px keyboard baseline, revision 5/11, two method comparison, pinned two-agent scripted proposal, forged verdict refused, report replay/tamper, exported actual bytes, zero external requests.');
  }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
 })().catch(e=>{console.error(e);process.exitCode=1;});

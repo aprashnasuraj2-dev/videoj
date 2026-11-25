@@ -154,3 +154,10 @@ test('v2 workspace and shared runtime require the v2 browser/kernel workflow',()
  const r=classifyChangedFiles(['apps/sutra-v2/src/main.js'],map);assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);
  assert.ok(classifyChangedFiles(['packages/sutra-runtime/index.js'],map).requiredWorkflows.includes('Validate SUTRA v2 knowledge kernel'));
 });
+
+
+test('v2 integrated learner source changes require v2 verification as well as legacy checks',()=>{
+ for(const file of ['packages/sutra-content-profile/index.js','packages/sutra-source-tools/index.js','apps/sutra/public/content/source-catalog.json','apps/sutra/public/transcripts/synthetic-timing.txt','apps/sutra/public/media/timing-fixture.mp4','apps/sutra/src/seek-policy.js']){
+  const r=classifyChangedFiles([file],map);assert.deepEqual(r.unmapped,[]);assert.ok(r.requiredWorkflows.includes('Validate SUTRA v2 knowledge kernel'),file);
+ }
+});

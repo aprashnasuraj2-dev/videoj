@@ -33,10 +33,15 @@ Pending until exact evidence; expand only when new concrete product requirements
 - [ ] V2-R01 Mandatory challenge conformance, free judge access, accepted human/security/cost/public release gates.
 - [ ] V2-R02 Final demo and submission package with genuine evidence; authorized submission separate.
 
-- [ ] V2-F01 Evaluate finite competing worlds with actual kernel receipts; compute optimal adaptive observation policy by bounded subset DP, explicit indistinguishable-world witness and unresolved-world abstention; compare independent exhaustive oracle.
+- [x] V2-F01 Evaluate finite competing worlds with actual kernel receipts; compute optimal adaptive observation policy by bounded subset DP, explicit indistinguishable-world witness and unresolved-world abstention; compare independent exhaustive oracle.
 - [ ] V2-F02 Browser workspace exposes actual conditional plan, cost assumptions, opposite world results and impossibility witness; no fake measurements or automatic actions.
 - [ ] V2-F03 Independently published typed observation capability with explicit applicability, evidence lineage and cost; actual consented browser discovery, policy recomputation and hostile/duplicate capability rejection.
 - [ ] V2-F04 Accept a separately verified actual observation, prune only inconsistent declared worlds, revalidate affected artifacts; unknown outcomes and noise fail closed.
 - [ ] V2-F05 Minimal incompatible assumption sets and alternative support sets; bounded search with completeness indicator, common-source lineage.
 
-Verified kernel and independent reference evidence: [V2-001 observations](SESSIONS.md). Next: exact V2-F01 CI, browser V2-F02 and cross-origin V2-F03/A02; finish runtime authority and deployed Observatory gates. See PLAN.md for all 28 workstreams.
+- [ ] V2-L01 Reuse actual legacy source-profile and source-tool code and existing catalog/transcript bytes; compile competing lesson hypotheses, plan decisive cue, use only validated receipt to prune, refuse tampering/stale versions and unknown-world outcomes.
+- [ ] V2-L02 Built browser learner journey: predict, plan, revise, inspect hash-checked native video seek and export source-bound evidence; invalidate stale interaction on prediction changes.
+- [ ] V2-L03 Rights-cleared meaningful lesson and written alternative; source-scope comparison, guided investigation and transfer task; measured benefit versus transcript-only/answer-only, no claim from synthetic fixture.
+- [ ] V2-L04 Independent replay of integrated learner decision including source identity, observation admission and prediction-independent truth status; version drift/withdrawal and provenance.
+
+Verified kernel and independent reference evidence: [V2-001 observations](SESSIONS.md). Next: verify V2-F02/L01/L02 candidate CI; then cross-origin V2-F03/A02 and learner replay L04, actual content L03. Finish runtime authority and deployed Observatory gates. See PLAN.md for all 28 workstreams.

@@ -327,18 +327,24 @@
         "apps/sutra-v2/",
         "packages/sutra-runtime/",
         "packages/sutra-evidence/",
-        "packages/sutra-consent/"
+        "packages/sutra-consent/",
+        "packages/sutra-content-profile/",
+        "packages/sutra-source-tools/",
+        "apps/sutra/public/content/",
+        "apps/sutra/public/transcripts/"
       ],
       "exact": [
         "packages/sutra-consent/strict-json.js",
         ".github/workflows/sutra-v2-knowledge.yml",
-        "docs/sutra-v2/progress.json"
+        "docs/sutra-v2/progress.json",
+        "apps/sutra/public/media/timing-fixture.mp4",
+        "apps/sutra/src/seek-policy.js"
       ],
       "requiredWorkflows": [
         "Validate SUTRA v2 knowledge kernel"
       ],
       "invalidates": [],
-      "reason": "Exact-quantity verification, browser workspace, pinned runtime, evidence and consent dependency changes require revision-bound v2 kernel/browser CI; do not misclassify legacy learner metrics."
+      "reason": "Exact-quantity verification, browser workspace, pinned runtime, evidence and consent dependency changes require revision-bound v2 kernel/browser CI; do not misclassify legacy learner metrics. Includes the legacy hash-bound lesson profile, source registry, timing fixture and native seek policy."
     }
   ]
 }

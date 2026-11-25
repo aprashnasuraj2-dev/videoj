@@ -2,10 +2,10 @@ name: Validate SUTRA v2 knowledge kernel
 on:
   push:
     branches: ['sutra/v2-knowledge-compiler']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-evidence/**', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
+    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
   pull_request:
     branches: ['main', 'sutra/caller-peer-failure-boundary']
-    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-evidence/**', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
+    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-evidence/**', 'packages/sutra-content-profile/**', 'packages/sutra-source-tools/**', 'apps/sutra/public/content/**', 'apps/sutra/public/transcripts/**', 'apps/sutra/public/media/timing-fixture.mp4', 'apps/sutra/src/seek-policy.js', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
 permissions:
   contents: read
 jobs:
@@ -51,6 +51,7 @@ jobs:
           cache-dependency-path: apps/sutra/package-lock.json
       - run: npm ci --prefix apps/sutra
       - run: node apps/sutra/node_modules/vite/bin/vite.js build apps/sutra-v2
+      - run: node apps/sutra-v2/stage-lesson.mjs
       - run: node packages/sutra-runtime/verify-vendor.mjs
       - run: node apps/sutra/node_modules/playwright/cli.js install --with-deps chromium
       - run: node apps/sutra-v2/test/browser.cjs
