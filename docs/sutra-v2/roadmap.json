@@ -2938,12 +2938,12 @@
     {
       "id": "V2-LK06-SEMANTIC-WORLDS",
       "track": "B",
-      "status": "Not started",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK02-INTENT-IR",
         "V2-LK05-SEMANTIC-COUNTERFACTUAL"
       ],
-      "scope": "Extend finite worlds with typed semantic versus empirical axes; share DAGs and lazily evaluate bounded alternatives.",
+      "scope": "Extend finite worlds with typed semantic versus empirical axes; share DAGs and lazily evaluate bounded alternatives. V2-070 candidate: at most four reviewed quantity axes with two to four exact values each, up to sixteen evaluated assignments crossed with supplied programs; explicit truncation and scoped interaction witnesses. Refused/unresolved baseline candidates not evaluated; no empirical probabilities or complete semantic worlds.",
       "acceptance": "Brute-force parity on small worlds, explicit truncation, no fabricated probabilities or completeness.",
       "evidence": []
     },

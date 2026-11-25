@@ -46,3 +46,7 @@ The Observatory CLI asserts a real deterministic state change, exact incremental
 ## Semantic counterfactual testing (candidate)
 
 `challengeSemanticInterpretations` admits a separately pinned scenario plan with up to 16 explicit hypothetical binding replacements. It uses admitted reviewed graphs, marks all scenario input bases synthetic, compares full and cached reports, and returns distinguishing witnesses for baseline-agreeing proposals. It cannot determine which formalization is intended or establish feasible interventions.
+
+## Living investigation diagnostics
+
+Clarification plans distinguish declared material pairs and preview exact answers without approving candidates. Finite semantic-world grids cross supplied programs with explicit synthetic quantity assignments, report truncated coverage, and identify observed joint-change witnesses. Both are bounded local diagnostics, not authority or complete meaning/evidence coverage.
