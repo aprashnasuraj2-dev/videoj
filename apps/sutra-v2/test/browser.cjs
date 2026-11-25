@@ -578,6 +578,20 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.match(await trialPage.locator('#trial-rows').innerText(),/includes null/);
   const trialComparison=await trialStep('compare','comparison',/not independent replication/);assert.equal(trialComparison.result.changes.length,1);assert.match(await trialPage.locator('#trial-rows').innerText(),/0\.91 → 0\.92/);
   assert.deepEqual(trialErrors,[]);assert.deepEqual(trialExternal,[]);await trialPage.close();
+  // Untrusted proposal admission: missing input, forged numeric leaf, exact complete arithmetic.
+  const compilerPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),compilerErrors=[],compilerExternal=[];
+  compilerPage.on('pageerror',e=>compilerErrors.push(e.message));compilerPage.on('request',r=>{if(new URL(r.url()).origin!==origin)compilerExternal.push(r.url());});
+  await compilerPage.goto(origin);await compilerPage.locator('#compiler-lab > summary').click();
+  async function compilerLoad(kind){await compilerPage.locator('#compiler-'+kind).click();await compilerPage.waitForFunction(()=>document.querySelector('#compiler-status').dataset.state==='loaded'&&!document.querySelector('#compiler-run').disabled);}
+  async function compilerRun(stem,pattern){
+   await compilerPage.locator('#compiler-run').click();await compilerPage.waitForFunction(()=>document.querySelector('#compiler-status').dataset.state==='ready'&&!document.querySelector('#compiler-export').disabled);
+   assert.match(await compilerPage.locator('#compiler-summary').innerText(),pattern);
+   const dl=compilerPage.waitForEvent('download');await compilerPage.locator('#compiler-export').click();const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,'compiler-'+stem+'.json'),bytes);return JSON.parse(bytes);
+  }
+  await compilerLoad('missing');const compilerMissing=await compilerRun('missing',/BLOCKED MISSING INPUT/);assert.deepEqual(compilerMissing.result.target.missing,['ppe26']);assert.match(await compilerPage.locator('#compiler-nodes').innerText(),/71611\/1/);
+  const forgedCompiler=JSON.parse(await compilerPage.locator('#compiler-proposal').inputValue());forgedCompiler.nodes[0].value='999';await compilerPage.locator('#compiler-proposal').fill(JSON.stringify(forgedCompiler));assert.equal(await compilerPage.locator('#compiler-export').isDisabled(),true);
+  await compilerPage.locator('#compiler-run').click();await compilerPage.waitForFunction(()=>document.querySelector('#compiler-status').dataset.state==='refused');assert.equal(await compilerPage.locator('#compiler-export').isDisabled(),true);
+  await compilerLoad('complete');const compilerFull=await compilerRun('complete',/CONDITIONALLY REFUTED/);assert.equal(compilerFull.result.target.questionRelevance,'UNVERIFIED');assert.match(await compilerPage.locator('#compiler-nodes').innerText(),/66987\/1/);assert.deepEqual(compilerErrors,[]);assert.deepEqual(compilerExternal,[]);await compilerPage.close();
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});
