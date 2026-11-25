@@ -925,3 +925,8 @@ Added 16 manually specified synthetic cases across finance, engineering, researc
 ## V2-061 — SUTRA-only active tree and exact verification reconciliation
 
 V2-059 and V2-060 each passed all nine exact workflows. V2-059 actual 360px browser and independent replay passed; preserve the V2-057 and V2-058 failures. V2-060 frozen pilot verified only at developer-authored scope. Retire 185 old source/configuration/workflow paths, including 16 source blobs relocated byte-for-byte into the learner's internal media boundary. Keep original NOTICE attribution, all SUTRA1/2 evidence and Git history. Root package is SUTRA-only; activate inherited learner workflow on the draft PR base. No default branch change, merge, release or deployment. Repository-isolation gate implemented but unverified until exact CI and tree inspection.
+
+
+## V2-062 — Controlled-language semantic round-trip
+
+Recompile admitted proposals under the caller-pinned version and render only the target-reachable DAG as ordered, nonrecursive instructions. Keep exact source tokens, declared types and scope, selected and unselected question bytes, missing values and blocked relations, and identify excluded nodes. Pairwise compare declared qualifier and instruction structure, not inferred intent or equivalence; no semantic entailment or external authority. Tests cover reversed comparator, changed division, period and negation annotations, partial question, invented numeric input, missing leaf, stale pin and deterministic replay. Exact CI pending; repository isolation remains pending and is not bypassed.

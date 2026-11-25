@@ -2890,7 +2890,7 @@
     {
       "id": "V2-LK04-ROUNDTRIP",
       "track": "B",
-      "status": "Not started",
+      "status": "Implemented but unverified",
       "dependencies": [
         "V2-LK02-INTENT-IR"
       ],
