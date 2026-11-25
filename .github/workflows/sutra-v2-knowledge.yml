@@ -17,6 +17,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Go offline checkpoint contract and adversarial tests
+        run: |
+          go version
+          go test -count=1 -v packages/sutra-knowledge/checkpoint/main.go packages/sutra-knowledge/checkpoint/main_test.go
       - run: node --test packages/sutra-knowledge/test/*.test.mjs
       - name: Execute and assert capability demonstration
         run: |
@@ -72,6 +76,11 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_conflict.py apps/sutra-v2/test-output/conflict-evidence.json apps/sutra-v2/test-output/conflict-withdrawn.json apps/sutra-v2/test-output/conflict-resolved.json > apps/sutra-v2/test-output/conflict-reference.txt
           cat apps/sutra-v2/test-output/conflict-reference.txt
+      - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
+        run: |
+          go version
+          go run packages/sutra-knowledge/checkpoint/main.go packages/sutra-knowledge/checkpoint/fixture-case.json apps/sutra-v2/test-output/conflict-evidence.json apps/sutra-v2/test-output/conflict-withdrawn.json apps/sutra-v2/test-output/conflict-resolved.json > apps/sutra-v2/test-output/conflict-checkpoints.json
+          cat apps/sutra-v2/test-output/conflict-checkpoints.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
