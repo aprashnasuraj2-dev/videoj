@@ -22,6 +22,7 @@ Active ==
     /\ epoch <= ExpiryEpoch
 
 AdvanceEpoch ==
+    /\ phase = "idle"
     /\ epoch < MaxEpoch
     /\ epoch' = epoch + 1
     /\ UNCHANGED <<revoked, admitted, phase, effects, reconciled>>
@@ -118,7 +119,14 @@ RevokeDuringDispatch ==
     /\ revoked' = TRUE
     /\ UNCHANGED <<epoch, admitted, phase, effects, reconciled>>
 
-\* Mutant 5: retry can create a second effect.
+\\* Mutant 5: policy epoch expires after the last grant check but before dispatch settles.
+AdvanceEpochDuringDispatch ==
+    /\ phase = "dispatching"
+    /\ epoch < MaxEpoch
+    /\ epoch' = epoch + 1
+    /\ UNCHANGED <<revoked, admitted, phase, effects, reconciled>>
+
+\* Mutant 6: retry can create a second effect.
 DuplicateEffect ==
     /\ phase = "dispatching"
     /\ effects = 1
@@ -130,6 +138,7 @@ RevokedSpec == Init /\ [][Next \/ ReserveRevoked]_vars
 ExpiredSpec == Init /\ [][Next \/ ReserveExpired]_vars
 ReconcileSpec == Init /\ [][Next \/ ReconcileUnadmitted]_vars
 RaceSpec == Init /\ [][Next \/ RevokeDuringDispatch]_vars
+EpochRaceSpec == Init /\ [][Next \/ AdvanceEpochDuringDispatch]_vars
 DuplicateSpec == Init /\ [][Next \/ DuplicateEffect]_vars
 
 ====
