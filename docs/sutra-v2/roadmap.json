@@ -3092,12 +3092,12 @@
     {
       "id": "V2-LK12-ACQUISITION",
       "track": "B",
-      "status": "Not started",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK06-SEMANTIC-WORLDS",
         "V2-D24-DISCLOSURE-FRONTIER"
       ],
-      "scope": "Extend source economics and disclosure frontier toward noisy observations, uncertain costs, robust/minimax/regret or justified VOI, shared costs, failed observations and multiple objectives.",
+      "scope": "Extend source economics and disclosure frontier toward noisy observations, uncertain costs, robust/minimax/regret or justified VOI, shared costs, failed observations and multiple objectives. V2-086 candidate: complete decisive synthetic grid ≤16 cells, bounded six observations, explicit terminal loss and worst cost/exposure, overlapping noisy/failed labels, shared one-time acquisition and abstention. No probabilities or external action. Multi-action oracle, browser and independent replay remain open.",
       "acceptance": "Information gain distinguished from decision value; report bounds/heuristics, no invented probabilities or global optimality.",
       "evidence": []
     },
