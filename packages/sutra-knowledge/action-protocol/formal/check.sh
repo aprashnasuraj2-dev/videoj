@@ -65,3 +65,19 @@ if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/witness-bridge-unfair" -c
 fi
 cat "$WORK/witness-bridge-unfair.log"
 grep -F 'Temporal property PreparedEventuallySettles was violated' "$WORK/witness-bridge-unfair.log"
+
+
+# Exact-consent grant lifecycle: active window, durable admission, revocation and
+# reconciliation are a separate bounded model from action/witness persistence.
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/grant-safe" -config GrantSafe.cfg GrantLifecycle.tla > "$WORK/grant-safe.log" 2>&1 || { cat "$WORK/grant-safe.log"; exit 1; }
+cat "$WORK/grant-safe.log"
+grep -F 'No error has been found' "$WORK/grant-safe.log"
+for entry in 'Revoked DispatchAuthorized' 'Expired DispatchAuthorized' 'Reconcile ReconcileRequiresAdmission' 'Race DispatchAuthorized' 'Duplicate AtMostOneEffect'; do
+ set -- $entry
+ if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/grant-$1" -config "Grant$1.cfg" GrantLifecycle.tla > "$WORK/grant-$1.log" 2>&1; then
+  cat "$WORK/grant-$1.log"; echo "grant lifecycle mutant $1 unexpectedly succeeded" >&2; exit 1
+ fi
+ cat "$WORK/grant-$1.log"
+ grep -F "Invariant $2 is violated" "$WORK/grant-$1.log"
+done
+python3 grant_model.py
