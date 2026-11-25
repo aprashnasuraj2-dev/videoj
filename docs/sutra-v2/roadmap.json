@@ -3117,6 +3117,12 @@
           "sourceRevision": "56691dae24e060f0a4acb6fa1c4ba180fc3e1542",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45613703394",
           "description": "V2-086 all 10 exact workflows passed; robust one-read objective, noisy failure and exposure tests. Broader multi-action/browser/independent replay separate."
+        },
+        {
+          "id": "V2-LK12-ACQUISITION",
+          "sourceRevision": "c4a628a31d449b5f325b4112dbbd7d484b931a70",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45614083545",
+          "description": "Exact V2-087 10/10 green: adaptive two-action oracle, actual guided browser 6 to 2 abstract objective and failure forces stop at 6. No real cost or decision authority."
         }
       ]
     },

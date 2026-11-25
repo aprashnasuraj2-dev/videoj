@@ -1,3 +1,4 @@
+import {evaluateReviewedIntervals} from '../../../packages/sutra-knowledge/reviewed-interval.js';
 import {planRobustAcquisition} from '../../../packages/sutra-knowledge/robust-acquisition.js';
 import {createInvestigationHistory,openInvestigationHistory} from '../../../packages/sutra-knowledge/investigation-history.js';
 import {inspectReviewedTable,addReviewedTable} from '../../../packages/sutra-knowledge/reviewed-table.js';
@@ -21,7 +22,7 @@ import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigation
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
-let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null;
+let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null;
 const tableFields=['table-text','table-source','table-lineage','table-inspect','table-row','table-column','table-id','table-kind','table-unit','table-scope','table-dim-l','table-dim-m','table-dim-t','table-add','table-stage','table-clear'];
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
@@ -95,7 +96,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 async function loadGuidedCase(domain,corrected,ticket){
@@ -196,7 +197,7 @@ function clearAcquisition(){acquisitionCurrent=null;by('acquisition-result').tex
 function clearGrid(){clearAcquisition();gridCurrent=null;by('world-result').textContent='';by('world-plan-pin').textContent='';by('world-snapshot-pin').textContent='';}
 function clearBranch(){branchCurrent=null;by('branch-result').textContent='';}
 function invalidateSemantic(){
- clearBranch();
+ clearBranch();clearIntervals();
  exposureCurrent=null;by('exposure-result').textContent='';clearGrid();
  clarificationCurrent=null;previewCurrent=null;reuseCurrent=null;by('clarification-result').textContent='';by('clarification-options').replaceChildren();by('clarification-preview').textContent='';by('reuse-result').textContent='';
  semanticCurrent=null;impactCurrent=null;by('roundtrip-result').textContent='';by('semantic-pin').textContent='No version evaluated.';by('semantic-result').textContent='';by('impact-result').textContent='';
@@ -210,6 +211,8 @@ function semanticControl(){
  by('baseline-file').disabled=busy;by('baseline-pin').disabled=busy;by('baseline-import').disabled=busy;
  by('baseline-clear').disabled=busy||!baseline;by('baseline-restore').disabled=busy||!baseline;by('impact-export').disabled=busy||!impactCurrent;
  by('exposure-run').disabled=busy||!semanticCurrent;by('exposure-export').disabled=busy||!exposureCurrent;
+ by('interval-run').disabled=busy||!semanticCurrent;by('interval-export').disabled=busy||!intervalCurrent;by('interval-export-pin').disabled=busy||!intervalCurrent;
+ for(const e of by('interval-fields').querySelectorAll('input,select'))e.disabled=busy||!semanticCurrent;
  by('world-run').disabled=busy||!semanticCurrent;by('world-export').disabled=busy||!gridCurrent;by('world-export-pin').disabled=busy||!gridCurrent;
  for(const e of by('world-fields').querySelectorAll('input,select'))e.disabled=busy||!semanticCurrent;
  for(const id of ['acquisition-mistake','acquisition-abstain','acquisition-source-cost','acquisition-read-cost','acquisition-exposure','acquisition-budget','acquisition-failure','acquisition-run'])by(id).disabled=busy||!gridCurrent;
@@ -302,7 +305,25 @@ by('roundtrip-run').onclick=()=>work(async ticket=>{
  report.qualification].join('\n');
  status('roundtrip_ready','Exact pinned instructions reconstructed. Review question coverage and qualifiers; no semantic equivalence or decision authority established.');
 });
+function clearIntervals(){
+ intervalCurrent=null;by('interval-result').textContent='';for(const id of ['interval-snapshot-pin','interval-version-pin','interval-plan-pin'])by(id).textContent='';
+}
+function renderIntervalFields(){
+ const panel=by('interval-fields');panel.replaceChildren();
+ for(let i=1;i<=4;i++){
+  const row=document.createElement('div');row.className='pinned-fields';
+  const label=document.createElement('label'),select=document.createElement('select');select.id='review-interval-axis-'+i;label.htmlFor=select.id;label.textContent='Range '+i+' binding (optional)';
+  const empty=document.createElement('option');empty.value='';empty.textContent='Not used';select.append(empty);
+  for(const b of bindings){const s=sources.find(s=>s.id===b.sourceId),o=document.createElement('option');o.value=b.id;o.textContent=b.id+' · '+s.text.slice(b.start,b.end);select.append(o);}
+  const change=()=>{clearIntervals();semanticControl();};select.onchange=change;row.append(label,select);
+  for(const bound of ['lower','upper']){
+   const l=document.createElement('label'),input=document.createElement('input');input.id='review-interval-'+bound+'-'+i;input.maxLength=100;input.placeholder='e.g. 3/2';input.autocomplete='off';l.htmlFor=input.id;l.textContent=bound+' inclusive rational bound';input.oninput=change;row.append(l,input);
+  }
+  panel.append(row);
+ }
+}
 function renderWorldAxes(){
+ renderIntervalFields();
  const panel=by('world-fields');panel.replaceChildren();
  for(let i=1;i<=4;i++){
   const row=document.createElement('div');row.className='pinned-fields';
@@ -314,6 +335,24 @@ function renderWorldAxes(){
   const change=()=>{clearGrid();semanticControl();};select.onchange=change;input.oninput=change;row.append(label,select,valueLabel,input);panel.append(row);
  }
 }
+by('interval-run').onclick=()=>work(async ticket=>{
+ const c=semanticCurrent;if(!c)return;clearIntervals();semanticControl();
+ const ranges=[],normal=s=>/^-?(?:0|[1-9][0-9]{0,47})$/.test(s)?s+'/1':s;
+ for(let i=1;i<=4;i++){
+  const bindingId=by('interval-axis-'+i).value,lower=by('interval-lower-'+i).value.trim(),upper=by('interval-upper-'+i).value.trim();
+  if(!bindingId&&!lower&&!upper)continue;ranges.push({bindingId,lower:normal(lower),upper:normal(upper)});
+ }
+ const planText=JSON.stringify({version:1,versionDigest:c.digest,ranges}),planDigest=await casePin(planText);
+ const result=await evaluateReviewedIntervals(c.versionText,c.digest,planText,planDigest);
+ const text=JSON.stringify({versionText:c.versionText,versionDigest:c.digest,planText,planDigest,result}),snapshot=await casePin(text);
+ if(ticket!==epoch||c!==semanticCurrent)return;intervalCurrent={text,snapshot};
+ by('interval-snapshot-pin').textContent=snapshot;by('interval-version-pin').textContent=c.digest;by('interval-plan-pin').textContent=planDigest;
+ by('interval-result').textContent=[...result.ranges.map(r=>r.bindingId+' ∈ ['+r.lower+', '+r.upper+']'),
+ ...result.candidates.flatMap(c=>[c.id+' · '+c.status.replaceAll('_',' '),...c.nodes.map(n=>n.id+' · '+(n.bounds?'['+n.bounds.lower+', '+n.bounds.upper+']':n.status)+(n.reason?' · '+n.reason:''))]),result.qualification].join('\n');
+ status('interval_ready','Exact conservative bounds computed; an unresolved enclosure is not proof of an actual reversal or statistical confidence.');
+});
+by('interval-export').onclick=()=>{if(intervalCurrent&&!busy)download(intervalCurrent.text,'sutra-reviewed-interval.json','application/json');};
+by('interval-export-pin').onclick=()=>{if(intervalCurrent&&!busy)download(intervalCurrent.snapshot+'\n','sutra-reviewed-interval.sha256','text/plain');};
 by('world-run').onclick=()=>work(async ticket=>{
  const c=semanticCurrent;if(!c)return;clearGrid();semanticControl();
  const axes=[];

@@ -271,6 +271,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/test_robust_acquisition.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/acquisition-reference.txt
           cat apps/sutra-v2/test-output/acquisition-reference.txt
+      - name: Independently replay actual browser continuous interval enclosure
+        run: |
+          python3 packages/sutra-knowledge/reference/test_reviewed_interval.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/interval-reference.txt
+          cat apps/sutra-v2/test-output/interval-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

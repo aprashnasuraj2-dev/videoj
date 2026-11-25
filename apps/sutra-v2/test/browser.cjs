@@ -775,6 +775,14 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
     await samplePage.locator('#review-semantic-run').click();await sampleState('semantic_ready');
     assert.match(await samplePage.locator('#review-semantic-result').innerText(),/AGREEMENT ON SUPPLIED CONDITIONAL OUTCOMES/);
     if(domain==='engineering'){
+     await samplePage.locator('#review-interval-panel > summary').click();
+     await samplePage.locator('#review-interval-axis-1').selectOption('peak');await samplePage.locator('#review-interval-lower-1').fill('75');await samplePage.locator('#review-interval-upper-1').fill('95');
+     await samplePage.locator('#review-interval-run').click();await sampleState('interval_ready');
+     const intervalResult=await samplePage.locator('#review-interval-result').innerText();assert.match(intervalResult,/normal_capacity · HOLDS FOR ALL DECLARED VALUES/);assert.match(intervalResult,/failure_capacity · NOT RESOLVED BY INTERVAL ENCLOSURE/);
+     const intervalDownload=samplePage.waitForEvent('download');await samplePage.locator('#review-interval-export').click();const intervalBytes=fs.readFileSync(await (await intervalDownload).path());fs.writeFileSync(path.join(output,'living-interval.json'),intervalBytes);
+     for(const [id,file] of [['snapshot','living-interval.sha256'],['version','living-interval-version.sha256'],['plan','living-interval-plan.sha256']])fs.writeFileSync(path.join(output,file),(await samplePage.locator('#review-interval-'+id+'-pin').textContent())+'\n');
+     await samplePage.locator('#review-interval-upper-1').fill('85');assert.equal(await samplePage.locator('#review-interval-export').isDisabled(),true);
+     await samplePage.locator('#review-interval-run').click();await sampleState('interval_ready');assert.match(await samplePage.locator('#review-interval-result').innerText(),/failure_capacity · HOLDS FOR ALL DECLARED VALUES/);
      const worldPanel=samplePage.locator('#review-world-panel');if(await worldPanel.getAttribute('open')===null)await worldPanel.locator('summary').first().click();
      await samplePage.locator('#review-world-axis-1').selectOption('peak');await samplePage.locator('#review-world-values-1').fill('50,200');await samplePage.locator('#review-world-run').click();await sampleState('world_ready');
      await samplePage.locator('#review-acquisition-panel > summary').click();await samplePage.locator('#review-acquisition-run').click();await sampleState('acquisition_ready');
