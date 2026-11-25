@@ -18,7 +18,7 @@ def active(s):
 def inv(s):
     epoch,revoked,admitted,phase,effects,reconciled=s
     if not (0<=epoch<=MAX and isinstance(revoked,bool) and isinstance(admitted,bool)
-            and phase in ("idle","dispatching") and effects in (0,1)
+            and phase in ("idle","dispatching") and effects in (0,1,2)
             and isinstance(reconciled,bool)):
         return "TypeOK"
     if phase=="dispatching" and not active(s):
@@ -99,7 +99,7 @@ for kind,expected in [
     ("expired","DispatchAuthorized"),
     ("reconcile","ReconcileRequiresAdmission"),
     ("race","DispatchAuthorized"),
-    ("duplicate","TypeOK"),
+    ("duplicate","AtMostOneEffect"),
 ]:
     discovered,trace,bad=counterexample(kind,expected)
     print(f"{kind} {bad} counterexample after discovering {discovered} states:")
