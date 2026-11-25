@@ -764,6 +764,32 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.match(qualifiers,/negation: Not lower · UNSUPPORTED_DECLARATION/);
   assert.match(qualifiers,/entailment and method UNVERIFIED/);
   const livingLayout=await reviewPage.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.right>innerWidth+1;}).slice(0,20).map(e=>({tag:e.tagName,id:e.id,className:typeof e.className==='string'?e.className:'',right:e.getBoundingClientRect().right,width:e.getBoundingClientRect().width}))}));assert.ok(livingLayout.scrollWidth<=livingLayout.width,JSON.stringify(livingLayout));assert.deepEqual(reviewErrors,[]);assert.deepEqual(reviewExternal,[]);await reviewPage.close();
+  // Two complete guided synthetic domains use the same real browser controls.
+  {
+   const samplePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
+   samplePage.on('pageerror',e=>errors.push(e.message));samplePage.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());});
+   await samplePage.goto(origin);await samplePage.locator('#reviewed-workspace > summary').click();await samplePage.locator('#review-sample-panel > summary').click();
+   const sampleState=s=>samplePage.waitForFunction(state=>document.querySelector('#review-status').dataset.state===state&&!document.querySelector('#review-reset').disabled,s);
+   for(const domain of ['finance','engineering']){
+    await samplePage.locator('#review-sample-'+domain).click();await sampleState('sample_ready');
+    await samplePage.locator('#review-semantic-run').click();await sampleState('semantic_ready');
+    assert.match(await samplePage.locator('#review-semantic-result').innerText(),/AGREEMENT ON SUPPLIED CONDITIONAL OUTCOMES/);
+    await samplePage.locator('#review-semantic-retain').click();await samplePage.locator('#review-sample-'+domain+'-corrected').click();await sampleState('sample_ready');
+    assert.equal(await samplePage.locator('#review-semantic-run').isDisabled(),true);
+    await samplePage.locator('#review-correspondence').check();await samplePage.locator('#review-semantic-run').click();await sampleState('semantic_ready');
+    assert.match(await samplePage.locator('#review-semantic-result').innerText(),/DIVERGENT CONDITIONAL OUTCOMES/);
+    const impact=await samplePage.locator('#review-impact-result').innerText();assert.match(impact,/CONDITIONAL RESULT REVERSED/);assert.match(impact,/CONDITIONAL RESULT SURVIVES/);
+    const panel=samplePage.locator('#review-exposure-panel');if(await panel.getAttribute('open')===null)await panel.locator('summary').click();
+    await samplePage.locator('#review-exposure-run').click();await sampleState('exposure_ready');
+    assert.match(await samplePage.locator('#review-exposure-result').innerText(),/Minimum declared input-touch cut: 1 cohort/);
+    assert.match(await samplePage.locator('#review-exposure-result').innerText(),/independence NOT ESTABLISHED/);
+    const dl=samplePage.waitForEvent('download');await samplePage.locator('#review-exposure-export').click();const a=JSON.parse(fs.readFileSync(await (await dl).path(),'utf8'));assert.equal(a.result.decisionAuthority,'NONE');
+    fs.writeFileSync(path.join(output,'guided-'+domain+'-exposure.json'),JSON.stringify(a));
+    assert.equal(await samplePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    await samplePage.locator('#review-baseline-clear').click();
+   }
+   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await samplePage.close();
+  }
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});

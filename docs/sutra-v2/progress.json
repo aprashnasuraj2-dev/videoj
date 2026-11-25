@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-077",
+  "session": "V2-078",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -34,7 +34,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "guided_specialist_fixture_candidate_pending_exact_ci",
+  "state": "guided_specialist_workspace_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -397,14 +397,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-078",
+    "parent": "d8d39d709d305147c3533dafb709e058459f17c4",
+    "description": "Integrate guided finance/network source, formula and revision cases and structural exposure UI; actual browser two-domain acceptance tests pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-077",
     "parent": "4cf2409b03407075c27ed75c8e37fabec302e621",
     "description": "Two shared-compiler worked synthetic finance/network fixtures with baseline and corrected source; exact CI pending, browser integration next."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-076",
-    "parent": "d46df18b147c4c34873f03e2f4072bc32c81a7a7",
-    "description": "Pinned direct-sibling three-way branch comparison, object conflict classification, exact separate branch impacts and outcomes. No merge. Exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [

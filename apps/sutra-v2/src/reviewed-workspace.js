@@ -1,3 +1,5 @@
+import {guidedLivingCase} from '../../../packages/sutra-knowledge/examples/guided-living-case.js';
+import {auditStructuralExposure} from '../../../packages/sutra-knowledge/structural-exposure.js';
 import {evaluateSemanticWorldGrid} from '../../../packages/sutra-knowledge/semantic-world-grid.js';
 import {compileReviewedExpression} from '../../../packages/sutra-knowledge/reviewed-expression.js';
 import {restoreReviewedSourceDraft,reviseReviewedSourceDraft} from '../../../packages/sutra-knowledge/source-draft-restore.js';
@@ -14,8 +16,8 @@ import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js
 import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
-let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null;
-const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate'];
+let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null;
+const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
 function control(){
  for(const id of controls)by(id).disabled=busy;
@@ -38,6 +40,17 @@ async function work(fn){
  try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
+async function loadGuidedCase(domain,corrected,ticket){
+ const c=await guidedLivingCase(domain,corrected);if(ticket!==epoch)return;
+ const d=structuredClone(c.draft);sources=d.sources;bindings=d.bindings;by('question').value=d.question;
+ invalidate('Synthetic example loaded; selections are predefined, not independently reviewed.');refresh();
+ sealed={contractText:c.contractText,pin:c.pin};stagedProposals=structuredClone(c.proposals);
+ annotations=new Map(c.candidates.map(a=>[a.id,{meaning:a.meaning,binding:a.binding,facets:{}}]));
+ by('pin').textContent=c.pin;by('contract').textContent=c.contractText;
+ by('sample-description').textContent=c.title+' · '+(corrected?c.change:'Baseline version. Retain it before loading the corrected example.')+' '+c.qualification;
+ renderBatch();status('sample_ready','Synthetic example staged and sealed. Evaluate meanings to inspect conditional results.');
+}
+for(const domain of ['finance','engineering'])for(const corrected of [false,true])by('sample-'+domain+(corrected?'-corrected':'')).onclick=()=>work(ticket=>loadGuidedCase(domain,corrected,ticket));
 by('question').addEventListener('input',()=>invalidate('Question changed. Re-seal before evaluating a proposal.'));
 by('source-add').onclick=()=>work(async ticket=>{
  const next=[...sources,{id:by('source-id').value,lineage:by('lineage').value,text:by('source-text').value}];
@@ -123,7 +136,7 @@ by('batch-run').onclick=()=>work(async ticket=>{
 by('batch-export').onclick=()=>{if(batchCurrent&&!busy)download(batchCurrent,'sutra-reviewed-order-contrast.json','application/json');};
 function clearGrid(){gridCurrent=null;by('world-result').textContent='';by('world-plan-pin').textContent='';by('world-snapshot-pin').textContent='';}
 function invalidateSemantic(){
- clearGrid();
+ exposureCurrent=null;by('exposure-result').textContent='';clearGrid();
  clarificationCurrent=null;previewCurrent=null;reuseCurrent=null;by('clarification-result').textContent='';by('clarification-options').replaceChildren();by('clarification-preview').textContent='';by('reuse-result').textContent='';
  semanticCurrent=null;impactCurrent=null;by('roundtrip-result').textContent='';by('semantic-pin').textContent='No version evaluated.';by('semantic-result').textContent='';by('impact-result').textContent='';
 }
@@ -135,6 +148,7 @@ function semanticControl(){
  for(const id of ['semantic-export','semantic-export-pin','semantic-retain','roundtrip-run','clarification-run'])by(id).disabled=busy||!semanticCurrent;
  by('baseline-file').disabled=busy;by('baseline-pin').disabled=busy;by('baseline-import').disabled=busy;
  by('baseline-clear').disabled=busy||!baseline;by('baseline-restore').disabled=busy||!baseline;by('impact-export').disabled=busy||!impactCurrent;
+ by('exposure-run').disabled=busy||!semanticCurrent;by('exposure-export').disabled=busy||!exposureCurrent;
  by('world-run').disabled=busy||!semanticCurrent;by('world-export').disabled=busy||!gridCurrent;by('world-export-pin').disabled=busy||!gridCurrent;
  for(const e of by('world-fields').querySelectorAll('input,select'))e.disabled=busy||!semanticCurrent;
  by('reuse-run').disabled=busy||!impactCurrent;by('reuse-export').disabled=busy||!reuseCurrent;
@@ -258,6 +272,18 @@ by('world-run').onclick=()=>work(async ticket=>{
 });
 by('world-export').onclick=()=>{if(gridCurrent&&!busy)download(gridCurrent.text,'sutra-semantic-world-grid.json','application/json');};
 by('world-export-pin').onclick=()=>{if(gridCurrent&&!busy)download(gridCurrent.snapshot+'\n','sutra-semantic-world-grid.sha256','text/plain');};
+by('exposure-run').onclick=()=>work(async ticket=>{
+ const c=semanticCurrent;if(!c)return;exposureCurrent=null;by('exposure-result').textContent='';
+ const r=await auditStructuralExposure(c.versionText,c.digest);if(ticket!==epoch||c!==semanticCurrent)return;
+ exposureCurrent={versionText:c.versionText,versionDigest:c.digest,result:r};
+ by('exposure-result').textContent=[r.counts.sourceArtifacts+' source artifacts · '+r.counts.conservativeCohorts+' conservative cohorts · independence NOT ESTABLISHED',
+ r.cut.minimumCohorts===null?r.cut.status.replaceAll('_',' '):'Minimum declared input-touch cut: '+r.cut.minimumCohorts+' cohort(s)',
+ ...r.cohorts.map(g=>g.id+' · '+g.sourceIds.join(', ')+' · affected targets '+(g.affectedTargetClasses.join(', ')||'none')),
+ ...r.cut.sets.map(s=>'Cut: '+s.join(', ')),
+ ...r.candidates.map(a=>a.id+' · '+a.state+' · target cohorts '+(a.targetCohorts.join(', ')||'none')),r.qualification].join('\n');
+ status('exposure_ready','Structural dependency exposure computed; independence and actual failure are not established.');
+});
+by('exposure-export').onclick=()=>{if(exposureCurrent&&!busy)download(JSON.stringify(exposureCurrent),'sutra-structural-exposure.json','application/json');};
 by('clarification-run').onclick=()=>work(async ticket=>{
  const current=semanticCurrent;if(!current)return;
  clarificationCurrent=null;previewCurrent=null;by('clarification-result').textContent='';by('clarification-options').replaceChildren();by('clarification-preview').textContent='';semanticControl();

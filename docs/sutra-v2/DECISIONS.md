@@ -119,3 +119,8 @@ Compare separately pinned direct children of one exact parent. Compute structura
 ## V2-077 — Shared specialist worked examples
 
 V2-074 and V2-075 each passed 10/10 exact workflows. Preserve and resolve earlier formula/grid failures at exact V2-074. New synthetic finance (operating cash vs after capex) and network (nominal vs surviving route capacity) examples use the same source draft and human expression compiler, with one changed source, one surviving and one reversed conditional interpretation. No actual company/network data or professional authority. Tests authored; exact CI pending. Integrate browser journey next. V2-076 sibling branch CI pending at observation.
+
+
+## V2-078 — Guided specialist browser journey and structural exposure
+
+Explicit sample buttons replace only current draft and leave retained baseline intact. Both synthetic domains use identical reviewed formula compiler and semantic/revision controls. Each correction reverses one candidate and preserves another. Structural exposure now inspectable/exportable; network targets share the demand source, so distinct route and load cohorts still admit a one-cohort structural input-touch cut. Actual Chromium tests traverse both domains and assert 360px layout, no external request, no authority. No real company/network or human acceptance claim. Exact CI pending; V2-076/077 to reconcile.
