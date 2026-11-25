@@ -696,22 +696,26 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await reviewFill('baseline-pin','sha256:'+'0'.repeat(64));await reviewPage.locator('#review-baseline-import').click();await reviewState('refused');
   assert.match(await reviewPage.locator('#review-baseline-state').innerText(),/No baseline/);
   await reviewFill('baseline-pin',livingPin);await reviewPage.locator('#review-baseline-import').click();await reviewState('baseline_ready');
-  await reviewFill('question','Is site A higher than site B?');
-  await stageReviewSource('report_a','root_a','測定 🧪 A: 12.50; repeat: 12.50;');
-  await stageReviewSource('report_b','root_b','Site B: 14.25;');
+  await reviewPage.locator('#review-baseline-restore').click();await reviewState('restored');
+  assert.match(await reviewPage.locator('#review-staged').innerText(),/2 staged source.*2 reviewed binding/);
+  await reviewPage.locator('#review-source-revise-panel > summary').click();
+  await reviewPage.locator('#review-source-revise-pick').selectOption('report_b');await reviewFill('source-revise-text','Site B: 14.25;');
+  await reviewPage.locator('#review-source-revise').click();await reviewState('draft');
+  assert.match(await reviewPage.locator('#review-staged').innerText(),/2 staged source.*1 reviewed binding/);
+  assert.match(await reviewPage.locator('#review-status').innerText(),/invalidated bindings: b/);
   await reviewFill('kind','stress');await reviewFill('unit','MPa');await reviewFill('scope','sample_scope');await reviewFill('dim-l','-1');await reviewFill('dim-m','1');await reviewFill('dim-t','-2');
-  await reviewFill('binding-id','a');await selectReview('report_a','12.50');await reviewPage.locator('#review-binding-add').click();await reviewState('draft');
   await reviewFill('binding-id','b');await selectReview('report_b','14.25');await reviewPage.locator('#review-binding-add').click();await reviewState('draft');
   await reviewPage.locator('#review-seal').click();await reviewState('sealed');
   await reviewPage.locator('#review-generate').click();await reviewState('proposal');
   const corrected=JSON.parse(await reviewPage.locator('#review-proposal').inputValue());
-  await reviewPage.locator('#review-batch-add').click();await reviewState('staged');
-  for(const [op,reverse,hostile] of [['lt',true,false],['le',false,false],['lt',false,false],['gt',false,true]]){
+  // Stage in reverse order; stable IDs, not ordinal position, identify candidates.
+  for(const [id,op,reverse,hostile] of [[5,'gt',false,true],[4,'lt',false,false],[3,'le',false,false],[2,'lt',true,false],[1,'gt',false,false]]){
    const p=structuredClone(corrected),n=p.nodes.find(n=>n.id===p.targetId);n.op=op;if(reverse)n.args.reverse();if(hostile)p.nodes[0].value='999';
-   await reviewFill('proposal',JSON.stringify(p));await reviewPage.locator('#review-batch-add').click();await reviewState('staged');
+   await reviewFill('proposal',JSON.stringify(p));await reviewFill('candidate-id','proposal_'+id);await reviewPage.locator('#review-batch-add').click();await reviewState('staged');
   }
   for(let i=1;i<=5;i++)await reviewPage.locator('#review-meaning-proposal_'+i).fill('Declared interpretation '+i);
   await reviewPage.locator('#review-meaning-link-proposal_1').selectOption('a');
+  assert.equal(await reviewPage.locator('#review-semantic-run').isDisabled(),true);await reviewPage.locator('#review-correspondence').check();
   await reviewPage.locator('#review-semantic-run').click();await reviewState('semantic_ready');
   assert.match(await reviewPage.locator('#review-impact-result').innerText(),/report_b CHANGED/);assert.match(await reviewPage.locator('#review-impact-result').innerText(),/CONDITIONAL RESULT REVERSED/);
   const impactDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-impact-export').click();const impactBytes=fs.readFileSync(await (await impactDownload).path());fs.writeFileSync(path.join(output,'living-impact.json'),impactBytes);
@@ -725,7 +729,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const reuseDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-reuse-export').click();const reuse=JSON.parse(fs.readFileSync(await (await reuseDownload).path(),'utf8'));
   assert.equal(reuse.audit.decisionAuthority,'NONE');assert.equal(reuse.audit.rows.length,5);assert.ok(reuse.audit.rows.every(r=>r.freshCanonicalMatch&&r.compilerOutcomesMatch));
   // Qualifier edits are declared evidence-linked context, never semantic proof.
-  await reviewPage.locator('#review-semantic-list > div').first().locator('details > summary').click();
+  await reviewPage.locator('#review-meaning-proposal_1').locator('..').locator('details > summary').click();
   await reviewPage.locator('#review-facet-proposal_1-time').fill('Review measurement period');
   await reviewPage.locator('#review-facet-proposal_1-time-binding').selectOption('a');
   await reviewPage.locator('#review-facet-proposal_1-negation').fill('Not lower');

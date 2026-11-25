@@ -2957,7 +2957,14 @@
       ],
       "scope": "Clarify only consequential distinctions; preserve unresolved branches, separate stakes, reversibility and clarification costs. V2-068 candidate: bounded exact subset selection over explicit facet statements and observed/synthetic material pairs; no human response adjudication, cost model or semantic approval.",
       "acceptance": "Measured questions, review time, residual error, keyboard source highlighting/corrections; unreviewed semantics never approved.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK07-AMBIGUITY-REVIEW",
+          "sourceRevision": "eb4e49c3b9c031295e50dd8e1e2a053564a64e1c",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45608607233",
+          "description": "All ten exact workflows green; material pair subset planner unit verified. No user effort or semantic correctness claim."
+        }
+      ]
     },
     {
       "id": "V2-LK08-KNOWLEDGE-GRAPH",
@@ -3004,11 +3011,11 @@
     {
       "id": "V2-LK10-VERSION-CONTROL",
       "track": "B",
-      "status": "Not started",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK09-REVISION"
       ],
-      "scope": "Branch hypotheses, diff and restore investigations, preserve conflicting empirical claims in merges.",
+      "scope": "Branch hypotheses, diff and restore investigations, preserve conflicting empirical claims in merges. V2-071 candidate: restore source draft from caller-pinned version, preserve historical candidates separately; explicit stable IDs and correction invalidation. Branch merge/concurrency and general persistence remain open.",
       "acceptance": "Conflicting updates explicit; identity not logical equivalence; restore exact historical version.",
       "evidence": []
     },

@@ -1,3 +1,4 @@
+import {restoreReviewedSourceDraft,reviseReviewedSourceDraft} from '../../../packages/sutra-knowledge/source-draft-restore.js';
 import {planInvestigationClarifications} from '../../../packages/sutra-knowledge/clarification-plan.js';
 import {previewClarificationAnswers} from '../../../packages/sutra-knowledge/clarification-preview.js';
 import {auditRevisionReuse} from '../../../packages/sutra-knowledge/revision-reuse-audit.js';
@@ -12,17 +13,18 @@ import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigation
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null;
-const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear'];
+const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
 function control(){
  for(const id of controls)by(id).disabled=busy;
- if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;}
+ if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;by('candidate-id').disabled=!sealed;by('source-revise').disabled=!sources.length;by('source-revise-pick').disabled=!sources.length;by('source-revise-text').disabled=!sources.length;}
  semanticControl();
 }
 function invalidate(message){epoch++;sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 function options(element,items){element.replaceChildren();for(const id of items){const o=document.createElement('option');o.value=id;o.textContent=id;element.append(o);}}
 function refresh(){
+ options(by('source-revise-pick'),sources.map(s=>s.id));by('source-revise-text').value=sources[0]?.text??'';
  options(by('source-pick'),sources.map(s=>s.id));by('select-text').value=sources[0]?.text??'';
  options(by('left'),bindings.map(b=>b.id));options(by('right'),bindings.map(b=>b.id));if(bindings.length>1)by('right').selectedIndex=1;
  by('staged').textContent=sources.length+' staged source(s) · '+bindings.length+' reviewed binding(s)';
@@ -31,7 +33,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 by('question').addEventListener('input',()=>invalidate('Question changed. Re-seal before evaluating a proposal.'));
@@ -40,6 +42,13 @@ by('source-add').onclick=()=>work(async ticket=>{
  await sealReviewedDraft(draft(next));if(ticket!==epoch)return;sources=next;
  invalidate('Source staged with exact textarea text; no source truth established.');refresh();by('source-pick').value=next.at(-1).id;by('select-text').value=next.at(-1).text;
  for(const id of ['source-id','lineage','source-text'])by(id).value='';
+});
+by('source-revise-pick').onchange=()=>{by('source-revise-text').value=sources.find(s=>s.id===by('source-revise-pick').value)?.text??'';};
+by('source-revise').onclick=()=>work(async ticket=>{
+ const r=await reviseReviewedSourceDraft(draft(),by('source-revise-pick').value,by('source-revise-text').value);if(ticket!==epoch)return;
+ sources=structuredClone(r.draft.sources);bindings=structuredClone(r.draft.bindings);
+ invalidate('Source corrected. Reselect invalidated bindings: '+(r.invalidatedBindingIds.join(', ')||'none')+'. Retained bindings: '+(r.retainedBindingIds.join(', ')||'none')+'.');
+ refresh();by('source-pick').value=r.sourceId;by('select-text').value=sources.find(s=>s.id===r.sourceId).text;
 });
 by('source-pick').onchange=()=>{by('select-text').value=sources.find(s=>s.id===by('source-pick').value)?.text??'';};
 by('binding-add').onclick=()=>{
@@ -73,7 +82,9 @@ function download(data,name,type){const url=URL.createObjectURL(new Blob([data],
 by('export').onclick=()=>{if(current&&!busy)download(current.bytes,'sutra-reviewed-workspace.json','application/json');};
 by('export-pin').onclick=()=>{if(current&&!busy)download(current.pin+'\n','sutra-reviewed-workspace.sha256','text/plain');};
 by('reset').onclick=()=>{if(busy)return;sources=[];bindings=[];for(const id of ['question','source-id','lineage','source-text','binding-id','kind','unit','scope'])by(id).value='';for(const id of ['dim-l','dim-m','dim-t'])by(id).value='0';invalidate('Draft cleared from this workspace. Previously downloaded files are unaffected.');refresh();};
+function nextCandidateId(){let i=1;while(stagedProposals.some(p=>p.id==='proposal_'+i))i++;return 'proposal_'+i;}
 function renderBatch(){
+ by('candidate-id').value=nextCandidateId();by('correspondence').checked=false;
  by('batch-count').textContent=stagedProposals.length+' / 8 staged proposals';
  by('batch-list').replaceChildren();
  for(const p of stagedProposals){const row=document.createElement('p');row.textContent=p.id+' · '+new TextEncoder().encode(p.proposalText).length+' bytes (untrusted)';by('batch-list').append(row);}
@@ -82,7 +93,9 @@ function renderBatch(){
 function clearBatch(){stagedProposals=[];batchCurrent=null;annotations=new Map();invalidateSemantic();by('batch-result').textContent='';renderBatch();}
 by('batch-add').onclick=()=>{
  if(busy||!sealed||!by('proposal').value||stagedProposals.length>=8)return;
- const p={id:'proposal_'+(stagedProposals.length+1),proposalText:by('proposal').value};
+ const id=by('candidate-id').value;
+ if(!/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(id)||stagedProposals.some(p=>p.id===id)){status('refused','REFUSED: invalid or duplicate candidate identifier.');return;}
+ const p={id,proposalText:by('proposal').value};
  const candidate=[...stagedProposals,p],batchText=JSON.stringify({version:1,contractDigest:sealed.pin,proposals:candidate});
  if(p.proposalText.length>65536||batchText.length>262144){status('refused','REFUSED: staged batch exceeds bounded input profile.');return;}
  stagedProposals=candidate;batchCurrent=null;invalidateSemantic();by('batch-result').textContent='';renderBatch();control();status('staged','Exact untrusted proposal staged; later edits do not change this saved copy.');
@@ -106,10 +119,11 @@ function invalidateSemantic(){
 function semanticControl(){
  for(const e of by('semantic-list').querySelectorAll('input,select'))e.disabled=busy;
  const ready=!!sealed&&stagedProposals.length>=2&&stagedProposals.every(p=>annotations.get(p.id)?.meaning.trim());
- by('semantic-run').disabled=busy||!ready;
+ by('correspondence').disabled=busy||!baseline;
+ by('semantic-run').disabled=busy||!ready||!!baseline&&!by('correspondence').checked;
  for(const id of ['semantic-export','semantic-export-pin','semantic-retain','roundtrip-run','clarification-run'])by(id).disabled=busy||!semanticCurrent;
  by('baseline-file').disabled=busy;by('baseline-pin').disabled=busy;by('baseline-import').disabled=busy;
- by('baseline-clear').disabled=busy||!baseline;by('impact-export').disabled=busy||!impactCurrent;
+ by('baseline-clear').disabled=busy||!baseline;by('baseline-restore').disabled=busy||!baseline;by('impact-export').disabled=busy||!impactCurrent;
  by('reuse-run').disabled=busy||!impactCurrent;by('reuse-export').disabled=busy||!reuseCurrent;
  by('clarification-answer-run').disabled=busy||!clarificationCurrent||!clarificationCurrent.plan.questions.length;
  by('clarification-export').disabled=busy||!previewCurrent;
@@ -154,9 +168,10 @@ function impactText(r){
   ...r.candidates.map(c=>c.id+' — '+c.outcome.replaceAll('_',' ')+' · dependency affected '+(c.dependencyAffected?'yes':'no')+' · review '+(c.reviewRequired?'required':'no new scoped dependency issue')),
   'New divergence: '+(r.triage.newDivergence?'yes':'no'),'Missing/unresolved: '+(r.missing.map(c=>c.id+' '+c.reason).join(', ')||'none'),'Full replay of both versions; no empirical or semantic assurance.'].join('\n');
 }
-function baselineState(){by('baseline-state').textContent=baseline?'Retained baseline '+baseline.digest+' · '+baseline.report.investigation.originalQuestion.text:'No baseline retained.';}
+function baselineState(){by('correspondence').checked=false;by('baseline-state').textContent=baseline?'Retained baseline '+baseline.digest+' · '+baseline.report.investigation.originalQuestion.text:'No baseline retained.';by('baseline-candidates').textContent=baseline?baseline.report.investigation.candidates.map(c=>c.id+' · '+c.meaning).join('\n'):'';}
+by('correspondence').onchange=()=>semanticControl();
 by('semantic-run').onclick=()=>work(async ticket=>{
- if(!sealed||stagedProposals.length<2)return;
+ if(!sealed||stagedProposals.length<2||baseline&&!by('correspondence').checked)return;
  invalidateSemantic();semanticControl();
  const batchText=JSON.stringify({version:1,contractDigest:sealed.pin,proposals:stagedProposals});
  const candidates=stagedProposals.map(p=>{
@@ -243,6 +258,15 @@ by('semantic-export').onclick=()=>{if(semanticCurrent&&!busy)download(semanticCu
 by('semantic-export-pin').onclick=()=>{if(semanticCurrent&&!busy)download(semanticCurrent.digest+'\n','sutra-investigation-version.sha256','text/plain');};
 by('semantic-retain').onclick=()=>{if(!semanticCurrent||busy)return;baseline=semanticCurrent;impactCurrent=null;reuseCurrent=null;by('reuse-result').textContent='';by('impact-result').textContent='';baselineState();semanticControl();status('semantic_ready','Current version retained as baseline in this tab. Export the exact version and digest to keep it across sessions.');};
 by('baseline-clear').onclick=()=>{if(busy)return;baseline=null;impactCurrent=null;reuseCurrent=null;by('reuse-result').textContent='';by('impact-result').textContent='';baselineState();semanticControl();};
+by('baseline-restore').onclick=()=>work(async ticket=>{
+ const a=baseline;if(!a)return;
+ const r=await restoreReviewedSourceDraft(a.versionText,a.digest);if(ticket!==epoch||a!==baseline)return;
+ const d=structuredClone(r.draft);sources=d.sources;bindings=d.bindings;by('question').value=d.question;
+ for(const id of ['source-id','lineage','source-text','binding-id','kind','unit','scope'])by(id).value='';
+ for(const id of ['dim-l','dim-m','dim-t'])by(id).value='0';
+ invalidate('Historical source selections restored. Candidate programs remain in the pinned baseline; explicitly stage corresponding candidates after sealing.');refresh();
+ status('restored','Restored '+sources.length+' source(s) and '+bindings.length+' reviewed selection(s). No candidate copied or approved.');
+});
 by('baseline-import').onclick=()=>{
  const file=by('baseline-file').files?.[0],digest=by('baseline-pin').value.trim();
  return work(async ticket=>{
