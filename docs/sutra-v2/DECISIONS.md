@@ -22,3 +22,7 @@ Use explicit synthetic counterfactual plan over already admitted typed graphs. D
 ## V2-057
 
 Reuse the reviewed workspace instead of creating a disconnected synthetic-only UI. Require explicit candidate meaning text; optional source-bound reference is declared, not proof. Save exact version input and separate digest; no automatic localStorage, credentials or external disclosure. Re-import only after bounded UTF-8 decode and pin-checked full replay. Draft edits invalidate stale exports; retained baseline is intentionally separate and cleared explicitly. A stage-order ID is a manual, scoped correspondence rule, not semantic identity; candidate meaning or formula changes require review. Browser controls use textContent, no untrusted HTML. Full replay may be slower than incremental; no latency claim.
+
+## V2-058
+
+Independent replay reuses the Python reference compiler and reconstructs admitted evidence links and dependency consequences via an independent fixed-point traversal. Input-only version pins prevent treating derived verdicts as authority. Explicit --living profile, no cross-profile auto-detection. Preserve compiler refusal status but do not equate independently generic exceptions with producer-specific diagnostic reasons; parity normalizes only independently refused diagnostics. Browser artifact tests retain external pins and reject nonidentity mutants. Independent implementation is same-project, not independent operator or empirical truth. No unbounded archive input; maximum version bytes 256 KiB.

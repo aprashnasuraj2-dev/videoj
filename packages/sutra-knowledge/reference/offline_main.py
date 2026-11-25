@@ -8,6 +8,7 @@ from verify_capsule import verify, read_bytes, refused, FORMAT
 from verify_aligned_capsule import verify as verify_aligned, MAX_BYTES as MAX_ALIGNED_BYTES
 from verify_trial_snapshot import verify as verify_trial, MAX_BYTES as MAX_TRIAL_BYTES
 from verify_reviewed_snapshot import verify as verify_reviewed, MAX_BYTES as MAX_REVIEWED_BYTES
+from verify_living_version import verify as verify_living, MAX_BYTES as MAX_LIVING_BYTES
 
 PIN_FILE = re.compile(rb'sha256:[a-f0-9]{64}(?:\r?\n)?', re.ASCII)
 
@@ -31,6 +32,7 @@ def main():
     profiles.add_argument('--aligned',action='store_true',help='Explicitly select the caller-pinned aligned capsule profile')
     profiles.add_argument('--trial',action='store_true',help='Explicitly select the research trial snapshot profile')
     profiles.add_argument('--reviewed',action='store_true',help='Explicitly select the reviewed compiler snapshot profile')
+    profiles.add_argument('--living',action='store_true',help='Explicitly select exact living investigation version replay')
     parser.add_argument('--contract-pin',help='Separately retained reviewed contract digest')
     parser.add_argument('--source-pin',help='Separately retained normalized trial source digest')
     parser.add_argument('--after-source-pin',help='Separately retained second normalized trial source digest for comparison')
@@ -41,7 +43,10 @@ def main():
     if args.contract_pin is not None and not args.reviewed:parser.error('--contract-pin requires --reviewed')
     try:
         pin=args.pin if args.pin is not None else load_pin(args.pin_file)
-        if args.reviewed:
+        if args.living:
+            with Path(args.capsule).open('rb') as f:data=f.read(MAX_LIVING_BYTES+1)
+            result=verify_living(data,pin)
+        elif args.reviewed:
             with Path(args.capsule).open('rb') as f:data=f.read(MAX_REVIEWED_BYTES+1)
             result=verify_reviewed(data,pin,args.contract_pin)
         elif args.trial:

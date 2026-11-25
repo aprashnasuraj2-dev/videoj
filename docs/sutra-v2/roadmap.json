@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-057",
+  "session": "V2-058",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2865,7 +2865,7 @@
       "dependencies": [
         "V2-LK01-SEMANTIC-TRIAGE"
       ],
-      "scope": "Preserve original natural-language question, candidate meanings and separate nine semantic obligations; source spans, entity, scope, unit, modality, negation, quantifier, baseline, causality, method, review and unknowns. V2-054 candidate: bounded separate annotation envelope with 13 explicit facets, exact source spans by reviewed binding/claim ID, separate nine obligations, original question and coverage, no truth or human sign-off. Automatic extraction and UI remain open. Exact scoped annotation tests verified; wider automatic interpretation and review remain open.",
+      "scope": "Preserve original natural-language question, candidate meanings and separate nine semantic obligations; source spans, entity, scope, unit, modality, negation, quantifier, baseline, causality, method, review and unknowns. V2-054 candidate: bounded separate annotation envelope with 13 explicit facets, exact source spans by reviewed binding/claim ID, separate nine obligations, original question and coverage, no truth or human sign-off. Automatic extraction and UI remain open. Exact scoped annotation tests verified; wider automatic interpretation and review remain open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending.",
       "acceptance": "Closed versioned schema, exact source-bound extraction, omission/negation/scope adversaries; no invented inputs.",
       "evidence": [
         {
@@ -2969,12 +2969,12 @@
     {
       "id": "V2-LK11-IMPACT-REPORT",
       "track": "B",
-      "status": "Implemented but unverified",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK09-REVISION",
         "V2-LK07-AMBIGUITY-REVIEW"
       ],
-      "scope": "Explain changes, surviving/invalidated conclusions, new contradictions, reconsidered decisions, missing evidence and next investigation. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open.",
+      "scope": "Explain changes, surviving/invalidated conclusions, new contradictions, reconsidered decisions, missing evidence and next investigation. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending.",
       "acceptance": "Two independent domain journeys, independently replayable export, old snapshots retained.",
       "evidence": []
     },
@@ -3021,7 +3021,7 @@
         "V2-LK07-AMBIGUITY-REVIEW",
         "V2-LK11-IMPACT-REPORT"
       ],
-      "scope": "Question → evidence → interpretations → review → investigation → conclusion → challenge → revision → export, manual/offline mode, accessible progressive disclosure. V2-057 candidate: manual reviewed workspace now preserves labels, source links, version export, separate pin, caller baseline import and evidence correction impact. Actual browser tests pending; stable candidate IDs, progressive source review, broader canvas, offline independent replay and accessibility acceptance remain open.",
+      "scope": "Question → evidence → interpretations → review → investigation → conclusion → challenge → revision → export, manual/offline mode, accessible progressive disclosure. V2-057 candidate: manual reviewed workspace now preserves labels, source links, version export, separate pin, caller baseline import and evidence correction impact. Actual browser tests pending; stable candidate IDs, progressive source review, broader canvas, offline independent replay and accessibility acceptance remain open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending.",
       "acceptance": "Actual browser journey, persistence, cancel/error recovery, keyboard/mobile and no-model pathway.",
       "evidence": []
     },

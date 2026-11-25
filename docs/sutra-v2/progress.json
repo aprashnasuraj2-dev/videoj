@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-057",
+  "session": "V2-058",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK05-SEMANTIC-COUNTERFACTUAL",
@@ -27,7 +27,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "living_investigation_browser_candidate_pending_exact_ci",
+  "state": "independent_living_version_replay_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -392,14 +392,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-058",
+    "parent": "daace962bc444b0239eb933ea7dfdd64ad6351b9",
+    "description": "Independent Python living version replay, explicit offline archive profile, actual browser impact parity and mutations; exact CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-057",
     "parent": "8a335023e62eedf19f3cc4849c0417f9b0604f5c",
     "description": "Actual caller-authored semantic version, independent retained pin input, baseline restore and corrected source impact UI; browser regressions authored, exact CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-056",
-    "parent": "32348421e11bd8882117f5a4b653cf432e456846",
-    "description": "Bounded pinned synthetic perturbations for accidentally agreeing candidate formulas; full vs cached replay equality; exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [

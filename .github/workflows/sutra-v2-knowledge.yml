@@ -248,6 +248,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_reviewed_order_contrast.py apps/sutra-v2/test-output/reviewed-order-contrast.json > apps/sutra-v2/test-output/reviewed-order-contrast-reference.txt
           cat apps/sutra-v2/test-output/reviewed-order-contrast-reference.txt
+      - name: Independently replay actual living investigation versions and scoped impact
+        run: |
+          python3 packages/sutra-knowledge/reference/test_living_version.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/living-reference.txt
+          cat apps/sutra-v2/test-output/living-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version
