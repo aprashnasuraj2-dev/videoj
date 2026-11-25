@@ -93,6 +93,10 @@ jobs:
           go version
           go run packages/sutra-knowledge/checkpoint/main.go packages/sutra-knowledge/checkpoint/support_replay.go packages/sutra-knowledge/checkpoint/fixture-case.json apps/sutra-v2/test-output/conflict-evidence.json apps/sutra-v2/test-output/conflict-withdrawn.json apps/sutra-v2/test-output/conflict-resolved.json > apps/sutra-v2/test-output/conflict-checkpoints.json
           cat apps/sutra-v2/test-output/conflict-checkpoints.json
+      - name: Independently reconstruct actual Rust support exports using Go
+        run: |
+          go run packages/sutra-knowledge/checkpoint/main.go packages/sutra-knowledge/checkpoint/support_replay.go verify-support packages/sutra-knowledge/checkpoint/fixture-case.json apps/sutra-v2/test-output/support-conflict.json apps/sutra-v2/test-output/conflict-evidence.json apps/sutra-v2/test-output/support-withdrawn.json apps/sutra-v2/test-output/conflict-withdrawn.json apps/sutra-v2/test-output/support-resolved.json apps/sutra-v2/test-output/conflict-resolved.json > apps/sutra-v2/test-output/support-go-reference.txt
+          cat apps/sutra-v2/test-output/support-go-reference.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
