@@ -3,19 +3,21 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-004",
+  "session": "V2-005",
   "next": [
-    "V2-L02",
-    "V2-F02",
-    "V2-L04",
+    "V2-L06",
+    "V2-F06",
+    "V2-A05",
+    "V2-L07",
     "V2-F03",
     "V2-A02",
+    "V2-L04",
     "V2-L03",
     "V2-F04",
     "V2-F05",
     "V2-O02"
   ],
-  "state": "learner_node_verified_browser_replay_candidate",
+  "state": "integrated_timing_verified_quiz_peer_candidate",
   "verified": [
     {
       "id": "V2-M01",
@@ -117,6 +119,24 @@
       "sourceRevision": "49764029d2f315f40fdd7f08da949f5d1170fc65",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45516629582/job/138877614472",
       "description": "21/21 Node groups including real legacy catalog/transcript, revision, stale receipt and outside-world abstention."
+    },
+    {
+      "id": "V2-F02",
+      "sourceRevision": "16e4a4f43ac61b00805e78a0fcf70e778ba669b7",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45516782710/job/138878138000",
+      "description": "Actual Chromium integrated learner and frontier; separate Python timing export replay against original source bytes and four rejected mutations."
+    },
+    {
+      "id": "V2-L02",
+      "sourceRevision": "16e4a4f43ac61b00805e78a0fcf70e778ba669b7",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45516782710/job/138878138000",
+      "description": "Actual Chromium integrated learner and frontier; separate Python timing export replay against original source bytes and four rejected mutations."
+    },
+    {
+      "id": "V2-L05",
+      "sourceRevision": "16e4a4f43ac61b00805e78a0fcf70e778ba669b7",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45516782710/job/138878138000",
+      "description": "Actual Chromium integrated learner and frontier; separate Python timing export replay against original source bytes and four rejected mutations."
     }
   ],
   "release": "not_authorized",
@@ -126,7 +146,7 @@
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45516629582/job/138877614814",
     "reason": "browser instrumentation counted same-origin media blob as external request; final assertion failed"
   },
-  "lastVerifiedKernelSource": "7c66df885ceb0507c46eb64a75453d0a989f2c69",
+  "lastVerifiedKernelSource": "16e4a4f43ac61b00805e78a0fcf70e778ba669b7",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",

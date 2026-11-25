@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "description": "Data-only observation adviser for the synthetic quiz strata lesson.",
+    "sutraObservation": {
+      "version": 1,
+      "caseId": "quiz_strata_v1",
+      "scope": "synthetic_quiz_strata",
+      "costUnit": "synthetic_effort",
+      "nodeId": "b_total_rate",
+      "cost": 1
+    }
+  },
+  "max_steps": 2,
+  "tools": [
+    {
+      "name": "aggregate_only",
+      "function": {
+        "description": "Suggest a declared observation, not a conclusion.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "request": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000
+            }
+          },
+          "required": [
+            "request"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "instructions": "Recommend the advertised observation only. The caller checks compatibility and computes the decision. No external tools.",
+      "tools": []
+    }
+  ]
+}

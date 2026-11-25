@@ -1,0 +1,29 @@
+{
+  "networks": [
+    {
+      "name": "group_sizes",
+      "front_man": "group_sizes",
+      "hocon": "./group_sizes.network.json",
+      "description": "Synthetic observation adviser"
+    },
+    {
+      "name": "aggregate_only",
+      "front_man": "aggregate_only",
+      "hocon": "./aggregate_only.network.json",
+      "description": "Synthetic observation adviser"
+    },
+    {
+      "name": "forged_verdict",
+      "front_man": "forged_verdict",
+      "hocon": "./forged_verdict.network.json",
+      "description": "Synthetic observation adviser"
+    }
+  ],
+  "allowed_peers": [],
+  "peer_policy": {
+    "mode": "closed"
+  },
+  "deployment": {
+    "mode": "static"
+  }
+}

@@ -6,12 +6,21 @@ const {chromium}=requireLegacy('playwright');
 const dist=path.resolve(__dirname,'../dist');
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.txt':'text/plain','.mp4':'video/mp4'};
 (async()=>{
+ const peerRoot=path.resolve(__dirname,'../peer'),peerRequests=[];
+ const peer=http.createServer((req,res)=>{
+  const pathname=new URL(req.url,'http://localhost').pathname;peerRequests.push({path:pathname,method:req.method,headers:req.headers});
+  const file=path.resolve(peerRoot,'.'+pathname);
+  if(!file.startsWith(peerRoot+path.sep)||!fs.existsSync(file)||!file.endsWith('.json')){res.writeHead(404);res.end();return;}
+  res.writeHead(200,{'Content-Type':'application/json','Access-Control-Allow-Origin':'*','Cache-Control':'no-store'});res.end(fs.readFileSync(file));
+ });
+ await new Promise(resolve=>peer.listen(0,'127.0.0.1',resolve));
+ const peerOrigin='http://127.0.0.1:'+peer.address().port;
  const server=http.createServer((req,res)=>{
   try{
    const pathname=new URL(req.url,'http://localhost').pathname;
    const file=pathname==='/'?path.join(dist,'index.html'):path.resolve(dist,'.'+decodeURIComponent(pathname));
    if(!file.startsWith(dist+path.sep)||!fs.statSync(file).isFile()||!mime[path.extname(file)])throw Error('missing');
-   res.writeHead(200,{'Content-Type':mime[path.extname(file)],'Cache-Control':'no-store','Content-Security-Policy':"default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; media-src blob:; base-uri 'none'; form-action 'none'",'Referrer-Policy':'no-referrer'});res.end(fs.readFileSync(file));
+   res.writeHead(200,{'Content-Type':mime[path.extname(file)],'Cache-Control':'no-store','Content-Security-Policy':"default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self' "+peerOrigin+"; img-src 'self'; media-src blob:; base-uri 'none'; form-action 'none'",'Referrer-Policy':'no-referrer'});res.end(fs.readFileSync(file));
   }catch{res.writeHead(404);res.end();}
  });
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
@@ -75,9 +84,52 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.equal(JSON.parse(exported.reportText).graphDigest,await page.locator('#identity').innerText());
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
+  await page.getByLabel('Your adjusted-rate prediction').selectOption('a_higher');
+  await page.getByRole('button',{name:'Plan subgroup investigation'}).click();
+  await page.waitForFunction(()=>document.querySelector('#quiz-status').dataset.state==='planned');
+  assert.equal(await page.locator('#quiz-cost').innerText(),'6');
+  const peerUrl=page.getByLabel('Observation peer network URL');
+  async function choose(name,allow){
+   await peerUrl.fill(peerOrigin+'/agents/'+name);
+   await page.getByRole('button',{name:'Discover observation peer'}).click();
+   await page.getByRole('dialog',{name:'Approve public artifact access?'}).waitFor();
+   assert.match(await page.locator('#quiz-consent-url').innerText(),/agent-manifest.json$/);
+   if(!allow){await page.getByRole('button',{name:'Deny observation contact'}).click();return;}
+   await page.getByRole('button',{name:'Allow observation GET once'}).click();
+   await page.getByRole('dialog',{name:'Approve public artifact access?'}).waitFor();
+   await page.waitForFunction(n=>document.querySelector('#quiz-consent-url').textContent.endsWith(n+'.network.json'),name);
+   await page.getByRole('button',{name:'Allow observation GET once'}).click();
+  }
+  await choose('group_sizes',false);
+  await page.waitForFunction(()=>document.querySelector('#quiz-peer-status').dataset.state==='refused');
+  assert.equal(peerRequests.length,0);
+  await choose('group_sizes',true);
+  await page.waitForFunction(()=>document.querySelector('#quiz-peer-status').dataset.state==='improved');
+  assert.equal(await page.locator('#quiz-cost').innerText(),'2');assert.equal(await page.locator('#quiz-next').innerText(),'a_beginner_n');
+  await choose('aggregate_only',true);
+  await page.waitForFunction(()=>document.querySelector('#quiz-peer-status').dataset.state==='redundant');
+  assert.equal(await page.locator('#quiz-cost').innerText(),'2');
+  await choose('forged_verdict',true);
+  await page.waitForFunction(()=>document.querySelector('#quiz-peer-status').dataset.state==='refused');
+  assert.equal(await page.locator('#quiz-cost').innerText(),'2');
+  await page.getByRole('button',{name:'Read decisive subgroup evidence'}).click();
+  await page.waitForFunction(()=>document.querySelector('#quiz-status').dataset.state==='conditional_question_resolved');
+  assert.match(await page.locator('#quiz-evidence').innerText(),/Equal-weighted A 65% · B 73.125%/);
+  await page.getByLabel('Choose interpretation').selectOption('causal');await page.getByRole('button',{name:'Check interpretation'}).click();
+  assert.match(await page.locator('#quiz-transfer-status').innerText(),/^Reconsider/);
+  await page.getByLabel('Choose interpretation').selectOption('standardized_only');await page.getByRole('button',{name:'Check interpretation'}).click();
+  assert.match(await page.locator('#quiz-transfer-status').innerText(),/^Correct/);
+  const quizDownload=page.waitForEvent('download');await page.getByRole('button',{name:'Export subgroup investigation'}).click();
+  const quiz=JSON.parse(fs.readFileSync(await (await quizDownload).path(),'utf8'));
+  assert.equal(quiz.result.truthStatus,'synthetic_model_only');assert.equal(quiz.result.answer,'not_a_higher');assert.equal(quiz.publishers.length,2);
+  assert.equal(peerRequests.length,6);assert.ok(peerRequests.every(r=>r.method==='GET'&&!r.headers.cookie&&!r.headers.referer&&!r.headers.authorization));
+  assert.ok(external.every(u=>new URL(u).origin===peerOrigin));assert.equal(external.length,6);assert.deepEqual(errors,[]);
+  fs.writeFileSync(path.join(output,'quiz-evidence.json'),JSON.stringify(quiz,null,2));
+  await page.screenshot({path:path.join(output,'subgroup-investigation.png'),fullPage:true});
+  console.log('PASS: consent-denied zero traffic, actual two-origin data-only scripted adviser, cheaper local policy 6→2, redundant and forged peers, exact standardized reversal, transfer, actual export.');
   await page.screenshot({path:path.join(output,'workspace.png'),fullPage:true});
   fs.writeFileSync(path.join(output,'browser-report.json'),JSON.stringify(exported,null,2));
   fs.writeFileSync(path.join(output,'learning-evidence.json'),JSON.stringify(learning,null,2));
   console.log('PASS: built browser workspace, 360px keyboard baseline, revision 5/11, two method comparison, pinned two-agent scripted proposal, forged verdict refused, report replay/tamper, exported actual bytes, zero external requests; frontier policy and impossibility witness, source-bound learning revision, hash-checked native video seek, export and reset.');
- }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
+ }finally{await browser?.close();await Promise.all([new Promise(resolve=>server.close(resolve)),new Promise(resolve=>peer.close(resolve))]);}
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -115,3 +115,5 @@ scopeButton.addEventListener('click',async()=>{
 });
 
 import './investigation.js';
+
+import './quiz.js';
