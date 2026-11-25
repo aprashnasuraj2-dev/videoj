@@ -337,6 +337,7 @@
         "packages/sutra-consent/strict-json.js",
         ".github/workflows/sutra-v2-knowledge.yml",
         "docs/sutra-v2/progress.json",
+        "docs/sutra-v2/roadmap.json",
         "apps/sutra/public/media/timing-fixture.mp4",
         "apps/sutra/src/seek-policy.js"
       ],
