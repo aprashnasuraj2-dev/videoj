@@ -916,10 +916,11 @@ func VerifyFencedEnvelope(e FencedEnvelope, req AuthorityRequest, challenge, ctx
 }
 
 type FencedCoordinator struct {
-	authority       *SharedAuthority
-	fence           *FenceClient
+	authority        *SharedAuthority
+	fence            *FenceClient
 	closureAuthority ed25519.PublicKey
-	fault           func(string) error
+	upstream         *upstreamEffectClient
+	fault            func(string) error
 }
 
 func NewFencedCoordinator(authority *SharedAuthority, fence *FenceClient) (*FencedCoordinator, error) {
@@ -939,6 +940,23 @@ func NewFencedCoordinatorWithClosureAuthority(authority *SharedAuthority, fence 
 		return nil, ErrPolicy
 	}
 	c.closureAuthority = append(ed25519.PublicKey(nil), closureAuthority...)
+	return c, nil
+}
+
+// newFencedCoordinatorWithUpstreamAuthority binds orphan recovery to a concrete
+// durable APPLIED-or-CLOSED upstream authority rather than to an unattached
+// signing key. It remains package-private and creates no new external write route.
+func newFencedCoordinatorWithUpstreamAuthority(authority *SharedAuthority, fence *FenceClient, upstream *upstreamEffectClient) (*FencedCoordinator, error) {
+	if authority == nil || fence == nil || upstream == nil ||
+		authority.ctx != upstream.ctx ||
+		!bytes.Equal(authority.signer.Public().(ed25519.PublicKey), upstream.authority) {
+		return nil, ErrPolicy
+	}
+	c, e := NewFencedCoordinatorWithClosureAuthority(authority, fence, upstream.upstream)
+	if e != nil {
+		return nil, e
+	}
+	c.upstream = upstream
 	return c, nil
 }
 func (c *FencedCoordinator) intentPath() string { return filepath.Join(c.authority.dir, fenceIntentName) }
@@ -1191,42 +1209,43 @@ func (c *FencedCoordinator) processLocked(req AuthorityRequest) (FencedResponse,
 	}
 	return out, nil
 }
-// ResolveOrphanWithClosureProof restores availability only after an external
-// authority permanently closes the exact idempotency identity without effect.
-func (c *FencedCoordinator) ResolveOrphanWithClosureProof(proof EffectClosureProof) error {
+// orphanResolutionStateLocked reconstructs the exact pre-effect orphan under
+// the local authority lock. Absence is never treated as non-application proof.
+func (c *FencedCoordinator) orphanResolutionStateLocked() (FenceReservation, FenceView, Digest, error) {
 	a := c.authority
-	a.mu.Lock()
-	defer a.mu.Unlock()
 	if a.lock == nil || a.poisoned {
-		return ErrStore
-	}
-	if len(c.closureAuthority) != ed25519.PublicKeySize {
-		return ErrPolicy
+		return FenceReservation{}, FenceView{}, Digest{}, ErrStore
 	}
 	if _, exists, e := c.loadIntentLocked(); e != nil {
-		return e
+		return FenceReservation{}, FenceView{}, Digest{}, e
 	} else if exists {
-		return ErrFenceConflict
+		return FenceReservation{}, FenceView{}, Digest{}, ErrFenceConflict
 	}
 	view, e := c.fence.View()
 	if e != nil {
-		return ErrFenceUnavailable
+		return FenceReservation{}, FenceView{}, Digest{}, ErrFenceUnavailable
 	}
 	current := a.headLocked()
 	if view.Head != current {
-		return ErrWitnessRollback
+		return FenceReservation{}, FenceView{}, Digest{}, ErrWitnessRollback
 	}
 	if view.Pending == (Digest{}) {
-		return ErrFenceConflict
+		return FenceReservation{}, FenceView{}, Digest{}, ErrFenceConflict
 	}
 	pending, exists, e := c.fence.PendingReservation()
 	if e != nil {
-		return ErrFenceUnavailable
+		return FenceReservation{}, FenceView{}, Digest{}, ErrFenceUnavailable
 	}
 	if !exists || pending.Hash() != view.Pending || pending.Before != current {
-		return ErrWitnessRollback
+		return FenceReservation{}, FenceView{}, Digest{}, ErrWitnessRollback
 	}
-	if !VerifyEffectClosureProof(proof, a.ctx, a.signer.Public().(ed25519.PublicKey), pending, c.closureAuthority) {
+	return pending, view, current, nil
+}
+
+func (c *FencedCoordinator) resolveOrphanProofLocked(proof EffectClosureProof, pending FenceReservation, view FenceView, current Digest) error {
+	a := c.authority
+	if len(c.closureAuthority) != ed25519.PublicKeySize ||
+		!VerifyEffectClosureProof(proof, a.ctx, a.signer.Public().(ed25519.PublicKey), pending, c.closureAuthority) {
 		return ErrPolicy
 	}
 	next, e := c.fence.Abort(pending)
@@ -1241,6 +1260,44 @@ func (c *FencedCoordinator) ResolveOrphanWithClosureProof(proof EffectClosurePro
 		return ErrWitnessRollback
 	}
 	return nil
+}
+
+// ResolveOrphanWithClosureProof restores availability only after an external
+// authority permanently closes the exact idempotency identity without effect.
+// This proof-only API remains useful as a negative-control boundary; the
+// concrete upstream path below additionally owns the APPLIED/CLOSED state.
+func (c *FencedCoordinator) ResolveOrphanWithClosureProof(proof EffectClosureProof) error {
+	a := c.authority
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	pending, view, current, e := c.orphanResolutionStateLocked()
+	if e != nil {
+		return e
+	}
+	return c.resolveOrphanProofLocked(proof, pending, view, current)
+}
+
+// resolveOrphanWithUpstreamClosure asks the configured durable receiver to make
+// CLOSED a terminal state before the admission fence can be released. A lost
+// close response leaves the fence fail-closed; retry/restart can reconcile the
+// same identity. If the upstream reports APPLIED/conflict, no abort occurs.
+func (c *FencedCoordinator) resolveOrphanWithUpstreamClosure() error {
+	a := c.authority
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	if c.upstream == nil || len(c.closureAuthority) != ed25519.PublicKeySize ||
+		!bytes.Equal(c.upstream.upstream, c.closureAuthority) {
+		return ErrPolicy
+	}
+	pending, view, current, e := c.orphanResolutionStateLocked()
+	if e != nil {
+		return e
+	}
+	proof, e := c.upstream.CloseUnapplied(pending)
+	if e != nil {
+		return e
+	}
+	return c.resolveOrphanProofLocked(proof, pending, view, current)
 }
 
 func (c *FencedCoordinator) Process(req AuthorityRequest) (FencedResponse, error) {
