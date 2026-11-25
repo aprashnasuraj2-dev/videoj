@@ -10,3 +10,8 @@ Compare matched LLM-only, LLM+search/execution, LLM+solver, multi-agent critique
 The exact frozen spec and runner live in packages/sutra-knowledge/evaluation/. Compare first-candidate ablation, enumerate-all conditional agreement using the exact compiler, and SUTRA triage. Same reviewed sources and candidate programs are available to all; no semantic generation or source selection measured. The simple enumerate-all baseline is expected to match SUTRA on this narrow task; the integrated workflow must demonstrate value elsewhere (revision, provenance, review effort and discovery). Report the equality if observed; no inflated novelty or performance claim. All expected states are explicit independent of runner outputs, but authored by project development, not external adjudication.
 
 Future: pairwise semantic blind evaluation by independent reviewers; frozen domain-specific public evidence with permission; compare end-to-end user tasks, not only formula results. No fabricated live model results or external disclosure.
+
+
+## V2-080 — Scoped revision selection pilot
+
+V2-077 and V2-078 exact 10/10 green. Freeze four development cases (two single-source, two all-source edits) with explicit retained/reselected IDs and expected conditional states. Compare exact rebuilt and restored/reselected version bytes; report full and targeted selection counts, and separate diagnostic projected node reuse. All-source controls require zero selection savings. The comparator is full reselection, not a strong incremental editor; no general speed, accuracy, human or novelty claim. Workflow prints and uploads result; exact CI pending. V2-079 pending at observation.

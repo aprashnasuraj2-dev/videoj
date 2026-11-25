@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-079",
+  "session": "V2-080",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -34,7 +34,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "sibling_browser_candidate_pending_exact_ci",
+  "state": "revision_selection_pilot_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -387,7 +387,7 @@
     "reason": "Browser syntax preflight refused duplicate gridPin declaration in the monolithic browser test; grid and independent replay not exercised.",
     "resolutionStatus": "Resolved at exact V2-074; all ten workflows passed; previous failing assertions retained."
   },
-  "lastVerifiedKernelSource": "4cf2409b03407075c27ed75c8e37fabec302e621",
+  "lastVerifiedKernelSource": "42528be19fe0428f5329d64383b5c311fb86e1ca",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -397,14 +397,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-080",
+    "parent": "a8237f617f4cc34cfe98b4ab7eb9b7af71779a7b",
+    "description": "Frozen four-case selection effort pilot; compare full reselection and source-local invalidation with exact reconstructed versions; all-source counterexamples. CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-079",
     "parent": "42528be19fe0428f5329d64383b5c311fb86e1ca",
     "description": "Pinned sibling import and three-way contrast browser integration; stale output invalidation, wrong-pin refusal, real guided export. Exact CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-078",
-    "parent": "d8d39d709d305147c3533dafb709e058459f17c4",
-    "description": "Integrate guided finance/network source, formula and revision cases and structural exposure UI; actual browser two-domain acceptance tests pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -1243,6 +1243,24 @@
       "sourceRevision": "4cf2409b03407075c27ed75c8e37fabec302e621",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45610633376",
       "description": "10/10 exact workflows passed; direct sibling object comparison and conflict/parent adversaries."
+    },
+    {
+      "id": "V2-LK16-SPECIALIST-JOURNEYS",
+      "sourceRevision": "d8d39d709d305147c3533dafb709e058459f17c4",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45611058386",
+      "description": "10/10 exact green; shared compiler synthetic finance and engineering fixtures."
+    },
+    {
+      "id": "V2-LK16-SPECIALIST-JOURNEYS",
+      "sourceRevision": "42528be19fe0428f5329d64383b5c311fb86e1ca",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45611190580",
+      "description": "10/10 exact green; actual mobile browser journeys and exposure exports."
+    },
+    {
+      "id": "V2-LK13-STRUCTURAL-WEAKNESS",
+      "sourceRevision": "42528be19fe0428f5329d64383b5c311fb86e1ca",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45611190580",
+      "description": "10/10 exact green; actual guided source exposure UI. Verify scope, not physical failure or independence."
     }
   ],
   "reconciledCI": [

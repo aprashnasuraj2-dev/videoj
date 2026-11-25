@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "dataset": "living-revision-selection-pilot-v1",
+  "split": "development_synthetic",
+  "annotation": "Developer-authored fixed source-selection oracle; no human timing or external adjudication.",
+  "cases": [
+    {
+      "id": "finance_capex",
+      "domain": "finance",
+      "changedSources": [
+        "investment_report"
+      ],
+      "expectedRetained": [
+        "ocf_before",
+        "ocf_now"
+      ],
+      "expectedReselected": [
+        "capex_before",
+        "capex_now"
+      ],
+      "expectedStates": {
+        "operating_cash": "CONDITIONALLY_SATISFIED",
+        "after_capital": "CONDITIONALLY_REFUTED"
+      }
+    },
+    {
+      "id": "network_route",
+      "domain": "engineering",
+      "changedSources": [
+        "route_report"
+      ],
+      "expectedRetained": [
+        "nominal",
+        "peak"
+      ],
+      "expectedReselected": [
+        "surviving"
+      ],
+      "expectedStates": {
+        "normal_capacity": "CONDITIONALLY_SATISFIED",
+        "failure_capacity": "CONDITIONALLY_REFUTED"
+      }
+    },
+    {
+      "id": "finance_both",
+      "domain": "finance",
+      "changedSources": [
+        "cash_report",
+        "investment_report"
+      ],
+      "expectedRetained": [],
+      "expectedReselected": [
+        "ocf_before",
+        "ocf_now",
+        "capex_before",
+        "capex_now"
+      ],
+      "expectedStates": {
+        "operating_cash": "CONDITIONALLY_SATISFIED",
+        "after_capital": "CONDITIONALLY_REFUTED"
+      }
+    },
+    {
+      "id": "network_both",
+      "domain": "engineering",
+      "changedSources": [
+        "load_report",
+        "route_report"
+      ],
+      "expectedRetained": [],
+      "expectedReselected": [
+        "nominal",
+        "peak",
+        "surviving"
+      ],
+      "expectedStates": {
+        "normal_capacity": "CONDITIONALLY_SATISFIED",
+        "failure_capacity": "CONDITIONALLY_REFUTED"
+      }
+    }
+  ]
+}

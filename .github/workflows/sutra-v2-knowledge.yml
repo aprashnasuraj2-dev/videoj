@@ -75,6 +75,10 @@ jobs:
       - run: node --test packages/sutra-knowledge/test/*.test.mjs
       - name: Execute frozen synthetic living-knowledge pilot and scoped baseline comparison
         run: node packages/sutra-knowledge/evaluation/living-pilot.mjs
+      - name: Execute frozen revision selection pilot
+        run: |
+          node packages/sutra-knowledge/evaluation/revision-selection-pilot.mjs > sutra-v2-revision-pilot.json
+          cat sutra-v2-revision-pilot.json
       - name: Execute and assert capability demonstration
         run: |
           node packages/sutra-knowledge/examples/observatory.mjs > sutra-v2-observation.json
@@ -97,6 +101,7 @@ jobs:
           name: sutra-v2-observation
           path: |
             sutra-v2-observation.json
+            sutra-v2-revision-pilot.json
             sutra-v2-frontier.json
             sutra-v2-conflict.json
             sutra-v2-challenges.json

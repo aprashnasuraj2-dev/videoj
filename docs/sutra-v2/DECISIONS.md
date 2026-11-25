@@ -129,3 +129,8 @@ Explicit sample buttons replace only current draft and leave retained baseline i
 ## V2-079 — Competing revision browser contrast
 
 V2-076 exact 10/10 green. Use retained parent and current evaluated child; import other child with independent digest. Replay all three, display object changes and both conditional outcomes, export exact input versions and comparison. Clear stale results on semantic change, pin/file edit or parent replacement. Actual finance browser test stages sibling with changed declaration, verifies wrong-pin refusal, same source correction and left-only declaration. No merge, shared decision, or independent Python verification of sibling contrast claimed. V2-077/078 pending at observation.
+
+
+## V2-080 — Scoped revision selection pilot
+
+V2-077 and V2-078 exact 10/10 green. Freeze four development cases (two single-source, two all-source edits) with explicit retained/reselected IDs and expected conditional states. Compare exact rebuilt and restored/reselected version bytes; report full and targeted selection counts, and separate diagnostic projected node reuse. All-source controls require zero selection savings. The comparator is full reselection, not a strong incremental editor; no general speed, accuracy, human or novelty claim. Workflow prints and uploads result; exact CI pending. V2-079 pending at observation.
