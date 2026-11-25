@@ -42,3 +42,7 @@ The Observatory CLI asserts a real deterministic state change, exact incremental
 ## Versioned investigations (candidate)
 
 `sealInvestigationVersion` creates bounded exact input bytes with an optional predecessor digest. `replayInvestigationVersion` requires a separately retained digest and recomputes the semantic investigation. `compareInvestigationVersions` requires the exact parent and reports source/binding changes, scoped reverse dependencies, surviving or changed conditional outcomes, missing inputs and review candidates. Full replay of both versions is intentional; no incremental performance claim, empirical validity or independent semantic verification. Two synthetic domains in `examples/living-investigation.mjs` exercise the same architecture.
+
+## Semantic counterfactual testing (candidate)
+
+`challengeSemanticInterpretations` admits a separately pinned scenario plan with up to 16 explicit hypothetical binding replacements. It uses admitted reviewed graphs, marks all scenario input bases synthetic, compares full and cached reports, and returns distinguishing witnesses for baseline-agreeing proposals. It cannot determine which formalization is intended or establish feasible interventions.

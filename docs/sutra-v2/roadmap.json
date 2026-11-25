@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-055",
+  "session": "V2-056",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2894,11 +2894,11 @@
     {
       "id": "V2-LK05-SEMANTIC-COUNTERFACTUAL",
       "track": "B",
-      "status": "Not started",
+      "status": "Implemented but unverified",
       "dependencies": [
         "V2-LK02-INTENT-IR"
       ],
-      "scope": "Perturb independent inputs to distinguish accidentally agreeing incorrect formalizations; use existing contrast and counterexample infrastructure.",
+      "scope": "Perturb independent inputs to distinguish accidentally agreeing incorrect formalizations; use existing contrast and counterexample infrastructure. V2-056 candidate: explicit pinned finite binding perturbations over existing typed kernel; detect accidental baseline agreement, compare cached/fresh report bytes, no evidence mutation. No automatic scenario synthesis, multi-axis completeness or independent replay yet.",
       "acceptance": "Wrong year, sign, denominator, population, aggregation, units and causal inference adversaries.",
       "evidence": []
     },
