@@ -2902,6 +2902,12 @@
           "sourceRevision": "dfa1437f35f0c7e1e0889e65261a49bd18ef840b",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45606294430",
           "description": "Exact 10/10 green; controlled target DAG reconstruction tests passed. Full semantic round-trip gate remains open; no entailment claim."
+        },
+        {
+          "id": "V2-LK04-ROUNDTRIP",
+          "sourceRevision": "a52f1f82c4597a7ee9cd0483b173bcd803d04524",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45606527156",
+          "description": "V2-064 exact 10/10 workflows green; actual browser controlled reconstruction, refused/uncertain display and stale-output invalidation. V2-065 additional qualifier edit browser job 139179369035 passed; full exact run pending at observation."
         }
       ]
     },
