@@ -119,7 +119,7 @@ RevokeDuringDispatch ==
     /\ revoked' = TRUE
     /\ UNCHANGED <<epoch, admitted, phase, effects, reconciled>>
 
-\\* Mutant 5: policy epoch expires after the last grant check but before dispatch settles.
+\* Mutant 5: policy epoch expires after the last grant check but before dispatch settles.
 AdvanceEpochDuringDispatch ==
     /\ phase = "dispatching"
     /\ epoch < MaxEpoch
