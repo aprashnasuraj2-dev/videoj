@@ -4,7 +4,7 @@ import {casePin} from '../pinned-investigation.js';
 import {compilerFinanceFixture,exactSpan} from '../examples/reviewed-compiler.mjs';
 import {FACETS} from '../semantic-investigation.js';
 import {sealInvestigationVersion} from '../investigation-revision.js';
-import {renderInvestigationRoundtrip} from '../controlled-roundtrip.js';
+import {renderInvestigationRoundtrip,exportInvestigationRoundtrip} from '../controlled-roundtrip.js';
 async function setup({missing=false}={}){
  const f=await compilerFinanceFixture({missing}),a=JSON.parse(f.proposalText),b=structuredClone(a),c=structuredClone(a);
  const question=JSON.parse(f.contractText).question.text;
@@ -51,4 +51,18 @@ test('deterministic exact replay retains all qualifier states without entailment
  assert.equal(r.candidates[0].qualifiers.length,13);
  assert.equal(r.candidates[0].review.entailment,'UNVERIFIED');
  assert.deepEqual(r.candidates[1].review.unsupportedFacets,['time','negation']);
+});
+
+test('object key ordering does not create false qualifier differences; exact version identity still changes',async()=>{
+ const v=await setup(),old=JSON.parse(v.versionText),batch=JSON.parse(old.batchText),ann=JSON.parse(old.annotationText);
+ batch.proposals[1].proposalText=batch.proposals[0].proposalText;
+ ann.candidates[1].meaning=ann.candidates[0].meaning;
+ ann.candidates[1].facets=structuredClone(ann.candidates[0].facets);
+ const ref=ann.candidates[1].facets.time.references[0];ann.candidates[1].facets.time.references[0]={id:ref.id,kind:ref.kind};
+ const bt=JSON.stringify(batch);ann.batchDigest=await casePin(bt);const at=JSON.stringify(ann);
+ const next=await sealInvestigationVersion({contractText:old.contractText,contractPin:old.contractPin,batchText:bt,annotationText:at,annotationPin:await casePin(at)});
+ const r=await exportInvestigationRoundtrip(next.versionText,next.digest);
+ const ab=r.result.differences.find(x=>x.left==='a'&&x.right==='b');assert.deepEqual(ab.declaredQualifierDifferences,[]);assert.equal(ab.instructionStructureDiffers,false);
+ assert.equal(ab.interpretationEquivalence,'NOT_ESTABLISHED');assert.notEqual(v.digest,next.digest);
+ assert.equal(r.snapshotPin,await casePin(r.bundleText));assert.equal(r.portable,true);
 });

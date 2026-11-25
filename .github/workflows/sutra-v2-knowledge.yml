@@ -297,6 +297,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/test_reviewed_question_browser.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/question-reference.txt
           cat apps/sutra-v2/test-output/question-reference.txt
+      - name: Independently replay browser controlled reconstruction and adversarial mutations
+        run: |
+          python3 packages/sutra-knowledge/reference/test_controlled_roundtrip_browser.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/roundtrip-reference.txt
+          cat apps/sutra-v2/test-output/roundtrip-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

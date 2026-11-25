@@ -680,6 +680,13 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.match(roundtripText,/semantic equivalence NOT ESTABLISHED/);
   assert.match(roundtripText,/Unspecified qualifiers:/);
   assert.ok(await reviewPage.locator('#review-roundtrip-result').isVisible());
+  async function saveRoundtrip(name){
+   const dl=reviewPage.waitForEvent('download');await reviewPage.locator('#review-roundtrip-export').click();const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,'living-roundtrip-'+name+'.json'),bytes);
+   const digest=await reviewPage.locator('#review-roundtrip-snapshot-pin').innerText(),vp=await reviewPage.locator('#review-roundtrip-version-pin').innerText();
+   fs.writeFileSync(path.join(output,'living-roundtrip-'+name+'.sha256'),digest+'\n');fs.writeFileSync(path.join(output,'living-roundtrip-'+name+'-version.sha256'),vp+'\n');
+   assert.equal(digest,'sha256:'+require('node:crypto').createHash('sha256').update(bytes).digest('hex'));assert.equal(vp,await reviewPage.locator('#review-semantic-pin').innerText());
+  }
+  await saveRoundtrip('before');
   await reviewPage.locator('#review-clarification-panel > summary').click();
   await reviewPage.locator('#review-clarification-run').click();await reviewState('clarification_ready');
   assert.match(await reviewPage.locator('#review-clarification-result').innerText(),/material pairs covered by 1 declared clarification questions/);
@@ -708,7 +715,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const livingDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-semantic-export').click();
   const livingBytes=fs.readFileSync(await (await livingDownload).path());fs.writeFileSync(path.join(output,'living-before.json'),livingBytes);fs.writeFileSync(path.join(output,'living-before.sha256'),livingPin+'\n');
   await reviewPage.locator('#review-semantic-retain').click();assert.match(await reviewPage.locator('#review-baseline-state').innerText(),/Retained baseline/);
-  await reviewPage.locator('#review-meaning-proposal_1').fill('Changed declaration');assert.equal(await reviewPage.locator('#review-semantic-export').isDisabled(),true);assert.equal(await reviewPage.locator('#review-roundtrip-run').isDisabled(),true);assert.equal(await reviewPage.locator('#review-roundtrip-result').innerText(),'');assert.equal(await reviewPage.locator('#review-clarification-export').isDisabled(),true);assert.equal(await reviewPage.locator('#review-clarification-preview').innerText(),'');
+  await reviewPage.locator('#review-meaning-proposal_1').fill('Changed declaration');assert.equal(await reviewPage.locator('#review-semantic-export').isDisabled(),true);assert.equal(await reviewPage.locator('#review-roundtrip-run').isDisabled(),true);assert.equal(await reviewPage.locator('#review-roundtrip-export').isDisabled(),true);assert.equal(await reviewPage.locator('#review-roundtrip-result').innerText(),'');assert.equal(await reviewPage.locator('#review-clarification-export').isDisabled(),true);assert.equal(await reviewPage.locator('#review-clarification-preview').innerText(),'');
   const reviewForged=JSON.parse(JSON.stringify(reviewOriginal));reviewForged.nodes[0].value='999';await reviewFill('proposal',JSON.stringify(reviewForged));assert.equal(await reviewPage.locator('#review-export').isDisabled(),true);await reviewPage.locator('#review-run').click();await reviewState('refused');
   await reviewFill('question','Is site A higher than site B? Revised.');assert.equal(await reviewPage.locator('#review-batch-export').isDisabled(),true);assert.match(await reviewPage.locator('#review-batch-count').innerText(),/0 \/ 8/);assert.equal(await reviewPage.locator('#review-run').isDisabled(),true);assert.equal(await reviewPage.locator('#review-export').isDisabled(),true);
   await reviewPage.locator('#review-seal').click();await reviewState('sealed');assert.notEqual(await reviewPage.locator('#review-pin').innerText(),reviewPin);
@@ -762,7 +769,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const qualifiers=await reviewPage.locator('#review-roundtrip-result').innerText();
   assert.match(qualifiers,/time: Review measurement period · SOURCE_LINKED_DECLARATION/);
   assert.match(qualifiers,/negation: Not lower · UNSUPPORTED_DECLARATION/);
-  assert.match(qualifiers,/entailment and method UNVERIFIED/);
+  assert.match(qualifiers,/entailment and method UNVERIFIED/);await saveRoundtrip('after');
   const livingLayout=await reviewPage.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.right>innerWidth+1;}).slice(0,20).map(e=>({tag:e.tagName,id:e.id,className:typeof e.className==='string'?e.className:'',right:e.getBoundingClientRect().right,width:e.getBoundingClientRect().width}))}));assert.ok(livingLayout.scrollWidth<=livingLayout.width,JSON.stringify(livingLayout));assert.deepEqual(reviewErrors,[]);assert.deepEqual(reviewExternal,[]);await reviewPage.close();
   // Two complete guided synthetic domains use the same real browser controls.
   {

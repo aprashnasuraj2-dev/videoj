@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-103",
+  "session": "V2-104",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2915,13 +2915,19 @@
           "sourceRevision": "f42875f273b4aaf79b259a53f445de0db6359ce4",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45710759011/job/139544257400",
           "description": "Scoped actual browser independent mapping replay passed at V2-101, including isolated Python zipapp and eight repinned mutations/three pin controls. Whole exact workflow still pending at observation."
+        },
+        {
+          "id": "V2-LK03-PATHWAYS",
+          "sourceRevision": "78e9b5cc2670163b69e186c119b14c1486609581",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45710993527/job/139545045638",
+          "description": "Exact V2-102 10/10 green; 43 accepted/4 refused cross-language question cases, all 13 comparison phrases, equality and direction, Unicode and bounded alternatives; actual independent browser replay also green."
         }
       ]
     },
     {
       "id": "V2-LK04-ROUNDTRIP",
       "track": "B",
-      "status": "Implemented but unverified",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK02-INTENT-IR"
       ],
@@ -2939,6 +2945,12 @@
           "sourceRevision": "a52f1f82c4597a7ee9cd0483b173bcd803d04524",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45606527156",
           "description": "V2-064 exact 10/10 workflows green; actual browser controlled reconstruction, refused/uncertain display and stale-output invalidation. V2-065 additional qualifier edit browser job 139179369035 passed; full exact run pending at observation."
+        },
+        {
+          "id": "V2-LK04-ROUNDTRIP",
+          "sourceRevision": "78e9b5cc2670163b69e186c119b14c1486609581",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45710993527/job/139545046194",
+          "description": "Existing controlled reconstruction unit and browser journey green at exact V2-102. New portable independent reconstruction profile remains pending."
         }
       ]
     },

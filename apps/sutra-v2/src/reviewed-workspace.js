@@ -14,7 +14,7 @@ import {restoreReviewedSourceDraft,reviseReviewedSourceDraft} from '../../../pac
 import {planInvestigationClarifications} from '../../../packages/sutra-knowledge/clarification-plan.js';
 import {previewClarificationAnswers} from '../../../packages/sutra-knowledge/clarification-preview.js';
 import {auditRevisionReuse} from '../../../packages/sutra-knowledge/revision-reuse-audit.js';
-import {renderInvestigationRoundtrip} from '../../../packages/sutra-knowledge/controlled-roundtrip.js';
+import {exportInvestigationRoundtrip} from '../../../packages/sutra-knowledge/controlled-roundtrip.js';
 import {sealReviewedDraft,draftComparisonProposal} from '../../../packages/sutra-knowledge/reviewed-draft.js';
 import {exportReviewedProposal} from '../../../packages/sutra-knowledge/reviewed-claim-compiler.js';
 import {reviewedSnapshotDigest,MAX_REVIEWED_SNAPSHOT_BYTES} from '../../../packages/sutra-knowledge/reviewed-snapshot.js';
@@ -24,6 +24,7 @@ import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js
 import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
+let roundtripCurrent=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
 let questionCurrent=null,questionExport=null,questionPathPin=null,questionSelections={left:null,right:null};
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
@@ -257,7 +258,7 @@ function invalidateSemantic(){
  clearBranch();clearIntervals();clearBinomial();clearFisher();
  exposureCurrent=null;by('exposure-result').textContent='';clearGrid();
  clarificationCurrent=null;previewCurrent=null;reuseCurrent=null;by('clarification-result').textContent='';by('clarification-options').replaceChildren();by('clarification-preview').textContent='';by('reuse-result').textContent='';
- semanticCurrent=null;impactCurrent=null;by('roundtrip-result').textContent='';by('semantic-pin').textContent='No version evaluated.';by('semantic-result').textContent='';by('impact-result').textContent='';
+ semanticCurrent=null;impactCurrent=null;clearRoundtrip();by('semantic-pin').textContent='No version evaluated.';by('semantic-result').textContent='';by('impact-result').textContent='';
 }
 function semanticControl(){
  for(const e of by('semantic-list').querySelectorAll('input,select'))e.disabled=busy;
@@ -265,6 +266,7 @@ function semanticControl(){
  by('correspondence').disabled=busy||!baseline;
  by('semantic-run').disabled=busy||!ready||!!baseline&&!by('correspondence').checked;
  for(const id of ['semantic-export','semantic-export-pin','semantic-retain','roundtrip-run','clarification-run'])by(id).disabled=busy||!semanticCurrent;
+ for(const id of ['roundtrip-export','roundtrip-export-pin'])by(id).disabled=busy||!roundtripCurrent;
  by('baseline-file').disabled=busy;by('baseline-pin').disabled=busy;by('baseline-import').disabled=busy;
  by('baseline-clear').disabled=busy||!baseline;by('baseline-restore').disabled=busy||!baseline;by('impact-export').disabled=busy||!impactCurrent;
  by('exposure-run').disabled=busy||!semanticCurrent;by('exposure-export').disabled=busy||!exposureCurrent;
@@ -391,11 +393,16 @@ by('semantic-run').onclick=()=>work(async ticket=>{
  if(impact)by('impact-result').textContent=impactText(impact);
  status('semantic_ready',impact?'Version replayed and compared with retained baseline. Conditional outcomes and unresolved meaning remain separate.':'Version sealed. Retain its digest separately; no interpretation or source truth established.');
 });
+function clearRoundtrip(){roundtripCurrent=null;by('roundtrip-result').textContent='';by('roundtrip-snapshot-pin').textContent='';by('roundtrip-version-pin').textContent='';by('roundtrip-disclosure').textContent='No reconstruction export available.';}
+by('roundtrip-export').onclick=()=>{if(!busy&&roundtripCurrent)download(roundtripCurrent.bytes,'sutra-controlled-roundtrip.json','application/json');};
+by('roundtrip-export-pin').onclick=()=>{if(!busy&&roundtripCurrent)download(roundtripCurrent.digest+'\n','sutra-controlled-roundtrip.sha256','text/plain');};
 by('roundtrip-run').onclick=()=>work(async ticket=>{
  if(!semanticCurrent)return;
- const current=semanticCurrent;by('roundtrip-result').textContent='';
- const report=await renderInvestigationRoundtrip(current.versionText,current.digest);
+ const current=semanticCurrent;clearRoundtrip();
+ const exported=await exportInvestigationRoundtrip(current.versionText,current.digest),report=exported.result;
  if(ticket!==epoch||current!==semanticCurrent)return;
+ if(exported.portable){roundtripCurrent={bytes:new TextEncoder().encode(exported.bundleText),digest:exported.snapshotPin};by('roundtrip-snapshot-pin').textContent=exported.snapshotPin;by('roundtrip-version-pin').textContent=current.digest;}
+ by('roundtrip-disclosure').textContent=exported.byteLength+' report bytes; includes exact version, full reviewed source text, all candidate declarations and reconstructed instructions. '+(exported.portable?'Local download only; review before sharing.':'Exceeds 256 KiB portable limit; no download.');
  by('roundtrip-result').textContent=[
  'Original question: '+report.originalQuestion.text,
  ...report.candidates.flatMap(c=>[c.id+' · '+c.proposedMeaning,

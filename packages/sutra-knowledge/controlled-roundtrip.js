@@ -2,11 +2,13 @@
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {replayInvestigationVersion} from './investigation-revision.js';
 import {compileReviewedProposal} from './reviewed-claim-compiler.js';
+import {casePin} from './pinned-investigation.js';
 import {FACETS} from './semantic-investigation.js';
 export const VERSION='sutra-controlled-roundtrip/v1';
 const enc=new TextEncoder(),dec=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true});
 const parse=(s,d=9)=>parseUniqueJson(s,{maxChars:262144,maxDepth:d});
 const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
+const canonical=x=>x===null||typeof x!=='object'?JSON.stringify(x):Array.isArray(x)?'['+x.map(canonical).join(',')+']':'{'+Object.keys(x).sort().map(k=>JSON.stringify(k)+':'+canonical(x[k])).join(',')+'}';
 const operators={add:'plus',sub:'minus',mul:'multiplied by',div:'divided by',eq:'equals',lt:'is less than',le:'is at most',gt:'is greater than',ge:'is at least'};
 function reconstruct(c){
  const nodes=new Map(c.nodes.map(n=>[n.id,n])),bindings=new Map(c.bindings.map(b=>[b.id,b])),seen=new Set(),steps=[];
@@ -46,11 +48,17 @@ export async function renderInvestigationRoundtrip(versionText,expectedPin){
   const a=candidates[i],b=candidates[j],facets=[];
   for(let k=0;k<FACETS.length;k++){
    const x=a.qualifiers[k],y=b.qualifiers[k];
-   if(JSON.stringify(x)!==JSON.stringify(y))facets.push(FACETS[k]);
+   if(canonical(x)!==canonical(y))facets.push(FACETS[k]);
   }
   // Compare target DAG instructions, not coincidentally equal numeric outputs.
   const shape=x=>x.computation?x.computation.steps.map(s=>({id:s.id,kind:s.kind,operator:s.operator,arguments:s.arguments,binding:s.source?.bindingId??null})):null;
-  differences.push({left:a.id,right:b.id,declaredQualifierDifferences:facets,selectedQuestionDiffers:JSON.stringify(a.questionSelection)!==JSON.stringify(b.questionSelection),instructionStructureDiffers:JSON.stringify(shape(a))!==JSON.stringify(shape(b)),interpretationEquivalence:'NOT_ESTABLISHED'});
+  differences.push({left:a.id,right:b.id,declaredQualifierDifferences:facets,selectedQuestionDiffers:canonical(a.questionSelection)!==canonical(b.questionSelection),instructionStructureDiffers:canonical(shape(a))!==canonical(shape(b)),interpretationEquivalence:'NOT_ESTABLISHED'});
  }
  return freeze({version:VERSION,versionDigest:expectedPin,originalQuestion:q,candidates,differences,triage:replay.investigation.triage.state,decisionAuthority:'NONE',qualification:'Controlled language describes admitted instructions, not the intended meaning or truth of the original question. Unselected bytes and unspecified facets are review prompts, not automatic semantic omissions. Structural differences do not establish semantic inequivalence. Supplied candidates only.'});
+}
+
+export async function exportInvestigationRoundtrip(versionText,versionPin){
+ const result=await renderInvestigationRoundtrip(versionText,versionPin),bundleText=JSON.stringify({versionText,versionDigest:versionPin,result});
+ const byteLength=enc.encode(bundleText).length;
+ return freeze({result,bundleText,snapshotPin:await casePin(bundleText),byteLength,portable:byteLength<=262144});
 }
