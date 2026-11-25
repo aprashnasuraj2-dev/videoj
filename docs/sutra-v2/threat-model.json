@@ -1,0 +1,592 @@
+{
+  "version": "sutra-v2-threat-model-v1",
+  "updated": "2026-11-25",
+  "scope": "SUTRA browser/runtime, evidence pipeline, synthetic action authority/witness laboratory, inference boundary, and planned multi-provider BYOK workspace. This is an executable engineering register, not a security certification.",
+  "nonClaims": [
+    "A model, peer, signature, hash, receipt, witness, or provenance record does not establish factual truth.",
+    "The current authority/witness laboratory is not distributed consensus, a public transparency log, trusted time, or a production arbitrary-effect transaction.",
+    "Current checked-in inference is disabled by default and BYOK remains disabled; no live provider credential is authorized by this model.",
+    "Browser-origin checks are not authentication against non-browser callers.",
+    "A privileged attacker able to roll back both authority and witness trust domains can recreate an older mutually consistent state."
+  ],
+  "principals": [
+    {
+      "id": "browser-user",
+      "authority": "Chooses investigations, explicit consent, provider/model profile and local UI actions. Does not sign machine authority implicitly."
+    },
+    {
+      "id": "browser-host",
+      "authority": "Trusted UI/runtime policy boundary; compiles closed data, injects fixed adapters, and presents consent. Must not delegate authority to model or peer text."
+    },
+    {
+      "id": "model",
+      "authority": "Proposal generation only. No permission to select credentials, destinations, budgets, verification status, action keys or consent."
+    },
+    {
+      "id": "peer-publisher",
+      "authority": "Publishes bounded public data/graphs. No authority over caller private context, model credential, remote write, or caller consent."
+    },
+    {
+      "id": "consent-approver",
+      "authority": "Signs or approves one exact scoped operation. Approval must bind operation, destination, lifetime and authority."
+    },
+    {
+      "id": "action-authority",
+      "authority": "Authenticates callers, owns synthetic action/receipt/contact state and exact expected-head CAS. Single authority, not consensus."
+    },
+    {
+      "id": "independent-witness",
+      "authority": "Maintains separately keyed monotonic head and signs challenge-bound attestations. Does not authorize the underlying action."
+    },
+    {
+      "id": "inference-relay",
+      "authority": "Fixed same-origin service that validates model requests, reserves bounded resources, and contacts only a configured upstream."
+    },
+    {
+      "id": "provider",
+      "authority": "Executes model inference under provider semantics. Provider output and usage reports are untrusted observations until checked."
+    },
+    {
+      "id": "credential-store",
+      "authority": "Future host-owned secret boundary. Exposes opaque handles only; secret values must never become graph/model/peer/trace data."
+    },
+    {
+      "id": "source-tool",
+      "authority": "Read-only bounded synthetic/source capability selected by trusted host policy; cannot widen itself."
+    },
+    {
+      "id": "operator",
+      "authority": "Controls deployment/configuration and may provision keys. Operator compromise is outside guarantees that depend on independent operation."
+    },
+    {
+      "id": "network-attacker",
+      "authority": "None. May drop, delay, replay, redirect, reorder or tamper with transport bytes."
+    },
+    {
+      "id": "storage-attacker",
+      "authority": "May replace/corrupt one local store in modeled rollback tests. Coordinated privileged rollback of all trust domains remains open."
+    }
+  ],
+  "assets": [
+    {
+      "id": "provider-credential",
+      "confidentiality": "critical",
+      "integrity": "critical",
+      "availability": "high"
+    },
+    {
+      "id": "private-context",
+      "confidentiality": "critical",
+      "integrity": "high",
+      "availability": "medium"
+    },
+    {
+      "id": "consent-grant",
+      "confidentiality": "low",
+      "integrity": "critical",
+      "availability": "high"
+    },
+    {
+      "id": "action-ledger",
+      "confidentiality": "low",
+      "integrity": "critical",
+      "availability": "critical"
+    },
+    {
+      "id": "witness-head",
+      "confidentiality": "low",
+      "integrity": "critical",
+      "availability": "critical"
+    },
+    {
+      "id": "quota-budget",
+      "confidentiality": "low",
+      "integrity": "critical",
+      "availability": "high"
+    },
+    {
+      "id": "evidence-provenance",
+      "confidentiality": "medium",
+      "integrity": "critical",
+      "availability": "high"
+    },
+    {
+      "id": "runtime-capability-policy",
+      "confidentiality": "low",
+      "integrity": "critical",
+      "availability": "critical"
+    },
+    {
+      "id": "exported-trace",
+      "confidentiality": "high",
+      "integrity": "high",
+      "availability": "medium"
+    }
+  ],
+  "boundaries": [
+    {
+      "id": "B01-browser-model",
+      "from": "browser-host",
+      "to": "model",
+      "allowed": "bounded messages/tools/model id",
+      "forbidden": "credentials, authority keys, implicit consent, verification authority"
+    },
+    {
+      "id": "B02-browser-peer",
+      "from": "browser-host",
+      "to": "peer-publisher",
+      "allowed": "explicitly consented public manifest/graph reads",
+      "forbidden": "provider credentials, private context without exact grant, caller prompt forwarding, remote execution"
+    },
+    {
+      "id": "B03-browser-relay",
+      "from": "browser-host",
+      "to": "inference-relay",
+      "allowed": "same-origin bounded model request under fixed contract",
+      "forbidden": "visitor Authorization, arbitrary upstream URL, provider secret, widened token/resource limits"
+    },
+    {
+      "id": "B04-relay-provider",
+      "from": "inference-relay",
+      "to": "provider",
+      "allowed": "validated bounded request plus server-owned credential",
+      "forbidden": "caller-controlled URL/headers/redirect target"
+    },
+    {
+      "id": "B05-caller-authority",
+      "from": "browser-host",
+      "to": "action-authority",
+      "allowed": "exact host-approved signed request with authenticated caller and expected head",
+      "forbidden": "model-selected action, new-key retry without approval, unsigned mutation"
+    },
+    {
+      "id": "B06-authority-witness",
+      "from": "action-authority",
+      "to": "independent-witness",
+      "allowed": "authority-signed current-head to new-head transition",
+      "forbidden": "stale parent, previously seen head, unsigned transition"
+    },
+    {
+      "id": "B07-client-witness-ack",
+      "from": "independent-witness",
+      "to": "browser-host",
+      "allowed": "fresh challenge-bound signed witness attestation paired with exact authority response",
+      "forbidden": "static replay as fresh acknowledgement"
+    },
+    {
+      "id": "B08-host-credential-store",
+      "from": "browser-host",
+      "to": "credential-store",
+      "allowed": "explicit user setup/remove and opaque handle use",
+      "forbidden": "secret value in DOM logs, graph, prompt, peer payload, trace, URL or telemetry"
+    },
+    {
+      "id": "B09-storage",
+      "from": "operator",
+      "to": "action-authority",
+      "allowed": "private local durable store under documented assumptions",
+      "forbidden": "claim that signatures alone prevent privileged coordinated rollback"
+    }
+  ],
+  "threats": [
+    {
+      "id": "T01-model-confused-deputy",
+      "severity": "critical",
+      "category": [
+        "integrity",
+        "confidentiality"
+      ],
+      "mechanism": "Hostile model/peer text attempts to choose a privileged tool, model, destination, credential or private context field.",
+      "invariant": "Untrusted text is data; runtime authority comes only from host policy and exact grants.",
+      "evidence": [
+        {
+          "path": "packages/sutra-runtime/test/peer-boundary.test.mjs",
+          "test": "host model policy overrides hostile peer and caller model hints without credential transfer"
+        },
+        {
+          "path": "packages/sutra-runtime/test/private-context.test.mjs",
+          "test": "runtime gives only explicitly approved field to exact peer model prompts"
+        }
+      ],
+      "openGates": [
+        "V2-P03-TAINT",
+        "V2-P04-CONSENT"
+      ]
+    },
+    {
+      "id": "T02-credential-exfiltration",
+      "severity": "critical",
+      "category": [
+        "confidentiality"
+      ],
+      "mechanism": "Provider/BYOK secret leaks through model arguments, peer fetch headers, traces, exports, logs, URLs or browser storage.",
+      "invariant": "Secret values remain in a host-owned credential boundary; downstream receives opaque capability only.",
+      "evidence": [
+        {
+          "path": "packages/sutra-runtime/test/peer-boundary.test.mjs",
+          "test": "host model policy overrides hostile peer and caller model hints without credential transfer"
+        },
+        {
+          "path": "packages/sutra-runtime/test/peer-boundary.test.mjs",
+          "test": "external MCP host cannot import a provider credential into its transport configuration"
+        },
+        {
+          "path": "services/sutra-api/test/inference.test.mjs",
+          "test": "fixed upstream, server key and imposed cap; sanitized streaming works end to end"
+        }
+      ],
+      "openGates": [
+        "V2-P14-BYOK-UX",
+        "V2-P03-TAINT"
+      ]
+    },
+    {
+      "id": "T03-arbitrary-upstream-ssrf",
+      "severity": "critical",
+      "category": [
+        "confidentiality",
+        "integrity"
+      ],
+      "mechanism": "Caller or model injects an upstream URL, redirect, credential-bearing URL or nested capability.",
+      "invariant": "Provider/MCP/action transports pin exact hosts/paths and refuse redirects or arbitrary URLs.",
+      "evidence": [
+        {
+          "path": "services/sutra-api/test/inference.test.mjs",
+          "test": "Worker uses Workerd-compatible non-following redirect mode; all redirects are refused before a second contact"
+        },
+        {
+          "path": "packages/sutra-runtime/test/peer-boundary.test.mjs",
+          "test": "untrusted peer graph cannot activate nested remote, MCP, executable, REST or private forwarding"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/protocol_test.go",
+          "test": "TestTransportRefusesRedirectForgeryAndBudget"
+        }
+      ],
+      "openGates": [
+        "V2-P03-TAINT"
+      ]
+    },
+    {
+      "id": "T04-ambiguous-write-replay",
+      "severity": "critical",
+      "category": [
+        "integrity"
+      ],
+      "mechanism": "Lost response causes blind replay with a fresh key or repeats a previously committed synthetic effect.",
+      "invariant": "Unknown remains nonterminal; retry uses the same approved logical action; signed receipt/status reconcile before new authority.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/protocol_test.go",
+          "test": "TestLostResponseAfterCommit"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/bridge_linux_test.go",
+          "test": "TestWitnessCoordinatorLostWitnessReplyRecoversWithoutSecondEffect"
+        }
+      ],
+      "openGates": [
+        "V2-P04-CONSENT",
+        "V2-P05-RECOVERY"
+      ]
+    },
+    {
+      "id": "T05-authority-snapshot-rollback",
+      "severity": "critical",
+      "category": [
+        "integrity"
+      ],
+      "mechanism": "A valid older signed authority snapshot resets history/contact accounting.",
+      "invariant": "An independently pinned witness head rejects authority-only rollback.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/witness_linux_test.go",
+          "test": "TestAuthorityWitnessRejectsAuthorityRollbackAndForgedAdvance"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/bridge_linux_test.go",
+          "test": "TestWitnessCoordinatorSingleWitnessRejectsAuthorityCloneFork"
+        }
+      ],
+      "openGates": [
+        "V2-P05-ROLLBACK",
+        "V2-F11b"
+      ]
+    },
+    {
+      "id": "T06-coordinated-dual-domain-rollback",
+      "severity": "critical",
+      "category": [
+        "integrity"
+      ],
+      "mechanism": "Privileged attacker restores both older valid authority and witness stores, recreating a mutually consistent old pair.",
+      "invariant": "No current invariant prevents this; guarantee requires independently operated transparency/quorum/freshness beyond both local stores.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/witness_linux_test.go",
+          "test": "TestAuthorityAndWitnessCoordinatedRollbackCounterexample"
+        }
+      ],
+      "openGates": [
+        "V2-P05-ROLLBACK",
+        "V2-F11b"
+      ]
+    },
+    {
+      "id": "T07-stale-ack-replay",
+      "severity": "critical",
+      "category": [
+        "integrity"
+      ],
+      "mechanism": "Captured valid authority response plus signed witness view is replayed to a rolled-back client as if fresh.",
+      "invariant": "External success requires a client-generated fresh challenge bound into a witness attestation and exact authority response.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/bridge_linux_test.go",
+          "test": "TestWitnessChallengeStopsReplayToRolledBackClient"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/witness_linux_test.go",
+          "test": "TestAuthorityWitnessChallengeAttestationReplayAndTamper"
+        }
+      ],
+      "openGates": [
+        "V2-P05-ROLLBACK",
+        "V2-P06-REFINE"
+      ]
+    },
+    {
+      "id": "T08-two-store-crash-gap",
+      "severity": "critical",
+      "category": [
+        "integrity",
+        "availability"
+      ],
+      "mechanism": "Process dies after durable intent, authority persistence or witness advancement, leaving two trust domains at different stages.",
+      "invariant": "Signed durable intent makes every one-step gap classifiable and recoverable; no next acknowledged mutation begins before settlement.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/bridge_linux_test.go",
+          "test": "TestWitnessCoordinatorProcessCrashBoundaries"
+        }
+      ],
+      "openGates": [
+        "V2-P06-REFINE",
+        "V2-F11b"
+      ]
+    },
+    {
+      "id": "T09-early-acknowledgement",
+      "severity": "critical",
+      "category": [
+        "integrity"
+      ],
+      "mechanism": "Caller receives success after authority mutation but before independent witness convergence.",
+      "invariant": "Externally accepted acknowledgement is composite and witness-confirmed; formal ack never leads witness.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/bridge_linux_test.go",
+          "test": "TestWitnessedResponseCompositeProofAndHTTPBoundary"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/WitnessBridge.tla",
+          "test": "AcknowledgeEarly"
+        }
+      ],
+      "openGates": [
+        "V2-P06-REFINE"
+      ]
+    },
+    {
+      "id": "T10-budget-oversubscription",
+      "severity": "critical",
+      "category": [
+        "integrity",
+        "availability"
+      ],
+      "mechanism": "Concurrent callers or restarted clients exceed contact/inference resource ceilings, or ambiguous requests are refunded and replayed.",
+      "invariant": "Shared authoritative reservation precedes contact; ambiguous admitted work is not refunded automatically.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/authority_linux_test.go",
+          "test": "TestSharedAuthorityRolledBackCursorConsumesBudgetWithoutRepeatingEffect"
+        },
+        {
+          "path": "services/sutra-api/test/inference.test.mjs",
+          "test": "repeated ambiguous admissions consume bounded daily allowance without any refund or replay"
+        },
+        {
+          "path": "services/sutra-api/test/inference.test.mjs",
+          "test": "transactional quota caps active concurrency, daily clients and resets on a new UTC day"
+        }
+      ],
+      "openGates": [
+        "V2-P14-BUDGET"
+      ]
+    },
+    {
+      "id": "T11-consent-substitution",
+      "severity": "critical",
+      "category": [
+        "integrity"
+      ],
+      "mechanism": "Discovery approval is reused for execution, inputs/destination change after approval, revoked/expired approval dispatches, or fresh key is minted as retry.",
+      "invariant": "Execution consent must bind exact operation/destination/lifetime/key and be checked immediately before contact.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/protocol_test.go",
+          "test": "TestConcurrentDeduplication"
+        },
+        {
+          "path": "packages/sutra-runtime/test/peer-invocation.test.mjs",
+          "test": "peer consent denial stops before contact with explicit failure and no fabricated completion"
+        }
+      ],
+      "openGates": [
+        "V2-P04-CONSENT"
+      ]
+    },
+    {
+      "id": "T12-peer-private-context-leak",
+      "severity": "critical",
+      "category": [
+        "confidentiality"
+      ],
+      "mechanism": "Peer URL/name substitution, metadata or return values widen private context grant.",
+      "invariant": "Private grants bind exact peer URL+network and independent directions with closed field allowlists.",
+      "evidence": [
+        {
+          "path": "packages/sutra-runtime/test/private-context.test.mjs",
+          "test": "same network name on a different origin does not inherit another peer grant"
+        },
+        {
+          "path": "packages/sutra-runtime/test/private-context.test.mjs",
+          "test": "peer protocol metadata cannot bypass the independent structured return allowlist"
+        }
+      ],
+      "openGates": [
+        "V2-P03-TAINT"
+      ]
+    },
+    {
+      "id": "T13-quota-identity-evasion",
+      "severity": "high",
+      "category": [
+        "availability",
+        "cost"
+      ],
+      "mechanism": "Rotating client identity evades per-client limits or spoofed Origin consumes public global budget.",
+      "invariant": "Global ceiling remains authoritative even where client identity is weak; public paid API is not claimed.",
+      "evidence": [
+        {
+          "path": "services/sutra-api/test/inference.test.mjs",
+          "test": "direct nonbrowser caller that spoofs allowed Origin still hits client quota before second provider call"
+        }
+      ],
+      "openGates": [
+        "V2-P14-BUDGET"
+      ]
+    },
+    {
+      "id": "T14-parser-ambiguity",
+      "severity": "high",
+      "category": [
+        "integrity"
+      ],
+      "mechanism": "Duplicate/escaped JSON keys, malformed Unicode, hidden metadata or accessors create different interpretations across layers.",
+      "invariant": "Closed bounded parser/schema rejects ambiguity before capability or provider contact.",
+      "evidence": [
+        {
+          "path": "services/sutra-api/test/inference.test.mjs",
+          "test": "ambiguous request JSON and historical tool arguments fail before quota or upstream"
+        },
+        {
+          "path": "packages/sutra-runtime/test/peer-boundary.test.mjs",
+          "test": "peer runtime option accessors and hidden metadata are refused before model or contact"
+        }
+      ],
+      "openGates": [
+        "V2-P03-TAINT"
+      ]
+    },
+    {
+      "id": "T15-provider-stream-confusion",
+      "severity": "high",
+      "category": [
+        "integrity"
+      ],
+      "mechanism": "Truncated, redirected, malformed or late provider streams are represented as complete model output.",
+      "invariant": "Only exact complete bounded SSE with supported terminal reason and DONE can certify completion.",
+      "evidence": [
+        {
+          "path": "services/sutra-api/test/inference.test.mjs",
+          "test": "upstream must return a complete exact SSE 200 before streaming or emitting DONE"
+        },
+        {
+          "path": "services/sutra-api/test/inference.test.mjs",
+          "test": "late upstream response body is disposed and quota lease released once after aborted request"
+        }
+      ],
+      "openGates": [
+        "V2-P14-BUDGET"
+      ]
+    },
+    {
+      "id": "T16-supply-chain-build-drift",
+      "severity": "high",
+      "category": [
+        "integrity"
+      ],
+      "mechanism": "Vendored runtime/WASM/toolchain or release artifact differs from reviewed source.",
+      "invariant": "Pinned vendor inventory, build identities and independent replay gates detect reviewed-artifact drift.",
+      "evidence": [
+        {
+          "path": "packages/sutra-runtime/README.md",
+          "test": "verify-vendor.mjs"
+        },
+        {
+          "path": ".github/workflows/sutra-v2-knowledge.yml",
+          "test": "Build isolated Rust WebAssembly support engine"
+        }
+      ],
+      "openGates": [
+        "V2-P00-REPRO",
+        "V2-P22-RELEASE"
+      ]
+    },
+    {
+      "id": "T17-browser-xss-extension-secret-theft",
+      "severity": "critical",
+      "category": [
+        "confidentiality"
+      ],
+      "mechanism": "Future browser-resident credential is read by XSS, compromised dependency, extension or DOM instrumentation.",
+      "invariant": "No browser credential storage design is approved yet; BYOK remains disabled until a reviewed host-owned secret boundary is selected.",
+      "evidence": [],
+      "openGates": [
+        "V2-P01-THREAT",
+        "V2-P14-BYOK-UX",
+        "V2-P22-RELEASE"
+      ]
+    },
+    {
+      "id": "T18-provider-billing-mismatch",
+      "severity": "critical",
+      "category": [
+        "cost",
+        "integrity"
+      ],
+      "mechanism": "Provider tokenization, failed-call billing or delayed usage differs from SUTRA estimates, converting a request cap into false dollar-budget assurance.",
+      "invariant": "SUTRA resource reservations are not represented as dollar spend; provider-side controls and observed usage are separate required evidence.",
+      "evidence": [
+        {
+          "path": "services/sutra-api/test/inference.test.mjs",
+          "test": "resource ceilings charge admitted work without refund, reject before provider, and preserve other counters"
+        }
+      ],
+      "openGates": [
+        "V2-P14-BUDGET"
+      ]
+    }
+  ]
+}
