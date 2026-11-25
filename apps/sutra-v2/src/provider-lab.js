@@ -26,6 +26,7 @@ const workspace=createProviderWorkspace({
 const handles=new Map();
 const form=by('provider-form'),kind=by('provider-kind'),label=by('provider-label'),key=by('provider-key');
 const reveal=by('provider-reveal'),status=by('provider-status'),profiles=by('provider-profiles');
+const callCap=by('provider-call-cap'),tokenCap=by('provider-token-cap');
 
 function providerMeta(id){return catalog.find(x=>x.id===id);}
 function setStatus(text,state=''){status.textContent=text;if(state)status.dataset.state=state;else delete status.dataset.state;}
@@ -102,7 +103,11 @@ form.addEventListener('submit',event=>{
  event.preventDefault();
  const credential=key.value;
  try{
-  const added=workspace.addProfile({providerId:kind.value,label:label.value.trim(),credential});
+  const calls=Number(callCap.value),tokens=Number(tokenCap.value);
+  const added=workspace.addProfile({
+   providerId:kind.value,label:label.value.trim(),credential,
+   limits:{maxCalls:calls,maxInputBytes:12000,maxOutputTokens:tokens,maxConcurrent:1}
+  });
   handles.set(added.profile.profileId,added.handle);
   key.value='';key.type='password';reveal.textContent='Show';reveal.setAttribute('aria-pressed','false');
   setStatus(added.profile.label+' added for this tab only. The form credential was cleared and no provider was contacted.','added');
