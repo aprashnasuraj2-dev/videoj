@@ -151,6 +151,11 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.state==='refused');
   assert.equal(await page.locator('#conflict-support-export').isDisabled(),true);
   await page.unroute('**/support-lattice.wasm');
+  await page.route('**/support-lattice.wasm',route=>route.fulfill({status:200,contentType:'application/wasm',body:Buffer.concat([fs.readFileSync(path.join(dist,'support-lattice.wasm')),Buffer.from([0])])}));
+  await page.getByRole('button',{name:'Start conflict investigation'}).click();
+  await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.state==='refused');
+  assert.equal(await page.locator('#conflict-support-export').isDisabled(),true);
+  await page.unroute('**/support-lattice.wasm');
   await page.getByRole('button',{name:'Start conflict investigation'}).click();
   await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.state==='conditional_observation_plan');
   await page.getByRole('button',{name:'Read first report'}).click();
@@ -202,7 +207,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.deepEqual(resolvedSupports.analysis.refutedSupports,[['read_b','read_c']]);
   assert.deepEqual(resolvedSupports.analysis.survivingWorlds,['w11']);
   assert.deepEqual(resolvedSupports.projection.observations,[{id:'read_b',mask:12},{id:'read_c',mask:10}]);
-  console.log('PASS: actual Rust WASM support lattice, alternate minimum conflicts, copied-source conditional supports, withdrawal removes both, refuted support after fresh read; blocked module fails closed.');
+  console.log('PASS: actual Rust WASM support lattice, alternate minimum conflicts, copied-source conditional supports, withdrawal removes both, refuted support after fresh read; blocked or digest-mismatched module fails closed.');
   assert.deepEqual(errors,[]);assert.equal(peerRequests.length,6);
   console.log('PASS: browser conflict, minimum witness, declared lineage withdrawal and restoration, resolved after new observation.');
   await page.screenshot({path:path.join(output,'subgroup-investigation.png'),fullPage:true});
