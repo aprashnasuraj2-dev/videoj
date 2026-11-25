@@ -67,3 +67,18 @@ and signed snapshot permits a fork; the test preserves this counterexample.
 There is no Byzantine quorum, multi-host consensus, arbitrary external write,
 provider spend budget, expiry/revocation, or browser exposure. See
 `formal/REFINEMENT.md` for the concrete Go-to-TLA trace mapping.
+
+## V2-011 independent monotonic witness candidate
+
+`AuthorityWitness` is a second Linux-only trust domain with its own key, lock and
+signed fsync+rename store. `SharedAuthority` signs each exact old-head → new-head
+transition; the witness accepts it only when the old head equals its current head.
+`OpenSharedAuthorityWitnessed` compares a reopened authority snapshot to an
+independently retrieved signed witness view. Restoring only an old authority
+snapshot is therefore detected. An actual separate-process loopback witness CAS
+test is part of the race gate.
+
+This improves rollback detection only when witness key/store/latest view are
+protected independently. Restoring both older valid signed stores recreates an
+old mutually consistent pair, which the permanent negative test accepts. This is
+not a quorum, public transparency log, trusted timestamp or Byzantine consensus.
