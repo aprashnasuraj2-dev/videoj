@@ -47,9 +47,17 @@ fn intersect(mut mask: u64, mut observations: u32, compatibility: &[u64]) -> u64
     }
     mask
 }
-fn minimal_add(family: &mut Vec<u32>, subset: u32) {
-    // Cardinality-first traversal has already visited every proper subset.
-    if !family.iter().any(|m| subset & m == *m) { family.push(subset); }
+// Propagate property existence from immediate proper subsets. This avoids
+// scanning an exponentially large antichain for each candidate.
+fn inherited_flags(subset: u32, closure: &[u8]) -> u8 {
+    let mut bits = subset;
+    let mut flags = 0;
+    while bits != 0 {
+        let bit = bits & bits.wrapping_neg();
+        flags |= closure[(subset ^ bit) as usize];
+        bits ^= bit;
+    }
+    flags
 }
 /// Analyze every subset in cardinality-first order, deterministic numeric mask
 /// order within equal cardinality. Budget is a number of subset evaluations.
@@ -76,21 +84,31 @@ pub fn analyze(decisions: &[Decision], compatibility: &[u64], budget: usize) -> 
         minimum_conflict_size: None, all_minimum_conflicts_complete: false,
         complete: false, subsets_evaluated: 0, subsets_total: total,
     };
+    let mut closure = vec![0u8; total];
     'sizes: for size in 0..=compatibility.len() as u32 {
         for subset in 0..total as u32 {
             if subset.count_ones() != size { continue; }
             if result.subsets_evaluated >= budget { break 'sizes; }
             result.subsets_evaluated += 1;
             let m=intersect(all,subset,compatibility);
-            match classify(m,sat,no) {
+            let inherited = inherited_flags(subset, &closure);
+            let flag = match classify(m,sat,no) {
                 Current::Conflict => {
                     if result.minimum_conflict_size.is_none() { result.minimum_conflict_size=Some(size); }
-                    minimal_add(&mut result.conflicts,subset);
+                    if inherited & 1 == 0 { result.conflicts.push(subset); }
+                    1
                 },
-                Current::Satisfied => minimal_add(&mut result.satisfied_supports,subset),
-                Current::Refuted => minimal_add(&mut result.refuted_supports,subset),
-                _ => (),
-            }
+                Current::Satisfied => {
+                    if inherited & 2 == 0 { result.satisfied_supports.push(subset); }
+                    2
+                },
+                Current::Refuted => {
+                    if inherited & 4 == 0 { result.refuted_supports.push(subset); }
+                    4
+                },
+                _ => 0,
+            };
+            closure[subset as usize] = inherited | flag;
         }
         if result.minimum_conflict_size == Some(size) { result.all_minimum_conflicts_complete=true; }
     }
