@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-118",
+  "session": "V2-119",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2979,7 +2979,7 @@
       "dependencies": [
         "V2-LK02-INTENT-IR"
       ],
-      "scope": "Perturb independent inputs to distinguish accidentally agreeing incorrect formalizations; use existing contrast and counterexample infrastructure. V2-056 candidate: explicit pinned finite binding perturbations over existing typed kernel; detect accidental baseline agreement, compare cached/fresh report bytes, no evidence mutation. No automatic scenario synthesis, multi-axis completeness or independent replay yet. Scoped unit/CI evidence registered; broader acceptance remains open.",
+      "scope": "Perturb independent inputs to distinguish accidentally agreeing incorrect formalizations; use existing contrast and counterexample infrastructure. V2-056 candidate: explicit pinned finite binding perturbations over existing typed kernel; detect accidental baseline agreement, compare cached/fresh report bytes, no evidence mutation. No automatic scenario synthesis, multi-axis completeness or independent replay yet. Scoped unit/CI evidence registered; broader acceptance remains open. V2-119 candidate: exact minimal finite probe review subset and tested proper-subset witness minimality; duplicates scoped, no computation savings or equivalence; CI pending.",
       "acceptance": "Wrong year, sign, denominator, population, aggregation, units and causal inference adversaries.",
       "evidence": [
         {
@@ -3004,7 +3004,7 @@
         "V2-LK02-INTENT-IR",
         "V2-LK05-SEMANTIC-COUNTERFACTUAL"
       ],
-      "scope": "Extend finite worlds with typed semantic versus empirical axes; share DAGs and lazily evaluate bounded alternatives. V2-070 candidate: at most four reviewed quantity axes with two to four exact values each, up to sixteen evaluated assignments crossed with supplied programs; explicit truncation and scoped interaction witnesses. Refused/unresolved baseline candidates not evaluated; no empirical probabilities or complete semantic worlds.",
+      "scope": "Extend finite worlds with typed semantic versus empirical axes; share DAGs and lazily evaluate bounded alternatives. V2-070 candidate: at most four reviewed quantity axes with two to four exact values each, up to sixteen evaluated assignments crossed with supplied programs; explicit truncation and scoped interaction witnesses. Refused/unresolved baseline candidates not evaluated; no empirical probabilities or complete semantic worlds. V2-119 candidate: exact minimal finite probe review subset and tested proper-subset witness minimality; duplicates scoped, no computation savings or equivalence; CI pending.",
       "acceptance": "Brute-force parity on small worlds, explicit truncation, no fabricated probabilities or completeness.",
       "evidence": [
         {
@@ -3029,7 +3029,7 @@
         "V2-LK04-ROUNDTRIP",
         "V2-LK06-SEMANTIC-WORLDS"
       ],
-      "scope": "Clarify only consequential distinctions; preserve unresolved branches, separate stakes, reversibility and clarification costs. V2-068 candidate: bounded exact subset selection over explicit facet statements and observed/synthetic material pairs; no human response adjudication, cost model or semantic approval.",
+      "scope": "Clarify only consequential distinctions; preserve unresolved branches, separate stakes, reversibility and clarification costs. V2-068 candidate: bounded exact subset selection over explicit facet statements and observed/synthetic material pairs; no human response adjudication, cost model or semantic approval. V2-119 candidate: exact minimal finite probe review subset and tested proper-subset witness minimality; duplicates scoped, no computation savings or equivalence; CI pending.",
       "acceptance": "Measured questions, review time, residual error, keyboard source highlighting/corrections; unreviewed semantics never approved.",
       "evidence": [
         {
@@ -3115,6 +3115,12 @@
           "sourceRevision": "1a4ebc16895b0ac729b1daf96faf86970b4664ec",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45716763984/job/139564690289",
           "description": "V2-114 exact nine returned PR workflows green. Controlled fresh-current benchmark all parity; wide correction median 30.13 vs 28.78 ms, irrelevant 29.02 vs 28.31 ms. No latency superiority."
+        },
+        {
+          "id": "V2-LK09-REVISION",
+          "sourceRevision": "c28a42099673ef2ef5d6d51b5a6b75a6929624c8",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45717919649",
+          "description": "V2-116 exact nine returned PR workflows green: independent multi-source correction/withdrawal transformation, all five dependency classes, Unicode and repinned tampering. Broader gates open."
         }
       ]
     },
@@ -3182,6 +3188,12 @@
           "sourceRevision": "19bde9ebd3792f4af7e51324f1379074f12198dc",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45715681018/job/139560999393",
           "description": "Nine exact returned PR workflows green; independent pinned source withdrawal transformation, actual browser report and adversarial replay. Separate push run not exposed; broader gate open."
+        },
+        {
+          "id": "V2-LK11-IMPACT-REPORT",
+          "sourceRevision": "c28a42099673ef2ef5d6d51b5a6b75a6929624c8",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45717919649",
+          "description": "V2-116 exact nine returned PR workflows green: independent multi-source correction/withdrawal transformation, all five dependency classes, Unicode and repinned tampering. Broader gates open."
         }
       ]
     },
@@ -3323,6 +3335,12 @@
           "sourceRevision": "ba4ac3bb7eec23846de32ace82db9ad16b98c0cb",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45715373517/job/139559952168",
           "description": "V2-109 exact nine returned PR workflows green: explicit versioned withdrawal, typed unknowns and surviving conditional result, quarantine and browser replay; broader gate open."
+        },
+        {
+          "id": "V2-LK15-UNIFIED-WORKSPACE",
+          "sourceRevision": "c28a42099673ef2ef5d6d51b5a6b75a6929624c8",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45717919649",
+          "description": "V2-116 exact nine returned PR workflows green: independent multi-source correction/withdrawal transformation, all five dependency classes, Unicode and repinned tampering. Broader gates open."
         }
       ]
     },
@@ -3357,7 +3375,7 @@
       "dependencies": [
         "V2-LK01-SEMANTIC-TRIAGE"
       ],
-      "scope": "Freeze staged 200 independently specified/annotated cases: 40 semantic,40 assumption,40 revision,30 ancestry,30 acquisition,20 replay/tamper; distinct synthetic/public/expert splits. V2-060 candidate: frozen 16-case synthetic development spec, exact candidate-state scoring, coverage/accuracy and unsupported decisive counts, first-candidate ablation and enumerate-all comparator. No held-out/external annotations, live models or broad superiority; exact CI pending. V2-080 candidate: four synthetic revision selection cases, full-reselection comparison, exact version reconstruction and all-source no-savings controls. No human effort/time or independent benchmark. V2-097 candidate: six developer-authored cases with exact expected execution vectors and matched programs/scenarios, first-candidate, raw and exact-program-deduplicated strict signature majority, retain-all plus witnesses. No reproduction of published method, independent annotations or semantic selection claim. V2-114 candidate: strong fresh-current retained-parent comparator and paired repeated 264-node workload; exact parity and descriptive timing; CI pending. V2-115 candidate: atomic separately pinned multi-source correction/withdrawal, explicit same-type reselection and conservative semantic link invalidation; independent replay and UI pending. V2-118 candidate: one exact host admission per candidate batch, opaque local capability, bounded adjacent UTF-8 codepoint checks; fresh and session parity and adversarial tests; CI pending.",
+      "scope": "Freeze staged 200 independently specified/annotated cases: 40 semantic,40 assumption,40 revision,30 ancestry,30 acquisition,20 replay/tamper; distinct synthetic/public/expert splits. V2-060 candidate: frozen 16-case synthetic development spec, exact candidate-state scoring, coverage/accuracy and unsupported decisive counts, first-candidate ablation and enumerate-all comparator. No held-out/external annotations, live models or broad superiority; exact CI pending. V2-080 candidate: four synthetic revision selection cases, full-reselection comparison, exact version reconstruction and all-source no-savings controls. No human effort/time or independent benchmark. V2-097 candidate: six developer-authored cases with exact expected execution vectors and matched programs/scenarios, first-candidate, raw and exact-program-deduplicated strict signature majority, retain-all plus witnesses. No reproduction of published method, independent annotations or semantic selection claim. V2-114 candidate: strong fresh-current retained-parent comparator and paired repeated 264-node workload; exact parity and descriptive timing; CI pending. V2-115 candidate: atomic separately pinned multi-source correction/withdrawal, explicit same-type reselection and conservative semantic link invalidation; independent replay and UI pending. V2-118 candidate: one exact host admission per candidate batch, opaque local capability, bounded adjacent UTF-8 codepoint checks; fresh and session parity and adversarial tests; CI pending. V2-119 candidate: exact minimal finite probe review subset and tested proper-subset witness minimality; duplicates scoped, no computation savings or equivalence; CI pending.",
       "acceptance": "Held-out separation; seven matched baselines (LLM, tools, solver, debate, domain software, SUTRA matched/offline); accuracy AND coverage, effort/cost, revision, replay, security, ablations and intervals.",
       "evidence": [
         {
@@ -3429,6 +3447,12 @@
           "sourceRevision": "7bc9a534383fed28b634ff6cf94bb165959e65e7",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45711349644/job/139546278286",
           "description": "Exact V2-103 10/10 green; hostile TSV markup/instruction and same-origin sentinel preserved inert, zero sentinel/external requests, fresh browser context/reload source isolation and stale export disclosure. Kernel Unicode/control adversaries green. No backend account or provider isolation claim."
+        },
+        {
+          "id": "V2-LK19-TRUST-BOUNDARY",
+          "sourceRevision": "c28a42099673ef2ef5d6d51b5a6b75a6929624c8",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45717919649",
+          "description": "V2-116 exact nine returned PR workflows green: independent multi-source correction/withdrawal transformation, all five dependency classes, Unicode and repinned tampering. Broader gates open."
         }
       ]
     },
