@@ -57,7 +57,7 @@ CoordinatedRollback ==
 MembershipCheck ==
     /\ PinnedMember
     /\ checked' = TRUE
-    /\ UNCHANGED <<history, pinSeq, pinHead, effects, lastEffectPinned, maxEver, lastEffectSeq>>
+    /\ UNCHANGED <<history, pinSeq, pinHead, effects, lastEffectPinned, maxEver, lastEffectSeq, lastEffectBelowMax>>
 
 Dispatch ==
     /\ checked
@@ -102,7 +102,7 @@ Safe == TypeOK /\ NoUnpinnedEffect /\ ReturningPinNeverAhead
 NumericCheck ==
     /\ CurrentSeq >= pinSeq
     /\ checked' = TRUE
-    /\ UNCHANGED <<history, pinSeq, pinHead, effects, lastEffectPinned, maxEver, lastEffectSeq>>
+    /\ UNCHANGED <<history, pinSeq, pinHead, effects, lastEffectPinned, maxEver, lastEffectSeq, lastEffectBelowMax>>
 
 NumericNext == Next \/ NumericCheck
 NumericSpec == Init /\ [][NumericNext]_vars
