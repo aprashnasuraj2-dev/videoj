@@ -251,10 +251,14 @@ func (a *SharedAuthority) signResponse(req AuthorityRequest,outcome byte,stale b
  copy(r.Signature[:],ed25519.Sign(a.signer,r.message()))
  return r
 }
-func (a *SharedAuthority) authenticate(req AuthorityRequest)bool{
- return req.Caller<authorityCallers&&(req.Op==AuthorityCommit||req.Op==AuthorityStatus)&&
-  a.receiver.admit(req.Action)&&ed25519.Verify(a.callers[req.Caller],req.message(),req.Signature[:])
+func (a *SharedAuthority) preflight(req AuthorityRequest)error{
+ if req.Caller>=authorityCallers{return ErrAuthorityAuth}
+ if req.Op!=AuthorityCommit&&req.Op!=AuthorityStatus{return ErrPolicy}
+ if !a.receiver.admit(req.Action){return ErrPolicy}
+ if !ed25519.Verify(a.callers[req.Caller],req.message(),req.Signature[:]){return ErrAuthorityAuth}
+ return nil
 }
+func (a *SharedAuthority) authenticate(req AuthorityRequest)bool{return a.preflight(req)==nil}
 
 type authorityPlan struct {
  before Digest
@@ -269,7 +273,7 @@ type authorityPlan struct {
 }
 
 func (a *SharedAuthority) planLocked(req AuthorityRequest)(authorityPlan,error){
- if !a.authenticate(req){return authorityPlan{},ErrAuthorityAuth}
+ if e:=a.preflight(req);e!=nil{return authorityPlan{},e}
  before:=a.headLocked()
  if a.spent[req.Caller]>=authorityPerCallerContacts||int(a.spent[0])+int(a.spent[1])>=authorityTotalContacts{
   return authorityPlan{before:before,after:before,outcome:AuthorityBudget,stale:req.Expected!=before},nil
@@ -337,7 +341,7 @@ func (a *SharedAuthority) ServeHTTP(w http.ResponseWriter,r *http.Request){
  req,e:=ParseAuthorityRequest(raw);if e!=nil{w.WriteHeader(http.StatusBadRequest);return}
  resp,e:=a.Process(req)
  if e!=nil{
-  if errors.Is(e,ErrAuthorityAuth){w.WriteHeader(http.StatusForbidden)}else{w.WriteHeader(http.StatusInternalServerError)}
+  if errors.Is(e,ErrAuthorityAuth)||errors.Is(e,ErrPolicy){w.WriteHeader(http.StatusForbidden)}else{w.WriteHeader(http.StatusInternalServerError)}
   return
  }
  w.Header().Set("Content-Type",media);w.Write(resp.Bytes())
