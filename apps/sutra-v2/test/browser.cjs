@@ -46,6 +46,12 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await page.waitForFunction(()=>document.querySelector('#provider-count').textContent==='2');
   assert.equal(await providerKey.inputValue(),'');assert.equal((await page.locator('body').innerText()).includes(betaSecret),false);
   assert.equal(await page.locator('.provider-card').count(),2);
+  const [providerExport]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Export safe summary'}).click()]);
+  const providerExportText=fs.readFileSync(await providerExport.path(),'utf8');
+  const providerExportJson=JSON.parse(providerExportText);
+  assert.equal(providerExportJson.version,'sutra-provider-workspace-summary-v1');assert.equal(providerExportJson.profiles.length,2);
+  assert.equal(providerExportText.includes(alphaSecret),false);assert.equal(providerExportText.includes(betaSecret),false);
+  assert.equal(providerExportText.includes('credential'),false);assert.equal(providerExportText.includes('handle'),false);
   await page.getByRole('button',{name:'Run local rehearsal'}).first().click();
   await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='complete');
   assert.equal(await page.locator('#provider-calls').innerText(),'1');assert.equal(await page.locator('#provider-active').innerText(),'0');
