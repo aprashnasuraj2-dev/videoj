@@ -33,7 +33,7 @@ func TestContactBookPersistentLimitsAndFrozenApprovals(t *testing.T){
   if r.URL.Path=="/commit"{
    conn,_,e:=w.(http.Hijacker).Hijack();if e!=nil{t.Error(e);return};conn.Close();return
   }
-  receiver.Load().ServeHTTP(w,r)
+  receiver.Load().serveHTTP(w,r)
  }));defer srv.Close()
  ctx,p,ak,pub,sk,journal,approvals:=bookApprovals(t,srv.URL)
  store,e:=CreateDurable(privateTemp(t),ctx,p,sk,2);if e!=nil{t.Fatal(e)};defer store.Close();receiver.Store(store)
@@ -63,7 +63,7 @@ func TestContactBookPersistentLimitsAndFrozenApprovals(t *testing.T){
 
 func TestContactBookReceiptAndCorruption(t *testing.T){
  var receiver atomic.Pointer[DurableReceiver];var requests atomic.Int32
- srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){requests.Add(1);receiver.Load().ServeHTTP(w,r)}));defer srv.Close()
+ srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){requests.Add(1);receiver.Load().serveHTTP(w,r)}));defer srv.Close()
  ctx,p,_,pub,sk,journal,approvals:=bookApprovals(t,srv.URL)
  store,e:=CreateDurable(privateTemp(t),ctx,p,sk,2);if e!=nil{t.Fatal(e)};defer store.Close();receiver.Store(store)
  dir:=privateTemp(t)
@@ -109,11 +109,11 @@ func TestDurableReorderedAcknowledgements(t *testing.T){
  unblock:=func(){once.Do(func(){close(release)})}
  srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
   if count.Add(1)==1{
-   sink:=httptest.NewRecorder();receiver.Load().ServeHTTP(sink,r)
+   sink:=httptest.NewRecorder();receiver.Load().serveHTTP(sink,r)
    close(held);<-release
    w.Header().Set("Content-Type",media);w.WriteHeader(sink.Code);w.Write(sink.Body.Bytes());return
   }
-  receiver.Load().ServeHTTP(w,r)
+  receiver.Load().serveHTTP(w,r)
  }));defer srv.Close();defer unblock()
  p,ak:=keys(1);pub,sk:=keys(2);ctx,e:=Context(srv.URL,"manifest-v1","session-1");if e!=nil{t.Fatal(e)}
  store,e:=CreateDurable(privateTemp(t),ctx,p,sk,2);if e!=nil{t.Fatal(e)};defer store.Close();receiver.Store(store)

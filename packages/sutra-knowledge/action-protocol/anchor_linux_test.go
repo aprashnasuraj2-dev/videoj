@@ -99,7 +99,7 @@ func TestDurableDelayedDeliveryAfterAbsent(t *testing.T){
    b,e:=io.ReadAll(io.LimitReader(r.Body,requestSize+1));if e!=nil{t.Error(e);return};held<-b
    conn,_,e:=w.(http.Hijacker).Hijack();if e!=nil{t.Error(e);return};conn.Close();return
   }
-  receiver.Load().ServeHTTP(w,r)
+  receiver.Load().serveHTTP(w,r)
  }));defer srv.Close()
  p,ak:=keys(1);pub,sk:=keys(2);ctx,e:=Context(srv.URL,"manifest-v1","session-1");if e!=nil{t.Fatal(e)}
  dir:=privateTemp(t);s,e:=CreateDurable(dir,ctx,p,sk,2);if e!=nil{t.Fatal(e)};defer s.Close();receiver.Store(s)

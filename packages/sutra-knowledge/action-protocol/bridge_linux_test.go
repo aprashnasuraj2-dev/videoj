@@ -309,7 +309,7 @@ func TestWitnessedResponseCompositeProofAndHTTPBoundary(t *testing.T){
  coordinator,e:=NewWitnessCoordinator(a,client);if e!=nil{t.Fatal(e)}
  traceMust(t,coordinator,"normal","init")
  coordinator.fault=traceFault(coordinator,"normal")
- api:=httptest.NewServer(coordinator);defer api.Close()
+ api:=httptest.NewServer(http.HandlerFunc(coordinator.serveHTTP));defer api.Close()
  req:=approve(t,0,ctx,ak);wire,_:=SignAuthorityRequest(0,AuthorityCommit,genesis,req,callerKey[0])
  challenge:=Digest{1}
  httpReq,e:=http.NewRequest(http.MethodPost,api.URL+"/authority-witnessed",bytes.NewReader(wire.Bytes()));if e!=nil{t.Fatal(e)}
@@ -377,7 +377,7 @@ func TestWitnessedAuthorityClientEndToEndAndTamperedComposite(t *testing.T){
 
  // Proxy one otherwise-valid response and flip the last witness-signature byte.
  tamper:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
-  recorder:=httptest.NewRecorder();coordinator.ServeHTTP(recorder,r)
+  recorder:=httptest.NewRecorder();coordinator.serveHTTP(recorder,r)
   if recorder.Code!=http.StatusOK{
    w.WriteHeader(recorder.Code);return
   }
@@ -446,7 +446,7 @@ func TestWitnessedAuthorityClientRefusesChallengeReuseBeforeContact(t *testing.T
  wc,e:=NewWitnessClient(witnessServer.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
  coordinator,e:=NewWitnessCoordinator(a,wc);if e!=nil{t.Fatal(e)}
  var calls atomic.Int32
- api:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){calls.Add(1);coordinator.ServeHTTP(w,r)}));defer api.Close()
+ api:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){calls.Add(1);coordinator.serveHTTP(w,r)}));defer api.Close()
  action:=approve(t,0,ctx,ak)
  client,e:=NewWitnessedAuthorityClient(api.URL,0,callerKey[0],authorityPub,witnessPub,ctx,genesis,rootView,action);if e!=nil{t.Fatal(e)}
  fixed:=Digest{7};client.challenge=func()(Digest,error){return fixed,nil}
@@ -478,8 +478,8 @@ func TestWitnessedAuthorityClientLostFinalReplyRecoversStatus(t *testing.T){
  var drop atomic.Bool;drop.Store(true)
  dropped:=make(chan WitnessedEnvelope,1)
  server:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
-  if !drop.CompareAndSwap(true,false){coordinator.ServeHTTP(w,r);return}
-  recorder:=httptest.NewRecorder();coordinator.ServeHTTP(recorder,r)
+  if !drop.CompareAndSwap(true,false){coordinator.serveHTTP(w,r);return}
+  recorder:=httptest.NewRecorder();coordinator.serveHTTP(recorder,r)
   envelope,parseErr:=ParseWitnessedEnvelope(recorder.Body.Bytes())
   if recorder.Code!=http.StatusOK||parseErr!=nil{t.Errorf("coordinator did not complete before lost reply: %d %v",recorder.Code,parseErr);w.WriteHeader(500);return}
   dropped<-envelope

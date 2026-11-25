@@ -327,7 +327,7 @@ func (g *GrantGuard) ProcessAttested(grant ActionGrant,req AuthorityRequest,chal
  }
 }
 
-func (g *GrantGuard) ServeHTTP(w http.ResponseWriter,r *http.Request){
+func (g *GrantGuard) serveHTTP(w http.ResponseWriter,r *http.Request){
  w.Header().Set("Cache-Control","no-store")
  if r.Method!=http.MethodPost||r.URL.Path!="/authority-granted"||r.URL.RawQuery!=""||r.Header.Get("Content-Type")!=media{
   w.WriteHeader(http.StatusBadRequest);return

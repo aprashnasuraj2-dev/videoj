@@ -51,12 +51,12 @@ func TestLostResponseAfterCommit(t *testing.T){
   if r.URL.Path=="/commit"&&commits.Add(1)==1{
    // Commit through the actual receiver HTTP handler, then discard its
    // response and close the TCP connection before the caller sees a receipt.
-   sink:=httptest.NewRecorder();receiver.Load().ServeHTTP(sink,r)
+   sink:=httptest.NewRecorder();receiver.Load().serveHTTP(sink,r)
    if sink.Code!=200{t.Errorf("fixture commit failed: %d",sink.Code)}
    conn,_,e:=w.(http.Hijacker).Hijack();if e!=nil{t.Error(e);return};conn.Close();return
   }
   if r.URL.Path=="/status"{status.Add(1)}
-  receiver.Load().ServeHTTP(w,r)
+  receiver.Load().serveHTTP(w,r)
  }));defer srv.Close()
  s,ak,p,ctx:=fixture(t,srv.URL,2);receiver.Store(s)
  r:=approve(t,0,ctx,ak);c,e:=NewClient(srv.URL,"manifest-v1","session-1",r,p);if e!=nil{t.Fatal(e)}
@@ -71,7 +71,7 @@ func TestAbsentDoesNotAuthorizeNewAction(t *testing.T){
  var receiver atomic.Pointer[Receiver];var requests atomic.Int32
  srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
   if requests.Add(1)==1{conn,_,e:=w.(http.Hijacker).Hijack();if e!=nil{t.Error(e);return};conn.Close();return}
-  receiver.Load().ServeHTTP(w,r)
+  receiver.Load().serveHTTP(w,r)
  }));defer srv.Close()
  s,ak,p,ctx:=fixture(t,srv.URL,2);receiver.Store(s);r:=approve(t,0,ctx,ak)
  c,e:=NewClient(srv.URL,"manifest-v1","session-1",r,p);if e!=nil{t.Fatal(e)}
@@ -102,7 +102,7 @@ func TestWireBoundAndOccupiedSlot(t *testing.T){
  s,ak,_,ctx:=fixture(t,"http://127.0.0.1:10000",2);r:=approve(t,0,ctx,ak)
  for _,b:=range [][]byte{nil,r.Bytes()[:requestSize-1],append(r.Bytes(),0)}{
   q:=httptest.NewRequest(http.MethodPost,"/commit",bytes.NewReader(b));q.Header.Set("Content-Type",media)
-  w:=httptest.NewRecorder();s.ServeHTTP(w,q);if w.Code!=400{t.Fatal(fmt.Sprint(w.Code))}
+  w:=httptest.NewRecorder();s.serveHTTP(w,q);if w.Code!=400{t.Fatal(fmt.Sprint(w.Code))}
  }
  if s.Count()!=0{t.Fatal("invalid effect")}
  if _,e:=s.Commit(r);e!=nil{t.Fatal(e)}

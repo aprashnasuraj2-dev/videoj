@@ -241,7 +241,7 @@ func TestGrantGuardExternalBoundaryConsentBeforeWitnessContact(t *testing.T){
  coordinator,e:=NewWitnessCoordinator(authority,witnessClient);if e!=nil{t.Fatal(e)}
  book,e:=CreateGrantBook(bookDir,ctx,consentPub,approver,bookKey,10);if e!=nil{t.Fatal(e)};defer book.Close()
  guard,e:=NewGrantGuard(book,coordinator);if e!=nil{t.Fatal(e)}
- api:=httptest.NewServer(guard);defer api.Close()
+ api:=httptest.NewServer(http.HandlerFunc(guard.serveHTTP));defer api.Close()
 
  challenge:=Digest{7}
  do:=func(grant ActionGrant,wire AuthorityRequest,challengeHeader string)(int,[]byte){

@@ -26,7 +26,7 @@ type actionReceiver interface {
  Commit(Request)(Receipt,error)
  Status(Request)(Receipt,error)
 }
-func (s *Receiver) ServeHTTP(w http.ResponseWriter,r *http.Request){
+func (s *Receiver) serveHTTP(w http.ResponseWriter,r *http.Request){
  serveActionHTTP(s,w,r)
 }
 func serveActionHTTP(s actionReceiver,w http.ResponseWriter,r *http.Request){

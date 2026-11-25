@@ -62,12 +62,12 @@ func TestSharedAuthorityAuthenticatedRecoverySharedBudgetAndTrace(t *testing.T){
  srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
   a:=current.Load();if a==nil{w.WriteHeader(503);return}
   if drop.CompareAndSwap(true,false){
-   recorder:=httptest.NewRecorder();a.ServeHTTP(recorder,r)
+   recorder:=httptest.NewRecorder();a.serveHTTP(recorder,r)
    if recorder.Code!=200{t.Errorf("authority commit failed %d",recorder.Code);return}
    parsed,e:=ParseAuthorityResponse(recorder.Body.Bytes());if e!=nil{t.Error(e);return};dropped<-parsed
    conn,_,e:=w.(http.Hijacker).Hijack();if e!=nil{t.Error(e);return};conn.Close();return
   }
-  a.ServeHTTP(w,r)
+  a.serveHTTP(w,r)
  }));defer srv.Close()
  ctx,approver,ak,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,srv.URL)
  dir:=privateTemp(t)
@@ -105,7 +105,7 @@ func TestSharedAuthorityAuthenticatedRecoverySharedBudgetAndTrace(t *testing.T){
 
 func TestSharedAuthorityAuthenticationCASAndTampering(t *testing.T){
  var current atomic.Pointer[SharedAuthority]
- srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){current.Load().ServeHTTP(w,r)}));defer srv.Close()
+ srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){current.Load().serveHTTP(w,r)}));defer srv.Close()
  ctx,approver,ak,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,srv.URL)
  a,e:=CreateSharedAuthority(privateTemp(t),ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer a.Close();current.Store(a)
  root,_:=a.Head();r0:=approve(t,0,ctx,ak);r1:=approve(t,1,ctx,ak)

@@ -96,12 +96,12 @@ func TestDurableTCPReopenAfterLostReply(t *testing.T){
  var commits,status atomic.Int32
  srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
   if r.URL.Path=="/commit"&&commits.Add(1)==1{
-   sink:=httptest.NewRecorder();active.Load().ServeHTTP(sink,r)
+   sink:=httptest.NewRecorder();active.Load().serveHTTP(sink,r)
    if sink.Code!=200{t.Errorf("commit status %d",sink.Code)}
    conn,_,e:=w.(http.Hijacker).Hijack();if e!=nil{t.Error(e);return};conn.Close();return
   }
   if r.URL.Path=="/status"{status.Add(1)}
-  active.Load().ServeHTTP(w,r)
+  active.Load().serveHTTP(w,r)
  }));defer srv.Close()
  dir:=privateTemp(t);a,ak:=keys(1);p,pk:=keys(2)
  ctx,e:=Context(srv.URL,"manifest-v1","session-1");if e!=nil{t.Fatal(e)}

@@ -334,7 +334,7 @@ func (a *SharedAuthority) Close()error{
  if a.lock==nil{return nil}
  e:=a.lock.Close();a.lock=nil;return e
 }
-func (a *SharedAuthority) ServeHTTP(w http.ResponseWriter,r *http.Request){
+func (a *SharedAuthority) serveHTTP(w http.ResponseWriter,r *http.Request){
  w.Header().Set("Cache-Control","no-store")
  if r.Method!=http.MethodPost||r.URL.Path!="/authority"||r.URL.RawQuery!=""||r.Header.Get("Content-Type")!=media{
   w.WriteHeader(http.StatusBadRequest);return

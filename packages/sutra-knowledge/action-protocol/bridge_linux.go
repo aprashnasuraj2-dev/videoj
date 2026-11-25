@@ -328,7 +328,7 @@ func parseWitnessChallengeHeader(r *http.Request)(Digest,error){
  return challenge,nil
 }
 
-func (c *WitnessCoordinator) ServeHTTP(w http.ResponseWriter,r *http.Request){
+func (c *WitnessCoordinator) serveHTTP(w http.ResponseWriter,r *http.Request){
  w.Header().Set("Cache-Control","no-store")
  if r.Method!=http.MethodPost||r.URL.Path!="/authority-witnessed"||r.URL.RawQuery!=""||r.Header.Get("Content-Type")!=media{
   w.WriteHeader(http.StatusBadRequest);return

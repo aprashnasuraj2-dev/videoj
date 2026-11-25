@@ -148,6 +148,6 @@ func OpenDurableAnchored(dir string,ctx Digest,approver ed25519.PublicKey,signer
  if e!=nil||actual!=expected{s.Close();return nil,ErrStore}
  return s,nil
 }
-func(s *DurableReceiver) ServeHTTP(w http.ResponseWriter,r *http.Request){
+func(s *DurableReceiver) serveHTTP(w http.ResponseWriter,r *http.Request){
  serveActionHTTP(s,w,r)
 }
