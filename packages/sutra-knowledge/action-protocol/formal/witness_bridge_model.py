@@ -9,12 +9,12 @@ distributed systems.
 from collections import deque
 
 MAX=2
-NONE=None
 
 def inv(state):
-    a,w,intent=state
-    if not (0<=a<=MAX and 0<=w<=MAX): return "TypeOK"
+    a,w,intent,ack=state
+    if not (0<=a<=MAX and 0<=w<=MAX and 0<=ack<=MAX): return "TypeOK"
     if w>a: return "WitnessNotAhead"
+    if ack>w: return "AckNotAhead"
     if a-w>1: return "GapBound"
     if intent is not None:
         b,n=intent
@@ -26,37 +26,41 @@ def inv(state):
     return None
 
 def safe_steps(s):
-    a,w,i=s
+    a,w,i,ack=s
     out=[]
     if i is None and a==w and a<MAX:
-        out.append(("Prepare",(a,w,(a,a+1))))
+        out.append(("Prepare",(a,w,(a,a+1),ack)))
     if i is not None:
         b,n=i
         if a==b and w==b:
-            out.append(("CommitAuthority",(n,w,i)))
-            out.append(("AbortPrepared",(a,w,None)))
+            out.append(("CommitAuthority",(n,w,i,ack)))
+            out.append(("AbortPrepared",(a,w,None,ack)))
         if a==n and w==b:
-            out.append(("AdvanceWitness",(a,n,i)))
+            out.append(("AdvanceWitness",(a,n,i,ack)))
         if a==n and w==n:
-            out.append(("ClearIntent",(a,w,None)))
+            out.append(("ClearIntent",(a,w,None,ack)))
+    if i is None and a==w and ack<a:
+        out.append(("Acknowledge",(a,w,None,a)))
     return out
 
 def mutant_steps(s,kind):
-    out=list(safe_steps(s));a,w,i=s
+    out=list(safe_steps(s));a,w,i,ack=s
     if kind=="early" and i is not None:
         b,n=i
         if a==b and w==b:
-            out.append(("AdvanceWitnessEarly",(a,n,i)))
+            out.append(("AdvanceWitnessEarly",(a,n,i,ack)))
     if kind=="double" and a>w and a<MAX:
-        out.append(("DoubleCommit",(a+1,w,(a,a+1))))
+        out.append(("DoubleCommit",(a+1,w,(a,a+1),ack)))
     if kind=="clear" and i is not None:
         b,n=i
         if a==n and w==b:
-            out.append(("ClearIntentEarly",(a,w,None)))
+            out.append(("ClearIntentEarly",(a,w,None,ack)))
+    if kind=="ack" and a>w and ack<a:
+        out.append(("AcknowledgeEarly",(a,w,i,a)))
     return out
 
 def explore():
-    start=(0,0,None);q=deque([start]);seen={start};edges=0
+    start=(0,0,None,0);q=deque([start]);seen={start};edges=0
     while q:
         s=q.popleft()
         bad=inv(s)
@@ -68,7 +72,7 @@ def explore():
     return seen,edges
 
 def counterexample(kind,expected):
-    start=(0,0,None);q=deque([start]);prev={start:None};action={}
+    start=(0,0,None,0);q=deque([start]);prev={start:None};action={}
     while q:
         s=q.popleft()
         bad=inv(s)
@@ -92,10 +96,11 @@ for kind,expected in [
     ("early","WitnessNotAhead"),
     ("double","GapBound"),
     ("clear","RecoverableGap"),
+    ("ack","AckNotAhead"),
 ]:
     discovered,trace,bad=counterexample(kind,expected)
     print(f"{kind} {bad} counterexample after discovering {discovered} states:")
-    state=(0,0,None)
+    state=(0,0,None,0)
     print("  Init",state)
     for act,state in trace:
         print(" ",act,state)
