@@ -95,3 +95,10 @@ The desired UX is a guided “AI providers” setup surface: fixed provider choi
 Security architecture must precede that UI. Secret values stay in a host-owned credential boundary and downstream components receive only opaque credential handles. Keys must never enter public graphs, prompts, agent/peer payloads, evidence receipts, trace exports, URLs, analytics, error text or plaintext browser persistence. Fixed provider adapters/relays must reject arbitrary upstream URLs. Budget reservation occurs before provider contact and unknown outcomes remain charged conservatively. Provider-specific actual billing remains distinct from SUTRA’s call/token/resource ceilings.
 
 The current checked-in SUTRA API remains intentionally incompatible with visitor BYOK: inference is disabled by default, status says `byok:false`, visitor Authorization is rejected, and existing operator documentation forbids browser key entry. Preserve that behavior until V2-P01-THREAT, V2-P03-TAINT, V2-P04-CONSENT, V2-P14-BUDGET and new V2-P14-BYOK-UX have their own evidence. Tests use fake providers only; this direction is not authorization to invoke a paid model, deploy a relay or store a real key.
+
+
+## V2-053 binding priority supersession
+
+SUTRA is a living computational knowledge system for discovering, challenging, maintaining, revising and acting on important knowledge. Persistent, accountable, model-replaceable investigations—not general chatbot intelligence—are the product.
+
+The [living knowledge mandate](LIVING-KNOWLEDGE.md) supersedes competition-centric scheduling, not earlier requirements or evidence. Three tracks run together; the first product slice uses existing reviewed claim compiler, contrast, exact kernel and snapshots. A no-model workspace is mandatory. No competition, deployment or paid provider action authorized.

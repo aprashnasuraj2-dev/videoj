@@ -1,3 +1,11 @@
+# SUTRA — Living, verifiable knowledge
+
+SUTRA is a living computational knowledge system for discovering, challenging, maintaining, revising and acting on important knowledge. Persistent, accountable, model-replaceable investigations—not general chatbot intelligence—are the product.
+
+[Binding product mandate](LIVING-KNOWLEDGE.md) · [Continuation](CONTINUE.md) · [Checklist](CHECKLIST.md) · [Roadmap](ROADMAP.md) · [Sessions](SESSIONS.md) · [Machine progress](progress.json)
+
+The following earlier product snapshot is retained as engineering history; current priorities follow the binding mandate and active queue, not the historical competition objective.
+
 # SUTRA 2.0 — A debugger for conclusions
 
 SUTRA is a debugger for conclusions. Product objective: falsification-first investigative reasoning and reproducibility. Trust/runtime infrastructure: consent, causal integrity, monotonic witnesses, compensation and bounded recovery, as a separate second act. Competition objective: attack a conclusion, expose declared ancestry, compute what survives and a decisive next observation, then verify a portable Proof Capsule offline. No paid inference required.

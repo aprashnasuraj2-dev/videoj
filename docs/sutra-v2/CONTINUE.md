@@ -4,13 +4,11 @@ This is the active SUTRA2 continuation contract. It inherits the durable checkpo
 
 The phrases **“continue sutra”**, **“continue with sutra”**, capitalization variants, and equivalent unambiguous continuation wording mean: **resume the latest remote SUTRA work and keep engineering**. They do not mean restart from the last chat summary, merely inspect status, or create a background automation.
 
-## Product priority
+## Product priority (V2-053)
 
-SUTRA is a debugger for conclusions. Product objective: falsification-first investigative reasoning and reproducibility. Trust/runtime infrastructure: consent, causal integrity, monotonic witnesses, compensation and bounded recovery, as a separate second act. Competition objective: attack a conclusion, expose declared ancestry, compute what survives and a decisive next observation, then verify a portable Proof Capsule offline. No paid inference required.
+SUTRA is a living computational knowledge system for discovering, challenging, maintaining, revising and acting on important knowledge. Persistent, accountable, model-replaceable investigations—not general chatbot intelligence—are the product.
 
-SUTRA MUST BE MORE INFORMATIVE WHEN ITS CONCLUSION FAILS THAN A NORMAL AI SYSTEM IS WHEN ITS ANSWER SUCCEEDS. Failed conclusions expose cause, changed and surviving claims, decisive dependencies, remaining worlds, and a next observation when one exists; contradictions must never be presented as an ordinary low-confidence vote.
-
-Prioritize the attack/recompute → lineage → decisive observation → Proof Capsule journey over additional agent integrations. Preserve the runtime as the second act; no external action authority follows from a conclusion.
+Read [LIVING-KNOWLEDGE.md](LIVING-KNOWLEDGE.md) before choosing tasks. Follow the three-track queue and its semantic, persistent revision, comparative evidence and UX priorities; preserve unfinished SUTRA1 and SUTRA2 work. Start from exact remote CI; fix or track failed candidates without erasing evidence. First integrated target: question and evidence → materially distinct reviewed alternatives → conditional computation → minimal clarification → persistent investigation → changed evidence → impact report → independently replayable export in two domains. No competition-centric work takes precedence over human value. No automatic authority or unsupported semantic/empirical claim.
 
 ## 1. Resume the real current state
 

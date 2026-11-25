@@ -68,12 +68,14 @@ def main():
     mutants=[]
     for k,v in [('decisionAuthority','MAJORITY'),('qualification','truth established'),('orderRelations',[])]:
         m=deepcopy(b);m[k]=v;mutants.append(m)
-    for k,v in [('relation','FORGED'),('orientation','FORGED'),('domain',[]),('uncovered',['GT']),('overlap',['GT']),('leftImpliesRight',False),('compatibleObservedOrders',['LT'])]:
+    for k,v in [('relation','FORGED'),('orientation','FORGED'),('domain',[]),('uncovered',['GT']),('overlap',[]),('leftImpliesRight',False),('compatibleObservedOrders',['LT'])]:
         m=deepcopy(b);m['orderRelations'][0][k]=v;mutants.append(m)
     for k,v in [('counts',{}),('entries',[]),('batchDigest','forged')]:
         m=deepcopy(b);m['contrast']['result'][k]=v;mutants.append(m)
     m=deepcopy(b);m['contrast']['contractText']+=' ';mutants.append(m)
     m=deepcopy(b);m['contrast']['batchText']+=' ';mutants.append(m)
-    for m in mutants:require(not verify(m))
+    for m in mutants:
+        require(canonical(m)!=canonical(b)) # negative controls must actually mutate the artifact
+        require(not verify(m))
     print('ACCEPTED actual caller-staged 5 proposals, 6 independently reconstructed order relations; REJECTED',len(mutants),'mutants')
 if __name__=='__main__':main()

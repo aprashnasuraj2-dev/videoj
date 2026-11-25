@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-052",
+  "session": "V2-053",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2329,8 +2329,8 @@
     "dependencyCycles": 0,
     "method": "V2-013 exact-source reconciliation: all existing nodes/dependencies retained; scoped evidence appended without completing any gate. Formal boundedness and negative controls checked at a9dd3fc6."
   },
-  "productObjective": "SUTRA is a debugger for conclusions. Product objective: falsification-first investigative reasoning and reproducibility. Trust/runtime infrastructure: consent, causal integrity, monotonic witnesses, compensation and bounded recovery, as a separate second act. Competition objective: attack a conclusion, expose declared ancestry, compute what survives and a decisive next observation, then verify a portable Proof Capsule offline. No paid inference required.",
-  "productInvariant": "SUTRA MUST BE MORE INFORMATIVE WHEN ITS CONCLUSION FAILS THAN A NORMAL AI SYSTEM IS WHEN ITS ANSWER SUCCEEDS. Failed conclusions expose cause, changed and surviving claims, decisive dependencies, remaining worlds, and a next observation when one exists; contradictions must never be presented as an ordinary low-confidence vote.",
+  "productObjective": "SUTRA is a living computational knowledge system for discovering, challenging, maintaining, revising and acting on important knowledge. Persistent, accountable, model-replaceable investigations—not general chatbot intelligence—are the product.",
+  "productInvariant": "Conclusions retain dependencies, alternatives, unresolved obligations and historical reproducibility; conditional computation never proves semantic or empirical truth.",
   "productGates": [
     {
       "id": "V2-STATIC-CSP",
@@ -2830,6 +2830,261 @@
         "V2-D25-CALLER-REVIEWED-WORKSPACE"
       ],
       "scope": "V2-052 candidate: caller stages up to eight exact untrusted proposals under one sealed contract. Separate order-logic profile classifies matching typed operand pairs (including reversed orientation), strict opposite versus exhaustive complement, implication, overlap, and self-comparison domain; unaligned or type-blocked operands remain unclassified. Actual state divergence fails closed. 150 exhaustive direct comparator oracle controls plus actual compiler tests; actual browser five proposals and independent Python replay of six pairs with 15 tamper challenges authored. No algebraic/semantic equivalence, source truth or independent vote. Exact CI pending."
+    },
+    {
+      "id": "V2-LK01-SEMANTIC-TRIAGE",
+      "track": "B",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D25-CALLER-REVIEWED-WORKSPACE",
+        "V2-D22-REVIEWED-PROPOSAL-CONTRAST"
+      ],
+      "scope": "Admit multiple reviewed interpretations; distinguish divergence, agreement, refusals and unresolved results without voting or semantic approval.",
+      "acceptance": "Exact compiler replays, opposite/same/unresolved/refused regressions; no universal interpretation coverage.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK02-INTENT-IR",
+      "track": "B",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK01-SEMANTIC-TRIAGE"
+      ],
+      "scope": "Preserve original natural-language question, candidate meanings and separate nine semantic obligations; source spans, entity, scope, unit, modality, negation, quantifier, baseline, causality, method, review and unknowns.",
+      "acceptance": "Closed versioned schema, exact source-bound extraction, omission/negation/scope adversaries; no invented inputs.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK03-PATHWAYS",
+      "track": "B",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK02-INTENT-IR"
+      ],
+      "scope": "Route structured table imports, templates, rules, user expressions, reviewed contracts, document import and optional model proposals through cheapest admissible path.",
+      "acceptance": "Same contract across paths, explicit consent, costs and review; compare deterministic and model proposals without votes.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK04-ROUNDTRIP",
+      "track": "B",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK02-INTENT-IR"
+      ],
+      "scope": "Render admitted meaning and executable relations into controlled language with original span and unresolved qualifier review.",
+      "acceptance": "Detect changed scope, definition, negation, denominator and invented relation; paraphrase is not equivalence proof.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK05-SEMANTIC-COUNTERFACTUAL",
+      "track": "B",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK02-INTENT-IR"
+      ],
+      "scope": "Perturb independent inputs to distinguish accidentally agreeing incorrect formalizations; use existing contrast and counterexample infrastructure.",
+      "acceptance": "Wrong year, sign, denominator, population, aggregation, units and causal inference adversaries.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK06-SEMANTIC-WORLDS",
+      "track": "B",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK02-INTENT-IR",
+        "V2-LK05-SEMANTIC-COUNTERFACTUAL"
+      ],
+      "scope": "Extend finite worlds with typed semantic versus empirical axes; share DAGs and lazily evaluate bounded alternatives.",
+      "acceptance": "Brute-force parity on small worlds, explicit truncation, no fabricated probabilities or completeness.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK07-AMBIGUITY-REVIEW",
+      "track": "B",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK04-ROUNDTRIP",
+        "V2-LK06-SEMANTIC-WORLDS"
+      ],
+      "scope": "Clarify only consequential distinctions; preserve unresolved branches, separate stakes, reversibility and clarification costs.",
+      "acceptance": "Measured questions, review time, residual error, keyboard source highlighting/corrections; unreviewed semantics never approved.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK08-KNOWLEDGE-GRAPH",
+      "track": "B",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK02-INTENT-IR"
+      ],
+      "scope": "Version claims, evidence, assumptions, hypotheses, definitions, observations, derived values, contradictions, questions, decisions, plans and proof artifacts; typed edge provenance.",
+      "acceptance": "Immutable identity and edge authority; distinguish human/model/formal relations; reject cycles in executable DAG.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK09-REVISION",
+      "track": "B",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK08-KNOWLEDGE-GRAPH"
+      ],
+      "scope": "Incremental evidence replacement/withdrawal, direct/transitive dependency invalidation, and historical reproducibility.",
+      "acceptance": "Incremental equals full recompute; shared descendants, concurrency, stale cache, interrupted writes, cycles and simultaneous updates.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK10-VERSION-CONTROL",
+      "track": "B",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK09-REVISION"
+      ],
+      "scope": "Branch hypotheses, diff and restore investigations, preserve conflicting empirical claims in merges.",
+      "acceptance": "Conflicting updates explicit; identity not logical equivalence; restore exact historical version.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK11-IMPACT-REPORT",
+      "track": "B",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK09-REVISION",
+        "V2-LK07-AMBIGUITY-REVIEW"
+      ],
+      "scope": "Explain changes, surviving/invalidated conclusions, new contradictions, reconsidered decisions, missing evidence and next investigation.",
+      "acceptance": "Two independent domain journeys, independently replayable export, old snapshots retained.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK12-ACQUISITION",
+      "track": "B",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK06-SEMANTIC-WORLDS",
+        "V2-D24-DISCLOSURE-FRONTIER"
+      ],
+      "scope": "Extend source economics and disclosure frontier toward noisy observations, uncertain costs, robust/minimax/regret or justified VOI, shared costs, failed observations and multiple objectives.",
+      "acceptance": "Information gain distinguished from decision value; report bounds/heuristics, no invented probabilities or global optimality.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK13-STRUCTURAL-WEAKNESS",
+      "track": "B",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK08-KNOWLEDGE-GRAPH"
+      ],
+      "scope": "Reuse lineage for shared trial, dataset, route, supplier, underlying model and economic exposure; common cuts and sensitivity templates.",
+      "acceptance": "Unknown ancestry stays unknown; independent fixtures across domains; no counting URLs as independence.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK14-STATISTICAL-PROFILES",
+      "track": "B",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK02-INTENT-IR",
+        "V2-LK06-SEMANTIC-WORLDS"
+      ],
+      "scope": "Select narrow interval/measurement and statistical profiles; include study design, bias, heterogeneity, missingness, multiple testing, power and causal assumptions as separate obligations.",
+      "acceptance": "Independent numerical references, coverage and assumption sensitivity; no deterministic proof of statistical or causal validity.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK15-UNIFIED-WORKSPACE",
+      "track": "B",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK07-AMBIGUITY-REVIEW",
+        "V2-LK11-IMPACT-REPORT"
+      ],
+      "scope": "Question → evidence → interpretations → review → investigation → conclusion → challenge → revision → export, manual/offline mode, accessible progressive disclosure.",
+      "acceptance": "Actual browser journey, persistence, cancel/error recovery, keyboard/mobile and no-model pathway.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK16-SPECIALIST-JOURNEYS",
+      "track": "C",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK15-UNIFIED-WORKSPACE"
+      ],
+      "scope": "Research, engineering, finance, medical research, student and general investigations on the same architecture; at least two complete narrow domains first.",
+      "acceptance": "Realistic distinct fixtures and user evaluation; no medical authority, financial recommendations or engineering certification.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK17-BENCHMARK",
+      "track": "C",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK01-SEMANTIC-TRIAGE"
+      ],
+      "scope": "Freeze staged 200 independently specified/annotated cases: 40 semantic,40 assumption,40 revision,30 ancestry,30 acquisition,20 replay/tamper; distinct synthetic/public/expert splits.",
+      "acceptance": "Held-out separation; seven matched baselines (LLM, tools, solver, debate, domain software, SUTRA matched/offline); accuracy AND coverage, effort/cost, revision, replay, security, ablations and intervals.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK18-PRIOR-ART",
+      "track": "C",
+      "status": "Not started",
+      "dependencies": [],
+      "scope": "Compare semantic parsing, synthesis, belief revision, truth maintenance, provenance, argumentation, incremental computation, decision theory, causal/statistical and robust optimization prior art.",
+      "acceptance": "Evidence register separates known algorithm, implementation, integration, novelty; include supplied ACL references; no unsupported superiority.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK19-TRUST-BOUNDARY",
+      "track": "A",
+      "status": "Not started",
+      "dependencies": [
+        "V2-LK02-INTENT-IR"
+      ],
+      "scope": "Maintain source/semantic/method/computation/empirical/freshness/applicability verification dimensions, untrusted document and provider boundaries, disclosure budgets, replay, rollback and cross-user isolation.",
+      "acceptance": "Injection, fabricated references, poison, Unicode, overflow, exhaustion, stale/replay/credential and cross-user adversaries; no automatic external action.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK20-REPOSITORY-ISOLATION",
+      "track": "A",
+      "status": "Not started",
+      "dependencies": [],
+      "scope": "Make active repository product and contributor entry points SUTRA-only; audit historical independent player files, workflows, root package, configs, media and reusable dependencies before removing non-SUTRA source.",
+      "acceptance": "Clean SUTRA builds and legacy compatibility, no retired live routes, historical Git evidence intact, no production cutover.",
+      "evidence": []
+    },
+    {
+      "id": "V2-LK21-FOUNDATION-QUEUE",
+      "track": "A",
+      "status": "Not started",
+      "dependencies": [],
+      "scope": "Continue exact CI, WASM, integrity, consent, recovery, rollback, refinement, provider budget/BYOK and all unresolved SUTRA1/2 gates by actual dependencies.",
+      "acceptance": "Old IDs, failures and evidence remain; no inherited credit or silently dropped gate.",
+      "evidence": []
     }
-  ]
+  ],
+  "livingKnowledgeDirection": {
+    "mandate": "docs/sutra-v2/LIVING-KNOWLEDGE.md",
+    "tracks": {
+      "A": "Foundation preservation and repository isolation",
+      "B": "Semantic compilation, knowledge revision and product",
+      "C": "Comparative evaluation and specialist journeys"
+    },
+    "next100Hours": {
+      "semantic": 30,
+      "knowledgeRevision": 20,
+      "evaluation": 20,
+      "foundations": 15,
+      "ux": 15
+    },
+    "priorityOrder": [
+      "V2-D27-REVIEWED-ORDER-CONTRAST",
+      "V2-LK01-SEMANTIC-TRIAGE",
+      "V2-LK02-INTENT-IR",
+      "V2-LK17-BENCHMARK",
+      "V2-LK08-KNOWLEDGE-GRAPH"
+    ],
+    "allocationIsTarget": true
+  }
 }
