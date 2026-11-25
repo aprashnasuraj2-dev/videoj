@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-024",
+  "session": "V2-025",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2492,13 +2492,31 @@
     },
     {
       "id": "V2-D09-WIRE-PARITY",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D02-CAPSULE",
         "V2-D07-OFFLINE",
         "V2-D08-ROOT-IMPACT"
       ],
-      "scope": "Differential agreement on explicitly expected accepted/refused results and identities using actual exported and downloaded bytes. Not a universal proof of parser equivalence."
+      "scope": "Differential agreement on explicitly expected accepted/refused results and identities using actual exported and downloaded bytes. Not a universal proof of parser equivalence.",
+      "evidence": [
+        {
+          "id": "V2-D09-WIRE-PARITY",
+          "sourceRevision": "91092e8415debce567e1676405d0afecc6ef855b",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45573886268/job/139066915828",
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45573886268 and push 45573875402, ingress 45573886271, impact 45573886357, evaluation 45573886529, Open Kit 45573886298, legacy release 45573886479, publisher 45573886242, browser matrix 45573886261. Actual Chromium-exported current/old capsules and downloaded independent Python verifier passed 77 explicit differential controls: 13 accepted, 64 refused; both verifiers agreed on every refusal reason and all accepted identities. Not universal parser equivalence."
+        }
+      ]
+    },
+    {
+      "id": "V2-D10-PINNED-CASE",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D08-ROOT-IMPACT",
+        "V2-D09-WIRE-PARITY",
+        "V2-D03-DIAGNOSIS"
+      ],
+      "scope": "Caller-supplied single-claim finite case with independently retained case pin; existing 12-world, 8-offer, 8-source, 24-event limits; general root diagnostics and exact rational observation partitions. Independent Python replay, browser JSON workspace. No physical validation, arbitrary natural-language compilation, or freshness guarantee."
     }
   ]
 }

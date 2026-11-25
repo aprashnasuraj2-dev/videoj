@@ -123,3 +123,5 @@ import './conflict.js';
 import './provider-lab.js';
 
 import './debugger.js';
+
+import './pinned-workspace.js';

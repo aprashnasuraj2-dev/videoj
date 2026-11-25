@@ -360,6 +360,27 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const impossible=await saveExplanation('explanation-impossible.json');assert.equal(impossible.next.kind,'impossible_with_available_observations');
   assert.match(await diagnosisPage.locator('#debug-next').innerText(),/No available observation plan/);assert.equal(await diagnosisPage.locator('#debug-plan-observe').isDisabled(),true);
   assert.deepEqual(diagnosisErrors,[]);assert.deepEqual(diagnosisExternal,[]);await diagnosisPage.close();
+  // Caller-pinned generalized finite case; separate context and actual downloads.
+  const pinnedPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),pinnedErrors=[],pinnedExternal=[];
+  pinnedPage.on('pageerror',e=>pinnedErrors.push(e.message));pinnedPage.on('request',r=>{if(new URL(r.url()).origin!==origin)pinnedExternal.push(r.url());});
+  await pinnedPage.goto(origin);await pinnedPage.locator('#pinned-workspace > summary').click();
+  async function pinnedStep(action,state,stem){
+   await pinnedPage.locator('#pinned-'+action).click();
+   await pinnedPage.waitForFunction(s=>document.querySelector('#pinned-state').textContent===s&&!document.querySelector('#pinned-export').disabled,state);
+   const dl=pinnedPage.waitForEvent('download');await pinnedPage.locator('#pinned-export').click();
+   const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,stem+'.json'),bytes);
+   return JSON.parse(bytes);
+  }
+  const pbase=await pinnedStep('example','UNDERDETERMINED','pinned-baseline');assert.equal(pbase.result.rootSummary.length,1);assert.match(await pinnedPage.locator('#pinned-plan').innerText(),/20\/1/);assert.match(await pinnedPage.locator('#pinned-plan').innerText(),/40\/1/);
+  const pconflict=await pinnedStep('conflict','CONFLICTED','pinned-conflict');assert.equal(pconflict.result.repairs.length,2);
+  const presolved=await pinnedStep('resolve','REFUTED','pinned-resolved');assert.deepEqual(presolved.result.minimum.refutation.map(x=>x.roots),[['capacity_root','meter_root']]);
+  await pinnedPage.locator('#pinned-case').fill(presolved.caseText+' ');
+  assert.equal(await pinnedPage.locator('#pinned-export').isDisabled(),true);
+  await pinnedPage.locator('#pinned-run').click();
+  await pinnedPage.waitForFunction(()=>document.querySelector('#pinned-status').textContent.includes('CASE_PIN_MISMATCH'));
+  assert.equal(await pinnedPage.locator('#pinned-result').isVisible(),false);
+  assert.equal(await pinnedPage.locator('#pinned-export').isDisabled(),true);
+  assert.deepEqual(pinnedErrors,[]);assert.deepEqual(pinnedExternal,[]);await pinnedPage.close();
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});
