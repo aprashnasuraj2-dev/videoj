@@ -118,3 +118,34 @@ func TestAuthorityAndWitnessCoordinatedRollbackCounterexample(t *testing.T){
  spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{}||total!=0||effects!=0{t.Fatal("coordinated rollback state",spent,total,effects,e)}
  t.Log("coordinated rollback of authority+witness remains possible to a privileged dual-domain attacker; no consensus claim")
 }
+
+
+func TestAuthorityWitnessChallengeAttestationReplayAndTamper(t *testing.T){
+ origin:="http://127.0.0.1:19103"
+ ctx,approver,ak,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,origin)
+ witnessPub,witnessKey:=witnessKeys()
+ authorityDir:=privateTemp(t);witnessDir:=privateTemp(t)
+ a,e:=CreateSharedAuthority(authorityDir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer a.Close()
+ genesis,_:=a.Head()
+ w,e:=CreateAuthorityWitness(witnessDir,ctx,authorityPub,witnessKey,genesis);if e!=nil{t.Fatal(e)};defer w.Close()
+
+ challenge1:=Digest{1}
+ att1,e:=w.Attest(challenge1);if e!=nil||!VerifyWitnessAttestation(att1,challenge1,ctx,authorityPub,witnessPub,genesis){t.Fatal("initial attestation",e)}
+ if VerifyWitnessAttestation(att1,Digest{2},ctx,authorityPub,witnessPub,genesis){t.Fatal("attestation replay accepted under different challenge")}
+ bad:=att1;bad.View.Head[0]^=1
+ if VerifyWitnessAttestation(bad,challenge1,ctx,authorityPub,witnessPub,genesis){t.Fatal("tampered nested view accepted")}
+ bad=att1;bad.Signature[0]^=1
+ if VerifyWitnessAttestation(bad,challenge1,ctx,authorityPub,witnessPub,genesis){t.Fatal("tampered attestation signature accepted")}
+
+ req:=approve(t,0,ctx,ak);wire,_:=SignAuthorityRequest(0,AuthorityCommit,genesis,req,callerKey[0])
+ committed,e:=a.Process(wire);if e!=nil{t.Fatal(e)}
+ transition,_:=SignWitnessTransition(ctx,genesis,committed.After,authorityKey)
+ if _,e=w.Advance(transition);e!=nil{t.Fatal(e)}
+ challenge2:=Digest{2}
+ att2,e:=w.Attest(challenge2);if e!=nil||!VerifyWitnessAttestation(att2,challenge2,ctx,authorityPub,witnessPub,genesis){t.Fatal("advanced attestation",e)}
+ if att2.View.Sequence!=1||att2.View.Head!=committed.After||att2.View==att1.View{t.Fatal("attestation did not advance")}
+ // Old attestation remains cryptographically valid only for its old challenge
+ // and old view. It is not a freshness proof for a new request.
+ if !VerifyWitnessAttestation(att1,challenge1,ctx,authorityPub,witnessPub,genesis){t.Fatal("historical attestation unexpectedly invalid")}
+ t.Log("nonce-bound witness attestations reject cross-request replay and tampering; they do not claim trusted time or detect coordinated witness rollback")
+}
