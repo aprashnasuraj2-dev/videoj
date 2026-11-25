@@ -209,3 +209,8 @@ Reconcile V2-091/092/093: each exact 10/10 workflows passed. Add bounded Fisher 
 ## V2-095 — Two-group statistical journey and source correction
 
 Add two-group synthetic sample and corrected source to the existing reviewed investigation. Four scope-labelled counts, explicit direction, declared family and nine design obligations; display exact tail and descriptive difference, retain three separate pins and invalidate stale exports. Initial 8/10 vs 2/10 tail 1063/46189; correction 6/10 vs 2/10 tail 713/4199; count consistency is not statistical support. Actual Chromium tests include duplicate binding refusal, family correction, design edit, corrected source and 360px/no-external-request checks. Independent offline archive replay of the actual export with eight derived mutations and three pin controls. The duplicate exact source-span adversary belongs to the existing compiler admission boundary; test now checks that boundary before profile evaluation. No independent samples, causal effect or clinical validity asserted. Exact CI pending; prior candidate remains to reconcile.
+
+
+## V2-096 — Initial prior-art and falsification register
+
+Inspect nine actual publisher/institutional abstracts, survey or standard overview, including all four supplied ACL references. Register established techniques separately from current restricted SUTRA implementation, proposed matched experiments and unclosed gaps. Add explicit execution-signature majority ablation, stepwise review comparison and independent interpretation recall evaluation to benchmark protocol. Existing simple enumeration tie is retained. No novelty claim or full-text systematic review. Statistical V2-094/095 CI pending at observation; exact evidence still to reconcile.

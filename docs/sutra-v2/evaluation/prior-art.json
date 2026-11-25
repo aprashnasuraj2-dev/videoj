@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-26",
+  "scope": "Initial source-checked research register. Publisher abstracts and listed standard overview only, not exhaustive review or novelty clearance.",
+  "claimPolicy": "Known techniques are not new algorithms; potential integration contribution requires matched end-to-end evaluation. No comparative superiority or intellectual-property conclusion.",
+  "sources": [
+    {
+      "id": "PA01",
+      "title": "Semantic Parsing of Ambiguous Input through Paraphrasing and Verification",
+      "authors": "Arthur, Neubig, Sakti, Toda, Nakamura",
+      "year": 2015,
+      "url": "https://aclanthology.org/Q15-1041/",
+      "level": "publisher abstract",
+      "known": "Jointly generate a meaning representation and a less ambiguous paraphrase from ambiguous input; language-model scores support verification.",
+      "sutra": "controlled-roundtrip.js reconstructs admitted target instructions; does not generate intended meaning or score paraphrases.",
+      "test": "Blindly label material qualifiers lost or altered in rendered instructions; compare generated paraphrase with controlled instruction reconstruction.",
+      "gap": "No automatic semantic parser or independent human semantic evaluation."
+    },
+    {
+      "id": "PA02",
+      "title": "Towards Transparent Interactive Semantic Parsing via Step-by-Step Correction",
+      "authors": "Mo, Lewis, Sun, White",
+      "year": 2022,
+      "url": "https://aclanthology.org/2022.findings-acl.28/",
+      "level": "publisher abstract",
+      "known": "Stepwise natural-language explanation of predicted logical forms with user corrections in knowledge-base question answering; introduces INSPIRED dialogue dataset.",
+      "sutra": "clarification-plan.js and clarification-preview.js separate exact declared alternatives and compatibility; workspace supports explicit correction.",
+      "test": "Matched user tasks: time, number of corrections, residual material errors, accessibility and unsupported answers versus stepwise interactive baseline.",
+      "gap": "No real user study or automatic interpretation repair."
+    },
+    {
+      "id": "PA03",
+      "title": "Weakly Supervised Semantic Parsing with Execution-based Spurious Program Filtering",
+      "authors": "Lee, Kim, Jung",
+      "year": 2023,
+      "url": "https://aclanthology.org/2023.emnlp-main.425/",
+      "level": "publisher abstract",
+      "known": "Represents programs by results over multiple inputs and uses majority voting to filter semantically divergent programs in weak supervision.",
+      "sutra": "semantic-counterfactual.js and semantic-witness-search.js expose differing formal behavior; deliberately do not vote away alternatives.",
+      "test": "Same candidate pool and same perturbation budget: compare observed-only, execution-signature majority, and retained distinguishing-witness workflows on wrong-program detection and minority correct interpretation retention.",
+      "gap": "No measured automatic parser performance or held-out result."
+    },
+    {
+      "id": "PA04",
+      "title": "Disambiguate First, Parse Later: Generating Interpretations for Ambiguity Resolution in Semantic Parsing",
+      "authors": "Saparina, Lapata",
+      "year": 2025,
+      "url": "https://aclanthology.org/2025.findings-acl.863/",
+      "level": "publisher abstract",
+      "known": "Generates preferred natural-language disambiguations, then fills missing interpretations before logical-form mapping; SQL execution supports interpretation annotation.",
+      "sutra": "semantic-investigation.js keeps caller-supplied meaning declarations and unresolved facets before and after calculation.",
+      "test": "Measure interpretation recall and precision on independently annotated ambiguous questions; compare same generation budgets, keeping missing interpretations visible.",
+      "gap": "Current supplied-candidate mode cannot establish interpretation recall over all plausible meanings."
+    },
+    {
+      "id": "PA05",
+      "title": "A Truth Maintenance System",
+      "authors": "Doyle",
+      "year": 1979,
+      "url": "https://dspace.mit.edu/entities/publication/5377b306-4ecc-4687-b1f5-78cbb4a0543a",
+      "level": "institutional abstract",
+      "known": "Maintains reasons for program beliefs and revises belief state by tracing dependencies and assumptions.",
+      "sutra": "investigation-revision.js tracks admitted dependencies and scoped impact while retaining exact historical input versions.",
+      "test": "Compare targeted invalidation with full replay and a simple reason-maintenance baseline under source withdrawal, reintroduction and conflicting branches.",
+      "gap": "Not a general truth maintenance implementation; no full belief closure or dependency-directed search claim."
+    },
+    {
+      "id": "PA06",
+      "title": "An assumption-based TMS",
+      "authors": "de Kleer",
+      "year": 1986,
+      "url": "https://doi.org/10.1016/0004-3702(86)90080-9",
+      "level": "publisher abstract",
+      "known": "Maintains assumption sets rather than only individual justifications.",
+      "sutra": "semantic-world-grid.js enumerates bounded supplied candidate and hypothetical quantity assignments.",
+      "test": "Compare support and counterexample sets against exhaustive finite oracle, measure truncation and repeated assumption reuse.",
+      "gap": "No ATMS implementation equivalence or general minimal environment algorithm claim."
+    },
+    {
+      "id": "PA07",
+      "title": "Logic of Belief Revision",
+      "authors": "Stanford Encyclopedia of Philosophy (survey)",
+      "year": 2023,
+      "url": "https://plato.stanford.edu/archives/spr2023/entries/logic-belief-revision/",
+      "level": "scholarly survey",
+      "known": "AGM distinguishes belief change operations and characterizes them with rationality postulates over logically closed belief sets.",
+      "sutra": "investigation-history.js and sibling-branch-contrast.js preserve conflicting versions rather than enforce global belief consistency.",
+      "test": "Explicitly compare withdrawal, restoration, incompatible branches, and preserved unresolved evidence; define scoped invariants before invoking belief-revision postulates.",
+      "gap": "Not an AGM theory implementation or rationality postulate compliance claim."
+    },
+    {
+      "id": "PA08",
+      "title": "A consistent semantics of self-adjusting computation",
+      "authors": "Acar, Blume, Donham",
+      "year": 2013,
+      "url": "https://www.cambridge.org/core/journals/journal-of-functional-programming/article/consistent-semantics-of-selfadjusting-computation/441A28C813BDA23B57F1ED2BB1A7E36E",
+      "level": "publisher abstract",
+      "known": "Formal correctness and consistency of self-adjusting computation; machine-checked semantics.",
+      "sutra": "revision-reuse-audit.js checks projected cached reports against fresh replay of admitted exact graphs.",
+      "test": "Matched full replay versus actual incremental execution on shared DAGs, simultaneous edits and interrupted updates; compare full output, runtime and memory.",
+      "gap": "SUTRA currently still replays full versions, no end-to-end incremental performance or formal equivalence theorem."
+    },
+    {
+      "id": "PA09",
+      "title": "PROV-DM: The PROV Data Model",
+      "authors": "Moreau and Missier (editors), W3C",
+      "year": 2013,
+      "url": "https://www.w3.org/TR/prov-dm/",
+      "level": "normative recommendation introduction and model overview",
+      "known": "Standard provenance vocabulary distinguishes entities, activities, agents, derivation and responsibility.",
+      "sutra": "Source spans, declared lineage and version digests track restricted provenance and dependency relationships.",
+      "test": "Map admitted evidence, computation and reviewer declaration into a PROV-compatible interchange profile; test round-trip without inventing agents or source authenticity.",
+      "gap": "No full PROV conformance, signature trust or empirical source independence."
+    }
+  ],
+  "uncovered": [
+    "Program synthesis and constraint solving",
+    "Formal argumentation",
+    "Statistical and causal inference",
+    "Decision theory and robust optimization",
+    "Modern competing persistent investigation products and research systems",
+    "Full-text methodological comparison and license evaluation for reusable datasets"
+  ]
+}

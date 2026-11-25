@@ -15,3 +15,8 @@ Future: pairwise semantic blind evaluation by independent reviewers; frozen doma
 ## V2-080 — Scoped revision selection pilot
 
 V2-077 and V2-078 exact 10/10 green. Freeze four development cases (two single-source, two all-source edits) with explicit retained/reselected IDs and expected conditional states. Compare exact rebuilt and restored/reselected version bytes; report full and targeted selection counts, and separate diagnostic projected node reuse. All-source controls require zero selection savings. The comparator is full reselection, not a strong incremental editor; no general speed, accuracy, human or novelty claim. Workflow prints and uploads result; exact CI pending. V2-079 pending at observation.
+
+
+## Prior-art-derived matched experiments
+
+Use [PRIOR_ART.md](PRIOR_ART.md) and prior-art.json as the hypothesis-to-test map, not proof of novelty. Add an execution-signature majority ablation using identical programs and perturbations, a simple enumerate-all comparator, a stepwise review baseline, and full replay versus actual incremental runtime (not projected reuse counts). Freeze independent ambiguity annotations before testing generation; score recall and precision, unsupported decisive conclusions, minority-correct retention, review time, residual errors, and cost. For every reported advantage publish a counterexample or failure mode and matched coverage. Do not copy research datasets without license checks or declare independence of developer-authored cases.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-095",
+  "session": "V2-096",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -3281,9 +3281,9 @@
     {
       "id": "V2-LK18-PRIOR-ART",
       "track": "C",
-      "status": "Not started",
+      "status": "Implementation in progress",
       "dependencies": [],
-      "scope": "Compare semantic parsing, synthesis, belief revision, truth maintenance, provenance, argumentation, incremental computation, decision theory, causal/statistical and robust optimization prior art.",
+      "scope": "Compare semantic parsing, synthesis, belief revision, truth maintenance, provenance, argumentation, incremental computation, decision theory, causal/statistical and robust optimization prior art. V2-096 initial source-checked register: all four supplied ACL abstracts plus TMS, ATMS, AGM survey, self-adjusting computation and W3C provenance. Map known work to current implementation and falsification experiments. Full-text, causal/statistical, robust optimization, argumentation, synthesis and competitive-product comparisons remain open.",
       "acceptance": "Evidence register separates known algorithm, implementation, integration, novelty; include supplied ACL references; no unsupported superiority.",
       "evidence": []
     },
