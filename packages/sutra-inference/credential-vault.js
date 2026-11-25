@@ -14,8 +14,8 @@ const closed=(value,keys)=>{
  if(!plain(value))return false;
  const descriptors=Object.getOwnPropertyDescriptors(value);
  if(Object.values(descriptors).some(d=>typeof d.get==='function'||typeof d.set==='function'))return false;
- const actual=Object.keys(value);
- return actual.length===keys.length&&actual.every(k=>keys.includes(k));
+ const actual=Reflect.ownKeys(value);
+ return actual.length===keys.length&&actual.every(k=>typeof k==='string'&&keys.includes(k));
 };
 const providerPattern=/^[a-z][a-z0-9-]{0,31}$/;
 const modelPattern=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/;
