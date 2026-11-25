@@ -9,6 +9,8 @@ on:
       - 'tools/sutra-*/**'
       - 'deploy/sutra-pages/**'
       - 'docs/sutra/evaluation/**'
+      - 'docs/sutra-v2/**'
+      - '.github/workflows/sutra-v2-knowledge.yml'
       - 'docs/sutra/verification-map.json'
       - 'docs/sutra/evidence/metrics.json'
       - 'docs/sutra/tools/impact.mjs'

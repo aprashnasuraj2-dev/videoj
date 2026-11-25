@@ -3,13 +3,14 @@
 Pending until exact evidence; expand only when new concrete product requirements or counterexamples emerge. Baseline facts are not v2 feature credit.
 
 - [x] V2-M01 Resolve immutable old source, CI, and preserve branch; migration decisions scoped to inspected code. Evidence: MIGRATION.md and linked exact old workflow.
-- [ ] V2-K01 Admit closed wire claim graph, exact rational and dimension types, reject duplicate keys and forged status.
-- [ ] V2-K02 Bounded dependency evaluation; reject cycles, missing/nonquantity dependencies and excessive depth.
-- [ ] V2-K03 Deterministic computation, incompatible units, refuted constraints, explicit blocked/indeterminate results.
-- [ ] V2-K04 Canonical receipt identity, fresh same-kernel replay, refuse modified/stale reports.
-- [ ] V2-K05 Incremental reuse after a material revision, preserve immutable historical receipt, distinguish computation reuse from total latency.
-- [ ] V2-O01 Execute actual synthetic mutation demonstration with independently specified oracle expectations and save CI output.
-- [ ] V2-K06 Independent reference replay implementation with golden vectors (not importing kernel).
+- [x] V2-K01 Admit closed wire claim graph, exact rational and dimension types, reject duplicate keys and forged status.
+- [x] V2-K02 Bounded dependency evaluation; reject cycles, missing/nonquantity dependencies and excessive depth.
+- [x] V2-K03 Deterministic computation, incompatible units, refuted constraints, explicit blocked/indeterminate results.
+- [x] V2-K04 Canonical receipt identity, fresh same-kernel replay, refuse modified/stale reports.
+- [x] V2-K05 Incremental reuse after a material revision, preserve immutable historical receipt, distinguish computation reuse from total latency.
+- [x] V2-O01 Execute actual synthetic mutation demonstration with independently specified oracle expectations and save CI output.
+- [x] V2-K06 Independent reference replay implementation with golden vectors (not importing kernel).
+- [ ] V2-M02 Map new product area into existing impact classifier, preserve fail-closed handling of unclassified code, and require v2 CI without misclassifying legacy metrics; ensure Observatory/reference commands propagate nonzero exit codes. Discovered after first PR CI.
 - [ ] V2-K07 Reverse dependency index, measured traversal/hash/calculation scaling and failure limits.
 - [ ] V2-K08 Typed quantity conversion and explicit semantic assumption compatibility; compare same-dimension but different scopes.
 - [ ] V2-E01 Evidence identity and source-version adapter using actual existing receipt validator, no trust promotion.
@@ -28,4 +29,4 @@ Pending until exact evidence; expand only when new concrete product requirements
 - [ ] V2-R01 Mandatory challenge conformance, free judge access, accepted human/security/cost/public release gates.
 - [ ] V2-R02 Final demo and submission package with genuine evidence; authorized submission separate.
 
-Next: verify V2-K01–05/O01 CI, then independent replay V2-K06 and runtime bridge V2-A01. See PLAN.md for all 28 workstreams.
+Verified kernel and independent reference evidence: [V2-001 observations](SESSIONS.md). Next: verify V2-M02 exact classifier/workflow correction, then browser-integrated verification capability and runtime bridge V2-A01; preserve explicit semantic scope work V2-K08. See PLAN.md for all 28 workstreams.

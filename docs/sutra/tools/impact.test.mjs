@@ -138,3 +138,13 @@ test('HTML loading shell changes invalidate the first viewer, browser, performan
  assert.ok(result.requiredWorkflows.includes('Validate SUTRA learner shell'));
  assert.ok(result.requiredWorkflows.includes('Validate SUTRA browser compatibility matrix'));
 });
+
+
+test('v2 knowledge kernel and reference consumer require their own verification without invalidating unrelated legacy learner metrics',()=>{
+ const r=classifyChangedFiles(['packages/sutra-knowledge/index.js','packages/sutra-knowledge/reference/verify.py','docs/sutra-v2/progress.json'],map);
+ assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);
+ assert.deepEqual(r.requiredWorkflows,['Validate SUTRA v2 knowledge kernel']);assert.deepEqual(r.invalidatedMetrics,[]);
+ const shared=classifyChangedFiles(['packages/sutra-consent/strict-json.js'],map);
+ assert.ok(shared.affectedSuites.includes('v2-knowledge-verification'));assert.ok(shared.affectedSuites.includes('security-boundary'));
+ assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/unknown-executable.mjs'],map).unmapped,['docs/sutra-v2/unknown-executable.mjs']);
+});

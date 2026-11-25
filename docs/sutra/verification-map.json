@@ -7,7 +7,8 @@
     "services/sutra-api/",
     "tools/sutra-",
     "deploy/sutra-pages/",
-    "docs/sutra/evaluation/"
+    "docs/sutra/evaluation/",
+    "docs/sutra-v2/"
   ],
   "suites": [
     {
@@ -317,6 +318,22 @@
         "provider_cost"
       ],
       "reason": "Operator-owned loopback model gateway changes can affect secret isolation, resource bounds, compatibility, inference cost and failure isolation; local integration tests do not establish live GPU readiness."
+    },
+    {
+      "id": "v2-knowledge-verification",
+      "prefixes": [
+        "packages/sutra-knowledge/"
+      ],
+      "exact": [
+        "packages/sutra-consent/strict-json.js",
+        ".github/workflows/sutra-v2-knowledge.yml",
+        "docs/sutra-v2/progress.json"
+      ],
+      "requiredWorkflows": [
+        "Validate SUTRA v2 knowledge kernel"
+      ],
+      "invalidates": [],
+      "reason": "New exact-quantity verification, mutation and independent replay need their own revision-bound CI; do not pretend they measure legacy learner metrics."
     }
   ]
 }

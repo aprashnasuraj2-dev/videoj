@@ -5,21 +5,60 @@
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
   "session": "V2-001",
   "next": [
-    "V2-K01",
-    "V2-K02",
-    "V2-K03",
-    "V2-K04",
-    "V2-K05",
-    "V2-O01",
-    "V2-K06",
-    "V2-A01"
+    "V2-M02",
+    "V2-U01",
+    "V2-A01",
+    "V2-K08",
+    "V2-K07"
   ],
-  "state": "candidate_unverified",
+  "state": "kernel_and_reference_verified_in_ci_pending_impact_integration",
   "verified": [
     {
       "id": "V2-M01",
       "artifact": "docs/sutra-v2/MIGRATION.md",
       "sourceRevision": "9bd76ef8bfd05f323592f21fe4b0841188861693"
+    },
+    {
+      "id": "V2-K01",
+      "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514783006/job/138871284267",
+      "description": "Closed wire admission and duplicate/escaped-key, status and invalid numeric fixtures"
+    },
+    {
+      "id": "V2-K02",
+      "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514783006/job/138871284267",
+      "description": "Graph missing refs/cycles/depth/nonquantity refusal"
+    },
+    {
+      "id": "V2-K03",
+      "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514783006/job/138871284267",
+      "description": "Exact arithmetic, 100 comparison controls, incompatible dimensions, zero division and bounded growth"
+    },
+    {
+      "id": "V2-K04",
+      "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514783006/job/138871284267",
+      "description": "Canonical receipts, reorder invariance, exact replay, tamper and stale rejection"
+    },
+    {
+      "id": "V2-K05",
+      "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514783006/job/138871284267",
+      "description": "16-node mutation: 5 executed, 11 reused; immutable baseline and atomic cache"
+    },
+    {
+      "id": "V2-O01",
+      "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514783006/job/138871284267",
+      "description": "Actual CLI synthetic mutation assertions and uploaded observation"
+    },
+    {
+      "id": "V2-K06",
+      "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514783006/job/138871284267",
+      "description": "Separate Python Fraction/hashlib/DFS implementation; eight replay challenges passed"
     }
   ],
   "release": "not_authorized",
@@ -28,5 +67,12 @@
     "sourceRevision": "fb1ddfff5b491db3ba1108fa3aec4643a62851e6",
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514643061",
     "reason": "test assertion expected TypeError instead of strict parser SyntaxError"
+  },
+  "lastVerifiedKernelSource": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
+  "openIssue": {
+    "id": "V2-M02",
+    "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
+    "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514790343",
+    "reason": "new kernel area unmapped in old fail-closed impact classification; CI pipeline exit-code propagation tightened"
   }
 }
