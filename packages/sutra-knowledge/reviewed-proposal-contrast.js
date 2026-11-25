@@ -1,7 +1,7 @@
 // Compare admitted computations, never majority-vote or equate arithmetic with truth.
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {casePin} from './pinned-investigation.js';
-import {compileReviewedProposal,validateReviewedContract} from './reviewed-claim-compiler.js';
+import {compileReviewedProposal,validateReviewedContract,createReviewedCompilerSession} from './reviewed-claim-compiler.js';
 export const VERSION='sutra-reviewed-proposal-contrast/v1';
 const ID=/^[A-Za-z][A-Za-z0-9_-]{0,63}$/;
 const keys=(o,ks)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===ks.length&&ks.every(k=>Object.hasOwn(o,k));
@@ -41,7 +41,7 @@ function pair(left,right){
  const stateRelation=decisive(a.status)&&decisive(b.status)?a.status===b.status?'SAME_CONDITIONAL_STATE':'OPPOSITE_CONDITIONAL_STATES':'AT_LEAST_ONE_UNRESOLVED';
  return {left:left.id,right:right.id,expressionRelation:same?'IDENTICAL_TYPED_STRUCTURE':'DIFFERENT_STRUCTURE_NOT_PROVEN_EQUIVALENT',stateRelation,bindingRelation:compareSets(a.bindingIds,b.bindingIds),sourceRelation:compareSets(a.sourceIds,b.sourceIds),sourceDigestRelation:compareSets(a.sourceDigests,b.sourceDigests),declaredLineageRelation:compareSets(a.declaredLineages,b.declaredLineages),semanticContradiction:'NOT_ESTABLISHED',independentEvidence:'NOT_ESTABLISHED'};
 }
-export async function contrastReviewedProposals(contractText,contractPin,batchText){
+async function contrastWithCompiler(contractText,contractPin,batchText,compile){
  const contract=await validateReviewedContract(contractText,contractPin);
  const b=parseUniqueJson(batchText,{maxChars:262144,maxDepth:5});
  if(!keys(b,['version','contractDigest','proposals'])||b.version!==1||b.contractDigest!==contractPin||!Array.isArray(b.proposals)||b.proposals.length<2||b.proposals.length>8)fail('CONTRAST_BATCH');
@@ -53,7 +53,7 @@ export async function contrastReviewedProposals(contractText,contractPin,batchTe
  const entries=[];
  for(const x of b.proposals.slice().sort((a,b)=>sort(a.id,b.id))){
   let result;
-  try{result=await compileReviewedProposal(contractText,contractPin,x.proposalText);}
+  try{result=await compile(x.id,contractText,contractPin,x.proposalText);}
   catch(e){const reason=typeof e?.message==='string'&&/^COMPILER_[A-Z_]+$/.test(e.message)?e.message:'PROPOSAL_OR_RESOURCE_REFUSED';entries.push({id:x.id,admission:'REFUSED',reason,computation:null});continue;}
   // Internal invariants/signature failures must not be silently treated as bad agent input.
   entries.push({id:x.id,admission:'ADMITTED',reason:null,computation:await describe(result)});
@@ -69,4 +69,32 @@ export async function contrastReviewedProposals(contractText,contractPin,batchTe
  const counts={admitted:accepted.length,refused:entries.length-accepted.length,satisfied:accepted.filter(e=>e.computation.status==='CONDITIONALLY_SATISFIED').length,refuted:accepted.filter(e=>e.computation.status==='CONDITIONALLY_REFUTED').length,unresolved:accepted.filter(e=>!decisive(e.computation.status)).length,distinctTypedStructures:targetGroups.length,distinctProposalBytes:proposalGroups.length,selfComparisons:accepted.filter(e=>e.computation.selfComparison).length};
  return freeze({version:VERSION,contractDigest:contractPin,batchDigest:await casePin(batchText),entries,pairs,counts,targetGroups,duplicateProposalGroups:proposalGroups.filter(g=>g.ids.length>1),duplicateSourceBytes:contract.duplicateSourceBytes,decisionAuthority:'NONE',qualification:QUAL});
 }
+export async function contrastReviewedProposals(contractText,contractPin,batchText){return contrastWithCompiler(contractText,contractPin,batchText,(_id,...args)=>compileReviewedProposal(...args));}
+// The trusted session never accepts a precomputed report or external callback.
+// Only admitted candidates persist private local arithmetic state.
+function contrastSession(initial=new Map()){
+ let previous=new Map(initial),busy=false;
+ return Object.freeze({async contrast(contractText,contractPin,batchText){
+  if(busy)throw Error('CONTRAST_SESSION_BUSY');busy=true;
+  try{
+   const next=new Map(),rows=new Map();
+   const result=await contrastWithCompiler(contractText,contractPin,batchText,async(id,...args)=>{
+    const session=previous.has(id)?previous.get(id).session.fork():createReviewedCompilerSession();
+    const {result,stats}=await session.compile(...args);
+    next.set(id,{session,nodeIds:result.report?.receipts.map(r=>r.id)??[]});rows.set(id,{id,admission:'ADMITTED',...stats});
+    return result;
+   });
+   const retired=[];
+   for(const e of result.entries)if(e.admission!=='ADMITTED')rows.set(e.id,{id:e.id,admission:'REFUSED',executed:[],reusedOutcomes:[],reusedReceipts:[],rebuiltReceipts:[],removed:[]});
+   const ids=new Set(result.entries.map(e=>e.id));
+   for(const [id,old] of previous)if(!next.has(id))retired.push({id,nodeIds:old.nodeIds,reason:ids.has(id)?'PROPOSAL_REFUSED':'CANDIDATE_ABSENT'});
+   const candidates=[...rows.values()].sort((a,b)=>sort(a.id,b.id));retired.sort((a,b)=>sort(a.id,b.id));
+   const totals=Object.fromEntries(['executed','reusedOutcomes','reusedReceipts','rebuiltReceipts','removed'].map(k=>[k,candidates.reduce((n,r)=>n+r[k].length,0)]));
+   totals.retired=retired.reduce((n,r)=>n+r.nodeIds.length,0);
+   const stats=freeze({candidates,retired,totals,qualification:'Actual private compiler arithmetic and receipt operations in this replay. Not independent evidence of performance or authority.'});
+   previous=next;return freeze({result,stats});
+  }finally{busy=false;}
+ },fork(){if(busy)throw Error('CONTRAST_SESSION_BUSY');return contrastSession(previous);}});
+}
+export function createReviewedContrastSession(){return contrastSession();}
 export async function exportReviewedContrast(contractText,contractPin,batchText){return freeze({version:VERSION,contractText,batchText,result:await contrastReviewedProposals(contractText,contractPin,batchText)});}

@@ -2,7 +2,7 @@
 // Annotation text is a proposal, not evidence entailment or a human sign-off.
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {casePin} from './pinned-investigation.js';
-import {triageReviewedInterpretations} from './semantic-triage.js';
+import {triageReviewedInterpretations,createSemanticTriageSession} from './semantic-triage.js';
 export const VERSION='sutra-semantic-investigation/v1';
 export const FACETS=Object.freeze(['entity','definition','time','population','geography','condition','measurement','baseline','quantifier','negation','modality','causality','method']);
 export const OBLIGATIONS=Object.freeze(['intent','evidenceSelection','extraction','entityResolution','scope','relationshipSelection','methodValidity','computation','communication']);
@@ -32,11 +32,11 @@ function readAnnotations(a,contractPin,batchPin,ids){
  }
  return a.candidates.slice().sort((a,b)=>sorts(a.id,b.id));
 }
-export async function evaluateSemanticInvestigation(contractText,contractPin,batchText,annotationText,annotationPin){
+async function evaluateWithTriage(contractText,contractPin,batchText,annotationText,annotationPin,evaluateTriage){
  if(typeof annotationPin!=='string'||!HASH.test(annotationPin)||await casePin(annotationText)!==annotationPin)fail('ANNOTATION_PIN');
  const batchPin=await casePin(batchText);
  // Existing compiler owns source bytes, numeric token admission, graph validation and computation.
- const triage=await triageReviewedInterpretations(contractText,contractPin,batchText);
+ const triage=await evaluateTriage(contractText,contractPin,batchText);
  const c=parse(contractText,9),b=parse(batchText,5),ids=new Set(b.proposals.map(p=>p.id));
  const annotated=readAnnotations(parse(annotationText),contractPin,batchPin,ids);
  const source=new Map(c.sources.map(s=>[s.id,s]));
@@ -79,3 +79,18 @@ export async function evaluateSemanticInvestigation(contractText,contractPin,bat
   verification:{sourceIntegrity:'PINNED_BYTES_ONLY',sourceAuthenticity:'UNVERIFIED',extractionFidelity:'EXACT_SPANS_NOT_ENTAILMENT',entityResolution:'UNVERIFIED',scopeConsistency:'DECLARED_NOT_ESTABLISHED',semanticInterpretation:'UNVERIFIED',methodValidity:'UNVERIFIED',computationalCorrectness:'PER_CANDIDATE_CONDITIONAL',empiricalSupport:'UNVERIFIED',freshness:'UNVERIFIED',externalApplicability:'UNVERIFIED'},
   qualification:'Candidate annotations and source links do not establish entailment, intended meaning, authenticity, method validity, or empirical truth. No external authority. Supplied candidates only.'});
 }
+
+export async function evaluateSemanticInvestigation(...args){return evaluateWithTriage(...args,triageReviewedInterpretations);}
+function semanticSession(triage){
+ let busy=false;
+ return Object.freeze({async evaluate(contractText,contractPin,batchText,annotationText,annotationPin){
+  if(busy)throw Error('SEMANTIC_SESSION_BUSY');busy=true;
+  try{
+   const next=triage.fork();let stats;
+   const result=await evaluateWithTriage(contractText,contractPin,batchText,annotationText,annotationPin,async(...args)=>{const out=await next.triage(...args);stats=out.stats;return out.result;});
+   // A bad annotation or facet reference must not commit arithmetic cache state.
+   triage=next;return freeze({result,stats});
+  }finally{busy=false;}
+ },fork(){if(busy)throw Error('SEMANTIC_SESSION_BUSY');return semanticSession(triage.fork());}});
+}
+export function createSemanticInvestigationSession(){return semanticSession(createSemanticTriageSession());}

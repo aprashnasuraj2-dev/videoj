@@ -15,7 +15,7 @@ test('reuses only arithmetic on a new contract basis, rebuilds every exact recei
 });
 test('same value with changed provenance invalidates shared descendants; numeric data cannot be hidden by a stable key',async()=>{
  const v=createProvenanceVerifier();await exact(v,graph(),keys());
- const b=await exact(v,graph('v2'),keys('changed','sourceB'));assert.deepEqual(b.stats.reusedOutcomes,['b']);assert.deepEqual(b.stats.executed.sort(),['a','left','right','square','sum']);
+ const b=await exact(v,graph('v2'),keys('changed','sourceB'));assert.deepEqual(b.stats.reusedOutcomes,['b']);assert.deepEqual([...b.stats.executed].sort(),['a','left','right','square','sum']);
  const c=await exact(v,graph('v3','2','4'),keys('changed','sourceB'));assert.deepEqual(c.stats.reusedOutcomes,['a']);assert.equal(c.stats.executed.length,5);
 });
 test('fork isolation, failed admission and removal are transactional',async()=>{

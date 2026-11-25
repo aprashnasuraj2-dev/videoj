@@ -89,6 +89,8 @@ jobs:
           python3 packages/sutra-knowledge/reference/test_reviewed_question.py < sutra-question-reference-cases.json
       - name: Execute frozen synthetic living-knowledge pilot and scoped baseline comparison
         run: node packages/sutra-knowledge/evaluation/living-pilot.mjs
+      - name: Measure actual provenance-bound revision replay against fresh exact parity
+        run: node packages/sutra-knowledge/evaluation/revision-session-pilot.mjs
       - name: Execute frozen revision selection pilot
         run: |
           node packages/sutra-knowledge/evaluation/revision-selection-pilot.mjs > sutra-v2-revision-pilot.json

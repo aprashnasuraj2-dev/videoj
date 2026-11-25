@@ -2,7 +2,7 @@
 // Full replay is the baseline; a dependency impact report is not a cache proof.
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {casePin} from './pinned-investigation.js';
-import {evaluateSemanticInvestigation,FACETS} from './semantic-investigation.js';
+import {evaluateSemanticInvestigation,createSemanticInvestigationSession,FACETS} from './semantic-investigation.js';
 export const VERSION='sutra-investigation-version/v1';
 const HASH=/^sha256:[a-f0-9]{64}$/;
 const pin=x=>typeof x==='string'&&HASH.test(x);
@@ -44,18 +44,23 @@ function projection(p){
  // question/claim spans—is retained. A changed byte span can require review.
  const q=parse(p,9);const {contractDigest,...rest}=q;return rest;
 }
-export async function replayInvestigationVersion(versionText,expectedPin){
+async function admitVersion(versionText,expectedPin){
  if(!pin(expectedPin)||await casePin(versionText)!==expectedPin)fail('PIN');
  const v=parse(versionText,6);
  if(!keys(v,['version','previousDigest','contractText','contractPin','batchText','annotationText','annotationPin'])||v.version!==VERSION||!(v.previousDigest===null||pin(v.previousDigest))||v.previousDigest===expectedPin||!pin(v.contractPin)||!pin(v.annotationPin)||![v.contractText,v.batchText,v.annotationText].every(s=>typeof s==='string'))fail('SHAPE');
+ return v;
+}
+function versionReport(v,expectedPin,investigation){return freeze({version:VERSION,digest:expectedPin,previousDigest:v.previousDigest,investigation,graph:graphFor(parse(v.contractText,9),investigation)});}
+export async function replayInvestigationVersion(versionText,expectedPin){
+ const v=await admitVersion(versionText,expectedPin);
  const investigation=await evaluateSemanticInvestigation(v.contractText,v.contractPin,v.batchText,v.annotationText,v.annotationPin);
- const c=parse(v.contractText,9);
- return freeze({version:VERSION,digest:expectedPin,previousDigest:v.previousDigest,investigation,graph:graphFor(c,investigation)});
+ return versionReport(v,expectedPin,investigation);
 }
 // Sealing is not authorization, source authenticity or truth; it binds exact input
 // bytes. The caller retains the pin independently from the artifact.
-export async function sealInvestigationVersion({previousDigest=null,contractText,contractPin,batchText,annotationText,annotationPin}){
- const versionText=JSON.stringify({version:VERSION,previousDigest,contractText,contractPin,batchText,annotationText,annotationPin});
+function versionWire({previousDigest=null,contractText,contractPin,batchText,annotationText,annotationPin}){return JSON.stringify({version:VERSION,previousDigest,contractText,contractPin,batchText,annotationText,annotationPin});}
+export async function sealInvestigationVersion(input){
+ const versionText=versionWire(input);
  const digest=await casePin(versionText);
  const report=await replayInvestigationVersion(versionText,digest);
  return freeze({versionText,digest,report});
@@ -82,6 +87,9 @@ const decisive=s=>s==='CONDITIONALLY_SATISFIED'||s==='CONDITIONALLY_REFUTED';
 export async function compareInvestigationVersions(beforeText,beforePin,afterText,afterPin){
  const before=await replayInvestigationVersion(beforeText,beforePin);
  const after=await replayInvestigationVersion(afterText,afterPin);
+ return impactFromReports(beforeText,beforePin,afterText,afterPin,before,after,false);
+}
+function impactFromReports(beforeText,beforePin,afterText,afterPin,before,after,session){
  if(beforePin===afterPin||after.previousDigest!==beforePin)fail('PARENT');
  const v1=parse(beforeText,6),v2=parse(afterText,6),c1=parse(v1.contractText,9),c2=parse(v2.contractText,9);
  const b1=parse(v1.batchText,5),b2=parse(v2.batchText,5),p1=mapBy(b1.proposals),p2=mapBy(b2.proposals);
@@ -119,6 +127,31 @@ export async function compareInvestigationVersions(beforeText,beforePin,afterTex
  const nextReview=candidates.filter(c=>c.reviewRequired).map(c=>c.id);
  return freeze({version:'sutra-investigation-impact/v1',beforeDigest:beforePin,afterDigest:afterPin,questionChanged,sourceChanges,bindingChanges,
   affectedDependencyNodes:ordered([...affectedBefore,...affectedAfter]),candidates,triage:{before:oldTriage,after:newTriage,newDivergence:oldTriage!=='DIVERGENT_CONDITIONAL_OUTCOMES'&&newTriage==='DIVERGENT_CONDITIONAL_OUTCOMES'},
-  missing,nextReview,decisionAuthority:'NONE',recomputation:'FULL_REPLAY_BOTH_VERSIONS',
-  qualification:'Survival means only matching conditional outcomes; source, meaning, method and applicability remain unverified. Source withdrawal does not establish falsity. Dependency impact is scoped to admitted target and supplied context; no incremental speedup or global completeness claimed.'});
+  missing,nextReview,decisionAuthority:'NONE',recomputation:session?'PROVENANCE_BOUND_SESSION_REPLAY':'FULL_REPLAY_BOTH_VERSIONS',
+  qualification:session?'Survival means only matching conditional outcomes; the prior exact local report is retained and the current version re-admitted with provenance-bound arithmetic reuse. Source, meaning, method and applicability remain unverified. No independent cache or speedup claim.':'Survival means only matching conditional outcomes; source, meaning, method and applicability remain unverified. Source withdrawal does not establish falsity. Dependency impact is scoped to admitted target and supplied context; no incremental speedup or global completeness claimed.'});
 }
+
+// A session is a private, bounded, linear version cursor. Fork explicitly to
+// pursue sibling hypotheses. Replaying a historical version in a fresh session
+// anchors only its exact bytes, not an independently established history.
+function replaySession(semantic,head=null){
+ let busy=false;
+ async function run(versionText,expectedPin){
+  const v=await admitVersion(versionText,expectedPin);
+  if(head&&head.digest!==expectedPin&&v.previousDigest!==head.digest)fail('SESSION_PARENT');
+  const next=semantic.fork(),out=await next.evaluate(v.contractText,v.contractPin,v.batchText,v.annotationText,v.annotationPin);
+  const report=versionReport(v,expectedPin,out.result);
+  const impact=head&&head.digest!==expectedPin?impactFromReports(head.versionText,head.digest,versionText,expectedPin,head.report,report,true):null;
+  const version=freeze({versionText,digest:expectedPin,report});
+  // Commit only after version admission, annotation reconstruction, graph and
+  // impact all succeed. No public or imported report can seed the cache.
+  semantic=next;head=version;return freeze({...version,impact,stats:out.stats});
+ }
+ return Object.freeze({
+  async replay(versionText,expectedPin){if(busy)throw Error('REVISION_SESSION_BUSY');busy=true;try{return await run(versionText,expectedPin);}finally{busy=false;}},
+  async seal(input){if(busy)throw Error('REVISION_SESSION_BUSY');busy=true;try{const wire=versionWire(input);return await run(wire,await casePin(wire));}finally{busy=false;}},
+  fork(){if(busy)throw Error('REVISION_SESSION_BUSY');return replaySession(semantic.fork(),head);},
+  head(){return head?.digest??null;}
+ });
+}
+export function createInvestigationReplaySession(){return replaySession(createSemanticInvestigationSession());}
