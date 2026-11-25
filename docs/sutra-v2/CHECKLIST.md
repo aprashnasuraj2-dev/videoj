@@ -10,7 +10,7 @@ Pending until exact evidence; expand only when new concrete product requirements
 - [x] V2-K05 Incremental reuse after a material revision, preserve immutable historical receipt, distinguish computation reuse from total latency.
 - [x] V2-O01 Execute actual synthetic mutation demonstration with independently specified oracle expectations and save CI output.
 - [x] V2-K06 Independent reference replay implementation with golden vectors (not importing kernel).
-- [ ] V2-M02 Map new product area into existing impact classifier, preserve fail-closed handling of unclassified code, and require v2 CI without misclassifying legacy metrics; ensure Observatory/reference commands propagate nonzero exit codes. Discovered after first PR CI.
+- [x] V2-M02 Map new product area into existing impact classifier, preserve fail-closed handling of unclassified code, and require v2 CI without misclassifying legacy metrics; ensure Observatory/reference commands propagate nonzero exit codes. Discovered after first PR CI.
 - [ ] V2-K07 Reverse dependency index, measured traversal/hash/calculation scaling and failure limits.
 - [ ] V2-K08 Typed quantity conversion and explicit semantic assumption compatibility; compare same-dimension but different scopes.
 - [ ] V2-E01 Evidence identity and source-version adapter using actual existing receipt validator, no trust promotion.
@@ -29,4 +29,4 @@ Pending until exact evidence; expand only when new concrete product requirements
 - [ ] V2-R01 Mandatory challenge conformance, free judge access, accepted human/security/cost/public release gates.
 - [ ] V2-R02 Final demo and submission package with genuine evidence; authorized submission separate.
 
-Verified kernel and independent reference evidence: [V2-001 observations](SESSIONS.md). Next: verify V2-M02 exact classifier/workflow correction, then browser-integrated verification capability and runtime bridge V2-A01; preserve explicit semantic scope work V2-K08. See PLAN.md for all 28 workstreams.
+Verified kernel and independent reference evidence: [V2-001 observations](SESSIONS.md). Next: browser-integrated verification capability and runtime bridge V2-A01; preserve explicit semantic scope work V2-K08. See PLAN.md for all 28 workstreams.
