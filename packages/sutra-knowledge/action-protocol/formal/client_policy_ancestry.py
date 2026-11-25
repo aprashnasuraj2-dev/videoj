@@ -11,45 +11,46 @@ MAX=3
 HEADS=range(1,6)
 
 def pinned_member(s):
-    history,pseq,phead,checked,effects,last_ok,maxever,lastseq=s
+    history,pseq,phead,checked,effects,last_ok,maxever,lastseq,last_below=s
     return pseq <= len(history)-1 and history[pseq] == phead
 
 def inv(s):
-    history,pseq,phead,checked,effects,last_ok,maxever,lastseq=s
+    history,pseq,phead,checked,effects,last_ok,maxever,lastseq,last_below=s
     if not (1<=len(history)<=MAX+1 and history[0]==0 and
             all(0<=h<=5 for h in history) and 0<=pseq<=MAX and
-            0<=phead<=5 and isinstance(checked,bool) and effects>=0 and
-            isinstance(last_ok,bool) and 0<=maxever<=MAX and 0<=lastseq<=MAX):
+            0<=phead<=5 and isinstance(checked,bool) and effects in (0,1) and
+            isinstance(last_ok,bool) and 0<=maxever<=MAX and 0<=lastseq<=MAX and
+            isinstance(last_below,bool)):
         return "TypeOK"
     if not last_ok: return "NoUnpinnedEffect"
     if pseq>maxever: return "ReturningPinNeverAhead"
     return None
 
 def safe_steps(s):
-    history,pseq,phead,checked,effects,last_ok,maxever,lastseq=s
+    history,pseq,phead,checked,effects,last_ok,maxever,lastseq,last_below=s
     out=[];cur=len(history)-1
     if cur<MAX:
         for h in HEADS:
             if h not in history:
-                out.append((f"Advance({h})",(history+(h,),pseq,phead,False,effects,last_ok,max(maxever,cur+1),lastseq)))
+                out.append((f"Advance({h})",(history+(h,),pseq,phead,False,effects,last_ok,max(maxever,cur+1),lastseq,last_below)))
     if pinned_member(s):
-        out.append(("ObserveCurrent",(history,cur,history[-1],False,effects,last_ok,maxever,lastseq)))
-        out.append(("MembershipCheck",(history,pseq,phead,True,effects,last_ok,maxever,lastseq)))
+        out.append(("ObserveCurrent",(history,cur,history[-1],False,effects,last_ok,maxever,lastseq,last_below)))
+        out.append(("MembershipCheck",(history,pseq,phead,True,effects,last_ok,maxever,lastseq,last_below)))
     if len(history)>1:
-        out.append(("CoordinatedRollback",(history[:-1],pseq,phead,False,effects,last_ok,maxever,lastseq)))
+        out.append(("CoordinatedRollback",(history[:-1],pseq,phead,False,effects,last_ok,maxever,lastseq,last_below)))
     if checked:
-        out.append(("Dispatch",(history,pseq,phead,False,effects+1,pinned_member(s),maxever,cur)))
+        out.append(("Dispatch",(history,pseq,phead,False,1,pinned_member(s),maxever,cur,cur<maxever)))
     return out
 
 def mutant_steps(s,kind):
-    out=list(safe_steps(s));history,pseq,phead,checked,effects,last_ok,maxever,lastseq=s
+    out=list(safe_steps(s));history,pseq,phead,checked,effects,last_ok,maxever,lastseq,last_below=s
     cur=len(history)-1
     if kind=="numeric" and cur>=pseq:
-        out.append(("NumericCheck",(history,pseq,phead,True,effects,last_ok,maxever,lastseq)))
+        out.append(("NumericCheck",(history,pseq,phead,True,effects,last_ok,maxever,lastseq,last_below)))
     return out
 
 def explore(kind=None, expected=None):
-    start=((0,),0,0,False,0,True,0,0)
+    start=((0,),0,0,False,0,True,0,0,False)
     q=deque([start]);prev={start:None};act={};edges=0
     while q:
         s=q.popleft();bad=inv(s)
@@ -73,29 +74,38 @@ states,edges,bad,trace=explore("numeric","NoUnpinnedEffect")
 print(f"numeric-only {bad} counterexample after {states} states / {edges} edges:",trace)
 
 def provision_counterexample():
-    start=((0,),0,0,False,0,True,0,0)
+    start=((0,),0,0,False,0,True,0,0,False)
     q=deque([start]);prev={start:None};act={}
     while q:
         s=q.popleft()
-        history,pseq,phead,checked,effects,last_ok,maxever,lastseq=s
-        if effects>0 and lastseq<maxever:
+        history,pseq,phead,checked,effects,last_ok,maxever,lastseq,last_below=s
+        if last_below:
             trace=[];cur=s
             while prev[cur] is not None:
                 trace.append((act[cur],cur));cur=prev[cur]
-            return len(prev),list(reversed(trace))
+            trace=list(reversed(trace))
+            names=[name for name,_ in trace]
+            required=["ObserveCurrent","CoordinatedRollback","ProvisionFresh","MembershipCheck","Dispatch"]
+            at=-1
+            for wanted in required:
+                at=next((i for i,name in enumerate(names) if i>at and name==wanted),-1)
+                if at<0:
+                    raise SystemExit(f"fresh provisioning witness missing {wanted}: {trace}")
+            return len(prev),trace
         cur=len(history)-1;out=[]
         if cur<MAX:
             for h in HEADS:
                 if h not in history:
-                    out.append((f"Advance({h})",(history+(h,),pseq,phead,False,effects,last_ok,max(maxever,cur+1),lastseq)))
+                    out.append((f"Advance({h})",(history+(h,),pseq,phead,False,effects,last_ok,max(maxever,cur+1),lastseq,last_below)))
+        if pinned_member(s):
+            out.append(("ObserveCurrent",(history,cur,history[-1],False,effects,last_ok,maxever,lastseq,last_below)))
+            out.append(("MembershipCheck",(history,pseq,phead,True,effects,last_ok,maxever,lastseq,last_below)))
         if len(history)>1:
-            out.append(("CoordinatedRollback",(history[:-1],pseq,phead,False,effects,last_ok,maxever,lastseq)))
-        out.append(("ProvisionFresh",(history,cur,history[-1],False,effects,last_ok,maxever,lastseq)))
-        # Membership is valid for this newly provisioned pin, even if history is rolled.
-        if pseq<=cur and history[pseq]==phead:
-            out.append(("MembershipCheck",(history,pseq,phead,True,effects,last_ok,maxever,lastseq)))
+            out.append(("CoordinatedRollback",(history[:-1],pseq,phead,False,effects,last_ok,maxever,lastseq,last_below)))
+        if not pinned_member(s) and cur<maxever:
+            out.append(("ProvisionFresh",(history,cur,history[-1],False,effects,last_ok,maxever,lastseq,last_below)))
         if checked:
-            out.append(("Dispatch",(history,pseq,phead,False,effects+1,True,maxever,cur)))
+            out.append(("Dispatch",(history,pseq,phead,False,1,True,maxever,cur,cur<maxever)))
         for name,n in out:
             if n not in prev:
                 prev[n]=s;act[n]=name;q.append(n)
