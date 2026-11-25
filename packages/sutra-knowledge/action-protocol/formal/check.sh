@@ -39,4 +39,4 @@ if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/anchored-unfair" -config 
  cat "$WORK/anchored-unfair.log"; echo 'unfair model unexpectedly satisfied liveness' >&2; exit 1
 fi
 cat "$WORK/anchored-unfair.log"
-grep -F 'Temporal properties were violated' "$WORK/anchored-unfair.log"
+grep -F 'Temporal property ConditionalRecovery was violated' "$WORK/anchored-unfair.log"
