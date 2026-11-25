@@ -3041,7 +3041,7 @@
       "dependencies": [
         "V2-LK09-REVISION"
       ],
-      "scope": "Branch hypotheses, diff and restore investigations, preserve conflicting empirical claims in merges. V2-071 candidate: restore source draft from caller-pinned version, preserve historical candidates separately; explicit stable IDs and correction invalidation. Branch merge/concurrency and general persistence remain open. V2-076 candidate: compare two separately pinned direct children of an exact parent, detect different concurrent changes to source/binding/question/candidate objects, retain both impacts. No merge, multi-generation history or concurrency storage.",
+      "scope": "Branch hypotheses, diff and restore investigations, preserve conflicting empirical claims in merges. V2-071 candidate: restore source draft from caller-pinned version, preserve historical candidates separately; explicit stable IDs and correction invalidation. Branch merge/concurrency and general persistence remain open. V2-076 candidate: compare two separately pinned direct children of an exact parent, detect different concurrent changes to source/binding/question/candidate objects, retain both impacts. No merge, multi-generation history or concurrency storage. V2-079 browser candidate: explicit other-child file and independent pin, exact common parent, all-three-version export, wrong pin and stale output refusal. No merge or multi-generation storage.",
       "acceptance": "Conflicting updates explicit; identity not logical equivalence; restore exact historical version.",
       "evidence": [
         {
@@ -3049,6 +3049,12 @@
           "sourceRevision": "935b916f78080689af603f5b8037d1355e89b979",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45609261800",
           "description": "All ten exact workflows passed; actual historical source restore, affected binding invalidation, stable IDs in reverse staging order and independent impact replay. Full branch/merge and persistence remain open."
+        },
+        {
+          "id": "V2-LK10-VERSION-CONTROL",
+          "sourceRevision": "4cf2409b03407075c27ed75c8e37fabec302e621",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45610633376",
+          "description": "10/10 exact workflows passed; direct sibling object comparison and conflict/parent adversaries."
         }
       ]
     },

@@ -786,3 +786,8 @@ V2-074 and V2-075 each passed 10/10 exact workflows. Preserve and resolve earlie
 ## V2-078 — Guided specialist browser journey and structural exposure
 
 Explicit sample buttons replace only current draft and leave retained baseline intact. Both synthetic domains use identical reviewed formula compiler and semantic/revision controls. Each correction reverses one candidate and preserves another. Structural exposure now inspectable/exportable; network targets share the demand source, so distinct route and load cohorts still admit a one-cohort structural input-touch cut. Actual Chromium tests traverse both domains and assert 360px layout, no external request, no authority. No real company/network or human acceptance claim. Exact CI pending; V2-076/077 to reconcile.
+
+
+## V2-079 — Competing revision browser contrast
+
+V2-076 exact 10/10 green. Use retained parent and current evaluated child; import other child with independent digest. Replay all three, display object changes and both conditional outcomes, export exact input versions and comparison. Clear stale results on semantic change, pin/file edit or parent replacement. Actual finance browser test stages sibling with changed declaration, verifies wrong-pin refusal, same source correction and left-only declaration. No merge, shared decision, or independent Python verification of sibling contrast claimed. V2-077/078 pending at observation.

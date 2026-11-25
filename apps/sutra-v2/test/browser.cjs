@@ -786,6 +786,18 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
     const dl=samplePage.waitForEvent('download');await samplePage.locator('#review-exposure-export').click();const a=JSON.parse(fs.readFileSync(await (await dl).path(),'utf8'));assert.equal(a.result.decisionAuthority,'NONE');
     fs.writeFileSync(path.join(output,'guided-'+domain+'-exposure.json'),JSON.stringify(a));
     assert.equal(await samplePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    if(domain==='finance'){
+     const left=samplePage.waitForEvent('download');await samplePage.locator('#review-semantic-export').click();const child=fs.readFileSync(await (await left).path());const childPin=await samplePage.locator('#review-semantic-pin').innerText();
+     // Retain the same parent; change a candidate declaration to create a second child.
+     const field=samplePage.locator('#review-meaning-operating_cash');await field.fill('Alternate declaration for operating cash');
+     await samplePage.locator('#review-correspondence').check();await samplePage.locator('#review-semantic-run').click();await sampleState('semantic_ready');
+     await samplePage.locator('#review-branch-panel > summary').click();
+     await samplePage.locator('#review-branch-file').setInputFiles({name:'child.json',mimeType:'application/json',buffer:child});
+     await samplePage.locator('#review-branch-pin').fill('sha256:'+'0'.repeat(64));await samplePage.locator('#review-branch-run').click();await sampleState('refused');assert.equal(await samplePage.locator('#review-branch-export').isDisabled(),true);
+     await samplePage.locator('#review-branch-pin').fill(childPin);await samplePage.locator('#review-branch-run').click();await sampleState('branch_ready');
+     const branch=samplePage.waitForEvent('download');await samplePage.locator('#review-branch-export').click();const b=JSON.parse(fs.readFileSync(await (await branch).path(),'utf8'));assert.equal(b.result.decisionAuthority,'NONE');assert.equal(b.result.status,'NO_CONFLICTS_IN_COMPARED_OBJECTS');assert.ok(b.result.changes.some(r=>r.kind==='candidates'&&r.id==='operating_cash'&&r.classification==='LEFT_ONLY'));assert.ok(b.result.changes.some(r=>r.kind==='sources'&&r.classification==='SAME_CHANGE'));
+     fs.writeFileSync(path.join(output,'guided-sibling-contrast.json'),JSON.stringify(b));await samplePage.locator('#review-branch-pin').fill('');assert.equal(await samplePage.locator('#review-branch-export').isDisabled(),true);
+    }
     await samplePage.locator('#review-baseline-clear').click();
    }
    assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await samplePage.close();
