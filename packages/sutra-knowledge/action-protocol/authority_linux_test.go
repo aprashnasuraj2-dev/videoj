@@ -10,6 +10,7 @@ import (
  "net/http"
  "net/http/httptest"
  "os"
+ "path/filepath"
  "sync"
  "sync/atomic"
  "testing"
