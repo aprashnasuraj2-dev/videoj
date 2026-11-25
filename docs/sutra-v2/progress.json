@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-044",
+  "session": "V2-045",
   "next": [
     "V2-D21-REVIEWED-COMPILER",
     "V2-D22-REVIEWED-PROPOSAL-CONTRAST",
@@ -20,7 +20,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "reviewed_proposal_contrast_candidate_pending_exact_ci",
+  "state": "reviewed_contrast_browser_and_shared_dag_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -362,20 +362,20 @@
   },
   "pendingCandidate": {
     "sourceRevision": null,
+    "sourceParent": "1fd9383382590dabf3212254203e51f25f23bc6c",
+    "status": "candidate_pending_exact_ci",
+    "identityRule": "Resolve immutable containing commit.",
+    "checks": [
+      "V2-045 candidate: fix an exponential shared-DAG signature traversal risk by memoizing in-flight promises, not completed hashes. Added depth-24 repeated-operand graph test requiring exactly 24 unique signature nodes; not a latency benchmark. Browser scripted 8-proposal challenge: five exact cloned self-comparisons, original comparison, reversed comparison and fabricated leaf; conditional majority is not authority. Separate Python reference reconstructs 21 admitted pair comparisons from independent host contract, exact structural hashes and explicit fixed malformed-leaf control; 16 tamper mutations authored. Generic refusal-order parity is not claimed. No live models or deployment. Exact CI pending."
+    ]
+  },
+  "previousPendingCandidate": {
+    "sourceRevision": "1fd9383382590dabf3212254203e51f25f23bc6c",
     "sourceParent": "77c0865310b35be0f25c3f6d23e5eac55373818b",
     "status": "candidate_pending_exact_ci",
     "identityRule": "Resolve immutable containing commit.",
     "checks": [
       "V2-044 candidate adds bounded multi-proposal contrast under one independently pinned reviewed contract. Replays every proposal; malformed agent proposals are refused individually while invalid host contract fails whole batch. Memoized exact expression digests ignore node renaming but preserve operator/operand order, typed binding identities and proposal-specific unknowns; flag same-operand comparisons, exact clones and distinct structures, separate conditional state agreement from semantic contradiction, expose shared source/binding/digest/declared-lineage sets. No majority-vote truth, algebraic equivalence, independent evidence or automatic adoption. Four test groups authored including 5 agreeing clones and a malformed proposal. Browser/independent contrast replay not yet implemented; exact CI pending."
-    ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": "77c0865310b35be0f25c3f6d23e5eac55373818b",
-    "sourceParent": "b3bfcf821c209d9d5de26728a69f27062e02bb7c",
-    "status": "candidate_pending_exact_ci",
-    "identityRule": "Resolve immutable containing commit.",
-    "checks": [
-      "V2-043 candidate: browser host-reviewed compiler with fixed normalized finance contract, visible exact byte spans/quantity types, editable untrusted proposal, missing input challenge, stale export invalidation and invented numeric leaf refusal. Independent generic Python reference uses Fraction, UTF-8 spans, repeated ready-set scan and separate source contract reconstruction to replay actual browser exports and challenge 13 mutations per state. Unicode category implementation parity is scoped, not universal. No live model, automatic source extraction, semantic entailment, formula validity or source truth. Exact CI pending."
     ]
   },
   "roadmap": "docs/sutra-v2/roadmap.json",

@@ -33,3 +33,14 @@ test('invalid host contract, duplicate identity, excessive batch and forged batc
  await assert.rejects(run(f,Array.from({length:9},(_,i)=>entry('p'+i,f.proposalText))),/CONTRAST_BATCH/);
  await assert.rejects(contrastReviewedProposals(f.contractText,f.pin,wire({version:1,contractDigest:f.pin,proposals:ps,decision:'VERIFIED'})),/CONTRAST_BATCH/);
 });
+
+test('shared repeated-operand DAG at depth 24 visits only 24 unique signature nodes',async()=>{
+ const f=await compilerFinanceFixture(),p=edit(f,p=>{
+  p.nodes=[{id:'base',kind:'input',bindingId:'ocf25'}];let prev='base';
+  for(let i=1;i<=22;i++){const id='double_'+i;p.nodes.push({id,kind:'derive',op:'add',args:[prev,prev]});prev=id;}
+  p.nodes.push({id:'target',kind:'constraint',op:'eq',args:[prev,prev]});p.targetId='target';
+ });
+ const r=await run(f,[entry('a',p),entry('b',p)]);
+ assert.equal(r.counts.admitted,2);assert.equal(r.counts.selfComparisons,2);assert.equal(r.counts.distinctTypedStructures,1);
+ assert.ok(r.entries.every(e=>e.computation.signatureNodes===24));
+});

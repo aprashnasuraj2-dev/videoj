@@ -1,4 +1,5 @@
-import {compilerFinanceFixture} from '../../../packages/sutra-knowledge/examples/reviewed-compiler.mjs';
+import {compilerFinanceFixture,compilerContrastFixture} from '../../../packages/sutra-knowledge/examples/reviewed-compiler.mjs';
+import {exportReviewedContrast} from '../../../packages/sutra-knowledge/reviewed-proposal-contrast.js';
 import {exportReviewedProposal} from '../../../packages/sutra-knowledge/reviewed-claim-compiler.js';
 const by=id=>document.getElementById('compiler-'+id);
 let fixture=null,current=null,busy=false,epoch=0;
@@ -35,3 +36,19 @@ by('complete').onclick=()=>load(false);by('missing').onclick=()=>load(true);by('
 by('proposal').addEventListener('input',()=>{epoch++;clear();status('loaded','Proposal changed; evaluate the exact current text.');controls();});
 by('export').onclick=()=>{if(!current||busy)return;const url=URL.createObjectURL(new Blob([current],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='sutra-reviewed-compiler.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 controls();
+
+let contrastBytes=null,contrastBusy=false;
+by('contrast-run').onclick=async()=>{
+ if(contrastBusy)return;contrastBusy=true;contrastBytes=null;by('contrast-run').disabled=true;by('contrast-export').disabled=true;by('contrast-rows').replaceChildren();
+ const state=by('contrast-status');state.dataset.state='working';state.textContent='Replaying eight scripted proposals locally…';
+ try{
+  const f=await compilerContrastFixture(),b=await exportReviewedContrast(f.contractText,f.pin,f.batchText),r=b.result,c=r.counts;
+  const bytes=new TextEncoder().encode(JSON.stringify(b));if(bytes.length>1048576)throw Error('CONTRAST_EXPORT_LIMIT');
+  state.textContent=c.admitted+' admitted, '+c.refused+' refused · '+c.satisfied+' conditionally satisfied, '+c.refuted+' conditionally refuted · '+c.distinctTypedStructures+' distinct typed expressions · '+c.selfComparisons+' same-operand comparisons. Decision authority: NONE.';
+  for(const e of r.entries){const p=document.createElement('p');p.textContent=e.id+': '+(e.admission==='REFUSED'?'REFUSED · '+e.reason:e.computation.status.replaceAll('_',' ')+(e.computation.selfComparison?' · same operand on both sides':'')+' · '+e.computation.declaredLineages.length+' declared lineage(s)');by('contrast-rows').append(p);}
+  for(const g of r.duplicateProposalGroups){const p=document.createElement('p');p.textContent='Exact duplicate proposal bytes: '+g.ids.join(', ')+'. Repetition is not independent evidence.';by('contrast-rows').append(p);}
+  contrastBytes=bytes;state.dataset.state='ready';by('contrast-export').disabled=false;
+ }catch{state.dataset.state='refused';state.textContent='REFUSED: no contrast report claimed.';}
+ finally{contrastBusy=false;by('contrast-run').disabled=false;}
+};
+by('contrast-export').onclick=()=>{if(!contrastBytes||contrastBusy)return;const url=URL.createObjectURL(new Blob([contrastBytes],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='sutra-reviewed-contrast.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);};

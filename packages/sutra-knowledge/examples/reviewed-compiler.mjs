@@ -17,3 +17,12 @@ export async function compilerFinanceFixture({missing=false}={}){
  const p={version:1,contractDigest:pin,questionSpan:exactSpan('question',question,question),claims:[{id:'quoted',kind:'quoted_assertion',span:exactSpan('normalized_filing',source,'FY2026 OCF = 182935')},{id:'method',kind:'hypothesis',text:'The proposed cash-flow proxy is OCF minus cash PPE.'}],nodes,targetId:'target'};
  return {contractText,pin,proposalText:JSON.stringify(p)};
 }
+
+export async function compilerContrastFixture(){
+ const f=await compilerFinanceFixture(),edit=fn=>{const p=JSON.parse(f.proposalText);fn(p);return JSON.stringify(p);};
+ const self=edit(p=>{const target=p.nodes.find(n=>n.id==='target');target.op='eq';target.args=['proxy25','proxy25'];});
+ const opposite=edit(p=>{p.nodes.find(n=>n.id==='target').op='lt';});
+ const hostile=edit(p=>{p.nodes[0].value='999';});
+ const proposals=[...Array.from({length:5},(_,i)=>({id:'scripted_copy_'+(i+1),proposalText:self})),{id:'original_proxy',proposalText:f.proposalText},{id:'reversed_comparison',proposalText:opposite},{id:'fabricated_value',proposalText:hostile}];
+ return {...f,batchText:JSON.stringify({version:1,contractDigest:f.pin,proposals})};
+}

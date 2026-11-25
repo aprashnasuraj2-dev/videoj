@@ -16,19 +16,24 @@ const difference=(a,b)=>a.filter(i=>!b.includes(i));
 const compareSets=(a,b)=>({shared:intersection(a,b),onlyLeft:difference(a,b),onlyRight:difference(b,a)});
 async function describe(result){
  const by=new Map(result.nodes.map(n=>[n.id,n])),memo=new Map();
- async function signature(i){
+ function signature(i){
   if(memo.has(i))return memo.get(i);
-  const n=by.get(i);if(!n)throw Error('CONTRAST_NODE_MISSING');
-  let shape;
-  if(n.kind==='input')shape={kind:'input',bindingId:n.bindingId,type:n.type};
-  else if(n.kind==='unknown')shape={kind:'unknown',proposalDigest:result.proposalDigest,id:n.id,type:n.type};
-  else shape={kind:n.kind,op:n.op,args:await Promise.all(n.args.map(signature)),type:n.type};
-  const hash=await casePin(JSON.stringify(shape));memo.set(i,hash);return hash;
+  // Cache the in-flight promise, not just its completed hash. Repeated shared
+  // children otherwise expand exponentially under concurrent Promise.all.
+  const work=(async()=>{
+   const n=by.get(i);if(!n)throw Error('CONTRAST_NODE_MISSING');
+   let shape;
+   if(n.kind==='input')shape={kind:'input',bindingId:n.bindingId,type:n.type};
+   else if(n.kind==='unknown')shape={kind:'unknown',proposalDigest:result.proposalDigest,id:n.id,type:n.type};
+   else shape={kind:n.kind,op:n.op,args:await Promise.all(n.args.map(signature)),type:n.type};
+   return casePin(JSON.stringify(shape));
+  })();
+  memo.set(i,work);return work;
  }
  const n=by.get(result.target.id),operandSignatures=await Promise.all(n.args.map(signature)),targetSignature=await signature(n.id);
  const sameOperand=operandSignatures[0]===operandSignatures[1];
  const bindingIds=n.bindings.slice(),used=result.bindings.filter(b=>bindingIds.includes(b.id));
- return {proposalDigest:result.proposalDigest,status:result.target.status,targetSignature,operandSignatures,targetOperator:n.op,selfComparison:sameOperand,bindingIds,sourceIds:result.target.sourceIds,declaredLineages:result.target.declaredLineages,sourceDigests:uniq(used.map(b=>b.span.sourceDigest)),missing:result.target.missing,typeBlockers:result.target.typeBlockers,questionRelevance:'UNVERIFIED',methodValidity:'UNVERIFIED'};
+ return {proposalDigest:result.proposalDigest,status:result.target.status,targetSignature,operandSignatures,signatureNodes:memo.size,targetOperator:n.op,selfComparison:sameOperand,bindingIds,sourceIds:result.target.sourceIds,declaredLineages:result.target.declaredLineages,sourceDigests:uniq(used.map(b=>b.span.sourceDigest)),missing:result.target.missing,typeBlockers:result.target.typeBlockers,questionRelevance:'UNVERIFIED',methodValidity:'UNVERIFIED'};
 }
 function pair(left,right){
  const a=left.computation,b=right.computation,same=a.targetSignature===b.targetSignature;

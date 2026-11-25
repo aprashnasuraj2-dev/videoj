@@ -224,6 +224,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_reviewed_compiler.py apps/sutra-v2/test-output/compiler-missing.json apps/sutra-v2/test-output/compiler-complete.json > apps/sutra-v2/test-output/compiler-reference.txt
           cat apps/sutra-v2/test-output/compiler-reference.txt
+      - name: Independently reconstruct scripted multi-proposal contrast
+        run: |
+          python3 packages/sutra-knowledge/reference/verify_reviewed_contrast.py apps/sutra-v2/test-output/compiler-contrast.json > apps/sutra-v2/test-output/compiler-contrast-reference.txt
+          cat apps/sutra-v2/test-output/compiler-contrast-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version
