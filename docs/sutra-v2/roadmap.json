@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-020",
+  "session": "V2-021",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2423,12 +2423,29 @@
     },
     {
       "id": "V2-D05-WORLD-TRACE",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D03-DIAGNOSIS",
         "V2-D04-GUIDE"
       ],
-      "scope": "Explicit per-world hypotheses, expected vs observed readings, exact blocking root sets and world readmission delta; independently replayable fixed-fixture trace; guide reset boundary."
+      "scope": "Explicit per-world hypotheses, expected vs observed readings, exact blocking root sets and world readmission delta; independently replayable fixed-fixture trace; guide reset boundary.",
+      "evidence": [
+        {
+          "id": "V2-D05-WORLD-TRACE",
+          "sourceRevision": "0e6b5be0b34cbc3b6d3af3ead516683cf17aec2e",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45571528317/job/139059084388",
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45571528317 and push 45571517657, ingress 45571528351, impact 45571528199, evaluation 45571528340, Open Kit 45571528083, legacy release 45571528114, publisher 45571528312, browser matrix 45571528245. Five actual Chromium world trace exports independently replayed with 50 adversarial mutations rejected. Both knowledge jobs passed 108 configurations with every blocker-removal subset. Actual browser checked all eight rows, expected/observed blocker values, copy invariance, withdrawal deltas and new guide ceremony after restart. PR artifact 15002476149 SHA-256 27e52b50e8c33b8ef3f1ef5fd279ad92fd1bd629d77afb9de655959fda005549 matched local download; conflict and resolved screenshots inspected. Scoped fixed binary model."
+        }
+      ]
+    },
+    {
+      "id": "V2-D06-ASSUMPTIONS",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D05-WORLD-TRACE",
+        "V2-D03-DIAGNOSIS"
+      ],
+      "scope": "Isolated target-limit variants and exact boundaries; distinct case identities, unchanged evidence and control, direct oracle, independent replay; no automatic adoption."
     }
   ]
 }

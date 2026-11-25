@@ -162,6 +162,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_world_trace.py apps/sutra-v2/test-output/world-trace-baseline.json apps/sutra-v2/test-output/world-trace-withdrawn.json apps/sutra-v2/test-output/world-trace-copied.json apps/sutra-v2/test-output/world-trace-conflicted.json apps/sutra-v2/test-output/world-trace-resolved.json > apps/sutra-v2/test-output/world-trace-reference.txt
           cat apps/sutra-v2/test-output/world-trace-reference.txt
+      - name: Independently replay exact assumption variants and reject scope leakage
+        run: |
+          python3 packages/sutra-knowledge/reference/verify_assumptions.py apps/sutra-v2/test-output/assumption-baseline.json apps/sutra-v2/test-output/assumption-withdrawn.json apps/sutra-v2/test-output/assumption-conflicted.json apps/sutra-v2/test-output/assumption-resolved.json > apps/sutra-v2/test-output/assumption-reference.txt
+          cat apps/sutra-v2/test-output/assumption-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

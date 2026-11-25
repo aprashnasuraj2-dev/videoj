@@ -439,6 +439,36 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await worldStep('withdraw','UNDERDETERMINED',['w101','w111']);await worldStep('plan-observe','REFUTED',['w111']);
   await saveWorld('world-trace-resolved.json');await worldPage.locator('.world-map').scrollIntoViewIfNeeded();await worldPage.screenshot({path:path.join(output,'world-trace-resolved.png'),fullPage:false});
   assert.deepEqual(worldErrors,[]);assert.deepEqual(worldExternal,[]);await worldPage.close();
+  const assumptionPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),assumptionErrors=[],assumptionExternal=[];
+  assumptionPage.on('pageerror',e=>assumptionErrors.push(e.message));assumptionPage.on('request',r=>{if(new URL(r.url()).origin!==origin)assumptionExternal.push(r.url());});
+  await assumptionPage.goto(origin);await assumptionPage.locator('#debug-manual > summary').click();
+  async function assumptionStep(id,state){
+   await assumptionPage.locator('#debug-'+id).click();
+   await assumptionPage.waitForFunction(s=>document.querySelector('#debug-state').dataset.state===s&&!document.querySelector('#debug-start').disabled,state);
+  }
+  async function testLimit(limit,expected,original){
+   const worlds=await assumptionPage.locator('#debug-worlds').innerText(),artifacts=await assumptionPage.locator('#debug-artifacts').innerText(),roots=await assumptionPage.locator('#debug-roots').innerText(),control=await assumptionPage.locator('#debug-control-state').innerText();
+   await assumptionPage.locator('#debug-assumption-limit').selectOption(limit);
+   assert.equal(await assumptionPage.locator('#debug-assumption-state').getAttribute('data-state'),expected);
+   assert.equal(await assumptionPage.locator('#debug-state').getAttribute('data-state'),original);
+   assert.equal(await assumptionPage.locator('#debug-worlds').innerText(),worlds);assert.equal(await assumptionPage.locator('#debug-artifacts').innerText(),artifacts);assert.equal(await assumptionPage.locator('#debug-roots').innerText(),roots);assert.equal(await assumptionPage.locator('#debug-control-state').innerText(),control);
+   assert.equal(await assumptionPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  }
+  async function saveAssumption(name){
+   const dl=assumptionPage.waitForEvent('download');await assumptionPage.locator('#debug-assumption-export').click();
+   const bundle=JSON.parse(fs.readFileSync(await (await dl).path(),'utf8'));fs.writeFileSync(path.join(output,name),JSON.stringify(bundle,null,2));return bundle.sensitivity;
+  }
+  await assumptionStep('start','SUPPORTED');
+  await testLimit('0/1','UNDERDETERMINED','SUPPORTED');const baselineSensitivity=await saveAssumption('assumption-baseline.json');assert.deepEqual(baselineSensitivity.minimumSampledChange,{halfUnits:1,limits:['1/2']});
+  await assumptionStep('withdraw','UNDERDETERMINED');await testLimit('2/1','SUPPORTED','UNDERDETERMINED');await saveAssumption('assumption-withdrawn.json');
+  await assumptionStep('restore','SUPPORTED');await assumptionStep('copies','SUPPORTED');await assumptionStep('disagree','CONFLICTED');
+  await testLimit('2/1','CONFLICTED','CONFLICTED');const conflictSensitivity=await saveAssumption('assumption-conflicted.json');assert.equal(conflictSensitivity.boundaries,null);assert.match(await assumptionPage.locator('#debug-assumption-boundaries').innerText(),/cannot resolve the evidence contradiction/);
+  await assumptionStep('withdraw','UNDERDETERMINED');await assumptionStep('plan-observe','REFUTED');await testLimit('2/1','SUPPORTED','REFUTED');
+  const resolvedSensitivity=await saveAssumption('assumption-resolved.json');assert.deepEqual(resolvedSensitivity.minimumSampledChange,{halfUnits:2,limits:['2/1']});
+  await assumptionPage.locator('.assumption-panel').scrollIntoViewIfNeeded();await assumptionPage.screenshot({path:path.join(output,'assumption-resolved.png'),fullPage:false});
+  await assumptionStep('start','SUPPORTED');assert.equal(await assumptionPage.locator('#debug-assumption-limit').inputValue(),'1/1');
+  assert.deepEqual(assumptionErrors,[]);assert.deepEqual(assumptionExternal,[]);await assumptionPage.close();
+  console.log('PASS: five exact target thresholds; original evidence, result and separate control remain unchanged; conflicting evidence survives rule change; four real sensitivity exports.');
   console.log('PASS: all eight world rows, exact blocker values, copy invariance, withdrawal deltas, fresh guide ceremony and five real world trace exports.');
   const desktopGuide=await browser.newPage({viewport:{width:1440,height:900}});await desktopGuide.goto(origin);await desktopGuide.locator('#debug-guide-next').click();
   await desktopGuide.waitForFunction(()=>document.querySelector('#debug-guide-next').dataset.action==='withdraw'&&!document.querySelector('#debug-guide-next').disabled);
