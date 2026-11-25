@@ -5,6 +5,8 @@ on:
       - 'deploy/sutra-pages/**'
       - 'services/sutra-api/**'
       - 'apps/sutra/**'
+      - 'apps/sutra-v2/**'
+      - 'packages/sutra-knowledge/support-lattice/**'
       - 'apps/sutra-peer/**'
       - '.github/workflows/sutra-cloudflare-ingress.yml'
   workflow_dispatch:
@@ -27,7 +29,9 @@ jobs:
       - name: Build independent static candidates
         run: |
           npm --prefix apps/sutra ci
-          npm --prefix apps/sutra run build
+          rustup target add wasm32-unknown-unknown
+          node apps/sutra-v2/build.mjs
+          node --test apps/sutra-v2/test/build-contract.test.mjs
           npm --prefix apps/sutra-peer run build
           node deploy/sutra-pages/prepare.mjs
           node deploy/sutra-pages/verify-build.mjs

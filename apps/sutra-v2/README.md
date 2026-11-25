@@ -5,12 +5,13 @@ Isolated from the legacy learner and all production routes. Reuse existing pinne
 ```sh
 npm ci --prefix apps/sutra
 rustup target add wasm32-unknown-unknown
-sh packages/sutra-knowledge/support-lattice/build-wasm.sh
-node apps/sutra/node_modules/vite/bin/vite.js build apps/sutra-v2
-node apps/sutra-v2/stage-lesson.mjs
+node apps/sutra-v2/build.mjs
+node --test apps/sutra-v2/test/build-contract.test.mjs
 node apps/sutra/node_modules/playwright/cli.js install chromium
 node apps/sutra-v2/test/browser.cjs
 ```
+
+`build.mjs` is the canonical V2 artifact build. It reuses the pinned V1 Vite toolchain, compiles the local Rust support module, builds `apps/sutra-v2/dist`, stages only explicit inherited fixture bytes plus static security headers, and refuses an artifact that does not identify as the V2 Knowledge Compiler. It does not deploy anything.
 
 The actual browser graph calculation and mutation are local, with no model or network. The optional scripted planning path exercises the unchanged pinned agent runtime with two local agents; the model can only select a host-approved method, not supply a verdict or code. Two calculations share the assumed beam formula; they differ in whether the section moment is declared or derived. This is not independent scientific corroboration. Export contains exact graph and receipt text, and browser replay is same-kernel. Separate Python reference consumer is tested in CI. No public deployment, physical-device or human accessibility acceptance claimed.
 

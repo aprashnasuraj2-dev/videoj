@@ -123,13 +123,12 @@ jobs:
           cache: npm
           cache-dependency-path: apps/sutra/package-lock.json
       - run: npm ci --prefix apps/sutra
-      - name: Build isolated Rust WebAssembly support engine
+      - name: Build canonical SUTRA v2 browser artifact
         run: |
           rustc --version
           rustup target add wasm32-unknown-unknown
-          sh packages/sutra-knowledge/support-lattice/build-wasm.sh
-      - run: node apps/sutra/node_modules/vite/bin/vite.js build apps/sutra-v2
-      - run: node apps/sutra-v2/stage-lesson.mjs
+          node apps/sutra-v2/build.mjs
+          node --test apps/sutra-v2/test/build-contract.test.mjs
       - run: node packages/sutra-runtime/verify-vendor.mjs
       - run: node apps/sutra/node_modules/playwright/cli.js install --with-deps chromium
       - run: node apps/sutra-v2/test/browser.cjs

@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
 import {securityHeaders} from '../../services/sutra-api/worker.js';
-const root=dirname(fileURLToPath(import.meta.url)),original=resolve(root,'../../apps/sutra/dist'),candidate=resolve(root,'dist'),guide=resolve(root,'../../apps/sutra-peer/dist');
+const root=dirname(fileURLToPath(import.meta.url)),original=resolve(root,'../../apps/sutra-v2/dist'),candidate=resolve(root,'dist'),guide=resolve(root,'../../apps/sutra-peer/dist');
 const read=(dir,name)=>readFile(resolve(dir,name));
 const digest=b=>createHash('sha256').update(b).digest('hex');
 async function inventory(dir){
@@ -13,6 +13,7 @@ async function inventory(dir){
  await walk(dir);return paths.sort();
 }
 const src=await inventory(original),dst=await inventory(candidate),peer=await inventory(guide);
+const index=(await read(original,'index.html')).toString();assert.match(index,/Investigative Learning/);assert.match(index,/KNOWLEDGE COMPILER/);
 assert.deepEqual(dst, [...src.filter(p=>p!=='_routes.json'),'_routes.json'].sort());
 for(const file of src.filter(p=>!['_headers','_routes.json'].includes(p)))assert.equal(digest(await read(original,file)),digest(await read(candidate,file)),file);
 const routes=JSON.parse(await read(candidate,'_routes.json'));

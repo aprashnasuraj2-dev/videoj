@@ -1,4 +1,4 @@
-name: Validate SUTRA release-candidate artifact gate
+name: Validate SUTRA legacy release-materializer compatibility gate
 on:
   pull_request:
     paths:
@@ -17,7 +17,9 @@ jobs:
         with:
           node-version: '22'
       - run: node --test tools/sutra-release-candidate/*.test.mjs
-      - name: Build development bundle required by candidate materializer
+      # Pre-V2 materializer contract: requires runtime/agent/reviewed-content artifacts
+      # that apps/sutra-v2 does not yet emit. Compatibility only; not canonical V2 entry.
+      - name: Build legacy compatibility bundle required by existing materializer
         working-directory: apps/sutra
         run: npm ci && npm run build
       - name: Incomplete release template must not materialize
