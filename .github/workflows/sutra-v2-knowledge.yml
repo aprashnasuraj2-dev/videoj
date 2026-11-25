@@ -21,6 +21,9 @@ jobs:
         run: |
           go version
           go test -count=1 -v packages/sutra-knowledge/checkpoint/main.go packages/sutra-knowledge/checkpoint/support_replay.go packages/sutra-knowledge/checkpoint/main_test.go
+      - name: Go scoped action protocol real TCP and race tests
+        run: |
+          go test -race -count=1 -v packages/sutra-knowledge/action-protocol/protocol.go packages/sutra-knowledge/action-protocol/transport.go packages/sutra-knowledge/action-protocol/protocol_test.go
       - name: Rust bounded support lattice and exhaustive reference controls
         run: |
           rustc --version
