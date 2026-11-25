@@ -3,14 +3,15 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-006",
+  "session": "V2-007",
   "next": [
-    "V2-F11",
-    "V2-F12",
+    "V2-F12c",
+    "V2-F11b",
+    "V2-F12d",
     "V2-F13",
     "V2-F04"
   ],
-  "state": "general_conflict_independently_reproduced_finite_fixture",
+  "state": "go_checkpoint_rust_support_browser_verified_pinned_wasm_go_replay_candidate_pending",
   "verified": [
     {
       "id": "V2-M01",
@@ -184,6 +185,24 @@
       "sourceRevision": "2b65fdc9ff904ae72d0dbad856b9e220a2472cc2",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45519232023/job/138886548233",
       "description": "Actual Chromium three exported states reconstructed independently against separately constructed frozen case; 18 tampered variants rejected; 33/33 Node tests including 37 synthetic table controls in two event orders. Node oracle: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45519232023/job/138886548678. Conditional replay; no external authority or history completeness proof."
+    },
+    {
+      "id": "V2-F11a",
+      "sourceRevision": "cd1e7c176ea9e9b94c75c8550f4e1d9caf1253a1",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520409787/job/138890521810",
+      "description": "Go Ed25519 signed actual 3→4→6 event prefixes; 4/4 Go contract groups incl portable external-anchor consumer; ephemeral witness only."
+    },
+    {
+      "id": "V2-F12a",
+      "sourceRevision": "cd1e7c176ea9e9b94c75c8550f4e1d9caf1253a1",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520409787/job/138890521476",
+      "description": "Rust 5/5 core tests (13,824 exhaustive synthetic tables), 6/6 ABI suite including 5 repeated core tests; bounded support families and completeness."
+    },
+    {
+      "id": "V2-F12b",
+      "sourceRevision": "cd1e7c176ea9e9b94c75c8550f4e1d9caf1253a1",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520409787/job/138890521810",
+      "description": "Actual Chromium compiled Rust WASM support analysis, alternative conflicts, copied-source withdrawal, fresh refuting support and missing module refusal; artifact 14978264100."
     }
   ],
   "release": "not_authorized",
@@ -193,7 +212,7 @@
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517668625/job/138881199452",
     "reason": "General evidence session set event parser maxChars=524288 above shared parser cap 262144. Corrected in next candidate."
   },
-  "lastVerifiedKernelSource": "2b65fdc9ff904ae72d0dbad856b9e220a2472cc2",
+  "lastVerifiedKernelSource": "cd1e7c176ea9e9b94c75c8550f4e1d9caf1253a1",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -201,5 +220,15 @@
     "reason": "new kernel area unmapped in old fail-closed impact classification; CI pipeline exit-code propagation tightened",
     "resolutionRevision": "6a862dd5d349538d6bcc32335a810fbe08cbfd33",
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
+  },
+  "pendingCandidate": {
+    "sourceRevision": "c74159da100748092c27d9ef9bcca96c281a65f8",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520762227",
+    "checks": [
+      "build-pinned WASM digest rejection",
+      "independent Go support export replay and matching history",
+      "24 support report mutations"
+    ],
+    "status": "pending_exact_ci"
   }
 }
