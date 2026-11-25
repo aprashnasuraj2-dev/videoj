@@ -280,9 +280,14 @@
               "sourceRevision": "1951512e9f9a9d566d723803d4fb42709888e8e3",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306/job/138912849718",
               "description": "Exact Go race gate passed authenticated caller signatures, atomic shared action+contact snapshot, lost-reply recovery across reopen, stale caller pin reconciliation, per-caller 2/global 3 durable accounting, live-budget rolled-cursor conflict, immutable copied caller identities, response tamper refusal, concurrent CAS one-effect serialization, actual separate authority server processes, corruption/failpoint poisoning, and preserved cloned-authority plus older-valid-snapshot rollback counterexamples. Independent Python accepted the actual four-event Go trace and mapped commit/status/budget behavior to bounded AnchoredRecovery transitions; original and anchored TLC safety/fairness/negative gates remained successful."
+            },
+            {
+              "sourceRevision": "322e05892ecfd5d7a67af7149b085ce19a873e8a",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527762530/job/138915235534",
+              "description": "Exact Go race gate passed a separately keyed/signed durable AuthorityWitness: authority-only rollback and stale witness views were rejected, forged authority transitions refused, and an actual separate witness server process advanced one authority-signed CAS then rejected the stale repeat. Permanent negative control restored both older valid authority and witness snapshots; the mutually consistent old pair reopened, proving coordinated dual-domain rollback remains possible and this is not consensus."
             }
           ],
-          "knownLimitations": "Caller-journal rollback is bounded by the external authority, but rollback of the authority itself remains demonstrably open: replacing authority.bin with an older genuinely signed snapshot resets history and contact counts, and cloning signer+snapshot can fork. An independently retained monotonic head/key trust domain and separate compensation approval remain mandatory."
+          "knownLimitations": "A separately protected witness detects rollback of the authority store alone, but a privileged attacker able to restore both independently signed stores can recreate an old consistent pair. No public transparency log, quorum, trusted time, independently operated third party, key rotation/distribution protocol or separately authorized compensation exists yet."
         }
       ]
     },
@@ -2062,8 +2067,13 @@
       "historicalChecked": false,
       "objective": "Durable atomic witness head and anti-equivocation: concurrent callers must not obtain acknowledged divergent checkpoints; specify compare-and-set protocol in TLA+, include unsafe mutation counterexample, crash/restart and signer isolation; model checking is not implementation refinement. Dependency: reviewed persistent store and independent key distribution.",
       "phase": "06",
-      "status": "Researching",
-      "evidence": null,
+      "status": "Implementation in progress",
+      "evidence": {
+        "id": "V2-F11b",
+        "sourceRevision": "322e05892ecfd5d7a67af7149b085ce19a873e8a",
+        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527762530/job/138915235534",
+        "description": "Exact Go race gate passed a separately keyed/signed durable AuthorityWitness: authority-only rollback and stale witness views were rejected, forged authority transitions refused, and an actual separate witness server process advanced one authority-signed CAS then rejected the stale repeat. Permanent negative control restored both older valid authority and witness snapshots; the mutually consistent old pair reopened, proving coordinated dual-domain rollback remains possible and this is not consensus."
+      },
       "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
       "dependencies": [
         "V2-P05-ROLLBACK",
@@ -2076,7 +2086,7 @@
       "positiveTests": "Atomically advance witness head under concurrent callers",
       "adversarialTests": "Cloned signer, crash and conflicting CAS",
       "verificationMethod": "TLC and implementation concurrency tests",
-      "knownLimitations": "Durable independent CAS not implemented"
+      "knownLimitations": "Independent single-witness CAS is implemented and process-tested, but coordinated rollback of authority+witness remains possible; the witness protocol is not yet modeled as a distinct TLA machine, no independent key distribution/operation or quorum exists, and implementation refinement is partial."
     },
     {
       "id": "V2-F12a",
@@ -2295,6 +2305,6 @@
     "duplicateIds": 0,
     "missingDependencies": 0,
     "dependencyCycles": 0,
-    "method": "Parsed exact remote roadmap and traversed all 90 recorded dependency nodes in V2-011; historical dependency links are current engineering judgments, not retroactive proof."
+    "method": "Parsed exact remote roadmap and traversed all 90 recorded dependency nodes in V2-011 after the independent witness candidate; historical dependency links are current engineering judgments, not retroactive proof."
   }
 }
