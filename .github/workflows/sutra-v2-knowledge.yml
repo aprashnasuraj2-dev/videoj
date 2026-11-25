@@ -1,0 +1,26 @@
+name: Validate SUTRA v2 knowledge kernel
+on:
+  push:
+    branches: ['sutra/v2-knowledge-compiler']
+    paths: ['packages/sutra-knowledge/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
+  pull_request:
+    branches: ['main', 'sutra/caller-peer-failure-boundary']
+    paths: ['packages/sutra-knowledge/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
+permissions:
+  contents: read
+jobs:
+  knowledge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node --test packages/sutra-knowledge/test/*.test.mjs
+      - name: Execute and assert capability demonstration
+        run: node packages/sutra-knowledge/examples/observatory.mjs | tee sutra-v2-observation.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sutra-v2-observation
+          path: sutra-v2-observation.json

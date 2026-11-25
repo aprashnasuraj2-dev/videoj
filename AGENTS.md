@@ -25,11 +25,10 @@ This repository contains two independent Video.js v10 projects.
 - Use meaningful commits and keep artifacts/release evidence tied to exact source revisions. Do not claim tests ran when they did not.
 - Use the repository's GitHub Actions verification and ordinary pull-request review for maintenance; avoid generating administrative task trackers as a substitute for product work.
 
-## SUTRA continuation and execution
+## SUTRA continuation and execution (v2 branch)
 
-- SUTRA is an explicitly requested new project plan in `docs/sutra/`; its live checklist applies when the user requests SUTRA work. The historical-planning note above applies to older player planning, not this active SUTRA plan.
-- Treat **“continue with sutra”** case-insensitively as a request to resume the established project: read `docs/sutra/README.md`, `CONTINUE.md`, `progress.json`, `PROGRESS.md`, the latest session/decisions and relevant detailed checklist. Inspect actual source/CI/release state before trusting old status.
-- Execute the next dependency-ready incomplete work; do not stop at a status recap or ask for renewed permission for already authorized reversible work. Record narrow participant-input blockers and continue independent engineering.
-- After each SUTRA session, update task checkboxes and evidence, machine cursor, readable handoff and append-only session log; record scope changes and new discoveries. Run `node docs/sutra/tools/progress.mjs check` when available and persist the checkpoint in the repo.
-- Keep SUTRA isolated from existing player deployments. Reuse only an explicitly reviewed player boundary. Follow applicable release/PR conventions; source commits, staging, public deployment, ZIP delivery and official submission are different outcomes.
-- Never count planned work, generated documentation, mock outputs, stale evidence, same-owner demo origins or unrun checks as completed implementation or independent adoption. Do not create background jobs or contact other people merely because the user says continue.
+- Active SUTRA 2.0 direction is in `docs/sutra-v2/`: open knowledge compiler and self-verifying agentic web. The historical `docs/sutra/` v1 register remains intact as source evidence, not the current product roadmap.
+- Treat “continue sutra” or “continue with sutra” as continuation of v2: read README, PLAN, MIGRATION, CHECKLIST, progress.json and SESSIONS; resolve exact branch and CI; execute the next dependency-ready engineering work. Do not resume v1 learner tasks unless explicitly required by an adapter.
+- Develop testable capability contracts and adversarial counterexamples as work proceeds. Separate LLM proposals from deterministic verification authority. Never count planned work, stale CI, mocked peer execution, synthetic content, same-owner origins, or unrun checks as genuine independent adoption or public verification.
+- Use isolated development branches; preserve DHAGO/DETOUR and old SUTRA work. No merge, release, paid inference, production/DNS change, or competition submission merely because work continues. Actual HTTPS deployed-site testing is a mandatory later gate after applicable authorization.
+- Update the v2 checklist, session evidence, and machine cursor with exact revision and observed results. Preserve prior failures. Do not create background jobs from the continuation phrase.
