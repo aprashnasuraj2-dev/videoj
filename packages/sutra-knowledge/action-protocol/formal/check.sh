@@ -154,3 +154,23 @@ for entry in 'Replay NoStaleDispatch' 'NoCheck DispatchWasFresh' 'Coordinated Wi
  grep -F "Invariant $2 is violated" "$WORK/grant-policy-$1.log"
 done
 python3 grant_policy_model.py
+
+
+# Returning-client exact policy ancestry. A numeric high-water alone is not a
+# history proof: alternate 2-prime/3-prime branches must not cross effect admission.
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/client-ancestry-safe" -config ClientPolicyAncestrySafe.cfg ClientPolicyAncestry.tla > "$WORK/client-ancestry-safe.log" 2>&1 || { cat "$WORK/client-ancestry-safe.log"; exit 1; }
+cat "$WORK/client-ancestry-safe.log"
+grep -F 'No error has been found' "$WORK/client-ancestry-safe.log"
+if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/client-ancestry-numeric" -config ClientPolicyAncestryNumeric.cfg ClientPolicyAncestry.tla > "$WORK/client-ancestry-numeric.log" 2>&1; then
+ cat "$WORK/client-ancestry-numeric.log"; echo "numeric-only client ancestry mutant unexpectedly succeeded" >&2; exit 1
+fi
+cat "$WORK/client-ancestry-numeric.log"
+grep -F 'Invariant NoUnpinnedEffect is violated' "$WORK/client-ancestry-numeric.log"
+# Permanent trust-root counterexample: a new client provisioned after coordinated
+# rollback can legitimately pin the rolled pair because it never observed newer history.
+if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/client-ancestry-provision" -config ClientPolicyAncestryProvision.cfg ClientPolicyAncestry.tla > "$WORK/client-ancestry-provision.log" 2>&1; then
+ cat "$WORK/client-ancestry-provision.log"; echo "fresh-provisioning rollback counterexample unexpectedly absent" >&2; exit 1
+fi
+cat "$WORK/client-ancestry-provision.log"
+grep -F 'Invariant NoEffectBelowExternalMax is violated' "$WORK/client-ancestry-provision.log"
+python3 client_policy_ancestry.py

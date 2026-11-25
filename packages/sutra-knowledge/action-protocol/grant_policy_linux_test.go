@@ -525,3 +525,128 @@ func TestGrantPolicyInvalidGrantRejectedBeforeWitnessContact(t *testing.T) {
 	}
 	t.Log("invalid signature and class substitution are rejected before any fresh policy-witness request")
 }
+
+
+func TestGrantPolicyMembershipAttestsExactHistoryPosition(t *testing.T) {
+	f := newGrantPolicyFixture(t)
+	request := approve(t, 0, f.ctx, f.approverKey)
+	grant, e := IssueActionGrant(request, GrantPrimary, 10, 20, f.consentKey)
+	if e != nil {
+		t.Fatal(e)
+	}
+	genesis, e := f.book.PolicyHead()
+	if e != nil {
+		t.Fatal(e)
+	}
+	if e = f.coordinator.AdvanceEpoch(10, 11); e != nil {
+		t.Fatal(e)
+	}
+	seq1, e := f.book.PolicyHead()
+	if e != nil {
+		t.Fatal(e)
+	}
+	if e = f.coordinator.Revoke(grant, request); e != nil {
+		t.Fatal(e)
+	}
+	seq2, e := f.book.PolicyHead()
+	if e != nil {
+		t.Fatal(e)
+	}
+	challenge := Digest{81}
+	for _, tc := range []struct {
+		sequence uint32
+		head     Digest
+	}{
+		{0, genesis},
+		{1, seq1},
+		{2, seq2},
+	} {
+		attestation, e := f.client.AttestMembershipChallenge(challenge, tc.sequence, tc.head)
+		if e != nil || attestation.RequestedSequence != tc.sequence || attestation.RequestedHead != tc.head ||
+			attestation.View.Sequence != 2 || attestation.View.Head != seq2 {
+			t.Fatal("membership", tc.sequence, e, attestation)
+		}
+		if !VerifyGrantPolicyMembershipAttestation(attestation, challenge, tc.sequence, tc.head, f.ctx,
+			f.bookKey.Public().(ed25519.PublicKey), f.client.witness, genesis) {
+			t.Fatal("membership signature", tc.sequence)
+		}
+	}
+	wrong := seq1
+	wrong[0] ^= 1
+	if _, e = f.client.AttestMembershipChallenge(challenge, 1, wrong); !errors.Is(e, ErrGrantPolicyRollback) {
+		t.Fatal("wrong head at real sequence accepted", e)
+	}
+	if _, e = f.client.AttestMembershipChallenge(challenge, 3, seq2); !errors.Is(e, ErrGrantPolicyRollback) {
+		t.Fatal("future sequence accepted", e)
+	}
+	t.Log("policy witness proves exact historical head at exact sequence while returning a fresh current view")
+}
+
+func TestGrantPolicyMembershipRejectsAlternateBranchAtSameSequence(t *testing.T) {
+	var current atomic.Pointer[GrantPolicyWitness]
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { current.Load().ServeHTTP(w, r) }))
+	defer srv.Close()
+	ctx, approver, _, _, _, _, _ := authorityFixture(t, srv.URL)
+	consentPub, _ := keys(11)
+	_, bookKey := keys(12)
+	policyPub, policyKey := grantPolicyKeys()
+	bookDir, witnessDir := privateTemp(t), privateTemp(t)
+	book, e := CreateGrantBook(bookDir, ctx, consentPub, approver, bookKey, 10)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer book.Close()
+	genesis, _ := book.PolicyHead()
+	witness, e := CreateGrantPolicyWitness(witnessDir, ctx, bookKey.Public().(ed25519.PublicKey), policyKey, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer witness.Close()
+	current.Store(witness)
+	client, _ := NewGrantPolicyClient(srv.URL, ctx, bookKey.Public().(ed25519.PublicKey), policyPub, genesis)
+	coordinator, _ := NewGrantPolicyCoordinator(book, client)
+	if e = coordinator.AdvanceEpoch(10, 11); e != nil {
+		t.Fatal(e)
+	}
+	canonical, _ := book.PolicyHead()
+	bookSeq1, _ := os.ReadFile(filepath.Join(bookDir, "grantbook.bin"))
+	witnessSeq1, _ := os.ReadFile(filepath.Join(witnessDir, "grant-policy.bin"))
+	if e = coordinator.AdvanceEpoch(11, 12); e != nil {
+		t.Fatal(e)
+	}
+	canonicalSeq2, _ := book.PolicyHead()
+	book.Close()
+	witness.Close()
+	if e = os.WriteFile(filepath.Join(bookDir, "grantbook.bin"), bookSeq1, 0600); e != nil {
+		t.Fatal(e)
+	}
+	if e = os.WriteFile(filepath.Join(witnessDir, "grant-policy.bin"), witnessSeq1, 0600); e != nil {
+		t.Fatal(e)
+	}
+	book, e = OpenGrantBook(bookDir, ctx, consentPub, approver, bookKey)
+	if e != nil {
+		t.Fatal(e)
+	}
+	witness, e = OpenGrantPolicyWitness(witnessDir, ctx, bookKey.Public().(ed25519.PublicKey), policyKey, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	current.Store(witness)
+	client, _ = NewGrantPolicyClient(srv.URL, ctx, bookKey.Public().(ed25519.PublicKey), policyPub, genesis)
+	coordinator, _ = NewGrantPolicyCoordinator(book, client)
+	if e = coordinator.AdvanceEpoch(11, 13); e != nil {
+		t.Fatal(e)
+	}
+	alternateSeq2, _ := book.PolicyHead()
+	if alternateSeq2 == canonicalSeq2 || canonical == (Digest{}) {
+		t.Fatal("alternate branch setup did not diverge")
+	}
+	if _, e = client.AttestMembershipChallenge(Digest{82}, 2, canonicalSeq2); !errors.Is(e, ErrGrantPolicyRollback) {
+		t.Fatal("canonical seq2 found in alternate branch", e)
+	}
+	attestation, e := client.AttestMembershipChallenge(Digest{83}, 1, canonical)
+	if e != nil || attestation.View.Head != alternateSeq2 {
+		t.Fatal("shared ancestor missing from alternate branch", e)
+	}
+	t.Log("same numeric sequence is not ancestry: alternate seq2 rejects canonical seq2 while shared seq1 remains provable")
+}
