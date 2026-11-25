@@ -72,7 +72,7 @@ grep -F 'Temporal property PreparedEventuallySettles was violated' "$WORK/witnes
 java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/grant-safe" -config GrantSafe.cfg GrantLifecycle.tla > "$WORK/grant-safe.log" 2>&1 || { cat "$WORK/grant-safe.log"; exit 1; }
 cat "$WORK/grant-safe.log"
 grep -F 'No error has been found' "$WORK/grant-safe.log"
-for entry in 'Revoked DispatchAuthorized' 'Expired DispatchAuthorized' 'Reconcile ReconcileRequiresAdmission' 'Race DispatchAuthorized' 'Duplicate AtMostOneEffect'; do
+for entry in 'Revoked DispatchAuthorized' 'Expired DispatchAuthorized' 'Reconcile ReconcileRequiresAdmission' 'Race DispatchAuthorized' 'EpochRace DispatchAuthorized' 'Duplicate AtMostOneEffect'; do
  set -- $entry
  if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/grant-$1" -config "Grant$1.cfg" GrantLifecycle.tla > "$WORK/grant-$1.log" 2>&1; then
   cat "$WORK/grant-$1.log"; echo "grant lifecycle mutant $1 unexpectedly succeeded" >&2; exit 1
