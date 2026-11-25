@@ -261,23 +261,26 @@ type WitnessedAuthorityClient struct {
  genesis Digest
  action Request
  head Digest
+ sequence uint32
  http *http.Client
  contacts int
 }
-func NewWitnessedAuthorityClient(origin string,caller byte,key ed25519.PrivateKey,authority,witness ed25519.PublicKey,ctx,genesis Digest,action Request,head Digest)(*WitnessedAuthorityClient,error){
+func NewWitnessedAuthorityClient(origin string,caller byte,key ed25519.PrivateKey,authority,witness ed25519.PublicKey,ctx,genesis Digest,pin WitnessView,action Request)(*WitnessedAuthorityClient,error){
  u,e:=url.Parse(origin)
  if e!=nil||u.Scheme!="http"||u.User!=nil||u.Path!=""||u.RawQuery!=""||u.Fragment!=""||u.Opaque!=""||u.Port()==""||u.Host==""{return nil,ErrPolicy}
  ip:=net.ParseIP(u.Hostname())
  if ip==nil||!ip.IsLoopback()||origin!="http://"+u.Host||caller>=authorityCallers||len(key)!=ed25519.PrivateKeySize||
-  len(authority)!=ed25519.PublicKeySize||len(witness)!=ed25519.PublicKeySize||ctx==(Digest{})||genesis==(Digest{})||action.Key==(Key{})||head==(Digest{}){return nil,ErrPolicy}
+  len(authority)!=ed25519.PublicKeySize||len(witness)!=ed25519.PublicKeySize||ctx==(Digest{})||genesis==(Digest{})||action.Key==(Key{})||
+  !VerifyWitnessViewPinned(pin,ctx,authority,witness,genesis){return nil,ErrPolicy}
  tr:=&http.Transport{Proxy:nil,DialContext:(&net.Dialer{Timeout:time.Second}).DialContext,DisableKeepAlives:true}
  h:=&http.Client{Transport:tr,Timeout:2*time.Second,CheckRedirect:func(*http.Request,[]*http.Request)error{return http.ErrUseLastResponse}}
  return &WitnessedAuthorityClient{
   origin:origin,caller:caller,key:append(ed25519.PrivateKey(nil),key...),authority:append(ed25519.PublicKey(nil),authority...),
-  witness:append(ed25519.PublicKey(nil),witness...),ctx:ctx,genesis:genesis,action:action,head:head,http:h,
+  witness:append(ed25519.PublicKey(nil),witness...),ctx:ctx,genesis:genesis,action:action,head:pin.Head,sequence:pin.Sequence,http:h,
  },nil
 }
 func (c *WitnessedAuthorityClient) Head()Digest{c.mu.Lock();defer c.mu.Unlock();return c.head}
+func (c *WitnessedAuthorityClient) Sequence()uint32{c.mu.Lock();defer c.mu.Unlock();return c.sequence}
 func (c *WitnessedAuthorityClient) Contacts()int{c.mu.Lock();defer c.mu.Unlock();return c.contacts}
 func (c *WitnessedAuthorityClient) exchange(op byte)(Receipt,WitnessedResponse,error){
  req,e:=SignAuthorityRequest(c.caller,op,c.head,c.action,c.key);if e!=nil{return Receipt{},WitnessedResponse{},e}
@@ -301,7 +304,12 @@ func (c *WitnessedAuthorityClient) exchange(op byte)(Receipt,WitnessedResponse,e
  raw,e:=io.ReadAll(io.LimitReader(res.Body,witnessedResponseSize+1));if e!=nil||len(raw)!=witnessedResponseSize{return Receipt{},WitnessedResponse{},ErrUnknown}
  response,e:=ParseWitnessedResponse(raw)
  if e!=nil||!VerifyWitnessedResponse(response,req,c.ctx,c.authority,c.witness,c.genesis){return Receipt{},WitnessedResponse{},ErrUnknown}
- c.head=response.Authority.After
+ if response.Authority.After==c.head{
+  if response.Witness.Sequence!=c.sequence{return Receipt{},WitnessedResponse{},ErrUnknown}
+ }else{
+  if response.Witness.Sequence!=c.sequence+1{return Receipt{},WitnessedResponse{},ErrUnknown}
+ }
+ c.head=response.Authority.After;c.sequence=response.Witness.Sequence
  switch response.Authority.Outcome{
  case AuthorityCommitted:return response.Authority.Receipt,response,nil
  case AuthorityAbsent:return Receipt{},response,ErrAbsent
