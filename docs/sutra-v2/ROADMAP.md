@@ -1251,3 +1251,8 @@ V2-124 `bd28a996424762c209d161a08f5609c14d23640d` and V2-125 `5d1d7f2e41368baabb
 ## V2-127 — Execute frozen atomic revision benchmark against matched fresh replay
 
 Pin V2-126 dataset Git blob d199bddb0bcc9023eb0c3cf77697e3cd3c278786; unchanged expectations. Runner exercises actual atomic transformation, exact parent/child replay, strong fresh session and provenance-bound session parity, explicit missing/reselected/retained bindings, changed semantic reference invalidation, independent source operation commutation, refusal and parent preservation. Compare stale carry-forward errors and selection counts to full reselection and source-local editing (latter equals SUTRA by construction). The 40 cases are two domain wrappers over 20 patterns; no independent annotations, real-world semantics, timing or superiority claim. CI runner and result artifact candidate; no additional verified credit yet.
+
+
+## V2-128 — Independent replay of the frozen revision corpus and CI configuration correction
+
+Fix the V2-127 workflow artifact path indentation defect found by remote readback (no passing V2-127 evidence claimed; workflow runs not returned at observation). Extend the unchanged frozen runner to emit actual separately pinned transaction bundles; independently reconstruct all 32 accepted cases with Python and compare to the precommitted expected states. Reject 64 repinned mutations (altered child identity and claimed status). Preserve eight JS refusal cases and original parent replay; Python positive-bundle tests do not independently classify those rejected transactions. Verified readback of the dataset Git blob by recomputation. CI pending; no independent annotation, benchmark completion or release authority.

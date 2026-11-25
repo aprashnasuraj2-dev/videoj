@@ -1,11 +1,11 @@
 // Frozen developer-authored revision benchmark. No external calls, human-time or independent labels.
 import assert from 'node:assert/strict';
-import {readFile} from 'node:fs/promises';
+import {readFile,writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {casePin} from '../pinned-investigation.js';
 import {selectedSpan} from '../reviewed-draft.js';
 import {livingFixture} from '../examples/living-investigation.mjs';
-import {prepareEvidenceRevision} from '../evidence-revision-transaction.js';
+import {prepareEvidenceRevision,exportEvidenceRevision} from '../evidence-revision-transaction.js';
 import {createInvestigationReplaySession,createFreshInvestigationReplaySession,replayInvestigationVersion} from '../investigation-revision.js';
 const expectedBlob='d199bddb0bcc9023eb0c3cf77697e3cd3c278786';
 const dataBytes=await readFile(new URL('./revision-development-v1.json',import.meta.url));
@@ -19,6 +19,7 @@ const contract=v=>JSON.parse(JSON.parse(v.versionText).contractText);
 const sorted=xs=>[...new Set(xs)].sort();
 const states=v=>candidateIds.map(id=>v.report.investigation.candidates.find(c=>c.id===id).computation?.status??'REFUSED');
 const comparable=x=>{const {recomputation,qualification,...rest}=x;return rest;};
+const bundles=[];
 const decisive=s=>s==='CONDITIONALLY_SATISFIED'||s==='CONDITIONALLY_REFUTED';
 async function operation(parent,o){
  const old=contract(parent).sources.find(s=>s.id===o.source),previousDigest=o.fault==='stale-pin'?'sha256:'+'0'.repeat(64):old.digest;
@@ -47,7 +48,10 @@ async function run(c){
   assert.deepEqual(await replayInvestigationVersion(parent.versionText,parent.digest),parent.report);
   return {id:c.id,expected:c.expected,kind:'refusal',exactMatch:true};
  }
- const x=await prepare(parent,operations),actual=states(x.child),changed=new Set(c.operations.map(o=>o.source));
+ const planText=JSON.stringify({version:1,parentDigest:parent.digest,operations}),planPin=await casePin(planText);
+ const portable=await exportEvidenceRevision(parent.versionText,parent.digest,planText,planPin);
+ assert.equal(portable.portable,true);assert.equal(portable.snapshotPin,await casePin(portable.bundleText));
+ const x=portable.revision,actual=states(x.child),changed=new Set(c.operations.map(o=>o.source));
  const invalidated=sorted(c.operations.flatMap(o=>ids[o.source]));
  const reselected=sorted(c.operations.flatMap(o=>(o.select??[]).map(s=>ids[o.source][s==='left'?0:1])));
  const missing=invalidated.filter(id=>!reselected.includes(id));
@@ -71,6 +75,7 @@ async function run(c){
   const reverse=await prepare(parent,[...operations].reverse());
   assert.equal(reverse.child.versionText,x.child.versionText);assert.deepEqual(reverse.impact,x.impact);
  }
+ bundles.push({id:c.id,bundleText:portable.bundleText,snapshotPin:portable.snapshotPin,parentDigest:parent.digest,planDigest:planPin});
  const total=next.bindings.length;
  const counts=r.stats.totals;
  return {id:c.id,kind:'accepted',exactMatch:true,expected:c.expected,actual,staleCarryForwardWrong:actual.filter((s,i)=>s!==before[i]).length,staleUnsupportedDecisive:actual.filter((s,i)=>!decisive(s)&&decisive(before[i])).length,
@@ -82,4 +87,5 @@ const valid=rows.filter(r=>r.kind==='accepted'),sum=k=>valid.reduce((a,r)=>a+r[k
 const report={dataset:spec.dataset,split:spec.split,frozenGitBlob:blob,frozenSha256:createHash('sha256').update(dataBytes).digest('hex'),cases:rows.length,exactCasesCorrect:rows.filter(r=>r.exactMatch).length,accepted:valid.length,refused:rows.filter(r=>r.kind==='refusal').length,
  staleCarryForwardWrong:sum('staleCarryForwardWrong'),staleUnsupportedDecisive:sum('staleUnsupportedDecisive'),fullReselection:sum('fullReselection'),sourceLocalReselection:sum('sourceLocalReselection'),sutraReselection:sum('sutraReselection'),arithmeticExecuted:sum('arithmeticExecuted'),arithmeticReused:sum('arithmeticReused'),arithmeticRemoved:sum('arithmeticRemoved'),commutationCases:valid.filter(r=>r.commutationChecked).length,rows,
  qualification:'Two synthetic domain wrappers over the same 20 transaction patterns, not 40 independently diverse scenarios. Full reselection is a deliberately weak baseline. Conventional source-local editing matches selection counts by construction; fresh replay uses the same exact child bytes and is not an independent transformation. Stale carry-forward is an unsafe ablation. No measured human time, semantic correctness, independent annotation, external truth or system speedup.'};
+if(process.argv[2])await writeFile(process.argv[2],JSON.stringify(bundles)+'\n');
 console.log(JSON.stringify(report,null,2));if(report.exactCasesCorrect!==40)process.exitCode=1;
