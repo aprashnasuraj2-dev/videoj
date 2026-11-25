@@ -5,6 +5,8 @@ import (
  "crypto/ed25519"
  "encoding/json"
  "strings"
+ "os"
+ "path/filepath"
  "testing"
 )
 
@@ -82,4 +84,34 @@ func TestGenesisAuthorityAndExactEventBytes(t *testing.T){
  c,e:=genesis(fixture(first),a,key);if e!=nil{t.Fatal(e)};a.Latest=c.ID()
  if _,e=genesis(fixture(first),a,key);e==nil{t.Fatal("second genesis accepted")}
  if _,e=advance(fixture(first),fixture("{ \"type\":\"read\",\"id\":\"one\"}",second),c,a,key);e==nil{t.Fatal("rewritten event bytes accepted")}
+}
+
+func TestPortableConsumer(t *testing.T){
+ dir:=t.TempDir()
+ write:=func(name string,b []byte)string{p:=filepath.Join(dir,name);if e:=os.WriteFile(p,b,0600);e!=nil{t.Fatal(e)};return p}
+ casePath:=write("case.json",[]byte("{\"scope\":\"test\"}"))
+ p1:=write("one.json",fixture(first))
+ p2:=write("two.json",fixture(first,second))
+ var report bytes.Buffer
+ if e:=run([]string{casePath,p1,p2},&report);e!=nil{t.Fatal(e)}
+ var m map[string]any
+ if e:=json.Unmarshal(report.Bytes(),&m);e!=nil{t.Fatal(e)}
+ pub,latest,session:=m["PublicKey"].(string),m["Latest"].(string),m["Session"].(string)
+ path:=write("receipts.json",report.Bytes())
+ args:=[]string{casePath,session,pub,latest,path,p2}
+ var output bytes.Buffer
+ if e:=verifyFile(args,&output);e!=nil{t.Fatal(e)}
+ if !strings.HasPrefix(output.String(),"ACCEPTED"){t.Fatal(output.String())}
+ for i,v:=range map[int]string{0:write("wrongcase.json",[]byte("{}")),1:"wrong_session",2:strings.Repeat("00",32),3:strings.Repeat("00",32),5:p1}{
+  bad:=append([]string{},args...);bad[i]=v
+  if e:=verifyFile(bad,&output);e==nil{t.Fatal("external anchor substitution accepted",i)}
+ }
+ for _,badReport:=range [][]byte{
+  []byte(strings.Replace(report.String(),"\"Sequence\":0","\"Sequence\":null",1)),
+  []byte(strings.Replace(report.String(),"\"Sequence\":0","\"sequence\":0",1)),
+  []byte(strings.Replace(report.String(),"\"Count\":1","\"Count\":2",1)),
+ }{
+  bad:=append([]string{},args...);bad[4]=write("bad.json",badReport)
+  if e:=verifyFile(bad,&output);e==nil{t.Fatal("malformed receipt accepted")}
+ }
 }
