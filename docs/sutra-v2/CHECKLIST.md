@@ -460,3 +460,10 @@ V2-040 exact source 1f5173a79d60ca6576b5939600fc0a1f667c8044 passed all nine wor
 ## V2-043 — reviewed compiler browser and reference replay
 
 - [ ] V2-D21: V2-043 candidate: browser host-reviewed compiler with fixed normalized finance contract, visible exact byte spans/quantity types, editable untrusted proposal, missing input challenge, stale export invalidation and invented numeric leaf refusal. Independent generic Python reference uses Fraction, UTF-8 spans, repeated ready-set scan and separate source contract reconstruction to replay actual browser exports and challenge 13 mutations per state. Unicode category implementation parity is scoped, not universal. No live model, automatic source extraction, semantic entailment, formula validity or source truth. Exact CI pending.
+
+
+## V2-044 — reviewed multi-proposal contrast candidate
+
+V2-041 exact source 550770a0e6710cc58f11e22cd5a5c3f37ac711fe passed all nine workflows (knowledge PR 45591788405, push 45591776663; auxiliary 45591789338,45591788389,45591788399,45591788521,45591788456,45591788370,45591788699). Both browser jobs 139127534008 and 139127574414 passed independent trial replay and standalone snapshot parity. Promote scoped v2 research profile only; V2-042/043 compiler CI not yet complete when observed.
+
+- [ ] V2-D22: V2-044 candidate adds bounded multi-proposal contrast under one independently pinned reviewed contract. Replays every proposal; malformed agent proposals are refused individually while invalid host contract fails whole batch. Memoized exact expression digests ignore node renaming but preserve operator/operand order, typed binding identities and proposal-specific unknowns; flag same-operand comparisons, exact clones and distinct structures, separate conditional state agreement from semantic contradiction, expose shared source/binding/digest/declared-lineage sets. No majority-vote truth, algebraic equivalence, independent evidence or automatic adoption. Four test groups authored including 5 agreeing clones and a malformed proposal. Browser/independent contrast replay not yet implemented; exact CI pending.

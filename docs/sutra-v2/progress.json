@@ -3,10 +3,10 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-043",
+  "session": "V2-044",
   "next": [
-    "V2-D20-RESEARCH-PARTITION",
     "V2-D21-REVIEWED-COMPILER",
+    "V2-D22-REVIEWED-PROPOSAL-CONTRAST",
     "V2-P07-WASM",
     "V2-RUNTIME-02",
     "V2-P05-RECOVERY",
@@ -20,7 +20,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "reviewed_compiler_browser_reference_candidate_pending_exact_ci",
+  "state": "reviewed_proposal_contrast_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -351,7 +351,7 @@
     "resolutionRevision": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579569479/job/139085895592"
   },
-  "lastVerifiedKernelSource": "1f5173a79d60ca6576b5939600fc0a1f667c8044",
+  "lastVerifiedKernelSource": "550770a0e6710cc58f11e22cd5a5c3f37ac711fe",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -362,20 +362,20 @@
   },
   "pendingCandidate": {
     "sourceRevision": null,
+    "sourceParent": "77c0865310b35be0f25c3f6d23e5eac55373818b",
+    "status": "candidate_pending_exact_ci",
+    "identityRule": "Resolve immutable containing commit.",
+    "checks": [
+      "V2-044 candidate adds bounded multi-proposal contrast under one independently pinned reviewed contract. Replays every proposal; malformed agent proposals are refused individually while invalid host contract fails whole batch. Memoized exact expression digests ignore node renaming but preserve operator/operand order, typed binding identities and proposal-specific unknowns; flag same-operand comparisons, exact clones and distinct structures, separate conditional state agreement from semantic contradiction, expose shared source/binding/digest/declared-lineage sets. No majority-vote truth, algebraic equivalence, independent evidence or automatic adoption. Four test groups authored including 5 agreeing clones and a malformed proposal. Browser/independent contrast replay not yet implemented; exact CI pending."
+    ]
+  },
+  "previousPendingCandidate": {
+    "sourceRevision": "77c0865310b35be0f25c3f6d23e5eac55373818b",
     "sourceParent": "b3bfcf821c209d9d5de26728a69f27062e02bb7c",
     "status": "candidate_pending_exact_ci",
     "identityRule": "Resolve immutable containing commit.",
     "checks": [
       "V2-043 candidate: browser host-reviewed compiler with fixed normalized finance contract, visible exact byte spans/quantity types, editable untrusted proposal, missing input challenge, stale export invalidation and invented numeric leaf refusal. Independent generic Python reference uses Fraction, UTF-8 spans, repeated ready-set scan and separate source contract reconstruction to replay actual browser exports and challenge 13 mutations per state. Unicode category implementation parity is scoped, not universal. No live model, automatic source extraction, semantic entailment, formula validity or source truth. Exact CI pending."
-    ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": "b3bfcf821c209d9d5de26728a69f27062e02bb7c",
-    "sourceParent": "550770a0e6710cc58f11e22cd5a5c3f37ac711fe",
-    "status": "candidate_pending_exact_ci",
-    "identityRule": "Resolve immutable containing commit.",
-    "checks": [
-      "V2-042 candidate: reviewed claim compiler uses independently retained host contract pin, exact question/source byte pins and UTF-8 half-open spans, strict numeric lexeme admission and declared unit/kind/scope types. Untrusted model proposal can reference reviewed quantities, propose hypotheses or unknowns and bounded arithmetic/constraints; cannot invent numeric leaves, assert verification, execute code or promote source quotes. Exact kernel runs only dependency-ready compatible subgraphs; missing inputs and semantic type mismatches block target, partial results retained; target relevance and method validity explicitly unverified. Declared duplicate source bytes across roots visible. Finance fixture uses normalized historical amounts; no live model, no automatic document extraction, no independent compiler replay or browser integration yet. Node adversarial tests authored; exact CI pending."
     ]
   },
   "roadmap": "docs/sutra-v2/roadmap.json",

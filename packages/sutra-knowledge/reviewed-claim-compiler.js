@@ -157,3 +157,5 @@ export async function compileReviewedProposal(contractText,contractPin,proposalT
  return frozen({version:VERSION,contractDigest:contractPin,proposalDigest:await casePin(proposalText),question:p.question,claims:p.claims,bindings:[...h.bindings.values()].sort((a,b)=>sort(a.id,b.id)),nodes:rows,graphText,report,target:{id:p.targetId,status,missing:target.missing,typeBlockers:target.typeBlockers,sourceIds:uniq(used.map(b=>b.span.sourceId)),declaredLineages:uniq(used.map(b=>b.span.declaredLineage)),questionRelevance:'UNVERIFIED',methodValidity:'UNVERIFIED'},duplicateSourceBytes:h.duplicateSourceBytes,qualification:QUAL});
 }
 export async function exportReviewedProposal(contractText,contractPin,proposalText){return frozen({version:VERSION,contractText,proposalText,result:await compileReviewedProposal(contractText,contractPin,proposalText)});}
+
+export async function validateReviewedContract(contractText,contractPin){const h=await host(contractText,contractPin);return frozen({contractDigest:contractPin,bindingCount:h.bindings.size,duplicateSourceBytes:h.duplicateSourceBytes});}
