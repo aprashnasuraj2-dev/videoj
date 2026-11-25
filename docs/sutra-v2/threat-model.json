@@ -861,6 +861,22 @@
         {
           "path": "packages/sutra-knowledge/action-protocol/formal/UpstreamWitness.tla",
           "test": "CoordinatedRollback"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/upstream_witness_refinement_linux_test.go",
+          "test": "TestUpstreamWitnessCoordinatorRefinementTrace"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/refine_upstream_witness_trace.py",
+          "test": "receiver-only-rollback"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/refine_upstream_witness_trace_mutants.py",
+          "test": "rollback-erases-physical-effect"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/refine_upstream_witness_trace_mutants.py",
+          "test": "rollback-also-rewinds-witness"
         }
       ],
       "openGates": [

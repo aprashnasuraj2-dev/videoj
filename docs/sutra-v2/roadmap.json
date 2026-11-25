@@ -289,7 +289,7 @@
               "description": "Exact-green upstream terminal monotonic witness: receiver-only valid signed snapshot rollback is rejected relative to the independently retained witness; store-ahead/witness-behind restart recovers exactly one transition. Clone-before-CAS and coordinated receiver+witness rollback remain executable two-effect counterexamples."
             }
           ],
-          "knownLimitations": "A separately keyed upstream witness now detects rollback of the upstream receiver store alone and recovers one persisted-but-unwitnessed transition. It remains post-effect: identical cloned receivers can both effect before CAS and later share the same accepted head. Coordinated receiver+witness rollback recreates an old consistent pair. No quorum/transparency/trusted time or independently operated external service."
+          "knownLimitations": "Receiver-only upstream rollback is now both runtime-tested and concretely mapped to the bounded witness relation, preserving physicalEffects=1 while the store returns to version 0 and witness remains 1. Identical cloned receivers can still both effect before CAS; coordinated receiver+witness rollback remains a two-effect counterexample."
         }
       ]
     },
@@ -340,11 +340,11 @@
           "verificationMethod": "TLC, trace refinement and implementation race tests",
           "status": "Implementation in progress",
           "evidence": {
-            "sourceRevision": "e581a0a5cae0e942821af18b4e547cb65efa9763",
-            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45559702271/job/139020178838",
-            "description": "Exact-green concrete pinned consent/policy refinement: Go traces cover current and historical exact ancestry, revoked/expired refusal, alternate-head rejection, post-APPLIED revocation reconciliation and never-admitted recovery refusal. Independent mapper binds exact pin sequence/head and transition shape; expanded mutants reject epoch/window drift, sequence jumps, fake/lost ancestry, missing revoke transition and recovery policy mutation."
+            "sourceRevision": "dbba396c6cca16c324975c86ed9ad234b7a619d8",
+            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45561857316/job/139027200691",
+            "description": "Exact-green implementation refinement now covers the upstream witness wrapper: actual Go normal, store-ahead restart recovery and receiver-only rollback-refusal traces map to bounded UpstreamWitness transitions; 10 mutated traces are rejected, including physical-effect erasure and coordinated-witness rollback substitutions."
           },
-          "knownLimitations": "Concrete upstream-terminal and pinned-consent trace refinement remain exact-green. The new UpstreamWitness model has separate Go regression and formal/reference evidence but no actual Go-to-UpstreamWitness trace mapper yet; therefore it is not implementation refinement. Clone/coordinated rollback, physical storage and real-provider semantics remain outside the proof."
+          "knownLimitations": "Concrete trace witnesses now cover upstream terminal state, pinned consent/policy and upstream rollback-witness seams. This is not universal simulation/refinement: arbitrary scheduling, cryptography, filesystem/power-loss internals, identical clones, coordinated trust-root rollback and real-provider semantics remain outside the mapping."
         }
       ]
     },
@@ -2271,7 +2271,7 @@
       "positiveTests": "Durable effect/ledger and explicit retry policy",
       "adversarialTests": "Crash, concurrent keys, unknown outcome, revoked approval and global budgets",
       "verificationMethod": "Go process and network integration, TLA refinement",
-      "knownLimitations": "RUNTIME-02 remains open. The private synthetic path now has rollback detection relative to one independent witness, but post-effect witness CAS cannot prevent identical cloned upstream effects and coordinated receiver+witness rollback remains possible. No real provider adapter, external mount, compensation authorization, physical-power-loss certification or provider-global billing authority."
+      "knownLimitations": "Private transaction path has upstream terminal idempotency, exact consent/policy ancestry, monotonic receiver-only rollback detection and concrete witness trace refinement. Still open: explicit causal compensation authorization, identical-clone physical-effect fencing, coordinated rollback, physical power-loss certification, provider-global billing/spend and any real external-provider adapter."
     },
     {
       "id": "V2-RUNTIME-03",

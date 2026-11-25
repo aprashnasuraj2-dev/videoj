@@ -215,3 +215,16 @@ Exact source `6e0ff79354a10520a9c9a4f84a40584d75cfa460` passed knowledge push `4
 - [ ] **Bounded formal evidence:** UpstreamWitness safe TLC explored 11 generated / 5 distinct states with no error. Clone and coordinated-rollback mutants violate `AtMostOnePhysicalEffect`. Independent Python reports safe 5 states/10 edges, clone 7/11 and coordinated 8/16.
 - [ ] **V2-P06-REFINE remains open:** the new bounded witness model and Go regressions are separate evidence. A concrete Go-to-UpstreamWitness trace mapper is still required before calling this implementation refinement.
 - [ ] **Claim boundary:** no global freshness, clone-safe exactly-once, Byzantine consensus, physical power-loss guarantee, real-provider effect guarantee or provider billing guarantee is claimed.
+
+
+## V2-013 upstream-witness implementation refinement — dbba396c6cca
+
+Exact source `dbba396c6cca16c324975c86ed9ad234b7a619d8` passed knowledge push `45561849680`, knowledge PR `45561857316`, impact `45561857408`, Open Kit `45561857342`, publisher `45561857373`, engineering evaluation `45561857411` and browser compatibility `45561857347`. Push knowledge job `139027175386` and PR knowledge job `139027200691` both passed the Go race trace export, independent witness refinement/mutant gate and full bounded formal suite.
+
+- [ ] **V2-P06-REFINE / actual witnessed traces:** Go exports normal commit, receiver-store-ahead restart recovery and receiver-only rollback refusal with explicit terminal/store/witness/intent/physical-effect state.
+- [ ] **Physical effect survives rollback abstraction:** the receiver-only rollback trace moves the signed store from version 1 to 0 while witness version and physical-effect count remain 1. The checker rejects a mutation that incorrectly erases the outside-world effect with the file.
+- [ ] **Crash/restart mapping:** the store-ahead trace maps `Prepare -> ApplyStore -> Stutter(restart) -> RecoverStoreAhead(AdvanceWitness)`; restart cannot clear intent or physical effect.
+- [ ] **Rollback mapping:** the adversarial trace maps `Prepare -> ApplyStore -> AdvanceWitness -> RollbackStore -> Stutter(ErrWitnessRollback)`.
+- [ ] **Independent mutation controls:** 10 trace mutants are rejected: profile substitution, missing durable intent, missing physical effect, success without witness, restart effect loss, uncleared recovery intent, rollback effect erasure, coordinated witness rollback masquerading as receiver-only rollback, refused recovery mutating the store, and missing event.
+- [ ] **Refinement scope:** this is three concrete trace witnesses, not universal simulation. Identical clones, coordinated receiver+witness rollback, cryptographic implementation, filesystem/power-loss semantics and real-provider behavior remain outside the refinement proof.
+- [ ] **Next RUNTIME-02 authority gap:** compensation remains only a signed grant class; no explicit compensation operation currently binds a new compensating action to the exact prior APPLIED effect being offset. Separate compensation authorization/causal binding remains open.
