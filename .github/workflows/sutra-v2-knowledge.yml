@@ -283,6 +283,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/test_withdrawal_revision.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/living-withdraw-reference.txt
           cat apps/sutra-v2/test-output/living-withdraw-reference.txt
+      - name: Independently replay actual browser atomic evidence transaction and tampering
+        run: |
+          python3 packages/sutra-knowledge/reference/test_evidence_revision.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/living-transaction-reference.txt
+          cat apps/sutra-v2/test-output/living-transaction-reference.txt
       - name: Independently replay actual browser finite semantic world grid
         run: |
           python3 packages/sutra-knowledge/reference/test_world_grid.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/world-grid-reference.txt

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Independent synthetic atomic transaction parity and tamper controls."""
-import json,sys
+import json,sys,subprocess
+from pathlib import Path
 from copy import deepcopy
 from verify_conflict import rawhash,require
 from verify_evidence_revision import verify
@@ -31,6 +32,14 @@ def check(data,pin,parent,plan):
     for args in [(data+b' ',pin,parent,plan),(data,pin,'sha256:'+'0'*64,plan),(data,pin,parent,'sha256:'+'0'*64),(data,'sha256:'+'0'*64,parent,plan)]:require(verify(*args)['status']=='REFUSED')
     return r
 def main():
+    if len(sys.argv)==3:
+        root=Path(sys.argv[1]);archive=Path(sys.argv[2]).resolve();report=root/'living-transaction.json';data=report.read_bytes()
+        pin,parent,plan=((root/('living-transaction'+s+'.sha256')).read_text().strip() for s in ('','-parent','-plan'))
+        result=check(data,pin,parent,plan)
+        require({c['id']:c['after'] for c in result['result']['changes']}=={'operating_cash':'CONDITIONALLY_REFUTED','after_capital':'BLOCKED_MISSING_INPUT'})
+        proc=subprocess.run([sys.executable,'-I','-S',str(archive),str(report.resolve()),'--evidence-transaction','--pin',pin,'--version-pin',parent,'--plan-pin',plan],capture_output=True,text=True,check=True)
+        require(json.loads(proc.stdout)==result);print('Actual browser atomic revision independently replayed with standalone archive and repinned tamper controls.');return
+    require(len(sys.argv)==1)
     cases=json.load(sys.stdin);require(len(cases)==4);classes=set()
     for c in cases:
         r=check(c['bundleText'].encode('utf-8'),c['snapshotPin'],c['parentDigest'],c['planDigest'])

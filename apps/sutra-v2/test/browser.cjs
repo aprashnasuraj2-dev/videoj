@@ -1049,6 +1049,48 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    assert.equal(await p.locator('#review-semantic-export').isDisabled(),true);assert.equal(await p.locator('#review-source-withdraw-version-apply').isDisabled(),true);assert.equal(await p.locator('#review-source-withdraw-export').isDisabled(),true);
    assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await p.close();
   }
+  // Atomic correction and withdrawal through actual local review controls.
+  {
+   const p=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
+   p.on('pageerror',e=>errors.push(e.message));p.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());});
+   await p.goto(origin);await p.locator('#reviewed-workspace > summary').click();await p.locator('#review-sample-panel > summary').click();
+   const loc=id=>p.locator('#review-'+id),click=id=>loc(id).click(),state=s=>p.waitForFunction(x=>document.querySelector('#review-status').dataset.state===x&&!document.querySelector('#review-reset').disabled,s);
+   await click('sample-finance');await state('sample_ready');await click('semantic-run');await state('semantic_ready');
+   const parentPin=await loc('semantic-pin').innerText();await click('semantic-retain');await p.locator('#review-transaction-panel > summary').click();
+   await loc('transaction-source').selectOption('cash_report');await loc('transaction-kind').selectOption('replace');
+   const corrected='Earlier operating cash: 120; Current operating cash: 110; ';
+   await loc('transaction-text').fill(corrected);
+   async function select(binding,token){
+    await loc('transaction-binding').selectOption(binding);
+    await loc('transaction-text').evaluate((e,t)=>{const i=e.value.indexOf(t);e.focus();e.setSelectionRange(i,i+t.length);},token);
+    await click('transaction-rebind');await state('transaction_selection');
+   }
+   await select('ocf_before','120');await select('ocf_now','110');assert.match(await loc('transaction-selections').innerText(),/ocf_now → 110/);
+   await loc('transaction-text').fill(corrected+'revised note');assert.equal(await loc('transaction-selections').innerText(),'');
+   await loc('transaction-text').fill(corrected);await select('ocf_before','120');await select('ocf_now','110');await click('transaction-stage');await state('transaction_queued');
+   await loc('transaction-source').selectOption('investment_report');await loc('transaction-kind').selectOption('withdraw');await click('transaction-stage');await state('transaction_queued');
+   assert.match(await loc('transaction-queue').innerText(),/cash_report · replace · 2 reviewed replacement/);assert.match(await loc('transaction-queue').innerText(),/investment_report · withdraw/);
+   await click('transaction-preview');await state('transaction_preview');
+   assert.match(await loc('transaction-result').innerText(),/operating_cash · TARGET_INPUT_RESELECTED.*CONDITIONALLY_REFUTED/);
+   assert.match(await loc('transaction-result').innerText(),/after_capital · TARGET_INPUT_MISSING.*BLOCKED_MISSING_INPUT/);
+   assert.equal(await loc('semantic-pin').innerText(),parentPin);assert.equal(await loc('transaction-export').isDisabled(),true);
+   await loc('transaction-source').selectOption('cash_report');assert.equal(await loc('transaction-apply').isDisabled(),true);
+   await click('transaction-preview');await state('transaction_preview');const planPin=await loc('transaction-plan-pin').innerText();
+   await click('transaction-apply');await state('semantic_ready');
+   assert.match(await loc('staged').innerText(),/1 staged source.*2 reviewed binding/);
+   assert.match(await loc('impact-result').innerText(),/CONDITIONAL RESULT REVERSED/);
+   assert.match(await loc('impact-result').innerText(),/PREVIOUS CONDITIONAL RESULT UNRESOLVED/);
+   assert.notEqual(await loc('semantic-pin').innerText(),parentPin);
+   assert.match(await loc('transaction-disclosure').innerText(),/investment_report \(withdraw\)/);
+   const d=p.waitForEvent('download');await click('transaction-export');const bytes=fs.readFileSync(await (await d).path());
+   const reportPin=await loc('transaction-snapshot-pin').innerText();assert.equal(reportPin,'sha256:'+require('node:crypto').createHash('sha256').update(bytes).digest('hex'));
+   fs.writeFileSync(path.join(output,'living-transaction.json'),bytes);fs.writeFileSync(path.join(output,'living-transaction.sha256'),reportPin+'\n');
+   fs.writeFileSync(path.join(output,'living-transaction-parent.sha256'),parentPin+'\n');fs.writeFileSync(path.join(output,'living-transaction-plan.sha256'),planPin+'\n');
+   const report=JSON.parse(bytes);assert.equal(report.childDigest,await loc('semantic-pin').innerText());assert.equal(report.planDigest,planPin);
+   await click('baseline-restore');await state('restored');assert.match(await loc('staged').innerText(),/2 staged source.*4 reviewed binding/);
+   assert.equal(await loc('transaction-export').isDisabled(),true);assert.equal(await loc('transaction-apply').isDisabled(),true);
+   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await p.close();
+  }
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});

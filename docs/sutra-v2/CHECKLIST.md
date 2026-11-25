@@ -861,3 +861,8 @@ V2-113 and V2-114 exact nine returned PR workflows green (knowledge runs 4571658
 ## V2-116 — Independent atomic evidence transaction reconstruction
 
 V2-115 exact PR workflows at observation: 4/9 green. Separate Python verifier rebuilds full old/new contract and plan-authorized transformation, exact typed reselection, missing inputs, quote/facet removal, refused quarantine, candidate outcomes and substantive impact; three separate pins. Closed offline archive profile; four synthetic fixtures including Unicode byte offsets and all five impact classes; nested repinned formula and plan mutations refused by acceptance tests, CI pending. No browser intake yet. Independent reconstruction is conditional, not empirical or semantic authority.
+
+
+## V2-117 — Atomic source revision workspace
+
+V2-116 exact returned PR workflows at observation: 5/9 green. Actual browser controls queue distinct source operations, select explicit replacement tokens with retained declared type, discard selections on replacement edits, bind exact baseline/plan, preview all candidate consequences and confirm only the exact unchanged queue. Shared child adoption path with single withdrawal; stale previews and exports cleared on draft/baseline edits; source inventory disclosure and local portable report. Actual 360px browser journey reverses operating cash and blocks capital-adjusted candidate, restores parent, tests stale guards and no external contact. Independent downloaded zipapp reconstructs browser transaction and tampering. CI pending. Broader semantic correspondence and independent benchmark still open.
