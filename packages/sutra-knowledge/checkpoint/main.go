@@ -252,6 +252,12 @@ func fromReceipt(session string,r Receipt)(Checkpoint,error){
  if c.ID().String()!=r.ID{return Checkpoint{},refused}
  return c,nil
 }
+func exactFields(raw []byte, fields ...string) (map[string]json.RawMessage,error) {
+ var m map[string]json.RawMessage
+ if json.Unmarshal(raw,&m)!=nil||len(m)!=len(fields){return nil,refused}
+ for _,k:=range fields{v,ok:=m[k];if !ok||bytes.Equal(v,[]byte("null")){return nil,refused}}
+ return m,nil
+}
 func verifyFile(args []string,out io.Writer)error{
  if len(args)!=6{return errors.New("usage: verify trusted-case.json session trusted-public-key-hex trusted-latest-id-hex receipt-report.json export.json")}
  caseBytes,e:=readBounded(args[0],maxCase);if e!=nil{return e}
@@ -261,6 +267,12 @@ func verifyFile(args []string,out io.Writer)error{
  a:=Anchor{Session:args[1],CaseDigest:sum(caseBytes),Key:ed25519.PublicKey(key),Latest:latest}
  data,e:=readBounded(args[4],maxExport);if e!=nil{return e}
  if e=strictJSON(data,maxExport);e!=nil{return e}
+ fields,e:=exactFields(data,"Profile","Session","PublicKey","Latest","Receipts","Qualification");if e!=nil{return e}
+ var rr []json.RawMessage
+ if json.Unmarshal(fields["Receipts"],&rr)!=nil{return refused}
+ for _,raw:=range rr{
+  if _,e=exactFields(raw,"Sequence","Count","CaseDigest","EventHead","ExportDigest","Previous","ID","Signature");e!=nil{return e}
+ }
  var report struct{
   Profile string
   Session string
