@@ -250,3 +250,26 @@ func TestSharedAuthorityExternalProcessCAS(t *testing.T){
  spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{1,1}||total!=2||effects!=2{t.Fatal("external durable counts",spent,total,effects,e)}
  t.Log("two distinct authority server processes used the same authenticated CAS store; signed history and shared counts survived process replacement")
 }
+
+
+func TestSharedAuthoritySignedSnapshotRollbackCounterexample(t *testing.T){
+ origin:="http://127.0.0.1:19095"
+ ctx,approver,ak,_,authorityKey,callerPub,callerKey:=authorityFixture(t,origin)
+ dir:=privateTemp(t)
+ a,e:=CreateSharedAuthority(dir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)}
+ path:=filepath.Join(dir,"authority.bin")
+ genesis,e:=os.ReadFile(path);if e!=nil{t.Fatal(e)}
+ root,_:=a.Head();req:=approve(t,0,ctx,ak);wire,_:=SignAuthorityRequest(0,AuthorityCommit,root,req,callerKey[0])
+ committed,e:=a.Process(wire);if e!=nil||committed.Outcome!=AuthorityCommitted{t.Fatal(e)}
+ advanced:=committed.After
+ a.Close()
+ // This is a deliberate trust-boundary counterexample. The bytes are a valid
+ // older snapshot signed by the same authority key. Without an independently
+ // retained monotonic head, OpenSharedAuthority cannot distinguish rollback.
+ if e=os.WriteFile(path,genesis,0600);e!=nil{t.Fatal(e)}
+ a,e=OpenSharedAuthority(dir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal("unanchored rollback unexpectedly refused",e)};defer a.Close()
+ restored,e:=a.Head();if e!=nil{t.Fatal(e)}
+ spent,total,effects,e:=a.Counts();if e!=nil{t.Fatal(e)}
+ if restored==advanced||spent!=[authorityCallers]byte{}||total!=0||effects!=0{t.Fatal("rollback counterexample missing",restored==advanced,spent,total,effects)}
+ t.Log("older valid signed authority snapshot reopened and reset history/budget: independent monotonic head remains mandatory")
+}
