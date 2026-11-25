@@ -39,6 +39,7 @@ const (
 var ErrGrantInactive = errors.New("action grant is not active at current policy epoch")
 var ErrGrantRevoked = errors.New("action grant is revoked")
 var ErrGrantClass = errors.New("action grant intent class mismatch")
+var ErrGrantNotDispatched = errors.New("action grant has no admitted dispatch to reconcile")
 
 type ActionGrant struct {
  ID GrantID
@@ -100,6 +101,7 @@ type GrantBook struct{
  signer ed25519.PrivateKey
  epoch uint64
  revoked []GrantID
+ admitted []GrantID
  poisoned bool
  fault func(string)error
 }
@@ -122,50 +124,61 @@ func openGrantBook(dir string,ctx Digest,consent,approver ed25519.PublicKey,sign
  ok:=false;defer func(){if !ok{b.Close()}}()
  if create{
   if _,e=os.Lstat(filepath.Join(dir,"grantbook.bin"));!errors.Is(e,os.ErrNotExist){return nil,ErrStore}
-  if e=b.persist(epoch,nil);e!=nil{return nil,e}
+  if e=b.persist(epoch,nil,nil);e!=nil{return nil,e}
  }else{
   f,e:=os.Open(filepath.Join(dir,"grantbook.bin"));if e!=nil{return nil,e}
   raw,e:=io.ReadAll(io.LimitReader(f,int64(b.maxSize()+1)));ce:=f.Close()
   if e!=nil||ce!=nil{return nil,ErrStore}
-  loadedEpoch,revoked,e:=b.decode(raw);if e!=nil{return nil,e}
-  b.epoch=loadedEpoch;b.revoked=revoked
+  loadedEpoch,revoked,admitted,e:=b.decode(raw);if e!=nil{return nil,e}
+  b.epoch=loadedEpoch;b.revoked=revoked;b.admitted=admitted
   if e=syncDirectory(dir);e!=nil{return nil,e}
  }
  ok=true;return b,nil
 }
-func (b *GrantBook) header(epoch uint64,n int)[]byte{
+func (b *GrantBook) header(epoch uint64,revokedN,admittedN int)[]byte{
  out:=append([]byte(grantBookDomain),b.ctx[:]...)
  out=append(out,b.consent...)
  out=append(out,b.approver...)
  out=append(out,b.signer.Public().(ed25519.PublicKey)...)
  out=binary.BigEndian.AppendUint64(out,epoch)
- return append(out,byte(n))
+ out=append(out,byte(revokedN))
+ return append(out,byte(admittedN))
 }
-func (b *GrantBook) maxSize()int{return len(b.header(maxGrantEpoch,maxGrantRevocations))+maxGrantRevocations*grantIDSize+ed25519.SignatureSize}
-func (b *GrantBook) encode(epoch uint64,revoked []GrantID)[]byte{
- body:=b.header(epoch,len(revoked))
+func (b *GrantBook) maxSize()int{return len(b.header(maxGrantEpoch,maxGrantRevocations,maxGrantRevocations))+2*maxGrantRevocations*grantIDSize+ed25519.SignatureSize}
+func (b *GrantBook) encode(epoch uint64,revoked,admitted []GrantID)[]byte{
+ body:=b.header(epoch,len(revoked),len(admitted))
  for _,id:=range revoked{body=append(body,id[:]...)}
+ for _,id:=range admitted{body=append(body,id[:]...)}
  return append(body,ed25519.Sign(b.signer,body)...)
 }
-func (b *GrantBook) decode(raw []byte)(uint64,[]GrantID,error){
- headerLen:=len(b.header(0,0))
- if len(raw)<headerLen+ed25519.SignatureSize||len(raw)>b.maxSize(){return 0,nil,ErrStore}
+func (b *GrantBook) decode(raw []byte)(uint64,[]GrantID,[]GrantID,error){
+ headerLen:=len(b.header(0,0,0))
+ if len(raw)<headerLen+ed25519.SignatureSize||len(raw)>b.maxSize(){return 0,nil,nil,ErrStore}
  body:=raw[:len(raw)-ed25519.SignatureSize]
- if !ed25519.Verify(b.signer.Public().(ed25519.PublicKey),body,raw[len(body):]){return 0,nil,ErrStore}
- epochOffset:=headerLen-9
- epoch:=binary.BigEndian.Uint64(body[epochOffset:epochOffset+8]);n:=int(body[headerLen-1])
- if epoch>maxGrantEpoch||n>maxGrantRevocations||len(body)!=headerLen+n*grantIDSize||!bytes.Equal(body[:headerLen],b.header(epoch,n)){return 0,nil,ErrStore}
- out:=make([]GrantID,0,n);seen:=map[GrantID]bool{}
- for i:=0;i<n;i++{
-  var id GrantID;start:=headerLen+i*grantIDSize;copy(id[:],body[start:start+grantIDSize])
-  if id==(GrantID{})||seen[id]{return 0,nil,ErrStore};seen[id]=true;out=append(out,id)
+ if !ed25519.Verify(b.signer.Public().(ed25519.PublicKey),body,raw[len(body):]){return 0,nil,nil,ErrStore}
+ epochOffset:=headerLen-10
+ epoch:=binary.BigEndian.Uint64(body[epochOffset:epochOffset+8])
+ revokedN:=int(body[headerLen-2]);admittedN:=int(body[headerLen-1])
+ if epoch>maxGrantEpoch||revokedN>maxGrantRevocations||admittedN>maxGrantRevocations||
+  len(body)!=headerLen+(revokedN+admittedN)*grantIDSize||!bytes.Equal(body[:headerLen],b.header(epoch,revokedN,admittedN)){
+  return 0,nil,nil,ErrStore
  }
- return epoch,out,nil
+ readIDs:=func(offset,n int)([]GrantID,error){
+  out:=make([]GrantID,0,n);seen:=map[GrantID]bool{}
+  for i:=0;i<n;i++{
+   var id GrantID;start:=offset+i*grantIDSize;copy(id[:],body[start:start+grantIDSize])
+   if id==(GrantID{})||seen[id]{return nil,ErrStore};seen[id]=true;out=append(out,id)
+  }
+  return out,nil
+ }
+ revoked,e:=readIDs(headerLen,revokedN);if e!=nil{return 0,nil,nil,e}
+ admitted,e:=readIDs(headerLen+revokedN*grantIDSize,admittedN);if e!=nil{return 0,nil,nil,e}
+ return epoch,revoked,admitted,nil
 }
-func (b *GrantBook) persist(epoch uint64,revoked []GrantID)error{
+func (b *GrantBook) persist(epoch uint64,revoked,admitted []GrantID)error{
  f,e:=os.CreateTemp(b.dir,".grantbook-");if e!=nil{return e}
  defer os.Remove(f.Name());defer f.Close()
- raw:=b.encode(epoch,revoked);n,e:=f.Write(raw);if e!=nil{return e};if n!=len(raw){return io.ErrShortWrite}
+ raw:=b.encode(epoch,revoked,admitted);n,e:=f.Write(raw);if e!=nil{return e};if n!=len(raw){return io.ErrShortWrite}
  if e=f.Sync();e!=nil{return e};if e=f.Close();e!=nil{return e}
  if b.fault!=nil{if e=b.fault("before-rename");e!=nil{return e}}
  if e=os.Rename(f.Name(),filepath.Join(b.dir,"grantbook.bin"));e!=nil{return e}
@@ -187,11 +200,15 @@ func (b *GrantBook) AdvanceEpoch(expected,next uint64)error{
  if b.lock==nil||b.poisoned{return ErrStore}
  if expected!=b.epoch{return ErrHeadConflict}
  if next<=b.epoch||next>maxGrantEpoch{return ErrPolicy}
- if e:=b.persist(next,b.revoked);e!=nil{b.poisoned=true;return ErrUnknown}
+ if e:=b.persist(next,b.revoked,b.admitted);e!=nil{b.poisoned=true;return ErrUnknown}
  b.epoch=next;return nil
 }
 func (b *GrantBook) isRevokedLocked(id GrantID)bool{
  for _,x:=range b.revoked{if x==id{return true}}
+ return false
+}
+func (b *GrantBook) isAdmittedLocked(id GrantID)bool{
+ for _,x:=range b.admitted{if x==id{return true}}
  return false
 }
 func (b *GrantBook) validApprovedRequestLocked(req Request)bool{
@@ -204,11 +221,10 @@ func (b *GrantBook) Revoke(g ActionGrant,req Request)error{
  if b.isRevokedLocked(g.ID){return nil}
  if len(b.revoked)>=maxGrantRevocations{return ErrBudget}
  next:=append(append([]GrantID(nil),b.revoked...),g.ID)
- if e:=b.persist(b.epoch,next);e!=nil{b.poisoned=true;return ErrUnknown}
+ if e:=b.persist(b.epoch,next,b.admitted);e!=nil{b.poisoned=true;return ErrUnknown}
  b.revoked=next;return nil
 }
-func (b *GrantBook) CheckDispatch(g ActionGrant,req Request,class GrantClass)error{
- b.mu.Lock();defer b.mu.Unlock()
+func (b *GrantBook) checkDispatchLocked(g ActionGrant,req Request,class GrantClass)error{
  if b.lock==nil||b.poisoned{return ErrStore}
  if !b.validApprovedRequestLocked(req)||!VerifyActionGrant(g,req,b.consent)||g.Context!=b.ctx{return ErrPolicy}
  if g.Class!=class{return ErrGrantClass}
@@ -216,12 +232,26 @@ func (b *GrantBook) CheckDispatch(g ActionGrant,req Request,class GrantClass)err
  if b.epoch<g.NotBefore||b.epoch>g.ExpiresAfter{return ErrGrantInactive}
  return nil
 }
-// Reconciliation never creates a new effect. An exact historically signed grant
-// may therefore query status after expiry/revocation; this does not reactivate it.
+func (b *GrantBook) CheckDispatch(g ActionGrant,req Request,class GrantClass)error{
+ b.mu.Lock();defer b.mu.Unlock()
+ return b.checkDispatchLocked(g,req,class)
+}
+func (b *GrantBook) reserveDispatchLocked(g ActionGrant,req Request,class GrantClass)error{
+ if e:=b.checkDispatchLocked(g,req,class);e!=nil{return e}
+ if b.isAdmittedLocked(g.ID){return nil}
+ if len(b.admitted)>=maxGrantRevocations{return ErrBudget}
+ next:=append(append([]GrantID(nil),b.admitted...),g.ID)
+ if e:=b.persist(b.epoch,b.revoked,next);e!=nil{b.poisoned=true;return ErrUnknown}
+ b.admitted=next
+ return nil
+}
+// Reconciliation never creates a new effect. It is allowed after expiry or
+// revocation only for a grant that was durably admitted for dispatch first.
 func (b *GrantBook) CheckReconcile(g ActionGrant,req Request)error{
  b.mu.Lock();defer b.mu.Unlock()
  if b.lock==nil||b.poisoned{return ErrStore}
  if !b.validApprovedRequestLocked(req)||!VerifyActionGrant(g,req,b.consent)||g.Context!=b.ctx{return ErrPolicy}
+ if !b.isAdmittedLocked(g.ID){return ErrGrantNotDispatched}
  return nil
 }
 
@@ -230,16 +260,20 @@ type GrantGuard struct{
  coordinator *WitnessCoordinator
 }
 func NewGrantGuard(book *GrantBook,coordinator *WitnessCoordinator)(*GrantGuard,error){
- if book==nil||coordinator==nil||book.ctx!=coordinator.authority.ctx{return nil,ErrPolicy}
+ if book==nil||coordinator==nil||book.ctx!=coordinator.authority.ctx||
+  !bytes.Equal(book.approver,coordinator.authority.approver){return nil,ErrPolicy}
  return &GrantGuard{book:book,coordinator:coordinator},nil
 }
 func (g *GrantGuard) Commit(grant ActionGrant,req AuthorityRequest,class GrantClass)(WitnessedResponse,error){
  if req.Op!=AuthorityCommit{return WitnessedResponse{},ErrPolicy}
- if e:=g.book.CheckDispatch(grant,req.Action,class);e!=nil{return WitnessedResponse{},e}
+ // Hold the grant-book mutex across the authority/witness transaction so a
+ // concurrent revocation cannot pass between the last policy check and dispatch.
+ g.book.mu.Lock();defer g.book.mu.Unlock()
+ if e:=g.book.reserveDispatchLocked(grant,req.Action,class);e!=nil{return WitnessedResponse{},e}
  return g.coordinator.Process(req)
 }
 func (g *GrantGuard) Status(grant ActionGrant,req AuthorityRequest)(WitnessedResponse,error){
- if e:=g.book.CheckReconcile(grant,req.Action);e!=nil{return WitnessedResponse{},e}
  if req.Op!=AuthorityStatus{return WitnessedResponse{},ErrPolicy}
+ if e:=g.book.CheckReconcile(grant,req.Action);e!=nil{return WitnessedResponse{},e}
  return g.coordinator.Process(req)
 }
