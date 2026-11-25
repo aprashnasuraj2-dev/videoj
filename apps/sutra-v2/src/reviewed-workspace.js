@@ -222,7 +222,48 @@ function semanticControl(){
  by('clarification-answer-run').disabled=busy||!clarificationCurrent||!clarificationCurrent.plan.questions.length;
  by('clarification-export').disabled=busy||!previewCurrent;
  for(const e of by('clarification-options').querySelectorAll('select'))e.disabled=busy;
- historyControl();
+ historyControl();renderStudio();
+}
+function studioNavigate(target){
+ if(!target)return;
+ for(let p=target.parentElement;p;p=p.parentElement)if(p.tagName==='DETAILS')p.open=true;
+ target.focus({preventScroll:true});target.scrollIntoView({block:'center'});
+}
+by('open').onclick=e=>{e.preventDefault();const workspace=document.getElementById('reviewed-workspace');workspace.open=true;studioNavigate(workspace.querySelector('summary'));};
+by('studio-next').onclick=()=>{if(!busy)studioNavigate(by(by('studio-next').dataset.target));};
+function renderStudio(){
+ const investigation=semanticCurrent?.report.investigation;
+ by('studio-question').textContent=by('question').value.trim()||'No question entered.';
+ by('studio-sources').textContent=String(sources.length);
+ by('studio-bindings').textContent=String(bindings.length);
+ by('studio-proposals').textContent=String(stagedProposals.length);
+ const state=investigation?.triage.state??'NO_CURRENT_RESULT';
+ by('studio-state').textContent=state.replaceAll('_',' ');
+ by('studio-state').dataset.state=state;
+ const cards=by('studio-cards');cards.replaceChildren();
+ for(const c of investigation?.candidates??[]){
+  const card=document.createElement('article'),title=document.createElement('h4'),meaning=document.createElement('p'),outcome=document.createElement('strong'),qual=document.createElement('small');
+  card.className='studio-card';card.dataset.candidate=c.id;title.textContent=c.id;meaning.textContent=c.meaning;
+  const status=c.computation?.status??'REFUSED';outcome.textContent=status.replaceAll('_',' ');outcome.dataset.outcome=status;
+  qual.textContent='Meaning unverified · '+c.questionCoverage.replaceAll('_',' ').toLowerCase();
+  card.append(title,meaning,outcome,qual);cards.append(card);
+ }
+ by('studio-impact').textContent=impactCurrent?impactCurrent.candidates.filter(c=>c.outcome==='CONDITIONAL_RESULT_REVERSED').length+' reversed · '+impactCurrent.candidates.filter(c=>c.outcome==='CONDITIONAL_RESULT_SURVIVES').length+' survived · '+impactCurrent.nextReview.length+' require review.':'No current revision comparison.';
+ by('studio-baseline').textContent=baseline?'Baseline retained: '+baseline.digest.slice(7,19)+'… (conditional version)':'No baseline retained.';
+ let target,label,help;
+ if(investigation){
+  if(state==='DIVERGENT_CONDITIONAL_OUTCOMES'){target='clarification-run';label='Inspect distinctions';help='The supplied candidate computations differ. Review the material distinctions before selecting a meaning.';}
+  else if(state==='AGREEMENT_ON_SUPPLIED_CONDITIONAL_OUTCOMES'){target='interval-run';label='Inspect uncertainty';help='Agreement on these candidates is not proof. Test declared ranges and then export the exact version.';}
+  else{target='roundtrip-run';label='Inspect unresolved results';help='Review missing inputs, refused proposals and the exact candidate meaning declarations.';}
+ }else if(!by('question').value.trim()){target='question';label='Enter question';help='Start with the original question, or load a synthetic example below.';}
+ else if(!sources.length){target='source-id';label='Stage source text';help='Supply exact text and its declared lineage.';}
+ else if(bindings.length<2){target='select-text';label='Review numeric selections';help='Select quantities in their source text and declare unit, scope and dimension.';}
+ else if(!sealed){target='seal';label='Review and seal draft';help='Seal the selected text and type declarations before creating proposals.';}
+ else if(stagedProposals.length<2){target='left';label='Create candidate comparisons';help='Stage at least two proposed interpretations.';}
+ else if(stagedProposals.some(p=>!annotations.get(p.id)?.meaning.trim())){target='meaning-'+stagedProposals.find(p=>!annotations.get(p.id)?.meaning.trim()).id;label='Declare candidate meaning';help='Describe what each candidate is intended to mean; this is not automatic entailment.';}
+ else if(baseline&&!by('correspondence').checked){target='correspondence';label='Review correspondence';help='Confirm candidate identifiers correspond across versions before computing revision impact.';}
+ else{target='semantic-run';label='Inspect evaluation controls';help='Evaluate all staged meanings under the sealed contract.';}
+ const next=by('studio-next');next.dataset.target=target;next.textContent=label;next.disabled=busy;by('studio-help').textContent=help;
 }
 function renderSemanticRows(){
  const list=by('semantic-list');list.replaceChildren();

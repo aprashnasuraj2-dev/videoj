@@ -3123,6 +3123,12 @@
           "sourceRevision": "c4a628a31d449b5f325b4112dbbd7d484b931a70",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45614083545",
           "description": "Exact V2-087 10/10 green: adaptive two-action oracle, actual guided browser 6 to 2 abstract objective and failure forces stop at 6. No real cost or decision authority."
+        },
+        {
+          "id": "V2-LK12-ACQUISITION",
+          "sourceRevision": "cfaf231586ae57a4b156b889d836606bd2a3647e",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45614386409/job/139205899105",
+          "description": "V2-088 exact 10/10 passed; actual robust policy independent Python set-based replay, nine mutations and four separate pin controls."
         }
       ]
     },
@@ -3160,7 +3166,14 @@
       ],
       "scope": "Select narrow interval/measurement and statistical profiles; include study design, bias, heterogeneity, missingness, multiple testing, power and causal assumptions as separate obligations. V2-089 candidate: exact continuous rational interval enclosure over admitted reviewed formulas; source point containment, same-node refinements, denominator zero and conservative dependency handling. Not statistical confidence or calibrated uncertainty; independent reference, browser and statistical study-design profiles remain open.",
       "acceptance": "Independent numerical references, coverage and assumption sensitivity; no deterministic proof of statistical or causal validity.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK14-STATISTICAL-PROFILES",
+          "sourceRevision": "ffbfc2817755e48a35ecbaeb29a184b6d78c535a",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45614773111",
+          "description": "V2-089 exact 10/10 passed; continuous rational interval enclosure, dependency identity, strict comparisons and denominator-zero refusal. No statistical confidence claim."
+        }
+      ]
     },
     {
       "id": "V2-LK15-UNIFIED-WORKSPACE",

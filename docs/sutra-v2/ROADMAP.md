@@ -1070,3 +1070,8 @@ V2-086 all ten exact workflows passed; scoped robust acquisition kernel evidence
 ## V2-090 — Continuous interval workspace and independent replay
 
 V2-087 exact 10/10 green; actual robust acquisition browser and adaptive oracle evidence registered. V2-088 browser and knowledge jobs passed including independent policy replay; full exact workflow reconciliation pending at observation. Add explicit range controls to existing living workspace, four optional bindings and rational inclusive bounds. Engineering fixture peak 75–95 yields invariant nominal capacity but unresolved failure capacity; narrowing to 75–85 yields both invariant under declared bounds. Clear stale exports, retain exact version/range/report pins. Independent Python Fraction interval solver reconstructs admitted targets and full bound report, explicit --interval profile; actual browser export plus six nonidentity derived mutants and stale pins. No statistical confidence or calibrated uncertainty. Exact CI pending; V2-089 kernel exact pending.
+
+
+## V2-091 — Living investigation overview
+
+V2-088 and V2-089 exact 10/10 passed; scoped acquisition reference and continuous interval kernel evidence registered. V2-090 full exact CI pending. Add header keyboard entry, live question/source/selection/candidate overview, conditional candidate cards, revision reversal/survival counts, baseline state and context-sensitive navigation to existing review controls (no automatic execution or new evaluator). Clear cards immediately on mutation. Actual mobile guided journey assertions for keyboard entry/focus, ready/invalidated state, correspondence, divergent review and screenshot artifacts. No accessibility certification or user-study claim. Exact CI pending.

@@ -768,12 +768,13 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   {
    const samplePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
    samplePage.on('pageerror',e=>errors.push(e.message));samplePage.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());});
-   await samplePage.goto(origin);await samplePage.locator('#reviewed-workspace > summary').click();await samplePage.locator('#review-sample-panel > summary').click();
+   await samplePage.goto(origin);await samplePage.locator('#review-open').focus();await samplePage.keyboard.press('Enter');assert.equal(await samplePage.locator('#reviewed-workspace').getAttribute('open'),'');assert.equal(await samplePage.locator('#review-studio-state').innerText(),'NO CURRENT RESULT');await samplePage.locator('#review-studio-next').click();assert.equal(await samplePage.locator('#review-question').evaluate(e=>e===document.activeElement),true);await samplePage.locator('#review-sample-panel > summary').click();
    const sampleState=s=>samplePage.waitForFunction(state=>document.querySelector('#review-status').dataset.state===state&&!document.querySelector('#review-reset').disabled,s);
    for(const domain of ['finance','engineering']){
     await samplePage.locator('#review-sample-'+domain).click();await sampleState('sample_ready');
     await samplePage.locator('#review-semantic-run').click();await sampleState('semantic_ready');
     assert.match(await samplePage.locator('#review-semantic-result').innerText(),/AGREEMENT ON SUPPLIED CONDITIONAL OUTCOMES/);
+    assert.equal(await samplePage.locator('#review-studio-cards article').count(),2);assert.equal(await samplePage.locator('#review-studio-state').innerText(),'AGREEMENT ON SUPPLIED CONDITIONAL OUTCOMES');assert.equal(await samplePage.locator('#review-studio-next').innerText(),'Inspect uncertainty');
     if(domain==='engineering'){
      await samplePage.locator('#review-interval-panel > summary').click();
      await samplePage.locator('#review-interval-axis-1').selectOption('peak');await samplePage.locator('#review-interval-lower-1').fill('75');await samplePage.locator('#review-interval-upper-1').fill('95');
@@ -798,8 +799,11 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
     }
     await samplePage.locator('#review-semantic-retain').click();await samplePage.locator('#review-sample-'+domain+'-corrected').click();await sampleState('sample_ready');
     assert.equal(await samplePage.locator('#review-semantic-run').isDisabled(),true);
+    assert.equal(await samplePage.locator('#review-studio-cards article').count(),0);assert.equal(await samplePage.locator('#review-studio-next').innerText(),'Review correspondence');
+    await samplePage.locator('#review-studio-next').click();assert.equal(await samplePage.locator('#review-correspondence').evaluate(e=>e===document.activeElement),true);
     await samplePage.locator('#review-correspondence').check();await samplePage.locator('#review-semantic-run').click();await sampleState('semantic_ready');
     assert.match(await samplePage.locator('#review-semantic-result').innerText(),/DIVERGENT CONDITIONAL OUTCOMES/);
+    assert.equal(await samplePage.locator('#review-studio-state').innerText(),'DIVERGENT CONDITIONAL OUTCOMES');assert.match(await samplePage.locator('#review-studio-impact').innerText(),/1 reversed · 1 survived/);assert.equal(await samplePage.locator('#review-studio-next').innerText(),'Inspect distinctions');await samplePage.locator('#review-studio-next').click();assert.equal(await samplePage.locator('#review-clarification-run').evaluate(e=>e===document.activeElement),true);await samplePage.locator('#review-studio').screenshot({path:path.join(output,'studio-'+domain+'.png')});
     const impact=await samplePage.locator('#review-impact-result').innerText();assert.match(impact,/CONDITIONAL RESULT REVERSED/);assert.match(impact,/CONDITIONAL RESULT SURVIVES/);
     const panel=samplePage.locator('#review-exposure-panel');if(await panel.getAttribute('open')===null)await panel.locator('summary').click();
     await samplePage.locator('#review-exposure-run').click();await sampleState('exposure_ready');
@@ -815,7 +819,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
      assert.equal(await samplePage.locator('#review-history-branch').inputValue(),'alternative');
      const left=samplePage.waitForEvent('download');await samplePage.locator('#review-semantic-export').click();const child=fs.readFileSync(await (await left).path());const childPin=await samplePage.locator('#review-semantic-pin').innerText();
      // Retain the same parent; change a candidate declaration to create a second child.
-     const field=samplePage.locator('#review-meaning-operating_cash');await field.fill('Alternate declaration for operating cash');
+     const field=samplePage.locator('#review-meaning-operating_cash');await field.fill('Alternate declaration for operating cash');assert.equal(await samplePage.locator('#review-studio-cards article').count(),0);assert.equal(await samplePage.locator('#review-studio-state').innerText(),'NO CURRENT RESULT');
      await samplePage.locator('#review-correspondence').check();await samplePage.locator('#review-semantic-run').click();await sampleState('semantic_ready');
      await samplePage.locator('#review-history-append').click();await sampleState('history_ready');
      assert.match(await samplePage.locator('#review-history-result').innerText(),/3 exact version.*2 branch/);
