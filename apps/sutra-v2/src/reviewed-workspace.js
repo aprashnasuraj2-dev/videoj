@@ -11,7 +11,7 @@ import {guidedLivingCase} from '../../../packages/sutra-knowledge/examples/guide
 import {auditStructuralExposure} from '../../../packages/sutra-knowledge/structural-exposure.js';
 import {evaluateSemanticWorldGrid} from '../../../packages/sutra-knowledge/semantic-world-grid.js';
 import {compileReviewedExpression} from '../../../packages/sutra-knowledge/reviewed-expression.js';
-import {restoreReviewedSourceDraft,reviseReviewedSourceDraft} from '../../../packages/sutra-knowledge/source-draft-restore.js';
+import {restoreReviewedSourceDraft,reviseReviewedSourceDraft,withdrawReviewedSourceDraft} from '../../../packages/sutra-knowledge/source-draft-restore.js';
 import {planInvestigationClarifications} from '../../../packages/sutra-knowledge/clarification-plan.js';
 import {previewClarificationAnswers} from '../../../packages/sutra-knowledge/clarification-preview.js';
 import {auditRevisionReuse} from '../../../packages/sutra-knowledge/revision-reuse-audit.js';
@@ -25,7 +25,7 @@ import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js
 import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
-let roundtripCurrent=null,textFilePreview=null;
+let roundtripCurrent=null,textFilePreview=null,withdrawalPreview=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
 let questionCurrent=null,questionExport=null,questionPathPin=null,questionSelections={left:null,right:null};
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
@@ -36,10 +36,12 @@ function control(){
  for(const id of controls)by(id).disabled=busy;
  if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;by('candidate-id').disabled=!sealed;by('expression').disabled=!sealed;by('expression-generate').disabled=!sealed||!by('expression').value.trim();by('source-revise').disabled=!sources.length;by('source-revise-pick').disabled=!sources.length;by('source-revise-text').disabled=!sources.length;}
  semanticControl();tableControl();questionControl();textFileControl();
+ by('source-withdraw-preview').disabled=busy||!sources.length;by('source-withdraw-apply').disabled=busy||!withdrawalPreview;
 }
-function invalidate(message){epoch++;clearTextFilePreview({clearFile:true});clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
+function invalidate(message){epoch++;clearWithdrawalPreview();clearTextFilePreview({clearFile:true});clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 function options(element,items){element.replaceChildren();for(const id of items){const o=document.createElement('option');o.value=id;o.textContent=id;element.append(o);}}
+function clearWithdrawalPreview(){withdrawalPreview=null;by('source-withdraw-summary').textContent='No withdrawal preview.';}
 function clearTextFilePreview({clearFile=false}={}){
  textFilePreview=null;by('text-file-preview').textContent='No local file inspected.';by('text-file-digest').textContent='';
  if(clearFile)by('text-file').value='';
@@ -219,7 +221,24 @@ by('source-add').onclick=()=>work(async ticket=>{
  invalidate('Source staged with exact textarea text; no source truth established.');refresh();by('source-pick').value=next.at(-1).id;by('select-text').value=next.at(-1).text;
  for(const id of ['source-id','lineage','source-text'])by(id).value='';
 });
-by('source-revise-pick').onchange=()=>{by('source-revise-text').value=sources.find(s=>s.id===by('source-revise-pick').value)?.text??'';};
+by('source-revise-pick').onchange=()=>{clearWithdrawalPreview();by('source-revise-text').value=sources.find(s=>s.id===by('source-revise-pick').value)?.text??'';control();};
+by('source-withdraw-preview').onclick=()=>work(async ticket=>{
+ clearWithdrawalPreview();
+ const source=sources.find(s=>s.id===by('source-revise-pick').value);
+ if(!source)throw Error('RESTORE_WITHDRAW_SOURCE_PIN');
+ const wire=draft(),pin=await casePin(source.text),r=await withdrawReviewedSourceDraft(wire,source.id,pin);
+ if(ticket!==epoch||wire!==draft()||source.id!==by('source-revise-pick').value)return;
+ withdrawalPreview={wire,sourceId:source.id,pin};
+ by('source-withdraw-summary').textContent='Withdraw '+source.id+' ('+pin+'). Invalidated bindings: '+(r.invalidatedBindingIds.join(', ')||'none')+'. Retained sources: '+(r.retainedSourceIds.join(', ')||'none')+'. Retained bindings: '+(r.retainedBindingIds.join(', ')||'none')+'. No change applied yet.';
+ status('withdrawal_preview','Review the consequences, then explicitly confirm withdrawal.');
+});
+by('source-withdraw-apply').onclick=()=>work(async ticket=>{
+ const p=withdrawalPreview;if(!p||p.wire!==draft()||p.sourceId!==by('source-revise-pick').value){clearWithdrawalPreview();throw Error('RESTORE_WITHDRAW_SOURCE_PIN');}
+ const r=await withdrawReviewedSourceDraft(p.wire,p.sourceId,p.pin);
+ if(ticket!==epoch||p!==withdrawalPreview||p.wire!==draft())return;
+ sources=structuredClone(r.draft.sources);bindings=structuredClone(r.draft.bindings);
+ invalidate('Source '+r.sourceId+' withdrawn from current draft. Invalidated bindings: '+(r.invalidatedBindingIds.join(', ')||'none')+'. Retained bindings: '+(r.retainedBindingIds.join(', ')||'none')+'. Historical versions unchanged.');refresh();
+});
 by('source-revise').onclick=()=>work(async ticket=>{
  const r=await reviseReviewedSourceDraft(draft(),by('source-revise-pick').value,by('source-revise-text').value);if(ticket!==epoch)return;
  sources=structuredClone(r.draft.sources);bindings=structuredClone(r.draft.bindings);

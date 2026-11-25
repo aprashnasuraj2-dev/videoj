@@ -981,6 +981,23 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    }
    await click('seal');await state('sealed');const next=JSON.parse(await page.locator('#review-contract').textContent());assert.notEqual(await page.locator('#review-pin').innerText(),oldPin);assert.equal(next.sources.find(s=>s.id==='local_report').digest,newDigest);assert.equal(next.sources.find(s=>s.id==='local_report').lineage,'declared_root');assert.deepEqual(next.bindings.find(b=>b.id==='c'),JSON.parse(oldContract).bindings.find(b=>b.id==='c'));
    await page.locator('#review-left').selectOption('a');await page.locator('#review-right').selectOption('b');await click('generate');await state('proposal');await click('run');await state('ready');assert.match(await page.locator('#review-result').innerText(),/CONDITIONALLY REFUTED/);
+   await page.locator('#review-source-revise-panel > summary').click();
+   await page.locator('#review-source-revise-pick').selectOption('local_report');await click('source-withdraw-preview');await state('withdrawal_preview');
+   assert.match(await page.locator('#review-source-withdraw-summary').innerText(),/Invalidated bindings: a, b/);
+   assert.match(await page.locator('#review-source-withdraw-summary').innerText(),/Retained bindings: c/);
+   assert.match(await page.locator('#review-staged').innerText(),/2 staged source\(s\) · 3 reviewed binding/);
+   assert.equal(await page.locator('#review-export').isDisabled(),false);
+   const other=next.sources.find(s=>s.id!=='local_report').id;
+   await page.locator('#review-source-revise-pick').selectOption(other);
+   assert.equal(await page.locator('#review-source-withdraw-apply').isDisabled(),true);
+   await page.locator('#review-source-revise-pick').selectOption('local_report');await click('source-withdraw-preview');await state('withdrawal_preview');
+   await click('source-withdraw-apply');await state('draft');
+   assert.match(await page.locator('#review-staged').innerText(),/1 staged source\(s\) · 1 reviewed binding/);
+   assert.equal(await page.locator('#review-export').isDisabled(),true);assert.equal(await page.locator('#review-source-withdraw-apply').isDisabled(),true);
+   assert.match(await page.locator('#review-binding-list').innerText(),/c = 15.25/);
+   await click('seal');await state('sealed');
+   const withdrawn=JSON.parse(await page.locator('#review-contract').textContent());assert.deepEqual(withdrawn.sources,next.sources.filter(s=>s.id!=='local_report'));assert.deepEqual(withdrawn.bindings,next.bindings.filter(x=>x.id==='c'));
+   assert.equal(await page.locator('#review-generate').isDisabled(),true);
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);assert.deepEqual(poison,[]);await page.close();
   }
   // Full first-minute tour from fresh browser state; no simulated verdicts.

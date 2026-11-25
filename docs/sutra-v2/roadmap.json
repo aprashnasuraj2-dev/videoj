@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-107",
+  "session": "V2-108",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2921,6 +2921,12 @@
           "sourceRevision": "78e9b5cc2670163b69e186c119b14c1486609581",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45710993527/job/139545045638",
           "description": "Exact V2-102 10/10 green; 43 accepted/4 refused cross-language question cases, all 13 comparison phrases, equality and direction, Unicode and bounded alternatives; actual independent browser replay also green."
+        },
+        {
+          "id": "V2-LK03-PATHWAYS",
+          "sourceRevision": "adf1d76e5b79cda9852818051d932ffad9c5be45",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45712887023/job/139551497664",
+          "description": "Nine returned PR workflows green; actual Chromium local UTF-8 stage/replacement/refusal journey passed after typed refusal fix. Separate push run not observed; no broad gate promotion."
         }
       ]
     },
@@ -3065,7 +3071,7 @@
       "dependencies": [
         "V2-LK08-KNOWLEDGE-GRAPH"
       ],
-      "scope": "Incremental evidence replacement/withdrawal, direct/transitive dependency invalidation, and historical reproducibility. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. Scoped unit/CI evidence registered; broader acceptance remains open.",
+      "scope": "Incremental evidence replacement/withdrawal, direct/transitive dependency invalidation, and historical reproducibility. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. Scoped unit/CI evidence registered; broader acceptance remains open. V2-108 candidate: exact pinned single-source draft withdrawal with explicit preview/confirmation, complete affected-binding invalidation and unchanged historical versions; no reuse or authority claim; exact CI pending.",
       "acceptance": "Incremental equals full recompute; shared descendants, concurrency, stale cache, interrupted writes, cycles and simultaneous updates.",
       "evidence": [
         {
@@ -3243,7 +3249,7 @@
         "V2-LK07-AMBIGUITY-REVIEW",
         "V2-LK11-IMPACT-REPORT"
       ],
-      "scope": "Question → evidence → interpretations → review → investigation → conclusion → challenge → revision → export, manual/offline mode, accessible progressive disclosure. V2-057 candidate: manual reviewed workspace now preserves labels, source links, version export, separate pin, caller baseline import and evidence correction impact. Actual browser tests pending; stable candidate IDs, progressive source review, broader canvas, offline independent replay and accessibility acceptance remain open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending.",
+      "scope": "Question → evidence → interpretations → review → investigation → conclusion → challenge → revision → export, manual/offline mode, accessible progressive disclosure. V2-057 candidate: manual reviewed workspace now preserves labels, source links, version export, separate pin, caller baseline import and evidence correction impact. Actual browser tests pending; stable candidate IDs, progressive source review, broader canvas, offline independent replay and accessibility acceptance remain open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending. V2-108 candidate: exact pinned single-source draft withdrawal with explicit preview/confirmation, complete affected-binding invalidation and unchanged historical versions; no reuse or authority claim; exact CI pending.",
       "acceptance": "Actual browser journey, persistence, cancel/error recovery, keyboard/mobile and no-model pathway.",
       "evidence": [
         {
