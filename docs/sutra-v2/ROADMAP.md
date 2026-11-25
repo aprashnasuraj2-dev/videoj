@@ -1,4 +1,4 @@
-# Dependency-aware engineering roadmap — V2-010
+# Dependency-aware engineering roadmap — V2-011
 
 This is the active phase index and new engineering-gate register. The original requirement IDs, descriptions, checkboxes and historical evidence remain in [CHECKLIST.md](CHECKLIST.md), [SESSIONS.md](SESSIONS.md) and [progress.json](progress.json); see [roadmap.json](roadmap.json) for structured records and crosswalk. Historical checkboxes are not equivalent to formal verification. New gates close only with their own observed evidence. P0 = blocking safety/correctness; P1 = product/verification; P2 = deferred/conditional. Risk is independent of priority. No percentage-complete metric.
 
@@ -111,8 +111,8 @@ Prior IDs: V2-RUNTIME-02.
 - **Positive tests:** Actual loopback TCP drop followed by reopen and reconciliation.
 - **Adversarial tests:** I/O failure, response reorder, invalid receipt, retry with new approval; no unapproved second effect.
 - **Verification:** Race-enabled transport integration and failpoint tests.
-- **Evidence:** [58a5f96456c4](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733); [e96734190870](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524456423/job/138904189960); [88ab00000eaf](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524767453/job/138905253653); [45ea97969ff5](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524868505/job/138905589669). Exact results and failed gate in SESSIONS.md.
-- **Limitations:** Delayed and reordered TCP delivery, crash reservation, frozen approvals and bounded signed journal verified. Trusted directory/signer only; rollback of caller journal or another book can reset/bypass budget. CAS wire integration, authenticated global contact accounting, expiry/revocation and approval replacement lifecycle remain open.
+- **Evidence:** [58a5f96456c4](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733); [e96734190870](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524456423/job/138904189960); [88ab00000eaf](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524767453/job/138905253653); [45ea97969ff5](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524868505/job/138905589669). Exact results and failed gate in SESSIONS.md; [1951512e9f9a](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306/job/138912849718). Exact scope and counterexamples in SESSIONS.md.
+- **Limitations:** Authenticated loopback authority now owns action history and per-caller/global contact accounting atomically, and stale local caller state cannot reset quota. Still a synthetic single-authority fixture: no approval expiry/revocation, generic new-key lifecycle, hostile-network replay protection, provider spend accounting, physical power-loss certification or arbitrary upstream side effect.
 
 ### V2-P05-ROLLBACK — Prevent replay of older valid snapshots and clone-induced equivocation relative to trusted external head
 
@@ -122,8 +122,8 @@ Prior IDs: V2-RUNTIME-02.
 - **Positive tests:** Head advancement and recovery.
 - **Adversarial tests:** Replace state by valid earlier snapshot; clone signer/store; denied compensation.
 - **Verification:** Multi-process integration and independent verifier.
-- **Evidence:** [58a5f96456c4](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733); [e96734190870](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524456423/job/138904189960); [45ea97969ff5](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524868505/job/138905589669). Exact results and failed gate in SESSIONS.md.
-- **Limitations:** Single trusted Linux CAS authority and portable pin verifier verified; cloned anchor itself still forks and old signed journal can reset budget. No independently distributed monotonic head/key, multi-host authority, authenticated CAS wire or separately authorized compensation. Threat-model dependency remains open.
+- **Evidence:** [58a5f96456c4](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733); [e96734190870](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524456423/job/138904189960); [45ea97969ff5](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524868505/job/138905589669). Exact results and failed gate in SESSIONS.md; [1951512e9f9a](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306/job/138912849718). Exact scope and counterexamples in SESSIONS.md.
+- **Limitations:** Caller-journal rollback is bounded by the external authority, but rollback of the authority itself remains demonstrably open: replacing authority.bin with an older genuinely signed snapshot resets history and contact counts, and cloning signer+snapshot can fork. An independently retained monotonic head/key trust domain and separate compensation approval remain mandatory.
 
 ## Phase 06 — TLA+ formal state-machine verification
 
@@ -148,8 +148,8 @@ Prior IDs: V2-F11b.
 - **Positive tests:** Concurrent approved operations and CAS.
 - **Adversarial tests:** Unauthorized key, rollback, lost acknowledgement and exhausted budget.
 - **Verification:** TLC, trace refinement and implementation race tests.
-- **Evidence:** [9f1d5fb793f8](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524578358/job/138904607388); [45ea97969ff5](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524868505/job/138905589669); [20e68b77ae86](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45525009986/job/138906066673). Exact results and failed gate in SESSIONS.md.
-- **Limitations:** Bounded two-caller/two-approved-key safety and conditional fairness checks exercised; no unconditional receipt liveness with finite budget. Go journal limits per approval, model limits per caller; CAS and journal transport separate. No trace-refinement proof, independent implementation of Go consumer or arbitrary external service guarantee.
+- **Evidence:** [9f1d5fb793f8](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524578358/job/138904607388); [45ea97969ff5](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524868505/job/138905589669); [20e68b77ae86](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45525009986/job/138906066673). Exact results and failed gate in SESSIONS.md; [1951512e9f9a](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306/job/138912849718). Exact scope and counterexamples in SESSIONS.md.
+- **Limitations:** One actual Go trace is independently replayed against the bounded transition mapping and budgets now match the TLA per-caller 2/global 3 profile. This is a trace witness, not a universal refinement theorem: Go collapses dispatch+delivery once bytes arrive, cryptography/binary parsing/storage are outside TLA, and authority snapshot rollback remains possible without an external monotonic witness.
 
 ## Phase 07 — Rust and WebAssembly high-assurance computation
 
@@ -270,6 +270,18 @@ Prior IDs: V2-RUNTIME-04.
 - **Verification:** Fake provider contract plus authorized real free route only.
 - **Evidence:** None; no credit claimed.
 - **Limitations:** No paid inference authorized; provider charging semantics vary.
+
+
+### V2-P14-BYOK-UX — Nontechnical multi-provider credential workspace without secret propagation
+
+- **Status:** Not started. **Priority/risk:** P0/critical. **Dependencies:** V2-P14-BUDGET, V2-P03-TAINT, V2-P04-CONSENT.
+- **Implementation:** `apps/sutra-v2; packages/sutra-inference; packages/sutra-runtime; services/sutra-api`.
+- **Acceptance:** At least two fixed provider profiles can coexist; secret values never enter graph, prompt, peer payload, trace, export, URL, telemetry or plaintext browser storage; provider/model choice and per-profile limits require explicit host UI; deterministic no-AI mode remains usable; removal clears the credential handle.
+- **Positive tests:** Fake provider profiles, masked onboarding, provider/model switching and independent bounded reservations; no live paid inference.
+- **Adversarial tests:** Credential canary, malicious peer/model asks for key, arbitrary endpoint, model-selected provider switch, stale handle, reload/export/log/DOM leakage and cross-profile confusion.
+- **Verification:** Browser integration + fake-provider relay/adapter + credential-canary scans + backend budget contract. Any real-provider validation is a separate authorized gate.
+- **Evidence:** None; no credit claimed.
+- **Limitations:** Current service intentionally reports `byok:false` and rejects visitor credentials. Vault/relay design, XSS/browser-extension exposure, CORS, persistence and provider billing semantics require threat review.
 
 ## Phase 15 — Distributed supervision and resilience
 
@@ -399,6 +411,6 @@ Prior IDs: V2-R01, V2-R02.
 
 ## Immediate dependency order
 
-Reconcile exact corrected fairness gate and subsequent documentation CI → integrate authenticated external CAS transport and externally monotonic caller reservation authority, align per-caller versus per-approval model and replay concrete traces → threat review, expiry/revocation and explicit compensation → host consent and browser write integration only when ready. Preserve verified primitives. Lean support proof and observation economics remain parallel dependency-ready research; no deployment or release.
+Build an independently retained monotonic witness for the authenticated shared authority and prove reopen/catch-up/rollback behavior → align more Go traces with the existing bounded model and define approval expiry/revocation/compensation → threat review and browser consent boundaries → provider-independent budget reservation → only then implement the nontechnical multi-provider BYOK workspace. Preserve deterministic no-AI operation and existing verified primitives. No deployment, release or paid inference.
 
-All 62 original IDs have individual objective, dependencies, risk/priority, location, acceptance, positive/adversarial tests, verification method, status, evidence and limitations in roadmap.json. Together with 27 new gates, the 89-ID dependency graph has no missing nodes, duplicate IDs or cycles. Legacy dependency mappings are current planning judgments, not historical proof.
+All 62 original IDs retain their individual historical records. Together with 28 new gates, the 90-ID dependency graph has no missing nodes, duplicate IDs or cycles. Legacy dependency mappings remain planning judgments, not retroactive proof.

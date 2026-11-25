@@ -3,20 +3,20 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-010",
+  "session": "V2-011",
   "next": [
-    "V2-P05-RECOVERY",
     "V2-P05-ROLLBACK",
     "V2-P06-REFINE",
-    "V2-F11b",
+    "V2-P05-RECOVERY",
+    "V2-P01-THREAT",
+    "V2-P04-CONSENT",
+    "V2-P14-BUDGET",
+    "V2-P14-BYOK-UX",
     "V2-RUNTIME-02",
     "V2-RUNTIME-03",
-    "V2-F12d",
-    "V2-F13",
-    "V2-F04",
-    "V2-RUNTIME-04"
+    "V2-F12d"
   ],
-  "state": "bounded_anchor_and_caller_journal_verified_in_scope_refinement_partial",
+  "state": "authenticated_shared_authority_external_process_and_trace_refinement_partial",
   "verified": [
     {
       "id": "V2-M01",
@@ -237,11 +237,11 @@
   "release": "not_authorized",
   "submission": "not_started",
   "lastFailed": {
-    "sourceRevision": "45ea97969ff51c90c15920cfa32518c0c156e46f",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524868505/job/138905589669",
-    "reason": "TLC fair check succeeded and unfair model produced exact named temporal counterexample, but harness grep expected plural wording; step exited 1."
+    "sourceRevision": "54932ff869b545cc100fd716751a0b4c499d0ac2",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45526366515/job/138910622318",
+    "reason": "Go action-protocol build failed before execution because authority_linux_test.go referenced filepath without importing path/filepath."
   },
-  "lastVerifiedKernelSource": "88ab00000eaf71c67f4a14c05ab82c4be31a2985",
+  "lastVerifiedKernelSource": "1951512e9f9a9d566d723803d4fb42709888e8e3",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -251,24 +251,27 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
-    "sourceRevision": "20e68b77ae86ed77199465330f88f54f786fd23f",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45525025473",
-    "pushRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45525009986",
+    "sourceRevision": "1951512e9f9a9d566d723803d4fb42709888e8e3",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306",
+    "pushRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527024146",
     "checks": [
-      "Go race tests including rollback counterexample",
-      "Original and anchored TLC safety/negative mutants",
-      "Fair conditional opportunity and unfair named temporal counterexample",
-      "Browser and all exact workflows"
+      "Authenticated shared-authority Go race tests",
+      "Independent actual Go trace replay",
+      "Original and anchored TLC safety/fairness/negative gates",
+      "Actual separate authority server process replacement",
+      "Signed-authority rollback counterexample",
+      "All six PR workflows plus push knowledge workflow"
     ],
-    "status": "formal_step_success_full_ci_pending",
+    "status": "exact_code_candidate_all_seven_workflows_success",
     "observed": [
-      "pull_request Validate SUTRA engineering evaluation 45525025581: success",
-      "pull_request Validate SUTRA Open Kit candidate 45525025466: success",
-      "pull_request Classify SUTRA verification impact 45525025618: success",
-      "pull_request Validate SUTRA v2 knowledge kernel 45525025473: in_progress",
-      "pull_request Validate SUTRA publisher starter 45525025543: success",
-      "pull_request Validate SUTRA browser compatibility matrix 45525025499: in_progress",
-      "push Validate SUTRA v2 knowledge kernel 45525009986: in_progress"
+      "PR knowledge 45527040306 / job 138912849718: success",
+      "PR browser job 138912849355: success",
+      "PR Open Kit 45527040235: success",
+      "PR impact 45527040263: success",
+      "PR publisher 45527040399: success",
+      "PR engineering 45527040308: success",
+      "PR browser matrix 45527040403: success",
+      "push knowledge 45527024146 / job 138912797107: success"
     ]
   },
   "previousPendingCandidate": {
@@ -314,6 +317,14 @@
       "resolutionRevision": "20e68b77ae86ed77199465330f88f54f786fd23f",
       "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45525009986/job/138906066673",
       "resolutionStatus": "formal_step_success_observed"
+    },
+    {
+      "sourceRevision": "54932ff869b545cc100fd716751a0b4c499d0ac2",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45526366515/job/138910622318",
+      "reason": "Go action-protocol build failed before execution because authority_linux_test.go referenced filepath without importing path/filepath.",
+      "resolutionRevision": "40516fb9cecd1fe7403a8451e69a9fa160aa02a8",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45526451099/job/138910902461",
+      "resolutionStatus": "exact_go_trace_tlc_and_full_workflow_success"
     }
   ],
   "reconciledDurableCandidate": {
@@ -396,6 +407,27 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45525009986/job/138906066673",
       "description": "Corrected exact expected diagnostic to Temporal property ConditionalRecovery was violated; push formal gate completed successfully.",
       "remaining": "Bounded two-caller/two-approved-key safety and conditional fairness checks exercised; no unconditional receipt liveness with finite budget. Go journal limits per approval, model limits per caller; CAS and journal transport separate. No trace-refinement proof, independent implementation of Go consumer or arbitrary external service guarantee."
+    },
+    {
+      "id": "V2-P05-RECOVERY",
+      "sourceRevision": "1951512e9f9a9d566d723803d4fb42709888e8e3",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306/job/138912849718",
+      "description": "Exact Go race gate passed authenticated caller signatures, atomic shared action+contact snapshot, lost-reply recovery across reopen, stale caller pin reconciliation, per-caller 2/global 3 durable accounting, live-budget rolled-cursor conflict, immutable copied caller identities, response tamper refusal, concurrent CAS one-effect serialization, actual separate authority server processes, corruption/failpoint poisoning, and preserved cloned-authority plus older-valid-snapshot rollback counterexamples. Independent Python accepted the actual four-event Go trace and mapped commit/status/budget behavior to bounded AnchoredRecovery transitions; original and anchored TLC safety/fairness/negative gates remained successful.",
+      "remaining": "Authenticated loopback authority now owns action history and per-caller/global contact accounting atomically, and stale local caller state cannot reset quota. Still a synthetic single-authority fixture: no approval expiry/revocation, generic new-key lifecycle, hostile-network replay protection, provider spend accounting, physical power-loss certification or arbitrary upstream side effect."
+    },
+    {
+      "id": "V2-P05-ROLLBACK",
+      "sourceRevision": "1951512e9f9a9d566d723803d4fb42709888e8e3",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306/job/138912849718",
+      "description": "Exact Go race gate passed authenticated caller signatures, atomic shared action+contact snapshot, lost-reply recovery across reopen, stale caller pin reconciliation, per-caller 2/global 3 durable accounting, live-budget rolled-cursor conflict, immutable copied caller identities, response tamper refusal, concurrent CAS one-effect serialization, actual separate authority server processes, corruption/failpoint poisoning, and preserved cloned-authority plus older-valid-snapshot rollback counterexamples. Independent Python accepted the actual four-event Go trace and mapped commit/status/budget behavior to bounded AnchoredRecovery transitions; original and anchored TLC safety/fairness/negative gates remained successful.",
+      "remaining": "Caller-journal rollback is bounded by the external authority, but rollback of the authority itself remains demonstrably open: replacing authority.bin with an older genuinely signed snapshot resets history and contact counts, and cloning signer+snapshot can fork. An independently retained monotonic head/key trust domain and separate compensation approval remain mandatory."
+    },
+    {
+      "id": "V2-P06-REFINE",
+      "sourceRevision": "1951512e9f9a9d566d723803d4fb42709888e8e3",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306/job/138912849718",
+      "description": "Exact Go race gate passed authenticated caller signatures, atomic shared action+contact snapshot, lost-reply recovery across reopen, stale caller pin reconciliation, per-caller 2/global 3 durable accounting, live-budget rolled-cursor conflict, immutable copied caller identities, response tamper refusal, concurrent CAS one-effect serialization, actual separate authority server processes, corruption/failpoint poisoning, and preserved cloned-authority plus older-valid-snapshot rollback counterexamples. Independent Python accepted the actual four-event Go trace and mapped commit/status/budget behavior to bounded AnchoredRecovery transitions; original and anchored TLC safety/fairness/negative gates remained successful.",
+      "remaining": "One actual Go trace is independently replayed against the bounded transition mapping and budgets now match the TLA per-caller 2/global 3 profile. This is a trace witness, not a universal refinement theorem: Go collapses dispatch+delivery once bytes arrive, cryptography/binary parsing/storage are outside TLA, and authority snapshot rollback remains possible without an external monotonic witness."
     }
   ],
   "reconciledCI": [

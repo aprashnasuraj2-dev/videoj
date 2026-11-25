@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-010",
+  "session": "V2-011",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -236,9 +236,14 @@
               "sourceRevision": "45ea97969ff51c90c15920cfa32518c0c156e46f",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524868505/job/138905589669",
               "description": "Go race passed including signed caller-journal rollback counterexample. TLC safe fairness check passed (995 states); removal of fairness produced named ConditionalRecovery temporal counterexample. Overall job failed because shell grep incorrectly expected plural diagnostic; subsequent steps skipped. Failure retained, no whole-job credit."
+            },
+            {
+              "sourceRevision": "1951512e9f9a9d566d723803d4fb42709888e8e3",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306/job/138912849718",
+              "description": "Exact Go race gate passed authenticated caller signatures, atomic shared action+contact snapshot, lost-reply recovery across reopen, stale caller pin reconciliation, per-caller 2/global 3 durable accounting, live-budget rolled-cursor conflict, immutable copied caller identities, response tamper refusal, concurrent CAS one-effect serialization, actual separate authority server processes, corruption/failpoint poisoning, and preserved cloned-authority plus older-valid-snapshot rollback counterexamples. Independent Python accepted the actual four-event Go trace and mapped commit/status/budget behavior to bounded AnchoredRecovery transitions; original and anchored TLC safety/fairness/negative gates remained successful."
             }
           ],
-          "knownLimitations": "Delayed and reordered TCP delivery, crash reservation, frozen approvals and bounded signed journal verified. Trusted directory/signer only; rollback of caller journal or another book can reset/bypass budget. CAS wire integration, authenticated global contact accounting, expiry/revocation and approval replacement lifecycle remain open."
+          "knownLimitations": "Authenticated loopback authority now owns action history and per-caller/global contact accounting atomically, and stale local caller state cannot reset quota. Still a synthetic single-authority fixture: no approval expiry/revocation, generic new-key lifecycle, hostile-network replay protection, provider spend accounting, physical power-loss certification or arbitrary upstream side effect."
         },
         {
           "id": "V2-P05-ROLLBACK",
@@ -270,9 +275,14 @@
               "sourceRevision": "45ea97969ff51c90c15920cfa32518c0c156e46f",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524868505/job/138905589669",
               "description": "Go race passed including signed caller-journal rollback counterexample. TLC safe fairness check passed (995 states); removal of fairness produced named ConditionalRecovery temporal counterexample. Overall job failed because shell grep incorrectly expected plural diagnostic; subsequent steps skipped. Failure retained, no whole-job credit."
+            },
+            {
+              "sourceRevision": "1951512e9f9a9d566d723803d4fb42709888e8e3",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306/job/138912849718",
+              "description": "Exact Go race gate passed authenticated caller signatures, atomic shared action+contact snapshot, lost-reply recovery across reopen, stale caller pin reconciliation, per-caller 2/global 3 durable accounting, live-budget rolled-cursor conflict, immutable copied caller identities, response tamper refusal, concurrent CAS one-effect serialization, actual separate authority server processes, corruption/failpoint poisoning, and preserved cloned-authority plus older-valid-snapshot rollback counterexamples. Independent Python accepted the actual four-event Go trace and mapped commit/status/budget behavior to bounded AnchoredRecovery transitions; original and anchored TLC safety/fairness/negative gates remained successful."
             }
           ],
-          "knownLimitations": "Single trusted Linux CAS authority and portable pin verifier verified; cloned anchor itself still forks and old signed journal can reset budget. No independently distributed monotonic head/key, multi-host authority, authenticated CAS wire or separately authorized compensation. Threat-model dependency remains open."
+          "knownLimitations": "Caller-journal rollback is bounded by the external authority, but rollback of the authority itself remains demonstrably open: replacing authority.bin with an older genuinely signed snapshot resets history and contact counts, and cloning signer+snapshot can fork. An independently retained monotonic head/key trust domain and separate compensation approval remain mandatory."
         }
       ]
     },
@@ -337,9 +347,14 @@
               "sourceRevision": "20e68b77ae86ed77199465330f88f54f786fd23f",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45525009986/job/138906066673",
               "description": "Corrected exact expected diagnostic to Temporal property ConditionalRecovery was violated; push formal gate completed successfully."
+            },
+            {
+              "sourceRevision": "1951512e9f9a9d566d723803d4fb42709888e8e3",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306/job/138912849718",
+              "description": "Exact Go race gate passed authenticated caller signatures, atomic shared action+contact snapshot, lost-reply recovery across reopen, stale caller pin reconciliation, per-caller 2/global 3 durable accounting, live-budget rolled-cursor conflict, immutable copied caller identities, response tamper refusal, concurrent CAS one-effect serialization, actual separate authority server processes, corruption/failpoint poisoning, and preserved cloned-authority plus older-valid-snapshot rollback counterexamples. Independent Python accepted the actual four-event Go trace and mapped commit/status/budget behavior to bounded AnchoredRecovery transitions; original and anchored TLC safety/fairness/negative gates remained successful."
             }
           ],
-          "knownLimitations": "Bounded two-caller/two-approved-key safety and conditional fairness checks exercised; no unconditional receipt liveness with finite budget. Go journal limits per approval, model limits per caller; CAS and journal transport separate. No trace-refinement proof, independent implementation of Go consumer or arbitrary external service guarantee."
+          "knownLimitations": "One actual Go trace is independently replayed against the bounded transition mapping and budgets now match the TLA per-caller 2/global 3 profile. This is a trace witness, not a universal refinement theorem: Go collapses dispatch+delivery once bytes arrive, cryptography/binary parsing/storage are outside TLA, and authority snapshot rollback remains possible without an external monotonic witness."
         }
       ]
     },
@@ -584,6 +599,25 @@
           "status": "Not started",
           "evidence": [],
           "knownLimitations": "No paid inference authorized; provider charging semantics vary"
+        },
+        {
+          "id": "V2-P14-BYOK-UX",
+          "objective": "Provide nontechnical multi-provider credential setup through host-owned opaque handles without making secrets model, peer or graph data",
+          "dependencies": [
+            "V2-P14-BUDGET",
+            "V2-P03-TAINT",
+            "V2-P04-CONSENT"
+          ],
+          "priority": "P0",
+          "risk": "critical",
+          "implementationLocation": "apps/sutra-v2; packages/sutra-inference; packages/sutra-runtime; services/sutra-api",
+          "acceptanceCriteria": "At least two fixed provider profiles can coexist; secret values never enter graph, prompt, peer payload, trace, export, URL, telemetry or plaintext browser storage; provider/model choice and per-profile limits require explicit host UI; deterministic no-AI mode remains usable; user can remove a credential cleanly",
+          "positiveTests": "Fake provider profiles with masked onboarding, provider/model switching and independent bounded reservations; no live paid inference",
+          "adversarialTests": "Credential canary, malicious peer/model asks for key, arbitrary endpoint, model-selected provider switch, stale credential handle, reload/export/log/DOM leakage and cross-profile confusion",
+          "verificationMethod": "Browser integration, fake-provider relay/adapter tests, credential-canary scans and backend budget contract; authorized real provider only in a later separately approved gate",
+          "status": "Not started",
+          "evidence": [],
+          "knownLimitations": "Current checked-in service intentionally reports byok:false and rejects visitor credentials. Browser-vault versus ephemeral same-origin relay design is not yet selected; XSS/browser-extension exposure, provider CORS, storage persistence and provider-specific billing semantics require threat review."
         }
       ]
     },
@@ -2254,13 +2288,13 @@
     }
   ],
   "validation": {
-    "requirements": 89,
+    "requirements": 90,
     "legacyRequirements": 62,
-    "newGates": 27,
+    "newGates": 28,
     "phases": 23,
     "duplicateIds": 0,
     "missingDependencies": 0,
     "dependencyCycles": 0,
-    "method": "Parsed exact remote roadmap and traversed all 89 recorded dependency nodes in V2-010; historical dependency links are current engineering judgments, not retroactive proof."
+    "method": "Parsed exact remote roadmap and traversed all 90 recorded dependency nodes in V2-011; historical dependency links are current engineering judgments, not retroactive proof."
   }
 }
