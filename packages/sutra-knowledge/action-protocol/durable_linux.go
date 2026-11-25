@@ -60,7 +60,7 @@ func openDurable(dir string,ctx Digest,approver ed25519.PublicKey,signer ed25519
   if e=s.persist(nil);e!=nil{return nil,e}
  }else{
   f,e:=os.Open(path);if e!=nil{return nil,e}
-  b,e:=io.ReadAll(io.LimitReader(f,maxSnapshot+1));ce:=f.Close()
+  b,e:=io.ReadAll(io.LimitReader(f,int64(maxSnapshot+1)));ce:=f.Close()
   if e!=nil||ce!=nil{return nil,ErrStore}
   requests,e:=s.decode(b);if e!=nil{return nil,e}
   for _,req:=range requests{
