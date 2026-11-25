@@ -71,6 +71,21 @@ test('operation accessors and unsupported values fail before budget reservation 
  assert.equal(contacts,0);
 });
 
+test('credential accidentally placed in operation is blocked before budget reservation or transport',async()=>{
+ let contacts=0;
+ const w=make(async()=>{contacts++;return {actualInputBytes:1,actualOutputTokens:1,value:'ok'};});
+ const a=w.addProfile({providerId:'provider-a',label:'Work',credential:alpha});
+ await assert.rejects(w.execute({
+  handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,now:0,
+  operation:{messages:[{role:'user',content:'do not send '+alpha}]}
+ }),e=>e.code==='SECRET_ECHO'&&!e.message.includes(alpha));
+ const keyed=Object.create(null);keyed['prefix-'+alpha]='x';
+ await assert.rejects(w.execute({
+  handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,now:0,operation:keyed
+ }),e=>e.code==='SECRET_ECHO');
+ assert.equal(contacts,0);assert.equal(w.budgetSnapshot().global.used.calls,0);
+});
+
 test('provider credential echo is refused and its already-admitted reservation becomes unknown',async()=>{
  let contacts=0;
  const w=make(async input=>{contacts++;return {actualInputBytes:10,actualOutputTokens:1,value:{nested:{leak:input.credential}}};});
