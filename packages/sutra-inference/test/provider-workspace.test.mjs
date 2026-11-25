@@ -15,7 +15,7 @@ const alpha='WORKSPACE_SECRET_ALPHA_8f924';
 const beta='WORKSPACE_SECRET_BETA_71ca0';
 
 const make=(sendA,sendB)=>{seed=1;return createProviderWorkspace({
- catalog,globalLimits,defaultProfileLimits:limits,leaseTicks:10,randomBytes,
+ catalog,globalLimits,defaultProfileLimits:limits,leaseTicks:10,randomBytes,clock:()=>0,
  transports:[
   {providerId:'provider-a',send:sendA??(async()=>({actualInputBytes:10,actualOutputTokens:5,value:{text:'alpha ok'}}))},
   {providerId:'provider-b',send:sendB??(async()=>({actualInputBytes:10,actualOutputTokens:5,value:{text:'beta ok'}}))}
@@ -33,8 +33,8 @@ test('two nontechnical provider profiles keep credentials opaque while trusted t
  assert.equal(w.list().length,2);
  const publicBefore=JSON.stringify({profiles:w.list(),budget:w.budgetSnapshot()});
  assert.equal(publicBefore.includes(alpha),false);assert.equal(publicBefore.includes(beta),false);
- const ra=await w.execute({handle:a.handle,model:'alpha-large',inputBytes:100,maxOutputTokens:50,now:0,operation:{kind:'chat',messages:['hello']}});
- const rb=await w.execute({handle:b.handle,model:'beta-fast',inputBytes:120,maxOutputTokens:60,now:0,operation:{kind:'chat',messages:['world']}});
+ const ra=await w.execute({handle:a.handle,model:'alpha-large',inputBytes:100,maxOutputTokens:50,operation:{kind:'chat',messages:['hello']}});
+ const rb=await w.execute({handle:b.handle,model:'beta-fast',inputBytes:120,maxOutputTokens:60,operation:{kind:'chat',messages:['world']}});
  assert.deepEqual(seen.map(x=>[x.provider,x.credential,x.model]),[
   ['provider-a',alpha,'alpha-large'],['provider-b',beta,'beta-fast']
  ]);
@@ -48,11 +48,12 @@ test('caller cannot supply provider endpoint, transport, credential field or una
  const w=make(async()=>{contacts++;return {actualInputBytes:1,actualOutputTokens:1,value:'ok'};});
  const a=w.addProfile({providerId:'provider-a',label:'Work',credential:alpha});
  for(const input of [
-  {handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:10,now:0,operation:{q:'x'},endpoint:'https://evil.example'},
-  {handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:10,now:0,operation:{q:'x'},transport:()=>{}},
-  {handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:10,now:0,operation:{q:'x'},credential:'attacker'},
+  {handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:10,operation:{q:'x'},endpoint:'https://evil.example'},
+  {handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:10,operation:{q:'x'},transport:()=>{}},
+  {handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:10,operation:{q:'x'},credential:'attacker'},
+  {handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:10,operation:{q:'x'},now:Number.MAX_SAFE_INTEGER},
  ])await assert.rejects(w.execute(input),e=>e instanceof ProviderWorkspaceError&&e.code==='REQUEST');
- await assert.rejects(w.execute({handle:a.handle,model:'model-chosen-by-peer',inputBytes:10,maxOutputTokens:10,now:0,operation:{q:'x'}}),e=>e.code==='MODEL');
+ await assert.rejects(w.execute({handle:a.handle,model:'model-chosen-by-peer',inputBytes:10,maxOutputTokens:10,operation:{q:'x'}}),e=>e.code==='MODEL');
  assert.equal(contacts,0);assert.equal(w.budgetSnapshot().global.used.calls,0);
  assert.throws(()=>w.addProfile({providerId:'provider-a',label:'bad',credential:alpha,endpoint:'https://evil.example'}),e=>e.code==='PROFILE');
 });
@@ -63,10 +64,10 @@ test('operation accessors and unsupported values fail before budget reservation 
  const a=w.addProfile({providerId:'provider-a',label:'Work',credential:alpha});
  const operation={kind:'chat'};
  Object.defineProperty(operation,'messages',{enumerable:true,get(){getterRuns++;return ['secret'];}});
- await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:10,now:0,operation}),e=>e.code==='PROVIDER_RESULT');
+ await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:10,operation}),e=>e.code==='PROVIDER_RESULT');
  assert.equal(getterRuns,0);assert.equal(contacts,0);assert.equal(w.budgetSnapshot().global.used.calls,0);
  for(const bad of [()=>{},new Date(),Symbol('x')]){
-  await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:10,now:0,operation:bad}),e=>e.code==='PROVIDER_RESULT');
+  await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:10,operation:bad}),e=>e.code==='PROVIDER_RESULT');
  }
  assert.equal(contacts,0);
 });
@@ -76,12 +77,12 @@ test('credential accidentally placed in operation is blocked before budget reser
  const w=make(async()=>{contacts++;return {actualInputBytes:1,actualOutputTokens:1,value:'ok'};});
  const a=w.addProfile({providerId:'provider-a',label:'Work',credential:alpha});
  await assert.rejects(w.execute({
-  handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,now:0,
+  handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,
   operation:{messages:[{role:'user',content:'do not send '+alpha}]}
  }),e=>e.code==='SECRET_ECHO'&&!e.message.includes(alpha));
  const keyed=Object.create(null);keyed['prefix-'+alpha]='x';
  await assert.rejects(w.execute({
-  handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,now:0,operation:keyed
+  handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,operation:keyed
  }),e=>e.code==='SECRET_ECHO');
  assert.equal(contacts,0);assert.equal(w.budgetSnapshot().global.used.calls,0);
 });
@@ -90,7 +91,7 @@ test('provider credential echo is refused and its already-admitted reservation b
  let contacts=0;
  const w=make(async input=>{contacts++;return {actualInputBytes:10,actualOutputTokens:1,value:{nested:{leak:input.credential}}};});
  const a=w.addProfile({providerId:'provider-a',label:'Work',credential:alpha});
- await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:50,now:0,operation:{q:'x'}}),e=>e.code==='SECRET_ECHO'&&!e.message.includes(alpha));
+ await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:50,operation:{q:'x'}}),e=>e.code==='SECRET_ECHO'&&!e.message.includes(alpha));
  assert.equal(contacts,1);
  const snap=w.budgetSnapshot();assert.equal(snap.global.used.calls,1);assert.equal(snap.global.used.unknown,1);assert.equal(snap.global.used.active,1);
  assert.equal(JSON.stringify(snap).includes(alpha),false);
@@ -104,8 +105,8 @@ test('transport failure and impossible usage report remain conservatively charge
  );
  const a=w.addProfile({providerId:'provider-a',label:'Work',credential:alpha});
  const b=w.addProfile({providerId:'provider-b',label:'Research',credential:beta});
- await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:50,now:0,operation:{q:'x'}}),e=>e.code==='PROVIDER_UNKNOWN'&&!e.message.includes(alpha));
- await assert.rejects(w.execute({handle:b.handle,model:'beta-fast',inputBytes:100,maxOutputTokens:50,now:0,operation:{q:'x'}}),e=>e.code==='USAGE');
+ await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:50,operation:{q:'x'}}),e=>e.code==='PROVIDER_UNKNOWN'&&!e.message.includes(alpha));
+ await assert.rejects(w.execute({handle:b.handle,model:'beta-fast',inputBytes:100,maxOutputTokens:50,operation:{q:'x'}}),e=>e.code==='USAGE');
  assert.equal(contactsA,1);assert.equal(contactsB,1);
  const snap=w.budgetSnapshot();assert.equal(snap.global.used.calls,2);assert.equal(snap.global.used.unknown,2);
  assert.equal(snap.global.used.actualOutputTokens,0);
@@ -116,9 +117,9 @@ test('per-profile concurrency admission happens before a second secret release',
  const pending=new Promise(resolve=>{release=resolve;});
  const w=make(async()=>{contacts++;await pending;return {actualInputBytes:10,actualOutputTokens:2,value:'done'};});
  const a=w.addProfile({providerId:'provider-a',label:'Work',credential:alpha});
- const first=w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,now:0,operation:{q:'one'}});
+ const first=w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,operation:{q:'one'}});
  await new Promise(resolve=>setImmediate(resolve));
- await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,now:0,operation:{q:'two'}}),e=>e.code==='BUDGET');
+ await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,operation:{q:'two'}}),e=>e.code==='BUDGET');
  assert.equal(contacts,1);
  release();assert.equal((await first).lease.state,'settled');
 });
@@ -126,11 +127,11 @@ test('per-profile concurrency admission happens before a second secret release',
 test('removing a profile invalidates the credential handle but retains budget audit history',async()=>{
  const w=make();
  const a=w.addProfile({providerId:'provider-a',label:'Work',credential:alpha});
- await w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,now:0,operation:{q:'x'}});
+ await w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,operation:{q:'x'}});
  const removed=w.removeProfile(a.handle);
  assert.equal(removed.budget.enabled,false);assert.equal(removed.budget.used.calls,1);
  assert.equal(w.list().length,0);
- await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:1,maxOutputTokens:1,now:1,operation:{q:'x'}}),e=>e.code==='HANDLE');
+ await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:1,maxOutputTokens:1,operation:{q:'x'}}),e=>e.code==='HANDLE');
  const row=w.budgetSnapshot().profiles.find(x=>x.profileId===a.profile.profileId);
  assert.equal(row.enabled,false);assert.equal(row.used.calls,1);
  assert.equal(JSON.stringify(row).includes(alpha),false);
@@ -144,7 +145,7 @@ test('provider result parser rejects accessors without executing them and preser
   return raw;
  });
  const a=w.addProfile({providerId:'provider-a',label:'Work',credential:alpha});
- await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:10,now:0,operation:{q:'x'}}),e=>e.code==='PROVIDER_RESULT');
+ await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:10,operation:{q:'x'}}),e=>e.code==='PROVIDER_RESULT');
  assert.equal(getterRuns,0);assert.equal(w.budgetSnapshot().global.used.unknown,1);
 });
 
@@ -167,7 +168,7 @@ test('removing a profile during an in-flight provider call fails the result clos
  const pending=new Promise(resolve=>{release=resolve;});
  const w=make(async input=>{contacts++;await pending;return {actualInputBytes:10,actualOutputTokens:2,value:{text:'done'}};});
  const a=w.addProfile({providerId:'provider-a',label:'Work',credential:alpha});
- const run=w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,now:0,operation:{q:'one'}});
+ const run=w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,operation:{q:'one'}});
  await new Promise(resolve=>setImmediate(resolve));assert.equal(contacts,1);
  const removed=w.removeProfile(a.handle);assert.equal(removed.budget.enabled,false);
  release();
