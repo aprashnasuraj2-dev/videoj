@@ -15,6 +15,7 @@ from verify_robust_acquisition import verify as verify_acquisition, MAX_BYTES as
 from verify_reviewed_interval import verify as verify_interval, MAX_BYTES as MAX_INTERVAL_BYTES
 from verify_reviewed_binomial import verify as verify_binomial, MAX_BYTES as MAX_BINOMIAL_BYTES
 from verify_reviewed_fisher import verify as verify_fisher, MAX_BYTES as MAX_FISHER_BYTES
+from verify_reviewed_question import verify as verify_question, MAX_BYTES as MAX_QUESTION_BYTES
 
 PIN_FILE = re.compile(rb'sha256:[a-f0-9]{64}(?:\r?\n)?', re.ASCII)
 
@@ -45,6 +46,7 @@ def main():
     profiles.add_argument('--interval',action='store_true',help='Explicitly select reviewed continuous interval replay')
     profiles.add_argument('--binomial',action='store_true',help='Explicitly select conditional binomial arithmetic replay')
     profiles.add_argument('--fisher',action='store_true',help='Explicitly select conditional two-group Fisher arithmetic replay')
+    profiles.add_argument('--question',action='store_true',help='Explicitly select restricted reviewed question mapping replay')
     parser.add_argument('--policy-pin',help='Separately retained acquisition policy digest')
     parser.add_argument('--version-pin',help='Separately retained living investigation version digest')
     parser.add_argument('--plan-pin',help='Separately retained synthetic grid plan digest')
@@ -55,12 +57,16 @@ def main():
     args=parser.parse_args()
     if args.case_pin is not None and not args.aligned:parser.error('--case-pin requires --aligned')
     if (args.source_pin is not None or args.after_source_pin is not None) and not args.trial:parser.error('trial source pins require --trial')
-    if args.contract_pin is not None and not args.reviewed:parser.error('--contract-pin requires --reviewed')
-    if (args.version_pin is not None or args.plan_pin is not None) and not (args.world_grid or args.acquisition or args.interval or args.binomial or args.fisher):parser.error('version and plan pins require an explicit applicable profile')
+    if args.contract_pin is not None and not (args.reviewed or args.question):parser.error('--contract-pin requires --reviewed or --question')
+    if args.version_pin is not None and not (args.world_grid or args.acquisition or args.interval or args.binomial or args.fisher):parser.error('version pin requires an applicable profile')
+    if args.plan_pin is not None and not (args.world_grid or args.acquisition or args.interval or args.binomial or args.fisher or args.question):parser.error('plan pin requires an applicable profile')
     if args.policy_pin is not None and not args.acquisition:parser.error('--policy-pin requires --acquisition')
     try:
         pin=args.pin if args.pin is not None else load_pin(args.pin_file)
-        if args.fisher:
+        if args.question:
+            with Path(args.capsule).open('rb') as f:data=f.read(MAX_QUESTION_BYTES+1)
+            result=verify_question(data,pin,args.contract_pin,args.plan_pin)
+        elif args.fisher:
             with Path(args.capsule).open('rb') as f:data=f.read(MAX_FISHER_BYTES+1)
             result=verify_fisher(data,pin,args.version_pin,args.plan_pin)
         elif args.binomial:

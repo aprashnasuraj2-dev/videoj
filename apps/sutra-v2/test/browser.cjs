@@ -917,7 +917,12 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    await click('question-path-run');await state('question_ready');
    const qp=await tablePage.locator('#review-question-path-result').innerText();
    assert.match(qp,/not less than/);assert.match(qp,/CONDITIONALLY_SATISFIED/);assert.match(qp,/CONDITIONALLY_REFUTED/);
-   await tablePage.locator('#review-question-path-left-binding').selectOption('new_rev');assert.equal(await tablePage.locator('#review-question-path-stage').isDisabled(),true);
+   const mappingContract=await tablePage.locator('#review-pin').innerText(),mappingPlan=await tablePage.locator('#review-question-path-plan-pin').innerText();
+   assert.match(mappingContract,/^sha256:[a-f0-9]{64}$/);assert.match(mappingPlan,/^sha256:[a-f0-9]{64}$/);
+   const mappingFile=tablePage.waitForEvent('download');await click('question-path-export');await (await mappingFile).saveAs(path.join(output,'reviewed-question.json'));
+   const mappingPinFile=tablePage.waitForEvent('download');await click('question-path-export-pin');await (await mappingPinFile).saveAs(path.join(output,'reviewed-question.sha256'));
+   fs.writeFileSync(path.join(output,'reviewed-question-contract.sha256'),mappingContract+'\n');fs.writeFileSync(path.join(output,'reviewed-question-plan.sha256'),mappingPlan+'\n');
+   await tablePage.locator('#review-question-path-left-binding').selectOption('new_rev');assert.equal(await tablePage.locator('#review-question-path-stage').isDisabled(),true);assert.equal(await tablePage.locator('#review-question-path-export').isDisabled(),true);
    await click('question-path-run');await state('question_ready');await click('question-path-stage');await state('question_staged');
    assert.match(await tablePage.locator('#review-batch-count').innerText(),/1 \/ 8/);assert.equal(await tablePage.locator('#review-semantic-run').isDisabled(),true);
    await tablePage.locator('#review-question-path-left-binding').selectOption(['new_rev','old_exp']);await click('question-path-run');await state('question_ready');await click('question-path-stage');await state('question_staged');

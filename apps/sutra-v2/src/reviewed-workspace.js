@@ -25,7 +25,7 @@ import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigation
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
-let questionCurrent=null,questionPathPin=null,questionSelections={left:null,right:null};
+let questionCurrent=null,questionExport=null,questionPathPin=null,questionSelections={left:null,right:null};
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
 const tableFields=['table-text','table-source','table-lineage','table-inspect','table-row','table-column','table-id','table-kind','table-unit','table-scope','table-dim-l','table-dim-m','table-dim-t','table-add','table-stage','table-clear'];
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected','sample-statistics','sample-statistics-corrected','sample-two-groups','sample-two-groups-corrected'];
@@ -38,7 +38,7 @@ function control(){
 function invalidate(message){epoch++;clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 function options(element,items){element.replaceChildren();for(const id of items){const o=document.createElement('option');o.value=id;o.textContent=id;element.append(o);}}
-function clearQuestionPreview(){questionCurrent=null;by('question-path-result').textContent='';}
+function clearQuestionPreview(){questionCurrent=null;questionExport=null;by('question-path-result').textContent='';by('question-path-snapshot-pin').textContent='';by('question-path-plan-pin').textContent='';}
 function questionControl(){
  const pin=sealed?.pin??null;
  if(pin!==questionPathPin){
@@ -54,6 +54,7 @@ function questionControl(){
  for(const id of ['question-path-text','question-path-left','question-path-right','question-path-left-binding','question-path-right-binding'])by(id).disabled=busy||!sealed;
  by('question-path-run').disabled=busy||!sealed||!questionSelections.left||!questionSelections.right||!mapped('left')||!mapped('right');
  by('question-path-stage').disabled=busy||!sealed||!questionCurrent||questionCurrent.contractDigest!==pin;
+ for(const id of ['question-path-export','question-path-export-pin'])by(id).disabled=busy||!questionExport;
 }
 for(const side of ['left','right']){
  by('question-path-'+side).onclick=()=>{
@@ -72,10 +73,17 @@ by('question-path-run').onclick=()=>work(async ticket=>{
  const plan=JSON.stringify({version:1,contractDigest:sealed.pin,left:operand('left'),right:operand('right')});
  const result=await compileReviewedQuestion(sealed.contractText,sealed.pin,plan,await casePin(plan));
  if(ticket!==epoch||result.contractDigest!==sealed?.pin)return;
+ const projection=Object.fromEntries(['version','contractDigest','planDigest','originalQuestion','grammar','left','relation','right','candidates','proposals','mode','decisionAuthority','qualification'].map(k=>[k,result[k]]));
+ const bundle=JSON.stringify({contractText:sealed.contractText,contractDigest:sealed.pin,planText:plan,planDigest:result.planDigest,result:projection});
+ const bytes=new TextEncoder().encode(bundle),digest=await casePin(bundle);
+ if(ticket!==epoch||result.contractDigest!==sealed?.pin)return;
  questionCurrent=result;
+ if(bytes.length<=262144){questionExport={bytes,digest};by('question-path-snapshot-pin').textContent=digest;by('question-path-plan-pin').textContent=result.planDigest;}
  by('question-path-result').textContent=['Exact relation: '+result.relation.span.quote+' → '+result.relation.operator,...result.candidates.map(c=>c.meaning+' · '+c.conditionalState),result.qualification].join('\n');
  status('question_ready','Local grammar compiled. Review all supplied mappings and conditional outcomes before explicitly staging.');
 });
+by('question-path-export').onclick=()=>{if(!busy&&questionExport)download(questionExport.bytes,'sutra-reviewed-question.json','application/json');};
+by('question-path-export-pin').onclick=()=>{if(!busy&&questionExport)download(questionExport.digest+'\n','sutra-reviewed-question.sha256','text/plain');};
 by('question-path-stage').onclick=()=>{
  const r=questionCurrent;
  if(busy||!sealed||!r||r.contractDigest!==sealed.pin)return;
