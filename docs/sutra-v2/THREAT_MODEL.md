@@ -72,3 +72,10 @@ Exact source `9b83295062ba8059ad1fa7590988ab4a86ef895b` makes APPLIED/CLOSED exc
 The guarantee stops at the authority history. If the signer and an older signed snapshot are cloned, two independently locked authorities can each apply the same identity. If an already-applied authority is rolled back to a valid older signed snapshot, its local terminal ledger and budget forget the prior effect while the outside-world effect does not disappear. Both cases are permanent regression counterexamples.
 
 **Invariant boundary:** valid signatures prove only that the configured key signed the bytes. APPLIED/CLOSED exclusivity, effect budget and idempotent retry are claims relative to one current, non-rolled-back authority history. They do **not** prove global freshness, consensus, one physical external effect, provider billing semantics or resistance to an operator who can restore/clone the signer and state. RUNTIME-02/P05-ROLLBACK/F11b/P06 and release security remain open until a stronger independently retained monotonic authority or a real upstream's enforced semantics is demonstrated.
+
+
+### T25 formal/refinement evidence — 149d11407bbf
+
+The rollback and clone mechanisms are now represented independently of the Go tests. `UpstreamTerminal.tla` keeps physical effects outside the rollback-able signed snapshot: the safe single-authority machine satisfies its bounded invariant, while `RollbackStore` and `CloneApply` each reach `AtMostOnePhysicalEffect` violations. An independent Python explorer reproduces both witnesses.
+
+A separate Go trace-refinement check covers two concrete non-adversarial terminal executions and rejects seven trace mutations. That does not solve T25: the refinement scope explicitly excludes clone and rollback, and those mechanisms remain negative controls. The next transaction-coupling path must also avoid converting a temporary status absence into permission to release admission after an ambiguous dispatch.

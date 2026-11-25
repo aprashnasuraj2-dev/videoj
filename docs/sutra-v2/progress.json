@@ -17,7 +17,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "upstream_apply_or_close_exact_verified_runtime02_formal_refinement_next",
+  "state": "upstream_terminal_refinement_exact_verified_transactional_coupling_next",
   "verified": [
     {
       "id": "V2-M01",
@@ -246,7 +246,7 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047/job/138998539263",
     "resolutionStatus": "resolved_exact_all_seven_workflows_success"
   },
-  "lastVerifiedKernelSource": "9b83295062ba8059ad1fa7590988ab4a86ef895b",
+  "lastVerifiedKernelSource": "149d11407bbf4033ac2252474d53c255d1bfbeb9",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -505,6 +505,14 @@
       "resolutionRevision": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
       "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047/job/138998539263",
       "resolutionStatus": "resolved_exact_all_seven_workflows_success"
+    },
+    {
+      "sourceRevision": "48a41453bfac11418b90f77873196d753c3af467",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45556172530",
+      "reason": "First upstream-terminal formal/refinement candidate failed before Go/TLA execution because executable threat-model validation rejected the newly registered T25 category 'rollback'; the schema permits confidentiality, integrity, availability, cost, privacy or supply-chain. No kernel/formal credit assigned to this revision.",
+      "resolutionRevision": "149d11407bbf4033ac2252474d53c255d1bfbeb9",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45556263605/job/139008939377",
+      "resolutionStatus": "resolved_by_schema_valid_integrity_category_and_exact_all_seven_green"
     }
   ],
   "reconciledDurableCandidate": {
@@ -797,6 +805,20 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45555367970",
       "description": "Permanent negative controls demonstrate that cloning the upstream signer plus signed snapshot lets two authorities each apply the same identity, and restoring a valid older signed snapshot permits reapplication across histories. Identical valid receipts therefore do not establish one global physical effect.",
       "remaining": "Requires an independently retained monotonic trust root / real upstream enforcement to resist clone or rollback. No consensus or global freshness claim."
+    },
+    {
+      "id": "V2-P06-REFINE",
+      "sourceRevision": "149d11407bbf4033ac2252474d53c255d1bfbeb9",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45556263605/job/139008939377",
+      "description": "Two actual Go upstream terminal executions (APPLIED and CLOSED, each init/transition/retry/status) are exported under SUTRA_UPSTREAM_TRACE and independently checked against the UpstreamTerminal transition relation. Seven mutations—profile, wrong apply state, lost effect, terminal rollback, closed-with-effect, wrong retry and missing event—are rejected. Separately, TLC safe profile generated 8 states / 3 distinct; rollback mutant reached AtMostOnePhysicalEffect violation in Apply->RollbackStore->Apply (10 generated / 5 distinct); clone mutant violated it in Apply->CloneApply (7 generated / 4 distinct). Independent Python reports safe 3 states/7 edges, rollback 6/11 and clone 4/8.",
+      "remaining": "This is a bounded two-trace implementation refinement witness, not universal simulation/refinement. Cryptographic verification, filesystem atomicity, scheduler/network timing, clone/rollback attackers and real provider semantics are outside the trace mapping; the negative models deliberately show the guarantee stops under clone or rollback."
+    },
+    {
+      "id": "V2-P05-ROLLBACK",
+      "sourceRevision": "149d11407bbf4033ac2252474d53c255d1bfbeb9",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45556263605/job/139008939377",
+      "description": "Dedicated UpstreamTerminal TLA and independent Python negative controls formalize the existing Go counterexamples: rollback of the signed store while physical effect persists, and cloned signer+snapshot application, both reach two physical effects.",
+      "remaining": "The model demonstrates the boundary; it does not solve it. External monotonic freshness/independent operation remains required."
     }
   ],
   "reconciledCI": [
@@ -2415,6 +2437,87 @@
         },
         {
           "id": 45555367798,
+          "event": "pull_request",
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "48a41453bfac11418b90f77873196d753c3af467",
+      "complete": false,
+      "description": "Upstream terminal formal/refinement candidate rejected at the first executable threat-model step: T25 used unsupported category 'rollback'. Go trace, TLA and later kernel steps were skipped; no credit.",
+      "runs": [
+        {
+          "id": 45556172530,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure",
+          "jobIds": [
+            139008639022
+          ]
+        }
+      ]
+    },
+    {
+      "sourceRevision": "149d11407bbf4033ac2252474d53c255d1bfbeb9",
+      "complete": true,
+      "description": "Corrected upstream terminal formal/refinement source. Actual Go APPLIED and CLOSED traces were independently mapped to the bounded transition relation; seven trace mutations were rejected. UpstreamTerminal safe TLC passed, rollback and clone mutants violated AtMostOnePhysicalEffect, and independent Python reproduced all three outcomes. Both knowledge runs plus five auxiliary PR workflows succeeded.",
+      "runs": [
+        {
+          "id": 45556257771,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            139008919502,
+            139008919794
+          ]
+        },
+        {
+          "id": 45556263605,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            139008939377,
+            139008939597
+          ]
+        },
+        {
+          "id": 45556263637,
+          "event": "pull_request",
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45556263728,
+          "event": "pull_request",
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45556263657,
+          "event": "pull_request",
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45556263600,
+          "event": "pull_request",
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45556263585,
           "event": "pull_request",
           "name": "Validate SUTRA browser compatibility matrix",
           "status": "completed",

@@ -809,6 +809,22 @@
         {
           "path": "packages/sutra-knowledge/action-protocol/upstream_network_linux_test.go",
           "test": "TestUpstreamEffectAuthorityLostHTTPReplyReconcilesWithoutSecondEffect"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/UpstreamTerminal.tla",
+          "test": "RollbackStore"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/UpstreamTerminal.tla",
+          "test": "CloneApply"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/upstream_refinement_linux_test.go",
+          "test": "TestUpstreamEffectAuthorityRefinementTrace"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/refine_upstream_trace_mutants.py",
+          "test": "terminal-rollback"
         }
       ],
       "openGates": [
