@@ -200,6 +200,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_proposal_clash.py --challenge apps/sutra-v2/test-output/clash-cross.json apps/sutra-v2/test-output/clash-compatible.json > apps/sutra-v2/test-output/clash-reference.txt
           cat apps/sutra-v2/test-output/clash-reference.txt
+      - name: Independently replay observed-domain omitted combination audit
+        run: |
+          python3 packages/sutra-knowledge/reference/verify_coverage_grid.py --challenge apps/sutra-v2/test-output/grid-compatible.json apps/sutra-v2/test-output/grid-excluded.json > apps/sutra-v2/test-output/grid-reference.txt
+          cat apps/sutra-v2/test-output/grid-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

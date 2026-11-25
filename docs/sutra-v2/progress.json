@@ -3,9 +3,9 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-034",
+  "session": "V2-035",
   "next": [
-    "V2-D16-CROSS-BRANCH-CLASH",
+    "V2-D17-OBSERVED-DOMAIN-GRID",
     "V2-P07-WASM",
     "V2-RUNTIME-02",
     "V2-P05-RECOVERY",
@@ -19,7 +19,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "cross_branch_receipt_clash_candidate_pending_exact_ci",
+  "state": "observed_domain_grid_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -331,6 +331,12 @@
       "sourceRevision": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579569479/job/139085895592",
       "description": "All nine exact-source workflows passed: knowledge PR 45579569479 and push 45579560377, ingress 45579569447, impact 45579569525, evaluation 45579569470, Open Kit 45579569509, legacy release 45579569500, publisher 45579569551, browser matrix 45579569465. Knowledge job 139085895176 passed 75 tests including 256 direct-oracle ordered pairs, 12 opposite decisive pairs and 128 false assertions. Actual Chromium replayed both histories, marked false asserted state, refused foreign case, left current history unchanged; independent Python accepted two reports and refused 30 mutants. Corrected previous duplicate lexical binding; Node syntax preflight passed."
+    },
+    {
+      "id": "V2-D16-CROSS-BRANCH-CLASH",
+      "sourceRevision": "c263313e0658536969ca1658e3c5ce93f1853096",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45580198159/job/139088020789",
+      "description": "All nine exact-source workflows passed: knowledge PR 45580198159 and push 45580185704, ingress 45580197942, impact 45580197908, evaluation 45580197861, Open Kit 45580197914, legacy release 45580197991, publisher 45580197853, browser matrix 45580197909. Knowledge job 139088020227 passed 80 tests including 256 direct-oracle ordered pairs and 24 cross-branch clashes. Actual browser receipt-only cross-branch clash and compatible false claim independently replayed; 30 mutants refused. Neither actual history nor availability changed."
     }
   ],
   "release": "not_authorized",
@@ -344,7 +350,7 @@
     "resolutionRevision": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579569479/job/139085895592"
   },
-  "lastVerifiedKernelSource": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
+  "lastVerifiedKernelSource": "c263313e0658536969ca1658e3c5ce93f1853096",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -355,8 +361,21 @@
   },
   "pendingCandidate": {
     "sourceRevision": null,
-    "sourceParent": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
+    "sourceParent": "c263313e0658536969ca1658e3c5ce93f1853096",
     "status": "candidate_pending_exact_ci",
+    "identityRule": "Resolve the immutable commit containing this checkpoint.",
+    "checks": [
+      "audit exact normalized observed input domains, duplicate assignment groups, exact BigInt Cartesian cardinality and missing count",
+      "enumerate entire hypothetical grid only when <=12 combinations; never silently truncate or claim empirical completeness",
+      "recompute each missing assignment from nearest deterministic base; exact input differences, receipt digests, compatibility blockers and decision",
+      "invalid offered quantity and unresolved target cause UNVERIFIED, not silent omission; original case and capsule unchanged",
+      "four local Node groups and two independent Python reports, 36 mutations refused; actual browser exact CI pending"
+    ]
+  },
+  "previousPendingCandidate": {
+    "sourceRevision": "c263313e0658536969ca1658e3c5ce93f1853096",
+    "sourceParent": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
+    "status": "verified_exact_ci",
     "identityRule": "Resolve the immutable commit containing this checkpoint.",
     "checks": [
       "hypothetical receipt-only union and intersection, exact deduplication of shared source bytes; neither history merged or adopted",
@@ -364,21 +383,6 @@
       "distinguish cross-branch contradiction, pre-existing conflict, and false assertion alone; minimum conflicting observation and declared-root sets",
       "same-lineage incompatible observations and explicit unavailable-in-other-branch readings; no observation availability policy invented",
       "five local Node groups including 256 ordered direct set/arithmetic oracle pairs, 24 cross-branch clashes; two Python replay reports and 30 mutations refused; browser exact CI pending"
-    ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
-    "sourceParent": "30e19bc37c0e029b48087262363821c66481dfa6",
-    "status": "verified_exact_ci",
-    "identityRule": "Resolve the immutable commit containing this checkpoint.",
-    "checks": [
-      "replay untrusted competing proposal against same caller-pinned aligned case; compare asserted and recomputed state",
-      "opposite decisive states disjoint survivors; both branches retain independent histories; no adoption",
-      "canonical common event prefix replay distinct from final shared readings, exact event digests, divergent tails, evidence roots and availability",
-      "invalid source, foreign case, malformed event or claimed state refused; false claim reported without endorsing it",
-      "four exact local Node groups; two independent Python replay reports and 30 mutated reports refused; actual browser exact CI pending",
-      "corrected duplicate lexical binding; full corrected browser source compiled in V8 before commit; CI node --check before dependency install",
-      "256 ordered subset pairs against independent direct arithmetic/set oracle: 12 opposite decisive pairs, 128 false asserted states, all passed locally"
     ]
   },
   "roadmap": "docs/sutra-v2/roadmap.json",

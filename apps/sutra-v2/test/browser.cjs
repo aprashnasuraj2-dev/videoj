@@ -512,6 +512,24 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await proposalPage.locator('#pinned-proposal-run').click();await proposalPage.waitForFunction(()=>document.querySelector('#pinned-proposal-status').dataset.state==='refused');
   assert.equal(await proposalPage.locator('#pinned-proposal-export').isDisabled(),true);assert.equal(await proposalPage.locator('#pinned-state').innerText(),'SUPPORTED');
   assert.deepEqual(proposalErrors,[]);assert.deepEqual(proposalExternal,[]);await proposalPage.close();
+  // Audit omitted combinations over observed values, not empirical independence.
+  const gridPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),gridErrors=[],gridExternal=[];
+  gridPage.on('pageerror',e=>gridErrors.push(e.message));gridPage.on('request',r=>{if(new URL(r.url()).origin!==origin)gridExternal.push(r.url());});
+  await gridPage.goto(origin);await gridPage.locator('#pinned-workspace > summary').click();await gridPage.locator('#pinned-grid-example').click();
+  await gridPage.waitForFunction(()=>document.querySelector('#pinned-state').textContent==='SUPPORTED'&&!document.querySelector('#pinned-export').disabled);
+  const gridCase=await gridPage.locator('#pinned-case').inputValue(),gridPin=await gridPage.locator('#pinned-pin').inputValue();
+  await gridPage.locator('#pinned-coverage > summary').click();
+  async function saveGrid(stem,expected){
+   const history=await gridPage.locator('#pinned-events').inputValue();
+   await gridPage.locator('#pinned-grid-run').click();await gridPage.waitForFunction(()=>document.querySelector('#pinned-grid-status').dataset.state==='ready'&&!document.querySelector('#pinned-grid-export').disabled);
+   assert.match(await gridPage.locator('#pinned-grid-summary').innerText(),new RegExp('hypothetical closure '+expected));
+   assert.equal(await gridPage.locator('#pinned-state').innerText(),'SUPPORTED');assert.equal(await gridPage.locator('#pinned-events').inputValue(),history);assert.equal(await gridPage.locator('#pinned-case').inputValue(),gridCase);assert.equal(await gridPage.locator('#pinned-pin').inputValue(),gridPin);
+   const dl=gridPage.waitForEvent('download');await gridPage.locator('#pinned-grid-export').click();const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,stem+'.json'),bytes);return JSON.parse(bytes).result;
+  }
+  const gridCompatible=await saveGrid('grid-compatible','UNDERDETERMINED');assert.equal(gridCompatible.missingCount,'1');assert.equal(gridCompatible.candidates[0].compatible,true);
+  await gridPage.locator('#pinned-events').fill(originalEvents);assert.equal(await gridPage.locator('#pinned-grid-export').isDisabled(),true);await gridPage.locator('#pinned-run').click();await gridPage.waitForFunction(()=>document.querySelector('#pinned-state').textContent==='SUPPORTED'&&!document.querySelector('#pinned-export').disabled);
+  const gridExcluded=await saveGrid('grid-excluded','SUPPORTED');assert.equal(gridExcluded.candidates[0].compatible,false);assert.deepEqual(gridExcluded.candidates[0].blockers.map(x=>x.observationId),['read_alternate']);
+  assert.deepEqual(gridErrors,[]);assert.deepEqual(gridExternal,[]);await gridPage.close();
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});

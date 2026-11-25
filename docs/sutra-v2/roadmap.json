@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-034",
+  "session": "V2-035",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2645,12 +2645,29 @@
     },
     {
       "id": "V2-D16-CROSS-BRANCH-CLASH",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D15-COMPETING-PROPOSAL",
         "V2-D08-ROOT-IMPACT"
       ],
-      "scope": "Receipt-only counterfactual deduplicating exact shared final source bytes, comparing shared and joint reading survivor sets, minimum conflicting observations and declared roots, hypothetical repairs and availability disagreements. No merged history, source availability, source truth, independence or authority to adopt."
+      "scope": "Receipt-only counterfactual deduplicating exact shared final source bytes, comparing shared and joint reading survivor sets, minimum conflicting observations and declared roots, hypothetical repairs and availability disagreements. No merged history, source availability, source truth, independence or authority to adopt.",
+      "evidence": [
+        {
+          "id": "V2-D16-CROSS-BRANCH-CLASH",
+          "sourceRevision": "c263313e0658536969ca1658e3c5ce93f1853096",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45580198159/job/139088020789",
+          "description": "All nine exact-source workflows passed: knowledge PR 45580198159 and push 45580185704, ingress 45580197942, impact 45580197908, evaluation 45580197861, Open Kit 45580197914, legacy release 45580197991, publisher 45580197853, browser matrix 45580197909. Knowledge job 139088020227 passed 80 tests including 256 direct-oracle ordered pairs and 24 cross-branch clashes. Actual browser receipt-only cross-branch clash and compatible false claim independently replayed; 30 mutants refused. Neither actual history nor availability changed."
+        }
+      ]
+    },
+    {
+      "id": "V2-D17-OBSERVED-DOMAIN-GRID",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D14-WORLD-COVERAGE",
+        "V2-D11-ALIGNED-CASE"
+      ],
+      "scope": "Hypothetical Cartesian coverage audit using normalized exact values already observed in the model; exact cardinality, missing and duplicate assignments, bounded complete enumeration, per-candidate blockers and hypothetical closure state. No empirical completeness, feasibility, independent inputs, new source availability or adoption."
     }
   ]
 }
