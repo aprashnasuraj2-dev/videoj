@@ -138,3 +138,19 @@ for entry in 'Double AtMostOneEffect' 'Bypass EffectRequiresAdmission'; do
  grep -F "Invariant $2 is violated" "$WORK/fence-clones-$1.log"
 done
 python3 fence_model.py
+
+
+# Grant-policy freshness: signed historical snapshots remain parseable, but
+# dispatch requires a fresh challenge-bound view matching the live policy head.
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/grant-policy-safe" -config GrantPolicyFreshSafe.cfg GrantPolicyFreshness.tla > "$WORK/grant-policy-safe.log" 2>&1 || { cat "$WORK/grant-policy-safe.log"; exit 1; }
+cat "$WORK/grant-policy-safe.log"
+grep -F 'No error has been found' "$WORK/grant-policy-safe.log"
+for entry in 'Replay NoStaleDispatch' 'NoCheck DispatchWasFresh' 'Coordinated WitnessMonotonic'; do
+ set -- $entry
+ if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/grant-policy-$1" -config "GrantPolicyFresh$1.cfg" GrantPolicyFreshness.tla > "$WORK/grant-policy-$1.log" 2>&1; then
+  cat "$WORK/grant-policy-$1.log"; echo "grant policy mutant $1 unexpectedly succeeded" >&2; exit 1
+ fi
+ cat "$WORK/grant-policy-$1.log"
+ grep -F "Invariant $2 is violated" "$WORK/grant-policy-$1.log"
+done
+python3 grant_policy_model.py
