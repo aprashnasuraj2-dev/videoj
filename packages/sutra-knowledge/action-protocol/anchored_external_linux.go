@@ -305,6 +305,48 @@ func (g *AnchoredFencedGrantGuard) ProcessCompositePinned(grant ActionGrant, req
 	return out, nil
 }
 
+// ResolveCompositeOrphanPinned clears only a pre-effect orphan and keeps the
+// strongest caller/policy boundary intact. It is intentionally an in-process
+// operator API, not a second HTTP write route. The original commit request and
+// caller policy pin must still be valid members of the current retained policy
+// history before the separately keyed permanent-closure proof is consumed.
+func (g *AnchoredFencedGrantGuard) ResolveCompositeOrphanPinned(grant ActionGrant, req AuthorityRequest, pin ClientPolicyPin, proof EffectClosureProof) error {
+	if req.Op != AuthorityCommit {
+		return ErrPolicy
+	}
+	a := g.coordinator.authority
+	if e := a.preflight(req); e != nil {
+		return e
+	}
+	if req.Caller >= authorityCallers || !VerifyClientPolicyPin(pin, a.ctx, grant.ID, req.Hash(), a.callers[req.Caller]) {
+		return ErrAuthorityAuth
+	}
+	b := g.policy.book
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	if e := g.policy.checkReconcileLocked(grant, req.Action); e != nil {
+		return e
+	}
+	policyHead := b.policyHeadLocked()
+	challenge, e := randomCompositeChallenge()
+	if e != nil {
+		return ErrUnknown
+	}
+	membership, e := g.policy.witness.AttestMembershipChallenge(challenge, pin.Sequence, pin.Head)
+	if e != nil {
+		if errors.Is(e, ErrGrantPolicyRollback) {
+			return ErrGrantPolicyRollback
+		}
+		return ErrGrantPolicyUnavailable
+	}
+	if membership.View.Head != policyHead ||
+		!VerifyGrantPolicyMembershipAttestation(membership, challenge, pin.Sequence, pin.Head, b.ctx,
+			b.signer.Public().(ed25519.PublicKey), g.policy.witness.witness, g.policy.witness.genesis) {
+		return ErrGrantPolicyRollback
+	}
+	return g.coordinator.ResolveOrphanWithClosureProof(proof)
+}
+
 func parseFenceChallengeHeader(r *http.Request) (Digest, error) {
 	var challenge Digest
 	if r == nil {

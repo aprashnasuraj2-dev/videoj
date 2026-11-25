@@ -44,6 +44,8 @@ type compositeFixture struct {
 	callerKeys   [authorityCallers]ed25519.PrivateKey
 	authorityPub ed25519.PublicKey
 	fencePub     ed25519.PublicKey
+	closurePub   ed25519.PublicKey
+	closureKey   ed25519.PrivateKey
 	fenceGenesis Digest
 }
 
@@ -73,6 +75,7 @@ func newCompositeFixture(t *testing.T, wrap func(http.Handler) http.Handler) *co
 	_, bookKey := keys(12)
 	policyPub, policyKey := grantPolicyKeys()
 	fencePub, fenceKey := fenceKeys()
+	closurePub, closureKey := closureKeys()
 
 	bookDir, policyDir := privateTemp(t), privateTemp(t)
 	book, e := CreateGrantBook(bookDir, ctx, consentPub, approver, bookKey, 10)
@@ -108,7 +111,7 @@ func newCompositeFixture(t *testing.T, wrap func(http.Handler) http.Handler) *co
 	if e != nil {
 		t.Fatal(e)
 	}
-	fenced, e := NewFencedCoordinator(authority, fenceClient)
+	fenced, e := NewFencedCoordinatorWithClosureAuthority(authority, fenceClient, closurePub)
 	if e != nil {
 		t.Fatal(e)
 	}
@@ -145,7 +148,7 @@ func newCompositeFixture(t *testing.T, wrap func(http.Handler) http.Handler) *co
 		fence: fence, fenceClient: fenceClient, fenced: fenced, authority: authority, guard: guard,
 		server: server, policySrv: policySrv, fenceSrv: fenceSrv, ctx: ctx, approver: approver, approverKey: approverKey,
 		consentPub: consentPub, consentKey: consentKey, callerKeys: callerKeys, authorityPub: authorityPub,
-		fencePub: fencePub, fenceGenesis: fenceGenesis,
+		fencePub: fencePub, closurePub: closurePub, closureKey: closureKey, fenceGenesis: fenceGenesis,
 	}
 }
 
@@ -234,6 +237,73 @@ func TestAnchoredFencedExternalRejectsLegacyWriteRoutesWithoutStateChange(t *tes
 		beforeSpent != afterSpent || beforeTotal != afterTotal || beforeEffects != afterEffects {
 		t.Fatal("legacy route attempt changed composite state")
 	}
+}
+
+func TestAnchoredFencedCompositePinnedOrphanRecovery(t *testing.T) {
+	f := newCompositeFixture(t, nil)
+	request := approve(t, 0, f.ctx, f.approverKey)
+	grant, e := IssueActionGrant(request, GrantPrimary, 10, 11, f.consentKey)
+	if e != nil {
+		t.Fatal(e)
+	}
+	client := f.client(t, 0, request, grant)
+	f.fenced.fault = func(at string) error {
+		if at == "after-reserve" {
+			return errors.New("drop composite owner evidence before effect")
+		}
+		return nil
+	}
+	if _, _, e = client.Commit(); !errors.Is(e, ErrUnknown) {
+		t.Fatal("composite reserve boundary did not become unknown", e)
+	}
+	pending, exists, e := f.fenceClient.PendingReservation()
+	if e != nil || !exists || pending.Before != f.fenceGenesis {
+		t.Fatal("composite pending reservation missing", exists, e, pending)
+	}
+	if e = os.Remove(f.fenced.intentPath()); e != nil {
+		t.Fatal(e)
+	}
+	f.fenced.fault = nil
+
+	wire, e := SignAuthorityRequest(0, AuthorityCommit, f.fenceGenesis, request, f.callerKeys[0])
+	if e != nil || pending.RequestHash != wire.Hash() {
+		t.Fatal("reconstructed original request mismatch", e)
+	}
+	pin, e := SignClientPolicyPin(f.ctx, grant.ID, wire.Hash(), 0, f.policyGenesis, f.callerKeys[0])
+	if e != nil {
+		t.Fatal(e)
+	}
+	closure, e := SignEffectClosureProof(f.ctx, f.authorityPub, pending, f.closureKey)
+	if e != nil {
+		t.Fatal(e)
+	}
+
+	badPin := pin
+	badPin.Head[0] ^= 1
+	if e = f.guard.ResolveCompositeOrphanPinned(grant, wire, badPin, closure); !errors.Is(e, ErrAuthorityAuth) {
+		t.Fatal("tampered caller policy pin reached orphan recovery", e)
+	}
+	stillPending, exists, e := f.fenceClient.PendingReservation()
+	if e != nil || !exists || !sameReservation(stillPending, pending) {
+		t.Fatal("bad composite recovery mutated pending admission", e)
+	}
+	if e = f.guard.ResolveCompositeOrphanPinned(grant, wire, pin, closure); e != nil {
+		t.Fatal("pinned composite orphan recovery", e)
+	}
+	if _, exists, e = f.fenceClient.PendingReservation(); e != nil || exists {
+		t.Fatal("composite closure left pending admission", exists, e)
+	}
+
+	receipt, envelope, e := client.Commit()
+	if e != nil || receipt.Version != 1 || envelope.Fenced.Authority.Outcome != AuthorityCommitted ||
+		client.FenceSequence() != 1 || client.PolicySequence() != 1 {
+		t.Fatal("caller did not recover through strongest composite", e, receipt.Version, client.FenceSequence(), client.PolicySequence())
+	}
+	spent, total, effects, e := f.authority.Counts()
+	if e != nil || spent != [authorityCallers]byte{1, 0} || total != 1 || effects != 1 {
+		t.Fatal("composite orphan recovery effect accounting", e, spent, total, effects)
+	}
+	t.Log("strongest pinned composite resolves a proven pre-effect orphan without exposing a lower HTTP write surface")
 }
 
 func TestAnchoredFencedExternalCompositeCommitRevokeStatus(t *testing.T) {
