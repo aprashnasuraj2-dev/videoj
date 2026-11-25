@@ -78,6 +78,8 @@ export function createEphemeralCredentialVault({catalog,randomBytes}={}){
   providers,
   addProfile(input){
    if(!closed(input,['providerId','label','credential'])||!providerById.has(input.providerId)||!labelPattern.test(input.label)||!secretValid(input.credential))stop('PROFILE');
+   if(input.label.includes(input.credential))stop('SECRET_LABEL');
+   for(const profile of profiles.values())if(input.label.includes(profile.secret))stop('SECRET_LABEL');
    if(profiles.size>=8)stop('PROFILE_LIMIT');
    const id=allocateId(),provider=providerById.get(input.providerId);
    const handle=Object.freeze(Object.assign(Object.create(null),{kind:'sutra-credential-handle-v1',profileId:id}));
