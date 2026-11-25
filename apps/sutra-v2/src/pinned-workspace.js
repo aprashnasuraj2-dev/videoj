@@ -1,15 +1,18 @@
 import {capacityExample} from '../../../packages/sutra-knowledge/pinned-investigation.js';
 import {alignedInvestigationExport} from '../../../packages/sutra-knowledge/aligned-investigation.js';
 import {createAlignedCapsule,verifyAlignedCapsule,MAX_ALIGNED_CAPSULE_BYTES} from '../../../packages/sutra-knowledge/aligned-capsule.js';
+import {exportMeasurementSensitivity} from '../../../packages/sutra-knowledge/measurement-sensitivity.js';
 const by=id=>document.getElementById('pinned-'+id),txt=(id,v)=>{by(id).textContent=v;};
-let busy=false,current=null,sample=null,stage=null,cap=null,verifiedCap=null;
+let busy=false,current=null,sample=null,stage=null,cap=null,verifiedCap=null,rangeResult=null;
 const capStatus=(state,text)=>{by('capsule-status').dataset.state=state;txt('capsule-status',text);};
-function clear(){current=null;by('result').hidden=true;txt('status','Input changed. Evaluate the exact current text.');}
+function clear(){current=null;clearRange();by('result').hidden=true;txt('status','Input changed. Evaluate the exact current text.');}
 function refresh(){
  for(const id of ['case','pin','events','example','run'])by(id).disabled=busy;
  by('export').disabled=busy||!current;
  by('conflict').disabled=busy||stage!=='baseline'||!current;
  by('resolve').disabled=busy||stage!=='conflict'||!current;
+ for(const id of ['range-observation','range-lower','range-upper','range-run'])by(id).disabled=busy||!current||!current.result.report.activeEvidence.length;
+ by('range-export').disabled=busy||!rangeResult;
  by('capsule-export').disabled=busy||!current;
  by('capsule-pin-export').disabled=busy||!cap;
  for(const id of ['capsule-case-pin','capsule-pin','capsule-file'])by(id).disabled=busy;
@@ -27,6 +30,9 @@ function render(){
  const p=r.report.frontier?.plan;
  const branches=p?.kind==='observe'?r.observationValues.find(o=>o.id===p.observationId)?.outcomes:[];
  txt('plan',p?.kind==='observe'?p.observationId+' · effort '+p.cost+' · worst case '+p.worstCost+'\n'+branches.map(b=>b.value+' → '+b.worlds.join(', ')).join('\n'):r.report.status+(r.report.frontier?.witness?': '+r.report.frontier.witness.join(' / '):''));
+ const select=by('range-observation');select.replaceChildren();
+ for(const r of current.result.report.activeEvidence){const option=document.createElement('option');option.value=r.observationId;option.textContent=r.observationId+' · '+r.nodeId+' = '+r.value+' · '+r.lineage;select.append(option);}
+ setPointBounds();clearRange();
  by('result').hidden=false;txt('status','Replayed locally. Conditional on the supplied finite model; source truth remains unverified.');
 }
 async function work(setup){
@@ -48,6 +54,39 @@ by('export').onclick=()=>{
  const url=URL.createObjectURL(new Blob([JSON.stringify(current)],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='sutra-pinned-investigation.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 };
 
+function rangeStatus(state,text){by('range-status').dataset.state=state;txt('range-status',text);}
+function clearRange(){rangeResult=null;by('range-result').hidden=true;rangeStatus('idle','No measurement policy evaluated.');}
+function setPointBounds(){
+ const r=current?.result.report.activeEvidence.find(r=>r.observationId===by('range-observation').value);
+ by('range-lower').value=r?.value??'';by('range-upper').value=r?.value??'';
+}
+by('range-observation').onchange=()=>{setPointBounds();clearRange();refresh();};
+for(const id of ['range-lower','range-upper'])by(id).oninput=()=>{clearRange();refresh();};
+function renderRange(){
+ const r=rangeResult.result;
+ function summary(v){
+  const f=v.frontier;
+  const next=!f?'Contradiction needs adjudication.':f.status==='conditional_observation_plan'?'Next offered observation: '+f.plan.observationId+' · worst-case effort '+f.plan.worstCost:f.status==='insufficient_observations'?'No available decisive plan. Witness: '+f.witness.join(' / '):f.status==='invariant_decision'?'No additional offered observation needed.':'An unresolved world blocks a decisive conclusion.';
+  const remaining=v.blockers.filter(w=>w.observations.length).map(w=>w.world+': '+w.observations.join(', '));
+  return v.state+'\nSurviving worlds: '+v.survivingWorlds.length+'\nReadmitted: '+(v.readmittedWorlds.join(', ')||'none')+'\n'+next+'\nRemaining exclusions:\n'+(remaining.join('\n')||'none');
+ }
+ txt('range-single',summary(r.single));txt('range-shared',summary(r.shared));txt('range-cohort','Declared matching cohort: '+r.cohort.join(', ')+'. No common calibration or independence is inferred.');
+ by('range-result').hidden=false;rangeStatus('ready','Hypothetical diagnosis computed. Actual conclusion remains '+current.result.state+'.');
+}
+by('range-run').onclick=async()=>{
+ if(busy||!current)return;busy=true;clearRange();refresh();
+ try{
+  const q=JSON.stringify({observationId:by('range-observation').value,lower:by('range-lower').value.trim(),upper:by('range-upper').value.trim()});
+  rangeResult=await exportMeasurementSensitivity(current.caseText,current.result.caseDigest,current.eventText,q);renderRange();
+ }catch{rangeResult=null;rangeStatus('refused','REFUSED: use normalized rational bounds containing an admitted point reading. Actual evidence unchanged.');}
+ finally{busy=false;refresh();}
+};
+by('range-export').onclick=()=>{
+ if(busy||!rangeResult)return;
+ const bytes=new TextEncoder().encode(JSON.stringify(rangeResult));
+ if(bytes.length>1048576){rangeStatus('refused','REFUSED: diagnosis export exceeds 1 MiB. Actual evidence unchanged.');return;}
+ download(bytes,'sutra-measurement-diagnosis.json','application/json');
+};
 function download(bytes,name,type){
  const url=URL.createObjectURL(new Blob([bytes],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }

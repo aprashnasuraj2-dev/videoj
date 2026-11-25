@@ -383,7 +383,30 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   }
   const oldAligned=await saveAligned('aligned-old');
   const pconflict=await pinnedStep('conflict','CONFLICTED','pinned-conflict');assert.equal(pconflict.result.repairs.length,2);
+  await pinnedPage.locator('#pinned-range > summary').click();
+  async function saveRange(stem,baseline,shared){
+   await pinnedPage.locator('#pinned-range-observation').selectOption('read_meter');
+   await pinnedPage.locator('#pinned-range-lower').fill('10/1');await pinnedPage.locator('#pinned-range-upper').fill('30/1');
+   await pinnedPage.locator('#pinned-range-run').click();
+   await pinnedPage.waitForFunction(()=>document.querySelector('#pinned-range-status').dataset.state==='ready'&&!document.querySelector('#pinned-range-export').disabled);
+   assert.equal(await pinnedPage.locator('#pinned-state').innerText(),baseline);
+   assert.match(await pinnedPage.locator('#pinned-range-single').innerText(),new RegExp(baseline));
+   assert.match(await pinnedPage.locator('#pinned-range-shared').innerText(),new RegExp(shared));
+   const dl=pinnedPage.waitForEvent('download');await pinnedPage.locator('#pinned-range-export').click();
+   const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,stem+'.json'),bytes);
+   const b=JSON.parse(bytes);assert.equal(b.result.baseline.state,baseline);assert.equal(b.result.shared.state,shared);assert.deepEqual(b.result.cohort,['read_meter','read_mirror']);
+   return b;
+  }
+  await saveRange('measurement-conflict','CONFLICTED','SUPPORTED');
   const presolved=await pinnedStep('resolve','REFUTED','pinned-resolved');assert.deepEqual(presolved.result.minimum.refutation.map(x=>x.roots),[['capacity_root','meter_root']]);
+  const measurement=await saveRange('measurement-resolved','REFUTED','UNDERDETERMINED');
+  assert.deepEqual(measurement.result.shared.readmittedWorlds,['load_10_cap_20','load_20_cap_20']);
+  assert.equal(measurement.result.shared.frontier.status,'insufficient_observations');
+  await pinnedPage.locator('#pinned-range-lower').fill('31/1');
+  assert.equal(await pinnedPage.locator('#pinned-range-export').isDisabled(),true);
+  await pinnedPage.locator('#pinned-range-run').click();
+  await pinnedPage.waitForFunction(()=>document.querySelector('#pinned-range-status').dataset.state==='refused');
+  assert.equal(await pinnedPage.locator('#pinned-state').innerText(),'REFUTED');
   const currentAligned=await saveAligned('aligned-current');assert.equal(currentAligned.casePin,oldAligned.casePin);
   await pinnedPage.locator('#pinned-capsule-verify').click();await pinnedPage.waitForFunction(()=>document.querySelector('#pinned-capsule-status').dataset.state==='verified');
   assert.match(await pinnedPage.locator('#pinned-capsule-status').innerText(),/REFUTED/);

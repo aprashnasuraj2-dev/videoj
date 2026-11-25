@@ -3,9 +3,9 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-029",
+  "session": "V2-030",
   "next": [
-    "V2-D12-ALIGNED-CAPSULE",
+    "V2-D13-MEASUREMENT-RANGE",
     "V2-P07-WASM",
     "V2-RUNTIME-02",
     "V2-P05-RECOVERY",
@@ -19,7 +19,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "aligned_portable_capsule_candidate_pending_exact_ci",
+  "state": "measurement_range_sensitivity_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -307,6 +307,12 @@
       "sourceRevision": "dcca55406c3a5bfacc2adc2a68cab5e49f24e129",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45575004185/job/139070646626",
       "description": "All nine exact-source workflows succeeded: knowledge PR 45575004185 and push 45574993655, ingress 45575004209, impact 45575004158, evaluation 45575004077, Open Kit 45575004140, legacy release 45575004181, publisher 45575004325, browser matrix 45575004147. Three actual aligned browser exports independently accepted; 29 mutated variants refused (10+10+9), plus independently recomputed mixed-equation substitution controls. The three targeted local Node groups were registered at V2-026; actual browser re-pinned operator change refused. Scoped structural alignment, not semantic validity."
+    },
+    {
+      "id": "V2-D12-ALIGNED-CAPSULE",
+      "sourceRevision": "441b8fa44ad0a8332e5ef7f0ecd980fd0c4e0d82",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45577083295/job/139077570567",
+      "description": "All nine exact-source workflows succeeded: knowledge PR 45577083295 and push 45577073214, ingress 45577083241, impact 45577083299, evaluation 45577083367, Open Kit 45577083228, legacy release 45577083254, publisher 45577083528, browser matrix 45577083252. Both knowledge jobs passed 61 tests, including maximum eight-observation path and 256 KiB aggregate refusal. Actual Chromium current/old aligned capsules and independent snapshot pins verified in a fresh tab, one-byte tamper refused, exact restore, stale pin and case pin mismatch refused. Both browser jobs passed 27 explicit aligned parity controls (4 accepted, 23 refused), including both profile directions and exact expected refusal reasons. Actual downloaded 68379-byte independent verifier SHA-256 f68e9b9fe9ca0a67d26cb953c6169c3a2f5e5894e2ab42559dcb69769476f3da matched deterministic local rebuild. Failed revisions 12e2d7b and 88f9446 each had seven passing auxiliary workflows and both knowledge workflows failed. Scoped exact aligned snapshot with two caller-held pins, not authenticity or freshness."
     }
   ],
   "release": "not_authorized",
@@ -316,9 +322,11 @@
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576689738",
     "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576697835",
     "reason": "Both actual Chromium journeys passed their browser execution and all preceding independent replay steps, but the new aligned capsule differential step failed at aligned-capsule-parity.mjs:60 in jobs 139076301919 and 139076274007. Test expected ENVELOPE_SCHEMA from the legacy profile when fed the deeply nested aligned wire; the actual legacy depth-4 parser refuses before schema with WIRE_REFUSED. Both local JS and Python legacy verifiers reproduce WIRE_REFUSED. No downgrade/acceptance occurred. Seven auxiliary workflows passed; full exact-source credit withheld. PR failed artifact 15004078329 digest sha256:3c06d9c9e374445132e437a6efca49bf55cd4819c898e2a61084dd7c2e239270.",
-    "resolutionStatus": "candidate checks exact early wire refusal in both legacy implementations and reverse profile refusal; no verifier changes; pending exact CI"
+    "resolutionStatus": "resolved at exact all-nine green source; shared parser unchanged, exact cross-profile refusal order tested",
+    "resolutionRevision": "441b8fa44ad0a8332e5ef7f0ecd980fd0c4e0d82",
+    "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45577083295/job/139077570567"
   },
-  "lastVerifiedKernelSource": "dcca55406c3a5bfacc2adc2a68cab5e49f24e129",
+  "lastVerifiedKernelSource": "441b8fa44ad0a8332e5ef7f0ecd980fd0c4e0d82",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -329,8 +337,22 @@
   },
   "pendingCandidate": {
     "sourceRevision": null,
-    "sourceParent": "88f94467148a6e5d7deb0f5232a2768d24323f87",
+    "sourceParent": "441b8fa44ad0a8332e5ef7f0ecd980fd0c4e0d82",
     "status": "candidate_pending_exact_ci",
+    "identityRule": "Resolve the immutable commit containing this checkpoint.",
+    "checks": [
+      "hypothetical exact inclusive range must contain admitted point; normalized rational, no source or event mutation",
+      "single reading vs explicitly matched same-lineage/node/value/dimension cohort; unrelated declared root remains exact",
+      "432 direct-oracle policies over all 81 source availability configurations, readmitted worlds and exact blockers",
+      "recompute minimax frontier on expanded worlds, explicit impossible and unresolved states; original capsule digest unchanged",
+      "actual browser conflict and resolved range exports, no adoption, stale diagnostic cleared on edit, invalid range refused",
+      "independent Python Fraction/set replay, 22 local mutations refused; five local Node groups passed exact staged source/test blobs; full CI pending"
+    ]
+  },
+  "previousPendingCandidate": {
+    "sourceRevision": "441b8fa44ad0a8332e5ef7f0ecd980fd0c4e0d82",
+    "sourceParent": "88f94467148a6e5d7deb0f5232a2768d24323f87",
+    "status": "verified_exact_ci",
     "identityRule": "Resolve the immutable commit containing this checkpoint.",
     "checks": [
       "actual general-case old/current capsules and separately saved snapshot pins",
@@ -342,21 +364,6 @@
       "five local test groups passed on corrected core f34d47d197289b0c3dec4ddd5e38e5522caa2993 and test fce58a5ae42c164bb88196c9fba052bbf1096cfc; independent Python corrected blob 7ad0a2cd73b2e8634a6bd7d5c2d23c0ef0eddcf1 verified two local snapshots; actual CI pending",
       "actual legacy depth-first refusal WIRE_REFUSED in both JS/Python; reverse profile CAPSULE_SCHEMA; mixed CLI flags exit 2",
       "corrected local parity script exact hash 194c0be5f9919c3a74660e75e5eb70b2bd6f79ed passed 27 explicit controls (4 accepted, 23 refused) against original failed browser artifact 15004926225 exact bytes and locally rebuilt independent archive"
-    ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": "88f94467148a6e5d7deb0f5232a2768d24323f87",
-    "sourceParent": "12e2d7b221136d56f53103bb3205a6deeb1876ab",
-    "status": "failed_exact_ci",
-    "identityRule": "Resolve the immutable commit containing this checkpoint.",
-    "checks": [
-      "actual general-case old/current capsules and separately saved snapshot pins",
-      "fresh-tab verification, one-byte tamper/refusal/restoration, old snapshot vs current pin, wrong case pin, no adoption",
-      "independent downloaded Python archive explicit aligned profile; legacy profile preserved",
-      "cross-language explicitly expected refusal reasons and accepted identities including both-pin substitution counterexample",
-      "profile downgrade, invalid wire, semantic forgery, re-pinned mixed equations; deterministic output and limits",
-      "strict 256 KiB aggregate bound, valid eight-observation path and oversized aggregate refusal",
-      "five local test groups passed on corrected core f34d47d197289b0c3dec4ddd5e38e5522caa2993 and test fce58a5ae42c164bb88196c9fba052bbf1096cfc; independent Python corrected blob 7ad0a2cd73b2e8634a6bd7d5c2d23c0ef0eddcf1 verified two local snapshots; actual CI pending"
     ]
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
@@ -584,14 +591,18 @@
       "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576203164",
       "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576209816",
       "reason": "Both actual Chromium jobs failed at browser.cjs:388 waiting for valid aligned snapshot verification (push 139074648305, PR 139074670037). Push knowledge job 139074647736 failed all four new capsule groups (56 passed, 4 failed). The local exact blob 0063fa41d7aebdddfaad7bc0b5af34ed37e7f412 and test 85c326a1466467aacb2a205afd15781d65b671cc reproduced all four failures. Root cause: strict-json.js rejects maxChars > 262144 before parsing, so passing 1048576 refused every valid snapshot. Seven auxiliary workflows passed. Failed browser artifact 15004926225 digest sha256:51c9899a483c0e973b2bfe622f5e32e050f69ba8dfa06e2de090512a2a5bc51e preserved. No verification credit.",
-      "resolutionStatus": "candidate constrains exact bytes to 262144 in both implementations and browser, preserving shared parser; pending exact CI"
+      "resolutionStatus": "resolved at exact all-nine green source; shared parser unchanged, exact cross-profile refusal order tested",
+      "resolutionRevision": "441b8fa44ad0a8332e5ef7f0ecd980fd0c4e0d82",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45577083295/job/139077570567"
     },
     {
       "sourceRevision": "88f94467148a6e5d7deb0f5232a2768d24323f87",
       "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576689738",
       "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576697835",
       "reason": "Both actual Chromium journeys passed their browser execution and all preceding independent replay steps, but the new aligned capsule differential step failed at aligned-capsule-parity.mjs:60 in jobs 139076301919 and 139076274007. Test expected ENVELOPE_SCHEMA from the legacy profile when fed the deeply nested aligned wire; the actual legacy depth-4 parser refuses before schema with WIRE_REFUSED. Both local JS and Python legacy verifiers reproduce WIRE_REFUSED. No downgrade/acceptance occurred. Seven auxiliary workflows passed; full exact-source credit withheld. PR failed artifact 15004078329 digest sha256:3c06d9c9e374445132e437a6efca49bf55cd4819c898e2a61084dd7c2e239270.",
-      "resolutionStatus": "candidate checks exact early wire refusal in both legacy implementations and reverse profile refusal; no verifier changes; pending exact CI"
+      "resolutionStatus": "resolved at exact all-nine green source; shared parser unchanged, exact cross-profile refusal order tested",
+      "resolutionRevision": "441b8fa44ad0a8332e5ef7f0ecd980fd0c4e0d82",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45577083295/job/139077570567"
     }
   ],
   "reconciledDurableCandidate": {

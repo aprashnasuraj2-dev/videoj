@@ -182,6 +182,10 @@ jobs:
         run: |
           node packages/sutra-knowledge/examples/aligned-capsule-parity.mjs apps/sutra-v2/test-output/aligned-current.json apps/sutra-v2/test-output/aligned-current.sha256 apps/sutra-v2/test-output/aligned-old.json apps/sutra-v2/test-output/aligned-old.sha256 apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/aligned-capsule-reference.txt
           cat apps/sutra-v2/test-output/aligned-capsule-reference.txt
+      - name: Independently replay hypothetical measurement intervals and shared-root relaxation
+        run: |
+          python3 packages/sutra-knowledge/reference/verify_measurement_sensitivity.py --challenge apps/sutra-v2/test-output/measurement-conflict.json apps/sutra-v2/test-output/measurement-resolved.json > apps/sutra-v2/test-output/measurement-reference.txt
+          cat apps/sutra-v2/test-output/measurement-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version
