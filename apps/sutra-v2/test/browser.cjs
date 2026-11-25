@@ -148,12 +148,12 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   // Refuse the transition if the locally built module cannot load. No JS fallback.
   await page.route('**/support-lattice.wasm',route=>route.abort());
   await page.getByRole('button',{name:'Start conflict investigation'}).click();
-  await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.state==='refused');
+  await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.state==='refused'&&!document.querySelector('#conflict-start').disabled);
   assert.equal(await page.locator('#conflict-support-export').isDisabled(),true);
   await page.unroute('**/support-lattice.wasm');
   await page.route('**/support-lattice.wasm',route=>route.fulfill({status:200,contentType:'application/wasm',body:Buffer.concat([fs.readFileSync(path.join(dist,'support-lattice.wasm')),Buffer.from([0])])}));
   await page.getByRole('button',{name:'Start conflict investigation'}).click();
-  await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.state==='refused');
+  await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.error==='SUPPORT_MODULE_DIGEST'&&!document.querySelector('#conflict-start').disabled);
   assert.equal(await page.locator('#conflict-support-export').isDisabled(),true);
   await page.unroute('**/support-lattice.wasm');
   await page.getByRole('button',{name:'Start conflict investigation'}).click();
