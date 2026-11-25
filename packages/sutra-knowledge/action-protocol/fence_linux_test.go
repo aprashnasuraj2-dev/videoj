@@ -749,7 +749,7 @@ func TestFencedCoordinatorOrphanResolutionRequiresExactClosureProof(t *testing.T
 	secondWire, _ := SignAuthorityRequest(1, AuthorityCommit, genesis, second, callerKey[1])
 	response, e := coordinator.Process(secondWire)
 	if e != nil || response.Authority.Outcome != AuthorityCommitted {
-		t.Fatal("fresh work did not resume after proven absence", e, response.Authority.Outcome)
+		t.Fatal("fresh work did not resume after permanent non-application closure", e, response.Authority.Outcome)
 	}
 	spent, total, effects, e = a.Counts()
 	if e != nil || spent != [authorityCallers]byte{0, 1} || total != 1 || effects != 1 {
@@ -815,7 +815,7 @@ func TestFencedCoordinatorClosureProofCannotUndoKnownLocalEffect(t *testing.T) {
 		view.Pending != pending.Hash() || view.Head != genesis {
 		t.Fatal("lying proof mutated known-effect state", e, ve, spent, total, effects, view)
 	}
-	t.Log("an closure signer cannot override a locally persisted effect; unresolved fence remains fail-closed")
+	t.Log("a closure signer cannot override a locally persisted effect; unresolved fence remains fail-closed")
 }
 
 func TestAdmissionFenceExhaustionIsExplicitAndNonMutating(t *testing.T) {
