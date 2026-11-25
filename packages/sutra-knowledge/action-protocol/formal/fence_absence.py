@@ -84,9 +84,9 @@ def explore(stepper, checker, stop=None):
 seen,edges,bad,_=explore(lambda s:closure_steps(s,False),lambda s:inv(s,True))
 print(f"closure safe {len(seen)} states, {edges} edges; safety invariants hold")
 
-orphans=[s for s in seen if s[0] is not NONE and s[0] not in s[1] and s[0] not in s[2]]
+orphans=[s for s in seen if s[0] is not NONE and s[0] not in s[1] and s[0] not in s[2] and s[0] not in s[5]]
 if not orphans:
-    raise SystemExit("no undispatched orphan reachable")
+    raise SystemExit("no unresolved undispatched orphan reachable")
 for s in orphans:
     owner=s[0]
     p=[n for name,n in closure_steps(s,False) if name==f"CloseUnapplied{owner}"]
@@ -95,7 +95,12 @@ for s in orphans:
     r=[n for name,n in closure_steps(p[0],False) if name==f"ResolveClosed{owner}"]
     if not r or r[0][0] is not NONE or owner not in r[0][5]:
         raise SystemExit(f"closure resolution missing or not durable for {s}")
-print(f"permanent closure checked for {len(orphans)} undispatched orphan states")
+closed_orphans=[s for s in seen if s[0] is not NONE and s[0] not in s[1] and s[0] in s[5]]
+for s in closed_orphans:
+    owner=s[0]
+    if not any(name==f"ResolveClosed{owner}" and n[0] is NONE and owner in n[5] for name,n in closure_steps(s,False)):
+        raise SystemExit(f"already-closed orphan cannot resolve: {s}")
+print(f"permanent closure checked for {len(orphans)} unresolved and {len(closed_orphans)} already-closed orphan states")
 
 seen,edges,bad,trace=explore(lambda s:closure_steps(s,True),effect_inv,"AtMostOneEffect")
 if bad!="AtMostOneEffect":
