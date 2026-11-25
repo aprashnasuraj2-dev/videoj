@@ -239,7 +239,7 @@ func (c *WitnessCoordinator) Recover()error{
 func (c *WitnessCoordinator) processLocked(req AuthorityRequest)(WitnessedResponse,error){
  a:=c.authority
  if a.lock==nil||a.poisoned{return WitnessedResponse{},ErrStore}
- if !a.authenticate(req){return WitnessedResponse{},ErrAuthorityAuth}
+ if e:=a.preflight(req);e!=nil{return WitnessedResponse{},e}
  if e:=c.recoverLocked();e!=nil{return WitnessedResponse{},e}
  plan,e:=a.planLocked(req);if e!=nil{return WitnessedResponse{},e}
  if !plan.persist{
@@ -310,7 +310,7 @@ func (c *WitnessCoordinator) ServeHTTP(w http.ResponseWriter,r *http.Request){
  response,e:=c.ProcessAttested(req,challenge)
  if e!=nil{
   switch {
-  case errors.Is(e,ErrAuthorityAuth):
+  case errors.Is(e,ErrAuthorityAuth),errors.Is(e,ErrPolicy):
    w.WriteHeader(http.StatusForbidden)
   case errors.Is(e,ErrWitnessRollback):
    w.WriteHeader(http.StatusConflict)
