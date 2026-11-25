@@ -192,7 +192,7 @@ by('batch-run').onclick=()=>work(async ticket=>{
  batchCurrent=bytes;status('batch_ready','Conditional order relations computed. Unaligned expressions remain unclassified; semantic relevance and source truth are not established.');
 });
 by('batch-export').onclick=()=>{if(batchCurrent&&!busy)download(batchCurrent,'sutra-reviewed-order-contrast.json','application/json');};
-function clearAcquisition(){acquisitionCurrent=null;by('acquisition-result').textContent='';}
+function clearAcquisition(){acquisitionCurrent=null;by('acquisition-result').textContent='';for(const id of ['acquisition-snapshot-pin','acquisition-version-pin','acquisition-grid-pin','acquisition-policy-pin'])by(id).textContent='';}
 function clearGrid(){clearAcquisition();gridCurrent=null;by('world-result').textContent='';by('world-plan-pin').textContent='';by('world-snapshot-pin').textContent='';}
 function clearBranch(){branchCurrent=null;by('branch-result').textContent='';}
 function invalidateSemantic(){
@@ -213,7 +213,7 @@ function semanticControl(){
  by('world-run').disabled=busy||!semanticCurrent;by('world-export').disabled=busy||!gridCurrent;by('world-export-pin').disabled=busy||!gridCurrent;
  for(const e of by('world-fields').querySelectorAll('input,select'))e.disabled=busy||!semanticCurrent;
  for(const id of ['acquisition-mistake','acquisition-abstain','acquisition-source-cost','acquisition-read-cost','acquisition-exposure','acquisition-budget','acquisition-failure','acquisition-run'])by(id).disabled=busy||!gridCurrent;
- by('acquisition-export').disabled=busy||!acquisitionCurrent;
+ by('acquisition-export').disabled=busy||!acquisitionCurrent;by('acquisition-export-pin').disabled=busy||!acquisitionCurrent;
  by('branch-file').disabled=busy;by('branch-pin').disabled=busy;by('branch-run').disabled=busy||!baseline||!semanticCurrent||!impactCurrent||!by('branch-file').files?.length||!by('branch-pin').value.trim();by('branch-export').disabled=busy||!branchCurrent;
  by('reuse-run').disabled=busy||!impactCurrent;by('reuse-export').disabled=busy||!reuseCurrent;
  by('clarification-answer-run').disabled=busy||!clarificationCurrent||!clarificationCurrent.plan.questions.length;
@@ -357,12 +357,13 @@ by('acquisition-run').onclick=()=>work(async ticket=>{
  const result=await planRobustAcquisition(c.versionText,c.digest,data.planText,data.planDigest,policyText,policyDigest);
  const text=JSON.stringify({versionText:c.versionText,versionDigest:c.digest,gridText:data.planText,gridDigest:data.planDigest,policyText,policyDigest,result});
  const snapshot=await casePin(text);if(ticket!==epoch||g!==gridCurrent||c!==semanticCurrent)return;
- acquisitionCurrent={text,snapshot};
+ acquisitionCurrent={text,snapshot};by('acquisition-snapshot-pin').textContent=snapshot;by('acquisition-version-pin').textContent=c.digest;by('acquisition-grid-pin').textContent=data.planDigest;by('acquisition-policy-pin').textContent=policyDigest;
  const render=(p,depth=0)=>{const prefix='  '.repeat(depth);return p.kind==='stop'?[prefix+'Stop: '+p.decision+' · worst loss '+p.worstObjective]:[prefix+'Observe '+p.actionId+' from '+p.sourceId+' · worst objective '+p.worstObjective,...p.branches.flatMap(b=>[prefix+'  '+b.outcome+':',...render(b.next,depth+2)])];};
  by('acquisition-result').textContent=[result.status.replaceAll('_',' '),...(result.plan?['Without observation: '+result.noObservation.worstObjective,'With best declared policy: '+result.plan.worstObjective,'Worst-case improvement: '+result.worstCaseImprovement,'Perfect-information lower bound: '+result.perfectInformationLowerBound,...render(result.plan)]:[]),result.qualification,'Snapshot digest: '+snapshot].join('\n');
  status('acquisition_ready','Hypothetical finite acquisition policy computed; no observation, payment, disclosure or action performed.');
 });
 by('acquisition-export').onclick=()=>{if(acquisitionCurrent&&!busy)download(acquisitionCurrent.text,'sutra-robust-acquisition.json','application/json');};
+by('acquisition-export-pin').onclick=()=>{if(acquisitionCurrent&&!busy)download(acquisitionCurrent.snapshot+'\n','sutra-robust-acquisition.sha256','text/plain');};
 by('exposure-run').onclick=()=>work(async ticket=>{
  const c=semanticCurrent;if(!c)return;exposureCurrent=null;by('exposure-result').textContent='';
  const r=await auditStructuralExposure(c.versionText,c.digest);if(ticket!==epoch||c!==semanticCurrent)return;

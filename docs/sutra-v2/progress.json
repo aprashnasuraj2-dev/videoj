@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-087",
+  "session": "V2-088",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -35,7 +35,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "robust_acquisition_workspace_candidate_pending_exact_ci",
+  "state": "independent_acquisition_replay_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -388,7 +388,7 @@
     "reason": "Inherited collapsed expression textarea failure in table browser test; history knowledge job passed.",
     "resolutionStatus": "Resolved at exact V2-084; all ten workflows green."
   },
-  "lastVerifiedKernelSource": "e8984d04873eae76a1f0abe36f82a0333aea84db",
+  "lastVerifiedKernelSource": "ad734612a4af2dbd3250bcc8ec4333474c608c5b",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -398,14 +398,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-088",
+    "parent": "c4a628a31d449b5f325b4112dbbd7d484b931a70",
+    "description": "Independent set-based robust policy replay and four separately displayed pins; exact browser artifact mutations and archive profile. CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-087",
     "parent": "56691dae24e060f0a4acb6fa1c4ba180fc3e1542",
     "description": "Actual world-grid acquisition UI with declared symmetric losses and fail toggle; two-action exhaustive oracle with shared cost, exposure and overlapping readings. Exact CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-086",
-    "parent": "ad734612a4af2dbd3250bcc8ec4333474c608c5b",
-    "description": "Finite robust acquisition planner, explicit loss/upper-bound costs/exposure and overlapping noisy/failed observations, exact minimax with abstention and independent one-read oracle; CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -1300,6 +1300,12 @@
       "sourceRevision": "e8984d04873eae76a1f0abe36f82a0333aea84db",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45613004519/job/139201105352",
       "description": "V2-084 exact 10/10 green. Actual TSV paste through coordinate review, stale invalidation, exact contract and formula, 360px layout and no external requests."
+    },
+    {
+      "id": "V2-LK10-VERSION-CONTROL",
+      "sourceRevision": "ad734612a4af2dbd3250bcc8ec4333474c608c5b",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45613371185/job/139202374433",
+      "description": "Exact V2-085 all ten workflows passed; browser portable two-branch history, independent Python parent closure and conditional replay, seven structural mutations. Cross-process and merge open."
     }
   ],
   "reconciledCI": [

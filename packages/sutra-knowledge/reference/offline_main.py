@@ -11,6 +11,7 @@ from verify_reviewed_snapshot import verify as verify_reviewed, MAX_BYTES as MAX
 from verify_living_version import verify as verify_living, MAX_BYTES as MAX_LIVING_BYTES
 from verify_world_grid import verify as verify_grid, MAX_BYTES as MAX_GRID_BYTES
 from verify_investigation_history import verify as verify_history, MAX_BYTES as MAX_HISTORY_BYTES
+from verify_robust_acquisition import verify as verify_acquisition, MAX_BYTES as MAX_ACQUISITION_BYTES
 
 PIN_FILE = re.compile(rb'sha256:[a-f0-9]{64}(?:\r?\n)?', re.ASCII)
 
@@ -37,6 +38,8 @@ def main():
     profiles.add_argument('--living',action='store_true',help='Explicitly select exact living investigation version replay')
     profiles.add_argument('--world-grid',action='store_true',help='Explicitly select finite synthetic world grid replay')
     profiles.add_argument('--history',action='store_true',help='Explicitly select bounded living investigation history replay')
+    profiles.add_argument('--acquisition',action='store_true',help='Explicitly select finite robust acquisition policy replay')
+    parser.add_argument('--policy-pin',help='Separately retained acquisition policy digest')
     parser.add_argument('--version-pin',help='Separately retained living investigation version digest')
     parser.add_argument('--plan-pin',help='Separately retained synthetic grid plan digest')
     parser.add_argument('--contract-pin',help='Separately retained reviewed contract digest')
@@ -47,10 +50,14 @@ def main():
     if args.case_pin is not None and not args.aligned:parser.error('--case-pin requires --aligned')
     if (args.source_pin is not None or args.after_source_pin is not None) and not args.trial:parser.error('trial source pins require --trial')
     if args.contract_pin is not None and not args.reviewed:parser.error('--contract-pin requires --reviewed')
-    if (args.version_pin is not None or args.plan_pin is not None) and not args.world_grid:parser.error('version and plan pins require --world-grid')
+    if (args.version_pin is not None or args.plan_pin is not None) and not (args.world_grid or args.acquisition):parser.error('version and plan pins require --world-grid or --acquisition')
+    if args.policy_pin is not None and not args.acquisition:parser.error('--policy-pin requires --acquisition')
     try:
         pin=args.pin if args.pin is not None else load_pin(args.pin_file)
-        if args.history:
+        if args.acquisition:
+            with Path(args.capsule).open('rb') as f:data=f.read(MAX_ACQUISITION_BYTES+1)
+            result=verify_acquisition(data,pin,args.version_pin,args.plan_pin,args.policy_pin)
+        elif args.history:
             with Path(args.capsule).open('rb') as f:data=f.read(MAX_HISTORY_BYTES+1)
             result=verify_history(data,pin)
         elif args.world_grid:

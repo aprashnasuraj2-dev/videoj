@@ -3073,6 +3073,12 @@
           "sourceRevision": "a8237f617f4cc34cfe98b4ab7eb9b7af71779a7b",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45611725678",
           "description": "V2-079 exact 10/10 green; actual browser sibling comparison with wrong-pin refusal and stale output invalidation. No merge or independent sibling comparison replay."
+        },
+        {
+          "id": "V2-LK10-VERSION-CONTROL",
+          "sourceRevision": "ad734612a4af2dbd3250bcc8ec4333474c608c5b",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45613371185/job/139202374433",
+          "description": "Exact V2-085 all ten workflows passed; browser portable two-branch history, independent Python parent closure and conditional replay, seven structural mutations. Cross-process and merge open."
         }
       ]
     },
