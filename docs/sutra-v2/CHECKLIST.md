@@ -1,5 +1,7 @@
 # Active outcome checklist
 
+V2-009: the dependency-aware active phase gates are in [ROADMAP.md](ROADMAP.md) and [roadmap.json](roadmap.json). This original ID register is retained for historical traceability; no earlier failures or requirements removed.
+
 Pending until exact evidence; expand only when new concrete product requirements or counterexamples emerge. Baseline facts are not v2 feature credit.
 
 - [x] V2-M01 Resolve immutable old source, CI, and preserve branch; migration decisions scoped to inspected code. Evidence: MIGRATION.md and linked exact old workflow.
@@ -68,7 +70,7 @@ Pending until exact evidence; expand only when new concrete product requirements
 
 Verified kernel and independent reference evidence: [V2-001 observations](SESSIONS.md). Next: verify action protocol RUNTIME-01, then RUNTIME-02/03, F11b/F12d, bundled economics and uncertainty-aware admission; generalized cross-origin F03/A02, learner replay L04 and measured content L03 remain open. Finish runtime authority and deployed Observatory gates. See PLAN.md for all 28 workstreams.
 
-- [ ] V2-RUNTIME-01 Signed scoped fixture action, bounded caller transport, atomic in-process idempotency and unknown-state reconciliation. Candidate eabb7c348b9ef66509e0d5ef41d4863f87bde3b3; require actual TCP drop after commit, absent status, concurrent duplicate submissions, forged receipt and redirect refusal, contact/effect budget, race check.
+- [x] V2-RUNTIME-01 Signed scoped fixture action, bounded caller transport, atomic in-process idempotency and unknown-state reconciliation. Verified at 9bcdda66dd9d42e4a1f9c1441482fea31e9c85a7 ([knowledge job](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45522113564/job/138896300388)): five Go race groups, actual TCP drop after commit, absent status, concurrent duplicate submissions, forged receipt and redirect refusal, contact/effect budget. In-process only.
 - [ ] V2-RUNTIME-02 Durable transactional receiver or upstream idempotency contract: crash before/after effect, restart, concurrent keys, expiry/revocation, globally enforced budgets, signed status semantics and explicit compensation authorization. A local lock cannot make arbitrary remote effects atomic. Formal safe/unsafe TLA+ model and implementation refinement required before external writes.
 - [ ] V2-RUNTIME-03 Integrate host-approved action contract with browser consent, separate origin/identity and declaration/enforcement, tainted external values never gain control authority, causal receipt links and verifier with independent trust anchors. Real two-site failure demo only after security gates. Do not expose new external write or paid-provider route prematurely.
 - [ ] V2-RUNTIME-04 Per-provider token/spend reservation and reconciliation (including timeout and concurrent calls), BYOK isolation and free judge path; model-declared cost is not authority. Recheck official challenge rules before submission; under-120-second failure-recovery demonstration is a design target, not a verified rule.

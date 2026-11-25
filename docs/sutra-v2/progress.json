@@ -3,18 +3,20 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-008",
+  "session": "V2-009",
   "next": [
-    "V2-RUNTIME-01",
-    "V2-RUNTIME-02",
+    "V2-P05-STORE",
+    "V2-P06-MODEL",
+    "V2-P05-RECOVERY",
+    "V2-P05-ROLLBACK",
+    "V2-P06-REFINE",
     "V2-RUNTIME-03",
-    "V2-F11b",
     "V2-F12d",
     "V2-F13",
     "V2-F04",
     "V2-RUNTIME-04"
   ],
-  "state": "support_replay_verified_scoped_action_protocol_candidate_pending",
+  "state": "runtime01_verified_durable_receiver_and_formal_model_candidates_pending",
   "verified": [
     {
       "id": "V2-M01",
@@ -212,6 +214,12 @@
       "sourceRevision": "380e2bb0c8d599f0c429fba648bbe4fc9ae8f580",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520945033/job/138892328011",
       "description": "All six reported PR workflows successful. Actual Rust WASM hash-pinned module and Go replay of three matching support reports; 24 mutations rejected."
+    },
+    {
+      "id": "V2-RUNTIME-01",
+      "sourceRevision": "9bcdda66dd9d42e4a1f9c1441482fea31e9c85a7",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45522113564/job/138896300388",
+      "description": "Five existing Go race test groups, actual TCP drop, 64 concurrent duplicates; in-process only."
     }
   ],
   "release": "not_authorized",
@@ -231,6 +239,15 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "sourceRevision": "23c45faab775e003a3d2fcb654c8f2dbf140f6e4",
+    "checks": [
+      "Go durable snapshot race and process crash tests",
+      "TLC safe model and expected unsafe invariant violation",
+      "independent Python state exploration"
+    ],
+    "status": "pending_exact_ci"
+  },
+  "previousPendingCandidate": {
     "sourceRevision": "eabb7c348b9ef66509e0d5ef41d4863f87bde3b3",
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45521995010",
     "checks": [
@@ -238,6 +255,20 @@
       "real TCP lost response reconciliation",
       "Go race and budget controls"
     ],
-    "status": "pending_exact_ci"
-  }
+    "status": "reconciled_success",
+    "verifiedBy": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45521995010/job/138895900114"
+  },
+  "roadmap": "docs/sutra-v2/roadmap.json",
+  "failureHistory": [
+    {
+      "sourceRevision": "95ae7ce02c887367d83f5e008ef9f6fcb43e91a6",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523057994/job/138899487639",
+      "reason": "Go build failed: typed int maxSnapshot passed to io.LimitReader(int64)."
+    },
+    {
+      "sourceRevision": "bf9bbd12d1a21ac404be63871434b5f82e023e47",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523091796/job/138899596239",
+      "reason": "Same typed int conversion; corrected at 23c45faab775e003a3d2fcb654c8f2dbf140f6e4"
+    }
+  ]
 }
