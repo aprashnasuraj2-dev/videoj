@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-030",
+  "session": "V2-031",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2582,13 +2582,30 @@
     },
     {
       "id": "V2-D13-MEASUREMENT-RANGE",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D12-ALIGNED-CAPSULE",
         "V2-D10-PINNED-CASE",
         "V2-D08-ROOT-IMPACT"
       ],
-      "scope": "Hypothetical inclusive exact rational interval relaxation of one admitted point reading versus an explicitly matched declared cohort. No asserted measurement uncertainty, shared calibration, source truth, external independence, adoption or empirical validation. Recomputed finite survivors, blockers and available observation policy; independent Python replay."
+      "scope": "Hypothetical inclusive exact rational interval relaxation of one admitted point reading versus an explicitly matched declared cohort. No asserted measurement uncertainty, shared calibration, source truth, external independence, adoption or empirical validation. Recomputed finite survivors, blockers and available observation policy; independent Python replay.",
+      "evidence": [
+        {
+          "id": "V2-D13-MEASUREMENT-RANGE",
+          "sourceRevision": "c66f1453d286f66bcfa3a189ba00efdcbb090dca",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45577758522/job/139079802299",
+          "description": "All nine exact-source workflows passed: knowledge PR 45577758522 and push 45577748118, ingress 45577758114, impact 45577758064, evaluation 45577758054, Open Kit 45577758189, legacy release 45577758213, publisher 45577758104, browser matrix 45577758185. Both browser jobs independently replayed actual conflict and resolved measurement exports, refusing 22 mutated reports. The 432-policy direct oracle covers 81 source availability configurations. Hypothetical range and declared matching cohort only; no empirical uncertainty or source truth inferred."
+        }
+      ]
+    },
+    {
+      "id": "V2-D14-WORLD-COVERAGE",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D13-MEASUREMENT-RANGE",
+        "V2-D11-ALIGNED-CASE"
+      ],
+      "scope": "Explicit hypothetical addition of one input-only aligned world; exact normalized duplicate and finite budget refusal, evidence-preserving recomputation, blockers, and observation policy. Not model completeness, empirical validity, automatic search, adoption or new evidence."
     }
   ]
 }

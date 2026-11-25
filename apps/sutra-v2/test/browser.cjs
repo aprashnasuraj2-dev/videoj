@@ -443,6 +443,36 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await pinnedPage.locator('#pinned-run').click();await pinnedPage.waitForFunction(()=>document.querySelector('#pinned-status').textContent.includes('CASE_GRAPH_ALIGNMENT'));
   assert.equal(await pinnedPage.locator('#pinned-export').isDisabled(),true);assert.equal(await pinnedPage.locator('#pinned-result').isVisible(),false);
   assert.deepEqual(pinnedErrors,[]);assert.deepEqual(pinnedExternal,[]);await pinnedPage.close();
+  // Model coverage challenge: a compatible omitted world changes the
+  // counterfactual, not the current case or its source admission.
+  const coveragePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),coverageErrors=[],coverageExternal=[];
+  coveragePage.on('pageerror',e=>coverageErrors.push(e.message));coveragePage.on('request',r=>{if(new URL(r.url()).origin!==origin)coverageExternal.push(r.url());});
+  await coveragePage.goto(origin);await coveragePage.locator('#pinned-workspace > summary').click();
+  await coveragePage.locator('#pinned-coverage-example').click();
+  await coveragePage.waitForFunction(()=>document.querySelector('#pinned-state').textContent==='SUPPORTED'&&!document.querySelector('#pinned-export').disabled);
+  const originalCase=await coveragePage.locator('#pinned-case').inputValue(),originalEvents=await coveragePage.locator('#pinned-events').inputValue(),originalPin=await coveragePage.locator('#pinned-pin').inputValue();
+  await coveragePage.locator('#pinned-coverage > summary').click();
+  async function coverageExport(stem,expected){
+   await coveragePage.locator('#pinned-coverage-run').click();
+   await coveragePage.waitForFunction(()=>document.querySelector('#pinned-coverage-status').dataset.state==='ready'&&!document.querySelector('#pinned-coverage-export').disabled);
+   assert.match(await coveragePage.locator('#pinned-coverage-variant').innerText(),new RegExp('SUPPORTED → '+expected));
+   assert.equal(await coveragePage.locator('#pinned-state').innerText(),'SUPPORTED');
+   assert.equal(await coveragePage.locator('#pinned-case').inputValue(),originalCase);assert.equal(await coveragePage.locator('#pinned-events').inputValue(),originalEvents);assert.equal(await coveragePage.locator('#pinned-pin').inputValue(),originalPin);
+   const dl=coveragePage.waitForEvent('download');await coveragePage.locator('#pinned-coverage-export').click();
+   const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,stem+'.json'),bytes);return JSON.parse(bytes);
+  }
+  const compatible=await coverageExport('coverage-compatible','UNDERDETERMINED');
+  assert.equal(compatible.result.candidate.compatible,true);assert.equal(compatible.result.variant.frontier.plan.observationId,'read_capacity');
+  await coveragePage.locator('#pinned-coverage-base').selectOption('load_30_cap_20');
+  await coveragePage.locator('#pinned-coverage-input').selectOption('capacity');
+  await coveragePage.locator('#pinned-coverage-value').fill('5');
+  await coveragePage.locator('#pinned-coverage-id').fill('incompatible');
+  const incompatible=await coverageExport('coverage-incompatible','SUPPORTED');
+  assert.deepEqual(incompatible.result.candidate.blockers.map(x=>x.observationId),['read_alternate']);
+  await coveragePage.locator('#pinned-coverage-value').fill('40/2');assert.equal(await coveragePage.locator('#pinned-coverage-export').isDisabled(),true);
+  await coveragePage.locator('#pinned-coverage-run').click();await coveragePage.waitForFunction(()=>document.querySelector('#pinned-coverage-status').dataset.state==='refused');
+  assert.equal(await coveragePage.locator('#pinned-state').innerText(),'SUPPORTED');
+  assert.deepEqual(coverageErrors,[]);assert.deepEqual(coverageExternal,[]);await coveragePage.close();
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});
