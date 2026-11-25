@@ -531,3 +531,139 @@ func TestFencedBudgetResponseMintsNoReservation(t *testing.T) {
 	}
 	t.Log("exhausted budget returns a signed no-op at the existing fence head with no phantom admission reservation")
 }
+
+
+func TestFencedCoordinatorOrphanedAdmissionFailsClosed(t *testing.T) {
+	var fencePtr atomic.Pointer[AdmissionFence]
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fencePtr.Load().ServeHTTP(w, r)
+	}))
+	defer srv.Close()
+	ctx, approver, ak, authorityPub, authorityKey, callerPub, callerKey := authorityFixture(t, srv.URL)
+	fencePub, fenceKey := fenceKeys()
+	a, e := CreateSharedAuthority(privateTemp(t), ctx, approver, authorityKey, callerPub, 2)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer a.Close()
+	genesis, e := a.Head()
+	if e != nil {
+		t.Fatal(e)
+	}
+	fence, e := CreateAdmissionFence(privateTemp(t), ctx, authorityPub, fenceKey, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer fence.Close()
+	fencePtr.Store(fence)
+	client, e := NewFenceClient(srv.URL, ctx, authorityPub, fencePub, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	coordinator, e := NewFencedCoordinator(a, client)
+	if e != nil {
+		t.Fatal(e)
+	}
+	coordinator.fault = func(at string) error {
+		if at == "after-reserve" {
+			return errors.New("simulated owner evidence loss boundary")
+		}
+		return nil
+	}
+	action := approve(t, 0, ctx, ak)
+	wire, e := SignAuthorityRequest(0, AuthorityCommit, genesis, action, callerKey[0])
+	if e != nil {
+		t.Fatal(e)
+	}
+	if _, e = coordinator.Process(wire); !errors.Is(e, ErrUnknown) {
+		t.Fatal("reserve boundary did not become unknown", e)
+	}
+	viewBefore, e := client.View()
+	if e != nil || viewBefore.Head != genesis || viewBefore.Pending == (Digest{}) {
+		t.Fatal("expected durable pending admission", e, viewBefore)
+	}
+	spent, total, effects, e := a.Counts()
+	if e != nil || spent != [authorityCallers]byte{} || total != 0 || effects != 0 {
+		t.Fatal("pre-effect reservation mutated authority", e, spent, total, effects)
+	}
+	if e = os.Remove(coordinator.intentPath()); e != nil {
+		t.Fatal(e)
+	}
+	if e = coordinator.Recover(); !errors.Is(e, ErrFenceOrphaned) {
+		t.Fatal("orphaned reservation was not distinguished", e)
+	}
+	second := approve(t, 1, ctx, ak)
+	secondWire, e := SignAuthorityRequest(1, AuthorityCommit, genesis, second, callerKey[1])
+	if e != nil {
+		t.Fatal(e)
+	}
+	if _, e = coordinator.Process(secondWire); !errors.Is(e, ErrFenceOrphaned) {
+		t.Fatal("new work bypassed orphaned admission", e)
+	}
+	viewAfter, e := client.View()
+	if e != nil || viewAfter != viewBefore {
+		t.Fatal("orphan recovery mutated the fence", e, viewBefore, viewAfter)
+	}
+	spent, total, effects, e = a.Counts()
+	if e != nil || spent != [authorityCallers]byte{} || total != 0 || effects != 0 {
+		t.Fatal("orphan path crossed effect boundary", e, spent, total, effects)
+	}
+	t.Log("lost owner evidence leaves the exact pending reservation fail-closed: zero effects and no automatic abort or second admission")
+}
+
+func TestAdmissionFenceExhaustionIsExplicitAndNonMutating(t *testing.T) {
+	origin := "http://127.0.0.1:1"
+	ctx, _, _, authorityPub, authorityKey, _, _ := authorityFixture(t, origin)
+	fencePub, fenceKey := fenceKeys()
+	genesis := Digest{240}
+	fence, e := CreateAdmissionFence(privateTemp(t), ctx, authorityPub, fenceKey, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer fence.Close()
+	before := genesis
+	for i := 0; i < fenceMaxTransitions; i++ {
+		after := Digest{byte(i + 1)}
+		reservation, er := SignFenceReservation(ctx, before, after, Digest{byte(64 + i)}, Digest{byte(128 + i)}, authorityKey)
+		if er != nil {
+			t.Fatal(er)
+		}
+		if _, er = fence.Reserve(reservation); er != nil {
+			t.Fatal("reserve", i, er)
+		}
+		view, er := fence.Finalize(reservation)
+		if er != nil || view.Sequence != uint32(i+1) || view.Head != after || view.Pending != (Digest{}) {
+			t.Fatal("finalize", i, er, view)
+		}
+		before = after
+	}
+	atCapacity, e := fence.View()
+	if e != nil || atCapacity.Sequence != fenceMaxTransitions || atCapacity.Head != before || atCapacity.Pending != (Digest{}) {
+		t.Fatal("capacity view", e, atCapacity)
+	}
+	extra, e := SignFenceReservation(ctx, before, Digest{99}, Digest{201}, Digest{202}, authorityKey)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if _, e = fence.Reserve(extra); !errors.Is(e, ErrFenceExhausted) {
+		t.Fatal("direct capacity refusal not explicit", e)
+	}
+	afterDirect, e := fence.View()
+	if e != nil || afterDirect != atCapacity {
+		t.Fatal("direct exhaustion mutated fence", e, atCapacity, afterDirect)
+	}
+	srv := httptest.NewServer(fence)
+	defer srv.Close()
+	client, e := NewFenceClient(srv.URL, ctx, authorityPub, fencePub, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if _, e = client.Reserve(extra); !errors.Is(e, ErrFenceExhausted) {
+		t.Fatal("wire capacity refusal not preserved", e)
+	}
+	afterWire, e := fence.View()
+	if e != nil || afterWire != atCapacity {
+		t.Fatal("wire exhaustion mutated fence", e, atCapacity, afterWire)
+	}
+	t.Log("bounded laboratory capacity is explicit and fail-closed; exhaustion never creates a pending reservation or synthetic effect")
+}

@@ -86,3 +86,26 @@ not a quorum, public transparency log, trusted timestamp or Byzantine consensus.
 ## V2-012 witnessed transaction boundary
 
 Plan without mutating; persist signed intent; apply exact durable authority plan; CAS independent witness; clear intent; expose only nonce-bound, genesis-pinned composite proof. A client with lost replies may reconcile a monotonic sequence gap if the signed contact ledger, request hash, stale-parent classification and challenge agree. Raw authority transport is legacy/fixture only, not the production write route. Status recovery is contact-budget bounded. All four process crash points and both real HTTP loss points passed at `8998fceab17b09ec8d1911945fd5bd90b7b26c89` ([race gate](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221)). Concurrent cloned stores both may persist local synthetic effects; one witness acknowledges only one, loser retains intent and refuses recovery. Independent admission/fencing or upstream idempotency is mandatory before arbitrary external effects. Both-domain rollback and GrantBook rollback remain explicit negative controls. No physical-power-loss certification or consensus claim.
+
+
+## V2-013 admission availability boundary
+
+The independent admission fence now distinguishes two fail-closed availability
+conditions instead of collapsing them into generic policy/rollback errors.
+A pending reservation whose owning authority-side intent has disappeared is
+reported as `ErrFenceOrphaned`; it is not automatically aborted. The bounded
+laboratory transition cap is reported as `ErrFenceExhausted` both in-process
+and over the loopback client, and exhaustion does not mutate the fence.
+
+This is intentionally a safety-over-liveness decision. Automatically clearing an
+orphan because its owner is unavailable is unsafe once an admitted operation may
+have dispatched an arbitrary external effect whose outcome can arrive later.
+`formal/FenceAvailability.tla` and the independent Python explorer preserve
+both sides permanently: the safe machine admits an orphaned-reservation liveness
+counterexample, while a steal-orphan recovery mutant violates
+`AtMostOneEffect` when delayed effects are allowed. The current Go receiver is
+still a local synthetic atomic effect, so these models do not prove a production
+provider transaction protocol. A real external write path needs an upstream
+idempotency/fencing contract or a separately authorized resolution mechanism;
+wall-clock lease expiry alone is not accepted as evidence that an effect did not
+occur.

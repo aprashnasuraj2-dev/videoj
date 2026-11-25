@@ -41,6 +41,8 @@ const fencedEnvelopeSize = authorityResponseSize + fenceAttestationSize + fenceR
 
 var ErrFenceConflict = errors.New("admission fence conflict")
 var ErrFenceUnavailable = errors.New("admission fence unavailable or ambiguous")
+var ErrFenceOrphaned = errors.New("admission fence orphaned; owner evidence unavailable")
+var ErrFenceExhausted = errors.New("admission fence exhausted")
 
 type FenceReservation struct {
 	Before      Digest
@@ -424,7 +426,10 @@ func (f *AdmissionFence) Reserve(r FenceReservation) (FenceView, error) {
 	if r.Before != f.headLocked() {
 		return FenceView{}, ErrFenceConflict
 	}
-	if len(f.commits) >= fenceMaxTransitions || f.seenHeadLocked(r.After) {
+	if len(f.commits) >= fenceMaxTransitions {
+		return FenceView{}, ErrFenceExhausted
+	}
+	if f.seenHeadLocked(r.After) {
 		return FenceView{}, ErrPolicy
 	}
 	for _, prior := range f.commits {
@@ -568,6 +573,8 @@ func (f *AdmissionFence) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case errors.Is(e, ErrFenceConflict):
 			w.WriteHeader(http.StatusConflict)
+		case errors.Is(e, ErrFenceExhausted):
+			w.WriteHeader(http.StatusTooManyRequests)
 		case errors.Is(e, ErrPolicy):
 			w.WriteHeader(http.StatusForbidden)
 		default:
@@ -608,6 +615,9 @@ func (c *FenceClient) parseView(res *http.Response, path string) (FenceView, err
 	defer res.Body.Close()
 	if res.StatusCode == http.StatusConflict {
 		return FenceView{}, ErrFenceConflict
+	}
+	if res.StatusCode == http.StatusTooManyRequests {
+		return FenceView{}, ErrFenceExhausted
 	}
 	if res.StatusCode == http.StatusForbidden {
 		return FenceView{}, ErrPolicy
@@ -901,8 +911,15 @@ func (c *FencedCoordinator) recoverLocked() error {
 	}
 	current := a.headLocked()
 	if !exists {
-		if view.Head != current || view.Pending != (Digest{}) {
+		if view.Head != current {
 			return ErrWitnessRollback
+		}
+		if view.Pending != (Digest{}) {
+			// A pending reservation without the authority-side durable intent
+			// cannot be safely auto-aborted. A cloned authority could otherwise
+			// clear another writer's admission while a delayed external effect
+			// is still possible. Preserve the orphan as fail-closed evidence.
+			return ErrFenceOrphaned
 		}
 		return nil
 	}
@@ -998,8 +1015,8 @@ func (c *FencedCoordinator) processLocked(req AuthorityRequest) (FencedResponse,
 	}
 	reserved, e := c.fence.Reserve(reservation)
 	if e != nil {
-		if errors.Is(e, ErrFenceConflict) {
-			return FencedResponse{}, ErrFenceConflict
+		if errors.Is(e, ErrFenceConflict) || errors.Is(e, ErrFenceExhausted) {
+			return FencedResponse{}, e
 		}
 		return FencedResponse{}, ErrFenceUnavailable
 	}

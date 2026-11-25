@@ -174,3 +174,24 @@ fi
 cat "$WORK/client-ancestry-provision.log"
 grep -F 'Invariant NoEffectBelowExternalMax is violated' "$WORK/client-ancestry-provision.log"
 python3 client_policy_ancestry.py
+
+
+# Admission availability is intentionally separate from admission safety.
+# Losing the reservation owner's durable evidence must fail liveness rather than
+# silently clear the fence. The steal-orphan mutant restores availability by
+# clearing another writer's reservation and must violate AtMostOneEffect once a
+# delayed arbitrary external effect is allowed to arrive.
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-availability-safe" -config FenceAvailabilitySafe.cfg FenceAvailability.tla > "$WORK/fence-availability-safe.log" 2>&1 || { cat "$WORK/fence-availability-safe.log"; exit 1; }
+cat "$WORK/fence-availability-safe.log"
+grep -F 'No error has been found' "$WORK/fence-availability-safe.log"
+if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-availability-orphan" -config FenceAvailabilityOrphan.cfg FenceAvailability.tla > "$WORK/fence-availability-orphan.log" 2>&1; then
+ cat "$WORK/fence-availability-orphan.log"; echo 'orphaned admission unexpectedly satisfied liveness' >&2; exit 1
+fi
+cat "$WORK/fence-availability-orphan.log"
+grep -F 'Temporal property PendingEventuallySettles was violated' "$WORK/fence-availability-orphan.log"
+if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-availability-steal" -config FenceAvailabilitySteal.cfg FenceAvailability.tla > "$WORK/fence-availability-steal.log" 2>&1; then
+ cat "$WORK/fence-availability-steal.log"; echo 'steal-orphan mutant unexpectedly preserved one effect' >&2; exit 1
+fi
+cat "$WORK/fence-availability-steal.log"
+grep -F 'Invariant AtMostOneEffect is violated' "$WORK/fence-availability-steal.log"
+python3 fence_availability.py
