@@ -33,7 +33,8 @@ test('degenerate margins, asymmetric tails, negative difference',async()=>{
  const v=await fisherFixture(0,1,2,3);assert.equal((await run(v)).exactConditionalTail,'1/1');
 });
 test('refuses bad counts, group scope, overlap, untrusted authority and pins',async()=>{
- for(const v of [await fisherFixture(11,10,2,10),await fisherFixture(0,0,2,10),await fisherFixture(1,150,2,150),await fisherFixture(1,3,1,2,{sameScope:true}),await fisherFixture(2,2,1,2,{alias:true})])await assert.rejects(run(v),/FISHER_/);
+ for(const v of [await fisherFixture(11,10,2,10),await fisherFixture(0,0,2,10),await fisherFixture(1,150,2,150),await fisherFixture(1,3,1,2,{sameScope:true})])await assert.rejects(run(v),/FISHER_/);
+ await assert.rejects(fisherFixture(2,2,1,2,{alias:true}),/COMPILER_DUPLICATE_BINDING_SPAN/);
  const v=await fisherFixture();
  for(const o of [{groupB:{successBinding:'as',trialBinding:'bn'}},{alternative:'twice-smaller'},{familyAlpha:'1/1'},{familySize:0},{design:{...fisherPlan(v).design,distinctGroups:'VERIFIED'}}])await assert.rejects(run(v,o),/FISHER_/);
  const text=JSON.stringify(fisherPlan(v));await assert.rejects(evaluateReviewedFisher(v.versionText,v.digest,text,'sha256:'+'0'.repeat(64)),/FISHER_PIN/);

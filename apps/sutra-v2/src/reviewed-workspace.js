@@ -1,3 +1,4 @@
+import {evaluateReviewedFisher,FISHER_DESIGN} from '../../../packages/sutra-knowledge/reviewed-fisher.js';
 import {evaluateReviewedBinomial,DESIGN_OBLIGATIONS} from '../../../packages/sutra-knowledge/reviewed-binomial.js';
 import {evaluateReviewedIntervals} from '../../../packages/sutra-knowledge/reviewed-interval.js';
 import {planRobustAcquisition} from '../../../packages/sutra-knowledge/robust-acquisition.js';
@@ -23,9 +24,9 @@ import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigation
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
-let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null;
+let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
 const tableFields=['table-text','table-source','table-lineage','table-inspect','table-row','table-column','table-id','table-kind','table-unit','table-scope','table-dim-l','table-dim-m','table-dim-t','table-add','table-stage','table-clear'];
-const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected','sample-statistics','sample-statistics-corrected'];
+const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected','sample-statistics','sample-statistics-corrected','sample-two-groups','sample-two-groups-corrected'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
 function control(){
  for(const id of controls)by(id).disabled=busy;
@@ -97,7 +98,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL|BINOMIAL)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL|BINOMIAL|FISHER)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 async function loadGuidedCase(domain,corrected,ticket){
@@ -110,7 +111,7 @@ async function loadGuidedCase(domain,corrected,ticket){
  by('sample-description').textContent=c.title+' · '+(corrected?c.change:'Baseline version. Retain it before loading the corrected example.')+' '+c.qualification;
  renderBatch();status('sample_ready','Synthetic example staged and sealed. Evaluate meanings to inspect conditional results.');
 }
-for(const domain of ['finance','engineering','statistics'])for(const corrected of [false,true])by('sample-'+domain+(corrected?'-corrected':'')).onclick=()=>work(ticket=>loadGuidedCase(domain,corrected,ticket));
+for(const domain of ['finance','engineering','statistics','two-groups'])for(const corrected of [false,true])by('sample-'+domain+(corrected?'-corrected':'')).onclick=()=>work(ticket=>loadGuidedCase(domain,corrected,ticket));
 by('question').addEventListener('input',()=>invalidate('Question changed. Re-seal before evaluating a proposal.'));
 by('source-add').onclick=()=>work(async ticket=>{
  const next=[...sources,{id:by('source-id').value,lineage:by('lineage').value,text:by('source-text').value}];
@@ -198,7 +199,7 @@ function clearAcquisition(){acquisitionCurrent=null;by('acquisition-result').tex
 function clearGrid(){clearAcquisition();gridCurrent=null;by('world-result').textContent='';by('world-plan-pin').textContent='';by('world-snapshot-pin').textContent='';}
 function clearBranch(){branchCurrent=null;by('branch-result').textContent='';}
 function invalidateSemantic(){
- clearBranch();clearIntervals();clearBinomial();
+ clearBranch();clearIntervals();clearBinomial();clearFisher();
  exposureCurrent=null;by('exposure-result').textContent='';clearGrid();
  clarificationCurrent=null;previewCurrent=null;reuseCurrent=null;by('clarification-result').textContent='';by('clarification-options').replaceChildren();by('clarification-preview').textContent='';by('reuse-result').textContent='';
  semanticCurrent=null;impactCurrent=null;by('roundtrip-result').textContent='';by('semantic-pin').textContent='No version evaluated.';by('semantic-result').textContent='';by('impact-result').textContent='';
@@ -216,6 +217,8 @@ function semanticControl(){
  for(const e of by('interval-fields').querySelectorAll('input,select'))e.disabled=busy||!semanticCurrent;
  by('binomial-run').disabled=busy||!semanticCurrent||bindings.filter(b=>b.type.kind==='count').length<2;by('binomial-export').disabled=busy||!binomialCurrent;by('binomial-export-pin').disabled=busy||!binomialCurrent;
  for(const el of by('binomial-fields').querySelectorAll('input,select'))el.disabled=busy||!semanticCurrent;
+ by('fisher-run').disabled=busy||!semanticCurrent||bindings.filter(b=>b.type.kind==='count').length<4;by('fisher-export').disabled=busy||!fisherCurrent;by('fisher-export-pin').disabled=busy||!fisherCurrent;
+ for(const el of by('fisher-fields').querySelectorAll('input,select'))el.disabled=busy||!semanticCurrent;
  by('world-run').disabled=busy||!semanticCurrent;by('world-export').disabled=busy||!gridCurrent;by('world-export-pin').disabled=busy||!gridCurrent;
  for(const e of by('world-fields').querySelectorAll('input,select'))e.disabled=busy||!semanticCurrent;
  for(const id of ['acquisition-mistake','acquisition-abstain','acquisition-source-cost','acquisition-read-cost','acquisition-exposure','acquisition-budget','acquisition-failure','acquisition-run'])by(id).disabled=busy||!gridCurrent;
@@ -367,7 +370,7 @@ function renderIntervalFields(){
  }
 }
 function renderWorldAxes(){
- renderIntervalFields();renderBinomialFields();
+ renderIntervalFields();renderBinomialFields();renderFisherFields();
  const panel=by('world-fields');panel.replaceChildren();
  for(let i=1;i<=4;i++){
   const row=document.createElement('div');row.className='pinned-fields';
@@ -405,6 +408,34 @@ by('binomial-run').onclick=()=>work(async ticket=>{
 });
 by('binomial-export').onclick=()=>{if(binomialCurrent&&!busy)download(binomialCurrent.text,'sutra-reviewed-binomial.json','application/json');};
 by('binomial-export-pin').onclick=()=>{if(binomialCurrent&&!busy)download(binomialCurrent.snapshot+'\n','sutra-reviewed-binomial.sha256','text/plain');};
+function clearFisher(){
+ fisherCurrent=null;by('fisher-result').textContent='';for(const id of ['fisher-snapshot-pin','fisher-version-pin','fisher-plan-pin'])by(id).textContent='';
+}
+function renderFisherFields(){
+ const counts=bindings.filter(b=>b.type.kind==='count');
+ for(const role of ['as','an','bs','bn']){
+  const select=by('fisher-'+role);select.replaceChildren();
+  const empty=document.createElement('option');empty.value='';empty.textContent='Select reviewed count';select.append(empty);
+  for(const b of counts){const s=sources.find(s=>s.id===b.sourceId),o=document.createElement('option');o.value=b.id;o.textContent=b.id+' · '+s.text.slice(b.start,b.end)+' · '+b.type.scope;select.append(o);}
+ }
+ by('fisher-alpha').value='1/20';by('fisher-family').value='1';by('fisher-alternative').value='two-sided-probability-order';
+ for(const k of FISHER_DESIGN)by('fisher-design-'+k).checked=false;
+}
+for(const el of by('fisher-fields').querySelectorAll('input,select'))el.addEventListener('input',()=>{clearFisher();semanticControl();});
+by('fisher-run').onclick=()=>work(async ticket=>{
+ const c=semanticCurrent;if(!c)return;clearFisher();semanticControl();
+ const design=Object.fromEntries(FISHER_DESIGN.map(k=>[k,by('fisher-design-'+k).checked?'DECLARED_NOT_VERIFIED':'UNRESOLVED']));
+ const planText=JSON.stringify({version:1,versionDigest:c.digest,groupA:{successBinding:by('fisher-as').value,trialBinding:by('fisher-an').value},groupB:{successBinding:by('fisher-bs').value,trialBinding:by('fisher-bn').value},alternative:by('fisher-alternative').value,familyAlpha:by('fisher-alpha').value.trim(),familySize:Number(by('fisher-family').value),design}),planDigest=await casePin(planText);
+ const result=await evaluateReviewedFisher(c.versionText,c.digest,planText,planDigest),text=JSON.stringify({versionText:c.versionText,versionDigest:c.digest,planText,planDigest,result});
+ if(ticket!==epoch||c!==semanticCurrent)return;
+ by('fisher-result').textContent=['Group A: '+result.groupA.successes+'/'+result.groupA.trials,'Group B: '+result.groupB.successes+'/'+result.groupB.trials,'Observed proportion difference A minus B: '+result.observedDifferenceAminusB,'Exact conditional tail: '+result.exactConditionalTail,'Per-test alpha: '+result.perTestAlpha,result.mathematicalThreshold.replaceAll('_',' '),result.interpretation.replaceAll('_',' '),'Unresolved design: '+(result.unresolvedDesign.join(', ')||'None declared unresolved; not independently verified'),result.qualification].join('\n');
+ if(new TextEncoder().encode(text).length>262144){status('fisher_unportable','Exact conditional arithmetic available; report exceeds portable profile limit. No export.');return;}
+ const snapshot=await casePin(text);if(ticket!==epoch||c!==semanticCurrent)return;
+ fisherCurrent={text,snapshot};by('fisher-snapshot-pin').textContent=snapshot;by('fisher-version-pin').textContent=c.digest;by('fisher-plan-pin').textContent=planDigest;
+ status('fisher_ready','Exact conditional comparison computed. Distinct declared groups are not proof of independence, and no causal or decision authority is established.');
+});
+by('fisher-export').onclick=()=>{if(fisherCurrent&&!busy)download(fisherCurrent.text,'sutra-reviewed-fisher.json','application/json');};
+by('fisher-export-pin').onclick=()=>{if(fisherCurrent&&!busy)download(fisherCurrent.snapshot+'\n','sutra-reviewed-fisher.sha256','text/plain');};
 by('interval-run').onclick=()=>work(async ticket=>{
  const c=semanticCurrent;if(!c)return;clearIntervals();semanticControl();
  const ranges=[],normal=s=>/^-?(?:0|[1-9][0-9]{0,47})$/.test(s)?s+'/1':s;

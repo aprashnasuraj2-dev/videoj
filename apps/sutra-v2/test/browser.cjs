@@ -863,6 +863,27 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    await loc('correspondence').check();await loc('semantic-run').click();await state('semantic_ready');await run();assert.match(await loc('binomial-result').innerText(),/7\/128/);assert.match(await loc('binomial-result').innerText(),/TAIL ABOVE DECLARED THRESHOLD/);
    assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await p.close();
   }
+  // Two observed groups, explicit design and correction through the same living workspace.
+  {
+   const p=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
+   p.on('pageerror',e=>errors.push(e.message));p.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());});
+   await p.goto(origin);await p.locator('#review-open').click();await p.locator('#review-sample-panel > summary').click();
+   const loc=id=>p.locator('#review-'+id),state=s=>p.waitForFunction(s=>document.querySelector('#review-status').dataset.state===s&&!document.querySelector('#review-reset').disabled,s);
+   await loc('sample-two-groups').click();await state('sample_ready');await loc('semantic-run').click();await state('semantic_ready');
+   await loc('fisher-panel').locator('summary').first().click();
+   const select=async()=>{for(const id of ['as','an','bs','bn'])await loc('fisher-'+id).selectOption(id);};
+   const run=async()=>{await loc('fisher-run').click();await state('fisher_ready');};
+   await select();await run();assert.match(await loc('fisher-result').innerText(),/1063\/46189/);assert.match(await loc('fisher-result').innerText(),/DESIGN UNRESOLVED/);
+   const dl=p.waitForEvent('download');await loc('fisher-export').click();fs.writeFileSync(path.join(output,'living-fisher.json'),fs.readFileSync(await (await dl).path()));
+   for(const [id,file] of [['snapshot','living-fisher.sha256'],['version','living-fisher-version.sha256'],['plan','living-fisher-plan.sha256']])fs.writeFileSync(path.join(output,file),(await loc('fisher-'+id+'-pin').textContent())+'\n');
+   await loc('fisher-bs').selectOption('as');assert.equal(await loc('fisher-export').isDisabled(),true);await loc('fisher-run').click();await state('refused');assert.match(await loc('status').innerText(),/FISHER_BINDING_IDENTITY/);
+   await select();await loc('fisher-family').fill('3');await run();assert.match(await loc('fisher-result').innerText(),/TAIL ABOVE DECLARED THRESHOLD/);
+   await loc('fisher-design-distinctGroups').check();assert.equal(await loc('fisher-export').isDisabled(),true);
+   await loc('semantic-retain').click();await loc('sample-two-groups-corrected').click();await state('sample_ready');assert.equal(await loc('fisher-export').isDisabled(),true);
+   await loc('correspondence').check();await loc('semantic-run').click();await state('semantic_ready');await select();await run();
+   assert.match(await loc('fisher-result').innerText(),/713\/4199/);assert.match(await loc('fisher-result').innerText(),/TAIL ABOVE DECLARED THRESHOLD/);assert.match(await loc('fisher-result').innerText(),/difference A minus B: 2\/5/);
+   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await p.close();
+  }
   // Structured spreadsheet paste uses original text and the same exact compiler.
   {
    const tablePage=await browser.newPage({viewport:{width:360,height:800}}),errors=[],external=[];
