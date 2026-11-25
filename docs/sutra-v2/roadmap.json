@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-015",
+  "session": "V2-016",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2333,20 +2333,41 @@
   "productInvariant": "SUTRA MUST BE MORE INFORMATIVE WHEN ITS CONCLUSION FAILS THAN A NORMAL AI SYSTEM IS WHEN ITS ANSWER SUCCEEDS. Failed conclusions expose cause, changed and surviving claims, decisive dependencies, remaining worlds, and a next observation when one exists; contradictions must never be presented as an ordinary low-confidence vote.",
   "productGates": [
     {
+      "id": "V2-STATIC-CSP",
+      "status": "Integration verified",
+      "dependencies": [],
+      "scope": "Scoped V2-only local packaged static CSP and WASM; no deployment",
+      "evidence": [
+        {
+          "id": "V2-STATIC-CSP",
+          "sourceRevision": "68c32ae70c523daf1e8e70a125ba6c5738bba4d9",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45566742003",
+          "description": "Exact source 68c32ae70c523daf1e8e70a125ba6c5738bba4d9 passed knowledge push 45566732763, PR 45566742207 and Pages ingress 45566742003; all nine observed runs succeeded, including both Chromium CSP probes and independent replay. Scope: local packaged candidate, no HTTPS deployment. Prior marker failure 39207bc454ec74afaa15f3ebf08d8867b2275614 is retained (job 139037256767, T16 build evidence marker)."
+        }
+      ]
+    },
+    {
       "id": "V2-D01-ATTACK",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
-        "V2-P07-WASM"
+        "V2-STATIC-CSP"
       ],
-      "scope": "critical/irrelevant withdrawal; declared-copy attack; minimum repairs; next observation; browser and independent replay"
+      "scope": "critical/irrelevant withdrawal; declared-copy attack; minimum repairs; next observation; browser and independent replay",
+      "evidence": [
+        {
+          "sourceRevision": "6ad7b85dbc56406d38b84385cb58bae5128fe737",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45567774777/job/139046680946",
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45567774777 and push 45567766279, ingress 45567775133, impact 45567774809, evaluation 45567774773, Open Kit 45567774881, legacy release 45567774749, publisher 45567774972, browser matrix 45567774784. Actual Chromium produced six attack exports; independent Python refused 40 mutations (6+6+7+7+7+7). Three targeted Node groups also reproduced locally with exact Git blob hashes. Synthetic, declared ancestry only; no deployment."
+        }
+      ]
     },
     {
       "id": "V2-D02-CAPSULE",
-      "status": "Not started",
+      "status": "Implemented but unverified",
       "dependencies": [
         "V2-D01-ATTACK"
       ],
-      "scope": "versioned externally anchored capsule export, offline replay and tamper controls"
+      "scope": "Bounded synthetic case, exact bytes, separately retained pin, independent replay; no signer or freshness"
     }
   ]
 }

@@ -276,10 +276,24 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    const dl=debugPage.waitForEvent('download');await debugPage.locator('#debug-export').click();
    const bundle=JSON.parse(fs.readFileSync(await (await dl).path(),'utf8'));fs.writeFileSync(path.join(output,name),JSON.stringify(bundle,null,2));return bundle;
   }
+  async function exportCapsule(stem){
+   const dl=debugPage.waitForEvent('download');await debugPage.locator('#debug-capsule-export').click();
+   const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,stem+'.json'),bytes);
+   const pin=await debugPage.locator('#debug-capsule-pin').inputValue();assert.match(pin,/^sha256:[0-9a-f]{64}$/);
+   const pinDl=debugPage.waitForEvent('download');await debugPage.locator('#debug-capsule-pin-export').click();
+   assert.equal(fs.readFileSync(await (await pinDl).path(),'utf8'),pin+'\n');fs.writeFileSync(path.join(output,stem+'.sha256'),pin+'\n');
+   return {bytes,pin};
+  }
+  async function capsuleClick(id,state){
+   await debugPage.locator('#debug-capsule-'+id).click();
+   await debugPage.waitForFunction(s=>document.querySelector('#debug-capsule-status').dataset.state===s&&!document.querySelector('#debug-start').disabled,state);
+  }
   await clickDebug('start','SUPPORTED');
   const initialDebug=await saveDebug('debugger-baseline.json');
   assert.deepEqual(initialDebug.result.diagnostics.minimumCuts.map(x=>x.removed),[['sample_one']]);
+  const oldCapsule=await exportCapsule('capsule-old');await capsuleClick('verify','verified');
   await clickDebug('withdraw','UNDERDETERMINED');
+  assert.match(await debugPage.locator('#debug-capsule-context').innerText(),/Historical snapshot/);
   const lost=await saveDebug('debugger-withdrawn.json');assert.equal(lost.result.claims.control_ok.state,'SUPPORTED');
   await clickDebug('restore','SUPPORTED');
   await clickDebug('copies','SUPPORTED');
@@ -294,7 +308,28 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const repair=await saveDebug('debugger-repaired.json');assert.equal(repair.result.nextObservation.id,'read_c');
   await clickDebug('observe','REFUTED');
   const resolvedDebug=await saveDebug('debugger-resolved.json');assert.deepEqual(resolvedDebug.result.claims.target.survivingWorlds,['w111']);
+  const currentCapsule=await exportCapsule('capsule-current');await capsuleClick('verify','verified');
+  await capsuleClick('tamper','refused');assert.match(await debugPage.locator('#debug-capsule-status').innerText(),/PIN_MISMATCH/);
+  await capsuleClick('restore','verified');assert.match(await debugPage.locator('#debug-capsule-status').innerText(),/Refuted/);
+  await debugPage.screenshot({path:path.join(output,'debugger-capsule.png'),fullPage:false});
   await clickDebug('control','REFUTED');assert.equal(await debugPage.locator('#debug-control-state').innerText(),'Underdetermined');
+  assert.match(await debugPage.locator('#debug-capsule-context').innerText(),/Historical snapshot/);
+  const verifierPage=await browser.newPage({viewport:{width:360,height:800}}),verifierErrors=[],verifierExternal=[];
+  verifierPage.on('pageerror',e=>verifierErrors.push(e.message));verifierPage.on('request',r=>{if(new URL(r.url()).origin!==origin)verifierExternal.push(r.url());});
+  await verifierPage.goto(origin);
+  async function verifyFile(cap,pin,state){
+   await verifierPage.locator('#debug-capsule-file').setInputFiles({name:'proof.json',mimeType:'application/json',buffer:cap.bytes});
+   await verifierPage.locator('#debug-capsule-pin').fill(pin);
+   await verifierPage.locator('#debug-capsule-verify').click();
+   await verifierPage.waitForFunction(s=>document.querySelector('#debug-capsule-status').dataset.state===s&&!document.querySelector('#debug-capsule-file').disabled,state);
+  }
+  await verifyFile(currentCapsule,currentCapsule.pin,'verified');
+  assert.match(await verifierPage.locator('#debug-capsule-context').innerText(),/No current conclusion loaded/);
+  await verifyFile(oldCapsule,currentCapsule.pin,'refused');
+  await verifyFile(oldCapsule,oldCapsule.pin,'verified');
+  assert.match(await verifierPage.locator('#debug-capsule-status').innerText(),/Supported/);
+  assert.deepEqual(verifierErrors,[]);assert.deepEqual(verifierExternal,[]);await verifierPage.close();
+  console.log('PASS: exact proof capsule export and separate pin, byte tamper refusal, exact restoration, fresh-tab verification, historical-state counterexample.');
   assert.equal(await debugPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   assert.deepEqual(debugErrors,[]);assert.deepEqual(debugExternal,[]);await debugPage.close();
   console.log('PASS: conclusion debugger critical and irrelevant withdrawal, ten declared-copy artifacts, conflict, repair and decisive observation; actual state exports.');
