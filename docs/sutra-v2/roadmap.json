@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-123",
+  "session": "V2-124",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2739,7 +2739,7 @@
       "dependencies": [
         "V2-D11-ALIGNED-CASE"
       ],
-      "scope": "V2-042 candidate: reviewed claim compiler uses independently retained host contract pin, exact question/source byte pins and UTF-8 half-open spans, strict numeric lexeme admission and declared unit/kind/scope types. Untrusted model proposal can reference reviewed quantities, propose hypotheses or unknowns and bounded arithmetic/constraints; cannot invent numeric leaves, assert verification, execute code or promote source quotes. Exact kernel runs only dependency-ready compatible subgraphs; missing inputs and semantic type mismatches block target, partial results retained; target relevance and method validity explicitly unverified. Declared duplicate source bytes across roots visible. Finance fixture uses normalized historical amounts; no live model, no automatic document extraction, no independent compiler replay or browser integration yet. Node adversarial tests authored; exact CI pending. V2-043 candidate: browser host-reviewed compiler with fixed normalized finance contract, visible exact byte spans/quantity types, editable untrusted proposal, missing input challenge, stale export invalidation and invented numeric leaf refusal. Independent generic Python reference uses Fraction, UTF-8 spans, repeated ready-set scan and separate source contract reconstruction to replay actual browser exports and challenge 13 mutations per state. Unicode category implementation parity is scoped, not universal. No live model, automatic source extraction, semantic entailment, formula validity or source truth. Exact CI pending.",
+      "scope": "V2-042 candidate: reviewed claim compiler uses independently retained host contract pin, exact question/source byte pins and UTF-8 half-open spans, strict numeric lexeme admission and declared unit/kind/scope types. Untrusted model proposal can reference reviewed quantities, propose hypotheses or unknowns and bounded arithmetic/constraints; cannot invent numeric leaves, assert verification, execute code or promote source quotes. Exact kernel runs only dependency-ready compatible subgraphs; missing inputs and semantic type mismatches block target, partial results retained; target relevance and method validity explicitly unverified. Declared duplicate source bytes across roots visible. Finance fixture uses normalized historical amounts; no live model, no automatic document extraction, no independent compiler replay or browser integration yet. Node adversarial tests authored; exact CI pending. V2-043 candidate: browser host-reviewed compiler with fixed normalized finance contract, visible exact byte spans/quantity types, editable untrusted proposal, missing input challenge, stale export invalidation and invented numeric leaf refusal. Independent generic Python reference uses Fraction, UTF-8 spans, repeated ready-set scan and separate source contract reconstruction to replay actual browser exports and challenge 13 mutations per state. Unicode category implementation parity is scoped, not universal. No live model, automatic source extraction, semantic entailment, formula validity or source truth. Exact CI pending. V2-124: caller-grounded signed difference/relative change question alternatives and independent replay; CI pending.",
       "evidence": [
         {
           "id": "V2-D21-REVIEWED-COMPILER",
@@ -2847,7 +2847,7 @@
         "V2-D25-CALLER-REVIEWED-WORKSPACE",
         "V2-D22-REVIEWED-PROPOSAL-CONTRAST"
       ],
-      "scope": "Admit multiple reviewed interpretations; distinguish divergence, agreement, refusals and unresolved results without voting or semantic approval.",
+      "scope": "Admit multiple reviewed interpretations; distinguish divergence, agreement, refusals and unresolved results without voting or semantic approval. V2-124: caller-grounded signed difference/relative change question alternatives and independent replay; CI pending.",
       "acceptance": "Exact compiler replays, opposite/same/unresolved/refused regressions; no universal interpretation coverage.",
       "evidence": [
         {

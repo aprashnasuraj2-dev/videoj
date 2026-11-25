@@ -6,6 +6,7 @@ from verify_conflict import rawhash,require
 from verify_reviewed_compiler import host,pin,audit,compact
 from verify_living_version import FACETS,ERRORS,check_wire
 VERSION='sutra-reviewed-question/v1'
+CHANGE_VERSION='sutra-reviewed-change-question/v1'
 MAX_BYTES=262144
 GRAMMAR='IS_EXACT_LEFT_RELATION_EXACT_RIGHT_QUESTION_MARK'
 QUAL='Closed English comparison grammar and exact caller-selected operand spans only. Binding correspondences are declarations, not inferred entity or semantic truth. All supplied alternatives are retained, including same-binding or type-blocked comparisons. Unsupported syntax and more than eight combinations are refused, not guessed. No unrestricted natural-language parsing, source retrieval, semantic completeness or external authority.'
@@ -27,6 +28,7 @@ def operand(p,raw,bindings):
 def calculate(ct,cp,pt,pp):
     require(pin(pp) and rawhash(pt)==pp)
     _,bindings,_=host(ct,cp);c=check_wire(ct,9);p=check_wire(pt,6);q=c['question']['text'];raw=q.encode('utf-16-le');n=len(raw)//2
+    if isinstance(p,dict) and type(p.get('version')) is int and p['version']==2:return calculate_change(ct,cp,pp,c,p,raw,bindings)
     require(keys(p,('version','contractDigest','left','right')) and type(p['version']) is int and p['version']==1 and p['contractDigest']==cp and n<=1000)
     l=operand(p['left'],raw,bindings);r=operand(p['right'],raw,bindings)
     ls,le=p['left']['start'],p['left']['end'];rs,re_=p['right']['start'],p['right']['end']
@@ -53,6 +55,49 @@ def calculate(ct,cp,pt,pp):
             if rel.startswith(('not ','no ')):facets['negation']=dict(statement='Explicit inclusive negated relation: '+rel,references=[dict(kind='claim',id='relation_phrase')])
             candidates.append(dict(id=i,meaning=meaning,facets=facets,leftBinding=a,rightBinding=b,expression=expression,conditionalState=computed));proposals.append(dict(id=i,proposalText=proposal))
     return dict(version=VERSION,contractDigest=cp,planDigest=pp,originalQuestion=c['question'],grammar=GRAMMAR,left=l,relation=dict(span=relspan,operator=op),right=r,candidates=candidates,proposals=proposals,mode='SINGLE_UNTRUSTED_PROPOSAL' if total==1 else 'ALL_DECLARED_ALTERNATIVES',decisionAuthority='NONE',qualification=QUAL)
+
+CHANGE_PREFIXES={'Is the change from ':['SIGNED_DIFFERENCE','SIGNED_RELATIVE_CHANGE'],'Is the signed difference from ':['SIGNED_DIFFERENCE'],'Is the signed relative change from ':['SIGNED_RELATIVE_CHANGE']}
+CHANGE_RESERVED=set('change difference signed relative from to between percent percentage point points absolute growth increase decrease'.split())
+CHANGE_QUAL='Closed English change grammar with caller-reviewed baseline, current and threshold bindings. Unqualified change preserves both signed difference and signed relative change; these are supplied templates, not complete meaning coverage. Relative formula divides by the signed baseline: zero remains unresolved and a negative baseline is not conventional positive-base growth. Percentage-point and percent wording, annualization, causal interpretation and authority are not inferred.'
+def calculate_change(ct,cp,pp,c,p,raw,bindings):
+    n=len(raw)//2
+    require(keys(p,('version','contractDigest','baseline','current','threshold')) and p['contractDigest']==cp and n<=1000)
+    b,cur,t=[operand(p[k],raw,bindings) for k in ('baseline','current','threshold')]
+    require(all(all(w.translate(str.maketrans({'ſ':'s','K':'k'})).lower() not in CHANGE_RESERVED for w in re.split('[ _-]',x['span']['quote'])) for x in (b,cur,t)))
+    bs,be=p['baseline']['start'],p['baseline']['end'];cs,ce=p['current']['start'],p['current']['end'];ts,te=p['threshold']['start'],p['threshold']['end']
+    prefix=raw[:2*bs].decode('utf-16-le');require(prefix in CHANGE_PREFIXES and raw[2*be:2*cs].decode('utf-16-le')==' to ' and ce<ts and te==n-1 and c['question']['text'].endswith('?'))
+    middle=raw[2*ce:2*ts].decode('utf-16-le');require(middle.startswith(' ') and middle.endswith(' ') and middle[1:-1] in PHRASES)
+    rel=middle[1:-1];op,opcode=PHRASES[rel];relspan=span(raw,ce+1,ts-1);mode_span=span(raw,7,bs-1);modes=CHANGE_PREFIXES[prefix]
+    total=len(modes)*len(b['bindingIds'])*len(cur['bindingIds'])*len(t['bindingIds']);require(total<=8)
+    candidates=[];proposals=[]
+    for mode in modes:
+        for prior in b['bindingIds']:
+            for now in cur['bindingIds']:
+                for threshold in t['bindingIds']:
+                    i='question_'+str(len(candidates)+1);nodes=[];inputs={}
+                    def input_node(binding):
+                        if binding not in inputs:
+                            inputs[binding]='input_'+str(len(inputs)+1);nodes.append(dict(id=inputs[binding],kind='input',bindingId=binding))
+                        return inputs[binding]
+                    a=input_node(now);z=input_node(prior);nodes.append(dict(id='derive_1',kind='derive',op='sub',args=[a,z]))
+                    left='derive_1';expression='(['+now+']-['+prior+'])'
+                    if mode=='SIGNED_RELATIVE_CHANGE':
+                        nodes.append(dict(id='derive_2',kind='derive',op='div',args=[left,z]));left='derive_2';expression+='/['+prior+']'
+                    right=input_node(threshold);nodes.append(dict(id='target',kind='constraint',op=opcode,args=[left,right]));expression+=op+'['+threshold+']'
+                    claims=[dict(id=k,kind='quoted_assertion',span=s) for k,s in [('change_phrase',mode_span),('baseline_alias',b['span']),('current_alias',cur['span']),('relation_phrase',relspan),('threshold_alias',t['span'])]]
+                    proposal=compact(dict(version=1,contractDigest=cp,questionSpan=span(raw,0,n),claims=claims,nodes=nodes,targetId='target'))
+                    computed=audit(ct,cp,proposal)['result']['target']['status']
+                    meaning=('Signed difference' if mode=='SIGNED_DIFFERENCE' else 'Signed relative change')+' from '+b['span']['quote']+' ('+prior+') to '+cur['span']['quote']+' ('+now+') '+rel+' '+t['span']['quote']+' ('+threshold+')'
+                    refs=[dict(kind='binding',id=x) for x in dict.fromkeys([prior,now,threshold])];facets=dict.fromkeys(FACETS)
+                    facets['definition']=dict(statement=meaning,references=refs)
+                    facets['baseline']=dict(statement='Caller-declared baseline: '+prior,references=[dict(kind='binding',id=prior)])
+                    facets['measurement']=dict(statement='Caller-declared current and threshold: '+now+' / '+threshold,references=[dict(kind='binding',id=x) for x in dict.fromkeys([now,threshold])])
+                    facets['method']=dict(statement='Current minus baseline; not absolute magnitude.' if mode=='SIGNED_DIFFERENCE' else '(Current minus baseline) divided by signed baseline; zero unresolved; negative baseline is not conventional growth.',references=refs)
+                    facets['quantifier']=dict(statement='Exact comparison phrase: '+rel,references=[dict(kind='claim',id='relation_phrase')])
+                    if rel.startswith(('not ','no ')):facets['negation']=dict(statement='Explicit inclusive negated relation: '+rel,references=[dict(kind='claim',id='relation_phrase')])
+                    candidates.append(dict(id=i,meaning=meaning,facets=facets,changeMode=mode,baselineBinding=prior,currentBinding=now,thresholdBinding=threshold,expression=expression,conditionalState=computed));proposals.append(dict(id=i,proposalText=proposal))
+    return dict(version=CHANGE_VERSION,contractDigest=cp,planDigest=pp,originalQuestion=c['question'],grammar='IS_CHANGE_FROM_EXACT_BASELINE_TO_EXACT_CURRENT_RELATION_EXACT_THRESHOLD_QUESTION_MARK',change=dict(span=mode_span,modes=modes),baseline=b,current=cur,threshold=t,relation=dict(span=relspan,operator=op),candidates=candidates,proposals=proposals,mode='SINGLE_UNTRUSTED_PROPOSAL' if total==1 else 'ALL_DECLARED_ALTERNATIVES',decisionAuthority='NONE',qualification=CHANGE_QUAL)
+
 def verify(data,expected,cp,pp):
     if not all(pin(p) for p in (expected,cp,pp)):return dict(status='REFUSED',reason='PIN_REQUIRED')
     if not isinstance(data,bytes) or not 1<=len(data)<=MAX_BYTES:return dict(status='REFUSED',reason='SIZE_OR_TYPE')
@@ -60,5 +105,5 @@ def verify(data,expected,cp,pp):
     try:
         b=check_wire(data.decode('utf-8',errors='strict'),40);require(keys(b,('contractText','contractDigest','planText','planDigest','result')) and b['contractDigest']==cp and b['planDigest']==pp)
         result=calculate(b['contractText'],cp,b['planText'],pp);require(canonical(result)==canonical(b['result']))
-        return dict(status='VERIFIED',profile=VERSION,result=result,qualification='Exact finite grammar and conditional candidate replay only; intended meaning, source truth and authority remain unverified.')
+        return dict(status='VERIFIED',profile=result['version'],result=result,qualification='Exact finite grammar and conditional candidate replay only; intended meaning, source truth and authority remain unverified.')
     except ERRORS:return dict(status='REFUSED',reason='REPLAY_REFUSED')
