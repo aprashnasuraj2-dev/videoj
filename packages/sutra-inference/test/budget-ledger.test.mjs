@@ -179,3 +179,12 @@ test('dynamic profile cardinality is bounded and closed configuration rejects hi
  const fresh=createProviderBudgetLedger({global,profiles:[],leaseTicks:10,randomBytes});
  assert.throws(()=>fresh.registerProfile(hidden),e=>e.code==='PROFILE');
 });
+
+
+test('lease expiry arithmetic refuses unsafe clock overflow before any reservation',()=>{
+ const {a,b}=profiles(),ledger=make([a.profile.profileId,b.profile.profileId]);
+ assert.throws(()=>ledger.reserve({
+  profileId:a.profile.profileId,inputBytes:1,maxOutputTokens:1,now:Number.MAX_SAFE_INTEGER-5
+ }),e=>e.code==='CLOCK');
+ const snap=ledger.snapshot();assert.equal(snap.global.used.calls,0);assert.equal(snap.global.used.active,0);
+});
