@@ -187,3 +187,15 @@ Exact source `dea58567d68d07c50eb31e9175db3f2a3619aa8e` passed knowledge push `4
 - [ ] **Mount boundary:** `pinnedUpstreamTransactionGuard` is package-private, does not implement `http.Handler`, and creates no new external write route.
 - [ ] **Next V2-P06-REFINE:** map actual fresh/revoked/reconcile/alternate-ancestry Go traces to the existing GrantLifecycle and ClientPolicyAncestry models; do not count the existing models alone as implementation refinement.
 - [ ] **Remaining consent limitation:** coordinated policy-book+witness rollback and fresh-client provisioning remain executable counterexamples; the single-process policy mutex is not distributed consensus or protection from cloned/hostile trust domains.
+
+
+## V2-013 pinned consent/policy implementation refinement — e581a0a5cae0
+
+Exact source `e581a0a5cae0e942821af18b4e547cb65efa9763` passed knowledge push `45559693575`, knowledge PR `45559702271`, impact `45559702162`, Open Kit `45559702184`, publisher `45559702149`, engineering evaluation `45559702216` and browser compatibility `45559702141`. Push knowledge job `139020150770` and PR knowledge job `139020178838` both passed the Go race gate, pinned-policy trace mapper and bounded formal suite.
+
+- [ ] **V2-P06-REFINE / concrete pinned-policy traces:** actual Go traces now cover current active consent, a historical exact policy pin that remains in witnessed ancestry, revoked consent, expired consent, alternate-head rejection, post-APPLIED revocation with exact reconciliation, and never-admitted recovery refusal.
+- [ ] **Exact ancestry distinction:** the trace records `pinSequence` and `pinHead`, so the independent mapper distinguishes current pins, historical retained ancestors and alternate/nonmember heads instead of trusting a boolean alone.
+- [ ] **Transition-strengthened mapper:** successful dispatch must keep epoch/grant window stable, advance policy exactly one transition for admission, retain the exact caller pin, and produce one upstream plus one local effect. Revocation must advance policy exactly once; reconciliation itself must not mutate policy.
+- [ ] **Adversarial refinement controls:** additional mutants reject epoch drift, grant-window drift, policy-sequence jumps, fake historical pins, lost historical membership, revocation without a policy transition and policy mutation during reconciliation, in addition to the earlier effect/admission/recovery corruptions.
+- [ ] **Failure preserved:** source `57dbdc6bd2f59eb0fbd062aeca5c807fe303fbee` failed knowledge Go build at `pinned_policy_refinement_linux_test.go:46` because the new trace test used `ed25519.PublicKey` without importing `crypto/ed25519`. Auxiliary workflows passed; the source receives no kernel/refinement credit.
+- [ ] **Claim boundary:** this is stronger concrete implementation-to-model evidence, not universal refinement. Coordinated policy rollback, fresh provisioning after rollback, cloned upstream authorities, physical storage/power loss and real-provider effects remain outside the proof.

@@ -167,7 +167,7 @@
             "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45558339999/job/139015729145",
             "description": "Exact-current grant/policy composition on the private upstream transaction path: exact caller pin membership is checked against current independent ancestry before grant admission mutation; active grant validity and authority head are checked before effect; policy mutex spans legitimate revocation/epoch race interval; admitted ambiguous effects can reconcile after revocation but revoked grants cannot create fresh effects."
           },
-          "knownLimitations": "Private synthetic path only. Coordinated rollback of policy book+witness and fresh provisioning remain explicit limitations; universal cross-process policy atomicity is not claimed. Concrete implementation-to-GrantLifecycle/ancestry trace mapping is next."
+          "knownLimitations": "Private synthetic path only. Exact source e581a0a5 adds concrete current/historical-pin implementation-to-model traces and adversarial transition mutants, but coordinated rollback of policy book+witness, fresh provisioning and universal cross-process policy atomicity remain explicit limitations."
         }
       ]
     },
@@ -335,11 +335,11 @@
           "verificationMethod": "TLC, trace refinement and implementation race tests",
           "status": "Implementation in progress",
           "evidence": {
-            "sourceRevision": "149d11407bbf4033ac2252474d53c255d1bfbeb9",
-            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45556263605/job/139008939377",
-            "description": "Actual Go upstream APPLIED/CLOSED traces independently map to UpstreamTerminal transitions; seven trace mutants rejected. TLC safe single-authority model passes while rollback and clone mutants violate AtMostOnePhysicalEffect; independent Python reproduces the bounded results."
+            "sourceRevision": "e581a0a5cae0e942821af18b4e547cb65efa9763",
+            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45559702271/job/139020178838",
+            "description": "Exact-green concrete pinned consent/policy refinement: Go traces cover current and historical exact ancestry, revoked/expired refusal, alternate-head rejection, post-APPLIED revocation reconciliation and never-admitted recovery refusal. Independent mapper binds exact pin sequence/head and transition shape; expanded mutants reject epoch/window drift, sequence jumps, fake/lost ancestry, missing revoke transition and recovery policy mutation."
           },
-          "knownLimitations": "Concrete trace refinement covers two single-authority terminal executions, not every Go execution. Cryptography, binary parsing, filesystem/power loss, concurrency schedules, clone/rollback attackers and real provider effects are not universally refined by this witness."
+          "knownLimitations": "Concrete trace refinement now covers upstream terminal APPLIED/CLOSED plus pinned consent/policy scenarios, including a retained historical exact ancestor. It remains bounded witness evidence, not universal Go refinement: coordinated rollback/fresh provisioning, cryptography/storage internals, arbitrary schedules, clone attackers, physical power loss and real-provider semantics are not proved."
         }
       ]
     },
