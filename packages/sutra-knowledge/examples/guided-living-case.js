@@ -3,7 +3,8 @@ import {sealReviewedDraft} from '../reviewed-draft.js';
 import {compileReviewedExpression} from '../reviewed-expression.js';
 const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
 export async function guidedLivingCase(domain,corrected=false){
- if(!['finance','engineering'].includes(domain)||typeof corrected!=='boolean')throw TypeError('GUIDED_CASE');
+ if(!['finance','engineering','statistics'].includes(domain)||typeof corrected!=='boolean')throw TypeError('GUIDED_CASE');
+ if(domain==='statistics')return statisticalCase(corrected);
  const finance=domain==='finance',question=finance?'Did cash generation improve after capital spending?':'Can the network sustain peak demand if one shared route fails?';
  const type=finance?{kind:'currency_amount',unit:'USD_million',scope:'synthetic_same_entity_periods',dimension:[0,0,0]}:{kind:'capacity',unit:'Mbps',scope:'synthetic_same_peak_condition',dimension:[0,0,0]};
  const specs=finance?[
@@ -36,4 +37,14 @@ export async function guidedLivingCase(domain,corrected=false){
  title:finance?'Cash generation and capital spending':'Shared-route capacity and resilience',
  change:finance?'Corrected current capital spending: 50 to 70 synthetic USD million.':'Corrected surviving capacity: 90 to 60 synthetic Mbps.',
  qualification:'Synthetic worked example with predefined selections and expressions. No actual company, network, independent source review or professional conclusion.'});
+}
+
+async function statisticalCase(corrected){
+ const question='Under a declared binomial null, does the observed success count exceed the threshold?',type={kind:'count',unit:'trials',scope:'synthetic_fixed_sample',dimension:[0,0,0]},sources=[],bindings=[];
+ let text='';for(const [id,label,value] of [['success','Successes',corrected?'8':'9'],['trials','Trials','10'],['failure','Failures',corrected?'2':'1']]){text+=label+': ';const start=text.length;text+=value;bindings.push({id,sourceId:'sample',start,end:text.length,type});text+='; ';}
+ sources.push({id:'sample',lineage:'synthetic',text});
+ const draft={version:1,question,sources,bindings},{contractText,pin}=await sealReviewedDraft(JSON.stringify(draft));
+ const candidates=[{id:'count_consistency',meaning:'Success count does not exceed trial count',binding:'trials',formula:'[success]<=[trials]'},{id:'observed_majority',meaning:'Observed successes exceed failures',binding:'success',formula:'[success]>[failure]'}],proposals=[];
+ for(const a of candidates){const r=await compileReviewedExpression(contractText,pin,a.formula);proposals.push({id:a.id,proposalText:r.proposalText});}
+ return freeze({domain:'statistics',corrected,draft,contractText,pin,proposals,candidates,title:'Synthetic binary outcome audit',change:'Corrected successes from 9 to 8 and failures from 1 to 2 in 10 trials.',qualification:'Synthetic counts only. Fixed sample, common probability, independence, sampling, missingness and prespecification are not established.'});
 }

@@ -745,3 +745,8 @@ V2-088 and V2-089 exact 10/10 passed; scoped acquisition reference and continuou
 ## V2-092 — Conditional exact binomial profile
 
 V2-090 exact all ten workflows passed; interval browser and independent reference evidence registered. Add scope-matched reviewed count bindings, fixed n<=256, exact rational one-sided inclusive binomial tails, explicit null probability, family alpha and declared Bonferroni family size. Separate seven unresolved/declared-not-verified sampling and design obligations from arithmetic threshold comparison. No p-value as hypothesis probability, causal interpretation, evidence independence, population validity or recommendation. Small fair-coin exhaustive bit-pattern and weighted nonbinary controls, exact boundary, degenerate null, invalid count/scope and pin adversaries authored. V2-091 overview exact CI pending. New profile browser and independent reference not yet implemented.
+
+
+## V2-093 — Local statistical journey and independent verifier
+
+Add actual guided synthetic sample of 9/10 successes and corrected 8/10, ordinary count candidates and separate conditional binomial profile controls. The exact one-sided tail changes 11/1024 to 7/128 under the half-probability null; a family size of five changes the threshold even at the original count. Design declarations default unresolved, invalidate all statistical exports on edit/revision, display three separately retained pins. Independent Python Fraction and math.comb replay of actual browser artifact, seven derived tamper controls and three independent pin controls. No statistical design, generalization, causation or hypothesis truth certified. Exact CI pending; V2-091/092 reconciliation pending.

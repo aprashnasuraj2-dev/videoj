@@ -845,6 +845,24 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    }
    assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await samplePage.close();
   }
+  // Actual reviewed statistical sample, model obligations, family size and revision.
+  {
+   const p=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
+   p.on('pageerror',e=>errors.push(e.message));p.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());});
+   await p.goto(origin);await p.locator('#review-open').click();await p.locator('#review-sample-panel > summary').click();
+   const loc=id=>p.locator('#review-'+id),state=s=>p.waitForFunction(s=>document.querySelector('#review-status').dataset.state===s&&!document.querySelector('#review-reset').disabled,s);
+   await loc('sample-statistics').click();await state('sample_ready');await loc('semantic-run').click();await state('semantic_ready');
+   await loc('binomial-panel').locator('summary').first().click();
+   const run=async()=>{await loc('binomial-success').selectOption('success');await loc('binomial-trial').selectOption('trials');await loc('binomial-run').click();await state('binomial_ready');};
+   await run();assert.match(await loc('binomial-result').innerText(),/11\/1024/);assert.match(await loc('binomial-result').innerText(),/DESIGN UNRESOLVED/);
+   const dl=p.waitForEvent('download');await loc('binomial-export').click();fs.writeFileSync(path.join(output,'living-binomial.json'),fs.readFileSync(await (await dl).path()));
+   for(const [id,file] of [['snapshot','living-binomial.sha256'],['version','living-binomial-version.sha256'],['plan','living-binomial-plan.sha256']])fs.writeFileSync(path.join(output,file),(await loc('binomial-'+id+'-pin').textContent())+'\n');
+   await loc('binomial-family').fill('5');assert.equal(await loc('binomial-export').isDisabled(),true);await run();assert.match(await loc('binomial-result').innerText(),/TAIL ABOVE DECLARED THRESHOLD/);
+   await loc('binomial-design-independentTrials').check();assert.equal(await loc('binomial-export').isDisabled(),true);
+   await loc('semantic-retain').click();await loc('sample-statistics-corrected').click();await state('sample_ready');assert.equal(await loc('binomial-export').isDisabled(),true);
+   await loc('correspondence').check();await loc('semantic-run').click();await state('semantic_ready');await run();assert.match(await loc('binomial-result').innerText(),/7\/128/);assert.match(await loc('binomial-result').innerText(),/TAIL ABOVE DECLARED THRESHOLD/);
+   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await p.close();
+  }
   // Structured spreadsheet paste uses original text and the same exact compiler.
   {
    const tablePage=await browser.newPage({viewport:{width:360,height:800}}),errors=[],external=[];
