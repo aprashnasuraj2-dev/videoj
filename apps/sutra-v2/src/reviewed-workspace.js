@@ -1,3 +1,4 @@
+import {planRobustAcquisition} from '../../../packages/sutra-knowledge/robust-acquisition.js';
 import {createInvestigationHistory,openInvestigationHistory} from '../../../packages/sutra-knowledge/investigation-history.js';
 import {inspectReviewedTable,addReviewedTable} from '../../../packages/sutra-knowledge/reviewed-table.js';
 import {compareSiblingInvestigations} from '../../../packages/sutra-knowledge/sibling-branch-contrast.js';
@@ -20,7 +21,7 @@ import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigation
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
-let tablePreview=null,tableSelections=[],history=null;
+let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null;
 const tableFields=['table-text','table-source','table-lineage','table-inspect','table-row','table-column','table-id','table-kind','table-unit','table-scope','table-dim-l','table-dim-m','table-dim-t','table-add','table-stage','table-clear'];
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
@@ -94,7 +95,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 async function loadGuidedCase(domain,corrected,ticket){
@@ -191,7 +192,8 @@ by('batch-run').onclick=()=>work(async ticket=>{
  batchCurrent=bytes;status('batch_ready','Conditional order relations computed. Unaligned expressions remain unclassified; semantic relevance and source truth are not established.');
 });
 by('batch-export').onclick=()=>{if(batchCurrent&&!busy)download(batchCurrent,'sutra-reviewed-order-contrast.json','application/json');};
-function clearGrid(){gridCurrent=null;by('world-result').textContent='';by('world-plan-pin').textContent='';by('world-snapshot-pin').textContent='';}
+function clearAcquisition(){acquisitionCurrent=null;by('acquisition-result').textContent='';}
+function clearGrid(){clearAcquisition();gridCurrent=null;by('world-result').textContent='';by('world-plan-pin').textContent='';by('world-snapshot-pin').textContent='';}
 function clearBranch(){branchCurrent=null;by('branch-result').textContent='';}
 function invalidateSemantic(){
  clearBranch();
@@ -210,6 +212,8 @@ function semanticControl(){
  by('exposure-run').disabled=busy||!semanticCurrent;by('exposure-export').disabled=busy||!exposureCurrent;
  by('world-run').disabled=busy||!semanticCurrent;by('world-export').disabled=busy||!gridCurrent;by('world-export-pin').disabled=busy||!gridCurrent;
  for(const e of by('world-fields').querySelectorAll('input,select'))e.disabled=busy||!semanticCurrent;
+ for(const id of ['acquisition-mistake','acquisition-abstain','acquisition-source-cost','acquisition-read-cost','acquisition-exposure','acquisition-budget','acquisition-failure','acquisition-run'])by(id).disabled=busy||!gridCurrent;
+ by('acquisition-export').disabled=busy||!acquisitionCurrent;
  by('branch-file').disabled=busy;by('branch-pin').disabled=busy;by('branch-run').disabled=busy||!baseline||!semanticCurrent||!impactCurrent||!by('branch-file').files?.length||!by('branch-pin').value.trim();by('branch-export').disabled=busy||!branchCurrent;
  by('reuse-run').disabled=busy||!impactCurrent;by('reuse-export').disabled=busy||!reuseCurrent;
  by('clarification-answer-run').disabled=busy||!clarificationCurrent||!clarificationCurrent.plan.questions.length;
@@ -333,6 +337,32 @@ by('world-run').onclick=()=>work(async ticket=>{
 });
 by('world-export').onclick=()=>{if(gridCurrent&&!busy)download(gridCurrent.text,'sutra-semantic-world-grid.json','application/json');};
 by('world-export-pin').onclick=()=>{if(gridCurrent&&!busy)download(gridCurrent.snapshot+'\n','sutra-semantic-world-grid.sha256','text/plain');};
+const acquisitionInputs=['acquisition-mistake','acquisition-abstain','acquisition-source-cost','acquisition-read-cost','acquisition-exposure','acquisition-budget','acquisition-failure'];
+for(const id of acquisitionInputs)by(id).oninput=()=>{clearAcquisition();semanticControl();};
+by('acquisition-run').onclick=()=>work(async ticket=>{
+ const g=gridCurrent,c=semanticCurrent;if(!g||!c)return;
+ clearAcquisition();semanticControl();
+ const data=JSON.parse(g.text);
+ const amount=id=>{const s=by(id).value;if(!/^(0|[1-9][0-9]{0,6})$/.test(s)||Number(s)>1000000)throw Error('ACQUISITION_AMOUNT');return Number(s);};
+ const mistake=amount('acquisition-mistake'),abstain=amount('acquisition-abstain'),sourceCost=amount('acquisition-source-cost'),readCost=amount('acquisition-read-cost'),exposure=amount('acquisition-exposure'),budget=amount('acquisition-budget');
+ const failure=by('acquisition-failure').checked;
+ const contract=JSON.parse(JSON.parse(c.versionText).contractText),bindings=new Map(contract.bindings.map(b=>[b.id,b]));
+ const axes=data.result.axes,sourceIds=[...new Set(axes.map(a=>bindings.get(a.bindingId).span.sourceId))];
+ const policy={version:1,versionDigest:c.digest,gridDigest:data.planDigest,costUnit:'declared_loss_units',exposureUnit:'abstract_exposure_units',exposureBudget:budget,
+  sourceCosts:sourceIds.map(id=>({id,costUpper:sourceCost})),initiallyAcquired:[],
+  decisions:[{id:'choose_true',loss:{constraint_satisfied:0,constraint_refuted:mistake}},{id:'choose_false',loss:{constraint_satisfied:mistake,constraint_refuted:0}},{id:'abstain',loss:{constraint_satisfied:abstain,constraint_refuted:abstain}}],
+  actions:axes.map((a,i)=>({id:'observe_'+(i+1),sourceId:bindings.get(a.bindingId).span.sourceId,bindingId:a.bindingId,readCostUpper:readCost,exposure,
+   outcomes:a.values.map((value,j)=>({value,labels:failure?['value_'+(j+1),'failed']:['value_'+(j+1)]}))}))};
+ const policyText=JSON.stringify(policy),policyDigest=await casePin(policyText);
+ const result=await planRobustAcquisition(c.versionText,c.digest,data.planText,data.planDigest,policyText,policyDigest);
+ const text=JSON.stringify({versionText:c.versionText,versionDigest:c.digest,gridText:data.planText,gridDigest:data.planDigest,policyText,policyDigest,result});
+ const snapshot=await casePin(text);if(ticket!==epoch||g!==gridCurrent||c!==semanticCurrent)return;
+ acquisitionCurrent={text,snapshot};
+ const render=(p,depth=0)=>{const prefix='  '.repeat(depth);return p.kind==='stop'?[prefix+'Stop: '+p.decision+' · worst loss '+p.worstObjective]:[prefix+'Observe '+p.actionId+' from '+p.sourceId+' · worst objective '+p.worstObjective,...p.branches.flatMap(b=>[prefix+'  '+b.outcome+':',...render(b.next,depth+2)])];};
+ by('acquisition-result').textContent=[result.status.replaceAll('_',' '),...(result.plan?['Without observation: '+result.noObservation.worstObjective,'With best declared policy: '+result.plan.worstObjective,'Worst-case improvement: '+result.worstCaseImprovement,'Perfect-information lower bound: '+result.perfectInformationLowerBound,...render(result.plan)]:[]),result.qualification,'Snapshot digest: '+snapshot].join('\n');
+ status('acquisition_ready','Hypothetical finite acquisition policy computed; no observation, payment, disclosure or action performed.');
+});
+by('acquisition-export').onclick=()=>{if(acquisitionCurrent&&!busy)download(acquisitionCurrent.text,'sutra-robust-acquisition.json','application/json');};
 by('exposure-run').onclick=()=>work(async ticket=>{
  const c=semanticCurrent;if(!c)return;exposureCurrent=null;by('exposure-result').textContent='';
  const r=await auditStructuralExposure(c.versionText,c.digest);if(ticket!==epoch||c!==semanticCurrent)return;

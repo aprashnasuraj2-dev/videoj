@@ -49,3 +49,39 @@ test('truncation, stale pin and fabricated costs/labels fail closed',async()=>{
  const s=await fixture();s.grid.maxAssignments=1;s.gridText=JSON.stringify(s.grid);s.gridPin=await casePin(s.gridText);s.policy.gridDigest=s.gridPin;
  const r=await run(s);assert.equal(r.status,'UNRESOLVED_OR_EXCESSIVE_GRID');assert.equal(r.plan,undefined);
 });
+
+async function twoAxisFixture(){
+ const question='Does the synthetic product exceed the limit?',source='X: 2; Y: 2; Limit: 9;',type={kind:'ratio',unit:'one',scope:'synthetic',dimension:[0,0,0]};
+ const {contractText,pin}=await sealReviewedDraft(JSON.stringify({version:1,question,sources:[{id:'source',lineage:'synthetic',text:source}],bindings:[['x',source.indexOf('2')],['y',source.lastIndexOf('2')],['limit',source.indexOf('9')]].map(([id,start])=>({id,sourceId:'source',start,end:start+1,type}))}));
+ const proposal=JSON.stringify({version:1,contractDigest:pin,questionSpan:{sourceId:'question',start:0,end:question.length,quote:question},claims:[],nodes:[...['x','y','limit'].map(id=>({id,kind:'input',bindingId:id})),{id:'product',kind:'derive',op:'mul',args:['x','y']},{id:'target',kind:'constraint',op:'gt',args:['product','limit']}],targetId:'target'});
+ const candidates=['a','b'].map(id=>({id,meaning:id,facets:Object.fromEntries(FACETS.map(k=>[k,null]))}));
+ const batchText=JSON.stringify({version:1,contractDigest:pin,proposals:candidates.map(c=>({id:c.id,proposalText:proposal}))});
+ const annotationText=JSON.stringify({version:1,contractDigest:pin,batchDigest:await casePin(batchText),candidates});
+ const v=await sealInvestigationVersion({contractText,contractPin:pin,batchText,annotationText,annotationPin:await casePin(annotationText)});
+ const grid={version:1,versionDigest:v.digest,axes:['x','y'].map(bindingId=>({bindingId,values:['2/1','4/1']})),maxAssignments:16},gridText=JSON.stringify(grid),gridPin=await casePin(gridText);
+ const policy={...(await fixture()).policy,versionDigest:v.digest,gridDigest:gridPin,exposureBudget:2,sourceCosts:[{id:'source',costUpper:2}],
+ actions:['x','y'].map(bindingId=>({id:'read_'+bindingId,sourceId:'source',bindingId,readCostUpper:1,exposure:1,outcomes:[{value:'2/1',labels:['low']},{value:'4/1',labels:['high']}]}))};
+ return {v,grid,gridText,gridPin,policy};
+}
+// Independent brute-force recursion on arrays, no masks or memoization.
+function oracle(worlds,actions,decisions,acquired,cost,budget){
+ const stop=Math.min(...decisions.map(d=>Math.max(...worlds.map(w=>d.loss[w.state]))));
+ let best=stop;
+ for(const a of actions){
+  if(a.exposure>budget)continue;
+  const outcomes=new Set(worlds.flatMap(w=>a.outcomes.find(o=>o.value===w[a.bindingId]).labels));
+  const branch=[...outcomes].map(label=>oracle(worlds.filter(w=>a.outcomes.find(o=>o.value===w[a.bindingId]).labels.includes(label)),actions.filter(x=>x!==a),decisions,true,cost,budget-a.exposure));
+  best=Math.min(best,(acquired?0:cost)+a.readCostUpper+Math.max(...branch));
+ }
+ return best;
+}
+test('adaptive two-axis acquisition, shared cost, and noisy outcomes match independent exhaustive oracle',async()=>{
+ const f=await twoAxisFixture(),worlds=[2,4].flatMap(x=>[2,4].map(y=>({x:x+'/1',y:y+'/1',state:x*y>9?'constraint_satisfied':'constraint_refuted'})));
+ const baseline=await run(f);assert.equal(baseline.plan.worstObjective,4);assert.equal(baseline.plan.kind,'observe');assert.ok(baseline.plan.branches.some(b=>b.next.kind==='observe'&&b.next.acquisitionCostUpper===0));assert.ok(baseline.plan.branches.some(b=>b.next.kind==='stop'));
+ for(const cost of [0,2,5])for(const budget of [0,1,2])for(const failed of [false,true]){
+  f.policy.sourceCosts[0].costUpper=cost;f.policy.exposureBudget=budget;
+  for(const a of f.policy.actions)a.outcomes=[{value:'2/1',labels:failed?['low','failed']:['low']},{value:'4/1',labels:failed?['high','failed']:['high']}];
+  const r=await run(f);assert.equal(r.plan.worstObjective,oracle(worlds,f.policy.actions,f.policy.decisions,false,cost,budget));
+  assert.ok(r.plan.worstExposure<=budget);
+ }
+});

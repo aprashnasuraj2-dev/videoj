@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-086",
+  "session": "V2-087",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -35,7 +35,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "robust_acquisition_candidate_pending_exact_ci",
+  "state": "robust_acquisition_workspace_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -382,13 +382,13 @@
   "release": "not_authorized",
   "submission": "not_started",
   "lastFailed": {
-    "sourceRevision": "ff6b2d5db99de472e13dc3e384b780a45993d625",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612522262",
-    "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612522262/job/139199448847",
-    "reason": "Actual TSV browser test passed selection queue, stale invalidation, staging and exact contract source/quotes; timed out filling expression textarea inside collapsed details. Remaining formula and layout assertions not exercised.",
-    "resolutionStatus": "V2-084 explicitly opens existing expression disclosure before filling; exact CI pending."
+    "sourceRevision": "3d7f26717df5f97c229a5bd66bc83b9ddfabdeab",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612737845",
+    "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612737845/job/139200200663",
+    "reason": "Inherited collapsed expression textarea failure in table browser test; history knowledge job passed.",
+    "resolutionStatus": "Resolved at exact V2-084; all ten workflows green."
   },
-  "lastVerifiedKernelSource": "22a61fc0b120b6cc2989b8494cd2a834ad82f2cd",
+  "lastVerifiedKernelSource": "e8984d04873eae76a1f0abe36f82a0333aea84db",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -398,14 +398,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-087",
+    "parent": "56691dae24e060f0a4acb6fa1c4ba180fc3e1542",
+    "description": "Actual world-grid acquisition UI with declared symmetric losses and fail toggle; two-action exhaustive oracle with shared cost, exposure and overlapping readings. Exact CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-086",
     "parent": "ad734612a4af2dbd3250bcc8ec4333474c608c5b",
     "description": "Finite robust acquisition planner, explicit loss/upper-bound costs/exposure and overlapping noisy/failed observations, exact minimax with abstention and independent one-read oracle; CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-085",
-    "parent": "e8984d04873eae76a1f0abe36f82a0333aea84db",
-    "description": "Browser history root/fork/append/restore/export/import with exact separate pin; independent Python archive parent closure and conditional replay, mutation tests against actual browser output. CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -707,7 +707,14 @@
       "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612522262",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612522262/job/139199448847",
       "reason": "Actual TSV browser test passed selection queue, stale invalidation, staging and exact contract source/quotes; timed out filling expression textarea inside collapsed details. Remaining formula and layout assertions not exercised.",
-      "resolutionStatus": "V2-084 explicitly opens existing expression disclosure before filling; exact CI pending."
+      "resolutionStatus": "Resolved at exact V2-084; all ten workflows green; formula disclosure and all assertions retained."
+    },
+    {
+      "sourceRevision": "3d7f26717df5f97c229a5bd66bc83b9ddfabdeab",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612737845",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612737845/job/139200200663",
+      "reason": "Inherited collapsed expression textarea failure in table browser test; history knowledge job passed.",
+      "resolutionStatus": "Resolved at exact V2-084; all ten workflows green."
     }
   ],
   "reconciledDurableCandidate": {
@@ -1287,6 +1294,12 @@
       "sourceRevision": "22a61fc0b120b6cc2989b8494cd2a834ad82f2cd",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612330510",
       "description": "V2-081 exact 10/10 green; structured TSV coordinate and manual contract equality, hostile token and stale pin tests. Browser integration separate."
+    },
+    {
+      "id": "V2-LK03-PATHWAYS",
+      "sourceRevision": "e8984d04873eae76a1f0abe36f82a0333aea84db",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45613004519/job/139201105352",
+      "description": "V2-084 exact 10/10 green. Actual TSV paste through coordinate review, stale invalidation, exact contract and formula, 360px layout and no external requests."
     }
   ],
   "reconciledCI": [

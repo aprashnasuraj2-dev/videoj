@@ -2897,6 +2897,12 @@
           "sourceRevision": "22a61fc0b120b6cc2989b8494cd2a834ad82f2cd",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612330510",
           "description": "V2-081 exact 10/10 green; structured TSV coordinate and manual contract equality, hostile token and stale pin tests. Browser integration separate."
+        },
+        {
+          "id": "V2-LK03-PATHWAYS",
+          "sourceRevision": "e8984d04873eae76a1f0abe36f82a0333aea84db",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45613004519/job/139201105352",
+          "description": "V2-084 exact 10/10 green. Actual TSV paste through coordinate review, stale invalidation, exact contract and formula, 360px layout and no external requests."
         }
       ]
     },

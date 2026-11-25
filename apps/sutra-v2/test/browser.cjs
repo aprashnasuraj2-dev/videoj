@@ -774,6 +774,15 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
     await samplePage.locator('#review-sample-'+domain).click();await sampleState('sample_ready');
     await samplePage.locator('#review-semantic-run').click();await sampleState('semantic_ready');
     assert.match(await samplePage.locator('#review-semantic-result').innerText(),/AGREEMENT ON SUPPLIED CONDITIONAL OUTCOMES/);
+    if(domain==='engineering'){
+     const worldPanel=samplePage.locator('#review-world-panel');if(await worldPanel.getAttribute('open')===null)await worldPanel.locator('summary').first().click();
+     await samplePage.locator('#review-world-axis-1').selectOption('peak');await samplePage.locator('#review-world-values-1').fill('50,200');await samplePage.locator('#review-world-run').click();await sampleState('world_ready');
+     await samplePage.locator('#review-acquisition-panel > summary').click();await samplePage.locator('#review-acquisition-run').click();await sampleState('acquisition_ready');
+     assert.match(await samplePage.locator('#review-acquisition-result').innerText(),/Without observation: 6/);assert.match(await samplePage.locator('#review-acquisition-result').innerText(),/With best declared policy: 2/);
+     const dl=samplePage.waitForEvent('download');await samplePage.locator('#review-acquisition-export').click();const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,'living-acquisition.json'),bytes);assert.equal(JSON.parse(bytes).result.decisionAuthority,'NONE');
+     await samplePage.locator('#review-acquisition-failure').check();assert.equal(await samplePage.locator('#review-acquisition-export').isDisabled(),true);await samplePage.locator('#review-acquisition-run').click();await sampleState('acquisition_ready');assert.match(await samplePage.locator('#review-acquisition-result').innerText(),/With best declared policy: 6/);
+     await samplePage.locator('#review-world-values-1').fill('50,100,200');assert.equal(await samplePage.locator('#review-acquisition-export').isDisabled(),true);
+    }
     if(domain==='finance'){
      await samplePage.locator('#review-history-panel > summary').click();await samplePage.locator('#review-history-create').click();await sampleState('history_ready');
      assert.match(await samplePage.locator('#review-history-result').innerText(),/1 exact version.*1 branch/);
