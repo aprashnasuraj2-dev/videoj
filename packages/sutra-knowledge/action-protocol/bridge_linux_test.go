@@ -101,7 +101,7 @@ func TestWitnessCoordinatorLostWitnessReplyRecoversWithoutSecondEffect(t *testin
  var drop atomic.Bool
  srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
   witness:=witnessPtr.Load();if witness==nil{w.WriteHeader(503);return}
-  if r.Method==http.MethodPost&&drop.CompareAndSwap(true,false){
+  if r.URL.Path=="/witness"&&r.Method==http.MethodPost&&drop.CompareAndSwap(true,false){
    recorder:=httptest.NewRecorder();witness.ServeHTTP(recorder,r)
    if recorder.Code!=http.StatusOK{t.Errorf("witness advance failed: %d",recorder.Code);return}
    conn,_,e:=w.(http.Hijacker).Hijack();if e!=nil{t.Error(e);return};conn.Close();return
