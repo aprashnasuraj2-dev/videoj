@@ -992,3 +992,8 @@ New finite stress-test review planner over already evaluated semantic world grid
 ## V2-120 — Independent semantic probe subset optimization
 
 Independent Python reconstructs the exact pinned finite grid and enumerates combinations with set unions rather than the JS bitmask DP. Verifies group deduplication, tested proper-subset minimality, budget optimum, excluded/unresolved and truncated cases. Five synthetic fixtures and repinned mutations, closed offline archive profile; exact CI pending. V2-117 and V2-118 exact nine returned PR workflows green (knowledge runs 45718126155, 45718273782). V2-119 pending at observation. No claim of semantic coverage, physical feasibility, or reduced grid evaluation work. Browser integration next.
+
+
+## V2-121 — Focused synthetic review in existing world-grid workflow
+
+V2-120 returned PR workflows at observation: 5/9 green. Integrate exact probe suite into existing finite grid with review budget, readable assignment cards, uncovered/untested/minimality detail, local report disclosure and separate pins. Replays the grid; no computation savings claimed. Stale exports cleared on budget, grid or investigation change. Actual browser export and downloaded independent verifier regression, mobile journey retained. CI pending. No semantic authority. Next: permanent frozen assumption-case development benchmark with matched comparators and negative controls.

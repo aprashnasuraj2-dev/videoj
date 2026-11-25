@@ -709,7 +709,17 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const gridPin=await reviewPage.locator('#review-world-snapshot-pin').innerText(),planPin=await reviewPage.locator('#review-world-plan-pin').innerText();
   fs.writeFileSync(path.join(output,'living-world-grid.sha256'),gridPin+'\n');fs.writeFileSync(path.join(output,'living-world-plan.sha256'),planPin+'\n');
   assert.equal(gridPin,'sha256:'+require('node:crypto').createHash('sha256').update(gridBytes).digest('hex'));
-  await reviewFill('world-values-2','41/4, 25/2, 0');assert.equal(await reviewPage.locator('#review-world-export').isDisabled(),true);
+  await reviewPage.locator('#review-probe-panel > summary').click();
+  await reviewPage.locator('#review-probe-budget').selectOption('1');await reviewPage.locator('#review-probe-run').click();await reviewState('probe_ready');
+  assert.match(await reviewPage.locator('#review-probe-summary').innerText(),/1 \/ 1 discovered structural differences covered by 1 review assignment/);
+  assert.equal(await reviewPage.locator('#review-probe-cards article').count(),1);
+  const probeDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-probe-export').click();const probeBytes=fs.readFileSync(await (await probeDownload).path());
+  const probe=JSON.parse(probeBytes),probePin=await reviewPage.locator('#review-probe-snapshot-pin').innerText(),probePlan=await reviewPage.locator('#review-probe-plan-pin').innerText();
+  assert.equal(probePin,'sha256:'+require('node:crypto').createHash('sha256').update(probeBytes).digest('hex'));assert.equal(probe.result.decisionAuthority,'NONE');
+  fs.writeFileSync(path.join(output,'living-probe-suite.json'),probeBytes);fs.writeFileSync(path.join(output,'living-probe-suite.sha256'),probePin+'\n');fs.writeFileSync(path.join(output,'living-probe-plan.sha256'),probePlan+'\n');
+  await reviewPage.locator('#review-probe-budget').selectOption('2');assert.equal(await reviewPage.locator('#review-probe-export').isDisabled(),true);
+  await reviewPage.locator('#review-probe-run').click();await reviewState('probe_ready');
+  await reviewFill('world-values-2','41/4, 25/2, 0');assert.equal(await reviewPage.locator('#review-world-export').isDisabled(),true);assert.equal(await reviewPage.locator('#review-probe-export').isDisabled(),true);
   }
   const livingPin=await reviewPage.locator('#review-semantic-pin').innerText();assert.match(livingPin,/^sha256:[a-f0-9]{64}$/);
   const livingDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-semantic-export').click();

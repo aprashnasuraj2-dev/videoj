@@ -295,6 +295,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/test_world_grid.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/world-grid-reference.txt
           cat apps/sutra-v2/test-output/world-grid-reference.txt
+      - name: Independently replay actual browser semantic probe suite
+        run: |
+          python3 packages/sutra-knowledge/reference/test_semantic_probe_suite.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/living-probe-reference.txt
+          cat apps/sutra-v2/test-output/living-probe-reference.txt
       - name: Independently replay actual browser investigation history
         run: |
           python3 packages/sutra-knowledge/reference/test_investigation_history.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/history-reference.txt

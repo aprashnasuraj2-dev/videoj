@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-import json,sys
+import json,sys,subprocess
+from pathlib import Path
 from copy import deepcopy
 from verify_conflict import rawhash,require
 from verify_semantic_probe_suite import verify
@@ -25,6 +26,13 @@ def check(data,snapshot,version,plan):
     require(verify(data,snapshot,version,'sha256:'+'0'*64)['status']=='REFUSED')
     return result['result']
 def main():
+    if len(sys.argv)==3:
+        root=Path(sys.argv[1]);archive=Path(sys.argv[2]).resolve();report=root/'living-probe-suite.json';data=report.read_bytes()
+        snapshot=(root/'living-probe-suite.sha256').read_text().strip();version=(root/'living-before.sha256').read_text().strip();plan=(root/'living-probe-plan.sha256').read_text().strip()
+        r=check(data,snapshot,version,plan);require(r['counts']['coveredPairs']==1 and r['counts']['selectedWorlds']==1)
+        proc=subprocess.run([sys.executable,'-I','-S',str(archive),str(report.resolve()),'--probe-suite','--pin',snapshot,'--version-pin',version,'--plan-pin',plan],capture_output=True,text=True,check=True)
+        require(json.loads(proc.stdout)['result']==r);print('Actual browser probe-suite report independently reconstructed by downloaded offline archive and tamper controls.');return
+    require(len(sys.argv)==1)
     cases=json.load(sys.stdin);require(len(cases)==5)
     rows=[check(c['bundleText'].encode(),c['snapshotPin'],c['versionDigest'],c['planDigest']) for c in cases]
     require(rows[0]['counts']['selectedWorlds']==1 and rows[0]['pairs'][0]['witnesses'][0]['minimality']=='MINIMAL_WITHIN_DECLARED_TESTED_SUBSETS')

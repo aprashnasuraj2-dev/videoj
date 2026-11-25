@@ -1,3 +1,4 @@
+import {exportSemanticProbeSuite} from '../../../packages/sutra-knowledge/semantic-probe-suite.js';
 import {exportEvidenceRevision} from '../../../packages/sutra-knowledge/evidence-revision-transaction.js';
 import {exportWithdrawalRevision} from '../../../packages/sutra-knowledge/withdrawal-revision.js';
 import {inspectReviewedTextFile,addReviewedTextFile,reviseReviewedTextFile,MAX_FILE_BYTES} from '../../../packages/sutra-knowledge/reviewed-text-file.js';
@@ -29,7 +30,7 @@ const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let roundtripCurrent=null,textFilePreview=null,withdrawalPreview=null,withdrawalExport=null;
 let baselineReplay=null,currentReplay=null;
-let transactionQueue=[],transactionSelections=[],transactionPreview=null,transactionExport=null;
+let transactionQueue=[],transactionSelections=[],transactionPreview=null,transactionExport=null,probeCurrent=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
 let questionCurrent=null,questionExport=null,questionPathPin=null,questionSelections={left:null,right:null};
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
@@ -207,7 +208,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL|BINOMIAL|FISHER|QUESTION|TEXT_FILE)_[A-Z0-9_]{1,64}$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL|BINOMIAL|FISHER|QUESTION|TEXT_FILE|PROBE_SUITE)_[A-Z0-9_]{1,64}$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 async function loadGuidedCase(domain,corrected,ticket){
@@ -473,7 +474,8 @@ by('batch-run').onclick=()=>work(async ticket=>{
 });
 by('batch-export').onclick=()=>{if(batchCurrent&&!busy)download(batchCurrent,'sutra-reviewed-order-contrast.json','application/json');};
 function clearAcquisition(){acquisitionCurrent=null;by('acquisition-result').textContent='';for(const id of ['acquisition-snapshot-pin','acquisition-version-pin','acquisition-grid-pin','acquisition-policy-pin'])by(id).textContent='';}
-function clearGrid(){clearAcquisition();gridCurrent=null;by('world-result').textContent='';by('world-plan-pin').textContent='';by('world-snapshot-pin').textContent='';}
+function clearProbe(){probeCurrent=null;by('probe-summary').textContent='';by('probe-cards').replaceChildren();by('probe-result').textContent='';by('probe-disclosure').textContent='No probe report available.';by('probe-snapshot-pin').textContent='';by('probe-plan-pin').textContent='';}
+function clearGrid(){clearProbe();clearAcquisition();gridCurrent=null;by('world-result').textContent='';by('world-plan-pin').textContent='';by('world-snapshot-pin').textContent='';}
 function clearBranch(){branchCurrent=null;by('branch-result').textContent='';}
 function invalidateSemantic(){
  clearTransaction();clearWithdrawalPreview();clearWithdrawalExport();clearBranch();clearIntervals();clearBinomial();clearFisher();
@@ -499,6 +501,7 @@ function semanticControl(){
  for(const el of by('binomial-fields').querySelectorAll('input,select'))el.disabled=busy||!semanticCurrent;
  by('fisher-run').disabled=busy||!semanticCurrent||bindings.filter(b=>b.type.kind==='count').length<4;by('fisher-export').disabled=busy||!fisherCurrent;by('fisher-export-pin').disabled=busy||!fisherCurrent;
  for(const el of by('fisher-fields').querySelectorAll('input,select'))el.disabled=busy||!semanticCurrent;
+ by('probe-budget').disabled=busy||!gridCurrent;by('probe-run').disabled=busy||!gridCurrent;for(const id of ['probe-export','probe-export-pin','probe-plan-pin-export'])by(id).disabled=busy||!probeCurrent;
  by('world-run').disabled=busy||!semanticCurrent;by('world-export').disabled=busy||!gridCurrent;by('world-export-pin').disabled=busy||!gridCurrent;
  for(const e of by('world-fields').querySelectorAll('input,select'))e.disabled=busy||!semanticCurrent;
  for(const id of ['acquisition-mistake','acquisition-abstain','acquisition-source-cost','acquisition-read-cost','acquisition-exposure','acquisition-budget','acquisition-failure','acquisition-run'])by(id).disabled=busy||!gridCurrent;
@@ -780,6 +783,39 @@ by('world-run').onclick=()=>work(async ticket=>{
 });
 by('world-export').onclick=()=>{if(gridCurrent&&!busy)download(gridCurrent.text,'sutra-semantic-world-grid.json','application/json');};
 by('world-export-pin').onclick=()=>{if(gridCurrent&&!busy)download(gridCurrent.snapshot+'\n','sutra-semantic-world-grid.sha256','text/plain');};
+by('probe-budget').onchange=()=>{clearProbe();semanticControl();};
+by('probe-run').onclick=()=>work(async ticket=>{
+ const g=gridCurrent,c=semanticCurrent;if(!g||!c)return;
+ clearProbe();semanticControl();
+ const data=JSON.parse(g.text),maxReviewWorlds=Number(by('probe-budget').value);
+ const planText=JSON.stringify({version:1,versionDigest:c.digest,gridPlanText:data.planText,gridPlanDigest:data.planDigest,maxReviewWorlds}),planPin=await casePin(planText);
+ const exported=await exportSemanticProbeSuite(c.versionText,c.digest,planText,planPin),r=exported.result;
+ if(ticket!==epoch||g!==gridCurrent||c!==semanticCurrent)return;
+ by('probe-summary').textContent=r.counts.coveredPairs+' / '+r.counts.distinguishablePairs+' discovered structural differences covered by '+r.counts.selectedWorlds+' review assignment(s). '+r.gridCoverage.evaluatedAssignments+' / '+r.gridCoverage.totalAssignments+' grid assignments evaluated'+(r.gridCoverage.truncated?' (truncated).':'.');
+ const cards=by('probe-cards');
+ for(const s of r.selectedWorlds){
+  const card=document.createElement('article');card.className='studio-card';
+  const heading=document.createElement('strong');heading.textContent='Hypothetical '+s.id.replace('world_','assignment ');
+  const values=document.createElement('p');values.textContent=s.assignment.map(a=>a.bindingId+' = '+a.value).join(' · ');
+  const changed=document.createElement('p');changed.textContent='Changed from reviewed values: '+(s.changedBindings.join(', ')||'none');
+  const differences=document.createElement('p');differences.textContent='Distinguishes: '+s.covers.map(p=>p.left+' / '+p.right).join('; ');
+  card.append(heading,values,changed,differences);cards.append(card);
+ }
+ by('probe-result').textContent=[
+  'Structurally distinct decisive programs: '+r.counts.structuralGroups+'; all supplied candidates: '+r.counts.candidateCount,
+  ...r.structuralGroups.filter(g=>g.members.length>1).map(g=>'Same typed structure: '+g.members.map(m=>m.id+' ('+m.meaning+')').join('; ')),
+  ...r.excluded.map(c=>c.id+' · not evaluated: '+c.state),
+  ...r.alreadyDivergent.map(p=>p.left+' / '+p.right+' · already conditionally divergent'),
+  ...r.pairs.flatMap(p=>[p.left+' / '+p.right+' · '+p.status.replaceAll('_',' '),...p.witnesses.map(w=>w.worldId+' · '+w.minimality.replaceAll('_',' ')+' · '+w.changedBindings.join(', ')+(w.untestedProperSubsets.length?' · '+w.untestedProperSubsets.length+' proper subset(s) untested':''))]),
+  ...r.uncoveredDistinguishablePairs.map(p=>'Budget leaves uncovered: '+p.left+' / '+p.right),r.qualification
+ ].join('\n');
+ by('probe-disclosure').textContent=exported.byteLength+' report bytes; includes the exact version and all reviewed source text. '+(exported.portable?'Local download only; review before sharing.':'Exceeds 256 KiB portable limit; no download.');
+ if(exported.portable){probeCurrent={text:exported.bundleText,snapshot:exported.snapshotPin,planPin};by('probe-snapshot-pin').textContent=exported.snapshotPin;by('probe-plan-pin').textContent=planPin;}
+ status('probe_ready','Focused synthetic review suite selected. No evidence, candidate meaning or original version changed.');
+});
+by('probe-export').onclick=()=>{if(!busy&&probeCurrent)download(probeCurrent.text,'sutra-semantic-probe-suite.json','application/json');};
+by('probe-export-pin').onclick=()=>{if(!busy&&probeCurrent)download(probeCurrent.snapshot+'\n','sutra-semantic-probe-suite.sha256','text/plain');};
+by('probe-plan-pin-export').onclick=()=>{if(!busy&&probeCurrent)download(probeCurrent.planPin+'\n','sutra-semantic-probe-plan.sha256','text/plain');};
 const acquisitionInputs=['acquisition-mistake','acquisition-abstain','acquisition-source-cost','acquisition-read-cost','acquisition-exposure','acquisition-budget','acquisition-failure'];
 for(const id of acquisitionInputs)by(id).oninput=()=>{clearAcquisition();semanticControl();};
 by('acquisition-run').onclick=()=>work(async ticket=>{
