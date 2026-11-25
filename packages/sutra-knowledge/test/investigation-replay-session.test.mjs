@@ -46,3 +46,10 @@ test('session sealing is exact, and concurrent calls and stale pins are rejected
  const r=await p;assert.equal(r.versionText,a.versionText);assert.equal(r.digest,a.digest);assert.deepEqual(r.report,a.report);
  await assert.rejects(s.replay(a.versionText,'sha256:'+'0'.repeat(64)),/REVISION_PIN/);assert.equal(s.head(),a.digest);
 });
+
+test('extra public arguments cannot replace private semantic triage',async()=>{
+ const {evaluateSemanticInvestigation}=await import('../semantic-investigation.js');
+ const v=await livingFixture(),x=JSON.parse(v.versionText);let called=false;
+ const result=await evaluateSemanticInvestigation(x.contractText,x.contractPin,x.batchText,x.annotationText,x.annotationPin,async()=>{called=true;throw Error('injected');});
+ assert.equal(called,false);assert.deepEqual(result,v.report.investigation);
+});

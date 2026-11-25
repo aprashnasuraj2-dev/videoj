@@ -23,10 +23,11 @@ import {reviewedSnapshotDigest,MAX_REVIEWED_SNAPSHOT_BYTES} from '../../../packa
 import {exportReviewedOrderContrast} from '../../../packages/sutra-knowledge/reviewed-order-contrast.js';
 import {FACETS} from '../../../packages/sutra-knowledge/semantic-investigation.js';
 import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js';
-import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
+import {createInvestigationReplaySession,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let roundtripCurrent=null,textFilePreview=null,withdrawalPreview=null,withdrawalExport=null;
+let baselineReplay=null,currentReplay=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
 let questionCurrent=null,questionExport=null,questionPathPin=null,questionSelections={left:null,right:null};
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
@@ -359,7 +360,7 @@ function invalidateSemantic(){
  clearWithdrawalPreview();clearWithdrawalExport();clearBranch();clearIntervals();clearBinomial();clearFisher();
  exposureCurrent=null;by('exposure-result').textContent='';clearGrid();
  clarificationCurrent=null;previewCurrent=null;reuseCurrent=null;by('clarification-result').textContent='';by('clarification-options').replaceChildren();by('clarification-preview').textContent='';by('reuse-result').textContent='';
- semanticCurrent=null;impactCurrent=null;clearRoundtrip();by('semantic-pin').textContent='No version evaluated.';by('semantic-result').textContent='';by('impact-result').textContent='';
+ semanticCurrent=null;currentReplay=null;impactCurrent=null;by('session-reuse-result').textContent='';clearRoundtrip();by('semantic-pin').textContent='No version evaluated.';by('semantic-result').textContent='';by('impact-result').textContent='';
 }
 function semanticControl(){
  for(const id of ['source-withdraw-export','source-withdraw-export-pin','source-withdraw-plan-pin-export'])by(id).disabled=busy||!withdrawalExport;
@@ -469,9 +470,9 @@ function semanticText(version){
 function impactText(r){
  return ['Source changes: '+(r.sourceChanges.map(s=>s.id+' '+s.change).join(', ')||'none'),'Question changed: '+(r.questionChanged?'yes':'no'),
   ...r.candidates.map(c=>c.id+' — '+c.outcome.replaceAll('_',' ')+' · dependency affected '+(c.dependencyAffected?'yes':'no')+' · review '+(c.reviewRequired?'required':'no new scoped dependency issue')),
-  'New divergence: '+(r.triage.newDivergence?'yes':'no'),'Missing/unresolved: '+(r.missing.map(c=>c.id+' '+c.reason).join(', ')||'none'),'Full replay of both versions; no empirical or semantic assurance.'].join('\n');
+  'New divergence: '+(r.triage.newDivergence?'yes':'no'),'Missing/unresolved: '+(r.missing.map(c=>c.id+' '+c.reason).join(', ')||'none'),(r.recomputation==='PROVENANCE_BOUND_SESSION_REPLAY'?'Retained local baseline and provenance-bound replay; export independently recomputes both versions.':'Full replay of both versions;')+' No empirical or semantic assurance.'].join('\n');
 }
-function baselineState(){clearWithdrawalPreview();clearWithdrawalExport();by('correspondence').checked=false;by('baseline-state').textContent=baseline?'Retained baseline '+baseline.digest+' · '+baseline.report.investigation.originalQuestion.text:'No baseline retained.';by('baseline-candidates').textContent=baseline?baseline.report.investigation.candidates.map(c=>c.id+' · '+c.meaning).join('\n'):'';}
+function baselineState(){by('session-reuse-result').textContent='';clearWithdrawalPreview();clearWithdrawalExport();by('correspondence').checked=false;by('baseline-state').textContent=baseline?'Retained baseline '+baseline.digest+' · '+baseline.report.investigation.originalQuestion.text:'No baseline retained.';by('baseline-candidates').textContent=baseline?baseline.report.investigation.candidates.map(c=>c.id+' · '+c.meaning).join('\n'):'';}
 by('correspondence').onchange=()=>semanticControl();
 by('semantic-run').onclick=()=>work(async ticket=>{
  if(!sealed||stagedProposals.length<2||baseline&&!by('correspondence').checked)return;
@@ -486,11 +487,27 @@ by('semantic-run').onclick=()=>work(async ticket=>{
  });
  const annotationText=JSON.stringify({version:1,contractDigest:sealed.pin,batchDigest:await casePin(batchText),candidates});
  const prior=baseline;
- const version=await sealInvestigationVersion({previousDigest:prior?.digest??null,contractText:sealed.contractText,contractPin:sealed.pin,batchText,annotationText,annotationPin:await casePin(annotationText)});
- if(ticket!==epoch)return;
- const impact=prior?await compareInvestigationVersions(prior.versionText,prior.digest,version.versionText,version.digest):null;
- if(ticket!==epoch)return;
- semanticCurrent=version;impactCurrent=impact;renderWorldAxes();
+ let anchor=null,warmup=null,session;
+ if(prior){
+  anchor=baselineReplay?.head()===prior.digest?baselineReplay:createInvestigationReplaySession();
+  if(anchor.head()!==prior.digest)warmup=(await anchor.replay(prior.versionText,prior.digest)).stats;
+  if(ticket!==epoch||prior!==baseline)return;
+  session=anchor.fork();
+ }else session=createInvestigationReplaySession();
+ const version=await session.seal({previousDigest:prior?.digest??null,contractText:sealed.contractText,contractPin:sealed.pin,batchText,annotationText,annotationPin:await casePin(annotationText)});
+ if(ticket!==epoch||prior!==baseline)return;
+ if(prior)baselineReplay=anchor;currentReplay=session;
+ const impact=version.impact;
+ semanticCurrent={versionText:version.versionText,digest:version.digest,report:version.report};impactCurrent=impact;renderWorldAxes();
+ const t=version.stats.totals;
+ by('session-reuse-result').textContent=[
+  prior?'Local revision from retained baseline (sibling-safe fork).':'Local initial evaluation (cold cache).',
+  t.executed+' arithmetic operations executed · '+t.reusedOutcomes+' outcomes reused',
+  t.rebuiltReceipts+' receipts rebuilt · '+t.reusedReceipts+' exact receipts reused · '+t.removed+' removed · '+t.retired+' retired',
+  ...(warmup?['Historical anchor warm-up: '+warmup.totals.executed+' operations executed separately.']:[]),
+  ...version.stats.candidates.map(c=>c.id+': '+c.executed.length+' executed, '+c.reusedOutcomes.length+' outcomes reused'),
+  'Actual local operation counts, not a latency or independent verification claim. Cache remains in this tab and is never exported.'
+ ].join('\n');
  by('semantic-pin').textContent=version.digest;by('semantic-result').textContent=semanticText(version);
  if(impact)by('impact-result').textContent=impactText(impact);
  status('semantic_ready',impact?'Version replayed and compared with retained baseline. Conditional outcomes and unresolved meaning remain separate.':'Version sealed. Retain its digest separately; no interpretation or source truth established.');
@@ -728,8 +745,8 @@ by('reuse-run').onclick=()=>work(async ticket=>{
 by('reuse-export').onclick=()=>{if(reuseCurrent&&!busy)download(JSON.stringify(reuseCurrent),'sutra-revision-reuse-audit.json','application/json');};
 by('semantic-export').onclick=()=>{if(semanticCurrent&&!busy)download(semanticCurrent.versionText,'sutra-investigation-version.json','application/json');};
 by('semantic-export-pin').onclick=()=>{if(semanticCurrent&&!busy)download(semanticCurrent.digest+'\n','sutra-investigation-version.sha256','text/plain');};
-by('semantic-retain').onclick=()=>{if(!semanticCurrent||busy)return;clearBranch();baseline=semanticCurrent;impactCurrent=null;reuseCurrent=null;by('reuse-result').textContent='';by('impact-result').textContent='';baselineState();semanticControl();status('semantic_ready','Current version retained as baseline in this tab. Export the exact version and digest to keep it across sessions.');};
-by('baseline-clear').onclick=()=>{if(busy)return;clearBranch();baseline=null;impactCurrent=null;reuseCurrent=null;by('reuse-result').textContent='';by('impact-result').textContent='';baselineState();semanticControl();};
+by('semantic-retain').onclick=()=>{if(!semanticCurrent||busy)return;clearBranch();baselineReplay=currentReplay?.head()===semanticCurrent.digest?currentReplay.fork():null;baseline=semanticCurrent;impactCurrent=null;reuseCurrent=null;by('reuse-result').textContent='';by('impact-result').textContent='';baselineState();semanticControl();status('semantic_ready','Current version retained as baseline in this tab. Export the exact version and digest to keep it across sessions.');};
+by('baseline-clear').onclick=()=>{if(busy)return;clearBranch();baseline=null;baselineReplay=null;impactCurrent=null;reuseCurrent=null;by('reuse-result').textContent='';by('impact-result').textContent='';baselineState();semanticControl();};
 by('baseline-restore').onclick=()=>work(async ticket=>{
  const a=baseline;if(!a)return;
  const r=await restoreReviewedSourceDraft(a.versionText,a.digest);if(ticket!==epoch||a!==baseline)return;
@@ -746,8 +763,8 @@ by('baseline-import').onclick=()=>{
   const bytes=new Uint8Array(await file.arrayBuffer());
   if(bytes.length!==file.size||bytes.length>262144)throw Error('REVISION_FILE_SIZE');
   const versionText=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(bytes);
-  const report=await replayInvestigationVersion(versionText,digest);if(ticket!==epoch)return;
-  baseline={versionText,digest,report};invalidateSemantic();baselineState();
+  const session=createInvestigationReplaySession(),replayed=await session.replay(versionText,digest);if(ticket!==epoch)return;
+  baseline={versionText,digest,report:replayed.report};baselineReplay=session;invalidateSemantic();baselineState();
   by('baseline-file').value='';by('baseline-pin').value='';
   status('baseline_ready','Exact saved baseline replayed from separately pinned bytes. Stage a corrected version to compare.');
  });
@@ -816,7 +833,7 @@ by('history-fork').onclick=()=>work(async ticket=>{
 });
 by('history-restore').onclick=()=>{
  if(busy||!history)return;
- baseline=history.restore(by('history-version').value);invalidateSemantic();baselineState();control();
+ baseline=history.restore(by('history-version').value);baselineReplay=null;invalidateSemantic();baselineState();control();
  status('baseline_ready','Historical version restored as comparison baseline. Current draft text is unchanged; use the separate source restore action if desired.');
 };
 by('history-export').onclick=()=>{if(history&&!busy)download(history.snapshot().historyText,'sutra-investigation-history.json','application/json');};
@@ -830,5 +847,13 @@ by('history-import').onclick=()=>work(async ticket=>{
  const h=await openInvestigationHistory(new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(bytes),digest);
  if(ticket!==epoch)return;history=h;by('history-file').value='';by('history-pin').value='';renderHistory();status('history_ready','All exact versions and branch heads replayed from the saved history. No draft or baseline changed.');
 });
-by('impact-export').onclick=()=>{if(impactCurrent&&semanticCurrent&&baseline&&!busy)download(JSON.stringify({beforeVersion:baseline.versionText,beforeDigest:baseline.digest,afterVersion:semanticCurrent.versionText,afterDigest:semanticCurrent.digest,impact:impactCurrent}),'sutra-investigation-impact.json','application/json');};
+by('impact-export').onclick=()=>work(async ticket=>{
+ const base=baseline,version=semanticCurrent,shown=impactCurrent;
+ if(!base||!version||!shown)return;
+ const impact=shown.recomputation==='PROVENANCE_BOUND_SESSION_REPLAY'?await compareInvestigationVersions(base.versionText,base.digest,version.versionText,version.digest):shown;
+ if(ticket!==epoch||base!==baseline||version!==semanticCurrent||shown!==impactCurrent)return;
+ const projection=x=>{const {recomputation,qualification,...rest}=x;return JSON.stringify(rest);};
+ if(projection(impact)!==projection(shown))throw Error('REVISION_SESSION_IMPACT_DIVERGENCE');
+ download(JSON.stringify({beforeVersion:base.versionText,beforeDigest:base.digest,afterVersion:version.versionText,afterDigest:version.digest,impact}),'sutra-investigation-impact.json','application/json');
+});
 renderBatch();refresh();baselineState();control();

@@ -748,10 +748,13 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.equal(await reviewPage.locator('#review-semantic-run').isDisabled(),true);await reviewPage.locator('#review-correspondence').check();
   await reviewPage.locator('#review-semantic-run').click();await reviewState('semantic_ready');
   assert.match(await reviewPage.locator('#review-impact-result').innerText(),/report_b CHANGED/);assert.match(await reviewPage.locator('#review-impact-result').innerText(),/CONDITIONAL RESULT REVERSED/);
+  assert.match(await reviewPage.locator('#review-session-reuse-result').innerText(),/8 arithmetic operations executed · 4 outcomes reused/);
+  assert.match(await reviewPage.locator('#review-session-reuse-result').innerText(),/12 receipts rebuilt/);
+  assert.match(await reviewPage.locator('#review-impact-result').innerText(),/provenance-bound replay/);
   const impactDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-impact-export').click();const impactBytes=fs.readFileSync(await (await impactDownload).path());fs.writeFileSync(path.join(output,'living-impact.json'),impactBytes);
   const impact=JSON.parse(impactBytes);assert.equal(impact.beforeDigest,livingPin);assert.equal(JSON.parse(impact.afterVersion).previousDigest,livingPin);
   assert.deepEqual(impact.impact.sourceChanges,[{id:'report_b',change:'CHANGED'}]);assert.equal(impact.impact.candidates.filter(c=>c.outcome==='CONDITIONAL_RESULT_REVERSED').length,4);
-  assert.equal(impact.impact.decisionAuthority,'NONE');
+  assert.equal(impact.impact.decisionAuthority,'NONE');assert.equal(impact.impact.recomputation,'FULL_REPLAY_BOTH_VERSIONS');
   const newPin=await reviewPage.locator('#review-semantic-pin').innerText();assert.equal(impact.afterDigest,newPin);fs.writeFileSync(path.join(output,'living-after.json'),impact.afterVersion);fs.writeFileSync(path.join(output,'living-after.sha256'),newPin+'\n');
   await reviewPage.locator('#review-reuse-panel > summary').click();
   await reviewPage.locator('#review-reuse-run').click();await reviewState('reuse_ready');
@@ -763,6 +766,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await reviewPage.locator('#review-facet-proposal_1-time').fill('Review measurement period');
   await reviewPage.locator('#review-facet-proposal_1-time-binding').selectOption('a');
   await reviewPage.locator('#review-facet-proposal_1-negation').fill('Not lower');
+  assert.equal(await reviewPage.locator('#review-session-reuse-result').innerText(),'');
   assert.equal(await reviewPage.locator('#review-semantic-export').isDisabled(),true);
   await reviewPage.locator('#review-semantic-run').click();await reviewState('semantic_ready');
   await reviewPage.locator('#review-roundtrip-run').click();await reviewState('roundtrip_ready');

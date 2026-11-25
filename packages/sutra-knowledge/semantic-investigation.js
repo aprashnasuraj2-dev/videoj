@@ -80,7 +80,7 @@ async function evaluateWithTriage(contractText,contractPin,batchText,annotationT
   qualification:'Candidate annotations and source links do not establish entailment, intended meaning, authenticity, method validity, or empirical truth. No external authority. Supplied candidates only.'});
 }
 
-export async function evaluateSemanticInvestigation(...args){return evaluateWithTriage(...args,triageReviewedInterpretations);}
+export async function evaluateSemanticInvestigation(contractText,contractPin,batchText,annotationText,annotationPin){return evaluateWithTriage(contractText,contractPin,batchText,annotationText,annotationPin,triageReviewedInterpretations);}
 function semanticSession(triage){
  let busy=false;
  return Object.freeze({async evaluate(contractText,contractPin,batchText,annotationText,annotationPin){
