@@ -1065,7 +1065,10 @@ func NewAnchoredFencedGrantGuard(policy *GrantPolicyCoordinator, coordinator *Fe
 	}
 	return &AnchoredFencedGrantGuard{policy: policy, coordinator: coordinator}, nil
 }
-// The unpinned methods below remain package-private regression laboratories.\n// External mutation must use ProcessCompositePinned/ServeHTTP so the caller's\n// exact signed policy pin and retained-history membership are mandatory.\nfunc (g *AnchoredFencedGrantGuard) commitLab(grant ActionGrant, req AuthorityRequest, class GrantClass) (FencedResponse, error) {
+// The unpinned methods below remain package-private regression laboratories.
+// External mutation must use ProcessCompositePinned/ServeHTTP so the caller's
+// exact signed policy pin and retained-history membership are mandatory.
+func (g *AnchoredFencedGrantGuard) commitLab(grant ActionGrant, req AuthorityRequest, class GrantClass) (FencedResponse, error) {
 	if req.Op != AuthorityCommit {
 		return FencedResponse{}, ErrPolicy
 	}
