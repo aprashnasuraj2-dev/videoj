@@ -2945,7 +2945,14 @@
       ],
       "scope": "Extend finite worlds with typed semantic versus empirical axes; share DAGs and lazily evaluate bounded alternatives. V2-070 candidate: at most four reviewed quantity axes with two to four exact values each, up to sixteen evaluated assignments crossed with supplied programs; explicit truncation and scoped interaction witnesses. Refused/unresolved baseline candidates not evaluated; no empirical probabilities or complete semantic worlds.",
       "acceptance": "Brute-force parity on small worlds, explicit truncation, no fabricated probabilities or completeness.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK06-SEMANTIC-WORLDS",
+          "sourceRevision": "6a116cddbf2402063f382d51bdba0d394d6f93e8",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45609002771",
+          "description": "All ten exact workflows passed; finite grid brute-force parity, interaction and truncation tests. No empirical completeness."
+        }
+      ]
     },
     {
       "id": "V2-LK07-AMBIGUITY-REVIEW",

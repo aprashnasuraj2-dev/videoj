@@ -254,6 +254,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/test_living_version.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/living-reference.txt
           cat apps/sutra-v2/test-output/living-reference.txt
+      - name: Independently replay actual browser finite semantic world grid
+        run: |
+          python3 packages/sutra-knowledge/reference/test_world_grid.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/world-grid-reference.txt
+          cat apps/sutra-v2/test-output/world-grid-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

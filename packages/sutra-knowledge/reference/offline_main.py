@@ -9,6 +9,7 @@ from verify_aligned_capsule import verify as verify_aligned, MAX_BYTES as MAX_AL
 from verify_trial_snapshot import verify as verify_trial, MAX_BYTES as MAX_TRIAL_BYTES
 from verify_reviewed_snapshot import verify as verify_reviewed, MAX_BYTES as MAX_REVIEWED_BYTES
 from verify_living_version import verify as verify_living, MAX_BYTES as MAX_LIVING_BYTES
+from verify_world_grid import verify as verify_grid, MAX_BYTES as MAX_GRID_BYTES
 
 PIN_FILE = re.compile(rb'sha256:[a-f0-9]{64}(?:\r?\n)?', re.ASCII)
 
@@ -33,6 +34,9 @@ def main():
     profiles.add_argument('--trial',action='store_true',help='Explicitly select the research trial snapshot profile')
     profiles.add_argument('--reviewed',action='store_true',help='Explicitly select the reviewed compiler snapshot profile')
     profiles.add_argument('--living',action='store_true',help='Explicitly select exact living investigation version replay')
+    profiles.add_argument('--world-grid',action='store_true',help='Explicitly select finite synthetic world grid replay')
+    parser.add_argument('--version-pin',help='Separately retained living investigation version digest')
+    parser.add_argument('--plan-pin',help='Separately retained synthetic grid plan digest')
     parser.add_argument('--contract-pin',help='Separately retained reviewed contract digest')
     parser.add_argument('--source-pin',help='Separately retained normalized trial source digest')
     parser.add_argument('--after-source-pin',help='Separately retained second normalized trial source digest for comparison')
@@ -41,9 +45,13 @@ def main():
     if args.case_pin is not None and not args.aligned:parser.error('--case-pin requires --aligned')
     if (args.source_pin is not None or args.after_source_pin is not None) and not args.trial:parser.error('trial source pins require --trial')
     if args.contract_pin is not None and not args.reviewed:parser.error('--contract-pin requires --reviewed')
+    if (args.version_pin is not None or args.plan_pin is not None) and not args.world_grid:parser.error('version and plan pins require --world-grid')
     try:
         pin=args.pin if args.pin is not None else load_pin(args.pin_file)
-        if args.living:
+        if args.world_grid:
+            with Path(args.capsule).open('rb') as f:data=f.read(MAX_GRID_BYTES+1)
+            result=verify_grid(data,pin,args.version_pin,args.plan_pin)
+        elif args.living:
             with Path(args.capsule).open('rb') as f:data=f.read(MAX_LIVING_BYTES+1)
             result=verify_living(data,pin)
         elif args.reviewed:

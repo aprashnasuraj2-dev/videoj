@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-072",
+  "session": "V2-073",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -32,7 +32,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "local_expression_pathway_candidate_pending_exact_ci",
+  "state": "independent_world_grid_workspace_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -384,7 +384,7 @@
     "reason": "Inherited learner storage scanner still failed before scope correction; retain exact revision failure.",
     "resolutionStatus": "Resolved in exact V2-063; full inherited learner suite and all 10 workflows green."
   },
-  "lastVerifiedKernelSource": "598298401b633171a1b7ea5d3af421a37f2ba1ce",
+  "lastVerifiedKernelSource": "6a116cddbf2402063f382d51bdba0d394d6f93e8",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -394,14 +394,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-073",
+    "parent": "0298511399fc336fa6862d35b1e87c6b2245be80",
+    "description": "Browser finite world axes and pinned export, independently replayed Python grid via offline archive, actual browser artifact and derived tamper tests; exact CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-072",
     "parent": "935b916f78080689af603f5b8037d1355e89b979",
     "description": "Closed local formula syntax with explicit reviewed binding references, DAG reuse, typed compiler integration, injection/depth tests and actual browser path. Exact CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-071",
-    "parent": "6a116cddbf2402063f382d51bdba0d394d6f93e8",
-    "description": "Pinned historical source draft restoration, exact UTF-8/UTF-16 reselect, affected-source invalidation, stable caller IDs and explicit baseline correspondence, reverse-order Chromium journey; exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -1190,6 +1190,12 @@
       "sourceRevision": "598298401b633171a1b7ea5d3af421a37f2ba1ce",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45608822113",
       "description": "All ten workflows passed; exact answer preview and actual browser clarification/reuse exports with refused candidate and stale controls verified. No human efficacy claim."
+    },
+    {
+      "id": "V2-LK06-SEMANTIC-WORLDS",
+      "sourceRevision": "6a116cddbf2402063f382d51bdba0d394d6f93e8",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45609002771",
+      "description": "All ten exact workflows passed; finite grid brute-force parity, interaction and truncation tests. No empirical completeness."
     }
   ],
   "reconciledCI": [

@@ -1,3 +1,4 @@
+import {evaluateSemanticWorldGrid} from '../../../packages/sutra-knowledge/semantic-world-grid.js';
 import {compileReviewedExpression} from '../../../packages/sutra-knowledge/reviewed-expression.js';
 import {restoreReviewedSourceDraft,reviseReviewedSourceDraft} from '../../../packages/sutra-knowledge/source-draft-restore.js';
 import {planInvestigationClarifications} from '../../../packages/sutra-knowledge/clarification-plan.js';
@@ -13,7 +14,7 @@ import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js
 import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
-let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null;
+let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null;
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
 function control(){
@@ -34,7 +35,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 by('question').addEventListener('input',()=>invalidate('Question changed. Re-seal before evaluating a proposal.'));
@@ -120,7 +121,9 @@ by('batch-run').onclick=()=>work(async ticket=>{
  batchCurrent=bytes;status('batch_ready','Conditional order relations computed. Unaligned expressions remain unclassified; semantic relevance and source truth are not established.');
 });
 by('batch-export').onclick=()=>{if(batchCurrent&&!busy)download(batchCurrent,'sutra-reviewed-order-contrast.json','application/json');};
+function clearGrid(){gridCurrent=null;by('world-result').textContent='';by('world-plan-pin').textContent='';by('world-snapshot-pin').textContent='';}
 function invalidateSemantic(){
+ clearGrid();
  clarificationCurrent=null;previewCurrent=null;reuseCurrent=null;by('clarification-result').textContent='';by('clarification-options').replaceChildren();by('clarification-preview').textContent='';by('reuse-result').textContent='';
  semanticCurrent=null;impactCurrent=null;by('roundtrip-result').textContent='';by('semantic-pin').textContent='No version evaluated.';by('semantic-result').textContent='';by('impact-result').textContent='';
 }
@@ -132,6 +135,8 @@ function semanticControl(){
  for(const id of ['semantic-export','semantic-export-pin','semantic-retain','roundtrip-run','clarification-run'])by(id).disabled=busy||!semanticCurrent;
  by('baseline-file').disabled=busy;by('baseline-pin').disabled=busy;by('baseline-import').disabled=busy;
  by('baseline-clear').disabled=busy||!baseline;by('baseline-restore').disabled=busy||!baseline;by('impact-export').disabled=busy||!impactCurrent;
+ by('world-run').disabled=busy||!semanticCurrent;by('world-export').disabled=busy||!gridCurrent;by('world-export-pin').disabled=busy||!gridCurrent;
+ for(const e of by('world-fields').querySelectorAll('input,select'))e.disabled=busy||!semanticCurrent;
  by('reuse-run').disabled=busy||!impactCurrent;by('reuse-export').disabled=busy||!reuseCurrent;
  by('clarification-answer-run').disabled=busy||!clarificationCurrent||!clarificationCurrent.plan.questions.length;
  by('clarification-export').disabled=busy||!previewCurrent;
@@ -195,7 +200,7 @@ by('semantic-run').onclick=()=>work(async ticket=>{
  if(ticket!==epoch)return;
  const impact=prior?await compareInvestigationVersions(prior.versionText,prior.digest,version.versionText,version.digest):null;
  if(ticket!==epoch)return;
- semanticCurrent=version;impactCurrent=impact;
+ semanticCurrent=version;impactCurrent=impact;renderWorldAxes();
  by('semantic-pin').textContent=version.digest;by('semantic-result').textContent=semanticText(version);
  if(impact)by('impact-result').textContent=impactText(impact);
  status('semantic_ready',impact?'Version replayed and compared with retained baseline. Conditional outcomes and unresolved meaning remain separate.':'Version sealed. Retain its digest separately; no interpretation or source truth established.');
@@ -218,6 +223,41 @@ by('roundtrip-run').onclick=()=>work(async ticket=>{
  report.qualification].join('\n');
  status('roundtrip_ready','Exact pinned instructions reconstructed. Review question coverage and qualifiers; no semantic equivalence or decision authority established.');
 });
+function renderWorldAxes(){
+ const panel=by('world-fields');panel.replaceChildren();
+ for(let i=1;i<=4;i++){
+  const row=document.createElement('div');row.className='pinned-fields';
+  const label=document.createElement('label'),select=document.createElement('select'),valueLabel=document.createElement('label'),input=document.createElement('input');
+  select.id='review-world-axis-'+i;label.htmlFor=select.id;label.textContent='Axis '+i+' binding (optional)';
+  const empty=document.createElement('option');empty.value='';empty.textContent='Not used';select.append(empty);
+  for(const b of bindings){const s=sources.find(s=>s.id===b.sourceId),o=document.createElement('option');o.value=b.id;o.textContent=b.id+' · '+s.text.slice(b.start,b.end);select.append(o);}
+  input.id='review-world-values-'+i;input.maxLength=400;input.placeholder='e.g. 2/1, 4/1';input.autocomplete='off';valueLabel.htmlFor=input.id;valueLabel.textContent='Two to four exact rational values, comma-separated';
+  const change=()=>{clearGrid();semanticControl();};select.onchange=change;input.oninput=change;row.append(label,select,valueLabel,input);panel.append(row);
+ }
+}
+by('world-run').onclick=()=>work(async ticket=>{
+ const c=semanticCurrent;if(!c)return;clearGrid();semanticControl();
+ const axes=[];
+ for(let i=1;i<=4;i++){
+  const bindingId=by('world-axis-'+i).value,raw=by('world-values-'+i).value.trim();
+  if(!bindingId&&!raw)continue;
+  const values=raw.split(',').map(s=>s.trim()).map(s=>/^-?(?:0|[1-9][0-9]{0,47})$/.test(s)?s+'/1':s);
+  axes.push({bindingId,values});
+ }
+ const planText=JSON.stringify({version:1,versionDigest:c.digest,axes,maxAssignments:16}),planDigest=await casePin(planText);
+ const result=await evaluateSemanticWorldGrid(c.versionText,c.digest,planText,planDigest);
+ const text=JSON.stringify({versionText:c.versionText,versionDigest:c.digest,planText,planDigest,result}),snapshot=await casePin(text);
+ if(ticket!==epoch||c!==semanticCurrent)return;
+ gridCurrent={text,snapshot};by('world-plan-pin').textContent=planDigest;by('world-snapshot-pin').textContent=snapshot;
+ by('world-result').textContent=[result.coverage.evaluatedAssignments+' / '+result.coverage.totalAssignments+' assignments evaluated'+(result.coverage.truncated?' (truncated)':''),result.coverage.executedCells+' candidate cells actually evaluated',
+ ...result.candidates.map(r=>r.id+' · '+r.status.replaceAll('_',' ')),
+ ...result.worlds.map(w=>w.id+' · '+w.assignment.map(a=>a.bindingId+'='+a.value).join(', ')+' · '+w.rows.map(r=>r.id+': '+r.state).join('; ')),
+ ...result.interactionWitnesses.map(w=>'Joint-change witness '+w.worldId+' · '+w.left+' / '+w.right+' · '+w.changedBindings.join(', ')),
+ result.qualification].join('\n');
+ status('world_ready','Finite synthetic worlds evaluated; original version unchanged. Retain the version, plan and snapshot digests separately for independent replay.');
+});
+by('world-export').onclick=()=>{if(gridCurrent&&!busy)download(gridCurrent.text,'sutra-semantic-world-grid.json','application/json');};
+by('world-export-pin').onclick=()=>{if(gridCurrent&&!busy)download(gridCurrent.snapshot+'\n','sutra-semantic-world-grid.sha256','text/plain');};
 by('clarification-run').onclick=()=>work(async ticket=>{
  const current=semanticCurrent;if(!current)return;
  clarificationCurrent=null;previewCurrent=null;by('clarification-result').textContent='';by('clarification-options').replaceChildren();by('clarification-preview').textContent='';semanticControl();
