@@ -4,10 +4,10 @@ EXTENDS Naturals, Sequences, TLC
 CONSTANT MaxVersion, HeadMax
 
 VARIABLES history, pinSeq, pinHead, checked, effects, lastEffectPinned,
-          maxEver, lastEffectSeq, lastEffectBelowMax
+          maxEver, lastEffectSeq, lastEffectBelowMax, provisioned
 
 vars == <<history, pinSeq, pinHead, checked, effects, lastEffectPinned,
-          maxEver, lastEffectSeq, lastEffectBelowMax>>
+          maxEver, lastEffectSeq, lastEffectBelowMax, provisioned>>
 
 CurrentSeq == Len(history) - 1
 CurrentHead == history[Len(history)]
@@ -26,6 +26,7 @@ Init ==
     /\ maxEver = 0
     /\ lastEffectSeq = 0
     /\ lastEffectBelowMax = FALSE
+    /\ provisioned = FALSE
 
 Advance(h) ==
     /\ h \in 1..HeadMax
@@ -34,7 +35,7 @@ Advance(h) ==
     /\ history' = Append(history, h)
     /\ checked' = FALSE
     /\ maxEver' = IF maxEver > CurrentSeq + 1 THEN maxEver ELSE CurrentSeq + 1
-    /\ UNCHANGED <<pinSeq, pinHead, effects, lastEffectPinned, lastEffectSeq, lastEffectBelowMax>>
+    /\ UNCHANGED <<pinSeq, pinHead, effects, lastEffectPinned, lastEffectSeq, lastEffectBelowMax, provisioned>>
 
 \* Returning client can move its pin forward only if its old exact pin is still
 \* an ancestor of the current witness history.
@@ -44,7 +45,7 @@ ObserveCurrent ==
     /\ pinSeq' = CurrentSeq
     /\ pinHead' = CurrentHead
     /\ checked' = FALSE
-    /\ UNCHANGED <<history, effects, lastEffectPinned, maxEver, lastEffectSeq, lastEffectBelowMax>>
+    /\ UNCHANGED <<history, effects, lastEffectPinned, maxEver, lastEffectSeq, lastEffectBelowMax, provisioned>>
 
 \* Coordinated rollback of the local policy book+witness removes the suffix.
 \* The returning client pin and external max-ever memory do not roll back.
@@ -52,12 +53,12 @@ CoordinatedRollback ==
     /\ Len(history) > 1
     /\ history' = SubSeq(history, 1, Len(history) - 1)
     /\ checked' = FALSE
-    /\ UNCHANGED <<pinSeq, pinHead, effects, lastEffectPinned, maxEver, lastEffectSeq, lastEffectBelowMax>>
+    /\ UNCHANGED <<pinSeq, pinHead, effects, lastEffectPinned, maxEver, lastEffectSeq, lastEffectBelowMax, provisioned>>
 
 MembershipCheck ==
     /\ PinnedMember
     /\ checked' = TRUE
-    /\ UNCHANGED <<history, pinSeq, pinHead, effects, lastEffectPinned, maxEver, lastEffectSeq, lastEffectBelowMax>>
+    /\ UNCHANGED <<history, pinSeq, pinHead, effects, lastEffectPinned, maxEver, lastEffectSeq, lastEffectBelowMax, provisioned>>
 
 Dispatch ==
     /\ checked
@@ -66,7 +67,7 @@ Dispatch ==
     /\ lastEffectSeq' = CurrentSeq
     /\ lastEffectBelowMax' = CurrentSeq < maxEver
     /\ checked' = FALSE
-    /\ UNCHANGED <<history, pinSeq, pinHead, maxEver>>
+    /\ UNCHANGED <<history, pinSeq, pinHead, maxEver, provisioned>>
 
 Crash == UNCHANGED vars
 
@@ -92,6 +93,7 @@ TypeOK ==
     /\ maxEver \in 0..MaxVersion
     /\ lastEffectSeq \in 0..MaxVersion
     /\ lastEffectBelowMax \in BOOLEAN
+    /\ provisioned \in BOOLEAN
 
 NoUnpinnedEffect == lastEffectPinned
 ReturningPinNeverAhead == pinSeq <= maxEver
@@ -102,7 +104,7 @@ Safe == TypeOK /\ NoUnpinnedEffect /\ ReturningPinNeverAhead
 NumericCheck ==
     /\ CurrentSeq >= pinSeq
     /\ checked' = TRUE
-    /\ UNCHANGED <<history, pinSeq, pinHead, effects, lastEffectPinned, maxEver, lastEffectSeq, lastEffectBelowMax>>
+    /\ UNCHANGED <<history, pinSeq, pinHead, effects, lastEffectPinned, maxEver, lastEffectSeq, lastEffectBelowMax, provisioned>>
 
 NumericNext == Next \/ NumericCheck
 NumericSpec == Init /\ [][NumericNext]_vars
@@ -110,19 +112,25 @@ NumericSpec == Init /\ [][NumericNext]_vars
 \* Permanent limitation: a freshly provisioned client has no retained prior pin
 \* and may accept the current rolled pair as its starting trust root.
 ProvisionFresh ==
-    /\ ~PinnedMember
     /\ CurrentSeq < maxEver
     /\ pinSeq' = CurrentSeq
     /\ pinHead' = CurrentHead
     /\ checked' = FALSE
+    /\ provisioned' = TRUE
     /\ UNCHANGED <<history, effects, lastEffectPinned, maxEver, lastEffectSeq, lastEffectBelowMax>>
+
+ProvisionCheck ==
+    /\ provisioned
+    /\ PinnedMember
+    /\ checked' = TRUE
+    /\ UNCHANGED <<history, pinSeq, pinHead, effects, lastEffectPinned, maxEver,
+                   lastEffectSeq, lastEffectBelowMax, provisioned>>
 
 ProvisionNext ==
     \/ \E h \in 1..HeadMax : Advance(h)
-    \/ ObserveCurrent
     \/ CoordinatedRollback
     \/ ProvisionFresh
-    \/ MembershipCheck
+    \/ ProvisionCheck
     \/ Dispatch
     \/ Crash
 
