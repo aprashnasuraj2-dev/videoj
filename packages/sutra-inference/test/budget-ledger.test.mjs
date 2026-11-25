@@ -143,3 +143,39 @@ test('budget errors and snapshots carry no provider credential or billing claim'
  assert.equal(text.includes('usd'),false);
  assert.equal(text.includes('price'),false);
 });
+
+
+test('profiles can be registered and disabled dynamically without erasing prior reservations',()=>{
+ const {a,b}=profiles();
+ const ledger=createProviderBudgetLedger({
+  global:{maxCalls:4,maxInputBytes:1000,maxOutputTokens:400,maxConcurrent:2},
+  profiles:[],leaseTicks:10,randomBytes
+ });
+ assert.equal(ledger.snapshot().profiles.length,0);
+ const limit={maxCalls:3,maxInputBytes:800,maxOutputTokens:300,maxConcurrent:1};
+ assert.equal(ledger.registerProfile({profileId:a.profile.profileId,limits:limit}).enabled,true);
+ assert.equal(ledger.registerProfile({profileId:b.profile.profileId,limits:limit}).enabled,true);
+ assert.throws(()=>ledger.registerProfile({profileId:a.profile.profileId,limits:limit}),e=>e.code==='PROFILE');
+ const active=ledger.reserve({profileId:a.profile.profileId,inputBytes:100,maxOutputTokens:100,now:0});
+ const disabled=ledger.disableProfile(a.profile.profileId);assert.equal(disabled.enabled,false);assert.equal(disabled.used.calls,1);
+ assert.throws(()=>ledger.reserve({profileId:a.profile.profileId,inputBytes:1,maxOutputTokens:1,now:1}),e=>e.code==='PROFILE_DISABLED');
+ // Disabling future admission does not discard or rewrite a previously admitted
+ // provider contact; its actual usage can still be reconciled.
+ ledger.settle(active.leaseId,{actualInputBytes:50,actualOutputTokens:20,now:1});
+ const snap=ledger.snapshot(),aRow=snap.profiles.find(x=>x.profileId===a.profile.profileId);
+ assert.equal(aRow.enabled,false);assert.equal(aRow.used.calls,1);assert.equal(aRow.used.actualOutputTokens,20);
+ assert.throws(()=>ledger.registerProfile({profileId:a.profile.profileId,limits:limit}),e=>e.code==='PROFILE','disabled IDs remain reserved for audit history');
+ assert.equal(JSON.stringify(snap).includes('SECRET_'),false);
+});
+
+test('dynamic profile cardinality is bounded and closed configuration rejects hidden fields',()=>{
+ const global={maxCalls:20,maxInputBytes:10000,maxOutputTokens:10000,maxConcurrent:8};
+ const ledger=createProviderBudgetLedger({global,profiles:[],leaseTicks:10,randomBytes});
+ const limit={maxCalls:2,maxInputBytes:1000,maxOutputTokens:1000,maxConcurrent:1};
+ for(let i=1;i<=8;i++)ledger.registerProfile({profileId:i.toString(16).padStart(32,'0'),limits:limit});
+ assert.throws(()=>ledger.registerProfile({profileId:'f'.repeat(32),limits:limit}),e=>e.code==='PROFILE');
+ const hidden={profileId:'e'.repeat(32),limits:limit};
+ Object.defineProperty(hidden,'secret',{value:'not allowed',enumerable:false});
+ const fresh=createProviderBudgetLedger({global,profiles:[],leaseTicks:10,randomBytes});
+ assert.throws(()=>fresh.registerProfile(hidden),e=>e.code==='PROFILE');
+});
