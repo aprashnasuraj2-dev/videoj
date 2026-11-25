@@ -17,7 +17,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "pinned_policy_trace_refinement_exact_verified_upstream_rollback_witness_next",
+  "state": "upstream_receiver_rollback_witness_exact_verified_witness_refinement_next",
   "verified": [
     {
       "id": "V2-M01",
@@ -246,7 +246,7 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45559702271/job/139020178838",
     "resolutionStatus": "resolved_import_then_strengthened_refinement_exact_all_required_workflows_success"
   },
-  "lastVerifiedKernelSource": "e581a0a5cae0e942821af18b4e547cb65efa9763",
+  "lastVerifiedKernelSource": "6e0ff79354a10520a9c9a4f84a40584d75cfa460",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -893,6 +893,34 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45559702271/job/139020178838",
       "description": "Exact implementation trace demonstrates current consent plus a retained historical exact policy pin accepted only when witness ancestry proves the exact sequence/head; alternate policy head remains zero-effect rejected.",
       "remaining": "Returning-client ancestry does not solve fresh provisioning after coordinated rollback or establish distributed consent consensus."
+    },
+    {
+      "id": "V2-P05-ROLLBACK",
+      "sourceRevision": "6e0ff79354a10520a9c9a4f84a40584d75cfa460",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45560974128/job/139024343353",
+      "description": "Receiver-only signed upstream snapshot rollback is rejected relative to an independently keyed monotonic witness; one persisted receiver transition ahead of the witness can be recovered after restart.",
+      "remaining": "Identical cloned receivers can both perform the physical effect before post-effect witness CAS, and coordinated receiver+witness rollback can reapply. No global freshness/consensus."
+    },
+    {
+      "id": "V2-F11b",
+      "sourceRevision": "6e0ff79354a10520a9c9a4f84a40584d75cfa460",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45560974128/job/139024343353",
+      "description": "Independent witness CAS now covers the upstream terminal head with exact genesis, matched bounded capacity and crash/restart bridge.",
+      "remaining": "Post-effect witness does not fence clones before effect; coordinated rollback and independent operation/key distribution remain open."
+    },
+    {
+      "id": "V2-RUNTIME-02",
+      "sourceRevision": "6e0ff79354a10520a9c9a4f84a40584d75cfa460",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45560974128/job/139024343353",
+      "description": "Strongest private pinned transaction fixture exercises witnessed upstream APPLIED/CLOSED state; raw/witnessed layers remain non-mountable.",
+      "remaining": "No real provider, public external write route, compensation authorization, physical power-loss proof or provider-global billing."
+    },
+    {
+      "id": "V2-P06-REFINE",
+      "sourceRevision": "6e0ff79354a10520a9c9a4f84a40584d75cfa460",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45560974128/job/139024343353",
+      "description": "Bounded UpstreamWitness safe/clone/coordinated model and independent Python explorer exact-green alongside Go race regressions.",
+      "remaining": "No actual Go-to-UpstreamWitness trace mapper yet; model checking plus implementation tests are not implementation refinement."
     }
   ],
   "reconciledCI": [
@@ -2840,6 +2868,70 @@
         },
         {
           "id": 45559702141,
+          "event": "pull_request",
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "6e0ff79354a10520a9c9a4f84a40584d75cfa460",
+      "complete": true,
+      "description": "Upstream terminal monotonic witness exact-green. Both knowledge workflows pass expanded Go race and UpstreamWitness formal gates; all five auxiliary PR workflows pass.",
+      "runs": [
+        {
+          "id": 45560965888,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            139024316496,
+            139024316109
+          ]
+        },
+        {
+          "id": 45560974128,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            139024343353,
+            139024343807
+          ]
+        },
+        {
+          "id": 45560974200,
+          "event": "pull_request",
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45560973997,
+          "event": "pull_request",
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45560974160,
+          "event": "pull_request",
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45560973990,
+          "event": "pull_request",
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45560974026,
           "event": "pull_request",
           "name": "Validate SUTRA browser compatibility matrix",
           "status": "completed",

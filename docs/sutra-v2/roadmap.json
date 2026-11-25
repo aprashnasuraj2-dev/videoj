@@ -282,9 +282,14 @@
               "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
               "description": "Exact pre-effect fencing and concurrent-clone regressions pass; admission is independently reserved before local synthetic effect persistence. Returning-client policy ancestry is exact rather than sequence-only."
+            },
+            {
+              "sourceRevision": "6e0ff79354a10520a9c9a4f84a40584d75cfa460",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45560974128/job/139024343353",
+              "description": "Exact-green upstream terminal monotonic witness: receiver-only valid signed snapshot rollback is rejected relative to the independently retained witness; store-ahead/witness-behind restart recovers exactly one transition. Clone-before-CAS and coordinated receiver+witness rollback remain executable two-effect counterexamples."
             }
           ],
-          "knownLimitations": "A separately protected witness detects rollback of the authority store alone, but a privileged attacker able to restore both independently signed stores can recreate an old consistent pair. No public transparency log, quorum, trusted time, independently operated third party, key rotation/distribution protocol or separately authorized compensation exists yet.\nV2-012 update: Independent single witness does not fence simultaneous cloned authority local writes; coordinated rollback of both domains remains possible; key distribution and rotation open.\nV2-012 candidate 1704e7c3: pre-effect admission/policy-ancestry work exists on branch; exact knowledge PR 45542920604 and push 45542913848 are still in progress, so this is not promoted verification evidence.\nV2-013: fresh provisioning after coordinated rollback remains an explicit counterexample; independently distributed monotonic trust/provisioning is still absent."
+          "knownLimitations": "A separately keyed upstream witness now detects rollback of the upstream receiver store alone and recovers one persisted-but-unwitnessed transition. It remains post-effect: identical cloned receivers can both effect before CAS and later share the same accepted head. Coordinated receiver+witness rollback recreates an old consistent pair. No quorum/transparency/trusted time or independently operated external service."
         }
       ]
     },
@@ -339,7 +344,7 @@
             "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45559702271/job/139020178838",
             "description": "Exact-green concrete pinned consent/policy refinement: Go traces cover current and historical exact ancestry, revoked/expired refusal, alternate-head rejection, post-APPLIED revocation reconciliation and never-admitted recovery refusal. Independent mapper binds exact pin sequence/head and transition shape; expanded mutants reject epoch/window drift, sequence jumps, fake/lost ancestry, missing revoke transition and recovery policy mutation."
           },
-          "knownLimitations": "Concrete trace refinement now covers upstream terminal APPLIED/CLOSED plus pinned consent/policy scenarios, including a retained historical exact ancestor. It remains bounded witness evidence, not universal Go refinement: coordinated rollback/fresh provisioning, cryptography/storage internals, arbitrary schedules, clone attackers, physical power loss and real-provider semantics are not proved."
+          "knownLimitations": "Concrete upstream-terminal and pinned-consent trace refinement remain exact-green. The new UpstreamWitness model has separate Go regression and formal/reference evidence but no actual Go-to-UpstreamWitness trace mapper yet; therefore it is not implementation refinement. Clone/coordinated rollback, physical storage and real-provider semantics remain outside the proof."
         }
       ]
     },
@@ -2062,7 +2067,15 @@
         "id": "V2-F11b",
         "sourceRevision": "f2e5d2ed646dccf7ca6becf9a3a583a81f6c1d4d",
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45528425615/job/138917422848",
-        "description": "Hardened witness exact Go race gate: a valid authority-signed transition back to a previously seen head is refused, witness views are structurally checked, consumers separately pin the original genesis, re-genesis with the same witness key is rejected by the pinned verifier, and prior authority-only rollback/separate-process CAS/coordinated dual-domain rollback controls remain passing."
+        "description": "Hardened witness exact Go race gate: a valid authority-signed transition back to a previously seen head is refused, witness views are structurally checked, consumers separately pin the original genesis, re-genesis with the same witness key is rejected by the pinned verifier, and prior authority-only rollback/separate-process CAS/coordinated dual-domain rollback controls remain passing.",
+        "additionalEvidence": [
+          {
+            "sourceRevision": "6e0ff79354a10520a9c9a4f84a40584d75cfa460",
+            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45560974128/job/139024343353",
+            "description": "Reused independent witness CAS for upstream terminal state: exact state-head pin, store-ahead crash recovery, receiver-only rollback refusal, matched 8-transition capacity, plus explicit clone-before-CAS and coordinated-rollback counterexamples."
+          }
+        ],
+        "knownLimitations": "Independent witness CAS covers both SharedAuthority and the private upstream terminal receiver in bounded laboratories. It detects single-store rollback and stale heads but is post-effect: identical clones may both cause effects before CAS, and coordinated rollback of receiver+witness remains possible. No third-party operation, quorum, transparency log, trusted time, key rotation/distribution protocol or universal refinement."
       },
       "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
       "dependencies": [
@@ -2076,12 +2089,17 @@
       "positiveTests": "Atomically advance witness head under concurrent callers",
       "adversarialTests": "Cloned signer, crash and conflicting CAS",
       "verificationMethod": "TLC and implementation concurrency tests",
-      "knownLimitations": "Independent witness CAS now rejects revisiting any observed head and consumers pin genesis, but coordinated rollback of authority+witness remains possible; no independently operated third party, transparency log/quorum, key-distribution/rotation protocol, witness two-phase TLA machine or full refinement exists.\nV2-013: exact ancestry protects returning clients only relative to retained pins; fresh-client provisioning after coordinated rollback remains unresolved.",
+      "knownLimitations": "Independent witness CAS covers both SharedAuthority and the private upstream terminal receiver in bounded laboratories. It detects single-store rollback and stale heads but is post-effect: identical clones may both cause effects before CAS, and coordinated rollback of receiver+witness remains possible. No third-party operation, quorum, transparency log, trusted time, key rotation/distribution protocol or universal refinement.",
       "additionalEvidence": [
         {
           "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
           "description": "Exact returning-client policy ancestry and grant-policy freshness gates pass; numeric high-water alone is rejected and a fresh-client coordinated-rollback limitation is demonstrated."
+        },
+        {
+          "sourceRevision": "6e0ff79354a10520a9c9a4f84a40584d75cfa460",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45560974128/job/139024343353",
+          "description": "Reused independent witness CAS for upstream terminal state: exact state-head pin, store-ahead crash recovery, receiver-only rollback refusal, matched 8-transition capacity, plus explicit clone-before-CAS and coordinated-rollback counterexamples."
         }
       ]
     },
@@ -2235,9 +2253,9 @@
       "phase": "05",
       "status": "Implementation in progress",
       "evidence": {
-        "sourceRevision": "dea58567d68d07c50eb31e9175db3f2a3619aa8e",
-        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45558339999",
-        "description": "Private transaction path now composes exact grant, current independently witnessed policy ancestry, current authority head, pre-effect admission, upstream APPLIED/CLOSED transaction, local authority result and fresh fence attestation. No additional HTTP write route exists."
+        "sourceRevision": "6e0ff79354a10520a9c9a4f84a40584d75cfa460",
+        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45560974128/job/139024343353",
+        "description": "Strongest private pinned consent/policy transaction fixture now routes APPLIED/CLOSED through a separately keyed monotonic upstream witness; receiver-only rollback and raw un-witnessed mutation fail closed while one-step store-ahead recovery survives restart."
       },
       "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
       "dependencies": [
@@ -2253,7 +2271,7 @@
       "positiveTests": "Durable effect/ledger and explicit retry policy",
       "adversarialTests": "Crash, concurrent keys, unknown outcome, revoked approval and global budgets",
       "verificationMethod": "Go process and network integration, TLA refinement",
-      "knownLimitations": "RUNTIME-02 remains open: the externally mountable composite still performs only the established local synthetic effect; real provider integration is absent. Upstream/policy coordinated rollback, physical power loss, compensation authorization, provider-global billing and external monotonic freshness remain unresolved."
+      "knownLimitations": "RUNTIME-02 remains open. The private synthetic path now has rollback detection relative to one independent witness, but post-effect witness CAS cannot prevent identical cloned upstream effects and coordinated receiver+witness rollback remains possible. No real provider adapter, external mount, compensation authorization, physical-power-loss certification or provider-global billing authority."
     },
     {
       "id": "V2-RUNTIME-03",

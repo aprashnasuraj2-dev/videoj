@@ -329,6 +329,10 @@
         {
           "path": "packages/sutra-knowledge/action-protocol/witness_linux_test.go",
           "test": "TestAuthorityAndWitnessCoordinatedRollbackCounterexample"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/upstream_witness_linux_test.go",
+          "test": "TestUpstreamWitnessedAuthorityCoordinatedRollbackCounterexample"
         }
       ],
       "openGates": [
@@ -795,8 +799,8 @@
       "category": [
         "integrity"
       ],
-      "mechanism": "A cloned upstream signer plus valid signed snapshot, or restoration of an older valid signed upstream snapshot, can recreate unused local terminal state while a prior physical effect already exists. Each local authority can therefore produce internally valid APPLIED state and receipts for the same identity without global effect uniqueness.",
-      "invariant": "APPLIED/CLOSED exclusivity and the durable effect budget are scoped to one current non-rolled-back upstream authority history. Signatures alone must never be treated as global freshness, consensus or arbitrary-provider exactly-once evidence.",
+      "mechanism": "Restoring only an older valid signed upstream receiver snapshot is now detected by the witnessed private composition when its independently retained witness remains ahead. However, identical cloned upstream authorities can each perform the physical effect before post-effect witness CAS, and coordinated rollback of receiver+witness can recreate an old consistent pair while prior physical effects remain.",
+      "invariant": "Witnessed mutation requires exact receiver state-head continuity against an independently keyed monotonic witness; receiver-only rollback and un-witnessed raw mutation must fail closed. This does not establish clone-safe physical-effect uniqueness or coordinated-rollback resistance; those remain explicit counterexamples.",
       "evidence": [
         {
           "path": "packages/sutra-knowledge/action-protocol/upstream_core_linux_test.go",
@@ -825,6 +829,38 @@
         {
           "path": "packages/sutra-knowledge/action-protocol/formal/refine_upstream_trace_mutants.py",
           "test": "terminal-rollback"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/upstream_witness_linux_test.go",
+          "test": "TestUpstreamWitnessedAuthorityDetectsSignedStoreRollback"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/upstream_witness_linux_test.go",
+          "test": "TestUpstreamWitnessedAuthorityRecoversStoreAheadOfWitnessAfterRestart"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/upstream_witness_linux_test.go",
+          "test": "TestUpstreamWitnessedAuthorityRejectsUnwitnessedRawMutation"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/upstream_witness_linux_test.go",
+          "test": "TestUpstreamWitnessedAuthorityCloneCounterexamplePreserved"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/upstream_witness_linux_test.go",
+          "test": "TestUpstreamWitnessedAuthorityCoordinatedRollbackCounterexample"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/UpstreamWitness.tla",
+          "test": "RollbackStore"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/UpstreamWitness.tla",
+          "test": "CloneApply"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/UpstreamWitness.tla",
+          "test": "CoordinatedRollback"
         }
       ],
       "openGates": [
