@@ -259,6 +259,11 @@ func TestGrantGuardExternalBoundaryConsentBeforeWitnessContact(t *testing.T){
  header:=hex.EncodeToString(challenge[:])
 
  baseline:=contacts.Load()
+ // Caller authentication is checked before grant admission or witness recovery.
+ _,wrongCallerKey:=keys(13)
+ forgedCaller,_:=SignAuthorityRequest(0,AuthorityCommit,root,action,wrongCallerKey)
+ if status,_:=do(active,forgedCaller,header);status!=http.StatusForbidden{t.Fatal("forged caller status",status)}
+ if contacts.Load()!=baseline{t.Fatal("forged caller contacted witness")}
  if status,_:=do(future,commitWire,header);status!=http.StatusForbidden{t.Fatal("future grant status",status)}
  if contacts.Load()!=baseline{t.Fatal("future grant contacted witness")}
 
