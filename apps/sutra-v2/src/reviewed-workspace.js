@@ -1,3 +1,4 @@
+import {renderInvestigationRoundtrip} from '../../../packages/sutra-knowledge/controlled-roundtrip.js';
 import {sealReviewedDraft,draftComparisonProposal} from '../../../packages/sutra-knowledge/reviewed-draft.js';
 import {exportReviewedProposal} from '../../../packages/sutra-knowledge/reviewed-claim-compiler.js';
 import {reviewedSnapshotDigest,MAX_REVIEWED_SNAPSHOT_BYTES} from '../../../packages/sutra-knowledge/reviewed-snapshot.js';
@@ -96,20 +97,20 @@ by('batch-run').onclick=()=>work(async ticket=>{
 });
 by('batch-export').onclick=()=>{if(batchCurrent&&!busy)download(batchCurrent,'sutra-reviewed-order-contrast.json','application/json');};
 function invalidateSemantic(){
- semanticCurrent=null;impactCurrent=null;by('semantic-pin').textContent='No version evaluated.';by('semantic-result').textContent='';by('impact-result').textContent='';
+ semanticCurrent=null;impactCurrent=null;by('roundtrip-result').textContent='';by('semantic-pin').textContent='No version evaluated.';by('semantic-result').textContent='';by('impact-result').textContent='';
 }
 function semanticControl(){
  for(const e of by('semantic-list').querySelectorAll('input,select'))e.disabled=busy;
  const ready=!!sealed&&stagedProposals.length>=2&&stagedProposals.every(p=>annotations.get(p.id)?.meaning.trim());
  by('semantic-run').disabled=busy||!ready;
- for(const id of ['semantic-export','semantic-export-pin','semantic-retain'])by(id).disabled=busy||!semanticCurrent;
+ for(const id of ['semantic-export','semantic-export-pin','semantic-retain','roundtrip-run'])by(id).disabled=busy||!semanticCurrent;
  by('baseline-file').disabled=busy;by('baseline-pin').disabled=busy;by('baseline-import').disabled=busy;
  by('baseline-clear').disabled=busy||!baseline;by('impact-export').disabled=busy||!impactCurrent;
 }
 function renderSemanticRows(){
  const list=by('semantic-list');list.replaceChildren();
  for(const p of stagedProposals){
-  const a=annotations.get(p.id)??{meaning:'',binding:''};annotations.set(p.id,a);
+  const a=annotations.get(p.id)??{meaning:'',binding:'',facets:{}};annotations.set(p.id,a);
   const label=document.createElement('label'),input=document.createElement('input');
   input.id='review-meaning-'+p.id;input.maxLength=2048;input.autocomplete='off';input.value=a.meaning;
   label.htmlFor=input.id;label.textContent=p.id+' — proposed meaning';
@@ -118,9 +119,22 @@ function renderSemanticRows(){
   const empty=document.createElement('option');empty.value='';empty.textContent='No reference declared';select.append(empty);
   for(const b of bindings){const option=document.createElement('option');option.value=b.id;option.textContent=b.id;select.append(option);}
   select.value=a.binding;
-  const change=()=>{epoch++;annotations.set(p.id,{meaning:input.value,binding:select.value});invalidateSemantic();semanticControl();};
+  const change=()=>{epoch++;a.meaning=input.value;a.binding=select.value;annotations.set(p.id,a);invalidateSemantic();semanticControl();};
   input.addEventListener('input',change);select.addEventListener('change',change);
-  const row=document.createElement('div');row.append(label,input,bindingLabel,select);list.append(row);
+  const row=document.createElement('div');row.append(label,input,bindingLabel,select);
+  const details=document.createElement('details'),summary=document.createElement('summary');summary.textContent='Review additional qualifiers (optional)';details.append(summary);
+  for(const facet of FACETS.filter(k=>k!=='definition')){
+   const field=document.createElement('div');field.className='pinned-fields';
+   const label=document.createElement('label'),input=document.createElement('input'),refLabel=document.createElement('label'),ref=document.createElement('select');
+   input.id='review-facet-'+p.id+'-'+facet;input.maxLength=1024;input.autocomplete='off';label.htmlFor=input.id;label.textContent=facet;
+   ref.id=input.id+'-binding';refLabel.htmlFor=ref.id;refLabel.textContent='Optional quantity reference';
+   const empty=document.createElement('option');empty.value='';empty.textContent='No reference declared';ref.append(empty);
+   for(const binding of bindings){const o=document.createElement('option');o.value=binding.id;o.textContent=binding.id;ref.append(o);}
+   const stored=a.facets[facet]??{statement:'',binding:''};input.value=stored.statement;ref.value=stored.binding;
+   const changed=()=>{epoch++;a.facets[facet]={statement:input.value,binding:ref.value};annotations.set(p.id,a);invalidateSemantic();semanticControl();};
+   input.addEventListener('input',changed);ref.addEventListener('change',changed);field.append(label,input,refLabel,ref);details.append(field);
+  }
+  row.append(details);list.append(row);
  }
 }
 function semanticText(version){
@@ -141,6 +155,7 @@ by('semantic-run').onclick=()=>work(async ticket=>{
   const a=annotations.get(p.id);if(!a?.meaning.trim())throw Error('SEMANTIC_MEANING_REQUIRED');
   const facets=Object.fromEntries(FACETS.map(k=>[k,null]));
   facets.definition={statement:a.meaning,references:a.binding?[{kind:'binding',id:a.binding}]:[]};
+  for(const k of FACETS.filter(k=>k!=='definition')){const f=a.facets[k];if(f?.statement.trim())facets[k]={statement:f.statement,references:f.binding?[{kind:'binding',id:f.binding}]:[]};else if(f?.binding)throw Error('SEMANTIC_FACET_STATEMENT_REQUIRED');}
   return {id:p.id,meaning:a.meaning,facets};
  });
  const annotationText=JSON.stringify({version:1,contractDigest:sealed.pin,batchDigest:await casePin(batchText),candidates});
@@ -153,6 +168,24 @@ by('semantic-run').onclick=()=>work(async ticket=>{
  by('semantic-pin').textContent=version.digest;by('semantic-result').textContent=semanticText(version);
  if(impact)by('impact-result').textContent=impactText(impact);
  status('semantic_ready',impact?'Version replayed and compared with retained baseline. Conditional outcomes and unresolved meaning remain separate.':'Version sealed. Retain its digest separately; no interpretation or source truth established.');
+});
+by('roundtrip-run').onclick=()=>work(async ticket=>{
+ if(!semanticCurrent)return;
+ const current=semanticCurrent;by('roundtrip-result').textContent='';
+ const report=await renderInvestigationRoundtrip(current.versionText,current.digest);
+ if(ticket!==epoch||current!==semanticCurrent)return;
+ by('roundtrip-result').textContent=[
+ 'Original question: '+report.originalQuestion.text,
+ ...report.candidates.flatMap(c=>[c.id+' · '+c.proposedMeaning,
+ c.questionSelection?'Selected: '+c.questionSelection.selected+' · Unselected prefix: '+JSON.stringify(c.questionSelection.unselectedPrefix)+' · Unselected suffix: '+JSON.stringify(c.questionSelection.unselectedSuffix):'No admitted question span.',
+ ...(c.computation?.steps.map(s=>s.statement+' · '+(s.outcome?.value??s.outcome?.status??s.status))??['No admitted computation.']),
+ 'Unspecified qualifiers: '+(c.review.unspecifiedFacets.join(', ')||'none'),
+ 'Unsupported declarations: '+(c.review.unsupportedFacets.join(', ')||'none'),
+ ...c.qualifiers.filter(q=>q.status!=='UNSPECIFIED').map(q=>q.facet+': '+q.statement+' · '+q.status),
+ 'Meaning, entailment and method UNVERIFIED.']),
+ ...report.differences.map(d=>d.left+' / '+d.right+' · qualifier differences: '+(d.declaredQualifierDifferences.join(', ')||'none')+' · instructions differ: '+(d.instructionStructureDiffers?'yes':'no')+' · semantic equivalence NOT ESTABLISHED'),
+ report.qualification].join('\n');
+ status('roundtrip_ready','Exact pinned instructions reconstructed. Review question coverage and qualifiers; no semantic equivalence or decision authority established.');
 });
 by('semantic-export').onclick=()=>{if(semanticCurrent&&!busy)download(semanticCurrent.versionText,'sutra-investigation-version.json','application/json');};
 by('semantic-export-pin').onclick=()=>{if(semanticCurrent&&!busy)download(semanticCurrent.digest+'\n','sutra-investigation-version.sha256','text/plain');};

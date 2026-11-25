@@ -935,3 +935,8 @@ Recompile admitted proposals under the caller-pinned version and render only the
 ## V2-063 — Inherited learner acceptance correction
 
 V2-061 full learner build succeeded but storage test failed (149 pass, 1 fail; job 139176666038). The scanner recursively included security test fixtures that deliberately contain forbidden API markers. Keep the single permitted production localStorage hit unchanged; exclude only exact package test directories, broaden production extension coverage to TS/TSX/JSX/CJS and reject literal production imports of /test/ paths. This is a static defense-in-depth check, not complete import graph or runtime proof. Preserve exact failure and require full inherited learner suite. V2-062 round-trip exact CI still pending.
+
+
+## V2-064 — Browser qualifier review and round-trip inspection
+
+Add optional per-candidate controls for every remaining qualifier beyond definition, with optional reviewed quantity reference and refusal of references without a statement. Keep user declaration separate from truth. Explicit local reconstruction of the exact pinned version displays target-reachable instructions, question coverage, qualifiers and structural differences, with no semantic-equivalence or decision authority. Draft changes clear the displayed report and disable reconstruction; all output uses textContent. Actual browser assertions cover reconstruction, refused proposal, uncertainty, stale-output invalidation and existing 360px viewport acceptance. Exact CI pending; prior failed learner acceptance remains tracked.
