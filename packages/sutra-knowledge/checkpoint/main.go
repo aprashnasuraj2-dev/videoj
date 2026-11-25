@@ -303,6 +303,6 @@ func verifyFile(args []string,out io.Writer)error{
 }
 func main(){
  args:=os.Args[1:];var e error
- if len(args)>0&&args[0]=="verify"{e=verifyFile(args[1:],os.Stdout)}else{e=run(args,os.Stdout)}
+ if len(args)>0&&args[0]=="verify"{e=verifyFile(args[1:],os.Stdout)}else if len(args)>0&&args[0]=="verify-support"{e=verifySupportFiles(args[1:],os.Stdout)}else{e=run(args,os.Stdout)}
  if e!=nil{fmt.Fprintln(os.Stderr,e);os.Exit(1)}
 }
