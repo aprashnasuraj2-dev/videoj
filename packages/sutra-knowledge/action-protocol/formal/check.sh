@@ -40,3 +40,28 @@ if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/anchored-unfair" -config 
 fi
 cat "$WORK/anchored-unfair.log"
 grep -F 'Temporal property ConditionalRecovery was violated' "$WORK/anchored-unfair.log"
+
+
+# Separate two-domain authority/witness crash bridge abstraction.
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/witness-bridge-safe" -config WitnessBridgeSafe.cfg WitnessBridge.tla > "$WORK/witness-bridge-safe.log" 2>&1 || { cat "$WORK/witness-bridge-safe.log"; exit 1; }
+cat "$WORK/witness-bridge-safe.log"
+grep -F 'No error has been found' "$WORK/witness-bridge-safe.log"
+for entry in 'Early WitnessNotAhead' 'Double GapBound' 'Clear RecoverableGap'; do
+ set -- $entry
+ if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/witness-bridge-$1" -config "WitnessBridge$1.cfg" WitnessBridge.tla > "$WORK/witness-bridge-$1.log" 2>&1; then
+  cat "$WORK/witness-bridge-$1.log"; echo "witness bridge mutant $1 unexpectedly succeeded" >&2; exit 1
+ fi
+ cat "$WORK/witness-bridge-$1.log"
+ grep -F "Invariant $2 is violated" "$WORK/witness-bridge-$1.log"
+done
+python3 witness_bridge_model.py
+
+# Prepared intent must settle under weak fairness; the stuttering model must fail.
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/witness-bridge-fair" -config WitnessBridgeFair.cfg WitnessBridge.tla > "$WORK/witness-bridge-fair.log" 2>&1 || { cat "$WORK/witness-bridge-fair.log"; exit 1; }
+cat "$WORK/witness-bridge-fair.log"
+grep -F 'No error has been found' "$WORK/witness-bridge-fair.log"
+if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/witness-bridge-unfair" -config WitnessBridgeUnfair.cfg WitnessBridge.tla > "$WORK/witness-bridge-unfair.log" 2>&1; then
+ cat "$WORK/witness-bridge-unfair.log"; echo 'unfair witness bridge unexpectedly satisfied liveness' >&2; exit 1
+fi
+cat "$WORK/witness-bridge-unfair.log"
+grep -F 'Temporal property PreparedEventuallySettles was violated' "$WORK/witness-bridge-unfair.log"
