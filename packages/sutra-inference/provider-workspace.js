@@ -104,12 +104,15 @@ export function createProviderWorkspace({catalog,globalLimits,defaultProfileLimi
    if(typeof model!=='string'||!modelPattern.test(model)||!profile.models.includes(model))stop('MODEL');
    const transport=transportById.get(profile.providerId);if(typeof transport!=='function')stop('TRANSPORT');
    const safeOperation=sanitizeProviderValue(operation,'');
+   let checkedOperation;
+   try{vault.use(handle,profile.providerId,secret=>{checkedOperation=sanitizeProviderValue(safeOperation,secret);});}
+   catch(error){if(error instanceof CredentialVaultError)stop('HANDLE');throw error;}
    let lease;
    try{lease=ledger.reserve({profileId:profile.profileId,inputBytes,maxOutputTokens,now});}
    catch(error){if(error instanceof BudgetLedgerError)stop(error.code==='PROFILE_DISABLED'?'PROFILE_DISABLED':'BUDGET');throw error;}
    try{
     const raw=await vault.use(handle,profile.providerId,(secret,meta)=>transport(Object.freeze({
-     providerId:meta.providerId,model,credential:secret,leaseId:lease.leaseId,operation:safeOperation
+     providerId:meta.providerId,model,credential:secret,leaseId:lease.leaseId,operation:checkedOperation
     })));
     let secret;
     await vault.use(handle,profile.providerId,value=>{secret=value;});
