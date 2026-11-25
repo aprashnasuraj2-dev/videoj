@@ -1,0 +1,1392 @@
+{
+  "schemaVersion": 1,
+  "dataset": "living-pilot-v1",
+  "split": "development_synthetic",
+  "annotation": "Developer-authored expected outcomes; not independent expert review, real evidence or held-out evaluation.",
+  "cases": [
+    {
+      "id": "S01",
+      "domain": "finance",
+      "question": "Did company performance improve?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "Higher revenue",
+          "left": "revenue_new",
+          "op": "gt",
+          "right": "revenue_old",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "b",
+          "meaning": "Higher margin",
+          "left": "margin_new",
+          "op": "gt",
+          "right": "margin_old",
+          "expected": "CONDITIONALLY_REFUTED"
+        }
+      ],
+      "expected": "DIVERGENT_CONDITIONAL_OUTCOMES",
+      "challenge": "Definition changes direction; growth is not profitability.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Revenue before: 85; Revenue after: 110; Margin before: 18%; Margin after: 12%; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "revenue_old",
+          "sourceId": "source",
+          "start": 16,
+          "end": 18,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD_million",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "revenue_new",
+          "sourceId": "source",
+          "start": 35,
+          "end": 38,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD_million",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "margin_old",
+          "sourceId": "source",
+          "start": 55,
+          "end": 58,
+          "type": {
+            "kind": "ratio",
+            "unit": "one",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "margin_new",
+          "sourceId": "source",
+          "start": 74,
+          "end": 77,
+          "type": {
+            "kind": "ratio",
+            "unit": "one",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S02",
+      "domain": "finance",
+      "question": "Did the business improve?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "Sales grew",
+          "left": "sales_new",
+          "op": "gt",
+          "right": "sales_old",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "b",
+          "meaning": "Cash generation grew",
+          "left": "cash_new",
+          "op": "gt",
+          "right": "cash_old",
+          "expected": "CONDITIONALLY_SATISFIED"
+        }
+      ],
+      "expected": "AGREEMENT_ON_SUPPLIED_CONDITIONAL_OUTCOMES",
+      "challenge": "Agreement on supplied indicators only, not universal business improvement.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Sales before: 90; Sales after: 95; Cash before: 13; Cash after: 21; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "sales_old",
+          "sourceId": "source",
+          "start": 14,
+          "end": 16,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD_million",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "sales_new",
+          "sourceId": "source",
+          "start": 31,
+          "end": 33,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD_million",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "cash_old",
+          "sourceId": "source",
+          "start": 48,
+          "end": 50,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD_million",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "cash_new",
+          "sourceId": "source",
+          "start": 64,
+          "end": 66,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD_million",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S03",
+      "domain": "engineering",
+      "question": "Can the network handle the load?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "Nominal operation",
+          "left": "nominal",
+          "op": "ge",
+          "right": "demand",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "b",
+          "meaning": "Single failure operation",
+          "left": "failed",
+          "op": "ge",
+          "right": "demand",
+          "expected": "CONDITIONALLY_REFUTED"
+        }
+      ],
+      "expected": "DIVERGENT_CONDITIONAL_OUTCOMES",
+      "challenge": "Nominal capacity does not imply failure resilience.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Nominal capacity: 230; Capacity after shared failure: 70; Peak demand: 140; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "nominal",
+          "sourceId": "source",
+          "start": 18,
+          "end": 21,
+          "type": {
+            "kind": "capacity",
+            "unit": "Mbps",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "failed",
+          "sourceId": "source",
+          "start": 54,
+          "end": 56,
+          "type": {
+            "kind": "capacity",
+            "unit": "Mbps",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "demand",
+          "sourceId": "source",
+          "start": 71,
+          "end": 74,
+          "type": {
+            "kind": "capacity",
+            "unit": "Mbps",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S04",
+      "domain": "engineering",
+      "question": "Is capacity sufficient?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "Normal load",
+          "left": "normal",
+          "op": "ge",
+          "right": "demand",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "b",
+          "meaning": "Declared failure load",
+          "left": "surviving",
+          "op": "ge",
+          "right": "demand",
+          "expected": "CONDITIONALLY_SATISFIED"
+        }
+      ],
+      "expected": "AGREEMENT_ON_SUPPLIED_CONDITIONAL_OUTCOMES",
+      "challenge": "Same conditional result under two explicit definitions.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Nominal capacity: 150; Surviving capacity: 105; Demand: 100; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "normal",
+          "sourceId": "source",
+          "start": 18,
+          "end": 21,
+          "type": {
+            "kind": "capacity",
+            "unit": "Mbps",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "surviving",
+          "sourceId": "source",
+          "start": 43,
+          "end": 46,
+          "type": {
+            "kind": "capacity",
+            "unit": "Mbps",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "demand",
+          "sourceId": "source",
+          "start": 56,
+          "end": 59,
+          "type": {
+            "kind": "capacity",
+            "unit": "Mbps",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S05",
+      "domain": "research",
+      "question": "Did the measured outcome increase?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "Aggregate rate",
+          "left": "agg_after",
+          "op": "gt",
+          "right": "agg_before",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "b",
+          "meaning": "Specified subgroup rate",
+          "left": "group_after",
+          "op": "gt",
+          "right": "group_before",
+          "expected": "CONDITIONALLY_REFUTED"
+        }
+      ],
+      "expected": "DIVERGENT_CONDITIONAL_OUTCOMES",
+      "challenge": "Population-specific effect direction differs; no causal assertion.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Aggregate before: 22%; Aggregate after: 25%; Subgroup before: 31%; Subgroup after: 27%; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "agg_before",
+          "sourceId": "source",
+          "start": 18,
+          "end": 21,
+          "type": {
+            "kind": "ratio",
+            "unit": "one",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "agg_after",
+          "sourceId": "source",
+          "start": 40,
+          "end": 43,
+          "type": {
+            "kind": "ratio",
+            "unit": "one",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "group_before",
+          "sourceId": "source",
+          "start": 62,
+          "end": 65,
+          "type": {
+            "kind": "ratio",
+            "unit": "one",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "group_after",
+          "sourceId": "source",
+          "start": 83,
+          "end": 86,
+          "type": {
+            "kind": "ratio",
+            "unit": "one",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S06",
+      "domain": "research",
+      "question": "Was the observed rate higher?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "Group A comparison",
+          "left": "a_new",
+          "op": "gt",
+          "right": "a_old",
+          "expected": "CONDITIONALLY_REFUTED"
+        },
+        {
+          "id": "b",
+          "meaning": "Group B comparison",
+          "left": "b_new",
+          "op": "gt",
+          "right": "b_old",
+          "expected": "CONDITIONALLY_REFUTED"
+        }
+      ],
+      "expected": "AGREEMENT_ON_SUPPLIED_CONDITIONAL_OUTCOMES",
+      "challenge": "Agreement on refutation, not proof of equivalence.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Group A earlier: 9%; Group A later: 7%; Group B earlier: 8%; Group B later: 5%; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "a_old",
+          "sourceId": "source",
+          "start": 17,
+          "end": 19,
+          "type": {
+            "kind": "ratio",
+            "unit": "one",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "a_new",
+          "sourceId": "source",
+          "start": 36,
+          "end": 38,
+          "type": {
+            "kind": "ratio",
+            "unit": "one",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "b_old",
+          "sourceId": "source",
+          "start": 57,
+          "end": 59,
+          "type": {
+            "kind": "ratio",
+            "unit": "one",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "b_new",
+          "sourceId": "source",
+          "start": 76,
+          "end": 78,
+          "type": {
+            "kind": "ratio",
+            "unit": "one",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S07",
+      "domain": "student",
+      "question": "Does the argument have enough supporting sources?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "Publication count",
+          "left": "published",
+          "op": "ge",
+          "right": "minimum",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "b",
+          "meaning": "Dataset count under declared ancestry",
+          "left": "roots",
+          "op": "ge",
+          "right": "minimum",
+          "expected": "CONDITIONALLY_REFUTED"
+        }
+      ],
+      "expected": "DIVERGENT_CONDITIONAL_OUTCOMES",
+      "challenge": "Source count is not independent confirmation.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Cited publications: 12; Declared independent datasets: 2; Minimum count: 5; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "published",
+          "sourceId": "source",
+          "start": 20,
+          "end": 22,
+          "type": {
+            "kind": "count",
+            "unit": "items",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "roots",
+          "sourceId": "source",
+          "start": 55,
+          "end": 56,
+          "type": {
+            "kind": "count",
+            "unit": "items",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "minimum",
+          "sourceId": "source",
+          "start": 73,
+          "end": 74,
+          "type": {
+            "kind": "count",
+            "unit": "items",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S08",
+      "domain": "business",
+      "question": "Did procurement get cheaper?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "Unit price declined",
+          "left": "unit_new",
+          "op": "lt",
+          "right": "unit_old",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "b",
+          "meaning": "Annual spend declined",
+          "left": "total_new",
+          "op": "lt",
+          "right": "total_old",
+          "expected": "CONDITIONALLY_REFUTED"
+        }
+      ],
+      "expected": "DIVERGENT_CONDITIONAL_OUTCOMES",
+      "challenge": "Different denominators and volume.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Old unit price: 20; New unit price: 17; Old annual total: 200; New annual total: 240; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "unit_old",
+          "sourceId": "source",
+          "start": 16,
+          "end": 18,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "unit_new",
+          "sourceId": "source",
+          "start": 36,
+          "end": 38,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "total_old",
+          "sourceId": "source",
+          "start": 58,
+          "end": 61,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "total_new",
+          "sourceId": "source",
+          "start": 81,
+          "end": 84,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S09",
+      "domain": "finance",
+      "question": "Did revenue and cash improve?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "Revenue grew",
+          "left": "rev_new",
+          "op": "gt",
+          "right": "rev_old",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "b",
+          "meaning": "Cash grew",
+          "left": "missing_cash",
+          "op": "gt",
+          "right": "cash_old",
+          "expected": "BLOCKED_MISSING_INPUT",
+          "unknown": {
+            "bindingId": "missing_cash",
+            "type": {
+              "kind": "currency_amount",
+              "unit": "USD_million",
+              "scope": "declared_comparable",
+              "dimension": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      ],
+      "expected": "INCOMPLETE_CANDIDATE_EVALUATION",
+      "challenge": "Missing current-period cash cannot be erased by decisive revenue.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Old revenue: 125; New revenue: 160; Old cash: 40; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "rev_old",
+          "sourceId": "source",
+          "start": 13,
+          "end": 16,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD_million",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "rev_new",
+          "sourceId": "source",
+          "start": 31,
+          "end": 34,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD_million",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "cash_old",
+          "sourceId": "source",
+          "start": 46,
+          "end": 48,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD_million",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S10",
+      "domain": "engineering",
+      "question": "Are both alternative routes sufficient?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "Route A capacity",
+          "left": "missing_a",
+          "op": "ge",
+          "right": "load",
+          "expected": "BLOCKED_MISSING_INPUT",
+          "unknown": {
+            "bindingId": "missing_a",
+            "type": {
+              "kind": "capacity",
+              "unit": "Mbps",
+              "scope": "declared_comparable",
+              "dimension": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        {
+          "id": "b",
+          "meaning": "Route B capacity",
+          "left": "missing_b",
+          "op": "ge",
+          "right": "load",
+          "expected": "BLOCKED_MISSING_INPUT",
+          "unknown": {
+            "bindingId": "missing_b",
+            "type": {
+              "kind": "capacity",
+              "unit": "Mbps",
+              "scope": "declared_comparable",
+              "dimension": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      ],
+      "expected": "INCOMPLETE_CANDIDATE_EVALUATION",
+      "challenge": "No verified capacity; refusal to decide is necessary.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Demand: 80; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "load",
+          "sourceId": "source",
+          "start": 8,
+          "end": 10,
+          "type": {
+            "kind": "capacity",
+            "unit": "Mbps",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S11",
+      "domain": "engineering",
+      "question": "Is the measured stress higher?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "A exceeds wet threshold",
+          "left": "a",
+          "op": "gt",
+          "right": "limit",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "b",
+          "meaning": "Cross-condition comparison",
+          "left": "a",
+          "op": "gt",
+          "right": "b",
+          "expected": "BLOCKED_TYPE"
+        }
+      ],
+      "expected": "INCOMPLETE_CANDIDATE_EVALUATION",
+      "challenge": "Identical unit, incompatible declared scope.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Site A wet condition: 11; Site B dry condition: 7; Wet condition threshold: 10; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "a",
+          "sourceId": "source",
+          "start": 22,
+          "end": 24,
+          "type": {
+            "kind": "stress",
+            "unit": "MPa",
+            "scope": "wet",
+            "dimension": [
+              -1,
+              1,
+              -2
+            ]
+          }
+        },
+        {
+          "id": "b",
+          "sourceId": "source",
+          "start": 48,
+          "end": 49,
+          "type": {
+            "kind": "stress",
+            "unit": "MPa",
+            "scope": "dry",
+            "dimension": [
+              -1,
+              1,
+              -2
+            ]
+          }
+        },
+        {
+          "id": "limit",
+          "sourceId": "source",
+          "start": 76,
+          "end": 78,
+          "type": {
+            "kind": "stress",
+            "unit": "MPa",
+            "scope": "wet",
+            "dimension": [
+              -1,
+              1,
+              -2
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S12",
+      "domain": "engineering",
+      "question": "Is the quantity within the allowed value?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "Torque below limit",
+          "left": "torque",
+          "op": "le",
+          "right": "limit",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "b",
+          "meaning": "Energy treated as torque",
+          "left": "energy",
+          "op": "le",
+          "right": "limit",
+          "expected": "BLOCKED_TYPE"
+        }
+      ],
+      "expected": "INCOMPLETE_CANDIDATE_EVALUATION",
+      "challenge": "Same physical dimensions do not establish quantity kind equivalence.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Torque: 60; Energy: 50; Torque limit: 70; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "torque",
+          "sourceId": "source",
+          "start": 8,
+          "end": 10,
+          "type": {
+            "kind": "torque",
+            "unit": "Nm",
+            "scope": "same_declared_scope",
+            "dimension": [
+              2,
+              1,
+              -2
+            ]
+          }
+        },
+        {
+          "id": "energy",
+          "sourceId": "source",
+          "start": 20,
+          "end": 22,
+          "type": {
+            "kind": "energy",
+            "unit": "J",
+            "scope": "same_declared_scope",
+            "dimension": [
+              2,
+              1,
+              -2
+            ]
+          }
+        },
+        {
+          "id": "limit",
+          "sourceId": "source",
+          "start": 38,
+          "end": 40,
+          "type": {
+            "kind": "torque",
+            "unit": "Nm",
+            "scope": "same_declared_scope",
+            "dimension": [
+              2,
+              1,
+              -2
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S13",
+      "domain": "general",
+      "question": "Did the value exceed the threshold?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "Strictly greater",
+          "left": "value",
+          "op": "gt",
+          "right": "limit",
+          "expected": "CONDITIONALLY_REFUTED"
+        },
+        {
+          "id": "b",
+          "meaning": "At least",
+          "left": "value",
+          "op": "ge",
+          "right": "limit",
+          "expected": "CONDITIONALLY_SATISFIED"
+        }
+      ],
+      "expected": "DIVERGENT_CONDITIONAL_OUTCOMES",
+      "challenge": "Strict versus inclusive comparison at equality.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Observed value: 30; Threshold: 30; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "value",
+          "sourceId": "source",
+          "start": 16,
+          "end": 18,
+          "type": {
+            "kind": "count",
+            "unit": "items",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "limit",
+          "sourceId": "source",
+          "start": 31,
+          "end": 33,
+          "type": {
+            "kind": "count",
+            "unit": "items",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S14",
+      "domain": "general",
+      "question": "Is the measurement above or below the reference?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "Strictly above",
+          "left": "value",
+          "op": "gt",
+          "right": "limit",
+          "expected": "CONDITIONALLY_REFUTED"
+        },
+        {
+          "id": "b",
+          "meaning": "Strictly below",
+          "left": "value",
+          "op": "lt",
+          "right": "limit",
+          "expected": "CONDITIONALLY_REFUTED"
+        }
+      ],
+      "expected": "AGREEMENT_ON_SUPPLIED_CONDITIONAL_OUTCOMES",
+      "challenge": "Both false at equality; no universal equivalence.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Observed value: 42; Reference: 42; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "value",
+          "sourceId": "source",
+          "start": 16,
+          "end": 18,
+          "type": {
+            "kind": "count",
+            "unit": "items",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "limit",
+          "sourceId": "source",
+          "start": 31,
+          "end": 33,
+          "type": {
+            "kind": "count",
+            "unit": "items",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S15",
+      "domain": "finance",
+      "question": "Did the observed metric improve?",
+      "candidates": [
+        {
+          "id": "a",
+          "meaning": "Reviewed comparison",
+          "left": "after",
+          "op": "gt",
+          "right": "before",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "b",
+          "meaning": "Untrusted fabricated input",
+          "left": "after",
+          "op": "gt",
+          "right": "before",
+          "expected": "REFUSED",
+          "fabricated": true
+        }
+      ],
+      "expected": "INCOMPLETE_CANDIDATE_EVALUATION",
+      "challenge": "Refused alternative cannot be discarded to create consensus.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Before: 27; After: 33; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "before",
+          "sourceId": "source",
+          "start": 8,
+          "end": 10,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD_million",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "after",
+          "sourceId": "source",
+          "start": 19,
+          "end": 21,
+          "type": {
+            "kind": "currency_amount",
+            "unit": "USD_million",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "S16",
+      "domain": "research",
+      "question": "Is the conclusion invariant across supplied methods?",
+      "candidates": [
+        {
+          "id": "copy_0",
+          "meaning": "Repeated method A",
+          "left": "x",
+          "op": "gt",
+          "right": "y",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "copy_1",
+          "meaning": "Repeated method A",
+          "left": "x",
+          "op": "gt",
+          "right": "y",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "copy_2",
+          "meaning": "Repeated method A",
+          "left": "x",
+          "op": "gt",
+          "right": "y",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "copy_3",
+          "meaning": "Repeated method A",
+          "left": "x",
+          "op": "gt",
+          "right": "y",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "copy_4",
+          "meaning": "Repeated method A",
+          "left": "x",
+          "op": "gt",
+          "right": "y",
+          "expected": "CONDITIONALLY_SATISFIED"
+        },
+        {
+          "id": "counterexample",
+          "meaning": "Method B",
+          "left": "z",
+          "op": "gt",
+          "right": "y",
+          "expected": "CONDITIONALLY_REFUTED"
+        }
+      ],
+      "expected": "DIVERGENT_CONDITIONAL_OUTCOMES",
+      "challenge": "Repeated identical proposals are not independent evidence; count does not settle divergence.",
+      "sources": [
+        {
+          "id": "source",
+          "lineage": "synthetic_record",
+          "text": "Method A estimate: 15; Reference: 10; Method B estimate: 8; "
+        }
+      ],
+      "bindings": [
+        {
+          "id": "x",
+          "sourceId": "source",
+          "start": 19,
+          "end": 21,
+          "type": {
+            "kind": "count",
+            "unit": "items",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "y",
+          "sourceId": "source",
+          "start": 34,
+          "end": 36,
+          "type": {
+            "kind": "count",
+            "unit": "items",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        },
+        {
+          "id": "z",
+          "sourceId": "source",
+          "start": 57,
+          "end": 58,
+          "type": {
+            "kind": "count",
+            "unit": "items",
+            "scope": "declared_comparable",
+            "dimension": [
+              0,
+              0,
+              0
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -73,6 +73,8 @@ jobs:
           rustc --edition=2021 -O --test packages/sutra-knowledge/support-lattice/wasm.rs -o /tmp/sutra-support-abi-tests
           /tmp/sutra-support-abi-tests
       - run: node --test packages/sutra-knowledge/test/*.test.mjs
+      - name: Execute frozen synthetic living-knowledge pilot and scoped baseline comparison
+        run: node packages/sutra-knowledge/evaluation/living-pilot.mjs
       - name: Execute and assert capability demonstration
         run: |
           node packages/sutra-knowledge/examples/observatory.mjs > sutra-v2-observation.json

@@ -30,3 +30,7 @@ Independent replay reuses the Python reference compiler and reconstructs admitte
 ## V2-059
 
 Mobile correctness is not optional. The semantic and revision computation succeeded in the observed browser journey, but document width exceeded 360px. Keep the failed evidence and existing assertion; constrain new controls and long digest text and add diagnostic details for any residual overflow. No horizontal clipping workaround or weakened assertion.
+
+## V2-060
+
+Compare SUTRA against a simple enumerate-all exact compiler baseline, not only weak first-candidate ablation. Expect equality on narrow triage; do not claim feature novelty or comparative superiority. Freeze explicit synthetic expected outcomes in a separate spec, label developer authorship, keep external/held-out count zero. Report coverage and accuracy jointly, count unsupported decisive results and missed invariants; no live model result without actual provider access.

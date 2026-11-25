@@ -691,3 +691,8 @@ New Python profile uses the existing independent reviewed compiler and Fraction/
 ## V2-059 — Responsive correction and exact candidate reconciliation
 
 V2-055 `32348421e11bd8882117f5a4b653cf432e456846` and V2-056 `8a335023e62eedf19f3cc4849c0417f9b0604f5c` each 9/9 workflows green, scoped graph/version and counterfactual results registered. Do not promote full broader gates. V2-057 `daace962bc444b0239eb933ea7dfdd64ad6351b9` actual browser job 139171547235 failed the 360px overflow check after executing correction and four reversal assertions. Preserve the failure; add scoped layout rules for semantic rows, digest wrapping, file input, controls and pre output; keep the width requirement and report overflowing element diagnostics. V2-058 independent replay not yet verified. No release. Exact V2-059 CI pending.
+
+
+## V2-060 — First frozen comparative development pilot
+
+Added 16 manually specified synthetic cases across finance, engineering, research, student, business and general comparisons, with explicit expected candidate outcomes independent of runner output. Cases include definition divergence, population, missing inputs, same-dimension different kind, strict/inclusive equality, fabricated leaf and repeated consensus. Same reviewed data/programs for first-candidate ablation, simple enumerate-all compiler comparator and SUTRA; report conditional coverage, accuracy among answered, unsupported decisive counts and missed invariants. Simple enumerate-all expected to match; this is not a competitive model claim. 200-case target and seven real baselines remain open; no external annotations/held-out or live provider. Test and CLI CI pending. Prior V2-059 responsive correction and V2-058 independent replay remain pending until exact CI.
