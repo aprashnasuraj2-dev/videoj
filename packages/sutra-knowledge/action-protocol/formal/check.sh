@@ -208,3 +208,23 @@ fi
 cat "$WORK/fence-absence-lie.log"
 grep -F 'Invariant AtMostOneEffect is violated' "$WORK/fence-absence-lie.log"
 python3 fence_absence.py
+
+
+# Exact-idempotency terminal authority. The safe machine is intentionally scoped
+# to one current authority history. Rollback and signer+snapshot cloning retain
+# the outside-world effect while recreating unused local state and must violate
+# AtMostOnePhysicalEffect.
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/upstream-terminal-safe" -config UpstreamTerminalSafe.cfg UpstreamTerminal.tla > "$WORK/upstream-terminal-safe.log" 2>&1 || { cat "$WORK/upstream-terminal-safe.log"; exit 1; }
+cat "$WORK/upstream-terminal-safe.log"
+grep -F 'No error has been found' "$WORK/upstream-terminal-safe.log"
+if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/upstream-terminal-rollback" -config UpstreamTerminalRollback.cfg UpstreamTerminal.tla > "$WORK/upstream-terminal-rollback.log" 2>&1; then
+ cat "$WORK/upstream-terminal-rollback.log"; echo 'upstream rollback mutant unexpectedly preserved one physical effect' >&2; exit 1
+fi
+cat "$WORK/upstream-terminal-rollback.log"
+grep -F 'Invariant AtMostOnePhysicalEffect is violated' "$WORK/upstream-terminal-rollback.log"
+if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/upstream-terminal-clone" -config UpstreamTerminalClone.cfg UpstreamTerminal.tla > "$WORK/upstream-terminal-clone.log" 2>&1; then
+ cat "$WORK/upstream-terminal-clone.log"; echo 'upstream clone mutant unexpectedly preserved one physical effect' >&2; exit 1
+fi
+cat "$WORK/upstream-terminal-clone.log"
+grep -F 'Invariant AtMostOnePhysicalEffect is violated' "$WORK/upstream-terminal-clone.log"
+python3 upstream_terminal.py
