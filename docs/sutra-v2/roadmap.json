@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-096",
+  "session": "V2-097",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -3255,7 +3255,7 @@
       "dependencies": [
         "V2-LK01-SEMANTIC-TRIAGE"
       ],
-      "scope": "Freeze staged 200 independently specified/annotated cases: 40 semantic,40 assumption,40 revision,30 ancestry,30 acquisition,20 replay/tamper; distinct synthetic/public/expert splits. V2-060 candidate: frozen 16-case synthetic development spec, exact candidate-state scoring, coverage/accuracy and unsupported decisive counts, first-candidate ablation and enumerate-all comparator. No held-out/external annotations, live models or broad superiority; exact CI pending. V2-080 candidate: four synthetic revision selection cases, full-reselection comparison, exact version reconstruction and all-source no-savings controls. No human effort/time or independent benchmark.",
+      "scope": "Freeze staged 200 independently specified/annotated cases: 40 semantic,40 assumption,40 revision,30 ancestry,30 acquisition,20 replay/tamper; distinct synthetic/public/expert splits. V2-060 candidate: frozen 16-case synthetic development spec, exact candidate-state scoring, coverage/accuracy and unsupported decisive counts, first-candidate ablation and enumerate-all comparator. No held-out/external annotations, live models or broad superiority; exact CI pending. V2-080 candidate: four synthetic revision selection cases, full-reselection comparison, exact version reconstruction and all-source no-savings controls. No human effort/time or independent benchmark. V2-097 candidate: six developer-authored cases with exact expected execution vectors and matched programs/scenarios, first-candidate, raw and exact-program-deduplicated strict signature majority, retain-all plus witnesses. No reproduction of published method, independent annotations or semantic selection claim.",
       "acceptance": "Held-out separation; seven matched baselines (LLM, tools, solver, debate, domain software, SUTRA matched/offline); accuracy AND coverage, effort/cost, revision, replay, security, ablations and intervals.",
       "evidence": [
         {

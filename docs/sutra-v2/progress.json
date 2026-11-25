@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-096",
+  "session": "V2-097",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -37,7 +37,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "prior_art_and_matched_evaluation_candidate_pending_exact_ci",
+  "state": "semantic_signature_benchmark_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -384,11 +384,11 @@
   "release": "not_authorized",
   "submission": "not_started",
   "lastFailed": {
-    "sourceRevision": "3d7f26717df5f97c229a5bd66bc83b9ddfabdeab",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612737845",
-    "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612737845/job/139200200663",
-    "reason": "Inherited collapsed expression textarea failure in table browser test; history knowledge job passed.",
-    "resolutionStatus": "Resolved at exact V2-084; all ten workflows green."
+    "sourceRevision": "4871ea5aafcec0631e648080194b6ea8be3b073c",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45708611142",
+    "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45708611142/job/139536902985",
+    "reason": "V2-094 knowledge test fixture attempted to create duplicate exact binding span; earlier compiler admission correctly refused before Fisher assertion. Browser passed; both kernel workflow runs failed.",
+    "resolutionStatus": "Corrected unit assertion at existing compiler boundary in V2-095; exact CI still pending at observation."
   },
   "lastVerifiedKernelSource": "81f2cd4ef65eebfcc309397e1096d6dceccfba9c",
   "resolvedIssue": {
@@ -400,14 +400,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-097",
+    "parent": "4d66190fee90e04689244498c6abbb2c69e67aa0",
+    "description": "Frozen six-case matched execution-signature comparison with explicit semantic developer labels, duplicate-aware vote and retained witnesses; exact CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-096",
     "parent": "135e25a00f963ad8c88cae6f39b26b0a6349226f",
     "description": "Initial nine-source prior-art evidence register and falsifiable matched evaluation design; exact CI pending. V2-094/095 exact CI still pending at observation."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-095",
-    "parent": "4871ea5aafcec0631e648080194b6ea8be3b073c",
-    "description": "Actual two-group guided revision, conditional exact comparison controls, portable report and independent browser export replay. Exact CI pending; V2-094 reconciliation pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -717,6 +717,13 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45612737845/job/139200200663",
       "reason": "Inherited collapsed expression textarea failure in table browser test; history knowledge job passed.",
       "resolutionStatus": "Resolved at exact V2-084; all ten workflows green."
+    },
+    {
+      "sourceRevision": "4871ea5aafcec0631e648080194b6ea8be3b073c",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45708611142",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45708611142/job/139536902985",
+      "reason": "V2-094 knowledge test fixture attempted to create duplicate exact binding span; earlier compiler admission correctly refused before Fisher assertion. Browser passed; both kernel workflow runs failed.",
+      "resolutionStatus": "Corrected unit assertion at existing compiler boundary in V2-095; exact CI still pending at observation."
     }
   ],
   "reconciledDurableCandidate": {

@@ -1,0 +1,304 @@
+{
+  "schemaVersion": 1,
+  "dataset": "semantic-signature-pilot-v1",
+  "split": "development_synthetic",
+  "annotation": "Developer-specified intended formulas and expected execution vectors, not independent semantic annotation or held-out data.",
+  "cases": [
+    {
+      "id": "P01",
+      "question": "Did the current-period amount exceed the threshold?",
+      "inputs": {
+        "current": "12",
+        "prior": "12",
+        "threshold": "10"
+      },
+      "programs": [
+        {
+          "id": "prior_wrong",
+          "formula": "[prior]>[threshold]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "current_right",
+          "formula": "[current]>[threshold]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "s01",
+          "replacements": {
+            "current": "8/1"
+          }
+        },
+        {
+          "id": "s02",
+          "replacements": {
+            "prior": "8/1"
+          }
+        }
+      ],
+      "expectedWitness": true
+    },
+    {
+      "id": "P02",
+      "question": "Did the value meet or exceed the inclusive limit?",
+      "inputs": {
+        "value": "10",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "inclusive_right",
+          "formula": "[value]>=[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 3,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "equality_wrong",
+          "formula": "[value]==[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "s01",
+          "replacements": {
+            "value": "12/1"
+          }
+        },
+        {
+          "id": "s02",
+          "replacements": {
+            "value": "8/1"
+          }
+        }
+      ],
+      "expectedWitness": true
+    },
+    {
+      "id": "P03",
+      "question": "Does the current-population outcome fraction exceed the benchmark?",
+      "inputs": {
+        "outcome": "60",
+        "population": "100",
+        "prior_population": "100",
+        "benchmark": "0.5"
+      },
+      "programs": [
+        {
+          "id": "prior_denominator_wrong",
+          "formula": "[outcome]/[prior_population]>[benchmark]",
+          "semanticLabel": "WRONG",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "current_denominator_right",
+          "formula": "[outcome]/[population]>[benchmark]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "s01",
+          "replacements": {
+            "population": "200/1"
+          }
+        },
+        {
+          "id": "s02",
+          "replacements": {
+            "prior_population": "200/1"
+          }
+        }
+      ],
+      "expectedWitness": true
+    },
+    {
+      "id": "P04",
+      "question": "Did the current-period value exceed the limit?",
+      "inputs": {
+        "current": "12",
+        "prior": "12",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "prior_wrong",
+          "formula": "[prior]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "current_right",
+          "formula": "[current]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_satisfied",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "s01",
+          "replacements": {
+            "limit": "11/1"
+          }
+        },
+        {
+          "id": "s02",
+          "replacements": {
+            "limit": "13/1"
+          }
+        }
+      ],
+      "expectedWitness": false
+    },
+    {
+      "id": "P05",
+      "question": "Does the product of X and Y exceed the threshold?",
+      "inputs": {
+        "x": "2",
+        "y": "2",
+        "limit": "9"
+      },
+      "programs": [
+        {
+          "id": "sum_wrong",
+          "formula": "[x]+[x]>[limit]",
+          "semanticLabel": "WRONG",
+          "copies": 3,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted",
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "product_right",
+          "formula": "[x]*[y]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_refuted",
+            "constraint_refuted",
+            "constraint_refuted",
+            "constraint_satisfied"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "s01",
+          "replacements": {
+            "x": "4/1"
+          }
+        },
+        {
+          "id": "s02",
+          "replacements": {
+            "y": "4/1"
+          }
+        },
+        {
+          "id": "s03",
+          "replacements": {
+            "x": "4/1",
+            "y": "4/1"
+          }
+        }
+      ],
+      "expectedWitness": true
+    },
+    {
+      "id": "P06",
+      "question": "Does X exceed the limit?",
+      "inputs": {
+        "x": "12",
+        "limit": "10"
+      },
+      "programs": [
+        {
+          "id": "forward_right",
+          "formula": "[x]>[limit]",
+          "semanticLabel": "RIGHT",
+          "copies": 2,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        },
+        {
+          "id": "reverse_right",
+          "formula": "[limit]<[x]",
+          "semanticLabel": "RIGHT",
+          "copies": 1,
+          "expected": [
+            "constraint_satisfied",
+            "constraint_refuted",
+            "constraint_refuted"
+          ]
+        }
+      ],
+      "scenarios": [
+        {
+          "id": "s01",
+          "replacements": {
+            "x": "8/1"
+          }
+        },
+        {
+          "id": "s02",
+          "replacements": {
+            "x": "10/1"
+          }
+        }
+      ],
+      "expectedWitness": false
+    }
+  ]
+}

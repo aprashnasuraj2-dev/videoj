@@ -765,3 +765,8 @@ Add two-group synthetic sample and corrected source to the existing reviewed inv
 ## V2-096 — Initial prior-art and falsification register
 
 Inspect nine actual publisher/institutional abstracts, survey or standard overview, including all four supplied ACL references. Register established techniques separately from current restricted SUTRA implementation, proposed matched experiments and unclosed gaps. Add explicit execution-signature majority ablation, stepwise review comparison and independent interpretation recall evaluation to benchmark protocol. Existing simple enumeration tie is retained. No novelty claim or full-text systematic review. Statistical V2-094/095 CI pending at observation; exact evidence still to reconcile.
+
+
+## V2-097 — Matched semantic execution-signature pilot
+
+Preserve V2-094 exact failure: job 139536902985 duplicate exact span fixture refused by existing compiler before profile evaluation; V2-095 corrects test boundary, exact CI pending. Add frozen six-case synthetic developer-labelled pilot with explicit expected signature vectors, same admitted candidate programs and perturbations for all methods. Compare first-candidate, raw strict-majority execution signature, exact-program-deduplicated signature vote and retain-all with distinguishing witnesses. Include wrong period, inclusive boundary, wrong denominator, no-witness control, joint-change witness and truly equivalent orientation control. Report correct-candidate loss, abstention, wrong-only selection and retained wrong candidates separately. No semantic selection, real model or published method reproduction. CI and CLI results pending.
