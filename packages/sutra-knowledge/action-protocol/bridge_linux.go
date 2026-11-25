@@ -239,6 +239,7 @@ func (c *WitnessCoordinator) Recover()error{
 func (c *WitnessCoordinator) processLocked(req AuthorityRequest)(WitnessedResponse,error){
  a:=c.authority
  if a.lock==nil||a.poisoned{return WitnessedResponse{},ErrStore}
+ if !a.authenticate(req){return WitnessedResponse{},ErrAuthorityAuth}
  if e:=c.recoverLocked();e!=nil{return WitnessedResponse{},e}
  plan,e:=a.planLocked(req);if e!=nil{return WitnessedResponse{},e}
  if !plan.persist{
