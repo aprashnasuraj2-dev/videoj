@@ -23,7 +23,11 @@ jobs:
           go test -count=1 -v packages/sutra-knowledge/checkpoint/main.go packages/sutra-knowledge/checkpoint/support_replay.go packages/sutra-knowledge/checkpoint/main_test.go
       - name: Go scoped action protocol real TCP and race tests
         run: |
-          go test -race -count=1 -v packages/sutra-knowledge/action-protocol/protocol.go packages/sutra-knowledge/action-protocol/transport.go packages/sutra-knowledge/action-protocol/protocol_test.go packages/sutra-knowledge/action-protocol/durable_linux.go packages/sutra-knowledge/action-protocol/durable_linux_test.go packages/sutra-knowledge/action-protocol/anchor_linux.go packages/sutra-knowledge/action-protocol/anchor_linux_test.go packages/sutra-knowledge/action-protocol/caller_linux.go packages/sutra-knowledge/action-protocol/caller_linux_test.go
+          SUTRA_AUTHORITY_TRACE="$GITHUB_WORKSPACE/sutra-v2-authority-trace.json" go test -race -count=1 -v packages/sutra-knowledge/action-protocol/protocol.go packages/sutra-knowledge/action-protocol/transport.go packages/sutra-knowledge/action-protocol/protocol_test.go packages/sutra-knowledge/action-protocol/durable_linux.go packages/sutra-knowledge/action-protocol/durable_linux_test.go packages/sutra-knowledge/action-protocol/anchor_linux.go packages/sutra-knowledge/action-protocol/anchor_linux_test.go packages/sutra-knowledge/action-protocol/caller_linux.go packages/sutra-knowledge/action-protocol/caller_linux_test.go packages/sutra-knowledge/action-protocol/authority_linux.go packages/sutra-knowledge/action-protocol/authority_linux_test.go
+      - name: Independently map actual Go authority trace to bounded TLA transitions
+        run: |
+          python3 packages/sutra-knowledge/action-protocol/formal/refine_trace.py sutra-v2-authority-trace.json > sutra-v2-authority-refinement.json
+          cat sutra-v2-authority-refinement.json
       - name: Bounded recovery state model and unsafe counterexample
         run: sh packages/sutra-knowledge/action-protocol/formal/check.sh
       - name: Rust bounded support lattice and exhaustive reference controls
@@ -60,6 +64,8 @@ jobs:
             sutra-v2-conflict.json
             sutra-v2-challenges.json
             sutra-v2-reference.json
+            sutra-v2-authority-trace.json
+            sutra-v2-authority-refinement.json
   browser:
     runs-on: ubuntu-latest
     timeout-minutes: 8

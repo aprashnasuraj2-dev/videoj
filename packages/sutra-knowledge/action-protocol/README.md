@@ -47,3 +47,23 @@ The tests use actual loopback TCP and close the socket after applying a syntheti
 ## V2-010 bounded candidates
 
 `Anchor` wraps a separately trusted durable authority; exact parent CAS serializes cooperating writers, and `VerifyAnchorView` validates ordered approvals and receipts against separately provisioned policy, keys and head. Cloning the anchor itself can still fork. `ContactBook` freezes exact host-approved keys, rejects duplicate slots and persists a signed reservation before each loopback request (two per approval, three for the book), with cached verified receipt and sticky unknown across reopen. It assumes one trusted private directory and signer; a valid older signed journal can reset its budget, and another book can bypass its cap. This is not a global provider budget. Neither primitive changes browser capabilities or exposes external writes. The CAS interface and journal transport are not yet integrated. See [formal/ANCHOR.md](formal/ANCHOR.md) for bounded safety, fairness and explicit implementation gaps.
+
+
+## V2-011 shared authenticated authority candidate
+
+`SharedAuthority` is a separate Linux-only laboratory primitive. It does not
+replace the previously verified durable receiver, `Anchor`, or `ContactBook`.
+It atomically persists the synthetic action history/receipt ledger and contact
+counts in one signed snapshot. Two pinned caller keys authenticate contacts;
+invalid callers consume zero budget. Valid contacts are bounded to two per
+caller and three aggregate, matching the current bounded TLA+ profile. Commit
+uses an expected-head CAS; status may reconcile a stale caller pin. A lost
+reply followed by restart can therefore recover the same receipt without
+resetting the shared budget. Restoring an old local caller cursor cannot reset
+the authority's counters.
+
+This still trusts one authority key and private filesystem. Cloning that key
+and signed snapshot permits a fork; the test preserves this counterexample.
+There is no Byzantine quorum, multi-host consensus, arbitrary external write,
+provider spend budget, expiry/revocation, or browser exposure. See
+`formal/REFINEMENT.md` for the concrete Go-to-TLA trace mapping.
