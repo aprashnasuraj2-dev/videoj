@@ -3,15 +3,18 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-007",
+  "session": "V2-008",
   "next": [
-    "V2-F12c",
+    "V2-RUNTIME-01",
+    "V2-RUNTIME-02",
+    "V2-RUNTIME-03",
     "V2-F11b",
     "V2-F12d",
     "V2-F13",
-    "V2-F04"
+    "V2-F04",
+    "V2-RUNTIME-04"
   ],
-  "state": "go_checkpoint_rust_support_browser_verified_pinned_wasm_go_replay_candidate_pending",
+  "state": "support_replay_verified_scoped_action_protocol_candidate_pending",
   "verified": [
     {
       "id": "V2-M01",
@@ -203,6 +206,12 @@
       "sourceRevision": "cd1e7c176ea9e9b94c75c8550f4e1d9caf1253a1",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520409787/job/138890521810",
       "description": "Actual Chromium compiled Rust WASM support analysis, alternative conflicts, copied-source withdrawal, fresh refuting support and missing module refusal; artifact 14978264100."
+    },
+    {
+      "id": "V2-F12c",
+      "sourceRevision": "380e2bb0c8d599f0c429fba648bbe4fc9ae8f580",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520945033/job/138892328011",
+      "description": "All six reported PR workflows successful. Actual Rust WASM hash-pinned module and Go replay of three matching support reports; 24 mutations rejected."
     }
   ],
   "release": "not_authorized",
@@ -212,7 +221,7 @@
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517668625/job/138881199452",
     "reason": "General evidence session set event parser maxChars=524288 above shared parser cap 262144. Corrected in next candidate."
   },
-  "lastVerifiedKernelSource": "cd1e7c176ea9e9b94c75c8550f4e1d9caf1253a1",
+  "lastVerifiedKernelSource": "380e2bb0c8d599f0c429fba648bbe4fc9ae8f580",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -222,12 +231,12 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
-    "sourceRevision": "c74159da100748092c27d9ef9bcca96c281a65f8",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520762227",
+    "sourceRevision": "eabb7c348b9ef66509e0d5ef41d4863f87bde3b3",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45521995010",
     "checks": [
-      "build-pinned WASM digest rejection",
-      "independent Go support export replay and matching history",
-      "24 support report mutations"
+      "signed action protocol",
+      "real TCP lost response reconciliation",
+      "Go race and budget controls"
     ],
     "status": "pending_exact_ci"
   }
