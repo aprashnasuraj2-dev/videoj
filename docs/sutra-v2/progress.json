@@ -3,23 +3,12 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-035",
+  "session": "V2-036",
   "next": [
-    "V2-D17-OBSERVED-DOMAIN-GRID",
-    "V2-P07-WASM",
-    "V2-RUNTIME-02",
-    "V2-P05-RECOVERY",
-    "V2-P05-ROLLBACK",
-    "V2-F11b",
-    "V2-P06-REFINE",
-    "V2-P01-THREAT",
-    "V2-P04-CONSENT",
-    "V2-P14-BUDGET",
-    "V2-P14-BYOK-UX",
-    "V2-RUNTIME-03",
-    "V2-F12d"
+    "Run exact source CI and resolve candidate SHA",
+    "Wire assumption contrast into browser UX and independent replay; preserve evidence and scope boundaries"
   ],
-  "state": "observed_domain_grid_candidate_pending_exact_ci",
+  "state": "assumption_contrast_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -350,7 +339,7 @@
     "resolutionRevision": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579569479/job/139085895592"
   },
-  "lastVerifiedKernelSource": "c263313e0658536969ca1658e3c5ce93f1853096",
+  "lastVerifiedKernelSource": "205dc1544a537dd4de3cd184653d975d84165a8d",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -360,6 +349,13 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "state": "candidate_pending_exact_ci",
+    "sourceRevision": null,
+    "parentRevision": "205dc1544a537dd4de3cd184653d975d84165a8d",
+    "scope": "V2-D18-ASSUMPTION-CONTRAST",
+    "resolution": "Resolve containing commit from PR head; do not inherit parent's green CI."
+  },
+  "previousPendingCandidate": {
     "sourceRevision": null,
     "sourceParent": "c263313e0658536969ca1658e3c5ce93f1853096",
     "status": "candidate_pending_exact_ci",
@@ -370,19 +366,6 @@
       "recompute each missing assignment from nearest deterministic base; exact input differences, receipt digests, compatibility blockers and decision",
       "invalid offered quantity and unresolved target cause UNVERIFIED, not silent omission; original case and capsule unchanged",
       "four local Node groups and two independent Python reports, 36 mutations refused; actual browser exact CI pending"
-    ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": "c263313e0658536969ca1658e3c5ce93f1853096",
-    "sourceParent": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
-    "status": "verified_exact_ci",
-    "identityRule": "Resolve the immutable commit containing this checkpoint.",
-    "checks": [
-      "hypothetical receipt-only union and intersection, exact deduplication of shared source bytes; neither history merged or adopted",
-      "joint survivor set equals intersection of branch survivors; shared-only survivors cover both branches",
-      "distinguish cross-branch contradiction, pre-existing conflict, and false assertion alone; minimum conflicting observation and declared-root sets",
-      "same-lineage incompatible observations and explicit unavailable-in-other-branch readings; no observation availability policy invented",
-      "five local Node groups including 256 ordered direct set/arithmetic oracle pairs, 24 cross-branch clashes; two Python replay reports and 30 mutations refused; browser exact CI pending"
     ]
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
@@ -5113,5 +5096,15 @@
     "pushRun": 45566732763,
     "ingressRun": 45566742003,
     "status": "exact_green_packaged_candidate"
+  },
+  "reconciledObservedGrid": {
+    "sourceRevision": "205dc1544a537dd4de3cd184653d975d84165a8d",
+    "prRun": 45580836169,
+    "pushRun": 45580827851,
+    "browserJobs": [
+      139090171285,
+      139090140809
+    ],
+    "conclusion": "success"
   }
 }

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-035",
+  "session": "V2-036",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2662,12 +2662,29 @@
     },
     {
       "id": "V2-D17-OBSERVED-DOMAIN-GRID",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D14-WORLD-COVERAGE",
         "V2-D11-ALIGNED-CASE"
       ],
-      "scope": "Hypothetical Cartesian coverage audit using normalized exact values already observed in the model; exact cardinality, missing and duplicate assignments, bounded complete enumeration, per-candidate blockers and hypothetical closure state. No empirical completeness, feasibility, independent inputs, new source availability or adoption."
+      "scope": "Hypothetical Cartesian coverage audit using normalized exact values already observed in the model; exact cardinality, missing and duplicate assignments, bounded complete enumeration, per-candidate blockers and hypothetical closure state. No empirical completeness, feasibility, independent inputs, new source availability or adoption.",
+      "evidence": [
+        {
+          "id": "V2-D17-OBSERVED-DOMAIN-GRID",
+          "sourceRevision": "205dc1544a537dd4de3cd184653d975d84165a8d",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45580836169/job/139090171285",
+          "description": "All nine exact-source workflows for 205dc1544a537dd4de3cd184653d975d84165a8d completed successfully (PR knowledge 45580836169, push knowledge 45580827851, seven auxiliary PR workflows 45580836080, 45580835965, 45580836055, 45580836002, 45580835988, 45580836035, 45580835993). Both browser jobs 139090171285 and 139090140809 completed the independent observed-domain replay step. Scoped observed-domain audit only."
+        }
+      ]
+    },
+    {
+      "id": "V2-D18-ASSUMPTION-CONTRAST",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D17-OBSERVED-DOMAIN-GRID",
+        "V2-D11-ALIGNED-CASE"
+      ],
+      "scope": "New assumption-contrast candidate: compare surviving declared decisive anchors against distinct normalized assignments in the observed grid, including explicitly hypothetical omitted combinations when bounded. Expose exact inclusion-minimal input/value interventions, separate model-only reversals from evidence-compatible, evidence-excluded and admission-blocked reversals, distinguish one-factor reversal from interaction-only reversal under complete finite coverage, and preserve original capsule. No causality, feasibility, probability, continuous-domain robustness, recommendation or adoption. A direct standalone Boolean oracle exercised the exact proposed anchor algorithm across 256 truth tables and 2,048 anchors; integrated Node tests, browser wiring, independent report replay and exact new-source CI remain pending. Direct local Git clone unavailable (DNS); no full local suite claim."
     }
   ]
 }

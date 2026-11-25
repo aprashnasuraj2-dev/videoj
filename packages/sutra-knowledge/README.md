@@ -26,3 +26,7 @@ The Observatory CLI asserts a real deterministic state change, exact incremental
 ## Counterfactual evidence frontier
 
 `frontier.js` independently evaluates every declared world through the exact kernel, then solves a bounded deterministic observation problem via subset dynamic programming. Minimize worst-case additive cost, break ties by best-case cost then stable observation ID. At most 12 worlds, eight observations, 4095 nonempty subset states. No probability, measurement noise, unlisted world or automatic physical action. Costs/partitions are declared inputs, not independently verified. Nondecisive worlds abstain; if opposite decisions are observationally indistinguishable, return a concrete pair. The independent test oracle enumerates remaining-test trees. This is not a new decision-tree algorithm, clinical decision system or claim of world-first.
+
+## Assumption contrast (candidate)
+
+`auditAssumptionContrast(caseText,pin,eventText)` separates exact discrete model reversals from those compatible with active readings; it reports inclusion-minimal exact input replacements, and explicitly detects interaction-only reversals where all single-axis alternatives are decisive and preserve the anchor. Coverage is only the observed-domain finite grid. No continuous sensitivity, physical feasibility, causal identification, or evidence adoption. Integrated verification pending.
