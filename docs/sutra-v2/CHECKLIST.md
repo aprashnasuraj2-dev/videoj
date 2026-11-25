@@ -228,3 +228,16 @@ Exact source `dbba396c6cca16c324975c86ed9ad234b7a619d8` passed knowledge push `4
 - [ ] **Independent mutation controls:** 10 trace mutants are rejected: profile substitution, missing durable intent, missing physical effect, success without witness, restart effect loss, uncleared recovery intent, rollback effect erasure, coordinated witness rollback masquerading as receiver-only rollback, refused recovery mutating the store, and missing event.
 - [ ] **Refinement scope:** this is three concrete trace witnesses, not universal simulation. Identical clones, coordinated receiver+witness rollback, cryptographic implementation, filesystem/power-loss semantics and real-provider behavior remain outside the refinement proof.
 - [ ] **Next RUNTIME-02 authority gap:** compensation remains only a signed grant class; no explicit compensation operation currently binds a new compensating action to the exact prior APPLIED effect being offset. Separate compensation authorization/causal binding remains open.
+
+
+## V2-013 causal compensation authority — b70312dfac3b
+
+Exact source `b70312dfac3bcb2c4c5197270fad622e00d5df72` passed knowledge push `45563002890`, knowledge PR `45563015491`, impact `45563015720`, Open Kit `45563015507`, publisher `45563015494`, engineering evaluation `45563015433` and browser compatibility `45563015739`. Push knowledge job `139030951985` and PR knowledge job `139030990649` passed the expanded Go race suite and CompensationAuthority formal/reference gates.
+
+- [ ] **V2-RUNTIME-02 / explicit compensation authorization:** compensation is a new separately authorized effect, not an implicit rollback of the primary action. The authorization binds the exact prior reservation hash, prior signed upstream receipt hash, compensation grant ID and exact compensation request hash.
+- [ ] **Distinct authority boundary:** the compensation signer is forbidden from reusing consent, caller, grant-book, action-authority, fence, upstream or policy-witness keys.
+- [ ] **Causal source proof:** fresh compensation requires a cryptographically valid prior receipt and current signed upstream status proving that exact source identity is APPLIED. An absent, tampered, CLOSED or mismatched source cannot authorize compensation.
+- [ ] **Primary/compensation class separation:** a `GrantCompensation` request cannot pass the ordinary primary transaction path. A primary-class grant cannot be used as compensation.
+- [ ] **Recovery boundary:** compensation recovery is allowed only for the same exact already-admitted compensation transaction and causal authorization; recovery does not grant authority for a new compensating effect.
+- [ ] **Formal negative controls:** the bounded CompensationAuthority model preserves separate authorization and prior-effect causality; mutants demonstrate that ordinary primary authority, missing compensation authority or missing prior APPLIED source must not be treated as safe compensation.
+- [ ] **Claim boundary:** a compensating action is not proof of physical reversal, atomic undo or restored external state. Real provider compensation semantics, physical power loss, identical-clone effects, coordinated rollback and provider-global billing remain open.

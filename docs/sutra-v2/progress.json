@@ -17,7 +17,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "upstream_witness_trace_refinement_exact_verified_compensation_authority_next",
+  "state": "causal_compensation_authority_exact_verified_v2_entrypoint_migration_and_physical_durability_next",
   "verified": [
     {
       "id": "V2-M01",
@@ -246,7 +246,7 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45559702271/job/139020178838",
     "resolutionStatus": "resolved_import_then_strengthened_refinement_exact_all_required_workflows_success"
   },
-  "lastVerifiedKernelSource": "dbba396c6cca16c324975c86ed9ad234b7a619d8",
+  "lastVerifiedKernelSource": "b70312dfac3bcb2c4c5197270fad622e00d5df72",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -928,6 +928,20 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45561857316/job/139027200691",
       "description": "Actual Go upstream-witness traces map normal, store-ahead restart recovery and receiver-only rollback refusal to the bounded transition relation. Ten corrupted traces are rejected, including physical-effect erasure during store rollback and coordinated witness rollback masquerading as the safe profile.",
       "remaining": "Finite three-trace witness only; clones, coordinated rollback, arbitrary scheduling, storage internals and real-provider semantics are outside this refinement evidence."
+    },
+    {
+      "id": "V2-RUNTIME-02",
+      "sourceRevision": "b70312dfac3bcb2c4c5197270fad622e00d5df72",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45563015491/job/139030990649",
+      "description": "Exact-green causal compensation authority: a separately keyed authorization binds one prior APPLIED reservation/receipt to the exact compensation grant and request; primary-path class bypass and source tamper/absence are refused; admitted compensation can reconcile without granting a fresh effect.",
+      "remaining": "Compensation is a new effect, not atomic reversal. Real provider semantics, physical power loss, clone-safe effects, coordinated rollback, provider-global spend and public external write integration remain open."
+    },
+    {
+      "id": "V2-P04-CONSENT",
+      "sourceRevision": "b70312dfac3bcb2c4c5197270fad622e00d5df72",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45563015491/job/139030990649",
+      "description": "Compensation requires a distinct authorization authority in addition to the compensation-class grant; authorization is bound to the exact prior receipt and new request rather than inferred from grant class alone.",
+      "remaining": "Synthetic private path only; no distributed consent consensus or production compensation UX."
     }
   ],
   "reconciledCI": [
@@ -3003,6 +3017,70 @@
         },
         {
           "id": 45561857347,
+          "event": "pull_request",
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "b70312dfac3bcb2c4c5197270fad622e00d5df72",
+      "complete": true,
+      "description": "Causal compensation authority exact-green. Both knowledge workflows passed expanded Go race and CompensationAuthority formal/reference gates; all five auxiliary PR workflows succeeded.",
+      "runs": [
+        {
+          "id": 45563002890,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            139030951985,
+            139030951339
+          ]
+        },
+        {
+          "id": 45563015491,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            139030990649,
+            139030990354
+          ]
+        },
+        {
+          "id": 45563015720,
+          "event": "pull_request",
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45563015507,
+          "event": "pull_request",
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45563015494,
+          "event": "pull_request",
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45563015433,
+          "event": "pull_request",
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45563015739,
           "event": "pull_request",
           "name": "Validate SUTRA browser compatibility matrix",
           "status": "completed",

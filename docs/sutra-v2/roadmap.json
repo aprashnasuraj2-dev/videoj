@@ -2253,9 +2253,9 @@
       "phase": "05",
       "status": "Implementation in progress",
       "evidence": {
-        "sourceRevision": "6e0ff79354a10520a9c9a4f84a40584d75cfa460",
-        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45560974128/job/139024343353",
-        "description": "Strongest private pinned consent/policy transaction fixture now routes APPLIED/CLOSED through a separately keyed monotonic upstream witness; receiver-only rollback and raw un-witnessed mutation fail closed while one-step store-ahead recovery survives restart."
+        "sourceRevision": "b70312dfac3bcb2c4c5197270fad622e00d5df72",
+        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45563015491/job/139030990649",
+        "description": "Exact-green private transaction lab now requires a distinct causal compensation authorization binding the exact prior APPLIED reservation/receipt to one compensation grant and request; primary path rejects compensation-class bypass; recovery is limited to already-admitted exact compensation."
       },
       "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
       "dependencies": [
@@ -2271,7 +2271,7 @@
       "positiveTests": "Durable effect/ledger and explicit retry policy",
       "adversarialTests": "Crash, concurrent keys, unknown outcome, revoked approval and global budgets",
       "verificationMethod": "Go process and network integration, TLA refinement",
-      "knownLimitations": "Private transaction path has upstream terminal idempotency, exact consent/policy ancestry, monotonic receiver-only rollback detection and concrete witness trace refinement. Still open: explicit causal compensation authorization, identical-clone physical-effect fencing, coordinated rollback, physical power-loss certification, provider-global billing/spend and any real external-provider adapter."
+      "knownLimitations": "Private synthetic path only. Explicit causal compensation authorization is now exercised, but compensation does not prove physical reversal. Identical-clone effects, coordinated rollback, physical power-loss certification, provider-global billing/spend, real provider semantics and any approved public external-write route remain unresolved."
     },
     {
       "id": "V2-RUNTIME-03",
