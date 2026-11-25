@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-121",
+  "session": "V2-122",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Integrated focused probe review workspace candidate; CI pending",
+  "state": "Frozen 40-case synthetic assumption development benchmark; runner pending",
   "verified": [
     {
       "id": "V2-M01",
@@ -401,14 +401,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-122",
+    "parent": "8c00a9123ea629a1770dd0da457b496d78ae07dc",
+    "description": "## V2-122 — Freeze 40 assumption development cases before runner\n\nDataset `packages/sutra-knowledge/evaluation/assumption-development-v1.json`, exact sha256:7b38b07b1c5b3abf904fa527d34945a5192e7c6dd850b36e5e0daf4335fdfd75, 40 fixed cases in ten families. Separate authoring-only exact rational oracle fixed expected baseline states, evaluated world states, structural duplicate groups, distinguishing/unresolved pairs and optimum budgeted review subset. Includes strict/inclusive thresholds, period ambiguity, two- and three-way interaction, wrong population denominator, relative/absolute change, negation, equivalent negative controls, review budget, truncation/refused/unresolved. This is synthetic developer-authored development material; zero external annotations, held-out or live model trials. The 200-case independently reviewed target remains open. Dataset is committed before implementing the evaluator; do not alter expected answers to fit implementation. Next commit adds matched first-world, single-change, greedy and exact subset comparators, with coverage, all-cell correctness and negative results. V2-119 exact nine returned PR workflows green; V2-120/121 pending at observation. Separate push run not exposed."
+  },
+  "previousPendingCandidate": {
     "session": "V2-121",
     "parent": "7266e6df723ad6c9e1fca2b7056802b528bcd38f",
     "description": "## V2-121 — Focused synthetic review in existing world-grid workflow\n\nV2-120 returned PR workflows at observation: 5/9 green. Integrate exact probe suite into existing finite grid with review budget, readable assignment cards, uncovered/untested/minimality detail, local report disclosure and separate pins. Replays the grid; no computation savings claimed. Stale exports cleared on budget, grid or investigation change. Actual browser export and downloaded independent verifier regression, mobile journey retained. CI pending. No semantic authority. Next: permanent frozen assumption-case development benchmark with matched comparators and negative controls."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-120",
-    "parent": "4bed121ecd295b85d021ff254fb95dbf3a88a3a9",
-    "description": "## V2-120 — Independent semantic probe subset optimization\n\nIndependent Python reconstructs the exact pinned finite grid and enumerates combinations with set unions rather than the JS bitmask DP. Verifies group deduplication, tested proper-subset minimality, budget optimum, excluded/unresolved and truncated cases. Five synthetic fixtures and repinned mutations, closed offline archive profile; exact CI pending. V2-117 and V2-118 exact nine returned PR workflows green (knowledge runs 45718126155, 45718273782). V2-119 pending at observation. No claim of semantic coverage, physical feasibility, or reduced grid evaluation work. Browser integration next."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -5140,6 +5140,189 @@
         {
           "id": 45718807781,
           "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "PR observation only; separate push run not exposed."
+    },
+    {
+      "sourceRevision": "4bed121ecd295b85d021ff254fb95dbf3a88a3a9",
+      "runs": [
+        {
+          "id": 45718627803,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718627796,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718627708,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718627899,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718627707,
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718627699,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718627873,
+          "name": "Validate SUTRA learner shell",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718627752,
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718627913,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "PR observation only; separate push run not exposed."
+    },
+    {
+      "sourceRevision": "7266e6df723ad6c9e1fca2b7056802b528bcd38f",
+      "runs": [
+        {
+          "id": 45718807690,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718807608,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718807616,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718807565,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718807781,
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718807570,
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718807778,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718807550,
+          "name": "Validate SUTRA learner shell",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45718807666,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "limitation": "PR observation only; separate push run not exposed."
+    },
+    {
+      "sourceRevision": "8c00a9123ea629a1770dd0da457b496d78ae07dc",
+      "runs": [
+        {
+          "id": 45719015715,
+          "name": "Validate SUTRA legacy release-materializer compatibility gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45719015089,
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45719014446,
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 45719014497,
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45719014369,
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45719014420,
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45719014360,
+          "name": "Validate SUTRA learner shell",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 45719014461,
+          "name": "Validate SUTRA Cloudflare ingress",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45719014724,
+          "name": "Validate SUTRA browser compatibility matrix",
           "status": "completed",
           "conclusion": "success"
         }

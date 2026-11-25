@@ -1,0 +1,4493 @@
+{
+  "schemaVersion": 1,
+  "dataset": "sutra-assumption-development-v1",
+  "category": "assumptions_and_counterexamples",
+  "split": "development_synthetic",
+  "annotation": "Developer-authored fixed cases. Expected states and optimal review sets calculated with a separate authoring-only exact rational oracle before the SUTRA runner was implemented. Not externally annotated, held out, or empirical.",
+  "cases": [
+    {
+      "id": "boundary_1",
+      "family": "boundary",
+      "question": "Does the value strictly exceed the declared threshold?",
+      "note": "Strict versus inclusive threshold; equality is a distinguishing input.",
+      "inputs": {
+        "x": "6",
+        "t": "5"
+      },
+      "programs": [
+        {
+          "id": "inclusive",
+          "formula": "[x]>=[t]"
+        },
+        {
+          "id": "strict",
+          "formula": "[x]>[t]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "6/1",
+            "5/1",
+            "4/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "inclusive": "CONDITIONALLY_SATISFIED",
+          "strict": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "inclusive"
+          ],
+          [
+            "strict"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 3,
+        "evaluatedAssignments": 3,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "strict": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "strict": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "inclusive": "constraint_refuted",
+              "strict": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "inclusive",
+            "right": "strict",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "boundary_2",
+      "family": "boundary",
+      "question": "Does the value strictly exceed the declared threshold?",
+      "note": "Strict versus inclusive threshold; equality is a distinguishing input.",
+      "inputs": {
+        "x": "9",
+        "t": "10"
+      },
+      "programs": [
+        {
+          "id": "inclusive",
+          "formula": "[x]>=[t]"
+        },
+        {
+          "id": "strict",
+          "formula": "[x]>[t]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "9/1",
+            "10/1",
+            "11/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "inclusive": "CONDITIONALLY_REFUTED",
+          "strict": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "inclusive"
+          ],
+          [
+            "strict"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 3,
+        "evaluatedAssignments": 3,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "inclusive": "constraint_refuted",
+              "strict": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "strict": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "strict": "constraint_satisfied"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "inclusive",
+            "right": "strict",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "boundary_3",
+      "family": "boundary",
+      "question": "Does the value strictly exceed the declared threshold?",
+      "note": "Strict versus inclusive threshold; equality is a distinguishing input.",
+      "inputs": {
+        "x": "16",
+        "t": "15"
+      },
+      "programs": [
+        {
+          "id": "inclusive",
+          "formula": "[x]>=[t]"
+        },
+        {
+          "id": "strict",
+          "formula": "[x]>[t]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "16/1",
+            "15/1",
+            "14/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "inclusive": "CONDITIONALLY_SATISFIED",
+          "strict": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "inclusive"
+          ],
+          [
+            "strict"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 3,
+        "evaluatedAssignments": 3,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "strict": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "strict": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "inclusive": "constraint_refuted",
+              "strict": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "inclusive",
+            "right": "strict",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "boundary_4",
+      "family": "boundary",
+      "question": "Does the value strictly exceed the declared threshold?",
+      "note": "Strict versus inclusive threshold; equality is a distinguishing input.",
+      "inputs": {
+        "x": "19",
+        "t": "20"
+      },
+      "programs": [
+        {
+          "id": "inclusive",
+          "formula": "[x]>=[t]"
+        },
+        {
+          "id": "strict",
+          "formula": "[x]>[t]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "19/1",
+            "20/1",
+            "21/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "inclusive": "CONDITIONALLY_REFUTED",
+          "strict": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "inclusive"
+          ],
+          [
+            "strict"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 3,
+        "evaluatedAssignments": 3,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "inclusive": "constraint_refuted",
+              "strict": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "strict": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "strict": "constraint_satisfied"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "inclusive",
+            "right": "strict",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "coverage_limits_1",
+      "family": "coverage_limits",
+      "question": "Does the synthetic product exceed the threshold?",
+      "note": "Truncated prefix omits the distinguishing joint world.",
+      "inputs": {
+        "x": "2",
+        "y": "2",
+        "limit": "9"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]>[limit]"
+        },
+        {
+          "id": "sum",
+          "formula": "[x]+[x]>[limit]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "2/1",
+            "4/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "2/1",
+            "4/1"
+          ]
+        }
+      ],
+      "maxAssignments": 3,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "sum": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "sum"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 4,
+        "evaluatedAssignments": 3,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "sum",
+            "witnessWorldIds": [],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 0,
+        "selectedWorldIds": [],
+        "coveredPairs": 0,
+        "totalChangedBindings": 0
+      }
+    },
+    {
+      "id": "coverage_limits_2",
+      "family": "coverage_limits",
+      "question": "Does the synthetic product exceed the threshold?",
+      "note": "Joint witness present but baseline-containing proper subsets were never tested.",
+      "inputs": {
+        "x": "2",
+        "y": "2",
+        "limit": "9"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]>[limit]"
+        },
+        {
+          "id": "sum",
+          "formula": "[x]+[x]>[limit]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "4/1",
+            "6/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "4/1",
+            "6/1"
+          ]
+        }
+      ],
+      "maxAssignments": 1,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "sum": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "sum"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 4,
+        "evaluatedAssignments": 1,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_satisfied",
+              "sum": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "sum",
+            "witnessWorldIds": [
+              "world_01"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_01"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 2
+      }
+    },
+    {
+      "id": "coverage_limits_3",
+      "family": "coverage_limits",
+      "question": "Does a three-factor product exceed its threshold?",
+      "note": "Truncated three-axis prefix; no global invariance.",
+      "inputs": {
+        "x": "2",
+        "y": "2",
+        "z": "2",
+        "limit": "33"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]*[z]>[limit]"
+        },
+        {
+          "id": "sum",
+          "formula": "[x]+[x]>[limit]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "2/1",
+            "4/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "2/1",
+            "4/1"
+          ]
+        },
+        {
+          "bindingId": "z",
+          "values": [
+            "2/1",
+            "4/1"
+          ]
+        }
+      ],
+      "maxAssignments": 5,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "sum": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "sum"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 8,
+        "evaluatedAssignments": 5,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_05",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "sum",
+            "witnessWorldIds": [],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 0,
+        "selectedWorldIds": [],
+        "coveredPairs": 0,
+        "totalChangedBindings": 0
+      }
+    },
+    {
+      "id": "coverage_limits_4",
+      "family": "coverage_limits",
+      "question": "Which stated comparison is conditionally satisfied?",
+      "note": "Refused and baseline-unresolved programs never become decisive just because a hypothetical world fills their problem.",
+      "inputs": {
+        "x": "2",
+        "y": "2",
+        "z": "0",
+        "limit": "9"
+      },
+      "programs": [
+        {
+          "id": "invalid",
+          "formula": null
+        },
+        {
+          "id": "product",
+          "formula": "[x]*[y]>[limit]"
+        },
+        {
+          "id": "ratio",
+          "formula": "[x]/[z]>[limit]"
+        },
+        {
+          "id": "sum",
+          "formula": "[x]+[x]>[limit]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "2/1",
+            "4/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "2/1",
+            "4/1"
+          ]
+        },
+        {
+          "bindingId": "z",
+          "values": [
+            "0/1",
+            "1/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "invalid": "REFUSED",
+          "product": "CONDITIONALLY_REFUTED",
+          "ratio": "UNRESOLVED_COMPUTATION",
+          "sum": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "sum"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 8,
+        "evaluatedAssignments": 8,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "invalid": "REFUSED",
+              "product": "constraint_refuted",
+              "ratio": "UNRESOLVED_COMPUTATION",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "invalid": "REFUSED",
+              "product": "constraint_refuted",
+              "ratio": "UNRESOLVED_COMPUTATION",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "invalid": "REFUSED",
+              "product": "constraint_refuted",
+              "ratio": "UNRESOLVED_COMPUTATION",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "invalid": "REFUSED",
+              "product": "constraint_refuted",
+              "ratio": "UNRESOLVED_COMPUTATION",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_05",
+            "states": {
+              "invalid": "REFUSED",
+              "product": "constraint_refuted",
+              "ratio": "UNRESOLVED_COMPUTATION",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_06",
+            "states": {
+              "invalid": "REFUSED",
+              "product": "constraint_refuted",
+              "ratio": "UNRESOLVED_COMPUTATION",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_07",
+            "states": {
+              "invalid": "REFUSED",
+              "product": "constraint_satisfied",
+              "ratio": "UNRESOLVED_COMPUTATION",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_08",
+            "states": {
+              "invalid": "REFUSED",
+              "product": "constraint_satisfied",
+              "ratio": "UNRESOLVED_COMPUTATION",
+              "sum": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "sum",
+            "witnessWorldIds": [
+              "world_07",
+              "world_08"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_07"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 2
+      }
+    },
+    {
+      "id": "denominator_1",
+      "family": "denominator",
+      "question": "Does the current population rate exceed one half?",
+      "note": "Population ambiguity; zero denominator must remain unresolved, not become a decisive witness.",
+      "inputs": {
+        "count": "6",
+        "current_pop": "8",
+        "prior_pop": "8",
+        "rate": "1/2"
+      },
+      "programs": [
+        {
+          "id": "current",
+          "formula": "[count]/[current_pop]>[rate]"
+        },
+        {
+          "id": "prior",
+          "formula": "[count]/[prior_pop]>[rate]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "current_pop",
+          "values": [
+            "8/1",
+            "16/1",
+            "0/1"
+          ]
+        },
+        {
+          "bindingId": "prior_pop",
+          "values": [
+            "8/1",
+            "16/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "current": "CONDITIONALLY_SATISFIED",
+          "prior": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "current"
+          ],
+          [
+            "prior"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 6,
+        "evaluatedAssignments": 6,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_05",
+            "states": {
+              "current": "blocked",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_06",
+            "states": {
+              "current": "blocked",
+              "prior": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "current",
+            "right": "prior",
+            "witnessWorldIds": [
+              "world_02",
+              "world_03"
+            ],
+            "unresolvedWorldIds": [
+              "world_05",
+              "world_06"
+            ]
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "denominator_2",
+      "family": "denominator",
+      "question": "Does the current population rate exceed one half?",
+      "note": "Population ambiguity; zero denominator must remain unresolved, not become a decisive witness.",
+      "inputs": {
+        "count": "9",
+        "current_pop": "12",
+        "prior_pop": "12",
+        "rate": "1/2"
+      },
+      "programs": [
+        {
+          "id": "current",
+          "formula": "[count]/[current_pop]>[rate]"
+        },
+        {
+          "id": "prior",
+          "formula": "[count]/[prior_pop]>[rate]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "current_pop",
+          "values": [
+            "12/1",
+            "24/1",
+            "0/1"
+          ]
+        },
+        {
+          "bindingId": "prior_pop",
+          "values": [
+            "12/1",
+            "24/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "current": "CONDITIONALLY_SATISFIED",
+          "prior": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "current"
+          ],
+          [
+            "prior"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 6,
+        "evaluatedAssignments": 6,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_05",
+            "states": {
+              "current": "blocked",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_06",
+            "states": {
+              "current": "blocked",
+              "prior": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "current",
+            "right": "prior",
+            "witnessWorldIds": [
+              "world_02",
+              "world_03"
+            ],
+            "unresolvedWorldIds": [
+              "world_05",
+              "world_06"
+            ]
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "denominator_3",
+      "family": "denominator",
+      "question": "Does the current population rate exceed one half?",
+      "note": "Population ambiguity; zero denominator must remain unresolved, not become a decisive witness.",
+      "inputs": {
+        "count": "12",
+        "current_pop": "16",
+        "prior_pop": "16",
+        "rate": "1/2"
+      },
+      "programs": [
+        {
+          "id": "current",
+          "formula": "[count]/[current_pop]>[rate]"
+        },
+        {
+          "id": "prior",
+          "formula": "[count]/[prior_pop]>[rate]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "current_pop",
+          "values": [
+            "16/1",
+            "32/1",
+            "0/1"
+          ]
+        },
+        {
+          "bindingId": "prior_pop",
+          "values": [
+            "16/1",
+            "32/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "current": "CONDITIONALLY_SATISFIED",
+          "prior": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "current"
+          ],
+          [
+            "prior"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 6,
+        "evaluatedAssignments": 6,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_05",
+            "states": {
+              "current": "blocked",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_06",
+            "states": {
+              "current": "blocked",
+              "prior": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "current",
+            "right": "prior",
+            "witnessWorldIds": [
+              "world_02",
+              "world_03"
+            ],
+            "unresolvedWorldIds": [
+              "world_05",
+              "world_06"
+            ]
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "denominator_4",
+      "family": "denominator",
+      "question": "Does the current population rate exceed one half?",
+      "note": "Population ambiguity; zero denominator must remain unresolved, not become a decisive witness.",
+      "inputs": {
+        "count": "15",
+        "current_pop": "20",
+        "prior_pop": "20",
+        "rate": "1/2"
+      },
+      "programs": [
+        {
+          "id": "current",
+          "formula": "[count]/[current_pop]>[rate]"
+        },
+        {
+          "id": "prior",
+          "formula": "[count]/[prior_pop]>[rate]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "current_pop",
+          "values": [
+            "20/1",
+            "40/1",
+            "0/1"
+          ]
+        },
+        {
+          "bindingId": "prior_pop",
+          "values": [
+            "20/1",
+            "40/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "current": "CONDITIONALLY_SATISFIED",
+          "prior": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "current"
+          ],
+          [
+            "prior"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 6,
+        "evaluatedAssignments": 6,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_05",
+            "states": {
+              "current": "blocked",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_06",
+            "states": {
+              "current": "blocked",
+              "prior": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "current",
+            "right": "prior",
+            "witnessWorldIds": [
+              "world_02",
+              "world_03"
+            ],
+            "unresolvedWorldIds": [
+              "world_05",
+              "world_06"
+            ]
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "equivalent_1",
+      "family": "equivalent",
+      "question": "Is the left value greater than the right?",
+      "note": "Negative control: structurally different but algebraically equivalent comparisons; no finite witness.",
+      "inputs": {
+        "x": "6",
+        "t": "5"
+      },
+      "programs": [
+        {
+          "id": "forward",
+          "formula": "[x]>[t]"
+        },
+        {
+          "id": "reverse",
+          "formula": "[t]<[x]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "t",
+          "values": [
+            "5/1",
+            "6/1"
+          ]
+        },
+        {
+          "bindingId": "x",
+          "values": [
+            "4/1",
+            "5/1",
+            "6/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "forward": "CONDITIONALLY_SATISFIED",
+          "reverse": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "forward"
+          ],
+          [
+            "reverse"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 6,
+        "evaluatedAssignments": 6,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "forward": "constraint_satisfied",
+              "reverse": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_05",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_06",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "forward",
+            "right": "reverse",
+            "witnessWorldIds": [],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 0,
+        "selectedWorldIds": [],
+        "coveredPairs": 0,
+        "totalChangedBindings": 0
+      }
+    },
+    {
+      "id": "equivalent_2",
+      "family": "equivalent",
+      "question": "Is the left value greater than the right?",
+      "note": "Negative control: structurally different but algebraically equivalent comparisons; no finite witness.",
+      "inputs": {
+        "x": "11",
+        "t": "10"
+      },
+      "programs": [
+        {
+          "id": "forward",
+          "formula": "[x]>[t]"
+        },
+        {
+          "id": "reverse",
+          "formula": "[t]<[x]"
+        },
+        {
+          "id": "reverse_copy",
+          "formula": "[t]<[x]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "t",
+          "values": [
+            "10/1",
+            "11/1"
+          ]
+        },
+        {
+          "bindingId": "x",
+          "values": [
+            "9/1",
+            "10/1",
+            "11/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "forward": "CONDITIONALLY_SATISFIED",
+          "reverse": "CONDITIONALLY_SATISFIED",
+          "reverse_copy": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "forward"
+          ],
+          [
+            "reverse",
+            "reverse_copy"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 6,
+        "evaluatedAssignments": 6,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted",
+              "reverse_copy": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted",
+              "reverse_copy": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "forward": "constraint_satisfied",
+              "reverse": "constraint_satisfied",
+              "reverse_copy": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted",
+              "reverse_copy": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_05",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted",
+              "reverse_copy": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_06",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted",
+              "reverse_copy": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "forward",
+            "right": "reverse",
+            "witnessWorldIds": [],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 0,
+        "selectedWorldIds": [],
+        "coveredPairs": 0,
+        "totalChangedBindings": 0
+      }
+    },
+    {
+      "id": "equivalent_3",
+      "family": "equivalent",
+      "question": "Is the left value greater than the right?",
+      "note": "Negative control: structurally different but algebraically equivalent comparisons; no finite witness.",
+      "inputs": {
+        "x": "16",
+        "t": "15"
+      },
+      "programs": [
+        {
+          "id": "forward",
+          "formula": "[x]>[t]"
+        },
+        {
+          "id": "reverse",
+          "formula": "[t]<[x]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "t",
+          "values": [
+            "15/1",
+            "16/1"
+          ]
+        },
+        {
+          "bindingId": "x",
+          "values": [
+            "14/1",
+            "15/1",
+            "16/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "forward": "CONDITIONALLY_SATISFIED",
+          "reverse": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "forward"
+          ],
+          [
+            "reverse"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 6,
+        "evaluatedAssignments": 6,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "forward": "constraint_satisfied",
+              "reverse": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_05",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_06",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "forward",
+            "right": "reverse",
+            "witnessWorldIds": [],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 0,
+        "selectedWorldIds": [],
+        "coveredPairs": 0,
+        "totalChangedBindings": 0
+      }
+    },
+    {
+      "id": "equivalent_4",
+      "family": "equivalent",
+      "question": "Is the left value greater than the right?",
+      "note": "Negative control: structurally different but algebraically equivalent comparisons; no finite witness.",
+      "inputs": {
+        "x": "21",
+        "t": "20"
+      },
+      "programs": [
+        {
+          "id": "forward",
+          "formula": "[x]>[t]"
+        },
+        {
+          "id": "reverse",
+          "formula": "[t]<[x]"
+        },
+        {
+          "id": "reverse_copy",
+          "formula": "[t]<[x]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "t",
+          "values": [
+            "20/1",
+            "21/1"
+          ]
+        },
+        {
+          "bindingId": "x",
+          "values": [
+            "19/1",
+            "20/1",
+            "21/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "forward": "CONDITIONALLY_SATISFIED",
+          "reverse": "CONDITIONALLY_SATISFIED",
+          "reverse_copy": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "forward"
+          ],
+          [
+            "reverse",
+            "reverse_copy"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 6,
+        "evaluatedAssignments": 6,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted",
+              "reverse_copy": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted",
+              "reverse_copy": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "forward": "constraint_satisfied",
+              "reverse": "constraint_satisfied",
+              "reverse_copy": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted",
+              "reverse_copy": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_05",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted",
+              "reverse_copy": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_06",
+            "states": {
+              "forward": "constraint_refuted",
+              "reverse": "constraint_refuted",
+              "reverse_copy": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "forward",
+            "right": "reverse",
+            "witnessWorldIds": [],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 0,
+        "selectedWorldIds": [],
+        "coveredPairs": 0,
+        "totalChangedBindings": 0
+      }
+    },
+    {
+      "id": "joint_three_1",
+      "family": "joint_three",
+      "question": "Does the declared three-factor score exceed its threshold?",
+      "note": "All single and double changes agree; only the three-way change distinguishes.",
+      "inputs": {
+        "x": "2",
+        "y": "2",
+        "z": "2",
+        "limit": "33"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]*[z]>[limit]"
+        },
+        {
+          "id": "sum",
+          "formula": "[x]+[x]>[limit]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "2/1",
+            "4/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "2/1",
+            "4/1"
+          ]
+        },
+        {
+          "bindingId": "z",
+          "values": [
+            "2/1",
+            "4/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "sum": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "sum"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 8,
+        "evaluatedAssignments": 8,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_05",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_06",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_07",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_08",
+            "states": {
+              "product": "constraint_satisfied",
+              "sum": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "sum",
+            "witnessWorldIds": [
+              "world_08"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_08"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 3
+      }
+    },
+    {
+      "id": "joint_three_2",
+      "family": "joint_three",
+      "question": "Does the declared three-factor score exceed its threshold?",
+      "note": "All single and double changes agree; only the three-way change distinguishes.",
+      "inputs": {
+        "x": "3",
+        "y": "3",
+        "z": "3",
+        "limit": "109"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]*[z]>[limit]"
+        },
+        {
+          "id": "sum",
+          "formula": "[x]+[x]>[limit]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "3/1",
+            "6/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "3/1",
+            "6/1"
+          ]
+        },
+        {
+          "bindingId": "z",
+          "values": [
+            "3/1",
+            "6/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "sum": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "sum"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 8,
+        "evaluatedAssignments": 8,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_05",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_06",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_07",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_08",
+            "states": {
+              "product": "constraint_satisfied",
+              "sum": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "sum",
+            "witnessWorldIds": [
+              "world_08"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_08"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 3
+      }
+    },
+    {
+      "id": "joint_three_3",
+      "family": "joint_three",
+      "question": "Does the declared three-factor score exceed its threshold?",
+      "note": "All single and double changes agree; only the three-way change distinguishes.",
+      "inputs": {
+        "x": "4",
+        "y": "4",
+        "z": "4",
+        "limit": "257"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]*[z]>[limit]"
+        },
+        {
+          "id": "sum",
+          "formula": "[x]+[x]>[limit]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "4/1",
+            "8/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "4/1",
+            "8/1"
+          ]
+        },
+        {
+          "bindingId": "z",
+          "values": [
+            "4/1",
+            "8/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "sum": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "sum"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 8,
+        "evaluatedAssignments": 8,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_05",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_06",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_07",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_08",
+            "states": {
+              "product": "constraint_satisfied",
+              "sum": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "sum",
+            "witnessWorldIds": [
+              "world_08"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_08"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 3
+      }
+    },
+    {
+      "id": "joint_three_4",
+      "family": "joint_three",
+      "question": "Does the declared three-factor score exceed its threshold?",
+      "note": "All single and double changes agree; only the three-way change distinguishes.",
+      "inputs": {
+        "x": "5",
+        "y": "5",
+        "z": "5",
+        "limit": "501"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]*[z]>[limit]"
+        },
+        {
+          "id": "sum",
+          "formula": "[x]+[x]>[limit]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "5/1",
+            "10/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "5/1",
+            "10/1"
+          ]
+        },
+        {
+          "bindingId": "z",
+          "values": [
+            "5/1",
+            "10/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "sum": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "sum"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 8,
+        "evaluatedAssignments": 8,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_05",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_06",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_07",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_08",
+            "states": {
+              "product": "constraint_satisfied",
+              "sum": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "sum",
+            "witnessWorldIds": [
+              "world_08"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_08"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 3
+      }
+    },
+    {
+      "id": "joint_two_1",
+      "family": "joint_two",
+      "question": "Does the declared two-factor score exceed its threshold?",
+      "note": "Only the joint double change separates the two baseline-refuted programs.",
+      "inputs": {
+        "x": "2",
+        "y": "2",
+        "limit": "9"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]>[limit]"
+        },
+        {
+          "id": "sum",
+          "formula": "[x]+[x]>[limit]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "2/1",
+            "4/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "2/1",
+            "4/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "sum": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "sum"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 4,
+        "evaluatedAssignments": 4,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "product": "constraint_satisfied",
+              "sum": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "sum",
+            "witnessWorldIds": [
+              "world_04"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_04"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 2
+      }
+    },
+    {
+      "id": "joint_two_2",
+      "family": "joint_two",
+      "question": "Does the declared two-factor score exceed its threshold?",
+      "note": "Only the joint double change separates the two baseline-refuted programs.",
+      "inputs": {
+        "x": "3",
+        "y": "3",
+        "limit": "19"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]>[limit]"
+        },
+        {
+          "id": "sum",
+          "formula": "[x]+[x]>[limit]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "3/1",
+            "6/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "3/1",
+            "6/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "sum": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "sum"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 4,
+        "evaluatedAssignments": 4,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "product": "constraint_satisfied",
+              "sum": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "sum",
+            "witnessWorldIds": [
+              "world_04"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_04"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 2
+      }
+    },
+    {
+      "id": "joint_two_3",
+      "family": "joint_two",
+      "question": "Does the declared two-factor score exceed its threshold?",
+      "note": "Only the joint double change separates the two baseline-refuted programs.",
+      "inputs": {
+        "x": "4",
+        "y": "4",
+        "limit": "33"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]>[limit]"
+        },
+        {
+          "id": "sum",
+          "formula": "[x]+[x]>[limit]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "4/1",
+            "8/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "4/1",
+            "8/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "sum": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "sum"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 4,
+        "evaluatedAssignments": 4,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "product": "constraint_satisfied",
+              "sum": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "sum",
+            "witnessWorldIds": [
+              "world_04"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_04"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 2
+      }
+    },
+    {
+      "id": "joint_two_4",
+      "family": "joint_two",
+      "question": "Does the declared two-factor score exceed its threshold?",
+      "note": "Only the joint double change separates the two baseline-refuted programs.",
+      "inputs": {
+        "x": "5",
+        "y": "5",
+        "limit": "51"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]>[limit]"
+        },
+        {
+          "id": "sum",
+          "formula": "[x]+[x]>[limit]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "5/1",
+            "10/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "5/1",
+            "10/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "sum": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "sum"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 4,
+        "evaluatedAssignments": 4,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "product": "constraint_refuted",
+              "sum": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "product": "constraint_satisfied",
+              "sum": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "sum",
+            "witnessWorldIds": [
+              "world_04"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_04"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 2
+      }
+    },
+    {
+      "id": "negation_1",
+      "family": "negation",
+      "question": "Is the amount no greater than its threshold?",
+      "note": "Negation/inclusive boundary; opposite baseline is already divergent, not a discovered witness.",
+      "inputs": {
+        "x": "3",
+        "t": "5"
+      },
+      "programs": [
+        {
+          "id": "inclusive",
+          "formula": "[x]<=[t]"
+        },
+        {
+          "id": "opposite",
+          "formula": "[x]>[t]"
+        },
+        {
+          "id": "strict",
+          "formula": "[x]<[t]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "3/1",
+            "5/1",
+            "6/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "inclusive": "CONDITIONALLY_SATISFIED",
+          "opposite": "CONDITIONALLY_REFUTED",
+          "strict": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "inclusive"
+          ],
+          [
+            "opposite"
+          ],
+          [
+            "strict"
+          ]
+        ],
+        "alreadyDivergent": [
+          {
+            "left": "inclusive",
+            "right": "opposite"
+          },
+          {
+            "left": "opposite",
+            "right": "strict"
+          }
+        ],
+        "totalAssignments": 3,
+        "evaluatedAssignments": 3,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "opposite": "constraint_refuted",
+              "strict": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "opposite": "constraint_refuted",
+              "strict": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "inclusive": "constraint_refuted",
+              "opposite": "constraint_satisfied",
+              "strict": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "inclusive",
+            "right": "strict",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "negation_2",
+      "family": "negation",
+      "question": "Is the amount no greater than its threshold?",
+      "note": "Negation/inclusive boundary; opposite baseline is already divergent, not a discovered witness.",
+      "inputs": {
+        "x": "8",
+        "t": "10"
+      },
+      "programs": [
+        {
+          "id": "inclusive",
+          "formula": "[x]<=[t]"
+        },
+        {
+          "id": "opposite",
+          "formula": "[x]>[t]"
+        },
+        {
+          "id": "strict",
+          "formula": "[x]<[t]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "8/1",
+            "10/1",
+            "11/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "inclusive": "CONDITIONALLY_SATISFIED",
+          "opposite": "CONDITIONALLY_REFUTED",
+          "strict": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "inclusive"
+          ],
+          [
+            "opposite"
+          ],
+          [
+            "strict"
+          ]
+        ],
+        "alreadyDivergent": [
+          {
+            "left": "inclusive",
+            "right": "opposite"
+          },
+          {
+            "left": "opposite",
+            "right": "strict"
+          }
+        ],
+        "totalAssignments": 3,
+        "evaluatedAssignments": 3,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "opposite": "constraint_refuted",
+              "strict": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "opposite": "constraint_refuted",
+              "strict": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "inclusive": "constraint_refuted",
+              "opposite": "constraint_satisfied",
+              "strict": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "inclusive",
+            "right": "strict",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "negation_3",
+      "family": "negation",
+      "question": "Is the amount no greater than its threshold?",
+      "note": "Negation/inclusive boundary; opposite baseline is already divergent, not a discovered witness.",
+      "inputs": {
+        "x": "13",
+        "t": "15"
+      },
+      "programs": [
+        {
+          "id": "inclusive",
+          "formula": "[x]<=[t]"
+        },
+        {
+          "id": "opposite",
+          "formula": "[x]>[t]"
+        },
+        {
+          "id": "strict",
+          "formula": "[x]<[t]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "13/1",
+            "15/1",
+            "16/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "inclusive": "CONDITIONALLY_SATISFIED",
+          "opposite": "CONDITIONALLY_REFUTED",
+          "strict": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "inclusive"
+          ],
+          [
+            "opposite"
+          ],
+          [
+            "strict"
+          ]
+        ],
+        "alreadyDivergent": [
+          {
+            "left": "inclusive",
+            "right": "opposite"
+          },
+          {
+            "left": "opposite",
+            "right": "strict"
+          }
+        ],
+        "totalAssignments": 3,
+        "evaluatedAssignments": 3,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "opposite": "constraint_refuted",
+              "strict": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "opposite": "constraint_refuted",
+              "strict": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "inclusive": "constraint_refuted",
+              "opposite": "constraint_satisfied",
+              "strict": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "inclusive",
+            "right": "strict",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "negation_4",
+      "family": "negation",
+      "question": "Is the amount no greater than its threshold?",
+      "note": "Negation/inclusive boundary; opposite baseline is already divergent, not a discovered witness.",
+      "inputs": {
+        "x": "18",
+        "t": "20"
+      },
+      "programs": [
+        {
+          "id": "inclusive",
+          "formula": "[x]<=[t]"
+        },
+        {
+          "id": "opposite",
+          "formula": "[x]>[t]"
+        },
+        {
+          "id": "strict",
+          "formula": "[x]<[t]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "18/1",
+            "20/1",
+            "21/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "inclusive": "CONDITIONALLY_SATISFIED",
+          "opposite": "CONDITIONALLY_REFUTED",
+          "strict": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "inclusive"
+          ],
+          [
+            "opposite"
+          ],
+          [
+            "strict"
+          ]
+        ],
+        "alreadyDivergent": [
+          {
+            "left": "inclusive",
+            "right": "opposite"
+          },
+          {
+            "left": "opposite",
+            "right": "strict"
+          }
+        ],
+        "totalAssignments": 3,
+        "evaluatedAssignments": 3,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "opposite": "constraint_refuted",
+              "strict": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "inclusive": "constraint_satisfied",
+              "opposite": "constraint_refuted",
+              "strict": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "inclusive": "constraint_refuted",
+              "opposite": "constraint_satisfied",
+              "strict": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "inclusive",
+            "right": "strict",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "period_1",
+      "family": "period",
+      "question": "Did the current-period amount exceed the limit?",
+      "note": "Current versus prior, with repeated exact structural programs in controls.",
+      "inputs": {
+        "current": "8",
+        "prior": "8",
+        "t": "5"
+      },
+      "programs": [
+        {
+          "id": "current",
+          "formula": "[current]>[t]"
+        },
+        {
+          "id": "prior",
+          "formula": "[prior]>[t]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "current",
+          "values": [
+            "8/1",
+            "4/1"
+          ]
+        },
+        {
+          "bindingId": "prior",
+          "values": [
+            "8/1",
+            "4/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "current": "CONDITIONALLY_SATISFIED",
+          "prior": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "current"
+          ],
+          [
+            "prior"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 4,
+        "evaluatedAssignments": 4,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "current",
+            "right": "prior",
+            "witnessWorldIds": [
+              "world_02",
+              "world_03"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "period_2",
+      "family": "period",
+      "question": "Did the current-period amount exceed the limit?",
+      "note": "Current versus prior, with repeated exact structural programs in controls.",
+      "inputs": {
+        "current": "13",
+        "prior": "13",
+        "t": "10"
+      },
+      "programs": [
+        {
+          "id": "current",
+          "formula": "[current]>[t]"
+        },
+        {
+          "id": "prior",
+          "formula": "[prior]>[t]"
+        },
+        {
+          "id": "prior_copy",
+          "formula": "[prior]>[t]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "current",
+          "values": [
+            "13/1",
+            "9/1"
+          ]
+        },
+        {
+          "bindingId": "prior",
+          "values": [
+            "13/1",
+            "9/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "current": "CONDITIONALLY_SATISFIED",
+          "prior": "CONDITIONALLY_SATISFIED",
+          "prior_copy": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "current"
+          ],
+          [
+            "prior",
+            "prior_copy"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 4,
+        "evaluatedAssignments": 4,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_satisfied",
+              "prior_copy": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_refuted",
+              "prior_copy": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_satisfied",
+              "prior_copy": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_refuted",
+              "prior_copy": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "current",
+            "right": "prior",
+            "witnessWorldIds": [
+              "world_02",
+              "world_03"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "period_3",
+      "family": "period",
+      "question": "Did the current-period amount exceed the limit?",
+      "note": "Current versus prior, with repeated exact structural programs in controls.",
+      "inputs": {
+        "current": "18",
+        "prior": "18",
+        "t": "15"
+      },
+      "programs": [
+        {
+          "id": "current",
+          "formula": "[current]>[t]"
+        },
+        {
+          "id": "prior",
+          "formula": "[prior]>[t]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "current",
+          "values": [
+            "18/1",
+            "14/1"
+          ]
+        },
+        {
+          "bindingId": "prior",
+          "values": [
+            "18/1",
+            "14/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "current": "CONDITIONALLY_SATISFIED",
+          "prior": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "current"
+          ],
+          [
+            "prior"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 4,
+        "evaluatedAssignments": 4,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "current",
+            "right": "prior",
+            "witnessWorldIds": [
+              "world_02",
+              "world_03"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "period_4",
+      "family": "period",
+      "question": "Did the current-period amount exceed the limit?",
+      "note": "Current versus prior, with repeated exact structural programs in controls.",
+      "inputs": {
+        "current": "23",
+        "prior": "23",
+        "t": "20"
+      },
+      "programs": [
+        {
+          "id": "current",
+          "formula": "[current]>[t]"
+        },
+        {
+          "id": "prior",
+          "formula": "[prior]>[t]"
+        },
+        {
+          "id": "prior_copy",
+          "formula": "[prior]>[t]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "current",
+          "values": [
+            "23/1",
+            "19/1"
+          ]
+        },
+        {
+          "bindingId": "prior",
+          "values": [
+            "23/1",
+            "19/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "current": "CONDITIONALLY_SATISFIED",
+          "prior": "CONDITIONALLY_SATISFIED",
+          "prior_copy": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "current"
+          ],
+          [
+            "prior",
+            "prior_copy"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 4,
+        "evaluatedAssignments": 4,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_satisfied",
+              "prior_copy": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "current": "constraint_satisfied",
+              "prior": "constraint_refuted",
+              "prior_copy": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_satisfied",
+              "prior_copy": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "current": "constraint_refuted",
+              "prior": "constraint_refuted",
+              "prior_copy": "constraint_refuted"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "current",
+            "right": "prior",
+            "witnessWorldIds": [
+              "world_02",
+              "world_03"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "relative_1",
+      "family": "relative",
+      "question": "Did the amount improve relative to its prior value?",
+      "note": "Absolute and relative change agree at baseline; alternative denominator changes distinguish.",
+      "inputs": {
+        "now": "15",
+        "prior": "5",
+        "delta": "5",
+        "factor": "2"
+      },
+      "programs": [
+        {
+          "id": "absolute",
+          "formula": "[now]-[prior]>[delta]"
+        },
+        {
+          "id": "relative",
+          "formula": "[now]/[prior]>[factor]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "prior",
+          "values": [
+            "5/1",
+            "8/1",
+            "0/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "absolute": "CONDITIONALLY_SATISFIED",
+          "relative": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "absolute"
+          ],
+          [
+            "relative"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 3,
+        "evaluatedAssignments": 3,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "absolute": "constraint_satisfied",
+              "relative": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "absolute": "constraint_satisfied",
+              "relative": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "absolute": "constraint_satisfied",
+              "relative": "blocked"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "absolute",
+            "right": "relative",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": [
+              "world_03"
+            ]
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "relative_2",
+      "family": "relative",
+      "question": "Did the amount improve relative to its prior value?",
+      "note": "Absolute and relative change agree at baseline; alternative denominator changes distinguish.",
+      "inputs": {
+        "now": "30",
+        "prior": "10",
+        "delta": "10",
+        "factor": "2"
+      },
+      "programs": [
+        {
+          "id": "absolute",
+          "formula": "[now]-[prior]>[delta]"
+        },
+        {
+          "id": "relative",
+          "formula": "[now]/[prior]>[factor]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "prior",
+          "values": [
+            "10/1",
+            "16/1",
+            "0/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "absolute": "CONDITIONALLY_SATISFIED",
+          "relative": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "absolute"
+          ],
+          [
+            "relative"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 3,
+        "evaluatedAssignments": 3,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "absolute": "constraint_satisfied",
+              "relative": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "absolute": "constraint_satisfied",
+              "relative": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "absolute": "constraint_satisfied",
+              "relative": "blocked"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "absolute",
+            "right": "relative",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": [
+              "world_03"
+            ]
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "relative_3",
+      "family": "relative",
+      "question": "Did the amount improve relative to its prior value?",
+      "note": "Absolute and relative change agree at baseline; alternative denominator changes distinguish.",
+      "inputs": {
+        "now": "45",
+        "prior": "15",
+        "delta": "15",
+        "factor": "2"
+      },
+      "programs": [
+        {
+          "id": "absolute",
+          "formula": "[now]-[prior]>[delta]"
+        },
+        {
+          "id": "relative",
+          "formula": "[now]/[prior]>[factor]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "prior",
+          "values": [
+            "15/1",
+            "24/1",
+            "0/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "absolute": "CONDITIONALLY_SATISFIED",
+          "relative": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "absolute"
+          ],
+          [
+            "relative"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 3,
+        "evaluatedAssignments": 3,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "absolute": "constraint_satisfied",
+              "relative": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "absolute": "constraint_satisfied",
+              "relative": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "absolute": "constraint_satisfied",
+              "relative": "blocked"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "absolute",
+            "right": "relative",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": [
+              "world_03"
+            ]
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "relative_4",
+      "family": "relative",
+      "question": "Did the amount improve relative to its prior value?",
+      "note": "Absolute and relative change agree at baseline; alternative denominator changes distinguish.",
+      "inputs": {
+        "now": "60",
+        "prior": "20",
+        "delta": "20",
+        "factor": "2"
+      },
+      "programs": [
+        {
+          "id": "absolute",
+          "formula": "[now]-[prior]>[delta]"
+        },
+        {
+          "id": "relative",
+          "formula": "[now]/[prior]>[factor]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "prior",
+          "values": [
+            "20/1",
+            "32/1",
+            "0/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "absolute": "CONDITIONALLY_SATISFIED",
+          "relative": "CONDITIONALLY_SATISFIED"
+        },
+        "structuralGroups": [
+          [
+            "absolute"
+          ],
+          [
+            "relative"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 3,
+        "evaluatedAssignments": 3,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "absolute": "constraint_satisfied",
+              "relative": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "absolute": "constraint_satisfied",
+              "relative": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "absolute": "constraint_satisfied",
+              "relative": "blocked"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "absolute",
+            "right": "relative",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": [
+              "world_03"
+            ]
+          }
+        ],
+        "distinguishablePairs": 1,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 1,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "review_budget_1",
+      "family": "review_budget",
+      "question": "Which synthetic score exceeds its declared threshold?",
+      "note": "Three eligible pairs; a single review assignment covers two, two can cover all.",
+      "inputs": {
+        "x": "2",
+        "y": "2",
+        "small": "3",
+        "limit": "12"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]>[limit]"
+        },
+        {
+          "id": "x_only",
+          "formula": "[x]>[small]"
+        },
+        {
+          "id": "y_only",
+          "formula": "[y]>[small]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "2/1",
+            "4/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "2/1",
+            "4/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "x_only": "CONDITIONALLY_REFUTED",
+          "y_only": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "x_only"
+          ],
+          [
+            "y_only"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 4,
+        "evaluatedAssignments": 4,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_refuted",
+              "x_only": "constraint_refuted",
+              "y_only": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "product": "constraint_refuted",
+              "x_only": "constraint_refuted",
+              "y_only": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "product": "constraint_refuted",
+              "x_only": "constraint_satisfied",
+              "y_only": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "product": "constraint_satisfied",
+              "x_only": "constraint_satisfied",
+              "y_only": "constraint_satisfied"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "x_only",
+            "witnessWorldIds": [
+              "world_03"
+            ],
+            "unresolvedWorldIds": []
+          },
+          {
+            "left": "product",
+            "right": "y_only",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": []
+          },
+          {
+            "left": "x_only",
+            "right": "y_only",
+            "witnessWorldIds": [
+              "world_02",
+              "world_03"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 3,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 2,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "review_budget_2",
+      "family": "review_budget",
+      "question": "Which synthetic score exceeds its declared threshold?",
+      "note": "Three eligible pairs; a single review assignment covers two, two can cover all.",
+      "inputs": {
+        "x": "4",
+        "y": "4",
+        "small": "6",
+        "limit": "48"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]>[limit]"
+        },
+        {
+          "id": "x_only",
+          "formula": "[x]>[small]"
+        },
+        {
+          "id": "y_only",
+          "formula": "[y]>[small]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "4/1",
+            "8/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "4/1",
+            "8/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "x_only": "CONDITIONALLY_REFUTED",
+          "y_only": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "x_only"
+          ],
+          [
+            "y_only"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 4,
+        "evaluatedAssignments": 4,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_refuted",
+              "x_only": "constraint_refuted",
+              "y_only": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "product": "constraint_refuted",
+              "x_only": "constraint_refuted",
+              "y_only": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "product": "constraint_refuted",
+              "x_only": "constraint_satisfied",
+              "y_only": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "product": "constraint_satisfied",
+              "x_only": "constraint_satisfied",
+              "y_only": "constraint_satisfied"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "x_only",
+            "witnessWorldIds": [
+              "world_03"
+            ],
+            "unresolvedWorldIds": []
+          },
+          {
+            "left": "product",
+            "right": "y_only",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": []
+          },
+          {
+            "left": "x_only",
+            "right": "y_only",
+            "witnessWorldIds": [
+              "world_02",
+              "world_03"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 3,
+        "selectedWorldIds": [
+          "world_02",
+          "world_03"
+        ],
+        "coveredPairs": 3,
+        "totalChangedBindings": 2
+      }
+    },
+    {
+      "id": "review_budget_3",
+      "family": "review_budget",
+      "question": "Which synthetic score exceeds its declared threshold?",
+      "note": "Three eligible pairs; a single review assignment covers two, two can cover all.",
+      "inputs": {
+        "x": "6",
+        "y": "6",
+        "small": "9",
+        "limit": "108"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]>[limit]"
+        },
+        {
+          "id": "x_only",
+          "formula": "[x]>[small]"
+        },
+        {
+          "id": "y_only",
+          "formula": "[y]>[small]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "6/1",
+            "12/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "6/1",
+            "12/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 1,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "x_only": "CONDITIONALLY_REFUTED",
+          "y_only": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "x_only"
+          ],
+          [
+            "y_only"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 4,
+        "evaluatedAssignments": 4,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_refuted",
+              "x_only": "constraint_refuted",
+              "y_only": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "product": "constraint_refuted",
+              "x_only": "constraint_refuted",
+              "y_only": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "product": "constraint_refuted",
+              "x_only": "constraint_satisfied",
+              "y_only": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "product": "constraint_satisfied",
+              "x_only": "constraint_satisfied",
+              "y_only": "constraint_satisfied"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "x_only",
+            "witnessWorldIds": [
+              "world_03"
+            ],
+            "unresolvedWorldIds": []
+          },
+          {
+            "left": "product",
+            "right": "y_only",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": []
+          },
+          {
+            "left": "x_only",
+            "right": "y_only",
+            "witnessWorldIds": [
+              "world_02",
+              "world_03"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 3,
+        "selectedWorldIds": [
+          "world_02"
+        ],
+        "coveredPairs": 2,
+        "totalChangedBindings": 1
+      }
+    },
+    {
+      "id": "review_budget_4",
+      "family": "review_budget",
+      "question": "Which synthetic score exceeds its declared threshold?",
+      "note": "Three eligible pairs; a single review assignment covers two, two can cover all.",
+      "inputs": {
+        "x": "8",
+        "y": "8",
+        "small": "12",
+        "limit": "192"
+      },
+      "programs": [
+        {
+          "id": "product",
+          "formula": "[x]*[y]>[limit]"
+        },
+        {
+          "id": "x_only",
+          "formula": "[x]>[small]"
+        },
+        {
+          "id": "y_only",
+          "formula": "[y]>[small]"
+        }
+      ],
+      "axes": [
+        {
+          "bindingId": "x",
+          "values": [
+            "8/1",
+            "16/1"
+          ]
+        },
+        {
+          "bindingId": "y",
+          "values": [
+            "8/1",
+            "16/1"
+          ]
+        }
+      ],
+      "maxAssignments": 16,
+      "maxReviewWorlds": 2,
+      "expected": {
+        "baseline": {
+          "product": "CONDITIONALLY_REFUTED",
+          "x_only": "CONDITIONALLY_REFUTED",
+          "y_only": "CONDITIONALLY_REFUTED"
+        },
+        "structuralGroups": [
+          [
+            "product"
+          ],
+          [
+            "x_only"
+          ],
+          [
+            "y_only"
+          ]
+        ],
+        "alreadyDivergent": [],
+        "totalAssignments": 4,
+        "evaluatedAssignments": 4,
+        "worldStates": [
+          {
+            "id": "world_01",
+            "states": {
+              "product": "constraint_refuted",
+              "x_only": "constraint_refuted",
+              "y_only": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_02",
+            "states": {
+              "product": "constraint_refuted",
+              "x_only": "constraint_refuted",
+              "y_only": "constraint_satisfied"
+            }
+          },
+          {
+            "id": "world_03",
+            "states": {
+              "product": "constraint_refuted",
+              "x_only": "constraint_satisfied",
+              "y_only": "constraint_refuted"
+            }
+          },
+          {
+            "id": "world_04",
+            "states": {
+              "product": "constraint_satisfied",
+              "x_only": "constraint_satisfied",
+              "y_only": "constraint_satisfied"
+            }
+          }
+        ],
+        "pairs": [
+          {
+            "left": "product",
+            "right": "x_only",
+            "witnessWorldIds": [
+              "world_03"
+            ],
+            "unresolvedWorldIds": []
+          },
+          {
+            "left": "product",
+            "right": "y_only",
+            "witnessWorldIds": [
+              "world_02"
+            ],
+            "unresolvedWorldIds": []
+          },
+          {
+            "left": "x_only",
+            "right": "y_only",
+            "witnessWorldIds": [
+              "world_02",
+              "world_03"
+            ],
+            "unresolvedWorldIds": []
+          }
+        ],
+        "distinguishablePairs": 3,
+        "selectedWorldIds": [
+          "world_02",
+          "world_03"
+        ],
+        "coveredPairs": 3,
+        "totalChangedBindings": 2
+      }
+    }
+  ]
+}
