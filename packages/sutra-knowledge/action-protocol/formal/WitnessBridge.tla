@@ -18,6 +18,7 @@ Init ==
 Prepare ==
     /\ intent = None
     /\ authority = witness
+    /\ ack = authority
     /\ authority < MaxVersion
     /\ intent' = [before |-> authority, after |-> authority + 1]
     /\ UNCHANGED <<authority, witness, ack>>
