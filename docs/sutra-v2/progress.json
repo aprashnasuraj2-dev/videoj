@@ -7,6 +7,8 @@
   "next": [
     "V2-F07",
     "V2-L08",
+    "V2-F08",
+    "V2-F09",
     "V2-F03",
     "V2-A02",
     "V2-L04",
@@ -15,7 +17,7 @@
     "V2-F05",
     "V2-O02"
   ],
-  "state": "subgroup_peer_verified_withdrawal_candidate",
+  "state": "subgroup_verified_withdrawal_and_general_conflict_candidate",
   "verified": [
     {
       "id": "V2-M01",
