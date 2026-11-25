@@ -12,13 +12,16 @@ import (
  "testing"
 )
 
+func privateTemp(t *testing.T) string {
+ t.Helper();dir:=t.TempDir();if e:=os.Chmod(dir,0700);e!=nil{t.Fatal(e)};return dir
+}
 func durableKeys(t *testing.T)(Digest,ed25519.PublicKey,ed25519.PrivateKey,ed25519.PrivateKey){
  t.Helper();a,ak:=keys(1);_,pk:=keys(2)
  ctx,e:=Context("fixture","manifest-v1","session-1");if e!=nil{t.Fatal(e)}
  return ctx,a,ak,pk
 }
 func TestDurableRestartConcurrentAndIdentity(t *testing.T){
- dir:=t.TempDir();ctx,a,ak,pk:=durableKeys(t)
+ dir:=privateTemp(t);ctx,a,ak,pk:=durableKeys(t)
  s,e:=CreateDurable(dir,ctx,a,pk,2);if e!=nil{t.Fatal(e)};defer s.Close()
  if other,e:=OpenDurable(dir,ctx,a,pk,2);!errors.Is(e,ErrStoreBusy){if other!=nil{other.Close()};t.Fatal("second owner",e)}
  r:=approve(t,0,ctx,ak)
@@ -42,7 +45,7 @@ func TestDurableRestartConcurrentAndIdentity(t *testing.T){
  if v,e:=s.Status(r);e!=nil||v!=first{t.Fatal("status recovery",e)}
 }
 func TestDurableCorruptionAndMissing(t *testing.T){
- dir:=t.TempDir();ctx,a,ak,pk:=durableKeys(t)
+ dir:=privateTemp(t);ctx,a,ak,pk:=durableKeys(t)
  if _,e:=OpenDurable(dir,ctx,a,pk,2);e==nil{t.Fatal("missing silently initialized")}
  s,e:=CreateDurable(dir,ctx,a,pk,2);if e!=nil{t.Fatal(e)}
  if _,e=s.Commit(approve(t,0,ctx,ak));e!=nil{t.Fatal(e)};s.Close()
@@ -67,7 +70,7 @@ func TestDurableCrashHelper(t *testing.T){
 }
 func TestDurableProcessCrashBoundaries(t *testing.T){
  for _,stage:=range []string{"before-rename","after-rename","after-commit"}{t.Run(stage,func(t *testing.T){
-  dir:=t.TempDir();ctx,a,ak,pk:=durableKeys(t)
+  dir:=privateTemp(t);ctx,a,ak,pk:=durableKeys(t)
   s,e:=CreateDurable(dir,ctx,a,pk,2);if e!=nil{t.Fatal(e)};s.Close()
   r:=approve(t,0,ctx,ak)
   if e=os.WriteFile(filepath.Join(dir,"request.fixture"),r.Bytes(),0600);e!=nil{t.Fatal(e)}
