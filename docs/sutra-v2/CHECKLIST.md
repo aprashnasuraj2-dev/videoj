@@ -39,7 +39,7 @@ Pending until exact evidence; expand only when new concrete product requirements
 - [ ] V2-F04 Accept a separately verified actual observation, prune only inconsistent declared worlds, revalidate affected artifacts; unknown outcomes and noise fail closed.
 - [ ] V2-F05 Minimal incompatible assumption sets and alternative support sets; bounded search with completeness indicator, common-source lineage.
 
-- [ ] V2-L01 Reuse actual legacy source-profile and source-tool code and existing catalog/transcript bytes; compile competing lesson hypotheses, plan decisive cue, use only validated receipt to prune, refuse tampering/stale versions and unknown-world outcomes.
+- [x] V2-L01 Reuse actual legacy source-profile and source-tool code and existing catalog/transcript bytes; compile competing lesson hypotheses, plan decisive cue, use only validated receipt to prune, refuse tampering/stale versions and unknown-world outcomes.
 - [ ] V2-L02 Built browser learner journey: predict, plan, revise, inspect hash-checked native video seek and export source-bound evidence; invalidate stale interaction on prediction changes.
 - [ ] V2-L03 Rights-cleared meaningful lesson and written alternative; source-scope comparison, guided investigation and transfer task; measured benefit versus transcript-only/answer-only, no claim from synthetic fixture.
 - [ ] V2-L04 Independent replay of integrated learner decision including source identity, observation admission and prediction-independent truth status; version drift/withdrawal and provenance.

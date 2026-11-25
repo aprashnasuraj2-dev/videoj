@@ -5,18 +5,17 @@
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
   "session": "V2-004",
   "next": [
-    "V2-F02",
-    "V2-L01",
     "V2-L02",
+    "V2-F02",
+    "V2-L04",
     "V2-F03",
     "V2-A02",
-    "V2-L04",
     "V2-L03",
     "V2-F04",
     "V2-F05",
     "V2-O02"
   ],
-  "state": "integrated_learner_candidate_pending",
+  "state": "learner_node_verified_browser_replay_candidate",
   "verified": [
     {
       "id": "V2-M01",
@@ -112,14 +111,20 @@
       "sourceRevision": "7c66df885ceb0507c46eb64a75453d0a989f2c69",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45516060763/job/138875653951",
       "description": "Actual minimax challenge and 36 independent exhaustive oracle controls; all seven workflows at this revision concluded success."
+    },
+    {
+      "id": "V2-L01",
+      "sourceRevision": "49764029d2f315f40fdd7f08da949f5d1170fc65",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45516629582/job/138877614472",
+      "description": "21/21 Node groups including real legacy catalog/transcript, revision, stale receipt and outside-world abstention."
     }
   ],
   "release": "not_authorized",
   "submission": "not_started",
   "lastFailed": {
-    "sourceRevision": "fb1ddfff5b491db3ba1108fa3aec4643a62851e6",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514643061",
-    "reason": "test assertion expected TypeError instead of strict parser SyntaxError"
+    "sourceRevision": "49764029d2f315f40fdd7f08da949f5d1170fc65",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45516629582/job/138877614814",
+    "reason": "browser instrumentation counted same-origin media blob as external request; final assertion failed"
   },
   "lastVerifiedKernelSource": "7c66df885ceb0507c46eb64a75453d0a989f2c69",
   "resolvedIssue": {

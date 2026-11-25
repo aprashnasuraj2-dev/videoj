@@ -20,7 +20,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
  try{
   browser=await chromium.launch({headless:true});
   const page=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
-  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(!r.url().startsWith(origin+'/'))external.push(r.url());});
+  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{const u=new URL(r.url());if(u.protocol==='blob:'&&u.origin===origin)return;if(u.origin!==origin||u.protocol!=='http:')external.push(r.url());});
   await page.goto(origin);
   await page.getByRole('button',{name:'Evaluate graph'}).focus();await page.keyboard.press('Enter');
   await page.waitForFunction(()=>document.querySelector('#verdict').dataset.verdict==='constraint_satisfied');
@@ -66,6 +66,8 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const ld=await learnerDownload;const learning=JSON.parse(fs.readFileSync(await ld.path(),'utf8'));
   assert.equal(learning.result.evidence.level,'catalog_matched');assert.equal(learning.result.truthStatus,'unverified');
   assert.equal(learning.result.feedback,'prediction_revised');
+  const output=path.resolve(__dirname,'../test-output');fs.mkdirSync(output,{recursive:true});
+  await page.screenshot({path:path.join(output,'investigation.png'),fullPage:true});
   await page.getByLabel('Your prediction').selectOption('before');assert.equal(await page.locator('#learn-export').isDisabled(),true);
   assert.equal(await page.locator('#learn-video').isHidden(),true);
   const downloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Download graph + report'}).click();
@@ -73,10 +75,9 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.equal(JSON.parse(exported.reportText).graphDigest,await page.locator('#identity').innerText());
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
-  const output=path.resolve(__dirname,'../test-output');fs.mkdirSync(output,{recursive:true});
   await page.screenshot({path:path.join(output,'workspace.png'),fullPage:true});
   fs.writeFileSync(path.join(output,'browser-report.json'),JSON.stringify(exported,null,2));
   fs.writeFileSync(path.join(output,'learning-evidence.json'),JSON.stringify(learning,null,2));
-  console.log('PASS: built browser workspace, 360px keyboard baseline, revision 5/11, two method comparison, pinned two-agent scripted proposal, forged verdict refused, report replay/tamper, exported actual bytes, zero external requests.');
+  console.log('PASS: built browser workspace, 360px keyboard baseline, revision 5/11, two method comparison, pinned two-agent scripted proposal, forged verdict refused, report replay/tamper, exported actual bytes, zero external requests; frontier policy and impossibility witness, source-bound learning revision, hash-checked native video seek, export and reset.');
  }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
 })().catch(e=>{console.error(e);process.exitCode=1;});

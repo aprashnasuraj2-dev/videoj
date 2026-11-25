@@ -1,4 +1,4 @@
-import {planTimingLesson,readLessonCue,resolveTimingLesson} from '../../../packages/sutra-knowledge/learner-frontier.js';
+import {timingLessonCase,planTimingLesson,readLessonCue,resolveTimingLesson} from '../../../packages/sutra-knowledge/learner-frontier.js';
 import {loadContentProfile,readVerifiedLessonMedia} from '../../../packages/sutra-content-profile/index.js';
 import {validateNativeSeekTarget,isNativeCueReached} from '../../sutra/src/seek-policy.js';
 import {evaluateFrontier} from '../../../packages/sutra-knowledge/frontier.js';
@@ -78,7 +78,7 @@ watch.addEventListener('click',()=>run(async(g,signal)=>{
 }));
 exportButton.addEventListener('click',()=>{
  if(!learned||busy)return;
- const url=URL.createObjectURL(new Blob([JSON.stringify({version:1,plan:learned.plan,result:learned.result},null,2)],{type:'application/json'}));
+ const url=URL.createObjectURL(new Blob([JSON.stringify({version:1,caseText:timingLessonCase(),plan:learned.plan,result:learned.result},null,2)],{type:'application/json'}));
  const a=document.createElement('a');a.href=url;a.download='sutra-learning-evidence.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
 function renderPolicy(node,depth=0){
