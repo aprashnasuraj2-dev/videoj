@@ -1,4 +1,4 @@
-import {prepareWithdrawalRevision} from '../../../packages/sutra-knowledge/withdrawal-revision.js';
+import {exportWithdrawalRevision} from '../../../packages/sutra-knowledge/withdrawal-revision.js';
 import {inspectReviewedTextFile,addReviewedTextFile,reviseReviewedTextFile,MAX_FILE_BYTES} from '../../../packages/sutra-knowledge/reviewed-text-file.js';
 import {exportReviewedQuestion} from '../../../packages/sutra-knowledge/reviewed-question.js';
 import {evaluateReviewedFisher,FISHER_DESIGN} from '../../../packages/sutra-knowledge/reviewed-fisher.js';
@@ -26,7 +26,7 @@ import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js
 import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
-let roundtripCurrent=null,textFilePreview=null,withdrawalPreview=null;
+let roundtripCurrent=null,textFilePreview=null,withdrawalPreview=null,withdrawalExport=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
 let questionCurrent=null,questionExport=null,questionPathPin=null,questionSelections={left:null,right:null};
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
@@ -44,6 +44,7 @@ function invalidate(message){epoch++;clearWithdrawalPreview();clearTextFilePrevi
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 function options(element,items){element.replaceChildren();for(const id of items){const o=document.createElement('option');o.value=id;o.textContent=id;element.append(o);}}
 function clearWithdrawalPreview(){withdrawalPreview=null;by('source-withdraw-summary').textContent='No withdrawal preview.';by('source-withdraw-version-result').textContent='';}
+function clearWithdrawalExport(){withdrawalExport=null;by('source-withdraw-disclosure').textContent='No withdrawal report available.';by('source-withdraw-snapshot-pin').textContent='';by('source-withdraw-plan-pin').textContent='';}
 function clearTextFilePreview({clearFile=false}={}){
  textFilePreview=null;by('text-file-preview').textContent='No local file inspected.';by('text-file-digest').textContent='';
  if(clearFile)by('text-file').value='';
@@ -247,11 +248,11 @@ by('source-withdraw-version-preview').onclick=()=>work(async ticket=>{
  if(!parent||!source)throw Error('REVISION_WITHDRAW_BASELINE');
  const seal=await sealReviewedDraft(wire),pin=await casePin(source.text);
  if(seal.pin!==parent.report.investigation.contractDigest)throw Error('REVISION_WITHDRAW_BASELINE');
- const revision=await prepareWithdrawalRevision(parent.versionText,parent.digest,source.id,pin);
+ const exported=await exportWithdrawalRevision(parent.versionText,parent.digest,source.id,pin),revision=exported.revision;
  if(ticket!==epoch||parent!==baseline||wire!==draft()||source.id!==by('source-revise-pick').value)return;
- withdrawalPreview={wire,sourceId:source.id,pin,parent,revision};
+ withdrawalPreview={wire,sourceId:source.id,pin,parent,revision,exported};
  by('source-withdraw-version-result').textContent=['Proposed child of '+parent.digest,
-  ...revision.changes.map(c=>c.id+' · '+c.classification+' · '+c.before+' → '+c.after+' · missing bindings: '+(c.targetBindings.join(', ')||'none')+' · removed links: '+c.removedReferences.length+' · removed quotations: '+c.removedClaims.length),
+  ...revision.changes.map(c=>c.id+' · '+c.classification+' · '+c.before+' → '+c.after+' · missing bindings: '+(c.targetBindings.join(', ')||'none')+' · removed links: '+c.removedReferences.length+' · removed quotations: '+c.removedClaims.length+(c.removedReferences.length?'\n  Links: '+c.removedReferences.map(r=>r.facet+'/'+r.kind+':'+r.id).join(', '):'')+(c.removedClaims.length?'\n  Quotations: '+c.removedClaims.join(', '):'')),
   revision.qualification,'No change applied. Confirm to use this child; existing staged proposals will be replaced.'].join('\n');
  status('withdrawal_version_preview','Review all candidate consequences. No change applied.');
 });
@@ -268,8 +269,14 @@ by('source-withdraw-version-apply').onclick=()=>work(async ticket=>{
  by('proposal').value=stagedProposals[0].proposalText;renderBatch();semanticCurrent=child;impactCurrent=revision.impact;renderWorldAxes();
  by('semantic-pin').textContent=child.digest;by('semantic-result').textContent=semanticText(child);by('impact-result').textContent=impactText(revision.impact);
  by('source-withdraw-version-result').textContent='Confirmed child '+child.digest+'; retained baseline '+p.parent.digest+'. Review unresolved meaning and missing evidence before making any decision.';
+ const e=p.exported,inventory=JSON.parse(JSON.parse(p.parent.versionText).contractText).sources.map(s=>s.id+' ('+new TextEncoder().encode(s.text).length+' source bytes)');
+ by('source-withdraw-disclosure').textContent=e.byteLength+' report bytes; contains full original and surviving source text, including withdrawn source '+p.sourceId+'. Parent source inventory: '+(inventory.join(', ')||'none')+'. '+(e.portable?'Local download only; review before sharing.':'Exceeds 256 KiB portable limit; no report download.');
+ if(e.portable){withdrawalExport={bytes:new TextEncoder().encode(e.bundleText),digest:e.snapshotPin,planDigest:e.planDigest};by('source-withdraw-snapshot-pin').textContent=e.snapshotPin;by('source-withdraw-plan-pin').textContent=e.planDigest;}
  status('semantic_ready','Withdrawal child replayed. Previous conditional results can become unresolved; no meaning or source truth established.');
 });
+by('source-withdraw-export').onclick=()=>{if(!busy&&withdrawalExport)download(withdrawalExport.bytes,'sutra-withdrawal-report.json','application/json');};
+by('source-withdraw-export-pin').onclick=()=>{if(!busy&&withdrawalExport)download(withdrawalExport.digest+'\n','sutra-withdrawal-report.sha256','text/plain');};
+by('source-withdraw-plan-pin-export').onclick=()=>{if(!busy&&withdrawalExport)download(withdrawalExport.planDigest+'\n','sutra-withdrawal-plan.sha256','text/plain');};
 by('source-revise').onclick=()=>work(async ticket=>{
  const r=await reviseReviewedSourceDraft(draft(),by('source-revise-pick').value,by('source-revise-text').value);if(ticket!==epoch)return;
  sources=structuredClone(r.draft.sources);bindings=structuredClone(r.draft.bindings);
@@ -349,12 +356,13 @@ function clearAcquisition(){acquisitionCurrent=null;by('acquisition-result').tex
 function clearGrid(){clearAcquisition();gridCurrent=null;by('world-result').textContent='';by('world-plan-pin').textContent='';by('world-snapshot-pin').textContent='';}
 function clearBranch(){branchCurrent=null;by('branch-result').textContent='';}
 function invalidateSemantic(){
- clearBranch();clearIntervals();clearBinomial();clearFisher();
+ clearWithdrawalPreview();clearWithdrawalExport();clearBranch();clearIntervals();clearBinomial();clearFisher();
  exposureCurrent=null;by('exposure-result').textContent='';clearGrid();
  clarificationCurrent=null;previewCurrent=null;reuseCurrent=null;by('clarification-result').textContent='';by('clarification-options').replaceChildren();by('clarification-preview').textContent='';by('reuse-result').textContent='';
  semanticCurrent=null;impactCurrent=null;clearRoundtrip();by('semantic-pin').textContent='No version evaluated.';by('semantic-result').textContent='';by('impact-result').textContent='';
 }
 function semanticControl(){
+ for(const id of ['source-withdraw-export','source-withdraw-export-pin','source-withdraw-plan-pin-export'])by(id).disabled=busy||!withdrawalExport;
  for(const e of by('semantic-list').querySelectorAll('input,select'))e.disabled=busy;
  const ready=!!sealed&&stagedProposals.length>=2&&stagedProposals.every(p=>annotations.get(p.id)?.meaning.trim());
  by('correspondence').disabled=busy||!baseline;
@@ -463,7 +471,7 @@ function impactText(r){
   ...r.candidates.map(c=>c.id+' — '+c.outcome.replaceAll('_',' ')+' · dependency affected '+(c.dependencyAffected?'yes':'no')+' · review '+(c.reviewRequired?'required':'no new scoped dependency issue')),
   'New divergence: '+(r.triage.newDivergence?'yes':'no'),'Missing/unresolved: '+(r.missing.map(c=>c.id+' '+c.reason).join(', ')||'none'),'Full replay of both versions; no empirical or semantic assurance.'].join('\n');
 }
-function baselineState(){clearWithdrawalPreview();by('correspondence').checked=false;by('baseline-state').textContent=baseline?'Retained baseline '+baseline.digest+' · '+baseline.report.investigation.originalQuestion.text:'No baseline retained.';by('baseline-candidates').textContent=baseline?baseline.report.investigation.candidates.map(c=>c.id+' · '+c.meaning).join('\n'):'';}
+function baselineState(){clearWithdrawalPreview();clearWithdrawalExport();by('correspondence').checked=false;by('baseline-state').textContent=baseline?'Retained baseline '+baseline.digest+' · '+baseline.report.investigation.originalQuestion.text:'No baseline retained.';by('baseline-candidates').textContent=baseline?baseline.report.investigation.candidates.map(c=>c.id+' · '+c.meaning).join('\n'):'';}
 by('correspondence').onchange=()=>semanticControl();
 by('semantic-run').onclick=()=>work(async ticket=>{
  if(!sealed||stagedProposals.length<2||baseline&&!by('correspondence').checked)return;

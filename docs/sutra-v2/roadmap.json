@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-109",
+  "session": "V2-110",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -3071,7 +3071,7 @@
       "dependencies": [
         "V2-LK08-KNOWLEDGE-GRAPH"
       ],
-      "scope": "Incremental evidence replacement/withdrawal, direct/transitive dependency invalidation, and historical reproducibility. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. Scoped unit/CI evidence registered; broader acceptance remains open. V2-108 candidate: exact pinned single-source draft withdrawal with explicit preview/confirmation, complete affected-binding invalidation and unchanged historical versions; no reuse or authority claim; exact CI pending. V2-109 candidate: exact pinned source withdrawal child, stable candidate identifiers, typed unknowns, contextual/target distinction and refused-parent quarantine; full replay, human preview/confirmation, CI pending.",
+      "scope": "Incremental evidence replacement/withdrawal, direct/transitive dependency invalidation, and historical reproducibility. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. Scoped unit/CI evidence registered; broader acceptance remains open. V2-108 candidate: exact pinned single-source draft withdrawal with explicit preview/confirmation, complete affected-binding invalidation and unchanged historical versions; no reuse or authority claim; exact CI pending. V2-109 candidate: exact pinned source withdrawal child, stable candidate identifiers, typed unknowns, contextual/target distinction and refused-parent quarantine; full replay, human preview/confirmation, CI pending. V2-110 candidate: independently replayable exact source-withdrawal transformation report, source-ID-bound plan pin, explicit disclosure and stale-export revocation, repinned adversaries; pending CI.",
       "acceptance": "Incremental equals full recompute; shared descendants, concurrency, stale cache, interrupted writes, cycles and simultaneous updates.",
       "evidence": [
         {
@@ -3138,7 +3138,7 @@
         "V2-LK09-REVISION",
         "V2-LK07-AMBIGUITY-REVIEW"
       ],
-      "scope": "Explain changes, surviving/invalidated conclusions, new contradictions, reconsidered decisions, missing evidence and next investigation. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending. Scoped unit/CI evidence registered; broader acceptance remains open. V2-109 candidate: exact pinned source withdrawal child, stable candidate identifiers, typed unknowns, contextual/target distinction and refused-parent quarantine; full replay, human preview/confirmation, CI pending.",
+      "scope": "Explain changes, surviving/invalidated conclusions, new contradictions, reconsidered decisions, missing evidence and next investigation. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending. Scoped unit/CI evidence registered; broader acceptance remains open. V2-109 candidate: exact pinned source withdrawal child, stable candidate identifiers, typed unknowns, contextual/target distinction and refused-parent quarantine; full replay, human preview/confirmation, CI pending. V2-110 candidate: independently replayable exact source-withdrawal transformation report, source-ID-bound plan pin, explicit disclosure and stale-export revocation, repinned adversaries; pending CI.",
       "acceptance": "Two independent domain journeys, independently replayable export, old snapshots retained.",
       "evidence": [
         {
@@ -3255,7 +3255,7 @@
         "V2-LK07-AMBIGUITY-REVIEW",
         "V2-LK11-IMPACT-REPORT"
       ],
-      "scope": "Question → evidence → interpretations → review → investigation → conclusion → challenge → revision → export, manual/offline mode, accessible progressive disclosure. V2-057 candidate: manual reviewed workspace now preserves labels, source links, version export, separate pin, caller baseline import and evidence correction impact. Actual browser tests pending; stable candidate IDs, progressive source review, broader canvas, offline independent replay and accessibility acceptance remain open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending. V2-108 candidate: exact pinned single-source draft withdrawal with explicit preview/confirmation, complete affected-binding invalidation and unchanged historical versions; no reuse or authority claim; exact CI pending. V2-109 candidate: exact pinned source withdrawal child, stable candidate identifiers, typed unknowns, contextual/target distinction and refused-parent quarantine; full replay, human preview/confirmation, CI pending.",
+      "scope": "Question → evidence → interpretations → review → investigation → conclusion → challenge → revision → export, manual/offline mode, accessible progressive disclosure. V2-057 candidate: manual reviewed workspace now preserves labels, source links, version export, separate pin, caller baseline import and evidence correction impact. Actual browser tests pending; stable candidate IDs, progressive source review, broader canvas, offline independent replay and accessibility acceptance remain open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending. V2-108 candidate: exact pinned single-source draft withdrawal with explicit preview/confirmation, complete affected-binding invalidation and unchanged historical versions; no reuse or authority claim; exact CI pending. V2-109 candidate: exact pinned source withdrawal child, stable candidate identifiers, typed unknowns, contextual/target distinction and refused-parent quarantine; full replay, human preview/confirmation, CI pending. V2-110 candidate: independently replayable exact source-withdrawal transformation report, source-ID-bound plan pin, explicit disclosure and stale-export revocation, repinned adversaries; pending CI.",
       "acceptance": "Actual browser journey, persistence, cancel/error recovery, keyboard/mobile and no-model pathway.",
       "evidence": [
         {
@@ -3367,7 +3367,7 @@
       "dependencies": [
         "V2-LK02-INTENT-IR"
       ],
-      "scope": "Maintain source/semantic/method/computation/empirical/freshness/applicability verification dimensions, untrusted document and provider boundaries, disclosure budgets, replay, rollback and cross-user isolation.",
+      "scope": "Maintain source/semantic/method/computation/empirical/freshness/applicability verification dimensions, untrusted document and provider boundaries, disclosure budgets, replay, rollback and cross-user isolation. V2-110 candidate: independently replayable exact source-withdrawal transformation report, source-ID-bound plan pin, explicit disclosure and stale-export revocation, repinned adversaries; pending CI.",
       "acceptance": "Injection, fabricated references, poison, Unicode, overflow, exhaustion, stale/replay/credential and cross-user adversaries; no automatic external action.",
       "evidence": [
         {

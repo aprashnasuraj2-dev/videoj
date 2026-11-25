@@ -75,3 +75,16 @@ export async function prepareWithdrawalRevision(versionText,versionPin,sourceId,
  return freeze({version:VERSION,parentDigest:versionPin,sourceId,sourcePin,draft:withdrawn.draft,
   child,changes,impact,decisionAuthority:'NONE',qualification:'Proposed child only. Exact admitted programs are rebound; missing inputs become typed unknowns, withdrawn quotations and links are removed, and refused parents stay refused. Meaning statements remain unverified. No evidence substitution, receipt transplantation, global dependency completeness or incremental speedup.'});
 }
+
+/** Portable transformation proof. Retain snapshot, parent and plan pins separately.
+ * The plan binds source ID as well as digest: two source IDs may share exact bytes. */
+export async function exportWithdrawalRevision(versionText,versionPin,sourceId,sourcePin){
+ const revision=await prepareWithdrawalRevision(versionText,versionPin,sourceId,sourcePin);
+ const planText=JSON.stringify({version:1,parentDigest:versionPin,sourceId,sourcePin});
+ const planDigest=await casePin(planText);
+ const bundleText=JSON.stringify({version:VERSION,parentVersion:versionText,parentDigest:versionPin,planText,planDigest,
+  childVersion:revision.child.versionText,childDigest:revision.child.digest,changes:revision.changes,impact:revision.impact,
+  decisionAuthority:'NONE',qualification:revision.qualification});
+ const byteLength=new TextEncoder().encode(bundleText).length;
+ return freeze({revision,bundleText,byteLength,portable:byteLength<=262144,snapshotPin:await casePin(bundleText),planDigest});
+}

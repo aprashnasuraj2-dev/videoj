@@ -1022,6 +1022,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    assert.match(await p.locator('#review-source-withdraw-version-result').innerText(),/after_capital · TARGET_EVIDENCE_WITHDRAWN.*BLOCKED_MISSING_INPUT/);
    assert.match(await p.locator('#review-source-withdraw-version-result').innerText(),/operating_cash · NO_SCOPED_SOURCE_DEPENDENCY.*CONDITIONALLY_SATISFIED/);
    assert.equal(await p.locator('#review-semantic-pin').innerText(),parentPin);
+   assert.equal(await p.locator('#review-source-withdraw-export').isDisabled(),true);
    assert.equal(await p.locator('#review-source-withdraw-apply').isDisabled(),true);
    await p.locator('#review-source-revise-pick').selectOption('cash_report');
    assert.equal(await p.locator('#review-source-withdraw-version-apply').isDisabled(),true);
@@ -1035,8 +1036,13 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    const child=await saveVersion('after');assert.equal(child.previousDigest,parentPin);
    assert.deepEqual(JSON.parse(child.contractText).sources,JSON.parse(parent.contractText).sources.filter(s=>s.id!=='investment_report'));
    const d=p.waitForEvent('download');await click('impact-export');fs.writeFileSync(path.join(output,'living-withdraw-impact.json'),fs.readFileSync(await (await d).path()));
+   assert.match(await p.locator('#review-source-withdraw-disclosure').innerText(),/including withdrawn source investment_report/);
+   const withdrawalDownload=p.waitForEvent('download');await click('source-withdraw-export');const withdrawalBytes=fs.readFileSync(await (await withdrawalDownload).path());
+   const snapshotPin=await p.locator('#review-source-withdraw-snapshot-pin').innerText(),planPin=await p.locator('#review-source-withdraw-plan-pin').innerText();
+   assert.equal(snapshotPin,'sha256:'+require('node:crypto').createHash('sha256').update(withdrawalBytes).digest('hex'));
+   fs.writeFileSync(path.join(output,'living-withdraw-report.json'),withdrawalBytes);fs.writeFileSync(path.join(output,'living-withdraw-report.sha256'),snapshotPin+'\n');fs.writeFileSync(path.join(output,'living-withdraw-plan.sha256'),planPin+'\n');
    await click('baseline-restore');await state('restored');assert.match(await p.locator('#review-staged').innerText(),/2 staged source.*4 reviewed binding/);
-   assert.equal(await p.locator('#review-semantic-export').isDisabled(),true);assert.equal(await p.locator('#review-source-withdraw-version-apply').isDisabled(),true);
+   assert.equal(await p.locator('#review-semantic-export').isDisabled(),true);assert.equal(await p.locator('#review-source-withdraw-version-apply').isDisabled(),true);assert.equal(await p.locator('#review-source-withdraw-export').isDisabled(),true);
    assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await p.close();
   }
   // Full first-minute tour from fresh browser state; no simulated verdicts.

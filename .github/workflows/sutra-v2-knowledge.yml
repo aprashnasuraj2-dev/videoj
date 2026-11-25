@@ -79,6 +79,10 @@ jobs:
         run: |
           node packages/sutra-knowledge/examples/fisher-reference-cases.mjs > sutra-fisher-reference-cases.json
           python3 packages/sutra-knowledge/reference/test_reviewed_fisher.py < sutra-fisher-reference-cases.json
+      - name: Independently compare source-withdrawal transformation and adversarial dependency classes
+        run: |
+          node packages/sutra-knowledge/examples/withdrawal-reference-cases.mjs > sutra-withdrawal-reference-cases.json
+          python3 packages/sutra-knowledge/reference/test_withdrawal_revision.py < sutra-withdrawal-reference-cases.json
       - name: Independently compare restricted question grammar across languages
         run: |
           node packages/sutra-knowledge/examples/question-reference-cases.mjs > sutra-question-reference-cases.json
@@ -269,6 +273,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/test_living_version.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/living-reference.txt
           cat apps/sutra-v2/test-output/living-reference.txt
+      - name: Independently replay actual browser source-withdrawal transformation and tampering
+        run: |
+          python3 packages/sutra-knowledge/reference/test_withdrawal_revision.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/living-withdraw-reference.txt
+          cat apps/sutra-v2/test-output/living-withdraw-reference.txt
       - name: Independently replay actual browser finite semantic world grid
         run: |
           python3 packages/sutra-knowledge/reference/test_world_grid.py apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/world-grid-reference.txt
