@@ -40,8 +40,8 @@ function render(){
  txt('conflict-detail','Surviving: '+(r.survivingWorlds.join(', ')||'none')+'\nDeclared lineage groups:\n'+Object.entries(r.lineageGroups).map(([l,ids])=>l+': '+ids.join(', ')).join('\n')+'\nUnavailable sources: '+(r.unavailableSources.join(', ')||'none')+'\nHistory events: '+r.history.length+'\nAll source truth remains unverified.');
 }
 async function work(fn){
- if(busy)return;busy=true;refresh();
- try{await fn();}catch{txt('conflict-status','Operation refused. Previous investigation remains unchanged.');by('conflict-status').dataset.state='refused';}
+ if(busy)return;busy=true;delete by('conflict-status').dataset.error;refresh();
+ try{await fn();}catch(e){txt('conflict-status','Operation refused. Previous investigation remains unchanged.');by('conflict-status').dataset.state='refused';by('conflict-status').dataset.error=e?.message==='SUPPORT_MODULE_DIGEST'?'SUPPORT_MODULE_DIGEST':'REFUSED';}
  finally{busy=false;refresh();}
 }
 async function append(e){
