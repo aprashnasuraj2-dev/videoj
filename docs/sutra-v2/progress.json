@@ -3,20 +3,13 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-005",
+  "session": "V2-006",
   "next": [
-    "V2-F08",
-    "V2-F09",
     "V2-F10",
-    "V2-F03",
-    "V2-A02",
-    "V2-L04",
-    "V2-L03",
-    "V2-F04",
-    "V2-F05",
-    "V2-O02"
+    "V2-F11",
+    "V2-F12"
   ],
-  "state": "subgroup_withdrawal_verified_general_conflict_corrected_browser_candidate",
+  "state": "general_conflict_browser_verified_independent_replay_candidate_pending",
   "verified": [
     {
       "id": "V2-M01",
@@ -172,6 +165,18 @@
       "sourceRevision": "c77cb1447d9253436634d74f59e7a56776cfedaa",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517521180/job/138880689328",
       "description": "Actual Chromium source-withdrawal simulation and restored read; independent Python replay of actual subgroup and withdrawal exports including five hostile changes."
+    },
+    {
+      "id": "V2-F08",
+      "sourceRevision": "864923a96743ea9ebb55f3e8c1d2837b2827e27e",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517808680/job/138881678329",
+      "description": "Exact PR merge checkout includes head; 31/31 Node groups and executable conflict challenge successful; finite synthetic host-pinned scope."
+    },
+    {
+      "id": "V2-F09",
+      "sourceRevision": "864923a96743ea9ebb55f3e8c1d2837b2827e27e",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517808680/job/138881677729",
+      "description": "Actual Chromium conflict, minimum witness, declared lineage withdrawal/restoration and fresh observation; browser export uploaded; no generalized independent replay yet."
     }
   ],
   "release": "not_authorized",
@@ -181,7 +186,7 @@
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517668625/job/138881199452",
     "reason": "General evidence session set event parser maxChars=524288 above shared parser cap 262144. Corrected in next candidate."
   },
-  "lastVerifiedKernelSource": "c77cb1447d9253436634d74f59e7a56776cfedaa",
+  "lastVerifiedKernelSource": "864923a96743ea9ebb55f3e8c1d2837b2827e27e",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
