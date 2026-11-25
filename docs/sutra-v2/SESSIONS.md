@@ -706,3 +706,8 @@ V2-059 and V2-060 each passed all nine exact workflows. V2-059 actual 360px brow
 ## V2-062 — Controlled-language semantic round-trip
 
 Recompile admitted proposals under the caller-pinned version and render only the target-reachable DAG as ordered, nonrecursive instructions. Keep exact source tokens, declared types and scope, selected and unselected question bytes, missing values and blocked relations, and identify excluded nodes. Pairwise compare declared qualifier and instruction structure, not inferred intent or equivalence; no semantic entailment or external authority. Tests cover reversed comparator, changed division, period and negation annotations, partial question, invented numeric input, missing leaf, stale pin and deterministic replay. Exact CI pending; repository isolation remains pending and is not bypassed.
+
+
+## V2-063 — Inherited learner acceptance correction
+
+V2-061 full learner build succeeded but storage test failed (149 pass, 1 fail; job 139176666038). The scanner recursively included security test fixtures that deliberately contain forbidden API markers. Keep the single permitted production localStorage hit unchanged; exclude only exact package test directories, broaden production extension coverage to TS/TSX/JSX/CJS and reject literal production imports of /test/ paths. This is a static defense-in-depth check, not complete import graph or runtime proof. Preserve exact failure and require full inherited learner suite. V2-062 round-trip exact CI still pending.
