@@ -292,15 +292,9 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const initialDebug=await saveDebug('debugger-baseline.json');
   assert.deepEqual(initialDebug.result.diagnostics.minimumCuts.map(x=>x.removed),[['sample_one']]);
   const oldCapsule=await exportCapsule('capsule-old');await capsuleClick('verify','verified');
-  async function saveExplanation(name){
-   const dl=debugPage.waitForEvent('download');await debugPage.locator('#debug-explanation-export').click();
-   const bundle=JSON.parse(fs.readFileSync(await (await dl).path(),'utf8'));fs.writeFileSync(path.join(output,name),JSON.stringify(bundle,null,2));return bundle.explanation;
-  }
   await clickDebug('withdraw','UNDERDETERMINED');
   assert.match(await debugPage.locator('#debug-capsule-context').innerText(),/Historical snapshot/);
   const lost=await saveDebug('debugger-withdrawn.json');assert.equal(lost.result.claims.control_ok.state,'SUPPORTED');
-  const planExplanation=await saveExplanation('explanation-plan.json');assert.equal(planExplanation.next.observationId,'read_b');assert.equal(planExplanation.next.worstCost,4);
-  assert.match(await debugPage.locator('#debug-plan-observe').innerText(),/disagreeing measurement/);assert.equal(await debugPage.locator('#debug-plan-branches p').count(),2);
   await clickDebug('restore','SUPPORTED');
   await clickDebug('copies','SUPPORTED');
   const copiedDebug=await saveDebug('debugger-copied.json');assert.equal(copiedDebug.result.groups.sample_one.length,10);
@@ -309,8 +303,6 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const conflictDebug=await saveDebug('debugger-conflicted.json');
   assert.equal(conflictDebug.result.activeArtifacts.length,12);assert.deepEqual(conflictDebug.result.conflict,['read_a','read_b']);
   assert.equal(await debugPage.locator('#debug-roots').innerText(),'3');
-  const conflictExplanation=await saveExplanation('explanation-conflict.json');assert.equal(conflictExplanation.claims.control_ok.globalState,'CONFLICTED');assert.deepEqual(conflictExplanation.claims.control_ok.conditionalSupport.map(x=>x.roots),[['sample_control']]);
-  assert.match(await debugPage.locator('[data-claim="control_ok"]').innerText(),/Conditional support: Separate control measurement/);
   await debugPage.screenshot({path:path.join(output,'debugger-conflicted.png'),fullPage:false});
   await clickDebug('withdraw','UNDERDETERMINED');
   const repair=await saveDebug('debugger-repaired.json');assert.equal(repair.result.nextObservation.id,'read_c');
@@ -339,14 +331,35 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.deepEqual(verifierErrors,[]);assert.deepEqual(verifierExternal,[]);await verifierPage.close();
   console.log('PASS: exact proof capsule export and separate pin, byte tamper refusal, exact restoration, fresh-tab verification, historical-state counterexample.');
   assert.equal(await debugPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
-  await clickDebug('start','SUPPORTED');await clickDebug('copies','SUPPORTED');await clickDebug('disagree','CONFLICTED');await clickDebug('observe','CONFLICTED');
-  const opposite=await saveExplanation('explanation-opposite.json');assert.deepEqual(opposite.claims.target.conditionalRefutation.map(x=>x.roots),[['sample_three','sample_two']]);
-  await clickDebug('start','SUPPORTED');await clickDebug('withdraw','UNDERDETERMINED');
-  await clickDebug('plan-observe','UNDERDETERMINED');assert.match(await debugPage.locator('#debug-plan-observe').innerText(),/second variable/);
-  await clickDebug('withdraw-other','UNDERDETERMINED');
-  const impossible=await saveExplanation('explanation-impossible.json');assert.equal(impossible.next.kind,'impossible_with_available_observations');
-  assert.match(await debugPage.locator('#debug-next').innerText(),/No available observation plan/);assert.equal(await debugPage.locator('#debug-plan-observe').isDisabled(),true);
   assert.deepEqual(debugErrors,[]);assert.deepEqual(debugExternal,[]);await debugPage.close();
+  // Chromium limits repeated downloads in a single document in our test
+  // environment. Keep every actual export and assertion, but run the
+  // independent diagnosis journey in its own browser context.
+  const diagnosisPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),diagnosisErrors=[],diagnosisExternal=[];
+  diagnosisPage.on('pageerror',e=>diagnosisErrors.push(e.message));diagnosisPage.on('request',r=>{if(new URL(r.url()).origin!==origin)diagnosisExternal.push(r.url());});
+  await diagnosisPage.goto(origin);
+  async function clickDiagnosis(id,state){
+   await diagnosisPage.locator('#debug-'+id).click();
+   await diagnosisPage.waitForFunction(s=>document.querySelector('#debug-state').dataset.state===s&&!document.querySelector('#debug-start').disabled,state);
+  }
+  async function saveExplanation(name){
+   const dl=diagnosisPage.waitForEvent('download');await diagnosisPage.locator('#debug-explanation-export').click();
+   const bundle=JSON.parse(fs.readFileSync(await (await dl).path(),'utf8'));fs.writeFileSync(path.join(output,name),JSON.stringify(bundle,null,2));return bundle.explanation;
+  }
+  await clickDiagnosis('start','SUPPORTED');await clickDiagnosis('withdraw','UNDERDETERMINED');
+  const planExplanation=await saveExplanation('explanation-plan.json');assert.equal(planExplanation.next.observationId,'read_b');assert.equal(planExplanation.next.worstCost,4);
+  assert.match(await diagnosisPage.locator('#debug-plan-observe').innerText(),/disagreeing measurement/);assert.equal(await diagnosisPage.locator('#debug-plan-branches p').count(),2);
+  await clickDiagnosis('restore','SUPPORTED');await clickDiagnosis('copies','SUPPORTED');await clickDiagnosis('disagree','CONFLICTED');
+  const conflictExplanation=await saveExplanation('explanation-conflict.json');assert.equal(conflictExplanation.claims.control_ok.globalState,'CONFLICTED');assert.deepEqual(conflictExplanation.claims.control_ok.conditionalSupport.map(x=>x.roots),[['sample_control']]);
+  assert.match(await diagnosisPage.locator('[data-claim="control_ok"]').innerText(),/Conditional support: Separate control measurement/);
+  await clickDiagnosis('observe','CONFLICTED');
+  const opposite=await saveExplanation('explanation-opposite.json');assert.deepEqual(opposite.claims.target.conditionalRefutation.map(x=>x.roots),[['sample_three','sample_two']]);
+  await clickDiagnosis('start','SUPPORTED');await clickDiagnosis('withdraw','UNDERDETERMINED');
+  await clickDiagnosis('plan-observe','UNDERDETERMINED');assert.match(await diagnosisPage.locator('#debug-plan-observe').innerText(),/second variable/);
+  await clickDiagnosis('withdraw-other','UNDERDETERMINED');
+  const impossible=await saveExplanation('explanation-impossible.json');assert.equal(impossible.next.kind,'impossible_with_available_observations');
+  assert.match(await diagnosisPage.locator('#debug-next').innerText(),/No available observation plan/);assert.equal(await diagnosisPage.locator('#debug-plan-observe').isDisabled(),true);
+  assert.deepEqual(diagnosisErrors,[]);assert.deepEqual(diagnosisExternal,[]);await diagnosisPage.close();
   console.log('PASS: conclusion debugger critical and irrelevant withdrawal, ten declared-copy artifacts, conflict, repair and decisive observation; actual state exports.');
   console.log('PASS: actual Rust WASM support lattice, alternate minimum conflicts, copied-source conditional supports, withdrawal removes both, refuted support after fresh read; blocked or digest-mismatched module fails closed.');
   assert.deepEqual(errors,[]);assert.equal(peerRequests.length,6);

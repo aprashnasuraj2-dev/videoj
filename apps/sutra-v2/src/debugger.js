@@ -153,7 +153,7 @@ by('capsule-export').onclick=()=>capsuleWork(async()=>{
  capsuleOriginal=Uint8Array.from(cap.bytes);capsuleWorking=Uint8Array.from(cap.bytes);
  capsuleAnchor=cap.expectedDigest;capsuleIdentity=null;capsuleVerified=false;capsuleTampered=false;
  by('capsule-file').value='';by('capsule-pin').value=cap.expectedDigest;
- capsuleStatus('ready','Exported exact snapshot. Retain the digest separately, then verify.');
+ capsuleStatus('ready','Prepared exact snapshot; download requested, browser save outcome not confirmed. Retain the digest separately, then verify.');
  downloadBytes(cap.bytes,'sutra-proof-capsule.json','application/json');
 });
 by('capsule-pin-export').onclick=()=>{

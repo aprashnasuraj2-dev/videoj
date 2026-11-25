@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-017",
+  "session": "V2-018",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2383,7 +2383,16 @@
         "V2-D01-ATTACK",
         "V2-D02-CAPSULE"
       ],
-      "scope": "Exhaustive finite fixture root-subset support/refutation, conditional claim visibility under global conflict, correct plan branches and impossibility witnesses; independent replay."
+      "scope": "Exhaustive finite fixture root-subset support/refutation, conditional claim visibility under global conflict, correct plan branches and impossibility witnesses; independent replay.",
+      "failureEvidence": [
+        {
+          "sourceRevision": "5f680cce0d821ed6af2a1c5e18aea046222679ba",
+          "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45569683434",
+          "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45569690876",
+          "reason": "Both knowledge jobs passed, both Chromium jobs failed awaiting the eleventh download in the combined document (PR job 139052995250, push 139052971382). Seven auxiliary runs passed. SHA-256 verified failed artifact 15001537818 contained resolved debugger export byte-identical to prior green state; local capsule generation/replay of those bytes succeeded. Separate isolated Chromium reproduction accepted ten downloads then timed out on the eleventh for both direct links and programmatic anchors. Full browser and independent diagnosis replay credit withheld.",
+          "resolutionStatus": "candidate separates browser contexts without dropping exports or assertions; pending exact CI"
+        }
+      ]
     }
   ]
 }

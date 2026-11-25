@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-017",
+  "session": "V2-018",
   "next": [
     "V2-D03-DIAGNOSIS",
     "V2-P07-WASM",
@@ -258,13 +258,11 @@
   "release": "not_authorized",
   "submission": "not_started",
   "lastFailed": {
-    "sourceRevision": "57dbdc6bd2f59eb0fbd062aeca5c807fe303fbee",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45559101725",
-    "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45559101725",
-    "reason": "Pinned consent-policy refinement candidate failed the Go action-protocol build because pinned_policy_refinement_linux_test.go referenced ed25519.PublicKey without importing crypto/ed25519. Five auxiliary PR workflows and the browser job passed; no kernel/refinement credit.",
-    "resolutionRevision": "e581a0a5cae0e942821af18b4e547cb65efa9763",
-    "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45559702271/job/139020178838",
-    "resolutionStatus": "resolved_import_then_strengthened_refinement_exact_all_required_workflows_success"
+    "sourceRevision": "5f680cce0d821ed6af2a1c5e18aea046222679ba",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45569683434",
+    "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45569690876",
+    "reason": "Both knowledge jobs passed, both Chromium jobs failed awaiting the eleventh download in the combined document (PR job 139052995250, push 139052971382). Seven auxiliary runs passed. SHA-256 verified failed artifact 15001537818 contained resolved debugger export byte-identical to prior green state; local capsule generation/replay of those bytes succeeded. Separate isolated Chromium reproduction accepted ten downloads then timed out on the eleventh for both direct links and programmatic anchors. Full browser and independent diagnosis replay credit withheld.",
+    "resolutionStatus": "candidate separates browser contexts without dropping exports or assertions; pending exact CI"
   },
   "lastVerifiedKernelSource": "0d6305526d28df4064360162f1125835ca8f9962",
   "resolvedIssue": {
@@ -277,6 +275,21 @@
   },
   "pendingCandidate": {
     "sourceRevision": null,
+    "sourceParent": "5f680cce0d821ed6af2a1c5e18aea046222679ba",
+    "status": "candidate_pending_exact_ci",
+    "identityRule": "Resolve the immutable commit containing this checkpoint.",
+    "checks": [
+      "108 evidence configurations against direct truth table",
+      "minimal consistent support and refutation subsets",
+      "global contradiction vs local conditional support",
+      "observation branches and explicit impossibility witness",
+      "recommended fixture read",
+      "independent Python explanation replay",
+      "separate complete capsule and diagnosis browser journeys; preserve every actual export"
+    ]
+  },
+  "previousPendingCandidate": {
+    "sourceRevision": null,
     "sourceParent": "0d6305526d28df4064360162f1125835ca8f9962",
     "status": "candidate_pending_exact_ci",
     "identityRule": "Resolve the immutable commit containing this checkpoint.",
@@ -287,21 +300,6 @@
       "observation branches and explicit impossibility witness",
       "recommended fixture read",
       "independent Python explanation replay"
-    ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": null,
-    "sourceParent": "6ad7b85dbc56406d38b84385cb58bae5128fe737",
-    "status": "candidate_pending_exact_ci",
-    "identityRule": "Resolve the immutable commit containing this checkpoint.",
-    "checks": [
-      "exact capsule and external pin",
-      "strict bounded wire",
-      "one-byte tamper and restore",
-      "rehashed semantics refusal",
-      "fresh-tab verification",
-      "historical replay counterexample",
-      "independent Python replay"
     ]
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
@@ -514,6 +512,13 @@
       "resolutionRevision": "e581a0a5cae0e942821af18b4e547cb65efa9763",
       "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45559702271/job/139020178838",
       "resolutionStatus": "resolved_import_then_strengthened_refinement_exact_all_required_workflows_success"
+    },
+    {
+      "sourceRevision": "5f680cce0d821ed6af2a1c5e18aea046222679ba",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45569683434",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45569690876",
+      "reason": "Both knowledge jobs passed, both Chromium jobs failed awaiting the eleventh download in the combined document (PR job 139052995250, push 139052971382). Seven auxiliary runs passed. SHA-256 verified failed artifact 15001537818 contained resolved debugger export byte-identical to prior green state; local capsule generation/replay of those bytes succeeded. Separate isolated Chromium reproduction accepted ten downloads then timed out on the eleventh for both direct links and programmatic anchors. Full browser and independent diagnosis replay credit withheld.",
+      "resolutionStatus": "candidate separates browser contexts without dropping exports or assertions; pending exact CI"
     }
   ],
   "reconciledDurableCandidate": {
