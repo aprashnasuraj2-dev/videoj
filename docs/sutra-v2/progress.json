@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-076",
+  "session": "V2-077",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -11,6 +11,7 @@
     "V2-LK05-SEMANTIC-COUNTERFACTUAL",
     "V2-LK06-SEMANTIC-WORLDS",
     "V2-LK13-STRUCTURAL-WEAKNESS",
+    "V2-LK16-SPECIALIST-JOURNEYS",
     "V2-LK10-VERSION-CONTROL",
     "V2-LK07-AMBIGUITY-REVIEW",
     "V2-LK08-KNOWLEDGE-GRAPH",
@@ -33,7 +34,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "sibling_branch_conflict_candidate_pending_exact_ci",
+  "state": "guided_specialist_fixture_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -384,9 +385,9 @@
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45609906212",
     "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45609906212/job/139190407991",
     "reason": "Browser syntax preflight refused duplicate gridPin declaration in the monolithic browser test; grid and independent replay not exercised.",
-    "resolutionStatus": "Local block-scoped grid test variables; exact CI pending."
+    "resolutionStatus": "Resolved at exact V2-074; all ten workflows passed; previous failing assertions retained."
   },
-  "lastVerifiedKernelSource": "935b916f78080689af603f5b8037d1355e89b979",
+  "lastVerifiedKernelSource": "d46df18b147c4c34873f03e2f4072bc32c81a7a7",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -396,14 +397,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-077",
+    "parent": "4cf2409b03407075c27ed75c8e37fabec302e621",
+    "description": "Two shared-compiler worked synthetic finance/network fixtures with baseline and corrected source; exact CI pending, browser integration next."
+  },
+  "previousPendingCandidate": {
     "session": "V2-076",
     "parent": "d46df18b147c4c34873f03e2f4072bc32c81a7a7",
     "description": "Pinned direct-sibling three-way branch comparison, object conflict classification, exact separate branch impacts and outcomes. No merge. Exact CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-075",
-    "parent": "6e36f4b361b287e575f20ef0b267cdb36cb1eacc",
-    "description": "Conservative shared source cohorts and exact minimum structural dependency cuts across supplied decisive target classes; finance and engineering adversaries. Exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -691,14 +692,14 @@
       "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45609489696",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45609489696/job/139189011299",
       "reason": "168/170 knowledge tests passed; two new formula tests failed at source fixture admission because indexOf('2') matched substring inside 12. Actual browser job passed. Numeric boundary refusal correct.",
-      "resolutionStatus": "Label-anchored fixture selection corrected; exact CI pending."
+      "resolutionStatus": "Resolved at exact V2-074; all ten workflows passed; previous failing assertions retained."
     },
     {
       "sourceRevision": "c6e923622ac80ab13fb6d08967c22a31ab999260",
       "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45609906212",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45609906212/job/139190407991",
       "reason": "Browser syntax preflight refused duplicate gridPin declaration in the monolithic browser test; grid and independent replay not exercised.",
-      "resolutionStatus": "Local block-scoped grid test variables; exact CI pending."
+      "resolutionStatus": "Resolved at exact V2-074; all ten workflows passed; previous failing assertions retained."
     }
   ],
   "reconciledDurableCandidate": {
@@ -1218,6 +1219,24 @@
       "sourceRevision": "935b916f78080689af603f5b8037d1355e89b979",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45609261800",
       "description": "All ten exact workflows passed; actual historical source restore, affected binding invalidation, stable IDs in reverse staging order and independent impact replay. Full branch/merge and persistence remain open."
+    },
+    {
+      "id": "V2-LK03-PATHWAYS",
+      "sourceRevision": "6e36f4b361b287e575f20ef0b267cdb36cb1eacc",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45610178836",
+      "description": "All ten exact workflows passed; formula tests and actual browser valid/invalid expression path."
+    },
+    {
+      "id": "V2-LK06-SEMANTIC-WORLDS",
+      "sourceRevision": "6e36f4b361b287e575f20ef0b267cdb36cb1eacc",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45610178836/job/139191349068",
+      "description": "All ten exact workflows passed; actual browser 4 assignment/16 decisive-cell grid and independent Python replay."
+    },
+    {
+      "id": "V2-LK13-STRUCTURAL-WEAKNESS",
+      "sourceRevision": "d46df18b147c4c34873f03e2f4072bc32c81a7a7",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45610373029",
+      "description": "All ten exact workflows passed; scoped structural cohort cuts and duplicate-byte bridge tests."
     }
   ],
   "reconciledCI": [

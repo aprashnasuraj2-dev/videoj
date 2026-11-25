@@ -665,3 +665,8 @@ Reuse pinned living graph and compiler target dependencies. Union sources by ide
 ## V2-076 — Three-way direct sibling investigation contrast
 
 Compare separately pinned direct children of one exact parent. Compute structural changes for original question, sources, reviewed bindings and candidates; strip only the mandatory contract digest for admitted proposal comparison, preserve refused raw bytes. Distinguish left/right-only, same change and conflicting changes including correction versus withdrawal. Replay each branch impact independently; retain outcome differences, identity digests and original branch versions. No automatic merge or assurance that nonoverlap is semantically safe. Tests cover conflict, disjoint source revisions, same change with distinct annotation, wrong parent and identical version refusal. Bounded by existing 8 source/64 binding/8 candidate profiles; no multi-generation merge or storage. Exact CI pending; V2-074 actual browser job passed, full exact workflow pending at observation.
+
+
+## V2-077 — Shared specialist worked examples
+
+V2-074 and V2-075 each passed 10/10 exact workflows. Preserve and resolve earlier formula/grid failures at exact V2-074. New synthetic finance (operating cash vs after capex) and network (nominal vs surviving route capacity) examples use the same source draft and human expression compiler, with one changed source, one surviving and one reversed conditional interpretation. No actual company/network data or professional authority. Tests authored; exact CI pending. Integrate browser journey next. V2-076 sibling branch CI pending at observation.

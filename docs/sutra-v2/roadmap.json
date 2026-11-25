@@ -2885,7 +2885,14 @@
       ],
       "scope": "Route structured table imports, templates, rules, user expressions, reviewed contracts, document import and optional model proposals through cheapest admissible path. V2-072 candidate: deterministic human expression syntax over reviewed bindings, same compiler and contrast path, no provider. Structured table/document paths and consent/cost comparison remain open.",
       "acceptance": "Same contract across paths, explicit consent, costs and review; compare deterministic and model proposals without votes.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK03-PATHWAYS",
+          "sourceRevision": "6e36f4b361b287e575f20ef0b267cdb36cb1eacc",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45610178836",
+          "description": "All ten exact workflows passed; formula tests and actual browser valid/invalid expression path."
+        }
+      ]
     },
     {
       "id": "V2-LK04-ROUNDTRIP",
@@ -2951,6 +2958,12 @@
           "sourceRevision": "6a116cddbf2402063f382d51bdba0d394d6f93e8",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45609002771",
           "description": "All ten exact workflows passed; finite grid brute-force parity, interaction and truncation tests. No empirical completeness."
+        },
+        {
+          "id": "V2-LK06-SEMANTIC-WORLDS",
+          "sourceRevision": "6e36f4b361b287e575f20ef0b267cdb36cb1eacc",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45610178836/job/139191349068",
+          "description": "All ten exact workflows passed; actual browser 4 assignment/16 decisive-cell grid and independent Python replay."
         }
       ]
     },
@@ -3079,7 +3092,14 @@
       ],
       "scope": "Reuse lineage for shared trial, dataset, route, supplier, underlying model and economic exposure; common cuts and sensitivity templates. V2-075 candidate: conservative connected cohorts from exact source bytes and host-declared lineage, distinct decisive target structures, exact minimum input-touch cuts over at most eight cohorts; unknown ancestry and context-only dependencies preserved. No physical failure or empirical independence proof.",
       "acceptance": "Unknown ancestry stays unknown; independent fixtures across domains; no counting URLs as independence.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK13-STRUCTURAL-WEAKNESS",
+          "sourceRevision": "d46df18b147c4c34873f03e2f4072bc32c81a7a7",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45610373029",
+          "description": "All ten exact workflows passed; scoped structural cohort cuts and duplicate-byte bridge tests."
+        }
+      ]
     },
     {
       "id": "V2-LK14-STATISTICAL-PROFILES",
@@ -3121,11 +3141,11 @@
     {
       "id": "V2-LK16-SPECIALIST-JOURNEYS",
       "track": "C",
-      "status": "Not started",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK15-UNIFIED-WORKSPACE"
       ],
-      "scope": "Research, engineering, finance, medical research, student and general investigations on the same architecture; at least two complete narrow domains first.",
+      "scope": "Research, engineering, finance, medical research, student and general investigations on the same architecture; at least two complete narrow domains first. V2-077 candidate: two synthetic finance/network worked cases through the same reviewed expression compiler, initial agreement and corrected-source divergence. Browser/user acceptance open.",
       "acceptance": "Realistic distinct fixtures and user evaluation; no medical authority, financial recommendations or engineering certification.",
       "evidence": []
     },
