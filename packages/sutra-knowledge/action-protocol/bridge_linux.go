@@ -9,6 +9,8 @@ package actionprotocol
 import (
  "bytes"
  "crypto/ed25519"
+ "crypto/rand"
+ "encoding/hex"
  "errors"
  "io"
  "net"
@@ -24,6 +26,7 @@ const bridgeIntentDomain = "SUTRA/authority-witness-intent/v1\x00"
 const bridgeIntentSize = 32+32+32+ed25519.SignatureSize
 const bridgeIntentName = "witness-intent.bin"
 const witnessedResponseSize = authorityResponseSize+witnessViewSize
+const witnessedEnvelopeSize = authorityResponseSize+witnessAttestationSize
 
 var ErrWitnessUnavailable = errors.New("independent witness unavailable or ambiguous")
 
@@ -83,6 +86,27 @@ func VerifyWitnessedResponse(r WitnessedResponse,req AuthorityRequest,ctx Digest
   r.Witness.Head==r.Authority.After
 }
 
+
+type WitnessedEnvelope struct {
+ Authority AuthorityResponse
+ Attestation WitnessAttestation
+}
+func (e WitnessedEnvelope) Bytes()[]byte{
+ b:=append([]byte(nil),e.Authority.Bytes()...)
+ return append(b,e.Attestation.Bytes()...)
+}
+func ParseWitnessedEnvelope(raw []byte)(WitnessedEnvelope,error){
+ if len(raw)!=witnessedEnvelopeSize{return WitnessedEnvelope{},ErrPolicy}
+ authority,e:=ParseAuthorityResponse(raw[:authorityResponseSize]);if e!=nil{return WitnessedEnvelope{},e}
+ attestation,e:=ParseWitnessAttestation(raw[authorityResponseSize:]);if e!=nil{return WitnessedEnvelope{},e}
+ return WitnessedEnvelope{Authority:authority,Attestation:attestation},nil
+}
+func VerifyWitnessedEnvelope(e WitnessedEnvelope,req AuthorityRequest,challenge Digest,ctx Digest,authority,witness ed25519.PublicKey,genesis Digest)bool{
+ return VerifyAuthorityResponse(e.Authority,req,authority)&&
+  VerifyWitnessAttestation(e.Attestation,challenge,ctx,authority,witness,genesis)&&
+  e.Attestation.View.Head==e.Authority.After
+}
+
 type WitnessClient struct {
  origin string
  ctx Digest
@@ -110,11 +134,26 @@ func (c *WitnessClient) parseResponse(res *http.Response)(WitnessView,error){
  v,e:=ParseWitnessView(raw);if e!=nil||!VerifyWitnessViewPinned(v,c.ctx,c.authority,c.witness,c.genesis){return WitnessView{},ErrWitnessUnavailable}
  return v,nil
 }
+func (c *WitnessClient) AttestChallenge(challenge Digest)(WitnessAttestation,error){
+ if challenge==(Digest{}){return WitnessAttestation{},ErrWitnessUnavailable}
+ req,e:=http.NewRequest(http.MethodPost,c.origin+"/witness/view",bytes.NewReader(challenge[:]));if e!=nil{return WitnessAttestation{},ErrWitnessUnavailable}
+ req.Header.Set("Content-Type",media);req.Header.Set("Accept",media)
+ res,e:=c.http.Do(req);if e!=nil{return WitnessAttestation{},ErrWitnessUnavailable}
+ if res==nil{return WitnessAttestation{},ErrWitnessUnavailable}
+ defer res.Body.Close()
+ if res.StatusCode!=http.StatusOK||res.Header.Get("Content-Type")!=media||res.Request==nil||res.Request.URL.String()!=c.origin+"/witness/view"{
+  return WitnessAttestation{},ErrWitnessUnavailable
+ }
+ raw,e:=io.ReadAll(io.LimitReader(res.Body,witnessAttestationSize+1));if e!=nil||len(raw)!=witnessAttestationSize{return WitnessAttestation{},ErrWitnessUnavailable}
+ attestation,e:=ParseWitnessAttestation(raw)
+ if e!=nil||!VerifyWitnessAttestation(attestation,challenge,c.ctx,c.authority,c.witness,c.genesis){return WitnessAttestation{},ErrWitnessUnavailable}
+ return attestation,nil
+}
 func (c *WitnessClient) View()(WitnessView,error){
- req,e:=http.NewRequest(http.MethodGet,c.origin+"/witness",nil);if e!=nil{return WitnessView{},ErrWitnessUnavailable}
- req.Header.Set("Accept",media)
- res,e:=c.http.Do(req);if e!=nil{return WitnessView{},ErrWitnessUnavailable}
- return c.parseResponse(res)
+ var challenge Digest
+ if _,e:=rand.Read(challenge[:]);e!=nil{return WitnessView{},ErrWitnessUnavailable}
+ attestation,e:=c.AttestChallenge(challenge);if e!=nil{return WitnessView{},e}
+ return attestation.View,nil
 }
 func (c *WitnessClient) Advance(t WitnessTransition)(WitnessView,error){
  req,e:=http.NewRequest(http.MethodPost,c.origin+"/witness",bytes.NewReader(t.Bytes()));if e!=nil{return WitnessView{},ErrWitnessUnavailable}
@@ -188,8 +227,8 @@ func (c *WitnessCoordinator) Recover()error{
  a:=c.authority;a.mu.Lock();defer a.mu.Unlock()
  return c.recoverLocked()
 }
-func (c *WitnessCoordinator) Process(req AuthorityRequest)(WitnessedResponse,error){
- a:=c.authority;a.mu.Lock();defer a.mu.Unlock()
+func (c *WitnessCoordinator) processLocked(req AuthorityRequest)(WitnessedResponse,error){
+ a:=c.authority
  if a.lock==nil||a.poisoned{return WitnessedResponse{},ErrStore}
  if e:=c.recoverLocked();e!=nil{return WitnessedResponse{},e}
  plan,e:=a.planLocked(req);if e!=nil{return WitnessedResponse{},e}
@@ -210,7 +249,6 @@ func (c *WitnessCoordinator) Process(req AuthorityRequest)(WitnessedResponse,err
  transition,e:=intent.transition(a.ctx,a.signer);if e!=nil{return WitnessedResponse{},e}
  view,e:=c.witness.Advance(transition)
  if e!=nil{
-  // A lost POST response is ambiguous. Keep the signed intent for Recover.
   return WitnessedResponse{},ErrUnknown
  }
  if view.Head!=plan.after{return WitnessedResponse{},ErrWitnessRollback}
@@ -222,16 +260,36 @@ func (c *WitnessCoordinator) Process(req AuthorityRequest)(WitnessedResponse,err
  }
  return witnessed,nil
 }
+func (c *WitnessCoordinator) Process(req AuthorityRequest)(WitnessedResponse,error){
+ a:=c.authority;a.mu.Lock();defer a.mu.Unlock()
+ return c.processLocked(req)
+}
+func (c *WitnessCoordinator) ProcessAttested(req AuthorityRequest,challenge Digest)(WitnessedEnvelope,error){
+ if challenge==(Digest{}){return WitnessedEnvelope{},ErrPolicy}
+ a:=c.authority;a.mu.Lock();defer a.mu.Unlock()
+ witnessed,e:=c.processLocked(req);if e!=nil{return WitnessedEnvelope{},e}
+ attestation,e:=c.witness.AttestChallenge(challenge);if e!=nil{return WitnessedEnvelope{},ErrWitnessUnavailable}
+ if attestation.View!=witnessed.Witness{return WitnessedEnvelope{},ErrWitnessRollback}
+ envelope:=WitnessedEnvelope{Authority:witnessed.Authority,Attestation:attestation}
+ if !VerifyWitnessedEnvelope(envelope,req,challenge,a.ctx,a.signer.Public().(ed25519.PublicKey),c.witness.witness,c.witness.genesis){
+  return WitnessedEnvelope{},ErrWitnessRollback
+ }
+ return envelope,nil
+}
 
 func (c *WitnessCoordinator) ServeHTTP(w http.ResponseWriter,r *http.Request){
  w.Header().Set("Cache-Control","no-store")
  if r.Method!=http.MethodPost||r.URL.Path!="/authority-witnessed"||r.URL.RawQuery!=""||r.Header.Get("Content-Type")!=media{
   w.WriteHeader(http.StatusBadRequest);return
  }
+ challenges:=r.Header.Values("X-Sutra-Witness-Challenge")
+ if len(challenges)!=1||len(challenges[0])!=64{w.WriteHeader(http.StatusBadRequest);return}
+ decoded,e:=hex.DecodeString(challenges[0]);if e!=nil||len(decoded)!=32||hex.EncodeToString(decoded)!=challenges[0]{w.WriteHeader(http.StatusBadRequest);return}
+ var challenge Digest;copy(challenge[:],decoded);if challenge==(Digest{}){w.WriteHeader(http.StatusBadRequest);return}
  defer r.Body.Close()
  raw,e:=io.ReadAll(io.LimitReader(r.Body,authorityRequestSize+1));if e!=nil||len(raw)!=authorityRequestSize{w.WriteHeader(http.StatusBadRequest);return}
  req,e:=ParseAuthorityRequest(raw);if e!=nil{w.WriteHeader(http.StatusBadRequest);return}
- response,e:=c.Process(req)
+ response,e:=c.ProcessAttested(req,challenge)
  if e!=nil{
   switch {
   case errors.Is(e,ErrAuthorityAuth):
@@ -248,7 +306,6 @@ func (c *WitnessCoordinator) ServeHTTP(w http.ResponseWriter,r *http.Request){
  w.Header().Set("Content-Type",media)
  _,_=w.Write(response.Bytes())
 }
-
 
 type WitnessedAuthorityClient struct {
  mu sync.Mutex
@@ -282,41 +339,44 @@ func NewWitnessedAuthorityClient(origin string,caller byte,key ed25519.PrivateKe
 func (c *WitnessedAuthorityClient) Head()Digest{c.mu.Lock();defer c.mu.Unlock();return c.head}
 func (c *WitnessedAuthorityClient) Sequence()uint32{c.mu.Lock();defer c.mu.Unlock();return c.sequence}
 func (c *WitnessedAuthorityClient) Contacts()int{c.mu.Lock();defer c.mu.Unlock();return c.contacts}
-func (c *WitnessedAuthorityClient) exchange(op byte)(Receipt,WitnessedResponse,error){
- req,e:=SignAuthorityRequest(c.caller,op,c.head,c.action,c.key);if e!=nil{return Receipt{},WitnessedResponse{},e}
+func (c *WitnessedAuthorityClient) exchange(op byte)(Receipt,WitnessedEnvelope,error){
+ req,e:=SignAuthorityRequest(c.caller,op,c.head,c.action,c.key);if e!=nil{return Receipt{},WitnessedEnvelope{},e}
+ var challenge Digest
+ if _,e=rand.Read(challenge[:]);e!=nil{return Receipt{},WitnessedEnvelope{},ErrUnknown}
  c.contacts++
- h,e:=http.NewRequest(http.MethodPost,c.origin+"/authority-witnessed",bytes.NewReader(req.Bytes()));if e!=nil{return Receipt{},WitnessedResponse{},ErrUnknown}
- h.GetBody=nil;h.Header.Set("Content-Type",media);h.Header.Set("Accept",media)
- res,e:=c.http.Do(h);if e!=nil{return Receipt{},WitnessedResponse{},ErrUnknown}
+ h,e:=http.NewRequest(http.MethodPost,c.origin+"/authority-witnessed",bytes.NewReader(req.Bytes()));if e!=nil{return Receipt{},WitnessedEnvelope{},ErrUnknown}
+ h.GetBody=nil;h.Header.Set("Content-Type",media);h.Header.Set("Accept",media);h.Header.Set("X-Sutra-Witness-Challenge",hex.EncodeToString(challenge[:]))
+ res,e:=c.http.Do(h);if e!=nil{return Receipt{},WitnessedEnvelope{},ErrUnknown}
  defer res.Body.Close()
  switch res.StatusCode{
  case http.StatusForbidden:
-  return Receipt{},WitnessedResponse{},ErrAuthorityAuth
+  return Receipt{},WitnessedEnvelope{},ErrAuthorityAuth
  case http.StatusConflict:
-  return Receipt{},WitnessedResponse{},ErrWitnessRollback
+  return Receipt{},WitnessedEnvelope{},ErrWitnessRollback
  case http.StatusServiceUnavailable:
-  return Receipt{},WitnessedResponse{},ErrUnknown
+  return Receipt{},WitnessedEnvelope{},ErrUnknown
  case http.StatusOK:
  default:
-  return Receipt{},WitnessedResponse{},ErrUnknown
+  return Receipt{},WitnessedEnvelope{},ErrUnknown
  }
- if res.Header.Get("Content-Type")!=media||res.Request==nil||res.Request.URL.String()!=c.origin+"/authority-witnessed"{return Receipt{},WitnessedResponse{},ErrUnknown}
- raw,e:=io.ReadAll(io.LimitReader(res.Body,witnessedResponseSize+1));if e!=nil||len(raw)!=witnessedResponseSize{return Receipt{},WitnessedResponse{},ErrUnknown}
- response,e:=ParseWitnessedResponse(raw)
- if e!=nil||!VerifyWitnessedResponse(response,req,c.ctx,c.authority,c.witness,c.genesis){return Receipt{},WitnessedResponse{},ErrUnknown}
+ if res.Header.Get("Content-Type")!=media||res.Request==nil||res.Request.URL.String()!=c.origin+"/authority-witnessed"{return Receipt{},WitnessedEnvelope{},ErrUnknown}
+ raw,e:=io.ReadAll(io.LimitReader(res.Body,witnessedEnvelopeSize+1));if e!=nil||len(raw)!=witnessedEnvelopeSize{return Receipt{},WitnessedEnvelope{},ErrUnknown}
+ response,e:=ParseWitnessedEnvelope(raw)
+ if e!=nil||!VerifyWitnessedEnvelope(response,req,challenge,c.ctx,c.authority,c.witness,c.genesis){return Receipt{},WitnessedEnvelope{},ErrUnknown}
+ view:=response.Attestation.View
  if response.Authority.After==c.head{
-  if response.Witness.Sequence!=c.sequence{return Receipt{},WitnessedResponse{},ErrUnknown}
+  if view.Sequence!=c.sequence{return Receipt{},WitnessedEnvelope{},ErrUnknown}
  }else{
-  if response.Witness.Sequence!=c.sequence+1{return Receipt{},WitnessedResponse{},ErrUnknown}
+  if view.Sequence!=c.sequence+1{return Receipt{},WitnessedEnvelope{},ErrUnknown}
  }
- c.head=response.Authority.After;c.sequence=response.Witness.Sequence
+ c.head=response.Authority.After;c.sequence=view.Sequence
  switch response.Authority.Outcome{
  case AuthorityCommitted:return response.Authority.Receipt,response,nil
  case AuthorityAbsent:return Receipt{},response,ErrAbsent
  case AuthorityConflict:return Receipt{},response,ErrHeadConflict
  case AuthorityBudget:return Receipt{},response,ErrContacts
- default:return Receipt{},WitnessedResponse{},ErrUnknown
+ default:return Receipt{},WitnessedEnvelope{},ErrUnknown
  }
 }
-func (c *WitnessedAuthorityClient) Commit()(Receipt,WitnessedResponse,error){c.mu.Lock();defer c.mu.Unlock();return c.exchange(AuthorityCommit)}
-func (c *WitnessedAuthorityClient) Status()(Receipt,WitnessedResponse,error){c.mu.Lock();defer c.mu.Unlock();return c.exchange(AuthorityStatus)}
+func (c *WitnessedAuthorityClient) Commit()(Receipt,WitnessedEnvelope,error){c.mu.Lock();defer c.mu.Unlock();return c.exchange(AuthorityCommit)}
+func (c *WitnessedAuthorityClient) Status()(Receipt,WitnessedEnvelope,error){c.mu.Lock();defer c.mu.Unlock();return c.exchange(AuthorityStatus)}
