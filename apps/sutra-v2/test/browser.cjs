@@ -35,13 +35,13 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   // no credential left in the DOM after submission, and local routing only.
   const providerKey=page.getByLabel('Test credential'),providerName=page.getByLabel('Profile name');
   const alphaSecret='BROWSER_TEST_ALPHA_83f29c',betaSecret='BROWSER_TEST_BETA_a901d2';
-  await providerName.fill('Work AI');await providerKey.fill(alphaSecret);
+  await providerName.fill('Work AI');await page.getByLabel('Session call cap').selectOption('1');await page.getByLabel('Reserved output budget').selectOption('256');await providerKey.fill(alphaSecret);
   await page.getByRole('button',{name:'Show'}).click();assert.equal(await providerKey.getAttribute('type'),'text');
   await page.getByRole('button',{name:'Hide'}).click();assert.equal(await providerKey.getAttribute('type'),'password');
   await page.getByRole('button',{name:'Add provider profile'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-count').textContent==='1');
   assert.equal(await providerKey.inputValue(),'');assert.equal((await page.locator('body').innerText()).includes(alphaSecret),false);
-  await page.getByLabel('Provider').selectOption('provider-b');await providerName.fill('Research AI');await providerKey.fill(betaSecret);
+  await page.getByLabel('Provider').selectOption('provider-b');await providerName.fill('Research AI');await page.getByLabel('Session call cap').selectOption('3');await page.getByLabel('Reserved output budget').selectOption('600');await providerKey.fill(betaSecret);
   await page.getByRole('button',{name:'Add provider profile'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-count').textContent==='2');
   assert.equal(await providerKey.inputValue(),'');assert.equal((await page.locator('body').innerText()).includes(betaSecret),false);
@@ -50,6 +50,10 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='complete');
   assert.equal(await page.locator('#provider-calls').innerText(),'1');assert.equal(await page.locator('#provider-active').innerText(),'0');
   assert.match(await page.locator('#provider-status').innerText(),/No LLM request was sent/);
+  assert.match(await page.locator('.provider-card').first().innerText(),/1 \/ 1 calls/);
+  await page.getByRole('button',{name:'Run local rehearsal'}).first().click();
+  await page.waitForFunction(()=>document.querySelector('#provider-status').dataset.state==='refused');
+  assert.equal(await page.locator('#provider-calls').innerText(),'1');
   await page.locator('.provider-card').nth(1).getByRole('button',{name:'Remove'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-count').textContent==='1');
   assert.equal(await page.locator('.provider-card').count(),1);
