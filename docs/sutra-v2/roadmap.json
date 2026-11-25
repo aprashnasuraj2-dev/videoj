@@ -2926,6 +2926,12 @@
           "sourceRevision": "8a335023e62eedf19f3cc4849c0417f9b0604f5c",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604211276/job/139170705861",
           "description": "All nine exact workflows passed. Explicit current/prior period perturbations break accidental agreement; cached/fresh report equivalence and adversarial plan rejection passed. Automatic scenario synthesis and independent counterfactual replay open."
+        },
+        {
+          "id": "V2-LK05-SEMANTIC-COUNTERFACTUAL",
+          "sourceRevision": "2b466aab0804941e8ab1beb3a1f8874087953e74",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45607336511/job/139181506637",
+          "description": "All 10 exact workflows passed; deterministic single-binding search, bounded coverage and duplicate typed structures tested. No multi-axis completeness."
         }
       ]
     },
@@ -2944,12 +2950,12 @@
     {
       "id": "V2-LK07-AMBIGUITY-REVIEW",
       "track": "B",
-      "status": "Not started",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK04-ROUNDTRIP",
         "V2-LK06-SEMANTIC-WORLDS"
       ],
-      "scope": "Clarify only consequential distinctions; preserve unresolved branches, separate stakes, reversibility and clarification costs.",
+      "scope": "Clarify only consequential distinctions; preserve unresolved branches, separate stakes, reversibility and clarification costs. V2-068 candidate: bounded exact subset selection over explicit facet statements and observed/synthetic material pairs; no human response adjudication, cost model or semantic approval.",
       "acceptance": "Measured questions, review time, residual error, keyboard source highlighting/corrections; unreviewed semantics never approved.",
       "evidence": []
     },
@@ -2986,6 +2992,12 @@
           "sourceRevision": "32348421e11bd8882117f5a4b653cf432e456846",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604019865/job/139170041893",
           "description": "All nine workflows passed at V2-055; scoped version graph, two-domain correction and withdrawal, irrelevant change, stale pin, wrong parent and declared lineage tests passed. Broader graph/transaction and incremental gates open."
+        },
+        {
+          "id": "V2-LK09-REVISION",
+          "sourceRevision": "69aabf2636dc44ba176d21fd4a0bd06a987ab62c",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45606969626/job/139180244382",
+          "description": "All 10 exact workflows passed; projected source-bound reuse agrees with fresh reports across two domains. Diagnostic only, no speedup claim."
         }
       ]
     },
@@ -3070,6 +3082,12 @@
           "sourceRevision": "819b3380ed946a5a71628e5e3afdafcd69c71316",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604905064/job/139173170604",
           "description": "All nine workflows green; actual Chromium 360px acceptance, baseline correction, four conditional reversals, impact export and independent Python archive replay. Full workspace gate remains open."
+        },
+        {
+          "id": "V2-LK15-UNIFIED-WORKSPACE",
+          "sourceRevision": "5025c652dfc77926ede9b4c611f37591f95573dd",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45606717786/job/139179369035",
+          "description": "All 10 exact workflows passed; actual browser qualifier edits and stale-output invalidation."
         }
       ]
     },
