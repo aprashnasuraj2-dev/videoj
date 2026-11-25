@@ -97,3 +97,44 @@ for entry in 'UnconditionalAck SettledEventuallyAcknowledged' 'UnfairAck Quiesce
  cat "$WORK/witness-lossy-$1.log"
  grep -F "Temporal property $2 was violated" "$WORK/witness-lossy-$1.log"
 done
+
+
+# Independent pre-effect admission fence. This is additive: the original
+# post-effect witness bridge and its simultaneous-clone counterexample remain.
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-safe" -config FenceAdmissionSafe.cfg FenceAdmission.tla > "$WORK/fence-safe.log" 2>&1 || { cat "$WORK/fence-safe.log"; exit 1; }
+cat "$WORK/fence-safe.log"
+grep -F 'No error has been found' "$WORK/fence-safe.log"
+for entry in 'Bypass AdmissionBeforeEffect' 'Early FenceNotAhead' 'Drop AdmissionBeforeEffect' 'Ack AckNotAhead'; do
+ set -- $entry
+ if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-$1" -config "FenceAdmission$1.cfg" FenceAdmission.tla > "$WORK/fence-$1.log" 2>&1; then
+  cat "$WORK/fence-$1.log"; echo "fence admission mutant $1 unexpectedly succeeded" >&2; exit 1
+ fi
+ cat "$WORK/fence-$1.log"
+ grep -F "Invariant $2 is violated" "$WORK/fence-$1.log"
+done
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-fair" -config FenceAdmissionFair.cfg FenceAdmission.tla > "$WORK/fence-fair.log" 2>&1 || { cat "$WORK/fence-fair.log"; exit 1; }
+cat "$WORK/fence-fair.log"
+grep -F 'No error has been found' "$WORK/fence-fair.log"
+for entry in 'Unfair PreparedEventuallySettles' 'UnconditionalAck SettledEventuallyAcknowledged'; do
+ set -- $entry
+ if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-$1" -config "FenceAdmission$1.cfg" FenceAdmission.tla > "$WORK/fence-$1.log" 2>&1; then
+  cat "$WORK/fence-$1.log"; echo "fence liveness negative control $1 unexpectedly succeeded" >&2; exit 1
+ fi
+ cat "$WORK/fence-$1.log"
+ grep -F "Temporal property $2 was violated" "$WORK/fence-$1.log"
+done
+
+# Two cloned authorities share one independent admission owner. Safe admission
+# must allow at most one local effect; each mutant has an exact named failure.
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-clones-safe" -config FenceClonesSafe.cfg FenceClones.tla > "$WORK/fence-clones-safe.log" 2>&1 || { cat "$WORK/fence-clones-safe.log"; exit 1; }
+cat "$WORK/fence-clones-safe.log"
+grep -F 'No error has been found' "$WORK/fence-clones-safe.log"
+for entry in 'Double AtMostOneEffect' 'Bypass EffectRequiresAdmission'; do
+ set -- $entry
+ if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/fence-clones-$1" -config "FenceClones$1.cfg" FenceClones.tla > "$WORK/fence-clones-$1.log" 2>&1; then
+  cat "$WORK/fence-clones-$1.log"; echo "fence clone mutant $1 unexpectedly succeeded" >&2; exit 1
+ fi
+ cat "$WORK/fence-clones-$1.log"
+ grep -F "Invariant $2 is violated" "$WORK/fence-clones-$1.log"
+done
+python3 fence_model.py
