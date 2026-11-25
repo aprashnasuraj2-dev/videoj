@@ -1,3 +1,4 @@
+import {inspectReviewedTextFile,addReviewedTextFile,MAX_FILE_BYTES} from '../../../packages/sutra-knowledge/reviewed-text-file.js';
 import {exportReviewedQuestion} from '../../../packages/sutra-knowledge/reviewed-question.js';
 import {evaluateReviewedFisher,FISHER_DESIGN} from '../../../packages/sutra-knowledge/reviewed-fisher.js';
 import {evaluateReviewedBinomial,DESIGN_OBLIGATIONS} from '../../../packages/sutra-knowledge/reviewed-binomial.js';
@@ -24,7 +25,7 @@ import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js
 import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
-let roundtripCurrent=null;
+let roundtripCurrent=null,textFilePreview=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
 let questionCurrent=null,questionExport=null,questionPathPin=null,questionSelections={left:null,right:null};
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
@@ -34,11 +35,39 @@ function status(state,message){by('status').dataset.state=state;by('status').tex
 function control(){
  for(const id of controls)by(id).disabled=busy;
  if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;by('candidate-id').disabled=!sealed;by('expression').disabled=!sealed;by('expression-generate').disabled=!sealed||!by('expression').value.trim();by('source-revise').disabled=!sources.length;by('source-revise-pick').disabled=!sources.length;by('source-revise-text').disabled=!sources.length;}
- semanticControl();tableControl();questionControl();
+ semanticControl();tableControl();questionControl();textFileControl();
 }
-function invalidate(message){epoch++;clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
+function invalidate(message){epoch++;clearTextFilePreview({clearFile:true});clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 function options(element,items){element.replaceChildren();for(const id of items){const o=document.createElement('option');o.value=id;o.textContent=id;element.append(o);}}
+function clearTextFilePreview({clearFile=false}={}){
+ textFilePreview=null;by('text-file-preview').textContent='No local file inspected.';by('text-file-digest').textContent='';
+ if(clearFile)by('text-file').value='';
+}
+function textFileControl(){
+ for(const id of ['text-file','text-file-source','text-file-lineage'])by(id).disabled=busy;
+ by('text-file-inspect').disabled=busy||!by('text-file').files?.length;
+ by('text-file-stage').disabled=busy||!textFilePreview;
+}
+by('text-file').onchange=()=>{clearTextFilePreview();textFileControl();};
+for(const id of ['text-file-source','text-file-lineage'])by(id).oninput=()=>{clearTextFilePreview();textFileControl();};
+by('text-file-inspect').onclick=()=>work(async ticket=>{
+ clearTextFilePreview();const file=by('text-file').files?.[0];
+ if(!file||file.size<1||file.size>MAX_FILE_BYTES)throw Error('TEXT_FILE_SIZE');
+ const bytes=new Uint8Array(await file.arrayBuffer()),doc=await inspectReviewedTextFile(bytes);
+ if(ticket!==epoch||by('text-file').files?.[0]!==file)return;
+ textFilePreview={bytes,doc,sourceId:by('text-file-source').value,lineage:by('text-file-lineage').value};
+ by('text-file-preview').textContent=doc.byteLength+' bytes, '+doc.utf16Length+' UTF-16 units. Exact UTF-8 text; no quantity selected. Local preview only.\n'+doc.text;
+ by('text-file-digest').textContent=doc.sourceDigest;status('text_file_inspected','Local file inspected without upload. Explicitly stage its exact text and review numeric spans separately.');
+});
+by('text-file-stage').onclick=()=>work(async ticket=>{
+ const preview=textFilePreview;if(!preview)return;
+ const r=await addReviewedTextFile(draft(),preview.bytes,{sourceId:preview.sourceId,lineage:preview.lineage,sourceDigest:preview.doc.sourceDigest});
+ if(ticket!==epoch||preview!==textFilePreview)return;
+ sources=structuredClone(r.draft.sources);bindings=structuredClone(r.draft.bindings);
+ clearTextFilePreview({clearFile:true});for(const id of ['text-file-source','text-file-lineage'])by(id).value='';
+ invalidate('Exact local file staged; zero automatically admitted quantities. Select and declare relevant numeric tokens.');refresh();by('source-pick').value=r.sourceId;by('select-text').value=sources.find(s=>s.id===r.sourceId).text;
+});
 function clearQuestionPreview(){questionCurrent=null;questionExport=null;by('question-path-result').textContent='';by('question-path-snapshot-pin').textContent='';by('question-path-plan-pin').textContent='';by('question-path-disclosure').textContent='No mapping export available.';}
 function questionControl(){
  const pin=sealed?.pin??null;
@@ -154,7 +183,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL|BINOMIAL|FISHER|QUESTION)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE|HISTORY|ACQUISITION|INTERVAL|BINOMIAL|FISHER|QUESTION|TEXT_FILE)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 async function loadGuidedCase(domain,corrected,ticket){

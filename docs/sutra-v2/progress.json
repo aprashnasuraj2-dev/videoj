@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-104",
+  "session": "V2-105",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Independent controlled reconstruction candidate; exact verification pending",
+  "state": "Exact local document intake candidate; exact verification pending",
   "verified": [
     {
       "id": "V2-M01",
@@ -391,7 +391,7 @@
     "reason": "207/208 knowledge tests passed including four question tests; same arbitrary author-length failure inherited from V2-098.",
     "resolutionStatus": "V2-100 corrects author-field validation; exact CI pending."
   },
-  "lastVerifiedKernelSource": "78e9b5cc2670163b69e186c119b14c1486609581",
+  "lastVerifiedKernelSource": "7bc9a534383fed28b634ff6cf94bb165959e65e7",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -401,14 +401,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-105",
+    "parent": "e3476be3c2b2c34dd7aae1be184858f133f6dcb8",
+    "description": "Exact bounded local UTF-8 file import, strict byte roundtrip, explicit staging and source pin, same reviewed contract as manual path, actual browser UTF-8 and adversarial controls. V2-104 exact CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-104",
     "parent": "7bc9a534383fed28b634ff6cf94bb165959e65e7",
     "description": "Independent controlled reconstruction profile and portable browser artifacts before/after qualifier edit, structural object-order correction and tamper/pin controls. V2-103 exact CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-103",
-    "parent": "78e9b5cc2670163b69e186c119b14c1486609581",
-    "description": "Mapping export disclosure inventory and byte length, hostile source text through browser/actual portable replay, no markup execution or request, separate context and reload isolation, Unicode control refusals. Exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -1444,6 +1444,12 @@
       "sourceRevision": "78e9b5cc2670163b69e186c119b14c1486609581",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45710993527/job/139545046194",
       "description": "Existing controlled reconstruction unit and browser journey green at exact V2-102. New portable independent reconstruction profile remains pending."
+    },
+    {
+      "id": "V2-LK19-TRUST-BOUNDARY",
+      "sourceRevision": "7bc9a534383fed28b634ff6cf94bb165959e65e7",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45711349644/job/139546278286",
+      "description": "Exact V2-103 10/10 green; hostile TSV markup/instruction and same-origin sentinel preserved inert, zero sentinel/external requests, fresh browser context/reload source isolation and stale export disclosure. Kernel Unicode/control adversaries green. No backend account or provider isolation claim."
     }
   ],
   "reconciledCI": [

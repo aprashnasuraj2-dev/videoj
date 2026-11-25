@@ -945,6 +945,28 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    await fill('question','Is current revenue higher than prior revenue?');assert.equal(await tablePage.locator('#review-question-path-stage').isDisabled(),true);
    assert.equal(await tablePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);assert.deepEqual(poisonRequests,[]);assert.equal(await tablePage.evaluate(()=>typeof globalThis.sutraPoison),'undefined');assert.equal(await tablePage.evaluate(()=>JSON.stringify({...localStorage,...sessionStorage}).includes('sutra-poison-sentinel')),false);await tablePage.reload();await tablePage.locator('#reviewed-workspace > summary').click();assert.equal(await tablePage.locator('#review-question').inputValue(),'');assert.match(await tablePage.locator('#review-staged').innerText(),/0 staged source/);assert.equal(await tablePage.locator('#review-question-path-export').isDisabled(),true);await tablePage.close();
   }
+  // Local UTF-8 document import: bytes, selection offsets, refusal and no network.
+  {
+   const page=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[],poison=[];
+   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());if(r.url().includes('sutra-local-file-sentinel'))poison.push(r.url());});
+   await page.goto(origin);await page.locator('#reviewed-workspace > summary').click();await page.locator('#review-text-file-panel > summary').click();
+   const fill=(id,value)=>page.locator('#review-'+id).fill(value),click=id=>page.locator('#review-'+id).click(),state=s=>page.waitForFunction(x=>document.querySelector('#review-status').dataset.state===x,s);
+   await fill('question','Is site A higher than site B?');await fill('text-file-source','local_report');await fill('text-file-lineage','declared_root');
+   const file=page.locator('#review-text-file');
+   await file.setInputFiles({name:'invalid.txt',mimeType:'text/plain',buffer:Buffer.from([0xc0,0xaf])});await click('text-file-inspect');await state('refused');assert.match(await page.locator('#review-status').innerText(),/TEXT_FILE_UTF8/);assert.equal(await page.locator('#review-text-file-stage').isDisabled(),true);
+   const text='\ufeff測定 🧪 <img src="/sutra-local-file-sentinel">\nSite A: 12.50;\nSite B: 10.25;\n',bytes=Buffer.from(text,'utf8'),expected='sha256:'+require('node:crypto').createHash('sha256').update(bytes).digest('hex');
+   await file.setInputFiles({name:'report.txt',mimeType:'text/plain',buffer:bytes});await click('text-file-inspect');await state('text_file_inspected');
+   assert.equal(await page.locator('#review-text-file-digest').innerText(),expected);assert.match(await page.locator('#review-text-file-preview').textContent(),/sutra-local-file-sentinel/);assert.equal(await page.locator('#review-text-file-preview img').count(),0);
+   await fill('text-file-lineage','changed_root');assert.equal(await page.locator('#review-text-file-stage').isDisabled(),true);await fill('text-file-lineage','declared_root');await click('text-file-inspect');await state('text_file_inspected');
+   await click('text-file-stage');await state('draft');assert.match(await page.locator('#review-staged').innerText(),/1 staged source\(s\) · 0 reviewed binding/);assert.equal(await page.locator('#review-select-text').inputValue(),text);
+   await fill('kind','stress');await fill('unit','MPa');await fill('scope','sample_scope');await fill('dim-l','-1');await fill('dim-m','1');await fill('dim-t','-2');
+   for(const [id,token] of [['a','12.50'],['b','10.25']]){
+    await fill('binding-id',id);await page.locator('#review-select-text').evaluate((el,token)=>{el.focus();const i=el.value.indexOf(token);el.setSelectionRange(i,i+token.length);},token);await click('binding-add');await state('draft');
+   }
+   await click('seal');await state('sealed');const contract=JSON.parse(await page.locator('#review-contract').textContent());assert.equal(contract.sources[0].digest,expected);assert.equal(contract.sources[0].text,text);assert.equal(contract.bindings[0].span.start,Buffer.byteLength(text.slice(0,text.indexOf('12.50')),'utf8'));
+   await click('generate');await state('proposal');await click('run');await state('ready');assert.match(await page.locator('#review-result').innerText(),/CONDITIONALLY SATISFIED/);
+   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);assert.deepEqual(poison,[]);await page.close();
+  }
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});

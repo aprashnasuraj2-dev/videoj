@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-104",
+  "session": "V2-105",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -3339,7 +3339,14 @@
       ],
       "scope": "Maintain source/semantic/method/computation/empirical/freshness/applicability verification dimensions, untrusted document and provider boundaries, disclosure budgets, replay, rollback and cross-user isolation.",
       "acceptance": "Injection, fabricated references, poison, Unicode, overflow, exhaustion, stale/replay/credential and cross-user adversaries; no automatic external action.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK19-TRUST-BOUNDARY",
+          "sourceRevision": "7bc9a534383fed28b634ff6cf94bb165959e65e7",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45711349644/job/139546278286",
+          "description": "Exact V2-103 10/10 green; hostile TSV markup/instruction and same-origin sentinel preserved inert, zero sentinel/external requests, fresh browser context/reload source isolation and stale export disclosure. Kernel Unicode/control adversaries green. No backend account or provider isolation claim."
+        }
+      ]
     },
     {
       "id": "V2-LK20-REPOSITORY-ISOLATION",
