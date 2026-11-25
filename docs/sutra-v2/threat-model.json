@@ -604,7 +604,7 @@
         },
         {
           "path": "packages/sutra-knowledge/action-protocol/witness_linux_test.go",
-          "test": "same witness key but a different genesis"
+          "test": "Reusing the same witness key with a different genesis is a distinct trust"
         }
       ],
       "openGates": [
