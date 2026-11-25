@@ -10,25 +10,25 @@ from collections import deque
 
 MAX=2
 
-def inv(state):
+def inv(state, max_version=MAX):
     a,w,intent,ack=state
-    if not (0<=a<=MAX and 0<=w<=MAX and 0<=ack<=MAX): return "TypeOK"
+    if not (0<=a<=max_version and 0<=w<=max_version and 0<=ack<=max_version): return "TypeOK"
     if w>a: return "WitnessNotAhead"
     if ack>w: return "AckNotAhead"
     if a-w>1: return "GapBound"
     if intent is not None:
         b,n=intent
-        if n!=b+1 or a not in (b,n) or w not in (b,n) or w>a:
+        if not (0<=b<max_version) or n!=b+1 or a not in (b,n) or w not in (b,n) or w>a:
             return "IntentCoherent"
     if a!=w:
         if intent is None or intent[0]!=w or intent[1]!=a:
             return "RecoverableGap"
     return None
 
-def safe_steps(s):
+def safe_steps(s, allow_unacked=False, max_version=MAX):
     a,w,i,ack=s
     out=[]
-    if i is None and a==w and ack==a and a<MAX:
+    if i is None and a==w and (allow_unacked or ack==a) and a<max_version:
         out.append(("Prepare",(a,w,(a,a+1),ack)))
     if i is not None:
         b,n=i
@@ -59,13 +59,13 @@ def mutant_steps(s,kind):
         out.append(("AcknowledgeEarly",(a,w,i,a)))
     return out
 
-def explore():
+def explore(allow_unacked=False, max_version=MAX):
     start=(0,0,None,0);q=deque([start]);seen={start};edges=0
     while q:
         s=q.popleft()
-        bad=inv(s)
+        bad=inv(s, max_version)
         if bad: raise SystemExit(f"safe invariant failed {bad}: {s}")
-        for _,n in safe_steps(s):
+        for _,n in safe_steps(s, allow_unacked, max_version):
             edges+=1
             if n not in seen:
                 seen.add(n);q.append(n)
@@ -104,3 +104,24 @@ for kind,expected in [
     print("  Init",state)
     for act,state in trace:
         print(" ",act,state)
+
+# The wider three-contact profile deliberately admits new contacts before the
+# previous acknowledgement was observed. It preserves all six safety invariants.
+lossy_states,lossy_edges=explore(True,3)
+print(f"lossy safe {len(lossy_states)} states, {lossy_edges} edges; all invariants hold")
+s=(0,0,None,0)
+for expected in ("Prepare","CommitAuthority","AdvanceWitness","ClearIntent","Prepare"):
+    next_states=[n for act,n in safe_steps(s,True,3) if act==expected]
+    if len(next_states)!=1: raise SystemExit(f"lost-ack trace missing {expected}: {s}")
+    s=next_states[0]
+    print("  lost-ack",expected,s)
+if s!=(1,1,(1,2),0): raise SystemExit("lost-ack trace did not permit later contact")
+# An endless abort/reprepare cycle disables Acknowledge intermittently: weak
+# fairness alone does not imply unconditional eventual acknowledgement.
+settled=(1,1,None,0)
+prepared=(1,1,(1,2),0)
+if ("Prepare",prepared) not in safe_steps(settled,True,3) or ("AbortPrepared",settled) not in safe_steps(prepared,True,3):
+    raise SystemExit("weak-fairness cycle missing")
+if any(act=="Acknowledge" for act,_ in safe_steps(prepared,True,3)):
+    raise SystemExit("ack unexpectedly enabled throughout cycle")
+print("lossy weak-fairness negative cycle: Prepare -> AbortPrepared -> repeat; acknowledgement intermittently disabled")

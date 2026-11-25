@@ -81,3 +81,19 @@ for entry in 'Revoked DispatchAuthorized' 'Expired DispatchAuthorized' 'Reconcil
  grep -F "Invariant $2 is violated" "$WORK/grant-$1.log"
 done
 python3 grant_model.py
+
+# Wider bridge safety: Go permits later contacts after an unobserved acknowledgement.
+# Retain the stricter original profile and its liveness counterexamples above.
+for entry in 'Safe' 'Fair'; do
+ java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/witness-lossy-$entry" -config "WitnessBridgeLossy$entry.cfg" WitnessBridgeLossy.tla > "$WORK/witness-lossy-$entry.log" 2>&1 || { cat "$WORK/witness-lossy-$entry.log"; exit 1; }
+ cat "$WORK/witness-lossy-$entry.log"
+ grep -F 'No error has been found' "$WORK/witness-lossy-$entry.log"
+done
+for entry in 'UnconditionalAck SettledEventuallyAcknowledged' 'UnfairAck QuiescentEventuallyAcknowledged'; do
+ set -- $entry
+ if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/witness-lossy-$1" -config "WitnessBridgeLossy$1.cfg" WitnessBridgeLossy.tla > "$WORK/witness-lossy-$1.log" 2>&1; then
+  cat "$WORK/witness-lossy-$1.log"; echo "lossy witness negative control $1 unexpectedly succeeded" >&2; exit 1
+ fi
+ cat "$WORK/witness-lossy-$1.log"
+ grep -F "Temporal property $2 was violated" "$WORK/witness-lossy-$1.log"
+done
