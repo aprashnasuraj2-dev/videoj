@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-041",
+  "session": "V2-042",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2717,7 +2717,23 @@
       "dependencies": [
         "V2-D11-ALIGNED-CASE"
       ],
-      "scope": "V2-040 candidate adds a research-only partition audit with closed source schema, exact case pin, event/participant count bounds, unique strata, aggregate conservation, exact per-row raw risk/difference/crude ratio receipts, separately reported adjusted rate ratio interval positions, and explicit non-establishment of universal causal benefit. RECOVERY NCT04381936 historical final vs preliminary numeric extracts (Figure 3, DOI 10.1056/NEJMoa2021436, PMID 32678530, PMC7383595, accessed 2026-11-25) share one declared study root. Aggregate direction lower, no-respiratory-support observed direction higher but adjusted CI includes null; no inference of harm/equivalence or clinical recommendation. Preliminary lower CI 0.91 versus final 0.92; version comparison not replication. Browser journey, strict edge-case tests, frozen independent Python replay and tamper challenges authored; exact candidate CI pending. Original paper bytes not pinned; no current guideline, clinical deployment, human efficacy or population transfer claim. V2-041 candidate: versioned trial audit v2 binds every input receipt to exact normalized-source pin and row ID, preventing population/version-only changes from preserving old receipts; aggregate-only counters are null (not tested). Strict negative-zero, duplicate-key, max-ID controls. Separate 256 KiB trial snapshot verifier requires caller-retained report and normalized source pins (two source pins for version comparison); independently implemented generic Python admission/reconstruction, packaged explicit --trial profile, preserved fixed and aligned flags. Browser exports exact bytes and snapshot digest; parity tests exercise historical snapshot, forged causal conclusion, scope/receipt tampering, source substitution and repinning, zero-event synthetic control, malformed wire and size refusal. Earlier v1 research exports remain historical development evidence, not silently accepted by v2. Source authenticity, freshness, medical validity and causal inference not established. Exact CI pending."
+      "scope": "V2-040 candidate adds a research-only partition audit with closed source schema, exact case pin, event/participant count bounds, unique strata, aggregate conservation, exact per-row raw risk/difference/crude ratio receipts, separately reported adjusted rate ratio interval positions, and explicit non-establishment of universal causal benefit. RECOVERY NCT04381936 historical final vs preliminary numeric extracts (Figure 3, DOI 10.1056/NEJMoa2021436, PMID 32678530, PMC7383595, accessed 2026-11-25) share one declared study root. Aggregate direction lower, no-respiratory-support observed direction higher but adjusted CI includes null; no inference of harm/equivalence or clinical recommendation. Preliminary lower CI 0.91 versus final 0.92; version comparison not replication. Browser journey, strict edge-case tests, frozen independent Python replay and tamper challenges authored; exact candidate CI pending. Original paper bytes not pinned; no current guideline, clinical deployment, human efficacy or population transfer claim. V2-041 candidate: versioned trial audit v2 binds every input receipt to exact normalized-source pin and row ID, preventing population/version-only changes from preserving old receipts; aggregate-only counters are null (not tested). Strict negative-zero, duplicate-key, max-ID controls. Separate 256 KiB trial snapshot verifier requires caller-retained report and normalized source pins (two source pins for version comparison); independently implemented generic Python admission/reconstruction, packaged explicit --trial profile, preserved fixed and aligned flags. Browser exports exact bytes and snapshot digest; parity tests exercise historical snapshot, forged causal conclusion, scope/receipt tampering, source substitution and repinning, zero-event synthetic control, malformed wire and size refusal. Earlier v1 research exports remain historical development evidence, not silently accepted by v2. Source authenticity, freshness, medical validity and causal inference not established. Exact CI pending.",
+      "evidence": [
+        {
+          "id": "V2-D20-RESEARCH-PARTITION-v1",
+          "sourceRevision": "1f5173a79d60ca6576b5939600fc0a1f667c8044",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45591249190/job/139125730226",
+          "description": "V2-040 exact source 1f5173a79d60ca6576b5939600fc0a1f667c8044 passed all nine workflows (knowledge PR 45591249190, push 45591240895, auxiliary PR 45591248968,45591249213,45591248939,45591249017,45591249029,45591249001,45591249047). Browser jobs 139125730226 and 139125699734 independently replayed research partition and report-version audit. This is historical v1 profile evidence; V2-041 source 550770a remains pending exact CI, no v2 snapshot promotion."
+        }
+      ]
+    },
+    {
+      "id": "V2-D21-REVIEWED-COMPILER",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D11-ALIGNED-CASE"
+      ],
+      "scope": "V2-042 candidate: reviewed claim compiler uses independently retained host contract pin, exact question/source byte pins and UTF-8 half-open spans, strict numeric lexeme admission and declared unit/kind/scope types. Untrusted model proposal can reference reviewed quantities, propose hypotheses or unknowns and bounded arithmetic/constraints; cannot invent numeric leaves, assert verification, execute code or promote source quotes. Exact kernel runs only dependency-ready compatible subgraphs; missing inputs and semantic type mismatches block target, partial results retained; target relevance and method validity explicitly unverified. Declared duplicate source bytes across roots visible. Finance fixture uses normalized historical amounts; no live model, no automatic document extraction, no independent compiler replay or browser integration yet. Node adversarial tests authored; exact CI pending."
     }
   ]
 }

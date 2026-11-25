@@ -30,3 +30,7 @@ The Observatory CLI asserts a real deterministic state change, exact incremental
 ## Assumption contrast (candidate)
 
 `auditAssumptionContrast(caseText,pin,eventText)` separates exact discrete model reversals from those compatible with active readings; it reports inclusion-minimal exact input replacements, and explicitly detects interaction-only reversals where all single-axis alternatives are decisive and preserve the anchor. Coverage is only the observed-domain finite grid. No continuous sensitivity, physical feasibility, causal identification, or evidence adoption. Integrated verification pending.
+
+## Reviewed claim compiler candidate
+
+`compileReviewedProposal(contractText,contractPin,proposalText)` admits exact source spans against a separately retained host contract and restricts executable numeric inputs to explicitly reviewed bindings. Unknowns stay unresolved, incompatible declared scopes block dependent nodes, and source quotes are not semantic proof. The arithmetic target is conditional, not an answer to the natural-language question. No automatic compilation or live model authority yet. CI pending.

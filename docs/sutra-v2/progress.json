@@ -3,9 +3,10 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-041",
+  "session": "V2-042",
   "next": [
     "V2-D20-RESEARCH-PARTITION",
+    "V2-D21-REVIEWED-COMPILER",
     "V2-P07-WASM",
     "V2-RUNTIME-02",
     "V2-P05-RECOVERY",
@@ -19,7 +20,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "source_bound_trial_snapshot_candidate_pending_exact_ci",
+  "state": "reviewed_compiler_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -350,7 +351,7 @@
     "resolutionRevision": "36b29c7ace8ebb4a27f39ef067947ec273a478d8",
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45579569479/job/139085895592"
   },
-  "lastVerifiedKernelSource": "a8540f8c0b6b745dd0301b26135de54d3c634efc",
+  "lastVerifiedKernelSource": "1f5173a79d60ca6576b5939600fc0a1f667c8044",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -361,20 +362,20 @@
   },
   "pendingCandidate": {
     "sourceRevision": null,
+    "sourceParent": "550770a0e6710cc58f11e22cd5a5c3f37ac711fe",
+    "status": "candidate_pending_exact_ci",
+    "identityRule": "Resolve immutable containing commit.",
+    "checks": [
+      "V2-042 candidate: reviewed claim compiler uses independently retained host contract pin, exact question/source byte pins and UTF-8 half-open spans, strict numeric lexeme admission and declared unit/kind/scope types. Untrusted model proposal can reference reviewed quantities, propose hypotheses or unknowns and bounded arithmetic/constraints; cannot invent numeric leaves, assert verification, execute code or promote source quotes. Exact kernel runs only dependency-ready compatible subgraphs; missing inputs and semantic type mismatches block target, partial results retained; target relevance and method validity explicitly unverified. Declared duplicate source bytes across roots visible. Finance fixture uses normalized historical amounts; no live model, no automatic document extraction, no independent compiler replay or browser integration yet. Node adversarial tests authored; exact CI pending."
+    ]
+  },
+  "previousPendingCandidate": {
+    "sourceRevision": "550770a0e6710cc58f11e22cd5a5c3f37ac711fe",
     "sourceParent": "1f5173a79d60ca6576b5939600fc0a1f667c8044",
     "status": "candidate_pending_exact_ci",
     "identityRule": "Resolve immutable containing commit.",
     "checks": [
       "V2-041 candidate: versioned trial audit v2 binds every input receipt to exact normalized-source pin and row ID, preventing population/version-only changes from preserving old receipts; aggregate-only counters are null (not tested). Strict negative-zero, duplicate-key, max-ID controls. Separate 256 KiB trial snapshot verifier requires caller-retained report and normalized source pins (two source pins for version comparison); independently implemented generic Python admission/reconstruction, packaged explicit --trial profile, preserved fixed and aligned flags. Browser exports exact bytes and snapshot digest; parity tests exercise historical snapshot, forged causal conclusion, scope/receipt tampering, source substitution and repinning, zero-event synthetic control, malformed wire and size refusal. Earlier v1 research exports remain historical development evidence, not silently accepted by v2. Source authenticity, freshness, medical validity and causal inference not established. Exact CI pending."
-    ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": "1f5173a79d60ca6576b5939600fc0a1f667c8044",
-    "sourceParent": "a8540f8c0b6b745dd0301b26135de54d3c634efc",
-    "status": "candidate_pending_exact_ci",
-    "identityRule": "Resolve immutable containing commit.",
-    "checks": [
-      "V2-040 candidate adds a research-only partition audit with closed source schema, exact case pin, event/participant count bounds, unique strata, aggregate conservation, exact per-row raw risk/difference/crude ratio receipts, separately reported adjusted rate ratio interval positions, and explicit non-establishment of universal causal benefit. RECOVERY NCT04381936 historical final vs preliminary numeric extracts (Figure 3, DOI 10.1056/NEJMoa2021436, PMID 32678530, PMC7383595, accessed 2026-11-25) share one declared study root. Aggregate direction lower, no-respiratory-support observed direction higher but adjusted CI includes null; no inference of harm/equivalence or clinical recommendation. Preliminary lower CI 0.91 versus final 0.92; version comparison not replication. Browser journey, strict edge-case tests, frozen independent Python replay and tamper challenges authored; exact candidate CI pending. Original paper bytes not pinned; no current guideline, clinical deployment, human efficacy or population transfer claim."
     ]
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
