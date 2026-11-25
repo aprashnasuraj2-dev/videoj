@@ -14,6 +14,7 @@ import (
  "encoding/binary"
  "errors"
  "io"
+ "net/http"
  "os"
  "path/filepath"
  "sync"
@@ -27,6 +28,7 @@ const maxGrantRevocations = 8
 const maxGrantEpoch uint64 = 1_000_000_000
 const actionGrantBodySize = grantIDSize+32+32+1+8+8
 const actionGrantSize = actionGrantBodySize+ed25519.SignatureSize
+const grantedAuthorityRequestSize = actionGrantSize+authorityRequestSize
 
 type GrantID [grantIDSize]byte
 type GrantClass byte
@@ -89,6 +91,22 @@ func VerifyActionGrant(g ActionGrant,req Request,consent ed25519.PublicKey)bool{
  return len(consent)==ed25519.PublicKeySize&&g.ID!=(GrantID{})&&g.RequestHash==req.Hash()&&g.Context==req.Context&&
   (g.Class==GrantPrimary||g.Class==GrantCompensation)&&g.NotBefore<=g.ExpiresAfter&&g.ExpiresAfter<=maxGrantEpoch&&
   ed25519.Verify(consent,g.message(),g.Signature[:])
+}
+
+
+type GrantedAuthorityRequest struct{
+ Grant ActionGrant
+ Authority AuthorityRequest
+}
+func (r GrantedAuthorityRequest) Bytes()[]byte{
+ b:=append([]byte(nil),r.Grant.Bytes()...)
+ return append(b,r.Authority.Bytes()...)
+}
+func ParseGrantedAuthorityRequest(raw []byte)(GrantedAuthorityRequest,error){
+ if len(raw)!=grantedAuthorityRequestSize{return GrantedAuthorityRequest{},ErrPolicy}
+ grant,e:=ParseActionGrant(raw[:actionGrantSize]);if e!=nil{return GrantedAuthorityRequest{},e}
+ authority,e:=ParseAuthorityRequest(raw[actionGrantSize:]);if e!=nil{return GrantedAuthorityRequest{},e}
+ return GrantedAuthorityRequest{Grant:grant,Authority:authority},nil
 }
 
 type GrantBook struct{
@@ -276,4 +294,48 @@ func (g *GrantGuard) Status(grant ActionGrant,req AuthorityRequest)(WitnessedRes
  if req.Op!=AuthorityStatus{return WitnessedResponse{},ErrPolicy}
  if e:=g.book.CheckReconcile(grant,req.Action);e!=nil{return WitnessedResponse{},e}
  return g.coordinator.Process(req)
+}
+
+func (g *GrantGuard) ProcessAttested(grant ActionGrant,req AuthorityRequest,challenge Digest)(WitnessedEnvelope,error){
+ if challenge==(Digest{}){return WitnessedEnvelope{},ErrPolicy}
+ switch req.Op{
+ case AuthorityCommit:
+  // The intent class comes from the signed grant itself. No external class
+  // parameter can reinterpret primary consent as compensation consent.
+  g.book.mu.Lock();defer g.book.mu.Unlock()
+  if e:=g.book.reserveDispatchLocked(grant,req.Action,grant.Class);e!=nil{return WitnessedEnvelope{},e}
+  return g.coordinator.ProcessAttested(req,challenge)
+ case AuthorityStatus:
+  if e:=g.book.CheckReconcile(grant,req.Action);e!=nil{return WitnessedEnvelope{},e}
+  return g.coordinator.ProcessAttested(req,challenge)
+ default:
+  return WitnessedEnvelope{},ErrPolicy
+ }
+}
+
+func (g *GrantGuard) ServeHTTP(w http.ResponseWriter,r *http.Request){
+ w.Header().Set("Cache-Control","no-store")
+ if r.Method!=http.MethodPost||r.URL.Path!="/authority-granted"||r.URL.RawQuery!=""||r.Header.Get("Content-Type")!=media{
+  w.WriteHeader(http.StatusBadRequest);return
+ }
+ challenge,e:=parseWitnessChallengeHeader(r);if e!=nil{w.WriteHeader(http.StatusBadRequest);return}
+ defer r.Body.Close()
+ raw,e:=io.ReadAll(io.LimitReader(r.Body,grantedAuthorityRequestSize+1));if e!=nil||len(raw)!=grantedAuthorityRequestSize{w.WriteHeader(http.StatusBadRequest);return}
+ request,e:=ParseGrantedAuthorityRequest(raw);if e!=nil{w.WriteHeader(http.StatusBadRequest);return}
+ response,e:=g.ProcessAttested(request.Grant,request.Authority,challenge)
+ if e!=nil{
+  switch {
+  case errors.Is(e,ErrGrantInactive),errors.Is(e,ErrGrantRevoked),errors.Is(e,ErrGrantClass),errors.Is(e,ErrGrantNotDispatched),errors.Is(e,ErrAuthorityAuth),errors.Is(e,ErrPolicy):
+   w.WriteHeader(http.StatusForbidden)
+  case errors.Is(e,ErrWitnessRollback),errors.Is(e,ErrHeadConflict):
+   w.WriteHeader(http.StatusConflict)
+  case errors.Is(e,ErrWitnessUnavailable),errors.Is(e,ErrUnknown):
+   w.WriteHeader(http.StatusServiceUnavailable)
+  default:
+   w.WriteHeader(http.StatusInternalServerError)
+  }
+  return
+ }
+ w.Header().Set("Content-Type",media)
+ _,_=w.Write(response.Bytes())
 }
