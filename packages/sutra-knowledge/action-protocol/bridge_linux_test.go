@@ -54,14 +54,14 @@ func TestWitnessCoordinatorProcessCrashBoundaries(t *testing.T){
   if _,e=coordinator.Process(wire);e!=nil{t.Fatal(e)}
   t.Fatal("child did not exit at requested bridge stage")
  }
- for _,stage:=range []string{"after-intent","after-authority","after-witness"}{
+ for _,stage:=range []string{"after-intent","after-authority","after-witness","after-clear"}{
   t.Run(stage,func(t *testing.T){
    var current atomic.Pointer[AuthorityWitness]
    srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
     witness:=current.Load();if witness==nil{w.WriteHeader(http.StatusServiceUnavailable);return}
     witness.ServeHTTP(w,r)
    }));defer srv.Close()
-   ctx,approver,_,authorityPub,authorityKey,callerPub,_:=authorityFixture(t,srv.URL)
+   ctx,approver,ak,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,srv.URL)
    witnessPub,witnessKey:=witnessKeys()
    authorityDir:=privateTemp(t);witnessDir:=privateTemp(t)
    a,e:=CreateSharedAuthority(authorityDir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)}
@@ -80,6 +80,9 @@ func TestWitnessCoordinatorProcessCrashBoundaries(t *testing.T){
    a,e=OpenSharedAuthority(authorityDir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer a.Close()
    client,e:=NewWitnessClient(srv.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
    coordinator,e:=NewWitnessCoordinator(a,client);if e!=nil{t.Fatal(e)}
+   if stage=="after-clear"{
+    if _,e=os.Lstat(filepath.Join(authorityDir,bridgeIntentName));!errors.Is(e,os.ErrNotExist){t.Fatal("post-clear crash retained intent",e)}
+   }
    if e=coordinator.Recover();e!=nil{t.Fatal("recovery",stage,e)}
    view,e:=client.View();if e!=nil{t.Fatal(e)}
    head,e:=a.Head();if e!=nil{t.Fatal(e)}
@@ -91,9 +94,23 @@ func TestWitnessCoordinatorProcessCrashBoundaries(t *testing.T){
    }else{
     if head==genesis||spent!=[authorityCallers]byte{1,0}||total!=1||effects!=1{t.Fatal("committed crash lost state",spent,total,effects)}
    }
+   if stage=="after-clear"{
+    // A different authenticated status contact recovers the result after
+    // the child died before exposing its composite acknowledgement.
+    req:=approve(t,0,ctx,ak)
+    status,e:=SignAuthorityRequest(0,AuthorityStatus,genesis,req,callerKey[0]);if e!=nil{t.Fatal(e)}
+    challenge,e:=randomWitnessChallenge();if e!=nil{t.Fatal(e)}
+    response,e:=coordinator.ProcessAttested(status,challenge)
+    if e!=nil||response.Authority.Outcome!=AuthorityCommitted||
+     !VerifyWitnessedEnvelope(response,status,challenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("post-clear authenticated status",e)}
+    spent,total,effects,e=a.Counts()
+    if e!=nil||spent!=[authorityCallers]byte{2,0}||total!=2||effects!=1{t.Fatal("post-clear status repeated effect",spent,total,effects,e)}
+    finalView,e:=client.View();if e!=nil{t.Fatal(e)}
+    finalHead,e:=a.Head();if e!=nil||finalView.Head!=finalHead||finalView.Sequence!=2{t.Fatal("status did not converge",e)}
+   }
   })
  }
- t.Log("actual process exits after intent, authority rename, and witness advance all recover to a single converged durable state")
+ t.Log("actual process exits after intent, authority rename, witness advance, and durable intent deletion all recover to a converged durable state; post-clear status returns a fresh composite proof without repeating the effect")
 }
 
 func TestWitnessCoordinatorLostWitnessReplyRecoversWithoutSecondEffect(t *testing.T){

@@ -19,6 +19,7 @@ import (
  "os"
  "path/filepath"
  "sync"
+ "syscall"
  "time"
 )
 
@@ -188,7 +189,14 @@ func (c *WitnessCoordinator) loadIntentLocked()(BridgeIntent,bool,error){
  info,e:=os.Lstat(path)
  if errors.Is(e,os.ErrNotExist){return BridgeIntent{},false,nil}
  if e!=nil||!info.Mode().IsRegular()||info.Mode().Perm()&0077!=0||info.Size()!=bridgeIntentSize{return BridgeIntent{},false,ErrStore}
- f,e:=os.Open(path);if e!=nil{return BridgeIntent{},false,e}
+ // O_NOFOLLOW rejects a symlink substituted after Lstat; O_NONBLOCK
+ // prevents a substituted FIFO from blocking this coordinator. The parent
+ // directory and its owner remain trusted; this is not hostile-root protection.
+ f,e:=os.OpenFile(path,os.O_RDONLY|syscall.O_NOFOLLOW|syscall.O_NONBLOCK,0)
+ if e!=nil{return BridgeIntent{},false,ErrStore}
+ opened,e:=f.Stat()
+ if e!=nil||!opened.Mode().IsRegular()||opened.Mode().Perm()&0077!=0||
+  opened.Size()!=bridgeIntentSize||!os.SameFile(info,opened){f.Close();return BridgeIntent{},false,ErrStore}
  raw,e:=io.ReadAll(io.LimitReader(f,bridgeIntentSize+1));ce:=f.Close()
  if e!=nil||ce!=nil{return BridgeIntent{},false,ErrStore}
  intent,e:=parseBridgeIntent(raw,c.authority.ctx,c.authority.signer.Public().(ed25519.PublicKey));if e!=nil{return BridgeIntent{},false,e}
@@ -264,6 +272,7 @@ func (c *WitnessCoordinator) processLocked(req AuthorityRequest)(WitnessedRespon
  if view.Head!=plan.after{return WitnessedResponse{},ErrWitnessRollback}
  if c.fault!=nil{if e=c.fault("after-witness");e!=nil{return WitnessedResponse{},ErrUnknown}}
  if e=c.clearIntentLocked();e!=nil{return WitnessedResponse{},ErrUnknown}
+ if c.fault!=nil{if e=c.fault("after-clear");e!=nil{return WitnessedResponse{},ErrUnknown}}
  witnessed:=WitnessedResponse{Authority:response,Witness:view}
  if !VerifyWitnessedResponse(witnessed,req,a.ctx,a.signer.Public().(ed25519.PublicKey),c.witness.witness,c.witness.genesis){
   return WitnessedResponse{},ErrWitnessRollback
