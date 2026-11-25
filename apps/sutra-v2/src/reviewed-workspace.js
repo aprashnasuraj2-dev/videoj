@@ -1,14 +1,15 @@
 import {sealReviewedDraft,draftComparisonProposal} from '../../../packages/sutra-knowledge/reviewed-draft.js';
 import {exportReviewedProposal} from '../../../packages/sutra-knowledge/reviewed-claim-compiler.js';
+import {reviewedSnapshotDigest,MAX_REVIEWED_SNAPSHOT_BYTES} from '../../../packages/sutra-knowledge/reviewed-snapshot.js';
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0;
-const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','reset'];
+const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
 function control(){
  for(const id of controls)by(id).disabled=busy;
- if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;}
+ if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;}
 }
-function invalidate(message){epoch++;sealed=null;current=null;by('pin').textContent='No current contract.';by('contract').textContent='';by('proposal').value='';by('result').textContent='';status('draft',message);control();}
+function invalidate(message){epoch++;sealed=null;current=null;by('pin').textContent='No current contract.';by('contract').textContent='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 function options(element,items){element.replaceChildren();for(const id of items){const o=document.createElement('option');o.value=id;o.textContent=id;element.append(o);}}
 function refresh(){
@@ -42,20 +43,24 @@ by('binding-add').onclick=()=>{
 };
 by('seal').onclick=()=>work(async ticket=>{
  const result=await sealReviewedDraft(draft());if(ticket!==epoch)return;
- sealed=result;current=null;by('proposal').value='';by('result').textContent='';by('pin').textContent=result.pin;by('contract').textContent=result.contractText;status('sealed','Reviewed contract sealed. Copy the pin independently if retaining evidence. No proposal evaluated.');
+ sealed=result;current=null;by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';by('pin').textContent=result.pin;by('contract').textContent=result.contractText;status('sealed','Reviewed contract sealed. Copy the pin independently if retaining evidence. No proposal evaluated.');
 });
 by('generate').onclick=()=>work(async ticket=>{
  if(!sealed)return;const p=await draftComparisonProposal(sealed.contractText,sealed.pin,by('left').value,by('right').value,by('op').value);if(ticket!==epoch)return;
- current=null;by('result').textContent='';by('proposal').value=p;status('proposal','User-selected comparison drafted. The proposal is still untrusted and may not answer the question.');
+ current=null;by('result').textContent='';by('snapshot-pin').textContent='';by('proposal').value=p;status('proposal','User-selected comparison drafted. The proposal is still untrusted and may not answer the question.');
 });
-by('proposal').addEventListener('input',()=>{epoch++;current=null;by('result').textContent='';status('proposal','Proposal edited. Run again before exporting.');control();});
+by('proposal').addEventListener('input',()=>{epoch++;current=null;by('result').textContent='';by('snapshot-pin').textContent='';status('proposal','Proposal edited. Run again before exporting.');control();});
 by('run').onclick=()=>work(async ticket=>{
- if(!sealed)return;current=null;by('result').textContent='';control();
+ if(!sealed)return;current=null;by('result').textContent='';by('snapshot-pin').textContent='';control();
  const bundle=await exportReviewedProposal(sealed.contractText,sealed.pin,by('proposal').value);if(ticket!==epoch)return;
- const bytes=new TextEncoder().encode(JSON.stringify(bundle));if(bytes.length>1048576)throw Error('DRAFT_EXPORT_LIMIT');
+ const bytes=new TextEncoder().encode(JSON.stringify(bundle));
  const r=bundle.result;by('result').textContent=r.target.status.replaceAll('_',' ')+' · relevance UNVERIFIED · method UNVERIFIED\n'+r.nodes.map(n=>n.id+' · '+(n.receipt?.outcome.value??n.receipt?.outcome.status??n.status)).join('\n');
- current=bytes;status('ready','Conditional computation available. Export contains the exact pasted source text; review before sharing.');
+ if(bytes.length>MAX_REVIEWED_SNAPSHOT_BYTES){status('ready_unportable','Conditional computation available; portable report exceeds the 256 KiB profile. No export.');return;}
+ const pin=await reviewedSnapshotDigest(bytes);if(ticket!==epoch)return;
+ current={bytes,pin};by('snapshot-pin').textContent=pin;status('ready','Conditional computation available. Export contains the exact pasted source text; review before sharing. Retain both pins separately.');
 });
-by('export').onclick=()=>{if(!current||busy)return;const url=URL.createObjectURL(new Blob([current],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='sutra-reviewed-workspace.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+function download(data,name,type){const url=URL.createObjectURL(new Blob([data],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+by('export').onclick=()=>{if(current&&!busy)download(current.bytes,'sutra-reviewed-workspace.json','application/json');};
+by('export-pin').onclick=()=>{if(current&&!busy)download(current.pin+'\n','sutra-reviewed-workspace.sha256','text/plain');};
 by('reset').onclick=()=>{if(busy)return;sources=[];bindings=[];for(const id of ['question','source-id','lineage','source-text','binding-id','kind','unit','scope'])by(id).value='';for(const id of ['dim-l','dim-m','dim-t'])by(id).value='0';invalidate('Draft cleared from this workspace. Previously downloaded files are unaffected.');refresh();};
 refresh();control();

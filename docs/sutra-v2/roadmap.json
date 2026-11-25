@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-049",
+  "session": "V2-050",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2767,11 +2767,19 @@
     },
     {
       "id": "V2-D23-SOURCE-ECONOMICS",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D11-ALIGNED-CASE"
       ],
-      "scope": "V2-046 candidate: separate host-pinned shared-source acquisition and marginal field-read economic profile over replay-derived surviving worlds and available field partitions. Exact bounded minimax state is (world cell, acquired source set); nonnegative costs, acquisition charged once, no fabricated availability, explicit initial acquisition and event digest; compare same-cost per-field counterfactual separately from legacy declared effort. Synthetic worst-case 4 to 3 units expected, 256 exhaustive sequence-oracle controls authored; no real cost, privacy/disclosure authorization, expected utility, bulk-read assumption or global best-branch optimization. CI pending. V2-047 candidate: wire three actual browser source-economics modes (fresh, assumed previously acquired, withdrawn) with exact policy exports and no external requests. Fix controlled per-field comparison to honor the same initially-acquired source set; otherwise sunk-cost differences were misclassified as sharing benefits. Independent Python set-state minimax reconstructs exact fixture/economic pins, source availability, both policies and counts; 16 mutation challenges per export authored. Synthetic expected comparisons fresh 4/3, acquired 0/0, withdrawn 4/4. No measured cost or actual disclosure. Exact CI pending."
+      "scope": "V2-046 candidate: separate host-pinned shared-source acquisition and marginal field-read economic profile over replay-derived surviving worlds and available field partitions. Exact bounded minimax state is (world cell, acquired source set); nonnegative costs, acquisition charged once, no fabricated availability, explicit initial acquisition and event digest; compare same-cost per-field counterfactual separately from legacy declared effort. Synthetic worst-case 4 to 3 units expected, 256 exhaustive sequence-oracle controls authored; no real cost, privacy/disclosure authorization, expected utility, bulk-read assumption or global best-branch optimization. CI pending. V2-047 candidate: wire three actual browser source-economics modes (fresh, assumed previously acquired, withdrawn) with exact policy exports and no external requests. Fix controlled per-field comparison to honor the same initially-acquired source set; otherwise sunk-cost differences were misclassified as sharing benefits. Independent Python set-state minimax reconstructs exact fixture/economic pins, source availability, both policies and counts; 16 mutation challenges per export authored. Synthetic expected comparisons fresh 4/3, acquired 0/0, withdrawn 4/4. No measured cost or actual disclosure. Exact CI pending.",
+      "evidence": [
+        {
+          "id": "V2-D23-SOURCE-ECONOMICS",
+          "sourceRevision": "3a4cb80cd86afa6cfe84ec7c0be2cf2656fb976f",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45593578601/job/139133742884",
+          "description": "V2-047 exact 3a4cb80cd86afa6cfe84ec7c0be2cf2656fb976f passed all nine workflows (knowledge PR 45593578601 and push 45593566432; independent source economics browser jobs 139133742884 and 139133695545). V2-048 468b78548ae5bd8414e5d601dd8d7c018a175983 knowledge and browser jobs all passed (PR 45593837780, push 45593824056); scoped bundle/exposure solver tests, not independent browser exposure profile yet."
+        }
+      ]
     },
     {
       "id": "V2-D24-DISCLOSURE-FRONTIER",
@@ -2788,6 +2796,15 @@
         "V2-D21-REVIEWED-COMPILER"
       ],
       "scope": "V2-049 candidate: actual caller-authored local reviewed workspace, up to eight staged immutable text sources and 64 reviewed bindings, UTF-16 selection converted to exact UTF-8 span, repeated numeric occurrence explicitly selectable, declared type/scope and dimensions, independent contract seal, user-selected comparator draft and editable untrusted JSON. Stale question/proposal invalidation, no network, explicit export contains pasted text, reset local draft only. Browser test uses two source texts including astral/multibyte prefix and repeated number, truncated token refusal, forged numeric leaf refusal and changed question pin; independent Python reconstructs expected contract and replays actual export. No automatic extraction, inference, semantic validity or source independence. Exact CI pending."
+    },
+    {
+      "id": "V2-D26-REVIEWED-SNAPSHOT",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D21-REVIEWED-COMPILER",
+        "V2-D25-CALLER-REVIEWED-WORKSPACE"
+      ],
+      "scope": "V2-050 candidate: explicit standalone reviewed compiler snapshot profile with caller-held report byte pin and separate reviewed contract pin, independent Python replay of arbitrary admitted contract/proposal rather than fixture-only matching. Browser saves exact snapshot digest, shows separately retained contract identity; large valid computations remain visible but no portable report above 256 KiB. Cross-profile refusal and 24 actual archive-vs-JS parity controls authored (actual caller workspace plus missing/refuted compiler reports, repinning, false status/method/relevance, forged receipts/spans, malformed wire, unreviewed leaf). No empirical truth, freshness or external adoption. Exact CI pending."
     }
   ]
 }
