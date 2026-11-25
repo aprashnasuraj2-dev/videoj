@@ -26,6 +26,12 @@ def inv(s, require_truth=True):
         return "TruthfulAbsence"
     return None
 
+def effect_inv(s):
+    owner,alive,dispatched,effects,fence,absence=s
+    if owner not in (NONE,*CLIENTS) or not alive<=set(CLIENTS) or not dispatched<=set(CLIENTS) or not effects<=set(CLIENTS) or fence not in (0,1) or not absence<=set(CLIENTS):
+        return "TypeOK"
+    return "AtMostOneEffect" if len(effects)>1 else None
+
 def base_steps(s):
     owner,alive,dispatched,effects,fence,absence=s
     out=[]
@@ -54,11 +60,11 @@ def proof_steps(s, lying=False):
             out.append((f"ResolveProvenAbsent{c}",(NONE,alive,dispatched,effects,fence,absence-{c})))
     return out
 
-def explore(stepper, require_truth=True, stop=None):
+def explore(stepper, require_truth=True, stop=None, checker=None):
     q=deque([START]);prev={START:None};act={};edges=0
     while q:
         s=q.popleft()
-        bad=inv(s,require_truth)
+        bad=checker(s) if checker is not None else inv(s,require_truth)
         if bad:
             if bad==stop:
                 trace=[];cur=s
@@ -89,7 +95,7 @@ for s in orphans:
         raise SystemExit(f"truthful resolution missing for {s}")
 print(f"truthful absence resolution checked for {len(orphans)} undispatched orphan states")
 
-seen,edges,bad,trace=explore(lambda s:proof_steps(s,True),False,"AtMostOneEffect")
+seen,edges,bad,trace=explore(lambda s:proof_steps(s,True),False,"AtMostOneEffect",effect_inv)
 if bad!="AtMostOneEffect":
     raise SystemExit(f"lying absence mutant expected AtMostOneEffect, got {bad}")
 print("lying absence AtMostOneEffect counterexample:",trace)
