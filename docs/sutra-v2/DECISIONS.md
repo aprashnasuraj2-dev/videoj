@@ -34,3 +34,8 @@ Mobile correctness is not optional. The semantic and revision computation succee
 ## V2-060
 
 Compare SUTRA against a simple enumerate-all exact compiler baseline, not only weak first-candidate ablation. Expect equality on narrow triage; do not claim feature novelty or comparative superiority. Freeze explicit synthetic expected outcomes in a separate spec, label developer authorship, keep external/held-out count zero. Report coverage and accuracy jointly, count unsupported decisive results and missed invariants; no live model result without actual provider access.
+
+
+## V2-061 — SUTRA-only active tree and exact verification reconciliation
+
+V2-059 and V2-060 each passed all nine exact workflows. V2-059 actual 360px browser and independent replay passed; preserve the V2-057 and V2-058 failures. V2-060 frozen pilot verified only at developer-authored scope. Retire 185 old source/configuration/workflow paths, including 16 source blobs relocated byte-for-byte into the learner's internal media boundary. Keep original NOTICE attribution, all SUTRA1/2 evidence and Git history. Root package is SUTRA-only; activate inherited learner workflow on the draft PR base. No default branch change, merge, release or deployment. Repository-isolation gate implemented but unverified until exact CI and tree inspection.

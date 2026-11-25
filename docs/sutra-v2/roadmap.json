@@ -3051,7 +3051,14 @@
       ],
       "scope": "Question → evidence → interpretations → review → investigation → conclusion → challenge → revision → export, manual/offline mode, accessible progressive disclosure. V2-057 candidate: manual reviewed workspace now preserves labels, source links, version export, separate pin, caller baseline import and evidence correction impact. Actual browser tests pending; stable candidate IDs, progressive source review, broader canvas, offline independent replay and accessibility acceptance remain open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending.",
       "acceptance": "Actual browser journey, persistence, cancel/error recovery, keyboard/mobile and no-model pathway.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK15-UNIFIED-WORKSPACE",
+          "sourceRevision": "819b3380ed946a5a71628e5e3afdafcd69c71316",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604905064/job/139173170604",
+          "description": "All nine workflows green; actual Chromium 360px acceptance, baseline correction, four conditional reversals, impact export and independent Python archive replay. Full workspace gate remains open."
+        }
+      ]
     },
     {
       "id": "V2-LK16-SPECIALIST-JOURNEYS",
@@ -3073,7 +3080,14 @@
       ],
       "scope": "Freeze staged 200 independently specified/annotated cases: 40 semantic,40 assumption,40 revision,30 ancestry,30 acquisition,20 replay/tamper; distinct synthetic/public/expert splits. V2-060 candidate: frozen 16-case synthetic development spec, exact candidate-state scoring, coverage/accuracy and unsupported decisive counts, first-candidate ablation and enumerate-all comparator. No held-out/external annotations, live models or broad superiority; exact CI pending.",
       "acceptance": "Held-out separation; seven matched baselines (LLM, tools, solver, debate, domain software, SUTRA matched/offline); accuracy AND coverage, effort/cost, revision, replay, security, ablations and intervals.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK17-BENCHMARK",
+          "sourceRevision": "de81a94d520d3721cb5c339677e696465913734a",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45605230125",
+          "description": "All nine exact workflows green; frozen 16-case developer-authored development pilot executed with matched deterministic baselines. Not held-out, externally annotated, 200-case or live-model evidence."
+        }
+      ]
     },
     {
       "id": "V2-LK18-PRIOR-ART",
@@ -3098,7 +3112,7 @@
     {
       "id": "V2-LK20-REPOSITORY-ISOLATION",
       "track": "A",
-      "status": "Not started",
+      "status": "Implemented but unverified",
       "dependencies": [],
       "scope": "Make active repository product and contributor entry points SUTRA-only; audit historical independent player files, workflows, root package, configs, media and reusable dependencies before removing non-SUTRA source.",
       "acceptance": "Clean SUTRA builds and legacy compatibility, no retired live routes, historical Git evidence intact, no production cutover.",

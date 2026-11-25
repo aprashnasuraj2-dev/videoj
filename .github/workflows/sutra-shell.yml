@@ -2,10 +2,10 @@ name: Validate SUTRA learner shell
 on:
   push:
     branches: [main]
-    paths: ['apps/sutra/**', 'apps/sutra-peer/**', 'packages/sutra-evidence/**', 'packages/sutra-runtime/**', 'packages/sutra-source-tools/**', 'packages/sutra-inference/**', 'packages/sutra-consent/**', 'packages/sutra-content-profile/**', 'packages/sutra-actions/**', 'services/sutra-api/**', 'src/**', '.github/workflows/sutra-shell.yml']
+    paths: ['apps/sutra/**', 'apps/sutra-peer/**', 'packages/sutra-evidence/**', 'packages/sutra-runtime/**', 'packages/sutra-source-tools/**', 'packages/sutra-inference/**', 'packages/sutra-consent/**', 'packages/sutra-content-profile/**', 'packages/sutra-actions/**', 'services/sutra-api/**', '.github/workflows/sutra-shell.yml']
   pull_request:
-    branches: [main]
-    paths: ['apps/sutra/**', 'apps/sutra-peer/**', 'packages/sutra-evidence/**', 'packages/sutra-runtime/**', 'packages/sutra-source-tools/**', 'packages/sutra-inference/**', 'packages/sutra-consent/**', 'packages/sutra-content-profile/**', 'packages/sutra-actions/**', 'services/sutra-api/**', 'src/**', '.github/workflows/sutra-shell.yml']
+    branches: [main, 'sutra/caller-peer-failure-boundary']
+    paths: ['apps/sutra/**', 'apps/sutra-peer/**', 'packages/sutra-evidence/**', 'packages/sutra-runtime/**', 'packages/sutra-source-tools/**', 'packages/sutra-inference/**', 'packages/sutra-consent/**', 'packages/sutra-content-profile/**', 'packages/sutra-actions/**', 'services/sutra-api/**', '.github/workflows/sutra-shell.yml']
 permissions:
   contents: read
 jobs:

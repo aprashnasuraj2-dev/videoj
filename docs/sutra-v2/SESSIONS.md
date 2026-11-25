@@ -696,3 +696,8 @@ V2-055 `32348421e11bd8882117f5a4b653cf432e456846` and V2-056 `8a335023e62eedf19f
 ## V2-060 — First frozen comparative development pilot
 
 Added 16 manually specified synthetic cases across finance, engineering, research, student, business and general comparisons, with explicit expected candidate outcomes independent of runner output. Cases include definition divergence, population, missing inputs, same-dimension different kind, strict/inclusive equality, fabricated leaf and repeated consensus. Same reviewed data/programs for first-candidate ablation, simple enumerate-all compiler comparator and SUTRA; report conditional coverage, accuracy among answered, unsupported decisive counts and missed invariants. Simple enumerate-all expected to match; this is not a competitive model claim. 200-case target and seven real baselines remain open; no external annotations/held-out or live provider. Test and CLI CI pending. Prior V2-059 responsive correction and V2-058 independent replay remain pending until exact CI.
+
+
+## V2-061 — SUTRA-only active tree and exact verification reconciliation
+
+V2-059 and V2-060 each passed all nine exact workflows. V2-059 actual 360px browser and independent replay passed; preserve the V2-057 and V2-058 failures. V2-060 frozen pilot verified only at developer-authored scope. Retire 185 old source/configuration/workflow paths, including 16 source blobs relocated byte-for-byte into the learner's internal media boundary. Keep original NOTICE attribution, all SUTRA1/2 evidence and Git history. Root package is SUTRA-only; activate inherited learner workflow on the draft PR base. No default branch change, merge, release or deployment. Repository-isolation gate implemented but unverified until exact CI and tree inspection.

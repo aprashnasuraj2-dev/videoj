@@ -1,46 +1,18 @@
 {
-  "name": "dhago",
+  "name": "sutra",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node scripts/compile-weave.mjs && vite",
-    "build": "node scripts/ensure-webm.mjs && node scripts/compile-weave.mjs && vite build && node scripts/prune-retired-media.mjs && node scripts/size-report.mjs",
-    "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
-    "deploy": "node apps/preview/deploy.mjs",
-    "deploy:vercel": "npx --yes vercel@64 build && npx --yes vercel@64 deploy --prebuilt",
-    "deploy:netlify": "npx --yes netlify-cli@27 deploy --build",
-    "deploy:cloudflare": "npm run build && npx --yes wrangler@4 pages deploy dist --project-name dhago",
-    "test": "playwright test",
-    "prepare:weave": "node scripts/compile-weave.mjs",
-    "size:report": "node scripts/size-report.mjs",
-    "sync:canonical-media": "node scripts/sync-canonical-media.mjs"
+    "setup:learner": "npm ci --prefix apps/sutra",
+    "test:knowledge": "node --test packages/sutra-knowledge/test/*.test.mjs",
+    "test:legacy": "npm test --prefix apps/sutra",
+    "build:learner": "npm run build --prefix apps/sutra",
+    "build:investigation": "node apps/sutra-v2/build.mjs",
+    "test:investigation-browser": "node apps/sutra-v2/test/browser.cjs",
+    "benchmark:pilot": "node packages/sutra-knowledge/evaluation/living-pilot.mjs"
   },
-  "dependencies": {
-    "@videojs/html": "10.4.0"
-  },
-  "devDependencies": {
-    "@axe-core/playwright": "^4.14.0",
-    "@base-ui/react": "^1.6.0",
-    "@heroicons/react": "^2.2.0",
-    "@playwright/test": "^1.65.0",
-    "@tailwindcss/vite": "^4.3.3",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "@videojs/mux-video": "10.4.0",
-    "@vitejs/plugin-react": "^6.1.2",
-    "class-variance-authority": "^0.7.1",
-    "cn": "^0.4.0",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2",
-    "vite": "^8.3.4"
-  },
-  "exports": {
-    "./player": "./src/create-player.ts",
-    "./ribbon": "./src/ribbon/ribbon.ts",
-    "./stress-lab": "./src/stress-lab/harness.ts"
+  "engines": {
+    "node": ">=22.12"
   }
 }

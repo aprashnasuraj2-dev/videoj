@@ -1,0 +1,1 @@
+Internal SUTRA learner media implementation. Sixteen source blobs relocated byte-for-byte from the historical player tree; original identifiers and attribution retained for compatibility. Not a standalone product. See root NOTICE and LICENSE.

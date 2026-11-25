@@ -1,3 +1,12 @@
+SUTRA — Living, verifiable knowledge
+
+The SUTRA learner contains an inherited media implementation under apps/sutra/src/media-player/.
+Copyright 2026 DHAGO contributors.
+Video.js copyright 2025-present Video.js contributors.
+Retained source headers and dependency license terms remain applicable. Historical standalone products remain in prior Git revisions; this notice is attribution, not an active product entry point.
+
+Original inherited notice follows for preservation of attribution and license obligations:
+
 DHAGO — Time, woven
 Copyright 2026 DHAGO contributors
 

@@ -3,18 +3,9 @@ dist/
 .env
 .env.*
 !.env.example
-test-results/
+coverage/
 playwright-report/
-tmp/
-handoff/
-published-dist/
-release-package/
-*.tgz
-*.zip
-*.log
+test-results/
+test-output/
 .DS_Store
-
-# Build-generated metadata and experimental media stay out of source releases.
-apps/preview/src/weave-studies.json
-apps/preview/public/media/from-fibre-to-fabric*
-apps/preview/public/media/studies-in-thread.weave.svg
+*.log

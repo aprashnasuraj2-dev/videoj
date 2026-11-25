@@ -1,7 +1,7 @@
-// Explicit reusable DHAGO boundary. No imports from apps/preview or DETOUR.
+// Reused media implementation, contained within the SUTRA learner.
 import {readPlaybackState} from './playback-state.js';
 import {validateNativeSeekTarget} from './seek-policy.js';
-import {createDhagoPlayer} from '../../../src/create-player.ts';
+import {createDhagoPlayer} from './media-player/create-player.ts';
 
 export function mountTimingPlayer(host,{source,poster,chapters,captions,bindVerifiedSource=false,onSourceInvalidated}={}){
  const player=createDhagoPlayer({source,poster,chapters,captions,surface:'minimal'});

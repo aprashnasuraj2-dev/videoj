@@ -1,7 +1,0 @@
-{
-  "origin": "https://detour-backup.aafnaipatro.com/",
-  "sourceSha": "50ac9661e315f099d3121850a57dd398cbeb5865",
-  "distBranch": "detour-dist-50ac9661e315",
-  "transport": "Cloudflare Worker with SHA-versioned R2 objects hydrated from immutable GitHub dist branch",
-  "notes": "Root-critical release objects are stored in isolated R2 bucket detour-release-assets; missing immutable paths hydrate once from the frozen dist branch. Pages project detour-videojs remains undeployed because Pages asset-JWT upload is connector-blocked."
-}

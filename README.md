@@ -16,3 +16,5 @@ SUTRA combines evidence-bound interpretation, deterministic verification, proven
 Run the bounded knowledge suite with Node 24: `node --test packages/sutra-knowledge/test/*.test.mjs`. Consult the relevant workflow for full browser, Go, Python and formal verification steps. Passing tests do not authorize release.
 
 **Continue with SUTRA** resumes the exact remote active draft PR and dependency-ready work under the binding mandate. All unfinished foundation gates remain tracked. This branch is development-only; no public deployment or release is authorized.
+
+[Active repository map](docs/sutra-v2/REPOSITORY_MAP.md). This development tree removes standalone retired products; the inherited learner media implementation is internal and retains original attribution. Exact post-isolation CI is required before accepting the change.
