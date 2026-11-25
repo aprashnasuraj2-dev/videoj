@@ -20,7 +20,7 @@ jobs:
       - name: Go offline checkpoint contract and adversarial tests
         run: |
           go version
-          go test -count=1 -v packages/sutra-knowledge/checkpoint/main.go packages/sutra-knowledge/checkpoint/main_test.go
+          go test -count=1 -v packages/sutra-knowledge/checkpoint/main.go packages/sutra-knowledge/checkpoint/support_replay.go packages/sutra-knowledge/checkpoint/main_test.go
       - name: Rust bounded support lattice and exhaustive reference controls
         run: |
           rustc --version
@@ -91,7 +91,7 @@ jobs:
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version
-          go run packages/sutra-knowledge/checkpoint/main.go packages/sutra-knowledge/checkpoint/fixture-case.json apps/sutra-v2/test-output/conflict-evidence.json apps/sutra-v2/test-output/conflict-withdrawn.json apps/sutra-v2/test-output/conflict-resolved.json > apps/sutra-v2/test-output/conflict-checkpoints.json
+          go run packages/sutra-knowledge/checkpoint/main.go packages/sutra-knowledge/checkpoint/support_replay.go packages/sutra-knowledge/checkpoint/fixture-case.json apps/sutra-v2/test-output/conflict-evidence.json apps/sutra-v2/test-output/conflict-withdrawn.json apps/sutra-v2/test-output/conflict-resolved.json > apps/sutra-v2/test-output/conflict-checkpoints.json
           cat apps/sutra-v2/test-output/conflict-checkpoints.json
       - uses: actions/upload-artifact@v4
         if: always()
