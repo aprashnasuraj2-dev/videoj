@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-088",
+  "session": "V2-089",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -11,6 +11,7 @@
     "V2-LK05-SEMANTIC-COUNTERFACTUAL",
     "V2-LK06-SEMANTIC-WORLDS",
     "V2-LK12-ACQUISITION",
+    "V2-LK14-STATISTICAL-PROFILES",
     "V2-LK13-STRUCTURAL-WEAKNESS",
     "V2-LK16-SPECIALIST-JOURNEYS",
     "V2-LK10-VERSION-CONTROL",
@@ -35,7 +36,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "independent_acquisition_replay_candidate_pending_exact_ci",
+  "state": "reviewed_continuous_interval_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -388,7 +389,7 @@
     "reason": "Inherited collapsed expression textarea failure in table browser test; history knowledge job passed.",
     "resolutionStatus": "Resolved at exact V2-084; all ten workflows green."
   },
-  "lastVerifiedKernelSource": "ad734612a4af2dbd3250bcc8ec4333474c608c5b",
+  "lastVerifiedKernelSource": "56691dae24e060f0a4acb6fa1c4ba180fc3e1542",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -398,14 +399,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-089",
+    "parent": "cfaf231586ae57a4b156b889d836606bd2a3647e",
+    "description": "Conservative exact rational continuous interval profile over reviewed target DAGs, zero-denominator and repeated-node adversaries, point containment and sample oracle. CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-088",
     "parent": "c4a628a31d449b5f325b4112dbbd7d484b931a70",
     "description": "Independent set-based robust policy replay and four separately displayed pins; exact browser artifact mutations and archive profile. CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-087",
-    "parent": "56691dae24e060f0a4acb6fa1c4ba180fc3e1542",
-    "description": "Actual world-grid acquisition UI with declared symmetric losses and fail toggle; two-action exhaustive oracle with shared cost, exposure and overlapping readings. Exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -1306,6 +1307,12 @@
       "sourceRevision": "ad734612a4af2dbd3250bcc8ec4333474c608c5b",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45613371185/job/139202374433",
       "description": "Exact V2-085 all ten workflows passed; browser portable two-branch history, independent Python parent closure and conditional replay, seven structural mutations. Cross-process and merge open."
+    },
+    {
+      "id": "V2-LK12-ACQUISITION",
+      "sourceRevision": "56691dae24e060f0a4acb6fa1c4ba180fc3e1542",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45613703394",
+      "description": "V2-086 all 10 exact workflows passed; robust one-read objective, noisy failure and exposure tests. Broader multi-action/browser/independent replay separate."
     }
   ],
   "reconciledCI": [

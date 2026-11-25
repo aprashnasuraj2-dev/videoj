@@ -3111,7 +3111,14 @@
       ],
       "scope": "Extend source economics and disclosure frontier toward noisy observations, uncertain costs, robust/minimax/regret or justified VOI, shared costs, failed observations and multiple objectives. V2-086 candidate: complete decisive synthetic grid ≤16 cells, bounded six observations, explicit terminal loss and worst cost/exposure, overlapping noisy/failed labels, shared one-time acquisition and abstention. No probabilities or external action. Multi-action oracle, browser and independent replay remain open.",
       "acceptance": "Information gain distinguished from decision value; report bounds/heuristics, no invented probabilities or global optimality.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK12-ACQUISITION",
+          "sourceRevision": "56691dae24e060f0a4acb6fa1c4ba180fc3e1542",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45613703394",
+          "description": "V2-086 all 10 exact workflows passed; robust one-read objective, noisy failure and exposure tests. Broader multi-action/browser/independent replay separate."
+        }
+      ]
     },
     {
       "id": "V2-LK13-STRUCTURAL-WEAKNESS",
@@ -3140,12 +3147,12 @@
     {
       "id": "V2-LK14-STATISTICAL-PROFILES",
       "track": "B",
-      "status": "Not started",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK02-INTENT-IR",
         "V2-LK06-SEMANTIC-WORLDS"
       ],
-      "scope": "Select narrow interval/measurement and statistical profiles; include study design, bias, heterogeneity, missingness, multiple testing, power and causal assumptions as separate obligations.",
+      "scope": "Select narrow interval/measurement and statistical profiles; include study design, bias, heterogeneity, missingness, multiple testing, power and causal assumptions as separate obligations. V2-089 candidate: exact continuous rational interval enclosure over admitted reviewed formulas; source point containment, same-node refinements, denominator zero and conservative dependency handling. Not statistical confidence or calibrated uncertainty; independent reference, browser and statistical study-design profiles remain open.",
       "acceptance": "Independent numerical references, coverage and assumption sensitivity; no deterministic proof of statistical or causal validity.",
       "evidence": []
     },
