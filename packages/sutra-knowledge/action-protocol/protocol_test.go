@@ -46,20 +46,19 @@ func TestConcurrentDeduplication(t *testing.T){
  _,otherKey:=keys(3);if _,e:=s.Commit(approve(t,1,ctx,otherKey));!errors.Is(e,ErrPolicy){t.Fatal("wrong signer")}
 }
 func TestLostResponseAfterCommit(t *testing.T){
- var s *Receiver;var commits,status atomic.Int32
+ var receiver atomic.Pointer[Receiver];var commits,status atomic.Int32
  srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
   if r.URL.Path=="/commit"&&commits.Add(1)==1{
    // Commit through the actual receiver HTTP handler, then discard its
    // response and close the TCP connection before the caller sees a receipt.
-   sink:=httptest.NewRecorder();s.ServeHTTP(sink,r)
+   sink:=httptest.NewRecorder();receiver.Load().ServeHTTP(sink,r)
    if sink.Code!=200{t.Errorf("fixture commit failed: %d",sink.Code)}
    conn,_,e:=w.(http.Hijacker).Hijack();if e!=nil{t.Error(e);return};conn.Close();return
   }
   if r.URL.Path=="/status"{status.Add(1)}
-  s.ServeHTTP(w,r)
+  receiver.Load().ServeHTTP(w,r)
  }));defer srv.Close()
- var ak ed25519.PrivateKey;var p ed25519.PublicKey;var ctx Digest
- s,ak,p,ctx=fixture(t,srv.URL,2)
+ s,ak,p,ctx:=fixture(t,srv.URL,2);receiver.Store(s)
  r:=approve(t,0,ctx,ak);c,e:=NewClient(srv.URL,"manifest-v1","session-1",r,p);if e!=nil{t.Fatal(e)}
  if _,e=c.Dispatch();!errors.Is(e,ErrUnknown)||c.State()!=Unknown||s.Count()!=1{t.Fatal("lost result incorrectly classified",e)}
  if _,e=c.Dispatch();!errors.Is(e,ErrUnknown)||commits.Load()!=1{t.Fatal("blind replay",e)}
@@ -69,13 +68,12 @@ func TestLostResponseAfterCommit(t *testing.T){
  t.Log("actual TCP drop after commit; one dispatch, one status, one effect")
 }
 func TestAbsentDoesNotAuthorizeNewAction(t *testing.T){
- var s *Receiver;var requests atomic.Int32
+ var receiver atomic.Pointer[Receiver];var requests atomic.Int32
  srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
   if requests.Add(1)==1{conn,_,e:=w.(http.Hijacker).Hijack();if e!=nil{t.Error(e);return};conn.Close();return}
-  s.ServeHTTP(w,r)
+  receiver.Load().ServeHTTP(w,r)
  }));defer srv.Close()
- var ak ed25519.PrivateKey;var p ed25519.PublicKey;var ctx Digest
- s,ak,p,ctx=fixture(t,srv.URL,2);r:=approve(t,0,ctx,ak)
+ s,ak,p,ctx:=fixture(t,srv.URL,2);receiver.Store(s);r:=approve(t,0,ctx,ak)
  c,e:=NewClient(srv.URL,"manifest-v1","session-1",r,p);if e!=nil{t.Fatal(e)}
  if _,e=c.Dispatch();!errors.Is(e,ErrUnknown){t.Fatal(e)}
  if _,e=c.Reconcile();!errors.Is(e,ErrAbsent)||c.State()!=Unknown{t.Fatal("absence treated as terminal",e)}
