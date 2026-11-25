@@ -957,7 +957,8 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    await fill('binding-id','c');await page.locator('#review-select-text').evaluate(el=>{el.focus();const i=el.value.indexOf('15.25');el.setSelectionRange(i,i+5);});await click('binding-add');await state('draft');
    await fill('text-file-source','local_report');await fill('text-file-lineage','declared_root');
    const file=page.locator('#review-text-file');
-   await file.setInputFiles({name:'invalid.txt',mimeType:'text/plain',buffer:Buffer.from([0xc0,0xaf])});await click('text-file-inspect');await state('refused');assert.match(await page.locator('#review-status').innerText(),/TEXT_FILE_UTF8/);assert.equal(await page.locator('#review-text-file-stage').isDisabled(),true);
+   await file.setInputFiles({name:'invalid.txt',mimeType:'text/plain',buffer:Buffer.from([0xc0,0xaf])});await click('text-file-inspect');await state('refused');assert.match(await page.locator('#review-status').innerText(),/^REFUSED: TEXT_FILE_UTF8\.$/);assert.equal(await page.locator('#review-text-file-stage').isDisabled(),true);
+   assert.equal(await page.locator('#review-text-file-digest').innerText(),'');assert.match(await page.locator('#review-staged').innerText(),/1 staged source\(s\) · 1 reviewed binding/);
    const text='\ufeff測定 🧪 <img src="/sutra-local-file-sentinel">\nSite A: 12.50;\nSite B: 10.25;\n',bytes=Buffer.from(text,'utf8'),expected='sha256:'+require('node:crypto').createHash('sha256').update(bytes).digest('hex');
    await file.setInputFiles({name:'report.txt',mimeType:'text/plain',buffer:bytes});await click('text-file-inspect');await state('text_file_inspected');
    assert.equal(await page.locator('#review-text-file-digest').innerText(),expected);assert.match(await page.locator('#review-text-file-preview').textContent(),/sutra-local-file-sentinel/);assert.equal(await page.locator('#review-text-file-preview img').count(),0);

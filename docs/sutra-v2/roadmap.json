@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-106",
+  "session": "V2-107",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2957,6 +2957,12 @@
           "sourceRevision": "e3476be3c2b2c34dd7aae1be184858f133f6dcb8",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45711834940/job/139547926314",
           "description": "Scoped actual browser independent roundtrip replay passed (before/after qualifier changes; 16 repinned mutations and 4 pin controls); whole revision pending at observation."
+        },
+        {
+          "id": "V2-LK04-ROUNDTRIP",
+          "sourceRevision": "e3476be3c2b2c34dd7aae1be184858f133f6dcb8",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45711834940/job/139547926314",
+          "description": "Exact V2-104 all ten workflows passed; portable independent Python reconstruction before and after qualifier edits, 16 repinned mutations and four pin controls; scoped reconstruction only."
         }
       ]
     },

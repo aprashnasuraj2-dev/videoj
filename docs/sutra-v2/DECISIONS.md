@@ -264,3 +264,8 @@ Exact V2-103 all ten workflows green, including browser hostile source, no reque
 ## V2-106 — Exact local-file evidence replacement
 
 Extend file intake with explicit add/replace selection and old/new source pins, retain declared lineage and invalidate every numeric binding from changed source even when its token is unchanged. Preserve unaffected source/binding bytes; reject stale previous/new pins, unchanged replacement and invalid text atomically. Browser preview shows previous digest and invalidated IDs; stage requires explicit replacement, stale previous computation/export cleared, reselect tokens and reseal. Actual browser test changes 12.50 to 8.25 against unchanged 10.25, reverses conditional comparison, preserves unrelated 15.25 binding and source lineage. No automatic remapping or empirical authority. V2-104 actual browser independent reconstruction job passed; whole revision pending at observation, V2-105/106 pending exact CI.
+
+
+## V2-107 — Typed local-file refusal and exact CI reconciliation
+
+V2-104 exact 10/10 workflows green. V2-105 kernel job passed; browser 139548853266 failed the specific invalid UTF-8 diagnostic. V2-106 browser 139549804317 reproduced the failure. Root cause: UI error sanitizer accepted only letters/underscores after recognized prefix, dropping UTF8. Permit bounded uppercase letters, digits and underscores while preserving generic refusal for unrecognized messages. Assert exact typed error, no digest, no stage, and unchanged prior source and binding. Keep failures explicitly recorded; no assertion relaxation, no acceptance of malformed file bytes. V2-107 exact CI pending.
