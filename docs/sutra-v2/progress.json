@@ -17,7 +17,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "upstream_terminal_refinement_exact_verified_transactional_coupling_next",
+  "state": "upstream_transaction_coupling_exact_verified_pinned_consent_composition_next",
   "verified": [
     {
       "id": "V2-M01",
@@ -246,7 +246,7 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047/job/138998539263",
     "resolutionStatus": "resolved_exact_all_seven_workflows_success"
   },
-  "lastVerifiedKernelSource": "149d11407bbf4033ac2252474d53c255d1bfbeb9",
+  "lastVerifiedKernelSource": "b60fc4fee0f1bc3603b0cabbdb0fcd5b13998854",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -513,6 +513,15 @@
       "resolutionRevision": "149d11407bbf4033ac2252474d53c255d1bfbeb9",
       "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45556263605/job/139008939377",
       "resolutionStatus": "resolved_by_schema_valid_integrity_category_and_exact_all_seven_green"
+    },
+    {
+      "sourceRevision": "7d52edd85498a01514a9fb84ef98532886cac480",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45557130936",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45557139140",
+      "reason": "First upstream transaction-coupling candidate failed both knowledge builds before tests: secure intent-file size checks compared os.FileInfo.Size() int64 values with typed int upstreamTxnIntentSize, and passed an int bound to io.LimitReader. Five auxiliary PR workflows succeeded. No Go/runtime/kernel credit.",
+      "resolutionRevision": "b60fc4fee0f1bc3603b0cabbdb0fcd5b13998854",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45557311348/job/139012396161",
+      "resolutionStatus": "resolved_by_explicit_int64_bounds_and_exact_all_seven_green"
     }
   ],
   "reconciledDurableCandidate": {
@@ -819,6 +828,27 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45556263605/job/139008939377",
       "description": "Dedicated UpstreamTerminal TLA and independent Python negative controls formalize the existing Go counterexamples: rollback of the signed store while physical effect persists, and cloned signer+snapshot application, both reach two physical effects.",
       "remaining": "The model demonstrates the boundary; it does not solve it. External monotonic freshness/independent operation remains required."
+    },
+    {
+      "id": "V2-RUNTIME-02",
+      "sourceRevision": "b60fc4fee0f1bc3603b0cabbdb0fcd5b13998854",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45557311348/job/139012396161",
+      "description": "Private upstream transaction coordinator persists the exact signed AuthorityRequest plus signed FenceReservation before admission, reserves the independent fence, performs upstream Apply before local acknowledgement, and returns only a causally bound local authority response + finalized fence + exact upstream receipt. Ambiguous dispatch is never resolved from status absence: CloseUnapplied races the exact identity; CLOSED aborts, APPLIED completes local commit/finalization.",
+      "remaining": "Still a package-private synthetic laboratory, not the externally mountable anchored grant/policy path and not a real provider. Exact current grant/revocation/policy ancestry is not yet composed into this transaction coordinator. Clone/rollback of the upstream authority, physical power-loss certification, explicit compensation authorization, real provider billing and global freshness remain open."
+    },
+    {
+      "id": "V2-P05-RECOVERY",
+      "sourceRevision": "b60fc4fee0f1bc3603b0cabbdb0fcd5b13998854",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45557311348/job/139012396161",
+      "description": "Recovery passes injected interruption after intent and after reserve, actual lost Apply request before effect, actual lost Apply reply after effect, process restart after upstream APPLIED before local acknowledgement, and lost fence-finalize reply after server-side finalization. Pre-effect uncertainty closes then aborts with zero effect; post-effect uncertainty observes APPLIED, commits local acknowledgement and finalizes without redispatch.",
+      "remaining": "A real external provider and physical power-failure environment are untested. Upstream signer/store rollback and coordinated trust-root rollback remain explicit counterexamples."
+    },
+    {
+      "id": "V2-P14-BUDGET",
+      "sourceRevision": "b60fc4fee0f1bc3603b0cabbdb0fcd5b13998854",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45557311348/job/139012396161",
+      "description": "A durable single-upstream-authority effect limit survives the transaction path. When the second external effect exceeds the upstream budget, the coordinator remains unknown/fail-closed until recovery durably closes that exact identity, aborts admission and leaves local acknowledgement/contact state unchanged.",
+      "remaining": "This is a synthetic effect-count budget inside one non-rolled-back authority history, not provider billing/spend accounting. Cloning/rollback can recreate budget; no real provider cost authority is integrated."
     }
   ],
   "reconciledCI": [
@@ -2518,6 +2548,126 @@
         },
         {
           "id": 45556263585,
+          "event": "pull_request",
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "7d52edd85498a01514a9fb84ef98532886cac480",
+      "complete": false,
+      "description": "Private upstream transaction coordinator candidate failed Go compilation in both knowledge runs on three int/int64 secure-intent size mismatches. All five auxiliary PR workflows succeeded; later Go/formal steps were skipped.",
+      "runs": [
+        {
+          "id": 45557130936,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 45557139140,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 45557138947,
+          "event": "pull_request",
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45557138951,
+          "event": "pull_request",
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45557140540,
+          "event": "pull_request",
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45557138994,
+          "event": "pull_request",
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45557139012,
+          "event": "pull_request",
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "b60fc4fee0f1bc3603b0cabbdb0fcd5b13998854",
+      "complete": true,
+      "description": "Exact-green private upstream transaction-coupling laboratory. Full signed request+reservation intent is durable before admission; upstream APPLIED occurs only after reserve and before local acknowledgement. Recovery uses CloseUnapplied to atomically resolve ambiguous dispatch: CLOSED permits abort, APPLIED completes local acknowledgement/finalization. Lost request before effect, lost reply after effect, restart after effect, lost finalize, global synthetic upstream budget, concurrent cloned callers and intent tamper regressions all pass under -race.",
+      "runs": [
+        {
+          "id": 45557306143,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            139012378313,
+            139012378546
+          ]
+        },
+        {
+          "id": 45557311348,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            139012396161,
+            139012396397
+          ]
+        },
+        {
+          "id": 45557311450,
+          "event": "pull_request",
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45557311365,
+          "event": "pull_request",
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45557311339,
+          "event": "pull_request",
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45557311324,
+          "event": "pull_request",
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45557311819,
           "event": "pull_request",
           "name": "Validate SUTRA browser compatibility matrix",
           "status": "completed",

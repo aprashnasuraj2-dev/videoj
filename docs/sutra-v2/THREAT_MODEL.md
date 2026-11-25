@@ -79,3 +79,12 @@ The guarantee stops at the authority history. If the signer and an older signed 
 The rollback and clone mechanisms are now represented independently of the Go tests. `UpstreamTerminal.tla` keeps physical effects outside the rollback-able signed snapshot: the safe single-authority machine satisfies its bounded invariant, while `RollbackStore` and `CloneApply` each reach `AtMostOnePhysicalEffect` violations. An independent Python explorer reproduces both witnesses.
 
 A separate Go trace-refinement check covers two concrete non-adversarial terminal executions and rejects seven trace mutations. That does not solve T25: the refinement scope explicitly excludes clone and rollback, and those mechanisms remain negative controls. The next transaction-coupling path must also avoid converting a temporary status absence into permission to release admission after an ambiguous dispatch.
+
+
+## T26 — temporary upstream absence is not non-application proof
+
+Once a pre-effect fence admits an exact external-effect identity, a lost request or response creates an ambiguity window. A status lookup can still report absence while the original request is delayed, so `absent` cannot authorize fence abort or fresh admission. Doing so recreates the previously preserved delayed-double-effect counterexample.
+
+Exact source `b60fc4fee0f1bc3603b0cabbdb0fcd5b13998854` makes the safer recovery rule executable in a private transaction laboratory. Recovery races the same identity through the upstream terminal authority: `CloseUnapplied` may make it durably CLOSED, in which case the local fence can abort; if APPLIED already won, closure conflicts and signed APPLIED status plus exact receipt retry force local acknowledgement/finalization. Tests drop the Apply before receiver execution and after receiver APPLIED, then verify zero effect versus one reconciled effect respectively.
+
+The guarantee remains scoped to one current upstream authority history. Rolling back or cloning that authority remains T25; a real provider has not implemented the protocol. The transaction coordinator is not externally mountable and is not yet bound to current grant/policy ancestry, so RUNTIME-02, P04 consent, P05 rollback and release gates remain open.

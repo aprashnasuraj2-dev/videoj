@@ -834,6 +834,41 @@
         "V2-P06-REFINE",
         "V2-P22-RELEASE"
       ]
+    },
+    {
+      "id": "T26-ambiguous-upstream-status-absence-release",
+      "severity": "critical",
+      "category": [
+        "integrity",
+        "availability"
+      ],
+      "mechanism": "After independent admission, an upstream Apply request or response may be delayed/lost. Treating a point-in-time 'not found' status as proof of non-application and releasing the fence can admit a new identity while the old Apply later takes effect, creating a double external effect.",
+      "invariant": "Once an exact upstream dispatch is ambiguous, admission may be released only after the upstream terminal authority atomically makes that exact identity CLOSED. If APPLIED has already won, recovery must complete the matching local acknowledgement and fence finalization. Temporary status absence has zero release authority.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/upstream_transaction_linux.go",
+          "test": "CloseUnapplied"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/upstream_transaction_linux_test.go",
+          "test": "TestUpstreamTransactionLostApplyReplyUsesApplyVsCloseRecovery"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/upstream_transaction_linux_test.go",
+          "test": "TestUpstreamTransactionRestartAfterEffectBeforeLocalAck"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/FenceAvailability.tla",
+          "test": "AtMostOneEffect"
+        }
+      ],
+      "openGates": [
+        "V2-RUNTIME-02",
+        "V2-P05-RECOVERY",
+        "V2-P04-CONSENT",
+        "V2-P05-ROLLBACK",
+        "V2-P22-RELEASE"
+      ]
     }
   ]
 }

@@ -227,54 +227,12 @@
           "adversarialTests": "I/O failure, response reorder, invalid receipt, retry with new approval; no unapproved second effect",
           "verificationMethod": "Race-enabled transport integration and failpoint tests",
           "status": "Implementation in progress",
-          "evidence": [
-            {
-              "sourceRevision": "58a5f96456c4f189e686616180992514f9e7d4f6",
-              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733",
-              "description": "Knowledge job and browser workflow completed successfully; durable TCP reopen, injected persistence failure, independent receipt pin rollback tests passed. Impact classifier at this revision failed separately."
-            },
-            {
-              "sourceRevision": "e96734190870bded34a96e8946b1af40abb37492",
-              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524456423/job/138904189960",
-              "description": "Exact Go race gate: concurrent CAS one winner; stale CAS refused after reopen; actual second OS process refused; independent pin rejects reordered, truncated and forged history; injected before/after rename errors; actual late TCP delivery after absent status and receiver reopen. Cloned trusted anchor still forks."
-            },
-            {
-              "sourceRevision": "88ab00000eaf71c67f4a14c05ab82c4be31a2985",
-              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524767453/job/138905253653",
-              "description": "Go race gate: signed ContactBook exact frozen approvals, two contacts per approval/three per book persist across restart, unknown sticky, new key and replacement refused, actual subprocess exit after synced reservation before TCP, cached receipt/corruption checks, actual reverse-order TCP acknowledgements both identical."
-            },
-            {
-              "sourceRevision": "45ea97969ff51c90c15920cfa32518c0c156e46f",
-              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524868505/job/138905589669",
-              "description": "Go race passed including signed caller-journal rollback counterexample. TLC safe fairness check passed (995 states); removal of fairness produced named ConditionalRecovery temporal counterexample. Overall job failed because shell grep incorrectly expected plural diagnostic; subsequent steps skipped. Failure retained, no whole-job credit."
-            },
-            {
-              "sourceRevision": "1951512e9f9a9d566d723803d4fb42709888e8e3",
-              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45527040306/job/138912849718",
-              "description": "Exact Go race gate passed authenticated caller signatures, atomic shared action+contact snapshot, lost-reply recovery across reopen, stale caller pin reconciliation, per-caller 2/global 3 durable accounting, live-budget rolled-cursor conflict, immutable copied caller identities, response tamper refusal, concurrent CAS one-effect serialization, actual separate authority server processes, corruption/failpoint poisoning, and preserved cloned-authority plus older-valid-snapshot rollback counterexamples. Independent Python accepted the actual four-event Go trace and mapped commit/status/budget behavior to bounded AnchoredRecovery transitions; original and anchored TLC safety/fairness/negative gates remained successful."
-            },
-            {
-              "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
-              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221",
-              "description": "Actual four process exits, lost final/witness HTTP responses, strict signed ledger+fresh challenge recovery and durable-intent tamper checks. Same-authority concurrent callers: one effect, one stale conflict, two contacts."
-            },
-            {
-              "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
-              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
-              "description": "Exact Go race tests distinguish orphaned admission and bounded fence exhaustion as fail-closed/non-mutating; both knowledge workflows and all auxiliary workflows passed."
-            },
-            {
-              "sourceRevision": "e64e35c73f7dcef09d4457a24d9963c1a7deeb73",
-              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550654471",
-              "description": "Exact V2-013 hardening: lower effect layers no longer implement http.Handler directly; current anchored composite unpinned methods are package-private; legacy write routes reject with authority/fence/policy state unchanged. Both knowledge runs and all auxiliary workflows passed."
-            },
-            {
-              "sourceRevision": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
-              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047",
-              "description": "Permanent non-application orphan recovery: exact cryptographic proof binds reservation/request/before-after/token; closure signer must be independent from action-authority and fence keys; wrong/tampered proof and known-effect rewind refused; truthful closure safe and lying closure double-effect counterexample verified by TLC plus independent Python."
-            }
-          ],
-          "knownLimitations": "Authenticated loopback authority now owns action history and per-caller/global contact accounting atomically, and stale local caller state cannot reset quota. Still a synthetic single-authority fixture: no approval expiry/revocation, generic new-key lifecycle, hostile-network replay protection, provider spend accounting, physical power-loss certification or arbitrary upstream side effect.\nV2-012 update: No proof for all filesystem/power-loss failures, arbitrary upstream effects or liveness with indefinitely unavailable witness. Reconciliation needs remaining contact budget.\nV2-013: loss of the reservation owner's durable evidence can leave admission permanently fail-closed. Clearing or leasing the orphan without proof of non-dispatch can permit delayed double effects for arbitrary external services.\nV2-013 network surface: accidental direct HTTP mounting of lower effect layers is closed, but deliberate custom wrappers around exported in-process laboratory operations remain possible. This does not establish arbitrary external-effect atomicity.\nV2-013 closure recovery: availability can resume only under a separately keyed permanent non-application contract for the exact idempotency identity. No real provider/upstream adapter currently supplies this guarantee."
+          "evidence": {
+            "sourceRevision": "b60fc4fee0f1bc3603b0cabbdb0fcd5b13998854",
+            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45557311348/job/139012396161",
+            "description": "Ambiguous external dispatch now resolves via exact upstream APPLIED-vs-CLOSED state rather than point-in-time absence. CLOSED permits fence abort; APPLIED forces local acknowledgement/finalization. Actual TCP loss before and after effect, restart after effect, and lost finalize response passed."
+          },
+          "knownLimitations": "Synthetic loopback authority and filesystem only; real provider/physical power-failure semantics unverified. Coordinated rollback and upstream signer+snapshot rollback remain counterexamples."
         },
         {
           "id": "V2-P05-ROLLBACK",
@@ -631,14 +589,12 @@
           "adversarialTests": "Malicious cost estimates, timeout, rate limit, credential canary",
           "verificationMethod": "Fake provider contract plus authorized real free route only",
           "status": "Implementation in progress",
-          "evidence": [
-            {
-              "sourceRevision": "8998fceab17b09ec8d1911945fd5bd90b7b26c89",
-              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45537116625/job/138946313221",
-              "description": "Existing fake provider ledger/workspace tests enforce host monotonic clock, reservation before contact, conservative unknown charges, bounded leases and retained audit."
-            }
-          ],
-          "knownLimitations": "No paid inference authorized; provider charging semantics vary\nV2-012 update: Process-local lab does not enforce durable global billing across restart, clones, multiple tenants or actual vendor charges."
+          "evidence": {
+            "sourceRevision": "b60fc4fee0f1bc3603b0cabbdb0fcd5b13998854",
+            "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45557311348/job/139012396161",
+            "description": "Single durable upstream authority enforces a bounded effect count through recovery; budget-exhausted second dispatch is terminally CLOSED and admission aborted without local acknowledgement."
+          },
+          "knownLimitations": "Not provider-global spend/billing authority; clone/rollback can reset the synthetic budget and no real provider reconciliation is integrated."
         },
         {
           "id": "V2-P14-BYOK-UX",
@@ -2286,9 +2242,9 @@
       "phase": "05",
       "status": "Implementation in progress",
       "evidence": {
-        "sourceRevision": "149d11407bbf4033ac2252474d53c255d1bfbeb9",
-        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45556263605",
-        "description": "Exact-green synthetic upstream APPLIED/CLOSED receiver plus dedicated bounded formal model and actual-Go trace refinement witness. Seven malformed trace mutations are rejected; rollback and cloned-authority models deliberately violate AtMostOnePhysicalEffect."
+        "sourceRevision": "b60fc4fee0f1bc3603b0cabbdb0fcd5b13998854",
+        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45557311348",
+        "description": "Exact-green private transaction-coupling lab: durable full request+reservation intent, pre-effect independent admission, upstream APPLIED before local acknowledgement, causal receipt binding, and APPLIED-vs-CLOSED ambiguity recovery. Lost-before-effect, lost-after-effect, restart, lost-finalize, budget, concurrent-clone and tamper regressions pass under race CI."
       },
       "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
       "dependencies": [
@@ -2304,7 +2260,7 @@
       "positiveTests": "Durable effect/ledger and explicit retry policy",
       "adversarialTests": "Crash, concurrent keys, unknown outcome, revoked approval and global budgets",
       "verificationMethod": "Go process and network integration, TLA refinement",
-      "knownLimitations": "RUNTIME-02 remains in progress. Formal/refinement evidence is bounded to a single synthetic authority history and two concrete Go traces; it does not establish universal refinement, arbitrary-provider behavior, global freshness or exactly-once physical effects. The actual fenced dispatch path still does not transactionally couple arbitrary upstream Apply with durable local intent/recovery. Clone/rollback, expiry/revocation, compensation authorization, physical power-loss certification and provider-global spend remain open."
+      "knownLimitations": "RUNTIME-02 remains open. The transaction coordinator is intentionally package-private and synthetic; it is not yet composed with the strongest anchored exact-grant/current-policy path and is not a real upstream provider adapter. Upstream clone/rollback, physical power loss, explicit compensation authorization, expiry/revocation in the transaction path, provider-global billing and global freshness remain unresolved."
     },
     {
       "id": "V2-RUNTIME-03",
