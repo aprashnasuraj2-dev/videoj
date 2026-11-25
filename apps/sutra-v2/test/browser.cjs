@@ -41,7 +41,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await page.getByRole('button',{name:'Add provider profile'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-count').textContent==='1');
   assert.equal(await providerKey.inputValue(),'');assert.equal((await page.locator('body').innerText()).includes(alphaSecret),false);
-  await page.getByLabel('Provider').selectOption('provider-b');await providerName.fill('Research AI');await page.getByLabel('Session call cap').selectOption('3');await page.getByLabel('Reserved output budget').selectOption('600');await providerKey.fill(betaSecret);
+  await page.getByLabel('Provider',{exact:true}).selectOption('provider-b');await providerName.fill('Research AI');await page.getByLabel('Session call cap').selectOption('3');await page.getByLabel('Reserved output budget').selectOption('600');await providerKey.fill(betaSecret);
   await page.getByRole('button',{name:'Add provider profile'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-count').textContent==='2');
   assert.equal(await providerKey.inputValue(),'');assert.equal((await page.locator('body').innerText()).includes(betaSecret),false);
