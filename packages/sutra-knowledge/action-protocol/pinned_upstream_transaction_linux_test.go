@@ -9,33 +9,26 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
-	"sync/atomic"
 	"testing"
 )
 
 type pinnedTxnFixture struct {
-	base           *compositeFixture
-	upstreamPtr    atomic.Pointer[upstreamEffectAuthority]
-	upstream       *upstreamEffectAuthority
-	upstreamDir    string
-	upstreamServer *httptest.Server
-	upstreamClient *upstreamEffectClient
-	transaction    *upstreamTransactionCoordinator
-	guard          *pinnedUpstreamTransactionGuard
+	base                  *compositeFixture
+	upstream              *upstreamEffectAuthority
+	upstreamDir           string
+	upstreamWitness       *AuthorityWitness
+	upstreamWitnessServer *httptest.Server
+	upstreamWitnessed     *upstreamWitnessCoordinator
+	upstreamServer        *httptest.Server
+	upstreamClient        *upstreamEffectClient
+	transaction           *upstreamTransactionCoordinator
+	guard                 *pinnedUpstreamTransactionGuard
 }
 
 func newPinnedTxnFixture(t *testing.T, upstreamLimit uint32) *pinnedTxnFixture {
 	t.Helper()
 	base := newCompositeFixture(t, nil)
 	f := &pinnedTxnFixture{base: base}
-	f.upstreamServer = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		u := f.upstreamPtr.Load()
-		if u == nil {
-			w.WriteHeader(http.StatusServiceUnavailable)
-			return
-		}
-		u.serveHTTP(w, r)
-	}))
 	f.upstreamDir = privateTemp(t)
 	upstream, e := createUpstreamEffectAuthority(
 		f.upstreamDir, base.ctx, base.authorityPub, base.closureKey, upstreamLimit,
@@ -44,7 +37,25 @@ func newPinnedTxnFixture(t *testing.T, upstreamLimit uint32) *pinnedTxnFixture {
 		t.Fatal(e)
 	}
 	f.upstream = upstream
-	f.upstreamPtr.Store(upstream)
+	genesis, e := upstream.StateHead()
+	if e != nil {
+		t.Fatal(e)
+	}
+	witnessPub, witnessKey := keys(30)
+	f.upstreamWitness, e = CreateAuthorityWitness(privateTemp(t), base.ctx, base.closurePub, witnessKey, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	f.upstreamWitnessServer = httptest.NewServer(f.upstreamWitness)
+	witnessClient, e := NewWitnessClient(f.upstreamWitnessServer.URL, base.ctx, base.closurePub, witnessPub, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	f.upstreamWitnessed, e = newUpstreamWitnessCoordinator(upstream, witnessClient)
+	if e != nil {
+		t.Fatal(e)
+	}
+	f.upstreamServer = httptest.NewServer(http.HandlerFunc(f.upstreamWitnessed.serveHTTP))
 	f.upstreamClient, e = newUpstreamEffectClient(
 		f.upstreamServer.URL, base.ctx, base.authorityPub, base.closurePub,
 	)
@@ -63,7 +74,11 @@ func newPinnedTxnFixture(t *testing.T, upstreamLimit uint32) *pinnedTxnFixture {
 		if f.upstream != nil {
 			_ = f.upstream.Close()
 		}
+		if f.upstreamWitness != nil {
+			_ = f.upstreamWitness.Close()
+		}
 		f.upstreamServer.Close()
+		f.upstreamWitnessServer.Close()
 	})
 	return f
 }

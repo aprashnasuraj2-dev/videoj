@@ -8,6 +8,7 @@ package actionprotocol
 import (
 	"bytes"
 	"crypto/ed25519"
+	"crypto/sha256"
 	"errors"
 	"io"
 	"os"
@@ -118,6 +119,18 @@ func (u *upstreamEffectAuthority) encode(records []upstreamRecord) []byte {
 		body = append(body, record.reservation.Bytes()...)
 	}
 	return append(body, ed25519.Sign(u.signer, body)...)
+}
+func (u *upstreamEffectAuthority) stateHeadFor(records []upstreamRecord) Digest {
+	return sha256.Sum256(u.encode(records))
+}
+func (u *upstreamEffectAuthority) stateHeadLocked() Digest { return u.stateHeadFor(u.records) }
+func (u *upstreamEffectAuthority) StateHead() (Digest, error) {
+	u.mu.Lock()
+	defer u.mu.Unlock()
+	if u.lock == nil || u.poisoned {
+		return Digest{}, ErrStore
+	}
+	return u.stateHeadLocked(), nil
 }
 func (u *upstreamEffectAuthority) decode(raw []byte) ([]upstreamRecord, error) {
 	headerSize := len(u.header(0))

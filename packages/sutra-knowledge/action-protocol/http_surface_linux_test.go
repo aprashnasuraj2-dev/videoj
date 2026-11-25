@@ -20,6 +20,7 @@ func TestExternalHTTPWriteSurfaceRequiresAnchoredFencedComposite(t *testing.T) {
 		(*FencedGrantGuard)(nil),
 		(*FencedCoordinator)(nil),
 		(*upstreamEffectAuthority)(nil),
+		(*upstreamWitnessCoordinator)(nil),
 		(*upstreamTransactionCoordinator)(nil),
 		(*pinnedUpstreamTransactionGuard)(nil),
 	}

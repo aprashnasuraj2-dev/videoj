@@ -228,3 +228,22 @@ fi
 cat "$WORK/upstream-terminal-clone.log"
 grep -F 'Invariant AtMostOnePhysicalEffect is violated' "$WORK/upstream-terminal-clone.log"
 python3 upstream_terminal.py
+
+
+# Independently retained upstream terminal head. Receiver-only signed snapshot
+# rollback remains safe relative to the witness. Clone effects before post-effect
+# CAS and coordinated receiver+witness rollback are permanent counterexamples.
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/upstream-witness-safe" -config UpstreamWitnessSafe.cfg UpstreamWitness.tla > "$WORK/upstream-witness-safe.log" 2>&1 || { cat "$WORK/upstream-witness-safe.log"; exit 1; }
+cat "$WORK/upstream-witness-safe.log"
+grep -F 'No error has been found' "$WORK/upstream-witness-safe.log"
+if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/upstream-witness-clone" -config UpstreamWitnessClone.cfg UpstreamWitness.tla > "$WORK/upstream-witness-clone.log" 2>&1; then
+ cat "$WORK/upstream-witness-clone.log"; echo 'upstream witness clone mutant unexpectedly preserved one physical effect' >&2; exit 1
+fi
+cat "$WORK/upstream-witness-clone.log"
+grep -F 'Invariant AtMostOnePhysicalEffect is violated' "$WORK/upstream-witness-clone.log"
+if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/upstream-witness-coordinated" -config UpstreamWitnessCoordinated.cfg UpstreamWitness.tla > "$WORK/upstream-witness-coordinated.log" 2>&1; then
+ cat "$WORK/upstream-witness-coordinated.log"; echo 'coordinated upstream+witness rollback unexpectedly preserved one physical effect' >&2; exit 1
+fi
+cat "$WORK/upstream-witness-coordinated.log"
+grep -F 'Invariant AtMostOnePhysicalEffect is violated' "$WORK/upstream-witness-coordinated.log"
+python3 upstream_witness.py
