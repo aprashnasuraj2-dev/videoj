@@ -90,7 +90,7 @@ func (c *upstreamTransactionCoordinator) loadIntentLocked() (upstreamTxnIntent, 
 	if errors.Is(e, os.ErrNotExist) {
 		return upstreamTxnIntent{}, false, nil
 	}
-	if e != nil || !info.Mode().IsRegular() || info.Mode().Perm()&0077 != 0 || info.Size() != upstreamTxnIntentSize {
+	if e != nil || !info.Mode().IsRegular() || info.Mode().Perm()&0077 != 0 || info.Size() != int64(upstreamTxnIntentSize) {
 		return upstreamTxnIntent{}, false, ErrStore
 	}
 	file, e := os.OpenFile(path, os.O_RDONLY|syscall.O_NOFOLLOW|syscall.O_NONBLOCK, 0)
@@ -99,11 +99,11 @@ func (c *upstreamTransactionCoordinator) loadIntentLocked() (upstreamTxnIntent, 
 	}
 	opened, e := file.Stat()
 	if e != nil || !opened.Mode().IsRegular() || opened.Mode().Perm()&0077 != 0 ||
-		opened.Size() != upstreamTxnIntentSize || !os.SameFile(info, opened) {
+		opened.Size() != int64(upstreamTxnIntentSize) || !os.SameFile(info, opened) {
 		file.Close()
 		return upstreamTxnIntent{}, false, ErrStore
 	}
-	raw, e := io.ReadAll(io.LimitReader(file, upstreamTxnIntentSize+1))
+	raw, e := io.ReadAll(io.LimitReader(file, int64(upstreamTxnIntentSize+1)))
 	ce := file.Close()
 	if e != nil || ce != nil || len(raw) != upstreamTxnIntentSize {
 		return upstreamTxnIntent{}, false, ErrStore
