@@ -7,7 +7,8 @@
     "The current authority/witness laboratory is not distributed consensus, a public transparency log, trusted time, or a production arbitrary-effect transaction.",
     "Current checked-in inference is disabled by default and BYOK remains disabled; no live provider credential is authorized by this model.",
     "Browser-origin checks are not authentication against non-browser callers.",
-    "A privileged attacker able to roll back both authority and witness trust domains can recreate an older mutually consistent state."
+    "A privileged attacker able to roll back both authority and witness trust domains can recreate an older mutually consistent state.",
+    "Exact credential canary scans detect direct secret echo only; they do not prove resistance to encoded, hashed, fragmented or transformed exfiltration by a compromised trusted adapter."
   ],
   "principals": [
     {
@@ -586,6 +587,106 @@
       ],
       "openGates": [
         "V2-P14-BUDGET"
+      ]
+    },
+    {
+      "id": "T19-authority-or-witness-key-compromise",
+      "severity": "critical",
+      "category": [
+        "integrity"
+      ],
+      "mechanism": "An attacker obtains the action-authority signing key or independent-witness signing key and can forge otherwise valid responses, transitions or challenge attestations inside that key's trust domain.",
+      "invariant": "Distinct authority and witness keys prevent one-key compromise from automatically impersonating both domains, but no current invariant survives compromise of the relevant signing key itself.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/witness_linux_test.go",
+          "test": "forged authority transition refused"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/witness_linux_test.go",
+          "test": "same witness key but a different genesis"
+        }
+      ],
+      "openGates": [
+        "V2-P01-THREAT",
+        "V2-P05-ROLLBACK",
+        "V2-F11b",
+        "V2-P22-RELEASE"
+      ]
+    },
+    {
+      "id": "T20-trusted-provider-adapter-exfiltration",
+      "severity": "critical",
+      "category": [
+        "confidentiality",
+        "cost"
+      ],
+      "mechanism": "A compromised host-approved provider transport receives the real credential at the secret-release boundary and can exfiltrate, transform or misuse it outside SUTRA's returned-result canary checks.",
+      "invariant": "Only explicitly host-pinned provider transports may receive a credential; exact-secret canary scans reduce accidental echo but are not data-loss prevention against an already trusted malicious adapter.",
+      "evidence": [
+        {
+          "path": "packages/sutra-inference/test/provider-workspace.test.mjs",
+          "test": "caller cannot supply provider endpoint, transport, credential field or unapproved model"
+        },
+        {
+          "path": "packages/sutra-inference/test/provider-workspace.test.mjs",
+          "test": "provider credential echo is refused and its already-admitted reservation becomes unknown"
+        }
+      ],
+      "openGates": [
+        "V2-P01-THREAT",
+        "V2-P03-TAINT",
+        "V2-P14-BYOK-UX",
+        "V2-P22-RELEASE"
+      ]
+    },
+    {
+      "id": "T21-provider-profile-confusion",
+      "severity": "critical",
+      "category": [
+        "confidentiality",
+        "integrity",
+        "cost"
+      ],
+      "mechanism": "A stale, cloned or cross-provider credential handle is used with another provider/model or a disabled profile, causing the wrong secret or budget identity to be dispatched.",
+      "invariant": "Opaque handle identity, fixed provider catalog, host-pinned transport, model allowlist and per-profile budget row must agree before secret release.",
+      "evidence": [
+        {
+          "path": "packages/sutra-inference/test/credential-vault.test.mjs",
+          "test": "forged, cloned, stale and cross-provider handles cannot resolve a credential"
+        },
+        {
+          "path": "packages/sutra-inference/test/provider-workspace.test.mjs",
+          "test": "removing a profile invalidates the credential handle but retains budget audit history"
+        },
+        {
+          "path": "packages/sutra-inference/test/budget-ledger.test.mjs",
+          "test": "profiles can be registered and disabled dynamically without erasing prior reservations"
+        }
+      ],
+      "openGates": [
+        "V2-P14-BUDGET",
+        "V2-P14-BYOK-UX"
+      ]
+    },
+    {
+      "id": "T22-credential-transform-leak",
+      "severity": "critical",
+      "category": [
+        "confidentiality"
+      ],
+      "mechanism": "A credential is encoded, hashed, fragmented or otherwise transformed before appearing in model input or provider output, bypassing an exact-string canary check.",
+      "invariant": "Current exact canary detection is only a regression guard for accidental direct disclosure and must not be represented as general secret DLP.",
+      "evidence": [
+        {
+          "path": "packages/sutra-inference/test/provider-workspace.test.mjs",
+          "test": "credential accidentally placed in operation is blocked before budget reservation or transport"
+        }
+      ],
+      "openGates": [
+        "V2-P01-THREAT",
+        "V2-P03-TAINT",
+        "V2-P14-BYOK-UX"
       ]
     }
   ]
