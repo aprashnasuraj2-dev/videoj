@@ -32,7 +32,7 @@ func grantFixture(t *testing.T)(*GrantBook,*GrantGuard,*SharedAuthority,*Authori
  witnessPtr.Store(witness)
  client,e:=NewWitnessClient(srv.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{a.Close();witness.Close();srv.Close();t.Fatal(e)}
  coordinator,e:=NewWitnessCoordinator(a,client);if e!=nil{a.Close();witness.Close();srv.Close();t.Fatal(e)}
- book,e:=CreateGrantBook(bookDir,ctx,consentPub,bookKey,10);if e!=nil{a.Close();witness.Close();srv.Close();t.Fatal(e)}
+ book,e:=CreateGrantBook(bookDir,ctx,consentPub,approver,bookKey,10);if e!=nil{a.Close();witness.Close();srv.Close();t.Fatal(e)}
  guard,e:=NewGrantGuard(book,coordinator);if e!=nil{book.Close();a.Close();witness.Close();srv.Close();t.Fatal(e)}
  _=witnessContacts
  return book,guard,a,witness,client,srv,ctx,ak,consentPub,consentKey,callerKey
@@ -117,17 +117,17 @@ func TestGrantBookSeparateCompensationApproval(t *testing.T){
 
 func TestGrantBookRestartLockCorruptionAndRollbackCounterexample(t *testing.T){
  origin:="http://127.0.0.1:19121"
- ctx,_,ak,_,_,_,_:=authorityFixture(t,origin)
+ ctx,approver,ak,_,_,_,_:=authorityFixture(t,origin)
  consentPub,consentKey:=keys(11);_,bookKey:=keys(12)
  dir:=privateTemp(t)
- book,e:=CreateGrantBook(dir,ctx,consentPub,bookKey,5);if e!=nil{t.Fatal(e)}
+ book,e:=CreateGrantBook(dir,ctx,consentPub,approver,bookKey,5);if e!=nil{t.Fatal(e)}
  req:=approve(t,0,ctx,ak);grant,e:=IssueActionGrant(req,GrantPrimary,5,9,consentKey);if e!=nil{t.Fatal(e)}
  genesis,e:=os.ReadFile(filepath.Join(dir,"grantbook.bin"));if e!=nil{t.Fatal(e)}
- if second,e:=OpenGrantBook(dir,ctx,consentPub,bookKey);!errors.Is(e,ErrStoreBusy){if second!=nil{second.Close()};t.Fatal("second owner",e)}
+ if second,e:=OpenGrantBook(dir,ctx,consentPub,approver,bookKey);!errors.Is(e,ErrStoreBusy){if second!=nil{second.Close()};t.Fatal("second owner",e)}
  if e=book.Revoke(grant,req);e!=nil{t.Fatal(e)}
  if e=book.AdvanceEpoch(5,7);e!=nil{t.Fatal(e)}
  book.Close()
- reopened,e:=OpenGrantBook(dir,ctx,consentPub,bookKey);if e!=nil{t.Fatal(e)}
+ reopened,e:=OpenGrantBook(dir,ctx,consentPub,approver,bookKey);if e!=nil{t.Fatal(e)}
  if epoch,e:=reopened.Epoch();e!=nil||epoch!=7{t.Fatal("epoch restart",epoch,e)}
  if e=reopened.CheckDispatch(grant,req,GrantPrimary);!errors.Is(e,ErrGrantRevoked){t.Fatal("revocation restart",e)}
  reopened.Close()
@@ -136,7 +136,7 @@ func TestGrantBookRestartLockCorruptionAndRollbackCounterexample(t *testing.T){
  // and revocation. The book therefore needs an independent monotonic anchor
  // before this mechanism can be called production revocation.
  if e=os.WriteFile(filepath.Join(dir,"grantbook.bin"),genesis,0600);e!=nil{t.Fatal(e)}
- rolled,e:=OpenGrantBook(dir,ctx,consentPub,bookKey);if e!=nil{t.Fatal("signed rollback refused unexpectedly",e)}
+ rolled,e:=OpenGrantBook(dir,ctx,consentPub,approver,bookKey);if e!=nil{t.Fatal("signed rollback refused unexpectedly",e)}
  if epoch,e:=rolled.Epoch();e!=nil||epoch!=5{t.Fatal("rollback epoch",epoch,e)}
  if e=rolled.CheckDispatch(grant,req,GrantPrimary);e!=nil{t.Fatal("rollback counterexample missing",e)}
  rolled.Close()
@@ -144,22 +144,22 @@ func TestGrantBookRestartLockCorruptionAndRollbackCounterexample(t *testing.T){
  // Signature corruption fails closed.
  raw,e:=os.ReadFile(filepath.Join(dir,"grantbook.bin"));if e!=nil{t.Fatal(e)};raw[len(raw)-1]^=1
  if e=os.WriteFile(filepath.Join(dir,"grantbook.bin"),raw,0600);e!=nil{t.Fatal(e)}
- if bad,e:=OpenGrantBook(dir,ctx,consentPub,bookKey);!errors.Is(e,ErrStore){if bad!=nil{bad.Close()};t.Fatal("corrupt book opened",e)}
+ if bad,e:=OpenGrantBook(dir,ctx,consentPub,approver,bookKey);!errors.Is(e,ErrStore){if bad!=nil{bad.Close()};t.Fatal("corrupt book opened",e)}
  t.Log("revocation and epoch survive restart/lock contention; old valid signed GrantBook rollback is a retained counterexample")
 }
 
 func TestGrantBookAmbiguousPersistencePoisonsUntilReopen(t *testing.T){
  origin:="http://127.0.0.1:19122"
- ctx,_,_,_,_,_,_:=authorityFixture(t,origin)
+ ctx,approver,_,_,_,_,_:=authorityFixture(t,origin)
  consentPub,_:=keys(11);_,bookKey:=keys(12)
  for _,stage:=range []string{"before-rename","after-rename"}{
   t.Run(stage,func(t *testing.T){
-   dir:=privateTemp(t);book,e:=CreateGrantBook(dir,ctx,consentPub,bookKey,1);if e!=nil{t.Fatal(e)}
+   dir:=privateTemp(t);book,e:=CreateGrantBook(dir,ctx,consentPub,approver,bookKey,1);if e!=nil{t.Fatal(e)}
    book.fault=func(at string)error{if at==stage{return errors.New("injected")};return nil}
    if e=book.AdvanceEpoch(1,2);!errors.Is(e,ErrUnknown){t.Fatal("ambiguous epoch change",e)}
    if _,e=book.Epoch();!errors.Is(e,ErrStore){t.Fatal("poisoned book readable",e)}
    book.Close()
-   book,e=OpenGrantBook(dir,ctx,consentPub,bookKey);if e!=nil{t.Fatal(e)};defer book.Close()
+   book,e=OpenGrantBook(dir,ctx,consentPub,approver,bookKey);if e!=nil{t.Fatal(e)};defer book.Close()
    epoch,e:=book.Epoch();if e!=nil{t.Fatal(e)}
    if stage=="before-rename"&&epoch!=1{t.Fatal("before rename committed",epoch)}
    if stage=="after-rename"&&epoch!=2{t.Fatal("after rename lost",epoch)}
