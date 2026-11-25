@@ -100,6 +100,7 @@ export function createProviderBudgetLedger({global,profiles,leaseTicks=45,random
    const profile=profileMap.get(profileId);
    if(!profile||!safe(inputBytes,1,MAX_REQUEST_BYTES)||!safe(maxOutputTokens,1,MAX_REQUEST_OUTPUT))stop('REQUEST');
    if(!profile.enabled)stop('PROFILE_DISABLED');
+   if(now>Number.MAX_SAFE_INTEGER-leaseTicks)stop('CLOCK');
    if(!canReserve(used,globalLimits,inputBytes,maxOutputTokens)||!canReserve(profile.used,profile.limits,inputBytes,maxOutputTokens))stop('QUOTA');
    const id=leaseId(),lease={id,profileId,inputBytes,outputTokens:maxOutputTokens,reservedAt:now,expiresAt:now+leaseTicks,state:'active',active:true,unknown:false,settlement:null};
    leases.set(id,lease);
