@@ -788,6 +788,37 @@
         "V2-P01-THREAT",
         "V2-P22-RELEASE"
       ]
+    },
+    {
+      "id": "T25-upstream-terminal-authority-clone-rollback",
+      "severity": "critical",
+      "category": [
+        "integrity",
+        "rollback"
+      ],
+      "mechanism": "A cloned upstream signer plus valid signed snapshot, or restoration of an older valid signed upstream snapshot, can recreate unused local terminal state while a prior physical effect already exists. Each local authority can therefore produce internally valid APPLIED state and receipts for the same identity without global effect uniqueness.",
+      "invariant": "APPLIED/CLOSED exclusivity and the durable effect budget are scoped to one current non-rolled-back upstream authority history. Signatures alone must never be treated as global freshness, consensus or arbitrary-provider exactly-once evidence.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/upstream_core_linux_test.go",
+          "test": "TestUpstreamEffectAuthorityCloneCounterexamplePreserved"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/upstream_rollback_linux_test.go",
+          "test": "TestUpstreamEffectAuthoritySignedSnapshotRollbackCounterexample"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/upstream_network_linux_test.go",
+          "test": "TestUpstreamEffectAuthorityLostHTTPReplyReconcilesWithoutSecondEffect"
+        }
+      ],
+      "openGates": [
+        "V2-RUNTIME-02",
+        "V2-P05-ROLLBACK",
+        "V2-F11b",
+        "V2-P06-REFINE",
+        "V2-P22-RELEASE"
+      ]
     }
   ]
 }

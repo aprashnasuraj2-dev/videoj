@@ -17,7 +17,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "orphan_permanent_closure_exact_verified_runtime02_real_upstream_contract_next",
+  "state": "upstream_apply_or_close_exact_verified_runtime02_formal_refinement_next",
   "verified": [
     {
       "id": "V2-M01",
@@ -246,7 +246,7 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047/job/138998539263",
     "resolutionStatus": "resolved_exact_all_seven_workflows_success"
   },
-  "lastVerifiedKernelSource": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
+  "lastVerifiedKernelSource": "9b83295062ba8059ad1fa7590988ab4a86ef895b",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -776,6 +776,27 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047/job/138998539263",
       "description": "FenceAvailability closure profile and independent Python explorer both preserve safety for truthful permanent closure; Python checked 36 states/44 edges and four unresolved plus four already-closed orphan states. Lying closure produces the intended AtMostOneEffect delayed-double-effect counterexample.",
       "remaining": "Finite model is not universal Go refinement and assumes exact idempotency identities plus a truthful external closure authority."
+    },
+    {
+      "id": "V2-RUNTIME-02",
+      "sourceRevision": "9b83295062ba8059ad1fa7590988ab4a86ef895b",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45555367970",
+      "description": "Synthetic upstream idempotency authority now owns APPLIED-or-CLOSED terminal identity state, signed status/receipt semantics and a durable bounded effect budget. Exact retries are idempotent; CLOSED cannot later apply; a logical request cannot acquire a new applied token after one application; concrete fenced-orphan cleanup obtains durable CLOSED before releasing admission. Strict loopback transport, no redirects/proxy/ambient credentials and non-http.Handler construction boundary passed exact race/network CI.",
+      "remaining": "Still a same-project synthetic receiver, not a real provider adapter or arbitrary external-effect transaction. Normal fenced dispatch still uses SharedAuthority for the synthetic effect. Clone and valid-snapshot rollback can replay physical effects across histories; expiry/revocation, separately authorized compensation, external monotonic freshness, physical power-loss certification and provider-global billing remain open."
+    },
+    {
+      "id": "V2-P05-RECOVERY",
+      "sourceRevision": "9b83295062ba8059ad1fa7590988ab4a86ef895b",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45555367970",
+      "description": "Before-rename failure reopens with zero effect; after-rename Apply failure reopens APPLIED and exact retry returns the same receipt without another local effect. Lost HTTP Apply reply reconciles through signed status after restart. Lost Close reply reopens CLOSED, reproduces the exact closure proof and permanently rejects later Apply of that identity. Fenced orphan cleanup uses this durable closure before aborting admission.",
+      "remaining": "Filesystem/power-loss semantics are not physically certified; a real external provider has not implemented the contract. A stale or cloned upstream store remains a counterexample."
+    },
+    {
+      "id": "V2-P05-ROLLBACK",
+      "sourceRevision": "9b83295062ba8059ad1fa7590988ab4a86ef895b",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45555367970",
+      "description": "Permanent negative controls demonstrate that cloning the upstream signer plus signed snapshot lets two authorities each apply the same identity, and restoring a valid older signed snapshot permits reapplication across histories. Identical valid receipts therefore do not establish one global physical effect.",
+      "remaining": "Requires an independently retained monotonic trust root / real upstream enforcement to resist clone or rollback. No consensus or global freshness claim."
     }
   ],
   "reconciledCI": [
@@ -2332,6 +2353,68 @@
         },
         {
           "id": 45553070163,
+          "event": "pull_request",
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "9b83295062ba8059ad1fa7590988ab4a86ef895b",
+      "complete": true,
+      "description": "Exact V2-013 durable upstream terminal-authority checkpoint: a private synthetic receiver owns mutually exclusive APPLIED/CLOSED terminal state, durable effect budget and signed status/receipt semantics; restart, before/after-rename ambiguity, lost apply/close replies, concurrent apply-vs-close, strict loopback transport and concrete orphan closure integration passed. Clone and stale-snapshot rollback counterexamples remain explicit. Both knowledge runs plus all five auxiliary PR workflows succeeded; V2-RUNTIME-02 remains open.",
+      "runs": [
+        {
+          "id": 45555362744,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            139006001119
+          ]
+        },
+        {
+          "id": 45555367970,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            139006018983
+          ]
+        },
+        {
+          "id": 45555367794,
+          "event": "pull_request",
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45555367759,
+          "event": "pull_request",
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45555367847,
+          "event": "pull_request",
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45555367760,
+          "event": "pull_request",
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45555367798,
           "event": "pull_request",
           "name": "Validate SUTRA browser compatibility matrix",
           "status": "completed",

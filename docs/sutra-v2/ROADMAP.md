@@ -478,3 +478,16 @@ Exact source `5b2e9e686bed23590ef433cb9c06d54157b842a3` passed both knowledge wo
 Finite formal/reference evidence: truthful closure keeps the closed identity durable; independent Python explored 36 states / 44 edges and checked four unresolved plus four already-closed orphan states. A deliberately lying closure authority produces the expected delayed two-effect counterexample after the old dispatched effect and a newly admitted identity both deliver. This is the counterexample, not a passed safety claim for a dishonest issuer.
 
 RUNTIME-02 and P05 remain in progress. No actual provider currently supplies the required permanent non-application contract, so this is a protocol boundary and falsification harness, not production exactly-once evidence. Expiry/revocation, explicit compensation authority, coordinated trust-root rollback/fresh provisioning, physical power-loss behavior and provider-global budget remain open. No external write, deployment or release is authorized.
+
+
+## V2-013 — durable upstream APPLIED/CLOSED receiver contract — 2026-11-25
+
+Exact verified source: `9b83295062ba8059ad1fa7590988ab4a86ef895b`. Required evidence is green on the immutable source: knowledge push 45555362744, knowledge PR 45555367970, impact 45555367794, Open Kit 45555367759, publisher 45555367847, engineering 45555367760 and browser compatibility 45555367798.
+
+The receiver-contract laboratory now makes the previous permanent non-application promise executable within one durable authority history. One exact idempotency identity becomes either **APPLIED** or **CLOSED**, never both; APPLIED retries return the same signed receipt, CLOSED retries return the same closure proof, and signed status is terminal rather than treating point-in-time absence as evidence. The authority persists a bounded effect budget with the terminal ledger and the loopback client preserves unknown outcomes until reconciliation. A concrete fenced-orphan recovery path obtains durable CLOSED from this authority before the admission fence is released.
+
+Recovery evidence covers injected failure before and after rename, restart, actual lost Apply/Close HTTP responses, concurrent Apply-versus-Close, durable budget accounting, strict transport validation and an upstream restart before orphan resolution. The upstream server remains package-private and cannot be mounted directly as `http.Handler`.
+
+**Counterexamples remain first-class.** Two cloned signer+snapshot authorities can each apply the same identity, and restoring a valid older signed snapshot after a physical effect permits reapplication across histories. The receipts can be cryptographically valid and even identical. Therefore this establishes neither global freshness, consensus nor arbitrary-provider exactly-once semantics.
+
+RUNTIME-02 remains **Implementation in progress**. The new receiver is synthetic and same-project; normal fenced dispatch still uses the synthetic SharedAuthority effect, no real provider implements the contract, and dedicated UpstreamTerminal formal/refinement evidence has not yet been promoted. Expiry/revocation, separate compensation approval, external monotonic rollback resistance, physical power-loss certification and provider-global spend remain open.

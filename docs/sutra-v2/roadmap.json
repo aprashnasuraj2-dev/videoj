@@ -2318,9 +2318,9 @@
       "phase": "05",
       "status": "Implementation in progress",
       "evidence": {
-        "sourceRevision": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
-        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047",
-        "description": "Permanent non-application orphan recovery: exact cryptographic proof binds reservation/request/before-after/token; closure signer must be independent from action-authority and fence keys; wrong/tampered proof and known-effect rewind refused; truthful closure safe and lying closure double-effect counterexample verified by TLC plus independent Python."
+        "sourceRevision": "9b83295062ba8059ad1fa7590988ab4a86ef895b",
+        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45555367970",
+        "description": "Exact-CI verified synthetic upstream APPLIED/CLOSED authority: durable terminal identity state and bounded effect budget, signed receipt/status, restart and lost-response reconciliation, concurrent Apply/Close serialization, strict loopback transport, and concrete pre-effect orphan closure before fence release. Clone and stale-snapshot rollback counterexamples are retained."
       },
       "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
       "dependencies": [
@@ -2336,7 +2336,7 @@
       "positiveTests": "Durable effect/ledger and explicit retry policy",
       "adversarialTests": "Crash, concurrent keys, unknown outcome, revoked approval and global budgets",
       "verificationMethod": "Go process and network integration, TLA refinement",
-      "knownLimitations": "Synthetic durable/fenced recovery, write-surface hardening and a typed permanent non-application closure protocol are exact-CI verified. V2-RUNTIME-02 remains open: no real upstream adapter attests/enforces permanent closure; arbitrary external effects, expiry/revocation, compensation authorization, coordinated trust-domain rollback/fresh provisioning, physical power-loss semantics and provider-global budgets remain unresolved."
+      "knownLimitations": "V2-RUNTIME-02 remains open. The receiver is synthetic and same-project; no real provider/upstream has implemented the contract, and normal fenced dispatch still applies the synthetic SharedAuthority effect rather than an arbitrary external effect. Cloned signer+snapshot and valid older-snapshot rollback can repeat physical effects across histories. Dedicated UpstreamTerminal formal/refinement evidence, expiry/revocation, separately authorized compensation, independent monotonic rollback protection, physical power-loss semantics and provider-global billing/spend remain unresolved."
     },
     {
       "id": "V2-RUNTIME-03",
