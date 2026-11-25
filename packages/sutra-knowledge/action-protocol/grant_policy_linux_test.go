@@ -360,7 +360,7 @@ func TestAnchoredFencedGrantGuardBlocksRolledBackRevocationBeforeFence(t *testin
 	fenced, _ := NewFencedCoordinator(authority, fenceClient)
 	guard, _ := NewAnchoredFencedGrantGuard(policy, fenced)
 	wire, _ := SignAuthorityRequest(0, AuthorityCommit, authorityGenesis, request, callerKey[0])
-	if _, e = guard.Commit(grant, wire, GrantPrimary); !errors.Is(e, ErrGrantPolicyRollback) {
+	if _, e = guard.commitLab(grant, wire, GrantPrimary); !errors.Is(e, ErrGrantPolicyRollback) {
 		t.Fatal("rolled-back grant policy reached effect admission", e)
 	}
 	spent, total, effects, e := authority.Counts()
@@ -422,7 +422,7 @@ func TestAnchoredFencedGrantGuardValidCommitRevokeAndStatus(t *testing.T) {
 	grant, _ := IssueActionGrant(request, GrantPrimary, 10, 11, consentKey)
 	wire, _ := SignAuthorityRequest(0, AuthorityCommit, authorityGenesis, request, callerKey[0])
 	challenge := Digest{9}
-	envelope, e := guard.ProcessAttested(grant, wire, challenge)
+	envelope, e := guard.processAttestedLab(grant, wire, challenge)
 	if e != nil || envelope.Authority.Outcome != AuthorityCommitted || envelope.Authority.Receipt.Version != 1 {
 		t.Fatal("anchored fenced commit", e)
 	}
@@ -447,13 +447,13 @@ func TestAnchoredFencedGrantGuardValidCommitRevokeAndStatus(t *testing.T) {
 	}
 	latest, _ := authority.Head()
 	retry, _ := SignAuthorityRequest(0, AuthorityCommit, latest, request, callerKey[0])
-	if _, e = guard.Commit(grant, retry, GrantPrimary); !errors.Is(e, ErrGrantRevoked) {
+	if _, e = guard.commitLab(grant, retry, GrantPrimary); !errors.Is(e, ErrGrantRevoked) {
 		t.Fatal("anchored revocation failed", e)
 	}
 	// Reconciliation is deliberately still allowed for the already-admitted
 	// historical dispatch and must not repeat the effect.
 	status, _ := SignAuthorityRequest(0, AuthorityStatus, latest, request, callerKey[0])
-	response, e := guard.Status(grant, status)
+	response, e := guard.statusLab(grant, status)
 	if e != nil || response.Authority.Outcome != AuthorityCommitted || response.Authority.Receipt != envelope.Authority.Receipt {
 		t.Fatal("revoked historical reconcile", e)
 	}

@@ -31,6 +31,11 @@ func TestExternalHTTPWriteSurfaceRequiresAnchoredFencedComposite(t *testing.T) {
 	if !composite.Implements(handler) {
 		t.Fatalf("anchored fenced-grant composite lost its deliberate HTTP surface: %v", composite)
 	}
+	for _, method := range []string{"Commit", "Status", "ProcessAttested"} {
+		if _, exposed := composite.MethodByName(method); exposed {
+			t.Fatalf("unpinned composite method remains exported: %s", method)
+		}
+	}
 
 	// Separately keyed control-plane state machines remain independently
 	// hostable, but none owns or commits the authority effect.

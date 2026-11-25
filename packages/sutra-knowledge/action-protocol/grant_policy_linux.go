@@ -1065,7 +1065,7 @@ func NewAnchoredFencedGrantGuard(policy *GrantPolicyCoordinator, coordinator *Fe
 	}
 	return &AnchoredFencedGrantGuard{policy: policy, coordinator: coordinator}, nil
 }
-func (g *AnchoredFencedGrantGuard) Commit(grant ActionGrant, req AuthorityRequest, class GrantClass) (FencedResponse, error) {
+// The unpinned methods below remain package-private regression laboratories.\n// External mutation must use ProcessCompositePinned/ServeHTTP so the caller's\n// exact signed policy pin and retained-history membership are mandatory.\nfunc (g *AnchoredFencedGrantGuard) commitLab(grant ActionGrant, req AuthorityRequest, class GrantClass) (FencedResponse, error) {
 	if req.Op != AuthorityCommit {
 		return FencedResponse{}, ErrPolicy
 	}
@@ -1082,7 +1082,7 @@ func (g *AnchoredFencedGrantGuard) Commit(grant ActionGrant, req AuthorityReques
 	// between the anchored final check and pre-effect fence admission.
 	return g.coordinator.Process(req)
 }
-func (g *AnchoredFencedGrantGuard) Status(grant ActionGrant, req AuthorityRequest) (FencedResponse, error) {
+func (g *AnchoredFencedGrantGuard) statusLab(grant ActionGrant, req AuthorityRequest) (FencedResponse, error) {
 	if req.Op != AuthorityStatus {
 		return FencedResponse{}, ErrPolicy
 	}
@@ -1097,7 +1097,7 @@ func (g *AnchoredFencedGrantGuard) Status(grant ActionGrant, req AuthorityReques
 	}
 	return g.coordinator.Process(req)
 }
-func (g *AnchoredFencedGrantGuard) ProcessAttested(grant ActionGrant, req AuthorityRequest, challenge Digest) (FencedEnvelope, error) {
+func (g *AnchoredFencedGrantGuard) processAttestedLab(grant ActionGrant, req AuthorityRequest, challenge Digest) (FencedEnvelope, error) {
 	if challenge == (Digest{}) {
 		return FencedEnvelope{}, ErrPolicy
 	}
