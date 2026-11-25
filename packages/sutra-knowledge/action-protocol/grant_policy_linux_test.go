@@ -467,3 +467,61 @@ func TestAnchoredFencedGrantGuardValidCommitRevokeAndStatus(t *testing.T) {
 	}
 	t.Log("policy admission, effect admission and external result are independently monotonic; later revocation blocks new effects but preserves exact historical reconciliation")
 }
+
+
+func TestGrantPolicyInvalidGrantRejectedBeforeWitnessContact(t *testing.T) {
+	var current atomic.Pointer[GrantPolicyWitness]
+	var contacts atomic.Int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		contacts.Add(1)
+		current.Load().ServeHTTP(w, r)
+	}))
+	defer srv.Close()
+	ctx, approver, ak, _, _, _, _ := authorityFixture(t, srv.URL)
+	consentPub, consentKey := keys(11)
+	_, bookKey := keys(12)
+	policyPub, policyKey := grantPolicyKeys()
+	book, e := CreateGrantBook(privateTemp(t), ctx, consentPub, approver, bookKey, 10)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer book.Close()
+	genesis, _ := book.PolicyHead()
+	witness, e := CreateGrantPolicyWitness(privateTemp(t), ctx, bookKey.Public().(ed25519.PublicKey), policyKey, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer witness.Close()
+	current.Store(witness)
+	client, _ := NewGrantPolicyClient(srv.URL, ctx, bookKey.Public().(ed25519.PublicKey), policyPub, genesis)
+	coordinator, _ := NewGrantPolicyCoordinator(book, client)
+	request := approve(t, 0, ctx, ak)
+	grant, _ := IssueActionGrant(request, GrantPrimary, 10, 11, consentKey)
+	forged := grant
+	forged.Signature[0] ^= 1
+	book.mu.Lock()
+	e = coordinator.reserveDispatchLocked(forged, request, GrantPrimary)
+	book.mu.Unlock()
+	if !errors.Is(e, ErrPolicy) {
+		t.Fatal("forged grant not refused locally", e)
+	}
+	if contacts.Load() != 0 {
+		t.Fatal("forged grant contacted policy witness", contacts.Load())
+	}
+	book.mu.Lock()
+	e = coordinator.reserveDispatchLocked(grant, request, GrantCompensation)
+	book.mu.Unlock()
+	if !errors.Is(e, ErrGrantClass) {
+		t.Fatal("class substitution not refused locally", e)
+	}
+	if contacts.Load() != 0 {
+		t.Fatal("class substitution contacted policy witness", contacts.Load())
+	}
+	if e = coordinator.Revoke(forged, request); !errors.Is(e, ErrPolicy) {
+		t.Fatal("forged revocation grant not refused locally", e)
+	}
+	if contacts.Load() != 0 {
+		t.Fatal("forged revocation contacted policy witness", contacts.Load())
+	}
+	t.Log("invalid signature and class substitution are rejected before any fresh policy-witness request")
+}

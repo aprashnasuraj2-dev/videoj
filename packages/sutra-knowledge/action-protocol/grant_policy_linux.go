@@ -795,6 +795,20 @@ func (c *GrantPolicyCoordinator) anchorMutationLocked(before, after Digest, appl
 	}
 	return nil
 }
+func (c *GrantPolicyCoordinator) validateGrantIdentityLocked(g ActionGrant, req Request, class *GrantClass) error {
+	b := c.book
+	if b.lock == nil || b.poisoned {
+		return ErrStore
+	}
+	if !b.validApprovedRequestLocked(req) || !VerifyActionGrant(g, req, b.consent) || g.Context != b.ctx {
+		return ErrPolicy
+	}
+	if class != nil && g.Class != *class {
+		return ErrGrantClass
+	}
+	return nil
+}
+
 func (c *GrantPolicyCoordinator) AdvanceEpoch(expected, next uint64) error {
 	c.book.mu.Lock()
 	defer c.book.mu.Unlock()
@@ -822,13 +836,13 @@ func (c *GrantPolicyCoordinator) AdvanceEpoch(expected, next uint64) error {
 func (c *GrantPolicyCoordinator) Revoke(g ActionGrant, req Request) error {
 	c.book.mu.Lock()
 	defer c.book.mu.Unlock()
+	if e := c.validateGrantIdentityLocked(g, req, nil); e != nil {
+		return e
+	}
 	if e := c.recoverLocked(); e != nil {
 		return e
 	}
 	b := c.book
-	if !b.validApprovedRequestLocked(req) || !VerifyActionGrant(g, req, b.consent) || g.Context != b.ctx {
-		return ErrPolicy
-	}
 	if b.isRevokedLocked(g.ID) {
 		return nil
 	}
@@ -848,6 +862,9 @@ func (c *GrantPolicyCoordinator) Revoke(g ActionGrant, req Request) error {
 	})
 }
 func (c *GrantPolicyCoordinator) reserveDispatchLocked(g ActionGrant, req Request, class GrantClass) error {
+	if e := c.validateGrantIdentityLocked(g, req, &class); e != nil {
+		return e
+	}
 	if e := c.recoverLocked(); e != nil {
 		return e
 	}
@@ -874,16 +891,13 @@ func (c *GrantPolicyCoordinator) reserveDispatchLocked(g ActionGrant, req Reques
 	})
 }
 func (c *GrantPolicyCoordinator) checkReconcileLocked(g ActionGrant, req Request) error {
+	if e := c.validateGrantIdentityLocked(g, req, nil); e != nil {
+		return e
+	}
 	if e := c.recoverLocked(); e != nil {
 		return e
 	}
 	b := c.book
-	if b.lock == nil || b.poisoned {
-		return ErrStore
-	}
-	if !b.validApprovedRequestLocked(req) || !VerifyActionGrant(g, req, b.consent) || g.Context != b.ctx {
-		return ErrPolicy
-	}
 	if !b.isAdmittedLocked(g.ID) {
 		return ErrGrantNotDispatched
 	}
