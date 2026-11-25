@@ -2,6 +2,8 @@
 
 V2-009: the dependency-aware active phase gates are in [ROADMAP.md](ROADMAP.md) and [roadmap.json](roadmap.json). This original ID register is retained for historical traceability; no earlier failures or requirements removed.
 
+V2-010: RECOVERY, ROLLBACK and REFINE have new partial executable evidence in ROADMAP.md, roadmap.json and SESSIONS.md. No historical checkbox or fully verified status changed. The remaining external anchor, global budget and refinement gates are not closed.
+
 Pending until exact evidence; expand only when new concrete product requirements or counterexamples emerge. Baseline facts are not v2 feature credit.
 
 - [x] V2-M01 Resolve immutable old source, CI, and preserve branch; migration decisions scoped to inspected code. Evidence: MIGRATION.md and linked exact old workflow.

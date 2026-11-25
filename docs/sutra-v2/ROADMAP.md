@@ -1,4 +1,4 @@
-# Dependency-aware engineering roadmap — V2-009
+# Dependency-aware engineering roadmap — V2-010
 
 This is the active phase index and new engineering-gate register. The original requirement IDs, descriptions, checkboxes and historical evidence remain in [CHECKLIST.md](CHECKLIST.md), [SESSIONS.md](SESSIONS.md) and [progress.json](progress.json); see [roadmap.json](roadmap.json) for structured records and crosswalk. Historical checkboxes are not equivalent to formal verification. New gates close only with their own observed evidence. P0 = blocking safety/correctness; P1 = product/verification; P2 = deferred/conditional. Risk is independent of priority. No percentage-complete metric.
 
@@ -111,8 +111,8 @@ Prior IDs: V2-RUNTIME-02.
 - **Positive tests:** Actual loopback TCP drop followed by reopen and reconciliation.
 - **Adversarial tests:** I/O failure, response reorder, invalid receipt, retry with new approval; no unapproved second effect.
 - **Verification:** Race-enabled transport integration and failpoint tests.
-- **Evidence:** [58a5f96456c4](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733).
-- **Limitations:** Actual TCP loss plus store reopen, same receipt and injected errors verified. Delayed/reordered response tests, persisted caller/global contact budgets and new-key authorization lifecycle remain open..
+- **Evidence:** [58a5f96456c4](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733); [e96734190870](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524456423/job/138904189960); [88ab00000eaf](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524767453/job/138905253653); [45ea97969ff5](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524868505/job/138905589669). Exact results and failed gate in SESSIONS.md.
+- **Limitations:** Delayed and reordered TCP delivery, crash reservation, frozen approvals and bounded signed journal verified. Trusted directory/signer only; rollback of caller journal or another book can reset/bypass budget. CAS wire integration, authenticated global contact accounting, expiry/revocation and approval replacement lifecycle remain open.
 
 ### V2-P05-ROLLBACK — Prevent replay of older valid snapshots and clone-induced equivocation relative to trusted external head
 
@@ -122,8 +122,8 @@ Prior IDs: V2-RUNTIME-02.
 - **Positive tests:** Head advancement and recovery.
 - **Adversarial tests:** Replace state by valid earlier snapshot; clone signer/store; denied compensation.
 - **Verification:** Multi-process integration and independent verifier.
-- **Evidence:** [58a5f96456c4](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733).
-- **Limitations:** Older signed snapshot refused with independently pinned receipt. Unanchored open intentionally demonstrates failure; cloned signers/stores sharing the prefix can still fork. Durable external CAS and independent trust-anchor distribution remain open..
+- **Evidence:** [58a5f96456c4](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733); [e96734190870](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524456423/job/138904189960); [45ea97969ff5](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524868505/job/138905589669). Exact results and failed gate in SESSIONS.md.
+- **Limitations:** Single trusted Linux CAS authority and portable pin verifier verified; cloned anchor itself still forks and old signed journal can reset budget. No independently distributed monotonic head/key, multi-host authority, authenticated CAS wire or separately authorized compensation. Threat-model dependency remains open.
 
 ## Phase 06 — TLA+ formal state-machine verification
 
@@ -142,14 +142,14 @@ Prior IDs: V2-F11b.
 
 ### V2-P06-REFINE — Model multi-key authorization, contact budgets, anti-equivocation, fairness and map Go transitions
 
-- **Status:** Not started. **Priority/risk:** P1/high. **Dependencies:** V2-P06-MODEL, V2-P05-RECOVERY, V2-P05-ROLLBACK.
+- **Status:** Implementation in progress. **Priority/risk:** P1/high. **Dependencies:** V2-P06-MODEL, V2-P05-RECOVERY, V2-P05-ROLLBACK.
 - **Implementation:** `packages/sutra-knowledge/action-protocol/formal; packages/sutra-knowledge/checkpoint`.
 - **Acceptance:** Bounded model and negative mutants distinguish safety from conditional liveness; implementation trace mapping reviewed.
 - **Positive tests:** Concurrent approved operations and CAS.
 - **Adversarial tests:** Unauthorized key, rollback, lost acknowledgement and exhausted budget.
 - **Verification:** TLC, trace refinement and implementation race tests.
-- **Evidence:** None; no credit claimed.
-- **Limitations:** No unbounded proof or external service guarantee.
+- **Evidence:** [9f1d5fb793f8](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524578358/job/138904607388); [45ea97969ff5](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45524868505/job/138905589669); [20e68b77ae86](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45525009986/job/138906066673). Exact results and failed gate in SESSIONS.md.
+- **Limitations:** Bounded two-caller/two-approved-key safety and conditional fairness checks exercised; no unconditional receipt liveness with finite budget. Go journal limits per approval, model limits per caller; CAS and journal transport separate. No trace-refinement proof, independent implementation of Go consumer or arbitrary external service guarantee.
 
 ## Phase 07 — Rust and WebAssembly high-assurance computation
 
@@ -399,6 +399,6 @@ Prior IDs: V2-R01, V2-R02.
 
 ## Immediate dependency order
 
-Reconcile newest full CI → delayed/reordered responses, persisted caller contact budget and concurrent distinct-key tests → external anchor/CAS and multi-key refinement → host consent and browser write integration only when explicitly ready → Lean support proof and observation economics in parallel where dependencies allow. No deployment or release.
+Reconcile exact corrected fairness gate and subsequent documentation CI → integrate authenticated external CAS transport and externally monotonic caller reservation authority, align per-caller versus per-approval model and replay concrete traces → threat review, expiry/revocation and explicit compensation → host consent and browser write integration only when ready. Preserve verified primitives. Lean support proof and observation economics remain parallel dependency-ready research; no deployment or release.
 
 All 62 original IDs have individual objective, dependencies, risk/priority, location, acceptance, positive/adversarial tests, verification method, status, evidence and limitations in roadmap.json. Together with 27 new gates, the 89-ID dependency graph has no missing nodes, duplicate IDs or cycles. Legacy dependency mappings are current planning judgments, not historical proof.
