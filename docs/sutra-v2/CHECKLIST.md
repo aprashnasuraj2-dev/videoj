@@ -13,6 +13,7 @@ Pending until exact evidence; expand only when new concrete product requirements
 - [x] V2-M02 Map new product area into existing impact classifier, preserve fail-closed handling of unclassified code, and require v2 CI without misclassifying legacy metrics; ensure Observatory/reference commands propagate nonzero exit codes. Discovered after first PR CI.
 - [ ] V2-K07 Reverse dependency index, measured traversal/hash/calculation scaling and failure limits.
 - [ ] V2-K08 Typed quantity conversion and explicit semantic assumption compatibility; compare same-dimension but different scopes.
+- [ ] V2-K09 Bind declared quantity kind/unit/scope into exact conversion graph; reject semantic incompatibility before equality constraint, prove torque-energy and condition counterexamples; replay graph independently (not independent semantic policy).
 - [ ] V2-E01 Evidence identity and source-version adapter using actual existing receipt validator, no trust promotion.
 - [ ] V2-A01 Bridge compiled proof obligations into existing pinned browser agent runtime under explicit model/peer authority.
 - [ ] V2-A02 Publish a compatible data-only peer capability and validate consented actual browser execution.

@@ -18,3 +18,7 @@ The Observatory CLI asserts a real deterministic state change, exact incremental
 ## Separate reference implementation
 
 `reference/verify.py` recomputes full canonical receipts from the graph using Python Fraction, hashlib and DFS rather than the JavaScript implementation. Run `node packages/sutra-knowledge/examples/export-challenges.mjs > challenges.json` then `python3 packages/sutra-knowledge/reference/verify.py challenges.json`. Exact positive controls, stale/forged digests/outcomes, ambiguous JSON and Unicode/dimensional fixtures are checked. This is independently implemented but same-project, not independently operated. CI required before credit.
+
+## Declared scope comparison
+
+`scope.js` compiles eight explicitly typed quantity kinds, exact rational conversion factors and three declared scope identifiers (subject, condition, reference frame) into the existing kernel. Incompatible scope or quantity kind omits the equality constraint entirely; no semantic equivalence is inferred. Torque and energy share dimensions yet cannot be compared as the same quantity. Conversion and declarations are hash-bound through input basis strings; independent Python replay checks the resulting graph, not the separate semantic compiler's policy. No affine units, uncertainty intervals, automatic unit parsing or source identity verification.

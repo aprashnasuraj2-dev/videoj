@@ -9,11 +9,12 @@
     "V2-U02",
     "V2-A04",
     "V2-D04",
-    "V2-A01",
     "V2-K08",
+    "V2-K09",
+    "V2-A01",
     "V2-O02"
   ],
-  "state": "browser_bridge_candidate_pending",
+  "state": "browser_bridge_and_scope_candidate_pending",
   "verified": [
     {
       "id": "V2-M01",

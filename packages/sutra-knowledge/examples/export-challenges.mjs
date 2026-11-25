@@ -1,5 +1,7 @@
 import {createVerifier} from '../index.js';
 import {beamGraph} from './beam.mjs';
+import {compareScopedQuantities} from '../scope.js';
+import {scopeFixture} from './scopes.mjs';
 const v=createVerifier(),a=beamGraph(),b=beamGraph('2500000000');
 const r=await v.evaluate(a),s=await v.evaluate(b);
 const cases=[
@@ -17,4 +19,7 @@ const graph=JSON.stringify({schemaVersion:1,nodes:[input('a','-2/3',[1,0,0]),inp
  {id:'square',kind:'derive',op:'mul',args:['sum','sum']}]});
 const other=await createVerifier().evaluate(graph);
 cases.push({id:'unicode-rational-and-incompatible',graph,report:other.reportText,expected:true});
+for(const name of ['unit_equivalent','torque_energy','scope_changed','same_scope_disagreement']){
+ const r=await compareScopedQuantities(scopeFixture(name));cases.push({id:'scope-'+name,graph:r.graphText,report:r.reportText,expected:true});
+}
 console.log(JSON.stringify({cases}));

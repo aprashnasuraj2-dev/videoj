@@ -3,6 +3,8 @@ import {createVerifier,replayReport} from '../../../packages/sutra-knowledge/ind
 import {beamGraph} from '../../../packages/sutra-knowledge/examples/beam.mjs';
 import {derivedSectionGraph,beamCase} from '../../../packages/sutra-knowledge/examples/methods.mjs';
 import {runProofProposal,scriptedProofModel} from '../../../packages/sutra-knowledge/agent-bridge.js';
+import {compareScopedQuantities} from '../../../packages/sutra-knowledge/scope.js';
+import {scopeFixture} from '../../../packages/sutra-knowledge/examples/scopes.mjs';
 const by=id=>document.getElementById(id),verifier=createVerifier();
 const evaluate=by('evaluate'),compare=by('compare'),agent=by('agent'),hostile=by('hostile'),material=by('material');
 const reportButtons=['download','replay','forge'].map(by);
@@ -15,6 +17,7 @@ function clear(){
  for(const id of ['deflection','limit','verdict','counts'])by(id).textContent='—';
  by('verdict').removeAttribute('data-verdict');by('identity').textContent='';by('nodes').replaceChildren();
  by('method-status').textContent='';by('agent-status').textContent='Not run for the selected assumption.';by('replay-status').textContent='No current report available.';
+ delete by('agent-status').dataset.state;delete by('replay-status').dataset.state;
 }
 material.addEventListener('change',()=>{epoch++;clear();by('status').textContent='Assumption changed. Evaluate the new graph; old results are not current.';});
 function render(graphText,result){
@@ -90,4 +93,23 @@ by('download').addEventListener('click',()=>{
  const url=URL.createObjectURL(new Blob([JSON.stringify(current,null,2)],{type:'application/json'})),a=document.createElement('a');
  a.href=url;a.download='sutra-proof.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
  by('replay-status').textContent='Download requested; browser save outcome not confirmed.';
+});
+
+const scopeSelect=by('scope-fixture'),scopeButton=by('scope-check');
+let scopeEpoch=0,scopeBusy=false;
+scopeSelect.addEventListener('change',()=>{
+ scopeEpoch++;by('scope-status').textContent='Selection changed. Check the new declared scope.';
+ delete by('scope-result').dataset.state;for(const id of ['scope-left','scope-right','scope-result'])by(id).textContent='—';
+});
+scopeButton.addEventListener('click',async()=>{
+ if(scopeBusy)return;scopeBusy=true;const ticket=scopeEpoch;scopeButton.setAttribute('aria-busy','true');
+ by('scope-status').textContent='Checking exact quantities and declared scope…';
+ try{
+  const r=await compareScopedQuantities(scopeFixture(scopeSelect.value));if(ticket!==scopeEpoch)return;
+  by('scope-left').textContent=r.left.value;by('scope-right').textContent=r.right.value;
+  by('scope-result').dataset.state=r.status;
+  by('scope-result').textContent={equal_declared_quantities:'Equal',different_declared_quantities:'Disagree',incomparable_declared_scope:'Incomparable'}[r.status];
+  by('scope-status').textContent=r.differences.length?'No equality constraint executed: incompatible declared '+r.differences.join(', ')+'.':'Exact comparison after SI conversion; declarations are not independently verified.';
+ }catch{if(ticket===scopeEpoch)by('scope-status').textContent='Scope verification refused.';}
+ finally{scopeBusy=false;scopeButton.removeAttribute('aria-busy');}
 });

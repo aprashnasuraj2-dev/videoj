@@ -22,3 +22,6 @@ Exact `6a862dd5d349538d6bcc32335a810fbe08cbfd33`: [impact classifier](https://gi
 ## V2-002 — 2026-11-25
 
 Resumed at `04a452995be68f63a8d03d7792a595f498015c80`; all seven observed applicable push/PR workflows at that head concluded success. Added built browser laboratory, actual dependency/mutation rendering, report replay and export, two exact section calculation paths, and closed host-approved proof method selection via the existing pinned agent runtime. Scripted adapter is explicitly a fixture; no provider, arbitrary model graph, external contact or deployment. Added dedicated Node and Chromium candidate tests and mapped v2/browser/shared runtime dependencies. No completion credit until exact CI. Next inspect candidate and semantic scope compatibility.
+
+### Semantic comparison candidate
+Added a closed scope compiler with exact SI conversion, explicit quantity kinds and subject/condition/reference-frame compatibility. Same-dimensional equal torque/energy and static/dynamic stress cannot reach an equality constraint. Distinct typed declarations bind into actual graph hashes; independent Python replay receives the compiled graph, not semantic policy. Added real UI, Node and browser cases; no credit until exact CI. Fixed stale agent/replay state flags on assumption change.

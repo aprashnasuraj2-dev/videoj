@@ -38,6 +38,12 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css'};
   await page.getByRole('button',{name:'Challenge forged verdict'}).click();await page.waitForFunction(()=>document.querySelector('#agent-status').dataset.state==='refused');
   await page.getByRole('button',{name:'Replay exact report'}).click();await page.waitForFunction(()=>document.querySelector('#replay-status').dataset.state==='reproduced');
   await page.getByRole('button',{name:'Challenge tampered report'}).click();await page.waitForFunction(()=>document.querySelector('#replay-status').dataset.state==='refused');
+  for(const [fixture,expected] of [['unit_equivalent','equal_declared_quantities'],['torque_energy','incomparable_declared_scope'],['scope_changed','incomparable_declared_scope'],['same_scope_disagreement','different_declared_quantities']]){
+   await page.getByLabel('Comparison challenge').selectOption(fixture);
+   assert.equal(await page.locator('#scope-result').innerText(),'—');
+   await page.getByRole('button',{name:'Check compatibility'}).click();
+   await page.waitForFunction(s=>document.querySelector('#scope-result').dataset.state===s,expected);
+  }
   const downloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Download graph + report'}).click();
   const download=await downloadPromise;assert.equal(download.suggestedFilename(),'sutra-proof.json');const exported=JSON.parse(fs.readFileSync(await download.path(),'utf8'));
   assert.equal(JSON.parse(exported.reportText).graphDigest,await page.locator('#identity').innerText());
