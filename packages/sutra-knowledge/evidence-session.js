@@ -56,6 +56,11 @@ function minimalConflict(reads,all){
  return null;
 }
 export async function evaluateEvidenceSession(caseText,eventText='[]'){
+ return (await evaluateEvidenceSessionWithProjection(caseText,eventText)).report;
+}
+// The projection is derived only from locally verified graph outcomes and
+// admitted active evidence. It is not a peer-controlled support assertion.
+export async function evaluateEvidenceSessionWithProjection(caseText,eventText='[]'){
  const c=admit(caseText);
  const events=parseUniqueJson(eventText,{maxChars:262144,maxDepth:6});
  if(!Array.isArray(events)||events.length>24)fail('EVIDENCE_EVENTS');
@@ -119,11 +124,13 @@ export async function evaluateEvidenceSession(caseText,eventText='[]'){
   worlds:worldReports.map(w=>w.summary),survivingWorlds:alive.map(w=>w.world.id),
   unavailableSources:c.sources.filter(s=>!sourceAvailable(s)).map(s=>s.id),lineageGroups,
   activeEvidence:active.map(({mask,...rest})=>rest),history:history.map(h=>h.type==='read'?{type:'read',receipt:Object.fromEntries(Object.entries(h.receipt).filter(([k])=>k!=='mask'))}:h)};
- if(!mask)return freeze({...base,status:'inconsistent_observations',conflict:minimalConflict(active,all),frontier:null});
+ const projection={version:1,worlds:worldReports.map(w=>({id:w.world.id,decision:w.summary.decision})),
+  observations:active.map(r=>({id:r.observationId,mask:r.mask})).sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0)};
+ if(!mask)return freeze({report:{...base,status:'inconsistent_observations',conflict:minimalConflict(active,all),frontier:null},projection});
  const observations=usable.map(o=>{
   const values=[...new Set(alive.map(w=>w.byId.get(o.nodeId).outcome.value))].sort();
   return {id:o.id,cost:o.cost,outcomes:Object.fromEntries(alive.map(w=>[w.world.id,valueLabel(values.indexOf(w.byId.get(o.nodeId).outcome.value))]))};
  });
  const frontier=await evaluateFrontier(JSON.stringify({version:1,decisionId:c.decisionId,costUnit:c.costUnit,worlds:alive.map(w=>w.world),observations}));
- return freeze({...base,status:frontier.status,frontier});
+ return freeze({report:{...base,status:frontier.status,frontier},projection});
 }
