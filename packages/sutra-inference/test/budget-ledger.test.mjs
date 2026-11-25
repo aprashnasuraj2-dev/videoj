@@ -188,3 +188,13 @@ test('lease expiry arithmetic refuses unsafe clock overflow before any reservati
  }),e=>e.code==='CLOCK');
  const snap=ledger.snapshot();assert.equal(snap.global.used.calls,0);assert.equal(snap.global.used.active,0);
 });
+
+
+test('budget clock is monotonic so callers cannot move time backward to manipulate lease state',()=>{
+ const {a,b}=profiles(),ledger=make([a.profile.profileId,b.profile.profileId]);
+ ledger.reserve({profileId:a.profile.profileId,inputBytes:10,maxOutputTokens:10,now:100});
+ assert.throws(()=>ledger.prune(99),e=>e.code==='CLOCK');
+ assert.throws(()=>ledger.reserve({profileId:b.profile.profileId,inputBytes:10,maxOutputTokens:10,now:50}),e=>e.code==='CLOCK');
+ const snap=ledger.snapshot();assert.equal(snap.global.used.calls,1);assert.equal(snap.global.used.active,1);
+ assert.equal(ledger.prune(110),1);assert.equal(ledger.snapshot().global.used.active,0);
+});
