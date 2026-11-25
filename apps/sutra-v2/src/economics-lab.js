@@ -28,3 +28,39 @@ async function run(mode){
 }
 ids.forEach(id=>by(id).onclick=()=>run(id));
 by('export').onclick=()=>{if(!current||busy)return;const url=URL.createObjectURL(new Blob([current],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='sutra-source-economics.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+
+import {disclosureFixture} from '../../../packages/sutra-knowledge/examples/disclosure-frontier.mjs';
+const db=id=>document.getElementById('disclosure-'+id);
+let disclosureBytes=null,disclosureBusy=false;
+const disclosureModes=[['open',4,false],['bounded',2,false],['infeasible',1,false],['withdrawn',4,true]];
+async function runDisclosure(cap,withdrawn){
+ if(disclosureBusy)return;
+ disclosureBusy=true;disclosureBytes=null;db('export').disabled=true;
+ for(const [id] of disclosureModes)db(id).disabled=true;
+ db('status').dataset.state='working';db('status').textContent='Solving explicit action bundles against a hard worst-branch cap…';db('plan').textContent='';
+ try{
+  const report=await disclosureFixture(cap,withdrawn?[{type:'withdraw_source',sourceId:'bundle'}]:[]);
+  const bytes=new TextEncoder().encode(JSON.stringify(report));
+  if(bytes.length>1048576)throw Error('DISCLOSURE_EXPORT_LIMIT');
+  const p=report.constrained.plan;
+  db('unrestricted').textContent=String(report.unrestricted.plan?.worstCost??'—');
+  db('effort').textContent=String(p?.worstCost??'—');db('exposure').textContent=String(p?.worstExposure??'—');
+  db('cap').textContent=String(report.exposureBudget);
+  const lines=[];
+  function walk(node,depth=0){
+   if(!node)return;const pad='  '.repeat(depth);
+   if(node.kind==='decision'){lines.push(pad+'Conditional '+node.decision.replace('constraint_','')+' · '+node.worlds.join(', '));return;}
+   lines.push(pad+node.actionId+' · '+node.observationIds.join(', ')+' · effort '+node.cost+' · exposure '+node.exposure);
+   for(const b of node.branches){lines.push(pad+'If '+b.outcome+':');walk(b.next,depth+1);}
+  }
+  walk(p);
+  for(const a of report.excludedActions)lines.push('Unavailable: '+a.id+' ('+a.unavailableObservationIds.join(', ')+')');
+  db('plan').textContent=lines.join('\n');
+  db('status').textContent=p?'Conditional plan within cap. No action executed.':report.constrained.status==='exposure_budget_infeasible'?'NO FEASIBLE PLAN: the declared cap rules out every decisive policy. Evidence is unchanged.':'NO DECISIVE PLAN: '+report.constrained.status;
+  db('status').dataset.outcome=report.constrained.status;
+  disclosureBytes=bytes;db('status').dataset.state='ready';db('export').disabled=false;
+ }catch{db('status').dataset.state='refused';db('status').textContent='REFUSED: no policy exported.';delete db('status').dataset.outcome;for(const id of ['unrestricted','effort','exposure','cap'])db(id).textContent='—';}
+ finally{disclosureBusy=false;for(const [id] of disclosureModes)db(id).disabled=false;}
+}
+for(const [id,cap,withdrawn] of disclosureModes)db(id).onclick=()=>runDisclosure(cap,withdrawn);
+db('export').onclick=()=>{if(!disclosureBytes||disclosureBusy)return;const url=URL.createObjectURL(new Blob([disclosureBytes],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='sutra-disclosure-policy.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);};

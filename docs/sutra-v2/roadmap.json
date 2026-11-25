@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-050",
+  "session": "V2-051",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2787,15 +2787,23 @@
       "dependencies": [
         "V2-D23-SOURCE-ECONOMICS"
       ],
-      "scope": "V2-048 candidate: separately pinned explicit same-source joint observation actions with exact joint tuple partitions, hard worst-branch abstract exposure cap independent of effort, one-time source acquisition, and explicit unavailable-action exclusion. Distinguish budget infeasibility from insufficient offered information. No implicit full-source disclosure, real privacy estimate or authorization. Synthetic open 3 units vs bounded 4 units and cap-1 infeasibility; 512 independent sequence oracle controls authored. No browser/independent Python replay yet; exact CI pending."
+      "scope": "V2-048 candidate: separately pinned explicit same-source joint observation actions with exact joint tuple partitions, hard worst-branch abstract exposure cap independent of effort, one-time source acquisition, and explicit unavailable-action exclusion. Distinguish budget infeasibility from insufficient offered information. No implicit full-source disclosure, real privacy estimate or authorization. Synthetic open 3 units vs bounded 4 units and cap-1 infeasibility; 512 independent sequence oracle controls authored. No browser/independent Python replay yet; exact CI pending. V2-051 candidate: integrate explicit exposure-constrained planner into actual Chromium with four export modes (cap 4 bundle, cap 2 separate, cap 1 infeasible, withdrawn bundle). Independent Python finite-set replay rebuilds the fixture, action schedule, joint partitions, effort and exposure constraints, source withdrawal, exact branch trees and state counts; 20 mutations per actual report authored. No measured privacy risk, execution or authorization. Exact candidate CI pending."
     },
     {
       "id": "V2-D25-CALLER-REVIEWED-WORKSPACE",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D21-REVIEWED-COMPILER"
       ],
-      "scope": "V2-049 candidate: actual caller-authored local reviewed workspace, up to eight staged immutable text sources and 64 reviewed bindings, UTF-16 selection converted to exact UTF-8 span, repeated numeric occurrence explicitly selectable, declared type/scope and dimensions, independent contract seal, user-selected comparator draft and editable untrusted JSON. Stale question/proposal invalidation, no network, explicit export contains pasted text, reset local draft only. Browser test uses two source texts including astral/multibyte prefix and repeated number, truncated token refusal, forged numeric leaf refusal and changed question pin; independent Python reconstructs expected contract and replays actual export. No automatic extraction, inference, semantic validity or source independence. Exact CI pending."
+      "scope": "V2-049 candidate: actual caller-authored local reviewed workspace, up to eight staged immutable text sources and 64 reviewed bindings, UTF-16 selection converted to exact UTF-8 span, repeated numeric occurrence explicitly selectable, declared type/scope and dimensions, independent contract seal, user-selected comparator draft and editable untrusted JSON. Stale question/proposal invalidation, no network, explicit export contains pasted text, reset local draft only. Browser test uses two source texts including astral/multibyte prefix and repeated number, truncated token refusal, forged numeric leaf refusal and changed question pin; independent Python reconstructs expected contract and replays actual export. No automatic extraction, inference, semantic validity or source independence. Exact CI pending.",
+      "evidence": [
+        {
+          "id": "V2-D25-CALLER-REVIEWED-WORKSPACE",
+          "sourceRevision": "90b17d32b8863ba66f43ef161454958b338f8fd0",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45594231142/job/139135971671",
+          "description": "All nine exact-source workflows passed, including knowledge PR 45594231142 and push 45594220649. Both actual Chromium caller-authored source/span workflows and independent Python reconstruction passed. Scoped manual extraction only."
+        }
+      ]
     },
     {
       "id": "V2-D26-REVIEWED-SNAPSHOT",

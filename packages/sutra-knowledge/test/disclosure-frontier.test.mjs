@@ -1,18 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {casePin} from '../pinned-investigation.js';
-import {economicsFixture} from '../examples/source-economics.mjs';
-import {disclosureFrontierExport,solveDisclosure} from '../disclosure-frontier.js';
-async function fixture(budget,events=[],mutate=p=>p){
- const f=await economicsFixture(),c=JSON.parse(f.caseText),eventText=JSON.stringify(events);
- const action=(id,sourceId,observationIds,readCost,exposure)=>({id,sourceId,observationIds,readCost,exposure});
- const policyText=JSON.stringify(mutate({version:1,caseDigest:f.pin,eventDigest:await casePin(eventText),costUnit:c.costUnit,exposureUnit:'synthetic_exposure',exposureBudget:budget,sourceCosts:c.sources.map(s=>({id:s.id,cost:s.id==='bundle'?3:2})),initiallyAcquired:[],actions:[
- action('bundle_both','bundle',['bundle_load','bundle_capacity'],0,4),
- action('single_load','meter',['read_meter'],0,1),
- action('single_capacity','capacity_record',['read_capacity'],0,1)
- ]}));
- return disclosureFrontierExport(f.caseText,f.pin,eventText,policyText,await casePin(policyText));
-}
+import {disclosureFixture as fixture} from '../examples/disclosure-frontier.mjs';
+import {solveDisclosure} from '../disclosure-frontier.js';
 test('explicit bundle versus staged reads: cap changes optimum, not evidence',async()=>{
  const open=await fixture(4),bounded=await fixture(2),refused=await fixture(1);
  assert.equal(open.unrestricted.plan.actionId,'bundle_both');assert.equal(open.constrained.plan.worstCost,3);assert.equal(open.constrained.plan.worstExposure,4);

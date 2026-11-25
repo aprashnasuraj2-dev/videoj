@@ -607,6 +607,16 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    const dl=economicsPage.waitForEvent('download');await economicsPage.locator('#economics-export').click();const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,'economics-'+mode+'.json'),bytes);
    assert.equal(JSON.parse(bytes).comparison.sharedAcquisitionWorstCost,shared);
   }
+  for(const [mode,cap,effort,exposure,unrestricted,outcome] of [['open',4,3,4,3,'conditional_observation_plan'],['bounded',2,4,2,3,'conditional_observation_plan'],['infeasible',1,null,null,3,'exposure_budget_infeasible'],['withdrawn',4,4,2,4,'conditional_observation_plan']]){
+   await economicsPage.locator('#disclosure-'+mode).click();
+   await economicsPage.waitForFunction(()=>document.querySelector('#disclosure-status').dataset.state==='ready'&&!document.querySelector('#disclosure-export').disabled);
+   for(const [id,v] of [['cap',cap],['effort',effort],['exposure',exposure],['unrestricted',unrestricted]])assert.equal(await economicsPage.locator('#disclosure-'+id).innerText(),String(v??'—'));
+   assert.equal(await economicsPage.locator('#disclosure-status').getAttribute('data-outcome'),outcome);
+   const dl=economicsPage.waitForEvent('download');await economicsPage.locator('#disclosure-export').click();const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,'disclosure-'+mode+'.json'),bytes);
+   const r=JSON.parse(bytes);assert.equal(r.constrained.plan?.worstCost??null,effort);assert.equal(r.constrained.status,outcome);
+   if(mode==='withdrawn')assert.deepEqual(r.excludedActions,[{id:'bundle_both',unavailableObservationIds:['bundle_capacity','bundle_load']}]);
+   if(mode==='infeasible')assert.equal(r.constrained.witness,null);
+  }
   assert.equal(await economicsPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   assert.deepEqual(economicsErrors,[]);assert.deepEqual(economicsExternal,[]);await economicsPage.close();
   const reviewPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),reviewErrors=[],reviewExternal=[];

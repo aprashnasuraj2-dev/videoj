@@ -642,3 +642,10 @@ V2-049 candidate: actual caller-authored local reviewed workspace, up to eight s
 V2-047 exact 3a4cb80cd86afa6cfe84ec7c0be2cf2656fb976f passed all nine workflows (knowledge PR 45593578601 and push 45593566432; independent source economics browser jobs 139133742884 and 139133695545). V2-048 468b78548ae5bd8414e5d601dd8d7c018a175983 knowledge and browser jobs all passed (PR 45593837780, push 45593824056); scoped bundle/exposure solver tests, not independent browser exposure profile yet.
 
 V2-050 candidate: explicit standalone reviewed compiler snapshot profile with caller-held report byte pin and separate reviewed contract pin, independent Python replay of arbitrary admitted contract/proposal rather than fixture-only matching. Browser saves exact snapshot digest, shows separately retained contract identity; large valid computations remain visible but no portable report above 256 KiB. Cross-profile refusal and 24 actual archive-vs-JS parity controls authored (actual caller workspace plus missing/refuted compiler reports, repinning, false status/method/relevance, forged receipts/spans, malformed wire, unreviewed leaf). No empirical truth, freshness or external adoption. Exact CI pending.
+
+
+## V2-051 — explicit exposure policy browser and reference
+
+All nine exact-source workflows passed, including knowledge PR 45594231142 and push 45594220649. Both actual Chromium caller-authored source/span workflows and independent Python reconstruction passed. Scoped manual extraction only.
+
+V2-051 candidate: integrate explicit exposure-constrained planner into actual Chromium with four export modes (cap 4 bundle, cap 2 separate, cap 1 infeasible, withdrawn bundle). Independent Python finite-set replay rebuilds the fixture, action schedule, joint partitions, effort and exposure constraints, source withdrawal, exact branch trees and state counts; 20 mutations per actual report authored. No measured privacy risk, execution or authorization. Exact candidate CI pending.
