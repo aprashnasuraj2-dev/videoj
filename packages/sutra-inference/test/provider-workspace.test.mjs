@@ -160,3 +160,19 @@ test('workspace configuration pins only known provider transports and contains n
  const source=fs.readFileSync(new URL('../provider-workspace.js',import.meta.url),'utf8');
  for(const forbidden of ['fetch(','WebSocket','XMLHttpRequest','localStorage','indexedDB','document.cookie'])assert.equal(source.includes(forbidden),false,forbidden);
 });
+
+
+test('removing a profile during an in-flight provider call fails the result closed and preserves the charge',async()=>{
+ let release,contacts=0;
+ const pending=new Promise(resolve=>{release=resolve;});
+ const w=make(async input=>{contacts++;await pending;return {actualInputBytes:10,actualOutputTokens:2,value:{text:'done'}};});
+ const a=w.addProfile({providerId:'provider-a',label:'Work',credential:alpha});
+ const run=w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,now:0,operation:{q:'one'}});
+ await new Promise(resolve=>setImmediate(resolve));assert.equal(contacts,1);
+ const removed=w.removeProfile(a.handle);assert.equal(removed.budget.enabled,false);
+ release();
+ await assert.rejects(run,e=>e.code==='PROVIDER_UNKNOWN');
+ const row=w.budgetSnapshot().profiles.find(x=>x.profileId===a.profile.profileId);
+ assert.equal(row.enabled,false);assert.equal(row.used.calls,1);assert.equal(row.used.unknown,1);assert.equal(row.used.active,1);
+ assert.equal(JSON.stringify(row).includes(alpha),false);
+});
