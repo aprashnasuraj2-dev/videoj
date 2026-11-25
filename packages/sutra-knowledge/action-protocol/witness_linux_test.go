@@ -28,21 +28,31 @@ func TestAuthorityWitnessRejectsAuthorityRollbackAndForgedAdvance(t *testing.T){
  genesis,e:=a.Head();if e!=nil{t.Fatal(e)}
  oldState,e:=os.ReadFile(filepath.Join(authorityDir,"authority.bin"));if e!=nil{t.Fatal(e)}
  w,e:=CreateAuthorityWitness(witnessDir,ctx,authorityPub,witnessKey,genesis);if e!=nil{t.Fatal(e)};defer w.Close()
- rootView,e:=w.View();if e!=nil||!VerifyWitnessView(rootView,ctx,authorityPub,witnessPub){t.Fatal("genesis witness",e)}
+ rootView,e:=w.View();if e!=nil||!VerifyWitnessViewPinned(rootView,ctx,authorityPub,witnessPub,genesis){t.Fatal("genesis witness",e)}
  req:=approve(t,0,ctx,ak);wire,_:=SignAuthorityRequest(0,AuthorityCommit,genesis,req,callerKey[0])
  committed,e:=a.Process(wire);if e!=nil||committed.Outcome!=AuthorityCommitted{t.Fatal(e)}
  advanced:=committed.After
  newState,e:=os.ReadFile(filepath.Join(authorityDir,"authority.bin"));if e!=nil{t.Fatal(e)}
  transition,e:=SignWitnessTransition(ctx,genesis,advanced,authorityKey);if e!=nil{t.Fatal(e)}
- view,e:=w.Advance(transition);if e!=nil||view.Head!=advanced||view.Sequence!=1||!VerifyWitnessView(view,ctx,authorityPub,witnessPub){t.Fatal("witness advance",e)}
+ view,e:=w.Advance(transition);if e!=nil||view.Head!=advanced||view.Sequence!=1||!VerifyWitnessViewPinned(view,ctx,authorityPub,witnessPub,genesis){t.Fatal("witness advance",e)}
+ // Even a valid authority signature may not return the monotonic witness to a
+ // previously observed head.
+ backwards,e:=SignWitnessTransition(ctx,advanced,genesis,authorityKey);if e!=nil{t.Fatal(e)}
+ if _,e=w.Advance(backwards);!errors.Is(e,ErrPolicy){t.Fatal("authority-signed witness rollback accepted",e)}
+ // Reusing the same witness key with a different genesis is a distinct trust
+ // root and is refused by consumers that pin the original genesis.
+ resetView:=view;resetView.Genesis=Digest{42}
+ copy(resetView.Signature[:],ed25519.Sign(witnessKey,resetView.message(ctx,authorityPub)))
+ if !VerifyWitnessView(resetView,ctx,authorityPub,witnessPub){t.Fatal("signed reset control invalid")}
+ if VerifyWitnessViewPinned(resetView,ctx,authorityPub,witnessPub,genesis){t.Fatal("re-genesis witness accepted by pinned verifier")}
  _,attacker:=keys(10);forged,e:=SignWitnessTransition(ctx,advanced,Digest{1},attacker);if e!=nil{t.Fatal(e)}
  if _,e=w.Advance(forged);!errors.Is(e,ErrPolicy){t.Fatal("forged authority advance accepted",e)}
  a.Close()
  if e=os.WriteFile(filepath.Join(authorityDir,"authority.bin"),oldState,0600);e!=nil{t.Fatal(e)}
- if rolled,e:=OpenSharedAuthorityWitnessed(authorityDir,ctx,approver,authorityKey,callerPub,2,view,witnessPub);!errors.Is(e,ErrWitnessRollback){if rolled!=nil{rolled.Close()};t.Fatal("authority rollback not detected",e)}
+ if rolled,e:=OpenSharedAuthorityWitnessed(authorityDir,ctx,approver,authorityKey,callerPub,2,genesis,view,witnessPub);!errors.Is(e,ErrWitnessRollback){if rolled!=nil{rolled.Close()};t.Fatal("authority rollback not detected",e)}
  if e=os.WriteFile(filepath.Join(authorityDir,"authority.bin"),newState,0600);e!=nil{t.Fatal(e)}
- a,e=OpenSharedAuthorityWitnessed(authorityDir,ctx,approver,authorityKey,callerPub,2,view,witnessPub);if e!=nil{t.Fatal("matching authority refused",e)};a.Close()
- if stale,e:=OpenSharedAuthorityWitnessed(authorityDir,ctx,approver,authorityKey,callerPub,2,rootView,witnessPub);!errors.Is(e,ErrWitnessRollback){if stale!=nil{stale.Close()};t.Fatal("stale witness admitted newer authority",e)}
+ a,e=OpenSharedAuthorityWitnessed(authorityDir,ctx,approver,authorityKey,callerPub,2,genesis,view,witnessPub);if e!=nil{t.Fatal("matching authority refused",e)};a.Close()
+ if stale,e:=OpenSharedAuthorityWitnessed(authorityDir,ctx,approver,authorityKey,callerPub,2,genesis,rootView,witnessPub);!errors.Is(e,ErrWitnessRollback){if stale!=nil{stale.Close()};t.Fatal("stale witness admitted newer authority",e)}
  t.Log("independent witness detects authority-only rollback and stale witness; forged authority transition refused")
 }
 
@@ -78,7 +88,7 @@ func TestAuthorityWitnessSeparateProcessAndCAS(t *testing.T){
  transition,e:=SignWitnessTransition(ctx,genesis,committed.After,authorityKey);if e!=nil{t.Fatal(e)}
  response,e:=http.Post(origin+"/witness",media,bytes.NewReader(transition.Bytes()));if e!=nil{t.Fatal(e)}
  body,e:=io.ReadAll(response.Body);response.Body.Close();if e!=nil||response.StatusCode!=200{t.Fatal("witness post",e,response.StatusCode)}
- view,e:=ParseWitnessView(body);if e!=nil||!VerifyWitnessView(view,ctx,authorityPub,witnessPub)||view.Head!=committed.After{t.Fatal("external witness view",e)}
+ view,e:=ParseWitnessView(body);if e!=nil||!VerifyWitnessViewPinned(view,ctx,authorityPub,witnessPub,genesis)||view.Head!=committed.After{t.Fatal("external witness view",e)}
  response,e=http.Post(origin+"/witness",media,bytes.NewReader(transition.Bytes()));if e!=nil{t.Fatal(e)}
  response.Body.Close();if response.StatusCode!=http.StatusConflict{t.Fatal("stale witness CAS",response.StatusCode)}
  t.Log("separate witness process advanced exactly once under authority signature and rejected stale CAS")
@@ -103,8 +113,8 @@ func TestAuthorityAndWitnessCoordinatedRollbackCounterexample(t *testing.T){
  if e=os.WriteFile(filepath.Join(authorityDir,"authority.bin"),oldAuthority,0600);e!=nil{t.Fatal(e)}
  if e=os.WriteFile(filepath.Join(witnessDir,"witness.bin"),oldWitness,0600);e!=nil{t.Fatal(e)}
  w,e=OpenAuthorityWitness(witnessDir,ctx,authorityPub,witnessKey,genesis);if e!=nil{t.Fatal(e)};defer w.Close()
- rolledView,e:=w.View();if e!=nil||rolledView.Head!=genesis||!VerifyWitnessView(rolledView,ctx,authorityPub,witnessPub){t.Fatal("coordinated witness rollback",e)}
- a,e=OpenSharedAuthorityWitnessed(authorityDir,ctx,approver,authorityKey,callerPub,2,rolledView,witnessPub);if e!=nil{t.Fatal("coordinated rollback counterexample unexpectedly refused",e)};defer a.Close()
+ rolledView,e:=w.View();if e!=nil||rolledView.Head!=genesis||!VerifyWitnessViewPinned(rolledView,ctx,authorityPub,witnessPub,genesis){t.Fatal("coordinated witness rollback",e)}
+ a,e=OpenSharedAuthorityWitnessed(authorityDir,ctx,approver,authorityKey,callerPub,2,genesis,rolledView,witnessPub);if e!=nil{t.Fatal("coordinated rollback counterexample unexpectedly refused",e)};defer a.Close()
  spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{}||total!=0||effects!=0{t.Fatal("coordinated rollback state",spent,total,effects,e)}
  t.Log("coordinated rollback of authority+witness remains possible to a privileged dual-domain attacker; no consensus claim")
 }
