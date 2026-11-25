@@ -2896,7 +2896,14 @@
       ],
       "scope": "Render admitted meaning and executable relations into controlled language with original span and unresolved qualifier review.",
       "acceptance": "Detect changed scope, definition, negation, denominator and invented relation; paraphrase is not equivalence proof.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK04-ROUNDTRIP",
+          "sourceRevision": "dfa1437f35f0c7e1e0889e65261a49bd18ef840b",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45606294430",
+          "description": "Exact 10/10 green; controlled target DAG reconstruction tests passed. Full semantic round-trip gate remains open; no entailment claim."
+        }
+      ]
     },
     {
       "id": "V2-LK05-SEMANTIC-COUNTERFACTUAL",
@@ -3122,7 +3129,14 @@
       "dependencies": [],
       "scope": "Make active repository product and contributor entry points SUTRA-only; audit historical independent player files, workflows, root package, configs, media and reusable dependencies before removing non-SUTRA source.",
       "acceptance": "Clean SUTRA builds and legacy compatibility, no retired live routes, historical Git evidence intact, no production cutover.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK20-REPOSITORY-ISOLATION",
+          "sourceRevision": "dfa1437f35f0c7e1e0889e65261a49bd18ef840b",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45606294286/job/139177896143",
+          "description": "All 10 exact workflows green after storage scanner scope correction, inherited full build/test/browser suite passed. Active tree physically isolated, retained legal attribution, no default-branch or production cutover."
+        }
+      ]
     },
     {
       "id": "V2-LK21-FOUNDATION-QUEUE",
