@@ -54,6 +54,10 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await page.waitForFunction(()=>document.querySelector('#provider-count').textContent==='1');
   assert.equal(await page.locator('.provider-card').count(),1);
   assert.equal((await page.locator('body').innerText()).includes(alphaSecret),false);assert.equal((await page.locator('body').innerText()).includes(betaSecret),false);
+  assert.equal((await page.locator('html').evaluate(el=>el.outerHTML)).includes(alphaSecret),false);
+  assert.equal((await page.locator('html').evaluate(el=>el.outerHTML)).includes(betaSecret),false);
+  assert.deepEqual(await page.evaluate(()=>({local:Object.keys(localStorage),session:Object.keys(sessionStorage)})),{local:[],session:[]});
+  if(await page.evaluate(()=>typeof indexedDB.databases==='function'))assert.deepEqual(await page.evaluate(async()=>await indexedDB.databases()),[]);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   await page.getByRole('button',{name:'Evaluate graph'}).focus();await page.keyboard.press('Enter');
   await page.waitForFunction(()=>document.querySelector('#verdict').dataset.verdict==='constraint_satisfied');
