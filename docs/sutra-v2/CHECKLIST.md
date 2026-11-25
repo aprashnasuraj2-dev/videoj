@@ -45,9 +45,12 @@ Pending until exact evidence; expand only when new concrete product requirements
 - [ ] V2-L04 Independent replay of integrated learner decision including source identity, observation admission and prediction-independent truth status; version drift/withdrawal and provenance.
 
 - [x] V2-L05 Independent Python replay of fixed original timing lesson browser export: exact legacy bytes, graph receipts, policy, source and answer; four mutations refused (bounded slice of L04, not generalized withdrawal).
-- [ ] V2-L06 Original substantive statistics lesson: identical aggregates, exact opposite standardized outcomes, scoped source and conditional interpretation; no causal or human efficacy claim.
-- [ ] V2-F06 Derive peer observation partitions from local verified graphs; cost-aware new capability improves policy, redundant distinct aggregate cannot, duplicate and forged status refused.
-- [ ] V2-A05 Actual two-origin browser consent, manifest and graph retrieval, leaf adviser execution with pinned scripted runtime, no credential/referrer disclosure, no contact after denial; no independent ownership claim.
-- [ ] V2-L07 Read host-pinned original source after planning, exact value prunes worlds, preserve conditional result and transfer interpretation; reject changed bytes; export full case and observation receipt.
+- [x] V2-L06 Original substantive statistics lesson: identical aggregates, exact opposite standardized outcomes, scoped source and conditional interpretation; no causal or human efficacy claim.
+- [x] V2-F06 Derive peer observation partitions from local verified graphs; cost-aware new capability improves policy, redundant distinct aggregate cannot, duplicate and forged status refused.
+- [x] V2-A05 Actual two-origin browser consent, manifest and graph retrieval, leaf adviser execution with pinned scripted runtime, no credential/referrer disclosure, no contact after denial; no independent ownership claim.
+- [x] V2-L07 Read host-pinned original source after planning, exact value prunes worlds, preserve conditional result and transfer interpretation; reject changed bytes; export full case and observation receipt.
+
+- [ ] V2-F07 Simulate withdrawal of the single host-pinned source behind multiple published capabilities: retain valid world receipts, remove all dependent observations, restore two-world ambiguity, export historical/current separation; restoration requires new evidence read.
+- [ ] V2-L08 Independent fixed-profile Python subgroup replay of actual browser exports: exact graph and receipt recomputation, direct Fraction standardization, independently optimal two-world policy, withdrawal witness, five hostile mutations.
 
 Verified kernel and independent reference evidence: [V2-001 observations](SESSIONS.md). Next: exact V2-L06/F06/A05/L07 CI; then generalized cross-origin F03/A02 and learner replay L04, measured content L03. Finish runtime authority and deployed Observatory gates. See PLAN.md for all 28 workstreams.

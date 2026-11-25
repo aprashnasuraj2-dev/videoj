@@ -50,23 +50,25 @@ async function evaluateWorlds(){
  }
  return worlds;
 }
-async function prepare(extra=[]){
+async function prepare(extra=[],sourceAvailable=true){
+ if(typeof sourceAvailable!=='boolean')refuse();
  if(!Array.isArray(extra)||extra.length>6)refuse();
  const offers=[...baseOffers,...extra.map(admitOffer)];
  if(new Set(offers.map(o=>o.nodeId)).size!==offers.length)refuse();
  const worlds=await evaluateWorlds();
- const observations=offers.map(o=>({id:o.nodeId,cost:o.cost,outcomes:Object.fromEntries(worlds.map(w=>[w.id,label(find(w.r,o.nodeId).outcome.value)]))}));
+ const observations=(sourceAvailable?offers:[]).map(o=>({id:o.nodeId,cost:o.cost,outcomes:Object.fromEntries(worlds.map(w=>[w.id,label(find(w.r,o.nodeId).outcome.value)]))}));
  const caseText=JSON.stringify({version:1,decisionId:CASE_ID,costUnit:COST_UNIT,worlds:worlds.map(({id,graphText,constraintId})=>({id,graphText,constraintId})),observations});
  const result=await evaluateFrontier(caseText);
  return {worlds,offers,caseText,result};
 }
-export async function planQuiz(extra=[]){
- const p=await prepare(extra);
+export async function planQuiz(extra=[],{sourceAvailable=true}={}){
+ const p=await prepare(extra,sourceAvailable);
  // Reveal aggregates, not hidden subgroup rates before the learner observes.
  return freeze({caseId:CASE_ID,caseText:p.caseText,plan:p.result,aggregates:p.worlds.map(w=>({id:w.id,a:find(w.r,'a_total_rate').outcome.value,b:find(w.r,'b_total_rate').outcome.value})),
-  offers:p.offers.map(o=>({...o})),scope:SCOPE,truthStatus:'synthetic_model_only'});
+  offers:p.offers.map(o=>({...o})),sourceAvailable,scope:SCOPE,truthStatus:'synthetic_model_only'});
 }
-export async function readQuizObservation({extra=[],nodeId,prediction,sourceText=QUIZ_SOURCE_TEXT}={}){
+export async function readQuizObservation({extra=[],nodeId,prediction,sourceText=QUIZ_SOURCE_TEXT,sourceAvailable=true}={}){
+ if(sourceAvailable!==true)refuse();
  if(!['a_higher','not_a_higher','unsure'].includes(prediction))refuse();
  const p=await prepare(extra);
  if(p.result.plan?.kind!=='observe'||p.result.plan.observationId!==nodeId)refuse();

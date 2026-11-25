@@ -32,3 +32,15 @@ test('source tampering, unplanned reads and causal interpretation are refused',a
  await assert.rejects(()=>readQuizObservation({extra,nodeId:'a_total_rate',prediction:'a_higher'}),/QUIZ_CAPABILITY_REFUSED/);
  assert.equal(quizTransfer('causal').correct,false);assert.equal(quizTransfer('standardized_only').correct,true);
 });
+
+test('withdrawing the single shared source restores ambiguity even with multiple peer advisers',async()=>{
+ const extra=[{nodeId:'a_beginner_n',cost:2},{nodeId:'b_total_rate',cost:1}];
+ const original=await planQuiz(extra),r=await readQuizObservation({extra,nodeId:'a_beginner_n',prediction:'a_higher'});
+ const withdrawn=await planQuiz(extra,{sourceAvailable:false});
+ assert.equal(r.remaining.status,'invariant_decision');assert.equal(withdrawn.sourceAvailable,false);
+ assert.equal(withdrawn.plan.status,'insufficient_observations');assert.equal(withdrawn.plan.plan,null);
+ assert.deepEqual(withdrawn.plan.witness,['balanced','reversal']);assert.deepEqual(withdrawn.plan.worlds,original.plan.worlds);
+ assert.equal(JSON.parse(withdrawn.caseText).observations.length,0);assert.equal(withdrawn.offers.length,4);
+ await assert.rejects(()=>readQuizObservation({extra,nodeId:'a_beginner_n',prediction:'a_higher',sourceAvailable:false}),/QUIZ_CAPABILITY_REFUSED/);
+ assert.deepEqual((await planQuiz(extra)).plan,original.plan);
+});
