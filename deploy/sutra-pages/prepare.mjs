@@ -7,7 +7,7 @@ const privateConfig=JSON.parse(await readFile(resolve(root,'../../services/sutra
 const intended=GUIDE_ORIGIN;
 if(privateConfig.vars.SUTRA_PEER_ORIGINS!==intended||privateConfig.vars.SUTRA_ENABLE_INFERENCE!=='false'||privateConfig.workers_dev!==false||privateConfig.preview_urls!==false)throw Error('Unsafe deployment candidate configuration');
 const index=await readFile(resolve(src,'index.html'),'utf8');
-if(!index.includes('Investigative Learning')||!index.includes('KNOWLEDGE COMPILER'))throw Error('Pages candidate source is not SUTRA v2');
+if(!index.includes('Debugger for conclusions')||!index.includes('KNOWLEDGE COMPILER'))throw Error('Pages candidate source is not SUTRA v2');
 const header=await readFile(resolve(src,'_headers'),'utf8');
 const candidateHeaders=guideCandidateHeaders(header);
 await rm(out,{recursive:true,force:true});await mkdir(out,{recursive:true});

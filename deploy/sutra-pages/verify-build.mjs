@@ -14,7 +14,7 @@ async function inventory(dir){
  await walk(dir);return paths.sort();
 }
 const src=await inventory(original),dst=await inventory(candidate),peer=await inventory(guide);
-const index=(await read(original,'index.html')).toString();assert.match(index,/Investigative Learning/);assert.match(index,/KNOWLEDGE COMPILER/);
+const index=(await read(original,'index.html')).toString();assert.match(index,/Debugger for conclusions/);assert.match(index,/KNOWLEDGE COMPILER/);
 assert.deepEqual(dst, [...src.filter(p=>p!=='_routes.json'),'_routes.json'].sort());
 for(const file of src.filter(p=>!['_headers','_routes.json'].includes(p)))assert.equal(digest(await read(original,file)),digest(await read(candidate,file)),file);
 const routes=JSON.parse(await read(candidate,'_routes.json'));

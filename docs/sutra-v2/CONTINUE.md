@@ -4,6 +4,14 @@ This is the active SUTRA2 continuation contract. It inherits the durable checkpo
 
 The phrases **“continue sutra”**, **“continue with sutra”**, capitalization variants, and equivalent unambiguous continuation wording mean: **resume the latest remote SUTRA work and keep engineering**. They do not mean restart from the last chat summary, merely inspect status, or create a background automation.
 
+## Product priority
+
+SUTRA is a debugger for conclusions. Product objective: falsification-first investigative reasoning and reproducibility. Trust/runtime infrastructure: consent, causal integrity, monotonic witnesses, compensation and bounded recovery, as a separate second act. Competition objective: attack a conclusion, expose declared ancestry, compute what survives and a decisive next observation, then verify a portable Proof Capsule offline. No paid inference required.
+
+SUTRA MUST BE MORE INFORMATIVE WHEN ITS CONCLUSION FAILS THAN A NORMAL AI SYSTEM IS WHEN ITS ANSWER SUCCEEDS. Failed conclusions expose cause, changed and surviving claims, decisive dependencies, remaining worlds, and a next observation when one exists; contradictions must never be presented as an ordinary low-confidence vote.
+
+Prioritize the attack/recompute → lineage → decisive observation → Proof Capsule journey over additional agent integrations. Preserve the runtime as the second act; no external action authority follows from a conclusion.
+
 ## 1. Resume the real current state
 
 1. Read root `AGENTS.md`, this file, README, PLAN, MIGRATION, CHECKLIST, ROADMAP, `roadmap.json`, `progress.json` and the latest SESSIONS entries.

@@ -1,4 +1,10 @@
-# SUTRA 2.0 — Knowledge Compiler
+# SUTRA 2.0 — A debugger for conclusions
+
+SUTRA is a debugger for conclusions. Product objective: falsification-first investigative reasoning and reproducibility. Trust/runtime infrastructure: consent, causal integrity, monotonic witnesses, compensation and bounded recovery, as a separate second act. Competition objective: attack a conclusion, expose declared ancestry, compute what survives and a decisive next observation, then verify a portable Proof Capsule offline. No paid inference required.
+
+**Product invariant:** SUTRA MUST BE MORE INFORMATIVE WHEN ITS CONCLUSION FAILS THAN A NORMAL AI SYSTEM IS WHEN ITS ANSWER SUCCEEDS. Failed conclusions expose cause, changed and surviving claims, decisive dependencies, remaining worlds, and a next observation when one exists; contradictions must never be presented as an ordinary low-confidence vote.
+
+The bounded attack fixture is the first candidate for this product identity. Full exact-source evidence is recorded separately; it does not certify physical truth.
 
 Active direction approved 2026-11-25. SUTRA compiles explicit claims into domain-specific verification obligations, composes open web specialist agents, preserves incompatible assumptions and counterexamples, and tracks which conclusions depend on revised artifacts. LLM output is a proposal, not verification authority. Scientific/medical evidence is not formal proof. The product direction also includes a professional nontechnical multi-provider workspace, but BYOK remains gated behind threat, consent, taint and provider-budget verification; current live inference/key entry stays disabled.
 

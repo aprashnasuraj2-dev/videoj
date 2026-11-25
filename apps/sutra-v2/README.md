@@ -1,4 +1,8 @@
-# SUTRA v2 browser laboratory
+# SUTRA v2 — conclusion debugger
+
+SUTRA is a debugger for conclusions. Product objective: falsification-first investigative reasoning and reproducibility. Trust/runtime infrastructure: consent, causal integrity, monotonic witnesses, compensation and bounded recovery, as a separate second act. Competition objective: attack a conclusion, expose declared ancestry, compute what survives and a decisive next observation, then verify a portable Proof Capsule offline. No paid inference required.
+
+The primary synthetic case is first in the browser. The older labs remain executable and their evidence markers remain intact.
 
 Isolated from the legacy learner and all production routes. Reuse existing pinned Vite and Playwright versions from apps/sutra; no second dependency tree. From repository root:
 

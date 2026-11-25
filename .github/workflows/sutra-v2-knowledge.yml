@@ -144,6 +144,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_conflict.py apps/sutra-v2/test-output/conflict-evidence.json apps/sutra-v2/test-output/conflict-withdrawn.json apps/sutra-v2/test-output/conflict-resolved.json > apps/sutra-v2/test-output/conflict-reference.txt
           cat apps/sutra-v2/test-output/conflict-reference.txt
+      - name: Independently replay conclusion debugger attack states and reject artifact tampering
+        run: |
+          python3 packages/sutra-knowledge/reference/verify_debugger.py apps/sutra-v2/test-output/debugger-baseline.json apps/sutra-v2/test-output/debugger-withdrawn.json apps/sutra-v2/test-output/debugger-copied.json apps/sutra-v2/test-output/debugger-conflicted.json apps/sutra-v2/test-output/debugger-repaired.json apps/sutra-v2/test-output/debugger-resolved.json > apps/sutra-v2/test-output/debugger-reference.txt
+          cat apps/sutra-v2/test-output/debugger-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

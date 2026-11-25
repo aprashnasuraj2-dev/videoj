@@ -3,8 +3,10 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-014",
+  "session": "V2-015",
   "next": [
+    "V2-D01-ATTACK",
+    "V2-D02-CAPSULE",
     "V2-P07-WASM",
     "V2-RUNTIME-02",
     "V2-P05-RECOVERY",
@@ -18,7 +20,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "v2_static_csp_wasm_candidate_pending_exact_ci",
+  "state": "conclusion_debugger_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -234,6 +236,12 @@
       "sourceRevision": "23c45faab775e003a3d2fcb654c8f2dbf140f6e4",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523248637/job/138900133257",
       "description": "TLC 2026.11.19.180144 rev bc1b506, pinned v1.8.0 artifact SHA256 fdffef247f563ef6edbfd44958d2a82db79e7564e07cb673262d896353fa6713. Safe 162 generated / 33 distinct / 0 queue; unsafe 96 generated / 39 distinct, AtMostOnce violated; independent Python 33 safe states/128 edges."
+    },
+    {
+      "id": "V2-STATIC-CSP",
+      "sourceRevision": "68c32ae70c523daf1e8e70a125ba6c5738bba4d9",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45566742003",
+      "description": "Exact source 68c32ae70c523daf1e8e70a125ba6c5738bba4d9 passed knowledge push 45566732763, PR 45566742207 and Pages ingress 45566742003; all nine observed runs succeeded, including both Chromium CSP probes and independent replay. Scope: local packaged candidate, no HTTPS deployment. Prior marker failure 39207bc454ec74afaa15f3ebf08d8867b2275614 is retained (job 139037256767, T16 build evidence marker)."
     }
   ],
   "release": "not_authorized",
@@ -247,7 +255,7 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45559702271/job/139020178838",
     "resolutionStatus": "resolved_import_then_strengthened_refinement_exact_all_required_workflows_success"
   },
-  "lastVerifiedKernelSource": "b70312dfac3bcb2c4c5197270fad622e00d5df72",
+  "lastVerifiedKernelSource": "68c32ae70c523daf1e8e70a125ba6c5738bba4d9",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -258,14 +266,16 @@
   },
   "pendingCandidate": {
     "sourceRevision": null,
-    "sourceParent": "9c6aaa593e99c5c469a28d154f611d2e57e3ae69",
-    "identityRule": "Immutable commit introducing this checkpoint; reconcile exact HEAD and record SHA after CI.",
+    "sourceParent": "68c32ae70c523daf1e8e70a125ba6c5738bba4d9",
     "status": "candidate_pending_exact_ci",
+    "identityRule": "Resolve the immutable commit containing this checkpoint.",
     "checks": [
-      "V2 static CSP",
-      "Chromium WASM and JS eval controls",
-      "Pages candidate exact guide-only policy delta",
-      "knowledge push and PR; ingress PR"
+      "critical and irrelevant withdrawal",
+      "ten artifacts one declared lineage",
+      "conflict repairs",
+      "minimax next observation",
+      "actual browser",
+      "independent Python replay"
     ]
   },
   "previousPendingCandidate": {
@@ -5018,5 +5028,12 @@
     "pushRun": 45565038532,
     "conclusion": "success",
     "limitation": "parent CI did not test real packaged CSP; no packaging promotion"
+  },
+  "reconciledCspCandidate": {
+    "sourceRevision": "68c32ae70c523daf1e8e70a125ba6c5738bba4d9",
+    "prRun": 45566742207,
+    "pushRun": 45566732763,
+    "ingressRun": 45566742003,
+    "status": "exact_green_packaged_candidate"
   }
 }

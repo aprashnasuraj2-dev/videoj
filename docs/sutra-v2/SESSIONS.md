@@ -384,3 +384,14 @@ Observed parent `9c6aaa593e99c5c469a28d154f611d2e57e3ae69`: eight PR workflows a
 - [ ] Actual Chromium external-script probe compares WASM compilation under V1 and V2 CSP; JS eval refused in both; main journey uses actual built policy plus explicit test peer.
 - [ ] Pages candidate must preserve all original assets and change only the exact approved guide origin; no deployment.
 - [ ] Exact source push/PR knowledge and ingress CI required before promotion or new product surface. Next: attackable conclusion product objective and vertical slice using existing conflict/lineage engine.
+
+
+## V2-015 — Conclusion debugger (candidate pending exact CI)
+
+Exact source 68c32ae70c523daf1e8e70a125ba6c5738bba4d9 passed knowledge push 45566732763, PR 45566742207 and Pages ingress 45566742003; all nine observed runs succeeded, including both Chromium CSP probes and independent replay. Scope: local packaged candidate, no HTTPS deployment. Prior marker failure 39207bc454ec74afaa15f3ebf08d8867b2275614 is retained (job 139037256767, T16 build evidence marker).
+
+SUTRA is a debugger for conclusions. Product objective: falsification-first investigative reasoning and reproducibility. Trust/runtime infrastructure: consent, causal integrity, monotonic witnesses, compensation and bounded recovery, as a separate second act. Competition objective: attack a conclusion, expose declared ancestry, compute what survives and a decisive next observation, then verify a portable Proof Capsule offline. No paid inference required.
+
+SUTRA MUST BE MORE INFORMATIVE WHEN ITS CONCLUSION FAILS THAN A NORMAL AI SYSTEM IS WHEN ITS ANSWER SUCCEEDS. Failed conclusions expose cause, changed and surviving claims, decisive dependencies, remaining worlds, and a next observation when one exists; contradictions must never be presented as an ordinary low-confidence vote.
+
+The first bounded slice composes the existing evidence-session, graph verifier, frontier planner and Rust support module. Ten supporting artifacts (one original plus nine exact anchored copies) enter one declared lineage; a conflicting root is not outvoted. Separate control provides a genuine nondependent claim. Exact minimum lineage withdrawals are enumerated; restoring availability is not evidence restoration. Conflict repairs are hypothetical, not authorization to discard evidence. Unknown copying, correlated errors and external truth are not established. The fixture has eight worlds, four computational observations and at most thirteen artifacts, with a 24-event limit. No global bounds are increased. Export is a replay state, not yet a signed/fresh Proof Capsule. Full independent browser replay remains pending CI.

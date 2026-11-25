@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-012",
+  "session": "V2-015",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -373,9 +373,10 @@
           "verificationMethod": "Rust tests, browser matrix, size/startup benchmark",
           "status": "Not started",
           "evidence": [
-            "Candidate pending exact CI: V2-only static CSP, Chromium external-script negative control and exact Pages guide-origin transform; parent 9c6aaa593e99c5c469a28d154f611d2e57e3ae69"
+            "Candidate pending exact CI: V2-only static CSP, Chromium external-script negative control and exact Pages guide-origin transform; parent 9c6aaa593e99c5c469a28d154f611d2e57e3ae69",
+            "Exact source 68c32ae70c523daf1e8e70a125ba6c5738bba4d9 passed knowledge push 45566732763, PR 45566742207 and Pages ingress 45566742003; all nine observed runs succeeded, including both Chromium CSP probes and independent replay. Scope: local packaged candidate, no HTTPS deployment. Prior marker failure 39207bc454ec74afaa15f3ebf08d8867b2275614 is retained (job 139037256767, T16 build evidence marker)."
           ],
-          "knownLimitations": "Existing bounded support tests are not general policy execution or physical hardware tests Packaged V2 CSP fix awaits exact immutable source CI; deployed HTTPS remains unverified."
+          "knownLimitations": "Existing bounded support tests are not general policy execution or physical hardware tests Packaged V2 CSP candidate passed exact CI; deployed HTTPS remains unverified. General WASM profile hardening is open."
         }
       ]
     },
@@ -2327,5 +2328,25 @@
     "missingDependencies": 0,
     "dependencyCycles": 0,
     "method": "V2-013 exact-source reconciliation: all existing nodes/dependencies retained; scoped evidence appended without completing any gate. Formal boundedness and negative controls checked at a9dd3fc6."
-  }
+  },
+  "productObjective": "SUTRA is a debugger for conclusions. Product objective: falsification-first investigative reasoning and reproducibility. Trust/runtime infrastructure: consent, causal integrity, monotonic witnesses, compensation and bounded recovery, as a separate second act. Competition objective: attack a conclusion, expose declared ancestry, compute what survives and a decisive next observation, then verify a portable Proof Capsule offline. No paid inference required.",
+  "productInvariant": "SUTRA MUST BE MORE INFORMATIVE WHEN ITS CONCLUSION FAILS THAN A NORMAL AI SYSTEM IS WHEN ITS ANSWER SUCCEEDS. Failed conclusions expose cause, changed and surviving claims, decisive dependencies, remaining worlds, and a next observation when one exists; contradictions must never be presented as an ordinary low-confidence vote.",
+  "productGates": [
+    {
+      "id": "V2-D01-ATTACK",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-P07-WASM"
+      ],
+      "scope": "critical/irrelevant withdrawal; declared-copy attack; minimum repairs; next observation; browser and independent replay"
+    },
+    {
+      "id": "V2-D02-CAPSULE",
+      "status": "Not started",
+      "dependencies": [
+        "V2-D01-ATTACK"
+      ],
+      "scope": "versioned externally anchored capsule export, offline replay and tamper controls"
+    }
+  ]
 }

@@ -263,6 +263,41 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.deepEqual(resolvedSupports.analysis.refutedSupports,[['read_b','read_c']]);
   assert.deepEqual(resolvedSupports.analysis.survivingWorlds,['w11']);
   assert.deepEqual(resolvedSupports.projection.observations,[{id:'read_b',mask:12},{id:'read_c',mask:10}]);
+  // Separate browser context: the flagship journey has no peer or AI contact.
+  const debugPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true});
+  const debugErrors=[],debugExternal=[];debugPage.on('pageerror',e=>debugErrors.push(e.message));
+  debugPage.on('request',r=>{if(new URL(r.url()).origin!==origin)debugExternal.push(r.url());});
+  await debugPage.goto(origin);
+  async function clickDebug(id,state){
+   await debugPage.locator('#debug-'+id).click();
+   await debugPage.waitForFunction(s=>document.querySelector('#debug-state').dataset.state===s&&!document.querySelector('#debug-start').disabled,state);
+  }
+  async function saveDebug(name){
+   const dl=debugPage.waitForEvent('download');await debugPage.locator('#debug-export').click();
+   const bundle=JSON.parse(fs.readFileSync(await (await dl).path(),'utf8'));fs.writeFileSync(path.join(output,name),JSON.stringify(bundle,null,2));return bundle;
+  }
+  await clickDebug('start','SUPPORTED');
+  const initialDebug=await saveDebug('debugger-baseline.json');
+  assert.deepEqual(initialDebug.result.diagnostics.minimumCuts.map(x=>x.removed),[['sample_one']]);
+  await clickDebug('withdraw','UNDERDETERMINED');
+  const lost=await saveDebug('debugger-withdrawn.json');assert.equal(lost.result.claims.control_ok.state,'SUPPORTED');
+  await clickDebug('restore','SUPPORTED');
+  await clickDebug('copies','SUPPORTED');
+  const copiedDebug=await saveDebug('debugger-copied.json');assert.equal(copiedDebug.result.groups.sample_one.length,10);
+  assert.deepEqual(copiedDebug.result.claims,initialDebug.result.claims);
+  await clickDebug('disagree','CONFLICTED');
+  const conflictDebug=await saveDebug('debugger-conflicted.json');
+  assert.equal(conflictDebug.result.activeArtifacts.length,12);assert.deepEqual(conflictDebug.result.conflict,['read_a','read_b']);
+  assert.equal(await debugPage.locator('#debug-roots').innerText(),'3');
+  await debugPage.screenshot({path:path.join(output,'debugger-conflicted.png'),fullPage:false});
+  await clickDebug('withdraw','UNDERDETERMINED');
+  const repair=await saveDebug('debugger-repaired.json');assert.equal(repair.result.nextObservation.id,'read_c');
+  await clickDebug('observe','REFUTED');
+  const resolvedDebug=await saveDebug('debugger-resolved.json');assert.deepEqual(resolvedDebug.result.claims.target.survivingWorlds,['w111']);
+  await clickDebug('control','REFUTED');assert.equal(await debugPage.locator('#debug-control-state').innerText(),'Underdetermined');
+  assert.equal(await debugPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  assert.deepEqual(debugErrors,[]);assert.deepEqual(debugExternal,[]);await debugPage.close();
+  console.log('PASS: conclusion debugger critical and irrelevant withdrawal, ten declared-copy artifacts, conflict, repair and decisive observation; actual state exports.');
   console.log('PASS: actual Rust WASM support lattice, alternate minimum conflicts, copied-source conditional supports, withdrawal removes both, refuted support after fresh read; blocked or digest-mismatched module fails closed.');
   assert.deepEqual(errors,[]);assert.equal(peerRequests.length,6);
   console.log('PASS: browser conflict, minimum witness, declared lineage withdrawal and restoration, resolved after new observation.');
