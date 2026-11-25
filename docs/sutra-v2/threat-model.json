@@ -793,8 +793,7 @@
       "id": "T25-upstream-terminal-authority-clone-rollback",
       "severity": "critical",
       "category": [
-        "integrity",
-        "rollback"
+        "integrity"
       ],
       "mechanism": "A cloned upstream signer plus valid signed snapshot, or restoration of an older valid signed upstream snapshot, can recreate unused local terminal state while a prior physical effect already exists. Each local authority can therefore produce internally valid APPLIED state and receipts for the same identity without global effect uniqueness.",
       "invariant": "APPLIED/CLOSED exclusivity and the durable effect budget are scoped to one current non-rolled-back upstream authority history. Signatures alone must never be treated as global freshness, consensus or arbitrary-provider exactly-once evidence.",
