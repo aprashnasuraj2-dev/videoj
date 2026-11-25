@@ -241,15 +241,22 @@ func (c *WitnessCoordinator) recoverLocked()error{
  switch {
  case current==intent.Before&&view.Head==intent.Before:
   // Prepared intent never reached the authoritative rename.
-  return c.clearIntentLocked()
+  if e=c.clearIntentLocked();e!=nil{return e}
+  if c.fault!=nil{if e=c.fault("after-recover-abort");e!=nil{return ErrUnknown}}
+  return nil
  case current==intent.After&&view.Head==intent.Before:
   transition,e:=intent.transition(c.authority.ctx,c.authority.signer);if e!=nil{return e}
   next,e:=c.witness.Advance(transition);if e!=nil{return ErrWitnessUnavailable}
   if next.Head!=intent.After{return ErrWitnessRollback}
-  return c.clearIntentLocked()
+  if c.fault!=nil{if e=c.fault("after-recover-advance");e!=nil{return ErrUnknown}}
+  if e=c.clearIntentLocked();e!=nil{return e}
+  if c.fault!=nil{if e=c.fault("after-recover-clear");e!=nil{return ErrUnknown}}
+  return nil
  case current==intent.After&&view.Head==intent.After:
   // Witness accepted but caller lost the response or process died before cleanup.
-  return c.clearIntentLocked()
+  if e=c.clearIntentLocked();e!=nil{return e}
+  if c.fault!=nil{if e=c.fault("after-recover-clear");e!=nil{return ErrUnknown}}
+  return nil
  default:
   return ErrWitnessRollback
  }

@@ -6,6 +6,7 @@ import (
  "bytes"
  "crypto/ed25519"
  "encoding/hex"
+ "encoding/json"
  "errors"
  "io"
  "net/http"
@@ -17,6 +18,60 @@ import (
  "syscall"
  "testing"
 )
+
+
+type bridgeTraceIntent struct{
+ RequestHash string `json:"requestHash"`
+ Before string `json:"before"`
+ After string `json:"after"`
+}
+type bridgeTraceEvent struct{
+ Profile string `json:"profile"`
+ Event string `json:"event"`
+ AuthorityHead string `json:"authorityHead"`
+ WitnessHead string `json:"witnessHead"`
+ WitnessSequence uint32 `json:"witnessSequence"`
+ CallerSpent [authorityCallers]byte `json:"callerSpent"`
+ TotalSpent int `json:"totalSpent"`
+ Effects int `json:"effects"`
+ Intent *bridgeTraceIntent `json:"intent"`
+}
+// Test-only observation. Read the actual signed durable authority snapshot,
+// compare it to in-memory state, read a challenge-bound witness view, and
+// verify the signed intent on disk. Do not serialize keys or approval bytes.
+// Call only while the coordinator holds the authority mutex.
+func bridgeTraceLocked(c *WitnessCoordinator,scenario,event string)error{
+ dir:=os.Getenv("SUTRA_BRIDGE_TRACE_DIR");if dir==""{return nil}
+ a:=c.authority
+ raw,e:=os.ReadFile(filepath.Join(a.dir,"authority.bin"));if e!=nil{return e}
+ spent,requests,e:=a.decode(raw);if e!=nil{return e}
+ if spent!=a.spent||!bytes.Equal(a.stateBody(spent,requests),a.stateBody(a.spent,a.requests)){return ErrStore}
+ head:=a.headLocked()
+ view,e:=c.witness.View();if e!=nil{return e}
+ intent,exists,e:=c.loadIntentLocked();if e!=nil{return e}
+ entry:=bridgeTraceEvent{
+  Profile:"SUTRA/witness-bridge-refinement/v1",Event:event,
+  AuthorityHead:hex.EncodeToString(head[:]),WitnessHead:hex.EncodeToString(view.Head[:]),
+  WitnessSequence:view.Sequence,CallerSpent:spent,TotalSpent:int(spent[0])+int(spent[1]),Effects:len(requests),
+ }
+ if exists{entry.Intent=&bridgeTraceIntent{
+  RequestHash:hex.EncodeToString(intent.RequestHash[:]),Before:hex.EncodeToString(intent.Before[:]),After:hex.EncodeToString(intent.After[:]),
+ }}
+ f,e:=os.OpenFile(filepath.Join(dir,scenario+".jsonl"),os.O_CREATE|os.O_WRONLY|os.O_APPEND,0600);if e!=nil{return e}
+ if e=json.NewEncoder(f).Encode(entry);e!=nil{f.Close();return e}
+ if e=f.Sync();e!=nil{f.Close();return e}
+ return f.Close()
+}
+func bridgeTrace(c *WitnessCoordinator,scenario,event string)error{
+ c.authority.mu.Lock();defer c.authority.mu.Unlock()
+ return bridgeTraceLocked(c,scenario,event)
+}
+func traceMust(t *testing.T,c *WitnessCoordinator,scenario,event string){
+ t.Helper();if e:=bridgeTrace(c,scenario,event);e!=nil{t.Fatal("bridge trace observation",scenario,event,e)}
+}
+func traceFault(c *WitnessCoordinator,scenario string)func(string)error{
+ return func(event string)error{return bridgeTraceLocked(c,scenario,event)}
+}
 
 func bridgeFixture(t *testing.T)(string,Digest,ed25519.PublicKey,ed25519.PrivateKey,ed25519.PublicKey,ed25519.PrivateKey,[authorityCallers]ed25519.PublicKey,[authorityCallers]ed25519.PrivateKey,ed25519.PublicKey,ed25519.PrivateKey,*AuthorityWitness,*httptest.Server){
  t.Helper()
@@ -47,8 +102,13 @@ func TestWitnessCoordinatorProcessCrashBoundaries(t *testing.T){
   a,e:=OpenSharedAuthority(dir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)}
   client,e:=NewWitnessClient(origin,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
   coordinator,e:=NewWitnessCoordinator(a,client);if e!=nil{t.Fatal(e)}
+  traceMust(t,coordinator,stage,"init")
   coordinator.fault=func(at string)error{
-   if at==stage{os.Exit(0)}
+   if e:=bridgeTraceLocked(coordinator,stage,at);e!=nil{return e}
+   if at==stage{
+    if e:=bridgeTraceLocked(coordinator,stage,"crash");e!=nil{return e}
+    os.Exit(0)
+   }
    return nil
   }
   requestRaw,e:=os.ReadFile(os.Getenv("SUTRA_BRIDGE_REQUEST"));if e!=nil{t.Fatal(e)}
@@ -87,10 +147,13 @@ func TestWitnessCoordinatorProcessCrashBoundaries(t *testing.T){
    a,e=OpenSharedAuthority(authorityDir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer a.Close()
    client,e:=NewWitnessClient(srv.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
    coordinator,e:=NewWitnessCoordinator(a,client);if e!=nil{t.Fatal(e)}
+   traceMust(t,coordinator,stage,"restart")
+   coordinator.fault=traceFault(coordinator,stage)
    if stage=="after-clear"{
     if _,e=os.Lstat(filepath.Join(authorityDir,bridgeIntentName));!errors.Is(e,os.ErrNotExist){t.Fatal("post-clear crash retained intent",e)}
    }
    if e=coordinator.Recover();e!=nil{t.Fatal("recovery",stage,e)}
+   traceMust(t,coordinator,stage,"recovered")
    view,e:=client.View();if e!=nil{t.Fatal(e)}
    head,e:=a.Head();if e!=nil{t.Fatal(e)}
    spent,total,effects,e:=a.Counts();if e!=nil{t.Fatal(e)}
@@ -109,6 +172,7 @@ func TestWitnessCoordinatorProcessCrashBoundaries(t *testing.T){
     response,e:=coordinator.ProcessAttested(status,challenge)
     if e!=nil||response.Authority.Outcome!=AuthorityCommitted||
      !VerifyWitnessedEnvelope(response,status,challenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("post-clear authenticated status",e)}
+    traceMust(t,coordinator,stage,"ack")
     spent,total,effects,e=a.Counts()
     if e!=nil||spent!=[authorityCallers]byte{2,0}||total!=2||effects!=1{t.Fatal("post-clear status repeated effect",spent,total,effects,e)}
     finalView,e:=client.View();if e!=nil{t.Fatal(e)}
@@ -139,16 +203,23 @@ func TestWitnessCoordinatorLostWitnessReplyRecoversWithoutSecondEffect(t *testin
  witness,e:=CreateAuthorityWitness(witnessDir,ctx,authorityPub,witnessKey,genesis);if e!=nil{t.Fatal(e)};witnessPtr.Store(witness);defer witness.Close()
  client,e:=NewWitnessClient(srv.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
  coordinator,e:=NewWitnessCoordinator(a,client);if e!=nil{t.Fatal(e)}
+ traceMust(t,coordinator,"lost-witness","init")
+ coordinator.fault=traceFault(coordinator,"lost-witness")
  req:=approve(t,0,ctx,ak);wire,_:=SignAuthorityRequest(0,AuthorityCommit,genesis,req,callerKey[0])
  drop.Store(true)
  if _,e=coordinator.Process(wire);!errors.Is(e,ErrUnknown){t.Fatal("lost witness reply not unknown",e)}
+ traceMust(t,coordinator,"lost-witness","lost-witness-response")
  spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{1,0}||total!=1||effects!=1{t.Fatal("authority result",spent,total,effects,e)}
  if e=coordinator.Recover();e!=nil{t.Fatal("recover lost witness reply",e)}
+ traceMust(t,coordinator,"lost-witness","recovered")
  view,e:=client.View();if e!=nil{t.Fatal(e)};head,_:=a.Head()
  if view.Head!=head||view.Sequence!=1{t.Fatal("witness did not converge")}
  // Same stale caller request after recovery consumes the second contact but
  // cannot repeat the effect.
- response,e:=coordinator.Process(wire);if e!=nil||response.Authority.Outcome!=AuthorityConflict||response.Authority.Stale!=1{t.Fatal("stale retry",e,response)}
+ challenge,e:=randomWitnessChallenge();if e!=nil{t.Fatal(e)}
+ response,e:=coordinator.ProcessAttested(wire,challenge);if e!=nil||response.Authority.Outcome!=AuthorityConflict||response.Authority.Stale!=1||
+  !VerifyWitnessedEnvelope(response,wire,challenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("stale retry",e,response)}
+ traceMust(t,coordinator,"lost-witness","ack")
  spent,total,effects,e=a.Counts();if e!=nil||spent!=[authorityCallers]byte{2,0}||total!=2||effects!=1{t.Fatal("stale retry accounting",spent,total,effects,e)}
  t.Log("witness POST response loss remained unknown; recovery observed committed witness head, cleared intent, and stale retry produced no duplicate effect")
 }
@@ -167,11 +238,13 @@ func TestWitnessCoordinatorSingleWitnessRejectsAuthorityCloneFork(t *testing.T){
  witness,e:=CreateAuthorityWitness(witnessDir,ctx,authorityPub,witnessKey,genesis);if e!=nil{t.Fatal(e)};witnessPtr.Store(witness);defer witness.Close()
  client,e:=NewWitnessClient(srv.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
  leftCoordinator,_:=NewWitnessCoordinator(left,client);rightCoordinator,_:=NewWitnessCoordinator(right,client)
+ traceMust(t,rightCoordinator,"clone-rejected","init")
  r0:=approve(t,0,ctx,ak);q0,_:=SignAuthorityRequest(0,AuthorityCommit,genesis,r0,callerKey[0])
  if response,e:=leftCoordinator.Process(q0);e!=nil||response.Authority.Outcome!=AuthorityCommitted{t.Fatal("left",e)}
  left.Close()
  r1:=approve(t,1,ctx,ak);q1,_:=SignAuthorityRequest(1,AuthorityCommit,genesis,r1,callerKey[1])
  if _,e=rightCoordinator.Process(q1);!errors.Is(e,ErrWitnessRollback){t.Fatal("cloned authority fork not blocked by single witness",e)}
+ traceMust(t,rightCoordinator,"clone-rejected","clone-rejected")
  spent,total,effects,e:=right.Counts();if e!=nil||spent!=[authorityCallers]byte{}||total!=0||effects!=0{t.Fatal("right clone mutated before witness check",spent,total,effects,e)}
  t.Log("one independently retained witness prevents two cloned authority stores from both advancing; cloning the witness remains the separate retained counterexample")
 }
@@ -234,6 +307,8 @@ func TestWitnessedResponseCompositeProofAndHTTPBoundary(t *testing.T){
  witness,e:=CreateAuthorityWitness(witnessDir,ctx,authorityPub,witnessKey,genesis);if e!=nil{t.Fatal(e)};witnessPtr.Store(witness);defer witness.Close()
  client,e:=NewWitnessClient(witnessServer.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
  coordinator,e:=NewWitnessCoordinator(a,client);if e!=nil{t.Fatal(e)}
+ traceMust(t,coordinator,"normal","init")
+ coordinator.fault=traceFault(coordinator,"normal")
  api:=httptest.NewServer(coordinator);defer api.Close()
  req:=approve(t,0,ctx,ak);wire,_:=SignAuthorityRequest(0,AuthorityCommit,genesis,req,callerKey[0])
  challenge:=Digest{1}
@@ -243,6 +318,7 @@ func TestWitnessedResponseCompositeProofAndHTTPBoundary(t *testing.T){
  raw,e:=io.ReadAll(res.Body);res.Body.Close();if e!=nil||res.StatusCode!=http.StatusOK||res.Header.Get("Content-Type")!=media{t.Fatal("witnessed endpoint",e,res.StatusCode)}
  envelope,e:=ParseWitnessedEnvelope(raw);if e!=nil||!VerifyWitnessedEnvelope(envelope,wire,challenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("attested composite proof",e)}
  if envelope.Authority.After!=envelope.Attestation.View.Head||envelope.Authority.Outcome!=AuthorityCommitted{t.Fatal("head binding")}
+ traceMust(t,coordinator,"normal","ack")
  // The static authority+witness pair remains internally verifiable, but only
  // the challenge-bound envelope is an external acknowledgement.
  combined:=WitnessedResponse{Authority:envelope.Authority,Witness:envelope.Attestation.View}
@@ -397,6 +473,8 @@ func TestWitnessedAuthorityClientLostFinalReplyRecoversStatus(t *testing.T){
  rootView,e:=witness.View();if e!=nil{t.Fatal(e)}
  witnessClient,e:=NewWitnessClient(witnessServer.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
  coordinator,e:=NewWitnessCoordinator(a,witnessClient);if e!=nil{t.Fatal(e)}
+ traceMust(t,coordinator,"lost-final","init")
+ coordinator.fault=traceFault(coordinator,"lost-final")
  var drop atomic.Bool;drop.Store(true)
  dropped:=make(chan WitnessedEnvelope,1)
  server:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
@@ -416,11 +494,13 @@ func TestWitnessedAuthorityClientLostFinalReplyRecoversStatus(t *testing.T){
  if first.Authority.Outcome!=AuthorityCommitted||first.Attestation.View.Sequence!=1||client.Head()!=genesis||client.Sequence()!=0||client.Contacts()!=1{t.Fatal("lost reply did not leave stale client pin",first.Authority.Outcome,first.Attestation.View.Sequence)}
  spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{1,0}||total!=1||effects!=1{t.Fatal("lost reply accounting",spent,total,effects,e)}
  if _,e=os.Lstat(coordinator.intentPath());!errors.Is(e,os.ErrNotExist){t.Fatal("final reply lost before durable intent cleanup",e)}
+ traceMust(t,coordinator,"lost-final","lost-final-response")
  receipt,recovered,e:=client.Status()
  if e!=nil||receipt!=first.Authority.Receipt||recovered.Authority.Stale!=1||recovered.Attestation.View.Sequence!=2{
   t.Fatal("fresh status must recover identical receipt across two-step witness sequence gap",e)
  }
  if client.Head()!=recovered.Authority.After||client.Sequence()!=2||client.Contacts()!=2{t.Fatal("recovered client cursor")}
+ traceMust(t,coordinator,"lost-final","ack")
  spent,total,effects,e=a.Counts();if e!=nil||spent!=[authorityCallers]byte{2,0}||total!=2||effects!=1{t.Fatal("status repeated effect",spent,total,effects,e)}
  view,e:=witnessClient.View();if e!=nil||view.Head!=recovered.Authority.After||view.Sequence!=2{t.Fatal("witness not converged",e)}
  t.Log("real HTTP final envelope loss recovered identical receipt via fresh authenticated status across a two-version witness gap; exactly two contacts and one effect")
