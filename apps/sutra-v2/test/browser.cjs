@@ -671,11 +671,21 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.match(roundtripText,/semantic equivalence NOT ESTABLISHED/);
   assert.match(roundtripText,/Unspecified qualifiers:/);
   assert.ok(await reviewPage.locator('#review-roundtrip-result').isVisible());
+  await reviewPage.locator('#review-clarification-panel > summary').click();
+  await reviewPage.locator('#review-clarification-run').click();await reviewState('clarification_ready');
+  assert.match(await reviewPage.locator('#review-clarification-result').innerText(),/material pairs covered by 1 declared clarification questions/);
+  await reviewPage.locator('#review-clarification-definition').selectOption('0');
+  await reviewPage.locator('#review-clarification-answer-run').click();await reviewState('clarification_preview');
+  assert.match(await reviewPage.locator('#review-clarification-preview').innerText(),/DIFFERS FROM DECLARED ANSWER/);
+  assert.match(await reviewPage.locator('#review-clarification-preview').innerText(),/REFUSED/);
+  const previewDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-clarification-export').click();
+  const preview=JSON.parse(fs.readFileSync(await (await previewDownload).path(),'utf8'));assert.equal(preview.preview.decisionAuthority,'NONE');assert.equal(preview.preview.candidates.length,5);
+  assert.equal(preview.versionDigest,await reviewPage.locator('#review-semantic-pin').innerText());
   const livingPin=await reviewPage.locator('#review-semantic-pin').innerText();assert.match(livingPin,/^sha256:[a-f0-9]{64}$/);
   const livingDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-semantic-export').click();
   const livingBytes=fs.readFileSync(await (await livingDownload).path());fs.writeFileSync(path.join(output,'living-before.json'),livingBytes);fs.writeFileSync(path.join(output,'living-before.sha256'),livingPin+'\n');
   await reviewPage.locator('#review-semantic-retain').click();assert.match(await reviewPage.locator('#review-baseline-state').innerText(),/Retained baseline/);
-  await reviewPage.locator('#review-meaning-proposal_1').fill('Changed declaration');assert.equal(await reviewPage.locator('#review-semantic-export').isDisabled(),true);assert.equal(await reviewPage.locator('#review-roundtrip-run').isDisabled(),true);assert.equal(await reviewPage.locator('#review-roundtrip-result').innerText(),'');
+  await reviewPage.locator('#review-meaning-proposal_1').fill('Changed declaration');assert.equal(await reviewPage.locator('#review-semantic-export').isDisabled(),true);assert.equal(await reviewPage.locator('#review-roundtrip-run').isDisabled(),true);assert.equal(await reviewPage.locator('#review-roundtrip-result').innerText(),'');assert.equal(await reviewPage.locator('#review-clarification-export').isDisabled(),true);assert.equal(await reviewPage.locator('#review-clarification-preview').innerText(),'');
   const reviewForged=JSON.parse(JSON.stringify(reviewOriginal));reviewForged.nodes[0].value='999';await reviewFill('proposal',JSON.stringify(reviewForged));assert.equal(await reviewPage.locator('#review-export').isDisabled(),true);await reviewPage.locator('#review-run').click();await reviewState('refused');
   await reviewFill('question','Is site A higher than site B? Revised.');assert.equal(await reviewPage.locator('#review-batch-export').isDisabled(),true);assert.match(await reviewPage.locator('#review-batch-count').innerText(),/0 \/ 8/);assert.equal(await reviewPage.locator('#review-run').isDisabled(),true);assert.equal(await reviewPage.locator('#review-export').isDisabled(),true);
   await reviewPage.locator('#review-seal').click();await reviewState('sealed');assert.notEqual(await reviewPage.locator('#review-pin').innerText(),reviewPin);
@@ -709,6 +719,11 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.deepEqual(impact.impact.sourceChanges,[{id:'report_b',change:'CHANGED'}]);assert.equal(impact.impact.candidates.filter(c=>c.outcome==='CONDITIONAL_RESULT_REVERSED').length,4);
   assert.equal(impact.impact.decisionAuthority,'NONE');
   const newPin=await reviewPage.locator('#review-semantic-pin').innerText();assert.equal(impact.afterDigest,newPin);fs.writeFileSync(path.join(output,'living-after.json'),impact.afterVersion);fs.writeFileSync(path.join(output,'living-after.sha256'),newPin+'\n');
+  await reviewPage.locator('#review-reuse-panel > summary').click();
+  await reviewPage.locator('#review-reuse-run').click();await reviewState('reuse_ready');
+  assert.match(await reviewPage.locator('#review-reuse-result').innerText(),/4 reused · 8 executed · 0 removed/);
+  const reuseDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-reuse-export').click();const reuse=JSON.parse(fs.readFileSync(await (await reuseDownload).path(),'utf8'));
+  assert.equal(reuse.audit.decisionAuthority,'NONE');assert.equal(reuse.audit.rows.length,5);assert.ok(reuse.audit.rows.every(r=>r.freshCanonicalMatch&&r.compilerOutcomesMatch));
   // Qualifier edits are declared evidence-linked context, never semantic proof.
   await reviewPage.locator('#review-semantic-list > div').first().locator('details > summary').click();
   await reviewPage.locator('#review-facet-proposal_1-time').fill('Review measurement period');

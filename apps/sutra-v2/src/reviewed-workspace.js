@@ -1,3 +1,6 @@
+import {planInvestigationClarifications} from '../../../packages/sutra-knowledge/clarification-plan.js';
+import {previewClarificationAnswers} from '../../../packages/sutra-knowledge/clarification-preview.js';
+import {auditRevisionReuse} from '../../../packages/sutra-knowledge/revision-reuse-audit.js';
 import {renderInvestigationRoundtrip} from '../../../packages/sutra-knowledge/controlled-roundtrip.js';
 import {sealReviewedDraft,draftComparisonProposal} from '../../../packages/sutra-knowledge/reviewed-draft.js';
 import {exportReviewedProposal} from '../../../packages/sutra-knowledge/reviewed-claim-compiler.js';
@@ -8,7 +11,7 @@ import {casePin} from '../../../packages/sutra-knowledge/pinned-investigation.js
 import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigationVersions} from '../../../packages/sutra-knowledge/investigation-revision.js';
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
-let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map();
+let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null;
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
 function control(){
@@ -97,15 +100,20 @@ by('batch-run').onclick=()=>work(async ticket=>{
 });
 by('batch-export').onclick=()=>{if(batchCurrent&&!busy)download(batchCurrent,'sutra-reviewed-order-contrast.json','application/json');};
 function invalidateSemantic(){
+ clarificationCurrent=null;previewCurrent=null;reuseCurrent=null;by('clarification-result').textContent='';by('clarification-options').replaceChildren();by('clarification-preview').textContent='';by('reuse-result').textContent='';
  semanticCurrent=null;impactCurrent=null;by('roundtrip-result').textContent='';by('semantic-pin').textContent='No version evaluated.';by('semantic-result').textContent='';by('impact-result').textContent='';
 }
 function semanticControl(){
  for(const e of by('semantic-list').querySelectorAll('input,select'))e.disabled=busy;
  const ready=!!sealed&&stagedProposals.length>=2&&stagedProposals.every(p=>annotations.get(p.id)?.meaning.trim());
  by('semantic-run').disabled=busy||!ready;
- for(const id of ['semantic-export','semantic-export-pin','semantic-retain','roundtrip-run'])by(id).disabled=busy||!semanticCurrent;
+ for(const id of ['semantic-export','semantic-export-pin','semantic-retain','roundtrip-run','clarification-run'])by(id).disabled=busy||!semanticCurrent;
  by('baseline-file').disabled=busy;by('baseline-pin').disabled=busy;by('baseline-import').disabled=busy;
  by('baseline-clear').disabled=busy||!baseline;by('impact-export').disabled=busy||!impactCurrent;
+ by('reuse-run').disabled=busy||!impactCurrent;by('reuse-export').disabled=busy||!reuseCurrent;
+ by('clarification-answer-run').disabled=busy||!clarificationCurrent||!clarificationCurrent.plan.questions.length;
+ by('clarification-export').disabled=busy||!previewCurrent;
+ for(const e of by('clarification-options').querySelectorAll('select'))e.disabled=busy;
 }
 function renderSemanticRows(){
  const list=by('semantic-list');list.replaceChildren();
@@ -187,10 +195,54 @@ by('roundtrip-run').onclick=()=>work(async ticket=>{
  report.qualification].join('\n');
  status('roundtrip_ready','Exact pinned instructions reconstructed. Review question coverage and qualifiers; no semantic equivalence or decision authority established.');
 });
+by('clarification-run').onclick=()=>work(async ticket=>{
+ const current=semanticCurrent;if(!current)return;
+ clarificationCurrent=null;previewCurrent=null;by('clarification-result').textContent='';by('clarification-options').replaceChildren();by('clarification-preview').textContent='';semanticControl();
+ const plan=await planInvestigationClarifications(current.versionText,current.digest,{maxQuestions:3,maxScenarios:8});
+ const digest=await casePin(JSON.stringify(plan));if(ticket!==epoch||current!==semanticCurrent)return;
+ clarificationCurrent={plan,digest};
+ by('clarification-result').textContent=[
+ plan.counts.coveredPairs+' of '+plan.counts.materialPairs+' material pairs covered by '+plan.counts.questions+' declared clarification questions.',
+ 'Uncovered pairs: '+plan.uncoveredMaterialPairs.map(p=>p.left+' / '+p.right).join(', '),
+ 'Unresolved candidates: '+(plan.unresolved.map(c=>c.candidateIds.join(', ')+' · '+c.state).join('; ')||'none'),
+ 'Synthetic probes: '+plan.witnessSearch.evaluated+' / '+plan.witnessSearch.possible+(plan.witnessSearch.truncated?' (truncated)':''),
+ ...plan.witnessSearch.witnesses.map(w=>w.left+' / '+w.right+' differ under '+w.replacements.map(r=>r.bindingId+' = '+r.value).join(', ')),
+ 'No witness does not prove equivalence. No candidate is selected or approved.'].join('\n');
+ for(const q of plan.questions){
+  const label=document.createElement('label'),select=document.createElement('select');select.id='review-clarification-'+q.facet;label.htmlFor=select.id;label.textContent=q.question;
+  const empty=document.createElement('option');empty.value='';empty.textContent='Leave unanswered';select.append(empty);
+  q.answers.forEach((a,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=a.statement+' ('+a.alternatives.flatMap(x=>x.candidateIds).join(', ')+')';select.append(o);});
+  select.onchange=()=>{previewCurrent=null;by('clarification-preview').textContent='';semanticControl();};
+  const row=document.createElement('div');row.className='pinned-fields';row.append(label,select);by('clarification-options').append(row);
+ }
+ status('clarification_ready','Material clarification plan ready. Answers only preview declared compatibility; the pinned investigation remains unchanged.');
+});
+by('clarification-answer-run').onclick=()=>work(async ticket=>{
+ const current=semanticCurrent,c=clarificationCurrent;if(!current||!c)return;
+ previewCurrent=null;by('clarification-preview').textContent='';
+ const answers=c.plan.questions.flatMap(q=>{const v=by('clarification-'+q.facet).value;return v===''?[]:[{facet:q.facet,statement:q.answers[Number(v)].statement}];});
+ const responseText=JSON.stringify({version:1,versionDigest:current.digest,planDigest:c.digest,budget:c.plan.budget,answers}),responsePin=await casePin(responseText);
+ const preview=await previewClarificationAnswers(current.versionText,current.digest,responseText,responsePin);
+ if(ticket!==epoch||current!==semanticCurrent||c!==clarificationCurrent)return;
+ previewCurrent={versionText:current.versionText,versionDigest:current.digest,responseText,responsePin,preview};
+ by('clarification-preview').textContent=[preview.status.replaceAll('_',' '),...preview.candidates.map(x=>x.id+' · '+x.compatibility.replaceAll('_',' ')+' · '+x.conditionalState),'Original version unchanged. No decision authority.'].join('\n');
+ status('clarification_preview','Answer compatibility preview ready; all candidates remain in the pinned version.');
+});
+by('clarification-export').onclick=()=>{if(previewCurrent&&!busy)download(JSON.stringify(previewCurrent),'sutra-clarification-preview.json','application/json');};
+by('reuse-run').onclick=()=>work(async ticket=>{
+ const a=baseline,b=semanticCurrent;if(!a||!b||!impactCurrent)return;
+ reuseCurrent=null;by('reuse-result').textContent='';
+ const audit=await auditRevisionReuse(a.versionText,a.digest,b.versionText,b.digest);
+ if(ticket!==epoch||a!==baseline||b!==semanticCurrent)return;
+ reuseCurrent={beforeVersion:a.versionText,beforeDigest:a.digest,afterVersion:b.versionText,afterDigest:b.digest,audit};
+ by('reuse-result').textContent=[audit.counts.reused+' reused · '+audit.counts.executed+' executed · '+audit.counts.removed+' removed',...audit.rows.map(r=>r.id+' · '+r.reused.length+' reused · '+r.executed.length+' executed · fresh replay matches'),audit.qualification].join('\n');
+ status('reuse_ready','Diagnostic reuse audit matched fresh computation. Both complete versions were replayed; no speedup claim.');
+});
+by('reuse-export').onclick=()=>{if(reuseCurrent&&!busy)download(JSON.stringify(reuseCurrent),'sutra-revision-reuse-audit.json','application/json');};
 by('semantic-export').onclick=()=>{if(semanticCurrent&&!busy)download(semanticCurrent.versionText,'sutra-investigation-version.json','application/json');};
 by('semantic-export-pin').onclick=()=>{if(semanticCurrent&&!busy)download(semanticCurrent.digest+'\n','sutra-investigation-version.sha256','text/plain');};
-by('semantic-retain').onclick=()=>{if(!semanticCurrent||busy)return;baseline=semanticCurrent;impactCurrent=null;by('impact-result').textContent='';baselineState();semanticControl();status('semantic_ready','Current version retained as baseline in this tab. Export the exact version and digest to keep it across sessions.');};
-by('baseline-clear').onclick=()=>{if(busy)return;baseline=null;impactCurrent=null;by('impact-result').textContent='';baselineState();semanticControl();};
+by('semantic-retain').onclick=()=>{if(!semanticCurrent||busy)return;baseline=semanticCurrent;impactCurrent=null;reuseCurrent=null;by('reuse-result').textContent='';by('impact-result').textContent='';baselineState();semanticControl();status('semantic_ready','Current version retained as baseline in this tab. Export the exact version and digest to keep it across sessions.');};
+by('baseline-clear').onclick=()=>{if(busy)return;baseline=null;impactCurrent=null;reuseCurrent=null;by('reuse-result').textContent='';by('impact-result').textContent='';baselineState();semanticControl();};
 by('baseline-import').onclick=()=>{
  const file=by('baseline-file').files?.[0],digest=by('baseline-pin').value.trim();
  return work(async ticket=>{
