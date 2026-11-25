@@ -31,3 +31,5 @@ input{font:inherit;min-height:44px;border:1px solid var(--line);border-radius:6p
 #review-correspondence{width:auto;flex:none;vertical-align:middle}#reviewed-workspace input#review-candidate-id{display:block;width:100%;max-width:100%;margin:6px 0}#review-source-revise-panel textarea{width:100%;min-width:0;max-width:100%}#review-clarification-options select{width:100%;min-width:0;max-width:100%}
 
 #review-world-fields{display:grid;gap:12px;min-width:0}#review-world-fields select,#review-world-fields input{width:100%;min-width:0;max-width:100%}
+
+#review-table-panel{min-width:0;max-width:100%;overflow-wrap:anywhere}#review-table-panel select,#review-table-panel textarea,#review-table-panel input{width:100%;min-width:0;max-width:100%}#review-table-list{max-height:14rem;overflow:auto}

@@ -802,6 +802,30 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    }
    assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await samplePage.close();
   }
+  // Structured spreadsheet paste uses original text and the same exact compiler.
+  {
+   const tablePage=await browser.newPage({viewport:{width:360,height:800}}),errors=[],external=[];
+   tablePage.on('pageerror',e=>errors.push(e.message));tablePage.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());});
+   await tablePage.goto(origin);await tablePage.locator('#reviewed-workspace > summary').click();await tablePage.locator('#review-table-panel > summary').click();
+   const fill=(id,v)=>tablePage.locator('#review-'+id).fill(v),click=id=>tablePage.locator('#review-'+id).click();
+   const state=s=>tablePage.waitForFunction(s=>document.querySelector('#review-status').dataset.state===s&&!document.querySelector('#review-reset').disabled,s);
+   const source='項目 🧪\tbefore\tafter\nRevenue\t100\t120\nExpense\t50\t70\n';
+   await fill('question','Did operating surplus increase?');await fill('table-source','ledger');await fill('table-lineage','report');await fill('table-text',source);
+   await click('table-inspect');await state('table_inspected');assert.match(await tablePage.locator('#review-table-status').innerText(),/2 data rows × 3 columns/);
+   await fill('table-kind','currency_amount');await fill('table-unit','USD');await fill('table-scope','same_company');
+   async function select(id,row,col){
+    await tablePage.locator('#review-table-row').selectOption(String(row));await tablePage.locator('#review-table-column').selectOption(String(col));await fill('table-id',id);await click('table-add');await state('table_selected');
+   }
+   await select('old_rev',1,1);
+   await fill('table-text',source.replace('120','130'));assert.equal(await tablePage.locator('#review-table-stage').isDisabled(),true);assert.equal(await tablePage.locator('#review-table-list').innerText(),'');
+   await fill('table-text',source);await click('table-inspect');await state('table_inspected');
+   await select('old_rev',1,1);await select('new_rev',1,2);await select('old_exp',2,1);await select('new_exp',2,2);
+   await click('table-stage');await state('table_staged');assert.match(await tablePage.locator('#review-staged').innerText(),/1 staged source.*4 reviewed binding/);
+   await click('seal');await state('sealed');const contract=JSON.parse(await tablePage.locator('#review-contract').textContent());assert.equal(contract.sources[0].text,source);assert.deepEqual(contract.bindings.map(b=>b.span.quote),['100','120','50','70']);
+   await fill('expression','[new_rev]-[new_exp]>[old_rev]-[old_exp]');await click('expression-generate');await state('proposal');await click('run');await state('ready');
+   assert.match(await tablePage.locator('#review-result').innerText(),/CONDITIONALLY REFUTED/);
+   assert.equal(await tablePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await tablePage.close();
+  }
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});

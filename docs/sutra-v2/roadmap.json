@@ -3055,6 +3055,12 @@
           "sourceRevision": "4cf2409b03407075c27ed75c8e37fabec302e621",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45610633376",
           "description": "10/10 exact workflows passed; direct sibling object comparison and conflict/parent adversaries."
+        },
+        {
+          "id": "V2-LK10-VERSION-CONTROL",
+          "sourceRevision": "a8237f617f4cc34cfe98b4ab7eb9b7af71779a7b",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45611725678",
+          "description": "V2-079 exact 10/10 green; actual browser sibling comparison with wrong-pin refusal and stale output invalidation. No merge or independent sibling comparison replay."
         }
       ]
     },

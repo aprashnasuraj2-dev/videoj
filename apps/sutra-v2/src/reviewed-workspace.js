@@ -1,3 +1,4 @@
+import {inspectReviewedTable,addReviewedTable} from '../../../packages/sutra-knowledge/reviewed-table.js';
 import {compareSiblingInvestigations} from '../../../packages/sutra-knowledge/sibling-branch-contrast.js';
 import {guidedLivingCase} from '../../../packages/sutra-knowledge/examples/guided-living-case.js';
 import {auditStructuralExposure} from '../../../packages/sutra-knowledge/structural-exposure.js';
@@ -18,16 +19,70 @@ import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigation
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null,gridCurrent=null,exposureCurrent=null,branchCurrent=null;
+let tablePreview=null,tableSelections=[];
+const tableFields=['table-text','table-source','table-lineage','table-inspect','table-row','table-column','table-id','table-kind','table-unit','table-scope','table-dim-l','table-dim-m','table-dim-t','table-add','table-stage','table-clear'];
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
 function control(){
  for(const id of controls)by(id).disabled=busy;
  if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;by('candidate-id').disabled=!sealed;by('expression').disabled=!sealed;by('expression-generate').disabled=!sealed||!by('expression').value.trim();by('source-revise').disabled=!sources.length;by('source-revise-pick').disabled=!sources.length;by('source-revise-text').disabled=!sources.length;}
- semanticControl();
+ semanticControl();tableControl();
 }
-function invalidate(message){epoch++;sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
+function invalidate(message){epoch++;clearTablePreview();sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 function options(element,items){element.replaceChildren();for(const id of items){const o=document.createElement('option');o.value=id;o.textContent=id;element.append(o);}}
+function clearTablePreview(){
+ tablePreview=null;tableSelections=[];by('table-row').replaceChildren();by('table-column').replaceChildren();by('table-cell').textContent='';by('table-list').textContent='';by('table-status').textContent='Inspect exact pasted text before selecting cells.';
+}
+function tableControl(){
+ for(const id of tableFields)by(id).disabled=busy;
+ if(!busy){
+  by('table-inspect').disabled=!by('table-text').value.trim();
+  for(const id of ['table-row','table-column','table-add'])by(id).disabled=!tablePreview;
+  by('table-stage').disabled=!tablePreview||!tableSelections.length;
+  by('table-clear').disabled=!tableSelections.length;
+ }
+}
+function tableCell(){
+ if(!tablePreview)return;
+ const row=Number(by('table-row').value),column=Number(by('table-column').value),c=tablePreview.table.rows[row-1]?.[column];
+ by('table-cell').textContent=c?'Row '+row+' · '+tablePreview.table.headers[column]+' · exact token '+JSON.stringify(c.text):'No cell selected.';
+}
+function tableList(){
+ by('table-list').textContent=tableSelections.map(s=>s.id+' · row '+s.row+' / '+tablePreview.table.headers[s.column]+' · '+JSON.stringify(tablePreview.table.rows[s.row-1][s.column].text)+' · '+s.type.kind+' / '+s.type.unit+' · '+s.type.scope).join('\n');
+}
+for(const id of ['table-text','table-source','table-lineage'])by(id).oninput=()=>{clearTablePreview();tableControl();};
+by('table-inspect').onclick=()=>work(async ticket=>{
+ const text=by('table-text').value,table=inspectReviewedTable(text),digest=await casePin(text);
+ if(ticket!==epoch)return;clearTablePreview();tablePreview={table,digest,text};
+ for(let r=1;r<=table.rowCount;r++){const o=document.createElement('option');o.value=String(r);o.textContent=r+' · '+table.rows[r-1][0].text.slice(0,100);by('table-row').append(o);}
+ table.headers.forEach((h,i)=>{const o=document.createElement('option');o.value=String(i);o.textContent=h;by('table-column').append(o);});
+ by('table-column').selectedIndex=1;
+ by('table-status').textContent=table.rowCount+' data rows × '+table.columnCount+' columns. Nothing admitted yet.';
+ tableCell();status('table_inspected','Table inspected; explicitly select exact cells and declare their types.');
+});
+by('table-row').onchange=tableCell;by('table-column').onchange=tableCell;
+by('table-add').onclick=()=>work(async ticket=>{
+ const p=tablePreview;if(!p)return;
+ const dim=['table-dim-l','table-dim-m','table-dim-t'].map(id=>{const x=by(id).value;if(!/^(0|-?[1-9][0-9]?)$/.test(x))throw Error('DRAFT_DIMENSION');return Number(x);});
+ const next=[...tableSelections,{id:by('table-id').value,row:Number(by('table-row').value),column:Number(by('table-column').value),type:{kind:by('table-kind').value,unit:by('table-unit').value,scope:by('table-scope').value,dimension:dim}}];
+ const selectionText=JSON.stringify({version:1,sourceDigest:p.digest,sourceId:by('table-source').value,lineage:by('table-lineage').value,cells:next});
+ // Preview admission against existing draft before adding to the queue. Commit is separate.
+ await addReviewedTable(draft(),p.text,selectionText,await casePin(selectionText));
+ if(ticket!==epoch||p!==tablePreview)return;tableSelections=next;by('table-id').value='';tableList();status('table_selected','Selected cell passed numeric admission. Stage the reviewed table to apply all selections.');
+});
+by('table-clear').onclick=()=>{if(busy)return;tableSelections=[];tableList();tableControl();};
+by('table-stage').onclick=()=>work(async ticket=>{
+ const p=tablePreview;if(!p||!tableSelections.length)return;
+ const selectionText=JSON.stringify({version:1,sourceDigest:p.digest,sourceId:by('table-source').value,lineage:by('table-lineage').value,cells:tableSelections});
+ const r=await addReviewedTable(draft(),p.text,selectionText,await casePin(selectionText));
+ if(ticket!==epoch||p!==tablePreview)return;
+ sources=structuredClone(r.draft.sources);bindings=structuredClone(r.draft.bindings);
+ invalidate('Reviewed table staged atomically. Seal the draft and compile an expression.');
+ refresh();by('source-pick').value=r.draft.sources.at(-1).id;by('select-text').value=p.text;
+ for(const id of ['table-text','table-source','table-lineage','table-id'])by(id).value='';
+ status('table_staged','Exact table text and '+r.selectedCells.length+' reviewed numeric selections staged. No formula or meaning inferred.');
+});
 function refresh(){
  options(by('source-revise-pick'),sources.map(s=>s.id));by('source-revise-text').value=sources[0]?.text??'';
  options(by('source-pick'),sources.map(s=>s.id));by('select-text').value=sources[0]?.text??'';
@@ -38,7 +93,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION|WORLD_GRID|COUNTERFACTUAL|BRANCH|TABLE)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 async function loadGuidedCase(domain,corrected,ticket){

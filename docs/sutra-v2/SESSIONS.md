@@ -801,3 +801,8 @@ V2-077 and V2-078 exact 10/10 green. Freeze four development cases (two single-s
 ## V2-081 — Exact structured table pathway
 
 Add restricted rectangular unquoted TSV paste, first row unique nonempty headers, 128 data rows × 16 columns, exact UTF-16 coordinate spans, at most 64 explicit selected cells. Selection binds source digest, source/lineage IDs, cell coordinates and caller-declared types. Reuse reviewed draft and compiler atomically; no automatic quantity inference, locale conversion or formula execution. Tests compare exact manual contract bytes and typed expression outcomes, including multibyte header, stale source, duplicate cells, ragged rows, hostile formula and malformed number. No browser integration yet; exact CI pending. V2-079/080 exact outcomes still to reconcile.
+
+
+## V2-082 — Interactive structured table import
+
+V2-079 10/10 exact workflows passed; scoped sibling browser evidence registered. Add local table paste inspector with row/column selection, exact token preview, explicit type declaration and atomic reviewed queue. Reuse table admission for every queue addition and final staging; any source text or identity change clears the queue, draft edits invalidate it, no automatic header interpretation. Browser test pastes multibyte table, rejects stale queue, stages four exact numeric cells, seals contract and computes a typed derived comparison; checks 360px and zero external requests. No file-original bytes, full spreadsheet grammar or auto-extraction claim. Exact CI pending; V2-080/081 still tracked.
