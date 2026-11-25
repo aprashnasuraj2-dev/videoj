@@ -612,6 +612,42 @@ func TestFencedCoordinatorOrphanedAdmissionFailsClosed(t *testing.T) {
 	t.Log("lost owner evidence leaves the exact pending reservation fail-closed: zero effects and no automatic abort or second admission")
 }
 
+func TestFencedCoordinatorClosureAuthorityMustBeIndependent(t *testing.T) {
+	var fencePtr atomic.Pointer[AdmissionFence]
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fencePtr.Load().ServeHTTP(w, r)
+	}))
+	defer srv.Close()
+	ctx, approver, _, authorityPub, authorityKey, callerPub, _ := authorityFixture(t, srv.URL)
+	fencePub, fenceKey := fenceKeys()
+	a, e := CreateSharedAuthority(privateTemp(t), ctx, approver, authorityKey, callerPub, 2)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer a.Close()
+	genesis, _ := a.Head()
+	fence, e := CreateAdmissionFence(privateTemp(t), ctx, authorityPub, fenceKey, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer fence.Close()
+	fencePtr.Store(fence)
+	client, e := NewFenceClient(srv.URL, ctx, authorityPub, fencePub, genesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if _, e = NewFencedCoordinatorWithClosureAuthority(a, client, authorityPub); !errors.Is(e, ErrPolicy) {
+		t.Fatal("action-authority key reused as closure authority", e)
+	}
+	if _, e = NewFencedCoordinatorWithClosureAuthority(a, client, fencePub); !errors.Is(e, ErrPolicy) {
+		t.Fatal("fence key reused as closure authority", e)
+	}
+	closurePub, _ := closureKeys()
+	if _, e = NewFencedCoordinatorWithClosureAuthority(a, client, closurePub); e != nil {
+		t.Fatal("independent closure key refused", e)
+	}
+}
+
 func TestFencedCoordinatorOrphanResolutionRequiresExactClosureProof(t *testing.T) {
 	var fencePtr atomic.Pointer[AdmissionFence]
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

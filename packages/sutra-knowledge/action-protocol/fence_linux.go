@@ -933,7 +933,9 @@ func NewFencedCoordinator(authority *SharedAuthority, fence *FenceClient) (*Fenc
 // permanent non-application of that exact reservation identity.
 func NewFencedCoordinatorWithClosureAuthority(authority *SharedAuthority, fence *FenceClient, closureAuthority ed25519.PublicKey) (*FencedCoordinator, error) {
 	c, e := NewFencedCoordinator(authority, fence)
-	if e != nil || len(closureAuthority) != ed25519.PublicKeySize {
+	if e != nil || len(closureAuthority) != ed25519.PublicKeySize ||
+		bytes.Equal(closureAuthority, authority.signer.Public().(ed25519.PublicKey)) ||
+		bytes.Equal(closureAuthority, fence.fence) {
 		return nil, ErrPolicy
 	}
 	c.closureAuthority = append(ed25519.PublicKey(nil), closureAuthority...)
