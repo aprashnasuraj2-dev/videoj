@@ -3028,7 +3028,7 @@
       "dependencies": [
         "V2-LK09-REVISION"
       ],
-      "scope": "Branch hypotheses, diff and restore investigations, preserve conflicting empirical claims in merges. V2-071 candidate: restore source draft from caller-pinned version, preserve historical candidates separately; explicit stable IDs and correction invalidation. Branch merge/concurrency and general persistence remain open.",
+      "scope": "Branch hypotheses, diff and restore investigations, preserve conflicting empirical claims in merges. V2-071 candidate: restore source draft from caller-pinned version, preserve historical candidates separately; explicit stable IDs and correction invalidation. Branch merge/concurrency and general persistence remain open. V2-076 candidate: compare two separately pinned direct children of an exact parent, detect different concurrent changes to source/binding/question/candidate objects, retain both impacts. No merge, multi-generation history or concurrency storage.",
       "acceptance": "Conflicting updates explicit; identity not logical equivalence; restore exact historical version.",
       "evidence": [
         {
