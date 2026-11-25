@@ -3,9 +3,9 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-026",
+  "session": "V2-027",
   "next": [
-    "V2-D11-ALIGNED-CASE",
+    "V2-D12-ALIGNED-CAPSULE",
     "V2-P07-WASM",
     "V2-RUNTIME-02",
     "V2-P05-RECOVERY",
@@ -19,7 +19,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "aligned_pinned_case_candidate_pending_exact_ci",
+  "state": "aligned_portable_capsule_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -301,6 +301,12 @@
       "sourceRevision": "43070237e15343d75f3db1a9be19c33342ca2326",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45574455950/job/139068811666",
       "description": "All nine exact-source workflows succeeded: knowledge PR 45574455950 and push 45574445279, ingress 45574456147, impact 45574455897, evaluation 45574456144, Open Kit 45574455918, legacy release 45574455928, publisher 45574455904, browser matrix 45574455913. Three actual nonbinary browser exports independently accepted with 23 mutated variants refused. Five targeted local Node groups passed with exact source blob hashes, including 256-subset oracle and larger inclusion-minimal repair, multiple offers and fresh reads. Scoped caller-pinned finite models, not model validity."
+    },
+    {
+      "id": "V2-D11-ALIGNED-CASE",
+      "sourceRevision": "dcca55406c3a5bfacc2adc2a68cab5e49f24e129",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45575004185/job/139070646626",
+      "description": "All nine exact-source workflows succeeded: knowledge PR 45575004185 and push 45574993655, ingress 45575004209, impact 45575004158, evaluation 45575004077, Open Kit 45575004140, legacy release 45575004181, publisher 45575004325, browser matrix 45575004147. Three actual aligned browser exports independently accepted; 29 mutated variants refused (10+10+9), plus independently recomputed mixed-equation substitution controls. The three targeted local Node groups were registered at V2-026; actual browser re-pinned operator change refused. Scoped structural alignment, not semantic validity."
     }
   ],
   "release": "not_authorized",
@@ -314,7 +320,7 @@
     "resolutionRevision": "dc50b83369478f6ee2c96186a8c1e14bd18ce004",
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45570334106/job/139055127953"
   },
-  "lastVerifiedKernelSource": "43070237e15343d75f3db1a9be19c33342ca2326",
+  "lastVerifiedKernelSource": "dcca55406c3a5bfacc2adc2a68cab5e49f24e129",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -325,8 +331,22 @@
   },
   "pendingCandidate": {
     "sourceRevision": null,
-    "sourceParent": "43070237e15343d75f3db1a9be19c33342ca2326",
+    "sourceParent": "dcca55406c3a5bfacc2adc2a68cab5e49f24e129",
     "status": "candidate_pending_exact_ci",
+    "identityRule": "Resolve the immutable commit containing this checkpoint.",
+    "checks": [
+      "explicit distinct case and snapshot pins; strict 1 MiB exact byte wire; immutable byte capture",
+      "actual general-case old/current capsules and separately saved snapshot pins",
+      "fresh-tab verification, one-byte tamper/refusal/restoration, old snapshot vs current pin, wrong case pin, no adoption",
+      "independent downloaded Python archive explicit aligned profile; legacy profile preserved",
+      "cross-language explicitly expected refusal reasons and accepted identities including both-pin substitution counterexample",
+      "profile downgrade, invalid wire, semantic forgery, re-pinned mixed equations; deterministic output and limits"
+    ]
+  },
+  "previousPendingCandidate": {
+    "sourceRevision": "dcca55406c3a5bfacc2adc2a68cab5e49f24e129",
+    "sourceParent": "43070237e15343d75f3db1a9be19c33342ca2326",
+    "status": "verified_exact_ci",
     "identityRule": "Resolve the immutable commit containing this checkpoint.",
     "checks": [
       "identical typed graph across worlds ignoring only input values, property and node ordering",
@@ -335,21 +355,6 @@
       "browser actual aligned exports and re-pinned operator drift refusal",
       "independent Python aligned fingerprint reconstruction and rehashed semantic substitution refusal",
       "three targeted local Node groups passed exact source blob hashes; full CI pending"
-    ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": "43070237e15343d75f3db1a9be19c33342ca2326",
-    "sourceParent": "91092e8415debce567e1676405d0afecc6ef855b",
-    "status": "verified_exact_ci",
-    "identityRule": "Resolve the immutable commit containing this checkpoint.",
-    "checks": [
-      "caller-pinned arbitrary finite case; exact UTF-8 case and event bounds",
-      "shared root across multiple sources and multiple observations per source; restoration requires new read",
-      "all inclusion-minimal supports, refutations, conflicts and consistency repairs; 12-world eight-root direct 256-subset oracle",
-      "nonbinary exact rational observation labels; unresolved worlds fail closed",
-      "actual browser nonbinary case three exports and independent Python reconstruction",
-      "case byte mutation refusal, stale result cleared on edit; zero external requests",
-      "five targeted local Node groups passed with exact Git blob hashes; three local Node-produced exports independently accepted by Python, 23 mutations rejected; actual browser and exact CI still pending"
     ]
   },
   "roadmap": "docs/sutra-v2/roadmap.json",

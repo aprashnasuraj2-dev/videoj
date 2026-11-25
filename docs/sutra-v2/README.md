@@ -15,3 +15,5 @@ Resume on branch `sutra/v2-knowledge-compiler`. “Continue with SUTRA” means 
 First candidate implements exact rational/dimensional operations, typed conditional constraints, a bounded dependency DAG, digest-bound results, selective calculation reuse and same-implementation replay. This is a narrow executable slice, not yet an agent network or an end-user website. All new capability credit requires actual tests and exact source evidence.
 
 [Caller-pinned investigations](PINNED_CASE.md) — separate finite-case workspace candidate; does not replace the guided synthetic fixture.
+
+The aligned finite-case workspace now has a candidate portable Proof Capsule with separate model and snapshot pins; see [caller-pinned investigations](PINNED_CASE.md). The original synthetic flagship and its Proof Capsule wire remain intact.

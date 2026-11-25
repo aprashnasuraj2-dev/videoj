@@ -178,6 +178,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_pinned_investigation.py --challenge apps/sutra-v2/test-output/pinned-baseline.json apps/sutra-v2/test-output/pinned-conflict.json apps/sutra-v2/test-output/pinned-resolved.json > apps/sutra-v2/test-output/pinned-reference.txt
           cat apps/sutra-v2/test-output/pinned-reference.txt
+      - name: Challenge actual aligned capsules using downloaded independent verifier
+        run: |
+          node packages/sutra-knowledge/examples/aligned-capsule-parity.mjs apps/sutra-v2/test-output/aligned-current.json apps/sutra-v2/test-output/aligned-current.sha256 apps/sutra-v2/test-output/aligned-old.json apps/sutra-v2/test-output/aligned-old.sha256 apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/aligned-capsule-reference.txt
+          cat apps/sutra-v2/test-output/aligned-capsule-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

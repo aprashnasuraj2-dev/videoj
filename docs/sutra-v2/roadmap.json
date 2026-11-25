@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-026",
+  "session": "V2-027",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2528,11 +2528,29 @@
     },
     {
       "id": "V2-D11-ALIGNED-CASE",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D10-PINNED-CASE"
       ],
-      "scope": "Strict structural alignment across typed worlds, stable schema fingerprint, no mixed equations or changed basis under a single aligned decision, existing legacy v1 export preserved; independent Python replay. Not proof of real-world meaning."
+      "scope": "Strict structural alignment across typed worlds, stable schema fingerprint, no mixed equations or changed basis under a single aligned decision, existing legacy v1 export preserved; independent Python replay. Not proof of real-world meaning.",
+      "evidence": [
+        {
+          "id": "V2-D11-ALIGNED-CASE",
+          "sourceRevision": "dcca55406c3a5bfacc2adc2a68cab5e49f24e129",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45575004185/job/139070646626",
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45575004185 and push 45574993655, ingress 45575004209, impact 45575004158, evaluation 45575004077, Open Kit 45575004140, legacy release 45575004181, publisher 45575004325, browser matrix 45575004147. Three actual aligned browser exports independently accepted; 29 mutated variants refused (10+10+9), plus independently recomputed mixed-equation substitution controls. The three targeted local Node groups were registered at V2-026; actual browser re-pinned operator change refused. Scoped structural alignment, not semantic validity."
+        }
+      ]
+    },
+    {
+      "id": "V2-D12-ALIGNED-CAPSULE",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D11-ALIGNED-CASE",
+        "V2-D02-CAPSULE",
+        "V2-D09-WIRE-PARITY"
+      ],
+      "scope": "Exact aligned finite-case snapshot, separate independently retained case and snapshot pins, strict bounded replay, browser import/export and independent offline archive with explicit aligned profile. No automatic adoption, publisher identity, source truth, semantic validation, model completeness or freshness."
     }
   ]
 }
