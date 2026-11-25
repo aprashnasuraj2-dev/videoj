@@ -286,15 +286,23 @@ func (c *WitnessCoordinator) ProcessAttested(req AuthorityRequest,challenge Dige
  return envelope,nil
 }
 
+func parseWitnessChallengeHeader(r *http.Request)(Digest,error){
+ var challenge Digest
+ if r==nil{return challenge,ErrPolicy}
+ values:=r.Header.Values("X-Sutra-Witness-Challenge")
+ if len(values)!=1||len(values[0])!=64{return challenge,ErrPolicy}
+ decoded,e:=hex.DecodeString(values[0]);if e!=nil||len(decoded)!=32||hex.EncodeToString(decoded)!=values[0]{return challenge,ErrPolicy}
+ copy(challenge[:],decoded)
+ if challenge==(Digest{}){return Digest{},ErrPolicy}
+ return challenge,nil
+}
+
 func (c *WitnessCoordinator) ServeHTTP(w http.ResponseWriter,r *http.Request){
  w.Header().Set("Cache-Control","no-store")
  if r.Method!=http.MethodPost||r.URL.Path!="/authority-witnessed"||r.URL.RawQuery!=""||r.Header.Get("Content-Type")!=media{
   w.WriteHeader(http.StatusBadRequest);return
  }
- challenges:=r.Header.Values("X-Sutra-Witness-Challenge")
- if len(challenges)!=1||len(challenges[0])!=64{w.WriteHeader(http.StatusBadRequest);return}
- decoded,e:=hex.DecodeString(challenges[0]);if e!=nil||len(decoded)!=32||hex.EncodeToString(decoded)!=challenges[0]{w.WriteHeader(http.StatusBadRequest);return}
- var challenge Digest;copy(challenge[:],decoded);if challenge==(Digest{}){w.WriteHeader(http.StatusBadRequest);return}
+ challenge,e:=parseWitnessChallengeHeader(r);if e!=nil{w.WriteHeader(http.StatusBadRequest);return}
  defer r.Body.Close()
  raw,e:=io.ReadAll(io.LimitReader(r.Body,authorityRequestSize+1));if e!=nil||len(raw)!=authorityRequestSize{w.WriteHeader(http.StatusBadRequest);return}
  req,e:=ParseAuthorityRequest(raw);if e!=nil{w.WriteHeader(http.StatusBadRequest);return}
