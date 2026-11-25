@@ -14,6 +14,7 @@ import (
  "os/exec"
  "path/filepath"
  "sync/atomic"
+ "syscall"
  "testing"
 )
 
@@ -38,7 +39,7 @@ func TestWitnessCoordinatorProcessCrashBoundaries(t *testing.T){
   stage:=os.Getenv("SUTRA_BRIDGE_STAGE")
   dir:=os.Getenv("SUTRA_BRIDGE_AUTHORITY_DIR")
   genesisPath:=os.Getenv("SUTRA_BRIDGE_GENESIS")
-  ctx,approver,ak,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,origin)
+  ctx,approver,_,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,origin)
   witnessPub,_:=witnessKeys()
   var genesis Digest
   raw,e:=os.ReadFile(genesisPath);if e!=nil||len(raw)!=len(genesis){t.Fatal("genesis",e)}
@@ -50,7 +51,9 @@ func TestWitnessCoordinatorProcessCrashBoundaries(t *testing.T){
    if at==stage{os.Exit(0)}
    return nil
   }
-  req:=approve(t,0,ctx,ak);wire,e:=SignAuthorityRequest(0,AuthorityCommit,genesis,req,callerKey[0]);if e!=nil{t.Fatal(e)}
+  requestRaw,e:=os.ReadFile(os.Getenv("SUTRA_BRIDGE_REQUEST"));if e!=nil{t.Fatal(e)}
+  req,e:=ParseRequest(requestRaw);if e!=nil{t.Fatal(e)}
+  wire,e:=SignAuthorityRequest(0,AuthorityCommit,genesis,req,callerKey[0]);if e!=nil{t.Fatal(e)}
   if _,e=coordinator.Process(wire);e!=nil{t.Fatal(e)}
   t.Fatal("child did not exit at requested bridge stage")
  }
@@ -68,6 +71,9 @@ func TestWitnessCoordinatorProcessCrashBoundaries(t *testing.T){
    genesis,e:=a.Head();if e!=nil{t.Fatal(e)};a.Close()
    witness,e:=CreateAuthorityWitness(witnessDir,ctx,authorityPub,witnessKey,genesis);if e!=nil{t.Fatal(e)};current.Store(witness);defer witness.Close()
    genesisFile:=filepath.Join(privateTemp(t),"genesis.bin");if e=os.WriteFile(genesisFile,genesis[:],0600);e!=nil{t.Fatal(e)}
+   req:=approve(t,0,ctx,ak)
+   requestFile:=filepath.Join(privateTemp(t),"request.bin")
+   if e=os.WriteFile(requestFile,req.Bytes(),0600);e!=nil{t.Fatal(e)}
    cmd:=exec.Command(os.Args[0],"-test.run=^TestWitnessCoordinatorProcessCrashBoundaries/"+stage+"$")
    cmd.Env=append(os.Environ(),
     "SUTRA_BRIDGE_CHILD=1",
@@ -75,6 +81,7 @@ func TestWitnessCoordinatorProcessCrashBoundaries(t *testing.T){
     "SUTRA_BRIDGE_STAGE="+stage,
     "SUTRA_BRIDGE_AUTHORITY_DIR="+authorityDir,
     "SUTRA_BRIDGE_GENESIS="+genesisFile,
+    "SUTRA_BRIDGE_REQUEST="+requestFile,
    )
    if out,e:=cmd.CombinedOutput();e!=nil{t.Fatalf("bridge child %s: %v\n%s",stage,e,out)}
    a,e=OpenSharedAuthority(authorityDir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer a.Close()
@@ -97,7 +104,6 @@ func TestWitnessCoordinatorProcessCrashBoundaries(t *testing.T){
    if stage=="after-clear"{
     // A different authenticated status contact recovers the result after
     // the child died before exposing its composite acknowledgement.
-    req:=approve(t,0,ctx,ak)
     status,e:=SignAuthorityRequest(0,AuthorityStatus,genesis,req,callerKey[0]);if e!=nil{t.Fatal(e)}
     challenge,e:=randomWitnessChallenge();if e!=nil{t.Fatal(e)}
     response,e:=coordinator.ProcessAttested(status,challenge)
@@ -184,12 +190,36 @@ func TestWitnessCoordinatorTamperedIntentFailsClosed(t *testing.T){
  coordinator.fault=func(at string)error{if at=="after-intent"{return errors.New("injected")};return nil}
  req:=approve(t,0,ctx,ak);wire,_:=SignAuthorityRequest(0,AuthorityCommit,genesis,req,callerKey[0])
  if _,e=coordinator.Process(wire);!errors.Is(e,ErrUnknown){t.Fatal(e)}
- path:=filepath.Join(authorityDir,bridgeIntentName);raw,e:=os.ReadFile(path);if e!=nil{t.Fatal(e)};raw[len(raw)-1]^=1
- if e=os.WriteFile(path,raw,0600);e!=nil{t.Fatal(e)}
+ path:=filepath.Join(authorityDir,bridgeIntentName);raw,e:=os.ReadFile(path);if e!=nil{t.Fatal(e)}
  coordinator.fault=nil
- if e=coordinator.Recover();!errors.Is(e,ErrStore){t.Fatal("tampered signed intent accepted",e)}
- spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{}||total!=0||effects!=0{t.Fatal("tampered intent changed authority",spent,total,effects,e)}
- t.Log("tampered bridge intent fails closed before authority or witness mutation")
+ flip:=func(index int)[]byte{copyRaw:=append([]byte(nil),raw...);copyRaw[index]^=1;return copyRaw}
+ parsed,e:=parseBridgeIntent(raw,ctx,authorityPub);if e!=nil{t.Fatal(e)}
+ otherCtx:=ctx;otherCtx[0]^=1
+ foreign,e:=signBridgeIntent(otherCtx,parsed.RequestHash,parsed.Before,parsed.After,authorityKey);if e!=nil{t.Fatal(e)}
+ cases:=[]struct{name string;install func()error}{
+  {"truncated",func()error{return os.WriteFile(path,raw[:len(raw)-1],0600)}},
+  {"oversized",func()error{return os.WriteFile(path,append(append([]byte(nil),raw...),0),0600)}},
+  {"random",func()error{return os.WriteFile(path,bytes.Repeat([]byte{0xa5},len(raw)),0600)}},
+  {"request-hash",func()error{return os.WriteFile(path,flip(0),0600)}},
+  {"before",func()error{return os.WriteFile(path,flip(32),0600)}},
+  {"after",func()error{return os.WriteFile(path,flip(64),0600)}},
+  {"signature",func()error{return os.WriteFile(path,flip(len(raw)-1),0600)}},
+  {"foreign-context",func()error{return os.WriteFile(path,foreign.Bytes(),0600)}},
+  {"permissions",func()error{if e:=os.WriteFile(path,raw,0600);e!=nil{return e};return os.Chmod(path,0644)}},
+  {"symlink",func()error{target:=filepath.Join(privateTemp(t),"valid-intent.bin");if e:=os.WriteFile(target,raw,0600);e!=nil{return e};return os.Symlink(target,path)}},
+  {"fifo",func()error{return syscall.Mkfifo(path,0600)}},
+ }
+ for _,tc:=range cases{t.Run(tc.name,func(t *testing.T){
+  if e:=os.Remove(path);e!=nil{t.Fatal(e)}
+  if e:=tc.install();e!=nil{t.Fatal(e)}
+  if e:=coordinator.Recover();!errors.Is(e,ErrStore){t.Fatal("invalid intent accepted",e)}
+  spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{}||total!=0||effects!=0{t.Fatal("invalid intent changed authority",spent,total,effects,e)}
+  view,e:=client.View();if e!=nil||view.Head!=genesis||view.Sequence!=0{t.Fatal("invalid intent changed witness",e)}
+ })}
+ if e=os.Remove(path);e!=nil{t.Fatal(e)}
+ if e=os.WriteFile(path,raw,0600);e!=nil{t.Fatal(e)}
+ if e=coordinator.Recover();e!=nil{t.Fatal("valid prepared intent could not abort",e)}
+ t.Log("eleven malformed or unsafe bridge intent entries fail closed; valid prepared intent remains recoverable")
 }
 
 
