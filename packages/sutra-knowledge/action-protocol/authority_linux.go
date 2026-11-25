@@ -251,6 +251,11 @@ func (a *SharedAuthority) signResponse(req AuthorityRequest,outcome byte,stale b
  copy(r.Signature[:],ed25519.Sign(a.signer,r.message()))
  return r
 }
+func (a *SharedAuthority) authenticate(req AuthorityRequest)bool{
+ return req.Caller<authorityCallers&&(req.Op==AuthorityCommit||req.Op==AuthorityStatus)&&
+  a.receiver.admit(req.Action)&&ed25519.Verify(a.callers[req.Caller],req.message(),req.Signature[:])
+}
+
 type authorityPlan struct {
  before Digest
  after Digest
@@ -264,8 +269,7 @@ type authorityPlan struct {
 }
 
 func (a *SharedAuthority) planLocked(req AuthorityRequest)(authorityPlan,error){
- if req.Caller>=authorityCallers||(req.Op!=AuthorityCommit&&req.Op!=AuthorityStatus)||!a.receiver.admit(req.Action)||
-  !ed25519.Verify(a.callers[req.Caller],req.message(),req.Signature[:]){return authorityPlan{},ErrAuthorityAuth}
+ if !a.authenticate(req){return authorityPlan{},ErrAuthorityAuth}
  before:=a.headLocked()
  if a.spent[req.Caller]>=authorityPerCallerContacts||int(a.spent[0])+int(a.spent[1])>=authorityTotalContacts{
   return authorityPlan{before:before,after:before,outcome:AuthorityBudget,stale:req.Expected!=before},nil
