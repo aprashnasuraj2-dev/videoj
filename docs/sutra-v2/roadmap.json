@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-053",
+  "session": "V2-054",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2824,33 +2824,48 @@
     },
     {
       "id": "V2-D27-REVIEWED-ORDER-CONTRAST",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D22-REVIEWED-PROPOSAL-CONTRAST",
         "V2-D25-CALLER-REVIEWED-WORKSPACE"
       ],
-      "scope": "V2-052 candidate: caller stages up to eight exact untrusted proposals under one sealed contract. Separate order-logic profile classifies matching typed operand pairs (including reversed orientation), strict opposite versus exhaustive complement, implication, overlap, and self-comparison domain; unaligned or type-blocked operands remain unclassified. Actual state divergence fails closed. 150 exhaustive direct comparator oracle controls plus actual compiler tests; actual browser five proposals and independent Python replay of six pairs with 15 tamper challenges authored. No algebraic/semantic equivalence, source truth or independent vote. Exact CI pending."
+      "scope": "V2-052 candidate: caller stages up to eight exact untrusted proposals under one sealed contract. Separate order-logic profile classifies matching typed operand pairs (including reversed orientation), strict opposite versus exhaustive complement, implication, overlap, and self-comparison domain; unaligned or type-blocked operands remain unclassified. Actual state divergence fails closed. 150 exhaustive direct comparator oracle controls plus actual compiler tests; actual browser five proposals and independent Python replay of six pairs with 15 tamper challenges authored. No algebraic/semantic equivalence, source truth or independent vote. Exact CI pending.",
+      "evidence": [
+        {
+          "id": "V2-D27-REVIEWED-ORDER-CONTRAST",
+          "sourceRevision": "480c88bce1753d9693cca830d6e6b851722ed90b",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45602751694/job/139165593491",
+          "description": "All nine exact workflows green, browser independent order contrast verifier passed after ineffective mutant correction. Restricted total-order predicate relation only."
+        }
+      ]
     },
     {
       "id": "V2-LK01-SEMANTIC-TRIAGE",
       "track": "B",
-      "status": "Implemented but unverified",
+      "status": "Unit verified",
       "dependencies": [
         "V2-D25-CALLER-REVIEWED-WORKSPACE",
         "V2-D22-REVIEWED-PROPOSAL-CONTRAST"
       ],
       "scope": "Admit multiple reviewed interpretations; distinguish divergence, agreement, refusals and unresolved results without voting or semantic approval.",
       "acceptance": "Exact compiler replays, opposite/same/unresolved/refused regressions; no universal interpretation coverage.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK01-SEMANTIC-TRIAGE",
+          "sourceRevision": "480c88bce1753d9693cca830d6e6b851722ed90b",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45602751694/job/139165594092",
+          "description": "Nine exact-source workflows passed (8 PR and knowledge push 45602734844); three triage tests passed. Scoped reviewed proposals, no natural-language meaning or universal coverage."
+        }
+      ]
     },
     {
       "id": "V2-LK02-INTENT-IR",
       "track": "B",
-      "status": "Not started",
+      "status": "Implemented but unverified",
       "dependencies": [
         "V2-LK01-SEMANTIC-TRIAGE"
       ],
-      "scope": "Preserve original natural-language question, candidate meanings and separate nine semantic obligations; source spans, entity, scope, unit, modality, negation, quantifier, baseline, causality, method, review and unknowns.",
+      "scope": "Preserve original natural-language question, candidate meanings and separate nine semantic obligations; source spans, entity, scope, unit, modality, negation, quantifier, baseline, causality, method, review and unknowns. V2-054 candidate: bounded separate annotation envelope with 13 explicit facets, exact source spans by reviewed binding/claim ID, separate nine obligations, original question and coverage, no truth or human sign-off. Automatic extraction and UI remain open.",
       "acceptance": "Closed versioned schema, exact source-bound extraction, omission/negation/scope adversaries; no invented inputs.",
       "evidence": []
     },
@@ -3079,8 +3094,6 @@
       "ux": 15
     },
     "priorityOrder": [
-      "V2-D27-REVIEWED-ORDER-CONTRAST",
-      "V2-LK01-SEMANTIC-TRIAGE",
       "V2-LK02-INTENT-IR",
       "V2-LK17-BENCHMARK",
       "V2-LK08-KNOWLEDGE-GRAPH"

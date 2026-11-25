@@ -34,3 +34,7 @@ The Observatory CLI asserts a real deterministic state change, exact incremental
 ## Reviewed claim compiler candidate
 
 `compileReviewedProposal(contractText,contractPin,proposalText)` admits exact source spans against a separately retained host contract and restricts executable numeric inputs to explicitly reviewed bindings. Unknowns stay unresolved, incompatible declared scopes block dependent nodes, and source quotes are not semantic proof. The arithmetic target is conditional, not an answer to the natural-language question. No automatic compilation or live model authority yet. CI pending.
+
+## Source-linked semantic investigation (candidate)
+
+`evaluateSemanticInvestigation(contractText,contractPin,batchText,annotationText,annotationPin)` extends reviewed proposal triage with a closed pinned annotation envelope. Original question, 13 explicit facets, nine separate obligations, exact quote/binding references, partial question coverage and refused branches remain visible. No automatic semantic interpretation, sign-off, authenticity, empirical truth or action authority. Full tests and independent replay are separate gates.

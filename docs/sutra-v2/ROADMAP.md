@@ -885,3 +885,8 @@ See [binding mandate](LIVING-KNOWLEDGE.md). New requirements extend rather than 
 - [ ] V2-LK21-FOUNDATION-QUEUE [Track A] Continue exact CI, WASM, integrity, consent, recovery, rollback, refinement, provider budget/BYOK and all unresolved SUTRA1/2 gates by actual dependencies. Acceptance: Old IDs, failures and evidence remain; no inherited credit or silently dropped gate.
 
 Priority: fix exact CI; semantic triage → evidence-bound IR → round trip/counterfactuals → material ambiguity review → versioned dependency revision → impact report/export. Track A remains parallel and Track C starts benchmark design now. See machine gates for dependencies.
+
+
+## V2-054 — Source-linked interpretation representation
+
+Exact V2-053 `480c88bce1753d9693cca830d6e6b851722ed90b`: all nine workflows successful (knowledge PR 45602751694 and push 45602734844); browser job 139165593491 and knowledge job 139165594092 passed. Promote only the scoped D27 order contrast and LK01 reviewed outcome triage. The former failure remains in history. LK02 candidate: separately pinned 13-facet annotation envelope, exact question, nine obligations and distinct verification dimensions; existing compiler exclusively admits source spans and computations. Unknown/refused, partially covered, unlinked or proposed qualifiers remain explicit. Five adversarial test groups authored; exact CI pending. No automatic semantic inference, validated extraction of meaning, independent IR replay or UI yet.

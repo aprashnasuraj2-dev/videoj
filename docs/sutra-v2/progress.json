@@ -3,10 +3,8 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-053",
+  "session": "V2-054",
   "next": [
-    "V2-D27-REVIEWED-ORDER-CONTRAST",
-    "V2-LK01-SEMANTIC-TRIAGE",
     "V2-LK02-INTENT-IR",
     "V2-LK17-BENCHMARK",
     "V2-LK08-KNOWLEDGE-GRAPH",
@@ -25,7 +23,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "living_knowledge_direction_semantic_triage_candidate_pending_exact_ci",
+  "state": "source_linked_semantic_ir_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -355,6 +353,18 @@
       "sourceRevision": "9c6a25e11b23051b0277206ed39878e7f69b0977",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45594622359/job/139137325965",
       "description": "All nine exact-source workflows passed, knowledge PR 45594622359 and push 45594609743; actual Chromium exports replayed by downloaded standalone Python archive with independent report/contract pins and parity controls. No source truth or freshness."
+    },
+    {
+      "id": "V2-LK01-SEMANTIC-TRIAGE",
+      "sourceRevision": "480c88bce1753d9693cca830d6e6b851722ed90b",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45602751694/job/139165594092",
+      "description": "Nine exact-source workflows passed (8 PR and knowledge push 45602734844); three triage tests passed. Scoped reviewed proposals, no natural-language meaning or universal coverage."
+    },
+    {
+      "id": "V2-D27-REVIEWED-ORDER-CONTRAST",
+      "sourceRevision": "480c88bce1753d9693cca830d6e6b851722ed90b",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45602751694/job/139165593491",
+      "description": "All nine exact workflows green, browser independent order contrast verifier passed after ineffective mutant correction. Restricted total-order predicate relation only."
     }
   ],
   "release": "not_authorized",
@@ -364,9 +374,11 @@
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45595551544",
     "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45595551544/job/139140557471",
     "reason": "Browser independent order-contrast verifier failed line 77 in tamper loop after original reconstruction passed. First pair equivalent GT overlap mutation ['GT'] is a no-op; candidate changes to [] and asserts each mutation differs before rejection. Knowledge job 139140558164 passed; 7 other PR workflows passed; full gate remains open.",
-    "resolutionStatus": "correction candidate; exact CI pending"
+    "resolutionStatus": "resolved at exact nine green workflows",
+    "resolutionRevision": "480c88bce1753d9693cca830d6e6b851722ed90b",
+    "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45602751694/job/139165593491"
   },
-  "lastVerifiedKernelSource": "9c6a25e11b23051b0277206ed39878e7f69b0977",
+  "lastVerifiedKernelSource": "480c88bce1753d9693cca830d6e6b851722ed90b",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -376,14 +388,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-054",
+    "parent": "480c88bce1753d9693cca830d6e6b851722ed90b",
+    "description": "Closed source-linked semantic annotation IR, exact original question, nine obligation states, refused/partial/unsupported branches and adversarial tests. No semantic truth or automatic extraction. Exact CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-053",
     "parent": "a3417cb102ab47a982520bde570fdd895e8e1d69",
     "description": "Correct V2-052 ineffective negative mutation; add reviewed interpretation outcome triage candidate, source-independent semantics remain unresolved; reorient active product and queue. Exact CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-052",
-    "parent": "fe2e35c8016327f552e64fa03f6e441a509319b9",
-    "description": "V2-052 candidate: caller stages up to eight exact untrusted proposals under one sealed contract. Separate order-logic profile classifies matching typed operand pairs (including reversed orientation), strict opposite versus exhaustive complement, implication, overlap, and self-comparison domain; unaligned or type-blocked operands remain unclassified. Actual state divergence fails closed. 150 exhaustive direct comparator oracle controls plus actual compiler tests; actual browser five proposals and independent Python replay of six pairs with 15 tamper challenges authored. No algebraic/semantic equivalence, source truth or independent vote. Exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
