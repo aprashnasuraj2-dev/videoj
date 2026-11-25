@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-098",
+  "session": "V2-099",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2865,7 +2865,7 @@
       "dependencies": [
         "V2-LK01-SEMANTIC-TRIAGE"
       ],
-      "scope": "Preserve original natural-language question, candidate meanings and separate nine semantic obligations; source spans, entity, scope, unit, modality, negation, quantifier, baseline, causality, method, review and unknowns. V2-054 candidate: bounded separate annotation envelope with 13 explicit facets, exact source spans by reviewed binding/claim ID, separate nine obligations, original question and coverage, no truth or human sign-off. Automatic extraction and UI remain open. Exact scoped annotation tests verified; wider automatic interpretation and review remain open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending.",
+      "scope": "Preserve original natural-language question, candidate meanings and separate nine semantic obligations; source spans, entity, scope, unit, modality, negation, quantifier, baseline, causality, method, review and unknowns. V2-054 candidate: bounded separate annotation envelope with 13 explicit facets, exact source spans by reviewed binding/claim ID, separate nine obligations, original question and coverage, no truth or human sign-off. Automatic extraction and UI remain open. Exact scoped annotation tests verified; wider automatic interpretation and review remain open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending. V2-099 candidate: closed English question grammar over exact caller-selected operand spans and reviewed mapping alternatives, inclusive negation, full-byte quotation claims, same compiler and bounded triage. Unsupported syntax and >8 alternatives refused. Not unrestricted semantic parsing.",
       "acceptance": "Closed versioned schema, exact source-bound extraction, omission/negation/scope adversaries; no invented inputs.",
       "evidence": [
         {
@@ -2883,7 +2883,7 @@
       "dependencies": [
         "V2-LK02-INTENT-IR"
       ],
-      "scope": "Route structured table imports, templates, rules, user expressions, reviewed contracts, document import and optional model proposals through cheapest admissible path. V2-072 candidate: deterministic human expression syntax over reviewed bindings, same compiler and contrast path, no provider. Structured table/document paths and consent/cost comparison remain open. V2-081 candidate: bounded unquoted TSV source text, explicit pinned cell coordinates/types, exact manual-contract parity; no automatic semantic extraction, formula evaluation or locale coercion.",
+      "scope": "Route structured table imports, templates, rules, user expressions, reviewed contracts, document import and optional model proposals through cheapest admissible path. V2-072 candidate: deterministic human expression syntax over reviewed bindings, same compiler and contrast path, no provider. Structured table/document paths and consent/cost comparison remain open. V2-081 candidate: bounded unquoted TSV source text, explicit pinned cell coordinates/types, exact manual-contract parity; no automatic semantic extraction, formula evaluation or locale coercion. V2-099 candidate: closed English question grammar over exact caller-selected operand spans and reviewed mapping alternatives, inclusive negation, full-byte quotation claims, same compiler and bounded triage. Unsupported syntax and >8 alternatives refused. Not unrestricted semantic parsing.",
       "acceptance": "Same contract across paths, explicit consent, costs and review; compare deterministic and model proposals without votes.",
       "evidence": [
         {

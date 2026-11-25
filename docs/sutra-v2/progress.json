@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-098",
+  "session": "V2-099",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -37,7 +37,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "research_register_impact_mapping_candidate_pending_exact_ci",
+  "state": "reviewed_question_grammar_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -400,14 +400,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-099",
+    "parent": "a56ee3ec7b425592a4a747aef96315668a11b6c0",
+    "description": "Exact caller-grounded English comparison grammar, full question coverage, explicit negation and bounded ambiguous mappings through reviewed expression/compiler; adversarial tests. Exact CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-098",
     "parent": "29c0778feb9f5930d062155bb9ca0613cd68f17c",
     "description": "Explicit research verification impact mapping, local register consistency test, failure diagnostics and V2-095 exact evidence reconciliation."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-097",
-    "parent": "4d66190fee90e04689244498c6abbb2c69e67aa0",
-    "description": "Frozen six-case matched execution-signature comparison with explicit semantic developer labels, duplicate-aware vote and retained witnesses; exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
