@@ -14,3 +14,7 @@ Deterministic receipt identities bind node, kernel identifier, ordered dependenc
 Limits: 64 Ki UTF-16 characters of graph JSON, 256 nodes, binary edges, depth 32, 48 decimal digits per input numerator/denominator, 512-bit normalized rationals, dimension exponents ±16, bounded canonical report. Kahn traversal sorts the bounded ready queue; this version still visits and hashes every node, so reported avoided **calculations** are not an end-to-end latency claim. Cycles and constraint-as-quantity dependencies fail admission. No untrusted executable callbacks. There is no external evidence resolver yet.
 
 The Observatory CLI asserts a real deterministic state change, exact incremental recomputation and rejection of modified/stale receipt artifacts. It is not a browser agent, deployment test, or novelty claim.
+
+## Separate reference implementation
+
+`reference/verify.py` recomputes full canonical receipts from the graph using Python Fraction, hashlib and DFS rather than the JavaScript implementation. Run `node packages/sutra-knowledge/examples/export-challenges.mjs > challenges.json` then `python3 packages/sutra-knowledge/reference/verify.py challenges.json`. Exact positive controls, stale/forged digests/outcomes, ambiguous JSON and Unicode/dimensional fixtures are checked. This is independently implemented but same-project, not independently operated. CI required before credit.

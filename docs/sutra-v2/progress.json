@@ -23,5 +23,10 @@
     }
   ],
   "release": "not_authorized",
-  "submission": "not_started"
+  "submission": "not_started",
+  "lastFailed": {
+    "sourceRevision": "fb1ddfff5b491db3ba1108fa3aec4643a62851e6",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514643061",
+    "reason": "test assertion expected TypeError instead of strict parser SyntaxError"
+  }
 }

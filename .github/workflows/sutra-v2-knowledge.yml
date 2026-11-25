@@ -20,7 +20,14 @@ jobs:
       - run: node --test packages/sutra-knowledge/test/*.test.mjs
       - name: Execute and assert capability demonstration
         run: node packages/sutra-knowledge/examples/observatory.mjs | tee sutra-v2-observation.json
+      - name: Independent Python reference replay
+        run: |
+          node packages/sutra-knowledge/examples/export-challenges.mjs > sutra-v2-challenges.json
+          python3 packages/sutra-knowledge/reference/verify.py sutra-v2-challenges.json | tee sutra-v2-reference.json
       - uses: actions/upload-artifact@v4
         with:
           name: sutra-v2-observation
-          path: sutra-v2-observation.json
+          path: |
+            sutra-v2-observation.json
+            sutra-v2-challenges.json
+            sutra-v2-reference.json

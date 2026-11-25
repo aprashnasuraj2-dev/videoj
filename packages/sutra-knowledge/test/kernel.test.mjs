@@ -57,7 +57,7 @@ test('closed grammar rejects false authority, ambiguous wire, missing dependenci
   graph(input('a','1',[1,0,17])),
   graph(input('a','1'),op('c','constraint','eq','a','a'),op('z','derive','add','c','a')),
   graph(input('n0','1'),...Array.from({length:32},(_,i)=>op('n'+(i+1),'derive','add','n'+i,'n0')))
- ])await assert.rejects(()=>v.evaluate(bad),TypeError);
+ ])await assert.rejects(()=>v.evaluate(bad),error=>error instanceof TypeError||error instanceof SyntaxError);
  const b=await v.evaluate(good);assert.equal(b.reportText,a.reportText);assert.deepEqual(b.stats.reused,['a']);
 });
 test('rational and dimension growth bounded; no floating point tolerance',async()=>{
