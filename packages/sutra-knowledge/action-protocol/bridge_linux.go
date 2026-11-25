@@ -16,6 +16,7 @@ import (
  "net/url"
  "os"
  "path/filepath"
+ "sync"
  "time"
 )
 
@@ -247,3 +248,67 @@ func (c *WitnessCoordinator) ServeHTTP(w http.ResponseWriter,r *http.Request){
  w.Header().Set("Content-Type",media)
  _,_=w.Write(response.Bytes())
 }
+
+
+type WitnessedAuthorityClient struct {
+ mu sync.Mutex
+ origin string
+ caller byte
+ key ed25519.PrivateKey
+ authority ed25519.PublicKey
+ witness ed25519.PublicKey
+ ctx Digest
+ genesis Digest
+ action Request
+ head Digest
+ http *http.Client
+ contacts int
+}
+func NewWitnessedAuthorityClient(origin string,caller byte,key ed25519.PrivateKey,authority,witness ed25519.PublicKey,ctx,genesis Digest,action Request,head Digest)(*WitnessedAuthorityClient,error){
+ u,e:=url.Parse(origin)
+ if e!=nil||u.Scheme!="http"||u.User!=nil||u.Path!=""||u.RawQuery!=""||u.Fragment!=""||u.Opaque!=""||u.Port()==""||u.Host==""{return nil,ErrPolicy}
+ ip:=net.ParseIP(u.Hostname())
+ if ip==nil||!ip.IsLoopback()||origin!="http://"+u.Host||caller>=authorityCallers||len(key)!=ed25519.PrivateKeySize||
+  len(authority)!=ed25519.PublicKeySize||len(witness)!=ed25519.PublicKeySize||ctx==(Digest{})||genesis==(Digest{})||action.Key==(Key{})||head==(Digest{}){return nil,ErrPolicy}
+ tr:=&http.Transport{Proxy:nil,DialContext:(&net.Dialer{Timeout:time.Second}).DialContext,DisableKeepAlives:true}
+ h:=&http.Client{Transport:tr,Timeout:2*time.Second,CheckRedirect:func(*http.Request,[]*http.Request)error{return http.ErrUseLastResponse}}
+ return &WitnessedAuthorityClient{
+  origin:origin,caller:caller,key:append(ed25519.PrivateKey(nil),key...),authority:append(ed25519.PublicKey(nil),authority...),
+  witness:append(ed25519.PublicKey(nil),witness...),ctx:ctx,genesis:genesis,action:action,head:head,http:h,
+ },nil
+}
+func (c *WitnessedAuthorityClient) Head()Digest{c.mu.Lock();defer c.mu.Unlock();return c.head}
+func (c *WitnessedAuthorityClient) Contacts()int{c.mu.Lock();defer c.mu.Unlock();return c.contacts}
+func (c *WitnessedAuthorityClient) exchange(op byte)(Receipt,WitnessedResponse,error){
+ req,e:=SignAuthorityRequest(c.caller,op,c.head,c.action,c.key);if e!=nil{return Receipt{},WitnessedResponse{},e}
+ c.contacts++
+ h,e:=http.NewRequest(http.MethodPost,c.origin+"/authority-witnessed",bytes.NewReader(req.Bytes()));if e!=nil{return Receipt{},WitnessedResponse{},ErrUnknown}
+ h.GetBody=nil;h.Header.Set("Content-Type",media);h.Header.Set("Accept",media)
+ res,e:=c.http.Do(h);if e!=nil{return Receipt{},WitnessedResponse{},ErrUnknown}
+ defer res.Body.Close()
+ switch res.StatusCode{
+ case http.StatusForbidden:
+  return Receipt{},WitnessedResponse{},ErrAuthorityAuth
+ case http.StatusConflict:
+  return Receipt{},WitnessedResponse{},ErrWitnessRollback
+ case http.StatusServiceUnavailable:
+  return Receipt{},WitnessedResponse{},ErrUnknown
+ case http.StatusOK:
+ default:
+  return Receipt{},WitnessedResponse{},ErrUnknown
+ }
+ if res.Header.Get("Content-Type")!=media||res.Request==nil||res.Request.URL.String()!=c.origin+"/authority-witnessed"{return Receipt{},WitnessedResponse{},ErrUnknown}
+ raw,e:=io.ReadAll(io.LimitReader(res.Body,witnessedResponseSize+1));if e!=nil||len(raw)!=witnessedResponseSize{return Receipt{},WitnessedResponse{},ErrUnknown}
+ response,e:=ParseWitnessedResponse(raw)
+ if e!=nil||!VerifyWitnessedResponse(response,req,c.ctx,c.authority,c.witness,c.genesis){return Receipt{},WitnessedResponse{},ErrUnknown}
+ c.head=response.Authority.After
+ switch response.Authority.Outcome{
+ case AuthorityCommitted:return response.Authority.Receipt,response,nil
+ case AuthorityAbsent:return Receipt{},response,ErrAbsent
+ case AuthorityConflict:return Receipt{},response,ErrHeadConflict
+ case AuthorityBudget:return Receipt{},response,ErrContacts
+ default:return Receipt{},WitnessedResponse{},ErrUnknown
+ }
+}
+func (c *WitnessedAuthorityClient) Commit()(Receipt,WitnessedResponse,error){c.mu.Lock();defer c.mu.Unlock();return c.exchange(AuthorityCommit)}
+func (c *WitnessedAuthorityClient) Status()(Receipt,WitnessedResponse,error){c.mu.Lock();defer c.mu.Unlock();return c.exchange(AuthorityStatus)}
