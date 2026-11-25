@@ -90,10 +90,24 @@ func ParseWitnessedResponse(raw []byte)(WitnessedResponse,error){
  witness,e:=ParseWitnessView(raw[authorityResponseSize:]);if e!=nil{return WitnessedResponse{},e}
  return WitnessedResponse{Authority:authority,Witness:witness},nil
 }
+// A witness version in this bounded coordinator is exactly one durable
+// authority contact. Refusal for an exhausted budget does not advance either.
+// This check is specific to the SharedAuthority contact ledger, not a generic
+// proof about arbitrary witness histories.
+func validWitnessedContact(r AuthorityResponse,req AuthorityRequest,v WitnessView)bool{
+ if r.Before==(Digest{})||r.After==(Digest{})||r.After!=v.Head||
+  r.CallerSpent>r.TotalSpent||v.Sequence!=uint32(r.TotalSpent){return false}
+ if (r.Stale==1)!=(req.Expected!=r.Before){return false}
+ if r.Outcome==AuthorityBudget{return r.Before==r.After}
+ if r.Before==r.After||r.CallerSpent==0||r.TotalSpent==0{return false}
+ if req.Op==AuthorityCommit&&r.Stale==1{return r.Outcome==AuthorityConflict}
+ if req.Op==AuthorityStatus{return r.Outcome==AuthorityCommitted||r.Outcome==AuthorityAbsent}
+ return req.Op==AuthorityCommit&&(r.Outcome==AuthorityCommitted||r.Outcome==AuthorityConflict)
+}
 func VerifyWitnessedResponse(r WitnessedResponse,req AuthorityRequest,ctx Digest,authority,witness ed25519.PublicKey,genesis Digest)bool{
  return VerifyAuthorityResponse(r.Authority,req,authority)&&
   VerifyWitnessViewPinned(r.Witness,ctx,authority,witness,genesis)&&
-  r.Witness.Head==r.Authority.After
+  validWitnessedContact(r.Authority,req,r.Witness)
 }
 
 
@@ -114,7 +128,7 @@ func ParseWitnessedEnvelope(raw []byte)(WitnessedEnvelope,error){
 func VerifyWitnessedEnvelope(e WitnessedEnvelope,req AuthorityRequest,challenge Digest,ctx Digest,authority,witness ed25519.PublicKey,genesis Digest)bool{
  return VerifyAuthorityResponse(e.Authority,req,authority)&&
   VerifyWitnessAttestation(e.Attestation,challenge,ctx,authority,witness,genesis)&&
-  e.Attestation.View.Head==e.Authority.After
+  validWitnessedContact(e.Authority,req,e.Attestation.View)
 }
 
 type WitnessClient struct {
@@ -357,7 +371,7 @@ func NewWitnessedAuthorityClient(origin string,caller byte,key ed25519.PrivateKe
  ip:=net.ParseIP(u.Hostname())
  if ip==nil||!ip.IsLoopback()||origin!="http://"+u.Host||caller>=authorityCallers||len(key)!=ed25519.PrivateKeySize||
   len(authority)!=ed25519.PublicKeySize||len(witness)!=ed25519.PublicKeySize||ctx==(Digest{})||genesis==(Digest{})||action.Key==(Key{})||
-  !VerifyWitnessViewPinned(pin,ctx,authority,witness,genesis){return nil,ErrPolicy}
+  pin.Sequence>authorityTotalContacts||!VerifyWitnessViewPinned(pin,ctx,authority,witness,genesis){return nil,ErrPolicy}
  tr:=&http.Transport{Proxy:nil,DialContext:(&net.Dialer{Timeout:time.Second}).DialContext,DisableKeepAlives:true}
  h:=&http.Client{Transport:tr,Timeout:2*time.Second,CheckRedirect:func(*http.Request,[]*http.Request)error{return http.ErrUseLastResponse}}
  return &WitnessedAuthorityClient{
@@ -393,10 +407,21 @@ func (c *WitnessedAuthorityClient) exchange(op byte)(Receipt,WitnessedEnvelope,e
  response,e:=ParseWitnessedEnvelope(raw)
  if e!=nil||!VerifyWitnessedEnvelope(response,req,challenge,c.ctx,c.authority,c.witness,c.genesis){return Receipt{},WitnessedEnvelope{},ErrUnknown}
  view:=response.Attestation.View
- if response.Authority.After==c.head{
-  if view.Sequence!=c.sequence{return Receipt{},WitnessedEnvelope{},ErrUnknown}
+ // The witness signs a fresh current head for this exact challenge. A
+ // lost response or another caller can leave the local pin behind by more
+ // than one transition. Require a strictly monotonic pin, and distinguish a
+ // fresh-parent contact from a stale-parent contact or no-op budget refusal.
+ // This trusts the pinned witness to retain its history; it is not a proof
+ // of each intervening transition or protection from a cloned witness key.
+ if view.Head==c.head{
+  if view.Sequence!=c.sequence||response.Authority.Before!=c.head||response.Authority.Outcome!=AuthorityBudget{return Receipt{},WitnessedEnvelope{},ErrUnknown}
  }else{
-  if view.Sequence!=c.sequence+1{return Receipt{},WitnessedEnvelope{},ErrUnknown}
+  if view.Sequence<=c.sequence{return Receipt{},WitnessedEnvelope{},ErrUnknown}
+  if response.Authority.Before==c.head{
+   if view.Sequence!=c.sequence+1{return Receipt{},WitnessedEnvelope{},ErrUnknown}
+  }else if response.Authority.Outcome!=AuthorityBudget&&view.Sequence<=c.sequence+1{
+   return Receipt{},WitnessedEnvelope{},ErrUnknown
+  }
  }
  c.head=response.Authority.After;c.sequence=view.Sequence
  switch response.Authority.Outcome{

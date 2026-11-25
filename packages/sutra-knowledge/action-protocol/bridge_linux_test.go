@@ -254,6 +254,23 @@ func TestWitnessedResponseCompositeProofAndHTTPBoundary(t *testing.T){
  wrongChallenge:=Digest{2}
  if VerifyWitnessedEnvelope(envelope,wire,wrongChallenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("witness envelope replay accepted under a new challenge")}
  if _,e=ParseWitnessedEnvelope(envelope.Authority.Bytes());e==nil{t.Fatal("raw authority response parsed as attested proof")}
+ // Correct signatures alone are insufficient if the two signers describe
+ // inconsistent versions/counters or an impossible no-op contact.
+ forged=envelope;forged.Attestation.View.Sequence++
+ copy(forged.Attestation.View.Signature[:],ed25519.Sign(witnessKey,forged.Attestation.View.message(ctx,authorityPub)))
+ copy(forged.Attestation.Signature[:],ed25519.Sign(witnessKey,forged.Attestation.message(ctx,authorityPub)))
+ if !VerifyWitnessAttestation(forged.Attestation,challenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("negative control lacks valid witness signature")}
+ if VerifyWitnessedEnvelope(forged,wire,challenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("signed witness sequence inconsistent with total contacts")}
+ forged=envelope;forged.Authority.TotalSpent++
+ copy(forged.Authority.Signature[:],ed25519.Sign(authorityKey,forged.Authority.message()))
+ if !VerifyAuthorityResponse(forged.Authority,wire,authorityPub){t.Fatal("negative control lacks valid authority signature")}
+ if VerifyWitnessedEnvelope(forged,wire,challenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("signed authority counters inconsistent with witness sequence")}
+ forged=envelope;forged.Authority.Stale=1
+ copy(forged.Authority.Signature[:],ed25519.Sign(authorityKey,forged.Authority.message()))
+ if VerifyWitnessedEnvelope(forged,wire,challenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("signed stale flag inconsistent with request parent")}
+ forged=envelope;forged.Authority.Before=forged.Authority.After;forged.Authority.Stale=1
+ copy(forged.Authority.Signature[:],ed25519.Sign(authorityKey,forged.Authority.message()))
+ if VerifyWitnessedEnvelope(forged,wire,challenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("signed committed contact cannot be a no-op")}
  t.Log("external acknowledgement requires exact authority receipt plus nonce-bound pinned witness attestation at the same head")
 }
 
