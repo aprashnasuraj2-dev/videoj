@@ -16,3 +16,17 @@ fi
 cat "$WORK/unsafe.log"
 grep -F 'Invariant AtMostOnce is violated' "$WORK/unsafe.log"
 python3 recovery_model.py
+
+# Separate multi-key CAS abstraction; preserve original recovery gate above.
+java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/anchored-safe" -config AnchoredSafe.cfg AnchoredRecovery.tla > "$WORK/anchored-safe.log" 2>&1 || { cat "$WORK/anchored-safe.log"; exit 1; }
+cat "$WORK/anchored-safe.log"
+grep -F 'No error has been found' "$WORK/anchored-safe.log"
+for entry in 'Unauthorized Authorized' 'Budget BoundedContacts' 'Rollback NoRollback' 'Stale NoFork'; do
+ set -- $entry
+ if java -cp "$JAR" tlc2.TLC -workers 1 -metadir "$WORK/anchored-$1" -config "Anchored$1.cfg" AnchoredRecovery.tla > "$WORK/anchored-$1.log" 2>&1; then
+  cat "$WORK/anchored-$1.log"; echo "mutant $1 unexpectedly succeeded" >&2; exit 1
+ fi
+ cat "$WORK/anchored-$1.log"
+ grep -F "Invariant $2 is violated" "$WORK/anchored-$1.log"
+done
+python3 anchored_model.py
