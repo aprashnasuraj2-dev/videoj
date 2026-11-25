@@ -35,11 +35,11 @@ const blank=()=>({calls:0,inputBytes:0,outputTokens:0,actualInputBytes:0,actualO
 
 export function createProviderBudgetLedger({global,profiles,leaseTicks=45,randomBytes}={}){
  const globalLimits=limits(global);
- if(!Array.isArray(profiles)||profiles.length<1||profiles.length>8||!safe(leaseTicks,1,MAX_LEASE_TICKS))stop('CONFIG');
+ if(!Array.isArray(profiles)||profiles.length>8||!safe(leaseTicks,1,MAX_LEASE_TICKS))stop('CONFIG');
  const profileMap=new Map();
  for(const item of profiles){
   if(!closed(item,['profileId','limits'])||!profilePattern.test(item.profileId)||profileMap.has(item.profileId))stop('CONFIG');
-  profileMap.set(item.profileId,{limits:limits(item.limits,globalLimits),used:blank()});
+  profileMap.set(item.profileId,{limits:limits(item.limits,globalLimits),used:blank(),enabled:true});
  }
  const fill=randomBytes??(length=>{
   if(!globalThis.crypto?.getRandomValues)stop('RANDOM');
@@ -84,10 +84,22 @@ export function createProviderBudgetLedger({global,profiles,leaseTicks=45,random
   bucket.inputBytes+inputBytes<=limit.maxInputBytes&&bucket.outputTokens+outputTokens<=limit.maxOutputTokens&&bucket.active<limit.maxConcurrent;
 
  return Object.freeze({
+  registerProfile(input){
+   if(!closed(input,['profileId','limits'])||!profilePattern.test(input.profileId)||profileMap.has(input.profileId)||profileMap.size>=8)stop('PROFILE');
+   const entry={limits:limits(input.limits,globalLimits),used:blank(),enabled:true};
+   profileMap.set(input.profileId,entry);
+   return Object.freeze({profileId:input.profileId,enabled:true,limits:entry.limits,used:publicUsed(entry.used)});
+  },
+  disableProfile(profileId){
+   const profile=profileMap.get(profileId);if(!profile)stop('PROFILE');
+   profile.enabled=false;
+   return Object.freeze({profileId,enabled:false,limits:profile.limits,used:publicUsed(profile.used)});
+  },
   reserve({profileId,inputBytes,maxOutputTokens,now}={}){
    prune(now);
    const profile=profileMap.get(profileId);
    if(!profile||!safe(inputBytes,1,MAX_REQUEST_BYTES)||!safe(maxOutputTokens,1,MAX_REQUEST_OUTPUT))stop('REQUEST');
+   if(!profile.enabled)stop('PROFILE_DISABLED');
    if(!canReserve(used,globalLimits,inputBytes,maxOutputTokens)||!canReserve(profile.used,profile.limits,inputBytes,maxOutputTokens))stop('QUOTA');
    const id=leaseId(),lease={id,profileId,inputBytes,outputTokens:maxOutputTokens,reservedAt:now,expiresAt:now+leaseTicks,state:'active',active:true,unknown:false,settlement:null};
    leases.set(id,lease);
@@ -131,7 +143,7 @@ export function createProviderBudgetLedger({global,profiles,leaseTicks=45,random
   snapshot(){
    return Object.freeze({
     global:Object.freeze({limits:globalLimits,used:publicUsed(used)}),
-    profiles:Object.freeze([...profileMap.entries()].map(([profileId,p])=>Object.freeze({profileId,limits:p.limits,used:publicUsed(p.used)})))
+    profiles:Object.freeze([...profileMap.entries()].map(([profileId,p])=>Object.freeze({profileId,enabled:p.enabled,limits:p.limits,used:publicUsed(p.used)})))
    });
   },
   inspectLease(id){return publicLease(getLease(id));}
