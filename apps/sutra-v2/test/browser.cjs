@@ -562,7 +562,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   }
   await financeStep('finance-example','baseline','UNDERDETERMINED',4,0);
   await financeStep('finance-ocf','ocf','UNDERDETERMINED',2,1);
-  const financeFull=await financeStep('finance-full','full','REFUTED',1,1);assert.equal(financeFull.report.activeEvidence.length,6);assert.match(await financePage.locator('#pinned-finance-explanation').innerText(),/66,987/);
+  const financeFull=await financeStep('finance-full','full','REFUTED',1,1);assert.equal(financeFull.report.activeEvidence.length,6);assert.match(await financePage.locator('#pinned-finance-explanation').innerText(),/66,987/);assert.match(await financePage.locator('#pinned-finance-explanation').innerText(),/111,324/);assert.match(await financePage.locator('#pinned-finance-explanation').innerText(),/4,624/);
   await financeStep('finance-withdraw','withdrawn','UNDERDETERMINED',4,0);assert.deepEqual(financeErrors,[]);assert.deepEqual(financeExternal,[]);await financePage.close();
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];

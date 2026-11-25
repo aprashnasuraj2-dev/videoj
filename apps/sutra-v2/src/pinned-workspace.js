@@ -7,7 +7,7 @@ import {exportProposalChallenge} from '../../../packages/sutra-knowledge/proposa
 import {exportProposalClash} from '../../../packages/sutra-knowledge/proposal-clash.js';
 import {exportObservedDomainGrid} from '../../../packages/sutra-knowledge/coverage-grid.js';
 import {exportAssumptionContrast} from '../../../packages/sutra-knowledge/assumption-contrast.js';
-import {microsoftCashFlowExample} from '../../../packages/sutra-knowledge/microsoft-cashflow.js';
+import {microsoftCashFlowExample,diagnoseMicrosoftCashFlow} from '../../../packages/sutra-knowledge/microsoft-cashflow.js';
 const by=id=>document.getElementById('pinned-'+id),txt=(id,v)=>{by(id).textContent=v;};
 let busy=false,current=null,sample=null,stage=null,cap=null,verifiedCap=null,rangeResult=null,coverageResult=null,proposalResult=null,clashResult=null,gridResult=null,contrastResult=null,financeSample=null;
 const capStatus=(state,text)=>{by('capsule-status').dataset.state=state;txt('capsule-status',text);};
@@ -40,9 +40,16 @@ function refresh(){
  txt('capsule-context',verifiedCap?(current?(verifiedCap.caseDigest===current.result.caseDigest&&verifiedCap.eventDigest===current.result.eventDigest?'Verified snapshot matches current investigation.':'Verified snapshot is different from the current investigation.'): 'Verified imported snapshot only; no current investigation.'):'No verified snapshot selected.');
 }
 for(const id of ['case','pin','events'])by(id).addEventListener('input',()=>{stage=null;clear();refresh();});
-function render(){
+async function render(){
  const r=current.result;
- if(stage?.startsWith('finance_'))txt('finance-explanation',stage==='finance_baseline'?'Four hypothetical candidate combinations. No reported fields admitted yet.':stage==='finance_ocf'?'FY2026 operating cash flow is higher; two different cash PPE assumptions still survive. The proxy direction is unresolved.':stage==='finance_full'?'FY2025 proxy: 71,611; FY2026 proxy: 66,987 (USD million). Difference: −4,624. Six field readings, two filings, one declared issuer root. Computation is conditional on the normalized extracts.':'Hypothetical issuer-lineage withdrawal removes all six dependent readings. Both filings remain in historical events; four candidate worlds survive again.');
+ if(stage?.startsWith('finance_')){
+  const d=await diagnoseMicrosoftCashFlow(current.caseText,current.result.caseDigest,current.eventText);
+  const fmt=v=>BigInt(v.split('/')[0]).toLocaleString('en-US'),distinct=id=>[...new Set(d.worlds.map(w=>w.quantities[id].value))].sort((a,b)=>BigInt(a.split('/')[0])<BigInt(b.split('/')[0])?-1:1).map(fmt).join(' / ');
+  const admitted=id=>d.activeEvidence.find(e=>e.nodeId===id)?.value;
+  const note=d.activeEvidence.length?d.activeEvidence.length+' admitted fields, '+d.declaredRoots.length+' declared issuer root(s). ':'No active field readings'+(d.priorReads?'; '+d.priorReads+' prior readings remain in history. ':'. ');
+  const actual=admitted('ocf26')&&admitted('ppe26')&&admitted('ocf25')&&admitted('ppe25');
+  txt('finance-explanation',note+(admitted('ocf26')?'Admitted FY2026 operating cash: '+fmt(admitted('ocf26'))+'. ':'')+(d.worlds.length?(actual?'Reported-input conditional computation: ':'Surviving candidate calculations: ')+'FY2025 proxy '+distinct('proxy25')+'; FY2026 proxy '+distinct('proxy26')+'; change '+distinct('delta')+'; maximum FY2026 cash PPE for nondecreasing proxy '+distinct('ppe_limit')+' (USD million). ':'No compatible candidate; no proxy computation claimed. ')+(actual&&d.worlds.length===1?'Admitted FY2026 cash PPE '+fmt(admitted('ppe26'))+'. ':'')+'State: '+d.state+'. Normalized extracts and declared model only.');
+ }
  txt('alignment','Same typed graph across '+current.alignment.worldCount+' worlds · '+current.alignment.nodeCount+' nodes · only input values vary.');
  txt('state',r.state);txt('worlds',r.report.survivingWorlds.length+' / '+r.report.worlds.length);txt('roots',r.rootSummary.length);
  const format=(name,xs)=>name+': '+(xs.length?xs.map(x=>(x.roots.join(' + ')||'Declared model alone')+' → '+x.worlds.length+' compatible worlds').join('\n'):'none');
@@ -58,7 +65,7 @@ function render(){
 }
 async function work(setup){
  if(busy)return;busy=true;clear();refresh();
- try{if(setup)await setup();current=await alignedInvestigationExport(by('case').value,by('pin').value.trim(),by('events').value);render();}
+ try{if(setup)await setup();current=await alignedInvestigationExport(by('case').value,by('pin').value.trim(),by('events').value);await render();}
  catch(e){current=null;stage=null;by('result').hidden=true;txt('status','REFUSED: '+(String(e?.message).startsWith('CASE_')?e.message:'case or evidence admission failed')+'. No result exported.');}
  finally{busy=false;refresh();}
 }
