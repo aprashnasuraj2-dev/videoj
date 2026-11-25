@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-058",
+  "session": "V2-059",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2901,13 +2901,20 @@
     {
       "id": "V2-LK05-SEMANTIC-COUNTERFACTUAL",
       "track": "B",
-      "status": "Implemented but unverified",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK02-INTENT-IR"
       ],
-      "scope": "Perturb independent inputs to distinguish accidentally agreeing incorrect formalizations; use existing contrast and counterexample infrastructure. V2-056 candidate: explicit pinned finite binding perturbations over existing typed kernel; detect accidental baseline agreement, compare cached/fresh report bytes, no evidence mutation. No automatic scenario synthesis, multi-axis completeness or independent replay yet.",
+      "scope": "Perturb independent inputs to distinguish accidentally agreeing incorrect formalizations; use existing contrast and counterexample infrastructure. V2-056 candidate: explicit pinned finite binding perturbations over existing typed kernel; detect accidental baseline agreement, compare cached/fresh report bytes, no evidence mutation. No automatic scenario synthesis, multi-axis completeness or independent replay yet. Scoped unit/CI evidence registered; broader acceptance remains open.",
       "acceptance": "Wrong year, sign, denominator, population, aggregation, units and causal inference adversaries.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK05-SEMANTIC-COUNTERFACTUAL",
+          "sourceRevision": "8a335023e62eedf19f3cc4849c0417f9b0604f5c",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604211276/job/139170705861",
+          "description": "All nine exact workflows passed. Explicit current/prior period perturbations break accidental agreement; cached/fresh report equivalence and adversarial plan rejection passed. Automatic scenario synthesis and independent counterfactual replay open."
+        }
+      ]
     },
     {
       "id": "V2-LK06-SEMANTIC-WORLDS",
@@ -2936,24 +2943,38 @@
     {
       "id": "V2-LK08-KNOWLEDGE-GRAPH",
       "track": "B",
-      "status": "Implemented but unverified",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK02-INTENT-IR"
       ],
-      "scope": "Version claims, evidence, assumptions, hypotheses, definitions, observations, derived values, contradictions, questions, decisions, plans and proof artifacts; typed edge provenance. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open.",
+      "scope": "Version claims, evidence, assumptions, hypotheses, definitions, observations, derived values, contradictions, questions, decisions, plans and proof artifacts; typed edge provenance. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. Scoped unit/CI evidence registered; broader acceptance remains open.",
       "acceptance": "Immutable identity and edge authority; distinguish human/model/formal relations; reject cycles in executable DAG.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK08-KNOWLEDGE-GRAPH",
+          "sourceRevision": "32348421e11bd8882117f5a4b653cf432e456846",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604019865/job/139170041893",
+          "description": "All nine workflows passed at V2-055; scoped version graph, two-domain correction and withdrawal, irrelevant change, stale pin, wrong parent and declared lineage tests passed. Broader graph/transaction and incremental gates open."
+        }
+      ]
     },
     {
       "id": "V2-LK09-REVISION",
       "track": "B",
-      "status": "Implemented but unverified",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK08-KNOWLEDGE-GRAPH"
       ],
-      "scope": "Incremental evidence replacement/withdrawal, direct/transitive dependency invalidation, and historical reproducibility. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open.",
+      "scope": "Incremental evidence replacement/withdrawal, direct/transitive dependency invalidation, and historical reproducibility. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. Scoped unit/CI evidence registered; broader acceptance remains open.",
       "acceptance": "Incremental equals full recompute; shared descendants, concurrency, stale cache, interrupted writes, cycles and simultaneous updates.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK09-REVISION",
+          "sourceRevision": "32348421e11bd8882117f5a4b653cf432e456846",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604019865/job/139170041893",
+          "description": "All nine workflows passed at V2-055; scoped version graph, two-domain correction and withdrawal, irrelevant change, stale pin, wrong parent and declared lineage tests passed. Broader graph/transaction and incremental gates open."
+        }
+      ]
     },
     {
       "id": "V2-LK10-VERSION-CONTROL",
@@ -2974,9 +2995,16 @@
         "V2-LK09-REVISION",
         "V2-LK07-AMBIGUITY-REVIEW"
       ],
-      "scope": "Explain changes, surviving/invalidated conclusions, new contradictions, reconsidered decisions, missing evidence and next investigation. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending.",
+      "scope": "Explain changes, surviving/invalidated conclusions, new contradictions, reconsidered decisions, missing evidence and next investigation. V2-055 narrow candidate: exact versioned source/binding/candidate graph and two-domain full-replay impact; remaining broader node types, incremental equivalence, concurrency, persistence, UX and independent replay are open. V2-058 candidate: independent Python bounded living version replay and impact parity against actual browser exports, separately held pins; diagnostic refusal reasons excluded, exact CI pending. Scoped unit/CI evidence registered; broader acceptance remains open.",
       "acceptance": "Two independent domain journeys, independently replayable export, old snapshots retained.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK11-IMPACT-REPORT",
+          "sourceRevision": "32348421e11bd8882117f5a4b653cf432e456846",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604019865/job/139170041893",
+          "description": "All nine workflows passed at V2-055; scoped version graph, two-domain correction and withdrawal, irrelevant change, stale pin, wrong parent and declared lineage tests passed. Broader graph/transaction and incremental gates open."
+        }
+      ]
     },
     {
       "id": "V2-LK12-ACQUISITION",

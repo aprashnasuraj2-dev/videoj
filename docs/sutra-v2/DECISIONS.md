@@ -26,3 +26,7 @@ Reuse the reviewed workspace instead of creating a disconnected synthetic-only U
 ## V2-058
 
 Independent replay reuses the Python reference compiler and reconstructs admitted evidence links and dependency consequences via an independent fixed-point traversal. Input-only version pins prevent treating derived verdicts as authority. Explicit --living profile, no cross-profile auto-detection. Preserve compiler refusal status but do not equate independently generic exceptions with producer-specific diagnostic reasons; parity normalizes only independently refused diagnostics. Browser artifact tests retain external pins and reject nonidentity mutants. Independent implementation is same-project, not independent operator or empirical truth. No unbounded archive input; maximum version bytes 256 KiB.
+
+## V2-059
+
+Mobile correctness is not optional. The semantic and revision computation succeeded in the observed browser journey, but document width exceeded 360px. Keep the failed evidence and existing assertion; constrain new controls and long digest text and add diagnostic details for any residual overflow. No horizontal clipping workaround or weakened assertion.

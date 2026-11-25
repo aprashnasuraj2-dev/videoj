@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-058",
+  "session": "V2-059",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK05-SEMANTIC-COUNTERFACTUAL",
@@ -27,7 +27,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "independent_living_version_replay_candidate_pending_exact_ci",
+  "state": "responsive_living_workflow_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -374,15 +374,13 @@
   "release": "not_authorized",
   "submission": "not_started",
   "lastFailed": {
-    "sourceRevision": "a3417cb102ab47a982520bde570fdd895e8e1d69",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45595551544",
-    "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45595551544/job/139140557471",
-    "reason": "Browser independent order-contrast verifier failed line 77 in tamper loop after original reconstruction passed. First pair equivalent GT overlap mutation ['GT'] is a no-op; candidate changes to [] and asserts each mutation differs before rejection. Knowledge job 139140558164 passed; 7 other PR workflows passed; full gate remains open.",
-    "resolutionStatus": "resolved at exact nine green workflows",
-    "resolutionRevision": "480c88bce1753d9693cca830d6e6b851722ed90b",
-    "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45602751694/job/139165593491"
+    "sourceRevision": "daace962bc444b0239eb933ea7dfdd64ad6351b9",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604452168",
+    "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604452168/job/139171547235",
+    "reason": "Actual Chromium completed semantic baseline restore, corrected source, impact export, four conditional reversal assertions and pin checks, then failed existing 360px viewport overflow assertion at browser.cjs:703. Narrow layout is an acceptance failure; no full browser credit.",
+    "resolutionStatus": "Responsive CSS and stronger diagnostic assertion candidate; exact CI pending"
   },
-  "lastVerifiedKernelSource": "6684c3f41fdf22c73aa9d43c89b273d63071f35f",
+  "lastVerifiedKernelSource": "8a335023e62eedf19f3cc4849c0417f9b0604f5c",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -392,14 +390,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-059",
+    "parent": "7c3e91af8cae21ef94050cb0f96670144afd24a9",
+    "description": "Fix 360px living workspace overflow and preserve exact browser failure, full CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-058",
     "parent": "daace962bc444b0239eb933ea7dfdd64ad6351b9",
     "description": "Independent Python living version replay, explicit offline archive profile, actual browser impact parity and mutations; exact CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-057",
-    "parent": "8a335023e62eedf19f3cc4849c0417f9b0604f5c",
-    "description": "Actual caller-authored semantic version, independent retained pin input, baseline restore and corrected source impact UI; browser regressions authored, exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -654,6 +652,13 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45595551544/job/139140557471",
       "reason": "Browser independent order-contrast verifier failed line 77 in tamper loop after original reconstruction passed. First pair equivalent GT overlap mutation ['GT'] is a no-op; candidate changes to [] and asserts each mutation differs before rejection. Knowledge job 139140558164 passed; 7 other PR workflows passed; full gate remains open.",
       "resolutionStatus": "correction candidate; exact CI pending"
+    },
+    {
+      "sourceRevision": "daace962bc444b0239eb933ea7dfdd64ad6351b9",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604452168",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604452168/job/139171547235",
+      "reason": "Actual Chromium completed semantic baseline restore, corrected source, impact export, four conditional reversal assertions and pin checks, then failed existing 360px viewport overflow assertion at browser.cjs:703. Narrow layout is an acceptance failure; no full browser credit.",
+      "resolutionStatus": "Responsive CSS and stronger diagnostic assertion candidate; exact CI pending"
     }
   ],
   "reconciledDurableCandidate": {
@@ -1071,6 +1076,30 @@
       "sourceRevision": "6684c3f41fdf22c73aa9d43c89b273d63071f35f",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45603794880/job/139169262471",
       "description": "All nine workflows green at V2-054, knowledge PR 45603794880 and push 45603785280. Scoped 13-facet annotations, nine obligations and exact source-linked references; broader semantic compiler remains open."
+    },
+    {
+      "id": "V2-LK08-KNOWLEDGE-GRAPH",
+      "sourceRevision": "32348421e11bd8882117f5a4b653cf432e456846",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604019865/job/139170041893",
+      "description": "All nine workflows passed at V2-055; scoped version graph, two-domain correction and withdrawal, irrelevant change, stale pin, wrong parent and declared lineage tests passed. Broader graph/transaction and incremental gates open."
+    },
+    {
+      "id": "V2-LK09-REVISION",
+      "sourceRevision": "32348421e11bd8882117f5a4b653cf432e456846",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604019865/job/139170041893",
+      "description": "All nine workflows passed at V2-055; scoped version graph, two-domain correction and withdrawal, irrelevant change, stale pin, wrong parent and declared lineage tests passed. Broader graph/transaction and incremental gates open."
+    },
+    {
+      "id": "V2-LK11-IMPACT-REPORT",
+      "sourceRevision": "32348421e11bd8882117f5a4b653cf432e456846",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604019865/job/139170041893",
+      "description": "All nine workflows passed at V2-055; scoped version graph, two-domain correction and withdrawal, irrelevant change, stale pin, wrong parent and declared lineage tests passed. Broader graph/transaction and incremental gates open."
+    },
+    {
+      "id": "V2-LK05-SEMANTIC-COUNTERFACTUAL",
+      "sourceRevision": "8a335023e62eedf19f3cc4849c0417f9b0604f5c",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45604211276/job/139170705861",
+      "description": "All nine exact workflows passed. Explicit current/prior period perturbations break accidental agreement; cached/fresh report equivalence and adversarial plan rejection passed. Automatic scenario synthesis and independent counterfactual replay open."
     }
   ],
   "reconciledCI": [

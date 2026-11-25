@@ -700,7 +700,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.deepEqual(impact.impact.sourceChanges,[{id:'report_b',change:'CHANGED'}]);assert.equal(impact.impact.candidates.filter(c=>c.outcome==='CONDITIONAL_RESULT_REVERSED').length,4);
   assert.equal(impact.impact.decisionAuthority,'NONE');
   const newPin=await reviewPage.locator('#review-semantic-pin').innerText();assert.equal(impact.afterDigest,newPin);fs.writeFileSync(path.join(output,'living-after.json'),impact.afterVersion);fs.writeFileSync(path.join(output,'living-after.sha256'),newPin+'\n');
-  assert.equal(await reviewPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(reviewErrors,[]);assert.deepEqual(reviewExternal,[]);await reviewPage.close();
+  const livingLayout=await reviewPage.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.right>innerWidth+1;}).slice(0,20).map(e=>({tag:e.tagName,id:e.id,className:typeof e.className==='string'?e.className:'',right:e.getBoundingClientRect().right,width:e.getBoundingClientRect().width}))}));assert.ok(livingLayout.scrollWidth<=livingLayout.width,JSON.stringify(livingLayout));assert.deepEqual(reviewErrors,[]);assert.deepEqual(reviewExternal,[]);await reviewPage.close();
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});

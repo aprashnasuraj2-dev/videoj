@@ -575,3 +575,8 @@ V2-054 exact 6684c3f41fdf22c73aa9d43c89b273d63071f35f all nine workflows success
 ## V2-058 — Independent living-version replay candidate
 
 New Python profile uses the existing independent reviewed compiler and Fraction/hashlib reference, validates nested exact version/contract/batch/annotation pins, reconstructs admitted candidate statuses, exact source-linked facets, explicit obligations and graph; independent fixed-point dependency traversal reconstructs scoped version impact. Offline verifier zipapp gains explicit --living profile (no automatic profile fallback). Actual browser before/after artifact parity and separate pin checks authored; 13 material impact mutations and stale pin/schema controls. Producer-specific refusal reason is intentionally not claimed reproduced; status and missing dependency fields still checked. Exact CI pending; no independent operator, semantic truth, empirical authority or deployment. Historical checks preserved.
+
+
+## V2-059 — Responsive correction and exact candidate reconciliation
+
+V2-055 `32348421e11bd8882117f5a4b653cf432e456846` and V2-056 `8a335023e62eedf19f3cc4849c0417f9b0604f5c` each 9/9 workflows green, scoped graph/version and counterfactual results registered. Do not promote full broader gates. V2-057 `daace962bc444b0239eb933ea7dfdd64ad6351b9` actual browser job 139171547235 failed the 360px overflow check after executing correction and four reversal assertions. Preserve the failure; add scoped layout rules for semantic rows, digest wrapping, file input, controls and pre output; keep the width requirement and report overflowing element diagnostics. V2-058 independent replay not yet verified. No release. Exact V2-059 CI pending.
