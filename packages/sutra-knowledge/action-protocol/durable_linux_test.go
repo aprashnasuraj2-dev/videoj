@@ -6,9 +6,12 @@ import (
  "crypto/ed25519"
  "errors"
  "os"
+ "net/http"
+ "net/http/httptest"
  "os/exec"
  "path/filepath"
  "sync"
+ "sync/atomic"
  "testing"
 )
 
@@ -63,7 +66,7 @@ func TestDurableCrashHelper(t *testing.T){
  s,e:=OpenDurable(dir,ctx,a,pk,2);if e!=nil{t.Fatal(e)}
  b,e:=os.ReadFile(filepath.Join(dir,"request.fixture"));if e!=nil{t.Fatal(e)}
  r,e:=ParseRequest(b);if e!=nil{t.Fatal(e)}
- s.fault=func(stage string){if stage==os.Getenv("SUTRA_CRASH_STAGE"){os.Exit(73)}}
+ s.fault=func(stage string)error{if stage==os.Getenv("SUTRA_CRASH_STAGE"){os.Exit(73)};return nil}
  if _,e=s.Commit(r);e!=nil{t.Fatal(e)}
  if os.Getenv("SUTRA_CRASH_STAGE")=="after-commit"{os.Exit(73)}
  t.Fatal("crash seam not reached")
@@ -86,4 +89,63 @@ func TestDurableProcessCrashBoundaries(t *testing.T){
   if v,e:=s.Commit(approve(t,1,ctx,ak));e!=nil||v.Version!=2{t.Fatal("duplicate effect",e)}
   t.Log("actual process exit at",stage,"and same-key recovery")
  })}
+}
+
+func TestDurableTCPReopenAfterLostReply(t *testing.T){
+ var active atomic.Pointer[DurableReceiver]
+ var commits,status atomic.Int32
+ srv:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
+  if r.URL.Path=="/commit"&&commits.Add(1)==1{
+   sink:=httptest.NewRecorder();active.Load().ServeHTTP(sink,r)
+   if sink.Code!=200{t.Errorf("commit status %d",sink.Code)}
+   conn,_,e:=w.(http.Hijacker).Hijack();if e!=nil{t.Error(e);return};conn.Close();return
+  }
+  if r.URL.Path=="/status"{status.Add(1)}
+  active.Load().ServeHTTP(w,r)
+ }));defer srv.Close()
+ dir:=privateTemp(t);a,ak:=keys(1);p,pk:=keys(2)
+ ctx,e:=Context(srv.URL,"manifest-v1","session-1");if e!=nil{t.Fatal(e)}
+ s,e:=CreateDurable(dir,ctx,a,pk,2);if e!=nil{t.Fatal(e)};defer s.Close();active.Store(s)
+ r:=approve(t,0,ctx,ak);c,e:=NewClient(srv.URL,"manifest-v1","session-1",r,p);if e!=nil{t.Fatal(e)}
+ if _,e=c.Dispatch();!errors.Is(e,ErrUnknown)||c.State()!=Unknown{t.Fatal("unknown outcome lost",e)}
+ before,e:=s.Status(r);if e!=nil{t.Fatal(e)}
+ if e=s.Close();e!=nil{t.Fatal(e)}
+ s,e=OpenDurable(dir,ctx,a,pk,2);if e!=nil{t.Fatal(e)};defer s.Close();active.Store(s)
+ receipt,e:=c.Reconcile();if e!=nil||receipt!=before||c.State()!=Committed{t.Fatal("reconciliation",e)}
+ if _,e=c.RetrySameApproval();e!=nil||commits.Load()!=1||status.Load()!=1||c.Contacts()!=2{t.Fatal("duplicate contact",e)}
+ if v,e:=s.Commit(approve(t,1,ctx,ak));e!=nil||v.Version!=2{t.Fatal("duplicate effect",e)}
+ t.Log("actual TCP lost response, store close/reopen, one commit and one status contact")
+}
+func TestDurableAmbiguousPersistencePoisonsOwner(t *testing.T){
+ for _,stage:=range []string{"before-rename","after-rename"}{t.Run(stage,func(t *testing.T){
+  dir:=privateTemp(t);ctx,a,ak,pk:=durableKeys(t)
+  s,e:=CreateDurable(dir,ctx,a,pk,2);if e!=nil{t.Fatal(e)};defer s.Close()
+  r:=approve(t,0,ctx,ak)
+  s.fault=func(at string)error{if stage==at{return errors.New("injected persistence failure")};return nil}
+  if _,e=s.Commit(r);!errors.Is(e,ErrUnknown){t.Fatal("uncertain commit treated as definitive",e)}
+  if _,e=s.Status(r);!errors.Is(e,ErrStore){t.Fatal("poisoned status accepted",e)}
+  if _,e=s.Commit(r);!errors.Is(e,ErrStore){t.Fatal("poisoned retry accepted",e)}
+  s.Close()
+  s,e=OpenDurable(dir,ctx,a,pk,2);if e!=nil{t.Fatal(e)};defer s.Close()
+  before,e:=s.Status(r)
+  if stage=="before-rename"{if !errors.Is(e,ErrAbsent){t.Fatal(e)}}else if e!=nil||before.Version!=1{t.Fatal(e)}
+  v,e:=s.Commit(r);if e!=nil||v.Version!=1{t.Fatal("recovery",e)}
+  if stage=="after-rename"&&before!=v{t.Fatal("changed receipt")}
+ })}
+}
+func TestDurableExternalReceiptPinRejectsSignedRollback(t *testing.T){
+ dir:=privateTemp(t);ctx,a,ak,pk:=durableKeys(t)
+ s,e:=CreateDurable(dir,ctx,a,pk,2);if e!=nil{t.Fatal(e)};defer s.Close()
+ p:=filepath.Join(dir,"state.bin");old,e:=os.ReadFile(p);if e!=nil{t.Fatal(e)}
+ req:=approve(t,0,ctx,ak);receipt,e:=s.Commit(req);if e!=nil{t.Fatal(e)}
+ s.Close()
+ s,e=OpenDurableAnchored(dir,ctx,a,pk,2,req,receipt);if e!=nil{t.Fatal(e)};s.Close()
+ // A genuinely signed older store is not corruption. Unanchored open cannot
+ // distinguish it; make that counterexample permanent, then require the pin.
+ if e=os.WriteFile(p,old,0600);e!=nil{t.Fatal(e)}
+ s,e=OpenDurable(dir,ctx,a,pk,2);if e!=nil{t.Fatal("unanchored counterexample unexpectedly refused",e)}
+ if _,e=s.Status(req);!errors.Is(e,ErrAbsent){t.Fatal(e)};s.Close()
+ if s,e=OpenDurableAnchored(dir,ctx,a,pk,2,req,receipt);!errors.Is(e,ErrStore){if s!=nil{s.Close()};t.Fatal("signed rollback accepted",e)}
+ bad:=receipt;bad.Version=2
+ if _,e=OpenDurableAnchored(dir,ctx,a,pk,2,req,bad);!errors.Is(e,ErrPolicy){t.Fatal("invalid pin accepted",e)}
 }

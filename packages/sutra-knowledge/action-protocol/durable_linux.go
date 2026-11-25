@@ -10,6 +10,7 @@ import (
  "crypto/ed25519"
  "errors"
  "io"
+ "net/http"
  "os"
  "path/filepath"
  "sync"
@@ -31,7 +32,7 @@ type DurableReceiver struct {
  requests []Request
  poisoned bool
  // Test-only crash seam: no external callbacks or network operations.
- fault func(string)
+ fault func(string) error
 }
 
 // Create explicitly initializes a new store; Open never creates a missing
@@ -103,9 +104,9 @@ func(s *DurableReceiver) persist(requests []Request)error{
  b:=s.encode(requests)
  n,e:=f.Write(b);if e!=nil{return e};if n!=len(b){return io.ErrShortWrite}
  if e=f.Sync();e!=nil{return e};if e=f.Close();e!=nil{return e}
- if s.fault!=nil{s.fault("before-rename")}
+ if s.fault!=nil{if e=s.fault("before-rename");e!=nil{return e}}
  if e=os.Rename(f.Name(),filepath.Join(s.dir,"state.bin"));e!=nil{return e}
- if s.fault!=nil{s.fault("after-rename")}
+ if s.fault!=nil{if e=s.fault("after-rename");e!=nil{return e}}
  return syncDirectory(s.dir)
 }
 func(s *DurableReceiver) Commit(r Request)(Receipt,error){
@@ -135,4 +136,18 @@ func(s *DurableReceiver) Close()error{
  s.mu.Lock();defer s.mu.Unlock()
  if s.lock==nil{return nil}
  e:=s.lock.Close();s.lock=nil;return e
+}
+
+// OpenDurableAnchored refuses rollback relative to a receipt and exact approval
+// independently retained by the caller. This is a prefix pin, NOT a global
+// consensus/anti-equivocation service. Never trust a pin read from this store.
+func OpenDurableAnchored(dir string,ctx Digest,approver ed25519.PublicKey,signer ed25519.PrivateKey,limit uint32,approved Request,expected Receipt)(*DurableReceiver,error){
+ if len(signer)!=ed25519.PrivateKeySize||!Verify(expected,approved,signer.Public().(ed25519.PublicKey)){return nil,ErrPolicy}
+ s,e:=OpenDurable(dir,ctx,approver,signer,limit);if e!=nil{return nil,e}
+ actual,e:=s.Status(approved)
+ if e!=nil||actual!=expected{s.Close();return nil,ErrStore}
+ return s,nil
+}
+func(s *DurableReceiver) ServeHTTP(w http.ResponseWriter,r *http.Request){
+ serveActionHTTP(s,w,r)
 }

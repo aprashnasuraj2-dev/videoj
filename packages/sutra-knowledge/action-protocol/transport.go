@@ -20,7 +20,16 @@ const maxContacts=4
 var ErrUnknown=errors.New("outcome unknown; reconcile status, do not assume failure")
 var ErrContacts=errors.New("contact budget exhausted")
 
+// The same bounded wire handler serves either the in-memory fixture or a
+// durable synthetic receiver. No browser registration or external writes.
+type actionReceiver interface {
+ Commit(Request)(Receipt,error)
+ Status(Request)(Receipt,error)
+}
 func (s *Receiver) ServeHTTP(w http.ResponseWriter,r *http.Request){
+ serveActionHTTP(s,w,r)
+}
+func serveActionHTTP(s actionReceiver,w http.ResponseWriter,r *http.Request){
  w.Header().Set("Cache-Control","no-store")
  if r.Method!=http.MethodPost||r.URL.RawQuery!=""||
  (r.URL.Path!="/commit"&&r.URL.Path!="/status")||r.Header.Get("Content-Type")!=media{

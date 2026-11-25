@@ -27,14 +27,18 @@ No automatic blind dispatch after ambiguous outcome. A status absence does not p
 From the repository root:
 
 ```sh
-go test -race -count=1 -v packages/sutra-knowledge/action-protocol/protocol.go packages/sutra-knowledge/action-protocol/transport.go packages/sutra-knowledge/action-protocol/protocol_test.go
+go test -race -count=1 -v packages/sutra-knowledge/action-protocol/protocol.go packages/sutra-knowledge/action-protocol/transport.go packages/sutra-knowledge/action-protocol/protocol_test.go packages/sutra-knowledge/action-protocol/durable_linux.go packages/sutra-knowledge/action-protocol/durable_linux_test.go
 ```
 
 The tests use actual loopback TCP and close the socket after applying a synthetic effect; they also close it before commit, exercise concurrent duplicate submissions, wrong approval, audience and manifest substitution, forged receipt, redirect, contact and effect budget, malformed request size and occupied slot. No external write is performed.
 
+## Durable synthetic receiver (Linux)
+
+`CreateDurable` explicitly initializes a private local directory; `OpenDurable` refuses a missing or invalid snapshot. The owned slot effect is the signed snapshot itself. A single process holds an advisory flock for the store lifetime; every commit writes a bounded signed request history to a temporary file, syncs it, atomically renames it and syncs the directory before returning the deterministic receipt. On uncertain persistence the instance refuses further reads/writes until reopened. The same fixed binary HTTP handler can serve the durable receiver, still only a synthetic fixture. An independently retained exact approval and receipt can be supplied to `OpenDurableAnchored` to reject a valid older signed snapshot relative to that pin. Cloned signers and stores sharing the pinned prefix can still fork; no global anti-equivocation or authenticated freshness. Tests include actual process exits and actual TCP loss with store reopen, plus injected I/O-stage errors; not physical power-loss tests. Trusted private directory/local filesystem and honest cooperating owners are required. Abandoned temporary files require bounded cleanup before production use.
+
 ## Scope and next gates
 
-- No persistence: a process restart discards the ledger. Do not use as a production receiver. Atomic durable effect+ledger commit (or an upstream idempotency contract), restart and recovery tests are mandatory before exposing any write. An external side effect and local record cannot generally be made atomic by this mutex.
+- The original in-memory receiver discards the ledger on restart. The separate Linux receiver persists only its owned synthetic snapshot. Do not use either as a production receiver. Atomic durable effect+ledger commit (or an upstream idempotency contract), wider restart/recovery tests and external anchor lifecycle are mandatory before exposing any write. An external side effect and local record cannot generally be made atomic by this mutex.
 - No generic rollback. Compensation is a distinct, independently authorized action that can itself fail; irreversible effects have no rollback.
 - No authenticated transport identity, revocation, expiration, multi-tenant key lifecycle, or distributed/global budget. Per-client contact limits reset if a new client is constructed; do not interpret them as a global spend limit.
 - No remote publisher execution or model tool registration. The loopback synthetic HTTP harness is not independent-site browser adoption.
