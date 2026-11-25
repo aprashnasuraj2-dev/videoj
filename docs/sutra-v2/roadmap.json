@@ -3030,7 +3030,14 @@
       ],
       "scope": "Branch hypotheses, diff and restore investigations, preserve conflicting empirical claims in merges. V2-071 candidate: restore source draft from caller-pinned version, preserve historical candidates separately; explicit stable IDs and correction invalidation. Branch merge/concurrency and general persistence remain open.",
       "acceptance": "Conflicting updates explicit; identity not logical equivalence; restore exact historical version.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK10-VERSION-CONTROL",
+          "sourceRevision": "935b916f78080689af603f5b8037d1355e89b979",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45609261800",
+          "description": "All ten exact workflows passed; actual historical source restore, affected binding invalidation, stable IDs in reverse staging order and independent impact replay. Full branch/merge and persistence remain open."
+        }
+      ]
     },
     {
       "id": "V2-LK11-IMPACT-REPORT",

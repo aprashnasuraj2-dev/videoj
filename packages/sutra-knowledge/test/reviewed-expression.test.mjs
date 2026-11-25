@@ -17,7 +17,7 @@ test('human expression and manually authored DAG have identical typed target str
 async function fixture(){
  const source='A: 12; B: 3; C: 2; Z: 0;',type={kind:'ratio',unit:'one',scope:'synthetic',dimension:[0,0,0]};
  const values=[['a','12'],['b','3'],['c','2'],['z','0']];
- const bindings=values.map(([id,v])=>({id,sourceId:'s',start:source.indexOf(v),end:source.indexOf(v)+v.length,type}));
+ const bindings=values.map(([id,v])=>{const label=id.toUpperCase()+': ',start=source.indexOf(label+v)+label.length;return {id,sourceId:'s',start,end:start+v.length,type};});
  return sealReviewedDraft(JSON.stringify({version:1,question:'Does the expression exceed the reference?',sources:[{id:'s',lineage:'synthetic',text:source}],bindings}));
 }
 test('operator precedence, repeated bindings and repeated subexpressions are exact',async()=>{

@@ -690,6 +690,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const previewDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-clarification-export').click();
   const preview=JSON.parse(fs.readFileSync(await (await previewDownload).path(),'utf8'));assert.equal(preview.preview.decisionAuthority,'NONE');assert.equal(preview.preview.candidates.length,5);
   assert.equal(preview.versionDigest,await reviewPage.locator('#review-semantic-pin').innerText());
+  {
   await reviewPage.locator('#review-world-panel > summary').click();
   await reviewPage.locator('#review-world-axis-1').selectOption('a');await reviewFill('world-values-1','25/2, 41/4');
   await reviewPage.locator('#review-world-axis-2').selectOption('b');await reviewFill('world-values-2','41/4, 25/2');
@@ -702,6 +703,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   fs.writeFileSync(path.join(output,'living-world-grid.sha256'),gridPin+'\n');fs.writeFileSync(path.join(output,'living-world-plan.sha256'),planPin+'\n');
   assert.equal(gridPin,'sha256:'+require('node:crypto').createHash('sha256').update(gridBytes).digest('hex'));
   await reviewFill('world-values-2','41/4, 25/2, 0');assert.equal(await reviewPage.locator('#review-world-export').isDisabled(),true);
+  }
   const livingPin=await reviewPage.locator('#review-semantic-pin').innerText();assert.match(livingPin,/^sha256:[a-f0-9]{64}$/);
   const livingDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-semantic-export').click();
   const livingBytes=fs.readFileSync(await (await livingDownload).path());fs.writeFileSync(path.join(output,'living-before.json'),livingBytes);fs.writeFileSync(path.join(output,'living-before.sha256'),livingPin+'\n');
