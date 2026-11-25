@@ -5,11 +5,12 @@
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
   "session": "V2-006",
   "next": [
-    "V2-F10",
     "V2-F11",
-    "V2-F12"
+    "V2-F12",
+    "V2-F13",
+    "V2-F04"
   ],
-  "state": "general_conflict_browser_verified_independent_replay_candidate_pending",
+  "state": "general_conflict_independently_reproduced_finite_fixture",
   "verified": [
     {
       "id": "V2-M01",
@@ -177,6 +178,12 @@
       "sourceRevision": "864923a96743ea9ebb55f3e8c1d2837b2827e27e",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517808680/job/138881677729",
       "description": "Actual Chromium conflict, minimum witness, declared lineage withdrawal/restoration and fresh observation; browser export uploaded; no generalized independent replay yet."
+    },
+    {
+      "id": "V2-F10",
+      "sourceRevision": "2b65fdc9ff904ae72d0dbad856b9e220a2472cc2",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45519232023/job/138886548233",
+      "description": "Actual Chromium three exported states reconstructed independently against separately constructed frozen case; 18 tampered variants rejected; 33/33 Node tests including 37 synthetic table controls in two event orders. Node oracle: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45519232023/job/138886548678. Conditional replay; no external authority or history completeness proof."
     }
   ],
   "release": "not_authorized",
@@ -186,7 +193,7 @@
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517668625/job/138881199452",
     "reason": "General evidence session set event parser maxChars=524288 above shared parser cap 262144. Corrected in next candidate."
   },
-  "lastVerifiedKernelSource": "864923a96743ea9ebb55f3e8c1d2837b2827e27e",
+  "lastVerifiedKernelSource": "2b65fdc9ff904ae72d0dbad856b9e220a2472cc2",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
