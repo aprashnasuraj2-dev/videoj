@@ -109,39 +109,77 @@ function calculate(node,deps){
   return quantity(r,dim,'computed');
  }catch(e){if(e instanceof RangeError&&['DIVISION_BY_ZERO','RATIONAL_LIMIT'].includes(e.message))return no('indeterminate',e.message);throw e;}
 }
-// Trusted, in-process incremental cache only. No importing third-party receipts
-// into cache. Identity commits to verifier version, node spec and dependency receipts.
-export function createVerifier(){
- let previous=new Map(),running=false;
- return Object.freeze({async evaluate(graphText){
+// Trusted, in-process cache only. The original receipt identity remains bound to
+// the complete graph and exact dependency receipts. The optional revision mode
+// reuses an arithmetic outcome only when the entire normalized input provenance
+// and all transitive computation identities are unchanged; it never imports a
+// receipt or changes the canonical wire report.
+function kernelVerifier(provenanceMode=false,initial=new Map()){
+ let previous=new Map(initial),running=false;
+ const emptyStats=removed=>freeze({executed:[],reusedOutcomes:[],reusedReceipts:[],rebuiltReceipts:[],removed});
+ const api={async evaluate(graphText,sourceKeys){
   if(running)throw Error('VERIFIER_BUSY');
   running=true;
   try{
-   const nodes=admit(graphText),next=new Map(),executed=[],reused=[];
+   const nodes=admit(graphText),next=new Map(),executed=[],reused=[],reusedOutcomes=[],rebuiltReceipts=[];
+   // The compiler supplies closed, normalized identities of *admitted* bindings.
+   // Copy the bounded map before any await. Exact numeric value and dimension
+   // remain in the computation key even if a caller lies about this identity.
+   const keys=new Map();
+   if(provenanceMode){
+    const inputs=nodes.filter(n=>n.kind==='input');
+    if(!(sourceKeys instanceof Map)||sourceKeys.size!==inputs.length)invalid('REVISION_PROVENANCE_KEYS');
+    let chars=0;
+    for(const n of inputs){
+     const key=sourceKeys.get(n.id);
+     if(typeof key!=='string'||!key.length||key.length>8192||/[\ud800-\udfff]/u.test(key))invalid('REVISION_PROVENANCE_KEY');
+     chars+=key.length;if(chars>262144)invalid('REVISION_PROVENANCE_LIMIT');
+     keys.set(n.id,key);
+    }
+   }
    for(const node of nodes){
-    const dependencies=(node.args??[]).map(id=>next.get(id));
+    const dependencyEntries=(node.args??[]).map(id=>next.get(id)),dependencies=dependencyEntries.map(d=>d.receipt);
     const refs=dependencies.map(d=>({id:d.id,receiptDigest:d.receiptDigest}));
     const nodeDigest=await digest({kernel:KERNEL,node,dependencies:refs});
     const old=previous.get(node.id);
+    const tokens=provenanceMode?dependencyEntries.map(d=>d.token):null;
+    const calculationKey=provenanceMode?canonical(node.kind==='input'?{id:node.id,kind:node.kind,value:node.value,dimension:node.dimension,provenance:keys.get(node.id)}:node):null;
+    const sameCalculation=provenanceMode?!!old&&old.calculationKey===calculationKey&&old.tokens.length===tokens.length&&old.tokens.every((t,i)=>t===tokens[i]):old?.receipt.nodeDigest===nodeDigest;
     let receipt;
-    if(old?.nodeDigest===nodeDigest){receipt=old;reused.push(node.id);}
-    else{
+    if(sameCalculation){
+     reusedOutcomes.push(node.id);
+     if(old.receipt.nodeDigest===nodeDigest){receipt=old.receipt;reused.push(node.id);}
+     else{
+      // New receipt, new digest and current dependency receipt identities.
+      // Only the immutable, deterministic arithmetic outcome is reused.
+      const body={id:node.id,nodeDigest,dependencies:refs,outcome:old.receipt.outcome};
+      receipt=freeze({...body,receiptDigest:await digest(body)});rebuiltReceipts.push(node.id);
+     }
+    }else{
      const body={id:node.id,nodeDigest,dependencies:refs,outcome:calculate(node,dependencies)};
-     receipt=freeze({...body,receiptDigest:await digest(body)});executed.push(node.id);
+     receipt=freeze({...body,receiptDigest:await digest(body)});executed.push(node.id);rebuiltReceipts.push(node.id);
     }
-    next.set(node.id,receipt);
+    next.set(node.id,{receipt,calculationKey,tokens,token:provenanceMode?(sameCalculation?old.token:Symbol()):null});
    }
-   const sorted=[...next.values()].sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);
+   const sorted=[...next.values()].map(e=>e.receipt).sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0);
    const graphDigest=await digest({kernel:KERNEL,nodes:sorted.map(r=>({id:r.id,nodeDigest:r.nodeDigest}))});
    const report=freeze({schemaVersion:1,kernel:KERNEL,graphDigest,receipts:sorted});
    const reportText=canonical(report);
    if(reportText.length>LIMIT.reportChars)throw RangeError('REPORT_LIMIT');
    const removed=[...previous.keys()].filter(id=>!next.has(id)).sort();
    previous=next; // transactional: invalid/failed run never replaces previous state
-   return freeze({report,reportText,stats:{executed,reused,removed}});
+   const stats=provenanceMode?{executed,reusedOutcomes,reusedReceipts:reused,rebuiltReceipts,removed}:{executed,reused,removed};
+   return freeze({report,reportText,stats});
   }finally{running=false;}
- }});
+ }};
+ if(provenanceMode){
+  api.fork=()=>{if(running)throw Error('VERIFIER_BUSY');return kernelVerifier(true,previous);};
+  api.clear=()=>{if(running)throw Error('VERIFIER_BUSY');const removed=[...previous.keys()].sort();previous=new Map();return emptyStats(removed);};
+ }
+ return Object.freeze(api);
 }
+export function createVerifier(){return kernelVerifier();}
+export function createProvenanceVerifier(){return kernelVerifier(true);}
 // No trust in claims or signatures asserted by the producer. Recompute from the
 // graph in a fresh verifier and require byte-identical canonical report.
 export async function replayReport(graphText,reportText){

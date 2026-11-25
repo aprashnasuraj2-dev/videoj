@@ -1,7 +1,7 @@
 // Data-only reviewed binding compiler. Models never supply executable code, numeric leaves or truth status.
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {casePin} from './pinned-investigation.js';
-import {createVerifier} from './index.js';
+import {createVerifier,createProvenanceVerifier} from './index.js';
 export const VERSION='sutra-reviewed-claim-compiler/v1';
 const HASH=/^sha256:[a-f0-9]{64}$/,ID=/^[A-Za-z][A-Za-z0-9_-]{0,63}$/;
 const id=x=>typeof x==='string'&&ID.test(x);
@@ -128,14 +128,16 @@ function proposal(proposalText,contractDigest,docs,bindings){
  if(ordered.length!==nodes.size)fail('COMPILER_CYCLE');
  return {question,claims,ordered,targetId:p.targetId};
 }
-export async function compileReviewedProposal(contractText,contractPin,proposalText){
- const h=await host(contractText,contractPin),p=proposal(proposalText,contractPin,h.docs,h.bindings),compiled=new Map(),executable=[];
+async function compileWithVerifier(contractText,contractPin,proposalText,revisionVerifier=null){
+ const h=await host(contractText,contractPin),p=proposal(proposalText,contractPin,h.docs,h.bindings),compiled=new Map(),executable=[],sourceKeys=new Map();
+ const proposalDigest=await casePin(proposalText);
  for(const n of p.ordered){
   let row;
   if(n.kind==='input'){
    const b=h.bindings.get(n.bindingId);
    row={id:n.id,kind:n.kind,type:b.type,status:'READY',bindingId:b.id,missing:[],typeBlockers:[],bindings:[b.id]};
    executable.push({id:n.id,kind:'input',value:b.value,dimension:b.type.dimension,basis:'compiler '+contractPin+' '+b.id});
+   if(revisionVerifier)sourceKeys.set(n.id,JSON.stringify(b));
   }else if(n.kind==='unknown'){
    row={id:n.id,kind:n.kind,type:n.type,status:'MISSING_INPUT',reason:n.reason,missing:[n.id],typeBlockers:[],bindings:[]};
   }else{
@@ -149,13 +151,28 @@ export async function compileReviewedProposal(contractText,contractPin,proposalT
   compiled.set(n.id,row);
  }
  const graphText=executable.length?JSON.stringify({schemaVersion:1,nodes:executable}):null;
- const report=graphText?(await createVerifier().evaluate(graphText)).report:null,receipts=new Map((report?.receipts??[]).map(r=>[r.id,r]));
+ const evaluation=graphText?await (revisionVerifier?revisionVerifier.evaluate(graphText,sourceKeys):createVerifier().evaluate(graphText)):null;
+ const stats=revisionVerifier?(evaluation?.stats??revisionVerifier.clear()):null;
+ const report=evaluation?.report??null,receipts=new Map((report?.receipts??[]).map(r=>[r.id,r]));
  const rows=[...compiled.values()].sort((a,b)=>sort(a.id,b.id)).map(n=>({...n,receipt:receipts.get(n.id)??null}));
  const target=rows.find(r=>r.id===p.targetId);
  const status=target.status!=='READY'?target.status:target.receipt?.outcome.status==='constraint_satisfied'?'CONDITIONALLY_SATISFIED':target.receipt?.outcome.status==='constraint_refuted'?'CONDITIONALLY_REFUTED':'UNRESOLVED_COMPUTATION';
  const used=target.bindings.map(i=>h.bindings.get(i));
- return frozen({version:VERSION,contractDigest:contractPin,proposalDigest:await casePin(proposalText),question:p.question,claims:p.claims,bindings:[...h.bindings.values()].sort((a,b)=>sort(a.id,b.id)),nodes:rows,graphText,report,target:{id:p.targetId,status,missing:target.missing,typeBlockers:target.typeBlockers,sourceIds:uniq(used.map(b=>b.span.sourceId)),declaredLineages:uniq(used.map(b=>b.span.declaredLineage)),questionRelevance:'UNVERIFIED',methodValidity:'UNVERIFIED'},duplicateSourceBytes:h.duplicateSourceBytes,qualification:QUAL});
+ const result=frozen({version:VERSION,contractDigest:contractPin,proposalDigest,question:p.question,claims:p.claims,bindings:[...h.bindings.values()].sort((a,b)=>sort(a.id,b.id)),nodes:rows,graphText,report,target:{id:p.targetId,status,missing:target.missing,typeBlockers:target.typeBlockers,sourceIds:uniq(used.map(b=>b.span.sourceId)),declaredLineages:uniq(used.map(b=>b.span.declaredLineage)),questionRelevance:'UNVERIFIED',methodValidity:'UNVERIFIED'},duplicateSourceBytes:h.duplicateSourceBytes,qualification:QUAL});
+ return frozen({result,stats});
 }
+export async function compileReviewedProposal(contractText,contractPin,proposalText){return (await compileWithVerifier(contractText,contractPin,proposalText)).result;}
+// Local trusted session; each compilation is a copy-on-write transaction. The
+// public compiler result remains byte-identical to fresh version-specific replay.
+function compilerSession(verifier){
+ let busy=false;
+ return Object.freeze({async compile(contractText,contractPin,proposalText){
+  if(busy)throw Error('COMPILER_SESSION_BUSY');busy=true;
+  try{const next=verifier.fork(),compiled=await compileWithVerifier(contractText,contractPin,proposalText,next);verifier=next;return compiled;}
+  finally{busy=false;}
+ },fork(){if(busy)throw Error('COMPILER_SESSION_BUSY');return compilerSession(verifier.fork());}});
+}
+export function createReviewedCompilerSession(){return compilerSession(createProvenanceVerifier());}
 export async function exportReviewedProposal(contractText,contractPin,proposalText){return frozen({version:VERSION,contractText,proposalText,result:await compileReviewedProposal(contractText,contractPin,proposalText)});}
 
 export async function validateReviewedContract(contractText,contractPin){const h=await host(contractText,contractPin);return frozen({contractDigest:contractPin,bindingCount:h.bindings.size,duplicateSourceBytes:h.duplicateSourceBytes});}
