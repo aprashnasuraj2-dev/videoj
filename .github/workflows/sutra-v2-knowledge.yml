@@ -2,10 +2,10 @@ name: Validate SUTRA v2 knowledge kernel
 on:
   push:
     branches: ['sutra/v2-knowledge-compiler']
-    paths: ['packages/sutra-knowledge/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
+    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-evidence/**', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
   pull_request:
     branches: ['main', 'sutra/caller-peer-failure-boundary']
-    paths: ['packages/sutra-knowledge/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
+    paths: ['apps/sutra-v2/**', 'packages/sutra-knowledge/**', 'packages/sutra-runtime/**', 'packages/sutra-evidence/**', 'packages/sutra-consent/**', 'packages/sutra-consent/strict-json.js', '.github/workflows/sutra-v2-knowledge.yml', 'docs/sutra-v2/**']
 permissions:
   contents: read
 jobs:
@@ -34,3 +34,24 @@ jobs:
             sutra-v2-observation.json
             sutra-v2-challenges.json
             sutra-v2-reference.json
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/sutra/package-lock.json
+      - run: npm ci --prefix apps/sutra
+      - run: node apps/sutra/node_modules/vite/bin/vite.js build apps/sutra-v2
+      - run: node packages/sutra-runtime/verify-vendor.mjs
+      - run: node apps/sutra/node_modules/playwright/cli.js install --with-deps chromium
+      - run: node apps/sutra-v2/test/browser.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sutra-v2-browser-observation
+          path: apps/sutra-v2/test-output/
+          if-no-files-found: ignore

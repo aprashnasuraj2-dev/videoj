@@ -21,6 +21,9 @@ Pending until exact evidence; expand only when new concrete product requirements
 - [ ] V2-D02 Engineering model derivation and explicit constraints, independent numerical method.
 - [ ] V2-D03 Scientific/statistical evidence lineage and applicability; research-only medical adapter.
 - [ ] V2-U01 New workspace renders typed verification results and mutations using real kernel, no fake graph.
+- [ ] V2-U02 Browser exports the exact graph/report bytes, rejects stale UI authority after assumption changes, replays and refuses tampered reports; 360px keyboard and no external requests.
+- [ ] V2-A04 Closed host-approved method selection through actual pinned agent runtime; reject model-asserted status, unknown case/method and nonconstraint target before kernel evaluation; no live provider or arbitrary peer tools.
+- [ ] V2-D04 Two explicit section-moment calculation paths produce exact identical deflection and constraint with distinct receipt identities; distinguish shared formula from independent empirical evidence.
 - [ ] V2-O02 Capability declaration format, falsifiable independent test policies, sealed challenge cases.
 - [ ] V2-O03 Observatory records real browser and exact deployment observations; detect authorized synthetic faults.
 - [ ] V2-O04 Independent reproducibility and actual HTTPS browser self-test after authorized candidate deployment.

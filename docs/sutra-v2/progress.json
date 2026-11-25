@@ -3,15 +3,17 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-001",
+  "session": "V2-002",
   "next": [
     "V2-U01",
+    "V2-U02",
+    "V2-A04",
+    "V2-D04",
     "V2-A01",
     "V2-K08",
-    "V2-K07",
     "V2-O02"
   ],
-  "state": "kernel_reference_and_impact_verified",
+  "state": "browser_bridge_candidate_pending",
   "verified": [
     {
       "id": "V2-M01",

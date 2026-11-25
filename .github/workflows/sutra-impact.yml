@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'apps/sutra/**'
+      - 'apps/sutra-v2/**'
       - 'apps/sutra-peer/**'
       - 'packages/sutra-*/**'
       - 'services/sutra-api/**'

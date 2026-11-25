@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SUTRA | Knowledge Compiler</title></head>
+<body>
+<header><a class="brand" href="./">SUTRA<span> / 02</span></a><span class="tag">Verification laboratory · development</span></header>
+<main>
+<section class="intro"><p class="eyebrow">01 / KNOWLEDGE COMPILER</p><h1>Claims are not conclusions.</h1><p>Inspect an executable dependency graph, change a declared assumption, and see precisely which calculations must be repeated. The result is a conditional check, never a structural safety certificate.</p></section>
+<section aria-labelledby="case-title" class="panel">
+<div class="section-head"><div><p class="eyebrow">ENGINEERING / EXACT QUANTITY</p><h2 id="case-title">The beam challenge</h2></div><span class="tag">Synthetic inputs</span></div>
+<p>4 m span · 5 kN/m uniformly distributed load · rectangular section 200 × 300 mm. Idealized simply supported, linear-elastic formula. The L/360 limit is illustrative, not code approval.</p>
+<div class="controls"><label for="material">Declared stiffness</label><select id="material"><option value="10000000000">10 GPa — baseline</option><option value="2500000000">2.5 GPa — revised assumption</option></select><button id="evaluate">Evaluate graph</button><button id="compare" class="secondary">Compare two methods</button></div>
+<p id="status" role="status" aria-live="polite">Choose Evaluate graph to run the local verifier. No model call is needed.</p>
+<div class="metrics"><div><span>Calculated deflection</span><strong id="deflection">—</strong></div><div><span>Illustrative limit</span><strong id="limit">—</strong></div><div><span>Conditional result</span><strong id="verdict">—</strong></div><div><span>Computed / reused</span><strong id="counts">—</strong></div></div>
+<p id="method-status" role="status" aria-live="polite"></p>
+<div class="graph-title"><h3>Dependency receipts</h3><span id="identity" class="mono"></span></div>
+<p class="hint">Each row names its actual dependencies and whether the verifier recalculated or reused it in this run. Declared assumptions are not verified facts.</p>
+<div class="graph" id="nodes" aria-label="Dependency receipts"></div>
+</section>
+<section class="panel" aria-labelledby="agent-title"><p class="eyebrow">02 / AGENT COMPOSITION</p><h2 id="agent-title">A planner is not a verifier.</h2><p>Run the pinned browser agent runtime with an explicit scripted driver. Two agents select a host-approved method; the deterministic kernel decides whether its constraint is satisfied. This is not live AI.</p><div class="controls"><button id="agent">Run scripted proof planner</button><button id="hostile" class="secondary">Challenge forged verdict</button></div><p id="agent-status" role="status" aria-live="polite">Not run.</p></section>
+<section class="panel" aria-labelledby="replay-title"><p class="eyebrow">03 / REPLAY</p><h2 id="replay-title">Make the evidence portable.</h2><p>Export the exact graph and receipt bytes, or challenge the report using a fresh local computation. A separate Python reference consumer is available in source; this browser replay uses the same kernel.</p><div class="controls"><button id="download" disabled>Download graph + report</button><button id="replay" class="secondary" disabled>Replay exact report</button><button id="forge" class="secondary" disabled>Challenge tampered report</button></div><p id="replay-status" role="status" aria-live="polite">No report available.</p></section>
+</main><footer>Development laboratory · No external contact · No model-generated verification badge</footer>
+<script type="module" src="./src/main.js"></script></body></html>

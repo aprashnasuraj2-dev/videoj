@@ -8,7 +8,8 @@
     "tools/sutra-",
     "deploy/sutra-pages/",
     "docs/sutra/evaluation/",
-    "docs/sutra-v2/"
+    "docs/sutra-v2/",
+    "apps/sutra-v2/"
   ],
   "suites": [
     {
@@ -322,7 +323,11 @@
     {
       "id": "v2-knowledge-verification",
       "prefixes": [
-        "packages/sutra-knowledge/"
+        "packages/sutra-knowledge/",
+        "apps/sutra-v2/",
+        "packages/sutra-runtime/",
+        "packages/sutra-evidence/",
+        "packages/sutra-consent/"
       ],
       "exact": [
         "packages/sutra-consent/strict-json.js",
@@ -333,7 +338,7 @@
         "Validate SUTRA v2 knowledge kernel"
       ],
       "invalidates": [],
-      "reason": "New exact-quantity verification, mutation and independent replay need their own revision-bound CI; do not pretend they measure legacy learner metrics."
+      "reason": "Exact-quantity verification, browser workspace, pinned runtime, evidence and consent dependency changes require revision-bound v2 kernel/browser CI; do not misclassify legacy learner metrics."
     }
   ]
 }

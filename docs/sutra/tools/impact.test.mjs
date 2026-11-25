@@ -148,3 +148,9 @@ test('v2 knowledge kernel and reference consumer require their own verification 
  assert.ok(shared.affectedSuites.includes('v2-knowledge-verification'));assert.ok(shared.affectedSuites.includes('security-boundary'));
  assert.deepEqual(classifyChangedFiles(['docs/sutra-v2/unknown-executable.mjs'],map).unmapped,['docs/sutra-v2/unknown-executable.mjs']);
 });
+
+
+test('v2 workspace and shared runtime require the v2 browser/kernel workflow',()=>{
+ const r=classifyChangedFiles(['apps/sutra-v2/src/main.js'],map);assert.deepEqual(r.unmapped,[]);assert.deepEqual(r.affectedSuites,['v2-knowledge-verification']);
+ assert.ok(classifyChangedFiles(['packages/sutra-runtime/index.js'],map).requiredWorkflows.includes('Validate SUTRA v2 knowledge kernel'));
+});
