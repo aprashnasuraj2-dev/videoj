@@ -113,3 +113,15 @@ test('trusted callback is the only secret release boundary and metadata cannot s
  assert.equal(Object.isFrozen(exported.profiles),true);
  assert.equal(JSON.stringify(exported).includes(canaryB),false);
 });
+
+
+test('credential copied into a public profile label is rejected, including a prior profile secret',()=>{
+ const v=vault();
+ assert.throws(()=>v.addProfile({providerId:'provider-a',label:'label '+canaryA,credential:canaryA}),e=>e.code==='SECRET_LABEL');
+ const first=v.addProfile({providerId:'provider-a',label:'Primary',credential:canaryA});
+ assert.equal(v.list().length,1);
+ assert.throws(()=>v.addProfile({providerId:'provider-b',label:'oops '+canaryA,credential:canaryB}),e=>e.code==='SECRET_LABEL');
+ assert.equal(v.list().length,1);
+ assert.equal(JSON.stringify(v.exportMetadata()).includes(canaryA),false);
+ assert.strictEqual(v.getHandle(first.profile.profileId),first.handle);
+});
