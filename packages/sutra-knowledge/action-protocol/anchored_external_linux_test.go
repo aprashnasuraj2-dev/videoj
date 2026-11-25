@@ -306,6 +306,67 @@ func TestAnchoredFencedCompositePinnedOrphanRecovery(t *testing.T) {
 	t.Log("strongest pinned composite resolves a proven pre-effect orphan without exposing a lower HTTP write surface")
 }
 
+func TestAnchoredFencedCompositeRevokedOrphanCanCloseButNotDispatch(t *testing.T) {
+	f := newCompositeFixture(t, nil)
+	request := approve(t, 0, f.ctx, f.approverKey)
+	grant, e := IssueActionGrant(request, GrantPrimary, 10, 11, f.consentKey)
+	if e != nil {
+		t.Fatal(e)
+	}
+	client := f.client(t, 0, request, grant)
+	f.fenced.fault = func(at string) error {
+		if at == "after-reserve" {
+			return errors.New("drop composite owner evidence before effect")
+		}
+		return nil
+	}
+	if _, _, e = client.Commit(); !errors.Is(e, ErrUnknown) {
+		t.Fatal("composite reserve boundary did not become unknown", e)
+	}
+	pending, exists, e := f.fenceClient.PendingReservation()
+	if e != nil || !exists {
+		t.Fatal("pending reservation missing before revocation", exists, e)
+	}
+	if e = os.Remove(f.fenced.intentPath()); e != nil {
+		t.Fatal(e)
+	}
+	f.fenced.fault = nil
+	if e = f.policy.Revoke(grant, request); e != nil {
+		t.Fatal("revoke admitted orphan grant", e)
+	}
+
+	wire, e := SignAuthorityRequest(0, AuthorityCommit, f.fenceGenesis, request, f.callerKeys[0])
+	if e != nil {
+		t.Fatal(e)
+	}
+	pin, e := SignClientPolicyPin(f.ctx, grant.ID, wire.Hash(), 0, f.policyGenesis, f.callerKeys[0])
+	if e != nil {
+		t.Fatal(e)
+	}
+	closure, e := SignEffectClosureProof(f.ctx, f.authorityPub, pending, f.closureKey)
+	if e != nil {
+		t.Fatal(e)
+	}
+	if e = f.guard.ResolveCompositeOrphanPinned(grant, wire, pin, closure); e != nil {
+		t.Fatal("revoked orphan cleanup should remain available", e)
+	}
+	if _, exists, e = f.fenceClient.PendingReservation(); e != nil || exists {
+		t.Fatal("revoked orphan cleanup left pending admission", exists, e)
+	}
+	if _, _, e = client.Commit(); !errors.Is(e, ErrPolicy) {
+		t.Fatal("revocation was bypassed after orphan cleanup", e)
+	}
+	spent, total, effects, e := f.authority.Counts()
+	if e != nil || spent != [authorityCallers]byte{} || total != 0 || effects != 0 {
+		t.Fatal("revoked cleanup crossed effect boundary", e, spent, total, effects)
+	}
+	view, e := f.fenceClient.View()
+	if e != nil || view.Pending != (Digest{}) || view.Sequence != 0 || view.Head != f.fenceGenesis {
+		t.Fatal("revoked cleanup changed effect fence history", e, view)
+	}
+	t.Log("revocation does not strand a proven pre-effect orphan, and cleanup does not restore dispatch authority")
+}
+
 func TestAnchoredFencedExternalCompositeCommitRevokeStatus(t *testing.T) {
 	f := newCompositeFixture(t, nil)
 	request := approve(t, 0, f.ctx, f.approverKey)
