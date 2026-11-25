@@ -1,0 +1,30 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {casePin} from '../pinned-investigation.js';
+import {exportTrialPartition,compareTrialVersions,recoveryTrialFixture} from '../trial-partition.js';
+import {trialSnapshotDigest,verifyTrialSnapshot,MAX_TRIAL_SNAPSHOT_BYTES} from '../trial-snapshot.js';
+const enc=x=>new TextEncoder().encode(typeof x==='string'?x:JSON.stringify(x));
+const bad=reason=>({status:'REFUSED',reason});
+test('exact snapshot pin and separate source pin; valid historical and repinned source counterexamples',async()=>{
+ const f=await recoveryTrialFixture(),a=await exportTrialPartition(f.sourceText,f.pin,'aggregate'),b=await exportTrialPartition(f.sourceText,f.pin,'partition'),ab=enc(a),bb=enc(b),ap=await trialSnapshotDigest(ab),bp=await trialSnapshotDigest(bb);
+ assert.equal((await verifyTrialSnapshot(ab,ap,f.pin)).conclusion,'NOT_TESTED');
+ assert.equal((await verifyTrialSnapshot(bb,bp,f.pin)).conclusion,'REFUTED_IN_DECLARED_PARTITION');
+ assert.deepEqual(await verifyTrialSnapshot(ab,bp,f.pin),bad('PIN_MISMATCH'));
+ const forged=structuredClone(b);forged.result.universalObservedLower='SUPPORTED_IN_DECLARED_PARTITION';const fb=enc(forged);
+ assert.deepEqual(await verifyTrialSnapshot(fb,await trialSnapshotDigest(fb),f.pin),bad('REPLAY_MISMATCH'));
+ const text=f.sourceText+' ',sourcePin=await casePin(text),alternate=enc(await exportTrialPartition(text,sourcePin,'partition')),alternatePin=await trialSnapshotDigest(alternate);
+ assert.deepEqual(await verifyTrialSnapshot(alternate,alternatePin,f.pin),bad('SOURCE_PIN_MISMATCH'));
+ assert.equal((await verifyTrialSnapshot(alternate,alternatePin,sourcePin)).status,'VERIFIED');
+ const malformed=enc('{"version":1,"version":1}');
+ assert.deepEqual(await verifyTrialSnapshot(malformed,await trialSnapshotDigest(malformed),f.pin),bad('WIRE_REFUSED'));
+ assert.deepEqual(await verifyTrialSnapshot(bb,bp,''),bad('SOURCE_PIN_REQUIRED'));
+ assert.deepEqual(await verifyTrialSnapshot(bb,bp,f.pin,f.pin),bad('SOURCE_PIN_PROFILE'));
+ assert.deepEqual(await verifyTrialSnapshot(new Uint8Array(MAX_TRIAL_SNAPSHOT_BYTES+1),bp,f.pin),bad('SIZE_OR_TYPE'));
+});
+test('version comparison requires both independently retained source pins',async()=>{
+ const p=await recoveryTrialFixture('preliminary'),f=await recoveryTrialFixture(),b=enc(await compareTrialVersions(p.sourceText,p.pin,f.sourceText,f.pin)),pin=await trialSnapshotDigest(b);
+ assert.deepEqual(await verifyTrialSnapshot(b,pin,p.pin),bad('AFTER_SOURCE_PIN_REQUIRED'));
+ assert.deepEqual(await verifyTrialSnapshot(b,pin,p.pin,p.pin),bad('AFTER_SOURCE_PIN_MISMATCH'));
+ assert.deepEqual(await verifyTrialSnapshot(b,pin,f.pin,p.pin),bad('SOURCE_PIN_MISMATCH'));
+ assert.equal((await verifyTrialSnapshot(b,pin,p.pin,f.pin)).conclusion,'NOT_ESTABLISHED');
+});

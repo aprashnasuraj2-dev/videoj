@@ -6,7 +6,7 @@ const fixture=()=>recoveryTrialFixture('final');
 async function changed(mutate){const f=await fixture(),c=JSON.parse(f.sourceText);mutate(c);const sourceText=JSON.stringify(c);return {sourceText,pin:await casePin(sourceText)};}
 test('aggregate does not establish universal subgroup direction; exact raw counterexample and reported uncertainty differ',async()=>{
  const f=await fixture(),a=await auditTrialPartition(f.sourceText,f.pin,'aggregate'),p=await auditTrialPartition(f.sourceText,f.pin,'partition');
- assert.equal(a.rows.length,1);assert.equal(a.rows[0].observedDirection,'LOWER');assert.equal(a.universalObservedLower,'NOT_TESTED');assert.equal(a.conservation,null);
+ assert.equal(a.rows.length,1);assert.equal(a.rows[0].observedDirection,'LOWER');assert.equal(a.universalObservedLower,'NOT_TESTED');assert.equal(a.conservation,null);assert.equal(a.descriptiveCounterexamples,null);assert.equal(a.reportedIntervalsNotBelowNull,null);
  assert.equal(p.universalObservedLower,'REFUTED_IN_DECLARED_PARTITION');assert.deepEqual(p.descriptiveCounterexamples,['no_respiratory_support']);
  assert.deepEqual(p.reportedIntervalsNotBelowNull,['no_respiratory_support']);assert.equal(p.universalCausalBenefit,'NOT_ESTABLISHED');
  const r=p.rows[3];assert.equal(r.observedDirection,'HIGHER');assert.equal(r.reportedAdjusted.intervalPosition,'INCLUDES_NULL');assert.notEqual(r.crudeRiskRatio,r.reportedAdjusted.point);
@@ -29,10 +29,9 @@ test('strict pin, count, conservation, row identity, interval and schema boundar
  [x=>{x.strata[1].id=x.strata[0].id;},/TRIAL_PARTITION/],
  [x=>{x.strata[0].adjusted.lower=80;},/TRIAL_INTERVAL/],
  [x=>{x.strata[0].adjusted.metric='crude_risk_ratio';},/TRIAL_INTERVAL/],
- [x=>{x.strata[0].claim='verified';},/TRIAL_COUNTS/],
- [x=>{x.strata[0].treatedEvents=-0;},null]
+ [x=>{x.strata[0].claim='verified';},/TRIAL_COUNTS/]
  ]){
-  const c=await changed(mutate);if(reason)await assert.rejects(auditTrialPartition(c.sourceText,c.pin,'partition'),reason);
+  const c=await changed(mutate);await assert.rejects(auditTrialPartition(c.sourceText,c.pin,'partition'),reason);
  }
 });
 test('zero control events and equality do not become an invented ratio or strict reduction',async()=>{
@@ -43,4 +42,16 @@ test('zero control events and equality do not become an invented ratio or strict
  const p=await auditTrialPartition(f.sourceText,f.pin,'partition');
  assert.equal(p.universalObservedLower,'REFUTED_IN_DECLARED_PARTITION');
  for(const r of p.rows){assert.equal(r.observedDirection,'EQUAL');assert.equal(r.crudeRiskRatio,null);assert.equal(r.crudeRiskRatioStatus,'indeterminate');assert.equal(r.reportedAdjusted.intervalPosition,'INCLUDES_NULL');}
+});
+
+test('metadata-only source change changes all receipt identities; negative zero and duplicate wire keys refused',async()=>{
+ const f=await fixture(),a=await auditTrialPartition(f.sourceText,f.pin,'partition'),g=await changed(c=>{c.population='A different population';}),b=await auditTrialPartition(g.sourceText,g.pin,'partition');
+ assert.equal(a.rows[0].treatedRisk,b.rows[0].treatedRisk);assert.notEqual(a.rows[0].report.graphDigest,b.rows[0].report.graphDigest);
+ assert.notEqual(a.rows[0].report.receipts.find(r=>r.id==='strictly_lower').receiptDigest,b.rows[0].report.receipts.find(r=>r.id==='strictly_lower').receiptDigest);
+ const negative=f.sourceText.replace('"treatedEvents":482','"treatedEvents":-0');
+ await assert.rejects(auditTrialPartition(negative,await casePin(negative),'partition'),/TRIAL_COUNTS/);
+ const duplicate=f.sourceText.replace('"version":1','"version":1,"version":1');
+ await assert.rejects(auditTrialPartition(duplicate,await casePin(duplicate),'partition'),/ambiguous/);
+ const max=await changed(c=>{c.studyId='s'.repeat(64);c.sourceVersion='v'.repeat(64);c.strata[0].id='a'.repeat(64);});
+ assert.equal((await auditTrialPartition(max.sourceText,max.pin,'partition')).rows.length,4);
 });

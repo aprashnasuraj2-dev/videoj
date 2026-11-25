@@ -571,7 +571,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   async function trialStep(button,stem,pattern){
    await trialPage.locator('#trial-'+button).click();await trialPage.waitForFunction(()=>document.querySelector('#trial-status').dataset.state==='ready'&&!document.querySelector('#trial-export').disabled);
    assert.match(await trialPage.locator('#trial-summary').innerText(),pattern);
-   const dl=trialPage.waitForEvent('download');await trialPage.locator('#trial-export').click();const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,'trial-'+stem+'.json'),bytes);return JSON.parse(bytes);
+   const dl=trialPage.waitForEvent('download');await trialPage.locator('#trial-export').click();const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,'trial-'+stem+'.json'),bytes);const pd=trialPage.waitForEvent('download');await trialPage.locator('#trial-pin-export').click();const pinBytes=fs.readFileSync(await (await pd).path());fs.writeFileSync(path.join(output,'trial-'+stem+'.sha256'),pinBytes);assert.equal(pinBytes.toString('ascii').trim(),'sha256:'+require('node:crypto').createHash('sha256').update(bytes).digest('hex'));return JSON.parse(bytes);
   }
   const trialAggregate=await trialStep('aggregate','aggregate',/NOT TESTED/);assert.equal(trialAggregate.result.rows.length,1);
   const trialPartition=await trialStep('partition','partition',/REFUTED in declared partition/);assert.deepEqual(trialPartition.result.descriptiveCounterexamples,['no_respiratory_support']);assert.equal(trialPartition.result.rows[3].reportedAdjusted.intervalPosition,'INCLUDES_NULL');

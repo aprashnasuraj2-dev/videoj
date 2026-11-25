@@ -2,7 +2,7 @@
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {casePin} from './pinned-investigation.js';
 import {createVerifier} from './index.js';
-export const VERSION='sutra-trial-partition/v1';
+export const VERSION='sutra-trial-partition/v2';
 const QUAL='Descriptive observed event proportions and source-reported adjusted interval positions only. No adjusted model reconstruction, significance test, causal effect, equivalence, individual applicability, current guideline or treatment advice. Declared partitions and source lineage are not independently validated. Normalized extract pins are not original document authentication.';
 const METRIC='age_adjusted_rate_ratio';
 const keys=(o,ks)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===ks.length&&ks.every(k=>Object.hasOwn(o,k));
@@ -23,9 +23,10 @@ function admit(text){
  if(c.aggregate.id!=='aggregate'||c.strata.some(x=>x.id==='aggregate')||new Set(rows.map(r=>r.id)).size!==rows.length)fail('TRIAL_PARTITION');
  return c;
 }
-function graph(c,r){
- const dim=[0,0,0],basis=c.studyId+' '+c.sourceVersion+' '+r.id;
- const input=(id,v,meaning)=>({id,kind:'input',value:String(v),dimension:dim,basis:basis+' '+meaning});
+function graph(pin,r){
+ // Exact normalized source bytes and row identity are part of every input receipt.
+ const dim=[0,0,0],basis='trial '+pin+' '+r.id;
+ const input=(id,v)=>({id,kind:'input',value:String(v),dimension:dim,basis});
  const derive=(id,op,a,b)=>({id,kind:'derive',op,args:[a,b]});
  const check=(id,op,a,b)=>({id,kind:'constraint',op,args:[a,b]});
  const nodes=[input('te',r.treatedEvents,'treated events'),input('tn',r.treatedTotal,'treated participants'),input('ce',r.controlEvents,'control events'),input('cn',r.controlTotal,'control participants'),input('adjusted_lower',r.adjusted.lower+'/100','reported adjusted lower bound'),input('adjusted_point',r.adjusted.point+'/100','reported adjusted point estimate'),input('adjusted_upper',r.adjusted.upper+'/100','reported adjusted upper bound'),input('one',1,'ratio null'),
@@ -34,8 +35,8 @@ function graph(c,r){
  return JSON.stringify({schemaVersion:1,nodes});
 }
 const yes=r=>r.outcome.status==='constraint_satisfied';
-async function rowAudit(c,r){
- const graphText=graph(c,r),run=await createVerifier().evaluate(graphText),by=new Map(run.report.receipts.map(x=>[x.id,x]));
+async function rowAudit(pin,r){
+ const graphText=graph(pin,r),run=await createVerifier().evaluate(graphText),by=new Map(run.report.receipts.map(x=>[x.id,x]));
  const outcome=id=>by.get(id).outcome;
  const lower=yes(by.get('strictly_lower')),higher=yes(by.get('strictly_higher'));
  const interval= yes(by.get('upper_below_null'))?'BELOW_NULL':yes(by.get('lower_above_null'))?'ABOVE_NULL':'INCLUDES_NULL';
@@ -45,17 +46,17 @@ export async function auditTrialPartition(sourceText,expectedPin,mode){
  if(!['aggregate','partition'].includes(mode))fail('TRIAL_MODE');
  if(await casePin(sourceText)!==expectedPin)fail('TRIAL_PIN_MISMATCH');
  const c=admit(sourceText);
- const rows=[await rowAudit(c,c.aggregate)];
+ const rows=[await rowAudit(expectedPin,c.aggregate)];
  let conservation=null;
  if(mode==='partition'){
   const fields=['treatedEvents','treatedTotal','controlEvents','controlTotal'];
   conservation=Object.fromEntries(fields.map(f=>[f,{aggregate:c.aggregate[f],sum:c.strata.reduce((n,r)=>n+r[f],0)}]));
   if(Object.values(conservation).some(x=>x.aggregate!==x.sum))fail('TRIAL_PARTITION_TOTALS');
-  for(const r of c.strata)rows.push(await rowAudit(c,r));
+  for(const r of c.strata)rows.push(await rowAudit(expectedPin,r));
  }
  const counters=rows.slice(1).filter(r=>r.observedDirection!=='LOWER').map(r=>r.id);
  const intervalNotBelow=rows.slice(1).filter(r=>r.reportedAdjusted.intervalPosition!=='BELOW_NULL').map(r=>r.id);
- return freeze({version:VERSION,sourceDigest:expectedPin,studyId:c.studyId,sourceVersion:c.sourceVersion,sourceLocator:c.sourceLocator,population:c.population,endpoint:c.endpoint,intervention:c.intervention,comparator:c.comparator,partition:c.partition,mode,rows,conservation,universalObservedLower:mode==='aggregate'?'NOT_TESTED':counters.length?'REFUTED_IN_DECLARED_PARTITION':'SUPPORTED_IN_DECLARED_PARTITION',descriptiveCounterexamples:counters,reportedIntervalsNotBelowNull:intervalNotBelow,universalCausalBenefit:'NOT_ESTABLISHED',qualification:QUAL});
+ return freeze({version:VERSION,sourceDigest:expectedPin,studyId:c.studyId,sourceVersion:c.sourceVersion,sourceLocator:c.sourceLocator,population:c.population,endpoint:c.endpoint,intervention:c.intervention,comparator:c.comparator,partition:c.partition,mode,rows,conservation,universalObservedLower:mode==='aggregate'?'NOT_TESTED':counters.length?'REFUTED_IN_DECLARED_PARTITION':'SUPPORTED_IN_DECLARED_PARTITION',descriptiveCounterexamples:mode==='aggregate'?null:counters,reportedIntervalsNotBelowNull:mode==='aggregate'?null:intervalNotBelow,universalCausalBenefit:'NOT_ESTABLISHED',qualification:QUAL});
 }
 export async function exportTrialPartition(sourceText,pin,mode){return freeze({version:VERSION,kind:'partition',sourceText,result:await auditTrialPartition(sourceText,pin,mode)});}
 export async function compareTrialVersions(beforeText,beforePin,afterText,afterPin){

@@ -1,10 +1,11 @@
 import {recoveryTrialFixture,exportTrialPartition,compareTrialVersions} from '../../../packages/sutra-knowledge/trial-partition.js';
+import {trialSnapshotDigest} from '../../../packages/sutra-knowledge/trial-snapshot.js';
 const by=id=>document.getElementById('trial-'+id);
 let busy=false,current=null,epoch=0;
 const titles={aggregate:'All randomized participants',invasive_ventilation:'Invasive ventilation',oxygen_only:'Oxygen without invasive ventilation',no_respiratory_support:'No respiratory support'};
 const pct=v=>{const [n,d]=v.split('/').map(Number);return (100*n/d).toFixed(2)+'%';};
 const decimal=v=>{const [n,d]=v.split('/').map(Number);return (n/d).toFixed(2);};
-function controls(){for(const id of ['aggregate','partition','compare'])by(id).disabled=busy;by('export').disabled=busy||!current;}
+function controls(){for(const id of ['aggregate','partition','compare'])by(id).disabled=busy;by('export').disabled=busy||!current;by('pin-export').disabled=busy||!current;}
 function render(bundle){
  const r=bundle.result,body=by('rows');body.replaceChildren();
  if(bundle.kind==='comparison'){
@@ -22,15 +23,19 @@ function render(bundle){
  }
 }
 async function run(mode){
- if(busy)return;busy=true;current=null;const ticket=++epoch;controls();by('rows').replaceChildren();by('summary').textContent='Evaluating locally…';by('status').dataset.state='working';
+ if(busy)return;busy=true;current=null;const ticket=++epoch;controls();by('rows').replaceChildren();by('pins').textContent='';by('summary').textContent='Evaluating locally…';by('status').dataset.state='working';
  try{
   const f=await recoveryTrialFixture('final');
   const bundle=mode==='compare'?await (async()=>{const p=await recoveryTrialFixture('preliminary');return compareTrialVersions(p.sourceText,p.pin,f.sourceText,f.pin);})():await exportTrialPartition(f.sourceText,f.pin,mode);
   if(ticket!==epoch)return;
-  render(bundle);current=bundle;by('status').textContent='Computed from the pinned normalized extract. No clinical decision or external request.';by('status').dataset.state='ready';
+  const bytes=new TextEncoder().encode(JSON.stringify(bundle)),snapshotPin=await trialSnapshotDigest(bytes),r=bundle.result;
+  if(ticket!==epoch)return;
+  render(bundle);current={bytes,snapshotPin};by('pins').textContent='Snapshot pin: '+snapshotPin+'\nSource pin: '+(r.sourceDigest??r.beforeDigest)+(r.afterDigest?'\nAfter-source pin: '+r.afterDigest:'');by('status').textContent='Computed from the pinned normalized extract. No clinical decision or external request.';by('status').dataset.state='ready';
  }catch{current=null;by('summary').textContent='No result claimed.';by('status').textContent='REFUSED: source or calculation could not be reconstructed.';by('status').dataset.state='refused';}
  finally{busy=false;controls();}
 }
 by('aggregate').onclick=()=>run('aggregate');by('partition').onclick=()=>run('partition');by('compare').onclick=()=>run('compare');
-by('export').onclick=()=>{if(!current||busy)return;const bytes=new TextEncoder().encode(JSON.stringify(current));if(bytes.length>1048576)return;const url=URL.createObjectURL(new Blob([bytes],{type:'application/json'})),a=document.createElement('a');a.href=url;a.download='sutra-trial-evidence.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+function download(bytes,name,type){const url=URL.createObjectURL(new Blob([bytes],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+by('export').onclick=()=>{if(current&&!busy)download(current.bytes,'sutra-trial-evidence.json','application/json');};
+by('pin-export').onclick=()=>{if(current&&!busy)download(current.snapshotPin+'\n','sutra-trial-evidence.sha256','text/plain');};
 controls();

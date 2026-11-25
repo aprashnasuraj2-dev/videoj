@@ -216,6 +216,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_trial_partition.py apps/sutra-v2/test-output/trial-aggregate.json apps/sutra-v2/test-output/trial-partition.json apps/sutra-v2/test-output/trial-comparison.json > apps/sutra-v2/test-output/trial-reference.txt
           cat apps/sutra-v2/test-output/trial-reference.txt
+      - name: Challenge trial snapshots with standalone offline verifier
+        run: |
+          node packages/sutra-knowledge/examples/trial-snapshot-parity.mjs apps/sutra-v2/test-output apps/sutra-v2/test-output/sutra-proof-verifier.pyz > apps/sutra-v2/test-output/trial-parity.txt
+          cat apps/sutra-v2/test-output/trial-parity.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

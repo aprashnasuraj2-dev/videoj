@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 from verify_capsule import verify, read_bytes, refused, FORMAT
 from verify_aligned_capsule import verify as verify_aligned, MAX_BYTES as MAX_ALIGNED_BYTES
+from verify_trial_snapshot import verify as verify_trial, MAX_BYTES as MAX_TRIAL_BYTES
 
 PIN_FILE = re.compile(rb'sha256:[a-f0-9]{64}(?:\r?\n)?', re.ASCII)
 
@@ -25,13 +26,21 @@ def main():
     pins=parser.add_mutually_exclusive_group(required=True)
     pins.add_argument('--pin',help='Independently retained sha256:<64 lowercase hex>')
     pins.add_argument('--pin-file',help='Separately retained ASCII digest file; never auto-derived from the capsule')
-    parser.add_argument('--aligned',action='store_true',help='Explicitly select the caller-pinned aligned capsule profile')
+    profiles=parser.add_mutually_exclusive_group()
+    profiles.add_argument('--aligned',action='store_true',help='Explicitly select the caller-pinned aligned capsule profile')
+    profiles.add_argument('--trial',action='store_true',help='Explicitly select the research trial snapshot profile')
+    parser.add_argument('--source-pin',help='Separately retained normalized trial source digest')
+    parser.add_argument('--after-source-pin',help='Separately retained second normalized trial source digest for comparison')
     parser.add_argument('--case-pin',help='Separately retained case SHA-256; required for aligned profile')
     args=parser.parse_args()
     if args.case_pin is not None and not args.aligned:parser.error('--case-pin requires --aligned')
+    if (args.source_pin is not None or args.after_source_pin is not None) and not args.trial:parser.error('trial source pins require --trial')
     try:
         pin=args.pin if args.pin is not None else load_pin(args.pin_file)
-        if args.aligned:
+        if args.trial:
+            with Path(args.capsule).open('rb') as f:data=f.read(MAX_TRIAL_BYTES+1)
+            result=verify_trial(data,pin,args.source_pin,args.after_source_pin)
+        elif args.aligned:
             with Path(args.capsule).open('rb') as f:data=f.read(MAX_ALIGNED_BYTES+1)
             result=verify_aligned(data,pin,args.case_pin)
         else:result=verify(read_bytes(args.capsule),pin)
