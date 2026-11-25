@@ -17,7 +17,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "network_mount_bypass_exact_verified_runtime02_external_effect_contract_next",
+  "state": "orphan_permanent_closure_exact_verified_runtime02_real_upstream_contract_next",
   "verified": [
     {
       "id": "V2-M01",
@@ -238,15 +238,15 @@
   "release": "not_authorized",
   "submission": "not_started",
   "lastFailed": {
-    "sourceRevision": "16b20699848352c0a91211b5f3485f54476fede3",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550046026",
-    "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550052462",
-    "reason": "Both knowledge runs reached the Go action-protocol compile and failed because a generated explanatory comment contained literal \\\\n text, producing a Go syntax error before the private-method hardening regression could execute. Browser and five auxiliary PR workflows succeeded; no whole-kernel credit.",
-    "resolutionRevision": "e64e35c73f7dcef09d4457a24d9963c1a7deeb73",
-    "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550654471/job/138990758148",
+    "sourceRevision": "811dcfb71086621fd836472a58962afa1d6af092",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45552921539",
+    "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45552933276",
+    "reason": "Distinct closure-authority key enforcement and Go regressions passed, but both knowledge jobs inherited the independent Python oracle defect: an already-closed orphan was incorrectly required to produce a second closure action. No whole-kernel credit.",
+    "resolutionRevision": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
+    "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047/job/138998539263",
     "resolutionStatus": "resolved_exact_all_seven_workflows_success"
   },
-  "lastVerifiedKernelSource": "e64e35c73f7dcef09d4457a24d9963c1a7deeb73",
+  "lastVerifiedKernelSource": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -477,6 +477,33 @@
       "reason": "Generated comment contained literal \\\\n text and caused Go syntax failure before the unpinned-method export regression executed.",
       "resolutionRevision": "e64e35c73f7dcef09d4457a24d9963c1a7deeb73",
       "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550654471/job/138990758148",
+      "resolutionStatus": "resolved_exact_all_seven_workflows_success"
+    },
+    {
+      "sourceRevision": "3b718c68f2c39d503cf9e62feeeb8f9a80adc2dd",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45551821866",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45551829815",
+      "reason": "Initial signed non-application recovery candidate passed the Go race gate but both knowledge jobs failed FenceAvailability TLA semantic analysis because repeated existential binder c declarations conflicted in the new proof/lie operators. No formal or whole-kernel credit.",
+      "resolutionRevision": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047/job/138998539263",
+      "resolutionStatus": "resolved_by_distinct_binders_permanent_closure_model_and_exact_green"
+    },
+    {
+      "sourceRevision": "f163f8bd197fbe8cf8a95db7a1df1e931fcdd5c8",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45552626040",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45552634075",
+      "reason": "Permanent-closure TLA model and Go tests passed their intended gates, but the independent Python oracle classified already-closed orphan states as if another CloseUnapplied action were required and exited nonzero. No whole-kernel credit.",
+      "resolutionRevision": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047/job/138998539263",
+      "resolutionStatus": "resolved_exact_all_seven_workflows_success"
+    },
+    {
+      "sourceRevision": "811dcfb71086621fd836472a58962afa1d6af092",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45552921539",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45552933276",
+      "reason": "Added enforced closure-key independence from authority and fence keys; exact Go tests passed, but both knowledge jobs inherited the same already-closed-orphan Python oracle defect. Five auxiliary PR workflows succeeded; no whole-kernel credit.",
+      "resolutionRevision": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047/job/138998539263",
       "resolutionStatus": "resolved_exact_all_seven_workflows_success"
     }
   ],
@@ -728,6 +755,27 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550654471/job/138990758148",
       "description": "Exact hardening removes direct http.Handler conformance from lower effect layers, removes exported unpinned methods from the current anchored composite, includes the surface regression in exact CI, and rejects legacy write routes with authority/fence/policy state unchanged. Both knowledge runs and all five auxiliary PR workflows pass.",
       "remaining": "Gate remains open: lower in-process laboratory operations can be deliberately wrapped; arbitrary upstream effects need independently enforced idempotency/fencing/reconciliation; orphan liveness, coordinated trust-root rollback, expiry/revocation, compensation authorization, power-loss semantics and provider-global budgets remain unresolved."
+    },
+    {
+      "id": "V2-P05-RECOVERY",
+      "sourceRevision": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047/job/138998539263",
+      "description": "Exact Go recovery path clears a pre-effect orphan only after a separately keyed permanent non-application closure proof bound to reservation hash, request hash, before/after authority heads and random admission token. Wrong signer/tamper is refused; a locally persisted effect cannot be rewound; fresh work resumes after valid closure.",
+      "remaining": "No real upstream/provider currently issues this permanent closure proof. Its semantics require an idempotency authority that guarantees the exact identity can never later execute; physical power loss and arbitrary remote-effect atomicity remain unproved."
+    },
+    {
+      "id": "V2-RUNTIME-02",
+      "sourceRevision": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047/job/138998539263",
+      "description": "Partial recovery contract verified: closure key must differ from action-authority and fence keys; exact cryptographic closure identity and pre-effect orphan checks pass; both knowledge runs and all auxiliary workflows green.",
+      "remaining": "Gate remains open until a real upstream idempotency/status adapter can enforce and attest permanent non-application, plus expiry/revocation, compensation, coordinated rollback, provider-global budgets and physical failure semantics."
+    },
+    {
+      "id": "V2-P06-REFINE",
+      "sourceRevision": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047/job/138998539263",
+      "description": "FenceAvailability closure profile and independent Python explorer both preserve safety for truthful permanent closure; Python checked 36 states/44 edges and four unresolved plus four already-closed orphan states. Lying closure produces the intended AtMostOneEffect delayed-double-effect counterexample.",
+      "remaining": "Finite model is not universal Go refinement and assumes exact idempotency identities plus a truthful external closure authority."
     }
   ],
   "reconciledCI": [
@@ -2157,6 +2205,133 @@
         },
         {
           "id": 45550654389,
+          "event": "pull_request",
+          "name": "Validate SUTRA browser compatibility matrix",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "3b718c68f2c39d503cf9e62feeeb8f9a80adc2dd",
+      "complete": false,
+      "description": "Initial closure recovery candidate: Go race passed, but both exact knowledge runs failed TLA semantic analysis on repeated existential binder names.",
+      "runs": [
+        {
+          "id": 45551821866,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 45551829815,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "f163f8bd197fbe8cf8a95db7a1df1e931fcdd5c8",
+      "complete": false,
+      "description": "Permanent-closure model parsed and Go tests passed, but independent Python oracle incorrectly rejected an already-closed orphan state; both knowledge runs failed.",
+      "runs": [
+        {
+          "id": 45552626040,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 45552634075,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "811dcfb71086621fd836472a58962afa1d6af092",
+      "complete": false,
+      "description": "Independent closure-key separation added; same Python oracle defect remained. Both knowledge runs failed; all five auxiliary PR workflows succeeded.",
+      "runs": [
+        {
+          "id": 45552921539,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 45552933276,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "sourceRevision": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
+      "complete": true,
+      "description": "Final V2-013 permanent-closure recovery checkpoint: exact Go cryptographic/runtime gates, truthful/lying TLC profile and independent Python oracle all pass in stated scope; both knowledge runs plus five auxiliary PR workflows successful.",
+      "runs": [
+        {
+          "id": 45553066291,
+          "event": "push",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            138998526447,
+            138998526815
+          ]
+        },
+        {
+          "id": 45553070047,
+          "event": "pull_request",
+          "name": "Validate SUTRA v2 knowledge kernel",
+          "status": "completed",
+          "conclusion": "success",
+          "jobIds": [
+            138998539263,
+            138998540014
+          ]
+        },
+        {
+          "id": 45553070048,
+          "event": "pull_request",
+          "name": "Classify SUTRA verification impact",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45553070046,
+          "event": "pull_request",
+          "name": "Validate SUTRA Open Kit candidate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45553070121,
+          "event": "pull_request",
+          "name": "Validate SUTRA publisher starter",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45553070116,
+          "event": "pull_request",
+          "name": "Validate SUTRA engineering evaluation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 45553070163,
           "event": "pull_request",
           "name": "Validate SUTRA browser compatibility matrix",
           "status": "completed",

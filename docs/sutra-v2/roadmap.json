@@ -267,9 +267,14 @@
               "sourceRevision": "e64e35c73f7dcef09d4457a24d9963c1a7deeb73",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550654471",
               "description": "Exact V2-013 hardening: lower effect layers no longer implement http.Handler directly; current anchored composite unpinned methods are package-private; legacy write routes reject with authority/fence/policy state unchanged. Both knowledge runs and all auxiliary workflows passed."
+            },
+            {
+              "sourceRevision": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047",
+              "description": "Permanent non-application orphan recovery: exact cryptographic proof binds reservation/request/before-after/token; closure signer must be independent from action-authority and fence keys; wrong/tampered proof and known-effect rewind refused; truthful closure safe and lying closure double-effect counterexample verified by TLC plus independent Python."
             }
           ],
-          "knownLimitations": "Authenticated loopback authority now owns action history and per-caller/global contact accounting atomically, and stale local caller state cannot reset quota. Still a synthetic single-authority fixture: no approval expiry/revocation, generic new-key lifecycle, hostile-network replay protection, provider spend accounting, physical power-loss certification or arbitrary upstream side effect.\nV2-012 update: No proof for all filesystem/power-loss failures, arbitrary upstream effects or liveness with indefinitely unavailable witness. Reconciliation needs remaining contact budget.\nV2-013: loss of the reservation owner's durable evidence can leave admission permanently fail-closed. Clearing or leasing the orphan without proof of non-dispatch can permit delayed double effects for arbitrary external services.\nV2-013 network surface: accidental direct HTTP mounting of lower effect layers is closed, but deliberate custom wrappers around exported in-process laboratory operations remain possible. This does not establish arbitrary external-effect atomicity."
+          "knownLimitations": "Authenticated loopback authority now owns action history and per-caller/global contact accounting atomically, and stale local caller state cannot reset quota. Still a synthetic single-authority fixture: no approval expiry/revocation, generic new-key lifecycle, hostile-network replay protection, provider spend accounting, physical power-loss certification or arbitrary upstream side effect.\nV2-012 update: No proof for all filesystem/power-loss failures, arbitrary upstream effects or liveness with indefinitely unavailable witness. Reconciliation needs remaining contact budget.\nV2-013: loss of the reservation owner's durable evidence can leave admission permanently fail-closed. Clearing or leasing the orphan without proof of non-dispatch can permit delayed double effects for arbitrary external services.\nV2-013 network surface: accidental direct HTTP mounting of lower effect layers is closed, but deliberate custom wrappers around exported in-process laboratory operations remain possible. This does not establish arbitrary external-effect atomicity.\nV2-013 closure recovery: availability can resume only under a separately keyed permanent non-application contract for the exact idempotency identity. No real provider/upstream adapter currently supplies this guarantee."
         },
         {
           "id": "V2-P05-ROLLBACK",
@@ -408,9 +413,14 @@
               "sourceRevision": "a9dd3fc62ad35bd14ec8cd4ebdd35bfac7fcd051",
               "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45546486966/job/138977247427",
               "description": "Finite ClientPolicyAncestry and FenceAvailability TLC/Python gates pass at exact source, including named numeric-history, fresh-provisioning, orphan-liveness and steal-orphan AtMostOneEffect counterexamples."
+            },
+            {
+              "sourceRevision": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047",
+              "description": "Permanent non-application orphan recovery: exact cryptographic proof binds reservation/request/before-after/token; closure signer must be independent from action-authority and fence keys; wrong/tampered proof and known-effect rewind refused; truthful closure safe and lying closure double-effect counterexample verified by TLC plus independent Python."
             }
           ],
-          "knownLimitations": "One actual Go trace is independently replayed against the bounded transition mapping and budgets now match the TLA per-caller 2/global 3 profile. This is a trace witness, not a universal refinement theorem: Go collapses dispatch+delivery once bytes arrive, cryptography/binary parsing/storage are outside TLA, and authority snapshot rollback remains possible without an external monotonic witness.\nV2-012 update: Trace checking is not universal simulation; clone rejection is outside admitted safe model; timing, signatures and physical storage are abstracted.\nV2-012 candidate 1704e7c3: pre-effect admission/policy-ancestry work exists on branch; exact knowledge PR 45542920604 and push 45542913848 are still in progress, so this is not promoted verification evidence.\nV2-013: bounded state exploration and independent reference models are not universal Go refinement; arbitrary external effects, cryptography, storage/power-loss and trust-root provisioning remain outside the abstraction."
+          "knownLimitations": "One actual Go trace is independently replayed against the bounded transition mapping and budgets now match the TLA per-caller 2/global 3 profile. This is a trace witness, not a universal refinement theorem: Go collapses dispatch+delivery once bytes arrive, cryptography/binary parsing/storage are outside TLA, and authority snapshot rollback remains possible without an external monotonic witness.\nV2-012 update: Trace checking is not universal simulation; clone rejection is outside admitted safe model; timing, signatures and physical storage are abstracted.\nV2-012 candidate 1704e7c3: pre-effect admission/policy-ancestry work exists on branch; exact knowledge PR 45542920604 and push 45542913848 are still in progress, so this is not promoted verification evidence.\nV2-013: bounded state exploration and independent reference models are not universal Go refinement; arbitrary external effects, cryptography, storage/power-loss and trust-root provisioning remain outside the abstraction.\nV2-013 closure profile is finite (two exact idempotency identities) and assumes truthful permanent closure; lying closure intentionally reaches a delayed double-effect counterexample."
         }
       ]
     },
@@ -2308,9 +2318,9 @@
       "phase": "05",
       "status": "Implementation in progress",
       "evidence": {
-        "sourceRevision": "e64e35c73f7dcef09d4457a24d9963c1a7deeb73",
-        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45550654471",
-        "description": "Exact network-surface hardening passes both knowledge workflows plus all auxiliary workflows: lower effectful handlers are non-mountable by type, unpinned current-composite methods are not exported, and legacy write routes preserve authority/fence/policy state."
+        "sourceRevision": "5b2e9e686bed23590ef433cb9c06d54157b842a3",
+        "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45553070047",
+        "description": "Permanent non-application orphan recovery: exact cryptographic proof binds reservation/request/before-after/token; closure signer must be independent from action-authority and fence keys; wrong/tampered proof and known-effect rewind refused; truthful closure safe and lying closure double-effect counterexample verified by TLC plus independent Python."
       },
       "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
       "dependencies": [
@@ -2326,7 +2336,7 @@
       "positiveTests": "Durable effect/ledger and explicit retry policy",
       "adversarialTests": "Crash, concurrent keys, unknown outcome, revoked approval and global budgets",
       "verificationMethod": "Go process and network integration, TLA refinement",
-      "knownLimitations": "Synthetic durable/fenced recovery and exact mount hardening are verified within the bounded laboratory. V2-RUNTIME-02 remains open: deliberate wrappers around lower in-process labs are possible; arbitrary upstream effects need an independently enforced idempotency/fencing/reconciliation contract; orphaned admission can remain unavailable; coordinated trust-domain rollback, expiry/revocation, compensation authorization, physical power-loss semantics and provider-global budgets remain unresolved."
+      "knownLimitations": "Synthetic durable/fenced recovery, write-surface hardening and a typed permanent non-application closure protocol are exact-CI verified. V2-RUNTIME-02 remains open: no real upstream adapter attests/enforces permanent closure; arbitrary external effects, expiry/revocation, compensation authorization, coordinated trust-domain rollback/fresh provisioning, physical power-loss semantics and provider-global budgets remain unresolved."
     },
     {
       "id": "V2-RUNTIME-03",

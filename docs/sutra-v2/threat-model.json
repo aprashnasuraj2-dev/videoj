@@ -10,7 +10,8 @@
     "A privileged attacker able to roll back both authority and witness trust domains can recreate an older mutually consistent state.",
     "Exact credential canary scans detect direct secret echo only; they do not prove resistance to encoded, hashed, fragmented or transformed exfiltration by a compromised trusted adapter.",
     "Fail-closed orphaned admission preserves modeled safety at the cost of availability; clearing or leasing an orphan without proof of non-dispatch can permit duplicate delayed external effects.",
-    "Lower raw authority, post-effect witness and legacy grant layers remain laboratory APIs, but they no longer implement http.Handler directly; deliberate custom wrappers or source modification can still bypass the approved composite and remain outside the guarantee."
+    "Lower raw authority, post-effect witness and legacy grant layers remain laboratory APIs, but they no longer implement http.Handler directly; deliberate custom wrappers or source modification can still bypass the approved composite and remain outside the guarantee.",
+    "No real provider or external service is verified to issue or honor SUTRA's permanent non-application closure proof; the current signer is a synthetic separately keyed laboratory authority."
   ],
   "principals": [
     {
@@ -745,6 +746,41 @@
       ],
       "openGates": [
         "V2-RUNTIME-02",
+        "V2-P01-THREAT",
+        "V2-P22-RELEASE"
+      ]
+    },
+    {
+      "id": "T24-false-nonapplication-closure",
+      "severity": "critical",
+      "category": [
+        "integrity",
+        "availability"
+      ],
+      "mechanism": "A compromised, stale or semantically weak closure authority signs 'not applied' for an exact reservation that was already dispatched or can still execute. Clearing that orphan admits another writer while the delayed prior effect remains possible.",
+      "invariant": "Closure authority key must be distinct from the action-authority and fence keys; proof must bind exact reservation hash, request hash, before/after heads and random token; the contract must mean permanent non-application, not point-in-time absence. If that promise is false, the system must not claim at-most-once safety.",
+      "evidence": [
+        {
+          "path": "packages/sutra-knowledge/action-protocol/fence_linux_test.go",
+          "test": "TestFencedCoordinatorClosureAuthorityMustBeIndependent"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/fence_linux_test.go",
+          "test": "TestFencedCoordinatorOrphanResolutionRequiresExactClosureProof"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/fence_linux_test.go",
+          "test": "TestFencedCoordinatorClosureProofCannotUndoKnownLocalEffect"
+        },
+        {
+          "path": "packages/sutra-knowledge/action-protocol/formal/FenceAvailability.tla",
+          "test": "LieClosed / AtMostOneEffect"
+        }
+      ],
+      "openGates": [
+        "V2-RUNTIME-02",
+        "V2-P05-RECOVERY",
+        "V2-P06-REFINE",
         "V2-P01-THREAT",
         "V2-P22-RELEASE"
       ]
