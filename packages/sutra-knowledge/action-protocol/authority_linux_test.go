@@ -3,6 +3,7 @@
 package actionprotocol
 
 import (
+ "bytes"
  "crypto/ed25519"
  "encoding/hex"
  "encoding/json"
@@ -163,4 +164,20 @@ func TestSharedAuthorityAmbiguousPersistencePoisonsOwner(t *testing.T){
    if spent!=[authorityCallers]byte{1,0}||total!=1||effects!=1{t.Fatal("after-rename lost commit",spent,total,effects)}
   }
  })}
+}
+
+
+func TestSharedAuthorityCopiesProvisionedCallerKeys(t *testing.T){
+ origin:="http://127.0.0.1:19093"
+ ctx,approver,ak,_,authorityKey,callerPub,callerKey:=authorityFixture(t,origin)
+ original0:=append(ed25519.PublicKey(nil),callerPub[0]...)
+ a,e:=CreateSharedAuthority(privateTemp(t),ctx,approver,authorityKey,callerPub,1);if e!=nil{t.Fatal(e)};defer a.Close()
+ root,_:=a.Head();req:=approve(t,0,ctx,ak)
+ // Mutating the caller-owned slice after provisioning must not replace the
+ // authority's authentication principal.
+ callerPub[0][0]^=0xff
+ wire,e:=SignAuthorityRequest(0,AuthorityCommit,root,req,callerKey[0]);if e!=nil{t.Fatal(e)}
+ response,e:=a.Process(wire);if e!=nil||response.Outcome!=AuthorityCommitted{t.Fatal("provisioned key aliased caller memory",e)}
+ if bytes.Equal(callerPub[0],original0){t.Fatal("test mutation did not occur")}
+ t.Log("authority owns immutable copies of provisioned caller keys")
 }
