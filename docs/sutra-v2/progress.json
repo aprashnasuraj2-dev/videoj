@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-080",
+  "session": "V2-081",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -34,7 +34,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "revision_selection_pilot_pending_exact_ci",
+  "state": "reviewed_table_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -397,14 +397,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-081",
+    "parent": "10658db4cbf9394ab2f7c15569a51cc7f8f1d951",
+    "description": "Exact restricted TSV cell selection pathway, original source span preservation and same-contract parity against manual selection; exact CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-080",
     "parent": "a8237f617f4cc34cfe98b4ab7eb9b7af71779a7b",
     "description": "Frozen four-case selection effort pilot; compare full reselection and source-local invalidation with exact reconstructed versions; all-source counterexamples. CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-079",
-    "parent": "42528be19fe0428f5329d64383b5c311fb86e1ca",
-    "description": "Pinned sibling import and three-way contrast browser integration; stale output invalidation, wrong-pin refusal, real guided export. Exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [

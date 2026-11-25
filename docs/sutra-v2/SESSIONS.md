@@ -796,3 +796,8 @@ V2-076 exact 10/10 green. Use retained parent and current evaluated child; impor
 ## V2-080 — Scoped revision selection pilot
 
 V2-077 and V2-078 exact 10/10 green. Freeze four development cases (two single-source, two all-source edits) with explicit retained/reselected IDs and expected conditional states. Compare exact rebuilt and restored/reselected version bytes; report full and targeted selection counts, and separate diagnostic projected node reuse. All-source controls require zero selection savings. The comparator is full reselection, not a strong incremental editor; no general speed, accuracy, human or novelty claim. Workflow prints and uploads result; exact CI pending. V2-079 pending at observation.
+
+
+## V2-081 — Exact structured table pathway
+
+Add restricted rectangular unquoted TSV paste, first row unique nonempty headers, 128 data rows × 16 columns, exact UTF-16 coordinate spans, at most 64 explicit selected cells. Selection binds source digest, source/lineage IDs, cell coordinates and caller-declared types. Reuse reviewed draft and compiler atomically; no automatic quantity inference, locale conversion or formula execution. Tests compare exact manual contract bytes and typed expression outcomes, including multibyte header, stale source, duplicate cells, ragged rows, hostile formula and malformed number. No browser integration yet; exact CI pending. V2-079/080 exact outcomes still to reconcile.

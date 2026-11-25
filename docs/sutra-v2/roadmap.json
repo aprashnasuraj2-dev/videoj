@@ -2883,7 +2883,7 @@
       "dependencies": [
         "V2-LK02-INTENT-IR"
       ],
-      "scope": "Route structured table imports, templates, rules, user expressions, reviewed contracts, document import and optional model proposals through cheapest admissible path. V2-072 candidate: deterministic human expression syntax over reviewed bindings, same compiler and contrast path, no provider. Structured table/document paths and consent/cost comparison remain open.",
+      "scope": "Route structured table imports, templates, rules, user expressions, reviewed contracts, document import and optional model proposals through cheapest admissible path. V2-072 candidate: deterministic human expression syntax over reviewed bindings, same compiler and contrast path, no provider. Structured table/document paths and consent/cost comparison remain open. V2-081 candidate: bounded unquoted TSV source text, explicit pinned cell coordinates/types, exact manual-contract parity; no automatic semantic extraction, formula evaluation or locale coercion.",
       "acceptance": "Same contract across paths, explicit consent, costs and review; compare deterministic and model proposals without votes.",
       "evidence": [
         {
