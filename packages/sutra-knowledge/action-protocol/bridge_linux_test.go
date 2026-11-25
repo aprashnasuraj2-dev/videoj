@@ -204,3 +204,47 @@ func TestWitnessedResponseCompositeProofAndHTTPBoundary(t *testing.T){
  if _,e=ParseWitnessedResponse(combined.Authority.Bytes());e==nil{t.Fatal("raw authority response parsed as witnessed proof")}
  t.Log("external acknowledgement requires both exact authority receipt and pinned independent witness view at the same head")
 }
+
+
+func TestWitnessedAuthorityClientEndToEndAndTamperedComposite(t *testing.T){
+ var witnessPtr atomic.Pointer[AuthorityWitness]
+ witnessServer:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){witnessPtr.Load().ServeHTTP(w,r)}));defer witnessServer.Close()
+ ctx,approver,ak,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,witnessServer.URL)
+ witnessPub,witnessKey:=witnessKeys()
+ authorityDir:=privateTemp(t);witnessDir:=privateTemp(t)
+ a,e:=CreateSharedAuthority(authorityDir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer a.Close()
+ genesis,_:=a.Head()
+ witness,e:=CreateAuthorityWitness(witnessDir,ctx,authorityPub,witnessKey,genesis);if e!=nil{t.Fatal(e)};witnessPtr.Store(witness);defer witness.Close()
+ witnessClient,e:=NewWitnessClient(witnessServer.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
+ coordinator,e:=NewWitnessCoordinator(a,witnessClient);if e!=nil{t.Fatal(e)}
+ authorityServer:=httptest.NewServer(coordinator);defer authorityServer.Close()
+
+ req0:=approve(t,0,ctx,ak)
+ client0,e:=NewWitnessedAuthorityClient(authorityServer.URL,0,callerKey[0],authorityPub,witnessPub,ctx,genesis,req0,genesis);if e!=nil{t.Fatal(e)}
+ receipt0,combined0,e:=client0.Commit();if e!=nil||receipt0.Version!=1||combined0.Authority.After!=combined0.Witness.Head{t.Fatal("first witnessed commit",e)}
+ if client0.Head()!=combined0.Witness.Head||client0.Contacts()!=1{t.Fatal("client head/contact state")}
+
+ req1:=approve(t,1,ctx,ak)
+ client1,e:=NewWitnessedAuthorityClient(authorityServer.URL,1,callerKey[1],authorityPub,witnessPub,ctx,genesis,req1,client0.Head());if e!=nil{t.Fatal(e)}
+ receipt1,combined1,e:=client1.Commit();if e!=nil||receipt1.Version!=2||combined1.Authority.After!=combined1.Witness.Head{t.Fatal("second witnessed commit",e)}
+ if client1.Head()!=combined1.Witness.Head||client1.Contacts()!=1{t.Fatal("second client state")}
+
+ // Proxy one otherwise-valid response and flip the last witness-signature byte.
+ tamper:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
+  recorder:=httptest.NewRecorder();coordinator.ServeHTTP(recorder,r)
+  if recorder.Code!=http.StatusOK{
+   w.WriteHeader(recorder.Code);return
+  }
+  raw:=append([]byte(nil),recorder.Body.Bytes()...);raw[len(raw)-1]^=1
+  w.Header().Set("Content-Type",media);w.WriteHeader(http.StatusOK);_,_=w.Write(raw)
+ }));defer tamper.Close()
+ // Only one aggregate contact remains. Use client 0's action as a status query
+ // at the latest head; the server may advance durable contact state, but the
+ // caller refuses the forged composite proof and returns unknown.
+ tamperedClient,e:=NewWitnessedAuthorityClient(tamper.URL,0,callerKey[0],authorityPub,witnessPub,ctx,genesis,req0,client1.Head());if e!=nil{t.Fatal(e)}
+ if _,_,e=tamperedClient.Status();!errors.Is(e,ErrUnknown){t.Fatal("tampered composite accepted",e)}
+ spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{2,1}||total!=3||effects!=2{t.Fatal("tamper contact accounting",spent,total,effects,e)}
+ view,e:=witnessClient.View();if e!=nil{t.Fatal(e)};head,_:=a.Head()
+ if view.Head!=head{t.Fatal("server state diverged after caller rejected forged transport")}
+ t.Log("actual clients accepted only composite authority+witness proofs; tampered witness signature became unknown without refunding the real third contact")
+}
