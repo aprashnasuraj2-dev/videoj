@@ -74,7 +74,7 @@ TypeOK ==
     /\ revoked \in BOOLEAN
     /\ admitted \in BOOLEAN
     /\ phase \in Phases
-    /\ effects \in 0..1
+    /\ effects \in 0..2
     /\ reconciled \in BOOLEAN
 
 DispatchAuthorized ==
