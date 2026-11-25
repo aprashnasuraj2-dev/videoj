@@ -25,7 +25,7 @@ const workspace=createProviderWorkspace({
 });
 const handles=new Map();
 const form=by('provider-form'),kind=by('provider-kind'),label=by('provider-label'),key=by('provider-key');
-const reveal=by('provider-reveal'),status=by('provider-status'),profiles=by('provider-profiles');
+const reveal=by('provider-reveal'),status=by('provider-status'),profiles=by('provider-profiles'),exportButton=by('provider-export');
 const callCap=by('provider-call-cap'),tokenCap=by('provider-token-cap');
 
 function providerMeta(id){return catalog.find(x=>x.id===id);}
@@ -91,8 +91,24 @@ function render(){
  if(!rows.length){
   const empty=document.createElement('p');empty.className='provider-empty';empty.textContent='Add a profile to rehearse multi-provider routing without contacting an LLM.';profiles.append(empty);
  }
+ exportButton.disabled=!rows.length;
  updateMetrics();
 }
+exportButton.addEventListener('click',()=>{
+ const rows=workspace.list();if(!rows.length)return;
+ const report=Object.freeze({
+  version:'sutra-provider-workspace-summary-v1',
+  mode:'development-local-only',
+  profiles:rows.map(({profileId,providerId,providerLabel,label,models,budget})=>({
+   profileId,providerId,providerLabel,label,models,
+   budget:{enabled:budget.enabled,limits:budget.limits,used:budget.used}
+  }))
+ });
+ const url=URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));
+ const a=document.createElement('a');a.href=url;a.download='sutra-provider-workspace-summary.json';document.body.append(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),1000);
+ setStatus('Safe summary export requested. Credential values and capability handles are excluded.','complete');
+});
 reveal.addEventListener('click',()=>{
  const showing=key.type==='text';key.type=showing?'password':'text';reveal.textContent=showing?'Show':'Hide';reveal.setAttribute('aria-pressed',String(!showing));
 });
