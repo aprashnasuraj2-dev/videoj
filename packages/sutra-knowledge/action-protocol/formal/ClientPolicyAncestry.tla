@@ -32,7 +32,7 @@ Advance(h) ==
     /\ ~HeadSeen(h)
     /\ history' = Append(history, h)
     /\ checked' = FALSE
-    /\ maxEver' = Max(maxEver, CurrentSeq + 1)
+    /\ maxEver' = IF maxEver > CurrentSeq + 1 THEN maxEver ELSE CurrentSeq + 1
     /\ UNCHANGED <<pinSeq, pinHead, effects, lastEffectPinned, lastEffectSeq>>
 
 \* Returning client can move its pin forward only if its old exact pin is still
