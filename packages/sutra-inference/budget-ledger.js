@@ -69,7 +69,9 @@ export function createProviderBudgetLedger({global,profiles,leaseTicks=45,random
   if(!safe(now,0,Number.MAX_SAFE_INTEGER))stop('CLOCK');
   let expired=0;
   for(const lease of leases.values()){
-   if(lease.active&&lease.unknown&&lease.expiresAt<=now){releaseActive(lease);lease.state='unknown-expired';expired++;}
+   if(lease.active&&lease.expiresAt<=now){
+    const wasUnknown=lease.unknown;releaseActive(lease);lease.state=wasUnknown?'unknown-expired':'lease-expired';expired++;
+   }
   }
   return expired;
  };
