@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-039",
+  "session": "V2-040",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2679,21 +2679,45 @@
     },
     {
       "id": "V2-D18-ASSUMPTION-CONTRAST",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D17-OBSERVED-DOMAIN-GRID",
         "V2-D11-ALIGNED-CASE"
       ],
-      "scope": "New assumption-contrast candidate: compare surviving declared decisive anchors against distinct normalized assignments in the observed grid, including explicitly hypothetical omitted combinations when bounded. Expose exact inclusion-minimal input/value interventions, separate model-only reversals from evidence-compatible, evidence-excluded and admission-blocked reversals, distinguish one-factor reversal from interaction-only reversal under complete finite coverage, and preserve original capsule. No causality, feasibility, probability, continuous-domain robustness, recommendation or adoption. A direct standalone Boolean oracle exercised the exact proposed anchor algorithm across 256 truth tables and 2,048 anchors; integrated Node tests, browser wiring, independent report replay and exact new-source CI remain pending. Direct local Git clone unavailable (DNS); no full local suite claim. V2-037 candidate extends V2-036 with an accessible read-only browser interaction example, report export (1 MiB limit), separate evidence-compatible and excluded witnesses, stale-report invalidation, two Chromium journey assertions, and independent Python reconstruction using pairwise exact intervention-set subset comparison, independently constructed fixture pin and 21 mutation controls per export. No browser, integrated Node, or Python execution observed yet on this source; exact CI pending. Earlier 2,048 pure-anchor oracle checks remain limited to that algorithm. No publication, source adoption, external requests or paid inference."
+      "scope": "New assumption-contrast candidate: compare surviving declared decisive anchors against distinct normalized assignments in the observed grid, including explicitly hypothetical omitted combinations when bounded. Expose exact inclusion-minimal input/value interventions, separate model-only reversals from evidence-compatible, evidence-excluded and admission-blocked reversals, distinguish one-factor reversal from interaction-only reversal under complete finite coverage, and preserve original capsule. No causality, feasibility, probability, continuous-domain robustness, recommendation or adoption. A direct standalone Boolean oracle exercised the exact proposed anchor algorithm across 256 truth tables and 2,048 anchors; integrated Node tests, browser wiring, independent report replay and exact new-source CI remain pending. Direct local Git clone unavailable (DNS); no full local suite claim. V2-037 candidate extends V2-036 with an accessible read-only browser interaction example, report export (1 MiB limit), separate evidence-compatible and excluded witnesses, stale-report invalidation, two Chromium journey assertions, and independent Python reconstruction using pairwise exact intervention-set subset comparison, independently constructed fixture pin and 21 mutation controls per export. No browser, integrated Node, or Python execution observed yet on this source; exact CI pending. Earlier 2,048 pure-anchor oracle checks remain limited to that algorithm. No publication, source adoption, external requests or paid inference.",
+      "evidence": [
+        {
+          "id": "V2-D18-ASSUMPTION-CONTRAST",
+          "sourceRevision": "a8540f8c0b6b745dd0301b26135de54d3c634efc",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45590466677/job/139123035195",
+          "description": "All nine exact-source workflows succeeded for a8540f8c0b6b745dd0301b26135de54d3c634efc (knowledge PR 45590466677, push 45590453958; auxiliary PR 45590466816, 45590466776, 45590466857, 45590466708, 45590466840, 45590466683, 45590466748). Browser jobs 139122995155 and 139123035195 completed independent public-filing cash-flow replay; knowledge jobs 139122995439 and 139123034889 completed Node tests. Also all nine passed for 855449c20ac1f9bdd8d75c947784833a83969a67 and cfdf151401371cd244ee49070d5ccc50ec08de7c. Exact source only; no external source authenticity."
+        }
+      ]
     },
     {
       "id": "V2-D19-PUBLIC-FILING-FINANCE",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D11-ALIGNED-CASE",
         "V2-D18-ASSUMPTION-CONTRAST"
       ],
-      "scope": "V2-038 public-filing finance vertical candidate. Microsoft FY2025 and FY2026 historical SEC filings (Part II Item 8 cash flows, accession 000095017025100235 and 000119312526323660, accessed 2026-11-25) manually transcribed into normalized field extracts: FY25 OCF 136162, cash PPE 64551; FY26 OCF 182935, cash PPE 115948; all USD million. Exact defined proxy OCF minus cash PPE: 71611 and 66987, change -4624. Four explicit hypothetical FY26 combinations; operating cash alone leaves opposite proxy decisions; full reported fields refute nondecreasing proxy; same conservative issuer lineage across both filings, six reads/two sources not six independent observations; hypothetical withdrawal restores ambiguity. No verified issuer authenticity, original HTML digest, real acquisition cost, future forecast, comprehensive GAAP/FCF metric or recommendation. Source numeric facts only, no verbatim filing content; original rights retained, no whole-source redistribution. Browser journey and independent pinned Python replay plus tamper controls written, not yet executed on exact candidate. V2-037 prior candidate remains pending until exact CI; no merge, deploy or paid inference. V2-039 candidate fixes the static-summary weakness of V2-038: graph derives exact proxy delta and cash PPE threshold, finance diagnostics revalidate exact fixture pin and event history, compare graph and target receipt digests against replay, retain active readings and root history, and render actual surviving receipt values instead of prewritten stage outcomes. Exact threshold 111324, actual 115948, delta -4624. Added tests for both opposite operating-only candidates, threshold identity, withdrawn evidence and foreign fixture refusal. Independent Python rebuild now includes both derived nodes. Exact new-source CI pending; no production or decision authority."
+      "scope": "V2-038 public-filing finance vertical candidate. Microsoft FY2025 and FY2026 historical SEC filings (Part II Item 8 cash flows, accession 000095017025100235 and 000119312526323660, accessed 2026-11-25) manually transcribed into normalized field extracts: FY25 OCF 136162, cash PPE 64551; FY26 OCF 182935, cash PPE 115948; all USD million. Exact defined proxy OCF minus cash PPE: 71611 and 66987, change -4624. Four explicit hypothetical FY26 combinations; operating cash alone leaves opposite proxy decisions; full reported fields refute nondecreasing proxy; same conservative issuer lineage across both filings, six reads/two sources not six independent observations; hypothetical withdrawal restores ambiguity. No verified issuer authenticity, original HTML digest, real acquisition cost, future forecast, comprehensive GAAP/FCF metric or recommendation. Source numeric facts only, no verbatim filing content; original rights retained, no whole-source redistribution. Browser journey and independent pinned Python replay plus tamper controls written, not yet executed on exact candidate. V2-037 prior candidate remains pending until exact CI; no merge, deploy or paid inference. V2-039 candidate fixes the static-summary weakness of V2-038: graph derives exact proxy delta and cash PPE threshold, finance diagnostics revalidate exact fixture pin and event history, compare graph and target receipt digests against replay, retain active readings and root history, and render actual surviving receipt values instead of prewritten stage outcomes. Exact threshold 111324, actual 115948, delta -4624. Added tests for both opposite operating-only candidates, threshold identity, withdrawn evidence and foreign fixture refusal. Independent Python rebuild now includes both derived nodes. Exact new-source CI pending; no production or decision authority.",
+      "evidence": [
+        {
+          "id": "V2-D19-PUBLIC-FILING-FINANCE",
+          "sourceRevision": "a8540f8c0b6b745dd0301b26135de54d3c634efc",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45590466677/job/139123035195",
+          "description": "All nine exact-source workflows succeeded for a8540f8c0b6b745dd0301b26135de54d3c634efc (knowledge PR 45590466677, push 45590453958; auxiliary PR 45590466816, 45590466776, 45590466857, 45590466708, 45590466840, 45590466683, 45590466748). Browser jobs 139122995155 and 139123035195 completed independent public-filing cash-flow replay; knowledge jobs 139122995439 and 139123034889 completed Node tests. Also all nine passed for 855449c20ac1f9bdd8d75c947784833a83969a67 and cfdf151401371cd244ee49070d5ccc50ec08de7c. Exact source only; no external source authenticity."
+        }
+      ]
+    },
+    {
+      "id": "V2-D20-RESEARCH-PARTITION",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D11-ALIGNED-CASE"
+      ],
+      "scope": "V2-040 candidate adds a research-only partition audit with closed source schema, exact case pin, event/participant count bounds, unique strata, aggregate conservation, exact per-row raw risk/difference/crude ratio receipts, separately reported adjusted rate ratio interval positions, and explicit non-establishment of universal causal benefit. RECOVERY NCT04381936 historical final vs preliminary numeric extracts (Figure 3, DOI 10.1056/NEJMoa2021436, PMID 32678530, PMC7383595, accessed 2026-11-25) share one declared study root. Aggregate direction lower, no-respiratory-support observed direction higher but adjusted CI includes null; no inference of harm/equivalence or clinical recommendation. Preliminary lower CI 0.91 versus final 0.92; version comparison not replication. Browser journey, strict edge-case tests, frozen independent Python replay and tamper challenges authored; exact candidate CI pending. Original paper bytes not pinned; no current guideline, clinical deployment, human efficacy or population transfer claim."
     }
   ]
 }

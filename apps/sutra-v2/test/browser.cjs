@@ -564,6 +564,20 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await financeStep('finance-ocf','ocf','UNDERDETERMINED',2,1);
   const financeFull=await financeStep('finance-full','full','REFUTED',1,1);assert.equal(financeFull.report.activeEvidence.length,6);assert.match(await financePage.locator('#pinned-finance-explanation').innerText(),/66,987/);assert.match(await financePage.locator('#pinned-finance-explanation').innerText(),/111,324/);assert.match(await financePage.locator('#pinned-finance-explanation').innerText(),/4,624/);
   await financeStep('finance-withdraw','withdrawn','UNDERDETERMINED',4,0);assert.deepEqual(financeErrors,[]);assert.deepEqual(financeExternal,[]);await financePage.close();
+  // Historical study: descriptive scope attack, interval distinction, version drift.
+  const trialPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),trialErrors=[],trialExternal=[];
+  trialPage.on('pageerror',e=>trialErrors.push(e.message));trialPage.on('request',r=>{if(new URL(r.url()).origin!==origin)trialExternal.push(r.url());});
+  await trialPage.goto(origin);await trialPage.locator('#trial-lab > summary').click();
+  async function trialStep(button,stem,pattern){
+   await trialPage.locator('#trial-'+button).click();await trialPage.waitForFunction(()=>document.querySelector('#trial-status').dataset.state==='ready'&&!document.querySelector('#trial-export').disabled);
+   assert.match(await trialPage.locator('#trial-summary').innerText(),pattern);
+   const dl=trialPage.waitForEvent('download');await trialPage.locator('#trial-export').click();const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,'trial-'+stem+'.json'),bytes);return JSON.parse(bytes);
+  }
+  const trialAggregate=await trialStep('aggregate','aggregate',/NOT TESTED/);assert.equal(trialAggregate.result.rows.length,1);
+  const trialPartition=await trialStep('partition','partition',/REFUTED in declared partition/);assert.deepEqual(trialPartition.result.descriptiveCounterexamples,['no_respiratory_support']);assert.equal(trialPartition.result.rows[3].reportedAdjusted.intervalPosition,'INCLUDES_NULL');
+  assert.match(await trialPage.locator('#trial-rows').innerText(),/includes null/);
+  const trialComparison=await trialStep('compare','comparison',/not independent replication/);assert.equal(trialComparison.result.changes.length,1);assert.match(await trialPage.locator('#trial-rows').innerText(),/0\.91 → 0\.92/);
+  assert.deepEqual(trialErrors,[]);assert.deepEqual(trialExternal,[]);await trialPage.close();
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});

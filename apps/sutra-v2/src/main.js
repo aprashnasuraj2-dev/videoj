@@ -125,3 +125,5 @@ import './provider-lab.js';
 import './debugger.js';
 
 import './pinned-workspace.js';
+
+import './trial-lab.js';

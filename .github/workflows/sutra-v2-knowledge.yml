@@ -212,6 +212,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_microsoft_cashflow.py apps/sutra-v2/test-output/finance-baseline.json apps/sutra-v2/test-output/finance-ocf.json apps/sutra-v2/test-output/finance-full.json apps/sutra-v2/test-output/finance-withdrawn.json > apps/sutra-v2/test-output/finance-reference.txt
           cat apps/sutra-v2/test-output/finance-reference.txt
+      - name: Independently replay clinical research scope and report-version audit
+        run: |
+          python3 packages/sutra-knowledge/reference/verify_trial_partition.py apps/sutra-v2/test-output/trial-aggregate.json apps/sutra-v2/test-output/trial-partition.json apps/sutra-v2/test-output/trial-comparison.json > apps/sutra-v2/test-output/trial-reference.txt
+          cat apps/sutra-v2/test-output/trial-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version
