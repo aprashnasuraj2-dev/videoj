@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-028",
+  "session": "V2-029",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2558,6 +2558,13 @@
           "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576209816",
           "reason": "Both actual Chromium jobs failed at browser.cjs:388 waiting for valid aligned snapshot verification (push 139074648305, PR 139074670037). Push knowledge job 139074647736 failed all four new capsule groups (56 passed, 4 failed). The local exact blob 0063fa41d7aebdddfaad7bc0b5af34ed37e7f412 and test 85c326a1466467aacb2a205afd15781d65b671cc reproduced all four failures. Root cause: strict-json.js rejects maxChars > 262144 before parsing, so passing 1048576 refused every valid snapshot. Seven auxiliary workflows passed. Failed browser artifact 15004926225 digest sha256:51c9899a483c0e973b2bfe622f5e32e050f69ba8dfa06e2de090512a2a5bc51e preserved. No verification credit.",
           "resolutionStatus": "candidate constrains exact bytes to 262144 in both implementations and browser, preserving shared parser; pending exact CI"
+        },
+        {
+          "sourceRevision": "88f94467148a6e5d7deb0f5232a2768d24323f87",
+          "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576689738",
+          "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576697835",
+          "reason": "Both actual Chromium journeys passed their browser execution and all preceding independent replay steps, but the new aligned capsule differential step failed at aligned-capsule-parity.mjs:60 in jobs 139076301919 and 139076274007. Test expected ENVELOPE_SCHEMA from the legacy profile when fed the deeply nested aligned wire; the actual legacy depth-4 parser refuses before schema with WIRE_REFUSED. Both local JS and Python legacy verifiers reproduce WIRE_REFUSED. No downgrade/acceptance occurred. Seven auxiliary workflows passed; full exact-source credit withheld. PR failed artifact 15004078329 digest sha256:3c06d9c9e374445132e437a6efca49bf55cd4819c898e2a61084dd7c2e239270.",
+          "resolutionStatus": "candidate checks exact early wire refusal in both legacy implementations and reverse profile refusal; no verifier changes; pending exact CI"
         }
       ]
     }

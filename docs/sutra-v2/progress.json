@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-028",
+  "session": "V2-029",
   "next": [
     "V2-D12-ALIGNED-CAPSULE",
     "V2-P07-WASM",
@@ -312,11 +312,11 @@
   "release": "not_authorized",
   "submission": "not_started",
   "lastFailed": {
-    "sourceRevision": "12e2d7b221136d56f53103bb3205a6deeb1876ab",
-    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576203164",
-    "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576209816",
-    "reason": "Both actual Chromium jobs failed at browser.cjs:388 waiting for valid aligned snapshot verification (push 139074648305, PR 139074670037). Push knowledge job 139074647736 failed all four new capsule groups (56 passed, 4 failed). The local exact blob 0063fa41d7aebdddfaad7bc0b5af34ed37e7f412 and test 85c326a1466467aacb2a205afd15781d65b671cc reproduced all four failures. Root cause: strict-json.js rejects maxChars > 262144 before parsing, so passing 1048576 refused every valid snapshot. Seven auxiliary workflows passed. Failed browser artifact 15004926225 digest sha256:51c9899a483c0e973b2bfe622f5e32e050f69ba8dfa06e2de090512a2a5bc51e preserved. No verification credit.",
-    "resolutionStatus": "candidate constrains exact bytes to 262144 in both implementations and browser, preserving shared parser; pending exact CI"
+    "sourceRevision": "88f94467148a6e5d7deb0f5232a2768d24323f87",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576689738",
+    "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576697835",
+    "reason": "Both actual Chromium journeys passed their browser execution and all preceding independent replay steps, but the new aligned capsule differential step failed at aligned-capsule-parity.mjs:60 in jobs 139076301919 and 139076274007. Test expected ENVELOPE_SCHEMA from the legacy profile when fed the deeply nested aligned wire; the actual legacy depth-4 parser refuses before schema with WIRE_REFUSED. Both local JS and Python legacy verifiers reproduce WIRE_REFUSED. No downgrade/acceptance occurred. Seven auxiliary workflows passed; full exact-source credit withheld. PR failed artifact 15004078329 digest sha256:3c06d9c9e374445132e437a6efca49bf55cd4819c898e2a61084dd7c2e239270.",
+    "resolutionStatus": "candidate checks exact early wire refusal in both legacy implementations and reverse profile refusal; no verifier changes; pending exact CI"
   },
   "lastVerifiedKernelSource": "dcca55406c3a5bfacc2adc2a68cab5e49f24e129",
   "resolvedIssue": {
@@ -329,7 +329,7 @@
   },
   "pendingCandidate": {
     "sourceRevision": null,
-    "sourceParent": "12e2d7b221136d56f53103bb3205a6deeb1876ab",
+    "sourceParent": "88f94467148a6e5d7deb0f5232a2768d24323f87",
     "status": "candidate_pending_exact_ci",
     "identityRule": "Resolve the immutable commit containing this checkpoint.",
     "checks": [
@@ -339,21 +339,24 @@
       "cross-language explicitly expected refusal reasons and accepted identities including both-pin substitution counterexample",
       "profile downgrade, invalid wire, semantic forgery, re-pinned mixed equations; deterministic output and limits",
       "strict 256 KiB aggregate bound, valid eight-observation path and oversized aggregate refusal",
-      "five local test groups passed on corrected core f34d47d197289b0c3dec4ddd5e38e5522caa2993 and test fce58a5ae42c164bb88196c9fba052bbf1096cfc; independent Python corrected blob 7ad0a2cd73b2e8634a6bd7d5c2d23c0ef0eddcf1 verified two local snapshots; actual CI pending"
+      "five local test groups passed on corrected core f34d47d197289b0c3dec4ddd5e38e5522caa2993 and test fce58a5ae42c164bb88196c9fba052bbf1096cfc; independent Python corrected blob 7ad0a2cd73b2e8634a6bd7d5c2d23c0ef0eddcf1 verified two local snapshots; actual CI pending",
+      "actual legacy depth-first refusal WIRE_REFUSED in both JS/Python; reverse profile CAPSULE_SCHEMA; mixed CLI flags exit 2",
+      "corrected local parity script exact hash 194c0be5f9919c3a74660e75e5eb70b2bd6f79ed passed 27 explicit controls (4 accepted, 23 refused) against original failed browser artifact 15004926225 exact bytes and locally rebuilt independent archive"
     ]
   },
   "previousPendingCandidate": {
-    "sourceRevision": "12e2d7b221136d56f53103bb3205a6deeb1876ab",
-    "sourceParent": "dcca55406c3a5bfacc2adc2a68cab5e49f24e129",
+    "sourceRevision": "88f94467148a6e5d7deb0f5232a2768d24323f87",
+    "sourceParent": "12e2d7b221136d56f53103bb3205a6deeb1876ab",
     "status": "failed_exact_ci",
     "identityRule": "Resolve the immutable commit containing this checkpoint.",
     "checks": [
-      "explicit distinct case and snapshot pins; strict 1 MiB exact byte wire; immutable byte capture",
       "actual general-case old/current capsules and separately saved snapshot pins",
       "fresh-tab verification, one-byte tamper/refusal/restoration, old snapshot vs current pin, wrong case pin, no adoption",
       "independent downloaded Python archive explicit aligned profile; legacy profile preserved",
       "cross-language explicitly expected refusal reasons and accepted identities including both-pin substitution counterexample",
-      "profile downgrade, invalid wire, semantic forgery, re-pinned mixed equations; deterministic output and limits"
+      "profile downgrade, invalid wire, semantic forgery, re-pinned mixed equations; deterministic output and limits",
+      "strict 256 KiB aggregate bound, valid eight-observation path and oversized aggregate refusal",
+      "five local test groups passed on corrected core f34d47d197289b0c3dec4ddd5e38e5522caa2993 and test fce58a5ae42c164bb88196c9fba052bbf1096cfc; independent Python corrected blob 7ad0a2cd73b2e8634a6bd7d5c2d23c0ef0eddcf1 verified two local snapshots; actual CI pending"
     ]
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
@@ -582,6 +585,13 @@
       "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576209816",
       "reason": "Both actual Chromium jobs failed at browser.cjs:388 waiting for valid aligned snapshot verification (push 139074648305, PR 139074670037). Push knowledge job 139074647736 failed all four new capsule groups (56 passed, 4 failed). The local exact blob 0063fa41d7aebdddfaad7bc0b5af34ed37e7f412 and test 85c326a1466467aacb2a205afd15781d65b671cc reproduced all four failures. Root cause: strict-json.js rejects maxChars > 262144 before parsing, so passing 1048576 refused every valid snapshot. Seven auxiliary workflows passed. Failed browser artifact 15004926225 digest sha256:51c9899a483c0e973b2bfe622f5e32e050f69ba8dfa06e2de090512a2a5bc51e preserved. No verification credit.",
       "resolutionStatus": "candidate constrains exact bytes to 262144 in both implementations and browser, preserving shared parser; pending exact CI"
+    },
+    {
+      "sourceRevision": "88f94467148a6e5d7deb0f5232a2768d24323f87",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576689738",
+      "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45576697835",
+      "reason": "Both actual Chromium journeys passed their browser execution and all preceding independent replay steps, but the new aligned capsule differential step failed at aligned-capsule-parity.mjs:60 in jobs 139076301919 and 139076274007. Test expected ENVELOPE_SCHEMA from the legacy profile when fed the deeply nested aligned wire; the actual legacy depth-4 parser refuses before schema with WIRE_REFUSED. Both local JS and Python legacy verifiers reproduce WIRE_REFUSED. No downgrade/acceptance occurred. Seven auxiliary workflows passed; full exact-source credit withheld. PR failed artifact 15004078329 digest sha256:3c06d9c9e374445132e437a6efca49bf55cd4819c898e2a61084dd7c2e239270.",
+      "resolutionStatus": "candidate checks exact early wire refusal in both legacy implementations and reverse profile refusal; no verifier changes; pending exact CI"
     }
   ],
   "reconciledDurableCandidate": {

@@ -7,6 +7,7 @@ import {spawnSync} from 'node:child_process';
 import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {createAlignedCapsule,verifyAlignedCapsule,MAX_ALIGNED_CAPSULE_BYTES} from '../aligned-capsule.js';
+import {createProofCapsule,verifyProofCapsule} from '../proof-capsule.js';
 import {capacityExample,pinnedInvestigationExport,casePin} from '../pinned-investigation.js';
 const args=process.argv.slice(2);assert.equal(args.length,5);
 const [currentPath,currentPinPath,oldPath,oldPinPath,archive]=args.map(resolvePath=>resolve(resolvePath));
@@ -52,12 +53,18 @@ const alternateCase=fixture.caseText+' ',alternateCasePin=await casePin(alternat
 const alternate=await createAlignedCapsule(alternateCase,alternateCasePin,object.investigation.eventText);
 add('valid alternate case with retained original case pin',alternate.bytes,'CASE_PIN_MISMATCH',alternate.expectedDigest,cp);
 add('valid alternate case with its own pins',alternate.bytes,null,alternate.expectedDigest,alternateCasePin,'REFUTED');
+const fixed=await createProofCapsule('[]');
+add('fixed-fixture capsule in aligned profile',fixed.bytes,'CAPSULE_SCHEMA',fixed.expectedDigest,cp);
 const dir=mkdtempSync(join(tmpdir(),'sutra-aligned-parity-'));
 try{
  const file=join(dir,'proof.json');
  writeFileSync(file,current);
  const wrongProfile=spawnSync('python3',['-I','-S',archive,file,'--pin',pin],{encoding:'utf8',cwd:dir,timeout:20000});
- assert.equal(wrongProfile.status,1);assert.equal(JSON.parse(wrongProfile.stdout).reason,'ENVELOPE_SCHEMA');
+ // The fixed envelope parser checks its depth bound before schema, so a
+ // nested aligned capsule must be refused at the wire boundary in both.
+ assert.equal(wrongProfile.status,1);const fixedRefusal=JSON.parse(wrongProfile.stdout);
+ assert.deepEqual(fixedRefusal,{status:'REFUSED',reason:'WIRE_REFUSED'});
+ assert.deepEqual(await verifyProofCapsule(current,pin),fixedRefusal);
  const mixedFlags=spawnSync('python3',['-I','-S',archive,file,'--pin',pin,'--case-pin',cp],{encoding:'utf8',cwd:dir,timeout:20000});assert.equal(mixedFlags.status,2);
  for(const x of cases){
   const js=await verifyAlignedCapsule(x.bytes,x.pin,x.caseDigest);writeFileSync(file,x.bytes);
