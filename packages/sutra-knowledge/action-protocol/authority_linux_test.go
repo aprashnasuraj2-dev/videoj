@@ -181,3 +181,26 @@ func TestSharedAuthorityCopiesProvisionedCallerKeys(t *testing.T){
  if bytes.Equal(callerPub[0],original0){t.Fatal("test mutation did not occur")}
  t.Log("authority owns immutable copies of provisioned caller keys")
 }
+
+
+func TestSharedAuthorityRolledBackCursorConsumesBudgetWithoutRepeatingEffect(t *testing.T){
+ origin:="http://127.0.0.1:19094"
+ ctx,approver,ak,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,origin)
+ dir:=privateTemp(t)
+ a,e:=CreateSharedAuthority(dir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer a.Close()
+ root,_:=a.Head();req0:=approve(t,0,ctx,ak);req1:=approve(t,1,ctx,ak)
+ first,_:=SignAuthorityRequest(0,AuthorityCommit,root,req0,callerKey[0])
+ committed,e:=a.Process(first);if e!=nil||committed.Outcome!=AuthorityCommitted||committed.Receipt.Version!=1{t.Fatal("first commit",e)}
+ // A restored caller cursor can reproduce old signed intent, but the external
+ // authority sees the stale parent. It charges the real contact and refuses a
+ // second effect rather than trusting the local journal.
+ replay,_:=SignAuthorityRequest(0,AuthorityCommit,root,req0,callerKey[0])
+ refused,e:=a.Process(replay);if e!=nil||refused.Outcome!=AuthorityConflict||refused.Stale!=1||refused.Receipt!=(Receipt{}){t.Fatal("rolled cursor replay",e,refused)}
+ spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{2,0}||total!=2||effects!=1{t.Fatal("rollback accounting",spent,total,effects,e)}
+ // The independent second caller still has exactly one aggregate contact left.
+ current,_:=a.Head();fresh,_:=SignAuthorityRequest(1,AuthorityCommit,current,req1,callerKey[1])
+ last,e:=a.Process(fresh);if e!=nil||last.Outcome!=AuthorityCommitted||last.Receipt.Version!=2{t.Fatal("remaining shared budget",e)}
+ spent,total,effects,e=a.Counts();if e!=nil||spent!=[authorityCallers]byte{2,1}||total!=3||effects!=2{t.Fatal("final shared accounting",spent,total,effects,e)}
+ if !VerifyAuthorityResponse(committed,first,authorityPub)||!VerifyAuthorityResponse(refused,replay,authorityPub)||!VerifyAuthorityResponse(last,fresh,authorityPub){t.Fatal("signed response verification")}
+ t.Log("rolled-back caller cursor spent its remaining contact on stale conflict; effect stayed at one until independent caller used final global contact")
+}
