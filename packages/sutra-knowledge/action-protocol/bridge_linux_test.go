@@ -291,3 +291,30 @@ func TestWitnessChallengeStopsReplayToRolledBackClient(t *testing.T){
  spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{1,0}||total!=1||effects!=1{t.Fatal("replay proxy changed server accounting",spent,total,effects,e)}
  t.Log("an exact old authority request plus captured signed witness view cannot be replayed as success when the client supplies a fresh witness challenge")
 }
+
+
+func TestWitnessedAuthorityClientRefusesChallengeReuseBeforeContact(t *testing.T){
+ var witnessPtr atomic.Pointer[AuthorityWitness]
+ witnessServer:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){witnessPtr.Load().ServeHTTP(w,r)}));defer witnessServer.Close()
+ ctx,approver,ak,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,witnessServer.URL)
+ witnessPub,witnessKey:=witnessKeys()
+ authorityDir:=privateTemp(t);witnessDir:=privateTemp(t)
+ a,e:=CreateSharedAuthority(authorityDir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer a.Close()
+ genesis,_:=a.Head()
+ witness,e:=CreateAuthorityWitness(witnessDir,ctx,authorityPub,witnessKey,genesis);if e!=nil{t.Fatal(e)};witnessPtr.Store(witness);defer witness.Close()
+ rootView,e:=witness.View();if e!=nil{t.Fatal(e)}
+ wc,e:=NewWitnessClient(witnessServer.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
+ coordinator,e:=NewWitnessCoordinator(a,wc);if e!=nil{t.Fatal(e)}
+ var calls atomic.Int32
+ api:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){calls.Add(1);coordinator.ServeHTTP(w,r)}));defer api.Close()
+ action:=approve(t,0,ctx,ak)
+ client,e:=NewWitnessedAuthorityClient(api.URL,0,callerKey[0],authorityPub,witnessPub,ctx,genesis,rootView,action);if e!=nil{t.Fatal(e)}
+ fixed:=Digest{7};client.challenge=func()(Digest,error){return fixed,nil}
+ if _,_,e=client.Commit();e!=nil{t.Fatal("first fixed challenge",e)}
+ firstCalls:=calls.Load();if firstCalls!=1{t.Fatal("first contact count",firstCalls)}
+ // A broken RNG or injected callback returning the same nonce must fail locally.
+ if _,_,e=client.Status();!errors.Is(e,ErrUnknown){t.Fatal("repeated challenge accepted",e)}
+ if calls.Load()!=firstCalls{t.Fatal("reused challenge reached authority")}
+ if client.Contacts()!=1{t.Fatal("reused challenge charged local contact",client.Contacts())}
+ t.Log("repeated challenge is refused before HTTP contact, preventing captured-envelope replay when nonce generation repeats")
+}
