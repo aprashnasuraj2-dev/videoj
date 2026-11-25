@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-025",
+  "session": "V2-026",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2510,13 +2510,29 @@
     },
     {
       "id": "V2-D10-PINNED-CASE",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D08-ROOT-IMPACT",
         "V2-D09-WIRE-PARITY",
         "V2-D03-DIAGNOSIS"
       ],
-      "scope": "Caller-supplied single-claim finite case with independently retained case pin; existing 12-world, 8-offer, 8-source, 24-event limits; general root diagnostics and exact rational observation partitions. Independent Python replay, browser JSON workspace. No physical validation, arbitrary natural-language compilation, or freshness guarantee."
+      "scope": "Caller-supplied single-claim finite case with independently retained case pin; existing 12-world, 8-offer, 8-source, 24-event limits; general root diagnostics and exact rational observation partitions. Independent Python replay, browser JSON workspace. No physical validation, arbitrary natural-language compilation, or freshness guarantee.",
+      "evidence": [
+        {
+          "id": "V2-D10-PINNED-CASE",
+          "sourceRevision": "43070237e15343d75f3db1a9be19c33342ca2326",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45574455950/job/139068811666",
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45574455950 and push 45574445279, ingress 45574456147, impact 45574455897, evaluation 45574456144, Open Kit 45574455918, legacy release 45574455928, publisher 45574455904, browser matrix 45574455913. Three actual nonbinary browser exports independently accepted with 23 mutated variants refused. Five targeted local Node groups passed with exact source blob hashes, including 256-subset oracle and larger inclusion-minimal repair, multiple offers and fresh reads. Scoped caller-pinned finite models, not model validity."
+        }
+      ]
+    },
+    {
+      "id": "V2-D11-ALIGNED-CASE",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D10-PINNED-CASE"
+      ],
+      "scope": "Strict structural alignment across typed worlds, stable schema fingerprint, no mixed equations or changed basis under a single aligned decision, existing legacy v1 export preserved; independent Python replay. Not proof of real-world meaning."
     }
   ]
 }

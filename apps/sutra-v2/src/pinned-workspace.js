@@ -1,4 +1,5 @@
-import {capacityExample,pinnedInvestigationExport} from '../../../packages/sutra-knowledge/pinned-investigation.js';
+import {capacityExample} from '../../../packages/sutra-knowledge/pinned-investigation.js';
+import {alignedInvestigationExport} from '../../../packages/sutra-knowledge/aligned-investigation.js';
 const by=id=>document.getElementById('pinned-'+id),txt=(id,v)=>{by(id).textContent=v;};
 let busy=false,current=null,sample=null,stage=null;
 function clear(){current=null;by('result').hidden=true;txt('status','Input changed. Evaluate the exact current text.');}
@@ -11,6 +12,7 @@ function refresh(){
 for(const id of ['case','pin','events'])by(id).addEventListener('input',()=>{stage=null;clear();refresh();});
 function render(){
  const r=current.result;
+ txt('alignment','Same typed graph across '+current.alignment.worldCount+' worlds · '+current.alignment.nodeCount+' nodes · only input values vary.');
  txt('state',r.state);txt('worlds',r.report.survivingWorlds.length+' / '+r.report.worlds.length);txt('roots',r.rootSummary.length);
  const format=(name,xs)=>name+': '+(xs.length?xs.map(x=>(x.roots.join(' + ')||'Declared model alone')+' → '+x.worlds.length+' compatible worlds').join('\n'):'none');
  txt('minimum',Object.entries(r.minimum).map(([k,v])=>format(k,v)).join('\n\n'));
@@ -22,7 +24,7 @@ function render(){
 }
 async function work(setup){
  if(busy)return;busy=true;clear();refresh();
- try{if(setup)await setup();current=await pinnedInvestigationExport(by('case').value,by('pin').value.trim(),by('events').value);render();}
+ try{if(setup)await setup();current=await alignedInvestigationExport(by('case').value,by('pin').value.trim(),by('events').value);render();}
  catch(e){current=null;stage=null;by('result').hidden=true;txt('status','REFUSED: '+(String(e?.message).startsWith('CASE_')?e.message:'case or evidence admission failed')+'. No result exported.');}
  finally{busy=false;refresh();}
 }

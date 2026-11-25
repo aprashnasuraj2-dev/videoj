@@ -48,8 +48,31 @@ def replay(case_text,pin,event_text):
         observation_values.append(dict(id=o['id'],dimension=o['dimension'],outcomes=[dict(label='value_'+str(i),value=v,worlds=[w for w in full if predictions[w][o['nodeId']]==v]) for i,v in enumerate(vals)]))
     root_summary=[dict(root=r,sourceIds=sorted({o['sourceId'] for o in active if o['lineage']==r}),observationIds=sorted(o['observationId'] for o in active if o['lineage']==r)) for r in roots]
     return dict(version=VERSION,caseDigest=pin,eventDigest=rawhash(event_text),state=current,rootSummary=root_summary,minimum=minimum,repairs=repairs,observationValues=observation_values,report=report,qualification=QUAL)
+ALIGNED_VERSION='sutra-aligned-investigation/v1'
+ALIGN_POLICY='identical-typed-graph-except-input-values/v1'
+ALIGN_QUAL='All declared worlds use the same typed graph, target, input basis and dimensions; only input values may vary. Structural alignment is not semantic or empirical validation.'
+def alignment(case_text):
+    c=bounded_load(case_text,MAX,9)
+    shapes=[]
+    for w in c['worlds']:
+        g=bounded_load(w['graphText'],65536,12)
+        ns=[]
+        for n in sorted(g['nodes'],key=lambda n:n['id']):
+            if n['kind']=='input':
+                ns.append(dict(id=n['id'],kind=n['kind'],dimension=n['dimension'],basis=n['basis']))
+            else:
+                ns.append(dict(id=n['id'],kind=n['kind'],op=n['op'],args=n['args']))
+        shapes.append(dict(schemaVersion=g['schemaVersion'],targetId=w['constraintId'],nodes=ns))
+    require(shapes and all(s==shapes[0] for s in shapes))
+    text=json.dumps(shapes[0],ensure_ascii=False,separators=(',',':'))
+    return dict(policy=ALIGN_POLICY,schemaDigest=rawhash(text),nodeCount=len(shapes[0]['nodes']),worldCount=len(shapes),qualification=ALIGN_QUAL)
 def verify(bundle,pin):
     try:
+        require(isinstance(bundle,dict))
+        if bundle.get('version')==ALIGNED_VERSION:
+            require(keys(bundle,('version','caseText','eventText','result','alignment')))
+            expected=replay(bundle['caseText'],pin,bundle['eventText'])
+            return canonical(expected)==canonical(bundle['result']) and canonical(alignment(bundle['caseText']))==canonical(bundle['alignment'])
         require(keys(bundle,('version','caseText','eventText','result')) and bundle['version']==VERSION)
         return canonical(replay(bundle['caseText'],pin,bundle['eventText']))==canonical(bundle['result'])
     except (ValueError,TypeError,KeyError,AttributeError,OverflowError,UnicodeError,RecursionError):return False
@@ -86,6 +109,17 @@ def main():
             bad=deepcopy(b);bad['result']['repairs']=[];mutants.append(bad)
         if b['result']['observationValues']:
             bad=deepcopy(b);bad['result']['observationValues'][0]['outcomes'][0]['value']='999/1';mutants.append(bad)
+        if b.get('version')==ALIGNED_VERSION:
+            bad=deepcopy(b);bad['alignment']['schemaDigest']='sha256:'+'0'*64;mutants.append(bad)
+            bad=deepcopy(b);bad['alignment']['qualification']='semantic truth';mutants.append(bad)
+            # Recompute a legal v1 case with a different operator and a new case
+            # pin, then falsely label it aligned. The independent guard refuses.
+            c=json.loads(b['caseText']);g=json.loads(c['worlds'][0]['graphText'])
+            next(n for n in g['nodes'] if n['id']=='target')['op']='ge'
+            c['worlds'][0]['graphText']=json.dumps(g,separators=(',',':'))
+            changed=json.dumps(c,separators=(',',':'));newpin=rawhash(changed)
+            forged=dict(version=ALIGNED_VERSION,caseText=changed,eventText=b['eventText'],result=replay(changed,newpin,b['eventText']),alignment=b['alignment'])
+            require(not verify(forged,newpin))
         for bad in mutants:require(not verify(bad,pin))
         print('ACCEPTED',Path(path).name,expected,'REJECTED',len(mutants),'mutants')
 if __name__=='__main__':main()

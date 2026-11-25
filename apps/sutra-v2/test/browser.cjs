@@ -371,7 +371,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,stem+'.json'),bytes);
    return JSON.parse(bytes);
   }
-  const pbase=await pinnedStep('example','UNDERDETERMINED','pinned-baseline');assert.equal(pbase.result.rootSummary.length,1);assert.match(await pinnedPage.locator('#pinned-plan').innerText(),/20\/1/);assert.match(await pinnedPage.locator('#pinned-plan').innerText(),/40\/1/);
+  const pbase=await pinnedStep('example','UNDERDETERMINED','pinned-baseline');assert.equal(pbase.result.rootSummary.length,1);assert.equal(pbase.version,'sutra-aligned-investigation/v1');assert.equal(pbase.alignment.worldCount,6);assert.match(await pinnedPage.locator('#pinned-alignment').innerText(),/only input values vary/);assert.match(await pinnedPage.locator('#pinned-plan').innerText(),/20\/1/);assert.match(await pinnedPage.locator('#pinned-plan').innerText(),/40\/1/);
   const pconflict=await pinnedStep('conflict','CONFLICTED','pinned-conflict');assert.equal(pconflict.result.repairs.length,2);
   const presolved=await pinnedStep('resolve','REFUTED','pinned-resolved');assert.deepEqual(presolved.result.minimum.refutation.map(x=>x.roots),[['capacity_root','meter_root']]);
   await pinnedPage.locator('#pinned-case').fill(presolved.caseText+' ');
@@ -380,6 +380,12 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await pinnedPage.waitForFunction(()=>document.querySelector('#pinned-status').textContent.includes('CASE_PIN_MISMATCH'));
   assert.equal(await pinnedPage.locator('#pinned-result').isVisible(),false);
   assert.equal(await pinnedPage.locator('#pinned-export').isDisabled(),true);
+  const driftCase=JSON.parse(presolved.caseText),driftGraph=JSON.parse(driftCase.worlds[0].graphText);
+  driftGraph.nodes.find(n=>n.id==='target').op='ge';driftCase.worlds[0].graphText=JSON.stringify(driftGraph);
+  const driftText=JSON.stringify(driftCase),driftPin='sha256:'+require('node:crypto').createHash('sha256').update(driftText).digest('hex');
+  await pinnedPage.locator('#pinned-case').fill(driftText);await pinnedPage.locator('#pinned-pin').fill(driftPin);
+  await pinnedPage.locator('#pinned-run').click();await pinnedPage.waitForFunction(()=>document.querySelector('#pinned-status').textContent.includes('CASE_GRAPH_ALIGNMENT'));
+  assert.equal(await pinnedPage.locator('#pinned-export').isDisabled(),true);assert.equal(await pinnedPage.locator('#pinned-result').isVisible(),false);
   assert.deepEqual(pinnedErrors,[]);assert.deepEqual(pinnedExternal,[]);await pinnedPage.close();
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
