@@ -94,36 +94,36 @@ Prior IDs: V2-RUNTIME-02.
 
 ### V2-P05-STORE — Atomic signed snapshot for owned finite synthetic effect and ledger
 
-- **Status:** Implemented but unverified. **Priority/risk:** P0/critical. **Dependencies:** V2-RUNTIME-01.
+- **Status:** Integration verified. **Priority/risk:** P0/critical. **Dependencies:** V2-RUNTIME-01.
 - **Implementation:** `packages/sutra-knowledge/action-protocol/durable_linux.go`.
 - **Acceptance:** Identical receipt on same-key retry across restart; lock exclusive; malformed or mismatched snapshot fails closed.
 - **Positive tests:** 64 concurrent duplicates, restart and process exits before rename, after rename, after sync.
 - **Adversarial tests:** Changed input, invalid snapshot, missing store, budget reset, second owner.
 - **Verification:** Go race CI and actual subprocess tests.
-- **Evidence:** 23c45faab775e003a3d2fcb654c8f2dbf140f6e4 (candidate; corrected build error, CI not yet reconciled).
-- **Limitations:** Linux trusted directory; old signed snapshot rollback and power loss not tested.
+- **Evidence:** [23c45faab775](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523248637/job/138900133257); [58a5f96456c4](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733).
+- **Limitations:** Linux trusted private directory; no physical power loss test, stale temporary file cleanup, distributed lock or upstream arbitrary side effects. Signed rollback protection requires independently retained receipt..
 
 ### V2-P05-RECOVERY — Exercise durable receiver through existing wire protocol and preserve unknown outcomes
 
-- **Status:** Not started. **Priority/risk:** P0/critical. **Dependencies:** V2-P05-STORE.
+- **Status:** Implementation in progress. **Priority/risk:** P0/critical. **Dependencies:** V2-P05-STORE.
 - **Implementation:** `packages/sutra-knowledge/action-protocol/transport.go`.
 - **Acceptance:** Lost reply plus server restart reconciles same approval; delayed request and status absence not terminal; bounded contacts.
 - **Positive tests:** Actual loopback TCP drop followed by reopen and reconciliation.
 - **Adversarial tests:** I/O failure, response reorder, invalid receipt, retry with new approval; no unapproved second effect.
 - **Verification:** Race-enabled transport integration and failpoint tests.
-- **Evidence:** None; no credit claimed.
-- **Limitations:** Client contacts not durable or global; external effects require upstream contract.
+- **Evidence:** [58a5f96456c4](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733).
+- **Limitations:** Actual TCP loss plus store reopen, same receipt and injected errors verified. Delayed/reordered response tests, persisted caller/global contact budgets and new-key authorization lifecycle remain open..
 
 ### V2-P05-ROLLBACK — Prevent replay of older valid snapshots and clone-induced equivocation relative to trusted external head
 
-- **Status:** Not started. **Priority/risk:** P0/critical. **Dependencies:** V2-P05-STORE, V2-P01-THREAT.
+- **Status:** Implementation in progress. **Priority/risk:** P0/critical. **Dependencies:** V2-P05-STORE, V2-P01-THREAT.
 - **Implementation:** `packages/sutra-knowledge/action-protocol; packages/sutra-knowledge/checkpoint`.
 - **Acceptance:** External anchor/CAS rejects stale signed store and fork; compensation separate approval.
 - **Positive tests:** Head advancement and recovery.
 - **Adversarial tests:** Replace state by valid earlier snapshot; clone signer/store; denied compensation.
 - **Verification:** Multi-process integration and independent verifier.
-- **Evidence:** None; no credit claimed.
-- **Limitations:** Local signatures alone cannot establish freshness.
+- **Evidence:** [58a5f96456c4](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733).
+- **Limitations:** Older signed snapshot refused with independently pinned receipt. Unanchored open intentionally demonstrates failure; cloned signers/stores sharing the prefix can still fork. Durable external CAS and independent trust-anchor distribution remain open..
 
 ## Phase 06 — TLA+ formal state-machine verification
 
@@ -131,14 +131,14 @@ Prior IDs: V2-F11b.
 
 ### V2-P06-MODEL — Check two-caller atomic action recovery and negative split-effect model
 
-- **Status:** Implemented but unverified. **Priority/risk:** P0/high. **Dependencies:** V2-RUNTIME-01.
+- **Status:** Formally verified within stated assumptions. **Priority/risk:** P0/high. **Dependencies:** V2-RUNTIME-01.
 - **Implementation:** `packages/sutra-knowledge/action-protocol/formal/`.
 - **Acceptance:** Safe TypeOK, AtMostOnce, ReceiptSound, AtomicLedger pass; unsafe produces AtMostOnce trace; pin exact TLC.
 - **Positive tests:** Safe finite exploration.
 - **Adversarial tests:** Crash between effect and ledger permits duplicate.
 - **Verification:** TLC and independent Python exploration.
-- **Evidence:** 129f501528cbc776f68672ba5436954e23dab566 (model and pinned TLC gate committed; no TLC result yet).
-- **Limitations:** Python locally checked; TLC pending; assumes valid one-key approval; no liveness or implementation refinement.
+- **Evidence:** [23c45faab775](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523248637/job/138900133257).
+- **Limitations:** One approved logical key/two callers; bounded pending set and crash abstraction; no liveness/fairness, budgets, signature verification, physical storage behavior or Go refinement..
 
 ### V2-P06-REFINE — Model multi-key authorization, contact budgets, anti-equivocation, fairness and map Go transitions
 
@@ -399,4 +399,6 @@ Prior IDs: V2-R01, V2-R02.
 
 ## Immediate dependency order
 
-Reconcile corrected Go/TLC candidate → durable transport and I/O-error tests → external anchor/CAS and multi-key refinement → host consent and browser write integration only when explicitly ready → Lean support proof and observation economics in parallel where dependencies allow. No deployment or release.
+Reconcile newest full CI → delayed/reordered responses, persisted caller contact budget and concurrent distinct-key tests → external anchor/CAS and multi-key refinement → host consent and browser write integration only when explicitly ready → Lean support proof and observation economics in parallel where dependencies allow. No deployment or release.
+
+All 62 original IDs have individual objective, dependencies, risk/priority, location, acceptance, positive/adversarial tests, verification method, status, evidence and limitations in roadmap.json. Together with 27 new gates, the 89-ID dependency graph has no missing nodes, duplicate IDs or cycles. Legacy dependency mappings are current planning judgments, not historical proof.

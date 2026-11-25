@@ -187,14 +187,20 @@
           "positiveTests": "64 concurrent duplicates, restart and process exits before rename, after rename, after sync",
           "adversarialTests": "Changed input, invalid snapshot, missing store, budget reset, second owner",
           "verificationMethod": "Go race CI and actual subprocess tests",
-          "status": "Implemented but unverified",
+          "status": "Integration verified",
           "evidence": [
             {
               "sourceRevision": "23c45faab775e003a3d2fcb654c8f2dbf140f6e4",
-              "status": "candidate; corrected build error, CI not yet reconciled"
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523248637/job/138900133257",
+              "description": "Six reported PR workflows passed; Go race tests, actual process exits at three boundaries, pinned TLC safe and unsafe models."
+            },
+            {
+              "sourceRevision": "58a5f96456c4f189e686616180992514f9e7d4f6",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733",
+              "description": "Knowledge job and browser workflow completed successfully; durable TCP reopen, injected persistence failure, independent receipt pin rollback tests passed. Impact classifier at this revision failed separately."
             }
           ],
-          "knownLimitations": "Linux trusted directory; old signed snapshot rollback and power loss not tested"
+          "knownLimitations": "Linux trusted private directory; no physical power loss test, stale temporary file cleanup, distributed lock or upstream arbitrary side effects. Signed rollback protection requires independently retained receipt."
         },
         {
           "id": "V2-P05-RECOVERY",
@@ -209,9 +215,15 @@
           "positiveTests": "Actual loopback TCP drop followed by reopen and reconciliation",
           "adversarialTests": "I/O failure, response reorder, invalid receipt, retry with new approval; no unapproved second effect",
           "verificationMethod": "Race-enabled transport integration and failpoint tests",
-          "status": "Not started",
-          "evidence": [],
-          "knownLimitations": "Client contacts not durable or global; external effects require upstream contract"
+          "status": "Implementation in progress",
+          "evidence": [
+            {
+              "sourceRevision": "58a5f96456c4f189e686616180992514f9e7d4f6",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733",
+              "description": "Knowledge job and browser workflow completed successfully; durable TCP reopen, injected persistence failure, independent receipt pin rollback tests passed. Impact classifier at this revision failed separately."
+            }
+          ],
+          "knownLimitations": "Actual TCP loss plus store reopen, same receipt and injected errors verified. Delayed/reordered response tests, persisted caller/global contact budgets and new-key authorization lifecycle remain open."
         },
         {
           "id": "V2-P05-ROLLBACK",
@@ -227,9 +239,15 @@
           "positiveTests": "Head advancement and recovery",
           "adversarialTests": "Replace state by valid earlier snapshot; clone signer/store; denied compensation",
           "verificationMethod": "Multi-process integration and independent verifier",
-          "status": "Not started",
-          "evidence": [],
-          "knownLimitations": "Local signatures alone cannot establish freshness"
+          "status": "Implementation in progress",
+          "evidence": [
+            {
+              "sourceRevision": "58a5f96456c4f189e686616180992514f9e7d4f6",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733",
+              "description": "Knowledge job and browser workflow completed successfully; durable TCP reopen, injected persistence failure, independent receipt pin rollback tests passed. Impact classifier at this revision failed separately."
+            }
+          ],
+          "knownLimitations": "Older signed snapshot refused with independently pinned receipt. Unanchored open intentionally demonstrates failure; cloned signers/stores sharing the prefix can still fork. Durable external CAS and independent trust-anchor distribution remain open."
         }
       ]
     },
@@ -253,14 +271,15 @@
           "positiveTests": "Safe finite exploration",
           "adversarialTests": "Crash between effect and ledger permits duplicate",
           "verificationMethod": "TLC and independent Python exploration",
-          "status": "Implemented but unverified",
+          "status": "Formally verified within stated assumptions",
           "evidence": [
             {
-              "sourceRevision": "129f501528cbc776f68672ba5436954e23dab566",
-              "status": "model and pinned TLC gate committed; no TLC result yet"
+              "sourceRevision": "23c45faab775e003a3d2fcb654c8f2dbf140f6e4",
+              "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523248637/job/138900133257",
+              "description": "TLC 2026.11.19.180144 rev bc1b506, pinned v1.8.0 artifact SHA256 fdffef247f563ef6edbfd44958d2a82db79e7564e07cb673262d896353fa6713. Safe 162 generated / 33 distinct / 0 queue; unsafe 96 generated / 39 distinct, AtMostOnce violated; independent Python 33 safe states/128 edges."
             }
           ],
-          "knownLimitations": "Python locally checked; TLC pending; assumes valid one-key approval; no liveness or implementation refinement"
+          "knownLimitations": "One approved logical key/two callers; bounded pending set and crash abstraction; no liveness/fairness, budgets, signature verification, physical storage behavior or Go refinement."
         },
         {
           "id": "V2-P06-REFINE",
@@ -770,77 +789,141 @@
         "artifact": "docs/sutra-v2/MIGRATION.md",
         "sourceRevision": "9bd76ef8bfd05f323592f21fe4b0841188861693"
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [],
+      "priority": "P0",
+      "risk": "medium",
+      "implementationLocation": "docs/sutra-v2/MIGRATION.md",
+      "acceptanceCriteria": "Resolve immutable old source, CI, and preserve branch; migration decisions scoped to inspected code. Evidence: MIGRATION.md and linked exact old workflow.",
+      "positiveTests": "Resolve immutable baseline and inspect relevant source boundaries",
+      "adversarialTests": "Verify no branch overwrite and no legacy metric promotion",
+      "verificationMethod": "Repository/CI audit",
+      "knownLimitations": "Baseline fact only; not V2 product credit"
     },
     {
       "id": "V2-K01",
       "historicalChecked": true,
       "objective": "Admit closed wire claim graph, exact rational and dimension types, reject duplicate keys and forged status.",
       "phase": "03",
-      "status": "Integration verified",
+      "status": "Unit verified",
       "evidence": {
         "id": "V2-K01",
         "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514783006/job/138871284267",
         "description": "Closed wire admission and duplicate/escaped-key, status and invalid numeric fixtures"
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-M01"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/index.js; packages/sutra-consent/strict-json.js",
+      "acceptanceCriteria": "Admit closed wire claim graph, exact rational and dimension types, reject duplicate keys and forged status.",
+      "positiveTests": "Admit exact rational closed graph",
+      "adversarialTests": "Reject duplicate decoded keys, forged status and malformed quantities",
+      "verificationMethod": "Node kernel tests",
+      "knownLimitations": "Restricted quantity wire profile"
     },
     {
       "id": "V2-K02",
       "historicalChecked": true,
       "objective": "Bounded dependency evaluation; reject cycles, missing/nonquantity dependencies and excessive depth.",
       "phase": "09",
-      "status": "Integration verified",
+      "status": "Unit verified",
       "evidence": {
         "id": "V2-K02",
         "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514783006/job/138871284267",
         "description": "Graph missing refs/cycles/depth/nonquantity refusal"
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K01"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/index.js",
+      "acceptanceCriteria": "Bounded dependency evaluation; reject cycles, missing/nonquantity dependencies and excessive depth.",
+      "positiveTests": "Evaluate bounded dependency DAG",
+      "adversarialTests": "Reject cycles, missing references, wrong types and depth overflow",
+      "verificationMethod": "Node graph tests",
+      "knownLimitations": "No reverse dependency index yet"
     },
     {
       "id": "V2-K03",
       "historicalChecked": true,
       "objective": "Deterministic computation, incompatible units, refuted constraints, explicit blocked/indeterminate results.",
       "phase": "09",
-      "status": "Integration verified",
+      "status": "Unit verified",
       "evidence": {
         "id": "V2-K03",
         "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514783006/job/138871284267",
         "description": "Exact arithmetic, 100 comparison controls, incompatible dimensions, zero division and bounded growth"
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K02"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/index.js",
+      "acceptanceCriteria": "Deterministic computation, incompatible units, refuted constraints, explicit blocked/indeterminate results.",
+      "positiveTests": "Compute exact quantities and explicit result states",
+      "adversarialTests": "Reject incompatible dimensions, division by zero and oversized arithmetic",
+      "verificationMethod": "Node exact arithmetic tests",
+      "knownLimitations": "Not empirical or professional certification"
     },
     {
       "id": "V2-K04",
       "historicalChecked": true,
       "objective": "Canonical receipt identity, fresh same-kernel replay, refuse modified/stale reports.",
       "phase": "08",
-      "status": "Integration verified",
+      "status": "Unit verified",
       "evidence": {
         "id": "V2-K04",
         "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514783006/job/138871284267",
         "description": "Canonical receipts, reorder invariance, exact replay, tamper and stale rejection"
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K03"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/index.js",
+      "acceptanceCriteria": "Canonical receipt identity, fresh same-kernel replay, refuse modified/stale reports.",
+      "positiveTests": "Reconstruct exact canonical report",
+      "adversarialTests": "Reject changed or stale report and input reorder ambiguity",
+      "verificationMethod": "Node report replay",
+      "knownLimitations": "Same-kernel replay is not independent"
     },
     {
       "id": "V2-K05",
       "historicalChecked": true,
       "objective": "Incremental reuse after a material revision, preserve immutable historical receipt, distinguish computation reuse from total latency.",
       "phase": "09",
-      "status": "Integration verified",
+      "status": "Unit verified",
       "evidence": {
         "id": "V2-K05",
         "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514783006/job/138871284267",
         "description": "16-node mutation: 5 executed, 11 reused; immutable baseline and atomic cache"
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K04"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/index.js",
+      "acceptanceCriteria": "Incremental reuse after a material revision, preserve immutable historical receipt, distinguish computation reuse from total latency.",
+      "positiveTests": "Recompute affected nodes on revision",
+      "adversarialTests": "Do not reuse invalidated result or mutate history",
+      "verificationMethod": "Mutation/reuse fixture",
+      "knownLimitations": "Calculation reuse not total latency"
     },
     {
       "id": "V2-O01",
@@ -854,7 +937,18 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514783006/job/138871284267",
         "description": "Actual CLI synthetic mutation assertions and uploaded observation"
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K05"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/examples/observatory.mjs",
+      "acceptanceCriteria": "Execute actual synthetic mutation demonstration with independently specified oracle expectations and save CI output.",
+      "positiveTests": "Execute actual baseline/revised capability challenge",
+      "adversarialTests": "Detect synthetic mutation and stale/forged replay",
+      "verificationMethod": "CLI and CI artifacts",
+      "knownLimitations": "Synthetic laboratory only"
     },
     {
       "id": "V2-K06",
@@ -868,7 +962,18 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514783006/job/138871284267",
         "description": "Separate Python Fraction/hashlib/DFS implementation; eight replay challenges passed"
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K04"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/reference/verify.py",
+      "acceptanceCriteria": "Independent reference replay implementation with golden vectors (not importing kernel).",
+      "positiveTests": "Reconstruct golden report using separate Fraction/hashlib/DFS implementation",
+      "adversarialTests": "Refuse altered report, stale digest and invalid graph",
+      "verificationMethod": "Independent implementation and CI artifacts",
+      "knownLimitations": "Separate implementation in same project, not independent operator"
     },
     {
       "id": "V2-M02",
@@ -882,7 +987,18 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424",
         "description": "Exact PR classifier succeeded with new suite mapping; explicit sequential commands and challenge upload succeeded in exact push kernel run 45514929515."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-M01"
+      ],
+      "priority": "P0",
+      "risk": "medium",
+      "implementationLocation": "docs/sutra/verification-map.json; docs/sutra/tools/impact.test.mjs",
+      "acceptanceCriteria": "Map new product area into existing impact classifier, preserve fail-closed handling of unclassified code, and require v2 CI without misclassifying legacy metrics; ensure Observatory/reference commands propagate nonzero exit codes. Discovered after first PR CI.",
+      "positiveTests": "Map known V2 paths and shared dependencies",
+      "adversarialTests": "Reject unmapped executable path and failed pipeline",
+      "verificationMethod": "Classifier CI and kernel gate",
+      "knownLimitations": "Roadmap mapping failure separately retained"
     },
     {
       "id": "V2-K07",
@@ -891,35 +1007,68 @@
       "phase": "09",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K05"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/index.js",
+      "acceptanceCriteria": "Reverse dependency index, measured traversal/hash/calculation scaling and failure limits.",
+      "positiveTests": "Compare indexed invalidation with full evaluation",
+      "adversarialTests": "Stress long/deep/wide DAG and stale dependency hashes",
+      "verificationMethod": "Scaling and exact comparison benchmark",
+      "knownLimitations": "Pending; no measured speedup"
     },
     {
       "id": "V2-K08",
       "historicalChecked": true,
       "objective": "Typed quantity conversion and explicit semantic assumption compatibility; compare same-dimension but different scopes.",
       "phase": "09",
-      "status": "Integration verified",
+      "status": "Unit verified",
       "evidence": {
         "id": "V2-K08",
         "sourceRevision": "ad3617a8200d1c527c86021de0cb3a553ec611e5",
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45515636775",
         "description": "Exact push kernel and actual Chromium browser jobs both passed; semantic compiler graph replay, scripted local agent bridge and built browser journey. Scope policy itself is not independently implemented."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K03"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/scope.js",
+      "acceptanceCriteria": "Typed quantity conversion and explicit semantic assumption compatibility; compare same-dimension but different scopes.",
+      "positiveTests": "Convert compatible quantity kinds and scopes",
+      "adversarialTests": "Reject equal dimension but incompatible semantic quantity",
+      "verificationMethod": "Scope unit tests",
+      "knownLimitations": "Bounded declared semantics"
     },
     {
       "id": "V2-K09",
       "historicalChecked": true,
       "objective": "Bind declared quantity kind/unit/scope into exact conversion graph; reject semantic incompatibility before equality constraint, prove torque-energy and condition counterexamples; replay graph independently (not independent semantic policy).",
       "phase": "09",
-      "status": "Integration verified",
+      "status": "Unit verified",
       "evidence": {
         "id": "V2-K09",
         "sourceRevision": "ad3617a8200d1c527c86021de0cb3a553ec611e5",
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45515636775",
         "description": "Exact push kernel and actual Chromium browser jobs both passed; semantic compiler graph replay, scripted local agent bridge and built browser journey. Scope policy itself is not independently implemented."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K08"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/scope.js; packages/sutra-knowledge/index.js",
+      "acceptanceCriteria": "Bind declared quantity kind/unit/scope into exact conversion graph; reject semantic incompatibility before equality constraint, prove torque-energy and condition counterexamples; replay graph independently (not independent semantic policy).",
+      "positiveTests": "Compare exact compatible quantity conversion graph",
+      "adversarialTests": "Torque versus energy and mismatched conditions",
+      "verificationMethod": "Node and independent graph replay",
+      "knownLimitations": "Semantic policy not independently implemented"
     },
     {
       "id": "V2-E01",
@@ -928,7 +1077,18 @@
       "phase": "09",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K04"
+      ],
+      "priority": "P0",
+      "risk": "high",
+      "implementationLocation": "packages/sutra-evidence; packages/sutra-knowledge/evidence-session.js",
+      "acceptanceCriteria": "Evidence identity and source-version adapter using actual existing receipt validator, no trust promotion.",
+      "positiveTests": "Bind exact source identity/version through existing validator",
+      "adversarialTests": "Reject stale/tampered receipt and self-certified source",
+      "verificationMethod": "Source adapter and browser export replay",
+      "knownLimitations": "Identity not source truth"
     },
     {
       "id": "V2-A01",
@@ -937,7 +1097,18 @@
       "phase": "02",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-A04"
+      ],
+      "priority": "P0",
+      "risk": "high",
+      "implementationLocation": "packages/sutra-runtime; packages/sutra-knowledge/agent-bridge.js",
+      "acceptanceCriteria": "Bridge compiled proof obligations into existing pinned browser agent runtime under explicit model/peer authority.",
+      "positiveTests": "Compile proof obligation into pinned runtime under consent",
+      "adversarialTests": "Unknown method, untrusted verdict and unauthorized tool refusal",
+      "verificationMethod": "Actual browser runtime tests",
+      "knownLimitations": "General proof obligation bridge not complete"
     },
     {
       "id": "V2-A02",
@@ -946,7 +1117,19 @@
       "phase": "13",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-A01",
+        "V2-P13-INTEROP"
+      ],
+      "priority": "P0",
+      "risk": "high",
+      "implementationLocation": "apps/sutra-v2/peer/agents; packages/sutra-runtime",
+      "acceptanceCriteria": "Publish a compatible data-only peer capability and validate consented actual browser execution.",
+      "positiveTests": "Publish compatible typed capability and execute with consent",
+      "adversarialTests": "No network after denial; reject version or identity drift",
+      "verificationMethod": "Browser two-origin and later HTTPS tests",
+      "knownLimitations": "Independent operator not verified"
     },
     {
       "id": "V2-A03",
@@ -955,7 +1138,18 @@
       "phase": "13",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-A02"
+      ],
+      "priority": "P0",
+      "risk": "high",
+      "implementationLocation": "apps/sutra-v2/; packages/sutra-knowledge/reference",
+      "acceptanceCriteria": "Discover unknown compatible peer, reject forged capability and receipt, replay from another implementation.",
+      "positiveTests": "Discover compatible unknown peer and replay result",
+      "adversarialTests": "Reject forged capability, receipt and self-repinned identity",
+      "verificationMethod": "Independent replay and browser discovery",
+      "knownLimitations": "No independent external adoption"
     },
     {
       "id": "V2-D01",
@@ -964,7 +1158,19 @@
       "phase": "09",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K03",
+        "V2-P10-LEAN"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/formal-support/ (proposed)",
+      "acceptanceCriteria": "Formal mathematics and bounded counterexample checker.",
+      "positiveTests": "Compile formal obligation and verify bounded counterexample",
+      "adversarialTests": "Reject invalid assumptions, inconsistent evidence and unchecked proof",
+      "verificationMethod": "Pinned proof toolchain and oracle",
+      "knownLimitations": "No Lean proof yet"
     },
     {
       "id": "V2-D02",
@@ -973,7 +1179,18 @@
       "phase": "09",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-D04"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/examples/beam.mjs",
+      "acceptanceCriteria": "Engineering model derivation and explicit constraints, independent numerical method.",
+      "positiveTests": "Reproduce engineering model with independent numerical method",
+      "adversarialTests": "Reject invalid scope/assumptions and dimensional mismatch",
+      "verificationMethod": "Exact numerical reference",
+      "knownLimitations": "Not physical or professional engineering certification"
     },
     {
       "id": "V2-D03",
@@ -982,7 +1199,19 @@
       "phase": "09",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-E01",
+        "V2-P11-UNCERTAINTY"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/evidence-session.js; packages/sutra-knowledge/scope.js",
+      "acceptanceCriteria": "Scientific/statistical evidence lineage and applicability; research-only medical adapter.",
+      "positiveTests": "Represent source applicability and scientific/statistical evidence",
+      "adversarialTests": "Reject contradictory scope, copied evidence and unsupported causal inference",
+      "verificationMethod": "Source replay and adversarial case",
+      "knownLimitations": "Research only; medical adapter not verified"
     },
     {
       "id": "V2-U01",
@@ -996,7 +1225,18 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45515636775",
         "description": "Exact push kernel and actual Chromium browser jobs both passed; semantic compiler graph replay, scripted local agent bridge and built browser journey. Scope policy itself is not independently implemented."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K03"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "apps/sutra-v2/src/main.js",
+      "acceptanceCriteria": "New workspace renders typed verification results and mutations using real kernel, no fake graph.",
+      "positiveTests": "Render actual typed results and mutations",
+      "adversarialTests": "Refuse stale display after input change",
+      "verificationMethod": "Actual Chromium journey",
+      "knownLimitations": "Synthetic content"
     },
     {
       "id": "V2-U02",
@@ -1010,7 +1250,19 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45515636775",
         "description": "Exact push kernel and actual Chromium browser jobs both passed; semantic compiler graph replay, scripted local agent bridge and built browser journey. Scope policy itself is not independently implemented."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-U01",
+        "V2-K04"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "apps/sutra-v2/src/main.js; apps/sutra-v2/test/browser.cjs",
+      "acceptanceCriteria": "Browser exports the exact graph/report bytes, rejects stale UI authority after assumption changes, replays and refuses tampered reports; 360px keyboard and no external requests.",
+      "positiveTests": "Export/replay exact bytes, keyboard narrow viewport",
+      "adversarialTests": "Refuse stale/tampered report; no external requests",
+      "verificationMethod": "Actual Chromium tests",
+      "knownLimitations": "Not physical mobile device verification"
     },
     {
       "id": "V2-A04",
@@ -1024,7 +1276,18 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45515636775",
         "description": "Exact push kernel and actual Chromium browser jobs both passed; semantic compiler graph replay, scripted local agent bridge and built browser journey. Scope policy itself is not independently implemented."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K03"
+      ],
+      "priority": "P0",
+      "risk": "high",
+      "implementationLocation": "packages/sutra-knowledge/agent-bridge.js; packages/sutra-runtime",
+      "acceptanceCriteria": "Closed host-approved method selection through actual pinned agent runtime; reject model-asserted status, unknown case/method and nonconstraint target before kernel evaluation; no live provider or arbitrary peer tools.",
+      "positiveTests": "Use actual pinned runtime with trusted host method selection",
+      "adversarialTests": "Reject model-asserted status, unknown method/case and nonconstraint target",
+      "verificationMethod": "Node and browser tests",
+      "knownLimitations": "Scripted adapter; no live provider"
     },
     {
       "id": "V2-D04",
@@ -1038,7 +1301,18 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45515636775",
         "description": "Exact push kernel and actual Chromium browser jobs both passed; semantic compiler graph replay, scripted local agent bridge and built browser journey. Scope policy itself is not independently implemented."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K08"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/examples/methods.mjs",
+      "acceptanceCriteria": "Two explicit section-moment calculation paths produce exact identical deflection and constraint with distinct receipt identities; distinguish shared formula from independent empirical evidence.",
+      "positiveTests": "Two exact section calculation paths agree",
+      "adversarialTests": "Distinguish receipt identities and shared formula from empirical independence",
+      "verificationMethod": "Exact fixture and replay",
+      "knownLimitations": "No independent empirical evidence"
     },
     {
       "id": "V2-O02",
@@ -1047,7 +1321,19 @@
       "phase": "17",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-O01",
+        "V2-P17-OBSERVE"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/examples/observatory.mjs; docs/sutra-v2/",
+      "acceptanceCriteria": "Capability declaration format, falsifiable independent test policies, sealed challenge cases.",
+      "positiveTests": "Map capability declaration to independent oracle",
+      "adversarialTests": "Alter claim, artifact or expected result; reject circular self-certification",
+      "verificationMethod": "Executable declaration validator",
+      "knownLimitations": "Not yet complete"
     },
     {
       "id": "V2-O03",
@@ -1056,16 +1342,38 @@
       "phase": "17",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-O02"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "apps/sutra-v2/; docs/sutra-v2/",
+      "acceptanceCriteria": "Observatory records real browser and exact deployment observations; detect authorized synthetic faults.",
+      "positiveTests": "Record actual browser and exact deployment observations",
+      "adversarialTests": "Detect authorized synthetic faults and artifact change",
+      "verificationMethod": "Browser observation exports",
+      "knownLimitations": "No deployment authorized"
     },
     {
       "id": "V2-O04",
       "historicalChecked": false,
       "objective": "Independent reproducibility and actual HTTPS browser self-test after authorized candidate deployment.",
       "phase": "17",
-      "status": "Not started",
+      "status": "Blocked",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-O03"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "docs/sutra-v2/; apps/sutra-v2/",
+      "acceptanceCriteria": "Independent reproducibility and actual HTTPS browser self-test after authorized candidate deployment.",
+      "positiveTests": "Independent consumer verifies actual authorized HTTPS deployment",
+      "adversarialTests": "Reject stale or fake observations and changed route",
+      "verificationMethod": "Fresh browser and external reproduction",
+      "knownLimitations": "Blocked until authorized deployment"
     },
     {
       "id": "V2-B01",
@@ -1074,7 +1382,18 @@
       "phase": "20",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-P20-BENCH"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/reference; docs/sutra-v2/",
+      "acceptanceCriteria": "Prior-art comparison and frozen baseline benchmark with measured advantages/limitations.",
+      "positiveTests": "Freeze matched-budget baseline and held-out cases",
+      "adversarialTests": "Avoid selection bias and unsupported novelty",
+      "verificationMethod": "Independent benchmark and primary-source register",
+      "knownLimitations": "No measured comparative advantage yet"
     },
     {
       "id": "V2-C01",
@@ -1083,39 +1402,83 @@
       "phase": "18",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-P18-KIT"
+      ],
+      "priority": "P2",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/; existing Open Kit",
+      "acceptanceCriteria": "Open kit and independent external publisher adoption.",
+      "positiveTests": "Separate consumer and independent publisher trial",
+      "adversarialTests": "Reject unverified ownership or dependency claims",
+      "verificationMethod": "Standalone package and adoption evidence",
+      "knownLimitations": "No release or third-party adoption"
     },
     {
       "id": "V2-R01",
       "historicalChecked": false,
       "objective": "Mandatory challenge conformance, free judge access, accepted human/security/cost/public release gates.",
       "phase": "22",
-      "status": "Not started",
+      "status": "Deferred with justification",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-P22-RELEASE"
+      ],
+      "priority": "P2",
+      "risk": "medium",
+      "implementationLocation": "docs/sutra-v2/; apps/sutra-v2/",
+      "acceptanceCriteria": "Mandatory challenge conformance, free judge access, accepted human/security/cost/public release gates.",
+      "positiveTests": "Verify official challenge, free judge path and security gates",
+      "adversarialTests": "Reject unverifiable readiness and paid-only route",
+      "verificationMethod": "Authorized release-readiness review",
+      "knownLimitations": "Deferred until explicit authorization"
     },
     {
       "id": "V2-R02",
       "historicalChecked": false,
       "objective": "Final demo and submission package with genuine evidence; authorized submission separate.",
       "phase": "22",
-      "status": "Not started",
+      "status": "Deferred with justification",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-R01"
+      ],
+      "priority": "P2",
+      "risk": "medium",
+      "implementationLocation": "docs/sutra-v2/; apps/sutra-v2/",
+      "acceptanceCriteria": "Final demo and submission package with genuine evidence; authorized submission separate.",
+      "positiveTests": "Reproduce timed demonstration and export evidence",
+      "adversarialTests": "No unsupported demo claims or unauthorized submission",
+      "verificationMethod": "Observed timed demo and approval",
+      "knownLimitations": "No release/submission authorized"
     },
     {
       "id": "V2-F01",
       "historicalChecked": true,
       "objective": "Evaluate finite competing worlds with actual kernel receipts; compute optimal adaptive observation policy by bounded subset DP, explicit indistinguishable-world witness and unresolved-world abstention; compare independent exhaustive oracle.",
       "phase": "11",
-      "status": "Integration verified",
+      "status": "Unit verified",
       "evidence": {
         "id": "V2-F01",
         "sourceRevision": "7c66df885ceb0507c46eb64a75453d0a989f2c69",
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45516060763/job/138875653951",
         "description": "Actual minimax challenge and 36 independent exhaustive oracle controls; all seven workflows at this revision concluded success."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-K03"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/frontier.js",
+      "acceptanceCriteria": "Evaluate finite competing worlds with actual kernel receipts; compute optimal adaptive observation policy by bounded subset DP, explicit indistinguishable-world witness and unresolved-world abstention; compare independent exhaustive oracle.",
+      "positiveTests": "Compute optimal bounded finite-world observation policy",
+      "adversarialTests": "Find indistinguishable-world witness and abstain",
+      "verificationMethod": "Independent exhaustive oracle",
+      "knownLimitations": "Exact bounded hypotheses"
     },
     {
       "id": "V2-F02",
@@ -1129,7 +1492,19 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45516782710/job/138878138000",
         "description": "Actual Chromium integrated learner and frontier; separate Python timing export replay against original source bytes and four rejected mutations."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F01",
+        "V2-U01"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "apps/sutra-v2/src/investigation.js; apps/sutra-v2/src/main.js",
+      "acceptanceCriteria": "Browser workspace exposes actual conditional plan, cost assumptions, opposite world results and impossibility witness; no fake measurements or automatic actions.",
+      "positiveTests": "Display actual plan and cost assumptions",
+      "adversarialTests": "No fake measurement or automatic action",
+      "verificationMethod": "Chromium browser tests",
+      "knownLimitations": "Synthetic cases"
     },
     {
       "id": "V2-F03",
@@ -1138,7 +1513,19 @@
       "phase": "13",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-A02",
+        "V2-F06"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "apps/sutra-v2/peer/agents; packages/sutra-knowledge/frontier.js",
+      "acceptanceCriteria": "Independently published typed observation capability with explicit applicability, evidence lineage and cost; actual consented browser discovery, policy recomputation and hostile/duplicate capability rejection.",
+      "positiveTests": "Discover independently published typed observation and recompute policy",
+      "adversarialTests": "Reject malicious, redundant and duplicate capabilities",
+      "verificationMethod": "Actual consented browser and independent publisher",
+      "knownLimitations": "No independent operator evidence yet"
     },
     {
       "id": "V2-F04",
@@ -1147,7 +1534,19 @@
       "phase": "11",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F10",
+        "V2-P11-UNCERTAINTY"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/evidence-session.js",
+      "acceptanceCriteria": "Accept a separately verified actual observation, prune only inconsistent declared worlds, revalidate affected artifacts; unknown outcomes and noise fail closed.",
+      "positiveTests": "Prune only inconsistent worlds using separately verified observation",
+      "adversarialTests": "Unknown outcome, noise and out-of-model value fail closed",
+      "verificationMethod": "Independent reference and admission tests",
+      "knownLimitations": "General uncertainty profile pending"
     },
     {
       "id": "V2-F05",
@@ -1156,7 +1555,18 @@
       "phase": "11",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F12a"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/support-lattice/lib.rs",
+      "acceptanceCriteria": "Minimal incompatible assumption sets and alternative support sets; bounded search with completeness indicator, common-source lineage.",
+      "positiveTests": "Enumerate incompatible sets and support alternatives",
+      "adversarialTests": "Copied lineage, missing alternatives and budget cutoff",
+      "verificationMethod": "Rust exhaustive oracle and lineage tests",
+      "knownLimitations": "Parent requirement broader than existing bounded slice"
     },
     {
       "id": "V2-L01",
@@ -1170,7 +1580,18 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45516629582/job/138877614472",
         "description": "21/21 Node groups including real legacy catalog/transcript, revision, stale receipt and outside-world abstention."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F01"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-content-profile; packages/sutra-source-tools; packages/sutra-knowledge/learner-frontier.js",
+      "acceptanceCriteria": "Reuse actual legacy source-profile and source-tool code and existing catalog/transcript bytes; compile competing lesson hypotheses, plan decisive cue, use only validated receipt to prune, refuse tampering/stale versions and unknown-world outcomes.",
+      "positiveTests": "Compile source-bound lesson and decisive observation",
+      "adversarialTests": "Reject tamper, stale versions and unknown-world results",
+      "verificationMethod": "Node and exact source fixture",
+      "knownLimitations": "Narrow timing lesson"
     },
     {
       "id": "V2-L02",
@@ -1184,7 +1605,19 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45516782710/job/138878138000",
         "description": "Actual Chromium integrated learner and frontier; separate Python timing export replay against original source bytes and four rejected mutations."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-L01",
+        "V2-U01"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "apps/sutra-v2/; apps/sutra-v2/test/browser.cjs",
+      "acceptanceCriteria": "Built browser learner journey: predict, plan, revise, inspect hash-checked native video seek and export source-bound evidence; invalidate stale interaction on prediction changes.",
+      "positiveTests": "Predict, plan, revise and seek native source",
+      "adversarialTests": "Invalidate old interaction on prediction change",
+      "verificationMethod": "Chromium journey",
+      "knownLimitations": "Synthetic fixture"
     },
     {
       "id": "V2-L03",
@@ -1193,7 +1626,19 @@
       "phase": "16",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-L08",
+        "V2-P16-LEARN"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "apps/sutra-v2/; packages/sutra-content-profile",
+      "acceptanceCriteria": "Rights-cleared meaningful lesson and written alternative; source-scope comparison, guided investigation and transfer task; measured benefit versus transcript-only/answer-only, no claim from synthetic fixture.",
+      "positiveTests": "Rights-cleared lesson and written alternative with transfer task",
+      "adversarialTests": "Reject unsupported educational efficacy and source rights claim",
+      "verificationMethod": "Human study and browser/a11y",
+      "knownLimitations": "Not human efficacy verified"
     },
     {
       "id": "V2-L04",
@@ -1202,7 +1647,19 @@
       "phase": "16",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-L08",
+        "V2-P11-UNCERTAINTY"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/reference; packages/sutra-knowledge/evidence-session.js",
+      "acceptanceCriteria": "Independent replay of integrated learner decision including source identity, observation admission and prediction-independent truth status; version drift/withdrawal and provenance.",
+      "positiveTests": "General integrated learner replay and source withdrawal",
+      "adversarialTests": "Version drift, invalid provenance and prediction-dependent truth",
+      "verificationMethod": "Independent replay of actual browser exports",
+      "knownLimitations": "Fixed lessons verified, general case pending"
     },
     {
       "id": "V2-L05",
@@ -1216,7 +1673,18 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45516782710/job/138878138000",
         "description": "Actual Chromium integrated learner and frontier; separate Python timing export replay against original source bytes and four rejected mutations."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-L02"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/reference/verify_learner.py",
+      "acceptanceCriteria": "Independent Python replay of fixed original timing lesson browser export: exact legacy bytes, graph receipts, policy, source and answer; four mutations refused (bounded slice of L04, not generalized withdrawal).",
+      "positiveTests": "Independently reconstruct timing lesson browser export",
+      "adversarialTests": "Four hostile variants refused",
+      "verificationMethod": "Python reference and actual browser CI",
+      "knownLimitations": "Fixed original lesson only"
     },
     {
       "id": "V2-L06",
@@ -1230,7 +1698,18 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517311759/job/138879970561",
         "description": "Actual two-origin browser scripted adviser, denial zero traffic, consented requests, 6→2 cost reduction, redundant/forged capability, exact subgroup reversal and actual export; 25 Node groups passed."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-L01"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/quiz-frontier.js; apps/sutra-v2/src/quiz.js",
+      "acceptanceCriteria": "Original substantive statistics lesson: identical aggregates, exact opposite standardized outcomes, scoped source and conditional interpretation; no causal or human efficacy claim.",
+      "positiveTests": "Show identical aggregate with opposite standardized result",
+      "adversarialTests": "Reject incompatible scope and unjustified causal claim",
+      "verificationMethod": "Exact synthetic statistics tests",
+      "knownLimitations": "No causal or human efficacy"
     },
     {
       "id": "V2-F06",
@@ -1244,7 +1723,19 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517311759/job/138879970561",
         "description": "Actual two-origin browser scripted adviser, denial zero traffic, consented requests, 6→2 cost reduction, redundant/forged capability, exact subgroup reversal and actual export; 25 Node groups passed."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F01",
+        "V2-L06"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/quiz-frontier.js; packages/sutra-knowledge/agent-bridge.js",
+      "acceptanceCriteria": "Derive peer observation partitions from local verified graphs; cost-aware new capability improves policy, redundant distinct aggregate cannot, duplicate and forged status refused.",
+      "positiveTests": "Derive outcome partition from local verified graph",
+      "adversarialTests": "Redundant aggregate, duplicate and forged verdict refused",
+      "verificationMethod": "Node oracle and browser",
+      "knownLimitations": "Synthetic peer profile"
     },
     {
       "id": "V2-A05",
@@ -1258,7 +1749,19 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517311759/job/138879970561",
         "description": "Actual two-origin browser scripted adviser, denial zero traffic, consented requests, 6→2 cost reduction, redundant/forged capability, exact subgroup reversal and actual export; 25 Node groups passed."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-A04",
+        "V2-F06"
+      ],
+      "priority": "P0",
+      "risk": "high",
+      "implementationLocation": "apps/sutra-v2/peer/agents; apps/sutra-v2/test/browser.cjs",
+      "acceptanceCriteria": "Actual two-origin browser consent, manifest and graph retrieval, leaf adviser execution with pinned scripted runtime, no credential/referrer disclosure, no contact after denial; no independent ownership claim.",
+      "positiveTests": "Actual two-origin consented browser execution",
+      "adversarialTests": "No contact after denial, no credential/referrer disclosure",
+      "verificationMethod": "Chromium and pinned scripted runtime",
+      "knownLimitations": "Same-owner origins; not independent adoption"
     },
     {
       "id": "V2-L07",
@@ -1272,7 +1775,19 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517311759/job/138879970561",
         "description": "Actual two-origin browser scripted adviser, denial zero traffic, consented requests, 6→2 cost reduction, redundant/forged capability, exact subgroup reversal and actual export; 25 Node groups passed."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-A05",
+        "V2-L06"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/quiz-frontier.js; apps/sutra-v2/src/quiz.js",
+      "acceptanceCriteria": "Read host-pinned original source after planning, exact value prunes worlds, preserve conditional result and transfer interpretation; reject changed bytes; export full case and observation receipt.",
+      "positiveTests": "Read host-pinned source and prune exact worlds",
+      "adversarialTests": "Reject changed bytes and preserve conditional interpretation",
+      "verificationMethod": "Actual browser export",
+      "knownLimitations": "Synthetic statistical lesson"
     },
     {
       "id": "V2-F07",
@@ -1286,7 +1801,18 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517521180/job/138880689328",
         "description": "Actual Chromium source-withdrawal simulation and restored read; independent Python replay of actual subgroup and withdrawal exports including five hostile changes."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-L07"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/quiz-frontier.js; packages/sutra-knowledge/evidence-session.js",
+      "acceptanceCriteria": "Simulate withdrawal of the single host-pinned source behind multiple published capabilities: retain valid world receipts, remove all dependent observations, restore two-world ambiguity, export historical/current separation; restoration requires new evidence read.",
+      "positiveTests": "Withdraw source and restore ambiguity",
+      "adversarialTests": "Do not silently revive historical observation on restoration",
+      "verificationMethod": "Browser withdrawal and replay",
+      "knownLimitations": "Simulated host-pinned source withdrawal"
     },
     {
       "id": "V2-L08",
@@ -1300,21 +1826,43 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517521180/job/138880689328",
         "description": "Actual Chromium source-withdrawal simulation and restored read; independent Python replay of actual subgroup and withdrawal exports including five hostile changes."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F07"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/reference/verify_quiz.py",
+      "acceptanceCriteria": "Independent fixed-profile Python subgroup replay of actual browser exports: exact graph and receipt recomputation, direct Fraction standardization, independently optimal two-world policy, withdrawal witness, five hostile mutations.",
+      "positiveTests": "Reconstruct exact subgroup policy and withdrawal",
+      "adversarialTests": "Refuse five hostile export mutations",
+      "verificationMethod": "Independent Fraction replay and browser CI",
+      "knownLimitations": "Fixed-profile replay"
     },
     {
       "id": "V2-F08",
       "historicalChecked": true,
       "objective": "General finite evidence session: host-pinned source values, scope/dimension checks, exact world filtering, minimum-cardinality conflict witness, explicit source and declared-lineage withdrawal/restoration, historical evidence preserved and no auto-restoration.",
       "phase": "11",
-      "status": "Integration verified",
+      "status": "Unit verified",
       "evidence": {
         "id": "V2-F08",
         "sourceRevision": "864923a96743ea9ebb55f3e8c1d2837b2827e27e",
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517808680/job/138881678329",
         "description": "Exact PR merge checkout includes head; 31/31 Node groups and executable conflict challenge successful; finite synthetic host-pinned scope."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F07"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/evidence-session.js",
+      "acceptanceCriteria": "General finite evidence session: host-pinned source values, scope/dimension checks, exact world filtering, minimum-cardinality conflict witness, explicit source and declared-lineage withdrawal/restoration, historical evidence preserved and no auto-restoration.",
+      "positiveTests": "Admit bounded pinned finite observations and conflict witness",
+      "adversarialTests": "Scope mismatch, copied lineage, restoration without new read",
+      "verificationMethod": "Node conflict fixtures",
+      "knownLimitations": "Exact declared finite worlds only"
     },
     {
       "id": "V2-F09",
@@ -1328,7 +1876,18 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517808680/job/138881677729",
         "description": "Actual Chromium conflict, minimum witness, declared lineage withdrawal/restoration and fresh observation; browser export uploaded; no generalized independent replay yet."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F08"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "apps/sutra-v2/src/conflict.js; apps/sutra-v2/test/browser.cjs",
+      "acceptanceCriteria": "Integrate generalized conflict session into actual learner/browser and prove source/lineage behavior from actual exported observations.",
+      "positiveTests": "Show generalized evidence conflict and withdrawal",
+      "adversarialTests": "Restore requires fresh observation, historical evidence preserved",
+      "verificationMethod": "Actual Chromium exports",
+      "knownLimitations": "Synthetic fixture"
     },
     {
       "id": "V2-F10",
@@ -1342,7 +1901,18 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45519232023/job/138886548233",
         "description": "Actual Chromium three exported states reconstructed independently against separately constructed frozen case; 18 tampered variants rejected; 33/33 Node tests including 37 synthetic table controls in two event orders. Node oracle: https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45519232023/job/138886548678. Conditional replay; no external authority or history completeness proof."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F09"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/reference/verify_conflict.py",
+      "acceptanceCriteria": "Independent general conflict replay and adversarial minimality benchmark; verify event/source pins, historical lineage, exact surviving worlds and witness. **CI verified and independently reproduced within the frozen fixture profile** at 2b65fdc9ff904ae72d0dbad856b9e220a2472cc2; [Node oracle](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45519232023/job/138886548678) and [browser replay](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45519232023/job/138886548233). Python set-based reference reconstructs session and policy from caller-selected case; actual Chromium export gate and 37 synthetic table controls (each tested in both event orders). Not external independent adoption.",
+      "positiveTests": "Reconstruct actual exports against separately frozen case",
+      "adversarialTests": "Refuse tampered case/events/lineage/receipt",
+      "verificationMethod": "Independent Python reference",
+      "knownLimitations": "Finite frozen profile, not complete history authority"
     },
     {
       "id": "V2-F11",
@@ -1351,7 +1921,19 @@
       "phase": "08",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F11a",
+        "V2-P05-ROLLBACK"
+      ],
+      "priority": "P0",
+      "risk": "high",
+      "implementationLocation": "packages/sutra-knowledge/checkpoint",
+      "acceptanceCriteria": "Explicit case-authority and event-history boundary: distinguish conditional replay from authenticity of caller pins and completeness/order of historical events; portable separately anchored case versions, reject self-repinned export. Fixture anchor is only an initial bounded control.",
+      "positiveTests": "Bind portable external history anchor",
+      "adversarialTests": "Reject self-repinning, truncation and cloned head",
+      "verificationMethod": "Independent consumer and durable witness",
+      "knownLimitations": "External authority lifecycle pending"
     },
     {
       "id": "V2-F12",
@@ -1360,7 +1942,20 @@
       "phase": "11",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F12a",
+        "V2-F12c",
+        "V2-P10-LEAN"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/support-lattice; packages/sutra-knowledge/evidence-session.js",
+      "acceptanceCriteria": "Enumerate alternative minimum and inclusion-minimal conflict/support sets with deterministic ordering and completeness budget; distinguish diagnostic alternatives from blame. Require triple-vs-pair, multiple cores, overlapping lineage and evidence withdrawal controls.",
+      "positiveTests": "Enumerate all alternative minimal supports/conflicts with completion indicator",
+      "adversarialTests": "Pair-vs-triple, copied lineage, cut budget and withdrawal",
+      "verificationMethod": "Rust and browser replay, formal support obligations",
+      "knownLimitations": "Bounded core verified; wider obligation open"
     },
     {
       "id": "V2-F11a",
@@ -1374,30 +1969,64 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520409787/job/138890521810",
         "description": "Go Ed25519 signed actual 3→4→6 event prefixes; 4/4 Go contract groups incl portable external-anchor consumer; ephemeral witness only."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F10"
+      ],
+      "priority": "P0",
+      "risk": "high",
+      "implementationLocation": "packages/sutra-knowledge/checkpoint",
+      "acceptanceCriteria": "Go signed observed-prefix checkpoint: strict byte wire, separate case/key/latest-ID input, reject rollback, altered export, signed fork relative to pinned latest, duplicate keys, Unicode ambiguity. Go portable consumer and actual ephemeral browser witness verified at cd1e7c176ea9e9b94c75c8550f4e1d9caf1253a1 ([knowledge](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520409787/job/138890521476), [browser](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520409787/job/138890521810)). Does not establish external freshness or pre-genesis completeness.",
+      "positiveTests": "Verify externally pinned signed prefix and portable consumer",
+      "adversarialTests": "Reject altered export, Unicode ambiguity and fork relative to pin",
+      "verificationMethod": "Go and actual browser witness",
+      "knownLimitations": "Ephemeral signer, no external freshness"
     },
     {
       "id": "V2-F11b",
       "historicalChecked": false,
       "objective": "Durable atomic witness head and anti-equivocation: concurrent callers must not obtain acknowledged divergent checkpoints; specify compare-and-set protocol in TLA+, include unsafe mutation counterexample, crash/restart and signer isolation; model checking is not implementation refinement. Dependency: reviewed persistent store and independent key distribution.",
       "phase": "06",
-      "status": "Not started",
+      "status": "Researching",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-P05-ROLLBACK",
+        "V2-P06-REFINE"
+      ],
+      "priority": "P0",
+      "risk": "high",
+      "implementationLocation": "packages/sutra-knowledge/checkpoint; packages/sutra-knowledge/action-protocol/formal",
+      "acceptanceCriteria": "Durable atomic witness head and anti-equivocation: concurrent callers must not obtain acknowledged divergent checkpoints; specify compare-and-set protocol in TLA+, include unsafe mutation counterexample, crash/restart and signer isolation; model checking is not implementation refinement. Dependency: reviewed persistent store and independent key distribution.",
+      "positiveTests": "Atomically advance witness head under concurrent callers",
+      "adversarialTests": "Cloned signer, crash and conflicting CAS",
+      "verificationMethod": "TLC and implementation concurrency tests",
+      "knownLimitations": "Durable independent CAS not implemented"
     },
     {
       "id": "V2-F12a",
       "historicalChecked": true,
       "objective": "Rust finite support lattice: all inclusion-minimal conflicts and nonvacuous conditional supports, minimum cardinality and tie completeness, bounded partial enumeration, exhaustive 13,824 small tables against direct-membership oracle; native CI at cd1e7c176ea9e9b94c75c8550f4e1d9caf1253a1.",
       "phase": "07",
-      "status": "Integration verified",
+      "status": "Unit verified",
       "evidence": {
         "id": "V2-F12a",
         "sourceRevision": "cd1e7c176ea9e9b94c75c8550f4e1d9caf1253a1",
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520409787/job/138890521476",
         "description": "Rust 5/5 core tests (13,824 exhaustive synthetic tables), 6/6 ABI suite including 5 repeated core tests; bounded support families and completeness."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F08"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/support-lattice/lib.rs",
+      "acceptanceCriteria": "Rust finite support lattice: all inclusion-minimal conflicts and nonvacuous conditional supports, minimum cardinality and tie completeness, bounded partial enumeration, exhaustive 13,824 small tables against direct-membership oracle; native CI at cd1e7c176ea9e9b94c75c8550f4e1d9caf1253a1.",
+      "positiveTests": "Enumerate nonvacuous inclusion-minimal support/conflict sets",
+      "adversarialTests": "13,824 finite table controls, cutoff and empty survivor",
+      "verificationMethod": "Rust native exhaustive oracle",
+      "knownLimitations": "Bounded 64 worlds/16 observations"
     },
     {
       "id": "V2-F12b",
@@ -1411,7 +2040,18 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520409787/job/138890521810",
         "description": "Actual Chromium compiled Rust WASM support analysis, alternative conflicts, copied-source withdrawal, fresh refuting support and missing module refusal; artifact 14978264100."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F12a"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/support-lattice/wasm.rs; apps/sutra-v2/src/support-wasm.js",
+      "acceptanceCriteria": "Local Rust WASM browser integration: derived projection, alternate minimum conflicts, common-lineage withdrawal, fresh refuting support, missing module refusal. Actual Chromium at cd1e7c176ea9e9b94c75c8550f4e1d9caf1253a1. No general independent support export replay yet.",
+      "positiveTests": "Run zero-import local WASM projection in browser",
+      "adversarialTests": "Missing/corrupted module, stale support on withdrawal",
+      "verificationMethod": "Actual Chromium WASM CI",
+      "knownLimitations": "Bounded browser ABI"
     },
     {
       "id": "V2-F12c",
@@ -1425,16 +2065,40 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520945033/job/138892328011",
         "description": "All six reported PR workflows successful. Actual Rust WASM hash-pinned module and Go replay of three matching support reports; 24 mutations rejected."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F12b",
+        "V2-F10"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/checkpoint/support_replay.go; apps/sutra-v2/src/support-wasm.js",
+      "acceptanceCriteria": "Build-pin module integrity and independent Go support export replay: actual browser hash mismatch category, full support report reconstruction against separately frozen case and matching event history, eight mutations per state. Exact combined CI at 380e2bb0c8d599f0c429fba648bbe4fc9ae8f580 passed: three Go replays of actual support exports and 24 rejected mutations ([browser](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45520945033/job/138892328011)). No general arbitrary-graph authority or deployed browser claim.",
+      "positiveTests": "Reconstruct actual support exports from frozen case and events",
+      "adversarialTests": "24 altered support reports refused",
+      "verificationMethod": "Independent Go replay, actual browser",
+      "knownLimitations": "Not arbitrary external graph authority"
     },
     {
       "id": "V2-F12d",
       "historicalChecked": false,
       "objective": "Formal support semantics and proof obligations: Lean 4 nonvacuity, subset minimality/completeness and soundness of closure recurrence; pin proof toolchain; separate theorem from implementation refinement and model applicability. No proof claimed.",
       "phase": "10",
-      "status": "Not started",
+      "status": "Blocked",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F12a",
+        "V2-P10-LEAN"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/formal-support/ (proposed)",
+      "acceptanceCriteria": "Formal support semantics and proof obligations: Lean 4 nonvacuity, subset minimality/completeness and soundness of closure recurrence; pin proof toolchain; separate theorem from implementation refinement and model applicability. No proof claimed.",
+      "positiveTests": "Formalize finite support nonvacuity and closure recurrence",
+      "adversarialTests": "Inconsistent evidence, inclusion/cardinality distinction, no sorry/admit",
+      "verificationMethod": "Pinned Lean compiler and axiom inspection",
+      "knownLimitations": "Lean not available locally"
     },
     {
       "id": "V2-F13",
@@ -1443,12 +2107,24 @@
       "phase": "12",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-F01",
+        "V2-P12-ECON"
+      ],
+      "priority": "P1",
+      "risk": "medium",
+      "implementationLocation": "packages/sutra-knowledge/frontier.js",
+      "acceptanceCriteria": "Source acquisition versus field-read cost semantics: one source can contain several fields; model bundled observations and disclosure costs without assuming additive per-field effort. Measure policy differences; retain existing narrow per-observation model until verified.",
+      "positiveTests": "Separate source acquisition and field-read cost",
+      "adversarialTests": "Greedy failure, shared acquisition and privacy cost",
+      "verificationMethod": "Exhaustive independent oracle",
+      "knownLimitations": "No calibrated probability"
     },
     {
       "id": "V2-RUNTIME-01",
-      "historicalChecked": false,
-      "objective": "Signed scoped fixture action, bounded caller transport, atomic in-process idempotency and unknown-state reconciliation. Candidate eabb7c348b9ef66509e0d5ef41d4863f87bde3b3; require actual TCP drop after commit, absent status, concurrent duplicate submissions, forged receipt and redirect refusal, contact/effect budget, race check.",
+      "historicalChecked": true,
+      "objective": "Signed scoped fixture action, bounded caller transport, atomic in-process idempotency and unknown-state reconciliation. Verified at 9bcdda66dd9d42e4a1f9c1441482fea31e9c85a7 ([knowledge job](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45522113564/job/138896300388)): five Go race groups, actual TCP drop after commit, absent status, concurrent duplicate submissions, forged receipt and redirect refusal, contact/effect budget. In-process only.",
       "phase": "04",
       "status": "Integration verified",
       "evidence": {
@@ -1457,16 +2133,41 @@
         "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45522113564/job/138896300388",
         "description": "Five existing Go race test groups, actual TCP drop, 64 concurrent duplicates; in-process only."
       },
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-A04"
+      ],
+      "priority": "P0",
+      "risk": "high",
+      "implementationLocation": "packages/sutra-knowledge/action-protocol/protocol.go; packages/sutra-knowledge/action-protocol/transport.go",
+      "acceptanceCriteria": "Signed scoped fixture action, bounded caller transport, atomic in-process idempotency and unknown-state reconciliation. Verified at 9bcdda66dd9d42e4a1f9c1441482fea31e9c85a7 ([knowledge job](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45522113564/job/138896300388)): five Go race groups, actual TCP drop after commit, absent status, concurrent duplicate submissions, forged receipt and redirect refusal, contact/effect budget. In-process only.",
+      "positiveTests": "One approved logical action, identical receipt under retry and unknown status",
+      "adversarialTests": "64 concurrent requests, TCP loss, forgery, redirects, budget and malformed wire",
+      "verificationMethod": "Go race and real TCP tests",
+      "knownLimitations": "In-memory receiver only"
     },
     {
       "id": "V2-RUNTIME-02",
       "historicalChecked": false,
       "objective": "Durable transactional receiver or upstream idempotency contract: crash before/after effect, restart, concurrent keys, expiry/revocation, globally enforced budgets, signed status semantics and explicit compensation authorization. A local lock cannot make arbitrary remote effects atomic. Formal safe/unsafe TLA+ model and implementation refinement required before external writes.",
       "phase": "05",
-      "status": "Not started",
+      "status": "Implementation in progress",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-P05-STORE",
+        "V2-P05-RECOVERY",
+        "V2-P05-ROLLBACK",
+        "V2-P06-REFINE"
+      ],
+      "priority": "P0",
+      "risk": "high",
+      "implementationLocation": "packages/sutra-knowledge/action-protocol",
+      "acceptanceCriteria": "Durable transactional receiver or upstream idempotency contract: crash before/after effect, restart, concurrent keys, expiry/revocation, globally enforced budgets, signed status semantics and explicit compensation authorization. A local lock cannot make arbitrary remote effects atomic. Formal safe/unsafe TLA+ model and implementation refinement required before external writes.",
+      "positiveTests": "Durable effect/ledger and explicit retry policy",
+      "adversarialTests": "Crash, concurrent keys, unknown outcome, revoked approval and global budgets",
+      "verificationMethod": "Go process and network integration, TLA refinement",
+      "knownLimitations": "Synthetic store verified; broader receiver gate open"
     },
     {
       "id": "V2-RUNTIME-03",
@@ -1475,7 +2176,20 @@
       "phase": "04",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-RUNTIME-02",
+        "V2-P04-CONSENT",
+        "V2-P08-CAUSAL"
+      ],
+      "priority": "P0",
+      "risk": "high",
+      "implementationLocation": "apps/sutra-v2/; packages/sutra-runtime; packages/sutra-consent",
+      "acceptanceCriteria": "Integrate host-approved action contract with browser consent, separate origin/identity and declaration/enforcement, tainted external values never gain control authority, causal receipt links and verifier with independent trust anchors. Real two-site failure demo only after security gates. Do not expose new external write or paid-provider route prematurely.",
+      "positiveTests": "Browser host approval, exact peer identity, causal receipts",
+      "adversarialTests": "Tainted value cannot grant authority; denied action zero network",
+      "verificationMethod": "Browser and independent receipt replay",
+      "knownLimitations": "No browser write integration"
     },
     {
       "id": "V2-RUNTIME-04",
@@ -1484,7 +2198,28 @@
       "phase": "14",
       "status": "Not started",
       "evidence": null,
-      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision."
+      "scope": "Original requirement and limitations preserved verbatim in CHECKLIST.md and SESSIONS.md; existing evidence applies only at recorded revision.",
+      "dependencies": [
+        "V2-P14-BUDGET"
+      ],
+      "priority": "P0",
+      "risk": "high",
+      "implementationLocation": "packages/sutra-inference; packages/sutra-runtime",
+      "acceptanceCriteria": "Per-provider token/spend reservation and reconciliation (including timeout and concurrent calls), BYOK isolation and free judge path; model-declared cost is not authority. Recheck official challenge rules before submission; under-120-second failure-recovery demonstration is a design target, not a verified rule.",
+      "positiveTests": "Reserve provider budgets and reconcile actual charges",
+      "adversarialTests": "Concurrent oversubscription, unknown charge, credential disclosure",
+      "verificationMethod": "Provider contract fixtures and authorized free route",
+      "knownLimitations": "No paid inference authorized"
     }
-  ]
+  ],
+  "validation": {
+    "requirements": 89,
+    "legacyRequirements": 62,
+    "newGates": 27,
+    "phases": 23,
+    "duplicateIds": 0,
+    "missingDependencies": 0,
+    "dependencyCycles": 0,
+    "method": "Parsed exact remote roadmap and traversed all recorded dependencies in V2-009. Historical dependency links are current engineering judgments, not a retroactive claim of executed prerequisites."
+  }
 }

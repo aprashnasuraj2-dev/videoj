@@ -5,18 +5,18 @@
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
   "session": "V2-009",
   "next": [
-    "V2-P05-STORE",
-    "V2-P06-MODEL",
     "V2-P05-RECOVERY",
     "V2-P05-ROLLBACK",
     "V2-P06-REFINE",
+    "V2-F11b",
+    "V2-RUNTIME-02",
     "V2-RUNTIME-03",
     "V2-F12d",
     "V2-F13",
     "V2-F04",
     "V2-RUNTIME-04"
   ],
-  "state": "runtime01_verified_durable_receiver_and_formal_model_candidates_pending",
+  "state": "durable_fixture_and_bounded_tlc_verified_extended_recovery_partial",
   "verified": [
     {
       "id": "V2-M01",
@@ -220,6 +220,18 @@
       "sourceRevision": "9bcdda66dd9d42e4a1f9c1441482fea31e9c85a7",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45522113564/job/138896300388",
       "description": "Five existing Go race test groups, actual TCP drop, 64 concurrent duplicates; in-process only."
+    },
+    {
+      "id": "V2-P05-STORE",
+      "sourceRevision": "23c45faab775e003a3d2fcb654c8f2dbf140f6e4",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523248637/job/138900133257",
+      "description": "Go durable receiver, exclusive owner, 64 duplicate requests, identical receipt on restart, actual subprocess exit before rename/after rename/after commit, signed snapshot corruption and budget controls."
+    },
+    {
+      "id": "V2-P06-MODEL",
+      "sourceRevision": "23c45faab775e003a3d2fcb654c8f2dbf140f6e4",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523248637/job/138900133257",
+      "description": "TLC 2026.11.19.180144 rev bc1b506, pinned v1.8.0 artifact SHA256 fdffef247f563ef6edbfd44958d2a82db79e7564e07cb673262d896353fa6713. Safe 162 generated / 33 distinct / 0 queue; unsafe 96 generated / 39 distinct, AtMostOnce violated; independent Python 33 safe states/128 edges."
     }
   ],
   "release": "not_authorized",
@@ -229,7 +241,7 @@
     "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45517668625/job/138881199452",
     "reason": "General evidence session set event parser maxChars=524288 above shared parser cap 262144. Corrected in next candidate."
   },
-  "lastVerifiedKernelSource": "380e2bb0c8d599f0c429fba648bbe4fc9ae8f580",
+  "lastVerifiedKernelSource": "58a5f96456c4f189e686616180992514f9e7d4f6",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -239,13 +251,18 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
-    "sourceRevision": "23c45faab775e003a3d2fcb654c8f2dbf140f6e4",
+    "sourceRevision": "a13f8b2ec03b1574148d237b82a38c049e0c1a5e",
+    "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523607142",
     "checks": [
-      "Go durable snapshot race and process crash tests",
-      "TLC safe model and expected unsafe invariant violation",
-      "independent Python state exploration"
+      "Latest integrated kernel and browser workflows",
+      "Legacy browser matrix"
     ],
-    "status": "pending_exact_ci"
+    "status": "full_ci_not_yet_reconciled",
+    "observed": [
+      "Go scoped action and race step success",
+      "TLC safe/unsafe step success",
+      "Impact classifier success at exact head"
+    ]
   },
   "previousPendingCandidate": {
     "sourceRevision": "eabb7c348b9ef66509e0d5ef41d4863f87bde3b3",
@@ -269,6 +286,45 @@
       "sourceRevision": "bf9bbd12d1a21ac404be63871434b5f82e023e47",
       "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523091796/job/138899596239",
       "reason": "Same typed int conversion; corrected at 23c45faab775e003a3d2fcb654c8f2dbf140f6e4"
+    },
+    {
+      "sourceRevision": "b7ceb09ca650f0b657ac2b6b0d29e5cf79377799",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523424992/job/138900724121",
+      "reason": "Roadmap JSON newly managed but not mapped; classifier exited nonzero after all 27 unit tests passed.",
+      "resolutionRevision": "a13f8b2ec03b1574148d237b82a38c049e0c1a5e",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523607098/job/138901349566"
+    },
+    {
+      "sourceRevision": "58a5f96456c4f189e686616180992514f9e7d4f6",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546682",
+      "reason": "Same impact mapping omission; corrected at a13f8b2ec03b1574148d237b82a38c049e0c1a5e",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523607098/job/138901349566"
+    }
+  ],
+  "reconciledDurableCandidate": {
+    "sourceRevision": "23c45faab775e003a3d2fcb654c8f2dbf140f6e4",
+    "checks": [
+      "Go durable snapshot race and process crash tests",
+      "TLC safe model and expected unsafe invariant violation",
+      "independent Python state exploration"
+    ],
+    "status": "verified_at_exact_candidate",
+    "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523248637/job/138900133257"
+  },
+  "partialEvidence": [
+    {
+      "id": "V2-P05-RECOVERY",
+      "sourceRevision": "58a5f96456c4f189e686616180992514f9e7d4f6",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733",
+      "description": "Knowledge job and browser workflow completed successfully; durable TCP reopen, injected persistence failure, independent receipt pin rollback tests passed. Impact classifier at this revision failed separately.",
+      "remaining": "Delayed/reordered delivery, persisted caller/global contact budgets, new-key authorization lifecycle."
+    },
+    {
+      "id": "V2-P05-ROLLBACK",
+      "sourceRevision": "58a5f96456c4f189e686616180992514f9e7d4f6",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45523546697/job/138901145733",
+      "description": "Knowledge job and browser workflow completed successfully; durable TCP reopen, injected persistence failure, independent receipt pin rollback tests passed. Impact classifier at this revision failed separately.",
+      "remaining": "External durable CAS, cloned signer equivocation, key lifecycle."
     }
   ]
 }
