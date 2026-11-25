@@ -65,7 +65,7 @@ Dispatch ==
     /\ effects' = 1
     /\ lastEffectPinned' = PinnedMember
     /\ lastEffectSeq' = CurrentSeq
-    /\ lastEffectBelowMax' = CurrentSeq < maxEver
+    /\ lastEffectBelowMax' = (CurrentSeq < maxEver)
     /\ checked' = FALSE
     /\ UNCHANGED <<history, pinSeq, pinHead, maxEver, provisioned>>
 
