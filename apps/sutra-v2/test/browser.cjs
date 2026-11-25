@@ -4,7 +4,7 @@ const path=require('node:path'),fs=require('node:fs'),http=require('node:http'),
 const requireLegacy=createRequire(path.resolve(__dirname,'../../sutra/package.json'));
 const {chromium}=requireLegacy('playwright');
 const dist=path.resolve(__dirname,'../dist');
-const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.txt':'text/plain','.mp4':'video/mp4'};
+const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.txt':'text/plain','.mp4':'video/mp4','.wasm':'application/wasm'};
 (async()=>{
  const peerRoot=path.resolve(__dirname,'../peer'),peerRequests=[];
  const peer=http.createServer((req,res)=>{
@@ -20,7 +20,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    const pathname=new URL(req.url,'http://localhost').pathname;
    const file=pathname==='/'?path.join(dist,'index.html'):path.resolve(dist,'.'+decodeURIComponent(pathname));
    if(!file.startsWith(dist+path.sep)||!fs.statSync(file).isFile()||!mime[path.extname(file)])throw Error('missing');
-   res.writeHead(200,{'Content-Type':mime[path.extname(file)],'Cache-Control':'no-store','Content-Security-Policy':"default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self' "+peerOrigin+"; img-src 'self'; media-src blob:; base-uri 'none'; form-action 'none'",'Referrer-Policy':'no-referrer'});res.end(fs.readFileSync(file));
+   res.writeHead(200,{'Content-Type':mime[path.extname(file)],'Cache-Control':'no-store','Content-Security-Policy':"default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self' "+peerOrigin+"; img-src 'self'; media-src blob:; base-uri 'none'; form-action 'none'",'Referrer-Policy':'no-referrer'});res.end(fs.readFileSync(file));
   }catch{res.writeHead(404);res.end();}
  });
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
@@ -145,6 +145,12 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await page.waitForFunction(()=>document.querySelector('#quiz-status').dataset.state==='conditional_question_resolved');
   assert.deepEqual(errors,[]);assert.equal(peerRequests.length,6);
   console.log('PASS: withdrawal restores two indistinguishable worlds, archives historical evidence, restore requires new read.');
+  // Refuse the transition if the locally built module cannot load. No JS fallback.
+  await page.route('**/support-lattice.wasm',route=>route.abort());
+  await page.getByRole('button',{name:'Start conflict investigation'}).click();
+  await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.state==='refused');
+  assert.equal(await page.locator('#conflict-support-export').isDisabled(),true);
+  await page.unroute('**/support-lattice.wasm');
   await page.getByRole('button',{name:'Start conflict investigation'}).click();
   await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.state==='conditional_observation_plan');
   await page.getByRole('button',{name:'Read first report'}).click();
@@ -160,12 +166,30 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    const bundle=JSON.parse(fs.readFileSync(await (await dl).path(),'utf8'));fs.writeFileSync(path.join(output,name),JSON.stringify(bundle,null,2));return bundle;
   }
   const conflicting=await saveConflict('conflict-evidence.json');assert.deepEqual(conflicting.result.conflict,['read_a','read_b']);
+  async function saveSupports(name){
+   const dl=page.waitForEvent('download');await page.getByRole('button',{name:'Export support analysis'}).click();
+   const bundle=JSON.parse(fs.readFileSync(await (await dl).path(),'utf8'));
+   fs.writeFileSync(path.join(output,name),JSON.stringify(bundle,null,2));return bundle;
+  }
+  const conflictSupports=await saveSupports('support-conflict.json');
+  assert.deepEqual(conflictSupports.analysis.conflicts,[['read_a','read_b'],['read_b','read_copy']]);
+  assert.deepEqual(conflictSupports.analysis.satisfiedSupports,[['read_a'],['read_copy']]);
+  assert.deepEqual(conflictSupports.analysis.refutedSupports,[]);
+  assert.deepEqual(conflictSupports.projection.observations,[{id:'read_a',mask:3},{id:'read_b',mask:12},{id:'read_copy',mask:3}]);
+  assert.equal(conflictSupports.analysis.subsetsEvaluated,8);
+  assert.match(await page.locator('#conflict-supports').innerText(),/diagnostic only; no current conclusion/);
   await page.screenshot({path:path.join(output,'conflicting-sources.png'),fullPage:true});
   await page.getByRole('button',{name:'Withdraw shared lineage'}).click();
   await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.state==='conditional_observation_plan');
   assert.equal(await page.locator('#conflict-worlds').innerText(),'2');assert.equal(await page.locator('#conflict-next').innerText(),'read_c');
   assert.equal(await page.locator('#conflict-a').isDisabled(),true);assert.equal(await page.locator('#conflict-copy').isDisabled(),true);
   const withdrawn=await saveConflict('conflict-withdrawn.json');assert.deepEqual(withdrawn.result.unavailableSources,['lab_a','lab_copy']);
+  const withdrawnSupports=await saveSupports('support-withdrawn.json');
+  assert.equal(withdrawnSupports.analysis.current,'ambiguous');
+  assert.deepEqual(withdrawnSupports.analysis.conflicts,[]);
+  assert.deepEqual(withdrawnSupports.analysis.satisfiedSupports,[]);
+  assert.deepEqual(withdrawnSupports.analysis.refutedSupports,[]);
+  assert.deepEqual(withdrawnSupports.projection.observations,[{id:'read_b',mask:12}]);
   await page.getByRole('button',{name:'Restore shared lineage'}).click();
   await page.waitForFunction(()=>!document.querySelector('#conflict-a').disabled);
   assert.equal(await page.locator('#conflict-reads').innerText(),'1');
@@ -173,6 +197,12 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await page.waitForFunction(()=>document.querySelector('#conflict-status').dataset.state==='invariant_decision');
   assert.equal(await page.locator('#conflict-next').innerText(),'constraint_refuted');
   await saveConflict('conflict-resolved.json');
+  const resolvedSupports=await saveSupports('support-resolved.json');
+  assert.equal(resolvedSupports.analysis.current,'refuted');
+  assert.deepEqual(resolvedSupports.analysis.refutedSupports,[['read_b','read_c']]);
+  assert.deepEqual(resolvedSupports.analysis.survivingWorlds,['w11']);
+  assert.deepEqual(resolvedSupports.projection.observations,[{id:'read_b',mask:12},{id:'read_c',mask:10}]);
+  console.log('PASS: actual Rust WASM support lattice, alternate minimum conflicts, copied-source conditional supports, withdrawal removes both, refuted support after fresh read; blocked module fails closed.');
   assert.deepEqual(errors,[]);assert.equal(peerRequests.length,6);
   console.log('PASS: browser conflict, minimum witness, declared lineage withdrawal and restoration, resolved after new observation.');
   await page.screenshot({path:path.join(output,'subgroup-investigation.png'),fullPage:true});
