@@ -229,6 +229,7 @@ func NewGrantGuard(book *GrantBook,coordinator *WitnessCoordinator)(*GrantGuard,
  return &GrantGuard{book:book,coordinator:coordinator},nil
 }
 func (g *GrantGuard) Commit(grant ActionGrant,req AuthorityRequest,class GrantClass)(WitnessedResponse,error){
+ if req.Op!=AuthorityCommit{return WitnessedResponse{},ErrPolicy}
  if e:=g.book.CheckDispatch(grant,req.Action,class);e!=nil{return WitnessedResponse{},e}
  return g.coordinator.Process(req)
 }
