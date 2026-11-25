@@ -851,3 +851,8 @@ V2-087 exact 10/10 green; actual robust acquisition browser and adaptive oracle 
 ## V2-091 — Living investigation overview
 
 V2-088 and V2-089 exact 10/10 passed; scoped acquisition reference and continuous interval kernel evidence registered. V2-090 full exact CI pending. Add header keyboard entry, live question/source/selection/candidate overview, conditional candidate cards, revision reversal/survival counts, baseline state and context-sensitive navigation to existing review controls (no automatic execution or new evaluator). Clear cards immediately on mutation. Actual mobile guided journey assertions for keyboard entry/focus, ready/invalidated state, correspondence, divergent review and screenshot artifacts. No accessibility certification or user-study claim. Exact CI pending.
+
+
+## V2-092 — Conditional exact binomial profile
+
+V2-090 exact all ten workflows passed; interval browser and independent reference evidence registered. Add scope-matched reviewed count bindings, fixed n<=256, exact rational one-sided inclusive binomial tails, explicit null probability, family alpha and declared Bonferroni family size. Separate seven unresolved/declared-not-verified sampling and design obligations from arithmetic threshold comparison. No p-value as hypothesis probability, causal interpretation, evidence independence, population validity or recommendation. Small fair-coin exhaustive bit-pattern and weighted nonbinary controls, exact boundary, degenerate null, invalid count/scope and pin adversaries authored. V2-091 overview exact CI pending. New profile browser and independent reference not yet implemented.

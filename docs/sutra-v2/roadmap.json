@@ -3164,7 +3164,7 @@
         "V2-LK02-INTENT-IR",
         "V2-LK06-SEMANTIC-WORLDS"
       ],
-      "scope": "Select narrow interval/measurement and statistical profiles; include study design, bias, heterogeneity, missingness, multiple testing, power and causal assumptions as separate obligations. V2-089 candidate: exact continuous rational interval enclosure over admitted reviewed formulas; source point containment, same-node refinements, denominator zero and conservative dependency handling. Not statistical confidence or calibrated uncertainty; independent reference, browser and statistical study-design profiles remain open.",
+      "scope": "Select narrow interval/measurement and statistical profiles; include study design, bias, heterogeneity, missingness, multiple testing, power and causal assumptions as separate obligations. V2-089 candidate: exact continuous rational interval enclosure over admitted reviewed formulas; source point containment, same-node refinements, denominator zero and conservative dependency handling. Not statistical confidence or calibrated uncertainty; independent reference, browser and statistical study-design profiles remain open. V2-092 candidate: exact one-sided binomial tails from scope-matched reviewed count bindings, declared rational null and Bonferroni family threshold; explicit unresolved design obligations. Independent numerical replay and browser pending.",
       "acceptance": "Independent numerical references, coverage and assumption sensitivity; no deterministic proof of statistical or causal validity.",
       "evidence": [
         {
@@ -3172,6 +3172,12 @@
           "sourceRevision": "ffbfc2817755e48a35ecbaeb29a184b6d78c535a",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45614773111",
           "description": "V2-089 exact 10/10 passed; continuous rational interval enclosure, dependency identity, strict comparisons and denominator-zero refusal. No statistical confidence claim."
+        },
+        {
+          "id": "V2-LK14-STATISTICAL-PROFILES",
+          "sourceRevision": "87b159df23fdb5255c28b7d0714b62abaae854c3",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45615236070/job/139208785125",
+          "description": "V2-090 exact 10/10 passed; actual engineering interval workspace and independent Python Fraction export replay, six mutation controls and stale pins."
         }
       ]
     },
