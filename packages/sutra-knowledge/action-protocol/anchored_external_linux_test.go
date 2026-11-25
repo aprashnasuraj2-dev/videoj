@@ -3,6 +3,7 @@
 package actionprotocol
 
 import (
+	"bytes"
 	"crypto/ed25519"
 	"errors"
 	"net/http"
@@ -167,6 +168,73 @@ func (f *compositeFixture) client(t *testing.T, caller byte, request Request, gr
 		t.Fatal(e)
 	}
 	return client
+}
+
+func TestAnchoredFencedExternalRejectsLegacyWriteRoutesWithoutStateChange(t *testing.T) {
+	f := newCompositeFixture(t, nil)
+	beforeFence, e := f.fenceClient.View()
+	if e != nil {
+		t.Fatal(e)
+	}
+	beforePolicy, e := f.policyClient.View()
+	if e != nil {
+		t.Fatal(e)
+	}
+	beforeHead, e := f.authority.Head()
+	if e != nil {
+		t.Fatal(e)
+	}
+	beforeSpent, beforeTotal, beforeEffects, e := f.authority.Counts()
+	if e != nil {
+		t.Fatal(e)
+	}
+
+	legacy := []string{
+		"/commit",
+		"/status",
+		"/authority",
+		"/authority-witnessed",
+		"/authority-granted",
+		"/authority-granted-fenced?legacy=1",
+	}
+	for _, route := range legacy {
+		req, e := http.NewRequest(http.MethodPost, f.server.URL+route, bytes.NewReader(make([]byte, pinnedGrantedAuthorityRequestSize)))
+		if e != nil {
+			t.Fatal(e)
+		}
+		req.Header.Set("Content-Type", media)
+		req.Header.Set("Accept", media)
+		req.Header.Set(fenceChallengeHeader, "01"+string(make([]byte, 62)))
+		res, e := http.DefaultClient.Do(req)
+		if e != nil {
+			t.Fatal(e)
+		}
+		res.Body.Close()
+		if res.StatusCode != http.StatusBadRequest {
+			t.Fatalf("legacy route %s returned %d", route, res.StatusCode)
+		}
+	}
+
+	afterFence, e := f.fenceClient.View()
+	if e != nil {
+		t.Fatal(e)
+	}
+	afterPolicy, e := f.policyClient.View()
+	if e != nil {
+		t.Fatal(e)
+	}
+	afterHead, e := f.authority.Head()
+	if e != nil {
+		t.Fatal(e)
+	}
+	afterSpent, afterTotal, afterEffects, e := f.authority.Counts()
+	if e != nil {
+		t.Fatal(e)
+	}
+	if beforeFence != afterFence || beforePolicy != afterPolicy || beforeHead != afterHead ||
+		beforeSpent != afterSpent || beforeTotal != afterTotal || beforeEffects != afterEffects {
+		t.Fatal("legacy route attempt changed composite state")
+	}
 }
 
 func TestAnchoredFencedExternalCompositeCommitRevokeStatus(t *testing.T) {
