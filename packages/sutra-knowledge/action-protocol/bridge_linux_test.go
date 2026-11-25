@@ -365,3 +365,46 @@ func TestWitnessedAuthorityClientRefusesChallengeReuseBeforeContact(t *testing.T
  if client.Contacts()!=1{t.Fatal("reused challenge charged local contact",client.Contacts())}
  t.Log("repeated challenge is refused before HTTP contact, preventing captured-envelope replay when nonce generation repeats")
 }
+
+
+// A real client loses the final composite HTTP reply, not the witness POST.
+// The authority and witness have already converged when the connection dies.
+func TestWitnessedAuthorityClientLostFinalReplyRecoversStatus(t *testing.T){
+ var witnessPtr atomic.Pointer[AuthorityWitness]
+ witnessServer:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){witnessPtr.Load().ServeHTTP(w,r)}));defer witnessServer.Close()
+ ctx,approver,ak,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,witnessServer.URL)
+ witnessPub,witnessKey:=witnessKeys()
+ a,e:=CreateSharedAuthority(privateTemp(t),ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer a.Close()
+ genesis,e:=a.Head();if e!=nil{t.Fatal(e)}
+ witness,e:=CreateAuthorityWitness(privateTemp(t),ctx,authorityPub,witnessKey,genesis);if e!=nil{t.Fatal(e)};defer witness.Close();witnessPtr.Store(witness)
+ rootView,e:=witness.View();if e!=nil{t.Fatal(e)}
+ witnessClient,e:=NewWitnessClient(witnessServer.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
+ coordinator,e:=NewWitnessCoordinator(a,witnessClient);if e!=nil{t.Fatal(e)}
+ var drop atomic.Bool;drop.Store(true)
+ dropped:=make(chan WitnessedEnvelope,1)
+ server:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
+  if !drop.CompareAndSwap(true,false){coordinator.ServeHTTP(w,r);return}
+  recorder:=httptest.NewRecorder();coordinator.ServeHTTP(recorder,r)
+  envelope,parseErr:=ParseWitnessedEnvelope(recorder.Body.Bytes())
+  if recorder.Code!=http.StatusOK||parseErr!=nil{t.Errorf("coordinator did not complete before lost reply: %d %v",recorder.Code,parseErr);w.WriteHeader(500);return}
+  dropped<-envelope
+  conn,_,hijackErr:=w.(http.Hijacker).Hijack();if hijackErr!=nil{t.Error(hijackErr);return}
+  conn.Close()
+ }));defer server.Close()
+ approved:=approve(t,0,ctx,ak)
+ client,e:=NewWitnessedAuthorityClient(server.URL,0,callerKey[0],authorityPub,witnessPub,ctx,genesis,rootView,approved);if e!=nil{t.Fatal(e)}
+ if _,_,e=client.Commit();!errors.Is(e,ErrUnknown){t.Fatal("lost final HTTP reply was not unknown",e)}
+ var first WitnessedEnvelope
+ select{case first=<-dropped:default:t.Fatal("no completed envelope before HTTP loss")}
+ if first.Authority.Outcome!=AuthorityCommitted||first.Attestation.View.Sequence!=1||client.Head()!=genesis||client.Sequence()!=0||client.Contacts()!=1{t.Fatal("lost reply did not leave stale client pin",first.Authority.Outcome,first.Attestation.View.Sequence)}
+ spent,total,effects,e:=a.Counts();if e!=nil||spent!=[authorityCallers]byte{1,0}||total!=1||effects!=1{t.Fatal("lost reply accounting",spent,total,effects,e)}
+ if _,e=os.Lstat(coordinator.intentPath());!errors.Is(e,os.ErrNotExist){t.Fatal("final reply lost before durable intent cleanup",e)}
+ receipt,recovered,e:=client.Status()
+ if e!=nil||receipt!=first.Authority.Receipt||recovered.Authority.Stale!=1||recovered.Attestation.View.Sequence!=2{
+  t.Fatal("fresh status must recover identical receipt across two-step witness sequence gap",e)
+ }
+ if client.Head()!=recovered.Authority.After||client.Sequence()!=2||client.Contacts()!=2{t.Fatal("recovered client cursor")}
+ spent,total,effects,e=a.Counts();if e!=nil||spent!=[authorityCallers]byte{2,0}||total!=2||effects!=1{t.Fatal("status repeated effect",spent,total,effects,e)}
+ view,e:=witnessClient.View();if e!=nil||view.Head!=recovered.Authority.After||view.Sequence!=2{t.Fatal("witness not converged",e)}
+ t.Log("real HTTP final envelope loss recovered identical receipt via fresh authenticated status across a two-version witness gap; exactly two contacts and one effect")
+}
