@@ -1,7 +1,7 @@
 // Compare admitted computations, never majority-vote or equate arithmetic with truth.
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {casePin} from './pinned-investigation.js';
-import {compileReviewedProposal,validateReviewedContract,createReviewedCompilerSession} from './reviewed-claim-compiler.js';
+import {compilePreparedReviewedProposal,prepareReviewedCompilerContract,createReviewedCompilerSession} from './reviewed-claim-compiler.js';
 export const VERSION='sutra-reviewed-proposal-contrast/v1';
 const ID=/^[A-Za-z][A-Za-z0-9_-]{0,63}$/;
 const keys=(o,ks)=>o&&typeof o==='object'&&!Array.isArray(o)&&Object.keys(o).length===ks.length&&ks.every(k=>Object.hasOwn(o,k));
@@ -42,7 +42,7 @@ function pair(left,right){
  return {left:left.id,right:right.id,expressionRelation:same?'IDENTICAL_TYPED_STRUCTURE':'DIFFERENT_STRUCTURE_NOT_PROVEN_EQUIVALENT',stateRelation,bindingRelation:compareSets(a.bindingIds,b.bindingIds),sourceRelation:compareSets(a.sourceIds,b.sourceIds),sourceDigestRelation:compareSets(a.sourceDigests,b.sourceDigests),declaredLineageRelation:compareSets(a.declaredLineages,b.declaredLineages),semanticContradiction:'NOT_ESTABLISHED',independentEvidence:'NOT_ESTABLISHED'};
 }
 async function contrastWithCompiler(contractText,contractPin,batchText,compile){
- const contract=await validateReviewedContract(contractText,contractPin);
+ const contract=await prepareReviewedCompilerContract(contractText,contractPin);
  const b=parseUniqueJson(batchText,{maxChars:262144,maxDepth:5});
  if(!keys(b,['version','contractDigest','proposals'])||b.version!==1||b.contractDigest!==contractPin||!Array.isArray(b.proposals)||b.proposals.length<2||b.proposals.length>8)fail('CONTRAST_BATCH');
  const ids=new Set();
@@ -53,7 +53,7 @@ async function contrastWithCompiler(contractText,contractPin,batchText,compile){
  const entries=[];
  for(const x of b.proposals.slice().sort((a,b)=>sort(a.id,b.id))){
   let result;
-  try{result=await compile(x.id,contractText,contractPin,x.proposalText);}
+  try{result=await compile(x.id,contract,x.proposalText);}
   catch(e){const reason=typeof e?.message==='string'&&/^COMPILER_[A-Z_]+$/.test(e.message)?e.message:'PROPOSAL_OR_RESOURCE_REFUSED';entries.push({id:x.id,admission:'REFUSED',reason,computation:null});continue;}
   // Internal invariants/signature failures must not be silently treated as bad agent input.
   entries.push({id:x.id,admission:'ADMITTED',reason:null,computation:await describe(result)});
@@ -69,7 +69,7 @@ async function contrastWithCompiler(contractText,contractPin,batchText,compile){
  const counts={admitted:accepted.length,refused:entries.length-accepted.length,satisfied:accepted.filter(e=>e.computation.status==='CONDITIONALLY_SATISFIED').length,refuted:accepted.filter(e=>e.computation.status==='CONDITIONALLY_REFUTED').length,unresolved:accepted.filter(e=>!decisive(e.computation.status)).length,distinctTypedStructures:targetGroups.length,distinctProposalBytes:proposalGroups.length,selfComparisons:accepted.filter(e=>e.computation.selfComparison).length};
  return freeze({version:VERSION,contractDigest:contractPin,batchDigest:await casePin(batchText),entries,pairs,counts,targetGroups,duplicateProposalGroups:proposalGroups.filter(g=>g.ids.length>1),duplicateSourceBytes:contract.duplicateSourceBytes,decisionAuthority:'NONE',qualification:QUAL});
 }
-export async function contrastReviewedProposals(contractText,contractPin,batchText){return contrastWithCompiler(contractText,contractPin,batchText,(_id,...args)=>compileReviewedProposal(...args));}
+export async function contrastReviewedProposals(contractText,contractPin,batchText){return contrastWithCompiler(contractText,contractPin,batchText,(_id,...args)=>compilePreparedReviewedProposal(...args));}
 // The trusted session never accepts a precomputed report or external callback.
 // Only admitted candidates persist private local arithmetic state.
 function contrastSession(initial=new Map()){
@@ -80,7 +80,7 @@ function contrastSession(initial=new Map()){
    const next=new Map(),rows=new Map();
    const result=await contrastWithCompiler(contractText,contractPin,batchText,async(id,...args)=>{
     const session=previous.has(id)?previous.get(id).session.fork():createReviewedCompilerSession();
-    const {result,stats}=await session.compile(...args);
+    const {result,stats}=await session.compilePrepared(...args);
     next.set(id,{session,nodeIds:result.report?.receipts.map(r=>r.id)??[]});rows.set(id,{id,admission:'ADMITTED',...stats});
     return result;
    });

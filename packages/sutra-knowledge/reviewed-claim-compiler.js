@@ -12,6 +12,16 @@ const sort=(a,b)=>a<b?-1:a>b?1:0;
 const frozen=x=>{if(x&&typeof x==='object'){Object.values(x).forEach(frozen);Object.freeze(x);}return x;};
 const bytes=s=>new TextEncoder().encode(s);
 const decode=b=>new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(b);
+const continuation=b=>(b&0xc0)===0x80;
+// The full source came from a validated Unicode string, and the selected span
+// has already been decoded fatally. Inspect only adjacent code points rather
+// than repeatedly decoding an entire 16 KiB document for every binding.
+function adjacent(raw,start,end){
+ let before='',after='';
+ if(start){let i=start-1;while(i>0&&continuation(raw[i]))i--;before=decode(raw.subarray(i,start));}
+ if(end<raw.length){let i=end+1;while(i<raw.length&&continuation(raw[i]))i++;after=decode(raw.subarray(end,i));}
+ return {before,after};
+}
 const text=(x,max)=>typeof x==='string'&&x.length>0&&x.length<=max&&!/[\ud800-\udfff]/u.test(x)&&x.trim().length>0;
 const boundedInt=x=>Number.isSafeInteger(x)&&x>=0&&!Object.is(x,-0);
 const uniq=xs=>[...new Set(xs)].sort(sort);
@@ -55,7 +65,7 @@ function span(s,docs,numeric=false){
  if(found!==s.quote)fail('COMPILER_QUOTE_MISMATCH');
  if(numeric){
   // Host-reviewed numeric token cannot be a truncated alphanumeric/decimal token.
-  const before=Array.from(decode(raw.slice(0,s.start))).at(-1)??'',after=Array.from(decode(raw.slice(s.end)))[0]??'';
+  const {before,after}=adjacent(raw,s.start,s.end);
   if(/[\p{L}\p{N}.,/%+\-]/u.test(before)||/[\p{L}\p{N}.,/%+\-]/u.test(after))fail('COMPILER_NUMBER_BOUNDARY');
  }
  return {sourceId:s.sourceId,start:s.start,end:s.end,quote:found,sourceDigest:doc.digest,declaredLineage:doc.lineage,origin:doc.origin};
@@ -128,8 +138,8 @@ function proposal(proposalText,contractDigest,docs,bindings){
  if(ordered.length!==nodes.size)fail('COMPILER_CYCLE');
  return {question,claims,ordered,targetId:p.targetId};
 }
-async function compileWithVerifier(contractText,contractPin,proposalText,revisionVerifier=null){
- const h=await host(contractText,contractPin),p=proposal(proposalText,contractPin,h.docs,h.bindings),compiled=new Map(),executable=[],sourceKeys=new Map();
+async function compileAdmitted(h,contractPin,proposalText,revisionVerifier=null){
+ const p=proposal(proposalText,contractPin,h.docs,h.bindings),compiled=new Map(),executable=[],sourceKeys=new Map();
  const proposalDigest=await casePin(proposalText);
  for(const n of p.ordered){
   let row;
@@ -161,16 +171,30 @@ async function compileWithVerifier(contractText,contractPin,proposalText,revisio
  const result=frozen({version:VERSION,contractDigest:contractPin,proposalDigest,question:p.question,claims:p.claims,bindings:[...h.bindings.values()].sort((a,b)=>sort(a.id,b.id)),nodes:rows,graphText,report,target:{id:p.targetId,status,missing:target.missing,typeBlockers:target.typeBlockers,sourceIds:uniq(used.map(b=>b.span.sourceId)),declaredLineages:uniq(used.map(b=>b.span.declaredLineage)),questionRelevance:'UNVERIFIED',methodValidity:'UNVERIFIED'},duplicateSourceBytes:h.duplicateSourceBytes,qualification:QUAL});
  return frozen({result,stats});
 }
-export async function compileReviewedProposal(contractText,contractPin,proposalText){return (await compileWithVerifier(contractText,contractPin,proposalText)).result;}
+// Opaque same-process admission capability. It contains no exposed mutable maps,
+// and no deserialized or caller-constructed object can stand in for admission.
+const preparedHosts=new WeakMap();
+export async function prepareReviewedCompilerContract(contractText,contractPin){
+ const h=await host(contractText,contractPin);
+ const capability=frozen({contractDigest:contractPin,bindingCount:h.bindings.size,duplicateSourceBytes:h.duplicateSourceBytes});
+ preparedHosts.set(capability,h);return capability;
+}
+function admitted(capability){const h=preparedHosts.get(capability);if(!h)fail('COMPILER_ADMISSION_CAPABILITY');return h;}
+export async function compilePreparedReviewedProposal(capability,proposalText){return (await compileAdmitted(admitted(capability),capability.contractDigest,proposalText)).result;}
+export async function compileReviewedProposal(contractText,contractPin,proposalText){return (await compileAdmitted(await host(contractText,contractPin),contractPin,proposalText)).result;}
 // Local trusted session; each compilation is a copy-on-write transaction. The
 // public compiler result remains byte-identical to fresh version-specific replay.
 function compilerSession(verifier){
  let busy=false;
- return Object.freeze({async compile(contractText,contractPin,proposalText){
+ async function transact(getHost,contractPin,proposalText){
   if(busy)throw Error('COMPILER_SESSION_BUSY');busy=true;
-  try{const next=verifier.fork(),compiled=await compileWithVerifier(contractText,contractPin,proposalText,next);verifier=next;return compiled;}
+  try{const h=await getHost(),next=verifier.fork(),compiled=await compileAdmitted(h,contractPin,proposalText,next);verifier=next;return compiled;}
   finally{busy=false;}
- },fork(){if(busy)throw Error('COMPILER_SESSION_BUSY');return compilerSession(verifier.fork());}});
+ }
+ return Object.freeze({
+  async compile(contractText,contractPin,proposalText){return transact(()=>host(contractText,contractPin),contractPin,proposalText);},
+  async compilePrepared(capability,proposalText){return transact(()=>admitted(capability),capability?.contractDigest,proposalText);},
+  fork(){if(busy)throw Error('COMPILER_SESSION_BUSY');return compilerSession(verifier.fork());}});
 }
 export function createReviewedCompilerSession(){return compilerSession(createProvenanceVerifier());}
 export async function exportReviewedProposal(contractText,contractPin,proposalText){return frozen({version:VERSION,contractText,proposalText,result:await compileReviewedProposal(contractText,contractPin,proposalText)});}
