@@ -3,7 +3,10 @@
 package actionprotocol
 
 import (
+ "bytes"
  "crypto/ed25519"
+ "encoding/hex"
+ "io"
  "errors"
  "time"
  "net/http"
@@ -219,4 +222,75 @@ func TestGrantBookAmbiguousPersistencePoisonsUntilReopen(t *testing.T){
    if stage=="after-rename"&&epoch!=2{t.Fatal("after rename lost",epoch)}
   })
  }
+}
+
+
+func TestGrantGuardExternalBoundaryConsentBeforeWitnessContact(t *testing.T){
+ var witnessPtr atomic.Pointer[AuthorityWitness]
+ var contacts atomic.Int32
+ witnessServer:=httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter,r *http.Request){
+  contacts.Add(1);witnessPtr.Load().ServeHTTP(w,r)
+ }));defer witnessServer.Close()
+ ctx,approver,ak,authorityPub,authorityKey,callerPub,callerKey:=authorityFixture(t,witnessServer.URL)
+ consentPub,consentKey:=keys(11);_,bookKey:=keys(12);witnessPub,witnessKey:=witnessKeys()
+ authorityDir:=privateTemp(t);witnessDir:=privateTemp(t);bookDir:=privateTemp(t)
+ authority,e:=CreateSharedAuthority(authorityDir,ctx,approver,authorityKey,callerPub,2);if e!=nil{t.Fatal(e)};defer authority.Close()
+ genesis,_:=authority.Head()
+ witness,e:=CreateAuthorityWitness(witnessDir,ctx,authorityPub,witnessKey,genesis);if e!=nil{t.Fatal(e)};defer witness.Close();witnessPtr.Store(witness)
+ witnessClient,e:=NewWitnessClient(witnessServer.URL,ctx,authorityPub,witnessPub,genesis);if e!=nil{t.Fatal(e)}
+ coordinator,e:=NewWitnessCoordinator(authority,witnessClient);if e!=nil{t.Fatal(e)}
+ book,e:=CreateGrantBook(bookDir,ctx,consentPub,approver,bookKey,10);if e!=nil{t.Fatal(e)};defer book.Close()
+ guard,e:=NewGrantGuard(book,coordinator);if e!=nil{t.Fatal(e)}
+ api:=httptest.NewServer(guard);defer api.Close()
+
+ challenge:=Digest{7}
+ do:=func(grant ActionGrant,wire AuthorityRequest,challengeHeader string)(int,[]byte){
+  body:=GrantedAuthorityRequest{Grant:grant,Authority:wire}.Bytes()
+  req,e:=http.NewRequest(http.MethodPost,api.URL+"/authority-granted",bytes.NewReader(body));if e!=nil{t.Fatal(e)}
+  req.Header.Set("Content-Type",media);req.Header.Set("X-Sutra-Witness-Challenge",challengeHeader)
+  res,e:=http.DefaultClient.Do(req);if e!=nil{t.Fatal(e)}
+  raw,e:=io.ReadAll(res.Body);res.Body.Close();if e!=nil{t.Fatal(e)}
+  return res.StatusCode,raw
+ }
+ action:=approve(t,0,ctx,ak);root,_:=authority.Head()
+ commitWire,_:=SignAuthorityRequest(0,AuthorityCommit,root,action,callerKey[0])
+ active,e:=IssueActionGrant(action,GrantPrimary,10,20,consentKey);if e!=nil{t.Fatal(e)}
+ future,e:=IssueActionGrant(action,GrantPrimary,11,20,consentKey);if e!=nil{t.Fatal(e)}
+ header:=hex.EncodeToString(challenge[:])
+
+ baseline:=contacts.Load()
+ if status,_:=do(future,commitWire,header);status!=http.StatusForbidden{t.Fatal("future grant status",status)}
+ if contacts.Load()!=baseline{t.Fatal("future grant contacted witness")}
+
+ other:=approve(t,1,ctx,ak);otherWire,_:=SignAuthorityRequest(0,AuthorityCommit,root,other,callerKey[0])
+ if status,_:=do(active,otherWire,header);status!=http.StatusForbidden{t.Fatal("new-key grant substitution status",status)}
+ if contacts.Load()!=baseline{t.Fatal("new-key substitution contacted witness")}
+
+ statusWire,_:=SignAuthorityRequest(0,AuthorityStatus,root,action,callerKey[0])
+ if status,_:=do(active,statusWire,header);status!=http.StatusForbidden{t.Fatal("unadmitted status",status)}
+ if contacts.Load()!=baseline{t.Fatal("unadmitted status contacted witness")}
+
+ if status,_:=do(active,commitWire,"00");status!=http.StatusBadRequest{t.Fatal("malformed challenge",status)}
+ if contacts.Load()!=baseline{t.Fatal("malformed challenge contacted witness")}
+
+ status,raw:=do(active,commitWire,header)
+ if status!=http.StatusOK{t.Fatal("active external grant",status)}
+ envelope,e:=ParseWitnessedEnvelope(raw);if e!=nil||!VerifyWitnessedEnvelope(envelope,commitWire,challenge,ctx,authorityPub,witnessPub,genesis){t.Fatal("external consent envelope",e)}
+ if contacts.Load()<=baseline{t.Fatal("valid dispatch never contacted witness")}
+ admittedContacts:=contacts.Load()
+
+ if e=book.Revoke(active,action);e!=nil{t.Fatal(e)}
+ latest:=envelope.Attestation.View.Head
+ revokedCommit,_:=SignAuthorityRequest(0,AuthorityCommit,latest,action,callerKey[0])
+ if status,_:=do(active,revokedCommit,header);status!=http.StatusForbidden{t.Fatal("revoked external commit",status)}
+ if contacts.Load()!=admittedContacts{t.Fatal("revoked commit contacted witness")}
+
+ // Exact admitted action can still reconcile after revocation.
+ revokedStatus,_:=SignAuthorityRequest(0,AuthorityStatus,latest,action,callerKey[0])
+ challenge2:=Digest{8};header2:=hex.EncodeToString(challenge2[:])
+ status,raw=do(active,revokedStatus,header2)
+ if status!=http.StatusOK{t.Fatal("revoked status reconcile",status)}
+ statusEnvelope,e:=ParseWitnessedEnvelope(raw);if e!=nil||!VerifyWitnessedEnvelope(statusEnvelope,revokedStatus,challenge2,ctx,authorityPub,witnessPub,genesis){t.Fatal("revoked status envelope",e)}
+ if statusEnvelope.Authority.Receipt!=envelope.Authority.Receipt{t.Fatal("reconciliation receipt changed")}
+ t.Log("external consent boundary rejects future, new-key, unadmitted-status, malformed-challenge and revoked dispatch before witness contact; exact admitted status remains reconcilable")
 }
