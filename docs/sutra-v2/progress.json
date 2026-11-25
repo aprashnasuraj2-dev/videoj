@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-082",
+  "session": "V2-083",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -34,7 +34,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "reviewed_table_browser_candidate_pending_exact_ci",
+  "state": "transactional_investigation_history_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -397,14 +397,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-083",
+    "parent": "ff6b2d5db99de472e13dc3e384b780a45993d625",
+    "description": "Bounded caller-pinned multi-generation history, explicit branch fork and exact restore, single-instance serialized compare-and-swap and conflict tests; CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-082",
     "parent": "22a61fc0b120b6cc2989b8494cd2a834ad82f2cd",
     "description": "Interactive exact TSV row/column selection and typed queue, atomic staging, stale text invalidation, actual 360px browser expression journey. CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-081",
-    "parent": "10658db4cbf9394ab2f7c15569a51cc7f8f1d951",
-    "description": "Exact restricted TSV cell selection pathway, original source span preservation and same-contract parity against manual selection; exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [

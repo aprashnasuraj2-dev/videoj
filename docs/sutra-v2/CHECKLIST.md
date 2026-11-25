@@ -695,3 +695,8 @@ Add restricted rectangular unquoted TSV paste, first row unique nonempty headers
 ## V2-082 — Interactive structured table import
 
 V2-079 10/10 exact workflows passed; scoped sibling browser evidence registered. Add local table paste inspector with row/column selection, exact token preview, explicit type declaration and atomic reviewed queue. Reuse table admission for every queue addition and final staging; any source text or identity change clears the queue, draft edits invalidate it, no automatic header interpretation. Browser test pastes multibyte table, rejects stale queue, stages four exact numeric cells, seals contract and computes a typed derived comparison; checks 360px and zero external requests. No file-original bytes, full spreadsheet grammar or auto-extraction claim. Exact CI pending; V2-080/081 still tracked.
+
+
+## V2-083 — Bounded transactional investigation history
+
+Add caller-pinned portable history of up to 12 versions and 8 branch heads under existing 256 KiB total wire bound. Replay every exact version in parent-before-child order; require one root, unique digests/branches and reachability from a retained head. Explicit fork from historical version; append only direct child to matching branch head. Serialize transactions within one instance, compare expected history digest at execution, commit only after full validation, preserve failed-state immutability and queue recovery. Tests exercise multi-generation history, historical fork, sibling correction/withdrawal conflict, exact restore, concurrent stale writer, malformed parent/order and unreachable versions. No disk persistence, multi-tab/process CAS, merge or independent replay claim. Exact CI pending.
