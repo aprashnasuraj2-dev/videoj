@@ -48,7 +48,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await probe.close();
   const page=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{const u=new URL(r.url());if(u.protocol==='blob:'&&u.origin===origin)return;if(u.origin!==origin||u.protocol!=='http:')external.push(r.url());});
-  await page.goto(origin);
+  await page.goto(origin);await page.locator('#engineering-labs > summary').click();
   // Nontechnical multi-provider setup lab: two ephemeral profiles, no network,
   // no credential left in the DOM after submission, and local routing only.
   const providerKey=page.getByLabel('Test credential'),providerName=page.getByLabel('Profile name');
@@ -267,7 +267,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const debugPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true});
   const debugErrors=[],debugExternal=[];debugPage.on('pageerror',e=>debugErrors.push(e.message));
   debugPage.on('request',r=>{if(new URL(r.url()).origin!==origin)debugExternal.push(r.url());});
-  await debugPage.goto(origin);
+  await debugPage.goto(origin);await debugPage.locator('#debug-manual > summary').click();
   async function clickDebug(id,state){
    await debugPage.locator('#debug-'+id).click();
    await debugPage.waitForFunction(s=>document.querySelector('#debug-state').dataset.state===s&&!document.querySelector('#debug-start').disabled,state);
@@ -337,7 +337,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   // independent diagnosis journey in its own browser context.
   const diagnosisPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),diagnosisErrors=[],diagnosisExternal=[];
   diagnosisPage.on('pageerror',e=>diagnosisErrors.push(e.message));diagnosisPage.on('request',r=>{if(new URL(r.url()).origin!==origin)diagnosisExternal.push(r.url());});
-  await diagnosisPage.goto(origin);
+  await diagnosisPage.goto(origin);await diagnosisPage.locator('#debug-manual > summary').click();
   async function clickDiagnosis(id,state){
    await diagnosisPage.locator('#debug-'+id).click();
    await diagnosisPage.waitForFunction(s=>document.querySelector('#debug-state').dataset.state===s&&!document.querySelector('#debug-start').disabled,state);
@@ -360,6 +360,53 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const impossible=await saveExplanation('explanation-impossible.json');assert.equal(impossible.next.kind,'impossible_with_available_observations');
   assert.match(await diagnosisPage.locator('#debug-next').innerText(),/No available observation plan/);assert.equal(await diagnosisPage.locator('#debug-plan-observe').isDisabled(),true);
   assert.deepEqual(diagnosisErrors,[]);assert.deepEqual(diagnosisExternal,[]);await diagnosisPage.close();
+  // Full first-minute tour from fresh browser state; no simulated verdicts.
+  const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
+  guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});
+  const guideStarted=Date.now();await guidePage.goto(origin);
+  const primary=guidePage.locator('#debug-guide-next');
+  const checkFirstScreen=async name=>{
+   await guidePage.evaluate(()=>scrollTo(0,0));
+   const rect=await primary.boundingBox();assert.ok(rect&&rect.y>=0&&rect.y+rect.height<=800,'primary action not in first viewport: '+name);
+   assert.equal(await guidePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+   await guidePage.screenshot({path:path.join(output,'guide-'+name+'.png'),fullPage:false});
+  };
+  async function guideStep(action,next,state,keyboard=false){
+   assert.equal(await primary.getAttribute('data-action'),action);
+   assert.equal(await primary.isDisabled(),false);
+   if(keyboard){await primary.focus();await guidePage.keyboard.press('Enter');}else await primary.click();
+   await guidePage.waitForFunction(n=>{const e=document.querySelector('#debug-guide-next');return e.dataset.action===n&&(n==='complete'||!e.disabled);},next);
+   if(state)assert.equal(await guidePage.locator('#debug-state').getAttribute('data-state'),state);
+  }
+  assert.equal(await guidePage.locator('#engineering-labs').getAttribute('open'),null);
+  await checkFirstScreen('initial');
+  await guideStep('start','withdraw','SUPPORTED',true);await checkFirstScreen('supported');
+  await guideStep('withdraw','restore','UNDERDETERMINED');await checkFirstScreen('withdrawn');
+  assert.equal(await guidePage.locator('#debug-control-state').innerText(),'Supported');
+  await guideStep('restore','copies','SUPPORTED');
+  await guideStep('copies','disagree','SUPPORTED');assert.match(await guidePage.locator('#debug-guide-summary').innerText(),/10 original-lineage artifacts = 1 declared root/);
+  await guideStep('disagree','withdraw','CONFLICTED');await checkFirstScreen('conflicted');
+  await guideStep('withdraw','plan-observe','UNDERDETERMINED');
+  await guideStep('plan-observe','capsule-export','REFUTED');await checkFirstScreen('refuted');
+  const guideCapsuleDl=guidePage.waitForEvent('download');await guideStep('capsule-export','capsule-pin-export','REFUTED');
+  const guideCapsuleBytes=fs.readFileSync(await (await guideCapsuleDl).path());
+  const guidePinDl=guidePage.waitForEvent('download');await guideStep('capsule-pin-export','capsule-verify','REFUTED');
+  const guidePin=fs.readFileSync(await (await guidePinDl).path(),'utf8').trim();
+  assert.equal('sha256:'+require('node:crypto').createHash('sha256').update(guideCapsuleBytes).digest('hex'),guidePin);
+  assert.deepEqual(guideCapsuleBytes,currentCapsule.bytes);assert.equal(guidePin,currentCapsule.pin);
+  await guideStep('capsule-verify','capsule-tamper','REFUTED');
+  await guideStep('capsule-tamper','capsule-restore','REFUTED');
+  assert.match(await guidePage.locator('#debug-capsule-status').innerText(),/PIN_MISMATCH/);await checkFirstScreen('tampered');
+  await guideStep('capsule-restore','complete','REFUTED');await checkFirstScreen('complete');
+  assert.match(await guidePage.locator('#debug-guide-proof').innerText(),/exact original reverified/);
+  const guideElapsed=Date.now()-guideStarted;assert.ok(guideElapsed<60000,'automated guided journey exceeded 60 seconds');
+  fs.writeFileSync(path.join(output,'debugger-guide-timing.json'),JSON.stringify({elapsedMs:guideElapsed,viewport:{width:360,height:800},actions:12,qualification:'Automated local Chromium timing, not a human usability study.'},null,2));
+  assert.deepEqual(guideErrors,[]);assert.deepEqual(guideExternal,[]);await guidePage.close();
+  const desktopGuide=await browser.newPage({viewport:{width:1440,height:900}});await desktopGuide.goto(origin);await desktopGuide.locator('#debug-guide-next').click();
+  await desktopGuide.waitForFunction(()=>document.querySelector('#debug-guide-next').dataset.action==='withdraw'&&!document.querySelector('#debug-guide-next').disabled);
+  const desktopRect=await desktopGuide.locator('#debug-guide-next').boundingBox();assert.ok(desktopRect&&desktopRect.y+desktopRect.height<=900);
+  await desktopGuide.screenshot({path:path.join(output,'guide-desktop-supported.png'),fullPage:false});await desktopGuide.close();
+  console.log('PASS: 12-action guided challenge from fresh state, all real computations/downloads, keyboard start, first-viewport primary action and zero external requests; automated elapsed '+guideElapsed+' ms.');
   console.log('PASS: conclusion debugger critical and irrelevant withdrawal, ten declared-copy artifacts, conflict, repair and decisive observation; actual state exports.');
   console.log('PASS: actual Rust WASM support lattice, alternate minimum conflicts, copied-source conditional supports, withdrawal removes both, refuted support after fresh read; blocked or digest-mismatched module fails closed.');
   assert.deepEqual(errors,[]);assert.equal(peerRequests.length,6);

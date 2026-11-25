@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-018",
+  "session": "V2-019",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2378,7 +2378,7 @@
     },
     {
       "id": "V2-D03-DIAGNOSIS",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D01-ATTACK",
         "V2-D02-CAPSULE"
@@ -2390,9 +2390,28 @@
           "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45569683434",
           "prRun": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45569690876",
           "reason": "Both knowledge jobs passed, both Chromium jobs failed awaiting the eleventh download in the combined document (PR job 139052995250, push 139052971382). Seven auxiliary runs passed. SHA-256 verified failed artifact 15001537818 contained resolved debugger export byte-identical to prior green state; local capsule generation/replay of those bytes succeeded. Separate isolated Chromium reproduction accepted ten downloads then timed out on the eleventh for both direct links and programmatic anchors. Full browser and independent diagnosis replay credit withheld.",
-          "resolutionStatus": "candidate separates browser contexts without dropping exports or assertions; pending exact CI"
+          "resolutionStatus": "resolved by separate browser contexts; both exact-source Chromium jobs and independent diagnosis replay passed",
+          "resolutionRevision": "dc50b83369478f6ee2c96186a8c1e14bd18ce004",
+          "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45570334106/job/139055127953"
+        }
+      ],
+      "evidence": [
+        {
+          "id": "V2-D03-DIAGNOSIS",
+          "sourceRevision": "dc50b83369478f6ee2c96186a8c1e14bd18ce004",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45570334106/job/139055127953",
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45570334106 and push 45570324195, ingress 45570334100, impact 45570334101, evaluation 45570334144, Open Kit 45570334105, legacy release 45570334117, publisher 45570334103, browser matrix 45570334116. Both browser jobs passed; independent Python accepted four actual diagnosis exports and rejected 28 mutations (7+8+7+6). Both knowledge jobs passed exhaustive 108-configuration direct oracle. Separate contexts preserved six original attack exports, two capsule/pin pairs, and four diagnosis exports. Scoped synthetic model."
         }
       ]
+    },
+    {
+      "id": "V2-D04-GUIDE",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D03-DIAGNOSIS",
+        "V2-D02-CAPSULE"
+      ],
+      "scope": "First-minute local guided challenge, progressive disclosure, actual 12-action route, keyboard/mobile/desktop checks, exact capsule equality; no human usability study or deployment."
     }
   ]
 }

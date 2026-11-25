@@ -131,6 +131,8 @@ jobs:
           node --test apps/sutra-v2/test/build-contract.test.mjs
       - run: node packages/sutra-runtime/verify-vendor.mjs
       - run: node apps/sutra/node_modules/playwright/cli.js install --with-deps chromium
+      - name: Check guided route against actual replayed investigation states
+        run: node --test apps/sutra-v2/test/demo-guide.test.mjs
       - run: node apps/sutra-v2/test/browser.cjs
       - name: Independently replay actual learner browser export and challenge tampering
         run: |

@@ -1,6 +1,7 @@
 import {debuggerBaseline,debuggerCopies,debuggerRead,DEBUGGER_VERSION} from '../../../packages/sutra-knowledge/conclusion-debugger.js';
 import {evaluateDebuggerExplanation,EXPLANATION_VERSION} from '../../../packages/sutra-knowledge/debugger-explanation.js';
 import {analyzeSupport} from './support-wasm.js';
+import {guidedAction} from './demo-guide.mjs';
 import {createProofCapsule,verifyProofCapsule,mutateCapsuleByte,MAX_CAPSULE_BYTES} from '../../../packages/sutra-knowledge/proof-capsule.js';
 const by=id=>document.getElementById('debug-'+id),txt=(id,value)=>{by(id).textContent=value;};
 const labels={target:'The system stays within its limit',control_ok:'The separate control is normal',sample_one:'Original report and copies',sample_two:'Independent-declared measurement',sample_three:'Second-variable measurement',sample_control:'Separate control measurement',read_b:'Read the disagreeing measurement',read_c:'Measure the second variable',read_a:'Read the original report',read_control:'Read the control'};
@@ -10,12 +11,13 @@ const expected={SUPPORTED:'satisfied',REFUTED:'refuted',CONFLICTED:'conflict',UN
 const ids=['start','withdraw','restore','copies','disagree','withdraw-other','observe','control','export','plan-observe','explanation-export'];
 let events=[],result=null,explanation=null,busy=false,capsuleBusy=false;
 let capsuleOriginal=null,capsuleWorking=null,capsuleAnchor=null,capsuleIdentity=null,capsuleVerified=false,capsuleTampered=false;
+let capsuleSourceHistory=null,capsulePinRequested=false,capsuleChallenge='none',capsuleFailureReason=null;
 const has=id=>result?.report.activeEvidence.some(a=>a.observationId===id);
 const unavailable=id=>result?.unavailableSources.includes(id);
 function refresh(){
  for(const id of ids)by(id).disabled=busy||capsuleBusy||id!=='start'&&!result;
  refreshCapsule();
- if(busy||capsuleBusy||!result)return;
+ if(busy||capsuleBusy||!result){refreshGuide();return;}
  const room=events.length<24;
  by('withdraw').disabled=!room||!has('read_a');
  by('restore').disabled=events.length>22||!unavailable('lab_a');
@@ -25,8 +27,10 @@ function refresh(){
  by('observe').disabled=!room||has('read_c')||unavailable('lab_c');
  by('control').disabled=!room||!has('read_control');
  by('plan-observe').disabled=!room||explanation?.next.kind!=='observe';
+ refreshGuide();
 }
 function render(previous){
+ document.querySelector('.debugger').dataset.ready='true';
  const r=result,target=r.claims.target,other=r.claims.control_ok;
  by('state').dataset.state=target.state;txt('state',states[target.state]);
  txt('worlds',String(target.survivingWorlds.length));
@@ -37,7 +41,7 @@ function render(previous){
  txt('control-state',states[other.state]);
  txt('survivors',target.survivingWorlds.length?target.survivingWorlds.map(id=>'a='+id[1]+', b='+id[2]+', control='+id[3]).join(' · '):'No declared world fits every admitted observation.');
  const cuts=r.diagnostics.minimumCuts;
- txt('why',target.state==='CONFLICTED'?'The active observations disagree: '+r.conflict.map(display).join(' + ')+'. Copies cannot outvote a contradiction.':target.state==='UNDERDETERMINED'?'Remaining worlds disagree on the conclusion. Evidence does not justify choosing one.':target.state==='SUPPORTED'?'Every surviving declared world satisfies the limit.':'Every surviving declared world violates the limit.');
+ txt('why',target.state==='CONFLICTED'?'Two admitted measurements disagree. Copies cannot outvote a contradiction.':target.state==='UNDERDETERMINED'?'Surviving worlds disagree; evidence cannot decide the claim.':target.state==='SUPPORTED'?'Every surviving world satisfies the declared limit.':'Every surviving world violates the declared limit.');
  txt('cuts',cuts.length?cuts.map(c=>c.removed.map(display).join(' + ')+' → '+states[c.claims.target.state]).join('\n'):'No minimum change is claimed for this state.');
  renderExplanation(explanation);
  by('groups').replaceChildren();
@@ -113,12 +117,36 @@ by('export').onclick=()=>{
  const a=document.createElement('a');a.href=url;a.download='sutra-debugger-state.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
 };
 
+function currentGuide(){
+ return guidedAction(events,result,{historyDigest:capsuleSourceHistory,hasBytes:Boolean(capsuleWorking),hasPin:Boolean(capsuleAnchor),pinRequested:capsulePinRequested,verified:capsuleVerified,tampered:capsuleTampered,challenge:capsuleChallenge});
+}
+function refreshGuide(){
+ const route=currentGuide(),button=by('guide-next');
+ by('guide-stage').textContent=route.mode==='complete'?'GUIDED CHALLENGE · COMPLETE':route.mode==='explore'?'EXPLORATION MODE':'GUIDED CHALLENGE · '+route.step+' / '+route.total;
+ button.dataset.mode=route.mode;button.dataset.action=route.action??'complete';button.textContent=route.title;
+ button.disabled=busy||capsuleBusy||!route.action||Boolean(by(route.action)?.disabled);
+ txt('guide-detail',route.detail);
+ const summary=by('guide-summary');summary.hidden=!result;
+ if(result){
+  const copies=result.groups.sample_one?.length??0;
+  const control=result.claims.control_ok.state;
+  summary.textContent=(copies>1?copies+' original-lineage artifacts = 1 declared root. ':'')+(control==='CONFLICTED'&&explanation.claims.control_ok.conditionalSupport.length?'Separate control has conditional support; the full model is conflicted.':'Separate control: '+states[control]+'.');
+ }
+ const proof=by('guide-proof');proof.hidden=!result||capsuleSourceHistory!==result.historyDigest;
+ if(!proof.hidden)proof.textContent=capsuleChallenge==='restored'&&capsuleVerified?'Proof: one-byte attack refused; exact original reverified.':capsuleChallenge==='rejected'?'Proof: altered bytes refused against the unchanged digest.':capsuleVerified?'Proof: exact snapshot replay verified locally.':'Proof snapshot prepared; browser save outcome is not confirmed.';
+}
+by('guide-next').onclick=()=>{
+ if(busy||capsuleBusy)return;
+ const route=currentGuide();if(!route.action)return;
+ const button=by(route.action);if(button&&!button.disabled)button.click();
+};
 function capsuleStatus(state,message){
  by('capsule-status').dataset.state=state;txt('capsule-status',message);
 }
 function refreshCapsule(){
  const locked=busy||capsuleBusy,hasFile=Boolean(by('capsule-file').files?.length);
  by('capsule-export').disabled=locked||!result;
+ by('capsule-download').disabled=locked||!capsuleOriginal;
  by('capsule-pin-export').disabled=locked||!capsuleAnchor;
  by('capsule-file').disabled=locked;by('capsule-pin').disabled=locked;
  by('capsule-verify').disabled=locked||!hasFile&&!capsuleWorking;
@@ -140,7 +168,7 @@ async function capsuleWork(make){
 }
 async function checkCapsule(bytes,pin){
  const checked=await verifyProofCapsule(bytes,pin);
- capsuleVerified=checked.status==='VERIFIED';
+ capsuleVerified=checked.status==='VERIFIED';capsuleFailureReason=checked.reason??null;
  if(!capsuleVerified){capsuleIdentity=null;capsuleStatus('refused','REFUSED: '+checked.reason);return false;}
  capsuleIdentity=checked.historyDigest;
  capsuleStatus('verified','VERIFIED: exact snapshot and model replay — '+states[checked.result.claims.target.state]+'.');
@@ -152,20 +180,27 @@ by('capsule-export').onclick=()=>capsuleWork(async()=>{
  if(cap.historyDigest!==result.historyDigest)throw Error('CAPSULE_HISTORY_MISMATCH');
  capsuleOriginal=Uint8Array.from(cap.bytes);capsuleWorking=Uint8Array.from(cap.bytes);
  capsuleAnchor=cap.expectedDigest;capsuleIdentity=null;capsuleVerified=false;capsuleTampered=false;
+ capsuleSourceHistory=cap.historyDigest;capsulePinRequested=false;capsuleChallenge='none';capsuleFailureReason=null;
  by('capsule-file').value='';by('capsule-pin').value=cap.expectedDigest;
  capsuleStatus('ready','Prepared exact snapshot; download requested, browser save outcome not confirmed. Retain the digest separately, then verify.');
  downloadBytes(cap.bytes,'sutra-proof-capsule.json','application/json');
 });
+by('capsule-download').onclick=()=>{
+ if(capsuleBusy||busy||!capsuleOriginal)return;
+ downloadBytes(capsuleOriginal,'sutra-proof-capsule.json','application/json');
+};
 by('capsule-pin-export').onclick=()=>{
  if(capsuleBusy||busy||!capsuleAnchor)return;
  downloadBytes(capsuleAnchor+'\n','sutra-proof-capsule.sha256','text/plain');
+ capsulePinRequested=true;refresh();
 };
 by('capsule-file').onchange=()=>{
  capsuleOriginal=null;capsuleWorking=null;capsuleAnchor=null;capsuleIdentity=null;capsuleVerified=false;capsuleTampered=false;
+ capsuleSourceHistory=null;capsulePinRequested=false;capsuleChallenge='none';capsuleFailureReason=null;
  capsuleStatus('ready','Imported file selected. Supply the separately retained digest and verify.');refresh();
 };
 by('capsule-pin').oninput=()=>{
- capsuleVerified=false;capsuleIdentity=null;capsuleAnchor=null;
+ capsuleVerified=false;capsuleIdentity=null;capsuleAnchor=null;capsulePinRequested=false;capsuleChallenge='none';capsuleFailureReason=null;
  capsuleStatus('ready','Expected digest changed. Verification required.');refresh();
 };
 by('capsule-verify').onclick=()=>capsuleWork(async()=>{
@@ -175,18 +210,20 @@ by('capsule-verify').onclick=()=>capsuleWork(async()=>{
  if(!bytes)throw Error('CAPSULE_MISSING');
  if(await checkCapsule(bytes,pin)){
   capsuleOriginal=Uint8Array.from(bytes);capsuleWorking=Uint8Array.from(bytes);capsuleTampered=false;
-  by('capsule-file').value='';capsuleAnchor=pin;
+  by('capsule-file').value='';capsuleAnchor=pin;capsuleSourceHistory=capsuleIdentity;
  }
 });
 by('capsule-tamper').onclick=()=>capsuleWork(async()=>{
  if(!capsuleVerified||!capsuleOriginal)return;
- capsuleWorking=mutateCapsuleByte(capsuleOriginal);capsuleTampered=true;
- await checkCapsule(capsuleWorking,by('capsule-pin').value.trim());
+ capsuleWorking=mutateCapsuleByte(capsuleOriginal);capsuleTampered=true;capsuleChallenge='none';
+ if(await checkCapsule(capsuleWorking,by('capsule-pin').value.trim())||capsuleFailureReason!=='PIN_MISMATCH')throw Error('CAPSULE_ATTACK_NOT_REFUSED');
+ capsuleChallenge='rejected';
 });
 by('capsule-restore').onclick=()=>capsuleWork(async()=>{
  if(!capsuleOriginal)return;
  capsuleWorking=Uint8Array.from(capsuleOriginal);capsuleTampered=false;
- await checkCapsule(capsuleWorking,by('capsule-pin').value.trim());
+ const prior=capsuleChallenge;capsuleChallenge='none';
+ if(await checkCapsule(capsuleWorking,by('capsule-pin').value.trim())&&prior==='rejected')capsuleChallenge='restored';
 });
 
 refresh();
