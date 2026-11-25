@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-101",
+  "session": "V2-102",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2903,6 +2903,12 @@
           "sourceRevision": "e8984d04873eae76a1f0abe36f82a0333aea84db",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45613004519/job/139201105352",
           "description": "V2-084 exact 10/10 green. Actual TSV paste through coordinate review, stale invalidation, exact contract and formula, 360px layout and no external requests."
+        },
+        {
+          "id": "V2-LK03-PATHWAYS",
+          "sourceRevision": "237b4b014b9865e17af871602bf46aed10ded057",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45710379769/job/139542938577",
+          "description": "Exact V2-100 10/10 passed; actual Chromium 360px spreadsheet-driven controlled question, two divergent outcomes, explicit staging, single-candidate guard, qualifier link edit, stale preview and no external requests. Restricted caller mapping only; no free-form NLP or semantic authority."
         }
       ]
     },
@@ -3297,7 +3303,14 @@
       "dependencies": [],
       "scope": "Compare semantic parsing, synthesis, belief revision, truth maintenance, provenance, argumentation, incremental computation, decision theory, causal/statistical and robust optimization prior art. V2-096 initial source-checked register: all four supplied ACL abstracts plus TMS, ATMS, AGM survey, self-adjusting computation and W3C provenance. Map known work to current implementation and falsification experiments. Full-text, causal/statistical, robust optimization, argumentation, synthesis and competitive-product comparisons remain open.",
       "acceptance": "Evidence register separates known algorithm, implementation, integration, novelty; include supplied ACL references; no unsupported superiority.",
-      "evidence": []
+      "evidence": [
+        {
+          "id": "V2-LK18-PRIOR-ART",
+          "sourceRevision": "237b4b014b9865e17af871602bf46aed10ded057",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45710379769/job/139542938224",
+          "description": "Exact V2-100 10/10 passed; nine-source register consistency, mandated references and falsification targets, explicit impact map, unknown path refusal. Initial abstract/primary specification review only; gaps remain, no novelty claim."
+        }
+      ]
     },
     {
       "id": "V2-LK19-TRUST-BOUNDARY",

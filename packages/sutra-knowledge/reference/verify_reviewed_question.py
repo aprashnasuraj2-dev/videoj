@@ -22,7 +22,7 @@ def operand(p,raw,bindings):
     require(keys(p,('start','end','bindingIds')) and isinstance(p['bindingIds'],list) and 1<=len(p['bindingIds'])<=8)
     ids=p['bindingIds'];require(all(isinstance(i,str) and i in bindings for i in ids) and len(set(ids))==len(ids))
     s=span(raw,p['start'],p['end']);words=re.split('[ _-]',s['quote'])
-    require(p['end']-p['start']<=128 and all(w and all(unicodedata.category(c)[0] in 'LMN' for c in w) and w.lower() not in RESERVED for w in words))
+    require(p['end']-p['start']<=128 and all(w and all(unicodedata.category(c)[0] in 'LMN' for c in w) and w.translate(str.maketrans({'ſ':'s','K':'k'})).lower() not in RESERVED for w in words))
     return dict(span=s,bindingIds=sorted(ids))
 def calculate(ct,cp,pt,pp):
     require(pin(pp) and rawhash(pt)==pp)

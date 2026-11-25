@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-101",
+  "session": "V2-102",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -37,7 +37,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Independent question replay candidate; exact verification pending",
+  "state": "Cross-language controlled question boundary candidate; exact verification pending",
   "verified": [
     {
       "id": "V2-M01",
@@ -390,7 +390,7 @@
     "reason": "207/208 knowledge tests passed including four question tests; same arbitrary author-length failure inherited from V2-098.",
     "resolutionStatus": "V2-100 corrects author-field validation; exact CI pending."
   },
-  "lastVerifiedKernelSource": "135e25a00f963ad8c88cae6f39b26b0a6349226f",
+  "lastVerifiedKernelSource": "237b4b014b9865e17af871602bf46aed10ded057",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -400,14 +400,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-102",
+    "parent": "f42875f273b4aaf79b259a53f445de0db6359ce4",
+    "description": "Single portable mapping export projection shared by UI and fixtures, independent 43 positive/4 refusal cross-language cases covering 13 phrases, Unicode, blocked types, same binding, 8/9 limits and Unicode long-s reserved word; V2-101 exact CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-101",
     "parent": "237b4b014b9865e17af871602bf46aed10ded057",
     "description": "Portable reviewed-question mapping report with independently retained snapshot, contract and plan pins; independent Python UTF-16/UTF-8 grammar and compiler replay, actual browser artifact and eight mutations. Exact CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-100",
-    "parent": "dde034a7bb881b6edd5d848a1ce188167c9f8375",
-    "description": "Browser controlled-language mapping, explicit stage, inherited quotation references with edit invalidation, single-candidate guard, mobile journey and corrected prior-art author validation. Exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -732,28 +732,36 @@
       "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45709064316",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45709064316/job/139538459300",
       "reason": "New machine-readable prior-art register was an unmapped managed documentation JSON path; classification exited 1. Knowledge/browser jobs passed, but no full exact credit.",
-      "resolutionStatus": "V2-098 candidate explicitly maps register and protocol, validates schema and mandatory references, retains unknown-path refusal. Exact CI pending."
+      "resolutionStatus": "Resolved at exact V2-100, all ten workflows passed; research mapping and valid short author fields preserved.",
+      "resolutionRevision": "237b4b014b9865e17af871602bf46aed10ded057",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45710379769/job/139542938577"
     },
     {
       "sourceRevision": "29c0778feb9f5930d062155bb9ca0613cd68f17c",
       "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45709323667",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45709323667/job/139539357985",
       "reason": "Research register classification remained unmapped; kernel job 139539358426 passed the signature experiment. Whole revision 9/10.",
-      "resolutionStatus": "Impact classifier passed at V2-098; whole-revision acceptance not yet attained."
+      "resolutionStatus": "Resolved at exact V2-100, all ten workflows passed; research mapping and valid short author fields preserved.",
+      "resolutionRevision": "237b4b014b9865e17af871602bf46aed10ded057",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45710379769/job/139542938577"
     },
     {
       "sourceRevision": "a56ee3ec7b425592a4a747aef96315668a11b6c0",
       "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45709619888",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45709619888/job/139540338547",
       "reason": "Prior-art register test imposed an invalid >10 character author-name rule; Doyle is legitimate. Impact and browser passed; knowledge failed.",
-      "resolutionStatus": "V2-100 distinguishes nonempty author field from substantive research descriptions. Exact CI pending."
+      "resolutionStatus": "Resolved at exact V2-100, all ten workflows passed; research mapping and valid short author fields preserved.",
+      "resolutionRevision": "237b4b014b9865e17af871602bf46aed10ded057",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45710379769/job/139542938577"
     },
     {
       "sourceRevision": "dde034a7bb881b6edd5d848a1ce188167c9f8375",
       "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45709831810",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45709831810/job/139541070487",
       "reason": "207/208 knowledge tests passed including four question tests; same arbitrary author-length failure inherited from V2-098.",
-      "resolutionStatus": "V2-100 corrects author-field validation; exact CI pending."
+      "resolutionStatus": "Resolved at exact V2-100, all ten workflows passed; research mapping and valid short author fields preserved.",
+      "resolutionRevision": "237b4b014b9865e17af871602bf46aed10ded057",
+      "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45710379769/job/139542938577"
     }
   ],
   "reconciledDurableCandidate": {
@@ -1405,6 +1413,18 @@
       "sourceRevision": "29c0778feb9f5930d062155bb9ca0613cd68f17c",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45709323776/job/139539358426",
       "description": "Scoped kernel experiment passed, whole revision 9/10 due to impact classification. 6/6 vectors, 67 candidate evaluations, 4/6 distinguishing. Raw majority 2 wrong-only, 1 abstention; deduplicated majority 0 wrong-only, 4 abstentions; retain-all kept 11 wrong instances, no correct candidate lost, no semantic selection. Synthetic developer labels; no superiority claim."
+    },
+    {
+      "id": "V2-LK03-PATHWAYS",
+      "sourceRevision": "237b4b014b9865e17af871602bf46aed10ded057",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45710379769/job/139542938577",
+      "description": "Exact V2-100 10/10 passed; actual Chromium 360px spreadsheet-driven controlled question, two divergent outcomes, explicit staging, single-candidate guard, qualifier link edit, stale preview and no external requests. Restricted caller mapping only; no free-form NLP or semantic authority."
+    },
+    {
+      "id": "V2-LK18-PRIOR-ART",
+      "sourceRevision": "237b4b014b9865e17af871602bf46aed10ded057",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45710379769/job/139542938224",
+      "description": "Exact V2-100 10/10 passed; nine-source register consistency, mandated references and falsification targets, explicit impact map, unknown path refusal. Initial abstract/primary specification review only; gaps remain, no novelty claim."
     }
   ],
   "reconciledCI": [

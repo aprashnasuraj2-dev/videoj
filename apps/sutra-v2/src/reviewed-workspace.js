@@ -1,4 +1,4 @@
-import {compileReviewedQuestion} from '../../../packages/sutra-knowledge/reviewed-question.js';
+import {exportReviewedQuestion} from '../../../packages/sutra-knowledge/reviewed-question.js';
 import {evaluateReviewedFisher,FISHER_DESIGN} from '../../../packages/sutra-knowledge/reviewed-fisher.js';
 import {evaluateReviewedBinomial,DESIGN_OBLIGATIONS} from '../../../packages/sutra-knowledge/reviewed-binomial.js';
 import {evaluateReviewedIntervals} from '../../../packages/sutra-knowledge/reviewed-interval.js';
@@ -71,14 +71,10 @@ by('question-path-run').onclick=()=>work(async ticket=>{
  clearQuestionPreview();
  const operand=side=>({...questionSelections[side],bindingIds:Array.from(by('question-path-'+side+'-binding').selectedOptions,o=>o.value)});
  const plan=JSON.stringify({version:1,contractDigest:sealed.pin,left:operand('left'),right:operand('right')});
- const result=await compileReviewedQuestion(sealed.contractText,sealed.pin,plan,await casePin(plan));
- if(ticket!==epoch||result.contractDigest!==sealed?.pin)return;
- const projection=Object.fromEntries(['version','contractDigest','planDigest','originalQuestion','grammar','left','relation','right','candidates','proposals','mode','decisionAuthority','qualification'].map(k=>[k,result[k]]));
- const bundle=JSON.stringify({contractText:sealed.contractText,contractDigest:sealed.pin,planText:plan,planDigest:result.planDigest,result:projection});
- const bytes=new TextEncoder().encode(bundle),digest=await casePin(bundle);
+ const exported=await exportReviewedQuestion(sealed.contractText,sealed.pin,plan,await casePin(plan)),result=exported.result;
  if(ticket!==epoch||result.contractDigest!==sealed?.pin)return;
  questionCurrent=result;
- if(bytes.length<=262144){questionExport={bytes,digest};by('question-path-snapshot-pin').textContent=digest;by('question-path-plan-pin').textContent=result.planDigest;}
+ if(exported.portable){questionExport={bytes:new TextEncoder().encode(exported.bundleText),digest:exported.snapshotPin};by('question-path-snapshot-pin').textContent=exported.snapshotPin;by('question-path-plan-pin').textContent=result.planDigest;}
  by('question-path-result').textContent=['Exact relation: '+result.relation.span.quote+' → '+result.relation.operator,...result.candidates.map(c=>c.meaning+' · '+c.conditionalState),result.qualification].join('\n');
  status('question_ready','Local grammar compiled. Review all supplied mappings and conditional outcomes before explicitly staging.');
 });

@@ -73,3 +73,12 @@ export async function compileReviewedQuestion(contractText,contractPin,planText,
   candidates,proposals,batchText,annotationText,annotationPin,investigation,mode:count===1?'SINGLE_UNTRUSTED_PROPOSAL':'ALL_DECLARED_ALTERNATIVES',decisionAuthority:'NONE',
   qualification:'Closed English comparison grammar and exact caller-selected operand spans only. Binding correspondences are declarations, not inferred entity or semantic truth. All supplied alternatives are retained, including same-binding or type-blocked comparisons. Unsupported syntax and more than eight combinations are refused, not guessed. No unrestricted natural-language parsing, source retrieval, semantic completeness or external authority.'});
 }
+
+/** Portable replay projection: independently pinned contract and plan are still mandatory. */
+export async function exportReviewedQuestion(contractText,contractPin,planText,planPin){
+ const result=await compileReviewedQuestion(contractText,contractPin,planText,planPin);
+ const projection=Object.fromEntries(['version','contractDigest','planDigest','originalQuestion','grammar','left','relation','right','candidates','proposals','mode','decisionAuthority','qualification'].map(k=>[k,result[k]]));
+ const bundleText=JSON.stringify({contractText,contractDigest:contractPin,planText,planDigest:planPin,result:projection});
+ const byteLength=new TextEncoder().encode(bundleText).length;
+ return freeze({result,bundleText,snapshotPin:await casePin(bundleText),byteLength,portable:byteLength<=262144});
+}
