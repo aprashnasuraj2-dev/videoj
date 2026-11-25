@@ -4,7 +4,7 @@ const path=require('node:path'),fs=require('node:fs'),http=require('node:http'),
 const requireLegacy=createRequire(path.resolve(__dirname,'../../sutra/package.json'));
 const {chromium}=requireLegacy('playwright');
 const dist=path.resolve(__dirname,'../dist');
-const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.txt':'text/plain','.mp4':'video/mp4','.wasm':'application/wasm'};
+const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json','.txt':'text/plain','.mp4':'video/mp4','.wasm':'application/wasm','.pyz':'application/zip','.sha256':'text/plain'};
 (async()=>{
  const peerRoot=path.resolve(__dirname,'../peer'),peerRequests=[];
  const peer=http.createServer((req,res)=>{
@@ -468,6 +468,18 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await assumptionPage.locator('.assumption-panel').scrollIntoViewIfNeeded();await assumptionPage.screenshot({path:path.join(output,'assumption-resolved.png'),fullPage:false});
   await assumptionStep('start','SUPPORTED');assert.equal(await assumptionPage.locator('#debug-assumption-limit').inputValue(),'1/1');
   assert.deepEqual(assumptionErrors,[]);assert.deepEqual(assumptionExternal,[]);await assumptionPage.close();
+  const offlinePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),offlineErrors=[],offlineExternal=[];
+  offlinePage.on('pageerror',e=>offlineErrors.push(e.message));offlinePage.on('request',r=>{if(new URL(r.url()).origin!==origin)offlineExternal.push(r.url());});
+  await offlinePage.goto(origin);await offlinePage.locator('.offline-verifier > summary').click();
+  for(const [id,file] of [['download','sutra-proof-verifier.pyz'],['digest','sutra-proof-verifier.pyz.sha256']]){
+   const dl=offlinePage.waitForEvent('download');await offlinePage.locator('#debug-offline-'+id).click();const saved=await dl;
+   assert.equal(saved.suggestedFilename(),file);
+   const bytes=fs.readFileSync(await saved.path());assert.deepEqual(bytes,fs.readFileSync(path.join(dist,file)));
+   fs.writeFileSync(path.join(output,file),bytes);
+  }
+  assert.equal(await offlinePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  assert.deepEqual(offlineErrors,[]);assert.deepEqual(offlineExternal,[]);await offlinePage.close();
+  console.log('PASS: actual static offline verifier and digest downloads match the built source artifacts; no external request.');
   console.log('PASS: five exact target thresholds; original evidence, result and separate control remain unchanged; conflicting evidence survives rule change; four real sensitivity exports.');
   console.log('PASS: all eight world rows, exact blocker values, copy invariance, withdrawal deltas, fresh guide ceremony and five real world trace exports.');
   const desktopGuide=await browser.newPage({viewport:{width:1440,height:900}});await desktopGuide.goto(origin);await desktopGuide.locator('#debug-guide-next').click();

@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+"""Build a deterministic, inspectable, standard-library-only verifier zipapp."""
+import json
+import sys
+from hashlib import sha256
+from io import BytesIO
+from pathlib import Path
+from zipfile import ZipFile, ZipInfo, ZIP_STORED
+
+HERE=Path(__file__).resolve().parent
+ROOT=HERE.parents[2]
+NAME='sutra-proof-verifier.pyz'
+FORMAT='sutra-proof-verifier-bundle/v1'
+SOURCES={'__main__.py':'offline_main.py','verify.py':'verify.py','verify_conflict.py':'verify_conflict.py',
+         'verify_debugger.py':'verify_debugger.py','verify_capsule.py':'verify_capsule.py'}
+README=b'''SUTRA Proof Capsule v1 / independent offline verifier\n\nRequires Python 3.10+; no third-party packages, network, or browser.\nRun from any directory:\n  python3 -I -S sutra-proof-verifier.pyz capsule.json --pin-file capsule.sha256\nOr supply the separately trusted digest with --pin sha256:<64 lowercase hex>.\nExit 0 = verified; 1 = refused; 2 = input/argument error.\nThe digest must be retained independently of the capsule.\nThe verifier checks exact bytes and replays the fixed synthetic model; it does not establish\nempirical truth, independent source identity, signatures, freshness, or external authority.\nThis archive is inspectable as ZIP and includes source hashes. Its own digest must be\ntrusted separately; a digest delivered by the same untrusted sender is not authenticity.\nNever execute a verifier received from an untrusted source without independent review.\n'''
+
+
+def expected_files():
+    files={name:(HERE/source).read_bytes() for name,source in SOURCES.items()}
+    for name in ('LICENSE','NOTICE'):
+        files[name]=(ROOT/name).read_bytes()
+    files['README.txt']=README
+    return files
+
+
+def digest(data):
+    return 'sha256:'+sha256(data).hexdigest()
+
+
+def make_bundle():
+    files=expected_files()
+    manifest=dict(format=FORMAT,files={name:digest(data) for name,data in sorted(files.items())})
+    files['MANIFEST.json']=(json.dumps(manifest,sort_keys=True,separators=(',',':'))+'\n').encode('utf-8')
+    output=BytesIO()
+    with ZipFile(output,'w',compression=ZIP_STORED) as archive:
+        for name,data in sorted(files.items()):
+            info=ZipInfo(name,date_time=(1980,1,1,0,0,0))
+            info.create_system=3
+            info.external_attr=0o100644<<16
+            info.compress_type=ZIP_STORED
+            archive.writestr(info,data)
+    return output.getvalue()
+
+
+def build(out):
+    out=Path(out)
+    out.mkdir(parents=True,exist_ok=True)
+    data=make_bundle()
+    (out/NAME).write_bytes(data)
+    (out/(NAME+'.sha256')).write_bytes((digest(data)+'\n').encode('ascii'))
+    return digest(data)
+
+
+if __name__=='__main__':
+    if len(sys.argv)!=2:raise SystemExit('usage: build_offline_verifier.py OUTPUT_DIR')
+    print(build(sys.argv[1]))

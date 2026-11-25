@@ -3,9 +3,9 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-021",
+  "session": "V2-022",
   "next": [
-    "V2-D06-ASSUMPTIONS",
+    "V2-D07-OFFLINE",
     "V2-P07-WASM",
     "V2-RUNTIME-02",
     "V2-P05-RECOVERY",
@@ -19,7 +19,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "assumption_sensitivity_candidate_pending_exact_ci",
+  "state": "offline_verifier_distribution_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -271,6 +271,12 @@
       "sourceRevision": "0e6b5be0b34cbc3b6d3af3ead516683cf17aec2e",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45571528317/job/139059084388",
       "description": "All nine exact-source workflows succeeded: knowledge PR 45571528317 and push 45571517657, ingress 45571528351, impact 45571528199, evaluation 45571528340, Open Kit 45571528083, legacy release 45571528114, publisher 45571528312, browser matrix 45571528245. Five actual Chromium world trace exports independently replayed with 50 adversarial mutations rejected. Both knowledge jobs passed 108 configurations with every blocker-removal subset. Actual browser checked all eight rows, expected/observed blocker values, copy invariance, withdrawal deltas and new guide ceremony after restart. PR artifact 15002476149 SHA-256 27e52b50e8c33b8ef3f1ef5fd279ad92fd1bd629d77afb9de655959fda005549 matched local download; conflict and resolved screenshots inspected. Scoped fixed binary model."
+    },
+    {
+      "id": "V2-D06-ASSUMPTIONS",
+      "sourceRevision": "c42248a63399263f9cb4651024df9422d3d440c6",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45572062202/job/139060857950",
+      "description": "All nine exact-source workflows succeeded: knowledge PR 45572062202 and push 45572056458, ingress 45572062273, impact 45572062298, evaluation 45572062245, Open Kit 45572062403, legacy release 45572062208, publisher 45572062216, browser matrix 45572062262. Five exact thresholds and 108 configurations passed, including original control receipts and admitted quantity invariance. Four actual browser assumption sensitivity exports independently replayed; 44 mutations rejected. Browser artifact 15003001999 SHA-256 f90a222223179e7515bc7cf84b3e6b8f4163fbc77ac757705cd4363462b00f04 matched local download; resolved counterfactual screenshot inspected. Original model, evidence, result and Proof Capsule remain unchanged. Scoped fixed binary model."
     }
   ],
   "release": "not_authorized",
@@ -284,7 +290,7 @@
     "resolutionRevision": "dc50b83369478f6ee2c96186a8c1e14bd18ce004",
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45570334106/job/139055127953"
   },
-  "lastVerifiedKernelSource": "0e6b5be0b34cbc3b6d3af3ead516683cf17aec2e",
+  "lastVerifiedKernelSource": "c42248a63399263f9cb4651024df9422d3d440c6",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -295,8 +301,21 @@
   },
   "pendingCandidate": {
     "sourceRevision": null,
-    "sourceParent": "0e6b5be0b34cbc3b6d3af3ead516683cf17aec2e",
+    "sourceParent": "c42248a63399263f9cb4651024df9422d3d440c6",
     "status": "candidate_pending_exact_ci",
+    "identityRule": "Resolve the immutable commit containing this checkpoint.",
+    "checks": [
+      "deterministic exact-source Python verifier ZIP application and manifest; no third-party dependencies",
+      "static build and Pages artifact preserve bundle and separately downloadable digest",
+      "actual browser downloads exact verifier and digest; no external requests",
+      "execute downloaded verifier in isolated Python with malicious import-shadow path, actual current and old capsules, exact restoration, altered bytes and semantic forgeries, malformed and missing pins",
+      "retain trust boundaries and previous tests"
+    ]
+  },
+  "previousPendingCandidate": {
+    "sourceRevision": "c42248a63399263f9cb4651024df9422d3d440c6",
+    "sourceParent": "0e6b5be0b34cbc3b6d3af3ead516683cf17aec2e",
+    "status": "verified_exact_ci",
     "identityRule": "Resolve the immutable commit containing this checkpoint.",
     "checks": [
       "five exact target threshold graphs with distinct case identities; observed quantity and independent control receipt invariance",
@@ -304,19 +323,6 @@
       "four actual browser sensitivity exports and independent Fraction replay plus mutations",
       "UI counterfactual does not adopt changed limit or alter original evidence/result; conflict cannot be resolved by changing rule",
       "all prior exports and proof ceremony preserved; no external requests"
-    ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": "0e6b5be0b34cbc3b6d3af3ead516683cf17aec2e",
-    "sourceParent": "793187573699da06e16bd5b337349007158abdb6",
-    "status": "verified_exact_ci",
-    "identityRule": "Resolve the immutable commit containing this checkpoint.",
-    "checks": [
-      "eight-world hypothesis trace, exact observation mismatches and root blockers, direct truth-table oracle across 108 configurations",
-      "every removal subset iff blocker set removed; nine copies leave world trace unchanged",
-      "five actual browser world trace exports and independent Python replay plus mutations",
-      "explicit new guide ceremony on restart without treating old snapshot as fresh",
-      "preserve earlier verified exports, capsule and guidance; no external requests"
     ]
   },
   "roadmap": "docs/sutra-v2/roadmap.json",

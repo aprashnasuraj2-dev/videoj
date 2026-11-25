@@ -2,6 +2,7 @@ import test from 'node:test';
 import {assertV2StaticHeaders,guideCandidateHeaders,rootStaticPolicy,V2_STATIC_CSP,GUIDE_ORIGIN} from '../static-headers.mjs';
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
+import {spawnSync} from 'node:child_process';
 import {readFile} from 'node:fs/promises';
 import {dirname,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -23,4 +24,12 @@ test('V2 policy differs from legacy only by WASM permission; packaged drift fail
  assert.equal(candidate,built.replace("connect-src 'self';","connect-src 'self' "+GUIDE_ORIGIN+";"));
  assert.equal(rootStaticPolicy(candidate),V2_STATIC_CSP.replace("connect-src 'self';","connect-src 'self' "+GUIDE_ORIGIN+";"));
  assert.throws(()=>guideCandidateHeaders(candidate));
+});
+
+test('standalone Python verifier is byte-reproducible, inspectable and bound to exact source',async()=>{
+ const archive=resolve(app,'dist/sutra-proof-verifier.pyz'),pin=archive+'.sha256';
+ const bytes=await readFile(archive),expected=await readFile(pin,'ascii');assert.equal(expected,'sha256:'+sha(bytes)+'\n');
+ const html=await readFile(resolve(app,'dist/index.html'),'utf8');assert.match(html,/href="\.\/sutra-proof-verifier\.pyz" download/);assert.match(html,/href="\.\/sutra-proof-verifier\.pyz\.sha256" download/);
+ const checked=spawnSync('python3',[resolve(app,'../../packages/sutra-knowledge/reference/test_offline_verifier.py'),'--build-only',archive,pin],{encoding:'utf8'});
+ assert.equal(checked.status,0,checked.stderr||String(checked.error));assert.match(checked.stdout,/exact source manifest and deterministic rebuild verified/);
 });

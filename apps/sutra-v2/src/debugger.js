@@ -64,8 +64,8 @@ function renderAssumptions(){
  txt('assumption-rule','Test rule: a + b ≤ '+label(selected.limit));
  txt('assumption-state',states[selected.targetState]);by('assumption-state').dataset.state=selected.targetState;
  const b=report.boundaries;
- txt('assumption-boundaries',b?'Surviving sum range: '+label(b.minSum)+' to '+label(b.maxSum)+'. Refuted below '+label(b.minSum)+'; supported at or above '+label(b.maxSum)+(b.minSum===b.maxSum?'. No mixed interval.':'; underdetermined between these boundaries.'):'No surviving world: changing this rule alone cannot resolve the evidence contradiction.');
- txt('assumption-change',selected.changedSurvivingWorlds.length+' surviving world outcome'+(selected.changedSurvivingWorlds.length===1?' changes':'s change')+'. '+selected.survivingWorlds.length+' worlds remain; separate control: '+states[selected.controlState]+'.');
+ txt('assumption-boundaries',b?'Surviving sum range: '+label(b.minSum)+' to '+label(b.maxSum)+'. Refuted below '+label(b.minSum)+'; supported at or above '+label(b.maxSum)+(b.minSum===b.maxSum?'. No mixed interval.':'; underdetermined at or above '+label(b.minSum)+' and below '+label(b.maxSum)+'.'):'No surviving world: changing this rule alone cannot resolve the evidence contradiction.');
+ txt('assumption-change',selected.changedSurvivingWorlds.length+' surviving world outcome'+(selected.changedSurvivingWorlds.length===1?' changes':'s change')+'. '+selected.survivingWorlds.length+(selected.survivingWorlds.length===1?' world remains; separate control: ':' worlds remain; separate control: ')+states[selected.controlState]+'.');
  const m=report.minimumSampledChange;
  txt('assumption-minimum',m?'Smallest tested limit change that alters the conclusion state: '+(m.halfUnits/2)+'; alternative limit'+(m.limits.length===1?' ':'s ')+m.limits.map(label).join(' or ')+'. Tested limits only.':'None of the five tested limits changes the conclusion state.');
 }

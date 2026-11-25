@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-021",
+  "session": "V2-022",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2440,12 +2440,29 @@
     },
     {
       "id": "V2-D06-ASSUMPTIONS",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D05-WORLD-TRACE",
         "V2-D03-DIAGNOSIS"
       ],
-      "scope": "Isolated target-limit variants and exact boundaries; distinct case identities, unchanged evidence and control, direct oracle, independent replay; no automatic adoption."
+      "scope": "Isolated target-limit variants and exact boundaries; distinct case identities, unchanged evidence and control, direct oracle, independent replay; no automatic adoption.",
+      "evidence": [
+        {
+          "id": "V2-D06-ASSUMPTIONS",
+          "sourceRevision": "c42248a63399263f9cb4651024df9422d3d440c6",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45572062202/job/139060857950",
+          "description": "All nine exact-source workflows succeeded: knowledge PR 45572062202 and push 45572056458, ingress 45572062273, impact 45572062298, evaluation 45572062245, Open Kit 45572062403, legacy release 45572062208, publisher 45572062216, browser matrix 45572062262. Five exact thresholds and 108 configurations passed, including original control receipts and admitted quantity invariance. Four actual browser assumption sensitivity exports independently replayed; 44 mutations rejected. Browser artifact 15003001999 SHA-256 f90a222223179e7515bc7cf84b3e6b8f4163fbc77ac757705cd4363462b00f04 matched local download; resolved counterfactual screenshot inspected. Original model, evidence, result and Proof Capsule remain unchanged. Scoped fixed binary model."
+        }
+      ]
+    },
+    {
+      "id": "V2-D07-OFFLINE",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D02-CAPSULE",
+        "V2-D06-ASSUMPTIONS"
+      ],
+      "scope": "Deterministic portable independent Python verifier distribution; actual browser download and execution with independently retained digest. No deployment or publisher authenticity claim."
     }
   ]
 }

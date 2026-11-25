@@ -13,7 +13,8 @@ if(!existsSync(vite))throw Error('Missing pinned SUTRA toolchain. Run npm ci --p
 run('sh',['packages/sutra-knowledge/support-lattice/build-wasm.sh']);
 run(node,[vite,'build','apps/sutra-v2']);
 run(node,['apps/sutra-v2/stage-lesson.mjs']);
+run('python3',['packages/sutra-knowledge/reference/build_offline_verifier.py','apps/sutra-v2/dist']);
 const html=await readFile(resolve(here,'dist/index.html'),'utf8');
 if(!html.includes('SUTRA')||!html.includes('Debugger for conclusions')||!html.includes('KNOWLEDGE COMPILER'))throw Error('Built artifact is not the SUTRA v2 product entry.');
-for(const file of ['dist/_headers','dist/support-lattice.wasm','dist/content/content-profile.json','dist/content/source-catalog.json','dist/transcripts/synthetic-timing.txt','dist/media/timing-fixture.mp4'])if(!existsSync(resolve(here,file)))throw Error('Missing staged V2 artifact: '+file);
+for(const file of ['dist/_headers','dist/support-lattice.wasm','dist/content/content-profile.json','dist/content/source-catalog.json','dist/transcripts/synthetic-timing.txt','dist/media/timing-fixture.mp4','dist/sutra-proof-verifier.pyz','dist/sutra-proof-verifier.pyz.sha256'])if(!existsSync(resolve(here,file)))throw Error('Missing staged V2 artifact: '+file);
 console.log(JSON.stringify({product:'sutra-v2',entry:'apps/sutra-v2/dist/index.html',legacyToolchain:'apps/sutra',deployment:false}));
