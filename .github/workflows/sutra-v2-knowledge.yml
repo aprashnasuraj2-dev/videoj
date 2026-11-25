@@ -21,6 +21,11 @@ jobs:
         run: |
           go version
           go test -count=1 -v packages/sutra-knowledge/checkpoint/main.go packages/sutra-knowledge/checkpoint/main_test.go
+      - name: Rust bounded support lattice and exhaustive reference controls
+        run: |
+          rustc --version
+          rustc --edition=2021 -O --test packages/sutra-knowledge/support-lattice/lib.rs -o /tmp/sutra-support-tests
+          /tmp/sutra-support-tests
       - run: node --test packages/sutra-knowledge/test/*.test.mjs
       - name: Execute and assert capability demonstration
         run: |
