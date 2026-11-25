@@ -68,6 +68,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_quiz.py apps/sutra-v2/test-output/quiz-evidence.json apps/sutra-v2/test-output/quiz-withdrawal.json > apps/sutra-v2/test-output/quiz-reference.txt
           cat apps/sutra-v2/test-output/quiz-reference.txt
+      - name: Independently replay generalized conflict browser exports and challenge tampering
+        run: |
+          python3 packages/sutra-knowledge/reference/verify_conflict.py apps/sutra-v2/test-output/conflict-evidence.json apps/sutra-v2/test-output/conflict-withdrawn.json apps/sutra-v2/test-output/conflict-resolved.json > apps/sutra-v2/test-output/conflict-reference.txt
+          cat apps/sutra-v2/test-output/conflict-reference.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
