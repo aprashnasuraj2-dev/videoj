@@ -119,3 +119,5 @@ import './investigation.js';
 import './quiz.js';
 
 import './conflict.js';
+
+import './provider-lab.js';
