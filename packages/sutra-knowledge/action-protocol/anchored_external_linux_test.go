@@ -182,14 +182,19 @@ func TestAnchoredFencedExternalCompositeCommitRevokeStatus(t *testing.T) {
 		t.Fatal("composite commit", e, receipt.Version, client.FenceSequence(), client.PolicySequence(), client.Contacts())
 	}
 	if envelope.Decision.Operation != AuthorityCommit ||
-		envelope.Decision.PolicyHead != envelope.Policy.View.Head ||
+		envelope.Decision.PolicyHead != envelope.Membership.View.Head ||
+		envelope.Membership.RequestedSequence != 0 || envelope.Membership.RequestedHead != f.policyGenesis ||
 		envelope.Fenced.Reservation.RequestHash == (Digest{}) {
 		t.Fatal("composite proof missing cross-domain bindings")
 	}
 	wire, _ := SignAuthorityRequest(0, AuthorityCommit, f.fenceGenesis, request, f.callerKeys[0])
-	if !VerifyAnchoredFencedEnvelope(envelope, grant, wire, envelope.Policy.Challenge, f.ctx,
-		f.authorityPub, f.fencePub, f.consentPub, f.bookKey.Public().(ed25519.PublicKey), f.policyPub,
-		f.fenceGenesis, f.policyGenesis) {
+	pin, e := SignClientPolicyPin(f.ctx, grant.ID, wire.Hash(), 0, f.policyGenesis, f.callerKeys[0])
+	if e != nil {
+		t.Fatal(e)
+	}
+	if !VerifyAnchoredFencedEnvelope(envelope, grant, wire, pin, envelope.Membership.Challenge, f.ctx,
+		f.callerKeys[0].Public().(ed25519.PublicKey), f.authorityPub, f.fencePub, f.consentPub,
+		f.bookKey.Public().(ed25519.PublicKey), f.policyPub, f.fenceGenesis, f.policyGenesis) {
 		t.Fatal("composite envelope independently invalid")
 	}
 	if e = f.policy.Revoke(grant, request); e != nil {
@@ -256,7 +261,8 @@ func TestAnchoredFencedExternalLostFinalReplyRecoversTwoDomains(t *testing.T) {
 	}
 	first := captured.Load()
 	if first == nil || first.Fenced.Authority.Outcome != AuthorityCommitted || first.Fenced.Authority.Receipt.Version != 1 ||
-		first.Policy.View.Sequence != 1 || first.Fenced.Attestation.View.Sequence != 1 {
+		first.Membership.View.Sequence != 1 || first.Membership.RequestedSequence != 0 ||
+		first.Membership.RequestedHead != f.policyGenesis || first.Fenced.Attestation.View.Sequence != 1 {
 		t.Fatal("server did not complete both domains before transport loss")
 	}
 	if client.Head() != f.fenceGenesis || client.FenceSequence() != 0 || client.PolicySequence() != 0 || client.Contacts() != 1 {

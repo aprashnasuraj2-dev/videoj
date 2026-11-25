@@ -32,12 +32,15 @@ const grantPolicyStoreDomain = "SUTRA/grant-policy-witness/v1\x00"
 const grantPolicyTransitionDomain = "SUTRA/grant-policy-transition/v1\x00"
 const grantPolicyViewDomain = "SUTRA/grant-policy-view/v1\x00"
 const grantPolicyAttestationDomain = "SUTRA/grant-policy-attestation/v1\x00"
+const grantPolicyMembershipDomain = "SUTRA/grant-policy-membership/v1\x00"
 const grantPolicyIntentDomain = "SUTRA/grant-policy-intent/v1\x00"
 const grantPolicyIntentName = "grant-policy-intent.bin"
 const grantPolicyMaxTransitions = 32
 const grantPolicyTransitionSize = 32 + 32 + ed25519.SignatureSize
 const grantPolicyViewSize = 4 + 32 + 32 + ed25519.SignatureSize
 const grantPolicyAttestationSize = 32 + grantPolicyViewSize + ed25519.SignatureSize
+const grantPolicyMembershipRequestSize = 32 + 4 + 32
+const grantPolicyMembershipSize = 32 + 4 + 32 + grantPolicyViewSize + ed25519.SignatureSize
 const grantPolicyIntentSize = 32 + 32 + ed25519.SignatureSize
 
 var ErrGrantPolicyRollback = errors.New("grant policy head does not match independent witness")
@@ -169,6 +172,56 @@ func ParseGrantPolicyAttestation(raw []byte) (GrantPolicyAttestation, error) {
 }
 func VerifyGrantPolicyAttestation(a GrantPolicyAttestation, expected, ctx Digest, bookSigner, witness ed25519.PublicKey, genesis Digest) bool {
 	return expected != (Digest{}) && a.Challenge == expected && VerifyGrantPolicyViewPinned(a.View, ctx, bookSigner, witness, genesis) &&
+		ed25519.Verify(witness, a.message(ctx, bookSigner), a.Signature[:])
+}
+
+
+type GrantPolicyMembershipAttestation struct {
+	Challenge        Digest
+	RequestedSequence uint32
+	RequestedHead    Digest
+	View             GrantPolicyView
+	Signature        [ed25519.SignatureSize]byte
+}
+func (a GrantPolicyMembershipAttestation) message(ctx Digest, bookSigner ed25519.PublicKey) []byte {
+	b := append([]byte(grantPolicyMembershipDomain), ctx[:]...)
+	b = append(b, bookSigner...)
+	b = append(b, a.Challenge[:]...)
+	b = binary.BigEndian.AppendUint32(b, a.RequestedSequence)
+	b = append(b, a.RequestedHead[:]...)
+	return append(b, a.View.Bytes()...)
+}
+func (a GrantPolicyMembershipAttestation) Bytes() []byte {
+	b := append([]byte(nil), a.Challenge[:]...)
+	b = binary.BigEndian.AppendUint32(b, a.RequestedSequence)
+	b = append(b, a.RequestedHead[:]...)
+	b = append(b, a.View.Bytes()...)
+	return append(b, a.Signature[:]...)
+}
+func ParseGrantPolicyMembershipAttestation(raw []byte) (GrantPolicyMembershipAttestation, error) {
+	var a GrantPolicyMembershipAttestation
+	if len(raw) != grantPolicyMembershipSize {
+		return a, ErrPolicy
+	}
+	copy(a.Challenge[:], raw[:32])
+	a.RequestedSequence = binary.BigEndian.Uint32(raw[32:36])
+	copy(a.RequestedHead[:], raw[36:68])
+	v, e := ParseGrantPolicyView(raw[68 : 68+grantPolicyViewSize])
+	if e != nil {
+		return a, e
+	}
+	a.View = v
+	copy(a.Signature[:], raw[68+grantPolicyViewSize:])
+	if a.Challenge == (Digest{}) || a.RequestedHead == (Digest{}) || a.RequestedSequence > grantPolicyMaxTransitions {
+		return GrantPolicyMembershipAttestation{}, ErrPolicy
+	}
+	return a, nil
+}
+func VerifyGrantPolicyMembershipAttestation(a GrantPolicyMembershipAttestation, expected Digest, requestedSequence uint32, requestedHead, ctx Digest, bookSigner, witness ed25519.PublicKey, genesis Digest) bool {
+	return expected != (Digest{}) && a.Challenge == expected &&
+		a.RequestedSequence == requestedSequence && a.RequestedHead == requestedHead &&
+		requestedHead != (Digest{}) && requestedSequence <= a.View.Sequence &&
+		VerifyGrantPolicyViewPinned(a.View, ctx, bookSigner, witness, genesis) &&
 		ed25519.Verify(witness, a.message(ctx, bookSigner), a.Signature[:])
 }
 
@@ -364,6 +417,36 @@ func (w *GrantPolicyWitness) Attest(challenge Digest) (GrantPolicyAttestation, e
 	copy(a.Signature[:], ed25519.Sign(w.signer, a.message(w.ctx, w.bookSigner)))
 	return a, nil
 }
+
+func (w *GrantPolicyWitness) headAtSequenceLocked(sequence uint32) (Digest, bool) {
+	if sequence == 0 {
+		return w.genesis, true
+	}
+	if sequence > uint32(len(w.transitions)) {
+		return Digest{}, false
+	}
+	return w.transitions[sequence-1].After, true
+}
+func (w *GrantPolicyWitness) AttestMembership(challenge Digest, requestedSequence uint32, requestedHead Digest) (GrantPolicyMembershipAttestation, error) {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	if challenge == (Digest{}) || requestedHead == (Digest{}) {
+		return GrantPolicyMembershipAttestation{}, ErrPolicy
+	}
+	actual, ok := w.headAtSequenceLocked(requestedSequence)
+	if !ok || actual != requestedHead {
+		return GrantPolicyMembershipAttestation{}, ErrGrantPolicyRollback
+	}
+	view, e := w.viewLocked()
+	if e != nil {
+		return GrantPolicyMembershipAttestation{}, e
+	}
+	a := GrantPolicyMembershipAttestation{
+		Challenge: challenge, RequestedSequence: requestedSequence, RequestedHead: requestedHead, View: view,
+	}
+	copy(a.Signature[:], ed25519.Sign(w.signer, a.message(w.ctx, w.bookSigner)))
+	return a, nil
+}
 func (w *GrantPolicyWitness) Advance(t GrantPolicyTransition) (GrantPolicyView, error) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
@@ -407,6 +490,37 @@ func (w *GrantPolicyWitness) ServeHTTP(rw http.ResponseWriter, r *http.Request) 
 	rw.Header().Set("Cache-Control", "no-store")
 	if r.URL.RawQuery != "" {
 		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	if r.URL.Path == "/grant-policy/membership" {
+		if r.Method != http.MethodPost || r.Header.Get("Content-Type") != media {
+			rw.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		defer r.Body.Close()
+		raw, e := io.ReadAll(io.LimitReader(r.Body, grantPolicyMembershipRequestSize+1))
+		if e != nil || len(raw) != grantPolicyMembershipRequestSize {
+			rw.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		var challenge, requestedHead Digest
+		copy(challenge[:], raw[:32])
+		requestedSequence := binary.BigEndian.Uint32(raw[32:36])
+		copy(requestedHead[:], raw[36:68])
+		a, e := w.AttestMembership(challenge, requestedSequence, requestedHead)
+		if e != nil {
+			switch {
+			case errors.Is(e, ErrGrantPolicyRollback):
+				rw.WriteHeader(http.StatusConflict)
+			case errors.Is(e, ErrPolicy):
+				rw.WriteHeader(http.StatusBadRequest)
+			default:
+				rw.WriteHeader(http.StatusServiceUnavailable)
+			}
+			return
+		}
+		rw.Header().Set("Content-Type", media)
+		_, _ = rw.Write(a.Bytes())
 		return
 	}
 	if r.URL.Path == "/grant-policy/view" {
@@ -543,6 +657,42 @@ func (c *GrantPolicyClient) View() (GrantPolicyView, error) {
 	}
 	return c.parseView(res, "/grant-policy")
 }
+func (c *GrantPolicyClient) AttestMembershipChallenge(challenge Digest, requestedSequence uint32, requestedHead Digest) (GrantPolicyMembershipAttestation, error) {
+	if challenge == (Digest{}) || requestedHead == (Digest{}) || requestedSequence > grantPolicyMaxTransitions {
+		return GrantPolicyMembershipAttestation{}, ErrGrantPolicyUnavailable
+	}
+	body := append([]byte(nil), challenge[:]...)
+	body = binary.BigEndian.AppendUint32(body, requestedSequence)
+	body = append(body, requestedHead[:]...)
+	req, e := http.NewRequest(http.MethodPost, c.origin+"/grant-policy/membership", bytes.NewReader(body))
+	if e != nil {
+		return GrantPolicyMembershipAttestation{}, ErrGrantPolicyUnavailable
+	}
+	req.Header.Set("Content-Type", media)
+	req.Header.Set("Accept", media)
+	res, e := c.http.Do(req)
+	if e != nil || res == nil {
+		return GrantPolicyMembershipAttestation{}, ErrGrantPolicyUnavailable
+	}
+	defer res.Body.Close()
+	if res.StatusCode == http.StatusConflict {
+		return GrantPolicyMembershipAttestation{}, ErrGrantPolicyRollback
+	}
+	if res.StatusCode != http.StatusOK || res.Header.Get("Content-Type") != media ||
+		res.Request == nil || res.Request.URL.String() != c.origin+"/grant-policy/membership" {
+		return GrantPolicyMembershipAttestation{}, ErrGrantPolicyUnavailable
+	}
+	raw, e := io.ReadAll(io.LimitReader(res.Body, grantPolicyMembershipSize+1))
+	if e != nil || len(raw) != grantPolicyMembershipSize {
+		return GrantPolicyMembershipAttestation{}, ErrGrantPolicyUnavailable
+	}
+	a, e := ParseGrantPolicyMembershipAttestation(raw)
+	if e != nil || !VerifyGrantPolicyMembershipAttestation(a, challenge, requestedSequence, requestedHead, c.ctx, c.bookSigner, c.witness, c.genesis) {
+		return GrantPolicyMembershipAttestation{}, ErrGrantPolicyUnavailable
+	}
+	return a, nil
+}
+
 func (c *GrantPolicyClient) FreshView() (GrantPolicyView, error) {
 	for attempts := 0; attempts < 2; attempts++ {
 		var challenge Digest

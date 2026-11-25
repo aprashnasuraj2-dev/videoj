@@ -26,7 +26,7 @@ import (
 const grantPolicyDecisionDomain = "SUTRA/grant-policy-decision/v1\x00"
 const grantPolicyDecisionBodySize = grantIDSize + 32 + 32 + 1 + 1 + 8
 const grantPolicyDecisionSize = grantPolicyDecisionBodySize + ed25519.SignatureSize
-const anchoredFencedEnvelopeSize = fencedEnvelopeSize + grantPolicyDecisionSize + grantPolicyAttestationSize
+const anchoredFencedEnvelopeSize = fencedEnvelopeSize + grantPolicyDecisionSize + grantPolicyMembershipSize
 const clientPolicyPinDomain = "SUTRA/client-policy-pin/v1\x00"
 const clientPolicyPinSize = 4 + 32 + ed25519.SignatureSize
 const pinnedGrantedAuthorityRequestSize = grantedAuthorityRequestSize + clientPolicyPinSize
@@ -196,12 +196,12 @@ func (c *GrantPolicyClient) AttestChallenge(challenge Digest) (GrantPolicyAttest
 type AnchoredFencedEnvelope struct {
 	Fenced     FencedEnvelope
 	Decision   GrantPolicyDecision
-	Policy     GrantPolicyAttestation
+	Membership GrantPolicyMembershipAttestation
 }
 func (e AnchoredFencedEnvelope) Bytes() []byte {
 	b := append([]byte(nil), e.Fenced.Bytes()...)
 	b = append(b, e.Decision.Bytes()...)
-	return append(b, e.Policy.Bytes()...)
+	return append(b, e.Membership.Bytes()...)
 }
 func ParseAnchoredFencedEnvelope(raw []byte) (AnchoredFencedEnvelope, error) {
 	if len(raw) != anchoredFencedEnvelopeSize {
@@ -217,18 +217,19 @@ func ParseAnchoredFencedEnvelope(raw []byte) (AnchoredFencedEnvelope, error) {
 		return AnchoredFencedEnvelope{}, e
 	}
 	offset += grantPolicyDecisionSize
-	policy, e := ParseGrantPolicyAttestation(raw[offset:])
+	membership, e := ParseGrantPolicyMembershipAttestation(raw[offset:])
 	if e != nil {
 		return AnchoredFencedEnvelope{}, e
 	}
-	return AnchoredFencedEnvelope{Fenced: fenced, Decision: decision, Policy: policy}, nil
+	return AnchoredFencedEnvelope{Fenced: fenced, Decision: decision, Membership: membership}, nil
 }
-func VerifyAnchoredFencedEnvelope(e AnchoredFencedEnvelope, grant ActionGrant, req AuthorityRequest, challenge, ctx Digest,
-	authority, fence, consent, bookSigner, policyWitness ed25519.PublicKey, fenceGenesis, policyGenesis Digest) bool {
-	return VerifyActionGrant(grant, req.Action, consent) &&
+func VerifyAnchoredFencedEnvelope(e AnchoredFencedEnvelope, grant ActionGrant, req AuthorityRequest, pin ClientPolicyPin, challenge, ctx Digest,
+	caller, authority, fence, consent, bookSigner, policyWitness ed25519.PublicKey, fenceGenesis, policyGenesis Digest) bool {
+	return VerifyClientPolicyPin(pin, ctx, grant.ID, req.Hash(), caller) &&
+		VerifyActionGrant(grant, req.Action, consent) &&
 		VerifyGrantPolicyDecision(e.Decision, grant, req, ctx, bookSigner) &&
-		VerifyGrantPolicyAttestation(e.Policy, challenge, ctx, bookSigner, policyWitness, policyGenesis) &&
-		e.Decision.PolicyHead == e.Policy.View.Head &&
+		VerifyGrantPolicyMembershipAttestation(e.Membership, challenge, pin.Sequence, pin.Head, ctx, bookSigner, policyWitness, policyGenesis) &&
+		e.Decision.PolicyHead == e.Membership.View.Head &&
 		VerifyFencedEnvelope(e.Fenced, req, challenge, ctx, authority, fence, fenceGenesis)
 }
 
@@ -311,21 +312,11 @@ func (g *AnchoredFencedGrantGuard) ProcessCompositePinned(grant ActionGrant, req
 	} else {
 		return AnchoredFencedEnvelope{}, ErrPolicy
 	}
-	if e := g.policy.recoverLocked(); e != nil {
-		return AnchoredFencedEnvelope{}, e
-	}
-	live, e := g.policy.witness.FreshView()
-	if e != nil {
-		return AnchoredFencedEnvelope{}, ErrGrantPolicyUnavailable
-	}
-	if live.Head != b.policyHeadLocked() || live.Sequence < pin.Sequence ||
-		(live.Sequence == pin.Sequence && live.Head != pin.Head) {
-		return AnchoredFencedEnvelope{}, ErrGrantPolicyRollback
-	}
-	// reserveDispatchLocked/checkReconcileLocked deliberately repeat their
-	// freshness check. The book mutex prevents local policy interleaving; the
-	// second fresh read catches an independently operated clone advancing the
-	// witness between client-pin admission and policy decision.
+	// The policy mutation/reconcile path itself refreshes the independent
+	// witness. After that exact decision, require the caller's signed prior pin
+	// to be an actual member of the witness's CURRENT retained history. This is
+	// stronger than sequence >= pin.Sequence: an alternate 2-prime/3-prime
+	// branch cannot satisfy membership for the caller's exact old head.
 	switch req.Op {
 	case AuthorityCommit:
 		if e := g.policy.reserveDispatchLocked(grant, req.Action, grant.Class); e != nil {
@@ -341,20 +332,23 @@ func (g *AnchoredFencedGrantGuard) ProcessCompositePinned(grant ActionGrant, req
 	if e != nil {
 		return AnchoredFencedEnvelope{}, e
 	}
-	policyAttestation, e := g.policy.witness.AttestChallenge(challenge)
+	membership, e := g.policy.witness.AttestMembershipChallenge(challenge, pin.Sequence, pin.Head)
 	if e != nil {
+		if errors.Is(e, ErrGrantPolicyRollback) {
+			return AnchoredFencedEnvelope{}, ErrGrantPolicyRollback
+		}
 		return AnchoredFencedEnvelope{}, ErrGrantPolicyUnavailable
 	}
-	if policyAttestation.View.Head != policyHead {
+	if membership.View.Head != policyHead {
 		return AnchoredFencedEnvelope{}, ErrGrantPolicyRollback
 	}
 	fenced, e := g.coordinator.ProcessAttested(req, challenge)
 	if e != nil {
 		return AnchoredFencedEnvelope{}, e
 	}
-	out := AnchoredFencedEnvelope{Fenced: fenced, Decision: decision, Policy: policyAttestation}
-	if !VerifyAnchoredFencedEnvelope(out, grant, req, challenge, b.ctx,
-		a.signer.Public().(ed25519.PublicKey), g.coordinator.fence.fence,
+	out := AnchoredFencedEnvelope{Fenced: fenced, Decision: decision, Membership: membership}
+	if !VerifyAnchoredFencedEnvelope(out, grant, req, pin, challenge, b.ctx,
+		a.callers[req.Caller], a.signer.Public().(ed25519.PublicKey), g.coordinator.fence.fence,
 		b.consent, b.signer.Public().(ed25519.PublicKey), g.policy.witness.witness,
 		g.coordinator.fence.genesis, g.policy.witness.genesis) {
 		return AnchoredFencedEnvelope{}, ErrWitnessRollback
@@ -544,11 +538,11 @@ func (c *AnchoredFencedGrantClient) exchange(op byte) (Receipt, AnchoredFencedEn
 		return Receipt{}, AnchoredFencedEnvelope{}, ErrUnknown
 	}
 	response, e := ParseAnchoredFencedEnvelope(raw)
-	if e != nil || !VerifyAnchoredFencedEnvelope(response, c.grant, req, challenge, c.ctx,
-		c.authority, c.fence, c.consent, c.bookSigner, c.policyWitness, c.fenceGenesis, c.policyGenesis) {
+	if e != nil || !VerifyAnchoredFencedEnvelope(response, c.grant, req, pin, challenge, c.ctx,
+		c.key.Public().(ed25519.PublicKey), c.authority, c.fence, c.consent, c.bookSigner, c.policyWitness, c.fenceGenesis, c.policyGenesis) {
 		return Receipt{}, AnchoredFencedEnvelope{}, ErrUnknown
 	}
-	policy := response.Policy.View
+	policy := response.Membership.View
 	if policy.Sequence < c.policySequence ||
 		(policy.Sequence == c.policySequence && policy.Head != c.policyHead) ||
 		(policy.Sequence > c.policySequence && policy.Head == c.policyHead) {
