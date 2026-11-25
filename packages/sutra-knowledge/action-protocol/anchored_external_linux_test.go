@@ -500,3 +500,89 @@ func TestAnchoredFencedExternalForgedGrantRefusedAtConstruction(t *testing.T) {
 	}
 	t.Log("external action session verifies exact grant before gaining a network-capable client")
 }
+
+
+func TestAnchoredFencedExternalRejectsAlternateHistoryPastClientHighWater(t *testing.T) {
+	f := newCompositeFixture(t, nil)
+	request := approve(t, 0, f.ctx, f.approverKey)
+	grant, e := IssueActionGrant(request, GrantPrimary, 10, 20, f.consentKey)
+	if e != nil {
+		t.Fatal(e)
+	}
+	// Canonical history: epoch 11 at sequence 1, then target revocation at
+	// sequence 2. The client pins that exact sequence-2 revocation head.
+	if e = f.policy.AdvanceEpoch(10, 11); e != nil {
+		t.Fatal(e)
+	}
+	bookSeq1, _ := os.ReadFile(filepath.Join(f.bookDir, "grantbook.bin"))
+	witnessSeq1, _ := os.ReadFile(filepath.Join(f.policyDir, "grant-policy.bin"))
+	if e = f.policy.Revoke(grant, request); e != nil {
+		t.Fatal(e)
+	}
+	policyPin, e := f.policyClient.View()
+	if e != nil || policyPin.Sequence != 2 {
+		t.Fatal("canonical client pin", e, policyPin.Sequence)
+	}
+	fencePin, _ := f.fenceClient.View()
+	client, e := NewAnchoredFencedGrantClient(
+		f.server.URL, 0, f.callerKeys[0], f.authorityPub, f.fencePub, f.consentPub,
+		f.bookKey.Public().(ed25519.PublicKey), f.policyPub, f.ctx, f.fenceGenesis, f.policyGenesis,
+		fencePin, policyPin, request, grant,
+	)
+	if e != nil {
+		t.Fatal(e)
+	}
+
+	// Roll both policy domains back to sequence 1, then build a valid alternate
+	// history past the client's numeric high-water without revoking the target:
+	// seq2' = epoch 12, seq3' = epoch 13.
+	f.book.Close()
+	f.policyW.Close()
+	if e = os.WriteFile(filepath.Join(f.bookDir, "grantbook.bin"), bookSeq1, 0600); e != nil {
+		t.Fatal(e)
+	}
+	if e = os.WriteFile(filepath.Join(f.policyDir, "grant-policy.bin"), witnessSeq1, 0600); e != nil {
+		t.Fatal(e)
+	}
+	rolledBook, e := OpenGrantBook(f.bookDir, f.ctx, f.consentPub, f.approver, f.bookKey)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer rolledBook.Close()
+	rolledWitness, e := OpenGrantPolicyWitness(f.policyDir, f.ctx, f.bookKey.Public().(ed25519.PublicKey), f.policyKey, f.policyGenesis)
+	if e != nil {
+		t.Fatal(e)
+	}
+	defer rolledWitness.Close()
+	f.policyPtr.Store(rolledWitness)
+	rolledClient, _ := NewGrantPolicyClient(f.policySrv.URL, f.ctx, f.bookKey.Public().(ed25519.PublicKey), f.policyPub, f.policyGenesis)
+	rolledPolicy, _ := NewGrantPolicyCoordinator(rolledBook, rolledClient)
+	if e = rolledPolicy.AdvanceEpoch(11, 12); e != nil {
+		t.Fatal("alternate seq2", e)
+	}
+	if e = rolledPolicy.AdvanceEpoch(12, 13); e != nil {
+		t.Fatal("alternate seq3", e)
+	}
+	view, e := rolledClient.FreshView()
+	if e != nil || view.Sequence != 3 || view.Head == policyPin.Head {
+		t.Fatal("alternate history setup", e, view.Sequence)
+	}
+	rolledGuard, _ := NewAnchoredFencedGrantGuard(rolledPolicy, f.fenced)
+	f.guardPtr.Store(rolledGuard)
+
+	// Security requirement: a sequence higher than the caller's pin is not
+	// sufficient. The live witness must prove that the caller's exact pinned
+	// head exists at the pinned sequence in its retained history.
+	if _, _, e = client.Commit(); !errors.Is(e, ErrWitnessRollback) {
+		t.Fatal("alternate history past numeric high-water reached effect; ancestry proof missing", e)
+	}
+	_, total, effects, e := f.authority.Counts()
+	if e != nil || total != 0 || effects != 0 {
+		t.Fatal("alternate policy history crossed effect boundary", total, effects, e)
+	}
+	fv, e := f.fenceClient.View()
+	if e != nil || fv.Sequence != 0 || fv.Head != f.fenceGenesis {
+		t.Fatal("alternate policy history crossed admission fence", e, fv)
+	}
+	t.Log("client high-water is an exact history pin, not only a sequence counter; alternate 2-prime/3-prime history is rejected before effect")
+}
