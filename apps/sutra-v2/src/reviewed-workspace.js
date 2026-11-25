@@ -1,3 +1,4 @@
+import {compileReviewedExpression} from '../../../packages/sutra-knowledge/reviewed-expression.js';
 import {restoreReviewedSourceDraft,reviseReviewedSourceDraft} from '../../../packages/sutra-knowledge/source-draft-restore.js';
 import {planInvestigationClarifications} from '../../../packages/sutra-knowledge/clarification-plan.js';
 import {previewClarificationAnswers} from '../../../packages/sutra-knowledge/clarification-preview.js';
@@ -13,14 +14,14 @@ import {sealInvestigationVersion,replayInvestigationVersion,compareInvestigation
 const by=id=>document.getElementById('review-'+id);
 let sources=[],bindings=[],sealed=null,current=null,busy=false,epoch=0,stagedProposals=[],batchCurrent=null;
 let semanticCurrent=null,baseline=null,impactCurrent=null,annotations=new Map(),clarificationCurrent=null,previewCurrent=null,reuseCurrent=null;
-const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise'];
+const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
 function control(){
  for(const id of controls)by(id).disabled=busy;
- if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;by('candidate-id').disabled=!sealed;by('source-revise').disabled=!sources.length;by('source-revise-pick').disabled=!sources.length;by('source-revise-text').disabled=!sources.length;}
+ if(!busy){by('binding-add').disabled=!sources.length;for(const id of ['left','right','op','generate'])by(id).disabled=!sealed||bindings.length<2;by('proposal').disabled=!sealed;by('run').disabled=!sealed||!by('proposal').value;by('export').disabled=!current;by('export-pin').disabled=!current;by('batch-add').disabled=!sealed||!by('proposal').value||stagedProposals.length>=8;by('batch-run').disabled=!sealed||stagedProposals.length<2;by('batch-clear').disabled=!stagedProposals.length;by('batch-export').disabled=!batchCurrent;by('candidate-id').disabled=!sealed;by('expression').disabled=!sealed;by('expression-generate').disabled=!sealed||!by('expression').value.trim();by('source-revise').disabled=!sources.length;by('source-revise-pick').disabled=!sources.length;by('source-revise-text').disabled=!sources.length;}
  semanticControl();
 }
-function invalidate(message){epoch++;sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
+function invalidate(message){epoch++;sealed=null;current=null;clearBatch();by('pin').textContent='No current contract.';by('contract').textContent='';by('expression').value='';by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';status('draft',message);control();}
 function draft(s=sources,b=bindings){return JSON.stringify({version:1,question:by('question').value,sources:s,bindings:b});}
 function options(element,items){element.replaceChildren();for(const id of items){const o=document.createElement('option');o.value=id;o.textContent=id;element.append(o);}}
 function refresh(){
@@ -33,7 +34,7 @@ function refresh(){
 }
 async function work(fn){
  if(busy)return;busy=true;const ticket=epoch;control();
- try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
+ try{await fn(ticket);}catch(e){if(ticket===epoch)status('refused','REFUSED: '+(typeof e?.message==='string'&&/^(DRAFT|COMPILER|SEMANTIC|REVISION|CASE|RESTORE|CLARIFICATION|EXPRESSION)_[A-Z_]+$/.test(e.message)?e.message:'invalid input or resource limit')+'.');}
  finally{busy=false;control();}
 }
 by('question').addEventListener('input',()=>invalidate('Question changed. Re-seal before evaluating a proposal.'));
@@ -63,6 +64,13 @@ by('binding-add').onclick=()=>{
 by('seal').onclick=()=>work(async ticket=>{
  const result=await sealReviewedDraft(draft());if(ticket!==epoch)return;
  sealed=result;current=null;clearBatch();by('proposal').value='';by('result').textContent='';by('snapshot-pin').textContent='';by('pin').textContent=result.pin;by('contract').textContent=result.contractText;status('sealed','Reviewed contract sealed. Copy the pin independently if retaining evidence. No proposal evaluated.');
+});
+by('expression').oninput=()=>control();
+by('expression-generate').onclick=()=>work(async ticket=>{
+ if(!sealed)return;
+ const result=await compileReviewedExpression(sealed.contractText,sealed.pin,by('expression').value);if(ticket!==epoch)return;
+ current=null;by('result').textContent='';by('snapshot-pin').textContent='';by('proposal').value=result.proposalText;
+ status('proposal','Local expression compiled to an untrusted proposal. Conditional precheck: '+result.target.status+'. Review the formula before staging or exporting.');
 });
 by('generate').onclick=()=>work(async ticket=>{
  if(!sealed)return;const p=await draftComparisonProposal(sealed.contractText,sealed.pin,by('left').value,by('right').value,by('op').value);if(ticket!==epoch)return;

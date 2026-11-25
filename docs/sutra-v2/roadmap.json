@@ -2879,11 +2879,11 @@
     {
       "id": "V2-LK03-PATHWAYS",
       "track": "B",
-      "status": "Not started",
+      "status": "Implementation in progress",
       "dependencies": [
         "V2-LK02-INTENT-IR"
       ],
-      "scope": "Route structured table imports, templates, rules, user expressions, reviewed contracts, document import and optional model proposals through cheapest admissible path.",
+      "scope": "Route structured table imports, templates, rules, user expressions, reviewed contracts, document import and optional model proposals through cheapest admissible path. V2-072 candidate: deterministic human expression syntax over reviewed bindings, same compiler and contrast path, no provider. Structured table/document paths and consent/cost comparison remain open.",
       "acceptance": "Same contract across paths, explicit consent, costs and review; compare deterministic and model proposals without votes.",
       "evidence": []
     },
@@ -2963,6 +2963,12 @@
           "sourceRevision": "eb4e49c3b9c031295e50dd8e1e2a053564a64e1c",
           "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45608607233",
           "description": "All ten exact workflows green; material pair subset planner unit verified. No user effort or semantic correctness claim."
+        },
+        {
+          "id": "V2-LK07-AMBIGUITY-REVIEW",
+          "sourceRevision": "598298401b633171a1b7ea5d3af421a37f2ba1ce",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45608822113",
+          "description": "All ten workflows passed; exact answer preview and actual browser clarification/reuse exports with refused candidate and stale controls verified. No human efficacy claim."
         }
       ]
     },

@@ -646,7 +646,16 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const reviewDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-export').click();const reviewBytes=fs.readFileSync(await (await reviewDownload).path());fs.writeFileSync(path.join(output,'reviewed-workspace.json'),reviewBytes);
   assert.deepEqual(JSON.parse(reviewBytes).result.target.sourceIds,['report_a','report_b']);
   const reviewPinDownload=reviewPage.waitForEvent('download');await reviewPage.locator('#review-export-pin').click();const reviewSnapshotPin=fs.readFileSync(await (await reviewPinDownload).path());fs.writeFileSync(path.join(output,'reviewed-workspace.sha256'),reviewSnapshotPin);assert.equal(reviewSnapshotPin.toString('ascii').trim(),await reviewPage.locator('#review-snapshot-pin').innerText());
-  const reviewOriginal=JSON.parse(await reviewPage.locator('#review-proposal').inputValue());
+  const originalProposalText=await reviewPage.locator('#review-proposal').inputValue();
+  await reviewPage.locator('#review-expression-panel > summary').click();
+  await reviewFill('expression','[a] > 999');await reviewPage.locator('#review-expression-generate').click();await reviewState('refused');
+  assert.match(await reviewPage.locator('#review-status').innerText(),/EXPRESSION_TOKEN/);
+  assert.equal(await reviewPage.locator('#review-proposal').inputValue(),originalProposalText);
+  await reviewFill('expression','([a]-[b]) > ([b]-[b])');await reviewPage.locator('#review-expression-generate').click();await reviewState('proposal');
+  await reviewPage.locator('#review-run').click();await reviewState('ready');
+  assert.match(await reviewPage.locator('#review-result').innerText(),/CONDITIONALLY SATISFIED/);
+  await reviewFill('proposal',originalProposalText);
+  const reviewOriginal=JSON.parse(originalProposalText);
   await reviewPage.locator('#review-batch-add').click();await reviewState('staged');
   for(const [op,reverse,hostile] of [['lt',true,false],['le',false,false],['lt',false,false],['gt',false,true]]){
    const p=structuredClone(reviewOriginal),n=p.nodes.find(n=>n.id===p.targetId);n.op=op;if(reverse)n.args.reverse();if(hostile)p.nodes[0].value='999';
