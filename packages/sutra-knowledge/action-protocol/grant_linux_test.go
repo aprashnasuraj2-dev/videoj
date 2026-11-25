@@ -5,7 +5,6 @@ package actionprotocol
 import (
  "crypto/ed25519"
  "errors"
- "sync"
  "time"
  "net/http"
  "net/http/httptest"
