@@ -190,6 +190,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_world_coverage.py --challenge apps/sutra-v2/test-output/coverage-compatible.json apps/sutra-v2/test-output/coverage-incompatible.json > apps/sutra-v2/test-output/coverage-reference.txt
           cat apps/sutra-v2/test-output/coverage-reference.txt
+      - name: Independently replay opposite and false competing agent proposals
+        run: |
+          python3 packages/sutra-knowledge/reference/verify_proposal_challenge.py --challenge apps/sutra-v2/test-output/proposal-correct.json apps/sutra-v2/test-output/proposal-forged.json > apps/sutra-v2/test-output/proposal-reference.txt
+          cat apps/sutra-v2/test-output/proposal-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

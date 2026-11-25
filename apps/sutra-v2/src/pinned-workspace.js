@@ -3,12 +3,13 @@ import {alignedInvestigationExport} from '../../../packages/sutra-knowledge/alig
 import {createAlignedCapsule,verifyAlignedCapsule,MAX_ALIGNED_CAPSULE_BYTES} from '../../../packages/sutra-knowledge/aligned-capsule.js';
 import {exportMeasurementSensitivity} from '../../../packages/sutra-knowledge/measurement-sensitivity.js';
 import {exportCoverageAttack} from '../../../packages/sutra-knowledge/world-coverage-attack.js';
+import {exportProposalChallenge} from '../../../packages/sutra-knowledge/proposal-challenge.js';
 const by=id=>document.getElementById('pinned-'+id),txt=(id,v)=>{by(id).textContent=v;};
-let busy=false,current=null,sample=null,stage=null,cap=null,verifiedCap=null,rangeResult=null,coverageResult=null;
+let busy=false,current=null,sample=null,stage=null,cap=null,verifiedCap=null,rangeResult=null,coverageResult=null,proposalResult=null;
 const capStatus=(state,text)=>{by('capsule-status').dataset.state=state;txt('capsule-status',text);};
-function clear(){current=null;clearRange();clearCoverage();by('result').hidden=true;txt('status','Input changed. Evaluate the exact current text.');}
+function clear(){current=null;clearRange();clearCoverage();clearProposal();by('result').hidden=true;txt('status','Input changed. Evaluate the exact current text.');}
 function refresh(){
- for(const id of ['case','pin','events','example','coverage-example','run'])by(id).disabled=busy;
+ for(const id of ['case','pin','events','example','coverage-example','proposal-example','run'])by(id).disabled=busy;
  by('export').disabled=busy||!current;
  by('conflict').disabled=busy||stage!=='baseline'||!current;
  by('resolve').disabled=busy||stage!=='conflict'||!current;
@@ -16,6 +17,8 @@ function refresh(){
  by('range-export').disabled=busy||!rangeResult;
  for(const id of ['coverage-base','coverage-id','coverage-input','coverage-value','coverage-run'])by(id).disabled=busy||!current||current.alignment.worldCount>=12;
  by('coverage-export').disabled=busy||!coverageResult;
+ for(const id of ['proposal-text','proposal-run'])by(id).disabled=busy||!current;
+ by('proposal-export').disabled=busy||!proposalResult;
  by('capsule-export').disabled=busy||!current;
  by('capsule-pin-export').disabled=busy||!cap;
  for(const id of ['capsule-case-pin','capsule-pin','capsule-file'])by(id).disabled=busy;
@@ -35,7 +38,7 @@ function render(){
  txt('plan',p?.kind==='observe'?p.observationId+' · effort '+p.cost+' · worst case '+p.worstCost+'\n'+branches.map(b=>b.value+' → '+b.worlds.join(', ')).join('\n'):r.report.status+(r.report.frontier?.witness?': '+r.report.frontier.witness.join(' / '):''));
  const select=by('range-observation');select.replaceChildren();
  for(const r of current.result.report.activeEvidence){const option=document.createElement('option');option.value=r.observationId;option.textContent=r.observationId+' · '+r.nodeId+' = '+r.value+' · '+r.lineage;select.append(option);}
- setPointBounds();clearRange();setCoverageWorlds();clearCoverage();
+ setPointBounds();clearRange();setCoverageWorlds();clearCoverage();clearProposal();
  by('result').hidden=false;txt('status','Replayed locally. Conditional on the supplied finite model; source truth remains unverified.');
 }
 async function work(setup){
@@ -51,6 +54,11 @@ by('example').onclick=()=>work(async()=>{
 });
 by('coverage-example').onclick=()=>work(async()=>{
  sample=await capacityExample();by('case').value=sample.caseText;by('pin').value=sample.pin;setEvents([sample.reads.read_alternate]);stage='coverage';
+});
+by('proposal-example').onclick=()=>work(async()=>{
+ sample=await capacityExample();by('case').value=sample.caseText;by('pin').value=sample.pin;
+ setEvents([sample.reads.read_capacity,sample.reads.read_alternate]);stage='proposal';
+ by('proposal-text').value=JSON.stringify({caseDigest:sample.pin,eventText:JSON.stringify([sample.reads.read_capacity,sample.reads.read_meter]),claimedState:'REFUTED'},null,2);
 });
 by('conflict').onclick=()=>work(async()=>{setEvents([sample.reads.read_meter,sample.reads.read_mirror,sample.reads.read_alternate]);stage='conflict';});
 by('resolve').onclick=()=>work(async()=>{setEvents([sample.reads.read_meter,sample.reads.read_mirror,sample.reads.read_alternate,{type:'withdraw_lineage',lineage:'alternate_root'},sample.reads.read_capacity]);stage='resolved';});
@@ -146,6 +154,31 @@ by('coverage-export').onclick=()=>{
  const bytes=new TextEncoder().encode(JSON.stringify(coverageResult));
  if(bytes.length>1048576){coverageStatus('refused','REFUSED: diagnosis export exceeds 1 MiB. Actual investigation unchanged.');return;}
  download(bytes,'sutra-coverage-diagnosis.json','application/json');
+};
+function proposalStatus(state,text){by('proposal-status').dataset.state=state;txt('proposal-status',text);}
+function clearProposal(){proposalResult=null;by('proposal-result').hidden=true;proposalStatus('idle','No competing proposal evaluated.');}
+by('proposal-text').oninput=()=>{clearProposal();refresh();};
+function renderProposal(){
+ const r=proposalResult.result;
+ txt('proposal-claim',(r.claim.matches?'CLAIM MATCHES REPLAY':'CLAIM DOES NOT MATCH REPLAY')+'\nClaimed: '+r.claim.claimedState+'\nRecomputed: '+r.claim.recomputedState+'\nCurrent: '+r.baseline.state+' · '+r.comparison);
+ txt('proposal-history',r.history.commonEventCount+' shared initial events · '+r.history.baselineEventCount+' current / '+r.history.proposalEventCount+' proposed\nShared prefix conclusion: '+r.history.commonPrefix.state+'\nCurrent-only tail: '+JSON.stringify(r.history.baselineTail,null,2)+'\nProposed-only tail: '+JSON.stringify(r.history.proposalTail,null,2));
+ const evidence=items=>items.map(x=>x.observationId+' · '+x.nodeId+' = '+x.value+' · '+x.lineage).join('\n')||'none';
+ txt('proposal-evidence','Shared final readings:\n'+evidence(r.evidence.shared)+'\nCurrent only:\n'+evidence(r.evidence.baselineOnly)+'\nProposal only:\n'+evidence(r.evidence.proposalOnly)+'\nDeclared roots and availability:\n'+JSON.stringify({roots:r.evidence.declaredRoots,unavailable:r.evidence.unavailableSources},null,2));
+ const f=r.history.commonPrefix.frontier;
+ txt('proposal-worlds','Shared surviving worlds: '+(r.worlds.shared.join(', ')||'none')+'\nCurrent only: '+(r.worlds.baselineOnly.join(', ')||'none')+'\nProposal only: '+(r.worlds.proposalOnly.join(', ')||'none')+'\nMinimal evidence sets by branch:\n'+JSON.stringify({current:r.baseline.minimum,proposed:r.proposal.minimum},null,2)+'\nShared-prefix observation policy: '+(f?.status==='conditional_observation_plan'?f.plan.observationId+' · worst-case effort '+f.plan.worstCost:f?.status??'conflict needs adjudication'));
+ by('proposal-result').hidden=false;proposalStatus('ready','Both histories replayed. Actual investigation remains '+current.result.state+'. No automatic adoption.');
+}
+by('proposal-run').onclick=async()=>{
+ if(busy||!current)return;busy=true;clearProposal();refresh();
+ try{proposalResult=await exportProposalChallenge(current.caseText,current.result.caseDigest,current.eventText,by('proposal-text').value);renderProposal();}
+ catch{proposalResult=null;proposalStatus('refused','REFUSED: require the same case digest, a valid pinned observation history, and a recognized claimed state. Actual investigation unchanged.');}
+ finally{busy=false;refresh();}
+};
+by('proposal-export').onclick=()=>{
+ if(busy||!proposalResult)return;
+ const bytes=new TextEncoder().encode(JSON.stringify(proposalResult));
+ if(bytes.length>1048576){proposalStatus('refused','REFUSED: diagnosis export exceeds 1 MiB. Actual investigation unchanged.');return;}
+ download(bytes,'sutra-proposal-diagnosis.json','application/json');
 };
 function download(bytes,name,type){
  const url=URL.createObjectURL(new Blob([bytes],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);

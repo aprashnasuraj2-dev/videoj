@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-031",
+  "session": "V2-032",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -2600,12 +2600,29 @@
     },
     {
       "id": "V2-D14-WORLD-COVERAGE",
-      "status": "Implemented but unverified",
+      "status": "Independently reproduced",
       "dependencies": [
         "V2-D13-MEASUREMENT-RANGE",
         "V2-D11-ALIGNED-CASE"
       ],
-      "scope": "Explicit hypothetical addition of one input-only aligned world; exact normalized duplicate and finite budget refusal, evidence-preserving recomputation, blockers, and observation policy. Not model completeness, empirical validity, automatic search, adoption or new evidence."
+      "scope": "Explicit hypothetical addition of one input-only aligned world; exact normalized duplicate and finite budget refusal, evidence-preserving recomputation, blockers, and observation policy. Not model completeness, empirical validity, automatic search, adoption or new evidence.",
+      "evidence": [
+        {
+          "id": "V2-D14-WORLD-COVERAGE",
+          "sourceRevision": "6919d3e7a55b4843563efa0b129c78c1480e7f78",
+          "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45578490574/job/139082271228",
+          "description": "All nine exact-source workflows passed: knowledge PR 45578490574 and push 45578480882, ingress 45578490273, impact 45578490447, evaluation 45578491870, Open Kit 45578490751, legacy release 45578490464, publisher 45578490538, browser matrix 45578490495. Knowledge job 139082271514 passed 70 tests. Actual browser compatible omitted world yields UNDERDETERMINED and excluded candidate preserves SUPPORTED; independent Python replay accepted both reports and refused 26 mutants. Same exact original model, history, receipts and capsule. Hypothetical model coverage, not completeness."
+        }
+      ]
+    },
+    {
+      "id": "V2-D15-COMPETING-PROPOSAL",
+      "status": "Implemented but unverified",
+      "dependencies": [
+        "V2-D11-ALIGNED-CASE",
+        "V2-D14-WORLD-COVERAGE"
+      ],
+      "scope": "Untrusted hypothetical agent proposal with same case digest, separate event history and asserted state; recompute both histories and shared canonical prefix, compare receipts, declared roots, availability, survivors, minimal sets and policies. No identity, independent corroboration, authorization, external inference, truth or adoption."
     }
   ]
 }

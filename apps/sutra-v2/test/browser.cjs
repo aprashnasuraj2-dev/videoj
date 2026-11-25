@@ -473,6 +473,33 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await coveragePage.locator('#pinned-coverage-run').click();await coveragePage.waitForFunction(()=>document.querySelector('#pinned-coverage-status').dataset.state==='refused');
   assert.equal(await coveragePage.locator('#pinned-state').innerText(),'SUPPORTED');
   assert.deepEqual(coverageErrors,[]);assert.deepEqual(coverageExternal,[]);await coveragePage.close();
+  // Competing agent proposal: replay both histories; do not adopt either branch.
+  const proposalPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),proposalErrors=[],proposalExternal=[];
+  proposalPage.on('pageerror',e=>proposalErrors.push(e.message));proposalPage.on('request',r=>{if(new URL(r.url()).origin!==origin)proposalExternal.push(r.url());});
+  await proposalPage.goto(origin);await proposalPage.locator('#pinned-workspace > summary').click();
+  await proposalPage.locator('#pinned-proposal-example').click();
+  await proposalPage.waitForFunction(()=>document.querySelector('#pinned-state').textContent==='SUPPORTED'&&!document.querySelector('#pinned-export').disabled);
+  const proposalOriginalCase=await proposalPage.locator('#pinned-case').inputValue(),proposalOriginalEvents=await proposalPage.locator('#pinned-events').inputValue(),proposalOriginalPin=await proposalPage.locator('#pinned-pin').inputValue();
+  await proposalPage.locator('#pinned-proposal > summary').click();
+  async function saveProposal(stem,matches){
+   await proposalPage.locator('#pinned-proposal-run').click();
+   await proposalPage.waitForFunction(()=>document.querySelector('#pinned-proposal-status').dataset.state==='ready'&&!document.querySelector('#pinned-proposal-export').disabled);
+   assert.match(await proposalPage.locator('#pinned-proposal-claim').innerText(),matches?/CLAIM MATCHES REPLAY/:/CLAIM DOES NOT MATCH REPLAY/);
+   assert.match(await proposalPage.locator('#pinned-proposal-history').innerText(),/1 shared initial events/);
+   assert.equal(await proposalPage.locator('#pinned-state').innerText(),'SUPPORTED');
+   assert.equal(await proposalPage.locator('#pinned-case').inputValue(),proposalOriginalCase);assert.equal(await proposalPage.locator('#pinned-events').inputValue(),proposalOriginalEvents);assert.equal(await proposalPage.locator('#pinned-pin').inputValue(),proposalOriginalPin);
+   const dl=proposalPage.waitForEvent('download');await proposalPage.locator('#pinned-proposal-export').click();
+   const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,stem+'.json'),bytes);return JSON.parse(bytes);
+  }
+  const opposite=await saveProposal('proposal-correct',true);
+  assert.equal(opposite.result.comparison,'OPPOSITE_DECISIVE_STATES');assert.deepEqual(opposite.result.worlds.shared,[]);assert.equal(opposite.result.history.commonPrefix.state,'UNDERDETERMINED');
+  const edited=JSON.parse(await proposalPage.locator('#pinned-proposal-text').inputValue());edited.claimedState='SUPPORTED';
+  await proposalPage.locator('#pinned-proposal-text').fill(JSON.stringify(edited));assert.equal(await proposalPage.locator('#pinned-proposal-export').isDisabled(),true);
+  const forged=await saveProposal('proposal-forged',false);assert.equal(forged.result.claim.recomputedState,'REFUTED');
+  edited.caseDigest='sha256:'+'0'.repeat(64);await proposalPage.locator('#pinned-proposal-text').fill(JSON.stringify(edited));
+  await proposalPage.locator('#pinned-proposal-run').click();await proposalPage.waitForFunction(()=>document.querySelector('#pinned-proposal-status').dataset.state==='refused');
+  assert.equal(await proposalPage.locator('#pinned-proposal-export').isDisabled(),true);assert.equal(await proposalPage.locator('#pinned-state').innerText(),'SUPPORTED');
+  assert.deepEqual(proposalErrors,[]);assert.deepEqual(proposalExternal,[]);await proposalPage.close();
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});

@@ -3,9 +3,9 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-031",
+  "session": "V2-032",
   "next": [
-    "V2-D14-WORLD-COVERAGE",
+    "V2-D15-COMPETING-PROPOSAL",
     "V2-P07-WASM",
     "V2-RUNTIME-02",
     "V2-P05-RECOVERY",
@@ -19,7 +19,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "world_coverage_candidate_pending_exact_ci",
+  "state": "competing_proposal_candidate_pending_exact_ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -319,6 +319,12 @@
       "sourceRevision": "c66f1453d286f66bcfa3a189ba00efdcbb090dca",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45577758522/job/139079802299",
       "description": "All nine exact-source workflows passed: knowledge PR 45577758522 and push 45577748118, ingress 45577758114, impact 45577758064, evaluation 45577758054, Open Kit 45577758189, legacy release 45577758213, publisher 45577758104, browser matrix 45577758185. Both browser jobs independently replayed actual conflict and resolved measurement exports, refusing 22 mutated reports. The 432-policy direct oracle covers 81 source availability configurations. Hypothetical range and declared matching cohort only; no empirical uncertainty or source truth inferred."
+    },
+    {
+      "id": "V2-D14-WORLD-COVERAGE",
+      "sourceRevision": "6919d3e7a55b4843563efa0b129c78c1480e7f78",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45578490574/job/139082271228",
+      "description": "All nine exact-source workflows passed: knowledge PR 45578490574 and push 45578480882, ingress 45578490273, impact 45578490447, evaluation 45578491870, Open Kit 45578490751, legacy release 45578490464, publisher 45578490538, browser matrix 45578490495. Knowledge job 139082271514 passed 70 tests. Actual browser compatible omitted world yields UNDERDETERMINED and excluded candidate preserves SUPPORTED; independent Python replay accepted both reports and refused 26 mutants. Same exact original model, history, receipts and capsule. Hypothetical model coverage, not completeness."
     }
   ],
   "release": "not_authorized",
@@ -332,7 +338,7 @@
     "resolutionRevision": "441b8fa44ad0a8332e5ef7f0ecd980fd0c4e0d82",
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45577083295/job/139077570567"
   },
-  "lastVerifiedKernelSource": "c66f1453d286f66bcfa3a189ba00efdcbb090dca",
+  "lastVerifiedKernelSource": "6919d3e7a55b4843563efa0b129c78c1480e7f78",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -343,8 +349,21 @@
   },
   "pendingCandidate": {
     "sourceRevision": null,
-    "sourceParent": "c66f1453d286f66bcfa3a189ba00efdcbb090dca",
+    "sourceParent": "6919d3e7a55b4843563efa0b129c78c1480e7f78",
     "status": "candidate_pending_exact_ci",
+    "identityRule": "Resolve the immutable commit containing this checkpoint.",
+    "checks": [
+      "replay untrusted competing proposal against same caller-pinned aligned case; compare asserted and recomputed state",
+      "opposite decisive states disjoint survivors; both branches retain independent histories; no adoption",
+      "canonical common event prefix replay distinct from final shared readings, exact event digests, divergent tails, evidence roots and availability",
+      "invalid source, foreign case, malformed event or claimed state refused; false claim reported without endorsing it",
+      "four exact local Node groups; two independent Python replay reports and 30 mutated reports refused; actual browser exact CI pending"
+    ]
+  },
+  "previousPendingCandidate": {
+    "sourceRevision": "6919d3e7a55b4843563efa0b129c78c1480e7f78",
+    "sourceParent": "c66f1453d286f66bcfa3a189ba00efdcbb090dca",
+    "status": "verified_exact_ci",
     "identityRule": "Resolve the immutable commit containing this checkpoint.",
     "checks": [
       "one aligned omitted-world candidate, explicit existing base and input-only exact overrides; normalized duplicate and world-budget refusal",
@@ -352,20 +371,6 @@
       "compatible omitted world can destroy decisiveness; incompatible candidate shows exact evidence blockers; unresolved candidate remains unverified",
       "independent Python replay of compatible and excluded candidate; 26 local mutations refused; actual browser independent replay pending",
       "stale diagnostics cleared; no variant adoption or release"
-    ]
-  },
-  "previousPendingCandidate": {
-    "sourceRevision": "c66f1453d286f66bcfa3a189ba00efdcbb090dca",
-    "sourceParent": "441b8fa44ad0a8332e5ef7f0ecd980fd0c4e0d82",
-    "status": "verified_exact_ci",
-    "identityRule": "Resolve the immutable commit containing this checkpoint.",
-    "checks": [
-      "hypothetical exact inclusive range must contain admitted point; normalized rational, no source or event mutation",
-      "single reading vs explicitly matched same-lineage/node/value/dimension cohort; unrelated declared root remains exact",
-      "432 direct-oracle policies over all 81 source availability configurations, readmitted worlds and exact blockers",
-      "recompute minimax frontier on expanded worlds, explicit impossible and unresolved states; original capsule digest unchanged",
-      "actual browser conflict and resolved range exports, no adoption, stale diagnostic cleared on edit, invalid range refused",
-      "independent Python Fraction/set replay, 22 local mutations refused; five local Node groups passed exact staged source/test blobs; full CI pending"
     ]
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
