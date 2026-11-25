@@ -530,6 +530,24 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await gridPage.locator('#pinned-events').fill(originalEvents);assert.equal(await gridPage.locator('#pinned-grid-export').isDisabled(),true);await gridPage.locator('#pinned-run').click();await gridPage.waitForFunction(()=>document.querySelector('#pinned-state').textContent==='SUPPORTED'&&!document.querySelector('#pinned-export').disabled);
   const gridExcluded=await saveGrid('grid-excluded','SUPPORTED');assert.equal(gridExcluded.candidates[0].compatible,false);assert.deepEqual(gridExcluded.candidates[0].blockers.map(x=>x.observationId),['read_alternate']);
   assert.deepEqual(gridErrors,[]);assert.deepEqual(gridExternal,[]);await gridPage.close();
+  // Interaction-only reversal, exact export, and evidence-excluded counterexample.
+  const contrastPage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),contrastErrors=[],contrastExternal=[];
+  contrastPage.on('pageerror',e=>contrastErrors.push(e.message));contrastPage.on('request',r=>{if(new URL(r.url()).origin!==origin)contrastExternal.push(r.url());});
+  await contrastPage.goto(origin);await contrastPage.locator('#pinned-workspace > summary').click();await contrastPage.locator('#pinned-contrast-example').click();
+  await contrastPage.waitForFunction(()=>document.querySelector('#pinned-state').textContent==='SUPPORTED'&&!document.querySelector('#pinned-export').disabled);
+  await contrastPage.locator('#pinned-coverage > summary').click();
+  const contrastCase=await contrastPage.locator('#pinned-case').inputValue(),contrastPin=await contrastPage.locator('#pinned-pin').inputValue();
+  async function saveContrast(stem,compatible){
+   const history=await contrastPage.locator('#pinned-events').inputValue();
+   await contrastPage.locator('#pinned-contrast-run').click();await contrastPage.waitForFunction(()=>document.querySelector('#pinned-contrast-status').dataset.state==='ready'&&!document.querySelector('#pinned-contrast-export').disabled);
+   assert.match(await contrastPage.locator('#pinned-contrast-anchors').innerText(),/INTERACTION ONLY WITHIN OBSERVED DOMAINS/);
+   assert.equal(await contrastPage.locator('#pinned-state').innerText(),'SUPPORTED');assert.equal(await contrastPage.locator('#pinned-events').inputValue(),history);assert.equal(await contrastPage.locator('#pinned-case').inputValue(),contrastCase);assert.equal(await contrastPage.locator('#pinned-pin').inputValue(),contrastPin);
+   const dl=contrastPage.waitForEvent('download');await contrastPage.locator('#pinned-contrast-export').click();const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,stem+'.json'),bytes);
+   const a=JSON.parse(bytes).result.anchors.find(x=>x.anchor.worldIds.includes('load_10_cap_20'));assert.equal(a.modelContrast.minimumChangedInputs,2);assert.equal(a.evidenceCompatibleContrast.count,compatible?1:0);assert.equal(a.evidenceExcludedContrast.count,compatible?0:1);assert.equal(a.modelContrast.minimalInterventions[0].origin,'hypothetical');
+  }
+  await saveContrast('contrast-compatible',true);
+  await contrastPage.locator('#pinned-events').fill(originalEvents);assert.equal(await contrastPage.locator('#pinned-contrast-export').isDisabled(),true);await contrastPage.locator('#pinned-run').click();await contrastPage.waitForFunction(()=>document.querySelector('#pinned-state').textContent==='SUPPORTED'&&!document.querySelector('#pinned-export').disabled);
+  await saveContrast('contrast-excluded',false);assert.deepEqual(contrastErrors,[]);assert.deepEqual(contrastExternal,[]);await contrastPage.close();
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});

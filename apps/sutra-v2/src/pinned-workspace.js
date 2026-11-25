@@ -6,12 +6,13 @@ import {exportCoverageAttack} from '../../../packages/sutra-knowledge/world-cove
 import {exportProposalChallenge} from '../../../packages/sutra-knowledge/proposal-challenge.js';
 import {exportProposalClash} from '../../../packages/sutra-knowledge/proposal-clash.js';
 import {exportObservedDomainGrid} from '../../../packages/sutra-knowledge/coverage-grid.js';
+import {exportAssumptionContrast} from '../../../packages/sutra-knowledge/assumption-contrast.js';
 const by=id=>document.getElementById('pinned-'+id),txt=(id,v)=>{by(id).textContent=v;};
-let busy=false,current=null,sample=null,stage=null,cap=null,verifiedCap=null,rangeResult=null,coverageResult=null,proposalResult=null,clashResult=null,gridResult=null;
+let busy=false,current=null,sample=null,stage=null,cap=null,verifiedCap=null,rangeResult=null,coverageResult=null,proposalResult=null,clashResult=null,gridResult=null,contrastResult=null;
 const capStatus=(state,text)=>{by('capsule-status').dataset.state=state;txt('capsule-status',text);};
 function clear(){current=null;clearRange();clearCoverage();clearProposal();clearGrid();by('result').hidden=true;txt('status','Input changed. Evaluate the exact current text.');}
 function refresh(){
- for(const id of ['case','pin','events','example','coverage-example','proposal-example','grid-example','run'])by(id).disabled=busy;
+ for(const id of ['case','pin','events','example','coverage-example','proposal-example','grid-example','contrast-example','run'])by(id).disabled=busy;
  by('export').disabled=busy||!current;
  by('conflict').disabled=busy||stage!=='baseline'||!current;
  by('resolve').disabled=busy||stage!=='conflict'||!current;
@@ -25,6 +26,8 @@ function refresh(){
  by('clash-export').disabled=busy||!clashResult;
  by('grid-run').disabled=busy||!current;
  by('grid-export').disabled=busy||!gridResult;
+ by('contrast-run').disabled=busy||!current;
+ by('contrast-export').disabled=busy||!contrastResult;
  by('capsule-export').disabled=busy||!current;
  by('capsule-pin-export').disabled=busy||!cap;
  for(const id of ['capsule-case-pin','capsule-pin','capsule-file'])by(id).disabled=busy;
@@ -64,6 +67,11 @@ by('coverage-example').onclick=()=>work(async()=>{
 by('grid-example').onclick=()=>work(async()=>{
  sample=await capacityExample();const c=JSON.parse(sample.caseText);c.worlds=c.worlds.filter(w=>w.id!=='load_30_cap_20');
  by('case').value=JSON.stringify(c);by('pin').value=await casePin(by('case').value);setEvents([sample.reads.read_meter]);stage='grid';
+});
+by('contrast-example').onclick=()=>work(async()=>{
+ sample=await capacityExample();const c=JSON.parse(sample.caseText);c.worlds=c.worlds.filter(w=>w.id!=='load_30_cap_40');
+ for(const w of c.worlds){const g=JSON.parse(w.graphText),target=g.nodes.pop();g.nodes.push({id:'limit',kind:'input',value:'900',dimension:[0,0,0],basis:'Synthetic product limit'},{id:'product',kind:'derive',op:'mul',args:['load','capacity']});target.args=['product','limit'];g.nodes.push(target);w.graphText=JSON.stringify(g);}
+ by('case').value=JSON.stringify(c);by('pin').value=await casePin(by('case').value);setEvents([]);stage='contrast';
 });
 by('proposal-example').onclick=()=>work(async()=>{
  sample=await capacityExample();by('case').value=sample.caseText;by('pin').value=sample.pin;
@@ -212,7 +220,7 @@ by('clash-export').onclick=()=>{
  download(bytes,'sutra-proposal-clash.json','application/json');
 };
 function gridStatus(state,text){by('grid-status').dataset.state=state;txt('grid-status',text);}
-function clearGrid(){gridResult=null;by('grid-result').hidden=true;gridStatus('idle','No observed-domain audit evaluated.');}
+function clearGrid(){gridResult=null;by('grid-result').hidden=true;gridStatus('idle','No observed-domain audit evaluated.');clearContrast();}
 function renderGrid(){
  const r=gridResult.result;
  txt('grid-summary',r.uniqueAssignments+' unique assignments / '+r.gridSize+' possible combinations of observed values · '+r.missingCount+' omitted\n'+(r.closureState===null?'Audit limit exceeded; no closure conclusion computed.':'Current '+r.baseline.state+' → hypothetical closure '+r.closureState));
@@ -231,6 +239,36 @@ by('grid-export').onclick=()=>{
  const bytes=new TextEncoder().encode(JSON.stringify(gridResult));
  if(bytes.length>1048576){gridStatus('refused','REFUSED: diagnosis export exceeds 1 MiB.');return;}
  download(bytes,'sutra-observed-domain-grid.json','application/json');
+};
+function contrastStatus(state,message){by('contrast-status').dataset.state=state;txt('contrast-status',message);}
+function clearContrast(){contrastResult=null;by('contrast-result').hidden=true;contrastStatus('idle','No assumption contrast evaluated.');}
+function showInterventions(f,labels){
+ return f.count?f.count+' opposite assignments · minimum '+f.minimumChangedInputs+' changes\n'+f.minimalInterventions.map(w=>w.changes.map(c=>c.id+' '+c.from+' → '+c.to).join('; ')+' ('+w.origin+')'+(w.blockers.length?' · excluded by '+w.blockers.map(b=>b.observationId).join(', '):'')+(w.invalidOffers.length?' · invalid offers '+w.invalidOffers.join(', '):'')).join('\n'):'None found among evaluated assignments';
+}
+function renderContrast(){
+ const r=contrastResult.result;
+ txt('contrast-summary',r.assignmentsEvaluated+' evaluated assignments / '+r.gridSize+' combinations · '+(r.completeOverObservedValues?'Complete over observed values only':'Incomplete grid; absence of a reversal is not established'));
+ const out=by('contrast-anchors');out.replaceChildren();
+ for(const a of r.anchors){
+  const section=document.createElement('section'),heading=document.createElement('h4'),text=document.createElement('p'),details=document.createElement('pre');
+  heading.textContent=a.anchor.worldIds.join(' / ');text.textContent=a.oneFactor.assessment.replaceAll('_',' ')+' · '+a.oneFactor.evaluated+'/'+a.oneFactor.expected+' one-factor alternatives evaluated; '+a.oneFactor.unresolved+' unresolved';
+  details.textContent='Model-only reversal:\n'+showInterventions(a.modelContrast)+'\n\nCompatible with admitted evidence:\n'+showInterventions(a.evidenceCompatibleContrast)+'\n\nExcluded by admitted evidence:\n'+showInterventions(a.evidenceExcludedContrast)+'\n\nAdmission blocked:\n'+showInterventions(a.admissionBlockedContrast)+'\n\nUnresolved assignments: '+a.unresolvedAssignments.length;
+  section.append(heading,text,details);out.append(section);
+ }
+ if(!r.anchors.length)out.textContent='No surviving declared decisive anchor; no reversal claim.';
+ by('contrast-result').hidden=false;contrastStatus('ready','Computed exact discrete counterfactuals. Current investigation unchanged.');
+}
+by('contrast-run').onclick=async()=>{
+ if(busy||!current)return;busy=true;clearContrast();refresh();
+ try{contrastResult=await exportAssumptionContrast(current.caseText,current.result.caseDigest,current.eventText);renderContrast();}
+ catch{contrastResult=null;contrastStatus('refused','REFUSED: assumption contrast could not be reconstructed. Current investigation unchanged.');}
+ finally{busy=false;refresh();}
+};
+by('contrast-export').onclick=()=>{
+ if(busy||!contrastResult)return;
+ const bytes=new TextEncoder().encode(JSON.stringify(contrastResult));
+ if(bytes.length>1048576){contrastStatus('refused','REFUSED: contrast export exceeds 1 MiB.');return;}
+ download(bytes,'sutra-assumption-contrast.json','application/json');
 };
 function download(bytes,name,type){
  const url=URL.createObjectURL(new Blob([bytes],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);

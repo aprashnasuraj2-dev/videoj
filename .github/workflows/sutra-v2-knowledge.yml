@@ -204,6 +204,10 @@ jobs:
         run: |
           python3 packages/sutra-knowledge/reference/verify_coverage_grid.py --challenge apps/sutra-v2/test-output/grid-compatible.json apps/sutra-v2/test-output/grid-excluded.json > apps/sutra-v2/test-output/grid-reference.txt
           cat apps/sutra-v2/test-output/grid-reference.txt
+      - name: Independently replay discrete assumption contrast and joint reversal
+        run: |
+          python3 packages/sutra-knowledge/reference/verify_assumption_contrast.py --challenge apps/sutra-v2/test-output/contrast-compatible.json apps/sutra-v2/test-output/contrast-excluded.json > apps/sutra-v2/test-output/contrast-reference.txt
+          cat apps/sutra-v2/test-output/contrast-reference.txt
       - name: Witness actual Chromium evidence history with Go Ed25519 checkpoint
         run: |
           go version

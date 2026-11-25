@@ -61,3 +61,7 @@ export async function auditAssumptionContrast(caseText,pin,eventText='[]'){
  const anchors=rows.filter(r=>r.origin==='declared'&&r.compatible&&decisive(r.decision)).map(r=>analyzeAnchor(r,rows,grid.axes,complete));
  return freeze({version:CONTRAST_VERSION,caseDigest:pin,eventDigest:baseline.eventDigest,schemaDigest:aligned.alignment.schemaDigest,baselineState:baseline.state,axes:grid.axes,gridStatus:grid.status,gridSize:grid.gridSize,assignmentsEvaluated:rows.length,completeOverObservedValues:complete,anchors,qualification:'Exact discrete contrast relative to surviving declared anchors and represented input values. Model-only changes may contradict active readings; evidence-compatible means not excluded by admitted readings, not feasible, causal, independent, probable or recommended. A finite incomplete grid cannot establish absence of a reversal. No case, observation, availability or capsule mutation.'});
 }
+
+export async function exportAssumptionContrast(caseText,pin,eventText='[]'){
+ return freeze({version:CONTRAST_VERSION,caseText,eventText,result:await auditAssumptionContrast(caseText,pin,eventText)});
+}

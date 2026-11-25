@@ -3,10 +3,21 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-036",
+  "session": "V2-037",
   "next": [
-    "Run exact source CI and resolve candidate SHA",
-    "Wire assumption contrast into browser UX and independent replay; preserve evidence and scope boundaries"
+    "V2-D18-ASSUMPTION-CONTRAST",
+    "V2-P07-WASM",
+    "V2-RUNTIME-02",
+    "V2-P05-RECOVERY",
+    "V2-P05-ROLLBACK",
+    "V2-F11b",
+    "V2-P06-REFINE",
+    "V2-P01-THREAT",
+    "V2-P04-CONSENT",
+    "V2-P14-BUDGET",
+    "V2-P14-BYOK-UX",
+    "V2-RUNTIME-03",
+    "V2-F12d"
   ],
   "state": "assumption_contrast_candidate_pending_exact_ci",
   "verified": [
@@ -349,24 +360,21 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
-    "state": "candidate_pending_exact_ci",
     "sourceRevision": null,
-    "parentRevision": "205dc1544a537dd4de3cd184653d975d84165a8d",
-    "scope": "V2-D18-ASSUMPTION-CONTRAST",
-    "resolution": "Resolve containing commit from PR head; do not inherit parent's green CI."
+    "sourceParent": "52c1920a5dd31ab7f3cf10db16344474d430cb89",
+    "status": "candidate_pending_exact_ci",
+    "identityRule": "Resolve immutable commit containing this checkpoint.",
+    "checks": [
+      "V2-037 candidate extends V2-036 with an accessible read-only browser interaction example, report export (1 MiB limit), separate evidence-compatible and excluded witnesses, stale-report invalidation, two Chromium journey assertions, and independent Python reconstruction using pairwise exact intervention-set subset comparison, independently constructed fixture pin and 21 mutation controls per export. No browser, integrated Node, or Python execution observed yet on this source; exact CI pending. Earlier 2,048 pure-anchor oracle checks remain limited to that algorithm. No publication, source adoption, external requests or paid inference."
+    ]
   },
   "previousPendingCandidate": {
-    "sourceRevision": null,
-    "sourceParent": "c263313e0658536969ca1658e3c5ce93f1853096",
-    "status": "candidate_pending_exact_ci",
-    "identityRule": "Resolve the immutable commit containing this checkpoint.",
-    "checks": [
-      "audit exact normalized observed input domains, duplicate assignment groups, exact BigInt Cartesian cardinality and missing count",
-      "enumerate entire hypothetical grid only when <=12 combinations; never silently truncate or claim empirical completeness",
-      "recompute each missing assignment from nearest deterministic base; exact input differences, receipt digests, compatibility blockers and decision",
-      "invalid offered quantity and unresolved target cause UNVERIFIED, not silent omission; original case and capsule unchanged",
-      "four local Node groups and two independent Python reports, 36 mutations refused; actual browser exact CI pending"
-    ]
+    "state": "candidate_pending_exact_ci",
+    "sourceRevision": "52c1920a5dd31ab7f3cf10db16344474d430cb89",
+    "parentRevision": "205dc1544a537dd4de3cd184653d975d84165a8d",
+    "scope": "V2-D18-ASSUMPTION-CONTRAST",
+    "resolution": "Resolve containing commit from PR head; do not inherit parent's green CI.",
+    "status": "candidate_pending_exact_ci"
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
