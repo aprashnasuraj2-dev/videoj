@@ -46,7 +46,7 @@ export function createProviderBudgetLedger({global,profiles,leaseTicks=45,random
   const bytes=new Uint8Array(length);globalThis.crypto.getRandomValues(bytes);return bytes;
  });
  if(typeof fill!=='function')stop('RANDOM');
- const used=blank(),leases=new Map();
+ const used=blank(),leases=new Map();let lastNow=-1;
 
  const leaseId=()=>{
   for(let i=0;i<4;i++){
@@ -66,7 +66,8 @@ export function createProviderBudgetLedger({global,profiles,leaseTicks=45,random
   if(lease.unknown){used.unknown--;p.used.unknown--;}
  };
  const prune=now=>{
-  if(!safe(now,0,Number.MAX_SAFE_INTEGER))stop('CLOCK');
+  if(!safe(now,0,Number.MAX_SAFE_INTEGER)||now<lastNow)stop('CLOCK');
+  lastNow=now;
   let expired=0;
   for(const lease of leases.values()){
    if(lease.active&&lease.expiresAt<=now){
