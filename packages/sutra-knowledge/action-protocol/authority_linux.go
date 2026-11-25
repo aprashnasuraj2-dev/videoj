@@ -251,16 +251,26 @@ func (a *SharedAuthority) signResponse(req AuthorityRequest,outcome byte,stale b
  copy(r.Signature[:],ed25519.Sign(a.signer,r.message()))
  return r
 }
-func (a *SharedAuthority) Process(req AuthorityRequest)(AuthorityResponse,error){
- a.mu.Lock();defer a.mu.Unlock()
- if a.lock==nil||a.poisoned{return AuthorityResponse{},ErrStore}
+type authorityPlan struct {
+ before Digest
+ after Digest
+ nextSpent [authorityCallers]byte
+ nextRequests []Request
+ candidate *Receiver
+ outcome byte
+ stale bool
+ receipt Receipt
+ persist bool
+}
+
+func (a *SharedAuthority) planLocked(req AuthorityRequest)(authorityPlan,error){
  if req.Caller>=authorityCallers||(req.Op!=AuthorityCommit&&req.Op!=AuthorityStatus)||!a.receiver.admit(req.Action)||
-  !ed25519.Verify(a.callers[req.Caller],req.message(),req.Signature[:]){return AuthorityResponse{},ErrAuthorityAuth}
+  !ed25519.Verify(a.callers[req.Caller],req.message(),req.Signature[:]){return authorityPlan{},ErrAuthorityAuth}
  before:=a.headLocked()
  if a.spent[req.Caller]>=authorityPerCallerContacts||int(a.spent[0])+int(a.spent[1])>=authorityTotalContacts{
-  return a.signResponse(req,AuthorityBudget,req.Expected!=before,before,before,Receipt{}),nil
+  return authorityPlan{before:before,after:before,outcome:AuthorityBudget,stale:req.Expected!=before},nil
  }
- candidate,e:=a.replayCandidate();if e!=nil{return AuthorityResponse{},e}
+ candidate,e:=a.replayCandidate();if e!=nil{return authorityPlan{},e}
  nextSpent:=a.spent;nextSpent[req.Caller]++
  nextRequests:=append([]Request(nil),a.requests...)
  stale:=req.Expected!=before
@@ -281,13 +291,32 @@ func (a *SharedAuthority) Process(req AuthorityRequest)(AuthorityResponse,error)
   receipt,e=candidate.Status(req.Action)
   if e==nil{outcome=AuthorityCommitted}else if errors.Is(e,ErrAbsent){outcome=AuthorityAbsent;e=nil}
  }
- if e!=nil{return AuthorityResponse{},e}
- if e=a.persist(nextSpent,nextRequests);e!=nil{
+ if e!=nil{return authorityPlan{},e}
+ after:=sha256.Sum256(a.stateBody(nextSpent,nextRequests))
+ return authorityPlan{
+  before:before,after:after,nextSpent:nextSpent,nextRequests:nextRequests,candidate:candidate,
+  outcome:outcome,stale:stale,receipt:receipt,persist:true,
+ },nil
+}
+
+func (a *SharedAuthority) applyPlanLocked(req AuthorityRequest,p authorityPlan)(AuthorityResponse,error){
+ if !p.persist{return a.signResponse(req,p.outcome,p.stale,p.before,p.after,p.receipt),nil}
+ if a.headLocked()!=p.before{return AuthorityResponse{},ErrHeadConflict}
+ if e:=a.persist(p.nextSpent,p.nextRequests);e!=nil{
   a.poisoned=true;return AuthorityResponse{},ErrUnknown
  }
- a.spent=nextSpent;a.requests=nextRequests;a.receiver=candidate
- after:=a.headLocked()
- return a.signResponse(req,outcome,stale,before,after,receipt),nil
+ a.spent=p.nextSpent;a.requests=p.nextRequests;a.receiver=p.candidate
+ if a.headLocked()!=p.after{
+  a.poisoned=true;return AuthorityResponse{},ErrStore
+ }
+ return a.signResponse(req,p.outcome,p.stale,p.before,p.after,p.receipt),nil
+}
+
+func (a *SharedAuthority) Process(req AuthorityRequest)(AuthorityResponse,error){
+ a.mu.Lock();defer a.mu.Unlock()
+ if a.lock==nil||a.poisoned{return AuthorityResponse{},ErrStore}
+ p,e:=a.planLocked(req);if e!=nil{return AuthorityResponse{},e}
+ return a.applyPlanLocked(req,p)
 }
 func (a *SharedAuthority) Close()error{
  a.mu.Lock();defer a.mu.Unlock()
