@@ -7,12 +7,13 @@ import {exportProposalChallenge} from '../../../packages/sutra-knowledge/proposa
 import {exportProposalClash} from '../../../packages/sutra-knowledge/proposal-clash.js';
 import {exportObservedDomainGrid} from '../../../packages/sutra-knowledge/coverage-grid.js';
 import {exportAssumptionContrast} from '../../../packages/sutra-knowledge/assumption-contrast.js';
+import {microsoftCashFlowExample} from '../../../packages/sutra-knowledge/microsoft-cashflow.js';
 const by=id=>document.getElementById('pinned-'+id),txt=(id,v)=>{by(id).textContent=v;};
-let busy=false,current=null,sample=null,stage=null,cap=null,verifiedCap=null,rangeResult=null,coverageResult=null,proposalResult=null,clashResult=null,gridResult=null,contrastResult=null;
+let busy=false,current=null,sample=null,stage=null,cap=null,verifiedCap=null,rangeResult=null,coverageResult=null,proposalResult=null,clashResult=null,gridResult=null,contrastResult=null,financeSample=null;
 const capStatus=(state,text)=>{by('capsule-status').dataset.state=state;txt('capsule-status',text);};
 function clear(){current=null;clearRange();clearCoverage();clearProposal();clearGrid();by('result').hidden=true;txt('status','Input changed. Evaluate the exact current text.');}
 function refresh(){
- for(const id of ['case','pin','events','example','coverage-example','proposal-example','grid-example','contrast-example','run'])by(id).disabled=busy;
+ for(const id of ['case','pin','events','example','coverage-example','proposal-example','grid-example','contrast-example','finance-example','run'])by(id).disabled=busy;
  by('export').disabled=busy||!current;
  by('conflict').disabled=busy||stage!=='baseline'||!current;
  by('resolve').disabled=busy||stage!=='conflict'||!current;
@@ -28,6 +29,10 @@ function refresh(){
  by('grid-export').disabled=busy||!gridResult;
  by('contrast-run').disabled=busy||!current;
  by('contrast-export').disabled=busy||!contrastResult;
+ by('finance-ocf').disabled=busy||stage!=='finance_baseline'||!current;
+ by('finance-full').disabled=busy||stage!=='finance_ocf'||!current;
+ by('finance-withdraw').disabled=busy||stage!=='finance_full'||!current;
+ by('finance-detail').hidden=!current||!stage?.startsWith('finance_');
  by('capsule-export').disabled=busy||!current;
  by('capsule-pin-export').disabled=busy||!cap;
  for(const id of ['capsule-case-pin','capsule-pin','capsule-file'])by(id).disabled=busy;
@@ -37,6 +42,7 @@ function refresh(){
 for(const id of ['case','pin','events'])by(id).addEventListener('input',()=>{stage=null;clear();refresh();});
 function render(){
  const r=current.result;
+ if(stage?.startsWith('finance_'))txt('finance-explanation',stage==='finance_baseline'?'Four hypothetical candidate combinations. No reported fields admitted yet.':stage==='finance_ocf'?'FY2026 operating cash flow is higher; two different cash PPE assumptions still survive. The proxy direction is unresolved.':stage==='finance_full'?'FY2025 proxy: 71,611; FY2026 proxy: 66,987 (USD million). Difference: −4,624. Six field readings, two filings, one declared issuer root. Computation is conditional on the normalized extracts.':'Hypothetical issuer-lineage withdrawal removes all six dependent readings. Both filings remain in historical events; four candidate worlds survive again.');
  txt('alignment','Same typed graph across '+current.alignment.worldCount+' worlds · '+current.alignment.nodeCount+' nodes · only input values vary.');
  txt('state',r.state);txt('worlds',r.report.survivingWorlds.length+' / '+r.report.worlds.length);txt('roots',r.rootSummary.length);
  const format=(name,xs)=>name+': '+(xs.length?xs.map(x=>(x.roots.join(' + ')||'Declared model alone')+' → '+x.worlds.length+' compatible worlds').join('\n'):'none');
@@ -73,6 +79,12 @@ by('contrast-example').onclick=()=>work(async()=>{
  for(const w of c.worlds){const g=JSON.parse(w.graphText),target=g.nodes.pop();g.nodes.push({id:'limit',kind:'input',value:'900',dimension:[0,0,0],basis:'Synthetic product limit'},{id:'product',kind:'derive',op:'mul',args:['load','capacity']});target.args=['product','limit'];g.nodes.push(target);w.graphText=JSON.stringify(g);}
  by('case').value=JSON.stringify(c);by('pin').value=await casePin(by('case').value);setEvents([]);stage='contrast';
 });
+by('finance-example').onclick=()=>work(async()=>{
+ financeSample=await microsoftCashFlowExample();by('case').value=financeSample.caseText;by('pin').value=financeSample.pin;setEvents([]);stage='finance_baseline';
+});
+by('finance-ocf').onclick=()=>work(async()=>{setEvents(financeSample.operatingOnly);stage='finance_ocf';});
+by('finance-full').onclick=()=>work(async()=>{setEvents(financeSample.full);stage='finance_full';});
+by('finance-withdraw').onclick=()=>work(async()=>{setEvents(financeSample.withdrawn);stage='finance_withdrawn';});
 by('proposal-example').onclick=()=>work(async()=>{
  sample=await capacityExample();by('case').value=sample.caseText;by('pin').value=sample.pin;
  setEvents([sample.reads.read_capacity,sample.reads.read_alternate]);stage='proposal';

@@ -548,6 +548,22 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await saveContrast('contrast-compatible',true);
   await contrastPage.locator('#pinned-events').fill(originalEvents);assert.equal(await contrastPage.locator('#pinned-contrast-export').isDisabled(),true);await contrastPage.locator('#pinned-run').click();await contrastPage.waitForFunction(()=>document.querySelector('#pinned-state').textContent==='SUPPORTED'&&!document.querySelector('#pinned-export').disabled);
   await saveContrast('contrast-excluded',false);assert.deepEqual(contrastErrors,[]);assert.deepEqual(contrastExternal,[]);await contrastPage.close();
+  // Real reported cash-flow fields; the proxy is a declared calculation, not an investment recommendation.
+  const financePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),financeErrors=[],financeExternal=[];
+  financePage.on('pageerror',e=>financeErrors.push(e.message));financePage.on('request',r=>{if(new URL(r.url()).origin!==origin)financeExternal.push(r.url());});
+  await financePage.goto(origin);await financePage.locator('#pinned-workspace > summary').click();
+  async function financeStep(button,stem,state,count,roots){
+   await financePage.locator('#pinned-'+button).click();
+   await financePage.waitForFunction(s=>document.querySelector('#pinned-state').textContent===s&&!document.querySelector('#pinned-export').disabled,state);
+   assert.equal(await financePage.locator('#pinned-worlds').innerText(),count+' / 4');assert.equal(await financePage.locator('#pinned-roots').innerText(),String(roots));
+   assert.equal(await financePage.locator('#pinned-finance-detail').isVisible(),true);
+   const dl=financePage.waitForEvent('download');await financePage.locator('#pinned-export').click();const bytes=fs.readFileSync(await (await dl).path());fs.writeFileSync(path.join(output,'finance-'+stem+'.json'),bytes);
+   return JSON.parse(bytes).result;
+  }
+  await financeStep('finance-example','baseline','UNDERDETERMINED',4,0);
+  await financeStep('finance-ocf','ocf','UNDERDETERMINED',2,1);
+  const financeFull=await financeStep('finance-full','full','REFUTED',1,1);assert.equal(financeFull.report.activeEvidence.length,6);assert.match(await financePage.locator('#pinned-finance-explanation').innerText(),/66,987/);
+  await financeStep('finance-withdraw','withdrawn','UNDERDETERMINED',4,0);assert.deepEqual(financeErrors,[]);assert.deepEqual(financeExternal,[]);await financePage.close();
   // Full first-minute tour from fresh browser state; no simulated verdicts.
   const guidePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),guideErrors=[],guideExternal=[];
   guidePage.on('pageerror',e=>guideErrors.push(e.message));guidePage.on('request',r=>{if(new URL(r.url()).origin!==origin)guideExternal.push(r.url());});
