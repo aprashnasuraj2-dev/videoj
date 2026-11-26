@@ -4,8 +4,12 @@ import {createServer} from 'node:http';
 import {spawn} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
 import {compilerFinanceFixture} from '../examples/reviewed-compiler.mjs';
+import {casePin} from '../pinned-investigation.js';
+import {replayInvestigationVersion} from '../investigation-revision.js';
+import {verifyExpressionReviewReceipt} from '../expression-review-receipt.js';
 const cli=fileURLToPath(new URL('../../../apps/sutra-v2/local-council.mjs',import.meta.url));
 const token='LOCAL_RUNNER_TEST_TOKEN_1234';
+const approved=async config=>['--execute-local','--approve-local-disclosure','--approve-plan',await casePin(JSON.stringify(config))];
 function run(config,args=[],env={}){
  return new Promise((resolve,reject)=>{
   const child=spawn(process.execPath,[cli,...args],{stdio:['pipe','pipe','pipe'],env:{...process.env,...env}});
@@ -31,19 +35,38 @@ test('local runner plans without reading credential or contacting endpoint; expl
  const {requests,config}=await fixture(t);
  const planned=await run(config);assert.equal(planned.code,0);assert.equal(JSON.parse(planned.stdout).mode,'LOCAL_PLAN_ONLY');assert.equal(requests.length,0);
  const single=await run(config,['--execute-local']);assert.equal(single.code,1);assert.equal(requests.length,0);
- const out=await run(config,['--execute-local','--approve-local-disclosure'],{SUTRA_LOCAL_RUNNER_TEST:token});
+ const plan=JSON.parse(planned.stdout);assert.equal(plan.planPin,await casePin(JSON.stringify(config)));assert.equal(plan.disclosedBindings.length,4);assert.ok(plan.disclosedBindings.every(b=>!Object.hasOwn(b,'valueLexeme')));
+ const out=await run(config,[...await approved(config),'--export-version'],{SUTRA_LOCAL_RUNNER_TEST:token});
  assert.equal(out.code,0,out.stderr);const result=JSON.parse(out.stdout);
  assert.equal(result.mode,'EXPLICIT_LOCAL_LOOPBACK_HTTP');assert.equal(result.result.state,'DIVERGENT_CONDITIONAL_OUTCOMES');assert.equal(result.budget.used.calls,4);assert.equal(result.budget.used.actualOutputTokens,10);
  assert.equal(result.receipt.receiptPin.startsWith('sha256:'),true);assert.equal(requests.length,4);
+ assert.equal(result.receiptStatus,'CREATED');assert.equal(result.investigationStatus,'CREATED');assert.equal(result.planPin,plan.planPin);
+ assert.equal((await verifyExpressionReviewReceipt({contractText:config.contractText,contractPin:config.contractPin,...result.receipt})).state,'DIVERGENT_CONDITIONAL_OUTCOMES');
+ assert.equal((await replayInvestigationVersion(result.investigation.versionText,result.investigation.versionPin)).investigation.triage.state,'DIVERGENT_CONDITIONAL_OUTCOMES');
  assert.ok(requests.filter(x=>x.path==='/chat').every(x=>x.headers.authorization===undefined&&x.headers['x-api-key']===undefined));
  assert.ok(requests.filter(x=>x.path==='/messages').every(x=>x.headers['x-api-key']===token));
  assert.equal(JSON.stringify(requests.map(x=>x.op)).includes('136162'),false);
  assert.equal(out.stdout.includes(token),false);assert.equal(out.stderr.includes(token),false);
 });
 test('wrong pin, unknown binding, unused endpoint and missing authentication refuse before first contact',async t=>{
- const {requests,config}=await fixture(t),args=['--execute-local','--approve-local-disclosure'];
+ const {requests,config}=await fixture(t),args=await approved(config);
  for(const c of [{...config,contractPin:'sha256:'+'0'.repeat(64)},{...config,disclosure:{bindingIds:['not_present'],includeValues:false}},{...config,agents:config.agents.slice(0,1)}]){
-  const r=await run(c,args,{SUTRA_LOCAL_RUNNER_TEST:token});assert.equal(r.code,1);assert.equal(r.stdout,'');assert.equal(requests.length,0);
+  const r=await run(c,await approved(c),{SUTRA_LOCAL_RUNNER_TEST:token});assert.equal(r.code,1);assert.equal(r.stdout,'');assert.equal(requests.length,0);
  }
  const missing=await run(config,args,{SUTRA_LOCAL_RUNNER_TEST:''});assert.equal(missing.code,1);assert.match(missing.stderr,/LOCAL_CREDENTIAL_REQUIRED/);assert.equal(requests.length,0);
+});
+
+test('approval binds exact configuration including disclosure, routes, budgets and credential aliases',async t=>{
+ const {requests,config}=await fixture(t),plan=await run(config),args=await approved(config);
+ assert.equal(JSON.parse(plan.stdout).planPin,args[3]);
+ for(const changed of [
+  {...config,disclosure:{...config.disclosure,includeValues:true}},
+  {...config,budget:{...config.budget,maxCalls:3}},
+  {...config,connections:config.connections.map((c,i)=>i?{...c,credentialEnv:'SUTRA_LOCAL_OTHER'}:c)},
+  {...config,agents:config.agents.map((a,i)=>i?{...a,role:'Changed instructions'}:a)}
+ ]){const out=await run(changed,args,{SUTRA_LOCAL_RUNNER_TEST:token});assert.equal(out.code,1);assert.match(out.stderr,/PLAN_PIN_MISMATCH/);assert.equal(out.stdout,'');}
+ assert.equal(requests.length,0);
+ const noPin=await run(config,['--execute-local','--approve-local-disclosure'],{SUTRA_LOCAL_RUNNER_TEST:token});assert.equal(noPin.code,1);assert.equal(requests.length,0);
+ const valuePlan=await run({...config,disclosure:{...config.disclosure,includeValues:true}});assert.equal(valuePlan.code,0);assert.equal(JSON.parse(valuePlan.stdout).disclosedBindings.find(x=>x.id==='ocf25').valueLexeme,'136162');assert.equal(requests.length,0);
+ const defaultOut=await run(config,args,{SUTRA_LOCAL_RUNNER_TEST:token});assert.equal(defaultOut.code,0,defaultOut.stderr);assert.equal(JSON.parse(defaultOut.stdout).investigationStatus,'NOT_REQUESTED');
 });

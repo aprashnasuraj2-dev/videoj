@@ -35,3 +35,6 @@ A separate Node CLI previews exact pinned question, disclosure and approved loca
 ### V2-159 — Native Ollama bounded wire
 
 Native `/api/chat` adapter is selectable in the scripted Studio and admitted by the explicit Node loopback runner. The finite `options.num_predict` cap is enforced again at the socket boundary; only terminal `done: true`, `done_reason: stop`, text-only responses and bounded `eval_count` are admitted. Native route tests use a real literal-loopback fixture server, not a genuine model. No external hosted transport, real key, or offline-model guarantee is added. API reference: https://docs.ollama.com/api/chat and https://docs.ollama.com/modelfile. Exact revision CI pending.
+
+## V2-160 exact local approval candidate
+Local operator execution requires the exact previewed input pin. Optional full living version export is explicitly selected and does not expand model disclosure. Existing local process trust and credential gates remain unchanged.
