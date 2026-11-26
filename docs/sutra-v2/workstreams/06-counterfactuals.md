@@ -29,3 +29,7 @@ Add a separate large-domain search profile with up to six axes × 32 declared va
 
 ### V2-183 CI correction
 Run 45757607945 failed because the regression incorrectly required a distinguishing witness inside the first 128 mixed-radix assignments of the 262,144-world scalability case. Incomplete chunks are specifically allowed to contain no witness. Correct the assertion to require explicit incomplete/non-equivalence qualification, and require an actual witness only after the separate 64-world domain is fully exhausted. Search implementation and coverage rules are unchanged. Prior failure retained; corrected CI pending.
+
+
+### V2-183 root-cause correction
+Corrected run 45758730031 revealed a substantive implementation defect rather than a test issue: the streaming profile read dependency bindings from `compiled.target.bindings`, a field that does not exist. JavaScript `new Set(undefined)` silently produced an empty set, so all candidates were classified static and no counterfactual graph was recomputed. Bindings now come from the compiler target row in `compiled.nodes`; regression explicitly requires fresh counterfactual executions. Both prior failed revisions remain evidence. Corrected CI pending.

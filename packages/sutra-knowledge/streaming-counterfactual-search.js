@@ -29,7 +29,7 @@ async function prepare(versionText,versionPin,domainText,domainPin){
  for(const candidate of version.investigation.candidates){
   const baseline=fromCompiler(candidate.computation?.status);if(!baseline||candidate.admission!=='ADMITTED')continue;
   const proposal=batch.proposals.find(p=>p.id===candidate.id);if(!proposal)fail('PROPOSAL');
-  const compiled=await compileReviewedProposal(raw.contractText,raw.contractPin,proposal.proposalText),graph=JSON.parse(compiled.graphText),bindingByNode=new Map(compiled.nodes.filter(n=>n.kind==='input').map(n=>[n.id,n.bindingId])),used=new Set(compiled.target.bindings),dynamic=[...used].some(x=>axisIds.has(x));
+  const compiled=await compileReviewedProposal(raw.contractText,raw.contractPin,proposal.proposalText),graph=JSON.parse(compiled.graphText),bindingByNode=new Map(compiled.nodes.filter(n=>n.kind==='input').map(n=>[n.id,n.bindingId])),targetRow=compiled.nodes.find(n=>n.id===compiled.target.id);if(!targetRow)fail('TARGET');const used=new Set(targetRow.bindings),dynamic=[...used].some(x=>axisIds.has(x));
   for(const n of graph.nodes)if(n.kind==='input')n.basis='streaming synthetic counterfactual '+bindingByNode.get(n.id);
   runs.push({id:candidate.id,baseline,graph,bindingByNode,target:compiled.target.id,dynamic,verifier:createVerifier()});
  }
