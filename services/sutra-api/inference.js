@@ -2,6 +2,7 @@ import {plain,InferenceError,readSse,makeAccumulator,abortable,MAX_SSE_BYTES} fr
 import {checkSchema,validateData} from '../../packages/sutra-runtime/vendor/nsdeploy/actions.js';
 import {parseUniqueJson} from '../../packages/sutra-runtime/strict-json.js';
 import {quotaLimits,sourceQuotaLimits,MAX_INPUT_BYTES,admissionWindow,ADMISSION_MS} from './quota.js';
+import {webResearchConfig,webResearchRequested} from './web-research-config.js';
 import {readQuotaReply} from './quota-transport.js';
 export const UPSTREAM='https://api.openai.com/v1/chat/completions';
 export async function clientKeyForRequest(request,secretValue,day=new Date().toISOString().slice(0,10)){
@@ -101,7 +102,8 @@ export function configuredModels(env={}){
 export function inferenceStatus(env={}){
  const concurrent=Number(env.SUTRA_MAX_CONCURRENT);
  const sourceQuotaRequested=env.SUTRA_MAX_DAILY_SOURCE_READS!==undefined||env.SUTRA_MAX_CLIENT_SOURCE_READS!==undefined;
- return (!sourceQuotaRequested||!!sourceQuotaLimits(env))&& typeof env.SUTRA_ALLOWED_ORIGIN==='string'&&/^https:\/\/[^/]+$/.test(env.SUTRA_ALLOWED_ORIGIN)&&
+ const webRequested=webResearchRequested(env);
+ return (!sourceQuotaRequested||!!sourceQuotaLimits(env))&&(!webRequested||!!webResearchConfig(env))&& typeof env.SUTRA_ALLOWED_ORIGIN==='string'&&/^https:\/\/[^/]+$/.test(env.SUTRA_ALLOWED_ORIGIN)&&
   Number.isInteger(Number(env.SUTRA_MAX_OUTPUT_TOKENS))&&Number(env.SUTRA_MAX_OUTPUT_TOKENS)>=64&&Number(env.SUTRA_MAX_OUTPUT_TOKENS)<=1024&&
   Number.isInteger(concurrent)&&concurrent>=1&&concurrent<=10&&!!quotaLimits(env)&&
   configuredModels(env).length>0&&env.SUTRA_ENABLE_INFERENCE==='true'&&
@@ -114,7 +116,9 @@ export async function inferenceContractId(env={},snapshot={backend:inferenceBack
  const {backend,models,maxOutput}=snapshot;
  if(!backend||typeof env.SUTRA_CLIENT_HASH_SECRET!=='string'||env.SUTRA_CLIENT_HASH_SECRET.length<32)throw Error('CONTRACT_CONFIG');
  const enc=new TextEncoder(),key=await crypto.subtle.importKey('raw',enc.encode(env.SUTRA_CLIENT_HASH_SECRET),{name:'HMAC',hash:'SHA-256'},false,['sign']);
- const message=JSON.stringify(['sutra-inference-contract-v2',backend.mode,backend.url,backend.credential,models,maxOutput,env.SUTRA_ALLOWED_ORIGIN,quotaLimits(env),sourceQuotaLimits(env),[env.SUTRA_CONTENT_MODE,env.SUTRA_CONTENT_VERSION,env.SUTRA_CATALOG_SHA256,env.SUTRA_TRANSCRIPT_SHA256]]);
+ const web=webResearchConfig(env);
+ const webMaterial=web?['configured',web.provider,web.providerOrigin,web.apiKey,web.tokenSecret,web.limits]:['disabled'];
+ const message=JSON.stringify(['sutra-inference-contract-v3',backend.mode,backend.url,backend.credential,models,maxOutput,env.SUTRA_ALLOWED_ORIGIN,quotaLimits(env),sourceQuotaLimits(env),webMaterial,[env.SUTRA_CONTENT_MODE,env.SUTRA_CONTENT_VERSION,env.SUTRA_CATALOG_SHA256,env.SUTRA_TRANSCRIPT_SHA256]]);
  const signature=await crypto.subtle.sign('HMAC',key,enc.encode(message));
  return Array.from(new Uint8Array(signature),b=>b.toString(16).padStart(2,'0')).join('');
 }

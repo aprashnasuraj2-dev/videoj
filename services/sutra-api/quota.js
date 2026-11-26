@@ -15,6 +15,10 @@ export function sourceQuotaLimits(env={}){
  const max=Number(env.SUTRA_MAX_DAILY_SOURCE_READS),perClient=Number(env.SUTRA_MAX_CLIENT_SOURCE_READS);
  return safe(max,1,100000)&&safe(perClient,1,max)?{max,perClient}:null;
 }
+export function webQuotaLimits(env={}){
+ const max=Number(env.SUTRA_MAX_DAILY_WEB_REQUESTS),perClient=Number(env.SUTRA_MAX_CLIENT_WEB_REQUESTS);
+ return safe(max,1,10000)&&safe(perClient,1,max)?{max,perClient}:null;
+}
 export function quotaLimits(env={}){
  const max=Number(env.SUTRA_MAX_DAILY_CALLS),perClient=Number(env.SUTRA_MAX_CLIENT_CALLS),maxConcurrent=Number(env.SUTRA_MAX_CONCURRENT);
  const maxInput=Number(env.SUTRA_MAX_DAILY_INPUT_BYTES??max*MAX_INPUT_BYTES),maxOutput=Number(env.SUTRA_MAX_DAILY_OUTPUT_TOKENS??max*MAX_OUTPUT_TOKENS);
@@ -26,7 +30,7 @@ export class InferenceQuota{
  async fetch(request){
   if(request.method!=='POST')return new Response('',{status:404});
   const pathname=new URL(request.url).pathname;
-  if(!['/reserve','/release','/source-read'].includes(pathname))return new Response('',{status:404});
+  if(!['/reserve','/release','/source-read','/web-request'].includes(pathname))return new Response('',{status:404});
   let input;try{const text=await request.text();if(text.length>512)throw Error();input=JSON.parse(text);}catch{return new Response('',{status:400});}
   if(pathname==='/source-read'){
    const limits=sourceQuotaLimits(this.env);
@@ -51,6 +55,33 @@ export class InferenceQuota{
      checkWindow(input,this.clock(),request.signal);
      if(state.total>=limits.max||used>=limits.perClient){await tx.put('source-quota',state);await tx.put(bucketKey,clients);return {allowed:false};}
      state.total++;clients.counts[input.clientKey]=used+1;await tx.put('source-quota',state);await tx.put(bucketKey,clients);return {allowed:true};
+    });
+    return Response.json(outcome,{status:outcome.allowed?200:429});
+   }catch{return new Response('',{status:503});}
+  }
+  if(pathname==='/web-request'){
+   const limits=webQuotaLimits(this.env);
+   if(!limits||!map(input)||Object.keys(input).length!==3||typeof input.day!=='string'||!Number.isSafeInteger(input.admitUntil)||typeof input.clientKey!=='string'||!/^[a-f0-9]{64}$/.test(input.clientKey))return new Response('',{status:limits?400:503});
+   try{
+    const outcome=await this.ctx.storage.transaction(async tx=>{
+     const now=this.clock();checkWindow(input,now,request.signal);const day=input.day;
+     // Keep the global counter small and shard per-client counters across 256
+     // pseudorandom HMAC buckets. A single hot day can never grow one Durable
+     // Object value with tens of thousands of client keys.
+     const bucket=input.clientKey.slice(0,2),bucketKey='web-quota:'+bucket;
+     let state=await tx.get('web-quota'),clients=await tx.get(bucketKey);
+     if(state){
+      if(!map(state)||!/^\d{4}-\d{2}-\d{2}$/.test(state.day??'')||state.day>day||!safe(state.total,0,100000)||Object.keys(state).some(k=>!['day','total'].includes(k)))throw Error('Invalid web quota state');
+      if(state.day!==day)state={day,total:0};
+     }else state={day,total:0};
+     if(clients){
+      if(!map(clients)||!/^\d{4}-\d{2}-\d{2}$/.test(clients.day??'')||clients.day>day||!map(clients.counts)||Object.keys(clients).some(k=>!['day','counts'].includes(k)))throw Error('Invalid web client bucket');
+      if(clients.day!==day)clients={day,counts:{}};
+     }else clients={day,counts:{}};
+     const used=clients.counts[input.clientKey]??0;if(!safe(used,0,100000))throw Error('Invalid web client count');
+     checkWindow(input,this.clock(),request.signal);
+     if(state.total>=limits.max||used>=limits.perClient){await tx.put('web-quota',state);await tx.put(bucketKey,clients);return {allowed:false};}
+     state.total++;clients.counts[input.clientKey]=used+1;await tx.put('web-quota',state);await tx.put(bucketKey,clients);return {allowed:true};
     });
     return Response.json(outcome,{status:outcome.allowed?200:429});
    }catch{return new Response('',{status:503});}
