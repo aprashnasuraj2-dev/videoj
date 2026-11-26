@@ -55,3 +55,13 @@ test('deadline and explicit host shutdown terminate pending local requests witho
  const p=second.exchange(wire(r));second.close();
  await assert.rejects(p,/CANCELLED/);await assert.rejects(second.exchange(wire(r)),/CLOSED/);
 });
+
+test('native Ollama request goes over literal loopback without credentials; altered token cap and options never contact server',async t=>{
+ const seen=[];const base=await server(t,(req,res)=>{const chunks=[];req.on('data',x=>chunks.push(x));req.on('end',()=>{seen.push({url:req.url,headers:req.headers,body:JSON.parse(Buffer.concat(chunks))});json(res,{done:true,done_reason:'stop',message:{role:'assistant',content:'native result'},eval_count:4});});});
+ const r=route(base,{protocol:'ollama-chat-json',endpoint:base+'/api/chat',models:['local-model:latest']});const local=createLoopbackModelExchange({routes:[r]});t.after(()=>local.close());
+ const w=createProtocolWorkspace({connections:[{id:r.connectionId,label:'Native',protocol:r.protocol,endpoint:r.endpoint,transportClass:'local',models:r.models}],exchange:local.exchange,globalLimits:limits,defaultProfileLimits:limits});
+ const p=w.addProfile({providerId:r.connectionId,label:'Local',credential:UNUSED});const result=await w.execute({handle:p.handle,model:r.models[0],inputBytes:1,maxOutputTokens:32,operation:{kind:'test',request:'local only'}});
+ assert.equal(result.value.text,'native result');assert.equal(seen.length,1);assert.equal(seen[0].url,'/api/chat');assert.deepEqual(seen[0].body.options,{num_predict:32});assert.equal(seen[0].headers.authorization,undefined);assert.equal(JSON.stringify(seen).includes(UNUSED),false);assert.equal(w.budgetSnapshot().global.used.actualOutputTokens,4);
+ for(const options of [{num_predict:-1},{num_predict:31},{num_predict:32,temperature:1}])await assert.rejects(local.exchange(wire(r,{bodyText:JSON.stringify({...seen[0].body,options})})),/BODY/);
+ assert.equal(seen.length,1);assert.throws(()=>createLoopbackModelExchange({routes:[{...r,authMode:'anthropic-key'}]}),/ROUTE/);
+});

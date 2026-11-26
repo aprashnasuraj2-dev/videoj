@@ -3,7 +3,7 @@
 import {request} from 'node:http';
 import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 const ID=/^[a-z][a-z0-9-]{0,31}$/,MODEL=/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/;
-const protocols=['openai-compatible-json','anthropic-messages-json'];
+const protocols=['openai-compatible-json','anthropic-messages-json','ollama-chat-json'];
 const MAX_REQUEST=131072,MAX_RESPONSE=262144;
 const int=(v,min,max)=>Number.isSafeInteger(v)&&v>=min&&v<=max;
 const fail=code=>{const e=new Error('Local model exchange refused ('+code+').');e.code=code;throw e;};
@@ -17,8 +17,8 @@ function routeEndpoint(raw){
 function admitBody(bodyText,model,outputCap,protocol){
  if(typeof bodyText!=='string'||Buffer.byteLength(bodyText,'utf8')>MAX_REQUEST||bodyText.length===0||/[\ud800-\udfff]/u.test(bodyText))fail('BODY');
  const b=parseUniqueJson(bodyText,{maxChars:MAX_REQUEST,maxDepth:8});
- const common=['model','messages','max_tokens','stream'];
- if(!closed(b,protocol==='anthropic-messages-json'?[...common,'system']:common)||b.model!==model||b.max_tokens!==outputCap||b.stream!==false||!Array.isArray(b.messages)||b.messages.length!==(protocol==='anthropic-messages-json'?1:2))fail('BODY');
+ const native=protocol==='ollama-chat-json',common=['model','messages',native?'options':'max_tokens','stream'];
+ if(!closed(b,protocol==='anthropic-messages-json'?[...common,'system']:common)||b.model!==model||(native?(!closed(b.options,['num_predict'])||b.options.num_predict!==outputCap):b.max_tokens!==outputCap)||b.stream!==false||!Array.isArray(b.messages)||b.messages.length!==(protocol==='anthropic-messages-json'?1:2))fail('BODY');
  const user=b.messages.at(-1);
  if(!closed(user,['role','content'])||user.role!=='user'||typeof user.content!=='string'||!user.content.length)fail('BODY');
  if(protocol==='anthropic-messages-json'){if(typeof b.system!=='string'||!b.system.length)fail('BODY');}

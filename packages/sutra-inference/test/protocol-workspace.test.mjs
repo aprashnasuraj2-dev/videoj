@@ -57,3 +57,14 @@ test('pre-encoding scan refuses another profile secret even when JSON would esca
  await assert.rejects(call(w,a,'org/custom-1',{kind:'chat',request:secret}),e=>e.code==='SECRET_ECHO');
  assert.equal(seen,0);assert.equal(w.budgetSnapshot().global.used.calls,0);
 });
+
+test('native Ollama chat has a finite generation limit and refuses nonterminal, tool-bearing or unaccountable output',async()=>{
+ const c={id:'native-local',label:'Native local model',protocol:'ollama-chat-json',endpoint:'http://127.0.0.1:11434/api/chat',transportClass:'local',models:['local-model:latest']};
+ const valid={done:true,done_reason:'stop',message:{role:'assistant',content:'verified by caller'},eval_count:7,prompt_eval_count:20};
+ let wire;const w=setup(async x=>{wire=JSON.parse(x.bodyText);return {status:200,bodyText:JSON.stringify(valid)}},{connections:[c]});
+ const p=w.addProfile({providerId:c.id,label:'Local',credential:A});const result=await call(w,p,c.models[0]);
+ assert.equal(result.value.text,valid.message.content);assert.deepEqual(wire.options,{num_predict:32});assert.equal(wire.stream,false);assert.equal(wire.model,c.models[0]);assert.equal(wire.messages[0].role,'system');assert.equal(w.budgetSnapshot().global.used.actualOutputTokens,7);
+ for(const bad of [{...valid,done:false},{...valid,done_reason:'length'},{...valid,eval_count:undefined},{...valid,eval_count:33},{...valid,prompt_eval_count:-1},{...valid,message:{...valid.message,tool_calls:[{}]}},{...valid,error:'failure'},{...valid,message:{role:'tool',content:'bad'}}]){
+  const q=setup(async()=>({status:200,bodyText:JSON.stringify(bad)}),{connections:[c]});const profile=q.addProfile({providerId:c.id,label:'Local',credential:A});await assert.rejects(call(q,profile,c.models[0]));assert.equal(q.budgetSnapshot().global.used.calls,1);
+ }
+});

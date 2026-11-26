@@ -79,7 +79,7 @@ function setup(config){
   const wire=JSON.parse(request.bodyText),operation=JSON.parse(wire.messages.at(-1).content);
   await new Promise(resolve=>setTimeout(resolve,45));
   const result=JSON.stringify(syntheticPayload(config.strategy,operation));
-  const body=request.protocol==='anthropic-messages-json'?{type:'message',role:'assistant',stop_reason:'end_turn',content:[{type:'text',text:result}],usage:{output_tokens:1}}:{choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:result}}],usage:{completion_tokens:1}};
+  const body=request.protocol==='anthropic-messages-json'?{type:'message',role:'assistant',stop_reason:'end_turn',content:[{type:'text',text:result}],usage:{output_tokens:1}}:request.protocol==='ollama-chat-json'?{done:true,done_reason:'stop',message:{role:'assistant',content:result},eval_count:1}:{choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:result}}],usage:{completion_tokens:1}};
   return {status:200,bodyText:JSON.stringify(body)};
  }});
  const handles=new Map();

@@ -50,6 +50,12 @@ const builtin=[
   decode:raw=>{
    if(!plain(raw)||raw.error!==undefined||raw.type!=='message'||raw.role!=='assistant'||raw.stop_reason!=='end_turn'||!Array.isArray(raw.content)||raw.content.length<1||raw.content.length>8||!raw.content.every(x=>plain(x)&&x.type==='text'&&str(x.text,16000))||!plain(raw.usage)||!safeTokens(raw.usage.output_tokens))stop('RESPONSE');
    return {text:raw.content.map(x=>x.text).join(''),outputTokens:raw.usage.output_tokens};
+  }},
+ {id:'ollama-chat-json',
+  encode:({model,operation,maxOutputTokens})=>JSON.stringify({model,messages:[{role:'system',content:system},{role:'user',content:userText(operation)}],options:{num_predict:maxOutputTokens},stream:false}),
+  decode:raw=>{
+   if(!plain(raw)||raw.error!==undefined||raw.done!==true||raw.done_reason!=='stop'||!plain(raw.message)||raw.message.role!=='assistant'||!str(raw.message.content,16000)||raw.message.tool_calls!=null&&(!Array.isArray(raw.message.tool_calls)||raw.message.tool_calls.length!==0)||!safeTokens(raw.eval_count)||raw.prompt_eval_count!==undefined&&!safeTokens(raw.prompt_eval_count))stop('RESPONSE');
+   return {text:raw.message.content,outputTokens:raw.eval_count};
   }}
 ];
 function endpoint(input,transportClass){

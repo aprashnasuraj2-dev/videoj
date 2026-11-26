@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-158",
+  "session": "V2-159",
   "next": [
     "V2-P14-BYOK-UX",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Candidate: explicit operator local multi-model runner; latest fully green V2-156.",
+  "state": "candidate-pending-ci",
   "verified": [
     {
       "id": "V2-M01",
@@ -419,14 +419,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-159",
+    "parent": "c11c99bb1a03c246a6a7634beeb4f6373bef6fee",
+    "description": "Native Ollama JSON adapter, finite native generation cap at transport, strict completion and usage, loopback regression and Studio protocol option."
+  },
+  "previousPendingCandidate": {
     "session": "V2-158",
     "parent": "5f27a60f3ef6408a6a4fdae10869cd0b96087953",
     "description": "### V2-158 — explicit local multi-model operator runner (candidate)\nExpose separate Node CLI with bounded strict stdin config, reviewed contract and disclosure preflight, arbitrary model/agent identity and compatible protocol selection, dry-run route/scope plan with zero credential access or contact, dual explicit execute/disclosure flags, all credential enrollment before first dispatch, no-key local placeholder never sent, per-process call/wire/token/concurrency caps, SIGINT/transport shutdown and portable receipt output. Real TCP end-to-end tests use two fixture protocols and verify no contact on dry-run, missing approval, pin or credential. No genuine LLM, public provider, hosted relay or production release authorized. V2-155 and V2-156 exact 9/9 workflows passed; V2-157 pending. Exact V2-158 CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-157",
-    "parent": "2c5042e168dc57e855567d018009a8745a7ecc16",
-    "description": "### V2-157 — expression receipt to living investigation graph (candidate)\nBridge verified expression receipt into existing versioned semantic investigation, deduplicate by compiled proposal identity, refuse single distinct candidate rather than fabricate alternatives, preserve exact question and compiled programs, set all unreviewed semantic facets unspecified. New root version has no decision authority. Studio exports existing baseline-compatible version and independent pin. Test full existing source-withdrawal pipeline: candidate dependencies 2 vs 4 reviewed bindings, both conditional conclusions become missing-input after withdrawal while original divergent root remains replayable; no model call. Browser checks exported version bytes and pin. V2-154 exact 9/9 workflows passed; V2-155 knowledge job 139630569794 and browser 139630570016 both passed; V2-156 pending at observation. Exact V2-157 CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [

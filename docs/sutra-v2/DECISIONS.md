@@ -496,3 +496,7 @@ Bridge verified expression receipt into existing versioned semantic investigatio
 
 ### V2-158 — explicit local multi-model operator runner (candidate)
 Expose separate Node CLI with bounded strict stdin config, reviewed contract and disclosure preflight, arbitrary model/agent identity and compatible protocol selection, dry-run route/scope plan with zero credential access or contact, dual explicit execute/disclosure flags, all credential enrollment before first dispatch, no-key local placeholder never sent, per-process call/wire/token/concurrency caps, SIGINT/transport shutdown and portable receipt output. Real TCP end-to-end tests use two fixture protocols and verify no contact on dry-run, missing approval, pin or credential. No genuine LLM, public provider, hosted relay or production release authorized. V2-155 and V2-156 exact 9/9 workflows passed; V2-157 pending. Exact V2-158 CI pending.
+
+### V2-159 — Native Ollama bounded wire
+
+Native `/api/chat` adapter is selectable in the scripted Studio and admitted by the explicit Node loopback runner. The finite `options.num_predict` cap is enforced again at the socket boundary; only terminal `done: true`, `done_reason: stop`, text-only responses and bounded `eval_count` are admitted. Native route tests use a real literal-loopback fixture server, not a genuine model. No external hosted transport, real key, or offline-model guarantee is added. API reference: https://docs.ollama.com/api/chat and https://docs.ollama.com/modelfile. Exact revision CI pending.

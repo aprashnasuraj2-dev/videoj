@@ -31,3 +31,7 @@ Node-only explicit literal-loopback connector, exact host-approved route descrip
 
 ## V2-158 explicit local operator runner (candidate)
 A separate Node CLI previews exact pinned question, disclosure and approved local route plan with no contact, requires both execution/disclosure flags for actual literal-loopback calls, preflights every credential and selected binding, applies resource budgets and outputs conditional review receipt. No hosted UI enablement. Config names only a restricted local environment variable for credentials. Tests use local fixture responders, not genuine model inference.
+
+### V2-159 — Native Ollama bounded wire
+
+Native `/api/chat` adapter is selectable in the scripted Studio and admitted by the explicit Node loopback runner. The finite `options.num_predict` cap is enforced again at the socket boundary; only terminal `done: true`, `done_reason: stop`, text-only responses and bounded `eval_count` are admitted. Native route tests use a real literal-loopback fixture server, not a genuine model. No external hosted transport, real key, or offline-model guarantee is added. API reference: https://docs.ollama.com/api/chat and https://docs.ollama.com/modelfile. Exact revision CI pending.

@@ -23,3 +23,7 @@ The SSE boundary uses the dependency-free duplicate-member scanner shipped in th
 
 ## Explicit Node-only loopback model connector (candidate)
 `createLoopbackModelExchange({routes,deadlineMs})` is a separately invoked trusted-host transport for exact literal `127.0.0.1` or `[::1]` HTTP endpoints on explicitly approved ports 1024–65535, paths, protocols and model IDs. It supports no-key, approved bearer or Anthropic-key authentication, finite non-streaming JSON, bounded deadlines and bytes, no DNS/proxy/redirect/fallback, and explicit shutdown. Integrate only as the injected exchange of `createProtocolWorkspace` after operator approval. Never expose this local transport through a hosted relay or browser. Tests use local synthetic HTTP servers, not actual model inference or external providers. Local process identity, model ownership, OS compromise, upstream computation and paid billing are not authenticated by this transport.
+
+### V2-159 — Native Ollama bounded wire
+
+Native `/api/chat` adapter is selectable in the scripted Studio and admitted by the explicit Node loopback runner. The finite `options.num_predict` cap is enforced again at the socket boundary; only terminal `done: true`, `done_reason: stop`, text-only responses and bounded `eval_count` are admitted. Native route tests use a real literal-loopback fixture server, not a genuine model. No external hosted transport, real key, or offline-model guarantee is added. API reference: https://docs.ollama.com/api/chat and https://docs.ollama.com/modelfile. Exact revision CI pending.
