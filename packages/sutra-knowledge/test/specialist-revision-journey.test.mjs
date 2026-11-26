@@ -16,3 +16,15 @@ for(const domain of ['finance','engineering'])test(domain+' multi-generation cor
  assert.deepEqual(await replayInvestigationVersion(b.versionText,b.digest),b.report);
  assert.equal(s.view.decisionAuthority,'NONE');
 });
+
+import {casePin} from '../pinned-investigation.js';
+import {evaluateReviewedIntervals} from '../reviewed-interval.js';
+test('network capacity investigation separates nominal threshold, degraded capacity and uncertainty',async()=>{
+ const a=await livingFixture('engineering'),b=await livingFixture('engineering',{revised:true,previousDigest:a.digest});
+ const run=async(v,lower,upper)=>{const text=JSON.stringify({version:1,versionDigest:v.digest,ranges:[{bindingId:'second',lower,upper}]});return evaluateReviewedIntervals(v.versionText,v.digest,text,await casePin(text));};
+ const certain=await run(a,'85/1','95/1'),uncertain=await run(a,'75/1','95/1'),failed=await run(b,'55/1','65/1');
+ const states=r=>Object.fromEntries(r.candidates.map(c=>[c.id,c.status]));
+ assert.equal(states(certain).primary_view,'HOLDS_FOR_ALL_DECLARED_VALUES');assert.equal(states(certain).secondary_view,'HOLDS_FOR_ALL_DECLARED_VALUES');
+ assert.equal(states(uncertain).secondary_view,'NOT_RESOLVED_BY_INTERVAL_ENCLOSURE');assert.equal(states(uncertain).primary_view,'HOLDS_FOR_ALL_DECLARED_VALUES');
+ assert.equal(states(failed).primary_view,'HOLDS_FOR_ALL_DECLARED_VALUES');assert.equal(states(failed).secondary_view,'REFUTED_FOR_ALL_DECLARED_VALUES');assert.equal(failed.decisionAuthority,'NONE');
+});

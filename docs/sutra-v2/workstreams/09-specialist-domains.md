@@ -16,3 +16,8 @@ No merge, release, live inference or external contact authorized. Child JS CI is
 ## Parallel session candidate
 Run two distinct existing synthetic specialist fixtures through correction, withdrawal, reintroduction and full four-version history recovery; require explicit blocked state during withdrawal and unaffected primary branch. This is same-kernel replay, not independent cross-language replay or real specialist/user validation. Next: rights-cleared source-specific scenarios, independent replay and human evaluation.
 Exact child CI pending.
+
+
+## V2-182 candidate
+Add engineering specialist uncertainty journey over actual reviewed intervals: nominal capacity remains sufficient, surviving capacity may be uncertain around demand or fail across the declared range after correction. Synthetic fixture, no service SLA or physical safety certification. Real-source and independent specialist validation still open.
+Exact child CI pending.
