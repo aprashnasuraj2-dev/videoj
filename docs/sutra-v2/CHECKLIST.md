@@ -1003,3 +1003,5 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 - [ ] **V2-P14-BYOK-UX / V2-LK15 product extension (2026-11-26):** [Open model connectivity](OPEN-MODEL-CONNECTIVITY.md) requires arbitrary provider labels, custom compatible endpoint/model IDs, multiple credential/model profiles, trusted adapter extension and provider-neutral agent assignment. No gate closed; live access remains disabled.
 
 - [ ] **V2-148 council candidate:** provider-neutral host assignments, bounded reviewed-method rounds, actual verifier feedback, failure and cancellation regressions; exact CI pending. Full arbitrary-intent and production provider gates remain open.
+
+- [ ] **V2-149 Agent Studio candidate:** primary browser workflow for arbitrary simulated connections, model/role assignments, bounded multi-agent verification feedback, scoped consent and redacted trace. Exact browser CI pending; no live provider or general-intent gate closed.

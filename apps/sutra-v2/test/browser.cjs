@@ -49,6 +49,41 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const page=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{const u=new URL(r.url());if(u.protocol==='blob:'&&u.origin===origin)return;if(u.origin!==origin||u.protocol!=='http:')external.push(r.url());});
   await page.goto(origin);await page.locator('#engineering-labs > summary').click();
+  // Provider-neutral Agent Studio uses real council and verifier, no external model calls.
+  await page.getByRole('button',{name:'Run local agent council'}).click();
+  assert.equal(await page.locator('#studio-status').getAttribute('data-state'),'refused');
+  await page.getByLabel('Connection A ID').fill('my-private-provider');
+  await page.getByLabel('Connection A model ID').fill('org/custom-model');
+  await page.getByLabel('Agent 1 role').fill('Independent reviewer');
+  await page.locator('#studio-share').check();
+  await page.getByRole('button',{name:'Run local agent council'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-status').dataset.state==='complete');
+  assert.equal(await page.locator('#studio-round-count').innerText(),'2');
+  assert.equal(await page.locator('#studio-calls').innerText(),'4');
+  assert.equal(await page.locator('#studio-agreement').innerText(),'same method');
+  assert.equal(await page.locator('.studio-agent-event').count(),4);
+  assert.equal(await page.locator('.studio-method[data-outcome="constraint_refuted"]').count(),1);
+  assert.equal(await page.locator('.studio-method[data-outcome="constraint_satisfied"]').count(),1);
+  const [studioDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Export council trace'}).click()]);
+  const studioText=fs.readFileSync(await studioDownload.path(),'utf8'),studioReport=JSON.parse(studioText);
+  assert.equal(studioReport.result.decisionAuthority,'NONE');
+  assert.equal(studioReport.result.rounds[0].agents[0].providerId,'my-private-provider');
+  assert.equal(studioReport.result.rounds[0].agents[0].model,'org/custom-model');
+  assert.equal(studioText.includes('SYNTHETIC_ONLY_'),false);assert.equal(studioText.includes('profileId'),false);assert.equal(studioText.includes('"handle"'),false);
+  await page.getByLabel('Scripted collaboration behavior').selectOption('hostile');
+  assert.equal(await page.getByRole('button',{name:'Export council trace'}).isDisabled(),true);
+  await page.getByRole('button',{name:'Run local agent council'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-status').dataset.state==='complete');
+  assert.equal(await page.locator('.studio-agent-event[data-status="REFUSED"]').count(),1);
+  assert.equal(await page.locator('#studio-agreement').innerText(),'incomplete');
+  await page.getByLabel('Scripted collaboration behavior').selectOption('contrast');
+  await page.getByLabel('Agent 2 connection').selectOption('a');
+  await page.getByLabel('Total call reservation cap').selectOption('2');
+  await page.getByRole('button',{name:'Run local agent council'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-status').dataset.state==='complete');
+  assert.equal(await page.locator('#studio-calls').innerText(),'2');
+  assert.equal(await page.locator('.studio-agent-event[data-status="REFUSED"]').count(),2);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   // Nontechnical multi-provider setup lab: two ephemeral profiles, no network,
   // no credential left in the DOM after submission, and local routing only.
   const providerKey=page.getByLabel('Test credential'),providerName=page.getByLabel('Profile name');

@@ -33,7 +33,7 @@ export async function runAgentCouncil({caseText,question,routes,workspace,maxRou
     if(controller.signal.aborted)return {agentId:route.id,providerId:route.providerId,model:route.model,status:'REFUSED',reason:'CANCELLED'};
     const base={agentId:route.id,providerId:route.providerId,model:route.model};
     try{
-     const operation={kind:'reviewed-method-council-v1',question,role:route.role,obligationId:c.obligationId,methodIds:[...methodIds],round,feedback:feedback.map(x=>({...x})),instruction:'Choose one offered method. Return only JSON {version:1,obligationId,methodId}. Prior findings are conditional, not semantic or factual authority. Do not request credentials, URLs or tools.'};
+     const operation={kind:'reviewed-method-council-v1',question,agentId:route.id,role:route.role,obligationId:c.obligationId,methodIds:[...methodIds],round,feedback:feedback.map(x=>({...x})),instruction:'Choose one offered method. Return only JSON {version:1,obligationId,methodId}. Prior findings are conditional, not semantic or factual authority. Do not request credentials, URLs or tools.'};
      const inputBytes=new TextEncoder().encode(JSON.stringify(operation)).length;
      const result=await execute({handle:route.handle,model:route.model,inputBytes,maxOutputTokens,operation});
      if(result.profile?.profileId!==route.profileId||result.profile?.providerId!==route.providerId||result.model!==route.model)fail('PROPOSAL_REFUSED');

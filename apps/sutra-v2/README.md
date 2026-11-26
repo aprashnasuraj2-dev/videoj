@@ -30,3 +30,6 @@ The built `dist/sutra-proof-verifier.pyz` is an inspectable source ZIP with a se
 ## Living investigation candidate
 
 The existing reviewed quantity workspace now supports manually declared candidate meanings, optional source-linked quantity references, sealed version input export with a separate digest, explicit baseline replay/import and corrected-source impact comparison. No automatic persistence or external contact; exports contain supplied text. Stage-order IDs require correspondence review. The initial browser journey remains a candidate until exact CI; independent version/impact replay and broader usability remain open.
+
+## Provider-neutral Agent Studio candidate
+The primary page includes a local scripted council with editable connection/model IDs, independently assignable roles (including a shared connection), explicit scope, bounded rounds/calls, actual conditional proof feedback and redacted trace export. The question is context, not an arbitrary semantic reasoning input; the reviewed case defines computations. Synthetic credentials and in-memory reservations are created per run; no production key entry, endpoint contact, billing, persistence or model inference. Browser tests cover divergence then convergence, forged verdict, budget refusal, custom identities and same-connection routes. Exact CI pending.

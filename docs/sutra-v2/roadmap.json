@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-148",
+  "session": "V2-149",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -620,7 +620,7 @@
               "description": "Existing fake-only nontechnical provider workspace, opaque handle policy, credential canary/metadata leakage tests, fixed host transports and no external calls in rehearsal."
             }
           ],
-          "knownLimitations": "Current checked-in service intentionally reports byok:false and rejects visitor credentials. Browser-vault versus ephemeral same-origin relay design is not yet selected; XSS/browser-extension exposure, provider CORS, storage persistence and provider-specific billing semantics require threat review.\nV2-012 update: No real key custody or paid inference authorized. XSS, extensions, persistence, CORS, provider idempotency and tenant isolation require separate review.\nV2-148: bounded two-provider mock council candidate with actual reviewed proof feedback; no live adapters/credentials, endpoint registry, browser Agent Studio or general question reasoning yet. Exact CI pending."
+          "knownLimitations": "Current checked-in service intentionally reports byok:false and rejects visitor credentials. Browser-vault versus ephemeral same-origin relay design is not yet selected; XSS/browser-extension exposure, provider CORS, storage persistence and provider-specific billing semantics require threat review.\nV2-012 update: No real key custody or paid inference authorized. XSS, extensions, persistence, CORS, provider idempotency and tenant isolation require separate review.\nV2-148: bounded two-provider mock council candidate with actual reviewed proof feedback; no live adapters/credentials, endpoint registry, browser Agent Studio or general question reasoning yet. Exact CI pending.\nV2-149: primary local Agent Studio candidate; two arbitrary mock connections with independently assigned roles, real conditional feedback, per-run limits and trace. No real endpoint/keys or general question compilation; exact CI pending."
         }
       ]
     },
