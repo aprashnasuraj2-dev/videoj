@@ -2,63 +2,35 @@
 import {parseUniqueJson} from '../../packages/sutra-consent/strict-json.js';
 import {createProtocolWorkspace} from '../../packages/sutra-inference/protocol-workspace.js';
 import {createLoopbackModelExchange} from '../../packages/sutra-inference/loopback-model-exchange.js';
-import {validateReviewedContract} from '../../packages/sutra-knowledge/reviewed-claim-compiler.js';
 import {runExpressionCouncil} from '../../packages/sutra-knowledge/expression-council.js';
 import {createExpressionReviewReceipt} from '../../packages/sutra-knowledge/expression-review-receipt.js';
 import {sealExpressionInvestigation} from '../../packages/sutra-knowledge/expression-investigation.js';
 import {casePin} from '../../packages/sutra-knowledge/pinned-investigation.js';
-import {admitCouncilDisclosure,projectCouncilBindings} from '../../packages/sutra-knowledge/council-disclosure.js';
-const VERSION='sutra-local-expression-council/v1',MAX=262144;
-const ID=/^[A-Za-z][A-Za-z0-9_-]{0,63}$/,ENV=/^SUTRA_LOCAL_[A-Z0-9_]{1,64}$/;
-const keys=(x,ks)=>x&&typeof x==='object'&&!Array.isArray(x)&&Object.keys(x).length===ks.length&&ks.every(k=>Object.hasOwn(x,k));
-const int=(x,min,max)=>Number.isSafeInteger(x)&&x>=min&&x<=max;
+import {projectCouncilBindings} from '../../packages/sutra-knowledge/council-disclosure.js';
+import {admitLocalCouncilConfig,LOCAL_COUNCIL_VERSION} from '../../packages/sutra-knowledge/local-council-config.js';
+const VERSION=LOCAL_COUNCIL_VERSION,MAX=262144;
 const fail=code=>{const e=new Error('Local council refused ('+code+').');e.code=code;throw e;};
-const text=(x,n)=>typeof x==='string'&&x.length<=n&&x.trim().length>0&&!/[\ud800-\udfff]/u.test(x);
 async function input(){
  const chunks=[];let bytes=0;
  for await(const chunk of process.stdin){bytes+=chunk.length;if(bytes>MAX)fail('INPUT_SIZE');chunks.push(chunk);}
  if(!bytes)fail('INPUT_SIZE');
  let wire;try{wire=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(Buffer.concat(chunks,bytes));}catch{fail('INPUT_ENCODING');}
- return {config:parseUniqueJson(wire,{maxChars:MAX,maxDepth:12}),planPin:await casePin(wire)};
-}
-async function admit(c){
- if(!keys(c,['version','contractText','contractPin','disclosure','connections','agents','budget','maxRounds','maxOutputTokens','roundPolicy','timeoutMs','transportDeadlineMs'])||c.version!==VERSION||!int(c.maxRounds,1,3)||!int(c.maxOutputTokens,1,1024)||!int(c.timeoutMs,100,30000)||!int(c.transportDeadlineMs,100,c.timeoutMs)||!['fixed','stop-on-stagnation'].includes(c.roundPolicy))fail('CONFIG');
- if(!keys(c.budget,['maxCalls','maxInputBytes','maxOutputTokens','maxConcurrent'])||!int(c.budget.maxCalls,1,12)||!int(c.budget.maxInputBytes,1,1048576)||!int(c.budget.maxOutputTokens,1,8192)||!int(c.budget.maxConcurrent,1,Math.min(4,c.budget.maxCalls)))fail('BUDGET');
- if(!Array.isArray(c.connections)||c.connections.length<1||c.connections.length>4||!Array.isArray(c.agents)||c.agents.length<1||c.agents.length>4||c.agents.length*c.maxRounds>8)fail('TEAM');
- const connections=new Map();
- for(const x of c.connections){
-  if(!keys(x,['id','label','protocol','endpoint','models','authMode','credentialEnv'])||connections.has(x.id)||!text(x.label,64)||!['none','bearer','anthropic-key'].includes(x.authMode)||(x.authMode==='none'?x.credentialEnv!==null:typeof x.credentialEnv!=='string'||!ENV.test(x.credentialEnv)))fail('CONNECTION');
-  connections.set(x.id,x);
- }
- const agents=new Set(),usedConnections=new Set();
- for(const x of c.agents){
-  const connection=connections.get(x?.connectionId);
-  if(!keys(x,['id','role','connectionId','model'])||typeof x.id!=='string'||!ID.test(x.id)||agents.has(x.id)||!text(x.role,200)||!connection||!Array.isArray(connection.models)||!connection.models.includes(x.model))fail('AGENT');
-  agents.add(x.id);usedConnections.add(x.connectionId);
- }
- if(usedConnections.size!==connections.size)fail('UNUSED_CONNECTION');
- const disclosure=admitCouncilDisclosure(c.disclosure,[...agents]);
- await validateReviewedContract(c.contractText,c.contractPin);
- const contract=parseUniqueJson(c.contractText,{maxChars:MAX,maxDepth:9});
- if(!text(contract.question.text,2000)||c.disclosure.bindingIds.some(id=>!contract.bindings.some(b=>b.id===id)))fail('DISCLOSURE');
- const local=createLoopbackModelExchange({routes:c.connections.map(x=>({connectionId:x.id,protocol:x.protocol,endpoint:x.endpoint,models:x.models,authMode:x.authMode})),deadlineMs:c.transportDeadlineMs});
- let workspace;
- try{workspace=createProtocolWorkspace({connections:c.connections.map(x=>({id:x.id,label:x.label,protocol:x.protocol,endpoint:x.endpoint,transportClass:'local',models:x.models})),exchange:local.exchange,globalLimits:c.budget,defaultProfileLimits:c.budget});}
- catch(e){local.close();throw e;}
- return {local,workspace,contract,disclosure};
+ return {wire,planPin:await casePin(wire)};
 }
 async function main(){
  const args=process.argv.slice(2),preview=args.length===0||args.length===1&&args[0]==='--plan';
  const execute=(args.length===4||args.length===5&&args[4]==='--export-version')&&args[0]==='--execute-local'&&args[1]==='--approve-local-disclosure'&&args[2]==='--approve-plan'&&/^sha256:[a-f0-9]{64}$/.test(args[3]);
  if(!execute&&!preview)fail('EXPLICIT_APPROVAL_REQUIRED');
- const {config,planPin}=await input();
+ const {wire,planPin}=await input();
  // Exact input-byte approval binds routes, credential aliases, question, source
  // contract, limits and disclosure. Reject changes before credential enrollment.
  if(execute&&args[3]!==planPin)fail('PLAN_PIN_MISMATCH');
- const {local,workspace,contract,disclosure}=await admit(config);
+ const {config,contract,disclosure,routes:approvedRoutes}=await admitLocalCouncilConfig(wire);
  const plan={version:VERSION,mode:'LOCAL_PLAN_ONLY',planPin,contractPin:config.contractPin,question:contract.question.text,disclosure:config.disclosure,disclosedBindings:disclosure.explicit?null:projectCouncilBindings(contract,disclosure),agentDisclosures:disclosure.scopes.map(scope=>({...scope,bindings:projectCouncilBindings(contract,scope)})),connections:config.connections,agents:config.agents,roundPolicy:config.roundPolicy,maxRounds:config.maxRounds,maximumAgentSlots:config.agents.length*config.maxRounds,budget:config.budget,maxOutputTokensPerCall:config.maxOutputTokens,timeoutMs:config.timeoutMs,transportDeadlineMs:config.transportDeadlineMs,qualification:'Preview contains the exact question and approved binding descriptors, and selected numeric values only when requested. Prior conditional outcomes may reveal relations. Credential environment names are not credential values. Literal loopback processes may forward data or incur cost. The optional --export-version includes the full reviewed contract in local stdout; share carefully. The plan pin binds bytes, not endpoint ownership or model identity.'};
+ if(!execute){process.stdout.write(JSON.stringify(plan)+'\n');return;}
+ const local=createLoopbackModelExchange({routes:approvedRoutes,deadlineMs:config.transportDeadlineMs});
  try{
-  if(!execute){process.stdout.write(JSON.stringify(plan)+'\n');return;}
+  const workspace=createProtocolWorkspace({connections:config.connections.map(x=>({id:x.id,label:x.label,protocol:x.protocol,endpoint:x.endpoint,transportClass:'local',models:x.models})),exchange:local.exchange,globalLimits:config.budget,defaultProfileLimits:config.budget});
   // Resolve every configured credential and enroll before dispatch. A missing
   // credential cannot cause a partially executed investigation.
   const handles=new Map();

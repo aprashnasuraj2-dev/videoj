@@ -174,6 +174,32 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.equal(await page.locator('#studio-scope-status').getAttribute('data-state'),'refused');
   assert.equal(await page.getByRole('button',{name:'Export council trace'}).isDisabled(),true);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  // Local operator configuration uses the same pure validator as the actual CLI.
+  await page.getByRole('button',{name:'Load reviewed cash-flow example'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-scope-status').dataset.state==='ready');
+  await page.getByLabel('Connection A protocol').selectOption('ollama-chat-json');
+  await page.getByLabel('Connection B protocol').selectOption('openai-compatible-json');
+  await page.locator('#studio-local-runner > summary').click();
+  await page.getByLabel('Local A endpoint').fill('http://127.0.0.1:11434/api/chat');
+  await page.getByLabel('Local B endpoint').fill('http://127.0.0.1:1234/v1/chat/completions');
+  await page.getByRole('button',{name:'Export local runner configuration'}).click();
+  assert.equal(await page.locator('#studio-local-plan-status').getAttribute('data-state'),'refused');
+  await page.locator('#studio-local-export-approve').check();
+  await page.getByLabel('Local B endpoint').fill('http://169.254.169.254:1234/v1/chat');
+  assert.equal(await page.locator('#studio-local-export-approve').isChecked(),false);
+  await page.locator('#studio-local-export-approve').check();
+  await page.getByRole('button',{name:'Export local runner configuration'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-local-plan-status').dataset.state==='refused');
+  await page.getByLabel('Local B endpoint').fill('http://127.0.0.1:1234/v1/chat/completions');
+  await page.locator('#studio-local-export-approve').check();
+  const [localPlanDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Export local runner configuration'}).click()]);
+  const localPlanText=fs.readFileSync(await localPlanDownload.path(),'utf8'),localPlan=JSON.parse(localPlanText);
+  assert.deepEqual(localPlan.connections.map(x=>x.protocol),['ollama-chat-json','openai-compatible-json']);
+  assert.ok(localPlan.connections.every(x=>x.authMode==='none'&&x.credentialEnv===null));
+  const localPlanPin='sha256:'+require('node:crypto').createHash('sha256').update(localPlanText).digest('hex');
+  assert.match(await page.locator('#studio-local-plan-status').innerText(),new RegExp(localPlanPin));
+  assert.match(await page.locator('#studio-local-plan-commands').innerText(),new RegExp('--approve-plan '+localPlanPin));
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   // Nontechnical multi-provider setup lab: two ephemeral profiles, no network,
   // no credential left in the DOM after submission, and local routing only.
   const providerKey=page.getByLabel('Test credential'),providerName=page.getByLabel('Profile name');
