@@ -32,3 +32,7 @@ Exact child CI pending.
 ### V2-182 approval lifecycle revalidation
 
 Revalidate route/profile identity and plan admission after asynchronous preview hashing and just before one-shot execution. In the combined security candidate, also check the originally captured opaque publication-generation fence. Revoked route consumes an otherwise valid approval attempt without contact, charge or fallback. Standalone workstream does not establish the security generation contract; combined verification required.
+
+
+## V2-183 candidate — operator-facing approval and credential lifecycle
+Add a real built-browser operator console over the ephemeral credential vault, budget ledger and one-shot expression-council capability. Operator enrolls a memory-only synthetic credential, previews exact provider/profile/model/disclosure/budget and digest without dispatch, explicitly approves that digest, consumes it once, removes the credential, and must generate a new preview after replacement or disclosure change. The form clears credential bytes immediately; UI and storage never contain them after enrollment. Dedicated 360px Chromium regression requires one scripted local call, zero external requests, no credential echo, no browser storage, replacement pin change and revocation. This is operator lifecycle for the local rehearsal transport, not live provider authentication or paid inference. Exact CI pending.
