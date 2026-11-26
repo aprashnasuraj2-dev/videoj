@@ -8,13 +8,13 @@ The participant explicitly directed on 23 November 2026: do not jump to release 
 
 On 24 November the participant explicitly tightened the ordering: stop further deployment preparation and prioritize the unfinished engineering checklist. Do not reconnect cloud accounts or advance domain/DNS, staging/public deployment, release or promotion merely because build candidates exist. Keep genuine human/external gates pending and continue independent local/CI engineering; use the latest register queue and dependency checks.
 
-## Latest implementation checkpoint — 0057
+## Latest implementation checkpoint — 0058
 
-**776/1,107 overall verified; 670/1,000 original; 324 pending; six omissions; one hardware blocker.** Exact source `f8c3da48a4d99a6311910b99a40b23d0ea9fa63c` passed all 19 workflows. Learner run 45835173595/job 139962008840 passed 161/161 app, 171/171 package/API, 182/182 runtime, 8/8 peer tests and the complete Chromium browser suite; browser-matrix run 45835173373 passed Chromium, Firefox and WebKit.
+**777/1,107 overall verified; 671/1,000 original; 323 pending; six omissions; one hardware blocker.** Session 0057 stabilized product source `f8c3da48a4d99a6311910b99a40b23d0ea9fa63c` at 19/19 workflows and closed P018-06, P019-02, P019-06, Phase 041 and Phase 050. Session 0058 adds P065-08 from a dated read-only Workers Observability path-to-service sample with sensitive request metadata excluded from repository evidence.
 
-P018-06 is verified after moving the synthetic contradiction record into the test tree and removing its control/mode from production comparison source. P019-02 is verified from the production 25 MiB asset-ceiling regression. P019-06 is verified from explicit-media/transcript-first low-bandwidth browser evidence. P041-10 is verified from the fresh-viewer visible-UI/keyboard journey, closing Phase 041. P050-10 is also verified because P050-01..09 were already complete and the same exact-head hero journey re-observed visible-UI completion plus refusal resilience, closing Phase 050.
+Cloudflare observation does **not** close P065-07: observability event counts are not billed Worker invocation usage or plan headroom. It also does not close P065-10: SUTRA is not publicly deployed, so no production SUTRA static visit or separate live inference accounting has been observed.
 
-Next: the remaining backlog is dominated by genuine participant/rights/human/provider/hardware/public-production or final-candidate/release/submission evidence. `P054-01` remains the machine cursor but requires actual approved model execution; the ready queue no longer includes P041-10. Follow `REMAINING_GATE_MAP.md` and do not convert gate-harness CI into the missing external event. Public release, domain changes, paid inference, merge and submission remain closed.
+Next: `P054-01` remains the machine cursor but requires actual approved model execution. Other near-complete phases are blocked by genuine entrant/content/human/provider/hardware/public-production/final-candidate evidence. Follow `REMAINING_GATE_MAP.md`; keep public deployment, domain/DNS changes, paid inference, merge, release and submission closed.
 
 ## Resume sequence
 
