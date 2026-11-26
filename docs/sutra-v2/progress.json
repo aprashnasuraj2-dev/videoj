@@ -9409,7 +9409,7 @@
     "pr49Baseline": "9bd76ef8bfd05f323592f21fe4b0841188861693"
   },
   "parallelWorkstreams": {
-    "session": "V2-180",
+    "session": "V2-181",
     "baseline": "25ae51a7341c6afa178466b8d107a6705c426c8d",
     "baseBranch": "sutra/v2-knowledge-compiler",
     "index": "docs/sutra-v2/PARALLEL-WORKSTREAMS.md",
@@ -9419,122 +9419,293 @@
         "branch": "sutra/v2-parallel/01-model-orchestration",
         "state": "implementation-or-executable-regression",
         "pr": 51,
-        "head": "49eb1f56352b95cbff5135fa3f368d77e4f8d339",
+        "head": "160caf5f63bcad74c1bf2c9de07cec8997cb1b91",
         "ci": {
-          "run": 45750028185,
+          "run": 45751228588,
           "observed": "success",
-          "scope": "child JS only"
-        }
+          "scope": "child JS regression"
+        },
+        "mergeableAtObservation": true,
+        "change": "Provider replacement with opposite outputs, explicit scope and independent budgets",
+        "next": "Explicit route replacement UI and consent, live authorized interoperability"
       },
       {
         "id": "02-persistent-knowledge",
         "branch": "sutra/v2-parallel/02-persistent-knowledge",
         "state": "implementation-or-executable-regression",
         "pr": 52,
-        "head": "538e399b37cfac793f324d63f6ded73c8334373d",
+        "head": "e82faa3964cda0180869ac57648386ac8d06bea9",
         "ci": {
-          "run": 45750033050,
+          "run": 45751442868,
           "observed": "success",
-          "scope": "child JS only"
-        }
+          "scope": "child JS regression"
+        },
+        "mergeableAtObservation": true,
+        "change": "Verified history extension; Linux immutable snapshot store, fsync and atomic head CAS",
+        "next": "Crash process injection, audited operator lock recovery, external freshness, browser persistence and scale"
       },
       {
         "id": "03-semantic-compilation",
         "branch": "sutra/v2-parallel/03-semantic-compilation",
-        "state": "acceptance-contract-only",
+        "state": "implementation-or-executable-regression",
         "pr": 53,
-        "head": "2526cde01130541471b067afe0deed63088d8fa8",
+        "head": "549a5a787f3f298a52bfd5ce192719063f852c86",
         "ci": {
-          "run": 45750039080,
+          "run": 45751011292,
           "observed": "success",
-          "scope": "child JS only"
-        }
+          "scope": "child JS regression"
+        },
+        "mergeableAtObservation": true,
+        "change": "Pinned explicit review of plausible/excluded/unresolved mappings; keep opposite outcomes",
+        "next": "Wire/browser review integration, more independently annotated ambiguity profiles"
       },
       {
         "id": "04-evidence-acquisition",
         "branch": "sutra/v2-parallel/04-evidence-acquisition",
-        "state": "acceptance-contract-only",
+        "state": "implementation-or-executable-regression",
         "pr": 54,
-        "head": "00fed563af6a3b5e79e007ced4d01264183a2d6c",
+        "head": "731e1269c1a66c7bdb1ad5d426eb8c76b53e25e3",
         "ci": {
-          "run": 45750042028,
+          "run": 45751233515,
           "observed": "success",
-          "scope": "child JS only"
-        }
+          "scope": "child JS regression"
+        },
+        "mergeableAtObservation": true,
+        "change": "Replayed synthetic observation path with surviving cells and declared cost/exposure",
+        "next": "Actual authenticated observation receipt, applicability and noisy correlation"
       },
       {
         "id": "05-independent-verification",
         "branch": "sutra/v2-parallel/05-independent-verification",
-        "state": "acceptance-contract-only",
+        "state": "implementation-or-executable-regression",
         "pr": 55,
-        "head": "575efab451cfdb4e41aa3487e83a166f2168cd86",
+        "head": "0db95b94e28679e81eaf7eda781410c5cbd144a3",
         "ci": {
-          "run": 45750087991,
+          "run": 45751328232,
           "observed": "success",
-          "scope": "child JS only"
-        }
+          "scope": "child JS regression"
+        },
+        "mergeableAtObservation": true,
+        "change": "13 positive and 12 forged generated graphs replayed by Python Fraction/hashlib",
+        "next": "Independent domain semantics, interval and statistical parity"
       },
       {
         "id": "06-counterfactuals",
         "branch": "sutra/v2-parallel/06-counterfactuals",
-        "state": "acceptance-contract-only",
+        "state": "implementation-or-executable-regression",
         "pr": 56,
-        "head": "11873ae54add4625e89a3ab353532f78524b59ff",
+        "head": "8b31621923f217959a1159f80ab2ac97aef46183",
         "ci": {
-          "run": 45750147430,
+          "run": 45751237516,
           "observed": "success",
-          "scope": "child JS only"
-        }
+          "scope": "child JS regression"
+        },
+        "mergeableAtObservation": true,
+        "change": "Monotone grid prefix/witness expansion audit",
+        "next": "Bounded search scaling, wider probes and measured review benefit"
       },
       {
         "id": "07-security-recovery",
         "branch": "sutra/v2-parallel/07-security-recovery",
         "state": "implementation-or-executable-regression",
         "pr": 57,
-        "head": "6f2532d2b3119287c97d7ca089d63db5d386c201",
+        "head": "ee677f5e5650d7386c0674065d567219a418535d",
         "ci": {
-          "run": 45750150946,
+          "run": 45751041634,
           "observed": "success",
-          "scope": "child JS only"
-        }
+          "scope": "child JS regression"
+        },
+        "mergeableAtObservation": true,
+        "change": "Decoded adapter-generated JSON checked before reservation/contact",
+        "next": "Prompt/peer and deployment boundaries, arbitrary encodings and rollback/refinement remain open"
       },
       {
         "id": "08-unified-workspace",
         "branch": "sutra/v2-parallel/08-unified-workspace",
-        "state": "acceptance-contract-only",
+        "state": "implementation-or-executable-regression",
         "pr": 58,
-        "head": "78bd9509ac01e06951fbab33d089fd847b435b7c",
+        "head": "54882b79748e6602affd7fde998cac290046859f",
         "ci": {
-          "run": 45750155401,
-          "observed": "success",
-          "scope": "child JS only"
-        }
+          "run": 45751470052,
+          "observed": "in_progress",
+          "scope": "child JS regression",
+          "browserRun": 45751470125,
+          "browserObserved": "in_progress"
+        },
+        "mergeableAtObservation": true,
+        "change": "Portable exact editable draft recovery; separate actual Chromium workflow",
+        "next": "Observe exact child browser CI; usability and complete investigation restore"
       },
       {
         "id": "09-specialist-domains",
         "branch": "sutra/v2-parallel/09-specialist-domains",
-        "state": "acceptance-contract-only",
+        "state": "implementation-or-executable-regression",
         "pr": 59,
-        "head": "357891e20374441e8af242928cdb6793ca465152",
+        "head": "1252e85fc9d2a4cb1ab28f14c5768b137c673063",
         "ci": {
-          "run": 45750211579,
+          "run": 45751336253,
           "observed": "success",
-          "scope": "child JS only"
-        }
+          "scope": "child JS regression"
+        },
+        "mergeableAtObservation": true,
+        "change": "Finance and engineering four-version correction/withdrawal/reintroduction journeys",
+        "next": "Rights-cleared real specialist sources, independent replay and human evaluation"
       },
       {
         "id": "10-benchmark",
         "branch": "sutra/v2-parallel/10-benchmark",
         "state": "implementation-or-executable-regression",
         "pr": 60,
-        "head": "bc3a06d9241b6f1671f036601d5c037f8e30d5b7",
+        "head": "f4ea4454361122adb439eca3e27b686a3df87168",
         "ci": {
-          "run": 45750217798,
+          "run": 45751331491,
           "observed": "success",
-          "scope": "child JS only"
-        }
+          "scope": "child JS regression"
+        },
+        "mergeableAtObservation": true,
+        "change": "Pinned common caps and paired case-level declared usage",
+        "next": "Frozen independent held-out corpus, seven matched baselines, actual metering"
       }
     ],
-    "qualification": "No new gate credit; child PR CI separate from full integration."
+    "qualification": "No new gate credit; child PR CI separate from full integration.",
+    "history": [
+      {
+        "session": "V2-180",
+        "branches": [
+          {
+            "id": "01-model-orchestration",
+            "branch": "sutra/v2-parallel/01-model-orchestration",
+            "state": "implementation-or-executable-regression",
+            "pr": 51,
+            "head": "49eb1f56352b95cbff5135fa3f368d77e4f8d339",
+            "ci": {
+              "run": 45750028185,
+              "observed": "success",
+              "scope": "child JS only"
+            }
+          },
+          {
+            "id": "02-persistent-knowledge",
+            "branch": "sutra/v2-parallel/02-persistent-knowledge",
+            "state": "implementation-or-executable-regression",
+            "pr": 52,
+            "head": "538e399b37cfac793f324d63f6ded73c8334373d",
+            "ci": {
+              "run": 45750033050,
+              "observed": "success",
+              "scope": "child JS only"
+            }
+          },
+          {
+            "id": "03-semantic-compilation",
+            "branch": "sutra/v2-parallel/03-semantic-compilation",
+            "state": "acceptance-contract-only",
+            "pr": 53,
+            "head": "2526cde01130541471b067afe0deed63088d8fa8",
+            "ci": {
+              "run": 45750039080,
+              "observed": "success",
+              "scope": "child JS only"
+            }
+          },
+          {
+            "id": "04-evidence-acquisition",
+            "branch": "sutra/v2-parallel/04-evidence-acquisition",
+            "state": "acceptance-contract-only",
+            "pr": 54,
+            "head": "00fed563af6a3b5e79e007ced4d01264183a2d6c",
+            "ci": {
+              "run": 45750042028,
+              "observed": "success",
+              "scope": "child JS only"
+            }
+          },
+          {
+            "id": "05-independent-verification",
+            "branch": "sutra/v2-parallel/05-independent-verification",
+            "state": "acceptance-contract-only",
+            "pr": 55,
+            "head": "575efab451cfdb4e41aa3487e83a166f2168cd86",
+            "ci": {
+              "run": 45750087991,
+              "observed": "success",
+              "scope": "child JS only"
+            }
+          },
+          {
+            "id": "06-counterfactuals",
+            "branch": "sutra/v2-parallel/06-counterfactuals",
+            "state": "acceptance-contract-only",
+            "pr": 56,
+            "head": "11873ae54add4625e89a3ab353532f78524b59ff",
+            "ci": {
+              "run": 45750147430,
+              "observed": "success",
+              "scope": "child JS only"
+            }
+          },
+          {
+            "id": "07-security-recovery",
+            "branch": "sutra/v2-parallel/07-security-recovery",
+            "state": "implementation-or-executable-regression",
+            "pr": 57,
+            "head": "6f2532d2b3119287c97d7ca089d63db5d386c201",
+            "ci": {
+              "run": 45750150946,
+              "observed": "success",
+              "scope": "child JS only"
+            }
+          },
+          {
+            "id": "08-unified-workspace",
+            "branch": "sutra/v2-parallel/08-unified-workspace",
+            "state": "acceptance-contract-only",
+            "pr": 58,
+            "head": "78bd9509ac01e06951fbab33d089fd847b435b7c",
+            "ci": {
+              "run": 45750155401,
+              "observed": "success",
+              "scope": "child JS only"
+            }
+          },
+          {
+            "id": "09-specialist-domains",
+            "branch": "sutra/v2-parallel/09-specialist-domains",
+            "state": "acceptance-contract-only",
+            "pr": 59,
+            "head": "357891e20374441e8af242928cdb6793ca465152",
+            "ci": {
+              "run": 45750211579,
+              "observed": "success",
+              "scope": "child JS only"
+            }
+          },
+          {
+            "id": "10-benchmark",
+            "branch": "sutra/v2-parallel/10-benchmark",
+            "state": "implementation-or-executable-regression",
+            "pr": 60,
+            "head": "bc3a06d9241b6f1671f036601d5c037f8e30d5b7",
+            "ci": {
+              "run": 45750217798,
+              "observed": "success",
+              "scope": "child JS only"
+            }
+          }
+        ]
+      }
+    ],
+    "priorityOrder": [
+      52,
+      53,
+      57,
+      58,
+      51,
+      54,
+      55,
+      56,
+      59,
+      60
+    ]
   }
 }

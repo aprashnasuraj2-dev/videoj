@@ -1081,3 +1081,6 @@ A lost browser-memory plan no longer forces a model rerun. Add pure exact plan r
 
 ### V2-180 — parallel workstream integration hub
 User authorized separate draft PRs for all ten critical workstreams. Branches are sibling children of the active V2 integration branch, never of production; each owns a separate workstream file and narrowly scoped implementation. Full existing formal/browser/release gates remain mandatory on integration. New lightweight PR workflow executes JS knowledge and inference regressions on child PRs; no standalone merge/release authorization. Existing candidate V2-179 has 7/9 observed PR workflows successful at planning; knowledge and learner still running. Do not infer cross-branch verification or use a green child PR as release approval. See PARALLEL-WORKSTREAMS.md.
+
+
+V2-181: all ten child PRs #51–60 advanced with executable slices; #52 and #58 advanced twice. Exact heads and actual CI observations in PARALLEL-WORKSTREAMS.md and progress.json. Nine scoped JS successes, latest workspace CI running with dedicated browser job. All observed mergeable; no integration or broad gate credit. Next parallel priority order 52, 53, 57, 58, with remaining tracks independently actionable. Preserve V1/older PRs as historical dependencies; no release.

@@ -1252,3 +1252,7 @@ V2-180 checkpoint: PRs #51–60 independently confirmed open and draft against t
 
 
 V2-180 follow-up: exact child JS runs 45750211579 and 45750217798 passed; all ten scoped JS workflows successful. Correct child document links to immutable heads. No merge, deployment or gate promotion.
+
+
+### V2-181 — multi-stream engineering
+V2-181: all ten child PRs #51–60 advanced with executable slices; #52 and #58 advanced twice. Exact heads and actual CI observations in PARALLEL-WORKSTREAMS.md and progress.json. Nine scoped JS successes, latest workspace CI running with dedicated browser job. All observed mergeable; no integration or broad gate credit. Next parallel priority order 52, 53, 57, 58, with remaining tracks independently actionable. Preserve V1/older PRs as historical dependencies; no release.

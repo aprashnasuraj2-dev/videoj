@@ -100,3 +100,8 @@ Do not create a scheduled/background task from this phrase.
 ## Parallel child workstreams (V2-180)
 
 Read [PARALLEL-WORKSTREAMS.md](PARALLEL-WORKSTREAMS.md), resolve every open child draft PR and exact CI, and resume independent pending segments without overwriting concurrent changes. Child records belong under workstreams/; update shared registers on integration, preserving original evidence. No automatic merge or release.
+
+
+### V2-181 parallel resumption discipline
+
+Resolve current open PRs #51–60 (and newly authorized child PRs), exact heads, base drift, mergeability and per-head workflow results before editing. Allocate deepest effort to persistent knowledge (#52), semantic compilation (#53), security (#57), unified workspace (#58), in that order, while progressing other dependency-ready tracks in the same batch. Use sibling branches and non-overlapping ownership; no global gate promotion from child-only CI. For each independent batch: inspect → implement → adversarial test → append workstream record → lease-checked commit → re-read exact remote head and CI → update central parallel registry. Preserve prior checkpoints, failures and unmet acceptance. If a child fails, track/fix it while other branches continue; do not merge as a shortcut. Full integrated and independent replay gates remain mandatory. Session duration is not an evidence claim; no background work without explicit supported execution.
