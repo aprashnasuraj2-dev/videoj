@@ -3941,9 +3941,9 @@
         "run": 45755640186,
         "conclusion": "success",
         "change": "Portable checkpoint; independent Python replay; actual browser export differential candidate",
-        "remaining": "Observe actual exported checkpoint Python/browser CI, integrate into validation-only candidate; user evaluation and larger bounded profile",
+        "remaining": "User evaluation, larger bounded portable profile, and final exact combined candidate observation",
         "browserRun": 45755640152,
-        "browserObserved": "in_progress"
+        "browserObserved": "success"
       },
       {
         "pr": 59,
@@ -3971,7 +3971,7 @@
     "combinedValidation": {
       "pr": 61,
       "branch": "sutra/v2-validation/v2-182",
-      "head": "fc238782f1950f76049d78ef178dae04259d3a2d",
+      "head": "467bcc2c25abde2c43278f117e4d9ada5baeb33c",
       "state": "validation-only-do-not-merge",
       "manifest": "docs/sutra-v2/validation/combined-v2-182.json",
       "children": [
@@ -4005,7 +4005,7 @@
         },
         {
           "pr": 58,
-          "head": "ee540afba806a2ff9748c269c3229353812149a7"
+          "head": "60d38f1248c2c6b5d82a89c3340ea401da6f01c3"
         },
         {
           "pr": 59,
@@ -4018,14 +4018,8 @@
       ],
       "nonoverlappingFiles": 51,
       "ci": {
-        "run": 45755340152,
-        "observed": "success",
-        "knowledgeJob": 139692536330,
-        "browserJob": 139692536528,
-        "impactRun": 45755340151,
-        "impactObserved": "success",
-        "scopedRun": 45755340116,
-        "scopedObserved": "success"
+        "run": 45755925032,
+        "observed": "in_progress"
       },
       "history": [
         {
@@ -4042,9 +4036,62 @@
           "observed": "success",
           "impactRun": 45754665894,
           "impactObserved": "success"
+        },
+        {
+          "revision": "fc238782f1950f76049d78ef178dae04259d3a2d",
+          "children": [
+            {
+              "pr": 51,
+              "head": "1c4514adc40a950db2cbeb7c4a945747d814ef60"
+            },
+            {
+              "pr": 52,
+              "head": "6ef4e33f750290e7d455c08b0cb9b700dd3036f1"
+            },
+            {
+              "pr": 53,
+              "head": "504453e16c67f7f2e06b88bfd8a8baebcb4de207"
+            },
+            {
+              "pr": 54,
+              "head": "23e036f19e6b23db1a6d9c69d752992168998400"
+            },
+            {
+              "pr": 55,
+              "head": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5"
+            },
+            {
+              "pr": 56,
+              "head": "2a4838db0aa198daa8b54c30180437bfe6404eb9"
+            },
+            {
+              "pr": 57,
+              "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+            },
+            {
+              "pr": 58,
+              "head": "ee540afba806a2ff9748c269c3229353812149a7"
+            },
+            {
+              "pr": 59,
+              "head": "e73659542f738fedabc038879d078616c8d97281"
+            },
+            {
+              "pr": 60,
+              "head": "9bf0ac16d885e485b31c12531b20508f7f337e48"
+            }
+          ],
+          "run": 45755340152,
+          "observed": "success",
+          "knowledgeJob": 139692536330,
+          "browserJob": 139692536528,
+          "impactRun": 45755340151,
+          "impactObserved": "success",
+          "scopedRun": 45755340116,
+          "scopedObserved": "success"
         }
       ],
-      "qualification": "Combined knowledge/browser job bodies copied unchanged from exact canonical workflow except branch guard/event. Snapshot contains latest production code on all child streams, but #58 later browser-test/doc-only revision not yet included. No merge, no release, no broad gate promotion."
+      "qualification": "Latest exact ten child heads; no merge or broad gate promotion. Prior full combined CI passed; latest exact full run pending at observation. #58 actual browser download independent differential passed separately."
     }
   }
 }
