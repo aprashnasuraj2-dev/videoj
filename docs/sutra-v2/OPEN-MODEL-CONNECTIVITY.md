@@ -28,3 +28,6 @@ Existing 200 synthetic cases stay frozen; fix the known aggregate revision manif
 
 ## V2-156 local transport candidate
 Node-only explicit literal-loopback connector, exact host-approved route descriptors and bounded JSON. This is not an enablement of the hosted UI, public relay, production credentials or paid inference. Real local TCP tests use simulated responders. Public egress, tenant isolation and authorized real model testing remain separate gates.
+
+## V2-158 explicit local operator runner (candidate)
+A separate Node CLI previews exact pinned question, disclosure and approved local route plan with no contact, requires both execution/disclosure flags for actual literal-loopback calls, preflights every credential and selected binding, applies resource budgets and outputs conditional review receipt. No hosted UI enablement. Config names only a restricted local environment variable for credentials. Tests use local fixture responders, not genuine model inference.

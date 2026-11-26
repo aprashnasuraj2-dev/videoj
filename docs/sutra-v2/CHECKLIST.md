@@ -1026,3 +1026,6 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 
 
 - [ ] **V2-157 candidate:** verified receipt bridges into existing pinned investigation graph and source withdrawal; export version/pin without semantic adoption; exact CI pending.
+
+
+- [ ] **V2-158 candidate:** explicit local multi-model runner, plan-only default, dual approval, bounded contract/credential preflight, real loopback fixture integration; no hosted or real-model authorization.
