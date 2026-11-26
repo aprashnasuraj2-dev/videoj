@@ -112,6 +112,12 @@ SUTRA has no public release in the current repository state. `docs/sutra/CHANGEL
 
 When a real public version exists, move only the changes included in that exact immutable release SHA into a dated version section and link the release/source identity. A branch commit, private candidate or CI artifact is not a public version.
 
+## Repository release versus npm publication
+
+A **repository/GitHub release** and an **npm publication** are separate distribution events. The planned Open Kit can be released as versioned source/archive assets in this repository without publishing any npm package. npm publication is optional and must be recorded only if an actual package/version is published to the registry.
+
+Do not write an npm package name, `npm install <published-package>` command, registry version or npm URL into release/submission copy unless that publication actually exists. Conversely, absence of npm publication does not turn a valid versioned repository source release into a failure of the source-distribution plan.
+
 ## 8. Support and maintenance boundary
 
 There is no guaranteed response time, hosted-service SLA or indefinite compatibility commitment. Contributions may improve the source project, but availability of an optional provider, peer publisher, browser codec, Cloudflare account or competition service is outside a source-level support promise.
