@@ -1037,3 +1037,5 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 - [ ] **V2-161 hosted route admission:** exact HTTPS route, mixed-answer refusal, one-use address pin and explicit TLS enforcement obligation. No public transport enabled; exact CI pending.
 
 - [ ] **V2-162 agent disclosure candidate:** explicit binding/value grants and directional peer feedback with whole-scope flow validation, local preview and adversarial tests; exact CI pending.
+
+- [ ] **V2-163 Agent Studio scope editor:** visible per-agent permissions, blocked-flow explanation, fresh consent and applied trace; actual browser CI pending.

@@ -2,6 +2,7 @@ import {createProtocolWorkspace} from '../../../packages/sutra-inference/protoco
 import {admitProofCase} from '../../../packages/sutra-knowledge/agent-bridge.js';
 import {runAgentCouncil} from '../../../packages/sutra-knowledge/agent-council.js';
 import {runExpressionCouncil} from '../../../packages/sutra-knowledge/expression-council.js';
+import {admitCouncilDisclosure} from '../../../packages/sutra-knowledge/council-disclosure.js';
 import {createExpressionReviewReceipt,verifyExpressionReviewReceipt} from '../../../packages/sutra-knowledge/expression-review-receipt.js';
 import {sealExpressionInvestigation} from '../../../packages/sutra-knowledge/expression-investigation.js';
 import {compilerFinanceFixture} from '../../../packages/sutra-knowledge/examples/reviewed-compiler.mjs';
@@ -13,12 +14,37 @@ const fixture=()=>JSON.stringify({obligationId:'beam_deflection',methods:[{id:'s
 const receiptButton=by('studio-export-receipt'),replayButton=by('studio-replay-receipt'),versionButton=by('studio-export-version');
 let active=null,current=null,epoch=0,replayEpoch=0;
 function status(message,state){const el=by('studio-status');el.textContent=message;el.dataset.state=state;}
-function clear(){current=null;exportButton.disabled=true;receiptButton.disabled=true;versionButton.disabled=true;by('studio-receipt-digest').textContent='';by('studio-version-digest').textContent='';by('studio-version-help').hidden=true;by('studio-result').hidden=true;by('studio-trace').replaceChildren();by('studio-methods').replaceChildren();by('studio-interpretation').textContent='';by('studio-review').hidden=true;by('studio-review-summary').textContent='';by('studio-review-steps').replaceChildren();}
+function clear(){current=null;exportButton.disabled=true;receiptButton.disabled=true;versionButton.disabled=true;by('studio-receipt-digest').textContent='';by('studio-version-digest').textContent='';by('studio-version-help').hidden=true;by('studio-result').hidden=true;by('studio-trace').replaceChildren();by('studio-methods').replaceChildren();by('studio-interpretation').textContent='';by('studio-applied-scopes').hidden=true;by('studio-applied-scopes').replaceChildren();by('studio-review').hidden=true;by('studio-review-summary').textContent='';by('studio-review-steps').replaceChildren();}
 function busy(value){for(const field of fields)field.disabled=value;runButton.disabled=value;cancelButton.disabled=!value;if(value)exportButton.disabled=true;}
 function revoke(){by('studio-share').checked=false;by('studio-expression-share').checked=false;}
 function resetReplay(){replayEpoch++;const el=by('studio-replay-status');el.textContent='Input changed. Replay again.';el.dataset.state='idle';replayButton.disabled=false;}
 function invalidate(){epoch++;active?.abort();clear();resetReplay();status('Configuration changed. Run a fresh council.','idle');}
 function showMode(){const expression=by('studio-mode').value==='expression';for(const id of ['studio-method-question','studio-method-case','studio-method-consent'])by(id).hidden=expression;by('studio-expression-fields').hidden=!expression;}
+const bindingList=id=>by(id).value.split(',').map(x=>x.trim()).filter(Boolean);
+function readDisclosure(){
+ const d={bindingIds:bindingList('studio-bindings'),includeValues:by('studio-include-values').checked};
+ if(by('studio-custom-scopes').checked)d.agentScopes=['a','b'].map((slot,i)=>({agentId:i?'agent_two':'agent_one',bindingIds:bindingList('studio-scope-'+slot),includeValues:by('studio-values-'+slot).checked,feedbackFrom:by('studio-peer-'+slot).checked?[i?'agent_one':'agent_two']:[]}));
+ return d;
+}
+const agentName=id=>id==='agent_one'?'Agent 1':'Agent 2';
+function scopeCards(target,scopes){
+ target.replaceChildren();
+ for(const scope of scopes){
+  const card=document.createElement('article');card.className='studio-scope-card';card.dataset.agent=scope.agentId;
+  card.append(element('strong',agentName(scope.agentId)),element('p',scope.bindingIds.join(', ')),element('small',(scope.includeValues?'Raw values allowed':'Descriptors only')+' · '+(scope.feedbackFrom.length?'Peer feedback from '+scope.feedbackFrom.map(agentName).join(', '):'No peer feedback')));
+  target.append(card);
+ }
+}
+function showScopes(){
+ const custom=by('studio-custom-scopes').checked;by('studio-agent-scopes').hidden=!custom;
+ const el=by('studio-scope-status'),target=by('studio-scope-summary');target.replaceChildren();
+ try{
+  const grant=admitCouncilDisclosure(readDisclosure(),['agent_one','agent_two']);
+  scopeCards(target,grant.scopes);el.dataset.state='ready';el.textContent=custom?'Individual permissions ready for review.':'Uniform team permissions ready for review.';
+ }catch(error){
+  el.dataset.state='refused';el.textContent=error?.code==='DISCLOSURE_FLOW'?'Peer feedback would flow from a broader evidence scope to a narrower one. Remove that direction.':'Complete valid binding subsets and raw-value permissions before approval.';
+ }
+}
 function element(tag,value,className){const x=document.createElement(tag);x.textContent=value;if(className)x.className=className;return x;}
 function render(r,configuration,calls){
  const expression=configuration.mode==='expression',artifacts=expression?r.candidates:r.methods;
@@ -28,6 +54,10 @@ function render(r,configuration,calls){
  if(expression&&r.reviewPlan){
   by('studio-review').hidden=false;by('studio-review-summary').textContent=r.reviewPlan.opposingPairs?r.reviewPlan.steps.length+' prioritized review prompts separate '+r.reviewPlan.coveredPairs+' of '+r.reviewPlan.opposingPairs+' opposing pairs. They do not validate meaning.':'No opposing pair to separate; review intended meaning and any missing candidates.';
   for(const step of r.reviewPlan.steps){const item=element('li',step.prompt);const choices=step.choices.map(c=>{const entry=r.triage?.contrast.entries.find(x=>x.id===c.candidateId);const candidate=r.candidates.find(x=>x.proposalDigest===entry?.computation?.proposalDigest);return (candidate?.expression??c.candidateId)+' — '+c.choice;});item.append(element('p',choices.join(' | ')));by('studio-review-steps').append(item);}
+ }
+ if(expression&&r.disclosure.agentScopes){
+  const target=by('studio-applied-scopes');target.hidden=false;target.append(element('h3','Applied evidence permissions'));
+  const cards=document.createElement('div');cards.className='studio-scope-preview';scopeCards(cards,r.disclosure.agentScopes);target.append(cards);
  }
  const outcomes=new Map(artifacts.map(m=>[key(m),verdict(m)]));
  for(const round of r.rounds){
@@ -96,13 +126,21 @@ function readConfig(){
  for(const c of connections)if(!/^[a-z][a-z0-9-]{0,31}$/.test(c.id)||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(c.model))throw Error('CONNECTION');
  const agents=['a','b'].map((slot,i)=>{const c=connections.find(x=>x.slot===by('studio-route-'+slot).value);return {id:i?'agent_two':'agent_one',role:by('studio-role-'+slot).value.trim(),connectionId:c.id,model:c.model};});
  const mode=by('studio-mode').value,common={mode,connections,agents,rounds:Number(by('studio-rounds').value),callCap:Number(by('studio-call-cap').value),strategy:by('studio-strategy').value};
- if(mode==='expression')return {...common,roundPolicy:by('studio-round-policy').value,contractText:by('studio-contract').value,contractPin:by('studio-contract-pin').value.trim(),disclosure:{bindingIds:by('studio-bindings').value.split(',').map(x=>x.trim()).filter(Boolean),includeValues:by('studio-include-values').checked}};
+ if(mode==='expression')return {...common,roundPolicy:by('studio-round-policy').value,contractText:by('studio-contract').value,contractPin:by('studio-contract-pin').value.trim(),disclosure:readDisclosure()};
  const question=by('studio-question').value.trim(),caseText=by('studio-case').value;admitProofCase(caseText);
  return {...common,question,caseText};
 }
-form.addEventListener('input',event=>{if(!['studio-share','studio-expression-share'].includes(event.target.id))revoke();showMode();invalidate();});
+form.addEventListener('input',event=>{
+ if(event.target.id==='studio-custom-scopes'&&event.target.checked){
+  // Start with the selected binding envelope, never silently grant raw
+  // values or peer feedback in customized mode.
+  for(const slot of ['a','b'])if(!by('studio-scope-'+slot).value.trim())by('studio-scope-'+slot).value=by('studio-bindings').value;
+ }
+ if(!['studio-share','studio-expression-share'].includes(event.target.id))revoke();
+ showMode();showScopes();invalidate();
+});
 by('studio-reset-case').addEventListener('click',()=>{by('studio-case').value=fixture();revoke();invalidate();});
-by('studio-load-finance').addEventListener('click',async()=>{revoke();invalidate();const ticket=epoch;try{const f=await compilerFinanceFixture();if(ticket!==epoch||active)return;by('studio-contract').value=f.contractText;by('studio-contract-pin').value=f.pin;by('studio-bindings').value='ocf25,ppe25,ocf26,ppe26';by('studio-include-values').checked=false;status('Reviewed example loaded. Approve the selected disclosure before running.','idle');}catch{if(ticket===epoch)status('Example unavailable.','refused');}});
+by('studio-load-finance').addEventListener('click',async()=>{revoke();invalidate();const ticket=epoch;try{const f=await compilerFinanceFixture();if(ticket!==epoch||active)return;by('studio-contract').value=f.contractText;by('studio-contract-pin').value=f.pin;by('studio-bindings').value='ocf25,ppe25,ocf26,ppe26';by('studio-include-values').checked=false;by('studio-custom-scopes').checked=false;for(const slot of ['a','b']){by('studio-scope-'+slot).value='';by('studio-values-'+slot).checked=false;by('studio-peer-'+slot).checked=false;}showScopes();status('Reviewed example loaded. Approve the selected disclosure before running.','idle');}catch{if(ticket===epoch)status('Example unavailable.','refused');}});
 cancelButton.addEventListener('click',()=>{if(!active)return;active.abort();clear();status('Council cancelled. Late adapter results cannot publish.','cancelled');});
 form.addEventListener('submit',async event=>{
  event.preventDefault();if(active)return;clear();
@@ -111,7 +149,7 @@ form.addEventListener('submit',async event=>{
  revoke();
  const ticket=++epoch,controller=new AbortController();active=controller;busy(true);status('Running local agents and independent verification…','busy');
  try{
-  const config=readConfig(),{workspace,routes}=setup(config);
+  const config=readConfig();if(expression)admitCouncilDisclosure(config.disclosure,config.agents.map(x=>x.id));const {workspace,routes}=setup(config);
   const options={workspace,routes,maxRounds:config.rounds,maxOutputTokens:256,signal:controller.signal};
   const r=expression?await runExpressionCouncil({...options,contractText:config.contractText,contractPin:config.contractPin,disclosure:config.disclosure,roundPolicy:config.roundPolicy}):await runAgentCouncil({...options,caseText:config.caseText,question:config.question});
   if(ticket!==epoch||controller.signal.aborted)return;
@@ -163,4 +201,4 @@ replayButton.addEventListener('click',async()=>{
  }catch{if(ticket===replayEpoch){el.dataset.state='refused';el.textContent='Receipt refused. Check exact receipt bytes, both retained pins and recomputed results.';}}
  finally{if(ticket===replayEpoch)replayButton.disabled=false;}
 });
-by('studio-case').value=fixture();showMode();
+by('studio-case').value=fixture();showMode();showScopes();

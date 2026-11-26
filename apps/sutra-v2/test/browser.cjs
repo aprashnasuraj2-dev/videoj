@@ -144,6 +144,36 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await page.waitForFunction(()=>document.querySelector('#studio-status').dataset.state==='refused');
   assert.equal(await page.getByRole('button',{name:'Export council trace'}).isDisabled(),true);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  // Agent-specific evidence grants: narrower model never receives the broader
+  // peer's expression, even where both share some binding IDs.
+  await page.getByRole('button',{name:'Load reviewed cash-flow example'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-contract-pin').value!=='sha256:'+'0'.repeat(64)&&document.querySelector('#studio-contract-pin').value.startsWith('sha256:'));
+  await page.locator('#studio-custom-scopes').check();
+  await page.getByLabel('Agent 1 binding IDs').fill('ocf25,ocf26');
+  await page.locator('#studio-peer-a').check();
+  assert.equal(await page.locator('#studio-scope-status').getAttribute('data-state'),'refused');
+  await page.locator('#studio-expression-share').check();
+  await page.getByRole('button',{name:'Run local agent council'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-status').dataset.state==='refused');
+  assert.equal(await page.getByRole('button',{name:'Export council trace'}).isDisabled(),true);
+  await page.locator('#studio-peer-a').uncheck();
+  await page.locator('#studio-peer-b').check();
+  assert.equal(await page.locator('#studio-scope-status').getAttribute('data-state'),'ready');
+  await page.locator('#studio-expression-share').check();
+  await page.getByRole('button',{name:'Run local agent council'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-status').dataset.state==='complete');
+  assert.equal(await page.locator('#studio-agreement').innerText(),'distinct candidates');
+  assert.equal(await page.locator('#studio-applied-scopes .studio-scope-card').count(),2);
+  assert.match(await page.locator('#studio-applied-scopes [data-agent="agent_one"]').innerText(),/ocf25, ocf26.*No peer feedback/s);
+  const [scopedDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Export council trace'}).click()]);
+  const scoped=JSON.parse(fs.readFileSync(await scopedDownload.path(),'utf8'));
+  assert.deepEqual(scoped.result.disclosure.agentScopes.map(x=>x.feedbackFrom),[[],['agent_one']]);
+  assert.ok(scoped.result.rounds.every(row=>row.agents.find(x=>x.agentId==='agent_one')?.expression==='[ocf26] > [ocf25]'));
+  await page.locator('#studio-expression-share').check();await page.locator('#studio-values-a').check();
+  assert.equal(await page.locator('#studio-expression-share').isChecked(),false);
+  assert.equal(await page.locator('#studio-scope-status').getAttribute('data-state'),'refused');
+  assert.equal(await page.getByRole('button',{name:'Export council trace'}).isDisabled(),true);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   // Nontechnical multi-provider setup lab: two ephemeral profiles, no network,
   // no credential left in the DOM after submission, and local routing only.
   const providerKey=page.getByLabel('Test credential'),providerName=page.getByLabel('Profile name');
