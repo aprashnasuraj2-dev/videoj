@@ -1011,3 +1011,6 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 - [ ] **V2-151 model proposal pathway:** new closed expressions over explicitly approved binding subset, actual compiler feedback, divergence/abstention, semantic review; candidate pending CI, not arbitrary text-to-truth.
 
 - [ ] **V2-152 concurrency/security candidate:** completion-clock settlement, monotonic rollback refusal, all-profile pre/post canary scans, metadata alias and accessor tests. No distributed budget or production credential guarantee; exact CI pending.
+
+
+- [ ] **V2-153 candidate:** expression Studio, heterogeneous wire rehearsal, explicit binding/value scope and per-run consent; protocol error classification repair. Exact CI pending; no live inference.

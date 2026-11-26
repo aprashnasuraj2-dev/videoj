@@ -72,6 +72,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.equal(studioText.includes('SYNTHETIC_ONLY_'),false);assert.equal(studioText.includes('profileId'),false);assert.equal(studioText.includes('"handle"'),false);
   await page.getByLabel('Scripted collaboration behavior').selectOption('hostile');
   assert.equal(await page.getByRole('button',{name:'Export council trace'}).isDisabled(),true);
+  await page.locator('#studio-share').check();
   await page.getByRole('button',{name:'Run local agent council'}).click();
   await page.waitForFunction(()=>document.querySelector('#studio-status').dataset.state==='complete');
   assert.equal(await page.locator('.studio-agent-event[data-status="REFUSED"]').count(),1);
@@ -79,10 +80,45 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await page.getByLabel('Scripted collaboration behavior').selectOption('contrast');
   await page.getByLabel('Agent 2 connection').selectOption('a');
   await page.getByLabel('Total call reservation cap').selectOption('2');
+  await page.locator('#studio-share').check();
   await page.getByRole('button',{name:'Run local agent council'}).click();
   await page.waitForFunction(()=>document.querySelector('#studio-status').dataset.state==='complete');
   assert.equal(await page.locator('#studio-calls').innerText(),'2');
   assert.equal(await page.locator('.studio-agent-event[data-status="REFUSED"]').count(),2);
+  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+  // Heterogeneous wire rehearsal, newly generated expression, dissent survives agreement.
+  await page.getByLabel('Investigation mode').selectOption('expression');
+  await page.getByRole('button',{name:'Load reviewed cash-flow example'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-contract-pin').value.startsWith('sha256:'));
+  await page.getByLabel('Agent 2 connection').selectOption('b');
+  await page.getByLabel('Total call reservation cap').selectOption('4');
+  await page.getByLabel('Scripted collaboration behavior').selectOption('reconsider');
+  await page.getByRole('button',{name:'Run local agent council'}).click();
+  assert.equal(await page.locator('#studio-status').getAttribute('data-state'),'refused');
+  await page.locator('#studio-expression-share').check();
+  await page.getByRole('button',{name:'Run local agent council'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-status').dataset.state==='complete');
+  assert.equal(await page.locator('#studio-calls').innerText(),'4');
+  assert.equal(await page.locator('#studio-agreement').innerText(),'same candidate');
+  assert.match(await page.locator('#studio-interpretation').innerText(),/DIVERGENT CONDITIONAL OUTCOMES.*semantic review required/);
+  assert.equal(await page.locator('.studio-method[data-outcome="CONDITIONALLY_REFUTED"]').count(),1);
+  assert.equal(await page.locator('.studio-method[data-outcome="CONDITIONALLY_SATISFIED"]').count(),1);
+  const [expressionDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Export council trace'}).click()]);
+  const expressionTrace=JSON.parse(fs.readFileSync(await expressionDownload.path(),'utf8'));
+  assert.deepEqual(expressionTrace.configuration.connections.map(x=>x.protocol),['openai-compatible-json','anthropic-messages-json']);
+  assert.equal(expressionTrace.result.disclosure.includeValues,false);assert.equal(expressionTrace.result.semanticReview,'REQUIRED');
+  assert.equal(JSON.stringify(expressionTrace).includes('https://model-'),false);
+  assert.equal(JSON.stringify(expressionTrace).includes('SYNTHETIC_ONLY_'),false);
+  await page.locator('#studio-expression-share').check();
+  await page.getByLabel('Allowed binding IDs (comma-separated)').fill('ocf25,ocf26');
+  assert.equal(await page.locator('#studio-expression-share').isChecked(),false);
+  assert.equal(await page.getByRole('button',{name:'Export council trace'}).isDisabled(),true);
+  await page.locator('#studio-expression-share').check();
+  await page.getByLabel('Retained contract SHA-256').fill('sha256:'+'0'.repeat(64));
+  await page.locator('#studio-expression-share').check();
+  await page.getByRole('button',{name:'Run local agent council'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-status').dataset.state==='refused');
+  assert.equal(await page.getByRole('button',{name:'Export council trace'}).isDisabled(),true);
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   // Nontechnical multi-provider setup lab: two ephemeral profiles, no network,
   // no credential left in the DOM after submission, and local routing only.
