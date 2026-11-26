@@ -165,3 +165,24 @@ test('development attack/evaluation fixtures stay outside the default public lea
   assert.equal(bytes.includes(Buffer.from(marker)),false,`development fixture leaked into ${path.relative(app,file)}`);
  }
 });
+
+test('checked-in deployment configuration contains defaults/placeholders only and keeps real secrets external',()=>{
+ const configs=[
+  JSON.parse(fs.readFileSync(path.join(app,'../../services/sutra-api/wrangler.jsonc'),'utf8')),
+  JSON.parse(fs.readFileSync(path.join(app,'../../services/sutra-api/wrangler.private.jsonc'),'utf8')),
+  JSON.parse(fs.readFileSync(path.join(app,'../../deploy/sutra-pages/wrangler.jsonc'),'utf8'))
+ ];
+ const forbidden=['SUTRA_PROVIDER_KEY','SUTRA_CLIENT_HASH_SECRET','SUTRA_SELF_HOSTED_TOKEN','SUTRA_SELF_HOSTED_UPSTREAM_URL'];
+ for(const config of configs){
+  const vars=config.vars??{};
+  for(const name of forbidden)assert.equal(Object.hasOwn(vars,name),false,`${name} must be supplied outside committed config`);
+ }
+ assert.equal(configs[0].vars.SUTRA_ENABLE_INFERENCE,'false');
+ assert.equal(configs[1].vars.SUTRA_ENABLE_INFERENCE,'false');
+ assert.equal(configs[0].vars.SUTRA_MODELS,'');
+ assert.equal(configs[1].vars.SUTRA_MODELS,'');
+ const readme=fs.readFileSync(path.join(app,'../../services/sutra-api/README.md'),'utf8');
+ for(const name of ['SUTRA_PROVIDER_KEY','SUTRA_CLIENT_HASH_SECRET','SUTRA_SELF_HOSTED_TOKEN'])assert.ok(readme.includes(name));
+ assert.match(readme,/Cloudflare secret management/);
+ assert.match(readme,/checked-in deployment remains disabled/i);
+});
