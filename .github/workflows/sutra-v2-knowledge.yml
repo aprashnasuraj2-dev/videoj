@@ -124,6 +124,11 @@ jobs:
           cat sutra-v2-ancestry-independent.json
           python3 packages/sutra-knowledge/reference/test_structural_exposure.py < sutra-v2-ancestry-development.json > sutra-v2-ancestry-portable.json
           cat sutra-v2-ancestry-portable.json
+      - name: Execute frozen robust acquisition cases and independent exhaustive oracle
+        run: |
+          node packages/sutra-knowledge/evaluation/acquisition-development-pilot.mjs > sutra-v2-acquisition-development.json
+          python3 packages/sutra-knowledge/evaluation/verify-acquisition-development.py < sutra-v2-acquisition-development.json > sutra-v2-acquisition-independent.json
+          cat sutra-v2-acquisition-independent.json
       - name: Execute frozen synthetic living-knowledge pilot and scoped baseline comparison
         run: node packages/sutra-knowledge/evaluation/living-pilot.mjs
       - name: Measure actual provenance-bound revision replay against fresh exact parity
@@ -158,6 +163,8 @@ jobs:
             sutra-v2-ancestry-development.json
             sutra-v2-ancestry-independent.json
             sutra-v2-ancestry-portable.json
+            sutra-v2-acquisition-development.json
+            sutra-v2-acquisition-independent.json
             sutra-assumption-development.json
             sutra-revision-development.json
             sutra-revision-development-bundles.json

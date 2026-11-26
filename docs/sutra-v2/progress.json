@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-138",
+  "session": "V2-139",
   "next": [
     "V2-LK02-INTENT-IR",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "30 acquisition development cases frozen; evaluator and exact CI pending",
+  "state": "acquisition frozen corpus executable independent oracle candidate; CI pending",
   "verified": [
     {
       "id": "V2-M01",
@@ -401,14 +401,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-139",
+    "parent": "ffa0625f24690217e6e17e488685e78895136d0d",
+    "description": "### V2-139 — execute frozen acquisition corpus and independent matched baseline oracle (candidate)\nPinned unchanged V2-138 manifest Git blob a5bd96c1667c9b980bbdfa34e1fb814baf692be0. Actual reviewed compiler, sealed investigation, finite world grid, minimax planner execute all 30 cases; expected roots/objectives and cell arithmetic checked. Separate Python enumerates from frozen manifest, not reported grid, with exact adaptive, one-read, nonadaptive subset and no-observation policies under matched losses/costs/budgets. CI publishes both JSON artifacts; no independent labels, measured real losses/privacy, human-time, superiority or verified benchmark credit pending exact workflow. V2-136/137/138 remain pending unless exact evidence later observed."
+  },
+  "previousPendingCandidate": {
     "session": "V2-138",
     "parent": "9e744cd22e6b2b81c115c96d4d93d3fb45a31221",
     "description": "### V2-138 — freeze acquisition development benchmark before implementation\nFreeze 30 explicit developer-labeled robust acquisition cases (15 single-axis and 15 two-axis conjunction). Expected objective and first action manually declared before evaluator; same bounded loss, actions, shared acquisition costs and exposure cap across future comparisons. Cases include free reads, stop ties, prepaid source, exposure exactly at/short of budget, overlapping and failed outcomes, shared vs separate source costs and two-step interaction. Two identical semantic proposals used solely for profile admission, not independent evidence. Next: executable compiler/grid/acquisition runner plus independent exhaustive oracle and matched no-observation/one-read/nonadaptive baselines. No empirical costs, independent human labels, speed or superiority claim; dataset not yet executed. V2-136/137 exact CI still pending at observation."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-137",
-    "parent": "48c0879c37f83a03a05c9e3ef61724cd3eacb9c9",
-    "description": "### V2-137 — reopen completed recovery in the same workspace (candidate)\nExtend the existing local import panel with explicit revision/recovery mode and six retained pins for recovery. Preview leaves current draft and baseline intact; mode/file/pin drift invalidates confirmation. Confirmed recovery reinstates its actual preceding revision baseline and exact recovered child, preserves the original portable report for byte-identical re-export, and never enables recursive recovery. Existing revision path and four-pin independent verifier inputs unchanged; final child digest saved via existing investigation digest export. Fresh Chromium regression uses actual previously downloaded report and separately saved pins; wrong final pin, stale mode, unrelated current draft, comparison baseline, byte-identical re-export, 360px/no external contact. V2-136 and V2-137 CI pending at authoring. No browser storage, source authentication or broad gate closure."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
