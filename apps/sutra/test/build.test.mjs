@@ -192,3 +192,15 @@ test('checked-in deployment configuration contains defaults/placeholders only an
  assert.match(readme,/Cloudflare secret management/);
  assert.match(readme,/checked-in deployment remains disabled/i);
 });
+
+test('production Pages assets stay within the current 25 MiB single-asset ceiling',()=>{
+ const pagesAssetLimit=25*1024*1024;
+ const files=[];
+ const walk=dir=>{for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const full=path.join(dir,entry.name);if(entry.isDirectory())walk(full);else files.push(full);}};
+ walk(path.join(app,'dist'));
+ assert.ok(files.length>0,'production build must contain deployable files');
+ for(const file of files){
+  const bytes=fs.statSync(file).size;
+  assert.ok(bytes<=pagesAssetLimit,`${path.relative(path.join(app,'dist'),file)} is ${bytes} bytes and exceeds the Cloudflare Pages single-asset ceiling of ${pagesAssetLimit} bytes`);
+ }
+});
