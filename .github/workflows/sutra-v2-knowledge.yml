@@ -108,7 +108,9 @@ jobs:
           node packages/sutra-knowledge/examples/evidence-recovery-reference-cases.mjs > sutra-evidence-recovery-reference-cases.json
           python3 packages/sutra-knowledge/reference/test_evidence_recovery.py < sutra-evidence-recovery-reference-cases.json
       - name: Independently replay frozen atomic revision benchmark exports
-        run: python3 packages/sutra-knowledge/reference/test_revision_development.py sutra-revision-development-bundles.json
+        run: |
+          python3 packages/sutra-knowledge/reference/test_revision_development.py sutra-revision-development-bundles.json > sutra-revision-development-independent.json
+          cat sutra-revision-development-independent.json
       - name: Independently compare restricted question grammar across languages
         run: |
           node packages/sutra-knowledge/examples/question-reference-cases.mjs > sutra-question-reference-cases.json
@@ -139,6 +141,10 @@ jobs:
           node packages/sutra-knowledge/evaluation/semantic-development.mjs > sutra-v2-semantic-development.json
           python3 packages/sutra-knowledge/evaluation/verify-semantic-development.py < sutra-v2-semantic-development.json > sutra-v2-semantic-independent.json
           cat sutra-v2-semantic-independent.json
+      - name: Assemble manifest-bound 200-case synthetic development ledger
+        run: |
+          python3 packages/sutra-knowledge/evaluation/development-ledger.py > sutra-v2-development-ledger.json
+          cat sutra-v2-development-ledger.json
       - name: Execute frozen synthetic living-knowledge pilot and scoped baseline comparison
         run: node packages/sutra-knowledge/evaluation/living-pilot.mjs
       - name: Measure actual provenance-bound revision replay against fresh exact parity
@@ -182,6 +188,8 @@ jobs:
             sutra-assumption-development.json
             sutra-revision-development.json
             sutra-revision-development-bundles.json
+            sutra-revision-development-independent.json
+            sutra-v2-development-ledger.json
             sutra-evidence-recovery-reference-cases.json
             sutra-v2-frontier.json
             sutra-v2-conflict.json

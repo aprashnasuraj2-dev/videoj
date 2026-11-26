@@ -440,3 +440,7 @@ Eight families × five explicit cases: period, inclusive threshold, denominator,
 
 ### V2-145 — execute frozen semantic development corpus (candidate)
 Forty developer-labeled cases through actual reviewed expression compiler and finite semantic challenge engine; pinned manifest blob 609ad48d3d18c2ff620abeae7a3b52747aae78c1. Independent Python Fraction oracle dispatches eight closed families, verifies expected and observed vectors, newly distinguishing pairs, raw/deduplicated vote selections and wrong-only/abstention/mixed metrics. All methods receive matched programs/scenarios; retain-all does not select intended meaning. No source truth, open-ended language accuracy, independent labels or external superiority. Exact CI pending.
+
+
+### V2-146 — reproducible six-group development ledger (candidate)
+Aggregate only completed individual evaluator/oracle results; enforce six frozen manifest blob digests, exact case IDs, group-specific matched counts, independent replay scope and report artifact SHA-256. Include actual checked-out revision plus PR head/run ID, separate 200 synthetic coverage from zero expert/held-out labels, and retain group-specific baselines without pooling heterogeneous scores. Capture existing revision Python summary as artifact; no weakening of original steps. CI pending; no release or benchmark gate closure.
