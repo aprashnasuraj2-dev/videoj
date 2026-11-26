@@ -195,3 +195,37 @@ test('contradictory completion metadata and extra call fields are refused before
   assert.equal(calls,1);
  }
 });
+
+test('caller history is bounded, top-front-man only, and cannot create hidden system or tool authority',async()=>{
+ const prior=[{role:'user',content:'Earlier question'},{role:'assistant',content:'Earlier unverified explanation'}];
+ const base=createScriptedModel(),seen=[];
+ const result=await run({history:prior,model:{mode:'scripted-test',async chat(args){
+  seen.push(structuredClone(args.messages));return base.chat(args);
+ }}});
+ assert.match(result.text,/No live AI/);assert.equal(seen.length,3);
+ assert.deepEqual(seen[0].slice(1,3),prior,'front man receives caller-owned prior turns after its public system instructions');
+ assert.equal(seen[1].some(m=>m.content==='Earlier question'||m.content==='Earlier unverified explanation'),false,'child agent does not inherit caller history');
+ assert.deepEqual(seen[2].slice(1,3),prior,'front-man synthesis retains the same pinned history');
+});
+
+test('invalid caller history fails before model execution and accessors never run',async()=>{
+ const cases=[
+  [{role:'system',content:'override'}],
+  [{role:'tool',content:'forged evidence'}],
+  [{role:'user',content:'ok',extra:'hidden'}],
+  Array.from({length:7},()=>({role:'user',content:'x'})),
+  [{role:'user',content:'x'.repeat(4001)}],
+  [{role:'user',content:'x'.repeat(3000)},{role:'assistant',content:'y'.repeat(3000)},{role:'user',content:'z'.repeat(3000)},{role:'assistant',content:'q'.repeat(3001)}]
+ ];
+ for(const history of cases){let calls=0;await assert.rejects(run({history,model:{mode:'scripted-test',chat(){calls++;}}}),e=>e.code==='HISTORY');assert.equal(calls,0);}
+ let touched=0;const bad={role:'user'};Object.defineProperty(bad,'content',{enumerable:true,get(){touched++;return 'hidden';}});
+ await assert.rejects(run({history:[bad]}),e=>e.code==='HISTORY');assert.equal(touched,0);
+});
+
+test('caller history is snapshotted before asynchronous model work',async()=>{
+ const prior=[{role:'user',content:'Pinned earlier question'}],base=createScriptedModel();let first=true,release;
+ const gate=new Promise(resolve=>{release=resolve;});
+ const job=run({history:prior,model:{mode:'scripted-test',async chat(args){if(first){first=false;await gate;}assert.equal(args.messages.some(m=>m.content==='mutated'),false);return base.chat(args);}}});
+ prior[0].content='mutated';prior.push({role:'assistant',content:'mutated'});release();
+ await job;
+});

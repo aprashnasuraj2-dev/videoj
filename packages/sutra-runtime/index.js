@@ -125,7 +125,7 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
 
 // Model adapters are explicitly injected; there is no keyless automatic mock fallback.
 // A scripted-test adapter is only a test driver, not a live inference service.
-export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,webTools,peerRuntime,thirdPartyMcp,privateContext,peerContextGrants}={}){
+export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,webTools,peerRuntime,thirdPartyMcp,privateContext,peerContextGrants,history=[]}={}){
  let admittedPeer=null;
  if(peerRuntime!==undefined){
   try{peerRuntime=snapshotContactConfig(peerRuntime,['inspector','fetchImpl'],'PEER_CONFIG');}
@@ -146,6 +146,15 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  catch(error){fail(error?.code??'PRIVATE_CONTEXT_POLICY','Private context policy is invalid.');}
  const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowWebTools:!!webTools,allowPeers:!!admittedPeer,externalMcpUrl:third?.url??null});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
+ let admittedHistory;
+ try{admittedHistory=snapshotJsonData(history,16384,'HISTORY');}catch{fail('HISTORY','Caller history must be bounded plain data.');}
+ if(!Array.isArray(admittedHistory)||admittedHistory.length>6)fail('HISTORY','Caller history must contain at most six messages.');
+ let historyChars=0;
+ for(const message of admittedHistory){
+  if(!plain(message)||Object.keys(message).sort().join(',')!=='content,role'||!['user','assistant'].includes(message.role)||typeof message.content!=='string'||!message.content.trim()||message.content.length>4000)fail('HISTORY','Caller history permits only bounded user/assistant text.');
+  historyChars+=message.content.length;if(historyChars>12000)fail('HISTORY','Caller history text budget exceeded.');
+ }
+ admittedHistory=Object.freeze(admittedHistory.map(message=>Object.freeze({role:message.role,content:message.content})));
  const adapterMode=model?.mode,adapterChat=model?.chat;
  if(typeof adapterChat!=='function'||!['scripted-test','provider'].includes(adapterMode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
  // The caller, not an untrusted graph (including a fetched peer), owns
@@ -325,7 +334,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
     ...(Object.keys(returning).length?{private_context:returning}:{})};
   }};
  };
- const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:adapterMode==='scripted-test',apiKey:'',defaultModel:approvedModel,modelOverride:approvedModel,resolveRemote:resolvePeer,resolveMcp:async ref=>{
+ const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:admittedHistory,isTop:true,mock:adapterMode==='scripted-test',apiKey:'',defaultModel:approvedModel,modelOverride:approvedModel,resolveRemote:resolvePeer,resolveMcp:async ref=>{
   check();
   if(ref?.url==='/api/source-tools'&&sourceClient)return sourceClient;
   if(ref?.url==='/api/web-tools'&&webClient)return webClient;
