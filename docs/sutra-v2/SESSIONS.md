@@ -1330,3 +1330,15 @@ Central source observed: `93ece692b610542f11d0ca7ff2cd08dcf9b44c6e`. [4577799416
 - N006: reconciled ten heads and documented drift against immutable central source. N007/N008: added missing N005 in machine next/default order and normalized current child register; remaining cross-register audits open. No broad gate credit.
 
 Next active: N001 passing exact CI on corrected witness fixture; independently advance N002/N003 then refresh and verify #61. Preserve all previous failures; no merge, release, external action or fabricated evidence.
+
+
+## V2-187 — scoped history and acquisition verification (26 November 2026)
+
+Central parent: `0b14cb66a75019502fa473bb88dc462067761c53`. Exact observations:
+- PR #52: `ae8630ec7d472263f8f8fffb16062bfbc10f96af`; [job 139769828804](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779075994/job/139769828804), 422/422 exact scoped JS tests passed; separate-process witness, rollback, bounded lost-response recovery. Close only V2-N001, V2-HIST-001.
+- PR #54: `2336566c64c4ce461042bec8b34c01c22356aba3`; [job 139770463685](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779263957/job/139770463685), 407+5+2 tests passed, authenticated separate-process receipt and acquisition path. Close only V2-N002, V2-ACQ-001.
+- PR #58: `4a9095387cfb0e9edd8aceddb747eaa35edeb94d`; [job 139770644359](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779317805/job/139770644359), workspace browser failed: primary action not in first viewport: conflicted. Keep N003 active.
+- Retained failed intermediate #52 job 139768775225: raw signed head/genesis digest incorrectly rehashed; fixed digest identity and recovery precondition. #54 job 139768793844: REVISION_PIN on positive replay; corrected fixture to valid two-world policy, signer and pinned version. #58 job 139768855899: 529px document width at 320px / 200% root size; CSS wrapping candidate subsequently failed first-viewport action in conflicted state. No full browser acceptance.
+- #61 manifest is stale; do not merge or transfer old green results. Rebuild only after correction and inspect current base drift.
+- V2 machine cursor and roadmap metadata normalized; legacy tracker retirement handling still requires implementation. N007/N008 remain open until audit and exact central evidence. No broad gate promotion.
+- Next: N003 browser corrective iteration, N004/N005 refreshed combined validation. No release, merge, paid inference, external contact or production change.

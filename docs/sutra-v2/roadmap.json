@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-179",
+  "session": "V2-187-exact-scoped-verification",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -4322,5 +4322,7 @@
       "Expand independent interval/statistical verifier, then run end-to-end reasoning evaluation rather than duplicate gold-program execution."
     ],
     "qualification": "Scoped evidence only. Existing roadmap gate status and historical evidence preserved; disposition is a work-selection overlay, not a completion-count promotion."
-  }
+  },
+  "activeChecklist": "docs/sutra-v2/CHECKLIST.md",
+  "executionPolicy": "Only the active V2 checklist selects tasks; broad roadmap statuses retain their prior evidence boundaries."
 }

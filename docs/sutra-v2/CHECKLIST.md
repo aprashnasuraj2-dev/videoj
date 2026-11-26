@@ -17,17 +17,17 @@
 
 ## Current live branch baseline to reconcile
 
-| PR | Workstream | Current head at V2-186 observation | Current evidence boundary |
+| PR | Workstream | Current head at V2-187 observation | Current evidence boundary |
 | --- | --- | --- | --- |
-| #50 | central V2 | `93ece692b610542f11d0ca7ff2cd08dcf9b44c6e` | knowledge passed; browser pending at observation |
+| #50 | central V2 | `0b14cb66a75019502fa473bb88dc462067761c53` | prior checkpoint; exact central CI reconciliation open |
 | #51 | model orchestration | `aca5e8b60c8ce67f09c72cb4722a05c8810634da` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45757418475) |
-| #52 | persistent knowledge | `82009e27fb07bbb8039af5c6341e004113a2c4d6` | [in_progress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45778757664) |
+| #52 | persistent knowledge | `ae8630ec7d472263f8f8fffb16062bfbc10f96af` | [422/422 exact scoped JS tests passed; separate-process witness, rollback, bounded lost-response recovery](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779075994/job/139769828804) |
 | #53 | semantic compilation | `0065b48dc5181f549845303d1569b88d94bc2ddf` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45758784104) |
-| #54 | evidence acquisition | `0818f78b4551fcfcdd2ff08bf50f1c519d2842c1` | [in_progress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45778763117) |
+| #54 | evidence acquisition | `2336566c64c4ce461042bec8b34c01c22356aba3` | [407+5+2 tests passed, authenticated separate-process receipt and acquisition path](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779263957/job/139770463685) |
 | #55 | independent verification | `1a429e24a4fca63affccedf138150480b3ee87c2` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45764898229) |
 | #56 | counterfactuals | `4620bf709d9749c311f6726e6d2e2bdf04a383b4` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759676416) |
 | #57 | security/recovery | `46055f4f75cf79370ae5e423d1fc99f53b17421e` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45753193964) |
-| #58 | unified workspace | `bef407d18994f5cf4557124c1aadeab38d4d994d` | [in_progress](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45778782354); accessibility diagnostics pending, product reflow open |
+| #58 | unified workspace | `4a9095387cfb0e9edd8aceddb747eaa35edeb94d` | [workspace browser failed: primary action not in first viewport: conflicted](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779317805/job/139770644359) |
 | #59 | specialist domains | `35a1e273fd10335ed70c7499d00d2cf3dfd03e01` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759708514) |
 | #60 | benchmark | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) |
 | #61 | validation-only combined tree | `ad295ae83bcafb48d489ef96475c80a22bac3c16` | old exact browser passed; knowledge/parallel reruns requested; accessibility assertion failed; manifest stale; **DO NOT MERGE** |
@@ -40,9 +40,9 @@ If any head changes, replace the stale row during reconciliation before claiming
 
 These items are first in the execution queue because later integrated claims depend on them.
 
-- [~] `V2-N001` Reconcile PR #52 exact head CI. Re-run or otherwise obtain completed exact-head scoped evidence for the external history-witness implementation; inspect cancelled job cause before rerun and retain failure/cancellation history.
-- [ ] `V2-N002` Reconcile PR #54 exact head CI for authenticated observation acquisition; confirm the separate-process Ed25519 receipt path completes on the exact current head.
-- [ ] `V2-N003` Complete PR #58 newest browser/accessibility evidence: 320px keyboard journey, accessible names, focus treatment, reflow/200% proxy, reduced motion, no storage and no external contact.
+- [x] `V2-N001` Reconcile PR #52 exact head CI. Re-run or otherwise obtain completed exact-head scoped evidence for the external history-witness implementation; inspect cancelled job cause before rerun and retain failure/cancellation history.
+- [x] `V2-N002` Reconcile PR #54 exact head CI for authenticated observation acquisition; confirm the separate-process Ed25519 receipt path completes on the exact current head.
+- [~] `V2-N003` Complete PR #58 newest browser/accessibility evidence: 320px keyboard journey, accessible names, focus treatment, reflow/200% proxy, reduced motion, no storage and no external contact.
 - [ ] `V2-N004` Complete PR #61 exact combined validation on the current 82-path manifest: combined knowledge regression, parallel regression and workspace browser/accessibility must all finish successfully or produce retained failures.
 - [ ] `V2-N005` Confirm #61 browser success and all child-specific workflows belong to the exact current manifest; do not inherit older #61 green revisions.
 - [x] `V2-N006` Reconcile all ten child heads against the current central V2 head and document base drift; do not treat the eight central coordination commits as automatically present in children.
@@ -78,7 +78,7 @@ Existing base: provider substitution, opposite-output preservation, one-shot rou
 
 Existing base: immutable snapshots, local CAS, fsync/atomic publication, subprocess concurrency, real SIGKILL tests, kernel flock profile and challenge-bound signed freshness witness candidate.
 
-- [ ] `V2-HIST-001` Finish exact-head witness CI and retain cancellation/failure evidence.
+- [x] `V2-HIST-001` Finish exact-head witness CI and retain cancellation/failure evidence.
 - [ ] `V2-HIST-002` Connect the durable history store to the full typed V2 knowledge graph, not only the narrow existing snapshot profile.
 - [ ] `V2-HIST-003` Verify simultaneous correction and withdrawal with shared descendants; incremental invalidation must equal full replay.
 - [ ] `V2-HIST-004` Verify branch/fork/restore/diff histories across multiple generations while preserving conflicting empirical claims.
@@ -107,7 +107,7 @@ Existing base: explicit competing mappings, exclusion/unresolved states, review 
 
 Existing base: acquisition path replay, source-bound receipts and challenged Ed25519 observation receipts from a separate signer process.
 
-- [ ] `V2-ACQ-001` Finish exact-head authenticated acquisition CI.
+- [x] `V2-ACQ-001` Finish exact-head authenticated acquisition CI.
 - [ ] `V2-ACQ-002` Separate source authentication, measurement calibration, applicability and real-world truth in the receipt model.
 - [ ] `V2-ACQ-003` Model correlated/noisy observations without inventing independence or probabilities.
 - [ ] `V2-ACQ-004` Support failed/unknown observations and bounded retry/replanning without converting failure into evidence.
