@@ -60,7 +60,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P083-05` Confirm the default funded model path from a clean browser session
 - [ ] `SUTRA-P083-06` Smoke-check existing Patro, DHAGO and DETOUR routes
 - [ ] `SUTRA-P083-07` Record rollback target and deployed artifact hashes
-- [ ] `SUTRA-P083-08` Do not treat a source merge or staged branch as proof of production release
+- [x] `SUTRA-P083-08` Do not treat a source merge or staged branch as proof of production release
 - [ ] `SUTRA-P083-09` Produce and review the phase artifact: Proposed production URLs activated and release record.
 - [ ] `SUTRA-P083-10` Close phase 083 only after its applicable tasks have evidence and its exit condition is observed: Both new origins serve the intended candidate over HTTPS; existing public player and Patro routes pass a smoke check.
 
@@ -77,7 +77,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P084-04` Retain upstream license, NOTICE and third-party attribution
 - [x] `SUTRA-P084-05` Check tools do not require private learner media or credentials
 - [ ] `SUTRA-P084-06` Run the documented clean-host install on the release version
-- [ ] `SUTRA-P084-07` Distinguish repository release from an optional npm publication
+- [x] `SUTRA-P084-07` Distinguish repository release from an optional npm publication
 - [ ] `SUTRA-P084-08` Record actual public URLs and release hashes for submission copy
 - [ ] `SUTRA-P084-09` Produce and review the phase artifact: Community tool URLs and versioned release package.
 - [ ] `SUTRA-P084-10` Close phase 084 only after its applicable tasks have evidence and its exit condition is observed: Each tool is available without an account, private key or SUTRA-only corpus; one clean independent installation is reproducible.
