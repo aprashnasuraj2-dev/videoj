@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0049 — 2026-11-26
+
+**729/1,107 overall verified; 623/1,000 original; 371 pending; six omissions; one hardware blocker.** P001-07 is verified from the explicit dependency policy and observed separation of unresolved eligibility/rights inputs from safe engineering. P023-09 is verified with a reviewed browser-runtime entry/first-local-run artifact and prior passing Chromium evidence. [Evidence](evidence/implementation/SESSION-0049.md).
+
+P023-03 remains pending: scripted local orchestration is not a real configured inference run. The independently executable original-task scan is now exhausted; remaining unchecked originals require genuine participant, human, provider, physical-device, public-HTTPS/interop, production-account or final-candidate evidence.
+
 ## Session 0048 — 2026-11-26
 
 **727/1,107 overall verified; 621/1,000 original; 373 pending; six omissions; one hardware blocker.** Four original items closed with bounded evidence: P001-03 technical pre-existing/contribution boundary, P001-06 official rules/exclusions snapshot, P050-02 fresh-browser first-load inference discovery, and P065-06 media/static route isolation from dynamic Worker/service paths. [Evidence](evidence/implementation/SESSION-0048.md).
