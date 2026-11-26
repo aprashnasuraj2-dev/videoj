@@ -19,7 +19,7 @@
 
 | PR | Workstream | Observed exact head at V2-197 reconciliation | Current evidence boundary |
 | --- | --- | --- | --- |
-| #50 | central V2 | `bc350f16c546a32f70ffe77652ed5fd5027589e5` | [exact V2-201 knowledge/browser/accessibility passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45793588254) |
+| #50 | central V2 | `d87414e463e396be3672e63f774de77b2ab6136d` | [exact V2-202 knowledge/browser/accessibility passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45794383708) |
 | #51 | model orchestration | `aca5e8b60c8ce67f09c72cb4722a05c8810634da` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45757418475) |
 | #52 | persistent knowledge | `61714c3c095ad254486b250c80cc84b0481dfdd2` | [423/423 scoped JS passed; atomic correction/withdrawal, prior-state refusal and restored replay](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788072332/job/139799827662) |
 | #53 | semantic compilation | `0065b48dc5181f549845303d1569b88d94bc2ddf` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45758784104) |
@@ -87,7 +87,7 @@ Existing base: immutable snapshots, local CAS, fsync/atomic publication, subproc
 - [x] `V2-HIST-007` Run large-history scale/resource tests and record asymptotic/observed limits.
 - [x] `V2-HIST-008` Decide and document supported filesystem/OS profiles; test cross-filesystem portability where claimed and explicitly refuse unsupported NFS/Windows behavior if not verified.
 - [ ] `V2-HIST-009` Perform physical/hardware power-loss durability evidence when available; do not substitute SIGKILL for power loss.
-- [ ] `V2-HIST-010` Integrate durable history into the unified browser workspace with stale-CAS and recovery UX.
+- [~] `V2-HIST-010` Integrate durable history into the unified browser workspace with stale-CAS and recovery UX.
 
 ## B3. PR #53 — semantic compilation and intent
 
@@ -96,7 +96,7 @@ Existing base: explicit competing mappings, exclusion/unresolved states, review 
 - [ ] `V2-SEM-001` Implement bounded natural-language-to-meaning/program induction; executing supplied gold programs is not sufficient.
 - [ ] `V2-SEM-002` Expand ambiguity coverage for signed/relative change, denominator, timeframe, population, negation, quantifier, modality, units and causal wording.
 - [ ] `V2-SEM-003` Complete the versioned intent IR with original question, candidate meanings and separate source/extraction/entity/scope/relationship/method/computation/empirical/applicability obligations.
-- [~] `V2-SEM-004` Integrate explicit competing interpretations and unresolved branches into the browser review UI.
+- [x] `V2-SEM-004` Integrate explicit competing interpretations and unresolved branches into the browser review UI.
 - [ ] `V2-SEM-005` Implement controlled-language round trip and detect scope/definition/negation/denominator/invented-relation drift.
 - [ ] `V2-SEM-006` Provide structured table, template/rule, user-expression, document and optional model-proposal pathways that produce the same reviewed contract where semantically equivalent.
 - [ ] `V2-SEM-007` Implement consequential clarification selection: ask only distinctions capable of changing material downstream results.
@@ -167,7 +167,7 @@ Existing base: portable draft/history/baseline checkpoint, stale-safe restore, i
 
 - [x] `V2-UX-001` Finish newest exact browser/accessibility CI.
 - [ ] `V2-UX-002` Integrate #52 durable history into the workspace using its real APIs.
-- [ ] `V2-UX-003` Integrate #53 mapping/semantic review into the workspace using its real APIs.
+- [x] `V2-UX-003` Integrate #53 mapping/semantic review into the workspace using its real APIs.
 - [ ] `V2-UX-004` Integrate #56 counterfactual challenge and coverage state.
 - [ ] `V2-UX-005` Integrate #54 acquisition planning/receipt admission under explicit consent.
 - [ ] `V2-UX-006` Integrate #51 provider/operator approval without making model use mandatory.

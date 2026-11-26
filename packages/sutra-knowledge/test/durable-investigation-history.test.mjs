@@ -4,6 +4,7 @@ import {mkdtemp,rm} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {livingFixture} from '../examples/living-investigation.mjs';
+import {createInvestigationHistory} from '../investigation-history.js';
 import {FACETS} from '../semantic-investigation.js';
 import {openDurableInvestigationHistory} from '../durable-investigation-history.mjs';
 
@@ -65,4 +66,16 @@ test('two durable typed adapters cannot both advance one retained head and faile
  const loser=winnerPin===revised.digest?withdrawn:revised;
  await assert.rejects(reopened.appendVersion({expectedHistoryPin:init.snapshot.digest,branch:'main',expectedBranchHead:root.digest,versionText:loser.versionText,versionPin:loser.digest}),/HISTORY_STORE_STALE_OR_ROLLED_BACK_HEAD/);
  assert.deepEqual((await reopened.read(snapshot.digest)).view,snapshot.view);
+});
+test('portable history snapshots initialize and advance the durable host only with exact retained CAS',async t=>{
+ const dir=await setup(t),root=await livingFixture('finance'),child=await livingFixture('finance',{revised:true,previousDigest:root.digest});
+ const portable=await createInvestigationHistory(root.versionText,root.digest),s0=portable.snapshot();
+ const s1=await portable.append({expectedHistoryPin:s0.digest,branch:'main',expectedHead:root.digest,versionText:child.versionText,versionPin:child.digest});
+ const host=await openDurableInvestigationHistory(dir),initialized=await host.initializeSnapshot({historyText:s0.historyText,historyPin:s0.digest});
+ assert.deepEqual(initialized,s0);
+ const advanced=await host.appendSnapshot({expectedHistoryPin:s0.digest,historyText:s1.historyText,historyPin:s1.digest});
+ assert.deepEqual(advanced,s1);
+ await assert.rejects(host.appendSnapshot({expectedHistoryPin:s0.digest,historyText:s1.historyText,historyPin:s1.digest}),/HISTORY_STORE_STALE_OR_ROLLED_BACK_HEAD/);
+ assert.deepEqual(await host.read(s1.digest),s1);
+ assertFullTypedGraph(await host.restore({expectedHistoryPin:s1.digest,versionPin:child.digest}),child);
 });

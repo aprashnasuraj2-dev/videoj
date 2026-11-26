@@ -27,6 +27,18 @@ async function bind(store){
    const {history}=await open(expectedHistoryPin);
    return history.snapshot();
   },
+  async initializeSnapshot({historyText,historyPin}={}){
+   const history=await openInvestigationHistory(historyText,historyPin),next=history.snapshot();
+   const loaded=await store.initialize(next.historyText,next.digest);
+   const reopened=await openInvestigationHistory(loaded.historyText,loaded.digest);
+   return reopened.snapshot();
+  },
+  async appendSnapshot({expectedHistoryPin,historyText,historyPin}={}){
+   const history=await openInvestigationHistory(historyText,historyPin),next=history.snapshot();
+   const committed=await store.append({expectedHead:expectedHistoryPin,nextText:next.historyText,nextPin:next.digest});
+   const reopened=await openInvestigationHistory(committed.historyText,committed.digest);
+   return reopened.snapshot();
+  },
   async restore({expectedHistoryPin,versionPin}={}){
    const {history}=await open(expectedHistoryPin);
    return history.restore(versionPin);

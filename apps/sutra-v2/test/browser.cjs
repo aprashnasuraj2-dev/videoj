@@ -36,7 +36,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
  });
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  const origin='http://127.0.0.1:'+server.address().port;
- let browser;
+ let browser;const cleanupDirs=[];
  try{
   browser=await chromium.launch({headless:true});
   const probe=await browser.newPage();
@@ -1045,7 +1045,20 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   }
   // Two complete guided synthetic domains use the same real browser controls.
   {
+   const durableDir=fs.mkdtempSync(path.join(require('node:os').tmpdir(),'sutra-browser-durable-'));cleanupDirs.push(durableDir);
+   const {openDurableInvestigationHistory}=await import('../../../packages/sutra-knowledge/durable-investigation-history.mjs'),durableHistory=await openDurableInvestigationHistory(durableDir);
    const samplePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];
+   await samplePage.exposeFunction('__sutraHistoryHostCall',async ({operation,payload})=>{
+    try{
+     let snapshot;
+     if(operation==='initialize_snapshot')snapshot=await durableHistory.initializeSnapshot(payload);
+     else if(operation==='append_snapshot')snapshot=await durableHistory.appendSnapshot(payload);
+     else if(operation==='read_snapshot')snapshot=await durableHistory.read(payload.expectedHistoryPin);
+     else throw Error('HISTORY_HOST_OPERATION');
+     return {ok:true,snapshot};
+    }catch(e){return {ok:false,error:String(e?.message??'HISTORY_HOST_FAILURE')};}
+   });
+   await samplePage.addInitScript(()=>{Object.defineProperty(globalThis,'sutraHistoryHost',{value:Object.freeze({version:1,call:(operation,payload)=>globalThis.__sutraHistoryHostCall({operation,payload})}),configurable:false,writable:false});});
    samplePage.on('pageerror',e=>errors.push(e.message));samplePage.on('request',r=>{if(new URL(r.url()).origin!==origin)external.push(r.url());});
    await samplePage.goto(origin);await samplePage.locator('#review-open').focus();await samplePage.keyboard.press('Enter');assert.equal(await samplePage.locator('#reviewed-workspace').getAttribute('open'),'');assert.equal(await samplePage.locator('#review-studio-state').innerText(),'NO CURRENT RESULT');await samplePage.locator('#review-studio-next').click();assert.equal(await samplePage.locator('#review-question').evaluate(e=>e===document.activeElement),true);await samplePage.locator('#review-sample-panel > summary').click();
    const sampleState=s=>samplePage.waitForFunction(state=>document.querySelector('#review-status').dataset.state===state&&!document.querySelector('#review-reset').disabled,s);
@@ -1075,6 +1088,10 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
     if(domain==='finance'){
      await samplePage.locator('#review-history-panel > summary').click();await samplePage.locator('#review-history-create').click();await sampleState('history_ready');
      assert.match(await samplePage.locator('#review-history-result').innerText(),/1 exact version.*1 branch/);
+     const rootHistoryPin=await samplePage.locator('#review-history-digest').innerText();
+     await samplePage.locator('#review-history-durable-panel > summary').click();
+     await samplePage.locator('#review-history-durable-initialize').click();await samplePage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='ready');
+     assert.equal(await samplePage.locator('#review-history-durable-pin').inputValue(),rootHistoryPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/initialized/);
     }
     await samplePage.locator('#review-semantic-retain').click();await samplePage.locator('#review-sample-'+domain+'-corrected').click();await sampleState('sample_ready');
     assert.equal(await samplePage.locator('#review-semantic-run').isDisabled(),true);
@@ -1108,6 +1125,12 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
      const archive=samplePage.waitForEvent('download');await samplePage.locator('#review-history-export').click();const historyBytes=fs.readFileSync(await (await archive).path());
      fs.writeFileSync(path.join(output,'living-history.json'),historyBytes);fs.writeFileSync(path.join(output,'living-history.sha256'),historyPin+'\n');
      const savedHistory=JSON.parse(historyBytes);assert.equal(savedHistory.versions.length,3);assert.equal(savedHistory.branches.length,2);
+     await durableHistory.appendSnapshot({expectedHistoryPin:rootHistoryPin,historyText:historyBytes.toString('utf8'),historyPin});
+     const localBeforeStale=await samplePage.locator('#review-history-digest').innerText();assert.equal(localBeforeStale,historyPin);
+     await samplePage.locator('#review-history-durable-append').click();await samplePage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='stale');
+     assert.equal(await samplePage.locator('#review-history-digest').innerText(),localBeforeStale);assert.equal(await samplePage.locator('#review-history-durable-pin').inputValue(),rootHistoryPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/No retry/);
+     await samplePage.locator('#review-history-durable-pin').fill(historyPin);await samplePage.locator('#review-history-durable-read').click();await samplePage.waitForFunction(()=>document.querySelector('#review-history-durable-status').dataset.state==='ready');
+     assert.equal(await samplePage.locator('#review-history-digest').innerText(),historyPin);assert.match(await samplePage.locator('#review-history-durable-status').innerText(),/In-memory history matches it/);
      await samplePage.locator('#review-history-clear').click();await sampleState('history_cleared');
      await samplePage.locator('#review-history-file').setInputFiles({name:'history.json',mimeType:'application/json',buffer:historyBytes});
      await samplePage.locator('#review-history-pin').fill('sha256:'+'0'.repeat(64));await samplePage.locator('#review-history-import').click();await sampleState('refused');assert.match(await samplePage.locator('#review-history-digest').innerText(),/No history/);
@@ -1652,5 +1675,5 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   fs.writeFileSync(path.join(output,'browser-report.json'),JSON.stringify(exported,null,2));
   fs.writeFileSync(path.join(output,'learning-evidence.json'),JSON.stringify(learning,null,2));
   console.log('PASS: built browser workspace, 360px keyboard baseline, revision 5/11, two method comparison, pinned two-agent scripted proposal, forged verdict refused, report replay/tamper, exported actual bytes, zero external requests; frontier policy and impossibility witness, source-bound learning revision, hash-checked native video seek, export and reset.');
- }finally{await browser?.close();await Promise.all([new Promise(resolve=>server.close(resolve)),new Promise(resolve=>peer.close(resolve))]);}
+ }finally{await browser?.close();for(const dir of cleanupDirs)fs.rmSync(dir,{recursive:true,force:true});await Promise.all([new Promise(resolve=>server.close(resolve)),new Promise(resolve=>peer.close(resolve))]);}
 })().catch(e=>{console.error(e);process.exitCode=1;});

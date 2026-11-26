@@ -3,15 +3,13 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-202-explicit-mapping-review-ui-candidate",
+  "session": "V2-203-durable-host-browser-candidate",
   "next": [
-    "V2-SEM-004",
-    "V2-UX-003",
     "V2-HIST-010",
     "V2-UX-002",
     "V2-HIST-009"
   ],
-  "state": "HIST008 exact strict Linux EXT2/3/4 profile verified; SEM004 active with real mapping-review browser UI candidate; UX003 remains pending exact browser acceptance",
+  "state": "SEM004 and UX003 exact mapping-review UI verified; HIST010 active with optional injected durable-host CAS/recovery candidate; UX002 pending exact acceptance",
   "verified": [
     {
       "id": "V2-M01",
@@ -551,6 +549,18 @@
       "sourceRevision": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45793588254/job/139818461041",
       "description": "Exact central 355/355 knowledge suite and browser passed. Runtime profile is Linux-only private EXT2/3/4 magic 0xef53; all other filesystem magic values and non-Linux refuse. NFS/SMB/CIFS/9P named refusals; cross-filesystem portability explicitly not claimed."
+    },
+    {
+      "id": "V2-SEM-004",
+      "sourceRevision": "d87414e463e396be3672e63f774de77b2ab6136d",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45794383708/job/139821171263",
+      "description": "Exact Chromium journey uses real question-mapping-review API: all alternatives rendered unresolved by default; explicit plausible/excluded/unresolved declarations, pinned export, invalidation and no automatic adoption; browser/accessibility passed."
+    },
+    {
+      "id": "V2-UX-003",
+      "sourceRevision": "d87414e463e396be3672e63f774de77b2ab6136d",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45794383708/job/139821171263",
+      "description": "Exact browser workspace integrates #53 mapping review API and preserves UNVERIFIED semantic status/decisionAuthority NONE; no external request added."
     }
   ],
   "release": "not_authorized",
@@ -9544,8 +9554,8 @@
     "pr49Baseline": "9bd76ef8bfd05f323592f21fe4b0841188861693"
   },
   "parallelWorkstreams": {
-    "session": "V2-202-explicit-mapping-review-ui-candidate",
-    "baseline": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+    "session": "V2-203-durable-host-browser-candidate",
+    "baseline": "d87414e463e396be3672e63f774de77b2ab6136d",
     "baseBranch": "sutra/v2-knowledge-compiler",
     "index": "docs/sutra-v2/PARALLEL-WORKSTREAMS.md",
     "branches": [
@@ -9566,9 +9576,9 @@
         "change": "One-shot approved route/scope plus pre-dispatch revalidation",
         "next": "Browser/operator approval wiring; actual authorized interoperability",
         "drift": {
-          "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+          "base": "d87414e463e396be3672e63f774de77b2ab6136d",
           "ahead": 5,
-          "behind": 45,
+          "behind": 46,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9588,9 +9598,9 @@
         "change": "Atomic immutable publication; real SIGKILL boundaries; explicit kernel flock profile; shared-DAG atomic revision regression",
         "next": "Integrated history/semantic/workspace acceptance; hardware power-loss, portability, external freshness, scale",
         "drift": {
-          "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+          "base": "d87414e463e396be3672e63f774de77b2ab6136d",
           "ahead": 11,
-          "behind": 45,
+          "behind": 46,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9609,9 +9619,9 @@
         "change": "Mapping revision audit and independent Python judgment reconstruction",
         "next": "Independent human annotation and browser review wiring",
         "drift": {
-          "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+          "base": "d87414e463e396be3672e63f774de77b2ab6136d",
           "ahead": 7,
-          "behind": 45,
+          "behind": 46,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9631,9 +9641,9 @@
         "change": "Exact source-bound observation receipt",
         "next": "External identity/measurement authentication and applicability",
         "drift": {
-          "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+          "base": "d87414e463e396be3672e63f774de77b2ab6136d",
           "ahead": 6,
-          "behind": 45,
+          "behind": 46,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9652,9 +9662,9 @@
         "change": "Independent Python topology and stale same-result revision challenges",
         "next": "Independent interval/statistical/semantic profiles",
         "drift": {
-          "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+          "base": "d87414e463e396be3672e63f774de77b2ab6136d",
           "ahead": 4,
-          "behind": 45,
+          "behind": 46,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9673,9 +9683,9 @@
         "change": "Normalized assignment domain expansion; omitted-world reporting",
         "next": "Scalable bounded search and measured review benefit",
         "drift": {
-          "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+          "base": "d87414e463e396be3672e63f774de77b2ab6136d",
           "ahead": 6,
-          "behind": 45,
+          "behind": 46,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9694,9 +9704,9 @@
         "change": "Opaque credential-generation fence through downstream publication",
         "next": "Post-publication lifecycle, transport/peer isolation, arbitrary encoding threat",
         "drift": {
-          "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+          "base": "d87414e463e396be3672e63f774de77b2ab6136d",
           "ahead": 5,
-          "behind": 45,
+          "behind": 46,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9720,9 +9730,9 @@
         "change": "Portable checkpoint; independent Python replay; actual browser export differential candidate",
         "next": "User evaluation, larger bounded portable profile, and final exact combined candidate observation",
         "drift": {
-          "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+          "base": "d87414e463e396be3672e63f774de77b2ab6136d",
           "ahead": 13,
-          "behind": 45,
+          "behind": 46,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9741,9 +9751,9 @@
         "change": "Engineering capacity interval and degraded-condition journey",
         "next": "Rights-cleared real source and independent specialist evaluation",
         "drift": {
-          "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+          "base": "d87414e463e396be3672e63f774de77b2ab6136d",
           "ahead": 6,
-          "behind": 45,
+          "behind": 46,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       },
@@ -9762,9 +9772,9 @@
         "change": "Held-out exact content and declared lineage collision audit",
         "next": "Frozen independently annotated real cases, matched actual metering and comparative runs",
         "drift": {
-          "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+          "base": "d87414e463e396be3672e63f774de77b2ab6136d",
           "ahead": 5,
-          "behind": 45,
+          "behind": 46,
           "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
         }
       }
@@ -12106,6 +12116,232 @@
           }
         ],
         "qualification": "Current exact scoped child observation, pinned to observed central source. No broad gate promotion; historical snapshots preserved."
+      },
+      {
+        "session": "V2-202-explicit-mapping-review-ui-candidate",
+        "baseline": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+        "branches": [
+          {
+            "id": "01-model-orchestration",
+            "branch": "sutra/v2-parallel/01-model-orchestration",
+            "pr": 51,
+            "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45757418475,
+              "observed": "success",
+              "scope": "exact child scoped JS regression",
+              "browserRun": 45757418447,
+              "browserObserved": "success"
+            },
+            "mergeableAtObservation": null,
+            "change": "One-shot approved route/scope plus pre-dispatch revalidation",
+            "next": "Browser/operator approval wiring; actual authorized interoperability",
+            "drift": {
+              "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+              "ahead": 5,
+              "behind": 45,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "02-persistent-knowledge",
+            "branch": "sutra/v2-parallel/02-persistent-knowledge",
+            "pr": 52,
+            "head": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45788072332,
+              "job": 139799827662,
+              "observed": "success",
+              "scope": "423/423 scoped JS; simultaneous correction/withdrawal, refusal and restoration, witness/recovery"
+            },
+            "mergeableAtObservation": null,
+            "change": "Atomic immutable publication; real SIGKILL boundaries; explicit kernel flock profile; shared-DAG atomic revision regression",
+            "next": "Integrated history/semantic/workspace acceptance; hardware power-loss, portability, external freshness, scale",
+            "drift": {
+              "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+              "ahead": 11,
+              "behind": 45,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "03-semantic-compilation",
+            "branch": "sutra/v2-parallel/03-semantic-compilation",
+            "pr": 53,
+            "head": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45758784104,
+              "observed": "success",
+              "scope": "exact child scoped JS regression"
+            },
+            "mergeableAtObservation": null,
+            "change": "Mapping revision audit and independent Python judgment reconstruction",
+            "next": "Independent human annotation and browser review wiring",
+            "drift": {
+              "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+              "ahead": 7,
+              "behind": 45,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "04-evidence-acquisition",
+            "branch": "sutra/v2-parallel/04-evidence-acquisition",
+            "pr": 54,
+            "head": "2336566c64c4ce461042bec8b34c01c22356aba3",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45779263957,
+              "job": 139770463685,
+              "observed": "success",
+              "scope": "407+5+2 tests passed, authenticated separate-process receipt and acquisition path"
+            },
+            "mergeableAtObservation": null,
+            "change": "Exact source-bound observation receipt",
+            "next": "External identity/measurement authentication and applicability",
+            "drift": {
+              "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+              "ahead": 6,
+              "behind": 45,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "05-independent-verification",
+            "branch": "sutra/v2-parallel/05-independent-verification",
+            "pr": 55,
+            "head": "1a429e24a4fca63affccedf138150480b3ee87c2",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45764898229,
+              "observed": "success",
+              "scope": "exact child scoped JS regression"
+            },
+            "mergeableAtObservation": null,
+            "change": "Independent Python topology and stale same-result revision challenges",
+            "next": "Independent interval/statistical/semantic profiles",
+            "drift": {
+              "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+              "ahead": 4,
+              "behind": 45,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "06-counterfactuals",
+            "branch": "sutra/v2-parallel/06-counterfactuals",
+            "pr": 56,
+            "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45759676416,
+              "observed": "success",
+              "scope": "exact child scoped JS regression"
+            },
+            "mergeableAtObservation": null,
+            "change": "Normalized assignment domain expansion; omitted-world reporting",
+            "next": "Scalable bounded search and measured review benefit",
+            "drift": {
+              "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+              "ahead": 6,
+              "behind": 45,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "07-security-recovery",
+            "branch": "sutra/v2-parallel/07-security-recovery",
+            "pr": 57,
+            "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45753193964,
+              "observed": "success",
+              "scope": "exact child scoped JS regression"
+            },
+            "mergeableAtObservation": null,
+            "change": "Opaque credential-generation fence through downstream publication",
+            "next": "Post-publication lifecycle, transport/peer isolation, arbitrary encoding threat",
+            "drift": {
+              "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+              "ahead": 5,
+              "behind": 45,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "08-unified-workspace",
+            "branch": "sutra/v2-parallel/08-unified-workspace",
+            "pr": 58,
+            "head": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+            "state": "scoped-verified",
+            "ci": {
+              "observed": "success",
+              "scope": "exact scoped JS and Chromium browser/accessibility; publisher retry succeeded",
+              "run": 45786416609,
+              "browserRun": 45786416592,
+              "browserJob": 139794191354,
+              "browserObserved": "success",
+              "publisherRun": 45786416590,
+              "publisherObserved": "success attempt 2; attempt 1 failure retained"
+            },
+            "mergeableAtObservation": null,
+            "change": "Portable checkpoint; independent Python replay; actual browser export differential candidate",
+            "next": "User evaluation, larger bounded portable profile, and final exact combined candidate observation",
+            "drift": {
+              "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+              "ahead": 13,
+              "behind": 45,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "09-specialist-domains",
+            "branch": "sutra/v2-parallel/09-specialist-domains",
+            "pr": 59,
+            "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45759708514,
+              "observed": "success",
+              "scope": "exact child scoped JS regression"
+            },
+            "mergeableAtObservation": null,
+            "change": "Engineering capacity interval and degraded-condition journey",
+            "next": "Rights-cleared real source and independent specialist evaluation",
+            "drift": {
+              "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+              "ahead": 6,
+              "behind": 45,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          },
+          {
+            "id": "10-benchmark",
+            "branch": "sutra/v2-parallel/10-benchmark",
+            "pr": 60,
+            "head": "b981d5b9e049fa62445c60c34ce8375b38933b89",
+            "state": "scoped-verified",
+            "ci": {
+              "run": 45759752586,
+              "observed": "success",
+              "scope": "exact child scoped JS regression"
+            },
+            "mergeableAtObservation": null,
+            "change": "Held-out exact content and declared lineage collision audit",
+            "next": "Frozen independently annotated real cases, matched actual metering and comparative runs",
+            "drift": {
+              "base": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+              "ahead": 5,
+              "behind": 45,
+              "mergeBase": "092c7971602ee9e294e467efbb0d72c44121e480"
+            }
+          }
+        ],
+        "qualification": "Current exact scoped child observation, pinned to observed central source. No broad gate promotion; historical snapshots preserved."
       }
     ],
     "priorityOrder": [
@@ -12675,19 +12911,19 @@
     "validationBranch": "sutra/v2-validation/v2-182",
     "validationPr": 61,
     "validationMergeAllowed": false,
-    "activeTask": "V2-SEM-004",
-    "remainingTasks": 146,
+    "activeTask": "V2-HIST-010",
+    "remainingTasks": 144,
     "activeTasks": 1,
-    "completedSinceReset": 22,
-    "remainingIncludingActive": 147,
+    "completedSinceReset": 24,
+    "remainingIncludingActive": 145,
     "externalBlockers": 6,
     "optionalRemainingTasks": 4,
-    "foundationRemainingIncludingActive": 143,
+    "foundationRemainingIncludingActive": 141,
     "explicitPriorityCounts": {
       "P0": 11,
       "P1": 16,
       "P2": 3,
-      "unclassified": 117
+      "unclassified": 115
     },
     "priorityCountQualification": "Explicit roadmap/checklist priorities only; unclassified checklist tasks use dependency order, no inferred priority labels."
   },
@@ -12699,14 +12935,14 @@
     "activePath": "docs/sutra-v2/CHECKLIST.md"
   },
   "currentReconciliation": {
-    "session": "V2-202-explicit-mapping-review-ui-candidate",
-    "centralSource": "bc350f16c546a32f70ffe77652ed5fd5027589e5",
+    "session": "V2-203-durable-host-browser-candidate",
+    "centralSource": "d87414e463e396be3672e63f774de77b2ab6136d",
     "centralRun": {
-      "id": 45793588254,
+      "id": 45794383708,
       "knowledge": "success",
       "browser": "success",
-      "knowledgeJob": 139818461041,
-      "browserJob": 139818461386
+      "knowledgeJob": 139821171644,
+      "browserJob": 139821171263
     },
     "validation": {
       "head": "8d12e8e15ff54c42910948a6a691eb41d631be15",
@@ -12877,13 +13113,13 @@
       "V2-N005",
       "V2-UX-001"
     ],
-    "next": "V2-SEM-004",
+    "next": "V2-HIST-010",
     "children": [
       {
         "pr": 51,
         "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da",
         "ahead": 5,
-        "behind": 45,
+        "behind": 46,
         "scopedRun": 45757418475,
         "scopedConclusion": "success"
       },
@@ -12891,7 +13127,7 @@
         "pr": 52,
         "head": "61714c3c095ad254486b250c80cc84b0481dfdd2",
         "ahead": 11,
-        "behind": 45,
+        "behind": 46,
         "scopedRun": 45788072332,
         "scopedConclusion": "success",
         "scopedJob": 139799827662
@@ -12900,7 +13136,7 @@
         "pr": 53,
         "head": "0065b48dc5181f549845303d1569b88d94bc2ddf",
         "ahead": 7,
-        "behind": 45,
+        "behind": 46,
         "scopedRun": 45758784104,
         "scopedConclusion": "success"
       },
@@ -12908,7 +13144,7 @@
         "pr": 54,
         "head": "2336566c64c4ce461042bec8b34c01c22356aba3",
         "ahead": 6,
-        "behind": 45,
+        "behind": 46,
         "scopedRun": 45779263957,
         "scopedConclusion": "success"
       },
@@ -12916,7 +13152,7 @@
         "pr": 55,
         "head": "1a429e24a4fca63affccedf138150480b3ee87c2",
         "ahead": 4,
-        "behind": 45,
+        "behind": 46,
         "scopedRun": 45764898229,
         "scopedConclusion": "success"
       },
@@ -12924,7 +13160,7 @@
         "pr": 56,
         "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4",
         "ahead": 6,
-        "behind": 45,
+        "behind": 46,
         "scopedRun": 45759676416,
         "scopedConclusion": "success"
       },
@@ -12932,7 +13168,7 @@
         "pr": 57,
         "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e",
         "ahead": 5,
-        "behind": 45,
+        "behind": 46,
         "scopedRun": 45753193964,
         "scopedConclusion": "success"
       },
@@ -12940,7 +13176,7 @@
         "pr": 58,
         "head": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
         "ahead": 13,
-        "behind": 45,
+        "behind": 46,
         "scopedRun": 45786416609,
         "scopedConclusion": "success",
         "browserRun": 45786416592,
@@ -12954,7 +13190,7 @@
         "pr": 59,
         "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01",
         "ahead": 6,
-        "behind": 45,
+        "behind": 46,
         "scopedRun": 45759708514,
         "scopedConclusion": "success"
       },
@@ -12962,7 +13198,7 @@
         "pr": 60,
         "head": "b981d5b9e049fa62445c60c34ce8375b38933b89",
         "ahead": 5,
-        "behind": 45,
+        "behind": 46,
         "scopedRun": 45759752586,
         "scopedConclusion": "success"
       }

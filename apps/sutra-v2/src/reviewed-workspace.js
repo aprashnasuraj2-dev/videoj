@@ -1,4 +1,5 @@
 import {openWorkspaceCheckpoint,exportWorkspaceCheckpoint} from '../../../packages/sutra-knowledge/workspace-checkpoint.js';
+import {createHistoryHostClient} from './history-host.js';
 import {openDraftCheckpoint,exportDraftCheckpoint} from '../../../packages/sutra-knowledge/draft-checkpoint.js';
 import {admitLocalBindingConfig,recoverLocalBindingPlan,verifyLocalBindingTransfer,LOCAL_BINDING_VERSION} from '../../../packages/sutra-knowledge/local-binding-config.js';
 import {previewBindingSuggestions,applyReviewedBindingSuggestions} from '../../../packages/sutra-knowledge/binding-suggestions.js';
@@ -47,6 +48,7 @@ const questionSides=['left','right','threshold'];
 const questionMode=()=>by('question-path-mode').value==='change';
 const activeQuestionSides=()=>questionMode()?questionSides:questionSides.slice(0,2);
 let tablePreview=null,tableSelections=[],history=null,acquisitionCurrent=null,intervalCurrent=null,binomialCurrent=null,fisherCurrent=null;
+const historyHost=createHistoryHostClient();
 const tableFields=['table-text','table-source','table-lineage','table-inspect','table-row','table-column','table-id','table-kind','table-unit','table-scope','table-dim-l','table-dim-m','table-dim-t','table-add','table-stage','table-clear'];
 const controls=['question','source-id','lineage','source-text','source-add','source-pick','select-text','binding-id','kind','unit','scope','dim-l','dim-m','dim-t','binding-add','seal','left','right','op','generate','proposal','run','export','export-pin','reset','batch-add','batch-run','batch-export','batch-clear','candidate-id','source-revise-pick','source-revise-text','source-revise','expression','expression-generate','sample-finance','sample-finance-corrected','sample-engineering','sample-engineering-corrected','sample-statistics','sample-statistics-corrected','sample-two-groups','sample-two-groups-corrected'];
 function status(state,message){by('status').dataset.state=state;by('status').textContent=message;}
@@ -1343,6 +1345,15 @@ by('branch-run').onclick=()=>work(async ticket=>{
  status('branch_ready','Both branches replayed from their exact common parent. Nothing merged or selected.');
 });
 by('branch-export').onclick=()=>{if(branchCurrent&&!busy)download(JSON.stringify(branchCurrent),'sutra-sibling-contrast.json','application/json');};
+function durableHistoryStatus(state,message){by('history-durable-status').dataset.state=state;by('history-durable-status').textContent=message;}
+function durableHistoryControl(){
+ const s=history?.snapshot(),retained=by('history-durable-pin').value.trim(),available=!!historyHost;
+ by('history-durable-pin').disabled=busy||!available;
+ by('history-durable-initialize').disabled=busy||!available||!s||!!retained;
+ by('history-durable-append').disabled=busy||!available||!s||!retained||retained===s.digest;
+ by('history-durable-read').disabled=busy||!available||!retained;
+ if(!available)durableHistoryStatus('unavailable','No durable host capability is present. Portable in-memory history remains available; no contact attempted.');
+}
 function historyControl(){
  const s=history?.snapshot(),branch=s?.view.branches.find(b=>b.name===by('history-branch').value);
  by('history-create').disabled=busy||!!history||!semanticCurrent||semanticCurrent.report.previousDigest!==null;
@@ -1350,6 +1361,7 @@ function historyControl(){
  for(const id of ['history-branch','history-version','history-fork-name','history-fork','history-restore','history-export','history-export-pin','history-clear'])by(id).disabled=busy||!history;
  for(const id of ['history-file','history-pin','history-import'])by(id).disabled=busy||!!history;
  if(!busy&&!history)by('history-import').disabled=!by('history-file').files?.length||!by('history-pin').value.trim();
+ durableHistoryControl();
 }
 function renderHistory(){
  const branch=by('history-branch'),version=by('history-version'),oldBranch=branch.value,oldVersion=version.value;
@@ -1369,6 +1381,32 @@ function renderHistory(){
 by('history-branch').onchange=historyControl;
 for(const id of ['history-file','history-pin'])by(id).addEventListener('input',historyControl);
 by('history-file').addEventListener('change',historyControl);
+by('history-durable-pin').addEventListener('input',()=>{durableHistoryStatus('idle','Retained durable digest edited. Host not contacted.');historyControl();});
+by('history-durable-initialize').onclick=()=>work(async ticket=>{
+ const h=history,s=h?.snapshot();if(!historyHost||!h||!s)return;
+ const committed=await historyHost.initialize(s);
+ if(ticket!==epoch||h!==history||history.snapshot().digest!==s.digest)return;
+ by('history-durable-pin').value=committed.digest;durableHistoryStatus('ready','Durable host initialized at the exact replayed history digest. Retain this digest separately.');status('history_durable_ready','Durable host initialized explicitly; browser history unchanged.');historyControl();
+});
+by('history-durable-append').onclick=()=>work(async ticket=>{
+ const h=history,s=h?.snapshot(),expected=by('history-durable-pin').value.trim();if(!historyHost||!h||!s||!expected)return;
+ try{
+  const committed=await historyHost.append(expected,s);
+  if(ticket!==epoch||h!==history||history.snapshot().digest!==s.digest||by('history-durable-pin').value.trim()!==expected)return;
+  by('history-durable-pin').value=committed.digest;durableHistoryStatus('ready','Durable host advanced to the exact current history digest. Retain this new digest separately.');status('history_durable_ready','Durable history advanced with exact retained-head CAS.');historyControl();
+ }catch(e){
+  if(ticket===epoch&&h===history&&by('history-durable-pin').value.trim()===expected)durableHistoryStatus(/STALE_OR_ROLLED_BACK_HEAD/.test(e?.message??'')?'stale':'refused',/STALE_OR_ROLLED_BACK_HEAD/.test(e?.message??'')?'Durable head differs from the retained digest. No retry or local history change occurred. Verify a separately retained current digest before proceeding.':'Durable host refused the write. No automatic retry or local history change occurred.');
+  throw e;
+ }
+});
+by('history-durable-read').onclick=()=>work(async ticket=>{
+ const h=history,expected=by('history-durable-pin').value.trim();if(!historyHost||!expected)return;
+ const checked=await historyHost.read(expected);
+ if(ticket!==epoch||h!==history||by('history-durable-pin').value.trim()!==expected)return;
+ const local=history?.snapshot().digest??null,same=local===checked.digest;
+ durableHistoryStatus('ready','Durable host exactly matches the retained digest. In-memory history '+(same?'matches it.':'is different and was not replaced.')+' No state was adopted automatically.');
+ status('history_durable_ready','Retained durable head verified without changing browser history.');historyControl();
+});
 by('history-create').onclick=()=>work(async ticket=>{
  const v=semanticCurrent;if(history||!v)return;
  const h=await createInvestigationHistory(v.versionText,v.digest);

@@ -1,4 +1,4 @@
-# Dependency-aware engineering roadmap — V2-202
+# Dependency-aware engineering roadmap — V2-203
 
 > **Execution-queue note (2026-11-26):** This roadmap remains the broad gate/dependency register, but task selection is controlled by [`CHECKLIST.md`](CHECKLIST.md). The 379 former SUTRA1 pending tasks are retired and must not be used as a continuation queue.
 
@@ -1573,3 +1573,9 @@ Do **not** close HIST-008 from the prior denylist: accepting unknown Linux files
 Exact V2-201 `bc350f16c546a32f70ffe77652ed5fd5027589e5` [run 45793588254](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45793588254) passed 355/355 knowledge tests plus browser/accessibility. Close HIST-008: production durable history is Linux-only and admits only observed EXT2/3/4 magic `0xef53`; every other filesystem type and non-Linux platform refuses. No cross-filesystem portability claim.
 
 SEM-004 is now active. Browser workspace imports the real `question-mapping-review.js` API. Every compiled mapping alternative is rendered with an explicit unresolved/plausible/excluded judgment, defaults unresolved, and can be exported as a separately pinned review snapshot. Any judgment or question/mapping change invalidates the review export. Review status retains `semanticInterpretation: UNVERIFIED` and `decisionAuthority: NONE`; it never selects a candidate automatically. Browser regression exercises two alternatives, incomplete review, one declared plausible, pinned downloads and invalidation with zero new external contact. SEM-004 and UX-003 remain open until exact new CI. HIST-009 remains unverified physical power-loss evidence; HIST-010/UX-002 remain durable-host browser integration work.
+
+## V2-203 — durable-host browser history candidate (2026-11-26)
+
+Exact V2-202 `d87414e463e396be3672e63f774de77b2ab6136d` [run 45794383708](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45794383708) passed knowledge, full browser journey and accessibility. Close SEM-004 and UX-003: real mapping-review API is exposed in the browser, alternatives default unresolved, explicit judgments produce a pinned replay snapshot, changes invalidate it, and semantic interpretation remains UNVERIFIED with no decision authority.
+
+HIST-010 is active. Extend the real durable adapter with exact portable snapshot initialize/append operations. The standalone browser still has **no filesystem authority**: a host must explicitly inject a versioned capability. Browser-side `history-host.js` independently replays input and returned snapshots; writes use a separately retained expected head; there is no write timeout/retry that could duplicate an ambiguous commit; a successful read never replaces browser history. Exact Chromium test injects a local host backed by the real Linux CAS store, initializes the root, advances the host out-of-band, proves the stale browser CAS fails without retry or local mutation, then verifies the independently retained current head. No network request is used for the host bridge. HIST-010 and UX-002 remain open until exact new CI. Physical power-loss HIST-009 remains unavailable and unclaimed.
