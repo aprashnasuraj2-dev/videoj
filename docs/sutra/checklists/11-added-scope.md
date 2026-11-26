@@ -1,5 +1,7 @@
 # Added scope, incidents and regressions
 
+> **RETIRED SUTRA1 EXECUTION QUEUE (2026-11-26).** The user retired all remaining unchecked SUTRA1 tasks. This file now preserves verified/omitted/blocked historical evidence only. Do not resume work from this file; use [`docs/sutra-v2/CHECKLIST.md`](../../sutra-v2/CHECKLIST.md).
+
 [Checklist index](../CHECKLIST.md) | [Progress register](../PROGRESS.md)
 
 Append discovered requirements here rather than renumbering the original 1,000 tasks. Use `SUTRA-X001-01`, `SUTRA-X001-02` for the first discovery group, then `X002`, and so on. Each item needs a concrete result, acceptance condition, dependency/scope note and evidence when completed.
@@ -183,4 +185,3 @@ Both are isolated learner/developer regressions verified in automated browser an
 
 - [x] `SUTRA-X010-42` Preserve keyboard focus and expose busy state during receipt-backed native cue seeks without permitting repeated activation. Verify actual Chromium keyboard Enter/Space, one native seek write, result replacement cancellation and a fresh successful retry. Shared direct/local/provider row implementation; do not infer physical keyboard or screen-reader acceptance. Requires X010-14 and X010-41.
 
-- [ ] `SUTRA-X010-43` Preserve keyboard focus and prevent repeated activation across featured native cue, comparison native cue and written-guide integrity checks while busy; verify actual held native seeks and one transport under Enter/Space, cross-surface supersession and normal retry. Requires X010-42. Scope is browser keyboard behavior, not physical-device or screen-reader acceptance.
