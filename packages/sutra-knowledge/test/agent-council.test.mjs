@@ -53,3 +53,17 @@ test('pre-cancel and noncooperative transport stop publication and later rounds'
  const before=await invoke(s,{signal:c.signal});assert.equal(before.termination,'CANCELLED_OR_TIMEOUT');assert.equal(s.seen.length,0);
  const after=await invoke(s,{timeoutMs:10});assert.equal(after.termination,'CANCELLED_OR_TIMEOUT');assert.equal(after.rounds.length,0);assert.equal(s.seen.length,2);
 });
+
+test('council works through heterogeneous wire protocol adapters without changing roles or verification',async()=>{
+ const {createProtocolWorkspace}=await import('../../sutra-inference/protocol-workspace.js');
+ let seed=1;const seen=[];
+ const limits={maxCalls:4,maxInputBytes:50000,maxOutputTokens:2048,maxConcurrent:2};
+ const workspace=createProtocolWorkspace({connections:[{id:'custom-wire-a',label:'Private A',protocol:'openai-compatible-json',endpoint:'https://private-a.example.com/v1/chat/completions',transportClass:'hosted',models:['custom/a']},{id:'custom-wire-b',label:'Private B',protocol:'anthropic-messages-json',endpoint:'https://private-b.example.com/v1/messages',transportClass:'hosted',models:['custom/b']}],globalLimits:limits,defaultProfileLimits:limits,randomBytes:n=>new Uint8Array(n).fill(seed++),clock:()=>0,exchange:async x=>{
+  const body=JSON.parse(x.bodyText),operation=JSON.parse(body.messages.at(-1).content);seen.push({id:x.connectionId,operation});
+  const content=proposal(operation.agentId==='planner'?'section_declared':'section_derived');
+  return {status:200,bodyText:JSON.stringify(x.protocol==='openai-compatible-json'?{choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content}}],usage:{completion_tokens:3}}:{type:'message',role:'assistant',stop_reason:'end_turn',content:[{type:'text',text:content}],usage:{output_tokens:3}})};
+ }});
+ const a=workspace.addProfile({providerId:'custom-wire-a',label:'A',credential:A}),b=workspace.addProfile({providerId:'custom-wire-b',label:'B',credential:B});
+ const routes=[{id:'planner',role:'propose',handle:a.handle,model:'custom/a',shareScope:scope},{id:'critic',role:'challenge',handle:b.handle,model:'custom/b',shareScope:scope}];
+ const result=await invoke({workspace,routes});assert.equal(result.methods.length,2);assert.equal(result.agreement,'DISTINCT_METHODS');assert.equal(seen.length,4);assert.equal(seen[2].operation.feedback.length,2);assert.equal(workspace.budgetSnapshot().global.used.actualOutputTokens,12);
+});

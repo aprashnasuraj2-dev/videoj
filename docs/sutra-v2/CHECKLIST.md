@@ -1005,3 +1005,5 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 - [ ] **V2-148 council candidate:** provider-neutral host assignments, bounded reviewed-method rounds, actual verifier feedback, failure and cancellation regressions; exact CI pending. Full arbitrary-intent and production provider gates remain open.
 
 - [ ] **V2-149 Agent Studio candidate:** primary browser workflow for arbitrary simulated connections, model/role assignments, bounded multi-agent verification feedback, scoped consent and redacted trace. Exact browser CI pending; no live provider or general-intent gate closed.
+
+- [ ] **V2-150 protocol candidate:** extensible trusted protocol registry, arbitrary model IDs, bounded wire adapters, byte-accounted exchange and heterogeneous council; no live transport. Restore first viewport without dropping regression. Exact CI pending.

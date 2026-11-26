@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-149",
+  "session": "V2-150",
   "next": [
     "V2-P14-BYOK-UX",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Candidate: primary Agent Studio browser integration; V2-148 CI running at observation.",
+  "state": "Candidate: heterogeneous protocol registry and browser first-viewport fix; V2-148 exact 9/9 passed.",
   "verified": [
     {
       "id": "V2-M01",
@@ -380,6 +380,18 @@
       "sourceRevision": "480c88bce1753d9693cca830d6e6b851722ed90b",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45602751694/job/139165593491",
       "description": "All nine exact workflows green, browser independent order contrast verifier passed after ineffective mutant correction. Restricted total-order predicate relation only."
+    },
+    {
+      "id": "V2-P14-BYOK-UX",
+      "sourceRevision": "950b95002c3fe93f387441434ab94fc27ae98ea6",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45734410157/job/139624048147",
+      "description": "Exact 9/9 PR workflows; five provider-neutral council tests and 262/262 kernel tests passed; injected only."
+    },
+    {
+      "id": "V2-LK17-BENCHMARK",
+      "sourceRevision": "950b95002c3fe93f387441434ab94fc27ae98ea6",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45734410157/job/139624048147",
+      "description": "200/200 heterogeneous frozen developer cases matched in manifest-bound ledger; zero expert/held-out; no external superiority."
     }
   ],
   "release": "not_authorized",
@@ -391,7 +403,7 @@
     "reason": "Actual browser invalid UTF-8 test: kernel refused correctly but UI sanitizer omitted digits in permitted error-code suffix, so TEXT_FILE_UTF8 became a generic refusal.",
     "resolutionStatus": "V2-107 exact nine returned PR workflows green including Chromium 139551497664; separate push run unobserved; historical failure retained."
   },
-  "lastVerifiedKernelSource": "b7a7a996d80ba51d1d2179eae14825ee96718ad4",
+  "lastVerifiedKernelSource": "950b95002c3fe93f387441434ab94fc27ae98ea6",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -401,14 +413,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-150",
+    "parent": "23edc323151ef03ec97e9ddc81912f76a73183e0",
+    "description": "### V2-150 — heterogeneous protocol registry and first-viewport repair (candidate)\nV2-148 exact 9/9 PR workflows passed: knowledge job 139624048147, 262/262 unit tests including five council cases, 200/200 frozen development ledger matched; zero held-out/expert labels. V2-149 browser job 139624980167 reached the existing first-screen regression but failed because the full Studio preceded the guided challenge. Preserve the test, restore debugger first and keep Studio prominent via direct header navigation. Add a trusted extensible protocol workspace composing existing vault and budget ledger: bounded nonstream OpenAI-compatible and Anthropic Messages JSON, custom trusted adapter contract, arbitrary connection labels/model IDs, explicit hosted/local transport descriptors and mandatory injected exchange. No default network, URL proxy, real key or new endpoint; DNS/egress/tenant gates remain open. Actual encoded body bytes reserved; incomplete, malformed, tool-bearing or over-budget responses refuse. Add heterogeneous council integration through both wire shapes and custom-adapter tests; exact CI pending. Next: model-generated reviewed expression proposals and general intent path."
+  },
+  "previousPendingCandidate": {
     "session": "V2-149",
     "parent": "950b95002c3fe93f387441434ab94fc27ae98ea6",
     "description": "### V2-149 — primary Agent Studio browser integration (candidate)\nExpose the council above the engineering labs with two user-editable arbitrary connection/model IDs, independently assigned role names/routes (including shared route), scope consent, bounded rounds and calls, reviewed JSON case, real independent conditional outcomes, round activity and trace export. Use per-run in-memory synthetic credentials, no endpoint or real-key input; mock decisions use agent identity and prior conditional results. DOM renders only text, config changes invalidate trace, cancellation stops publication. Actual Chromium test candidate covers custom IDs, distinct outcomes retained after convergence, forged verdict, same-route budget refusal and redacted download. No open-ended semantic parsing, live model call, provider-global billing, independent trace replay, persistent collaboration or deployment claim. V2-148 exact CI running at observation; do not inherit verification. Next: reconcile exact CI, correct regressions, then connect general reviewed intent proposals and harden registry."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-148",
-    "parent": "25754181acbd582fdf80e92bed6015ff8a2f5341",
-    "description": "### V2-148 — provider-neutral reviewed-method council and ledger format repair (candidate)\nUser-directed pivot: no new corpus. Repair aggregate ledger comparison to use the revision producer's bare SHA-256 format, preserving exact bytes, Git blob and case identities. Add bounded host-owned council over the existing ephemeral credential vault and provider budget workspace. Arbitrary catalog/provider labels and custom model IDs; 1–4 agent routes, 1–3 rounds, explicit question/feedback disclosure scope, same-round barrier, fixed host assignments, per-method exact verification and preserved prior disagreements. Model output is a closed reviewed-method proposal; graph and credentials never deliberately sent to peers, no model-generated endpoint or verdict accepted. No auto fallback/retry. Timeout stops publication, not an injected non-cooperative transport; budget ownership remains in workspace. Tests use two arbitrary mock providers and actual beam verifier, hostile output, scope, budget and cancellation. Existing branch V2-146 exact knowledge job 139617361867 failed at manifest digest representation after 257 unit passes; retain failure. V2-147 register was already pending at observed parent; no inherited credit. New exact CI pending. Next: validate this candidate, then browser Agent Studio and general reviewed intent proposal pathway; live credentials, arbitrary egress and paid inference remain disabled."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -791,6 +803,13 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45732403006/job/139617361867",
       "reason": "Aggregate revision report manifest comparison used prefixed versus bare SHA-256; 257 kernel unit tests passed.",
       "resolutionStatus": "V2-148 comparison repair candidate; exact CI pending."
+    },
+    {
+      "sourceRevision": "23edc323151ef03ec97e9ddc81912f76a73183e0",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45734696851",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45734696851/job/139624980167",
+      "reason": "Primary guided action below 360x800 first viewport after inserting full Agent Studio before debugger.",
+      "resolutionStatus": "V2-150 restores debugger first and keeps header navigation; exact browser CI pending."
     }
   ],
   "reconciledDurableCandidate": {
