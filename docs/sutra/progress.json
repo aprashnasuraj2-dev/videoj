@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-26T12:48:46+05:45",
+  "updated_at": "2026-11-26T16:25:00+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "ae042db07f51d0cf1e71f002869ce9a65a011d48",
-  "last_session_id": "SUTRA-SESSION-0046",
+  "last_observed_code_sha": "d1560cfadbd0cf73007076e7a5e7b8f319e8fc81",
+  "last_session_id": "SUTRA-SESSION-0047",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P054-01",
@@ -15,7 +15,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "P1 engineering harnesses are verified. Run SUTRA-P054-01 only after participant approval of provider/model/spend; while that input is unavailable, continue the next dependency-ready independent engineering item. Physical/human acceptance remains external. No release or paid inference.",
+  "next_action": "SUTRA-P078-02 stabilization closure is verified at exact head d1560cfadbd0cf73007076e7a5e7b8f319e8fc81. P054-01 remains participant-owned pending provider/model/spend approval; continue dependency-ready independent engineering while R-005 through R-010 external gates remain open. No release or paid inference.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -12900,6 +12900,19 @@
           "observed_at": "2026-11-26T12:48:46+05:45"
         }
       ]
+    },
+    "SUTRA-P078-02": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:25:00+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0047.md",
+          "description": "Exact-head 19/19 CI plus learner/runtime/API/browser assertions close consent, source-version and default-inference stabilization without claiming live provider, human acceptance or release.",
+          "result": "pass",
+          "source_revision": "d1560cfadbd0cf73007076e7a5e7b8f319e8fc81",
+          "observed_at": "2026-11-26T16:25:00+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -13010,6 +13023,7 @@
     "**712/1,099 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-41 exact learner build and unit tests pass, full CI pending. X010-42 shared receipt seek focus and reactivation implementation awaits actual Chromium/full CI.",
     "**713/1,100 overall verified; 616/1,000 original; 380 pending; six omissions; one hardware blocker.** X010-41 exact 19/19 verified. X010-42 shared receipt focus and X010-43 featured/comparison/guide busy-state candidates pending exact full CI.",
     "**714/1,100 overall verified; 616/1,000 original; 379 pending; six omissions; one hardware blocker.** X010-42 exact 19/19 verified. X010-43 implementation cbddb72b6ce582e8919edf2ea186682f1813e15a pending exact CI; no credit yet.",
-    "2026-11-26T12:48:46+05:45: **722/1,107 overall verified; 616/1,000 original; 378 pending; six omissions; one hardware blocker.** X010-43 reconciled exact 19/19. X010-44..50 P0/P1 engineering integration verified on exact combined source ae042db07f51d0cf1e71f002869ce9a65a011d48 with all 19 workflows successful. R-007 live funded provider evidence and R-008 physical/human acceptance remain open; no paid inference, public deployment or human-test claim."
+    "2026-11-26T12:48:46+05:45: **722/1,107 overall verified; 616/1,000 original; 378 pending; six omissions; one hardware blocker.** X010-43 reconciled exact 19/19. X010-44..50 P0/P1 engineering integration verified on exact combined source ae042db07f51d0cf1e71f002869ce9a65a011d48 with all 19 workflows successful. R-007 live funded provider evidence and R-008 physical/human acceptance remain open; no paid inference, public deployment or human-test claim.",
+    "Session 0047: SUTRA-P078-02 verified from exact-head d1560cfadbd0cf73007076e7a5e7b8f319e8fc81 19/19 CI and executed consent/source/config/default-off/evidence/stream/ambiguity regressions. Counts become 723/1107 overall and 617/1000 original; P078-07/P078-10 and all external human/content/provider/public-release gates remain open."
   ]
 }
