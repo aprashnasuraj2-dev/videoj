@@ -4,9 +4,9 @@
 
 ## Session 0057 — 2026-11-26
 
-**775/1,107 overall verified; 669/1,000 original; 325 pending; six omissions; one hardware blocker.** P018-06, P019-02, P019-06 and P041-10 are newly verified from exact source `f8c3da48a4d99a6311910b99a40b23d0ea9fa63c`. All 19 workflows passed; learner run 45835173595/job 139962008840 passed 161/161 app, 171/171 package/API, 182/182 runtime, 8/8 peer tests and the complete Chromium suite. Chromium/Firefox/WebKit compatibility matrix also passed. [Evidence](evidence/implementation/SESSION-0057.md).
+**776/1,107 overall verified; 670/1,000 original; 324 pending; six omissions; one hardware blocker.** P018-06, P019-02, P019-06, P041-10 and P050-10 are newly verified from exact source `f8c3da48a4d99a6311910b99a40b23d0ea9fa63c`. All 19 workflows passed; learner run 45835173595/job 139962008840 passed 161/161 app, 171/171 package/API, 182/182 runtime, 8/8 peer tests and the complete Chromium suite. Chromium/Firefox/WebKit compatibility matrix also passed. [Evidence](evidence/implementation/SESSION-0057.md).
 
-The development contradiction fixture is no longer imported by production comparison code; the production learner exposes only the real-evidence comparison action. The build enforces the current 25 MiB Pages single-file ceiling, and browser evidence confirms transcript-first/explicit-media low-bandwidth behavior. Phase 041 now closes from a fresh-viewer visible-UI/keyboard journey. Original content rights, final media hosting, human/pilot acceptance, live funded inference, production deployment, release and submission remain pending.
+The development contradiction fixture is no longer imported by production comparison code; the production learner exposes only the real-evidence comparison action. The build enforces the current 25 MiB Pages single-file ceiling, and browser evidence confirms transcript-first/explicit-media low-bandwidth behavior. Phase 041 and Phase 050 now close from the fresh-viewer visible-UI/keyboard journey and refusal resilience. Original content rights, final media hosting, human/pilot acceptance, live funded inference, production deployment, release and submission remain pending.
 
 ## Session 0056 — 2026-11-26
 
