@@ -7,7 +7,7 @@ SUTRA is the planned evidence-linked learning companion for the Open Agentic Web
 
 ## Continue with SUTRA
 
-When the user says **“continue with sutra”** (case-insensitive), read the repository instructions and [continuation procedure](CONTINUE.md), inspect [progress.json](progress.json), [PROGRESS.md](PROGRESS.md) and the relevant detailed checklist, verify the last recorded state against source/evidence, then carry out the next dependency-ready work. Do not merely repeat the plan or stop at a status report.
+The SUTRA1 execution queue is retired. When the user says **“continue with SUTRA”**, go directly to [SUTRA V2 continuation](../sutra-v2/CONTINUE.md) and [the active V2 checklist](../sutra-v2/CHECKLIST.md). Do not run the old V1 `next` command or select former V1 pending work.
 
 ## Working documents
 
