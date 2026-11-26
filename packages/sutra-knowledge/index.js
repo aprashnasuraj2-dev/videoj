@@ -187,3 +187,21 @@ export async function replayReport(graphText,reportText){
  const result=await createVerifier().evaluate(graphText);
  return result.reportText===reportText;
 }
+
+// Exact structural invalidation diagnostic over admitted graphs. It does not
+// import receipts or grant authority. Compare both old and new reverse edges.
+export function revisionDependencyClosure(beforeText,afterText){
+ const before=new Map(admit(beforeText).map(n=>[n.id,n])),after=new Map(admit(afterText).map(n=>[n.id,n]));
+ const children=new Map(),changed=[],removed=[],added=[];
+ for(const graph of [before,after])for(const n of graph.values())for(const dep of new Set(n.args??[])){
+  if(!children.has(dep))children.set(dep,new Set());children.get(dep).add(n.id);
+ }
+ for(const id of new Set([...before.keys(),...after.keys()])){
+  if(!before.has(id)){added.push(id);changed.push(id);}
+  else if(!after.has(id)){removed.push(id);changed.push(id);}
+  else if(canonical(before.get(id))!==canonical(after.get(id)))changed.push(id);
+ }
+ const affected=new Set(changed),queue=changed.slice();let traversedEdges=0;
+ for(let i=0;i<queue.length;i++)for(const child of children.get(queue[i])??[]){traversedEdges++;if(!affected.has(child)){affected.add(child);queue.push(child);}}
+ return freeze({changed:changed.sort(),added:added.sort(),removed:removed.sort(),affected:[...affected].sort(),recompute:[...affected].filter(id=>after.has(id)).sort(),unaffected:[...after.keys()].filter(id=>!affected.has(id)).sort(),traversedEdges,decisionAuthority:'NONE'});
+}
