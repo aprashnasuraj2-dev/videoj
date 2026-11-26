@@ -180,7 +180,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** A new viewer can finish the task using the visible UI; the local learning flow survives peer denial.
 
 - [x] `SUTRA-P050-01` Complete the hero journey without console commands or hidden setup
-- [ ] `SUTRA-P050-02` Check first-load instructions and default funded inference discovery
+- [x] `SUTRA-P050-02` Check first-load instructions and default funded inference discovery
 - [x] `SUTRA-P050-03` Inspect all loading, empty, denied, conflict and success transitions
 - [x] `SUTRA-P050-04` Confirm evidence selection and saved-card feedback are consistent
 - [x] `SUTRA-P050-05` Verify peer refusal leaves local lesson/transcript functionality useful
