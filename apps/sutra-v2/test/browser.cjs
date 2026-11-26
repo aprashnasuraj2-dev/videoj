@@ -989,6 +989,30 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.match(qualifiers,/negation: Not lower · UNSUPPORTED_DECLARATION/);
   assert.match(qualifiers,/entailment and method UNVERIFIED/);await saveRoundtrip('after');
   const livingLayout=await reviewPage.evaluate(()=>({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,overflow:[...document.querySelectorAll('body *')].filter(e=>{const r=e.getBoundingClientRect();return r.width>0&&r.right>innerWidth+1;}).slice(0,20).map(e=>({tag:e.tagName,id:e.id,className:typeof e.className==='string'?e.className:'',right:e.getBoundingClientRect().right,width:e.getBoundingClientRect().width}))}));assert.ok(livingLayout.scrollWidth<=livingLayout.width,JSON.stringify(livingLayout));assert.deepEqual(reviewErrors,[]);assert.deepEqual(reviewExternal,[]);await reviewPage.close();
+  // Exact model suggestion review from a clean page: no external requests.
+  {
+   const sp=await browser.newPage({viewport:{width:360,height:800}}),errs=[],requests=[];
+   sp.on('pageerror',e=>errs.push(e.message));sp.on('request',r=>{if(new URL(r.url()).origin!==origin)requests.push(r.url());});
+   await sp.goto(origin);await sp.locator('#review-open').click();
+   const state=x=>sp.waitForFunction(s=>document.querySelector('#review-status').dataset.state===s&&!document.querySelector('#review-reset').disabled,x);
+   await sp.locator('#review-question').fill('Is A higher than B?');
+   for(const [id,value] of [['a','測定 🧪 A: 12.50; repeat: 12.50;'],['b','B: 10.25;']]){
+    await sp.locator('#review-source-id').fill(id);await sp.locator('#review-lineage').fill('root_'+id);await sp.locator('#review-source-text').fill(value);await sp.locator('#review-source-add').click();await state('draft');
+   }
+   await sp.locator('#review-binding-suggestions-panel > summary').click();
+   const type={kind:'stress',unit:'MPa',scope:'same_condition',dimension:[-1,1,-2]},s=(id,sourceId,quote,before='',after='')=>({id,sourceId,quote,before,after,type});
+   const wire=JSON.stringify({version:1,suggestions:[s('a_value','a','12.50','repeat: ',';'),s('ambiguous','a','12.50'),s('b_value','b','10.25')]});
+   await sp.locator('#review-binding-suggestions-json').fill(wire);await sp.locator('#review-binding-suggestions-preview').click();await state('suggestions_preview');
+   assert.equal(await sp.locator('[data-suggestion-state="REVIEW_REQUIRED"]').count(),2);assert.equal(await sp.locator('[data-suggestion-state="REFUSED"]').count(),1);
+   assert.match(await sp.locator('#review-staged').innerText(),/0 reviewed binding/);assert.equal(await sp.locator('#review-binding-suggestions-apply').isDisabled(),true);
+   await sp.locator('#review-binding-suggestions-rows input[value="a_value"]').check();
+   await sp.locator('#review-binding-suggestions-rows input[value="b_value"]').check();
+   await sp.locator('#review-binding-suggestions-apply').click();await state('suggestions_applied');
+   assert.match(await sp.locator('#review-staged').innerText(),/2 reviewed binding/);
+   await sp.locator('#review-seal').click();await state('sealed');await sp.locator('#review-generate').click();await state('proposal');await sp.locator('#review-run').click();await state('ready');
+   assert.match(await sp.locator('#review-result').innerText(),/CONDITIONALLY SATISFIED/);
+   assert.deepEqual(errs,[]);assert.deepEqual(requests,[]);assert.equal(await sp.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await sp.close();
+  }
   // Two complete guided synthetic domains use the same real browser controls.
   {
    const samplePage=await browser.newPage({viewport:{width:360,height:800},acceptDownloads:true}),errors=[],external=[];

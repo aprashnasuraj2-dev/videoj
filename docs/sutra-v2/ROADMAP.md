@@ -1434,3 +1434,7 @@ Add bounded immutable offers between existing workspaces. Explicitly replay and 
 
 ### V2-172 — mixed operator credential admission cancellation and full-plan canary scan (candidate)
 Bound the host credential callback wait by caller cancellation and the approved overall timeout; observe late rejections, refuse sanitized credential-read errors, close both exchanges, and scan all decoded plan/contract fields after credential enrollment before any dispatch. No new network authorization, no callback sandbox or general DLP claim. V2-171 browser job 139654687336 succeeded; scoped inference 85/85 and council 36/36 tests passed in knowledge job 139654687570, which later failed the unchanged pinned TLC SHA-256 check. New exact CI pending.
+
+
+### V2-173 — exact model-suggested quantity review (candidate)
+Add a bounded untrusted suggestion format using unique literal context anchors, compiler-validated exact numeric spans and explicit pinned human selection. Ambiguous repeated values, fabricated quotes, truncated numbers, invalid types and stale pins refuse; conflicting duplicate spans cannot be jointly admitted. Existing evidence bytes and unselected candidates remain unchanged. Browser accepts pasted suggestions without provider contact, previews actual context and requires explicit selected review before sealing. Add focused tests to the pre-formal-download CI step. No claim of automated semantic extraction or model identity. Exact CI pending.

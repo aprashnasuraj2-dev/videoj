@@ -1057,3 +1057,5 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 - [ ] **V2-171 candidate:** same-tab exact offers with replay, explicit baseline replacement and fresh disclosure approval; browser syntax repair; exact CI pending.
 
 - [ ] **V2-172 candidate:** bounded credential admission, sanitized refusal and complete decoded plan scan before contact; exact CI pending.
+
+- [ ] **V2-173 candidate:** exact unique anchor suggestions, atomic selected review and browser integration; exact CI pending.
