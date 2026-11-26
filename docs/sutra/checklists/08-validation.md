@@ -114,7 +114,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P076-05` Log each intervention and blocker rather than coaching invisibly
 - [ ] `SUTRA-P076-06` Keep participant identities out of public research notes
 - [ ] `SUTRA-P076-07` Report zero/one participants honestly if recruitment fails
-- [ ] `SUTRA-P076-08` Do not count project-owned demo sites as independent adopters
+- [x] `SUTRA-P076-08` Do not count project-owned demo sites as independent adopters
 - [ ] `SUTRA-P076-09` Produce and review the phase artifact: De-identified setup logs and adoption friction report.
 - [ ] `SUTRA-P076-10` Close phase 076 only after its applicable tasks have evidence and its exit condition is observed: Target two clean runs within 15 minutes each; if only one or zero participate, disclose the actual count and remaining validation gap.
 
