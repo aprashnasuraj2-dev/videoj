@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createProviderWebTools} from '../src/provider-web-tools.js';
+import {createProviderWebTools,providerWebCallLimit} from '../src/provider-web-tools.js';
 
 const origin='https://sutra.test';
 const json=(value,status=200)=>new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json'}});
@@ -39,4 +39,11 @@ test('browser web adapter fails closed on token substitution, malformed payloads
 test('bound web transport status is mapped without leaking server error bodies',async()=>{
  const client=createProviderWebTools({origin,fetchImpl:async()=>new Response('PRIVATE PROVIDER DETAIL',{status:503,headers:{'Content-Type':'text/plain'}})});
  await assert.rejects(client.search('question'),e=>e.code==='WEB_UNAVAILABLE'&&!String(e.message).includes('PRIVATE'));
+});
+
+test('learner web budget caps one run below the daily client allowance',()=>{
+ assert.equal(providerWebCallLimit,3);
+ const client=createProviderWebTools({origin,fetchImpl:async()=>json({status:'discovery_only',truthStatus:'unverified',sources:[]})});
+ assert.equal(client.maxCalls,3);
+ assert.equal(client.allowExternalResearch,true);
 });

@@ -7,7 +7,8 @@ const exactRecord=(value,keys)=>{
  if(!value||typeof value!=='object'||Array.isArray(value)||Object.getPrototypeOf(value)!==Object.prototype||Object.keys(value).sort().join(',')!==[...keys].sort().join(','))fail('WEB_RESPONSE');
  return value;
 };
-export function createProviderWebTools({origin,fetchImpl,maxCalls=6}={}){
+export const providerWebCallLimit=3;
+export function createProviderWebTools({origin,fetchImpl,maxCalls=providerWebCallLimit}={}){
  if(typeof origin!=='string'||typeof fetchImpl!=='function'||!Number.isSafeInteger(maxCalls)||maxCalls<1||maxCalls>6)fail('WEB_CONFIG');
  const tokens=new Map();
  const call=async(path,body,signal)=>{

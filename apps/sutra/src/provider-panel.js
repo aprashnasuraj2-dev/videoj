@@ -2,6 +2,7 @@ import {discoverProvider,runProviderLesson,snapshotLearningContext,snapshotConve
 import {applyScreenState} from './status-state.js';
 import {createReceiptActionRow,createReceiptSeekScope} from './receipt-actions.js';
 import {executionLimits} from '../../../packages/sutra-runtime/index.js';
+import {providerWebCallLimit} from './provider-web-tools.js';
 
 export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=location.origin,onTelemetry=()=>{},getLearningContext=()=>null}){
  const sources=loadedContent.sources;
@@ -103,6 +104,9 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
    if(code==='SOURCE_QUOTA'){set('denied','The bounded source-read allowance is exhausted for now. No completed model answer is claimed. The already loaded lesson, transcript and local question path remain available.');return;}
    if(code==='SOURCE_UNAVAILABLE'){set('error','The source service is temporarily unavailable. No completed model answer is claimed. The already loaded local lesson remains available.');return;}
    if(code==='SOURCE_QUERY_TOO_BROAD'){set('empty','The model asked for a source search with more matches than the bounded evidence view can show. No excerpts or model interpretation from that incomplete search are presented. Ask a narrower question and run explicitly again.');return;}
+   if(['ANSWER_FORMAT','CITATION_REQUIRED','CITATION_FORBIDDEN','CITATION_INVALID','INDEPENDENCE_REQUIRED','EVIDENCE_FORMAT'].includes(code)){set('empty','The research answer failed the quotation/provenance contract ('+code+'). Its model text was discarded rather than presenting unsupported source claims. Retrieved receipts, if any, remain unverified source material.');return;}
+   if(code==='WEB_QUOTA'){set('denied','The bounded public-web allowance is exhausted for now. No completed research answer is claimed; lesson evidence and local tools remain available.');return;}
+   if(['WEB_UNAVAILABLE','WEB_TIMEOUT','WEB_READ_REFUSED','WEB_RESPONSE'].includes(code)){set('error','Public research stopped safely ('+code+'). No completed research answer is claimed; lesson evidence and local tools remain available.');return;}
    if(cancelled&&!operation.started){set('cancelled','Inference cancelled before a model request was attempted. Previous results, if any, remain unchanged.');return;}
    set(cancelled?'cancelled':'error',(cancelled?'Inference cancelled.':'Inference stopped ('+code+').')+' No completed answer is claimed. The local lesson remains available; retry only explicitly.');
   }finally{if(active===operation){active=null;controls();(run.disabled?check:run).focus();}}
@@ -129,7 +133,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
   consentBackend.textContent=approvedContract.backend==='self_hosted'?'Operator self-hosted gateway':'External hosted provider';
   consentModel.textContent=model;
   consentChars.textContent=String(value.length);consentQuestion.textContent=value;
-  consentBudget.textContent='Up to '+runtimeBounds.maxModelCalls+' model calls, '+runtimeBounds.maxAgents+' agent invocations and '+Math.round(runtimeBounds.timeoutMs/1000)+' seconds for this run. No automatic retry.';
+  consentBudget.textContent='Up to '+runtimeBounds.maxModelCalls+' model calls, '+runtimeBounds.maxAgents+' agent invocations'+(approvedContract.webResearch==='configured'?', '+providerWebCallLimit+' public web tool calls':'')+' and '+Math.round(runtimeBounds.timeoutMs/1000)+' seconds for this run. No automatic retry.';
   const playback=learningContext?.playback;
   consentContext.textContent=playback?.available?
    'Playback '+playback.currentTime.toFixed(2)+'s of '+playback.duration.toFixed(2)+'s; current cue '+(learningContext.currentCueId??'none')+'; inspected cue '+(learningContext.inspectedCueId??'none')+'; '+history.length+' prior completed turn'+(history.length===1?'':'s')+' included.':
