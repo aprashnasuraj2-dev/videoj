@@ -3,7 +3,7 @@
 import {snapshotContactConfig} from './external-mcp.js';
 import {snapshotDataRecord,snapshotDataArray} from '../sutra-evidence/index.js';
 import {validateData} from './vendor/nsdeploy/actions.js';
-import {abortable} from '../sutra-inference/protocol.js';
+import {abortableOperation} from './abortable-operation.js';
 import {parseUniqueJson} from './strict-json.js';
 
 const schema=(properties,required=Object.keys(properties))=>({type:'object',properties,required,additionalProperties:false});
@@ -57,7 +57,7 @@ export function createWebAccess(input,{signal}={}){
   const timer=setTimeout(cancel,12000);
   try{
    const promise=Promise.resolve().then(()=>{if(controller.signal.aborted)fail('WEB_CANCELLED');return fn(...args,{signal:controller.signal});});
-   const result=await abortable(promise,controller.signal);check();return result;
+   const result=await abortableOperation(promise,controller.signal);check();return result;
   }catch(error){
    check();
    fail(controller.signal.aborted?'WEB_TIMEOUT':safeErrors.has(error?.code)?error.code:'WEB_UNAVAILABLE');
