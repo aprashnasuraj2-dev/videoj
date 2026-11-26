@@ -144,11 +144,22 @@ test('branch-dependent evidence acquisition strictly beats matched fixed subsets
  const failed=await run(f);assert.equal(failed.plan.kind,'stop');assert.equal(failed.plan.worstObjective,6);
 });
 
-import {replayAcquisitionPath} from '../acquisition-path.js';
+import {replayAcquisitionPath,replaySourceBoundAcquisitionPath} from '../acquisition-path.js';
 async function path(f,events){const policyText=JSON.stringify(f.policy),policyPin=await casePin(policyText),traceText=JSON.stringify({version:1,policyPin,events});return replayAcquisitionPath({versionText:f.v.versionText,versionPin:f.v.digest,gridText:f.gridText,gridPin:f.gridPin,policyText,policyPin,traceText,tracePin:await casePin(traceText)});}
 test('replay an explicitly declared observation path, preserve surviving worlds and charge shared costs',async()=>{
  const f=await fixture(),initial=await path(f,[]),r=await path(f,[{actionId:'read',outcome:'high'}]);
  assert.equal(initial.status,'AWAITING_DECLARED_OBSERVATION');assert.equal(r.status,'DECLARED_TERMINAL');assert.equal(r.declaredDecision,'choose_true');assert.equal(r.survivingCells.length,2);assert.equal(r.costUpper,2);assert.equal(r.exposure,1);assert.equal(r.decisionAuthority,'NONE');
  for(const events of [[{actionId:'read',outcome:'unknown'}],[{actionId:'forged',outcome:'high'}],[{actionId:'read',outcome:'high'},{actionId:'read',outcome:'low'}]])await assert.rejects(path(f,events),/ACQUISITION_PATH_/);
  const g=await fixture();g.policy.exposureBudget=0;await assert.rejects(path(g,[{actionId:'read',outcome:'high'}]),/ACQUISITION_PATH_/);
+});
+
+test('observation receipt binds exact Unicode source span without claiming measurement authenticity',async()=>{
+ const f=await fixture(),policyText=JSON.stringify(f.policy),policyPin=await casePin(policyText),traceText=JSON.stringify({version:1,policyPin,events:[{actionId:'read',outcome:'high'}]}),tracePin=await casePin(traceText),sourceText='測定: high';
+ const receipt={actionId:'read',outcome:'high',sourceId:'measurement',sourceText,sourcePin:await casePin(sourceText),start:4,end:8};
+ const wire={version:1,tracePin,receipts:[receipt]};
+ const run=async w=>{const receiptsText=JSON.stringify(w);return replaySourceBoundAcquisitionPath({versionText:f.v.versionText,versionPin:f.v.digest,gridText:f.gridText,gridPin:f.gridPin,policyText,policyPin,traceText,tracePin,receiptsText,receiptsPin:await casePin(receiptsText)});};
+ const result=await run(wire);assert.equal(result.path.declaredDecision,'choose_true');assert.equal(result.observationAuthentication,'NOT_ESTABLISHED');assert.equal(result.decisionAuthority,'NONE');
+ await assert.rejects(run({...wire,receipts:[{...receipt,sourceText:'測定: high amended'}]}),/ACQUISITION_PATH_RECEIPT_SOURCE_PIN/);
+ await assert.rejects(run({...wire,receipts:[{...receipt,start:3}]}),/ACQUISITION_PATH_RECEIPT_MAPPING/);
+ await assert.rejects(run({...wire,receipts:[]}),/ACQUISITION_PATH_RECEIPT_SHAPE/);
 });

@@ -23,3 +23,8 @@ Child JS regression is not full integration evidence. Maintain exact source revi
 ## Parallel session candidate
 Add exact-pinned declared observation trace replay over recomputed finite acquisition policy, including surviving worlds, accumulated upper costs and exposure, invalid/out-of-order outcomes and no authority. Next: separately authenticated actual observation receipt and noise/applicability policy.
 Exact child CI pending.
+
+
+## V2-182 candidate
+Exact source-bound declared observation receipts for finite acquisition traces. Each event must cite the exact label in independently pinned text at a specific span; stale text, invalid spans and missing receipts fail. No external authentication or real measurement applicability; this is a prerequisite not an authority grant.
+Exact child CI pending.
