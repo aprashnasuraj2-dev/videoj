@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0056 — 2026-11-26
+
+**771/1,107 overall verified; 665/1,000 original; 329 pending; six omissions; one hardware blocker.** P087-07 is verified as a current reproducibility prerequisite: exact learner run 45809483294/job 139873282707 completed `npm ci` from the committed lockfile and verified 10 unchanged vendored nsDeploy modules at the pinned upstream commit. [Evidence](evidence/implementation/SESSION-0056.md).
+
+This is not final-release reproduction. Clean final-candidate checkout/build, distributed-artifact scan, reproduction log and phase exit remain pending.
+
 ## Session 0055 — 2026-11-26
 
 **770/1,107 overall verified; 664/1,000 original; 330 pending; six omissions; one hardware blocker.** P001-08 and P007-02 are verified from the public-safe participant handoff: eligibility is **not determined**, availability is **unconfirmed**, only blocker/task categories are public, and private identity/permission documents stay outside the repository. [Evidence](evidence/implementation/SESSION-0055.md).
