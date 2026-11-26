@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-26T16:42:29+05:45",
+  "updated_at": "2026-11-26T16:53:07+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
-  "last_observed_code_sha": "08c7ca36e93dd748f004bc9cc511914aeebfebd6",
-  "last_session_id": "SUTRA-SESSION-0050",
+  "last_observed_code_sha": "14d41bf92af831a469539c6e84eef2868bad448f",
+  "last_session_id": "SUTRA-SESSION-0051",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P054-01",
@@ -15,7 +15,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Phase 088 contributor artifact is implemented and CI-validated; P088-08/P088-10 remain pending for an actual new-reader observation. Core product gates still require participant/rights/human/provider/hardware/public-production evidence. Continue safe pre-release documentation only where it does not imply a frozen or deployed candidate.",
+  "next_action": "P085/P086 pre-release report subsets are verified; P085-04/10 and P086-02/03/05/09/10 stay pending for live/final/public/human evidence. Judging runbook exists but P089-06/07/08 remain pending until the corrected documentation contract executes. Core participant/rights/provider/hardware/public-production gates remain open.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -13095,6 +13095,175 @@
           "observed_at": "2026-11-26T16:42:29+05:45"
         }
       ]
+    },
+    "SUTRA-P085-01": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:53:07+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "description": "Technical_Report.md separates browser graph/local evidence responsibilities from optional server inference.",
+          "result": "pass",
+          "source_revision": "14d41bf92af831a469539c6e84eef2868bad448f",
+          "observed_at": "2026-11-26T16:53:07+05:45"
+        }
+      ]
+    },
+    "SUTRA-P085-02": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:53:07+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "description": "Technical_Report.md documents public artifact resolution, caller-side peer policy and registered-action authority.",
+          "result": "pass",
+          "source_revision": "14d41bf92af831a469539c6e84eef2868bad448f",
+          "observed_at": "2026-11-26T16:53:07+05:45"
+        }
+      ]
+    },
+    "SUTRA-P085-03": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:53:07+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "description": "Technical_Report.md explains content/cue validation, bounded context and independently validated receipt authority.",
+          "result": "pass",
+          "source_revision": "14d41bf92af831a469539c6e84eef2868bad448f",
+          "observed_at": "2026-11-26T16:53:07+05:45"
+        }
+      ]
+    },
+    "SUTRA-P085-05": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:53:07+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "description": "Technical_Report.md contains clean learner/package/Open Kit/tracker reproduction commands.",
+          "result": "pass",
+          "source_revision": "14d41bf92af831a469539c6e84eef2868bad448f",
+          "observed_at": "2026-11-26T16:53:07+05:45"
+        }
+      ]
+    },
+    "SUTRA-P085-06": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:53:07+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "description": "Technical_Report.md records static/media cache policy and atomic inference quota assumptions without calling them a currency budget.",
+          "result": "pass",
+          "source_revision": "14d41bf92af831a469539c6e84eef2868bad448f",
+          "observed_at": "2026-11-26T16:53:07+05:45"
+        }
+      ]
+    },
+    "SUTRA-P085-07": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:53:07+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "description": "Technical_Report.md includes a source-to-claim table; CI asserts referenced implementation paths exist.",
+          "result": "pass",
+          "source_revision": "14d41bf92af831a469539c6e84eef2868bad448f",
+          "observed_at": "2026-11-26T16:53:07+05:45"
+        }
+      ]
+    },
+    "SUTRA-P085-08": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:53:07+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "description": "Technical_Report.md explicitly lists untested human/provider/hardware/public-production environments and avoids release guarantees.",
+          "result": "pass",
+          "source_revision": "14d41bf92af831a469539c6e84eef2868bad448f",
+          "observed_at": "2026-11-26T16:53:07+05:45"
+        }
+      ]
+    },
+    "SUTRA-P085-09": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:53:07+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "description": "Technical_Report.md exists under the checklist-requested artifact name; its content passed the source/claim contract and the later rename was byte-preserving.",
+          "result": "pass",
+          "source_revision": "14d41bf92af831a469539c6e84eef2868bad448f",
+          "observed_at": "2026-11-26T16:53:07+05:45"
+        }
+      ]
+    },
+    "SUTRA-P086-01": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:53:07+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "description": "Community note maps each reusable component to a specific builder problem and a bounded non-goal.",
+          "result": "pass",
+          "source_revision": "14d41bf92af831a469539c6e84eef2868bad448f",
+          "observed_at": "2026-11-26T16:53:07+05:45"
+        }
+      ]
+    },
+    "SUTRA-P086-04": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:53:07+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "description": "Community note explicitly separates project-controlled install/reproduction evidence from independent adoption.",
+          "result": "pass",
+          "source_revision": "14d41bf92af831a469539c6e84eef2868bad448f",
+          "observed_at": "2026-11-26T16:53:07+05:45"
+        }
+      ]
+    },
+    "SUTRA-P086-06": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:53:07+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "description": "Community note defines a realistic source-maintenance boundary and excludes hosted-service/indefinite support promises.",
+          "result": "pass",
+          "source_revision": "14d41bf92af831a469539c6e84eef2868bad448f",
+          "observed_at": "2026-11-26T16:53:07+05:45"
+        }
+      ]
+    },
+    "SUTRA-P086-07": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:53:07+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "description": "Community note counts same-owner caller/peer, loopback services and CI runners as zero independent adopters.",
+          "result": "pass",
+          "source_revision": "14d41bf92af831a469539c6e84eef2868bad448f",
+          "observed_at": "2026-11-26T16:53:07+05:45"
+        }
+      ]
+    },
+    "SUTRA-P086-08": {
+      "state": "verified",
+      "verified_at": "2026-11-26T16:53:07+05:45",
+      "evidence": [
+        {
+          "artifact": "docs/sutra/evidence/implementation/SESSION-0051.md",
+          "description": "Community note contains a short factual contribution paragraph that explicitly disclaims external adoption/public interoperability/production impact.",
+          "result": "pass",
+          "source_revision": "14d41bf92af831a469539c6e84eef2868bad448f",
+          "observed_at": "2026-11-26T16:53:07+05:45"
+        }
+      ]
     }
   },
   "blockers": [
@@ -13209,6 +13378,7 @@
     "Session 0047: SUTRA-P078-02 verified from exact-head d1560cfadbd0cf73007076e7a5e7b8f319e8fc81 19/19 CI and executed consent/source/config/default-off/evidence/stream/ambiguity regressions. Counts become 723/1107 overall and 617/1000 original; P078-07/P078-10 and all external human/content/provider/public-release gates remain open.",
     "Session 0048: four original tasks verified (P001-03, P001-06, P050-02, P065-06). Counts 727/1107 overall, 621/1000 original, 373 pending, six omissions, one hardware blocker. Official rules snapshot does not establish entrant eligibility; automated browser/route tests do not establish human/provider/production evidence.",
     "Session 0049: P001-07 and P023-09 verified. Counts 729/1107 overall, 623/1000 original, 371 pending, six omissions, one hardware blocker. P023-03 remains pending because scripted local orchestration is not configured live inference.",
-    "Session 0050: P088-01..07 and P088-09 verified from contributor/changelog artifacts plus Open Kit run 45806012457 job 139861341692 (3/3 tests, clean distribution checks). Counts 737/1107 overall, 631/1000 original, 363 pending, six omissions, one hardware blocker. P088-08/10 remain pending for a real new-reader check."
+    "Session 0050: P088-01..07 and P088-09 verified from contributor/changelog artifacts plus Open Kit run 45806012457 job 139861341692 (3/3 tests, clean distribution checks). Counts 737/1107 overall, 631/1000 original, 363 pending, six omissions, one hardware blocker. P088-08/10 remain pending for a real new-reader check.",
+    "Session 0051: P085-01/02/03/05/06/07/08/09 and P086-01/04/06/07/08 verified from Open Kit run 45806619487 job 139863464177 (5/5 tests, clean distribution checks). Counts 750/1107 overall, 644/1000 original, 350 pending, six omissions, one hardware blocker. P089 runbook not credited because its first contract run failed on Markdown-sensitive assertion; correction queued."
   ]
 }
