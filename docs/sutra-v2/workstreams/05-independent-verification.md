@@ -28,3 +28,7 @@ Exact child CI pending.
 ## V2-182 candidate
 Independent Python replay now challenges revision with identical derived sum but changed premises, permutation, dangling references, duplicates and cycles. Three valid and four invalid cases execute independently; same numerical result cannot authorize stale provenance. Cross-language domain-specific verification still pending.
 Exact child CI pending.
+
+
+## V2-184 reuse-first independent interval candidate
+The existing independent Python Fraction verifier and actual browser interval replay already exist. Do not recreate them. Extend their bounded differential coverage using the original JS fixture and verifier: eight positive profiles (strict/inclusive, point, mixed signs, identity/dependency, zero and positive divisors, unused range, rational boundary), eight self-repinned authority mutants, one forged node bound and one stale plan pin. Exact child CI pending. This does not establish calibrated uncertainty, probability or full statistical semantics.

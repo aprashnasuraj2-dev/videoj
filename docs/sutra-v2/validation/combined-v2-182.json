@@ -1,7 +1,7 @@
 {
   "version": 1,
   "kind": "validation-only-non-merge-candidate",
-  "parent": "5cbab6abcfcb448b133bc286e02cfb26ce9123c7",
+  "parent": "deb40e01ea02d48d290790ea751039f519b85e8d",
   "commonChildBase": "092c7971602ee9e294e467efbb0d72c44121e480",
   "children": [
     {
@@ -22,7 +22,7 @@
     },
     {
       "pr": 55,
-      "head": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5"
+      "head": "1a429e24a4fca63affccedf138150480b3ee87c2"
     },
     {
       "pr": 56,
@@ -45,8 +45,8 @@
       "head": "b981d5b9e049fa62445c60c34ce8375b38933b89"
     }
   ],
-  "materializedTree": "b1f36bd926cbc20f7480000098be8e4e62c9c33c",
-  "nonoverlappingFiles": 80,
+  "materializedTree": null,
+  "nonoverlappingFiles": 81,
   "workflowSourceBlob": "d6b34cd470596280d0b9a15b1a263665c6db348f",
   "qualification": "Exact child blobs copied into a separate branch; no PR merge, no release or authority. Full canonical knowledge/browser job bodies unchanged except exact branch gate. Never merge validation PR; advance child PRs individually and rebuild candidate from exact heads.",
   "previousSnapshots": [
@@ -226,10 +226,57 @@
       "observed": "browser success; knowledge cancelled at initial observation",
       "parallelRun": 45761643796,
       "parallelObserved": "cancelled at initial observation"
+    },
+    {
+      "revision": "59faf60eb73ac9064fde1c9b28205d6e87e3887c",
+      "parent": "5cbab6abcfcb448b133bc286e02cfb26ce9123c7",
+      "children": [
+        {
+          "pr": 51,
+          "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da"
+        },
+        {
+          "pr": 52,
+          "head": "8caac249b3e3a6844fbef9fd9b189996d4d8566b"
+        },
+        {
+          "pr": 53,
+          "head": "0065b48dc5181f549845303d1569b88d94bc2ddf"
+        },
+        {
+          "pr": 54,
+          "head": "0a781904d90a101b7f74a5b471d521ad8a024d05"
+        },
+        {
+          "pr": 55,
+          "head": "55fc7cac90c9546f8182fb0ac2ee5d4f9a005eb5"
+        },
+        {
+          "pr": 56,
+          "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4"
+        },
+        {
+          "pr": 57,
+          "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+        },
+        {
+          "pr": 58,
+          "head": "7690ca6d874f61f8da98418c9c6e8b766b313e56"
+        },
+        {
+          "pr": 59,
+          "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01"
+        },
+        {
+          "pr": 60,
+          "head": "b981d5b9e049fa62445c60c34ce8375b38933b89"
+        }
+      ],
+      "qualification": "V2-184 integration-only correction; no PR workflows observed while base conflict existed."
     }
   ],
-  "refreshQualification": "Current central tree and all ten pinned child revisions; no merge, exact CI pending. Materialized tree precedes manifest/document replacement; source overlap explicitly reconciled.",
-  "childUniquePaths": 81,
+  "refreshQualification": "Append-only validation branch refresh with central base ancestry. Exact central documentation and #55 interval differential copied; no child PR or validation PR merged into central. Integration-only adapters and correction retained. Candidate tree precedes final verification; no prior green inherited.",
+  "childUniquePaths": 82,
   "overlappingPaths": [
     {
       "path": "apps/sutra-v2/index.html",
@@ -260,6 +307,14 @@
         ".github/workflows/sutra-v2-workspace-browser.yml",
         ".github/workflows/sutra-v2-finqa-benchmark.yml"
       ]
+    },
+    {
+      "priorRevision": "59faf60eb73ac9064fde1c9b28205d6e87e3887c",
+      "centralHead": "deb40e01ea02d48d290790ea751039f519b85e8d",
+      "child55Head": "1a429e24a4fca63affccedf138150480b3ee87c2",
+      "child55Run": 45764898229,
+      "child55Conclusion": "success",
+      "decision": "Include central HEAD as second parent of validation-only commit to resolve base-ancestry conflict. No force push, no merge of validation PR, no central change."
     }
   ]
 }
