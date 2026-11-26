@@ -1,4 +1,5 @@
 import {createSourceMcp,admitSourceConfig} from './source-mcp.js';
+import {admitWebConfig,createWebAccess} from './web-access.js';
 import {parseUniqueJson} from './strict-json.js';
 import {createExternalReadMcp,validateExternalMcpConfig,snapshotContactConfig} from './external-mcp.js';
 import {fetchJsonWithConsent,pinConsentInspector} from '../sutra-consent/index.js';
@@ -63,7 +64,7 @@ function snapshotJsonData(value,maxBytes,sizeCode='NETWORK_SIZE'){
 
 // The current profile deliberately accepts local declarative agents only.
 // Peer/MCP/action/code loading must be integrated with consent in later phases.
-export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false,allowPeers=false,externalMcpUrl=null}={}){
+export function compileNetwork(definition,{name='learner',frontMan='learner',limits={},allowSourceTools=false,allowWebTools=false,allowPeers=false,externalMcpUrl=null}={}){
  const bounds=executionLimits(limits);
  const raw=snapshotJsonData(definition,65536);
  if(!plain(raw))fail('NETWORK_DATA','Network must be an object.');
@@ -82,7 +83,7 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
   allowed(agent.function,['description','parameters'],'function');
   try{checkSchema(agent.function.parameters);}catch{fail('SCHEMA','Unsupported or malformed invocation schema.');}
   if(agent.function.parameters.type!=='object'||agent.function.parameters.additionalProperties!==false)fail('SCHEMA','Invocation schema must reject extra object fields.');
-  if(!Array.isArray(agent.tools)||agent.tools.length>16||agent.tools.some(ref=>typeof ref!=='string'&&!((allowSourceTools===true&&plain(ref)&&Object.keys(ref).length===1&&ref.url==='/api/source-tools')||(typeof externalMcpUrl==='string'&&plain(ref)&&Object.keys(ref).length===1&&ref.url===externalMcpUrl))))fail('TOOLS','Agent needs a bounded local tool list.');
+  if(!Array.isArray(agent.tools)||agent.tools.length>16||agent.tools.some(ref=>typeof ref!=='string'&&!((allowSourceTools===true&&plain(ref)&&Object.keys(ref).length===1&&ref.url==='/api/source-tools')||(allowWebTools===true&&plain(ref)&&Object.keys(ref).length===1&&ref.url==='/api/web-tools')||(typeof externalMcpUrl==='string'&&plain(ref)&&Object.keys(ref).length===1&&ref.url===externalMcpUrl))))fail('TOOLS','Agent needs a bounded local tool list.');
   if(new Set(agent.tools.map(r=>JSON.stringify(r))).size!==agent.tools.length)fail('TOOLS','Duplicate local references are unsupported.');
   const steps=agent.max_steps??raw.max_steps??bounds.maxSteps;
   if(!Number.isInteger(steps)||steps<1||steps>bounds.maxSteps)fail('STEPS','Invalid or over-budget step count.');
@@ -105,7 +106,7 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
   const exposed=new Set();
   for(const ref of agent.tools){
    const namesForRef=typeof ref==='string'?[safeName(names.has(ref)?ref:parseExternalAgent(ref).agentName)]:
-    ref.url==='/api/source-tools'?['mcp_search_lesson','mcp_read_cue']:['mcp_read_public'];
+    ref.url==='/api/source-tools'?['mcp_search_lesson','mcp_read_cue']:ref.url==='/api/web-tools'?['mcp_search_web','mcp_read_web_source']:['mcp_read_public'];
    for(const tool of namesForRef){if(exposed.has(tool))fail('TOOL_NAME_COLLISION','Distinct capabilities cannot share one model-facing tool name.');exposed.add(tool);}
   }
  }
@@ -124,7 +125,7 @@ export function compileNetwork(definition,{name='learner',frontMan='learner',lim
 
 // Model adapters are explicitly injected; there is no keyless automatic mock fallback.
 // A scripted-test adapter is only a test driver, not a live inference service.
-export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,peerRuntime,thirdPartyMcp,privateContext,peerContextGrants}={}){
+export async function runNetwork({definition,name='learner',frontMan='learner',request,model,limits={},signal,onEvent,sourceTools,webTools,peerRuntime,thirdPartyMcp,privateContext,peerContextGrants}={}){
  let admittedPeer=null;
  if(peerRuntime!==undefined){
   try{peerRuntime=snapshotContactConfig(peerRuntime,['inspector','fetchImpl'],'PEER_CONFIG');}
@@ -139,10 +140,11 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  // Snapshot source contact metadata before observers or model work, and use
  // the same pinned origin in both the client and runner context.
  if(sourceTools!==undefined){try{sourceTools=admitSourceConfig(sourceTools);}catch{fail('SOURCE_CONFIG','Source tool host configuration was refused.');}}
+ if(webTools!==undefined){try{webTools=admitWebConfig(webTools);}catch{fail('WEB_CONFIG','Explicit host web research grant is required.');}}
  let privatePolicy;
  try{privatePolicy=createPrivateContextPolicy({values:privateContext??{},grants:peerContextGrants??[]});}
  catch(error){fail(error?.code??'PRIVATE_CONTEXT_POLICY','Private context policy is invalid.');}
- const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowPeers:!!admittedPeer,externalMcpUrl:third?.url??null});
+ const compiled=compileNetwork(definition,{name,frontMan,limits,allowSourceTools:!!sourceTools,allowWebTools:!!webTools,allowPeers:!!admittedPeer,externalMcpUrl:third?.url??null});
  if(typeof request!=='string'||!request.trim()||request.length>2000)fail('REQUEST','A nonempty request up to 2000 characters is required.');
  const adapterMode=model?.mode,adapterChat=model?.chat;
  if(typeof adapterChat!=='function'||!['scripted-test','provider'].includes(adapterMode))fail('MODEL_UNAVAILABLE','No configured model adapter; live inference is not connected.');
@@ -234,6 +236,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const composition={remoteCalls:0,peerCalls:new Map(),maxRemoteCalls:admittedPeer?2:0,maxCallsPerPeer:admittedPeer?1:0,agentCalls:0,maxAgentCalls:bounds.maxAgents,deadlineSeconds:bounds.timeoutMs/1000,deadline:Date.now()+bounds.timeoutMs};
  const unavailable=()=>fail('CAPABILITY_UNAVAILABLE','External capabilities are disabled in this local runtime profile.');
  try{
+ const webClient=webTools?createWebAccess(webTools,{signal:controller.signal}):null;
  const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
  const guardSource=method=>async(...args)=>{
   check();
@@ -325,6 +328,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const ctx={network:compiled.network,frontMan:compiled.frontMan,baseOrigin:sourceTools?.origin??'https://sutra.invalid/agents',displayOrigin:'sutra-local',llm:guardedModel,trace,composition,slyData:{},history:[],isTop:true,mock:adapterMode==='scripted-test',apiKey:'',defaultModel:approvedModel,modelOverride:approvedModel,resolveRemote:resolvePeer,resolveMcp:async ref=>{
   check();
   if(ref?.url==='/api/source-tools'&&sourceClient)return sourceClient;
+  if(ref?.url==='/api/web-tools'&&webClient)return webClient;
   if(ref?.url===third?.url&&externalClient)return externalClient;
   return unavailable();
  },resolveLink:unavailable,requestConsent:async info=>info?.kind==='network'&&!!admittedPeer||info?.kind==='mcp'&&!!third?'proceed':'decline'};
@@ -332,7 +336,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
   if(limitHit)fail(limitHit,'Composition agent or remote-call budget stopped execution.');
   if(pendingRefinements.size)fail('SOURCE_QUERY_TOO_BROAD','Source refinement remained unresolved at the end of execution.');
   if(!result.text)fail('INCOMPLETE','Execution stopped before a complete answer.');
-  return {text:result.text,mode:adapterMode,modelCalls:startedModelCalls,agentCalls:composition.agentCalls,events};
+  return {text:result.text,mode:adapterMode,modelCalls:startedModelCalls,agentCalls:composition.agentCalls,events,...(webClient?{webResearch:webClient.snapshot()}:{})};
  }catch(error){
   // Expose bounded counters and sanitized reason only; never return partial model text or arbitrary error details.
   const source=failure??(controller.signal.aborted?controller.signal.reason:error);
