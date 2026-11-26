@@ -1290,3 +1290,18 @@ Validation-only PR #61 refreshed to `c34dc954f7a35857e24a9d5f8795f3e61fc359dd` f
 | #60 | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) | Frozen 40-case FinQA gold-program execution benchmark, seven arms and independent scorer | End-to-end natural-language reasoning, matched actual model metering |
 
 Next: observe exact CI; integrate #52 persistent knowledge and #53 semantic review into #58 unified workspace using existing APIs; extend independent interval/statistical replay and end-to-end benchmark. No real provider, human, physical hardware, public deployment or release evidence claimed.
+
+## V2-185 — remaining-work checklist reset and SUTRA1 queue retirement — 2026-11-26
+
+- User explicitly retired/deleted the 379 remaining SUTRA1 pending checklist items and required “continue with SUTRA” to work from the renewed V2 checklist.
+- Verified legacy checklist distribution before retirement: 18 + 42 + 6 + 6 + 8 + 11 + 19 + 68 + 100 + 100 + 1 = **379 unchecked tasks** across the eleven legacy checklist files.
+- Removed only `[ ]` legacy task lines. Retained 714 verified task records, six historical omissions, one historical blocker record and Git history.
+- Replaced `docs/sutra/CHECKLIST.md` with a historical-only retirement index; retired the V1 machine cursor and redirected legacy continuation/README to V2.
+- Replaced `docs/sutra-v2/CHECKLIST.md` with a remaining-work-only execution checklist covering immediate CI/register reconciliation, PRs #51–#60, the 21 Living Knowledge exits, unresolved V2 foundation phases, cross-register obligations and external blockers.
+- Rewrote root `AGENTS.md` and `docs/sutra-v2/CONTINUE.md` so the V2 checklist is the sole active work queue. Updated V2 `progress.json` to session `V2-185-checklist-reset` and next queue beginning `V2-N001`.
+- Baseline before this decision/session checkpoint: `undefined`. This is documentation/work-selection reconciliation only; no child implementation is promoted by these commits.
+- Known current verification work remains: #52 exact scoped CI, #54 exact scoped CI, #58 accessibility browser CI and #61 current combined validation.
+- No release, merge, paid inference, real credential, deployment, outreach or submission authorization.
+
+**Next:** execute `V2-N001` by reconciling PR #52 exact-head CI, then proceed through the new checklist’s dependency-aware order.
+
