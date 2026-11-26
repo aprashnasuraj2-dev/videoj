@@ -61,7 +61,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P023-06` Record browser execution evidence separately from provider inference execution
 - [x] `SUTRA-P023-07` Ensure the server proxy does not secretly own orchestration
 - [x] `SUTRA-P023-08` Verify initial errors are visible without opening developer tools
-- [ ] `SUTRA-P023-09` Produce and review the phase artifact: Runtime entry module and first local run.
+- [x] `SUTRA-P023-09` Produce and review the phase artifact: Runtime entry module and first local run.
 - [ ] `SUTRA-P023-10` Close phase 023 only after its applicable tasks have evidence and its exit condition is observed: Browser traces prove graph execution and internal delegation; a server-only chat endpoint is insufficient.
 
 ## Phase 024 - Add pre-execution network validation
