@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {mkdtemp,writeFile,readFile,rm} from 'node:fs/promises';import {tmpdir} from 'node:os';import {join} from 'node:path';
+import {mkdtemp,writeFile,readFile,rm,access} from 'node:fs/promises';import {tmpdir} from 'node:os';import {join} from 'node:path';
 import {build,verify,scan} from './build.mjs';
 test('candidate builds twice with deterministic inventory and rejects tampering',async t=>{
  const root=await mkdtemp(join(tmpdir(),'sutra-kit-'));t.after(()=>rm(root,{recursive:true,force:true}));
@@ -48,4 +48,39 @@ test('SUTRA contributor path names runnable entry points without inventing a pub
  assert.match(changelog,/## Unreleased/);
  assert.match(changelog,/branch commit, CI artifact, private Open Kit candidate, staging build or proposed URL/i);
  assert.doesNotMatch(changelog,/^## \[[0-9]/m,'no version may be invented before public release');
+});
+
+test('pre-release technical report binds implementation claims to existing source paths and preserves unverified limits',async()=>{
+ const report=await readFile(new URL('../../docs/sutra/TECHNICAL_REPORT.md',import.meta.url),'utf8');
+ for(const marker of [
+  'System responsibility split',
+  'Public artifact resolution and peer policy',
+  'Evidence validation and context filtering',
+  'Reproduction commands',
+  'Hosting, cache and quota model',
+  'Security/privacy mechanisms and limits',
+  'Current release limits / untested environments',
+  'Source-to-claim index',
+  'SUTRA-P085-04',
+  'pre-release engineering report draft'
+ ])assert.ok(report.includes(marker),marker);
+ for(const rel of [
+  'apps/sutra/src/main.js',
+  'packages/sutra-runtime/index.js',
+  'packages/sutra-evidence/index.js',
+  'packages/sutra-source-tools/index.js',
+  'packages/sutra-consent/index.js',
+  'apps/sutra/src/provider-run.js',
+  'apps/sutra/src/receipt-actions.js',
+  'services/sutra-api/inference.js',
+  'services/sutra-api/quota.js',
+  'services/sutra-api/wrangler.jsonc',
+  'apps/sutra/public/_headers',
+  'deploy/sutra-pages/ingress.test.mjs',
+  'docs/sutra/progress.json'
+ ])await access(new URL('../../'+rel,import.meta.url));
+ assert.match(report,/live funded-provider economics have \*\*not\*\* been measured/i);
+ assert.match(report,/No production SUTRA hostname.*is claimed/i);
+ assert.match(report,/catalog_matched.*not factual-truth/i);
+ assert.doesNotMatch(report,/sutra\.aafnaipatro\.com.*(?:is live|deployed|production is active)/i);
 });
