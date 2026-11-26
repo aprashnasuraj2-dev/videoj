@@ -23,6 +23,18 @@
       "front_man": "learner",
       "hocon": "./v/ff40e39c6877a7d91591010ae8a9125d2bda4804/research_learner.network.json",
       "description": "Model-directed lesson/web research with quotation-bound source claims and explicit inference/conflict/uncertainty labels."
+    },
+    {
+      "name": "source_peer_learner",
+      "front_man": "learner",
+      "hocon": "./v/585ad6e003d35773580fa863ef0dd6a9d4783046/source_peer_learner.network.json",
+      "description": "Caller-resolved compatible peer plus lesson evidence; peer claims remain unverified and quotation-bound."
+    },
+    {
+      "name": "research_peer_learner",
+      "front_man": "learner",
+      "hocon": "./v/14c5c880786b47c6634d5ad18fb5eafb8739971f/research_peer_learner.network.json",
+      "description": "Caller-resolved compatible peer plus lesson/web research; external claims remain unverified and quotation-bound."
     }
   ],
   "allowed_peers": [],

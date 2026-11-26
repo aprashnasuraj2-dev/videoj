@@ -1,7 +1,7 @@
 import {validateEpistemicAnswer,formatEpistemicAnswer} from '../../../packages/sutra-runtime/epistemic-answer.js';
 import {createProviderWebTools} from './provider-web-tools.js';
 import {parseUniqueJson} from '../../../packages/sutra-consent/strict-json.js';
-import {compileNetwork,runNetwork} from '../../../packages/sutra-runtime/index.js';
+import {compileNetwork,runNetwork,resolveSymbolicPeerLinks,canonicalPeerNetworkUrl} from '../../../packages/sutra-runtime/index.js';
 import {createProviderAdapter} from '../../../packages/sutra-inference/client.js';
 import {abortable} from '../../../packages/sutra-inference/protocol.js';
 import {validateReceipt,snapshotDataRecord,snapshotDataArray} from '../../../packages/sutra-evidence/index.js';
@@ -74,6 +74,17 @@ export function snapshotApprovedContract(value){
   const content=Object.freeze(Object.fromEntries(innerKeys.map(k=>[k,inner[k]])));
   return Object.freeze(Object.fromEntries(keys.map(k=>[k,k==='content'?content:data[k]])));
  }catch{throw contractError();}
+}
+export function snapshotPeerComposition(value,{webResearch='disabled'}={}){
+ if(value===null||value===undefined)return null;
+ try{
+  const data=snapshotDataRecord(value,2);
+  if(Object.keys(data).sort().join(',')!=='capabilities,peerUrl'||typeof data.peerUrl!=='string')throw Error();
+  const peerUrl=canonicalPeerNetworkUrl(data.peerUrl);if(peerUrl!==data.peerUrl)throw Error();
+  const capabilities=snapshotDataArray(data.capabilities,2);
+  if(capabilities.some(cap=>!['source','web'].includes(cap))||new Set(capabilities).size!==capabilities.length||capabilities.includes('web')&&webResearch!=='configured')throw Error();
+  return Object.freeze({peerUrl,capabilities:Object.freeze([...capabilities].sort())});
+ }catch{const error=Error('Invalid peer composition approval.');error.code='PEER_CONFIG';throw error;}
 }
 export function snapshotLearningContext(value){
  if(value===null||value===undefined)return null;
@@ -183,7 +194,7 @@ export function evaluateEvidenceAcceptance({webResearchEnabled=false,lessonRecei
  return Object.freeze({accepted:false,basis:'none',lessonCount,webCount,code:webResearchEnabled?'EVIDENCE_REQUIRED':'SOURCE_EVIDENCE_REQUIRED'});
 }
 
-export async function discoverProvider({origin,loadedContent,fetchImpl=fetch,signal}={}){
+export async function discoverProvider({origin,loadedContent,peerUrl=null,fetchImpl=fetch,signal}={}){
  if(!validOrigin(origin))throw Error('Invalid caller origin');
  const controller=new AbortController(),abort=()=>controller.abort(),timer=setTimeout(abort,5000);
  signal?.addEventListener('abort',abort,{once:true});if(signal?.aborted)abort();
@@ -205,15 +216,18 @@ export async function discoverProvider({origin,loadedContent,fetchImpl=fetch,sig
   if(!plain(router)||Object.keys(router).some(k=>!['base_url','mock','publisher_funded'].includes(k))||router.base_url!==origin+data.routerBase||router.mock!==false||router.publisher_funded!==true)throw Error('Published router does not match configured provider');
   if(manifest.coded_tools||manifest.actions||manifest.deployment?.direct_byok!==false)throw Error('Published deployment contradicts no-BYOK policy');
   if(!Array.isArray(manifest.networks))throw Error('Missing published networks');
-  const selectedNetwork=data.webResearch==='configured'?'research_learner':'source_learner';
+  let canonicalPeer=null;
+  if(peerUrl!==null){canonicalPeer=canonicalPeerNetworkUrl(peerUrl);if(canonicalPeer!==peerUrl)throw Error('Peer network URL must be canonical.');}
+  const selectedNetwork=canonicalPeer?(data.webResearch==='configured'?'research_peer_learner':'source_peer_learner'):(data.webResearch==='configured'?'research_learner':'source_learner');
   const entries=manifest.networks.filter(x=>plain(x)&&x.name===selectedNetwork);
   if(entries.length!==1||typeof entries[0].hocon!=='string'||typeof entries[0].front_man!=='string')throw Error('Missing exact learner network');
   const graphUrl=new URL(entries[0].hocon,origin+'/agents/');
   if(graphUrl.origin!==origin||graphUrl.username||graphUrl.password||graphUrl.search||graphUrl.hash||!graphUrl.pathname.startsWith('/agents/'))throw Error('Invalid source learner URL');
-  const graph=await readPublicJson({url:graphUrl.href,origin,fetchImpl,signal:controller.signal,maxBytes:65536});
+  let graph=await readPublicJson({url:graphUrl.href,origin,fetchImpl,signal:controller.signal,maxBytes:65536});
   if(!plain(graph.llm_config)||Object.keys(graph.llm_config).some(k=>k!=='model_name')||graph.llm_config.model_name!==data.model)throw Error('Published model does not match configured provider');
+  if(canonicalPeer)graph=resolveSymbolicPeerLinks(graph,{version:1,networks:{[selectedNetwork]:{expert_peer:canonicalPeer}}},selectedNetwork);
   const published={definition:graph,name:selectedNetwork,frontMan:entries[0].front_man,artifacts:{manifest:origin+'/agents/agent-manifest.json',definition:graphUrl.href}};
-  compileNetwork(graph,{name:published.name,frontMan:published.frontMan,allowSourceTools:true,allowWebTools:data.webResearch==='configured'});
+  compileNetwork(graph,{name:published.name,frontMan:published.frontMan,allowSourceTools:true,allowWebTools:data.webResearch==='configured',allowPeers:!!canonicalPeer});
   const contract=Object.freeze({backend:data.backend,model:data.model,inferenceContractId:data.inferenceContractId,router:router.base_url,content:Object.freeze(contentIdentity(content)),graphUrl:graphUrl.href,frontMan:published.frontMan,graphSha256:await sha(graph),webResearch:data.webResearch});
   controller.signal.throwIfAborted();
   return {state:'configured',model:data.model,backend:data.backend,contract,published};
@@ -264,13 +278,15 @@ export function createBoundProviderTransport({origin,approvedContract,fetchImpl=
   finally{finished=true;}
  };
 }
-export async function runProviderLesson({origin,approvedContract,loadedContent,question,history=[],learningContext=null,fetchImpl=fetch,signal,onModelStart=()=>{}}={}){
+export async function runProviderLesson({origin,approvedContract,loadedContent,question,history=[],learningContext=null,peerComposition=null,peerInspector,fetchImpl=fetch,signal,onModelStart=()=>{}}={}){
  approvedContract=snapshotApprovedContract(approvedContract);
  const model=approvedContract.model;
  if(!validOrigin(origin)||typeof model!=='string'||!modelPattern.test(model)||model==='mock-1'||typeof question!=='string'||!question.trim()||question.length>1200)throw Error('Invalid run input');
  assertContractOrigin(approvedContract,origin);
  if(typeof onModelStart!=='function')throw contractError();
  const turns=snapshotConversationTurns(history),context=snapshotLearningContext(learningContext),callerHistory=runtimeHistoryFor({turns,context,loadedContent});
+ const peer=snapshotPeerComposition(peerComposition,{webResearch:approvedContract.webResearch});
+ if(peer&&(!peerInspector||typeof peerInspector.perform!=='function')){const error=Error('Peer contact inspector is required.');error.code='PEER_CONFIG';throw error;}
  const controller=new AbortController(),abort=()=>controller.abort();
  const receiptCollector=createReceiptCollector({sources:loadedContent.sources}),usage=createProviderUsageLedger();
  // Scope the public version precondition to the two caller-owned POST endpoints.
@@ -291,22 +307,22 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
   // Recheck immediately before every explicit run, then execute that exact in-memory graph.
   // The caller's mounted lesson remains the authority for local source receipts.
   let fresh;
-  try{fresh=await discoverProvider({origin,loadedContent,fetchImpl,signal:controller.signal});}
+  try{fresh=await discoverProvider({origin,loadedContent,peerUrl:peer?.peerUrl??null,fetchImpl,signal:controller.signal});}
   catch(error){if(controller.signal.aborted||error?.code==='CONTENT_CHANGED')throw error;throw contractError();}
   if(fresh.state!=='configured'||!same(fresh.contract,approvedContract))throw contractError();
   controller.signal.throwIfAborted();
   const webTools=approvedContract.webResearch==='configured'?createProviderWebTools({origin,fetchImpl:boundFetch}):undefined;
-  const result=await runNetwork({...fresh.published,request:question,model:measured,signal:controller.signal,history:callerHistory,sourceTools:{origin,sources:loadedContent.sources,fetchImpl:boundFetch,onReceipt:receipt=>receiptCollector.add(receipt)},...(webTools?{webTools}:{})});
+  const result=await runNetwork({...fresh.published,request:question,model:measured,signal:controller.signal,history:callerHistory,sourceTools:{origin,sources:loadedContent.sources,fetchImpl:boundFetch,onReceipt:receipt=>receiptCollector.add(receipt)},...(webTools?{webTools}:{}),...(peer?{peerRuntime:{inspector:peerInspector},peerCapabilityGrants:peer.capabilities.length?[{peerUrl:peer.peerUrl,capabilities:peer.capabilities}]:[]}:{})});
   if(contractRejected)throw Error('Inference configuration precondition rejected.');
   if(catalogRejected)throw Error('Catalog precondition rejected.');
   const evidence=receiptCollector.snapshot();
   if(evidence.invalid){const invalid=Error('Independent receipt validation failed.');invalid.code='SOURCE_EVIDENCE_INVALID';throw invalid;}
   if(evidence.overflow){const excess=Error('Source receipt limit exceeded.');excess.code='SOURCE_EVIDENCE_LIMIT';throw excess;}
-  const webResearch=result.webResearch??null;
-  if(approvedContract.webResearch==='configured'){
-   let epistemic;try{epistemic=validateEpistemicAnswer(result.text,{lessonReceipts:evidence.receipts,webReceipts:webResearch?.receipts??[]});}
+  const webResearch=result.webResearch??null,peerResearch=result.peerResearch??null;
+  if(approvedContract.webResearch==='configured'||peer){
+   let epistemic;try{epistemic=validateEpistemicAnswer(result.text,{lessonReceipts:evidence.receipts,webReceipts:webResearch?.receipts??[],peerReceipts:peerResearch?.receipts??[]});}
    catch(error){const rejected=Error('Research answer failed epistemic receipt binding.');rejected.code=typeof error?.code==='string'?error.code:'ANSWER_FORMAT';throw rejected;}
-   return {model,text:formatEpistemicAnswer(epistemic),epistemicClaims:epistemic.claims,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,webResearch,evidenceBasis:epistemic.basis,quotationIntegrity:epistemic.verification,usage:usage.snapshot(),truthStatus:'unverified'};
+   return {model,text:formatEpistemicAnswer(epistemic),epistemicClaims:epistemic.claims,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,webResearch,peerResearch,evidenceBasis:epistemic.basis,quotationIntegrity:epistemic.verification,usage:usage.snapshot(),truthStatus:'unverified'};
   }
   const acceptance=evaluateEvidenceAcceptance({webResearchEnabled:false,lessonReceipts:evidence.receipts,webResearch:null});
   if(!acceptance.accepted){const missing=Error('No independently catalog-matched lesson receipt was available for the completed interpretation.');missing.code=acceptance.code;throw missing;}

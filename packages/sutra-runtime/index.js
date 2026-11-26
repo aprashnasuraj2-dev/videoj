@@ -491,6 +491,9 @@ function parsePeerNetworkReference(peerUrl){
  if(base.origin!==target.origin||base.pathname!==basePath)fail('PEER_URL','Peer site base did not preserve the requested origin and path.');
  return {target,base,networkName};
 }
+export function canonicalPeerNetworkUrl(peerUrl){
+ return parsePeerNetworkReference(peerUrl).target.href;
+}
 
 // Only the caller's same-origin publication can resolve symbols. Resolution is
 // not contact approval; the resulting absolute URL still requires peerRuntime
