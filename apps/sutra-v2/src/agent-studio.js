@@ -2,18 +2,21 @@ import {createProtocolWorkspace} from '../../../packages/sutra-inference/protoco
 import {admitProofCase} from '../../../packages/sutra-knowledge/agent-bridge.js';
 import {runAgentCouncil} from '../../../packages/sutra-knowledge/agent-council.js';
 import {runExpressionCouncil} from '../../../packages/sutra-knowledge/expression-council.js';
+import {createExpressionReviewReceipt,verifyExpressionReviewReceipt} from '../../../packages/sutra-knowledge/expression-review-receipt.js';
 import {compilerFinanceFixture} from '../../../packages/sutra-knowledge/examples/reviewed-compiler.mjs';
 import {beamGraph} from '../../../packages/sutra-knowledge/examples/beam.mjs';
 const by=id=>document.getElementById(id);
 const form=by('studio-form'),runButton=by('studio-run'),cancelButton=by('studio-cancel'),exportButton=by('studio-export');
 const fields=[...form.querySelectorAll('input,select,textarea'),by('studio-reset-case'),by('studio-load-finance')];
 const fixture=()=>JSON.stringify({obligationId:'beam_deflection',methods:[{id:'stiffer_assumption',constraintId:'deflection_limit',graphText:beamGraph('10000000000')},{id:'softer_assumption',constraintId:'deflection_limit',graphText:beamGraph('2500000000')}]});
-let active=null,current=null,epoch=0;
+const receiptButton=by('studio-export-receipt'),replayButton=by('studio-replay-receipt');
+let active=null,current=null,epoch=0,replayEpoch=0;
 function status(message,state){const el=by('studio-status');el.textContent=message;el.dataset.state=state;}
-function clear(){current=null;exportButton.disabled=true;by('studio-result').hidden=true;by('studio-trace').replaceChildren();by('studio-methods').replaceChildren();by('studio-interpretation').textContent='';by('studio-review').hidden=true;by('studio-review-summary').textContent='';by('studio-review-steps').replaceChildren();}
+function clear(){current=null;exportButton.disabled=true;receiptButton.disabled=true;by('studio-receipt-digest').textContent='';by('studio-result').hidden=true;by('studio-trace').replaceChildren();by('studio-methods').replaceChildren();by('studio-interpretation').textContent='';by('studio-review').hidden=true;by('studio-review-summary').textContent='';by('studio-review-steps').replaceChildren();}
 function busy(value){for(const field of fields)field.disabled=value;runButton.disabled=value;cancelButton.disabled=!value;if(value)exportButton.disabled=true;}
 function revoke(){by('studio-share').checked=false;by('studio-expression-share').checked=false;}
-function invalidate(){epoch++;active?.abort();clear();status('Configuration changed. Run a fresh council.','idle');}
+function resetReplay(){replayEpoch++;const el=by('studio-replay-status');el.textContent='Input changed. Replay again.';el.dataset.state='idle';replayButton.disabled=false;}
+function invalidate(){epoch++;active?.abort();clear();resetReplay();status('Configuration changed. Run a fresh council.','idle');}
 function showMode(){const expression=by('studio-mode').value==='expression';for(const id of ['studio-method-question','studio-method-case','studio-method-consent'])by(id).hidden=expression;by('studio-expression-fields').hidden=!expression;}
 function element(tag,value,className){const x=document.createElement(tag);x.textContent=value;if(className)x.className=className;return x;}
 function render(r,configuration,calls){
@@ -118,11 +121,32 @@ form.addEventListener('submit',async event=>{
   current={version:'sutra-local-council-trace/v1',configuration:{...config,connections:config.connections.map(({endpoint,...c})=>c)},result:r,calls};
   status('Local council completed: '+r.termination+'. '+r.agreement+'. No live inference or decision authority.','complete');
  }catch{if(ticket===epoch&&!controller.signal.aborted)status('Council refused. Check connection descriptors, reviewed input, pin and disclosure.','refused');}
- finally{if(active===controller){active=null;busy(false);exportButton.disabled=!current;}}
+ finally{if(active===controller){active=null;busy(false);exportButton.disabled=!current;receiptButton.disabled=!(current?.configuration.mode==='expression'&&current.result.candidates.length);}}
 });
 exportButton.addEventListener('click',()=>{
  if(!current||active)return;
  const url=URL.createObjectURL(new Blob([JSON.stringify(current,null,2)],{type:'application/json'}));const anchor=document.createElement('a');anchor.href=url;anchor.download='sutra-local-council-trace.json';document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
  status('Trace export requested. It includes reviewed input; no credential handles or endpoint descriptors.','complete');
+});
+receiptButton.addEventListener('click',async()=>{
+ if(!current||active||current.configuration.mode!=='expression')return;
+ const snapshot=current,ticket=epoch;receiptButton.disabled=true;
+ try{
+  const c=snapshot.configuration,r=await createExpressionReviewReceipt({contractText:c.contractText,contractPin:c.contractPin,bindingIds:c.disclosure.bindingIds,expressions:snapshot.result.candidates.map(x=>x.expression)});
+  if(ticket!==epoch||current!==snapshot)return;
+  const url=URL.createObjectURL(new Blob([r.receiptText],{type:'application/json'}));const anchor=document.createElement('a');anchor.href=url;anchor.download='sutra-expression-review-receipt.json';document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  by('studio-receipt-digest').textContent='Retain this receipt pin separately: '+r.receiptPin;
+ }catch{if(ticket===epoch&&current===snapshot)by('studio-receipt-digest').textContent='Receipt refused.';}
+ finally{if(ticket===epoch&&current===snapshot)receiptButton.disabled=false;}
+});
+for(const id of ['studio-receipt-text','studio-receipt-expected'])by(id).addEventListener('input',resetReplay);
+replayButton.addEventListener('click',async()=>{
+ const ticket=++replayEpoch,el=by('studio-replay-status');replayButton.disabled=true;el.dataset.state='busy';el.textContent='Recomputing locally…';
+ try{
+  const r=await verifyExpressionReviewReceipt({contractText:by('studio-contract').value,contractPin:by('studio-contract-pin').value.trim(),receiptText:by('studio-receipt-text').value,receiptPin:by('studio-receipt-expected').value.trim()});
+  if(ticket!==replayEpoch)return;
+  el.dataset.state='reproduced';el.textContent=r.status+' · '+r.candidateCount+' candidates · '+r.state+' · semantic review required.';
+ }catch{if(ticket===replayEpoch){el.dataset.state='refused';el.textContent='Receipt refused. Check exact receipt bytes, both retained pins and recomputed results.';}}
+ finally{if(ticket===replayEpoch)replayButton.disabled=false;}
 });
 by('studio-case').value=fixture();showMode();

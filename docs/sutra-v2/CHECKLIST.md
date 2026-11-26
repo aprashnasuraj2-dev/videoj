@@ -1017,3 +1017,6 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 
 
 - [ ] **V2-154 candidate:** host-controlled stagnation stop and greedy semantic review prompts; retain divergence, no truth or optimality claim; exact CI pending.
+
+
+- [ ] **V2-155 candidate:** independently reproducible expression receipt with separate retained pins and scope, exact computation replay, no transcript authenticity claim; exact CI pending.

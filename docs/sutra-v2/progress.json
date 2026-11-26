@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-154",
+  "session": "V2-155",
   "next": [
     "V2-P14-BYOK-UX",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Candidate: host-directed stagnation stop and prioritized semantic review plan; exact CI pending.",
+  "state": "Candidate: portable independent expression computation receipt; exact CI pending.",
   "verified": [
     {
       "id": "V2-M01",
@@ -419,14 +419,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-155",
+    "parent": "b6d29f5774d7dd6da6cb0d8c4d3b3dd47137029f",
+    "description": "### V2-155 — independent portable expression computation receipt (candidate)\nSeparate auditable computation from untrusted agent transcript: compact canonical receipt contains separately pinned contract identity, approved binding IDs, recorded expressions, recomputed proposal identities/statuses and review plan. Offline replay validates exact retained receipt pin, exact contract pin, binding scope and canonical recomputation, refusing even self-repinned forged results. No provider identities, endpoint, credential, source text, call history or model-authorship claim in receipt. Studio exports receipt with separate pin and replays exact/tampered bytes. Contract remains independently required. Receipt may reveal conditional relations. V2-153 browser job 139629109476 passed, knowledge pending at observation; exact V2-155 CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-154",
     "parent": "4eefa38b36bc448e3e1c6aae51704c13aac88cf2",
     "description": "### V2-154 — host-directed resource stopping and semantic review planning (candidate)\nAdd opt-in stop-on-stagnation policy to expression council: compare compiled proposal digests, stop after a complete repeated round only if no new compiled candidate appears and all original team members still propose. Preserve fixed default, hard call cap, all dissent and explicit no authority. Three-round fixture reserves four instead of six calls (33% fewer simulated calls), not measured paid cost or accuracy. Greedily prioritize binding-inclusion/comparator review prompts by opposing-pair separation, with exact-expression fallback when footprints match. No optimality, semantic correctness, causal conclusion or candidate coverage claim. Studio exposes policy and plan, tests dissent after convergence, new candidate continuation, abstention and comparator/structure distinctions. Exact CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-153",
-    "parent": "d410001275850819c9b1ee7542d5718e26dc4d5d",
-    "description": "### V2-153 — generated-expression Studio and real wire-format rehearsal (candidate)\nV2-151 kernel job 139626930460 passed; browser 139626929920 repeated the 3/4 call failure. V2-152 browser job 139627789581 passed the full existing suite including the concurrency and mobile layout regressions; inference job 139627789195 refused a malicious accessor correctly but changed the protocol error from OPERATION to PROVIDER_RESULT. Restore protocol-safe shape admission before all-profile credential scan, still before serialization. Studio now exposes editable connection endpoint descriptors, two independent protocol choices, simulated wire encoding/decoding via the actual protocol registry, generated expressions over a pinned reviewed evidence contract, user-selected binding IDs and optional raw value scope, fresh per-run consent, visible persistent conditional divergence and redacted export. Test heterogeneous protocols, divergent outcomes after convergence, pin refusal, consent revocation and mobile overflow. Scripted generation only, no live inference or endpoint contact. Exact new CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [

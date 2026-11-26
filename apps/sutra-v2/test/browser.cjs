@@ -112,6 +112,18 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.equal(expressionTrace.result.termination,'STAGNANT_CANDIDATES');
   assert.equal(expressionTrace.result.reviewPlan.coveredPairs,1);
   assert.match(await page.locator('#studio-review-steps').innerText(),/ppe25/);
+  const [receiptDownload]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Export computation receipt'}).click()]);
+  const receiptText=fs.readFileSync(await receiptDownload.path(),'utf8');
+  const receiptPin=(await page.locator('#studio-receipt-digest').innerText()).match(/sha256:[a-f0-9]{64}/)[0];
+  await page.locator('#studio-replay > summary').click();
+  await page.getByLabel('Computation receipt JSON').fill(receiptText);
+  await page.getByLabel('Retained receipt SHA-256').fill(receiptPin);
+  await page.getByRole('button',{name:'Replay computation receipt'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-replay-status').dataset.state==='reproduced');
+  assert.match(await page.locator('#studio-replay-status').innerText(),/DIVERGENT_CONDITIONAL_OUTCOMES/);
+  await page.getByLabel('Computation receipt JSON').fill(receiptText+' ');
+  await page.getByRole('button',{name:'Replay computation receipt'}).click();
+  await page.waitForFunction(()=>document.querySelector('#studio-replay-status').dataset.state==='refused');
   assert.equal(JSON.stringify(expressionTrace).includes('https://model-'),false);
   assert.equal(JSON.stringify(expressionTrace).includes('SYNTHETIC_ONLY_'),false);
   await page.locator('#studio-expression-share').check();
