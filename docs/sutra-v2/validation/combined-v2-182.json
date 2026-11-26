@@ -243,5 +243,23 @@
   "validationReconciliations": [
     "Preserve exact path rules for previous validation manifests/workflows and add specific operator/FinQA workflow and license paths; retain both impact tests.",
     "Canonical knowledge/browser job bodies unchanged; new child workflows retained."
+  ],
+  "validationFollowups": [
+    {
+      "priorRevision": "c34dc954f7a35857e24a9d5f8795f3e61fc359dd",
+      "failedBrowserRun": 45764494043,
+      "failedBrowserJob": 139722015352,
+      "observedFailure": "Legacy test substring label matched new operator credential; strict-mode locator ambiguity.",
+      "correction": "Scope legacy provider labels to #provider-form; preserve both interfaces. Extend only child-specific workflow guards to include exact validation branch. Add integration-only history/review adapter and cross-workstream regression using original APIs.",
+      "newEvidence": "pending exact CI",
+      "sourceChanges": [
+        "apps/sutra-v2/test/browser.cjs",
+        "packages/sutra-knowledge/reviewed-history-workspace.js",
+        "packages/sutra-knowledge/test/reviewed-history-workspace.test.mjs",
+        ".github/workflows/sutra-v2-operator-browser.yml",
+        ".github/workflows/sutra-v2-workspace-browser.yml",
+        ".github/workflows/sutra-v2-finqa-benchmark.yml"
+      ]
+    }
   ]
 }

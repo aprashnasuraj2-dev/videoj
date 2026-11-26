@@ -7,7 +7,7 @@ permissions:
   contents: read
 jobs:
   workspace-browser:
-    if: github.head_ref == 'sutra/v2-parallel/08-unified-workspace'
+    if: github.head_ref == 'sutra/v2-parallel/08-unified-workspace' || github.head_ref == 'sutra/v2-validation/v2-182'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:

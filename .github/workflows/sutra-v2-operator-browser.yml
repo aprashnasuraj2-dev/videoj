@@ -7,7 +7,7 @@ permissions:
   contents: read
 jobs:
   operator-browser:
-    if: github.head_ref == 'sutra/v2-parallel/01-model-orchestration'
+    if: github.head_ref == 'sutra/v2-parallel/01-model-orchestration' || github.head_ref == 'sutra/v2-validation/v2-182'
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:

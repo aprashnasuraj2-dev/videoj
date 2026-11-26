@@ -252,15 +252,16 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
   // Nontechnical multi-provider setup lab: two ephemeral profiles, no network,
   // no credential left in the DOM after submission, and local routing only.
-  const providerKey=page.getByLabel('Test credential'),providerName=page.getByLabel('Profile name');
+  const legacyProviderForm=page.locator('#provider-form');
+  const providerKey=legacyProviderForm.getByLabel('Test credential',{exact:true}),providerName=legacyProviderForm.getByLabel('Profile name',{exact:true});
   const alphaSecret='BROWSER_TEST_ALPHA_83f29c',betaSecret='BROWSER_TEST_BETA_a901d2';
-  await providerName.fill('Work AI');await page.getByLabel('Session call cap').selectOption('1');await page.getByLabel('Reserved output budget').selectOption('256');await providerKey.fill(alphaSecret);
+  await providerName.fill('Work AI');await legacyProviderForm.getByLabel('Session call cap',{exact:true}).selectOption('1');await legacyProviderForm.getByLabel('Reserved output budget',{exact:true}).selectOption('256');await providerKey.fill(alphaSecret);
   await page.getByRole('button',{name:'Show'}).click();assert.equal(await providerKey.getAttribute('type'),'text');
   await page.getByRole('button',{name:'Hide'}).click();assert.equal(await providerKey.getAttribute('type'),'password');
   await page.getByRole('button',{name:'Add provider profile'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-count').textContent==='1');
   assert.equal(await providerKey.inputValue(),'');assert.equal((await page.locator('body').innerText()).includes(alphaSecret),false);
-  await page.getByLabel('Provider',{exact:true}).selectOption('provider-b');await providerName.fill('Research AI');await page.getByLabel('Session call cap').selectOption('3');await page.getByLabel('Reserved output budget').selectOption('600');await providerKey.fill(betaSecret);
+  await legacyProviderForm.getByLabel('Provider',{exact:true}).selectOption('provider-b');await providerName.fill('Research AI');await legacyProviderForm.getByLabel('Session call cap',{exact:true}).selectOption('3');await legacyProviderForm.getByLabel('Reserved output budget',{exact:true}).selectOption('600');await providerKey.fill(betaSecret);
   await page.getByRole('button',{name:'Add provider profile'}).click();
   await page.waitForFunction(()=>document.querySelector('#provider-count').textContent==='2');
   assert.equal(await providerKey.inputValue(),'');assert.equal((await page.locator('body').innerText()).includes(betaSecret),false);
