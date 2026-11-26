@@ -1210,3 +1210,7 @@ Connect council review prompts to explicit human answers over a separately pinne
 
 ### V2-171 — same-tab evidence-to-council-to-revision handoff (candidate)
 Add bounded immutable offers between existing workspaces. Explicitly replay and load a sealed evidence contract into Studio, clearing previous consent and raw value grants; large binding sets require manual subset. Offer a distinct-candidate root for explicit replay, editable-source reconstruction and confirmation as current/retained baseline; no model call, semantic adoption, automatic replacement or persistence. Browser candidate checks exact root pin, two candidates, round-trip contract pin and revoked approval. Fix V2-170 browser test syntax collision (job 139653511463) without changing assertions. V2-170 scoped council/orchestration step succeeded (job 139653510942); full formal gate still pending at observation. Exact V2-171 CI pending.
+
+
+### V2-172 — mixed operator credential admission cancellation and full-plan canary scan (candidate)
+Bound the host credential callback wait by caller cancellation and the approved overall timeout; observe late rejections, refuse sanitized credential-read errors, close both exchanges, and scan all decoded plan/contract fields after credential enrollment before any dispatch. No new network authorization, no callback sandbox or general DLP claim. V2-171 browser job 139654687336 succeeded; scoped inference 85/85 and council 36/36 tests passed in knowledge job 139654687570, which later failed the unchanged pinned TLC SHA-256 check. New exact CI pending.

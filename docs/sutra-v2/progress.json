@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-171",
+  "session": "V2-172",
   "next": [
     "V2-P14-BYOK-UX",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Candidate: same-tab integrated evidence/council/revision journey and browser syntax repair.",
+  "state": "Candidate: cancelable mixed credential admission; exact V2-171 browser and scoped tests passed, formal dependency integrity blocked.",
   "verified": [
     {
       "id": "V2-M01",
@@ -449,14 +449,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-172",
+    "parent": "6f5f89da516df9880ec8250ab5b9fc3521b31019",
+    "description": "### V2-172 — mixed operator credential admission cancellation and full-plan canary scan (candidate)\nBound the host credential callback wait by caller cancellation and the approved overall timeout; observe late rejections, refuse sanitized credential-read errors, close both exchanges, and scan all decoded plan/contract fields after credential enrollment before any dispatch. No new network authorization, no callback sandbox or general DLP claim. V2-171 browser job 139654687336 succeeded; scoped inference 85/85 and council 36/36 tests passed in knowledge job 139654687570, which later failed the unchanged pinned TLC SHA-256 check. New exact CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-171",
     "parent": "698a810e1f01570fe6353e2b7cb158d97344e193",
     "description": "### V2-171 — same-tab evidence-to-council-to-revision handoff (candidate)\nAdd bounded immutable offers between existing workspaces. Explicitly replay and load a sealed evidence contract into Studio, clearing previous consent and raw value grants; large binding sets require manual subset. Offer a distinct-candidate root for explicit replay, editable-source reconstruction and confirmation as current/retained baseline; no model call, semantic adoption, automatic replacement or persistence. Browser candidate checks exact root pin, two candidates, round-trip contract pin and revoked approval. Fix V2-170 browser test syntax collision (job 139653511463) without changing assertions. V2-170 scoped council/orchestration step succeeded (job 139653510942); full formal gate still pending at observation. Exact V2-171 CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-170",
-    "parent": "5e3620e7411c979f7d129a8e2420cd38bc60289d",
-    "description": "### V2-170 — reversible human review answers and scoped CI diagnostics (candidate)\nConnect council review prompts to explicit human answers over a separately pinned and recomputed expression receipt. Exact comparison choices only; candidates outside compared pairs remain unknown, original dissent and receipt remain intact, no semantic approval or automatic adoption. Studio supports preview/reset and export of replayable answer comparison; browser checks both matching and conflicting branches. Add early scoped council integration step without removing any existing unit/formal gates. V2-168 and V2-169 knowledge jobs 139651382343 and 139652112443 both stopped on pinned TLC download checksum mismatch before the full knowledge tests, not a demonstrated code regression. No pin change or bypass; scoped results cannot close full CI gate. V2-168 browser passed; V2-169 browser pending at observation. Exact new CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -881,6 +881,13 @@
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45743377490/job/139653511463",
       "reason": "Browser harness duplicate reviewDownload variable declaration",
       "resolutionStatus": "V2-171 unique variable name; exact browser CI pending."
+    },
+    {
+      "sourceRevision": "6f5f89da516df9880ec8250ab5b9fc3521b31019",
+      "run": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45743739111",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45743739111/job/139654687570",
+      "reason": "Pinned TLC JAR SHA-256 mismatch",
+      "resolutionStatus": "External dependency integrity gate remains blocked; pin unchanged."
     }
   ],
   "reconciledDurableCandidate": {
@@ -1646,6 +1653,18 @@
       "sourceRevision": "088d3f3162b5aa3627a96eca4864c06b1ee0406d",
       "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45725620769/job/139594608390",
       "description": "Exact nine PR workflows green. Actual 360px recovery through confirmed withdrawal, explicit reselection, stale preview invalidation, baseline restoration, local downloads and independently replayed artifact; isolated archive matched, 6 tamper/pin attempts refused. Immediate-only, no restored semantic authority."
+    },
+    {
+      "id": "V2-LK15-UNIFIED-WORKSPACE",
+      "sourceRevision": "6f5f89da516df9880ec8250ab5b9fc3521b31019",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45743739111/job/139654687336",
+      "description": "Exact browser job passed evidence-to-council-to-revision handoff and independent verification."
+    },
+    {
+      "id": "V2-P14-BYOK-UX",
+      "sourceRevision": "6f5f89da516df9880ec8250ab5b9fc3521b31019",
+      "artifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45743739111/job/139654687570",
+      "description": "85 inference and 36 council tests passed; later TLC checksum mismatch means full knowledge job failed."
     }
   ],
   "reconciledCI": [

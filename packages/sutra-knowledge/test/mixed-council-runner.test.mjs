@@ -63,3 +63,23 @@ test('mixed plan refuses route class swaps, credential alias crossing and unsupp
  }
  assert.equal(s.requests.length,0);assert.equal(s.dns.length,0);
 });
+
+test('cancelled or timed-out credential admission never dispatches; late host outcomes are ignored',async t=>{
+ const s=await setup(t);const ctrl=new AbortController();let late,started;
+ const ready=new Promise(r=>started=r);
+ const pending=runApprovedMixedCouncil({...s.options,signal:ctrl.signal,readCredential:()=>{started();return new Promise((_,reject)=>late=reject);}});
+ await ready;ctrl.abort();await assert.rejects(pending,/CANCELLED/);late(new Error(A));await new Promise(r=>setImmediate(r));
+ assert.equal(s.requests.length,0);assert.equal(s.dns.length,0);
+ const config={...s.config,timeoutMs:100,transportDeadlineMs:100};
+ const configText=JSON.stringify(config),plan=await admitMixedCouncilConfig(configText);
+ await assert.rejects(runApprovedMixedCouncil({...s.options,configText,approvedPlanPin:plan.planPin,readCredential:()=>new Promise(()=>{})}),/TIMEOUT/);
+ assert.equal(s.requests.length,0);assert.equal(s.dns.length,0);
+});
+test('credential resolver exceptions and secret-bearing plan identifiers fail before either route contacts',async t=>{
+ const s=await setup(t);
+ await assert.rejects(runApprovedMixedCouncil({...s.options,readCredential:async()=>{throw new Error(A);}}),e=>/CREDENTIAL_READ/.test(e.message)&&!e.message.includes(A));
+ const config=structuredClone(s.config);config.agents[0].id=A;
+ const configText=JSON.stringify(config),plan=await admitMixedCouncilConfig(configText);
+ await assert.rejects(runApprovedMixedCouncil({...s.options,configText,approvedPlanPin:plan.planPin}),e=>e.code==='SECRET_ECHO'&&!e.message.includes(A));
+ assert.equal(s.requests.length,0);assert.equal(s.dns.length,0);
+});
