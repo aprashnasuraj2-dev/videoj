@@ -94,7 +94,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P065-03` Check request precedence for the two proposed subdomains
 - [x] `SUTRA-P065-04` Serve graphs, runtime modules, transcripts and public HTML statically
 - [x] `SUTRA-P065-05` Avoid run-worker-first patterns that unnecessarily invoke dynamic code
-- [ ] `SUTRA-P065-06` Keep media delivery outside the main Patro application Worker
+- [x] `SUTRA-P065-06` Keep media delivery outside the main Patro application Worker
 - [ ] `SUTRA-P065-07` Calculate headroom using account-wide usage and retry assumptions
 - [ ] `SUTRA-P065-08` Record a dated request sample showing which requests invoke Workers
 - [x] `SUTRA-P065-09` Produce and review the phase artifact: Route/quota budget and before/after request sample.
