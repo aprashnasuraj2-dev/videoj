@@ -168,3 +168,8 @@ Central parent: `0b14cb66a75019502fa473bb88dc462067761c53`. Exact observations:
 - #61 manifest is stale; do not merge or transfer old green results. Rebuild only after correction and inspect current base drift.
 - V2 machine cursor and roadmap metadata normalized; legacy tracker retirement handling still requires implementation. N007/N008 remain open until audit and exact central evidence. No broad gate promotion.
 - Next: N003 browser corrective iteration, N004/N005 refreshed combined validation. No release, merge, paid inference, external contact or production change.
+
+
+## V2-188 — queue invariants and workspace candidate (26 November 2026)
+
+Parent `78d00276ea23f1d5cd5888e582fc951f2921864f`. #58 new candidate `e163e9a9a293a4be9c713f2b2967de33d91b07bd` restores three compact metric columns and removes compulsory full-width header navigation, retaining wrapping/min-width protections. Prior job 139770644359 failed conflicted-state first-viewport action at 360x800; exact new browser evidence pending. No acceptance change. Add V2 read-only checklist/queue validator, tests for count, duplicate ID, legacy fallback and missing evidence, and a central CI step. Historical V1 tracker recognizes explicit retirement and redirects next-task output, retaining its evidence audit. Candidate verification remains open (N007/N008/N012). N003 remains active; 160 outstanding engineering items, six external blockers. #61 remains stale and validation-only.

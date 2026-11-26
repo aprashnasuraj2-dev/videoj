@@ -17,9 +17,9 @@
 
 ## Current live branch baseline to reconcile
 
-| PR | Workstream | Current head at V2-187 observation | Current evidence boundary |
+| PR | Workstream | Current head at V2-188 observation | Current evidence boundary |
 | --- | --- | --- | --- |
-| #50 | central V2 | `0b14cb66a75019502fa473bb88dc462067761c53` | prior checkpoint; exact central CI reconciliation open |
+| #50 | central V2 | `78d00276ea23f1d5cd5888e582fc951f2921864f` | exact central CI pending observation |
 | #51 | model orchestration | `aca5e8b60c8ce67f09c72cb4722a05c8810634da` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45757418475) |
 | #52 | persistent knowledge | `ae8630ec7d472263f8f8fffb16062bfbc10f96af` | [422/422 exact scoped JS tests passed; separate-process witness, rollback, bounded lost-response recovery](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779075994/job/139769828804) |
 | #53 | semantic compilation | `0065b48dc5181f549845303d1569b88d94bc2ddf` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45758784104) |
@@ -27,7 +27,7 @@
 | #55 | independent verification | `1a429e24a4fca63affccedf138150480b3ee87c2` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45764898229) |
 | #56 | counterfactuals | `4620bf709d9749c311f6726e6d2e2bdf04a383b4` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759676416) |
 | #57 | security/recovery | `46055f4f75cf79370ae5e423d1fc99f53b17421e` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45753193964) |
-| #58 | unified workspace | `4a9095387cfb0e9edd8aceddb747eaa35edeb94d` | [workspace browser failed: primary action not in first viewport: conflicted](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779317805/job/139770644359) |
+| #58 | unified workspace | `e163e9a9a293a4be9c713f2b2967de33d91b07bd` | candidate: adaptive header and compact metrics; exact CI pending |
 | #59 | specialist domains | `35a1e273fd10335ed70c7499d00d2cf3dfd03e01` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759708514) |
 | #60 | benchmark | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) |
 | #61 | validation-only combined tree | `ad295ae83bcafb48d489ef96475c80a22bac3c16` | old exact browser passed; knowledge/parallel reruns requested; accessibility assertion failed; manifest stale; **DO NOT MERGE** |

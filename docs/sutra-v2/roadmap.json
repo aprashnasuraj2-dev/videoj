@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-187-exact-scoped-verification",
+  "session": "V2-188-queue-invariants-candidate",
   "statusDefinitions": [
     "Not started",
     "Researching",

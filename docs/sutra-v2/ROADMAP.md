@@ -1,4 +1,4 @@
-# Dependency-aware engineering roadmap — V2-187
+# Dependency-aware engineering roadmap — V2-188
 
 > **Execution-queue note (2026-11-26):** This roadmap remains the broad gate/dependency register, but task selection is controlled by [`CHECKLIST.md`](CHECKLIST.md). The 379 former SUTRA1 pending tasks are retired and must not be used as a continuation queue.
 
