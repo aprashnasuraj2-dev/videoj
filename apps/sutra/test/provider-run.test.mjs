@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {createReceiptCollector,snapshotApprovedContract,snapshotLearningContext,snapshotConversationTurns,discoverProvider,createBoundProviderTransport} from '../src/provider-run.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {createReceiptCollector,snapshotApprovedContract,snapshotLearningContext,snapshotConversationTurns,evaluateEvidenceAcceptance,discoverProvider,createBoundProviderTransport} from '../src/provider-run.js';
 
 const receipt=(i,source='source')=>({version:1,sourceId:source,sourceVersion:'v1',sourceHash:'a'.repeat(64),mediaHash:'b'.repeat(64),cueId:'cue-'+i,start:i,end:i+1,excerpt:'cue '+i,retrievedAt:'2026-11-24T00:00:00Z',verification:'unverified'});
 
@@ -240,4 +240,15 @@ test('web routes require an explicitly web-enabled approved contract',async()=>{
  for(const call of calls){
   assert.equal(call.opts.credentials,'omit');assert.equal(call.opts.headers.get('X-Sutra-Inference-Contract'),'a'.repeat(64));assert.equal(call.opts.headers.get('Authorization'),null);
  }
+});
+
+test('research-enabled acceptance permits an actually read web source without forcing unrelated lesson evidence',()=>{
+ const web={receipts:[{sourceId:'web-1',url:'https://example.org/source',excerpt:'retrieved'}]};
+ assert.deepEqual(evaluateEvidenceAcceptance({webResearchEnabled:true,lessonReceipts:[],webResearch:web}),{accepted:true,basis:'web',lessonCount:0,webCount:1});
+ assert.deepEqual(evaluateEvidenceAcceptance({webResearchEnabled:true,lessonReceipts:[receipt(0)],webResearch:web}),{accepted:true,basis:'lesson_and_web',lessonCount:1,webCount:1});
+ assert.deepEqual(evaluateEvidenceAcceptance({webResearchEnabled:true,lessonReceipts:[receipt(0)],webResearch:{receipts:[]}}),{accepted:true,basis:'lesson',lessonCount:1,webCount:0});
+ const searchOnly=evaluateEvidenceAcceptance({webResearchEnabled:true,lessonReceipts:[],webResearch:{receipts:[]}});
+ assert.equal(searchOnly.accepted,false);assert.equal(searchOnly.code,'EVIDENCE_REQUIRED');
+ const sourceOnly=evaluateEvidenceAcceptance({webResearchEnabled:false,lessonReceipts:[],webResearch:null});
+ assert.equal(sourceOnly.accepted,false);assert.equal(sourceOnly.code,'SOURCE_EVIDENCE_REQUIRED');
 });

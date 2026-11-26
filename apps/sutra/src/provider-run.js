@@ -165,6 +165,18 @@ async function readPublicJson({url,origin,fetchImpl,signal,maxBytes}){
  return data;
 }
 
+export function evaluateEvidenceAcceptance({webResearchEnabled=false,lessonReceipts=[],webResearch=null}={}){
+ if(typeof webResearchEnabled!=='boolean'||!Array.isArray(lessonReceipts))throw Error('Invalid evidence acceptance input');
+ const lessonCount=lessonReceipts.length;
+ const webReceipts=webResearch?.receipts;
+ if(webReceipts!==undefined&&!Array.isArray(webReceipts))throw Error('Invalid web evidence snapshot');
+ const webCount=Array.isArray(webReceipts)?webReceipts.length:0;
+ if(lessonCount>20||webCount>6)throw Error('Evidence acceptance bounds exceeded');
+ if(lessonCount>0)return Object.freeze({accepted:true,basis:webCount>0?'lesson_and_web':'lesson',lessonCount,webCount});
+ if(webResearchEnabled&&webCount>0)return Object.freeze({accepted:true,basis:'web',lessonCount,webCount});
+ return Object.freeze({accepted:false,basis:'none',lessonCount,webCount,code:webResearchEnabled?'EVIDENCE_REQUIRED':'SOURCE_EVIDENCE_REQUIRED'});
+}
+
 export async function discoverProvider({origin,loadedContent,fetchImpl=fetch,signal}={}){
  if(!validOrigin(origin))throw Error('Invalid caller origin');
  const controller=new AbortController(),abort=()=>controller.abort(),timer=setTimeout(abort,5000);
@@ -284,8 +296,10 @@ export async function runProviderLesson({origin,approvedContract,loadedContent,q
   const evidence=receiptCollector.snapshot();
   if(evidence.invalid){const invalid=Error('Independent receipt validation failed.');invalid.code='SOURCE_EVIDENCE_INVALID';throw invalid;}
   if(evidence.overflow){const excess=Error('Source receipt limit exceeded.');excess.code='SOURCE_EVIDENCE_LIMIT';throw excess;}
-  if(!evidence.receipts.length){const missing=Error('No independently catalog-matched source receipt.');missing.code='SOURCE_EVIDENCE_REQUIRED';throw missing;}
-  return {model,text:result.text,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,webResearch:result.webResearch??null,usage:usage.snapshot(),truthStatus:'unverified'};
+  const webResearch=result.webResearch??null;
+  const acceptance=evaluateEvidenceAcceptance({webResearchEnabled:approvedContract.webResearch==='configured',lessonReceipts:evidence.receipts,webResearch});
+  if(!acceptance.accepted){const missing=Error('No independently observed evidence was available for the completed interpretation.');missing.code=acceptance.code;throw missing;}
+  return {model,text:result.text,agentCalls:result.agentCalls,modelCalls:result.modelCalls,receipts:evidence.receipts,webResearch,evidenceBasis:acceptance.basis,usage:usage.snapshot(),truthStatus:'unverified'};
  }catch(error){
   // Only independently validated receipts survive a failed run. Never retain partial model text.
   const code=signal?.aborted?'CANCELLED':contractRejected?'CONTRACT_CHANGED_DURING_RUN':catalogRejected?'CONTENT_CHANGED_DURING_RUN':typeof error?.code==='string'&&/^[A-Z_]{2,64}$/.test(error.code)?error.code:'RUN_FAILED';

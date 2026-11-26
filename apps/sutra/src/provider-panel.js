@@ -86,7 +86,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
    turns=[...turns,{question:approval.question,answer:result.text.slice(0,3000)}].slice(-2);
    const u=result.usage,w=result.webResearch;metrics.textContent=result.agentCalls+' agent invocations · '+result.modelCalls+' model calls · '+u.reported+'/'+u.calls+' calls reported token usage. '+(u.complete?'Reported input/output/total tokens: '+u.promptTokens+'/'+u.completionTokens+'/'+u.totalTokens+'.':'Usage incomplete; total run cost is unknown.')+' Public web capability: '+(w?String(w.providerCalls)+' provider calls, '+String(w.receipts?.length??0)+' sources read.':'disabled or unused')+'. Per-call latency: '+u.requests.map(row=>row.latencyMs+' ms').join(', ')+'. No automatic retries.';
    try{onTelemetry({outcome:'completed',backend:approval.contract.backend,model:result.model,usage:u});}catch{}
-   output.hidden=false;set('completed','Model run completed. Interpretation remains unverified; retrieved receipts establish catalog consistency only.');
+   output.hidden=false;set('completed','Model run completed. Interpretation remains unverified. Lesson receipts establish catalog consistency only; public web receipts establish retrieval of an unverified source claim only.');
   }catch(error){
    if(active!==operation)return;
    if(operation.started)clear();const cancelled=operation.controller.signal.aborted;const code=cancelled?'CANCELLED':error?.code??'RUN_FAILED';const partial=error?.partial;
@@ -98,6 +98,7 @@ export function mountProviderPanel({loadedContent,seekTo,prepareReview,origin=lo
    if(code==='CONTRACT_CHANGED_DURING_RUN'){set('error','The server rejected the approved inference configuration during this run. Earlier calls may have occurred. No completed answer is claimed; check inference availability again.');return;}
    if(code==='SOURCE_EVIDENCE_INVALID'){set('error','Independent validation of retrieved source evidence failed. The model interpretation was discarded. Only still-valid receipts, if any, remain available.');return;}
    if(code==='SOURCE_EVIDENCE_REQUIRED'){set('empty','The model returned without any independently catalog-matched source receipt. Its interpretation was discarded; no completed answer is claimed.');return;}
+   if(code==='EVIDENCE_REQUIRED'){set('empty','The model returned without an independently catalog-matched lesson receipt or an actually read public web source. Search snippets do not count as evidence. Its interpretation was discarded; no completed answer is claimed.');return;}
    if(code==='SOURCE_EVIDENCE_LIMIT'){set('empty','Source retrieval exceeded the bounded evidence display. The model interpretation was discarded rather than hiding additional source cues. Narrow the question and run again explicitly.');return;}
    if(code==='SOURCE_QUOTA'){set('denied','The bounded source-read allowance is exhausted for now. No completed model answer is claimed. The already loaded lesson, transcript and local question path remain available.');return;}
    if(code==='SOURCE_UNAVAILABLE'){set('error','The source service is temporarily unavailable. No completed model answer is claimed. The already loaded local lesson remains available.');return;}
