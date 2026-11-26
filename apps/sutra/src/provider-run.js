@@ -190,7 +190,7 @@ export function createBoundProviderTransport({origin,approvedContract,fetchImpl=
    response=await abortable(incoming,signal);
    signal?.throwIfAborted();
    if(response?.redirected||response?.url&&response.url!==target.href)throw Error('PROVIDER_ROUTE');
-   if(response.status===409)onPrecondition(target.pathname==='/api/v1/chat/completions'&&response.headers.get('X-Sutra-Precondition')==='inference'?'inference':'catalog');
+   if(response.status===409)onPrecondition((target.pathname==='/api/v1/chat/completions'||target.pathname.startsWith('/api/web/'))&&response.headers.get('X-Sutra-Precondition')==='inference'?'inference':'catalog');
    signal?.throwIfAborted();
    return response;
   }catch(error){dispose(response??received);throw error;}

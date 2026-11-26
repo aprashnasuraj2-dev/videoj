@@ -100,7 +100,7 @@ export async function handleWebResearch(request,env={},{fetchImpl=fetch,clock=Da
  const config=webResearchConfig(env);
  if(!config||!inferenceStatus(env))return error('WEB_DISABLED',503);
  let contractId;try{contractId=await inferenceContractId(env);}catch{return error('WEB_DISABLED',503);}
- if(request.headers.get('X-Sutra-Inference-Contract')!==contractId)return error('INFERENCE_CONTRACT_MISMATCH',409);
+ if(request.headers.get('X-Sutra-Inference-Contract')!==contractId)return Response.json({error:{code:'INFERENCE_CONTRACT_MISMATCH',message:'Web research configuration changed; no evidence is claimed.'}},{status:409,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','X-Sutra-Precondition':'inference'}});
  if(request.signal.aborted)return error('WEB_CANCELLED',499);
  let body;try{body=await readJson(request,4096);}catch{return error(request.signal.aborted?'WEB_CANCELLED':'PAYLOAD',request.signal.aborted?499:400);}
  if(!body||typeof body!=='object'||Array.isArray(body))return error('PAYLOAD',400);
