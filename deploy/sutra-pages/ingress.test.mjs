@@ -26,6 +26,29 @@ test('only exact methods and paths reach service; no static fallback or retries'
  const result=await onRequest({request:req('/api/status'),env});assert.equal(result.status,502);assert.equal(calls,1);assert.ok(!(await result.text()).includes('private canary'));
  assert.equal((await onRequest({request:req('/api/status'),env:{}})).status,503);
 });
+
+test('media, content and ordinary static routes cannot reach the private API service binding',async()=>{
+ const pages=JSON.parse(await readFile(new URL('./wrangler.jsonc',import.meta.url)));
+ const workerAssets=JSON.parse(await readFile(new URL('../../services/sutra-api/wrangler.jsonc',import.meta.url))).assets;
+ assert.deepEqual(workerAssets.run_worker_first,['/api/*'],'Worker-first execution must stay API-only');
+ assert.equal(pages.pages_build_output_dir,'./dist');
+ assert.deepEqual(pages.services,[{binding:'SUTRA_API',service:'sutra-api-private'}]);
+ let calls=0;
+ const env={SUTRA_API:{fetch(){calls++;throw Error('static/media route reached private service');}}};
+ for(const path of [
+  '/',
+  '/index.html',
+  '/assets/app-deadbeef.js',
+  '/content/source-catalog.json',
+  '/agents/agent-manifest.json',
+  '/media/timing-fixture.mp4',
+  '/media/release/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/lesson.mp4'
+ ]){
+  const response=await onRequest({request:req(path),env});
+  assert.equal(response.status,404,path);
+ }
+ assert.equal(calls,0,'non-API routes must never invoke the private service binding');
+});
 test('SSE streaming is passed without buffering, preserved request and no-store',async()=>{
  const original=req('/api/infer',{method:'POST',headers:{Origin:base,'Content-Type':'application/json','CF-Connecting-IP':'192.0.2.1'},body:'{}'});
  let controller;const stream=new ReadableStream({start:c=>controller=c});const encoder=new TextEncoder();
