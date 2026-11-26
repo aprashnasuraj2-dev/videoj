@@ -58,3 +58,13 @@ test('baseline opposite outcomes are not counted as hypothetical discovery; stal
  await assert.rejects(evaluateSemanticProbeSuite(args[0],args[1],bad,await casePin(bad)),/PROBE_SUITE_PLAN/);
  await assert.rejects(evaluateSemanticProbeSuite(...args.slice(0,3),'sha256:'+'0'.repeat(64)),/PROBE_SUITE_PIN/);
 });
+
+import {auditGridExpansion} from '../grid-expansion-audit.js';
+test('larger identical grid budget preserves prefix and discovers a joint-only witness',async()=>{
+ const v=await fixture({product:'[x]*[y]>[limit]',sum:'[x]+[x]>[limit]'});
+ const make=n=>JSON.stringify({version:1,versionDigest:v.digest,axes:[{bindingId:'x',values:['2/1','4/1']},{bindingId:'y',values:['2/1','4/1']}],maxAssignments:n});
+ const before=make(3),after=make(4),r=await auditGridExpansion({versionText:v.versionText,versionPin:v.digest,beforeText:before,beforePin:await casePin(before),afterText:after,afterPin:await casePin(after)});
+ assert.equal(r.prefixPreserved,true);assert.equal(r.newWorlds,1);assert.equal(r.newWitnessPairs.length,1);assert.equal(r.truncated,false);assert.equal(r.decisionAuthority,'NONE');
+ const reversed=JSON.stringify({...JSON.parse(after),axes:[{bindingId:'x',values:['4/1','2/1']},{bindingId:'y',values:['2/1','4/1']}]});
+ await assert.rejects(auditGridExpansion({versionText:v.versionText,versionPin:v.digest,beforeText:before,beforePin:await casePin(before),afterText:reversed,afterPin:await casePin(reversed)}),/GRID_EXPANSION_AXES/);
+});
