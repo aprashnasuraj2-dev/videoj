@@ -11,3 +11,7 @@ State: implementation candidate; exact CI pending.
 Acceptance: Preserve rollback counterexamples, expand trust boundary and consent enforcement; no general DLP claim.
 
 No merge, release, live inference or external contact authorized. Child JS CI is scoped; full integration gates remain mandatory. Record exact source and CI evidence here.
+
+
+## Parallel session candidate
+Scan raw and strictly decoded adapter JSON before reserving or contacting transport. Regression: Unicode-escaped credential introduced by a custom encoder, zero contact and zero reservation. JSON adapters remain trusted code, but accidental exact credential echo is blocked. Arbitrary encodings, split secrets and general DLP remain outside this guarantee. Exact CI pending.

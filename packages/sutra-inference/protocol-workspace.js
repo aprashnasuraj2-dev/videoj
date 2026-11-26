@@ -106,6 +106,11 @@ export function createProtocolWorkspace({connections,adapters=[],exchange,global
    const operation=workspace.admitOperation(safeOperation(input.operation));
    const wireText=registry.get(c.protocol).encode(Object.freeze({model:input.model,operation,maxOutputTokens:input.maxOutputTokens}));
    if(!str(wireText,131072)||bytes(wireText)>131072)stop('REQUEST_SIZE');
+   // A trusted encoder can still accidentally introduce an enrolled credential.
+   // Check the actual wire bytes and the decoded JSON boundary before reservation.
+   workspace.admitOperation(wireText);
+   const decodedWire=parseUniqueJson(wireText,{maxChars:131072,maxDepth:32});
+   workspace.admitOperation(decodedWire);
    // Reserve actual serialized request bytes, not a caller-provided smaller estimate.
    return workspace.execute({handle:input.handle,model:input.model,inputBytes:bytes(wireText),maxOutputTokens:input.maxOutputTokens,operation:{wireText,outputCap:input.maxOutputTokens}});
   }
