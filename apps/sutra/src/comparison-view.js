@@ -1,7 +1,7 @@
 import {isNativeCueReached} from './seek-policy.js';
 import {readContentBytes} from '../../../packages/sutra-content-profile/index.js';
 import {assertReviewedGuideDerivative} from '../../../packages/sutra-content-profile/guide-derivative.js';
-import {compareClaimPair,syntheticComparison} from './comparison.js';
+import {compareClaimPair} from './comparison.js';
 import {applyLocale} from './localization.js';
 import {validateEvidenceClaim} from '../../../packages/sutra-evidence/index.js';
 import {buildUncertaintyGuidance} from './uncertainty-guidance.js';
@@ -45,10 +45,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
  }:null;
  const controls=node('div','actions');
  const compare=node('button','primary','Inspect available evidence');compare.dataset.i18n='comparison.inspect';compare.type='button';
- const developmentConflict=import.meta.env.DEV?syntheticComparison:null;
- const conflict=developmentConflict?node('button',null,'Demonstrate development-only synthetic conflict'):null;
- if(conflict){conflict.type='button';conflict.dataset.devFixture='synthetic-conflict';controls.append(compare,conflict);}
- else controls.append(compare);
+ controls.append(compare);
  const status=node('p','comparison-status');
  status.setAttribute('role','status');status.setAttribute('aria-live','polite');
  const cards=node('div','comparison-cards');
@@ -57,7 +54,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
  const nextStep=node('p','comparison-next-step');nextStep.setAttribute('role','note');
  const note=node('p','muted','Comparisons evaluate exact declared values and source scope, not the truth of either claim. Missing evidence remains missing; disagreement is not resolved by source consistency alone.');note.dataset.i18n='comparison.note';
  host.replaceChildren(controls,status,nextStep,cards,seekStatus,note);
- let activeMode='available',generation=0,operation=0,activeAction=null;
+ let generation=0,operation=0,activeAction=null;
  const invalidateAction=()=>{activeAction?.controller.abort();activeAction=null;operation++;};
  const beginAction=()=>{invalidateAction();return activeAction={generation,operation,controller:new AbortController()};};
  const current=token=>activeAction===token&&token.generation===generation&&token.operation===operation&&!token.controller.signal.aborted;
@@ -108,7 +105,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
       const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');
       if(digest!==claim.sourceHash)throw Error('Source hash mismatch');
       const text=new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(bytes),anchor=href.hash.slice(1);
-      if(contentMode==='reviewed'&&activeMode==='available'){
+      if(contentMode==='reviewed'){
        // Template parsing can drop wrapper attributes, e.g. <body hidden>.
        // Require the same canonical derivative the compiler would emit,
        // including metadata, wrapper, CSP and exact escaped excerpt.
@@ -122,7 +119,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
        // The reviewed compiler emits one text-only blockquote; the bundled
        // synthetic example uses a paragraph. Never accept a substring buried
        // in heading, hidden markup, or a second duplicate anchor.
-       const excerptTag=claim.sourceId==='fixture_guide'&&activeMode==='conflict'?'P':'BLOCKQUOTE';
+       const excerptTag='BLOCKQUOTE';
        const candidates=anchored?Array.from(anchored.children).filter(element=>element.tagName===excerptTag):[];
        const exact=candidates.length===1?candidates[0]:null;
        if(!anchored||anchored.tagName!=='SECTION'||!exact||exact.attributes.length||exact.children.length||exact.textContent!==claim.excerpt)throw Error('Anchored excerpt mismatch');
@@ -135,7 +132,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
     article.append(verify);
    }
   }
-  if(activeMode==='available'&&claim.sourceKind==='video'&&
+  if(claim.sourceKind==='video'&&
    Number.isFinite(claim.start)&&typeof seekTo==='function'){
    const button=node('button',null,'Inspect native video cue at '+String(claim.start)+' seconds');
    button.type='button';
@@ -156,7 +153,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
  }
  function render(){
   generation++;invalidateAction();
-  const comparison=compareClaimPair(activeMode==='conflict'&&developmentConflict?developmentConflict:{video:local,guide:guideClaim});
+  const comparison=compareClaimPair({video:local,guide:guideClaim});
   const videoCard=card('Video-side source',comparison.video),guideCard=card('Written guide-side source',comparison.guide);
   videoCard.querySelector('h3').dataset.i18n='comparison.video';guideCard.querySelector('h3').dataset.i18n='comparison.guide';
   cards.replaceChildren(videoCard,guideCard);
@@ -175,14 +172,7 @@ export function mountComparisonView(host,{receipt,sources,seekTo,videoClaim,guid
   applyLocale(host,document.documentElement.lang||'en');
   return comparison.status;
  }
- compare.addEventListener('click',()=>{
-  activeMode='available';compare.classList.add('primary');conflict?.classList.remove('primary');render();
- });
- if(conflict)conflict.addEventListener('click',()=>{
-  activeMode='conflict';conflict.classList.add('primary');compare.classList.remove('primary');render();
- });
+ compare.addEventListener('click',()=>render());
  render();
- const api={showAvailable(){activeMode='available';render();},cancelPending(){if(activeAction){invalidateAction();seekStatus.textContent='Comparison action cancelled on navigation. No successful result is claimed.';}}};
- if(developmentConflict)api.showConflict=()=>{activeMode='conflict';render();};
- return api;
+ return {showAvailable(){render();},cancelPending(){if(activeAction){invalidateAction();seekStatus.textContent='Comparison action cancelled on navigation. No successful result is claimed.';}}};
 }
