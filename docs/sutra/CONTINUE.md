@@ -8,13 +8,16 @@ The participant explicitly directed on 23 November 2026: do not jump to release 
 
 On 24 November the participant explicitly tightened the ordering: stop further deployment preparation and prioritize the unfinished engineering checklist. Do not reconnect cloud accounts or advance domain/DNS, staging/public deployment, release or promotion merely because build candidates exist. Keep genuine human/external gates pending and continue independent local/CI engineering; use the latest register queue and dependency checks.
 
-## Latest implementation checkpoint — 0058
 
-**777/1,107 overall verified; 671/1,000 original; 323 pending; six omissions; one hardware blocker.** Session 0057 stabilized product source `f8c3da48a4d99a6311910b99a40b23d0ea9fa63c` at 19/19 workflows and closed P018-06, P019-02, P019-06, Phase 041 and Phase 050. Session 0058 adds P065-08 from a dated read-only Workers Observability path-to-service sample with sensitive request metadata excluded from repository evidence.
+On 27 November 2026 the participant explicitly superseded the earlier deployment hold **for the SUTRA caller app on the connected CloudflareB account** and requested direct deployment with a `.dev` domain. The caller app is now live at `https://sutra-c70.pages.dev/`. This does not authorize paid inference, fabricate final content rights, establish a separate peer production origin, or complete submission. CloudflareB currently has no DNS zone/Registrar domain, so custom owned `.dev` binding remains pending. See SUTRA-DECISION-0053 and Session 0059.
 
-Cloudflare observation does **not** close P065-07: observability event counts are not billed Worker invocation usage or plan headroom. It also does not close P065-10: SUTRA is not publicly deployed, so no production SUTRA static visit or separate live inference accounting has been observed.
+## Latest implementation checkpoint — 0059
 
-Next: `P054-01` remains the machine cursor but requires actual approved model execution. Other near-complete phases are blocked by genuine entrant/content/human/provider/hardware/public-production/final-candidate evidence. Follow `REMAINING_GATE_MAP.md`; keep public deployment, domain/DNS changes, paid inference, merge, release and submission closed.
+**777/1,107 overall verified; 671/1,000 original; 323 pending; six omissions; one hardware blocker.** The caller app is publicly deployed on **CloudflareB** at `https://sutra-c70.pages.dev/`. Canonical deployment `f2209727-cff2-4142-ad1d-966c42770e48` serves revision `2c32a3da0e2d5c7392efb8abd73bf16037a0dd3d`; selected production-critical hashes match the initial direct deployment, and automatic production branch deployments are disabled.
+
+The deployment is intentionally recorded as `app_live_peer_pending`: the public profile is still synthetic development content; the separate peer origin, rights-cleared final corpus, live funded inference, human/device acceptance and final release/submission gates remain open. CloudflareB has no owned DNS zone or Registrar domain, so a separate custom `.dev` hostname cannot yet be attached; do not invent or purchase one without a real domain choice/authorization.
+
+Next: continue dependency-ready engineering/evidence work. The prior blanket no-deploy instruction is superseded only for this caller deployment; do not infer authorization for paid inference, domain purchase, peer production release or Devpost submission.
 
 ## Resume sequence
 
