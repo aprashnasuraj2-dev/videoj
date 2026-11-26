@@ -38,3 +38,20 @@ export async function replayQuestionMappingReview({snapshotText,snapshotPin,expe
  if(JSON.stringify(result)!==JSON.stringify(x.result))fail('REPLAY_DIVERGENCE');
  return result;
 }
+
+// Compare successive independently retained mapping reviews without pretending
+// candidate IDs or coincident outcomes establish semantic continuity.
+export async function compareQuestionMappingReviews({before,after}={}){
+ const [a,b]=await Promise.all([replayQuestionMappingReview(before),replayQuestionMappingReview(after)]);
+ const identity=r=>JSON.stringify([r.meaning,r.expression]);
+ const old=new Map(),next=new Map();
+ for(const [rows,map] of [[a.rows,old],[b.rows,next]])for(const row of rows){const key=identity(row);if(map.has(key))fail('AMBIGUOUS_IDENTITY');map.set(key,row);}
+ const sameInputs=a.contractPin===b.contractPin&&a.planPin===b.planPin;
+ const changes=[];
+ for(const key of new Set([...old.keys(),...next.keys()])){
+  const left=old.get(key),right=next.get(key);
+  const status=!left?'NEW_MAPPING':!right?'REMOVED_MAPPING':!sameInputs?'REVIEW_CONTEXT_CHANGED':left.judgment!==right.judgment?'JUDGMENT_CHANGED':'UNCHANGED_DECLARATION';
+  changes.push({before:left??null,after:right??null,status,reviewRequired:status!=='UNCHANGED_DECLARATION',conditionalOutcomeChanged:!!left&&!!right&&left.conditionalState!==right.conditionalState});
+ }
+ return freeze({version:1,beforeReviewPin:a.reviewPin,afterReviewPin:b.reviewPin,sameInputs,changes,semanticInterpretation:'UNVERIFIED',decisionAuthority:'NONE',qualification:'Exact displayed mapping identity only, not semantic equivalence. Different pinned evidence or plan requires review even with identical formula and outcome; no judgment is automatically carried forward.'});
+}

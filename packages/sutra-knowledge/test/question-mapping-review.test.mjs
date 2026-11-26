@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {casePin} from '../pinned-investigation.js';
 import {sealReviewedDraft} from '../reviewed-draft.js';
-import {reviewQuestionMapping,exportQuestionMappingReview,replayQuestionMappingReview} from '../question-mapping-review.js';
+import {reviewQuestionMapping,exportQuestionMappingReview,replayQuestionMappingReview,compareQuestionMappingReviews} from '../question-mapping-review.js';
 async function fixture(){
  const question='Is current higher than prior?',text='A: 12; B: 10; C: 8;',type={kind:'currency_amount',unit:'USD',scope:'same_company',dimension:[0,0,0]};
  const c=await sealReviewedDraft(JSON.stringify({version:1,question,sources:[{id:'source',lineage:'root',text}],bindings:[['a','12'],['b','10'],['c','8']].map(([id,v])=>({id,sourceId:'source',start:text.indexOf(v),end:text.indexOf(v)+v.length,type}))}));
@@ -29,4 +29,13 @@ test('portable mapping review requires all independently retained pins and recom
  await assert.rejects(replayQuestionMappingReview({...args,snapshotText,snapshotPin:await casePin(snapshotText)}),/MAPPING_REVIEW_REPLAY_DIVERGENCE/);
  const stale=JSON.parse(x.snapshotText);stale.reviewText=JSON.stringify({...JSON.parse(reviewText),choices:[]});stale.reviewPin=await casePin(stale.reviewText);const staleText=JSON.stringify(stale);
  await assert.rejects(replayQuestionMappingReview({...args,snapshotText:staleText,snapshotPin:await casePin(staleText)}),/MAPPING_REVIEW_SNAPSHOT_INPUT_PINS/);
+});
+
+async function saved(f,choices){const reviewText=JSON.stringify({version:1,contractPin:f.contractPin,planPin:f.planPin,choices}),reviewPin=await casePin(reviewText),x=await exportQuestionMappingReview({...f,reviewText,reviewPin});return {snapshotText:x.snapshotText,snapshotPin:x.snapshotPin,expectedContractPin:f.contractPin,expectedPlanPin:f.planPin,expectedReviewPin:reviewPin};}
+test('review revisions do not transfer judgment through renumbered mapping or changed pinned plan',async()=>{
+ const f=await fixture(),old=await saved(f,[{id:'question_1',judgment:'plausible'},{id:'question_2',judgment:'excluded'}]);
+ const same=await saved(f,[{id:'question_1',judgment:'excluded'},{id:'question_2',judgment:'excluded'}]);
+ const delta=await compareQuestionMappingReviews({before:old,after:same});assert.equal(delta.sameInputs,true);assert.deepEqual(delta.changes.map(x=>x.status),['JUDGMENT_CHANGED','UNCHANGED_DECLARATION']);
+ const p=JSON.parse(f.planText);p.left.bindingIds=['c'];const planText=JSON.stringify(p),g={...f,planText,planPin:await casePin(planText)};
+ const newer=await saved(g,[]),r=await compareQuestionMappingReviews({before:old,after:newer});assert.equal(r.sameInputs,false);assert.equal(r.changes[0].status,'REMOVED_MAPPING');assert.equal(r.changes[1].status,'REVIEW_CONTEXT_CHANGED');assert.equal(r.changes[1].before.id,'question_2');assert.equal(r.changes[1].after.id,'question_1');assert.equal(r.changes[1].after.judgment,'unresolved');assert.ok(r.changes.every(x=>x.reviewRequired));assert.equal(r.decisionAuthority,'NONE');
 });

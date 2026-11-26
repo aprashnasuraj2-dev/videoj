@@ -27,3 +27,8 @@ Exact child CI pending.
 
 ## Portable mapping review record
 Export full reviewed inputs and all alternative judgments under independent contract, plan, review and snapshot pins. Replay recomputes every conditional result and refuses a self-repinned forged result or substituted review. Full record bounded by existing casePin cap. Same-implementation replay, no semantic certification or independent human identity. Next: browser wiring and cross-language profile. Exact CI pending.
+
+
+## V2-182 candidate
+Compare two fully replayed portable review records by exact displayed meaning/expression identity, not recycled candidate IDs. Pin drift forces re-review even if formula/outcome unchanged; new/removed mappings and changed judgments explicit. Adversary removes first mapping, renumbering second; prior exclusion does not transfer. No semantic equivalence or automatic judgment adoption. Browser wiring, independent annotation and independent review implementation remain open.
+Exact child CI pending.
