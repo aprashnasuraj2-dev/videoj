@@ -39,7 +39,7 @@ test('receipt collector revalidates earlier receipts when mounted source identit
  sources[0].version='v1';assert.equal(c.snapshot().invalid,true,'invalid evidence state remains sticky even if caller restores catalog');
 });
 
-const approval=()=>({backend:'self_hosted',model:'local-model',inferenceContractId:'a'.repeat(64),router:'https://example.test/api/v1',content:{profileSha256:'b'.repeat(64),catalogSha256:'c'.repeat(64),transcriptSha256:'d'.repeat(64),contentVersion:'v1',contentMode:'synthetic',primarySourceId:'source'},graphUrl:'https://example.test/agents/graph.json',frontMan:'learner',graphSha256:'e'.repeat(64)});
+const approval=()=>({backend:'self_hosted',model:'local-model',inferenceContractId:'a'.repeat(64),router:'https://example.test/api/v1',content:{profileSha256:'b'.repeat(64),catalogSha256:'c'.repeat(64),transcriptSha256:'d'.repeat(64),contentVersion:'v1',contentMode:'synthetic',primarySourceId:'source'},graphUrl:'https://example.test/agents/graph.json',frontMan:'learner',graphSha256:'e'.repeat(64),webResearch:'disabled'});
 test('approved contract snapshot is closed and unaffected by caller changes during discovery or model callbacks',()=>{
  const raw=approval(),expected=structuredClone(raw),snapshot=snapshotApprovedContract(raw);
  raw.inferenceContractId='f'.repeat(64);raw.content.catalogSha256='f'.repeat(64);raw.model='other';
@@ -55,7 +55,7 @@ test('pre-aborted provider discovery never contacts status',async()=>{
 });
 
 test('provider status preflight refuses same-origin substituted URL, partial response and dishonest content type before additional GETs',async()=>{
- const valid={inference:'disabled',sourceTools:'catalog',content:{},factualTruth:'unverified'},base='https://example.test';
+ const valid={inference:'disabled',sourceTools:'catalog',webResearch:'disabled',content:{},factualTruth:'unverified'},base='https://example.test';
  for(const response of [
   Object.defineProperty(Response.json(valid),'url',{value:base+'/other-status'}),
   new Response(JSON.stringify(valid),{status:206,headers:{'Content-Type':'application/json'}}),
@@ -88,7 +88,7 @@ test('provider disabled preflight uses one credentialless exact JSON request and
  let calls=0,options;
  const output=await discoverProvider({origin:'https://example.test',fetchImpl:async(url,opts)=>{
   calls++;options=opts;assert.equal(url,'https://example.test/api/status');
-  return Response.json({inference:'disabled',sourceTools:'catalog',content:{},factualTruth:'unverified'});
+  return Response.json({inference:'disabled',sourceTools:'catalog',webResearch:'disabled',content:{},factualTruth:'unverified'});
  }});
  assert.deepEqual(output,{state:'disabled'});assert.equal(calls,1);assert.equal(options.credentials,'omit');assert.equal(options.headers.Accept,'application/json');
 });
