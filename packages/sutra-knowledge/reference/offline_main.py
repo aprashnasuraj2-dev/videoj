@@ -59,6 +59,7 @@ def main():
     profiles.add_argument('--evidence-recovery',action='store_true',help='Explicitly select exact immediately preceding evidence recovery replay')
     profiles.add_argument('--exposure',action='store_true',help='Explicitly select declared structural exposure replay')
     profiles.add_argument('--probe-suite',action='store_true',help='Explicitly select exact finite semantic probe review subset')
+    parser.add_argument('--child-pin',help='Optional separately retained final child digest for atomic revision or recovery replay')
     parser.add_argument('--ancestor-pin',help='Separately retained pre-revision ancestor digest')
     parser.add_argument('--revision-plan-pin',help='Separately retained preceding atomic revision plan digest')
     parser.add_argument('--policy-pin',help='Separately retained acquisition policy digest')
@@ -69,6 +70,7 @@ def main():
     parser.add_argument('--after-source-pin',help='Separately retained second normalized trial source digest for comparison')
     parser.add_argument('--case-pin',help='Separately retained case SHA-256; required for aligned profile')
     args=parser.parse_args()
+    if args.child_pin is not None and not (args.evidence_transaction or args.evidence_recovery):parser.error('--child-pin requires --evidence-transaction or --evidence-recovery')
     if args.case_pin is not None and not args.aligned:parser.error('--case-pin requires --aligned')
     if (args.source_pin is not None or args.after_source_pin is not None) and not args.trial:parser.error('trial source pins require --trial')
     if args.contract_pin is not None and not (args.reviewed or args.question):parser.error('--contract-pin requires --reviewed or --question')
@@ -86,10 +88,10 @@ def main():
             result=verify_probe_suite(data,pin,args.version_pin,args.plan_pin)
         elif args.evidence_recovery:
             with Path(args.capsule).open('rb') as f:data=f.read(MAX_RECOVERY_BYTES+1)
-            result=verify_recovery(data,pin,args.ancestor_pin,args.revision_plan_pin,args.version_pin,args.plan_pin)
+            result=verify_recovery(data,pin,args.ancestor_pin,args.revision_plan_pin,args.version_pin,args.plan_pin,args.child_pin)
         elif args.evidence_transaction:
             with Path(args.capsule).open('rb') as f:data=f.read(MAX_TRANSACTION_BYTES+1)
-            result=verify_transaction(data,pin,args.version_pin,args.plan_pin)
+            result=verify_transaction(data,pin,args.version_pin,args.plan_pin,args.child_pin)
         elif args.withdrawal:
             with Path(args.capsule).open('rb') as f:data=f.read(MAX_WITHDRAWAL_BYTES+1)
             result=verify_withdrawal(data,pin,args.version_pin,args.plan_pin)

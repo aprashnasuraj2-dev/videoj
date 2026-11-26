@@ -1128,6 +1128,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    fs.writeFileSync(path.join(output,'living-transaction.json'),bytes);fs.writeFileSync(path.join(output,'living-transaction.sha256'),reportPin+'\n');
    fs.writeFileSync(path.join(output,'living-transaction-parent.sha256'),parentPin+'\n');fs.writeFileSync(path.join(output,'living-transaction-plan.sha256'),planPin+'\n');
    const report=JSON.parse(bytes);assert.equal(report.childDigest,await loc('semantic-pin').innerText());assert.equal(report.planDigest,planPin);
+   const childDownload=p.waitForEvent('download');await click('semantic-export-pin');const childBytes=fs.readFileSync(await (await childDownload).path());assert.equal(childBytes.toString().trim(),report.childDigest);fs.writeFileSync(path.join(output,'living-transaction-child.sha256'),childBytes);
    await click('baseline-restore');await state('restored');assert.match(await loc('staged').innerText(),/2 staged source.*4 reviewed binding/);
    assert.equal(await loc('transaction-export').isDisabled(),true);assert.equal(await loc('transaction-apply').isDisabled(),true);
    assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.deepEqual(errors,[]);assert.deepEqual(external,[]);await p.close();

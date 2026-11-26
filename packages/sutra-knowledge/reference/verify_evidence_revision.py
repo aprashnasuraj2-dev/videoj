@@ -92,11 +92,14 @@ def reconstruct_transaction(bundle,parent_pin,plan_pin):
             require(isinstance(row['reason'],str) and len(row['reason'])<=128);row['reason']='REFUSED'
     require(canonical(impact)==canonical(claimed))
     return dict(version=VERSION,parentDigest=parent_pin,planDigest=plan_pin,childDigest=child_pin,sourceChanges=source_changes,invalidatedBindingIds=sorted(affected),reselectedBindingIds=sorted(reselected),missingBindingIds=sorted(lost),changes=changes,impact=impact,decisionAuthority='NONE')
-def verify(data,expected,parent_pin,plan_pin):
+def verify(data,expected,parent_pin,plan_pin,child_pin=None):
+    if child_pin is not None and not pin(child_pin):return dict(status='REFUSED',reason='CHILD_PIN_REQUIRED')
     if not all(pin(p) for p in (expected,parent_pin,plan_pin)):return dict(status='REFUSED',reason='PIN_REQUIRED')
     if not isinstance(data,bytes) or not 1<=len(data)<=MAX_BYTES:return dict(status='REFUSED',reason='SIZE_OR_TYPE')
     if 'sha256:'+sha256(data).hexdigest()!=expected:return dict(status='REFUSED',reason='PIN_MISMATCH')
     try:
         bundle=check_wire(data.decode('utf-8',errors='strict'),40)
-        return dict(status='VERIFIED',profile=VERSION,result=reconstruct_transaction(bundle,parent_pin,plan_pin),qualification='Independent structural transformation and conditional arithmetic replay only; no source truth, semantic validity, freshness, or external authority.')
+        result=reconstruct_transaction(bundle,parent_pin,plan_pin)
+        if child_pin is not None and result['childDigest']!=child_pin:return dict(status='REFUSED',reason='CHILD_PIN_MISMATCH')
+        return dict(status='VERIFIED',profile=VERSION,result=result,qualification='Independent structural transformation and conditional arithmetic replay only; no source truth, semantic validity, freshness, or external authority.')
     except ERRORS:return dict(status='REFUSED',reason='REPLAY_REFUSED')

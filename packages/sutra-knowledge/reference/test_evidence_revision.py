@@ -9,6 +9,9 @@ def wire(x):return json.dumps(x,ensure_ascii=False,separators=(',',':'))
 def check(data,pin,parent,plan):
     r=verify(data,pin,parent,plan);require(r['status']=='VERIFIED')
     obj=json.loads(data)
+    require(verify(data,pin,parent,plan,obj['childDigest'])==r)
+    require(verify(data,pin,parent,plan,'sha256:'+'0'*64)==dict(status='REFUSED',reason='CHILD_PIN_MISMATCH'))
+    require(verify(data,pin,parent,plan,'invalid')==dict(status='REFUSED',reason='CHILD_PIN_REQUIRED'))
     def refused(x,pp=parent,pl=plan):
         s=wire(x);require(verify(s.encode('utf-8'),rawhash(s),pp,pl)['status']=='REFUSED')
     for k,v in [('decisionAuthority','VERIFIED'),('changes',[]),('sourceChanges',[]),('invalidatedBindingIds',['invented']),('reselectedBindingIds',['invented']),('missingBindingIds',['invented']),('qualification','truth'),('childDigest',parent)]:
@@ -38,7 +41,13 @@ def main():
         result=check(data,pin,parent,plan)
         require({c['id']:c['after'] for c in result['result']['changes']}=={'operating_cash':'CONDITIONALLY_REFUTED','after_capital':'BLOCKED_MISSING_INPUT'})
         proc=subprocess.run([sys.executable,'-I','-S',str(archive),str(report.resolve()),'--evidence-transaction','--pin',pin,'--version-pin',parent,'--plan-pin',plan],capture_output=True,text=True,check=True)
-        require(json.loads(proc.stdout)==result);print('Actual browser atomic revision independently replayed with standalone archive and repinned tamper controls.');return
+        require(json.loads(proc.stdout)==result)
+        child=(root/'living-transaction-child.sha256').read_text().strip()
+        command=proc.args
+        accepted=subprocess.run(command+['--child-pin',child],capture_output=True,text=True,check=True);require(json.loads(accepted.stdout)==result)
+        refused=subprocess.run(command+['--child-pin','sha256:'+'0'*64],capture_output=True,text=True);require(refused.returncode==1 and json.loads(refused.stdout)==dict(status='REFUSED',reason='CHILD_PIN_MISMATCH'))
+        invalid=subprocess.run(command+['--child-pin','invalid'],capture_output=True,text=True);require(invalid.returncode==1 and json.loads(invalid.stdout)==dict(status='REFUSED',reason='CHILD_PIN_REQUIRED'))
+        print('Actual browser atomic revision independently replayed with standalone archive, separately retained final child and repinned tamper controls.');return
     require(len(sys.argv)==1)
     cases=json.load(sys.stdin);require(len(cases)==4);classes=set()
     for c in cases:

@@ -23,5 +23,10 @@ def main():
     t=wire(x);require(verify(t.encode(),rawhash(t),*pins[1:])['status']=='REFUSED');count+=1
     proc=subprocess.run([sys.executable,'-I','-S',str(archive),str(report.resolve()),'--evidence-recovery','--pin',pins[0],'--ancestor-pin',pins[1],'--revision-plan-pin',pins[2],'--version-pin',pins[3],'--plan-pin',pins[4]],capture_output=True,text=True,check=True)
     require(json.loads(proc.stdout)==result)
+    child=(root/'living-recovery-child.sha256').read_text().strip()
+    require(verify(data,*pins,child)==result)
+    accepted=subprocess.run(proc.args+['--child-pin',child],capture_output=True,text=True,check=True);require(json.loads(accepted.stdout)==result)
+    refused=subprocess.run(proc.args+['--child-pin','sha256:'+'0'*64],capture_output=True,text=True);require(refused.returncode==1 and json.loads(refused.stdout)==dict(status='REFUSED',reason='CHILD_PIN_MISMATCH'));count+=1
+    invalid=subprocess.run(proc.args+['--child-pin','invalid'],capture_output=True,text=True);require(invalid.returncode==1 and json.loads(invalid.stdout)==dict(status='REFUSED',reason='CHILD_PIN_REQUIRED'));count+=1
     print(json.dumps({'actualBrowserRecoveryVerified':True,'standaloneArchiveMatches':True,'refusedTamperAndPins':count}))
 if __name__=='__main__':main()

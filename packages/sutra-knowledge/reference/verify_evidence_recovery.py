@@ -83,11 +83,14 @@ def reconstruct_recovery(bundle,ancestor_pin,revision_pin,parent_pin,recovery_pi
     require(canonical(impact)==canonical(claimed))
     return dict(version=VERSION,ancestorDigest=ancestor_pin,revisionPlanDigest=revision_pin,parentDigest=parent_pin,recoveryPlanDigest=recovery_pin,childDigest=child_pin,restoredSourceIds=sorted(restored),recoveredBindingIds=sorted(recovered),stillMissingBindingIds=sorted(lost-set(recovered)),changes=changes,impact=impact,decisionAuthority='NONE')
 
-def verify(data,expected,ancestor_pin,revision_pin,parent_pin,recovery_pin):
+def verify(data,expected,ancestor_pin,revision_pin,parent_pin,recovery_pin,child_pin=None):
+    if child_pin is not None and not pin(child_pin):return dict(status='REFUSED',reason='CHILD_PIN_REQUIRED')
     if not all(pin(p) for p in (expected,ancestor_pin,revision_pin,parent_pin,recovery_pin)):return dict(status='REFUSED',reason='PIN_REQUIRED')
     if not isinstance(data,bytes) or not 1<=len(data)<=MAX_BYTES:return dict(status='REFUSED',reason='SIZE_OR_TYPE')
     if 'sha256:'+sha256(data).hexdigest()!=expected:return dict(status='REFUSED',reason='PIN_MISMATCH')
     try:
         bundle=check_wire(data.decode('utf-8',errors='strict'),40)
-        return dict(status='VERIFIED',profile=VERSION,result=reconstruct_recovery(bundle,ancestor_pin,revision_pin,parent_pin,recovery_pin),qualification='Independent structural recovery and conditional arithmetic replay only; no source truth, semantic validity, freshness, or external authority.')
+        result=reconstruct_recovery(bundle,ancestor_pin,revision_pin,parent_pin,recovery_pin)
+        if child_pin is not None and result['childDigest']!=child_pin:return dict(status='REFUSED',reason='CHILD_PIN_MISMATCH')
+        return dict(status='VERIFIED',profile=VERSION,result=result,qualification='Independent structural recovery and conditional arithmetic replay only; no source truth, semantic validity, freshness, or external authority.')
     except ERRORS:return dict(status='REFUSED',reason='REPLAY_REFUSED')

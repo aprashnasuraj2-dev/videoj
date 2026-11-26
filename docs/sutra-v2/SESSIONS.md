@@ -1106,3 +1106,7 @@ Forty developer-labeled cases through actual reviewed expression compiler and fi
 
 ### V2-146 — reproducible six-group development ledger (candidate)
 Aggregate only completed individual evaluator/oracle results; enforce six frozen manifest blob digests, exact case IDs, group-specific matched counts, independent replay scope and report artifact SHA-256. Include actual checked-out revision plus PR head/run ID, separate 200 synthetic coverage from zero expert/held-out labels, and retain group-specific baselines without pooling heterogeneous scores. Capture existing revision Python summary as artifact; no weakening of original steps. CI pending; no release or benchmark gate closure.
+
+
+### V2-147 — independently retained final-child pin in offline verification (candidate)
+V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 20/20, 16 invalid cases: strict and structural zero false accepts, hash-only 14, hash-plus-declared-pins 8; two intentional pretty-reformat differences (knowledge job 139615315490). Add optional final-child digest to structural Python revision/recovery verifier and CLI, preserving exact old successful outputs when absent or matching. Wrong and malformed child pins refuse explicitly; actual browser separately exports final child for each transition and downloaded standalone archive checks them. Frozen replay evaluator uses new direct optional pin rather than wrapper; frozen expectations unchanged. Structural replay still differs from strict producer bytes. CI pending, no broad gate closure.

@@ -16,8 +16,8 @@ for case,row in zip(manifest['cases'],data['rows']):
     assert case['id']==row['id'] and case['kind']==row['kind']
     verify=revision if case['kind']=='revision' else recovery
     assert len(row['pins'])==(4 if case['kind']=='revision' else 6)
-    result=verify(row['raw'].encode('utf-8'),*row['pins'][:-1])
-    structural='accept' if result['status']=='VERIFIED' and result['result']['childDigest']==row['pins'][-1] else 'refuse'
+    result=verify(row['raw'].encode('utf-8'),*row['pins'])
+    structural='accept' if result['status']=='VERIFIED' else 'refuse'
     assert structural==case['expected']['structural'],(case['id'],result)
     assert row['strict']==case['expected']['strict'],case['id']
     rows.append(dict(id=case['id'],strict=row['strict'],structural=structural,hashOnly=row['hashOnly'],declaredPins=row['declaredPins']))
