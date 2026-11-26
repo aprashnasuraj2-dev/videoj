@@ -28,3 +28,7 @@ Exact child CI pending.
 ## V2-182 candidate
 One-shot in-memory explicit council approval captures exact host workspace/route handles, pinned contract, displayed binding disclosure, budgets and feedback policy. Replacement needs new preview and approval; plan bytes are not a capability. Regression mutates caller arrays/role after preview, refuses other route pin and repeated execution, preserves compiled proposal identity. Live identity and UI remain unverified.
 Exact child CI pending.
+
+### V2-182 approval lifecycle revalidation
+
+Revalidate route/profile identity and plan admission after asynchronous preview hashing and just before one-shot execution. In the combined security candidate, also check the originally captured opaque publication-generation fence. Revoked route consumes an otherwise valid approval attempt without contact, charge or fallback. Standalone workstream does not establish the security generation contract; combined verification required.

@@ -21,10 +21,21 @@ export async function prepareApprovedExpressionCouncil({contractText,contractPin
  const plan=freeze({version:1,contractPin,question:c.question.text,agents:config.team.map(x=>({id:x.id,role:x.role,providerId:x.providerId,profileId:x.profileId,model:x.model,scope:grant.agentScopes.find(s=>s.agentId===x.id),bindings:projectCouncilBindings(c,grant.agentScopes.find(s=>s.agentId===x.id))})),maxRounds,maxOutputTokens,timeoutMs,roundPolicy,qualification:'This plan authorizes only the captured in-process routes and displayed evidence/feedback scope, not fallback or semantic adoption. Provider identity remains host supplied.'});
  workspace.admitOperation(plan);
  const planPin=await casePin(JSON.stringify(plan));let used=false;
+ // Recheck the captured route identities after asynchronous preview generation
+ // and immediately before consuming the dispatch capability. The combined
+ // security workstream additionally supplies an opaque generation fence.
+ const revalidate=()=>{
+  const current=prepareCouncil({routes:captured,workspace,shareScope:SCOPE,maxRounds,maxOutputTokens,timeoutMs,signal,maxSlots:8});
+  if(current.team.some((r,i)=>r.providerId!==config.team[i].providerId||r.profileId!==config.team[i].profileId))fail('ROUTE_CHANGED');
+  config.assertPublication?.();
+  workspace.admitOperation(plan);
+ };
+ revalidate();
  return Object.freeze({plan,planPin,async execute({approveDisclosure,approvedPlanPin}={}){
   if(used)fail('CONSUMED');if(approveDisclosure!==true||approvedPlanPin!==planPin)fail('PIN');
   // Consume even on failure; no retry or substitution under old approval.
   used=true;
+  revalidate();
   return runExpressionCouncil({contractText,contractPin,disclosure:grant,routes:captured,workspace,maxRounds,maxOutputTokens,timeoutMs,signal,roundPolicy});
  }});
 }

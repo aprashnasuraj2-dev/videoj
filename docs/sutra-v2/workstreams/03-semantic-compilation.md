@@ -32,3 +32,7 @@ Export full reviewed inputs and all alternative judgments under independent cont
 ## V2-182 candidate
 Compare two fully replayed portable review records by exact displayed meaning/expression identity, not recycled candidate IDs. Pin drift forces re-review even if formula/outcome unchanged; new/removed mappings and changed judgments explicit. Adversary removes first mapping, renumbering second; prior exclusion does not transfer. No semantic equivalence or automatic judgment adoption. Browser wiring, independent annotation and independent review implementation remain open.
 Exact child CI pending.
+
+
+## V2-182 independent mapping-review replay
+Extend the existing independently implemented Python finite-question compiler with a separate strict review-envelope reconstruction, external input pins, exact candidate rows and status calculation. Child regression executes Python on four valid judgment states and three independently repinned/stale/duplicate adversaries. Same-project independent implementation, not human annotation, truth or authority. Exact CI pending.

@@ -6,7 +6,7 @@ import {join} from 'node:path';
 import {spawn} from 'node:child_process';
 import {livingFixture} from '../examples/living-investigation.mjs';
 import {createInvestigationHistory} from '../investigation-history.js';
-import {openLocalHistoryStore} from '../local-history-store.mjs';
+import {openLocalHistoryStore,createFlockedHistoryStore} from '../local-history-store.mjs';
 async function setup(t){
  const dir=await mkdtemp(join(tmpdir(),'sutra-history-'));t.after(()=>rm(dir,{recursive:true,force:true}));
  const root=await livingFixture(),a=await livingFixture('finance',{revised:true,previousDigest:root.digest}),b=await livingFixture('finance',{withdraw:true,previousDigest:root.digest});
@@ -66,15 +66,15 @@ test('partial staging artifact cannot poison immutable final name; preexisting c
 // Inject a genuine child-process death at the production filesystem call, not
 // a callback that throws and allows finally blocks to clean up. Only test code
 // patches Node built-in exports; the store has no fault-injection backdoor.
-function crashAppend(dir,args,phase){
+function crashAppend(dir,args,phase,mode='exclusive-create'){
  const moduleUrl=new URL('../local-history-store.mjs',import.meta.url).href;
  const code=`import fs from 'node:fs/promises';import {syncBuiltinESMExports} from 'node:module';
  const phase=process.argv[2],realLink=fs.link,realRename=fs.rename;
  const die=()=>{process.kill(process.pid,'SIGKILL');};
  fs.link=async(a,b)=>{if(phase==='before_link'&&String(b).includes('/history-'))die();return realLink(a,b);};
  fs.rename=async(a,b)=>{if(String(b).endsWith('/HEAD')&&phase==='before_head')die();const r=await realRename(a,b);if(String(b).endsWith('/HEAD')&&phase==='after_head')die();return r;};
- syncBuiltinESMExports();const {openLocalHistoryStore}=await import(${JSON.stringify(moduleUrl)});let input='';for await(const c of process.stdin)input+=c;const s=await openLocalHistoryStore(process.argv[1]);await s.append(JSON.parse(input));process.exitCode=3;`;
- return new Promise((resolve,reject)=>{const child=spawn(process.execPath,['--input-type=module','-e',code,dir,phase],{stdio:['pipe','ignore','pipe']});let stderr='';child.stderr.on('data',d=>stderr+=d);child.on('error',reject);child.on('close',(code,signal)=>{try{assert.equal(signal,'SIGKILL',stderr+' code '+code);resolve();}catch(e){reject(e);}});child.stdin.end(JSON.stringify(args));});
+ syncBuiltinESMExports();const {openLocalHistoryStore}=await import(${JSON.stringify(moduleUrl)});let input='';for await(const c of process.stdin)input+=c;const s=await openLocalHistoryStore(process.argv[1],{lockMode:process.argv[3]});await s.append(JSON.parse(input));process.exitCode=3;`;
+ return new Promise((resolve,reject)=>{const child=spawn(process.execPath,['--input-type=module','-e',code,dir,phase,mode],{stdio:['pipe','ignore','pipe']});let stderr='';child.stderr.on('data',d=>stderr+=d);child.on('error',reject);child.on('close',(code,signal)=>{try{assert.equal(signal,'SIGKILL',stderr+' code '+code);resolve();}catch(e){reject(e);}});child.stdin.end(JSON.stringify(args));});
 }
 for(const phase of ['before_link','before_head','after_head'])test('SIGKILL at '+phase+' preserves one exact published state and requires offline lock recovery',async t=>{
  const {dir,a}=await setup(t),s=await openLocalHistoryStore(dir);await s.initialize(a.root.historyText,a.root.digest);
@@ -89,4 +89,19 @@ for(const phase of ['before_link','before_head','after_head'])test('SIGKILL at '
  if(phase==='after_head')await assert.rejects(reopened.append(args),/HISTORY_STORE_STALE_OR_ROLLED_BACK_HEAD/);
  else assert.equal((await reopened.append(args)).digest,a.child.digest);
  assert.equal((await reopened.read(a.child.digest)).historyText,a.child.historyText);
+});
+
+for(const phase of ['before_link','before_head','after_head'])test('kernel flock automatically releases after real killed writer '+phase+' without deleting stable inode',async t=>{
+ const {dir,a}=await setup(t),storeDir=join(dir,'fresh'),s=await createFlockedHistoryStore(storeDir);await s.initialize(a.root.historyText,a.root.digest);
+ const args={expectedHead:a.root.digest,nextText:a.child.historyText,nextPin:a.child.digest},marker=await readFile(join(storeDir,'WRITE.lock'),'utf8');
+ await crashAppend(storeDir,args,phase,'kernel-flock');const reopened=await openLocalHistoryStore(storeDir,{lockMode:'kernel-flock'});
+ const published=phase==='after_head'?a.child:a.root;assert.equal((await reopened.read(published.digest)).historyText,published.historyText);
+ if(phase==='after_head')await assert.rejects(reopened.append(args),/HISTORY_STORE_STALE_OR_ROLLED_BACK_HEAD/);else assert.equal((await reopened.append(args)).digest,a.child.digest);
+ assert.equal((await reopened.read(a.child.digest)).digest,a.child.digest);assert.equal(await readFile(join(storeDir,'WRITE.lock'),'utf8'),marker);
+ const legacy=await openLocalHistoryStore(storeDir);await assert.rejects(legacy.append(args),/HISTORY_STORE_BUSY_OR_CRASHED_LOCK/);
+});
+test('kernel flock is explicit fresh-directory profile, never implicit legacy migration',async t=>{
+ const {dir,a}=await setup(t),legacy=await openLocalHistoryStore(dir);await legacy.initialize(a.root.historyText,a.root.digest);
+ await assert.rejects(openLocalHistoryStore(dir,{lockMode:'kernel-flock'}),/HISTORY_STORE_FLOCK_MARKER/);
+ await assert.rejects(createFlockedHistoryStore(dir),e=>e.code==='EEXIST');assert.equal((await legacy.read(a.root.digest)).digest,a.root.digest);
 });
