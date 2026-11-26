@@ -1047,3 +1047,5 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 - [ ] **V2-166 hosted socket candidate:** exact public IP/TLS hostname authentication before credentials, bounded response and no redirects; injected tests only, exact CI pending.
 
 - [ ] **V2-167 real TLS fixture:** same authenticated socket, SNI/peer, untrusted CA and redirect adversaries; exact CI pending.
+
+- [ ] **V2-168 mixed operator candidate:** exact mixed route plan, explicit hosted approval, separate aliases, shared council and receipt; local TCP and injected hosted I/O only; exact CI pending.

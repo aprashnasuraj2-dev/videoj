@@ -30,3 +30,6 @@ Native `/api/chat` adapter is selectable in the scripted Studio and admitted by 
 
 ## Hosted destination admission candidate
 The Node-only `public-route-policy.js` requires host-approved HTTPS route/model descriptors and a trusted injected all-address resolver; it rejects mixed public/private DNS results, conservatively excludes special IPv4/IPv6 ranges, issues one-use in-memory leases and returns an IP-pinned, original TLS hostname transport descriptor. No network client, credential or public relay is enabled. The future trusted transport must use this address directly, verify TLS/peer identity, reject redirects, enforce deadline/byte limits and prevent reuse. DNS resolution cannot prove endpoint ownership, privacy or routability. Fixture tests do not contact external services.
+
+### Mixed operator council candidate
+The Node-only mixed config and runner can combine literal-loopback and explicitly injected hosted HTTPS transports in one reviewed-expression council, with exact plan approval, separate hosted approval, bounded credentials enrollment and shared accounting. The test harness uses a real loopback fixture and injected hosted I/O. No default public resolver or production hosted activation is provided. Local-only config compatibility is retained.

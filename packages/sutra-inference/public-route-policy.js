@@ -28,7 +28,7 @@ function parseEndpoint(endpoint){
  if(host.length>253||labels.length<2||isIP(host)||labels.some(x=>!(/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/.test(x)))||!/[a-z]/.test(labels.at(-1))||/(?:^|\.)(localhost|local|internal|lan|home|onion|test|invalid|example|arpa)$/.test(host))fail('ENDPOINT');
  return Object.freeze({endpoint,hostname:host,path:u.pathname,port:443});
 }
-function admitRoutes(routes){
+export function admitPublicRoutes(routes){
  if(!Array.isArray(routes)||routes.length<1||routes.length>8||!dense(routes))fail('CONFIG');
  const approved=new Map();
  for(const r of routes){
@@ -48,7 +48,7 @@ function checkAnswers(raw){
  return Object.freeze(out.sort((a,b)=>a.family-b.family||(a.address<b.address?-1:a.address>b.address?1:0)));
 }
 export function createPublicRoutePolicy({routes,resolveAll,clock=()=>Math.floor(performance.now()),ttlMs=5000}={}){
- const approved=admitRoutes(routes);
+ const approved=admitPublicRoutes(routes);
  if(typeof resolveAll!=='function'||typeof clock!=='function'||!integer(ttlMs,1,10000))fail('CONFIG');
  const leases=new WeakMap();let last=-1,closedHost=false;
  const now=()=>{const t=clock();if(!integer(t,0,Number.MAX_SAFE_INTEGER-ttlMs)||t<last)fail('CLOCK');last=t;return t;};
