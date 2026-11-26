@@ -156,7 +156,12 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const bounds=compiled.limits,controller=new AbortController();
  const aborted=()=>controller.abort(signal?.reason??new RuntimeError('CANCELLED','Run cancelled.'));
  if(signal?.aborted)aborted();else signal?.addEventListener('abort',aborted,{once:true});
- const trace=new TraceBus(),events=[];let modelCalls=0,startedModelCalls=0,completedModelCalls=0,active=0,totalOutput=0,failure=null,closed=false,limitHit=null;const waiters=[];
+ const trace=new TraceBus(),events=[];
+ // Only locally proven broad searches are recoverable. Per-agent round tracking
+ // prevents sibling agents or parallel calls in the same turn from satisfying
+ // another agent's pending refinement. All normal run budgets still apply.
+ const agentRounds=new Map(),pendingRefinements=new Map();let refinements=0;
+ let modelCalls=0,startedModelCalls=0,completedModelCalls=0,active=0,totalOutput=0,failure=null,closed=false,limitHit=null;const waiters=[];
  const check=()=>{if(closed)fail('CLOSED','Run is closed.');if(controller.signal.aborted)throw controller.signal.reason;};
  const emit=event=>{
   if(closed)return;
@@ -199,6 +204,8 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
     if(schemaByName.has(name))fail('TOOL_NAME_COLLISION','Distinct capabilities cannot share one model-facing tool name.');
     schemaByName.set(name,tool.function.parameters);
    }
+   const agentRound=(agentRounds.get(args.parentSpan)??0)+1;
+   agentRounds.set(args.parentSpan,agentRound);
    startedModelCalls++;
    const candidate=await Promise.race([Reflect.apply(adapterChat,model,[{...args,tools:offeredTools,messages:offeredMessages,model:approvedModel,signal:controller.signal,onContentDelta:undefined}]),stopped]);check();
    // Treat adapter results as untrusted data before the pinned runner sees
@@ -218,6 +225,8 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
     if(typeof call.function.arguments!=='string'||call.function.arguments.length>8000)fail('ARGUMENTS','Tool arguments exceed the data limit.');
     try{validateData(schema,parseUniqueJson(call.function.arguments,{maxChars:8000,maxDepth:16}));}catch{fail('ARGUMENTS','Tool arguments failed the declared unambiguous invocation schema.');}
    }
+   if(!response.toolCalls.length&&pendingRefinements.has(args.parentSpan))
+    stopRun(new RuntimeError('SOURCE_QUERY_TOO_BROAD','Source refinement ended without a complete, nonempty search result.'));
    completedModelCalls++;trace.end(span,{status:'ok'});return response;
   }catch(error){if(!failure)failure=error;controller.abort(error);trace.fail(span,new Error('Model or tool boundary failed.'));throw error;}
   finally{active--;waiters.shift()?.();}
@@ -226,7 +235,35 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  const unavailable=()=>fail('CAPABILITY_UNAVAILABLE','External capabilities are disabled in this local runtime profile.');
  try{
  const rawSourceClient=sourceTools?createSourceMcp({...sourceTools,signal:controller.signal}):null;
- const guardSource=method=>async(...args)=>{check();try{const result=await rawSourceClient[method](...args);check();return result;}catch(cause){if(controller.signal.aborted)throw controller.signal.reason;const safe=['SOURCE_QUOTA','SOURCE_VERSION','SOURCE_UNAVAILABLE','SOURCE_EVIDENCE_LIMIT','SOURCE_QUERY_TOO_BROAD'].includes(cause?.code)?cause.code:'CAPABILITY_UNAVAILABLE';return stopRun(new RuntimeError(safe,'Source retrieval failed ('+safe+'); no completed source result is claimed.'));}};
+ const guardSource=method=>async(...args)=>{
+  check();
+  const search=method==='callTool'&&args[0]==='search_lesson';
+  const agentSpan=search?trace.spans.get(args[2])?.parent:undefined;
+  const round=agentRounds.get(agentSpan);
+  try{
+   const result=await rawSourceClient[method](...args);check();
+   // The source client has already independently validated every receipt,
+   // completeness field and filter. Empty results never resolve a refusal.
+   if(search&&pendingRefinements.has(agentSpan)&&round>pendingRefinements.get(agentSpan)){
+    const observation=JSON.parse(result);
+    if(observation.truncated===false&&observation.receipts.length>0)
+     pendingRefinements.delete(agentSpan);
+   }
+   return result;
+  }catch(cause){
+   if(controller.signal.aborted)throw controller.signal.reason;
+   const safe=['SOURCE_QUOTA','SOURCE_VERSION','SOURCE_UNAVAILABLE','SOURCE_EVIDENCE_LIMIT','SOURCE_QUERY_TOO_BROAD'].includes(cause?.code)?cause.code:'CAPABILITY_UNAVAILABLE';
+   if(safe==='SOURCE_QUERY_TOO_BROAD'&&search&&typeof agentSpan==='string'&&Number.isInteger(round)&&refinements<2){
+    refinements++;
+    pendingRefinements.set(agentSpan,round);
+    trace.note('source_refinement_required',{parent:agentSpan,status:'refinement_required'});
+    // This is host-generated control information, not source evidence.
+    // No excerpt, count, URL or provider response body is released.
+    return JSON.stringify({version:1,status:'refinement_required',code:safe,receipts:[],truthStatus:'unverified',truncated:true,guidance:'No evidence was retrieved. Try a more specific literal phrase or restrict the source and time interval. Do not cite this refusal.'});
+   }
+   return stopRun(new RuntimeError(safe,'Source retrieval failed ('+safe+'); no completed source result is claimed.'));
+  }
+ };
  const sourceClient=rawSourceClient?{listTools:guardSource('listTools'),callTool:guardSource('callTool')}:null;
  const rawExternal=third?createExternalReadMcp({url:third.url,inspector:third.inspector,fetchImpl:third.fetchImpl},{signal:controller.signal}):null;
  const guardExternal=method=>async(...args)=>{
@@ -293,6 +330,7 @@ export async function runNetwork({definition,name='learner',frontMan='learner',r
  },resolveLink:unavailable,requestConsent:async info=>info?.kind==='network'&&!!admittedPeer||info?.kind==='mcp'&&!!third?'proceed':'decline'};
   check();const result=await Promise.race([runAgent(ctx,frontMan,request,null,[]),stopped]);check();if(failure)throw failure;
   if(limitHit)fail(limitHit,'Composition agent or remote-call budget stopped execution.');
+  if(pendingRefinements.size)fail('SOURCE_QUERY_TOO_BROAD','Source refinement remained unresolved at the end of execution.');
   if(!result.text)fail('INCOMPLETE','Execution stopped before a complete answer.');
   return {text:result.text,mode:adapterMode,modelCalls:startedModelCalls,agentCalls:composition.agentCalls,events};
  }catch(error){
