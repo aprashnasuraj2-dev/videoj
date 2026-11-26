@@ -1262,3 +1262,6 @@ V2-181 final: 17 child commits across #51–60; all latest scoped JS green; work
 
 
 V2-182 batch 1: ten independent implementation commits, ten exact scoped JS workflows green, workspace Chromium green; #52 real subprocess crash challenge candidate 8e9cd7c pending. Parent fdeadbb8 exact nine PR workflows passed (registry only). All broader gates remain open; next workstream actions and exact evidence in parallel registry.
+
+
+V2-182 reconciliation: all ten streams advanced, latest scoped suites green; #52 actual SIGKILL and fresh kernel-flock recovery verified, #53 independent Python mapping judgments verified, #58 independent Python checkpoint summary verified and actual downloaded browser export differential pending. Validation-only draft #61 combined knowledge/browser passed at fc238782 (run 45755340152; jobs 139692536330, 139692536528); #58 later test-only candidate not included. Preserve initial exact-path impact failure and corrected outcome. No merge, release, deployment, gate promotion, or elapsed-hour certification. Next: reconcile latest #58 browser and exact combined candidate, then independent acceptance gaps.

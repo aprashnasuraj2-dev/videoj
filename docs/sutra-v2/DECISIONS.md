@@ -592,3 +592,7 @@ Persist investigation history in a trusted Linux private directory using immutab
 
 ### V2-182 — publication and recovery architecture
 Publish immutable disk snapshots through staged fsynced inode/link, never write partial bytes to content-addressed names. Use exact declared mapping identity, not candidate number, when comparing review revisions. Fence downstream publication across credential-set change; one-shot council approval is a host-held capability. Portable workspace replaces editable draft/baseline/history only with explicit pinned consent and discards executable approvals. Benchmark split and observation receipts are declarations, not external authenticity.
+
+
+### V2-182 combined verification and process recovery
+Use a separate non-merge validation draft to materialize exact child blobs, retain original child PRs and exact manifest, and run unchanged canonical knowledge/browser job bodies with a dedicated branch guard. Never treat combined candidate success as merged-state or release evidence. For fresh Linux-only history stores, kernel-managed flock releases on process death; retain the legacy protocol separately, refuse mixed-mode writes, and do not infer power-loss or rollback witness guarantees. Independent Python workspace/mapping reconstruction verifies bounded declared inputs, not semantic truth or permission. Record every failed revision and exact correction.
