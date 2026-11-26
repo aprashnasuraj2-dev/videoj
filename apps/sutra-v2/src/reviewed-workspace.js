@@ -1,4 +1,5 @@
 import {exportSemanticProbeSuite} from '../../../packages/sutra-knowledge/semantic-probe-suite.js';
+import {makeEvidencePinCard,readEvidencePinCard} from '../../../packages/sutra-knowledge/evidence-checkpoint-pins.js';
 import {exportEvidenceRecovery,openEvidenceRecovery} from '../../../packages/sutra-knowledge/evidence-recovery.js';
 import {exportEvidenceRevision,openEvidenceRevision} from '../../../packages/sutra-knowledge/evidence-revision-transaction.js';
 import {exportWithdrawalRevision} from '../../../packages/sutra-knowledge/withdrawal-revision.js';
@@ -343,7 +344,7 @@ function transactionControl(){
  by('transaction-clear').disabled=busy||!transactionQueue.length;
  by('transaction-preview').disabled=busy||!baseline||!transactionQueue.length;
  by('transaction-apply').disabled=busy||!transactionPreview||transactionPreview.parent!==baseline;
- for(const id of ['transaction-export','transaction-export-pin'])by(id).disabled=busy||!transactionExport;
+ for(const id of ['transaction-export','transaction-export-pin','transaction-pin-card'])by(id).disabled=busy||!transactionExport;
  by('transaction-plan-pin-export').disabled=busy||!(transactionPreview||transactionExport);
  // Source picker must remain usable after queueing its current selection.
  by('transaction-source').disabled=busy||!ready;
@@ -411,12 +412,13 @@ by('transaction-apply').onclick=()=>work(async ticket=>{
  adoptReviewedChild(r.child,p.draft,r.impact,'Atomic source revision confirmed; exact child evaluated.');
  by('transaction-result').textContent='Confirmed '+r.sourceChanges.length+' source revision(s). Retained baseline unchanged. Review new conditional states and removed semantic links.';
  by('transaction-disclosure').textContent=e.byteLength+' report bytes; includes original and corrected source text, including withdrawals: '+r.sourceChanges.map(x=>x.sourceId+' ('+x.kind+')').join(', ')+'. '+(e.portable?'Local download only; review before sharing.':'Exceeds 256 KiB portable limit; no report download.');
- if(e.portable){transactionExport={bundleText:e.bundleText,snapshotPin:e.snapshotPin,planPin:p.planPin};by('transaction-snapshot-pin').textContent=e.snapshotPin;by('transaction-plan-pin').textContent=p.planPin;}
+ if(e.portable){transactionExport={bundleText:e.bundleText,snapshotPin:e.snapshotPin,planPin:p.planPin,card:makeEvidencePinCard('revision',[e.snapshotPin,r.parentDigest,p.planPin,r.child.digest])};by('transaction-snapshot-pin').textContent=e.snapshotPin;by('transaction-plan-pin').textContent=p.planPin;}
  startRecoveryContext(p.parent,p.planText,p.planPin,r);
  status('semantic_ready','Atomic revision child confirmed. No source truth or intended meaning established.');
 });
 by('transaction-export').onclick=()=>{if(!busy&&transactionExport)download(transactionExport.bundleText,'sutra-evidence-transaction.json','application/json');};
 by('transaction-export-pin').onclick=()=>{if(!busy&&transactionExport)download(transactionExport.snapshotPin+'\n','sutra-evidence-transaction.sha256','text/plain');};
+by('transaction-pin-card').onclick=()=>{if(!busy&&transactionExport)download(transactionExport.card,'sutra-revision-pin-card.json','application/json');};
 by('transaction-plan-pin-export').onclick=()=>{if(!busy&&(transactionPreview||transactionExport))download((transactionPreview?.planPin??transactionExport.planPin)+'\n','sutra-evidence-transaction-plan.sha256','text/plain');};
 function startRecoveryContext(ancestor,planText,planPin,r){
  if(!r.missingBindingIds.length)return;
@@ -428,7 +430,7 @@ function startRecoveryContext(ancestor,planText,planPin,r){
 }
 function clearRecoveryImport(clearFields=false){
  recoveryImport=null;by('recovery-import-result').textContent='';
- if(clearFields){by('recovery-import-file').value='';by('recovery-import-mode').value='revision';for(const id of ['snapshot','ancestor','plan','child','recovery-plan','final'])by('recovery-import-'+id).value='';}
+ if(clearFields){by('recovery-import-file').value='';by('recovery-import-card').value='';by('recovery-import-mode').value='revision';for(const id of ['snapshot','ancestor','plan','child','recovery-plan','final'])by('recovery-import-'+id).value='';}
 }
 function recoveryImportMode(){return by('recovery-import-mode').value;}
 function recoveryImportPins(){const ids=['snapshot','ancestor','plan','child'];if(recoveryImportMode()==='recovery')ids.push('recovery-plan','final');return ids.map(id=>by('recovery-import-'+id).value.trim());}
@@ -459,11 +461,12 @@ function recoveryControl(){
  by('recovery-clear').disabled=busy||!ready||!recoveryQueue.length;
  by('recovery-preview').disabled=busy||!ready||!recoveryQueue.length;
  by('recovery-apply').disabled=busy||!ready||!recoveryPreview;
- for(const id of ['recovery-export','recovery-export-pin'])by(id).disabled=busy||!recoveryExport;
+ for(const id of ['recovery-export','recovery-export-pin','recovery-pin-card'])by(id).disabled=busy||!recoveryExport;
  by('recovery-input-pins').disabled=busy||!(recoveryPreview||recoveryExport);
  const file=by('recovery-import-file').files?.[0],isRecovery=recoveryImportMode()==='recovery';
  by('recovery-import-extra').hidden=!isRecovery;
- for(const id of ['file','snapshot','ancestor','plan','child','mode'])by('recovery-import-'+id).disabled=busy;
+ for(const id of ['file','card','snapshot','ancestor','plan','child','mode'])by('recovery-import-'+id).disabled=busy;
+ by('recovery-import-load-card').disabled=busy||!by('recovery-import-card').files?.[0];
  for(const id of ['recovery-plan','final'])by('recovery-import-'+id).disabled=busy||!isRecovery;
  by('recovery-import-preview').disabled=busy||!file||!recoveryImportPins().every(p=>/^sha256:[a-f0-9]{64}$/.test(p));
  by('recovery-import-apply').disabled=busy||!recoveryImport;
@@ -471,6 +474,18 @@ function recoveryControl(){
 for(const id of ['file','snapshot','ancestor','plan','child','mode','recovery-plan','final'])by('recovery-import-'+id).addEventListener('input',()=>{clearRecoveryImport();recoveryControl();});
  by('recovery-import-mode').addEventListener('change',()=>{clearRecoveryImport();recoveryControl();});
 by('recovery-import-file').addEventListener('change',()=>{clearRecoveryImport();recoveryControl();});
+by('recovery-import-card').addEventListener('change',()=>{clearRecoveryImport();recoveryControl();});
+by('recovery-import-load-card').onclick=()=>work(async ticket=>{
+ clearRecoveryImport();const file=by('recovery-import-card').files?.[0];
+ if(!file||file.size<1||file.size>2048)throw Error('REVISION_PIN_CARD_SIZE');
+ const card=readEvidencePinCard(new TextDecoder('utf-8',{fatal:true,ignoreBOM:true}).decode(await file.arrayBuffer()));
+ if(ticket!==epoch||file!==by('recovery-import-card').files?.[0])return;
+ by('recovery-import-mode').value=card.mode;
+ const ids=['snapshot','ancestor','plan','child','recovery-plan','final'];
+ ids.forEach((id,i)=>by('recovery-import-'+id).value=card.values[i]??'');
+ by('recovery-import-result').textContent='Digest fields filled from separately supplied card. No report replayed or applied. Confirm the card was retained independently.';
+ status('recovery_pin_card_ready','Pin card parsed locally; report replay and explicit confirmation still required.');
+});
 by('recovery-import-preview').onclick=()=>work(async ticket=>{
  clearRecoveryImport();const file=by('recovery-import-file').files?.[0],pins=recoveryImportPins(),mode=recoveryImportMode();
  if(!file||file.size<1||file.size>262144)throw Error('REVISION_TRANSACTION_IMPORT_SIZE');
@@ -496,7 +511,7 @@ by('recovery-import-apply').onclick=()=>work(async ticket=>{
   by('recovery-import-result').textContent='Exact saved recovery reopened. No further recovery is enabled.';
   by('recovery-result').textContent='Reopened '+r.recoveredBindingIds.length+' recovered input(s). Still missing: '+(r.stillMissingBindingIds.join(', ')||'none')+'. Former semantic links remain removed.';
   by('recovery-disclosure').textContent=e.byteLength+' bytes. Includes historical source text, including withdrawals. Local download only; review before sharing.';
-  recoveryExport={bundleText:e.bundleText,snapshotPin:e.snapshotPin,pins:{ancestorDigest:r.ancestorDigest,revisionPlanDigest:r.revisionPlanDigest,parentDigest:r.parentDigest,recoveryPlanDigest:r.recoveryPlanDigest}};
+  recoveryExport={bundleText:e.bundleText,snapshotPin:e.snapshotPin,pins:{ancestorDigest:r.ancestorDigest,revisionPlanDigest:r.revisionPlanDigest,parentDigest:r.parentDigest,recoveryPlanDigest:r.recoveryPlanDigest},card:makeEvidencePinCard('recovery',[e.snapshotPin,r.ancestorDigest,r.revisionPlanDigest,r.parentDigest,r.recoveryPlanDigest,r.child.digest])};
   by('recovery-snapshot-pin').textContent=e.snapshotPin;by('recovery-plan-pin').textContent=r.recoveryPlanDigest;
   status('semantic_ready','Saved recovery reopened; no source truth or intended meaning established.');
   return;
@@ -504,6 +519,9 @@ by('recovery-import-apply').onclick=()=>work(async ticket=>{
  const {ancestor,planText,planPin,exported}=p.opened,r=exported.revision;
  baseline=ancestor;baselineReplay=null;adoptReviewedChild(r.child,p.draft,r.impact,'Saved atomic revision reopened after explicit confirmation.');baselineState();
  startRecoveryContext(ancestor,planText,planPin,r);
+ transactionExport={bundleText:exported.bundleText,snapshotPin:exported.snapshotPin,planPin,card:makeEvidencePinCard('revision',[exported.snapshotPin,ancestor.digest,planPin,r.child.digest])};
+ by('transaction-snapshot-pin').textContent=exported.snapshotPin;by('transaction-plan-pin').textContent=planPin;
+ by('transaction-disclosure').textContent=exported.byteLength+' bytes. Includes historical source text, including withdrawals. Local download only; review before sharing.';
  by('recovery-import-result').textContent='Exact saved revision reopened. Missing inputs remain unknown until explicitly selected and confirmed.';
  status('semantic_ready','Saved atomic revision reopened; no source truth or intended meaning established.');
 });
@@ -555,11 +573,12 @@ by('recovery-apply').onclick=()=>work(async ticket=>{
  adoptReviewedChild(r.child,p.draft,r.impact,'Explicit evidence recovery confirmed.');baselineState();
  by('recovery-result').textContent='Confirmed '+r.recoveredBindingIds.length+' restored numeric input(s). Still missing: '+(r.stillMissingBindingIds.join(', ')||'none')+'. Former semantic links remain removed. Comparison baseline is the immediately preceding revision.';
  by('recovery-disclosure').textContent=(e.portable?e.byteLength+' bytes. Includes the original, revised and recovered source text, including withdrawn text. Local download only; review before sharing.':'Recovery exceeds the portable profile; no report download.');
- if(e.portable){recoveryExport={bundleText:e.bundleText,snapshotPin:e.snapshotPin,pins:p.pins};by('recovery-snapshot-pin').textContent=e.snapshotPin;by('recovery-plan-pin').textContent=p.pins.recoveryPlanDigest;}
+ if(e.portable){recoveryExport={bundleText:e.bundleText,snapshotPin:e.snapshotPin,pins:p.pins,card:makeEvidencePinCard('recovery',[e.snapshotPin,r.ancestorDigest,r.revisionPlanDigest,r.parentDigest,r.recoveryPlanDigest,r.child.digest])};by('recovery-snapshot-pin').textContent=e.snapshotPin;by('recovery-plan-pin').textContent=p.pins.recoveryPlanDigest;}
  status('semantic_ready','Recovery child confirmed; no semantic or empirical authority established.');
 });
 by('recovery-export').onclick=()=>{if(!busy&&recoveryExport)download(recoveryExport.bundleText,'sutra-evidence-recovery.json','application/json');};
 by('recovery-export-pin').onclick=()=>{if(!busy&&recoveryExport)download(recoveryExport.snapshotPin+'\n','sutra-evidence-recovery.sha256','text/plain');};
+by('recovery-pin-card').onclick=()=>{if(!busy&&recoveryExport)download(recoveryExport.card,'sutra-recovery-pin-card.json','application/json');};
 by('recovery-input-pins').onclick=()=>{const p=recoveryPreview??recoveryExport;if(!busy&&p)download(JSON.stringify(p.pins,null,2)+'\n','sutra-evidence-recovery-input-pins.json','application/json');};
 by('source-revise').onclick=()=>work(async ticket=>{
  const r=await reviseReviewedSourceDraft(draft(),by('source-revise-pick').value,by('source-revise-text').value);if(ticket!==epoch)return;

@@ -1161,6 +1161,7 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    assert.equal(pin,'sha256:'+require('node:crypto').createHash('sha256').update(bytes).digest('hex'));
    const report=JSON.parse(bytes);assert.equal(report.childDigest,await loc('semantic-pin').innerText());assert.equal(report.parentDigest,parent);
     assert.equal((await save('semantic-export-pin','living-recovery-child.sha256')).toString().trim(),report.childDigest);
+    const card=JSON.parse(await save('recovery-pin-card','living-recovery-pin-card.json'));assert.deepEqual(card.pins,{snapshotDigest:pin,ancestorDigest:ancestor,revisionPlanDigest:revisionPlan,revisedDigest:parent,recoveryPlanDigest:plan,recoveredDigest:report.childDigest});
    const a=JSON.parse(JSON.parse(report.childVersion).annotationText);assert.deepEqual(a.candidates.find(x=>x.id==='after_capital').facets.definition.references,[]);
    assert.equal(await loc('recovery-preview').isDisabled(),true);
    await click('baseline-restore');await state('restored');assert.match(await loc('staged').innerText(),/1 staged source.*2 reviewed binding/);assert.equal(await loc('recovery-export').isDisabled(),true);
@@ -1204,8 +1205,14 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    await p.locator('#review-transaction-panel > summary').click();await p.locator('#review-recovery-panel > summary').click();await p.locator('#review-recovery-import-panel > summary').click();
    const file=path.join(output,'living-recovery.json'),bytes=fs.readFileSync(file),report=JSON.parse(bytes),input=JSON.parse(fs.readFileSync(path.join(output,'living-recovery-input-pins.json'),'utf8'));
    const pin=fs.readFileSync(path.join(output,'living-recovery.sha256'),'utf8').trim(),child=fs.readFileSync(path.join(output,'living-recovery-child.sha256'),'utf8').trim();
-   await loc('recovery-import-mode').selectOption('recovery');await loc('recovery-import-file').setInputFiles(file);
-   for(const [id,value] of [['snapshot',pin],['ancestor',input.ancestorDigest],['plan',input.revisionPlanDigest],['child',input.parentDigest],['recovery-plan',input.recoveryPlanDigest],['final','sha256:'+'0'.repeat(64)]])await loc('recovery-import-'+id).fill(value);
+   await loc('recovery-import-file').setInputFiles(file);
+   const cardFile=path.join(output,'living-recovery-pin-card.json');
+   await loc('recovery-import-card').setInputFiles({name:'bad.json',mimeType:'application/json',buffer:Buffer.from('{"profile":"a","profile":"b"}')});
+   await click('recovery-import-load-card');await state('refused');assert.equal(await loc('semantic-pin').innerText(),untouched);
+   await loc('recovery-import-card').setInputFiles(cardFile);await click('recovery-import-load-card');await state('recovery_pin_card_ready');
+   assert.equal(await loc('recovery-import-mode').inputValue(),'recovery');assert.equal(await loc('recovery-import-apply').isDisabled(),true);
+   assert.equal(await loc('recovery-import-snapshot').inputValue(),pin);assert.equal(await loc('recovery-import-final').inputValue(),child);
+   await loc('recovery-import-final').fill('sha256:'+'0'.repeat(64));
    await click('recovery-import-preview');await state('refused');assert.equal(await loc('semantic-pin').innerText(),untouched);assert.equal(await loc('recovery-import-apply').isDisabled(),true);
    await loc('recovery-import-final').fill(child);await click('recovery-import-preview');await state('recovery_import_preview');assert.equal(await loc('semantic-pin').innerText(),untouched);
    await loc('recovery-import-mode').selectOption('revision');assert.equal(await loc('recovery-import-apply').isDisabled(),true);
