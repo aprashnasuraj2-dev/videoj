@@ -1043,3 +1043,5 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 - [ ] **V2-164 local handoff:** shared pure preflight and exact browser-exported local operator plan, explicit full-contract consent, no browser provider contact; exact CI pending.
 
 - [ ] **V2-165 local result return:** compact CLI transfer, strict independent receipt/root replay, browser file import and verified version download; exact CI pending.
+
+- [ ] **V2-166 hosted socket candidate:** exact public IP/TLS hostname authentication before credentials, bounded response and no redirects; injected tests only, exact CI pending.
