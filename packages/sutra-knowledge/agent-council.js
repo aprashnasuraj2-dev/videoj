@@ -17,5 +17,6 @@ export async function runAgentCouncil({caseText,question,routes,workspace,maxRou
   feedbackRow:(round,row,method)=>({round,agentId:row.agentId,methodId:row.candidateKey,verification:method.outcome.status})
  });
  const rounds=result.rounds.map(row=>Object.freeze({round:row.round,agents:Object.freeze(row.agents.map(({candidateKey,...other})=>Object.freeze(candidateKey===undefined?other:{...other,methodId:candidateKey})))}));
+ config.assertPublication();
  return Object.freeze({profile:'sutra-reviewed-agent-council/v1',mode:'injected-transport-laboratory',obligationId:c.obligationId,rounds:Object.freeze(rounds),methods:result.artifacts,termination:result.termination,agreement:{INCOMPLETE:'INCOMPLETE',SAME_CANDIDATE:'SAME_METHOD',DISTINCT_CANDIDATES:'DISTINCT_METHODS'}[result.agreement],decisionAuthority:'NONE',qualification:'Model proposals select caller-reviewed methods only. Conditional computations do not establish intended meaning, evidence truth or independent model ancestry. No live provider, endpoint, cost or secret is configured here.'});
 }

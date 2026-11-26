@@ -214,3 +214,25 @@ test('cross-profile exact credential canaries and array accessors refuse before 
  await assert.rejects(send({q:bad}),e=>e.code==='PROVIDER_RESULT');assert.equal(ran,0);assert.equal(contacts,0);
  await assert.rejects(send({q:'safe'}),e=>e.code==='SECRET_ECHO');assert.equal(contacts,1);assert.equal(w.budgetSnapshot().global.used.unknown,1);
 });
+
+
+test('removing another credential during a dispatch cannot weaken the result canary boundary',async()=>{
+ let release,contacts=0;const wait=new Promise(r=>{release=r;});
+ const w=make(undefined,async()=>{contacts++;await wait;return {actualInputBytes:1,actualOutputTokens:1,value:{text:'late '+alpha}};});
+ const a=w.addProfile({providerId:'provider-a',label:'A',credential:alpha}),b=w.addProfile({providerId:'provider-b',label:'B',credential:beta});
+ const pending=w.execute({handle:b.handle,model:'beta-fast',inputBytes:100,maxOutputTokens:20,operation:{q:'test'}});
+ assert.equal(contacts,1);w.removeProfile(a.handle);release();
+ await assert.rejects(pending,e=>e.code==='PROFILE_SET_CHANGED'&&!e.message.includes(alpha));
+ assert.equal(w.budgetSnapshot().global.used.unknown,1);assert.equal(w.list().length,1);assert.equal(contacts,1);
+});
+test('enrollment during dispatch invalidates publication even with harmless response',async()=>{
+ let release;const wait=new Promise(r=>{release=r;});
+ const w=make(async()=>{await wait;return {actualInputBytes:1,actualOutputTokens:1,value:'safe'};});
+ const a=w.addProfile({providerId:'provider-a',label:'A',credential:alpha});
+ const pending=w.execute({handle:a.handle,model:'alpha-small',inputBytes:100,maxOutputTokens:20,operation:{q:'test'}});
+ const added=w.addProfile({providerId:'provider-b',label:'B',credential:beta});release();
+ await assert.rejects(pending,e=>e.code==='PROFILE_SET_CHANGED');assert.equal(w.budgetSnapshot().global.used.unknown,1);
+ // Unknown reservation retains its concurrency slot; no retry bypass.
+ await assert.rejects(w.execute({handle:a.handle,model:'alpha-small',inputBytes:10,maxOutputTokens:5,operation:{q:'new'}}),e=>e.code==='BUDGET');
+ const next=await w.execute({handle:added.handle,model:'beta-fast',inputBytes:10,maxOutputTokens:5,operation:{q:'new'}});assert.equal(next.lease.state,'settled');assert.equal(w.budgetSnapshot().global.used.unknown,1);
+});

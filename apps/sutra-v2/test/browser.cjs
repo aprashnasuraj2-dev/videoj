@@ -999,6 +999,18 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
    for(const [id,value] of [['a','測定 🧪 A: 12.50; repeat: 12.50;'],['b','B: 10.25;']]){
     await sp.locator('#review-source-id').fill(id);await sp.locator('#review-lineage').fill('root_'+id);await sp.locator('#review-source-text').fill(value);await sp.locator('#review-source-add').click();await state('draft');
    }
+   // Save and restore a draft with exact Unicode source text, wrong-pin refusal, and explicit confirmation.
+   await sp.locator('#review-draft-checkpoint-panel > summary').click();
+   const draftDownload=sp.waitForEvent('download');await sp.locator('#review-draft-save').click();await state('draft_saved');
+   const savedDraft=fs.readFileSync(await (await draftDownload).path(),'utf8'),savedPin=await sp.locator('#review-draft-saved-pin').innerText();
+   await sp.locator('#review-reset').click();await state('draft');assert.match(await sp.locator('#review-staged').innerText(),/0 staged source/);
+   await sp.locator('#review-draft-file').setInputFiles({name:'draft.json',mimeType:'application/json',buffer:Buffer.from(savedDraft)});
+   await sp.locator('#review-draft-pin').fill('sha256:'+'0'.repeat(64));await sp.locator('#review-draft-check').click();await state('refused');
+   assert.equal(await sp.locator('#review-draft-restore').isDisabled(),true);
+   await sp.locator('#review-draft-pin').fill(savedPin);await sp.locator('#review-draft-check').click();await state('draft_checked');
+   assert.equal(await sp.locator('#review-draft-restore').isDisabled(),true);await sp.locator('#review-draft-confirm').check();await sp.locator('#review-draft-restore').click();await state('draft_restored');
+   assert.match(await sp.locator('#review-staged').innerText(),/2 staged source/);
+   assert.equal(await sp.locator('#review-question').inputValue(),'Is A higher than B?');
    await sp.locator('#review-binding-suggestions-panel > summary').click();
    const type={kind:'stress',unit:'MPa',scope:'same_condition',dimension:[-1,1,-2]},s=(id,sourceId,quote,before='',after='')=>({id,sourceId,quote,before,after,type});
    const wire=JSON.stringify({version:1,suggestions:[s('a_value','a','12.50','repeat: ',';'),s('ambiguous','a','12.50'),s('b_value','b','10.25')]});
@@ -1108,6 +1120,14 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
      const branch=samplePage.waitForEvent('download');await samplePage.locator('#review-branch-export').click();const b=JSON.parse(fs.readFileSync(await (await branch).path(),'utf8'));assert.equal(b.result.decisionAuthority,'NONE');assert.equal(b.result.status,'NO_CONFLICTS_IN_COMPARED_OBJECTS');assert.ok(b.result.changes.some(r=>r.kind==='candidates'&&r.id==='operating_cash'&&r.classification==='LEFT_ONLY'));assert.ok(b.result.changes.some(r=>r.kind==='sources'&&r.classification==='SAME_CHANGE'));
      fs.writeFileSync(path.join(output,'guided-sibling-contrast.json'),JSON.stringify(b));await samplePage.locator('#review-branch-pin').fill('');assert.equal(await samplePage.locator('#review-branch-export').isDisabled(),true);
      await samplePage.locator('#review-history-version').selectOption({index:0});await samplePage.locator('#review-history-restore').click();await sampleState('baseline_ready');assert.match(await samplePage.locator('#review-baseline-state').innerText(),new RegExp(savedHistory.versions[0].digest));
+     await samplePage.locator('#review-session-checkpoint-panel > summary').click();
+     const sessionDownload=samplePage.waitForEvent('download');await samplePage.locator('#review-session-save').click();await sampleState('session_saved');
+     const sessionBytes=fs.readFileSync(await (await sessionDownload).path()),sessionPin=await samplePage.locator('#review-session-saved-pin').innerText(),savedQuestion=await samplePage.locator('#review-question').inputValue();
+     await samplePage.locator('#review-history-clear').click();await sampleState('history_cleared');await samplePage.locator('#review-baseline-clear').click();await samplePage.locator('#review-reset').click();await sampleState('draft');
+     await samplePage.locator('#review-session-file').setInputFiles({name:'workspace.json',mimeType:'application/json',buffer:sessionBytes});await samplePage.locator('#review-session-pin').fill(sessionPin);await samplePage.locator('#review-session-check').click();await sampleState('session_checked');
+     await samplePage.locator('#review-session-confirm').check();await samplePage.locator('#review-question').fill('Changed after preview');assert.equal(await samplePage.locator('#review-session-restore').isDisabled(),true);
+     await samplePage.locator('#review-session-check').click();await sampleState('session_checked');await samplePage.locator('#review-session-confirm').check();await samplePage.locator('#review-session-restore').click();await sampleState('session_restored');
+     assert.equal(await samplePage.locator('#review-question').inputValue(),savedQuestion);assert.equal(await samplePage.locator('#review-history-digest').innerText(),historyPin);assert.match(await samplePage.locator('#review-baseline-state').innerText(),new RegExp(savedHistory.versions[0].digest));assert.equal(await samplePage.locator('#review-semantic-run').isDisabled(),true);
      assert.equal(await samplePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await samplePage.locator('#review-history-clear').click();await sampleState('history_cleared');
     }
     await samplePage.locator('#review-baseline-clear').click();
