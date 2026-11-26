@@ -3,7 +3,7 @@
 // Ambiguous admissions retain their conservative resource charge and lease TTL.
 import {readBoundedResponse,isFullJson} from '../../packages/sutra-runtime/bounded-response.js';
 export async function readQuotaReply(quota,path,payload,signal){
- if(!['/reserve','/release','/source-read'].includes(path))throw Error('Quota path');
+ if(!['/reserve','/release','/source-read','/web-request'].includes(path))throw Error('Quota path');
  const {response,bytes}=await readBoundedResponse({
   // Workerd does not implement Fetch's redirect:'error'. Manual is the
   // runtime-supported non-following mode; the exact status/URL checks below

@@ -1,3 +1,4 @@
+import {handleWebResearch} from './web-research.js';
 import {handleInference,inferenceStatus,inferenceBackend,configuredModels,inferenceContractId,readJson,isJsonRequest,clientKeyForRequest} from './inference.js';
 import {createSourceTools} from '../../packages/sutra-source-tools/index.js';
 import {sourceQuotaLimits,admissionWindow,ADMISSION_MS} from './quota.js';
@@ -139,6 +140,7 @@ export default {async fetch(request,env){
  }
  else if(inferencePath)response=await handleInference(request,env);
  else if(path==='/api/source-tools')response=await handleSourceTools(request,env);
+ else if(path==='/api/web/search'||path==='/api/web/read')response=await handleWebResearch(request,env);
  else if(path==='/api/status'&&request.method==='GET'){
   let contractId=null;if(inferenceStatus(env)){try{contractId=await inferenceContractId(env);}catch{}}
   const configured=!!contractId;

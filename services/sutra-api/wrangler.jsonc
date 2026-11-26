@@ -7,6 +7,10 @@
   "assets": {"directory": "../../apps/sutra/dist", "binding": "ASSETS", "run_worker_first": ["/api/*"]},
   "vars": {
     "SUTRA_ENABLE_INFERENCE": "false",
+    "SUTRA_ENABLE_WEB_RESEARCH": "false",
+    "SUTRA_WEB_PROVIDER": "",
+    "SUTRA_MAX_DAILY_WEB_REQUESTS": "40",
+    "SUTRA_MAX_CLIENT_WEB_REQUESTS": "6",
     "SUTRA_ALLOWED_ORIGIN": "https://sutra.aafnaipatro.com",
     "SUTRA_MODELS": "",
     "SUTRA_MAX_OUTPUT_TOKENS": "512",
