@@ -27,3 +27,7 @@ Reject carriage returns in restored source text as well as question text, so tex
 
 ## V2-182 candidate — coherent portable workspace restore
 Export a bounded exact local workspace containing draft, optional retained baseline and optional history. Replay all included inputs before preview, require separate outer digest and explicit replacement, invalidate stale previews on any of three state changes. Restore clears current candidate/result and execution approval; no provider settings/credentials, no freshness. Unit tests tamper nested baseline and authority field; Chromium journey saves three-version/two-branch history, clears state, rejects stale confirmation and restores without current results. 256 KiB envelope cap may refuse large histories. Exact CI pending.
+
+### V2-182 independent workspace checkpoint candidate
+
+Independent Python reconstructs UTF-16 draft spans, admits a reconstructed contract, and replays optional pinned history and baseline. Differential regression compares only the declared summary and authority, not full browser state. Two positive cases and six tamper/refusal controls. No freshness or execution restoration. Exact CI to be reconciled centrally.
