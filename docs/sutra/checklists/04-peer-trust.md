@@ -1,5 +1,7 @@
 # 04. Peer composition and trust
 
+> **RETIRED SUTRA1 EXECUTION QUEUE (2026-11-26).** The user retired all remaining unchecked SUTRA1 tasks. This file now preserves verified/omitted/blocked historical evidence only. Do not resume work from this file; use [`docs/sutra-v2/CHECKLIST.md`](../../sutra-v2/CHECKLIST.md).
+
 [Checklist index](../CHECKLIST.md) | [Progress register](../PROGRESS.md) | [Continuation procedure](../CONTINUE.md)
 
 Original planning window: **6-10 Dec 2026**. This is a target window, not proof of work.
@@ -19,14 +21,12 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 
 - [x] `SUTRA-P031-01` Create an independent apps/sutra-peer static package and build output
 - [x] `SUTRA-P031-02` Publish a checklist front agent and narrow source-selection helper
-- [ ] `SUTRA-P031-03` Serve a human-readable guide page with actual corpus provenance
 - [x] `SUTRA-P031-04` Keep its public graph declarative and independently fetchable
 - [x] `SUTRA-P031-05` Avoid requiring caller UI imports or a private agent server
 - [x] `SUTRA-P031-06` Expose the exact checklist network identifier through its own manifest
 - [x] `SUTRA-P031-07` Prepare distinct preview and production origin configuration
 - [x] `SUTRA-P031-08` State both public origins are controlled by the same project owner
 - [x] `SUTRA-P031-09` Produce and review the phase artifact: Peer graph, manifest, links and source page.
-- [ ] `SUTRA-P031-10` Close phase 031 only after its applicable tasks have evidence and its exit condition is observed: The peer is independently fetchable on a distinct HTTPS origin, with no dependency on the caller bundle.
 
 ## Phase 032 - Resolve peers by exact network name
 
@@ -71,7 +71,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Apply CORS only to intended public artifacts and inspect real browser fetches. Fetch manifests and graphs without caller credentials; keep inference and action policies separate.
 - **Phase exit:** Public artifacts load from a caller origin; credentialed wildcard configurations and accidental private responses are absent.
 
-- [ ] `SUTRA-P034-01` Serve public artifact CORS from both staging and intended public origins
 - [x] `SUTRA-P034-02` Fetch public manifests and graphs without caller credentials
 - [x] `SUTRA-P034-03` Allow only the methods and headers required by artifact access
 - [x] `SUTRA-P034-04` Keep authentication and inference policies separate from public artifact CORS
@@ -80,7 +79,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P034-07` Check missing CORS and failed preflight produce usable errors
 - [x] `SUTRA-P034-08` Document cross-origin permissions independently from publisher trust
 - [x] `SUTRA-P034-09` Produce and review the phase artifact: Header checks and cross-origin browser evidence.
-- [ ] `SUTRA-P034-10` Close phase 034 only after its applicable tasks have evidence and its exit condition is observed: Public artifacts load from a caller origin; credentialed wildcard configurations and accidental private responses are absent.
 
 ## Phase 035 - Run the peer in the caller browser
 
@@ -179,7 +177,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Replay the specification checklist on two HTTPS origins. Include denial, invalid graph, cycle, budget, private context and router inheritance. Distinguish the two same-owner origins from independent adoption.
 - **Phase exit:** All required observable behaviors pass or block progression; no extension is represented as a normative requirement.
 
-- [ ] `SUTRA-P040-01` Replay the complete specification interoperability checklist on HTTPS
 - [x] `SUTRA-P040-02` Verify two-agent publication and actual grounded internal invocation
 - [x] `SUTRA-P040-03` Verify exact-name second-origin loading and caller-local execution
 - [x] `SUTRA-P040-04` Verify denied origin, invalid graph, cycle and budget refusal behavior
@@ -188,4 +185,3 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P040-07` Distinguish optional extensions from the core conformance claim
 - [x] `SUTRA-P040-08` Block the milestone on missing evidence or a critical boundary failure
 - [x] `SUTRA-P040-09` Produce and review the phase artifact: Milestone B evidence and conformance gap list.
-- [ ] `SUTRA-P040-10` Close phase 040 only after its applicable tasks have evidence and its exit condition is observed: All required observable behaviors pass or block progression; no extension is represented as a normative requirement.
