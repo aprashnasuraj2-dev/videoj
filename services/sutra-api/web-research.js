@@ -49,10 +49,14 @@ async function verifyToken({secret,token,contractId,clientKey,clock}){
  const url=admitPublicWebUrl(payload.url);if(!url||url!==payload.url)throw Error('WEB_TOKEN');
  return url;
 }
-async function reserveWeb(request,env){
+async function webIdentity(request,env){
  const window=admissionWindow();
- const signal=AbortSignal.any([request.signal,AbortSignal.timeout(ADMISSION_MS)]);
- const clientKey=await clientKeyForRequest(request,env.SUTRA_CLIENT_HASH_SECRET,window.day);signal.throwIfAborted();
+ const clientKey=await clientKeyForRequest(request,env.SUTRA_CLIENT_HASH_SECRET,window.day);
+ return Object.freeze({window,clientKey});
+}
+async function reserveWeb(request,env,identity){
+ const {window,clientKey}=identity;
+ const signal=AbortSignal.any([request.signal,AbortSignal.timeout(ADMISSION_MS)]);signal.throwIfAborted();
  const quota=env.SUTRA_QUOTA.get(env.SUTRA_QUOTA.idFromName('sutra-inference-global-v1'));
  const admission=await readQuotaReply(quota,'/web-request',{clientKey,...window},signal);
  if(admission.status!==200||Date.now()>=window.admitUntil){
@@ -108,7 +112,7 @@ export async function handleWebResearch(request,env={},{fetchImpl=fetch,clock=Da
   if(Object.keys(body).length!==1||typeof body.query!=='string')return error('PAYLOAD',400);
   const query=body.query.normalize('NFKC').trim();
   if(!query||query.length>300||/[\u0000-\u001f\u007f]/.test(query))return error('PAYLOAD',400);
-  let clientKey;try{clientKey=await reserveWeb(request,env);}catch(e){return providerFailure(e,request);}
+  let identity,clientKey;try{identity=await webIdentity(request,env);clientKey=await reserveWeb(request,env,identity);}catch(e){return providerFailure(e,request);}
   try{
    const data=await providerJson(config,'/v2/search',{query,limit:4,sources:[{type:'web'}],domainTools:false,timeout:10000,safe:true},request.signal,fetchImpl);
    if(!Array.isArray(data.web)||data.web.length>4)return error('WEB_UNAVAILABLE',502);
@@ -123,9 +127,9 @@ export async function handleWebResearch(request,env={},{fetchImpl=fetch,clock=Da
   }catch(e){return providerFailure(e,request);}
  }
  if(Object.keys(body).length!==1||typeof body.token!=='string')return error('PAYLOAD',400);
- let clientKey;try{clientKey=await clientKeyForRequest(request,env.SUTRA_CLIENT_HASH_SECRET,admissionWindow().day);}catch{return error('WEB_QUOTA_UNAVAILABLE',503);}
- let target;try{target=await verifyToken({secret:config.tokenSecret,token:body.token,contractId,clientKey,clock});}catch{return error('WEB_READ_REFUSED',403);}
- try{await reserveWeb(request,env);}catch(e){return providerFailure(e,request);}
+ let identity;try{identity=await webIdentity(request,env);}catch{return error('WEB_QUOTA_UNAVAILABLE',503);}
+ let target;try{target=await verifyToken({secret:config.tokenSecret,token:body.token,contractId,clientKey:identity.clientKey,clock});}catch{return error('WEB_READ_REFUSED',403);}
+ try{await reserveWeb(request,env,identity);}catch(e){return providerFailure(e,request);}
  try{
   const data=await providerJson(config,'/v2/scrape',{url:target,formats:['markdown'],onlyMainContent:true,timeout:10000},request.signal,fetchImpl);
   const meta=data.metadata;
