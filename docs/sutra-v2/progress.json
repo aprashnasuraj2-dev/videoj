@@ -3,42 +3,23 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-179",
+  "session": "V2-185-checklist-reset",
   "next": [
-    "V2-P14-BYOK-UX",
-    "V2-LK03-PATHWAYS",
-    "V2-LK15-UNIFIED-WORKSPACE",
-    "V2-LK02-INTENT-IR",
-    "V2-LK04-ROUNDTRIP",
-    "V2-LK05-SEMANTIC-COUNTERFACTUAL",
-    "V2-LK06-SEMANTIC-WORLDS",
-    "V2-LK12-ACQUISITION",
-    "V2-LK14-STATISTICAL-PROFILES",
-    "V2-LK13-STRUCTURAL-WEAKNESS",
-    "V2-LK16-SPECIALIST-JOURNEYS",
-    "V2-LK10-VERSION-CONTROL",
-    "V2-LK07-AMBIGUITY-REVIEW",
-    "V2-LK08-KNOWLEDGE-GRAPH",
-    "V2-LK09-REVISION",
-    "V2-LK11-IMPACT-REPORT",
-    "V2-LK18-PRIOR-ART",
-    "V2-LK17-BENCHMARK",
-    "V2-LK19-TRUST-BOUNDARY",
-    "V2-LK20-REPOSITORY-ISOLATION",
-    "V2-D24-DISCLOSURE-FRONTIER",
-    "V2-P07-WASM",
-    "V2-RUNTIME-02",
-    "V2-P05-RECOVERY",
-    "V2-P05-ROLLBACK",
-    "V2-F11b",
-    "V2-P06-REFINE",
-    "V2-P01-THREAT",
-    "V2-P04-CONSENT",
-    "V2-P14-BUDGET",
-    "V2-RUNTIME-03",
-    "V2-F12d"
+    "V2-N001",
+    "V2-N002",
+    "V2-N003",
+    "V2-N004",
+    "V2-N006",
+    "V2-N007",
+    "V2-N008",
+    "V2-N009",
+    "V2-N010",
+    "V2-N011",
+    "V2-N012",
+    "V2-UX-002",
+    "V2-UX-003"
   ],
-  "state": "Candidate: local extraction plan recovery for exact staged draft",
+  "state": "Active V2 remaining-work checklist; exact remote reconciliation first",
   "verified": [
     {
       "id": "V2-M01",
@@ -448,15 +429,11 @@
     "resolutionRevision": "6a862dd5d349538d6bcc32335a810fbe08cbfd33",
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
-  "pendingCandidate": {
+  "pendingCandidate": null,
+  "previousPendingCandidate": {
     "session": "V2-179",
     "parent": "92facb7b273f259a676b66f26d6d3d99180590fe",
     "description": "### V2-179 — recover exact saved local extraction plan (candidate)\nA lost browser-memory plan no longer forces a model rerun. Add pure exact plan recovery bound to a separately retained plan digest and byte-identical already staged draft, with zero network contact or draft replacement. Browser file import is bounded, fatal UTF-8 decoded, guarded against stale inputs, displays the actual admitted route/scope/budgets and never grants execution approval. Existing transfer verification and explicit quantity selection remain mandatory. Add pure digest/draft/plan tamper cases and actual Chromium plan-discard/recover/wrong-pin/no-contact journey. Current draft must first be reconstructed exactly; no automatic cross-session persistence or proof of model authorship. V2-178 exact CI pending. V2-177 scoped council/operator integration passed (knowledge job 139672991940). New exact CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-178",
-    "parent": "3065b0624973c95a2e6300257d1935b13c46b379",
-    "description": "### V2-178 — decoded council candidate credential boundary (candidate)\nExtend the host-owned council scheduler to scan admitted decoded candidate strings against every enrolled credential before compilation, trace insertion or directed peer feedback. A structurally valid expression equal to another agent's credential but escaped in the inner JSON must refuse without eliminating unrelated legitimate candidates or retrying the refused route. Add an injected two-provider regression. Restore the exact previous historical evidence objects in roadmap.json (V2-177 inadvertently appended a limitation to historical entries; active gate limitations retained). V2-177 PR CI observed 4/9 successful at checkpoint; no inherited new credit. Exact new CI pending. This is scoped exact-canary detection, not general DLP or strong noninterference."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [
@@ -10587,5 +10564,24 @@
       "Expand independent interval/statistical verifier, then run end-to-end reasoning evaluation rather than duplicate gold-program execution."
     ],
     "qualification": "Scoped evidence only. Existing roadmap gate status and historical evidence preserved; disposition is a work-selection overlay, not a completion-count promotion."
+  },
+  "activeChecklist": {
+    "path": "docs/sutra-v2/CHECKLIST.md",
+    "activatedAt": "2026-11-26T13:15:00+05:45",
+    "semantics": "sole active execution queue",
+    "continuationCommand": "continue with SUTRA",
+    "selectionRule": "reconcile exact remote V2 state, then execute first dependency-ready unchecked item",
+    "legacyV1PendingRetired": 379,
+    "legacyV1ActiveQueue": false,
+    "validationBranch": "sutra/v2-validation/v2-182",
+    "validationPr": 61,
+    "validationMergeAllowed": false
+  },
+  "legacyChecklistRetirement": {
+    "date": "2026-11-26",
+    "removedPendingTasks": 379,
+    "disposition": "retired; historical evidence only",
+    "historicalPath": "docs/sutra/",
+    "activePath": "docs/sutra-v2/CHECKLIST.md"
   }
 }
