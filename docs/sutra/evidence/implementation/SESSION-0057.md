@@ -65,17 +65,23 @@ The exact-head hero browser scenario starts from a fresh browser context and com
 
 P041-07 remains the previously recorded permitted omission; the applicable Phase 041 tasks and exit condition are now observed.
 
+### SUTRA-P050-10 — verified; Phase 050 closes
+
+All P050-01..09 were already verified. The exact-head hero browser re-observed the complete learner journey through visible UI, including empty/loading/conflict/success/denied states, evidence-to-native-media seek, review save/delete, refusal resilience, and a 360 px keyboard-only local completion without developer-console setup or external requests. The previously verified P050-05 peer-refusal behavior remains current because the changed comparison-fixture boundary does not alter peer refusal handling.
+
+This closes the Phase 050 exit condition without claiming human usability research, physical-device acceptance, or live funded inference.
+
 ## Counterexample / boundary
 
 A green development build is **not** a release. A synthetic timing source is **not** licensed original lesson provenance. Automated accessibility/browser passes are **not** physical-device, screen-reader or user-study acceptance. Provider gate tests are **not** live funded model economics. None of those external/final-state gates is changed by this session.
 
 ## Register effect
 
-Four original tasks are newly verified: P018-06, P019-02, P019-06 and P041-10.
+Five original tasks are newly verified: P018-06, P019-02, P019-06, P041-10 and P050-10.
 
-- Overall verified: **771 -> 775 / 1,107**
-- Original verified: **665 -> 669 / 1,000**
-- Original pending: **329 -> 325**
+- Overall verified: **771 -> 776 / 1,107**
+- Original verified: **665 -> 670 / 1,000**
+- Original pending: **329 -> 324**
 - Omissions: **6** unchanged
 - Hardware blockers: **1** unchanged
 
