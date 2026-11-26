@@ -91,7 +91,9 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   await page.getByRole('button',{name:'Load reviewed cash-flow example'}).click();
   await page.waitForFunction(()=>document.querySelector('#studio-contract-pin').value.startsWith('sha256:'));
   await page.getByLabel('Agent 2 connection').selectOption('b');
-  await page.getByLabel('Total call reservation cap').selectOption('4');
+  await page.getByLabel('Total call reservation cap').selectOption('6');
+  await page.getByLabel('Maximum rounds').selectOption('3');
+  await page.getByLabel('Host round policy').selectOption('stop-on-stagnation');
   await page.getByLabel('Scripted collaboration behavior').selectOption('reconsider');
   await page.getByRole('button',{name:'Run local agent council'}).click();
   assert.equal(await page.locator('#studio-status').getAttribute('data-state'),'refused');
@@ -107,6 +109,9 @@ const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json
   const expressionTrace=JSON.parse(fs.readFileSync(await expressionDownload.path(),'utf8'));
   assert.deepEqual(expressionTrace.configuration.connections.map(x=>x.protocol),['openai-compatible-json','anthropic-messages-json']);
   assert.equal(expressionTrace.result.disclosure.includeValues,false);assert.equal(expressionTrace.result.semanticReview,'REQUIRED');
+  assert.equal(expressionTrace.result.termination,'STAGNANT_CANDIDATES');
+  assert.equal(expressionTrace.result.reviewPlan.coveredPairs,1);
+  assert.match(await page.locator('#studio-review-steps').innerText(),/ppe25/);
   assert.equal(JSON.stringify(expressionTrace).includes('https://model-'),false);
   assert.equal(JSON.stringify(expressionTrace).includes('SYNTHETIC_ONLY_'),false);
   await page.locator('#studio-expression-share').check();

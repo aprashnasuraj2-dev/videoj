@@ -10,7 +10,7 @@ const fields=[...form.querySelectorAll('input,select,textarea'),by('studio-reset
 const fixture=()=>JSON.stringify({obligationId:'beam_deflection',methods:[{id:'stiffer_assumption',constraintId:'deflection_limit',graphText:beamGraph('10000000000')},{id:'softer_assumption',constraintId:'deflection_limit',graphText:beamGraph('2500000000')}]});
 let active=null,current=null,epoch=0;
 function status(message,state){const el=by('studio-status');el.textContent=message;el.dataset.state=state;}
-function clear(){current=null;exportButton.disabled=true;by('studio-result').hidden=true;by('studio-trace').replaceChildren();by('studio-methods').replaceChildren();by('studio-interpretation').textContent='';}
+function clear(){current=null;exportButton.disabled=true;by('studio-result').hidden=true;by('studio-trace').replaceChildren();by('studio-methods').replaceChildren();by('studio-interpretation').textContent='';by('studio-review').hidden=true;by('studio-review-summary').textContent='';by('studio-review-steps').replaceChildren();}
 function busy(value){for(const field of fields)field.disabled=value;runButton.disabled=value;cancelButton.disabled=!value;if(value)exportButton.disabled=true;}
 function revoke(){by('studio-share').checked=false;by('studio-expression-share').checked=false;}
 function invalidate(){epoch++;active?.abort();clear();status('Configuration changed. Run a fresh council.','idle');}
@@ -21,6 +21,10 @@ function render(r,configuration,calls){
  const key=x=>expression?x.expression:x.methodId,verdict=x=>expression?x.target.status:x.outcome.status;
  by('studio-result').hidden=false;by('studio-round-count').textContent=String(r.rounds.length);by('studio-calls').textContent=String(calls);by('studio-agreement').textContent=r.agreement.replaceAll('_',' ').toLowerCase();
  by('studio-interpretation').textContent=expression?r.state.replaceAll('_',' ')+' — semantic review required; agreement cannot resolve divergent outcomes.':'Method selection only; independent computation is conditional on the reviewed graphs.';
+ if(expression&&r.reviewPlan){
+  by('studio-review').hidden=false;by('studio-review-summary').textContent=r.reviewPlan.opposingPairs?r.reviewPlan.steps.length+' prioritized review prompts separate '+r.reviewPlan.coveredPairs+' of '+r.reviewPlan.opposingPairs+' opposing pairs. They do not validate meaning.':'No opposing pair to separate; review intended meaning and any missing candidates.';
+  for(const step of r.reviewPlan.steps){const item=element('li',step.prompt);const choices=step.choices.map(c=>{const entry=r.triage?.contrast.entries.find(x=>x.id===c.candidateId);const candidate=r.candidates.find(x=>x.proposalDigest===entry?.computation?.proposalDigest);return (candidate?.expression??c.candidateId)+' — '+c.choice;});item.append(element('p',choices.join(' | ')));by('studio-review-steps').append(item);}
+ }
  const outcomes=new Map(artifacts.map(m=>[key(m),verdict(m)]));
  for(const round of r.rounds){
   const section=document.createElement('section');section.className='studio-round';section.append(element('h4','Round '+round.round));
@@ -88,7 +92,7 @@ function readConfig(){
  for(const c of connections)if(!/^[a-z][a-z0-9-]{0,31}$/.test(c.id)||!/^[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}$/.test(c.model))throw Error('CONNECTION');
  const agents=['a','b'].map((slot,i)=>{const c=connections.find(x=>x.slot===by('studio-route-'+slot).value);return {id:i?'agent_two':'agent_one',role:by('studio-role-'+slot).value.trim(),connectionId:c.id,model:c.model};});
  const mode=by('studio-mode').value,common={mode,connections,agents,rounds:Number(by('studio-rounds').value),callCap:Number(by('studio-call-cap').value),strategy:by('studio-strategy').value};
- if(mode==='expression')return {...common,contractText:by('studio-contract').value,contractPin:by('studio-contract-pin').value.trim(),disclosure:{bindingIds:by('studio-bindings').value.split(',').map(x=>x.trim()).filter(Boolean),includeValues:by('studio-include-values').checked}};
+ if(mode==='expression')return {...common,roundPolicy:by('studio-round-policy').value,contractText:by('studio-contract').value,contractPin:by('studio-contract-pin').value.trim(),disclosure:{bindingIds:by('studio-bindings').value.split(',').map(x=>x.trim()).filter(Boolean),includeValues:by('studio-include-values').checked}};
  const question=by('studio-question').value.trim(),caseText=by('studio-case').value;admitProofCase(caseText);
  return {...common,question,caseText};
 }
@@ -105,7 +109,7 @@ form.addEventListener('submit',async event=>{
  try{
   const config=readConfig(),{workspace,routes}=setup(config);
   const options={workspace,routes,maxRounds:config.rounds,maxOutputTokens:256,signal:controller.signal};
-  const r=expression?await runExpressionCouncil({...options,contractText:config.contractText,contractPin:config.contractPin,disclosure:config.disclosure}):await runAgentCouncil({...options,caseText:config.caseText,question:config.question});
+  const r=expression?await runExpressionCouncil({...options,contractText:config.contractText,contractPin:config.contractPin,disclosure:config.disclosure,roundPolicy:config.roundPolicy}):await runAgentCouncil({...options,caseText:config.caseText,question:config.question});
   if(ticket!==epoch||controller.signal.aborted)return;
   const calls=workspace.budgetSnapshot().global.used.calls;
   if(r.termination==='CANCELLED_OR_TIMEOUT'){status('Council timed out. No late results accepted.','cancelled');return;}

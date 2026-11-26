@@ -64,3 +64,34 @@ test('cancellation publishes no unfinished round and preflight cap prevents exce
  const r=await run(s,{timeoutMs:10});assert.equal(r.state,'INCOMPLETE_CANCELLED');assert.equal(r.rounds.length,0);assert.equal(r.candidates.length,0);
  const t=setup(()=>proposal(correct),()=>proposal(correct));await assert.rejects(run(t,{routes:[...t.routes,{...t.routes[0],id:'third'}],maxRounds:3}),e=>e.code==='CONFIG');assert.equal(t.seen.length,0);
 });
+
+test('host stops redundant rounds on compiled identity but preserves historical divergence and semantic review',async()=>{
+ const s=setup(op=>proposal(op.round===1?alternative:correct),()=>proposal(correct));
+ const r=await run(s,{maxRounds:3,roundPolicy:'stop-on-stagnation'});
+ assert.equal(s.seen.length,4);assert.equal(r.rounds.length,2);assert.equal(r.termination,'STAGNANT_CANDIDATES');
+ assert.equal(r.state,'DIVERGENT_CONDITIONAL_OUTCOMES');assert.equal(r.decisionAuthority,'NONE');
+ assert.equal(r.reviewPlan.opposingPairs,1);assert.equal(r.reviewPlan.coveredPairs,1);
+ assert.equal(r.reviewPlan.steps[0].kind,'BINDING_INCLUSION');assert.match(r.reviewPlan.steps[0].prompt,/ppe25/);
+ assert.deepEqual(r.reviewPlan.steps[0].choices.map(x=>x.choice),['NOT_INCLUDED','INCLUDED']);
+ const fixed=setup(op=>proposal(op.round===1?alternative:correct),()=>proposal(correct));
+ assert.equal((await run(fixed,{maxRounds:3})).rounds.length,3);assert.equal(fixed.seen.length,6);
+});
+test('comparison and structure review cover divergent formulas with identical binding footprints',async()=>{
+ const a=setup(()=>proposal('[ocf26] > [ocf25]'),()=>proposal('[ocf26] <= [ocf25]'));
+ const r=await run(a,{maxRounds:1});
+ assert.equal(r.reviewPlan.steps.length,1);assert.equal(r.reviewPlan.steps[0].kind,'COMPARISON_OPERATOR');
+ const b=setup(()=>proposal('[ocf26] > [ocf25]'),()=>proposal('[ocf25] > [ocf26]'));
+ const q=await run(b,{maxRounds:1});
+ assert.equal(q.reviewPlan.steps.length,1);assert.equal(q.reviewPlan.steps[0].kind,'EXPRESSION_STRUCTURE');
+ assert.equal(q.reviewPlan.coveredPairs,1);
+});
+test('new compiled proposals and missing team members do not trigger a false stagnation stop',async()=>{
+ const newFormula='[ocf26] >= [ocf25]';
+ const a=setup(op=>proposal(op.round===1?alternative:op.round===2?newFormula:correct),()=>proposal(correct));
+ const r=await run(a,{maxRounds:3,roundPolicy:'stop-on-stagnation'});
+ assert.equal(r.rounds.length,3);assert.equal(r.termination,'ROUND_LIMIT');
+ const b=setup(()=>JSON.stringify({version:1,kind:'abstain'}),()=>proposal(correct));
+ const q=await run(b,{maxRounds:3,roundPolicy:'stop-on-stagnation'});
+ assert.equal(q.rounds.length,3);assert.equal(q.agreement,'INCOMPLETE');assert.equal(q.reviewPlan.state,'REVIEW_SINGLE_PROPOSAL');
+ await assert.rejects(run(b,{roundPolicy:'model-decides'}),e=>e.code==='CONFIG');
+});

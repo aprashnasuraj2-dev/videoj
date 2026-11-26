@@ -4,11 +4,13 @@ import {parseUniqueJson} from '../sutra-consent/strict-json.js';
 import {validateReviewedContract} from './reviewed-claim-compiler.js';
 import {compileReviewedExpression} from './reviewed-expression.js';
 import {triageReviewedInterpretations} from './semantic-triage.js';
+import {planCouncilReview} from './council-review-plan.js';
 import {prepareCouncil,runCouncilRounds,councilClosed,councilFail,councilText,denseCouncilArray} from './council-scheduler.js';
 const SCOPE='reviewed-question-bindings-and-conditional-feedback';
 const ID=/^[A-Za-z][A-Za-z0-9_-]{0,63}$/;
 const freeze=x=>{if(x&&typeof x==='object'&&!Object.isFrozen(x)){Object.values(x).forEach(freeze);Object.freeze(x);}return x;};
-export async function runExpressionCouncil({contractText,contractPin,disclosure,routes,workspace,maxRounds=2,maxOutputTokens=512,timeoutMs=15000,signal}={}){
+export async function runExpressionCouncil({contractText,contractPin,disclosure,routes,workspace,maxRounds=2,maxOutputTokens=512,timeoutMs=15000,signal,roundPolicy='fixed'}={}){
+ if(!['fixed','stop-on-stagnation'].includes(roundPolicy))councilFail('CONFIG');
  const config=prepareCouncil({routes,workspace,shareScope:SCOPE,maxRounds,maxOutputTokens,timeoutMs,signal,maxSlots:8});
  if(!councilClosed(disclosure,['bindingIds','includeValues'])||!Array.isArray(disclosure.bindingIds)||disclosure.bindingIds.length<1||disclosure.bindingIds.length>16||!denseCouncilArray(disclosure.bindingIds)||typeof disclosure.includeValues!=='boolean'||disclosure.bindingIds.some(x=>typeof x!=='string'||!ID.test(x))||new Set(disclosure.bindingIds).size!==disclosure.bindingIds.length)councilFail('DISCLOSURE');
  const allowed=new Set(disclosure.bindingIds),includeValues=disclosure.includeValues;
@@ -34,7 +36,8 @@ export async function runExpressionCouncil({contractText,contractPin,disclosure,
    if(e.usedBindings.some(id=>!allowed.has(id)))councilFail('VERIFICATION_REFUSED');
    return freeze({expression,proposalText:e.proposalText,proposalDigest:e.proposalDigest,usedBindings:e.usedBindings,target:e.target,authorship:'MODEL_PROPOSAL',semanticReview:'REQUIRED'});
   },
-  feedbackRow:(round,row,artifact)=>({round,agentId:row.agentId,expression:row.candidateKey,verification:artifact.target.status})
+  feedbackRow:(round,row,artifact)=>({round,agentId:row.agentId,expression:row.candidateKey,verification:artifact.target.status}),
+  progressIdentity:roundPolicy==='stop-on-stagnation'?artifact=>artifact.proposalDigest:null
  });
  const rounds=result.rounds.map(row=>freeze({round:row.round,agents:row.agents.map(({candidateKey,...other})=>candidateKey===undefined?other:{...other,expression:candidateKey})}));
  // Keep every valid model expression and every agent occurrence. Compare unique
@@ -49,5 +52,6 @@ export async function runExpressionCouncil({contractText,contractPin,disclosure,
  const cancelled=result.termination==='CANCELLED_OR_TIMEOUT'||signal?.aborted;
  if(cancelled){triage=null;batchText=null;}
  const state=cancelled?'INCOMPLETE_CANCELLED':triage?triage.state:unique.length===1?'SINGLE_ADMITTED_PROPOSAL':'NO_ADMITTED_PROPOSALS';
- return freeze({profile:'sutra-reviewed-expression-council/v1',mode:'injected-transport-laboratory',contractDigest:contractPin,disclosure:{bindingIds:bindings.map(x=>x.id),includeValues},rounds,candidates:result.artifacts,uniqueCompiledProposals:unique.length,batchText,triage,state,termination:cancelled?'CANCELLED_OR_TIMEOUT':result.termination,agreement:result.agreement,semanticReview:'REQUIRED',decisionAuthority:'NONE',qualification:'New model-generated formulas over host-reviewed bindings, not human-approved meanings. Numeric computation is conditional; no semantic coverage, external evidence truth, or decision authority. Binding values are shared only with explicit value scope; conditional feedback can reveal relations among approved bindings. No live provider or key entry.'});
+ const reviewPlan=cancelled?null:planCouncilReview(triage,unique);
+ return freeze({profile:'sutra-reviewed-expression-council/v1',mode:'injected-transport-laboratory',contractDigest:contractPin,disclosure:{bindingIds:bindings.map(x=>x.id),includeValues},rounds,candidates:result.artifacts,uniqueCompiledProposals:unique.length,batchText,triage,reviewPlan,roundPolicy,state,termination:cancelled?'CANCELLED_OR_TIMEOUT':result.termination,agreement:result.agreement,semanticReview:'REQUIRED',decisionAuthority:'NONE',qualification:'New model-generated formulas over host-reviewed bindings, not human-approved meanings. Numeric computation is conditional; no semantic coverage, external evidence truth, or decision authority. Binding values are shared only with explicit value scope; conditional feedback can reveal relations among approved bindings. No live provider or key entry.'});
 }

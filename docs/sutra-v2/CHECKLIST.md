@@ -1014,3 +1014,6 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 
 
 - [ ] **V2-153 candidate:** expression Studio, heterogeneous wire rehearsal, explicit binding/value scope and per-run consent; protocol error classification repair. Exact CI pending; no live inference.
+
+
+- [ ] **V2-154 candidate:** host-controlled stagnation stop and greedy semantic review prompts; retain divergence, no truth or optimality claim; exact CI pending.

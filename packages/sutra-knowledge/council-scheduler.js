@@ -20,12 +20,12 @@ export function prepareCouncil({routes,workspace,shareScope,maxRounds=2,maxOutpu
 }
 // Policies are trusted internal code. The only model-controlled value they
 // receive is bounded untrusted text; route handles never enter their operations.
-export async function runCouncilRounds(config,{operation,admit,verify,feedbackRow}){
+export async function runCouncilRounds(config,{operation,admit,verify,feedbackRow,progressIdentity=null}){
  const {team,execute,maxRounds,maxOutputTokens,timeoutMs,signal}=config,controller=new AbortController();
  const cancelled=()=>controller.abort();if(signal?.aborted)cancelled();else signal?.addEventListener('abort',cancelled,{once:true});
  const timer=setTimeout(cancelled,timeoutMs);
  let abortListener;const cancelledPromise=new Promise(resolve=>{abortListener=()=>resolve(null);if(controller.signal.aborted)abortListener();else controller.signal.addEventListener('abort',abortListener,{once:true});});
- const trace=[],verified=new Map();let active=team,termination='ROUND_LIMIT';
+ const trace=[],verified=new Map(),seenProgress=new Set();let active=team,termination='ROUND_LIMIT';
  try{
   for(let round=1;round<=maxRounds;round++){
    if(controller.signal.aborted){termination='CANCELLED_OR_TIMEOUT';break;}
@@ -58,6 +58,13 @@ export async function runCouncilRounds(config,{operation,admit,verify,feedbackRo
    trace.push(Object.freeze({round,agents:Object.freeze(rows.map(Object.freeze))}));
    active=active.filter(r=>rows.some(x=>x.agentId===r.id&&x.status==='PROPOSED'));
    if(!active.length){termination='NO_ADMITTED_PROPOSALS';break;}
+   if(progressIdentity){
+    let added=0;
+    for(const row of rows){if(row.status!=='PROPOSED')continue;const identity=progressIdentity(verified.get(row.candidateKey));if(!seenProgress.has(identity)){seenProgress.add(identity);added++;}}
+    // A refusal or abstention cannot masquerade as stable full-team coverage.
+    // A repeated typed proposal is a resource-stopping signal, not a verdict.
+    if(round>1&&round<maxRounds&&active.length===team.length&&added===0){termination='STAGNANT_CANDIDATES';break;}
+   }
   }
   const last=trace.at(-1)?.agents??[],proposals=last.filter(x=>x.status==='PROPOSED'),distinct=new Set(proposals.map(x=>x.candidateKey));
   const used=new Set(trace.flatMap(x=>x.agents.filter(y=>y.status==='PROPOSED').map(y=>y.candidateKey)));
