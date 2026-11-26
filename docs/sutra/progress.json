@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "project": "SUTRA",
-  "updated_at": "2026-11-26T19:56:56+05:45",
+  "updated_at": "2026-11-27T00:06:36+05:45",
   "work_branch": "sutra/caller-peer-failure-boundary",
   "last_observed_code_sha": "f8c3da48a4d99a6311910b99a40b23d0ea9fa63c",
-  "last_session_id": "SUTRA-SESSION-0058",
+  "last_session_id": "SUTRA-SESSION-0059",
   "stage": "source_consent_and_learner_stabilization",
   "current_task": null,
   "next_task": "SUTRA-P054-01",
@@ -14,7 +14,7 @@
     "SUTRA-P020-02",
     "SUTRA-P005-08"
   ],
-  "next_action": "Session 0058 verifies P065-08 from a dated read-only Cloudflare Worker request sample. P065-07 remains pending because Workers Observability events are not billed invocation/headroom evidence, and P065-10 remains pending until an actual SUTRA production static visit and separate inference accounting are observed. Other open originals remain dominated by participant/rights/human/provider/hardware/public-production/final-candidate evidence. Keep release, deployment and paid inference closed.",
+  "next_action": "SUTRA caller app is publicly deployed on CloudflareB at https://sutra-c70.pages.dev/ with automatic branch deployments disabled. A separate peer origin, rights-cleared final content, live funded inference, human/device acceptance and final release/submission gates remain open. Custom .dev binding is blocked because CloudflareB currently has no DNS zone or Registrar domain. Continue engineering/evidence work without treating the synthetic-content deployment as final challenge readiness.",
   "task_records": {
     "SUTRA-P002-01": {
       "state": "verified",
@@ -13660,13 +13660,26 @@
     }
   ],
   "release": {
-    "state": "not_started",
-    "proposed_app_url": "https://sutra.aafnaipatro.com/",
-    "proposed_peer_url": "https://sutra-guide.aafnaipatro.com/",
-    "verified_app_url": null,
+    "state": "app_live_peer_pending",
+    "proposed_app_url": "https://sutra-c70.pages.dev/",
+    "proposed_peer_url": null,
+    "verified_app_url": "https://sutra-c70.pages.dev/",
     "verified_peer_url": null,
-    "source_revision": null,
-    "evidence": []
+    "source_revision": "2c32a3da0e2d5c7392efb8abd73bf16037a0dd3d",
+    "cloudflare_account": "CloudflareB",
+    "cloudflare_pages_project": "sutra",
+    "cloudflare_deployment_id": "f2209727-cff2-4142-ad1d-966c42770e48",
+    "automatic_production_deployments": false,
+    "custom_domain_state": "blocked_no_owned_domain",
+    "evidence": [
+      {
+        "artifact": "docs/sutra/evidence/implementation/SESSION-0059.md",
+        "description": "CloudflareB Pages production deployment succeeded; canonical app is publicly reachable at sutra-c70.pages.dev. Final canonical deployment is 2c32a3da... with selected app artifact hashes equal to the initial direct deployment. No owned custom .dev zone/registration exists in CloudflareB.",
+        "result": "pass",
+        "source_revision": "2c32a3da0e2d5c7392efb8abd73bf16037a0dd3d",
+        "observed_at": "2026-11-27T00:06:36+05:45"
+      }
+    ]
   },
   "submission": {
     "package_state": "not_started",
@@ -13736,6 +13749,7 @@
     "Session 0055: P001-08 and P007-02 verified from PARTICIPANT_HANDOFF.md. Exact learner run 45809483294/job 139873282707 later completed fully green, strengthening Session 0054 without additional credit. Counts 770/1107 overall, 664/1000 original, 330 pending, six omissions, one hardware blocker.",
     "Session 0056: P087-07 verified from learner run 45809483294/job 139873282707: npm ci and vendor verification succeeded; 10 upstream nsDeploy modules matched pinned commit 486ecf26.... Counts 771/1107 overall, 665/1000 original, 329 pending, six omissions, one hardware blocker.",
     "Session 0057: P018-06, P019-02, P019-06, P041-10 and P050-10 verified from exact source f8c3da48a4d99a6311910b99a40b23d0ea9fa63c. All 19 workflows passed; learner job 139962008840 passed 161 app, 171 package/API, 182 runtime, 8 peer tests and complete Chromium. Counts 776/1107 overall, 670/1000 original, 324 pending, six omissions, one hardware blocker. Phase 041 and Phase 050 close. No real-content, human, live-provider, deployment, release or submission claim.",
-    "Session 0058: P065-08 verified from a 2026-11-26 read-only Workers Observability sample with privacy projection. 24h event counts: patro 30,996; aafnai-library-phase1 1,882; patro-date-pages 593. Event counts are not billed invocation counts, so P065-07/P065-10 remain open. Counts 777/1107 overall, 671/1000 original, 323 pending, six omissions, one hardware blocker."
+    "Session 0058: P065-08 verified from a 2026-11-26 read-only Workers Observability sample with privacy projection. 24h event counts: patro 30,996; aafnai-library-phase1 1,882; patro-date-pages 593. Event counts are not billed invocation counts, so P065-07/P065-10 remain open. Counts 777/1107 overall, 671/1000 original, 323 pending, six omissions, one hardware blocker.",
+    "Session 0059: participant explicitly authorized CloudflareB public deployment, superseding the prior no-deploy hold for the caller app only. Cloudflare Pages project sutra is live at https://sutra-c70.pages.dev/; final canonical deployment f2209727 uses revision 2c32a3da..., and selected critical artifact hashes match the initial direct deployment. Automatic production deployments are disabled. No owned custom .dev domain exists in CloudflareB, so custom binding remains blocked. Counts unchanged at 777/1107 overall, 671/1000 original, 323 pending."
   ]
 }
