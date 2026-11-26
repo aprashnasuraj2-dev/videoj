@@ -18,3 +18,8 @@ Reordered graph does not invalidate; changed/removed nodes and descendants class
 
 ## Verification boundary
 Child JS regression is not full integration evidence. Maintain exact source revision, actual job and failure evidence in this file. No automatic authority, deployment, paid inference, or merge. Shared central registers are updated on integration; original open gates remain open.
+
+
+## Parallel session — candidate
+Implement verified append-only history extension: both separately pinned snapshots fully replayed; exact ordered version prefix and every previous branch head's descendant ancestry required. Tests cover valid append/fork and independently valid sibling/rollback refusal. No durable storage or global freshness. Next: transactional persistent store with external checkpoint and crash/restart tests.
+Exact child CI pending.
