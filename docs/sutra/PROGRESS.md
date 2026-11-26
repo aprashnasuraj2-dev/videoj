@@ -2,6 +2,12 @@
 
 [Checklist](CHECKLIST.md) | [Machine state](progress.json) | [Sessions](SESSIONS.md)
 
+## Session 0050 — 2026-11-26
+
+**737/1,107 overall verified; 631/1,000 original; 363 pending; six omissions; one hardware blocker.** Phase 088 now has a CI-checked pre-release contributor path and changelog policy: P088-01..07 and P088-09 are verified. Open Kit run 45806012457/job 139861341692 passed the documentation contract and clean source-distribution checks. [Evidence](evidence/implementation/SESSION-0050.md).
+
+P088-08/P088-10 remain pending because no actual new reader has been observed locating the tool entry points. No release, deployment or support-SLA claim was created.
+
 ## Session 0049 — 2026-11-26
 
 **729/1,107 overall verified; 623/1,000 original; 371 pending; six omissions; one hardware blocker.** P001-07 is verified from the explicit dependency policy and observed separation of unresolved eligibility/rights inputs from safe engineering. P023-09 is verified with a reviewed browser-runtime entry/first-local-run artifact and prior passing Chromium evidence. [Evidence](evidence/implementation/SESSION-0049.md).
