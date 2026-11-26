@@ -147,3 +147,21 @@ test('reviewed guide excerpt route has a defense-in-depth no-execution header po
  assert.equal(headers['Referrer-Policy'],'no-referrer');assert.equal(headers['X-Content-Type-Options'],'nosniff');assert.equal(headers['X-Frame-Options'],'DENY');
  assert.equal(headers['Cache-Control'],'public, max-age=31536000, immutable');
 });
+
+test('development attack/evaluation fixtures stay outside the default public learner content and bundle',()=>{
+ const catalog=JSON.parse(fs.readFileSync(path.join(app,'public/content/source-catalog.json'),'utf8'));
+ assert.equal(catalog.contentVersion,'synthetic-timing-v1');
+ assert.deepEqual(catalog.sources.map(s=>s.id),['synthetic-timing-fixture']);
+ const devFixture=JSON.parse(fs.readFileSync(path.join(app,'test/fixtures/local-zero-model-dev.json'),'utf8'));
+ assert.match(devFixture.description,/development-only synthetic/i);
+ assert.ok(devFixture.cases.some(c=>c.id.startsWith('adversarial-')));
+ const marker=devFixture.sources[0].id;
+ assert.equal(marker,'synthetic-zero-model-evaluation');
+ const files=[];
+ const walk=dir=>{for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const full=path.join(dir,entry.name);if(entry.isDirectory())walk(full);else files.push(full);}};
+ walk(path.join(app,'dist'));
+ for(const file of files){
+  const bytes=fs.readFileSync(file);
+  assert.equal(bytes.includes(Buffer.from(marker)),false,`development fixture leaked into ${path.relative(app,file)}`);
+ }
+});
