@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-155",
+  "session": "V2-156",
   "next": [
     "V2-P14-BYOK-UX",
     "V2-LK03-PATHWAYS",
@@ -38,7 +38,7 @@
     "V2-RUNTIME-03",
     "V2-F12d"
   ],
-  "state": "Candidate: portable independent expression computation receipt; exact CI pending.",
+  "state": "Candidate: explicit Node-only loopback transport; latest fully green V2-153.",
   "verified": [
     {
       "id": "V2-M01",
@@ -409,7 +409,7 @@
     "reason": "Actual browser invalid UTF-8 test: kernel refused correctly but UI sanitizer omitted digits in permitted error-code suffix, so TEXT_FILE_UTF8 became a generic refusal.",
     "resolutionStatus": "V2-107 exact nine returned PR workflows green including Chromium 139551497664; separate push run unobserved; historical failure retained."
   },
-  "lastVerifiedKernelSource": "950b95002c3fe93f387441434ab94fc27ae98ea6",
+  "lastVerifiedKernelSource": "4eefa38b36bc448e3e1c6aae51704c13aac88cf2",
   "resolvedIssue": {
     "id": "V2-M02",
     "sourceRevision": "8d12175bec19eeb373dd199f3224a20bd07c86fa",
@@ -419,14 +419,14 @@
     "resolutionArtifact": "https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45514936424"
   },
   "pendingCandidate": {
+    "session": "V2-156",
+    "parent": "ec66facf3c0d1104f36e14ec6b8e9395f1b8dd0d",
+    "description": "### V2-156 — explicit Node-only loopback HTTP connector (candidate)\nAdd a separately invoked trusted-host transport for self-operated local model endpoints, exact literal loopback IP/port/path/protocol/model approvals, no DNS/proxy/redirect/discovery/fallback, explicit no-key or approved header mode, bounded bytes/deadline and shutdown. Integrate actual protocol workspace with local TCP fixture servers, test auth isolation and route substitution/redirect/partial/invalid encoding/oversize/deadline. No real model, external provider or production UI enabled. V2-153 exact 9/9 workflows passed including browser job 139629109476 and kernel job 139629109872. V2-154 browser job 139629792477 passed, remaining exact CI pending at observation. V2-156 exact CI pending."
+  },
+  "previousPendingCandidate": {
     "session": "V2-155",
     "parent": "b6d29f5774d7dd6da6cb0d8c4d3b3dd47137029f",
     "description": "### V2-155 — independent portable expression computation receipt (candidate)\nSeparate auditable computation from untrusted agent transcript: compact canonical receipt contains separately pinned contract identity, approved binding IDs, recorded expressions, recomputed proposal identities/statuses and review plan. Offline replay validates exact retained receipt pin, exact contract pin, binding scope and canonical recomputation, refusing even self-repinned forged results. No provider identities, endpoint, credential, source text, call history or model-authorship claim in receipt. Studio exports receipt with separate pin and replays exact/tampered bytes. Contract remains independently required. Receipt may reveal conditional relations. V2-153 browser job 139629109476 passed, knowledge pending at observation; exact V2-155 CI pending."
-  },
-  "previousPendingCandidate": {
-    "session": "V2-154",
-    "parent": "4eefa38b36bc448e3e1c6aae51704c13aac88cf2",
-    "description": "### V2-154 — host-directed resource stopping and semantic review planning (candidate)\nAdd opt-in stop-on-stagnation policy to expression council: compare compiled proposal digests, stop after a complete repeated round only if no new compiled candidate appears and all original team members still propose. Preserve fixed default, hard call cap, all dissent and explicit no authority. Three-round fixture reserves four instead of six calls (33% fewer simulated calls), not measured paid cost or accuracy. Greedily prioritize binding-inclusion/comparator review prompts by opposing-pair separation, with exact-expression fallback when footprints match. No optimality, semantic correctness, causal conclusion or candidate coverage claim. Studio exposes policy and plan, tests dissent after convergence, new candidate continuation, abstention and comparator/structure distinctions. Exact CI pending."
   },
   "roadmap": "docs/sutra-v2/roadmap.json",
   "failureHistory": [

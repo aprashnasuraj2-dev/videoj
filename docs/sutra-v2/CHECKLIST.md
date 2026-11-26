@@ -1020,3 +1020,6 @@ V2-142/143 exact nine returned PR workflows each green. Actual replay benchmark 
 
 
 - [ ] **V2-155 candidate:** independently reproducible expression receipt with separate retained pins and scope, exact computation replay, no transcript authenticity claim; exact CI pending.
+
+
+- [ ] **V2-156 candidate:** explicit Node-only literal-loopback connector and real TCP fixture adversaries; no production enablement or real model evidence; exact CI pending.

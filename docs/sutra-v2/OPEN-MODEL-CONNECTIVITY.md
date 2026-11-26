@@ -25,3 +25,6 @@ Rejected alternatives: fixed vendor enum (excludes private models); unrestricted
 5. No claim of production support until exact-source tests and separately authorized provider integration evidence. Keep current live inference/key entry disabled until threat, consent, taint, provider-budget and deployment gates pass. No paid calls, credentials or external disclosures authorized by this requirement.
 
 Existing 200 synthetic cases stay frozen; fix the known aggregate revision manifest mismatch rather than expand them. This requirement extends existing open gates and does not close any prior gate or change the current implementation cursor.
+
+## V2-156 local transport candidate
+Node-only explicit literal-loopback connector, exact host-approved route descriptors and bounded JSON. This is not an enablement of the hosted UI, public relay, production credentials or paid inference. Real local TCP tests use simulated responders. Public egress, tenant isolation and authorized real model testing remain separate gates.
