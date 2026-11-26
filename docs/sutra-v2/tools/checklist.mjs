@@ -45,6 +45,20 @@ export function auditChecklist(checklist, progress, roadmap, legacy) {
   const core=[...(roadmap.phases??[]).flatMap(phase=>phase.requirements??[]),...(roadmap.productGates??[])];
   if(core.some(t=>Array.isArray(t.dependencies)&&t.dependencies.some(id=>webIds.includes(id))))errors.push('Core gate depends on optional web access');
 
+
+  const curr=progress.currentReconciliation,parallel=progress.parallelWorkstreams,roadParallel=roadmap.parallelCandidateEvidence;
+  if(curr?.session!==progress.session||parallel?.session!==progress.session||roadParallel?.session!==progress.session)errors.push('Current reconciliation session mismatch');
+  if(parallel?.baseline!==curr?.centralSource)errors.push('Current reconciliation base mismatch');
+  const childPins=xs=>Array.isArray(xs)?xs.map(x=>[x.pr,x.head??x.sourceRevision]):null;
+  const live=childPins(curr?.children);
+  if(!live||live.length!==10||live.some(([pr,sha],i)=>pr!==51+i||!(/^[a-f0-9]{40}$/).test(sha)))errors.push('Invalid current child pins');
+  for(const pins of [childPins(parallel?.branches),childPins(roadParallel?.records),childPins(parallel?.combinedValidation?.children),childPins(roadParallel?.combinedValidation?.children)])if(JSON.stringify(pins)!==JSON.stringify(live))errors.push('Current child pins disagree');
+  for(const v of [parallel?.combinedValidation,roadParallel?.combinedValidation])if(v?.head!==curr?.validation?.head||v?.parent!==curr?.validation?.centralSource||v?.state!=='validation-only-do-not-merge')errors.push('Validation-only current manifest mismatch');
+  if(curr?.validation?.mergeAllowed!==false)errors.push('Current validation merge authority forbidden');
+  if(roadmap.gateClosurePolicy?.authority!=='docs/sutra-v2/CHECKLIST.md'||roadmap.gateClosurePolicy?.livingKnowledgeGates!==21)errors.push('Living Knowledge closure authority mismatch');
+  const lk=(roadmap.productGates??[]).filter(t=>t.id.startsWith('V2-LK'));
+  if(lk.length!==21||lk.some(t=>!tasks.has(t.id)))errors.push('Living Knowledge acceptance register mismatch');
+  if(progress.reuseFirstReconciliation?.historicalOnly!==true||roadmap.reuseFirstReconciliation?.historicalOnly!==true)errors.push('Historical queue not explicitly retired');
   return {counts,activeTask:active.activeTask,errors};
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){

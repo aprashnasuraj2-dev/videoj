@@ -22,3 +22,7 @@ Prior validation `ad295ae83bcafb48d489ef96475c80a22bac3c16`: combined and parall
 ## V2-194 — queue-parser refresh
 
 Exact previous central `66440d22c457a819eebba666e8c74837f9eac382` and validation `f58473523181779fca3e13f0127bb18469ea76da` failed the queue audit on valid lowercase suffix IDs V2-F11b and V2-F12d. Exact previous combined parallel and workspace passed, not inherited by this revision. Refresh eight central register and parser blobs from `2d6cf98937dda9f20ea5be9064d8ef3a602c4c24` after exact conflict checks; all ten child pins unchanged, canonical workflow unchanged. Exact CI pending. Validation-only; DO NOT MERGE.
+
+## V2-196 exact refresh (2026-11-26)
+
+Central `e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70` full CI 45787710589 passed. #52 `61714c3c095ad254486b250c80cc84b0481dfdd2` 423/423 exact scoped JS tests passed, including atomic shared-descendant correction/withdrawal, refusal and restored replay. Previous combined `ca2fa3516b6dcfc69b94e4180c28b411a7548cc9` canonical knowledge/browser, parallel and workspace passed; compatibility in_progress at observation. Copy exactly 11 verified nonoverlapping deltas (ten central register/audit files, one #52 regression). No merge authorization; new revision must pass its own CI.

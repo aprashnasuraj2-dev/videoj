@@ -1,7 +1,7 @@
 {
   "version": 1,
   "kind": "validation-only-non-merge-candidate",
-  "parent": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+  "parent": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
   "commonChildBase": "092c7971602ee9e294e467efbb0d72c44121e480",
   "children": [
     {
@@ -10,7 +10,7 @@
     },
     {
       "pr": 52,
-      "head": "ae8630ec7d472263f8f8fffb16062bfbc10f96af"
+      "head": "61714c3c095ad254486b250c80cc84b0481dfdd2"
     },
     {
       "pr": 53,
@@ -391,9 +391,65 @@
       "workspaceRun": 45786657934,
       "workspaceObserved": "success",
       "qualification": "old central queue parser failure; no new revision inherits green"
+    },
+    {
+      "revision": "ca2fa3516b6dcfc69b94e4180c28b411a7548cc9",
+      "parent": "2d6cf98937dda9f20ea5be9064d8ef3a602c4c24",
+      "children": [
+        {
+          "pr": 51,
+          "head": "aca5e8b60c8ce67f09c72cb4722a05c8810634da"
+        },
+        {
+          "pr": 52,
+          "head": "ae8630ec7d472263f8f8fffb16062bfbc10f96af"
+        },
+        {
+          "pr": 53,
+          "head": "0065b48dc5181f549845303d1569b88d94bc2ddf"
+        },
+        {
+          "pr": 54,
+          "head": "2336566c64c4ce461042bec8b34c01c22356aba3"
+        },
+        {
+          "pr": 55,
+          "head": "1a429e24a4fca63affccedf138150480b3ee87c2"
+        },
+        {
+          "pr": 56,
+          "head": "4620bf709d9749c311f6726e6d2e2bdf04a383b4"
+        },
+        {
+          "pr": 57,
+          "head": "46055f4f75cf79370ae5e423d1fc99f53b17421e"
+        },
+        {
+          "pr": 58,
+          "head": "ba24ce6fbda97b76a85bce929659fb0f278d1f13"
+        },
+        {
+          "pr": 59,
+          "head": "35a1e273fd10335ed70c7499d00d2cf3dfd03e01"
+        },
+        {
+          "pr": 60,
+          "head": "b981d5b9e049fa62445c60c34ce8375b38933b89"
+        }
+      ],
+      "combinedRun": 45787018982,
+      "knowledgeJob": 139796246998,
+      "browserJob": 139796247554,
+      "combinedObserved": "success",
+      "parallelRun": 45787019038,
+      "parallelObserved": "success",
+      "workspaceRun": 45787019111,
+      "workspaceObserved": "success",
+      "browserCompatibilityRun": 45787019018,
+      "browserCompatibilityObserved": "in_progress"
     }
   ],
-  "refreshQualification": "V2-194 exact refresh of eight central register/parser paths; all child pins unchanged. Previous integrated workspace and parallel succeeded but exact combined knowledge failed queue parser. No integration-only source overwritten. All exact new CI required; no merge into central.",
+  "refreshQualification": "V2-196 exact refresh: ten central coordination/audit paths and one #52 test-only revision, all old overlay blobs matched exact source; no overlap; no integration source change. Fresh exact CI required; validation only.",
   "childUniquePaths": 82,
   "overlappingPaths": [
     {
@@ -732,6 +788,83 @@
           "status": "in_progress"
         }
       ]
+    },
+    {
+      "priorRevision": "ca2fa3516b6dcfc69b94e4180c28b411a7548cc9",
+      "centralHead": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
+      "child52Head": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+      "child52Run": 45788072332,
+      "child52Conclusion": "success",
+      "changed": [
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/CHECKLIST.md",
+          "before": "4b9065bc4248e36822a5202537689964e597be56",
+          "after": "743780557dc70f79b210ff5670249ca92dd52ae3"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/CONTINUE.md",
+          "before": "c596a0e95a9558b054b3b4e3d7a92a7b40e62e5a",
+          "after": "e8dbb86e20804a5ab2f5697a46125c1d797749ab"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/LIVING-KNOWLEDGE.md",
+          "before": "35c0ea5dd93b0eb9f58732aa07fe660617a41b45",
+          "after": "1e21124308ab734413af55eb054a2bd8276a816d"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/PARALLEL-WORKSTREAMS.md",
+          "before": "64ec1f9a13db72d285aacf335a66896e9fb81237",
+          "after": "f336581bc7af16db94219805659cb7ba9fac270f"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/ROADMAP.md",
+          "before": "24e91b438354787e08d8c068f4f2e2d7bffd994f",
+          "after": "952ce42db4817981b89b3709308cf2c8f37c01f9"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/SESSIONS.md",
+          "before": "df7abfb1303ffda0f978d88c4c95467d64b7d743",
+          "after": "680028e5986613417999b8afa6bfff9bf8fe3d6c"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/progress.json",
+          "before": "4a57fe70f8f471800f7af761329df6648129bc2f",
+          "after": "ed5633b94619a2c78d4a8fd6bedaceb7059dff1e"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/roadmap.json",
+          "before": "1374d297910553c9552ee767ad519375dafb9384",
+          "after": "25303d1bcf035acde19afffa2b01a3e3252e7822"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/tools/checklist.mjs",
+          "before": "2437c2f588df4e87ac05299fec372e535d440470",
+          "after": "cf627b0228bfb7793931a6ff9eb2db024e621876"
+        },
+        {
+          "source": "central",
+          "path": "docs/sutra-v2/tools/checklist.test.mjs",
+          "before": "3e3a9e64c5d3abf1593e8986e1e231fbea6b819c",
+          "after": "c28832507fbc9592a79b4e585793023828b90221"
+        },
+        {
+          "source": "#52",
+          "path": "packages/sutra-knowledge/test/revision-dependency-closure.test.mjs",
+          "before": "337882cbc3163ae9148f6efc64615a00f0f899bd",
+          "after": "9f0b8b40782a459269ee37ea1cd4b1821404ed8b"
+        }
+      ],
+      "verification": "pending exact new CI",
+      "validationOnly": true
     }
   ]
 }
