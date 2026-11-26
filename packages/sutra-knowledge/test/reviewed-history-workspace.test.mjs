@@ -1,0 +1,53 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {mkdtemp,rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+import {casePin} from '../pinned-investigation.js';
+import {sealReviewedDraft} from '../reviewed-draft.js';
+import {compileReviewedQuestion} from '../reviewed-question.js';
+import {sealInvestigationVersion} from '../investigation-revision.js';
+import {createInvestigationHistory} from '../investigation-history.js';
+import {verifyHistoryExtension} from '../history-extension.js';
+import {openLocalHistoryStore} from '../local-history-store.mjs';
+import {exportWorkspaceCheckpoint} from '../workspace-checkpoint.js';
+import {exportQuestionMappingReview,compareQuestionMappingReviews} from '../question-mapping-review.js';
+import {openReviewedHistoryWorkspace} from '../reviewed-history-workspace.js';
+
+async function fixture(value,previousDigest=null){
+ const question='Is current higher than prior?',text='A: '+value+'; B: 10; C: 8;';
+ const type={kind:'currency_amount',unit:'USD',scope:'same_company',dimension:[0,0,0]};
+ const draftText=JSON.stringify({version:1,question,sources:[{id:'source',lineage:'root',text}],bindings:[['a',String(value)],['b','10'],['c','8']].map(([id,v])=>({id,sourceId:'source',start:text.indexOf(v),end:text.indexOf(v)+v.length,type}))});
+ const c=await sealReviewedDraft(draftText);
+ const planText=JSON.stringify({version:1,contractDigest:c.pin,left:{start:3,end:10,bindingIds:['a','c']},right:{start:23,end:28,bindingIds:['b']}});
+ const planPin=await casePin(planText),compiled=await compileReviewedQuestion(c.contractText,c.pin,planText,planPin);
+ const version=await sealInvestigationVersion({previousDigest,contractText:c.contractText,contractPin:c.pin,batchText:compiled.batchText,annotationText:compiled.annotationText,annotationPin:compiled.annotationPin});
+ const reviewText=JSON.stringify({version:1,contractPin:c.pin,planPin,choices:previousDigest?[]:[{id:'question_1',judgment:'plausible'},{id:'question_2',judgment:'excluded'}]});
+ const reviewPin=await casePin(reviewText),review=await exportQuestionMappingReview({contractText:c.contractText,contractPin:c.pin,planText,planPin,reviewText,reviewPin});
+ return {draftText,version,contract:c,mappingReview:{snapshotText:review.snapshotText,snapshotPin:review.snapshotPin,expectedContractPin:c.pin,expectedPlanPin:planPin,expectedReviewPin:reviewPin}};
+}
+test('persistent revision and portable review compose; changed evidence cannot inherit old judgments',async t=>{
+ const dir=await mkdtemp(join(tmpdir(),'sutra-mapping-history-'));t.after(()=>rm(dir,{recursive:true,force:true}));
+ const a=await fixture(12),b=await fixture(7,a.version.digest);
+ const h=await createInvestigationHistory(a.version.versionText,a.version.digest),root=h.snapshot();
+ const next=await h.append({expectedHistoryPin:root.digest,branch:'main',expectedHead:a.version.digest,versionText:b.version.versionText,versionPin:b.version.digest});
+ const ext=await verifyHistoryExtension({previousText:root.historyText,previousPin:root.digest,nextText:next.historyText,nextPin:next.digest});
+ assert.deepEqual(ext.addedVersions,[b.version.digest]);
+ const store=await openLocalHistoryStore(dir);await store.initialize(root.historyText,root.digest);await store.append({expectedHead:root.digest,nextText:next.historyText,nextPin:next.digest});
+ const loaded=await (await openLocalHistoryStore(dir)).read(next.digest);
+ const saved=await exportWorkspaceCheckpoint({draftText:b.draftText,history:{text:loaded.historyText,pin:loaded.digest},baseline:{text:a.version.versionText,pin:a.version.digest}});
+ const args={workspaceText:saved.text,workspacePin:saved.pin,expectedHistoryPin:next.digest,selectedVersionPin:b.version.digest,mappingReview:b.mappingReview};
+ const opened=await openReviewedHistoryWorkspace(args);
+ assert.equal(opened.selectedVersionPin,b.version.digest);assert.equal(opened.review.status,'REVIEW_INCOMPLETE');assert.ok(opened.review.rows.every(x=>x.judgment==='unresolved'));assert.equal(opened.decisionAuthority,'NONE');
+ const delta=await compareQuestionMappingReviews({before:a.mappingReview,after:b.mappingReview});assert.equal(delta.sameInputs,false);assert.ok(delta.changes.every(x=>x.reviewRequired));assert.ok(delta.changes.some(x=>x.conditionalOutcomeChanged));
+ await assert.rejects(openReviewedHistoryWorkspace({...args,mappingReview:a.mappingReview}),/HISTORY_MAPPING_REVIEW_CONTRACT_MISMATCH/);
+ await assert.rejects(openReviewedHistoryWorkspace({...args,expectedHistoryPin:root.digest}),/HISTORY_MAPPING_HISTORY_PIN/);
+ await assert.rejects(openReviewedHistoryWorkspace({...args,selectedVersionPin:a.version.digest}),/HISTORY_MAPPING_DRAFT_VERSION_MISMATCH/);
+ const changed=JSON.parse(b.mappingReview.snapshotText);changed.result.rows[0].judgment='plausible';const forged=JSON.stringify(changed),forgedPin=await casePin(forged);
+ await assert.rejects(openReviewedHistoryWorkspace({...args,mappingReview:{...b.mappingReview,snapshotText:forged,snapshotPin:forgedPin}}),/MAPPING_REVIEW_REPLAY_DIVERGENCE/);
+ const cases=[{id:'historical',...a.mappingReview,expected:true},{id:'corrected',...b.mappingReview,expected:true},{id:'forged',...b.mappingReview,snapshotText:forged,snapshotPin:forgedPin,expected:false}];
+ const p=spawnSync('python3',[fileURLToPath(new URL('../reference/verify_question_mapping_review.py',import.meta.url))],{input:JSON.stringify(cases),encoding:'utf8',timeout:30000,maxBuffer:1048576});
+ assert.equal(p.status,0,p.stderr||p.stdout||String(p.error));assert.equal(JSON.parse(p.stdout).cases.filter(c=>c.accepted).length,2);
+});

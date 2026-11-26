@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-197-exact-register-closure-and-revision-regression",
+  "session": "V2-198-first-foundation-source-integration",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -3726,7 +3726,7 @@
     "allocationIsTarget": true
   },
   "parallelCandidateEvidence": {
-    "session": "V2-197-exact-register-closure-and-revision-regression",
+    "session": "V2-198-first-foundation-source-integration",
     "qualification": "Current exact scoped child and validation-only evidence. Product gate statuses are not full acceptance; sole closure authority is active checklist.",
     "history": [
       {
@@ -4266,20 +4266,20 @@
       "nonoverlappingFiles": 81,
       "ci": {
         "run": 45788350009,
-        "knowledge": "in_progress",
-        "browser": "in_progress",
+        "knowledge": "success",
+        "browser": "success",
         "parallelRun": 45788349987,
         "parallel": "success",
         "workspaceRun": 45788350020,
-        "workspace": "in_progress",
+        "workspace": "success",
         "browserCompatibilityRun": 45788350132,
-        "browserCompatibility": "in_progress",
+        "browserCompatibility": "success",
         "operatorBrowserRun": 45788349834,
-        "operatorBrowser": "in_progress",
+        "operatorBrowser": "success",
         "finqaRun": 45788349813,
         "finqa": "success",
         "publisherRun": 45788351602,
-        "publisher": "in_progress"
+        "publisher": "success"
       },
       "history": [
         {
@@ -4473,7 +4473,7 @@
           "validationOnlyPaths": 6
         }
       ],
-      "qualification": "Validation only; eleven exact nonoverlapping delta blobs. New exact CI required; historical success does not transfer.",
+      "qualification": "All 11 exact candidate workflows passed; later central source integration separate; validation-only.",
       "parent": "e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70",
       "childUniquePaths": 82,
       "exactChildBlobs": 75,
@@ -4768,5 +4768,189 @@
     "authority": "docs/sutra-v2/CHECKLIST.md",
     "scope": "Roadmap statuses are scoped implementation/evidence states, not full acceptance; only checked active checklist items with exact evidence close their stated acceptance.",
     "livingKnowledgeGates": 21
-  }
+  },
+  "integrationTranches": [
+    {
+      "version": 1,
+      "kind": "source-level-integration-candidate-no-pr-merge",
+      "parent": "b9fed8f89064237a2c88d8966f10076298649b02",
+      "sourceValidation": "8d12e8e15ff54c42910948a6a691eb41d631be15",
+      "sourcePins": {
+        "52": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+        "53": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+        "58": "ba24ce6fbda97b76a85bce929659fb0f278d1f13"
+      },
+      "selected": [
+        {
+          "pr": 52,
+          "revision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+          "path": "docs/sutra-v2/workstreams/02-persistent-knowledge.md",
+          "base": null,
+          "blob": "b1eb3d8ff5d1ed408ef29b14e07ececd8e747e6f"
+        },
+        {
+          "pr": 52,
+          "revision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+          "path": "packages/sutra-knowledge/history-extension.js",
+          "base": null,
+          "blob": "9658486570f2cd3ba840c7de38ed7db292b8e7d8"
+        },
+        {
+          "pr": 52,
+          "revision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+          "path": "packages/sutra-knowledge/history-witness-client.js",
+          "base": null,
+          "blob": "f1b3484b427acd1141e01b96edf917965a77f6ec"
+        },
+        {
+          "pr": 52,
+          "revision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+          "path": "packages/sutra-knowledge/index.js",
+          "base": "89aa2ac29a1880494b195f60c75ab5e7e5d55f96",
+          "blob": "d60cd96c8ac6f24b8fed8c875b63ef865d6a0b7c"
+        },
+        {
+          "pr": 52,
+          "revision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+          "path": "packages/sutra-knowledge/local-history-store.mjs",
+          "base": null,
+          "blob": "f0fcc54d167ebfd8120af16e91ae67b2f99d9c7a"
+        },
+        {
+          "pr": 52,
+          "revision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+          "path": "packages/sutra-knowledge/test/history-extension.test.mjs",
+          "base": null,
+          "blob": "cb34391a55998850a825fe54f4ba694ead4ede93"
+        },
+        {
+          "pr": 52,
+          "revision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+          "path": "packages/sutra-knowledge/test/history-witness-client.test.mjs",
+          "base": null,
+          "blob": "584de8449cf9e89df28d8a6dea4ff232e6fe5a09"
+        },
+        {
+          "pr": 52,
+          "revision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+          "path": "packages/sutra-knowledge/test/local-history-store.test.mjs",
+          "base": null,
+          "blob": "5c536f70064082d8075e3cca005d8e8d5486f7be"
+        },
+        {
+          "pr": 52,
+          "revision": "61714c3c095ad254486b250c80cc84b0481dfdd2",
+          "path": "packages/sutra-knowledge/test/revision-dependency-closure.test.mjs",
+          "base": null,
+          "blob": "9f0b8b40782a459269ee37ea1cd4b1821404ed8b"
+        },
+        {
+          "pr": 53,
+          "revision": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+          "path": "packages/sutra-knowledge/question-mapping-review.js",
+          "base": null,
+          "blob": "8a52d0ea5227a69ef68706cdb7ae965d5905b5f3"
+        },
+        {
+          "pr": 53,
+          "revision": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+          "path": "packages/sutra-knowledge/reference/verify_question_mapping_review.py",
+          "base": null,
+          "blob": "14d7983dec072ad17a78321b75731b2899055855"
+        },
+        {
+          "pr": 53,
+          "revision": "0065b48dc5181f549845303d1569b88d94bc2ddf",
+          "path": "packages/sutra-knowledge/test/question-mapping-review.test.mjs",
+          "base": null,
+          "blob": "d9d16d4758a30cc48b053c396bce6d37b6163618"
+        },
+        {
+          "pr": 58,
+          "revision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+          "path": "apps/sutra-v2/index.html",
+          "base": "85d4fa2f07eefdf0b69940a298fdb46ddf2d5b2d",
+          "blob": "454e12f2873c4e7e8aa1e9256c7878cd7b914ebe"
+        },
+        {
+          "pr": 58,
+          "revision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+          "path": "apps/sutra-v2/src/reviewed-workspace.js",
+          "base": "28d647183e691de3a33146cce12c89ae6019b43a",
+          "blob": "ea200442dc15f44ef6a113e4b148cab67104bca5"
+        },
+        {
+          "pr": 58,
+          "revision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+          "path": "apps/sutra-v2/src/style.css",
+          "base": "73573965919fdb83e9f0b984cea74be968e5344a",
+          "blob": "099334b25bce582a5f4f8782e24ebc90903d94bc"
+        },
+        {
+          "pr": 58,
+          "revision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+          "path": "apps/sutra-v2/test/browser.cjs",
+          "base": "5ae86025e72b900a77f82cedfeb48fed65c2831b",
+          "blob": "02166353e1002b79e31c97d91c2c35268c50be72"
+        },
+        {
+          "pr": 58,
+          "revision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+          "path": "apps/sutra-v2/test/workspace-accessibility.cjs",
+          "base": null,
+          "blob": "7ab3b898cd4fcbb558909af05e00a14aa46dac3d"
+        },
+        {
+          "pr": 58,
+          "revision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+          "path": "packages/sutra-knowledge/draft-checkpoint.js",
+          "base": null,
+          "blob": "03b8c470eaf2e39facaef2f868b0a6dc1834f359"
+        },
+        {
+          "pr": 58,
+          "revision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+          "path": "packages/sutra-knowledge/reference/verify_workspace_checkpoint.py",
+          "base": null,
+          "blob": "2c93bdf9a5c50a027d41295d55458fb33dffa12d"
+        },
+        {
+          "pr": 58,
+          "revision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+          "path": "packages/sutra-knowledge/test/draft-checkpoint.test.mjs",
+          "base": null,
+          "blob": "b622f9604a851e2c9b6e74c5fcc742cdd50f43ec"
+        },
+        {
+          "pr": 58,
+          "revision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+          "path": "packages/sutra-knowledge/test/workspace-checkpoint.test.mjs",
+          "base": null,
+          "blob": "aca61ce986f5c2ed282d188d81c6a8f691222451"
+        },
+        {
+          "pr": 58,
+          "revision": "ba24ce6fbda97b76a85bce929659fb0f278d1f13",
+          "path": "packages/sutra-knowledge/workspace-checkpoint.js",
+          "base": null,
+          "blob": "92b8184acdbe30c63667c54f2ff005aac9ec2a96"
+        },
+        {
+          "origin": "individually reviewed validation-only composition",
+          "revision": "8d12e8e15ff54c42910948a6a691eb41d631be15",
+          "path": "packages/sutra-knowledge/reviewed-history-workspace.js",
+          "base": null,
+          "blob": "871220fb834d6cbde10b72584ed5f63f36dc3029"
+        },
+        {
+          "origin": "individually reviewed validation-only composition",
+          "revision": "8d12e8e15ff54c42910948a6a691eb41d631be15",
+          "path": "packages/sutra-knowledge/test/reviewed-history-workspace.test.mjs",
+          "base": null,
+          "blob": "e77299a69da644ccf007c3bf45b3165a191ae01e"
+        }
+      ],
+      "qualification": "22 exact individually selected child blobs and two reviewed composition blobs; no validation PR merge, no external provider contact. Full central exact CI required. Host durable storage, browser checkpoint and mapping contracts composed; browser semantic review and host durable transport not yet wired."
+    }
+  ]
 }

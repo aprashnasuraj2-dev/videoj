@@ -30,7 +30,7 @@
 | #58 | unified workspace | `ba24ce6fbda97b76a85bce929659fb0f278d1f13` | [exact accessibility and browser passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45786416592/job/139794191354); parallel passed; publisher setup failure retained; exact retry passed |
 | #59 | specialist domains | `35a1e273fd10335ed70c7499d00d2cf3dfd03e01` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759708514) |
 | #60 | benchmark | `b981d5b9e049fa62445c60c34ce8375b38933b89` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45759752586) |
-| #61 | validation-only combined tree | `8d12e8e15ff54c42910948a6a691eb41d631be15` | pins central `e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70` and ten exact children; [combined CI running](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788350009); [parallel passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788349987), prior exact `ca2fa3516b6dcfc69b94e4180c28b411a7548cc9` canonical CI passed; **DO NOT MERGE** |
+| #61 | validation-only combined tree | `8d12e8e15ff54c42910948a6a691eb41d631be15` | [all 11 exact workflows passed](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788350009); [workspace](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788350020), [compatibility](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45788350132); source integration changes central separately; **DO NOT MERGE** |
 
 If any head changes, reconcile the affected delta before claiming work against it. V2-197 comparison at observed central `e42b6d1c80dd06dc1075ce1b9d99bbfc26be7e70`: all ten children 39 commits behind (ahead counts #51–#60: 5, 11, 7, 6, 4, 6, 5, 13, 6, 5). The current validation-only tree pins that source, not this later bookkeeping checkpoint. Subsequent changes require exact reconciliation; see session evidence.
 
@@ -44,7 +44,7 @@ These items are first in the execution queue because later integrated claims dep
 - [x] `V2-N002` Reconcile PR #54 exact head CI for authenticated observation acquisition; confirm the separate-process Ed25519 receipt path completes on the exact current head.
 - [x] `V2-N003` Complete PR #58 newest browser/accessibility evidence: 320px keyboard journey, accessible names, focus treatment, reflow/200% proxy, reduced motion, no storage and no external contact.
 - [x] `V2-N004` Complete PR #61 exact combined validation on the current 82-path manifest: combined knowledge regression, parallel regression and workspace browser/accessibility must all finish successfully or produce retained failures.
-- [~] `V2-N005` Confirm #61 browser success and all child-specific workflows belong to the exact current manifest; do not inherit older #61 green revisions.
+- [x] `V2-N005` Confirm #61 browser success and all child-specific workflows belong to the exact current manifest; do not inherit older #61 green revisions.
 - [x] `V2-N006` Reconcile all ten child heads against the current central V2 head and document base drift; do not treat the eight central coordination commits as automatically present in children.
 - [x] `V2-N007` Normalize `progress.json`, `roadmap.json`, Markdown roadmap/checklist and parallel registry so one current V2 checkpoint supersedes stale top-level V2-179/V2-182 cursors without erasing historical entries.
 - [x] `V2-N008` Make all machine/readable queues reference this remaining-work checklist and remove any automatic fallback to SUTRA1 pending IDs.
@@ -53,7 +53,7 @@ These items are first in the execution queue because later integrated claims dep
 - [x] `V2-N011` Produce a reviewed integration plan for moving compatible child work into the central V2 line without losing branch-specific evidence or known failures.
 - [x] `V2-N012` Run the applicable central exact CI after register/checklist reconciliation and record the new immutable checkpoint separately from the tested child SHAs.
 
-**Exit:** current heads, CI state, registers and next cursor agree; no stale V1 or old V2 queue can become active.
+**Exit:** scoped coordination complete at the pinned V2-196 candidate; the new central integration tranche must pass its own exact CI. No stale V1 or old V2 queue can become active.
 
 ---
 
@@ -79,7 +79,7 @@ Existing base: provider substitution, opposite-output preservation, one-shot rou
 Existing base: immutable snapshots, local CAS, fsync/atomic publication, subprocess concurrency, real SIGKILL tests, kernel flock profile and challenge-bound signed freshness witness candidate.
 
 - [x] `V2-HIST-001` Finish exact-head witness CI and retain cancellation/failure evidence.
-- [ ] `V2-HIST-002` Connect the durable history store to the full typed V2 knowledge graph, not only the narrow existing snapshot profile.
+- [~] `V2-HIST-002` Connect the durable history store to the full typed V2 knowledge graph, not only the narrow existing snapshot profile.
 - [ ] `V2-HIST-003` Verify simultaneous correction and withdrawal with shared descendants; incremental invalidation must equal full replay.
 - [ ] `V2-HIST-004` Verify branch/fork/restore/diff histories across multiple generations while preserving conflicting empirical claims.
 - [ ] `V2-HIST-005` Establish an externally retained monotonic witness workflow and bounded lost-response recovery without blind replay.
@@ -165,7 +165,7 @@ Existing base: decoded exact-credential scanning, credential-set generation fenc
 
 Existing base: portable draft/history/baseline checkpoint, stale-safe restore, independent replay of actual browser export and automated keyboard/reflow/reduced-motion candidate.
 
-- [ ] `V2-UX-001` Finish newest exact browser/accessibility CI.
+- [x] `V2-UX-001` Finish newest exact browser/accessibility CI.
 - [ ] `V2-UX-002` Integrate #52 durable history into the workspace using its real APIs.
 - [ ] `V2-UX-003` Integrate #53 mapping/semantic review into the workspace using its real APIs.
 - [ ] `V2-UX-004` Integrate #56 counterfactual challenge and coverage state.

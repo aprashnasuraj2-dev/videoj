@@ -237,6 +237,8 @@ jobs:
       - name: Check guided route against actual replayed investigation states
         run: node --test apps/sutra-v2/test/demo-guide.test.mjs
       - run: node apps/sutra-v2/test/browser.cjs
+      - name: Execute integrated keyboard, reflow and reduced-motion accessibility contract
+        run: node apps/sutra-v2/test/workspace-accessibility.cjs
       - name: Independently replay actual learner browser export and challenge tampering
         run: |
           python3 packages/sutra-knowledge/reference/verify_learner.py apps/sutra-v2/test-output/learning-evidence.json apps/sutra/public > apps/sutra-v2/test-output/learning-reference.txt
