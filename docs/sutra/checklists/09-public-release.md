@@ -131,7 +131,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P087-04` Verify Open Kit commands without the learner application
 - [ ] `SUTRA-P087-05` Inspect distributed archives, bundles and trace exports for secrets
 - [ ] `SUTRA-P087-06` Record environment, commands, exit codes and evidence locations
-- [ ] `SUTRA-P087-07` Ensure lockfiles and pinned runtime are sufficient for reproduction
+- [x] `SUTRA-P087-07` Ensure lockfiles and pinned runtime are sufficient for reproduction
 - [x] `SUTRA-P087-08` Report missing hardware/network verification as untested rather than passing
 - [ ] `SUTRA-P087-09` Produce and review the phase artifact: Reproduction log and artifact-scan findings.
 - [ ] `SUTRA-P087-10` Close phase 087 only after its applicable tasks have evidence and its exit condition is observed: A fresh builder can reproduce the release; no management token, provider key or participant personal data remains in public assets.
