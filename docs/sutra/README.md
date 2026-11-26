@@ -45,4 +45,4 @@ The script reads the tracker and exits nonzero for inconsistent IDs, missing clo
 
 The checklist is comprehensive initial coverage, not a guarantee against unknown failures. Add discoveries to [added scope](checklists/11-added-scope.md) and record revised acceptance when justified. Do product work and use the register as a handoff; never substitute tracker activity for implementation or verification.
 
-Target final ZIP handoff: **9 January 2027**. Official deadline baseline: **11 January 2027, 21:45 Asia/Kathmandu (16:00 UTC)**, subject to live re-verification. Proposed origins `sutra.aafnaipatro.com` and `sutra-guide.aafnaipatro.com` are not established deployment facts.
+Target final ZIP handoff: **9 January 2027**. Official deadline baseline: **11 January 2027, 21:45 Asia/Kathmandu (16:00 UTC)**, subject to live re-verification. The SUTRA caller app is currently public on CloudflareB at `https://sutra-c70.pages.dev/`; the content profile remains synthetic development content. No separate peer production origin or owned custom `.dev` domain is established yet.
