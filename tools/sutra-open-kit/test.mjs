@@ -16,3 +16,36 @@ test('secret pattern canaries and forbidden paths fail closed',()=>{
  assert.throws(()=>scan('sample.txt',Buffer.from('-----BEGIN '+'PRIVATE KEY-----')),/rejected/);
  assert.doesNotThrow(()=>scan('example.json',Buffer.from('{"verification":"unverified"}')));
 });
+
+test('SUTRA contributor path names runnable entry points without inventing a public release or support SLA',async()=>{
+ const guide=await readFile(new URL('../../docs/sutra/CONTRIBUTING.md',import.meta.url),'utf8');
+ const changelog=await readFile(new URL('../../docs/sutra/CHANGELOG.md',import.meta.url),'utf8');
+ for(const marker of [
+  'packages/sutra-evidence/',
+  'packages/sutra-consent/',
+  'packages/sutra-source-tools/',
+  'packages/sutra-runtime/',
+  'tools/sutra-open-kit/',
+  'apps/sutra/',
+  'apps/sutra-peer/',
+  'services/sutra-api/',
+  'node docs/sutra/tools/progress.mjs check',
+  'npm --prefix apps/sutra ci',
+  'npm --prefix apps/sutra run build',
+  'node packages/sutra-runtime/verify-vendor.mjs',
+  'SECURITY.md',
+  '>=22.12',
+  'Vite 8.3.4',
+  'Playwright 1.62.1',
+  '@videojs/html@10.4.0',
+  'Direct BYOK: not supported',
+  'There is no guaranteed response time',
+  'SUTRA-P088-08'
+ ])assert.ok(guide.includes(marker),marker);
+ assert.match(guide,/private vulnerability reporting/i);
+ assert.match(guide,/no public release/i);
+ assert.match(changelog,/no public release yet/i);
+ assert.match(changelog,/## Unreleased/);
+ assert.match(changelog,/branch commit, CI artifact, private Open Kit candidate, staging build or proposed URL/i);
+ assert.doesNotMatch(changelog,/^## \[[0-9]/m,'no version may be invented before public release');
+});
