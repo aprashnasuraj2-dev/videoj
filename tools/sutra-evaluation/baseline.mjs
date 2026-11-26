@@ -5,7 +5,8 @@ import {validateReceipt} from '../../packages/sutra-evidence/index.js';
 import {runNetwork} from '../../packages/sutra-runtime/index.js';
 import {createSourceScriptedModel} from '../../packages/sutra-runtime/testing.js';
 import {handleSourceTools} from '../../services/sutra-api/worker.js';
-import {compareClaimPair,syntheticComparison} from '../../apps/sutra/src/comparison.js';
+import {compareClaimPair} from '../../apps/sutra/src/comparison.js';
+import {syntheticComparison} from '../../apps/sutra/test/fixtures/synthetic-comparison.mjs';
 import {buildUncertaintyGuidance} from '../../apps/sutra/src/uncertainty-guidance.js';
 
 const readJson=async path=>JSON.parse(await readFile(new URL(path,import.meta.url),'utf8'));
