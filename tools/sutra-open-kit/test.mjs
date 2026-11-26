@@ -40,6 +40,9 @@ test('SUTRA contributor path names runnable entry points without inventing a pub
   '@videojs/html@10.4.0',
   'Direct BYOK: not supported',
   'There is no guaranteed response time',
+  'repository/GitHub release',
+  'npm publication',
+  'npm publication is optional',
   'SUTRA-P088-08'
  ])assert.ok(guide.includes(marker),marker);
  assert.match(guide,/private vulnerability reporting/i);
