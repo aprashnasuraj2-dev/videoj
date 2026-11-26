@@ -23,7 +23,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [ ] `SUTRA-P001-04` Review ownership of DHAGO imports and original/new training material
 - [ ] `SUTRA-P001-05` List employer/third-party assets requiring permission before public inclusion
 - [x] `SUTRA-P001-06` Record applicable competition exclusions and unresolved questions with official sources
-- [ ] `SUTRA-P001-07` Keep eligibility uncertainties separate from engineering work that can proceed
+- [x] `SUTRA-P001-07` Keep eligibility uncertainties separate from engineering work that can proceed
 - [ ] `SUTRA-P001-08` Log only eligibility outcome and blockers publicly, with no private documents
 - [ ] `SUTRA-P001-09` Produce and review the phase artifact: Private eligibility checklist; public ownership/attribution notes.
 - [ ] `SUTRA-P001-10` Close phase 001 only after its applicable tasks have evidence and its exit condition is observed: Every entrant and reused component has a known eligibility or rights basis; unresolved items are named.
