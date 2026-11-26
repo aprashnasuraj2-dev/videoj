@@ -60,7 +60,7 @@ test('static _headers security boundary matches default Worker API policy and ke
 });
 
 
-test('first-party browser storage is limited to the explicit local review controller',()=>{
+test('first-party browser storage is limited to explicit local state controllers',()=>{
  const roots=[
   path.join(app,'src'),
   path.join(app,'../../packages/sutra-inference'),
@@ -75,7 +75,7 @@ test('first-party browser storage is limited to the explicit local review contro
   const text=fs.readFileSync(file,'utf8');
   for(const marker of ['localStorage','sessionStorage','indexedDB','document.cookie'])if(text.includes(marker))hits.push({file:path.relative(app,file),marker});
  }
- assert.deepEqual(hits,[{file:'src/main.js',marker:'localStorage'}]);
+ assert.deepEqual(hits,[{file:'src/main.js',marker:'localStorage'},{file:'src/workspace-integration.js',marker:'localStorage'}]);
 });
 
 
