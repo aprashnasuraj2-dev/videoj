@@ -84,3 +84,25 @@ test('pre-release technical report binds implementation claims to existing sourc
  assert.match(report,/catalog_matched.*not factual-truth/i);
  assert.doesNotMatch(report,/sutra\.aafnaipatro\.com.*(?:is live|deployed|production is active)/i);
 });
+
+test('community impact note separates reusable engineering evidence from external adoption claims',async()=>{
+ const note=await readFile(new URL('../../docs/sutra/COMMUNITY_TOOLS_AND_IMPACT.md',import.meta.url),'utf8');
+ for(const marker of [
+  'Evidence validator',
+  'Consent inspector',
+  'Restricted browser runtime',
+  'Source tools',
+  'Publisher starter',
+  'Open Kit packager',
+  'Installation usability is not adoption',
+  'External-builder evidence still missing',
+  'Maintenance boundary',
+  'Short factual contribution paragraph',
+  'same-owner SUTRA caller/peer origins count as zero independent adopters',
+  'CI runners count as zero external builders'
+ ])assert.ok(note.includes(marker),marker);
+ assert.match(note,/Current independent external adoption count: \*\*not established\*\*/);
+ assert.match(note,/without a hosted-service SLA, guaranteed response time or promise of indefinite compatibility/i);
+ assert.match(note,/does not yet demonstrate independent external adoption, public third-party interoperability, or production impact/i);
+ assert.doesNotMatch(note,/\b[1-9][0-9]* independent (?:adopters|builders|users)\b/i);
+});
