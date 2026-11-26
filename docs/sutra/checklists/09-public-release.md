@@ -143,15 +143,15 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Provide a quickstart, sample issues, compatibility boundaries, security reporting and a minimal changelog. Avoid claiming an ongoing support commitment that cannot be met.
 - **Phase exit:** A newcomer knows what to run, what to reuse and where to report a problem without reading the entire product codebase.
 
-- [ ] `SUTRA-P088-01` Write a short clean-install and first-invocation contributor path
-- [ ] `SUTRA-P088-02` Explain package boundaries and supported compatibility versions
-- [ ] `SUTRA-P088-03` Provide minimal reproducible issue-reporting guidance
-- [ ] `SUTRA-P088-04` Describe safe security reporting without publishing exploit secrets
-- [ ] `SUTRA-P088-05` Document contribution scope and examples suitable for newcomers
-- [ ] `SUTRA-P088-06` Keep changelog entries tied to public versions
-- [ ] `SUTRA-P088-07` Avoid promises of indefinite hosted support or response times
+- [x] `SUTRA-P088-01` Write a short clean-install and first-invocation contributor path
+- [x] `SUTRA-P088-02` Explain package boundaries and supported compatibility versions
+- [x] `SUTRA-P088-03` Provide minimal reproducible issue-reporting guidance
+- [x] `SUTRA-P088-04` Describe safe security reporting without publishing exploit secrets
+- [x] `SUTRA-P088-05` Document contribution scope and examples suitable for newcomers
+- [x] `SUTRA-P088-06` Keep changelog entries tied to public versions
+- [x] `SUTRA-P088-07` Avoid promises of indefinite hosted support or response times
 - [ ] `SUTRA-P088-08` Check a new reader can locate tool entry points quickly
-- [ ] `SUTRA-P088-09` Produce and review the phase artifact: CONTRIBUTING and maintenance notes for SUTRA/Open Kit.
+- [x] `SUTRA-P088-09` Produce and review the phase artifact: CONTRIBUTING and maintenance notes for SUTRA/Open Kit.
 - [ ] `SUTRA-P088-10` Close phase 088 only after its applicable tasks have evidence and its exit condition is observed: A newcomer knows what to run, what to reuse and where to report a problem without reading the entire product codebase.
 
 ## Phase 089 - Rehearse rollback and judging availability
