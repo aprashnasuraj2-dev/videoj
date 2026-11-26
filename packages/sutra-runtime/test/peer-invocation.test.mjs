@@ -153,8 +153,8 @@ function webPeerModel(counter={calls:0}){
 }
 const peerWebHost=counter=>({
  allowExternalResearch:true,maxCalls:3,
- async search(query){counter.search++;assert.equal(query,'bounded peer evidence');return [{url:'https://evidence.example/article',title:'Evidence',snippet:'Discovery only'}];},
- async read(url){counter.read++;assert.equal(url,'https://evidence.example/article');return {url,text:'The independent public source contains a sufficiently long retrieved evidence passage.'};}
+ async search(query){counter.search++;assert.equal(query,'bounded peer evidence');return [{url:'https://evidence.org/article',title:'Evidence',snippet:'Discovery only'}];},
+ async read(url){counter.read++;assert.equal(url,'https://evidence.org/article');return {url,text:'The independent public source contains a sufficiently long retrieved evidence passage.'};}
 });
 
 test('exact peer capability grant lets an independently published compatible graph consume caller-owned web research',async()=>{
