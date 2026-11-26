@@ -37,3 +37,12 @@ test('one-shot plan binds exact route, scope and question; replacement needs a n
  await assert.rejects(x.execute({approveDisclosure:true,approvedPlanPin:x.planPin}),/COUNCIL_APPROVAL_CONSUMED/);assert.equal(a.seen.length,1);
  const r2=await y.execute({approveDisclosure:true,approvedPlanPin:y.planPin});assert.equal(r2.candidates[0].proposalDigest,r.candidates[0].proposalDigest);assert.equal(b.seen.length,1);
 });
+
+test('a revoked captured route consumes its valid approval attempt without contact or fallback',async()=>{
+ const f=await compilerFinanceFixture(),a=setup('provider-a','custom/a');
+ const x=await prepareApprovedExpressionCouncil({contractText:f.contractText,contractPin:f.pin,disclosure:{bindingIds:['ocf25','ocf26'],includeValues:false},routes:a.routes,workspace:a.workspace,maxRounds:1});
+ a.workspace.removeProfile(a.routes[0].handle);
+ await assert.rejects(x.execute({approveDisclosure:true,approvedPlanPin:x.planPin}),/ROUTE/);
+ assert.equal(a.seen.length,0);assert.equal(a.workspace.budgetSnapshot().global.used.calls,0);
+ await assert.rejects(x.execute({approveDisclosure:true,approvedPlanPin:x.planPin}),/CONSUMED/);
+});
