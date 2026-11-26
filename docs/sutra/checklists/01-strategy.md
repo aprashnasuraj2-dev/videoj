@@ -1,5 +1,7 @@
 # 01. Strategy and competition fit
 
+> **RETIRED SUTRA1 EXECUTION QUEUE (2026-11-26).** The user retired all remaining unchecked SUTRA1 tasks. This file now preserves verified/omitted/blocked historical evidence only. Do not resume work from this file; use [`docs/sutra-v2/CHECKLIST.md`](../../sutra-v2/CHECKLIST.md).
+
 [Checklist index](../CHECKLIST.md) | [Progress register](../PROGRESS.md) | [Continuation procedure](../CONTINUE.md)
 
 Original planning window: **23-26 Nov 2026**. This is a target window, not proof of work.
@@ -17,16 +19,6 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Intent:** Check entrant residence, age, team representation and rights to reuse existing code. Identify the person who will narrate the final video.
 - **Phase exit:** Every entrant and reused component has a known eligibility or rights basis; unresolved items are named.
 
-- [ ] `SUTRA-P001-01` Record entrant country/residence and legal-age eligibility privately, without publishing identity documents
-- [ ] `SUTRA-P001-02` Confirm individual/team representation and name the actual human narrator
-- [ ] `SUTRA-P001-03` Identify all pre-existing components and the competition-period contribution boundary
-- [ ] `SUTRA-P001-04` Review ownership of DHAGO imports and original/new training material
-- [ ] `SUTRA-P001-05` List employer/third-party assets requiring permission before public inclusion
-- [ ] `SUTRA-P001-06` Record applicable competition exclusions and unresolved questions with official sources
-- [ ] `SUTRA-P001-07` Keep eligibility uncertainties separate from engineering work that can proceed
-- [ ] `SUTRA-P001-08` Log only eligibility outcome and blockers publicly, with no private documents
-- [ ] `SUTRA-P001-09` Produce and review the phase artifact: Private eligibility checklist; public ownership/attribution notes.
-- [ ] `SUTRA-P001-10` Close phase 001 only after its applicable tasks have evidence and its exit condition is observed: Every entrant and reused component has a known eligibility or rights basis; unresolved items are named.
 
 ## Phase 002 - Define the single audience and job
 
@@ -41,10 +33,8 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P002-04` Write three failure examples, including wrong cue and conflicting checklist
 - [x] `SUTRA-P002-05` Define what counts as successful evidence retrieval and user action
 - [x] `SUTRA-P002-06` Document what the project will not claim about certification or competence
-- [ ] `SUTRA-P002-07` Identify who can fact-check the technical lesson before public use
 - [x] `SUTRA-P002-08` Record assumptions about language, device, connectivity and prior experience
 - [x] `SUTRA-P002-09` Produce and review the phase artifact: One-page problem brief with one primary task and three failure examples.
-- [ ] `SUTRA-P002-10` Close phase 002 only after its applicable tasks have evidence and its exit condition is observed: Task success can be observed without assuming a training benefit or claiming operational certification.
 
 ## Phase 003 - Pin the challenge and specification baseline
 
@@ -96,9 +86,7 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - [x] `SUTRA-P005-05` Show source comparison, human review and saved evidence receipt
 - [x] `SUTRA-P005-06` Reserve time for a visible denial or bounded-execution failure
 - [x] `SUTRA-P005-07` Reserve time to demonstrate public reusable tools and actual results
-- [ ] `SUTRA-P005-08` Check the storyline can be explained in the entrant’s real voice
 - [x] `SUTRA-P005-09` Produce and review the phase artifact: Time-coded browser demo outline.
-- [ ] `SUTRA-P005-10` Close phase 005 only after its applicable tasks have evidence and its exit condition is observed: The complete story fits 110 seconds with a 10-second ceiling margin; no feature relies on a hidden narrator claim.
 
 ## Phase 006 - Translate the judging rubric into evidence
 
@@ -126,15 +114,11 @@ Check a box only after its result is observed. Add revision-linked evidence to `
 - **Phase exit:** The calendar has a named daily capacity; model cost assumptions and unknown provider prices are shown separately.
 
 - [x] `SUTRA-P007-01` Sum person-hour estimates and add a named integration contingency
-- [ ] `SUTRA-P007-02` Record participant availability and tasks requiring genuine human involvement
 - [x] `SUTRA-P007-03` Separate inference, media, hosting and optional service cost assumptions
-- [ ] `SUTRA-P007-04` Select an approved spend ceiling before enabling funded inference
 - [x] `SUTRA-P007-05` Calculate baseline capacity and sensitivity to doubled token/retry usage
 - [x] `SUTRA-P007-06` Name the first optional scope cuts when available hours shrink
-- [ ] `SUTRA-P007-07` Reserve availability funding through the verified judging end date
 - [x] `SUTRA-P007-08` Record missing prices, tester availability and infrastructure access honestly
 - [x] `SUTRA-P007-09` Produce and review the phase artifact: Effort baseline, cost worksheet and scope-cut order.
-- [ ] `SUTRA-P007-10` Close phase 007 only after its applicable tasks have evidence and its exit condition is observed: The calendar has a named daily capacity; model cost assumptions and unknown provider prices are shown separately.
 
 ## Phase 008 - Choose deployment origins and isolation
 
