@@ -20,6 +20,8 @@ When the user says **“continue with sutra”** (case-insensitive), read the re
 | [DECISIONS.md](DECISIONS.md) | Rationale, optional omissions, scope changes and reversals |
 | [COVERAGE.md](COVERAGE.md) | Cross-cutting requirement coverage, acceptance targets and evidence rules |
 | [BASELINE.md](BASELINE.md) | PDF provenance, known source revision, rules/spec and planning assumptions |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | SUTRA clean-install, component entry points, issue/security and contribution boundaries |
+| [CHANGELOG.md](CHANGELOG.md) | Pre-release changelog policy; no invented public versions |
 | [evidence/README.md](evidence/README.md) | Evidence conventions without private data or fabricated outcomes |
 
 ## Read-only progress commands
