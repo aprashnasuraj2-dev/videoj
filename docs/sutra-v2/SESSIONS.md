@@ -1347,3 +1347,8 @@ Central parent: `0b14cb66a75019502fa473bb88dc462067761c53`. Exact observations:
 ## V2-188 — queue invariants and workspace candidate (26 November 2026)
 
 Parent `78d00276ea23f1d5cd5888e582fc951f2921864f`. #58 new candidate `e163e9a9a293a4be9c713f2b2967de33d91b07bd` restores three compact metric columns and removes compulsory full-width header navigation, retaining wrapping/min-width protections. Prior job 139770644359 failed conflicted-state first-viewport action at 360x800; exact new browser evidence pending. No acceptance change. Add V2 read-only checklist/queue validator, tests for count, duplicate ID, legacy fallback and missing evidence, and a central CI step. Historical V1 tracker recognizes explicit retirement and redirects next-task output, retaining its evidence audit. Candidate verification remains open (N007/N008/N012). N003 remains active; 160 outstanding engineering items, six external blockers. #61 remains stale and validation-only.
+
+
+## V2-189 — optional web access plan (2026-11-26)
+
+User supplied ten TypeScript files. Added four bounded checklist tasks WEB-001–004 under existing #54 acquisition, with #57 security, #58 UI and #55 replay reuse. [Integration contract and source fingerprints](WEB-ACCESS.md). No new workstream, no live provider test, no runtime enabled, no gate promoted. Existing N003 cursor and immediate CI reconciliation unchanged. Parent `2e1fce3dc5740d6f57127da6b6c8611f6f984c30`. Proposed host-only consented GET and source snapshot admission; reject current prototype's DNS/transport/MIME/taint gaps rather than import wholesale. 164 outstanding engineering tasks including one active; six external blockers.

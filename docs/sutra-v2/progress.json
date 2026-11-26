@@ -3,7 +3,7 @@
   "project": "SUTRA 2.0",
   "branch": "sutra/v2-knowledge-compiler",
   "legacyBaseline": "9bd76ef8bfd05f323592f21fe4b0841188861693",
-  "session": "V2-188-queue-invariants-candidate",
+  "session": "V2-189-web-access-extension-plan",
   "next": [
     "V2-N003",
     "V2-N004",
@@ -11275,10 +11275,10 @@
     "validationPr": 61,
     "validationMergeAllowed": false,
     "activeTask": "V2-N003",
-    "remainingTasks": 159,
+    "remainingTasks": 163,
     "activeTasks": 1,
     "completedSinceReset": 5,
-    "remainingIncludingActive": 160,
+    "remainingIncludingActive": 164,
     "externalBlockers": 6
   },
   "legacyChecklistRetirement": {
@@ -11336,5 +11336,57 @@
       "V2-N006"
     ],
     "next": "V2-N001"
+  },
+  "webAccess": {
+    "session": "V2-189-web-access-extension-plan",
+    "status": "planned",
+    "scope": "optional read-only web discovery and reviewed source intake, disabled by default",
+    "contract": "docs/sutra-v2/WEB-ACCESS.md",
+    "owner": "#54 with #57, #58 and #55 integration",
+    "tasks": [
+      {
+        "id": "V2-WEB-001",
+        "priority": "P0",
+        "owner": "central / #57 + #54",
+        "dependencies": [
+          "V2-ACQ-008",
+          "V2-P02-RUNTIME",
+          "V2-P03-TAINT",
+          "V2-P04-CONSENT"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "V2-WEB-002",
+        "priority": "P1",
+        "owner": "#54",
+        "dependencies": [
+          "V2-WEB-001"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "V2-WEB-003",
+        "priority": "P1",
+        "owner": "#54 + #58",
+        "dependencies": [
+          "V2-WEB-002",
+          "V2-UX-005"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "V2-WEB-004",
+        "priority": "P1",
+        "owner": "central + #55/#57/#58",
+        "dependencies": [
+          "V2-WEB-003"
+        ],
+        "status": "pending"
+      }
+    ],
+    "enablement": "exact route-specific consent/runtime/taint, transport and integrated acceptance; live endpoints separately authorized",
+    "broadGateCredit": false,
+    "sourceRevision": "2e1fce3dc5740d6f57127da6b6c8611f6f984c30"
   }
 }

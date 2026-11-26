@@ -17,9 +17,9 @@
 
 ## Current live branch baseline to reconcile
 
-| PR | Workstream | Current head at V2-188 observation | Current evidence boundary |
+| PR | Workstream | Current head at V2-189 observation | Current evidence boundary |
 | --- | --- | --- | --- |
-| #50 | central V2 | `78d00276ea23f1d5cd5888e582fc951f2921864f` | exact central CI pending observation |
+| #50 | central V2 | `2e1fce3dc5740d6f57127da6b6c8611f6f984c30` | prior checkpoint; exact CI reconciliation open |
 | #51 | model orchestration | `aca5e8b60c8ce67f09c72cb4722a05c8810634da` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45757418475) |
 | #52 | persistent knowledge | `ae8630ec7d472263f8f8fffb16062bfbc10f96af` | [422/422 exact scoped JS tests passed; separate-process witness, rollback, bounded lost-response recovery](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45779075994/job/139769828804) |
 | #53 | semantic compilation | `0065b48dc5181f549845303d1569b88d94bc2ddf` | [success](https://github.com/aprashnasuraj2-dev/videoj/actions/runs/45758784104) |
@@ -118,6 +118,16 @@ Existing base: acquisition path replay, source-bound receipts and challenged Ed2
 - [ ] `V2-ACQ-009` Add source ancestry/independence representation so repeated URLs or signer identity do not imply independent evidence.
 - [ ] `V2-ACQ-010` Integrate acquisition planning and result admission into the unified workspace.
 - [ ] `V2-ACQ-011` Add independent oracle/replay coverage for multi-action noisy/shared-cost cases.
+
+
+### Optional web access (small extension of #54 acquisition; not a new workstream)
+
+See [WEB-ACCESS.md](WEB-ACCESS.md). Reuse existing consent, egress, budgets, taint, source receipts and #58 workspace; off by default. Priorities below apply to this feature, not unrelated work.
+
+- [ ] `V2-WEB-001` **P0** — Adapt existing host egress, consent and bounded-response primitives for credentialless read-only HTTPS search/read; explicit opt-in, exact destination/query disclosure, DNS/IP pinning and per-hop re-admission, cancellation, byte/contact/deadline budgets, robots policy and no fetch on refusal. Prove with deterministic adversarial fixtures.
+- [ ] `V2-WEB-002` **P1** — Implement two bounded web_search/web_read capabilities using approved provider adapters, accurate intent/status and deterministic ranking, inert HTML extraction and typed untrusted source snapshots; bind raw/extracted digests and exact source spans, never promote snippets or page instructions to evidence/authority.
+- [ ] `V2-WEB-003` **P1** — Add optional search/open/preview/import to the existing evidence workspace, explicit user review/selection and refresh-as-revision; manual/offline path remains complete, no automatic follow-links, provider/model coupling or external contact from imported text.
+- [ ] `V2-WEB-004` **P1** — Verify exact integrated source with deterministic hostile transport/parser/consent/budget tests, browser no-contact and opt-in fixture journeys, offline independent receipt/span replay and changed-page revision; retain failures, measure limits, and keep live provider acceptance separate from fixture evidence.
 
 ## B5. PR #55 — independent verification and replay
 
@@ -307,7 +317,7 @@ Unless exact remote reconciliation shows a dependency change, execute in this or
 5. `V2-N005` confirm manifest-bound evidence; `V2-N006`–`V2-N012` normalize branches/registers and prepare reviewed integration.
 6. Integrate `#52 history + #53 semantic review → #58 workspace`.
 7. Integrate #57 trust boundaries and #51 operator/model approval around that path.
-8. Integrate #56 counterfactual challenge and #54 acquisition into the same investigation.
+8. Integrate #56 counterfactual challenge and #54 acquisition into the same investigation; add the optional WEB-001–004 slice when its relevant consent/runtime/taint and workspace dependencies are verified. Keep web disabled otherwise.
 9. Expand #55 statistical/semantic independent verification.
 10. Exercise #59 complete specialist journeys.
 11. Advance #60 to end-to-end natural-language and full staged benchmarking.

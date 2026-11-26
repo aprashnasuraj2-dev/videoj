@@ -613,3 +613,8 @@ Reuse-first selection: preserve v1 and v2 historical statuses. Record scoped chi
 
 **Release/authority:** No merge, public deployment, paid inference, real credentials, outreach, release or submission is authorized by this decision.
 
+
+
+## V2-DECISION-0189 — Optional web discovery/read as existing evidence adapter (2026-11-26)
+
+Decision: add four bounded tasks under #54 evidence acquisition; retain current runtime, consent, budgets, taint and workspace; use the supplied prototype as design input, not an executable second foundation. Default disabled; host-owned credentialless HTTPS GET only with scoped disclosure consent and exact source review. Search rankings do not prove truth or independence. No automatic fetch, external authority, public relay or deployment. See [WEB-ACCESS.md](WEB-ACCESS.md). Existing broad gate statuses and active CI cursor unchanged.

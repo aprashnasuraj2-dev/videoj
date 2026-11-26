@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "session": "V2-188-queue-invariants-candidate",
+  "session": "V2-189-web-access-extension-plan",
   "statusDefinitions": [
     "Not started",
     "Researching",
@@ -3311,7 +3311,7 @@
         "V2-LK06-SEMANTIC-WORLDS",
         "V2-D24-DISCLOSURE-FRONTIER"
       ],
-      "scope": "Extend source economics and disclosure frontier toward noisy observations, uncertain costs, robust/minimax/regret or justified VOI, shared costs, failed observations and multiple objectives. V2-086 candidate: complete decisive synthetic grid ≤16 cells, bounded six observations, explicit terminal loss and worst cost/exposure, overlapping noisy/failed labels, shared one-time acquisition and abstention. No probabilities or external action. Multi-action oracle, browser and independent replay remain open. V2-138 freezes 30 acquisition development cases before evaluator; explicit expected minimax objective and root; no independent expert annotations or empirical costs. V2-139 candidate executes 30 frozen cases through actual planner and independent matched oracle; exact CI pending; no broad gate credit. V2-140 separate adversarial branching regression checks adaptive versus fixed subsets with identical loss/exposure; not part of frozen 30 cases; CI pending. V2-139 exact acquisition 30/30 matched independent oracle; fixed subset tied exact objective 126; no general superiority.",
+      "scope": "Extend source economics and disclosure frontier toward noisy observations, uncertain costs, robust/minimax/regret or justified VOI, shared costs, failed observations and multiple objectives. V2-086 candidate: complete decisive synthetic grid ≤16 cells, bounded six observations, explicit terminal loss and worst cost/exposure, overlapping noisy/failed labels, shared one-time acquisition and abstention. No probabilities or external action. Multi-action oracle, browser and independent replay remain open. V2-138 freezes 30 acquisition development cases before evaluator; explicit expected minimax objective and root; no independent expert annotations or empirical costs. V2-139 candidate executes 30 frozen cases through actual planner and independent matched oracle; exact CI pending; no broad gate credit. V2-140 separate adversarial branching regression checks adaptive versus fixed subsets with identical loss/exposure; not part of frozen 30 cases; CI pending. V2-139 exact acquisition 30/30 matched independent oracle; fixed subset tied exact objective 126; no general superiority. V2-189 planned optional web search/read input adapter under WEB-001–004; no status or broad gate credit change.",
       "acceptance": "Information gain distinguished from decision value; report bounds/heuristics, no invented probabilities or global optimality.",
       "evidence": [
         {
@@ -4324,5 +4324,57 @@
     "qualification": "Scoped evidence only. Existing roadmap gate status and historical evidence preserved; disposition is a work-selection overlay, not a completion-count promotion."
   },
   "activeChecklist": "docs/sutra-v2/CHECKLIST.md",
-  "executionPolicy": "Only the active V2 checklist selects tasks; broad roadmap statuses retain their prior evidence boundaries."
+  "executionPolicy": "Only the active V2 checklist selects tasks; broad roadmap statuses retain their prior evidence boundaries.",
+  "webAccess": {
+    "session": "V2-189-web-access-extension-plan",
+    "status": "planned",
+    "scope": "optional read-only web discovery and reviewed source intake, disabled by default",
+    "contract": "docs/sutra-v2/WEB-ACCESS.md",
+    "owner": "#54 with #57, #58 and #55 integration",
+    "tasks": [
+      {
+        "id": "V2-WEB-001",
+        "priority": "P0",
+        "owner": "central / #57 + #54",
+        "dependencies": [
+          "V2-ACQ-008",
+          "V2-P02-RUNTIME",
+          "V2-P03-TAINT",
+          "V2-P04-CONSENT"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "V2-WEB-002",
+        "priority": "P1",
+        "owner": "#54",
+        "dependencies": [
+          "V2-WEB-001"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "V2-WEB-003",
+        "priority": "P1",
+        "owner": "#54 + #58",
+        "dependencies": [
+          "V2-WEB-002",
+          "V2-UX-005"
+        ],
+        "status": "pending"
+      },
+      {
+        "id": "V2-WEB-004",
+        "priority": "P1",
+        "owner": "central + #55/#57/#58",
+        "dependencies": [
+          "V2-WEB-003"
+        ],
+        "status": "pending"
+      }
+    ],
+    "enablement": "exact route-specific consent/runtime/taint, transport and integrated acceptance; live endpoints separately authorized",
+    "broadGateCredit": false,
+    "sourceRevision": "2e1fce3dc5740d6f57127da6b6c8611f6f984c30"
+  }
 }
