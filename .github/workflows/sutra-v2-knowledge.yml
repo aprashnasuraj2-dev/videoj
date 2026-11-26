@@ -117,6 +117,11 @@ jobs:
         run: |
           node packages/sutra-knowledge/examples/change-question-reference-cases.mjs > sutra-change-question-reference-cases.json
           python3 packages/sutra-knowledge/reference/test_reviewed_change_question.py < sutra-change-question-reference-cases.json
+      - name: Execute thirty frozen structural ancestry cases and independent graph oracle
+        run: |
+          node packages/sutra-knowledge/evaluation/ancestry-development-pilot.mjs > sutra-v2-ancestry-development.json
+          python3 packages/sutra-knowledge/evaluation/verify-ancestry-development.py < sutra-v2-ancestry-development.json > sutra-v2-ancestry-independent.json
+          cat sutra-v2-ancestry-independent.json
       - name: Execute frozen synthetic living-knowledge pilot and scoped baseline comparison
         run: node packages/sutra-knowledge/evaluation/living-pilot.mjs
       - name: Measure actual provenance-bound revision replay against fresh exact parity
@@ -148,6 +153,8 @@ jobs:
           path: |
             sutra-v2-observation.json
             sutra-v2-revision-pilot.json
+            sutra-v2-ancestry-development.json
+            sutra-v2-ancestry-independent.json
             sutra-assumption-development.json
             sutra-revision-development.json
             sutra-revision-development-bundles.json

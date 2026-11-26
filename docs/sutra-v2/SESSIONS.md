@@ -1050,3 +1050,7 @@ V2-126 and V2-128 each observed 9/9 exact PR workflows successful; V2-127 malfor
 
 ### V2-132 — freeze structural ancestry development corpus
 Thirty developer-labeled topology cases frozen before evaluator implementation: separate artifacts, shared declared lineage, exact duplicate bytes, transitive bridges, cycles, overlapping/disjoint dependencies, context-only, question-only uncovered targets, refusal and unknown states, copied candidates, and 8-source boundary. Labels explicitly list expected components and complete minimum cut sets. No independent expert annotation, verified source independence or empirical failure claim. V2-129/130 exact nine PR workflows green each; V2-130 independently verified 4 recovery fixtures, rejected 52 tamper/pin cases and matched 4 isolated archive results. Browser V2-131 still in CI at observation. Reconcile correct recovery gates LK09/10/11/15/19 without closing them.
+
+
+### V2-133 — execute frozen ancestry topology benchmark
+Real compiler + sealed semantic investigation + structural audit on all 30 frozen labels (Git blob 0af4985a8c32eaef7a9073f5033b4d875f1bd774). Separately implemented Python traversal/combinations checks all components and complete min cuts against same frozen manifest; compare naive artifact-only and lineage-only baselines. One-target manifests duplicated only to satisfy two-proposal profile; identical target structures counted once. No claims of independent expert labels, independence, full causal ancestry or actual failure probability. Exact CI pending; no gate closed.
