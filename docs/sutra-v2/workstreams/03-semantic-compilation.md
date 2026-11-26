@@ -18,3 +18,8 @@ False equivalence from coincident numerical outcomes must not establish intent; 
 
 ## Verification boundary
 Child JS regression is not full integration evidence. Maintain exact source revision, actual job and failure evidence in this file. No automatic authority, deployment, paid inference, or merge. Shared central registers are updated on integration; original open gates remain open.
+
+
+## Parallel session — candidate
+Add independently pinned explicit mapping review over replayed compiler results; preserve excluded and unresolved alternatives including opposite arithmetic outcomes. Reject unknown/duplicate/forged judgments. No semantic certification or automatic selection. Next: browser review integration and independent annotation of material ambiguity.
+Exact child CI pending.
